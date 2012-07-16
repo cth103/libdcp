@@ -1,0 +1,5 @@
+def configure(conf):
+    conf.recurse('src')
+
+def build(bld):
+    bld.recurse('src')

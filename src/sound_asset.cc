@@ -20,7 +20,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <boost/filesystem.hpp>
-#include <AS_DCP.h>
+#include "AS_DCP.h"
 #include "sound_asset.h"
 #include "util.h"
 

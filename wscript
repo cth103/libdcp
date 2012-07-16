@@ -6,22 +6,8 @@ def options(opt):
 
 def configure(conf):
     conf.load('compiler_cxx')
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Werror', '-Wextra', '-O2', '-D_FILE_OFFSET_BITS=64'])
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-O2', '-D_FILE_OFFSET_BITS=64'])
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
-
-    conf.check_cc(msg = 'Checking for libkumu',
-                  function_name = 'Kumu::Version',
-                  header_name = 'KM_util.h',
-                  lib = 'kumu',
-                  uselib_store = 'KUMU',
-                  mandatory = True)
-
-    conf.check_cc(msg = 'Checking for asdcplib',
-                  function_name = 'ASDCP::Version',
-                  header_name = 'AS_DCP.h',
-                  lib = 'asdcp',
-                  uselib_store = 'ASDCP',
-                  mandatory = True)
 
     conf.check_cfg(package = 'openssl', args = '--cflags --libs', uselib_store = 'OPENSSL', mandatory = True)
     conf.check_cfg(package = 'sigc++-2.0', args = '--cflags --libs', uselib_store = 'SIGC++', mandatory = True)
@@ -36,8 +22,10 @@ def configure(conf):
                    uselib_store = 'BOOST_FILESYSTEM')
 
     conf.recurse('test')
+    conf.recurse('asdcplib')
 
 def build(bld):
     bld.recurse('src')
     bld.recurse('test')
+    bld.recurse('asdcplib')
 
