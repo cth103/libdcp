@@ -585,6 +585,8 @@ ASDCP::MPEG2::MXFWriter::h__Writer::WriteFrame(const FrameBuffer& FrameBuf, AESE
     case FRAME_I: Flags = 0x00; break;
     case FRAME_P: Flags = 0x22; break;
     case FRAME_B: Flags = 0x33; break;
+    /* Keep gcc quiet */
+    case FRAME_U: break;
     }
 
   if ( FrameBuf.GOPStart() )

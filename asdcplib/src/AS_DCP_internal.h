@@ -110,9 +110,9 @@ namespace ASDCP
       KLReader() {}
       ~KLReader() {}
 
-      inline const byte_t* Key() { return m_KeyBuf; }
-      inline const ui64_t  Length() { return m_ValueLength; }
-      inline const ui64_t  KLLength() { return m_KLLength; }
+      inline byte_t* Key() { return m_KeyBuf; }
+      inline ui64_t  Length() { return m_ValueLength; }
+      inline ui64_t  KLLength() { return m_KLLength; }
       
       Result_t ReadKLFromFile(Kumu::FileReader& Reader);
     };

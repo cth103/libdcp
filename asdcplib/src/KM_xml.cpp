@@ -559,7 +559,7 @@ struct xph_test_wrapper
 // expat wrapper functions, map callbacks to IASAXHandler
 // 
 static void
-xph_test_start(void* p, const XML_Char* name, const XML_Char** attrs)
+xph_test_start(void* p, const XML_Char*, const XML_Char**)
 {
   assert(p);
   xph_test_wrapper* Wrapper = (xph_test_wrapper*)p;

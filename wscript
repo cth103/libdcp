@@ -6,7 +6,7 @@ def options(opt):
 
 def configure(conf):
     conf.load('compiler_cxx')
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-O2', '-D_FILE_OFFSET_BITS=64'])
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Werror', '-Wextra', '-O2', '-D_FILE_OFFSET_BITS=64'])
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
 
     conf.check_cfg(package = 'openssl', args = '--cflags --libs', uselib_store = 'OPENSSL', mandatory = True)

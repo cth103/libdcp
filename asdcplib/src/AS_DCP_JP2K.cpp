@@ -315,12 +315,12 @@ lh__Reader::OpenRead(const char* filename, EssenceType_t type)
 	      DefaultLogSink().Warn("EditRate and SampleRate do not match (%.03f, %.03f).\n",
 				    m_EditRate.Quotient(), m_SampleRate.Quotient());
 	      
-	      if ( m_EditRate == EditRate_24 && m_SampleRate == EditRate_48 ||
-		   m_EditRate == EditRate_25 && m_SampleRate == EditRate_50 ||
-		   m_EditRate == EditRate_30 && m_SampleRate == EditRate_60 ||
-		   m_EditRate == EditRate_48 && m_SampleRate == EditRate_96 ||
-		   m_EditRate == EditRate_50 && m_SampleRate == EditRate_100 ||
-		   m_EditRate == EditRate_60 && m_SampleRate == EditRate_120 )
+	      if ( (m_EditRate == EditRate_24 && m_SampleRate == EditRate_48) ||
+		   (m_EditRate == EditRate_25 && m_SampleRate == EditRate_50) ||
+		   (m_EditRate == EditRate_30 && m_SampleRate == EditRate_60) ||
+		   (m_EditRate == EditRate_48 && m_SampleRate == EditRate_96) ||
+		   (m_EditRate == EditRate_50 && m_SampleRate == EditRate_100) ||
+		   (m_EditRate == EditRate_60 && m_SampleRate == EditRate_120) )
 		{
 		  DefaultLogSink().Debug("File may contain JPEG Interop stereoscopic images.\n");
 		  return RESULT_SFORMAT;
@@ -874,7 +874,9 @@ lh__Writer::JP2K_PDesc_to_MD(JP2K::PictureDescriptor& PDesc)
   const ui32_t tmp_buffer_len = 1024;
   byte_t tmp_buffer[tmp_buffer_len];
 
-  *(ui32_t*)tmp_buffer = KM_i32_BE(MaxComponents); // three components
+  ui32_t* tmp_buffer_ui32 = (ui32_t*) tmp_buffer;
+  *tmp_buffer_ui32 = KM_i32_BE(MaxComponents); // three components
+  
   *(ui32_t*)(tmp_buffer+4) = KM_i32_BE(sizeof(ASDCP::JP2K::ImageComponent_t));
   memcpy(tmp_buffer + 8, &PDesc.ImageComponents, sizeof(ASDCP::JP2K::ImageComponent_t) * MaxComponents);
 

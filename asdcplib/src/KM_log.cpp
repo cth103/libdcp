@@ -186,7 +186,7 @@ Kumu::SyslogLogSink::~SyslogLogSink()
 void
 Kumu::SyslogLogSink::WriteEntry(const LogEntry& Entry)
 {
-  int priority;
+  int priority = 0;
 
   switch ( Entry.Type )
     {

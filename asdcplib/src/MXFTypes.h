@@ -162,7 +162,7 @@ namespace ASDCP
 	  }
 
 	  //
-	  void Dump(FILE* stream = 0, ui32_t depth = 0)
+	  void Dump(FILE* stream = 0, ui32_t = 0)
 	    {
 	      char identbuf[IdentBufferLen];
 
@@ -223,7 +223,7 @@ namespace ASDCP
 	  }
 
 	  //
-	  void Dump(FILE* stream = 0, ui32_t depth = 0)
+	    void Dump(FILE* stream = 0, ui32_t = 0)
 	    {
 	      char identbuf[IdentBufferLen];
 
@@ -381,7 +381,7 @@ namespace ASDCP
 	{
 	public:
 	  Raw();
-	  Raw(const Raw& rhs) { Copy(rhs); }
+		Raw(const Raw& rhs) : Kumu::ByteString () { Copy(rhs); }
 	  virtual ~Raw();
 
 	  const Raw& operator=(const Raw& rhs) { Copy(rhs); return *this; }

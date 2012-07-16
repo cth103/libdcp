@@ -61,7 +61,7 @@ ASDCP::default_md_object_init()
 
 //
 ASDCP::h__Reader::h__Reader(const Dictionary& d) :
-  m_HeaderPart(m_Dict), m_BodyPart(m_Dict), m_FooterPart(m_Dict), m_Dict(&d), m_EssenceStart(0)
+  m_Dict(&d), m_HeaderPart(m_Dict), m_BodyPart(m_Dict), m_FooterPart(m_Dict), m_EssenceStart(0)
 {
   default_md_object_init();
 }

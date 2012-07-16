@@ -94,6 +94,12 @@ class h__ParserState
 	case ST_EXT:
 	  m_State = ST_SEQ;
 	  return RESULT_OK;
+	case ST_SEQ:
+	case ST_PIC:
+	case ST_GOP:
+	case ST_SLICE:
+	  /* Keep gcc quiet */
+	  break;
 	}
       
       DefaultLogSink().Error("SEQ follows %s\n", StringParserState(m_State));
@@ -110,6 +116,12 @@ class h__ParserState
 	case ST_EXT:
 	  m_State = ST_SLICE;
 	  return RESULT_OK;
+	case ST_INIT:
+	case ST_SEQ:
+	case ST_GOP:
+	case ST_SLICE:
+	  /* Keep gcc quiet */
+	  break;
 	}
       
       DefaultLogSink().Error("Slice follows %s\n", StringParserState(m_State));
@@ -128,6 +140,10 @@ class h__ParserState
 	case ST_EXT:
 	  m_State = ST_PIC;
 	  return RESULT_OK;
+	case ST_PIC:
+	case ST_SLICE:
+	  /* Keep gcc quiet */
+	  break;
 	}
       
       DefaultLogSink().Error("PIC follows %s\n", StringParserState(m_State));
@@ -144,6 +160,12 @@ class h__ParserState
       case ST_SEQ:
 	m_State = ST_GOP;
 	return RESULT_OK;
+      case ST_INIT:
+      case ST_PIC:
+      case ST_GOP:
+      case ST_SLICE:
+	/* Keep gcc quiet */
+	break;
       }
     
     DefaultLogSink().Error("GOP follows %s\n", StringParserState(m_State));
@@ -161,6 +183,10 @@ class h__ParserState
 	case ST_GOP:
 	  m_State = ST_EXT;
 	  return RESULT_OK;
+      case ST_INIT:
+      case ST_SLICE:
+	  /* Keep gcc quiet */
+	  break;
       }
 
     DefaultLogSink().Error("EXT follows %s\n", StringParserState(m_State));
@@ -192,7 +218,7 @@ public:
   ~StreamParams() {}
 
   //
-  Result_t Sequence(VESParser*, const byte_t* b, ui32_t s)
+  Result_t Sequence(VESParser*, const byte_t* b, ui32_t)
   {
     Result_t result = m_State.Goto_SEQ();
 
@@ -211,7 +237,7 @@ public:
   }
 
   //
-  Result_t Extension(VESParser*, const byte_t* b, ui32_t s)
+  Result_t Extension(VESParser*, const byte_t* b, ui32_t)
   {
     Result_t result = m_State.Goto_EXT();
 
@@ -286,7 +312,7 @@ public:
     m_State.Reset();
  }
 
-  Result_t Sequence(VESParser*, const byte_t* b, ui32_t s)
+  Result_t Sequence(VESParser*, const byte_t*, ui32_t s)
   {
     if ( m_State.Test_SLICE() )
       {
@@ -324,7 +350,7 @@ public:
     return m_State.Test_SLICE() ? RESULT_OK : RESULT_FAIL;
   }
 
-  Result_t Extension(VESParser*, const byte_t* b, ui32_t s)
+  Result_t Extension(VESParser*, const byte_t*, ui32_t s)
   {
     m_FrameSize += s;
     return m_State.Goto_EXT();
@@ -339,7 +365,7 @@ public:
     return m_State.Goto_GOP();
   }
 
-  Result_t Data(VESParser*, const byte_t* b, i32_t s)
+  Result_t Data(VESParser*, const byte_t*, i32_t s)
   {
     m_FrameSize += s;
     return RESULT_OK;

@@ -179,7 +179,7 @@ namespace Kumu
   {
   public:
     virtual ~PathMatchAny() {}
-    inline bool Match(const std::string& s) const { return true; }
+    inline bool Match(const std::string&) const { return true; }
   };
 
 #ifndef KM_WIN32

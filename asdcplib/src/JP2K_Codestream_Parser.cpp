@@ -179,6 +179,26 @@ ASDCP::JP2K::ParseMetadataIntoDesc(const FrameBuffer& FB, PictureDescriptor& PDe
 	  memcpy(&PDesc.QuantizationDefault, NextMarker.m_Data, NextMarker.m_DataSize);
 	  PDesc.QuantizationDefault.SPqcdLength = NextMarker.m_DataSize - 1;
 	  break;
+
+	case MRK_NIL:
+	case MRK_SOC:
+	case MRK_SOT:
+	case MRK_EOC:
+	case MRK_COC:
+	case MRK_RGN:
+	case MRK_QCC:
+	case MRK_POC:
+	case MRK_TLM:
+	case MRK_PLM:
+	case MRK_PLT:
+	case MRK_PPM:
+	case MRK_PPT:
+	case MRK_SOP:
+	case MRK_EPH:
+	case MRK_CRG:
+	case MRK_COM:
+	  /* Keep gcc quiet */
+	  break;
 	}
     }
 

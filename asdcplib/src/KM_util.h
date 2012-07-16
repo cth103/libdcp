@@ -527,7 +527,7 @@ namespace Kumu
       }
     };
 
-  inline void hexdump(const ByteString& buf, FILE* stream = 0) {
+  inline void hexdump(const ByteString& buf, FILE*) {
     hexdump(buf.RoData(), buf.Length());
   }
 

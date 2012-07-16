@@ -69,8 +69,8 @@ version_split(const char* str)
 
 //
 ASDCP::h__Writer::h__Writer(const Dictionary& d) :
-  m_HeaderPart(m_Dict), m_BodyPart(m_Dict), m_FooterPart(m_Dict), m_Dict(&d),
-  m_HeaderSize(0), m_EssenceStart(0),
+  m_Dict(&d), m_HeaderSize(0), m_HeaderPart(m_Dict),
+  m_BodyPart(m_Dict), m_FooterPart(m_Dict), m_EssenceStart(0),
   m_EssenceDescriptor(0), m_FramesWritten(0), m_StreamOffset(0)
 {
   default_md_object_init();

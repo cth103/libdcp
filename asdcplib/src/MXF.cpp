@@ -1018,8 +1018,8 @@ ASDCP::MXF::OPAtomHeader::Dump(FILE* stream)
 //
 
 ASDCP::MXF::OPAtomIndexFooter::OPAtomIndexFooter(const Dictionary*& d) :
-  Partition(d), m_Dict(d),
-  m_CurrentSegment(0), m_BytesPerEditUnit(0), m_BodySID(0),
+  Partition(d),
+  m_CurrentSegment(0), m_BytesPerEditUnit(0), m_BodySID(0), m_Dict(d),
   m_ECOffset(0), m_Lookup(0)
 {
   BodySID = 0;
