@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PackingList xmlns="http://www.smpte-ra.org/schemas/429-8/2007/PKL">
+  <Id>urn:uuid:caaf9bfe-2a00-4b95-b6d3-d6c0b181e17b</Id>
+  <AnnotationText>A Test DCP</AnnotationText>
+  <IssueDate>2012-07-16T06:28:27+00:00</IssueDate>
+  <Issuer>OpenDCP 0.0.25</Issuer>
+  <Creator>OpenDCP 0.0.25</Creator>
+  <AssetList>
+    <Asset>
+      <Id>urn:uuid:0a2335fe-09a3-4a19-b5ea-2e0308e727b3</Id>
+      <AnnotationText>video.mxf</AnnotationText>
+      <Hash>ETDlJzvJT98gAc2Y84/4AoXQuhs=</Hash>
+      <Size>26080</Size>
+      <Type>application/mxf</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:ac884d5a-1d72-425b-a45b-d0c0bce4f6f4</Id>
+      <AnnotationText>audio.mxf</AnnotationText>
+      <Hash>duYsdzeBVwuv5EfxvLmshyBQdo0=</Hash>
+      <Size>305326</Size>
+      <Type>application/mxf</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:488d58ab-474e-4b01-a2cb-a6ce1e5e70b3</Id>
+      <Hash>RanewioDBtecLpvB7W2v/g9/vos=</Hash>
+      <Size>1526</Size>
+      <Type>text/xml</Type>
+    </Asset>
+  </AssetList>
+</PackingList>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompositionPlaylist xmlns="http://www.smpte-ra.org/schemas/429-7/2006/CPL">
+  <Id>urn:uuid:488d58ab-474e-4b01-a2cb-a6ce1e5e70b3</Id>
+  <AnnotationText>A Test DCP</AnnotationText>
+  <IssueDate>2012-07-16T06:28:27+00:00</IssueDate>
+  <Creator>OpenDCP 0.0.25</Creator>
+  <ContentTitleText>A Test DCP</ContentTitleText>
+  <ContentKind>feature</ContentKind>
+  <ContentVersion>
+    <Id>urn:uri:488d58ab-474e-4b01-a2cb-a6ce1e5e70b3_2012-07-16T06:28:27+00:00</Id>
+    <LabelText>488d58ab-474e-4b01-a2cb-a6ce1e5e70b3_2012-07-16T06:28:27+00:00</LabelText>
+  </ContentVersion>
+  <RatingList/>
+  <ReelList>
+    <Reel>
+      <Id>urn:uuid:b4f8f14e-63d9-4d34-9b8d-11d158d77115</Id>
+      <AssetList>
+        <MainPicture>
+          <Id>urn:uuid:0a2335fe-09a3-4a19-b5ea-2e0308e727b3</Id>
+          <AnnotationText>video.mxf</AnnotationText>
+          <EditRate>24 1</EditRate>
+          <IntrinsicDuration>24</IntrinsicDuration>
+          <EntryPoint>0</EntryPoint>
+          <Duration>24</Duration>
+          <FrameRate>24 1</FrameRate>
+          <ScreenAspectRatio>32 32</ScreenAspectRatio>
+        </MainPicture>
+        <MainSound>
+          <Id>urn:uuid:ac884d5a-1d72-425b-a45b-d0c0bce4f6f4</Id>
+          <AnnotationText>audio.mxf</AnnotationText>
+          <EditRate>24 1</EditRate>
+          <IntrinsicDuration>24</IntrinsicDuration>
+          <EntryPoint>0</EntryPoint>
+          <Duration>24</Duration>
+        </MainSound>
+      </AssetList>
+    </Reel>
+  </ReelList>
+</CompositionPlaylist>

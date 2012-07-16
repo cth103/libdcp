@@ -1,0 +1,14 @@
+def build(bld):
+    obj = bld(features = 'cxx cxxshlib')
+    obj.name = 'libdcp'
+    obj.export_includes = ['.']
+    obj.uselib = 'ASDCP KUMU BOOST_FILESYSTEM OPENSSL SIGC++'
+    obj.source = """
+                 dcp.cc
+                 asset.cc
+                 sound_asset.cc
+                 picture_asset.cc
+                 util.cc
+                 tags.cc
+                 """
+    obj.target = 'libdcp'
