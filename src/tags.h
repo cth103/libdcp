@@ -32,6 +32,7 @@ public:
 	std::string product_version;
 	std::string issuer;
 	std::string creator;
+	std::string issue_date;
 
 private:
 	Tags ();

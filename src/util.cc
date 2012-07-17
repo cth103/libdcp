@@ -19,6 +19,7 @@
 
 #include <stdexcept>
 #include <sstream>
+#include <iostream>
 #include <iomanip>
 #include <openssl/sha.h>
 #include "KM_util.h"
@@ -75,6 +76,5 @@ libdcp::make_digest (string filename)
 
 	stringstream s;
 	char digest[64];
-	s << setfill('0') << setw(36) << Kumu::base64encode (byte_buffer, 20, digest, 64);
-	return s.str ();
+	return Kumu::base64encode (byte_buffer, 20, digest, 64);
 }

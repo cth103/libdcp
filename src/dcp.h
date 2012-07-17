@@ -65,8 +65,6 @@ private:
 	int _fps;
 	int _length;
 	std::list<boost::shared_ptr<Asset> > _assets;
-
-	std::string _date;
 };
 
 }

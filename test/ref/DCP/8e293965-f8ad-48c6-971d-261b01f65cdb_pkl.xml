@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PackingList xmlns="http://www.smpte-ra.org/schemas/429-8/2007/PKL">
-  <Id>urn:uuid:caaf9bfe-2a00-4b95-b6d3-d6c0b181e17b</Id>
+  <Id>urn:uuid:8e293965-f8ad-48c6-971d-261b01f65cdb</Id>
   <AnnotationText>A Test DCP</AnnotationText>
-  <IssueDate>2012-07-16T06:28:27+00:00</IssueDate>
+  <IssueDate>2012-07-17T04:32:07+00:00</IssueDate>
   <Issuer>OpenDCP 0.0.25</Issuer>
   <Creator>OpenDCP 0.0.25</Creator>
   <AssetList>
     <Asset>
-      <Id>urn:uuid:0a2335fe-09a3-4a19-b5ea-2e0308e727b3</Id>
+      <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
       <AnnotationText>video.mxf</AnnotationText>
-      <Hash>ETDlJzvJT98gAc2Y84/4AoXQuhs=</Hash>
+      <Hash>4jimd5RaYhFS0ENh6tUTnjMqN/M=</Hash>
       <Size>26080</Size>
       <Type>application/mxf</Type>
     </Asset>
     <Asset>
-      <Id>urn:uuid:ac884d5a-1d72-425b-a45b-d0c0bce4f6f4</Id>
+      <Id>urn:uuid:c38bdd62-ce03-4988-8603-195f134207c7</Id>
       <AnnotationText>audio.mxf</AnnotationText>
-      <Hash>duYsdzeBVwuv5EfxvLmshyBQdo0=</Hash>
+      <Hash>6YhrUkOvm46kYdhrgDuKNvfa9uA=</Hash>
       <Size>305326</Size>
       <Type>application/mxf</Type>
     </Asset>
     <Asset>
-      <Id>urn:uuid:488d58ab-474e-4b01-a2cb-a6ce1e5e70b3</Id>
-      <Hash>RanewioDBtecLpvB7W2v/g9/vos=</Hash>
+      <Id>urn:uuid:df0e4141-13c3-4a7a-bef8-b5a04fcbc4bb</Id>
+      <Hash>DR62woRxafHQcqScRIHQd6hChFU=</Hash>
       <Size>1526</Size>
       <Type>text/xml</Type>
     </Asset>

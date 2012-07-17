@@ -31,7 +31,12 @@ Tags::Tags ()
 	, issuer ("libdcp" LIBDCP_VERSION)
 	, creator ("libdcp" LIBDCP_VERSION)
 {
-
+	char buffer[64];
+	time_t now;
+	time (&now);
+	struct tm* tm = localtime (&now);
+	strftime (buffer, 64, "%Y-%m-%dT%I:%M:%S+00:00", tm);
+	issue_date = string (buffer);
 }
 
 Tags *

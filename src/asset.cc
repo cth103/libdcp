@@ -46,11 +46,13 @@ Asset::Asset (string p, int fps, int len)
 void
 Asset::write_to_pkl (ostream& s) const
 {
-	s << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
+	s << "    <Asset>\n"
+	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
 	  << "      <AnnotationText>" << filesystem::path(_mxf_path).filename() << "</AnnotationText>\n"
 	  << "      <Hash>" << _digest << "</Hash>\n"
 	  << "      <Size>" << filesystem::file_size(_mxf_path) << "</Size>\n"
-	  << "      <Type>application/mxf</Type>\n";
+	  << "      <Type>application/mxf</Type>\n"
+	  << "    </Asset>\n";
 }
 
 void

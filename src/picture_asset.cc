@@ -80,13 +80,13 @@ void
 PictureAsset::write_to_cpl (ostream& s) const
 {
 	s << "        <MainPicture>\n"
-	  << "          <Id>" << _uuid << "</Id>\n"
+	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
 	  << "          <AnnotationText>" << filesystem::path(_mxf_path).filename() << "</AnnotationText>\n"
-	  << "          <EditRate>" << _fps << "</EditRate>\n"
+	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
 	  << "          <IntrinsicDuration>" << _length << "</IntrinsicDuration>\n"
 	  << "          <EntryPoint>0</EntryPoint>\n"
 	  << "          <Duration>" << _length << "</Duration>\n"
-	  << "          <FrameRate>" << _fps << "</FrameRate>\n"
+	  << "          <FrameRate>" << _fps << " 1</FrameRate>\n"
 	  << "          <ScreenAspectRatio>" << _width << " " << _height << "</ScreenAspectRatio>\n"
 	  << "        </MainPicture>\n";
 }

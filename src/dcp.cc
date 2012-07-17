@@ -43,12 +43,6 @@ DCP::DCP (string d, string n, ContentType c, int fps, int length)
 	, _fps (fps)
 	, _length (length)
 {
-	char buffer[64];
-	time_t now;
-	time (&now);
-	struct tm* tm = localtime (&now);
-	strftime (buffer, 64, "%Y-%m-%dT%I:%M:%S+00:00", tm);
-	_date = string (buffer);
 }
 
 void
@@ -105,13 +99,13 @@ DCP::write_cpl (string cpl_uuid) const
 	    << "<CompositionPlaylist xmlns=\"http://www.smpte-ra.org/schemas/429-7/2006/CPL\">\n"
 	    << "  <Id>urn:uuid:" << cpl_uuid << "</Id>\n"
 	    << "  <AnnotationText>" << _name << "</AnnotationText>\n"
-	    << "  <IssueDate>" << _date << "</IssueDate>\n"
-	    << "  <Creator>libdcp " << Tags::instance()->creator << "</Creator>\n"
+	    << "  <IssueDate>" << Tags::instance()->issue_date << "</IssueDate>\n"
+	    << "  <Creator>" << Tags::instance()->creator << "</Creator>\n"
 	    << "  <ContentTitleText>" << _name << "</ContentTitleText>\n"
-	    << "  <ContentKind>" << _content_type << "</ContentKind>\n"
+	    << "  <ContentKind>" << content_type_string (_content_type) << "</ContentKind>\n"
 	    << "  <ContentVersion>\n"
-	    << "    <Id>urn:uri:" << cpl_uuid << "_" << _date << "</Id>\n"
-	    << "    <LabelText>" << cpl_uuid << "_" << _date << "</LabelText>\n"
+	    << "    <Id>urn:uri:" << cpl_uuid << "_" << Tags::instance()->issue_date << "</Id>\n"
+	    << "    <LabelText>" << cpl_uuid << "_" << Tags::instance()->issue_date << "</LabelText>\n"
 	    << "  </ContentVersion>\n"
 	    << "  <RatingList/>\n"
 	    << "  <ReelList>\n";
@@ -152,7 +146,7 @@ DCP::write_pkl (string pkl_uuid, string cpl_uuid, string cpl_digest, int cpl_len
 	    << "<PackingList xmlns=\"http://www.smpte-ra.org/schemas/429-8/2007/PKL\">\n"
 	    << "  <Id>urn:uuid:" << pkl_uuid << "</Id>\n"
 	    << "  <AnnotationText>" << _name << "</AnnotationText>\n"
-	    << "  <IssueDate>" << _date << "</IssueDate>\n"
+	    << "  <IssueDate>" << Tags::instance()->issue_date << "</IssueDate>\n"
 	    << "  <Issuer>" << Tags::instance()->issuer << "</Issuer>\n"
 	    << "  <Creator>" << Tags::instance()->creator << "</Creator>\n"
 	    << "  <AssetList>\n";
@@ -162,7 +156,7 @@ DCP::write_pkl (string pkl_uuid, string cpl_uuid, string cpl_digest, int cpl_len
 	}
 
 	pkl << "    <Asset>\n"
-	    << "      <Id>urn:uuid" << cpl_uuid << "</Id>\n"
+	    << "      <Id>urn:uuid:" << cpl_uuid << "</Id>\n"
 	    << "      <Hash>" << cpl_digest << "</Hash>\n"
 	    << "      <Size>" << cpl_length << "</Size>\n"
 	    << "      <Type>text/xml</Type>\n"
@@ -201,7 +195,7 @@ DCP::write_assetmap (string cpl_uuid, int cpl_length, string pkl_uuid, int pkl_l
 	   << "  <Id>urn:uuid:" << make_uuid() << "</Id>\n"
 	   << "  <Creator>" << Tags::instance()->creator << "</Creator>\n"
 	   << "  <VolumeCount>1</VolumeCount>\n"
-	   << "  <IssueDate>" << _date << "</IssueDate>\n"
+	   << "  <IssueDate>" << Tags::instance()->issue_date << "</IssueDate>\n"
 	   << "  <Issuer>" << Tags::instance()->issuer << "</Issuer>\n"
 	   << "  <AssetList>\n";
 
