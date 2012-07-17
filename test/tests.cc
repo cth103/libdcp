@@ -22,6 +22,7 @@
 #include "dcp.h"
 #include "util.h"
 #include "metadata.h"
+#include "types.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test
@@ -29,6 +30,19 @@
 
 using namespace std;
 using namespace boost;
+
+string
+j2c (int)
+{
+	return "test/data/32x32_red_square.j2c";
+}
+
+string
+wav (libdcp::Channel)
+{
+	return "test/data/1s_24-bit_48k_silence.wav";
+}
+		
 
 BOOST_AUTO_TEST_CASE (dcp_test)
 {
@@ -45,17 +59,8 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	filesystem::create_directories ("build/test/foo");
 	libdcp::DCP d ("build/test/foo", "A Test DCP", libdcp::DCP::FEATURE, 24, 24);
 
-	list<string> j2cs;
-	for (int i = 0; i < 24; ++i) {
-		j2cs.push_back ("test/data/32x32_red_square.j2c");
-	}
-	d.add_picture_asset (j2cs, 32, 32);
-	
-	list<string> wavs;
-	for (int i = 0; i < 2; ++i) {
-		wavs.push_back ("test/data/1s_24-bit_48k_silence.wav");
-	}
-	d.add_sound_asset (wavs);
+	d.add_picture_asset (sigc::ptr_fun (&j2c), 32, 32);
+	d.add_sound_asset (sigc::ptr_fun (&wav), 2);
 
 	d.write_xml ();
 }

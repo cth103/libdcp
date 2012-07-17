@@ -36,7 +36,7 @@ using namespace boost;
 using namespace libdcp;
 
 PictureAsset::PictureAsset (
-	list<string> const & files,
+	sigc::slot<string, int> get_path,
 	string mxf_path,
 	sigc::signal1<void, float>* progress,
 	int fps,
@@ -47,11 +47,38 @@ PictureAsset::PictureAsset (
 	, _width (width)
 	, _height (height)
 {
+	construct (get_path);
+}
+
+PictureAsset::PictureAsset (
+	vector<string> const & files,
+	string mxf_path,
+	sigc::signal1<void, float>* progress,
+	int fps,
+	int length,
+	int width,
+	int height)
+	: Asset (mxf_path, progress, fps, length)
+	, _width (width)
+	, _height (height)
+{
+	construct (sigc::bind (sigc::mem_fun (*this, &PictureAsset::path_from_list), files));
+}
+
+string
+PictureAsset::path_from_list (int f, vector<string> const & files) const
+{
+	return files[f];
+}
+
+void
+PictureAsset::construct (sigc::slot<string, int> get_path)
+{
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
-	if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (files.front().c_str(), frame_buffer))) {
+	if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (get_path(0).c_str(), frame_buffer))) {
 		stringstream s;
-		s << "could not open " << files.front() << " for reading";
+		s << "could not open " << get_path(0) << " for reading";
 		throw runtime_error (s.str());
 	}
 	
@@ -67,11 +94,13 @@ PictureAsset::PictureAsset (
 		throw runtime_error ("could not open MXF for writing");
 	}
 
-	int j = 0;
-	for (list<string>::const_iterator i = files.begin(); i != files.end(); ++i) {
-		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (i->c_str(), frame_buffer))) {
+	for (int i = 0; i < _length; ++i) {
+
+		string const path = get_path (i);
+		
+		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (path.c_str(), frame_buffer))) {
 			stringstream s;
-			s << "could not open " << *i << " for reading";
+			s << "could not open " << path << " for reading";
 			throw runtime_error (s.str());
 		}
 
@@ -80,8 +109,7 @@ PictureAsset::PictureAsset (
 			throw runtime_error ("error in writing video MXF");
 		}
 		
-		++j;
-		(*_progress) (0.5 * float (j) / files.size ());
+		(*_progress) (0.5 * float (i) / _length);
 	}
 	
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {

@@ -24,6 +24,7 @@
 #include <list>
 #include <boost/shared_ptr.hpp>
 #include <sigc++/sigc++.h>
+#include "types.h"
 
 /** @brief Namespace for everything in libdcp */
 namespace libdcp
@@ -41,7 +42,7 @@ class Asset;
  *
  *  libdcp::DCP dcp ("My Film DCP", "My Film", libdcp::DCP::FEATURE, 24, 50000);
  *
- *  list<string> j2k_files;
+ *  vector<string> j2k_files;
  *  j2k_files.push_back ("1.j2c");
  *  ...
  *  j2k_files.push_back ("50000.j2c");
@@ -49,7 +50,7 @@ class Asset;
  *  // These images are 1998x1080 pixels (DCI Flat)
  *  dcp.add_picture_asset (j2k_files, 1998, 1080);
  *
- *  list<string> wav_files;
+ *  vector<string> wav_files;
  *  wav_files.push_back ("L.wav");
  *  wav_files.push_back ("R.wav");
  *  wav_files.push_back ("C.wav");
@@ -101,16 +102,30 @@ public:
 
 	/** Add a sound asset.
 	 *  @param files Pathnames of WAV files to use in the order Left, Right,
-	 *  Centre, Lfe (sub), Left surround, Right surround.
+	 *  Centre, Lfe (sub), Left surround, Right surround; not all files need
+	 *  to be present.
 	 */
-	void add_sound_asset (std::list<std::string> const & files);
+	void add_sound_asset (std::vector<std::string> const & files);
+
+	/** Add a sound asset.
+	 *  @param get_path Functor to get the path to the WAV for a given channel.
+	 *  @param channels Number of channels.
+	 */
+	void add_sound_asset (sigc::slot<std::string, Channel> get_path, int channels);
 
 	/** Add a picture asset.
 	 *  @param files Pathnames of JPEG2000 files, in frame order.
 	 *  @param width Width of images in pixels.
 	 *  @param height Height of images in pixels.
 	 */
-	void add_picture_asset (std::list<std::string> const & files, int width, int height);
+	void add_picture_asset (std::vector<std::string> const & files, int width, int height);
+
+	/** Add a picture asset.
+	 *  @param get_path Functor to get path to the JPEG2000 for a given frame.
+	 *  @param width Width of images in pixels.
+	 *  @param height Height of images in pixels.
+	 */
+	void add_picture_asset (sigc::slot<std::string, int> get_path, int width, int height);
 
 	/** Write the required XML files to the directory that was
 	 *  passed into the constructor.

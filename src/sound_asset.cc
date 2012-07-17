@@ -32,13 +32,39 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-SoundAsset::SoundAsset (list<string> const & files, string mxf_path, sigc::signal1<void, float>* progress, int fps, int length)
+SoundAsset::SoundAsset (
+	vector<string> const & files, string mxf_path, sigc::signal1<void, float>* progress, int fps, int length
+	)
 	: Asset (mxf_path, progress, fps, length)
+	, _channels (files.size ())
+{
+	construct (sigc::bind (sigc::mem_fun (*this, &SoundAsset::path_from_channel), files));
+}
+
+SoundAsset::SoundAsset (
+	sigc::slot<string, Channel> get_path, string mxf_path, sigc::signal1<void, float>* progress, int fps, int length, int channels
+	)
+	: Asset (mxf_path, progress, fps, length)
+	, _channels (channels)
+{
+	construct (get_path);
+}
+
+string
+SoundAsset::path_from_channel (Channel channel, vector<string> const & files)
+{
+	unsigned int const c = int (channel);
+	assert (c < files.size ());
+	return files[c];
+}
+
+void
+SoundAsset::construct (sigc::slot<string, Channel> get_path)
 {
 	ASDCP::Rational asdcp_fps (_fps, 1);
 	
- 	ASDCP::PCM::WAVParser pcm_parser_channel[files.size()];
-	if (pcm_parser_channel[0].OpenRead (files.front().c_str(), asdcp_fps)) {
+ 	ASDCP::PCM::WAVParser pcm_parser_channel[_channels];
+	if (pcm_parser_channel[0].OpenRead (get_path(LEFT).c_str(), asdcp_fps)) {
 		throw runtime_error ("could not open WAV file for reading");
 	}
 	
@@ -47,24 +73,33 @@ SoundAsset::SoundAsset (list<string> const & files, string mxf_path, sigc::signa
 	audio_desc.ChannelCount = 0;
 	audio_desc.BlockAlign = 0;
 	audio_desc.EditRate = asdcp_fps;
-	audio_desc.AvgBps = audio_desc.AvgBps * files.size ();
+	audio_desc.AvgBps = audio_desc.AvgBps * _channels;
 
-	ASDCP::PCM::FrameBuffer frame_buffer_channel[files.size()];
-	ASDCP::PCM::AudioDescriptor audio_desc_channel[files.size()];
-	
-	int j = 0;
-	for (list<string>::const_iterator i = files.begin(); i != files.end(); ++i) {
+	Channel channels[] = {
+		LEFT,
+		RIGHT,
+		CENTRE,
+		LFE,
+		LS,
+		RS
+	};
+
+	ASDCP::PCM::FrameBuffer frame_buffer_channel[_channels];
+	ASDCP::PCM::AudioDescriptor audio_desc_channel[_channels];
+
+	for (int i = 0; i < _channels; ++i) {
+
+		string const path = get_path (channels[i]);
 		
-		if (ASDCP_FAILURE (pcm_parser_channel[j].OpenRead (i->c_str(), asdcp_fps))) {
+		if (ASDCP_FAILURE (pcm_parser_channel[i].OpenRead (path.c_str(), asdcp_fps))) {
 			throw runtime_error ("could not open WAV file for reading");
 		}
 
-		pcm_parser_channel[j].FillAudioDescriptor (audio_desc_channel[j]);
-		frame_buffer_channel[j].Capacity (ASDCP::PCM::CalcFrameBufferSize (audio_desc_channel[j]));
+		pcm_parser_channel[i].FillAudioDescriptor (audio_desc_channel[i]);
+		frame_buffer_channel[i].Capacity (ASDCP::PCM::CalcFrameBufferSize (audio_desc_channel[i]));
 
-		audio_desc.ChannelCount += audio_desc_channel[j].ChannelCount;
-		audio_desc.BlockAlign += audio_desc_channel[j].BlockAlign;
-		++j;
+		audio_desc.ChannelCount += audio_desc_channel[i].ChannelCount;
+		audio_desc.BlockAlign += audio_desc_channel[i].BlockAlign;
 	}
 
 	ASDCP::PCM::FrameBuffer frame_buffer;
@@ -86,7 +121,7 @@ SoundAsset::SoundAsset (list<string> const & files, string mxf_path, sigc::signa
 		byte_t sample_size = ASDCP::PCM::CalcSampleSize (audio_desc_channel[0]);
 		int offset = 0;
 
-		for (list<string>::size_type j = 0; j < files.size(); ++j) {
+		for (int j = 0; j < _channels; ++j) {
 			memset (frame_buffer_channel[j].Data(), 0, frame_buffer_channel[j].Capacity());
 			if (ASDCP_FAILURE (pcm_parser_channel[j].ReadFrame (frame_buffer_channel[j]))) {
 				throw runtime_error ("could not read audio frame");
@@ -98,7 +133,7 @@ SoundAsset::SoundAsset (list<string> const & files, string mxf_path, sigc::signa
 		}
 
 		while (data_s < data_e) {
-			for (list<string>::size_type j = 0; j < files.size(); ++j) {
+			for (int j = 0; j < _channels; ++j) {
 				byte_t* frame = frame_buffer_channel[j].Data() + offset;
 				memcpy (data_s, frame, sample_size);
 				data_s += sample_size;

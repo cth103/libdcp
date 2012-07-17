@@ -41,7 +41,7 @@ public:
 	 *  @param height Height of images in pixels.
 	 */
 	PictureAsset (
-		std::list<std::string> const & files,
+		std::vector<std::string> const & files,
 		std::string mxf_path,
 		sigc::signal1<void, float>* progress,
 		int fps,
@@ -50,12 +50,35 @@ public:
 		int height
 		);
 
+	/** Construct a PictureAsset, generating the MXF from the JPEG2000 files.
+	 *  This may take some time; progress is indicated by emission of the Progress signal.
+	 *  @param files Pathnames of JPEG2000 files, in frame order.
+	 *  @param mxf_path Pathname of MXF file to create.
+	 *  @param progress Signal to inform of progress.
+	 *  @param fps Frames per second.
+	 *  @param length Length in frames.
+	 *  @param width Width of images in pixels.
+	 *  @param height Height of images in pixels.
+	 */
+	PictureAsset (
+		sigc::slot<std::string, int> get_path,
+		std::string mxf_path,
+		sigc::signal1<void, float>* progress,
+		int fps,
+		int length,
+		int width,
+		int height
+		);
+	
 	/** Write details of this asset to a CPL stream.
 	 *  @param s Stream.
 	 */
 	void write_to_cpl (std::ostream& s) const;
 
 private:
+	std::string path_from_list (int f, std::vector<std::string> const & files) const;
+	void construct (sigc::slot<std::string, int>);
+	
 	/** picture width in pixels */
 	int _width;
 	/** picture height in pixels */

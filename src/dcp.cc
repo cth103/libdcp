@@ -44,7 +44,7 @@ DCP::DCP (string directory, string name, ContentType content_type, int fps, int 
 }
 
 void
-DCP::add_sound_asset (list<string> const & files)
+DCP::add_sound_asset (vector<string> const & files)
 {
 	filesystem::path p;
 	p /= _directory;
@@ -53,12 +53,30 @@ DCP::add_sound_asset (list<string> const & files)
 }
 
 void
-DCP::add_picture_asset (list<string> const & files, int w, int h)
+DCP::add_sound_asset (sigc::slot<string, Channel> get_path, int channels)
+{
+	filesystem::path p;
+	p /= _directory;
+	p /= "audio.mxf";
+	_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (get_path, p.string(), &Progress, _fps, _length, channels)));
+}
+
+void
+DCP::add_picture_asset (vector<string> const & files, int width, int height)
 {
 	filesystem::path p;
 	p /= _directory;
 	p /= "video.mxf";
-	_assets.push_back (shared_ptr<PictureAsset> (new PictureAsset (files, p.string(), &Progress, _fps, _length, w, h)));
+	_assets.push_back (shared_ptr<PictureAsset> (new PictureAsset (files, p.string(), &Progress, _fps, _length, width, height)));
+}
+
+void
+DCP::add_picture_asset (sigc::slot<string, int> get_path, int width, int height)
+{
+	filesystem::path p;
+	p /= _directory;
+	p /= "video.mxf";
+	_assets.push_back (shared_ptr<PictureAsset> (new PictureAsset (get_path, p.string(), &Progress, _fps, _length, width, height)));
 }
 
 void

@@ -17,11 +17,15 @@
 
 */
 
+#ifndef LIBDCP_SOUND_ASSET_H
+#define LIBDCP_SOUND_ASSET_H
+
 /** @file  src/sound_asset.h
  *  @brief An asset made up of WAV files
  */
 
 #include "asset.h"
+#include "types.h"
 
 namespace libdcp
 {
@@ -37,13 +41,47 @@ public:
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
+	 *  @param channels Number of audio channels.
 	 */
-	SoundAsset (std::list<std::string> const & files, std::string mxf_path, sigc::signal1<void, float>* progress, int fps, int length);
+	SoundAsset (
+		std::vector<std::string> const & files,
+		std::string mxf_path,
+		sigc::signal1<void, float>* progress,
+		int fps,
+		int length
+		);
 
+	/** Construct a SoundAsset, generating the MXF from the WAV files.
+	 *  This may take some time; progress is indicated by emission of the Progress signal.
+	 *  @param files Pathnames of sound files, in the order Left, Right, Centre, Lfe (sub), Left surround, Right surround.
+	 *  @param mxf_path Pathname of MXF file to create.
+	 *  @param progress Signal to inform of progress.
+	 *  @param fps Frames per second.
+	 *  @param length Length in frames.
+	 *  @param channels Number of audio channels.
+	 */
+	SoundAsset (
+		sigc::slot<std::string, Channel>,
+		std::string mxf_path,
+		sigc::signal1<void, float>* progress,
+		int fps,
+		int length,
+		int channels
+		);
+	
 	/** Write details of this asset to a CPL stream.
 	 *  @param s Stream.
 	 */
 	void write_to_cpl (std::ostream& s) const;
+
+private:
+	void construct (sigc::slot<std::string, Channel> get_path);
+	std::string path_from_channel (Channel channel, std::vector<std::string> const & files);
+
+	/** Number of channels in the asset */
+	int _channels;
 };
 
 }
+
+#endif
