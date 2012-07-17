@@ -9,6 +9,8 @@ which is included in the source distribution for libdcp.
 
 See libdcp::DCP for an example of libdcp's use.
 
+libdcp is distributed under the GNU GPL.
+
 */
 
 
