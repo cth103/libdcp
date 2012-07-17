@@ -21,6 +21,7 @@
 #include <sstream>
 #include <iostream>
 #include <iomanip>
+#include <boost/filesystem.hpp>
 #include <openssl/sha.h>
 #include "KM_util.h"
 #include "KM_fileio.h"
@@ -28,6 +29,7 @@
 #include "util.h"
 
 using namespace std;
+using namespace boost;
 
 /** Create a UUID.
  *  @return UUID.
@@ -47,8 +49,10 @@ libdcp::make_uuid ()
  *  @return Digest.
  */
 string
-libdcp::make_digest (string filename)
+libdcp::make_digest (string filename, sigc::signal1<void, float>* progress)
 {
+	int const file_size = filesystem::file_size (filename);
+	
 	Kumu::FileReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (filename.c_str ()))) {
 		throw runtime_error ("could not open file to compute digest");
@@ -58,6 +62,7 @@ libdcp::make_digest (string filename)
 	SHA1_Init (&sha);
 	
 	Kumu::ByteString read_buffer (65536);
+	int done = 0;
 	while (1) {
 		ui32_t read = 0;
 		Kumu::Result_t r = reader.Read (read_buffer.Data(), read_buffer.Capacity(), &read);
@@ -69,6 +74,11 @@ libdcp::make_digest (string filename)
 		}
 		
 		SHA1_Update (&sha, read_buffer.Data(), read);
+		done += read;
+
+		if (progress) {
+			(*progress) (0.5 + (0.5 * done / file_size));
+		}
 	}
 
 	byte_t byte_buffer[20];

@@ -58,7 +58,7 @@ DCP::add_sound_asset (list<string> const & files)
 	filesystem::path p;
 	p /= _directory;
 	p /= "audio.mxf";
-	_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (files, p.string(), _fps, _length)));
+	_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (files, p.string(), &Progress, _fps, _length)));
 }
 
 /** Add a picture asset.
@@ -70,7 +70,7 @@ DCP::add_picture_asset (list<string> const & files, int w, int h)
 	filesystem::path p;
 	p /= _directory;
 	p /= "video.mxf";
-	_assets.push_back (shared_ptr<PictureAsset> (new PictureAsset (files, p.string(), _fps, _length, w, h)));
+	_assets.push_back (shared_ptr<PictureAsset> (new PictureAsset (files, p.string(), &Progress, _fps, _length, w, h)));
 }
 
 /** Write the required XML files to the directory that was
@@ -82,7 +82,7 @@ DCP::write_xml () const
 	string cpl_uuid = make_uuid ();
 	string cpl_path = write_cpl (cpl_uuid);
 	int cpl_length = filesystem::file_size (cpl_path);
-	string cpl_digest = make_digest (cpl_path);
+	string cpl_digest = make_digest (cpl_path, 0);
 
 	string pkl_uuid = make_uuid ();
 	string pkl_path = write_pkl (pkl_uuid, cpl_uuid, cpl_digest, cpl_length);

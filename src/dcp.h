@@ -17,9 +17,13 @@
 
 */
 
+#ifndef LIBDCP_DCP_H
+#define LIBDCP_DCP_H
+
 #include <string>
 #include <list>
 #include <boost/shared_ptr.hpp>
+#include <sigc++/sigc++.h>
 
 namespace libdcp
 {
@@ -51,6 +55,11 @@ public:
 
 	void write_xml () const;
 
+	/** Emitted with a parameter between 0 and 1 to indicate progress
+	 *  for long jobs.
+	 */
+	sigc::signal1<void, float> Progress;
+
 private:
 
 	std::string write_cpl (std::string) const;
@@ -75,3 +84,5 @@ private:
 };
 
 }
+
+#endif

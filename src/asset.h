@@ -34,22 +34,19 @@ namespace libdcp
 class Asset
 {
 public:
-	Asset (std::string, int, int);
+	Asset (std::string, sigc::signal1<void, float>*, int, int);
 
 	virtual void write_to_cpl (std::ostream &) const = 0;
 	void write_to_pkl (std::ostream &) const;
 	void write_to_assetmap (std::ostream &) const;
-
-	/** Emitted with a parameter between 0 and 1 to indicate progress in constructing
-	 *  this asset.
-	 */
-	sigc::signal1<void, float> Progress;
 
 protected:
 	void fill_writer_info (ASDCP::WriterInfo *) const;
 
 	/** Path to our MXF file */
 	std::string _mxf_path;
+	/** Signal to emit to report progress */
+	sigc::signal1<void, float>* _progress;
 	/** Frames per second */
 	int _fps;
 	/** Length in frames */

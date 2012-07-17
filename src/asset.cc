@@ -35,8 +35,9 @@ using namespace libdcp;
  *  @param len Length in frames.
  */
 
-Asset::Asset (string p, int fps, int len)
+Asset::Asset (string p, sigc::signal1<void, float>* progress, int fps, int len)
 	: _mxf_path (p)
+	, _progress (progress)
 	, _fps (fps)
 	, _length (len)
 	, _uuid (make_uuid ())

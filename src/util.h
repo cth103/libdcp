@@ -18,10 +18,11 @@
 */
 
 #include <string>
+#include <sigc++/sigc++.h>
 
 namespace libdcp {
 	
 extern std::string make_uuid ();
-extern std::string make_digest (std::string);
+extern std::string make_digest (std::string, sigc::signal1<void, float> *);
 
 }

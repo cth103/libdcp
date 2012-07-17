@@ -26,7 +26,7 @@ namespace libdcp
 class PictureAsset : public Asset
 {
 public:
-	PictureAsset (std::list<std::string> const &, std::string, int, int, int, int);
+	PictureAsset (std::list<std::string> const &, std::string, sigc::signal1<void, float>*, int, int, int, int);
 
 	void write_to_cpl (std::ostream &) const;
 

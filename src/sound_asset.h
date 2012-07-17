@@ -26,7 +26,7 @@ namespace libdcp
 class SoundAsset : public Asset
 {
 public:
-	SoundAsset (std::list<std::string> const &, std::string, int, int);
+	SoundAsset (std::list<std::string> const &, std::string, sigc::signal1<void, float>*, int, int);
 
 	void write_to_cpl (std::ostream &) const;
 };

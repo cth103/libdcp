@@ -36,8 +36,8 @@ using namespace libdcp;
  *  @param len Length in frames.
  */
 
-SoundAsset::SoundAsset (list<string> const & files, string p, int fps, int len)
-	: Asset (p, fps, len)
+SoundAsset::SoundAsset (list<string> const & files, string p, sigc::signal1<void, float>* progress, int fps, int len)
+	: Asset (p, progress, fps, len)
 {
 	ASDCP::Rational asdcp_fps (_fps, 1);
 	
@@ -114,14 +114,14 @@ SoundAsset::SoundAsset (list<string> const & files, string p, int fps, int len)
 			throw runtime_error ("could not write audio MXF frame");
 		}
 
-		Progress (float (i) / _length);
+		(*_progress) (0.5 * float (i) / _length);
 	}
 
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
 		throw runtime_error ("could not finalise audio MXF");
 	}
 
-	_digest = make_digest (_mxf_path);
+	_digest = make_digest (_mxf_path, _progress);
 }
 
 /** Write details of this asset to a CPL stream.

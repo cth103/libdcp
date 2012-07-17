@@ -20,6 +20,7 @@
 #include <list>
 #include <stdexcept>
 #include <iostream>
+#include <sstream>
 #include <boost/filesystem.hpp>
 #include "AS_DCP.h"
 #include "KM_fileio.h"
@@ -40,15 +41,17 @@ using namespace libdcp;
  *  @param h Height of images in pixels.
  */
 
-PictureAsset::PictureAsset (list<string> const & files, string p, int fps, int len, int w, int h)
-	: Asset (p, fps, len)
+PictureAsset::PictureAsset (list<string> const & files, string p, sigc::signal1<void, float>* progress, int fps, int len, int w, int h)
+	: Asset (p, progress, fps, len)
 	, _width (w)
 	, _height (h)
 {
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
 	if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (files.front().c_str(), frame_buffer))) {
-		throw runtime_error ("could not open J2K file for reading");
+		stringstream s;
+		s << "could not open " << files.front() << " for reading";
+		throw runtime_error (s.str());
 	}
 	
 	ASDCP::JP2K::PictureDescriptor picture_desc;
@@ -66,7 +69,9 @@ PictureAsset::PictureAsset (list<string> const & files, string p, int fps, int l
 	int j = 0;
 	for (list<string>::const_iterator i = files.begin(); i != files.end(); ++i) {
 		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (i->c_str(), frame_buffer))) {
-			throw runtime_error ("could not open J2K file for reading");
+			stringstream s;
+			s << "could not open " << *i << " for reading";
+			throw runtime_error (s.str());
 		}
 
 		/* XXX: passing 0 to WriteFrame ok? */
@@ -75,14 +80,14 @@ PictureAsset::PictureAsset (list<string> const & files, string p, int fps, int l
 		}
 		
 		++j;
-		Progress (float (j) / files.size ());
+		(*_progress) (0.5 * float (j) / files.size ());
 	}
 	
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
 		throw runtime_error ("error in finalising video MXF");
 	}
 
-	_digest = make_digest (_mxf_path);
+	_digest = make_digest (_mxf_path, _progress);
 }
 
 /** Write details of this asset to a CPL stream.
