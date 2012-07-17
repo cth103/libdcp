@@ -30,6 +30,7 @@ namespace ASDCP {
 namespace libdcp
 {
 
+/** Parent class for assets (picture / sound collections) */	
 class Asset
 {
 public:
@@ -39,15 +40,23 @@ public:
 	void write_to_pkl (std::ostream &) const;
 	void write_to_assetmap (std::ostream &) const;
 
+	/** Emitted with a parameter between 0 and 1 to indicate progress in constructing
+	 *  this asset.
+	 */
 	sigc::signal1<void, float> Progress;
 
 protected:
 	void fill_writer_info (ASDCP::WriterInfo *) const;
 
+	/** Path to our MXF file */
 	std::string _mxf_path;
+	/** Frames per second */
 	int _fps;
+	/** Length in frames */
 	int _length;
+	/** Our UUID */
 	std::string _uuid;
+	/** Digest of our MXF */
 	std::string _digest;
 };
 

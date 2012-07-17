@@ -1,23 +1,52 @@
 #!/usr/bin/python
 
+#
+# This slightly ridiculous script gets OpenDCP to generate
+# a DCP using out test reference data (in j2c/ and wav/)
+# and then adjusts its XML output to account for the fact
+# that OpenDCP will generate its own random UUIDs (and use
+# current timestamps).  We set UUIDs and timestamps back
+# to what our test suite will expect.
+#
+# The output of this script is checked into git, so
+# there's normally no need to run it.
+#
+# If you do run it, the XML should be right but the 
+# MXFs that OpenDCP generates will not be quite what
+# we expect, as they also contain random UUIDs.  I don't
+# think there's an easy way round that, so after running
+# this script you will need to check that the libdcp
+# test code generates correct MXFs (by verification on
+# a projector, probably), and then copy those MXFs into the
+# test/ref/DCP directory.
+#
+
 import os
 import sys
 import fileinput
 from lxml import etree
 
+# Namespaces for the various XML files
 assetmap_namespace = 'http://www.smpte-ra.org/schemas/429-9/2007/AM'
 cpl_namespace = 'http://www.smpte-ra.org/schemas/429-7/2006/CPL'
 pkl_namespace = 'http://www.smpte-ra.org/schemas/429-8/2007/PKL'
 
-wanted_cpl_id = 'df0e4141-13c3-4a7a-bef8-b5a04fcbc4bb'
-wanted_pkl_id = '8e293965-f8ad-48c6-971d-261b01f65cdb'
-wanted_assetmap_id = '18be072e-5a0f-44e1-b2eb-c8a52ae12789'
+# The UUIDs of things that we want to put into the
+# OpenDCP-generated XML
+wanted_cpl_id = '9892e944-5046-4dbb-af7c-f50742f62fc2'
+wanted_pkl_id = 'df0e4141-13c3-4a7a-bef8-b5a04fcbc4bb'
+wanted_assetmap_id = 'b135d5cf-d180-43d8-b0b3-7373737b73bf'
 wanted_video_mxf_id = '81fb54df-e1bf-4647-8788-ea7ba154375b'
-wanted_audio_mxf_id = 'c38bdd62-ce03-4988-8603-195f134207c7'
-wanted_reel_id = 'b135d5cf-d180-43d8-b0b3-7373737b73bf'
-wanted_asset_hashes = ['E2vhyxdJQhEzSQZdp31w84ZZpfk=', '9OVODrw+zTkSbkGduoQ30k3Kk6Y=', '5E8Q9swcc2bBbFF3IEPNXfIP8gM=']
+wanted_audio_mxf_id = '67b9341e-cadd-4dac-9d5c-f5a1d59f2d06'
+wanted_reel_id = '379fa64c-ad71-46cf-bef7-b45624006610'
+
+# The hashes of the assets: first is the video MXF, second the audio MXF and third the CPL.
+wanted_asset_hashes = ['VB9LCTmiD9OLlw4SvrEWUm5d67Q=', 'HapNpn7MjiJLa1OHRI61Rx8N/is=', 'PbXuvpUOKccTLMxg/lEbaXvNCT4=']
+
+# The issue date that we want to use
 wanted_issue_date = '2012-07-17T04:45:18+00:00'
 
+# Get OpenDCP to make the DCP
 os.system('rm -rf DCP')
 os.mkdir('DCP')
 os.system('opendcp_mxf -i j2c -o DCP/video.mxf -r 24')
@@ -25,6 +54,7 @@ os.system('opendcp_mxf -i wav -o DCP/audio.mxf -r 24')
 os.system('opendcp_xml --reel DCP/video.mxf DCP/audio.mxf -k feature -t "A Test DCP" -a "A Test DCP"')
 os.system('mv *.xml DCP')
 
+# Find what IDs it used
 cpl_id = None
 pkl_id = None
 assetmap_id = None
@@ -39,6 +69,7 @@ for r, d, f in os.walk('DCP'):
         elif n.endswith('pkl.xml'):
             pkl_id = n[0:-8]
 
+# (along the way, rename the CPL/PKL files)
 os.rename('DCP/%s_cpl.xml' % cpl_id, 'DCP/%s_cpl.xml' % wanted_cpl_id)
 os.rename('DCP/%s_pkl.xml' % pkl_id, 'DCP/%s_pkl.xml' % wanted_pkl_id)
 
@@ -77,13 +108,13 @@ xml = etree.parse('DCP/%s_pkl.xml' % wanted_pkl_id)
 
 asset_list =   xml.getroot().find(pkl_name('AssetList'))
 asset_hashes = []
-print asset_list
 for a in asset_list.iter():
     if a.tag == "{%s}Hash" % pkl_namespace:
         asset_hashes.append(a.text)
 
 issue_date =    xml.getroot().find(pkl_name('IssueDate')).text
 
+# Now run through the XML files doing the replacements
 for r, d, f in os.walk('DCP'):
     for n in f:
         if n.endswith('.xml'):

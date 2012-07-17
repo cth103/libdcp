@@ -44,6 +44,9 @@ Asset::Asset (string p, int fps, int len)
 	
 }
 
+/** Write details of the asset to a PKL stream.
+ *  @param s Stream.
+ */
 void
 Asset::write_to_pkl (ostream& s) const
 {
@@ -56,6 +59,9 @@ Asset::write_to_pkl (ostream& s) const
 	  << "    </Asset>\n";
 }
 
+/** Write details of the asset to a ASSETMAP stream.
+ *  @param s Stream.
+ */
 void
 Asset::write_to_assetmap (ostream& s) const
 {
@@ -72,6 +78,7 @@ Asset::write_to_assetmap (ostream& s) const
 	  << "    </Asset>\n";
 }
 
+/** Fill in a ADSCP::WriteInfo struct */
 void
 Asset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
 {
@@ -80,5 +87,7 @@ Asset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
 	writer_info->ProductName = Tags::instance()->product_name.c_str();
 
 	writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
-	Kumu::GenRandomUUID (writer_info->AssetUUID);
+	unsigned int c;
+	Kumu::hex2bin (_uuid.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
+	assert (c == Kumu::UUID_Length);
 }

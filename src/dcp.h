@@ -26,6 +26,7 @@ namespace libdcp
 
 class Asset;	
 
+/** A class to create a DCP */	
 class DCP
 {
 public:
@@ -59,11 +60,17 @@ private:
 
 	static std::string content_type_string (ContentType);
 
+	/** the directory that we are writing to */
 	std::string _directory;
+	/** the name of the DCP */
 	std::string _name;
+	/** the content type of the DCP */
 	ContentType _content_type;
+	/** frames per second */
 	int _fps;
+	/** length in frames */
 	int _length;
+	/** assets */
 	std::list<boost::shared_ptr<Asset> > _assets;
 };
 
