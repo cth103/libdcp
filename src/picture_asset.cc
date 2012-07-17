@@ -30,6 +30,7 @@
 #include "KM_fileio.h"
 #include "picture_asset.h"
 #include "util.h"
+#include "exceptions.h"
 
 using namespace std;
 using namespace boost;
@@ -77,9 +78,7 @@ PictureAsset::construct (sigc::slot<string, int> get_path)
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
 	if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (get_path(0).c_str(), frame_buffer))) {
-		stringstream s;
-		s << "could not open " << get_path(0) << " for reading";
-		throw runtime_error (s.str());
+		throw FileError ("could not open JPEG2000 file for reading", get_path (0));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor picture_desc;
@@ -91,7 +90,7 @@ PictureAsset::construct (sigc::slot<string, int> get_path)
 	
 	ASDCP::JP2K::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (_mxf_path.c_str(), writer_info, picture_desc))) {
-		throw runtime_error ("could not open MXF for writing");
+		throw FileError ("could not open MXF file for writing", _mxf_path);
 	}
 
 	for (int i = 0; i < _length; ++i) {
@@ -99,21 +98,19 @@ PictureAsset::construct (sigc::slot<string, int> get_path)
 		string const path = get_path (i);
 		
 		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (path.c_str(), frame_buffer))) {
-			stringstream s;
-			s << "could not open " << path << " for reading";
-			throw runtime_error (s.str());
+			throw FileError ("could not open JPEG2000 file for reading", path);
 		}
 
 		/* XXX: passing 0 to WriteFrame ok? */
 		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, 0, 0))) {
-			throw runtime_error ("error in writing video MXF");
+			throw MiscError ("error in writing video MXF");
 		}
 		
 		(*_progress) (0.5 * float (i) / _length);
 	}
 	
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
-		throw runtime_error ("error in finalising video MXF");
+		throw MiscError ("error in finalising video MXF");
 	}
 
 	_digest = make_digest (_mxf_path, _progress);

@@ -31,6 +31,7 @@
 #include "KM_fileio.h"
 #include "AS_DCP.h"
 #include "util.h"
+#include "exceptions.h"
 
 using namespace std;
 using namespace boost;
@@ -52,7 +53,7 @@ libdcp::make_digest (string filename, sigc::signal1<void, float>* progress)
 	
 	Kumu::FileReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (filename.c_str ()))) {
-		throw runtime_error ("could not open file to compute digest");
+		throw FileError ("could not open file to compute digest", filename);
 	}
 	
 	SHA_CTX sha;
@@ -67,7 +68,7 @@ libdcp::make_digest (string filename, sigc::signal1<void, float>* progress)
 		if (r == Kumu::RESULT_ENDOFFILE) {
 			break;
 		} else if (ASDCP_FAILURE (r)) {
-			throw runtime_error ("could not read file to compute digest");
+			throw FileError ("could not read file to compute digest", filename);
 		}
 		
 		SHA1_Update (&sha, read_buffer.Data(), read);

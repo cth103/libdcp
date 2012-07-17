@@ -27,6 +27,7 @@
 #include "AS_DCP.h"
 #include "sound_asset.h"
 #include "util.h"
+#include "exceptions.h"
 
 using namespace std;
 using namespace boost;
@@ -65,7 +66,7 @@ SoundAsset::construct (sigc::slot<string, Channel> get_path)
 	
  	ASDCP::PCM::WAVParser pcm_parser_channel[_channels];
 	if (pcm_parser_channel[0].OpenRead (get_path(LEFT).c_str(), asdcp_fps)) {
-		throw runtime_error ("could not open WAV file for reading");
+		throw FileError ("could not open WAV file for reading", get_path(LEFT));
 	}
 	
 	ASDCP::PCM::AudioDescriptor audio_desc;
@@ -92,7 +93,7 @@ SoundAsset::construct (sigc::slot<string, Channel> get_path)
 		string const path = get_path (channels[i]);
 		
 		if (ASDCP_FAILURE (pcm_parser_channel[i].OpenRead (path.c_str(), asdcp_fps))) {
-			throw runtime_error ("could not open WAV file for reading");
+			throw FileError ("could not open WAV file for reading", path);
 		}
 
 		pcm_parser_channel[i].FillAudioDescriptor (audio_desc_channel[i]);
@@ -111,7 +112,7 @@ SoundAsset::construct (sigc::slot<string, Channel> get_path)
 
 	ASDCP::PCM::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (_mxf_path.c_str(), writer_info, audio_desc))) {
-		throw runtime_error ("could not open audio MXF for writing");
+		throw FileError ("could not open audio MXF for writing", _mxf_path);
 	}
 
 	for (int i = 0; i < _length; ++i) {
@@ -124,11 +125,11 @@ SoundAsset::construct (sigc::slot<string, Channel> get_path)
 		for (int j = 0; j < _channels; ++j) {
 			memset (frame_buffer_channel[j].Data(), 0, frame_buffer_channel[j].Capacity());
 			if (ASDCP_FAILURE (pcm_parser_channel[j].ReadFrame (frame_buffer_channel[j]))) {
-				throw runtime_error ("could not read audio frame");
+				throw MiscError ("could not read audio frame");
 			}
 			
 			if (frame_buffer_channel[j].Size() != frame_buffer_channel[j].Capacity()) {
-				throw runtime_error ("short audio frame");
+				throw MiscError ("short audio frame");
 			}
 		}
 
@@ -142,14 +143,14 @@ SoundAsset::construct (sigc::slot<string, Channel> get_path)
 		}
 
 		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, 0, 0))) {
-			throw runtime_error ("could not write audio MXF frame");
+			throw MiscError ("could not write audio MXF frame");
 		}
 
 		(*_progress) (0.5 * float (i) / _length);
 	}
 
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
-		throw runtime_error ("could not finalise audio MXF");
+		throw MiscError ("could not finalise audio MXF");
 	}
 
 	_digest = make_digest (_mxf_path, _progress);
