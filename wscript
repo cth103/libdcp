@@ -25,6 +25,12 @@ def configure(conf):
     conf.recurse('asdcplib')
 
 def build(bld):
+    bld(source = 'libdcp.pc.in',
+        version = VERSION,
+        includedir = '%s/include' % bld.env.PREFIX,
+        libs = "-L${libdir} -ldcp -lkumu-libdcp -lasdcp-libdcp",
+        install_path = '${LIBDIR}/pkgconfig')
+
     bld.recurse('src')
     bld.recurse('test')
     bld.recurse('asdcplib')

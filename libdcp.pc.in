@@ -1,0 +1,9 @@
+prefix=@prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libdcp
+Description: DCP creation library
+Version: @version@
+Libs: @libs@
+Cflags: -I${includedir}

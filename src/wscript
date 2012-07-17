@@ -1,6 +1,7 @@
 def build(bld):
     obj = bld(features = 'cxx cxxshlib')
     obj.name = 'libdcp'
+    obj.target = 'dcp'
     obj.export_includes = ['.']
     obj.uselib = 'BOOST_FILESYSTEM OPENSSL SIGC++'
     obj.use = 'libkumu-libdcp libasdcp-libdcp'
@@ -12,4 +13,9 @@ def build(bld):
                  util.cc
                  tags.cc
                  """
-    obj.target = 'libdcp'
+
+    headers = """
+              dcp.h
+              """
+
+    bld.install_files('${PREFIX}/include/libdcp', headers)
