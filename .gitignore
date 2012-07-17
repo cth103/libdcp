@@ -3,3 +3,5 @@ core
 build
 .waf*
 .lock*
+doc/html
+doc/latex

@@ -1,0 +1,14 @@
+/*!
+
+@mainpage libdcp
+
+libdcp is a small library to create Digital Cinema Packages (DCPs) from JPEG2000 and WAV files.
+
+Most of the hard work is done by a (slightly patched) version of asdcplib (http://www.cinecert.com/asdcplib/)
+which is included in the source distribution for libdcp.
+
+See libdcp::DCP for an example of libdcp's use.
+
+*/
+
+
