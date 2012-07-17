@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/util.cc
+ *  @brief Utility methods.
+ */
+
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
@@ -31,9 +35,6 @@
 using namespace std;
 using namespace boost;
 
-/** Create a UUID.
- *  @return UUID.
- */
 string
 libdcp::make_uuid ()
 {
@@ -44,10 +45,6 @@ libdcp::make_uuid ()
 	return string (buffer);
 }
 
-/** Create a digest for a file.
- *  @param filename File name.
- *  @return Digest.
- */
 string
 libdcp::make_digest (string filename, sigc::signal1<void, float>* progress)
 {

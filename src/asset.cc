@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/asset.cc
+ *  @brief Parent class for assets of DCPs.
+ */
+
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include "AS_DCP.h"
@@ -29,25 +33,16 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-/** Construct an Asset.
- *  @param p Pathname of MXF file.
- *  @param fps Frames per second.
- *  @param len Length in frames.
- */
-
-Asset::Asset (string p, sigc::signal1<void, float>* progress, int fps, int len)
-	: _mxf_path (p)
+Asset::Asset (string mxf_path, sigc::signal1<void, float>* progress, int fps, int length)
+	: _mxf_path (mxf_path)
 	, _progress (progress)
 	, _fps (fps)
-	, _length (len)
+	, _length (length)
 	, _uuid (make_uuid ())
 {
 	
 }
 
-/** Write details of the asset to a PKL stream.
- *  @param s Stream.
- */
 void
 Asset::write_to_pkl (ostream& s) const
 {
@@ -60,9 +55,6 @@ Asset::write_to_pkl (ostream& s) const
 	  << "    </Asset>\n";
 }
 
-/** Write details of the asset to a ASSETMAP stream.
- *  @param s Stream.
- */
 void
 Asset::write_to_assetmap (ostream& s) const
 {
@@ -79,7 +71,6 @@ Asset::write_to_assetmap (ostream& s) const
 	  << "    </Asset>\n";
 }
 
-/** Fill in a ADSCP::WriteInfo struct */
 void
 Asset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
 {

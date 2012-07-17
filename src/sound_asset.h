@@ -17,18 +17,33 @@
 
 */
 
+/** @file  src/sound_asset.h
+ *  @brief An asset made up of WAV files
+ */
+
 #include "asset.h"
 
 namespace libdcp
 {
 
-/** An asset made up of WAV files */
+/** @brief An asset made up of WAV files */
 class SoundAsset : public Asset
 {
 public:
-	SoundAsset (std::list<std::string> const &, std::string, sigc::signal1<void, float>*, int, int);
+	/** Construct a SoundAsset, generating the MXF from the WAV files.
+	 *  This may take some time; progress is indicated by emission of the Progress signal.
+	 *  @param files Pathnames of sound files, in the order Left, Right, Centre, Lfe (sub), Left surround, Right surround.
+	 *  @param mxf_path Pathname of MXF file to create.
+	 *  @param progress Signal to inform of progress.
+	 *  @param fps Frames per second.
+	 *  @param length Length in frames.
+	 */
+	SoundAsset (std::list<std::string> const & files, std::string mxf_path, sigc::signal1<void, float>* progress, int fps, int length);
 
-	void write_to_cpl (std::ostream &) const;
+	/** Write details of this asset to a CPL stream.
+	 *  @param s Stream.
+	 */
+	void write_to_cpl (std::ostream& s) const;
 };
 
 }

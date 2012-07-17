@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/picture_asset.h
+ *  @brief An asset made up of JPEG2000 files
+ */
+
 #include <list>
 #include <stdexcept>
 #include <iostream>
@@ -31,20 +35,17 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-/** Construct a PictureAsset, generating the MXF from the JPEG2000 files.
- *  This may take some time; progress is indicated by emission of the Progress signal.
- *  @param files Pathnames of JPEG2000 files, in frame order.
- *  @param p Pathname of MXF file to create.
- *  @param fps Frames per second.
- *  @param len Length in frames.
- *  @param w Width of images in pixels.
- *  @param h Height of images in pixels.
- */
-
-PictureAsset::PictureAsset (list<string> const & files, string p, sigc::signal1<void, float>* progress, int fps, int len, int w, int h)
-	: Asset (p, progress, fps, len)
-	, _width (w)
-	, _height (h)
+PictureAsset::PictureAsset (
+	list<string> const & files,
+	string mxf_path,
+	sigc::signal1<void, float>* progress,
+	int fps,
+	int length,
+	int width,
+	int height)
+	: Asset (mxf_path, progress, fps, length)
+	, _width (width)
+	, _height (height)
 {
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
@@ -90,9 +91,6 @@ PictureAsset::PictureAsset (list<string> const & files, string p, sigc::signal1<
 	_digest = make_digest (_mxf_path, _progress);
 }
 
-/** Write details of this asset to a CPL stream.
- *  @param s Stream.
- */
 void
 PictureAsset::write_to_cpl (ostream& s) const
 {

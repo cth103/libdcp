@@ -33,25 +33,16 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-/** Construct a DCP.
- *  @param d Directory to write files to.
- *  @param n Name.
- *  @param c Content type.
- *  @param fps Frames per second.
- *  @param length Length in frames.
- */
-DCP::DCP (string d, string n, ContentType c, int fps, int length)
-	: _directory (d)
-	, _name (n)
-	, _content_type (c)
+DCP::DCP (string directory, string name, ContentType content_type, int fps, int length)
+	: _directory (directory)
+	, _name (name)
+	, _content_type (content_type)
 	, _fps (fps)
 	, _length (length)
 {
+	
 }
 
-/** Add a sound asset.
- *  @param files Pathnames of WAV files to use in the order Left, Right, Centre, Lfe (sub), Left surround, Right surround.
- */
 void
 DCP::add_sound_asset (list<string> const & files)
 {
@@ -61,9 +52,6 @@ DCP::add_sound_asset (list<string> const & files)
 	_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (files, p.string(), &Progress, _fps, _length)));
 }
 
-/** Add a picture asset.
- *  @param files Pathnames of JPEG2000 files, in frame order.
- */
 void
 DCP::add_picture_asset (list<string> const & files, int w, int h)
 {
@@ -73,9 +61,6 @@ DCP::add_picture_asset (list<string> const & files, int w, int h)
 	_assets.push_back (shared_ptr<PictureAsset> (new PictureAsset (files, p.string(), &Progress, _fps, _length, w, h)));
 }
 
-/** Write the required XML files to the directory that was
- *  passed into the constructor.
- */
 void
 DCP::write_xml () const
 {
@@ -91,10 +76,6 @@ DCP::write_xml () const
 	write_assetmap (cpl_uuid, cpl_length, pkl_uuid, filesystem::file_size (pkl_path));
 }
 
-/** Write the CPL file.
- *  @param cpl_uuid UUID to use.
- *  @return CPL pathname.
- */
 string
 DCP::write_cpl (string cpl_uuid) const
 {
@@ -136,12 +117,6 @@ DCP::write_cpl (string cpl_uuid) const
 	return p.string ();
 }
 
-/** Write the PKL file.
- *  @param pkl_uuid UUID to use.
- *  @param cpl_uuid UUID of the CPL file.
- *  @param cpl_digest SHA digest of the CPL file.
- *  @param cpl_length Length of the CPL file in bytes.
- */
 std::string
 DCP::write_pkl (string pkl_uuid, string cpl_uuid, string cpl_digest, int cpl_length) const
 {
@@ -178,7 +153,6 @@ DCP::write_pkl (string pkl_uuid, string cpl_uuid, string cpl_digest, int cpl_len
 	return p.string ();
 }
 
-/** Write the VOLINDEX file */
 void
 DCP::write_volindex () const
 {
@@ -193,12 +167,6 @@ DCP::write_volindex () const
 	   << "</VolumeIndex>\n";
 }
 
-/** Write the ASSETMAP file.
- *  @param cpl_uuid UUID of our CPL.
- *  @param cpl_length Length of our CPL in bytes.
- *  @param pkl_uuid UUID of our PKL.
- *  @param pkl_length Length of our PKL in bytes.
- */
 void
 DCP::write_assetmap (string cpl_uuid, int cpl_length, string pkl_uuid, int pkl_length) const
 {
@@ -249,13 +217,10 @@ DCP::write_assetmap (string cpl_uuid, int cpl_length, string pkl_uuid, int pkl_l
 	   << "</AssetMap>\n";
 }
 
-/** @param t A content type.
- *  @return A string representation suitable for use in a CPL.
- */
 string
-DCP::content_type_string (ContentType t)
+DCP::content_type_string (ContentType type)
 {
-	switch (t) {
+	switch (type) {
 	case FEATURE:
 		return "feature";
 	case SHORT:

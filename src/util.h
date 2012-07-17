@@ -21,8 +21,18 @@
 #include <sigc++/sigc++.h>
 
 namespace libdcp {
-	
+
+/** Create a UUID.
+ *  @return UUID.
+ */
 extern std::string make_uuid ();
-extern std::string make_digest (std::string, sigc::signal1<void, float> *);
+
+/** Create a digest for a file.
+ *  @param filename File name.
+ *  @param progress If non-0, a signal which will be emitted periodically to update
+ *  progress; the parameter will start at 0.5 and proceed to 1.
+ *  @return Digest.
+ */
+extern std::string make_digest (std::string filename, sigc::signal1<void, float>* progress);
 
 }

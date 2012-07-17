@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/asset.h
+ *  @brief Parent class for assets of DCPs.
+ */
+
 #ifndef LIBDCP_ASSET_H
 #define LIBDCP_ASSET_H
 
@@ -30,18 +34,41 @@ namespace ASDCP {
 namespace libdcp
 {
 
-/** Parent class for assets (picture / sound collections) */	
+/** @brief Parent class for assets of DCPs
+ *
+ *  These are collections of pictures or sound.
+ */
 class Asset
 {
 public:
-	Asset (std::string, sigc::signal1<void, float>*, int, int);
+	/** Construct an Asset.
+	 *  @param mxf_path Pathname of MXF file.
+	 *  @param progress Signal to inform of progress.
+	 *  @param fps Frames per second.
+	 *  @param length Length in frames.
+	 */
+	Asset (std::string mxf_path, sigc::signal1<void, float>* progress, int fps, int length);
 
-	virtual void write_to_cpl (std::ostream &) const = 0;
-	void write_to_pkl (std::ostream &) const;
-	void write_to_assetmap (std::ostream &) const;
+	/** Write details of the asset to a CPL stream.
+	 *  @param s Stream.
+	 */
+	virtual void write_to_cpl (std::ostream& s) const = 0;
+
+	/** Write details of the asset to a PKL stream.
+	 *  @param s Stream.
+	 */
+	void write_to_pkl (std::ostream& s) const;
+
+	/** Write details of the asset to a ASSETMAP stream.
+	 *  @param s Stream.
+	 */
+	void write_to_assetmap (std::ostream& s) const;
 
 protected:
-	void fill_writer_info (ASDCP::WriterInfo *) const;
+	/** Fill in a ADSCP::WriteInfo struct.
+	 *  @param w struct to fill in.
+	 */
+	void fill_writer_info (ASDCP::WriterInfo* w) const;
 
 	/** Path to our MXF file */
 	std::string _mxf_path;
