@@ -17,7 +17,7 @@
 
 */
 
-/** @file  src/picture_asset.h
+/** @file  src/picture_asset.cc
  *  @brief An asset made up of JPEG2000 files
  */
 
