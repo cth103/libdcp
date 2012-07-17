@@ -50,8 +50,6 @@ namespace Kumu
 
   // key_len must be <= 64 (larger values will be truncated)
   void Gen_FIPS_186_Value(const byte_t* key_in, ui32_t key_len, byte_t* buf, ui32_t buf_len);
-
-  extern bool libdcp_test;
 } // namespace Kumu
 
 

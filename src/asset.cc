@@ -17,6 +17,7 @@
 
 */
 
+#include <iostream>
 #include <boost/filesystem.hpp>
 #include "AS_DCP.h"
 #include "KM_util.h"

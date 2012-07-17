@@ -48,8 +48,6 @@ using namespace Kumu;
 const char* DEV_URANDOM = "/dev/urandom";
 #endif // KM_WIN32
 
-bool Kumu::libdcp_test = false;
-
 const ui32_t RNG_KEY_SIZE = 512UL;
 const ui32_t RNG_KEY_SIZE_BITS = 256UL;
 const ui32_t RNG_BLOCK_SIZE = 16UL;

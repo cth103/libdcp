@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	t->company_name = "OpenDCP";
 	t->product_name = "OpenDCP";
 	t->product_version = "0.0.25";
-	t->issue_date = "2012-07-17T04:32:07+00:00";
+	t->issue_date = "2012-07-17T04:45:18+00:00";
 	filesystem::remove_all ("build/test/foo");
 	filesystem::create_directories ("build/test/foo");
 	libdcp::DCP d ("build/test/foo", "A Test DCP", libdcp::DCP::FEATURE, 24, 24);

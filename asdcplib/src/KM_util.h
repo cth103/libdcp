@@ -41,6 +41,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace Kumu
 {
+  extern bool libdcp_test;
+	
   // The version number declaration and explanation are in ../configure.ac
   const char* Version();
 
