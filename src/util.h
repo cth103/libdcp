@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/util.h
+ *  @brief Utility methods.
+ */
+
 #include <string>
 #include <sigc++/sigc++.h>
 

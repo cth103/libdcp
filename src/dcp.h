@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/dcp.h
+ *  @brief A class to create a DCP.
+ */
+
 #ifndef LIBDCP_DCP_H
 #define LIBDCP_DCP_H
 
@@ -34,46 +38,8 @@ class Asset;
 
 /** @class DCP dcp.h libdcp/dcp.h
  *  @brief A class to create a DCP.
- *
- *  Typical use might be:
- *  @code
- *  #include <libdcp/dcp.h>
- *  using namespace std;
- *
- *  libdcp::DCP dcp ("My Film DCP", "My Film", libdcp::DCP::FEATURE, 24, 50000);
- *
- *  vector<string> j2k_files;
- *  j2k_files.push_back ("1.j2c");
- *  ...
- *  j2k_files.push_back ("50000.j2c");
- *
- *  // These images are 1998x1080 pixels (DCI Flat)
- *  dcp.add_picture_asset (j2k_files, 1998, 1080);
- *
- *  vector<string> wav_files;
- *  wav_files.push_back ("L.wav");
- *  wav_files.push_back ("R.wav");
- *  wav_files.push_back ("C.wav");
- *  wav_files.push_back ("Lfe.wav");
- *  wav_files.push_back ("Ls.wav");
- *  wav_files.push_back ("Rs.wav");
- *  dcp.add_sound_asset (wav_files);
- *
- *  dcp.write_xml ();
- *
- *  @endcode
- *
- *  This will create a DCP at 24 frames per second with 50000 frames, writing
- *  data to a directory "My Film DCP", naming the DCP "My Film" and marking
- *  as a Feature.  We then add the picture and sound files (which creates
- *  MXF files inside the DCP directory) and then write the required XML files.
- *
- *  If you want to report progress for long jobs (add_picture_asset() can
- *  take a long time, in particular, as it must do a lot of disk I/O for
- *  large DCPs), connect to the libdcp::DCP::Progress signal and report its parameter
- *  to the user (it will range between 0 for 0% and 1 for 100%).
  */
- 
+	
 class DCP
 {
 public:

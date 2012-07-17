@@ -17,14 +17,19 @@
 
 */
 
+/** @file  src/metadata.h
+ *  @brief Metadata for writing to the DCP.
+ */
+
 #include <string>
 
 namespace libdcp
 {
 
-/** A class to hold various metadata that will be written
- *  to the DCP.  The values are initialised, and can be modified
- *  if desired.
+/** @brief A class to hold various metadata that will be written
+ *  to the DCP.
+ *
+ *  The values are initialised, and can be modified if desired.
  */
 class Metadata
 {

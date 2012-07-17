@@ -17,8 +17,12 @@
 
 */
 
-#ifndef LIBDCP_CHANNEL_H
-#define LIBDCP_CHANNEL_H
+/** @file  src/types.h
+ *  @brief Miscellaneous types.
+ */
+
+#ifndef LIBDCP_TYPES_H
+#define LIBDCP_TYPES_H
 
 namespace libdcp
 {

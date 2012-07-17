@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/dcp.cc
+ *  @brief A class to create a DCP.
+ */
+
 #include <sstream>
 #include <fstream>
 #include <iomanip>

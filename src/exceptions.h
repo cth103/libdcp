@@ -24,6 +24,7 @@
 namespace libdcp
 {
 
+/** @brief An exception related to a file */
 class FileError : public std::exception
 {
 public:
@@ -34,30 +35,38 @@ public:
 			    
 	~FileError () throw () {}
 
+	/** @return error message */
 	char const * what () const throw () {
 		return _message.c_str ();
 	}
 	
+	/** @return filename of file that was involved */
 	std::string filename () const {
 		return _filename;
 	}
 
 private:
+	/** error message */
 	std::string _message;
+	/** filename of file that was involved */
 	std::string _filename;
 };
 
+
+/** @brief A miscellaneous exception */
 class MiscError : public std::exception
 {
 public:
 	MiscError (std::string const & message) : _message (message) {}
 	~MiscError () throw () {}
 
+	/** @return error message */
 	char const * what () const throw () {
 		return _message.c_str ();
 	}
 
 private:
+	/** error message */
 	std::string _message;
 };
 

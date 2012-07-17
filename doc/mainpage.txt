@@ -7,9 +7,82 @@ libdcp is a small library to create Digital Cinema Packages (DCPs) from JPEG2000
 Most of the hard work is done by a (slightly patched) version of asdcplib (http://www.cinecert.com/asdcplib/)
 which is included in the source distribution for libdcp.
 
-See libdcp::DCP for an example of libdcp's use.
-
 libdcp is distributed under the GNU GPL.
+
+Typical use might be:
+@code
+#include <libdcp/dcp.h>
+using namespace std;
+
+libdcp::DCP dcp ("My Film DCP", "My Film", libdcp::DCP::FEATURE, 24, 50000);
+
+vector<string> j2k_files;
+j2k_files.push_back ("1.j2c");
+...
+j2k_files.push_back ("50000.j2c");
+
+// These images are 1998x1080 pixels (DCI Flat)
+dcp.add_picture_asset (j2k_files, 1998, 1080);
+
+vector<string> wav_files;
+wav_files.push_back ("L.wav");
+wav_files.push_back ("R.wav");
+wav_files.push_back ("C.wav");
+wav_files.push_back ("Lfe.wav");
+wav_files.push_back ("Ls.wav");
+wav_files.push_back ("Rs.wav");
+dcp.add_sound_asset (wav_files);
+
+dcp.write_xml ();
+
+@endcode
+
+This will create a DCP at 24 frames per second with 50000 frames, writing
+data to a directory "My Film DCP", naming the DCP "My Film" and marking
+as a Feature.  We then add the picture and sound files (which creates
+MXF files inside the DCP directory) and then write the required XML files.
+
+If you want to report progress for long jobs (add_picture_asset() can
+take a long time, in particular, as it must do a lot of disk I/O for
+large DCPs), connect to the libdcp::DCP::Progress signal and report its parameter
+to the user (it will range between 0 for 0% and 1 for 100%).
+
+If you can generate content paths algorithmically, you may prefer to do something
+like this:
+
+@code
+
+string
+j2k_path (int frame)
+{
+	stringstream s;
+	s << "my_j2ks/" << frame << ".j2c"
+	return s.str ();
+}
+
+string
+wav_path (libdcp::Channel channel)
+{
+	switch (channel) {
+	case LEFT:
+		return "left.wav";
+	case RIGHT:
+		return "right.wav";
+	}
+
+	return "";
+}
+
+...
+
+// Our images are 1998x1080 (DCI Flat)
+dcp.add_picture_asset (sigc::ptr_fun (&j2k_path), 1998, 1080);
+// We have two sound channels
+dcp.add_sound_asset (sigc::ptr_fun (&wav_path), 2);
+
+...
+
+@endcode
 
 */
 

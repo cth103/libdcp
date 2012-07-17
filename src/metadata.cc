@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/metadata.cc
+ *  @brief Metadata for writing to the DCP.
+ */
+
 #include "metadata.h"
 
 using namespace std;
