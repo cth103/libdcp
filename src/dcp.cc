@@ -27,7 +27,7 @@
 #include "sound_asset.h"
 #include "picture_asset.h"
 #include "util.h"
-#include "tags.h"
+#include "metadata.h"
 
 using namespace std;
 using namespace boost;
@@ -90,13 +90,13 @@ DCP::write_cpl (string cpl_uuid) const
 	    << "<CompositionPlaylist xmlns=\"http://www.smpte-ra.org/schemas/429-7/2006/CPL\">\n"
 	    << "  <Id>urn:uuid:" << cpl_uuid << "</Id>\n"
 	    << "  <AnnotationText>" << _name << "</AnnotationText>\n"
-	    << "  <IssueDate>" << Tags::instance()->issue_date << "</IssueDate>\n"
-	    << "  <Creator>" << Tags::instance()->creator << "</Creator>\n"
+	    << "  <IssueDate>" << Metadata::instance()->issue_date << "</IssueDate>\n"
+	    << "  <Creator>" << Metadata::instance()->creator << "</Creator>\n"
 	    << "  <ContentTitleText>" << _name << "</ContentTitleText>\n"
 	    << "  <ContentKind>" << content_type_string (_content_type) << "</ContentKind>\n"
 	    << "  <ContentVersion>\n"
-	    << "    <Id>urn:uri:" << cpl_uuid << "_" << Tags::instance()->issue_date << "</Id>\n"
-	    << "    <LabelText>" << cpl_uuid << "_" << Tags::instance()->issue_date << "</LabelText>\n"
+	    << "    <Id>urn:uri:" << cpl_uuid << "_" << Metadata::instance()->issue_date << "</Id>\n"
+	    << "    <LabelText>" << cpl_uuid << "_" << Metadata::instance()->issue_date << "</LabelText>\n"
 	    << "  </ContentVersion>\n"
 	    << "  <RatingList/>\n"
 	    << "  <ReelList>\n";
@@ -131,9 +131,9 @@ DCP::write_pkl (string pkl_uuid, string cpl_uuid, string cpl_digest, int cpl_len
 	    << "<PackingList xmlns=\"http://www.smpte-ra.org/schemas/429-8/2007/PKL\">\n"
 	    << "  <Id>urn:uuid:" << pkl_uuid << "</Id>\n"
 	    << "  <AnnotationText>" << _name << "</AnnotationText>\n"
-	    << "  <IssueDate>" << Tags::instance()->issue_date << "</IssueDate>\n"
-	    << "  <Issuer>" << Tags::instance()->issuer << "</Issuer>\n"
-	    << "  <Creator>" << Tags::instance()->creator << "</Creator>\n"
+	    << "  <IssueDate>" << Metadata::instance()->issue_date << "</IssueDate>\n"
+	    << "  <Issuer>" << Metadata::instance()->issuer << "</Issuer>\n"
+	    << "  <Creator>" << Metadata::instance()->creator << "</Creator>\n"
 	    << "  <AssetList>\n";
 
 	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
@@ -178,10 +178,10 @@ DCP::write_assetmap (string cpl_uuid, int cpl_length, string pkl_uuid, int pkl_l
 	am << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 	   << "<AssetMap xmlns=\"http://www.smpte-ra.org/schemas/429-9/2007/AM\">\n"
 	   << "  <Id>urn:uuid:" << make_uuid() << "</Id>\n"
-	   << "  <Creator>" << Tags::instance()->creator << "</Creator>\n"
+	   << "  <Creator>" << Metadata::instance()->creator << "</Creator>\n"
 	   << "  <VolumeCount>1</VolumeCount>\n"
-	   << "  <IssueDate>" << Tags::instance()->issue_date << "</IssueDate>\n"
-	   << "  <Issuer>" << Tags::instance()->issuer << "</Issuer>\n"
+	   << "  <IssueDate>" << Metadata::instance()->issue_date << "</IssueDate>\n"
+	   << "  <Issuer>" << Metadata::instance()->issuer << "</Issuer>\n"
 	   << "  <AssetList>\n";
 
 	am << "    <Asset>\n"

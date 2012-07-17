@@ -21,7 +21,7 @@
 #include "KM_prng.h"
 #include "dcp.h"
 #include "util.h"
-#include "tags.h"
+#include "metadata.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test
@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 {
 	Kumu::libdcp_test = true;
 	
-	libdcp::Tags* t = libdcp::Tags::instance ();
+	libdcp::Metadata* t = libdcp::Metadata::instance ();
 	t->issuer = "OpenDCP 0.0.25";
 	t->creator = "OpenDCP 0.0.25";
 	t->company_name = "OpenDCP";

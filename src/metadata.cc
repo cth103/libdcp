@@ -17,32 +17,37 @@
 
 */
 
-#include <string>
+#include "metadata.h"
 
-namespace libdcp
+using namespace std;
+using namespace libdcp;
+
+Metadata* Metadata::_instance = 0;
+
+/** Construct a Metadata object with some default values */
+Metadata::Metadata ()
+	: company_name ("libdcp")
+	, product_name ("libdcp")
+	, product_version (LIBDCP_VERSION)
+	, issuer ("libdcp" LIBDCP_VERSION)
+	, creator ("libdcp" LIBDCP_VERSION)
 {
-
-/** A class to hold various metadata that will be written
- *  to the DCP.  The values are initialised, and can be modified
- *  if desired.
- */
-class Tags
-{
-public:
-	static Tags* instance ();
-
-	std::string company_name;
-	std::string product_name;
-	std::string product_version;
-	std::string issuer;
-	std::string creator;
-	std::string issue_date;
-
-private:
-	Tags ();
-
-	/** Singleton instance of Tags */
-	static Tags* _instance;
-};
-
+	char buffer[64];
+	time_t now;
+	time (&now);
+	struct tm* tm = localtime (&now);
+	strftime (buffer, 64, "%Y-%m-%dT%I:%M:%S+00:00", tm);
+	issue_date = string (buffer);
 }
+
+/** @return Singleton Metadata instance */
+Metadata *
+Metadata::instance ()
+{
+	if (_instance == 0) {
+		_instance = new Metadata;
+	}
+
+	return _instance;
+}
+		

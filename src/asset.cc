@@ -27,7 +27,7 @@
 #include "KM_util.h"
 #include "asset.h"
 #include "util.h"
-#include "tags.h"
+#include "metadata.h"
 
 using namespace std;
 using namespace boost;
@@ -74,9 +74,9 @@ Asset::write_to_assetmap (ostream& s) const
 void
 Asset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
 {
-	writer_info->ProductVersion = Tags::instance()->product_version;
-	writer_info->CompanyName = Tags::instance()->company_name;
-	writer_info->ProductName = Tags::instance()->product_name.c_str();
+	writer_info->ProductVersion = Metadata::instance()->product_version;
+	writer_info->CompanyName = Metadata::instance()->company_name;
+	writer_info->ProductName = Metadata::instance()->product_name.c_str();
 
 	writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
 	unsigned int c;

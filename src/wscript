@@ -11,11 +11,12 @@ def build(bld):
                  sound_asset.cc
                  picture_asset.cc
                  util.cc
-                 tags.cc
+                 metadata.cc
                  """
 
     headers = """
               dcp.h
+              metadata.h
               """
 
     bld.install_files('${PREFIX}/include/libdcp', headers)
