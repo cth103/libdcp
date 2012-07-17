@@ -28,8 +28,6 @@
 
 using namespace std;
 
-bool libdcp::libdcp_test = false;
-
 /** Create a UUID.
  *  @return UUID.
  */
@@ -38,20 +36,7 @@ libdcp::make_uuid ()
 {
 	char buffer[64];
 	Kumu::UUID id;
-
-	if (libdcp_test) {
-		static int N = 0;
-		byte_t t[16];
-		for (int i = 0; i < 16; ++i) {
-			t[i] = N;
-		}
-		++N;
-		
-		id = Kumu::UUID (t);
-	} else {
-		Kumu::GenRandomValue (id);
-	}
-	
+	Kumu::GenRandomValue (id);
 	id.EncodeHex (buffer, 64);
 	return string (buffer);
 }

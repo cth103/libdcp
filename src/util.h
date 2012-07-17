@@ -23,6 +23,5 @@ namespace libdcp {
 	
 extern std::string make_uuid ();
 extern std::string make_digest (std::string);
-extern bool libdcp_test;
 
 }

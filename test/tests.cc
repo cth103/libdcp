@@ -18,6 +18,7 @@
 */
 
 #include <boost/filesystem.hpp>
+#include "KM_prng.h"
 #include "dcp.h"
 #include "util.h"
 #include "tags.h"
@@ -31,8 +32,8 @@ using namespace boost;
 
 BOOST_AUTO_TEST_CASE (dcp_test)
 {
-	libdcp::libdcp_test = true;
-
+	Kumu::libdcp_test = true;
+	
 	libdcp::Tags* t = libdcp::Tags::instance ();
 	t->issuer = "OpenDCP 0.0.25";
 	t->creator = "OpenDCP 0.0.25";

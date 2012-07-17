@@ -48,6 +48,7 @@ using namespace Kumu;
 const char* DEV_URANDOM = "/dev/urandom";
 #endif // KM_WIN32
 
+bool Kumu::libdcp_test = false;
 
 const ui32_t RNG_KEY_SIZE = 512UL;
 const ui32_t RNG_KEY_SIZE_BITS = 256UL;
@@ -64,6 +65,7 @@ public:
   AES_KEY   m_Context;
   byte_t    m_ctr_buf[RNG_BLOCK_SIZE];
   Mutex     m_Lock;
+  unsigned int m_libdcp_test_rng_state;
 
   h__RNG()
   {
@@ -97,6 +99,8 @@ public:
     } // end AutoMutex context
 
     set_key(rng_key);
+
+    m_libdcp_test_rng_state = 1;
   }
 	
   //
@@ -137,6 +141,12 @@ public:
 	byte_t tmp[RNG_BLOCK_SIZE];
 	AES_encrypt(m_ctr_buf, tmp, &m_Context);
 	memcpy(buf + gen_count, tmp, len - gen_count);
+      }
+
+    if (libdcp_test)
+      {    
+        for (unsigned int i = 0; i < len; ++i)
+	  buf[i] = rand_r(&m_libdcp_test_rng_state);
       }
   }
 };
