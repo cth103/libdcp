@@ -22,6 +22,7 @@
 namespace libdcp
 {
 
+/** An asset made up of JPEG2000 files */
 class PictureAsset : public Asset
 {
 public:
@@ -30,7 +31,9 @@ public:
 	void write_to_cpl (std::ostream &) const;
 
 private:
+	/** picture width in pixels */
 	int _width;
+	/** picture height in pixels */
 	int _height;
 };
 

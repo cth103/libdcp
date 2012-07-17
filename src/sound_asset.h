@@ -22,6 +22,7 @@
 namespace libdcp
 {
 
+/** An asset made up of WAV files */
 class SoundAsset : public Asset
 {
 public:

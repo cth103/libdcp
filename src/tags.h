@@ -22,6 +22,10 @@
 namespace libdcp
 {
 
+/** A class to hold various metadata that will be written
+ *  to the DCP.  The values are initialised, and can be modified
+ *  if desired.
+ */
 class Tags
 {
 public:
@@ -36,7 +40,8 @@ public:
 
 private:
 	Tags ();
-	
+
+	/** Singleton instance of Tags */
 	static Tags* _instance;
 };
 

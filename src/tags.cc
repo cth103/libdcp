@@ -24,6 +24,7 @@ using namespace libdcp;
 
 Tags* Tags::_instance = 0;
 
+/** Construct a Tags object with some default values */
 Tags::Tags ()
 	: company_name ("libdcp")
 	, product_name ("libdcp")
@@ -39,6 +40,7 @@ Tags::Tags ()
 	issue_date = string (buffer);
 }
 
+/** @return Singleton Tags instance */
 Tags *
 Tags::instance ()
 {

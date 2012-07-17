@@ -28,6 +28,14 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
+/** Construct a SoundAsset, generating the MXF from the WAV files.
+ *  This may take some time; progress is indicated by emission of the Progress signal.
+ *  @param files Pathnames of sound files, in the order Left, Right, Centre, Lfe (sub), Left surround, Right surround.
+ *  @param p Pathname of MXF file to create.
+ *  @param fps Frames per second.
+ *  @param len Length in frames.
+ */
+
 SoundAsset::SoundAsset (list<string> const & files, string p, int fps, int len)
 	: Asset (p, fps, len)
 {
@@ -115,6 +123,10 @@ SoundAsset::SoundAsset (list<string> const & files, string p, int fps, int len)
 
 	_digest = make_digest (_mxf_path);
 }
+
+/** Write details of this asset to a CPL stream.
+ *  @param s Stream.
+ */
 
 void
 SoundAsset::write_to_cpl (ostream& s) const
