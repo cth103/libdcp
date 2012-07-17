@@ -41,7 +41,6 @@ public:
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
-	 *  @param channels Number of audio channels.
 	 */
 	SoundAsset (
 		std::vector<std::string> const & files,
@@ -53,7 +52,7 @@ public:
 
 	/** Construct a SoundAsset, generating the MXF from the WAV files.
 	 *  This may take some time; progress is indicated by emission of the Progress signal.
-	 *  @param files Pathnames of sound files, in the order Left, Right, Centre, Lfe (sub), Left surround, Right surround.
+	 *  @param get_path Functor which returns a WAV file path for a given channel.
 	 *  @param mxf_path Pathname of MXF file to create.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
@@ -61,7 +60,7 @@ public:
 	 *  @param channels Number of audio channels.
 	 */
 	SoundAsset (
-		sigc::slot<std::string, Channel>,
+		sigc::slot<std::string, Channel> get_path,
 		std::string mxf_path,
 		sigc::signal1<void, float>* progress,
 		int fps,
