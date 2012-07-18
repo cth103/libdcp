@@ -5,6 +5,6 @@ includedir=@includedir@
 Name: libdcp
 Description: DCP creation library
 Version: @version@
-Requires: sigc++-2.0
+Requires: sigc++-2.0 openssl
 Libs: @libs@
 Cflags: -I${includedir}
