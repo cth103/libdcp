@@ -92,7 +92,7 @@ ASDCP::TimedText::DescriptorDump(ASDCP::TimedText::TimedTextDescriptor const& TD
   fprintf(stream, "ContainerDuration: %u\n",    TDesc.ContainerDuration);
   fprintf(stream, "          AssetID: %s\n",    TmpID.EncodeHex(buf, 64));
   fprintf(stream, "    NamespaceName: %s\n",    TDesc.NamespaceName.c_str());
-  fprintf(stream, "    ResourceCount: %d\n",   TDesc.ResourceList.size());
+  fprintf(stream, "    ResourceCount: %ld\n",   TDesc.ResourceList.size());
 
   TimedText::ResourceList_t::const_iterator ri;
   for ( ri = TDesc.ResourceList.begin() ; ri != TDesc.ResourceList.end(); ri++ )
