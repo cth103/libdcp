@@ -72,4 +72,5 @@ BOOST_AUTO_TEST_CASE (error_test)
 	vector<string> p;
 	p.push_back ("frobozz");
 	BOOST_CHECK_THROW (d.add_picture_asset (p, 32, 32), libdcp::FileError);
+	BOOST_CHECK_THROW (d.add_sound_asset (p), libdcp::FileError);
 }
