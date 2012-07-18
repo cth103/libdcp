@@ -23,6 +23,7 @@
 #include "util.h"
 #include "metadata.h"
 #include "types.h"
+#include "exceptions.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test
@@ -63,4 +64,12 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	d.add_sound_asset (sigc::ptr_fun (&wav), 2);
 
 	d.write_xml ();
+}
+
+BOOST_AUTO_TEST_CASE (error_test)
+{
+	libdcp::DCP d ("build/test/bar", "A Test DCP", libdcp::DCP::TEST, 24, 24);
+	vector<string> p;
+	p.push_back ("frobozz");
+	BOOST_CHECK_THROW (d.add_picture_asset (p, 32, 32), libdcp::FileError);
 }
