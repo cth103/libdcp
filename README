@@ -1,0 +1,23 @@
+== libdcp
+
+Hello.
+
+
+== Building:
+
+./waf configure
+./waf
+./waf install
+
+
+== Dependencies
+
+boost filesystem library
+OpenSSL
+libsigc++
+
+
+== Documentation
+
+Run doxygen in the top-level directory and then see build/doc/html/index.html.
+
