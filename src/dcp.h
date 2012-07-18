@@ -25,7 +25,7 @@
 #define LIBDCP_DCP_H
 
 #include <string>
-#include <list>
+#include <vector>
 #include <boost/shared_ptr.hpp>
 #include <sigc++/sigc++.h>
 #include "types.h"
