@@ -35,3 +35,5 @@ def build(bld):
     bld.recurse('test')
     bld.recurse('asdcplib')
 
+def dist(ctx):
+    ctx.excl = 'TODO core *~ .git build .waf* .lock* doc/*~ src/*~ test/ref/*~'
