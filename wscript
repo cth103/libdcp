@@ -1,5 +1,5 @@
 APPNAME = 'libdcp'
-VERSION = '0.01'
+VERSION = '0.02pre'
 
 def options(opt):
     opt.load('compiler_cxx')
