@@ -7,9 +7,8 @@
 # if anything is different.
 #
 
-LD_LIBRARY_PATH=build/src:build/asdcplib/src
-build/test/tests
-diff -ur build/test/foo test/ref/DCP
+LD_LIBRARY_PATH=build/src:build/asdcplib/src build/test/tests
+diff -ur test/ref/DCP build/test/foo
 if [ "$?" != "0" ]; then
   echo "FAIL: files differ"
   exit 1
