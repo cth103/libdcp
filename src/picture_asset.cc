@@ -121,7 +121,7 @@ PictureAsset::write_to_cpl (ostream& s) const
 {
 	s << "        <MainPicture>\n"
 	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "          <AnnotationText>" << filesystem::path(_mxf_path).filename() << "</AnnotationText>\n"
+	  << "          <AnnotationText>" << filesystem::path(_mxf_path).filename().string() << "</AnnotationText>\n"
 	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
 	  << "          <IntrinsicDuration>" << _length << "</IntrinsicDuration>\n"
 	  << "          <EntryPoint>0</EntryPoint>\n"
