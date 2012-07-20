@@ -22,6 +22,7 @@ def build(bld):
               types.h
               exceptions.h
               test_mode.h
+              git_commit.h
               """
 
     bld.install_files('${PREFIX}/include/libdcp', headers)
