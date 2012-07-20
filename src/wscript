@@ -12,6 +12,8 @@ def build(bld):
                  picture_asset.cc
                  util.cc
                  metadata.cc
+                 git_commit.cc
+                 test_mode.cc
                  """
 
     headers = """

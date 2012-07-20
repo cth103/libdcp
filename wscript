@@ -1,3 +1,5 @@
+import subprocess
+
 APPNAME = 'libdcp'
 VERSION = '0.03pre'
 
@@ -25,6 +27,8 @@ def configure(conf):
     conf.recurse('asdcplib')
 
 def build(bld):
+    create_stored_commit()
+
     bld(source = 'libdcp.pc.in',
         version = VERSION,
         includedir = '%s/include' % bld.env.PREFIX,
@@ -37,3 +41,20 @@ def build(bld):
 
 def dist(ctx):
     ctx.excl = 'TODO core *~ .git build .waf* .lock* doc/*~ src/*~ test/ref/*~'
+
+def create_stored_commit():
+    cmd = "LANG= git log --abbrev HEAD^..HEAD ."
+    output = subprocess.Popen(cmd, shell=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()[0].splitlines()
+    o = output[0].decode('utf-8')
+    commit = o.replace ("commit ", "")[0:10]
+
+    try:
+        text =  '#include "git_commit.h"\n'
+        text += 'char const * libdcp::git_commit = \"%s\";\n' % commit
+        print('Writing git commit info to src/git_commit.cc')
+        o = open('src/git_commit.cc', 'w')
+        o.write(text)
+        o.close()
+    except IOError:
+        print('Could not open src/git_commit.cc for writing\n')
+        sys.exit(-1)
