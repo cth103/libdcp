@@ -48,7 +48,11 @@ Asset::write_to_pkl (ostream& s) const
 {
 	s << "    <Asset>\n"
 	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
+#if BOOST_FILESYSTEM_VERSION == 3
 	  << "      <AnnotationText>" << filesystem::path(_mxf_path).filename().string() << "</AnnotationText>\n"
+#else		
+	  << "      <AnnotationText>" << filesystem::path(_mxf_path).filename() << "</AnnotationText>\n"
+#endif		
 	  << "      <Hash>" << _digest << "</Hash>\n"
 	  << "      <Size>" << filesystem::file_size(_mxf_path) << "</Size>\n"
 	  << "      <Type>application/mxf</Type>\n"
@@ -62,7 +66,11 @@ Asset::write_to_assetmap (ostream& s) const
 	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
 	  << "      <ChunkList>\n"
 	  << "        <Chunk>\n"
+#if BOOST_FILESYSTEM_VERSION == 3		
 	  << "          <Path>" << filesystem::path(_mxf_path).filename().string() << "</Path>\n"
+#else		
+	  << "          <Path>" << filesystem::path(_mxf_path).filename() << "</Path>\n"
+#endif		
 	  << "          <VolumeIndex>1</VolumeIndex>\n"
 	  << "          <Offset>0</Offset>\n"
 	  << "          <Length>" << filesystem::file_size(_mxf_path) << "</Length>\n"

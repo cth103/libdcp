@@ -121,7 +121,11 @@ PictureAsset::write_to_cpl (ostream& s) const
 {
 	s << "        <MainPicture>\n"
 	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
+#if BOOST_FILESYSTEM_VERSION == 3
 	  << "          <AnnotationText>" << filesystem::path(_mxf_path).filename().string() << "</AnnotationText>\n"
+#else		
+	  << "          <AnnotationText>" << filesystem::path(_mxf_path).filename() << "</AnnotationText>\n"
+#endif		
 	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
 	  << "          <IntrinsicDuration>" << _length << "</IntrinsicDuration>\n"
 	  << "          <EntryPoint>0</EntryPoint>\n"
