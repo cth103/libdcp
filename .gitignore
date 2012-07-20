@@ -5,4 +5,4 @@ build
 .lock*
 doc/html
 doc/latex
-src/git_commit.cc
+src/version.cc

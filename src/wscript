@@ -12,7 +12,7 @@ def build(bld):
                  picture_asset.cc
                  util.cc
                  metadata.cc
-                 git_commit.cc
+                 version.cc
                  test_mode.cc
                  """
 
@@ -22,7 +22,7 @@ def build(bld):
               types.h
               exceptions.h
               test_mode.h
-              git_commit.h
+              version.h
               """
 
     bld.install_files('${PREFIX}/include/libdcp', headers)
