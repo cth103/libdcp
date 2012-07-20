@@ -21,6 +21,7 @@ def build(bld):
               metadata.h
               types.h
               exceptions.h
+              test_mode.h
               """
 
     bld.install_files('${PREFIX}/include/libdcp', headers)
