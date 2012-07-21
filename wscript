@@ -6,14 +6,25 @@ VERSION = '0.05pre'
 
 def options(opt):
     opt.load('compiler_cxx')
+    opt.add_option('--target-windows', action='store_true', default = False, help = 'set up to do a cross-compile to Windows')
 
 def configure(conf):
     conf.load('compiler_cxx')
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Werror', '-Wextra', '-Wno-unused-result', '-O2', '-D_FILE_OFFSET_BITS=64'])
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-Wno-unused-result', '-O2', '-D_FILE_OFFSET_BITS=64'])
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
+
+    if conf.options.target_windows:
+        conf.env.append_value('CXXFLAGS', '-DLIBDCP_WINDOWS')
+    else:
+        conf.env.append_value('CXXFLAGS', '-DLIBDCP_POSIX')
 
     conf.check_cfg(package = 'openssl', args = '--cflags --libs', uselib_store = 'OPENSSL', mandatory = True)
     conf.check_cfg(package = 'sigc++-2.0', args = '--cflags --libs', uselib_store = 'SIGC++', mandatory = True)
+
+    if conf.options.target_windows:
+        boost_lib_suffix = '-mt'
+    else:
+        boost_lib_suffix = ''
     
     conf.check_cxx(fragment = """
     			      #include <boost/filesystem.hpp>\n
@@ -21,7 +32,7 @@ def configure(conf):
 			      """,
                    msg = 'Checking for boost filesystem library',
                    libpath = '/usr/local/lib',
-                   lib = ['boost_filesystem', 'boost_system'],
+                   lib = ['boost_filesystem%s' % boost_lib_suffix, 'boost_system%s' % boost_lib_suffix],
                    uselib_store = 'BOOST_FILESYSTEM')
 
     conf.recurse('test')

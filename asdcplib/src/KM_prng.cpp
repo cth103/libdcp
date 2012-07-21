@@ -141,11 +141,17 @@ public:
 	memcpy(buf + gen_count, tmp, len - gen_count);
       }
 
+#ifdef LIBDCP_POSIX
     if (libdcp_test)
       {    
         for (unsigned int i = 0; i < len; ++i)
 	  buf[i] = rand_r(&m_libdcp_test_rng_state);
       }
+#endif
+
+#ifdef LIBDCP_WINDOWS
+    /* XXX */
+#endif
   }
 };
 

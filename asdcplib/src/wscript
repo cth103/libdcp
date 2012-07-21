@@ -1,16 +1,17 @@
 def configure(conf):
-    conf.check_cc(msg = 'Checking for library expat', header_name = 'tiffio.h', lib = 'expat', uselib_store = 'EXPAT', mandatory = True)
-    conf.env.append_value('CXXFLAGS', '-DHAVE_EXPAT')
     conf.env.append_value('CXXFLAGS', '-D_FILE_OFFSET_BITS=64')
     conf.env.append_value('CXXFLAGS', '-DPACKAGE_VERSION="1.9.45-dvdomatic"')
-    # XXX: ?
-    conf.env.append_value('CXXFLAGS', '-DASDCP_PLATFORM="linux"')
+    if conf.options.target_windows:
+        conf.env.append_value('CXXFLAGS', '-DASDCP_PLATFORM="win32"')
+        conf.env.append_value('CXXFLAGS', '-DKM_WIN32')
+    else:
+        conf.env.append_value('CXXFLAGS', '-DASDCP_PLATFORM="linux"')
 
 def build(bld):
     obj = bld(features = 'cxx cxxshlib')
     obj.name = 'libkumu-libdcp'
     obj.target = 'kumu-libdcp'
-    obj.uselib = 'EXPAT'
+    obj.uselib = 'OPENSSL'
     obj.includes = ['.']
     obj.export_includes = ['.']
     obj.source = """
@@ -25,7 +26,8 @@ def build(bld):
     obj = bld(features = 'cxx cxxshlib')
     obj.name = 'libasdcp-libdcp'
     obj.target = 'asdcp-libdcp'
-    obj.uselib = 'EXPAT'
+    obj.uselib = 'OPENSSL'
+    obj.use = 'libkumu-libdcp'
     obj.includes = ['.']
     obj.export_includes = ['.']
     obj.source = """

@@ -1,9 +1,17 @@
 def configure(conf):
+    if conf.options.target_windows:
+        boost_lib_suffix = '-mt'
+    else:
+        boost_lib_suffix = ''
+
     conf.check_cxx(fragment = """
                               #define BOOST_TEST_MODULE Config test\n
     			      #include <boost/test/unit_test.hpp>\n
                               int main() {}
-                              """, msg = 'Checking for boost unit testing library', lib = 'boost_unit_test_framework', uselib_store = 'BOOST_TEST')
+                              """,
+                              msg = 'Checking for boost unit testing library',
+                              lib = 'boost_unit_test_framework%s' % boost_lib_suffix,
+                              uselib_store = 'BOOST_TEST')
 
 def build(bld):
     obj = bld(features = 'cxx cxxprogram')
