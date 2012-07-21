@@ -37,4 +37,9 @@ libdcp::enable_test_mode ()
 {
 	Kumu::libdcp_test = true;
 	Metadata::instance()->issue_date = "2012-01-01T00:00:00+00:00";
+
+	/* Remove version strings */
+	Metadata::instance()->issuer = "libdcp-test";
+	Metadata::instance()->creator = "libdcp-test";
+	Metadata::instance()->product_version = "test";
 }
