@@ -304,3 +304,30 @@ DCP::DCP (string directory)
 	}
 }
 
+list<string>
+DCP::equals (DCP const & other, EqualityType type) const
+{
+	list<string> notes;
+	
+	switch (type) {
+	case LIBDCP_METADATA:
+		if (_name != other._name) {
+			notes.push_back ("names differ");
+		}
+		if (_content_kind != other._content_kind) {
+			notes.push_back ("content kinds differ");
+		}
+		if (_fps != other._fps) {
+			notes.push_back ("frames per second differ");
+		}
+		if (_length != other._length) {
+			notes.push_back ("lengths differ");
+		}
+		if (_assets.size() != other._assets.size()) {
+			notes.push_back ("asset counts differ");
+		}
+		break;
+	}
+
+	return notes;
+}

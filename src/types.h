@@ -62,6 +62,10 @@ public:
 	int denominator;
 };
 
+enum EqualityType {
+	LIBDCP_METADATA
+};
+
 }
 
 #endif
