@@ -23,6 +23,7 @@
 
 #include <string>
 #include <sigc++/sigc++.h>
+#include "types.h"
 
 namespace libdcp {
 
@@ -39,7 +40,8 @@ extern std::string make_uuid ();
  */
 extern std::string make_digest (std::string filename, sigc::signal1<void, float>* progress);
 
-extern std::string content_type_to_string (ContentType type);
+extern std::string content_kind_to_string (ContentKind kind);
+extern ContentKind content_kind_from_string (std::string kind);
 extern bool ends_with (std::string big, std::string little);
 	
 }

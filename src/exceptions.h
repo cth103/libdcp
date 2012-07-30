@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_EXCEPTIONS_H
+#define LIBDCP_EXCEPTIONS_H
+
 /** @file  src/exceptions.h
  *  @brief Exceptions thrown by libdcp.
  */
@@ -70,4 +73,40 @@ private:
 	std::string _message;
 };
 
+/** @brief A DCP read exception */
+class DCPReadError : public std::exception
+{
+public:
+	DCPReadError (std::string const & message) : _message (message) {}
+	~DCPReadError () throw () {}
+
+	/** @return error message */
+	char const * what () const throw () {
+		return _message.c_str ();
+	}
+
+private:
+	/** error message */
+	std::string _message;
+};
+
+/** @brief An XML error */
+class XMLError : public std::exception
+{
+public:
+	XMLError (std::string const & message) : _message (message) {}
+	~XMLError () throw () {}
+
+	/** @return error message */
+	char const * what () const throw () {
+		return _message.c_str ();
+	}
+
+private:
+	/** error message */
+	std::string _message;
+};
+	
 }
+
+#endif

@@ -32,6 +32,7 @@
 #include "AS_DCP.h"
 #include "util.h"
 #include "exceptions.h"
+#include "types.h"
 
 using namespace std;
 using namespace boost;
@@ -88,9 +89,9 @@ libdcp::make_digest (string filename, sigc::signal1<void, float>* progress)
 }
 
 string
-libdcp::content_type_to_string (ContentType type)
+libdcp::content_kind_to_string (ContentKind kind)
 {
-	switch (type) {
+	switch (kind) {
 	case FEATURE:
 		return "feature";
 	case SHORT:
@@ -111,6 +112,34 @@ libdcp::content_type_to_string (ContentType type)
 		return "psa";
 	case ADVERTISEMENT:
 		return "advertisement";
+	}
+
+	assert (false);
+}
+
+libdcp::ContentKind
+libdcp::content_kind_from_string (string type)
+{
+	if (type == "feature") {
+		return FEATURE;
+	} else if (type == "short") {
+		return SHORT;
+	} else if (type == "trailer") {
+		return TRAILER;
+	} else if (type == "test") {
+		return TEST;
+	} else if (type == "transitional") {
+		return TRANSITIONAL;
+	} else if (type == "rating") {
+		return RATING;
+	} else if (type == "teaser") {
+		return TEASER;
+	} else if (type == "policy") {
+		return POLICY;
+	} else if (type == "psa") {
+		return PUBLIC_SERVICE_ANNOUNCEMENT;
+	} else if (type == "advertisement") {
+		return ADVERTISEMENT;
 	}
 
 	assert (false);

@@ -50,11 +50,11 @@ public:
 	/** Construct a DCP.
 	 *  @param directory Directory to write files to.
 	 *  @param name Name.
-	 *  @param content_type Content type.
+	 *  @param content_kind Content kind.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
 	 */
-	DCP (std::string directory, std::string name, ContentType content_type, int fps, int length);
+	DCP (std::string directory, std::string name, ContentKind content_kind, int fps, int length);
 
 	DCP (std::string directory);
 
@@ -126,8 +126,8 @@ private:
 	std::string _directory;
 	/** the name of the DCP */
 	std::string _name;
-	/** the content type of the DCP */
-	ContentType _content_type;
+	/** the content kind of the DCP */
+	ContentKind _content_kind;
 	/** frames per second */
 	int _fps;
 	/** length in frames */

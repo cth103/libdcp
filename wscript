@@ -7,6 +7,7 @@ VERSION = '0.05'
 def options(opt):
     opt.load('compiler_cxx')
     opt.add_option('--target-windows', action='store_true', default = False, help = 'set up to do a cross-compile to Windows')
+    opt.add_option('--enable-debug', action='store_true', default = False, help = 'build with debugging information and without optimisation')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -20,12 +21,18 @@ def configure(conf):
 
     conf.check_cfg(package = 'openssl', args = '--cflags --libs', uselib_store = 'OPENSSL', mandatory = True)
     conf.check_cfg(package = 'sigc++-2.0', args = '--cflags --libs', uselib_store = 'SIGC++', mandatory = True)
+    conf.check_cfg(package = 'libxml++-2.6', args = '--cflags --libs', uselib_store = 'LIBXML++', mandatory = True)
 
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'
     else:
         boost_lib_suffix = ''
-    
+
+    if conf.options.enable_debug:
+        conf.env.append_value('CXXFLAGS', '-g')
+    else:
+        conf.env.append_value('CXXFLAGS', '-O3')
+
     conf.check_cxx(fragment = """
     			      #include <boost/filesystem.hpp>\n
     			      int main() { boost::filesystem::copy_file ("a", "b"); }\n
@@ -48,6 +55,7 @@ def build(bld):
         install_path = '${LIBDIR}/pkgconfig')
 
     bld.recurse('src')
+    bld.recurse('tools')
     bld.recurse('test')
     bld.recurse('asdcplib')
 

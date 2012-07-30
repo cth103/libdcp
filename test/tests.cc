@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	t->issue_date = "2012-07-17T04:45:18+00:00";
 	filesystem::remove_all ("build/test/foo");
 	filesystem::create_directories ("build/test/foo");
-	libdcp::DCP d ("build/test/foo", "A Test DCP", libdcp::DCP::FEATURE, 24, 24);
+	libdcp::DCP d ("build/test/foo", "A Test DCP", libdcp::FEATURE, 24, 24);
 
 	d.add_picture_asset (sigc::ptr_fun (&j2c), 32, 32);
 	d.add_sound_asset (sigc::ptr_fun (&wav), 2);
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 
 BOOST_AUTO_TEST_CASE (error_test)
 {
-	libdcp::DCP d ("build/test/bar", "A Test DCP", libdcp::DCP::TEST, 24, 24);
+	libdcp::DCP d ("build/test/bar", "A Test DCP", libdcp::TEST, 24, 24);
 	vector<string> p;
 	p.push_back ("frobozz");
 	BOOST_CHECK_THROW (d.add_picture_asset (p, 32, 32), libdcp::FileError);

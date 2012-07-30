@@ -3,17 +3,21 @@ def build(bld):
     obj.name = 'libdcp'
     obj.target = 'dcp'
     obj.export_includes = ['.']
-    obj.uselib = 'BOOST_FILESYSTEM OPENSSL SIGC++'
+    obj.uselib = 'BOOST_FILESYSTEM OPENSSL SIGC++ LIBXML++'
     obj.use = 'libkumu-libdcp libasdcp-libdcp'
     obj.source = """
-                 dcp.cc
+                 cpl.cc
+                 dcp.cc        
                  asset.cc
                  sound_asset.cc
                  picture_asset.cc
+                 pkl.cc
                  util.cc
                  metadata.cc
                  version.cc
                  test_mode.cc
+                 types.cc
+                 xml.cc
                  """
 
     headers = """

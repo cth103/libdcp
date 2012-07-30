@@ -37,7 +37,7 @@ enum Channel {
 	RS = 5       ///< right surround
 };
 
-enum ContentType
+enum ContentKind
 {
 	FEATURE,
 	SHORT,
@@ -49,6 +49,17 @@ enum ContentType
 	POLICY,
 	PUBLIC_SERVICE_ANNOUNCEMENT,
 	ADVERTISEMENT
+};
+
+class Fraction
+{
+public:
+	Fraction () : numerator (0), denominator (0) {}
+	Fraction (std::string s);
+	Fraction (int n, int d) : numerator (n), denominator (d) {}
+
+	int numerator;
+	int denominator;
 };
 
 }
