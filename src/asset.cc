@@ -33,8 +33,9 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-Asset::Asset (string mxf_path, sigc::signal1<void, float>* progress, int fps, int length)
-	: _mxf_path (mxf_path)
+Asset::Asset (string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int length)
+	: _directory (directory)
+	, _mxf_name (mxf_name)
 	, _progress (progress)
 	, _fps (fps)
 	, _length (length)
@@ -48,13 +49,9 @@ Asset::write_to_pkl (ostream& s) const
 {
 	s << "    <Asset>\n"
 	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
-#if BOOST_FILESYSTEM_VERSION == 3
-	  << "      <AnnotationText>" << filesystem::path(_mxf_path).filename().string() << "</AnnotationText>\n"
-#else		
-	  << "      <AnnotationText>" << filesystem::path(_mxf_path).filename() << "</AnnotationText>\n"
-#endif		
+	  << "      <AnnotationText>" << _mxf_name << "</AnnotationText>\n"
 	  << "      <Hash>" << _digest << "</Hash>\n"
-	  << "      <Size>" << filesystem::file_size(_mxf_path) << "</Size>\n"
+	  << "      <Size>" << filesystem::file_size(mxf_path()) << "</Size>\n"
 	  << "      <Type>application/mxf</Type>\n"
 	  << "    </Asset>\n";
 }
@@ -66,14 +63,10 @@ Asset::write_to_assetmap (ostream& s) const
 	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
 	  << "      <ChunkList>\n"
 	  << "        <Chunk>\n"
-#if BOOST_FILESYSTEM_VERSION == 3		
-	  << "          <Path>" << filesystem::path(_mxf_path).filename().string() << "</Path>\n"
-#else		
-	  << "          <Path>" << filesystem::path(_mxf_path).filename() << "</Path>\n"
-#endif		
+	  << "          <Path>" << _mxf_name << "</Path>\n"
 	  << "          <VolumeIndex>1</VolumeIndex>\n"
 	  << "          <Offset>0</Offset>\n"
-	  << "          <Length>" << filesystem::file_size(_mxf_path) << "</Length>\n"
+	  << "          <Length>" << filesystem::file_size(mxf_path()) << "</Length>\n"
 	  << "        </Chunk>\n"
 	  << "      </ChunkList>\n"
 	  << "    </Asset>\n";
@@ -90,4 +83,13 @@ Asset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
 	unsigned int c;
 	Kumu::hex2bin (_uuid.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
 	assert (c == Kumu::UUID_Length);
+}
+
+filesystem::path
+Asset::mxf_path () const
+{
+	filesystem::path p;
+	p /= _directory;
+	p /= _mxf_name;
+	return p;
 }

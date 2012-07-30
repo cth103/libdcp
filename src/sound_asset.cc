@@ -34,25 +34,25 @@ using namespace boost;
 using namespace libdcp;
 
 SoundAsset::SoundAsset (
-	vector<string> const & files, string mxf_path, sigc::signal1<void, float>* progress, int fps, int length
+	vector<string> const & files, string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int length
 	)
-	: Asset (mxf_path, progress, fps, length)
+	: Asset (directory, mxf_name, progress, fps, length)
 	, _channels (files.size ())
 {
 	construct (sigc::bind (sigc::mem_fun (*this, &SoundAsset::path_from_channel), files));
 }
 
 SoundAsset::SoundAsset (
-	sigc::slot<string, Channel> get_path, string mxf_path, sigc::signal1<void, float>* progress, int fps, int length, int channels
+	sigc::slot<string, Channel> get_path, string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int length, int channels
 	)
-	: Asset (mxf_path, progress, fps, length)
+	: Asset (directory, mxf_name, progress, fps, length)
 	, _channels (channels)
 {
 	construct (get_path);
 }
 
-SoundAsset::SoundAsset (string mxf_path, int fps, int length)
-	: Asset (mxf_path, 0, fps, length)
+SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int length)
+	: Asset (directory, mxf_name, 0, fps, length)
 	, _channels (0)
 {
 
@@ -118,8 +118,8 @@ SoundAsset::construct (sigc::slot<string, Channel> get_path)
 	fill_writer_info (&writer_info);
 
 	ASDCP::PCM::MXFWriter mxf_writer;
-	if (ASDCP_FAILURE (mxf_writer.OpenWrite (_mxf_path.c_str(), writer_info, audio_desc))) {
-		throw FileError ("could not open audio MXF for writing", _mxf_path);
+	if (ASDCP_FAILURE (mxf_writer.OpenWrite (mxf_path().c_str(), writer_info, audio_desc))) {
+		throw FileError ("could not open audio MXF for writing", mxf_path().string());
 	}
 
 	for (int i = 0; i < _length; ++i) {
@@ -160,7 +160,7 @@ SoundAsset::construct (sigc::slot<string, Channel> get_path)
 		throw MiscError ("could not finalise audio MXF");
 	}
 
-	_digest = make_digest (_mxf_path, _progress);
+	_digest = make_digest (mxf_path().string(), _progress);
 }
 
 void
@@ -168,11 +168,7 @@ SoundAsset::write_to_cpl (ostream& s) const
 {
 	s << "        <MainSound>\n"
 	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
-#if BOOST_FILESYSTEM_VERSION == 3		
-	  << "          <AnnotationText>" << filesystem::path(_mxf_path).filename().string() << "</AnnotationText>\n"
-#else		
-	  << "          <AnnotationText>" << filesystem::path(_mxf_path).filename() << "</AnnotationText>\n"
-#endif		
+	  << "          <AnnotationText>" << _mxf_name << "</AnnotationText>\n"
 	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
 	  << "          <IntrinsicDuration>" << _length << "</IntrinsicDuration>\n"
 	  << "          <EntryPoint>0</EntryPoint>\n"

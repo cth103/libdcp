@@ -37,14 +37,16 @@ public:
 	/** Construct a SoundAsset, generating the MXF from the WAV files.
 	 *  This may take some time; progress is indicated by emission of the Progress signal.
 	 *  @param files Pathnames of sound files, in the order Left, Right, Centre, Lfe (sub), Left surround, Right surround.
-	 *  @param mxf_path Pathname of MXF file to create.
+	 *  @param directory Directory in which to create MXF file.
+	 *  @param mxf_name Name of MXF file to create.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
 	 */
 	SoundAsset (
 		std::vector<std::string> const & files,
-		std::string mxf_path,
+		std::string directory,
+		std::string mxf_name,
 		sigc::signal1<void, float>* progress,
 		int fps,
 		int length
@@ -53,7 +55,8 @@ public:
 	/** Construct a SoundAsset, generating the MXF from the WAV files.
 	 *  This may take some time; progress is indicated by emission of the Progress signal.
 	 *  @param get_path Functor which returns a WAV file path for a given channel.
-	 *  @param mxf_path Pathname of MXF file to create.
+	 *  @param directory Directory in which to create MXF file.
+	 *  @param mxf_name Name of MXF file to create.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
@@ -61,7 +64,8 @@ public:
 	 */
 	SoundAsset (
 		sigc::slot<std::string, Channel> get_path,
-		std::string mxf_path,
+		std::string directory,
+		std::string mxf_name,
 		sigc::signal1<void, float>* progress,
 		int fps,
 		int length,
@@ -69,7 +73,8 @@ public:
 		);
 
 	SoundAsset (
-		std::string mxf_path,
+		std::string directory,
+		std::string mxf_name,
 		int fps,
 		int length
 		);

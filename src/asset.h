@@ -42,12 +42,13 @@ class Asset
 {
 public:
 	/** Construct an Asset.
-	 *  @param mxf_path Pathname of MXF file.
+	 *  @param directory Directory where MXF file is.
+	 *  @param mxf_name Name of MXF file.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
 	 */
-	Asset (std::string mxf_path, sigc::signal1<void, float>* progress, int fps, int length);
+	Asset (std::string directory, std::string mxf_path, sigc::signal1<void, float>* progress, int fps, int length);
 
 	/** Write details of the asset to a CPL stream.
 	 *  @param s Stream.
@@ -70,8 +71,12 @@ protected:
 	 */
 	void fill_writer_info (ASDCP::WriterInfo* w) const;
 
-	/** Path to our MXF file */
-	std::string _mxf_path;
+	boost::filesystem::path mxf_path () const;
+
+	/** Directory that our MXF file is in */
+	std::string _directory;
+	/** Name of our MXF file */
+	std::string _mxf_name;
 	/** Signal to emit to report progress */
 	sigc::signal1<void, float>* _progress;
 	/** Frames per second */

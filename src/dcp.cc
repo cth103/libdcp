@@ -54,37 +54,25 @@ DCP::DCP (string directory, string name, ContentKind content_kind, int fps, int 
 void
 DCP::add_sound_asset (vector<string> const & files)
 {
-	filesystem::path p;
-	p /= _directory;
-	p /= "audio.mxf";
-	_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (files, p.string(), &Progress, _fps, _length)));
+	_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (files, _directory, "audio.mxf", &Progress, _fps, _length)));
 }
 
 void
 DCP::add_sound_asset (sigc::slot<string, Channel> get_path, int channels)
 {
-	filesystem::path p;
-	p /= _directory;
-	p /= "audio.mxf";
-	_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (get_path, p.string(), &Progress, _fps, _length, channels)));
+	_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (get_path, _directory, "audio.mxf", &Progress, _fps, _length, channels)));
 }
 
 void
 DCP::add_picture_asset (vector<string> const & files, int width, int height)
 {
-	filesystem::path p;
-	p /= _directory;
-	p /= "video.mxf";
-	_assets.push_back (shared_ptr<PictureAsset> (new PictureAsset (files, p.string(), &Progress, _fps, _length, width, height)));
+	_assets.push_back (shared_ptr<PictureAsset> (new PictureAsset (files, _directory, "video.mxf", &Progress, _fps, _length, width, height)));
 }
 
 void
 DCP::add_picture_asset (sigc::slot<string, int> get_path, int width, int height)
 {
-	filesystem::path p;
-	p /= _directory;
-	p /= "video.mxf";
-	_assets.push_back (shared_ptr<PictureAsset> (new PictureAsset (get_path, p.string(), &Progress, _fps, _length, width, height)));
+	_assets.push_back (shared_ptr<PictureAsset> (new PictureAsset (get_path, _directory, "video.mxf", &Progress, _fps, _length, width, height)));
 }
 
 void
@@ -295,6 +283,7 @@ DCP::DCP (string directory)
 
 	_assets.push_back (shared_ptr<PictureAsset> (
 				   new PictureAsset (
+					   _directory,
 					   cpl_assets->main_picture->annotation_text,
 					   _fps,
 					   _length,
@@ -306,6 +295,7 @@ DCP::DCP (string directory)
 	if (cpl_assets->main_sound) {
 		_assets.push_back (shared_ptr<SoundAsset> (
 					   new SoundAsset (
+						   _directory,
 						   cpl_assets->main_picture->annotation_text,
 						   _fps,
 						   _length
