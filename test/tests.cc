@@ -74,3 +74,15 @@ BOOST_AUTO_TEST_CASE (error_test)
 	BOOST_CHECK_THROW (d.add_picture_asset (p, 32, 32), libdcp::FileError);
 	BOOST_CHECK_THROW (d.add_sound_asset (p), libdcp::FileError);
 }
+
+BOOST_AUTO_TEST_CASE (read_dcp)
+{
+	libdcp::DCP d ("test/ref/DCP");
+
+	BOOST_CHECK_EQUAL (d.name(), "A Test DCP");
+	BOOST_CHECK_EQUAL (d.content_kind(), libdcp::FEATURE);
+	BOOST_CHECK_EQUAL (d.frames_per_second(), 24);
+	BOOST_CHECK_EQUAL (d.length(), 24);
+}
+	
+	

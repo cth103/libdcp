@@ -90,6 +90,22 @@ public:
 	 */
 	void write_xml () const;
 
+	std::string name () const {
+		return _name;
+	}
+
+	ContentKind content_kind () const {
+		return _content_kind;
+	}
+
+	int frames_per_second () const {
+		return _fps;
+	}
+
+	int length () const {
+		return _length;
+	}
+
 	/** Emitted with a parameter between 0 and 1 to indicate progress
 	 *  for long jobs.
 	 */
