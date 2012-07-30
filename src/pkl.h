@@ -16,15 +16,6 @@ public:
 	std::string type;
 };
 
-class PKLAssetList : public XMLNode
-{
-public:
-	PKLAssetList ();
-	PKLAssetList (xmlpp::Node const * node);
-
-	std::list<boost::shared_ptr<PKLAsset> > assets;
-};
-
 class PKL : public XMLFile
 {
 public:
@@ -35,7 +26,7 @@ public:
 	std::string issue_date;
 	std::string issuer;
 	std::string creator;
-	boost::shared_ptr<PKLAssetList> asset_list;
+	std::list<boost::shared_ptr<PKLAsset> > assets;
 };
 	
 }

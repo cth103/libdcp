@@ -6,9 +6,10 @@ def build(bld):
     obj.uselib = 'BOOST_FILESYSTEM OPENSSL SIGC++ LIBXML++'
     obj.use = 'libkumu-libdcp libasdcp-libdcp'
     obj.source = """
+                 asset.cc
+                 asset_map.cc
                  cpl.cc
                  dcp.cc        
-                 asset.cc
                  sound_asset.cc
                  picture_asset.cc
                  pkl.cc

@@ -51,6 +51,13 @@ SoundAsset::SoundAsset (
 	construct (get_path);
 }
 
+SoundAsset::SoundAsset (string mxf_path, int fps, int length)
+	: Asset (mxf_path, 0, fps, length)
+	, _channels (0)
+{
+
+}
+
 string
 SoundAsset::path_from_channel (Channel channel, vector<string> const & files)
 {

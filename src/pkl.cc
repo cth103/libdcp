@@ -11,13 +11,7 @@ PKL::PKL (string file)
 	issue_date = string_node ("IssueDate");
 	issuer = string_node ("Issuer");
 	creator = string_node ("Creator");
-	asset_list = sub_node<PKLAssetList> ("AssetList");
-}
-
-PKLAssetList::PKLAssetList (xmlpp::Node const * node)
-	: XMLNode (node)
-{
-	assets = sub_nodes<PKLAsset> ("Asset");
+	assets = sub_nodes<PKLAsset> ("AssetList", "Asset");
 }
 
 PKLAsset::PKLAsset (xmlpp::Node const * node)

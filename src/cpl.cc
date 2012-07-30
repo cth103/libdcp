@@ -14,7 +14,7 @@ CPL::CPL (string file)
 	content_kind = kind_node ("ContentKind");
 	content_version = sub_node<ContentVersion> ("ContentVersion");
 	ignore_node ("RatingList");
-	reel_list = sub_node<ReelList> ("ReelList");
+	reels = sub_nodes<Reel> ("ReelList", "Reel");
 
 	done ();
 }
@@ -24,13 +24,6 @@ ContentVersion::ContentVersion (xmlpp::Node const * node)
 {
 	id = string_node ("Id");
 	label_text = string_node ("LabelText");
-	done ();
-}
-
-ReelList::ReelList (xmlpp::Node const * node)
-	: XMLNode (node)
-{
-	reels = sub_nodes<Reel> ("Reel");
 	done ();
 }
 

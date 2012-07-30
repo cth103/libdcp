@@ -4,20 +4,14 @@ using namespace std;
 using namespace libdcp;
 
 AssetMap::AssetMap (string file)
-	: XMLFile (file)
+	: XMLFile (file, "AssetMap")
 {
 	id = string_node ("Id");
 	creator = string_node ("Creator");
 	volume_count = int_node ("VolumeCount");
 	issue_date = string_node ("IssueDate");
 	issuer = string_node ("Issuer");
-	asset_list = sub_node<AssetList> ("AssetMapAssetList");
-}
-
-AssetMapAssetList::AssetMapAssetList (xmlpp::Node const * node)
-	: XMLNode (node)
-{
-	assets = sub_nodes<AssetMapAsset> ("Asset");
+	assets = sub_nodes<AssetMapAsset> ("AssetList", "Asset");
 }
 
 AssetMapAsset::AssetMapAsset (xmlpp::Node const * node)
@@ -25,13 +19,7 @@ AssetMapAsset::AssetMapAsset (xmlpp::Node const * node)
 {
 	id = string_node ("Id");
 	packing_list = optional_string_node ("PackingList");
-	chunk_list = sub_node<ChunkList> ("ChunkList");
-}
-
-ChunkList::ChunkList (xmlpp::Node const * node)
-	: XMLNode (node)
-{
-	chunks = sub_nodes<Chunk> ("Chunk");
+	chunks = sub_nodes<Chunk> ("ChunkList", "Chunk");
 }
 
 Chunk::Chunk (xmlpp::Node const * node)

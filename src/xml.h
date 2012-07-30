@@ -48,8 +48,9 @@ protected:
 	}
 	
 	template <class T>
-	std::list<boost::shared_ptr<T> > sub_nodes (std::string name) {
-		std::list<xmlpp::Node*> n = xml_nodes (name);
+	std::list<boost::shared_ptr<T> > sub_nodes (std::string name, std::string sub) {
+		XMLNode p (xml_node (name));
+		std::list<xmlpp::Node*> n = p.xml_nodes (sub);
 		std::list<boost::shared_ptr<T> > r;
 		for (typename std::list<xmlpp::Node*>::iterator i = n.begin(); i != n.end(); ++i) {
 			r.push_back (boost::shared_ptr<T> (new T (*i)));

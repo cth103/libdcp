@@ -135,8 +135,6 @@ XMLFile::XMLFile (string file, string root_name)
 	if (_node->get_name() != root_name) {
 		throw XMLError ("unrecognised root node");
 	}
-
-	cout << this << " root node is " << _node->get_name() << "\n";
 }
 
 XMLFile::~XMLFile ()

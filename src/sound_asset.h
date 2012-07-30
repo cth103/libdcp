@@ -67,6 +67,12 @@ public:
 		int length,
 		int channels
 		);
+
+	SoundAsset (
+		std::string mxf_path,
+		int fps,
+		int length
+		);
 	
 	/** Write details of this asset to a CPL stream.
 	 *  @param s Stream.

@@ -53,15 +53,6 @@ public:
 	boost::shared_ptr<CPLAssetList> asset_list;
 };
 
-class ReelList : public XMLNode
-{
-public:
-	ReelList () {}
-	ReelList (xmlpp::Node const * node);
-
-	std::list<boost::shared_ptr<Reel> > reels;
-};
-
 class ContentVersion : public XMLNode
 {
 public:
@@ -82,9 +73,9 @@ public:
 	std::string issue_date;
 	std::string creator;
 	std::string content_title_text;
-	std::string content_kind;
+	ContentKind content_kind;
 	boost::shared_ptr<ContentVersion> content_version;
-	boost::shared_ptr<ReelList> reel_list;
+	std::list<boost::shared_ptr<Reel> > reels;
 };
 
 }

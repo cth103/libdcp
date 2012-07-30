@@ -3,6 +3,18 @@
 
 namespace libdcp {
 
+class Chunk : public XMLNode
+{
+public:
+	Chunk ();
+	Chunk (xmlpp::Node const * node);
+
+	std::string path;
+	int volume_index;
+	int offset;
+	int length;
+};
+
 class AssetMapAsset : public XMLNode
 {
 public:
@@ -11,16 +23,7 @@ public:
 
 	std::string id;
 	std::string packing_list;
-	boost::shared_ptr<ChunkList> 
-};
-
-class AssetMapAssetList : public XMLNode
-{
-public:
-	AssetMapAssetList ();
-	AssetMapAssetList (xmlpp::Node const * node);
-
-	std::list<boost::shared_ptr<AssetMapAsset> > assets;
+	std::list<boost::shared_ptr<Chunk> > chunks;
 };
 
 class AssetMap : public XMLFile
@@ -33,5 +36,7 @@ public:
 	int volume_count;
 	std::string issue_date;
 	std::string issuer;
-	boost::shared_ptr<AssetMapAssetList> asset_list;
+	std::list<boost::shared_ptr<AssetMapAsset> > assets;
 };
+
+}

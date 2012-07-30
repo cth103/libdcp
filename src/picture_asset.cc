@@ -66,6 +66,14 @@ PictureAsset::PictureAsset (
 	construct (sigc::bind (sigc::mem_fun (*this, &PictureAsset::path_from_list), files));
 }
 
+PictureAsset::PictureAsset (string mxf_path, int fps, int length, int width, int height)
+	: Asset (mxf_path, 0, fps, length)
+	, _width (width)
+	, _height (height)
+{
+
+}
+
 string
 PictureAsset::path_from_list (int f, vector<string> const & files) const
 {

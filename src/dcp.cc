@@ -35,6 +35,7 @@
 #include "exceptions.h"
 #include "cpl.h"
 #include "pkl.h"
+#include "asset_map.h"
 
 using namespace std;
 using namespace boost;
@@ -273,7 +274,43 @@ DCP::DCP (string directory)
 		}
 	}
 
+	/* Read the XML */
 	CPL cpl (cpl_file);
 	PKL pkl (pkl_file);
+	AssetMap asset_map (asset_map_file);
+
+	/* Cross-check */
+	/* XXX */
+
+	/* Now cherry-pick the required bits into our own data structure */
+	
+	_name = cpl.annotation_text;
+	_content_kind = cpl.content_kind;
+
+	shared_ptr<CPLAssetList> cpl_assets = cpl.reels.front()->asset_list;
+	
+	/* XXX */
+	_fps = cpl_assets->main_picture->frame_rate.numerator;
+	_length = cpl_assets->main_picture->duration;
+
+	_assets.push_back (shared_ptr<PictureAsset> (
+				   new PictureAsset (
+					   cpl_assets->main_picture->annotation_text,
+					   _fps,
+					   _length,
+					   cpl_assets->main_picture->screen_aspect_ratio.numerator,
+					   cpl_assets->main_picture->screen_aspect_ratio.denominator
+					   )
+				   ));
+
+	if (cpl_assets->main_sound) {
+		_assets.push_back (shared_ptr<SoundAsset> (
+					   new SoundAsset (
+						   cpl_assets->main_picture->annotation_text,
+						   _fps,
+						   _length
+						   )
+					   ));
+	}
 }
 
