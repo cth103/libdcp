@@ -239,32 +239,152 @@ DCP::write_assetmap (string cpl_uuid, int cpl_length, string pkl_uuid, int pkl_l
 	   << "</AssetMap>\n";
 }
 
-string
-DCP::content_type_string (ContentType type)
+
+DCP::DCP (string directory)
+	: _directory (directory)
 {
-	switch (type) {
-	case FEATURE:
-		return "feature";
-	case SHORT:
-		return "short";
-	case TRAILER:
-		return "trailer";
-	case TEST:
-		return "test";
-	case TRANSITIONAL:
-		return "transitional";
-	case RATING:
-		return "rating";
-	case TEASER:
-		return "teaser";
-	case POLICY:
-		return "policy";
-	case PUBLIC_SERVICE_ANNOUNCEMENT:
-		return "psa";
-	case ADVERTISEMENT:
-		return "advertisement";
+	string cpl;
+	string pkl;
+	string asset_map;
+
+	for (filesystem::directory_iterator i = filesystem::directory_iterator(directory); i != filesystem::directory_iterator(); ++i) {
+		string const t = i->path()->string ();
+		if (ends_with (t, "_cpl.xml")) {
+			if (cpl.empty ()) {
+				cpl = t;
+			} else {
+				throw DCPReadError ("duplicate CPLs found");
+			}
+		} else if (ends_with (t, "_pkl.xml")) {
+			if (pkl.empty ()) {
+				pkl = t;
+			} else {
+				throw DCPReadError ("duplicate PKLs found");
+			}
+		} else if (ends_with (t, "ASSETMAP.xml")) {
+			if (asset_map.empty ()) {
+				asset_map = t;
+			} else {
+				throw DCPReadError ("duplicate AssetMaps found");
+			}
+		}
 	}
 
-	assert (false);
+	load_cpl (cpl);
+	load_pkl (pkl);
+	load_asset_map (asset_map);
 }
+
+void
+DCP::load_cpl (string file)
+{
+	xmlpp::DOMParser parser;
+	parser.parser_file (file);
+	if (!parser) {
+		throw DCPReadError ("could not create parser for CPL");
+	}
+
+	xmlpp::Element* root = parser.get_document()->get_root_node ();
+	dcp_read_assert (root->get_name() == "CompositionPlaylist", "unrecognised CPL format");
+
+	xmlpp::Node::NodeList children = root->get_children ();
+	for (xmlpp::Node::NodeList::iterator i = children.begin(); i != children.end(); ++i) {
+		bool taken = false;
+		xml_maybe (*i, taken, _cpl_id, "Id");
+		xml_maybe (*i, taken, _annotation_text, "AnnotationText");
+		xml_maybe (*i, taken, _issue_date, "IssueDate");
+		xml_maybe (*i, taken, _creator, "Creator");
+		xml_maybe (*i, taken, _content_title_text, "ContentTitleText");
+		xml_maybe (*i, taken, _content_kind, "ContentKind");
+
+		if ((*i)->get_name() == "ContentVersion") {
+			taken = true;
+			load_cpl_content_version (*i);
+		}
+
+		if ((*i)->get_name() == "RatingList") {
+			taken = true;
+		}
+
+		if ((*i)->get_name() == "ReelList") {
+			taken = true;
+			load_cpl_reel_list (*i);
+		}
+
+		xml_assert_taken (*i, taken);
+	}
+}
+
+void
+DCP::load_cpl_content_version (xmlpp::Node const * node)
+{
+	xmlpp::Node::NodeList children = node->get_children ();
+	for (xmlpp::Node::NodeList::iterator i = children.begin(); i != children.end(); ++i) {
+		bool taken = false;
+		xml_maybe (*i, taken, _content_version_id, "Id");
+		xml_maybe (*i, taken, _content_version_label_text, "LabelText");
+		xml_assert_taken (*i, taken);
+	}
+}
+
+void
+DCP::load_cpl_reel_list (xmlpp::Node const * node)
+{
+	xmlpp::Node::NodeList children = node->get_children ();
+	bool had_reel = false;
+	for (xmlpp::Node::NodeList::iterator i = children.begin(); i != children.end(); ++i) {
+		bool taken = false;
+		if ((*i)->get_name() == "Reel") {
+			if (!had_reel) {
+				load_cpl_reel (*i);
+				had_reel = true;
+			} else {
+				throw DCPReadError ("multiple reels not supported");
+			}
+		}
+		xml_assert_taken (*i, taken);
+	}
+}
+
+void
+DCP::load_cpl_reel (xmlpp::Node const * node)
+{
+	xmlpp::Node::NodeList children = node->get_children ();
+	for (xmlpp::Node::NodeList::iterator i = children.begin(); i != children.end(); ++i) {
+		bool taken = false;
+		xml_taken (*i, taken, _reel_id, "Id");
+		if ((*i)->name() == "AssetList") {
+			taken = true;
+			load_cpl_asset_list (*i);
+		}
+		xml_assert_taken (*i, taken);
+	}
+}
+
+void
+DCP::load_cpl_asset_list (xmlpp::Node const * node)
+{
+	xmlpp::Node::NodeList children = node->get_children ();
+	for (xmlpp::Node::NodeList::iterator i = children.begin(); i != children.end(); ++i) {
+		bool taken = false;
+		if ((*i)->name() == "MainPicture") {
+			taken = true;
+			load_cpl_main_picture (*i);
+		} else if ((*i)->name() == "MainSound") {
+			taken = true;
+			load_cpl_main_sound (*i);
+		}
+		xml_assert_taken (*i, taken);
+	}
+}
+
+void
+DCP::load_cpl_main_picture (xmlpp::Node const * node)
+{
+	xmlpp::Node::NodeList children = node->get_children ();
+	for (xmlpp::Node::NodeList::iterator i = children.begin(); i != children.end(); ++i) {
+		bool taken = false;
+		xml_maybe (*i, taken, _video_id, "Id");
 		
+	}
+}

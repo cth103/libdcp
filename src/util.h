@@ -39,4 +39,7 @@ extern std::string make_uuid ();
  */
 extern std::string make_digest (std::string filename, sigc::signal1<void, float>* progress);
 
+extern std::string content_type_to_string (ContentType type);
+extern bool ends_with (std::string big, std::string little);
+	
 }

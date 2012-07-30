@@ -30,6 +30,10 @@
 #include <sigc++/sigc++.h>
 #include "types.h"
 
+namespace xmlpp {
+	class Node;
+}
+
 /** @brief Namespace for everything in libdcp */
 namespace libdcp
 {
@@ -43,20 +47,6 @@ class Asset;
 class DCP
 {
 public:
-	enum ContentType
-	{
-		FEATURE,
-		SHORT,
-		TRAILER,
-		TEST,
-		TRANSITIONAL,
-		RATING,
-		TEASER,
-		POLICY,
-		PUBLIC_SERVICE_ANNOUNCEMENT,
-		ADVERTISEMENT
-	};
-
 	/** Construct a DCP.
 	 *  @param directory Directory to write files to.
 	 *  @param name Name.
@@ -65,6 +55,8 @@ public:
 	 *  @param length Length in frames.
 	 */
 	DCP (std::string directory, std::string name, ContentType content_type, int fps, int length);
+
+	DCP (std::string directory);
 
 	/** Add a sound asset.
 	 *  @param files Pathnames of WAV files to use in the order Left, Right,
@@ -129,11 +121,6 @@ private:
 	 *  @param pkl_length Length of our PKL in bytes.
 	 */
 	void write_assetmap (std::string cpl_uuid, int cpl_length, std::string pkl_uuid, int pkl_length) const;
-
-	/** @param type A content type.
-	 *  @return A string representation suitable for use in a CPL.
-	 */
-	static std::string content_type_string (ContentType type);
 
 	/** the directory that we are writing to */
 	std::string _directory;

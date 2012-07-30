@@ -37,6 +37,20 @@ enum Channel {
 	RS = 5       ///< right surround
 };
 
+enum ContentType
+{
+	FEATURE,
+	SHORT,
+	TRAILER,
+	TEST,
+	TRANSITIONAL,
+	RATING,
+	TEASER,
+	POLICY,
+	PUBLIC_SERVICE_ANNOUNCEMENT,
+	ADVERTISEMENT
+};
+
 }
 
 #endif

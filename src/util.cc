@@ -86,3 +86,42 @@ libdcp::make_digest (string filename, sigc::signal1<void, float>* progress)
 	char digest[64];
 	return Kumu::base64encode (byte_buffer, 20, digest, 64);
 }
+
+string
+libdcp::content_type_to_string (ContentType type)
+{
+	switch (type) {
+	case FEATURE:
+		return "feature";
+	case SHORT:
+		return "short";
+	case TRAILER:
+		return "trailer";
+	case TEST:
+		return "test";
+	case TRANSITIONAL:
+		return "transitional";
+	case RATING:
+		return "rating";
+	case TEASER:
+		return "teaser";
+	case POLICY:
+		return "policy";
+	case PUBLIC_SERVICE_ANNOUNCEMENT:
+		return "psa";
+	case ADVERTISEMENT:
+		return "advertisement";
+	}
+
+	assert (false);
+}
+		
+bool
+libdcp::ends_with (string big, string little)
+{
+	if (little.size() > big.size()) {
+		return false;
+	}
+
+	return big.compare (big.length() - little.length(), little.length(), little) == 0;
+}
