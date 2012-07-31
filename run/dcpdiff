@@ -2,8 +2,10 @@
 
 export LD_LIBRARY_PATH=build/src
 if [ "$1" == "--debug" ]; then
+    shift
     gdb --args build/tools/dcpdiff "$@"
 elif [ "$1" == "--valgrind" ]; then
+    shift
     valgrind --tool="memcheck" --leak-check=full --show-reachable=yes build/tools/dcpdiff "$@"
 else
     build/tools/dcpdiff "$@"
