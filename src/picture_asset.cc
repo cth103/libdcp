@@ -200,11 +200,11 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
 		ASDCP::JP2K::FrameBuffer buffer_B (4 * Kumu::Megabyte);
 
 		for (int i = 0; i < _length; ++i) {
-			if (ASDCP_FAILURE (reader_A.ReadFrame (0, buffer_A))) {
+			if (ASDCP_FAILURE (reader_A.ReadFrame (i, buffer_A))) {
 				throw DCPReadError ("could not read video frame");
 			}
 
-			if (ASDCP_FAILURE (reader_B.ReadFrame (0, buffer_B))) {
+			if (ASDCP_FAILURE (reader_B.ReadFrame (i, buffer_B))) {
 				throw DCPReadError ("could not read video frame");
 			}
 
