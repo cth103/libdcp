@@ -51,7 +51,7 @@ Asset::write_to_pkl (ostream& s) const
 	s << "    <Asset>\n"
 	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
 	  << "      <AnnotationText>" << _mxf_name << "</AnnotationText>\n"
-	  << "      <Hash>" << _digest << "</Hash>\n"
+	  << "      <Hash>" << digest() << "</Hash>\n"
 	  << "      <Size>" << filesystem::file_size(mxf_path()) << "</Size>\n"
 	  << "      <Type>application/mxf</Type>\n"
 	  << "    </Asset>\n";
@@ -114,7 +114,7 @@ Asset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
 	
 	if (flags & MXF_BITWISE) {
 
-		if (_digest != other->_digest) {
+		if (digest() != other->digest()) {
 			notes.push_back ("MXF digests differ");
 		}
 		
@@ -148,3 +148,17 @@ Asset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
 
 	return notes;
 }
+
+string
+Asset::digest () const
+{
+	if (_digest.empty ()) {
+		_digest = make_digest (mxf_path().string(), 0);
+	}
+
+	return _digest;
+}
+
+		
+		
+       

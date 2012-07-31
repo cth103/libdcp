@@ -74,7 +74,7 @@ PictureAsset::PictureAsset (string directory, string mxf_name, int fps, int leng
 	, _width (width)
 	, _height (height)
 {
-	_digest = make_digest (mxf_path().string(), 0);
+
 }
 
 string
@@ -123,8 +123,6 @@ PictureAsset::construct (sigc::slot<string, int> get_path)
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
 		throw MiscError ("error in finalising video MXF");
 	}
-
-	_digest = make_digest (mxf_path().string(), _progress);
 }
 
 void

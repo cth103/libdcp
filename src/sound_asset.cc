@@ -57,7 +57,7 @@ SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int length)
 	: Asset (directory, mxf_name, 0, fps, length)
 	, _channels (0)
 {
-	_digest = make_digest (mxf_path().string(), 0);
+
 }
 
 string
@@ -161,8 +161,6 @@ SoundAsset::construct (sigc::slot<string, Channel> get_path)
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
 		throw MiscError ("could not finalise audio MXF");
 	}
-
-	_digest = make_digest (mxf_path().string(), _progress);
 }
 
 void

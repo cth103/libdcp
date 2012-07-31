@@ -78,6 +78,7 @@ protected:
 	void fill_writer_info (ASDCP::WriterInfo* w) const;
 
 	boost::filesystem::path mxf_path () const;
+	std::string digest () const;
 
 	/** Directory that our MXF file is in */
 	std::string _directory;
@@ -91,8 +92,10 @@ protected:
 	int _length;
 	/** Our UUID */
 	std::string _uuid;
+
+private:	
 	/** Digest of our MXF */
-	std::string _digest;
+	mutable std::string _digest;
 };
 
 }
