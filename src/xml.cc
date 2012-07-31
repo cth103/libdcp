@@ -100,10 +100,10 @@ XMLNode::fraction_node (string name)
 	return Fraction (string_node (name));
 }
 
-int
-XMLNode::int_node (string name)
+int64_t
+XMLNode::int64_node (string name)
 {
-	return lexical_cast<int> (string_node (name));
+	return lexical_cast<int64_t> (string_node (name));
 }
 
 void

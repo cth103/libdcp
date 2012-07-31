@@ -20,7 +20,7 @@ PKLAsset::PKLAsset (xmlpp::Node const * node)
 	id = string_node ("Id");
 	annotation_text = optional_string_node ("AnnotationText");
 	hash = string_node ("Hash");
-	size = int_node ("Size");
+	size = int64_node ("Size");
 	type = string_node ("Type");
 }
 	

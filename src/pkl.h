@@ -12,7 +12,7 @@ public:
 	std::string id;
 	std::string annotation_text;
 	std::string hash;
-	int size;
+	int64_t size;
 	std::string type;
 };
 

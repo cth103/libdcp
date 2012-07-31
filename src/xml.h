@@ -26,7 +26,7 @@ protected:
 	std::string optional_string_node (std::string);
 	ContentKind kind_node (std::string);
 	Fraction fraction_node (std::string);
-	int int_node (std::string);
+	int64_t int64_node (std::string);
 	void ignore_node (std::string);
 	void done ();
 

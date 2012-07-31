@@ -8,7 +8,7 @@ AssetMap::AssetMap (string file)
 {
 	id = string_node ("Id");
 	creator = string_node ("Creator");
-	volume_count = int_node ("VolumeCount");
+	volume_count = int64_node ("VolumeCount");
 	issue_date = string_node ("IssueDate");
 	issuer = string_node ("Issuer");
 	assets = sub_nodes<AssetMapAsset> ("AssetList", "Asset");
@@ -26,8 +26,8 @@ Chunk::Chunk (xmlpp::Node const * node)
 	: XMLNode (node)
 {
 	path = string_node ("Path");
-	volume_index = int_node ("VolumeIndex");
-	offset = int_node ("Offset");
-	length = int_node ("Length");
+	volume_index = int64_node ("VolumeIndex");
+	offset = int64_node ("Offset");
+	length = int64_node ("Length");
 }
 

@@ -10,9 +10,9 @@ public:
 	Chunk (xmlpp::Node const * node);
 
 	std::string path;
-	int volume_index;
-	int offset;
-	int length;
+	int64_t volume_index;
+	int64_t offset;
+	int64_t length;
 };
 
 class AssetMapAsset : public XMLNode
@@ -33,7 +33,7 @@ public:
 
 	std::string id;
 	std::string creator;
-	int volume_count;
+	int64_t volume_count;
 	std::string issue_date;
 	std::string issuer;
 	std::list<boost::shared_ptr<AssetMapAsset> > assets;

@@ -51,9 +51,9 @@ MainPicture::MainPicture (xmlpp::Node const * node)
 	id = string_node ("Id");
 	annotation_text = string_node ("AnnotationText");
 	edit_rate = fraction_node ("EditRate");
-	intrinsic_duration = int_node ("IntrinsicDuration");
-	entry_point = int_node ("EntryPoint");
-	duration = int_node ("Duration");
+	intrinsic_duration = int64_node ("IntrinsicDuration");
+	entry_point = int64_node ("EntryPoint");
+	duration = int64_node ("Duration");
 	frame_rate = fraction_node ("FrameRate");
 	screen_aspect_ratio = fraction_node ("ScreenAspectRatio");
 
@@ -66,9 +66,9 @@ MainSound::MainSound (xmlpp::Node const * node)
 	id = string_node ("Id");
 	annotation_text = string_node ("AnnotationText");
 	edit_rate = fraction_node ("EditRate");
-	intrinsic_duration = int_node ("IntrinsicDuration");
-	entry_point = int_node ("EntryPoint");
-	duration = int_node ("Duration");
+	intrinsic_duration = int64_node ("IntrinsicDuration");
+	entry_point = int64_node ("EntryPoint");
+	duration = int64_node ("Duration");
 
 	done ();
 }

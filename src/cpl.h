@@ -12,9 +12,9 @@ public:
 	std::string id;
 	std::string annotation_text;
 	Fraction edit_rate;
-	int intrinsic_duration;
-	int entry_point;
-	int duration;
+	int64_t intrinsic_duration;
+	int64_t entry_point;
+	int64_t duration;
 	Fraction frame_rate;
 	Fraction screen_aspect_ratio;
 };
@@ -28,9 +28,9 @@ public:
 	std::string id;
 	std::string annotation_text;
 	Fraction edit_rate;
-	int intrinsic_duration;
-	int entry_point;
-	int duration;
+	int64_t intrinsic_duration;
+	int64_t entry_point;
+	int64_t duration;
 };
 
 class CPLAssetList : public XMLNode
