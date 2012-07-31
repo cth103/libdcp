@@ -110,12 +110,14 @@ Asset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
 		if (_length != other->_length) {
 			notes.push_back ("MXF lengths differ");
 		}
-		if (_digest != other->_digest) {
-			notes.push_back ("MXF digests differ");
-		}
 	}
 	
 	if (flags & MXF_BITWISE) {
+
+		if (_digest != other->_digest) {
+			notes.push_back ("MXF digests differ");
+		}
+		
 		if (filesystem::file_size (mxf_path()) != filesystem::file_size (other->mxf_path())) {
 			notes.push_back (mxf_path().string() + " and " + other->mxf_path().string() + " sizes differ");
 			return notes;
@@ -135,19 +137,13 @@ Asset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
 			a.read (abuffer, t);
 			b.read (bbuffer, t);
 
-			for (int i = 0; i < t; ++i) {
-				if (abuffer[i] != bbuffer[i]) {
-					notes.push_back (mxf_path().string() + " and " + other->mxf_path().string() + " content differs");
-					return notes;
-				}
+			if (memcmp (abuffer, bbuffer, t) != 0) {
+				notes.push_back (mxf_path().string() + " and " + other->mxf_path().string() + " content differs");
+				return notes;
 			}
 
 			n -= t;
 		}
-	}
-
-	if (flags & MXF_INSPECT) {
-
 	}
 
 	return notes;

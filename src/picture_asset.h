@@ -81,6 +81,8 @@ public:
 	 */
 	void write_to_cpl (std::ostream& s) const;
 
+	std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityFlags flags) const;
+	
 private:
 	std::string path_from_list (int f, std::vector<std::string> const & files) const;
 	void construct (sigc::slot<std::string, int>);

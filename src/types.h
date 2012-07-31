@@ -65,7 +65,7 @@ public:
 enum EqualityFlags {
 	LIBDCP_METADATA = 0x1,
 	MXF_BITWISE = 0x2,
-	MXF_INSPECT
+	MXF_INSPECT = 0x4
 };
 
 }

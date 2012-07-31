@@ -26,6 +26,7 @@
 #include <iostream>
 #include <sstream>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include "AS_DCP.h"
 #include "KM_fileio.h"
 #include "picture_asset.h"
@@ -139,4 +140,87 @@ PictureAsset::write_to_cpl (ostream& s) const
 	  << "          <FrameRate>" << _fps << " 1</FrameRate>\n"
 	  << "          <ScreenAspectRatio>" << _width << " " << _height << "</ScreenAspectRatio>\n"
 	  << "        </MainPicture>\n";
+}
+
+list<string>
+PictureAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
+{
+	list<string> notes = Asset::equals (other, flags);
+		     
+	if (flags & MXF_INSPECT) {
+		ASDCP::JP2K::MXFReader reader_A;
+		if (ASDCP_FAILURE (reader_A.OpenRead (mxf_path().c_str()))) {
+			throw FileError ("could not open MXF file for reading", mxf_path().string());
+		}
+
+		ASDCP::JP2K::MXFReader reader_B;
+		if (ASDCP_FAILURE (reader_B.OpenRead (other->mxf_path().c_str()))) {
+			throw FileError ("could not open MXF file for reading", mxf_path().string());
+		}
+
+		ASDCP::JP2K::PictureDescriptor desc_A;
+		if (ASDCP_FAILURE (reader_A.FillPictureDescriptor (desc_A))) {
+			throw DCPReadError ("could not read video MXF information");
+		}
+		ASDCP::JP2K::PictureDescriptor desc_B;
+		if (ASDCP_FAILURE (reader_B.FillPictureDescriptor (desc_B))) {
+			throw DCPReadError ("could not read video MXF information");
+		}
+
+		if (
+			desc_A.EditRate != desc_B.EditRate ||
+			desc_A.ContainerDuration != desc_B.ContainerDuration ||
+			desc_A.SampleRate != desc_B.SampleRate ||
+			desc_A.StoredWidth != desc_B.StoredWidth ||
+			desc_A.StoredHeight != desc_B.StoredHeight ||
+			desc_A.AspectRatio != desc_B.AspectRatio ||
+			desc_A.Rsize != desc_B.Rsize ||
+			desc_A.Xsize != desc_B.Xsize ||
+			desc_A.Ysize != desc_B.Ysize ||
+			desc_A.XOsize != desc_B.XOsize ||
+			desc_A.YOsize != desc_B.YOsize ||
+			desc_A.XTsize != desc_B.XTsize ||
+			desc_A.YTsize != desc_B.YTsize ||
+			desc_A.XTOsize != desc_B.XTOsize ||
+			desc_A.YTOsize != desc_B.YTOsize ||
+			desc_A.Csize != desc_B.Csize
+//			desc_A.CodingStyleDefault != desc_B.CodingStyleDefault ||
+//			desc_A.QuantizationDefault != desc_B.QuantizationDefault
+			) {
+		
+			notes.push_back ("video MXF picture descriptors differ");
+		}
+
+//		for (unsigned int j = 0; j < ASDCP::JP2K::MaxComponents; ++j) {
+//			if (desc_A.ImageComponents[j] != desc_B.ImageComponents[j]) {
+//				notes.pack_start ("video MXF picture descriptors differ");
+//			}
+//		}
+				
+
+		ASDCP::JP2K::FrameBuffer buffer_A (4 * Kumu::Megabyte);
+		ASDCP::JP2K::FrameBuffer buffer_B (4 * Kumu::Megabyte);
+
+		for (int i = 0; i < _length; ++i) {
+			if (ASDCP_FAILURE (reader_A.ReadFrame (0, buffer_A))) {
+				throw DCPReadError ("could not read video frame");
+			}
+
+			if (ASDCP_FAILURE (reader_B.ReadFrame (0, buffer_B))) {
+				throw DCPReadError ("could not read video frame");
+			}
+
+			if (buffer_A.Size() != buffer_B.Size()) {
+				notes.push_back ("sizes of video data for frame " + lexical_cast<string>(i) + " differ");
+				continue;
+			}
+
+			if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
+				notes.push_back ("J2K data for frame " + lexical_cast<string>(i) + " differ");
+				continue;
+			}
+		}
+	}
+
+	return notes;
 }

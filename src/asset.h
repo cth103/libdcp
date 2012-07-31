@@ -66,9 +66,11 @@ public:
 	 */
 	void write_to_assetmap (std::ostream& s) const;
 
-	std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityFlags flags) const;
+	virtual std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityFlags flags) const;
 
 protected:
+	friend class PictureAsset;
+	
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
 	 */
