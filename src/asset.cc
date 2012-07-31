@@ -96,33 +96,33 @@ Asset::mxf_path () const
 }
 
 list<string>
-Asset::equals (Asset const & other, EqualityFlags flags) const
+Asset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
 {
 	list<string> notes;
 	
 	if (flags & LIBDCP_METADATA) {
-		if (_mxf_name != other._mxf_name) {
+		if (_mxf_name != other->_mxf_name) {
 			notes.push_back ("MXF names differ");
 		}
-		if (_fps != other._fps) {
+		if (_fps != other->_fps) {
 			notes.push_back ("MXF frames per second differ");
 		}
-		if (_length != other._length) {
+		if (_length != other->_length) {
 			notes.push_back ("MXF lengths differ");
 		}
-		if (_digest != other._digest) {
+		if (_digest != other->_digest) {
 			notes.push_back ("MXF digests differ");
 		}
 	}
 	
 	if (flags & MXF_BITWISE) {
-		if (filesystem::file_size (mxf_path()) != filesystem::file_size (other.mxf_path())) {
-			notes.push_back (mxf_path().string() + " and " + other.mxf_path().string() + " sizes differ");
+		if (filesystem::file_size (mxf_path()) != filesystem::file_size (other->mxf_path())) {
+			notes.push_back (mxf_path().string() + " and " + other->mxf_path().string() + " sizes differ");
 			return notes;
 		}
 		
 		ifstream a (mxf_path().c_str(), ios::binary);
-		ifstream b (other.mxf_path().c_str(), ios::binary);
+		ifstream b (other->mxf_path().c_str(), ios::binary);
 
 		int buffer_size = 65536;
 		char abuffer[buffer_size];
@@ -137,13 +137,17 @@ Asset::equals (Asset const & other, EqualityFlags flags) const
 
 			for (int i = 0; i < t; ++i) {
 				if (abuffer[i] != bbuffer[i]) {
-					notes.push_back (mxf_path().string() + " and " + other.mxf_path().string() + " content differs");
+					notes.push_back (mxf_path().string() + " and " + other->mxf_path().string() + " content differs");
 					return notes;
 				}
 			}
 
 			n -= t;
 		}
+	}
+
+	if (flags & MXF_INSPECT) {
+
 	}
 
 	return notes;

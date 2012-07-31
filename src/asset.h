@@ -66,7 +66,7 @@ public:
 	 */
 	void write_to_assetmap (std::ostream& s) const;
 
-	std::list<std::string> equals (Asset const & other, EqualityFlags flags) const;
+	std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityFlags flags) const;
 
 protected:
 	/** Fill in a ADSCP::WriteInfo struct.

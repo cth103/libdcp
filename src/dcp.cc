@@ -332,7 +332,7 @@ DCP::equals (DCP const & other, EqualityFlags flags) const
 	list<shared_ptr<Asset> >::const_iterator b = other._assets.begin ();
 	
 	while (a != _assets.end ()) {
-		list<string> n = (*a)->equals (*b->get(), flags);
+		list<string> n = (*a)->equals (*b, flags);
 		notes.merge (n);
 		++a;
 		++b;
