@@ -55,7 +55,7 @@ SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int length)
 	: Asset (directory, mxf_name, 0, fps, length)
 	, _channels (0)
 {
-
+	_digest = make_digest (mxf_path().string(), 0);
 }
 
 string

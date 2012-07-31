@@ -100,10 +100,22 @@ Asset::equals (Asset const & other, EqualityFlags flags) const
 {
 	list<string> notes;
 	
-	switch (flags) {
-	case LIBDCP_METADATA:
-		break;
-	case MXF_BITWISE:
+	if (flags & LIBDCP_METADATA) {
+		if (_mxf_name != other._mxf_name) {
+			notes.push_back ("MXF names differ");
+		}
+		if (_fps != other._fps) {
+			notes.push_back ("MXF frames per second differ");
+		}
+		if (_length != other._length) {
+			notes.push_back ("MXF lengths differ");
+		}
+		if (_digest != other._digest) {
+			notes.push_back ("MXF digests differ");
+		}
+	}
+	
+	if (flags & MXF_BITWISE) {
 		if (filesystem::file_size (mxf_path()) != filesystem::file_size (other.mxf_path())) {
 			notes.push_back (mxf_path().string() + " and " + other.mxf_path().string() + " sizes differ");
 			return notes;

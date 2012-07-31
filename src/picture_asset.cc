@@ -73,7 +73,7 @@ PictureAsset::PictureAsset (string directory, string mxf_name, int fps, int leng
 	, _width (width)
 	, _height (height)
 {
-
+	_digest = make_digest (mxf_path().string(), 0);
 }
 
 string

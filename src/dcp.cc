@@ -324,22 +324,18 @@ DCP::equals (DCP const & other, EqualityFlags flags) const
 		}
 	}
 
-	if (flags & LIBDCP_METADATA || flags & MXF_BITWISE) {
-		if (_assets.size() != other._assets.size()) {
-			notes.push_back ("asset counts differ");
-		}
+	if (_assets.size() != other._assets.size()) {
+		notes.push_back ("asset counts differ");
 	}
-
-	if (flags & MXF_BITWISE) {
-		list<shared_ptr<Asset> >::const_iterator a = _assets.begin ();
-		list<shared_ptr<Asset> >::const_iterator b = other._assets.begin ();
-
-		while (a != _assets.end ()) {
-			list<string> n = (*a)->equals (*b->get(), MXF_BITWISE);
-			notes.merge (n);
-			++a;
-			++b;
-		}
+	
+	list<shared_ptr<Asset> >::const_iterator a = _assets.begin ();
+	list<shared_ptr<Asset> >::const_iterator b = other._assets.begin ();
+	
+	while (a != _assets.end ()) {
+		list<string> n = (*a)->equals (*b->get(), flags);
+		notes.merge (n);
+		++a;
+		++b;
 	}
 
 	return notes;
