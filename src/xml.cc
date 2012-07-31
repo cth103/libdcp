@@ -1,6 +1,7 @@
 #include <sstream>
 #include <iostream>
 #include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
 #include <libxml++/libxml++.h>
 #include "xml.h"
 #include "exceptions.h"
@@ -125,6 +126,10 @@ XMLNode::done ()
 
 XMLFile::XMLFile (string file, string root_name)
 {
+	if (!filesystem::exists (file)) {
+		throw FileError ("XML file does not exist", file);
+	}
+	
 	_parser = new xmlpp::DomParser;
 	_parser->parse_file (file);
 	if (!_parser) {

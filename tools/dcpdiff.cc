@@ -1,7 +1,10 @@
+#include <boost/filesystem.hpp>
 #include <getopt.h>
 #include "dcp.h"
+#include "exceptions.h"
 
 using namespace std;
+using namespace boost;
 using namespace libdcp;
 
 static void
@@ -55,15 +58,38 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	DCP a (argv[optind]);
-	DCP b (argv[optind + 1]);
+	if (!filesystem::exists (argv[optind])) {
+		cerr << argv[0] << ": DCP " << argv[optind] << " not found.\n";
+		exit (EXIT_FAILURE);
+	}
+
+	if (!filesystem::exists (argv[optind + 1])) {
+		cerr << argv[0] << ": DCP " << argv[optind + 1] << " not found.\n";
+		exit (EXIT_FAILURE);
+	}
+
+	DCP* a = 0;
+	try {
+		a = new DCP (argv[optind]);
+	} catch (FileError& e) {
+		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << " " << e.filename() << "\n";
+		exit (EXIT_FAILURE);
+	}
+
+	DCP* b = 0;
+	try {
+		b = new DCP (argv[optind + 1]);
+	} catch (FileError& e) {
+		cerr << "Could not read DCP " << argv[optind + 1] << "; " << e.what() << " " << e.filename() << "\n";
+		exit (EXIT_FAILURE);
+	}
 
 	EqualityFlags flags = EqualityFlags (LIBDCP_METADATA | MXF_INSPECT);
 	if (bitwise) {
 		flags = EqualityFlags (flags | MXF_BITWISE);
 	}
 
-	list<string> notes = a.equals (b, flags);
+	list<string> notes = a->equals (*b, flags);
 	if (notes.empty ()) {
 		cout << "DCPs identical\n";
 		exit (EXIT_SUCCESS);

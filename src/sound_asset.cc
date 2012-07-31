@@ -24,6 +24,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+#include "KM_fileio.h"
 #include "AS_DCP.h"
 #include "sound_asset.h"
 #include "util.h"
@@ -176,3 +178,72 @@ SoundAsset::write_to_cpl (ostream& s) const
 	  << "        </MainSound>\n";
 }
 
+list<string>
+SoundAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
+{
+	list<string> notes = Asset::equals (other, flags);
+		     
+	if (flags & MXF_INSPECT) {
+		ASDCP::PCM::MXFReader reader_A;
+		if (ASDCP_FAILURE (reader_A.OpenRead (mxf_path().c_str()))) {
+			cout << "failed " << mxf_path() << "\n";
+			throw FileError ("could not open MXF file for reading", mxf_path().string());
+		}
+
+		ASDCP::PCM::MXFReader reader_B;
+		if (ASDCP_FAILURE (reader_B.OpenRead (other->mxf_path().c_str()))) {
+			cout << "failed " << other->mxf_path() << "\n";
+			throw FileError ("could not open MXF file for reading", mxf_path().string());
+		}
+
+		ASDCP::PCM::AudioDescriptor desc_A;
+		if (ASDCP_FAILURE (reader_A.FillAudioDescriptor (desc_A))) {
+			throw DCPReadError ("could not read audio MXF information");
+		}
+		ASDCP::PCM::AudioDescriptor desc_B;
+		if (ASDCP_FAILURE (reader_B.FillAudioDescriptor (desc_B))) {
+			throw DCPReadError ("could not read audio MXF information");
+		}
+
+		if (
+			desc_A.EditRate != desc_B.EditRate ||
+			desc_A.AudioSamplingRate != desc_B.AudioSamplingRate ||
+			desc_A.Locked != desc_B.Locked ||
+			desc_A.ChannelCount != desc_B.ChannelCount ||
+			desc_A.QuantizationBits != desc_B.QuantizationBits ||
+			desc_A.BlockAlign != desc_B.BlockAlign ||
+			desc_A.AvgBps != desc_B.AvgBps ||
+			desc_A.LinkedTrackID != desc_B.LinkedTrackID ||
+			desc_A.ContainerDuration != desc_B.ContainerDuration
+//			desc_A.ChannelFormat != desc_B.ChannelFormat ||
+			) {
+		
+			notes.push_back ("audio MXF picture descriptors differ");
+		}
+
+		ASDCP::PCM::FrameBuffer buffer_A (1 * Kumu::Megabyte);
+		ASDCP::PCM::FrameBuffer buffer_B (1 * Kumu::Megabyte);
+
+		for (int i = 0; i < _length; ++i) {
+			if (ASDCP_FAILURE (reader_A.ReadFrame (0, buffer_A))) {
+				throw DCPReadError ("could not read audio frame");
+			}
+
+			if (ASDCP_FAILURE (reader_B.ReadFrame (0, buffer_B))) {
+				throw DCPReadError ("could not read audio frame");
+			}
+
+			if (buffer_A.Size() != buffer_B.Size()) {
+				notes.push_back ("sizes of video data for frame " + lexical_cast<string>(i) + " differ");
+				continue;
+			}
+
+			if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
+				notes.push_back ("PCM data for frame " + lexical_cast<string>(i) + " differ");
+				continue;
+			}
+		}
+	}
+
+	return notes;
+}

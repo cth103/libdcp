@@ -262,21 +262,50 @@ DCP::DCP (string directory)
 		}
 	}
 
+	if (cpl_file.empty ()) {
+		throw FileError ("no CPL file found", "");
+	}
+
+	if (pkl_file.empty ()) {
+		throw FileError ("no PKL file found", "");
+	}
+
+	if (asset_map_file.empty ()) {
+		throw FileError ("no AssetMap file found", "");
+	}
+
 	/* Read the XML */
-	CPL cpl (cpl_file);
-	PKL pkl (pkl_file);
-	AssetMap asset_map (asset_map_file);
+	shared_ptr<CPL> cpl;
+	try {
+		cpl.reset (new CPL (cpl_file));
+	} catch (FileError& e) {
+		throw FileError ("could not load CPL file", cpl_file);
+	}
+
+	shared_ptr<PKL> pkl;
+	try {
+		pkl.reset (new PKL (pkl_file));
+	} catch (FileError& e) {
+		throw FileError ("could not load PKL file", pkl_file);
+	}
+
+	shared_ptr<AssetMap> asset_map;
+	try {
+		asset_map.reset (new AssetMap (asset_map_file));
+	} catch (FileError& e) {
+		throw FileError ("could not load AssetMap file", asset_map_file);
+	}
 
 	/* Cross-check */
 	/* XXX */
 
 	/* Now cherry-pick the required bits into our own data structure */
 	
-	_name = cpl.annotation_text;
-	_content_kind = cpl.content_kind;
+	_name = cpl->annotation_text;
+	_content_kind = cpl->content_kind;
 
-	shared_ptr<CPLAssetList> cpl_assets = cpl.reels.front()->asset_list;
-	
+	shared_ptr<CPLAssetList> cpl_assets = cpl->reels.front()->asset_list;
+
 	/* XXX */
 	_fps = cpl_assets->main_picture->frame_rate.numerator;
 	_length = cpl_assets->main_picture->duration;
@@ -296,7 +325,7 @@ DCP::DCP (string directory)
 		_assets.push_back (shared_ptr<SoundAsset> (
 					   new SoundAsset (
 						   _directory,
-						   cpl_assets->main_picture->annotation_text,
+						   cpl_assets->main_sound->annotation_text,
 						   _fps,
 						   _length
 						   )

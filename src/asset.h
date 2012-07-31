@@ -70,6 +70,7 @@ public:
 
 protected:
 	friend class PictureAsset;
+	friend class SoundAsset;
 	
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
