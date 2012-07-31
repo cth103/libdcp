@@ -26,6 +26,7 @@
 
 #include <string>
 #include <sigc++/sigc++.h>
+#include "types.h"
 
 namespace ASDCP {
 	class WriterInfo;
@@ -64,6 +65,8 @@ public:
 	 *  @param s Stream.
 	 */
 	void write_to_assetmap (std::ostream& s) const;
+
+	std::list<std::string> equals (Asset const & other, EqualityFlags flags) const;
 
 protected:
 	/** Fill in a ADSCP::WriteInfo struct.

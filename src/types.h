@@ -62,8 +62,9 @@ public:
 	int denominator;
 };
 
-enum EqualityType {
-	LIBDCP_METADATA
+enum EqualityFlags {
+	LIBDCP_METADATA = 0x1,
+	MXF_BITWISE = 0x2
 };
 
 }

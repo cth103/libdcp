@@ -49,9 +49,9 @@ main (int argc, char* argv[])
 	DCP a (argv[optind]);
 	DCP b (argv[optind + 1]);
 
-	list<string> notes = a.equals (b, LIBDCP_METADATA);
+	list<string> notes = a.equals (b, EqualityFlags (LIBDCP_METADATA | MXF_BITWISE));
 	if (notes.empty ()) {
-		cout << "DCPs identical by LIBDCP_METADATA\n";
+		cout << "DCPs identical\n";
 		exit (EXIT_SUCCESS);
 	}
 

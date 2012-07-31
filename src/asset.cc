@@ -22,6 +22,7 @@
  */
 
 #include <iostream>
+#include <fstream>
 #include <boost/filesystem.hpp>
 #include "AS_DCP.h"
 #include "KM_util.h"
@@ -92,4 +93,46 @@ Asset::mxf_path () const
 	p /= _directory;
 	p /= _mxf_name;
 	return p;
+}
+
+list<string>
+Asset::equals (Asset const & other, EqualityFlags flags) const
+{
+	list<string> notes;
+	
+	switch (flags) {
+	case LIBDCP_METADATA:
+		break;
+	case MXF_BITWISE:
+		if (filesystem::file_size (mxf_path()) != filesystem::file_size (other.mxf_path())) {
+			notes.push_back (mxf_path().string() + " and " + other.mxf_path().string() + " sizes differ");
+			return notes;
+		}
+		
+		ifstream a (mxf_path().c_str(), ios::binary);
+		ifstream b (other.mxf_path().c_str(), ios::binary);
+
+		int buffer_size = 65536;
+		char abuffer[buffer_size];
+		char bbuffer[buffer_size];
+
+		int n = filesystem::file_size (mxf_path ());
+
+		while (n) {
+			int const t = min (n, buffer_size);
+			a.read (abuffer, t);
+			b.read (bbuffer, t);
+
+			for (int i = 0; i < t; ++i) {
+				if (abuffer[i] != bbuffer[i]) {
+					notes.push_back (mxf_path().string() + " and " + other.mxf_path().string() + " content differs");
+					return notes;
+				}
+			}
+
+			n -= t;
+		}
+	}
+
+	return notes;
 }

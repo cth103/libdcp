@@ -305,12 +305,11 @@ DCP::DCP (string directory)
 }
 
 list<string>
-DCP::equals (DCP const & other, EqualityType type) const
+DCP::equals (DCP const & other, EqualityFlags flags) const
 {
 	list<string> notes;
 	
-	switch (type) {
-	case LIBDCP_METADATA:
+	if (flags & LIBDCP_METADATA) {
 		if (_name != other._name) {
 			notes.push_back ("names differ");
 		}
@@ -323,10 +322,24 @@ DCP::equals (DCP const & other, EqualityType type) const
 		if (_length != other._length) {
 			notes.push_back ("lengths differ");
 		}
+	}
+
+	if (flags & LIBDCP_METADATA || flags & MXF_BITWISE) {
 		if (_assets.size() != other._assets.size()) {
 			notes.push_back ("asset counts differ");
 		}
-		break;
+	}
+
+	if (flags & MXF_BITWISE) {
+		list<shared_ptr<Asset> >::const_iterator a = _assets.begin ();
+		list<shared_ptr<Asset> >::const_iterator b = other._assets.begin ();
+
+		while (a != _assets.end ()) {
+			list<string> n = (*a)->equals (*b->get(), MXF_BITWISE);
+			notes.merge (n);
+			++a;
+			++b;
+		}
 	}
 
 	return notes;
