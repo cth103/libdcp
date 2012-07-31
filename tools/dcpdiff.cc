@@ -25,6 +25,7 @@ main (int argc, char* argv[])
 	int option_index = 0;
 	while (1) {
 		static struct option long_options[] = {
+			{ "bitwise", no_argument, 0, 'b'},
 			{ "version", no_argument, 0, 'v'},
 			{ "help", no_argument, 0, 'h'},
 			{ 0, 0, 0, 0 }
