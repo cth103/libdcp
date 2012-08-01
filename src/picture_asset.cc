@@ -27,6 +27,7 @@
 #include <sstream>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <openjpeg.h>
 #include "AS_DCP.h"
 #include "KM_fileio.h"
 #include "picture_asset.h"
@@ -208,17 +209,71 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
 				throw DCPReadError ("could not read video frame");
 			}
 
+			bool j2k_same = true;
+
 			if (buffer_A.Size() != buffer_B.Size()) {
 				notes.push_back ("sizes of video data for frame " + lexical_cast<string>(i) + " differ");
+				j2k_same = false;
 				continue;
 			}
 
 			if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
 				notes.push_back ("J2K data for frame " + lexical_cast<string>(i) + " differ");
+				j2k_same = false;
 				continue;
+			}
+
+			if (!j2k_same) {
+				/* Decompress the images to bitmaps */
+				opj_image_t* image_A = decompress_j2k (const_cast<uint8_t*> (buffer_A.RoData()), buffer_A.Size ());
+				opj_image_t* image_B = decompress_j2k (const_cast<uint8_t*> (buffer_B.RoData()), buffer_B.Size ());
+
+				/* Compare them */
+				
+				if (image_A->numcomps != image_B->numcomps) {
+					notes.push_back ("image component counts for frame " + lexical_cast<string>(i) + " differ");
+				}
+
+				for (int c = 0; c < image_A->numcomps; ++c) {
+					if (image_A->comps[c].w != image_B->comps[c].w || image_A->comps[c].h != image_B->comps[c].h) {
+						notes.push_back ("image sizes for frame " + lexical_cast<string>(i) + " differ");
+					}
+					
+					cout << "comp " << c << " of " << image_A->numcomps << "\n";
+					cout << "bpp " << image_A->comps[c].bpp << "\n";
+					
+					for (int x = 0; x < image_A->comps[c].w; ++x) {
+						for (int y = 0; y < image_A->comps[c].h; ++y) {
+								
+						}
+					}
+				}
+				
+
+				opj_image_destroy (image_A);
+				opj_image_destroy (image_B);
 			}
 		}
 	}
 
 	return notes;
+}
+
+opj_image_t *
+PictureAsset::decompress_j2k (uint8_t* data, int64_t size) const
+{
+	opj_dinfo_t* decoder = opj_create_decompress (CODEC_J2K);
+	opj_dparameters_t parameters;
+	opj_set_default_decoder_parameters (&parameters);
+	opj_setup_decoder (decoder, &parameters);
+	opj_cio_t* cio = opj_cio_open ((opj_common_ptr) decoder, data, size);
+	opj_image_t* image = opj_decode (decoder, cio);
+	if (!image) {
+		opj_destroy_decompress (decoder);
+		opj_cio_close (cio);
+		throw DCPReadError ("could not decode JPEG2000 codestream");
+	}
+
+	opj_cio_close (cio);
+	return image;
 }

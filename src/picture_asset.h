@@ -21,6 +21,7 @@
  *  @brief An asset made up of JPEG2000 files
  */
 
+#include <openjpeg.h>
 #include "asset.h"
 
 namespace libdcp
@@ -86,6 +87,7 @@ public:
 private:
 	std::string path_from_list (int f, std::vector<std::string> const & files) const;
 	void construct (sigc::slot<std::string, int>);
+	opj_image_t* decompress_j2k (uint8_t* data, int64_t size) const;
 	
 	/** picture width in pixels */
 	int _width;

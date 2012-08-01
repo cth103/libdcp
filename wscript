@@ -23,6 +23,15 @@ def configure(conf):
     conf.check_cfg(package = 'sigc++-2.0', args = '--cflags --libs', uselib_store = 'SIGC++', mandatory = True)
     conf.check_cfg(package = 'libxml++-2.6', args = '--cflags --libs', uselib_store = 'LIBXML++', mandatory = True)
 
+    conf.check_cc(fragment  = """
+    			      #include <stdio.h>\n
+			      #include <openjpeg.h>\n
+			      int main () {\n
+			      void* p = (void *) opj_image_create;\n
+			      return 0;\n
+			      }
+			      """, msg = 'Checking for library openjpeg', lib = 'openjpeg', uselib_store = 'OPENJPEG')
+
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'
     else:
