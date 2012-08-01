@@ -122,9 +122,14 @@ Asset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
 			notes.push_back (mxf_path().string() + " and " + other->mxf_path().string() + " sizes differ");
 			return notes;
 		}
-		
+
+#if BOOST_FILESYSTEM_VERSION == 3
 		ifstream a (mxf_path().c_str(), ios::binary);
 		ifstream b (other->mxf_path().c_str(), ios::binary);
+#else
+		ifstream a (mxf_path().string().c_str(), ios::binary);
+		ifstream b (other->mxf_path().string().c_str(), ios::binary);
+#endif		
 
 		int buffer_size = 65536;
 		char abuffer[buffer_size];
