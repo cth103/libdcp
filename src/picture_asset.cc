@@ -25,6 +25,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <openjpeg.h>
@@ -142,9 +143,9 @@ PictureAsset::write_to_cpl (ostream& s) const
 }
 
 list<string>
-PictureAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
+PictureAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags, double max_mean, double max_std_dev) const
 {
-	list<string> notes = Asset::equals (other, flags);
+	list<string> notes = Asset::equals (other, flags, max_mean, max_std_dev);
 		     
 	if (flags & MXF_INSPECT) {
 		ASDCP::JP2K::MXFReader reader_A;
@@ -214,13 +215,9 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
 			if (buffer_A.Size() != buffer_B.Size()) {
 				notes.push_back ("sizes of video data for frame " + lexical_cast<string>(i) + " differ");
 				j2k_same = false;
-				continue;
-			}
-
-			if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
+			} else if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
 				notes.push_back ("J2K data for frame " + lexical_cast<string>(i) + " differ");
 				j2k_same = false;
-				continue;
 			}
 
 			if (!j2k_same) {
@@ -234,21 +231,38 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
 					notes.push_back ("image component counts for frame " + lexical_cast<string>(i) + " differ");
 				}
 
+				vector<int> abs_diffs (image_A->comps[0].w * image_A->comps[0].h * image_A->numcomps);
+				int d = 0;
+
 				for (int c = 0; c < image_A->numcomps; ++c) {
+
 					if (image_A->comps[c].w != image_B->comps[c].w || image_A->comps[c].h != image_B->comps[c].h) {
 						notes.push_back ("image sizes for frame " + lexical_cast<string>(i) + " differ");
 					}
-					
-					cout << "comp " << c << " of " << image_A->numcomps << "\n";
-					cout << "bpp " << image_A->comps[c].bpp << "\n";
-					
-					for (int x = 0; x < image_A->comps[c].w; ++x) {
-						for (int y = 0; y < image_A->comps[c].h; ++y) {
-								
-						}
+
+					int const pixels = image_A->comps[c].w * image_A->comps[c].h;
+					for (int j = 0; j < pixels; ++j) {
+						abs_diffs[d++] = abs (image_A->comps[c].data[j] - image_B->comps[c].data[j]);
 					}
 				}
-				
+
+				uint64_t total = 0;
+				for (vector<int>::iterator j = abs_diffs.begin(); j != abs_diffs.end(); ++j) {
+					total += *j;
+				}
+
+				double const mean = double (total) / abs_diffs.size ();
+
+				uint64_t total_squared_deviation = 0;
+				for (vector<int>::iterator j = abs_diffs.begin(); j != abs_diffs.end(); ++j) {
+					total_squared_deviation += pow (*j - mean, 2);
+				}
+
+				double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
+
+				if (mean > max_mean || std_dev > max_std_dev) {
+					notes.push_back ("mean or standard deviation out of range for " + lexical_cast<string>(i));
+				}
 
 				opj_image_destroy (image_A);
 				opj_image_destroy (image_B);

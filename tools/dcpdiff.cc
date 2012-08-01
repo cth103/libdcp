@@ -90,7 +90,7 @@ main (int argc, char* argv[])
 		flags = EqualityFlags (flags | MXF_BITWISE);
 	}
 
-	list<string> notes = a->equals (*b, flags);
+	list<string> notes = a->equals (*b, flags, 5, 5);
 	if (notes.empty ()) {
 		cout << "DCPs identical\n";
 		exit (EXIT_SUCCESS);

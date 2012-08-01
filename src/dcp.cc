@@ -334,7 +334,7 @@ DCP::DCP (string directory)
 }
 
 list<string>
-DCP::equals (DCP const & other, EqualityFlags flags) const
+DCP::equals (DCP const & other, EqualityFlags flags, double max_mean, double max_std_dev) const
 {
 	list<string> notes;
 	
@@ -361,7 +361,7 @@ DCP::equals (DCP const & other, EqualityFlags flags) const
 	list<shared_ptr<Asset> >::const_iterator b = other._assets.begin ();
 	
 	while (a != _assets.end ()) {
-		list<string> n = (*a)->equals (*b, flags);
+		list<string> n = (*a)->equals (*b, flags, max_mean, max_std_dev);
 		notes.merge (n);
 		++a;
 		++b;

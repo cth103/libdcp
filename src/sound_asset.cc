@@ -177,9 +177,9 @@ SoundAsset::write_to_cpl (ostream& s) const
 }
 
 list<string>
-SoundAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
+SoundAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags, double max_mean, double max_std_dev) const
 {
-	list<string> notes = Asset::equals (other, flags);
+	list<string> notes = Asset::equals (other, flags, max_mean, max_std_dev);
 		     
 	if (flags & MXF_INSPECT) {
 		ASDCP::PCM::MXFReader reader_A;

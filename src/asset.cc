@@ -96,7 +96,7 @@ Asset::mxf_path () const
 }
 
 list<string>
-Asset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
+Asset::equals (shared_ptr<const Asset> other, EqualityFlags flags, double, double) const
 {
 	list<string> notes;
 	
