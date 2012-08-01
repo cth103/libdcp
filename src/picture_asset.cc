@@ -100,7 +100,7 @@ PictureAsset::construct (sigc::slot<string, int> get_path)
 	fill_writer_info (&writer_info);
 	
 	ASDCP::JP2K::MXFWriter mxf_writer;
-	if (ASDCP_FAILURE (mxf_writer.OpenWrite (mxf_path().c_str(), writer_info, picture_desc))) {
+	if (ASDCP_FAILURE (mxf_writer.OpenWrite (mxf_path().string().c_str(), writer_info, picture_desc))) {
 		throw FileError ("could not open MXF file for writing", mxf_path().string());
 	}
 
@@ -147,12 +147,12 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
 		     
 	if (flags & MXF_INSPECT) {
 		ASDCP::JP2K::MXFReader reader_A;
-		if (ASDCP_FAILURE (reader_A.OpenRead (mxf_path().c_str()))) {
+		if (ASDCP_FAILURE (reader_A.OpenRead (mxf_path().string().c_str()))) {
 			throw FileError ("could not open MXF file for reading", mxf_path().string());
 		}
 
 		ASDCP::JP2K::MXFReader reader_B;
-		if (ASDCP_FAILURE (reader_B.OpenRead (other->mxf_path().c_str()))) {
+		if (ASDCP_FAILURE (reader_B.OpenRead (other->mxf_path().string().c_str()))) {
 			throw FileError ("could not open MXF file for reading", mxf_path().string());
 		}
 

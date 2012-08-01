@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <stdint.h>
 #include <glibmm.h>
 #include <boost/shared_ptr.hpp>
 #include "types.h"

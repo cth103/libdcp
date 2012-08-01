@@ -123,8 +123,8 @@ Asset::equals (shared_ptr<const Asset> other, EqualityFlags flags) const
 			return notes;
 		}
 		
-		ifstream a (mxf_path().c_str(), ios::binary);
-		ifstream b (other->mxf_path().c_str(), ios::binary);
+		ifstream a (mxf_path().string().c_str(), ios::binary);
+		ifstream b (other->mxf_path().string().c_str(), ios::binary);
 
 		int buffer_size = 65536;
 		char abuffer[buffer_size];

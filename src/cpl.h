@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <boost/shared_ptr.hpp>
 #include "xml.h"
 
