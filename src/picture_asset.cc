@@ -143,11 +143,11 @@ PictureAsset::write_to_cpl (ostream& s) const
 }
 
 list<string>
-PictureAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags, double max_mean, double max_std_dev) const
+PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 {
-	list<string> notes = Asset::equals (other, flags, max_mean, max_std_dev);
+	list<string> notes = Asset::equals (other, opt);
 		     
-	if (flags & MXF_INSPECT) {
+	if (opt.flags & MXF_INSPECT) {
 		ASDCP::JP2K::MXFReader reader_A;
 		if (ASDCP_FAILURE (reader_A.OpenRead (mxf_path().string().c_str()))) {
 			throw FileError ("could not open MXF file for reading", mxf_path().string());
@@ -221,6 +221,11 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags, double
 			}
 
 			if (!j2k_same) {
+
+				if (opt.verbose) {
+					cout << "J2K images for " << i << " differ; checking by pixel\n";
+				}
+				
 				/* Decompress the images to bitmaps */
 				opj_image_t* image_A = decompress_j2k (const_cast<uint8_t*> (buffer_A.RoData()), buffer_A.Size ());
 				opj_image_t* image_B = decompress_j2k (const_cast<uint8_t*> (buffer_B.RoData()), buffer_B.Size ());
@@ -260,8 +265,12 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityFlags flags, double
 
 				double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
 
-				if (mean > max_mean || std_dev > max_std_dev) {
+				if (mean > opt.max_mean_pixel_error || std_dev > opt.max_std_dev_pixel_error) {
 					notes.push_back ("mean or standard deviation out of range for " + lexical_cast<string>(i));
+				}
+
+				if (opt.verbose) {
+					cout << "\tmean pixel error " << mean << ", standard deviation " << std_dev << "\n";
 				}
 
 				opj_image_destroy (image_A);

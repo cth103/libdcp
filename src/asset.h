@@ -66,7 +66,7 @@ public:
 	 */
 	void write_to_assetmap (std::ostream& s) const;
 
-	virtual std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityFlags flags, double max_mean, double max_std_dev) const;
+	virtual std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
 
 protected:
 	friend class PictureAsset;

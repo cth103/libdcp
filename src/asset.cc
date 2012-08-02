@@ -96,11 +96,11 @@ Asset::mxf_path () const
 }
 
 list<string>
-Asset::equals (shared_ptr<const Asset> other, EqualityFlags flags, double, double) const
+Asset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 {
 	list<string> notes;
 	
-	if (flags & LIBDCP_METADATA) {
+	if (opt.flags & LIBDCP_METADATA) {
 		if (_mxf_name != other->_mxf_name) {
 			notes.push_back ("MXF names differ");
 		}
@@ -112,7 +112,7 @@ Asset::equals (shared_ptr<const Asset> other, EqualityFlags flags, double, doubl
 		}
 	}
 	
-	if (flags & MXF_BITWISE) {
+	if (opt.flags & MXF_BITWISE) {
 
 		if (digest() != other->digest()) {
 			notes.push_back ("MXF digests differ");
