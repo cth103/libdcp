@@ -238,6 +238,7 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 
 				vector<int> abs_diffs (image_A->comps[0].w * image_A->comps[0].h * image_A->numcomps);
 				int d = 0;
+				int max_diff = 0;
 
 				for (int c = 0; c < image_A->numcomps; ++c) {
 
@@ -247,7 +248,9 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 
 					int const pixels = image_A->comps[c].w * image_A->comps[c].h;
 					for (int j = 0; j < pixels; ++j) {
-						abs_diffs[d++] = abs (image_A->comps[c].data[j] - image_B->comps[c].data[j]);
+						int const t = abs (image_A->comps[c].data[j] - image_B->comps[c].data[j]);
+						abs_diffs[d++] = t;
+						max_diff = max (max_diff, t);
 					}
 				}
 
@@ -270,7 +273,7 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 				}
 
 				if (opt.verbose) {
-					cout << "\tmean pixel error " << mean << ", standard deviation " << std_dev << "\n";
+					cout << "\tmax pixel error " << max_diff << ", mean pixel error " << mean << ", standard deviation " << std_dev << "\n";
 				}
 
 				opj_image_destroy (image_A);
