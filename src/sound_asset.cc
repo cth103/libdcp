@@ -232,7 +232,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 			}
 
 			if (buffer_A.Size() != buffer_B.Size()) {
-				notes.push_back ("sizes of video data for frame " + lexical_cast<string>(i) + " differ");
+				notes.push_back ("sizes of audio data for frame " + lexical_cast<string>(i) + " differ");
 				continue;
 			}
 
