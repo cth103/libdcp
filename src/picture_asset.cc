@@ -34,6 +34,7 @@
 #include "picture_asset.h"
 #include "util.h"
 #include "exceptions.h"
+#include "picture_frame.h"
 
 using namespace std;
 using namespace boost;
@@ -302,4 +303,10 @@ PictureAsset::decompress_j2k (uint8_t* data, int64_t size) const
 
 	opj_cio_close (cio);
 	return image;
+}
+
+shared_ptr<const PictureFrame>
+PictureAsset::get_frame (int n) const
+{
+	return shared_ptr<const PictureFrame> (new PictureFrame (mxf_path().string(), n));
 }

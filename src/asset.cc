@@ -159,6 +159,10 @@ Asset::digest () const
 	return _digest;
 }
 
-		
-		
-       
+int
+Asset::length () const
+{
+	return _length;
+}
+
+	

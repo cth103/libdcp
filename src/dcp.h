@@ -39,6 +39,7 @@ namespace libdcp
 {
 
 class Asset;	
+class PictureAsset;
 
 /** @class DCP dcp.h libdcp/dcp.h
  *  @brief A class to create or read a DCP.
@@ -105,6 +106,8 @@ public:
 	int length () const {
 		return _length;
 	}
+
+	boost::shared_ptr<const PictureAsset> picture_asset () const;
 
 	std::list<std::string> equals (DCP const & other, EqualityOptions options) const;
 

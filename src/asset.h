@@ -25,6 +25,7 @@
 #define LIBDCP_ASSET_H
 
 #include <string>
+#include <boost/filesystem.hpp>
 #include <sigc++/sigc++.h>
 #include "types.h"
 
@@ -67,6 +68,8 @@ public:
 	void write_to_assetmap (std::ostream& s) const;
 
 	virtual std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
+
+	int length () const;
 
 protected:
 	friend class PictureAsset;

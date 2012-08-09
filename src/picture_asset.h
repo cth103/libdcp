@@ -27,6 +27,8 @@
 namespace libdcp
 {
 
+class PictureFrame;	
+
 /** @brief An asset made up of JPEG2000 files */
 class PictureAsset : public Asset
 {
@@ -83,6 +85,8 @@ public:
 	void write_to_cpl (std::ostream& s) const;
 
 	std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
+
+	boost::shared_ptr<const PictureFrame> get_frame (int n) const;
 	
 private:
 	std::string path_from_list (int f, std::vector<std::string> const & files) const;

@@ -12,6 +12,7 @@ def build(bld):
                  dcp.cc        
                  sound_asset.cc
                  picture_asset.cc
+                 picture_frame.cc
                  pkl.cc
                  util.cc
                  metadata.cc
@@ -28,6 +29,8 @@ def build(bld):
               exceptions.h
               test_mode.h
               version.h
+              picture_asset.h
+              asset.h
               """
 
     bld.install_files('${PREFIX}/include/libdcp', headers)

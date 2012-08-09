@@ -369,3 +369,16 @@ DCP::equals (DCP const & other, EqualityOptions opt) const
 
 	return notes;
 }
+
+shared_ptr<const PictureAsset>
+DCP::picture_asset () const
+{
+	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
+		shared_ptr<PictureAsset> p = dynamic_pointer_cast<PictureAsset> (*i);
+		if (p) {
+			return p;
+		}
+	}
+
+	return shared_ptr<const PictureAsset> ();
+}
