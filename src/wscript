@@ -31,6 +31,7 @@ def build(bld):
               version.h
               picture_asset.h
               asset.h
+              picture_frame.h
               """
 
     bld.install_files('${PREFIX}/include/libdcp', headers)

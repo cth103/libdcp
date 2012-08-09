@@ -20,6 +20,12 @@
 #include <string>
 #include <stdint.h>
 
+namespace ASDCP {
+	namespace JP2K {
+		class FrameBuffer;
+	}
+}
+
 namespace libdcp {
 
 class PictureFrame
