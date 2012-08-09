@@ -41,7 +41,7 @@ namespace libdcp
 class Asset;	
 
 /** @class DCP dcp.h libdcp/dcp.h
- *  @brief A class to create a DCP.
+ *  @brief A class to create or read a DCP.
  */
 	
 class DCP
