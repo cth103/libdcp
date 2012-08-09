@@ -15,6 +15,7 @@ Hello.
 boost filesystem library
 OpenSSL
 libsigc++
+libxml++
 
 
 == Documentation
