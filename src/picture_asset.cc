@@ -143,6 +143,7 @@ PictureAsset::write_to_cpl (ostream& s) const
 	  << "        </MainPicture>\n";
 }
 
+/* XXX: could use get_frame()? */
 list<string>
 PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 {
