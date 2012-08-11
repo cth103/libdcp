@@ -87,6 +87,14 @@ public:
 	std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
 
 	boost::shared_ptr<const PictureFrame> get_frame (int n) const;
+
+	int width () const {
+		return _width;
+	}
+
+	int height () const {
+		return _height;
+	}
 	
 private:
 	std::string path_from_list (int f, std::vector<std::string> const & files) const;

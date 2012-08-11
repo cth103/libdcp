@@ -14,12 +14,15 @@ public:
 	std::string hash;
 	int64_t size;
 	std::string type;
+	std::string original_file_name;
 };
 
 class PKL : public XMLFile
 {
 public:
 	PKL (std::string file);
+
+	boost::shared_ptr<PKLAsset> asset_from_id (std::string id) const;
 
 	std::string id;
 	std::string annotation_text;

@@ -25,7 +25,9 @@
 #include <fstream>
 #include <iomanip>
 #include <cassert>
+#include <iostream>
 #include <boost/filesystem.hpp>
+#include <libxml++/libxml++.h>
 #include "dcp.h"
 #include "asset.h"
 #include "sound_asset.h"
@@ -240,25 +242,49 @@ DCP::DCP (string directory)
 	string asset_map_file;
 
 	for (filesystem::directory_iterator i = filesystem::directory_iterator(directory); i != filesystem::directory_iterator(); ++i) {
+		
 		string const t = i->path().string ();
-		if (ends_with (t, "_cpl.xml")) {
+
+		if (ends_with (t, ".mxf")) {
+			continue;
+		}
+
+		xmlpp::DomParser* p = new xmlpp::DomParser;
+
+		try {
+			p->parse_file (t);
+		} catch (std::exception& e) {
+			delete p;
+			continue;
+		}
+		
+		if (!p) {
+			delete p;
+			continue;
+		}
+
+		string const root = p->get_document()->get_root_node()->get_name ();
+		delete p;
+		
+		if (root == "CompositionPlaylist") {
 			if (cpl_file.empty ()) {
 				cpl_file = t;
 			} else {
 				throw DCPReadError ("duplicate CPLs found");
 			}
-		} else if (ends_with (t, "_pkl.xml")) {
+		} else if (root == "PackingList") {
 			if (pkl_file.empty ()) {
 				pkl_file = t;
 			} else {
 				throw DCPReadError ("duplicate PKLs found");
 			}
-		} else if (ends_with (t, "ASSETMAP.xml")) {
+		} else if (root == "AssetMap") {
 			if (asset_map_file.empty ()) {
 				asset_map_file = t;
 			} else {
 				throw DCPReadError ("duplicate AssetMaps found");
 			}
+			asset_map_file = t;
 		}
 	}
 
@@ -310,10 +336,15 @@ DCP::DCP (string directory)
 	_fps = cpl_assets->main_picture->frame_rate.numerator;
 	_length = cpl_assets->main_picture->duration;
 
+	string n = cpl_assets->main_picture->annotation_text;
+	if (n.empty ()) {
+		n = pkl->asset_from_id(cpl_assets->main_picture->id)->original_file_name;
+	}
+
 	_assets.push_back (shared_ptr<PictureAsset> (
 				   new PictureAsset (
 					   _directory,
-					   cpl_assets->main_picture->annotation_text,
+					   n,
 					   _fps,
 					   _length,
 					   cpl_assets->main_picture->screen_aspect_ratio.numerator,
@@ -321,11 +352,16 @@ DCP::DCP (string directory)
 					   )
 				   ));
 
+	n = cpl_assets->main_sound->annotation_text;
+	if (n.empty ()) {
+		n = pkl->asset_from_id(cpl_assets->main_sound->id)->original_file_name;
+	}
+	
 	if (cpl_assets->main_sound) {
 		_assets.push_back (shared_ptr<SoundAsset> (
 					   new SoundAsset (
 						   _directory,
-						   cpl_assets->main_sound->annotation_text,
+						   n,
 						   _fps,
 						   _length
 						   )

@@ -1,3 +1,4 @@
+#include <iostream>
 #include "cpl.h"
 
 using namespace std;
@@ -12,9 +13,13 @@ CPL::CPL (string file)
 	creator = string_node ("Creator");
 	content_title_text = string_node ("ContentTitleText");
 	content_kind = kind_node ("ContentKind");
-	content_version = sub_node<ContentVersion> ("ContentVersion");
+	content_version = optional_sub_node<ContentVersion> ("ContentVersion");
 	ignore_node ("RatingList");
 	reels = sub_nodes<Reel> ("ReelList", "Reel");
+
+	ignore_node ("Issuer");
+	ignore_node ("Signer");
+	ignore_node ("Signature");
 
 	done ();
 }
@@ -49,13 +54,21 @@ MainPicture::MainPicture (xmlpp::Node const * node)
 	: XMLNode (node)
 {
 	id = string_node ("Id");
-	annotation_text = string_node ("AnnotationText");
+	annotation_text = optional_string_node ("AnnotationText");
 	edit_rate = fraction_node ("EditRate");
 	intrinsic_duration = int64_node ("IntrinsicDuration");
 	entry_point = int64_node ("EntryPoint");
 	duration = int64_node ("Duration");
 	frame_rate = fraction_node ("FrameRate");
-	screen_aspect_ratio = fraction_node ("ScreenAspectRatio");
+	try {
+		screen_aspect_ratio = fraction_node ("ScreenAspectRatio");
+	} catch (XMLError& e) {
+		/* Maybe it's not a fraction */
+	}
+	float f = float_node ("ScreenAspectRatio");
+	screen_aspect_ratio = Fraction (f * 1000, 1000);
+
+	ignore_node ("Hash");
 
 	done ();
 }
@@ -64,11 +77,13 @@ MainSound::MainSound (xmlpp::Node const * node)
 	: XMLNode (node)
 {
 	id = string_node ("Id");
-	annotation_text = string_node ("AnnotationText");
+	annotation_text = optional_string_node ("AnnotationText");
 	edit_rate = fraction_node ("EditRate");
 	intrinsic_duration = int64_node ("IntrinsicDuration");
 	entry_point = int64_node ("EntryPoint");
 	duration = int64_node ("Duration");
 
+	ignore_node ("Hash");
+	
 	done ();
 }

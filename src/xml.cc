@@ -107,6 +107,27 @@ XMLNode::int64_node (string name)
 	return lexical_cast<int64_t> (string_node (name));
 }
 
+int64_t
+XMLNode::optional_int64_node (string name)
+{
+	list<xmlpp::Node*> nodes = xml_nodes (name);
+	if (nodes.size() > 2) {
+		throw XMLError ("duplicate XML tag " + name);
+	}
+
+	if (nodes.empty ()) {
+		return 0;
+	}
+
+	return int64_node (name);
+}
+
+float
+XMLNode::float_node (string name)
+{
+	return lexical_cast<float> (string_node (name));
+}
+
 void
 XMLNode::ignore_node (string name)
 {
