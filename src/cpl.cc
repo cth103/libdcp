@@ -65,8 +65,12 @@ MainPicture::MainPicture (xmlpp::Node const * node)
 	} catch (XMLError& e) {
 		/* Maybe it's not a fraction */
 	}
-	float f = float_node ("ScreenAspectRatio");
-	screen_aspect_ratio = Fraction (f * 1000, 1000);
+	try {
+		float f = float_node ("ScreenAspectRatio");
+		screen_aspect_ratio = Fraction (f * 1000, 1000);
+	} catch (bad_cast& e) {
+
+	}
 
 	ignore_node ("Hash");
 

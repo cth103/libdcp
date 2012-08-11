@@ -30,6 +30,7 @@ def build(bld):
               test_mode.h
               version.h
               picture_asset.h
+              sound_asset.h
               asset.h
               picture_frame.h
               """

@@ -85,6 +85,12 @@ public:
 	void write_to_cpl (std::ostream& s) const;
 
 	std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
+
+	int channels () const {
+		return _channels;
+	}
+
+	int sampling_rate () const;
 	
 private:
 	void construct (sigc::slot<std::string, Channel> get_path);

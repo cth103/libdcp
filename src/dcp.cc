@@ -418,3 +418,16 @@ DCP::picture_asset () const
 
 	return shared_ptr<const PictureAsset> ();
 }
+
+shared_ptr<const SoundAsset>
+DCP::sound_asset () const
+{
+	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
+		shared_ptr<SoundAsset> s = dynamic_pointer_cast<SoundAsset> (*i);
+		if (s) {
+			return s;
+		}
+	}
+
+	return shared_ptr<const SoundAsset> ();
+}

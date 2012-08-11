@@ -245,3 +245,22 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 
 	return notes;
 }
+
+
+int
+SoundAsset::sampling_rate () const
+{
+	ASDCP::PCM::MXFReader reader;
+	if (ASDCP_FAILURE (reader.OpenRead (mxf_path().string().c_str()))) {
+		throw FileError ("could not open MXF file for reading", mxf_path().string());
+	}
+
+	
+	ASDCP::PCM::AudioDescriptor desc;
+	if (ASDCP_FAILURE (reader.FillAudioDescriptor (desc))) {
+		throw DCPReadError ("could not read audio MXF information");
+	}
+
+	return desc.AudioSamplingRate.Numerator / desc.AudioSamplingRate.Denominator;
+}
+
