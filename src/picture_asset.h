@@ -77,7 +77,7 @@ public:
 		int height
 		);
 
-	PictureAsset (std::string directory, std::string mxf_name, int fps, int length, int width, int height);
+	PictureAsset (std::string directory, std::string mxf_name, int fps, int length);
 	
 	/** Write details of this asset to a CPL stream.
 	 *  @param s Stream.

@@ -20,6 +20,7 @@ def build(bld):
                  test_mode.cc
                  types.cc
                  xml.cc
+                 sound_frame.cc
                  """
 
     headers = """
@@ -33,6 +34,7 @@ def build(bld):
               sound_asset.h
               asset.h
               picture_frame.h
+              sound_frame.h
               """
 
     bld.install_files('${PREFIX}/include/libdcp', headers)

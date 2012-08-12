@@ -346,18 +346,17 @@ DCP::DCP (string directory)
 					   _directory,
 					   n,
 					   _fps,
-					   _length,
-					   cpl_assets->main_picture->screen_aspect_ratio.numerator,
-					   cpl_assets->main_picture->screen_aspect_ratio.denominator
+					   _length
 					   )
 				   ));
 
-	n = cpl_assets->main_sound->annotation_text;
-	if (n.empty ()) {
-		n = pkl->asset_from_id(cpl_assets->main_sound->id)->original_file_name;
-	}
-	
 	if (cpl_assets->main_sound) {
+
+		n = cpl_assets->main_sound->annotation_text;
+		if (n.empty ()) {
+			n = pkl->asset_from_id(cpl_assets->main_sound->id)->original_file_name;
+		}
+	
 		_assets.push_back (shared_ptr<SoundAsset> (
 					   new SoundAsset (
 						   _directory,

@@ -72,11 +72,21 @@ PictureAsset::PictureAsset (
 	construct (sigc::bind (sigc::mem_fun (*this, &PictureAsset::path_from_list), files));
 }
 
-PictureAsset::PictureAsset (string directory, string mxf_name, int fps, int length, int width, int height)
+PictureAsset::PictureAsset (string directory, string mxf_name, int fps, int length)
 	: Asset (directory, mxf_name, 0, fps, length)
-	, _width (width)
-	, _height (height)
 {
+	ASDCP::JP2K::MXFReader reader;
+	if (ASDCP_FAILURE (reader.OpenRead (mxf_path().string().c_str()))) {
+		throw FileError ("could not open MXF file for reading", mxf_path().string());
+	}
+	
+	ASDCP::JP2K::PictureDescriptor desc;
+	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
+		throw DCPReadError ("could not read video MXF information");
+	}
+
+	_width = desc.StoredWidth;
+	_height = desc.StoredHeight;
 
 }
 

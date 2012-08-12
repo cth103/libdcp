@@ -30,6 +30,7 @@
 #include "sound_asset.h"
 #include "util.h"
 #include "exceptions.h"
+#include "sound_frame.h"
 
 using namespace std;
 using namespace boost;
@@ -40,6 +41,7 @@ SoundAsset::SoundAsset (
 	)
 	: Asset (directory, mxf_name, progress, fps, length)
 	, _channels (files.size ())
+	, _sampling_rate (0)
 {
 	construct (sigc::bind (sigc::mem_fun (*this, &SoundAsset::path_from_channel), files));
 }
@@ -49,6 +51,7 @@ SoundAsset::SoundAsset (
 	)
 	: Asset (directory, mxf_name, progress, fps, length)
 	, _channels (channels)
+	, _sampling_rate (0)
 {
 	construct (get_path);
 }
@@ -57,7 +60,19 @@ SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int length)
 	: Asset (directory, mxf_name, 0, fps, length)
 	, _channels (0)
 {
+	ASDCP::PCM::MXFReader reader;
+	if (ASDCP_FAILURE (reader.OpenRead (mxf_path().string().c_str()))) {
+		throw FileError ("could not open MXF file for reading", mxf_path().string());
+	}
 
+	
+	ASDCP::PCM::AudioDescriptor desc;
+	if (ASDCP_FAILURE (reader.FillAudioDescriptor (desc))) {
+		throw DCPReadError ("could not read audio MXF information");
+	}
+
+	_sampling_rate = desc.AudioSamplingRate.Numerator / desc.AudioSamplingRate.Denominator;
+	_channels = desc.ChannelCount;
 }
 
 string
@@ -246,21 +261,8 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 	return notes;
 }
 
-
-int
-SoundAsset::sampling_rate () const
+shared_ptr<const SoundFrame>
+SoundAsset::get_frame (int n) const
 {
-	ASDCP::PCM::MXFReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (mxf_path().string().c_str()))) {
-		throw FileError ("could not open MXF file for reading", mxf_path().string());
-	}
-
-	
-	ASDCP::PCM::AudioDescriptor desc;
-	if (ASDCP_FAILURE (reader.FillAudioDescriptor (desc))) {
-		throw DCPReadError ("could not read audio MXF information");
-	}
-
-	return desc.AudioSamplingRate.Numerator / desc.AudioSamplingRate.Denominator;
+	return shared_ptr<const SoundFrame> (new SoundFrame (mxf_path().string(), n));
 }
-

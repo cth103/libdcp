@@ -30,6 +30,8 @@
 namespace libdcp
 {
 
+class SoundFrame;	
+
 /** @brief An asset made up of WAV files */
 class SoundAsset : public Asset
 {
@@ -86,11 +88,15 @@ public:
 
 	std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
 
+	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
+	
 	int channels () const {
 		return _channels;
 	}
 
-	int sampling_rate () const;
+	int sampling_rate () const {
+		return _sampling_rate;
+	}
 	
 private:
 	void construct (sigc::slot<std::string, Channel> get_path);
@@ -98,6 +104,7 @@ private:
 
 	/** Number of channels in the asset */
 	int _channels;
+	int _sampling_rate;
 };
 
 }
