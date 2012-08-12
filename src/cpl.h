@@ -34,6 +34,20 @@ public:
 	int64_t duration;
 };
 
+class MainSubtitle : public XMLNode
+{
+public:
+	MainSubtitle () {}
+	MainSubtitle (xmlpp::Node const * node);
+
+	std::string id;
+	std::string annotation_text;
+	Fraction edit_rate;
+	int64_t intrinsic_duration;
+	int64_t entry_point;
+	int64_t duration;
+};
+
 class CPLAssetList : public XMLNode
 {
 public:
@@ -42,6 +56,7 @@ public:
 
 	boost::shared_ptr<MainPicture> main_picture;
 	boost::shared_ptr<MainSound> main_sound;
+	boost::shared_ptr<MainSubtitle> main_subtitle;
 };
 
 class Reel : public XMLNode

@@ -8,7 +8,7 @@ CPL::CPL (string file)
 	: XMLFile (file, "CompositionPlaylist")
 {
 	id = string_node ("Id");
-	annotation_text = string_node ("AnnotationText");
+	annotation_text = optional_string_node ("AnnotationText");
 	issue_date = string_node ("IssueDate");
 	creator = string_node ("Creator");
 	content_title_text = string_node ("ContentTitleText");
@@ -46,6 +46,7 @@ CPLAssetList::CPLAssetList (xmlpp::Node const * node)
 {
 	main_picture = sub_node<MainPicture> ("MainPicture");
 	main_sound = optional_sub_node<MainSound> ("MainSound");
+	main_subtitle = optional_sub_node<MainSubtitle> ("MainSubtitle");
 
 	done ();
 }
@@ -78,6 +79,21 @@ MainPicture::MainPicture (xmlpp::Node const * node)
 }
 
 MainSound::MainSound (xmlpp::Node const * node)
+	: XMLNode (node)
+{
+	id = string_node ("Id");
+	annotation_text = optional_string_node ("AnnotationText");
+	edit_rate = fraction_node ("EditRate");
+	intrinsic_duration = int64_node ("IntrinsicDuration");
+	entry_point = int64_node ("EntryPoint");
+	duration = int64_node ("Duration");
+
+	ignore_node ("Hash");
+	
+	done ();
+}
+
+MainSubtitle::MainSubtitle (xmlpp::Node const * node)
 	: XMLNode (node)
 {
 	id = string_node ("Id");

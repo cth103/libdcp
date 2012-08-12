@@ -288,9 +288,9 @@ DCP::DCP (string directory)
 	_fps = cpl_assets->main_picture->frame_rate.numerator;
 	_length = cpl_assets->main_picture->duration;
 
-	string n = cpl_assets->main_picture->annotation_text;
+	string n = pkl->asset_from_id(cpl_assets->main_picture->id)->original_file_name;
 	if (n.empty ()) {
-		n = pkl->asset_from_id(cpl_assets->main_picture->id)->original_file_name;
+		n = cpl_assets->main_picture->annotation_text;
 	}
 
 	_assets.push_back (shared_ptr<PictureAsset> (
@@ -304,9 +304,9 @@ DCP::DCP (string directory)
 
 	if (cpl_assets->main_sound) {
 
-		n = cpl_assets->main_sound->annotation_text;
+		n = pkl->asset_from_id(cpl_assets->main_sound->id)->original_file_name;
 		if (n.empty ()) {
-			n = pkl->asset_from_id(cpl_assets->main_sound->id)->original_file_name;
+			n = cpl_assets->main_sound->annotation_text;
 		}
 	
 		_assets.push_back (shared_ptr<SoundAsset> (
@@ -333,7 +333,7 @@ DCP::scan (Files& files, string directory) const
 			continue;
 		}
 
-		if (ends_with (t, ".mxf")) {
+		if (ends_with (t, ".mxf") || ends_with (t, ".ttf")) {
 			continue;
 		}
 
@@ -373,6 +373,8 @@ DCP::scan (Files& files, string directory) const
 				throw DCPReadError ("duplicate AssetMaps found");
 			}
 			files.asset_map = t;
+		} else if (root == "DCSubtitle") {
+			files.subtitles.push_back (t);
 		}
 	}
 }

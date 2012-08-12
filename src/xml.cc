@@ -62,8 +62,13 @@ XMLNode::string_node (string name)
 	xmlpp::Node* node = xml_node (name);
 	
         xmlpp::Node::NodeList c = node->get_children ();
-	if (c.size() != 1) {
+
+	if (c.size() > 1) {
 		throw XMLError ("unexpected content in XML node");
+	}
+
+	if (c.empty ()) {
+		return "";
 	}
 	
         xmlpp::ContentNode const * v = dynamic_cast<xmlpp::ContentNode const *> (c.front());

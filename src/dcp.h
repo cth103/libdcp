@@ -149,6 +149,7 @@ private:
 		std::string cpl;
 		std::string pkl;
 		std::string asset_map;
+		std::list<std::string> subtitles;
 	};
 
 	void scan (Files& files, std::string directory) const;

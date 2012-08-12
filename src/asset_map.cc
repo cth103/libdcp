@@ -26,7 +26,7 @@ Chunk::Chunk (xmlpp::Node const * node)
 	: XMLNode (node)
 {
 	path = string_node ("Path");
-	volume_index = int64_node ("VolumeIndex");
+	volume_index = optional_int64_node ("VolumeIndex");
 	offset = optional_int64_node ("Offset");
 	length = optional_int64_node ("Length");
 }
