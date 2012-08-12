@@ -145,6 +145,14 @@ private:
 	 */
 	void write_assetmap (std::string cpl_uuid, int cpl_length, std::string pkl_uuid, int pkl_length) const;
 
+	struct Files {
+		std::string cpl;
+		std::string pkl;
+		std::string asset_map;
+	};
+
+	void scan (Files& files, std::string directory) const;
+
 	/** the directory that we are writing to */
 	std::string _directory;
 	/** the name of the DCP */

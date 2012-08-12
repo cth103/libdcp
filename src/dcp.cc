@@ -237,89 +237,41 @@ DCP::write_assetmap (string cpl_uuid, int cpl_length, string pkl_uuid, int pkl_l
 DCP::DCP (string directory)
 	: _directory (directory)
 {
-	string cpl_file;
-	string pkl_file;
-	string asset_map_file;
+	Files files;
+	scan (files, directory);
 
-	for (filesystem::directory_iterator i = filesystem::directory_iterator(directory); i != filesystem::directory_iterator(); ++i) {
-		
-		string const t = i->path().string ();
-
-		if (ends_with (t, ".mxf")) {
-			continue;
-		}
-
-		xmlpp::DomParser* p = new xmlpp::DomParser;
-
-		try {
-			p->parse_file (t);
-		} catch (std::exception& e) {
-			delete p;
-			continue;
-		}
-		
-		if (!p) {
-			delete p;
-			continue;
-		}
-
-		string const root = p->get_document()->get_root_node()->get_name ();
-		delete p;
-		
-		if (root == "CompositionPlaylist") {
-			if (cpl_file.empty ()) {
-				cpl_file = t;
-			} else {
-				throw DCPReadError ("duplicate CPLs found");
-			}
-		} else if (root == "PackingList") {
-			if (pkl_file.empty ()) {
-				pkl_file = t;
-			} else {
-				throw DCPReadError ("duplicate PKLs found");
-			}
-		} else if (root == "AssetMap") {
-			if (asset_map_file.empty ()) {
-				asset_map_file = t;
-			} else {
-				throw DCPReadError ("duplicate AssetMaps found");
-			}
-			asset_map_file = t;
-		}
-	}
-
-	if (cpl_file.empty ()) {
+	if (files.cpl.empty ()) {
 		throw FileError ("no CPL file found", "");
 	}
 
-	if (pkl_file.empty ()) {
+	if (files.pkl.empty ()) {
 		throw FileError ("no PKL file found", "");
 	}
 
-	if (asset_map_file.empty ()) {
+	if (files.asset_map.empty ()) {
 		throw FileError ("no AssetMap file found", "");
 	}
 
 	/* Read the XML */
 	shared_ptr<CPL> cpl;
 	try {
-		cpl.reset (new CPL (cpl_file));
+		cpl.reset (new CPL (files.cpl));
 	} catch (FileError& e) {
-		throw FileError ("could not load CPL file", cpl_file);
+		throw FileError ("could not load CPL file", files.cpl);
 	}
 
 	shared_ptr<PKL> pkl;
 	try {
-		pkl.reset (new PKL (pkl_file));
+		pkl.reset (new PKL (files.pkl));
 	} catch (FileError& e) {
-		throw FileError ("could not load PKL file", pkl_file);
+		throw FileError ("could not load PKL file", files.pkl);
 	}
 
 	shared_ptr<AssetMap> asset_map;
 	try {
-		asset_map.reset (new AssetMap (asset_map_file));
+		asset_map.reset (new AssetMap (files.asset_map));
 	} catch (FileError& e) {
-		throw FileError ("could not load AssetMap file", asset_map_file);
+		throw FileError ("could not load AssetMap file", files.asset_map);
 	}
 
 	/* Cross-check */
@@ -367,6 +319,64 @@ DCP::DCP (string directory)
 					   ));
 	}
 }
+
+
+void
+DCP::scan (Files& files, string directory) const
+{
+	for (filesystem::directory_iterator i = filesystem::directory_iterator(directory); i != filesystem::directory_iterator(); ++i) {
+		
+		string const t = i->path().string ();
+
+		if (filesystem::is_directory (*i)) {
+			scan (files, t);
+			continue;
+		}
+
+		if (ends_with (t, ".mxf")) {
+			continue;
+		}
+
+		xmlpp::DomParser* p = new xmlpp::DomParser;
+
+		try {
+			p->parse_file (t);
+		} catch (std::exception& e) {
+			delete p;
+			continue;
+		}
+		
+		if (!p) {
+			delete p;
+			continue;
+		}
+
+		string const root = p->get_document()->get_root_node()->get_name ();
+		delete p;
+		
+		if (root == "CompositionPlaylist") {
+			if (files.cpl.empty ()) {
+				files.cpl = t;
+			} else {
+				throw DCPReadError ("duplicate CPLs found");
+			}
+		} else if (root == "PackingList") {
+			if (files.pkl.empty ()) {
+				files.pkl = t;
+			} else {
+				throw DCPReadError ("duplicate PKLs found");
+			}
+		} else if (root == "AssetMap") {
+			if (files.asset_map.empty ()) {
+				files.asset_map = t;
+			} else {
+				throw DCPReadError ("duplicate AssetMaps found");
+			}
+			files.asset_map = t;
+		}
+	}
+}
+
 
 list<string>
 DCP::equals (DCP const & other, EqualityOptions opt) const
