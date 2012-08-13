@@ -25,19 +25,19 @@ namespace libdcp {
 class Time
 {
 public:
-	Time () : h (0), m (0), s (0), ms (0) {}
+	Time () : h (0), m (0), s (0), t (0) {}
 	Time (int frame, int frames_per_second);
-	Time (int h_, int m_, int s_, int ms_)
+	Time (int h_, int m_, int s_, int t_)
 		: h (h_)
 		, m (m_)
 		, s (s_)
-		, ms (ms_)
+		, t (t_)
 	{}
 
 	int h;
 	int m;
 	int s;
-	int ms;
+	int t;
 };
 
 extern bool operator== (Time const & a, Time const & b);

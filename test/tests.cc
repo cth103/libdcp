@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 {
 	libdcp::Time t (977143, 24);
 
-	BOOST_CHECK_EQUAL (t.ms, 292);
+	BOOST_CHECK_EQUAL (t.t, 73);
 	BOOST_CHECK_EQUAL (t.s, 34);
 	BOOST_CHECK_EQUAL (t.m, 18);
 	BOOST_CHECK_EQUAL (t.h, 11);

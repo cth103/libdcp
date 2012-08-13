@@ -27,7 +27,7 @@ using namespace libdcp;
 Time::Time (int frame, int frames_per_second)
 {
 	float sec_float = float (frame) / frames_per_second;
-	ms = int (sec_float * 1000) % 1000;
+	t = (int (sec_float * 1000) % 1000) / 4;
 	s = floor (sec_float);
 
 	if (s > 60) {
@@ -44,7 +44,7 @@ Time::Time (int frame, int frames_per_second)
 bool
 libdcp::operator== (Time const & a, Time const & b)
 {
-	return (a.h == b.h && a.m == b.m && a.s == b.s && a.ms == b.ms);
+	return (a.h == b.h && a.m == b.m && a.s == b.s && a.t == b.t);
 }
 
 bool
@@ -62,8 +62,8 @@ libdcp::operator<= (Time const & a, Time const & b)
 		return a.s <= b.s;
 	}
 
-	if (a.ms != b.ms) {
-		return a.ms <= b.ms;
+	if (a.t != b.t) {
+		return a.t <= b.t;
 	}
 
 	return true;
@@ -72,6 +72,6 @@ libdcp::operator<= (Time const & a, Time const & b)
 ostream &
 libdcp::operator<< (ostream& s, Time const & t)
 {
-	s << t.h << ":" << t.m << ":" << t.s << "." << t.ms;
+	s << t.h << ":" << t.m << ":" << t.s << "." << t.t;
 	return s;
 }
