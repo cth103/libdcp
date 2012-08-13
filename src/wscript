@@ -35,6 +35,7 @@ def build(bld):
               version.h
               picture_asset.h
               sound_asset.h
+              subtitle_asset.h
               asset.h
               picture_frame.h
               sound_frame.h
