@@ -44,13 +44,10 @@ class Asset
 {
 public:
 	/** Construct an Asset.
-	 *  @param directory Directory where MXF file is.
-	 *  @param mxf_name Name of MXF file.
-	 *  @param progress Signal to inform of progress.
-	 *  @param fps Frames per second.
-	 *  @param length Length in frames.
+	 *  @param directory Directory where our XML or MXF file is.
+	 *  @param file_name Name of our file within directory.
 	 */
-	Asset (std::string directory, std::string mxf_path, sigc::signal1<void, float>* progress, int fps, int length);
+	Asset (std::string directory, std::string file_name);
 
 	/** Write details of the asset to a CPL stream.
 	 *  @param s Stream.
@@ -67,37 +64,24 @@ public:
 	 */
 	void write_to_assetmap (std::ostream& s) const;
 
-	virtual std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
-
-	int length () const;
+	virtual std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const = 0;
 
 protected:
 	friend class PictureAsset;
 	friend class SoundAsset;
 	
-	/** Fill in a ADSCP::WriteInfo struct.
-	 *  @param w struct to fill in.
-	 */
-	void fill_writer_info (ASDCP::WriterInfo* w) const;
-
-	boost::filesystem::path mxf_path () const;
 	std::string digest () const;
+	boost::filesystem::path path () const;
 
-	/** Directory that our MXF file is in */
+	/** Directory that our MXF or XML file is in */
 	std::string _directory;
-	/** Name of our MXF file */
-	std::string _mxf_name;
-	/** Signal to emit to report progress */
-	sigc::signal1<void, float>* _progress;
-	/** Frames per second */
-	int _fps;
-	/** Length in frames */
-	int _length;
+	/** Name of our MXF or XML file */
+	std::string _file_name;
 	/** Our UUID */
 	std::string _uuid;
 
 private:	
-	/** Digest of our MXF */
+	/** Digest of our MXF or XML file */
 	mutable std::string _digest;
 };
 

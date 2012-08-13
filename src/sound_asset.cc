@@ -39,7 +39,7 @@ using namespace libdcp;
 SoundAsset::SoundAsset (
 	vector<string> const & files, string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int length
 	)
-	: Asset (directory, mxf_name, progress, fps, length)
+	: MXFAsset (directory, mxf_name, progress, fps, length)
 	, _channels (files.size ())
 	, _sampling_rate (0)
 {
@@ -49,7 +49,7 @@ SoundAsset::SoundAsset (
 SoundAsset::SoundAsset (
 	sigc::slot<string, Channel> get_path, string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int length, int channels
 	)
-	: Asset (directory, mxf_name, progress, fps, length)
+	: MXFAsset (directory, mxf_name, progress, fps, length)
 	, _channels (channels)
 	, _sampling_rate (0)
 {
@@ -57,12 +57,12 @@ SoundAsset::SoundAsset (
 }
 
 SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int length)
-	: Asset (directory, mxf_name, 0, fps, length)
+	: MXFAsset (directory, mxf_name, 0, fps, length)
 	, _channels (0)
 {
 	ASDCP::PCM::MXFReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (mxf_path().string().c_str()))) {
-		throw FileError ("could not open MXF file for reading", mxf_path().string());
+	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
+		throw FileError ("could not open MXF file for reading", path().string());
 	}
 
 	
@@ -135,8 +135,8 @@ SoundAsset::construct (sigc::slot<string, Channel> get_path)
 	fill_writer_info (&writer_info);
 
 	ASDCP::PCM::MXFWriter mxf_writer;
-	if (ASDCP_FAILURE (mxf_writer.OpenWrite (mxf_path().string().c_str(), writer_info, audio_desc))) {
-		throw FileError ("could not open audio MXF for writing", mxf_path().string());
+	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, audio_desc))) {
+		throw FileError ("could not open audio MXF for writing", path().string());
 	}
 
 	for (int i = 0; i < _length; ++i) {
@@ -183,7 +183,7 @@ SoundAsset::write_to_cpl (ostream& s) const
 {
 	s << "        <MainSound>\n"
 	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "          <AnnotationText>" << _mxf_name << "</AnnotationText>\n"
+	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
 	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
 	  << "          <IntrinsicDuration>" << _length << "</IntrinsicDuration>\n"
 	  << "          <EntryPoint>0</EntryPoint>\n"
@@ -194,19 +194,19 @@ SoundAsset::write_to_cpl (ostream& s) const
 list<string>
 SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 {
-	list<string> notes = Asset::equals (other, opt);
+	list<string> notes = MXFAsset::equals (other, opt);
 		     
 	if (opt.flags & MXF_INSPECT) {
 		ASDCP::PCM::MXFReader reader_A;
-		if (ASDCP_FAILURE (reader_A.OpenRead (mxf_path().string().c_str()))) {
-			cout << "failed " << mxf_path() << "\n";
-			throw FileError ("could not open MXF file for reading", mxf_path().string());
+		if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
+			cout << "failed " << path() << "\n";
+			throw FileError ("could not open MXF file for reading", path().string());
 		}
 
 		ASDCP::PCM::MXFReader reader_B;
-		if (ASDCP_FAILURE (reader_B.OpenRead (other->mxf_path().string().c_str()))) {
-			cout << "failed " << other->mxf_path() << "\n";
-			throw FileError ("could not open MXF file for reading", mxf_path().string());
+		if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
+			cout << "failed " << other->path() << "\n";
+			throw FileError ("could not open MXF file for reading", path().string());
 		}
 
 		ASDCP::PCM::AudioDescriptor desc_A;
@@ -264,5 +264,5 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 shared_ptr<const SoundFrame>
 SoundAsset::get_frame (int n) const
 {
-	return shared_ptr<const SoundFrame> (new SoundFrame (mxf_path().string(), n));
+	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n));
 }

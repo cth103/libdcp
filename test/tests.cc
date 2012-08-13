@@ -24,6 +24,7 @@
 #include "metadata.h"
 #include "types.h"
 #include "exceptions.h"
+#include "subtitle_asset.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test
@@ -85,4 +86,21 @@ BOOST_AUTO_TEST_CASE (read_dcp)
 	BOOST_CHECK_EQUAL (d.length(), 24);
 }
 	
+BOOST_AUTO_TEST_CASE (subtitles)
+{
+	libdcp::SubtitleAsset subs ("test/ref", "subs.xml");
+
+	BOOST_CHECK_EQUAL (subs.language(), "French");
+	BOOST_CHECK_EQUAL (subs.fonts().size(), 1);
+	BOOST_CHECK_EQUAL (subs.fonts().front()->subtitles().size(), 4);
+
+	list<shared_ptr<libdcp::Subtitle> >::const_iterator i = subs.fonts().front()->subtitles().begin ();
+
+	BOOST_CHECK_EQUAL ((*i)->in(), libdcp::Time (0, 0, 5, 198));
+	BOOST_CHECK_EQUAL ((*i)->out(), libdcp::Time (0, 0, 7, 115));
+	BOOST_CHECK_EQUAL ((*i)->texts().size(), 1);
+	BOOST_CHECK_EQUAL ((*i)->texts().front()->v_position(), 15);
+	BOOST_CHECK_EQUAL ((*i)->texts().front()->text(), "My jacket was Idi Amin's");
+}
+
 	

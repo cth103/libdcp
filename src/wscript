@@ -10,7 +10,10 @@ def build(bld):
                  asset_map.cc
                  cpl.cc
                  dcp.cc        
+                 dcp_time.cc
+                 mxf_asset.cc
                  sound_asset.cc
+                 subtitle_asset.cc
                  picture_asset.cc
                  picture_frame.cc
                  pkl.cc

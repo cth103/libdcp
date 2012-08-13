@@ -49,7 +49,7 @@ PictureAsset::PictureAsset (
 	int length,
 	int width,
 	int height)
-	: Asset (directory, mxf_name, progress, fps, length)
+	: MXFAsset (directory, mxf_name, progress, fps, length)
 	, _width (width)
 	, _height (height)
 {
@@ -65,7 +65,7 @@ PictureAsset::PictureAsset (
 	int length,
 	int width,
 	int height)
-	: Asset (directory, mxf_name, progress, fps, length)
+	: MXFAsset (directory, mxf_name, progress, fps, length)
 	, _width (width)
 	, _height (height)
 {
@@ -73,11 +73,11 @@ PictureAsset::PictureAsset (
 }
 
 PictureAsset::PictureAsset (string directory, string mxf_name, int fps, int length)
-	: Asset (directory, mxf_name, 0, fps, length)
+	: MXFAsset (directory, mxf_name, 0, fps, length)
 {
 	ASDCP::JP2K::MXFReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (mxf_path().string().c_str()))) {
-		throw FileError ("could not open MXF file for reading", mxf_path().string());
+	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
+		throw FileError ("could not open MXF file for reading", path().string());
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc;
@@ -113,8 +113,8 @@ PictureAsset::construct (sigc::slot<string, int> get_path)
 	fill_writer_info (&writer_info);
 	
 	ASDCP::JP2K::MXFWriter mxf_writer;
-	if (ASDCP_FAILURE (mxf_writer.OpenWrite (mxf_path().string().c_str(), writer_info, picture_desc))) {
-		throw FileError ("could not open MXF file for writing", mxf_path().string());
+	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc))) {
+		throw FileError ("could not open MXF file for writing", path().string());
 	}
 
 	for (int i = 0; i < _length; ++i) {
@@ -143,7 +143,7 @@ PictureAsset::write_to_cpl (ostream& s) const
 {
 	s << "        <MainPicture>\n"
 	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "          <AnnotationText>" << _mxf_name << "</AnnotationText>\n"
+	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
 	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
 	  << "          <IntrinsicDuration>" << _length << "</IntrinsicDuration>\n"
 	  << "          <EntryPoint>0</EntryPoint>\n"
@@ -157,17 +157,17 @@ PictureAsset::write_to_cpl (ostream& s) const
 list<string>
 PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 {
-	list<string> notes = Asset::equals (other, opt);
+	list<string> notes = MXFAsset::equals (other, opt);
 		     
 	if (opt.flags & MXF_INSPECT) {
 		ASDCP::JP2K::MXFReader reader_A;
-		if (ASDCP_FAILURE (reader_A.OpenRead (mxf_path().string().c_str()))) {
-			throw FileError ("could not open MXF file for reading", mxf_path().string());
+		if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
+			throw FileError ("could not open MXF file for reading", path().string());
 		}
 
 		ASDCP::JP2K::MXFReader reader_B;
-		if (ASDCP_FAILURE (reader_B.OpenRead (other->mxf_path().string().c_str()))) {
-			throw FileError ("could not open MXF file for reading", mxf_path().string());
+		if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
+			throw FileError ("could not open MXF file for reading", path().string());
 		}
 
 		ASDCP::JP2K::PictureDescriptor desc_A;
@@ -319,5 +319,5 @@ PictureAsset::decompress_j2k (uint8_t* data, int64_t size) const
 shared_ptr<const PictureFrame>
 PictureAsset::get_frame (int n) const
 {
-	return shared_ptr<const PictureFrame> (new PictureFrame (mxf_path().string(), n));
+	return shared_ptr<const PictureFrame> (new PictureFrame (path().string(), n));
 }

@@ -139,6 +139,12 @@ XMLNode::ignore_node (string name)
 	_taken.push_back (name);
 }
 
+Time
+XMLNode::time_attribute (string name)
+{
+
+}
+
 void
 XMLNode::done ()
 {

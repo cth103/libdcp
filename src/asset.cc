@@ -34,12 +34,9 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-Asset::Asset (string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int length)
+Asset::Asset (string directory, string file_name)
 	: _directory (directory)
-	, _mxf_name (mxf_name)
-	, _progress (progress)
-	, _fps (fps)
-	, _length (length)
+	, _file_name (file_name)
 	, _uuid (make_uuid ())
 {
 	
@@ -50,9 +47,9 @@ Asset::write_to_pkl (ostream& s) const
 {
 	s << "    <Asset>\n"
 	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "      <AnnotationText>" << _mxf_name << "</AnnotationText>\n"
+	  << "      <AnnotationText>" << _file_name << "</AnnotationText>\n"
 	  << "      <Hash>" << digest() << "</Hash>\n"
-	  << "      <Size>" << filesystem::file_size(mxf_path()) << "</Size>\n"
+	  << "      <Size>" << filesystem::file_size(path()) << "</Size>\n"
 	  << "      <Type>application/mxf</Type>\n"
 	  << "    </Asset>\n";
 }
@@ -64,105 +61,30 @@ Asset::write_to_assetmap (ostream& s) const
 	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
 	  << "      <ChunkList>\n"
 	  << "        <Chunk>\n"
-	  << "          <Path>" << _mxf_name << "</Path>\n"
+	  << "          <Path>" << _file_name << "</Path>\n"
 	  << "          <VolumeIndex>1</VolumeIndex>\n"
 	  << "          <Offset>0</Offset>\n"
-	  << "          <Length>" << filesystem::file_size(mxf_path()) << "</Length>\n"
+	  << "          <Length>" << filesystem::file_size(path()) << "</Length>\n"
 	  << "        </Chunk>\n"
 	  << "      </ChunkList>\n"
 	  << "    </Asset>\n";
 }
 
-void
-Asset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
-{
-	writer_info->ProductVersion = Metadata::instance()->product_version;
-	writer_info->CompanyName = Metadata::instance()->company_name;
-	writer_info->ProductName = Metadata::instance()->product_name.c_str();
-
-	writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
-	unsigned int c;
-	Kumu::hex2bin (_uuid.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
-	assert (c == Kumu::UUID_Length);
-}
-
 filesystem::path
-Asset::mxf_path () const
+Asset::path () const
 {
 	filesystem::path p;
 	p /= _directory;
-	p /= _mxf_name;
+	p /= _file_name;
 	return p;
-}
-
-list<string>
-Asset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
-{
-	list<string> notes;
-	
-	if (opt.flags & LIBDCP_METADATA) {
-		if (_mxf_name != other->_mxf_name) {
-			notes.push_back ("MXF names differ");
-		}
-		if (_fps != other->_fps) {
-			notes.push_back ("MXF frames per second differ");
-		}
-		if (_length != other->_length) {
-			notes.push_back ("MXF lengths differ");
-		}
-	}
-	
-	if (opt.flags & MXF_BITWISE) {
-
-		if (digest() != other->digest()) {
-			notes.push_back ("MXF digests differ");
-		}
-		
-		if (filesystem::file_size (mxf_path()) != filesystem::file_size (other->mxf_path())) {
-			notes.push_back (mxf_path().string() + " and " + other->mxf_path().string() + " sizes differ");
-			return notes;
-		}
-		
-		ifstream a (mxf_path().string().c_str(), ios::binary);
-		ifstream b (other->mxf_path().string().c_str(), ios::binary);
-
-		int buffer_size = 65536;
-		char abuffer[buffer_size];
-		char bbuffer[buffer_size];
-
-		int n = filesystem::file_size (mxf_path ());
-
-		while (n) {
-			int const t = min (n, buffer_size);
-			a.read (abuffer, t);
-			b.read (bbuffer, t);
-
-			if (memcmp (abuffer, bbuffer, t) != 0) {
-				notes.push_back (mxf_path().string() + " and " + other->mxf_path().string() + " content differs");
-				return notes;
-			}
-
-			n -= t;
-		}
-	}
-
-	return notes;
 }
 
 string
 Asset::digest () const
 {
 	if (_digest.empty ()) {
-		_digest = make_digest (mxf_path().string(), 0);
+		_digest = make_digest (path().string(), 0);
 	}
 
 	return _digest;
 }
-
-int
-Asset::length () const
-{
-	return _length;
-}
-
-	

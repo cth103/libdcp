@@ -24,7 +24,7 @@
  *  @brief An asset made up of WAV files
  */
 
-#include "asset.h"
+#include "mxf_asset.h"
 #include "types.h"
 
 namespace libdcp
@@ -33,7 +33,7 @@ namespace libdcp
 class SoundFrame;	
 
 /** @brief An asset made up of WAV files */
-class SoundAsset : public Asset
+class SoundAsset : public MXFAsset
 {
 public:
 	/** Construct a SoundAsset, generating the MXF from the WAV files.

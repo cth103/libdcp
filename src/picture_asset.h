@@ -22,7 +22,7 @@
  */
 
 #include <openjpeg.h>
-#include "asset.h"
+#include "mxf_asset.h"
 
 namespace libdcp
 {
@@ -30,7 +30,7 @@ namespace libdcp
 class PictureFrame;	
 
 /** @brief An asset made up of JPEG2000 files */
-class PictureAsset : public Asset
+class PictureAsset : public MXFAsset
 {
 public:
 	/** Construct a PictureAsset, generating the MXF from the JPEG2000 files.
