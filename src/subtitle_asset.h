@@ -57,7 +57,7 @@ public:
 		return _out;
 	}
 
-	std::list<boost::shared_ptr<Text> > texts () const {
+	std::list<boost::shared_ptr<Text> > const & texts () const {
 		return _texts;
 	}
 
@@ -73,7 +73,7 @@ public:
 	Font () {}
 	Font (xmlpp::Node const * node);
 
-	std::list<boost::shared_ptr<Subtitle> > subtitles () const {
+	std::list<boost::shared_ptr<Subtitle> > const & subtitles () const {
 		return _subtitles;
 	}
 
@@ -95,7 +95,7 @@ public:
 		return _language;
 	}
 
-	std::list<boost::shared_ptr<Font> > fonts () const {
+	std::list<boost::shared_ptr<Font> > const & fonts () const {
 		return _fonts;
 	}
 

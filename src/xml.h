@@ -8,6 +8,7 @@
 #include <boost/shared_ptr.hpp>
 #include "types.h"
 #include "exceptions.h"
+#include "dcp_time.h"
 
 namespace xmlpp {
 	class Node;
@@ -35,6 +36,9 @@ protected:
 
 	Time time_attribute (std::string);
 	float float_attribute (std::string);
+	std::string string_attribute (std::string);
+
+	std::string content ();
 
 	template <class T>
 	boost::shared_ptr<T> sub_node (std::string name) {

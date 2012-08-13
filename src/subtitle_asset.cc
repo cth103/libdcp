@@ -44,11 +44,14 @@ Font::Font (xmlpp::Node const * node)
 Subtitle::Subtitle (xmlpp::Node const * node)
 	: XMLNode (node)
 {
+	_in = time_attribute ("TimeIn");
+	_out = time_attribute ("TimeOut");
 	_texts = sub_nodes<Text> ("Text");
 }
 
 Text::Text (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-
+	_text = content ();
+	_v_position = float_attribute ("VPosition");
 }

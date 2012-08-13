@@ -2,6 +2,7 @@
 #include <iostream>
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 #include <libxml++/libxml++.h>
 #include "xml.h"
 #include "exceptions.h"
@@ -59,24 +60,7 @@ XMLNode::xml_nodes (string name)
 string
 XMLNode::string_node (string name)
 {
-	xmlpp::Node* node = xml_node (name);
-	
-        xmlpp::Node::NodeList c = node->get_children ();
-
-	if (c.size() > 1) {
-		throw XMLError ("unexpected content in XML node");
-	}
-
-	if (c.empty ()) {
-		return "";
-	}
-	
-        xmlpp::ContentNode const * v = dynamic_cast<xmlpp::ContentNode const *> (c.front());
-	if (!v) {
-		throw XMLError ("missing content in XML node");
-	}
-	
-	return v->get_content ();
+	return XMLNode (xml_node (name)).content ();
 }
 
 string
@@ -142,7 +126,35 @@ XMLNode::ignore_node (string name)
 Time
 XMLNode::time_attribute (string name)
 {
+	string const t = string_attribute (name);
 
+	vector<string> b;
+	boost::split (b, t, is_any_of (":"));
+	assert (b.size() == 4);
+
+	return Time (lexical_cast<int> (b[0]), lexical_cast<int> (b[1]), lexical_cast<int> (b[2]), lexical_cast<int> (b[3]));
+}
+
+string
+XMLNode::string_attribute (string name)
+{
+	xmlpp::Element const * e = dynamic_cast<const xmlpp::Element *> (_node);
+	if (!e) {
+		return "";
+	}
+	
+	xmlpp::Attribute* a = e->get_attribute (name);
+	if (!a) {
+		return "";
+	}
+
+	return a->get_value ();
+}
+
+float
+XMLNode::float_attribute (string name)
+{
+	return lexical_cast<float> (string_attribute (name));
 }
 
 void
@@ -154,6 +166,27 @@ XMLNode::done ()
 			throw XMLError ("unexpected XML node " + (*i)->get_name());
 		}
 	}
+}
+
+string
+XMLNode::content ()
+{
+        xmlpp::Node::NodeList c = _node->get_children ();
+
+	if (c.size() > 1) {
+		throw XMLError ("unexpected content in XML node");
+	}
+
+	if (c.empty ()) {
+		return "";
+	}
+	
+        xmlpp::ContentNode const * v = dynamic_cast<xmlpp::ContentNode const *> (c.front());
+	if (!v) {
+		throw XMLError ("missing content in XML node");
+	}
+	
+	return v->get_content ();
 }
 
 XMLFile::XMLFile (string file, string root_name)

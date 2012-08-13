@@ -101,6 +101,29 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL ((*i)->texts().size(), 1);
 	BOOST_CHECK_EQUAL ((*i)->texts().front()->v_position(), 15);
 	BOOST_CHECK_EQUAL ((*i)->texts().front()->text(), "My jacket was Idi Amin's");
+	++i;
+
+	BOOST_CHECK_EQUAL ((*i)->in(), libdcp::Time (0, 0, 7, 177));
+	BOOST_CHECK_EQUAL ((*i)->out(), libdcp::Time (0, 0, 11, 31));
+	BOOST_CHECK_EQUAL ((*i)->texts().size(), 2);
+	BOOST_CHECK_EQUAL ((*i)->texts().front()->v_position(), 21);
+	BOOST_CHECK_EQUAL ((*i)->texts().front()->text(), "My corset was H.M. The Queen's");
+	BOOST_CHECK_EQUAL ((*i)->texts().back()->v_position(), 15);
+	BOOST_CHECK_EQUAL ((*i)->texts().back()->text(), "My large wonderbra");
+	++i;
+
+	BOOST_CHECK_EQUAL ((*i)->in(), libdcp::Time (0, 0, 11, 94));
+	BOOST_CHECK_EQUAL ((*i)->out(), libdcp::Time (0, 0, 13, 63));
+	BOOST_CHECK_EQUAL ((*i)->texts().size(), 1);
+	BOOST_CHECK_EQUAL ((*i)->texts().front()->v_position(), 15);
+	BOOST_CHECK_EQUAL ((*i)->texts().front()->text(), "Once belonged to the Shah");
+	++i;
+
+	BOOST_CHECK_EQUAL ((*i)->in(), libdcp::Time (0, 0, 13, 104));
+	BOOST_CHECK_EQUAL ((*i)->out(), libdcp::Time (0, 0, 15, 177));
+	BOOST_CHECK_EQUAL ((*i)->texts().size(), 1);
+	BOOST_CHECK_EQUAL ((*i)->texts().front()->v_position(), 15);
+	BOOST_CHECK_EQUAL ((*i)->texts().front()->text(), "And these are Roy Hattersley's jeans");
 }
 
 	
