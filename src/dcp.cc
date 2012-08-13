@@ -32,6 +32,7 @@
 #include "asset.h"
 #include "sound_asset.h"
 #include "picture_asset.h"
+#include "subtitle_asset.h"
 #include "util.h"
 #include "metadata.h"
 #include "exceptions.h"
@@ -441,4 +442,17 @@ DCP::sound_asset () const
 	}
 
 	return shared_ptr<const SoundAsset> ();
+}
+
+shared_ptr<const SubtitleAsset>
+DCP::subtitle_asset () const
+{
+	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
+		shared_ptr<SubtitleAsset> s = dynamic_pointer_cast<SubtitleAsset> (*i);
+		if (s) {
+			return s;
+		}
+	}
+
+	return shared_ptr<const SubtitleAsset> ();
 }

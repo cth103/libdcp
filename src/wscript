@@ -36,6 +36,9 @@ def build(bld):
               picture_asset.h
               sound_asset.h
               subtitle_asset.h
+              mxf_asset.h
+              xml.h
+              dcp_time.h
               asset.h
               picture_frame.h
               sound_frame.h
