@@ -124,6 +124,9 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL ((*i)->texts().size(), 1);
 	BOOST_CHECK_EQUAL ((*i)->texts().front()->v_position(), 15);
 	BOOST_CHECK_EQUAL ((*i)->texts().front()->text(), "And these are Roy Hattersley's jeans");
+
+	BOOST_CHECK_EQUAL (subs.subtitles_at (libdcp::Time (0, 0, 14, 042)).size(), 1);
+	BOOST_CHECK_EQUAL (subs.subtitles_at (libdcp::Time (0, 0, 14, 042)).front()->text(), "And these are Roy Hattersley's jeans");
 }
 
 	

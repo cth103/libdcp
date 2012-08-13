@@ -19,9 +19,11 @@
 
 #include "subtitle_asset.h"
 
+using namespace std;
+using namespace boost;
 using namespace libdcp;
 
-SubtitleAsset::SubtitleAsset (std::string directory, std::string xml)
+SubtitleAsset::SubtitleAsset (string directory, string xml)
 	: Asset (directory, xml)
 	, XMLFile (path().string(), "DCSubtitle")
 {
@@ -54,4 +56,29 @@ Text::Text (xmlpp::Node const * node)
 {
 	_text = content ();
 	_v_position = float_attribute ("VPosition");
+}
+
+list<shared_ptr<Text> >
+SubtitleAsset::subtitles_at (Time t) const
+{
+	for (list<shared_ptr<Font> >::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
+		list<shared_ptr<Text> > s = (*i)->subtitles_at (t);
+		if (!s.empty ()) {
+			return s;
+		}
+	}
+
+	return list<shared_ptr<Text> > ();
+}
+
+list<shared_ptr<Text> >
+Font::subtitles_at (Time t) const
+{
+	for (list<shared_ptr<Subtitle> >::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
+		if ((*i)->in() <= t && t <= (*i)->out()) {
+			return (*i)->texts ();
+		}
+	}
+
+	return list<shared_ptr<Text> > ();
 }

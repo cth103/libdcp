@@ -77,6 +77,8 @@ public:
 		return _subtitles;
 	}
 
+	std::list<boost::shared_ptr<Text> > subtitles_at (Time t) const;
+	
 private:
 	std::list<boost::shared_ptr<Subtitle> > _subtitles;
 };
@@ -94,6 +96,8 @@ public:
 	std::string language () const {
 		return _language;
 	}
+
+	std::list<boost::shared_ptr<Text> > subtitles_at (Time t) const;
 
 	std::list<boost::shared_ptr<Font> > const & fonts () const {
 		return _fonts;

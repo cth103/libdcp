@@ -28,6 +28,28 @@ libdcp::operator== (Time const & a, Time const & b)
 	return (a.h == b.h && a.m == b.m && a.s == b.s && a.ms == b.ms);
 }
 
+bool
+libdcp::operator<= (Time const & a, Time const & b)
+{
+	if (a.h != b.h) {
+		return a.h <= b.h;
+	}
+
+	if (a.m != b.m) {
+		return a.m <= b.m;
+	}
+
+	if (a.s != b.s) {
+		return a.s <= b.s;
+	}
+
+	if (a.ms != b.ms) {
+		return a.ms <= b.ms;
+	}
+
+	return true;
+}
+
 ostream &
 libdcp::operator<< (ostream& s, Time const & t)
 {
