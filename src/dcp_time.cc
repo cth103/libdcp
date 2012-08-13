@@ -18,9 +18,28 @@
 */
 
 #include <iostream>
+#include <cmath>
 #include "dcp_time.h"
 
 using namespace std;
+using namespace libdcp;
+
+Time::Time (int frame, int frames_per_second)
+{
+	float sec_float = float (frame) / frames_per_second;
+	ms = int (sec_float * 1000) % 1000;
+	s = floor (sec_float);
+
+	if (s > 60) {
+		m = s / 60;
+		s -= m * 60;
+	}
+
+	if (m > 60) {
+		h = m / 60;
+		m -= h * 60;
+	}
+}
 
 bool
 libdcp::operator== (Time const & a, Time const & b)

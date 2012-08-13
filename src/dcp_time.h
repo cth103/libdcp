@@ -26,6 +26,7 @@ class Time
 {
 public:
 	Time () : h (0), m (0), s (0), ms (0) {}
+	Time (int frame, int frames_per_second);
 	Time (int h_, int m_, int s_, int ms_)
 		: h (h_)
 		, m (m_)
