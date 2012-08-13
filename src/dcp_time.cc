@@ -25,6 +25,10 @@ using namespace std;
 using namespace libdcp;
 
 Time::Time (int frame, int frames_per_second)
+	: h (0)
+	, m (0)
+	, s (0)
+	, t (0)
 {
 	float sec_float = float (frame) / frames_per_second;
 	t = (int (sec_float * 1000) % 1000) / 4;

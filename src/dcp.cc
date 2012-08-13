@@ -319,6 +319,11 @@ DCP::DCP (string directory)
 						   )
 					   ));
 	}
+
+	for (list<string>::iterator i = files.subtitles.begin(); i != files.subtitles.end(); ++i) {
+		string const l = i->substr (_directory.length ());
+		_assets.push_back (shared_ptr<SubtitleAsset> (new SubtitleAsset (_directory, l)));
+	}
 }
 
 
