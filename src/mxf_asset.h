@@ -30,12 +30,12 @@ class MXFAsset : public Asset
 public:
 	/** Construct an MXFAsset.
 	 *  @param directory Directory where MXF file is.
-	 *  @param mxf_name Name of MXF file.
+	 *  @param file_name Name of MXF file.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
 	 */
-	MXFAsset (std::string directory, std::string mxf_path, sigc::signal1<void, float>* progress, int fps, int length);
+	MXFAsset (std::string directory, std::string file_name, sigc::signal1<void, float>* progress, int fps, int length);
 
 	virtual std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
 	

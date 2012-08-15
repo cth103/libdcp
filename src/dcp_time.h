@@ -17,16 +17,29 @@
 
 */
 
+/** @file  src/dcp_time.h
+ *  @brief A representation of time within a DCP.
+ */
+
 #ifndef LIBDCP_TIME_H
 #define LIBDCP_TIME_H
 
 namespace libdcp {
 
+/** @class Time
+ *  @brief A representation of time within a DCP.
+ */
+	
 class Time
 {
 public:
 	Time () : h (0), m (0), s (0), t (0) {}
+
+	/** Construct a Time from a frame index (starting from 0)
+	 *  and a frames per second count.
+	 */
 	Time (int frame, int frames_per_second);
+	
 	Time (int h_, int m_, int s_, int t_)
 		: h (h_)
 		, m (m_)
@@ -34,10 +47,10 @@ public:
 		, t (t_)
 	{}
 
-	int h;
-	int m;
-	int s;
-	int t;
+	int h; ///< hours
+	int m; ///< minutes
+	int s; ///< seconds
+	int t; ///< `ticks', where 1 tick is 4 milliseconds
 };
 
 extern bool operator== (Time const & a, Time const & b);

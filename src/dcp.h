@@ -51,6 +51,9 @@ class DCP
 {
 public:
 	/** Construct a DCP.
+	 *
+	 *  This is for making a new DCP that you are going to add assets to.
+	 *
 	 *  @param directory Directory to write files to.
 	 *  @param name Name.
 	 *  @param content_kind Content kind.
@@ -59,6 +62,13 @@ public:
 	 */
 	DCP (std::string directory, std::string name, ContentKind content_kind, int fps, int length);
 
+	/** Construct a DCP object for an existing DCP.
+	 *
+	 *  The DCP's XML metadata will be examined, and you can then look at the contents
+	 *  of the DCP.
+	 *
+	 *  @param directory Existing DCP's directory.
+	 */
 	DCP (std::string directory);
 
 	/** Add a sound asset.
@@ -93,26 +103,43 @@ public:
 	 */
 	void write_xml () const;
 
+	/** @return the DCP's name, as will be presented on projector
+	 *  media servers and theatre management systems.
+	 */
 	std::string name () const {
 		return _name;
 	}
 
+	/** @return the type of the content, used by media servers
+	 *  to categorise things (e.g. feature, trailer, etc.)
+	 */
 	ContentKind content_kind () const {
 		return _content_kind;
 	}
 
+	/** @return the number of frames per second */
 	int frames_per_second () const {
 		return _fps;
 	}
 
+	/** @return the length in frames */
 	int length () const {
 		return _length;
 	}
 
+	/** @return the main picture asset, if one exists, otherwise 0 */
 	boost::shared_ptr<const PictureAsset> picture_asset () const;
+	/** @return the main sound asset, if one exists, otherwise 0 */
 	boost::shared_ptr<const SoundAsset> sound_asset () const;
+	/** @return the main subtitle asset, if one exists, otherwise 0 */
 	boost::shared_ptr<const SubtitleAsset> subtitle_asset () const;
 
+	/** Compare this DCP with another, according to various options.
+	 *  @param other DCP to compare this one to.
+	 *  @param options Options to define just what "equality" means.
+	 *  @return An empty list if the DCPs are equal; otherwise a list of messages
+	 *  which explain the ways in which they differ.
+	 */
 	std::list<std::string> equals (DCP const & other, EqualityOptions options) const;
 
 	/** Emitted with a parameter between 0 and 1 to indicate progress

@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/dcp_time.cc
+ *  @brief A representation of time within a DCP.
+ */
+
 #include <iostream>
 #include <cmath>
 #include "dcp_time.h"

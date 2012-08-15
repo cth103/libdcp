@@ -2,14 +2,17 @@
 
 @mainpage libdcp
 
-libdcp is a small library to create Digital Cinema Packages (DCPs) from JPEG2000 and WAV files.
+libdcp is a small library to create and read Digital Cinema Packages (DCPs) from JPEG2000 and WAV files.
 
 Most of the hard work is done by a (slightly patched) version of asdcplib (http://www.cinecert.com/asdcplib/)
 which is included in the source distribution for libdcp.
 
 libdcp is distributed under the GNU GPL.
 
-Typical use might be:
+Creating DCPs
+--
+
+Typical use for creating DCPs might be:
 @code
 #include <libdcp/dcp.h>
 using namespace std;
@@ -45,7 +48,17 @@ MXF files inside the DCP directory) and then write the required XML files.
 If you want to report progress for long jobs (add_picture_asset() can
 take a long time, in particular, as it must do a lot of disk I/O for
 large DCPs), connect to the libdcp::DCP::Progress signal and report its parameter
-to the user (it will range between 0 for 0% and 1 for 100%).
+to the user (it will range between 0 for 0% and 1 for 100%) using something like
+
+@code
+void
+report (float p)
+{
+   cout << "We are " << int (p * 100) << "% done.\n";
+}
+
+dcp.Progress.connect (sigc::ptr_fun (&report));
+@endcode
 
 If you can generate content paths algorithmically, you may prefer to do something
 like this:
@@ -83,6 +96,72 @@ dcp.add_sound_asset (sigc::ptr_fun (&wav_path), 2);
 ...
 
 @endcode
+
+Reading existing DCPs
+--
+
+Alternatively libdcp can be used to read existing DCPs and examine their content.  You
+might do
+
+@code
+#include <libdcp/dcp.h>
+using namespace std;
+
+libdcp::DCP dcp ("some-DCP-directory");
+@endcode
+
+libdcp will look at the XML files that make up the DCP and find its assets.  You can then
+do things like
+
+@code
+boost::shared_ptr<libdcp::PictureAsset> p = dcp.picture_asset ();
+boost::shared_ptr<libdcp::RGBAFrame> f = p->get_frame(42)->rgba_frame ();
+uint8_t* data = f->data ();
+int size = f->size ();
+@endcode
+
+This will extract the image of frame 42 from the DCP and make its RGBA data available
+for examination.
+
+Audio data is accessed in chunks equal in length to the duration of a video frame.  To
+get the audio that accompanies frame 66, you can do
+
+@code
+boost::shared_ptr<libdcp::SoundAsset> s = dcp.sound_asset ();
+cout << "Sound has " << s->channels() << " channels at " << s->sampling_rate() << "Hz\n";
+boost::shared_ptr<libdcp::SoundFrame> f = s->get_frame(66);
+uint8_t* data = f->data ();
+int size = f->size ();
+@endcode
+
+The returned data is interleaved 24-bit samples, so that
+
+@code
+int left = data[0] | (data[1] << 8) | (data[2] << 16);
+data += 3;
+int right = data[0] | (data[1] << 8) | (data[2] << 16);
+data += 3;
+int centre = data[0] | (data[1] << 8) | (data[2] << 16);
+data += 3;
+int lfe = data[0] | (data[1] << 8) | (data[2] << 16);
+data += 3;
+int ls = data[0] | (data[1] << 8) | (data[2] << 16);
+data += 3;
+int rs = data[0] | (data[1] << 8) | (data[2] << 16);
+data += 3;
+@endcode
+
+would obtain the first sample from each of the 6 channels for that frame.
+
+Subtitles can be read using code like
+
+@code
+boost::shared_ptr<SubtitleAsset> s = dcp.subtitle_asset ();
+list<boost::shared_ptr<libdcp::Text> > texts = s->subtitles_at (libdcp::Time (0, 3, 2, 5));
+@endcode
+
+This returns the subtitles that should be shown at 3 minutes, 2
+seconds, 5 ticks (where 1 tick is 4ms) into the DCP.
 
 */
 
