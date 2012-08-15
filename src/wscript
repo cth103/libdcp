@@ -11,37 +11,40 @@ def build(bld):
                  cpl.cc
                  dcp.cc        
                  dcp_time.cc
+                 lut.cc
+                 metadata.cc
                  mxf_asset.cc
-                 sound_asset.cc
-                 subtitle_asset.cc
                  picture_asset.cc
                  picture_frame.cc
                  pkl.cc
-                 util.cc
-                 metadata.cc
-                 version.cc
+                 rgba_frame.cc
+                 sound_asset.cc
+                 sound_frame.cc
+                 subtitle_asset.cc
                  test_mode.cc
                  types.cc
+                 util.cc
+                 version.cc
                  xml.cc
-                 sound_frame.cc
                  """
 
     headers = """
-              dcp.h
-              metadata.h
-              types.h
-              exceptions.h
-              test_mode.h
-              version.h
-              picture_asset.h
-              sound_asset.h
-              subtitle_asset.h
-              mxf_asset.h
-              xml.h
-              dcp_time.h
               asset.h
+              dcp.h
+              dcp_time.h
+              exceptions.h
+              metadata.h
+              mxf_asset.h
+              picture_asset.h
               picture_frame.h
+              rgba_frame.h
+              sound_asset.h
               sound_frame.h
+              subtitle_asset.h
+              test_mode.h
+              types.h
+              version.h
+              xml.h
               """
 
     bld.install_files('${PREFIX}/include/libdcp', headers)

@@ -21,7 +21,7 @@
 #define LIBDCP_SOUND_ASSET_H
 
 /** @file  src/sound_asset.h
- *  @brief An asset made up of WAV files
+ *  @brief An asset made up of PCM audio data files
  */
 
 #include "mxf_asset.h"
@@ -36,7 +36,7 @@ class SoundFrame;
 class SoundAsset : public MXFAsset
 {
 public:
-	/** Construct a SoundAsset, generating the MXF from the WAV files.
+	/** Construct a SoundAsset, generating the MXF from some WAV files.
 	 *  This may take some time; progress is indicated by emission of the Progress signal.
 	 *  @param files Pathnames of sound files, in the order Left, Right, Centre, Lfe (sub), Left surround, Right surround.
 	 *  @param directory Directory in which to create MXF file.
@@ -54,7 +54,7 @@ public:
 		int length
 		);
 
-	/** Construct a SoundAsset, generating the MXF from the WAV files.
+	/** Construct a SoundAsset, generating the MXF from some WAV files.
 	 *  This may take some time; progress is indicated by emission of the Progress signal.
 	 *  @param get_path Functor which returns a WAV file path for a given channel.
 	 *  @param directory Directory in which to create MXF file.
@@ -97,7 +97,7 @@ public:
 	int sampling_rate () const {
 		return _sampling_rate;
 	}
-	
+
 private:
 	void construct (sigc::slot<std::string, Channel> get_path);
 	std::string path_from_channel (Channel channel, std::vector<std::string> const & files);

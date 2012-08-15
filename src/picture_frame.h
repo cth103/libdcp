@@ -19,6 +19,7 @@
 
 #include <string>
 #include <stdint.h>
+#include <boost/shared_ptr.hpp>
 
 namespace ASDCP {
 	namespace JP2K {
@@ -28,6 +29,8 @@ namespace ASDCP {
 
 namespace libdcp {
 
+class RGBAFrame;	
+
 class PictureFrame
 {
 public:
@@ -36,6 +39,8 @@ public:
 
 	uint8_t const * data () const;
 	int size () const;
+
+	boost::shared_ptr<RGBAFrame> rgba_frame () const;
 
 private:
 	ASDCP::JP2K::FrameBuffer* _buffer;
