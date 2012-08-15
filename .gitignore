@@ -6,3 +6,7 @@ build
 doc/html
 doc/latex
 src/version.cc
+src/lut.cc
+src/lut.h
+*.pyc
+
