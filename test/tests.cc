@@ -25,6 +25,9 @@
 #include "types.h"
 #include "exceptions.h"
 #include "subtitle_asset.h"
+#include "picture_asset.h"
+#include "sound_asset.h"
+#include "reel.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test
@@ -61,8 +64,28 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	filesystem::create_directories ("build/test/foo");
 	libdcp::DCP d ("build/test/foo", "A Test DCP", libdcp::FEATURE, 24, 24);
 
-	d.add_picture_asset (sigc::ptr_fun (&j2c), 32, 32);
-	d.add_sound_asset (sigc::ptr_fun (&wav), 2);
+	shared_ptr<libdcp::PictureAsset> mp (new libdcp::PictureAsset (
+						    sigc::ptr_fun (&j2c),
+						    "build/test/foo",
+						    "video.mxf",
+						    &d.Progress,
+						    24,
+						    24,
+						    32,
+						    32
+						    ));
+
+	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
+						  sigc::ptr_fun (&wav),
+						  "build/test/foo",
+						  "audio.mxf",
+						  &(d.Progress),
+						  24,
+						  24,
+						  2
+						  ));
+
+	d.add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 
 	d.write_xml ();
 }
@@ -72,8 +95,9 @@ BOOST_AUTO_TEST_CASE (error_test)
 	libdcp::DCP d ("build/test/bar", "A Test DCP", libdcp::TEST, 24, 24);
 	vector<string> p;
 	p.push_back ("frobozz");
-	BOOST_CHECK_THROW (d.add_picture_asset (p, 32, 32), libdcp::FileError);
-	BOOST_CHECK_THROW (d.add_sound_asset (p), libdcp::FileError);
+
+	BOOST_CHECK_THROW (new libdcp::PictureAsset (p, "build/test/bar", "video.mxf", &d.Progress, 24, 24, 32, 32), libdcp::FileError);
+	BOOST_CHECK_THROW (new libdcp::SoundAsset (p, "build/test/bar", "audio.mxf", &d.Progress, 24, 24), libdcp::FileError);
 }
 
 BOOST_AUTO_TEST_CASE (read_dcp)

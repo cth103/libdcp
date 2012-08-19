@@ -42,6 +42,7 @@ class Asset;
 class PictureAsset;
 class SoundAsset;
 class SubtitleAsset;
+class Reel;
 
 /** @class DCP dcp.h libdcp/dcp.h
  *  @brief A class to create or read a DCP.
@@ -71,32 +72,7 @@ public:
 	 */
 	DCP (std::string directory);
 
-	/** Add a sound asset.
-	 *  @param files Pathnames of WAV files to use in the order Left, Right,
-	 *  Centre, Lfe (sub), Left surround, Right surround; not all files need
-	 *  to be present.
-	 */
-	void add_sound_asset (std::vector<std::string> const & files);
-
-	/** Add a sound asset.
-	 *  @param get_path Functor to get the path to the WAV for a given channel.
-	 *  @param channels Number of channels.
-	 */
-	void add_sound_asset (sigc::slot<std::string, Channel> get_path, int channels);
-
-	/** Add a picture asset.
-	 *  @param files Pathnames of JPEG2000 files, in frame order.
-	 *  @param width Width of images in pixels.
-	 *  @param height Height of images in pixels.
-	 */
-	void add_picture_asset (std::vector<std::string> const & files, int width, int height);
-
-	/** Add a picture asset.
-	 *  @param get_path Functor to get path to the JPEG2000 for a given frame.
-	 *  @param width Width of images in pixels.
-	 *  @param height Height of images in pixels.
-	 */
-	void add_picture_asset (sigc::slot<std::string, int> get_path, int width, int height);
+	void add_reel (boost::shared_ptr<const Reel> reel);
 
 	/** Write the required XML files to the directory that was
 	 *  passed into the constructor.
@@ -127,12 +103,9 @@ public:
 		return _length;
 	}
 
-	/** @return the main picture asset, if one exists, otherwise 0 */
-	boost::shared_ptr<const PictureAsset> picture_asset () const;
-	/** @return the main sound asset, if one exists, otherwise 0 */
-	boost::shared_ptr<const SoundAsset> sound_asset () const;
-	/** @return the main subtitle asset, if one exists, otherwise 0 */
-	boost::shared_ptr<const SubtitleAsset> subtitle_asset () const;
+	std::list<boost::shared_ptr<const Reel> > reels () const {
+		return _reels;
+	}
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
@@ -193,8 +166,8 @@ private:
 	int _fps;
 	/** length in frames */
 	int _length;
-	/** assets */
-	std::list<boost::shared_ptr<Asset> > _assets;
+	/** reels */
+	std::list<boost::shared_ptr<const Reel> > _reels;
 };
 
 }

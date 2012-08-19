@@ -39,6 +39,7 @@
 #include "cpl.h"
 #include "pkl.h"
 #include "asset_map.h"
+#include "reel.h"
 
 using namespace std;
 using namespace boost;
@@ -55,27 +56,9 @@ DCP::DCP (string directory, string name, ContentKind content_kind, int fps, int 
 }
 
 void
-DCP::add_sound_asset (vector<string> const & files)
+DCP::add_reel (shared_ptr<const Reel> reel)
 {
-	_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (files, _directory, "audio.mxf", &Progress, _fps, _length)));
-}
-
-void
-DCP::add_sound_asset (sigc::slot<string, Channel> get_path, int channels)
-{
-	_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (get_path, _directory, "audio.mxf", &Progress, _fps, _length, channels)));
-}
-
-void
-DCP::add_picture_asset (vector<string> const & files, int width, int height)
-{
-	_assets.push_back (shared_ptr<PictureAsset> (new PictureAsset (files, _directory, "video.mxf", &Progress, _fps, _length, width, height)));
-}
-
-void
-DCP::add_picture_asset (sigc::slot<string, int> get_path, int width, int height)
-{
-	_assets.push_back (shared_ptr<PictureAsset> (new PictureAsset (get_path, _directory, "video.mxf", &Progress, _fps, _length, width, height)));
+	_reels.push_back (reel);
 }
 
 void
@@ -118,11 +101,7 @@ DCP::write_cpl (string cpl_uuid) const
 	    << "  <RatingList/>\n"
 	    << "  <ReelList>\n";
 
-	cpl << "    <Reel>\n"
-	    << "      <Id>urn:uuid:" << make_uuid() << "</Id>\n"
-	    << "      <AssetList>\n";
-
-	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
+	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		(*i)->write_to_cpl (cpl);
 	}
 
@@ -153,7 +132,7 @@ DCP::write_pkl (string pkl_uuid, string cpl_uuid, string cpl_digest, int cpl_len
 	    << "  <Creator>" << Metadata::instance()->creator << "</Creator>\n"
 	    << "  <AssetList>\n";
 
-	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
+	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		(*i)->write_to_pkl (pkl);
 	}
 
@@ -226,7 +205,7 @@ DCP::write_assetmap (string cpl_uuid, int cpl_length, string pkl_uuid, int pkl_l
 	   << "      </ChunkList>\n"
 	   << "    </Asset>\n";
 	
-	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
+	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		(*i)->write_to_assetmap (am);
 	}
 
@@ -282,47 +261,54 @@ DCP::DCP (string directory)
 	
 	_name = cpl->annotation_text;
 	_content_kind = cpl->content_kind;
+	_length = 0;
+	_fps = 0;
 
-	shared_ptr<CPLAssetList> cpl_assets = cpl->reels.front()->asset_list;
+	for (list<shared_ptr<CPLReel> >::iterator i = cpl->reels.begin(); i != cpl->reels.end(); ++i) {
+		assert (_fps == 0 || _fps == (*i)->asset_list->main_picture->frame_rate.numerator);
+		_fps = (*i)->asset_list->main_picture->frame_rate.numerator;
+		_length += (*i)->asset_list->main_picture->duration;
 
-	/* XXX */
-	_fps = cpl_assets->main_picture->frame_rate.numerator;
-	_length = cpl_assets->main_picture->duration;
-
-	string n = pkl->asset_from_id(cpl_assets->main_picture->id)->original_file_name;
-	if (n.empty ()) {
-		n = cpl_assets->main_picture->annotation_text;
-	}
-
-	_assets.push_back (shared_ptr<PictureAsset> (
-				   new PictureAsset (
-					   _directory,
-					   n,
-					   _fps,
-					   _length
-					   )
-				   ));
-
-	if (cpl_assets->main_sound) {
-
-		n = pkl->asset_from_id(cpl_assets->main_sound->id)->original_file_name;
+		string n = pkl->asset_from_id ((*i)->asset_list->main_picture->id)->original_file_name;
 		if (n.empty ()) {
-			n = cpl_assets->main_sound->annotation_text;
+			n = (*i)->asset_list->main_picture->annotation_text;
 		}
-	
-		_assets.push_back (shared_ptr<SoundAsset> (
-					   new SoundAsset (
-						   _directory,
-						   n,
-						   _fps,
-						   _length
-						   )
-					   ));
-	}
+		
+		shared_ptr<PictureAsset> picture (new PictureAsset (
+							  _directory,
+							  n,
+							  _fps,
+							  (*i)->asset_list->main_picture->duration
+							  )
+			);
 
-	for (list<string>::iterator i = files.subtitles.begin(); i != files.subtitles.end(); ++i) {
-		string const l = i->substr (_directory.length ());
-		_assets.push_back (shared_ptr<SubtitleAsset> (new SubtitleAsset (_directory, l)));
+		shared_ptr<SoundAsset> sound;
+		
+		if ((*i)->asset_list->main_sound) {
+			
+			n = pkl->asset_from_id ((*i)->asset_list->main_sound->id)->original_file_name;
+			if (n.empty ()) {
+				n = (*i)->asset_list->main_sound->annotation_text;
+			}
+			
+			sound.reset (new SoundAsset (
+					     _directory,
+					     n,
+					     _fps,
+					     (*i)->asset_list->main_sound->duration
+					     )
+				);
+		}
+
+		assert (files.subtitles.size() < 2);
+
+		shared_ptr<SubtitleAsset> subtitle;
+		if (!files.subtitles.empty ()) {
+			string const l = files.subtitles.front().substr (_directory.length ());
+			subtitle.reset (new SubtitleAsset (_directory, l));
+		}
+
+		_reels.push_back (shared_ptr<Reel> (new Reel (picture, sound, subtitle)));
 	}
 }
 
@@ -406,14 +392,14 @@ DCP::equals (DCP const & other, EqualityOptions opt) const
 		}
 	}
 
-	if (_assets.size() != other._assets.size()) {
-		notes.push_back ("asset counts differ");
+	if (_reels.size() != other._reels.size()) {
+		notes.push_back ("reel counts differ");
 	}
 	
-	list<shared_ptr<Asset> >::const_iterator a = _assets.begin ();
-	list<shared_ptr<Asset> >::const_iterator b = other._assets.begin ();
+	list<shared_ptr<const Reel> >::const_iterator a = _reels.begin ();
+	list<shared_ptr<const Reel> >::const_iterator b = other._reels.begin ();
 	
-	while (a != _assets.end ()) {
+	while (a != _reels.end ()) {
 		list<string> n = (*a)->equals (*b, opt);
 		notes.merge (n);
 		++a;
@@ -423,41 +409,3 @@ DCP::equals (DCP const & other, EqualityOptions opt) const
 	return notes;
 }
 
-shared_ptr<const PictureAsset>
-DCP::picture_asset () const
-{
-	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
-		shared_ptr<PictureAsset> p = dynamic_pointer_cast<PictureAsset> (*i);
-		if (p) {
-			return p;
-		}
-	}
-
-	return shared_ptr<const PictureAsset> ();
-}
-
-shared_ptr<const SoundAsset>
-DCP::sound_asset () const
-{
-	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
-		shared_ptr<SoundAsset> s = dynamic_pointer_cast<SoundAsset> (*i);
-		if (s) {
-			return s;
-		}
-	}
-
-	return shared_ptr<const SoundAsset> ();
-}
-
-shared_ptr<const SubtitleAsset>
-DCP::subtitle_asset () const
-{
-	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
-		shared_ptr<SubtitleAsset> s = dynamic_pointer_cast<SubtitleAsset> (*i);
-		if (s) {
-			return s;
-		}
-	}
-
-	return shared_ptr<const SubtitleAsset> ();
-}

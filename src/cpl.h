@@ -87,11 +87,11 @@ public:
 };
 
 /** CPL Reel node */	
-class Reel : public XMLNode
+class CPLReel : public XMLNode
 {
 public:
-	Reel () {}
-	Reel (xmlpp::Node const * node);
+	CPLReel () {}
+	CPLReel (xmlpp::Node const * node);
 
 	std::string id;
 	boost::shared_ptr<CPLAssetList> asset_list;
@@ -122,7 +122,7 @@ public:
 	std::string content_title_text;
 	ContentKind content_kind;
 	boost::shared_ptr<ContentVersion> content_version;
-	std::list<boost::shared_ptr<Reel> > reels;
+	std::list<boost::shared_ptr<CPLReel> > reels;
 };
 
 }

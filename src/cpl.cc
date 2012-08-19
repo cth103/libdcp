@@ -38,7 +38,7 @@ CPL::CPL (string file)
 	content_kind = kind_node ("ContentKind");
 	content_version = optional_sub_node<ContentVersion> ("ContentVersion");
 	ignore_node ("RatingList");
-	reels = sub_nodes<Reel> ("ReelList", "Reel");
+	reels = sub_nodes<CPLReel> ("ReelList", "Reel");
 
 	ignore_node ("Issuer");
 	ignore_node ("Signer");
@@ -55,7 +55,7 @@ ContentVersion::ContentVersion (xmlpp::Node const * node)
 	done ();
 }
 
-Reel::Reel (xmlpp::Node const * node)
+CPLReel::CPLReel (xmlpp::Node const * node)
 	: XMLNode (node)
 {
 	id = string_node ("Id");

@@ -17,6 +17,7 @@ def build(bld):
                  picture_asset.cc
                  picture_frame.cc
                  pkl.cc
+                 reel.cc
                  rgba_frame.cc
                  sound_asset.cc
                  sound_frame.cc
@@ -37,6 +38,7 @@ def build(bld):
               mxf_asset.h
               picture_asset.h
               picture_frame.h
+              reel.h
               rgba_frame.h
               sound_asset.h
               sound_frame.h
