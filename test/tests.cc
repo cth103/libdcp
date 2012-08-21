@@ -177,3 +177,26 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (t.m, 18);
 	BOOST_CHECK_EQUAL (t.h, 11);
 }
+
+BOOST_AUTO_TEST_CASE (color)
+{
+	libdcp::Color c ("FFFF0000");
+
+	BOOST_CHECK_EQUAL (c.r, 255);
+	BOOST_CHECK_EQUAL (c.g, 0);
+	BOOST_CHECK_EQUAL (c.b, 0);
+
+	c = libdcp::Color ("FF00FF00");
+
+	BOOST_CHECK_EQUAL (c.r, 0);
+	BOOST_CHECK_EQUAL (c.g, 255);
+	BOOST_CHECK_EQUAL (c.b, 0);
+
+	c = libdcp::Color ("FF0000FF");
+
+	BOOST_CHECK_EQUAL (c.r, 0);
+	BOOST_CHECK_EQUAL (c.g, 0);
+	BOOST_CHECK_EQUAL (c.b, 255);
+}
+
+	
