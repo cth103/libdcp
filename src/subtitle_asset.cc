@@ -65,6 +65,7 @@ SubtitleAsset::examine_font_node (shared_ptr<FontNode> font_node, list<shared_pt
 						(*j)->in,
 						(*j)->out,
 						(*k)->v_position,
+						(*k)->v_align,
 						(*k)->text,
 						effective.effect.get(),
 						effective.effect_color.get()
@@ -149,9 +150,18 @@ SubtitleNode::SubtitleNode (xmlpp::Node const * node)
 
 TextNode::TextNode (xmlpp::Node const * node)
 	: XMLNode (node)
+	, v_align (CENTER)
 {
 	text = content ();
 	v_position = float_attribute ("VPosition");
+	string const v = optional_string_attribute ("VAlign");
+	if (v == "top") {
+		v_align = TOP;
+	} else if (v == "center") {
+		v_align = CENTER;
+	} else if (v == "bottom") {
+		v_align = BOTTOM;
+	}
 }
 
 list<shared_ptr<Subtitle> >
@@ -194,6 +204,7 @@ Subtitle::Subtitle (
 	Time in,
 	Time out,
 	float v_position,
+	VAlign v_align,
 	string text,
 	Effect effect,
 	Color effect_color
@@ -205,6 +216,7 @@ Subtitle::Subtitle (
 	, _in (in)
 	, _out (out)
 	, _v_position (v_position)
+	, _v_align (v_align)
 	, _text (text)
 	, _effect (effect)
 	, _effect_color (effect_color)

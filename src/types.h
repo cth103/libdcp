@@ -57,6 +57,13 @@ enum Effect
 	BORDER,
 	SHADOW
 };
+
+enum VAlign
+{
+	TOP,
+	CENTER,
+	BOTTOM
+};
 	
 class Fraction
 {

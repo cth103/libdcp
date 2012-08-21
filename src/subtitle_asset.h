@@ -31,6 +31,7 @@ public:
 	TextNode (xmlpp::Node const * node);
 
 	float v_position;
+	VAlign v_align;
 	std::string text;
 };
 
@@ -84,6 +85,7 @@ public:
 		Time in,
 		Time out,
 		float v_position,
+		VAlign v_align,
 		std::string text,
 		Effect effect,
 		Color effect_color
@@ -117,6 +119,10 @@ public:
 		return _v_position;
 	}
 
+	VAlign v_align () const {
+		return _v_align;
+	}
+
 	Effect effect () const {
 		return _effect;
 	}
@@ -135,6 +141,7 @@ private:
 	Time _in;
 	Time _out;
 	float _v_position;
+	VAlign _v_align;
 	std::string _text;
 	Effect _effect;
 	Color _effect_color;
