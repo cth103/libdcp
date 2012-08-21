@@ -35,38 +35,79 @@ SubtitleAsset::SubtitleAsset (string directory, string xml)
 	ignore_node ("LoadFont");
 
 	list<shared_ptr<FontNode> > font_nodes = sub_nodes<FontNode> ("Font");
-	list<shared_ptr<LoadFontNode> > load_font_nodes = sub_nodes<LoadFontNode> ("LoadFont");
+	_load_font_nodes = sub_nodes<LoadFontNode> ("LoadFont");
 
 	/* Now make Subtitle objects to represent the raw XML nodes
 	   in a sane way.
 	*/
 
+	list<shared_ptr<FontNode> > current_font_nodes;
 	for (list<shared_ptr<FontNode> >::iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
-		for (list<shared_ptr<SubtitleNode> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
-			for (list<shared_ptr<TextNode> >::iterator k = (*j)->text_nodes.begin(); k != (*j)->text_nodes.end(); ++k) {
-				_subtitles.push_back (
-					shared_ptr<Subtitle> (
-						new Subtitle (
-							font_id_to_name ((*i)->id, load_font_nodes),
-							(*i)->size,
-							(*j)->in,
-							(*j)->out,
-							(*k)->v_position,
-							(*k)->text
-							)
+		examine_font_node (*i, current_font_nodes);
+	}
+}
+
+void
+SubtitleAsset::examine_font_node (shared_ptr<FontNode> font_node, list<shared_ptr<FontNode> >& current_font_nodes)
+{
+	current_font_nodes.push_back (font_node);
+	
+	for (list<shared_ptr<SubtitleNode> >::iterator j = font_node->subtitle_nodes.begin(); j != font_node->subtitle_nodes.end(); ++j) {
+		for (list<shared_ptr<TextNode> >::iterator k = (*j)->text_nodes.begin(); k != (*j)->text_nodes.end(); ++k) {
+			_subtitles.push_back (
+				shared_ptr<Subtitle> (
+					new Subtitle (
+						font_id_to_name (id_from_font_nodes (current_font_nodes)),
+						size_from_font_nodes (current_font_nodes),
+						(*j)->in,
+						(*j)->out,
+						(*k)->v_position,
+						(*k)->text
 						)
-					);
-			}
+					)
+				);
 		}
 	}
+
+	for (list<shared_ptr<FontNode> >::iterator j = font_node->font_nodes.begin(); j != font_node->font_nodes.end(); ++j) {
+		examine_font_node (*j, current_font_nodes);
+	}
+
+	current_font_nodes.pop_back ();
+}
+
+string
+SubtitleAsset::id_from_font_nodes (list<shared_ptr<FontNode> > const & font_nodes) const
+{
+	for (list<shared_ptr<FontNode> >::const_reverse_iterator i = font_nodes.rbegin(); i != font_nodes.rend(); ++i) {
+		if (!(*i)->id.empty ()) {
+			return (*i)->id;
+		}
+	}
+
+	return "";
+}
+
+int
+SubtitleAsset::size_from_font_nodes (list<shared_ptr<FontNode> > const & font_nodes) const
+{
+	for (list<shared_ptr<FontNode> >::const_reverse_iterator i = font_nodes.rbegin(); i != font_nodes.rend(); ++i) {
+		if ((*i)->size != 0) {
+			return (*i)->size;
+		}
+	}
+
+	return 0;
+
 }
 
 FontNode::FontNode (xmlpp::Node const * node)
 	: XMLNode (node)
 {
 	id = string_attribute ("Id");
-	size = int64_attribute ("Size");
+	size = optional_int64_attribute ("Size");
 	subtitle_nodes = sub_nodes<SubtitleNode> ("Subtitle");
+	font_nodes = sub_nodes<FontNode> ("Font");
 }
 
 LoadFontNode::LoadFontNode (xmlpp::Node const * node)
@@ -106,14 +147,14 @@ SubtitleAsset::subtitles_at (Time t) const
 }
 
 std::string
-SubtitleAsset::font_id_to_name (string id, list<shared_ptr<LoadFontNode> > const & load_font_nodes) const
+SubtitleAsset::font_id_to_name (string id) const
 {
-	list<shared_ptr<LoadFontNode> >::const_iterator i = load_font_nodes.begin();
-	while (i != load_font_nodes.end() && (*i)->id != id) {
+	list<shared_ptr<LoadFontNode> >::const_iterator i = _load_font_nodes.begin();
+	while (i != _load_font_nodes.end() && (*i)->id != id) {
 		++i;
 	}
 
-	if (i == load_font_nodes.end ()) {
+	if (i == _load_font_nodes.end ()) {
 		return "";
 	}
 

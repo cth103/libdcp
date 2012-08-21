@@ -55,6 +55,7 @@ public:
 	int size;
 	
 	std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
+	std::list<boost::shared_ptr<FontNode> > font_nodes;
 };
 
 class LoadFontNode : public XMLNode
@@ -128,12 +129,16 @@ public:
 	std::list<boost::shared_ptr<Subtitle> > subtitles_at (Time t) const;
 
 private:
-	std::string font_id_to_name (std::string id, std::list<boost::shared_ptr<LoadFontNode> > const & load_font_nodes) const;
+	std::string font_id_to_name (std::string id) const;
+	void examine_font_node (boost::shared_ptr<FontNode> font_node, std::list<boost::shared_ptr<FontNode> >& current_font_nodes);
+	std::string id_from_font_nodes (std::list<boost::shared_ptr<FontNode> > const & font_nodes) const;
+	int size_from_font_nodes (std::list<boost::shared_ptr<FontNode> > const & font_nodes) const;
 	
 	std::string _subtitle_id;
 	std::string _movie_title;
 	int64_t _reel_number;
 	std::string _language;
+	std::list<boost::shared_ptr<LoadFontNode> > _load_font_nodes;
 
 	std::list<boost::shared_ptr<Subtitle> > _subtitles;
 };

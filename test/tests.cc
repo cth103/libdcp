@@ -115,41 +115,6 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	libdcp::SubtitleAsset subs ("test/ref", "subs.xml");
 
 	BOOST_CHECK_EQUAL (subs.language(), "French");
-//	BOOST_CHECK_EQUAL (subs.font_nodes().size(), 1);
-//	BOOST_CHECK_EQUAL (subs.font_nodes().front()->subtitle_nodes.size(), 4);
-
-#if 0	
-	list<shared_ptr<libdcp::SubtitleNode> >::const_iterator i = subs.font_nodes().front()->subtitle_nodes.begin ();
-
-	BOOST_CHECK_EQUAL ((*i)->in, libdcp::Time (0, 0, 5, 198));
-	BOOST_CHECK_EQUAL ((*i)->out, libdcp::Time (0, 0, 7, 115));
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.size(), 1);
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.front()->v_position, 15);
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.front()->text, "My jacket was Idi Amin's");
-	++i;
-
-	BOOST_CHECK_EQUAL ((*i)->in, libdcp::Time (0, 0, 7, 177));
-	BOOST_CHECK_EQUAL ((*i)->out, libdcp::Time (0, 0, 11, 31));
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.size(), 2);
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.front()->v_position, 21);
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.front()->text, "My corset was H.M. The Queen's");
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.back()->v_position, 15);
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.back()->text, "My large wonderbra");
-	++i;
-
-	BOOST_CHECK_EQUAL ((*i)->in, libdcp::Time (0, 0, 11, 94));
-	BOOST_CHECK_EQUAL ((*i)->out, libdcp::Time (0, 0, 13, 63));
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.size(), 1);
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.front()->v_position, 15);
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.front()->text, "Once belonged to the Shah");
-	++i;
-
-	BOOST_CHECK_EQUAL ((*i)->in, libdcp::Time (0, 0, 13, 104));
-	BOOST_CHECK_EQUAL ((*i)->out, libdcp::Time (0, 0, 15, 177));
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.size(), 1);
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.front()->v_position, 15);
-	BOOST_CHECK_EQUAL ((*i)->text_nodes.front()->text, "And these are Roy Hattersley's jeans");
-#endif	
 
 	list<shared_ptr<libdcp::Subtitle> > s = subs.subtitles_at (libdcp::Time (0, 0, 6, 1));
 	BOOST_CHECK_EQUAL (s.size(), 1);
@@ -159,6 +124,21 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL (s.front()->out(), libdcp::Time (0, 0, 7, 115));
 	BOOST_CHECK_EQUAL (s.front()->font(), "Arial");
 	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
+
+	s = subs.subtitles_at (libdcp::Time (0, 0, 7, 190));
+	BOOST_CHECK_EQUAL (s.size(), 2);
+	BOOST_CHECK_EQUAL (s.front()->text(), "My corset was H.M. The Queen's");
+	BOOST_CHECK_EQUAL (s.front()->v_position(), 21);
+	BOOST_CHECK_EQUAL (s.front()->in(), libdcp::Time (0, 0, 7, 177));
+	BOOST_CHECK_EQUAL (s.front()->out(), libdcp::Time (0, 0, 11, 31));
+	BOOST_CHECK_EQUAL (s.front()->font(), "Arial");
+	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
+	BOOST_CHECK_EQUAL (s.back()->text(), "My large wonderbra");
+	BOOST_CHECK_EQUAL (s.back()->v_position(), 15);
+	BOOST_CHECK_EQUAL (s.back()->in(), libdcp::Time (0, 0, 7, 177));
+	BOOST_CHECK_EQUAL (s.back()->out(), libdcp::Time (0, 0, 11, 31));
+	BOOST_CHECK_EQUAL (s.back()->font(), "Arial");
+	BOOST_CHECK_EQUAL (s.back()->size_in_pixels(1080), 53);
 	
 	s = subs.subtitles_at (libdcp::Time (0, 0, 11, 95));
 	BOOST_CHECK_EQUAL (s.size(), 1);

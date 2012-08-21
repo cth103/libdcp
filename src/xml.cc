@@ -163,6 +163,17 @@ XMLNode::int64_attribute (string name)
 	return lexical_cast<int64_t> (string_attribute (name));
 }
 
+int64_t
+XMLNode::optional_int64_attribute (string name)
+{
+	string const s = string_attribute (name);
+	if (s.empty ()) {
+		return 0;
+	}
+	
+	return lexical_cast<int64_t> (s);
+}
+
 void
 XMLNode::done ()
 {
