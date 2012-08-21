@@ -37,6 +37,7 @@ protected:
 	Time time_attribute (std::string);
 	float float_attribute (std::string);
 	std::string string_attribute (std::string);
+	int64_t int64_attribute (std::string);
 
 	std::string content ();
 

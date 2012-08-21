@@ -157,6 +157,12 @@ XMLNode::float_attribute (string name)
 	return lexical_cast<float> (string_attribute (name));
 }
 
+int64_t
+XMLNode::int64_attribute (string name)
+{
+	return lexical_cast<int64_t> (string_attribute (name));
+}
+
 void
 XMLNode::done ()
 {

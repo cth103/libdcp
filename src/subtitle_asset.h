@@ -24,30 +24,64 @@
 namespace libdcp
 {
 
-class Text : public XMLNode
+class TextNode : public XMLNode
 {
 public:
-	Text () {}
-	Text (xmlpp::Node const * node);
+	TextNode () {}
+	TextNode (xmlpp::Node const * node);
 
-	float v_position () const {
-		return _v_position;
-	}
-
-	std::string text () const {
-		return _text;
-	}
-
-private:
-	float _v_position;
-	std::string _text;
+	float v_position;
+	std::string text;
 };
 
-class Subtitle : public XMLNode
+class SubtitleNode : public XMLNode
 {
 public:
-	Subtitle () {}
-	Subtitle (xmlpp::Node const * node);
+	SubtitleNode () {}
+	SubtitleNode (xmlpp::Node const * node);
+
+	Time in;
+	Time out;
+	std::list<boost::shared_ptr<TextNode> > text_nodes;
+};
+
+class FontNode : public XMLNode
+{
+public:
+	FontNode () {}
+	FontNode (xmlpp::Node const * node);
+
+	std::string id;
+	int size;
+	
+	std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
+};
+
+class LoadFontNode : public XMLNode
+{
+public:
+	LoadFontNode () {}
+	LoadFontNode (xmlpp::Node const * node);
+
+	std::string id;
+	std::string uri;
+};
+
+class Subtitle
+{
+public:
+	Subtitle (
+		std::string font,
+		int size,
+		Time in,
+		Time out,
+		float v_position,
+		std::string text
+		);
+
+	std::string font () const {
+		return _font;
+	}
 
 	Time in () const {
 		return _in;
@@ -57,32 +91,25 @@ public:
 		return _out;
 	}
 
-	std::list<boost::shared_ptr<Text> > const & texts () const {
-		return _texts;
+	std::string text () const {
+		return _text;
 	}
 
+	float v_position () const {
+		return _v_position;
+	}
+
+	int size_in_pixels (int screen_height) const;
+
 private:
-	std::list<boost::shared_ptr<Text> > _texts;
+	std::string _font;
+	int _size;
 	Time _in;
 	Time _out;
+	float _v_position;
+	std::string _text;
 };
 
-class Font : public XMLNode
-{
-public:
-	Font () {}
-	Font (xmlpp::Node const * node);
-
-	std::list<boost::shared_ptr<Subtitle> > const & subtitles () const {
-		return _subtitles;
-	}
-
-	std::list<boost::shared_ptr<Text> > subtitles_at (Time t) const;
-	
-private:
-	std::list<boost::shared_ptr<Subtitle> > _subtitles;
-};
-	
 class SubtitleAsset : public Asset, public XMLFile
 {
 public:
@@ -90,6 +117,7 @@ public:
 
 	void write_to_cpl (std::ostream&) const {}
 	virtual std::list<std::string> equals (boost::shared_ptr<const Asset>, EqualityOptions) const {
+		/* XXX */
 		return std::list<std::string> ();
 	}
 
@@ -97,18 +125,22 @@ public:
 		return _language;
 	}
 
-	std::list<boost::shared_ptr<Text> > subtitles_at (Time t) const;
+	std::list<boost::shared_ptr<Subtitle> > subtitles_at (Time t) const;
 
-	std::list<boost::shared_ptr<Font> > const & fonts () const {
-		return _fonts;
+	std::list<boost::shared_ptr<FontNode> > font_nodes () const {
+		return _font_nodes;
 	}
 
 private:
+	std::string font_id_to_name (std::string id, std::list<boost::shared_ptr<LoadFontNode> > const & load_font_nodes) const;
+	
 	std::string _subtitle_id;
 	std::string _movie_title;
 	int64_t _reel_number;
 	std::string _language;
-	std::list<boost::shared_ptr<Font> > _fonts;
+	std::list<boost::shared_ptr<FontNode> > _font_nodes;
+
+	std::list<boost::shared_ptr<Subtitle> > _subtitles;
 };
 
 }

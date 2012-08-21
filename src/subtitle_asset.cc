@@ -34,51 +34,121 @@ SubtitleAsset::SubtitleAsset (string directory, string xml)
 
 	ignore_node ("LoadFont");
 
-	_fonts = sub_nodes<Font> ("Font");
+	_font_nodes = sub_nodes<FontNode> ("Font");
+	list<shared_ptr<LoadFontNode> > load_font_nodes = sub_nodes<LoadFontNode> ("LoadFont");
+
+	/* Now make Subtitle objects to represent the raw XML nodes
+	   in a sane way.
+	*/
+
+	for (list<shared_ptr<FontNode> >::iterator i = _font_nodes.begin(); i != _font_nodes.end(); ++i) {
+		for (list<shared_ptr<SubtitleNode> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
+			for (list<shared_ptr<TextNode> >::iterator k = (*j)->text_nodes.begin(); k != (*j)->text_nodes.end(); ++k) {
+				_subtitles.push_back (
+					shared_ptr<Subtitle> (
+						new Subtitle (
+							font_id_to_name ((*i)->id, load_font_nodes),
+							(*i)->size,
+							(*j)->in,
+							(*j)->out,
+							(*k)->v_position,
+							(*k)->text
+							)
+						)
+					);
+			}
+		}
+	}
 }
 
-Font::Font (xmlpp::Node const * node)
+FontNode::FontNode (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	_subtitles = sub_nodes<Subtitle> ("Subtitle");
+	id = string_attribute ("Id");
+	size = int64_attribute ("Size");
+	subtitle_nodes = sub_nodes<SubtitleNode> ("Subtitle");
 }
 
-Subtitle::Subtitle (xmlpp::Node const * node)
+LoadFontNode::LoadFontNode (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	_in = time_attribute ("TimeIn");
-	_out = time_attribute ("TimeOut");
-	_texts = sub_nodes<Text> ("Text");
+	id = string_attribute ("Id");
+	uri = string_attribute ("URI");
 }
+	
 
-Text::Text (xmlpp::Node const * node)
+SubtitleNode::SubtitleNode (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	_text = content ();
-	_v_position = float_attribute ("VPosition");
+	in = time_attribute ("TimeIn");
+	out = time_attribute ("TimeOut");
+	text_nodes = sub_nodes<TextNode> ("Text");
 }
 
-list<shared_ptr<Text> >
+TextNode::TextNode (xmlpp::Node const * node)
+	: XMLNode (node)
+{
+	text = content ();
+	v_position = float_attribute ("VPosition");
+}
+
+list<shared_ptr<Subtitle> >
 SubtitleAsset::subtitles_at (Time t) const
 {
-	for (list<shared_ptr<Font> >::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
-		list<shared_ptr<Text> > s = (*i)->subtitles_at (t);
-		if (!s.empty ()) {
-			return s;
+	list<shared_ptr<Subtitle> > s;
+	for (list<shared_ptr<Subtitle> >::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
+		if ((*i)->in() <= t && t <= (*i)->out ()) {
+			s.push_back (*i);
 		}
 	}
 
-	return list<shared_ptr<Text> > ();
+	return s;
 }
 
-list<shared_ptr<Text> >
-Font::subtitles_at (Time t) const
+std::string
+SubtitleAsset::font_id_to_name (string id, list<shared_ptr<LoadFontNode> > const & load_font_nodes) const
 {
-	for (list<shared_ptr<Subtitle> >::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
-		if ((*i)->in() <= t && t <= (*i)->out()) {
-			return (*i)->texts ();
-		}
+	list<shared_ptr<LoadFontNode> >::const_iterator i = load_font_nodes.begin();
+	while (i != load_font_nodes.end() && (*i)->id != id) {
+		++i;
 	}
 
-	return list<shared_ptr<Text> > ();
+	if (i == load_font_nodes.end ()) {
+		return "";
+	}
+
+	if ((*i)->uri == "arial.ttf") {
+		return "Arial";
+	}
+
+	return "";
+}
+
+Subtitle::Subtitle (
+	std::string font,
+	int size,
+	Time in,
+	Time out,
+	float v_position,
+	std::string text
+	)
+	: _font (font)
+	, _size (size)
+	, _in (in)
+	, _out (out)
+	, _v_position (v_position)
+	, _text (text)
+{
+
+}
+
+int
+Subtitle::size_in_pixels (int screen_height) const
+{
+	/* Size in the subtitle file is given in points as if the screen
+	   height is 11 inches, so a 72pt font would be 1/11th of the screen
+	   height.
+	*/
+	
+	return _size * screen_height / (11 * 72);
 }
