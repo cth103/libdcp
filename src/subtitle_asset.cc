@@ -54,12 +54,13 @@ SubtitleAsset::examine_font_node (shared_ptr<FontNode> font_node, list<shared_pt
 
 	for (list<shared_ptr<SubtitleNode> >::iterator j = font_node->subtitle_nodes.begin(); j != font_node->subtitle_nodes.end(); ++j) {
 		for (list<shared_ptr<TextNode> >::iterator k = (*j)->text_nodes.begin(); k != (*j)->text_nodes.end(); ++k) {
+			FontNode effective (current_font_nodes);
 			_subtitles.push_back (
 				shared_ptr<Subtitle> (
 					new Subtitle (
-						font_id_to_name (id_from_font_nodes (current_font_nodes)),
-						italic_from_font_nodes (current_font_nodes),
-						size_from_font_nodes (current_font_nodes),
+						font_id_to_name (effective.id),
+						effective.italic.get(),
+						effective.size,
 						(*j)->in,
 						(*j)->out,
 						(*k)->v_position,
@@ -77,44 +78,6 @@ SubtitleAsset::examine_font_node (shared_ptr<FontNode> font_node, list<shared_pt
 	current_font_nodes.pop_back ();
 }
 
-string
-SubtitleAsset::id_from_font_nodes (list<shared_ptr<FontNode> > const & font_nodes) const
-{
-	for (list<shared_ptr<FontNode> >::const_reverse_iterator i = font_nodes.rbegin(); i != font_nodes.rend(); ++i) {
-		if (!(*i)->id.empty ()) {
-			return (*i)->id;
-		}
-	}
-
-	return "";
-}
-
-int
-SubtitleAsset::size_from_font_nodes (list<shared_ptr<FontNode> > const & font_nodes) const
-{
-	for (list<shared_ptr<FontNode> >::const_reverse_iterator i = font_nodes.rbegin(); i != font_nodes.rend(); ++i) {
-		if ((*i)->size != 0) {
-			return (*i)->size;
-		}
-	}
-
-	return 0;
-
-}
-
-bool
-SubtitleAsset::italic_from_font_nodes (list<shared_ptr<FontNode> > const & font_nodes) const
-{
-	for (list<shared_ptr<FontNode> >::const_reverse_iterator i = font_nodes.rbegin(); i != font_nodes.rend(); ++i) {
-		if ((*i)->italic) {
-			return (*i)->italic.get ();
-		}
-	}
-
-	return false;
-
-}
-
 FontNode::FontNode (xmlpp::Node const * node)
 	: XMLNode (node)
 {
@@ -123,6 +86,23 @@ FontNode::FontNode (xmlpp::Node const * node)
 	italic = optional_bool_attribute ("Italic");
 	subtitle_nodes = sub_nodes<SubtitleNode> ("Subtitle");
 	font_nodes = sub_nodes<FontNode> ("Font");
+}
+
+FontNode::FontNode (list<shared_ptr<FontNode> > const & font_nodes)
+	: size (0)
+	, italic (false)
+{
+	for (list<shared_ptr<FontNode> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
+		if (!(*i)->id.empty ()) {
+			id = (*i)->id;
+		}
+		if ((*i)->size != 0) {
+			size = (*i)->size;
+		}
+		if ((*i)->italic) {
+			italic = (*i)->italic.get ();
+		}
+	}
 }
 
 LoadFontNode::LoadFontNode (xmlpp::Node const * node)

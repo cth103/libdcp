@@ -50,6 +50,7 @@ class FontNode : public XMLNode
 public:
 	FontNode () {}
 	FontNode (xmlpp::Node const * node);
+	FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes);
 
 	std::string id;
 	int size;
@@ -138,9 +139,6 @@ public:
 private:
 	std::string font_id_to_name (std::string id) const;
 	void examine_font_node (boost::shared_ptr<FontNode> font_node, std::list<boost::shared_ptr<FontNode> >& current_font_nodes);
-	std::string id_from_font_nodes (std::list<boost::shared_ptr<FontNode> > const & font_nodes) const;
-	int size_from_font_nodes (std::list<boost::shared_ptr<FontNode> > const & font_nodes) const;
-	bool italic_from_font_nodes (std::list<boost::shared_ptr<FontNode> > const & font_nodes) const;
 	
 	std::string _subtitle_id;
 	std::string _movie_title;
