@@ -60,6 +60,7 @@ SubtitleAsset::examine_font_node (shared_ptr<FontNode> font_node, list<shared_pt
 					new Subtitle (
 						font_id_to_name (effective.id),
 						effective.italic.get(),
+						effective.color.get(),
 						effective.size,
 						(*j)->in,
 						(*j)->out,
@@ -84,6 +85,7 @@ FontNode::FontNode (xmlpp::Node const * node)
 	id = string_attribute ("Id");
 	size = optional_int64_attribute ("Size");
 	italic = optional_bool_attribute ("Italic");
+	color = optional_color_attribute ("Color");
 	subtitle_nodes = sub_nodes<SubtitleNode> ("Subtitle");
 	font_nodes = sub_nodes<FontNode> ("Font");
 }
@@ -91,6 +93,7 @@ FontNode::FontNode (xmlpp::Node const * node)
 FontNode::FontNode (list<shared_ptr<FontNode> > const & font_nodes)
 	: size (0)
 	, italic (false)
+	, color ("FFFFFFFF")
 {
 	for (list<shared_ptr<FontNode> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
 		if (!(*i)->id.empty ()) {
@@ -101,6 +104,9 @@ FontNode::FontNode (list<shared_ptr<FontNode> > const & font_nodes)
 		}
 		if ((*i)->italic) {
 			italic = (*i)->italic.get ();
+		}
+		if ((*i)->color) {
+			color = (*i)->color.get ();
 		}
 	}
 }
@@ -163,6 +169,7 @@ SubtitleAsset::font_id_to_name (string id) const
 Subtitle::Subtitle (
 	std::string font,
 	bool italic,
+	Color color,
 	int size,
 	Time in,
 	Time out,
@@ -171,6 +178,7 @@ Subtitle::Subtitle (
 	)
 	: _font (font)
 	, _italic (italic)
+	, _color (color)
 	, _size (size)
 	, _in (in)
 	, _out (out)

@@ -124,6 +124,7 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL (s.front()->out(), libdcp::Time (0, 0, 7, 115));
 	BOOST_CHECK_EQUAL (s.front()->font(), "Arial");
 	BOOST_CHECK_EQUAL (s.front()->italic(), false);
+	BOOST_CHECK_EQUAL (s.front()->color(), libdcp::Color(255, 255, 255));
 	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
 
 	s = subs.subtitles_at (libdcp::Time (0, 0, 7, 190));
@@ -140,7 +141,8 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL (s.back()->in(), libdcp::Time (0, 0, 7, 177));
 	BOOST_CHECK_EQUAL (s.back()->out(), libdcp::Time (0, 0, 11, 31));
 	BOOST_CHECK_EQUAL (s.back()->font(), "Arial");
-	BOOST_CHECK_EQUAL (s.front()->italic(), true);
+	BOOST_CHECK_EQUAL (s.back()->italic(), true);
+	BOOST_CHECK_EQUAL (s.back()->color(), libdcp::Color(255, 255, 255));
 	BOOST_CHECK_EQUAL (s.back()->size_in_pixels(1080), 53);
 	
 	s = subs.subtitles_at (libdcp::Time (0, 0, 11, 95));
@@ -151,6 +153,7 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL (s.front()->out(), libdcp::Time (0, 0, 13, 63));
 	BOOST_CHECK_EQUAL (s.front()->font(), "Arial");
 	BOOST_CHECK_EQUAL (s.front()->italic(), false);
+	BOOST_CHECK_EQUAL (s.front()->color(), libdcp::Color(255, 255, 255));
 	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
 
 	s = subs.subtitles_at (libdcp::Time (0, 0, 14, 42));
@@ -161,6 +164,7 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL (s.front()->out(), libdcp::Time (0, 0, 15, 177));
 	BOOST_CHECK_EQUAL (s.front()->font(), "Arial");
 	BOOST_CHECK_EQUAL (s.front()->italic(), false);
+	BOOST_CHECK_EQUAL (s.front()->color(), libdcp::Color(255, 255, 255));
 	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
 }
 

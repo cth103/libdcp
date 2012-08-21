@@ -74,7 +74,21 @@ struct EqualityOptions {
 	double max_mean_pixel_error;
 	double max_std_dev_pixel_error;
 };
-		
+
+class Color
+{
+public:
+	Color ();
+	Color (int r_, int g_, int b_);
+	Color (std::string argb_hex);
+
+	int r;
+	int g;
+	int b;
+};
+
+extern bool operator== (Color const & a, Color const & b);
+extern std::ostream & operator<< (std::ostream & s, Color const & c);
 
 }
 

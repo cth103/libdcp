@@ -55,6 +55,7 @@ public:
 	std::string id;
 	int size;
 	boost::optional<bool> italic;
+	boost::optional<Color> color;
 	
 	std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
 	std::list<boost::shared_ptr<FontNode> > font_nodes;
@@ -76,6 +77,7 @@ public:
 	Subtitle (
 		std::string font,
 		bool italic,
+		Color color,
 		int size,
 		Time in,
 		Time out,
@@ -89,6 +91,10 @@ public:
 
 	bool italic () const {
 		return _italic;
+	}
+
+	Color color () const {
+		return _color;
 	}
 
 	Time in () const {
@@ -112,6 +118,7 @@ public:
 private:
 	std::string _font;
 	bool _italic;
+	Color _color;
 	int _size;
 	Time _in;
 	Time _out;

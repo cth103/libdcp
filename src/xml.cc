@@ -189,6 +189,17 @@ XMLNode::optional_bool_attribute (string name)
 	return optional<bool> (false);
 }
 
+optional<Color>
+XMLNode::optional_color_attribute (string name)
+{
+	string const s = string_attribute (name);
+	if (s.empty ()) {
+		return optional<Color> ();
+	}
+
+	return optional<Color> (Color (s));
+}
+
 void
 XMLNode::done ()
 {
