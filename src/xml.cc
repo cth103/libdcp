@@ -126,13 +126,7 @@ XMLNode::ignore_node (string name)
 Time
 XMLNode::time_attribute (string name)
 {
-	string const t = string_attribute (name);
-
-	vector<string> b;
-	boost::split (b, t, is_any_of (":"));
-	assert (b.size() == 4);
-
-	return Time (lexical_cast<int> (b[0]), lexical_cast<int> (b[1]), lexical_cast<int> (b[2]), lexical_cast<int> (b[3]));
+	return Time (string_attribute (name));
 }
 
 string

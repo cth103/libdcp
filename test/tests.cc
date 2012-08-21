@@ -17,6 +17,7 @@
 
 */
 
+#include <cmath>
 #include <boost/filesystem.hpp>
 #include "KM_prng.h"
 #include "dcp.h"
@@ -191,6 +192,27 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (t.s, 34);
 	BOOST_CHECK_EQUAL (t.m, 18);
 	BOOST_CHECK_EQUAL (t.h, 11);
+
+	libdcp::Time a (3, 2, 3, 4);
+	libdcp::Time b (2, 3, 4, 5);
+
+	libdcp::Time r = a - b;
+	BOOST_CHECK_EQUAL (r.h, 0);
+	BOOST_CHECK_EQUAL (r.m, 58);
+	BOOST_CHECK_EQUAL (r.s, 58);
+	BOOST_CHECK_EQUAL (r.t, 249);
+
+	a = libdcp::Time (1, 58, 56, 240);
+	b = libdcp::Time (1, 7, 12, 120);
+	r = a + b;
+	BOOST_CHECK_EQUAL (r.h, 3);
+	BOOST_CHECK_EQUAL (r.m, 6);
+	BOOST_CHECK_EQUAL (r.s, 9);
+	BOOST_CHECK_EQUAL (r.t, 110);
+
+	a = libdcp::Time (24, 12, 6, 3);
+	b = libdcp::Time (16, 8, 4, 2);
+	BOOST_CHECK_EQUAL (a / b, 1.5);
 }
 
 BOOST_AUTO_TEST_CASE (color)

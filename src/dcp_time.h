@@ -47,6 +47,8 @@ public:
 		, t (t_)
 	{}
 
+	Time (std::string time);
+
 	int h; ///< hours
 	int m; ///< minutes
 	int s; ///< seconds
@@ -55,7 +57,12 @@ public:
 
 extern bool operator== (Time const & a, Time const & b);
 extern bool operator<= (Time const & a, Time const & b);
+extern bool operator< (Time const & a, Time const & b);
+extern bool operator> (Time const & a, Time const & b);
 extern std::ostream & operator<< (std::ostream & s, Time const & t);
+extern Time operator+ (Time a, Time const & b);	
+extern Time operator- (Time a, Time const & b);
+extern float operator/ (Time a, Time const & b);
 
 }
 

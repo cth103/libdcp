@@ -33,6 +33,12 @@ public:
 	float v_position;
 	VAlign v_align;
 	std::string text;
+	Time fade_up_time;
+	Time fade_down_time;
+
+private:
+	Time fade_time (std::string name);
+	
 };
 
 class SubtitleNode : public XMLNode
@@ -88,7 +94,9 @@ public:
 		VAlign v_align,
 		std::string text,
 		Effect effect,
-		Color effect_color
+		Color effect_color,
+		Time fade_up_time,
+		Time fade_down_time
 		);
 
 	std::string font () const {
@@ -131,6 +139,14 @@ public:
 		return _effect_color;
 	}
 
+	Time fade_up_time () const {
+		return _fade_up_time;
+	}
+
+	Time fade_down_time () const {
+		return _fade_down_time;
+	}
+
 	int size_in_pixels (int screen_height) const;
 
 private:
@@ -145,6 +161,8 @@ private:
 	std::string _text;
 	Effect _effect;
 	Color _effect_color;
+	Time _fade_up_time;
+	Time _fade_down_time;
 };
 
 class SubtitleAsset : public Asset, public XMLFile

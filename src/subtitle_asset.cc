@@ -17,6 +17,7 @@
 
 */
 
+#include <boost/lexical_cast.hpp>
 #include "subtitle_asset.h"
 
 using namespace std;
@@ -68,7 +69,9 @@ SubtitleAsset::examine_font_node (shared_ptr<FontNode> font_node, list<shared_pt
 						(*k)->v_align,
 						(*k)->text,
 						effective.effect.get(),
-						effective.effect_color.get()
+						effective.effect_color.get(),
+						(*k)->fade_up_time,
+						(*k)->fade_down_time
 						)
 					)
 				);
@@ -162,6 +165,31 @@ TextNode::TextNode (xmlpp::Node const * node)
 	} else if (v == "bottom") {
 		v_align = BOTTOM;
 	}
+
+	fade_up_time = fade_time ("FadeUpTime");
+	fade_down_time = fade_time ("FadeUpTime");
+}
+
+
+Time
+TextNode::fade_time (string name)
+{
+	string const u = optional_string_attribute (name);
+	Time t;
+	
+	if (u.empty ()) {
+		t = Time (0, 0, 0, 20);
+	} else if (u.find (":") != string::npos) {
+		t = Time (u);
+	} else {
+		t = Time (0, 0, 0, lexical_cast<int> (u));
+	}
+
+	if (t > Time (0, 0, 8, 0)) {
+		t = Time (0, 0, 8, 0);
+	}
+
+	return t;
 }
 
 list<shared_ptr<Subtitle> >
@@ -207,7 +235,9 @@ Subtitle::Subtitle (
 	VAlign v_align,
 	string text,
 	Effect effect,
-	Color effect_color
+	Color effect_color,
+	Time fade_up_time,
+	Time fade_down_time
 	)
 	: _font (font)
 	, _italic (italic)
@@ -220,6 +250,8 @@ Subtitle::Subtitle (
 	, _text (text)
 	, _effect (effect)
 	, _effect_color (effect_color)
+	, _fade_up_time (fade_up_time)
+	, _fade_down_time (fade_down_time)
 {
 
 }
