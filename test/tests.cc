@@ -115,9 +115,10 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	libdcp::SubtitleAsset subs ("test/ref", "subs.xml");
 
 	BOOST_CHECK_EQUAL (subs.language(), "French");
-	BOOST_CHECK_EQUAL (subs.font_nodes().size(), 1);
-	BOOST_CHECK_EQUAL (subs.font_nodes().front()->subtitle_nodes.size(), 4);
+//	BOOST_CHECK_EQUAL (subs.font_nodes().size(), 1);
+//	BOOST_CHECK_EQUAL (subs.font_nodes().front()->subtitle_nodes.size(), 4);
 
+#if 0	
 	list<shared_ptr<libdcp::SubtitleNode> >::const_iterator i = subs.font_nodes().front()->subtitle_nodes.begin ();
 
 	BOOST_CHECK_EQUAL ((*i)->in, libdcp::Time (0, 0, 5, 198));
@@ -148,15 +149,34 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL ((*i)->text_nodes.size(), 1);
 	BOOST_CHECK_EQUAL ((*i)->text_nodes.front()->v_position, 15);
 	BOOST_CHECK_EQUAL ((*i)->text_nodes.front()->text, "And these are Roy Hattersley's jeans");
+#endif	
 
-	BOOST_CHECK_EQUAL (subs.subtitles_at (libdcp::Time (0, 0, 14, 42)).size(), 1);
-	shared_ptr<libdcp::Subtitle> s = subs.subtitles_at (libdcp::Time (0, 0, 14, 42)).front ();
-	BOOST_CHECK_EQUAL (s->text(), "And these are Roy Hattersley's jeans");
-	BOOST_CHECK_EQUAL (s->v_position(), 15);
-	BOOST_CHECK_EQUAL (s->in(), libdcp::Time (0, 0, 13, 104));
-	BOOST_CHECK_EQUAL (s->out(), libdcp::Time (0, 0, 15, 177));
-	BOOST_CHECK_EQUAL (s->font(), "Arial");
-	BOOST_CHECK_EQUAL (s->size_in_pixels(1080), 53);
+	list<shared_ptr<libdcp::Subtitle> > s = subs.subtitles_at (libdcp::Time (0, 0, 6, 1));
+	BOOST_CHECK_EQUAL (s.size(), 1);
+	BOOST_CHECK_EQUAL (s.front()->text(), "My jacket was Idi Amin's");
+	BOOST_CHECK_EQUAL (s.front()->v_position(), 15);
+	BOOST_CHECK_EQUAL (s.front()->in(), libdcp::Time (0, 0, 5, 198));
+	BOOST_CHECK_EQUAL (s.front()->out(), libdcp::Time (0, 0, 7, 115));
+	BOOST_CHECK_EQUAL (s.front()->font(), "Arial");
+	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
+	
+	s = subs.subtitles_at (libdcp::Time (0, 0, 11, 95));
+	BOOST_CHECK_EQUAL (s.size(), 1);
+	BOOST_CHECK_EQUAL (s.front ()->text(), "Once belonged to the Shah");
+	BOOST_CHECK_EQUAL (s.front ()->v_position(), 15);
+	BOOST_CHECK_EQUAL (s.front ()->in(), libdcp::Time (0, 0, 11, 94));
+	BOOST_CHECK_EQUAL (s.front ()->out(), libdcp::Time (0, 0, 13, 63));
+	BOOST_CHECK_EQUAL (s.front ()->font(), "Arial");
+	BOOST_CHECK_EQUAL (s.front ()->size_in_pixels(1080), 53);
+
+	s = subs.subtitles_at (libdcp::Time (0, 0, 14, 42));
+	BOOST_CHECK_EQUAL (s.size(), 1);
+	BOOST_CHECK_EQUAL (s.front ()->text(), "And these are Roy Hattersley's jeans");
+	BOOST_CHECK_EQUAL (s.front ()->v_position(), 15);
+	BOOST_CHECK_EQUAL (s.front ()->in(), libdcp::Time (0, 0, 13, 104));
+	BOOST_CHECK_EQUAL (s.front ()->out(), libdcp::Time (0, 0, 15, 177));
+	BOOST_CHECK_EQUAL (s.front ()->font(), "Arial");
+	BOOST_CHECK_EQUAL (s.front ()->size_in_pixels(1080), 53);
 }
 
 BOOST_AUTO_TEST_CASE (dcp_time)
