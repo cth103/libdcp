@@ -56,6 +56,8 @@ public:
 	int size;
 	boost::optional<bool> italic;
 	boost::optional<Color> color;
+	std::string effect;
+	boost::optional<Color> effect_color;
 	
 	std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
 	std::list<boost::shared_ptr<FontNode> > font_nodes;
@@ -82,7 +84,9 @@ public:
 		Time in,
 		Time out,
 		float v_position,
-		std::string text
+		std::string text,
+		std::string effect,
+		Color effect_color
 		);
 
 	std::string font () const {
@@ -113,6 +117,14 @@ public:
 		return _v_position;
 	}
 
+	std::string effect () const {
+		return _effect;
+	}
+
+	Color effect_color () const {
+		return _effect_color;
+	}
+
 	int size_in_pixels (int screen_height) const;
 
 private:
@@ -124,6 +136,8 @@ private:
 	Time _out;
 	float _v_position;
 	std::string _text;
+	std::string _effect;
+	Color _effect_color;
 };
 
 class SubtitleAsset : public Asset, public XMLFile

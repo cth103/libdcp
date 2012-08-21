@@ -140,6 +140,22 @@ XMLNode::string_attribute (string name)
 {
 	xmlpp::Element const * e = dynamic_cast<const xmlpp::Element *> (_node);
 	if (!e) {
+		throw XMLError ("missing attribute");
+	}
+	
+	xmlpp::Attribute* a = e->get_attribute (name);
+	if (!a) {
+		throw XMLError ("missing attribute");
+	}
+
+	return a->get_value ();
+}
+
+string
+XMLNode::optional_string_attribute (string name)
+{
+	xmlpp::Element const * e = dynamic_cast<const xmlpp::Element *> (_node);
+	if (!e) {
 		return "";
 	}
 	
@@ -166,7 +182,7 @@ XMLNode::int64_attribute (string name)
 int64_t
 XMLNode::optional_int64_attribute (string name)
 {
-	string const s = string_attribute (name);
+	string const s = optional_string_attribute (name);
 	if (s.empty ()) {
 		return 0;
 	}
@@ -177,7 +193,7 @@ XMLNode::optional_int64_attribute (string name)
 optional<bool>
 XMLNode::optional_bool_attribute (string name)
 {
-	string const s = string_attribute (name);
+	string const s = optional_string_attribute (name);
 	if (s.empty ()) {
 		return optional<bool> ();
 	}
@@ -192,7 +208,7 @@ XMLNode::optional_bool_attribute (string name)
 optional<Color>
 XMLNode::optional_color_attribute (string name)
 {
-	string const s = string_attribute (name);
+	string const s = optional_string_attribute (name);
 	if (s.empty ()) {
 		return optional<Color> ();
 	}

@@ -35,7 +35,7 @@ Time::Time (int frame, int frames_per_second)
 	, t (0)
 {
 	float sec_float = float (frame) / frames_per_second;
-	t = (int (sec_float * 1000) % 1000) / 4;
+	t = (int (floor (sec_float * 1000)) % 1000) / 4;
 	s = floor (sec_float);
 
 	if (s > 60) {

@@ -65,7 +65,9 @@ SubtitleAsset::examine_font_node (shared_ptr<FontNode> font_node, list<shared_pt
 						(*j)->in,
 						(*j)->out,
 						(*k)->v_position,
-						(*k)->text
+						(*k)->text,
+						effective.effect,
+						effective.effect_color.get()
 						)
 					)
 				);
@@ -82,10 +84,12 @@ SubtitleAsset::examine_font_node (shared_ptr<FontNode> font_node, list<shared_pt
 FontNode::FontNode (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	id = string_attribute ("Id");
+	id = optional_string_attribute ("Id");
 	size = optional_int64_attribute ("Size");
 	italic = optional_bool_attribute ("Italic");
 	color = optional_color_attribute ("Color");
+	effect = optional_string_attribute ("Effect");
+	effect_color = optional_color_attribute ("EffectColor");
 	subtitle_nodes = sub_nodes<SubtitleNode> ("Subtitle");
 	font_nodes = sub_nodes<FontNode> ("Font");
 }
@@ -107,6 +111,12 @@ FontNode::FontNode (list<shared_ptr<FontNode> > const & font_nodes)
 		}
 		if ((*i)->color) {
 			color = (*i)->color.get ();
+		}
+		if (!(*i)->effect.empty ()) {
+			effect = (*i)->effect;
+		}
+		if ((*i)->effect_color) {
+			effect_color = (*i)->effect_color.get ();
 		}
 	}
 }
@@ -167,14 +177,16 @@ SubtitleAsset::font_id_to_name (string id) const
 }
 
 Subtitle::Subtitle (
-	std::string font,
+	string font,
 	bool italic,
 	Color color,
 	int size,
 	Time in,
 	Time out,
 	float v_position,
-	std::string text
+	string text,
+	string effect,
+	Color effect_color
 	)
 	: _font (font)
 	, _italic (italic)
@@ -184,6 +196,8 @@ Subtitle::Subtitle (
 	, _out (out)
 	, _v_position (v_position)
 	, _text (text)
+	, _effect (effect)
+	, _effect_color (effect_color)
 {
 
 }
