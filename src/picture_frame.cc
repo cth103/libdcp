@@ -22,7 +22,7 @@
 #include "KM_fileio.h"
 #include "picture_frame.h"
 #include "exceptions.h"
-#include "rgba_frame.h"
+#include "argb_frame.h"
 #include "lut.h"
 
 using namespace std;
@@ -61,8 +61,12 @@ PictureFrame::size () const
 	return _buffer->Size ();
 }
 
-shared_ptr<RGBAFrame>
-PictureFrame::rgba_frame () const
+/** @return An ARGB representation of this frame.  This is ARGB in the
+ *  Cairo sense, so that each pixel takes up 4 bytes; the first byte
+ *  is blue, second green, third red and fourth alpha (always 255).
+ */
+shared_ptr<ARGBFrame>
+PictureFrame::argb_frame () const
 {
 	/* JPEG2000 -> decompressed XYZ */
 	
@@ -94,12 +98,12 @@ PictureFrame::rgba_frame () const
 	int* xyz_y = xyz_frame->comps[1].data;
 	int* xyz_z = xyz_frame->comps[2].data;
 
-	shared_ptr<RGBAFrame> rgba_frame (new RGBAFrame (xyz_frame->x1, xyz_frame->y1));
+	shared_ptr<ARGBFrame> argb_frame (new ARGBFrame (xyz_frame->x1, xyz_frame->y1));
 	
-	uint8_t* rgba = rgba_frame->data ();
+	uint8_t* argb = argb_frame->data ();
 	
 	for (int y = 0; y < xyz_frame->y1; ++y) {
-		uint8_t* rgba_line = rgba;
+		uint8_t* argb_line = argb;
 		for (int x = 0; x < xyz_frame->x1; ++x) {
 			
 			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_x < 4096 && *xyz_z < 4096);
@@ -129,17 +133,17 @@ PictureFrame::rgba_frame () const
 			d.b = max (d.b, 0.0);
 			
 			/* Out gamma LUT */
-			*rgba_line++ = lut_out[(int) (d.r * COLOR_DEPTH)];
-			*rgba_line++ = lut_out[(int) (d.g * COLOR_DEPTH)];
-			*rgba_line++ = lut_out[(int) (d.b * COLOR_DEPTH)];
-			*rgba_line++ = 0xff;
+			*argb_line++ = lut_out[(int) (d.b * COLOR_DEPTH)];
+			*argb_line++ = lut_out[(int) (d.g * COLOR_DEPTH)];
+			*argb_line++ = lut_out[(int) (d.r * COLOR_DEPTH)];
+			*argb_line++ = 0xff;
 		}
 		
-		rgba += rgba_frame->stride ();
+		argb += argb_frame->stride ();
 	}
 	
 	opj_cio_close (cio);
 	opj_image_destroy (xyz_frame);
 
-	return rgba_frame;
+	return argb_frame;
 }

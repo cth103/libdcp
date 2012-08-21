@@ -17,11 +17,11 @@
 
 */
 
-#include "rgba_frame.h"
+#include "argb_frame.h"
 
 using namespace libdcp;
 
-RGBAFrame::RGBAFrame (int width, int height)
+ARGBFrame::ARGBFrame (int width, int height)
 	: _width (width)
 	, _height (height)
 {
@@ -29,13 +29,13 @@ RGBAFrame::RGBAFrame (int width, int height)
 }
 
 
-RGBAFrame::~RGBAFrame ()
+ARGBFrame::~ARGBFrame ()
 {
 	delete[] _data;
 }
 
 int
-RGBAFrame::stride () const
+ARGBFrame::stride () const
 {
 	return _width * 4;
 }

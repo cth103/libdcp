@@ -29,7 +29,7 @@ namespace ASDCP {
 
 namespace libdcp {
 
-class RGBAFrame;	
+class ARGBFrame;	
 
 class PictureFrame
 {
@@ -40,7 +40,7 @@ public:
 	uint8_t const * data () const;
 	int size () const;
 
-	boost::shared_ptr<RGBAFrame> rgba_frame () const;
+	boost::shared_ptr<ARGBFrame> argb_frame () const;
 
 private:
 	ASDCP::JP2K::FrameBuffer* _buffer;

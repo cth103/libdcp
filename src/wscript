@@ -18,7 +18,7 @@ def build(bld):
                  picture_frame.cc
                  pkl.cc
                  reel.cc
-                 rgba_frame.cc
+                 argb_frame.cc
                  sound_asset.cc
                  sound_frame.cc
                  subtitle_asset.cc
@@ -39,7 +39,7 @@ def build(bld):
               picture_asset.h
               picture_frame.h
               reel.h
-              rgba_frame.h
+              argb_frame.h
               sound_asset.h
               sound_frame.h
               subtitle_asset.h

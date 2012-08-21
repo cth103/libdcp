@@ -22,11 +22,11 @@
 namespace libdcp
 {
 
-class RGBAFrame
+class ARGBFrame
 {
 public:
-	RGBAFrame (int width, int height);
-	~RGBAFrame ();
+	ARGBFrame (int width, int height);
+	~ARGBFrame ();
 
 	uint8_t* data () const {
 		return _data;
