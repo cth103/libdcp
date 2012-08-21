@@ -174,6 +174,21 @@ XMLNode::optional_int64_attribute (string name)
 	return lexical_cast<int64_t> (s);
 }
 
+optional<bool>
+XMLNode::optional_bool_attribute (string name)
+{
+	string const s = string_attribute (name);
+	if (s.empty ()) {
+		return optional<bool> ();
+	}
+
+	if (s == "1" || s == "yes") {
+		return optional<bool> (true);
+	}
+
+	return optional<bool> (false);
+}
+
 void
 XMLNode::done ()
 {

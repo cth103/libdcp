@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <glibmm.h>
 #include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 #include "types.h"
 #include "exceptions.h"
 #include "dcp_time.h"
@@ -39,6 +40,7 @@ protected:
 	std::string string_attribute (std::string);
 	int64_t int64_attribute (std::string);
 	int64_t optional_int64_attribute (std::string);
+	boost::optional<bool> optional_bool_attribute (std::string);
 
 	std::string content ();
 

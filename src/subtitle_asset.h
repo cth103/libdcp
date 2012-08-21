@@ -53,6 +53,7 @@ public:
 
 	std::string id;
 	int size;
+	boost::optional<bool> italic;
 	
 	std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
 	std::list<boost::shared_ptr<FontNode> > font_nodes;
@@ -73,6 +74,7 @@ class Subtitle
 public:
 	Subtitle (
 		std::string font,
+		bool italic,
 		int size,
 		Time in,
 		Time out,
@@ -82,6 +84,10 @@ public:
 
 	std::string font () const {
 		return _font;
+	}
+
+	bool italic () const {
+		return _italic;
 	}
 
 	Time in () const {
@@ -104,6 +110,7 @@ public:
 
 private:
 	std::string _font;
+	bool _italic;
 	int _size;
 	Time _in;
 	Time _out;
@@ -133,6 +140,7 @@ private:
 	void examine_font_node (boost::shared_ptr<FontNode> font_node, std::list<boost::shared_ptr<FontNode> >& current_font_nodes);
 	std::string id_from_font_nodes (std::list<boost::shared_ptr<FontNode> > const & font_nodes) const;
 	int size_from_font_nodes (std::list<boost::shared_ptr<FontNode> > const & font_nodes) const;
+	bool italic_from_font_nodes (std::list<boost::shared_ptr<FontNode> > const & font_nodes) const;
 	
 	std::string _subtitle_id;
 	std::string _movie_title;
