@@ -56,7 +56,7 @@ public:
 	int size;
 	boost::optional<bool> italic;
 	boost::optional<Color> color;
-	std::string effect;
+	boost::optional<Effect> effect;
 	boost::optional<Color> effect_color;
 	
 	std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
@@ -85,7 +85,7 @@ public:
 		Time out,
 		float v_position,
 		std::string text,
-		std::string effect,
+		Effect effect,
 		Color effect_color
 		);
 
@@ -117,7 +117,7 @@ public:
 		return _v_position;
 	}
 
-	std::string effect () const {
+	Effect effect () const {
 		return _effect;
 	}
 
@@ -136,7 +136,7 @@ private:
 	Time _out;
 	float _v_position;
 	std::string _text;
-	std::string _effect;
+	Effect _effect;
 	Color _effect_color;
 };
 

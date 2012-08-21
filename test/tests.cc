@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL (s.front()->italic(), false);
 	BOOST_CHECK_EQUAL (s.front()->color(), libdcp::Color(255, 255, 255));
 	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
-	BOOST_CHECK_EQUAL (s.front()->effect(), "border");
+	BOOST_CHECK_EQUAL (s.front()->effect(), libdcp::BORDER);
 	BOOST_CHECK_EQUAL (s.front()->effect_color(), libdcp::Color(0, 0, 0));
 
 	s = subs.subtitles_at (libdcp::Time (0, 0, 7, 190));
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL (s.front()->font(), "Arial");
 	BOOST_CHECK_EQUAL (s.front()->italic(), true);
 	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
-	BOOST_CHECK_EQUAL (s.front()->effect(), "border");
+	BOOST_CHECK_EQUAL (s.front()->effect(), libdcp::BORDER);
 	BOOST_CHECK_EQUAL (s.front()->effect_color(), libdcp::Color(0, 0, 0));
 	BOOST_CHECK_EQUAL (s.back()->text(), "My large wonderbra");
 	BOOST_CHECK_EQUAL (s.back()->v_position(), 15);
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL (s.back()->italic(), true);
 	BOOST_CHECK_EQUAL (s.back()->color(), libdcp::Color(255, 255, 255));
 	BOOST_CHECK_EQUAL (s.back()->size_in_pixels(1080), 53);
-	BOOST_CHECK_EQUAL (s.back()->effect(), "border");
+	BOOST_CHECK_EQUAL (s.back()->effect(), libdcp::BORDER);
 	BOOST_CHECK_EQUAL (s.back()->effect_color(), libdcp::Color(0, 0, 0));
 	
 	s = subs.subtitles_at (libdcp::Time (0, 0, 11, 95));
@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL (s.front()->italic(), false);
 	BOOST_CHECK_EQUAL (s.front()->color(), libdcp::Color(255, 255, 255));
 	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
-	BOOST_CHECK_EQUAL (s.front()->effect(), "border");
+	BOOST_CHECK_EQUAL (s.front()->effect(), libdcp::BORDER);
 	BOOST_CHECK_EQUAL (s.front()->effect_color(), libdcp::Color(0, 0, 0));
 
 	s = subs.subtitles_at (libdcp::Time (0, 0, 14, 42));
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL (s.front()->italic(), false);
 	BOOST_CHECK_EQUAL (s.front()->color(), libdcp::Color(255, 255, 255));
 	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
-	BOOST_CHECK_EQUAL (s.front()->effect(), "border");
+	BOOST_CHECK_EQUAL (s.front()->effect(), libdcp::BORDER);
 	BOOST_CHECK_EQUAL (s.front()->effect_color(), libdcp::Color(0, 0, 0));
 }
 

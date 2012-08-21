@@ -66,7 +66,7 @@ SubtitleAsset::examine_font_node (shared_ptr<FontNode> font_node, list<shared_pt
 						(*j)->out,
 						(*k)->v_position,
 						(*k)->text,
-						effective.effect,
+						effective.effect.get(),
 						effective.effect_color.get()
 						)
 					)
@@ -88,7 +88,16 @@ FontNode::FontNode (xmlpp::Node const * node)
 	size = optional_int64_attribute ("Size");
 	italic = optional_bool_attribute ("Italic");
 	color = optional_color_attribute ("Color");
-	effect = optional_string_attribute ("Effect");
+	string const e = optional_string_attribute ("Effect");
+	if (e == "none") {
+		effect = NONE;
+	} else if (e == "border") {
+		effect = BORDER;
+	} else if (e == "shadow") {
+		effect = SHADOW;
+	} else if (!e.empty ()) {
+		throw DCPReadError ("unknown subtitle effect type");
+	}
 	effect_color = optional_color_attribute ("EffectColor");
 	subtitle_nodes = sub_nodes<SubtitleNode> ("Subtitle");
 	font_nodes = sub_nodes<FontNode> ("Font");
@@ -98,6 +107,7 @@ FontNode::FontNode (list<shared_ptr<FontNode> > const & font_nodes)
 	: size (0)
 	, italic (false)
 	, color ("FFFFFFFF")
+	, effect_color ("FFFFFFFF")
 {
 	for (list<shared_ptr<FontNode> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
 		if (!(*i)->id.empty ()) {
@@ -112,8 +122,8 @@ FontNode::FontNode (list<shared_ptr<FontNode> > const & font_nodes)
 		if ((*i)->color) {
 			color = (*i)->color.get ();
 		}
-		if (!(*i)->effect.empty ()) {
-			effect = (*i)->effect;
+		if ((*i)->effect) {
+			effect = (*i)->effect.get ();
 		}
 		if ((*i)->effect_color) {
 			effect_color = (*i)->effect_color.get ();
@@ -185,7 +195,7 @@ Subtitle::Subtitle (
 	Time out,
 	float v_position,
 	string text,
-	string effect,
+	Effect effect,
 	Color effect_color
 	)
 	: _font (font)

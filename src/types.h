@@ -51,6 +51,13 @@ enum ContentKind
 	ADVERTISEMENT
 };
 
+enum Effect
+{
+	NONE,
+	BORDER,
+	SHADOW
+};
+	
 class Fraction
 {
 public:
