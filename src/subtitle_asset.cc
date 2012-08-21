@@ -34,14 +34,14 @@ SubtitleAsset::SubtitleAsset (string directory, string xml)
 
 	ignore_node ("LoadFont");
 
-	_font_nodes = sub_nodes<FontNode> ("Font");
+	list<shared_ptr<FontNode> > font_nodes = sub_nodes<FontNode> ("Font");
 	list<shared_ptr<LoadFontNode> > load_font_nodes = sub_nodes<LoadFontNode> ("LoadFont");
 
 	/* Now make Subtitle objects to represent the raw XML nodes
 	   in a sane way.
 	*/
 
-	for (list<shared_ptr<FontNode> >::iterator i = _font_nodes.begin(); i != _font_nodes.end(); ++i) {
+	for (list<shared_ptr<FontNode> >::iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
 		for (list<shared_ptr<SubtitleNode> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
 			for (list<shared_ptr<TextNode> >::iterator k = (*j)->text_nodes.begin(); k != (*j)->text_nodes.end(); ++k) {
 				_subtitles.push_back (

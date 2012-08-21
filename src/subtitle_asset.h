@@ -127,10 +127,6 @@ public:
 
 	std::list<boost::shared_ptr<Subtitle> > subtitles_at (Time t) const;
 
-	std::list<boost::shared_ptr<FontNode> > font_nodes () const {
-		return _font_nodes;
-	}
-
 private:
 	std::string font_id_to_name (std::string id, std::list<boost::shared_ptr<LoadFontNode> > const & load_font_nodes) const;
 	
@@ -138,7 +134,6 @@ private:
 	std::string _movie_title;
 	int64_t _reel_number;
 	std::string _language;
-	std::list<boost::shared_ptr<FontNode> > _font_nodes;
 
 	std::list<boost::shared_ptr<Subtitle> > _subtitles;
 };
