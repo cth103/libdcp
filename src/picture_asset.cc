@@ -281,8 +281,6 @@ MonoPictureAsset::construct (sigc::slot<string, int> get_path)
 
 		string const path = get_path (i);
 
-		cout << "reading " << path << "\n";
-		
 		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (path.c_str(), frame_buffer))) {
 			throw FileError ("could not open JPEG2000 file for reading", path);
 		}
