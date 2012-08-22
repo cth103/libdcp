@@ -33,6 +33,7 @@ namespace libdcp {
 
 class ARGBFrame;
 
+/** A single frame of a 2D (monoscopic) picture asset */	
 class MonoPictureFrame
 {
 public:
@@ -45,6 +46,7 @@ private:
 	ASDCP::JP2K::FrameBuffer* _buffer;
 };
 
+/** A single frame of a 3D (stereoscopic) picture asset */	
 class StereoPictureFrame
 {
 public:

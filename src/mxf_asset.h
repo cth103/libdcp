@@ -33,6 +33,7 @@ public:
 	 *  @param file_name Name of MXF file.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
+	 *  @param entry_point The entry point of this MXF; ie the first frame that should be used.
 	 *  @param length Length in frames.
 	 */
 	MXFAsset (std::string directory, std::string file_name, sigc::signal1<void, float>* progress, int fps, int entry_point, int length);

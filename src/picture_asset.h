@@ -58,6 +58,7 @@ protected:
 	int _height;
 };
 
+/** A 2D (monoscopic) picture asset */
 class MonoPictureAsset : public PictureAsset
 {
 public:
@@ -114,6 +115,7 @@ private:
 	void construct (sigc::slot<std::string, int>);
 };
 
+/** A 3D (stereoscopic) picture asset */	
 class StereoPictureAsset : public PictureAsset
 {
 public:

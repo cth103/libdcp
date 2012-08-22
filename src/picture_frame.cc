@@ -30,6 +30,10 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
+/** Make a picture frame from a 2D (monoscopic) asset.
+ *  @param mxf_path Path to the asset's MXF file.
+ *  @param n Frame within the asset, not taking EntryPoint into account.
+ */
 MonoPictureFrame::MonoPictureFrame (string mxf_path, int n)
 {
 	ASDCP::JP2K::MXFReader reader;
@@ -50,20 +54,6 @@ MonoPictureFrame::~MonoPictureFrame ()
 	delete _buffer;
 }
 
-#if 0
-uint8_t const *
-MonoPictureFrame::data () const
-{
-	return _buffer->RoData();
-}
-
-int
-MonoPictureFrame::size () const
-{
-	return _buffer->Size ();
-}
-#endif
-
 /** @return An ARGB representation of this frame.  This is ARGB in the
  *  Cairo sense, so that each pixel takes up 4 bytes; the first byte
  *  is blue, second green, third red and fourth alpha (always 255).
@@ -78,7 +68,10 @@ MonoPictureFrame::argb_frame () const
 	return f;
 }
 
-
+/** Make a picture frame from a 3D (stereoscopic) asset.
+ *  @param mxf_path Path to the asset's MXF file.
+ *  @param n Frame within the asset, not taking EntryPoint into account.
+ */
 StereoPictureFrame::StereoPictureFrame (string mxf_path, int n)
 {
 	ASDCP::JP2K::MXFSReader reader;
@@ -99,6 +92,13 @@ StereoPictureFrame::~StereoPictureFrame ()
 	delete _buffer;
 }
 
+/** @return An ARGB representation of one of the eyes (left or right)
+ *  of this frame.  This is ARGB in the Cairo sense, so that each
+ *  pixel takes up 4 bytes; the first byte is blue, second green,
+ *  third red and fourth alpha (always 255).
+ *
+ *  @param eye Eye to return (EYE_LEFT or EYE_RIGHT).
+ */
 shared_ptr<ARGBFrame>
 StereoPictureFrame::argb_frame (Eye eye) const
 {
