@@ -293,6 +293,7 @@ DCP::DCP (string directory)
 					       _directory,
 					       n,
 					       _fps,
+					       (*i)->asset_list->main_picture->entry_point,
 					       (*i)->asset_list->main_picture->duration
 					       )
 				);
@@ -308,6 +309,7 @@ DCP::DCP (string directory)
 					       _directory,
 					       n,
 					       _fps,
+					       (*i)->asset_list->main_stereoscopic_picture->entry_point,
 					       (*i)->asset_list->main_stereoscopic_picture->duration
 					       )
 				);
@@ -325,6 +327,7 @@ DCP::DCP (string directory)
 					     _directory,
 					     n,
 					     _fps,
+					     (*i)->asset_list->main_sound->entry_point,
 					     (*i)->asset_list->main_sound->duration
 					     )
 				);

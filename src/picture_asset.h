@@ -34,7 +34,7 @@ class StereoPictureFrame;
 class PictureAsset : public MXFAsset
 {
 public:
-	PictureAsset (std::string directory, std::string mxf_name, sigc::signal1<void, float>* progress, int fps, int length);
+	PictureAsset (std::string directory, std::string mxf_name, sigc::signal1<void, float>* progress, int fps, int entry_point, int length);
 	
 	/** Write details of this asset to a CPL stream.
 	 *  @param s Stream.
@@ -105,7 +105,7 @@ public:
 		int height
 		);
 
-	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, int length);
+	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, int entry_point, int length);
 	
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 
@@ -117,7 +117,7 @@ private:
 class StereoPictureAsset : public PictureAsset
 {
 public:
-	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, int length);
+	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, int entry_point, int length);
 	
 	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
 };

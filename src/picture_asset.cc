@@ -40,8 +40,8 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-PictureAsset::PictureAsset (string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int length)
-	: MXFAsset (directory, mxf_name, progress, fps, length)
+PictureAsset::PictureAsset (string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int entry_point, int length)
+	: MXFAsset (directory, mxf_name, progress, fps, entry_point, length)
 {
 
 }
@@ -214,7 +214,7 @@ MonoPictureAsset::MonoPictureAsset (
 	int length,
 	int width,
 	int height)
-	: PictureAsset (directory, mxf_name, progress, fps, length)
+	: PictureAsset (directory, mxf_name, progress, fps, 0, length)
 {
 	_width = width;
 	_height = height;
@@ -230,15 +230,15 @@ MonoPictureAsset::MonoPictureAsset (
 	int length,
 	int width,
 	int height)
-	: PictureAsset (directory, mxf_name, progress, fps, length)
+	: PictureAsset (directory, mxf_name, progress, fps, 0, length)
 {
 	_width = width;
 	_height = height;
 	construct (sigc::bind (sigc::mem_fun (*this, &MonoPictureAsset::path_from_list), files));
 }
 
-MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, int length)
-	: PictureAsset (directory, mxf_name, 0, fps, length)
+MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, int entry_point, int length)
+	: PictureAsset (directory, mxf_name, 0, fps, entry_point, length)
 {
 	ASDCP::JP2K::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
@@ -305,11 +305,11 @@ MonoPictureAsset::path_from_list (int f, vector<string> const & files) const
 shared_ptr<const MonoPictureFrame>
 MonoPictureAsset::get_frame (int n) const
 {
-	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n));
+	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n + _entry_point));
 }
 
-StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int length)
-	: PictureAsset (directory, mxf_name, 0, fps, length)
+StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int entry_point, int length)
+	: PictureAsset (directory, mxf_name, 0, fps, entry_point, length)
 {
 	ASDCP::JP2K::MXFSReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
@@ -328,5 +328,5 @@ StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int f
 shared_ptr<const StereoPictureFrame>
 StereoPictureAsset::get_frame (int n) const
 {
-	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n));
+	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n + _entry_point));
 }

@@ -39,7 +39,7 @@ using namespace libdcp;
 SoundAsset::SoundAsset (
 	vector<string> const & files, string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int length
 	)
-	: MXFAsset (directory, mxf_name, progress, fps, length)
+	: MXFAsset (directory, mxf_name, progress, fps, 0, length)
 	, _channels (files.size ())
 	, _sampling_rate (0)
 {
@@ -49,15 +49,15 @@ SoundAsset::SoundAsset (
 SoundAsset::SoundAsset (
 	sigc::slot<string, Channel> get_path, string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int length, int channels
 	)
-	: MXFAsset (directory, mxf_name, progress, fps, length)
+	: MXFAsset (directory, mxf_name, progress, fps, 0, length)
 	, _channels (channels)
 	, _sampling_rate (0)
 {
 	construct (get_path);
 }
 
-SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int length)
-	: MXFAsset (directory, mxf_name, 0, fps, length)
+SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int entry_point, int length)
+	: MXFAsset (directory, mxf_name, 0, fps, entry_point, length)
 	, _channels (0)
 {
 	ASDCP::PCM::MXFReader reader;
@@ -264,5 +264,5 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 shared_ptr<const SoundFrame>
 SoundAsset::get_frame (int n) const
 {
-	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n));
+	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n + _entry_point));
 }

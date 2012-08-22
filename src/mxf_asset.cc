@@ -34,10 +34,11 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-MXFAsset::MXFAsset (string directory, string file_name, sigc::signal1<void, float>* progress, int fps, int length)
+MXFAsset::MXFAsset (string directory, string file_name, sigc::signal1<void, float>* progress, int fps, int entry_point, int length)
 	: Asset (directory, file_name)
 	, _progress (progress)
 	, _fps (fps)
+	, _entry_point (entry_point)
 	, _length (length)
 {
 	
@@ -120,5 +121,3 @@ MXFAsset::length () const
 {
 	return _length;
 }
-
-	

@@ -78,6 +78,7 @@ public:
 		std::string directory,
 		std::string mxf_name,
 		int fps,
+		int entry_point,
 		int length
 		);
 	

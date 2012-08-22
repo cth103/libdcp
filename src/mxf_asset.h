@@ -35,7 +35,7 @@ public:
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
 	 */
-	MXFAsset (std::string directory, std::string file_name, sigc::signal1<void, float>* progress, int fps, int length);
+	MXFAsset (std::string directory, std::string file_name, sigc::signal1<void, float>* progress, int fps, int entry_point, int length);
 
 	virtual std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
 	
@@ -51,6 +51,7 @@ protected:
 	sigc::signal1<void, float>* _progress;
 	/** Frames per second */
 	int _fps;
+	int _entry_point;
 	/** Length in frames */
 	int _length;
 };
