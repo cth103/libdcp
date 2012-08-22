@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 
 	a = libdcp::Time (24, 12, 6, 3);
 	b = libdcp::Time (16, 8, 4, 2);
-	BOOST_CHECK_EQUAL (a / b, 1.5);
+	BOOST_CHECK_CLOSE (a / b, 1.5, 1e-5);
 }
 
 BOOST_AUTO_TEST_CASE (color)
