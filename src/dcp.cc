@@ -265,24 +265,49 @@ DCP::DCP (string directory)
 	_fps = 0;
 
 	for (list<shared_ptr<CPLReel> >::iterator i = cpl->reels.begin(); i != cpl->reels.end(); ++i) {
-		assert (_fps == 0 || _fps == (*i)->asset_list->main_picture->frame_rate.numerator);
-		_fps = (*i)->asset_list->main_picture->frame_rate.numerator;
-		_length += (*i)->asset_list->main_picture->duration;
 
-		string n = pkl->asset_from_id ((*i)->asset_list->main_picture->id)->original_file_name;
-		if (n.empty ()) {
-			n = (*i)->asset_list->main_picture->annotation_text;
+		shared_ptr<Picture> p;
+
+		if ((*i)->asset_list->main_picture) {
+			p = (*i)->asset_list->main_picture;
+		} else {
+			p = (*i)->asset_list->main_stereoscopic_picture;
 		}
 		
-		shared_ptr<PictureAsset> picture (new PictureAsset (
-							  _directory,
-							  n,
-							  _fps,
-							  (*i)->asset_list->main_picture->duration
-							  )
-			);
+		assert (_fps == 0 || _fps == p->frame_rate.numerator);
+		_fps = p->frame_rate.numerator;
+		_length += p->duration;
 
+		string n = pkl->asset_from_id (p->id)->original_file_name;
+		if (n.empty ()) {
+			n = p->annotation_text;
+		}
+		
+		shared_ptr<PictureAsset> picture;
 		shared_ptr<SoundAsset> sound;
+		shared_ptr<SubtitleAsset> subtitle;
+		
+		if ((*i)->asset_list->main_picture) {
+
+			picture.reset (new MonoPictureAsset (
+					       _directory,
+					       n,
+					       _fps,
+					       (*i)->asset_list->main_picture->duration
+					       )
+				);
+			
+		} else if ((*i)->asset_list->main_stereoscopic_picture) {
+			
+			picture.reset (new StereoPictureAsset (
+					       _directory,
+					       n,
+					       _fps,
+					       (*i)->asset_list->main_stereoscopic_picture->duration
+					       )
+				);
+			
+		}
 		
 		if ((*i)->asset_list->main_sound) {
 			
@@ -302,7 +327,6 @@ DCP::DCP (string directory)
 
 		assert (files.subtitles.size() < 2);
 
-		shared_ptr<SubtitleAsset> subtitle;
 		if (!files.subtitles.empty ()) {
 			string const l = files.subtitles.front().substr (_directory.length ());
 			subtitle.reset (new SubtitleAsset (_directory, l));

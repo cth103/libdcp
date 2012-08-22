@@ -20,30 +20,41 @@
 #include <string>
 #include <stdint.h>
 #include <boost/shared_ptr.hpp>
+#include "types.h"
 
 namespace ASDCP {
 	namespace JP2K {
 		class FrameBuffer;
+		class SFrameBuffer;
 	}
 }
 
 namespace libdcp {
 
-class ARGBFrame;	
+class ARGBFrame;
 
-class PictureFrame
+class MonoPictureFrame
 {
 public:
-	PictureFrame (std::string mxf_path, int n);
-	~PictureFrame ();
-
-	uint8_t const * data () const;
-	int size () const;
+	MonoPictureFrame (std::string mxf_path, int n);
+	~MonoPictureFrame ();
 
 	boost::shared_ptr<ARGBFrame> argb_frame () const;
 
 private:
 	ASDCP::JP2K::FrameBuffer* _buffer;
+};
+
+class StereoPictureFrame
+{
+public:
+	StereoPictureFrame (std::string mxf_path, int n);
+	~StereoPictureFrame ();
+
+	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye) const;
+
+private:
+	ASDCP::JP2K::SFrameBuffer* _buffer;
 };
 
 }

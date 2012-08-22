@@ -33,9 +33,12 @@
 #include "util.h"
 #include "exceptions.h"
 #include "types.h"
+#include "argb_frame.h"
+#include "lut.h"
 
 using namespace std;
 using namespace boost;
+using namespace libdcp;
 
 string
 libdcp::make_uuid ()
@@ -153,4 +156,85 @@ libdcp::ends_with (string big, string little)
 	}
 
 	return big.compare (big.length() - little.length(), little.length(), little) == 0;
+}
+
+opj_image_t *
+libdcp::decompress_j2k (uint8_t* data, int64_t size)
+{
+	opj_dinfo_t* decoder = opj_create_decompress (CODEC_J2K);
+	opj_dparameters_t parameters;
+	opj_set_default_decoder_parameters (&parameters);
+	opj_setup_decoder (decoder, &parameters);
+	opj_cio_t* cio = opj_cio_open ((opj_common_ptr) decoder, data, size);
+	opj_image_t* image = opj_decode (decoder, cio);
+	if (!image) {
+		opj_destroy_decompress (decoder);
+		opj_cio_close (cio);
+		throw DCPReadError ("could not decode JPEG2000 codestream");
+	}
+
+	opj_cio_close (cio);
+	return image;
+}
+
+shared_ptr<ARGBFrame>
+libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
+{
+	struct {
+		double x, y, z;
+	} s;
+	
+	struct {
+		double r, g, b;
+	} d;
+	
+	int* xyz_x = xyz_frame->comps[0].data;
+	int* xyz_y = xyz_frame->comps[1].data;
+	int* xyz_z = xyz_frame->comps[2].data;
+
+	shared_ptr<ARGBFrame> argb_frame (new ARGBFrame (xyz_frame->x1, xyz_frame->y1));
+	
+	uint8_t* argb = argb_frame->data ();
+	
+	for (int y = 0; y < xyz_frame->y1; ++y) {
+		uint8_t* argb_line = argb;
+		for (int x = 0; x < xyz_frame->x1; ++x) {
+			
+			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_x < 4096 && *xyz_z < 4096);
+			
+			/* In gamma LUT */
+			s.x = lut_in[*xyz_x++];
+			s.y = lut_in[*xyz_y++];
+			s.z = lut_in[*xyz_z++];
+			
+			/* DCI companding */
+			s.x /= DCI_COEFFICIENT;
+			s.y /= DCI_COEFFICIENT;
+			s.z /= DCI_COEFFICIENT;
+			
+			/* XYZ to RGB */
+			d.r = ((s.x * color_matrix[0][0]) + (s.y * color_matrix[0][1]) + (s.z * color_matrix[0][2]));
+			d.g = ((s.x * color_matrix[1][0]) + (s.y * color_matrix[1][1]) + (s.z * color_matrix[1][2]));
+			d.b = ((s.x * color_matrix[2][0]) + (s.y * color_matrix[2][1]) + (s.z * color_matrix[2][2]));
+			
+			d.r = min (d.r, 1.0);
+			d.r = max (d.r, 0.0);
+			
+			d.g = min (d.g, 1.0);
+			d.g = max (d.g, 0.0);
+			
+			d.b = min (d.b, 1.0);
+			d.b = max (d.b, 0.0);
+			
+			/* Out gamma LUT */
+			*argb_line++ = lut_out[(int) (d.b * COLOR_DEPTH)];
+			*argb_line++ = lut_out[(int) (d.g * COLOR_DEPTH)];
+			*argb_line++ = lut_out[(int) (d.r * COLOR_DEPTH)];
+			*argb_line++ = 0xff;
+		}
+		
+		argb += argb_frame->stride ();
+	}
+
+	return argb_frame;
 }

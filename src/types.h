@@ -64,6 +64,12 @@ enum VAlign
 	CENTER,
 	BOTTOM
 };
+
+enum Eye
+{
+	EYE_LEFT,
+	EYE_RIGHT
+};
 	
 class Fraction
 {

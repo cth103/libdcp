@@ -67,7 +67,8 @@ CPLReel::CPLReel (xmlpp::Node const * node)
 CPLAssetList::CPLAssetList (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	main_picture = sub_node<MainPicture> ("MainPicture");
+	main_picture = optional_sub_node<MainPicture> ("MainPicture");
+	main_stereoscopic_picture = optional_sub_node<MainStereoscopicPicture> ("MainStereoscopicPicture");
 	main_sound = optional_sub_node<MainSound> ("MainSound");
 	main_subtitle = optional_sub_node<MainSubtitle> ("MainSubtitle");
 
@@ -75,6 +76,18 @@ CPLAssetList::CPLAssetList (xmlpp::Node const * node)
 }
 
 MainPicture::MainPicture (xmlpp::Node const * node)
+	: Picture (node)
+{
+
+}
+
+MainStereoscopicPicture::MainStereoscopicPicture (xmlpp::Node const * node)
+	: Picture (node)
+{
+
+}
+
+Picture::Picture (xmlpp::Node const * node)
 	: XMLNode (node)
 {
 	id = string_node ("Id");

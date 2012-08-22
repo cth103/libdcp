@@ -27,12 +27,11 @@
 
 namespace libdcp {
 
-/** CPL MainPicture node */	
-class MainPicture : public XMLNode
+class Picture : public XMLNode
 {
 public:
-	MainPicture () {}
-	MainPicture (xmlpp::Node const * node);
+	Picture () {}
+	Picture (xmlpp::Node const * node);
 
 	std::string id;
 	std::string annotation_text;
@@ -42,6 +41,23 @@ public:
 	int64_t duration;
 	Fraction frame_rate;
 	Fraction screen_aspect_ratio;
+};
+
+
+/** CPL MainPicture node */
+class MainPicture : public Picture
+{
+public:
+	MainPicture () {}
+	MainPicture (xmlpp::Node const * node);
+};
+
+/** CPL MainStereoscopicPicture node */
+class MainStereoscopicPicture : public Picture
+{
+public:
+	MainStereoscopicPicture () {}
+	MainStereoscopicPicture (xmlpp::Node const * node);
 };
 
 /** CPL MainSound node */	
@@ -82,6 +98,7 @@ public:
 	CPLAssetList (xmlpp::Node const * node);
 
 	boost::shared_ptr<MainPicture> main_picture;
+	boost::shared_ptr<MainStereoscopicPicture> main_stereoscopic_picture;
 	boost::shared_ptr<MainSound> main_sound;
 	boost::shared_ptr<MainSubtitle> main_subtitle;
 };

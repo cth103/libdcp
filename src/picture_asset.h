@@ -27,10 +27,38 @@
 namespace libdcp
 {
 
-class PictureFrame;	
+class MonoPictureFrame;	
+class StereoPictureFrame;	
 
 /** @brief An asset made up of JPEG2000 files */
 class PictureAsset : public MXFAsset
+{
+public:
+	PictureAsset (std::string directory, std::string mxf_name, sigc::signal1<void, float>* progress, int fps, int length);
+	
+	/** Write details of this asset to a CPL stream.
+	 *  @param s Stream.
+	 */
+	void write_to_cpl (std::ostream& s) const;
+
+	std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
+
+	int width () const {
+		return _width;
+	}
+
+	int height () const {
+		return _height;
+	}
+
+protected:	
+	/** picture width in pixels */
+	int _width;
+	/** picture height in pixels */
+	int _height;
+};
+
+class MonoPictureAsset : public PictureAsset
 {
 public:
 	/** Construct a PictureAsset, generating the MXF from the JPEG2000 files.
@@ -44,7 +72,7 @@ public:
 	 *  @param width Width of images in pixels.
 	 *  @param height Height of images in pixels.
 	 */
-	PictureAsset (
+	MonoPictureAsset (
 		std::vector<std::string> const & files,
 		std::string directory,
 		std::string mxf_name,
@@ -66,7 +94,7 @@ public:
 	 *  @param width Width of images in pixels.
 	 *  @param height Height of images in pixels.
 	 */
-	PictureAsset (
+	MonoPictureAsset (
 		sigc::slot<std::string, int> get_path,
 		std::string directory,
 		std::string mxf_name,
@@ -77,34 +105,22 @@ public:
 		int height
 		);
 
-	PictureAsset (std::string directory, std::string mxf_name, int fps, int length);
+	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, int length);
 	
-	/** Write details of this asset to a CPL stream.
-	 *  @param s Stream.
-	 */
-	void write_to_cpl (std::ostream& s) const;
+	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 
-	std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
-
-	boost::shared_ptr<const PictureFrame> get_frame (int n) const;
-
-	int width () const {
-		return _width;
-	}
-
-	int height () const {
-		return _height;
-	}
-	
 private:
 	std::string path_from_list (int f, std::vector<std::string> const & files) const;
 	void construct (sigc::slot<std::string, int>);
-	opj_image_t* decompress_j2k (uint8_t* data, int64_t size) const;
-	
-	/** picture width in pixels */
-	int _width;
-	/** picture height in pixels */
-	int _height;
 };
+
+class StereoPictureAsset : public PictureAsset
+{
+public:
+	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, int length);
+	
+	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
+};
+	
 
 }

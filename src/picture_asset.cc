@@ -40,102 +40,10 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-PictureAsset::PictureAsset (
-	sigc::slot<string, int> get_path,
-	string directory,
-	string mxf_name,
-	sigc::signal1<void, float>* progress,
-	int fps,
-	int length,
-	int width,
-	int height)
+PictureAsset::PictureAsset (string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int length)
 	: MXFAsset (directory, mxf_name, progress, fps, length)
-	, _width (width)
-	, _height (height)
 {
-	construct (get_path);
-}
 
-PictureAsset::PictureAsset (
-	vector<string> const & files,
-	string directory,
-	string mxf_name,
-	sigc::signal1<void, float>* progress,
-	int fps,
-	int length,
-	int width,
-	int height)
-	: MXFAsset (directory, mxf_name, progress, fps, length)
-	, _width (width)
-	, _height (height)
-{
-	construct (sigc::bind (sigc::mem_fun (*this, &PictureAsset::path_from_list), files));
-}
-
-PictureAsset::PictureAsset (string directory, string mxf_name, int fps, int length)
-	: MXFAsset (directory, mxf_name, 0, fps, length)
-{
-	ASDCP::JP2K::MXFReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		throw FileError ("could not open MXF file for reading", path().string());
-	}
-	
-	ASDCP::JP2K::PictureDescriptor desc;
-	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
-		throw DCPReadError ("could not read video MXF information");
-	}
-
-	_width = desc.StoredWidth;
-	_height = desc.StoredHeight;
-
-}
-
-string
-PictureAsset::path_from_list (int f, vector<string> const & files) const
-{
-	return files[f];
-}
-
-void
-PictureAsset::construct (sigc::slot<string, int> get_path)
-{
-	ASDCP::JP2K::CodestreamParser j2k_parser;
-	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
-	if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (get_path(0).c_str(), frame_buffer))) {
-		throw FileError ("could not open JPEG2000 file for reading", get_path (0));
-	}
-	
-	ASDCP::JP2K::PictureDescriptor picture_desc;
-	j2k_parser.FillPictureDescriptor (picture_desc);
-	picture_desc.EditRate = ASDCP::Rational (_fps, 1);
-	
-	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info);
-	
-	ASDCP::JP2K::MXFWriter mxf_writer;
-	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc))) {
-		throw FileError ("could not open MXF file for writing", path().string());
-	}
-
-	for (int i = 0; i < _length; ++i) {
-
-		string const path = get_path (i);
-		
-		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (path.c_str(), frame_buffer))) {
-			throw FileError ("could not open JPEG2000 file for reading", path);
-		}
-
-		/* XXX: passing 0 to WriteFrame ok? */
-		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, 0, 0))) {
-			throw MiscError ("error in writing video MXF");
-		}
-		
-		(*_progress) (0.5 * float (i) / _length);
-	}
-	
-	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
-		throw MiscError ("error in finalising video MXF");
-	}
 }
 
 void
@@ -297,27 +205,128 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 	return notes;
 }
 
-opj_image_t *
-PictureAsset::decompress_j2k (uint8_t* data, int64_t size) const
+MonoPictureAsset::MonoPictureAsset (
+	sigc::slot<string, int> get_path,
+	string directory,
+	string mxf_name,
+	sigc::signal1<void, float>* progress,
+	int fps,
+	int length,
+	int width,
+	int height)
+	: PictureAsset (directory, mxf_name, progress, fps, length)
 {
-	opj_dinfo_t* decoder = opj_create_decompress (CODEC_J2K);
-	opj_dparameters_t parameters;
-	opj_set_default_decoder_parameters (&parameters);
-	opj_setup_decoder (decoder, &parameters);
-	opj_cio_t* cio = opj_cio_open ((opj_common_ptr) decoder, data, size);
-	opj_image_t* image = opj_decode (decoder, cio);
-	if (!image) {
-		opj_destroy_decompress (decoder);
-		opj_cio_close (cio);
-		throw DCPReadError ("could not decode JPEG2000 codestream");
-	}
-
-	opj_cio_close (cio);
-	return image;
+	_width = width;
+	_height = height;
+	construct (get_path);
 }
 
-shared_ptr<const PictureFrame>
-PictureAsset::get_frame (int n) const
+MonoPictureAsset::MonoPictureAsset (
+	vector<string> const & files,
+	string directory,
+	string mxf_name,
+	sigc::signal1<void, float>* progress,
+	int fps,
+	int length,
+	int width,
+	int height)
+	: PictureAsset (directory, mxf_name, progress, fps, length)
 {
-	return shared_ptr<const PictureFrame> (new PictureFrame (path().string(), n));
+	_width = width;
+	_height = height;
+	construct (sigc::bind (sigc::mem_fun (*this, &MonoPictureAsset::path_from_list), files));
+}
+
+MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, int length)
+	: PictureAsset (directory, mxf_name, 0, fps, length)
+{
+	ASDCP::JP2K::MXFReader reader;
+	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
+		throw FileError ("could not open MXF file for reading", path().string());
+	}
+	
+	ASDCP::JP2K::PictureDescriptor desc;
+	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
+		throw DCPReadError ("could not read video MXF information");
+	}
+
+	_width = desc.StoredWidth;
+	_height = desc.StoredHeight;
+}
+
+void
+MonoPictureAsset::construct (sigc::slot<string, int> get_path)
+{
+	ASDCP::JP2K::CodestreamParser j2k_parser;
+	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
+	if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (get_path(0).c_str(), frame_buffer))) {
+		throw FileError ("could not open JPEG2000 file for reading", get_path (0));
+	}
+	
+	ASDCP::JP2K::PictureDescriptor picture_desc;
+	j2k_parser.FillPictureDescriptor (picture_desc);
+	picture_desc.EditRate = ASDCP::Rational (_fps, 1);
+	
+	ASDCP::WriterInfo writer_info;
+	fill_writer_info (&writer_info);
+	
+	ASDCP::JP2K::MXFWriter mxf_writer;
+	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc))) {
+		throw FileError ("could not open MXF file for writing", path().string());
+	}
+
+	for (int i = 0; i < _length; ++i) {
+
+		string const path = get_path (i);
+		
+		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (path.c_str(), frame_buffer))) {
+			throw FileError ("could not open JPEG2000 file for reading", path);
+		}
+
+		/* XXX: passing 0 to WriteFrame ok? */
+		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, 0, 0))) {
+			throw MiscError ("error in writing video MXF");
+		}
+		
+		(*_progress) (0.5 * float (i) / _length);
+	}
+	
+	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
+		throw MiscError ("error in finalising video MXF");
+	}
+}
+
+string
+MonoPictureAsset::path_from_list (int f, vector<string> const & files) const
+{
+	return files[f];
+}
+
+shared_ptr<const MonoPictureFrame>
+MonoPictureAsset::get_frame (int n) const
+{
+	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n));
+}
+
+StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int length)
+	: PictureAsset (directory, mxf_name, 0, fps, length)
+{
+	ASDCP::JP2K::MXFSReader reader;
+	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
+		throw FileError ("could not open MXF file for reading", path().string());
+	}
+	
+	ASDCP::JP2K::PictureDescriptor desc;
+	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
+		throw DCPReadError ("could not read video MXF information");
+	}
+
+	_width = desc.StoredWidth;
+	_height = desc.StoredHeight;
+}
+
+shared_ptr<const StereoPictureFrame>
+StereoPictureAsset::get_frame (int n) const
+{
+	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n));
 }

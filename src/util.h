@@ -22,11 +22,15 @@
  */
 
 #include <string>
+#include <stdint.h>
 #include <sigc++/sigc++.h>
+#include <openjpeg.h>
 #include "types.h"
 
 namespace libdcp {
 
+class ARGBFrame;	
+	
 /** Create a UUID.
  *  @return UUID.
  */
@@ -43,5 +47,8 @@ extern std::string make_digest (std::string filename, sigc::signal1<void, float>
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
 extern bool ends_with (std::string big, std::string little);
+
+extern opj_image_t* decompress_j2k (uint8_t* data, int64_t size);
+extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (opj_image_t* xyz_frame);
 
 }

@@ -23,7 +23,7 @@
 
 namespace libdcp {
 
-class PictureAsset;	
+class PictureAsset;
 class SoundAsset;	
 class SubtitleAsset;	
 
@@ -43,7 +43,7 @@ public:
 	boost::shared_ptr<const PictureAsset> main_picture () const {
 		return _main_picture;
 	}
-	
+
 	boost::shared_ptr<const SoundAsset> main_sound () const {
 		return _main_sound;
 	}
