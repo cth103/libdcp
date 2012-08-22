@@ -42,6 +42,8 @@ using namespace libdcp;
 
 PictureAsset::PictureAsset (string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int entry_point, int length)
 	: MXFAsset (directory, mxf_name, progress, fps, entry_point, length)
+	, _width (0)
+	, _height (0)
 {
 
 }
