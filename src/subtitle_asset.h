@@ -151,6 +151,10 @@ public:
 		return _fade_down_time;
 	}
 
+	int size () const {
+		return _size;
+	}
+	
 	int size_in_pixels (int screen_height) const;
 
 private:
@@ -169,6 +173,9 @@ private:
 	Time _fade_down_time;
 };
 
+bool operator== (Subtitle const & a, Subtitle const & b);
+std::ostream& operator<< (std::ostream& s, Subtitle const & sub);
+
 class SubtitleAsset : public Asset, public XMLFile
 {
 public:
@@ -185,6 +192,9 @@ public:
 	}
 
 	std::list<boost::shared_ptr<Subtitle> > subtitles_at (Time t) const;
+	std::list<boost::shared_ptr<Subtitle> > const & subtitles () const {
+		return _subtitles;
+	}
 
 private:
 	std::string font_id_to_name (std::string id) const;

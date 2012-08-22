@@ -119,69 +119,90 @@ BOOST_AUTO_TEST_CASE (subtitles)
 
 	list<shared_ptr<libdcp::Subtitle> > s = subs.subtitles_at (libdcp::Time (0, 0, 6, 1));
 	BOOST_CHECK_EQUAL (s.size(), 1);
-	BOOST_CHECK_EQUAL (s.front()->text(), "My jacket was Idi Amin's");
-	BOOST_CHECK_EQUAL (s.front()->v_position(), 15);
-	BOOST_CHECK_EQUAL (s.front()->in(), libdcp::Time (0, 0, 5, 198));
-	BOOST_CHECK_EQUAL (s.front()->out(), libdcp::Time (0, 0, 7, 115));
-	BOOST_CHECK_EQUAL (s.front()->font(), "Arial");
-	BOOST_CHECK_EQUAL (s.front()->italic(), false);
-	BOOST_CHECK_EQUAL (s.front()->color(), libdcp::Color(255, 255, 255));
-	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
-	BOOST_CHECK_EQUAL (s.front()->effect(), libdcp::BORDER);
-	BOOST_CHECK_EQUAL (s.front()->effect_color(), libdcp::Color(0, 0, 0));
-	BOOST_CHECK_EQUAL (s.front()->v_align(), libdcp::BOTTOM);
-
+	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+				   "Arial",
+				   false,
+				   libdcp::Color (255, 255, 255),
+				   39,
+				   libdcp::Time (0, 0, 5, 198),
+				   libdcp::Time (0, 0, 7, 115),
+				   15,
+				   libdcp::BOTTOM,
+				   "My jacket was Idi Amin's",
+				   libdcp::BORDER,
+				   libdcp::Color (0, 0, 0),
+				   libdcp::Time (0, 0, 0, 20),
+				   libdcp::Time (0, 0, 0, 20)
+				   ));
+							 
 	s = subs.subtitles_at (libdcp::Time (0, 0, 7, 190));
 	BOOST_CHECK_EQUAL (s.size(), 2);
-	BOOST_CHECK_EQUAL (s.front()->text(), "My corset was H.M. The Queen's");
-	BOOST_CHECK_EQUAL (s.front()->v_position(), 21);
-	BOOST_CHECK_EQUAL (s.front()->in(), libdcp::Time (0, 0, 7, 177));
-	BOOST_CHECK_EQUAL (s.front()->out(), libdcp::Time (0, 0, 11, 31));
-	BOOST_CHECK_EQUAL (s.front()->font(), "Arial");
-	BOOST_CHECK_EQUAL (s.front()->italic(), true);
-	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
-	BOOST_CHECK_EQUAL (s.front()->effect(), libdcp::BORDER);
-	BOOST_CHECK_EQUAL (s.front()->effect_color(), libdcp::Color(0, 0, 0));
-	BOOST_CHECK_EQUAL (s.front()->v_align(), libdcp::BOTTOM);
-	BOOST_CHECK_EQUAL (s.back()->text(), "My large wonderbra");
-	BOOST_CHECK_EQUAL (s.back()->v_position(), 15);
-	BOOST_CHECK_EQUAL (s.back()->in(), libdcp::Time (0, 0, 7, 177));
-	BOOST_CHECK_EQUAL (s.back()->out(), libdcp::Time (0, 0, 11, 31));
-	BOOST_CHECK_EQUAL (s.back()->font(), "Arial");
-	BOOST_CHECK_EQUAL (s.back()->italic(), false);
-	BOOST_CHECK_EQUAL (s.back()->color(), libdcp::Color(255, 255, 255));
-	BOOST_CHECK_EQUAL (s.back()->size_in_pixels(1080), 53);
-	BOOST_CHECK_EQUAL (s.back()->effect(), libdcp::BORDER);
-	BOOST_CHECK_EQUAL (s.back()->effect_color(), libdcp::Color(0, 0, 0));
-	BOOST_CHECK_EQUAL (s.back()->v_align(), libdcp::BOTTOM);
-	
+	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+				   "Arial",
+				   true,
+				   libdcp::Color (255, 255, 255),
+				   39,
+				   libdcp::Time (0, 0, 7, 177),
+				   libdcp::Time (0, 0, 11, 31),
+				   21,
+				   libdcp::BOTTOM,
+				   "My corset was H.M. The Queen's",
+				   libdcp::BORDER,
+				   libdcp::Color (0, 0, 0),
+				   libdcp::Time (0, 0, 0, 20),
+				   libdcp::Time (0, 0, 0, 20)
+				   ));
+	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+				   "Arial",
+				   false,
+				   libdcp::Color (255, 255, 255),
+				   39,
+				   libdcp::Time (0, 0, 7, 177),
+				   libdcp::Time (0, 0, 11, 31),
+				   15,
+				   libdcp::BOTTOM,
+				   "My large wonderbra",
+				   libdcp::BORDER,
+				   libdcp::Color (0, 0, 0),
+				   libdcp::Time (0, 0, 0, 20),
+				   libdcp::Time (0, 0, 0, 20)
+				   ));
+
 	s = subs.subtitles_at (libdcp::Time (0, 0, 11, 95));
 	BOOST_CHECK_EQUAL (s.size(), 1);
-	BOOST_CHECK_EQUAL (s.front()->text(), "Once belonged to the Shah");
-	BOOST_CHECK_EQUAL (s.front()->v_position(), 15);
-	BOOST_CHECK_EQUAL (s.front()->in(), libdcp::Time (0, 0, 11, 94));
-	BOOST_CHECK_EQUAL (s.front()->out(), libdcp::Time (0, 0, 13, 63));
-	BOOST_CHECK_EQUAL (s.front()->font(), "Arial");
-	BOOST_CHECK_EQUAL (s.front()->italic(), false);
-	BOOST_CHECK_EQUAL (s.front()->color(), libdcp::Color(255, 255, 255));
-	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
-	BOOST_CHECK_EQUAL (s.front()->effect(), libdcp::BORDER);
-	BOOST_CHECK_EQUAL (s.front()->effect_color(), libdcp::Color(0, 0, 0));
-	BOOST_CHECK_EQUAL (s.front()->v_align(), libdcp::BOTTOM);
+	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+				   "Arial",
+				   false,
+				   libdcp::Color (255, 255, 255),
+				   39,
+				   libdcp::Time (0, 0, 11, 94),
+				   libdcp::Time (0, 0, 13, 63),
+				   15,
+				   libdcp::BOTTOM,
+				   "Once belonged to the Shah",
+				   libdcp::BORDER,
+				   libdcp::Color (0, 0, 0),
+				   libdcp::Time (0, 0, 0, 20),
+				   libdcp::Time (0, 0, 0, 20)
+				   ));
 
 	s = subs.subtitles_at (libdcp::Time (0, 0, 14, 42));
 	BOOST_CHECK_EQUAL (s.size(), 1);
-	BOOST_CHECK_EQUAL (s.front()->text(), "And these are Roy Hattersley's jeans");
-	BOOST_CHECK_EQUAL (s.front()->v_position(), 15);
-	BOOST_CHECK_EQUAL (s.front()->in(), libdcp::Time (0, 0, 13, 104));
-	BOOST_CHECK_EQUAL (s.front()->out(), libdcp::Time (0, 0, 15, 177));
-	BOOST_CHECK_EQUAL (s.front()->font(), "Arial");
-	BOOST_CHECK_EQUAL (s.front()->italic(), false);
-	BOOST_CHECK_EQUAL (s.front()->color(), libdcp::Color(255, 255, 255));
-	BOOST_CHECK_EQUAL (s.front()->size_in_pixels(1080), 53);
-	BOOST_CHECK_EQUAL (s.front()->effect(), libdcp::BORDER);
-	BOOST_CHECK_EQUAL (s.front()->effect_color(), libdcp::Color(0, 0, 0));
-	BOOST_CHECK_EQUAL (s.front()->v_align(), libdcp::BOTTOM);
+	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+				   "Arial",
+				   false,
+				   libdcp::Color (255, 255, 255),
+				   39,
+				   libdcp::Time (0, 0, 13, 104),
+				   libdcp::Time (0, 0, 15, 177),
+				   15,
+				   libdcp::BOTTOM,
+				   "And these are Roy Hattersley's jeans",
+				   libdcp::BORDER,
+				   libdcp::Color (0, 0, 0),
+				   libdcp::Time (0, 0, 0, 20),
+				   libdcp::Time (0, 0, 0, 20)
+				   ));
 }
 
 BOOST_AUTO_TEST_CASE (dcp_time)
@@ -235,5 +256,3 @@ BOOST_AUTO_TEST_CASE (color)
 	BOOST_CHECK_EQUAL (c.g, 0);
 	BOOST_CHECK_EQUAL (c.b, 255);
 }
-
-	

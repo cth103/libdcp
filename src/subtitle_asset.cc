@@ -287,3 +287,42 @@ Subtitle::size_in_pixels (int screen_height) const
 	
 	return _size * screen_height / (11 * 72);
 }
+
+bool
+libdcp::operator== (Subtitle const & a, Subtitle const & b)
+{
+	return (
+		a.font() == b.font() &&
+		a.italic() == b.italic() &&
+		a.color() == b.color() &&
+		a.size() == b.size() &&
+		a.in() == b.in() &&
+		a.out() == b.out() &&
+		a.v_position() == b.v_position() &&
+		a.v_align() == b.v_align() &&
+		a.text() == b.text() &&
+		a.effect() == b.effect() &&
+		a.effect_color() == b.effect_color() &&
+		a.fade_up_time() == b.fade_up_time() &&
+		a.fade_down_time() == b.fade_down_time()
+		);
+}
+
+ostream&
+libdcp::operator<< (ostream& s, Subtitle const & sub)
+{
+	s << "\n`" << sub.text() << "' from " << sub.in() << " to " << sub.out() << ";\n"
+	  << "fade up " << sub.fade_up_time() << ", fade down " << sub.fade_down_time() << ";\n"
+	  << "font " << sub.font() << ", ";
+
+	if (sub.italic()) {
+		s << "italic";
+	} else {
+		s << "non-italic";
+	}
+	
+	s << ", size " << sub.size() << ", color " << sub.color() << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align()) << ";\n"
+	  << "effect " << ((int) sub.effect()) << ", effect color " << sub.effect_color();
+
+	return s;
+}
