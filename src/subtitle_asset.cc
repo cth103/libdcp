@@ -43,46 +43,65 @@ SubtitleAsset::SubtitleAsset (string directory, string xml)
 	*/
 
 	list<shared_ptr<FontNode> > current_font_nodes;
-	for (list<shared_ptr<FontNode> >::iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
-		examine_font_node (*i, current_font_nodes);
+	list<shared_ptr<SubtitleNode> > current_subtitle_nodes;
+	current_subtitle_nodes.push_back (shared_ptr<SubtitleNode> ());
+	examine_font_nodes (font_nodes, current_font_nodes, current_subtitle_nodes);
+}
+
+void
+SubtitleAsset::examine_font_nodes (
+	list<shared_ptr<FontNode> > const & font_nodes,
+	list<shared_ptr<FontNode> >& current_font_nodes,
+	list<shared_ptr<SubtitleNode> >& current_subtitle_nodes
+	)
+{
+	for (list<shared_ptr<FontNode> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
+		
+		current_font_nodes.push_back (*i);
+
+		for (list<shared_ptr<SubtitleNode> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
+			current_subtitle_nodes.push_back (*j);
+			examine_text_nodes (*j, (*j)->text_nodes, current_font_nodes);
+			examine_font_nodes ((*j)->font_nodes, current_font_nodes, current_subtitle_nodes);
+			current_subtitle_nodes.pop_back ();
+		}
+	
+		examine_font_nodes ((*i)->font_nodes, current_font_nodes, current_subtitle_nodes);
+		examine_text_nodes (current_subtitle_nodes.back (), (*i)->text_nodes, current_font_nodes);
+		
+		current_font_nodes.pop_back ();
 	}
 }
 
 void
-SubtitleAsset::examine_font_node (shared_ptr<FontNode> font_node, list<shared_ptr<FontNode> >& current_font_nodes)
+SubtitleAsset::examine_text_nodes (
+	shared_ptr<SubtitleNode> subtitle_node,
+	list<shared_ptr<TextNode> > const & text_nodes,
+	list<shared_ptr<FontNode> >& current_font_nodes
+	)
 {
-	current_font_nodes.push_back (font_node);
-
-	for (list<shared_ptr<SubtitleNode> >::iterator j = font_node->subtitle_nodes.begin(); j != font_node->subtitle_nodes.end(); ++j) {
-		for (list<shared_ptr<TextNode> >::iterator k = (*j)->text_nodes.begin(); k != (*j)->text_nodes.end(); ++k) {
-			FontNode effective (current_font_nodes);
-			_subtitles.push_back (
-				shared_ptr<Subtitle> (
-					new Subtitle (
-						font_id_to_name (effective.id),
-						effective.italic.get(),
-						effective.color.get(),
-						effective.size,
-						(*j)->in,
-						(*j)->out,
-						(*k)->v_position,
-						(*k)->v_align,
-						(*k)->text,
-						effective.effect.get(),
-						effective.effect_color.get(),
-						(*k)->fade_up_time,
-						(*k)->fade_down_time
-						)
+	for (list<shared_ptr<TextNode> >::const_iterator i = text_nodes.begin(); i != text_nodes.end(); ++i) {
+		FontNode effective (current_font_nodes);
+		_subtitles.push_back (
+			shared_ptr<Subtitle> (
+				new Subtitle (
+					font_id_to_name (effective.id),
+					effective.italic.get(),
+					effective.color.get(),
+					effective.size,
+					subtitle_node->in,
+					subtitle_node->out,
+					(*i)->v_position,
+					(*i)->v_align,
+					(*i)->text,
+					effective.effect.get(),
+					effective.effect_color.get(),
+					(*i)->fade_up_time,
+					(*i)->fade_down_time
 					)
-				);
-		}
+				)
+			);
 	}
-
-	for (list<shared_ptr<FontNode> >::iterator j = font_node->font_nodes.begin(); j != font_node->font_nodes.end(); ++j) {
-		examine_font_node (*j, current_font_nodes);
-	}
-
-	current_font_nodes.pop_back ();
 }
 
 FontNode::FontNode (xmlpp::Node const * node)
@@ -105,6 +124,7 @@ FontNode::FontNode (xmlpp::Node const * node)
 	effect_color = optional_color_attribute ("EffectColor");
 	subtitle_nodes = sub_nodes<SubtitleNode> ("Subtitle");
 	font_nodes = sub_nodes<FontNode> ("Font");
+	text_nodes = sub_nodes<TextNode> ("Text");
 }
 
 FontNode::FontNode (list<shared_ptr<FontNode> > const & font_nodes)
@@ -148,6 +168,7 @@ SubtitleNode::SubtitleNode (xmlpp::Node const * node)
 {
 	in = time_attribute ("TimeIn");
 	out = time_attribute ("TimeOut");
+	font_nodes = sub_nodes<FontNode> ("Font");
 	text_nodes = sub_nodes<TextNode> ("Text");
 }
 

@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE (subtitles)
 	BOOST_CHECK_EQUAL (s.back()->in(), libdcp::Time (0, 0, 7, 177));
 	BOOST_CHECK_EQUAL (s.back()->out(), libdcp::Time (0, 0, 11, 31));
 	BOOST_CHECK_EQUAL (s.back()->font(), "Arial");
-	BOOST_CHECK_EQUAL (s.back()->italic(), true);
+	BOOST_CHECK_EQUAL (s.back()->italic(), false);
 	BOOST_CHECK_EQUAL (s.back()->color(), libdcp::Color(255, 255, 255));
 	BOOST_CHECK_EQUAL (s.back()->size_in_pixels(1080), 53);
 	BOOST_CHECK_EQUAL (s.back()->effect(), libdcp::BORDER);

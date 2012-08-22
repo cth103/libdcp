@@ -24,6 +24,8 @@
 namespace libdcp
 {
 
+class FontNode;
+
 class TextNode : public XMLNode
 {
 public:
@@ -49,6 +51,7 @@ public:
 
 	Time in;
 	Time out;
+	std::list<boost::shared_ptr<FontNode> > font_nodes;
 	std::list<boost::shared_ptr<TextNode> > text_nodes;
 };
 
@@ -68,6 +71,7 @@ public:
 	
 	std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
 	std::list<boost::shared_ptr<FontNode> > font_nodes;
+	std::list<boost::shared_ptr<TextNode> > text_nodes;
 };
 
 class LoadFontNode : public XMLNode
@@ -184,7 +188,18 @@ public:
 
 private:
 	std::string font_id_to_name (std::string id) const;
-	void examine_font_node (boost::shared_ptr<FontNode> font_node, std::list<boost::shared_ptr<FontNode> >& current_font_nodes);
+
+	void examine_font_nodes (
+		std::list<boost::shared_ptr<FontNode> > const & font_nodes,
+		std::list<boost::shared_ptr<FontNode> >& current_font_nodes,
+		std::list<boost::shared_ptr<SubtitleNode> >& current_subtitle_nodes
+		);
+	
+	void examine_text_nodes (
+		boost::shared_ptr<SubtitleNode> subtitle_node,
+		std::list<boost::shared_ptr<TextNode> > const & text_nodes,
+		std::list<boost::shared_ptr<FontNode> >& current_font_nodes
+		);
 	
 	std::string _subtitle_id;
 	std::string _movie_title;
