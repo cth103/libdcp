@@ -96,8 +96,8 @@ SubtitleAsset::examine_text_nodes (
 					(*i)->text,
 					effective.effect.get(),
 					effective.effect_color.get(),
-					(*i)->fade_up_time,
-					(*i)->fade_down_time
+					subtitle_node->fade_up_time,
+					subtitle_node->fade_down_time
 					)
 				)
 			);
@@ -170,30 +170,12 @@ SubtitleNode::SubtitleNode (xmlpp::Node const * node)
 	out = time_attribute ("TimeOut");
 	font_nodes = sub_nodes<FontNode> ("Font");
 	text_nodes = sub_nodes<TextNode> ("Text");
-}
-
-TextNode::TextNode (xmlpp::Node const * node)
-	: XMLNode (node)
-	, v_align (CENTER)
-{
-	text = content ();
-	v_position = float_attribute ("VPosition");
-	string const v = optional_string_attribute ("VAlign");
-	if (v == "top") {
-		v_align = TOP;
-	} else if (v == "center") {
-		v_align = CENTER;
-	} else if (v == "bottom") {
-		v_align = BOTTOM;
-	}
-
 	fade_up_time = fade_time ("FadeUpTime");
-	fade_down_time = fade_time ("FadeUpTime");
+	fade_down_time = fade_time ("FadeDownTime");
 }
-
 
 Time
-TextNode::fade_time (string name)
+SubtitleNode::fade_time (string name)
 {
 	string const u = optional_string_attribute (name);
 	Time t;
@@ -212,6 +194,23 @@ TextNode::fade_time (string name)
 
 	return t;
 }
+
+TextNode::TextNode (xmlpp::Node const * node)
+	: XMLNode (node)
+	, v_align (CENTER)
+{
+	text = content ();
+	v_position = float_attribute ("VPosition");
+	string const v = optional_string_attribute ("VAlign");
+	if (v == "top") {
+		v_align = TOP;
+	} else if (v == "center") {
+		v_align = CENTER;
+	} else if (v == "bottom") {
+		v_align = BOTTOM;
+	}
+}
+
 
 list<shared_ptr<Subtitle> >
 SubtitleAsset::subtitles_at (Time t) const

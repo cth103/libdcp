@@ -35,12 +35,6 @@ public:
 	float v_position;
 	VAlign v_align;
 	std::string text;
-	Time fade_up_time;
-	Time fade_down_time;
-
-private:
-	Time fade_time (std::string name);
-	
 };
 
 class SubtitleNode : public XMLNode
@@ -51,8 +45,13 @@ public:
 
 	Time in;
 	Time out;
+	Time fade_up_time;
+	Time fade_down_time;
 	std::list<boost::shared_ptr<FontNode> > font_nodes;
 	std::list<boost::shared_ptr<TextNode> > text_nodes;
+
+private:
+	Time fade_time (std::string name);
 };
 
 class FontNode : public XMLNode

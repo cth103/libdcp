@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DCSubtitle Version="1.0">
+		<SubtitleID>notusedforthstest</SubtitleID>
+		<Language>notusedforthistest</Language>
+		<MovieTitle>subs2 test</MovieTitle>
+		<ReelNumber>1</ReelNumber>
+		<LoadFont Id="theFont" URI="arial.ttf"/>
+		<Font Id="theFont" Italic="no" Color="FFFFFFFF" Effect="border" EffectColor="FF000000" Size="42">
+			<Subtitle SpotNumber="1" TimeIn="00:00:41:062" TimeOut="00:00:43:052" FadeUpTime="0" FadeDownTime="0">
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5">At afternoon tea with John Peel</Text>
+				</Font>
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5">I enquired if his accent was real</Text>
+				</Font>
+			</Subtitle>
+			<Subtitle SpotNumber="2" TimeIn="00:00:50:042" TimeOut="00:00:52:021" FadeUpTime="0" FadeDownTime="0">
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5">He said "out of the house</Text>
+				</Font>
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5">I'm incredibly scouse</Text>
+				</Font>
+			</Subtitle>
+			<Subtitle SpotNumber="3" TimeIn="00:01:02:208" TimeOut="00:01:04:010" FadeUpTime="0" FadeDownTime="0">
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5">At home it depends how I feel."</Text>
+				</Font>
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5">I spent a long weekend in Brighton</Text>
+				</Font>
+			</Subtitle>
+			<Subtitle SpotNumber="4" TimeIn="00:01:15:042" TimeOut="00:01:16:042" FadeUpTime="0" FadeDownTime="0">
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5">With the legendary Miss Enid Blyton</Text>
+				</Font>
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5">She said "you be Noddy</Text>
+				</Font>
+			</Subtitle>
+			<Subtitle SpotNumber="5" TimeIn="00:01:20:219" TimeOut="00:01:22:073" FadeUpTime="0" FadeDownTime="0">
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5">and I'll show you my body"</Text>
+				</Font>
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5">But Big Ears kept turning the light on.</Text>
+				</Font>
+			</Subtitle>
+			<Subtitle SpotNumber="6" TimeIn="00:01:27:115" TimeOut="00:01:28:208" FadeUpTime="0" FadeDownTime="0">
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5">That curious creature the Sphinx</Text>
+				</Font>
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5">Is smarter than anyone thinks</Text>
+				</Font>
+			</Subtitle>
+			<Subtitle SpotNumber="7" TimeIn="00:01:42:229" TimeOut="00:01:45:062" FadeUpTime="0" FadeDownTime="0">
+				<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5">It sits there and smirks</Text>
+				<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5">And you don't think it works</Text>
+			</Subtitle>
+			<Subtitle SpotNumber="8" TimeIn="00:01:45:146" TimeOut="00:01:47:094" FadeUpTime="0" FadeDownTime="0">
+				<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5">Then when you're not looking, it winks.</Text>
+				<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5">When it snows you will find Sister Sledge</Text>
+			</Subtitle>
+			<Subtitle SpotNumber="9" TimeIn="00:01:47:146" TimeOut="00:01:48:167" FadeUpTime="0" FadeDownTime="0">
+				<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5">Out mooning, at night, on the ledge</Text>
+				<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5">One storey down</Text>
+			</Subtitle>
+			<Subtitle SpotNumber="10" TimeIn="00:01:53:021" TimeOut="00:01:56:010" FadeUpTime="0" FadeDownTime="0">
+				<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="-0.5">Is the maestro, James Brown</Text>
+				<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="-0.5">Displaying his meat and two veg.</Text>
+			</Subtitle>
+			<Subtitle SpotNumber="15" TimeIn="00:02:05:208" TimeOut="00:02:07:031" FadeUpTime="0" FadeDownTime="0">
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5">HELLO</Text>
+				</Font>
+				<Font Italic="yes">
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5">WORLD</Text>
+				</Font>
+			</Subtitle>
+		</Font>
+	</DCSubtitle>
