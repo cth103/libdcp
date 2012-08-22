@@ -17,11 +17,30 @@
 
 */
 
+/** @file  src/argb_frame.h
+ *  @brief Container for a single image from a picture asset.
+ */
+
 #include <stdint.h>
 
 namespace libdcp
 {
 
+/** @class ARGBFrame
+ *  @brief A single frame of picture data held in an ARGB buffer.
+ *
+ *  The format of the data is:
+ *
+ *  <pre>
+ *  Byte   /- 0 -------|- 1 --------|- 2 --------|- 3 --------|- 4 --------|- 5 --------| ...
+ *         |(0, 0) Blue|(0, 0) Red  |(0, 0) Blue |(0, 0) Alpha|(0, 1) Blue |(0, 1) Red  | ...
+ *  </pre>
+ *
+ *  So that the first byte is the blue component of the pixel at x=0, y=0, the second
+ *  is the red component, and so on.
+ *
+ *  Lines are packed so that the second row directly follows the first.
+ */
 class ARGBFrame
 {
 public:
@@ -32,6 +51,7 @@ public:
 		return _data;
 	}
 
+	/** Length of one picture row in bytes */
 	int stride () const;
 
 private:

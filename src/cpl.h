@@ -125,7 +125,12 @@ public:
 	std::string label_text;
 };
 
-/** Class to parse a CPL */
+/** @class CPL
+ *  @brief Class to parse a CPL
+ *
+ *  This class is used to parse XML CPL files.  It is rarely necessary
+ *  for the caller to use it outside libdcp.
+ */
 class CPL : public XMLFile
 {
 public:

@@ -115,12 +115,12 @@ do things like
 
 @code
 boost::shared_ptr<libdcp::PictureAsset> p = dcp.picture_asset ();
-boost::shared_ptr<libdcp::RGBAFrame> f = p->get_frame(42)->rgba_frame ();
+boost::shared_ptr<libdcp::ARGBFrame> f = p->get_frame(42)->rgba_frame ();
 uint8_t* data = f->data ();
 int size = f->size ();
 @endcode
 
-This will extract the image of frame 42 from the DCP and make its RGBA data available
+This will extract the image of frame 42 from the DCP and make its ARGB data available
 for examination.
 
 Audio data is accessed in chunks equal in length to the duration of a video frame.  To
@@ -134,7 +134,7 @@ uint8_t* data = f->data ();
 int size = f->size ();
 @endcode
 
-The returned data is interleaved 24-bit samples, so that
+The returned data are interleaved 24-bit samples, so that
 
 @code
 int left = data[0] | (data[1] << 8) | (data[2] << 16);
