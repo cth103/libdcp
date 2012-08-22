@@ -70,6 +70,7 @@ def build(bld):
     bld.recurse('tools')
     bld.recurse('test')
     bld.recurse('asdcplib')
+    bld.recurse('examples')
 
 def dist(ctx):
     ctx.excl = 'TODO core *~ .git build .waf* .lock* doc/*~ src/*~ test/ref/*~'

@@ -280,6 +280,8 @@ MonoPictureAsset::construct (sigc::slot<string, int> get_path)
 	for (int i = 0; i < _length; ++i) {
 
 		string const path = get_path (i);
+
+		cout << "reading " << path << "\n";
 		
 		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (path.c_str(), frame_buffer))) {
 			throw FileError ("could not open JPEG2000 file for reading", path);
@@ -289,8 +291,10 @@ MonoPictureAsset::construct (sigc::slot<string, int> get_path)
 		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, 0, 0))) {
 			throw MiscError ("error in writing video MXF");
 		}
-		
-		(*_progress) (0.5 * float (i) / _length);
+
+		if (_progress) {
+			(*_progress) (0.5 * float (i) / _length);
+		}
 	}
 	
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {

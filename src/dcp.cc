@@ -52,7 +52,7 @@ DCP::DCP (string directory, string name, ContentKind content_kind, int fps, int 
 	, _fps (fps)
 	, _length (length)
 {
-	
+	filesystem::create_directories (directory);
 }
 
 void
@@ -274,8 +274,8 @@ DCP::DCP (string directory)
 			p = (*i)->asset_list->main_stereoscopic_picture;
 		}
 		
-		assert (_fps == 0 || _fps == p->frame_rate.numerator);
-		_fps = p->frame_rate.numerator;
+		assert (_fps == 0 || _fps == p->edit_rate.numerator);
+		_fps = p->edit_rate.numerator;
 		_length += p->duration;
 
 		shared_ptr<PictureAsset> picture;

@@ -170,7 +170,9 @@ SoundAsset::construct (sigc::slot<string, Channel> get_path)
 			throw MiscError ("could not write audio MXF frame");
 		}
 
-		(*_progress) (0.5 * float (i) / _length);
+		if (_progress) {
+			(*_progress) (0.5 * float (i) / _length);
+		}
 	}
 
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {

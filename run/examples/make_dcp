@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export LD_LIBRARY_PATH=build/src
+if [ "$1" == "--debug" ]; then
+    shift
+    gdb --args build/examples/make_dcp "$@"
+elif [ "$1" == "--valgrind" ]; then
+    shift
+    valgrind --tool="memcheck" --leak-check=full --show-reachable=yes build/examples/make_dcp "$@"
+else
+    build/examples/make_dcp "$@"
+fi
