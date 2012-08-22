@@ -17,13 +17,20 @@
 
 */
 
-/* This example file shows how to make a DCP from some JPEG2000 and WAV files
-   using libdcp.
-*/
+/** @file examples/make_dcp.cc
+ *  @brief Shows how to make a DCP from some JPEG2000 and WAV files.
+ */
 
 #include <vector>
 #include <string>
 #include <sigc++/sigc++.h>
+
+/* If you are using an installed libdcp, these #includes would need to be changed to
+#include <libdcp/dcp.h>
+#include <libdcp/picture_asset.h>
+... etc. ...
+*/
+
 #include "dcp.h"
 #include "picture_asset.h"
 #include "sound_asset.h"
@@ -67,6 +74,14 @@ main ()
 
 	/* Now we will create a `sound asset', which is made up of a WAV file for each channel of audio.  Here we're using
 	   stereo, so we add two WAV files to a vector.
+
+	   We could add more files here to use more channels; the file order is:
+	       Left
+	       Right
+	       Centre
+	       LFE (sub)
+	       Left surround
+	       Right surround
 	*/
 	std::vector<std::string> sound_files;
 	sound_files.push_back ("examples/sine_440_-12dB.wav");
