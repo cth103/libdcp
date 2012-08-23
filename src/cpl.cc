@@ -61,6 +61,7 @@ CPLReel::CPLReel (xmlpp::Node const * node)
 	id = string_node ("Id");
 	asset_list = sub_node<CPLAssetList> ("AssetList");
 
+	ignore_node ("AnnotationText");
 	done ();
 }
 
