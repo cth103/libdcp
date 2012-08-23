@@ -15,6 +15,8 @@ def configure(conf):
     conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-Wno-unused-result', '-O2', '-D_FILE_OFFSET_BITS=64'])
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
 
+    conf.env.TARGET_WINDOWS = conf.options.target_windows
+
     if conf.options.target_windows:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_WINDOWS')
     else:
@@ -60,10 +62,15 @@ def configure(conf):
 def build(bld):
     create_version_cc(VERSION)
 
+    if bld.env.TARGET_WINDOWS:
+        boost_lib_suffix = '-mt'
+    else:
+        boost_lib_suffix = ''
+
     bld(source = 'libdcp.pc.in',
         version = VERSION,
         includedir = '%s/include' % bld.env.PREFIX,
-        libs = "-L${libdir} -ldcp -lkumu-libdcp -lasdcp-libdcp",
+        libs = "-L${libdir} -ldcp -lkumu-libdcp -lasdcp-libdcp -lboost_system%s" % boost_lib_suffix,
         install_path = '${LIBDIR}/pkgconfig')
 
     bld.recurse('src')

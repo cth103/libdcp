@@ -6,5 +6,5 @@ Name: libdcp
 Description: DCP creation library
 Version: @version@
 Requires: sigc++-2.0 openssl
-Libs: @libs@ -lboost_system
+Libs: @libs@
 Cflags: -I${includedir}
