@@ -50,7 +50,7 @@ CPL::CPL (string file)
 ContentVersion::ContentVersion (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	id = string_node ("Id");
+	id = optional_string_node ("Id");
 	label_text = string_node ("LabelText");
 	done ();
 }

@@ -31,7 +31,7 @@ XMLNode::xml_node (string name)
 	if (n.size() > 1) {
 		throw XMLError ("duplicate XML tag " + name);
 	} else if (n.empty ()) {
-		throw XMLError ("missing XML tag " + name);
+		throw XMLError ("missing XML tag " + name + " in " + _node->get_name());
 	}
 	
 	return n.front ();
