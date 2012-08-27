@@ -126,6 +126,7 @@ MainSound::MainSound (xmlpp::Node const * node)
 	duration = int64_node ("Duration");
 
 	ignore_node ("Hash");
+	ignore_node ("Language");
 	
 	done ();
 }
