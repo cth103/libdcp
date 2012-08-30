@@ -54,14 +54,19 @@ MonoPictureFrame::~MonoPictureFrame ()
 	delete _buffer;
 }
 
-/** @return An ARGB representation of this frame.  This is ARGB in the
+/** @param reduce a factor by which to reduce the resolution
+ *  of the image, expressed as a power of two (pass 0 for no
+ *  reduction).
+ *
+ *  @return An ARGB representation of this frame.  This is ARGB in the
  *  Cairo sense, so that each pixel takes up 4 bytes; the first byte
  *  is blue, second green, third red and fourth alpha (always 255).
+ *
  */
 shared_ptr<ARGBFrame>
-MonoPictureFrame::argb_frame () const
+MonoPictureFrame::argb_frame (int reduce) const
 {
-	opj_image_t* xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size());
+	opj_image_t* xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce);
 	assert (xyz_frame->numcomps == 3);
 	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame);
 	opj_image_destroy (xyz_frame);
@@ -92,23 +97,28 @@ StereoPictureFrame::~StereoPictureFrame ()
 	delete _buffer;
 }
 
-/** @return An ARGB representation of one of the eyes (left or right)
+/** @param reduce a factor by which to reduce the resolution
+ *  of the image, expressed as a power of two (pass 0 for no
+ *  reduction).
+ *
+ *  @param eye Eye to return (EYE_LEFT or EYE_RIGHT).
+ *
+ *  @return An ARGB representation of one of the eyes (left or right)
  *  of this frame.  This is ARGB in the Cairo sense, so that each
  *  pixel takes up 4 bytes; the first byte is blue, second green,
  *  third red and fourth alpha (always 255).
  *
- *  @param eye Eye to return (EYE_LEFT or EYE_RIGHT).
  */
 shared_ptr<ARGBFrame>
-StereoPictureFrame::argb_frame (Eye eye) const
+StereoPictureFrame::argb_frame (Eye eye, int reduce) const
 {
 	opj_image_t* xyz_frame = 0;
 	switch (eye) {
 	case LEFT:
-		xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->Left.RoData()), _buffer->Left.Size());
+		xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->Left.RoData()), _buffer->Left.Size(), reduce);
 		break;
 	case RIGHT:
-		xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->Right.RoData()), _buffer->Right.Size());
+		xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->Right.RoData()), _buffer->Right.Size(), reduce);
 		break;
 	}
 	

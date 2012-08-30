@@ -159,11 +159,12 @@ libdcp::ends_with (string big, string little)
 }
 
 opj_image_t *
-libdcp::decompress_j2k (uint8_t* data, int64_t size)
+libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 {
 	opj_dinfo_t* decoder = opj_create_decompress (CODEC_J2K);
 	opj_dparameters_t parameters;
 	opj_set_default_decoder_parameters (&parameters);
+	parameters.cp_reduce = reduce;
 	opj_setup_decoder (decoder, &parameters);
 	opj_cio_t* cio = opj_cio_open ((opj_common_ptr) decoder, data, size);
 	opj_image_t* image = opj_decode (decoder, cio);

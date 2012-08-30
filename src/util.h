@@ -48,7 +48,7 @@ extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
 extern bool ends_with (std::string big, std::string little);
 
-extern opj_image_t* decompress_j2k (uint8_t* data, int64_t size);
+extern opj_image_t* decompress_j2k (uint8_t* data, int64_t size, int reduce);
 extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (opj_image_t* xyz_frame);
 
 }

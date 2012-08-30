@@ -149,8 +149,8 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 				}
 				
 				/* Decompress the images to bitmaps */
-				opj_image_t* image_A = decompress_j2k (const_cast<uint8_t*> (buffer_A.RoData()), buffer_A.Size ());
-				opj_image_t* image_B = decompress_j2k (const_cast<uint8_t*> (buffer_B.RoData()), buffer_B.Size ());
+				opj_image_t* image_A = decompress_j2k (const_cast<uint8_t*> (buffer_A.RoData()), buffer_A.Size (), 0);
+				opj_image_t* image_B = decompress_j2k (const_cast<uint8_t*> (buffer_B.RoData()), buffer_B.Size (), 0);
 
 				/* Compare them */
 				

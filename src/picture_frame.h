@@ -40,7 +40,7 @@ public:
 	MonoPictureFrame (std::string mxf_path, int n);
 	~MonoPictureFrame ();
 
-	boost::shared_ptr<ARGBFrame> argb_frame () const;
+	boost::shared_ptr<ARGBFrame> argb_frame (int reduce = 0) const;
 
 private:
 	ASDCP::JP2K::FrameBuffer* _buffer;
@@ -53,7 +53,7 @@ public:
 	StereoPictureFrame (std::string mxf_path, int n);
 	~StereoPictureFrame ();
 
-	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye) const;
+	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye, int reduce = 0) const;
 
 private:
 	ASDCP::JP2K::SFrameBuffer* _buffer;
