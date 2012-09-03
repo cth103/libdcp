@@ -22,3 +22,4 @@ libxml++
 
 Run doxygen in the top-level directory and then see build/doc/html/index.html.
 
+There are some examples in the examples/ directory.
