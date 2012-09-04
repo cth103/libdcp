@@ -93,7 +93,9 @@ XMLNode::fraction_node (string name)
 int64_t
 XMLNode::int64_node (string name)
 {
-	return lexical_cast<int64_t> (string_node (name));
+	string s = string_node (name);
+	erase_all (s, " ");
+	return lexical_cast<int64_t> (s);
 }
 
 int64_t
