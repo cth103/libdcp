@@ -156,8 +156,6 @@ private:
 		std::list<std::string> subtitles;
 	};
 
-	void scan (Files& files, std::string directory) const;
-
 	/** the directory that we are writing to */
 	std::string _directory;
 	/** the name of the DCP */
