@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export LD_LIBRARY_PATH=build/src:build/asdcplib/src
+if [ "$1" == "--debug" ]; then
+    shift
+    gdb --args build/tools/dcpinfo "$@"
+elif [ "$1" == "--valgrind" ]; then
+    shift
+    valgrind --tool="memcheck" --leak-check=full --show-reachable=yes build/tools/dcpinfo "$@"
+else
+    build/tools/dcpinfo "$@"
+fi

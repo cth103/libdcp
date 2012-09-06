@@ -18,4 +18,19 @@ if [ "$?" != "0" ]; then
   echo "FAIL: files differ"
   exit 1
 fi
+
+if [ -e "../libdcp-test" ]; then
+  for d in `find ../libdcp-test -mindepth 1 -maxdepth 1 -type d`; do
+    LD_LIBRARY_PATH=build/src:build/asdcplib/src build/tools/dcpinfo $d
+    if [ "$?" != "0" ]; then
+      echo "FAIL: dcpinfo failed"
+      exit 1
+    fi
+  done
+else
+  echo "Test corpus not found"
+  exit 1
+fi
+
 echo "PASS"
+

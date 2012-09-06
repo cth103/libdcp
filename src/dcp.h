@@ -69,8 +69,10 @@ public:
 	 *  of the DCP.
 	 *
 	 *  @param directory Existing DCP's directory.
+	 *  @param read_mxfs true to read MXF files; setting to false can be useful for testing, but
+	 *  normally it should be set to true.
 	 */
-	DCP (std::string directory);
+	DCP (std::string directory, bool read_mxfs = true);
 
 	void add_reel (boost::shared_ptr<const Reel> reel);
 

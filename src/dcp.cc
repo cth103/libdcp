@@ -214,7 +214,7 @@ DCP::write_assetmap (string cpl_uuid, int cpl_length, string pkl_uuid, int pkl_l
 }
 
 
-DCP::DCP (string directory)
+DCP::DCP (string directory, bool read_mxfs)
 	: _directory (directory)
 {
 	Files files;
@@ -282,7 +282,7 @@ DCP::DCP (string directory)
 		shared_ptr<SoundAsset> sound;
 		shared_ptr<SubtitleAsset> subtitle;
 		
-		if ((*i)->asset_list->main_picture) {
+		if (read_mxfs && (*i)->asset_list->main_picture) {
 
 			string n = pkl->asset_from_id (p->id)->original_file_name;
 			if (n.empty ()) {
@@ -298,7 +298,7 @@ DCP::DCP (string directory)
 					       )
 				);
 			
-		} else if ((*i)->asset_list->main_stereoscopic_picture) {
+		} else if (read_mxfs && (*i)->asset_list->main_stereoscopic_picture) {
 			
 			string n = pkl->asset_from_id (p->id)->original_file_name;
 			if (n.empty ()) {
@@ -316,7 +316,7 @@ DCP::DCP (string directory)
 			
 		}
 		
-		if ((*i)->asset_list->main_sound) {
+		if (read_mxfs && (*i)->asset_list->main_sound) {
 			
 			string n = pkl->asset_from_id ((*i)->asset_list->main_sound->id)->original_file_name;
 			if (n.empty ()) {
