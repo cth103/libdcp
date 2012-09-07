@@ -5,6 +5,9 @@
 #include "dcp.h"
 #include "exceptions.h"
 #include "reel.h"
+#include "sound_asset.h"
+#include "picture_asset.h"
+#include "subtitle_asset.h"
 
 using namespace std;
 using namespace boost;
@@ -53,8 +56,6 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	list<string> missing_mxfs;
-
 	DCP* dcp = 0;
 	try {
 		dcp = new DCP (argv[optind], false);
@@ -67,30 +68,20 @@ main (int argc, char* argv[])
 	     << "\tLength: " << dcp->length() << "\n"
 	     << "\tFrames per second: " << dcp->frames_per_second() << "\n";
 
-	if (!missing_mxfs.empty ()) {
-		cout << "\tmissing MXFs: ";
-		for (list<string>::const_iterator i = missing_mxfs.begin(); i != missing_mxfs.end(); ++i) {
-			cout << *i << " " ;
-		}
-		cout << "\n";
-	}
-
 	list<shared_ptr<const Reel> > reels = dcp->reels ();
 
 	int R = 1;
 	for (list<shared_ptr<const Reel> >::const_iterator i = reels.begin(); i != reels.end(); ++i) {
 		cout << "Reel " << R << "\n";
-		cout << "\tContains: ";
 		if ((*i)->main_picture()) {
-			cout << "picture ";
+			cout << "\tPicture:  " << (*i)->main_picture()->width() << "x" << (*i)->main_picture()->height() << "\n";
 		}
 		if ((*i)->main_sound()) {
-			cout << "sound ";
+			cout << "\tSound:    " << (*i)->main_sound()->channels() << " channels at " << (*i)->main_sound()->sampling_rate() << "Hz\n";
 		}
 		if ((*i)->main_subtitle()) {
-			cout << "subtitle ";
+			cout << "\tSubtitle: " << (*i)->main_subtitle()->subtitles().size() << " subtitles in " << (*i)->main_subtitle()->language() << "\n";
 		}
-		cout << "\n";
 		++R;
 	}
 

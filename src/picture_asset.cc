@@ -72,12 +72,12 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 	if (opt.flags & MXF_INSPECT) {
 		ASDCP::JP2K::MXFReader reader_A;
 		if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
-			throw FileError ("could not open MXF file for reading", path().string());
+			throw MXFFileError ("could not open MXF file for reading", path().string());
 		}
 
 		ASDCP::JP2K::MXFReader reader_B;
 		if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
-			throw FileError ("could not open MXF file for reading", path().string());
+			throw MXFFileError ("could not open MXF file for reading", path().string());
 		}
 
 		ASDCP::JP2K::PictureDescriptor desc_A;
@@ -244,7 +244,7 @@ MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, 
 {
 	ASDCP::JP2K::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		throw FileError ("could not open MXF file for reading", path().string());
+		throw MXFFileError ("could not open MXF file for reading", path().string());
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc;
@@ -274,7 +274,7 @@ MonoPictureAsset::construct (sigc::slot<string, int> get_path)
 	
 	ASDCP::JP2K::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc))) {
-		throw FileError ("could not open MXF file for writing", path().string());
+		throw MXFFileError ("could not open MXF file for writing", path().string());
 	}
 
 	for (int i = 0; i < _length; ++i) {
@@ -317,7 +317,7 @@ StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int f
 {
 	ASDCP::JP2K::MXFSReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		throw FileError ("could not open MXF file for reading", path().string());
+		throw MXFFileError ("could not open MXF file for reading", path().string());
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc;

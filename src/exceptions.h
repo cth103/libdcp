@@ -55,7 +55,14 @@ private:
 	std::string _filename;
 };
 
-
+class MXFFileError : public FileError
+{
+public:
+	MXFFileError (std::string const & message, std::string const & filename)
+		: FileError (message, filename)
+	{}
+};
+	
 /** @brief A miscellaneous exception */
 class MiscError : public std::exception
 {

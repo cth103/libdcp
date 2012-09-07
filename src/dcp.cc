@@ -214,7 +214,7 @@ DCP::write_assetmap (string cpl_uuid, int cpl_length, string pkl_uuid, int pkl_l
 }
 
 
-DCP::DCP (string directory, bool read_mxfs)
+DCP::DCP (string directory, bool require_mxfs)
 	: _directory (directory)
 {
 	Files files;
@@ -329,56 +329,74 @@ DCP::DCP (string directory, bool read_mxfs)
 		shared_ptr<PictureAsset> picture;
 		shared_ptr<SoundAsset> sound;
 		shared_ptr<SubtitleAsset> subtitle;
-		
-		if (read_mxfs && (*i)->asset_list->main_picture) {
+
+		if ((*i)->asset_list->main_picture) {
 
 			string n = pkl->asset_from_id (p->id)->original_file_name;
 			if (n.empty ()) {
 				n = p->annotation_text;
 			}
-		
-			picture.reset (new MonoPictureAsset (
-					       _directory,
-					       n,
-					       _fps,
-					       (*i)->asset_list->main_picture->entry_point,
-					       (*i)->asset_list->main_picture->duration
-					       )
-				);
+
+			try {
+				picture.reset (new MonoPictureAsset (
+						       _directory,
+						       n,
+						       _fps,
+						       (*i)->asset_list->main_picture->entry_point,
+						       (*i)->asset_list->main_picture->duration
+						       )
+					);
+			} catch (MXFFileError) {
+				if (require_mxfs) {
+					throw;
+				}
+			}
 			
-		} else if (read_mxfs && (*i)->asset_list->main_stereoscopic_picture) {
+		} else if ((*i)->asset_list->main_stereoscopic_picture) {
 			
 			string n = pkl->asset_from_id (p->id)->original_file_name;
 			if (n.empty ()) {
 				n = p->annotation_text;
 			}
 			
-			picture.reset (new StereoPictureAsset (
-					       _directory,
-					       n,
-					       _fps,
-					       (*i)->asset_list->main_stereoscopic_picture->entry_point,
-					       (*i)->asset_list->main_stereoscopic_picture->duration
-					       )
-				);
+			try {
+				picture.reset (new StereoPictureAsset (
+						       _directory,
+						       n,
+						       _fps,
+						       (*i)->asset_list->main_stereoscopic_picture->entry_point,
+						       (*i)->asset_list->main_stereoscopic_picture->duration
+						       )
+					);
+			} catch (MXFFileError) {
+				if (require_mxfs) {
+					throw;
+				}
+			}
 			
 		}
 		
-		if (read_mxfs && (*i)->asset_list->main_sound) {
+		if ((*i)->asset_list->main_sound) {
 			
 			string n = pkl->asset_from_id ((*i)->asset_list->main_sound->id)->original_file_name;
 			if (n.empty ()) {
 				n = (*i)->asset_list->main_sound->annotation_text;
 			}
 			
-			sound.reset (new SoundAsset (
-					     _directory,
-					     n,
-					     _fps,
-					     (*i)->asset_list->main_sound->entry_point,
-					     (*i)->asset_list->main_sound->duration
-					     )
-				);
+			try {
+				sound.reset (new SoundAsset (
+						     _directory,
+						     n,
+						     _fps,
+						     (*i)->asset_list->main_sound->entry_point,
+						     (*i)->asset_list->main_sound->duration
+						     )
+					);
+			} catch (MXFFileError) {
+				if (require_mxfs) {
+					throw;
+				}
+			}
 		}
 
 		if ((*i)->asset_list->main_subtitle) {

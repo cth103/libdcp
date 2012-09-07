@@ -62,7 +62,7 @@ SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int entry_po
 {
 	ASDCP::PCM::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		throw FileError ("could not open MXF file for reading", path().string());
+		throw MXFFileError ("could not open MXF file for reading", path().string());
 	}
 
 	
@@ -202,13 +202,13 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 		ASDCP::PCM::MXFReader reader_A;
 		if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
 			cout << "failed " << path() << "\n";
-			throw FileError ("could not open MXF file for reading", path().string());
+			throw MXFFileError ("could not open MXF file for reading", path().string());
 		}
 
 		ASDCP::PCM::MXFReader reader_B;
 		if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
 			cout << "failed " << other->path() << "\n";
-			throw FileError ("could not open MXF file for reading", path().string());
+			throw MXFFileError ("could not open MXF file for reading", path().string());
 		}
 
 		ASDCP::PCM::AudioDescriptor desc_A;
