@@ -56,12 +56,18 @@ release_version_string = rewrite_wscript(release_version)
 #append_to_changelog(release_version_string)
 
 command("git diff")
-if (raw_input() != "y"):
+if raw_input() != "y":
     command("git reset --hard")
     print 'Aborted'
     sys.exit(1)
 
 command("git commit -a -m \"Bump version\"")
+print "git cleaning..."
+command("git clean -n")
+if raw_input() != "y":
+    print 'Aborted'
+    sys.exit(1)
+command("git clean")
 command("git tag -m \"v%s\" v%s" % (release_version_string, release_version_string))
 command("./waf clean")
 command("./waf")
@@ -71,7 +77,7 @@ command("./waf dist")
 rewrite_wscript(new_pre_version)
 
 command("git diff")
-if (raw_input() != "y"):
+if raw_input() != "y":
     command("git reset --hard")
     print 'Aborted'
     sys.exit(1)
