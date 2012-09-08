@@ -24,6 +24,7 @@
 #include "asset_map.h"
 
 using namespace std;
+using namespace boost;
 using namespace libdcp;
 
 AssetMap::AssetMap (string file)
@@ -54,3 +55,14 @@ Chunk::Chunk (xmlpp::Node const * node)
 	length = optional_int64_node ("Length");
 }
 
+shared_ptr<AssetMapAsset>
+AssetMap::asset_from_id (string id) const
+{
+	for (list<shared_ptr<AssetMapAsset> >::const_iterator i = assets.begin (); i != assets.end(); ++i) {
+		if ((*i)->id == id) {
+			return *i;
+		}
+	}
+
+	return shared_ptr<AssetMapAsset> ();
+}

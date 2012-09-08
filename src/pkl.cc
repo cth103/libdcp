@@ -49,16 +49,3 @@ PKLAsset::PKLAsset (xmlpp::Node const * node)
 	type = string_node ("Type");
 	original_file_name = optional_string_node ("OriginalFileName");
 }
-	
-shared_ptr<PKLAsset>
-PKL::asset_from_id (string id) const
-{
-	for (list<shared_ptr<PKLAsset> >::const_iterator i = assets.begin (); i != assets.end(); ++i) {
-		if ((*i)->id == id) {
-			return *i;
-		}
-	}
-
-	return shared_ptr<PKLAsset> ();
-}
-

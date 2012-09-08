@@ -45,8 +45,6 @@ class PKL : public XMLFile
 public:
 	PKL (std::string file);
 
-	boost::shared_ptr<PKLAsset> asset_from_id (std::string id) const;
-
 	std::string id;
 	std::string annotation_text;
 	std::string issue_date;

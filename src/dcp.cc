@@ -332,15 +332,10 @@ DCP::DCP (string directory, bool require_mxfs)
 
 		if ((*i)->asset_list->main_picture) {
 
-			string n = pkl->asset_from_id (p->id)->original_file_name;
-			if (n.empty ()) {
-				n = p->annotation_text;
-			}
-
 			try {
 				picture.reset (new MonoPictureAsset (
 						       _directory,
-						       n,
+						       asset_map->asset_from_id ((*i)->asset_list->main_picture->id)->chunks.front()->path,
 						       _fps,
 						       (*i)->asset_list->main_picture->entry_point,
 						       (*i)->asset_list->main_picture->duration
@@ -354,15 +349,10 @@ DCP::DCP (string directory, bool require_mxfs)
 			
 		} else if ((*i)->asset_list->main_stereoscopic_picture) {
 			
-			string n = pkl->asset_from_id (p->id)->original_file_name;
-			if (n.empty ()) {
-				n = p->annotation_text;
-			}
-			
 			try {
 				picture.reset (new StereoPictureAsset (
 						       _directory,
-						       n,
+						       asset_map->asset_from_id ((*i)->asset_list->main_stereoscopic_picture->id)->chunks.front()->path,
 						       _fps,
 						       (*i)->asset_list->main_stereoscopic_picture->entry_point,
 						       (*i)->asset_list->main_stereoscopic_picture->duration
@@ -378,15 +368,10 @@ DCP::DCP (string directory, bool require_mxfs)
 		
 		if ((*i)->asset_list->main_sound) {
 			
-			string n = pkl->asset_from_id ((*i)->asset_list->main_sound->id)->original_file_name;
-			if (n.empty ()) {
-				n = (*i)->asset_list->main_sound->annotation_text;
-			}
-			
 			try {
 				sound.reset (new SoundAsset (
 						     _directory,
-						     n,
+						     asset_map->asset_from_id ((*i)->asset_list->main_sound->id)->chunks.front()->path,
 						     _fps,
 						     (*i)->asset_list->main_sound->entry_point,
 						     (*i)->asset_list->main_sound->duration
@@ -400,16 +385,11 @@ DCP::DCP (string directory, bool require_mxfs)
 		}
 
 		if ((*i)->asset_list->main_subtitle) {
-
-			string n = pkl->asset_from_id ((*i)->asset_list->main_subtitle->id)->original_file_name;
-			if (n.empty ()) {
-				n = (*i)->asset_list->main_subtitle->annotation_text;
-			}
 			
 			subtitle.reset (new SubtitleAsset (
-					     _directory,
-					     n
-					     )
+						_directory,
+						asset_map->asset_from_id ((*i)->asset_list->main_subtitle->id)->chunks.front()->path
+						)
 				);
 		}
 			

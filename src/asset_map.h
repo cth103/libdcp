@@ -55,6 +55,8 @@ class AssetMap : public XMLFile
 public:
 	AssetMap (std::string file);
 
+	boost::shared_ptr<AssetMapAsset> asset_from_id (std::string id) const;
+	
 	std::string id;
 	std::string creator;
 	int64_t volume_count;

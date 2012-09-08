@@ -26,6 +26,11 @@ DCP: ../libdcp-test/BARBARA_TLR_F_DE-FR_CH_51_2K_LOK_20120410_OV
 	Frames per second: 24
 Reel 1
 	Subtitle: 31 subtitles in French
+DCP: ../libdcp-test/MACHINE-GUN-PREACH_TLR-1_F_EN-de-fr_CH_51_2K_TIT_20111107
+	Length: 3513
+	Frames per second: 24
+Reel 1
+	Subtitle: 94 subtitles in English
 DCP: ../libdcp-test/ASTERIX_TLR-01_F_FR-DE_CH_51_2K_FRE_20120730_DGL_OV
 	Length: 3080
 	Frames per second: 24
