@@ -7,22 +7,22 @@
   <Creator>OpenDCP 0.0.25</Creator>
   <AssetList>
     <Asset>
-      <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
-      <AnnotationText>video.mxf</AnnotationText>
-      <Hash>VB9LCTmiD9OLlw4SvrEWUm5d67Q=</Hash>
-      <Size>26080</Size>
-      <Type>application/mxf</Type>
-    </Asset>
-    <Asset>
-      <Id>urn:uuid:67b9341e-cadd-4dac-9d5c-f5a1d59f2d06</Id>
+      <Id>urn:uuid:c38bdd62-ce03-4988-8603-195f134207c7</Id>
       <AnnotationText>audio.mxf</AnnotationText>
-      <Hash>HapNpn7MjiJLa1OHRI61Rx8N/is=</Hash>
+      <Hash>+qImGHkt/XouNaJ1V/+7BtcB4VU=</Hash>
       <Size>305326</Size>
       <Type>application/mxf</Type>
     </Asset>
     <Asset>
-      <Id>urn:uuid:9892e944-5046-4dbb-af7c-f50742f62fc2</Id>
-      <Hash>PbXuvpUOKccTLMxg/lEbaXvNCT4=</Hash>
+      <Id>urn:uuid:d36f4bb3-c4fa-4a95-9915-6fec3110cd71</Id>
+      <AnnotationText>video.mxf</AnnotationText>
+      <Hash>E2vhyxdJQhEzSQZdp31w84ZZpfk=</Hash>
+      <Size>26080</Size>
+      <Type>application/mxf</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
+      <Hash>TTn7vvdUQi/G+KaW1Pym/DjxULM=</Hash>
       <Size>1526</Size>
       <Type>text/xml</Type>
     </Asset>

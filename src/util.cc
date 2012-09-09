@@ -127,7 +127,7 @@ libdcp::content_kind_from_string (string type)
 		return FEATURE;
 	} else if (type == "short") {
 		return SHORT;
-	} else if (type == "trailer") {
+	} else if (type == "trailer" || type == "Trailer") {
 		return TRAILER;
 	} else if (type == "test") {
 		return TEST;

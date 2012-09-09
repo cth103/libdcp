@@ -49,14 +49,19 @@ video_frame (int /* frame */)
 int
 main ()
 {
-	/* Make a DCP object.  "My Film DCP" is the directory name for the DCP, "My Film" is the title
-	   that will be shown on the projector / TMS when the DCP is ingested.
+	/* Make a DCP object.  "My Film DCP" is the directory name for the DCP */
+	libdcp::DCP dcp ("My Film DCP");
+	
+	/* Now make a CPL object.
 
+	   "My Film" is the title that will be shown on the projector / TMS when the DCP is ingested.
 	   FEATURE is the type that the projector will list the DCP as.
-
 	   24 is the frame rate, and the DCP will be 48 frames long (ie 2 seconds at 24 fps).
-	*/
-	libdcp::DCP dcp ("My Film DCP", "My Film", libdcp::FEATURE, 24, 48);
+	*/	
+	boost::shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("My Film DCP", "My Film", libdcp::FEATURE, 24, 48));
+
+	/* And add the CPL to the DCP */
+	dcp.add_cpl (cpl);
 
 	/* Now make a `picture asset'.  This is a collection of the JPEG2000 files that make up the picture, one per frame.
 	   Here we're using a function (video_frame) to obtain the name of the JPEG2000 file for each frame.
@@ -92,8 +97,8 @@ main ()
 		new libdcp::SoundAsset (sound_files, "My Film DCP", "audio.mxf", 0, 24, 48)
 		);
 
-	/* Now that we have the assets, we can create a Reel to put them in and add it to the DCP */
-	dcp.add_reel (
+	/* Now that we have the assets, we can create a Reel to put them in and add it to the CPL */
+	cpl->add_reel (
 		boost::shared_ptr<libdcp::Reel> (
 			new libdcp::Reel (picture_asset, sound_asset, boost::shared_ptr<libdcp::SubtitleAsset> ())
 			)

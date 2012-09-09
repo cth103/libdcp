@@ -43,49 +43,19 @@ class PictureAsset;
 class SoundAsset;
 class SubtitleAsset;
 class Reel;
+class AssetMap;
 
-/** @class DCP dcp.h libdcp/dcp.h
- *  @brief A class to create or read a DCP.
- */
-	
-class DCP
+class CPL
 {
 public:
-	/** Construct a DCP.
-	 *
-	 *  This is for making a new DCP that you are going to add assets to.
-	 *
-	 *  @param directory Directory to write files to.
-	 *  @param name Name.
-	 *  @param content_kind Content kind.
-	 *  @param fps Frames per second.
-	 *  @param length Length in frames.
-	 */
-	DCP (std::string directory, std::string name, ContentKind content_kind, int fps, int length);
-
-	/** Construct a DCP object for an existing DCP.
-	 *
-	 *  The DCP's XML metadata will be examined, and you can then look at the contents
-	 *  of the DCP.
-	 *
-	 *  @param directory Existing DCP's directory.
-	 *  @param read_mxfs true to read MXF files; setting to false can be useful for testing, but
-	 *  normally it should be set to true.
-	 */
-	DCP (std::string directory, bool read_mxfs = true);
+	CPL (std::string directory, std::string name, ContentKind content_kind, int length, int frames_per_second);
+	CPL (std::string directory, std::string file, boost::shared_ptr<const AssetMap> asset_map, bool require_mxfs = true);
 
 	void add_reel (boost::shared_ptr<const Reel> reel);
-
-	/** Write the required XML files to the directory that was
-	 *  passed into the constructor.
-	 */
-	void write_xml () const;
-
-	/** @return the DCP's name, as will be presented on projector
-	 *  media servers and theatre management systems.
-	 */
-	std::string name () const {
-		return _name;
+	
+	/** @return the length in frames */
+	int length () const {
+		return _length;
 	}
 
 	/** @return the type of the content, used by media servers
@@ -95,19 +65,76 @@ public:
 		return _content_kind;
 	}
 
+	std::list<boost::shared_ptr<const Reel> > reels () const {
+		return _reels;
+	}
+
+	/** @return the CPL's name, as will be presented on projector
+	 *  media servers and theatre management systems.
+	 */
+	std::string name () const {
+		return _name;
+	}
+
 	/** @return the number of frames per second */
 	int frames_per_second () const {
 		return _fps;
 	}
 
-	/** @return the length in frames */
-	int length () const {
-		return _length;
-	}
+	std::list<boost::shared_ptr<const Asset> > assets () const;
+	
+	std::list<std::string> equals (CPL const & other, EqualityOptions options) const;
+	
+	void write_xml () const;
+	void write_to_assetmap (std::ostream& s) const;
+	void write_to_pkl (std::ostream& s) const;
+	
+private:
+	std::string _directory;
+	/** the name of the DCP */
+	std::string _name;
+	/** the content kind of the CPL */
+	ContentKind _content_kind;
+	/** length in frames */
+	mutable int _length;
+	/** frames per second */
+	int _fps;
+	/** reels */
+	std::list<boost::shared_ptr<const Reel> > _reels;
 
-	std::list<boost::shared_ptr<const Reel> > reels () const {
-		return _reels;
-	}
+	std::string _uuid;
+	mutable std::string _digest;
+};
+
+/** @class DCP dcp.h libdcp/dcp.h
+ *  @brief A class to create or read a DCP.
+ */
+	
+class DCP
+{
+public:
+	/** Construct a DCP.  You can pass an existing DCP's directory
+	 *  as the parameter, or a non-existant folder to create a new
+	 *  DCP in.
+	 *
+	 *  @param directory Directory containing the DCP's files.
+	 */
+	DCP (std::string directory);
+
+	/** Read an existing DCP's data.
+	 *
+	 *  The DCP's XML metadata will be examined, and you can then look at the contents
+	 *  of the DCP.
+	 *
+	 *  @param require_mxfs true to throw an exception if MXF files are missing; setting to false
+	 *  can be useful for testing, but normally it should be set to true.
+	 */
+	void read (bool require_mxfs = true);
+
+	/** Write the required XML files to the directory that was
+	 *  passed into the constructor.
+	 */
+	void write_xml () const;
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
@@ -117,6 +144,12 @@ public:
 	 */
 	std::list<std::string> equals (DCP const & other, EqualityOptions options) const;
 
+	void add_cpl (boost::shared_ptr<CPL> cpl);
+
+	std::list<boost::shared_ptr<const CPL> > cpls () const {
+		return _cpls;
+	}
+
 	/** Emitted with a parameter between 0 and 1 to indicate progress
 	 *  for long jobs.
 	 */
@@ -124,33 +157,24 @@ public:
 
 private:
 
-	/** Write the CPL file.
-	 *  @param cpl_uuid UUID to use.
-	 *  @return CPL pathname.
-	 */
-	std::string write_cpl (std::string cpl_uuid) const;
-
 	/** Write the PKL file.
 	 *  @param pkl_uuid UUID to use.
-	 *  @param cpl_uuid UUID of the CPL file.
-	 *  @param cpl_digest SHA digest of the CPL file.
-	 *  @param cpl_length Length of the CPL file in bytes.
 	 */
-	std::string write_pkl (std::string pkl_uuid, std::string cpl_uuid, std::string cpl_digest, int cpl_length) const;
+	std::string write_pkl (std::string pkl_uuid) const;
 	
 	/** Write the VOLINDEX file */
 	void write_volindex () const;
 
 	/** Write the ASSETMAP file.
-	 *  @param cpl_uuid UUID of our CPL.
-	 *  @param cpl_length Length of our CPL in bytes.
 	 *  @param pkl_uuid UUID of our PKL.
 	 *  @param pkl_length Length of our PKL in bytes.
 	 */
-	void write_assetmap (std::string cpl_uuid, int cpl_length, std::string pkl_uuid, int pkl_length) const;
+	void write_assetmap (std::string pkl_uuid, int pkl_length) const;
+
+	std::list<boost::shared_ptr<const Asset> > assets () const;
 
 	struct Files {
-		std::string cpl;
+		std::list<std::string> cpls;
 		std::string pkl;
 		std::string asset_map;
 		std::list<std::string> subtitles;
@@ -158,16 +182,7 @@ private:
 
 	/** the directory that we are writing to */
 	std::string _directory;
-	/** the name of the DCP */
-	std::string _name;
-	/** the content kind of the DCP */
-	ContentKind _content_kind;
-	/** frames per second */
-	int _fps;
-	/** length in frames */
-	int _length;
-	/** reels */
-	std::list<boost::shared_ptr<const Reel> > _reels;
+	std::list<boost::shared_ptr<const CPL> > _cpls;
 };
 
 }

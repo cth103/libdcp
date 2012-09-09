@@ -64,6 +64,10 @@ public:
 	 */
 	void write_to_assetmap (std::ostream& s) const;
 
+	std::string uuid () const {
+		return _uuid;
+	}
+
 	virtual std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const = 0;
 
 protected:

@@ -46,38 +46,6 @@ Reel::write_to_cpl (ostream& s) const
 	}
 }
 	
-void
-Reel::write_to_pkl (ostream& s) const
-{
-	if (_main_picture) {
-		_main_picture->write_to_pkl (s);
-	}
-
-	if (_main_sound) {
-		_main_sound->write_to_pkl (s);
-	}
-
-	if (_main_subtitle) {
-		_main_subtitle->write_to_pkl (s);
-	}
-}
-
-void
-Reel::write_to_assetmap (ostream& s) const
-{
-	if (_main_picture) {
-		_main_picture->write_to_assetmap (s);
-	}
-
-	if (_main_sound) {
-		_main_sound->write_to_assetmap (s);
-	}
-
-	if (_main_subtitle) {
-		_main_subtitle->write_to_assetmap (s);
-	}
-}
-
 list<string>
 Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt) const
 {

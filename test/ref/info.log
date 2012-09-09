@@ -1,49 +1,71 @@
 DCP: ../libdcp-test/ASTERIX_TSR_F_FR-DE_51_2K_20120411_SE_2D
-	Length: 1439
-	Frames per second: 24
-Reel 1
-Reel 2
-	Subtitle: 30 subtitles in Custom
+  CPL: ASTERIX_TSR_F_FR-DE_51_2K_20120411_SE_2D
+    Length: 1439
+    Frames per second: 24
+    Reel 1
+    Reel 2
+      Subtitle: 30 subtitles in Custom
 DCP: ../libdcp-test/WRECK-IT-RALPH_TLR-A-3D_S_EN-DEFR_INT_51_2K_DI_20120620_TEU_i3D
-	Length: 3385
-	Frames per second: 24
-Reel 1
+  CPL: WRECK-IT-RALPH_TLR-A-3D_S_EN-DEFR_INT_51_2K_DI_20120620_TEU_i3D
+    Length: 3385
+    Frames per second: 24
+    Reel 1
 DCP: ../libdcp-test/AVATAR-3D_TLR-H_F_EN-XX_INTL-TXTD_2K_51_TCF_20091022_DUK-i3D-ngb
-	Length: 4960
-	Frames per second: 24
-Reel 1
+  CPL: AVATAR-3D_TLR-H_F_EN-XX_INTL-TXTD_2K_51_TCF_20091022_DUK-i3D-ngb
+    Length: 4960
+    Frames per second: 24
+    Reel 1
 DCP: ../libdcp-test/END-OF-TIME_TLR_F_XX-XX_CH_51_2K_LOK_20120726_DGL_OV
-	Length: 2865
-	Frames per second: 24
-Reel 1
-Reel 2
+  CPL: 
+    Length: 2865
+    Frames per second: 24
+    Reel 1
+    Reel 2
 DCP: ../libdcp-test/THE-GUARD_TRL_F_EN-DE-FR_CH_51_2K_20110718_TIT
-	Length: 3201
-	Frames per second: 24
-Reel 1
+  CPL: THE-GUARD_TRL_F_EN-DE-FR_CH_51_2K_20110718_TIT
+    Length: 3201
+    Frames per second: 24
+    Reel 1
+DCP: ../libdcp-test/SANS-ISSUE_TLR_F_EN-FR_FR_51_2K_SND_20120316_ECL_OV
+  CPL: SANS-ISSUE_TLR_F_FR-XX_FR_51_2K_SND_20120316_ECL_OV
+    Length: 2972
+    Frames per second: 24
+    Reel 1
+    Reel 2
+  CPL: SANS-ISSUE_TLR_F_EN-FR_FR_51_2K_SND_20120316_ECL_OV
+    Length: 2972
+    Frames per second: 24
+    Reel 1
+    Reel 2
+      Subtitle: 49 subtitles in French
 DCP: ../libdcp-test/BARBARA_TLR_F_DE-FR_CH_51_2K_LOK_20120410_OV
-	Length: 2917
-	Frames per second: 24
-Reel 1
-	Subtitle: 31 subtitles in French
+  CPL: BARBARA_TLR_F_DE-FR_CH_51_2K_LOK_20120410_OV
+    Length: 2917
+    Frames per second: 24
+    Reel 1
+      Subtitle: 31 subtitles in French
 DCP: ../libdcp-test/MACHINE-GUN-PREACH_TLR-1_F_EN-de-fr_CH_51_2K_TIT_20111107
-	Length: 3513
-	Frames per second: 24
-Reel 1
-	Subtitle: 94 subtitles in English
+  CPL: MACHINE-GUN-PREACH_TLR-1_F_EN-de-fr_CH_51_2K_TIT_20111107
+    Length: 3513
+    Frames per second: 24
+    Reel 1
+      Subtitle: 94 subtitles in English
 DCP: ../libdcp-test/ASTERIX_TLR-01_F_FR-DE_CH_51_2K_FRE_20120730_DGL_OV
-	Length: 3080
-	Frames per second: 24
-Reel 1
-	Subtitle: 49 subtitles in French
+  CPL: 
+    Length: 3080
+    Frames per second: 24
+    Reel 1
+      Subtitle: 49 subtitles in French
 DCP: ../libdcp-test/EPIC-3D_TLR-D_S_EN-DE-FR_CH_51_48_ST_20120718_TIT_i3D-ngb_OV
-	Length: 3166
-	Frames per second: 24
-Reel 1
-	Subtitle: 32 subtitles in English
+  CPL: 
+    Length: 3166
+    Frames per second: 24
+    Reel 1
+      Subtitle: 32 subtitles in English
 DCP: ../libdcp-test/ELLES_TLR_C_FR-DE_20_2K_20120412_SE
-	Length: 2794
-	Frames per second: 24
-Reel 1
-Reel 2
-	Subtitle: 52 subtitles in Custom
+  CPL: ELLES_TLR_C_FR-DE_20_2K_20120412_SE
+    Length: 2794
+    Frames per second: 24
+    Reel 1
+    Reel 2
+      Subtitle: 52 subtitles in Custom

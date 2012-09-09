@@ -63,7 +63,8 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	t->issue_date = "2012-07-17T04:45:18+00:00";
 	filesystem::remove_all ("build/test/foo");
 	filesystem::create_directories ("build/test/foo");
-	libdcp::DCP d ("build/test/foo", "A Test DCP", libdcp::FEATURE, 24, 24);
+	libdcp::DCP d ("build/test/foo");
+	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/foo", "A Test DCP", libdcp::FEATURE, 24, 24));
 
 	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset (
 							 sigc::ptr_fun (&j2c),
@@ -86,14 +87,15 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 						  2
 						  ));
 
-	d.add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
+	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
+	d.add_cpl (cpl);
 
 	d.write_xml ();
 }
 
 BOOST_AUTO_TEST_CASE (error_test)
 {
-	libdcp::DCP d ("build/test/bar", "A Test DCP", libdcp::TEST, 24, 24);
+	libdcp::DCP d ("build/test/bar");
 	vector<string> p;
 	p.push_back ("frobozz");
 
@@ -104,11 +106,15 @@ BOOST_AUTO_TEST_CASE (error_test)
 BOOST_AUTO_TEST_CASE (read_dcp)
 {
 	libdcp::DCP d ("test/ref/DCP");
+	d.read ();
 
-	BOOST_CHECK_EQUAL (d.name(), "A Test DCP");
-	BOOST_CHECK_EQUAL (d.content_kind(), libdcp::FEATURE);
-	BOOST_CHECK_EQUAL (d.frames_per_second(), 24);
-	BOOST_CHECK_EQUAL (d.length(), 24);
+	list<shared_ptr<const libdcp::CPL> > cpls = d.cpls ();
+	BOOST_CHECK_EQUAL (cpls.size(), 1);
+
+	BOOST_CHECK_EQUAL (cpls.front()->name(), "A Test DCP");
+	BOOST_CHECK_EQUAL (cpls.front()->content_kind(), libdcp::FEATURE);
+	BOOST_CHECK_EQUAL (cpls.front()->frames_per_second(), 24);
+	BOOST_CHECK_EQUAL (cpls.front()->length(), 24);
 }
 	
 BOOST_AUTO_TEST_CASE (subtitles1)

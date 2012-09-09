@@ -45,77 +45,31 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-DCP::DCP (string directory, string name, ContentKind content_kind, int fps, int length)
+DCP::DCP (string directory)
 	: _directory (directory)
-	, _name (name)
-	, _content_kind (content_kind)
-	, _fps (fps)
-	, _length (length)
 {
 	filesystem::create_directories (directory);
 }
 
 void
-DCP::add_reel (shared_ptr<const Reel> reel)
-{
-	_reels.push_back (reel);
-}
-
-void
 DCP::write_xml () const
 {
-	string cpl_uuid = make_uuid ();
-	string cpl_path = write_cpl (cpl_uuid);
-	int cpl_length = filesystem::file_size (cpl_path);
-	string cpl_digest = make_digest (cpl_path, 0);
-
-	string pkl_uuid = make_uuid ();
-	string pkl_path = write_pkl (pkl_uuid, cpl_uuid, cpl_digest, cpl_length);
-	
-	write_volindex ();
-	write_assetmap (cpl_uuid, cpl_length, pkl_uuid, filesystem::file_size (pkl_path));
-}
-
-string
-DCP::write_cpl (string cpl_uuid) const
-{
-	filesystem::path p;
-	p /= _directory;
-	stringstream s;
-	s << cpl_uuid << "_cpl.xml";
-	p /= s.str();
-	ofstream cpl (p.string().c_str());
-	
-	cpl << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-	    << "<CompositionPlaylist xmlns=\"http://www.smpte-ra.org/schemas/429-7/2006/CPL\">\n"
-	    << "  <Id>urn:uuid:" << cpl_uuid << "</Id>\n"
-	    << "  <AnnotationText>" << _name << "</AnnotationText>\n"
-	    << "  <IssueDate>" << Metadata::instance()->issue_date << "</IssueDate>\n"
-	    << "  <Creator>" << Metadata::instance()->creator << "</Creator>\n"
-	    << "  <ContentTitleText>" << _name << "</ContentTitleText>\n"
-	    << "  <ContentKind>" << content_kind_to_string (_content_kind) << "</ContentKind>\n"
-	    << "  <ContentVersion>\n"
-	    << "    <Id>urn:uri:" << cpl_uuid << "_" << Metadata::instance()->issue_date << "</Id>\n"
-	    << "    <LabelText>" << cpl_uuid << "_" << Metadata::instance()->issue_date << "</LabelText>\n"
-	    << "  </ContentVersion>\n"
-	    << "  <RatingList/>\n"
-	    << "  <ReelList>\n";
-
-	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
-		(*i)->write_to_cpl (cpl);
+	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
+		(*i)->write_xml ();
 	}
 
-	cpl << "      </AssetList>\n"
-	    << "    </Reel>\n"
-	    << "  </ReelList>\n"
-	    << "</CompositionPlaylist>\n";
-
-	return p.string ();
+	string pkl_uuid = make_uuid ();
+	string pkl_path = write_pkl (pkl_uuid);
+	
+	write_volindex ();
+	write_assetmap (pkl_uuid, filesystem::file_size (pkl_path));
 }
 
 std::string
-DCP::write_pkl (string pkl_uuid, string cpl_uuid, string cpl_digest, int cpl_length) const
+DCP::write_pkl (string pkl_uuid) const
 {
+	assert (!_cpls.empty ());
+	
 	filesystem::path p;
 	p /= _directory;
 	stringstream s;
@@ -126,22 +80,21 @@ DCP::write_pkl (string pkl_uuid, string cpl_uuid, string cpl_digest, int cpl_len
 	pkl << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 	    << "<PackingList xmlns=\"http://www.smpte-ra.org/schemas/429-8/2007/PKL\">\n"
 	    << "  <Id>urn:uuid:" << pkl_uuid << "</Id>\n"
-	    << "  <AnnotationText>" << _name << "</AnnotationText>\n"
+		/* XXX: this is a bit of a hack */
+	    << "  <AnnotationText>" << _cpls.front()->name() << "</AnnotationText>\n"
 	    << "  <IssueDate>" << Metadata::instance()->issue_date << "</IssueDate>\n"
 	    << "  <Issuer>" << Metadata::instance()->issuer << "</Issuer>\n"
 	    << "  <Creator>" << Metadata::instance()->creator << "</Creator>\n"
 	    << "  <AssetList>\n";
 
-	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
+	list<shared_ptr<const Asset> > a = assets ();
+	for (list<shared_ptr<const Asset> >::const_iterator i = a.begin(); i != a.end(); ++i) {
 		(*i)->write_to_pkl (pkl);
 	}
 
-	pkl << "    <Asset>\n"
-	    << "      <Id>urn:uuid:" << cpl_uuid << "</Id>\n"
-	    << "      <Hash>" << cpl_digest << "</Hash>\n"
-	    << "      <Size>" << cpl_length << "</Size>\n"
-	    << "      <Type>text/xml</Type>\n"
-	    << "    </Asset>\n";
+	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
+		(*i)->write_to_pkl (pkl);
+	}
 
 	pkl << "  </AssetList>\n"
 	    << "</PackingList>\n";
@@ -164,7 +117,7 @@ DCP::write_volindex () const
 }
 
 void
-DCP::write_assetmap (string cpl_uuid, int cpl_length, string pkl_uuid, int pkl_length) const
+DCP::write_assetmap (string pkl_uuid, int pkl_length) const
 {
 	filesystem::path p;
 	p /= _directory;
@@ -192,20 +145,13 @@ DCP::write_assetmap (string cpl_uuid, int cpl_length, string pkl_uuid, int pkl_l
 	   << "        </Chunk>\n"
 	   << "      </ChunkList>\n"
 	   << "    </Asset>\n";
-
-	am << "    <Asset>\n"
-	   << "      <Id>urn:uuid:" << cpl_uuid << "</Id>\n"
-	   << "      <ChunkList>\n"
-	   << "        <Chunk>\n"
-	   << "          <Path>" << cpl_uuid << "_cpl.xml</Path>\n"
-	   << "          <VolumeIndex>1</VolumeIndex>\n"
-	   << "          <Offset>0</Offset>\n"
-	   << "          <Length>" << cpl_length << "</Length>\n"
-	   << "        </Chunk>\n"
-	   << "      </ChunkList>\n"
-	   << "    </Asset>\n";
 	
-	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
+	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
+		(*i)->write_to_assetmap (am);
+	}
+
+	list<shared_ptr<const Asset> > a = assets ();
+	for (list<shared_ptr<const Asset> >::const_iterator i = a.begin(); i != a.end(); ++i) {
 		(*i)->write_to_assetmap (am);
 	}
 
@@ -214,8 +160,8 @@ DCP::write_assetmap (string cpl_uuid, int cpl_length, string pkl_uuid, int pkl_l
 }
 
 
-DCP::DCP (string directory, bool require_mxfs)
-	: _directory (directory)
+void
+DCP::read (bool require_mxfs)
 {
 	Files files;
 
@@ -263,11 +209,7 @@ DCP::DCP (string directory, bool require_mxfs)
 		delete p;
 
 		if (root == "CompositionPlaylist") {
-			if (files.cpl.empty ()) {
-				files.cpl = t.string();
-			} else {
-				throw DCPReadError ("duplicate CPLs found");
-			}
+			files.cpls.push_back (t.string());
 		} else if (root == "PackingList") {
 			if (files.pkl.empty ()) {
 				files.pkl = t.string();
@@ -279,20 +221,12 @@ DCP::DCP (string directory, bool require_mxfs)
 		}
 	}
 	
-	if (files.cpl.empty ()) {
-		throw FileError ("no CPL file found", "");
+	if (files.cpls.empty ()) {
+		throw FileError ("no CPL files found", "");
 	}
 
 	if (files.pkl.empty ()) {
 		throw FileError ("no PKL file found", "");
-	}
-
-	/* Read the XML */
-	shared_ptr<CPLFile> cpl;
-	try {
-		cpl.reset (new CPLFile (files.cpl));
-	} catch (FileError& e) {
-		throw FileError ("could not load CPL file", files.cpl);
 	}
 
 	shared_ptr<PKLFile> pkl;
@@ -305,12 +239,91 @@ DCP::DCP (string directory, bool require_mxfs)
 	/* Cross-check */
 	/* XXX */
 
+	for (list<string>::iterator i = files.cpls.begin(); i != files.cpls.end(); ++i) {
+		_cpls.push_back (shared_ptr<CPL> (new CPL (_directory, *i, asset_map, require_mxfs)));
+	}
+
+}
+
+list<string>
+DCP::equals (DCP const & other, EqualityOptions opt) const
+{
+	list<string> notes;
+
+	if (_cpls.size() != other._cpls.size()) {
+		notes.push_back ("CPL counts differ");
+	}
+
+	list<shared_ptr<const CPL> >::const_iterator a = _cpls.begin ();
+	list<shared_ptr<const CPL> >::const_iterator b = other._cpls.begin ();
+
+	while (a != _cpls.end ()) {
+		list<string> n = (*a)->equals (*b->get(), opt);
+		notes.merge (n);
+		++a;
+		++b;
+	}
+
+	return notes;
+}
+
+
+void
+DCP::add_cpl (shared_ptr<CPL> cpl)
+{
+	_cpls.push_back (cpl);
+}
+
+class AssetComparator
+{
+public:
+	bool operator() (shared_ptr<const Asset> a, shared_ptr<const Asset> b) {
+		return a->uuid() < b->uuid();
+	}
+};
+
+list<shared_ptr<const Asset> >
+DCP::assets () const
+{
+	list<shared_ptr<const Asset> > a;
+	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
+		list<shared_ptr<const Asset> > t = (*i)->assets ();
+		a.merge (t);
+	}
+
+	a.sort ();
+	a.unique ();
+	return a;
+}
+
+CPL::CPL (string directory, string name, ContentKind content_kind, int length, int frames_per_second)
+	: _directory (directory)
+	, _name (name)
+	, _content_kind (content_kind)
+	, _length (length)
+	, _fps (frames_per_second)
+{
+	_uuid = make_uuid ();
+}
+
+CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, bool require_mxfs)
+	: _directory (directory)
+	, _content_kind (FEATURE)
+	, _length (0)
+	, _fps (0)
+{
+	/* Read the XML */
+	shared_ptr<CPLFile> cpl;
+	try {
+		cpl.reset (new CPLFile (file));
+	} catch (FileError& e) {
+		throw FileError ("could not load CPL file", file);
+	}
+	
 	/* Now cherry-pick the required bits into our own data structure */
 	
 	_name = cpl->annotation_text;
 	_content_kind = cpl->content_kind;
-	_length = 0;
-	_fps = 0;
 
 	for (list<shared_ptr<CPLReel> >::iterator i = cpl->reels.begin(); i != cpl->reels.end(); ++i) {
 
@@ -322,7 +335,6 @@ DCP::DCP (string directory, bool require_mxfs)
 			p = (*i)->asset_list->main_stereoscopic_picture;
 		}
 		
-		assert (_fps == 0 || _fps == p->edit_rate.numerator);
 		_fps = p->edit_rate.numerator;
 		_length += p->duration;
 
@@ -397,8 +409,102 @@ DCP::DCP (string directory, bool require_mxfs)
 	}
 }
 
+void
+CPL::add_reel (shared_ptr<const Reel> reel)
+{
+	_reels.push_back (reel);
+}
+
+void
+CPL::write_xml () const
+{
+	filesystem::path p;
+	p /= _directory;
+	stringstream s;
+	s << _uuid << "_cpl.xml";
+	p /= s.str();
+	ofstream os (p.string().c_str());
+	
+	os << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+	   << "<CompositionPlaylist xmlns=\"http://www.smpte-ra.org/schemas/429-7/2006/CPL\">\n"
+	   << "  <Id>urn:uuid:" << _uuid << "</Id>\n"
+	   << "  <AnnotationText>" << _name << "</AnnotationText>\n"
+	   << "  <IssueDate>" << Metadata::instance()->issue_date << "</IssueDate>\n"
+	   << "  <Creator>" << Metadata::instance()->creator << "</Creator>\n"
+	   << "  <ContentTitleText>" << _name << "</ContentTitleText>\n"
+	   << "  <ContentKind>" << content_kind_to_string (_content_kind) << "</ContentKind>\n"
+	   << "  <ContentVersion>\n"
+	   << "    <Id>urn:uri:" << _uuid << "_" << Metadata::instance()->issue_date << "</Id>\n"
+	   << "    <LabelText>" << _uuid << "_" << Metadata::instance()->issue_date << "</LabelText>\n"
+	   << "  </ContentVersion>\n"
+	   << "  <RatingList/>\n"
+	   << "  <ReelList>\n";
+	
+	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
+		(*i)->write_to_cpl (os);
+	}
+
+	os << "      </AssetList>\n"
+	   << "    </Reel>\n"
+	   << "  </ReelList>\n"
+	   << "</CompositionPlaylist>\n";
+
+	os.close ();
+
+	_digest = make_digest (p.string (), 0);
+	_length = filesystem::file_size (p.string ());
+}
+
+void
+CPL::write_to_pkl (ostream& s) const
+{
+	s << "    <Asset>\n"
+	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
+	  << "      <Hash>" << _digest << "</Hash>\n"
+	  << "      <Size>" << _length << "</Size>\n"
+	  << "      <Type>text/xml</Type>\n"
+	  << "    </Asset>\n";
+}
+
+list<shared_ptr<const Asset> >
+CPL::assets () const
+{
+	list<shared_ptr<const Asset> > a;
+	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
+		if ((*i)->main_picture ()) {
+			a.push_back ((*i)->main_picture ());
+		}
+		if ((*i)->main_sound ()) {
+			a.push_back ((*i)->main_sound ());
+		}
+		if ((*i)->main_subtitle ()) {
+			a.push_back ((*i)->main_subtitle ());
+		}
+	}
+
+	return a;
+}
+
+void
+CPL::write_to_assetmap (ostream& s) const
+{
+	s << "    <Asset>\n"
+	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
+	  << "      <ChunkList>\n"
+	  << "        <Chunk>\n"
+	  << "          <Path>" << _uuid << "_cpl.xml</Path>\n"
+	  << "          <VolumeIndex>1</VolumeIndex>\n"
+	  << "          <Offset>0</Offset>\n"
+	  << "          <Length>" << _length << "</Length>\n"
+	  << "        </Chunk>\n"
+	  << "      </ChunkList>\n"
+	  << "    </Asset>\n";
+}
+	
+	
+	
 list<string>
-DCP::equals (DCP const & other, EqualityOptions opt) const
+CPL::equals (CPL const & other, EqualityOptions opt) const
 {
 	list<string> notes;
 	
@@ -433,4 +539,3 @@ DCP::equals (DCP const & other, EqualityOptions opt) const
 
 	return notes;
 }
-

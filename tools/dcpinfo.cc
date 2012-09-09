@@ -58,31 +58,39 @@ main (int argc, char* argv[])
 
 	DCP* dcp = 0;
 	try {
-		dcp = new DCP (argv[optind], false);
+		dcp = new DCP (argv[optind]);
+		dcp->read (false);
 	} catch (FileError& e) {
 		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << " " << e.filename() << "\n";
 		exit (EXIT_FAILURE);
 	}
 
-	cout << "DCP: " << argv[optind] << "\n"
-	     << "\tLength: " << dcp->length() << "\n"
-	     << "\tFrames per second: " << dcp->frames_per_second() << "\n";
+	cout << "DCP: " << argv[optind] << "\n";
 
-	list<shared_ptr<const Reel> > reels = dcp->reels ();
+	list<shared_ptr<const CPL> > cpls = dcp->cpls ();
 
-	int R = 1;
-	for (list<shared_ptr<const Reel> >::const_iterator i = reels.begin(); i != reels.end(); ++i) {
-		cout << "Reel " << R << "\n";
-		if ((*i)->main_picture()) {
-			cout << "\tPicture:  " << (*i)->main_picture()->width() << "x" << (*i)->main_picture()->height() << "\n";
+	for (list<shared_ptr<const CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
+		cout << "  CPL: " << (*i)->name() << "\n"
+		     << "    Length: " << (*i)->length() << "\n"
+		     << "    Frames per second: " << (*i)->frames_per_second() << "\n";
+		
+		list<shared_ptr<const Reel> > reels = (*i)->reels ();
+
+		int R = 1;
+		for (list<shared_ptr<const Reel> >::const_iterator j = reels.begin(); j != reels.end(); ++j) {
+			cout << "    Reel " << R << "\n";
+			
+			if ((*j)->main_picture()) {
+				cout << "      Picture:  " << (*j)->main_picture()->width() << "x" << (*j)->main_picture()->height() << "\n";
+			}
+			if ((*j)->main_sound()) {
+				cout << "      Sound:    " << (*j)->main_sound()->channels() << " channels at " << (*j)->main_sound()->sampling_rate() << "Hz\n";
+			}
+			if ((*j)->main_subtitle()) {
+				cout << "      Subtitle: " << (*j)->main_subtitle()->subtitles().size() << " subtitles in " << (*j)->main_subtitle()->language() << "\n";
+			}
+			++R;
 		}
-		if ((*i)->main_sound()) {
-			cout << "\tSound:    " << (*i)->main_sound()->channels() << " channels at " << (*i)->main_sound()->sampling_rate() << "Hz\n";
-		}
-		if ((*i)->main_subtitle()) {
-			cout << "\tSubtitle: " << (*i)->main_subtitle()->subtitles().size() << " subtitles in " << (*i)->main_subtitle()->language() << "\n";
-		}
-		++R;
 	}
 
 	return 0;
