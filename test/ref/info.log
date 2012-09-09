@@ -361,6 +361,11 @@ DCP: ../libdcp-test/TREE-OF-LIFE_TLR-2_F_EN-DE-FR_INT-TD_51_2K_SUM_20110126_LSP
           font:Arial; italic:1; color:(255, 255, 255); in:0:2:3.60; out:0:2:5.130; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Prochainement
           font:Arial; italic:1; color:(255, 255, 255); in:0:2:3.60; out:0:2:5.130; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
+DCP: ../libdcp-test/TOTAL-RECALL_TLR-A_F_FR-XX_FR_51_2K_SPE_20120406_ECL_OV
+  CPL: TOTAL-RECALL_TLR-A_F_FR-XX_FR_51_2K_SPE_20120406_ECL_OV
+    Length: 2976
+    Frames per second: 24
+    Reel 1
 DCP: ../libdcp-test/PARANORMAL-ACT-4_TLR-A_S_EN-FR-DE_CH_51_2K_PC_20120727_DUK_OV
   CPL: PARANORMAL-ACT-4_TLR-A_S_EN-FR-DE_CH_51_2K_PC_20120727_DUK_OV
     Length: 2464
