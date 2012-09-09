@@ -5,6 +5,11 @@ DCP: ../libdcp-test/ASTERIX_TSR_F_FR-DE_51_2K_20120411_SE_2D
     Reel 1
     Reel 2
       Subtitle: 30 subtitles in Custom
+DCP: ../libdcp-test/HOLY-MOTORS_TLR_F_FR-XX_51_2K_20120529_ECL_OV
+  CPL: HOLY-MOTORS_TLR_F_FR-XX_51_2K_20120529_ECL_OV
+    Length: 2575
+    Frames per second: 24
+    Reel 1
 DCP: ../libdcp-test/WRECK-IT-RALPH_TLR-A-3D_S_EN-DEFR_INT_51_2K_DI_20120620_TEU_i3D
   CPL: WRECK-IT-RALPH_TLR-A-3D_S_EN-DEFR_INT_51_2K_DI_20120620_TEU_i3D
     Length: 3385
