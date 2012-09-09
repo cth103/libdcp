@@ -17,7 +17,7 @@
 
 */
 
-/** @file  src/cpl.h
+/** @file  src/cpl_file.h
  *  @brief Classes used to parse a CPL.
  */
 
@@ -125,17 +125,17 @@ public:
 	std::string label_text;
 };
 
-/** @class CPL
+/** @class CPLFile
  *  @brief Class to parse a CPL
  *
  *  This class is used to parse XML CPL files.  It is rarely necessary
  *  for the caller to use it outside libdcp.
  */
-class CPL : public XMLFile
+class CPLFile : public XMLFile
 {
 public:
 	/** Parse a CPL XML file into our member variables */
-	CPL (std::string file);
+	CPLFile (std::string file);
 
 	std::string id;
 	std::string annotation_text;

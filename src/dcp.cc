@@ -36,7 +36,7 @@
 #include "util.h"
 #include "metadata.h"
 #include "exceptions.h"
-#include "cpl.h"
+#include "cpl_file.h"
 #include "pkl.h"
 #include "asset_map.h"
 #include "reel.h"
@@ -288,9 +288,9 @@ DCP::DCP (string directory, bool require_mxfs)
 	}
 
 	/* Read the XML */
-	shared_ptr<CPL> cpl;
+	shared_ptr<CPLFile> cpl;
 	try {
-		cpl.reset (new CPL (files.cpl));
+		cpl.reset (new CPLFile (files.cpl));
 	} catch (FileError& e) {
 		throw FileError ("could not load CPL file", files.cpl);
 	}

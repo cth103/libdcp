@@ -17,17 +17,17 @@
 
 */
 
-/** @file  src/cpl.cc
+/** @file  src/cpl_file.cc
  *  @brief Classes used to parse a CPL.
  */
 
 #include <iostream>
-#include "cpl.h"
+#include "cpl_file.h"
 
 using namespace std;
 using namespace libdcp;
 
-CPL::CPL (string file)
+CPLFile::CPLFile (string file)
 	: XMLFile (file, "CompositionPlaylist")
 {
 	id = string_node ("Id");

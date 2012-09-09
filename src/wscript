@@ -8,7 +8,7 @@ def build(bld):
     obj.source = """
                  asset.cc
                  asset_map.cc
-                 cpl.cc
+                 cpl_file.cc
                  dcp.cc        
                  dcp_time.cc
                  lut.cc
