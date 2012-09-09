@@ -149,6 +149,16 @@ libdcp::content_kind_from_string (string type)
 }
 		
 bool
+libdcp::starts_with (string big, string little)
+{
+	if (little.size() > big.size()) {
+		return false;
+	}
+
+	return big.substr (0, little.length()) == little;
+}
+
+bool
 libdcp::ends_with (string big, string little)
 {
 	if (little.size() > big.size()) {

@@ -22,6 +22,7 @@
  */
 
 #include "asset_map.h"
+#include "util.h"
 
 using namespace std;
 using namespace boost;
@@ -50,6 +51,13 @@ Chunk::Chunk (xmlpp::Node const * node)
 	: XMLNode (node)
 {
 	path = string_node ("Path");
+
+	string const prefix = "file://";
+
+	if (starts_with (path, prefix)) {
+		path = path.substr (prefix.length());
+	}
+	
 	volume_index = optional_int64_node ("VolumeIndex");
 	offset = optional_int64_node ("Offset");
 	length = optional_int64_node ("Length");

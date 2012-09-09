@@ -82,6 +82,11 @@ DCP: ../libdcp-test/MACHINE-GUN-PREACH_TLR-1_F_EN-de-fr_CH_51_2K_TIT_20111107
     Frames per second: 24
     Reel 1
       Subtitle: 94 subtitles in English
+DCP: ../libdcp-test/DU-VENT-DANS-MES-MOLLETS_TLR_F_FR-XX_FR_51_2K_GA_20120621_ECL_OV
+  CPL: DU-VENT-DANS-MES-MOLLETS_TLR_F_FR-XX_FR_51_2K_GA_20120621_ECL_OV
+    Length: 2502
+    Frames per second: 24
+    Reel 1
 DCP: ../libdcp-test/ASTERIX_TLR-01_F_FR-DE_CH_51_2K_FRE_20120730_DGL_OV
   CPL: 
     Length: 3080
