@@ -175,6 +175,9 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 	}
 
 	opj_cio_close (cio);
+
+	image->x1 /= pow (2, reduce);
+	image->y1 /= pow (2, reduce);
 	return image;
 }
 
@@ -194,13 +197,13 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
 	int* xyz_z = xyz_frame->comps[2].data;
 
 	shared_ptr<ARGBFrame> argb_frame (new ARGBFrame (xyz_frame->x1, xyz_frame->y1));
-	
+
 	uint8_t* argb = argb_frame->data ();
 	
 	for (int y = 0; y < xyz_frame->y1; ++y) {
 		uint8_t* argb_line = argb;
 		for (int x = 0; x < xyz_frame->x1; ++x) {
-			
+
 			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_x < 4096 && *xyz_z < 4096);
 			
 			/* In gamma LUT */
