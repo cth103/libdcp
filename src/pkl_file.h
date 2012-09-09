@@ -17,35 +17,40 @@
 
 */
 
-/** @file  src/cpl.cc
- *  @brief Classes used to parse a PKL.
+/** @file  src/pkl_file.h
+ *  @brief Classes used to parse a PKL
  */
 
-#include <iostream>
-#include "pkl.h"
+#include <boost/shared_ptr.hpp>
+#include "xml.h"
 
-using namespace std;
-using namespace boost;
-using namespace libdcp;
+namespace libdcp {
 
-PKL::PKL (string file)
-	: XMLFile (file, "PackingList")
+class PKLAsset : public XMLNode
 {
-	id = string_node ("Id");
-	annotation_text = string_node ("AnnotationText");
-	issue_date = string_node ("IssueDate");
-	issuer = string_node ("Issuer");
-	creator = string_node ("Creator");
-	assets = sub_nodes<PKLAsset> ("AssetList", "Asset");
-}
+public:
+	PKLAsset () {}
+	PKLAsset (xmlpp::Node const * node);
 
-PKLAsset::PKLAsset (xmlpp::Node const * node)
-	: XMLNode (node)
+	std::string id;
+	std::string annotation_text;
+	std::string hash;
+	int64_t size;
+	std::string type;
+	std::string original_file_name;
+};
+
+class PKLFile : public XMLFile
 {
-	id = string_node ("Id");
-	annotation_text = optional_string_node ("AnnotationText");
-	hash = string_node ("Hash");
-	size = int64_node ("Size");
-	type = string_node ("Type");
-	original_file_name = optional_string_node ("OriginalFileName");
+public:
+	PKLFile (std::string file);
+
+	std::string id;
+	std::string annotation_text;
+	std::string issue_date;
+	std::string issuer;
+	std::string creator;
+	std::list<boost::shared_ptr<PKLAsset> > assets;
+};
+	
 }

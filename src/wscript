@@ -16,7 +16,7 @@ def build(bld):
                  mxf_asset.cc
                  picture_asset.cc
                  picture_frame.cc
-                 pkl.cc
+                 pkl_file.cc
                  reel.cc
                  argb_frame.cc
                  sound_asset.cc

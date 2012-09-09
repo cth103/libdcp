@@ -37,7 +37,7 @@
 #include "metadata.h"
 #include "exceptions.h"
 #include "cpl_file.h"
-#include "pkl.h"
+#include "pkl_file.h"
 #include "asset_map.h"
 #include "reel.h"
 
@@ -295,9 +295,9 @@ DCP::DCP (string directory, bool require_mxfs)
 		throw FileError ("could not load CPL file", files.cpl);
 	}
 
-	shared_ptr<PKL> pkl;
+	shared_ptr<PKLFile> pkl;
 	try {
-		pkl.reset (new PKL (files.pkl));
+		pkl.reset (new PKLFile (files.pkl));
 	} catch (FileError& e) {
 		throw FileError ("could not load PKL file", files.pkl);
 	}
