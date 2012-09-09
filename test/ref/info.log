@@ -30,6 +30,15 @@ DCP: ../libdcp-test/AVATAR-3D_TLR-H_F_EN-XX_INTL-TXTD_2K_51_TCF_20091022_DUK-i3D
     Length: 4960
     Frames per second: 24
     Reel 1
+DCP: ../libdcp-test/NEZ-DANS-RUISSEAU_TLR-1_F_FR-XX_51_2K
+  CPL: 
+    Length: 2833
+    Frames per second: 25
+    Reel 1
+  CPL: 
+    Length: 2833
+    Frames per second: 25
+    Reel 1
 DCP: ../libdcp-test/Amour_TRL-1_F_FR-XX_51_DCP_4K_JP2K_20120613_LIS_OV
   CPL: Amour_TRL-1_F_FR-XX_51_DCP_4K_JP2K_20120613_LIS_OV
     Length: 2584
