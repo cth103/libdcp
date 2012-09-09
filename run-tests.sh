@@ -34,7 +34,7 @@ else
   exit 1
 fi
 
-diff -q build/test/info.log test/ref/info.log
+diff -q build/test/info.log ../libdcp-test/info.log
 if [ "$?" != "0" ]; then
   echo "FAIL: dcpinfo output incorrect"
   exit 1
