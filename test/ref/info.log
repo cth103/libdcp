@@ -15,6 +15,12 @@ DCP: ../libdcp-test/AVATAR-3D_TLR-H_F_EN-XX_INTL-TXTD_2K_51_TCF_20091022_DUK-i3D
     Length: 4960
     Frames per second: 24
     Reel 1
+DCP: ../libdcp-test/TREE-OF-LIFE_TLR-2_F_EN-DE-FR_INT-TD_51_2K_SUM_20110126_LSP
+  CPL: TREE-OF-LIFE_TLR-2_F_EN-DE-FR_INT-TD_51_2K_SUM_20110126_LSP
+    Length: 3081
+    Frames per second: 24
+    Reel 1
+      Subtitle: 55 subtitles in German-French
 DCP: ../libdcp-test/END-OF-TIME_TLR_F_XX-XX_CH_51_2K_LOK_20120726_DGL_OV
   CPL: 
     Length: 2865
