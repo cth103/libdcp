@@ -33,7 +33,7 @@ CPLFile::CPLFile (string file)
 	id = string_node ("Id");
 	annotation_text = optional_string_node ("AnnotationText");
 	issue_date = string_node ("IssueDate");
-	creator = string_node ("Creator");
+	creator = optional_string_node ("Creator");
 	content_title_text = string_node ("ContentTitleText");
 	content_kind = kind_node ("ContentKind");
 	content_version = optional_sub_node<ContentVersion> ("ContentVersion");
