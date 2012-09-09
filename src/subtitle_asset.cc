@@ -19,6 +19,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include "subtitle_asset.h"
+#include "util.h"
 
 using namespace std;
 using namespace boost;
@@ -42,71 +43,93 @@ SubtitleAsset::SubtitleAsset (string directory, string xml)
 	   in a sane way.
 	*/
 
-	list<shared_ptr<FontNode> > current_font_nodes;
-	list<shared_ptr<SubtitleNode> > current_subtitle_nodes;
-	current_subtitle_nodes.push_back (shared_ptr<SubtitleNode> ());
-	examine_font_nodes (font_nodes, current_font_nodes, current_subtitle_nodes);
+	ParseState parse_state;
+	examine_font_nodes (font_nodes, parse_state);
 }
 
 void
 SubtitleAsset::examine_font_nodes (
 	list<shared_ptr<FontNode> > const & font_nodes,
-	list<shared_ptr<FontNode> >& current_font_nodes,
-	list<shared_ptr<SubtitleNode> >& current_subtitle_nodes
+	ParseState& parse_state
 	)
 {
 	for (list<shared_ptr<FontNode> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
-		
-		current_font_nodes.push_back (*i);
+
+		parse_state.font_nodes.push_back (*i);
+		maybe_add_subtitle ((*i)->text, parse_state);
 
 		for (list<shared_ptr<SubtitleNode> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
-			current_subtitle_nodes.push_back (*j);
-			examine_text_nodes (*j, (*j)->text_nodes, current_font_nodes);
-			examine_font_nodes ((*j)->font_nodes, current_font_nodes, current_subtitle_nodes);
-			current_subtitle_nodes.pop_back ();
+			parse_state.subtitle_nodes.push_back (*j);
+			examine_text_nodes ((*j)->text_nodes, parse_state);
+			examine_font_nodes ((*j)->font_nodes, parse_state);
+			parse_state.subtitle_nodes.pop_back ();
 		}
 	
-		examine_font_nodes ((*i)->font_nodes, current_font_nodes, current_subtitle_nodes);
-		examine_text_nodes (current_subtitle_nodes.back (), (*i)->text_nodes, current_font_nodes);
+		examine_font_nodes ((*i)->font_nodes, parse_state);
+		examine_text_nodes ((*i)->text_nodes, parse_state);
 		
-		current_font_nodes.pop_back ();
+		parse_state.font_nodes.pop_back ();
 	}
 }
 
 void
 SubtitleAsset::examine_text_nodes (
-	shared_ptr<SubtitleNode> subtitle_node,
 	list<shared_ptr<TextNode> > const & text_nodes,
-	list<shared_ptr<FontNode> >& current_font_nodes
+	ParseState& parse_state
 	)
 {
 	for (list<shared_ptr<TextNode> >::const_iterator i = text_nodes.begin(); i != text_nodes.end(); ++i) {
-		FontNode effective (current_font_nodes);
-		_subtitles.push_back (
-			shared_ptr<Subtitle> (
-				new Subtitle (
-					font_id_to_name (effective.id),
-					effective.italic.get(),
-					effective.color.get(),
-					effective.size,
-					subtitle_node->in,
-					subtitle_node->out,
-					(*i)->v_position,
-					(*i)->v_align,
-					(*i)->text,
-					effective.effect.get(),
-					effective.effect_color.get(),
-					subtitle_node->fade_up_time,
-					subtitle_node->fade_down_time
-					)
-				)
-			);
+		parse_state.text_nodes.push_back (*i);
+		maybe_add_subtitle ((*i)->text, parse_state);
+		examine_font_nodes ((*i)->font_nodes, parse_state);
+		parse_state.text_nodes.pop_back ();
 	}
+}
+
+void
+SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
+{
+	if (empty_or_white_space (text)) {
+		return;
+	}
+	
+	if (parse_state.text_nodes.empty() || parse_state.subtitle_nodes.empty ()) {
+		return;
+	}
+
+	assert (!parse_state.text_nodes.empty ());
+	assert (!parse_state.subtitle_nodes.empty ());
+	
+	FontNode effective_font (parse_state.font_nodes);
+	TextNode effective_text (*parse_state.text_nodes.back ());
+	SubtitleNode effective_subtitle (*parse_state.subtitle_nodes.back ());
+
+	_subtitles.push_back (
+		shared_ptr<Subtitle> (
+			new Subtitle (
+				font_id_to_name (effective_font.id),
+				effective_font.italic.get(),
+				effective_font.color.get(),
+				effective_font.size,
+				effective_subtitle.in,
+				effective_subtitle.out,
+				effective_text.v_position,
+				effective_text.v_align,
+				text,
+				effective_font.effect.get(),
+				effective_font.effect_color.get(),
+				effective_subtitle.fade_up_time,
+				effective_subtitle.fade_down_time
+				)
+			)
+		);
 }
 
 FontNode::FontNode (xmlpp::Node const * node)
 	: XMLNode (node)
 {
+	text = content ();
+	
 	id = optional_string_attribute ("Id");
 	size = optional_int64_attribute ("Size");
 	italic = optional_bool_attribute ("Italic");
@@ -209,8 +232,9 @@ TextNode::TextNode (xmlpp::Node const * node)
 	} else if (v == "bottom") {
 		v_align = BOTTOM;
 	}
-}
 
+	font_nodes = sub_nodes<FontNode> ("Font");
+}
 
 list<shared_ptr<Subtitle> >
 SubtitleAsset::subtitles_at (Time t) const

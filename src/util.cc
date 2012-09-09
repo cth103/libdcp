@@ -252,3 +252,15 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
 
 	return argb_frame;
 }
+
+bool
+libdcp::empty_or_white_space (string s)
+{
+	for (size_t i = 0; i < s.length(); ++i) {
+		if (s[i] != ' ' && s[i] != '\n' && s[i] != '\t') {
+			return false;
+		}
+	}
+
+	return true;
+}

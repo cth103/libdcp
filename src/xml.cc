@@ -226,22 +226,17 @@ XMLNode::done ()
 string
 XMLNode::content ()
 {
+	string content;
+	
         xmlpp::Node::NodeList c = _node->get_children ();
-
-	if (c.size() > 1) {
-		throw XMLError ("unexpected content in XML node");
+	for (xmlpp::Node::NodeList::const_iterator i = c.begin(); i != c.end(); ++i) {
+		xmlpp::ContentNode const * v = dynamic_cast<xmlpp::ContentNode const *> (*i);
+		if (v) {
+			content += v->get_content ();
+		}
 	}
 
-	if (c.empty ()) {
-		return "";
-	}
-	
-        xmlpp::ContentNode const * v = dynamic_cast<xmlpp::ContentNode const *> (c.front());
-	if (!v) {
-		throw XMLError ("missing content in XML node");
-	}
-	
-	return v->get_content ();
+	return content;
 }
 
 XMLFile::XMLFile (string file, string root_name)

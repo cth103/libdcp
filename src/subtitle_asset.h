@@ -35,6 +35,7 @@ public:
 	float v_position;
 	VAlign v_align;
 	std::string text;
+	std::list<boost::shared_ptr<FontNode> > font_nodes;
 };
 
 class SubtitleNode : public XMLNode
@@ -61,6 +62,7 @@ public:
 	FontNode (xmlpp::Node const * node);
 	FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes);
 
+	std::string text;
 	std::string id;
 	int size;
 	boost::optional<bool> italic;
@@ -198,16 +200,22 @@ public:
 private:
 	std::string font_id_to_name (std::string id) const;
 
+	struct ParseState {
+		std::list<boost::shared_ptr<FontNode> > font_nodes;
+		std::list<boost::shared_ptr<TextNode> > text_nodes;
+		std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
+	};
+
+	void maybe_add_subtitle (std::string text, ParseState const & parse_state);
+	
 	void examine_font_nodes (
 		std::list<boost::shared_ptr<FontNode> > const & font_nodes,
-		std::list<boost::shared_ptr<FontNode> >& current_font_nodes,
-		std::list<boost::shared_ptr<SubtitleNode> >& current_subtitle_nodes
+		ParseState& parse_state
 		);
 	
 	void examine_text_nodes (
-		boost::shared_ptr<SubtitleNode> subtitle_node,
 		std::list<boost::shared_ptr<TextNode> > const & text_nodes,
-		std::list<boost::shared_ptr<FontNode> >& current_font_nodes
+		ParseState& parse_state
 		);
 	
 	std::string _subtitle_id;

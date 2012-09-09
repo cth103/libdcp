@@ -356,6 +356,144 @@ DCP: ../libdcp-test/TREE-OF-LIFE_TLR-2_F_EN-DE-FR_INT-TD_51_2K_SUM_20110126_LSP
           font:Arial; italic:1; color:(255, 255, 255); in:0:2:3.60; out:0:2:5.130; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Prochainement
           font:Arial; italic:1; color:(255, 255, 255); in:0:2:3.60; out:0:2:5.130; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
+DCP: ../libdcp-test/PARANORMAL-ACT-4_TLR-A_S_EN-FR-DE_CH_51_2K_PC_20120727_DUK_OV
+  CPL: PARANORMAL-ACT-4_TLR-A_S_EN-FR-DE_CH_51_2K_PC_20120727_DUK_OV
+    Length: 2464
+    Frames per second: 24
+    Reel 1
+      Subtitle: 66 subtitles in German French (FR) Hybrid
+        Kristi, sag Hallo.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:1.20; out:0:0:2.114; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Tu dis bonjour, Kristi?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:1.20; out:0:0:2.114; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Da ist Katie.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:3.177; out:0:0:4.197; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        C'est Katie.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:3.177; out:0:0:4.197; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Das hat meine Schwester gut gemacht.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:5.20; out:0:0:6.187; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Fière de ma sœur.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:5.20; out:0:0:6.187; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Hunter...
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:6.229; out:0:0:7.145; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        2006
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:7.239; out:0:0:10.31; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        EN 2006
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:7.239; out:0:0:10.31; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        VERSCHWANDEN SIE
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:13.114; out:0:0:15.239; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        ILS ONT DISPARU
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:13.114; out:0:0:15.239; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        DIESES JAHR
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:19.52; out:0:0:21.72; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        CETTE ANNÉE
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:19.52; out:0:0:21.72; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        FÜHRT ALL DIE AKTIVITÄT
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:32.177; out:0:0:34.125; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        TOUTE L'ACTIVITÉ
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:32.177; out:0:0:34.125; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Ich höre dauernd Geräusche.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:34.208; out:0:0:36.93; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        J'ai entendu beaucoup de bruit.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:34.208; out:0:0:36.93; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Es passiert lauter seltsames Zeug,
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:36.114; out:0:0:38.41; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Il se passe des trucs bizarres...
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:36.114; out:0:0:38.41; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        seit die neuen Nachbarn eingezogen sind.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:38.62; out:0:0:39.208; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        depuis l'arrivée des voisins.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:38.62; out:0:0:39.208; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Lichter können immer mal ausgehen.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:40.0; out:0:0:41.145; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        La lumière s'éteint tout le temps.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:40.0; out:0:0:41.145; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        HIERZU
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:42.41; out:0:0:44.177; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        A MENÉ À ÇA
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:42.41; out:0:0:44.177; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Es passiert wieder. Die Bewegungsmelder
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:44.197; out:0:0:46.10; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Ça recommence. Les détecteurs...
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:44.197; out:0:0:46.10; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        schalten sich nachts ein und aus.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:46.31; out:0:0:47.72; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        de mouvement s'allument la nuit.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:46.31; out:0:0:47.72; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Na klar.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:47.104; out:0:0:48.104; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        C'est ça.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:47.104; out:0:0:48.104; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Ich wette, das ist
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:48.125; out:0:0:49.52; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        C'est sûrement...
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:48.125; out:0:0:49.52; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        der seltsame Junge von gegenüber.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:49.72; out:0:0:51.62; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        le gamin zarbi d'en face.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:49.72; out:0:0:51.62; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Schau.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:51.104; out:0:0:52.104; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Regarde.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:51.104; out:0:0:52.104; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Siehst du ihn?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:53.135; out:0:0:55.93; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Tu le vois?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:53.135; out:0:0:55.93; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Was zum Teufel?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:56.125; out:0:0:58.0; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Quoi?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:56.125; out:0:0:58.0; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Er ist so unheimlich.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:58.104; out:0:1:0.104; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Il est trop flippant.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:58.104; out:0:1:0.104; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Was tut er da?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:1.229; out:0:1:3.104; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Que fait-il?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:1.229; out:0:1:3.104; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        - Unheimlich, oder? - Ja.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:3.145; out:0:1:5.124; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        - Flippant, hein? - Oui.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:3.145; out:0:1:5.124; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Was ist los?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:8.0; out:0:1:9.83; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Que se passe-t-il?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:8.0; out:0:1:9.83; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Keine Ahnung. Es ist seltsam.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:10.208; out:0:1:13.41; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Aucune idée. C'est bizarre.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:10.208; out:0:1:13.41; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Alice, was passiert da?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:13.145; out:0:1:15.62; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Alice, qu'y a-t-il?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:13.145; out:0:1:15.62; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Ich weiss nicht.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:15.104; out:0:1:16.145; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Je ne sais pas.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:15.104; out:0:1:16.145; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Vordertür offen. Hintertür offen.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:17.145; out:0:1:20.104; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Entrée ouverte. Porte de derrière ouverte.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:17.145; out:0:1:20.104; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Was ist da los?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:20.166; out:0:1:22.41; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Alice, que se passe-t-il?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:20.166; out:0:1:22.41; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        - Alice? - Was ist?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:22.125; out:0:1:23.166; v_position:83.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        - Alice? - Quoi?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:22.125; out:0:1:23.166; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        Alice!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:23.218; out:0:1:25.52; v_position:90; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        DEMNÄCHST - ParanormalMovie.com
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:32.229; out:0:1:36.72; v_position:56.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        PROCHAINEMENT - ParanormalMovie.com
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:32.229; out:0:1:36.72; v_position:63; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        WAS GESCHAH WIRKLICH?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:36.135; out:0:1:41.135; v_position:56.69; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
+        QU'EST-IL VRAIMENT ARRIVÉ?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:36.135; out:0:1:41.135; v_position:63; v_align:0; effect:1; effect_color:(255, 255, 255); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 45
 DCP: ../libdcp-test/END-OF-TIME_TLR_F_XX-XX_CH_51_2K_LOK_20120726_DGL_OV
   CPL: 
     Length: 2865
