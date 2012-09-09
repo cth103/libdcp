@@ -16,21 +16,25 @@ using namespace libdcp;
 static void
 help (string n)
 {
-	cerr << "Syntax: " << n << " <DCP>\n";
+	cerr << "Syntax: " << n << " [options] <DCP>\n"
+	     << "  -s, --subtitles  list all subtitles\n";
 }
 
 int
 main (int argc, char* argv[])
 {
+	bool subtitles = false;
+	
 	int option_index = 0;
 	while (1) {
 		static struct option long_options[] = {
 			{ "version", no_argument, 0, 'v'},
 			{ "help", no_argument, 0, 'h'},
+			{ "subtitles", no_argument, 0, 's'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "vh", long_options, &option_index);
+		int c = getopt_long (argc, argv, "vhs", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -43,6 +47,9 @@ main (int argc, char* argv[])
 		case 'h':
 			help (argv[0]);
 			exit (EXIT_SUCCESS);
+		case 's':
+			subtitles = true;
+			break;
 		}
 	}
 
@@ -87,7 +94,13 @@ main (int argc, char* argv[])
 				cout << "      Sound:    " << (*j)->main_sound()->channels() << " channels at " << (*j)->main_sound()->sampling_rate() << "Hz\n";
 			}
 			if ((*j)->main_subtitle()) {
-				cout << "      Subtitle: " << (*j)->main_subtitle()->subtitles().size() << " subtitles in " << (*j)->main_subtitle()->language() << "\n";
+				list<shared_ptr<Subtitle> > subs = (*j)->main_subtitle()->subtitles ();
+				cout << "      Subtitle: " << subs.size() << " subtitles in " << (*j)->main_subtitle()->language() << "\n";
+				if (subtitles) {
+					for (list<shared_ptr<Subtitle> >::const_iterator k = subs.begin(); k != subs.end(); ++k) {
+						cout << "        " << (*k)->text() << "\n";
+					}
+				}
 			}
 			++R;
 		}
