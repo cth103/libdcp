@@ -99,6 +99,19 @@ main (int argc, char* argv[])
 				if (subtitles) {
 					for (list<shared_ptr<Subtitle> >::const_iterator k = subs.begin(); k != subs.end(); ++k) {
 						cout << "        " << (*k)->text() << "\n";
+						cout << "          "
+						     << "font:" << (*k)->font() << "; "
+						     << "italic:" << (*k)->italic() << "; "
+						     << "color:" << (*k)->color() << "; "
+						     << "in:" << (*k)->in() << "; "
+						     << "out:" << (*k)->out() << "; "
+						     << "v_position:" << (*k)->v_position() << "; "
+						     << "v_align:" << (*k)->v_align() << "; "
+						     << "effect:" << (*k)->effect() << "; "
+						     << "effect_color:" << (*k)->effect_color() << "; "
+						     << "fade_up_time:" << (*k)->fade_up_time() << "; "
+						     << "fade_down_time:" << (*k)->fade_down_time() << "; "
+						     << "size: " << (*k)->size() << "\n";
 					}
 				}
 			}

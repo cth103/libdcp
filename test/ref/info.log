@@ -6,35 +6,65 @@ DCP: ../libdcp-test/ASTERIX_TSR_F_FR-DE_51_2K_20120411_SE_2D
     Reel 2
       Subtitle: 30 subtitles in Custom
         Ich gehe nach Gallien und treffe dich.
+          font:; italic:0; color:(235, 235, 235); in:0:0:1.135; out:0:0:5.198; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Ich gehe nach Ägypten,du behinderst mich.
+          font:; italic:0; color:(235, 235, 235); in:0:0:1.135; out:0:0:5.198; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Jetzt verhinderst du meinen Einmarsch in
+          font:; italic:0; color:(235, 235, 235); in:0:0:5.240; out:0:0:8.62; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         die Bretagne.
+          font:; italic:0; color:(235, 235, 235); in:0:0:5.240; out:0:0:8.62; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Du willst mein Leben zerstören.
+          font:; italic:0; color:(235, 235, 235); in:0:0:8.104; out:0:0:10.208; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Es ist so, Julius. Es sind die Abenteuer
+          font:; italic:0; color:(235, 235, 235); in:0:0:11.94; out:0:0:15.135; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         von Asterix, nicht von Cäsar.
+          font:; italic:0; color:(235, 235, 235); in:0:0:11.94; out:0:0:15.135; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         "Die Abenteuer von Asterix"?
+          font:; italic:0; color:(235, 235, 235); in:0:0:15.177; out:0:0:17.115; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Prima, wir gehen in die Bretagne.
+          font:; italic:0; color:(235, 235, 235); in:0:0:17.156; out:0:0:19.156; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Die haben ganz
+          font:; italic:0; color:(235, 235, 235); in:0:0:17.156; out:0:0:19.156; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         neue Römer.
+          font:; italic:0; color:(235, 235, 235); in:0:0:19.198; out:0:0:20.208; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Diese Kraft!
+          font:; italic:0; color:(235, 235, 235); in:0:0:22.31; out:0:0:23.73; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Der Zaubertrank, nehme ich an?
+          font:; italic:0; color:(235, 235, 235); in:0:0:23.115; out:0:0:24.229; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Ausgezeichnete Nachricht.
+          font:; italic:0; color:(235, 235, 235); in:0:0:25.21; out:0:0:26.94; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Wieso sprechen Sie rückwärts?
+          font:; italic:0; color:(235, 235, 235); in:0:0:26.146; out:0:0:27.177; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Wie bitte?
+          font:; italic:0; color:(235, 235, 235); in:0:0:27.219; out:0:0:29.62; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Das ist Asterax.
+          font:; italic:0; color:(235, 235, 235); in:0:0:30.31; out:0:0:31.83; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Guten Abend.
+          font:; italic:0; color:(235, 235, 235); in:0:0:32.10; out:0:0:32.208; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Obelax.
+          font:; italic:0; color:(235, 235, 235); in:0:0:33.21; out:0:0:34.52; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         - Guten Abend.
+          font:; italic:0; color:(235, 235, 235); in:0:0:34.104; out:0:0:36.94; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         - Nein, eine Sekunde.
+          font:; italic:0; color:(235, 235, 235); in:0:0:34.104; out:0:0:36.94; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         "Bonsoir" mit Betonung auf dem "A".
+          font:; italic:0; color:(235, 235, 235); in:0:0:36.146; out:0:0:39.0; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         ASTERIX & OBELIX
+          font:; italic:0; color:(235, 235, 235); in:0:0:40.167; out:0:0:43.219; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         IM AUFTRAG IHRER MAJESTÄT
+          font:; italic:0; color:(235, 235, 235); in:0:0:40.167; out:0:0:43.219; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         - Meine Kameraden sind ...
+          font:; italic:0; color:(235, 235, 235); in:0:0:44.10; out:0:0:45.156; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         - Gallier!
+          font:; italic:0; color:(235, 235, 235); in:0:0:44.10; out:0:0:45.156; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Einfach zu erraten.
+          font:; italic:0; color:(235, 235, 235); in:0:0:45.198; out:0:0:47.21; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Wegen des Akzents?
+          font:; italic:0; color:(235, 235, 235); in:0:0:47.94; out:0:0:48.73; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         Nein, wegen des Geruchs.
+          font:; italic:0; color:(235, 235, 235); in:0:0:48.125; out:0:0:50.52; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
         www.frenetic.ch
+          font:; italic:0; color:(235, 235, 235); in:0:0:50.104; out:0:0:52.104; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 36
 DCP: ../libdcp-test/HOLY-MOTORS_TLR_F_FR-XX_51_2K_20120529_ECL_OV
   CPL: HOLY-MOTORS_TLR_F_FR-XX_51_2K_20120529_ECL_OV
     Length: 2575
@@ -81,70 +111,135 @@ DCP: ../libdcp-test/T-T-S-SPY_TRL-1_F_EN-de-fr_CH_51_4K_OPTM_20111107_TIT_OV
     Reel 1
       Subtitle: 65 subtitles in Custom
         Ich bin im Ruhestand.
+          font:; italic:0; color:(255, 255, 255); in:0:0:4.62; out:0:0:5.208; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Je suis à la retraite.
+          font:; italic:0; color:(255, 255, 255); in:0:0:4.62; out:0:0:5.208; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Da ist ein Maulwurf.
+          font:; italic:0; color:(255, 255, 255); in:0:0:7.115; out:0:0:9.62; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Il y a une taupe.
+          font:; italic:0; color:(255, 255, 255); in:0:0:7.115; out:0:0:9.62; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         An der Spitze des "Circus".
+          font:; italic:0; color:(255, 255, 255); in:0:0:10.125; out:0:0:12.125; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Au plus haut niveau du "Cirque".
+          font:; italic:0; color:(255, 255, 255); in:0:0:10.125; out:0:0:12.125; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Er ist schon seit Jahren dort.
+          font:; italic:0; color:(255, 255, 255); in:0:0:14.104; out:0:0:15.188; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Et ce, depuis des années.
+          font:; italic:0; color:(255, 255, 255); in:0:0:14.104; out:0:0:15.188; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Du musst etwas für mich tun.
+          font:; italic:0; color:(255, 255, 255); in:0:0:17.115; out:0:0:18.188; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Fais quelque chose pour moi.
+          font:; italic:0; color:(255, 255, 255); in:0:0:17.115; out:0:0:18.188; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Sie beobachten uns sicher.
+          font:; italic:0; color:(255, 255, 255); in:0:0:19.208; out:0:0:21.52; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Dis-toi qu'ils t'observent.
+          font:; italic:0; color:(255, 255, 255); in:0:0:19.208; out:0:0:21.52; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         TRAUE NIEMANDEM
+          font:; italic:0; color:(255, 255, 255); in:0:0:21.135; out:0:0:22.177; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         NE TE FIE À PERSONNE
+          font:; italic:0; color:(255, 255, 255); in:0:0:21.135; out:0:0:22.177; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         - Wenn du erwischst wirst... - Was machst du hier?
+          font:; italic:0; color:(255, 255, 255); in:0:0:23.208; out:0:0:26.10; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         - Si on t'attrape... - Tu fous quoi ici?
+          font:; italic:0; color:(255, 255, 255); in:0:0:23.208; out:0:0:26.10; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Erwähn mich nicht.
+          font:; italic:0; color:(255, 255, 255); in:0:0:26.146; out:0:0:27.208; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Ne mentionne pas mon nom.
+          font:; italic:0; color:(255, 255, 255); in:0:0:26.146; out:0:0:27.208; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         VERDÄCHTIGE JEDEN
+          font:; italic:0; color:(255, 255, 255); in:0:0:28.0; out:0:0:29.62; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         SOUPÇONNE TOUT LE MONDE
+          font:; italic:0; color:(255, 255, 255); in:0:0:28.0; out:0:0:29.62; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Er ist ein Fanatiker.
+          font:; italic:0; color:(255, 255, 255); in:0:0:29.115; out:0:0:30.73; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         C'est un fanatique.
+          font:; italic:0; color:(255, 255, 255); in:0:0:29.115; out:0:0:30.73; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Und Fanatiker verschweigen immer etwas.
+          font:; italic:0; color:(255, 255, 255); in:0:0:30.125; out:0:0:34.94; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Et un fanatique cache toujours un secret.
+          font:; italic:0; color:(255, 255, 255); in:0:0:30.125; out:0:0:34.94; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Hallo Ricky.
+          font:; italic:0; color:(255, 255, 255); in:0:0:35.42; out:0:0:36.52; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Bonjour, Ricky.
+          font:; italic:0; color:(255, 255, 255); in:0:0:35.42; out:0:0:36.52; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         - Ich musste dich sehen. - Wieso?
+          font:; italic:0; color:(255, 255, 255); in:0:0:36.198; out:0:0:38.188; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         - J'avais besoin de te voir. - Pourquoi?
+          font:; italic:0; color:(255, 255, 255); in:0:0:36.198; out:0:0:38.188; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Da ist eine Frau.
+          font:; italic:0; color:(255, 255, 255); in:0:0:39.240; out:0:0:41.156; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Il y a une femme.
+          font:; italic:0; color:(255, 255, 255); in:0:0:39.240; out:0:0:41.156; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Ich weiss, wer Sie sind.
+          font:; italic:0; color:(255, 255, 255); in:0:0:42.146; out:0:0:43.240; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Je sais qui vous êtes.
+          font:; italic:0; color:(255, 255, 255); in:0:0:42.146; out:0:0:43.240; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Haben Sie Infos über den Doppelagenten?
+          font:; italic:0; color:(255, 255, 255); in:0:0:45.156; out:0:0:47.188; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Vous avez des infos sur l'agent double?
+          font:; italic:0; color:(255, 255, 255); in:0:0:45.156; out:0:0:47.188; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Was sie mir gesagt hat,
+          font:; italic:0; color:(255, 255, 255); in:0:0:49.62; out:0:0:50.188; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Elle m'a dit...
+          font:; italic:0; color:(255, 255, 255); in:0:0:49.62; out:0:0:50.188; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         war sensationell.
+          font:; italic:0; color:(255, 255, 255); in:0:0:52.42; out:0:0:53.188; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         quelque chose d'énorme.
+          font:; italic:0; color:(255, 255, 255); in:0:0:52.42; out:0:0:53.188; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         NACH DEM BESTSELLER-ROMAN VON...
+          font:; italic:0; color:(255, 255, 255); in:0:0:54.94; out:0:0:56.42; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         ADAPTÉ DU BEST-SELLER DE...
+          font:; italic:0; color:(255, 255, 255); in:0:0:54.94; out:0:0:56.42; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Sag es mir.
+          font:; italic:0; color:(255, 255, 255); in:0:0:57.188; out:0:0:58.104; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Raconte-moi.
+          font:; italic:0; color:(255, 255, 255); in:0:0:57.188; out:0:0:58.104; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Er tötete unseren Mann in Istanbul.
+          font:; italic:0; color:(255, 255, 255); in:0:0:59.73; out:0:1:0.135; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Il a tué notre homme à Istanbul.
+          font:; italic:0; color:(255, 255, 255); in:0:0:59.73; out:0:1:0.135; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Es wurde richtig hässlich.
+          font:; italic:0; color:(255, 255, 255); in:0:1:2.104; out:0:1:3.240; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         C'est vraiment sinistre.
+          font:; italic:0; color:(255, 255, 255); in:0:1:2.104; out:0:1:3.240; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         EIN FILM VON...
+          font:; italic:0; color:(255, 255, 255); in:0:1:4.125; out:0:1:6.0; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         UN FILM DE...
+          font:; italic:0; color:(255, 255, 255); in:0:1:4.125; out:0:1:6.0; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Nur wir stehen zwischen Moskau und dem 3. Weltkrieg.
+          font:; italic:0; color:(255, 255, 255); in:0:1:6.21; out:0:1:8.188; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Il n'y a que nous entre Moscou et la 3 e guerre mondiale.
+          font:; italic:0; color:(255, 255, 255); in:0:1:6.21; out:0:1:8.188; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Es ist an der Zeit.
+          font:; italic:0; color:(255, 255, 255); in:0:1:9.94; out:0:1:10.104; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         C'est le moment.
+          font:; italic:0; color:(255, 255, 255); in:0:1:9.94; out:0:1:10.104; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         BAFTA-PREISTRÄGER GARY OLDMAN
+          font:; italic:0; color:(255, 255, 255); in:0:1:11.31; out:0:1:12.188; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         GARY OLDMAN, LAURÉAT D'UN BAFTA AWARD
+          font:; italic:0; color:(255, 255, 255); in:0:1:11.31; out:0:1:12.188; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Er ist einer von 5 Männern.
+          font:; italic:0; color:(255, 255, 255); in:0:1:12.219; out:0:1:15.21; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         C'est l'un des cinq hommes.
+          font:; italic:0; color:(255, 255, 255); in:0:1:12.219; out:0:1:15.21; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Ich will von Ihnen nur...
+          font:; italic:0; color:(255, 255, 255); in:0:1:16.240; out:0:1:18.10; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         Je n'attends qu'une chose:
+          font:; italic:0; color:(255, 255, 255); in:0:1:16.240; out:0:1:18.10; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         einen Kontakt.
+          font:; italic:0; color:(255, 255, 255); in:0:1:19.156; out:0:1:21.21; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         un nom de code.
+          font:; italic:0; color:(255, 255, 255); in:0:1:19.156; out:0:1:21.21; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         DAME, KÖNIG, ASS, SPION
+          font:; italic:0; color:(255, 255, 255); in:0:1:35.21; out:0:1:37.156; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         LA TAUPE
+          font:; italic:0; color:(255, 255, 255); in:0:1:35.21; out:0:1:37.156; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         DEMNÄCHST
+          font:; italic:0; color:(255, 255, 255); in:0:1:46.177; out:0:1:50.42; v_position:87.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         PROCHAINEMENT
+          font:; italic:0; color:(255, 255, 255); in:0:1:46.177; out:0:1:50.42; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
         ASCOT ELITE Entertainment Group Zürich
+          font:; italic:0; color:(255, 255, 255); in:0:1:50.73; out:0:1:52.42; v_position:93.5; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 49
 DCP: ../libdcp-test/TREE-OF-LIFE_TLR-2_F_EN-DE-FR_INT-TD_51_2K_SUM_20110126_LSP
   CPL: TREE-OF-LIFE_TLR-2_F_EN-DE-FR_INT-TD_51_2K_SUM_20110126_LSP
     Length: 3081
@@ -152,60 +247,115 @@ DCP: ../libdcp-test/TREE-OF-LIFE_TLR-2_F_EN-DE-FR_INT-TD_51_2K_SUM_20110126_LSP
     Reel 1
       Subtitle: 55 subtitles in German-French
         Ein Alligator!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:22.230; out:0:0:23.200; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Un alligator!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:22.230; out:0:0:23.200; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Du wirst gross sein, ehe der Baum es ist.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:26.50; out:0:0:28.80; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Tu seras grand avant cet arbre.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:26.50; out:0:0:28.80; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Los, schlag zu.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:42.200; out:0:0:43.160; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Frappe-moi.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:42.200; out:0:0:43.160; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Schlag schon.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:43.220; out:0:0:44.190; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Frappe-moi.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:43.220; out:0:0:44.190; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Na los, Junge.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:44.230; out:0:0:46.0; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Allez, fils.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:44.230; out:0:0:46.0; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Er hat Angst vor dir.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:46.30; out:0:0:47.160; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Il a peur de toi.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:46.30; out:0:0:47.160; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Du erwartest Dinge von ihm, die nur Erwachsene können.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:47.220; out:0:0:50.160; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Ce que tu attends de lui, seul un adulte peut le faire.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:47.220; out:0:0:50.160; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Ich wollte, dass du stark bist.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:50.200; out:0:0:52.140; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Je voulais juste que tu sois fort.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:50.200; out:0:0:52.140; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Deinen Mann stehst.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:52.190; out:0:0:53.170; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Que tu sois toi-même.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:52.190; out:0:0:53.170; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         ASCOT ELITE Entertainment Group Zürich
+          font:Arial; italic:0; color:(255, 255, 255); in:0:2:5.190; out:0:2:7.70; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Es gibt zwei Wege durchs Leben:
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:9.110; out:0:0:11.110; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Il y a deux voies dans la vie:
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:9.110; out:0:0:11.110; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Jener der Natur...
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:13.110; out:0:0:14.220; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         la voie de la nature...
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:13.110; out:0:0:14.220; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         und den Weg der Gnade.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:15.100; out:0:0:16.140; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         et celle de la grâce.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:15.100; out:0:0:16.140; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Entschliess dich für einen dieser Wege.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:20.190; out:0:0:22.190; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Il te faut choisir laquelle suivre.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:20.190; out:0:0:22.190; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Drehbuch und Regie
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:28.220; out:0:0:30.90; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Écrit et réalisé par
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:28.220; out:0:0:30.90; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Um etwas zu erreichen, braucht man Willenskraft.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:40.30; out:0:0:42.160; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Une volonté de fer te fera arriver dans ce monde.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:40.30; out:0:0:42.160; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Vater.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:56.140; out:0:0:57.60; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Père.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:56.140; out:0:0:57.60; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Mutter.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:58.80; out:0:0:59.10; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Mère.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:58.80; out:0:0:59.10; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Ihr kämpft ständig in meinem Innern.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:0.0; out:0:1:2.110; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Vous luttez constamment au fond de moi.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:0.0; out:0:1:2.110; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Und werdet das immer tun.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:5.140; out:0:1:7.110; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Et vous le ferez toujours.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:5.140; out:0:1:7.110; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Eines Tages fallen wir hin und weinen,
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:9.50; out:0:1:11.200; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Un jour, on tombera en pleurs.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:9.50; out:0:1:11.200; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         dann werden wir alles verstehen.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:13.0; out:0:1:14.140; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Et alors, on comprendra tout.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:13.0; out:0:1:14.140; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Alles.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:16.10; out:0:1:16.200; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Tout.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:16.10; out:0:1:16.200; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Führe uns...
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:28.240; out:0:1:29.220; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Guide-nous...
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:28.240; out:0:1:29.220; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         ...bis ans Ende aller Zeit.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:31.30; out:0:1:32.110; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         ...jusqu'à la fin des temps.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:31.30; out:0:1:32.110; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Wenn du nicht liebst...
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:37.0; out:0:1:38.220; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         À moins que tu n'aimes...
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:37.0; out:0:1:38.220; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         ...verrinnt dein Leben im Nu.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:42.110; out:0:1:44.40; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         ...ta vie passera comme un éclair.
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:42.110; out:0:1:44.40; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Demnächst
+          font:Arial; italic:1; color:(255, 255, 255); in:0:2:3.60; out:0:2:5.130; v_position:84; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
         Prochainement
+          font:Arial; italic:1; color:(255, 255, 255); in:0:2:3.60; out:0:2:5.130; v_position:90; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 42
 DCP: ../libdcp-test/END-OF-TIME_TLR_F_XX-XX_CH_51_2K_LOK_20120726_DGL_OV
   CPL: 
     Length: 2865
@@ -230,54 +380,103 @@ DCP: ../libdcp-test/SANS-ISSUE_TLR_F_EN-FR_FR_51_2K_SND_20120316_ECL_OV
     Reel 2
       Subtitle: 49 subtitles in French
         Content de te revoir.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:3.156; out:0:0:4.197; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Je suis heureuse
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:5.197; out:0:0:6.239; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         qu'on soit tous réunis.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:7.83; out:0:0:9.41; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         À la famille.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:9.93; out:0:0:10.197; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Je vais en ville.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:14.177; out:0:0:16.135; v_position:21.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Besoin de rien ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:14.177; out:0:0:16.135; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Reviens vite !
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:16.177; out:0:0:17.145; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Maman ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:20.62; out:0:0:21.156; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Papa ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:23.41; out:0:0:24.72; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Aidez-moi !
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:26.93; out:0:0:27.41; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Ma famille a disparu.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:27.83; out:0:0:28.166; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Menez-moi au bateau.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:28.208; out:0:0:30.93; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Vous êtes Will ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:31.166; out:0:0:32.177; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         - Qui vous l'a dit ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:33.72; out:0:0:35.72; v_position:21.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         - Votre mère.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:33.72; out:0:0:35.72; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Lâchez-moi !
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:36.135; out:0:0:37.156; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         - Qu'y a-t-il ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:39.125; out:0:0:41.208; v_position:21.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         - Je t'expliquerai.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:39.125; out:0:0:41.208; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         - Je travaille pour le gouvernement.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:43.52; out:0:0:46.83; v_position:21.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         - Consultant ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:43.52; out:0:0:46.83; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Pas à l'ambassade.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:46.125; out:0:0:47.197; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Tu es à la CIA.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:49.218; out:0:0:51.83; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Tu m'as caché ça ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:51.156; out:0:0:52.239; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         - Qui êtes-vous ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:0:58.20; out:0:1:0.41; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         - Vous avez 24 heures.
+          font:Arial; italic:1; color:(251, 255, 251); in:0:0:58.20; out:0:1:0.41; v_position:21.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Ma mallette ou je les tue.
+          font:Arial; italic:1; color:(251, 255, 251); in:0:1:1.52; out:0:1:2.177; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         J'aide votre père.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:5.177; out:0:1:6.187; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Il a volé quelque chose.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:7.83; out:0:1:8.197; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         La mallette ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:9.72; out:0:1:10.10; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Si vous coopérez...
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:10.52; out:0:1:11.197; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         on retrouvera votre famille.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:11.239; out:0:1:13.125; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Je vous crois pas.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:13.166; out:0:1:14.229; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Tu n'as pas d'argent,
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:19.62; out:0:1:21.166; v_position:21.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         tu es étranger...
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:19.62; out:0:1:21.166; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Je ne pars pas sans eux.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:21.208; out:0:1:23.31; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Vous avez peur.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:24.187; out:0:1:25.177; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Un braqueur qui a peur,
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:25.218; out:0:1:28.166; v_position:21.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         ça me fait peur.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:25.218; out:0:1:28.166; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Alors, ça va être tendu.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:29.10; out:0:1:30.156; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Partout...
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:33.20; out:0:1:34.72; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         ils vous traqueront.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:34.125; out:0:1:35.93; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Tu m'as manipulé ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:36.93; out:0:1:37.114; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         - Manipulé ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:37.156; out:0:1:39.145; v_position:21.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         - Oui ou non ?
+          font:Arial; italic:1; color:(251, 255, 251); in:0:1:37.156; out:0:1:39.145; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Vous êtes qui ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:41.20; out:0:1:41.208; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Réponds !
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:45.104; out:0:1:46.114; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         - Tu fais quoi ?
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:53.125; out:0:1:55.156; v_position:21.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         - Consultant.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:53.125; out:0:1:55.156; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
         Tel père, tel fils.
+          font:Arial; italic:0; color:(251, 255, 251); in:0:1:57.62; out:0:1:58.145; v_position:14.5; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 44
 DCP: ../libdcp-test/BARBARA_TLR_F_DE-FR_CH_51_2K_LOK_20120410_OV
   CPL: BARBARA_TLR_F_DE-FR_CH_51_2K_LOK_20120410_OV
     Length: 2917
@@ -285,36 +484,67 @@ DCP: ../libdcp-test/BARBARA_TLR_F_DE-FR_CH_51_2K_LOK_20120410_OV
     Reel 1
       Subtitle: 31 subtitles in French
         OURS D’ARGENT – PRIX DE LA MISE EN SCENE
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:5.240; out:0:0:8.10; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         C'est elle?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:19.94; out:0:0:20.188; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Oui.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:22.52; out:0:0:22.167; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         C'est le Dr Wolff.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:26.52; out:0:0:27.94; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Elle va travailler avec nous.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:27.167; out:0:0:29.94; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Elle vient de Berlin…
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:29.135; out:0:0:30.177; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         et a décidé de…
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:31.240; out:0:0:33.10; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         On s'est déjà présentées.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:33.42; out:0:0:34.135; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Bon appétit.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:35.10; out:0:0:35.219; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         As-tu reçu l'argent?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:36.219; out:0:0:38.21; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Il faut que tu l'emballes
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:38.104; out:0:0:40.21; v_position:13; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         de manière imperméable. 
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:38.104; out:0:0:40.21; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Par la mer? Quand?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:40.146; out:0:0:42.73; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Bientôt. Très vite.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:42.229; out:0:0:44.208; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Vous ne devriez pas vous isoler.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:45.10; out:0:0:46.219; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         On fait une petite excursion?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:53.125; out:0:0:54.177; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Venez, s'il vous plaît.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:1.146; out:0:1:2.83; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Vous cherchez quoi exactement
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:5.83; out:0:1:6.146; v_position:13; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         dans cette province?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:5.83; out:0:1:6.146; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         A ce que personne ne s'isole?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:7.31; out:0:1:8.208; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Ca me plaît ici.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:9.177; out:0:1:10.240; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         J'ai un mauvais pressentiment,
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:23.42; out:0:1:25.63; v_position:13; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         je ne sais pas pourquoi.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:23.42; out:0:1:25.63; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Barbara…
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:26.219; out:0:1:27.177; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         me laisse pas seule…
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:27.208; out:0:1:29.156; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         ne pars pas.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:30.104; out:0:1:31.167; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Quelle heure est-il?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:32.167; out:0:1:33.208; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         Vous êtes censé me convaincre?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:43.10; out:0:1:44.146; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         De quoi?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:45.135; out:0:1:46.115; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         De retirer ma demande de sortie de territoire.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:47.104; out:0:1:50.42; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
         prochainement
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:50.125; out:0:1:52.42; v_position:8; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 36
 DCP: ../libdcp-test/MACHINE-GUN-PREACH_TLR-1_F_EN-de-fr_CH_51_2K_TIT_20111107
   CPL: MACHINE-GUN-PREACH_TLR-1_F_EN-de-fr_CH_51_2K_TIT_20111107
     Length: 3513
@@ -322,99 +552,193 @@ DCP: ../libdcp-test/MACHINE-GUN-PREACH_TLR-1_F_EN-de-fr_CH_51_2K_TIT_20111107
     Reel 1
       Subtitle: 94 subtitles in English
         Ich habe viel Mist gebaut.
+          font:; italic:0; color:(255, 255, 255); in:0:0:6.21; out:0:0:8.135; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         J'ai fait beaucoup de choses dont je suis pas fier.
+          font:; italic:0; color:(255, 255, 255); in:0:0:6.21; out:0:0:8.135; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Hab vielen wehgetan.
+          font:; italic:0; color:(255, 255, 255); in:0:0:9.188; out:0:0:11.94; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Blessé beaucoup de gens.
+          font:; italic:0; color:(255, 255, 255); in:0:0:9.188; out:0:0:11.94; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         So kannst du nicht weitermachen.
+          font:; italic:0; color:(255, 255, 255); in:0:0:13.115; out:0:0:15.198; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Tu peux pas continuer comme ça!
+          font:; italic:0; color:(255, 255, 255); in:0:0:13.115; out:0:0:15.198; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Hilf mir.
+          font:; italic:0; color:(255, 255, 255); in:0:0:17.198; out:0:0:18.208; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Aide-moi.
+          font:; italic:0; color:(255, 255, 255); in:0:0:17.198; out:0:0:18.208; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Nach der wahren Geschichte
+          font:; italic:1; color:(255, 255, 255); in:0:0:19.135; out:0:0:21.83; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         D'après l'exaltante histoire vraie
+          font:; italic:1; color:(255, 255, 255); in:0:0:19.135; out:0:0:21.83; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ich habe keinen schönen Schuhe, Lynn.
+          font:; italic:0; color:(255, 255, 255); in:0:0:21.167; out:0:0:23.115; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         J'ai pas de belles chaussures, Lynn.
+          font:; italic:0; color:(255, 255, 255); in:0:0:21.167; out:0:0:23.115; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Über die aussergewöhnliche Reise eines Mannes
+          font:; italic:1; color:(255, 255, 255); in:0:0:24.0; out:0:0:25.208; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         De l'extraordinaire voyage d'un homme
+          font:; italic:1; color:(255, 255, 255); in:0:0:24.0; out:0:0:25.208; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ich will mit Ihnen über Familien wie Ihre reden,
+          font:; italic:0; color:(255, 255, 255); in:0:0:26.198; out:0:0:29.94; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Je suis là pour parler de familles comme la vôtre,
+          font:; italic:0; color:(255, 255, 255); in:0:0:26.198; out:0:0:29.94; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         die weit weg sind und unbedingt Ihre Hilfe brauchen.
+          font:; italic:0; color:(255, 255, 255); in:0:0:29.167; out:0:0:32.188; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         très loin d'ici, qui ont besoin de votre aide.
+          font:; italic:0; color:(255, 255, 255); in:0:0:29.167; out:0:0:32.188; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         - Ich dachte, ich könnte hingehen. - Nach Afrika?
+          font:; italic:0; color:(255, 255, 255); in:0:0:34.135; out:0:0:37.0; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         - Je me disais que je pourrais y aller. - En Afrique?
+          font:; italic:0; color:(255, 255, 255); in:0:0:34.135; out:0:0:37.0; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Die sind sicher froh um jede Hilfe.
+          font:; italic:0; color:(255, 255, 255); in:0:0:37.73; out:0:0:39.198; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ils seraient ravis d'avoir de l'aide.
+          font:; italic:0; color:(255, 255, 255); in:0:0:37.73; out:0:0:39.198; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ich werde nicht lange weg sein.
+          font:; italic:0; color:(255, 255, 255); in:0:0:40.0; out:0:0:41.167; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Je serai bientôt de retour.
+          font:; italic:0; color:(255, 255, 255); in:0:0:40.0; out:0:0:41.167; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Offizielle Auswahl, Toronto Filmfestival 2011
+          font:; italic:1; color:(255, 255, 255); in:0:0:45.94; out:0:0:47.31; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Sélection officielle du festival international du film de Toronto 2011
+          font:; italic:1; color:(255, 255, 255); in:0:0:45.94; out:0:0:47.31; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         - Seid ihr in irgendeiner Armee? - Wir sind Friedenskämpfer.
+          font:; italic:0; color:(255, 255, 255); in:0:0:47.73; out:0:0:49.188; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         - Vous faites partie d'une armée? - On est des résistants.
+          font:; italic:0; color:(255, 255, 255); in:0:0:47.73; out:0:0:49.188; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ich bin... Freut mich.
+          font:; italic:0; color:(255, 255, 255); in:0:0:50.94; out:0:0:51.104; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Sam. Enchanté.
+          font:; italic:0; color:(255, 255, 255); in:0:0:50.94; out:0:0:51.104; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ich möchte in den Sudan am Wochenende.
+          font:; italic:0; color:(255, 255, 255); in:0:0:51.188; out:0:0:53.156; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Je veux aller au Soudan, ce week-end.
+          font:; italic:0; color:(255, 255, 255); in:0:0:51.188; out:0:0:53.156; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ich brauche jemand, der mir alles zeigt.
+          font:; italic:0; color:(255, 255, 255); in:0:0:53.219; out:0:0:55.94; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         J'ai besoin d'un guide.
+          font:; italic:0; color:(255, 255, 255); in:0:0:53.219; out:0:0:55.94; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Hier herrscht Krieg.
+          font:; italic:0; color:(255, 255, 255); in:0:0:55.156; out:0:0:56.115; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         C'est une zone en guerre.
+          font:; italic:0; color:(255, 255, 255); in:0:0:55.156; out:0:0:56.115; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Wenn Sie bleiben, kommen Sie ums Leben.
+          font:; italic:0; color:(255, 255, 255); in:0:0:56.167; out:0:0:57.188; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Si tu restes ici, tu te feras tuer.
+          font:; italic:0; color:(255, 255, 255); in:0:0:56.167; out:0:0:57.188; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Er suchte etwas, woran er glauben konnte
+          font:; italic:1; color:(255, 255, 255); in:0:0:58.219; out:0:1:0.156; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Il cherchait quelque chose en quoi croire
+          font:; italic:1; color:(255, 255, 255); in:0:0:58.219; out:0:1:0.156; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Sie sind hier sicherer als in ihren Häusern.
+          font:; italic:0; color:(255, 255, 255); in:0:1:0.198; out:0:1:2.208; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ils sont plus en sécurité ici que chez eux.
+          font:; italic:0; color:(255, 255, 255); in:0:1:0.198; out:0:1:2.208; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Hier schlafen sie nicht.
+          font:; italic:0; color:(255, 255, 255); in:0:1:3.31; out:0:1:4.115; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ils ne dorment pas, ici.
+          font:; italic:0; color:(255, 255, 255); in:0:1:3.31; out:0:1:4.115; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Sie sind zu viele. Wir können nicht allen helfen.
+          font:; italic:0; color:(255, 255, 255); in:0:1:4.156; out:0:1:6.208; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Il y en a trop. On peut pas tous les aider.
+          font:; italic:0; color:(255, 255, 255); in:0:1:4.156; out:0:1:6.208; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Er hat etwas gefunden...
+          font:; italic:1; color:(255, 255, 255); in:0:1:7.104; out:0:1:8.167; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Il a trouvé quelque chose...
+          font:; italic:1; color:(255, 255, 255); in:0:1:7.104; out:0:1:8.167; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Wir nehmen möglichst viele mit.
+          font:; italic:0; color:(255, 255, 255); in:0:1:9.198; out:0:1:11.42; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         On en prend autant que possible.
+          font:; italic:0; color:(255, 255, 255); in:0:1:9.198; out:0:1:11.42; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Sag den anderen, wir holen sie später.
+          font:; italic:0; color:(255, 255, 255); in:0:1:11.83; out:0:1:12.198; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Dis aux autres qu'on reviendra plus tard.
+          font:; italic:0; color:(255, 255, 255); in:0:1:11.83; out:0:1:12.198; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         ...wofür er kämpfen konnte
+          font:; italic:1; color:(255, 255, 255); in:0:1:14.42; out:0:1:15.240; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         ...valant la peine de se battre
+          font:; italic:1; color:(255, 255, 255); in:0:1:14.42; out:0:1:15.240; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ich brauche das Geld für ein weiteres Fahrzeug,
+          font:; italic:0; color:(255, 255, 255); in:0:1:16.63; out:0:1:18.52; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Il me faut de l'argent pour une autre véhicule...
+          font:; italic:0; color:(255, 255, 255); in:0:1:16.63; out:0:1:18.52; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         um Kinder zu retten.
+          font:; italic:0; color:(255, 255, 255); in:0:1:18.94; out:0:1:19.219; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         pour pouvoir sauver des enfants.
+          font:; italic:0; color:(255, 255, 255); in:0:1:18.94; out:0:1:19.219; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         - Beruhige dich. - Sag das nicht!
+          font:; italic:0; color:(255, 255, 255); in:0:1:19.240; out:0:1:21.219; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         - Calmez-vous. - Me dites pas de me calmer!
+          font:; italic:0; color:(255, 255, 255); in:0:1:19.240; out:0:1:21.219; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Vom gefeierten Regisseur von
+          font:; italic:1; color:(255, 255, 255); in:0:1:22.104; out:0:1:23.177; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Par le réalisateur encensé de
+          font:; italic:1; color:(255, 255, 255); in:0:1:22.104; out:0:1:23.177; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Dieses Waisenhaus baue ich im Sudan.
+          font:; italic:0; color:(255, 255, 255); in:0:1:26.83; out:0:1:28.240; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         C'est l'orphelinat que je vais constuire au Soudan.
+          font:; italic:0; color:(255, 255, 255); in:0:1:26.83; out:0:1:28.240; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Sie sprechen über euch, die Kinder.
+          font:; italic:0; color:(255, 255, 255); in:0:1:30.208; out:0:1:32.229; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ils parlent de vous, les enfants.
+          font:; italic:0; color:(255, 255, 255); in:0:1:30.208; out:0:1:32.229; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ich will den Leuten nur helfen.
+          font:; italic:0; color:(255, 255, 255); in:0:1:33.83; out:0:1:34.240; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         J'essaie juste d'aider ces gens.
+          font:; italic:0; color:(255, 255, 255); in:0:1:33.83; out:0:1:34.240; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Genaue wie du auch.
+          font:; italic:0; color:(255, 255, 255); in:0:1:35.42; out:0:1:36.104; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Comme vous.
+          font:; italic:0; color:(255, 255, 255); in:0:1:35.42; out:0:1:36.104; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Die Rebellenarmee setzte ein Kopfgeld aus auf dich.
+          font:; italic:0; color:(255, 255, 255); in:0:1:38.167; out:0:1:40.208; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         L'armée rebelle a placé un contrat sur ta tête.
+          font:; italic:0; color:(255, 255, 255); in:0:1:38.167; out:0:1:40.208; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Etwas musst du wohl richtig machen.
+          font:; italic:0; color:(255, 255, 255); in:0:1:41.73; out:0:1:42.188; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Il faut faire les choses bien.
+          font:; italic:0; color:(255, 255, 255); in:0:1:41.73; out:0:1:42.188; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Sie fackelten alles ab. Es ist aus.
+          font:; italic:0; color:(255, 255, 255); in:0:1:47.21; out:0:1:50.10; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ils l'ont brûlé. Il ne reste rien. C'est terminé.
+          font:; italic:0; color:(255, 255, 255); in:0:1:47.21; out:0:1:50.10; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Bau es neu auf. Hörst du?
+          font:; italic:0; color:(255, 255, 255); in:0:1:50.115; out:0:1:53.104; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Bouge-toi et reconstruis-le. Tu m'entends?
+          font:; italic:0; color:(255, 255, 255); in:0:1:50.115; out:0:1:53.104; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         - Sam, warte. - Siehst du, was warten bringt?
+          font:; italic:0; color:(255, 255, 255); in:0:1:57.156; out:0:1:59.115; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         - Sam, attends. - Tu vois où attendre te mène?
+          font:; italic:0; color:(255, 255, 255); in:0:1:57.156; out:0:1:59.115; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Das ist kein Übel.
+          font:; italic:0; color:(255, 255, 255); in:0:2:4.188; out:0:2:6.83; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Cet endroit n'est pas l'enfer.
+          font:; italic:0; color:(255, 255, 255); in:0:2:4.188; out:0:2:6.83; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Bekämpf das Übel hier auf deine Art...
+          font:; italic:0; color:(255, 255, 255); in:0:2:6.156; out:0:2:8.0; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Combat le mal d'ici à ta façon...
+          font:; italic:0; color:(255, 255, 255); in:0:2:6.156; out:0:2:8.0; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         und lass mich meines bekämpfen.
+          font:; italic:0; color:(255, 255, 255); in:0:2:8.31; out:0:2:9.21; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         et laisse-moi combattre à ma façon.
+          font:; italic:0; color:(255, 255, 255); in:0:2:8.31; out:0:2:9.21; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Euch Kindern zu helfen...
+          font:; italic:0; color:(255, 255, 255); in:0:2:13.31; out:0:2:13.240; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Vous aider, les enfants,
+          font:; italic:0; color:(255, 255, 255); in:0:2:13.31; out:0:2:13.240; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         ist das einzig Gute, das ich je getan habe.
+          font:; italic:0; color:(255, 255, 255); in:0:2:14.52; out:0:2:17.104; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         est la seule bonne chose que j'aie jamais faite.
+          font:; italic:0; color:(255, 255, 255); in:0:2:14.52; out:0:2:17.104; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Du weisst nicht, wovon ich rede, was?
+          font:; italic:0; color:(255, 255, 255); in:0:2:18.63; out:0:2:20.104; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Tu comprends pas ce que je dis, hein?
+          font:; italic:0; color:(255, 255, 255); in:0:2:18.63; out:0:2:20.104; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         DEMNÄCHST
+          font:; italic:0; color:(255, 255, 255); in:0:2:22.229; out:0:2:24.125; v_position:88; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         PROCHAINEMENT
+          font:; italic:0; color:(255, 255, 255); in:0:2:22.229; out:0:2:24.125; v_position:94; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
 DCP: ../libdcp-test/DU-VENT-DANS-MES-MOLLETS_TLR_F_FR-XX_FR_51_2K_GA_20120621_ECL_OV
   CPL: DU-VENT-DANS-MES-MOLLETS_TLR_F_FR-XX_FR_51_2K_GA_20120621_ECL_OV
     Length: 2502
@@ -427,54 +751,103 @@ DCP: ../libdcp-test/ASTERIX_TLR-01_F_FR-DE_CH_51_2K_FRE_20120730_DGL_OV
     Reel 1
       Subtitle: 49 subtitles in French
         Wir befinden uns im Jahr 50 vor Christus.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:5.198; out:0:0:7.115; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Nachdem er Gallien,
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:7.177; out:0:0:11.31; v_position:21; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Ägypten und Spanien besetzt hat,
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:7.177; out:0:0:11.31; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         trägt Cäsar den Namen Roms
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:11.94; out:0:0:13.63; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         bis auf die Insel Britannien.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:13.104; out:0:0:15.177; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Unglaublich!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:15.240; out:0:0:18.188; v_position:21; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Die Götter meinen es gut mit mir.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:15.240; out:0:0:18.188; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Ich frage mich,
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:20.240; out:0:0:24.42; v_position:21; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         ob wir ewig Widerstand leisten können.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:20.240; out:0:0:24.42; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Es gibt ein Dorf,
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:27.198; out:0:0:30.240; v_position:21; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         dem dieses Unterfangen gelungen ist.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:27.198; out:0:0:30.240; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Grautvornix,
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:31.208; out:0:0:34.146; v_position:21; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         auf dem Land steht man früh auf.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:31.208; out:0:0:34.146; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Ich komme aus Lutetia
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:34.208; out:0:0:37.63; v_position:21; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         und da ist jetzt Schlafenszeit.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:34.208; out:0:0:37.63; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Also lasst mich in Ruhe, ihr Einfaltspinsel.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:37.125; out:0:0:39.31; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Darf ich vorstellen, Teefax.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:43.52; out:0:0:44.115; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Sehr erfreut. Schütteln wir uns die Hände.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:44.177; out:0:0:46.52; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         -Obelix!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:47.188; out:0:0:50.73; v_position:21; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         -Klasse, wir segeln nach Britannien.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:47.188; out:0:0:50.73; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Da haben sie ganz frische Römer.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:50.135; out:0:0:51.135; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Wir sind bald wieder da.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:52.156; out:0:0:54.63; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Willkommen in Londinium.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:55.52; out:0:0:57.94; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Ich dachte, Britinnen seien hässlich,
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:59.0; out:0:1:1.42; v_position:21; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         aber die gefällt mir.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:0:59.0; out:0:1:1.42; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Ja, sie ist hübsch.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:1.104; out:0:1:4.42; v_position:21; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Ihr schwarzes Kleid steht ihr gut.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:1.104; out:0:1:4.42; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Ich glaube, ich gefalle ihr nicht.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:6.21; out:0:1:8.83; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Du willst Miss Dings gefallen?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:8.146; out:0:1:10.135; v_position:21; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Mach ihr ein Geschenk.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:8.146; out:0:1:10.135; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Gallier sind heimlich gelandet
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:14.146; out:0:1:16.104; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         mit einer Geheimwaffe in einem Fass?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:16.167; out:0:1:17.167; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Exzellente Neuigkeit.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:17.208; out:0:1:18.177; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Nicht wahr, meine Lieben?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:18.240; out:0:1:20.10; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Was machst du denn da?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:21.229; out:0:1:23.21; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Ich habe nur gekostet.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:23.104; out:0:1:25.52; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Nur ein bisschen, nicht viel.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:25.115; out:0:1:26.240; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Wir engagieren Söldner, die Normannen.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:27.52; out:0:1:29.146; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Die wissen nicht, was Angst ist.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:29.208; out:0:1:32.219; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Ihr Trottel!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:36.73; out:0:1:38.83; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Lass los!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:43.52; out:0:1:45.21; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Zeig uns, was Angst ist!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:45.83; out:0:1:46.208; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         ASTERIX UND OBELIX
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:53.0; out:0:1:55.188; v_position:21; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         IM AUFTRAG IHRER MAJESTÄT
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:53.0; out:0:1:55.188; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Lebt sich's gut als Henker?
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:56.0; out:0:1:57.125; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Es interessiert mich wirklich.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:58.115; out:0:2:2.10; v_position:21; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Man trifft ja im Leben nie einen Henker.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:58.115; out:0:2:2.10; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         Und wenn, dann ist es das letzte Mal.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:2:2.73; out:0:2:4.167; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
         www.frenetic.ch
+          font:Arial; italic:0; color:(255, 255, 255); in:0:2:4.229; out:0:2:7.135; v_position:15; v_align:2; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.1; fade_down_time:0:0:0.1; size: 39
 DCP: ../libdcp-test/EPIC-3D_TLR-D_S_EN-DE-FR_CH_51_48_ST_20120718_TIT_i3D-ngb_OV
   CPL: 
     Length: 3166
@@ -482,37 +855,69 @@ DCP: ../libdcp-test/EPIC-3D_TLR-D_S_EN-DE-FR_CH_51_48_ST_20120718_TIT_i3D-ngb_OV
     Reel 1
       Subtitle: 32 subtitles in English
         VON DEN MACHERN VON
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:41.62; out:0:0:43.52; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         PAR LES RÉALISATEURS DE
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:41.62; out:0:0:43.52; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         UND
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:50.42; out:0:0:52.21; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         ET DE
+          font:Arial; italic:1; color:(255, 255, 255); in:0:0:50.42; out:0:0:52.21; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         NÄCHSTES JAHR
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:2.208; out:0:1:4.10; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         L'ANNÉE PROCHAINE
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:2.208; out:0:1:4.10; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         ENTDECKEN SIE
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:15.42; out:0:1:16.42; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         DÉCOUVREZ
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:15.42; out:0:1:16.42; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         EINE WELT
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:20.219; out:0:1:22.73; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         UN MONDE
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:20.219; out:0:1:22.73; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         JENSEITS IHRER FANTASIE
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:27.115; out:0:1:28.208; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         QUI DÉPASSE VOTRE IMAGINATION
+          font:Arial; italic:1; color:(255, 255, 255); in:0:1:27.115; out:0:1:28.208; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Das tut weh! Das sind meine Augen!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:42.229; out:0:1:45.62; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ça fait mal! Ce sont mes yeux!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:42.229; out:0:1:45.62; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Lass los, Mann. Echt.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:45.146; out:0:1:47.94; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Sérieusement, mec. Tu dois lâcher.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:45.146; out:0:1:47.94; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Lass los, lass los!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:47.146; out:0:1:48.167; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Lâche, lâche!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:47.146; out:0:1:48.167; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Dad? Ich hatte einen total schrägen Traum.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:53.21; out:0:1:56.10; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Papa? J'ai fait un rêve super tordu.
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:53.21; out:0:1:56.10; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Mit sprechenden Schnecken...
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:56.125; out:0:1:58.42; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Avec des limaces qui parlent...
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:56.125; out:0:1:58.42; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         und winzig kleinen Soldaten und...
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:58.135; out:0:2:1.42; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         et de minuscules soldats et...
+          font:Arial; italic:0; color:(255, 255, 255); in:0:1:58.135; out:0:2:1.42; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Hallo!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:2:2.135; out:0:2:3.83; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Bonjour!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:2:2.135; out:0:2:3.83; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ach, Mann!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:2:3.188; out:0:2:5.62; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         Ah, la vache!
+          font:Arial; italic:0; color:(255, 255, 255); in:0:2:3.188; out:0:2:5.62; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         IN 3D
+          font:Arial; italic:1; color:(255, 255, 255); in:0:2:5.208; out:0:2:7.31; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         EN 3D
+          font:Arial; italic:1; color:(255, 255, 255); in:0:2:5.208; out:0:2:7.31; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         DEMNÄCHST
+          font:Arial; italic:0; color:(255, 255, 255); in:0:2:7.73; out:0:2:10.31; v_position:89; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
         PROCHAINEMENT
+          font:Arial; italic:0; color:(255, 255, 255); in:0:2:7.73; out:0:2:10.31; v_position:95; v_align:0; effect:1; effect_color:(0, 0, 0); fade_up_time:0:0:0.0; fade_down_time:0:0:0.0; size: 42
 DCP: ../libdcp-test/ELLES_TLR_C_FR-DE_20_2K_20120412_SE
   CPL: ELLES_TLR_C_FR-DE_20_2K_20120412_SE
     Length: 2794
@@ -521,54 +926,106 @@ DCP: ../libdcp-test/ELLES_TLR_C_FR-DE_20_2K_20120412_SE
     Reel 2
       Subtitle: 52 subtitles in Custom
         Hallo, guten Tag, hier ist Lola.
+          font:; italic:0; color:(235, 235, 235); in:0:0:1.115; out:0:0:3.156; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Wollen wir ein Treffen vereinbaren?
+          font:; italic:0; color:(235, 235, 235); in:0:0:3.219; out:0:0:6.240; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Ja, das mache ich ...
+          font:; italic:0; color:(235, 235, 235); in:0:0:3.219; out:0:0:6.240; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Ich hatte echt Glück
+          font:; italic:0; color:(235, 235, 235); in:0:0:10.0; out:0:0:13.31; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         mit meinem ersten Kunden.
+          font:; italic:0; color:(235, 235, 235); in:0:0:10.0; out:0:0:13.31; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Sein Blick erregte mich.
+          font:; italic:0; color:(235, 235, 235); in:0:0:13.177; out:0:0:15.219; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Gefällt es Ihnen, wenn er
+          font:; italic:0; color:(235, 235, 235); in:0:0:16.104; out:0:0:18.0; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Ihre Brüste berührt? Befehlen Sie oder
+          font:; italic:0; color:(235, 235, 235); in:0:0:18.42; out:0:0:21.115; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         wird Ihnen befohlen? Empfinden Sie Macht?
+          font:; italic:0; color:(235, 235, 235); in:0:0:18.42; out:0:0:21.115; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Gefällt Ihnen das nicht?
+          font:; italic:0; color:(235, 235, 235); in:0:0:22.62; out:0:0:23.198; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         EINE JOURNALISTIN
+          font:; italic:0; color:(235, 235, 235); in:0:0:24.0; out:0:0:25.135; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Es ist
+          font:; italic:0; color:(235, 235, 235); in:0:0:25.177; out:0:0:26.167; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         wie beim Rauchen. Schwierig aufzuhören.
+          font:; italic:0; color:(235, 235, 235); in:0:0:26.208; out:0:0:29.177; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Weil ich jetzt plötzlich Geld habe.
+          font:; italic:0; color:(235, 235, 235); in:0:0:26.208; out:0:0:29.177; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         ERFORSCHT DIE GEHEIMNISSE
+          font:; italic:0; color:(235, 235, 235); in:0:0:29.219; out:0:0:31.156; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         - Wie sind die Männer? Problemhaufen?
+          font:; italic:0; color:(235, 235, 235); in:0:0:31.198; out:0:0:35.135; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         - Nein, gar nicht. Sie sind total normal.
+          font:; italic:0; color:(235, 235, 235); in:0:0:31.198; out:0:0:35.135; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         - Viele sind im Alter meines Vaters.
+          font:; italic:0; color:(235, 235, 235); in:0:0:35.177; out:0:0:39.135; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         - Gelangweilte Familienväter.
+          font:; italic:0; color:(235, 235, 235); in:0:0:35.177; out:0:0:39.135; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         ZWEIER UNGEWÖHNLICHER STUDENTINNEN
+          font:; italic:0; color:(235, 235, 235); in:0:0:39.198; out:0:0:42.0; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         - Finden Sie das nicht demütigend?
+          font:; italic:0; color:(235, 235, 235); in:0:0:42.42; out:0:0:44.125; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         - Nein.
+          font:; italic:0; color:(235, 235, 235); in:0:0:42.42; out:0:0:44.125; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Ich kann das nicht ganz verstehen.
+          font:; italic:0; color:(235, 235, 235); in:0:0:45.135; out:0:0:47.115; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Seit du diese Recherche über Huren
+          font:; italic:0; color:(235, 235, 235); in:0:0:48.240; out:0:0:52.42; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         machst, bist du echt seltsam.
+          font:; italic:0; color:(235, 235, 235); in:0:0:48.240; out:0:0:52.42; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Ich weiss nicht, ob es Huren sind.
+          font:; italic:0; color:(235, 235, 235); in:0:0:52.83; out:0:0:53.240; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         - Hure ist Hure.
+          font:; italic:0; color:(235, 235, 235); in:0:0:54.208; out:0:0:56.229; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         - Du scheinst dich auszukennen.
+          font:; italic:0; color:(235, 235, 235); in:0:0:54.208; out:0:0:56.229; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Sie sagen gerne "gefällt dir mein grosser
+          font:; italic:0; color:(235, 235, 235); in:0:0:57.156; out:0:1:1.31; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Schwanz?", "gefällt dir das, Schlampe?"
+          font:; italic:0; color:(235, 235, 235); in:0:0:57.156; out:0:1:1.31; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Sie erzählen mir von ihrem Leben,
+          font:; italic:0; color:(235, 235, 235); in:0:1:1.73; out:0:1:3.135; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         ihrem Job,
+          font:; italic:0; color:(235, 235, 235); in:0:1:3.219; out:0:1:5.52; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         ihren Frauen.
+          font:; italic:0; color:(235, 235, 235); in:0:1:6.104; out:0:1:7.52; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         EIN PORTRÄT VON FRAUEN
+          font:; italic:0; color:(235, 235, 235); in:0:1:7.94; out:0:1:8.208; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Was ist für Sie
+          font:; italic:0; color:(235, 235, 235); in:0:1:9.0; out:0:1:10.125; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         das Schwierigste daran?
+          font:; italic:0; color:(235, 235, 235); in:0:1:10.167; out:0:1:11.219; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Das ständige Lügen.
+          font:; italic:0; color:(235, 235, 235); in:0:1:12.21; out:0:1:13.198; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         DURCH DIE AUGEN EINER MUTTER
+          font:; italic:0; color:(235, 235, 235); in:0:1:13.240; out:0:1:15.115; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Du hast Glück. Siehst du nicht,
+          font:; italic:0; color:(235, 235, 235); in:0:1:15.156; out:0:1:17.177; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         wie andere Leute kämpfen?
+          font:; italic:0; color:(235, 235, 235); in:0:1:15.156; out:0:1:17.177; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Wovon sprichst du?
+          font:; italic:0; color:(235, 235, 235); in:0:1:17.240; out:0:1:20.188; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Hast du nicht gekämpft?
+          font:; italic:0; color:(235, 235, 235); in:0:1:17.240; out:0:1:20.188; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Ich rieche es immer noch.
+          font:; italic:0; color:(235, 235, 235); in:0:1:21.94; out:0:1:22.240; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Flaubert lesen oder studieren,
+          font:; italic:0; color:(235, 235, 235); in:0:1:23.31; out:0:1:25.135; v_position:81; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         das ändert nichts.
+          font:; italic:0; color:(235, 235, 235); in:0:1:23.31; out:0:1:25.135; v_position:86; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Ich bin nicht wie Sie!
+          font:; italic:0; color:(235, 235, 235); in:0:1:25.177; out:0:1:26.240; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         mit OSCAR-Preisträgerin Juliette Binoche
+          font:; italic:0; color:(235, 235, 235); in:0:1:27.31; out:0:1:28.146; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Das macht Sie
+          font:; italic:0; color:(235, 235, 235); in:0:1:34.83; out:0:1:35.156; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         sicher ein wenig einsam?
+          font:; italic:0; color:(235, 235, 235); in:0:1:35.198; out:0:1:37.115; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         Wir sind alle alleine, nicht?
+          font:; italic:0; color:(235, 235, 235); in:0:1:39.10; out:0:1:40.229; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         www.frenetic.ch
+          font:; italic:0; color:(235, 235, 235); in:0:1:45.52; out:0:1:46.115; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
         DEMNÄCHST
+          font:; italic:0; color:(235, 235, 235); in:0:1:46.156; out:0:1:47.198; v_position:83; v_align:0; effect:2; effect_color:(9, 9, 9); fade_up_time:0:0:0.20; fade_down_time:0:0:0.20; size: 40
