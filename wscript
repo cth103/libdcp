@@ -79,6 +79,8 @@ def build(bld):
     bld.recurse('asdcplib')
     bld.recurse('examples')
 
+    bld.add_post_fun(post)
+
 def dist(ctx):
     ctx.excl = 'TODO core *~ .git build .waf* .lock* doc/*~ src/*~ test/ref/*~'
 
@@ -102,3 +104,7 @@ def create_version_cc(version):
     except IOError:
         print('Could not open src/version.cc for writing\n')
         sys.exit(-1)
+
+def post(ctx):
+    if ctx.cmd == 'install':
+        ctx.exec_command('/sbin/ldconfig')
