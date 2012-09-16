@@ -18,7 +18,7 @@ help (string n)
 	     << "  -h, --help         show this help\n"
 	     << "\n"
 	     << "The <DCP>s are the DCP directories to compare.\n"
-	     << "Default is to compare metadata and content ignoring timestamps\n"
+	     << "Default is to compare metadata and content, ignoring timestamps\n"
 	     << "and differing UUIDs.  Pass -b to perform a bitwise comparison.\n";
 }
 
