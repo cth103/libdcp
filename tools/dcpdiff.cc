@@ -79,6 +79,7 @@ main (int argc, char* argv[])
 	DCP* a = 0;
 	try {
 		a = new DCP (argv[optind]);
+		a->read ();
 	} catch (FileError& e) {
 		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << " " << e.filename() << "\n";
 		exit (EXIT_FAILURE);
@@ -87,6 +88,7 @@ main (int argc, char* argv[])
 	DCP* b = 0;
 	try {
 		b = new DCP (argv[optind + 1]);
+		b->read ();
 	} catch (FileError& e) {
 		cerr << "Could not read DCP " << argv[optind + 1] << "; " << e.what() << " " << e.filename() << "\n";
 		exit (EXIT_FAILURE);
