@@ -63,7 +63,6 @@ PictureAsset::write_to_cpl (ostream& s) const
 	  << "        </MainPicture>\n";
 }
 
-/* XXX: could use get_frame()? */
 list<string>
 PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 {
@@ -118,94 +117,11 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 //				notes.pack_start ("video MXF picture descriptors differ");
 //			}
 //		}
-				
-
-		ASDCP::JP2K::FrameBuffer buffer_A (4 * Kumu::Megabyte);
-		ASDCP::JP2K::FrameBuffer buffer_B (4 * Kumu::Megabyte);
-
-		for (int i = 0; i < _length; ++i) {
-			if (ASDCP_FAILURE (reader_A.ReadFrame (i, buffer_A))) {
-				throw DCPReadError ("could not read video frame");
-			}
-
-			if (ASDCP_FAILURE (reader_B.ReadFrame (i, buffer_B))) {
-				throw DCPReadError ("could not read video frame");
-			}
-
-			bool j2k_same = true;
-
-			if (buffer_A.Size() != buffer_B.Size()) {
-				notes.push_back ("sizes of video data for frame " + lexical_cast<string>(i) + " differ");
-				j2k_same = false;
-			} else if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
-				notes.push_back ("J2K data for frame " + lexical_cast<string>(i) + " differ");
-				j2k_same = false;
-			}
-
-			if (!j2k_same) {
-
-				if (opt.verbose) {
-					cout << "J2K images for " << i << " differ; checking by pixel\n";
-				}
-				
-				/* Decompress the images to bitmaps */
-				opj_image_t* image_A = decompress_j2k (const_cast<uint8_t*> (buffer_A.RoData()), buffer_A.Size (), 0);
-				opj_image_t* image_B = decompress_j2k (const_cast<uint8_t*> (buffer_B.RoData()), buffer_B.Size (), 0);
-
-				/* Compare them */
-				
-				if (image_A->numcomps != image_B->numcomps) {
-					notes.push_back ("image component counts for frame " + lexical_cast<string>(i) + " differ");
-				}
-
-				vector<int> abs_diffs (image_A->comps[0].w * image_A->comps[0].h * image_A->numcomps);
-				int d = 0;
-				int max_diff = 0;
-
-				for (int c = 0; c < image_A->numcomps; ++c) {
-
-					if (image_A->comps[c].w != image_B->comps[c].w || image_A->comps[c].h != image_B->comps[c].h) {
-						notes.push_back ("image sizes for frame " + lexical_cast<string>(i) + " differ");
-					}
-
-					int const pixels = image_A->comps[c].w * image_A->comps[c].h;
-					for (int j = 0; j < pixels; ++j) {
-						int const t = abs (image_A->comps[c].data[j] - image_B->comps[c].data[j]);
-						abs_diffs[d++] = t;
-						max_diff = max (max_diff, t);
-					}
-				}
-
-				uint64_t total = 0;
-				for (vector<int>::iterator j = abs_diffs.begin(); j != abs_diffs.end(); ++j) {
-					total += *j;
-				}
-
-				double const mean = double (total) / abs_diffs.size ();
-
-				uint64_t total_squared_deviation = 0;
-				for (vector<int>::iterator j = abs_diffs.begin(); j != abs_diffs.end(); ++j) {
-					total_squared_deviation += pow (*j - mean, 2);
-				}
-
-				double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
-
-				if (mean > opt.max_mean_pixel_error || std_dev > opt.max_std_dev_pixel_error) {
-					notes.push_back ("mean or standard deviation out of range for " + lexical_cast<string>(i));
-				}
-
-				if (opt.verbose) {
-					cout << "\tmax pixel error " << max_diff << ", mean pixel error " << mean << ", standard deviation " << std_dev << "\n";
-				}
-
-				opj_image_destroy (image_A);
-				opj_image_destroy (image_B);
-			}
-		}
 	}
 
 	return notes;
 }
+
 
 MonoPictureAsset::MonoPictureAsset (
 	sigc::slot<string, int> get_path,
@@ -311,6 +227,143 @@ MonoPictureAsset::get_frame (int n) const
 {
 	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n + _entry_point));
 }
+
+
+list<string>
+MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
+{
+	list<string> notes = PictureAsset::equals (other, opt);
+
+	shared_ptr<const MonoPictureAsset> other_picture = dynamic_pointer_cast<const MonoPictureAsset> (other);
+	assert (other_picture);
+
+	for (int i = 0; i < _length; ++i) {
+		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
+		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
+
+		list<string> n = frame_buffer_equals (
+			i, opt,
+			frame_A->j2k_frame()->RoData(), frame_A->j2k_frame()->Size(),
+			frame_B->j2k_frame()->RoData(), frame_B->j2k_frame()->Size()
+			);
+
+		notes.merge (n);
+	}
+
+	return notes;
+}
+
+list<string>
+StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
+{
+	list<string> notes = PictureAsset::equals (other, opt);
+	
+	shared_ptr<const StereoPictureAsset> other_picture = dynamic_pointer_cast<const StereoPictureAsset> (other);
+	assert (other_picture);
+	
+	for (int i = 0; i < _length; ++i) {
+		shared_ptr<const StereoPictureFrame> frame_A = get_frame (i);
+		shared_ptr<const StereoPictureFrame> frame_B = other_picture->get_frame (i);
+
+		list<string> n = frame_buffer_equals (
+			i, opt,
+			frame_A->j2k_frame()->Left.RoData(), frame_A->j2k_frame()->Left.Size(),
+			frame_B->j2k_frame()->Left.RoData(), frame_B->j2k_frame()->Left.Size()
+			);
+
+		notes.merge (n);
+
+		n = frame_buffer_equals (
+			i, opt,
+			frame_A->j2k_frame()->Right.RoData(), frame_A->j2k_frame()->Right.Size(),
+			frame_B->j2k_frame()->Right.RoData(), frame_B->j2k_frame()->Right.Size()
+			);
+
+		notes.merge (n);
+	}
+
+	return notes;
+}
+
+list<string>
+PictureAsset::frame_buffer_equals (
+	int frame, EqualityOptions opt, uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
+	) const
+{
+	list<string> notes;
+	
+	bool j2k_same = true;
+	if (size_A != size_B) {
+		notes.push_back ("sizes of video data for frame " + lexical_cast<string>(frame) + " differ");
+		j2k_same = false;
+	} else if (memcmp (data_A, data_B, size_A) != 0) {
+		notes.push_back ("J2K data for frame " + lexical_cast<string>(frame) + " differ");
+		j2k_same = false;
+	}
+	
+	if (!j2k_same) {
+		
+		if (opt.verbose) {
+			cout << "J2K images for " << frame << " differ; checking by pixel\n";
+		}
+		
+		/* Decompress the images to bitmaps */
+		opj_image_t* image_A = decompress_j2k (const_cast<uint8_t*> (data_A), size_A, 0);
+		opj_image_t* image_B = decompress_j2k (const_cast<uint8_t*> (data_B), size_B, 0);
+		
+		/* Compare them */
+		
+		if (image_A->numcomps != image_B->numcomps) {
+			notes.push_back ("image component counts for frame " + lexical_cast<string>(frame) + " differ");
+		}
+		
+		vector<int> abs_diffs (image_A->comps[0].w * image_A->comps[0].h * image_A->numcomps);
+		int d = 0;
+		int max_diff = 0;
+		
+		for (int c = 0; c < image_A->numcomps; ++c) {
+			
+			if (image_A->comps[c].w != image_B->comps[c].w || image_A->comps[c].h != image_B->comps[c].h) {
+				notes.push_back ("image sizes for frame " + lexical_cast<string>(frame) + " differ");
+			}
+			
+			int const pixels = image_A->comps[c].w * image_A->comps[c].h;
+			for (int j = 0; j < pixels; ++j) {
+				int const t = abs (image_A->comps[c].data[j] - image_B->comps[c].data[j]);
+				abs_diffs[d++] = t;
+				max_diff = max (max_diff, t);
+			}
+		}
+		
+		uint64_t total = 0;
+		for (vector<int>::iterator j = abs_diffs.begin(); j != abs_diffs.end(); ++j) {
+			total += *j;
+		}
+		
+		double const mean = double (total) / abs_diffs.size ();
+		
+		uint64_t total_squared_deviation = 0;
+		for (vector<int>::iterator j = abs_diffs.begin(); j != abs_diffs.end(); ++j) {
+			total_squared_deviation += pow (*j - mean, 2);
+		}
+		
+		double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
+		
+		if (mean > opt.max_mean_pixel_error || std_dev > opt.max_std_dev_pixel_error) {
+			notes.push_back ("mean or standard deviation out of range for " + lexical_cast<string>(frame));
+		}
+		
+		if (opt.verbose) {
+			cout << "\tmax pixel error " << max_diff << ", mean pixel error " << mean << ", standard deviation " << std_dev << "\n";
+		}
+		
+		opj_image_destroy (image_A);
+		opj_image_destroy (image_B);
+	}
+
+	return notes;
+}
+
 
 StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int entry_point, int length)
 	: PictureAsset (directory, mxf_name, 0, fps, entry_point, length)

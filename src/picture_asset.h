@@ -52,6 +52,11 @@ public:
 	}
 
 protected:	
+
+	std::list<std::string> frame_buffer_equals (
+		int frame, EqualityOptions opt, uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
+		) const;
+	
 	/** picture width in pixels */
 	int _width;
 	/** picture height in pixels */
@@ -109,6 +114,7 @@ public:
 	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, int entry_point, int length);
 	
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
+	std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
 
 private:
 	std::string path_from_list (int f, std::vector<std::string> const & files) const;
@@ -122,6 +128,7 @@ public:
 	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, int entry_point, int length);
 	
 	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
+	std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
 };
 	
 
