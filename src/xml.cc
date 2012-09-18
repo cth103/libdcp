@@ -25,9 +25,9 @@ XMLNode::XMLNode (xmlpp::Node const * node)
 }
 
 xmlpp::Node *
-XMLNode::xml_node (string name)
+XMLNode::node_child (string name)
 {
-	list<xmlpp::Node*> n = xml_nodes (name);
+	list<xmlpp::Node*> n = node_children (name);
 	if (n.size() > 1) {
 		throw XMLError ("duplicate XML tag " + name);
 	} else if (n.empty ()) {
@@ -38,7 +38,7 @@ XMLNode::xml_node (string name)
 }
 
 list<xmlpp::Node*>
-XMLNode::xml_nodes (string name)
+XMLNode::node_children (string name)
 {
 	/* XXX: using find / get_path should work here, but I can't follow
 	   how get_path works.
@@ -58,15 +58,15 @@ XMLNode::xml_nodes (string name)
 }
 
 string
-XMLNode::string_node (string name)
+XMLNode::string_child (string name)
 {
-	return XMLNode (xml_node (name)).content ();
+	return XMLNode (node_child (name)).content ();
 }
 
 string
-XMLNode::optional_string_node (string name)
+XMLNode::optional_string_child (string name)
 {
-	list<xmlpp::Node*> nodes = xml_nodes (name);
+	list<xmlpp::Node*> nodes = node_children (name);
 	if (nodes.size() > 2) {
 		throw XMLError ("duplicate XML tag " + name);
 	}
@@ -75,33 +75,33 @@ XMLNode::optional_string_node (string name)
 		return "";
 	}
 
-	return string_node (name);
+	return string_child (name);
 }
 
 ContentKind
-XMLNode::kind_node (string name)
+XMLNode::kind_child (string name)
 {
-	return content_kind_from_string (string_node (name));
+	return content_kind_from_string (string_child (name));
 }
 
 Fraction
-XMLNode::fraction_node (string name)
+XMLNode::fraction_child (string name)
 {
-	return Fraction (string_node (name));
+	return Fraction (string_child (name));
 }
 
 int64_t
-XMLNode::int64_node (string name)
+XMLNode::int64_child (string name)
 {
-	string s = string_node (name);
+	string s = string_child (name);
 	erase_all (s, " ");
 	return lexical_cast<int64_t> (s);
 }
 
 int64_t
-XMLNode::optional_int64_node (string name)
+XMLNode::optional_int64_child (string name)
 {
-	list<xmlpp::Node*> nodes = xml_nodes (name);
+	list<xmlpp::Node*> nodes = node_children (name);
 	if (nodes.size() > 2) {
 		throw XMLError ("duplicate XML tag " + name);
 	}
@@ -110,17 +110,18 @@ XMLNode::optional_int64_node (string name)
 		return 0;
 	}
 
-	return int64_node (name);
+	return int64_child (name);
 }
 
 float
-XMLNode::float_node (string name)
+XMLNode::float_child (string name)
 {
-	return lexical_cast<float> (string_node (name));
+	cout << "float node of " << string_child(name) << " for " << name << "\n";
+	return lexical_cast<float> (string_child (name));
 }
 
 void
-XMLNode::ignore_node (string name)
+XMLNode::ignore_child (string name)
 {
 	_taken.push_back (name);
 }

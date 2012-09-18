@@ -25,14 +25,14 @@ public:
 	XMLNode (xmlpp::Node const * node);
 
 protected:
-	std::string string_node (std::string);
-	std::string optional_string_node (std::string);
-	ContentKind kind_node (std::string);
-	Fraction fraction_node (std::string);
-	int64_t int64_node (std::string);
-	int64_t optional_int64_node (std::string);
-	float float_node (std::string);
-	void ignore_node (std::string);
+	std::string string_child (std::string);
+	std::string optional_string_child (std::string);
+	ContentKind kind_child (std::string);
+	Fraction fraction_child (std::string);
+	int64_t int64_child (std::string);
+	int64_t optional_int64_child (std::string);
+	float float_child (std::string);
+	void ignore_child (std::string);
 	void done ();
 
 	Time time_attribute (std::string);
@@ -47,13 +47,13 @@ protected:
 	std::string content ();
 
 	template <class T>
-	boost::shared_ptr<T> sub_node (std::string name) {
-		return boost::shared_ptr<T> (new T (xml_node (name)));
+	boost::shared_ptr<T> type_child (std::string name) {
+		return boost::shared_ptr<T> (new T (node_child (name)));
 	}
 
 	template <class T>
-	boost::shared_ptr<T> optional_sub_node (std::string name) {
-		std::list<xmlpp::Node*> n = xml_nodes (name);
+	boost::shared_ptr<T> optional_type_child (std::string name) {
+		std::list<xmlpp::Node*> n = node_children (name);
 		if (n.size() > 1) {
 			throw XMLError ("duplicate XML tag");
 		} else if (n.empty ()) {
@@ -64,8 +64,8 @@ protected:
 	}
 	
 	template <class T>
-	std::list<boost::shared_ptr<T> > sub_nodes (std::string name) {
-		std::list<xmlpp::Node*> n = xml_nodes (name);
+	std::list<boost::shared_ptr<T> > type_children (std::string name) {
+		std::list<xmlpp::Node*> n = node_children (name);
 		std::list<boost::shared_ptr<T> > r;
 		for (typename std::list<xmlpp::Node*>::iterator i = n.begin(); i != n.end(); ++i) {
 			r.push_back (boost::shared_ptr<T> (new T (*i)));
@@ -74,16 +74,16 @@ protected:
 	}
 
 	template <class T>
-	std::list<boost::shared_ptr<T> > sub_nodes (std::string name, std::string sub) {
-		XMLNode p (xml_node (name));
-		return p.sub_nodes<T> (sub);
+	std::list<boost::shared_ptr<T> > type_grand_children (std::string name, std::string sub) {
+		XMLNode p (node_child (name));
+		return p.type_children<T> (sub);
 	}
 
 	xmlpp::Node const * _node;
 
 private:
-	xmlpp::Node* xml_node (std::string);
-	std::list<xmlpp::Node*> xml_nodes (std::string);
+	xmlpp::Node* node_child (std::string);
+	std::list<xmlpp::Node*> node_children (std::string);
 	std::list<Glib::ustring> _taken;
 };
 

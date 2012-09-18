@@ -31,21 +31,21 @@ using namespace libdcp;
 PKLFile::PKLFile (string file)
 	: XMLFile (file, "PackingList")
 {
-	id = string_node ("Id");
-	annotation_text = string_node ("AnnotationText");
-	issue_date = string_node ("IssueDate");
-	issuer = string_node ("Issuer");
-	creator = string_node ("Creator");
-	assets = sub_nodes<PKLAsset> ("AssetList", "Asset");
+	id = string_child ("Id");
+	annotation_text = string_child ("AnnotationText");
+	issue_date = string_child ("IssueDate");
+	issuer = string_child ("Issuer");
+	creator = string_child ("Creator");
+	assets = type_grand_children<PKLAsset> ("AssetList", "Asset");
 }
 
 PKLAsset::PKLAsset (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	id = string_node ("Id");
-	annotation_text = optional_string_node ("AnnotationText");
-	hash = string_node ("Hash");
-	size = int64_node ("Size");
-	type = string_node ("Type");
-	original_file_name = optional_string_node ("OriginalFileName");
+	id = string_child ("Id");
+	annotation_text = optional_string_child ("AnnotationText");
+	hash = string_child ("Hash");
+	size = int64_child ("Size");
+	type = string_child ("Type");
+	original_file_name = optional_string_child ("OriginalFileName");
 }

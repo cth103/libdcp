@@ -31,26 +31,26 @@ using namespace libdcp;
 AssetMap::AssetMap (string file)
 	: XMLFile (file, "AssetMap")
 {
-	id = string_node ("Id");
-	creator = string_node ("Creator");
-	volume_count = int64_node ("VolumeCount");
-	issue_date = string_node ("IssueDate");
-	issuer = string_node ("Issuer");
-	assets = sub_nodes<AssetMapAsset> ("AssetList", "Asset");
+	id = string_child ("Id");
+	creator = string_child ("Creator");
+	volume_count = int64_child ("VolumeCount");
+	issue_date = string_child ("IssueDate");
+	issuer = string_child ("Issuer");
+	assets = type_grand_children<AssetMapAsset> ("AssetList", "Asset");
 }
 
 AssetMapAsset::AssetMapAsset (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	id = string_node ("Id");
-	packing_list = optional_string_node ("PackingList");
-	chunks = sub_nodes<Chunk> ("ChunkList", "Chunk");
+	id = string_child ("Id");
+	packing_list = optional_string_child ("PackingList");
+	chunks = type_grand_children<Chunk> ("ChunkList", "Chunk");
 }
 
 Chunk::Chunk (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	path = string_node ("Path");
+	path = string_child ("Path");
 
 	string const prefix = "file://";
 
@@ -58,9 +58,9 @@ Chunk::Chunk (xmlpp::Node const * node)
 		path = path.substr (prefix.length());
 	}
 	
-	volume_index = optional_int64_node ("VolumeIndex");
-	offset = optional_int64_node ("Offset");
-	length = optional_int64_node ("Length");
+	volume_index = optional_int64_child ("VolumeIndex");
+	offset = optional_int64_child ("Offset");
+	length = optional_int64_child ("Length");
 }
 
 shared_ptr<AssetMapAsset>

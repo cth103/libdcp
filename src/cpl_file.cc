@@ -30,19 +30,19 @@ using namespace libdcp;
 CPLFile::CPLFile (string file)
 	: XMLFile (file, "CompositionPlaylist")
 {
-	id = string_node ("Id");
-	annotation_text = optional_string_node ("AnnotationText");
-	issue_date = string_node ("IssueDate");
-	creator = optional_string_node ("Creator");
-	content_title_text = string_node ("ContentTitleText");
-	content_kind = kind_node ("ContentKind");
-	content_version = optional_sub_node<ContentVersion> ("ContentVersion");
-	ignore_node ("RatingList");
-	reels = sub_nodes<CPLReel> ("ReelList", "Reel");
+	id = string_child ("Id");
+	annotation_text = optional_string_child ("AnnotationText");
+	issue_date = string_child ("IssueDate");
+	creator = optional_string_child ("Creator");
+	content_title_text = string_child ("ContentTitleText");
+	content_kind = kind_child ("ContentKind");
+	content_version = optional_type_child<ContentVersion> ("ContentVersion");
+	ignore_child ("RatingList");
+	reels = type_grand_children<CPLReel> ("ReelList", "Reel");
 
-	ignore_node ("Issuer");
-	ignore_node ("Signer");
-	ignore_node ("Signature");
+	ignore_child ("Issuer");
+	ignore_child ("Signer");
+	ignore_child ("Signature");
 
 	done ();
 }
@@ -50,28 +50,28 @@ CPLFile::CPLFile (string file)
 ContentVersion::ContentVersion (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	id = optional_string_node ("Id");
-	label_text = string_node ("LabelText");
+	id = optional_string_child ("Id");
+	label_text = string_child ("LabelText");
 	done ();
 }
 
 CPLReel::CPLReel (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	id = string_node ("Id");
-	asset_list = sub_node<CPLAssetList> ("AssetList");
+	id = string_child ("Id");
+	asset_list = type_child<CPLAssetList> ("AssetList");
 
-	ignore_node ("AnnotationText");
+	ignore_child ("AnnotationText");
 	done ();
 }
 
 CPLAssetList::CPLAssetList (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	main_picture = optional_sub_node<MainPicture> ("MainPicture");
-	main_stereoscopic_picture = optional_sub_node<MainStereoscopicPicture> ("MainStereoscopicPicture");
-	main_sound = optional_sub_node<MainSound> ("MainSound");
-	main_subtitle = optional_sub_node<MainSubtitle> ("MainSubtitle");
+	main_picture = optional_type_child<MainPicture> ("MainPicture");
+	main_stereoscopic_picture = optional_type_child<MainStereoscopicPicture> ("MainStereoscopicPicture");
+	main_sound = optional_type_child<MainSound> ("MainSound");
+	main_subtitle = optional_type_child<MainSubtitle> ("MainSubtitle");
 
 	done ();
 }
@@ -91,26 +91,26 @@ MainStereoscopicPicture::MainStereoscopicPicture (xmlpp::Node const * node)
 Picture::Picture (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	id = string_node ("Id");
-	annotation_text = optional_string_node ("AnnotationText");
-	edit_rate = fraction_node ("EditRate");
-	intrinsic_duration = int64_node ("IntrinsicDuration");
-	entry_point = int64_node ("EntryPoint");
-	duration = int64_node ("Duration");
-	frame_rate = fraction_node ("FrameRate");
+	id = string_child ("Id");
+	annotation_text = optional_string_child ("AnnotationText");
+	edit_rate = fraction_child ("EditRate");
+	intrinsic_duration = int64_child ("IntrinsicDuration");
+	entry_point = int64_child ("EntryPoint");
+	duration = int64_child ("Duration");
+	frame_rate = fraction_child ("FrameRate");
 	try {
-		screen_aspect_ratio = fraction_node ("ScreenAspectRatio");
+		screen_aspect_ratio = fraction_child ("ScreenAspectRatio");
 	} catch (XMLError& e) {
 		/* Maybe it's not a fraction */
 	}
 	try {
-		float f = float_node ("ScreenAspectRatio");
+		float f = float_child ("ScreenAspectRatio");
 		screen_aspect_ratio = Fraction (f * 1000, 1000);
 	} catch (bad_cast& e) {
 
 	}
 
-	ignore_node ("Hash");
+	ignore_child ("Hash");
 
 	done ();
 }
@@ -118,15 +118,15 @@ Picture::Picture (xmlpp::Node const * node)
 MainSound::MainSound (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	id = string_node ("Id");
-	annotation_text = optional_string_node ("AnnotationText");
-	edit_rate = fraction_node ("EditRate");
-	intrinsic_duration = int64_node ("IntrinsicDuration");
-	entry_point = int64_node ("EntryPoint");
-	duration = int64_node ("Duration");
+	id = string_child ("Id");
+	annotation_text = optional_string_child ("AnnotationText");
+	edit_rate = fraction_child ("EditRate");
+	intrinsic_duration = int64_child ("IntrinsicDuration");
+	entry_point = int64_child ("EntryPoint");
+	duration = int64_child ("Duration");
 
-	ignore_node ("Hash");
-	ignore_node ("Language");
+	ignore_child ("Hash");
+	ignore_child ("Language");
 	
 	done ();
 }
@@ -134,15 +134,15 @@ MainSound::MainSound (xmlpp::Node const * node)
 MainSubtitle::MainSubtitle (xmlpp::Node const * node)
 	: XMLNode (node)
 {
-	id = string_node ("Id");
-	annotation_text = optional_string_node ("AnnotationText");
-	edit_rate = fraction_node ("EditRate");
-	intrinsic_duration = int64_node ("IntrinsicDuration");
-	entry_point = int64_node ("EntryPoint");
-	duration = int64_node ("Duration");
+	id = string_child ("Id");
+	annotation_text = optional_string_child ("AnnotationText");
+	edit_rate = fraction_child ("EditRate");
+	intrinsic_duration = int64_child ("IntrinsicDuration");
+	entry_point = int64_child ("EntryPoint");
+	duration = int64_child ("Duration");
 
-	ignore_node ("Hash");
-	ignore_node ("Language");
+	ignore_child ("Hash");
+	ignore_child ("Language");
 	
 	done ();
 }

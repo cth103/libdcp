@@ -29,15 +29,15 @@ SubtitleAsset::SubtitleAsset (string directory, string xml)
 	: Asset (directory, xml)
 	, XMLFile (path().string(), "DCSubtitle")
 {
-	_subtitle_id = string_node ("SubtitleID");
-	_movie_title = string_node ("MovieTitle");
-	_reel_number = int64_node ("ReelNumber");
-	_language = string_node ("Language");
+	_subtitle_id = string_child ("SubtitleID");
+	_movie_title = string_child ("MovieTitle");
+	_reel_number = int64_child ("ReelNumber");
+	_language = string_child ("Language");
 
-	ignore_node ("LoadFont");
+	ignore_child ("LoadFont");
 
-	list<shared_ptr<FontNode> > font_nodes = sub_nodes<FontNode> ("Font");
-	_load_font_nodes = sub_nodes<LoadFontNode> ("LoadFont");
+	list<shared_ptr<FontNode> > font_nodes = type_children<FontNode> ("Font");
+	_load_font_nodes = type_children<LoadFontNode> ("LoadFont");
 
 	/* Now make Subtitle objects to represent the raw XML nodes
 	   in a sane way.
@@ -145,9 +145,9 @@ FontNode::FontNode (xmlpp::Node const * node)
 		throw DCPReadError ("unknown subtitle effect type");
 	}
 	effect_color = optional_color_attribute ("EffectColor");
-	subtitle_nodes = sub_nodes<SubtitleNode> ("Subtitle");
-	font_nodes = sub_nodes<FontNode> ("Font");
-	text_nodes = sub_nodes<TextNode> ("Text");
+	subtitle_nodes = type_children<SubtitleNode> ("Subtitle");
+	font_nodes = type_children<FontNode> ("Font");
+	text_nodes = type_children<TextNode> ("Text");
 }
 
 FontNode::FontNode (list<shared_ptr<FontNode> > const & font_nodes)
@@ -191,8 +191,8 @@ SubtitleNode::SubtitleNode (xmlpp::Node const * node)
 {
 	in = time_attribute ("TimeIn");
 	out = time_attribute ("TimeOut");
-	font_nodes = sub_nodes<FontNode> ("Font");
-	text_nodes = sub_nodes<TextNode> ("Text");
+	font_nodes = type_children<FontNode> ("Font");
+	text_nodes = type_children<TextNode> ("Text");
 	fade_up_time = fade_time ("FadeUpTime");
 	fade_down_time = fade_time ("FadeDownTime");
 }
@@ -233,7 +233,7 @@ TextNode::TextNode (xmlpp::Node const * node)
 		v_align = BOTTOM;
 	}
 
-	font_nodes = sub_nodes<FontNode> ("Font");
+	font_nodes = type_children<FontNode> ("Font");
 }
 
 list<shared_ptr<Subtitle> >
