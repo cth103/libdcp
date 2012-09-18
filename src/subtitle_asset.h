@@ -220,7 +220,8 @@ private:
 	
 	std::string _subtitle_id;
 	std::string _movie_title;
-	int64_t _reel_number;
+	/* strangely, this is sometimes a string */
+	std::string _reel_number;
 	std::string _language;
 	std::list<boost::shared_ptr<LoadFontNode> > _load_font_nodes;
 

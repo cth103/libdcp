@@ -116,7 +116,6 @@ XMLNode::optional_int64_child (string name)
 float
 XMLNode::float_child (string name)
 {
-	cout << "float node of " << string_child(name) << " for " << name << "\n";
 	return lexical_cast<float> (string_child (name));
 }
 

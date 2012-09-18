@@ -31,7 +31,7 @@ SubtitleAsset::SubtitleAsset (string directory, string xml)
 {
 	_subtitle_id = string_child ("SubtitleID");
 	_movie_title = string_child ("MovieTitle");
-	_reel_number = int64_child ("ReelNumber");
+	_reel_number = string_child ("ReelNumber");
 	_language = string_child ("Language");
 
 	ignore_child ("LoadFont");
