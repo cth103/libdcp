@@ -342,12 +342,18 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 		shared_ptr<SoundAsset> sound;
 		shared_ptr<SubtitleAsset> subtitle;
 
-		if ((*i)->asset_list->main_picture) {
+		/* Some rather twisted logic to decide if we are 3D or not;
+		   some DCPs give a MainStereoscopicPicture to indicate 3D, others
+		   just have a FrameRate twice the EditRate and apparently
+		   expect you to divine the fact that they are hence 3D.
+		*/
+
+		if (!(*i)->asset_list->main_stereoscopic_picture && p->edit_rate == p->frame_rate) {
 
 			try {
 				picture.reset (new MonoPictureAsset (
 						       _directory,
-						       asset_map->asset_from_id ((*i)->asset_list->main_picture->id)->chunks.front()->path,
+						       asset_map->asset_from_id (p->id)->chunks.front()->path,
 						       _fps,
 						       (*i)->asset_list->main_picture->entry_point,
 						       (*i)->asset_list->main_picture->duration
@@ -359,15 +365,15 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 				}
 			}
 			
-		} else if ((*i)->asset_list->main_stereoscopic_picture) {
-			
+		} else {
+
 			try {
 				picture.reset (new StereoPictureAsset (
 						       _directory,
-						       asset_map->asset_from_id ((*i)->asset_list->main_stereoscopic_picture->id)->chunks.front()->path,
+						       asset_map->asset_from_id (p->id)->chunks.front()->path,
 						       _fps,
-						       (*i)->asset_list->main_stereoscopic_picture->entry_point,
-						       (*i)->asset_list->main_stereoscopic_picture->duration
+						       p->entry_point,
+						       p->duration
 						       )
 					);
 			} catch (MXFFileError) {

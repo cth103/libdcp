@@ -20,6 +20,18 @@ Fraction::Fraction (string s)
 	denominator = lexical_cast<int> (b[1]);
 }
 
+bool
+libdcp::operator== (Fraction const & a, Fraction const & b)
+{
+	return (a.numerator == b.numerator && a.denominator == b.denominator);
+}
+
+bool
+libdcp::operator!= (Fraction const & a, Fraction const & b)
+{
+	return (a.numerator != b.numerator || a.denominator != b.denominator);
+}
+
 Color::Color ()
 	: r (0)
 	, g (0)

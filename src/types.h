@@ -82,6 +82,9 @@ public:
 	int denominator;
 };
 
+extern bool operator== (Fraction const & a, Fraction const & b);
+extern bool operator!= (Fraction const & a, Fraction const & b);
+	
 enum EqualityFlags {
 	LIBDCP_METADATA = 0x1,
 	MXF_BITWISE = 0x2,
