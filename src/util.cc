@@ -135,7 +135,7 @@ libdcp::content_kind_from_string (string type)
 		return TRANSITIONAL;
 	} else if (type == "rating") {
 		return RATING;
-	} else if (type == "teaser") {
+	} else if (type == "teaser" || type == "Teaser") {
 		return TEASER;
 	} else if (type == "policy") {
 		return POLICY;
