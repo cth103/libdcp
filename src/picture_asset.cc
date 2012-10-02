@@ -70,56 +70,55 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<s
 		return false;
 	}
 		     
-	if (!opt.bitwise) {
-		ASDCP::JP2K::MXFReader reader_A;
-		if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
-			throw MXFFileError ("could not open MXF file for reading", path().string());
-		}
-
-		ASDCP::JP2K::MXFReader reader_B;
-		if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
-			throw MXFFileError ("could not open MXF file for reading", path().string());
-		}
-
-		ASDCP::JP2K::PictureDescriptor desc_A;
-		if (ASDCP_FAILURE (reader_A.FillPictureDescriptor (desc_A))) {
-			throw DCPReadError ("could not read video MXF information");
-		}
-		ASDCP::JP2K::PictureDescriptor desc_B;
-		if (ASDCP_FAILURE (reader_B.FillPictureDescriptor (desc_B))) {
-			throw DCPReadError ("could not read video MXF information");
-		}
-
-		if (
-			desc_A.EditRate != desc_B.EditRate ||
-			desc_A.ContainerDuration != desc_B.ContainerDuration ||
-			desc_A.SampleRate != desc_B.SampleRate ||
-			desc_A.StoredWidth != desc_B.StoredWidth ||
-			desc_A.StoredHeight != desc_B.StoredHeight ||
-			desc_A.AspectRatio != desc_B.AspectRatio ||
-			desc_A.Rsize != desc_B.Rsize ||
-			desc_A.Xsize != desc_B.Xsize ||
-			desc_A.Ysize != desc_B.Ysize ||
-			desc_A.XOsize != desc_B.XOsize ||
-			desc_A.YOsize != desc_B.YOsize ||
-			desc_A.XTsize != desc_B.XTsize ||
-			desc_A.YTsize != desc_B.YTsize ||
-			desc_A.XTOsize != desc_B.XTOsize ||
-			desc_A.YTOsize != desc_B.YTOsize ||
-			desc_A.Csize != desc_B.Csize
-//			desc_A.CodingStyleDefault != desc_B.CodingStyleDefault ||
-//			desc_A.QuantizationDefault != desc_B.QuantizationDefault
-			) {
+	ASDCP::JP2K::MXFReader reader_A;
+	if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
+		throw MXFFileError ("could not open MXF file for reading", path().string());
+	}
+	
+	ASDCP::JP2K::MXFReader reader_B;
+	if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
+		throw MXFFileError ("could not open MXF file for reading", path().string());
+	}
+	
+	ASDCP::JP2K::PictureDescriptor desc_A;
+	if (ASDCP_FAILURE (reader_A.FillPictureDescriptor (desc_A))) {
+		throw DCPReadError ("could not read video MXF information");
+	}
+	ASDCP::JP2K::PictureDescriptor desc_B;
+	if (ASDCP_FAILURE (reader_B.FillPictureDescriptor (desc_B))) {
+		throw DCPReadError ("could not read video MXF information");
+	}
+	
+	if (
+		desc_A.EditRate != desc_B.EditRate ||
+		desc_A.ContainerDuration != desc_B.ContainerDuration ||
+		desc_A.SampleRate != desc_B.SampleRate ||
+		desc_A.StoredWidth != desc_B.StoredWidth ||
+		desc_A.StoredHeight != desc_B.StoredHeight ||
+		desc_A.AspectRatio != desc_B.AspectRatio ||
+		desc_A.Rsize != desc_B.Rsize ||
+		desc_A.Xsize != desc_B.Xsize ||
+		desc_A.Ysize != desc_B.Ysize ||
+		desc_A.XOsize != desc_B.XOsize ||
+		desc_A.YOsize != desc_B.YOsize ||
+		desc_A.XTsize != desc_B.XTsize ||
+		desc_A.YTsize != desc_B.YTsize ||
+		desc_A.XTOsize != desc_B.XTOsize ||
+		desc_A.YTOsize != desc_B.YTOsize ||
+		desc_A.Csize != desc_B.Csize
+//		desc_A.CodingStyleDefault != desc_B.CodingStyleDefault ||
+//		desc_A.QuantizationDefault != desc_B.QuantizationDefault
+		) {
 		
-			notes.push_back ("video MXF picture descriptors differ");
-		}
+		notes.push_back ("video MXF picture descriptors differ");
+		return false;
+	}
 
 //		for (unsigned int j = 0; j < ASDCP::JP2K::MaxComponents; ++j) {
 //			if (desc_A.ImageComponents[j] != desc_B.ImageComponents[j]) {
 //				notes.pack_start ("video MXF picture descriptors differ");
 //			}
 //		}
-	}
 
 	return true;
 }
@@ -241,18 +240,16 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, li
 	shared_ptr<const MonoPictureAsset> other_picture = dynamic_pointer_cast<const MonoPictureAsset> (other);
 	assert (other_picture);
 
-	if (!opt.bitwise) {
-		for (int i = 0; i < _length; ++i) {
-			shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
-			shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
-			
-			if (!frame_buffer_equals (
-				    i, opt, notes,
-				    frame_A->j2k_frame()->RoData(), frame_A->j2k_frame()->Size(),
-				    frame_B->j2k_frame()->RoData(), frame_B->j2k_frame()->Size()
-				    )) {
-				return false;
-			}
+	for (int i = 0; i < _length; ++i) {
+		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
+		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
+		
+		if (!frame_buffer_equals (
+			    i, opt, notes,
+			    frame_A->j2k_frame()->RoData(), frame_A->j2k_frame()->Size(),
+			    frame_B->j2k_frame()->RoData(), frame_B->j2k_frame()->Size()
+			    )) {
+			return false;
 		}
 	}
 
@@ -269,27 +266,24 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 	shared_ptr<const StereoPictureAsset> other_picture = dynamic_pointer_cast<const StereoPictureAsset> (other);
 	assert (other_picture);
 
-	if (!opt.bitwise) {
-	
-		for (int i = 0; i < _length; ++i) {
-			shared_ptr<const StereoPictureFrame> frame_A = get_frame (i);
-			shared_ptr<const StereoPictureFrame> frame_B = other_picture->get_frame (i);
-			
-			if (!frame_buffer_equals (
-				i, opt, notes,
-				frame_A->j2k_frame()->Left.RoData(), frame_A->j2k_frame()->Left.Size(),
-				frame_B->j2k_frame()->Left.RoData(), frame_B->j2k_frame()->Left.Size()
-				    )) {
-				return false;
-			}
-
-			if (!frame_buffer_equals (
-				    i, opt, notes,
-				    frame_A->j2k_frame()->Right.RoData(), frame_A->j2k_frame()->Right.Size(),
-				    frame_B->j2k_frame()->Right.RoData(), frame_B->j2k_frame()->Right.Size()
-				    )) {
-				return false;
-			}
+	for (int i = 0; i < _length; ++i) {
+		shared_ptr<const StereoPictureFrame> frame_A = get_frame (i);
+		shared_ptr<const StereoPictureFrame> frame_B = other_picture->get_frame (i);
+		
+		if (!frame_buffer_equals (
+			    i, opt, notes,
+			    frame_A->j2k_frame()->Left.RoData(), frame_A->j2k_frame()->Left.Size(),
+			    frame_B->j2k_frame()->Left.RoData(), frame_B->j2k_frame()->Left.Size()
+			    )) {
+			return false;
+		}
+		
+		if (!frame_buffer_equals (
+			    i, opt, notes,
+			    frame_A->j2k_frame()->Right.RoData(), frame_A->j2k_frame()->Right.Size(),
+			    frame_B->j2k_frame()->Right.RoData(), frame_B->j2k_frame()->Right.Size()
+			    )) {
+			return false;
 		}
 	}
 

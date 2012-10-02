@@ -12,40 +12,34 @@ static void
 help (string n)
 {
 	cerr << "Syntax: " << n << " [OPTION] <DCP> <DCP>\n"
-	     << "  -b, --bitwise      bitwise check\n"
 	     << "  -v, --version      show libdcp version\n"
 	     << "  -h, --help         show this help\n"
 	     << "\n"
 	     << "The <DCP>s are the DCP directories to compare.\n"
-	     << "Default is to compare metadata and content, ignoring timestamps\n"
-	     << "and differing UUIDs.  Pass -b to perform a bitwise comparison.\n";
+	     << "Comparison is of metadata and content, ignoring timestamps\n"
+	     << "and differing UUIDs.\n";
 }
 
 int
 main (int argc, char* argv[])
 {
 	EqualityOptions options;
-	options.bitwise = false;
 	
 	int option_index = 0;
 	while (1) {
 		static struct option long_options[] = {
-			{ "bitwise", no_argument, 0, 'b'},
 			{ "version", no_argument, 0, 'v'},
 			{ "help", no_argument, 0, 'h'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "bvhd", long_options, &option_index);
+		int c = getopt_long (argc, argv, "vh", long_options, &option_index);
 
 		if (c == -1) {
 			break;
 		}
 
 		switch (c) {
-		case 'b':
-			options.bitwise = true;
-			break;
 		case 'v':
 			cout << "dcpdiff version " << LIBDCP_VERSION << "\n";
 			exit (EXIT_SUCCESS);

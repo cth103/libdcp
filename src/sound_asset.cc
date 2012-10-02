@@ -200,64 +200,62 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<str
 		return false;
 	}
 		     
-	if (!opt.bitwise) {
-		ASDCP::PCM::MXFReader reader_A;
-		if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
-			throw MXFFileError ("could not open MXF file for reading", path().string());
-		}
+	ASDCP::PCM::MXFReader reader_A;
+	if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
+		throw MXFFileError ("could not open MXF file for reading", path().string());
+	}
 
-		ASDCP::PCM::MXFReader reader_B;
-		if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
-			throw MXFFileError ("could not open MXF file for reading", path().string());
-		}
+	ASDCP::PCM::MXFReader reader_B;
+	if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
+		throw MXFFileError ("could not open MXF file for reading", path().string());
+	}
 
-		ASDCP::PCM::AudioDescriptor desc_A;
-		if (ASDCP_FAILURE (reader_A.FillAudioDescriptor (desc_A))) {
-			throw DCPReadError ("could not read audio MXF information");
-		}
-		ASDCP::PCM::AudioDescriptor desc_B;
-		if (ASDCP_FAILURE (reader_B.FillAudioDescriptor (desc_B))) {
-			throw DCPReadError ("could not read audio MXF information");
-		}
-
-		if (
-			desc_A.EditRate != desc_B.EditRate ||
-			desc_A.AudioSamplingRate != desc_B.AudioSamplingRate ||
-			desc_A.Locked != desc_B.Locked ||
-			desc_A.ChannelCount != desc_B.ChannelCount ||
-			desc_A.QuantizationBits != desc_B.QuantizationBits ||
-			desc_A.BlockAlign != desc_B.BlockAlign ||
-			desc_A.AvgBps != desc_B.AvgBps ||
-			desc_A.LinkedTrackID != desc_B.LinkedTrackID ||
-			desc_A.ContainerDuration != desc_B.ContainerDuration
-//			desc_A.ChannelFormat != desc_B.ChannelFormat ||
-			) {
+	ASDCP::PCM::AudioDescriptor desc_A;
+	if (ASDCP_FAILURE (reader_A.FillAudioDescriptor (desc_A))) {
+		throw DCPReadError ("could not read audio MXF information");
+	}
+	ASDCP::PCM::AudioDescriptor desc_B;
+	if (ASDCP_FAILURE (reader_B.FillAudioDescriptor (desc_B))) {
+		throw DCPReadError ("could not read audio MXF information");
+	}
+	
+	if (
+		desc_A.EditRate != desc_B.EditRate ||
+		desc_A.AudioSamplingRate != desc_B.AudioSamplingRate ||
+		desc_A.Locked != desc_B.Locked ||
+		desc_A.ChannelCount != desc_B.ChannelCount ||
+		desc_A.QuantizationBits != desc_B.QuantizationBits ||
+		desc_A.BlockAlign != desc_B.BlockAlign ||
+		desc_A.AvgBps != desc_B.AvgBps ||
+		desc_A.LinkedTrackID != desc_B.LinkedTrackID ||
+		desc_A.ContainerDuration != desc_B.ContainerDuration
+//		desc_A.ChannelFormat != desc_B.ChannelFormat ||
+		) {
 		
-			notes.push_back ("audio MXF picture descriptors differ");
+		notes.push_back ("audio MXF picture descriptors differ");
+		return false;
+	}
+	
+	ASDCP::PCM::FrameBuffer buffer_A (1 * Kumu::Megabyte);
+	ASDCP::PCM::FrameBuffer buffer_B (1 * Kumu::Megabyte);
+	
+	for (int i = 0; i < _length; ++i) {
+		if (ASDCP_FAILURE (reader_A.ReadFrame (i, buffer_A))) {
+			throw DCPReadError ("could not read audio frame");
+		}
+		
+		if (ASDCP_FAILURE (reader_B.ReadFrame (i, buffer_B))) {
+			throw DCPReadError ("could not read audio frame");
+		}
+		
+		if (buffer_A.Size() != buffer_B.Size()) {
+			notes.push_back ("sizes of audio data for frame " + lexical_cast<string>(i) + " differ");
 			return false;
 		}
-
-		ASDCP::PCM::FrameBuffer buffer_A (1 * Kumu::Megabyte);
-		ASDCP::PCM::FrameBuffer buffer_B (1 * Kumu::Megabyte);
-
-		for (int i = 0; i < _length; ++i) {
-			if (ASDCP_FAILURE (reader_A.ReadFrame (i, buffer_A))) {
-				throw DCPReadError ("could not read audio frame");
-			}
-
-			if (ASDCP_FAILURE (reader_B.ReadFrame (i, buffer_B))) {
-				throw DCPReadError ("could not read audio frame");
-			}
-
-			if (buffer_A.Size() != buffer_B.Size()) {
-				notes.push_back ("sizes of audio data for frame " + lexical_cast<string>(i) + " differ");
-				return false;
-			}
-
-			if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
-				notes.push_back ("PCM data for MXF frame " + lexical_cast<string>(i) + " differ");
-				return false;
-			}
+		
+		if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
+			notes.push_back ("PCM data for MXF frame " + lexical_cast<string>(i) + " differ");
+			return false;
 		}
 	}
 

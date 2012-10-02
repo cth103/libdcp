@@ -58,7 +58,7 @@ MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
 }
 
 bool
-MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<string>& notes) const
+MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions, list<string>& notes) const
 {
 	shared_ptr<const MXFAsset> other_mxf = dynamic_pointer_cast<const MXFAsset> (other);
 	if (!other_mxf) {
@@ -79,41 +79,6 @@ MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<strin
 	if (_length != other_mxf->_length) {
 		notes.push_back ("MXF lengths differ");
 		return false;
-	}
-	
-	if (opt.bitwise) {
-
-		if (digest() != other_mxf->digest()) {
-			notes.push_back ("MXF digests differ");
-			return false;
-		}
-		
-		if (filesystem::file_size (path()) != filesystem::file_size (other_mxf->path())) {
-			notes.push_back (path().string() + " and " + other_mxf->path().string() + " sizes differ");
-			return false;
-		}
-		
-		ifstream a (path().string().c_str(), ios::binary);
-		ifstream b (other_mxf->path().string().c_str(), ios::binary);
-
-		int buffer_size = 65536;
-		char abuffer[buffer_size];
-		char bbuffer[buffer_size];
-
-		int n = filesystem::file_size (path ());
-
-		while (n) {
-			int const t = min (n, buffer_size);
-			a.read (abuffer, t);
-			b.read (bbuffer, t);
-
-			if (memcmp (abuffer, bbuffer, t) != 0) {
-				notes.push_back (path().string() + " and " + other_mxf->path().string() + " content differs");
-				return false;
-			}
-
-			n -= t;
-		}
 	}
 
 	return true;
