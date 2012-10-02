@@ -57,37 +57,40 @@ MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
 	assert (c == Kumu::UUID_Length);
 }
 
-list<string>
-MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
+bool
+MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<string>& notes) const
 {
 	shared_ptr<const MXFAsset> other_mxf = dynamic_pointer_cast<const MXFAsset> (other);
 	if (!other_mxf) {
-		return list<string> ();
+		notes.push_back ("comparing an MXF asset with a non-MXF asset");
+		return false;
 	}
 	
-	list<string> notes;
-	
-	if (opt.flags & LIBDCP_METADATA) {
-		if (_file_name != other_mxf->_file_name) {
-			notes.push_back ("MXF names differ");
-		}
-		if (_fps != other_mxf->_fps) {
-			notes.push_back ("MXF frames per second differ");
-		}
-		if (_length != other_mxf->_length) {
-			notes.push_back ("MXF lengths differ");
-		}
+	if (_file_name != other_mxf->_file_name) {
+		notes.push_back ("MXF names differ");
+		return false;
+	}
+
+	if (_fps != other_mxf->_fps) {
+		notes.push_back ("MXF frames per second differ");
+		return false;
 	}
 	
-	if (opt.flags & MXF_BITWISE) {
+	if (_length != other_mxf->_length) {
+		notes.push_back ("MXF lengths differ");
+		return false;
+	}
+	
+	if (opt.bitwise) {
 
 		if (digest() != other_mxf->digest()) {
 			notes.push_back ("MXF digests differ");
+			return false;
 		}
 		
 		if (filesystem::file_size (path()) != filesystem::file_size (other_mxf->path())) {
 			notes.push_back (path().string() + " and " + other_mxf->path().string() + " sizes differ");
-			return notes;
+			return false;
 		}
 		
 		ifstream a (path().string().c_str(), ios::binary);
@@ -106,14 +109,14 @@ MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 
 			if (memcmp (abuffer, bbuffer, t) != 0) {
 				notes.push_back (path().string() + " and " + other_mxf->path().string() + " content differs");
-				return notes;
+				return false;
 			}
 
 			n -= t;
 		}
 	}
 
-	return notes;
+	return true;
 }
 
 int

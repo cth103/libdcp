@@ -38,7 +38,7 @@ public:
 	 */
 	MXFAsset (std::string directory, std::string file_name, sigc::signal1<void, float>* progress, int fps, int entry_point, int length);
 
-	virtual std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const;
+	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
 	
 	int length () const;
 

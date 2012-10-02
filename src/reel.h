@@ -54,7 +54,7 @@ public:
 
 	void write_to_cpl (std::ostream & s) const;
 
-	std::list<std::string> equals (boost::shared_ptr<const Reel> other, EqualityOptions opt) const;
+	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, std::list<std::string>& notes) const;
 
 private:
 	boost::shared_ptr<const PictureAsset> _main_picture;

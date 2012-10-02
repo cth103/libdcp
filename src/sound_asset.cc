@@ -193,12 +193,14 @@ SoundAsset::write_to_cpl (ostream& s) const
 	  << "        </MainSound>\n";
 }
 
-list<string>
-SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
+bool
+SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<string>& notes) const
 {
-	list<string> notes = MXFAsset::equals (other, opt);
+	if (!MXFAsset::equals (other, opt, notes)) {
+		return false;
+	}
 		     
-	if (opt.flags & MXF_INSPECT) {
+	if (!opt.bitwise) {
 		ASDCP::PCM::MXFReader reader_A;
 		if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
 			throw MXFFileError ("could not open MXF file for reading", path().string());
@@ -232,6 +234,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 			) {
 		
 			notes.push_back ("audio MXF picture descriptors differ");
+			return false;
 		}
 
 		ASDCP::PCM::FrameBuffer buffer_A (1 * Kumu::Megabyte);
@@ -248,17 +251,17 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 
 			if (buffer_A.Size() != buffer_B.Size()) {
 				notes.push_back ("sizes of audio data for frame " + lexical_cast<string>(i) + " differ");
-				continue;
+				return false;
 			}
 
 			if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
 				notes.push_back ("PCM data for MXF frame " + lexical_cast<string>(i) + " differ");
-				continue;
+				return false;
 			}
 		}
 	}
 
-	return notes;
+	return true;
 }
 
 shared_ptr<const SoundFrame>

@@ -68,7 +68,7 @@ public:
 		return _uuid;
 	}
 
-	virtual std::list<std::string> equals (boost::shared_ptr<const Asset> other, EqualityOptions opt) const = 0;
+	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const = 0;
 
 protected:
 	friend class PictureAsset;

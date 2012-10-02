@@ -14,7 +14,6 @@ help (string n)
 	cerr << "Syntax: " << n << " [OPTION] <DCP> <DCP>\n"
 	     << "  -b, --bitwise      bitwise check\n"
 	     << "  -v, --version      show libdcp version\n"
-	     << "  -d, --verbose      be verbose\n"
 	     << "  -h, --help         show this help\n"
 	     << "\n"
 	     << "The <DCP>s are the DCP directories to compare.\n"
@@ -26,8 +25,7 @@ int
 main (int argc, char* argv[])
 {
 	EqualityOptions options;
-	options.flags = EqualityFlags (LIBDCP_METADATA | MXF_INSPECT);
-	options.verbose = false;
+	options.bitwise = false;
 	
 	int option_index = 0;
 	while (1) {
@@ -35,7 +33,6 @@ main (int argc, char* argv[])
 			{ "bitwise", no_argument, 0, 'b'},
 			{ "version", no_argument, 0, 'v'},
 			{ "help", no_argument, 0, 'h'},
-			{ "verbose", no_argument, 0, 'd'},
 			{ 0, 0, 0, 0 }
 		};
 
@@ -47,7 +44,7 @@ main (int argc, char* argv[])
 
 		switch (c) {
 		case 'b':
-			options.flags = EqualityFlags (options.flags | MXF_BITWISE);
+			options.bitwise = true;
 			break;
 		case 'v':
 			cout << "dcpdiff version " << LIBDCP_VERSION << "\n";
@@ -55,9 +52,6 @@ main (int argc, char* argv[])
 		case 'h':
 			help (argv[0]);
 			exit (EXIT_SUCCESS);
-		case 'd':
-			options.verbose = true;
-			break;
 		}
 	}
 
@@ -97,14 +91,16 @@ main (int argc, char* argv[])
 	options.max_mean_pixel_error = 5;
 	options.max_std_dev_pixel_error = 5;
 
-	list<string> notes = a->equals (*b, options);
-	if (notes.empty ()) {
-		cout << "DCPs equal\n";
-		exit (EXIT_SUCCESS);
-	}
+	list<string> notes;
+	bool equals = a->equals (*b, options, notes);
 
 	for (list<string>::iterator i = notes.begin(); i != notes.end(); ++i) {
 		cout << "  " << *i << "\n";
+	}
+
+	if (equals) {
+		cout << "DCPs equal\n";
+		exit (EXIT_SUCCESS);
 	}
 
 	exit (EXIT_FAILURE);

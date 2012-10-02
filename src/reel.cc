@@ -46,38 +46,36 @@ Reel::write_to_cpl (ostream& s) const
 	}
 }
 	
-list<string>
-Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt) const
+bool
+Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, list<string>& notes) const
 {
-	list<string> o;
-	
 	if ((_main_picture && !other->_main_picture) || (!_main_picture && other->_main_picture)) {
-		o.push_back ("reel has different assets");
+		notes.push_back ("reel has different assets");
+		return false;
 	}
 	
-	if (_main_picture) {
-		list<string> m = _main_picture->equals (other->_main_picture, opt);
-		o.merge (m);
+	if (_main_picture && !_main_picture->equals (other->_main_picture, opt, notes)) {
+		return false;
 	}
 
 	if ((_main_sound && !other->_main_sound) || (!_main_sound && other->_main_sound)) {
-		o.push_back ("reel has different assets");
+		notes.push_back ("reel has different assets");
+		return false;
 	}
 	
-	if (_main_sound) {
-		list<string> m = _main_sound->equals (other->_main_sound, opt);
-		o.merge (m);
+	if (_main_sound && !_main_sound->equals (other->_main_sound, opt, notes)) {
+		return false;
 	}
 
 	if ((_main_subtitle && !other->_main_subtitle) || (!_main_subtitle && other->_main_subtitle)) {
-		o.push_back ("reel has different assets");
+		notes.push_back ("reel has different assets");
+		return false;
 	}
 	
-	if (_main_subtitle) {
-		list<string> m = _main_subtitle->equals (other->_main_subtitle, opt);
-		o.merge (m);
+	if (_main_subtitle && !_main_subtitle->equals (other->_main_subtitle, opt, notes)) {
+		return false;
 	}
 
-	return o;
+	return true;
 }
 

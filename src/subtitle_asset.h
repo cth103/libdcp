@@ -183,9 +183,10 @@ public:
 	SubtitleAsset (std::string directory, std::string xml);
 
 	void write_to_cpl (std::ostream&) const {}
-	virtual std::list<std::string> equals (boost::shared_ptr<const Asset>, EqualityOptions) const {
+	virtual bool equals (boost::shared_ptr<const Asset>, EqualityOptions, std::list<std::string>& notes) const {
 		/* XXX */
-		return std::list<std::string> ();
+		notes.push_back ("subtitle assets not compared yet");
+		return true;
 	}
 
 	std::string language () const {

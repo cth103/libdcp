@@ -85,15 +85,12 @@ public:
 extern bool operator== (Fraction const & a, Fraction const & b);
 extern bool operator!= (Fraction const & a, Fraction const & b);
 	
-enum EqualityFlags {
-	LIBDCP_METADATA = 0x1,
-	MXF_BITWISE = 0x2,
-	MXF_INSPECT = 0x4
-};
-
 struct EqualityOptions {
-	EqualityFlags flags;
-	bool verbose;
+	/** true to do a bitwise comparison.
+	 *  false to compare PCM and image data, possibly allowing
+	 *  some variation in values.
+	 */
+	bool bitwise;
 	double max_mean_pixel_error;
 	double max_std_dev_pixel_error;
 };

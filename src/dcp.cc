@@ -245,26 +245,26 @@ DCP::read (bool require_mxfs)
 
 }
 
-list<string>
-DCP::equals (DCP const & other, EqualityOptions opt) const
+bool
+DCP::equals (DCP const & other, EqualityOptions opt, list<string>& notes) const
 {
-	list<string> notes;
-
 	if (_cpls.size() != other._cpls.size()) {
 		notes.push_back ("CPL counts differ");
+		return false;
 	}
 
 	list<shared_ptr<const CPL> >::const_iterator a = _cpls.begin ();
 	list<shared_ptr<const CPL> >::const_iterator b = other._cpls.begin ();
 
 	while (a != _cpls.end ()) {
-		list<string> n = (*a)->equals (*b->get(), opt);
-		notes.merge (n);
+		if (!(*a)->equals (*b->get(), opt, notes)) {
+			return false;
+		}
 		++a;
 		++b;
 	}
 
-	return notes;
+	return true;
 }
 
 
@@ -509,39 +509,44 @@ CPL::write_to_assetmap (ostream& s) const
 	
 	
 	
-list<string>
-CPL::equals (CPL const & other, EqualityOptions opt) const
+bool
+CPL::equals (CPL const & other, EqualityOptions opt, list<string>& notes) const
 {
-	list<string> notes;
-	
-	if (opt.flags & LIBDCP_METADATA) {
-		if (_name != other._name) {
-			notes.push_back ("names differ");
-		}
-		if (_content_kind != other._content_kind) {
-			notes.push_back ("content kinds differ");
-		}
-		if (_fps != other._fps) {
-			notes.push_back ("frames per second differ");
-		}
-		if (_length != other._length) {
-			notes.push_back ("lengths differ");
-		}
+	if (_name != other._name) {
+		notes.push_back ("names differ");
+		return false;
+	}
+
+	if (_content_kind != other._content_kind) {
+		notes.push_back ("content kinds differ");
+		return false;
+	}
+
+	if (_fps != other._fps) {
+		notes.push_back ("frames per second differ");
+		return false;
+	}
+
+	if (_length != other._length) {
+		notes.push_back ("lengths differ");
+		return false;
 	}
 
 	if (_reels.size() != other._reels.size()) {
 		notes.push_back ("reel counts differ");
+		return false;
 	}
 	
 	list<shared_ptr<const Reel> >::const_iterator a = _reels.begin ();
 	list<shared_ptr<const Reel> >::const_iterator b = other._reels.begin ();
 	
 	while (a != _reels.end ()) {
-		list<string> n = (*a)->equals (*b, opt);
-		notes.merge (n);
+		if (!(*a)->equals (*b, opt, notes)) {
+			return false;
+		}
 		++a;
 		++b;
 	}
 
-	return notes;
+	return true;
 }
