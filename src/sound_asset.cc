@@ -201,13 +201,11 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 	if (opt.flags & MXF_INSPECT) {
 		ASDCP::PCM::MXFReader reader_A;
 		if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
-			cout << "failed " << path() << "\n";
 			throw MXFFileError ("could not open MXF file for reading", path().string());
 		}
 
 		ASDCP::PCM::MXFReader reader_B;
 		if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
-			cout << "failed " << other->path() << "\n";
 			throw MXFFileError ("could not open MXF file for reading", path().string());
 		}
 
@@ -240,11 +238,11 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 		ASDCP::PCM::FrameBuffer buffer_B (1 * Kumu::Megabyte);
 
 		for (int i = 0; i < _length; ++i) {
-			if (ASDCP_FAILURE (reader_A.ReadFrame (0, buffer_A))) {
+			if (ASDCP_FAILURE (reader_A.ReadFrame (i, buffer_A))) {
 				throw DCPReadError ("could not read audio frame");
 			}
 
-			if (ASDCP_FAILURE (reader_B.ReadFrame (0, buffer_B))) {
+			if (ASDCP_FAILURE (reader_B.ReadFrame (i, buffer_B))) {
 				throw DCPReadError ("could not read audio frame");
 			}
 
@@ -254,7 +252,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt) const
 			}
 
 			if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
-				notes.push_back ("PCM data for frame " + lexical_cast<string>(i) + " differ");
+				notes.push_back ("PCM data for MXF frame " + lexical_cast<string>(i) + " differ");
 				continue;
 			}
 		}
