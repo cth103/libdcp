@@ -254,16 +254,13 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<str
 		}
 		
 		if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
-			notes.push_back ("PCM data for MXF frame " + lexical_cast<string>(i) + " differ");
-
 			for (uint32_t i = 0; i < buffer_A.Size(); ++i) {
 				int const d = abs (buffer_A.RoData()[i] - buffer_B.RoData()[i]);
-				if (d) {
-					notes.push_back ("First difference is " + lexical_cast<string> (d));
+				if (d > opt.max_audio_sample_error) {
+					notes.push_back ("PCM data difference of " + lexical_cast<string> (d));
 					return false;
 				}
 			}
-			return false;
 		}
 	}
 

@@ -84,6 +84,8 @@ main (int argc, char* argv[])
 
 	options.max_mean_pixel_error = 5;
 	options.max_std_dev_pixel_error = 5;
+	/* I think this is just below the LSB at 16-bits (ie the 8th most significant bit at 24-bit) */
+	options.max_audio_sample_error = 255;
 
 	list<string> notes;
 	bool equals = a->equals (*b, options, notes);

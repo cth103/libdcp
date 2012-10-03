@@ -86,8 +86,15 @@ extern bool operator== (Fraction const & a, Fraction const & b);
 extern bool operator!= (Fraction const & a, Fraction const & b);
 	
 struct EqualityOptions {
+	EqualityOptions () 
+		: max_mean_pixel_error (0)
+		, max_std_dev_pixel_error (0)
+		, max_audio_sample_error (0)
+	{}
+
 	double max_mean_pixel_error;
 	double max_std_dev_pixel_error;
+	int max_audio_sample_error;
 };
 
 class Color
