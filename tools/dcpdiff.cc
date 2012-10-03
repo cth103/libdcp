@@ -95,7 +95,6 @@ main (int argc, char* argv[])
 	}
 
 	if (equals) {
-		cout << "DCPs equal\n";
 		exit (EXIT_SUCCESS);
 	}
 
