@@ -45,9 +45,9 @@ class Asset
 public:
 	/** Construct an Asset.
 	 *  @param directory Directory where our XML or MXF file is.
-	 *  @param file_name Name of our file within directory.
+	 *  @param file_name Name of our file within directory, or empty to make one up based on UUID.
 	 */
-	Asset (std::string directory, std::string file_name);
+	Asset (std::string directory, std::string file_name = "");
 
 	/** Write details of the asset to a CPL stream.
 	 *  @param s Stream.

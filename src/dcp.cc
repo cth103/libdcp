@@ -216,8 +216,6 @@ DCP::read (bool require_mxfs)
 			} else {
 				throw DCPReadError ("duplicate PKLs found");
 			}
-		} else if (root == "DCSubtitle") {
-			files.subtitles.push_back (t.string());
 		}
 	}
 	
@@ -242,7 +240,6 @@ DCP::read (bool require_mxfs)
 	for (list<string>::iterator i = files.cpls.begin(); i != files.cpls.end(); ++i) {
 		_cpls.push_back (shared_ptr<CPL> (new CPL (_directory, *i, asset_map, require_mxfs)));
 	}
-
 }
 
 bool

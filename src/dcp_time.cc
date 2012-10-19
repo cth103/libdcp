@@ -75,6 +75,12 @@ libdcp::operator== (Time const & a, Time const & b)
 }
 
 bool
+libdcp::operator!= (Time const & a, Time const & b)
+{
+	return !(a == b);
+}
+
+bool
 libdcp::operator<= (Time const & a, Time const & b)
 {
 	if (a.h != b.h) {
@@ -210,3 +216,18 @@ libdcp::operator/ (Time a, Time const & b)
 	int64_t const bt = b.h * 3600 * 250 + b.m * 60 * 250 + b.s * 250 + b.t;
 	return float (at) / bt;
 }
+
+string
+Time::to_string () const
+{
+	stringstream str;
+	str << h << ":" << m << ":" << s << ":" << t;
+	return str.str ();
+}
+
+int64_t
+Time::to_ticks () const
+{
+	return t + s * 25 + m * 60 * 25 + h * 60 * 60 * 25;
+}
+

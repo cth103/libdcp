@@ -58,12 +58,18 @@ enum Effect
 	SHADOW
 };
 
+extern std::string effect_to_string (Effect e);
+extern Effect string_to_effect (std::string s);
+
 enum VAlign
 {
 	TOP,
 	CENTER,
 	BOTTOM
 };
+
+extern std::string valign_to_string (VAlign a);
+extern VAlign string_to_valign (std::string s);
 
 enum Eye
 {
@@ -107,9 +113,12 @@ public:
 	int r;
 	int g;
 	int b;
+
+	std::string to_argb_string () const;
 };
 
 extern bool operator== (Color const & a, Color const & b);
+extern bool operator!= (Color const & a, Color const & b);
 extern std::ostream & operator<< (std::ostream & s, Color const & c);
 
 }

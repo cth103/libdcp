@@ -53,9 +53,13 @@ public:
 	int m; ///< minutes
 	int s; ///< seconds
 	int t; ///< `ticks', where 1 tick is 4 milliseconds
+
+	std::string to_string () const;
+	int64_t to_ticks () const;
 };
 
 extern bool operator== (Time const & a, Time const & b);
+extern bool operator!= (Time const & a, Time const & b);
 extern bool operator<= (Time const & a, Time const & b);
 extern bool operator< (Time const & a, Time const & b);
 extern bool operator> (Time const & a, Time const & b);

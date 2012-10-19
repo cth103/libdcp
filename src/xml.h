@@ -24,7 +24,6 @@ public:
 	XMLNode ();
 	XMLNode (xmlpp::Node const * node);
 
-protected:
 	std::string string_child (std::string);
 	std::string optional_string_child (std::string);
 	ContentKind kind_child (std::string);

@@ -177,7 +177,6 @@ private:
 		std::list<std::string> cpls;
 		std::string pkl;
 		std::string asset_map;
-		std::list<std::string> subtitles;
 	};
 
 	/** the directory that we are writing to */

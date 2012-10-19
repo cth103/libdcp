@@ -17,6 +17,7 @@
 
 */
 
+#include <fstream>
 #include <boost/lexical_cast.hpp>
 #include "subtitle_asset.h"
 #include "util.h"
@@ -25,30 +26,41 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-SubtitleAsset::SubtitleAsset (string directory, string xml)
-	: Asset (directory, xml)
-	, XMLFile (path().string(), "DCSubtitle")
+SubtitleAsset::SubtitleAsset (string directory, string xml_file)
+	: Asset (directory, xml_file)
 {
-	_subtitle_id = string_child ("SubtitleID");
-	_movie_title = string_child ("MovieTitle");
-	_reel_number = string_child ("ReelNumber");
-	_language = string_child ("Language");
+	shared_ptr<XMLFile> xml (new XMLFile (path().string(), "DCSubtitle"));
+	
+	_uuid = xml->string_child ("SubtitleID");
+	_movie_title = xml->string_child ("MovieTitle");
+	_reel_number = xml->string_child ("ReelNumber");
+	_language = xml->string_child ("Language");
 
-	ignore_child ("LoadFont");
+	xml->ignore_child ("LoadFont");
 
-	list<shared_ptr<FontNode> > font_nodes = type_children<FontNode> ("Font");
-	_load_font_nodes = type_children<LoadFontNode> ("LoadFont");
+	list<shared_ptr<FontNode> > font_nodes = xml->type_children<FontNode> ("Font");
+	_load_font_nodes = xml->type_children<LoadFontNode> ("LoadFont");
 
 	/* Now make Subtitle objects to represent the raw XML nodes
 	   in a sane way.
 	*/
 
 	ParseState parse_state;
-	examine_font_nodes (font_nodes, parse_state);
+	examine_font_nodes (xml, font_nodes, parse_state);
+}
+
+SubtitleAsset::SubtitleAsset (string directory, string movie_title, string language)
+	: Asset (directory)
+	, _movie_title (movie_title)
+	, _reel_number ("1")
+	, _language (language)
+{
+
 }
 
 void
 SubtitleAsset::examine_font_nodes (
+	shared_ptr<XMLFile> xml,
 	list<shared_ptr<FontNode> > const & font_nodes,
 	ParseState& parse_state
 	)
@@ -60,13 +72,13 @@ SubtitleAsset::examine_font_nodes (
 
 		for (list<shared_ptr<SubtitleNode> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
 			parse_state.subtitle_nodes.push_back (*j);
-			examine_text_nodes ((*j)->text_nodes, parse_state);
-			examine_font_nodes ((*j)->font_nodes, parse_state);
+			examine_text_nodes (xml, (*j)->text_nodes, parse_state);
+			examine_font_nodes (xml, (*j)->font_nodes, parse_state);
 			parse_state.subtitle_nodes.pop_back ();
 		}
 	
-		examine_font_nodes ((*i)->font_nodes, parse_state);
-		examine_text_nodes ((*i)->text_nodes, parse_state);
+		examine_font_nodes (xml, (*i)->font_nodes, parse_state);
+		examine_text_nodes (xml, (*i)->text_nodes, parse_state);
 		
 		parse_state.font_nodes.pop_back ();
 	}
@@ -74,6 +86,7 @@ SubtitleAsset::examine_font_nodes (
 
 void
 SubtitleAsset::examine_text_nodes (
+	shared_ptr<XMLFile> xml,
 	list<shared_ptr<TextNode> > const & text_nodes,
 	ParseState& parse_state
 	)
@@ -81,7 +94,7 @@ SubtitleAsset::examine_text_nodes (
 	for (list<shared_ptr<TextNode> >::const_iterator i = text_nodes.begin(); i != text_nodes.end(); ++i) {
 		parse_state.text_nodes.push_back (*i);
 		maybe_add_subtitle ((*i)->text, parse_state);
-		examine_font_nodes ((*i)->font_nodes, parse_state);
+		examine_font_nodes (xml, (*i)->font_nodes, parse_state);
 		parse_state.text_nodes.pop_back ();
 	}
 }
@@ -135,14 +148,8 @@ FontNode::FontNode (xmlpp::Node const * node)
 	italic = optional_bool_attribute ("Italic");
 	color = optional_color_attribute ("Color");
 	string const e = optional_string_attribute ("Effect");
-	if (e == "none") {
-		effect = NONE;
-	} else if (e == "border") {
-		effect = BORDER;
-	} else if (e == "shadow") {
-		effect = SHADOW;
-	} else if (!e.empty ()) {
-		throw DCPReadError ("unknown subtitle effect type");
+	if (!e.empty ()) {
+		effect = string_to_effect (e);
 	}
 	effect_color = optional_color_attribute ("EffectColor");
 	subtitle_nodes = type_children<SubtitleNode> ("Subtitle");
@@ -225,12 +232,8 @@ TextNode::TextNode (xmlpp::Node const * node)
 	text = content ();
 	v_position = float_attribute ("VPosition");
 	string const v = optional_string_attribute ("VAlign");
-	if (v == "top") {
-		v_align = TOP;
-	} else if (v == "center") {
-		v_align = CENTER;
-	} else if (v == "bottom") {
-		v_align = BOTTOM;
+	if (!v.empty ()) {
+		v_align = string_to_valign (v);
 	}
 
 	font_nodes = type_children<FontNode> ("Font");
@@ -348,4 +351,135 @@ libdcp::operator<< (ostream& s, Subtitle const & sub)
 	  << "effect " << ((int) sub.effect()) << ", effect color " << sub.effect_color();
 
 	return s;
+}
+
+void
+SubtitleAsset::add (shared_ptr<Subtitle> s)
+{
+	_subtitles.push_back (s);
+}
+
+void
+SubtitleAsset::write_to_cpl (ostream& s) const
+{
+	/* XXX: should EditRate, Duration and IntrinsicDuration be in here? */
+	
+	s << "        <MainSubtitle>\n"
+	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
+	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
+	  << "          <EntryPoint>0</EntryPoint>\n"
+	  << "        </MainSubtitle>\n";
+}
+
+struct SubtitleSorter {
+	bool operator() (shared_ptr<Subtitle> a, shared_ptr<Subtitle> b) {
+		return a->in() < b->in();
+	}
+};
+
+void
+SubtitleAsset::write_xml ()
+{
+	ofstream f (path().string().c_str());
+
+	f << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+	  << "<DCSubtitle Version=\"1.0\">\n"
+	  << "  <SubtitleID>" << _uuid << "</SubtitleID>\n"
+	  << "  <MovieTitle>" << _movie_title << "</MovieTitle>\n"
+	  << "  <ReelNumber>" << _reel_number << "</ReelNumber>\n"
+	  << "  <Language>" << _language << "</Language>\n"
+	  << "  <LoadFont Id=\"theFontId\" URI=\"arial.ttf\"/>";
+
+	_subtitles.sort (SubtitleSorter ());
+
+	/* XXX: multiple fonts not supported */
+	/* XXX: script, underlined, weight not supported */
+
+	bool first = true;
+	bool italic;
+	Color color;
+	int size = 0;
+	Effect effect = NONE;
+	Color effect_color;
+	int spot_number = 1;
+	Time last_in;
+	Time last_out;
+	Time last_fade_up_time;
+	Time last_fade_down_time;
+
+	for (list<shared_ptr<Subtitle> >::iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
+
+		stringstream a;
+		if (first || italic != (*i)->italic()) {
+			italic = (*i)->italic ();
+			a << "Italic=\"" << (italic ? "yes" : "no") << "\" ";
+		}
+
+		if (first || color != (*i)->color()) {
+			color = (*i)->color ();
+			a << "Color=\"" << color.to_argb_string() << "\" ";
+		}
+
+		if (size || size != (*i)->size()) {
+			size = (*i)->size ();
+			a << "Size=\"" << size << "\" ";
+		}
+
+		if (first || effect != (*i)->effect()) {
+			effect = (*i)->effect ();
+			a << "Effect=\"" << effect_to_string(effect) << "\" ";
+		}
+
+		if (first || effect_color != (*i)->effect_color()) {
+			effect_color = (*i)->effect_color ();
+			a << "EffectColor=\"" << effect_color.to_argb_string() << "\" ";
+		}
+
+		if (first) {
+			a << "Script=\"normal\" Underlined=\"no\" Weight=\"normal\">";
+		}
+
+		if (!a.str().empty()) {
+			if (!first) {
+				f << "  </Font>\n";
+			} else {
+				f << "  <Font Id=\"theFontId\" " << a << ">\n";
+			}
+		}
+
+		if (first ||
+		    (last_in != (*i)->in() ||
+		     last_out != (*i)->out() ||
+		     last_fade_up_time != (*i)->fade_up_time() ||
+		     last_fade_down_time != (*i)->fade_down_time()
+			    )) {
+
+			if (!first) {
+				f << "  </Subtitle>\n";
+			}
+
+			f << "  <Subtitle "
+			  << "SpotNumber=\"" << spot_number++ << "\" "
+			  << "TimeIn=" << (*i)->in().to_string() << "\" "
+			  << "TimeOut=\"" << (*i)->out().to_string() << "\" "
+			  << "FadeUpTime=\"" << (*i)->fade_up_time().to_ticks() << "\" "
+			  << "FadeDownTime=\"" << (*i)->fade_down_time().to_ticks() << "\" "
+			  << ">\n";
+
+			last_in = (*i)->in ();
+			last_out = (*i)->out ();
+			last_fade_up_time = (*i)->fade_up_time ();
+			last_fade_down_time = (*i)->fade_down_time ();
+		}
+
+		f << "      <Text "
+		  << "VAlign=\"" << valign_to_string ((*i)->v_align()) << "\" "
+		  << "VPosition=\"" << (*i)->v_position() << "\" "
+		  << ">" << (*i)->text() << "</Text>\n";
+
+		first = false;
+	}
+
+	f << "  </Subtitle>\n";
+	f << "</Font>\n";
 }

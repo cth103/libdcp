@@ -39,7 +39,9 @@ Asset::Asset (string directory, string file_name)
 	, _file_name (file_name)
 	, _uuid (make_uuid ())
 {
-	
+	if (_file_name.empty ()) {
+		_file_name = _uuid + ".xml";
+	}
 }
 
 void

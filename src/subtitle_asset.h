@@ -177,12 +177,13 @@ private:
 bool operator== (Subtitle const & a, Subtitle const & b);
 std::ostream& operator<< (std::ostream& s, Subtitle const & sub);
 
-class SubtitleAsset : public Asset, public XMLFile
+class SubtitleAsset : public Asset
 {
 public:
-	SubtitleAsset (std::string directory, std::string xml);
+	SubtitleAsset (std::string directory, std::string xml_file);
+	SubtitleAsset (std::string directory, std::string movie_title, std::string language);
 
-	void write_to_cpl (std::ostream&) const {}
+	void write_to_cpl (std::ostream&) const;
 	virtual bool equals (boost::shared_ptr<const Asset>, EqualityOptions, std::list<std::string>& notes) const {
 		/* XXX */
 		notes.push_back ("subtitle assets not compared yet");
@@ -198,6 +199,10 @@ public:
 		return _subtitles;
 	}
 
+	void add (boost::shared_ptr<Subtitle>);
+
+	void write_xml ();
+
 private:
 	std::string font_id_to_name (std::string id) const;
 
@@ -210,16 +215,17 @@ private:
 	void maybe_add_subtitle (std::string text, ParseState const & parse_state);
 	
 	void examine_font_nodes (
+		boost::shared_ptr<XMLFile> xml,
 		std::list<boost::shared_ptr<FontNode> > const & font_nodes,
 		ParseState& parse_state
 		);
 	
 	void examine_text_nodes (
+		boost::shared_ptr<XMLFile> xml,
 		std::list<boost::shared_ptr<TextNode> > const & text_nodes,
 		ParseState& parse_state
 		);
-	
-	std::string _subtitle_id;
+
 	std::string _movie_title;
 	/* strangely, this is sometimes a string */
 	std::string _reel_number;
