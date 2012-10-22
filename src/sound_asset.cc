@@ -153,7 +153,10 @@ SoundAsset::construct (sigc::slot<string, Channel> get_path)
 			}
 			
 			if (frame_buffer_channel[j].Size() != frame_buffer_channel[j].Capacity()) {
-				throw MiscError ("short audio frame");
+				stringstream s;
+				s << "short audio frame; " << _channels << " channels, "
+				  << frame_buffer_channel[j].Size() << " vs " << frame_buffer_channel[j].Capacity();
+				throw MiscError (s.str ());
 			}
 		}
 
