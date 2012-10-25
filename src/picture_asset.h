@@ -34,7 +34,7 @@ class StereoPictureFrame;
 class PictureAsset : public MXFAsset
 {
 public:
-	PictureAsset (std::string directory, std::string mxf_name, sigc::signal1<void, float>* progress, int fps, int entry_point, int length);
+	PictureAsset (std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length);
 	
 	/** Write details of this asset to a CPL stream.
 	 *  @param s Stream.
@@ -83,7 +83,7 @@ public:
 		std::vector<std::string> const & files,
 		std::string directory,
 		std::string mxf_name,
-		sigc::signal1<void, float>* progress,
+		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int length,
 		int width,
@@ -102,10 +102,10 @@ public:
 	 *  @param height Height of images in pixels.
 	 */
 	MonoPictureAsset (
-		sigc::slot<std::string, int> get_path,
+		boost::function<std::string (int)> get_path,
 		std::string directory,
 		std::string mxf_name,
-		sigc::signal1<void, float>* progress,
+		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int length,
 		int width,
@@ -119,7 +119,7 @@ public:
 
 private:
 	std::string path_from_list (int f, std::vector<std::string> const & files) const;
-	void construct (sigc::slot<std::string, int>);
+	void construct (boost::function<std::string (int)>);
 };
 
 /** A 3D (stereoscopic) picture asset */	

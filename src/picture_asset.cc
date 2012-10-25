@@ -36,11 +36,17 @@
 #include "exceptions.h"
 #include "picture_frame.h"
 
-using namespace std;
-using namespace boost;
+using std::string;
+using std::ostream;
+using std::list;
+using std::vector;
+using std::max;
+using boost::shared_ptr;
+using boost::dynamic_pointer_cast;
+using boost::lexical_cast;
 using namespace libdcp;
 
-PictureAsset::PictureAsset (string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int entry_point, int length)
+PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length)
 	: MXFAsset (directory, mxf_name, progress, fps, entry_point, length)
 	, _width (0)
 	, _height (0)
@@ -125,10 +131,10 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<s
 
 
 MonoPictureAsset::MonoPictureAsset (
-	sigc::slot<string, int> get_path,
+	boost::function<string (int)> get_path,
 	string directory,
 	string mxf_name,
-	sigc::signal1<void, float>* progress,
+	boost::signals2::signal<void (float)>* progress,
 	int fps,
 	int length,
 	int width,
@@ -144,7 +150,7 @@ MonoPictureAsset::MonoPictureAsset (
 	vector<string> const & files,
 	string directory,
 	string mxf_name,
-	sigc::signal1<void, float>* progress,
+	boost::signals2::signal<void (float)>* progress,
 	int fps,
 	int length,
 	int width,
@@ -153,7 +159,7 @@ MonoPictureAsset::MonoPictureAsset (
 {
 	_width = width;
 	_height = height;
-	construct (sigc::bind (sigc::mem_fun (*this, &MonoPictureAsset::path_from_list), files));
+	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files));
 }
 
 MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, int entry_point, int length)
@@ -174,7 +180,7 @@ MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, 
 }
 
 void
-MonoPictureAsset::construct (sigc::slot<string, int> get_path)
+MonoPictureAsset::construct (boost::function<string (int)> get_path)
 {
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);

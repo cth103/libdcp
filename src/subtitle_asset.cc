@@ -22,8 +22,13 @@
 #include "subtitle_asset.h"
 #include "util.h"
 
-using namespace std;
-using namespace boost;
+using std::string;
+using std::list;
+using std::ostream;
+using std::ofstream;
+using std::stringstream;
+using boost::shared_ptr;
+using boost::lexical_cast;
 using namespace libdcp;
 
 SubtitleAsset::SubtitleAsset (string directory, string xml_file)

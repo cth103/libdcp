@@ -49,7 +49,7 @@ public:
 		std::vector<std::string> const & files,
 		std::string directory,
 		std::string mxf_name,
-		sigc::signal1<void, float>* progress,
+		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int length
 		);
@@ -65,10 +65,10 @@ public:
 	 *  @param channels Number of audio channels.
 	 */
 	SoundAsset (
-		sigc::slot<std::string, Channel> get_path,
+		boost::function<std::string (Channel)> get_path,
 		std::string directory,
 		std::string mxf_name,
-		sigc::signal1<void, float>* progress,
+		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int length,
 		int channels
@@ -100,7 +100,7 @@ public:
 	}
 
 private:
-	void construct (sigc::slot<std::string, Channel> get_path);
+	void construct (boost::function<std::string (Channel)> get_path);
 	std::string path_from_channel (Channel channel, std::vector<std::string> const & files);
 
 	/** Number of channels in the asset */

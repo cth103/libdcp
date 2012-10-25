@@ -27,7 +27,7 @@
 #include <string>
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#include <sigc++/sigc++.h>
+#include <boost/signals2.hpp>
 #include "types.h"
 
 namespace xmlpp {
@@ -153,7 +153,7 @@ public:
 	/** Emitted with a parameter between 0 and 1 to indicate progress
 	 *  for long jobs.
 	 */
-	sigc::signal1<void, float> Progress;
+	boost::signals2::signal<void (float)> Progress;
 
 private:
 

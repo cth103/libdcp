@@ -36,8 +36,11 @@
 #include "argb_frame.h"
 #include "lut.h"
 
-using namespace std;
-using namespace boost;
+using std::string;
+using std::stringstream;
+using std::min;
+using std::max;
+using boost::shared_ptr;
 using namespace libdcp;
 
 string
@@ -51,9 +54,9 @@ libdcp::make_uuid ()
 }
 
 string
-libdcp::make_digest (string filename, sigc::signal1<void, float>* progress)
+libdcp::make_digest (string filename, boost::signals2::signal<void (float)>* progress)
 {
-	int const file_size = filesystem::file_size (filename);
+	int const file_size = boost::filesystem::file_size (filename);
 	
 	Kumu::FileReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (filename.c_str ()))) {

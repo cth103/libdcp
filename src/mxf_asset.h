@@ -20,6 +20,7 @@
 #ifndef LIBDCP_MXF_ASSET_H
 #define LIBDCP_MXF_ASSET_H
 
+#include <boost/signals2.hpp>
 #include "asset.h"
 
 namespace libdcp
@@ -36,7 +37,7 @@ public:
 	 *  @param entry_point The entry point of this MXF; ie the first frame that should be used.
 	 *  @param length Length in frames.
 	 */
-	MXFAsset (std::string directory, std::string file_name, sigc::signal1<void, float>* progress, int fps, int entry_point, int length);
+	MXFAsset (std::string directory, std::string file_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length);
 
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
 	
@@ -49,7 +50,7 @@ protected:
 	void fill_writer_info (ASDCP::WriterInfo* w) const;
 
 	/** Signal to emit to report progress */
-	sigc::signal1<void, float>* _progress;
+	boost::signals2::signal<void (float)>* _progress;
 	/** Frames per second */
 	int _fps;
 	int _entry_point;

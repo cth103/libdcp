@@ -23,7 +23,6 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_POSIX')
 
     conf.check_cfg(package = 'openssl', args = '--cflags --libs', uselib_store = 'OPENSSL', mandatory = True)
-    conf.check_cfg(package = 'sigc++-2.0', args = '--cflags --libs', uselib_store = 'SIGC++', mandatory = True)
     conf.check_cfg(package = 'libxml++-2.6', args = '--cflags --libs', uselib_store = 'LIBXML++', mandatory = True)
 
     conf.check_cc(fragment  = """
@@ -53,6 +52,13 @@ def configure(conf):
                    libpath = '/usr/local/lib',
                    lib = ['boost_filesystem%s' % boost_lib_suffix, 'boost_system%s' % boost_lib_suffix],
                    uselib_store = 'BOOST_FILESYSTEM')
+
+    conf.check_cxx(fragment = """
+    			      #include <boost/signals2.hpp>\n
+    			      int main() { boost::signals2::signal<void (int)> x; }\n
+			      """,
+                   msg = 'Checking for boost signals2 library',
+                   uselib_store = 'BOOST_SIGNALS2')
 
     lut.make_luts()
 

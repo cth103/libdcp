@@ -26,7 +26,6 @@
 
 #include <string>
 #include <boost/filesystem.hpp>
-#include <sigc++/sigc++.h>
 #include "types.h"
 
 namespace ASDCP {

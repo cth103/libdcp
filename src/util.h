@@ -23,7 +23,7 @@
 
 #include <string>
 #include <stdint.h>
-#include <sigc++/sigc++.h>
+#include <boost/signals2.hpp>
 #include <openjpeg.h>
 #include "types.h"
 
@@ -42,7 +42,7 @@ extern std::string make_uuid ();
  *  progress; the parameter will start at 0.5 and proceed to 1.
  *  @return Digest.
  */
-extern std::string make_digest (std::string filename, sigc::signal1<void, float>* progress);
+extern std::string make_digest (std::string filename, boost::signals2::signal<void (float)>* progress);
 
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);

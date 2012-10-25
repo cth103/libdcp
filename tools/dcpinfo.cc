@@ -9,8 +9,11 @@
 #include "picture_asset.h"
 #include "subtitle_asset.h"
 
-using namespace std;
-using namespace boost;
+using std::string;
+using std::cerr;
+using std::cout;
+using std::list;
+using boost::shared_ptr;
 using namespace libdcp;
 
 static void
@@ -58,7 +61,7 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	if (!filesystem::exists (argv[optind])) {
+	if (!boost::filesystem::exists (argv[optind])) {
 		cerr << argv[0] << ": DCP " << argv[optind] << " not found.\n";
 		exit (EXIT_FAILURE);
 	}

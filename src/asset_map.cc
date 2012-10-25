@@ -24,8 +24,9 @@
 #include "asset_map.h"
 #include "util.h"
 
-using namespace std;
-using namespace boost;
+using std::string;
+using std::list;
+using boost::shared_ptr;
 using namespace libdcp;
 
 AssetMap::AssetMap (string file)

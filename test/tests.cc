@@ -34,8 +34,10 @@
 #define BOOST_TEST_MODULE libdcp_test
 #include <boost/test/unit_test.hpp>
 
-using namespace std;
-using namespace boost;
+using std::string;
+using std::vector;
+using std::list;
+using boost::shared_ptr;
 
 string
 j2c (int)
@@ -61,13 +63,13 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	t->product_name = "OpenDCP";
 	t->product_version = "0.0.25";
 	t->issue_date = "2012-07-17T04:45:18+00:00";
-	filesystem::remove_all ("build/test/foo");
-	filesystem::create_directories ("build/test/foo");
+	boost::filesystem::remove_all ("build/test/foo");
+	boost::filesystem::create_directories ("build/test/foo");
 	libdcp::DCP d ("build/test/foo");
 	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/foo", "A Test DCP", libdcp::FEATURE, 24, 24));
 
 	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset (
-							 sigc::ptr_fun (&j2c),
+							 j2c,
 							 "build/test/foo",
 							 "video.mxf",
 							 &d.Progress,
@@ -78,15 +80,15 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 							 ));
 
 	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
-						  sigc::ptr_fun (&wav),
-						  "build/test/foo",
-						  "audio.mxf",
-						  &(d.Progress),
-						  24,
-						  24,
-						  2
-						  ));
-
+						   wav,
+						   "build/test/foo",
+						   "audio.mxf",
+						   &(d.Progress),
+						   24,
+						   24,
+						   2
+						   ));
+	
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);
 

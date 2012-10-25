@@ -26,8 +26,8 @@
 #include "lut.h"
 #include "util.h"
 
-using namespace std;
-using namespace boost;
+using std::string;
+using boost::shared_ptr;
 using namespace libdcp;
 
 /** Make a picture frame from a 2D (monoscopic) asset.

@@ -23,7 +23,6 @@
 
 #include <vector>
 #include <string>
-#include <sigc++/sigc++.h>
 
 /* If you are using an installed libdcp, these #includes would need to be changed to
 #include <libdcp/dcp.h>
@@ -74,7 +73,7 @@ main ()
 	   for 2K projectors.
 	*/
 	boost::shared_ptr<libdcp::MonoPictureAsset> picture_asset (
-		new libdcp::MonoPictureAsset (sigc::ptr_fun (&video_frame), "My Film DCP", "video.mxf", 0, 24, 48, 1998, 1080)
+		new libdcp::MonoPictureAsset (video_frame, "My Film DCP", "video.mxf", 0, 24, 48, 1998, 1080)
 		);
 
 	/* Now we will create a `sound asset', which is made up of a WAV file for each channel of audio.  Here we're using

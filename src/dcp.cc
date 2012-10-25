@@ -41,14 +41,18 @@
 #include "asset_map.h"
 #include "reel.h"
 
-using namespace std;
-using namespace boost;
+using std::string;
+using std::list;
+using std::stringstream;
+using std::ofstream;
+using std::ostream;
+using boost::shared_ptr;
 using namespace libdcp;
 
 DCP::DCP (string directory)
 	: _directory (directory)
 {
-	filesystem::create_directories (directory);
+	boost::filesystem::create_directories (directory);
 }
 
 void
@@ -62,7 +66,7 @@ DCP::write_xml () const
 	string pkl_path = write_pkl (pkl_uuid);
 	
 	write_volindex ();
-	write_assetmap (pkl_uuid, filesystem::file_size (pkl_path));
+	write_assetmap (pkl_uuid, boost::filesystem::file_size (pkl_path));
 }
 
 std::string
@@ -70,7 +74,7 @@ DCP::write_pkl (string pkl_uuid) const
 {
 	assert (!_cpls.empty ());
 	
-	filesystem::path p;
+	boost::filesystem::path p;
 	p /= _directory;
 	stringstream s;
 	s << pkl_uuid << "_pkl.xml";
@@ -105,7 +109,7 @@ DCP::write_pkl (string pkl_uuid) const
 void
 DCP::write_volindex () const
 {
-	filesystem::path p;
+	boost::filesystem::path p;
 	p /= _directory;
 	p /= "VOLINDEX.xml";
 	ofstream vi (p.string().c_str());
@@ -119,7 +123,7 @@ DCP::write_volindex () const
 void
 DCP::write_assetmap (string pkl_uuid, int pkl_length) const
 {
-	filesystem::path p;
+	boost::filesystem::path p;
 	p /= _directory;
 	p /= "ASSETMAP.xml";
 	ofstream am (p.string().c_str());
@@ -167,14 +171,14 @@ DCP::read (bool require_mxfs)
 
 	shared_ptr<AssetMap> asset_map;
 	try {
-		filesystem::path p = _directory;
+		boost::filesystem::path p = _directory;
 		p /= "ASSETMAP";
-		if (filesystem::exists (p)) {
+		if (boost::filesystem::exists (p)) {
 			asset_map.reset (new AssetMap (p.string ()));
 		} else {
 			p = _directory;
 			p /= "ASSETMAP.xml";
-			if (filesystem::exists (p)) {
+			if (boost::filesystem::exists (p)) {
 				asset_map.reset (new AssetMap (p.string ()));
 			} else {
 				throw DCPReadError ("could not find AssetMap file");
@@ -190,7 +194,7 @@ DCP::read (bool require_mxfs)
 			throw XMLError ("unsupported asset chunk count");
 		}
 
-		filesystem::path t = _directory;
+		boost::filesystem::path t = _directory;
 		t /= (*i)->chunks.front()->path;
 		
 		if (ends_with (t.string(), ".mxf") || ends_with (t.string(), ".ttf")) {
@@ -421,7 +425,7 @@ CPL::add_reel (shared_ptr<const Reel> reel)
 void
 CPL::write_xml () const
 {
-	filesystem::path p;
+	boost::filesystem::path p;
 	p /= _directory;
 	stringstream s;
 	s << _uuid << "_cpl.xml";
@@ -455,7 +459,7 @@ CPL::write_xml () const
 	os.close ();
 
 	_digest = make_digest (p.string (), 0);
-	_length = filesystem::file_size (p.string ());
+	_length = boost::filesystem::file_size (p.string ());
 }
 
 void

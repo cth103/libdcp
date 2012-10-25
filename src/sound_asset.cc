@@ -32,22 +32,31 @@
 #include "exceptions.h"
 #include "sound_frame.h"
 
-using namespace std;
-using namespace boost;
+using std::string;
+using std::stringstream;
+using std::ostream;
+using std::vector;
+using std::list;
+using boost::shared_ptr;
+using boost::lexical_cast;
 using namespace libdcp;
 
 SoundAsset::SoundAsset (
-	vector<string> const & files, string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int length
+	vector<string> const & files, string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int length
 	)
 	: MXFAsset (directory, mxf_name, progress, fps, 0, length)
 	, _channels (files.size ())
 	, _sampling_rate (0)
 {
-	construct (sigc::bind (sigc::mem_fun (*this, &SoundAsset::path_from_channel), files));
+	construct (boost::bind (&SoundAsset::path_from_channel, this, _1, files));
 }
 
 SoundAsset::SoundAsset (
-	sigc::slot<string, Channel> get_path, string directory, string mxf_name, sigc::signal1<void, float>* progress, int fps, int length, int channels
+	boost::function<string (Channel)> get_path,
+	string directory,
+	string mxf_name,
+	boost::signals2::signal<void (float)>* progress,
+	int fps, int length, int channels
 	)
 	: MXFAsset (directory, mxf_name, progress, fps, 0, length)
 	, _channels (channels)
@@ -84,7 +93,7 @@ SoundAsset::path_from_channel (Channel channel, vector<string> const & files)
 }
 
 void
-SoundAsset::construct (sigc::slot<string, Channel> get_path)
+SoundAsset::construct (boost::function<string (Channel)> get_path)
 {
 	ASDCP::Rational asdcp_fps (_fps, 1);
 	
