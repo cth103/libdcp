@@ -25,6 +25,7 @@
 #define LIBDCP_ASSET_H
 
 #include <string>
+#include <list>
 #include <boost/filesystem.hpp>
 #include "types.h"
 
