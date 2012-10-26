@@ -401,7 +401,7 @@ SubtitleAsset::write_xml ()
 	/* XXX: script, underlined, weight not supported */
 
 	bool first = true;
-	bool italic;
+	bool italic = false;
 	Color color;
 	int size = 0;
 	Effect effect = NONE;
