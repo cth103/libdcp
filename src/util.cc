@@ -189,8 +189,8 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 
 	opj_cio_close (cio);
 
-	image->x1 /= pow (2, reduce);
-	image->y1 /= pow (2, reduce);
+	image->x1 = rint (float(image->x1) / pow (2, reduce));
+	image->y1 = rint (float(image->y1) / pow (2, reduce));
 	return image;
 }
 
