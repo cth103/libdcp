@@ -3,7 +3,7 @@ import os
 import lut
 
 APPNAME = 'libdcp'
-VERSION = '0.27'
+VERSION = '0.28pre'
 
 def options(opt):
     opt.load('compiler_cxx')

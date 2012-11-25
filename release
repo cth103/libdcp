@@ -70,8 +70,8 @@ if raw_input() != "y":
 command("git clean -f")
 command("git tag -m \"v%s\" v%s" % (release_version_string, release_version_string))
 command("./waf clean")
-command("./waf")
 command("./waf configure")
+command("./waf")
 command("./waf dist")
 
 rewrite_wscript(new_pre_version)
