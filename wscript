@@ -19,6 +19,7 @@ def configure(conf):
 
     if conf.options.target_windows:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_WINDOWS')
+        conf.env.append_value('LIB', 'msvcr100')
     else:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_POSIX')
 

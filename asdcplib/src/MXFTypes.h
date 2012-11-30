@@ -117,7 +117,7 @@ namespace ASDCP
 		result = Tmp.Unarchive(Reader);
 
 		if ( result )
-		  push_back(Tmp);
+		  this->push_back(Tmp);
 	      }
 
 	    return result;
@@ -192,7 +192,7 @@ namespace ASDCP
 		{
 		  T Tmp;
 		  result = Tmp.Unarchive(Reader);
-		  push_back(Tmp);
+		  this->push_back(Tmp);
 		}
 
 	      return result;
