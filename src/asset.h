@@ -49,6 +49,8 @@ public:
 	 */
 	Asset (std::string directory, std::string file_name = "");
 
+	virtual ~Asset() {}
+
 	/** Write details of the asset to a CPL stream.
 	 *  @param s Stream.
 	 */
