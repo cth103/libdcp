@@ -11,7 +11,7 @@ def build(bld):
     obj = bld(features = 'cxx cxxshlib')
     obj.name = 'libkumu-libdcp'
     obj.target = 'kumu-libdcp'
-    obj.uselib = 'OPENSSL'
+    obj.uselib = 'OPENSSL BOOST_FILESYSTEM'
     obj.includes = ['.']
     obj.export_includes = ['.']
     obj.source = """

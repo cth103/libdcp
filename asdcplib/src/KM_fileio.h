@@ -34,6 +34,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <KM_util.h>
 #include <string>
+#include <boost/filesystem.hpp>
 
 #ifdef KM_WIN32
 # include <io.h>
@@ -51,24 +52,16 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace Kumu
 {
-  //
   class DirScanner
-    {
-    public:
-#ifdef KM_WIN32
-      __int64               m_Handle;
-      struct _finddatai64_t m_FileInfo;
-#else
-      DIR*       m_Handle;
-#endif
-
-      DirScanner(void);
-      ~DirScanner() { Close(); }
-
-      Result_t Open(const char*);
-      Result_t Close();
-      Result_t GetNext(char*);
-    };
+  {
+  public:
+	  DirScanner();
+	  Result_t Open(const char *);
+	  Result_t GetNext(char *);
+	  Result_t Close();
+  private:
+	  boost::filesystem::directory_iterator _iterator;
+  };
 
 #ifdef KM_WIN32
   typedef __int64  fsize_t;
@@ -91,8 +84,8 @@ namespace Kumu
     SP_POS   = SEEK_CUR,
     SP_END   = SEEK_END
   };
-#endif
-
+#endif	
+	
   //
 #ifndef KM_SMALL_FILES_OK
   template <bool sizecheck>    void compile_time_size_checker();

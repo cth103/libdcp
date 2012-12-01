@@ -1211,185 +1211,37 @@ Kumu::WriteBufferIntoFile(const Kumu::ByteString& Buffer, const std::string& Fil
 //------------------------------------------------------------------------------------------
 //
 
-
-// Win32 directory scanner
-//
-#ifdef KM_WIN32
-
-//
-Kumu::DirScanner::DirScanner(void) : m_Handle(-1) {}
-
-//
-//
-Result_t
-Kumu::DirScanner::Open(const char* filename)
+Kumu::DirScanner::DirScanner()
 {
-  KM_TEST_NULL_STR_L(filename);
 
-  // we need to append a '*' to read the entire directory
-  ui32_t fn_len = strlen(filename); 
-  char* tmp_file = (char*)malloc(fn_len + 8);
-
-  if ( tmp_file == 0 )
-    return RESULT_ALLOC;
-
-  strcpy(tmp_file, filename);
-  char* p = &tmp_file[fn_len] - 1;
-
-  if ( *p != '/' && *p != '\\' )
-    {
-      p++;
-      *p++ = '/';
-    }
-
-  *p++ = '*';
-  *p = 0;
-  // whew...
-
-  m_Handle = _findfirsti64(tmp_file, &m_FileInfo);
-  Result_t result = RESULT_OK;
-
-  if ( m_Handle == -1 )
-    result = RESULT_NOT_FOUND;
-
-  return result;
 }
 
-
-//
-//
 Result_t
-Kumu::DirScanner::Close()
+Kumu::DirScanner::Open (const char* filename)
 {
-  if ( m_Handle == -1 )
-    return RESULT_FILEOPEN;
+	KM_TEST_NULL_L (filename);
 
-  if ( _findclose((long)m_Handle) == -1 )
-    return RESULT_FAIL;
-
-  m_Handle = -1;
-  return RESULT_OK;
-}
-
-
-// This sets filename param to the same per-instance buffer every time, so
-// the value will change on the next call
-Result_t
-Kumu::DirScanner::GetNext(char* filename)
-{
-  KM_TEST_NULL_L(filename);
-
-  if ( m_Handle == -1 )
-    return RESULT_FILEOPEN;
-
-  if ( m_FileInfo.name[0] == '\0' )
-    return RESULT_ENDOFFILE;
-
-  strncpy(filename, m_FileInfo.name, MaxFilePath);
-  Result_t result = RESULT_OK;
-
-  if ( _findnexti64((long)m_Handle, &m_FileInfo) == -1 )
-    {
-      m_FileInfo.name[0] = '\0';
-	  
-      if ( errno != ENOENT )
-	result = RESULT_FAIL;
-    }
-
-  return result;
-}
-
-
-#else // KM_WIN32
-
-// POSIX directory scanner
-
-//
-Kumu::DirScanner::DirScanner(void) : m_Handle(NULL) {}
-
-//
-Result_t
-Kumu::DirScanner::Open(const char* filename)
-{
-  KM_TEST_NULL_STR_L(filename);
-
-  Result_t result = RESULT_OK;
-
-  if ( ( m_Handle = opendir(filename) ) == NULL )
-    {
-      switch ( errno )
-	{
-	case ENOENT:
-	case ENOTDIR:
-	  result = RESULT_NOTAFILE;
-	case EACCES:
-	  result = RESULT_NO_PERM;
-	case ELOOP:
-	case ENAMETOOLONG:
-	  result = RESULT_PARAM;
-	case EMFILE:
-	case ENFILE:
-	  result = RESULT_STATE;
-	default:
-	  DefaultLogSink().Error("DirScanner::Open(%s): %s\n", filename, strerror(errno));
-	  result = RESULT_FAIL;
+	if (!boost::filesystem::is_directory(filename)) {
+		return RESULT_NOT_FOUND;
 	}
-    }
-
-  return result;
+	
+	_iterator = boost::filesystem::directory_iterator (filename);
+	return RESULT_OK;
 }
 
-
-//
 Result_t
-Kumu::DirScanner::Close()
+Kumu::DirScanner::GetNext (char* filename)
 {
-  if ( m_Handle == NULL )
-    return RESULT_FILEOPEN;
-
-  if ( closedir(m_Handle) == -1 ) {
-    switch ( errno )
-      {
-      case EBADF:
-      case EINTR:
-	return RESULT_STATE;
-      default:
-	DefaultLogSink().Error("DirScanner::Close(): %s\n", strerror(errno));
-	return RESULT_FAIL;
-      }
-  }
-
-  m_Handle = NULL;
-  return RESULT_OK;
+	KM_TEST_NULL_L (filename);
+	
+	if (_iterator == boost::filesystem::directory_iterator()) {
+		return RESULT_ENDOFFILE;
+	}
+	
+	strncpy (filename, boost::filesystem::path(*_iterator).filename().generic_string().c_str(), MaxFilePath);
+	++_iterator;
+	return RESULT_OK;
 }
-
-
-//
-Result_t
-Kumu::DirScanner::GetNext(char* filename)
-{
-  KM_TEST_NULL_L(filename);
-
-  if ( m_Handle == NULL )
-    return RESULT_FILEOPEN;
-
-  struct dirent* entry;
-
-  for (;;)
-    {
-      if ( ( entry = readdir(m_Handle)) == NULL )
-	return RESULT_ENDOFFILE;
-
-      break;
-    }
-
-  strncpy(filename, entry->d_name, MaxFilePath);
-  return RESULT_OK;
-}
-
-
-#endif // KM_WIN32
-
 
 //------------------------------------------------------------------------------------------
 
