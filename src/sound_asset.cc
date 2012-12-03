@@ -115,8 +115,13 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 		CENTRE,
 		LFE,
 		LS,
-		RS
+		RS,
+		/* XXX: not quite sure what these should be yet */
+		CHANNEL_7,
+		CHANNEL_8
 	};
+
+	assert (int(_channels) <= int(sizeof(channels) / sizeof(Channel)));
 
 	ASDCP::PCM::FrameBuffer frame_buffer_channel[_channels];
 	ASDCP::PCM::AudioDescriptor audio_desc_channel[_channels];

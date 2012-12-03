@@ -29,12 +29,14 @@ namespace libdcp
 
 /** Identifier for a sound channel */
 enum Channel {
-	LEFT = 0,    ///< left
-	RIGHT = 1,   ///< right
-	CENTRE = 2,  ///< centre
-	LFE = 3,     ///< low-frequency effects (sub)
-	LS = 4,      ///< left surround
-	RS = 5       ///< right surround
+	LEFT = 0,      ///< left
+	RIGHT = 1,     ///< right
+	CENTRE = 2,    ///< centre
+	LFE = 3,       ///< low-frequency effects (sub)
+	LS = 4,        ///< left surround
+	RS = 5,        ///< right surround
+	CHANNEL_7 = 6, ///< channel 7; not sure what this should be called
+	CHANNEL_8 = 7  ///< channel 8; not sure what this should be called
 };
 
 enum ContentKind
