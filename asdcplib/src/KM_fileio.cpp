@@ -1237,8 +1237,13 @@ Kumu::DirScanner::GetNext (char* filename)
 	if (_iterator == boost::filesystem::directory_iterator()) {
 		return RESULT_ENDOFFILE;
 	}
-	
-	strncpy (filename, boost::filesystem::path(*_iterator).filename().generic_string().c_str(), MaxFilePath);
+
+#if BOOST_FILESYSTEM_VERSION == 3	
+	std::string f = boost::filesystem::path(*_iterator).filename().generic_string();
+#else
+	std::string f = boost::filesystem::path(*_iterator).filename();
+#endif	
+	strncpy (filename, f.c_str(), MaxFilePath);
 	++_iterator;
 	return RESULT_OK;
 }
