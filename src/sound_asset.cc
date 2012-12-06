@@ -155,24 +155,17 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 
 	for (int i = 0; i < _length; ++i) {
 
-		byte_t *data_s = frame_buffer.Data();
-		byte_t *data_e = data_s + frame_buffer.Capacity();
-		byte_t sample_size = ASDCP::PCM::CalcSampleSize (audio_desc_channel[0]);
-		int offset = 0;
-
 		for (int j = 0; j < _channels; ++j) {
 			memset (frame_buffer_channel[j].Data(), 0, frame_buffer_channel[j].Capacity());
 			if (ASDCP_FAILURE (pcm_parser_channel[j].ReadFrame (frame_buffer_channel[j]))) {
 				throw MiscError ("could not read audio frame");
 			}
-			
-			if (frame_buffer_channel[j].Size() != frame_buffer_channel[j].Capacity()) {
-				stringstream s;
-				s << "short audio frame; " << _channels << " channels, "
-				  << frame_buffer_channel[j].Size() << " vs " << frame_buffer_channel[j].Capacity();
-				throw MiscError (s.str ());
-			}
 		}
+
+		byte_t *data_s = frame_buffer.Data();
+		byte_t *data_e = data_s + frame_buffer.Capacity();
+		byte_t sample_size = ASDCP::PCM::CalcSampleSize (audio_desc_channel[0]);
+		int offset = 0;
 
 		while (data_s < data_e) {
 			for (int j = 0; j < _channels; ++j) {
