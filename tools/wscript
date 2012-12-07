@@ -1,11 +1,13 @@
 def build(bld):
     obj = bld(features = 'cxx cxxprogram')
     obj.use = ['libdcp']
+    obj.uselib = 'OPENJPEG'
     obj.source = 'dcpdiff.cc'
     obj.target = 'dcpdiff'
 
     obj = bld(features = 'cxx cxxprogram')
     obj.use = ['libdcp']
+    obj.uselib = 'OPENJPEG'
     obj.source = 'dcpinfo.cc'
     obj.target = 'dcpinfo'
 

@@ -8,7 +8,11 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', '-DASDCP_PLATFORM="linux"')
 
 def build(bld):
-    obj = bld(features = 'cxx cxxshlib')
+    if bld.env.STATIC_LIBDCP:
+        obj = bld(features = 'cxx cxxstlib')
+    else:
+        obj = bld(features = 'cxx cxxshlib')
+
     obj.name = 'libkumu-libdcp'
     obj.target = 'kumu-libdcp'
     obj.uselib = 'OPENSSL BOOST_FILESYSTEM'
@@ -23,7 +27,11 @@ def build(bld):
                  KM_prng.cpp
                  """
 
-    obj = bld(features = 'cxx cxxshlib')
+    if bld.env.STATIC_LIBDCP:
+        obj = bld(features = 'cxx cxxstlib')
+    else:
+        obj = bld(features = 'cxx cxxshlib')
+
     obj.name = 'libasdcp-libdcp'
     obj.target = 'asdcp-libdcp'
     obj.uselib = 'OPENSSL'
@@ -57,4 +65,10 @@ def build(bld):
                  PCMParserList.cpp
                  MDD.cpp
                  """
-    
+
+    if bld.env.STATIC_LIBDCP:
+        bld.install_files('${PREFIX}/lib', 'libkumu-libdcp.a')
+        bld.install_files('${PREFIX}/lib', 'libasdcp-libdcp.a')
+    else:
+        bld.install_files('${PREFIX}/lib', 'libkumu-libdcp.so')
+        bld.install_files('${PREFIX}/lib', 'libasdcp-libdcp.so')

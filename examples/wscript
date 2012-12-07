@@ -2,6 +2,7 @@ def build(bld):
     obj = bld(features = 'cxx cxxprogram')
     obj.name   = 'examples'
     obj.use    = 'libdcp'
+    obj.uselib = 'OPENJPEG'
     obj.source = 'make_dcp.cc'
     obj.target = 'make_dcp'
     obj.install_path = ''
