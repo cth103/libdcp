@@ -69,6 +69,3 @@ def build(bld):
     if bld.env.STATIC_LIBDCP:
         bld.install_files('${PREFIX}/lib', 'libkumu-libdcp.a')
         bld.install_files('${PREFIX}/lib', 'libasdcp-libdcp.a')
-    else:
-        bld.install_files('${PREFIX}/lib', 'libkumu-libdcp.so')
-        bld.install_files('${PREFIX}/lib', 'libasdcp-libdcp.so')

@@ -56,5 +56,3 @@ def build(bld):
     bld.install_files('${PREFIX}/include/libdcp', headers)
     if bld.env.STATIC_LIBDCP:
         bld.install_files('${PREFIX}/lib', 'libdcp.a')
-    else:
-        bld.install_files('${PREFIX}/lib', 'libdcp.so')
