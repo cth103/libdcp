@@ -50,7 +50,9 @@ def configure(conf):
     if conf.options.enable_debug:
         conf.env.append_value('CXXFLAGS', '-g')
     else:
-        conf.env.append_value('CXXFLAGS', '-O3')
+        # Somewhat experimental use of -O2 rather than -O3 to see if
+        # Windows builds are any more reliable
+        conf.env.append_value('CXXFLAGS', '-O2')
 
     conf.check_cxx(fragment = """
     			      #include <boost/filesystem.hpp>\n
