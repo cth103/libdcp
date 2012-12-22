@@ -98,7 +98,7 @@ def build(bld):
     bld.add_post_fun(post)
 
 def dist(ctx):
-    ctx.excl = 'TODO core *~ .git build .waf* .lock* doc/*~ src/*~ test/ref/*~'
+    ctx.excl = 'TODO core *~ .git build .waf* .lock* doc/*~ src/*~ test/ref/*~ __pycache__'
 
 def create_version_cc(version):
     if os.path.exists('.git'):
