@@ -469,7 +469,7 @@ SubtitleAsset::write_xml (ostream& s) const
 			a << "Script=\"normal\" Underlined=\"no\" Weight=\"normal\"";
 		}
 
-		if (first ||
+		if (first || font_changed ||
 		    (last_in != (*i)->in() ||
 		     last_out != (*i)->out() ||
 		     last_fade_up_time != (*i)->fade_up_time() ||

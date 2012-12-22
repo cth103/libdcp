@@ -53,6 +53,8 @@ for d in `find build/test/libdcp-test -mindepth 1 -maxdepth 1 -type d`; do
   fi
 done
 
+sed -i "s/DCP: build\/test/DCP: \.\./g" build/test/info2.log
+
 diff -q build/test/info2.log ../libdcp-test/info.log
 if [ "$?" != "0" ]; then
   echo "FAIL: dcpinfo output from rewrite incorrect"
