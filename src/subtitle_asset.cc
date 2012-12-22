@@ -34,7 +34,7 @@ using namespace libdcp;
 SubtitleAsset::SubtitleAsset (string directory, string xml_file)
 	: Asset (directory, xml_file)
 {
-	read_xml (xml_file);
+	read_xml (path().string());
 }
 
 SubtitleAsset::SubtitleAsset (string directory, string movie_title, string language)
