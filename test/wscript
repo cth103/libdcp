@@ -31,3 +31,11 @@ def build(bld):
     obj.source = 'subs_in_out.cc'
     obj.target = 'subs_in_out'
     obj.install_path = ''
+
+    obj = bld(features = 'cxx cxxprogram')
+    obj.name   = 'rewrite_subs'
+    obj.uselib = 'BOOST_TEST OPENJPEG'
+    obj.use    = 'libdcp'
+    obj.source = 'rewrite_subs.cc'
+    obj.target = 'rewrite_subs'
+    obj.install_path = ''

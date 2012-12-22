@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export LD_LIBRARY_PATH=build/src
+if [ "$1" == "--debug" ]; then
+    shift
+    gdb --args build/test/rewrite_subs "$@"
+elif [ "$1" == "--valgrind" ]; then
+    shift
+    valgrind --tool="memcheck" --leak-check=full --show-reachable=yes build/test/rewrite_subs "$@"
+else
+    build/test/rewrite_subs "$@"
+fi

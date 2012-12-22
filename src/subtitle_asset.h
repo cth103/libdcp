@@ -202,11 +202,12 @@ public:
 	void add (boost::shared_ptr<Subtitle>);
 
 	void read_xml (std::string);
-	void write_xml ();
-	void write_xml (std::ostream& s);
+	void write_xml () const;
+	void write_xml (std::ostream& s) const;
 
 private:
 	std::string font_id_to_name (std::string id) const;
+	std::string escape (std::string) const;
 
 	struct ParseState {
 		std::list<boost::shared_ptr<FontNode> > font_nodes;
@@ -235,6 +236,7 @@ private:
 	std::list<boost::shared_ptr<LoadFontNode> > _load_font_nodes;
 
 	std::list<boost::shared_ptr<Subtitle> > _subtitles;
+	bool _need_sort;
 };
 
 }

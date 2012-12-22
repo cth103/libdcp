@@ -19,6 +19,7 @@
 
 #include <fstream>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 #include "subtitle_asset.h"
 #include "util.h"
 
@@ -33,6 +34,7 @@ using namespace libdcp;
 
 SubtitleAsset::SubtitleAsset (string directory, string xml_file)
 	: Asset (directory, xml_file)
+	, _need_sort (false)
 {
 	read_xml (path().string());
 }
@@ -42,6 +44,7 @@ SubtitleAsset::SubtitleAsset (string directory, string movie_title, string langu
 	, _movie_title (movie_title)
 	, _reel_number ("1")
 	, _language (language)
+	, _need_sort (false)
 {
 
 }
@@ -368,6 +371,7 @@ void
 SubtitleAsset::add (shared_ptr<Subtitle> s)
 {
 	_subtitles.push_back (s);
+	_need_sort = true;
 }
 
 void
@@ -392,24 +396,34 @@ struct SubtitleSorter {
 };
 
 void
-SubtitleAsset::write_xml ()
+SubtitleAsset::write_xml () const
 {
 	ofstream f (path().string().c_str());
 	write_xml (f);
 }
 
 void
-SubtitleAsset::write_xml (ostream& s)
+SubtitleAsset::write_xml (ostream& s) const
 {
 	s << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 	  << "<DCSubtitle Version=\"1.0\">\n"
 	  << "  <SubtitleID>" << _uuid << "</SubtitleID>\n"
 	  << "  <MovieTitle>" << _movie_title << "</MovieTitle>\n"
 	  << "  <ReelNumber>" << _reel_number << "</ReelNumber>\n"
-	  << "  <Language>" << _language << "</Language>\n"
-	  << "  <LoadFont Id=\"theFontId\" URI=\"arial.ttf\"/>\n";
+	  << "  <Language>" << _language << "</Language>\n";
 
-	_subtitles.sort (SubtitleSorter ());
+	if (_load_font_nodes.size() > 1) {
+		throw MiscError ("multiple LoadFont nodes not supported");
+	}
+
+	if (!_load_font_nodes.empty ()) {
+		s << "  <LoadFont Id=\"" << _load_font_nodes.front()->id << "\" URI=\"" << _load_font_nodes.front()->uri << "\"/>\n";
+	}
+
+	list<shared_ptr<Subtitle> > sorted = _subtitles;
+	if (_need_sort) {
+		sorted.sort (SubtitleSorter ());
+	}
 
 	/* XXX: multiple fonts not supported */
 	/* XXX: script, underlined, weight not supported */
@@ -426,7 +440,7 @@ SubtitleAsset::write_xml (ostream& s)
 	Time last_fade_up_time;
 	Time last_fade_down_time;
 
-	for (list<shared_ptr<Subtitle> >::iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
+	for (list<shared_ptr<Subtitle> >::iterator i = sorted.begin(); i != sorted.end(); ++i) {
 
 		/* We will start a new <Font>...</Font> whenever some font property changes.
 		   I suppose should really make an optimal hierarchy of <Font> tags, but
@@ -470,7 +484,13 @@ SubtitleAsset::write_xml (ostream& s)
 				if (!first) {
 					s << "  </Font>\n";
 				}
-				s << "  <Font Id=\"theFontId\" " << a.str() << ">\n";
+
+				string id = "theFontId";
+				if (!_load_font_nodes.empty()) {
+					id = _load_font_nodes.front()->id;
+				}
+				
+				s << "  <Font Id=\"" << id << "\" " << a.str() << ">\n";
 			}
 
 			s << "  <Subtitle "
@@ -490,7 +510,7 @@ SubtitleAsset::write_xml (ostream& s)
 		s << "      <Text "
 		  << "VAlign=\"" << valign_to_string ((*i)->v_align()) << "\" "
 		  << "VPosition=\"" << (*i)->v_position() << "\""
-		  << ">" << (*i)->text() << "</Text>\n";
+		  << ">" << escape ((*i)->text()) << "</Text>\n";
 
 		first = false;
 	}
@@ -498,4 +518,12 @@ SubtitleAsset::write_xml (ostream& s)
 	s << "  </Subtitle>\n";
 	s << "  </Font>\n";
 	s << "</DCSubtitle>\n";
+}
+
+/** XXX: Another reason why we should be writing with libxml++ */
+string
+SubtitleAsset::escape (string s) const
+{
+	boost::replace_all (s, "&", "&amp;");
+	return s;
 }
