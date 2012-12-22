@@ -201,7 +201,9 @@ public:
 
 	void add (boost::shared_ptr<Subtitle>);
 
+	void read_xml (std::string);
 	void write_xml ();
+	void write_xml (std::ostream& s);
 
 private:
 	std::string font_id_to_name (std::string id) const;

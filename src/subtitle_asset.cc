@@ -34,7 +34,22 @@ using namespace libdcp;
 SubtitleAsset::SubtitleAsset (string directory, string xml_file)
 	: Asset (directory, xml_file)
 {
-	shared_ptr<XMLFile> xml (new XMLFile (path().string(), "DCSubtitle"));
+	read_xml (xml_file);
+}
+
+SubtitleAsset::SubtitleAsset (string directory, string movie_title, string language)
+	: Asset (directory)
+	, _movie_title (movie_title)
+	, _reel_number ("1")
+	, _language (language)
+{
+
+}
+
+void
+SubtitleAsset::read_xml (string xml_file)
+{
+	shared_ptr<XMLFile> xml (new XMLFile (xml_file, "DCSubtitle"));
 	
 	_uuid = xml->string_child ("SubtitleID");
 	_movie_title = xml->string_child ("MovieTitle");
@@ -52,15 +67,6 @@ SubtitleAsset::SubtitleAsset (string directory, string xml_file)
 
 	ParseState parse_state;
 	examine_font_nodes (xml, font_nodes, parse_state);
-}
-
-SubtitleAsset::SubtitleAsset (string directory, string movie_title, string language)
-	: Asset (directory)
-	, _movie_title (movie_title)
-	, _reel_number ("1")
-	, _language (language)
-{
-
 }
 
 void
@@ -134,7 +140,7 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 				effective_text.v_position,
 				effective_text.v_align,
 				text,
-				effective_font.effect.get(),
+				effective_font.effect ? effective_font.effect.get() : NONE,
 				effective_font.effect_color.get(),
 				effective_subtitle.fade_up_time,
 				effective_subtitle.fade_down_time
@@ -378,7 +384,10 @@ SubtitleAsset::write_to_cpl (ostream& s) const
 
 struct SubtitleSorter {
 	bool operator() (shared_ptr<Subtitle> a, shared_ptr<Subtitle> b) {
-		return a->in() < b->in();
+		if (a->in() != b->in()) {
+			return a->in() < b->in();
+		}
+		return a->v_position() < b->v_position();
 	}
 };
 
@@ -386,14 +395,19 @@ void
 SubtitleAsset::write_xml ()
 {
 	ofstream f (path().string().c_str());
+	write_xml (f);
+}
 
-	f << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+void
+SubtitleAsset::write_xml (ostream& s)
+{
+	s << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 	  << "<DCSubtitle Version=\"1.0\">\n"
 	  << "  <SubtitleID>" << _uuid << "</SubtitleID>\n"
 	  << "  <MovieTitle>" << _movie_title << "</MovieTitle>\n"
 	  << "  <ReelNumber>" << _reel_number << "</ReelNumber>\n"
 	  << "  <Language>" << _language << "</Language>\n"
-	  << "  <LoadFont Id=\"theFontId\" URI=\"arial.ttf\"/>";
+	  << "  <LoadFont Id=\"theFontId\" URI=\"arial.ttf\"/>\n";
 
 	_subtitles.sort (SubtitleSorter ());
 
@@ -414,42 +428,31 @@ SubtitleAsset::write_xml ()
 
 	for (list<shared_ptr<Subtitle> >::iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
 
+		/* We will start a new <Font>...</Font> whenever some font property changes.
+		   I suppose should really make an optimal hierarchy of <Font> tags, but
+		   that seems hard.
+		*/
+
+		bool const font_changed = first              ||
+			italic       != (*i)->italic()       ||
+			color        != (*i)->color()        ||
+			size         != (*i)->size()         ||
+			effect       != (*i)->effect()       ||
+			effect_color != (*i)->effect_color();
+
 		stringstream a;
-		if (first || italic != (*i)->italic()) {
+		if (font_changed) {
 			italic = (*i)->italic ();
 			a << "Italic=\"" << (italic ? "yes" : "no") << "\" ";
-		}
-
-		if (first || color != (*i)->color()) {
 			color = (*i)->color ();
 			a << "Color=\"" << color.to_argb_string() << "\" ";
-		}
-
-		if (size || size != (*i)->size()) {
 			size = (*i)->size ();
 			a << "Size=\"" << size << "\" ";
-		}
-
-		if (first || effect != (*i)->effect()) {
 			effect = (*i)->effect ();
 			a << "Effect=\"" << effect_to_string(effect) << "\" ";
-		}
-
-		if (first || effect_color != (*i)->effect_color()) {
 			effect_color = (*i)->effect_color ();
 			a << "EffectColor=\"" << effect_color.to_argb_string() << "\" ";
-		}
-
-		if (first) {
-			a << "Script=\"normal\" Underlined=\"no\" Weight=\"normal\">";
-		}
-
-		if (!a.str().empty()) {
-			if (!first) {
-				f << "  </Font>\n";
-			} else {
-				f << "  <Font Id=\"theFontId\" " << a << ">\n";
-			}
+			a << "Script=\"normal\" Underlined=\"no\" Weight=\"normal\"";
 		}
 
 		if (first ||
@@ -460,15 +463,22 @@ SubtitleAsset::write_xml ()
 			    )) {
 
 			if (!first) {
-				f << "  </Subtitle>\n";
+				s << "  </Subtitle>\n";
 			}
 
-			f << "  <Subtitle "
+			if (font_changed) {
+				if (!first) {
+					s << "  </Font>\n";
+				}
+				s << "  <Font Id=\"theFontId\" " << a.str() << ">\n";
+			}
+
+			s << "  <Subtitle "
 			  << "SpotNumber=\"" << spot_number++ << "\" "
-			  << "TimeIn=" << (*i)->in().to_string() << "\" "
+			  << "TimeIn=\"" << (*i)->in().to_string() << "\" "
 			  << "TimeOut=\"" << (*i)->out().to_string() << "\" "
 			  << "FadeUpTime=\"" << (*i)->fade_up_time().to_ticks() << "\" "
-			  << "FadeDownTime=\"" << (*i)->fade_down_time().to_ticks() << "\" "
+			  << "FadeDownTime=\"" << (*i)->fade_down_time().to_ticks() << "\""
 			  << ">\n";
 
 			last_in = (*i)->in ();
@@ -477,14 +487,15 @@ SubtitleAsset::write_xml ()
 			last_fade_down_time = (*i)->fade_down_time ();
 		}
 
-		f << "      <Text "
+		s << "      <Text "
 		  << "VAlign=\"" << valign_to_string ((*i)->v_align()) << "\" "
-		  << "VPosition=\"" << (*i)->v_position() << "\" "
+		  << "VPosition=\"" << (*i)->v_position() << "\""
 		  << ">" << (*i)->text() << "</Text>\n";
 
 		first = false;
 	}
 
-	f << "  </Subtitle>\n";
-	f << "</Font>\n";
+	s << "  </Subtitle>\n";
+	s << "  </Font>\n";
+	s << "</DCSubtitle>\n";
 }
