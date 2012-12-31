@@ -1,8 +1,9 @@
 #!/bin/bash
 
 #
-# Runs our test suite, which builds a DCP.
-# The output is compared against the one
+# Runs our test suite, which (amongst other things)
+# builds a couple of DCPs.
+# The outputs are compared against the ones
 # in test/ref/DCP, and an error is given
 # if anything is different.
 #
@@ -13,7 +14,14 @@ if [ "$1" == "--debug" ]; then
 else
   LD_LIBRARY_PATH=build/src:build/asdcplib/src build/test/tests
 fi
-diff -ur test/ref/DCP build/test/foo
+
+diff -ur test/ref/DCP/foo build/test/foo
+if [ "$?" != "0" ]; then
+  echo "FAIL: files differ"
+  exit 1
+fi
+
+diff -ur test/ref/DCP/bar build/test/bar
 if [ "$?" != "0" ]; then
   echo "FAIL: files differ"
   exit 1

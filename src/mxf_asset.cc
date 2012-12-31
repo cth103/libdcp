@@ -25,10 +25,12 @@
 #include <fstream>
 #include <boost/filesystem.hpp>
 #include "AS_DCP.h"
+#include "KM_prng.h"
 #include "KM_util.h"
 #include "mxf_asset.h"
 #include "util.h"
 #include "metadata.h"
+#include "exceptions.h"
 
 using std::string;
 using std::list;
@@ -36,14 +38,40 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace libdcp;
 
-MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length)
+MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length, bool encrypted)
 	: Asset (directory, file_name)
 	, _progress (progress)
 	, _fps (fps)
 	, _entry_point (entry_point)
 	, _length (length)
+	, _encrypted (encrypted)
+	, _encryption_context (0)
 {
-	
+	if (_encrypted) {
+		_key_id = make_uuid ();
+		uint8_t key_buffer[ASDCP::KeyLen];
+		Kumu::FortunaRNG rng;
+		rng.FillRandom (key_buffer, ASDCP::KeyLen);
+		char key_string[ASDCP::KeyLen * 4];
+		Kumu::bin2hex (key_buffer, ASDCP::KeyLen, key_string, ASDCP::KeyLen * 4);
+		_key_value = key_string;
+			
+		_encryption_context = new ASDCP::AESEncContext;
+		if (ASDCP_FAILURE (_encryption_context->InitKey (key_buffer))) {
+			throw MiscError ("could not set up encryption context");
+		}
+
+		uint8_t cbc_buffer[ASDCP::CBC_BLOCK_SIZE];
+		
+		if (ASDCP_FAILURE (_encryption_context->SetIVec (rng.FillRandom (cbc_buffer, ASDCP::CBC_BLOCK_SIZE)))) {
+			throw MiscError ("could not set up CBC initialization vector");
+		}
+	}
+}
+
+MXFAsset::~MXFAsset ()
+{
+	delete _encryption_context;
 }
 
 void
@@ -57,6 +85,15 @@ MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
 	unsigned int c;
 	Kumu::hex2bin (_uuid.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
 	assert (c == Kumu::UUID_Length);
+
+	if (_encrypted) {
+		Kumu::GenRandomUUID (writer_info->ContextID);
+		writer_info->EncryptedEssence = true;
+
+		unsigned int c;
+		Kumu::hex2bin (_key_id.c_str(), writer_info->CryptographicKeyID, Kumu::UUID_Length, &c);
+		assert (c == Kumu::UUID_Length);
+	}
 }
 
 bool

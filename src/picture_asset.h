@@ -34,7 +34,9 @@ class StereoPictureFrame;
 class PictureAsset : public MXFAsset
 {
 public:
-	PictureAsset (std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length);
+	PictureAsset (
+		std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length, bool encrypted
+		);
 	
 	/** Write details of this asset to a CPL stream.
 	 *  @param s Stream.
@@ -78,6 +80,7 @@ public:
 	 *  @param length Length in frames.
 	 *  @param width Width of images in pixels.
 	 *  @param height Height of images in pixels.
+	 *  @param encrypted true if asset should be encrypted.
 	 */
 	MonoPictureAsset (
 		std::vector<std::string> const & files,
@@ -87,7 +90,8 @@ public:
 		int fps,
 		int length,
 		int width,
-		int height
+		int height,
+		bool encrypted
 		);
 
 	/** Construct a PictureAsset, generating the MXF from the JPEG2000 files.
@@ -100,6 +104,7 @@ public:
 	 *  @param length Length in frames.
 	 *  @param width Width of images in pixels.
 	 *  @param height Height of images in pixels.
+	 *  @param encrypted true if asset should be encrypted.
 	 */
 	MonoPictureAsset (
 		boost::function<std::string (int)> get_path,
@@ -109,7 +114,8 @@ public:
 		int fps,
 		int length,
 		int width,
-		int height
+		int height,
+		bool encrypted
 		);
 
 	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, int entry_point, int length);

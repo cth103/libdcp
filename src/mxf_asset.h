@@ -23,6 +23,10 @@
 #include <boost/signals2.hpp>
 #include "asset.h"
 
+namespace ASDCP {
+	class AESEncContext;
+}
+
 namespace libdcp
 {
 
@@ -36,8 +40,13 @@ public:
 	 *  @param fps Frames per second.
 	 *  @param entry_point The entry point of this MXF; ie the first frame that should be used.
 	 *  @param length Length in frames.
+	 *  @param encrypted true if the MXF should be encrypted.
 	 */
-	MXFAsset (std::string directory, std::string file_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length);
+	MXFAsset (
+		std::string directory, std::string file_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length, bool encrypted
+		);
+
+	~MXFAsset ();
 
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
 	
@@ -56,6 +65,10 @@ protected:
 	int _entry_point;
 	/** Length in frames */
 	int _length;
+	bool _encrypted;
+	ASDCP::AESEncContext* _encryption_context;
+	std::string _key_value;
+	std::string _key_id;
 };
 
 }

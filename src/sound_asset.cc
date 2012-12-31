@@ -42,9 +42,9 @@ using boost::lexical_cast;
 using namespace libdcp;
 
 SoundAsset::SoundAsset (
-	vector<string> const & files, string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int length
+	vector<string> const & files, string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int length, bool encrypted
 	)
-	: MXFAsset (directory, mxf_name, progress, fps, 0, length)
+	: MXFAsset (directory, mxf_name, progress, fps, 0, length, encrypted)
 	, _channels (files.size ())
 	, _sampling_rate (0)
 {
@@ -56,9 +56,9 @@ SoundAsset::SoundAsset (
 	string directory,
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
-	int fps, int length, int channels
+	int fps, int length, int channels, bool encrypted
 	)
-	: MXFAsset (directory, mxf_name, progress, fps, 0, length)
+	: MXFAsset (directory, mxf_name, progress, fps, 0, length, encrypted)
 	, _channels (channels)
 	, _sampling_rate (0)
 {
@@ -66,7 +66,7 @@ SoundAsset::SoundAsset (
 }
 
 SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int entry_point, int length)
-	: MXFAsset (directory, mxf_name, 0, fps, entry_point, length)
+	: MXFAsset (directory, mxf_name, 0, fps, entry_point, length, false)
 	, _channels (0)
 {
 	ASDCP::PCM::MXFReader reader;
@@ -176,7 +176,7 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 			offset += sample_size;
 		}
 
-		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, 0, 0))) {
+		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, _encryption_context, 0))) {
 			throw MiscError ("could not write audio MXF frame");
 		}
 

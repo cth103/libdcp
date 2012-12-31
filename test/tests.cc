@@ -76,7 +76,8 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 							 24,
 							 24,
 							 32,
-							 32
+							 32,
+							 false
 							 ));
 
 	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
@@ -86,7 +87,8 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 						   &(d.Progress),
 						   24,
 						   24,
-						   2
+						   2,
+						   false
 						   ));
 	
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
@@ -97,12 +99,12 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 
 BOOST_AUTO_TEST_CASE (error_test)
 {
-	libdcp::DCP d ("build/test/bar");
+	libdcp::DCP d ("build/test/fred");
 	vector<string> p;
 	p.push_back ("frobozz");
 
-	BOOST_CHECK_THROW (new libdcp::MonoPictureAsset (p, "build/test/bar", "video.mxf", &d.Progress, 24, 24, 32, 32), libdcp::FileError);
-	BOOST_CHECK_THROW (new libdcp::SoundAsset (p, "build/test/bar", "audio.mxf", &d.Progress, 24, 24), libdcp::FileError);
+	BOOST_CHECK_THROW (new libdcp::MonoPictureAsset (p, "build/test/fred", "video.mxf", &d.Progress, 24, 24, 32, 32, false), libdcp::FileError);
+	BOOST_CHECK_THROW (new libdcp::SoundAsset (p, "build/test/fred", "audio.mxf", &d.Progress, 24, 24, false), libdcp::FileError);
 }
 
 BOOST_AUTO_TEST_CASE (read_dcp)
@@ -578,4 +580,49 @@ BOOST_AUTO_TEST_CASE (color)
 	BOOST_CHECK_EQUAL (c.b, 255);
 	BOOST_CHECK_EQUAL (c.to_argb_string(), "FF0000FF");
 	
+}
+
+BOOST_AUTO_TEST_CASE (encryption)
+{
+	Kumu::libdcp_test = true;
+	
+	libdcp::Metadata* t = libdcp::Metadata::instance ();
+	t->issuer = "OpenDCP 0.0.25";
+	t->creator = "OpenDCP 0.0.25";
+	t->company_name = "OpenDCP";
+	t->product_name = "OpenDCP";
+	t->product_version = "0.0.25";
+	t->issue_date = "2012-07-17T04:45:18+00:00";
+	boost::filesystem::remove_all ("build/test/bar");
+	boost::filesystem::create_directories ("build/test/bar");
+	libdcp::DCP d ("build/test/bar");
+	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/bar", "A Test DCP", libdcp::FEATURE, 24, 24));
+
+	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset (
+							 j2c,
+							 "build/test/bar",
+							 "video.mxf",
+							 &d.Progress,
+							 24,
+							 24,
+							 32,
+							 32,
+							 false
+							 ));
+
+	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
+						   wav,
+						   "build/test/bar",
+						   "audio.mxf",
+						   &(d.Progress),
+						   24,
+						   24,
+						   2,
+						   false
+						   ));
+	
+	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
+	d.add_cpl (cpl);
+
+	d.write_xml ();
 }

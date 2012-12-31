@@ -46,8 +46,8 @@ using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace libdcp;
 
-PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length)
-	: MXFAsset (directory, mxf_name, progress, fps, entry_point, length)
+PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length, bool encrypted)
+	: MXFAsset (directory, mxf_name, progress, fps, entry_point, length, encrypted)
 	, _width (0)
 	, _height (0)
 {
@@ -138,8 +138,9 @@ MonoPictureAsset::MonoPictureAsset (
 	int fps,
 	int length,
 	int width,
-	int height)
-	: PictureAsset (directory, mxf_name, progress, fps, 0, length)
+	int height,
+	bool encrypted)
+	: PictureAsset (directory, mxf_name, progress, fps, 0, length, encrypted)
 {
 	_width = width;
 	_height = height;
@@ -154,8 +155,9 @@ MonoPictureAsset::MonoPictureAsset (
 	int fps,
 	int length,
 	int width,
-	int height)
-	: PictureAsset (directory, mxf_name, progress, fps, 0, length)
+	int height,
+	bool encrypted)
+	: PictureAsset (directory, mxf_name, progress, fps, 0, length, encrypted)
 {
 	_width = width;
 	_height = height;
@@ -163,7 +165,7 @@ MonoPictureAsset::MonoPictureAsset (
 }
 
 MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, int entry_point, int length)
-	: PictureAsset (directory, mxf_name, 0, fps, entry_point, length)
+	: PictureAsset (directory, mxf_name, 0, fps, entry_point, length, false)
 {
 	ASDCP::JP2K::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
@@ -194,7 +196,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 	
 	ASDCP::WriterInfo writer_info;
 	fill_writer_info (&writer_info);
-	
+
 	ASDCP::JP2K::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc))) {
 		throw MXFFileError ("could not open MXF file for writing", path().string());
@@ -208,8 +210,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 			throw FileError ("could not open JPEG2000 file for reading", path);
 		}
 
-		/* XXX: passing 0 to WriteFrame ok? */
-		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, 0, 0))) {
+		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, _encryption_context, 0))) {
 			throw MiscError ("error in writing video MXF");
 		}
 
@@ -363,7 +364,7 @@ PictureAsset::frame_buffer_equals (
 
 
 StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int entry_point, int length)
-	: PictureAsset (directory, mxf_name, 0, fps, entry_point, length)
+	: PictureAsset (directory, mxf_name, 0, fps, entry_point, length, false)
 {
 	ASDCP::JP2K::MXFSReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {

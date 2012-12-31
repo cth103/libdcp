@@ -39,9 +39,14 @@ Time::Time (int frame, int frames_per_second)
 	, s (0)
 	, t (0)
 {
-	float sec_float = float (frame) / frames_per_second;
-	t = (int (floor (sec_float * 1000)) % 1000) / 4;
-	s = floor (sec_float);
+	set (double (frame) / frames_per_second);
+}
+
+void
+Time::set (double ss)
+{
+	t = (int (round (ss * 1000)) % 1000) / 4;
+	s = floor (ss);
 
 	if (s > 60) {
 		m = s / 60;

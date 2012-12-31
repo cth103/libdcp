@@ -44,6 +44,7 @@ public:
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
+	 *  @param encrypted true if asset should be encrypted.
 	 */
 	SoundAsset (
 		std::vector<std::string> const & files,
@@ -51,7 +52,8 @@ public:
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
-		int length
+		int length,
+		bool encrypted
 		);
 
 	/** Construct a SoundAsset, generating the MXF from some WAV files.
@@ -63,6 +65,7 @@ public:
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
 	 *  @param channels Number of audio channels.
+	 *  @param encrypted true if asset should be encrypted.
 	 */
 	SoundAsset (
 		boost::function<std::string (Channel)> get_path,
@@ -71,7 +74,8 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int length,
-		int channels
+		int channels,
+		bool encrypted
 		);
 
 	SoundAsset (
