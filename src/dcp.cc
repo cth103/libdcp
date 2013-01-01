@@ -457,13 +457,46 @@ CPL::write_xml (bool encrypted, CertificateChain const & certificates) const
 	   << "  </ReelList>\n";
 
 	if (encrypted) {
-		os << "  <dsig:X509Data>\n"
-		   << "    <dsig:X509IssuerSerial>\n"
-		   << "      <dsig:X509IssuerName>" << Certificate::name_for_xml (certificates.leaf()->issuer()) << "</dsig:IssuerName>\n"
-		   << "      <dsig:X509SerialNumber>" << certificates.leaf()->serial() << "</dsig:X509SerialNumber>\n"
-		   << "    <dsig:X509IssuerSerial>\n"
-		   << "    <dsig:X509SubjectName>" << Certificate::name_for_xml (certificates.leaf()->subject()) << "</dsig:X509SubjectName>\n"
-		   << "  </dsig:X509Data>\n";
+		os << "  <Signer>\n"
+		   << "    <dsig:X509Data>\n"
+		   << "      <dsig:X509IssuerSerial>\n"
+		   << "        <dsig:X509IssuerName>" << Certificate::name_for_xml (certificates.leaf()->issuer()) << "</dsig:IssuerName>\n"
+		   << "        <dsig:X509SerialNumber>" << certificates.leaf()->serial() << "</dsig:X509SerialNumber>\n"
+		   << "      <dsig:X509IssuerSerial>\n"
+		   << "      <dsig:X509SubjectName>" << Certificate::name_for_xml (certificates.leaf()->subject()) << "</dsig:X509SubjectName>\n"
+		   << "    </dsig:X509Data>\n"
+		   << "  </Signer>\n"
+		   << "  <dsig:Signature>\n"
+		   << "    <dsig:SignedInfo>\n"
+		   << "      <dsig:CanonicalizationMethod Algorithm=\"http://www.w3.org/TR/2001/REC-xml-c14n-20010315\"/>\n"
+		   << "      <dsig:SignatureMethod Algorithm=\"http://www.w3.org/2001/04/xmldsig-more#rsa-sha256\"/>\n"
+		   << "      <dsig:Reference URI=\"\">\n"
+		   << "        <dsig:Transforms>\n"
+		   << "          <dsig:Transform Algorithm=\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\"/>\n"
+		   << "        </dsig:Transforms>\n"
+		   << "        <dsig:DigestMethod Algorithm=\"http://www.w3.org/2000/09/xmldsig#sha1\"/>\n"
+			/* this is done by xmlsec1 in cinemaslides */
+		   << "        <dsig:DigestValue>" << "XXX" << "</dsig:DigestValue>\n"
+		   << "      </dsig:Reference>\n"
+		   << "    </dsig:SignedInfo>\n"
+			/* this is done by xmlsec1 in cinemaslides */
+		   << "    <dsig:SignatureValue>" << "XXX" << "</dsig:SignatureValue>\n";
+		
+		os << "    <dsig:KeyInfo>\n";
+		
+		list<shared_ptr<Certificate> > c = certificates.leaf_to_root ();
+		for (list<shared_ptr<Certificate> >::iterator i = c.begin(); i != c.end(); ++i) {
+			os << "      <dsig:X509Data>\n"
+			   << "        <dsig:X509IssuerSerial>\n"
+			   << "          <dsig:X509IssuerName>" << Certificate::name_for_xml ((*i)->issuer()) << "</dsig:IssuerName>\n"
+			   << "          <dsig:X509SerialNumber>" << (*i)->serial() << "</dsig:X509SerialNumber>\n"
+			   << "        </dsig:X509IssuerSerial>\n"
+			   << "        <dsig:X509Certificate>" << "XXX" << "</dsig:X509Certificate>\n"
+			   << "      </dsig:X509Data>\n";
+		}
+
+		os << "    </dsig:KeyInfo>\n";
+		os << "  </dsig:Signature>\n";
 	}
 	
 	os << "</CompositionPlaylist>\n";

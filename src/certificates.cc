@@ -118,3 +118,11 @@ CertificateChain::leaf () const
 	assert (_certificates.size() >= 2);
 	return _certificates.back ();
 }
+
+list<shared_ptr<Certificate> >
+CertificateChain::leaf_to_root () const
+{
+	list<shared_ptr<Certificate> > c = _certificates;
+	c.reverse ();
+	return c;
+}

@@ -36,6 +36,8 @@ public:
 	boost::shared_ptr<Certificate> root () const;
 	boost::shared_ptr<Certificate> leaf () const;
 
+	std::list<boost::shared_ptr<Certificate> > leaf_to_root () const;
+
 private:
 	friend class ::certificates;
 	std::list<boost::shared_ptr<Certificate> > _certificates;
