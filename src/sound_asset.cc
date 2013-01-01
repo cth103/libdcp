@@ -25,6 +25,7 @@
 #include <stdexcept>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <libxml++/nodes/element.h>
 #include "KM_fileio.h"
 #include "AS_DCP.h"
 #include "sound_asset.h"
@@ -191,16 +192,15 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 }
 
 void
-SoundAsset::write_to_cpl (ostream& s) const
+SoundAsset::write_to_cpl (xmlpp::Element* parent) const
 {
-	s << "        <MainSound>\n"
-	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
-	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
-	  << "          <IntrinsicDuration>" << _length << "</IntrinsicDuration>\n"
-	  << "          <EntryPoint>0</EntryPoint>\n"
-	  << "          <Duration>" << _length << "</Duration>\n"
-	  << "        </MainSound>\n";
+	xmlpp::Element* main_sound = parent->add_child("MainSound");
+	main_sound->add_child("Id")->add_child_text("urn:uuid:" + _uuid);
+	main_sound->add_child("AnnotationText")->add_child_text(_file_name);
+	main_sound->add_child("EditRate")->add_child_text(boost::lexical_cast<string> (_fps) + " 1");
+	main_sound->add_child("IntrinsicDuration")->add_child_text(boost::lexical_cast<string> (_length));
+	main_sound->add_child("EntryPoint")->add_child_text("0");
+	main_sound->add_child("Duration")->add_child_text(boost::lexical_cast<string> (_length));
 }
 
 bool

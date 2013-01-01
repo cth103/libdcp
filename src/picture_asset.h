@@ -38,10 +38,10 @@ public:
 		std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length, bool encrypted
 		);
 	
-	/** Write details of this asset to a CPL stream.
-	 *  @param s Stream.
+	/** Write details of the asset to a CPL AssetList node.
+	 *  @param p Parent node.
 	 */
-	void write_to_cpl (std::ostream& s) const;
+	void write_to_cpl (xmlpp::Element* p) const;
 
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
 

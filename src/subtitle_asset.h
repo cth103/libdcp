@@ -183,7 +183,11 @@ public:
 	SubtitleAsset (std::string directory, std::string xml_file);
 	SubtitleAsset (std::string directory, std::string movie_title, std::string language);
 
-	void write_to_cpl (std::ostream&) const;
+	/** Write details of the asset to a CPL AssetList node.
+	 *  @param p Parent node.
+	 */
+	void write_to_cpl (xmlpp::Element* p) const;
+	
 	virtual bool equals (boost::shared_ptr<const Asset>, EqualityOptions, std::list<std::string>& notes) const {
 		/* XXX */
 		notes.push_back ("subtitle assets not compared yet");

@@ -21,6 +21,10 @@
 #include <boost/shared_ptr.hpp>
 #include "types.h"
 
+namespace xmlpp {
+	class Node;
+}
+
 namespace libdcp {
 
 class PictureAsset;
@@ -52,7 +56,7 @@ public:
 		return _main_subtitle;
 	}
 
-	void write_to_cpl (std::ostream & s) const;
+	void write_to_cpl (xmlpp::Node *) const;
 
 	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, std::list<std::string>& notes) const;
 

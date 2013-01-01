@@ -20,6 +20,7 @@
 #include <fstream>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <libxml++/nodes/element.h>
 #include "subtitle_asset.h"
 #include "util.h"
 
@@ -375,15 +376,14 @@ SubtitleAsset::add (shared_ptr<Subtitle> s)
 }
 
 void
-SubtitleAsset::write_to_cpl (ostream& s) const
+SubtitleAsset::write_to_cpl (xmlpp::Element* parent) const
 {
 	/* XXX: should EditRate, Duration and IntrinsicDuration be in here? */
-	
-	s << "        <MainSubtitle>\n"
-	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
-	  << "          <EntryPoint>0</EntryPoint>\n"
-	  << "        </MainSubtitle>\n";
+
+	xmlpp::Element* main_subtitle = parent->add_child("MainSubtitle");
+	main_subtitle->add_child("Id")->add_child_text("urn:uuid:" + _uuid);
+	main_subtitle->add_child("AnnotationText")->add_child_text(_file_name);
+	main_subtitle->add_child("EntryPoint")->add_child_text("0");
 }
 
 struct SubtitleSorter {

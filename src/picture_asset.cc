@@ -29,6 +29,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <openjpeg.h>
+#include <libxml++/nodes/element.h>
 #include "AS_DCP.h"
 #include "KM_fileio.h"
 #include "picture_asset.h"
@@ -41,6 +42,7 @@ using std::ostream;
 using std::list;
 using std::vector;
 using std::max;
+using std::stringstream;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
@@ -55,18 +57,19 @@ PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::
 }
 
 void
-PictureAsset::write_to_cpl (ostream& s) const
+PictureAsset::write_to_cpl (xmlpp::Element* parent) const
 {
-	s << "        <MainPicture>\n"
-	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
-	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
-	  << "          <IntrinsicDuration>" << _length << "</IntrinsicDuration>\n"
-	  << "          <EntryPoint>0</EntryPoint>\n"
-	  << "          <Duration>" << _length << "</Duration>\n"
-	  << "          <FrameRate>" << _fps << " 1</FrameRate>\n"
-	  << "          <ScreenAspectRatio>" << _width << " " << _height << "</ScreenAspectRatio>\n"
-	  << "        </MainPicture>\n";
+	xmlpp::Element* main_picture = parent->add_child("MainPicture");
+	main_picture->add_child("Id")->add_child_text("urn:uuid:" + _uuid);
+	main_picture->add_child("AnnotationText")->add_child_text(_file_name);
+	main_picture->add_child("EditRate")->add_child_text(boost::lexical_cast<string> (_fps) + " 1");
+	main_picture->add_child("IntrinsicDuration")->add_child_text(boost::lexical_cast<string> (_length));
+	main_picture->add_child("EntryPoint")->add_child_text("0");
+	main_picture->add_child("Duration")->add_child_text(boost::lexical_cast<string> (_length));
+	main_picture->add_child("FrameRate")->add_child_text(boost::lexical_cast<string> (_fps) + " 1");
+	stringstream sar;
+	sar << _width << " " << _height;
+	main_picture->add_child("ScreenAspectRatio")->add_child_text(sar.str());
 }
 
 bool

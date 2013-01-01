@@ -33,6 +33,10 @@ namespace ASDCP {
 	class WriterInfo;
 }
 
+namespace xmlpp {
+	class Element;
+}
+
 namespace libdcp
 {
 
@@ -51,10 +55,10 @@ public:
 
 	virtual ~Asset() {}
 
-	/** Write details of the asset to a CPL stream.
-	 *  @param s Stream.
+	/** Write details of the asset to a CPL AssetList node.
+	 *  @param p Parent node.
 	 */
-	virtual void write_to_cpl (std::ostream& s) const = 0;
+	virtual void write_to_cpl (xmlpp::Element* p) const = 0;
 
 	/** Write details of the asset to a PKL stream.
 	 *  @param s Stream.
