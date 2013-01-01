@@ -29,12 +29,14 @@
 #include "picture_asset.h"
 #include "sound_asset.h"
 #include "reel.h"
+#include "certificates.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test
 #include <boost/test/unit_test.hpp>
 
 using std::string;
+using std::cout;
 using std::vector;
 using std::list;
 using boost::shared_ptr;
@@ -109,7 +111,7 @@ BOOST_AUTO_TEST_CASE (error_test)
 
 BOOST_AUTO_TEST_CASE (read_dcp)
 {
-	libdcp::DCP d ("test/ref/DCP");
+	libdcp::DCP d ("test/ref/DCP/foo");
 	d.read ();
 
 	list<shared_ptr<const libdcp::CPL> > cpls = d.cpls ();
@@ -607,7 +609,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 							 24,
 							 32,
 							 32,
-							 false
+							 true
 							 ));
 
 	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
@@ -618,11 +620,34 @@ BOOST_AUTO_TEST_CASE (encryption)
 						   24,
 						   24,
 						   2,
-						   false
+						   true
 						   ));
 	
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);
 
 	d.write_xml ();
+}
+
+BOOST_AUTO_TEST_CASE (certificates)
+{
+	libdcp::CertificateChain c ("test/data/certificate_chain");
+	BOOST_CHECK_EQUAL (c._certificates.size(), 3);
+
+	BOOST_CHECK_EQUAL (
+		c.root()->issuer(),
+		"/O=example.org/OU=example.org/CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION/dnQualifier=rTeK7x+nopFkyphflooz6p2ZM7A="
+		);
+	
+	BOOST_CHECK_EQUAL (
+		libdcp::Certificate::name_for_xml (c.root()->issuer()),
+		"dnQualifier=rTeK7x+nopFkyphflooz6p2ZM7A=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		);
+
+	BOOST_CHECK_EQUAL (c.root()->serial(), "5");
+
+	BOOST_CHECK_EQUAL (
+		libdcp::Certificate::name_for_xml (c.root()->subject()),
+		"dnQualifier=rTeK7x+nopFkyphflooz6p2ZM7A=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		);
 }

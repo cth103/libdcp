@@ -3,6 +3,14 @@
 Hello.
 
 
+== Acknowledgements
+
+Wolfgang Woehl's cinemaslides was most informative on the
+nasty details of encryption.
+
+
+
+
 == Building:
 
 ./waf configure

@@ -51,6 +51,7 @@ using namespace libdcp;
 
 DCP::DCP (string directory)
 	: _directory (directory)
+	, _encrypted (false)
 {
 	boost::filesystem::create_directories (directory);
 }
@@ -59,7 +60,7 @@ void
 DCP::write_xml () const
 {
 	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
-		(*i)->write_xml ();
+		(*i)->write_xml (_encrypted, _certificates);
 	}
 
 	string pkl_uuid = make_uuid ();
@@ -423,7 +424,7 @@ CPL::add_reel (shared_ptr<const Reel> reel)
 }
 
 void
-CPL::write_xml () const
+CPL::write_xml (bool encrypted, CertificateChain const & certificates) const
 {
 	boost::filesystem::path p;
 	p /= _directory;
@@ -453,8 +454,19 @@ CPL::write_xml () const
 
 	os << "      </AssetList>\n"
 	   << "    </Reel>\n"
-	   << "  </ReelList>\n"
-	   << "</CompositionPlaylist>\n";
+	   << "  </ReelList>\n";
+
+	if (encrypted) {
+		os << "  <dsig:X509Data>\n"
+		   << "    <dsig:X509IssuerSerial>\n"
+		   << "      <dsig:X509IssuerName>" << Certificate::name_for_xml (certificates.leaf()->issuer()) << "</dsig:IssuerName>\n"
+		   << "      <dsig:X509SerialNumber>" << certificates.leaf()->serial() << "</dsig:X509SerialNumber>\n"
+		   << "    <dsig:X509IssuerSerial>\n"
+		   << "    <dsig:X509SubjectName>" << Certificate::name_for_xml (certificates.leaf()->subject()) << "</dsig:X509SubjectName>\n"
+		   << "  </dsig:X509Data>\n";
+	}
+	
+	os << "</CompositionPlaylist>\n";
 
 	os.close ();
 

@@ -56,6 +56,9 @@ public:
 
 	std::string to_string () const;
 	int64_t to_ticks () const;
+
+private:
+	void set (double);
 };
 
 extern bool operator== (Time const & a, Time const & b);

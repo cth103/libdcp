@@ -29,6 +29,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>
 #include "types.h"
+#include "certificates.h"
 
 namespace xmlpp {
 	class Node;
@@ -85,7 +86,7 @@ public:
 	
 	bool equals (CPL const & other, EqualityOptions options, std::list<std::string>& notes) const;
 	
-	void write_xml () const;
+	void write_xml (bool, CertificateChain const &) const;
 	void write_to_assetmap (std::ostream& s) const;
 	void write_to_pkl (std::ostream& s) const;
 	
@@ -182,6 +183,9 @@ private:
 	/** the directory that we are writing to */
 	std::string _directory;
 	std::list<boost::shared_ptr<const CPL> > _cpls;
+
+	bool _encrypted;
+	CertificateChain _certificates;
 };
 
 }
