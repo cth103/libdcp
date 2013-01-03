@@ -66,6 +66,9 @@ PictureAsset::write_to_cpl (xmlpp::Element* parent) const
 	main_picture->add_child("IntrinsicDuration")->add_child_text(boost::lexical_cast<string> (_length));
 	main_picture->add_child("EntryPoint")->add_child_text("0");
 	main_picture->add_child("Duration")->add_child_text(boost::lexical_cast<string> (_length));
+	if (_encrypted) {
+		main_picture->add_child("KeyId")->add_child_text("urn:uuid:" + _key_id);
+	}
 	main_picture->add_child("FrameRate")->add_child_text(boost::lexical_cast<string> (_fps) + " 1");
 	stringstream sar;
 	sar << _width << " " << _height;
