@@ -641,18 +641,18 @@ BOOST_AUTO_TEST_CASE (certificates)
 
 	BOOST_CHECK_EQUAL (
 		c.root()->issuer(),
-		"/O=example.org/OU=example.org/CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION/dnQualifier=rTeK7x+nopFkyphflooz6p2ZM7A="
+		"/O=example.org/OU=example.org/CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION/dnQualifier=rTeK7x\+nopFkyphflooz6p2ZM7A="
 		);
 	
 	BOOST_CHECK_EQUAL (
 		libdcp::Certificate::name_for_xml (c.root()->issuer()),
-		"dnQualifier=rTeK7x+nopFkyphflooz6p2ZM7A=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		"dnQualifier=rTeK7x\+nopFkyphflooz6p2ZM7A=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 
 	BOOST_CHECK_EQUAL (c.root()->serial(), "5");
 
 	BOOST_CHECK_EQUAL (
 		libdcp::Certificate::name_for_xml (c.root()->subject()),
-		"dnQualifier=rTeK7x+nopFkyphflooz6p2ZM7A=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		"dnQualifier=rTeK7x\+nopFkyphflooz6p2ZM7A=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 }
