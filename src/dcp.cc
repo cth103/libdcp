@@ -506,6 +506,7 @@ CPL::write_xml (bool encrypted, CertificateChain const & certificates, string co
 		list<shared_ptr<Certificate> > c = certificates.leaf_to_root ();
 		for (list<shared_ptr<Certificate> >::iterator i = c.begin(); i != c.end(); ++i) {
 			xmlpp::Element* data = key_info->add_child("X509Data", "dsig");
+
 			{
 				xmlpp::Element* serial = data->add_child("X509IssuerSerial", "dsig");
 				serial->add_child("X509IssuerName", "dsig")->add_child_text(
@@ -513,7 +514,11 @@ CPL::write_xml (bool encrypted, CertificateChain const & certificates, string co
 					);
 				serial->add_child("X509SerialNumber", "dsig")->add_child_text((*i)->serial());
 			}
+			
+			data->add_child("X509Certificate", "dsig")->add_child_text((*i)->certificate());
 		}
+
+		doc.write_to_file_formatted ("/home/carl/fuckwit.xml", "UTF-8");
 
 		xmlSecKeysMngrPtr keys_manager = xmlSecKeysMngrCreate();
 		if (!keys_manager) {

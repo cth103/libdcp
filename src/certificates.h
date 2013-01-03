@@ -17,6 +17,7 @@ public:
 	Certificate (X509 *);
 	~Certificate ();
 
+	std::string certificate () const;
 	std::string issuer () const;
 	std::string serial () const;
 	std::string subject () const;

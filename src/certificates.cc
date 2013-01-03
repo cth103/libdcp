@@ -27,6 +27,30 @@ Certificate::~Certificate ()
 }
 
 string
+Certificate::certificate () const
+{
+	BIO* bio = BIO_new (BIO_s_mem ());
+	if (!bio) {
+		throw MiscError ("could not create memory BIO");
+	}
+	
+	PEM_write_bio_X509 (bio, _certificate);
+
+	string s;
+	char* data;
+	long int const data_length = BIO_get_mem_data (bio, &data);
+	for (long int i = 0; i < data_length; ++i) {
+		s += data[i];
+	}
+
+	BIO_free (bio);
+
+	boost::replace_all (s, "-----BEGIN CERTIFICATE-----\n", "");
+	boost::replace_all (s, "-----END CERTIFICATE-----\n", "");
+	return s;
+}
+
+string
 Certificate::issuer () const
 {
 	X509_NAME* n = X509_get_issuer_name (_certificate);
