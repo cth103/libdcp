@@ -28,6 +28,9 @@ def configure(conf):
 
     conf.check_cfg(package = 'openssl', args = '--cflags --libs', uselib_store = 'OPENSSL', mandatory = True)
     conf.check_cfg(package = 'libxml++-2.6', args = '--cflags --libs', uselib_store = 'LIBXML++', mandatory = True)
+    conf.check_cfg(package = 'xmlsec1', args = '--cflags --libs', uselib_store = 'XMLSEC1', mandatory = True)
+    # Remove erroneous escaping of quotes from xmlsec1 defines
+    conf.env.DEFINES_XMLSEC1 = [f.replace('\\', '') for f in conf.env.DEFINES_XMLSEC1]
 
     openjpeg_fragment = """
     			#include <stdio.h>\n

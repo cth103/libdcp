@@ -86,7 +86,7 @@ public:
 	
 	bool equals (CPL const & other, EqualityOptions options, std::list<std::string>& notes) const;
 	
-	void write_xml (bool, CertificateChain const &) const;
+	void write_xml (bool, CertificateChain const &, std::string const &) const;
 	void write_to_assetmap (std::ostream& s) const;
 	void write_to_pkl (std::ostream& s) const;
 	
@@ -151,6 +151,18 @@ public:
 		return _cpls;
 	}
 
+	void set_encrypted (bool e) {
+		_encrypted = e;
+	}
+
+	void set_certificates (CertificateChain const & c) {
+		_certificates = c;
+	}
+
+	void set_signer_key (std::string const & s) {
+		_signer_key = s;
+	}
+
 	/** Emitted with a parameter between 0 and 1 to indicate progress
 	 *  for long jobs.
 	 */
@@ -186,6 +198,7 @@ private:
 
 	bool _encrypted;
 	CertificateChain _certificates;
+	std::string _signer_key;
 };
 
 }

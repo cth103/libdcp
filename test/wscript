@@ -18,7 +18,7 @@ def configure(conf):
 def build(bld):
     obj = bld(features = 'cxx cxxprogram')
     obj.name   = 'tests'
-    obj.uselib = 'BOOST_TEST OPENJPEG'
+    obj.uselib = 'BOOST_TEST OPENJPEG XMLSEC1'
     obj.use    = 'libdcp'
     obj.source = 'tests.cc'
     obj.target = 'tests'

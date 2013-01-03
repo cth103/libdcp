@@ -27,6 +27,9 @@
 #include <iomanip>
 #include <boost/filesystem.hpp>
 #include <openssl/sha.h>
+#include <xmlsec/xmldsig.h>
+#include <xmlsec/dl.h>
+#include <xmlsec/app.h>
 #include "KM_util.h"
 #include "KM_fileio.h"
 #include "AS_DCP.h"
@@ -37,6 +40,7 @@
 #include "lut.h"
 
 using std::string;
+using std::cout;
 using std::stringstream;
 using std::min;
 using std::max;
@@ -266,4 +270,26 @@ libdcp::empty_or_white_space (string s)
 	}
 
 	return true;
+}
+
+void
+libdcp::init ()
+{
+	if (xmlSecInit() < 0) {
+		throw MiscError ("could not initialise xmlsec");
+	}
+
+#ifdef XMLSEC_CRYPTO_DYNAMIC_LOADING
+	if (xmlSecCryptoDLLoadLibrary (BAD_CAST XMLSEC_CRYPTO) < 0) {
+		throw MiscError ("unable to load default xmlsec-crypto library");
+	}
+#endif
+	
+	if (xmlSecCryptoAppInit (0) < 0) {
+		throw MiscError ("could not initialise crypto library");
+	}
+	
+	if (xmlSecCryptoInit() < 0) {
+		throw MiscError ("could not initialise xmlsec-crypto");
+	}
 }

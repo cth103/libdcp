@@ -28,6 +28,8 @@
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <libxml++/libxml++.h>
+#include <xmlsec/xmldsig.h>
+#include <xmlsec/app.h>
 #include "dcp.h"
 #include "asset.h"
 #include "sound_asset.h"
@@ -60,7 +62,7 @@ void
 DCP::write_xml () const
 {
 	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
-		(*i)->write_xml (_encrypted, _certificates);
+		(*i)->write_xml (_encrypted, _certificates, _signer_key);
 	}
 
 	string pkl_uuid = make_uuid ();
@@ -424,7 +426,7 @@ CPL::add_reel (shared_ptr<const Reel> reel)
 }
 
 void
-CPL::write_xml (bool encrypted, CertificateChain const & certificates) const
+CPL::write_xml (bool encrypted, CertificateChain const & certificates, string const & signer_key) const
 {
 	boost::filesystem::path p;
 	p /= _directory;
@@ -434,6 +436,10 @@ CPL::write_xml (bool encrypted, CertificateChain const & certificates) const
 
 	xmlpp::Document doc;
 	xmlpp::Element* cpl = doc.create_root_node("CompositionPlaylist", "http://www.smpte-ra.org/schemas/429-7/2006/CPL");
+
+	if (encrypted) {
+		cpl->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
+	}
 
 	cpl->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
 	cpl->add_child("AnnotationText")->add_child_text (_name);
@@ -474,12 +480,13 @@ CPL::write_xml (bool encrypted, CertificateChain const & certificates) const
 		}
 
 		xmlpp::Element* signature = cpl->add_child("Signature", "dsig");
+		
 		{
 			xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
 			signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
 			signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
 			{
-				xmlpp::Element* reference = signature->add_child("Reference", "dsig");
+				xmlpp::Element* reference = signed_info->add_child("Reference", "dsig");
 				reference->set_attribute ("URI", "");
 				{
 					xmlpp::Element* transforms = reference->add_child("Transforms", "dsig");
@@ -488,21 +495,56 @@ CPL::write_xml (bool encrypted, CertificateChain const & certificates) const
 						);
 				}
 				reference->add_child("DigestMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
+				/* This will be filled in by the signing later */
+				reference->add_child("DigestValue", "dsig");
 			}
 		}
 
+		signature->add_child("SignatureValue", "dsig");
+
+		xmlpp::Element* key_info = signature->add_child("KeyInfo", "dsig");
 		list<shared_ptr<Certificate> > c = certificates.leaf_to_root ();
 		for (list<shared_ptr<Certificate> >::iterator i = c.begin(); i != c.end(); ++i) {
-			xmlpp::Element* data = signature->add_child("X509Data", "dsig");
+			xmlpp::Element* data = key_info->add_child("X509Data", "dsig");
 			{
-				xmlpp::Element* serial = data->add_child("X509IssuerSerial", "data");
+				xmlpp::Element* serial = data->add_child("X509IssuerSerial", "dsig");
 				serial->add_child("X509IssuerName", "dsig")->add_child_text(
 					Certificate::name_for_xml ((*i)->issuer())
 					);
 				serial->add_child("X509SerialNumber", "dsig")->add_child_text((*i)->serial());
-				serial->add_child("X509Certificate", "dsig")->add_child_text("XXX");
 			}
 		}
+
+		xmlSecKeysMngrPtr keys_manager = xmlSecKeysMngrCreate();
+		if (!keys_manager) {
+			throw MiscError ("could not create keys manager");
+		}
+		if (xmlSecCryptoAppDefaultKeysMngrInit (keys_manager) < 0) {
+			throw MiscError ("could not initialise keys manager");
+		}
+
+		xmlSecKeyPtr const key = xmlSecCryptoAppKeyLoad (signer_key.c_str(), xmlSecKeyDataFormatPem, 0, 0, 0);
+		if (key == 0) {
+			throw MiscError ("could not load signer key");
+		}
+
+		if (xmlSecCryptoAppDefaultKeysMngrAdoptKey (keys_manager, key) < 0) {
+			xmlSecKeyDestroy (key);
+			throw MiscError ("could not use signer key");
+		}
+
+		xmlSecDSigCtx signature_context;
+
+		if (xmlSecDSigCtxInitialize (&signature_context, keys_manager) < 0) {
+			throw MiscError ("could not initialise XMLSEC context");
+		}
+
+		if (xmlSecDSigCtxSign (&signature_context, signature->cobj()) < 0) {
+			throw MiscError ("could not sign CPL");
+		}
+
+		xmlSecDSigCtxFinalize (&signature_context);
+		xmlSecKeysMngrDestroy (keys_manager);
 	}
 
 	doc.write_to_file_formatted (p.string(), "UTF-8");

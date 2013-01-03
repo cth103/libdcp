@@ -53,4 +53,6 @@ extern bool empty_or_white_space (std::string s);
 extern opj_image_t* decompress_j2k (uint8_t* data, int64_t size, int reduce);
 extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (opj_image_t* xyz_frame);
 
+extern void init ();
+
 }

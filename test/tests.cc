@@ -56,6 +56,8 @@ wav (libdcp::Channel)
 
 BOOST_AUTO_TEST_CASE (dcp_test)
 {
+	libdcp::init ();
+	
 	Kumu::libdcp_test = true;
 	
 	libdcp::Metadata* t = libdcp::Metadata::instance ();
@@ -598,7 +600,11 @@ BOOST_AUTO_TEST_CASE (encryption)
 	boost::filesystem::remove_all ("build/test/bar");
 	boost::filesystem::create_directories ("build/test/bar");
 	libdcp::DCP d ("build/test/bar");
+	d.set_encrypted (true);
+	d.set_certificates (libdcp::CertificateChain ("test/data/certificate_chain"));
+	d.set_signer_key ("test/data/signer.key");
 	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/bar", "A Test DCP", libdcp::FEATURE, 24, 24));
+	
 
 	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset (
 							 j2c,

@@ -7,7 +7,7 @@ def build(bld):
     obj.name = 'libdcp'
     obj.target = 'dcp'
     obj.export_includes = ['.']
-    obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 OPENSSL SIGC++ LIBXML++ OPENJPEG'
+    obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 OPENSSL SIGC++ LIBXML++ OPENJPEG XMLSEC1'
     obj.use = 'libkumu-libdcp libasdcp-libdcp'
     obj.source = """
                  asset.cc
