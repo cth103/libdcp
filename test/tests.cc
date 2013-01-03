@@ -605,7 +605,6 @@ BOOST_AUTO_TEST_CASE (encryption)
 	d.set_signer_key ("test/data/signer.key");
 	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/bar", "A Test DCP", libdcp::FEATURE, 24, 24));
 	
-
 	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset (
 							 j2c,
 							 "build/test/bar",
