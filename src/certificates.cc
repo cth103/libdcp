@@ -46,7 +46,7 @@ Certificate::certificate () const
 	BIO_free (bio);
 
 	boost::replace_all (s, "-----BEGIN CERTIFICATE-----\n", "");
-	boost::replace_all (s, "-----END CERTIFICATE-----\n", "");
+	boost::replace_all (s, "\n-----END CERTIFICATE-----\n", "");
 	return s;
 }
 
@@ -72,7 +72,10 @@ Certificate::name_for_xml (string const & n)
 		x << *i << ",";
 	}
 
-	return x.str().substr(0, x.str().length() - 2);
+	string s = x.str();
+	boost::replace_all (s, "+", "\\+");
+
+	return s.substr(0, s.length() - 2);
 }
 
 string
