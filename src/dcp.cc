@@ -27,6 +27,7 @@
 #include <cassert>
 #include <iostream>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <libxml++/libxml++.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
@@ -82,29 +83,37 @@ DCP::write_pkl (string pkl_uuid) const
 	stringstream s;
 	s << pkl_uuid << "_pkl.xml";
 	p /= s.str();
-	ofstream pkl (p.string().c_str());
 
-	pkl << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-	    << "<PackingList xmlns=\"http://www.smpte-ra.org/schemas/429-8/2007/PKL\">\n"
-	    << "  <Id>urn:uuid:" << pkl_uuid << "</Id>\n"
-		/* XXX: this is a bit of a hack */
-	    << "  <AnnotationText>" << _cpls.front()->name() << "</AnnotationText>\n"
-	    << "  <IssueDate>" << Metadata::instance()->issue_date << "</IssueDate>\n"
-	    << "  <Issuer>" << Metadata::instance()->issuer << "</Issuer>\n"
-	    << "  <Creator>" << Metadata::instance()->creator << "</Creator>\n"
-	    << "  <AssetList>\n";
-
-	list<shared_ptr<const Asset> > a = assets ();
-	for (list<shared_ptr<const Asset> >::const_iterator i = a.begin(); i != a.end(); ++i) {
-		(*i)->write_to_pkl (pkl);
+	xmlpp::Document doc;
+	xmlpp::Element* pkl = doc.create_root_node("PackingList", "http://www.smpte-ra.org/schemas/429-8/2007/PKL");
+	if (_encrypted) {
+		pkl->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	}
 
-	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
-		(*i)->write_to_pkl (pkl);
+	pkl->add_child("Id")->add_child_text ("urn:uuid:" + pkl_uuid);
+	/* XXX: this is a bit of a hack */
+	pkl->add_child("AnnotationText")->add_child_text(_cpls.front()->name());
+	pkl->add_child("IssueDate")->add_child_text (Metadata::instance()->issue_date);
+	pkl->add_child("Issuer")->add_child_text (Metadata::instance()->issuer);
+	pkl->add_child("Creator")->add_child_text (Metadata::instance()->creator);
+
+	{
+		xmlpp::Element* asset_list = pkl->add_child("AssetList");
+		list<shared_ptr<const Asset> > a = assets ();
+		for (list<shared_ptr<const Asset> >::const_iterator i = a.begin(); i != a.end(); ++i) {
+			(*i)->write_to_pkl (asset_list);
+		}
+
+		for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
+			(*i)->write_to_pkl (asset_list);
+		}
 	}
 
-	pkl << "  </AssetList>\n"
-	    << "</PackingList>\n";
+	if (_encrypted) {
+		sign (pkl, _certificates, _signer_key);
+	}
+		
+	doc.write_to_file_formatted (p.string(), "UTF-8");
 
 	return p.string ();
 }
@@ -462,94 +471,7 @@ CPL::write_xml (bool encrypted, CertificateChain const & certificates, string co
 	}
 
 	if (encrypted) {
-		xmlpp::Element* signer = cpl->add_child("Signer");
-		{
-			xmlpp::Element* data = signer->add_child("X509Data", "dsig");
-			{
-				xmlpp::Element* serial = data->add_child("X509IssuerSerial", "dsig");
-				serial->add_child("X509IssuerName", "dsig")->add_child_text (
-					Certificate::name_for_xml (certificates.leaf()->issuer())
-					);
-				serial->add_child("X509SerialNumber", "dsig")->add_child_text (
-					certificates.leaf()->serial()
-					);
-			}
-			data->add_child("X509SubjectName", "dsig")->add_child_text (
-				Certificate::name_for_xml (certificates.leaf()->subject())
-				);
-		}
-
-		xmlpp::Element* signature = cpl->add_child("Signature", "dsig");
-		
-		{
-			xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
-			signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
-			signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-			{
-				xmlpp::Element* reference = signed_info->add_child("Reference", "dsig");
-				reference->set_attribute ("URI", "");
-				{
-					xmlpp::Element* transforms = reference->add_child("Transforms", "dsig");
-					transforms->add_child("Transform", "dsig")->set_attribute (
-						"Algorithm", "http://www.w3.org/2000/09/xmldsig#enveloped-signature"
-						);
-				}
-				reference->add_child("DigestMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
-				/* This will be filled in by the signing later */
-				reference->add_child("DigestValue", "dsig");
-			}
-		}
-
-		signature->add_child("SignatureValue", "dsig");
-
-		xmlpp::Element* key_info = signature->add_child("KeyInfo", "dsig");
-		list<shared_ptr<Certificate> > c = certificates.leaf_to_root ();
-		for (list<shared_ptr<Certificate> >::iterator i = c.begin(); i != c.end(); ++i) {
-			xmlpp::Element* data = key_info->add_child("X509Data", "dsig");
-
-			{
-				xmlpp::Element* serial = data->add_child("X509IssuerSerial", "dsig");
-				serial->add_child("X509IssuerName", "dsig")->add_child_text(
-					Certificate::name_for_xml ((*i)->issuer())
-					);
-				serial->add_child("X509SerialNumber", "dsig")->add_child_text((*i)->serial());
-			}
-			
-			data->add_child("X509Certificate", "dsig")->add_child_text((*i)->certificate());
-		}
-
-		doc.write_to_file_formatted ("/home/carl/fuckwit.xml", "UTF-8");
-
-		xmlSecKeysMngrPtr keys_manager = xmlSecKeysMngrCreate();
-		if (!keys_manager) {
-			throw MiscError ("could not create keys manager");
-		}
-		if (xmlSecCryptoAppDefaultKeysMngrInit (keys_manager) < 0) {
-			throw MiscError ("could not initialise keys manager");
-		}
-
-		xmlSecKeyPtr const key = xmlSecCryptoAppKeyLoad (signer_key.c_str(), xmlSecKeyDataFormatPem, 0, 0, 0);
-		if (key == 0) {
-			throw MiscError ("could not load signer key");
-		}
-
-		if (xmlSecCryptoAppDefaultKeysMngrAdoptKey (keys_manager, key) < 0) {
-			xmlSecKeyDestroy (key);
-			throw MiscError ("could not use signer key");
-		}
-
-		xmlSecDSigCtx signature_context;
-
-		if (xmlSecDSigCtxInitialize (&signature_context, keys_manager) < 0) {
-			throw MiscError ("could not initialise XMLSEC context");
-		}
-
-		if (xmlSecDSigCtxSign (&signature_context, signature->cobj()) < 0) {
-			throw MiscError ("could not sign CPL");
-		}
-
-		xmlSecDSigCtxFinalize (&signature_context);
-		xmlSecKeysMngrDestroy (keys_manager);
+		DCP::sign (cpl, certificates, signer_key);
 	}
 
 	doc.write_to_file_formatted (p.string(), "UTF-8");
@@ -559,14 +481,105 @@ CPL::write_xml (bool encrypted, CertificateChain const & certificates, string co
 }
 
 void
-CPL::write_to_pkl (ostream& s) const
+DCP::sign (xmlpp::Element* parent, CertificateChain const & certificates, string const & signer_key)
 {
-	s << "    <Asset>\n"
-	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "      <Hash>" << _digest << "</Hash>\n"
-	  << "      <Size>" << _length << "</Size>\n"
-	  << "      <Type>text/xml</Type>\n"
-	  << "    </Asset>\n";
+	xmlpp::Element* signer = parent->add_child("Signer");
+
+	{
+		xmlpp::Element* data = signer->add_child("X509Data", "dsig");
+		{
+			xmlpp::Element* serial = data->add_child("X509IssuerSerial", "dsig");
+			serial->add_child("X509IssuerName", "dsig")->add_child_text (
+				Certificate::name_for_xml (certificates.leaf()->issuer())
+				);
+			serial->add_child("X509SerialNumber", "dsig")->add_child_text (
+				certificates.leaf()->serial()
+				);
+		}
+		data->add_child("X509SubjectName", "dsig")->add_child_text (
+			Certificate::name_for_xml (certificates.leaf()->subject())
+			);
+	}
+	
+	xmlpp::Element* signature = parent->add_child("Signature", "dsig");
+	
+	{
+		xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
+		signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
+		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+		{
+			xmlpp::Element* reference = signed_info->add_child("Reference", "dsig");
+			reference->set_attribute ("URI", "");
+			{
+				xmlpp::Element* transforms = reference->add_child("Transforms", "dsig");
+				transforms->add_child("Transform", "dsig")->set_attribute (
+					"Algorithm", "http://www.w3.org/2000/09/xmldsig#enveloped-signature"
+					);
+			}
+			reference->add_child("DigestMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
+			/* This will be filled in by the signing later */
+			reference->add_child("DigestValue", "dsig");
+		}
+	}
+	
+	signature->add_child("SignatureValue", "dsig");
+	
+	xmlpp::Element* key_info = signature->add_child("KeyInfo", "dsig");
+	list<shared_ptr<Certificate> > c = certificates.leaf_to_root ();
+	for (list<shared_ptr<Certificate> >::iterator i = c.begin(); i != c.end(); ++i) {
+		xmlpp::Element* data = key_info->add_child("X509Data", "dsig");
+		
+		{
+			xmlpp::Element* serial = data->add_child("X509IssuerSerial", "dsig");
+			serial->add_child("X509IssuerName", "dsig")->add_child_text(
+				Certificate::name_for_xml ((*i)->issuer())
+				);
+			serial->add_child("X509SerialNumber", "dsig")->add_child_text((*i)->serial());
+		}
+		
+		data->add_child("X509Certificate", "dsig")->add_child_text((*i)->certificate());
+	}
+	
+	xmlSecKeysMngrPtr keys_manager = xmlSecKeysMngrCreate();
+	if (!keys_manager) {
+		throw MiscError ("could not create keys manager");
+	}
+	if (xmlSecCryptoAppDefaultKeysMngrInit (keys_manager) < 0) {
+		throw MiscError ("could not initialise keys manager");
+	}
+	
+	xmlSecKeyPtr const key = xmlSecCryptoAppKeyLoad (signer_key.c_str(), xmlSecKeyDataFormatPem, 0, 0, 0);
+	if (key == 0) {
+		throw MiscError ("could not load signer key");
+		}
+	
+	if (xmlSecCryptoAppDefaultKeysMngrAdoptKey (keys_manager, key) < 0) {
+		xmlSecKeyDestroy (key);
+		throw MiscError ("could not use signer key");
+	}
+	
+	xmlSecDSigCtx signature_context;
+	
+	if (xmlSecDSigCtxInitialize (&signature_context, keys_manager) < 0) {
+		throw MiscError ("could not initialise XMLSEC context");
+	}
+	
+	if (xmlSecDSigCtxSign (&signature_context, signature->cobj()) < 0) {
+		throw MiscError ("could not sign CPL");
+	}
+	
+	xmlSecDSigCtxFinalize (&signature_context);
+	xmlSecKeysMngrDestroy (keys_manager);
+}
+
+void
+CPL::write_to_pkl (xmlpp::Element* p) const
+{
+	xmlpp::Element* asset = p->add_child("Asset");
+	asset->add_child("Id")->add_child_text("urn:uuid:" + _uuid);
+	asset->add_child("Hash")->add_child_text(_digest);
+	asset->add_child("Size")->add_child_text(boost::lexical_cast<string> (_length));
+	asset->add_child("Type")->add_child_text("text/xml");
 }
 
 list<shared_ptr<const Asset> >

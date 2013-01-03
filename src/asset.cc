@@ -24,6 +24,8 @@
 #include <iostream>
 #include <fstream>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+#include <libxml++/nodes/element.h>
 #include "AS_DCP.h"
 #include "KM_util.h"
 #include "asset.h"
@@ -45,15 +47,14 @@ Asset::Asset (string directory, string file_name)
 }
 
 void
-Asset::write_to_pkl (ostream& s) const
+Asset::write_to_pkl (xmlpp::Element* p) const
 {
-	s << "    <Asset>\n"
-	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "      <AnnotationText>" << _file_name << "</AnnotationText>\n"
-	  << "      <Hash>" << digest() << "</Hash>\n"
-	  << "      <Size>" << filesystem::file_size(path()) << "</Size>\n"
-	  << "      <Type>application/mxf</Type>\n"
-	  << "    </Asset>\n";
+	xmlpp::Element* asset = p->add_child("Asset");
+	asset->add_child("Id")->add_child_text("urn:uuid:" + _uuid);
+	asset->add_child("AnnotationText")->add_child_text (_file_name);
+	asset->add_child("Hash")->add_child_text (digest());
+	asset->add_child("Size")->add_child_text (boost::lexical_cast<string> (filesystem::file_size(path())));
+	asset->add_child("Type")->add_child_text ("application/mxf");
 }
 
 void

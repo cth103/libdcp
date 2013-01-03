@@ -60,10 +60,10 @@ public:
 	 */
 	virtual void write_to_cpl (xmlpp::Element* p) const = 0;
 
-	/** Write details of the asset to a PKL stream.
-	 *  @param s Stream.
+	/** Write details of the asset to a PKL AssetList node.
+	 *  @param p Parent node.
 	 */
-	void write_to_pkl (std::ostream& s) const;
+	void write_to_pkl (xmlpp::Element* p) const;
 
 	/** Write details of the asset to a ASSETMAP stream.
 	 *  @param s Stream.

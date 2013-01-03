@@ -32,7 +32,7 @@
 #include "certificates.h"
 
 namespace xmlpp {
-	class Node;
+	class Element;
 }
 
 /** @brief Namespace for everything in libdcp */
@@ -88,7 +88,7 @@ public:
 	
 	void write_xml (bool, CertificateChain const &, std::string const &) const;
 	void write_to_assetmap (std::ostream& s) const;
-	void write_to_pkl (std::ostream& s) const;
+	void write_to_pkl (xmlpp::Element* p) const;
 	
 private:
 	std::string _directory;
@@ -167,6 +167,8 @@ public:
 	 *  for long jobs.
 	 */
 	boost::signals2::signal<void (float)> Progress;
+
+	static void sign (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & signer_key);
 
 private:
 
