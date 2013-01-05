@@ -36,6 +36,7 @@ def build(bld):
 
     headers = """
               asset.h
+              certificates.h
               dcp.h
               dcp_time.h
               exceptions.h
@@ -50,6 +51,7 @@ def build(bld):
               subtitle_asset.h
               test_mode.h
               types.h
+              util.h
               version.h
               xml.h
               """
