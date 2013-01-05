@@ -619,9 +619,9 @@ CPL::make_kdm (CertificateChain const & certificates, string const & signer_key,
 					recipient->add_child("X509SubjectName")->add_child_text (Certificate::name_for_xml (recipient_cert->subject()));
 				}
 
-				kdm_required_extensions->add_child("CompositionPlaylistId")->add_child_text("XXX");
-				kdm_required_extensions->add_child("ContentTitleText")->add_child_text("XXX");
-				kdm_required_extensions->add_child("ContentAuthenticator")->add_child_text("XXX");
+				kdm_required_extensions->add_child("CompositionPlaylistId")->add_child_text("urn:uuid:" + _uuid);
+				kdm_required_extensions->add_child("ContentTitleText")->add_child_text(_name);
+				kdm_required_extensions->add_child("ContentAuthenticator")->add_child_text(certificates.leaf()->thumbprint());
 				kdm_required_extensions->add_child("ContentKeysNotValidBefore")->add_child_text("XXX");
 				kdm_required_extensions->add_child("ContentKeysNotValidAfter")->add_child_text("XXX");
 
