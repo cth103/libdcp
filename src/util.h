@@ -27,9 +27,14 @@
 #include <openjpeg.h>
 #include "types.h"
 
+namespace xmlpp {
+	class Element;
+}
+
 namespace libdcp {
 
-class ARGBFrame;	
+class ARGBFrame;
+class CertificateChain;
 	
 /** Create a UUID.
  *  @return UUID.
@@ -55,4 +60,8 @@ extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (opj_image_t* xyz_frame);
 
 extern void init ();
 
+extern void sign (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & signer_key);
+extern void add_signature_value (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & signer_key, std::string const & ns);
+extern void add_signer (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & ns);
+	
 }

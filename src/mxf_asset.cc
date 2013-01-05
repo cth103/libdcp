@@ -24,6 +24,7 @@
 #include <iostream>
 #include <fstream>
 #include <boost/filesystem.hpp>
+#include <libxml++/nodes/element.h>
 #include "AS_DCP.h"
 #include "KM_prng.h"
 #include "KM_util.h"
@@ -127,4 +128,12 @@ int
 MXFAsset::length () const
 {
 	return _length;
+}
+
+void
+MXFAsset::add_typed_key_id (xmlpp::Element* parent) const
+{
+	xmlpp::Element* typed_key_id = parent->add_child("TypedKeyId");
+	typed_key_id->add_child("KeyType")->add_child_text(key_type ());
+	typed_key_id->add_child("KeyId")->add_child_text("urn:uuid:" + _key_id);
 }

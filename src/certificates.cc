@@ -4,6 +4,7 @@
 #include <openssl/x509.h>
 #include <openssl/ssl.h>
 #include <openssl/asn1.h>
+#include <libxml++/nodes/element.h>
 #include "certificates.h"
 #include "exceptions.h"
 
@@ -104,7 +105,6 @@ Certificate::serial () const
 
 	return st;
 }
-		
 
 /** @param filename Text file of PEM-format certificates,
  *  in the order:

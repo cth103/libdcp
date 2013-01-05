@@ -64,6 +64,9 @@ protected:
 	int _width;
 	/** picture height in pixels */
 	int _height;
+
+private:
+	std::string key_type () const;
 };
 
 /** A 2D (monoscopic) picture asset */

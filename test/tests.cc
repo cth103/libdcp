@@ -19,6 +19,7 @@
 
 #include <cmath>
 #include <boost/filesystem.hpp>
+#include <libxml++/libxml++.h>
 #include "KM_prng.h"
 #include "dcp.h"
 #include "util.h"
@@ -632,6 +633,8 @@ BOOST_AUTO_TEST_CASE (encryption)
 	d.add_cpl (cpl);
 
 	d.write_xml ();
+
+	cpl->make_kdm(d.certificates(), d.signer_key(), d.certificates().leaf())->write_to_file_formatted ("build/test/bar.kdm.xml", "UTF-8");
 }
 
 BOOST_AUTO_TEST_CASE (certificates)

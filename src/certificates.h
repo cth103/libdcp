@@ -9,6 +9,10 @@
 
 class certificates;
 
+namespace xmlpp {
+	class Element;
+}
+
 namespace libdcp {
 
 class Certificate : public boost::noncopyable

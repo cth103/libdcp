@@ -27,6 +27,8 @@
 #include <iomanip>
 #include <boost/filesystem.hpp>
 #include <openssl/sha.h>
+#include <libxml++/nodes/element.h>
+#include <libxml++/document.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/dl.h>
 #include <xmlsec/app.h>
@@ -38,12 +40,14 @@
 #include "types.h"
 #include "argb_frame.h"
 #include "lut.h"
+#include "certificates.h"
 
 using std::string;
 using std::cout;
 using std::stringstream;
 using std::min;
 using std::max;
+using std::list;
 using boost::shared_ptr;
 using namespace libdcp;
 
@@ -293,3 +297,109 @@ libdcp::init ()
 		throw MiscError ("could not initialise xmlsec-crypto");
 	}
 }
+
+void
+libdcp::add_signature_value (xmlpp::Element* parent, CertificateChain const & certificates, string const & signer_key, string const & ns)
+{
+	parent->add_child("SignatureValue", ns);
+	
+	xmlpp::Element* key_info = parent->add_child("KeyInfo", ns);
+	list<shared_ptr<Certificate> > c = certificates.leaf_to_root ();
+	for (list<shared_ptr<Certificate> >::iterator i = c.begin(); i != c.end(); ++i) {
+		xmlpp::Element* data = key_info->add_child("X509Data", ns);
+		
+		{
+			xmlpp::Element* serial = data->add_child("X509IssuerSerial", ns);
+			serial->add_child("X509IssuerName", ns)->add_child_text(
+				Certificate::name_for_xml ((*i)->issuer())
+				);
+			serial->add_child("X509SerialNumber", ns)->add_child_text((*i)->serial());
+		}
+		
+		data->add_child("X509Certificate", ns)->add_child_text((*i)->certificate());
+	}
+
+	xmlSecKeysMngrPtr keys_manager = xmlSecKeysMngrCreate();
+	if (!keys_manager) {
+		throw MiscError ("could not create keys manager");
+	}
+	if (xmlSecCryptoAppDefaultKeysMngrInit (keys_manager) < 0) {
+		throw MiscError ("could not initialise keys manager");
+	}
+	
+	xmlSecKeyPtr const key = xmlSecCryptoAppKeyLoad (signer_key.c_str(), xmlSecKeyDataFormatPem, 0, 0, 0);
+	if (key == 0) {
+		throw MiscError ("could not load signer key");
+		}
+	
+	if (xmlSecCryptoAppDefaultKeysMngrAdoptKey (keys_manager, key) < 0) {
+		xmlSecKeyDestroy (key);
+		throw MiscError ("could not use signer key");
+	}
+	
+	xmlSecDSigCtx signature_context;
+	
+	if (xmlSecDSigCtxInitialize (&signature_context, keys_manager) < 0) {
+		throw MiscError ("could not initialise XMLSEC context");
+	}
+	
+	if (xmlSecDSigCtxSign (&signature_context, parent->cobj()) < 0) {
+		throw MiscError ("could not sign");
+	}
+	
+	xmlSecDSigCtxFinalize (&signature_context);
+	xmlSecKeysMngrDestroy (keys_manager);
+}
+
+
+void
+libdcp::add_signer (xmlpp::Element* parent, CertificateChain const & certificates, string const & ns)
+{
+	xmlpp::Element* signer = parent->add_child("Signer");
+
+	{
+		xmlpp::Element* data = signer->add_child("X509Data", ns);
+		
+		{
+			xmlpp::Element* serial_element = data->add_child("X509IssuerSerial", ns);
+			serial_element->add_child("X509IssuerName", ns)->add_child_text (
+				Certificate::name_for_xml (certificates.leaf()->issuer())
+				);
+			serial_element->add_child("X509SerialNumber", ns)->add_child_text (
+				certificates.leaf()->serial()
+				);
+		}
+		
+		data->add_child("X509SubjectName", ns)->add_child_text (Certificate::name_for_xml (certificates.leaf()->subject()));
+	}
+}
+
+void
+libdcp::sign (xmlpp::Element* parent, CertificateChain const & certificates, string const & signer_key)
+{
+	add_signer (parent, certificates, "dsig");
+
+	xmlpp::Element* signature = parent->add_child("Signature", "dsig");
+	
+	{
+		xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
+		signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
+		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+		{
+			xmlpp::Element* reference = signed_info->add_child("Reference", "dsig");
+			reference->set_attribute ("URI", "");
+			{
+				xmlpp::Element* transforms = reference->add_child("Transforms", "dsig");
+				transforms->add_child("Transform", "dsig")->set_attribute (
+					"Algorithm", "http://www.w3.org/2000/09/xmldsig#enveloped-signature"
+					);
+			}
+			reference->add_child("DigestMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
+			/* This will be filled in by the signing later */
+			reference->add_child("DigestValue", "dsig");
+		}
+	}
+	
+	add_signature_value (signature, certificates, signer_key, "dsig");
+}
+

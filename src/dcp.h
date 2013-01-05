@@ -32,6 +32,7 @@
 #include "certificates.h"
 
 namespace xmlpp {
+	class Document;
 	class Element;
 }
 
@@ -89,6 +90,8 @@ public:
 	void write_xml (bool, CertificateChain const &, std::string const &) const;
 	void write_to_assetmap (std::ostream& s) const;
 	void write_to_pkl (xmlpp::Element* p) const;
+
+	boost::shared_ptr<xmlpp::Document> make_kdm (CertificateChain const &, std::string const &, boost::shared_ptr<const Certificate>) const;
 	
 private:
 	std::string _directory;
@@ -159,16 +162,22 @@ public:
 		_certificates = c;
 	}
 
+	CertificateChain certificates () const {
+		return _certificates;
+	}
+
 	void set_signer_key (std::string const & s) {
 		_signer_key = s;
+	}
+
+	std::string signer_key () const {
+		return _signer_key;
 	}
 
 	/** Emitted with a parameter between 0 and 1 to indicate progress
 	 *  for long jobs.
 	 */
 	boost::signals2::signal<void (float)> Progress;
-
-	static void sign (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & signer_key);
 
 private:
 

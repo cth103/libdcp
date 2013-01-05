@@ -51,8 +51,11 @@ public:
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
 	
 	int length () const;
+	void add_typed_key_id (xmlpp::Element *) const;
 
 protected:
+	virtual std::string key_type () const = 0;
+	
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
 	 */

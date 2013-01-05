@@ -104,6 +104,8 @@ public:
 	}
 
 private:
+	std::string key_type () const;
+	
 	void construct (boost::function<std::string (Channel)> get_path);
 	std::string path_from_channel (Channel channel, std::vector<std::string> const & files);
 

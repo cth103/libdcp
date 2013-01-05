@@ -391,3 +391,9 @@ StereoPictureAsset::get_frame (int n) const
 {
 	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n + _entry_point));
 }
+
+string
+PictureAsset::key_type () const
+{
+	return "MDIK";
+}

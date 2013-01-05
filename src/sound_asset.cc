@@ -285,3 +285,9 @@ SoundAsset::get_frame (int n) const
 {
 	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n + _entry_point));
 }
+
+string
+SoundAsset::key_type () const
+{
+	return "MDAK";
+}

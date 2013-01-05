@@ -471,105 +471,13 @@ CPL::write_xml (bool encrypted, CertificateChain const & certificates, string co
 	}
 
 	if (encrypted) {
-		DCP::sign (cpl, certificates, signer_key);
+		sign (cpl, certificates, signer_key);
 	}
 
 	doc.write_to_file_formatted (p.string(), "UTF-8");
 
 	_digest = make_digest (p.string (), 0);
 	_length = boost::filesystem::file_size (p.string ());
-}
-
-void
-DCP::sign (xmlpp::Element* parent, CertificateChain const & certificates, string const & signer_key)
-{
-	xmlpp::Element* signer = parent->add_child("Signer");
-
-	{
-		xmlpp::Element* data = signer->add_child("X509Data", "dsig");
-		{
-			xmlpp::Element* serial = data->add_child("X509IssuerSerial", "dsig");
-			serial->add_child("X509IssuerName", "dsig")->add_child_text (
-				Certificate::name_for_xml (certificates.leaf()->issuer())
-				);
-			serial->add_child("X509SerialNumber", "dsig")->add_child_text (
-				certificates.leaf()->serial()
-				);
-		}
-		data->add_child("X509SubjectName", "dsig")->add_child_text (
-			Certificate::name_for_xml (certificates.leaf()->subject())
-			);
-	}
-	
-	xmlpp::Element* signature = parent->add_child("Signature", "dsig");
-	
-	{
-		xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
-		signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
-		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-		{
-			xmlpp::Element* reference = signed_info->add_child("Reference", "dsig");
-			reference->set_attribute ("URI", "");
-			{
-				xmlpp::Element* transforms = reference->add_child("Transforms", "dsig");
-				transforms->add_child("Transform", "dsig")->set_attribute (
-					"Algorithm", "http://www.w3.org/2000/09/xmldsig#enveloped-signature"
-					);
-			}
-			reference->add_child("DigestMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
-			/* This will be filled in by the signing later */
-			reference->add_child("DigestValue", "dsig");
-		}
-	}
-	
-	signature->add_child("SignatureValue", "dsig");
-	
-	xmlpp::Element* key_info = signature->add_child("KeyInfo", "dsig");
-	list<shared_ptr<Certificate> > c = certificates.leaf_to_root ();
-	for (list<shared_ptr<Certificate> >::iterator i = c.begin(); i != c.end(); ++i) {
-		xmlpp::Element* data = key_info->add_child("X509Data", "dsig");
-		
-		{
-			xmlpp::Element* serial = data->add_child("X509IssuerSerial", "dsig");
-			serial->add_child("X509IssuerName", "dsig")->add_child_text(
-				Certificate::name_for_xml ((*i)->issuer())
-				);
-			serial->add_child("X509SerialNumber", "dsig")->add_child_text((*i)->serial());
-		}
-		
-		data->add_child("X509Certificate", "dsig")->add_child_text((*i)->certificate());
-	}
-	
-	xmlSecKeysMngrPtr keys_manager = xmlSecKeysMngrCreate();
-	if (!keys_manager) {
-		throw MiscError ("could not create keys manager");
-	}
-	if (xmlSecCryptoAppDefaultKeysMngrInit (keys_manager) < 0) {
-		throw MiscError ("could not initialise keys manager");
-	}
-	
-	xmlSecKeyPtr const key = xmlSecCryptoAppKeyLoad (signer_key.c_str(), xmlSecKeyDataFormatPem, 0, 0, 0);
-	if (key == 0) {
-		throw MiscError ("could not load signer key");
-		}
-	
-	if (xmlSecCryptoAppDefaultKeysMngrAdoptKey (keys_manager, key) < 0) {
-		xmlSecKeyDestroy (key);
-		throw MiscError ("could not use signer key");
-	}
-	
-	xmlSecDSigCtx signature_context;
-	
-	if (xmlSecDSigCtxInitialize (&signature_context, keys_manager) < 0) {
-		throw MiscError ("could not initialise XMLSEC context");
-	}
-	
-	if (xmlSecDSigCtxSign (&signature_context, signature->cobj()) < 0) {
-		throw MiscError ("could not sign CPL");
-	}
-	
-	xmlSecDSigCtxFinalize (&signature_context);
-	xmlSecKeysMngrDestroy (keys_manager);
 }
 
 void
@@ -659,4 +567,148 @@ CPL::equals (CPL const & other, EqualityOptions opt, list<string>& notes) const
 	}
 
 	return true;
+}
+
+shared_ptr<xmlpp::Document>
+CPL::make_kdm (CertificateChain const & certificates, string const & signer_key, shared_ptr<const Certificate> recipient_cert) const
+{
+	shared_ptr<xmlpp::Document> doc (new xmlpp::Document);
+	xmlpp::Element* root = doc->create_root_node ("DCinemaSecurityMessage");
+	root->set_namespace_declaration ("http://www.smpte-ra.org/schemas/430-3/2006/ETM", "");
+	root->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "ds");
+	root->set_namespace_declaration ("http://www.w3.org/2001/04/xmlenc#", "enc");
+
+	{
+		xmlpp::Element* authenticated_public = root->add_child("AuthenticatedPublic");
+		authenticated_public->set_attribute("Id", "ID_AuthenticatedPublic");
+		xmlAddID (0, doc->cobj(), (const xmlChar *) "ID_AuthenticatedPublic", authenticated_public->get_attribute("Id")->cobj());
+		
+		authenticated_public->add_child("MessageId")->add_child_text("urn:uuid:" + make_uuid());
+		authenticated_public->add_child("MessageType")->add_child_text("http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
+		authenticated_public->add_child("AnnotationText")->add_child_text(Metadata::instance()->product_name);
+		authenticated_public->add_child("IssueDate")->add_child_text(Metadata::instance()->issue_date);
+
+		{
+			xmlpp::Element* signer = authenticated_public->add_child("Signer");
+			signer->add_child("X509IssuerName", "ds")->add_child_text (
+				Certificate::name_for_xml (recipient_cert->issuer())
+				);
+			signer->add_child("X509SerialNumber", "ds")->add_child_text (
+				recipient_cert->serial()
+				);
+		}
+
+		{
+			xmlpp::Element* required_extensions = authenticated_public->add_child("RequiredExtensions");
+
+			{
+				xmlpp::Element* kdm_required_extensions = required_extensions->add_child("KDMRequiredExtensions");
+				kdm_required_extensions->set_namespace_declaration ("http://www.smpte-ra.org/schemas/430-1/2006/KDM");
+				{
+					xmlpp::Element* recipient = kdm_required_extensions->add_child("Recipient");
+					{
+						xmlpp::Element* serial_element = recipient->add_child("X509IssuerSerial");
+						serial_element->add_child("X509IssuerName", "ds")->add_child_text (
+							Certificate::name_for_xml (recipient_cert->issuer())
+							);
+						serial_element->add_child("X509SerialNumber", "ds")->add_child_text (
+							recipient_cert->serial()
+							);
+					}
+
+					recipient->add_child("X509SubjectName")->add_child_text (Certificate::name_for_xml (recipient_cert->subject()));
+				}
+
+				kdm_required_extensions->add_child("CompositionPlaylistId")->add_child_text("XXX");
+				kdm_required_extensions->add_child("ContentTitleText")->add_child_text("XXX");
+				kdm_required_extensions->add_child("ContentAuthenticator")->add_child_text("XXX");
+				kdm_required_extensions->add_child("ContentKeysNotValidBefore")->add_child_text("XXX");
+				kdm_required_extensions->add_child("ContentKeysNotValidAfter")->add_child_text("XXX");
+
+				{
+					xmlpp::Element* authorized_device_info = kdm_required_extensions->add_child("AuthorizedDeviceInfo");
+					authorized_device_info->add_child("DeviceListIdentifier")->add_child_text("urn:uuid:" + make_uuid());
+					authorized_device_info->add_child("DeviceListDescription")->add_child_text(recipient_cert->subject());
+					{
+						xmlpp::Element* device_list = authorized_device_info->add_child("DeviceList");
+						device_list->add_child("CertificateThumbprint")->add_child_text("XXX");
+					}
+				}
+
+				{
+					xmlpp::Element* key_id_list = kdm_required_extensions->add_child("KeyIdList");
+					list<shared_ptr<const Asset> > a = assets();
+					for (list<shared_ptr<const Asset> >::iterator i = a.begin(); i != a.end(); ++i) {
+						/* XXX: non-MXF assets? */
+						shared_ptr<const MXFAsset> mxf = boost::dynamic_pointer_cast<const MXFAsset> (*i);
+						if (mxf) {
+							mxf->add_typed_key_id (key_id_list);
+						}
+					}
+				}
+
+				{
+					xmlpp::Element* forensic_mark_flag_list = kdm_required_extensions->add_child("ForensicMarkFlagList");
+					forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text ( 
+						"http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable"
+						);
+					forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text ( 
+						"http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable"
+						);
+				}
+			}
+		}
+					 
+		authenticated_public->add_child("NonCriticalExtensions");
+	}
+
+	{
+		xmlpp::Element* authenticated_private = root->add_child("AuthenticatedPrivate");
+		authenticated_private->set_attribute ("Id", "ID_AuthenticatedPrivate");
+		xmlAddID (0, doc->cobj(), (const xmlChar *) "ID_AuthenticatedPrivate", authenticated_private->get_attribute("Id")->cobj());
+		{
+			xmlpp::Element* encrypted_key = authenticated_private->add_child ("EncryptedKey", "enc");
+			{
+				xmlpp::Element* encryption_method = encrypted_key->add_child ("EncryptionMethod", "enc");
+				encryption_method->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p");
+				encryption_method->add_child("DigestMethod", "ds")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
+			}
+
+			xmlpp::Element* cipher_data = authenticated_private->add_child ("CipherData", "enc");
+			cipher_data->add_child("CipherValue", "enc")->add_child_text("XXX");
+		}
+	}
+	
+	/* XXX: x2 one for each mxf? */
+
+	{
+		xmlpp::Element* signature = root->add_child("Signature", "ds");
+		
+		{
+			xmlpp::Element* signed_info = signature->add_child("SignedInfo", "ds");
+			signed_info->add_child("CanonicalizationMethod", "ds")->set_attribute(
+				"Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"
+				);
+			signed_info->add_child("SignatureMethod", "ds")->set_attribute(
+				"Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
+				);
+			{
+				xmlpp::Element* reference = signed_info->add_child("Reference", "ds");
+				reference->set_attribute("URI", "#ID_AuthenticatedPublic");
+				reference->add_child("DigestMethod", "ds")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmlenc#sha256");
+				reference->add_child("DigestValue", "ds");
+			}
+			
+			{				
+				xmlpp::Element* reference = signed_info->add_child("Reference", "ds");
+				reference->set_attribute("URI", "#ID_AuthenticatedPrivate");
+				reference->add_child("DigestMethod", "ds")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmlenc#sha256");
+				reference->add_child("DigestValue", "ds");
+			}
+		}
+		
+		add_signature_value (signature, certificates, signer_key, "ds");
+	}
+
+	return doc;
 }

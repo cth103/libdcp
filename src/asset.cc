@@ -91,3 +91,4 @@ Asset::digest () const
 
 	return _digest;
 }
+
