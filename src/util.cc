@@ -97,7 +97,6 @@ libdcp::make_digest (string filename, boost::signals2::signal<void (float)>* pro
 	byte_t byte_buffer[20];
 	SHA1_Final (byte_buffer, &sha);
 
-	stringstream s;
 	char digest[64];
 	return Kumu::base64encode (byte_buffer, 20, digest, 64);
 }

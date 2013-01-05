@@ -1,3 +1,22 @@
+/*
+    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+*/
+
 #include <sstream>
 #include <vector>
 #include <boost/algorithm/string.hpp>
@@ -5,6 +24,7 @@
 #include <openssl/ssl.h>
 #include <openssl/asn1.h>
 #include <libxml++/nodes/element.h>
+#include "KM_util.h"
 #include "certificates.h"
 #include "exceptions.h"
 
@@ -106,6 +126,27 @@ Certificate::serial () const
 	return st;
 }
 
+string
+Certificate::thumbprint () const
+{
+	uint8_t buffer[8192];
+	uint8_t* p = buffer;
+	i2d_X509_CINF (_certificate->cert_info, &p);
+	int const length = p - buffer;
+	if (length > 8192) {
+		throw MiscError ("buffer too small to generate thumbprint");
+	}
+
+	SHA_CTX sha;
+	SHA1_Init (&sha);
+	SHA1_Update (&sha, buffer, length);
+	uint8_t digest[20];
+	SHA1_Final (digest, &sha);
+
+	char digest_base64[64];
+	return Kumu::base64encode (digest, 20, digest_base64, 64);
+}
+
 /** @param filename Text file of PEM-format certificates,
  *  in the order:
  *
@@ -153,3 +194,4 @@ CertificateChain::leaf_to_root () const
 	c.reverse ();
 	return c;
 }
+

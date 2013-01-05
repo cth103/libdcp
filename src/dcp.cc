@@ -631,7 +631,7 @@ CPL::make_kdm (CertificateChain const & certificates, string const & signer_key,
 					authorized_device_info->add_child("DeviceListDescription")->add_child_text(recipient_cert->subject());
 					{
 						xmlpp::Element* device_list = authorized_device_info->add_child("DeviceList");
-						device_list->add_child("CertificateThumbprint")->add_child_text("XXX");
+						device_list->add_child("CertificateThumbprint")->add_child_text(recipient_cert->thumbprint());
 					}
 				}
 
