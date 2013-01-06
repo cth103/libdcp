@@ -37,6 +37,10 @@ namespace libdcp {
 class Certificate : public boost::noncopyable
 {
 public:
+	Certificate ()
+		: _certificate (0)
+	{}
+	
 	Certificate (X509 *);
 	~Certificate ();
 
