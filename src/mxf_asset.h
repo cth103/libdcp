@@ -26,6 +26,7 @@
 namespace libdcp
 {
 
+/** @brief Parent class for assets which have MXF files */	
 class MXFAsset : public Asset
 {
 public:

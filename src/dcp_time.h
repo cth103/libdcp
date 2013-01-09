@@ -39,7 +39,13 @@ public:
 	 *  and a frames per second count.
 	 */
 	Time (int frame, int frames_per_second);
-	
+
+	/** Construct a Time from hours, minutes, seconds and ticks.
+	 *  @param h_ Hours.
+	 *  @param m_ Minutes.
+	 *  @param s_ Seconds.
+	 *  @param t_ Ticks (where 1 tick is 4 milliseconds).
+	 */
 	Time (int h_, int m_, int s_, int t_)
 		: h (h_)
 		, m (m_)

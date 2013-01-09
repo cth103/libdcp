@@ -307,6 +307,12 @@ CPL::CPL (string directory, string name, ContentKind content_kind, int length, i
 	_uuid = make_uuid ();
 }
 
+/** Construct a CPL object from a XML file.
+ *  @param directory The directory containing this CPL's DCP.
+ *  @param file The CPL XML filename.
+ *  @param asset_map The corresponding asset map.
+ *  @param require_mxfs true to throw an exception if a required MXF file does not exist.
+ */
 CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, bool require_mxfs)
 	: _directory (directory)
 	, _content_kind (FEATURE)

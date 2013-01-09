@@ -49,6 +49,10 @@ Color::Color (int r_, int g_, int b_)
 
 }
 
+/** Construct a Color from an ARGB hex string; the alpha value is ignored.
+ *  @param argb_hex A string of the form AARRGGBB, where e.g. RR is a two-character
+ *  hex value.
+ */
 Color::Color (string argb_hex)
 {
 	int alpha;
@@ -57,6 +61,9 @@ Color::Color (string argb_hex)
 	}
 }
 
+/** @return An ARGB string of the form AARRGGBB, where e.g. RR is a two-character
+ *  hex value.  The alpha value will always be FF (ie 255; maximum alpha).
+ */
 string
 Color::to_argb_string () const
 {
@@ -72,12 +79,20 @@ Color::to_argb_string () const
 	return t;
 }
 
+/** operator== for Colors.
+ *  @param a First color to compare.
+ *  @param b Second color to compare.
+ */
 bool
 libdcp::operator== (Color const & a, Color const & b)
 {
 	return (a.r == b.r && a.g == b.g && a.b == b.b);
 }
 
+/** operator!= for Colors.
+ *  @param a First color to compare.
+ *  @param b Second color to compare.
+ */
 bool
 libdcp::operator!= (Color const & a, Color const & b)
 {

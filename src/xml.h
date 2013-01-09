@@ -18,6 +18,7 @@ namespace xmlpp {
 
 namespace libdcp {
 
+/** @brief A helper class for XML nodes */
 class XMLNode
 {
 public:
@@ -86,6 +87,7 @@ private:
 	std::list<Glib::ustring> _taken;
 };
 
+/** @brief A helper class for XML files */	
 class XMLFile : public XMLNode
 {
 public:

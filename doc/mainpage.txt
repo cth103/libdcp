@@ -2,7 +2,8 @@
 
 @mainpage libdcp
 
-libdcp is a small library to create and read Digital Cinema Packages (DCPs) from JPEG2000 and WAV files.
+libdcp is a library to create Digital Cinema Packages (DCPs) from JPEG2000 and WAV files, and also to
+read and process existing DCPs.
 
 Most of the hard work is done by a (slightly patched) version of asdcplib (http://www.cinecert.com/asdcplib/)
 which is included in the source distribution for libdcp.
@@ -17,7 +18,7 @@ An example of DCP creation is given in examples/make_dcp.cc.
 Reading existing DCPs
 --
 
-Alternatively libdcp can be used to read existing DCPs and examine their content.  You might do
+libdcp can be used to read existing DCPs and examine their content.  You might do
 
 @code
 #include <libdcp/dcp.h>

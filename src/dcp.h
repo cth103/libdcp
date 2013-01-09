@@ -45,6 +45,7 @@ class SubtitleAsset;
 class Reel;
 class AssetMap;
 
+/** @brief A CPL within a DCP */
 class CPL
 {
 public:
@@ -102,7 +103,9 @@ private:
 	/** reels */
 	std::list<boost::shared_ptr<const Reel> > _reels;
 
+	/** our UUID */
 	std::string _uuid;
+	/** a SHA1 digest of our XML */
 	mutable std::string _digest;
 };
 
@@ -181,6 +184,7 @@ private:
 
 	/** the directory that we are writing to */
 	std::string _directory;
+	/** our CPLs */
 	std::list<boost::shared_ptr<const CPL> > _cpls;
 };
 

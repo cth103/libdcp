@@ -55,6 +55,7 @@ private:
 	std::string _filename;
 };
 
+/** @brief An exception related to an MXF file */
 class MXFFileError : public FileError
 {
 public:
