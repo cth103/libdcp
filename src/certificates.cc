@@ -42,6 +42,19 @@ Certificate::Certificate (X509* c)
 	
 }
 
+Certificate::Certificate (string const & filename)
+	: _certificate (0)
+{
+	FILE* f = fopen (filename.c_str(), "r");
+	if (!f) {
+		throw FileError ("could not open file", filename);
+	}
+	
+	if (!PEM_read_X509 (f, &_certificate, 0, 0)) {
+		throw MiscError ("could not read X509 certificate");
+	}
+}
+
 Certificate::~Certificate ()
 {
 	X509_free (_certificate);
@@ -147,32 +160,6 @@ Certificate::thumbprint () const
 	return Kumu::base64encode (digest, 20, digest_base64, 64);
 }
 
-/** @param filename Text file of PEM-format certificates,
- *  in the order:
- *
- *  1. self-signed root certificate
- *  2. intermediate certificate signed by root certificate
- *  ...
- *  n. leaf certificate signed by previous intermediate.
- */
-
-CertificateChain::CertificateChain (string const & filename)
-{
-	FILE* f = fopen (filename.c_str(), "r");
-	if (!f) {
-		throw FileError ("could not open file", filename);
-	}
-	
-	while (1) {
-		X509* c = 0;
-		if (!PEM_read_X509 (f, &c, 0, 0)) {
-			break;
-		}
-
-		_certificates.push_back (shared_ptr<Certificate> (new Certificate (c)));
-	}
-}
-
 shared_ptr<Certificate>
 CertificateChain::root () const
 {
@@ -195,3 +182,8 @@ CertificateChain::leaf_to_root () const
 	return c;
 }
 
+void
+CertificateChain::add (shared_ptr<Certificate> c)
+{
+	_certificates.push_back (c);
+}

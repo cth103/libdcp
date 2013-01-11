@@ -73,6 +73,15 @@ def configure(conf):
                    msg = 'Checking for boost signals2 library',
                    uselib_store = 'BOOST_SIGNALS2')
 
+    conf.check_cxx(fragment = """
+    			      #include <boost/date_time.hpp>\n
+    			      int main() { boost::gregorian::day_clock::local_day(); }\n
+			      """,
+                   msg = 'Checking for boost datetime library',
+                   libpath = '/usr/local/lib',
+                   lib = ['boost_date_time%s' % boost_lib_suffix, 'boost_system%s' % boost_lib_suffix],
+                   uselib_store = 'BOOST_DATETIME')
+
     lut.make_luts()
 
     conf.recurse('test')

@@ -28,6 +28,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "types.h"
 #include "certificates.h"
 
@@ -46,6 +47,18 @@ class SoundAsset;
 class SubtitleAsset;
 class Reel;
 class AssetMap;
+
+class Encryption
+{
+public:
+	Encryption (CertificateChain c, std::string const & k)
+		: certificates (c)
+		, signer_key (k)
+	{}
+
+	CertificateChain certificates;
+	std::string signer_key;
+};
 
 class CPL
 {
@@ -87,11 +100,17 @@ public:
 	
 	bool equals (CPL const & other, EqualityOptions options, std::list<std::string>& notes) const;
 	
-	void write_xml (bool, CertificateChain const &, std::string const &) const;
+	void write_xml (boost::shared_ptr<Encryption>) const;
 	void write_to_assetmap (std::ostream& s) const;
 	void write_to_pkl (xmlpp::Element* p) const;
 
-	boost::shared_ptr<xmlpp::Document> make_kdm (CertificateChain const &, std::string const &, boost::shared_ptr<const Certificate>) const;
+	boost::shared_ptr<xmlpp::Document> make_kdm (
+		CertificateChain const &,
+		std::string const &,
+		boost::shared_ptr<const Certificate>,
+		boost::posix_time::ptime from,
+		boost::posix_time::ptime until
+		) const;
 	
 private:
 	std::string _directory;
@@ -138,7 +157,7 @@ public:
 	/** Write the required XML files to the directory that was
 	 *  passed into the constructor.
 	 */
-	void write_xml () const;
+	void write_xml (boost::shared_ptr<Encryption> crypt = boost::shared_ptr<Encryption> ()) const;
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
@@ -154,26 +173,6 @@ public:
 		return _cpls;
 	}
 
-	void set_encrypted (bool e) {
-		_encrypted = e;
-	}
-
-	void set_certificates (CertificateChain const & c) {
-		_certificates = c;
-	}
-
-	CertificateChain certificates () const {
-		return _certificates;
-	}
-
-	void set_signer_key (std::string const & s) {
-		_signer_key = s;
-	}
-
-	std::string signer_key () const {
-		return _signer_key;
-	}
-
 	/** Emitted with a parameter between 0 and 1 to indicate progress
 	 *  for long jobs.
 	 */
@@ -184,7 +183,7 @@ private:
 	/** Write the PKL file.
 	 *  @param pkl_uuid UUID to use.
 	 */
-	std::string write_pkl (std::string pkl_uuid) const;
+	std::string write_pkl (std::string pkl_uuid, boost::shared_ptr<Encryption>) const;
 	
 	/** Write the VOLINDEX file */
 	void write_volindex () const;
@@ -206,10 +205,6 @@ private:
 	/** the directory that we are writing to */
 	std::string _directory;
 	std::list<boost::shared_ptr<const CPL> > _cpls;
-
-	bool _encrypted;
-	CertificateChain _certificates;
-	std::string _signer_key;
 };
 
 }

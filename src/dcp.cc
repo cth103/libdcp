@@ -54,27 +54,26 @@ using namespace libdcp;
 
 DCP::DCP (string directory)
 	: _directory (directory)
-	, _encrypted (false)
 {
 	boost::filesystem::create_directories (directory);
 }
 
 void
-DCP::write_xml () const
+DCP::write_xml (shared_ptr<Encryption> crypt) const
 {
 	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
-		(*i)->write_xml (_encrypted, _certificates, _signer_key);
+		(*i)->write_xml (crypt);
 	}
 
 	string pkl_uuid = make_uuid ();
-	string pkl_path = write_pkl (pkl_uuid);
+	string pkl_path = write_pkl (pkl_uuid, crypt);
 	
 	write_volindex ();
 	write_assetmap (pkl_uuid, boost::filesystem::file_size (pkl_path));
 }
 
 std::string
-DCP::write_pkl (string pkl_uuid) const
+DCP::write_pkl (string pkl_uuid, shared_ptr<Encryption> crypt) const
 {
 	assert (!_cpls.empty ());
 	
@@ -86,7 +85,7 @@ DCP::write_pkl (string pkl_uuid) const
 
 	xmlpp::Document doc;
 	xmlpp::Element* pkl = doc.create_root_node("PackingList", "http://www.smpte-ra.org/schemas/429-8/2007/PKL");
-	if (_encrypted) {
+	if (crypt) {
 		pkl->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	}
 
@@ -109,8 +108,8 @@ DCP::write_pkl (string pkl_uuid) const
 		}
 	}
 
-	if (_encrypted) {
-		sign (pkl, _certificates, _signer_key);
+	if (crypt) {
+		sign (pkl, crypt->certificates, crypt->signer_key);
 	}
 		
 	doc.write_to_file_formatted (p.string(), "UTF-8");
@@ -435,7 +434,7 @@ CPL::add_reel (shared_ptr<const Reel> reel)
 }
 
 void
-CPL::write_xml (bool encrypted, CertificateChain const & certificates, string const & signer_key) const
+CPL::write_xml (shared_ptr<Encryption> crypt) const
 {
 	boost::filesystem::path p;
 	p /= _directory;
@@ -446,7 +445,7 @@ CPL::write_xml (bool encrypted, CertificateChain const & certificates, string co
 	xmlpp::Document doc;
 	xmlpp::Element* cpl = doc.create_root_node("CompositionPlaylist", "http://www.smpte-ra.org/schemas/429-7/2006/CPL");
 
-	if (encrypted) {
+	if (crypt) {
 		cpl->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	}
 
@@ -470,8 +469,8 @@ CPL::write_xml (bool encrypted, CertificateChain const & certificates, string co
 		(*i)->write_to_cpl (reel_list);
 	}
 
-	if (encrypted) {
-		sign (cpl, certificates, signer_key);
+	if (crypt) {
+		sign (cpl, crypt->certificates, crypt->signer_key);
 	}
 
 	doc.write_to_file_formatted (p.string(), "UTF-8");
@@ -570,7 +569,13 @@ CPL::equals (CPL const & other, EqualityOptions opt, list<string>& notes) const
 }
 
 shared_ptr<xmlpp::Document>
-CPL::make_kdm (CertificateChain const & certificates, string const & signer_key, shared_ptr<const Certificate> recipient_cert) const
+CPL::make_kdm (
+	CertificateChain const & certificates,
+	string const & signer_key,
+	shared_ptr<const Certificate> recipient_cert,
+	boost::posix_time::ptime from,
+	boost::posix_time::ptime until
+	) const
 {
 	shared_ptr<xmlpp::Document> doc (new xmlpp::Document);
 	xmlpp::Element* root = doc->create_root_node ("DCinemaSecurityMessage");

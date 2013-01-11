@@ -40,7 +40,8 @@ public:
 	Certificate ()
 		: _certificate (0)
 	{}
-	
+
+	Certificate (std::string const &);
 	Certificate (X509 *);
 	~Certificate ();
 
@@ -61,7 +62,8 @@ class CertificateChain
 {
 public:
 	CertificateChain () {}
-	CertificateChain (std::string const &);
+
+	void add (boost::shared_ptr<Certificate>);
 
 	boost::shared_ptr<Certificate> root () const;
 	boost::shared_ptr<Certificate> leaf () const;

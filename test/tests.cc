@@ -31,6 +31,7 @@
 #include "sound_asset.h"
 #include "reel.h"
 #include "certificates.h"
+#include "crypt_chain.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test
@@ -601,9 +602,19 @@ BOOST_AUTO_TEST_CASE (encryption)
 	boost::filesystem::remove_all ("build/test/bar");
 	boost::filesystem::create_directories ("build/test/bar");
 	libdcp::DCP d ("build/test/bar");
-	d.set_encrypted (true);
-	d.set_certificates (libdcp::CertificateChain ("test/data/certificate_chain"));
-	d.set_signer_key ("test/data/signer.key");
+
+	libdcp::CertificateChain chain;
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/ca.self-signed.pem")));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/intermediate.signed.pem")));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/leaf.signed.pem")));
+
+	shared_ptr<libdcp::Encryption> crypt (
+		new libdcp::Encryption (
+			chain,
+			"test/data/signer.key"
+			)
+		);
+
 	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/bar", "A Test DCP", libdcp::FEATURE, 24, 24));
 	
 	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset (
@@ -632,16 +643,27 @@ BOOST_AUTO_TEST_CASE (encryption)
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);
 
-	d.write_xml ();
+	d.write_xml (crypt);
 
-	cpl->make_kdm(d.certificates(), d.signer_key(), d.certificates().leaf())->write_to_file_formatted ("build/test/bar.kdm.xml", "UTF-8");
+	shared_ptr<xmlpp::Document> kdm = cpl->make_kdm (
+		crypt->certificates,
+		crypt->signer_key,
+		crypt->certificates.leaf(),
+		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
+		boost::posix_time::time_from_string ("2013-01-08 00:00:00")
+		);
+
+	kdm->write_to_file_formatted ("build/test/bar.kdm.xml", "UTF-8");
 }
 
 BOOST_AUTO_TEST_CASE (certificates)
 {
-	libdcp::CertificateChain c ("test/data/certificate_chain");
-	BOOST_CHECK_EQUAL (c._certificates.size(), 3);
+	libdcp::CertificateChain c;
 
+	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/ca.self-signed.pem")));
+	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/intermediate.signed.pem")));
+	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/leaf.signed.pem")));
+	
 	BOOST_CHECK_EQUAL (
 		c.root()->issuer(),
 		"/O=example.org/OU=example.org/CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION/dnQualifier=rTeK7x+nopFkyphflooz6p2ZM7A="
@@ -658,4 +680,11 @@ BOOST_AUTO_TEST_CASE (certificates)
 		libdcp::Certificate::name_for_xml (c.root()->subject()),
 		"dnQualifier=rTeK7x\\+nopFkyphflooz6p2ZM7A=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
+}
+
+BOOST_AUTO_TEST_CASE (crypt_chain)
+{
+	boost::filesystem::remove_all ("build/test/crypt");
+	boost::filesystem::create_directory ("build/test/crypt");
+	libdcp::make_crypt_chain ("build/test/crypt");
 }
