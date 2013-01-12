@@ -44,6 +44,7 @@ public:
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
+	 *  @param start_frame Frame in the source to start writing from.
 	 */
 	SoundAsset (
 		std::vector<std::string> const & files,
@@ -51,7 +52,8 @@ public:
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
-		int length
+		int length,
+		int start_frame
 		);
 
 	/** Construct a SoundAsset, generating the MXF from some WAV files.
@@ -62,6 +64,7 @@ public:
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
+	 *  @param start_frame Frame in the source to start writing from.
 	 *  @param channels Number of audio channels.
 	 */
 	SoundAsset (
@@ -71,6 +74,7 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int length,
+		int start_frame,
 		int channels
 		);
 
@@ -106,6 +110,7 @@ private:
 	/** Number of channels in the asset */
 	int _channels;
 	int _sampling_rate;
+	int _start_frame;
 };
 
 }

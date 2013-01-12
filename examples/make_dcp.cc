@@ -93,7 +93,7 @@ main ()
 
 	/* Now we can create the sound asset using these files */
 	boost::shared_ptr<libdcp::SoundAsset> sound_asset (
-		new libdcp::SoundAsset (sound_files, "My Film DCP", "audio.mxf", 0, 24, 48)
+		new libdcp::SoundAsset (sound_files, "My Film DCP", "audio.mxf", 0, 24, 48, 0)
 		);
 
 	/* Now that we have the assets, we can create a Reel to put them in and add it to the CPL */

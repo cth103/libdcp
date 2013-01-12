@@ -457,9 +457,7 @@ CPL::write_xml () const
 		(*i)->write_to_cpl (os);
 	}
 
-	os << "      </AssetList>\n"
-	   << "    </Reel>\n"
-	   << "  </ReelList>\n"
+	os << "  </ReelList>\n"
 	   << "</CompositionPlaylist>\n";
 
 	os.close ();

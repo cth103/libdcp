@@ -44,6 +44,9 @@ Reel::write_to_cpl (ostream& s) const
 	if (_main_subtitle) {
 		_main_subtitle->write_to_cpl (s);
 	}
+
+	s << "      </AssetList>\n"
+	  << "    </Reel>\n";
 }
 	
 bool
