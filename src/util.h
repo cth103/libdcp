@@ -31,25 +31,13 @@ namespace libdcp {
 
 class ARGBFrame;	
 	
-/** Create a UUID.
- *  @return UUID.
- */
 extern std::string make_uuid ();
-
-/** Create a digest for a file.
- *  @param filename File name.
- *  @param progress If non-0, a signal which will be emitted periodically to update
- *  progress; the parameter will start at 0.5 and proceed to 1.
- *  @return Digest.
- */
 extern std::string make_digest (std::string filename, boost::signals2::signal<void (float)>* progress);
-
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
 extern bool starts_with (std::string big, std::string little);
 extern bool ends_with (std::string big, std::string little);
 extern bool empty_or_white_space (std::string s);
-
 extern opj_image_t* decompress_j2k (uint8_t* data, int64_t size, int reduce);
 extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (opj_image_t* xyz_frame);
 

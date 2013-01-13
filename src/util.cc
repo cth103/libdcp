@@ -43,6 +43,9 @@ using std::max;
 using boost::shared_ptr;
 using namespace libdcp;
 
+/** Create a UUID.
+ *  @return UUID.
+ */
 string
 libdcp::make_uuid ()
 {
@@ -53,6 +56,13 @@ libdcp::make_uuid ()
 	return string (buffer);
 }
 
+
+/** Create a digest for a file.
+ *  @param filename File name.
+ *  @param progress If non-0, a signal which will be emitted periodically to update
+ *  progress; the parameter will start at 0.5 and proceed to 1.
+ *  @return Digest.
+ */
 string
 libdcp::make_digest (string filename, boost::signals2::signal<void (float)>* progress)
 {
@@ -94,6 +104,11 @@ libdcp::make_digest (string filename, boost::signals2::signal<void (float)>* pro
 	return Kumu::base64encode (byte_buffer, 20, digest, 64);
 }
 
+/** Convert a content kind to a string which is representative,
+ *  but not necessarily human-readable.
+ *  @param kind ContentKind.
+ *  @return string.
+ */
 string
 libdcp::content_kind_to_string (ContentKind kind)
 {
