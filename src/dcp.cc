@@ -462,7 +462,7 @@ CPL::write_xml () const
 
 	os.close ();
 
-	_digest = make_digest (p.string (), 0);
+	_digest = make_digest (p.string ());
 	_length = boost::filesystem::file_size (p.string ());
 }
 

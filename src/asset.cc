@@ -85,7 +85,7 @@ string
 Asset::digest () const
 {
 	if (_digest.empty ()) {
-		_digest = make_digest (path().string(), 0);
+		_digest = make_digest (path().string());
 	}
 
 	return _digest;

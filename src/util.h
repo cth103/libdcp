@@ -23,7 +23,6 @@
 
 #include <string>
 #include <stdint.h>
-#include <boost/signals2.hpp>
 #include <openjpeg.h>
 #include "types.h"
 
@@ -32,7 +31,7 @@ namespace libdcp {
 class ARGBFrame;	
 	
 extern std::string make_uuid ();
-extern std::string make_digest (std::string filename, boost::signals2::signal<void (float)>* progress);
+extern std::string make_digest (std::string filename);
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
 extern bool starts_with (std::string big, std::string little);

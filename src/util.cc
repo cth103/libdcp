@@ -59,15 +59,11 @@ libdcp::make_uuid ()
 
 /** Create a digest for a file.
  *  @param filename File name.
- *  @param progress If non-0, a signal which will be emitted periodically to update
- *  progress; the parameter will start at 0.5 and proceed to 1.
  *  @return Digest.
  */
 string
-libdcp::make_digest (string filename, boost::signals2::signal<void (float)>* progress)
+libdcp::make_digest (string filename)
 {
-	int const file_size = boost::filesystem::file_size (filename);
-	
 	Kumu::FileReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (filename.c_str ()))) {
 		throw FileError ("could not open file to compute digest", filename);
@@ -90,10 +86,6 @@ libdcp::make_digest (string filename, boost::signals2::signal<void (float)>* pro
 		
 		SHA1_Update (&sha, read_buffer.Data(), read);
 		done += read;
-
-		if (progress) {
-			(*progress) (0.5 + (0.5 * done / file_size));
-		}
 	}
 
 	byte_t byte_buffer[20];
@@ -104,8 +96,8 @@ libdcp::make_digest (string filename, boost::signals2::signal<void (float)>* pro
 	return Kumu::base64encode (byte_buffer, 20, digest, 64);
 }
 
-/** Convert a content kind to a string which is representative,
- *  but not necessarily human-readable.
+/** Convert a content kind to a string which can be used in a
+ *  <ContentKind> node.
  *  @param kind ContentKind.
  *  @return string.
  */
@@ -138,9 +130,16 @@ libdcp::content_kind_to_string (ContentKind kind)
 	assert (false);
 }
 
+/** Convert a string from a <ContentKind> node to a libdcp ContentKind.
+ *  Reasonably tolerant about varying case.
+ *  @param type Content kind string.
+ *  @return libdcp ContentKind.
+ */
 libdcp::ContentKind
 libdcp::content_kind_from_string (string type)
 {
+	/* XXX: should probably just convert type to lower-case and have done with it */
+	
 	if (type == "feature") {
 		return FEATURE;
 	} else if (type == "short") {
@@ -165,7 +164,11 @@ libdcp::content_kind_from_string (string type)
 
 	assert (false);
 }
-		
+
+/** @param big A string.
+ *  @param little A string which is the same length as, or shorter than, big.
+ *  @return true if `big' starts with `little'.
+ */
 bool
 libdcp::starts_with (string big, string little)
 {
@@ -176,6 +179,10 @@ libdcp::starts_with (string big, string little)
 	return big.substr (0, little.length()) == little;
 }
 
+/** @param big A string.
+ *  @param little A string which is the same length as, or shorter than, big.
+ *  @return true if `big' ends with `little'.
+ */
 bool
 libdcp::ends_with (string big, string little)
 {
@@ -186,6 +193,15 @@ libdcp::ends_with (string big, string little)
 	return big.compare (big.length() - little.length(), little.length(), little) == 0;
 }
 
+/** Decompress a JPEG2000 image to a bitmap.
+ *  @param data JPEG2000 data.
+ *  @param size Size of data in bytes.
+ *  @param reduce A power of 2 by which to reduce the size of the decoded image;
+ *  e.g. 0 reduces by (2^0 == 1), ie keeping the same size.
+ *       1 reduces by (2^1 == 2), ie halving the size of the image.
+ *  This is useful for scaling 4K DCP images down to 2K.
+ *  @return openjpeg image, which the caller must call opj_image_destroy() on.
+ */
 opj_image_t *
 libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 {
@@ -209,6 +225,10 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 	return image;
 }
 
+/** Convert an openjpeg XYZ image to RGB.
+ *  @param xyz_frame Frame in XYZ.
+ *  @return RGB image.
+ */
 shared_ptr<ARGBFrame>
 libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
 {
@@ -271,6 +291,9 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
 	return argb_frame;
 }
 
+/** @param s A string.
+ *  @return true if the string contains only space, newline or tab characters, or is empty.
+ */
 bool
 libdcp::empty_or_white_space (string s)
 {
