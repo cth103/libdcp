@@ -147,8 +147,12 @@ public:
 	 */
 	bool equals (DCP const & other, EqualityOptions options, std::list<std::string>& notes) const;
 
+	/** Add a CPL to this DCP.
+	 *  @param cpl CPL to add.
+	 */
 	void add_cpl (boost::shared_ptr<CPL> cpl);
 
+	/** @return The list of CPLs in this DCP */
 	std::list<boost::shared_ptr<const CPL> > cpls () const {
 		return _cpls;
 	}
@@ -174,6 +178,7 @@ private:
 	 */
 	void write_assetmap (std::string pkl_uuid, int pkl_length) const;
 
+	/** @return Assets in all this CPLs in this DCP */
 	std::list<boost::shared_ptr<const Asset> > assets () const;
 
 	struct Files {
