@@ -165,34 +165,6 @@ libdcp::content_kind_from_string (string type)
 	assert (false);
 }
 
-/** @param big A string.
- *  @param little A string which is the same length as, or shorter than, big.
- *  @return true if `big' starts with `little'.
- */
-bool
-libdcp::starts_with (string big, string little)
-{
-	if (little.size() > big.size()) {
-		return false;
-	}
-
-	return big.substr (0, little.length()) == little;
-}
-
-/** @param big A string.
- *  @param little A string which is the same length as, or shorter than, big.
- *  @return true if `big' ends with `little'.
- */
-bool
-libdcp::ends_with (string big, string little)
-{
-	if (little.size() > big.size()) {
-		return false;
-	}
-
-	return big.compare (big.length() - little.length(), little.length(), little) == 0;
-}
-
 /** Decompress a JPEG2000 image to a bitmap.
  *  @param data JPEG2000 data.
  *  @param size Size of data in bytes.

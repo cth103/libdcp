@@ -27,6 +27,7 @@
 #include <cassert>
 #include <iostream>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 #include <libxml++/libxml++.h>
 #include "dcp.h"
 #include "asset.h"
@@ -197,7 +198,7 @@ DCP::read (bool require_mxfs)
 		boost::filesystem::path t = _directory;
 		t /= (*i)->chunks.front()->path;
 		
-		if (ends_with (t.string(), ".mxf") || ends_with (t.string(), ".ttf")) {
+		if (boost::algorithm::ends_with (t.string(), ".mxf") || boost::algorithm::ends_with (t.string(), ".ttf")) {
 			continue;
 		}
 
