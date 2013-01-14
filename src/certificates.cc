@@ -63,6 +63,8 @@ Certificate::~Certificate ()
 string
 Certificate::certificate () const
 {
+	assert (_certificate);
+	
 	BIO* bio = BIO_new (BIO_s_mem ());
 	if (!bio) {
 		throw MiscError ("could not create memory BIO");
@@ -87,6 +89,8 @@ Certificate::certificate () const
 string
 Certificate::issuer () const
 {
+	assert (_certificate);
+	
 	X509_NAME* n = X509_get_issuer_name (_certificate);
 	assert (n);
 
@@ -115,6 +119,8 @@ Certificate::name_for_xml (string const & n)
 string
 Certificate::subject () const
 {
+	assert (_certificate);
+
 	X509_NAME* n = X509_get_subject_name (_certificate);
 	assert (n);
 
@@ -126,6 +132,8 @@ Certificate::subject () const
 string
 Certificate::serial () const
 {
+	assert (_certificate);
+
 	ASN1_INTEGER* s = X509_get_serialNumber (_certificate);
 	assert (s);
 	
@@ -142,6 +150,8 @@ Certificate::serial () const
 string
 Certificate::thumbprint () const
 {
+	assert (_certificate);
+	
 	uint8_t buffer[8192];
 	uint8_t* p = buffer;
 	i2d_X509_CINF (_certificate->cert_info, &p);
