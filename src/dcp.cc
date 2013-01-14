@@ -584,6 +584,8 @@ CPL::make_kdm (
 	boost::posix_time::ptime until
 	) const
 {
+	assert (recipient_cert);
+	
 	shared_ptr<xmlpp::Document> doc (new xmlpp::Document);
 	xmlpp::Element* root = doc->create_root_node ("DCinemaSecurityMessage");
 	root->set_namespace_declaration ("http://www.smpte-ra.org/schemas/430-3/2006/ETM", "");
