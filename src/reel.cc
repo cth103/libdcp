@@ -45,9 +45,6 @@ Reel::write_to_cpl (xmlpp::Node* parent) const
 	if (_main_subtitle) {
 		_main_subtitle->write_to_cpl (asset_list);
 	}
-
-	s << "      </AssetList>\n"
-	  << "    </Reel>\n";
 }
 	
 bool

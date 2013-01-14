@@ -637,6 +637,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 						   &(d.Progress),
 						   24,
 						   24,
+						   0,
 						   2,
 						   true
 						   ));

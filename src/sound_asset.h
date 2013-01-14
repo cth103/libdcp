@@ -54,7 +54,7 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int length,
-		int start_frame
+		int start_frame,
 		bool encrypted
 		);
 
