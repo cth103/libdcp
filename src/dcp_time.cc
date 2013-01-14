@@ -222,6 +222,7 @@ libdcp::operator/ (Time a, Time const & b)
 	return float (at) / bt;
 }
 
+/** @return A string of the form h:m:s:t */
 string
 Time::to_string () const
 {
@@ -230,6 +231,7 @@ Time::to_string () const
 	return str.str ();
 }
 
+/** @return This time in ticks */
 int64_t
 Time::to_ticks () const
 {

@@ -21,6 +21,7 @@
  *  @brief Classes used to parse a AssetMap.
  */
 
+#include <boost/algorithm/string.hpp>
 #include "asset_map.h"
 #include "util.h"
 
@@ -55,7 +56,7 @@ Chunk::Chunk (xmlpp::Node const * node)
 
 	string const prefix = "file://";
 
-	if (starts_with (path, prefix)) {
+	if (boost::algorithm::starts_with (path, prefix)) {
 		path = path.substr (prefix.length());
 	}
 	

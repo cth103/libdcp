@@ -43,12 +43,22 @@ using boost::lexical_cast;
 using namespace libdcp;
 
 SoundAsset::SoundAsset (
-	vector<string> const & files, string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int length, bool encrypted
+	vector<string> const & files,
+	string directory,
+	string mxf_name,
+	boost::signals2::signal<void (float)>* progress,
+	int fps,
+	int length,
+	int start_frame,
+	bool encrypted
 	)
 	: MXFAsset (directory, mxf_name, progress, fps, 0, length, encrypted)
 	, _channels (files.size ())
 	, _sampling_rate (0)
+	, _start_frame (start_frame)
 {
+	assert (_channels);
+	
 	construct (boost::bind (&SoundAsset::path_from_channel, this, _1, files));
 }
 
@@ -57,18 +67,26 @@ SoundAsset::SoundAsset (
 	string directory,
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
-	int fps, int length, int channels, bool encrypted
+	int fps,
+	int length,
+	int start_frame,
+	int channels,
+	bool encrypted
 	)
 	: MXFAsset (directory, mxf_name, progress, fps, 0, length, encrypted)
 	, _channels (channels)
 	, _sampling_rate (0)
+	, _start_frame (start_frame)
 {
+	assert (_channels);
+	
 	construct (get_path);
 }
 
 SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int entry_point, int length)
 	: MXFAsset (directory, mxf_name, 0, fps, entry_point, length, false)
 	, _channels (0)
+	, _start_frame (0)
 {
 	ASDCP::PCM::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
@@ -97,7 +115,7 @@ void
 SoundAsset::construct (boost::function<string (Channel)> get_path)
 {
 	ASDCP::Rational asdcp_fps (_fps, 1);
-	
+
  	ASDCP::PCM::WAVParser pcm_parser_channel[_channels];
 	if (pcm_parser_channel[0].OpenRead (get_path(LEFT).c_str(), asdcp_fps)) {
 		throw FileError ("could not open WAV file for reading", get_path(LEFT));
@@ -154,6 +172,15 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 		throw FileError ("could not open audio MXF for writing", path().string());
 	}
 
+	/* Skip through up to our _start_frame; this is pretty inefficient... */
+	for (int i = 0; i < _start_frame; ++i) {
+		for (int j = 0; j < _channels; ++j) {
+			if (ASDCP_FAILURE (pcm_parser_channel[j].ReadFrame (frame_buffer_channel[j]))) {
+				throw MiscError ("could not read audio frame");
+			}
+		}
+	}
+	
 	for (int i = 0; i < _length; ++i) {
 
 		for (int j = 0; j < _channels; ++j) {

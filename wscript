@@ -3,7 +3,7 @@ import os
 import lut
 
 APPNAME = 'libdcp'
-VERSION = '0.36pre'
+VERSION = '0.37pre'
 
 def options(opt):
     opt.load('compiler_cxx')
@@ -20,6 +20,7 @@ def configure(conf):
     conf.env.TARGET_WINDOWS = conf.options.target_windows
     conf.env.STATIC_OPENJPEG = conf.options.static_openjpeg
     conf.env.STATIC_LIBDCP = conf.options.static_libdcp
+    conf.env.ENABLE_DEBUG = conf.options.enable_debug
 
     if conf.options.target_windows:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_WINDOWS')
@@ -88,7 +89,7 @@ def configure(conf):
     conf.recurse('asdcplib')
 
 def build(bld):
-    create_version_cc(VERSION)
+    create_version_cc(bld, VERSION)
 
     if bld.env.TARGET_WINDOWS:
         boost_lib_suffix = '-mt'
@@ -112,7 +113,7 @@ def build(bld):
 def dist(ctx):
     ctx.excl = 'TODO core *~ .git build .waf* .lock* doc/*~ src/*~ test/ref/*~ __pycache__'
 
-def create_version_cc(version):
+def create_version_cc(bld, version):
     if os.path.exists('.git'):
         cmd = "LANG= git log --abbrev HEAD^..HEAD ."
         output = subprocess.Popen(cmd, shell=True, stderr=subprocess.STDOUT, stdout=subprocess.PIPE).communicate()[0].splitlines()
@@ -125,6 +126,11 @@ def create_version_cc(version):
         text =  '#include "version.h"\n'
         text += 'char const * libdcp::git_commit = \"%s\";\n' % commit
         text += 'char const * libdcp::version = \"%s\";\n' % version
+        if bld.env.ENABLE_DEBUG:
+            debug_string = 'true'
+        else:
+            debug_string = 'false'
+        text += 'bool const built_with_debug = %s;\n' % debug_string
         print('Writing version information to src/version.cc')
         o = open('src/version.cc', 'w')
         o.write(text)

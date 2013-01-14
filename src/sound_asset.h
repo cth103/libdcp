@@ -44,6 +44,7 @@ public:
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
+	 *  @param start_frame Frame in the source to start writing from.
 	 *  @param encrypted true if asset should be encrypted.
 	 */
 	SoundAsset (
@@ -53,6 +54,7 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int length,
+		int start_frame
 		bool encrypted
 		);
 
@@ -64,6 +66,7 @@ public:
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
+	 *  @param start_frame Frame in the source to start writing from.
 	 *  @param channels Number of audio channels.
 	 *  @param encrypted true if asset should be encrypted.
 	 */
@@ -74,6 +77,7 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int length,
+		int start_frame,
 		int channels,
 		bool encrypted
 		);
@@ -112,6 +116,7 @@ private:
 	/** Number of channels in the asset */
 	int _channels;
 	int _sampling_rate;
+	int _start_frame;
 };
 
 }

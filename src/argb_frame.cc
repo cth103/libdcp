@@ -21,6 +21,11 @@
 
 using namespace libdcp;
 
+/** Construct an empty ARGBFrame with a given width and height and with
+ *  undefined contents.
+ *  @param width Width in pixels.
+ *  @param height Height in pixels.
+ */
 ARGBFrame::ARGBFrame (int width, int height)
 	: _width (width)
 	, _height (height)
@@ -34,6 +39,7 @@ ARGBFrame::~ARGBFrame ()
 	delete[] _data;
 }
 
+/** @return The stride, in bytes; that is, the number of bytes per row of the image */
 int
 ARGBFrame::stride () const
 {

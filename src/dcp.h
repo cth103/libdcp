@@ -60,6 +60,7 @@ public:
 	std::string signer_key;
 };
 
+/** @brief A CPL within a DCP */
 class CPL
 {
 public:
@@ -125,7 +126,9 @@ private:
 	/** reels */
 	std::list<boost::shared_ptr<const Reel> > _reels;
 
+	/** our UUID */
 	std::string _uuid;
+	/** a SHA1 digest of our XML */
 	mutable std::string _digest;
 };
 
@@ -167,8 +170,12 @@ public:
 	 */
 	bool equals (DCP const & other, EqualityOptions options, std::list<std::string>& notes) const;
 
+	/** Add a CPL to this DCP.
+	 *  @param cpl CPL to add.
+	 */
 	void add_cpl (boost::shared_ptr<CPL> cpl);
 
+	/** @return The list of CPLs in this DCP */
 	std::list<boost::shared_ptr<const CPL> > cpls () const {
 		return _cpls;
 	}
@@ -194,6 +201,7 @@ private:
 	 */
 	void write_assetmap (std::string pkl_uuid, int pkl_length) const;
 
+	/** @return Assets in all this CPLs in this DCP */
 	std::list<boost::shared_ptr<const Asset> > assets () const;
 
 	struct Files {
@@ -204,6 +212,7 @@ private:
 
 	/** the directory that we are writing to */
 	std::string _directory;
+	/** our CPLs */
 	std::list<boost::shared_ptr<const CPL> > _cpls;
 };
 

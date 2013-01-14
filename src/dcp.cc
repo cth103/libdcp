@@ -28,6 +28,7 @@
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 #include <libxml++/libxml++.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
@@ -208,7 +209,7 @@ DCP::read (bool require_mxfs)
 		boost::filesystem::path t = _directory;
 		t /= (*i)->chunks.front()->path;
 		
-		if (ends_with (t.string(), ".mxf") || ends_with (t.string(), ".ttf")) {
+		if (boost::algorithm::ends_with (t.string(), ".mxf") || boost::algorithm::ends_with (t.string(), ".ttf")) {
 			continue;
 		}
 
@@ -318,6 +319,12 @@ CPL::CPL (string directory, string name, ContentKind content_kind, int length, i
 	_uuid = make_uuid ();
 }
 
+/** Construct a CPL object from a XML file.
+ *  @param directory The directory containing this CPL's DCP.
+ *  @param file The CPL XML filename.
+ *  @param asset_map The corresponding asset map.
+ *  @param require_mxfs true to throw an exception if a required MXF file does not exist.
+ */
 CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, bool require_mxfs)
 	: _directory (directory)
 	, _content_kind (FEATURE)
@@ -475,7 +482,7 @@ CPL::write_xml (shared_ptr<Encryption> crypt) const
 
 	doc.write_to_file_formatted (p.string(), "UTF-8");
 
-	_digest = make_digest (p.string (), 0);
+	_digest = make_digest (p.string ());
 	_length = boost::filesystem::file_size (p.string ());
 }
 

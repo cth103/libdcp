@@ -105,6 +105,9 @@ struct EqualityOptions {
 	int max_audio_sample_error;
 };
 
+/** @class Color
+ *  @brief An RGB color (aka colour).
+ */
 class Color
 {
 public:
@@ -112,9 +115,9 @@ public:
 	Color (int r_, int g_, int b_);
 	Color (std::string argb_hex);
 
-	int r;
-	int g;
-	int b;
+	int r; ///< red component, from 0 to 255
+	int g; ///< green component, from 0 to 255
+	int b; ///< blue component, from 0 to 255
 
 	std::string to_argb_string () const;
 };

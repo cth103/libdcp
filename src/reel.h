@@ -31,6 +31,7 @@ class PictureAsset;
 class SoundAsset;	
 class SubtitleAsset;	
 
+/** @brief A reel within a DCP; the part which actually contains picture, sound and subtitle data */	
 class Reel
 {
 public:

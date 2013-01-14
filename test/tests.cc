@@ -93,6 +93,7 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 						   &(d.Progress),
 						   24,
 						   24,
+						   0,
 						   2,
 						   false
 						   ));
@@ -109,8 +110,8 @@ BOOST_AUTO_TEST_CASE (error_test)
 	vector<string> p;
 	p.push_back ("frobozz");
 
-	BOOST_CHECK_THROW (new libdcp::MonoPictureAsset (p, "build/test/fred", "video.mxf", &d.Progress, 24, 24, 32, 32, false), libdcp::FileError);
-	BOOST_CHECK_THROW (new libdcp::SoundAsset (p, "build/test/fred", "audio.mxf", &d.Progress, 24, 24, false), libdcp::FileError);
+	BOOST_CHECK_THROW (new libdcp::MonoPictureAsset (p, "build/test/bar", "video.mxf", &d.Progress, 24, 24, 32, 32, false), libdcp::FileError);
+	BOOST_CHECK_THROW (new libdcp::SoundAsset (p, "build/test/bar", "audio.mxf", &d.Progress, 24, 24, 0, false), libdcp::FileError);
 }
 
 BOOST_AUTO_TEST_CASE (read_dcp)

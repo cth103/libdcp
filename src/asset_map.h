@@ -27,6 +27,9 @@
 
 namespace libdcp {
 
+/** @class Chunk
+ *  @brief A simple parser for and representation of a \<Chunk\> node within an asset map.
+ */
 class Chunk : public XMLNode
 {
 public:
@@ -39,6 +42,9 @@ public:
 	int64_t length;
 };
 
+/** @class AssetMapAsset
+ *  @brief A simple parser for and representation of an \<AssetMap\> node within an asset map.
+ */
 class AssetMapAsset : public XMLNode
 {
 public:
@@ -50,6 +56,9 @@ public:
 	std::list<boost::shared_ptr<Chunk> > chunks;
 };
 
+/** @class AssetMap
+ *  @brief A simple parser for and representation of an asset map file.
+ */
 class AssetMap : public XMLFile
 {
 public:

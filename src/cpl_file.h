@@ -27,6 +27,7 @@
 
 namespace libdcp {
 
+/** @brief A simple parser for and representation of a CPL \<Picture\> node */
 class Picture : public XMLNode
 {
 public:
@@ -44,7 +45,7 @@ public:
 };
 
 
-/** CPL MainPicture node */
+/** @brief A simple parser for and representation of a CPL \<MainPicture\> node */
 class MainPicture : public Picture
 {
 public:
@@ -52,7 +53,7 @@ public:
 	MainPicture (xmlpp::Node const * node);
 };
 
-/** CPL MainStereoscopicPicture node */
+/** @brief A simple parser for and representation of a CPL \<MainStereoscopicPicture\> node */
 class MainStereoscopicPicture : public Picture
 {
 public:
@@ -60,7 +61,7 @@ public:
 	MainStereoscopicPicture (xmlpp::Node const * node);
 };
 
-/** CPL MainSound node */	
+/** @brief A simple parser for and representation of a CPL \<MainSound\> node */
 class MainSound : public XMLNode
 {
 public:
@@ -75,7 +76,7 @@ public:
 	int64_t duration;
 };
 
-/** CPL MainSubtitle node */	
+/** @brief A simple parser for and representation of a CPL \<MainSubtitle\> node */
 class MainSubtitle : public XMLNode
 {
 public:
@@ -90,7 +91,7 @@ public:
 	int64_t duration;
 };
 
-/** CPL AssetList node */	
+/** @brief A simple parser for and representation of a CPL \<AssetList\> node */
 class CPLAssetList : public XMLNode
 {
 public:
@@ -103,7 +104,7 @@ public:
 	boost::shared_ptr<MainSubtitle> main_subtitle;
 };
 
-/** CPL Reel node */	
+/** @brief A simple parser for and representation of a CPL \<Reel\> node */
 class CPLReel : public XMLNode
 {
 public:
@@ -114,7 +115,8 @@ public:
 	boost::shared_ptr<CPLAssetList> asset_list;
 };
 
-/** CPL ContentVersion node */	
+
+/** @brief A simple parser for and representation of a CPL \<ContentVersion\> node */
 class ContentVersion : public XMLNode
 {
 public:
