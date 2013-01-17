@@ -36,14 +36,20 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace libdcp;
 
-MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length)
+MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int fps, int length)
 	: Asset (directory, file_name)
 	, _progress (progress)
 	, _fps (fps)
-	, _entry_point (entry_point)
+	, _entry_point (0)
 	, _length (length)
 {
 	
+}
+
+void
+MXFAsset::set_entry_point (int e)
+{
+	_entry_point = e;
 }
 
 void

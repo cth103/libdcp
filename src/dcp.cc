@@ -363,10 +363,11 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 						       _directory,
 						       asset_map->asset_from_id (p->id)->chunks.front()->path,
 						       _fps,
-						       (*i)->asset_list->main_picture->entry_point,
 						       (*i)->asset_list->main_picture->duration
 						       )
 					);
+
+				picture->set_entry_point ((*i)->asset_list->main_picture->entry_point);
 			} catch (MXFFileError) {
 				if (require_mxfs) {
 					throw;
@@ -380,10 +381,12 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 						       _directory,
 						       asset_map->asset_from_id (p->id)->chunks.front()->path,
 						       _fps,
-						       p->entry_point,
 						       p->duration
 						       )
 					);
+
+				picture->set_entry_point (p->entry_point);
+				
 			} catch (MXFFileError) {
 				if (require_mxfs) {
 					throw;
@@ -399,10 +402,11 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 						     _directory,
 						     asset_map->asset_from_id ((*i)->asset_list->main_sound->id)->chunks.front()->path,
 						     _fps,
-						     (*i)->asset_list->main_sound->entry_point,
 						     (*i)->asset_list->main_sound->duration
 						     )
 					);
+
+				sound->set_entry_point ((*i)->asset_list->main_sound->entry_point);
 			} catch (MXFFileError) {
 				if (require_mxfs) {
 					throw;

@@ -44,7 +44,7 @@ using namespace libdcp;
 SoundAsset::SoundAsset (
 	vector<string> const & files, string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int length, int start_frame
 	)
-	: MXFAsset (directory, mxf_name, progress, fps, 0, length)
+	: MXFAsset (directory, mxf_name, progress, fps, length)
 	, _channels (files.size ())
 	, _sampling_rate (0)
 	, _start_frame (start_frame)
@@ -61,7 +61,7 @@ SoundAsset::SoundAsset (
 	boost::signals2::signal<void (float)>* progress,
 	int fps, int length, int start_frame, int channels
 	)
-	: MXFAsset (directory, mxf_name, progress, fps, 0, length)
+	: MXFAsset (directory, mxf_name, progress, fps, length)
 	, _channels (channels)
 	, _sampling_rate (0)
 	, _start_frame (start_frame)
@@ -71,8 +71,8 @@ SoundAsset::SoundAsset (
 	construct (get_path);
 }
 
-SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int entry_point, int length)
-	: MXFAsset (directory, mxf_name, 0, fps, entry_point, length)
+SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int length)
+	: MXFAsset (directory, mxf_name, 0, fps, length)
 	, _channels (0)
 	, _start_frame (0)
 {

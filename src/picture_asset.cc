@@ -46,8 +46,8 @@ using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace libdcp;
 
-PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length)
-	: MXFAsset (directory, mxf_name, progress, fps, entry_point, length)
+PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int length)
+	: MXFAsset (directory, mxf_name, progress, fps, length)
 {
 
 }
@@ -136,7 +136,7 @@ MonoPictureAsset::MonoPictureAsset (
 	int fps,
 	int length,
 	Size size)
-	: PictureAsset (directory, mxf_name, progress, fps, 0, length)
+	: PictureAsset (directory, mxf_name, progress, fps, length)
 {
 	_size = size;
 	construct (get_path);
@@ -150,14 +150,14 @@ MonoPictureAsset::MonoPictureAsset (
 	int fps,
 	int length,
 	Size size)
-	: PictureAsset (directory, mxf_name, progress, fps, 0, length)
+	: PictureAsset (directory, mxf_name, progress, fps, length)
 {
 	_size = size;
 	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files));
 }
 
-MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, int entry_point, int length)
-	: PictureAsset (directory, mxf_name, 0, fps, entry_point, length)
+MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, int length)
+	: PictureAsset (directory, mxf_name, 0, fps, length)
 {
 	ASDCP::JP2K::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
@@ -356,8 +356,8 @@ PictureAsset::frame_buffer_equals (
 }
 
 
-StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int entry_point, int length)
-	: PictureAsset (directory, mxf_name, 0, fps, entry_point, length)
+StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int length)
+	: PictureAsset (directory, mxf_name, 0, fps, length)
 {
 	ASDCP::JP2K::MXFSReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
