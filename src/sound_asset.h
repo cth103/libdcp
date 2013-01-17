@@ -45,6 +45,7 @@ public:
 	 *  @param fps Frames per second.
 	 *  @param intrinsic_duration Length of the whole asset in frames.
 	 *  @param start_frame Frame in the source to start writing from.
+	 *  Note that this is different to entry_point in that the asset will contain no data before start_frame.
 	 */
 	SoundAsset (
 		std::vector<std::string> const & files,
@@ -65,6 +66,7 @@ public:
 	 *  @param fps Frames per second.
 	 *  @param intrinsic_duration Length of the whole asset in frames.
 	 *  @param start_frame Frame in the source to start writing from.
+	 *  Note that this is different to entry_point in that the asset will contain no data before start_frame.
 	 *  @param channels Number of audio channels.
 	 */
 	SoundAsset (
