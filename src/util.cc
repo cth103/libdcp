@@ -216,7 +216,7 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
 	int* xyz_y = xyz_frame->comps[1].data;
 	int* xyz_z = xyz_frame->comps[2].data;
 
-	shared_ptr<ARGBFrame> argb_frame (new ARGBFrame (xyz_frame->x1, xyz_frame->y1));
+	shared_ptr<ARGBFrame> argb_frame (new ARGBFrame (Size (xyz_frame->x1, xyz_frame->y1)));
 
 	uint8_t* argb = argb_frame->data ();
 	

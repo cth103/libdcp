@@ -75,8 +75,7 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 							 &d.Progress,
 							 24,
 							 24,
-							 32,
-							 32
+							 libdcp::Size (32, 32)
 							 ));
 
 	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
@@ -102,7 +101,7 @@ BOOST_AUTO_TEST_CASE (error_test)
 	vector<string> p;
 	p.push_back ("frobozz");
 
-	BOOST_CHECK_THROW (new libdcp::MonoPictureAsset (p, "build/test/bar", "video.mxf", &d.Progress, 24, 24, 32, 32), libdcp::FileError);
+	BOOST_CHECK_THROW (new libdcp::MonoPictureAsset (p, "build/test/bar", "video.mxf", &d.Progress, 24, 24, libdcp::Size (32, 32)), libdcp::FileError);
 	BOOST_CHECK_THROW (new libdcp::SoundAsset (p, "build/test/bar", "audio.mxf", &d.Progress, 24, 24, 0), libdcp::FileError);
 }
 

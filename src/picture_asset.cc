@@ -48,8 +48,6 @@ using namespace libdcp;
 
 PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length)
 	: MXFAsset (directory, mxf_name, progress, fps, entry_point, length)
-	, _width (0)
-	, _height (0)
 {
 
 }
@@ -65,7 +63,7 @@ PictureAsset::write_to_cpl (ostream& s) const
 	  << "          <EntryPoint>0</EntryPoint>\n"
 	  << "          <Duration>" << _length << "</Duration>\n"
 	  << "          <FrameRate>" << _fps << " 1</FrameRate>\n"
-	  << "          <ScreenAspectRatio>" << _width << " " << _height << "</ScreenAspectRatio>\n"
+	  << "          <ScreenAspectRatio>" << _size.width << " " << _size.height << "</ScreenAspectRatio>\n"
 	  << "        </MainPicture>\n";
 }
 
@@ -137,12 +135,10 @@ MonoPictureAsset::MonoPictureAsset (
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
 	int length,
-	int width,
-	int height)
+	Size size)
 	: PictureAsset (directory, mxf_name, progress, fps, 0, length)
 {
-	_width = width;
-	_height = height;
+	_size = size;
 	construct (get_path);
 }
 
@@ -153,12 +149,10 @@ MonoPictureAsset::MonoPictureAsset (
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
 	int length,
-	int width,
-	int height)
+	Size size)
 	: PictureAsset (directory, mxf_name, progress, fps, 0, length)
 {
-	_width = width;
-	_height = height;
+	_size = size;
 	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files));
 }
 
@@ -175,8 +169,8 @@ MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, 
 		throw DCPReadError ("could not read video MXF information");
 	}
 
-	_width = desc.StoredWidth;
-	_height = desc.StoredHeight;
+	_size.width = desc.StoredWidth;
+	_size.height = desc.StoredHeight;
 }
 
 void
@@ -375,8 +369,8 @@ StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int f
 		throw DCPReadError ("could not read video MXF information");
 	}
 
-	_width = desc.StoredWidth;
-	_height = desc.StoredHeight;
+	_size.width = desc.StoredWidth;
+	_size.height = desc.StoredHeight;
 }
 
 shared_ptr<const StereoPictureFrame>

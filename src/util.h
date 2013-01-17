@@ -17,18 +17,37 @@
 
 */
 
+#ifndef LIBDCP_UTIL_H
+#define LIBDCP_UTIL_H
+
 /** @file  src/util.h
  *  @brief Utility methods.
  */
 
 #include <string>
 #include <stdint.h>
+#include <boost/shared_ptr.hpp>
 #include <openjpeg.h>
 #include "types.h"
 
 namespace libdcp {
 
-class ARGBFrame;	
+class ARGBFrame;
+
+struct Size {
+	Size ()
+		: width (0)
+		, height (0)
+	{}
+
+	Size (int w, int h)
+		: width (w)
+		, height (h)
+	{}
+	
+	int width;
+	int height;
+};
 	
 extern std::string make_uuid ();
 extern std::string make_digest (std::string filename);
@@ -39,3 +58,5 @@ extern opj_image_t* decompress_j2k (uint8_t* data, int64_t size, int reduce);
 extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (opj_image_t* xyz_frame);
 
 }
+
+#endif

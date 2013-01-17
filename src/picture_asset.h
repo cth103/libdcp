@@ -23,6 +23,7 @@
 
 #include <openjpeg.h>
 #include "mxf_asset.h"
+#include "util.h"
 
 namespace libdcp
 {
@@ -43,12 +44,8 @@ public:
 
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
 
-	int width () const {
-		return _width;
-	}
-
-	int height () const {
-		return _height;
+	Size size () const {
+		return _size;
 	}
 
 protected:	
@@ -57,11 +54,9 @@ protected:
 		int frame, EqualityOptions opt, std::list<std::string>& notes,
 		uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
 		) const;
-	
-	/** picture width in pixels */
-	int _width;
-	/** picture height in pixels */
-	int _height;
+
+	/** picture size in pixels */
+	Size _size;
 };
 
 /** A 2D (monoscopic) picture asset */
@@ -76,8 +71,7 @@ public:
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
-	 *  @param width Width of images in pixels.
-	 *  @param height Height of images in pixels.
+	 *  @param size Size of images in pixels.
 	 */
 	MonoPictureAsset (
 		std::vector<std::string> const & files,
@@ -86,8 +80,7 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int length,
-		int width,
-		int height
+		Size size
 		);
 
 	/** Construct a PictureAsset, generating the MXF from the JPEG2000 files.
@@ -98,8 +91,7 @@ public:
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
-	 *  @param width Width of images in pixels.
-	 *  @param height Height of images in pixels.
+	 *  @param size Size of images in pixels.
 	 */
 	MonoPictureAsset (
 		boost::function<std::string (int)> get_path,
@@ -108,8 +100,7 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int length,
-		int width,
-		int height
+		Size size
 		);
 
 	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, int entry_point, int length);

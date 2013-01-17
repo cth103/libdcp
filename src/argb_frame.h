@@ -22,6 +22,7 @@
  */
 
 #include <stdint.h>
+#include "util.h"
 
 namespace libdcp
 {
@@ -44,7 +45,7 @@ namespace libdcp
 class ARGBFrame
 {
 public:
-	ARGBFrame (int width, int height);
+	ARGBFrame (Size size);
 	~ARGBFrame ();
 
 	uint8_t* data () const {
@@ -54,17 +55,12 @@ public:
 	/** Length of one picture row in bytes */
 	int stride () const;
 
-	int width () const {
-		return _width;
-	}
-
-	int height () const {
-		return _height;
+	Size size () const {
+		return _size;
 	}
 
 private:
-	int _width;
-	int _height;
+	Size _size;
 	uint8_t* _data;
 };
 
