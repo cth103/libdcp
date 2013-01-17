@@ -49,6 +49,7 @@ def build(bld):
               subtitle_asset.h
               test_mode.h
               types.h
+              util.h
               version.h
               xml.h
               """

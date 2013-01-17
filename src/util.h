@@ -49,6 +49,9 @@ struct Size {
 	int height;
 };
 	
+extern bool operator== (Size const & a, Size const & b);
+extern bool operator!= (Size const & a, Size const & b);
+
 extern std::string make_uuid ();
 extern std::string make_digest (std::string filename);
 extern std::string content_kind_to_string (ContentKind kind);

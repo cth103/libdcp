@@ -277,3 +277,14 @@ libdcp::empty_or_white_space (string s)
 
 	return true;
 }
+
+bool libdcp::operator== (libdcp::Size const & a, libdcp::Size const & b)
+{
+	return (a.width == b.width && a.height == b.height);
+}
+
+bool libdcp::operator!= (libdcp::Size const & a, libdcp::Size const & b)
+{
+	return !(a == b);
+}
+
