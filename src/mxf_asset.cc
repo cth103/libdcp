@@ -42,6 +42,7 @@ MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<
 	, _fps (fps)
 	, _entry_point (0)
 	, _intrinsic_duration (intrinsic_duration)
+	, _duration (intrinsic_duration)
 {
 	
 }
@@ -50,6 +51,12 @@ void
 MXFAsset::set_entry_point (int e)
 {
 	_entry_point = e;
+}
+
+void
+MXFAsset::set_duration (int d)
+{
+	_duration = d;
 }
 
 void
@@ -89,6 +96,11 @@ MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions, list<string>& 
 		return false;
 	}
 
+	if (_duration != other_mxf->_duration) {
+		notes.push_back ("MXF durations differ");
+		return false;
+	}
+	
 	return true;
 }
 

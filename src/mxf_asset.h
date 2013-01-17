@@ -40,6 +40,7 @@ public:
 	MXFAsset (std::string directory, std::string file_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration);
 
 	void set_entry_point (int e);
+	void set_duration (int d);
 
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
 	
@@ -55,9 +56,12 @@ protected:
 	boost::signals2::signal<void (float)>* _progress;
 	/** Frames per second */
 	int _fps;
+	/** Start point to present in frames */
 	int _entry_point;
 	/** Total length in frames */
 	int _intrinsic_duration;
+	/** Length to present in frames */
+	int _duration;
 };
 
 }

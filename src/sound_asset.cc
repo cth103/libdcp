@@ -214,8 +214,8 @@ SoundAsset::write_to_cpl (ostream& s) const
 	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
 	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
 	  << "          <IntrinsicDuration>" << _intrinsic_duration << "</IntrinsicDuration>\n"
-	  << "          <EntryPoint>0</EntryPoint>\n"
-	  << "          <Duration>" << _intrinsic_duration << "</Duration>\n"
+	  << "          <EntryPoint>" << _entry_point << "</EntryPoint>\n"
+	  << "          <Duration>" << _duration << "</Duration>\n"
 	  << "        </MainSound>\n";
 }
 
