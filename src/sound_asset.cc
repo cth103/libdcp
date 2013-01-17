@@ -42,7 +42,11 @@ using boost::lexical_cast;
 using namespace libdcp;
 
 SoundAsset::SoundAsset (
-	vector<string> const & files, string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, int start_frame
+	vector<string> const & files,
+	string directory,
+	string mxf_name,
+	boost::signals2::signal<void (float)>* progress,
+	int fps, int intrinsic_duration, int start_frame
 	)
 	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 	, _channels (files.size ())
