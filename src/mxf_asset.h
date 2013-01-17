@@ -35,15 +35,15 @@ public:
 	 *  @param file_name Name of MXF file.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
-	 *  @param length Length in frames.
+	 *  @param intrinsic_duration Duration of the whole asset in frames.
 	 */
-	MXFAsset (std::string directory, std::string file_name, boost::signals2::signal<void (float)>* progress, int fps, int length);
+	MXFAsset (std::string directory, std::string file_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration);
 
 	void set_entry_point (int e);
 
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
 	
-	int length () const;
+	int intrinsic_duration () const;
 
 protected:
 	/** Fill in a ADSCP::WriteInfo struct.
@@ -56,8 +56,8 @@ protected:
 	/** Frames per second */
 	int _fps;
 	int _entry_point;
-	/** Length in frames */
-	int _length;
+	/** Total length in frames */
+	int _intrinsic_duration;
 };
 
 }

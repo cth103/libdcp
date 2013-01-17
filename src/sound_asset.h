@@ -43,7 +43,7 @@ public:
 	 *  @param mxf_name Name of MXF file to create.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
-	 *  @param length Length in frames.
+	 *  @param intrinsic_duration Length of the whole asset in frames.
 	 *  @param start_frame Frame in the source to start writing from.
 	 */
 	SoundAsset (
@@ -52,7 +52,7 @@ public:
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
-		int length,
+		int intrinsic_duration,
 		int start_frame
 		);
 
@@ -63,7 +63,7 @@ public:
 	 *  @param mxf_name Name of MXF file to create.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
-	 *  @param length Length in frames.
+	 *  @param intrinsic_duration Length of the whole asset in frames.
 	 *  @param start_frame Frame in the source to start writing from.
 	 *  @param channels Number of audio channels.
 	 */
@@ -73,7 +73,7 @@ public:
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
-		int length,
+		int intrinsic_duration,
 		int start_frame,
 		int channels
 		);
@@ -82,7 +82,7 @@ public:
 		std::string directory,
 		std::string mxf_name,
 		int fps,
-		int length
+		int intrinsic_duration
 		);
 	
 	/** Write details of this asset to a CPL stream.

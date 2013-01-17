@@ -37,8 +37,11 @@ public:
 	std::string id;
 	std::string annotation_text;
 	Fraction edit_rate;
+	/** Duration of the whole thing */
 	int64_t intrinsic_duration;
+	/** Start point in frames */
 	int64_t entry_point;
+	/** Duration that will actually play */
 	int64_t duration;
 	Fraction frame_rate;
 	Fraction screen_aspect_ratio;

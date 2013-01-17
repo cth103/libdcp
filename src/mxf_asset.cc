@@ -36,12 +36,12 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace libdcp;
 
-MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int fps, int length)
+MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration)
 	: Asset (directory, file_name)
 	, _progress (progress)
 	, _fps (fps)
 	, _entry_point (0)
-	, _length (length)
+	, _intrinsic_duration (intrinsic_duration)
 {
 	
 }
@@ -84,8 +84,8 @@ MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions, list<string>& 
 		return false;
 	}
 	
-	if (_length != other_mxf->_length) {
-		notes.push_back ("MXF lengths differ");
+	if (_intrinsic_duration != other_mxf->_intrinsic_duration) {
+		notes.push_back ("MXF intrinsic durations differ");
 		return false;
 	}
 
@@ -93,7 +93,7 @@ MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions, list<string>& 
 }
 
 int
-MXFAsset::length () const
+MXFAsset::intrinsic_duration () const
 {
-	return _length;
+	return _intrinsic_duration;
 }

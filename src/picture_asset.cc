@@ -46,8 +46,8 @@ using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace libdcp;
 
-PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int length)
-	: MXFAsset (directory, mxf_name, progress, fps, length)
+PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration)
+	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 {
 
 }
@@ -59,9 +59,9 @@ PictureAsset::write_to_cpl (ostream& s) const
 	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
 	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
 	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
-	  << "          <IntrinsicDuration>" << _length << "</IntrinsicDuration>\n"
+	  << "          <IntrinsicDuration>" << _intrinsic_duration << "</IntrinsicDuration>\n"
 	  << "          <EntryPoint>0</EntryPoint>\n"
-	  << "          <Duration>" << _length << "</Duration>\n"
+	  << "          <Duration>" << _intrinsic_duration << "</Duration>\n"
 	  << "          <FrameRate>" << _fps << " 1</FrameRate>\n"
 	  << "          <ScreenAspectRatio>" << _size.width << " " << _size.height << "</ScreenAspectRatio>\n"
 	  << "        </MainPicture>\n";
@@ -134,9 +134,9 @@ MonoPictureAsset::MonoPictureAsset (
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
-	int length,
+	int intrinsic_duration,
 	Size size)
-	: PictureAsset (directory, mxf_name, progress, fps, length)
+	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 {
 	_size = size;
 	construct (get_path);
@@ -148,16 +148,16 @@ MonoPictureAsset::MonoPictureAsset (
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
-	int length,
+	int intrinsic_duration,
 	Size size)
-	: PictureAsset (directory, mxf_name, progress, fps, length)
+	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 {
 	_size = size;
 	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files));
 }
 
-MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, int length)
-	: PictureAsset (directory, mxf_name, 0, fps, length)
+MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, int intrinsic_duration)
+	: PictureAsset (directory, mxf_name, 0, fps, intrinsic_duration)
 {
 	ASDCP::JP2K::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
@@ -194,7 +194,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 		throw MXFFileError ("could not open MXF file for writing", path().string());
 	}
 
-	for (int i = 0; i < _length; ++i) {
+	for (int i = 0; i < _intrinsic_duration; ++i) {
 
 		string const path = get_path (i);
 
@@ -208,7 +208,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 		}
 
 		if (_progress) {
-			(*_progress) (0.5 * float (i) / _length);
+			(*_progress) (0.5 * float (i) / _intrinsic_duration);
 		}
 	}
 	
@@ -240,7 +240,7 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, li
 	shared_ptr<const MonoPictureAsset> other_picture = dynamic_pointer_cast<const MonoPictureAsset> (other);
 	assert (other_picture);
 
-	for (int i = 0; i < _length; ++i) {
+	for (int i = 0; i < _intrinsic_duration; ++i) {
 		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
 		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
 		
@@ -266,7 +266,7 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 	shared_ptr<const StereoPictureAsset> other_picture = dynamic_pointer_cast<const StereoPictureAsset> (other);
 	assert (other_picture);
 
-	for (int i = 0; i < _length; ++i) {
+	for (int i = 0; i < _intrinsic_duration; ++i) {
 		shared_ptr<const StereoPictureFrame> frame_A = get_frame (i);
 		shared_ptr<const StereoPictureFrame> frame_B = other_picture->get_frame (i);
 		
@@ -356,8 +356,8 @@ PictureAsset::frame_buffer_equals (
 }
 
 
-StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int length)
-	: PictureAsset (directory, mxf_name, 0, fps, length)
+StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int intrinsic_duration)
+	: PictureAsset (directory, mxf_name, 0, fps, intrinsic_duration)
 {
 	ASDCP::JP2K::MXFSReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {

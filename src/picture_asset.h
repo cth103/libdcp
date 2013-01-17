@@ -35,7 +35,7 @@ class StereoPictureFrame;
 class PictureAsset : public MXFAsset
 {
 public:
-	PictureAsset (std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int length);
+	PictureAsset (std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration);
 	
 	/** Write details of this asset to a CPL stream.
 	 *  @param s Stream.
@@ -70,7 +70,7 @@ public:
 	 *  @param mxf_name Name of MXF file to create.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
-	 *  @param length Length in frames.
+	 *  @param intrinsic_duration Length of the whole asset in frames.
 	 *  @param size Size of images in pixels.
 	 */
 	MonoPictureAsset (
@@ -79,7 +79,7 @@ public:
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
-		int length,
+		int intrinsic_duration,
 		Size size
 		);
 
@@ -90,7 +90,7 @@ public:
 	 *  @param mxf_name Name of MXF file to create.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
-	 *  @param length Length in frames.
+	 *  @param intrinsic_duration Length of the whole asset in frames.
 	 *  @param size Size of images in pixels.
 	 */
 	MonoPictureAsset (
@@ -99,11 +99,11 @@ public:
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
-		int length,
+		int intrinsic_duration,
 		Size size
 		);
 
-	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, int length);
+	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, int intrinsic_duration);
 	
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
@@ -117,7 +117,7 @@ private:
 class StereoPictureAsset : public PictureAsset
 {
 public:
-	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, int length);
+	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, int intrinsic_duration);
 	
 	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;

@@ -42,9 +42,9 @@ using boost::lexical_cast;
 using namespace libdcp;
 
 SoundAsset::SoundAsset (
-	vector<string> const & files, string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int length, int start_frame
+	vector<string> const & files, string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, int start_frame
 	)
-	: MXFAsset (directory, mxf_name, progress, fps, length)
+	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 	, _channels (files.size ())
 	, _sampling_rate (0)
 	, _start_frame (start_frame)
@@ -59,9 +59,9 @@ SoundAsset::SoundAsset (
 	string directory,
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
-	int fps, int length, int start_frame, int channels
+	int fps, int intrinsic_duration, int start_frame, int channels
 	)
-	: MXFAsset (directory, mxf_name, progress, fps, length)
+	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 	, _channels (channels)
 	, _sampling_rate (0)
 	, _start_frame (start_frame)
@@ -71,8 +71,8 @@ SoundAsset::SoundAsset (
 	construct (get_path);
 }
 
-SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int length)
-	: MXFAsset (directory, mxf_name, 0, fps, length)
+SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int intrinsic_duration)
+	: MXFAsset (directory, mxf_name, 0, fps, intrinsic_duration)
 	, _channels (0)
 	, _start_frame (0)
 {
@@ -169,7 +169,7 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 		}
 	}
 	
-	for (int i = 0; i < _length; ++i) {
+	for (int i = 0; i < _intrinsic_duration; ++i) {
 
 		for (int j = 0; j < _channels; ++j) {
 			memset (frame_buffer_channel[j].Data(), 0, frame_buffer_channel[j].Capacity());
@@ -197,7 +197,7 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 		}
 
 		if (_progress) {
-			(*_progress) (0.5 * float (i) / _length);
+			(*_progress) (0.5 * float (i) / _intrinsic_duration);
 		}
 	}
 
@@ -213,9 +213,9 @@ SoundAsset::write_to_cpl (ostream& s) const
 	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
 	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
 	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
-	  << "          <IntrinsicDuration>" << _length << "</IntrinsicDuration>\n"
+	  << "          <IntrinsicDuration>" << _intrinsic_duration << "</IntrinsicDuration>\n"
 	  << "          <EntryPoint>0</EntryPoint>\n"
-	  << "          <Duration>" << _length << "</Duration>\n"
+	  << "          <Duration>" << _intrinsic_duration << "</Duration>\n"
 	  << "        </MainSound>\n";
 }
 
@@ -265,7 +265,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<str
 	ASDCP::PCM::FrameBuffer buffer_A (1 * Kumu::Megabyte);
 	ASDCP::PCM::FrameBuffer buffer_B (1 * Kumu::Megabyte);
 	
-	for (int i = 0; i < _length; ++i) {
+	for (int i = 0; i < _intrinsic_duration; ++i) {
 		if (ASDCP_FAILURE (reader_A.ReadFrame (i, buffer_A))) {
 			throw DCPReadError ("could not read audio frame");
 		}
