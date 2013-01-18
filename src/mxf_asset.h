@@ -30,29 +30,45 @@ namespace libdcp
 class MXFAsset : public Asset
 {
 public:
+	/** Construct an MXFAsset.
+	 *  This class will not write anything to disk in this constructor, but subclasses may.
+	 *
+	 *  @param directory Directory where MXF file is.
+	 *  @param file_name Name of MXF file.
+	 */
 	MXFAsset (std::string directory, std::string file_name);
 	
 	/** Construct an MXFAsset.
+	 *  This class will not write anything to disk in this constructor, but subclasses may.
+	 *
 	 *  @param directory Directory where MXF file is.
 	 *  @param file_name Name of MXF file.
-	 *  @param progress Signal to inform of progress.
-	 *  @param fps Frames per second.
+	 *  @param progress Signal to use to inform of progress, or 0.
+	 *  @param edit_rate Edit rate in frames per second (usually equal to the video frame rate).
 	 *  @param intrinsic_duration Duration of the whole asset in frames.
 	 */
-	MXFAsset (std::string directory, std::string file_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration);
+	MXFAsset (std::string directory, std::string file_name, boost::signals2::signal<void (float)>* progress, int edit_rate, int intrinsic_duration);
 
-	void set_entry_point (int e);
-	void set_duration (int d);
-
-	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
+	void set_entry_point (int e) {
+		_entry_point = e;
+	}
 	
-	int intrinsic_duration () const;
-	int frames_per_second () const {
-		return _fps;
+	void set_duration (int d) {
+		_duration = d;
 	}
 
 	void set_intrinsic_duration (int d) {
 		_intrinsic_duration = d;
+	}
+
+	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
+	
+	int intrinsic_duration () const {
+		return _intrinsic_duration;
+	}
+	
+	int edit_rate () const {
+		return _edit_rate;
 	}
 
 	/** Fill in a ADSCP::WriteInfo struct.
@@ -63,10 +79,10 @@ public:
 
 protected:
 
-	/** Signal to emit to report progress */
+	/** Signal to emit to report progress, or 0 */
 	boost::signals2::signal<void (float)>* _progress;
-	/** Frames per second */
-	int _fps;
+	/** The edit rate; this is normally equal to the number of video frames per second */
+	int _edit_rate;
 	/** Start point to present in frames */
 	int _entry_point;
 	/** Total length in frames */

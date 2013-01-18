@@ -39,7 +39,7 @@ using namespace libdcp;
 MXFAsset::MXFAsset (string directory, string file_name)
 	: Asset (directory, file_name)
 	, _progress (0)
-	, _fps (0)
+	, _edit_rate (0)
 	, _entry_point (0)
 	, _intrinsic_duration (0)
 	, _duration (0)
@@ -47,29 +47,16 @@ MXFAsset::MXFAsset (string directory, string file_name)
 
 }
 
-MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration)
+MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int edit_rate, int intrinsic_duration)
 	: Asset (directory, file_name)
 	, _progress (progress)
-	, _fps (fps)
+	, _edit_rate (edit_rate)
 	, _entry_point (0)
 	, _intrinsic_duration (intrinsic_duration)
 	, _duration (intrinsic_duration)
 {
 	
 }
-
-void
-MXFAsset::set_entry_point (int e)
-{
-	_entry_point = e;
-}
-
-void
-MXFAsset::set_duration (int d)
-{
-	_duration = d;
-}
-
 void
 MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid)
 {
@@ -97,8 +84,8 @@ MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions, list<string>& 
 		return false;
 	}
 
-	if (_fps != other_mxf->_fps) {
-		notes.push_back ("MXF frames per second differ");
+	if (_edit_rate != other_mxf->_edit_rate) {
+		notes.push_back ("MXF edit rates differ");
 		return false;
 	}
 	
@@ -113,10 +100,4 @@ MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions, list<string>& 
 	}
 	
 	return true;
-}
-
-int
-MXFAsset::intrinsic_duration () const
-{
-	return _intrinsic_duration;
 }

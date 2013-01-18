@@ -65,11 +65,11 @@ PictureAsset::write_to_cpl (ostream& s) const
 	s << "        <MainPicture>\n"
 	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
 	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
-	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
+	  << "          <EditRate>" << _edit_rate << " 1</EditRate>\n"
 	  << "          <IntrinsicDuration>" << _intrinsic_duration << "</IntrinsicDuration>\n"
 	  << "          <EntryPoint>" << _entry_point << "</EntryPoint>\n"
 	  << "          <Duration>" << _duration << "</Duration>\n"
-	  << "          <FrameRate>" << _fps << " 1</FrameRate>\n"
+	  << "          <FrameRate>" << _edit_rate << " 1</FrameRate>\n"
 	  << "          <ScreenAspectRatio>" << _size.width << " " << _size.height << "</ScreenAspectRatio>\n"
 	  << "        </MainPicture>\n";
 }
@@ -182,7 +182,7 @@ MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name)
 
 	_size.width = desc.StoredWidth;
 	_size.height = desc.StoredHeight;
-	_fps = desc.EditRate.Numerator;
+	_edit_rate = desc.EditRate.Numerator;
 	assert (desc.EditRate.Denominator == 1);
 	_intrinsic_duration = desc.ContainerDuration;
 }
@@ -198,7 +198,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 	
 	ASDCP::JP2K::PictureDescriptor picture_desc;
 	j2k_parser.FillPictureDescriptor (picture_desc);
-	picture_desc.EditRate = ASDCP::Rational (_fps, 1);
+	picture_desc.EditRate = ASDCP::Rational (_edit_rate, 1);
 	
 	ASDCP::WriterInfo writer_info;
 	fill_writer_info (&writer_info, _uuid);
@@ -400,6 +400,9 @@ MonoPictureAsset::start_write ()
 	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this));
 }
 
+/** @param a Asset to write to.  `a' must not be deleted while
+ *  this writer class still exists, or bad things will happen.
+ */
 MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a)
 	: _frame_buffer (4 * Kumu::Megabyte)
 	, _asset (a)
@@ -412,13 +415,17 @@ MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a)
 void
 MonoPictureAssetWriter::write (uint8_t* data, int size)
 {
+	assert (!_finalized);
+	
 	if (ASDCP_FAILURE (_j2k_parser.OpenReadFrame (data, size, _frame_buffer))) {
 		throw MiscError ("could not parse J2K frame");
 	}
 
 	if (_frames_written == 0) {
+		/* This is our first frame; set up the writer */
+		
 		_j2k_parser.FillPictureDescriptor (_picture_descriptor);
-		_picture_descriptor.EditRate = ASDCP::Rational (_asset->frames_per_second(), 1);
+		_picture_descriptor.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
 	
 		MXFAsset::fill_writer_info (&_writer_info, _asset->uuid());
 		

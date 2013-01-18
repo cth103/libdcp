@@ -92,7 +92,7 @@ SoundAsset::SoundAsset (string directory, string mxf_name)
 
 	_sampling_rate = desc.AudioSamplingRate.Numerator / desc.AudioSamplingRate.Denominator;
 	_channels = desc.ChannelCount;
-	_fps = desc.EditRate.Numerator;
+	_edit_rate = desc.EditRate.Numerator;
 	assert (desc.EditRate.Denominator == 1);
 	_intrinsic_duration = desc.ContainerDuration;
 }
@@ -117,10 +117,10 @@ SoundAsset::path_from_channel (Channel channel, vector<string> const & files)
 void
 SoundAsset::construct (boost::function<string (Channel)> get_path)
 {
-	ASDCP::Rational asdcp_fps (_fps, 1);
+	ASDCP::Rational asdcp_edit_rate (_edit_rate, 1);
 
  	ASDCP::PCM::WAVParser pcm_parser_channel[_channels];
-	if (pcm_parser_channel[0].OpenRead (get_path(LEFT).c_str(), asdcp_fps)) {
+	if (pcm_parser_channel[0].OpenRead (get_path(LEFT).c_str(), asdcp_edit_rate)) {
 		throw FileError ("could not open WAV file for reading", get_path(LEFT));
 	}
 	
@@ -128,7 +128,7 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 	pcm_parser_channel[0].FillAudioDescriptor (audio_desc);
 	audio_desc.ChannelCount = 0;
 	audio_desc.BlockAlign = 0;
-	audio_desc.EditRate = asdcp_fps;
+	audio_desc.EditRate = asdcp_edit_rate;
 	audio_desc.AvgBps = audio_desc.AvgBps * _channels;
 
 	Channel channels[] = {
@@ -152,7 +152,7 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 
 		string const path = get_path (channels[i]);
 		
-		if (ASDCP_FAILURE (pcm_parser_channel[i].OpenRead (path.c_str(), asdcp_fps))) {
+		if (ASDCP_FAILURE (pcm_parser_channel[i].OpenRead (path.c_str(), asdcp_edit_rate))) {
 			throw FileError ("could not open WAV file for reading", path);
 		}
 
@@ -227,7 +227,7 @@ SoundAsset::write_to_cpl (ostream& s) const
 	s << "        <MainSound>\n"
 	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
 	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
-	  << "          <EditRate>" << _fps << " 1</EditRate>\n"
+	  << "          <EditRate>" << _edit_rate << " 1</EditRate>\n"
 	  << "          <IntrinsicDuration>" << _intrinsic_duration << "</IntrinsicDuration>\n"
 	  << "          <EntryPoint>" << _entry_point << "</EntryPoint>\n"
 	  << "          <Duration>" << _duration << "</Duration>\n"
@@ -328,7 +328,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
 	, _frame_buffer_offset (0)
 {
 	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
-	_audio_desc.EditRate = ASDCP::Rational (_asset->frames_per_second(), 1);
+	_audio_desc.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
 	_audio_desc.AudioSamplingRate = ASDCP::Rational (_asset->sampling_rate(), 0);
 	_audio_desc.Locked = 0;
 	_audio_desc.ChannelCount = _asset->channels ();
