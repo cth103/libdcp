@@ -46,8 +46,9 @@ using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace libdcp;
 
-PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration)
+PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, Size size)
 	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
+	, _size (size)
 {
 
 }
@@ -136,9 +137,8 @@ MonoPictureAsset::MonoPictureAsset (
 	int fps,
 	int intrinsic_duration,
 	Size size)
-	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration)
+	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, size)
 {
-	_size = size;
 	construct (get_path);
 }
 
@@ -150,14 +150,19 @@ MonoPictureAsset::MonoPictureAsset (
 	int fps,
 	int intrinsic_duration,
 	Size size)
-	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration)
+	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, size)
 {
-	_size = size;
 	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files));
 }
 
+MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, Size size)
+	: PictureAsset (directory, mxf_name, 0, fps, 0, size)
+{
+
+}
+
 MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, int intrinsic_duration)
-	: PictureAsset (directory, mxf_name, 0, fps, intrinsic_duration)
+	: PictureAsset (directory, mxf_name, 0, fps, intrinsic_duration, Size (0, 0))
 {
 	ASDCP::JP2K::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
@@ -187,7 +192,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 	picture_desc.EditRate = ASDCP::Rational (_fps, 1);
 	
 	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info);
+	fill_writer_info (&writer_info, _uuid);
 	
 	ASDCP::JP2K::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc))) {
@@ -357,7 +362,7 @@ PictureAsset::frame_buffer_equals (
 
 
 StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int intrinsic_duration)
-	: PictureAsset (directory, mxf_name, 0, fps, intrinsic_duration)
+	: PictureAsset (directory, mxf_name, 0, fps, intrinsic_duration, Size (0, 0))
 {
 	ASDCP::JP2K::MXFSReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
@@ -377,4 +382,61 @@ shared_ptr<const StereoPictureFrame>
 StereoPictureAsset::get_frame (int n) const
 {
 	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n + _entry_point));
+}
+
+shared_ptr<MonoPictureAssetWriter>
+MonoPictureAsset::start_write ()
+{
+	/* XXX: can't we use a shared_ptr here? */
+	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this));
+}
+
+MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a)
+	: _frame_buffer (4 * Kumu::Megabyte)
+	, _asset (a)
+	, _frames_written (0)
+	, _finalized (false)
+{
+
+}
+
+void
+MonoPictureAssetWriter::write (uint8_t* data, int size)
+{
+	if (ASDCP_FAILURE (_j2k_parser.OpenReadFrame (data, size, _frame_buffer))) {
+		throw MiscError ("could not parse J2K frame");
+	}
+
+	if (_frames_written == 0) {
+		_j2k_parser.FillPictureDescriptor (_picture_descriptor);
+		_picture_descriptor.EditRate = ASDCP::Rational (_asset->frames_per_second(), 1);
+	
+		MXFAsset::fill_writer_info (&_writer_info, _asset->uuid());
+		
+		if (ASDCP_FAILURE (_mxf_writer.OpenWrite (_asset->path().c_str(), _writer_info, _picture_descriptor))) {
+			throw MXFFileError ("could not open MXF file for writing", _asset->path().string());
+		}
+	}
+
+	if (ASDCP_FAILURE (_mxf_writer.WriteFrame (_frame_buffer, 0, 0))) {
+		throw MiscError ("error in writing video MXF");
+	}
+
+	_frames_written++;
+}
+
+void
+MonoPictureAssetWriter::finalize ()
+{
+	if (ASDCP_FAILURE (_mxf_writer.Finalize())) {
+		throw MiscError ("error in finalizing video MXF");
+	}
+
+	_finalized = true;
+	_asset->set_intrinsic_duration (_frames_written);
+}
+
+MonoPictureAssetWriter::~MonoPictureAssetWriter ()
+{
+	assert (_finalized);
 }

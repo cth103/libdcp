@@ -70,14 +70,13 @@ public:
 		return _uuid;
 	}
 
+	boost::filesystem::path path () const;
+	
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const = 0;
 
 protected:
-	friend class PictureAsset;
-	friend class SoundAsset;
 	
 	std::string digest () const;
-	boost::filesystem::path path () const;
 
 	/** Directory that our MXF or XML file is in */
 	std::string _directory;

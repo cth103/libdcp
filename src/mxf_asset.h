@@ -45,12 +45,21 @@ public:
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
 	
 	int intrinsic_duration () const;
+	int frames_per_second () const {
+		return _fps;
+	}
 
-protected:
+	void set_intrinsic_duration (int d) {
+		_intrinsic_duration = d;
+	}
+
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
+	 *  @param uuid uuid to use.
 	 */
-	void fill_writer_info (ASDCP::WriterInfo* w) const;
+	static void fill_writer_info (ASDCP::WriterInfo* w, std::string uuid);
+
+protected:
 
 	/** Signal to emit to report progress */
 	boost::signals2::signal<void (float)>* _progress;

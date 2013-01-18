@@ -157,7 +157,7 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 	frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (audio_desc));
 
 	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info);
+	fill_writer_info (&writer_info, _uuid);
 
 	ASDCP::PCM::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, audio_desc))) {

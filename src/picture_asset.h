@@ -22,6 +22,7 @@
  */
 
 #include <openjpeg.h>
+#include "AS_DCP.h"
 #include "mxf_asset.h"
 #include "util.h"
 
@@ -35,7 +36,7 @@ class StereoPictureFrame;
 class PictureAsset : public MXFAsset
 {
 public:
-	PictureAsset (std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration);
+	PictureAsset (std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, Size size);
 	
 	/** Write details of this asset to a CPL stream.
 	 *  @param s Stream.
@@ -57,6 +58,31 @@ protected:
 
 	/** picture size in pixels */
 	Size _size;
+};
+
+class MonoPictureAsset;
+
+class MonoPictureAssetWriter
+{
+public:
+	~MonoPictureAssetWriter ();
+
+	void write (uint8_t* data, int size);
+	void finalize ();
+
+private:
+	friend class MonoPictureAsset;
+	
+	MonoPictureAssetWriter (MonoPictureAsset *);
+
+	ASDCP::JP2K::CodestreamParser _j2k_parser;
+	ASDCP::JP2K::FrameBuffer _frame_buffer;
+	ASDCP::JP2K::MXFWriter _mxf_writer;
+	ASDCP::WriterInfo _writer_info;
+	ASDCP::JP2K::PictureDescriptor _picture_descriptor;
+	MonoPictureAsset* _asset;
+	int _frames_written;
+	bool _finalized;
 };
 
 /** A 2D (monoscopic) picture asset */
@@ -102,6 +128,15 @@ public:
 		int intrinsic_duration,
 		Size size
 		);
+
+	MonoPictureAsset (
+		std::string directory,
+		std::string mxf_name,
+		int fps,
+		Size size
+		);
+
+	boost::shared_ptr<MonoPictureAssetWriter> start_write ();
 
 	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, int intrinsic_duration);
 	

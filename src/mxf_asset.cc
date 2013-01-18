@@ -60,7 +60,7 @@ MXFAsset::set_duration (int d)
 }
 
 void
-MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
+MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid)
 {
 	writer_info->ProductVersion = Metadata::instance()->product_version;
 	writer_info->CompanyName = Metadata::instance()->company_name;
@@ -68,7 +68,7 @@ MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
 
 	writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
 	unsigned int c;
-	Kumu::hex2bin (_uuid.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
+	Kumu::hex2bin (uuid.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
 	assert (c == Kumu::UUID_Length);
 }
 
