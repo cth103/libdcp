@@ -36,6 +36,7 @@ class StereoPictureFrame;
 class PictureAsset : public MXFAsset
 {
 public:
+	PictureAsset (std::string directory, std::string mxf_name);
 	PictureAsset (std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, Size size);
 	
 	/** Write details of this asset to a CPL stream.
@@ -129,17 +130,12 @@ public:
 		Size size
 		);
 
-	MonoPictureAsset (
-		std::string directory,
-		std::string mxf_name,
-		int fps,
-		Size size
-		);
+	MonoPictureAsset (std::string directory, std::string mxf_name);
+	
+	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
 
 	boost::shared_ptr<MonoPictureAssetWriter> start_write ();
 
-	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, int intrinsic_duration);
-	
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
 

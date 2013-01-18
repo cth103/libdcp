@@ -53,6 +53,12 @@ PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::
 
 }
 
+PictureAsset::PictureAsset (string directory, string mxf_name)
+	: MXFAsset (directory, mxf_name)
+{
+
+}
+
 void
 PictureAsset::write_to_cpl (ostream& s) const
 {
@@ -161,8 +167,8 @@ MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, 
 
 }
 
-MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, int intrinsic_duration)
-	: PictureAsset (directory, mxf_name, 0, fps, intrinsic_duration, Size (0, 0))
+MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name)
+	: PictureAsset (directory, mxf_name)
 {
 	ASDCP::JP2K::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
@@ -176,6 +182,9 @@ MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, 
 
 	_size.width = desc.StoredWidth;
 	_size.height = desc.StoredHeight;
+	_fps = desc.EditRate.Numerator;
+	assert (desc.EditRate.Denominator == 1);
+	_intrinsic_duration = desc.ContainerDuration;
 }
 
 void
@@ -434,6 +443,7 @@ MonoPictureAssetWriter::finalize ()
 
 	_finalized = true;
 	_asset->set_intrinsic_duration (_frames_written);
+	_asset->set_duration (_frames_written);
 }
 
 MonoPictureAssetWriter::~MonoPictureAssetWriter ()

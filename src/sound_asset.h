@@ -24,13 +24,40 @@
  *  @brief An asset made up of PCM audio data files
  */
 
+#include "AS_DCP.h"
 #include "mxf_asset.h"
 #include "types.h"
 
 namespace libdcp
 {
 
-class SoundFrame;	
+class SoundFrame;
+
+class SoundAsset;
+
+class SoundAssetWriter
+{
+public:
+	~SoundAssetWriter ();
+
+	void write (float const * const *, int);
+	void finalize ();
+
+private:
+	friend class SoundAsset;
+
+	SoundAssetWriter (SoundAsset *);
+	void write_current_frame ();
+
+	SoundAsset* _asset;
+	bool _finalized;
+	int _frames_written;
+	int _frame_buffer_offset;
+	ASDCP::PCM::MXFWriter _mxf_writer;
+	ASDCP::PCM::FrameBuffer _frame_buffer;
+	ASDCP::WriterInfo _writer_info;
+	ASDCP::PCM::AudioDescriptor _audio_desc;
+};
 
 /** @brief An asset made up of WAV files */
 class SoundAsset : public MXFAsset
@@ -82,10 +109,18 @@ public:
 
 	SoundAsset (
 		std::string directory,
+		std::string mxf_name
+		);
+
+	SoundAsset (
+		std::string directory,
 		std::string mxf_name,
 		int fps,
-		int intrinsic_duration
+		int channels,
+		int sampling_rate
 		);
+
+	boost::shared_ptr<SoundAssetWriter> start_write ();
 	
 	/** Write details of this asset to a CPL stream.
 	 *  @param s Stream.

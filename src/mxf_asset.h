@@ -30,6 +30,8 @@ namespace libdcp
 class MXFAsset : public Asset
 {
 public:
+	MXFAsset (std::string directory, std::string file_name);
+	
 	/** Construct an MXFAsset.
 	 *  @param directory Directory where MXF file is.
 	 *  @param file_name Name of MXF file.

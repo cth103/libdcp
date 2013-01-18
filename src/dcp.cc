@@ -361,9 +361,7 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 			try {
 				picture.reset (new MonoPictureAsset (
 						       _directory,
-						       asset_map->asset_from_id (p->id)->chunks.front()->path,
-						       _fps,
-						       (*i)->asset_list->main_picture->duration
+						       asset_map->asset_from_id (p->id)->chunks.front()->path
 						       )
 					);
 
@@ -400,9 +398,7 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 			try {
 				sound.reset (new SoundAsset (
 						     _directory,
-						     asset_map->asset_from_id ((*i)->asset_list->main_sound->id)->chunks.front()->path,
-						     _fps,
-						     (*i)->asset_list->main_sound->duration
+						     asset_map->asset_from_id ((*i)->asset_list->main_sound->id)->chunks.front()->path
 						     )
 					);
 

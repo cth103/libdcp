@@ -75,8 +75,8 @@ SoundAsset::SoundAsset (
 	construct (get_path);
 }
 
-SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int intrinsic_duration)
-	: MXFAsset (directory, mxf_name, 0, fps, intrinsic_duration)
+SoundAsset::SoundAsset (string directory, string mxf_name)
+	: MXFAsset (directory, mxf_name)
 	, _channels (0)
 	, _start_frame (0)
 {
@@ -85,7 +85,6 @@ SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int intrinsi
 		throw MXFFileError ("could not open MXF file for reading", path().string());
 	}
 
-	
 	ASDCP::PCM::AudioDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillAudioDescriptor (desc))) {
 		throw DCPReadError ("could not read audio MXF information");
@@ -93,6 +92,18 @@ SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int intrinsi
 
 	_sampling_rate = desc.AudioSamplingRate.Numerator / desc.AudioSamplingRate.Denominator;
 	_channels = desc.ChannelCount;
+	_fps = desc.EditRate.Numerator;
+	assert (desc.EditRate.Denominator == 1);
+	_intrinsic_duration = desc.ContainerDuration;
+}
+
+SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int channels, int sampling_rate)
+	: MXFAsset (directory, mxf_name, 0, fps, 0)
+	, _channels (channels)
+	, _sampling_rate (sampling_rate)
+	, _start_frame (0)
+{
+
 }
 
 string
@@ -157,7 +168,7 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 	frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (audio_desc));
 
 	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info, _uuid);
+	MXFAsset::fill_writer_info (&writer_info, _uuid);
 
 	ASDCP::PCM::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, audio_desc))) {
@@ -301,4 +312,97 @@ shared_ptr<const SoundFrame>
 SoundAsset::get_frame (int n) const
 {
 	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n + _entry_point));
+}
+
+shared_ptr<SoundAssetWriter>
+SoundAsset::start_write ()
+{
+	/* XXX: can't we use a shared_ptr here? */
+	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter (this));
+}
+
+SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
+	: _asset (a)
+	, _finalized (false)
+	, _frames_written (0)
+	, _frame_buffer_offset (0)
+{
+	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
+	_audio_desc.EditRate = ASDCP::Rational (_asset->frames_per_second(), 1);
+	_audio_desc.AudioSamplingRate = ASDCP::Rational (_asset->sampling_rate(), 0);
+	_audio_desc.Locked = 0;
+	_audio_desc.ChannelCount = _asset->channels ();
+	_audio_desc.QuantizationBits = 24;
+	_audio_desc.BlockAlign = 3 * _asset->channels();
+	_audio_desc.AvgBps = _asset->sampling_rate() * _audio_desc.BlockAlign;
+	_audio_desc.LinkedTrackID = 0;
+	_audio_desc.ChannelFormat = ASDCP::PCM::CF_NONE;
+	
+	_frame_buffer.Capacity (ASDCP::PCM::CalcFrameBufferSize (_audio_desc));
+	_frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_audio_desc));
+	memset (_frame_buffer.Data(), 0, _frame_buffer.Capacity());
+	
+	MXFAsset::fill_writer_info (&_writer_info, _asset->uuid ());
+	
+	if (ASDCP_FAILURE (_mxf_writer.OpenWrite (_asset->path().c_str(), _writer_info, _audio_desc))) {
+		throw FileError ("could not open audio MXF for writing", _asset->path().string());
+	}
+}
+
+void
+SoundAssetWriter::write (float const * const * data, int frames)
+{
+	for (int i = 0; i < frames; ++i) {
+
+		byte_t* out = _frame_buffer.Data() + _frame_buffer_offset;
+
+		/* Write one sample per channel */
+		for (int j = 0; j < _asset->channels(); ++j) {
+			int32_t const s = data[j][i] * (1 << 23);
+			*out++ = (s & 0xff);
+			*out++ = (s & 0xff00) >> 8;
+			*out++ = (s & 0xff0000) >> 16;
+		}
+		_frame_buffer_offset += 3 * _asset->channels();
+
+		assert (_frame_buffer_offset <= int (_frame_buffer.Capacity()));
+
+		/* Finish the MXF frame if required */
+		if (_frame_buffer_offset == int (_frame_buffer.Capacity())) {
+			write_current_frame ();
+			_frame_buffer_offset = 0;
+			memset (_frame_buffer.Data(), 0, _frame_buffer.Capacity());
+		}
+	}
+}
+
+void
+SoundAssetWriter::write_current_frame ()
+{
+	if (ASDCP_FAILURE (_mxf_writer.WriteFrame (_frame_buffer, 0, 0))) {
+		throw MiscError ("could not write audio MXF frame");
+	}
+
+	++_frames_written;
+}
+
+void
+SoundAssetWriter::finalize ()
+{
+	if (_frame_buffer_offset > 0) {
+		write_current_frame ();
+	}
+	
+	if (ASDCP_FAILURE (_mxf_writer.Finalize())) {
+		throw MiscError ("could not finalise audio MXF");
+	}
+
+	_finalized = true;
+	_asset->set_intrinsic_duration (_frames_written);
+	_asset->set_duration (_frames_written);
+}
+
+SoundAssetWriter::~SoundAssetWriter ()
+{
+	assert (_finalized);
 }
