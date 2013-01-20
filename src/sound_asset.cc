@@ -329,7 +329,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
 {
 	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
 	_audio_desc.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
-	_audio_desc.AudioSamplingRate = ASDCP::Rational (_asset->sampling_rate(), 0);
+	_audio_desc.AudioSamplingRate = ASDCP::Rational (_asset->sampling_rate(), 1);
 	_audio_desc.Locked = 0;
 	_audio_desc.ChannelCount = _asset->channels ();
 	_audio_desc.QuantizationBits = 24;
