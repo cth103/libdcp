@@ -321,30 +321,39 @@ SoundAsset::start_write ()
 	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter (this));
 }
 
+struct SoundAssetWriter::ASDCPState
+{
+	ASDCP::PCM::MXFWriter mxf_writer;
+	ASDCP::PCM::FrameBuffer frame_buffer;
+	ASDCP::WriterInfo writer_info;
+	ASDCP::PCM::AudioDescriptor audio_desc;
+};
+
 SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
-	: _asset (a)
+	: _state (new SoundAssetWriter::ASDCPState)
+	, _asset (a)
 	, _finalized (false)
 	, _frames_written (0)
 	, _frame_buffer_offset (0)
 {
 	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
-	_audio_desc.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
-	_audio_desc.AudioSamplingRate = ASDCP::Rational (_asset->sampling_rate(), 1);
-	_audio_desc.Locked = 0;
-	_audio_desc.ChannelCount = _asset->channels ();
-	_audio_desc.QuantizationBits = 24;
-	_audio_desc.BlockAlign = 3 * _asset->channels();
-	_audio_desc.AvgBps = _asset->sampling_rate() * _audio_desc.BlockAlign;
-	_audio_desc.LinkedTrackID = 0;
-	_audio_desc.ChannelFormat = ASDCP::PCM::CF_NONE;
+	_state->audio_desc.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
+	_state->audio_desc.AudioSamplingRate = ASDCP::Rational (_asset->sampling_rate(), 1);
+	_state->audio_desc.Locked = 0;
+	_state->audio_desc.ChannelCount = _asset->channels ();
+	_state->audio_desc.QuantizationBits = 24;
+	_state->audio_desc.BlockAlign = 3 * _asset->channels();
+	_state->audio_desc.AvgBps = _asset->sampling_rate() * _state->audio_desc.BlockAlign;
+	_state->audio_desc.LinkedTrackID = 0;
+	_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_NONE;
 	
-	_frame_buffer.Capacity (ASDCP::PCM::CalcFrameBufferSize (_audio_desc));
-	_frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_audio_desc));
-	memset (_frame_buffer.Data(), 0, _frame_buffer.Capacity());
+	_state->frame_buffer.Capacity (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
+	_state->frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
+	memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
 	
-	MXFAsset::fill_writer_info (&_writer_info, _asset->uuid ());
+	MXFAsset::fill_writer_info (&_state->writer_info, _asset->uuid ());
 	
-	if (ASDCP_FAILURE (_mxf_writer.OpenWrite (_asset->path().c_str(), _writer_info, _audio_desc))) {
+	if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (_asset->path().c_str(), _state->writer_info, _state->audio_desc))) {
 		throw FileError ("could not open audio MXF for writing", _asset->path().string());
 	}
 }
@@ -354,7 +363,7 @@ SoundAssetWriter::write (float const * const * data, int frames)
 {
 	for (int i = 0; i < frames; ++i) {
 
-		byte_t* out = _frame_buffer.Data() + _frame_buffer_offset;
+		byte_t* out = _state->frame_buffer.Data() + _frame_buffer_offset;
 
 		/* Write one sample per channel */
 		for (int j = 0; j < _asset->channels(); ++j) {
@@ -365,13 +374,13 @@ SoundAssetWriter::write (float const * const * data, int frames)
 		}
 		_frame_buffer_offset += 3 * _asset->channels();
 
-		assert (_frame_buffer_offset <= int (_frame_buffer.Capacity()));
+		assert (_frame_buffer_offset <= int (_state->frame_buffer.Capacity()));
 
 		/* Finish the MXF frame if required */
-		if (_frame_buffer_offset == int (_frame_buffer.Capacity())) {
+		if (_frame_buffer_offset == int (_state->frame_buffer.Capacity())) {
 			write_current_frame ();
 			_frame_buffer_offset = 0;
-			memset (_frame_buffer.Data(), 0, _frame_buffer.Capacity());
+			memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
 		}
 	}
 }
@@ -379,7 +388,7 @@ SoundAssetWriter::write (float const * const * data, int frames)
 void
 SoundAssetWriter::write_current_frame ()
 {
-	if (ASDCP_FAILURE (_mxf_writer.WriteFrame (_frame_buffer, 0, 0))) {
+	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, 0, 0))) {
 		throw MiscError ("could not write audio MXF frame");
 	}
 
@@ -393,7 +402,7 @@ SoundAssetWriter::finalize ()
 		write_current_frame ();
 	}
 	
-	if (ASDCP_FAILURE (_mxf_writer.Finalize())) {
+	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
 		throw MiscError ("could not finalise audio MXF");
 	}
 

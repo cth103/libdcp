@@ -22,7 +22,6 @@
  */
 
 #include <openjpeg.h>
-#include "AS_DCP.h"
 #include "mxf_asset.h"
 #include "util.h"
 
@@ -100,14 +99,20 @@ public:
 
 private:
 	friend class MonoPictureAsset;
-	
+
 	MonoPictureAssetWriter (MonoPictureAsset *);
 
-	ASDCP::JP2K::CodestreamParser _j2k_parser;
-	ASDCP::JP2K::FrameBuffer _frame_buffer;
-	ASDCP::JP2K::MXFWriter _mxf_writer;
-	ASDCP::WriterInfo _writer_info;
-	ASDCP::JP2K::PictureDescriptor _picture_descriptor;
+	/* no copy construction */
+	MonoPictureAssetWriter (MonoPictureAssetWriter const &);
+	MonoPictureAssetWriter& operator= (MonoPictureAssetWriter const &);
+
+	/* do this with an opaque pointer so we don't have to include
+	   ASDCP headers
+	*/
+	   
+	struct ASDCPState;
+	boost::shared_ptr<ASDCPState> _state;
+
 	MonoPictureAsset* _asset;
 	/** Number of picture frames written to the asset so far */
 	int _frames_written;

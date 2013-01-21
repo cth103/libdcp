@@ -24,7 +24,6 @@
  *  @brief An asset made up of PCM audio data files
  */
 
-#include "AS_DCP.h"
 #include "mxf_asset.h"
 #include "types.h"
 
@@ -47,16 +46,24 @@ private:
 	friend class SoundAsset;
 
 	SoundAssetWriter (SoundAsset *);
+
+	/* no copy construction */
+	SoundAssetWriter (SoundAssetWriter const &);
+	SoundAssetWriter& operator= (SoundAssetWriter const &);
+	
 	void write_current_frame ();
+
+	/* do this with an opaque pointer so we don't have to include
+	   ASDCP headers
+	*/
+	   
+	struct ASDCPState;
+	boost::shared_ptr<ASDCPState> _state;
 
 	SoundAsset* _asset;
 	bool _finalized;
 	int _frames_written;
 	int _frame_buffer_offset;
-	ASDCP::PCM::MXFWriter _mxf_writer;
-	ASDCP::PCM::FrameBuffer _frame_buffer;
-	ASDCP::WriterInfo _writer_info;
-	ASDCP::PCM::AudioDescriptor _audio_desc;
 };
 
 /** @brief An asset made up of WAV files */

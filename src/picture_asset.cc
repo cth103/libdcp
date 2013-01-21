@@ -400,11 +400,25 @@ MonoPictureAsset::start_write ()
 	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this));
 }
 
+struct MonoPictureAssetWriter::ASDCPState
+{
+	ASDCPState()
+		: frame_buffer (4 * Kumu::Megabyte)
+	{}
+	
+	ASDCP::JP2K::CodestreamParser j2k_parser;
+	ASDCP::JP2K::FrameBuffer frame_buffer;
+	ASDCP::JP2K::MXFWriter mxf_writer;
+	ASDCP::WriterInfo writer_info;
+	ASDCP::JP2K::PictureDescriptor picture_descriptor;
+};
+
+
 /** @param a Asset to write to.  `a' must not be deleted while
  *  this writer class still exists, or bad things will happen.
  */
 MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a)
-	: _frame_buffer (4 * Kumu::Megabyte)
+	: _state (new MonoPictureAssetWriter::ASDCPState)
 	, _asset (a)
 	, _frames_written (0)
 	, _finalized (false)
@@ -417,24 +431,24 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 {
 	assert (!_finalized);
 	
-	if (ASDCP_FAILURE (_j2k_parser.OpenReadFrame (data, size, _frame_buffer))) {
+	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
 		throw MiscError ("could not parse J2K frame");
 	}
 
 	if (_frames_written == 0) {
 		/* This is our first frame; set up the writer */
 		
-		_j2k_parser.FillPictureDescriptor (_picture_descriptor);
-		_picture_descriptor.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
+		_state->j2k_parser.FillPictureDescriptor (_state->picture_descriptor);
+		_state->picture_descriptor.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
 	
-		MXFAsset::fill_writer_info (&_writer_info, _asset->uuid());
+		MXFAsset::fill_writer_info (&_state->writer_info, _asset->uuid());
 		
-		if (ASDCP_FAILURE (_mxf_writer.OpenWrite (_asset->path().c_str(), _writer_info, _picture_descriptor))) {
+		if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (_asset->path().c_str(), _state->writer_info, _state->picture_descriptor))) {
 			throw MXFFileError ("could not open MXF file for writing", _asset->path().string());
 		}
 	}
 
-	if (ASDCP_FAILURE (_mxf_writer.WriteFrame (_frame_buffer, 0, 0))) {
+	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, 0, 0))) {
 		throw MiscError ("error in writing video MXF");
 	}
 
@@ -444,7 +458,7 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 void
 MonoPictureAssetWriter::finalize ()
 {
-	if (ASDCP_FAILURE (_mxf_writer.Finalize())) {
+	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
 		throw MiscError ("error in finalizing video MXF");
 	}
 
