@@ -443,7 +443,7 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 	
 		MXFAsset::fill_writer_info (&_state->writer_info, _asset->uuid());
 		
-		if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (_asset->path().c_str(), _state->writer_info, _state->picture_descriptor))) {
+		if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->picture_descriptor))) {
 			throw MXFFileError ("could not open MXF file for writing", _asset->path().string());
 		}
 	}
