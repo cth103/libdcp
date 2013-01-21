@@ -344,7 +344,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
 	
 	MXFAsset::fill_writer_info (&_writer_info, _asset->uuid ());
 	
-	if (ASDCP_FAILURE (_mxf_writer.OpenWrite (_asset->path().c_str(), _writer_info, _audio_desc))) {
+	if (ASDCP_FAILURE (_mxf_writer.OpenWrite (_asset->path().string().c_str(), _writer_info, _audio_desc))) {
 		throw FileError ("could not open audio MXF for writing", _asset->path().string());
 	}
 }
