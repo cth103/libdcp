@@ -78,7 +78,6 @@ public:
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param intrinsic_duration Length of the whole asset in frames.
-	 *  @param start_frame Frame in the source to start writing from.
 	 *  Note that this is different to entry_point in that the asset will contain no data before start_frame.
 	 */
 	SoundAsset (
@@ -87,8 +86,7 @@ public:
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
-		int intrinsic_duration,
-		int start_frame
+		int intrinsic_duration
 		);
 
 	/** Construct a SoundAsset, generating the MXF from some WAV files.
@@ -99,8 +97,6 @@ public:
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
 	 *  @param intrinsic_duration Length of the whole asset in frames.
-	 *  @param start_frame Frame in the source to start writing from.
-	 *  Note that this is different to entry_point in that the asset will contain no data before start_frame.
 	 *  @param channels Number of audio channels.
 	 */
 	SoundAsset (
@@ -110,7 +106,6 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int intrinsic_duration,
-		int start_frame,
 		int channels
 		);
 
@@ -153,7 +148,6 @@ private:
 	/** Number of channels in the asset */
 	int _channels;
 	int _sampling_rate;
-	int _start_frame;
 };
 
 }

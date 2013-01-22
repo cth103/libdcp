@@ -46,12 +46,11 @@ SoundAsset::SoundAsset (
 	string directory,
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
-	int fps, int intrinsic_duration, int start_frame
+	int fps, int intrinsic_duration
 	)
 	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 	, _channels (files.size ())
 	, _sampling_rate (0)
-	, _start_frame (start_frame)
 {
 	assert (_channels);
 	
@@ -63,12 +62,11 @@ SoundAsset::SoundAsset (
 	string directory,
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
-	int fps, int intrinsic_duration, int start_frame, int channels
+	int fps, int intrinsic_duration, int channels
 	)
 	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 	, _channels (channels)
 	, _sampling_rate (0)
-	, _start_frame (start_frame)
 {
 	assert (_channels);
 	
@@ -78,7 +76,6 @@ SoundAsset::SoundAsset (
 SoundAsset::SoundAsset (string directory, string mxf_name)
 	: MXFAsset (directory, mxf_name)
 	, _channels (0)
-	, _start_frame (0)
 {
 	ASDCP::PCM::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
@@ -101,7 +98,6 @@ SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int channels
 	: MXFAsset (directory, mxf_name, 0, fps, 0)
 	, _channels (channels)
 	, _sampling_rate (sampling_rate)
-	, _start_frame (0)
 {
 
 }
@@ -173,15 +169,6 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 	ASDCP::PCM::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, audio_desc))) {
 		throw FileError ("could not open audio MXF for writing", path().string());
-	}
-
-	/* Skip through up to our _start_frame; this is pretty inefficient... */
-	for (int i = 0; i < _start_frame; ++i) {
-		for (int j = 0; j < _channels; ++j) {
-			if (ASDCP_FAILURE (pcm_parser_channel[j].ReadFrame (frame_buffer_channel[j]))) {
-				throw MiscError ("could not read audio frame");
-			}
-		}
 	}
 	
 	for (int i = 0; i < _intrinsic_duration; ++i) {
