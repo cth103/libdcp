@@ -29,19 +29,10 @@ def configure(conf):
 
     conf.check_cfg(package = 'openssl', args = '--cflags --libs', uselib_store = 'OPENSSL', mandatory = True)
     conf.check_cfg(package = 'libxml++-2.6', args = '--cflags --libs', uselib_store = 'LIBXML++', mandatory = True)
-
-    openjpeg_fragment = """
-    			#include <stdio.h>\n
-			#include <openjpeg.h>\n
-			int main () {\n
-			void* p = (void *) opj_image_create;\n
-			return 0;\n
-			}
-			"""
     if conf.options.static_openjpeg:
         conf.check_cc(fragment = openjpeg_fragment, msg = 'Checking for library openjpeg', stlib = 'openjpeg', uselib_store = 'OPENJPEG')
     else:
-        conf.check_cc(fragment = openjpeg_fragment, msg = 'Checking for library openjpeg', lib = 'openjpeg', uselib_store = 'OPENJPEG')
+        conf.check_cfg(package = 'libopenjpeg', args = '--cflags --libs', uselib_store = 'OPENJPEG', mandatory = True)
 
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'
