@@ -260,8 +260,8 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, li
 		
 		if (!frame_buffer_equals (
 			    i, opt, notes,
-			    frame_A->j2k_frame()->RoData(), frame_A->j2k_frame()->Size(),
-			    frame_B->j2k_frame()->RoData(), frame_B->j2k_frame()->Size()
+			    frame_A->j2k_data(), frame_A->j2k_size(),
+			    frame_B->j2k_data(), frame_B->j2k_size()
 			    )) {
 			return false;
 		}
@@ -286,16 +286,16 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 		
 		if (!frame_buffer_equals (
 			    i, opt, notes,
-			    frame_A->j2k_frame()->Left.RoData(), frame_A->j2k_frame()->Left.Size(),
-			    frame_B->j2k_frame()->Left.RoData(), frame_B->j2k_frame()->Left.Size()
+			    frame_A->left_j2k_data(), frame_A->left_j2k_size(),
+			    frame_B->left_j2k_data(), frame_B->left_j2k_size()
 			    )) {
 			return false;
 		}
 		
 		if (!frame_buffer_equals (
 			    i, opt, notes,
-			    frame_A->j2k_frame()->Right.RoData(), frame_A->j2k_frame()->Right.Size(),
-			    frame_B->j2k_frame()->Right.RoData(), frame_B->j2k_frame()->Right.Size()
+			    frame_A->right_j2k_data(), frame_A->right_j2k_size(),
+			    frame_B->right_j2k_data(), frame_B->right_j2k_size()
 			    )) {
 			return false;
 		}

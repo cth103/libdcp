@@ -54,6 +54,18 @@ MonoPictureFrame::~MonoPictureFrame ()
 	delete _buffer;
 }
 
+uint8_t const *
+MonoPictureFrame::j2k_data () const
+{
+	return _buffer->RoData ();
+}
+
+int
+MonoPictureFrame::j2k_size () const
+{
+	return _buffer->Size ();
+}
+
 /** @param reduce a factor by which to reduce the resolution
  *  of the image, expressed as a power of two (pass 0 for no
  *  reduction).
@@ -126,4 +138,28 @@ StereoPictureFrame::argb_frame (Eye eye, int reduce) const
 	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame);
 	opj_image_destroy (xyz_frame);
 	return f;
+}
+
+uint8_t const *
+StereoPictureFrame::left_j2k_data () const
+{
+	return _buffer->Left.RoData ();
+}
+
+int
+StereoPictureFrame::left_j2k_size () const
+{
+	return _buffer->Left.Size ();
+}
+
+uint8_t const *
+StereoPictureFrame::right_j2k_data () const
+{
+	return _buffer->Right.RoData ();
+}
+
+int
+StereoPictureFrame::right_j2k_size () const
+{
+	return _buffer->Right.Size ();
 }

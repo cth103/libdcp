@@ -71,6 +71,14 @@ public:
 	}
 
 	boost::filesystem::path path () const;
+
+	void set_directory (std::string d) {
+		_directory = d;
+	}
+
+	void set_file_name (std::string f) {
+		_file_name = f;
+	}
 	
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const = 0;
 

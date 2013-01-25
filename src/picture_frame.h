@@ -41,9 +41,8 @@ public:
 	~MonoPictureFrame ();
 
 	boost::shared_ptr<ARGBFrame> argb_frame (int reduce = 0) const;
-	ASDCP::JP2K::FrameBuffer* j2k_frame () const {
-		return _buffer;
-	}
+	uint8_t const * j2k_data () const;
+	int j2k_size () const;
 
 private:
 	ASDCP::JP2K::FrameBuffer* _buffer;
@@ -57,9 +56,10 @@ public:
 	~StereoPictureFrame ();
 
 	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye, int reduce = 0) const;
-	ASDCP::JP2K::SFrameBuffer* j2k_frame () const {
-		return _buffer;
-	}
+	uint8_t const * left_j2k_data () const;
+	int left_j2k_size () const;
+	uint8_t const * right_j2k_data () const;
+	int right_j2k_size () const;
 
 private:
 	ASDCP::JP2K::SFrameBuffer* _buffer;
