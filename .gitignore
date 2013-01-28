@@ -10,3 +10,7 @@ src/lut.cc
 src/lut.h
 *.pyc
 __pycache__
+GPATH
+GRTAGS
+GSYMS
+GTAGS
