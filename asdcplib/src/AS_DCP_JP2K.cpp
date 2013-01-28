@@ -815,7 +815,7 @@ public:
   Result_t OpenWrite(const char*, EssenceType_t type, ui32_t HeaderSize);
   Result_t SetSourceStream(const PictureDescriptor&, const std::string& label,
 			   ASDCP::Rational LocalEditRate = ASDCP::Rational(0,0));
-  Result_t WriteFrame(const JP2K::FrameBuffer&, bool add_index, AESEncContext*, HMACContext*);
+  Result_t WriteFrame(const JP2K::FrameBuffer&, bool add_index, AESEncContext*, HMACContext*, std::string* hash = 0);
   Result_t Finalize();
   Result_t JP2K_PDesc_to_MD(JP2K::PictureDescriptor& PDesc);
 };
@@ -978,7 +978,7 @@ lh__Writer::SetSourceStream(const PictureDescriptor& PDesc, const std::string& l
 //
 ASDCP::Result_t
 lh__Writer::WriteFrame(const JP2K::FrameBuffer& FrameBuf, bool add_index,
-		       AESEncContext* Ctx, HMACContext* HMAC)
+		       AESEncContext* Ctx, HMACContext* HMAC, std::string* hash)
 {
   Result_t result = RESULT_OK;
 
@@ -988,7 +988,7 @@ lh__Writer::WriteFrame(const JP2K::FrameBuffer& FrameBuf, bool add_index,
   ui64_t StreamOffset = m_StreamOffset;
 
   if ( ASDCP_SUCCESS(result) )
-    result = WriteEKLVPacket(FrameBuf, m_EssenceUL, Ctx, HMAC);
+    result = WriteEKLVPacket(FrameBuf, m_EssenceUL, Ctx, HMAC, hash);
 
   if ( ASDCP_SUCCESS(result) && add_index )
     {  
@@ -1099,12 +1099,12 @@ ASDCP::JP2K::MXFWriter::OpenWrite(const char* filename, const WriterInfo& Info,
 // Fails if the file is not open, is finalized, or an operating system
 // error occurs.
 ASDCP::Result_t
-ASDCP::JP2K::MXFWriter::WriteFrame(const FrameBuffer& FrameBuf, AESEncContext* Ctx, HMACContext* HMAC)
+ASDCP::JP2K::MXFWriter::WriteFrame(const FrameBuffer& FrameBuf, AESEncContext* Ctx, HMACContext* HMAC, std::string* hash)
 {
   if ( m_Writer.empty() )
     return RESULT_INIT;
 
-  return m_Writer->WriteFrame(FrameBuf, true, Ctx, HMAC);
+  return m_Writer->WriteFrame(FrameBuf, true, Ctx, HMAC, hash);
 }
 
 // Closes the MXF file, writing the index and other closing information.
@@ -1115,6 +1115,12 @@ ASDCP::JP2K::MXFWriter::Finalize()
     return RESULT_INIT;
 
   return m_Writer->Finalize();
+}
+
+ui64_t
+ASDCP::JP2K::MXFWriter::Tell() const
+{
+	return m_Writer->m_File.Tell();
 }
 
 

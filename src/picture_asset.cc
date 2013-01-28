@@ -41,6 +41,9 @@ using std::ostream;
 using std::list;
 using std::vector;
 using std::max;
+using std::pair;
+using std::make_pair;
+using std::istream;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
@@ -216,7 +219,6 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 			throw FileError ("could not open JPEG2000 file for reading", path);
 		}
 
-		/* XXX: passing 0 to WriteFrame ok? */
 		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, 0, 0))) {
 			throw MiscError ("error in writing video MXF");
 		}
@@ -240,7 +242,7 @@ MonoPictureAsset::path_from_list (int f, vector<string> const & files) const
 shared_ptr<const MonoPictureFrame>
 MonoPictureAsset::get_frame (int n) const
 {
-	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n + _entry_point));
+	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n));
 }
 
 
@@ -390,7 +392,7 @@ StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int f
 shared_ptr<const StereoPictureFrame>
 StereoPictureAsset::get_frame (int n) const
 {
-	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n + _entry_point));
+	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n));
 }
 
 shared_ptr<MonoPictureAssetWriter>
@@ -398,6 +400,17 @@ MonoPictureAsset::start_write ()
 {
 	/* XXX: can't we use a shared_ptr here? */
 	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this));
+}
+
+FrameInfo::FrameInfo (istream& s)
+{
+	s >> offset >> length >> hash;
+}
+
+void
+FrameInfo::write (ostream& s)
+{
+	s << offset << " " << length << " " << hash;
 }
 
 struct MonoPictureAssetWriter::ASDCPState
@@ -426,7 +439,7 @@ MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a)
 
 }
 
-void
+FrameInfo
 MonoPictureAssetWriter::write (uint8_t* data, int size)
 {
 	assert (!_finalized);
@@ -448,11 +461,15 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 		}
 	}
 
-	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, 0, 0))) {
+	uint64_t const before_offset = _state->mxf_writer.Tell ();
+
+	string hash;
+	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, 0, 0, &hash))) {
 		throw MiscError ("error in writing video MXF");
 	}
 
 	_frames_written++;
+	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 
 void

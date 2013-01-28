@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_PICTURE_ASSET_H
+#define LIBDCP_PICTURE_ASSET_H
+
 /** @file  src/picture_asset.h
  *  @brief An asset made up of JPEG2000 files
  */
@@ -79,6 +82,23 @@ protected:
 
 class MonoPictureAsset;
 
+struct FrameInfo
+{
+	FrameInfo (uint64_t o, uint64_t l, std::string h)
+		: offset (o)
+		, length (l)
+		, hash (h)
+	{}
+
+	FrameInfo (std::istream& s);
+
+	void write (std::ostream& s);
+	
+	uint64_t offset;
+	uint64_t length;
+	std::string hash;
+};
+
 /** A helper class for writing to MonoPictureAssets progressively (i.e. writing frame-by-frame,
  *  rather than giving libdcp all the frames in one go).
  *
@@ -94,7 +114,7 @@ class MonoPictureAssetWriter
 public:
 	~MonoPictureAssetWriter ();
 
-	void write (uint8_t* data, int size);
+	FrameInfo write (uint8_t* data, int size);
 	void finalize ();
 
 private:
@@ -205,3 +225,5 @@ public:
 	
 
 }
+
+#endif
