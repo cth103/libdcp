@@ -32,6 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "AS_DCP_internal.h"
 #include "KLV.h"
 
+using std::cout;
 using namespace ASDCP;
 using namespace ASDCP::MXF;
 
@@ -640,6 +641,17 @@ ASDCP::h__Writer::WriteEKLVPacket(const ASDCP::FrameBuffer& FrameBuf, const byte
   if (hash) {
 	  *hash = m_File.StopHashing();
   }
+
+  return result;
+}
+
+Result_t
+ASDCP::h__Writer::FakeWriteEKLVPacket(int size)
+{
+  Result_t result = RESULT_OK;
+
+  m_StreamOffset += size;
+  m_File.Seek(size, Kumu::SP_POS);
 
   return result;
 }

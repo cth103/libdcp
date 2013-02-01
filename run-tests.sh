@@ -63,5 +63,11 @@ if [ "$?" != "0" ]; then
   echo "FAIL: dcpinfo output from rewrite incorrect"
   exit 1
 fi
+
+diff build/test/baz/video1.mxf build/test/baz/video2.mxf
+if [ "$?" != "0" ]; then
+  echo "FAIL: MXFs from recovery incorrect"
+  exit 1
+fi
     
 echo "PASS"

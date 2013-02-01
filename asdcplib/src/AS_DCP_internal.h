@@ -239,6 +239,8 @@ namespace ASDCP
       Result_t WriteEKLVPacket(const ASDCP::FrameBuffer& FrameBuf,
 			       const byte_t* EssenceUL, AESEncContext* Ctx, HMACContext* HMAC, std::string* hash = 0);
 
+      Result_t FakeWriteEKLVPacket(int size);
+	    
       Result_t WriteMXFFooter();
 
    };

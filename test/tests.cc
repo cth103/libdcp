@@ -35,6 +35,7 @@
 #include <boost/test/unit_test.hpp>
 
 using std::string;
+using std::cout;
 using std::vector;
 using std::list;
 using boost::shared_ptr;
@@ -577,4 +578,67 @@ BOOST_AUTO_TEST_CASE (color)
 	BOOST_CHECK_EQUAL (c.b, 255);
 	BOOST_CHECK_EQUAL (c.to_argb_string(), "FF0000FF");
 	
+}
+
+BOOST_AUTO_TEST_CASE (recovery)
+{
+	Kumu::libdcp_test = true;
+
+	cout << "=== recovery.\n";
+
+	string const picture = "test/data/32x32_red_square.j2c";
+	int const length = boost::filesystem::file_size (picture);
+	uint8_t* data = new uint8_t[length];
+	{
+		FILE* f = fopen (picture.c_str(), "rb");
+		BOOST_CHECK (f);
+		fread (data, 1, length, f);
+		fclose (f);
+	}
+
+	Kumu::ResetTestRNG ();
+	
+	boost::filesystem::remove_all ("build/test/baz");
+	boost::filesystem::create_directories ("build/test/baz");
+	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset ("build/test/baz", "video1.mxf", 24, libdcp::Size (32, 32)));
+	shared_ptr<libdcp::MonoPictureAssetWriter> writer = mp->start_write ();
+
+	int written_length = 0;
+	for (int i = 0; i < 24; ++i) {
+		libdcp::FrameInfo info = writer->write (data, length);
+		written_length = info.length;
+		cout << "- written length " << written_length << "\n";
+	}
+
+	writer->finalize ();
+	writer.reset ();
+
+	cout << "=== recovery part 2.\n";
+	
+	boost::filesystem::copy_file ("build/test/baz/video1.mxf", "build/test/baz/video2.mxf");
+	boost::filesystem::resize_file ("build/test/baz/video2.mxf", 16384 + 353 * 11);
+
+	{
+		FILE* f = fopen ("build/test/baz/video2.mxf", "wa");
+		rewind (f);
+		char zeros[256];
+		memset (zeros, 0, 256);
+		fwrite (zeros, 1, 256, f);
+		fclose (f);
+	}
+
+	Kumu::ResetTestRNG ();
+
+	mp.reset (new libdcp::MonoPictureAsset ("build/test/baz", "video2.mxf", 24, libdcp::Size (32, 32)));
+	writer = mp->start_overwrite ();
+
+	for (int i = 0; i < 4; ++i) {
+		writer->fake_write (written_length);
+	}
+
+	for (int i = 0; i < 20; ++i) {
+		writer->write (data, length);
+	}
+	
+	writer->finalize ();
 }

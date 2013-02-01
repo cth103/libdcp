@@ -115,12 +115,13 @@ public:
 	~MonoPictureAssetWriter ();
 
 	FrameInfo write (uint8_t* data, int size);
+	void fake_write (int size);
 	void finalize ();
 
 private:
 	friend class MonoPictureAsset;
 
-	MonoPictureAssetWriter (MonoPictureAsset *);
+	MonoPictureAssetWriter (MonoPictureAsset *, bool);
 
 	/* no copy construction */
 	MonoPictureAssetWriter (MonoPictureAssetWriter const &);
@@ -204,6 +205,8 @@ public:
 
 	/** Start a progressive write to a MonoPictureAsset */
 	boost::shared_ptr<MonoPictureAssetWriter> start_write ();
+
+	boost::shared_ptr<MonoPictureAssetWriter> start_overwrite ();
 
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;

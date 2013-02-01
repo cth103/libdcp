@@ -207,7 +207,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 	fill_writer_info (&writer_info, _uuid);
 	
 	ASDCP::JP2K::MXFWriter mxf_writer;
-	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc))) {
+	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc, 16384, false))) {
 		throw MXFFileError ("could not open MXF file for writing", path().string());
 	}
 
@@ -399,7 +399,14 @@ shared_ptr<MonoPictureAssetWriter>
 MonoPictureAsset::start_write ()
 {
 	/* XXX: can't we use a shared_ptr here? */
-	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this));
+	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, false));
+}
+
+shared_ptr<MonoPictureAssetWriter>
+MonoPictureAsset::start_overwrite ()
+{
+	/* XXX: can't we use a shared_ptr here? */
+	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, true));
 }
 
 FrameInfo::FrameInfo (istream& s)
@@ -455,8 +462,8 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 		_state->picture_descriptor.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
 	
 		MXFAsset::fill_writer_info (&_state->writer_info, _asset->uuid());
-		
-		if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->picture_descriptor))) {
+
+		if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->picture_descriptor, 16384, false))) {
 			throw MXFFileError ("could not open MXF file for writing", _asset->path().string());
 		}
 	}
@@ -468,8 +475,33 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 		throw MiscError ("error in writing video MXF");
 	}
 
-	_frames_written++;
+	++_frames_written;
 	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
+}
+
+void
+MonoPictureAssetWriter::fake_write (int size)
+{
+	assert (!_finalized);
+
+	if (_frames_written == 0) {
+		/* This is our first frame; set up the writer */
+		
+		_state->j2k_parser.FillPictureDescriptor (_state->picture_descriptor);
+		_state->picture_descriptor.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
+	
+		MXFAsset::fill_writer_info (&_state->writer_info, _asset->uuid());
+
+		if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->picture_descriptor, 16384, true))) {
+			throw MXFFileError ("could not open MXF file for writing", _asset->path().string());
+		}
+	}
+
+	if (ASDCP_FAILURE (_state->mxf_writer.FakeWriteFrame (size))) {
+		throw MiscError ("error in writing video MXF");
+	}
+
+	++_frames_written;
 }
 
 void
