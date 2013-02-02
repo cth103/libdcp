@@ -55,7 +55,7 @@ def configure(conf):
                               """,
                    mandatory = True,
                    msg = 'Checking for boost library >= 1.45',
-                   okmsg = 'ok',
+                   okmsg = 'yes',
                    errmsg = 'too old\nPlease install boost version 1.45 or higher.')
 
     conf.check_cxx(fragment = """
