@@ -47,6 +47,18 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', '-O2')
 
     conf.check_cxx(fragment = """
+                              #include <boost/version.hpp>\n
+                              #if BOOST_VERSION < 104500\n
+                              #error boost too old\n
+                              #endif\n
+                              int main(void) { return 0; }\n
+                              """,
+                   mandatory = True,
+                   msg = 'Checking for boost library >= 1.45',
+                   okmsg = 'ok',
+                   errmsg = 'too old\nPlease install boost version 1.45 or higher.')
+
+    conf.check_cxx(fragment = """
     			      #include <boost/filesystem.hpp>\n
     			      int main() { boost::filesystem::copy_file ("a", "b"); }\n
 			      """,
