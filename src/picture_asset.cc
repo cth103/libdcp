@@ -397,10 +397,10 @@ StereoPictureAsset::get_frame (int n) const
 }
 
 shared_ptr<MonoPictureAssetWriter>
-MonoPictureAsset::start_write (uint8_t* data, int size, bool overwrite)
+MonoPictureAsset::start_write (bool overwrite)
 {
 	/* XXX: can't we use a shared_ptr here? */
-	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, data, size, overwrite));
+	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, overwrite));
 }
 
 FrameInfo::FrameInfo (istream& s)
@@ -431,11 +431,20 @@ struct MonoPictureAssetWriter::ASDCPState
 /** @param a Asset to write to.  `a' must not be deleted while
  *  this writer class still exists, or bad things will happen.
  */
-MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a, uint8_t* data, int size, bool overwrite)
+MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a, bool overwrite)
 	: _state (new MonoPictureAssetWriter::ASDCPState)
 	, _asset (a)
 	, _frames_written (0)
+	, _started (false)
 	, _finalized (false)
+	, _overwrite (overwrite)
+{
+
+}
+
+
+void
+MonoPictureAssetWriter::start (uint8_t* data, int size)
 {
 	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
 		throw MiscError ("could not parse J2K frame");
@@ -451,17 +460,23 @@ MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a, uint8_t* da
 				   _state->writer_info,
 				   _state->picture_descriptor,
 				   16384,
-				   overwrite)
+				   _overwrite)
 		    )) {
 		
 		throw MXFFileError ("could not open MXF file for writing", _asset->path().string());
 	}
+
+	_started = true;
 }
 
 FrameInfo
 MonoPictureAssetWriter::write (uint8_t* data, int size)
 {
 	assert (!_finalized);
+
+	if (!_started) {
+		start (data, size);
+	}
 
  	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
  		throw MiscError ("could not parse J2K frame");
@@ -481,6 +496,7 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 void
 MonoPictureAssetWriter::fake_write (int size)
 {
+	assert (_started);
 	assert (!_finalized);
 
 	if (ASDCP_FAILURE (_state->mxf_writer.FakeWriteFrame (size))) {

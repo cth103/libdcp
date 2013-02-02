@@ -121,7 +121,8 @@ public:
 private:
 	friend class MonoPictureAsset;
 
-	MonoPictureAssetWriter (MonoPictureAsset *, uint8_t *, int, bool);
+	MonoPictureAssetWriter (MonoPictureAsset *, bool);
+	void start (uint8_t *, int);
 
 	/* no copy construction */
 	MonoPictureAssetWriter (MonoPictureAssetWriter const &);
@@ -137,8 +138,10 @@ private:
 	MonoPictureAsset* _asset;
 	/** Number of picture frames written to the asset so far */
 	int _frames_written;
+	bool _started;
 	/** true if finalize() has been called */
 	bool _finalized;
+	bool _overwrite;
 };
 
 /** A 2D (monoscopic) picture asset */
@@ -204,7 +207,7 @@ public:
 	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
 
 	/** Start a progressive write to a MonoPictureAsset */
-	boost::shared_ptr<MonoPictureAssetWriter> start_write (uint8_t *, int, bool);
+	boost::shared_ptr<MonoPictureAssetWriter> start_write (bool);
 
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
