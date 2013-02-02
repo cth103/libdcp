@@ -84,9 +84,9 @@ class MonoPictureAsset;
 
 struct FrameInfo
 {
-	FrameInfo (uint64_t o, uint64_t l, std::string h)
+	FrameInfo (uint64_t o, uint64_t s, std::string h)
 		: offset (o)
-		, length (l)
+		, size (s)
 		, hash (h)
 	{}
 
@@ -95,7 +95,7 @@ struct FrameInfo
 	void write (std::ostream& s);
 	
 	uint64_t offset;
-	uint64_t length;
+	uint64_t size;
 	std::string hash;
 };
 
@@ -121,7 +121,7 @@ public:
 private:
 	friend class MonoPictureAsset;
 
-	MonoPictureAssetWriter (MonoPictureAsset *, bool);
+	MonoPictureAssetWriter (MonoPictureAsset *, uint8_t *, int, bool);
 
 	/* no copy construction */
 	MonoPictureAssetWriter (MonoPictureAssetWriter const &);
@@ -204,9 +204,7 @@ public:
 	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
 
 	/** Start a progressive write to a MonoPictureAsset */
-	boost::shared_ptr<MonoPictureAssetWriter> start_write ();
-
-	boost::shared_ptr<MonoPictureAssetWriter> start_overwrite ();
+	boost::shared_ptr<MonoPictureAssetWriter> start_write (uint8_t *, int, bool);
 
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;

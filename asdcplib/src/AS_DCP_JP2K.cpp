@@ -996,8 +996,6 @@ lh__Writer::WriteFrame(const JP2K::FrameBuffer& FrameBuf, bool add_index,
     result = m_State.Goto_RUNNING(); // first time through
  
   ui64_t StreamOffset = m_StreamOffset;
-  cout << "Real write @ " << StreamOffset << " (header is " << m_HeaderSize << ")\n";
-  cout << "\tfile @ " << m_File.Tell() << "\n";
 
   if ( ASDCP_SUCCESS(result) )
     result = WriteEKLVPacket(FrameBuf, m_EssenceUL, Ctx, HMAC, hash);
@@ -1022,8 +1020,6 @@ lh__Writer::FakeWriteFrame(int size, bool add_index)
     result = m_State.Goto_RUNNING();
 
   ui64_t StreamOffset = m_StreamOffset;
-  cout << "Fake write @ " << StreamOffset << " (header is " << m_HeaderSize << ")\n";
-  cout << "\tfile @ " << m_File.Tell() << "\n";
 
   if ( ASDCP_SUCCESS(result) )
     result = FakeWriteEKLVPacket(size);

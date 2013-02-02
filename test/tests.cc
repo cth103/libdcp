@@ -584,15 +584,13 @@ BOOST_AUTO_TEST_CASE (recovery)
 {
 	Kumu::libdcp_test = true;
 
-	cout << "=== recovery.\n";
-
 	string const picture = "test/data/32x32_red_square.j2c";
-	int const length = boost::filesystem::file_size (picture);
-	uint8_t* data = new uint8_t[length];
+	int const size = boost::filesystem::file_size (picture);
+	uint8_t* data = new uint8_t[size];
 	{
 		FILE* f = fopen (picture.c_str(), "rb");
 		BOOST_CHECK (f);
-		fread (data, 1, length, f);
+		fread (data, 1, size, f);
 		fclose (f);
 	}
 
@@ -601,25 +599,22 @@ BOOST_AUTO_TEST_CASE (recovery)
 	boost::filesystem::remove_all ("build/test/baz");
 	boost::filesystem::create_directories ("build/test/baz");
 	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset ("build/test/baz", "video1.mxf", 24, libdcp::Size (32, 32)));
-	shared_ptr<libdcp::MonoPictureAssetWriter> writer = mp->start_write ();
+	shared_ptr<libdcp::MonoPictureAssetWriter> writer = mp->start_write (data, size, false);
 
-	int written_length = 0;
+	int written_size = 0;
 	for (int i = 0; i < 24; ++i) {
-		libdcp::FrameInfo info = writer->write (data, length);
-		written_length = info.length;
-		cout << "- written length " << written_length << "\n";
+		libdcp::FrameInfo info = writer->write (data, size);
+		written_size = info.size;
 	}
 
 	writer->finalize ();
 	writer.reset ();
 
-	cout << "=== recovery part 2.\n";
-	
 	boost::filesystem::copy_file ("build/test/baz/video1.mxf", "build/test/baz/video2.mxf");
 	boost::filesystem::resize_file ("build/test/baz/video2.mxf", 16384 + 353 * 11);
 
 	{
-		FILE* f = fopen ("build/test/baz/video2.mxf", "wa");
+		FILE* f = fopen ("build/test/baz/video2.mxf", "r+");
 		rewind (f);
 		char zeros[256];
 		memset (zeros, 0, 256);
@@ -630,14 +625,14 @@ BOOST_AUTO_TEST_CASE (recovery)
 	Kumu::ResetTestRNG ();
 
 	mp.reset (new libdcp::MonoPictureAsset ("build/test/baz", "video2.mxf", 24, libdcp::Size (32, 32)));
-	writer = mp->start_overwrite ();
+	writer = mp->start_write (data, size, true);
 
 	for (int i = 0; i < 4; ++i) {
-		writer->fake_write (written_length);
+		writer->fake_write (written_size);
 	}
 
-	for (int i = 0; i < 20; ++i) {
-		writer->write (data, length);
+	for (int i = 4; i < 24; ++i) {
+		writer->write (data, size);
 	}
 	
 	writer->finalize ();

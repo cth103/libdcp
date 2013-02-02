@@ -44,6 +44,7 @@ using std::max;
 using std::pair;
 using std::make_pair;
 using std::istream;
+using std::cout;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
@@ -396,28 +397,21 @@ StereoPictureAsset::get_frame (int n) const
 }
 
 shared_ptr<MonoPictureAssetWriter>
-MonoPictureAsset::start_write ()
+MonoPictureAsset::start_write (uint8_t* data, int size, bool overwrite)
 {
 	/* XXX: can't we use a shared_ptr here? */
-	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, false));
-}
-
-shared_ptr<MonoPictureAssetWriter>
-MonoPictureAsset::start_overwrite ()
-{
-	/* XXX: can't we use a shared_ptr here? */
-	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, true));
+	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, data, size, overwrite));
 }
 
 FrameInfo::FrameInfo (istream& s)
 {
-	s >> offset >> length >> hash;
+	s >> offset >> size >> hash;
 }
 
 void
 FrameInfo::write (ostream& s)
 {
-	s << offset << " " << length << " " << hash;
+	s << offset << " " << size << " " << hash;
 }
 
 struct MonoPictureAssetWriter::ASDCPState
@@ -437,36 +431,41 @@ struct MonoPictureAssetWriter::ASDCPState
 /** @param a Asset to write to.  `a' must not be deleted while
  *  this writer class still exists, or bad things will happen.
  */
-MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a)
+MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a, uint8_t* data, int size, bool overwrite)
 	: _state (new MonoPictureAssetWriter::ASDCPState)
 	, _asset (a)
 	, _frames_written (0)
 	, _finalized (false)
 {
+	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
+		throw MiscError ("could not parse J2K frame");
+	}
 
+	_state->j2k_parser.FillPictureDescriptor (_state->picture_descriptor);
+	_state->picture_descriptor.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
+	
+	MXFAsset::fill_writer_info (&_state->writer_info, _asset->uuid());
+	
+	if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (
+				   _asset->path().string().c_str(),
+				   _state->writer_info,
+				   _state->picture_descriptor,
+				   16384,
+				   overwrite)
+		    )) {
+		
+		throw MXFFileError ("could not open MXF file for writing", _asset->path().string());
+	}
 }
 
 FrameInfo
 MonoPictureAssetWriter::write (uint8_t* data, int size)
 {
 	assert (!_finalized);
-	
-	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
-		throw MiscError ("could not parse J2K frame");
-	}
 
-	if (_frames_written == 0) {
-		/* This is our first frame; set up the writer */
-		
-		_state->j2k_parser.FillPictureDescriptor (_state->picture_descriptor);
-		_state->picture_descriptor.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
-	
-		MXFAsset::fill_writer_info (&_state->writer_info, _asset->uuid());
-
-		if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->picture_descriptor, 16384, false))) {
-			throw MXFFileError ("could not open MXF file for writing", _asset->path().string());
-		}
-	}
+ 	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
+ 		throw MiscError ("could not parse J2K frame");
+ 	}
 
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
@@ -484,19 +483,6 @@ MonoPictureAssetWriter::fake_write (int size)
 {
 	assert (!_finalized);
 
-	if (_frames_written == 0) {
-		/* This is our first frame; set up the writer */
-		
-		_state->j2k_parser.FillPictureDescriptor (_state->picture_descriptor);
-		_state->picture_descriptor.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
-	
-		MXFAsset::fill_writer_info (&_state->writer_info, _asset->uuid());
-
-		if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->picture_descriptor, 16384, true))) {
-			throw MXFFileError ("could not open MXF file for writing", _asset->path().string());
-		}
-	}
-
 	if (ASDCP_FAILURE (_state->mxf_writer.FakeWriteFrame (size))) {
 		throw MiscError ("error in writing video MXF");
 	}
@@ -507,6 +493,8 @@ MonoPictureAssetWriter::fake_write (int size)
 void
 MonoPictureAssetWriter::finalize ()
 {
+	assert (!_finalized);
+	
 	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
 		throw MiscError ("error in finalizing video MXF");
 	}
