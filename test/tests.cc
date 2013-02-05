@@ -594,7 +594,10 @@ BOOST_AUTO_TEST_CASE (recovery)
 		fclose (f);
 	}
 
+#ifdef LIBDCP_POSIX
+	/* XXX: fix this posix-only stuff */
 	Kumu::ResetTestRNG ();
+#endif	
 	
 	boost::filesystem::remove_all ("build/test/baz");
 	boost::filesystem::create_directories ("build/test/baz");
@@ -622,7 +625,9 @@ BOOST_AUTO_TEST_CASE (recovery)
 		fclose (f);
 	}
 
+#ifdef LIBDCP_POSIX	
 	Kumu::ResetTestRNG ();
+#endif	
 
 	mp.reset (new libdcp::MonoPictureAsset ("build/test/baz", "video2.mxf", 24, libdcp::Size (32, 32)));
 	writer = mp->start_write (true);
