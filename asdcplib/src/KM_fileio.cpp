@@ -833,6 +833,34 @@ Kumu::FileWriter::OpenWrite(const char* filename)
 
 //
 Kumu::Result_t
+Kumu::FileWriter::OpenModify(const char* filename)
+{
+  KM_TEST_NULL_STR_L(filename);
+  m_Filename = filename;
+  
+  // suppress popup window on error
+  UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
+
+  m_Handle = ::CreateFileA(filename,
+			  (GENERIC_WRITE|GENERIC_READ),  // open for reading
+			  FILE_SHARE_READ,               // share for reading
+			  NULL,                          // no security
+			  OPEN_ALWAYS,                   // don't truncate existing
+			  FILE_ATTRIBUTE_NORMAL,         // normal file
+			  NULL                           // no template file
+			  );
+
+  ::SetErrorMode(prev);
+
+  if ( m_Handle == INVALID_HANDLE_VALUE )
+    return Kumu::RESULT_FILEOPEN;
+  
+  m_IOVec = new h__iovec;
+  return Kumu::RESULT_OK;
+}
+
+//
+Kumu::Result_t
 Kumu::FileWriter::Writev(ui32_t* bytes_written)
 {
   assert( ! m_IOVec.empty() );
