@@ -221,7 +221,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 		}
 
 		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, 0, 0))) {
-			throw MiscError ("error in writing video MXF");
+			throw MXFFileError ("error in writing video MXF", this->path().string());
 		}
 
 		if (_progress) {
@@ -230,7 +230,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 	}
 	
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
-		throw MiscError ("error in finalising video MXF");
+		throw MXFFileError ("error in finalising video MXF", path().string());
 	}
 }
 
@@ -486,7 +486,7 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 
 	string hash;
 	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, 0, 0, &hash))) {
-		throw MiscError ("error in writing video MXF");
+		throw MXFFileError ("error in writing video MXF", _asset->path().string());
 	}
 
 	++_frames_written;
@@ -500,7 +500,7 @@ MonoPictureAssetWriter::fake_write (int size)
 	assert (!_finalized);
 
 	if (ASDCP_FAILURE (_state->mxf_writer.FakeWriteFrame (size))) {
-		throw MiscError ("error in writing video MXF");
+		throw MXFFileError ("error in writing video MXF", _asset->path().string());
 	}
 
 	++_frames_written;
@@ -512,7 +512,7 @@ MonoPictureAssetWriter::finalize ()
 	assert (!_finalized);
 	
 	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
-		throw MiscError ("error in finalizing video MXF");
+		throw MXFFileError ("error in finalizing video MXF", _asset->path().string());
 	}
 
 	_finalized = true;
