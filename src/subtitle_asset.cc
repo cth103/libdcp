@@ -413,7 +413,7 @@ SubtitleAsset::write_xml (ostream& s) const
 	  << "  <Language>" << _language << "</Language>\n";
 
 	if (_load_font_nodes.size() > 1) {
-		throw MiscError ("multiple LoadFont nodes not supported");
+		boost::throw_exception (MiscError ("multiple LoadFont nodes not supported"));
 	}
 
 	if (!_load_font_nodes.empty ()) {

@@ -182,17 +182,17 @@ DCP::read (bool require_mxfs)
 			if (boost::filesystem::exists (p)) {
 				asset_map.reset (new AssetMap (p.string ()));
 			} else {
-				throw DCPReadError ("could not find AssetMap file");
+				boost::throw_exception (DCPReadError ("could not find AssetMap file"));
 			}
 		}
 		
 	} catch (FileError& e) {
-		throw FileError ("could not load AssetMap file", files.asset_map);
+		boost::throw_exception (FileError ("could not load AssetMap file", files.asset_map));
 	}
 
 	for (list<shared_ptr<AssetMapAsset> >::const_iterator i = asset_map->assets.begin(); i != asset_map->assets.end(); ++i) {
 		if ((*i)->chunks.size() != 1) {
-			throw XMLError ("unsupported asset chunk count");
+			boost::throw_exception (XMLError ("unsupported asset chunk count"));
 		}
 
 		boost::filesystem::path t = _directory;
@@ -219,24 +219,24 @@ DCP::read (bool require_mxfs)
 			if (files.pkl.empty ()) {
 				files.pkl = t.string();
 			} else {
-				throw DCPReadError ("duplicate PKLs found");
+				boost::throw_exception (DCPReadError ("duplicate PKLs found"));
 			}
 		}
 	}
 	
 	if (files.cpls.empty ()) {
-		throw FileError ("no CPL files found", "");
+		boost::throw_exception (FileError ("no CPL files found", ""));
 	}
 
 	if (files.pkl.empty ()) {
-		throw FileError ("no PKL file found", "");
+		boost::throw_exception (FileError ("no PKL file found", ""));
 	}
 
 	shared_ptr<PKLFile> pkl;
 	try {
 		pkl.reset (new PKLFile (files.pkl));
 	} catch (FileError& e) {
-		throw FileError ("could not load PKL file", files.pkl);
+		boost::throw_exception (FileError ("could not load PKL file", files.pkl));
 	}
 
 	/* Cross-check */
@@ -325,7 +325,7 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 	try {
 		cpl.reset (new CPLFile (file));
 	} catch (FileError& e) {
-		throw FileError ("could not load CPL file", file);
+		boost::throw_exception (FileError ("could not load CPL file", file));
 	}
 	
 	/* Now cherry-pick the required bits into our own data structure */

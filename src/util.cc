@@ -66,7 +66,7 @@ libdcp::make_digest (string filename)
 {
 	Kumu::FileReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (filename.c_str ()))) {
-		throw FileError ("could not open file to compute digest", filename);
+		boost::throw_exception (FileError ("could not open file to compute digest", filename));
 	}
 	
 	SHA_CTX sha;
@@ -81,7 +81,7 @@ libdcp::make_digest (string filename)
 		if (r == Kumu::RESULT_ENDOFFILE) {
 			break;
 		} else if (ASDCP_FAILURE (r)) {
-			throw FileError ("could not read file to compute digest", filename);
+			boost::throw_exception (FileError ("could not read file to compute digest", filename));
 		}
 		
 		SHA1_Update (&sha, read_buffer.Data(), read);
@@ -187,7 +187,7 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 	if (!image) {
 		opj_destroy_decompress (decoder);
 		opj_cio_close (cio);
-		throw DCPReadError ("could not decode JPEG2000 codestream");
+		boost::throw_exception (DCPReadError ("could not decode JPEG2000 codestream"));
 	}
 
 	opj_cio_close (cio);

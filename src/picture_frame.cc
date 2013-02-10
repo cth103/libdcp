@@ -38,14 +38,14 @@ MonoPictureFrame::MonoPictureFrame (string mxf_path, int n)
 {
 	ASDCP::JP2K::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (mxf_path.c_str()))) {
-		throw FileError ("could not open MXF file for reading", mxf_path);
+		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path));
 	}
 
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = new ASDCP::JP2K::FrameBuffer (4 * Kumu::Megabyte);
 
 	if (ASDCP_FAILURE (reader.ReadFrame (n, *_buffer))) {
-		throw DCPReadError ("could not read video frame");
+		boost::throw_exception (DCPReadError ("could not read video frame"));
 	}
 }
 
@@ -93,14 +93,14 @@ StereoPictureFrame::StereoPictureFrame (string mxf_path, int n)
 {
 	ASDCP::JP2K::MXFSReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (mxf_path.c_str()))) {
-		throw FileError ("could not open MXF file for reading", mxf_path);
+		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path));
 	}
 
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = new ASDCP::JP2K::SFrameBuffer (4 * Kumu::Megabyte);
 
 	if (ASDCP_FAILURE (reader.ReadFrame (n, *_buffer))) {
-		throw DCPReadError ("could not read video frame");
+		boost::throw_exception (DCPReadError ("could not read video frame"));
 	}
 }
 

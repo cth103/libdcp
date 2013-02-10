@@ -29,14 +29,14 @@ SoundFrame::SoundFrame (string mxf_path, int n)
 {
 	ASDCP::PCM::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (mxf_path.c_str()))) {
-		throw FileError ("could not open MXF file for reading", mxf_path);
+		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path));
 	}
 
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = new ASDCP::PCM::FrameBuffer (1 * Kumu::Megabyte);
 
 	if (ASDCP_FAILURE (reader.ReadFrame (n, *_buffer))) {
-		throw DCPReadError ("could not read audio frame");
+		boost::throw_exception (DCPReadError ("could not read audio frame"));
 	}
 }
 
