@@ -87,21 +87,21 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<s
 		     
 	ASDCP::JP2K::MXFReader reader_A;
 	if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
-		throw MXFFileError ("could not open MXF file for reading", path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
 	}
 	
 	ASDCP::JP2K::MXFReader reader_B;
 	if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
-		throw MXFFileError ("could not open MXF file for reading", path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc_A;
 	if (ASDCP_FAILURE (reader_A.FillPictureDescriptor (desc_A))) {
-		throw DCPReadError ("could not read video MXF information");
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
 	ASDCP::JP2K::PictureDescriptor desc_B;
 	if (ASDCP_FAILURE (reader_B.FillPictureDescriptor (desc_B))) {
-		throw DCPReadError ("could not read video MXF information");
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
 	
 	if (
@@ -176,12 +176,12 @@ MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name)
 {
 	ASDCP::JP2K::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		throw MXFFileError ("could not open MXF file for reading", path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
-		throw DCPReadError ("could not read video MXF information");
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
 
 	_size.width = desc.StoredWidth;
@@ -197,7 +197,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
 	if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (get_path(0).c_str(), frame_buffer))) {
-		throw FileError ("could not open JPEG2000 file for reading", get_path (0));
+		boost::throw_exception (FileError ("could not open JPEG2000 file for reading", get_path (0)));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor picture_desc;
@@ -209,7 +209,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 	
 	ASDCP::JP2K::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc, 16384, false))) {
-		throw MXFFileError ("could not open MXF file for writing", path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for writing", path().string()));
 	}
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
@@ -217,11 +217,11 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 		string const path = get_path (i);
 
 		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (path.c_str(), frame_buffer))) {
-			throw FileError ("could not open JPEG2000 file for reading", path);
+			boost::throw_exception (FileError ("could not open JPEG2000 file for reading", path));
 		}
 
 		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, 0, 0))) {
-			throw MiscError ("error in writing video MXF");
+			boost::throw_exception (MXFFileError ("error in writing video MXF", this->path().string()));
 		}
 
 		if (_progress) {
@@ -230,7 +230,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 	}
 	
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
-		throw MiscError ("error in finalising video MXF");
+		boost::throw_exception (MXFFileError ("error in finalising video MXF", path().string()));
 	}
 }
 
@@ -378,12 +378,12 @@ StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int f
 {
 	ASDCP::JP2K::MXFSReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		throw MXFFileError ("could not open MXF file for reading", path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
-		throw DCPReadError ("could not read video MXF information");
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
 
 	_size.width = desc.StoredWidth;
@@ -447,7 +447,7 @@ void
 MonoPictureAssetWriter::start (uint8_t* data, int size)
 {
 	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
-		throw MiscError ("could not parse J2K frame");
+		boost::throw_exception (MiscError ("could not parse J2K frame"));
 	}
 
 	_state->j2k_parser.FillPictureDescriptor (_state->picture_descriptor);
@@ -463,7 +463,7 @@ MonoPictureAssetWriter::start (uint8_t* data, int size)
 				   _overwrite)
 		    )) {
 		
-		throw MXFFileError ("could not open MXF file for writing", _asset->path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for writing", _asset->path().string()));
 	}
 
 	_started = true;
@@ -479,14 +479,14 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 	}
 
  	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
- 		throw MiscError ("could not parse J2K frame");
+ 		boost::throw_exception (MiscError ("could not parse J2K frame"));
  	}
 
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
 	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, 0, 0, &hash))) {
-		throw MiscError ("error in writing video MXF");
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
 	}
 
 	++_frames_written;
@@ -500,7 +500,7 @@ MonoPictureAssetWriter::fake_write (int size)
 	assert (!_finalized);
 
 	if (ASDCP_FAILURE (_state->mxf_writer.FakeWriteFrame (size))) {
-		throw MiscError ("error in writing video MXF");
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
 	}
 
 	++_frames_written;
@@ -512,7 +512,7 @@ MonoPictureAssetWriter::finalize ()
 	assert (!_finalized);
 	
 	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
-		throw MiscError ("error in finalizing video MXF");
+		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _asset->path().string()));
 	}
 
 	_finalized = true;

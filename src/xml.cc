@@ -29,9 +29,9 @@ XMLNode::node_child (string name)
 {
 	list<xmlpp::Node*> n = node_children (name);
 	if (n.size() > 1) {
-		throw XMLError ("duplicate XML tag " + name);
+		boost::throw_exception (XMLError ("duplicate XML tag " + name));
 	} else if (n.empty ()) {
-		throw XMLError ("missing XML tag " + name + " in " + _node->get_name());
+		boost::throw_exception (XMLError ("missing XML tag " + name + " in " + _node->get_name()));
 	}
 	
 	return n.front ();
@@ -68,7 +68,7 @@ XMLNode::optional_string_child (string name)
 {
 	list<xmlpp::Node*> nodes = node_children (name);
 	if (nodes.size() > 2) {
-		throw XMLError ("duplicate XML tag " + name);
+		boost::throw_exception (XMLError ("duplicate XML tag " + name));
 	}
 
 	if (nodes.empty ()) {
@@ -103,7 +103,7 @@ XMLNode::optional_int64_child (string name)
 {
 	list<xmlpp::Node*> nodes = node_children (name);
 	if (nodes.size() > 2) {
-		throw XMLError ("duplicate XML tag " + name);
+		boost::throw_exception (XMLError ("duplicate XML tag " + name));
 	}
 
 	if (nodes.empty ()) {
@@ -136,12 +136,12 @@ XMLNode::string_attribute (string name)
 {
 	xmlpp::Element const * e = dynamic_cast<const xmlpp::Element *> (_node);
 	if (!e) {
-		throw XMLError ("missing attribute");
+		boost::throw_exception (XMLError ("missing attribute"));
 	}
 	
 	xmlpp::Attribute* a = e->get_attribute (name);
 	if (!a) {
-		throw XMLError ("missing attribute");
+		boost::throw_exception (XMLError ("missing attribute"));
 	}
 
 	return a->get_value ();
@@ -218,7 +218,7 @@ XMLNode::done ()
 	xmlpp::Node::NodeList c = _node->get_children ();
 	for (xmlpp::Node::NodeList::iterator i = c.begin(); i != c.end(); ++i) {
 		if (dynamic_cast<xmlpp::Element *> (*i) && find (_taken.begin(), _taken.end(), (*i)->get_name()) == _taken.end ()) {
-			throw XMLError ("unexpected XML node " + (*i)->get_name());
+			boost::throw_exception (XMLError ("unexpected XML node " + (*i)->get_name()));
 		}
 	}
 }
@@ -242,18 +242,18 @@ XMLNode::content ()
 XMLFile::XMLFile (string file, string root_name)
 {
 	if (!filesystem::exists (file)) {
-		throw FileError ("XML file does not exist", file);
+		boost::throw_exception (FileError ("XML file does not exist", file));
 	}
 	
 	_parser = new xmlpp::DomParser;
 	_parser->parse_file (file);
 	if (!_parser) {
-		throw XMLError ("could not parse XML");
+		boost::throw_exception (XMLError ("could not parse XML"));
 	}
 
 	_node = _parser->get_document()->get_root_node ();
 	if (_node->get_name() != root_name) {
-		throw XMLError ("unrecognised root node");
+		boost::throw_exception (XMLError ("unrecognised root node"));
 	}
 }
 

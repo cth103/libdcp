@@ -2,7 +2,7 @@ import subprocess
 import os
 
 APPNAME = 'libdcp'
-VERSION = '0.40pre'
+VERSION = '0.41pre'
 
 def options(opt):
     opt.load('compiler_cxx')
@@ -108,7 +108,7 @@ def build(bld):
     bld.add_post_fun(post)
 
 def dist(ctx):
-    ctx.excl = 'TODO core *~ .git build .waf* .lock* doc/*~ src/*~ test/ref/*~ __pycache__'
+    ctx.excl = 'TODO core *~ .git build .waf* .lock* doc/*~ src/*~ test/ref/*~ __pycache__ GPATH GRTAGS GSYMS GTAGS'
 
 def create_version_cc(bld, version):
     if os.path.exists('.git'):
