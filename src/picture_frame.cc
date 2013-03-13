@@ -25,6 +25,10 @@
 #include "argb_frame.h"
 #include "lut.h"
 #include "util.h"
+#include "gamma_lut.h"
+#include "xyz_srgb_lut.h"
+
+#define DCI_GAMMA 2.6
 
 using std::string;
 using boost::shared_ptr;
@@ -76,11 +80,11 @@ MonoPictureFrame::j2k_size () const
  *
  */
 shared_ptr<ARGBFrame>
-MonoPictureFrame::argb_frame (int reduce) const
+MonoPictureFrame::argb_frame (int reduce, float srgb_gamma) const
 {
 	opj_image_t* xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce);
 	assert (xyz_frame->numcomps == 3);
-	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame);
+	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA), XYZsRGBLUT::cache.get (12, srgb_gamma));
 	opj_image_destroy (xyz_frame);
 	return f;
 }
@@ -122,7 +126,7 @@ StereoPictureFrame::~StereoPictureFrame ()
  *
  */
 shared_ptr<ARGBFrame>
-StereoPictureFrame::argb_frame (Eye eye, int reduce) const
+StereoPictureFrame::argb_frame (Eye eye, int reduce, float srgb_gamma) const
 {
 	opj_image_t* xyz_frame = 0;
 	switch (eye) {
@@ -135,7 +139,7 @@ StereoPictureFrame::argb_frame (Eye eye, int reduce) const
 	}
 	
 	assert (xyz_frame->numcomps == 3);
-	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame);
+	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA), XYZsRGBLUT::cache.get (12, srgb_gamma));
 	opj_image_destroy (xyz_frame);
 	return f;
 }

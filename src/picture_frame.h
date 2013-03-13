@@ -40,7 +40,7 @@ public:
 	MonoPictureFrame (std::string mxf_path, int n);
 	~MonoPictureFrame ();
 
-	boost::shared_ptr<ARGBFrame> argb_frame (int reduce = 0) const;
+	boost::shared_ptr<ARGBFrame> argb_frame (int reduce = 0, float srgb_gamma = 2.4) const;
 	uint8_t const * j2k_data () const;
 	int j2k_size () const;
 
@@ -55,7 +55,7 @@ public:
 	StereoPictureFrame (std::string mxf_path, int n);
 	~StereoPictureFrame ();
 
-	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye, int reduce = 0) const;
+	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye, int reduce = 0, float srgb_gamma = 2.4) const;
 	uint8_t const * left_j2k_data () const;
 	int left_j2k_size () const;
 	uint8_t const * right_j2k_data () const;

@@ -29,6 +29,7 @@
 #include "picture_asset.h"
 #include "sound_asset.h"
 #include "reel.h"
+#include "gamma_lut.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test

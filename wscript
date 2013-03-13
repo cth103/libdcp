@@ -1,6 +1,5 @@
 import subprocess
 import os
-import lut
 
 APPNAME = 'libdcp'
 VERSION = '0.40pre'
@@ -82,8 +81,6 @@ def configure(conf):
 			      """,
                    msg = 'Checking for boost signals2 library',
                    uselib_store = 'BOOST_SIGNALS2')
-
-    lut.make_luts()
 
     conf.recurse('test')
     conf.recurse('asdcplib')

@@ -34,7 +34,8 @@
 #include "exceptions.h"
 #include "types.h"
 #include "argb_frame.h"
-#include "lut.h"
+#include "gamma_lut.h"
+#include "xyz_srgb_lut.h"
 
 using std::string;
 using std::stringstream;
@@ -202,8 +203,19 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
  *  @return RGB image.
  */
 shared_ptr<ARGBFrame>
-libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
+libdcp::xyz_to_rgb (opj_image_t* xyz_frame, shared_ptr<const GammaLUT> lut_in, shared_ptr<const XYZsRGBLUT> lut_out)
 {
+	float const dci_coefficient = 48.0 / 52.37;
+
+        /* sRGB color matrix for XYZ -> RGB */
+	float const colour_matrix[3][3] = {
+		{ 3.240454836, -1.537138850, -0.498531547},
+		{-0.969266390,  1.876010929,  0.041556082},
+		{ 0.055643420, -0.204025854,  1.057225162}
+	};
+
+	int const max_colour = pow (2, lut_out->bit_depth()) - 1;
+
 	struct {
 		double x, y, z;
 	} s;
@@ -227,19 +239,19 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
 			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_x < 4096 && *xyz_z < 4096);
 			
 			/* In gamma LUT */
-			s.x = lut_in[*xyz_x++];
-			s.y = lut_in[*xyz_y++];
-			s.z = lut_in[*xyz_z++];
+			s.x = lut_in->lut()[*xyz_x++];
+			s.y = lut_in->lut()[*xyz_y++];
+			s.z = lut_in->lut()[*xyz_z++];
 			
 			/* DCI companding */
-			s.x /= DCI_COEFFICIENT;
-			s.y /= DCI_COEFFICIENT;
-			s.z /= DCI_COEFFICIENT;
+			s.x /= dci_coefficient;
+			s.y /= dci_coefficient;
+			s.z /= dci_coefficient;
 			
 			/* XYZ to RGB */
-			d.r = ((s.x * color_matrix[0][0]) + (s.y * color_matrix[0][1]) + (s.z * color_matrix[0][2]));
-			d.g = ((s.x * color_matrix[1][0]) + (s.y * color_matrix[1][1]) + (s.z * color_matrix[1][2]));
-			d.b = ((s.x * color_matrix[2][0]) + (s.y * color_matrix[2][1]) + (s.z * color_matrix[2][2]));
+			d.r = ((s.x * colour_matrix[0][0]) + (s.y * colour_matrix[0][1]) + (s.z * colour_matrix[0][2]));
+			d.g = ((s.x * colour_matrix[1][0]) + (s.y * colour_matrix[1][1]) + (s.z * colour_matrix[1][2]));
+			d.b = ((s.x * colour_matrix[2][0]) + (s.y * colour_matrix[2][1]) + (s.z * colour_matrix[2][2]));
 			
 			d.r = min (d.r, 1.0);
 			d.r = max (d.r, 0.0);
@@ -251,9 +263,9 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
 			d.b = max (d.b, 0.0);
 			
 			/* Out gamma LUT */
-			*argb_line++ = lut_out[(int) (d.b * COLOR_DEPTH)];
-			*argb_line++ = lut_out[(int) (d.g * COLOR_DEPTH)];
-			*argb_line++ = lut_out[(int) (d.r * COLOR_DEPTH)];
+			*argb_line++ = lut_out->lut()[(int) (d.b * max_colour)];
+			*argb_line++ = lut_out->lut()[(int) (d.g * max_colour)];
+			*argb_line++ = lut_out->lut()[(int) (d.r * max_colour)];
 			*argb_line++ = 0xff;
 		}
 		

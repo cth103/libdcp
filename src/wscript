@@ -15,7 +15,7 @@ def build(bld):
                  cpl_file.cc
                  dcp.cc        
                  dcp_time.cc
-                 lut.cc
+                 gamma_lut.cc
                  metadata.cc
                  mxf_asset.cc
                  picture_asset.cc
@@ -31,6 +31,7 @@ def build(bld):
                  util.cc
                  version.cc
                  xml.cc
+                 xyz_srgb_lut.cc
                  """
 
     headers = """
