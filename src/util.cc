@@ -242,11 +242,13 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame, shared_ptr<const GammaLUT> lut_in, s
 			s.x = lut_in->lut()[*xyz_x++];
 			s.y = lut_in->lut()[*xyz_y++];
 			s.z = lut_in->lut()[*xyz_z++];
-			
+
+#if 0			
 			/* DCI companding */
 			s.x /= dci_coefficient;
 			s.y /= dci_coefficient;
 			s.z /= dci_coefficient;
+#endif			
 			
 			/* XYZ to RGB */
 			d.r = ((s.x * colour_matrix[0][0]) + (s.y * colour_matrix[0][1]) + (s.z * colour_matrix[0][2]));
