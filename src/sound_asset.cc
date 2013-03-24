@@ -298,7 +298,8 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<str
 shared_ptr<const SoundFrame>
 SoundAsset::get_frame (int n) const
 {
-	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n + _entry_point));
+	/* XXX: should add on entry point here? */
+	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n));
 }
 
 shared_ptr<SoundAssetWriter>
