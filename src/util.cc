@@ -208,10 +208,18 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame, shared_ptr<const GammaLUT> lut_in, s
 	float const dci_coefficient = 48.0 / 52.37;
 
         /* sRGB color matrix for XYZ -> RGB */
+#if 0	
 	float const colour_matrix[3][3] = {
 		{ 3.240454836, -1.537138850, -0.498531547},
 		{-0.969266390,  1.876010929,  0.041556082},
 		{ 0.055643420, -0.204025854,  1.057225162}
+	};
+#endif
+
+	float const colour_matrix[3][3] = {
+		{ 3.1338561, -1.6168667, -0.4906146 },
+		{ -0.9787684, 1.9161415, 0.0334540 },
+		{ 0.0719453, -0.2289914, 1.4052427 }
 	};
 
 	int const max_colour = pow (2, lut_out->bit_depth()) - 1;
@@ -243,12 +251,10 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame, shared_ptr<const GammaLUT> lut_in, s
 			s.y = lut_in->lut()[*xyz_y++];
 			s.z = lut_in->lut()[*xyz_z++];
 
-#if 0			
 			/* DCI companding */
 			s.x /= dci_coefficient;
 			s.y /= dci_coefficient;
 			s.z /= dci_coefficient;
-#endif			
 			
 			/* XYZ to RGB */
 			d.r = ((s.x * colour_matrix[0][0]) + (s.y * colour_matrix[0][1]) + (s.z * colour_matrix[0][2]));
