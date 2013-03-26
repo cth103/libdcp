@@ -13,15 +13,11 @@ XYZsRGBLUT::XYZsRGBLUT(int bits, float gamma)
 
 	for (int i = 0; i < bit_length; ++i) {
 		float v = float(i) / (bit_length - 1);
-#if 0		
 		if (v < (0.04045 / 12.92)) {
 			v *= 12.92;
 		} else {
-#endif			
 			v = (1.055 * pow (v, (1 / gamma))) - 0.055;
-#if 0			
 		}
-#endif		
 
 		_lut[i] = int(v * 255);
 	}
