@@ -19,6 +19,7 @@
 
 #include <list>
 #include <boost/shared_ptr.hpp>
+#include <boost/function.hpp>
 #include "types.h"
 
 namespace libdcp {
@@ -55,7 +56,7 @@ public:
 
 	void write_to_cpl (std::ostream & s) const;
 
-	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, std::list<std::string>& notes) const;
+	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (std::string)> notes) const;
 
 private:
 	boost::shared_ptr<const PictureAsset> _main_picture;

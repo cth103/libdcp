@@ -248,10 +248,10 @@ DCP::read (bool require_mxfs)
 }
 
 bool
-DCP::equals (DCP const & other, EqualityOptions opt, list<string>& notes) const
+DCP::equals (DCP const & other, EqualityOptions opt, boost::function<void (string)> note) const
 {
 	if (_cpls.size() != other._cpls.size()) {
-		notes.push_back ("CPL counts differ");
+		note ("CPL counts differ");
 		return false;
 	}
 
@@ -259,7 +259,7 @@ DCP::equals (DCP const & other, EqualityOptions opt, list<string>& notes) const
 	list<shared_ptr<const CPL> >::const_iterator b = other._cpls.begin ();
 
 	while (a != _cpls.end ()) {
-		if (!(*a)->equals (*b->get(), opt, notes)) {
+		if (!(*a)->equals (*b->get(), opt, note)) {
 			return false;
 		}
 		++a;
@@ -516,30 +516,30 @@ CPL::write_to_assetmap (ostream& s) const
 	
 	
 bool
-CPL::equals (CPL const & other, EqualityOptions opt, list<string>& notes) const
+CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (string)> note) const
 {
 	if (_name != other._name) {
-		notes.push_back ("names differ");
+		note ("names differ");
 		return false;
 	}
 
 	if (_content_kind != other._content_kind) {
-		notes.push_back ("content kinds differ");
+		note ("content kinds differ");
 		return false;
 	}
 
 	if (_fps != other._fps) {
-		notes.push_back ("frames per second differ");
+		note ("frames per second differ");
 		return false;
 	}
 
 	if (_length != other._length) {
-		notes.push_back ("lengths differ");
+		note ("lengths differ");
 		return false;
 	}
 
 	if (_reels.size() != other._reels.size()) {
-		notes.push_back ("reel counts differ");
+		note ("reel counts differ");
 		return false;
 	}
 	
@@ -547,7 +547,7 @@ CPL::equals (CPL const & other, EqualityOptions opt, list<string>& notes) const
 	list<shared_ptr<const Reel> >::const_iterator b = other._reels.begin ();
 	
 	while (a != _reels.end ()) {
-		if (!(*a)->equals (*b, opt, notes)) {
+		if (!(*a)->equals (*b, opt, note)) {
 			return false;
 		}
 		++a;

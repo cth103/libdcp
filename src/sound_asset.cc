@@ -222,9 +222,9 @@ SoundAsset::write_to_cpl (ostream& s) const
 }
 
 bool
-SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<string>& notes) const
+SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (string)> note) const
 {
-	if (!MXFAsset::equals (other, opt, notes)) {
+	if (!MXFAsset::equals (other, opt, note)) {
 		return false;
 	}
 		     
@@ -260,7 +260,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<str
 //		desc_A.ChannelFormat != desc_B.ChannelFormat ||
 		) {
 		
-		notes.push_back ("audio MXF picture descriptors differ");
+		note ("audio MXF picture descriptors differ");
 		return false;
 	}
 	
@@ -277,7 +277,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<str
 		}
 		
 		if (buffer_A.Size() != buffer_B.Size()) {
-			notes.push_back ("sizes of audio data for frame " + lexical_cast<string>(i) + " differ");
+			note ("sizes of audio data for frame " + lexical_cast<string>(i) + " differ");
 			return false;
 		}
 		
@@ -285,7 +285,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<str
 			for (uint32_t i = 0; i < buffer_A.Size(); ++i) {
 				int const d = abs (buffer_A.RoData()[i] - buffer_B.RoData()[i]);
 				if (d > opt.max_audio_sample_error) {
-					notes.push_back ("PCM data difference of " + lexical_cast<string> (d));
+					note ("PCM data difference of " + lexical_cast<string> (d));
 					return false;
 				}
 			}

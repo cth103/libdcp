@@ -63,7 +63,7 @@ public:
 	 */
 	void write_to_cpl (std::ostream& s) const;
 
-	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
+	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (std::string)> note) const;
 
 	Size size () const {
 		return _size;
@@ -72,7 +72,7 @@ public:
 protected:	
 
 	bool frame_buffer_equals (
-		int frame, EqualityOptions opt, std::list<std::string>& notes,
+		int frame, EqualityOptions opt, boost::function<void (std::string)> note,
 		uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
 		) const;
 
@@ -210,7 +210,7 @@ public:
 	boost::shared_ptr<MonoPictureAssetWriter> start_write (bool);
 
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
-	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
+	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (std::string)> note) const;
 
 private:
 	std::string path_from_list (int f, std::vector<std::string> const & files) const;
@@ -224,7 +224,7 @@ public:
 	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, int intrinsic_duration);
 	
 	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
-	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
+	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (std::string)> note) const;
 };
 	
 

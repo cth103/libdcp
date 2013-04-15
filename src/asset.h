@@ -27,6 +27,7 @@
 #include <string>
 #include <list>
 #include <boost/filesystem.hpp>
+#include <boost/function.hpp>
 #include "types.h"
 
 namespace ASDCP {
@@ -80,7 +81,7 @@ public:
 		_file_name = f;
 	}
 	
-	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const = 0;
+	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (std::string)>) const = 0;
 
 protected:
 	

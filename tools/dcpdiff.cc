@@ -20,6 +20,12 @@ help (string n)
 	     << "and differing UUIDs.\n";
 }
 
+void
+note (string n)
+{
+	cout << " " << n << "\n";
+}
+
 int
 main (int argc, char* argv[])
 {
@@ -87,12 +93,7 @@ main (int argc, char* argv[])
 	/* I think this is just below the LSB at 16-bits (ie the 8th most significant bit at 24-bit) */
 	options.max_audio_sample_error = 255;
 
-	list<string> notes;
-	bool equals = a->equals (*b, options, notes);
-
-	for (list<string>::iterator i = notes.begin(); i != notes.end(); ++i) {
-		cout << "  " << *i << "\n";
-	}
+	bool const equals = a->equals (*b, options, boost::bind (note, _1));
 
 	if (equals) {
 		exit (EXIT_SUCCESS);

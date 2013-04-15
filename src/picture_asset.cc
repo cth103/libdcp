@@ -79,9 +79,9 @@ PictureAsset::write_to_cpl (ostream& s) const
 }
 
 bool
-PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<string>& notes) const
+PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (string)> note) const
 {
-	if (!MXFAsset::equals (other, opt, notes)) {
+	if (!MXFAsset::equals (other, opt, note)) {
 		return false;
 	}
 		     
@@ -125,7 +125,7 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<s
 //		desc_A.QuantizationDefault != desc_B.QuantizationDefault
 		) {
 		
-		notes.push_back ("video MXF picture descriptors differ");
+		note ("video MXF picture descriptors differ");
 		return false;
 	}
 
@@ -248,9 +248,9 @@ MonoPictureAsset::get_frame (int n) const
 
 
 bool
-MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<string>& notes) const
+MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (string)> note) const
 {
-	if (!PictureAsset::equals (other, opt, notes)) {
+	if (!PictureAsset::equals (other, opt, note)) {
 		return false;
 	}
 
@@ -262,7 +262,7 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, li
 		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
 		
 		if (!frame_buffer_equals (
-			    i, opt, notes,
+			    i, opt, note,
 			    frame_A->j2k_data(), frame_A->j2k_size(),
 			    frame_B->j2k_data(), frame_B->j2k_size()
 			    )) {
@@ -274,9 +274,9 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, li
 }
 
 bool
-StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<string>& notes) const
+StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (string)> note) const
 {
-	if (!PictureAsset::equals (other, opt, notes)) {
+	if (!PictureAsset::equals (other, opt, note)) {
 		return false;
 	}
 	
@@ -288,7 +288,7 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 		shared_ptr<const StereoPictureFrame> frame_B = other_picture->get_frame (i);
 		
 		if (!frame_buffer_equals (
-			    i, opt, notes,
+			    i, opt, note,
 			    frame_A->left_j2k_data(), frame_A->left_j2k_size(),
 			    frame_B->left_j2k_data(), frame_B->left_j2k_size()
 			    )) {
@@ -296,7 +296,7 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 		}
 		
 		if (!frame_buffer_equals (
-			    i, opt, notes,
+			    i, opt, note,
 			    frame_A->right_j2k_data(), frame_A->right_j2k_size(),
 			    frame_B->right_j2k_data(), frame_B->right_j2k_size()
 			    )) {
@@ -309,7 +309,8 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 
 bool
 PictureAsset::frame_buffer_equals (
-	int frame, EqualityOptions opt, list<string>& notes, uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
+	int frame, EqualityOptions opt, boost::function<void (string)> note,
+	uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
 	) const
 {
 	if (size_A == size_B && memcmp (data_A, data_B, size_A) == 0) {
@@ -324,7 +325,7 @@ PictureAsset::frame_buffer_equals (
 	/* Compare them */
 	
 	if (image_A->numcomps != image_B->numcomps) {
-		notes.push_back ("image component counts for frame " + lexical_cast<string>(frame) + " differ");
+		note ("image component counts for frame " + lexical_cast<string>(frame) + " differ");
 		return false;
 	}
 	
@@ -335,7 +336,7 @@ PictureAsset::frame_buffer_equals (
 	for (int c = 0; c < image_A->numcomps; ++c) {
 		
 		if (image_A->comps[c].w != image_B->comps[c].w || image_A->comps[c].h != image_B->comps[c].h) {
-			notes.push_back ("image sizes for frame " + lexical_cast<string>(frame) + " differ");
+			note ("image sizes for frame " + lexical_cast<string>(frame) + " differ");
 			return false;
 		}
 		
@@ -362,7 +363,7 @@ PictureAsset::frame_buffer_equals (
 	double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
 	
 	if (mean > opt.max_mean_pixel_error || std_dev > opt.max_std_dev_pixel_error) {
-		notes.push_back ("mean or standard deviation out of range for " + lexical_cast<string>(frame));
+		note ("mean or standard deviation out of range for " + lexical_cast<string>(frame));
 		return false;
 	}
 	

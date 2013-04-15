@@ -50,32 +50,32 @@ Reel::write_to_cpl (ostream& s) const
 }
 	
 bool
-Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, list<string>& notes) const
+Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (string)> note) const
 {
 	if ((_main_picture && !other->_main_picture) || (!_main_picture && other->_main_picture)) {
-		notes.push_back ("reel has different assets");
+		note ("reel has different assets");
 		return false;
 	}
 	
-	if (_main_picture && !_main_picture->equals (other->_main_picture, opt, notes)) {
+	if (_main_picture && !_main_picture->equals (other->_main_picture, opt, note)) {
 		return false;
 	}
 
 	if ((_main_sound && !other->_main_sound) || (!_main_sound && other->_main_sound)) {
-		notes.push_back ("reel has different assets");
+		note ("reel has different assets");
 		return false;
 	}
 	
-	if (_main_sound && !_main_sound->equals (other->_main_sound, opt, notes)) {
+	if (_main_sound && !_main_sound->equals (other->_main_sound, opt, note)) {
 		return false;
 	}
 
 	if ((_main_subtitle && !other->_main_subtitle) || (!_main_subtitle && other->_main_subtitle)) {
-		notes.push_back ("reel has different assets");
+		note ("reel has different assets");
 		return false;
 	}
 	
-	if (_main_subtitle && !_main_subtitle->equals (other->_main_subtitle, opt, notes)) {
+	if (_main_subtitle && !_main_subtitle->equals (other->_main_subtitle, opt, note)) {
 		return false;
 	}
 

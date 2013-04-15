@@ -61,7 +61,7 @@ public:
 		_intrinsic_duration = d;
 	}
 
-	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
+	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (std::string)> note) const;
 	
 	int intrinsic_duration () const {
 		return _intrinsic_duration;

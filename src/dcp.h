@@ -84,7 +84,7 @@ public:
 
 	std::list<boost::shared_ptr<const Asset> > assets () const;
 	
-	bool equals (CPL const & other, EqualityOptions options, std::list<std::string>& notes) const;
+	bool equals (CPL const & other, EqualityOptions options, boost::function<void (std::string)> note) const;
 	
 	void write_xml () const;
 	void write_to_assetmap (std::ostream& s) const;
@@ -141,11 +141,10 @@ public:
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
-	 *  @param options Options to define just what "equality" means.
-	 *  @param notes Filled in with notes about differences.
+	 *  @param options Options to define what "equality" means.
 	 *  @return true if the DCPs are equal according to EqualityOptions, otherwise false.
 	 */
-	bool equals (DCP const & other, EqualityOptions options, std::list<std::string>& notes) const;
+	bool equals (DCP const & other, EqualityOptions options, boost::function<void (std::string)> note) const;
 
 	/** Add a CPL to this DCP.
 	 *  @param cpl CPL to add.
