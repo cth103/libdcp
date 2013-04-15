@@ -24,6 +24,8 @@
 #ifndef LIBDCP_TYPES_H
 #define LIBDCP_TYPES_H
 
+#include <string>
+
 namespace libdcp
 {
 
