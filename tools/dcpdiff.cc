@@ -8,12 +8,15 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
+static bool verbose = false;
+
 static void
 help (string n)
 {
 	cerr << "Syntax: " << n << " [OPTION] <DCP> <DCP>\n"
-	     << "  -v, --version      show libdcp version\n"
+	     << "  -V, --version      show libdcp version\n"
 	     << "  -h, --help         show this help\n"
+	     << "  -v, --verbose      be verbose\n"
 	     << "\n"
 	     << "The <DCP>s are the DCP directories to compare.\n"
 	     << "Comparison is of metadata and content, ignoring timestamps\n"
@@ -21,9 +24,11 @@ help (string n)
 }
 
 void
-note (string n)
+note (NoteType t, string n)
 {
-	cout << " " << n << "\n";
+	if (t == ERROR || (t == PROGRESS && verbose)) {
+		cout << " " << n << "\n";
+	}
 }
 
 int
@@ -34,24 +39,28 @@ main (int argc, char* argv[])
 	int option_index = 0;
 	while (1) {
 		static struct option long_options[] = {
-			{ "version", no_argument, 0, 'v'},
+			{ "version", no_argument, 0, 'V'},
 			{ "help", no_argument, 0, 'h'},
+			{ "verbose", no_argument, 0, 'v'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "vh", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhv", long_options, &option_index);
 
 		if (c == -1) {
 			break;
 		}
 
 		switch (c) {
-		case 'v':
+		case 'V':
 			cout << "dcpdiff version " << LIBDCP_VERSION << "\n";
 			exit (EXIT_SUCCESS);
 		case 'h':
 			help (argv[0]);
 			exit (EXIT_SUCCESS);
+		case 'v':
+			verbose = true;
+			break;
 		}
 	}
 
@@ -93,7 +102,7 @@ main (int argc, char* argv[])
 	/* I think this is just below the LSB at 16-bits (ie the 8th most significant bit at 24-bit) */
 	options.max_audio_sample_error = 255;
 
-	bool const equals = a->equals (*b, options, boost::bind (note, _1));
+	bool const equals = a->equals (*b, options, boost::bind (note, _1, _2));
 
 	if (equals) {
 		exit (EXIT_SUCCESS);

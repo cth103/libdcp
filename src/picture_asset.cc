@@ -79,7 +79,7 @@ PictureAsset::write_to_cpl (ostream& s) const
 }
 
 bool
-PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (string)> note) const
+PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!MXFAsset::equals (other, opt, note)) {
 		return false;
@@ -125,7 +125,7 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost:
 //		desc_A.QuantizationDefault != desc_B.QuantizationDefault
 		) {
 		
-		note ("video MXF picture descriptors differ");
+		note (ERROR, "video MXF picture descriptors differ");
 		return false;
 	}
 
@@ -248,7 +248,7 @@ MonoPictureAsset::get_frame (int n) const
 
 
 bool
-MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (string)> note) const
+MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!PictureAsset::equals (other, opt, note)) {
 		return false;
@@ -258,6 +258,7 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, bo
 	assert (other_picture);
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
+		note (PROGRESS, "Comparing video frame " + lexical_cast<string> (i) + " of " + lexical_cast<string> (_intrinsic_duration));
 		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
 		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
 		
@@ -274,7 +275,7 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, bo
 }
 
 bool
-StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (string)> note) const
+StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!PictureAsset::equals (other, opt, note)) {
 		return false;
@@ -309,7 +310,7 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 
 bool
 PictureAsset::frame_buffer_equals (
-	int frame, EqualityOptions opt, boost::function<void (string)> note,
+	int frame, EqualityOptions opt, boost::function<void (NoteType, string)> note,
 	uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
 	) const
 {
@@ -325,7 +326,7 @@ PictureAsset::frame_buffer_equals (
 	/* Compare them */
 	
 	if (image_A->numcomps != image_B->numcomps) {
-		note ("image component counts for frame " + lexical_cast<string>(frame) + " differ");
+		note (ERROR, "image component counts for frame " + lexical_cast<string>(frame) + " differ");
 		return false;
 	}
 	
@@ -336,7 +337,7 @@ PictureAsset::frame_buffer_equals (
 	for (int c = 0; c < image_A->numcomps; ++c) {
 		
 		if (image_A->comps[c].w != image_B->comps[c].w || image_A->comps[c].h != image_B->comps[c].h) {
-			note ("image sizes for frame " + lexical_cast<string>(frame) + " differ");
+			note (ERROR, "image sizes for frame " + lexical_cast<string>(frame) + " differ");
 			return false;
 		}
 		
@@ -363,7 +364,7 @@ PictureAsset::frame_buffer_equals (
 	double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
 	
 	if (mean > opt.max_mean_pixel_error || std_dev > opt.max_std_dev_pixel_error) {
-		note ("mean or standard deviation out of range for " + lexical_cast<string>(frame));
+		note (ERROR, "mean or standard deviation out of range for " + lexical_cast<string>(frame));
 		return false;
 	}
 	

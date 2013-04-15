@@ -248,10 +248,10 @@ DCP::read (bool require_mxfs)
 }
 
 bool
-DCP::equals (DCP const & other, EqualityOptions opt, boost::function<void (string)> note) const
+DCP::equals (DCP const & other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (_cpls.size() != other._cpls.size()) {
-		note ("CPL counts differ");
+		note (ERROR, "CPL counts differ");
 		return false;
 	}
 
@@ -516,30 +516,30 @@ CPL::write_to_assetmap (ostream& s) const
 	
 	
 bool
-CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (string)> note) const
+CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (_name != other._name) {
-		note ("names differ");
+		note (ERROR, "names differ");
 		return false;
 	}
 
 	if (_content_kind != other._content_kind) {
-		note ("content kinds differ");
+		note (ERROR, "content kinds differ");
 		return false;
 	}
 
 	if (_fps != other._fps) {
-		note ("frames per second differ");
+		note (ERROR, "frames per second differ");
 		return false;
 	}
 
 	if (_length != other._length) {
-		note ("lengths differ");
+		note (ERROR, "lengths differ");
 		return false;
 	}
 
 	if (_reels.size() != other._reels.size()) {
-		note ("reel counts differ");
+		note (ERROR, "reel counts differ");
 		return false;
 	}
 	

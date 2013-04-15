@@ -184,9 +184,9 @@ public:
 	SubtitleAsset (std::string directory, std::string movie_title, std::string language);
 
 	void write_to_cpl (std::ostream&) const;
-	virtual bool equals (boost::shared_ptr<const Asset>, EqualityOptions, boost::function<void (std::string)> note) const {
+	virtual bool equals (boost::shared_ptr<const Asset>, EqualityOptions, boost::function<void (NoteType, std::string)> note) const {
 		/* XXX */
-		note ("subtitle assets not compared yet");
+		note (ERROR, "subtitle assets not compared yet");
 		return true;
 	}
 

@@ -71,31 +71,31 @@ MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid)
 }
 
 bool
-MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions, boost::function<void (string)> note) const
+MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions, boost::function<void (NoteType, string)> note) const
 {
 	shared_ptr<const MXFAsset> other_mxf = dynamic_pointer_cast<const MXFAsset> (other);
 	if (!other_mxf) {
-		note ("comparing an MXF asset with a non-MXF asset");
+		note (ERROR, "comparing an MXF asset with a non-MXF asset");
 		return false;
 	}
 	
 	if (_file_name != other_mxf->_file_name) {
-		note ("MXF names differ");
+		note (ERROR, "MXF names differ");
 		return false;
 	}
 
 	if (_edit_rate != other_mxf->_edit_rate) {
-		note ("MXF edit rates differ");
+		note (ERROR, "MXF edit rates differ");
 		return false;
 	}
 	
 	if (_intrinsic_duration != other_mxf->_intrinsic_duration) {
-		note ("MXF intrinsic durations differ");
+		note (ERROR, "MXF intrinsic durations differ");
 		return false;
 	}
 
 	if (_duration != other_mxf->_duration) {
-		note ("MXF durations differ");
+		note (ERROR, "MXF durations differ");
 		return false;
 	}
 	

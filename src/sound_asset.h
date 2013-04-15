@@ -129,7 +129,7 @@ public:
 	 */
 	void write_to_cpl (std::ostream& s) const;
 
-	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (std::string)> note) const;
+	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
 	

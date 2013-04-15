@@ -107,6 +107,11 @@ struct EqualityOptions {
 	int max_audio_sample_error;
 };
 
+enum NoteType {
+	PROGRESS,
+	ERROR
+};
+
 /** @class Color
  *  @brief An RGB color (aka colour).
  */
