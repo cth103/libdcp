@@ -17,6 +17,7 @@ help (string n)
 	     << "  -V, --version      show libdcp version\n"
 	     << "  -h, --help         show this help\n"
 	     << "  -v, --verbose      be verbose\n"
+	     << "  -n, --names        allow differing MXF names\n"
 	     << "\n"
 	     << "The <DCP>s are the DCP directories to compare.\n"
 	     << "Comparison is of metadata and content, ignoring timestamps\n"
@@ -42,10 +43,11 @@ main (int argc, char* argv[])
 			{ "version", no_argument, 0, 'V'},
 			{ "help", no_argument, 0, 'h'},
 			{ "verbose", no_argument, 0, 'v'},
+			{ "names", no_argument, 0, 'n'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vhv", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhvn", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -60,6 +62,9 @@ main (int argc, char* argv[])
 			exit (EXIT_SUCCESS);
 		case 'v':
 			verbose = true;
+			break;
+		case 'n':
+			options.mxf_names_can_differ = true;
 			break;
 		}
 	}

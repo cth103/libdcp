@@ -71,7 +71,7 @@ MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid)
 }
 
 bool
-MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions, boost::function<void (NoteType, string)> note) const
+MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	shared_ptr<const MXFAsset> other_mxf = dynamic_pointer_cast<const MXFAsset> (other);
 	if (!other_mxf) {
@@ -81,7 +81,9 @@ MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions, boost::functio
 	
 	if (_file_name != other_mxf->_file_name) {
 		note (ERROR, "MXF names differ");
-		return false;
+		if (!opt.mxf_names_can_differ) {
+			return false;
+		}
 	}
 
 	if (_edit_rate != other_mxf->_edit_rate) {
