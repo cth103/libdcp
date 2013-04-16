@@ -315,6 +315,7 @@ PictureAsset::frame_buffer_equals (
 	) const
 {
 	if (size_A == size_B && memcmp (data_A, data_B, size_A) == 0) {
+		note (NOTE, "J2K identical");
 		/* Easy result; the J2K data is identical */
 		return true;
 	}
@@ -367,6 +368,8 @@ PictureAsset::frame_buffer_equals (
 		note (ERROR, "mean or standard deviation out of range for " + lexical_cast<string>(frame));
 		return false;
 	}
+
+	note (NOTE, "mean difference " + lexical_cast<string> (mean) + ", deviation " + lexical_cast<string> (std_dev));
 	
 	opj_image_destroy (image_A);
 	opj_image_destroy (image_B);

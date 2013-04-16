@@ -26,7 +26,7 @@ help (string n)
 void
 note (NoteType t, string n)
 {
-	if (t == ERROR || (t == PROGRESS && verbose)) {
+	if (t == ERROR || verbose) {
 		cout << " " << n << "\n";
 	}
 }

@@ -109,7 +109,8 @@ struct EqualityOptions {
 
 enum NoteType {
 	PROGRESS,
-	ERROR
+	ERROR,
+	NOTE
 };
 
 /** @class Color
