@@ -1,2 +1,2 @@
-builds = ['source']
+release_targets = ['source']
 
