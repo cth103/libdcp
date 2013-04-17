@@ -1,2 +1,5 @@
 release_targets = ['source']
 
+def build(prefix):
+    command('./waf configure --prefix=%s build install' % prefix)
+
