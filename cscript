@@ -1,7 +1,7 @@
 release_targets = ['source']
 
-def build(prefix):
+def build(dep_prefix, install_prefix):
     command("""CXXFLAGS=-I%s/include LINKFLAGS=-L%s/lib PKG_CONFIG_PATH=%s/lib/pkgconfig
-               ./waf configure --static-openjpeg --static-libdcp --prefix=%s build install""" % (prefix, prefix, prefix, prefix))
+               ./waf configure --static-openjpeg --static-libdcp --prefix=%s build install""" % (dep_prefix, dep_prefix, dep_prefix, install_prefix))
 
 
