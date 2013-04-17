@@ -1,5 +1,6 @@
 release_targets = ['source']
 
 def build(prefix):
-    command('./waf configure --prefix=%s build install' % prefix)
+    command('CXXFLAGS=-I%s/include LINKFLAGS=-L%s/lib PKG_CONFIG_PATH=%s/lib/pkgconfig ./waf configure --prefix=%s build install' % (prefix, prefix, prefix, prefix))
+
 
