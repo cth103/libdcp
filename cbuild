@@ -1,0 +1,16 @@
+#!/usr/bin/python
+
+import argparse
+import os
+
+parser = argparse.ArgumentParser()
+parser.add_argument('command')
+parser.add_argument('-p', '--prefix', help='prefix', required=True)
+args = parser.parse_args()
+
+def command(c):
+    print c
+    os.system(c)
+
+if args.command == 'build':
+    command('./waf configure --prefix=%s build install' % args.prefix)
