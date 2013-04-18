@@ -1,14 +1,9 @@
-release_targets = ['source']
 
-def build(dep_prefix, install_prefix, target, static, parallel):
-    configure = './waf configure --prefix=%s' % install_prefix
-    if static:
-        configure += ' --static-openjpeg --static-libdcp'
-
-    var = "CXXFLAGS=-I%s/include LINKFLAGS=-L%s/lib PKG_CONFIG_PATH=%s/lib/pkgconfig" % (dep_prefix, dep_prefix, dep_prefix)
-
-    command('%s %s' % (var, configure))
-    command('./waf build install')
-
-
-
+def build(env, target):
+    cmd = './waf configure --prefix=%s' % env.work_dir(True)
+    if target.platform == 'linux':
+        cmd += ' --static-libdcp --static-openjpeg'
+    elif target.platform == 'windows':
+        cmd += ' --target-windows'
+    env.command(cmd)
+    env.command('./waf build install')

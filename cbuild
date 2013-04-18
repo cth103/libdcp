@@ -6,6 +6,7 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument('command')
 parser.add_argument('-p', '--prefix', help='prefix', required=True)
+parser.add_argument('-s', '--static', help='build statically', action='store_true')
 args = parser.parse_args()
 
 def command(c):
@@ -13,4 +14,8 @@ def command(c):
     os.system(c)
 
 if args.command == 'build':
-    command('./waf configure --prefix=%s build install' % args.prefix)
+    cmd = './waf configure --prefix=%s' % args.prefix
+    if args.static:
+        cmd += ' --static-libdcp --static-openjpeg'
+    cmd += ' build install'
+    command(cmd)
