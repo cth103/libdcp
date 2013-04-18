@@ -1,6 +1,6 @@
 
 def build(env, target):
-    cmd = './waf configure --prefix=%s' % env.work_dir(True)
+    cmd = './waf configure --prefix=%s' % env.work_dir_cscript()
     if target.platform == 'linux':
         cmd += ' --static-libdcp --static-openjpeg'
     elif target.platform == 'windows':
