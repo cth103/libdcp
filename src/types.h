@@ -109,6 +109,9 @@ struct EqualityOptions {
 	bool mxf_names_can_differ;
 };
 
+/* Win32 defines this */	
+#undef ERROR
+
 enum NoteType {
 	PROGRESS,
 	ERROR,
