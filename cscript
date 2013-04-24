@@ -1,3 +1,4 @@
+import os
 
 def build(env, target):
     cmd = './waf configure --prefix=%s' % env.work_dir_cscript()
@@ -9,10 +10,6 @@ def build(env, target):
     env.command('./waf build install')
 
 def make_doxygen(env):
-    try:
-        os.makedirs('build/doc')
-    except:
-        pass
-    env.command('pwd')
+    os.makedirs('build/doc')
     env.command('doxygen')
     return os.path.abspath('build/doc/html')
