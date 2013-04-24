@@ -7,3 +7,7 @@ def build(env, target):
         cmd += ' --target-windows'
     env.command(cmd)
     env.command('./waf build install')
+
+def make_doxygen(env):
+    env.command('doxygen')
+    return os.path.abspath('build/doc/html')
