@@ -9,9 +9,9 @@ def build(env, target):
     env.command('./waf build install')
 
 def make_doxygen(env):
-    env.command('doxygen')
     try:
         os.makedirs('build/doc')
     except:
         pass
+    env.command('doxygen')
     return os.path.abspath('build/doc/html')
