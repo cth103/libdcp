@@ -26,7 +26,6 @@
 #include "lut.h"
 #include "util.h"
 #include "gamma_lut.h"
-#include "xyz_srgb_lut.h"
 
 #define DCI_GAMMA 2.6
 
@@ -84,7 +83,7 @@ MonoPictureFrame::argb_frame (int reduce, float srgb_gamma) const
 {
 	opj_image_t* xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce);
 	assert (xyz_frame->numcomps == 3);
-	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA), XYZsRGBLUT::cache.get (12, srgb_gamma));
+	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA), GammaLUT::cache.get (12, 1 / srgb_gamma));
 	opj_image_destroy (xyz_frame);
 	return f;
 }
@@ -139,7 +138,7 @@ StereoPictureFrame::argb_frame (Eye eye, int reduce, float srgb_gamma) const
 	}
 	
 	assert (xyz_frame->numcomps == 3);
-	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA), XYZsRGBLUT::cache.get (12, srgb_gamma));
+	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA), GammaLUT::cache.get (12, 1 / srgb_gamma));
 	opj_image_destroy (xyz_frame);
 	return f;
 }

@@ -35,7 +35,6 @@
 #include "types.h"
 #include "argb_frame.h"
 #include "gamma_lut.h"
-#include "xyz_srgb_lut.h"
 
 using std::string;
 using std::stringstream;
@@ -203,11 +202,13 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
  *  @return RGB image.
  */
 shared_ptr<ARGBFrame>
-libdcp::xyz_to_rgb (opj_image_t* xyz_frame, shared_ptr<const GammaLUT> lut_in, shared_ptr<const XYZsRGBLUT> lut_out)
+libdcp::xyz_to_rgb (opj_image_t* xyz_frame, shared_ptr<const GammaLUT> lut_in, shared_ptr<const GammaLUT> lut_out)
 {
 	float const dci_coefficient = 48.0 / 52.37;
 
-        /* sRGB color matrix for XYZ -> RGB */
+        /* sRGB color matrix for XYZ -> RGB.  This is the same as the one used by the Fraunhofer
+	   EasyDCP player, I think.
+	*/
 
 	float const colour_matrix[3][3] = {
 		{  3.24096989631653,   -1.5373831987381,  -0.498610764741898 },
@@ -264,9 +265,9 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame, shared_ptr<const GammaLUT> lut_in, s
 			d.b = max (d.b, 0.0);
 			
 			/* Out gamma LUT */
-			*argb_line++ = lut_out->lut()[(int) (d.b * max_colour)];
-			*argb_line++ = lut_out->lut()[(int) (d.g * max_colour)];
-			*argb_line++ = lut_out->lut()[(int) (d.r * max_colour)];
+			*argb_line++ = lut_out->lut()[(int) (d.b * max_colour)] * 0xff;
+			*argb_line++ = lut_out->lut()[(int) (d.g * max_colour)] * 0xff;
+			*argb_line++ = lut_out->lut()[(int) (d.r * max_colour)] * 0xff;
 			*argb_line++ = 0xff;
 		}
 		

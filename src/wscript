@@ -31,7 +31,6 @@ def build(bld):
                  util.cc
                  version.cc
                  xml.cc
-                 xyz_srgb_lut.cc
                  """
 
     headers = """
