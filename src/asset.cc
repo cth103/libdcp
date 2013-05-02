@@ -35,10 +35,14 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-Asset::Asset (string directory, string file_name)
+Asset::Asset (string directory, string file_name, int edit_rate, int intrinsic_duration)
 	: _directory (directory)
 	, _file_name (file_name)
 	, _uuid (make_uuid ())
+	, _edit_rate (edit_rate)
+	, _entry_point (0)
+	, _intrinsic_duration (intrinsic_duration)
+	, _duration (intrinsic_duration)
 {
 	if (_file_name.empty ()) {
 		_file_name = _uuid + ".xml";
@@ -90,4 +94,26 @@ Asset::digest () const
 	}
 
 	return _digest;
+}
+
+
+bool
+Asset::equals (shared_ptr<const Asset> other, EqualityOptions, boost::function<void (NoteType, string)> note) const
+{
+	if (_edit_rate != other->_edit_rate) {
+		note (ERROR, "MXF edit rates differ");
+		return false;
+	}
+	
+	if (_intrinsic_duration != other->_intrinsic_duration) {
+		note (ERROR, "MXF intrinsic durations differ");
+		return false;
+	}
+
+	if (_duration != other->_duration) {
+		note (ERROR, "MXF durations differ");
+		return false;
+	}
+
+	return true;
 }

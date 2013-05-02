@@ -39,21 +39,13 @@ using namespace libdcp;
 MXFAsset::MXFAsset (string directory, string file_name)
 	: Asset (directory, file_name)
 	, _progress (0)
-	, _edit_rate (0)
-	, _entry_point (0)
-	, _intrinsic_duration (0)
-	, _duration (0)
 {
 
 }
 
 MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int edit_rate, int intrinsic_duration)
-	: Asset (directory, file_name)
+	: Asset (directory, file_name, edit_rate, intrinsic_duration)
 	, _progress (progress)
-	, _edit_rate (edit_rate)
-	, _entry_point (0)
-	, _intrinsic_duration (intrinsic_duration)
-	, _duration (intrinsic_duration)
 {
 	
 }
@@ -73,6 +65,10 @@ MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid)
 bool
 MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
+	if (!Asset::equals (other, opt, note)) {
+		return false;
+	}
+	
 	shared_ptr<const MXFAsset> other_mxf = dynamic_pointer_cast<const MXFAsset> (other);
 	if (!other_mxf) {
 		note (ERROR, "comparing an MXF asset with a non-MXF asset");
@@ -84,21 +80,6 @@ MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::fun
 		if (!opt.mxf_names_can_differ) {
 			return false;
 		}
-	}
-
-	if (_edit_rate != other_mxf->_edit_rate) {
-		note (ERROR, "MXF edit rates differ");
-		return false;
-	}
-	
-	if (_intrinsic_duration != other_mxf->_intrinsic_duration) {
-		note (ERROR, "MXF intrinsic durations differ");
-		return false;
-	}
-
-	if (_duration != other_mxf->_duration) {
-		note (ERROR, "MXF durations differ");
-		return false;
 	}
 	
 	return true;

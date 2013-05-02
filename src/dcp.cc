@@ -365,7 +365,8 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 						       )
 					);
 
-				picture->set_entry_point ((*i)->asset_list->main_picture->entry_point);
+				picture->set_entry_point (p->entry_point);
+				picture->set_duration (p->duration);
 			} catch (MXFFileError) {
 				if (require_mxfs) {
 					throw;
@@ -384,6 +385,7 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 					);
 
 				picture->set_entry_point (p->entry_point);
+				picture->set_duration (p->duration);
 				
 			} catch (MXFFileError) {
 				if (require_mxfs) {
@@ -403,6 +405,7 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 					);
 
 				sound->set_entry_point ((*i)->asset_list->main_sound->entry_point);
+				sound->set_duration ((*i)->asset_list->main_sound->duration);
 			} catch (MXFFileError) {
 				if (require_mxfs) {
 					throw;

@@ -48,7 +48,7 @@ public:
 	 *  @param directory Directory where our XML or MXF file is.
 	 *  @param file_name Name of our file within directory, or empty to make one up based on UUID.
 	 */
-	Asset (std::string directory, std::string file_name = "");
+	Asset (std::string directory, std::string file_name = "", int edit_rate = 0, int intrinsic_duration = 0);
 
 	virtual ~Asset() {}
 
@@ -80,8 +80,36 @@ public:
 	void set_file_name (std::string f) {
 		_file_name = f;
 	}
+
+	int entry_point () const {
+		return _entry_point;
+	}
+
+	int duration () const {
+		return _duration;
+	}
 	
-	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)>) const = 0;
+	int intrinsic_duration () const {
+		return _intrinsic_duration;
+	}
+	
+	int edit_rate () const {
+		return _edit_rate;
+	}
+
+	void set_entry_point (int e) {
+		_entry_point = e;
+	}
+	
+	void set_duration (int d) {
+		_duration = d;
+	}
+
+	void set_intrinsic_duration (int d) {
+		_intrinsic_duration = d;
+	}
+
+	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)>) const;
 
 protected:
 	
@@ -93,6 +121,14 @@ protected:
 	std::string _file_name;
 	/** Our UUID */
 	std::string _uuid;
+	/** The edit rate; this is normally equal to the number of video frames per second */
+	int _edit_rate;
+	/** Start point to present in frames */
+	int _entry_point;
+	/** Total length in frames */
+	int _intrinsic_duration;
+	/** Length to present in frames */
+	int _duration;
 
 private:	
 	/** Digest of our MXF or XML file */
