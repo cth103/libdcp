@@ -364,13 +364,18 @@ PictureAsset::frame_buffer_equals (
 	
 	double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
 	
-	if (mean > opt.max_mean_pixel_error || std_dev > opt.max_std_dev_pixel_error) {
-		note (ERROR, "mean or standard deviation out of range for " + lexical_cast<string>(frame));
+	note (NOTE, "mean difference " + lexical_cast<string> (mean) + ", deviation " + lexical_cast<string> (std_dev));
+	
+	if (mean > opt.max_mean_pixel_error) {
+		note (ERROR, "mean " + lexical_cast<string>(mean) + " out of range " + lexical_cast<string>(opt.max_mean_pixel_error) + " in frame " + lexical_cast<string>(frame));
 		return false;
 	}
 
-	note (NOTE, "mean difference " + lexical_cast<string> (mean) + ", deviation " + lexical_cast<string> (std_dev));
-	
+	if (std_dev > opt.max_std_dev_pixel_error) {
+		note (ERROR, "standard deviation " + lexical_cast<string>(std_dev) + " out of range " + lexical_cast<string>(opt.max_std_dev_pixel_error) + " in frame " + lexical_cast<string>(frame));
+		return false;
+	}
+
 	opj_image_destroy (image_A);
 	opj_image_destroy (image_B);
 
