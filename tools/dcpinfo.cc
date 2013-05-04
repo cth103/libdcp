@@ -8,6 +8,7 @@
 #include "sound_asset.h"
 #include "picture_asset.h"
 #include "subtitle_asset.h"
+#include "cpl.h"
 
 using std::string;
 using std::cerr;

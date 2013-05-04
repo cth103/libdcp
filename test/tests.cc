@@ -30,6 +30,7 @@
 #include "sound_asset.h"
 #include "reel.h"
 #include "gamma_lut.h"
+#include "cpl.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test

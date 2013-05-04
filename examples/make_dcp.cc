@@ -26,11 +26,13 @@
 
 /* If you are using an installed libdcp, these #includes would need to be changed to
 #include <libdcp/dcp.h>
+#include <libdcp/cpl.h>
 #include <libdcp/picture_asset.h>
 ... etc. ...
 */
 
 #include "dcp.h"
+#include "cpl.h"
 #include "picture_asset.h"
 #include "sound_asset.h"
 #include "reel.h"
