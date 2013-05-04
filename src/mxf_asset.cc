@@ -58,11 +58,11 @@ MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<
 	
 }
 void
-MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid)
+MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid, MXFMetadata const & metadata)
 {
-	writer_info->ProductVersion = Metadata::instance()->product_version;
-	writer_info->CompanyName = Metadata::instance()->company_name;
-	writer_info->ProductName = Metadata::instance()->product_name.c_str();
+	writer_info->ProductVersion = metadata.product_version;
+	writer_info->CompanyName = metadata.company_name;
+	writer_info->ProductName = metadata.product_name.c_str();
 
 	writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
 	unsigned int c;

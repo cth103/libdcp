@@ -27,7 +27,6 @@ def build(bld):
                  sound_asset.cc
                  sound_frame.cc
                  subtitle_asset.cc
-                 test_mode.cc
                  types.cc
                  util.cc
                  version.cc
@@ -36,6 +35,7 @@ def build(bld):
 
     headers = """
               asset.h
+              cpl.h
               dcp.h
               dcp_time.h
               exceptions.h
@@ -48,7 +48,6 @@ def build(bld):
               sound_asset.h
               sound_frame.h
               subtitle_asset.h
-              test_mode.h
               types.h
               util.h
               version.h

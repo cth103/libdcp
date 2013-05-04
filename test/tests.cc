@@ -59,13 +59,14 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 {
 	Kumu::libdcp_test = true;
 	
-	libdcp::Metadata* t = libdcp::Metadata::instance ();
-	t->issuer = "OpenDCP 0.0.25";
-	t->creator = "OpenDCP 0.0.25";
-	t->company_name = "OpenDCP";
-	t->product_name = "OpenDCP";
-	t->product_version = "0.0.25";
-	t->issue_date = "2012-07-17T04:45:18+00:00";
+	libdcp::XMLMetadata xml_meta;
+	xml_meta.issuer = "OpenDCP 0.0.25";
+	xml_meta.creator = "OpenDCP 0.0.25";
+	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
+	libdcp::MXFMetadata mxf_meta;
+	mxf_meta.company_name = "OpenDCP";
+	mxf_meta.product_name = "OpenDCP";
+	mxf_meta.product_version = "0.0.25";
 	boost::filesystem::remove_all ("build/test/foo");
 	boost::filesystem::create_directories ("build/test/foo");
 	libdcp::DCP d ("build/test/foo");
@@ -78,7 +79,8 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 							 &d.Progress,
 							 24,
 							 24,
-							 libdcp::Size (32, 32)
+							 libdcp::Size (32, 32),
+							 mxf_meta
 							 ));
 
 	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
@@ -88,13 +90,14 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 						   &(d.Progress),
 						   24,
 						   24,
-						   2
+						   2,
+						   mxf_meta
 						   ));
 	
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);
 
-	d.write_xml ();
+	d.write_xml (xml_meta);
 }
 
 BOOST_AUTO_TEST_CASE (error_test)

@@ -46,7 +46,8 @@ SoundAsset::SoundAsset (
 	string directory,
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
-	int fps, int intrinsic_duration
+	int fps, int intrinsic_duration,
+	MXFMetadata const & metadata
 	)
 	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 	, _channels (files.size ())
@@ -54,7 +55,7 @@ SoundAsset::SoundAsset (
 {
 	assert (_channels);
 	
-	construct (boost::bind (&SoundAsset::path_from_channel, this, _1, files));
+	construct (boost::bind (&SoundAsset::path_from_channel, this, _1, files), metadata);
 }
 
 SoundAsset::SoundAsset (
@@ -62,7 +63,8 @@ SoundAsset::SoundAsset (
 	string directory,
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
-	int fps, int intrinsic_duration, int channels
+	int fps, int intrinsic_duration, int channels,
+	MXFMetadata const & metadata
 	)
 	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 	, _channels (channels)
@@ -70,7 +72,7 @@ SoundAsset::SoundAsset (
 {
 	assert (_channels);
 	
-	construct (get_path);
+	construct (get_path, metadata);
 }
 
 SoundAsset::SoundAsset (string directory, string mxf_name)
@@ -111,7 +113,7 @@ SoundAsset::path_from_channel (Channel channel, vector<string> const & files)
 }
 
 void
-SoundAsset::construct (boost::function<string (Channel)> get_path)
+SoundAsset::construct (boost::function<string (Channel)> get_path, MXFMetadata const & metadata)
 {
 	ASDCP::Rational asdcp_edit_rate (_edit_rate, 1);
 
@@ -164,7 +166,7 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 	frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (audio_desc));
 
 	ASDCP::WriterInfo writer_info;
-	MXFAsset::fill_writer_info (&writer_info, _uuid);
+	MXFAsset::fill_writer_info (&writer_info, _uuid, metadata);
 
 	ASDCP::PCM::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, audio_desc))) {
@@ -303,10 +305,10 @@ SoundAsset::get_frame (int n) const
 }
 
 shared_ptr<SoundAssetWriter>
-SoundAsset::start_write ()
+SoundAsset::start_write (MXFMetadata const & metadata)
 {
 	/* XXX: can't we use a shared_ptr here? */
-	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter (this));
+	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter (this, metadata));
 }
 
 struct SoundAssetWriter::ASDCPState
@@ -317,12 +319,13 @@ struct SoundAssetWriter::ASDCPState
 	ASDCP::PCM::AudioDescriptor audio_desc;
 };
 
-SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
+SoundAssetWriter::SoundAssetWriter (SoundAsset* a, MXFMetadata const & m)
 	: _state (new SoundAssetWriter::ASDCPState)
 	, _asset (a)
 	, _finalized (false)
 	, _frames_written (0)
 	, _frame_buffer_offset (0)
+	, _metadata (m)
 {
 	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
 	_state->audio_desc.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
@@ -339,7 +342,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
 	_state->frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
 	memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
 	
-	MXFAsset::fill_writer_info (&_state->writer_info, _asset->uuid ());
+	MXFAsset::fill_writer_info (&_state->writer_info, _asset->uuid (), _metadata);
 	
 	if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->audio_desc))) {
 		boost::throw_exception (FileError ("could not open audio MXF for writing", _asset->path().string()));

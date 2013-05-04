@@ -58,21 +58,21 @@ DCP::DCP (string directory)
 }
 
 void
-DCP::write_xml () const
+DCP::write_xml (XMLMetadata const & metadata) const
 {
 	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
-		(*i)->write_xml ();
+		(*i)->write_xml (metadata);
 	}
 
 	string pkl_uuid = make_uuid ();
-	string pkl_path = write_pkl (pkl_uuid);
+	string pkl_path = write_pkl (pkl_uuid, metadata);
 	
 	write_volindex ();
-	write_assetmap (pkl_uuid, boost::filesystem::file_size (pkl_path));
+	write_assetmap (pkl_uuid, boost::filesystem::file_size (pkl_path), metadata);
 }
 
 std::string
-DCP::write_pkl (string pkl_uuid) const
+DCP::write_pkl (string pkl_uuid, XMLMetadata const & metadata) const
 {
 	assert (!_cpls.empty ());
 	
@@ -88,9 +88,9 @@ DCP::write_pkl (string pkl_uuid) const
 	    << "  <Id>urn:uuid:" << pkl_uuid << "</Id>\n"
 		/* XXX: this is a bit of a hack */
 	    << "  <AnnotationText>" << _cpls.front()->name() << "</AnnotationText>\n"
-	    << "  <IssueDate>" << Metadata::instance()->issue_date << "</IssueDate>\n"
-	    << "  <Issuer>" << Metadata::instance()->issuer << "</Issuer>\n"
-	    << "  <Creator>" << Metadata::instance()->creator << "</Creator>\n"
+	    << "  <IssueDate>" << metadata.issue_date << "</IssueDate>\n"
+	    << "  <Issuer>" << metadata.issuer << "</Issuer>\n"
+	    << "  <Creator>" << metadata.creator << "</Creator>\n"
 	    << "  <AssetList>\n";
 
 	list<shared_ptr<const Asset> > a = assets ();
@@ -123,7 +123,7 @@ DCP::write_volindex () const
 }
 
 void
-DCP::write_assetmap (string pkl_uuid, int pkl_length) const
+DCP::write_assetmap (string pkl_uuid, int pkl_length, XMLMetadata const & metadata) const
 {
 	boost::filesystem::path p;
 	p /= _directory;
@@ -133,10 +133,10 @@ DCP::write_assetmap (string pkl_uuid, int pkl_length) const
 	am << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 	   << "<AssetMap xmlns=\"http://www.smpte-ra.org/schemas/429-9/2007/AM\">\n"
 	   << "  <Id>urn:uuid:" << make_uuid() << "</Id>\n"
-	   << "  <Creator>" << Metadata::instance()->creator << "</Creator>\n"
+	   << "  <Creator>" << metadata.creator << "</Creator>\n"
 	   << "  <VolumeCount>1</VolumeCount>\n"
-	   << "  <IssueDate>" << Metadata::instance()->issue_date << "</IssueDate>\n"
-	   << "  <Issuer>" << Metadata::instance()->issuer << "</Issuer>\n"
+	   << "  <IssueDate>" << metadata.issue_date << "</IssueDate>\n"
+	   << "  <Issuer>" << metadata.issuer << "</Issuer>\n"
 	   << "  <AssetList>\n";
 
 	am << "    <Asset>\n"

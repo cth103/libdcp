@@ -27,6 +27,7 @@ namespace libdcp {
 class AssetMap;
 class Asset;
 class Reel;
+class XMLMetadata;
 
 /** @brief A CPL within a DCP */
 class CPL
@@ -69,7 +70,7 @@ public:
 	
 	bool equals (CPL const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
 	
-	void write_xml () const;
+	void write_xml (XMLMetadata const &) const;
 	void write_to_assetmap (std::ostream& s) const;
 	void write_to_pkl (std::ostream& s) const;
 	

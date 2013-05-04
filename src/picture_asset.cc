@@ -146,10 +146,12 @@ MonoPictureAsset::MonoPictureAsset (
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
 	int intrinsic_duration,
-	Size size)
+	Size size,
+	MXFMetadata const & metadata
+	)
 	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, size)
 {
-	construct (get_path);
+	construct (get_path, metadata);
 }
 
 MonoPictureAsset::MonoPictureAsset (
@@ -159,10 +161,12 @@ MonoPictureAsset::MonoPictureAsset (
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
 	int intrinsic_duration,
-	Size size)
+	Size size,
+	MXFMetadata const & metadata
+	)
 	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, size)
 {
-	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files));
+	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files), metadata);
 }
 
 MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, Size size)
@@ -192,7 +196,7 @@ MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name)
 }
 
 void
-MonoPictureAsset::construct (boost::function<string (int)> get_path)
+MonoPictureAsset::construct (boost::function<string (int)> get_path, MXFMetadata const & metadata)
 {
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
@@ -205,7 +209,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path)
 	picture_desc.EditRate = ASDCP::Rational (_edit_rate, 1);
 	
 	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info, _uuid);
+	fill_writer_info (&writer_info, _uuid, metadata);
 	
 	ASDCP::JP2K::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc, 16384, false))) {
@@ -402,10 +406,10 @@ StereoPictureAsset::get_frame (int n) const
 }
 
 shared_ptr<MonoPictureAssetWriter>
-MonoPictureAsset::start_write (bool overwrite)
+MonoPictureAsset::start_write (bool overwrite, MXFMetadata const & metadata)
 {
-	/* XXX: can't we use a shared_ptr here? */
-	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, overwrite));
+	/* XXX: can't we use shared_ptr here? */
+	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, overwrite, metadata));
 }
 
 FrameInfo::FrameInfo (istream& s)
@@ -436,13 +440,14 @@ struct MonoPictureAssetWriter::ASDCPState
 /** @param a Asset to write to.  `a' must not be deleted while
  *  this writer class still exists, or bad things will happen.
  */
-MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a, bool overwrite)
+MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a, bool overwrite, MXFMetadata const & m)
 	: _state (new MonoPictureAssetWriter::ASDCPState)
 	, _asset (a)
 	, _frames_written (0)
 	, _started (false)
 	, _finalized (false)
 	, _overwrite (overwrite)
+	, _metadata (m)
 {
 
 }
@@ -458,7 +463,7 @@ MonoPictureAssetWriter::start (uint8_t* data, int size)
 	_state->j2k_parser.FillPictureDescriptor (_state->picture_descriptor);
 	_state->picture_descriptor.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
 	
-	MXFAsset::fill_writer_info (&_state->writer_info, _asset->uuid());
+	MXFAsset::fill_writer_info (&_state->writer_info, _asset->uuid(), _metadata);
 	
 	if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (
 				   _asset->path().string().c_str(),

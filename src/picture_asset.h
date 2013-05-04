@@ -27,6 +27,7 @@
 #include <openjpeg.h>
 #include "mxf_asset.h"
 #include "util.h"
+#include "metadata.h"
 
 namespace libdcp
 {
@@ -121,7 +122,7 @@ public:
 private:
 	friend class MonoPictureAsset;
 
-	MonoPictureAssetWriter (MonoPictureAsset *, bool);
+	MonoPictureAssetWriter (MonoPictureAsset *, bool, MXFMetadata const &);
 	void start (uint8_t *, int);
 
 	/* no copy construction */
@@ -142,6 +143,7 @@ private:
 	/** true if finalize() has been called */
 	bool _finalized;
 	bool _overwrite;
+	MXFMetadata _metadata;
 };
 
 /** A 2D (monoscopic) picture asset */
@@ -166,7 +168,8 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int intrinsic_duration,
-		Size size
+		Size size,
+		MXFMetadata const & metadata = MXFMetadata ()
 		);
 
 	/** Construct a MonoPictureAsset, generating the MXF from the JPEG2000 files.
@@ -187,7 +190,8 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int intrinsic_duration,
-		Size size
+		Size size,
+		MXFMetadata const & metadata = MXFMetadata ()
 		);
 
 	/** Construct a MonoPictureAsset, reading the MXF from disk.
@@ -207,14 +211,14 @@ public:
 	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
 
 	/** Start a progressive write to a MonoPictureAsset */
-	boost::shared_ptr<MonoPictureAssetWriter> start_write (bool);
+	boost::shared_ptr<MonoPictureAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ());
 
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 private:
 	std::string path_from_list (int f, std::vector<std::string> const & files) const;
-	void construct (boost::function<std::string (int)>);
+	void construct (boost::function<std::string (int)>, MXFMetadata const &);
 };
 
 /** A 3D (stereoscopic) picture asset */	

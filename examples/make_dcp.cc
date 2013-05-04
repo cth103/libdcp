@@ -108,7 +108,8 @@ main ()
 	/* Finally, we call this to write the XML description files to the DCP.  After this, the DCP
 	   is ready to ingest and play.
 	*/
-	dcp.write_xml ();
+	libdcp::XMLMetadata metadata;
+	dcp.write_xml (metadata);
 
 	return 0;
 }

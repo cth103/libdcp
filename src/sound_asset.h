@@ -26,12 +26,12 @@
 
 #include "mxf_asset.h"
 #include "types.h"
+#include "metadata.h"
 
 namespace libdcp
 {
 
 class SoundFrame;
-
 class SoundAsset;
 
 class SoundAssetWriter
@@ -45,7 +45,7 @@ public:
 private:
 	friend class SoundAsset;
 
-	SoundAssetWriter (SoundAsset *);
+	SoundAssetWriter (SoundAsset *, MXFMetadata const &);
 
 	/* no copy construction */
 	SoundAssetWriter (SoundAssetWriter const &);
@@ -64,6 +64,7 @@ private:
 	bool _finalized;
 	int _frames_written;
 	int _frame_buffer_offset;
+	MXFMetadata _metadata;
 };
 
 /** @brief An asset made up of WAV files */
@@ -86,7 +87,8 @@ public:
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
-		int intrinsic_duration
+		int intrinsic_duration,
+		MXFMetadata const & metadata = MXFMetadata ()
 		);
 
 	/** Construct a SoundAsset, generating the MXF from some WAV files.
@@ -106,7 +108,8 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int intrinsic_duration,
-		int channels
+		int channels,
+		MXFMetadata const & metadata = MXFMetadata ()
 		);
 
 	SoundAsset (
@@ -122,7 +125,7 @@ public:
 		int sampling_rate
 		);
 
-	boost::shared_ptr<SoundAssetWriter> start_write ();
+	boost::shared_ptr<SoundAssetWriter> start_write (MXFMetadata const & metadata = MXFMetadata ());
 	
 	/** Write details of this asset to a CPL stream.
 	 *  @param s Stream.
@@ -142,7 +145,7 @@ public:
 	}
 
 private:
-	void construct (boost::function<std::string (Channel)> get_path);
+	void construct (boost::function<std::string (Channel)> get_path, MXFMetadata const &);
 	std::string path_from_channel (Channel channel, std::vector<std::string> const & files);
 
 	/** Number of channels in the asset */

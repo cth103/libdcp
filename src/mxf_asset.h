@@ -26,6 +26,8 @@
 namespace libdcp
 {
 
+class MXFMetadata;	
+
 /** @brief Parent class for assets which have MXF files */	
 class MXFAsset : public Asset
 {
@@ -75,10 +77,10 @@ public:
 	 *  @param w struct to fill in.
 	 *  @param uuid uuid to use.
 	 */
-	static void fill_writer_info (ASDCP::WriterInfo* w, std::string uuid);
+	static void fill_writer_info (ASDCP::WriterInfo* w, std::string uuid, MXFMetadata const & metadata);
 
 protected:
-
+	
 	/** Signal to emit to report progress, or 0 */
 	boost::signals2::signal<void (float)>* _progress;
 	/** The edit rate; this is normally equal to the number of video frames per second */

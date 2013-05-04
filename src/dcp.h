@@ -45,6 +45,7 @@ class SubtitleAsset;
 class Reel;
 class AssetMap;
 class CPL;
+class XMLMetadata;
 
 /** @class DCP
  *  @brief A class to create or read a DCP.
@@ -74,7 +75,7 @@ public:
 	/** Write the required XML files to the directory that was
 	 *  passed into the constructor.
 	 */
-	void write_xml () const;
+	void write_xml (XMLMetadata const &) const;
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
@@ -103,7 +104,7 @@ private:
 	/** Write the PKL file.
 	 *  @param pkl_uuid UUID to use.
 	 */
-	std::string write_pkl (std::string pkl_uuid) const;
+	std::string write_pkl (std::string pkl_uuid, XMLMetadata const &) const;
 	
 	/** Write the VOLINDEX file */
 	void write_volindex () const;
@@ -112,7 +113,7 @@ private:
 	 *  @param pkl_uuid UUID of our PKL.
 	 *  @param pkl_length Length of our PKL in bytes.
 	 */
-	void write_assetmap (std::string pkl_uuid, int pkl_length) const;
+	void write_assetmap (std::string pkl_uuid, int pkl_length, XMLMetadata const &) const;
 
 	/** @return Assets in all this CPLs in this DCP */
 	std::list<boost::shared_ptr<const Asset> > assets () const;

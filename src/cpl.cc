@@ -168,7 +168,7 @@ CPL::add_reel (shared_ptr<const Reel> reel)
 }
 
 void
-CPL::write_xml () const
+CPL::write_xml (XMLMetadata const & metadata) const
 {
 	boost::filesystem::path p;
 	p /= _directory;
@@ -181,13 +181,13 @@ CPL::write_xml () const
 	   << "<CompositionPlaylist xmlns=\"http://www.smpte-ra.org/schemas/429-7/2006/CPL\">\n"
 	   << "  <Id>urn:uuid:" << _uuid << "</Id>\n"
 	   << "  <AnnotationText>" << _name << "</AnnotationText>\n"
-	   << "  <IssueDate>" << Metadata::instance()->issue_date << "</IssueDate>\n"
-	   << "  <Creator>" << Metadata::instance()->creator << "</Creator>\n"
+	   << "  <IssueDate>" << metadata.issue_date << "</IssueDate>\n"
+	   << "  <Creator>" << metadata.creator << "</Creator>\n"
 	   << "  <ContentTitleText>" << _name << "</ContentTitleText>\n"
 	   << "  <ContentKind>" << content_kind_to_string (_content_kind) << "</ContentKind>\n"
 	   << "  <ContentVersion>\n"
-	   << "    <Id>urn:uri:" << _uuid << "_" << Metadata::instance()->issue_date << "</Id>\n"
-	   << "    <LabelText>" << _uuid << "_" << Metadata::instance()->issue_date << "</LabelText>\n"
+	   << "    <Id>urn:uri:" << _uuid << "_" << metadata.issue_date << "</Id>\n"
+	   << "    <LabelText>" << _uuid << "_" << metadata.issue_date << "</LabelText>\n"
 	   << "  </ContentVersion>\n"
 	   << "  <RatingList/>\n"
 	   << "  <ReelList>\n";
