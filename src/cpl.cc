@@ -103,7 +103,8 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 						       )
 					);
 
-				picture->set_entry_point ((*i)->asset_list->main_picture->entry_point);
+				picture->set_entry_point (p->entry_point);
+				picture->set_duration (p->duration);
 			} catch (MXFFileError) {
 				if (require_mxfs) {
 					throw;
@@ -111,7 +112,6 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 			}
 			
 		} else {
-
 			try {
 				picture.reset (new StereoPictureAsset (
 						       _directory,
@@ -122,6 +122,7 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 					);
 
 				picture->set_entry_point (p->entry_point);
+				picture->set_duration (p->duration);
 				
 			} catch (MXFFileError) {
 				if (require_mxfs) {
@@ -141,6 +142,7 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 					);
 
 				sound->set_entry_point ((*i)->asset_list->main_sound->entry_point);
+				sound->set_duration ((*i)->asset_list->main_sound->duration);
 			} catch (MXFFileError) {
 				if (require_mxfs) {
 					throw;
@@ -155,6 +157,9 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 						asset_map->asset_from_id ((*i)->asset_list->main_subtitle->id)->chunks.front()->path
 						)
 				);
+
+			subtitle->set_entry_point ((*i)->asset_list->main_subtitle->entry_point);
+			subtitle->set_duration ((*i)->asset_list->main_subtitle->duration);
 		}
 			
 		_reels.push_back (shared_ptr<Reel> (new Reel (picture, sound, subtitle)));

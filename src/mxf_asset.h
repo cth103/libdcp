@@ -51,27 +51,7 @@ public:
 	 */
 	MXFAsset (std::string directory, std::string file_name, boost::signals2::signal<void (float)>* progress, int edit_rate, int intrinsic_duration);
 
-	void set_entry_point (int e) {
-		_entry_point = e;
-	}
-	
-	void set_duration (int d) {
-		_duration = d;
-	}
-
-	void set_intrinsic_duration (int d) {
-		_intrinsic_duration = d;
-	}
-
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
-	
-	int intrinsic_duration () const {
-		return _intrinsic_duration;
-	}
-	
-	int edit_rate () const {
-		return _edit_rate;
-	}
 
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
@@ -83,14 +63,6 @@ protected:
 	
 	/** Signal to emit to report progress, or 0 */
 	boost::signals2::signal<void (float)>* _progress;
-	/** The edit rate; this is normally equal to the number of video frames per second */
-	int _edit_rate;
-	/** Start point to present in frames */
-	int _entry_point;
-	/** Total length in frames */
-	int _intrinsic_duration;
-	/** Length to present in frames */
-	int _duration;
 };
 
 }

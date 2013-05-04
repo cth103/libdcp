@@ -14,10 +14,12 @@ static void
 help (string n)
 {
 	cerr << "Syntax: " << n << " [OPTION] <DCP> <DCP>\n"
-	     << "  -V, --version      show libdcp version\n"
-	     << "  -h, --help         show this help\n"
-	     << "  -v, --verbose      be verbose\n"
-	     << "  -n, --names        allow differing MXF names\n"
+	     << "  -V, --version        show libdcp version\n"
+	     << "  -h, --help           show this help\n"
+	     << "  -v, --verbose        be verbose\n"
+	     << "  -n, --names          allow differing MXF names\n"
+	     << "  -m, --mean-pixel     maximum allowed mean pixel error (default 5)\n"
+	     << "  -s, --std-dev-pixel  maximum allowed standard deviation of pixel error (default 5)\n"
 	     << "\n"
 	     << "The <DCP>s are the DCP directories to compare.\n"
 	     << "Comparison is of metadata and content, ignoring timestamps\n"
@@ -36,6 +38,8 @@ int
 main (int argc, char* argv[])
 {
 	EqualityOptions options;
+	options.max_mean_pixel_error = 5;
+	options.max_std_dev_pixel_error = 5;
 	
 	int option_index = 0;
 	while (1) {
@@ -44,10 +48,12 @@ main (int argc, char* argv[])
 			{ "help", no_argument, 0, 'h'},
 			{ "verbose", no_argument, 0, 'v'},
 			{ "names", no_argument, 0, 'n'},
+			{ "mean-pixel", required_argument, 0, 'm'},
+			{ "std-dev-pixel", required_argument, 0, 's'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vhvn", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhvnm:s:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -65,6 +71,12 @@ main (int argc, char* argv[])
 			break;
 		case 'n':
 			options.mxf_names_can_differ = true;
+			break;
+		case 'm':
+			options.max_mean_pixel_error = atof (optarg);
+			break;
+		case 's':
+			options.max_std_dev_pixel_error = atof (optarg);
 			break;
 		}
 	}
@@ -102,8 +114,6 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	options.max_mean_pixel_error = 5;
-	options.max_std_dev_pixel_error = 5;
 	/* I think this is just below the LSB at 16-bits (ie the 8th most significant bit at 24-bit) */
 	options.max_audio_sample_error = 255;
 
