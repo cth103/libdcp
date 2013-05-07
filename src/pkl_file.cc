@@ -32,7 +32,7 @@ PKLFile::PKLFile (string file)
 	: XMLFile (file, "PackingList")
 {
 	id = string_child ("Id");
-	annotation_text = string_child ("AnnotationText");
+	annotation_text = optional_string_child ("AnnotationText");
 	issue_date = string_child ("IssueDate");
 	issuer = string_child ("Issuer");
 	creator = string_child ("Creator");
