@@ -26,6 +26,7 @@
 #include <iostream>
 #include <iomanip>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <openssl/sha.h>
 #include "KM_util.h"
 #include "KM_fileio.h"
@@ -41,6 +42,7 @@ using std::stringstream;
 using std::min;
 using std::max;
 using boost::shared_ptr;
+using boost::lexical_cast;
 using namespace libdcp;
 
 /** Create a UUID.
@@ -187,7 +189,7 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 	if (!image) {
 		opj_destroy_decompress (decoder);
 		opj_cio_close (cio);
-		boost::throw_exception (DCPReadError ("could not decode JPEG2000 codestream"));
+		boost::throw_exception (DCPReadError ("could not decode JPEG2000 codestream of " + lexical_cast<string> (size) + " bytes."));
 	}
 
 	opj_cio_close (cio);
