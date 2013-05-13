@@ -26,11 +26,11 @@ namespace libdcp
 
 class FontNode;
 
-class TextNode : public XMLNode
+class TextNode
 {
 public:
 	TextNode () {}
-	TextNode (xmlpp::Node const * node);
+	TextNode (boost::shared_ptr<const cxml::Node> node);
 
 	float v_position;
 	VAlign v_align;
@@ -38,11 +38,11 @@ public:
 	std::list<boost::shared_ptr<FontNode> > font_nodes;
 };
 
-class SubtitleNode : public XMLNode
+class SubtitleNode 
 {
 public:
 	SubtitleNode () {}
-	SubtitleNode (xmlpp::Node const * node);
+	SubtitleNode (boost::shared_ptr<const cxml::Node> node);
 
 	Time in;
 	Time out;
@@ -52,14 +52,14 @@ public:
 	std::list<boost::shared_ptr<TextNode> > text_nodes;
 
 private:
-	Time fade_time (std::string name);
+	Time fade_time (boost::shared_ptr<const cxml::Node>, std::string name);
 };
 
-class FontNode : public XMLNode
+class FontNode 
 {
 public:
 	FontNode () {}
-	FontNode (xmlpp::Node const * node);
+	FontNode (boost::shared_ptr<const cxml::Node> node);
 	FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes);
 
 	std::string text;
@@ -75,11 +75,11 @@ public:
 	std::list<boost::shared_ptr<TextNode> > text_nodes;
 };
 
-class LoadFontNode : public XMLNode
+class LoadFontNode 
 {
 public:
 	LoadFontNode () {}
-	LoadFontNode (xmlpp::Node const * node);
+	LoadFontNode (boost::shared_ptr<const cxml::Node> node);
 
 	std::string id;
 	std::string uri;
@@ -218,13 +218,13 @@ private:
 	void maybe_add_subtitle (std::string text, ParseState const & parse_state);
 	
 	void examine_font_nodes (
-		boost::shared_ptr<XMLFile> xml,
+		boost::shared_ptr<const cxml::Node> xml,
 		std::list<boost::shared_ptr<FontNode> > const & font_nodes,
 		ParseState& parse_state
 		);
 	
 	void examine_text_nodes (
-		boost::shared_ptr<XMLFile> xml,
+		boost::shared_ptr<const cxml::Node> xml,
 		std::list<boost::shared_ptr<TextNode> > const & text_nodes,
 		ParseState& parse_state
 		);

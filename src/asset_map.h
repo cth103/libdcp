@@ -23,18 +23,18 @@
 
 #include <stdint.h>
 #include <boost/shared_ptr.hpp>
-#include "xml.h"
+#include <libcxml/cxml.h>
 
 namespace libdcp {
 
 /** @class Chunk
  *  @brief A simple parser for and representation of a \<Chunk\> node within an asset map.
  */
-class Chunk : public XMLNode
+class Chunk
 {
 public:
 	Chunk ();
-	Chunk (xmlpp::Node const * node);
+	Chunk (boost::shared_ptr<const cxml::Node> node);
 
 	std::string path;
 	int64_t volume_index;
@@ -45,11 +45,11 @@ public:
 /** @class AssetMapAsset
  *  @brief A simple parser for and representation of an \<AssetMap\> node within an asset map.
  */
-class AssetMapAsset : public XMLNode
+class AssetMapAsset
 {
 public:
 	AssetMapAsset ();
-	AssetMapAsset (xmlpp::Node const * node);
+	AssetMapAsset (boost::shared_ptr<const cxml::Node> node);
 
 	std::string id;
 	std::string packing_list;
@@ -59,7 +59,7 @@ public:
 /** @class AssetMap
  *  @brief A simple parser for and representation of an asset map file.
  */
-class AssetMap : public XMLFile
+class AssetMap
 {
 public:
 	AssetMap (std::string file);

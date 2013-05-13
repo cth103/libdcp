@@ -8,8 +8,7 @@ def options(opt):
     opt.load('compiler_cxx')
     opt.add_option('--target-windows', action='store_true', default = False, help = 'set up to do a cross-compile to Windows')
     opt.add_option('--enable-debug', action='store_true', default = False, help = 'build with debugging information and without optimisation')
-    opt.add_option('--static-openjpeg', action='store_true', default = False, help = 'link statically to openjpeg')
-    opt.add_option('--static-libdcp', action='store_true', default = False, help = 'build libdcp and in-tree dependencies statically')
+    opt.add_option('--static', action='store_true', default = False, help = 'build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -17,8 +16,7 @@ def configure(conf):
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
 
     conf.env.TARGET_WINDOWS = conf.options.target_windows
-    conf.env.STATIC_OPENJPEG = conf.options.static_openjpeg
-    conf.env.STATIC_LIBDCP = conf.options.static_libdcp
+    conf.env.STATIC = conf.options.static
     conf.env.ENABLE_DEBUG = conf.options.enable_debug
 
     if conf.options.target_windows:
@@ -28,8 +26,7 @@ def configure(conf):
 
     conf.check_cfg(package = 'openssl', args = '--cflags --libs', uselib_store = 'OPENSSL', mandatory = True)
     conf.check_cfg(package = 'libxml++-2.6', args = '--cflags --libs', uselib_store = 'LIBXML++', mandatory = True)
-    if conf.options.static_openjpeg:
-
+    if conf.options.static:
         conf.check_cc(fragment = """
                        #include <stdio.h>\n
                        #include <openjpeg.h>\n
@@ -39,8 +36,12 @@ def configure(conf):
                        }
                        """,
                        msg = 'Checking for library openjpeg', stlib = 'openjpeg', uselib_store = 'OPENJPEG', mandatory = True)
+        
+        conf.env.HAVE_CXML = 1
+        conf.env.STLIB_CXML = ['cxml']
     else:
         conf.check_cfg(package = 'libopenjpeg', args = '--cflags --libs', uselib_store = 'OPENJPEG', mandatory = True)
+        conf.check_cfg(package = 'libcxml', args = '--cflags --libs', uselib_store = 'CXML', mandatory = True)
 
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'

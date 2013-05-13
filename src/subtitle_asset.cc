@@ -22,6 +22,7 @@
 #include <boost/algorithm/string.hpp>
 #include "subtitle_asset.h"
 #include "util.h"
+#include "xml.h"
 
 using std::string;
 using std::list;
@@ -30,6 +31,7 @@ using std::ofstream;
 using std::stringstream;
 using boost::shared_ptr;
 using boost::lexical_cast;
+using boost::optional;
 using namespace libdcp;
 
 SubtitleAsset::SubtitleAsset (string directory, string xml_file)
@@ -52,7 +54,7 @@ SubtitleAsset::SubtitleAsset (string directory, string movie_title, string langu
 void
 SubtitleAsset::read_xml (string xml_file)
 {
-	shared_ptr<XMLFile> xml (new XMLFile (xml_file, "DCSubtitle"));
+	shared_ptr<cxml::File> xml (new cxml::File (xml_file, "DCSubtitle"));
 	
 	_uuid = xml->string_child ("SubtitleID");
 	_movie_title = xml->string_child ("MovieTitle");
@@ -61,8 +63,8 @@ SubtitleAsset::read_xml (string xml_file)
 
 	xml->ignore_child ("LoadFont");
 
-	list<shared_ptr<FontNode> > font_nodes = xml->type_children<FontNode> ("Font");
-	_load_font_nodes = xml->type_children<LoadFontNode> ("LoadFont");
+	list<shared_ptr<FontNode> > font_nodes = type_children<FontNode> (xml, "Font");
+	_load_font_nodes = type_children<LoadFontNode> (xml, "LoadFont");
 
 	/* Now make Subtitle objects to represent the raw XML nodes
 	   in a sane way.
@@ -74,7 +76,7 @@ SubtitleAsset::read_xml (string xml_file)
 
 void
 SubtitleAsset::examine_font_nodes (
-	shared_ptr<XMLFile> xml,
+	shared_ptr<const cxml::Node> xml,
 	list<shared_ptr<FontNode> > const & font_nodes,
 	ParseState& parse_state
 	)
@@ -100,7 +102,7 @@ SubtitleAsset::examine_font_nodes (
 
 void
 SubtitleAsset::examine_text_nodes (
-	shared_ptr<XMLFile> xml,
+	shared_ptr<const cxml::Node> xml,
 	list<shared_ptr<TextNode> > const & text_nodes,
 	ParseState& parse_state
 	)
@@ -152,23 +154,28 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 		);
 }
 
-FontNode::FontNode (xmlpp::Node const * node)
-	: XMLNode (node)
+FontNode::FontNode (shared_ptr<const cxml::Node> node)
 {
-	text = content ();
+	text = node->content ();
 	
-	id = optional_string_attribute ("Id");
-	size = optional_int64_attribute ("Size");
-	italic = optional_bool_attribute ("Italic");
-	color = optional_color_attribute ("Color");
-	string const e = optional_string_attribute ("Effect");
-	if (!e.empty ()) {
-		effect = string_to_effect (e);
+	id = node->optional_string_attribute ("Id").get_value_or ("");
+	size = node->optional_number_attribute<int64_t> ("Size").get_value_or (0);
+	italic = node->optional_bool_attribute ("Italic").get_value_or (false);
+	optional<string> c = node->optional_string_attribute ("Color");
+	if (c) {
+		color = Color (c.get ());
 	}
-	effect_color = optional_color_attribute ("EffectColor");
-	subtitle_nodes = type_children<SubtitleNode> ("Subtitle");
-	font_nodes = type_children<FontNode> ("Font");
-	text_nodes = type_children<TextNode> ("Text");
+	optional<string> const e = node->optional_string_attribute ("Effect");
+	if (e) {
+		effect = string_to_effect (e.get ());
+	}
+	c = node->optional_string_attribute ( "EffectColor");
+	if (c) {
+		effect_color = Color (c.get ());
+	}
+	subtitle_nodes = type_children<SubtitleNode> (node, "Subtitle");
+	font_nodes = type_children<FontNode> (node, "Font");
+	text_nodes = type_children<TextNode> (node, "Text");
 }
 
 FontNode::FontNode (list<shared_ptr<FontNode> > const & font_nodes)
@@ -199,29 +206,27 @@ FontNode::FontNode (list<shared_ptr<FontNode> > const & font_nodes)
 	}
 }
 
-LoadFontNode::LoadFontNode (xmlpp::Node const * node)
-	: XMLNode (node)
+LoadFontNode::LoadFontNode (shared_ptr<const cxml::Node> node)
 {
-	id = string_attribute ("Id");
-	uri = string_attribute ("URI");
+	id = node->string_attribute ("Id");
+	uri = node->string_attribute ("URI");
 }
 	
 
-SubtitleNode::SubtitleNode (xmlpp::Node const * node)
-	: XMLNode (node)
+SubtitleNode::SubtitleNode (shared_ptr<const cxml::Node> node)
 {
-	in = time_attribute ("TimeIn");
-	out = time_attribute ("TimeOut");
-	font_nodes = type_children<FontNode> ("Font");
-	text_nodes = type_children<TextNode> ("Text");
-	fade_up_time = fade_time ("FadeUpTime");
-	fade_down_time = fade_time ("FadeDownTime");
+	in = Time (node->string_attribute ("TimeIn"));
+	out = Time (node->string_attribute ("TimeOut"));
+	font_nodes = type_children<FontNode> (node, "Font");
+	text_nodes = type_children<TextNode> (node, "Text");
+	fade_up_time = fade_time (node, "FadeUpTime");
+	fade_down_time = fade_time (node, "FadeDownTime");
 }
 
 Time
-SubtitleNode::fade_time (string name)
+SubtitleNode::fade_time (shared_ptr<const cxml::Node> node, string name)
 {
-	string const u = optional_string_attribute (name);
+	string const u = node->optional_string_attribute (name).get_value_or ("");
 	Time t;
 	
 	if (u.empty ()) {
@@ -239,18 +244,17 @@ SubtitleNode::fade_time (string name)
 	return t;
 }
 
-TextNode::TextNode (xmlpp::Node const * node)
-	: XMLNode (node)
-	, v_align (CENTER)
+TextNode::TextNode (shared_ptr<const cxml::Node> node)
+	: v_align (CENTER)
 {
-	text = content ();
-	v_position = float_attribute ("VPosition");
-	string const v = optional_string_attribute ("VAlign");
-	if (!v.empty ()) {
-		v_align = string_to_valign (v);
+	text = node->content ();
+	v_position = node->number_attribute<float> ("VPosition");
+	optional<string> v = node->optional_string_attribute ("VAlign");
+	if (v) {
+		v_align = string_to_valign (v.get ());
 	}
 
-	font_nodes = type_children<FontNode> ("Font");
+	font_nodes = type_children<FontNode> (node, "Font");
 }
 
 list<shared_ptr<Subtitle> >

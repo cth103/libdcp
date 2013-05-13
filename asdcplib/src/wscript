@@ -8,7 +8,7 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', '-DASDCP_PLATFORM="linux"')
 
 def build(bld):
-    if bld.env.STATIC_LIBDCP:
+    if bld.env.STATIC:
         obj = bld(features = 'cxx cxxstlib')
     else:
         obj = bld(features = 'cxx cxxshlib')
@@ -27,7 +27,7 @@ def build(bld):
                  KM_prng.cpp
                  """
 
-    if bld.env.STATIC_LIBDCP:
+    if bld.env.STATIC:
         obj = bld(features = 'cxx cxxstlib')
     else:
         obj = bld(features = 'cxx cxxshlib')
@@ -66,6 +66,6 @@ def build(bld):
                  MDD.cpp
                  """
 
-    if bld.env.STATIC_LIBDCP:
+    if bld.env.STATIC:
         bld.install_files('${PREFIX}/lib', 'libkumu-libdcp.a')
         bld.install_files('${PREFIX}/lib', 'libasdcp-libdcp.a')

@@ -23,126 +23,125 @@
 
 #include <iostream>
 #include "cpl_file.h"
+#include "xml.h"
+#include "util.h"
 
-using namespace std;
+using std::string;
+using std::bad_cast;
+using boost::shared_ptr;
 using namespace libdcp;
 
 CPLFile::CPLFile (string file)
-	: XMLFile (file, "CompositionPlaylist")
 {
-	id = string_child ("Id");
-	annotation_text = optional_string_child ("AnnotationText");
-	issue_date = string_child ("IssueDate");
-	creator = optional_string_child ("Creator");
-	content_title_text = string_child ("ContentTitleText");
-	content_kind = kind_child ("ContentKind");
-	content_version = optional_type_child<ContentVersion> ("ContentVersion");
-	ignore_child ("RatingList");
-	reels = type_grand_children<CPLReel> ("ReelList", "Reel");
+	cxml::File f (file, "CompositionPlaylist");
+	
+	id = f.string_child ("Id");
+	annotation_text = f.optional_string_child ("AnnotationText").get_value_or ("");
+	issue_date = f.string_child ("IssueDate");
+	creator = f.optional_string_child ("Creator").get_value_or ("");
+	content_title_text = f.string_child ("ContentTitleText");
+	content_kind = content_kind_from_string (f.string_child ("ContentKind"));
+	content_version = optional_type_child<ContentVersion> (f, "ContentVersion");
+	f.ignore_child ("RatingList");
+	reels = type_grand_children<CPLReel> (f, "ReelList", "Reel");
 
-	ignore_child ("Issuer");
-	ignore_child ("Signer");
-	ignore_child ("Signature");
+	f.ignore_child ("Issuer");
+	f.ignore_child ("Signer");
+	f.ignore_child ("Signature");
 
-	done ();
+	f.done ();
 }
 
-ContentVersion::ContentVersion (xmlpp::Node const * node)
-	: XMLNode (node)
+ContentVersion::ContentVersion (shared_ptr<const cxml::Node> node)
 {
-	id = optional_string_child ("Id");
-	label_text = string_child ("LabelText");
-	done ();
+	id = node->optional_string_child ("Id").get_value_or ("");
+	label_text = node->string_child ("LabelText");
+	node->done ();
 }
 
-CPLReel::CPLReel (xmlpp::Node const * node)
-	: XMLNode (node)
+CPLReel::CPLReel (shared_ptr<const cxml::Node> node)
 {
-	id = string_child ("Id");
-	asset_list = type_child<CPLAssetList> ("AssetList");
+	id = node->string_child ("Id");
+	asset_list = type_child<CPLAssetList> (node, "AssetList");
 
-	ignore_child ("AnnotationText");
-	done ();
+	node->ignore_child ("AnnotationText");
+	node->done ();
 }
 
-CPLAssetList::CPLAssetList (xmlpp::Node const * node)
-	: XMLNode (node)
+CPLAssetList::CPLAssetList (shared_ptr<const cxml::Node> node)
 {
-	main_picture = optional_type_child<MainPicture> ("MainPicture");
-	main_stereoscopic_picture = optional_type_child<MainStereoscopicPicture> ("MainStereoscopicPicture");
-	main_sound = optional_type_child<MainSound> ("MainSound");
-	main_subtitle = optional_type_child<MainSubtitle> ("MainSubtitle");
+	main_picture = optional_type_child<MainPicture> (node, "MainPicture");
+	main_stereoscopic_picture = optional_type_child<MainStereoscopicPicture> (node, "MainStereoscopicPicture");
+	main_sound = optional_type_child<MainSound> (node, "MainSound");
+	main_subtitle = optional_type_child<MainSubtitle> (node, "MainSubtitle");
 
-	done ();
+	node->done ();
 }
 
-MainPicture::MainPicture (xmlpp::Node const * node)
+MainPicture::MainPicture (shared_ptr<const cxml::Node> node)
 	: Picture (node)
 {
 
 }
 
-MainStereoscopicPicture::MainStereoscopicPicture (xmlpp::Node const * node)
+MainStereoscopicPicture::MainStereoscopicPicture (shared_ptr<const cxml::Node> node)
 	: Picture (node)
 {
 
 }
 
-Picture::Picture (xmlpp::Node const * node)
-	: XMLNode (node)
+Picture::Picture (shared_ptr<const cxml::Node> node)
 {
-	id = string_child ("Id");
-	annotation_text = optional_string_child ("AnnotationText");
-	edit_rate = fraction_child ("EditRate");
-	intrinsic_duration = int64_child ("IntrinsicDuration");
-	entry_point = int64_child ("EntryPoint");
-	duration = int64_child ("Duration");
-	frame_rate = fraction_child ("FrameRate");
+	id = node->string_child ("Id");
+	annotation_text = node->optional_string_child ("AnnotationText").get_value_or ("");
+	edit_rate = Fraction (node->string_child ("EditRate"));
+	intrinsic_duration = node->number_child<int64_t> ("IntrinsicDuration");
+	entry_point = node->number_child<int64_t> ("EntryPoint");
+	duration = node->number_child<int64_t> ("Duration");
+	frame_rate = Fraction (node->string_child ("FrameRate"));
 	try {
-		screen_aspect_ratio = fraction_child ("ScreenAspectRatio");
+		screen_aspect_ratio = Fraction (node->string_child ("ScreenAspectRatio"));
 	} catch (XMLError& e) {
 		/* Maybe it's not a fraction */
 	}
 	try {
-		float f = float_child ("ScreenAspectRatio");
+		float f = node->number_child<float> ("ScreenAspectRatio");
 		screen_aspect_ratio = Fraction (f * 1000, 1000);
 	} catch (bad_cast& e) {
 
 	}
 
-	ignore_child ("Hash");
+	node->ignore_child ("Hash");
 
-	done ();
+	node->done ();
 }
 
-MainSound::MainSound (xmlpp::Node const * node)
-	: XMLNode (node)
+MainSound::MainSound (shared_ptr<const cxml::Node> node)
 {
-	id = string_child ("Id");
-	annotation_text = optional_string_child ("AnnotationText");
-	edit_rate = fraction_child ("EditRate");
-	intrinsic_duration = int64_child ("IntrinsicDuration");
-	entry_point = int64_child ("EntryPoint");
-	duration = int64_child ("Duration");
+	id = node->string_child ("Id");
+	annotation_text = node->optional_string_child ("AnnotationText").get_value_or ("");
+	edit_rate = Fraction (node->string_child ("EditRate"));
+	intrinsic_duration = node->number_child<int64_t> ("IntrinsicDuration");
+	entry_point = node->number_child<int64_t> ("EntryPoint");
+	duration = node->number_child<int64_t> ("Duration");
 
-	ignore_child ("Hash");
-	ignore_child ("Language");
+	node->ignore_child ("Hash");
+	node->ignore_child ("Language");
 	
-	done ();
+	node->done ();
 }
 
-MainSubtitle::MainSubtitle (xmlpp::Node const * node)
-	: XMLNode (node)
+MainSubtitle::MainSubtitle (shared_ptr<const cxml::Node> node)
 {
-	id = string_child ("Id");
-	annotation_text = optional_string_child ("AnnotationText");
-	edit_rate = fraction_child ("EditRate");
-	intrinsic_duration = int64_child ("IntrinsicDuration");
-	entry_point = int64_child ("EntryPoint");
-	duration = int64_child ("Duration");
+	id = node->string_child ("Id");
+	annotation_text = node->optional_string_child ("AnnotationText").get_value_or ("");
+	edit_rate = Fraction (node->string_child ("EditRate"));
+	intrinsic_duration = node->number_child<int64_t> ("IntrinsicDuration");
+	entry_point = node->number_child<int64_t> ("EntryPoint");
+	duration = node->number_child<int64_t> ("Duration");
 
-	ignore_child ("Hash");
-	ignore_child ("Language");
+	node->ignore_child ("Hash");
+	node->ignore_child ("Language");
 	
-	done ();
+	node->done ();
 }

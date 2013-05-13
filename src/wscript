@@ -1,5 +1,5 @@
 def build(bld):
-    if bld.env.STATIC_LIBDCP:
+    if bld.env.STATIC:
         obj = bld(features = 'cxx cxxstlib')
     else:
         obj = bld(features = 'cxx cxxshlib')
@@ -7,7 +7,7 @@ def build(bld):
     obj.name = 'libdcp'
     obj.target = 'dcp'
     obj.export_includes = ['.']
-    obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 OPENSSL SIGC++ LIBXML++ OPENJPEG'
+    obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 OPENSSL SIGC++ LIBXML++ OPENJPEG CXML'
     obj.use = 'libkumu-libdcp libasdcp-libdcp'
     obj.source = """
                  asset.cc
@@ -30,7 +30,6 @@ def build(bld):
                  types.cc
                  util.cc
                  version.cc
-                 xml.cc
                  """
 
     headers = """
@@ -51,9 +50,8 @@ def build(bld):
               types.h
               util.h
               version.h
-              xml.h
               """
 
     bld.install_files('${PREFIX}/include/libdcp', headers)
-    if bld.env.STATIC_LIBDCP:
+    if bld.env.STATIC:
         bld.install_files('${PREFIX}/lib', 'libdcp.a')

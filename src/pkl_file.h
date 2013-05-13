@@ -26,11 +26,11 @@
 
 namespace libdcp {
 
-class PKLAsset : public XMLNode
+class PKLAsset
 {
 public:
 	PKLAsset () {}
-	PKLAsset (xmlpp::Node const * node);
+	PKLAsset (boost::shared_ptr<const cxml::Node>);
 
 	std::string id;
 	std::string annotation_text;
@@ -40,7 +40,7 @@ public:
 	std::string original_file_name;
 };
 
-class PKLFile : public XMLFile
+class PKLFile
 {
 public:
 	PKLFile (std::string file);
