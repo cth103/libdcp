@@ -27,26 +27,23 @@ using namespace std;
 using namespace libdcp;
 
 void
-Reel::write_to_cpl (ostream& s) const
+Reel::write_to_cpl (xmlpp::Node* node) const
 {
-	s << "    <Reel>\n"
-	  << "      <Id>urn:uuid:" << make_uuid() << "</Id>\n"
-	  << "      <AssetList>\n";
+	xmlpp::Node* reel = node->add_child ("Reel");
+	reel->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
+	xmlpp::Node* asset_list = reel->add_child ("AssetList");
 	
 	if (_main_picture) {
-		_main_picture->write_to_cpl (s);
+		_main_picture->write_to_cpl (asset_list);
 	}
 
 	if (_main_sound) {
-		_main_sound->write_to_cpl (s);
+		_main_sound->write_to_cpl (asset_list);
 	}
 
 	if (_main_subtitle) {
-		_main_subtitle->write_to_cpl (s);
+		_main_subtitle->write_to_cpl (asset_list);
 	}
-
-	s << "      </AssetList>\n"
-	  << "    </Reel>\n";
 }
 	
 bool

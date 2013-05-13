@@ -34,6 +34,7 @@ using std::ofstream;
 using std::ostream;
 using std::list;
 using boost::shared_ptr;
+using boost::lexical_cast;
 using namespace libdcp;
 
 CPL::CPL (string directory, string name, ContentKind content_kind, int length, int frames_per_second)
@@ -180,45 +181,42 @@ CPL::write_xml (XMLMetadata const & metadata) const
 	stringstream s;
 	s << _uuid << "_cpl.xml";
 	p /= s.str();
-	ofstream os (p.string().c_str());
-	
-	os << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-	   << "<CompositionPlaylist xmlns=\"http://www.smpte-ra.org/schemas/429-7/2006/CPL\">\n"
-	   << "  <Id>urn:uuid:" << _uuid << "</Id>\n"
-	   << "  <AnnotationText>" << _name << "</AnnotationText>\n"
-	   << "  <IssueDate>" << metadata.issue_date << "</IssueDate>\n"
-	   << "  <Creator>" << metadata.creator << "</Creator>\n"
-	   << "  <ContentTitleText>" << _name << "</ContentTitleText>\n"
-	   << "  <ContentKind>" << content_kind_to_string (_content_kind) << "</ContentKind>\n"
-	   << "  <ContentVersion>\n"
-	   << "    <Id>urn:uri:" << _uuid << "_" << metadata.issue_date << "</Id>\n"
-	   << "    <LabelText>" << _uuid << "_" << metadata.issue_date << "</LabelText>\n"
-	   << "  </ContentVersion>\n"
-	   << "  <RatingList/>\n"
-	   << "  <ReelList>\n";
+
+	xmlpp::Document doc;
+	xmlpp::Element* root = doc.create_root_node ("CompositionPlaylist", "http://www.smpte-ra.org/schemas/429-7/2006/CPL");
+	root->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
+	root->add_child("AnnotationText")->add_child_text (_name);
+	root->add_child("IssueDate")->add_child_text (metadata.issue_date);
+	root->add_child("Creator")->add_child_text (metadata.creator);
+	root->add_child("ContentTitleText")->add_child_text (_name);
+	root->add_child("ContentKind")->add_child_text (content_kind_to_string (_content_kind));
+	{
+		xmlpp::Node* cv = root->add_child ("ContentVersion");
+		cv->add_child ("Id")->add_child_text ("urn:uri:" + _uuid + "_" + metadata.issue_date);
+		cv->add_child ("LabelText")->add_child_text (_uuid + "_" + metadata.issue_date);
+	}
+	root->add_child("RatingList");
+
+	xmlpp::Node* reel_list = root->add_child ("ReelList");
 	
 	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
-		(*i)->write_to_cpl (os);
+		(*i)->write_to_cpl (reel_list);
 	}
 
-	os << "  </ReelList>\n"
-	   << "</CompositionPlaylist>\n";
-
-	os.close ();
+	doc.write_to_file_formatted (p.string (), "UTF-8");
 
 	_digest = make_digest (p.string ());
 	_length = boost::filesystem::file_size (p.string ());
 }
 
 void
-CPL::write_to_pkl (ostream& s) const
+CPL::write_to_pkl (xmlpp::Node* node) const
 {
-	s << "    <Asset>\n"
-	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "      <Hash>" << _digest << "</Hash>\n"
-	  << "      <Size>" << _length << "</Size>\n"
-	  << "      <Type>text/xml</Type>\n"
-	  << "    </Asset>\n";
+	xmlpp::Node* asset = node->add_child ("Asset");
+	asset->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
+	asset->add_child("Hash")->add_child_text (_digest);
+	asset->add_child("Size")->add_child_text (lexical_cast<string> (_length));
+	asset->add_child("Type")->add_child_text ("text/xml");
 }
 
 list<shared_ptr<const Asset> >
@@ -241,19 +239,16 @@ CPL::assets () const
 }
 
 void
-CPL::write_to_assetmap (ostream& s) const
+CPL::write_to_assetmap (xmlpp::Node* node) const
 {
-	s << "    <Asset>\n"
-	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "      <ChunkList>\n"
-	  << "        <Chunk>\n"
-	  << "          <Path>" << _uuid << "_cpl.xml</Path>\n"
-	  << "          <VolumeIndex>1</VolumeIndex>\n"
-	  << "          <Offset>0</Offset>\n"
-	  << "          <Length>" << _length << "</Length>\n"
-	  << "        </Chunk>\n"
-	  << "      </ChunkList>\n"
-	  << "    </Asset>\n";
+	xmlpp::Node* asset = node->add_child ("Asset");
+	asset->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
+	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
+	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
+	chunk->add_child("Path")->add_child_text (_uuid + "_cpl.xml");
+	chunk->add_child("VolumeIndex")->add_child_text ("1");
+	chunk->add_child("Offset")->add_child_text("0");
+	chunk->add_child("Length")->add_child_text(lexical_cast<string> (_length));
 }
 	
 	

@@ -20,6 +20,7 @@
 #include <list>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
+#include <libxml++/libxml++.h>
 #include "types.h"
 
 namespace libdcp {
@@ -74,8 +75,8 @@ public:
 	bool equals (CPL const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
 	
 	void write_xml (XMLMetadata const &) const;
-	void write_to_assetmap (std::ostream& s) const;
-	void write_to_pkl (std::ostream& s) const;
+	void write_to_assetmap (xmlpp::Node *) const;
+	void write_to_pkl (xmlpp::Node *) const;
 	
 private:
 	std::string _directory;

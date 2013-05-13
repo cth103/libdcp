@@ -59,10 +59,10 @@ public:
 	 */
 	PictureAsset (std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, Size size);
 	
-	/** Write details of this asset to a CPL stream.
-	 *  @param s Stream.
+	/** Write details of this asset to a CPL XML node.
+	 *  @param node Node.
 	 */
-	void write_to_cpl (std::ostream& s) const;
+	void write_to_cpl (xmlpp::Node* node) const;
 
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 

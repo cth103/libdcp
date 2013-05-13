@@ -20,6 +20,7 @@
 #include <list>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
+#include <libxml++/libxml++.h>
 #include "types.h"
 
 namespace libdcp {
@@ -54,7 +55,7 @@ public:
 		return _main_subtitle;
 	}
 
-	void write_to_cpl (std::ostream & s) const;
+	void write_to_cpl (xmlpp::Node *) const;
 
 	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> notes) const;
 

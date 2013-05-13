@@ -28,6 +28,7 @@
 #include <list>
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
+#include <libxml++/libxml++.h>
 #include "types.h"
 
 namespace ASDCP {
@@ -55,17 +56,17 @@ public:
 	/** Write details of the asset to a CPL stream.
 	 *  @param s Stream.
 	 */
-	virtual void write_to_cpl (std::ostream& s) const = 0;
+	virtual void write_to_cpl (xmlpp::Node *) const = 0;
 
 	/** Write details of the asset to a PKL stream.
 	 *  @param s Stream.
 	 */
-	void write_to_pkl (std::ostream& s) const;
+	void write_to_pkl (xmlpp::Node *) const;
 
 	/** Write details of the asset to a ASSETMAP stream.
 	 *  @param s Stream.
 	 */
-	void write_to_assetmap (std::ostream& s) const;
+	void write_to_assetmap (xmlpp::Node *) const;
 
 	std::string uuid () const {
 		return _uuid;

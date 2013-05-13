@@ -276,15 +276,15 @@ SubtitleAsset::add (shared_ptr<Subtitle> s)
 }
 
 void
-SubtitleAsset::write_to_cpl (ostream& s) const
+SubtitleAsset::write_to_cpl (xmlpp::Node* node) const
 {
 	/* XXX: should EditRate, Duration and IntrinsicDuration be in here? */
-	
-	s << "        <MainSubtitle>\n"
-	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
-	  << "          <EntryPoint>0</EntryPoint>\n"
-	  << "        </MainSubtitle>\n";
+
+	xmlpp::Node* ms = node->add_child ("MainSubtitle");
+	ms->add_child("Id")->add_child_text("urn:uuid:" + _uuid);
+	ms->add_child("AnnotationText")->add_child_text (_file_name);
+	/* XXX */
+	ms->add_child("EntryPoint")->add_child_text ("0");
 }
 
 struct SubtitleSorter {
@@ -299,26 +299,30 @@ struct SubtitleSorter {
 void
 SubtitleAsset::write_xml () const
 {
-	ofstream f (path().string().c_str());
-	write_xml (f);
+	ofstream s (path().string().c_str());
+	write_xml (s);
 }
 
 void
 SubtitleAsset::write_xml (ostream& s) const
 {
-	s << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-	  << "<DCSubtitle Version=\"1.0\">\n"
-	  << "  <SubtitleID>" << _uuid << "</SubtitleID>\n"
-	  << "  <MovieTitle>" << _movie_title << "</MovieTitle>\n"
-	  << "  <ReelNumber>" << _reel_number << "</ReelNumber>\n"
-	  << "  <Language>" << _language << "</Language>\n";
+	xmlpp::Document doc;
+	xmlpp::Element* root = doc.create_root_node ("DCSubtitle");
+	root->set_attribute ("Version", "1.0");
+
+	root->add_child("SubtitleID")->add_child_text (_uuid);
+	root->add_child("MovieTitle")->add_child_text (_movie_title);
+	root->add_child("ReelNumber")->add_child_text (lexical_cast<string> (_reel_number));
+	root->add_child("Language")->add_child_text (_language);
 
 	if (_load_font_nodes.size() > 1) {
 		boost::throw_exception (MiscError ("multiple LoadFont nodes not supported"));
 	}
 
 	if (!_load_font_nodes.empty ()) {
-		s << "  <LoadFont Id=\"" << _load_font_nodes.front()->id << "\" URI=\"" << _load_font_nodes.front()->uri << "\"/>\n";
+		xmlpp::Element* load_font = root->add_child("LoadFont");
+		load_font->set_attribute("Id", _load_font_nodes.front()->id);
+		load_font->set_attribute("URI",  _load_font_nodes.front()->uri);
 	}
 
 	list<shared_ptr<Subtitle> > sorted = _subtitles;
@@ -329,7 +333,6 @@ SubtitleAsset::write_xml (ostream& s) const
 	/* XXX: multiple fonts not supported */
 	/* XXX: script, underlined, weight not supported */
 
-	bool first = true;
 	bool italic = false;
 	Color color;
 	int size = 0;
@@ -341,66 +344,61 @@ SubtitleAsset::write_xml (ostream& s) const
 	Time last_fade_up_time;
 	Time last_fade_down_time;
 
+	xmlpp::Element* font = 0;
+	xmlpp::Element* subtitle = 0;
+
 	for (list<shared_ptr<Subtitle> >::iterator i = sorted.begin(); i != sorted.end(); ++i) {
 
 		/* We will start a new <Font>...</Font> whenever some font property changes.
-		   I suppose should really make an optimal hierarchy of <Font> tags, but
+		   I suppose we should really make an optimal hierarchy of <Font> tags, but
 		   that seems hard.
 		*/
 
-		bool const font_changed = first              ||
+		bool const font_changed =
 			italic       != (*i)->italic()       ||
 			color        != (*i)->color()        ||
 			size         != (*i)->size()         ||
 			effect       != (*i)->effect()       ||
 			effect_color != (*i)->effect_color();
 
-		stringstream a;
 		if (font_changed) {
 			italic = (*i)->italic ();
-			a << "Italic=\"" << (italic ? "yes" : "no") << "\" ";
 			color = (*i)->color ();
-			a << "Color=\"" << color.to_argb_string() << "\" ";
 			size = (*i)->size ();
-			a << "Size=\"" << size << "\" ";
 			effect = (*i)->effect ();
-			a << "Effect=\"" << effect_to_string(effect) << "\" ";
 			effect_color = (*i)->effect_color ();
-			a << "EffectColor=\"" << effect_color.to_argb_string() << "\" ";
-			a << "Script=\"normal\" Underlined=\"no\" Weight=\"normal\"";
 		}
 
-		if (first || font_changed ||
+		if (!font || font_changed) {
+			font = root->add_child ("Font");
+			string id = "theFontId";
+			if (!_load_font_nodes.empty()) {
+				id = _load_font_nodes.front()->id;
+			}
+			font->set_attribute ("Id", id);
+			font->set_attribute ("Italic", italic ? "yes" : "no");
+			font->set_attribute ("Color", color.to_argb_string());
+			font->set_attribute ("Size", lexical_cast<string> (size));
+			font->set_attribute ("Effect", effect_to_string (effect));
+			font->set_attribute ("EffectColor", effect_color.to_argb_string());
+			font->set_attribute ("Script", "normal");
+			font->set_attribute ("Underlined", "no");
+			font->set_attribute ("Weight", "normal");
+		}
+
+		if (!subtitle ||
 		    (last_in != (*i)->in() ||
 		     last_out != (*i)->out() ||
 		     last_fade_up_time != (*i)->fade_up_time() ||
 		     last_fade_down_time != (*i)->fade_down_time()
 			    )) {
 
-			if (!first) {
-				s << "  </Subtitle>\n";
-			}
-
-			if (font_changed) {
-				if (!first) {
-					s << "  </Font>\n";
-				}
-
-				string id = "theFontId";
-				if (!_load_font_nodes.empty()) {
-					id = _load_font_nodes.front()->id;
-				}
-				
-				s << "  <Font Id=\"" << id << "\" " << a.str() << ">\n";
-			}
-
-			s << "  <Subtitle "
-			  << "SpotNumber=\"" << spot_number++ << "\" "
-			  << "TimeIn=\"" << (*i)->in().to_string() << "\" "
-			  << "TimeOut=\"" << (*i)->out().to_string() << "\" "
-			  << "FadeUpTime=\"" << (*i)->fade_up_time().to_ticks() << "\" "
-			  << "FadeDownTime=\"" << (*i)->fade_down_time().to_ticks() << "\""
-			  << ">\n";
+			subtitle = font->add_child ("Subtitle");
+			subtitle->set_attribute ("SpotNumber", lexical_cast<string> (spot_number++));
+			subtitle->set_attribute ("TimeIn", (*i)->in().to_string());
+			subtitle->set_attribute ("TimeOut", (*i)->out().to_string());
+			subtitle->set_attribute ("FadeUpTime", lexical_cast<string> ((*i)->fade_up_time().to_ticks()));
+			subtitle->set_attribute ("FadeDownTime", lexical_cast<string> ((*i)->fade_down_time().to_ticks()));
 
 			last_in = (*i)->in ();
 			last_out = (*i)->out ();
@@ -408,23 +406,12 @@ SubtitleAsset::write_xml (ostream& s) const
 			last_fade_down_time = (*i)->fade_down_time ();
 		}
 
-		s << "      <Text "
-		  << "VAlign=\"" << valign_to_string ((*i)->v_align()) << "\" "
-		  << "VPosition=\"" << (*i)->v_position() << "\""
-		  << ">" << escape ((*i)->text()) << "</Text>\n";
-
-		first = false;
+		xmlpp::Element* text = subtitle->add_child ("Text");
+		text->set_attribute ("VAlign", valign_to_string ((*i)->v_align()));		
+		text->set_attribute ("VPosition", lexical_cast<string> ((*i)->v_position()));
+		text->add_child_text ((*i)->text());
 	}
 
-	s << "  </Subtitle>\n";
-	s << "  </Font>\n";
-	s << "</DCSubtitle>\n";
+	doc.write_to_stream_formatted (s);
 }
 
-/** XXX: Another reason why we should be writing with libxml++ */
-string
-SubtitleAsset::escape (string s) const
-{
-	boost::replace_all (s, "&", "&amp;");
-	return s;
-}

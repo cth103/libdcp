@@ -123,7 +123,7 @@ public:
 	SubtitleAsset (std::string directory, std::string xml_file);
 	SubtitleAsset (std::string directory, std::string movie_title, std::string language);
 
-	void write_to_cpl (std::ostream&) const;
+	void write_to_cpl (xmlpp::Node *) const;
 	virtual bool equals (boost::shared_ptr<const Asset>, EqualityOptions, boost::function<void (NoteType, std::string)> note) const {
 		/* XXX */
 		note (ERROR, "subtitle assets not compared yet");
@@ -143,11 +143,10 @@ public:
 
 	void read_xml (std::string);
 	void write_xml () const;
-	void write_xml (std::ostream& s) const;
+	void write_xml (std::ostream &) const;
 
 private:
 	std::string font_id_to_name (std::string id) const;
-	std::string escape (std::string) const;
 
 	struct ParseState {
 		std::list<boost::shared_ptr<parse::Font> > font_nodes;

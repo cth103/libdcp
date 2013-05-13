@@ -28,6 +28,7 @@
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 #include <libxml++/libxml++.h>
 #include "dcp.h"
 #include "asset.h"
@@ -48,6 +49,7 @@ using std::stringstream;
 using std::ofstream;
 using std::ostream;
 using boost::shared_ptr;
+using boost::lexical_cast;
 using namespace libdcp;
 
 DCP::DCP (string directory)
@@ -80,30 +82,29 @@ DCP::write_pkl (string pkl_uuid, XMLMetadata const & metadata) const
 	stringstream s;
 	s << pkl_uuid << "_pkl.xml";
 	p /= s.str();
-	ofstream pkl (p.string().c_str());
 
-	pkl << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-	    << "<PackingList xmlns=\"http://www.smpte-ra.org/schemas/429-8/2007/PKL\">\n"
-	    << "  <Id>urn:uuid:" << pkl_uuid << "</Id>\n"
-		/* XXX: this is a bit of a hack */
-	    << "  <AnnotationText>" << _cpls.front()->name() << "</AnnotationText>\n"
-	    << "  <IssueDate>" << metadata.issue_date << "</IssueDate>\n"
-	    << "  <Issuer>" << metadata.issuer << "</Issuer>\n"
-	    << "  <Creator>" << metadata.creator << "</Creator>\n"
-	    << "  <AssetList>\n";
+	xmlpp::Document doc;
+	xmlpp::Element* root = doc.create_root_node ("PackingList", "http://www.smpte-ra.org/schemas/429-8/2007/PKL");
+
+	root->add_child("Id")->add_child_text ("urn:uuid:" + pkl_uuid);
+	/* XXX: this is a bit of a hack */
+	root->add_child("AnnotationText")->add_child_text (_cpls.front()->name());
+	root->add_child("IssueDate")->add_child_text (metadata.issue_date);
+	root->add_child("Issuer")->add_child_text (metadata.issuer);
+	root->add_child("Creator")->add_child_text (metadata.creator);
+
+	xmlpp::Node* asset_list = root->add_child ("AssetList");
 
 	list<shared_ptr<const Asset> > a = assets ();
 	for (list<shared_ptr<const Asset> >::const_iterator i = a.begin(); i != a.end(); ++i) {
-		(*i)->write_to_pkl (pkl);
+		(*i)->write_to_pkl (asset_list);
 	}
 
 	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
-		(*i)->write_to_pkl (pkl);
+		(*i)->write_to_pkl (asset_list);
 	}
 
-	pkl << "  </AssetList>\n"
-	    << "</PackingList>\n";
-
+	doc.write_to_file_formatted (p.string (), "UTF-8");
 	return p.string ();
 }
 
@@ -113,12 +114,11 @@ DCP::write_volindex () const
 	boost::filesystem::path p;
 	p /= _directory;
 	p /= "VOLINDEX.xml";
-	ofstream vi (p.string().c_str());
 
-	vi << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-	   << "<VolumeIndex xmlns=\"http://www.smpte-ra.org/schemas/429-9/2007/AM\">\n"
-	   << "  <Index>1</Index>\n"
-	   << "</VolumeIndex>\n";
+	xmlpp::Document doc;
+	xmlpp::Element* root = doc.create_root_node ("VolumeIndex", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
+	root->add_child("Index")->add_child_text ("1");
+	doc.write_to_file_formatted (p.string (), "UTF-8");
 }
 
 void
@@ -127,41 +127,37 @@ DCP::write_assetmap (string pkl_uuid, int pkl_length, XMLMetadata const & metada
 	boost::filesystem::path p;
 	p /= _directory;
 	p /= "ASSETMAP.xml";
-	ofstream am (p.string().c_str());
 
-	am << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-	   << "<AssetMap xmlns=\"http://www.smpte-ra.org/schemas/429-9/2007/AM\">\n"
-	   << "  <Id>urn:uuid:" << make_uuid() << "</Id>\n"
-	   << "  <Creator>" << metadata.creator << "</Creator>\n"
-	   << "  <VolumeCount>1</VolumeCount>\n"
-	   << "  <IssueDate>" << metadata.issue_date << "</IssueDate>\n"
-	   << "  <Issuer>" << metadata.issuer << "</Issuer>\n"
-	   << "  <AssetList>\n";
+	xmlpp::Document doc;
+	xmlpp::Element* root = doc.create_root_node ("AssetMap", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
 
-	am << "    <Asset>\n"
-	   << "      <Id>urn:uuid:" << pkl_uuid << "</Id>\n"
-	   << "      <PackingList>true</PackingList>\n"
-	   << "      <ChunkList>\n"
-	   << "        <Chunk>\n"
-	   << "          <Path>" << pkl_uuid << "_pkl.xml</Path>\n"
-	   << "          <VolumeIndex>1</VolumeIndex>\n"
-	   << "          <Offset>0</Offset>\n"
-	   << "          <Length>" << pkl_length << "</Length>\n"
-	   << "        </Chunk>\n"
-	   << "      </ChunkList>\n"
-	   << "    </Asset>\n";
+	root->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
+	root->add_child("Creator")->add_child_text (metadata.creator);
+	root->add_child("VolumeCount")->add_child_text ("1");
+	root->add_child("IssueDate")->add_child_text (metadata.issue_date);
+	root->add_child("Issuer")->add_child_text (metadata.issuer);
+	xmlpp::Node* asset_list = root->add_child ("AssetList");
+
+	xmlpp::Node* asset = asset_list->add_child ("Asset");
+	asset->add_child("Id")->add_child_text ("urn:uuid:" + pkl_uuid);
+	asset->add_child("PackingList")->add_child_text ("true");
+	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
+	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
+	chunk->add_child("Path")->add_child_text (pkl_uuid + "_pkl.xml");
+	chunk->add_child("VolumeIndex")->add_child_text ("1");
+	chunk->add_child("Offset")->add_child_text ("0");
+	chunk->add_child("Length")->add_child_text (lexical_cast<string> (pkl_length));
 	
 	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
-		(*i)->write_to_assetmap (am);
+		(*i)->write_to_assetmap (asset_list);
 	}
 
 	list<shared_ptr<const Asset> > a = assets ();
 	for (list<shared_ptr<const Asset> >::const_iterator i = a.begin(); i != a.end(); ++i) {
-		(*i)->write_to_assetmap (am);
+		(*i)->write_to_assetmap (asset_list);
 	}
 
-	am << "  </AssetList>\n"
-	   << "</AssetMap>\n";
+	doc.write_to_file_formatted (p.string (), "UTF-8");
 }
 
 

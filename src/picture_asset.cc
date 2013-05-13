@@ -64,18 +64,17 @@ PictureAsset::PictureAsset (string directory, string mxf_name)
 }
 
 void
-PictureAsset::write_to_cpl (ostream& s) const
+PictureAsset::write_to_cpl (xmlpp::Node* node) const
 {
-	s << "        <MainPicture>\n"
-	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
-	  << "          <EditRate>" << _edit_rate << " 1</EditRate>\n"
-	  << "          <IntrinsicDuration>" << _intrinsic_duration << "</IntrinsicDuration>\n"
-	  << "          <EntryPoint>" << _entry_point << "</EntryPoint>\n"
-	  << "          <Duration>" << _duration << "</Duration>\n"
-	  << "          <FrameRate>" << _edit_rate << " 1</FrameRate>\n"
-	  << "          <ScreenAspectRatio>" << _size.width << " " << _size.height << "</ScreenAspectRatio>\n"
-	  << "        </MainPicture>\n";
+	xmlpp::Node* mp = node->add_child ("MainPicture");
+	mp->add_child ("Id")->add_child_text ("urn:uuid:" + _uuid);
+	mp->add_child ("AnnotationText")->add_child_text (_file_name);
+	mp->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
+	mp->add_child ("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
+	mp->add_child ("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));
+	mp->add_child ("Duration")->add_child_text (lexical_cast<string> (_duration));
+	mp->add_child ("FrameRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
+	mp->add_child ("ScreenAspectRatio")->add_child_text (lexical_cast<string> (_size.width) + " " + lexical_cast<string> (_size.height));
 }
 
 bool

@@ -211,16 +211,15 @@ SoundAsset::construct (boost::function<string (Channel)> get_path, MXFMetadata c
 }
 
 void
-SoundAsset::write_to_cpl (ostream& s) const
+SoundAsset::write_to_cpl (xmlpp::Node* node) const
 {
-	s << "        <MainSound>\n"
-	  << "          <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "          <AnnotationText>" << _file_name << "</AnnotationText>\n"
-	  << "          <EditRate>" << _edit_rate << " 1</EditRate>\n"
-	  << "          <IntrinsicDuration>" << _intrinsic_duration << "</IntrinsicDuration>\n"
-	  << "          <EntryPoint>" << _entry_point << "</EntryPoint>\n"
-	  << "          <Duration>" << _duration << "</Duration>\n"
-	  << "        </MainSound>\n";
+	xmlpp::Node* ms = node->add_child ("MainSound");
+	ms->add_child ("Id")->add_child_text ("urn:uuid:" + _uuid);
+	ms->add_child ("AnnotationText")->add_child_text (_file_name);
+	ms->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
+	ms->add_child ("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
+	ms->add_child ("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));
+	ms->add_child ("Duration")->add_child_text (lexical_cast<string> (_duration));
 }
 
 bool
