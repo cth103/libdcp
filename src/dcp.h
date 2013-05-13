@@ -43,7 +43,6 @@ class PictureAsset;
 class SoundAsset;
 class SubtitleAsset;
 class Reel;
-class AssetMap;
 class CPL;
 class XMLMetadata;
 

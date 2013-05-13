@@ -19,12 +19,12 @@
 
 #include <fstream>
 #include "cpl.h"
-#include "cpl_file.h"
+#include "parse/cpl.h"
 #include "util.h"
 #include "picture_asset.h"
 #include "sound_asset.h"
 #include "subtitle_asset.h"
-#include "asset_map.h"
+#include "parse/asset_map.h"
 #include "reel.h"
 #include "metadata.h"
 
@@ -52,16 +52,16 @@ CPL::CPL (string directory, string name, ContentKind content_kind, int length, i
  *  @param asset_map The corresponding asset map.
  *  @param require_mxfs true to throw an exception if a required MXF file does not exist.
  */
-CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, bool require_mxfs)
+CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMap> asset_map, bool require_mxfs)
 	: _directory (directory)
 	, _content_kind (FEATURE)
 	, _length (0)
 	, _fps (0)
 {
 	/* Read the XML */
-	shared_ptr<CPLFile> cpl;
+	shared_ptr<parse::CPL> cpl;
 	try {
-		cpl.reset (new CPLFile (file));
+		cpl.reset (new parse::CPL (file));
 	} catch (FileError& e) {
 		boost::throw_exception (FileError ("could not load CPL file", file));
 	}
@@ -71,9 +71,9 @@ CPL::CPL (string directory, string file, shared_ptr<const AssetMap> asset_map, b
 	_name = cpl->annotation_text;
 	_content_kind = cpl->content_kind;
 
-	for (list<shared_ptr<CPLReel> >::iterator i = cpl->reels.begin(); i != cpl->reels.end(); ++i) {
+	for (list<shared_ptr<libdcp::parse::Reel> >::iterator i = cpl->reels.begin(); i != cpl->reels.end(); ++i) {
 
-		shared_ptr<Picture> p;
+		shared_ptr<parse::Picture> p;
 
 		if ((*i)->asset_list->main_picture) {
 			p = (*i)->asset_list->main_picture;

@@ -11,8 +11,6 @@ def build(bld):
     obj.use = 'libkumu-libdcp libasdcp-libdcp'
     obj.source = """
                  asset.cc
-                 asset_map.cc
-                 cpl_file.cc
                  dcp.cc        
                  cpl.cc
                  dcp_time.cc
@@ -21,7 +19,6 @@ def build(bld):
                  mxf_asset.cc
                  picture_asset.cc
                  picture_frame.cc
-                 pkl_file.cc
                  reel.cc
                  argb_frame.cc
                  sound_asset.cc
@@ -30,6 +27,10 @@ def build(bld):
                  types.cc
                  util.cc
                  version.cc
+                 parse/asset_map.cc
+                 parse/cpl.cc
+                 parse/pkl.cc
+                 parse/subtitle.cc
                  """
 
     headers = """
@@ -55,3 +56,4 @@ def build(bld):
     bld.install_files('${PREFIX}/include/libdcp', headers)
     if bld.env.STATIC:
         bld.install_files('${PREFIX}/lib', 'libdcp.a')
+

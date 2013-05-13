@@ -37,9 +37,8 @@
 #include "util.h"
 #include "metadata.h"
 #include "exceptions.h"
-#include "cpl_file.h"
-#include "pkl_file.h"
-#include "asset_map.h"
+#include "parse/pkl.h"
+#include "parse/asset_map.h"
 #include "reel.h"
 #include "cpl.h"
 
@@ -171,17 +170,17 @@ DCP::read (bool require_mxfs)
 {
 	Files files;
 
-	shared_ptr<AssetMap> asset_map;
+	shared_ptr<parse::AssetMap> asset_map;
 	try {
 		boost::filesystem::path p = _directory;
 		p /= "ASSETMAP";
 		if (boost::filesystem::exists (p)) {
-			asset_map.reset (new AssetMap (p.string ()));
+			asset_map.reset (new libdcp::parse::AssetMap (p.string ()));
 		} else {
 			p = _directory;
 			p /= "ASSETMAP.xml";
 			if (boost::filesystem::exists (p)) {
-				asset_map.reset (new AssetMap (p.string ()));
+				asset_map.reset (new libdcp::parse::AssetMap (p.string ()));
 			} else {
 				boost::throw_exception (DCPReadError ("could not find AssetMap file"));
 			}
@@ -191,7 +190,7 @@ DCP::read (bool require_mxfs)
 		boost::throw_exception (FileError ("could not load AssetMap file", files.asset_map));
 	}
 
-	for (list<shared_ptr<AssetMapAsset> >::const_iterator i = asset_map->assets.begin(); i != asset_map->assets.end(); ++i) {
+	for (list<shared_ptr<libdcp::parse::AssetMapAsset> >::const_iterator i = asset_map->assets.begin(); i != asset_map->assets.end(); ++i) {
 		if ((*i)->chunks.size() != 1) {
 			boost::throw_exception (XMLError ("unsupported asset chunk count"));
 		}
@@ -233,9 +232,9 @@ DCP::read (bool require_mxfs)
 		boost::throw_exception (FileError ("no PKL file found", ""));
 	}
 
-	shared_ptr<PKLFile> pkl;
+	shared_ptr<parse::PKL> pkl;
 	try {
-		pkl.reset (new PKLFile (files.pkl));
+		pkl.reset (new parse::PKL (files.pkl));
 	} catch (FileError& e) {
 		boost::throw_exception (FileError ("could not load PKL file", files.pkl));
 	}

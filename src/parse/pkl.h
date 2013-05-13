@@ -17,14 +17,16 @@
 
 */
 
-/** @file  src/pkl_file.h
+/** @file  src/parse/pkl.h
  *  @brief Classes used to parse a PKL
  */
 
 #include <boost/shared_ptr.hpp>
-#include "xml.h"
+#include "../xml.h"
 
 namespace libdcp {
+
+namespace parse {
 
 class PKLAsset
 {
@@ -40,10 +42,10 @@ public:
 	std::string original_file_name;
 };
 
-class PKLFile
+class PKL
 {
 public:
-	PKLFile (std::string file);
+	PKL (std::string file);
 
 	std::string id;
 	std::string annotation_text;
@@ -53,4 +55,6 @@ public:
 	std::list<boost::shared_ptr<PKLAsset> > assets;
 };
 	
+}
+
 }

@@ -27,6 +27,8 @@
 
 namespace libdcp {
 
+namespace parse {
+
 /** @class Chunk
  *  @brief A simple parser for and representation of a \<Chunk\> node within an asset map.
  */
@@ -73,5 +75,7 @@ public:
 	std::string issuer;
 	std::list<boost::shared_ptr<AssetMapAsset> > assets;
 };
+
+}
 
 }

@@ -20,70 +20,10 @@
 #include "asset.h"
 #include "xml.h"
 #include "dcp_time.h"
+#include "parse/subtitle.h"
 
 namespace libdcp
 {
-
-class FontNode;
-
-class TextNode
-{
-public:
-	TextNode () {}
-	TextNode (boost::shared_ptr<const cxml::Node> node);
-
-	float v_position;
-	VAlign v_align;
-	std::string text;
-	std::list<boost::shared_ptr<FontNode> > font_nodes;
-};
-
-class SubtitleNode 
-{
-public:
-	SubtitleNode () {}
-	SubtitleNode (boost::shared_ptr<const cxml::Node> node);
-
-	Time in;
-	Time out;
-	Time fade_up_time;
-	Time fade_down_time;
-	std::list<boost::shared_ptr<FontNode> > font_nodes;
-	std::list<boost::shared_ptr<TextNode> > text_nodes;
-
-private:
-	Time fade_time (boost::shared_ptr<const cxml::Node>, std::string name);
-};
-
-class FontNode 
-{
-public:
-	FontNode () {}
-	FontNode (boost::shared_ptr<const cxml::Node> node);
-	FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes);
-
-	std::string text;
-	std::string id;
-	int size;
-	boost::optional<bool> italic;
-	boost::optional<Color> color;
-	boost::optional<Effect> effect;
-	boost::optional<Color> effect_color;
-	
-	std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
-	std::list<boost::shared_ptr<FontNode> > font_nodes;
-	std::list<boost::shared_ptr<TextNode> > text_nodes;
-};
-
-class LoadFontNode 
-{
-public:
-	LoadFontNode () {}
-	LoadFontNode (boost::shared_ptr<const cxml::Node> node);
-
-	std::string id;
-	std::string uri;
-};
 
 class Subtitle
 {
@@ -210,22 +150,22 @@ private:
 	std::string escape (std::string) const;
 
 	struct ParseState {
-		std::list<boost::shared_ptr<FontNode> > font_nodes;
-		std::list<boost::shared_ptr<TextNode> > text_nodes;
-		std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
+		std::list<boost::shared_ptr<parse::Font> > font_nodes;
+		std::list<boost::shared_ptr<parse::Text> > text_nodes;
+		std::list<boost::shared_ptr<parse::Subtitle> > subtitle_nodes;
 	};
 
 	void maybe_add_subtitle (std::string text, ParseState const & parse_state);
 	
 	void examine_font_nodes (
 		boost::shared_ptr<const cxml::Node> xml,
-		std::list<boost::shared_ptr<FontNode> > const & font_nodes,
+		std::list<boost::shared_ptr<parse::Font> > const & font_nodes,
 		ParseState& parse_state
 		);
 	
 	void examine_text_nodes (
 		boost::shared_ptr<const cxml::Node> xml,
-		std::list<boost::shared_ptr<TextNode> > const & text_nodes,
+		std::list<boost::shared_ptr<parse::Text> > const & text_nodes,
 		ParseState& parse_state
 		);
 
@@ -233,7 +173,7 @@ private:
 	/* strangely, this is sometimes a string */
 	std::string _reel_number;
 	std::string _language;
-	std::list<boost::shared_ptr<LoadFontNode> > _load_font_nodes;
+	std::list<boost::shared_ptr<parse::LoadFont> > _load_font_nodes;
 
 	std::list<boost::shared_ptr<Subtitle> > _subtitles;
 	bool _need_sort;

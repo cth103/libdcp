@@ -63,8 +63,8 @@ SubtitleAsset::read_xml (string xml_file)
 
 	xml->ignore_child ("LoadFont");
 
-	list<shared_ptr<FontNode> > font_nodes = type_children<FontNode> (xml, "Font");
-	_load_font_nodes = type_children<LoadFontNode> (xml, "LoadFont");
+	list<shared_ptr<libdcp::parse::Font> > font_nodes = type_children<libdcp::parse::Font> (xml, "Font");
+	_load_font_nodes = type_children<libdcp::parse::LoadFont> (xml, "LoadFont");
 
 	/* Now make Subtitle objects to represent the raw XML nodes
 	   in a sane way.
@@ -77,16 +77,16 @@ SubtitleAsset::read_xml (string xml_file)
 void
 SubtitleAsset::examine_font_nodes (
 	shared_ptr<const cxml::Node> xml,
-	list<shared_ptr<FontNode> > const & font_nodes,
+	list<shared_ptr<libdcp::parse::Font> > const & font_nodes,
 	ParseState& parse_state
 	)
 {
-	for (list<shared_ptr<FontNode> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
+	for (list<shared_ptr<libdcp::parse::Font> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
 
 		parse_state.font_nodes.push_back (*i);
 		maybe_add_subtitle ((*i)->text, parse_state);
 
-		for (list<shared_ptr<SubtitleNode> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
+		for (list<shared_ptr<libdcp::parse::Subtitle> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
 			parse_state.subtitle_nodes.push_back (*j);
 			examine_text_nodes (xml, (*j)->text_nodes, parse_state);
 			examine_font_nodes (xml, (*j)->font_nodes, parse_state);
@@ -103,11 +103,11 @@ SubtitleAsset::examine_font_nodes (
 void
 SubtitleAsset::examine_text_nodes (
 	shared_ptr<const cxml::Node> xml,
-	list<shared_ptr<TextNode> > const & text_nodes,
+	list<shared_ptr<libdcp::parse::Text> > const & text_nodes,
 	ParseState& parse_state
 	)
 {
-	for (list<shared_ptr<TextNode> >::const_iterator i = text_nodes.begin(); i != text_nodes.end(); ++i) {
+	for (list<shared_ptr<libdcp::parse::Text> >::const_iterator i = text_nodes.begin(); i != text_nodes.end(); ++i) {
 		parse_state.text_nodes.push_back (*i);
 		maybe_add_subtitle ((*i)->text, parse_state);
 		examine_font_nodes (xml, (*i)->font_nodes, parse_state);
@@ -129,9 +129,9 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 	assert (!parse_state.text_nodes.empty ());
 	assert (!parse_state.subtitle_nodes.empty ());
 	
-	FontNode effective_font (parse_state.font_nodes);
-	TextNode effective_text (*parse_state.text_nodes.back ());
-	SubtitleNode effective_subtitle (*parse_state.subtitle_nodes.back ());
+	libdcp::parse::Font effective_font (parse_state.font_nodes);
+	libdcp::parse::Text effective_text (*parse_state.text_nodes.back ());
+	libdcp::parse::Subtitle effective_subtitle (*parse_state.subtitle_nodes.back ());
 
 	_subtitles.push_back (
 		shared_ptr<Subtitle> (
@@ -154,109 +154,6 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 		);
 }
 
-FontNode::FontNode (shared_ptr<const cxml::Node> node)
-{
-	text = node->content ();
-	
-	id = node->optional_string_attribute ("Id").get_value_or ("");
-	size = node->optional_number_attribute<int64_t> ("Size").get_value_or (0);
-	italic = node->optional_bool_attribute ("Italic").get_value_or (false);
-	optional<string> c = node->optional_string_attribute ("Color");
-	if (c) {
-		color = Color (c.get ());
-	}
-	optional<string> const e = node->optional_string_attribute ("Effect");
-	if (e) {
-		effect = string_to_effect (e.get ());
-	}
-	c = node->optional_string_attribute ( "EffectColor");
-	if (c) {
-		effect_color = Color (c.get ());
-	}
-	subtitle_nodes = type_children<SubtitleNode> (node, "Subtitle");
-	font_nodes = type_children<FontNode> (node, "Font");
-	text_nodes = type_children<TextNode> (node, "Text");
-}
-
-FontNode::FontNode (list<shared_ptr<FontNode> > const & font_nodes)
-	: size (0)
-	, italic (false)
-	, color ("FFFFFFFF")
-	, effect_color ("FFFFFFFF")
-{
-	for (list<shared_ptr<FontNode> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
-		if (!(*i)->id.empty ()) {
-			id = (*i)->id;
-		}
-		if ((*i)->size != 0) {
-			size = (*i)->size;
-		}
-		if ((*i)->italic) {
-			italic = (*i)->italic.get ();
-		}
-		if ((*i)->color) {
-			color = (*i)->color.get ();
-		}
-		if ((*i)->effect) {
-			effect = (*i)->effect.get ();
-		}
-		if ((*i)->effect_color) {
-			effect_color = (*i)->effect_color.get ();
-		}
-	}
-}
-
-LoadFontNode::LoadFontNode (shared_ptr<const cxml::Node> node)
-{
-	id = node->string_attribute ("Id");
-	uri = node->string_attribute ("URI");
-}
-	
-
-SubtitleNode::SubtitleNode (shared_ptr<const cxml::Node> node)
-{
-	in = Time (node->string_attribute ("TimeIn"));
-	out = Time (node->string_attribute ("TimeOut"));
-	font_nodes = type_children<FontNode> (node, "Font");
-	text_nodes = type_children<TextNode> (node, "Text");
-	fade_up_time = fade_time (node, "FadeUpTime");
-	fade_down_time = fade_time (node, "FadeDownTime");
-}
-
-Time
-SubtitleNode::fade_time (shared_ptr<const cxml::Node> node, string name)
-{
-	string const u = node->optional_string_attribute (name).get_value_or ("");
-	Time t;
-	
-	if (u.empty ()) {
-		t = Time (0, 0, 0, 20);
-	} else if (u.find (":") != string::npos) {
-		t = Time (u);
-	} else {
-		t = Time (0, 0, 0, lexical_cast<int> (u));
-	}
-
-	if (t > Time (0, 0, 8, 0)) {
-		t = Time (0, 0, 8, 0);
-	}
-
-	return t;
-}
-
-TextNode::TextNode (shared_ptr<const cxml::Node> node)
-	: v_align (CENTER)
-{
-	text = node->content ();
-	v_position = node->number_attribute<float> ("VPosition");
-	optional<string> v = node->optional_string_attribute ("VAlign");
-	if (v) {
-		v_align = string_to_valign (v.get ());
-	}
-
-	font_nodes = type_children<FontNode> (node, "Font");
-}
-
 list<shared_ptr<Subtitle> >
 SubtitleAsset::subtitles_at (Time t) const
 {
@@ -273,7 +170,7 @@ SubtitleAsset::subtitles_at (Time t) const
 std::string
 SubtitleAsset::font_id_to_name (string id) const
 {
-	list<shared_ptr<LoadFontNode> >::const_iterator i = _load_font_nodes.begin();
+	list<shared_ptr<libdcp::parse::LoadFont> >::const_iterator i = _load_font_nodes.begin();
 	while (i != _load_font_nodes.end() && (*i)->id != id) {
 		++i;
 	}

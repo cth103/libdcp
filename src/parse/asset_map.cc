@@ -23,13 +23,13 @@
 
 #include <boost/algorithm/string.hpp>
 #include "asset_map.h"
-#include "util.h"
-#include "xml.h"
+#include "../util.h"
+#include "../xml.h"
 
 using std::string;
 using std::list;
 using boost::shared_ptr;
-using namespace libdcp;
+using namespace libdcp::parse;
 
 AssetMap::AssetMap (string file)
 {

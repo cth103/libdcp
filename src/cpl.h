@@ -24,7 +24,10 @@
 
 namespace libdcp {
 
-class AssetMap;
+namespace parse {
+	class AssetMap;
+}
+	
 class Asset;
 class Reel;
 class XMLMetadata;
@@ -34,7 +37,7 @@ class CPL
 {
 public:
 	CPL (std::string directory, std::string name, ContentKind content_kind, int length, int frames_per_second);
-	CPL (std::string directory, std::string file, boost::shared_ptr<const AssetMap> asset_map, bool require_mxfs = true);
+	CPL (std::string directory, std::string file, boost::shared_ptr<const parse::AssetMap> asset_map, bool require_mxfs = true);
 
 	void add_reel (boost::shared_ptr<const Reel> reel);
 	

@@ -22,13 +22,13 @@
  */
 
 #include <iostream>
-#include "pkl_file.h"
+#include "pkl.h"
 
 using namespace std;
 using namespace boost;
-using namespace libdcp;
+using namespace libdcp::parse;
 
-PKLFile::PKLFile (string file)
+PKL::PKL (string file)
 {
 	cxml::File f (file, "PackingList");
 	

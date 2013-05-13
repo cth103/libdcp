@@ -17,16 +17,18 @@
 
 */
 
-/** @file  src/cpl_file.h
+/** @file  src/parse/cpl.h
  *  @brief Classes used to parse a CPL.
  */
 
 #include <stdint.h>
 #include <boost/shared_ptr.hpp>
 #include <libcxml/cxml.h>
-#include "types.h"
+#include "../types.h"
 
 namespace libdcp {
+
+namespace parse	{
 
 /** @brief A simple representation of a CPL \<Picture\> node */
 class Picture
@@ -109,11 +111,11 @@ public:
 };
 
 /** @brief A simple parser for and representation of a CPL \<Reel\> node */
-class CPLReel
+class Reel
 {
 public:
-	CPLReel () {}
-	CPLReel (boost::shared_ptr<const cxml::Node> node);
+	Reel () {}
+	Reel (boost::shared_ptr<const cxml::Node> node);
 
 	std::string id;
 	boost::shared_ptr<CPLAssetList> asset_list;
@@ -131,17 +133,17 @@ public:
 	std::string label_text;
 };
 
-/** @class CPLFile
+/** @class CPL
  *  @brief Class to parse a CPL
  *
  *  This class is used to parse XML CPL files.  It is rarely necessary
  *  for the caller to use it outside libdcp.
  */
-class CPLFile
+class CPL
 {
 public:
 	/** Parse a CPL XML file into our member variables */
-	CPLFile (std::string file);
+	CPL (std::string file);
 
 	std::string id;
 	std::string annotation_text;
@@ -150,8 +152,10 @@ public:
 	std::string content_title_text;
 	ContentKind content_kind;
 	boost::shared_ptr<ContentVersion> content_version;
-	std::list<boost::shared_ptr<CPLReel> > reels;
+	std::list<boost::shared_ptr<Reel> > reels;
 };
+
+}
 
 }
 

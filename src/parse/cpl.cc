@@ -22,16 +22,16 @@
  */
 
 #include <iostream>
-#include "cpl_file.h"
-#include "xml.h"
-#include "util.h"
+#include "cpl.h"
+#include "../xml.h"
+#include "../util.h"
 
 using std::string;
 using std::bad_cast;
 using boost::shared_ptr;
-using namespace libdcp;
+using namespace libdcp::parse;
 
-CPLFile::CPLFile (string file)
+CPL::CPL (string file)
 {
 	cxml::File f (file, "CompositionPlaylist");
 	
@@ -43,7 +43,7 @@ CPLFile::CPLFile (string file)
 	content_kind = content_kind_from_string (f.string_child ("ContentKind"));
 	content_version = optional_type_child<ContentVersion> (f, "ContentVersion");
 	f.ignore_child ("RatingList");
-	reels = type_grand_children<CPLReel> (f, "ReelList", "Reel");
+	reels = type_grand_children<Reel> (f, "ReelList", "Reel");
 
 	f.ignore_child ("Issuer");
 	f.ignore_child ("Signer");
@@ -59,7 +59,7 @@ ContentVersion::ContentVersion (shared_ptr<const cxml::Node> node)
 	node->done ();
 }
 
-CPLReel::CPLReel (shared_ptr<const cxml::Node> node)
+Reel::Reel (shared_ptr<const cxml::Node> node)
 {
 	id = node->string_child ("Id");
 	asset_list = type_child<CPLAssetList> (node, "AssetList");
