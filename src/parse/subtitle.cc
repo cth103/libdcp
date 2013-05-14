@@ -36,7 +36,7 @@ Font::Font (shared_ptr<const cxml::Node> node)
 	
 	id = node->optional_string_attribute ("Id").get_value_or ("");
 	size = node->optional_number_attribute<int64_t> ("Size").get_value_or (0);
-	italic = node->optional_bool_attribute ("Italic").get_value_or (false);
+	italic = node->optional_bool_attribute ("Italic");
 	optional<string> c = node->optional_string_attribute ("Color");
 	if (c) {
 		color = Color (c.get ());

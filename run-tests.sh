@@ -29,7 +29,7 @@ if [ ! -e "../libdcp-test" ]; then
   exit 1
 fi
 
-for d in `find ../libdcp-test -mindepth 1 -maxdepth 1 -type d`; do
+for d in `find ../libdcp-test -mindepth 1 -maxdepth 1 -type d | sort`; do
   if [ `basename $d` != ".git" ]; then
     LD_LIBRARY_PATH=build/src:build/asdcplib/src build/tools/dcpinfo -s $d >> build/test/info.log
     if [ "$?" != "0" ]; then
@@ -49,7 +49,7 @@ rm -f build/test/info2.log
 rm -rf build/test/libdcp-test
 
 cp -r ../libdcp-test build/test
-for d in `find build/test/libdcp-test -mindepth 1 -maxdepth 1 -type d`; do
+for d in `find build/test/libdcp-test -mindepth 1 -maxdepth 1 -type d | sort`; do
   if [ `basename $d` != ".git" ]; then
     LD_LIBRARY_PATH=build/src:build/asdcplib/src build/test/rewrite_subs $d
     LD_LIBRARY_PATH=build/src:build/asdcplib/src build/tools/dcpinfo -s $d >> build/test/info2.log

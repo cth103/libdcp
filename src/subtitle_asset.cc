@@ -386,7 +386,7 @@ SubtitleAsset::write_xml (ostream& s) const
 			font->set_attribute ("Weight", "normal");
 		}
 
-		if (!subtitle ||
+		if (!subtitle || font_changed ||
 		    (last_in != (*i)->in() ||
 		     last_out != (*i)->out() ||
 		     last_fade_up_time != (*i)->fade_up_time() ||
@@ -412,6 +412,6 @@ SubtitleAsset::write_xml (ostream& s) const
 		text->add_child_text ((*i)->text());
 	}
 
-	doc.write_to_stream_formatted (s);
+	doc.write_to_stream_formatted (s, "UTF-8");
 }
 
