@@ -33,7 +33,7 @@ public:
 		, _bit_depth (bit_depth)
 		, _gamma (gamma)
 	{
-		_lut = new T[int(std::pow(2, _bit_depth))];
+		_lut = new T[int(std::pow(2.0f, _bit_depth))];
 	}
 
 	virtual ~LUT() {
