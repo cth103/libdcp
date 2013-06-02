@@ -256,8 +256,10 @@ CPL::write_to_assetmap (xmlpp::Node* node) const
 bool
 CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (_name != other._name) {
-		note (ERROR, "names differ");
+	if (_name != other._name && !opt.cpl_names_can_differ) {
+		stringstream s;
+		s << "names differ: " << _name << " vs " << other._name << "\n";
+		note (ERROR, s.str ());
 		return false;
 	}
 
