@@ -2,27 +2,32 @@ import subprocess
 import os
 
 APPNAME = 'libdcp'
-VERSION = '0.51pre'
+VERSION = '0.53pre'
 
 def options(opt):
     opt.load('compiler_cxx')
     opt.add_option('--target-windows', action='store_true', default = False, help = 'set up to do a cross-compile to Windows')
+    opt.add_option('--osx', action='store_true', default = False, help = 'set up to build on OS X')
     opt.add_option('--enable-debug', action='store_true', default = False, help = 'build with debugging information and without optimisation')
     opt.add_option('--static', action='store_true', default = False, help = 'build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
 
 def configure(conf):
     conf.load('compiler_cxx')
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-Wno-unused-result', '-O2', '-D_FILE_OFFSET_BITS=64'])
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-O2', '-D_FILE_OFFSET_BITS=64'])
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
 
     conf.env.TARGET_WINDOWS = conf.options.target_windows
     conf.env.STATIC = conf.options.static
+    conf.env.OSX = conf.options.osx
     conf.env.ENABLE_DEBUG = conf.options.enable_debug
 
     if conf.options.target_windows:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_WINDOWS')
     else:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_POSIX')
+
+    if not conf.options.osx:
+        conf.env.append_value('CXXFLAGS', ['-Wno-unused-result'])
 
     conf.check_cfg(package = 'openssl', args = '--cflags --libs', uselib_store = 'OPENSSL', mandatory = True)
     conf.check_cfg(package = 'libxml++-2.6', args = '--cflags --libs', uselib_store = 'LIBXML++', mandatory = True)

@@ -6,6 +6,8 @@ def build(env, target):
         cmd += ' --static-libdcp --static-openjpeg'
     elif target.platform == 'windows':
         cmd += ' --target-windows'
+    elif target.platform == 'osx':
+        cmd += ' --osx'
     env.command(cmd)
     env.command('./waf build install')
 
