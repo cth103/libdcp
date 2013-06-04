@@ -404,5 +404,5 @@ SoundAssetWriter::finalize ()
 
 SoundAssetWriter::~SoundAssetWriter ()
 {
-	assert (_finalized);
+
 }
