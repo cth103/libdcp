@@ -401,8 +401,3 @@ SoundAssetWriter::finalize ()
 	_asset->set_intrinsic_duration (_frames_written);
 	_asset->set_duration (_frames_written);
 }
-
-SoundAssetWriter::~SoundAssetWriter ()
-{
-
-}
