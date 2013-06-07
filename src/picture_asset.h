@@ -113,8 +113,6 @@ struct FrameInfo
 class MonoPictureAssetWriter
 {
 public:
-	~MonoPictureAssetWriter ();
-
 	FrameInfo write (uint8_t* data, int size);
 	void fake_write (int size);
 	void finalize ();
