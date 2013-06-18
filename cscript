@@ -1,17 +1,17 @@
 import os
 
-def build(env, target):
-    cmd = './waf configure --prefix=%s' % env.work_dir_cscript()
+def build(target):
+    cmd = './waf configure --prefix=%s' % target.work_dir_cscript()
     if target.platform == 'linux':
         cmd += ' --static-libdcp --static-openjpeg'
     elif target.platform == 'windows':
         cmd += ' --target-windows'
     elif target.platform == 'osx':
         cmd += ' --osx'
-    env.command(cmd)
-    env.command('./waf build install')
+    target.command(cmd)
+    target.command('./waf build install')
 
 def make_doxygen(env):
     os.makedirs('build/doc')
-    env.command('doxygen')
+    target.command('doxygen')
     return os.path.abspath('build/doc/html')
