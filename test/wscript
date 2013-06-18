@@ -18,7 +18,7 @@ def configure(conf):
 def build(bld):
     obj = bld(features = 'cxx cxxprogram')
     obj.name   = 'tests'
-    obj.uselib = 'BOOST_TEST OPENJPEG'
+    obj.uselib = 'BOOST_TEST OPENJPEG CXML'
     obj.use    = 'libdcp'
     obj.source = 'tests.cc'
     obj.target = 'tests'
@@ -26,7 +26,7 @@ def build(bld):
 
     obj = bld(features = 'cxx cxxprogram')
     obj.name   = 'subs_in_out'
-    obj.uselib = 'BOOST_TEST OPENJPEG'
+    obj.uselib = 'BOOST_TEST OPENJPEG CXML'
     obj.use    = 'libdcp'
     obj.source = 'subs_in_out.cc'
     obj.target = 'subs_in_out'
@@ -34,7 +34,7 @@ def build(bld):
 
     obj = bld(features = 'cxx cxxprogram')
     obj.name   = 'rewrite_subs'
-    obj.uselib = 'BOOST_TEST OPENJPEG'
+    obj.uselib = 'BOOST_TEST OPENJPEG CXML'
     obj.use    = 'libdcp'
     obj.source = 'rewrite_subs.cc'
     obj.target = 'rewrite_subs'
