@@ -11,7 +11,7 @@ def build(target):
     target.command(cmd)
     target.command('./waf build install')
 
-def make_doxygen(env):
+def make_doxygen(target):
     os.makedirs('build/doc')
     target.command('doxygen')
     return os.path.abspath('build/doc/html')
