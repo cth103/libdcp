@@ -1,5 +1,12 @@
 import os
 
+def dependencies(target):
+    if target.platform == 'windows':
+        return ()
+    else:
+        # XXX: should be some versions in here
+        return (('libcxml', None))
+
 def build(target):
     cmd = './waf configure --prefix=%s' % target.work_dir_cscript()
     if target.platform == 'linux':
