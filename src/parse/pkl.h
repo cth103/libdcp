@@ -17,13 +17,44 @@
 
 */
 
-/** @file  src/test_mode.h
- *  @brief A method to enable test mode for libdcp.
+/** @file  src/parse/pkl.h
+ *  @brief Classes used to parse a PKL
  */
 
-namespace libdcp
-{
+#include <boost/shared_ptr.hpp>
+#include "../xml.h"
 
-extern void enable_test_mode ();
+namespace libdcp {
+
+namespace parse {
+
+class PKLAsset
+{
+public:
+	PKLAsset () {}
+	PKLAsset (boost::shared_ptr<const cxml::Node>);
+
+	std::string id;
+	std::string annotation_text;
+	std::string hash;
+	int64_t size;
+	std::string type;
+	std::string original_file_name;
+};
+
+class PKL
+{
+public:
+	PKL (std::string file);
+
+	std::string id;
+	std::string annotation_text;
+	std::string issue_date;
+	std::string issuer;
+	std::string creator;
+	std::list<boost::shared_ptr<PKLAsset> > assets;
+};
+	
+}
 
 }

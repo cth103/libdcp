@@ -17,12 +17,16 @@
 
 */
 
+#ifndef LIBDCP_UTIL_H
+#define LIBDCP_UTIL_H
+
 /** @file  src/util.h
  *  @brief Utility methods.
  */
 
 #include <string>
 #include <stdint.h>
+#include <boost/shared_ptr.hpp>
 #include <openjpeg.h>
 #include "types.h"
 
@@ -34,14 +38,34 @@ namespace libdcp {
 
 class ARGBFrame;
 class CertificateChain;
+class GammaLUT;
+class XYZsRGBLUT;
+
+struct Size {
+	Size ()
+		: width (0)
+		, height (0)
+	{}
+
+	Size (int w, int h)
+		: width (w)
+		, height (h)
+	{}
 	
+	int width;
+	int height;
+};
+	
+extern bool operator== (Size const & a, Size const & b);
+extern bool operator!= (Size const & a, Size const & b);
+
 extern std::string make_uuid ();
 extern std::string make_digest (std::string filename);
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
 extern bool empty_or_white_space (std::string s);
 extern opj_image_t* decompress_j2k (uint8_t* data, int64_t size, int reduce);
-extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (opj_image_t* xyz_frame);
+extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (opj_image_t* xyz_frame, boost::shared_ptr<const GammaLUT>, boost::shared_ptr<const GammaLUT>);
 
 extern void init ();
 
@@ -50,3 +74,5 @@ extern void add_signature_value (xmlpp::Element* parent, CertificateChain const 
 extern void add_signer (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & ns);
 	
 }
+
+#endif

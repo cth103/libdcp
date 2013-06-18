@@ -26,11 +26,44 @@
 
 #include "mxf_asset.h"
 #include "types.h"
+#include "metadata.h"
 
 namespace libdcp
 {
 
-class SoundFrame;	
+class SoundFrame;
+class SoundAsset;
+
+class SoundAssetWriter
+{
+public:
+	void write (float const * const *, int);
+	void finalize ();
+
+private:
+	friend class SoundAsset;
+
+	SoundAssetWriter (SoundAsset *, MXFMetadata const &);
+
+	/* no copy construction */
+	SoundAssetWriter (SoundAssetWriter const &);
+	SoundAssetWriter& operator= (SoundAssetWriter const &);
+	
+	void write_current_frame ();
+
+	/* do this with an opaque pointer so we don't have to include
+	   ASDCP headers
+	*/
+	   
+	struct ASDCPState;
+	boost::shared_ptr<ASDCPState> _state;
+
+	SoundAsset* _asset;
+	bool _finalized;
+	int _frames_written;
+	int _frame_buffer_offset;
+	MXFMetadata _metadata;
+};
 
 /** @brief An asset made up of WAV files */
 class SoundAsset : public MXFAsset
@@ -45,7 +78,9 @@ public:
 	 *  @param fps Frames per second.
 	 *  @param length Length in frames.
 	 *  @param start_frame Frame in the source to start writing from.
+	 *  @param intrinsic_duration Length of the whole asset in frames.
 	 *  @param encrypted true if asset should be encrypted.
+	 *  Note that this is different to entry_point in that the asset will contain no data before start_frame.
 	 */
 	SoundAsset (
 		std::vector<std::string> const & files,
@@ -53,9 +88,9 @@ public:
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
-		int length,
-		int start_frame,
-		bool encrypted
+		int intrinsic_duration,
+		bool encrypted,
+		MXFMetadata const & metadata = MXFMetadata ()
 		);
 
 	/** Construct a SoundAsset, generating the MXF from some WAV files.
@@ -65,8 +100,7 @@ public:
 	 *  @param mxf_name Name of MXF file to create.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Frames per second.
-	 *  @param length Length in frames.
-	 *  @param start_frame Frame in the source to start writing from.
+	 *  @param intrinsic_duration Length of the whole asset in frames.
 	 *  @param channels Number of audio channels.
 	 *  @param encrypted true if asset should be encrypted.
 	 */
@@ -76,26 +110,33 @@ public:
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
-		int length,
-		int start_frame,
+		int intrinsic_duration,
 		int channels,
-		bool encrypted
+		bool encrypted,
+		MXFMetadata const & metadata = MXFMetadata ()
+		);
+
+	SoundAsset (
+		std::string directory,
+		std::string mxf_name
 		);
 
 	SoundAsset (
 		std::string directory,
 		std::string mxf_name,
 		int fps,
-		int entry_point,
-		int length
+		int channels,
+		int sampling_rate
 		);
-	
-	/** Write details of the asset to a CPL AssetList node.
-	 *  @param p Parent node.
-	 */
-	void write_to_cpl (xmlpp::Element* p) const;
 
-	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
+	boost::shared_ptr<SoundAssetWriter> start_write (MXFMetadata const & metadata = MXFMetadata ());
+	
+	/** Write details of this asset to a CPL XML node.
+	 *  @param node Node.
+	 */
+	void write_to_cpl (xmlpp::Node* node) const;
+
+	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
 	
@@ -109,14 +150,12 @@ public:
 
 private:
 	std::string key_type () const;
-	
-	void construct (boost::function<std::string (Channel)> get_path);
+	void construct (boost::function<std::string (Channel)> get_path, MXFMetadata const &);
 	std::string path_from_channel (Channel channel, std::vector<std::string> const & files);
 
 	/** Number of channels in the asset */
 	int _channels;
 	int _sampling_rate;
-	int _start_frame;
 };
 
 }

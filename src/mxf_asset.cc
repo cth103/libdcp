@@ -39,12 +39,18 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace libdcp;
 
-MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length, bool encrypted)
+MXFAsset::MXFAsset (string directory, string file_name)
 	: Asset (directory, file_name)
+	, _progress (0)
+	, _encrypted (false)
+	, _encryption_context (0)
+{
+
+}
+
+MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int edit_rate, int intrinsic_duration, bool encrypted)
+	: Asset (directory, file_name, edit_rate, intrinsic_duration)
 	, _progress (progress)
-	, _fps (fps)
-	, _entry_point (entry_point)
-	, _length (length)
 	, _encrypted (encrypted)
 	, _encryption_context (0)
 {
@@ -76,15 +82,15 @@ MXFAsset::~MXFAsset ()
 }
 
 void
-MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
+MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid, MXFMetadata const & metadata)
 {
-	writer_info->ProductVersion = Metadata::instance()->product_version;
-	writer_info->CompanyName = Metadata::instance()->company_name;
-	writer_info->ProductName = Metadata::instance()->product_name.c_str();
+	writer_info->ProductVersion = metadata.product_version;
+	writer_info->CompanyName = metadata.company_name;
+	writer_info->ProductName = metadata.product_name.c_str();
 
 	writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
 	unsigned int c;
-	Kumu::hex2bin (_uuid.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
+	Kumu::hex2bin (uuid.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
 	assert (c == Kumu::UUID_Length);
 
 	if (_encrypted) {
@@ -98,36 +104,26 @@ MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info) const
 }
 
 bool
-MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions, list<string>& notes) const
+MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
+	if (!Asset::equals (other, opt, note)) {
+		return false;
+	}
+	
 	shared_ptr<const MXFAsset> other_mxf = dynamic_pointer_cast<const MXFAsset> (other);
 	if (!other_mxf) {
-		notes.push_back ("comparing an MXF asset with a non-MXF asset");
+		note (ERROR, "comparing an MXF asset with a non-MXF asset");
 		return false;
 	}
 	
 	if (_file_name != other_mxf->_file_name) {
-		notes.push_back ("MXF names differ");
-		return false;
-	}
-
-	if (_fps != other_mxf->_fps) {
-		notes.push_back ("MXF frames per second differ");
-		return false;
+		note (ERROR, "MXF names differ");
+		if (!opt.mxf_names_can_differ) {
+			return false;
+		}
 	}
 	
-	if (_length != other_mxf->_length) {
-		notes.push_back ("MXF lengths differ");
-		return false;
-	}
-
 	return true;
-}
-
-int
-MXFAsset::length () const
-{
-	return _length;
 }
 
 void

@@ -32,6 +32,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <KM_fileio.h>
 #include <KM_log.h>
 #include <fcntl.h>
+#include <sstream>
+#include <iomanip>
 
 #include <assert.h>
 
@@ -48,7 +50,6 @@ using namespace Kumu;
 #ifdef KM_WIN32
 typedef struct _stati64 fstat_t;
 #define S_IFLNK 0
-
 
 // win32 has WriteFileGather() and ReadFileScatter() but they
 // demand page alignment and page sizing, making them unsuitable
@@ -614,7 +615,10 @@ Kumu::FileReader::Size() const
 
 // these are declared here instead of in the header file
 // because we have a mem_ptr that is managing a hidden class
-Kumu::FileWriter::FileWriter() {}
+Kumu::FileWriter::FileWriter()
+	: m_Hashing (false)
+{}
+
 Kumu::FileWriter::~FileWriter() {}
 
 //
@@ -637,6 +641,37 @@ Kumu::FileWriter::Writev(const byte_t* buf, ui32_t buf_len)
   iov->m_Count++;
 
   return RESULT_OK;
+}
+
+void
+Kumu::FileWriter::StartHashing()
+{
+	m_Hashing = true;
+	MD5_Init (&m_MD5Context);
+}
+
+void
+Kumu::FileWriter::MaybeHash(void const * data, int size)
+{
+	if (m_Hashing) {
+		MD5_Update (&m_MD5Context, data, size);
+	}
+}
+
+std::string
+Kumu::FileWriter::StopHashing()
+{
+	m_Hashing = false;
+	
+	unsigned char digest[MD5_DIGEST_LENGTH];
+	MD5_Final (digest, &m_MD5Context);
+
+	std::stringstream s;
+	for (int i = 0; i < MD5_DIGEST_LENGTH; ++i) {
+		s << std::hex << std::setfill('0') << std::setw(2) << ((int) digest[i]);
+	}
+
+	return s.str ();
 }
 
 
@@ -798,6 +833,34 @@ Kumu::FileWriter::OpenWrite(const char* filename)
 
 //
 Kumu::Result_t
+Kumu::FileWriter::OpenModify(const char* filename)
+{
+  KM_TEST_NULL_STR_L(filename);
+  m_Filename = filename;
+  
+  // suppress popup window on error
+  UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
+
+  m_Handle = ::CreateFileA(filename,
+			  (GENERIC_WRITE|GENERIC_READ),  // open for reading
+			  FILE_SHARE_READ,               // share for reading
+			  NULL,                          // no security
+			  OPEN_ALWAYS,                   // don't truncate existing
+			  FILE_ATTRIBUTE_NORMAL,         // normal file
+			  NULL                           // no template file
+			  );
+
+  ::SetErrorMode(prev);
+
+  if ( m_Handle == INVALID_HANDLE_VALUE )
+    return Kumu::RESULT_FILEOPEN;
+  
+  m_IOVec = new h__iovec;
+  return Kumu::RESULT_OK;
+}
+
+//
+Kumu::Result_t
 Kumu::FileWriter::Writev(ui32_t* bytes_written)
 {
   assert( ! m_IOVec.empty() );
@@ -830,6 +893,7 @@ Kumu::FileWriter::Writev(ui32_t* bytes_written)
 	  break;
 	}
 
+      MaybeHash (iov->m_iovec[i].iov_base, iov->m_iovec[i].iov_len);
       *bytes_written += tmp_count;
     }
 
@@ -860,6 +924,8 @@ Kumu::FileWriter::Write(const byte_t* buf, ui32_t buf_len, ui32_t* bytes_written
   if ( result == 0 || *bytes_written != buf_len )
     return Kumu::RESULT_WRITEFAIL;
 
+  MaybeHash (buf, buf_len);
+  
   return Kumu::RESULT_OK;
 }
 
@@ -1006,6 +1072,10 @@ Kumu::FileWriter::Writev(ui32_t* bytes_written)
   if ( write_size == -1L || write_size != total_size )
     return RESULT_WRITEFAIL;
 
+  for (int i = 0; i < iov->m_Count; ++i) {
+	  MaybeHash (iov->m_iovec[i].iov_base, iov->m_iovec[i].iov_len);
+  }
+
   iov->m_Count = 0;
   *bytes_written = write_size;  
   return RESULT_OK;
@@ -1025,6 +1095,7 @@ Kumu::FileWriter::Write(const byte_t* buf, ui32_t buf_len, ui32_t* bytes_written
     return RESULT_STATE;
 
   int write_size = write(m_Handle, buf, buf_len);
+  MaybeHash (buf, buf_len);
 
   if ( write_size == -1L || (ui32_t)write_size != buf_len )
     return RESULT_WRITEFAIL;
@@ -1034,7 +1105,7 @@ Kumu::FileWriter::Write(const byte_t* buf, ui32_t buf_len, ui32_t* bytes_written
 }
 
 
-#endif // KM_WIN32
+#endif
 
 //------------------------------------------------------------------------------------------
 

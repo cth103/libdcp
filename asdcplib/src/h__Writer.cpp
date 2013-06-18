@@ -32,6 +32,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "AS_DCP_internal.h"
 #include "KLV.h"
 
+using std::cout;
 using namespace ASDCP;
 using namespace ASDCP::MXF;
 
@@ -499,10 +500,12 @@ ASDCP::h__Writer::WriteMXFHeader(const std::string& PackageLabel, const UL& Wrap
 // standard method of writing a plaintext or encrypted frame
 Result_t
 ASDCP::h__Writer::WriteEKLVPacket(const ASDCP::FrameBuffer& FrameBuf, const byte_t* EssenceUL,
-				  AESEncContext* Ctx, HMACContext* HMAC)
+				  AESEncContext* Ctx, HMACContext* HMAC, std::string* hash)
 {
   Result_t result = RESULT_OK;
   IntegrityPack IntPack;
+
+  m_File.StartHashing();
 
   byte_t overhead[128];
   Kumu::MemIOWriter Overhead(overhead, 128);
@@ -634,6 +637,21 @@ ASDCP::h__Writer::WriteEKLVPacket(const ASDCP::FrameBuffer& FrameBuf, const byte
 
   if ( ASDCP_SUCCESS(result) )
     result = m_File.Writev();
+
+  if (hash) {
+	  *hash = m_File.StopHashing();
+  }
+
+  return result;
+}
+
+Result_t
+ASDCP::h__Writer::FakeWriteEKLVPacket(int size)
+{
+  Result_t result = RESULT_OK;
+
+  m_StreamOffset += size;
+  m_File.Seek(size, Kumu::SP_POS);
 
   return result;
 }

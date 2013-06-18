@@ -24,6 +24,8 @@
 #ifndef LIBDCP_TYPES_H
 #define LIBDCP_TYPES_H
 
+#include <string>
+
 namespace libdcp
 {
 
@@ -98,11 +100,24 @@ struct EqualityOptions {
 		: max_mean_pixel_error (0)
 		, max_std_dev_pixel_error (0)
 		, max_audio_sample_error (0)
+		, cpl_names_can_differ (false)
+		, mxf_names_can_differ (false)
 	{}
 
 	double max_mean_pixel_error;
 	double max_std_dev_pixel_error;
 	int max_audio_sample_error;
+	bool cpl_names_can_differ;
+	bool mxf_names_can_differ;
+};
+
+/* Win32 defines this */	
+#undef ERROR
+
+enum NoteType {
+	PROGRESS,
+	ERROR,
+	NOTE
 };
 
 /** @class Color

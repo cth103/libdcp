@@ -87,6 +87,7 @@ This project depends upon the following libraries:
 #define _AS_DCP_H_
 
 #include <KM_error.h>
+#include <KM_platform.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <math.h>
@@ -1090,6 +1091,8 @@ namespace ASDCP {
 	  // encrypted headers.
 	  Result_t OpenReadFrame(const char* filename, FrameBuffer&) const;
 
+	  Result_t OpenReadFrame(const unsigned char * data, unsigned int size, FrameBuffer&) const;
+
 	  // Fill a PictureDescriptor struct with the values from the file's codestream.
 	  // Returns RESULT_INIT if the file is not open.
 	  Result_t FillPictureDescriptor(PictureDescriptor&) const;
@@ -1162,20 +1165,26 @@ namespace ASDCP {
 	  virtual MXF::OPAtomHeader& OPAtomHeader();
 	  virtual MXF::OPAtomIndexFooter& OPAtomIndexFooter();
 
-	  // Open the file for writing. The file must not exist. Returns error if
+	  // Open the file for writing. The file must not exist unless overwrite is true. Returns error if
 	  // the operation cannot be completed or if nonsensical data is discovered
 	  // in the essence descriptor.
 	  Result_t OpenWrite(const char* filename, const WriterInfo&,
-			     const PictureDescriptor&, ui32_t HeaderSize = 16384);
+			     const PictureDescriptor&, ui32_t HeaderSize, bool overwrite);
 
 	  // Writes a frame of essence to the MXF file. If the optional AESEncContext
 	  // argument is present, the essence is encrypted prior to writing.
+	  // A MD5 hash of the data that we write is written to hash if it is not 0
 	  // Fails if the file is not open, is finalized, or an operating system
 	  // error occurs.
-	  Result_t WriteFrame(const FrameBuffer&, AESEncContext* = 0, HMACContext* = 0);
+	  Result_t WriteFrame(const FrameBuffer&, AESEncContext* = 0, HMACContext* = 0, std::string* hash = 0);
+
+	  Result_t FakeWriteFrame(int size);
 
 	  // Closes the MXF file, writing the index and revised header.
 	  Result_t Finalize();
+
+	  // Return the current file offset in the MXF file that we are writing
+	  ui64_t Tell() const;
 	};
 
       //

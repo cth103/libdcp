@@ -28,7 +28,6 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include "types.h"
 #include "certificates.h"
 
@@ -46,93 +45,11 @@ class PictureAsset;
 class SoundAsset;
 class SubtitleAsset;
 class Reel;
-class AssetMap;
+class CPL;
+class XMLMetadata;
+class Encryption;
 
-class Encryption
-{
-public:
-	Encryption (CertificateChain c, std::string const & k)
-		: certificates (c)
-		, signer_key (k)
-	{}
-
-	CertificateChain certificates;
-	std::string signer_key;
-};
-
-/** @brief A CPL within a DCP */
-class CPL
-{
-public:
-	CPL (std::string directory, std::string name, ContentKind content_kind, int length, int frames_per_second);
-	CPL (std::string directory, std::string file, boost::shared_ptr<const AssetMap> asset_map, bool require_mxfs = true);
-
-	void add_reel (boost::shared_ptr<const Reel> reel);
-	
-	/** @return the length in frames */
-	int length () const {
-		return _length;
-	}
-
-	/** @return the type of the content, used by media servers
-	 *  to categorise things (e.g. feature, trailer, etc.)
-	 */
-	ContentKind content_kind () const {
-		return _content_kind;
-	}
-
-	std::list<boost::shared_ptr<const Reel> > reels () const {
-		return _reels;
-	}
-
-	/** @return the CPL's name, as will be presented on projector
-	 *  media servers and theatre management systems.
-	 */
-	std::string name () const {
-		return _name;
-	}
-
-	/** @return the number of frames per second */
-	int frames_per_second () const {
-		return _fps;
-	}
-
-	std::list<boost::shared_ptr<const Asset> > assets () const;
-	
-	bool equals (CPL const & other, EqualityOptions options, std::list<std::string>& notes) const;
-	
-	void write_xml (boost::shared_ptr<Encryption>) const;
-	void write_to_assetmap (std::ostream& s) const;
-	void write_to_pkl (xmlpp::Element* p) const;
-
-	boost::shared_ptr<xmlpp::Document> make_kdm (
-		CertificateChain const &,
-		std::string const &,
-		boost::shared_ptr<const Certificate>,
-		boost::posix_time::ptime from,
-		boost::posix_time::ptime until
-		) const;
-	
-private:
-	std::string _directory;
-	/** the name of the DCP */
-	std::string _name;
-	/** the content kind of the CPL */
-	ContentKind _content_kind;
-	/** length in frames */
-	mutable int _length;
-	/** frames per second */
-	int _fps;
-	/** reels */
-	std::list<boost::shared_ptr<const Reel> > _reels;
-
-	/** our UUID */
-	std::string _uuid;
-	/** a SHA1 digest of our XML */
-	mutable std::string _digest;
-};
-
-/** @class DCP dcp.h libdcp/dcp.h
+/** @class DCP
  *  @brief A class to create or read a DCP.
  */
 	
@@ -160,15 +77,14 @@ public:
 	/** Write the required XML files to the directory that was
 	 *  passed into the constructor.
 	 */
-	void write_xml (boost::shared_ptr<Encryption> crypt = boost::shared_ptr<Encryption> ()) const;
+	void write_xml (XMLMetadata const &, boost::shared_ptr<Encryption> crypt = boost::shared_ptr<Encryption> ()) const;
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
-	 *  @param options Options to define just what "equality" means.
-	 *  @param notes Filled in with notes about differences.
+	 *  @param options Options to define what "equality" means.
 	 *  @return true if the DCPs are equal according to EqualityOptions, otherwise false.
 	 */
-	bool equals (DCP const & other, EqualityOptions options, std::list<std::string>& notes) const;
+	bool equals (DCP const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
 
 	/** Add a CPL to this DCP.
 	 *  @param cpl CPL to add.
@@ -190,7 +106,7 @@ private:
 	/** Write the PKL file.
 	 *  @param pkl_uuid UUID to use.
 	 */
-	std::string write_pkl (std::string pkl_uuid, boost::shared_ptr<Encryption>) const;
+	std::string write_pkl (std::string pkl_uuid, XMLMetadata const &, boost::shared_ptr<Encryption>) const;
 	
 	/** Write the VOLINDEX file */
 	void write_volindex () const;
@@ -199,7 +115,7 @@ private:
 	 *  @param pkl_uuid UUID of our PKL.
 	 *  @param pkl_length Length of our PKL in bytes.
 	 */
-	void write_assetmap (std::string pkl_uuid, int pkl_length) const;
+	void write_assetmap (std::string pkl_uuid, int pkl_length, XMLMetadata const &) const;
 
 	/** @return Assets in all this CPLs in this DCP */
 	std::list<boost::shared_ptr<const Asset> > assets () const;

@@ -381,6 +381,9 @@ namespace Kumu
   
   void GenRandomUUID(byte_t* buf); // buf must be UUID_Length or longer
   void GenRandomValue(UUID&);
+#ifdef LIBDCP_POSIX	
+  void ResetTestRNG();
+#endif	
   
   typedef ArchivableList<UUID> UUIDList;
 

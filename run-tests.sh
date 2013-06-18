@@ -37,7 +37,7 @@ if [ ! -e "../libdcp-test" ]; then
   exit 1
 fi
 
-for d in `find ../libdcp-test -mindepth 1 -maxdepth 1 -type d`; do
+for d in `find ../libdcp-test -mindepth 1 -maxdepth 1 -type d | sort`; do
   if [ `basename $d` != ".git" ]; then
     LD_LIBRARY_PATH=build/src:build/asdcplib/src build/tools/dcpinfo -s $d >> build/test/info.log
     if [ "$?" != "0" ]; then
@@ -57,7 +57,7 @@ rm -f build/test/info2.log
 rm -rf build/test/libdcp-test
 
 cp -r ../libdcp-test build/test
-for d in `find build/test/libdcp-test -mindepth 1 -maxdepth 1 -type d`; do
+for d in `find build/test/libdcp-test -mindepth 1 -maxdepth 1 -type d | sort`; do
   if [ `basename $d` != ".git" ]; then
     LD_LIBRARY_PATH=build/src:build/asdcplib/src build/test/rewrite_subs $d
     LD_LIBRARY_PATH=build/src:build/asdcplib/src build/tools/dcpinfo -s $d >> build/test/info2.log
@@ -69,6 +69,12 @@ sed -i "s/DCP: build\/test/DCP: \.\./g" build/test/info2.log
 diff -q build/test/info2.log ../libdcp-test/info.log
 if [ "$?" != "0" ]; then
   echo "FAIL: dcpinfo output from rewrite incorrect"
+  exit 1
+fi
+
+diff build/test/baz/video1.mxf build/test/baz/video2.mxf
+if [ "$?" != "0" ]; then
+  echo "FAIL: MXFs from recovery incorrect"
   exit 1
 fi
     

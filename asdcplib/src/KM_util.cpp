@@ -534,6 +534,15 @@ Kumu::GenRandomValue(UUID& ID)
   ID.Set(tmp_buf);
 }
 
+#ifdef LIBDCP_POSIX
+void
+Kumu::ResetTestRNG()
+{
+  FortunaRNG RNG;
+  RNG.Reset();
+}
+#endif
+
 //
 void
 Kumu::GenRandomUUID(byte_t* buf)

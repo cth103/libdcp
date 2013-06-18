@@ -1,5 +1,5 @@
 def build(bld):
-    if bld.env.STATIC_LIBDCP:
+    if bld.env.STATIC:
         obj = bld(features = 'cxx cxxstlib')
     else:
         obj = bld(features = 'cxx cxxshlib')
@@ -7,37 +7,38 @@ def build(bld):
     obj.name = 'libdcp'
     obj.target = 'dcp'
     obj.export_includes = ['.']
-    obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG XMLSEC1'
+    obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1'
     obj.use = 'libkumu-libdcp libasdcp-libdcp'
     obj.source = """
                  asset.cc
-                 asset_map.cc
-                 certificates.cc
-                 cpl_file.cc
-                 crypt_chain.cc
                  dcp.cc        
+                 certificates.cc
+                 crypt_chain.cc
+                 cpl.cc
                  dcp_time.cc
-                 lut.cc
+                 gamma_lut.cc
                  metadata.cc
                  mxf_asset.cc
                  picture_asset.cc
                  picture_frame.cc
-                 pkl_file.cc
                  reel.cc
                  argb_frame.cc
                  sound_asset.cc
                  sound_frame.cc
                  subtitle_asset.cc
-                 test_mode.cc
                  types.cc
                  util.cc
                  version.cc
-                 xml.cc
+                 parse/asset_map.cc
+                 parse/cpl.cc
+                 parse/pkl.cc
+                 parse/subtitle.cc
                  """
 
     headers = """
               asset.h
               certificates.h
+              cpl.h
               crypt_chain.h
               dcp.h
               dcp_time.h
@@ -51,13 +52,12 @@ def build(bld):
               sound_asset.h
               sound_frame.h
               subtitle_asset.h
-              test_mode.h
               types.h
               util.h
               version.h
-              xml.h
               """
 
     bld.install_files('${PREFIX}/include/libdcp', headers)
-    if bld.env.STATIC_LIBDCP:
+    if bld.env.STATIC:
         bld.install_files('${PREFIX}/lib', 'libdcp.a')
+

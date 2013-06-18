@@ -64,7 +64,7 @@ Time::Time (string time)
 	vector<string> b;
 	split (b, time, is_any_of (":"));
 	if (b.size() != 4) {
-		throw DCPReadError ("unrecognised time specification");
+		boost::throw_exception (DCPReadError ("unrecognised time specification"));
 	}
 	
 	h = lexical_cast<int> (b[0]);

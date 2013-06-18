@@ -26,6 +26,7 @@
 #include <iostream>
 #include <iomanip>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <openssl/sha.h>
 #include <libxml++/nodes/element.h>
 #include <libxml++/document.h>
@@ -39,8 +40,8 @@
 #include "exceptions.h"
 #include "types.h"
 #include "argb_frame.h"
-#include "lut.h"
 #include "certificates.h"
+#include "gamma_lut.h"
 
 using std::string;
 using std::cout;
@@ -49,6 +50,7 @@ using std::min;
 using std::max;
 using std::list;
 using boost::shared_ptr;
+using boost::lexical_cast;
 using namespace libdcp;
 
 /** Create a UUID.
@@ -74,7 +76,7 @@ libdcp::make_digest (string filename)
 {
 	Kumu::FileReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (filename.c_str ()))) {
-		throw FileError ("could not open file to compute digest", filename);
+		boost::throw_exception (FileError ("could not open file to compute digest", filename));
 	}
 	
 	SHA_CTX sha;
@@ -89,7 +91,7 @@ libdcp::make_digest (string filename)
 		if (r == Kumu::RESULT_ENDOFFILE) {
 			break;
 		} else if (ASDCP_FAILURE (r)) {
-			throw FileError ("could not read file to compute digest", filename);
+			boost::throw_exception (FileError ("could not read file to compute digest", filename));
 		}
 		
 		SHA1_Update (&sha, read_buffer.Data(), read);
@@ -194,7 +196,7 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 	if (!image) {
 		opj_destroy_decompress (decoder);
 		opj_cio_close (cio);
-		throw DCPReadError ("could not decode JPEG2000 codestream");
+		boost::throw_exception (DCPReadError ("could not decode JPEG2000 codestream of " + lexical_cast<string> (size) + " bytes."));
 	}
 
 	opj_cio_close (cio);
@@ -209,8 +211,22 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
  *  @return RGB image.
  */
 shared_ptr<ARGBFrame>
-libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
+libdcp::xyz_to_rgb (opj_image_t* xyz_frame, shared_ptr<const GammaLUT> lut_in, shared_ptr<const GammaLUT> lut_out)
 {
+	float const dci_coefficient = 48.0 / 52.37;
+
+        /* sRGB color matrix for XYZ -> RGB.  This is the same as the one used by the Fraunhofer
+	   EasyDCP player, I think.
+	*/
+
+	float const colour_matrix[3][3] = {
+		{  3.24096989631653,   -1.5373831987381,  -0.498610764741898 },
+		{ -0.96924364566803,    1.87596750259399,  0.0415550582110882 },
+		{  0.0556300804018974, -0.203976958990097, 1.05697154998779 }
+	};
+
+	int const max_colour = pow (2, lut_out->bit_depth()) - 1;
+
 	struct {
 		double x, y, z;
 	} s;
@@ -223,7 +239,7 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
 	int* xyz_y = xyz_frame->comps[1].data;
 	int* xyz_z = xyz_frame->comps[2].data;
 
-	shared_ptr<ARGBFrame> argb_frame (new ARGBFrame (xyz_frame->x1, xyz_frame->y1));
+	shared_ptr<ARGBFrame> argb_frame (new ARGBFrame (Size (xyz_frame->x1, xyz_frame->y1)));
 
 	uint8_t* argb = argb_frame->data ();
 	
@@ -234,19 +250,19 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
 			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_x < 4096 && *xyz_z < 4096);
 			
 			/* In gamma LUT */
-			s.x = lut_in[*xyz_x++];
-			s.y = lut_in[*xyz_y++];
-			s.z = lut_in[*xyz_z++];
-			
+			s.x = lut_in->lut()[*xyz_x++];
+			s.y = lut_in->lut()[*xyz_y++];
+			s.z = lut_in->lut()[*xyz_z++];
+
 			/* DCI companding */
-			s.x /= DCI_COEFFICIENT;
-			s.y /= DCI_COEFFICIENT;
-			s.z /= DCI_COEFFICIENT;
+			s.x /= dci_coefficient;
+			s.y /= dci_coefficient;
+			s.z /= dci_coefficient;
 			
 			/* XYZ to RGB */
-			d.r = ((s.x * color_matrix[0][0]) + (s.y * color_matrix[0][1]) + (s.z * color_matrix[0][2]));
-			d.g = ((s.x * color_matrix[1][0]) + (s.y * color_matrix[1][1]) + (s.z * color_matrix[1][2]));
-			d.b = ((s.x * color_matrix[2][0]) + (s.y * color_matrix[2][1]) + (s.z * color_matrix[2][2]));
+			d.r = ((s.x * colour_matrix[0][0]) + (s.y * colour_matrix[0][1]) + (s.z * colour_matrix[0][2]));
+			d.g = ((s.x * colour_matrix[1][0]) + (s.y * colour_matrix[1][1]) + (s.z * colour_matrix[1][2]));
+			d.b = ((s.x * colour_matrix[2][0]) + (s.y * colour_matrix[2][1]) + (s.z * colour_matrix[2][2]));
 			
 			d.r = min (d.r, 1.0);
 			d.r = max (d.r, 0.0);
@@ -258,9 +274,9 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame)
 			d.b = max (d.b, 0.0);
 			
 			/* Out gamma LUT */
-			*argb_line++ = lut_out[(int) (d.b * COLOR_DEPTH)];
-			*argb_line++ = lut_out[(int) (d.g * COLOR_DEPTH)];
-			*argb_line++ = lut_out[(int) (d.r * COLOR_DEPTH)];
+			*argb_line++ = lut_out->lut()[(int) (d.b * max_colour)] * 0xff;
+			*argb_line++ = lut_out->lut()[(int) (d.g * max_colour)] * 0xff;
+			*argb_line++ = lut_out->lut()[(int) (d.r * max_colour)] * 0xff;
 			*argb_line++ = 0xff;
 		}
 		
@@ -410,5 +426,15 @@ libdcp::sign (xmlpp::Element* parent, CertificateChain const & certificates, str
 	}
 	
 	add_signature_value (signature, certificates, signer_key, "dsig");
+}
+
+bool libdcp::operator== (libdcp::Size const & a, libdcp::Size const & b)
+{
+	return (a.width == b.width && a.height == b.height);
+}
+
+bool libdcp::operator!= (libdcp::Size const & a, libdcp::Size const & b)
+{
+	return !(a == b);
 }
 

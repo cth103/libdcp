@@ -40,10 +40,9 @@ public:
 	MonoPictureFrame (std::string mxf_path, int n);
 	~MonoPictureFrame ();
 
-	boost::shared_ptr<ARGBFrame> argb_frame (int reduce = 0) const;
-	ASDCP::JP2K::FrameBuffer* j2k_frame () const {
-		return _buffer;
-	}
+	boost::shared_ptr<ARGBFrame> argb_frame (int reduce = 0, float srgb_gamma = 2.4) const;
+	uint8_t const * j2k_data () const;
+	int j2k_size () const;
 
 private:
 	ASDCP::JP2K::FrameBuffer* _buffer;
@@ -56,10 +55,11 @@ public:
 	StereoPictureFrame (std::string mxf_path, int n);
 	~StereoPictureFrame ();
 
-	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye, int reduce = 0) const;
-	ASDCP::JP2K::SFrameBuffer* j2k_frame () const {
-		return _buffer;
-	}
+	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye, int reduce = 0, float srgb_gamma = 2.4) const;
+	uint8_t const * left_j2k_data () const;
+	int left_j2k_size () const;
+	uint8_t const * right_j2k_data () const;
+	int right_j2k_size () const;
 
 private:
 	ASDCP::JP2K::SFrameBuffer* _buffer;

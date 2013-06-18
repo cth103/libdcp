@@ -35,6 +35,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <KM_util.h>
 #include <string>
 #include <boost/filesystem.hpp>
+#include <openssl/md5.h>
 
 #ifdef KM_WIN32
 # include <io.h>
@@ -298,6 +299,8 @@ namespace Kumu
       class h__iovec;
       mem_ptr<h__iovec>  m_IOVec;
       KM_NO_COPY_CONSTRUCT(FileWriter);
+      bool m_Hashing;
+      MD5_CTX m_MD5Context;
 
     public:
       FileWriter();
@@ -317,6 +320,10 @@ namespace Kumu
       // the iovec list will be written to disk before the given buffer,as though
       // you had called Writev() first.
       Result_t Write(const byte_t*, ui32_t, ui32_t* = 0);            // write buffer to disk
+
+      void StartHashing();
+      void MaybeHash(void const *, int);
+      std::string StopHashing();
    };
 
   Result_t CreateDirectoriesInPath(const std::string& Path);

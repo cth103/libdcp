@@ -21,16 +21,14 @@
 
 using namespace libdcp;
 
-/** Construct an empty ARGBFrame with a given width and height and with
+/** Construct an empty ARGBFrame of a given size and with
  *  undefined contents.
- *  @param width Width in pixels.
- *  @param height Height in pixels.
+ *  @param size Size in pixels.
  */
-ARGBFrame::ARGBFrame (int width, int height)
-	: _width (width)
-	, _height (height)
+ARGBFrame::ARGBFrame (Size size)
+	: _size (size)
 {
-	_data = new uint8_t[width * height * 4];
+	_data = new uint8_t[_size.width * _size.height * 4];
 }
 
 
@@ -43,5 +41,5 @@ ARGBFrame::~ARGBFrame ()
 int
 ARGBFrame::stride () const
 {
-	return _width * 4;
+	return _size.width * 4;
 }

@@ -43,62 +43,69 @@ using std::list;
 using std::vector;
 using std::max;
 using std::stringstream;
+using std::pair;
+using std::make_pair;
+using std::istream;
+using std::cout;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace libdcp;
 
-PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length, bool encrypted)
-	: MXFAsset (directory, mxf_name, progress, fps, entry_point, length, encrypted)
-	, _width (0)
-	, _height (0)
+PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, bool encrypted, Size size)
+	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration, encrypted)
+	, _size (size)
+{
+
+}
+
+PictureAsset::PictureAsset (string directory, string mxf_name)
+	: MXFAsset (directory, mxf_name)
 {
 
 }
 
 void
-PictureAsset::write_to_cpl (xmlpp::Element* parent) const
+PictureAsset::write_to_cpl (xmlpp::Node* node) const
 {
-	xmlpp::Element* main_picture = parent->add_child("MainPicture");
-	main_picture->add_child("Id")->add_child_text("urn:uuid:" + _uuid);
-	main_picture->add_child("AnnotationText")->add_child_text(_file_name);
-	main_picture->add_child("EditRate")->add_child_text(boost::lexical_cast<string> (_fps) + " 1");
-	main_picture->add_child("IntrinsicDuration")->add_child_text(boost::lexical_cast<string> (_length));
-	main_picture->add_child("EntryPoint")->add_child_text("0");
-	main_picture->add_child("Duration")->add_child_text(boost::lexical_cast<string> (_length));
+	xmlpp::Node* mp = node->add_child ("MainPicture");
+	mp->add_child ("Id")->add_child_text ("urn:uuid:" + _uuid);
+	mp->add_child ("AnnotationText")->add_child_text (_file_name);
+	mp->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
+	mp->add_child ("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
+	mp->add_child ("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));
+	mp->add_child ("Duration")->add_child_text (lexical_cast<string> (_duration));
 	if (_encrypted) {
-		main_picture->add_child("KeyId")->add_child_text("urn:uuid:" + _key_id);
+		mp->add_child("KeyId")->add_child_text("urn:uuid:" + _key_id);
 	}
-	main_picture->add_child("FrameRate")->add_child_text(boost::lexical_cast<string> (_fps) + " 1");
-	stringstream sar;
-	sar << _width << " " << _height;
-	main_picture->add_child("ScreenAspectRatio")->add_child_text(sar.str());
+	mp->add_child ("FrameRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
+	mp->add_child ("ScreenAspectRatio")->add_child_text (lexical_cast<string> (_size.width) + " " + lexical_cast<string> (_size.height));
 }
 
 bool
-PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<string>& notes) const
+PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (!MXFAsset::equals (other, opt, notes)) {
+	if (!MXFAsset::equals (other, opt, note)) {
 		return false;
 	}
 		     
 	ASDCP::JP2K::MXFReader reader_A;
 	if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
-		throw MXFFileError ("could not open MXF file for reading", path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
 	}
 	
 	ASDCP::JP2K::MXFReader reader_B;
 	if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
-		throw MXFFileError ("could not open MXF file for reading", path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc_A;
 	if (ASDCP_FAILURE (reader_A.FillPictureDescriptor (desc_A))) {
-		throw DCPReadError ("could not read video MXF information");
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
 	ASDCP::JP2K::PictureDescriptor desc_B;
 	if (ASDCP_FAILURE (reader_B.FillPictureDescriptor (desc_B))) {
-		throw DCPReadError ("could not read video MXF information");
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
 	
 	if (
@@ -122,7 +129,7 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<s
 //		desc_A.QuantizationDefault != desc_B.QuantizationDefault
 		) {
 		
-		notes.push_back ("video MXF picture descriptors differ");
+		note (ERROR, "video MXF picture descriptors differ");
 		return false;
 	}
 
@@ -142,15 +149,14 @@ MonoPictureAsset::MonoPictureAsset (
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
-	int length,
-	int width,
-	int height,
-	bool encrypted)
-	: PictureAsset (directory, mxf_name, progress, fps, 0, length, encrypted)
+	int intrinsic_duration,
+	bool encrypted,
+	Size size,
+	MXFMetadata const & metadata
+	)
+	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, encrypted, size)
 {
-	_width = width;
-	_height = height;
-	construct (get_path);
+	construct (get_path, metadata);
 }
 
 MonoPictureAsset::MonoPictureAsset (
@@ -159,74 +165,82 @@ MonoPictureAsset::MonoPictureAsset (
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
-	int length,
-	int width,
-	int height,
-	bool encrypted)
-	: PictureAsset (directory, mxf_name, progress, fps, 0, length, encrypted)
+	int intrinsic_duration,
+	bool encrypted,
+	Size size,
+	MXFMetadata const & metadata
+	)
+	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, encrypted, size)
 {
-	_width = width;
-	_height = height;
-	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files));
+	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files), metadata);
 }
 
-MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, int entry_point, int length)
-	: PictureAsset (directory, mxf_name, 0, fps, entry_point, length, false)
+MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, Size size)
+	: PictureAsset (directory, mxf_name, 0, fps, 0, false, size)
+{
+
+}
+
+MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name)
+	: PictureAsset (directory, mxf_name)
 {
 	ASDCP::JP2K::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		throw MXFFileError ("could not open MXF file for reading", path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
-		throw DCPReadError ("could not read video MXF information");
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
 
-	_width = desc.StoredWidth;
-	_height = desc.StoredHeight;
+	_size.width = desc.StoredWidth;
+	_size.height = desc.StoredHeight;
+	_edit_rate = desc.EditRate.Numerator;
+	assert (desc.EditRate.Denominator == 1);
+	_intrinsic_duration = desc.ContainerDuration;
 }
 
 void
-MonoPictureAsset::construct (boost::function<string (int)> get_path)
+MonoPictureAsset::construct (boost::function<string (int)> get_path, MXFMetadata const & metadata)
 {
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
 	if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (get_path(0).c_str(), frame_buffer))) {
-		throw FileError ("could not open JPEG2000 file for reading", get_path (0));
+		boost::throw_exception (FileError ("could not open JPEG2000 file for reading", get_path (0)));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor picture_desc;
 	j2k_parser.FillPictureDescriptor (picture_desc);
-	picture_desc.EditRate = ASDCP::Rational (_fps, 1);
+	picture_desc.EditRate = ASDCP::Rational (_edit_rate, 1);
 	
 	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info);
-
+	fill_writer_info (&writer_info, _uuid, metadata);
+	
 	ASDCP::JP2K::MXFWriter mxf_writer;
-	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc))) {
-		throw MXFFileError ("could not open MXF file for writing", path().string());
+	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc, 16384, false))) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for writing", path().string()));
 	}
 
-	for (int i = 0; i < _length; ++i) {
+	for (int i = 0; i < _intrinsic_duration; ++i) {
 
 		string const path = get_path (i);
 
 		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (path.c_str(), frame_buffer))) {
-			throw FileError ("could not open JPEG2000 file for reading", path);
+			boost::throw_exception (FileError ("could not open JPEG2000 file for reading", path));
 		}
 
 		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, _encryption_context, 0))) {
-			throw MiscError ("error in writing video MXF");
+			boost::throw_exception (MXFFileError ("error in writing video MXF", this->path().string()));
 		}
 
 		if (_progress) {
-			(*_progress) (0.5 * float (i) / _length);
+			(*_progress) (0.5 * float (i) / _intrinsic_duration);
 		}
 	}
 	
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
-		throw MiscError ("error in finalising video MXF");
+		boost::throw_exception (MXFFileError ("error in finalising video MXF", path().string()));
 	}
 }
 
@@ -239,28 +253,29 @@ MonoPictureAsset::path_from_list (int f, vector<string> const & files) const
 shared_ptr<const MonoPictureFrame>
 MonoPictureAsset::get_frame (int n) const
 {
-	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n + _entry_point));
+	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n));
 }
 
 
 bool
-MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<string>& notes) const
+MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (!PictureAsset::equals (other, opt, notes)) {
+	if (!PictureAsset::equals (other, opt, note)) {
 		return false;
 	}
 
 	shared_ptr<const MonoPictureAsset> other_picture = dynamic_pointer_cast<const MonoPictureAsset> (other);
 	assert (other_picture);
 
-	for (int i = 0; i < _length; ++i) {
+	for (int i = 0; i < _intrinsic_duration; ++i) {
+		note (PROGRESS, "Comparing video frame " + lexical_cast<string> (i) + " of " + lexical_cast<string> (_intrinsic_duration));
 		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
 		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
 		
 		if (!frame_buffer_equals (
-			    i, opt, notes,
-			    frame_A->j2k_frame()->RoData(), frame_A->j2k_frame()->Size(),
-			    frame_B->j2k_frame()->RoData(), frame_B->j2k_frame()->Size()
+			    i, opt, note,
+			    frame_A->j2k_data(), frame_A->j2k_size(),
+			    frame_B->j2k_data(), frame_B->j2k_size()
 			    )) {
 			return false;
 		}
@@ -270,31 +285,31 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, li
 }
 
 bool
-StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<string>& notes) const
+StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (!PictureAsset::equals (other, opt, notes)) {
+	if (!PictureAsset::equals (other, opt, note)) {
 		return false;
 	}
 	
 	shared_ptr<const StereoPictureAsset> other_picture = dynamic_pointer_cast<const StereoPictureAsset> (other);
 	assert (other_picture);
 
-	for (int i = 0; i < _length; ++i) {
+	for (int i = 0; i < _intrinsic_duration; ++i) {
 		shared_ptr<const StereoPictureFrame> frame_A = get_frame (i);
 		shared_ptr<const StereoPictureFrame> frame_B = other_picture->get_frame (i);
 		
 		if (!frame_buffer_equals (
-			    i, opt, notes,
-			    frame_A->j2k_frame()->Left.RoData(), frame_A->j2k_frame()->Left.Size(),
-			    frame_B->j2k_frame()->Left.RoData(), frame_B->j2k_frame()->Left.Size()
+			    i, opt, note,
+			    frame_A->left_j2k_data(), frame_A->left_j2k_size(),
+			    frame_B->left_j2k_data(), frame_B->left_j2k_size()
 			    )) {
 			return false;
 		}
 		
 		if (!frame_buffer_equals (
-			    i, opt, notes,
-			    frame_A->j2k_frame()->Right.RoData(), frame_A->j2k_frame()->Right.Size(),
-			    frame_B->j2k_frame()->Right.RoData(), frame_B->j2k_frame()->Right.Size()
+			    i, opt, note,
+			    frame_A->right_j2k_data(), frame_A->right_j2k_size(),
+			    frame_B->right_j2k_data(), frame_B->right_j2k_size()
 			    )) {
 			return false;
 		}
@@ -305,10 +320,12 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 
 bool
 PictureAsset::frame_buffer_equals (
-	int frame, EqualityOptions opt, list<string>& notes, uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
+	int frame, EqualityOptions opt, boost::function<void (NoteType, string)> note,
+	uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
 	) const
 {
 	if (size_A == size_B && memcmp (data_A, data_B, size_A) == 0) {
+		note (NOTE, "J2K identical");
 		/* Easy result; the J2K data is identical */
 		return true;
 	}
@@ -320,7 +337,7 @@ PictureAsset::frame_buffer_equals (
 	/* Compare them */
 	
 	if (image_A->numcomps != image_B->numcomps) {
-		notes.push_back ("image component counts for frame " + lexical_cast<string>(frame) + " differ");
+		note (ERROR, "image component counts for frame " + lexical_cast<string>(frame) + " differ");
 		return false;
 	}
 	
@@ -331,7 +348,7 @@ PictureAsset::frame_buffer_equals (
 	for (int c = 0; c < image_A->numcomps; ++c) {
 		
 		if (image_A->comps[c].w != image_B->comps[c].w || image_A->comps[c].h != image_B->comps[c].h) {
-			notes.push_back ("image sizes for frame " + lexical_cast<string>(frame) + " differ");
+			note (ERROR, "image sizes for frame " + lexical_cast<string>(frame) + " differ");
 			return false;
 		}
 		
@@ -357,11 +374,18 @@ PictureAsset::frame_buffer_equals (
 	
 	double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
 	
-	if (mean > opt.max_mean_pixel_error || std_dev > opt.max_std_dev_pixel_error) {
-		notes.push_back ("mean or standard deviation out of range for " + lexical_cast<string>(frame));
+	note (NOTE, "mean difference " + lexical_cast<string> (mean) + ", deviation " + lexical_cast<string> (std_dev));
+	
+	if (mean > opt.max_mean_pixel_error) {
+		note (ERROR, "mean " + lexical_cast<string>(mean) + " out of range " + lexical_cast<string>(opt.max_mean_pixel_error) + " in frame " + lexical_cast<string>(frame));
 		return false;
 	}
-	
+
+	if (std_dev > opt.max_std_dev_pixel_error) {
+		note (ERROR, "standard deviation " + lexical_cast<string>(std_dev) + " out of range " + lexical_cast<string>(opt.max_std_dev_pixel_error) + " in frame " + lexical_cast<string>(frame));
+		return false;
+	}
+
 	opj_image_destroy (image_A);
 	opj_image_destroy (image_B);
 
@@ -369,27 +393,152 @@ PictureAsset::frame_buffer_equals (
 }
 
 
-StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int entry_point, int length)
-	: PictureAsset (directory, mxf_name, 0, fps, entry_point, length, false)
+StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int intrinsic_duration)
+	: PictureAsset (directory, mxf_name, 0, fps, intrinsic_duration, false, Size (0, 0))
 {
 	ASDCP::JP2K::MXFSReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		throw MXFFileError ("could not open MXF file for reading", path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
-		throw DCPReadError ("could not read video MXF information");
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
 
-	_width = desc.StoredWidth;
-	_height = desc.StoredHeight;
+	_size.width = desc.StoredWidth;
+	_size.height = desc.StoredHeight;
 }
 
 shared_ptr<const StereoPictureFrame>
 StereoPictureAsset::get_frame (int n) const
 {
-	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n + _entry_point));
+	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n));
+}
+
+shared_ptr<MonoPictureAssetWriter>
+MonoPictureAsset::start_write (bool overwrite, MXFMetadata const & metadata)
+{
+	/* XXX: can't we use shared_ptr here? */
+	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, overwrite, metadata));
+}
+
+FrameInfo::FrameInfo (istream& s)
+{
+	s >> offset >> size >> hash;
+}
+
+void
+FrameInfo::write (ostream& s)
+{
+	s << offset << " " << size << " " << hash;
+}
+
+struct MonoPictureAssetWriter::ASDCPState
+{
+	ASDCPState()
+		: frame_buffer (4 * Kumu::Megabyte)
+	{}
+	
+	ASDCP::JP2K::CodestreamParser j2k_parser;
+	ASDCP::JP2K::FrameBuffer frame_buffer;
+	ASDCP::JP2K::MXFWriter mxf_writer;
+	ASDCP::WriterInfo writer_info;
+	ASDCP::JP2K::PictureDescriptor picture_descriptor;
+};
+
+
+/** @param a Asset to write to.  `a' must not be deleted while
+ *  this writer class still exists, or bad things will happen.
+ */
+MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a, bool overwrite, MXFMetadata const & m)
+	: _state (new MonoPictureAssetWriter::ASDCPState)
+	, _asset (a)
+	, _frames_written (0)
+	, _started (false)
+	, _finalized (false)
+	, _overwrite (overwrite)
+	, _metadata (m)
+{
+
+}
+
+
+void
+MonoPictureAssetWriter::start (uint8_t* data, int size)
+{
+	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
+		boost::throw_exception (MiscError ("could not parse J2K frame"));
+	}
+
+	_state->j2k_parser.FillPictureDescriptor (_state->picture_descriptor);
+	_state->picture_descriptor.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
+	
+	_asset->fill_writer_info (&_state->writer_info, _asset->uuid(), _metadata);
+	
+	if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (
+				   _asset->path().string().c_str(),
+				   _state->writer_info,
+				   _state->picture_descriptor,
+				   16384,
+				   _overwrite)
+		    )) {
+		
+		boost::throw_exception (MXFFileError ("could not open MXF file for writing", _asset->path().string()));
+	}
+
+	_started = true;
+}
+
+FrameInfo
+MonoPictureAssetWriter::write (uint8_t* data, int size)
+{
+	assert (!_finalized);
+
+	if (!_started) {
+		start (data, size);
+	}
+
+ 	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
+ 		boost::throw_exception (MiscError ("could not parse J2K frame"));
+ 	}
+
+	uint64_t const before_offset = _state->mxf_writer.Tell ();
+
+	string hash;
+	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, 0, 0, &hash))) {
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
+	}
+
+	++_frames_written;
+	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
+}
+
+void
+MonoPictureAssetWriter::fake_write (int size)
+{
+	assert (_started);
+	assert (!_finalized);
+
+	if (ASDCP_FAILURE (_state->mxf_writer.FakeWriteFrame (size))) {
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
+	}
+
+	++_frames_written;
+}
+
+void
+MonoPictureAssetWriter::finalize ()
+{
+	assert (!_finalized);
+	
+	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
+		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _asset->path().string()));
+	}
+
+	_finalized = true;
+	_asset->set_intrinsic_duration (_frames_written);
+	_asset->set_duration (_frames_written);
 }
 
 string

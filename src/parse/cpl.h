@@ -17,28 +17,34 @@
 
 */
 
-/** @file  src/cpl_file.h
+/** @file  src/parse/cpl.h
  *  @brief Classes used to parse a CPL.
  */
 
 #include <stdint.h>
 #include <boost/shared_ptr.hpp>
-#include "xml.h"
+#include <libcxml/cxml.h>
+#include "../types.h"
 
 namespace libdcp {
 
-/** @brief A simple parser for and representation of a CPL \<Picture\> node */
-class Picture : public XMLNode
+namespace parse	{
+
+/** @brief A simple representation of a CPL \<Picture\> node */
+class Picture
 {
 public:
 	Picture () {}
-	Picture (xmlpp::Node const * node);
+	Picture (boost::shared_ptr<const cxml::Node> node);
 
 	std::string id;
 	std::string annotation_text;
 	Fraction edit_rate;
+	/** Duration of the whole thing */
 	int64_t intrinsic_duration;
+	/** Start point in frames */
 	int64_t entry_point;
+	/** Duration that will actually play */
 	int64_t duration;
 	Fraction frame_rate;
 	Fraction screen_aspect_ratio;
@@ -50,7 +56,7 @@ class MainPicture : public Picture
 {
 public:
 	MainPicture () {}
-	MainPicture (xmlpp::Node const * node);
+	MainPicture (boost::shared_ptr<const cxml::Node> node);
 };
 
 /** @brief A simple parser for and representation of a CPL \<MainStereoscopicPicture\> node */
@@ -58,15 +64,15 @@ class MainStereoscopicPicture : public Picture
 {
 public:
 	MainStereoscopicPicture () {}
-	MainStereoscopicPicture (xmlpp::Node const * node);
+	MainStereoscopicPicture (boost::shared_ptr<const cxml::Node> node);
 };
 
 /** @brief A simple parser for and representation of a CPL \<MainSound\> node */
-class MainSound : public XMLNode
+class MainSound
 {
 public:
 	MainSound () {}
-	MainSound (xmlpp::Node const * node);
+	MainSound (boost::shared_ptr<const cxml::Node> node);
 
 	std::string id;
 	std::string annotation_text;
@@ -77,11 +83,11 @@ public:
 };
 
 /** @brief A simple parser for and representation of a CPL \<MainSubtitle\> node */
-class MainSubtitle : public XMLNode
+class MainSubtitle
 {
 public:
 	MainSubtitle () {}
-	MainSubtitle (xmlpp::Node const * node);
+	MainSubtitle (boost::shared_ptr<const cxml::Node> node);
 
 	std::string id;
 	std::string annotation_text;
@@ -92,11 +98,11 @@ public:
 };
 
 /** @brief A simple parser for and representation of a CPL \<AssetList\> node */
-class CPLAssetList : public XMLNode
+class CPLAssetList
 {
 public:
 	CPLAssetList () {}
-	CPLAssetList (xmlpp::Node const * node);
+	CPLAssetList (boost::shared_ptr<const cxml::Node> node);
 
 	boost::shared_ptr<MainPicture> main_picture;
 	boost::shared_ptr<MainStereoscopicPicture> main_stereoscopic_picture;
@@ -105,11 +111,11 @@ public:
 };
 
 /** @brief A simple parser for and representation of a CPL \<Reel\> node */
-class CPLReel : public XMLNode
+class Reel
 {
 public:
-	CPLReel () {}
-	CPLReel (xmlpp::Node const * node);
+	Reel () {}
+	Reel (boost::shared_ptr<const cxml::Node> node);
 
 	std::string id;
 	boost::shared_ptr<CPLAssetList> asset_list;
@@ -117,27 +123,27 @@ public:
 
 
 /** @brief A simple parser for and representation of a CPL \<ContentVersion\> node */
-class ContentVersion : public XMLNode
+class ContentVersion
 {
 public:
 	ContentVersion () {}
-	ContentVersion (xmlpp::Node const * node);
+	ContentVersion (boost::shared_ptr<const cxml::Node> node);
 
 	std::string id;
 	std::string label_text;
 };
 
-/** @class CPLFile
+/** @class CPL
  *  @brief Class to parse a CPL
  *
  *  This class is used to parse XML CPL files.  It is rarely necessary
  *  for the caller to use it outside libdcp.
  */
-class CPLFile : public XMLFile
+class CPL
 {
 public:
 	/** Parse a CPL XML file into our member variables */
-	CPLFile (std::string file);
+	CPL (std::string file);
 
 	std::string id;
 	std::string annotation_text;
@@ -146,8 +152,10 @@ public:
 	std::string content_title_text;
 	ContentKind content_kind;
 	boost::shared_ptr<ContentVersion> content_version;
-	std::list<boost::shared_ptr<CPLReel> > reels;
+	std::list<boost::shared_ptr<Reel> > reels;
 };
+
+}
 
 }
 

@@ -48,18 +48,17 @@ SoundAsset::SoundAsset (
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
-	int length,
-	int start_frame,
-	bool encrypted
+	int intrinsic_duration,
+	bool encrypted,
+	MXFMetadata const & metadata
 	)
-	: MXFAsset (directory, mxf_name, progress, fps, 0, length, encrypted)
+	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration, encrypted)
 	, _channels (files.size ())
 	, _sampling_rate (0)
-	, _start_frame (start_frame)
 {
 	assert (_channels);
 	
-	construct (boost::bind (&SoundAsset::path_from_channel, this, _1, files));
+	construct (boost::bind (&SoundAsset::path_from_channel, this, _1, files), metadata);
 }
 
 SoundAsset::SoundAsset (
@@ -68,39 +67,47 @@ SoundAsset::SoundAsset (
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
-	int length,
-	int start_frame,
+	int intrinsic_duration,
 	int channels,
-	bool encrypted
+	bool encrypted,
+	MXFMetadata const & metadata
 	)
-	: MXFAsset (directory, mxf_name, progress, fps, 0, length, encrypted)
+	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration, encrypted)
 	, _channels (channels)
 	, _sampling_rate (0)
-	, _start_frame (start_frame)
 {
 	assert (_channels);
 	
-	construct (get_path);
+	construct (get_path, metadata);
 }
 
-SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int entry_point, int length)
-	: MXFAsset (directory, mxf_name, 0, fps, entry_point, length, false)
+SoundAsset::SoundAsset (string directory, string mxf_name)
+	: MXFAsset (directory, mxf_name)
 	, _channels (0)
-	, _start_frame (0)
 {
 	ASDCP::PCM::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		throw MXFFileError ("could not open MXF file for reading", path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
 	}
 
-	
 	ASDCP::PCM::AudioDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillAudioDescriptor (desc))) {
-		throw DCPReadError ("could not read audio MXF information");
+		boost::throw_exception (DCPReadError ("could not read audio MXF information"));
 	}
 
 	_sampling_rate = desc.AudioSamplingRate.Numerator / desc.AudioSamplingRate.Denominator;
 	_channels = desc.ChannelCount;
+	_edit_rate = desc.EditRate.Numerator;
+	assert (desc.EditRate.Denominator == 1);
+	_intrinsic_duration = desc.ContainerDuration;
+}
+
+SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int channels, int sampling_rate)
+	: MXFAsset (directory, mxf_name, 0, fps, 0, false)
+	, _channels (channels)
+	, _sampling_rate (sampling_rate)
+{
+
 }
 
 string
@@ -112,20 +119,20 @@ SoundAsset::path_from_channel (Channel channel, vector<string> const & files)
 }
 
 void
-SoundAsset::construct (boost::function<string (Channel)> get_path)
+SoundAsset::construct (boost::function<string (Channel)> get_path, MXFMetadata const & metadata)
 {
-	ASDCP::Rational asdcp_fps (_fps, 1);
+	ASDCP::Rational asdcp_edit_rate (_edit_rate, 1);
 
  	ASDCP::PCM::WAVParser pcm_parser_channel[_channels];
-	if (pcm_parser_channel[0].OpenRead (get_path(LEFT).c_str(), asdcp_fps)) {
-		throw FileError ("could not open WAV file for reading", get_path(LEFT));
+	if (pcm_parser_channel[0].OpenRead (get_path(LEFT).c_str(), asdcp_edit_rate)) {
+		boost::throw_exception (FileError ("could not open WAV file for reading", get_path(LEFT)));
 	}
 	
 	ASDCP::PCM::AudioDescriptor audio_desc;
 	pcm_parser_channel[0].FillAudioDescriptor (audio_desc);
 	audio_desc.ChannelCount = 0;
 	audio_desc.BlockAlign = 0;
-	audio_desc.EditRate = asdcp_fps;
+	audio_desc.EditRate = asdcp_edit_rate;
 	audio_desc.AvgBps = audio_desc.AvgBps * _channels;
 
 	Channel channels[] = {
@@ -149,8 +156,8 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 
 		string const path = get_path (channels[i]);
 		
-		if (ASDCP_FAILURE (pcm_parser_channel[i].OpenRead (path.c_str(), asdcp_fps))) {
-			throw FileError ("could not open WAV file for reading", path);
+		if (ASDCP_FAILURE (pcm_parser_channel[i].OpenRead (path.c_str(), asdcp_edit_rate))) {
+			boost::throw_exception (FileError ("could not open WAV file for reading", path));
 		}
 
 		pcm_parser_channel[i].FillAudioDescriptor (audio_desc_channel[i]);
@@ -165,28 +172,19 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 	frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (audio_desc));
 
 	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info);
+	MXFAsset::fill_writer_info (&writer_info, _uuid, metadata);
 
 	ASDCP::PCM::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, audio_desc))) {
-		throw FileError ("could not open audio MXF for writing", path().string());
-	}
-
-	/* Skip through up to our _start_frame; this is pretty inefficient... */
-	for (int i = 0; i < _start_frame; ++i) {
-		for (int j = 0; j < _channels; ++j) {
-			if (ASDCP_FAILURE (pcm_parser_channel[j].ReadFrame (frame_buffer_channel[j]))) {
-				throw MiscError ("could not read audio frame");
-			}
-		}
+		boost::throw_exception (FileError ("could not open audio MXF for writing", path().string()));
 	}
 	
-	for (int i = 0; i < _length; ++i) {
+	for (int i = 0; i < _intrinsic_duration; ++i) {
 
 		for (int j = 0; j < _channels; ++j) {
 			memset (frame_buffer_channel[j].Data(), 0, frame_buffer_channel[j].Capacity());
 			if (ASDCP_FAILURE (pcm_parser_channel[j].ReadFrame (frame_buffer_channel[j]))) {
-				throw MiscError ("could not read audio frame");
+				boost::throw_exception (MiscError ("could not read audio frame"));
 			}
 		}
 
@@ -205,58 +203,58 @@ SoundAsset::construct (boost::function<string (Channel)> get_path)
 		}
 
 		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, _encryption_context, 0))) {
-			throw MiscError ("could not write audio MXF frame");
+			boost::throw_exception (MiscError ("could not write audio MXF frame"));
 		}
 
 		if (_progress) {
-			(*_progress) (0.5 * float (i) / _length);
+			(*_progress) (0.5 * float (i) / _intrinsic_duration);
 		}
 	}
 
 	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
-		throw MiscError ("could not finalise audio MXF");
+		boost::throw_exception (MiscError ("could not finalise audio MXF"));
 	}
 }
 
 void
-SoundAsset::write_to_cpl (xmlpp::Element* parent) const
+SoundAsset::write_to_cpl (xmlpp::Node* node) const
 {
-	xmlpp::Element* main_sound = parent->add_child("MainSound");
-	main_sound->add_child("Id")->add_child_text("urn:uuid:" + _uuid);
-	main_sound->add_child("AnnotationText")->add_child_text(_file_name);
-	main_sound->add_child("EditRate")->add_child_text(boost::lexical_cast<string> (_fps) + " 1");
-	main_sound->add_child("IntrinsicDuration")->add_child_text(boost::lexical_cast<string> (_length));
-	main_sound->add_child("EntryPoint")->add_child_text("0");
-	main_sound->add_child("Duration")->add_child_text(boost::lexical_cast<string> (_length));
+	xmlpp::Node* ms = node->add_child ("MainSound");
+	ms->add_child ("Id")->add_child_text ("urn:uuid:" + _uuid);
+	ms->add_child ("AnnotationText")->add_child_text (_file_name);
+	ms->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
+	ms->add_child ("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
+	ms->add_child ("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));
+	ms->add_child ("Duration")->add_child_text (lexical_cast<string> (_duration));
 	if (_encrypted) {
-		main_sound->add_child("KeyId")->add_child_text("urn:uuid:" + _key_id);
+		ms->add_child("KeyId")->add_child_text("urn:uuid:" + _key_id);
 	}
 }
 
 bool
-SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<string>& notes) const
+SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (!MXFAsset::equals (other, opt, notes)) {
+	if (!MXFAsset::equals (other, opt, note)) {
 		return false;
 	}
 		     
 	ASDCP::PCM::MXFReader reader_A;
 	if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
-		throw MXFFileError ("could not open MXF file for reading", path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
 	}
 
 	ASDCP::PCM::MXFReader reader_B;
 	if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
-		throw MXFFileError ("could not open MXF file for reading", path().string());
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
 	}
 
 	ASDCP::PCM::AudioDescriptor desc_A;
 	if (ASDCP_FAILURE (reader_A.FillAudioDescriptor (desc_A))) {
-		throw DCPReadError ("could not read audio MXF information");
+		boost::throw_exception (DCPReadError ("could not read audio MXF information"));
 	}
 	ASDCP::PCM::AudioDescriptor desc_B;
 	if (ASDCP_FAILURE (reader_B.FillAudioDescriptor (desc_B))) {
-		throw DCPReadError ("could not read audio MXF information");
+		boost::throw_exception (DCPReadError ("could not read audio MXF information"));
 	}
 	
 	if (
@@ -272,24 +270,24 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<str
 //		desc_A.ChannelFormat != desc_B.ChannelFormat ||
 		) {
 		
-		notes.push_back ("audio MXF picture descriptors differ");
+		note (ERROR, "audio MXF picture descriptors differ");
 		return false;
 	}
 	
 	ASDCP::PCM::FrameBuffer buffer_A (1 * Kumu::Megabyte);
 	ASDCP::PCM::FrameBuffer buffer_B (1 * Kumu::Megabyte);
 	
-	for (int i = 0; i < _length; ++i) {
+	for (int i = 0; i < _intrinsic_duration; ++i) {
 		if (ASDCP_FAILURE (reader_A.ReadFrame (i, buffer_A))) {
-			throw DCPReadError ("could not read audio frame");
+			boost::throw_exception (DCPReadError ("could not read audio frame"));
 		}
 		
 		if (ASDCP_FAILURE (reader_B.ReadFrame (i, buffer_B))) {
-			throw DCPReadError ("could not read audio frame");
+			boost::throw_exception (DCPReadError ("could not read audio frame"));
 		}
 		
 		if (buffer_A.Size() != buffer_B.Size()) {
-			notes.push_back ("sizes of audio data for frame " + lexical_cast<string>(i) + " differ");
+			note (ERROR, "sizes of audio data for frame " + lexical_cast<string>(i) + " differ");
 			return false;
 		}
 		
@@ -297,7 +295,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<str
 			for (uint32_t i = 0; i < buffer_A.Size(); ++i) {
 				int const d = abs (buffer_A.RoData()[i] - buffer_B.RoData()[i]);
 				if (d > opt.max_audio_sample_error) {
-					notes.push_back ("PCM data difference of " + lexical_cast<string> (d));
+					note (ERROR, "PCM data difference of " + lexical_cast<string> (d));
 					return false;
 				}
 			}
@@ -310,7 +308,106 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, list<str
 shared_ptr<const SoundFrame>
 SoundAsset::get_frame (int n) const
 {
-	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n + _entry_point));
+	/* XXX: should add on entry point here? */
+	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n));
+}
+
+shared_ptr<SoundAssetWriter>
+SoundAsset::start_write (MXFMetadata const & metadata)
+{
+	/* XXX: can't we use a shared_ptr here? */
+	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter (this, metadata));
+}
+
+struct SoundAssetWriter::ASDCPState
+{
+	ASDCP::PCM::MXFWriter mxf_writer;
+	ASDCP::PCM::FrameBuffer frame_buffer;
+	ASDCP::WriterInfo writer_info;
+	ASDCP::PCM::AudioDescriptor audio_desc;
+};
+
+SoundAssetWriter::SoundAssetWriter (SoundAsset* a, MXFMetadata const & m)
+	: _state (new SoundAssetWriter::ASDCPState)
+	, _asset (a)
+	, _finalized (false)
+	, _frames_written (0)
+	, _frame_buffer_offset (0)
+	, _metadata (m)
+{
+	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
+	_state->audio_desc.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
+	_state->audio_desc.AudioSamplingRate = ASDCP::Rational (_asset->sampling_rate(), 1);
+	_state->audio_desc.Locked = 0;
+	_state->audio_desc.ChannelCount = _asset->channels ();
+	_state->audio_desc.QuantizationBits = 24;
+	_state->audio_desc.BlockAlign = 3 * _asset->channels();
+	_state->audio_desc.AvgBps = _asset->sampling_rate() * _state->audio_desc.BlockAlign;
+	_state->audio_desc.LinkedTrackID = 0;
+	_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_NONE;
+	
+	_state->frame_buffer.Capacity (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
+	_state->frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
+	memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
+	
+	_asset->fill_writer_info (&_state->writer_info, _asset->uuid (), _metadata);
+	
+	if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->audio_desc))) {
+		boost::throw_exception (FileError ("could not open audio MXF for writing", _asset->path().string()));
+	}
+}
+
+void
+SoundAssetWriter::write (float const * const * data, int frames)
+{
+	for (int i = 0; i < frames; ++i) {
+
+		byte_t* out = _state->frame_buffer.Data() + _frame_buffer_offset;
+
+		/* Write one sample per channel */
+		for (int j = 0; j < _asset->channels(); ++j) {
+			int32_t const s = data[j][i] * (1 << 23);
+			*out++ = (s & 0xff);
+			*out++ = (s & 0xff00) >> 8;
+			*out++ = (s & 0xff0000) >> 16;
+		}
+		_frame_buffer_offset += 3 * _asset->channels();
+
+		assert (_frame_buffer_offset <= int (_state->frame_buffer.Capacity()));
+
+		/* Finish the MXF frame if required */
+		if (_frame_buffer_offset == int (_state->frame_buffer.Capacity())) {
+			write_current_frame ();
+			_frame_buffer_offset = 0;
+			memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
+		}
+	}
+}
+
+void
+SoundAssetWriter::write_current_frame ()
+{
+	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, 0, 0))) {
+		boost::throw_exception (MiscError ("could not write audio MXF frame"));
+	}
+
+	++_frames_written;
+}
+
+void
+SoundAssetWriter::finalize ()
+{
+	if (_frame_buffer_offset > 0) {
+		write_current_frame ();
+	}
+	
+	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
+		boost::throw_exception (MiscError ("could not finalise audio MXF"));
+	}
+
+	_finalized = true;
+	_asset->set_intrinsic_duration (_frames_written);
+	_asset->set_duration (_frames_written);
 }
 
 string

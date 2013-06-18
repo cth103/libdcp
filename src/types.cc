@@ -15,7 +15,7 @@ Fraction::Fraction (string s)
 	vector<string> b;
 	split (b, s, is_any_of (" "));
 	if (b.size() != 2) {
-		throw XMLError ("malformed fraction " + s + " in XML node");
+		boost::throw_exception (XMLError ("malformed fraction " + s + " in XML node"));
 	}
 	numerator = lexical_cast<int> (b[0]);
 	denominator = lexical_cast<int> (b[1]);
@@ -57,7 +57,7 @@ Color::Color (string argb_hex)
 {
 	int alpha;
 	if (sscanf (argb_hex.c_str(), "%2x%2x%2x%2x", &alpha, &r, &g, &b) < 4) {
-		throw XMLError ("could not parse colour string");
+		boost::throw_exception (XMLError ("could not parse colour string"));
 	}
 }
 
@@ -118,7 +118,7 @@ libdcp::effect_to_string (Effect e)
 		return "shadow";
 	}
 
-	throw MiscError ("unknown effect type");
+	boost::throw_exception (MiscError ("unknown effect type"));
 }
 
 Effect
@@ -132,7 +132,7 @@ libdcp::string_to_effect (string s)
 		return SHADOW;
 	}
 
-	throw DCPReadError ("unknown subtitle effect type");
+	boost::throw_exception (DCPReadError ("unknown subtitle effect type"));
 }
 
 string
@@ -147,7 +147,7 @@ libdcp::valign_to_string (VAlign v)
 		return "bottom";
 	}
 
-	throw MiscError ("unknown valign type");
+	boost::throw_exception (MiscError ("unknown valign type"));
 }
 
 VAlign
@@ -161,7 +161,7 @@ libdcp::string_to_valign (string s)
 		return BOTTOM;
 	}
 	
-	throw DCPReadError ("unknown subtitle valign type");
+	boost::throw_exception (DCPReadError ("unknown subtitle valign type"));
 }
 
 		

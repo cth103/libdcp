@@ -23,36 +23,36 @@
 
 #include <boost/algorithm/string.hpp>
 #include "asset_map.h"
-#include "util.h"
+#include "../util.h"
+#include "../xml.h"
 
 using std::string;
 using std::list;
 using boost::shared_ptr;
-using namespace libdcp;
+using namespace libdcp::parse;
 
 AssetMap::AssetMap (string file)
-	: XMLFile (file, "AssetMap")
 {
-	id = string_child ("Id");
-	creator = string_child ("Creator");
-	volume_count = int64_child ("VolumeCount");
-	issue_date = string_child ("IssueDate");
-	issuer = string_child ("Issuer");
-	assets = type_grand_children<AssetMapAsset> ("AssetList", "Asset");
+	cxml::File f (file, "AssetMap");
+
+	id = f.string_child ("Id");
+	creator = f.string_child ("Creator");
+	volume_count = f.number_child<int64_t> ("VolumeCount");
+	issue_date = f.string_child ("IssueDate");
+	issuer = f.string_child ("Issuer");
+	assets = type_grand_children<AssetMapAsset> (f, "AssetList", "Asset");
 }
 
-AssetMapAsset::AssetMapAsset (xmlpp::Node const * node)
-	: XMLNode (node)
+AssetMapAsset::AssetMapAsset (shared_ptr<const cxml::Node> node)
 {
-	id = string_child ("Id");
-	packing_list = optional_string_child ("PackingList");
-	chunks = type_grand_children<Chunk> ("ChunkList", "Chunk");
+	id = node->string_child ("Id");
+	packing_list = node->optional_string_child ("PackingList").get_value_or ("");
+	chunks = type_grand_children<Chunk> (node, "ChunkList", "Chunk");
 }
 
-Chunk::Chunk (xmlpp::Node const * node)
-	: XMLNode (node)
+Chunk::Chunk (shared_ptr<const cxml::Node> node)
 {
-	path = string_child ("Path");
+	path = node->string_child ("Path");
 
 	string const prefix = "file://";
 
@@ -60,9 +60,9 @@ Chunk::Chunk (xmlpp::Node const * node)
 		path = path.substr (prefix.length());
 	}
 	
-	volume_index = optional_int64_child ("VolumeIndex");
-	offset = optional_int64_child ("Offset");
-	length = optional_int64_child ("Length");
+	volume_index = node->optional_number_child<int64_t> ("VolumeIndex").get_value_or (0);
+	offset = node->optional_number_child<int64_t> ("Offset").get_value_or (0);
+	length = node->optional_number_child<int64_t> ("Length").get_value_or (0);
 }
 
 shared_ptr<AssetMapAsset>

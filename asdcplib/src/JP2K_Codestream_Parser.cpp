@@ -91,6 +91,26 @@ public:
 
     return result;
   }
+
+  Result_t OpenReadFrame(const unsigned char * data, unsigned int size, FrameBuffer& FB)
+  {
+    if ( FB.Capacity() < size )
+      {
+        DefaultLogSink().Error("FrameBuf.Capacity: %u frame length: %u\n", FB.Capacity(), (ui32_t) size);
+        return RESULT_SMALLBUF;
+      }
+
+    memcpy (FB.Data(), data, size);
+    FB.Size(size);
+
+    byte_t start_of_data = 0; // out param
+    const Result_t result = ParseMetadataIntoDesc(FB, m_PDesc, &start_of_data);
+
+    if ( ASDCP_SUCCESS(result) )
+      FB.PlaintextOffset(start_of_data);
+
+    return result;
+  }	
 };
 
 ASDCP::Result_t
@@ -222,6 +242,15 @@ ASDCP::JP2K::CodestreamParser::OpenReadFrame(const char* filename, FrameBuffer& 
 {
   const_cast<ASDCP::JP2K::CodestreamParser*>(this)->m_Parser = new h__CodestreamParser;
   return m_Parser->OpenReadFrame(filename, FB);
+}
+
+// Opens the stream for reading, parses enough data to provide a complete
+// set of stream metadata for the MXFWriter below.
+ASDCP::Result_t
+ASDCP::JP2K::CodestreamParser::OpenReadFrame(const unsigned char* data, unsigned int size, FrameBuffer& FB) const
+{
+  const_cast<ASDCP::JP2K::CodestreamParser*>(this)->m_Parser = new h__CodestreamParser;
+  return m_Parser->OpenReadFrame(data, size, FB);
 }
 
 //

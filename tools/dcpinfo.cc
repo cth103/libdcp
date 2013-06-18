@@ -8,6 +8,7 @@
 #include "sound_asset.h"
 #include "picture_asset.h"
 #include "subtitle_asset.h"
+#include "cpl.h"
 
 using std::string;
 using std::cerr;
@@ -91,7 +92,7 @@ main (int argc, char* argv[])
 			cout << "    Reel " << R << "\n";
 			
 			if ((*j)->main_picture()) {
-				cout << "      Picture:  " << (*j)->main_picture()->width() << "x" << (*j)->main_picture()->height() << "\n";
+				cout << "      Picture:  " << (*j)->main_picture()->size().width << "x" << (*j)->main_picture()->size().height << "\n";
 			}
 			if ((*j)->main_sound()) {
 				cout << "      Sound:    " << (*j)->main_sound()->channels() << " channels at " << (*j)->main_sound()->sampling_rate() << "Hz\n";

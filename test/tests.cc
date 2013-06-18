@@ -32,6 +32,8 @@
 #include "reel.h"
 #include "certificates.h"
 #include "crypt_chain.h"
+#include "gamma_lut.h"
+#include "cpl.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test
@@ -62,13 +64,14 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	
 	Kumu::libdcp_test = true;
 	
-	libdcp::Metadata* t = libdcp::Metadata::instance ();
-	t->issuer = "OpenDCP 0.0.25";
-	t->creator = "OpenDCP 0.0.25";
-	t->company_name = "OpenDCP";
-	t->product_name = "OpenDCP";
-	t->product_version = "0.0.25";
-	t->issue_date = "2012-07-17T04:45:18+00:00";
+	libdcp::XMLMetadata xml_meta;
+	xml_meta.issuer = "OpenDCP 0.0.25";
+	xml_meta.creator = "OpenDCP 0.0.25";
+	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
+	libdcp::MXFMetadata mxf_meta;
+	mxf_meta.company_name = "OpenDCP";
+	mxf_meta.product_name = "OpenDCP";
+	mxf_meta.product_version = "0.0.25";
 	boost::filesystem::remove_all ("build/test/foo");
 	boost::filesystem::create_directories ("build/test/foo");
 	libdcp::DCP d ("build/test/foo");
@@ -81,9 +84,9 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 							 &d.Progress,
 							 24,
 							 24,
-							 32,
-							 32,
-							 false
+							 libdcp::Size (32, 32),
+							 false,
+							 mxf_meta
 							 ));
 
 	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
@@ -95,13 +98,15 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 						   24,
 						   0,
 						   2,
-						   false
+						   2,
+						   false,
+						   mxf_meta
 						   ));
 	
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);
 
-	d.write_xml ();
+	d.write_xml (xml_meta);
 }
 
 BOOST_AUTO_TEST_CASE (error_test)
@@ -110,8 +115,8 @@ BOOST_AUTO_TEST_CASE (error_test)
 	vector<string> p;
 	p.push_back ("frobozz");
 
-	BOOST_CHECK_THROW (new libdcp::MonoPictureAsset (p, "build/test/bar", "video.mxf", &d.Progress, 24, 24, 32, 32, false), libdcp::FileError);
-	BOOST_CHECK_THROW (new libdcp::SoundAsset (p, "build/test/bar", "audio.mxf", &d.Progress, 24, 24, 0, false), libdcp::FileError);
+	BOOST_CHECK_THROW (new libdcp::MonoPictureAsset (p, "build/test/bar", "video.mxf", &d.Progress, 24, 24, false, libdcp::Size (32, 32)), libdcp::FileError);
+	BOOST_CHECK_THROW (new libdcp::SoundAsset (p, "build/test/bar", "audio.mxf", &d.Progress, 24, 24, false), libdcp::FileError);
 }
 
 BOOST_AUTO_TEST_CASE (read_dcp)
@@ -689,4 +694,69 @@ BOOST_AUTO_TEST_CASE (crypt_chain)
 	boost::filesystem::remove_all ("build/test/crypt");
 	boost::filesystem::create_directory ("build/test/crypt");
 	libdcp::make_crypt_chain ("build/test/crypt");
+}
+
+BOOST_AUTO_TEST_CASE (recovery)
+{
+	Kumu::libdcp_test = true;
+
+	string const picture = "test/data/32x32_red_square.j2c";
+	int const size = boost::filesystem::file_size (picture);
+	uint8_t* data = new uint8_t[size];
+	{
+		FILE* f = fopen (picture.c_str(), "rb");
+		BOOST_CHECK (f);
+		fread (data, 1, size, f);
+		fclose (f);
+	}
+
+#ifdef LIBDCP_POSIX
+	/* XXX: fix this posix-only stuff */
+	Kumu::ResetTestRNG ();
+#endif	
+	
+	boost::filesystem::remove_all ("build/test/baz");
+	boost::filesystem::create_directories ("build/test/baz");
+	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset ("build/test/baz", "video1.mxf", 24, libdcp::Size (32, 32)));
+	shared_ptr<libdcp::MonoPictureAssetWriter> writer = mp->start_write (false);
+
+	int written_size = 0;
+	for (int i = 0; i < 24; ++i) {
+		libdcp::FrameInfo info = writer->write (data, size);
+		written_size = info.size;
+	}
+
+	writer->finalize ();
+	writer.reset ();
+
+	boost::filesystem::copy_file ("build/test/baz/video1.mxf", "build/test/baz/video2.mxf");
+	boost::filesystem::resize_file ("build/test/baz/video2.mxf", 16384 + 353 * 11);
+
+	{
+		FILE* f = fopen ("build/test/baz/video2.mxf", "r+");
+		rewind (f);
+		char zeros[256];
+		memset (zeros, 0, 256);
+		fwrite (zeros, 1, 256, f);
+		fclose (f);
+	}
+
+#ifdef LIBDCP_POSIX	
+	Kumu::ResetTestRNG ();
+#endif	
+
+	mp.reset (new libdcp::MonoPictureAsset ("build/test/baz", "video2.mxf", 24, libdcp::Size (32, 32)));
+	writer = mp->start_write (true);
+
+	writer->write (data, size);
+
+	for (int i = 1; i < 4; ++i) {
+		writer->fake_write (written_size);
+	}
+
+	for (int i = 4; i < 24; ++i) {
+		writer->write (data, size);
+	}
+	
+	writer->finalize ();
 }

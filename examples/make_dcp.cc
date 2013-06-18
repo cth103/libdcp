@@ -26,11 +26,13 @@
 
 /* If you are using an installed libdcp, these #includes would need to be changed to
 #include <libdcp/dcp.h>
+#include <libdcp/cpl.h>
 #include <libdcp/picture_asset.h>
 ... etc. ...
 */
 
 #include "dcp.h"
+#include "cpl.h"
 #include "picture_asset.h"
 #include "sound_asset.h"
 #include "reel.h"
@@ -73,7 +75,7 @@ main ()
 	   for 2K projectors.
 	*/
 	boost::shared_ptr<libdcp::MonoPictureAsset> picture_asset (
-		new libdcp::MonoPictureAsset (video_frame, "My Film DCP", "video.mxf", 0, 24, 48, 1998, 1080, false)
+		new libdcp::MonoPictureAsset (video_frame, "My Film DCP", "video.mxf", 0, 24, 48, libdcp::Size (1998, 1080), false)
 		);
 
 	/* Now we will create a `sound asset', which is made up of a WAV file for each channel of audio.  Here we're using
@@ -93,7 +95,7 @@ main ()
 
 	/* Now we can create the sound asset using these files */
 	boost::shared_ptr<libdcp::SoundAsset> sound_asset (
-		new libdcp::SoundAsset (sound_files, "My Film DCP", "audio.mxf", 0, 24, 48, 0, false)
+		new libdcp::SoundAsset (sound_files, "My Film DCP", "audio.mxf", 0, 24, 48, false)
 		);
 
 	/* Now that we have the assets, we can create a Reel to put them in and add it to the CPL */
@@ -106,7 +108,8 @@ main ()
 	/* Finally, we call this to write the XML description files to the DCP.  After this, the DCP
 	   is ready to ingest and play.
 	*/
-	dcp.write_xml ();
+	libdcp::XMLMetadata metadata;
+	dcp.write_xml (metadata);
 
 	return 0;
 }

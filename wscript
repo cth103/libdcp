@@ -1,25 +1,24 @@
 import subprocess
 import os
-import lut
 
 APPNAME = 'libdcp'
-VERSION = '0.37pre'
+VERSION = '0.54pre'
 
 def options(opt):
     opt.load('compiler_cxx')
     opt.add_option('--target-windows', action='store_true', default = False, help = 'set up to do a cross-compile to Windows')
+    opt.add_option('--osx', action='store_true', default = False, help = 'set up to build on OS X')
     opt.add_option('--enable-debug', action='store_true', default = False, help = 'build with debugging information and without optimisation')
-    opt.add_option('--static-openjpeg', action='store_true', default = False, help = 'link statically to openjpeg')
-    opt.add_option('--static-libdcp', action='store_true', default = False, help = 'build libdcp and in-tree dependencies statically')
+    opt.add_option('--static', action='store_true', default = False, help = 'build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
 
 def configure(conf):
     conf.load('compiler_cxx')
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-Wno-unused-result', '-O2', '-D_FILE_OFFSET_BITS=64'])
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-O2', '-D_FILE_OFFSET_BITS=64'])
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
 
     conf.env.TARGET_WINDOWS = conf.options.target_windows
-    conf.env.STATIC_OPENJPEG = conf.options.static_openjpeg
-    conf.env.STATIC_LIBDCP = conf.options.static_libdcp
+    conf.env.STATIC = conf.options.static
+    conf.env.OSX = conf.options.osx
     conf.env.ENABLE_DEBUG = conf.options.enable_debug
 
     if conf.options.target_windows:
@@ -27,24 +26,31 @@ def configure(conf):
     else:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_POSIX')
 
+    if not conf.options.osx:
+        conf.env.append_value('CXXFLAGS', ['-Wno-unused-result'])
+
     conf.check_cfg(package = 'openssl', args = '--cflags --libs', uselib_store = 'OPENSSL', mandatory = True)
     conf.check_cfg(package = 'libxml++-2.6', args = '--cflags --libs', uselib_store = 'LIBXML++', mandatory = True)
     conf.check_cfg(package = 'xmlsec1', args = '--cflags --libs', uselib_store = 'XMLSEC1', mandatory = True)
     # Remove erroneous escaping of quotes from xmlsec1 defines
     conf.env.DEFINES_XMLSEC1 = [f.replace('\\', '') for f in conf.env.DEFINES_XMLSEC1]
 
-    openjpeg_fragment = """
-    			#include <stdio.h>\n
-			#include <openjpeg.h>\n
-			int main () {\n
-			void* p = (void *) opj_image_create;\n
-			return 0;\n
-			}
-			"""
-    if conf.options.static_openjpeg:
-        conf.check_cc(fragment = openjpeg_fragment, msg = 'Checking for library openjpeg', stlib = 'openjpeg', uselib_store = 'OPENJPEG')
+    if conf.options.static:
+        conf.check_cc(fragment = """
+                       #include <stdio.h>\n
+                       #include <openjpeg.h>\n
+                       int main () {\n
+                       void* p = (void *) opj_image_create;\n
+                       return 0;\n
+                       }
+                       """,
+                       msg = 'Checking for library openjpeg', stlib = 'openjpeg', uselib_store = 'OPENJPEG', mandatory = True)
+        
+        conf.env.HAVE_CXML = 1
+        conf.env.STLIB_CXML = ['cxml']
     else:
-        conf.check_cc(fragment = openjpeg_fragment, msg = 'Checking for library openjpeg', lib = 'openjpeg', uselib_store = 'OPENJPEG')
+        conf.check_cfg(package = 'libopenjpeg', args = '--cflags --libs', uselib_store = 'OPENJPEG', mandatory = True)
+        conf.check_cfg(package = 'libcxml', args = '--cflags --libs', uselib_store = 'CXML', mandatory = True)
 
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'
@@ -57,6 +63,18 @@ def configure(conf):
         # Somewhat experimental use of -O2 rather than -O3 to see if
         # Windows builds are any more reliable
         conf.env.append_value('CXXFLAGS', '-O2')
+
+    conf.check_cxx(fragment = """
+                              #include <boost/version.hpp>\n
+                              #if BOOST_VERSION < 104500\n
+                              #error boost too old\n
+                              #endif\n
+                              int main(void) { return 0; }\n
+                              """,
+                   mandatory = True,
+                   msg = 'Checking for boost library >= 1.45',
+                   okmsg = 'yes',
+                   errmsg = 'too old\nPlease install boost version 1.45 or higher.')
 
     conf.check_cxx(fragment = """
     			      #include <boost/filesystem.hpp>\n
@@ -82,8 +100,6 @@ def configure(conf):
                    libpath = '/usr/local/lib',
                    lib = ['boost_date_time%s' % boost_lib_suffix, 'boost_system%s' % boost_lib_suffix],
                    uselib_store = 'BOOST_DATETIME')
-
-    lut.make_luts()
 
     conf.recurse('test')
     conf.recurse('asdcplib')
@@ -111,7 +127,7 @@ def build(bld):
     bld.add_post_fun(post)
 
 def dist(ctx):
-    ctx.excl = 'TODO core *~ .git build .waf* .lock* doc/*~ src/*~ test/ref/*~ __pycache__'
+    ctx.excl = 'TODO core *~ .git build .waf* .lock* doc/*~ src/*~ test/ref/*~ __pycache__ GPATH GRTAGS GSYMS GTAGS'
 
 def create_version_cc(bld, version):
     if os.path.exists('.git'):

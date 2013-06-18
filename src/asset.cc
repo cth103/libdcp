@@ -25,6 +25,7 @@
 #include <fstream>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/function.hpp>
 #include <libxml++/nodes/element.h>
 #include "AS_DCP.h"
 #include "KM_util.h"
@@ -36,10 +37,14 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-Asset::Asset (string directory, string file_name)
+Asset::Asset (string directory, string file_name, int edit_rate, int intrinsic_duration)
 	: _directory (directory)
 	, _file_name (file_name)
 	, _uuid (make_uuid ())
+	, _edit_rate (edit_rate)
+	, _entry_point (0)
+	, _intrinsic_duration (intrinsic_duration)
+	, _duration (intrinsic_duration)
 {
 	if (_file_name.empty ()) {
 		_file_name = _uuid + ".xml";
@@ -47,30 +52,27 @@ Asset::Asset (string directory, string file_name)
 }
 
 void
-Asset::write_to_pkl (xmlpp::Element* p) const
+Asset::write_to_pkl (xmlpp::Node* node) const
 {
-	xmlpp::Element* asset = p->add_child("Asset");
-	asset->add_child("Id")->add_child_text("urn:uuid:" + _uuid);
+	xmlpp::Node* asset = node->add_child ("Asset");
+	asset->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
 	asset->add_child("AnnotationText")->add_child_text (_file_name);
-	asset->add_child("Hash")->add_child_text (digest());
-	asset->add_child("Size")->add_child_text (boost::lexical_cast<string> (filesystem::file_size(path())));
+	asset->add_child("Hash")->add_child_text (digest ());
+	asset->add_child("Size")->add_child_text (lexical_cast<string> (filesystem::file_size(path())));
 	asset->add_child("Type")->add_child_text ("application/mxf");
 }
 
 void
-Asset::write_to_assetmap (ostream& s) const
+Asset::write_to_assetmap (xmlpp::Node* node) const
 {
-	s << "    <Asset>\n"
-	  << "      <Id>urn:uuid:" << _uuid << "</Id>\n"
-	  << "      <ChunkList>\n"
-	  << "        <Chunk>\n"
-	  << "          <Path>" << _file_name << "</Path>\n"
-	  << "          <VolumeIndex>1</VolumeIndex>\n"
-	  << "          <Offset>0</Offset>\n"
-	  << "          <Length>" << filesystem::file_size(path()) << "</Length>\n"
-	  << "        </Chunk>\n"
-	  << "      </ChunkList>\n"
-	  << "    </Asset>\n";
+	xmlpp::Node* asset = node->add_child ("Asset");
+	asset->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
+	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
+	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
+	chunk->add_child("Path")->add_child_text (_file_name);
+	chunk->add_child("VolumeIndex")->add_child_text ("1");
+	chunk->add_child("Offset")->add_child_text ("0");
+	chunk->add_child("Length")->add_child_text (lexical_cast<string> (filesystem::file_size(path())));
 }
 
 filesystem::path
@@ -92,3 +94,23 @@ Asset::digest () const
 	return _digest;
 }
 
+bool
+Asset::equals (shared_ptr<const Asset> other, EqualityOptions, boost::function<void (NoteType, string)> note) const
+{
+	if (_edit_rate != other->_edit_rate) {
+		note (ERROR, "MXF edit rates differ");
+		return false;
+	}
+	
+	if (_intrinsic_duration != other->_intrinsic_duration) {
+		note (ERROR, "MXF intrinsic durations differ");
+		return false;
+	}
+
+	if (_duration != other->_duration) {
+		note (ERROR, "MXF durations differ");
+		return false;
+	}
+
+	return true;
+}

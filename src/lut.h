@@ -17,40 +17,47 @@
 
 */
 
-/** @file  src/pkl_file.h
- *  @brief Classes used to parse a PKL
- */
+#ifndef LIBDCP_LUT_H
+#define LIBDCP_LUT_H
 
-#include <boost/shared_ptr.hpp>
-#include "xml.h"
+#include <cmath>
 
 namespace libdcp {
 
-class PKLAsset : public XMLNode
+template<typename T>
+class LUT
 {
 public:
-	PKLAsset () {}
-	PKLAsset (xmlpp::Node const * node);
+	LUT(int bit_depth, float gamma)
+		: _lut(0)
+		, _bit_depth (bit_depth)
+		, _gamma (gamma)
+	{
+		_lut = new T[int(std::pow(2.0f, _bit_depth))];
+	}
 
-	std::string id;
-	std::string annotation_text;
-	std::string hash;
-	int64_t size;
-	std::string type;
-	std::string original_file_name;
-};
-
-class PKLFile : public XMLFile
-{
-public:
-	PKLFile (std::string file);
-
-	std::string id;
-	std::string annotation_text;
-	std::string issue_date;
-	std::string issuer;
-	std::string creator;
-	std::list<boost::shared_ptr<PKLAsset> > assets;
-};
+	virtual ~LUT() {
+		delete[] _lut;
+	}
 	
+	T const * lut() const {
+		return _lut;
+	}
+
+	int bit_depth () const {
+		return _bit_depth;
+	}
+
+	float gamma () const {
+		return _gamma;
+	}
+
+protected:
+	T* _lut;
+	int _bit_depth;
+	float _gamma;
+};
+
 }
+
+#endif

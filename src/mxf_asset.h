@@ -30,45 +30,48 @@ namespace ASDCP {
 namespace libdcp
 {
 
+class MXFMetadata;	
+
 /** @brief Parent class for assets which have MXF files */	
 class MXFAsset : public Asset
 {
 public:
 	/** Construct an MXFAsset.
+	 *  This class will not write anything to disk in this constructor, but subclasses may.
+	 *
 	 *  @param directory Directory where MXF file is.
 	 *  @param file_name Name of MXF file.
-	 *  @param progress Signal to inform of progress.
-	 *  @param fps Frames per second.
-	 *  @param entry_point The entry point of this MXF; ie the first frame that should be used.
-	 *  @param length Length in frames.
-	 *  @param encrypted true if the MXF should be encrypted.
 	 */
-	MXFAsset (
-		std::string directory, std::string file_name, boost::signals2::signal<void (float)>* progress, int fps, int entry_point, int length, bool encrypted
-		);
+	MXFAsset (std::string directory, std::string file_name);
+	
+	/** Construct an MXFAsset.
+	 *  This class will not write anything to disk in this constructor, but subclasses may.
+	 *
+	 *  @param directory Directory where MXF file is.
+	 *  @param file_name Name of MXF file.
+	 *  @param progress Signal to use to inform of progress, or 0.
+	 *  @param edit_rate Edit rate in frames per second (usually equal to the video frame rate).
+	 *  @param intrinsic_duration Duration of the whole asset in frames.
+	 */
+	MXFAsset (std::string directory, std::string file_name, boost::signals2::signal<void (float)>* progress, int edit_rate, int intrinsic_duration, bool encrypted);
 
 	~MXFAsset ();
 
-	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, std::list<std::string>& notes) const;
-	
-	int length () const;
-	void add_typed_key_id (xmlpp::Element *) const;
+	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
+	/** Fill in a ADSCP::WriteInfo struct.
+	 *  @param w struct to fill in.
+	 *  @param uuid uuid to use.
+	 */
+	void fill_writer_info (ASDCP::WriterInfo* w, std::string uuid, MXFMetadata const & metadata);
+
+	void add_typed_key_id (xmlpp::Element *) const;
+	
 protected:
 	virtual std::string key_type () const = 0;
 	
-	/** Fill in a ADSCP::WriteInfo struct.
-	 *  @param w struct to fill in.
-	 */
-	void fill_writer_info (ASDCP::WriterInfo* w) const;
-
-	/** Signal to emit to report progress */
+	/** Signal to emit to report progress, or 0 */
 	boost::signals2::signal<void (float)>* _progress;
-	/** Frames per second */
-	int _fps;
-	int _entry_point;
-	/** Length in frames */
-	int _length;
 	bool _encrypted;
 	ASDCP::AESEncContext* _encryption_context;
 	std::string _key_value;

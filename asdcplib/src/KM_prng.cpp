@@ -1,3 +1,5 @@
+/* -*- c-basic-offset: 2; -*- */
+
 /*
 Copyright (c) 2006-2009, John Hurst
 All rights reserved.
@@ -98,7 +100,9 @@ public:
 
     set_key(rng_key);
 
-    m_libdcp_test_rng_state = 1;
+#ifdef LIBDCP_POSIX    
+    reset();
+#endif    
   }
 	
   //
@@ -153,6 +157,13 @@ public:
     /* XXX */
 #endif
   }
+
+#ifdef LIBDCP_POSIX  
+  void reset ()
+  {
+    m_libdcp_test_rng_state = 1;
+  }
+#endif  
 };
 
 
@@ -205,6 +216,14 @@ Kumu::FortunaRNG::FillRandom(Kumu::ByteString& Buffer)
   Buffer.Length(Buffer.Capacity());
   return Buffer.Data();
 }
+
+#ifdef LIBDCP_POSIX
+void
+Kumu::FortunaRNG::Reset()
+{
+  s_RNG->reset();
+}
+#endif
 
 //------------------------------------------------------------------------------------------
 

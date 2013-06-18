@@ -20,70 +20,10 @@
 #include "asset.h"
 #include "xml.h"
 #include "dcp_time.h"
+#include "parse/subtitle.h"
 
 namespace libdcp
 {
-
-class FontNode;
-
-class TextNode : public XMLNode
-{
-public:
-	TextNode () {}
-	TextNode (xmlpp::Node const * node);
-
-	float v_position;
-	VAlign v_align;
-	std::string text;
-	std::list<boost::shared_ptr<FontNode> > font_nodes;
-};
-
-class SubtitleNode : public XMLNode
-{
-public:
-	SubtitleNode () {}
-	SubtitleNode (xmlpp::Node const * node);
-
-	Time in;
-	Time out;
-	Time fade_up_time;
-	Time fade_down_time;
-	std::list<boost::shared_ptr<FontNode> > font_nodes;
-	std::list<boost::shared_ptr<TextNode> > text_nodes;
-
-private:
-	Time fade_time (std::string name);
-};
-
-class FontNode : public XMLNode
-{
-public:
-	FontNode () {}
-	FontNode (xmlpp::Node const * node);
-	FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes);
-
-	std::string text;
-	std::string id;
-	int size;
-	boost::optional<bool> italic;
-	boost::optional<Color> color;
-	boost::optional<Effect> effect;
-	boost::optional<Color> effect_color;
-	
-	std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
-	std::list<boost::shared_ptr<FontNode> > font_nodes;
-	std::list<boost::shared_ptr<TextNode> > text_nodes;
-};
-
-class LoadFontNode : public XMLNode
-{
-public:
-	LoadFontNode () {}
-	LoadFontNode (xmlpp::Node const * node);
-
-	std::string id;
-	std::string uri;
-};
 
 class Subtitle
 {
@@ -183,14 +123,10 @@ public:
 	SubtitleAsset (std::string directory, std::string xml_file);
 	SubtitleAsset (std::string directory, std::string movie_title, std::string language);
 
-	/** Write details of the asset to a CPL AssetList node.
-	 *  @param p Parent node.
-	 */
-	void write_to_cpl (xmlpp::Element* p) const;
-	
-	virtual bool equals (boost::shared_ptr<const Asset>, EqualityOptions, std::list<std::string>& notes) const {
+	void write_to_cpl (xmlpp::Node *) const;
+	virtual bool equals (boost::shared_ptr<const Asset>, EqualityOptions, boost::function<void (NoteType, std::string)> note) const {
 		/* XXX */
-		notes.push_back ("subtitle assets not compared yet");
+		note (ERROR, "subtitle assets not compared yet");
 		return true;
 	}
 
@@ -207,29 +143,28 @@ public:
 
 	void read_xml (std::string);
 	void write_xml () const;
-	void write_xml (std::ostream& s) const;
+	void write_xml (std::ostream &) const;
 
 private:
 	std::string font_id_to_name (std::string id) const;
-	std::string escape (std::string) const;
 
 	struct ParseState {
-		std::list<boost::shared_ptr<FontNode> > font_nodes;
-		std::list<boost::shared_ptr<TextNode> > text_nodes;
-		std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
+		std::list<boost::shared_ptr<parse::Font> > font_nodes;
+		std::list<boost::shared_ptr<parse::Text> > text_nodes;
+		std::list<boost::shared_ptr<parse::Subtitle> > subtitle_nodes;
 	};
 
 	void maybe_add_subtitle (std::string text, ParseState const & parse_state);
 	
 	void examine_font_nodes (
-		boost::shared_ptr<XMLFile> xml,
-		std::list<boost::shared_ptr<FontNode> > const & font_nodes,
+		boost::shared_ptr<const cxml::Node> xml,
+		std::list<boost::shared_ptr<parse::Font> > const & font_nodes,
 		ParseState& parse_state
 		);
 	
 	void examine_text_nodes (
-		boost::shared_ptr<XMLFile> xml,
-		std::list<boost::shared_ptr<TextNode> > const & text_nodes,
+		boost::shared_ptr<const cxml::Node> xml,
+		std::list<boost::shared_ptr<parse::Text> > const & text_nodes,
 		ParseState& parse_state
 		);
 
@@ -237,7 +172,7 @@ private:
 	/* strangely, this is sometimes a string */
 	std::string _reel_number;
 	std::string _language;
-	std::list<boost::shared_ptr<LoadFontNode> > _load_font_nodes;
+	std::list<boost::shared_ptr<parse::LoadFont> > _load_font_nodes;
 
 	std::list<boost::shared_ptr<Subtitle> > _subtitles;
 	bool _need_sort;

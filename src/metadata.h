@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_METADATA_H
+#define LIBDCP_METADATA_H
+
 /** @file  src/metadata.h
  *  @brief Metadata for writing to the DCP.
  */
@@ -26,28 +29,28 @@
 namespace libdcp
 {
 
-/** @brief A class to hold various metadata that will be written
- *  to the DCP.
- *
- *  The values are initialised, and can be modified if desired.
- */
-class Metadata
+class MXFMetadata
 {
 public:
-	static Metadata* instance ();
+	MXFMetadata ();
 
 	std::string company_name;
 	std::string product_name;
 	std::string product_version;
+};
+
+class XMLMetadata
+{
+public:
+	XMLMetadata ();
+
+	void set_issue_date_now ();
+	
 	std::string issuer;
 	std::string creator;
 	std::string issue_date;
-
-private:
-	Metadata ();
-
-	/** Singleton instance of Metadata */
-	static Metadata* _instance;
 };
 
 }
+
+#endif

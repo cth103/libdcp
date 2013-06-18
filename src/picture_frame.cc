@@ -25,6 +25,9 @@
 #include "argb_frame.h"
 #include "lut.h"
 #include "util.h"
+#include "gamma_lut.h"
+
+#define DCI_GAMMA 2.6
 
 using std::string;
 using boost::shared_ptr;
@@ -38,20 +41,32 @@ MonoPictureFrame::MonoPictureFrame (string mxf_path, int n)
 {
 	ASDCP::JP2K::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (mxf_path.c_str()))) {
-		throw FileError ("could not open MXF file for reading", mxf_path);
+		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path));
 	}
 
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = new ASDCP::JP2K::FrameBuffer (4 * Kumu::Megabyte);
 
 	if (ASDCP_FAILURE (reader.ReadFrame (n, *_buffer))) {
-		throw DCPReadError ("could not read video frame");
+		boost::throw_exception (DCPReadError ("could not read video frame"));
 	}
 }
 
 MonoPictureFrame::~MonoPictureFrame ()
 {
 	delete _buffer;
+}
+
+uint8_t const *
+MonoPictureFrame::j2k_data () const
+{
+	return _buffer->RoData ();
+}
+
+int
+MonoPictureFrame::j2k_size () const
+{
+	return _buffer->Size ();
 }
 
 /** @param reduce a factor by which to reduce the resolution
@@ -64,11 +79,11 @@ MonoPictureFrame::~MonoPictureFrame ()
  *
  */
 shared_ptr<ARGBFrame>
-MonoPictureFrame::argb_frame (int reduce) const
+MonoPictureFrame::argb_frame (int reduce, float srgb_gamma) const
 {
 	opj_image_t* xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce);
 	assert (xyz_frame->numcomps == 3);
-	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame);
+	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA), GammaLUT::cache.get (12, 1 / srgb_gamma));
 	opj_image_destroy (xyz_frame);
 	return f;
 }
@@ -81,14 +96,14 @@ StereoPictureFrame::StereoPictureFrame (string mxf_path, int n)
 {
 	ASDCP::JP2K::MXFSReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (mxf_path.c_str()))) {
-		throw FileError ("could not open MXF file for reading", mxf_path);
+		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path));
 	}
 
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = new ASDCP::JP2K::SFrameBuffer (4 * Kumu::Megabyte);
 
 	if (ASDCP_FAILURE (reader.ReadFrame (n, *_buffer))) {
-		throw DCPReadError ("could not read video frame");
+		boost::throw_exception (DCPReadError ("could not read video frame"));
 	}
 }
 
@@ -110,7 +125,7 @@ StereoPictureFrame::~StereoPictureFrame ()
  *
  */
 shared_ptr<ARGBFrame>
-StereoPictureFrame::argb_frame (Eye eye, int reduce) const
+StereoPictureFrame::argb_frame (Eye eye, int reduce, float srgb_gamma) const
 {
 	opj_image_t* xyz_frame = 0;
 	switch (eye) {
@@ -123,7 +138,31 @@ StereoPictureFrame::argb_frame (Eye eye, int reduce) const
 	}
 	
 	assert (xyz_frame->numcomps == 3);
-	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame);
+	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA), GammaLUT::cache.get (12, 1 / srgb_gamma));
 	opj_image_destroy (xyz_frame);
 	return f;
+}
+
+uint8_t const *
+StereoPictureFrame::left_j2k_data () const
+{
+	return _buffer->Left.RoData ();
+}
+
+int
+StereoPictureFrame::left_j2k_size () const
+{
+	return _buffer->Left.Size ();
+}
+
+uint8_t const *
+StereoPictureFrame::right_j2k_data () const
+{
+	return _buffer->Right.RoData ();
+}
+
+int
+StereoPictureFrame::right_j2k_size () const
+{
+	return _buffer->Right.Size ();
 }
