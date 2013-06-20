@@ -21,6 +21,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include "subtitle_asset.h"
+#include "parse/subtitle.h"
 #include "util.h"
 #include "xml.h"
 

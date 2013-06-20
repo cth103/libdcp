@@ -51,7 +51,6 @@ def build(bld):
               types.h
               util.h
               version.h
-              xml.h
               """
 
     bld.install_files('${PREFIX}/include/libdcp', headers)

@@ -27,6 +27,7 @@
 #include "parse/asset_map.h"
 #include "reel.h"
 #include "metadata.h"
+#include "exceptions.h"
 
 using std::string;
 using std::stringstream;
