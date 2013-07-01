@@ -28,6 +28,7 @@
 #include "reel.h"
 #include "metadata.h"
 #include "exceptions.h"
+#include "compose.hpp"
 
 using std::string;
 using std::stringstream;
@@ -270,17 +271,19 @@ CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (NoteT
 	}
 
 	if (_fps != other._fps) {
-		note (ERROR, "frames per second differ");
+		note (ERROR, String::compose ("frames per second differ (%1 vs %2)", _fps, other._fps));
 		return false;
 	}
 
 	if (_length != other._length) {
-		note (ERROR, "lengths differ");
+		stringstream s;
+		s << "lengths differ (" << _length << " cf " << other._length << ")";
+		note (ERROR, String::compose ("lengths differ (%1 vs %2)", _length, other._length));
 		return false;
 	}
 
 	if (_reels.size() != other._reels.size()) {
-		note (ERROR, "reel counts differ");
+		note (ERROR, String::compose ("reel counts differ (%1 vs %2)", _reels.size(), other._reels.size()));
 		return false;
 	}
 	
