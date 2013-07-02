@@ -15,6 +15,10 @@ def build(target):
         cmd += ' --target-windows'
     elif target.platform == 'osx':
         cmd += ' --osx'
+
+    if target.debug:
+        cmd += ' --enable-debug'
+
     target.command(cmd)
     target.command('./waf build install')
 
