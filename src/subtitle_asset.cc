@@ -22,6 +22,7 @@
 #include <boost/algorithm/string.hpp>
 #include <libxml++/nodes/element.h>
 #include "subtitle_asset.h"
+#include "parse/subtitle.h"
 #include "util.h"
 #include "xml.h"
 

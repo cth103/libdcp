@@ -3,6 +3,7 @@
 #include "cpl.h"
 #include "reel.h"
 #include "subtitle_asset.h"
+#include "exceptions.h"
 
 using std::cout;
 using std::cerr;

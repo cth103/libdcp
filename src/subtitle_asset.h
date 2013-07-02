@@ -17,13 +17,20 @@
 
 */
 
+#include <libcxml/cxml.h>
 #include "asset.h"
-#include "xml.h"
 #include "dcp_time.h"
-#include "parse/subtitle.h"
 
 namespace libdcp
 {
+
+namespace parse
+{
+	class Font;
+	class Text;
+	class Subtitle;
+	class LoadFont;
+}
 
 class Subtitle
 {

@@ -28,6 +28,8 @@
 #include "reel.h"
 #include "metadata.h"
 #include "encryption.h"
+#include "exceptions.h"
+#include "compose.hpp"
 
 using std::string;
 using std::stringstream;
@@ -175,7 +177,7 @@ CPL::add_reel (shared_ptr<const Reel> reel)
 }
 
 void
-CPL::write_xml (shared_ptr<Encryption> crypt, XMLMetadata const & metadata) const
+CPL::write_xml (XMLMetadata const & metadata, shared_ptr<Encryption> crypt) const
 {
 	boost::filesystem::path p;
 	p /= _directory;
@@ -279,17 +281,19 @@ CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (NoteT
 	}
 
 	if (_fps != other._fps) {
-		note (ERROR, "frames per second differ");
+		note (ERROR, String::compose ("frames per second differ (%1 vs %2)", _fps, other._fps));
 		return false;
 	}
 
 	if (_length != other._length) {
-		note (ERROR, "lengths differ");
+		stringstream s;
+		s << "lengths differ (" << _length << " cf " << other._length << ")";
+		note (ERROR, String::compose ("lengths differ (%1 vs %2)", _length, other._length));
 		return false;
 	}
 
 	if (_reels.size() != other._reels.size()) {
-		note (ERROR, "reel counts differ");
+		note (ERROR, String::compose ("reel counts differ (%1 vs %2)", _reels.size(), other._reels.size()));
 		return false;
 	}
 	
@@ -329,10 +333,10 @@ CPL::make_kdm (
 		authenticated_public->set_attribute("Id", "ID_AuthenticatedPublic");
 		xmlAddID (0, doc->cobj(), (const xmlChar *) "ID_AuthenticatedPublic", authenticated_public->get_attribute("Id")->cobj());
 		
-		authenticated_public->add_child("MessageId")->add_child_text("urn:uuid:" + make_uuid());
-		authenticated_public->add_child("MessageType")->add_child_text("http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
-		authenticated_public->add_child("AnnotationText")->add_child_text(Metadata::instance()->product_name);
-		authenticated_public->add_child("IssueDate")->add_child_text(Metadata::instance()->issue_date);
+		authenticated_public->add_child("MessageId")->add_child_text ("urn:uuid:" + make_uuid());
+		authenticated_public->add_child("MessageType")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
+		authenticated_public->add_child("AnnotationText")->add_child_text (MXFMetadata::instance()->product_name);
+		authenticated_public->add_child("IssueDate")->add_child_text (MXFMetadata::instance()->issue_date);
 
 		{
 			xmlpp::Element* signer = authenticated_public->add_child("Signer");
