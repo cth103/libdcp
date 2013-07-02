@@ -46,77 +46,32 @@ using std::vector;
 using std::list;
 using boost::shared_ptr;
 
-string
+
+struct TestConfig
+{
+	TestConfig()
+	{
+		libdcp::init ();
+	}
+};
+
+BOOST_GLOBAL_FIXTURE (TestConfig);
+
+
+static string
 j2c (int)
 {
 	return "test/data/32x32_red_square.j2c";
 }
 
-string
+static string
 wav (libdcp::Channel)
 {
 	return "test/data/1s_24-bit_48k_silence.wav";
 }
-		
 
-BOOST_AUTO_TEST_CASE (dcp_test)
-{
-	libdcp::init ();
-	
-	Kumu::libdcp_test = true;
-	
-	libdcp::XMLMetadata xml_meta;
-	xml_meta.issuer = "OpenDCP 0.0.25";
-	xml_meta.creator = "OpenDCP 0.0.25";
-	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
-	libdcp::MXFMetadata mxf_meta;
-	mxf_meta.company_name = "OpenDCP";
-	mxf_meta.product_name = "OpenDCP";
-	mxf_meta.product_version = "0.0.25";
-	boost::filesystem::remove_all ("build/test/foo");
-	boost::filesystem::create_directories ("build/test/foo");
-	libdcp::DCP d ("build/test/foo");
-	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/foo", "A Test DCP", libdcp::FEATURE, 24, 24));
-
-	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset (
-							 j2c,
-							 "build/test/foo",
-							 "video.mxf",
-							 &d.Progress,
-							 24,
-							 24,
-							 false,
-							 libdcp::Size (32, 32),
-							 mxf_meta
-							 ));
-
-	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
-						   wav,
-						   "build/test/foo",
-						   "audio.mxf",
-						   &(d.Progress),
-						   24,
-						   24,
-						   2,
-						   false,
-						   mxf_meta
-						   ));
-	
-	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
-	d.add_cpl (cpl);
-
-	d.write_xml (xml_meta);
-}
-
-BOOST_AUTO_TEST_CASE (error_test)
-{
-	libdcp::DCP d ("build/test/fred");
-	vector<string> p;
-	p.push_back ("frobozz");
-
-	BOOST_CHECK_THROW (new libdcp::MonoPictureAsset (p, "build/test/bar", "video.mxf", &d.Progress, 24, 24, false, libdcp::Size (32, 32)), libdcp::FileError);
-	BOOST_CHECK_THROW (new libdcp::SoundAsset (p, "build/test/bar", "audio.mxf", &d.Progress, 24, 24, false), libdcp::FileError);
-}
+#include "dcp_test.cc"
+#include "error_test.cc"
 
 BOOST_AUTO_TEST_CASE (read_dcp)
 {
@@ -609,12 +564,12 @@ BOOST_AUTO_TEST_CASE (encryption)
 	
 	boost::filesystem::remove_all ("build/test/bar");
 	boost::filesystem::create_directories ("build/test/bar");
-	libdcp::DCP d ("build/test/bar");
+	libdcp::DCP d ("build/test/DCP/bar");
 
 	libdcp::CertificateChain chain;
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/ca.self-signed.pem")));
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/intermediate.signed.pem")));
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/leaf.signed.pem")));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/data/ca.self-signed.pem")));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/data/intermediate.signed.pem")));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/data/leaf.signed.pem")));
 
 	shared_ptr<libdcp::Encryption> crypt (
 		new libdcp::Encryption (
@@ -667,13 +622,20 @@ BOOST_AUTO_TEST_CASE (encryption)
 	kdm->write_to_file_formatted ("build/test/bar.kdm.xml", "UTF-8");
 }
 
+BOOST_AUTO_TEST_CASE (crypt_chain)
+{
+	boost::filesystem::remove_all ("build/test/crypt");
+	boost::filesystem::create_directory ("build/test/crypt");
+	libdcp::make_crypt_chain ("build/test/crypt");
+}
+
 BOOST_AUTO_TEST_CASE (certificates)
 {
 	libdcp::CertificateChain c;
 
-	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/ca.self-signed.pem")));
-	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/intermediate.signed.pem")));
-	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/leaf.signed.pem")));
+	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/crypt/ca.self-signed.pem")));
+	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/crypt/intermediate.signed.pem")));
+	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/crypt/leaf.signed.pem")));
 	
 	BOOST_CHECK_EQUAL (
 		c.root()->issuer(),
@@ -691,13 +653,6 @@ BOOST_AUTO_TEST_CASE (certificates)
 		libdcp::Certificate::name_for_xml (c.root()->subject()),
 		"dnQualifier=rTeK7x\\+nopFkyphflooz6p2ZM7A=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
-}
-
-BOOST_AUTO_TEST_CASE (crypt_chain)
-{
-	boost::filesystem::remove_all ("build/test/crypt");
-	boost::filesystem::create_directory ("build/test/crypt");
-	libdcp::make_crypt_chain ("build/test/crypt");
 }
 
 BOOST_AUTO_TEST_CASE (recovery)
