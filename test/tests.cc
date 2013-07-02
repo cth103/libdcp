@@ -34,6 +34,7 @@
 #include "crypt_chain.h"
 #include "gamma_lut.h"
 #include "cpl.h"
+#include "encryption.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test
@@ -84,8 +85,8 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 							 &d.Progress,
 							 24,
 							 24,
-							 libdcp::Size (32, 32),
 							 false,
+							 libdcp::Size (32, 32),
 							 mxf_meta
 							 ));
 
@@ -96,8 +97,6 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 						   &(d.Progress),
 						   24,
 						   24,
-						   0,
-						   2,
 						   2,
 						   false,
 						   mxf_meta
@@ -597,14 +596,17 @@ BOOST_AUTO_TEST_CASE (color)
 BOOST_AUTO_TEST_CASE (encryption)
 {
 	Kumu::libdcp_test = true;
+
+	libdcp::MXFMetadata mxf_metadata;
+	mxf_metadata.company_name = "OpenDCP";
+	mxf_metadata.product_name = "OpenDCP";
+	mxf_metadata.product_version = "0.0.25";
+
+	libdcp::XMLMetadata xml_metadata;
+	xml_metadata.issuer = "OpenDCP 0.0.25";
+	xml_metadata.creator = "OpenDCP 0.0.25";
+	xml_metadata.issue_date = "2012-07-17T04:45:18+00:00";
 	
-	libdcp::Metadata* t = libdcp::Metadata::instance ();
-	t->issuer = "OpenDCP 0.0.25";
-	t->creator = "OpenDCP 0.0.25";
-	t->company_name = "OpenDCP";
-	t->product_name = "OpenDCP";
-	t->product_version = "0.0.25";
-	t->issue_date = "2012-07-17T04:45:18+00:00";
 	boost::filesystem::remove_all ("build/test/bar");
 	boost::filesystem::create_directories ("build/test/bar");
 	libdcp::DCP d ("build/test/bar");
@@ -630,9 +632,9 @@ BOOST_AUTO_TEST_CASE (encryption)
 							 &d.Progress,
 							 24,
 							 24,
-							 32,
-							 32,
-							 true
+							 true,
+							 libdcp::Size (32, 32),
+							 mxf_metadata
 							 ));
 
 	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
@@ -642,22 +644,24 @@ BOOST_AUTO_TEST_CASE (encryption)
 						   &(d.Progress),
 						   24,
 						   24,
-						   0,
 						   2,
-						   true
+						   true,
+						   mxf_metadata
 						   ));
 	
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);
 
-	d.write_xml (crypt);
+	d.write_xml (xml_metadata, crypt);
 
 	shared_ptr<xmlpp::Document> kdm = cpl->make_kdm (
 		crypt->certificates,
 		crypt->signer_key,
 		crypt->certificates.leaf(),
 		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
-		boost::posix_time::time_from_string ("2013-01-08 00:00:00")
+		boost::posix_time::time_from_string ("2013-01-08 00:00:00"),
+		mxf_metadata,
+		xml_metadata
 		);
 
 	kdm->write_to_file_formatted ("build/test/bar.kdm.xml", "UTF-8");

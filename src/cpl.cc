@@ -18,6 +18,7 @@
 */
 
 #include <fstream>
+#include <libxml/parser.h>
 #include "cpl.h"
 #include "parse/cpl.h"
 #include "util.h"
@@ -317,7 +318,9 @@ CPL::make_kdm (
 	string const & signer_key,
 	shared_ptr<const Certificate> recipient_cert,
 	boost::posix_time::ptime from,
-	boost::posix_time::ptime until
+	boost::posix_time::ptime until,
+	MXFMetadata const & mxf_metadata,
+	XMLMetadata const & xml_metadata
 	) const
 {
 	assert (recipient_cert);
@@ -335,8 +338,8 @@ CPL::make_kdm (
 		
 		authenticated_public->add_child("MessageId")->add_child_text ("urn:uuid:" + make_uuid());
 		authenticated_public->add_child("MessageType")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
-		authenticated_public->add_child("AnnotationText")->add_child_text (MXFMetadata::instance()->product_name);
-		authenticated_public->add_child("IssueDate")->add_child_text (MXFMetadata::instance()->issue_date);
+		authenticated_public->add_child("AnnotationText")->add_child_text (mxf_metadata.product_name);
+		authenticated_public->add_child("IssueDate")->add_child_text (xml_metadata.issue_date);
 
 		{
 			xmlpp::Element* signer = authenticated_public->add_child("Signer");

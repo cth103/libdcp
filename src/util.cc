@@ -307,20 +307,6 @@ libdcp::init ()
 	if (xmlSecInit() < 0) {
 		throw MiscError ("could not initialise xmlsec");
 	}
-
-#ifdef XMLSEC_CRYPTO_DYNAMIC_LOADING
-	if (xmlSecCryptoDLLoadLibrary (BAD_CAST XMLSEC_CRYPTO) < 0) {
-		throw MiscError ("unable to load default xmlsec-crypto library");
-	}
-#endif
-	
-	if (xmlSecCryptoAppInit (0) < 0) {
-		throw MiscError ("could not initialise crypto library");
-	}
-	
-	if (xmlSecCryptoInit() < 0) {
-		throw MiscError ("could not initialise xmlsec-crypto");
-	}
 }
 
 void
@@ -347,19 +333,6 @@ libdcp::add_signature_value (xmlpp::Element* parent, CertificateChain const & ce
 	xmlSecKeysMngrPtr keys_manager = xmlSecKeysMngrCreate();
 	if (!keys_manager) {
 		throw MiscError ("could not create keys manager");
-	}
-	if (xmlSecCryptoAppDefaultKeysMngrInit (keys_manager) < 0) {
-		throw MiscError ("could not initialise keys manager");
-	}
-	
-	xmlSecKeyPtr const key = xmlSecCryptoAppKeyLoad (signer_key.c_str(), xmlSecKeyDataFormatPem, 0, 0, 0);
-	if (key == 0) {
-		throw MiscError ("could not load signer key");
-		}
-	
-	if (xmlSecCryptoAppDefaultKeysMngrAdoptKey (keys_manager, key) < 0) {
-		xmlSecKeyDestroy (key);
-		throw MiscError ("could not use signer key");
 	}
 	
 	xmlSecDSigCtx signature_context;

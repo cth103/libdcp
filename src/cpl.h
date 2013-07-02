@@ -34,7 +34,8 @@ namespace parse {
 class Asset;
 class Reel;
 class XMLMetadata;
-	class Encryption;
+class MXFMetadata;
+class Encryption;
 	
 /** @brief A CPL within a DCP */
 class CPL
@@ -86,7 +87,9 @@ public:
 		std::string const &,
 		boost::shared_ptr<const Certificate>,
 		boost::posix_time::ptime from,
-		boost::posix_time::ptime until
+		boost::posix_time::ptime until,
+		MXFMetadata const &,
+		XMLMetadata const &
 		) const;
 	
 private:
