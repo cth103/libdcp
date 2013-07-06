@@ -8,6 +8,11 @@
 # if anything is different.
 #
 
+if [ ! -e "../libdcp-test" ]; then
+  echo "Test corpus not found"
+  exit 1
+fi
+
 if [ "$1" == "--debug" ]; then
   shift
   LD_LIBRARY_PATH=build/src:build/asdcplib/src gdb --args build/test/tests
@@ -31,11 +36,6 @@ if [ "$?" != "0" ]; then
 fi
 
 rm -f build/test/info.log
-
-if [ ! -e "../libdcp-test" ]; then
-  echo "Test corpus not found"
-  exit 1
-fi
 
 for d in `find ../libdcp-test -mindepth 1 -maxdepth 1 -type d | sort`; do
   if [ `basename $d` != ".git" ]; then
