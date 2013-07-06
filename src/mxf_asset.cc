@@ -24,6 +24,7 @@
 #include <iostream>
 #include <fstream>
 #include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
 #include <libxml++/nodes/element.h>
 #include "AS_DCP.h"
 #include "KM_prng.h"
@@ -36,6 +37,7 @@
 using std::string;
 using std::list;
 using boost::shared_ptr;
+using boost::lexical_cast;
 using boost::dynamic_pointer_cast;
 using namespace libdcp;
 
@@ -132,4 +134,19 @@ MXFAsset::add_typed_key_id (xmlpp::Element* parent) const
 	xmlpp::Element* typed_key_id = parent->add_child("TypedKeyId");
 	typed_key_id->add_child("KeyType")->add_child_text(key_type ());
 	typed_key_id->add_child("KeyId")->add_child_text("urn:uuid:" + _key_id);
+}
+
+void
+MXFAsset::write_to_cpl (xmlpp::Node* node) const
+{
+	xmlpp::Node* a = node->add_child (cpl_node_name ());
+	a->add_child ("Id")->add_child_text ("urn:uuid:" + _uuid);
+	a->add_child ("AnnotationText")->add_child_text (_file_name);
+	a->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
+	a->add_child ("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
+	a->add_child ("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));
+	a->add_child ("Duration")->add_child_text (lexical_cast<string> (_duration));
+	if (_encrypted) {
+		a->add_child("KeyId")->add_child_text ("urn:uuid:" + _key_id);
+	}
 }

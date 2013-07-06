@@ -96,6 +96,8 @@ public:
 		return _cpls;
 	}
 
+	bool encrypted () const;
+
 	/** Emitted with a parameter between 0 and 1 to indicate progress
 	 *  for long jobs.
 	 */

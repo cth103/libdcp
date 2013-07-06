@@ -48,6 +48,7 @@ public:
 	int64_t duration;
 	Fraction frame_rate;
 	Fraction screen_aspect_ratio;
+	std::string key_id;
 };
 
 
@@ -80,6 +81,7 @@ public:
 	int64_t intrinsic_duration;
 	int64_t entry_point;
 	int64_t duration;
+	std::string key_id;
 };
 
 /** @brief A simple parser for and representation of a CPL \<MainSubtitle\> node */

@@ -131,10 +131,6 @@ public:
 
 	boost::shared_ptr<SoundAssetWriter> start_write (MXFMetadata const & metadata = MXFMetadata ());
 	
-	/** Write details of this asset to a CPL XML node.
-	 *  @param node Node.
-	 */
-	void write_to_cpl (xmlpp::Node* node) const;
 
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
@@ -152,6 +148,7 @@ private:
 	std::string key_type () const;
 	void construct (boost::function<std::string (Channel)> get_path, MXFMetadata const &);
 	std::string path_from_channel (Channel channel, std::vector<std::string> const & files);
+	std::string cpl_node_name () const;
 
 	/** Number of channels in the asset */
 	int _channels;

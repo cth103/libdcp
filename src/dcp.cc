@@ -302,3 +302,15 @@ DCP::assets () const
 	a.unique ();
 	return a;
 }
+
+bool
+DCP::encrypted () const
+{
+	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
+		if ((*i)->encrypted ()) {
+			return true;
+		}
+	}
+
+	return false;
+}

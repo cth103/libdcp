@@ -61,6 +61,8 @@ public:
 
 	void write_to_cpl (xmlpp::Node *) const;
 
+	bool encrypted () const;
+	
 	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> notes) const;
 
 private:

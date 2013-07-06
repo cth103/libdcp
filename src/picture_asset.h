@@ -59,21 +59,16 @@ public:
 	 */
 	PictureAsset (std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, bool encrypted, Size);
 	
-	/** Write details of this asset to a CPL XML node.
-	 *  @param node Node.
-	 */
-	void write_to_cpl (xmlpp::Node* node) const;
-
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 	Size size () const {
 		return _size;
 	}
 
+	void write_to_cpl (xmlpp::Node *) const;
+
 protected:	
 
-	std::string key_type () const;
-	
 	bool frame_buffer_equals (
 		int frame, EqualityOptions opt, boost::function<void (NoteType, std::string)> note,
 		uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
@@ -81,6 +76,10 @@ protected:
 
 	/** picture size in pixels */
 	Size _size;
+
+private:
+	std::string key_type () const;
+	std::string cpl_node_name () const;
 };
 
 class MonoPictureAsset;

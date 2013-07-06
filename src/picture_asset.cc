@@ -65,21 +65,27 @@ PictureAsset::PictureAsset (string directory, string mxf_name)
 
 }
 
+string
+PictureAsset::cpl_node_name () const
+{
+	return "MainPicture";
+}
+
 void
 PictureAsset::write_to_cpl (xmlpp::Node* node) const
 {
-	xmlpp::Node* mp = node->add_child ("MainPicture");
-	mp->add_child ("Id")->add_child_text ("urn:uuid:" + _uuid);
-	mp->add_child ("AnnotationText")->add_child_text (_file_name);
-	mp->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
-	mp->add_child ("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
-	mp->add_child ("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));
-	mp->add_child ("Duration")->add_child_text (lexical_cast<string> (_duration));
-	if (_encrypted) {
-		mp->add_child("KeyId")->add_child_text("urn:uuid:" + _key_id);
+	MXFAsset::write_to_cpl (node);
+	
+	xmlpp::Node::NodeList c = node->get_children ();
+	xmlpp::Node::NodeList::iterator i = c.begin();
+	while (i != c.end() && (*i)->get_name() != cpl_node_name ()) {
+		++i;
 	}
-	mp->add_child ("FrameRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
-	mp->add_child ("ScreenAspectRatio")->add_child_text (lexical_cast<string> (_size.width) + " " + lexical_cast<string> (_size.height));
+
+	assert (i != c.end ());
+
+	(*i)->add_child ("FrameRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
+	(*i)->add_child ("ScreenAspectRatio")->add_child_text (lexical_cast<string> (_size.width) + " " + lexical_cast<string> (_size.height));
 }
 
 bool

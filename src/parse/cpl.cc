@@ -111,6 +111,8 @@ Picture::Picture (shared_ptr<const cxml::Node> node)
 
 	}
 
+	key_id = node->optional_string_child ("KeyId").get_value_or ("");
+
 	node->ignore_child ("Hash");
 
 	node->done ();
@@ -124,7 +126,8 @@ MainSound::MainSound (shared_ptr<const cxml::Node> node)
 	intrinsic_duration = node->number_child<int64_t> ("IntrinsicDuration");
 	entry_point = node->number_child<int64_t> ("EntryPoint");
 	duration = node->number_child<int64_t> ("Duration");
-
+	key_id = node->optional_string_child ("KeyId").get_value_or ("");
+	
 	node->ignore_child ("Hash");
 	node->ignore_child ("Language");
 	

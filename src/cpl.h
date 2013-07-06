@@ -75,6 +75,8 @@ public:
 	}
 
 	std::list<boost::shared_ptr<const Asset> > assets () const;
+
+	bool encrypted () const;
 	
 	bool equals (CPL const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
 	

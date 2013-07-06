@@ -59,6 +59,8 @@ public:
 
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
+	virtual void write_to_cpl (xmlpp::Node *) const;
+
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
 	 *  @param uuid uuid to use.
@@ -66,9 +68,18 @@ public:
 	void fill_writer_info (ASDCP::WriterInfo* w, std::string uuid, MXFMetadata const & metadata);
 
 	void add_typed_key_id (xmlpp::Element *) const;
+
+	void set_key_id (std::string k) {
+		_key_id = k;
+	}
+
+	bool encrypted () const {
+		return !_key_id.empty ();
+	}
 	
 protected:
 	virtual std::string key_type () const = 0;
+	virtual std::string cpl_node_name () const = 0;
 	
 	/** Signal to emit to report progress, or 0 */
 	boost::signals2::signal<void (float)>* _progress;

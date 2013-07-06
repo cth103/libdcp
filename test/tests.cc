@@ -68,6 +68,9 @@ wav (libdcp::Channel)
 	return "test/data/1s_24-bit_48k_silence.wav";
 }
 
+static string test_corpus = "../libdcp-test";
+
+#include "decryption_test.cc"
 #include "dcp_test.cc"
 #include "error_test.cc"
 #include "read_dcp_test.cc"
@@ -76,12 +79,12 @@ wav (libdcp::Channel)
 #include "color_test.cc"
 #include "recovery_test.cc"
 
-BOOST_AUTO_TEST_CASE (crypt_chain)
-{
-	boost::filesystem::remove_all ("build/test/crypt");
-	boost::filesystem::create_directory ("build/test/crypt");
-	libdcp::make_crypt_chain ("build/test/crypt");
-}
+//BOOST_AUTO_TEST_CASE (crypt_chain)
+//{
+//	boost::filesystem::remove_all ("build/test/crypt");
+//	boost::filesystem::create_directory ("build/test/crypt");
+//	libdcp::make_crypt_chain ("build/test/crypt");
+//}
 
-#include "encryption_test.cc"
-#include "certificates_test.cc"
+//#include "encryption_test.cc"
+//#include "certificates_test.cc"

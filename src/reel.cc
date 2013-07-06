@@ -80,3 +80,9 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::f
 	return true;
 }
 
+bool
+Reel::encrypted () const
+{
+	return ((_main_picture && _main_picture->encrypted ()) || (_main_sound && _main_sound->encrypted ()));
+}
+

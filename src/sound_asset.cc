@@ -216,19 +216,10 @@ SoundAsset::construct (boost::function<string (Channel)> get_path, MXFMetadata c
 	}
 }
 
-void
-SoundAsset::write_to_cpl (xmlpp::Node* node) const
+string
+SoundAsset::cpl_node_name () const
 {
-	xmlpp::Node* ms = node->add_child ("MainSound");
-	ms->add_child ("Id")->add_child_text ("urn:uuid:" + _uuid);
-	ms->add_child ("AnnotationText")->add_child_text (_file_name);
-	ms->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
-	ms->add_child ("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
-	ms->add_child ("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));
-	ms->add_child ("Duration")->add_child_text (lexical_cast<string> (_duration));
-	if (_encrypted) {
-		ms->add_child("KeyId")->add_child_text("urn:uuid:" + _key_id);
-	}
+	return "MainSound";
 }
 
 bool

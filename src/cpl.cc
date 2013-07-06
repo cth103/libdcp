@@ -110,6 +110,7 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 
 				picture->set_entry_point (p->entry_point);
 				picture->set_duration (p->duration);
+				picture->set_key_id (p->key_id);
 			} catch (MXFFileError) {
 				if (require_mxfs) {
 					throw;
@@ -128,6 +129,7 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 
 				picture->set_entry_point (p->entry_point);
 				picture->set_duration (p->duration);
+				picture->set_key_id (p->key_id);
 				
 			} catch (MXFFileError) {
 				if (require_mxfs) {
@@ -148,6 +150,7 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 
 				sound->set_entry_point ((*i)->asset_list->main_sound->entry_point);
 				sound->set_duration ((*i)->asset_list->main_sound->duration);
+				sound->set_key_id ((*i)->asset_list->main_sound->key_id);
 			} catch (MXFFileError) {
 				if (require_mxfs) {
 					throw;
@@ -464,4 +467,17 @@ CPL::make_kdm (
 	}
 
 	return doc;
+}
+
+/** @return true if we have any encrypted content */
+bool
+CPL::encrypted () const
+{
+	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
+		if ((*i)->encrypted ()) {
+			return true;
+		}
+	}
+
+	return false;
 }
