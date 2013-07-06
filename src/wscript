@@ -10,19 +10,20 @@ def build(bld):
     obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1'
     obj.use = 'libkumu-libdcp libasdcp-libdcp'
     obj.source = """
+                 argb_frame.cc
                  asset.cc
-                 dcp.cc        
                  certificates.cc
                  crypt_chain.cc
                  cpl.cc
+                 dcp.cc        
                  dcp_time.cc
                  gamma_lut.cc
+                 kdm.cc
                  metadata.cc
                  mxf_asset.cc
                  picture_asset.cc
                  picture_frame.cc
                  reel.cc
-                 argb_frame.cc
                  sound_asset.cc
                  sound_frame.cc
                  subtitle_asset.cc
