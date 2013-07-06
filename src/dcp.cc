@@ -46,6 +46,7 @@
 #include "reel.h"
 #include "cpl.h"
 #include "encryption.h"
+#include "kdm.h"
 
 using std::string;
 using std::list;
@@ -65,7 +66,7 @@ DCP::DCP (string directory)
 void
 DCP::write_xml (XMLMetadata const & metadata, shared_ptr<Encryption> crypt) const
 {
-	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
+	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
 		(*i)->write_xml (metadata, crypt);
 	}
 
@@ -106,7 +107,7 @@ DCP::write_pkl (string pkl_uuid, XMLMetadata const & metadata, shared_ptr<Encryp
 		(*i)->write_to_pkl (asset_list);
 	}
 	
-	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
+	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
 		(*i)->write_to_pkl (asset_list);
 	}
 
@@ -158,7 +159,7 @@ DCP::write_assetmap (string pkl_uuid, int pkl_length, XMLMetadata const & metada
 	chunk->add_child("Offset")->add_child_text ("0");
 	chunk->add_child("Length")->add_child_text (lexical_cast<string> (pkl_length));
 	
-	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
+	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
 		(*i)->write_to_assetmap (asset_list);
 	}
 
@@ -261,8 +262,8 @@ DCP::equals (DCP const & other, EqualityOptions opt, boost::function<void (NoteT
 		return false;
 	}
 
-	list<shared_ptr<const CPL> >::const_iterator a = _cpls.begin ();
-	list<shared_ptr<const CPL> >::const_iterator b = other._cpls.begin ();
+	list<shared_ptr<CPL> >::const_iterator a = _cpls.begin ();
+	list<shared_ptr<CPL> >::const_iterator b = other._cpls.begin ();
 
 	while (a != _cpls.end ()) {
 		if (!(*a)->equals (*b->get(), opt, note)) {
@@ -293,7 +294,7 @@ list<shared_ptr<const Asset> >
 DCP::assets () const
 {
 	list<shared_ptr<const Asset> > a;
-	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
+	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
 		list<shared_ptr<const Asset> > t = (*i)->assets ();
 		a.merge (t);
 	}
@@ -306,11 +307,25 @@ DCP::assets () const
 bool
 DCP::encrypted () const
 {
-	for (list<shared_ptr<const CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
+	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
 		if ((*i)->encrypted ()) {
 			return true;
 		}
 	}
 
 	return false;
+}
+
+void
+DCP::add_kdm (KDM const & kdm)
+{
+	list<KDMCipher> ciphers = kdm.ciphers ();
+	
+	for (list<shared_ptr<CPL> >::iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
+		for (list<KDMCipher>::iterator j = ciphers.begin(); j != ciphers.end(); ++j) {
+			if (j->cpl_id() == (*i)->id()) {
+				(*i)->add_kdm (kdm);
+			}				
+		}
+	}
 }

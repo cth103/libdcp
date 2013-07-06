@@ -259,7 +259,7 @@ MonoPictureAsset::path_from_list (int f, vector<string> const & files) const
 shared_ptr<const MonoPictureFrame>
 MonoPictureAsset::get_frame (int n) const
 {
-	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n));
+	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n, _decryption_context));
 }
 
 

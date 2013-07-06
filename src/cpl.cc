@@ -48,7 +48,7 @@ CPL::CPL (string directory, string name, ContentKind content_kind, int length, i
 	, _length (length)
 	, _fps (frames_per_second)
 {
-	_uuid = make_uuid ();
+	_id = make_uuid ();
 }
 
 /** Construct a CPL object from a XML file.
@@ -75,6 +75,9 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 	
 	_name = cpl->annotation_text;
 	_content_kind = cpl->content_kind;
+
+	/* Trim urn:uuid: off the front */
+	_id = cpl->id.substr (9);
 
 	for (list<shared_ptr<libdcp::parse::Reel> >::iterator i = cpl->reels.begin(); i != cpl->reels.end(); ++i) {
 
@@ -110,7 +113,10 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 
 				picture->set_entry_point (p->entry_point);
 				picture->set_duration (p->duration);
-				picture->set_key_id (p->key_id);
+				if (p->key_id.length() > 9) {
+					/* Trim urn:uuid: */
+					picture->set_key_id (p->key_id.substr (9));
+				}
 			} catch (MXFFileError) {
 				if (require_mxfs) {
 					throw;
@@ -129,7 +135,10 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 
 				picture->set_entry_point (p->entry_point);
 				picture->set_duration (p->duration);
-				picture->set_key_id (p->key_id);
+				if (p->key_id.length() > 9) {
+					/* Trim urn:uuid: */
+					picture->set_key_id (p->key_id.substr (9));
+				}
 				
 			} catch (MXFFileError) {
 				if (require_mxfs) {
@@ -148,9 +157,14 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 						     )
 					);
 
-				sound->set_entry_point ((*i)->asset_list->main_sound->entry_point);
-				sound->set_duration ((*i)->asset_list->main_sound->duration);
-				sound->set_key_id ((*i)->asset_list->main_sound->key_id);
+				shared_ptr<parse::MainSound> s = (*i)->asset_list->main_sound;
+
+				sound->set_entry_point (s->entry_point);
+				sound->set_duration (s->duration);
+				if (s->key_id.length() > 9) {
+					/* Trim urn:uuid: */
+					sound->set_key_id (s->key_id.substr (9));
+				}
 			} catch (MXFFileError) {
 				if (require_mxfs) {
 					throw;
@@ -175,7 +189,7 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 }
 
 void
-CPL::add_reel (shared_ptr<const Reel> reel)
+CPL::add_reel (shared_ptr<Reel> reel)
 {
 	_reels.push_back (reel);
 }
@@ -186,7 +200,7 @@ CPL::write_xml (XMLMetadata const & metadata, shared_ptr<Encryption> crypt) cons
 	boost::filesystem::path p;
 	p /= _directory;
 	stringstream s;
-	s << _uuid << "_cpl.xml";
+	s << _id << "_cpl.xml";
 	p /= s.str();
 
 	xmlpp::Document doc;
@@ -196,7 +210,7 @@ CPL::write_xml (XMLMetadata const & metadata, shared_ptr<Encryption> crypt) cons
 		root->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	}
 	
-	root->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
+	root->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	root->add_child("AnnotationText")->add_child_text (_name);
 	root->add_child("IssueDate")->add_child_text (metadata.issue_date);
 	root->add_child("Creator")->add_child_text (metadata.creator);
@@ -204,14 +218,14 @@ CPL::write_xml (XMLMetadata const & metadata, shared_ptr<Encryption> crypt) cons
 	root->add_child("ContentKind")->add_child_text (content_kind_to_string (_content_kind));
 	{
 		xmlpp::Node* cv = root->add_child ("ContentVersion");
-		cv->add_child ("Id")->add_child_text ("urn:uri:" + _uuid + "_" + metadata.issue_date);
-		cv->add_child ("LabelText")->add_child_text (_uuid + "_" + metadata.issue_date);
+		cv->add_child ("Id")->add_child_text ("urn:uri:" + _id + "_" + metadata.issue_date);
+		cv->add_child ("LabelText")->add_child_text (_id + "_" + metadata.issue_date);
 	}
 	root->add_child("RatingList");
 
 	xmlpp::Node* reel_list = root->add_child ("ReelList");
 	
-	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
+	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		(*i)->write_to_cpl (reel_list);
 	}
 
@@ -229,7 +243,7 @@ void
 CPL::write_to_pkl (xmlpp::Node* node) const
 {
 	xmlpp::Node* asset = node->add_child ("Asset");
-	asset->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
+	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	asset->add_child("Hash")->add_child_text (_digest);
 	asset->add_child("Size")->add_child_text (lexical_cast<string> (_length));
 	asset->add_child("Type")->add_child_text ("text/xml");
@@ -239,7 +253,7 @@ list<shared_ptr<const Asset> >
 CPL::assets () const
 {
 	list<shared_ptr<const Asset> > a;
-	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
+	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		if ((*i)->main_picture ()) {
 			a.push_back ((*i)->main_picture ());
 		}
@@ -258,10 +272,10 @@ void
 CPL::write_to_assetmap (xmlpp::Node* node) const
 {
 	xmlpp::Node* asset = node->add_child ("Asset");
-	asset->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
+	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
 	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
-	chunk->add_child("Path")->add_child_text (_uuid + "_cpl.xml");
+	chunk->add_child("Path")->add_child_text (_id + "_cpl.xml");
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text("0");
 	chunk->add_child("Length")->add_child_text(lexical_cast<string> (_length));
@@ -301,8 +315,8 @@ CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (NoteT
 		return false;
 	}
 	
-	list<shared_ptr<const Reel> >::const_iterator a = _reels.begin ();
-	list<shared_ptr<const Reel> >::const_iterator b = other._reels.begin ();
+	list<shared_ptr<Reel> >::const_iterator a = _reels.begin ();
+	list<shared_ptr<Reel> >::const_iterator b = other._reels.begin ();
 	
 	while (a != _reels.end ()) {
 		if (!(*a)->equals (*b, opt, note)) {
@@ -375,7 +389,7 @@ CPL::make_kdm (
 					recipient->add_child("X509SubjectName")->add_child_text (Certificate::name_for_xml (recipient_cert->subject()));
 				}
 
-				kdm_required_extensions->add_child("CompositionPlaylistId")->add_child_text("urn:uuid:" + _uuid);
+				kdm_required_extensions->add_child("CompositionPlaylistId")->add_child_text("urn:uuid:" + _id);
 				kdm_required_extensions->add_child("ContentTitleText")->add_child_text(_name);
 				kdm_required_extensions->add_child("ContentAuthenticator")->add_child_text(certificates.leaf()->thumbprint());
 				kdm_required_extensions->add_child("ContentKeysNotValidBefore")->add_child_text("XXX");
@@ -473,11 +487,19 @@ CPL::make_kdm (
 bool
 CPL::encrypted () const
 {
-	for (list<shared_ptr<const Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
+	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		if ((*i)->encrypted ()) {
 			return true;
 		}
 	}
 
 	return false;
+}
+
+void
+CPL::add_kdm (KDM const & kdm)
+{
+	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
+		(*i)->add_kdm (kdm);
+	}
 }

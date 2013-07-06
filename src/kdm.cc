@@ -94,7 +94,8 @@ KDMCipher::KDMCipher (unsigned char const * raw, int len)
 		_key_id = get_uuid (&raw, 16);
 		_not_valid_before = get (&raw, 25);
 		_not_valid_after = get (&raw, 25);
-		_key_data = get_hex (&raw, 16);
+		memcpy (_key_raw, raw, 16);
+		_key_string = get_hex (&raw, 16);
 		break;
 	case 138:
 		/* SMPTE */
@@ -105,7 +106,8 @@ KDMCipher::KDMCipher (unsigned char const * raw, int len)
 		_key_id = get_uuid (&raw, 16);
 		_not_valid_before = get (&raw, 25);
 		_not_valid_after = get (&raw, 25);
-		_key_data = get_hex (&raw, 16);
+		memcpy (_key_raw, raw, 16);
+		_key_string = get_hex (&raw, 16);
 		break;
 	default:
 		assert (false);

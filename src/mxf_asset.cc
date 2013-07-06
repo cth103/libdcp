@@ -33,6 +33,7 @@
 #include "util.h"
 #include "metadata.h"
 #include "exceptions.h"
+#include "kdm.h"
 
 using std::string;
 using std::list;
@@ -46,6 +47,7 @@ MXFAsset::MXFAsset (string directory, string file_name)
 	, _progress (0)
 	, _encrypted (false)
 	, _encryption_context (0)
+	, _decryption_context (0)
 {
 
 }
@@ -55,6 +57,7 @@ MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<
 	, _progress (progress)
 	, _encrypted (encrypted)
 	, _encryption_context (0)
+	, _decryption_context (0)
 {
 	if (_encrypted) {
 		_key_id = make_uuid ();
@@ -148,5 +151,14 @@ MXFAsset::write_to_cpl (xmlpp::Node* node) const
 	a->add_child ("Duration")->add_child_text (lexical_cast<string> (_duration));
 	if (_encrypted) {
 		a->add_child("KeyId")->add_child_text ("urn:uuid:" + _key_id);
+	}
+}
+
+void
+MXFAsset::set_kdm_cipher (KDMCipher cipher)
+{
+	_decryption_context = new ASDCP::AESDecContext;
+	if (ASDCP_FAILURE (_decryption_context->InitKey (cipher.key_raw ()))) {
+		throw MiscError ("could not set up decryption context");
 	}
 }

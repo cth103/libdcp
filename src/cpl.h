@@ -36,6 +36,7 @@ class Reel;
 class XMLMetadata;
 class MXFMetadata;
 class Encryption;
+class KDM;
 	
 /** @brief A CPL within a DCP */
 class CPL
@@ -44,7 +45,7 @@ public:
 	CPL (std::string directory, std::string name, ContentKind content_kind, int length, int frames_per_second);
 	CPL (std::string directory, std::string file, boost::shared_ptr<const parse::AssetMap> asset_map, bool require_mxfs = true);
 
-	void add_reel (boost::shared_ptr<const Reel> reel);
+	void add_reel (boost::shared_ptr<Reel> reel);
 	
 	/** @return the length in frames */
 	int length () const {
@@ -58,7 +59,7 @@ public:
 		return _content_kind;
 	}
 
-	std::list<boost::shared_ptr<const Reel> > reels () const {
+	std::list<boost::shared_ptr<Reel> > reels () const {
 		return _reels;
 	}
 
@@ -77,6 +78,10 @@ public:
 	std::list<boost::shared_ptr<const Asset> > assets () const;
 
 	bool encrypted () const;
+
+	std::string id () const {
+		return _id;
+	}
 	
 	bool equals (CPL const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
 	
@@ -93,6 +98,8 @@ public:
 		MXFMetadata const &,
 		XMLMetadata const &
 		) const;
+
+	void add_kdm (KDM const &);
 	
 private:
 	std::string _directory;
@@ -105,10 +112,10 @@ private:
 	/** frames per second */
 	int _fps;
 	/** reels */
-	std::list<boost::shared_ptr<const Reel> > _reels;
+	std::list<boost::shared_ptr<Reel> > _reels;
 
 	/** our UUID */
-	std::string _uuid;
+	std::string _id;
 	/** a SHA1 digest of our XML */
 	mutable std::string _digest;
 };

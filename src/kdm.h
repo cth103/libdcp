@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_KDM_H
+#define LIBDCP_KDM_H
+
 #include <boost/filesystem.hpp>
 
 namespace libdcp {
@@ -54,8 +57,12 @@ public:
 		return _not_valid_after;
 	}
 	
-	std::string key_data () const {
-		return _key_data;
+	std::string key_string () const {
+		return _key_string;
+	}
+
+	unsigned char const * key_raw () const {
+		return _key_raw;
 	}
 	
 private:
@@ -70,7 +77,8 @@ private:
 	std::string _key_id;
 	std::string _not_valid_before;
 	std::string _not_valid_after;
-	std::string _key_data;
+	std::string _key_string;
+	unsigned char _key_raw[16];
 };
 
 class KDM
@@ -89,4 +97,4 @@ private:
 
 }
 
-	
+#endif

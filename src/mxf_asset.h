@@ -21,6 +21,7 @@
 #define LIBDCP_MXF_ASSET_H
 
 #include <boost/signals2.hpp>
+#include "AS_DCP.h"
 #include "asset.h"
 
 namespace ASDCP {
@@ -31,6 +32,7 @@ namespace libdcp
 {
 
 class MXFMetadata;	
+class KDMCipher;
 
 /** @brief Parent class for assets which have MXF files */	
 class MXFAsset : public Asset
@@ -69,6 +71,10 @@ public:
 
 	void add_typed_key_id (xmlpp::Element *) const;
 
+	std::string key_id () const {
+		return _key_id;
+	}
+
 	void set_key_id (std::string k) {
 		_key_id = k;
 	}
@@ -76,6 +82,8 @@ public:
 	bool encrypted () const {
 		return !_key_id.empty ();
 	}
+
+	void set_kdm_cipher (KDMCipher);
 	
 protected:
 	virtual std::string key_type () const = 0;
@@ -87,6 +95,7 @@ protected:
 	ASDCP::AESEncContext* _encryption_context;
 	std::string _key_value;
 	std::string _key_id;
+	ASDCP::AESDecContext* _decryption_context;
 };
 
 }

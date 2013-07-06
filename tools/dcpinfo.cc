@@ -78,17 +78,17 @@ main (int argc, char* argv[])
 
 	cout << "DCP: " << argv[optind] << "\n";
 
-	list<shared_ptr<const CPL> > cpls = dcp->cpls ();
+	list<shared_ptr<CPL> > cpls = dcp->cpls ();
 
-	for (list<shared_ptr<const CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
+	for (list<shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
 		cout << "  CPL: " << (*i)->name() << "\n"
 		     << "    Length: " << (*i)->length() << "\n"
 		     << "    Frames per second: " << (*i)->frames_per_second() << "\n";
 		
-		list<shared_ptr<const Reel> > reels = (*i)->reels ();
+		list<shared_ptr<Reel> > reels = (*i)->reels ();
 
 		int R = 1;
-		for (list<shared_ptr<const Reel> >::const_iterator j = reels.begin(); j != reels.end(); ++j) {
+		for (list<shared_ptr<Reel> >::const_iterator j = reels.begin(); j != reels.end(); ++j) {
 			cout << "    Reel " << R << "\n";
 			
 			if ((*j)->main_picture()) {

@@ -30,17 +30,18 @@ namespace xmlpp {
 namespace libdcp {
 
 class PictureAsset;
-class SoundAsset;	
-class SubtitleAsset;	
+class SoundAsset;
+class SubtitleAsset;
+class KDM;	
 
 /** @brief A reel within a DCP; the part which actually contains picture, sound and subtitle data */	
 class Reel
 {
 public:
 	Reel (
-		boost::shared_ptr<const PictureAsset> picture,
-		boost::shared_ptr<const SoundAsset> sound,
-		boost::shared_ptr<const SubtitleAsset> subtitle
+		boost::shared_ptr<PictureAsset> picture,
+		boost::shared_ptr<SoundAsset> sound,
+		boost::shared_ptr<SubtitleAsset> subtitle
 		)
 		: _main_picture (picture)
 		, _main_sound (sound)
@@ -65,10 +66,12 @@ public:
 	
 	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> notes) const;
 
+	void add_kdm (KDM const &);
+
 private:
-	boost::shared_ptr<const PictureAsset> _main_picture;
-	boost::shared_ptr<const SoundAsset> _main_sound;
-	boost::shared_ptr<const SubtitleAsset> _main_subtitle;
+	boost::shared_ptr<PictureAsset> _main_picture;
+	boost::shared_ptr<SoundAsset> _main_sound;
+	boost::shared_ptr<SubtitleAsset> _main_subtitle;
 };
 
 }

@@ -48,6 +48,7 @@ class Reel;
 class CPL;
 class XMLMetadata;
 class Encryption;
+class KDM;
 
 /** @class DCP
  *  @brief A class to create or read a DCP.
@@ -92,11 +93,13 @@ public:
 	void add_cpl (boost::shared_ptr<CPL> cpl);
 
 	/** @return The list of CPLs in this DCP */
-	std::list<boost::shared_ptr<const CPL> > cpls () const {
+	std::list<boost::shared_ptr<CPL> > cpls () const {
 		return _cpls;
 	}
 
 	bool encrypted () const;
+
+	void add_kdm (KDM const &);
 
 	/** Emitted with a parameter between 0 and 1 to indicate progress
 	 *  for long jobs.
@@ -131,7 +134,7 @@ private:
 	/** the directory that we are writing to */
 	std::string _directory;
 	/** our CPLs */
-	std::list<boost::shared_ptr<const CPL> > _cpls;
+	std::list<boost::shared_ptr<CPL> > _cpls;
 };
 
 }

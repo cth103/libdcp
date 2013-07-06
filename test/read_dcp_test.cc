@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE (read_dcp)
 	libdcp::DCP d ("test/ref/DCP/foo");
 	d.read ();
 
-	list<shared_ptr<const libdcp::CPL> > cpls = d.cpls ();
+	list<shared_ptr<libdcp::CPL> > cpls = d.cpls ();
 	BOOST_CHECK_EQUAL (cpls.size(), 1);
 
 	BOOST_CHECK_EQUAL (cpls.front()->name(), "A Test DCP");

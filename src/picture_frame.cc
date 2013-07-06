@@ -37,7 +37,7 @@ using namespace libdcp;
  *  @param mxf_path Path to the asset's MXF file.
  *  @param n Frame within the asset, not taking EntryPoint into account.
  */
-MonoPictureFrame::MonoPictureFrame (string mxf_path, int n)
+MonoPictureFrame::MonoPictureFrame (string mxf_path, int n, ASDCP::AESDecContext* c)
 {
 	ASDCP::JP2K::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (mxf_path.c_str()))) {
@@ -47,7 +47,7 @@ MonoPictureFrame::MonoPictureFrame (string mxf_path, int n)
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = new ASDCP::JP2K::FrameBuffer (4 * Kumu::Megabyte);
 
-	if (ASDCP_FAILURE (reader.ReadFrame (n, *_buffer))) {
+	if (ASDCP_FAILURE (reader.ReadFrame (n, *_buffer, c))) {
 		boost::throw_exception (DCPReadError ("could not read video frame"));
 	}
 }

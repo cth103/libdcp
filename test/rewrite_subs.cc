@@ -23,11 +23,11 @@ try
 	DCP* dcp = new DCP (argv[1]);
 	dcp->read (false);
 	
-	list<shared_ptr<const CPL> > cpls = dcp->cpls ();
-	for (list<boost::shared_ptr<const CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
+	list<shared_ptr<CPL> > cpls = dcp->cpls ();
+	for (list<boost::shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
 
-		list<shared_ptr<const Reel> > reels = (*i)->reels ();
-		for (list<shared_ptr<const Reel> >::iterator j = reels.begin(); j != reels.end(); ++j) {
+		list<shared_ptr<Reel> > reels = (*i)->reels ();
+		for (list<shared_ptr<Reel> >::iterator j = reels.begin(); j != reels.end(); ++j) {
 
 			if ((*j)->main_subtitle()) {
 				(*j)->main_subtitle()->write_xml ();

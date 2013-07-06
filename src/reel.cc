@@ -23,8 +23,12 @@
 #include "picture_asset.h"
 #include "sound_asset.h"
 #include "subtitle_asset.h"
+#include "kdm.h"
 
-using namespace std;
+using std::string;
+using std::list;
+using std::cout;
+using boost::shared_ptr;
 using namespace libdcp;
 
 void
@@ -86,3 +90,17 @@ Reel::encrypted () const
 	return ((_main_picture && _main_picture->encrypted ()) || (_main_sound && _main_sound->encrypted ()));
 }
 
+void
+Reel::add_kdm (KDM const & kdm)
+{
+	list<KDMCipher> ciphers = kdm.ciphers ();
+	
+	for (list<KDMCipher>::iterator i = ciphers.begin(); i != ciphers.end(); ++i) {
+		if (i->key_id() == _main_picture->key_id()) {
+			_main_picture->set_kdm_cipher (*i);
+		}
+		if (i->key_id() == _main_sound->key_id()) {
+			_main_sound->set_kdm_cipher (*i);
+		}
+	}
+}
