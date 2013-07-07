@@ -44,6 +44,7 @@ def build(bld):
               dcp.h
               dcp_time.h
               exceptions.h
+              kdm.h
               metadata.h
               mxf_asset.h
               picture_asset.h
