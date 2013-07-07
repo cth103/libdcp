@@ -27,6 +27,7 @@ namespace ASDCP {
 		class FrameBuffer;
 		class SFrameBuffer;
 	}
+	class AESDecContext;
 }
 
 namespace libdcp {
