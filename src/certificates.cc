@@ -97,10 +97,10 @@ Certificate::issuer () const
 string
 Certificate::asn_to_utf8 (ASN1_STRING* s)
 {
-	unsigned char* buf = new unsigned char[256];
+	unsigned char* buf = 0;
 	ASN1_STRING_to_UTF8 (&buf, s);
 	string const u (reinterpret_cast<char *> (buf));
-	delete[] buf;
+	OPENSSL_free (buf);
 	return u;
 }
 
