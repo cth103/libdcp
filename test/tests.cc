@@ -79,6 +79,7 @@ static string test_corpus = "../libdcp-test";
 #include "dcp_time_test.cc"
 #include "color_test.cc"
 #include "recovery_test.cc"
+#include "certificates_test.cc"
 
 //BOOST_AUTO_TEST_CASE (crypt_chain)
 //{
@@ -88,4 +89,3 @@ static string test_corpus = "../libdcp-test";
 //}
 
 //#include "encryption_test.cc"
-//#include "certificates_test.cc"

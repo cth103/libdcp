@@ -1,0 +1,12 @@
+[ default ]
+distinguished_name = req_distinguished_name
+x509_extensions	= v3_ca
+[ v3_ca ]
+basicConstraints = critical,CA:false
+keyUsage = digitalSignature,keyEncipherment
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer:always
+[ req_distinguished_name ]
+O = Unique organization name
+OU = Organization unit
+CN = Entity and dnQualifier

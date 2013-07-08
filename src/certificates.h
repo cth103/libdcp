@@ -52,9 +52,11 @@ public:
 
 	std::string thumbprint () const;
 
-	static std::string name_for_xml (std::string const &);
-
 private:
+	static std::string name_for_xml (X509_NAME *);
+	static std::string asn_to_utf8 (ASN1_STRING *);
+	static std::string get_name_part (X509_NAME *, int);
+
 	X509* _certificate;
 };
 

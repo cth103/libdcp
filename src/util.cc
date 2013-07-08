@@ -321,10 +321,8 @@ libdcp::add_signature_value (xmlpp::Element* parent, CertificateChain const & ce
 		
 		{
 			xmlpp::Element* serial = data->add_child("X509IssuerSerial", ns);
-			serial->add_child("X509IssuerName", ns)->add_child_text(
-				Certificate::name_for_xml ((*i)->issuer())
-				);
-			serial->add_child("X509SerialNumber", ns)->add_child_text((*i)->serial());
+			serial->add_child("X509IssuerName", ns)->add_child_text((*i)->issuer ());
+			serial->add_child("X509SerialNumber", ns)->add_child_text((*i)->serial ());
 		}
 		
 		data->add_child("X509Certificate", ns)->add_child_text((*i)->certificate());
@@ -360,15 +358,11 @@ libdcp::add_signer (xmlpp::Element* parent, CertificateChain const & certificate
 		
 		{
 			xmlpp::Element* serial_element = data->add_child("X509IssuerSerial", ns);
-			serial_element->add_child("X509IssuerName", ns)->add_child_text (
-				Certificate::name_for_xml (certificates.leaf()->issuer())
-				);
-			serial_element->add_child("X509SerialNumber", ns)->add_child_text (
-				certificates.leaf()->serial()
-				);
+			serial_element->add_child("X509IssuerName", ns)->add_child_text (certificates.leaf()->issuer());
+			serial_element->add_child("X509SerialNumber", ns)->add_child_text (certificates.leaf()->serial());
 		}
 		
-		data->add_child("X509SubjectName", ns)->add_child_text (Certificate::name_for_xml (certificates.leaf()->subject()));
+		data->add_child("X509SubjectName", ns)->add_child_text (certificates.leaf()->subject());
 	}
 }
 

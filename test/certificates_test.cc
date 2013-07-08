@@ -21,24 +21,54 @@ BOOST_AUTO_TEST_CASE (certificates)
 {
 	libdcp::CertificateChain c;
 
-	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/crypt/ca.self-signed.pem")));
-	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/crypt/intermediate.signed.pem")));
-	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/data/crypt/leaf.signed.pem")));
+	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/ref/crypt/ca.self-signed.pem")));
+	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/ref/crypt/intermediate.signed.pem")));
+	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/ref/crypt/leaf.signed.pem")));
+
+	list<shared_ptr<libdcp::Certificate> > leaf_to_root = c.leaf_to_root ();
+
+	list<shared_ptr<libdcp::Certificate> >::iterator i = leaf_to_root.begin ();
+
+	/* Leaf */
+	BOOST_CHECK_EQUAL (*i, c.leaf ());
 	
 	BOOST_CHECK_EQUAL (
-		c.root()->issuer(),
-		"/O=example.org/OU=example.org/CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION/dnQualifier=rTeK7x+nopFkyphflooz6p2ZM7A="
+		c.leaf()->issuer(),
+		"dnQualifier=bmtwThq3srgxIAeRMjX6BFhgLDw=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		);
+
+	BOOST_CHECK_EQUAL (
+		c.leaf()->subject(),
+		"dnQualifier=d95fGDzERNdxfYPgphvAR8A18L4=,CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 	
+	++i;
+
+	/* Intermediate */
 	BOOST_CHECK_EQUAL (
-		libdcp::Certificate::name_for_xml (c.root()->issuer()),
-		"dnQualifier=rTeK7x\\+nopFkyphflooz6p2ZM7A=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		(*i)->issuer(),
+		"dnQualifier=ndND9A/cODo2rTdrbLVmfQnoaSc=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		);
+
+	BOOST_CHECK_EQUAL (
+		(*i)->subject(),
+		"dnQualifier=bmtwThq3srgxIAeRMjX6BFhgLDw=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		);
+	
+	++i;
+
+	/* Root */
+	BOOST_CHECK_EQUAL (*i, c.root ());
+	BOOST_CHECK_EQUAL (
+		c.root()->issuer(),
+		"dnQualifier=ndND9A/cODo2rTdrbLVmfQnoaSc=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 
 	BOOST_CHECK_EQUAL (c.root()->serial(), "5");
 
 	BOOST_CHECK_EQUAL (
-		libdcp::Certificate::name_for_xml (c.root()->subject()),
-		"dnQualifier=rTeK7x\\+nopFkyphflooz6p2ZM7A=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		c.root()->subject(),
+		"dnQualifier=ndND9A/cODo2rTdrbLVmfQnoaSc=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
+
 }

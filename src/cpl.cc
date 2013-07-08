@@ -360,12 +360,8 @@ CPL::make_kdm (
 
 		{
 			xmlpp::Element* signer = authenticated_public->add_child("Signer");
-			signer->add_child("X509IssuerName", "ds")->add_child_text (
-				Certificate::name_for_xml (recipient_cert->issuer())
-				);
-			signer->add_child("X509SerialNumber", "ds")->add_child_text (
-				recipient_cert->serial()
-				);
+			signer->add_child("X509IssuerName", "ds")->add_child_text (recipient_cert->issuer());
+			signer->add_child("X509SerialNumber", "ds")->add_child_text (recipient_cert->serial());
 		}
 
 		{
@@ -378,15 +374,11 @@ CPL::make_kdm (
 					xmlpp::Element* recipient = kdm_required_extensions->add_child("Recipient");
 					{
 						xmlpp::Element* serial_element = recipient->add_child("X509IssuerSerial");
-						serial_element->add_child("X509IssuerName", "ds")->add_child_text (
-							Certificate::name_for_xml (recipient_cert->issuer())
-							);
-						serial_element->add_child("X509SerialNumber", "ds")->add_child_text (
-							recipient_cert->serial()
-							);
+						serial_element->add_child("X509IssuerName", "ds")->add_child_text (recipient_cert->issuer());
+						serial_element->add_child("X509SerialNumber", "ds")->add_child_text (recipient_cert->serial());
 					}
 
-					recipient->add_child("X509SubjectName")->add_child_text (Certificate::name_for_xml (recipient_cert->subject()));
+					recipient->add_child("X509SubjectName")->add_child_text (recipient_cert->subject());
 				}
 
 				kdm_required_extensions->add_child("CompositionPlaylistId")->add_child_text("urn:uuid:" + _id);

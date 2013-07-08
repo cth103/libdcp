@@ -26,6 +26,7 @@
 #include <libxml++/nodes/element.h>
 #include "KM_util.h"
 #include "certificates.h"
+#include "compose.hpp"
 #include "exceptions.h"
 
 using std::list;
@@ -90,30 +91,44 @@ string
 Certificate::issuer () const
 {
 	assert (_certificate);
-	
-	X509_NAME* n = X509_get_issuer_name (_certificate);
-	assert (n);
-
-	char b[256];
-	X509_NAME_oneline (n, b, 256);
-	return b;
+	return name_for_xml (X509_get_issuer_name (_certificate));
 }
 
 string
-Certificate::name_for_xml (string const & n)
+Certificate::asn_to_utf8 (ASN1_STRING* s)
 {
-	stringstream x;
+	unsigned char* buf = new unsigned char[256];
+	ASN1_STRING_to_UTF8 (&buf, s);
+	string const u (reinterpret_cast<char *> (buf));
+	delete[] buf;
+	return u;
+}
+
+string
+Certificate::get_name_part (X509_NAME* n, int nid)
+{
+	int p = -1;
+	p = X509_NAME_get_index_by_NID (n, nid, p);
+	assert (p != -1);
+	return asn_to_utf8 (X509_NAME_ENTRY_get_data (X509_NAME_get_entry (n, p)));
+}
 	
-	vector<string> p;
-	boost::split (p, n, boost::is_any_of ("/"));
-	for (vector<string>::const_reverse_iterator i = p.rbegin(); i != p.rend(); ++i) {
-		x << *i << ",";
-	}
 
-	string s = x.str();
+string
+Certificate::name_for_xml (X509_NAME * n)
+{
+	assert (n);
+
+	string s = String::compose (
+		"dnQualifier=%1,CN=%2,OU=%3,O=%4",
+		get_name_part (n, NID_dnQualifier),
+		get_name_part (n, NID_commonName),
+		get_name_part (n, NID_organizationalUnitName),
+		get_name_part (n, NID_organizationName)
+		);
+	
 	boost::replace_all (s, "+", "\\+");
-
-	return s.substr(0, s.length() - 2);
+	return s;
 }
 
 string
@@ -121,12 +136,7 @@ Certificate::subject () const
 {
 	assert (_certificate);
 
-	X509_NAME* n = X509_get_subject_name (_certificate);
-	assert (n);
-
-	char b[256];
-	X509_NAME_oneline (n, b, 256);
-	return b;
+	return name_for_xml (X509_get_subject_name (_certificate));
 }
 
 string
