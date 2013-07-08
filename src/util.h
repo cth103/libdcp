@@ -72,7 +72,9 @@ extern void init ();
 extern void sign (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & signer_key);
 extern void add_signature_value (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & signer_key, std::string const & ns);
 extern void add_signer (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & ns);
-	
+
+extern int base64_decode (std::string const & in, unsigned char* out, int out_length);
+
 }
 
 #endif

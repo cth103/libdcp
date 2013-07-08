@@ -67,3 +67,12 @@ BOOST_AUTO_TEST_CASE (decryption_test)
 	BOOST_CHECK_EQUAL (plaintext_frame->size().height, encrypted_frame->size().height);
 	BOOST_CHECK_EQUAL (memcmp (plaintext_frame->data(), encrypted_frame->data(), plaintext_frame->stride() * plaintext_frame->size().height), 0);
 }
+
+/** Load in a KDM that didn't work at first */
+BOOST_AUTO_TEST_CASE (failing_kdm_test)
+{
+	libdcp::KDM kdm (
+		"test/data/target.pem.crt.de5d4eba-e683-41ca-bdda-aa4ad96af3f4.kdm.xml",
+		"test/data/private.key"
+		);
+}

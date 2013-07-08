@@ -70,8 +70,9 @@ wav (libdcp::Channel)
 
 static string test_corpus = "../libdcp-test";
 
-#include "kdm_test.cc"
+#include "util_test.cc"
 #include "decryption_test.cc"
+#include "kdm_test.cc"
 #include "dcp_test.cc"
 #include "error_test.cc"
 #include "read_dcp_test.cc"

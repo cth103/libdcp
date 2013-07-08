@@ -18,11 +18,14 @@
 */
 
 #include <iomanip>
+#include <boost/algorithm/string.hpp>
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
+#include <openssl/err.h>
 #include <libcxml/cxml.h>
-#include "KM_util.h"
+#include "util.h"
 #include "kdm.h"
+#include "compose.hpp"
 #include "exceptions.h"
 
 using std::list;
@@ -31,6 +34,7 @@ using std::stringstream;
 using std::hex;
 using std::setw;
 using std::setfill;
+using std::cout;
 using boost::shared_ptr;
 using namespace libdcp;
 
@@ -65,18 +69,18 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 
 		/* Decode it from base-64 */
 		unsigned char cipher_value[256];
-		ui32_t cipher_value_len;
-		if (Kumu::base64decode (cipher_value_base64->content().c_str(), cipher_value, sizeof (cipher_value), &cipher_value_len)) {
-			RSA_free (rsa);
-			throw MiscError ("could not base-64-decode CipherValue from KDM");
-		}
+		int const cipher_value_len = base64_decode (cipher_value_base64->content(), cipher_value, sizeof (cipher_value));
 
 		/* Decrypt it */
-		unsigned char decrypted[2048];
-		unsigned int const decrypted_len = RSA_private_decrypt (cipher_value_len, cipher_value, decrypted, rsa, RSA_PKCS1_OAEP_PADDING);
-		assert (decrypted_len < sizeof (decrypted));
+		unsigned char* decrypted = new unsigned char[RSA_size(rsa)];
+		int const decrypted_len = RSA_private_decrypt (cipher_value_len, cipher_value, decrypted, rsa, RSA_PKCS1_OAEP_PADDING);
+		if (decrypted_len == -1) {
+			delete[] decrypted;
+			throw MiscError (String::compose ("Could not decrypt KDM (%1)", ERR_error_string (ERR_get_error(), 0)));
+		}
 
 		_ciphers.push_back (KDMCipher (decrypted, decrypted_len));
+		delete[] decrypted;
 	}
 
 	RSA_free (rsa);

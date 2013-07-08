@@ -405,3 +405,30 @@ bool libdcp::operator!= (libdcp::Size const & a, libdcp::Size const & b)
 	return !(a == b);
 }
 
+/** The base64 decode routine in KM_util.cpp gives different values to both
+ *  this and the command-line base64 for some inputs.  Not sure why.
+ */
+int
+libdcp::base64_decode (string const & in, unsigned char* out, int out_length)
+{
+	BIO* b64 = BIO_new (BIO_f_base64 ());
+
+	/* This means the input should have no newlines */
+	BIO_set_flags (b64, BIO_FLAGS_BASE64_NO_NL);
+
+	/* Copy our input string, removing newlines */
+	char in_buffer[in.size() + 1];
+	char* p = in_buffer;
+	for (size_t i = 0; i < in.size(); ++i) {
+		if (in[i] != '\n' && in[i] != '\r') {
+			*p++ = in[i];
+		}
+	}
+		
+	BIO* bmem = BIO_new_mem_buf (in_buffer, p - in_buffer);
+	bmem = BIO_push (b64, bmem);
+	int const N = BIO_read (bmem, out, out_length);
+	BIO_free_all (bmem);
+
+	return N;
+}
