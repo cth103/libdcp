@@ -50,7 +50,8 @@ libdcp::make_crypt_chain (string directory)
 	{
 		ifstream f ("ca_dnq");
 		getline (f, ca_dnq);
-		boost::replace_all (ca_dnq, "/", "\\/");
+		/* XXX: is this right? */
+		boost::replace_all (ca_dnq, "/", "\\\\/");
 	}
 	
 	string const ca_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION/dnQualifier=" + ca_dnq;
@@ -86,7 +87,7 @@ libdcp::make_crypt_chain (string directory)
 	{
 		ifstream f ("inter_dnq");
 		getline (f, inter_dnq);
-		boost::replace_all (inter_dnq, "/", "\\/");
+		boost::replace_all (inter_dnq, "/", "\\\\/");
 	}
 		
 	string const inter_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION/dnQualifier=" + inter_dnq;
@@ -125,7 +126,7 @@ libdcp::make_crypt_chain (string directory)
 	{
 		ifstream f ("leaf_dnq");
 		getline (f, leaf_dnq);
-		boost::replace_all (leaf_dnq, "/", "\\/");
+		boost::replace_all (leaf_dnq, "/", "\\\\/");
 	}
 
 	string const leaf_subject = "/O=example.org/OU=example.org/CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION/dnQualifier=" + leaf_dnq;
