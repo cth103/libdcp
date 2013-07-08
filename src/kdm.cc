@@ -72,7 +72,7 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 		}
 
 		/* Decrypt it */
-		unsigned char decrypted[256];
+		unsigned char decrypted[2048];
 		unsigned int const decrypted_len = RSA_private_decrypt (cipher_value_len, cipher_value, decrypted, rsa, RSA_PKCS1_OAEP_PADDING);
 		assert (decrypted_len < sizeof (decrypted));
 
