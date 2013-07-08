@@ -21,11 +21,11 @@
 #define LIBDCP_MXF_ASSET_H
 
 #include <boost/signals2.hpp>
-#include "AS_DCP.h"
 #include "asset.h"
 
 namespace ASDCP {
 	class AESEncContext;
+	class AESDecContext;
 }
 
 namespace libdcp
