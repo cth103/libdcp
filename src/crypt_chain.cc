@@ -33,7 +33,7 @@ using std::cout;
 static void command (char const * c)
 {
 	int const r = system (c);
-	if (WEXITSTATUS (r)) {
+	if (r) {
 		stringstream s;
 		s << "error in " << c << "\n";
 		throw libdcp::MiscError (s.str());
