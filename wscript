@@ -22,7 +22,7 @@ def configure(conf):
     conf.env.ENABLE_DEBUG = conf.options.enable_debug
 
     if conf.options.target_windows:
-        conf.env.append_value('CXXFLAGS', '-DLIBDCP_WINDOWS')
+        conf.env.append_value('CXXFLAGS', ['-DLIBDCP_WINDOWS', 'OPENSSL_SYS_WIN32'])
     else:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_POSIX')
 

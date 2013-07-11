@@ -24,9 +24,6 @@
 #include <list>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
-#ifdef LIBDCP_WINDOWS
-#include "wincrypt.h"
-#endif
 #include <openssl/x509.h>
 
 class certificates;
