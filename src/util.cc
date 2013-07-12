@@ -42,6 +42,7 @@
 #include "argb_frame.h"
 #include "certificates.h"
 #include "gamma_lut.h"
+#include "xyz_frame.h"
 
 using std::string;
 using std::cout;
@@ -181,9 +182,9 @@ libdcp::content_kind_from_string (string type)
  *  e.g. 0 reduces by (2^0 == 1), ie keeping the same size.
  *       1 reduces by (2^1 == 2), ie halving the size of the image.
  *  This is useful for scaling 4K DCP images down to 2K.
- *  @return openjpeg image, which the caller must call opj_image_destroy() on.
+ *  @return XYZ image.
  */
-opj_image_t *
+shared_ptr<libdcp::XYZFrame>
 libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 {
 	opj_dinfo_t* decoder = opj_create_decompress (CODEC_J2K);
@@ -203,7 +204,7 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 
 	image->x1 = rint (float(image->x1) / pow (2, reduce));
 	image->y1 = rint (float(image->y1) / pow (2, reduce));
-	return image;
+	return shared_ptr<XYZFrame> (new XYZFrame (image));
 }
 
 /** Convert an openjpeg XYZ image to RGB.
@@ -211,7 +212,7 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
  *  @return RGB image.
  */
 shared_ptr<ARGBFrame>
-libdcp::xyz_to_rgb (opj_image_t* xyz_frame, shared_ptr<const GammaLUT> lut_in, shared_ptr<const GammaLUT> lut_out)
+libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const GammaLUT> lut_in, shared_ptr<const GammaLUT> lut_out)
 {
 	float const dci_coefficient = 48.0 / 52.37;
 
@@ -235,17 +236,17 @@ libdcp::xyz_to_rgb (opj_image_t* xyz_frame, shared_ptr<const GammaLUT> lut_in, s
 		double r, g, b;
 	} d;
 	
-	int* xyz_x = xyz_frame->comps[0].data;
-	int* xyz_y = xyz_frame->comps[1].data;
-	int* xyz_z = xyz_frame->comps[2].data;
+	int* xyz_x = xyz_frame->data (0);
+	int* xyz_y = xyz_frame->data (1);
+	int* xyz_z = xyz_frame->data (2);
 
-	shared_ptr<ARGBFrame> argb_frame (new ARGBFrame (Size (xyz_frame->x1, xyz_frame->y1)));
+	shared_ptr<ARGBFrame> argb_frame (new ARGBFrame (xyz_frame->size ()));
 
 	uint8_t* argb = argb_frame->data ();
 	
-	for (int y = 0; y < xyz_frame->y1; ++y) {
+	for (int y = 0; y < xyz_frame->size().height; ++y) {
 		uint8_t* argb_line = argb;
-		for (int x = 0; x < xyz_frame->x1; ++x) {
+		for (int x = 0; x < xyz_frame->size().width; ++x) {
 
 			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_x < 4096 && *xyz_z < 4096);
 			

@@ -39,7 +39,7 @@ namespace libdcp {
 class ARGBFrame;
 class CertificateChain;
 class GammaLUT;
-class XYZsRGBLUT;
+class XYZFrame;
 
 struct Size {
 	Size ()
@@ -64,8 +64,8 @@ extern std::string make_digest (std::string filename);
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
 extern bool empty_or_white_space (std::string s);
-extern opj_image_t* decompress_j2k (uint8_t* data, int64_t size, int reduce);
-extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (opj_image_t* xyz_frame, boost::shared_ptr<const GammaLUT>, boost::shared_ptr<const GammaLUT>);
+extern boost::shared_ptr<XYZFrame> decompress_j2k (uint8_t* data, int64_t size, int reduce);
+extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (boost::shared_ptr<const XYZFrame>, boost::shared_ptr<const GammaLUT>, boost::shared_ptr<const GammaLUT>);
 
 extern void init ();
 

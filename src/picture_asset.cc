@@ -36,6 +36,7 @@
 #include "util.h"
 #include "exceptions.h"
 #include "picture_frame.h"
+#include "xyz_frame.h"
 
 using std::string;
 using std::ostream;
@@ -337,30 +338,25 @@ PictureAsset::frame_buffer_equals (
 	}
 		
 	/* Decompress the images to bitmaps */
-	opj_image_t* image_A = decompress_j2k (const_cast<uint8_t*> (data_A), size_A, 0);
-	opj_image_t* image_B = decompress_j2k (const_cast<uint8_t*> (data_B), size_B, 0);
+	shared_ptr<XYZFrame> image_A = decompress_j2k (const_cast<uint8_t*> (data_A), size_A, 0);
+	shared_ptr<XYZFrame> image_B = decompress_j2k (const_cast<uint8_t*> (data_B), size_B, 0);
 	
 	/* Compare them */
 	
-	if (image_A->numcomps != image_B->numcomps) {
-		note (ERROR, "image component counts for frame " + lexical_cast<string>(frame) + " differ");
-		return false;
-	}
-	
-	vector<int> abs_diffs (image_A->comps[0].w * image_A->comps[0].h * image_A->numcomps);
+	vector<int> abs_diffs (image_A->size().width * image_A->size().height * 3);
 	int d = 0;
 	int max_diff = 0;
 	
-	for (int c = 0; c < image_A->numcomps; ++c) {
+	for (int c = 0; c < 3; ++c) {
 		
-		if (image_A->comps[c].w != image_B->comps[c].w || image_A->comps[c].h != image_B->comps[c].h) {
+		if (image_A->size() != image_B->size()) {
 			note (ERROR, "image sizes for frame " + lexical_cast<string>(frame) + " differ");
 			return false;
 		}
 		
-		int const pixels = image_A->comps[c].w * image_A->comps[c].h;
+		int const pixels = image_A->size().width * image_A->size().height;
 		for (int j = 0; j < pixels; ++j) {
-			int const t = abs (image_A->comps[c].data[j] - image_B->comps[c].data[j]);
+			int const t = abs (image_A->data(c)[j] - image_B->data(c)[j]);
 			abs_diffs[d++] = t;
 			max_diff = max (max_diff, t);
 		}
@@ -391,9 +387,6 @@ PictureAsset::frame_buffer_equals (
 		note (ERROR, "standard deviation " + lexical_cast<string>(std_dev) + " out of range " + lexical_cast<string>(opt.max_std_dev_pixel_error) + " in frame " + lexical_cast<string>(frame));
 		return false;
 	}
-
-	opj_image_destroy (image_A);
-	opj_image_destroy (image_B);
 
 	return true;
 }

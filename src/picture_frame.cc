@@ -81,11 +81,10 @@ MonoPictureFrame::j2k_size () const
 shared_ptr<ARGBFrame>
 MonoPictureFrame::argb_frame (int reduce, float srgb_gamma) const
 {
-	opj_image_t* xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce);
-	assert (xyz_frame->numcomps == 3);
-	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA), GammaLUT::cache.get (12, 1 / srgb_gamma));
-	opj_image_destroy (xyz_frame);
-	return f;
+	return xyz_to_rgb (
+		decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce),
+		GammaLUT::cache.get (12, DCI_GAMMA), GammaLUT::cache.get (12, 1 / srgb_gamma)
+		);
 }
 
 /** Make a picture frame from a 3D (stereoscopic) asset.
@@ -127,7 +126,7 @@ StereoPictureFrame::~StereoPictureFrame ()
 shared_ptr<ARGBFrame>
 StereoPictureFrame::argb_frame (Eye eye, int reduce, float srgb_gamma) const
 {
-	opj_image_t* xyz_frame = 0;
+	shared_ptr<XYZFrame> xyz_frame;
 	switch (eye) {
 	case LEFT:
 		xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->Left.RoData()), _buffer->Left.Size(), reduce);
@@ -137,10 +136,7 @@ StereoPictureFrame::argb_frame (Eye eye, int reduce, float srgb_gamma) const
 		break;
 	}
 	
-	assert (xyz_frame->numcomps == 3);
-	shared_ptr<ARGBFrame> f = xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA), GammaLUT::cache.get (12, 1 / srgb_gamma));
-	opj_image_destroy (xyz_frame);
-	return f;
+	return xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA), GammaLUT::cache.get (12, 1 / srgb_gamma));
 }
 
 uint8_t const *

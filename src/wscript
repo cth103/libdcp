@@ -32,6 +32,7 @@ def build(bld):
                  types.cc
                  util.cc
                  version.cc
+                 xyz_frame.cc
                  parse/asset_map.cc
                  parse/cpl.cc
                  parse/pkl.cc
@@ -62,6 +63,7 @@ def build(bld):
               types.h
               util.h
               version.h
+              xyz_frame.h
               """
 
     bld.install_files('${PREFIX}/include/libdcp', headers)
