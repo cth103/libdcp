@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_SOUND_FRAME_H
+#define LIBDCP_SOUND_FRAME_H
+
 #include <string>
 #include <stdint.h>
 
@@ -42,3 +45,5 @@ private:
 };
 
 }
+
+#endif
