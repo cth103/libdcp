@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_CPL_H
+#define LIBDCP_CPL_H
+
 #include <list>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
@@ -121,3 +124,5 @@ private:
 };
 
 }
+
+#endif
