@@ -23,9 +23,11 @@ def build(bld):
                  mxf_asset.cc
                  picture_asset.cc
                  picture_frame.cc
+                 rec709_linearised_gamma_lut.cc
                  reel.cc
                  sound_asset.cc
                  sound_frame.cc
+                 srgb_linearised_gamma_lut.cc
                  subtitle_asset.cc
                  types.cc
                  util.cc
@@ -44,15 +46,18 @@ def build(bld):
               dcp.h
               dcp_time.h
               exceptions.h
+              gamma_lut.h
               kdm.h
               metadata.h
               mxf_asset.h
               picture_asset.h
               picture_frame.h
+              rec709_linearised_gamma_lut.h
               reel.h
               argb_frame.h
               sound_asset.h
               sound_frame.h
+              srgb_linearised_gamma_lut.h
               subtitle_asset.h
               types.h
               util.h
