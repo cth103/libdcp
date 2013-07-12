@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_REEL_H
+#define LIBDCP_REEL_H
+
 #include <list>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
@@ -75,3 +78,5 @@ private:
 };
 
 }
+
+#endif
