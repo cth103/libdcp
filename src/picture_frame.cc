@@ -26,6 +26,7 @@
 #include "lut.h"
 #include "util.h"
 #include "gamma_lut.h"
+#include "rgb_xyz.h"
 
 #define DCI_GAMMA 2.6
 

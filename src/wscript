@@ -25,6 +25,7 @@ def build(bld):
                  picture_frame.cc
                  rec709_linearised_gamma_lut.cc
                  reel.cc
+                 rgb_xyz.cc
                  sound_asset.cc
                  sound_frame.cc
                  srgb_linearised_gamma_lut.cc
@@ -53,6 +54,7 @@ def build(bld):
               mxf_asset.h
               picture_asset.h
               picture_frame.h
+              rgb_xyz.h
               rec709_linearised_gamma_lut.h
               reel.h
               argb_frame.h
