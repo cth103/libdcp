@@ -34,11 +34,11 @@ namespace libdcp
  *
  *  <pre>
  *  Byte   /- 0 -------|- 1 --------|- 2 --------|- 3 --------|- 4 --------|- 5 --------| ...
- *         |(0, 0) Blue|(0, 0) Red  |(0, 0) Blue |(0, 0) Alpha|(0, 1) Blue |(0, 1) Red  | ...
+ *         |(0, 0) Blue|(0, 0)Green |(0, 0) Red  |(0, 0) Alpha|(0, 1) Blue |(0, 1) Green| ...
  *  </pre>
  *
  *  So that the first byte is the blue component of the pixel at x=0, y=0, the second
- *  is the red component, and so on.
+ *  is the green component, and so on.
  *
  *  Lines are packed so that the second row directly follows the first.
  */
