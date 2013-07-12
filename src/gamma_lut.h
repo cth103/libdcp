@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_GAMMA_LUT_H
+#define LIBDCP_GAMMA_LUT_H
+
 #include "lut.h"
 #include "lut_cache.h"
 
@@ -30,3 +33,5 @@ public:
 };
 
 }
+
+#endif
