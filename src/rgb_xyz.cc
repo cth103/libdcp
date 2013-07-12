@@ -21,31 +21,23 @@
 #include "argb_frame.h"
 #include "xyz_frame.h"
 #include "gamma_lut.h"
+#include "image.h"
+#include "colour_matrix.h"
 
 using std::min;
 using std::max;
 using boost::shared_ptr;
 using namespace libdcp;
 
+#define DCI_COEFFICIENT (48.0 / 52.37)
+
 /** Convert an openjpeg XYZ image to RGB.
  *  @param xyz_frame Frame in XYZ.
  *  @return RGB image.
  */
 shared_ptr<ARGBFrame>
-libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const GammaLUT> lut_in, shared_ptr<const GammaLUT> lut_out)
+libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const LUT> lut_in, shared_ptr<const LUT> lut_out)
 {
-	float const dci_coefficient = 48.0 / 52.37;
-
-        /* sRGB color matrix for XYZ -> RGB.  This is the same as the one used by the Fraunhofer
-	   EasyDCP player, I think.
-	*/
-
-	float const colour_matrix[3][3] = {
-		{  3.24096989631653,   -1.5373831987381,  -0.498610764741898 },
-		{ -0.96924364566803,    1.87596750259399,  0.0415550582110882 },
-		{  0.0556300804018974, -0.203976958990097, 1.05697154998779 }
-	};
-
 	int const max_colour = pow (2, lut_out->bit_depth()) - 1;
 
 	struct {
@@ -76,14 +68,14 @@ libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const Gamma
 			s.z = lut_in->lut()[*xyz_z++];
 
 			/* DCI companding */
-			s.x /= dci_coefficient;
-			s.y /= dci_coefficient;
-			s.z /= dci_coefficient;
-			
+			s.x /= DCI_COEFFICIENT;
+			s.y /= DCI_COEFFICIENT;
+			s.z /= DCI_COEFFICIENT;
+
 			/* XYZ to RGB */
-			d.r = ((s.x * colour_matrix[0][0]) + (s.y * colour_matrix[0][1]) + (s.z * colour_matrix[0][2]));
-			d.g = ((s.x * colour_matrix[1][0]) + (s.y * colour_matrix[1][1]) + (s.z * colour_matrix[1][2]));
-			d.b = ((s.x * colour_matrix[2][0]) + (s.y * colour_matrix[2][1]) + (s.z * colour_matrix[2][2]));
+			d.r = ((s.x * colour_matrix::xyz_to_rgb[0][0]) + (s.y * colour_matrix::xyz_to_rgb[0][1]) + (s.z * colour_matrix::xyz_to_rgb[0][2]));
+			d.g = ((s.x * colour_matrix::xyz_to_rgb[1][0]) + (s.y * colour_matrix::xyz_to_rgb[1][1]) + (s.z * colour_matrix::xyz_to_rgb[1][2]));
+			d.b = ((s.x * colour_matrix::xyz_to_rgb[2][0]) + (s.y * colour_matrix::xyz_to_rgb[2][1]) + (s.z * colour_matrix::xyz_to_rgb[2][2]));
 			
 			d.r = min (d.r, 1.0);
 			d.r = max (d.r, 0.0);
@@ -107,3 +99,58 @@ libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const Gamma
 	return argb_frame;
 }
 
+shared_ptr<libdcp::XYZFrame>
+libdcp::rgb_to_xyz (shared_ptr<const Image> rgb, shared_ptr<const LUT> lut_in, shared_ptr<const LUT> lut_out, float const colour_matrix[3][3])
+{
+	assert (lut_in->bit_depth() == 12);
+	assert (lut_out->bit_depth() == 16);
+	
+	shared_ptr<XYZFrame> xyz (new XYZFrame (rgb->size ()));
+
+	struct {
+		double r, g, b;
+	} s;
+
+	struct {
+		double x, y, z;
+	} d;
+
+	int jn = 0;
+	for (int y = 0; y < rgb->size().height; ++y) {
+		uint8_t* p = rgb->data()[0] + y * rgb->stride()[0];
+		for (int x = 0; x < rgb->size().width; ++x) {
+
+			/* In gamma LUT (converting 8-bit input to 12-bit) */
+			s.r = lut_in->lut()[*p++ << 4];
+			s.g = lut_in->lut()[*p++ << 4];
+			s.b = lut_in->lut()[*p++ << 4];
+			
+			/* RGB to XYZ Matrix */
+			d.x = ((s.r * colour_matrix[0][0]) +
+			       (s.g * colour_matrix[0][1]) +
+			       (s.b * colour_matrix[0][2]));
+			
+			d.y = ((s.r * colour_matrix[1][0]) +
+			       (s.g * colour_matrix[1][1]) +
+			       (s.b * colour_matrix[1][2]));
+			
+			d.z = ((s.r * colour_matrix[2][0]) +
+			       (s.g * colour_matrix[2][1]) +
+			       (s.b * colour_matrix[2][2]));
+			
+			/* DCI companding */
+			d.x = d.x * DCI_COEFFICIENT * 65535;
+			d.y = d.y * DCI_COEFFICIENT * 65535;
+			d.z = d.z * DCI_COEFFICIENT * 65535;
+			
+			/* Out gamma LUT */
+			xyz->data(0)[jn] = lut_out->lut()[(int) d.x] * 4096;
+			xyz->data(1)[jn] = lut_out->lut()[(int) d.y] * 4096;
+			xyz->data(2)[jn] = lut_out->lut()[(int) d.z] * 4096;
+
+			++jn;
+		}
+	}
+
+	return xyz;
+}

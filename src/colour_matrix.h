@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,22 +17,14 @@
 
 */
 
-#include "srgb_linearised_gamma_lut.h"
+namespace libdcp {
 
-using namespace libdcp;
+namespace colour_matrix {
 
-LUTCache<SRGBLinearisedGammaLUT> SRGBLinearisedGammaLUT::cache;
+extern float const xyz_to_rgb[3][3];
+extern float const srgb_to_xyz[3][3];
+extern float const rec709_to_xyz[3][3];
 
-SRGBLinearisedGammaLUT::SRGBLinearisedGammaLUT (int bits, float gamma)
-	: LUT (bits, gamma)
-{
-	int const bit_length = pow (2, bits);
-	for (int i = 0; i < bit_length; ++i) {
-		float const p = static_cast<float> (i) / (bit_length - 1);
-		if (p > 0.04045) {
-			_lut[i] = pow ((p + 0.055) / 1.055, gamma);
-		} else {
-			_lut[i] = p / 12.92;
-		}
-	}
+}	
+
 }

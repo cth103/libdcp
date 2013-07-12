@@ -25,7 +25,7 @@
 
 namespace libdcp {
 
-class GammaLUT : public LUT<float>
+class GammaLUT : public LUT
 {
 public:
 	GammaLUT (int bit_length, float gamma);

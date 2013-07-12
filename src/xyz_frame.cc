@@ -18,6 +18,7 @@
 */
 
 #include <cassert>
+#include <stdexcept>
 #include "xyz_frame.h"
 
 using namespace libdcp;
@@ -27,6 +28,34 @@ XYZFrame::XYZFrame (opj_image_t* image)
 	: _opj_image (image)
 {
 	assert (_opj_image->numcomps == 3);
+}
+
+XYZFrame::XYZFrame (Size size)
+{
+	opj_image_cmptparm_t cmptparm[3];
+	
+	for (int i = 0; i < 3; ++i) {
+		cmptparm[i].dx = 1;
+		cmptparm[i].dy = 1;
+		cmptparm[i].w = size.width;
+		cmptparm[i].h = size.height;
+		cmptparm[i].x0 = 0;
+		cmptparm[i].y0 = 0;
+		cmptparm[i].prec = 12;
+		cmptparm[i].bpp = 12;
+		cmptparm[i].sgnd = 0;
+	}
+
+	/* XXX: is this _SRGB right? */
+	_opj_image = opj_image_create (3, &cmptparm[0], CLRSPC_SRGB);
+	if (_opj_image == 0) {
+		throw std::runtime_error ("could not create libopenjpeg image");
+	}
+
+	_opj_image->x0 = 0;
+	_opj_image->y0 = 0;
+	_opj_image->x1 = size.width;
+	_opj_image->y1 = size.height;
 }
 
 XYZFrame::~XYZFrame ()

@@ -17,21 +17,26 @@
 
 */
 
-#include <boost/shared_ptr.hpp>
+#include "colour_matrix.h"
 
-namespace libdcp {
+/* sRGB color matrix for XYZ -> RGB.  This is the same as the one used by the Fraunhofer
+   EasyDCP player, I think.
+*/
 
-class ARGBFrame;	
-class XYZFrame;
-class LUT;
-class Image;
-	
-extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (
-	boost::shared_ptr<const XYZFrame>, boost::shared_ptr<const LUT>, boost::shared_ptr<const LUT>
-	);
+float const libdcp::colour_matrix::xyz_to_rgb[3][3] = {
+	{  3.24096989631653,   -1.5373831987381,  -0.498610764741898 },
+	{ -0.96924364566803,    1.87596750259399,  0.0415550582110882 },
+	{  0.0556300804018974, -0.203976958990097, 1.05697154998779 }
+};
 
-extern boost::shared_ptr<XYZFrame> rgb_to_xyz (
-	boost::shared_ptr<const Image>, boost::shared_ptr<const LUT>, boost::shared_ptr<const LUT>, float const colour_matrix[3][3]
-	);
-	
-}
+float const libdcp::colour_matrix::srgb_to_xyz[3][3] = {
+	{0.4124564, 0.3575761, 0.1804375},
+	{0.2126729, 0.7151522, 0.0721750},
+	{0.0193339, 0.1191920, 0.9503041}
+};
+
+float const libdcp::colour_matrix::rec709_to_xyz[3][3] = {
+	{0.4124564, 0.3575761, 0.1804375},
+	{0.2126729, 0.7151522, 0.0721750},
+	{0.0193339, 0.1191920, 0.9503041}
+};

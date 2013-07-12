@@ -13,11 +13,13 @@ def build(bld):
                  argb_frame.cc
                  asset.cc
                  certificates.cc
+                 colour_matrix.cc
                  crypt_chain.cc
                  cpl.cc
                  dcp.cc        
                  dcp_time.cc
                  gamma_lut.cc
+                 image.cc
                  kdm.cc
                  metadata.cc
                  mxf_asset.cc
@@ -43,13 +45,16 @@ def build(bld):
     headers = """
               asset.h
               certificates.h
+              colour_matrix.h
               cpl.h
               crypt_chain.h
               dcp.h
               dcp_time.h
               exceptions.h
               gamma_lut.h
+              image.h
               kdm.h
+              lut.h
               metadata.h
               mxf_asset.h
               picture_asset.h

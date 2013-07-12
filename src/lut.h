@@ -24,7 +24,6 @@
 
 namespace libdcp {
 
-template<typename T>
 class LUT
 {
 public:
@@ -33,14 +32,14 @@ public:
 		, _bit_depth (bit_depth)
 		, _gamma (gamma)
 	{
-		_lut = new T[int(std::pow(2.0f, _bit_depth))];
+		_lut = new float[int(std::pow(2.0f, _bit_depth))];
 	}
 
 	virtual ~LUT() {
 		delete[] _lut;
 	}
 	
-	T const * lut() const {
+	float const * lut() const {
 		return _lut;
 	}
 
@@ -53,7 +52,7 @@ public:
 	}
 
 protected:
-	T* _lut;
+	float* _lut;
 	int _bit_depth;
 	float _gamma;
 };

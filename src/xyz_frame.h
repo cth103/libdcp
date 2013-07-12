@@ -26,6 +26,7 @@ class XYZFrame
 {
 public:
 	XYZFrame (opj_image_t *);
+	XYZFrame (Size);
 	~XYZFrame ();
 
 	int* data (int) const;

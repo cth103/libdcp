@@ -22,7 +22,7 @@
 
 namespace libdcp {
 
-class SRGBLinearisedGammaLUT : public LUT<float>
+class SRGBLinearisedGammaLUT : public LUT
 {
 public:
 	SRGBLinearisedGammaLUT (int bit_length, float gamma);
