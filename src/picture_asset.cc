@@ -117,7 +117,6 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost:
 	
 	if (
 		desc_A.EditRate != desc_B.EditRate ||
-		desc_A.ContainerDuration != desc_B.ContainerDuration ||
 		desc_A.SampleRate != desc_B.SampleRate ||
 		desc_A.StoredWidth != desc_B.StoredWidth ||
 		desc_A.StoredHeight != desc_B.StoredHeight ||
@@ -140,6 +139,10 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost:
 		return false;
 	}
 
+	if (desc_A.ContainerDuration != desc_B.ContainerDuration) {
+		note (ERROR, "video container durations differ");
+	}
+	
 //		for (unsigned int j = 0; j < ASDCP::JP2K::MaxComponents; ++j) {
 //			if (desc_A.ImageComponents[j] != desc_B.ImageComponents[j]) {
 //				notes.pack_start ("video MXF picture descriptors differ");
