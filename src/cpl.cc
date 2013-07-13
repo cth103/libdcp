@@ -305,9 +305,7 @@ CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (NoteT
 
 	if (_length != other._length) {
 		stringstream s;
-		s << "lengths differ (" << _length << " cf " << other._length << ")";
 		note (ERROR, String::compose ("lengths differ (%1 vs %2)", _length, other._length));
-		return false;
 	}
 
 	if (_reels.size() != other._reels.size()) {

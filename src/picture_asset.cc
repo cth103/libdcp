@@ -275,6 +275,10 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, bo
 	assert (other_picture);
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
+		if (i >= other_picture->intrinsic_duration()) {
+			return false;
+		}
+		
 		note (PROGRESS, "Comparing video frame " + lexical_cast<string> (i) + " of " + lexical_cast<string> (_intrinsic_duration));
 		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
 		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
