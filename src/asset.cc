@@ -98,18 +98,16 @@ bool
 Asset::equals (shared_ptr<const Asset> other, EqualityOptions, boost::function<void (NoteType, string)> note) const
 {
 	if (_edit_rate != other->_edit_rate) {
-		note (ERROR, "MXF edit rates differ");
+		note (ERROR, "asset edit rates differ");
 		return false;
 	}
 	
 	if (_intrinsic_duration != other->_intrinsic_duration) {
-		note (ERROR, "MXF intrinsic durations differ");
-		return false;
+		note (ERROR, "asset intrinsic durations differ");
 	}
 
 	if (_duration != other->_duration) {
-		note (ERROR, "MXF durations differ");
-		return false;
+		note (ERROR, "asset durations differ");
 	}
 
 	return true;
