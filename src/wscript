@@ -55,6 +55,7 @@ def build(bld):
               image.h
               kdm.h
               lut.h
+              lut_cache.h
               metadata.h
               mxf_asset.h
               picture_asset.h
