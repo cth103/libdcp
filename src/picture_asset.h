@@ -33,7 +33,9 @@ namespace libdcp
 {
 
 class MonoPictureFrame;	
-class StereoPictureFrame;	
+class StereoPictureFrame;
+class MonoPictureAssetWriter;
+class StereoPictureAssetWriter;
 
 /** @brief An asset made up of JPEG2000 files */
 class PictureAsset : public MXFAsset
@@ -84,66 +86,6 @@ private:
 
 class MonoPictureAsset;
 
-struct FrameInfo
-{
-	FrameInfo (uint64_t o, uint64_t s, std::string h)
-		: offset (o)
-		, size (s)
-		, hash (h)
-	{}
-
-	FrameInfo (std::istream& s);
-
-	void write (std::ostream& s);
-	
-	uint64_t offset;
-	uint64_t size;
-	std::string hash;
-};
-
-/** A helper class for writing to MonoPictureAssets progressively (i.e. writing frame-by-frame,
- *  rather than giving libdcp all the frames in one go).
- *
- *  Objects of this class can only be created with MonoPictureAsset::start_write().
- *
- *  Frames can be written to the MonoPictureAsset by calling write() with a JPEG2000 image
- *  (a verbatim .j2 file).  finalize() must be called after the last frame has been written.
- *  The action of finalize() can't be done in MonoPictureAssetWriter's destructor as it may
- *  throw an exception.
- */
-class MonoPictureAssetWriter
-{
-public:
-	FrameInfo write (uint8_t* data, int size);
-	void fake_write (int size);
-	void finalize ();
-
-private:
-	friend class MonoPictureAsset;
-
-	MonoPictureAssetWriter (MonoPictureAsset *, bool, MXFMetadata const &);
-	void start (uint8_t *, int);
-
-	/* no copy construction */
-	MonoPictureAssetWriter (MonoPictureAssetWriter const &);
-	MonoPictureAssetWriter& operator= (MonoPictureAssetWriter const &);
-
-	/* do this with an opaque pointer so we don't have to include
-	   ASDCP headers
-	*/
-	   
-	struct ASDCPState;
-	boost::shared_ptr<ASDCPState> _state;
-
-	MonoPictureAsset* _asset;
-	/** Number of picture frames written to the asset so far */
-	int _frames_written;
-	bool _started;
-	/** true if finalize() has been called */
-	bool _finalized;
-	bool _overwrite;
-	MXFMetadata _metadata;
-};
 
 /** A 2D (monoscopic) picture asset */
 class MonoPictureAsset : public PictureAsset
@@ -229,7 +171,20 @@ class StereoPictureAsset : public PictureAsset
 {
 public:
 	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, int intrinsic_duration);
-	
+
+	/** Construct a StereoPictureAsset for progressive writing using
+	 *  start_write() and a StereoPictureAssetWriter.
+	 *
+	 *  @param directory Directory to put the MXF in.
+	 *  @param mxf_name Filename of the MXF within this directory.
+	 *  @param fps Video frames per second.
+	 *  @param size Size in pixels that the picture frames will be.
+	 */
+	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
+
+	/** Start a progressive write to a StereoPictureAsset */
+	boost::shared_ptr<StereoPictureAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ());
+
 	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 };

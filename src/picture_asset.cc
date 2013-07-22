@@ -37,6 +37,7 @@
 #include "exceptions.h"
 #include "picture_frame.h"
 #include "xyz_frame.h"
+#include "picture_asset_writer.h"
 
 using std::string;
 using std::ostream;
@@ -429,126 +430,14 @@ MonoPictureAsset::start_write (bool overwrite, MXFMetadata const & metadata)
 	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, overwrite, metadata));
 }
 
-FrameInfo::FrameInfo (istream& s)
-{
-	s >> offset >> size >> hash;
-}
-
-void
-FrameInfo::write (ostream& s)
-{
-	s << offset << " " << size << " " << hash;
-}
-
-struct MonoPictureAssetWriter::ASDCPState
-{
-	ASDCPState()
-		: frame_buffer (4 * Kumu::Megabyte)
-	{}
-	
-	ASDCP::JP2K::CodestreamParser j2k_parser;
-	ASDCP::JP2K::FrameBuffer frame_buffer;
-	ASDCP::JP2K::MXFWriter mxf_writer;
-	ASDCP::WriterInfo writer_info;
-	ASDCP::JP2K::PictureDescriptor picture_descriptor;
-};
-
-
-/** @param a Asset to write to.  `a' must not be deleted while
- *  this writer class still exists, or bad things will happen.
- */
-MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* a, bool overwrite, MXFMetadata const & m)
-	: _state (new MonoPictureAssetWriter::ASDCPState)
-	, _asset (a)
-	, _frames_written (0)
-	, _started (false)
-	, _finalized (false)
-	, _overwrite (overwrite)
-	, _metadata (m)
-{
-
-}
-
-
-void
-MonoPictureAssetWriter::start (uint8_t* data, int size)
-{
-	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
-		boost::throw_exception (MiscError ("could not parse J2K frame"));
-	}
-
-	_state->j2k_parser.FillPictureDescriptor (_state->picture_descriptor);
-	_state->picture_descriptor.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
-	
-	_asset->fill_writer_info (&_state->writer_info, _asset->uuid(), _metadata);
-	
-	if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (
-				   _asset->path().string().c_str(),
-				   _state->writer_info,
-				   _state->picture_descriptor,
-				   16384,
-				   _overwrite)
-		    )) {
-		
-		boost::throw_exception (MXFFileError ("could not open MXF file for writing", _asset->path().string()));
-	}
-
-	_started = true;
-}
-
-FrameInfo
-MonoPictureAssetWriter::write (uint8_t* data, int size)
-{
-	assert (!_finalized);
-
-	if (!_started) {
-		start (data, size);
-	}
-
- 	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
- 		boost::throw_exception (MiscError ("could not parse J2K frame"));
- 	}
-
-	uint64_t const before_offset = _state->mxf_writer.Tell ();
-
-	string hash;
-	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, 0, 0, &hash))) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
-	}
-
-	++_frames_written;
-	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
-}
-
-void
-MonoPictureAssetWriter::fake_write (int size)
-{
-	assert (_started);
-	assert (!_finalized);
-
-	if (ASDCP_FAILURE (_state->mxf_writer.FakeWriteFrame (size))) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
-	}
-
-	++_frames_written;
-}
-
-void
-MonoPictureAssetWriter::finalize ()
-{
-	assert (!_finalized);
-	
-	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
-		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _asset->path().string()));
-	}
-
-	_finalized = true;
-	_asset->set_intrinsic_duration (_frames_written);
-	_asset->set_duration (_frames_written);
-}
-
 string
 PictureAsset::key_type () const
 {
 	return "MDIK";
+}
+
+StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, Size size)
+	: PictureAsset (directory, mxf_name, 0, fps, 0, false, size)
+{
+
 }

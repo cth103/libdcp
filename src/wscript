@@ -24,6 +24,7 @@ def build(bld):
                  metadata.cc
                  mxf_asset.cc
                  picture_asset.cc
+                 picture_asset_writer.cc
                  picture_frame.cc
                  rec709_linearised_gamma_lut.cc
                  reel.cc

@@ -1,0 +1,225 @@
+/*
+    Copyright (C) 2012-2013 Carl Hetherington <cth@carlh.net>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+*/
+
+#include "AS_DCP.h"
+#include "KM_fileio.h"
+#include "picture_asset_writer.h"
+#include "exceptions.h"
+#include "picture_asset.h"
+
+using std::istream;
+using std::ostream;
+using std::string;
+using boost::shared_ptr;
+using namespace libdcp;
+
+FrameInfo::FrameInfo (istream& s)
+{
+	s >> offset >> size >> hash;
+}
+
+void
+FrameInfo::write (ostream& s)
+{
+	s << offset << " " << size << " " << hash;
+}
+
+
+PictureAssetWriter::PictureAssetWriter (bool overwrite, MXFMetadata const & metadata)
+	: _frames_written (0)
+	, _started (false)
+	, _finalized (false)
+	, _overwrite (overwrite)
+	, _metadata (metadata)
+{
+	
+}
+
+struct MonoPictureAssetWriter::ASDCPState
+{
+	ASDCPState()
+		: frame_buffer (4 * Kumu::Megabyte)
+	{}
+	
+	ASDCP::JP2K::CodestreamParser j2k_parser;
+	ASDCP::JP2K::FrameBuffer frame_buffer;
+	ASDCP::JP2K::MXFWriter mxf_writer;
+	ASDCP::WriterInfo writer_info;
+	ASDCP::JP2K::PictureDescriptor picture_descriptor;
+};
+
+struct StereoPictureAssetWriter::ASDCPState
+{
+	ASDCPState()
+		: frame_buffer (4 * Kumu::Megabyte)
+	{}
+	
+	ASDCP::JP2K::CodestreamParser j2k_parser;
+	ASDCP::JP2K::SFrameBuffer frame_buffer;
+	ASDCP::JP2K::MXFSWriter mxf_writer;
+	ASDCP::WriterInfo writer_info;
+	ASDCP::JP2K::PictureDescriptor picture_descriptor;
+};
+
+/** @param a Asset to write to.  `a' must not be deleted while
+ *  this writer class still exists, or bad things will happen.
+ */
+MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* asset, bool overwrite, MXFMetadata const & metadata)
+	: PictureAssetWriter (overwrite, metadata)
+	, _state (new MonoPictureAssetWriter::ASDCPState)
+	, _asset (asset)
+{
+
+}
+
+StereoPictureAssetWriter::StereoPictureAssetWriter (StereoPictureAsset* asset, bool overwrite, MXFMetadata const & metadata)
+	: PictureAssetWriter (overwrite, metadata)
+	, _state (new StereoPictureAssetWriter::ASDCPState)
+	, _asset (asset)
+{
+
+}
+
+template <class P, class Q>
+void start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint8_t* data, int size)
+{
+	if (ASDCP_FAILURE (state->j2k_parser.OpenReadFrame (data, size, state->frame_buffer))) {
+		boost::throw_exception (MiscError ("could not parse J2K frame"));
+	}
+
+	state->j2k_parser.FillPictureDescriptor (state->picture_descriptor);
+	state->picture_descriptor.EditRate = ASDCP::Rational (asset->edit_rate(), 1);
+	
+	asset->fill_writer_info (&state->writer_info, asset->uuid(), writer->_metadata);
+	
+	if (ASDCP_FAILURE (state->mxf_writer.OpenWrite (
+				   asset->path().string().c_str(),
+				   state->writer_info,
+				   state->picture_descriptor,
+				   16384,
+				   writer->_overwrite)
+		    )) {
+		
+		boost::throw_exception (MXFFileError ("could not open MXF file for writing", asset->path().string()));
+	}
+
+	writer->_started = true;
+}
+
+void
+MonoPictureAssetWriter::start (uint8_t* data, int size)
+{
+	::start (this, _state, _asset, data, size);
+}
+
+void
+StereoPictureAssetWriter::start (uint8_t* data, int size)
+{
+	::start (this, _state, _asset, data, size);
+}
+
+template <class P, class Q>
+FrameInfo write (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint8_t* data, int size)
+{
+	assert (!writer->_finalized);
+
+	if (!writer->_started) {
+		writer->start (data, size);
+	}
+
+ 	if (ASDCP_FAILURE (state->j2k_parser.OpenReadFrame (data, size, state->frame_buffer))) {
+ 		boost::throw_exception (MiscError ("could not parse J2K frame"));
+ 	}
+
+	uint64_t const before_offset = state->mxf_writer.Tell ();
+
+	string hash;
+	if (ASDCP_FAILURE (state->mxf_writer.WriteFrame (state->frame_buffer, 0, 0, &hash))) {
+		boost::throw_exception (MXFFileError ("error in writing video MXF", asset->path().string()));
+	}
+
+	++asset->_frames_written;
+	return FrameInfo (before_offset, state->mxf_writer.Tell() - before_offset, hash);
+}
+
+FrameInfo
+MonoPictureAssetWriter::write (uint8_t* data, int size)
+{
+	return ::write (this, _state, _asset, data, size);
+}
+
+FrameInfo
+StereoPictureAssetWriter::write (uint8_t* data, int size)
+{
+	return ::write (this, _state, _asset, data, size);
+}
+
+void
+MonoPictureAssetWriter::fake_write (int size)
+{
+	assert (_started);
+	assert (!_finalized);
+
+	if (ASDCP_FAILURE (_state->mxf_writer.FakeWriteFrame (size))) {
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
+	}
+
+	++_frames_written;
+}
+
+void
+StereoPictureAssetWriter::fake_write (int size)
+{
+	assert (_started);
+	assert (!_finalized);
+
+	if (ASDCP_FAILURE (_state->mxf_writer.FakeWriteFrame (size))) {
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
+	}
+
+	++_frames_written;
+}
+
+void
+MonoPictureAssetWriter::finalize ()
+{
+	assert (!_finalized);
+	
+	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
+		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _asset->path().string()));
+	}
+
+	_finalized = true;
+	_asset->set_intrinsic_duration (_frames_written);
+	_asset->set_duration (_frames_written);
+}
+
+void
+StereoPictureAssetWriter::finalize ()
+{
+	assert (!_finalized);
+	
+	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
+		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _asset->path().string()));
+	}
+
+	_finalized = true;
+	_asset->set_intrinsic_duration (_frames_written);
+	_asset->set_duration (_frames_written);
+}

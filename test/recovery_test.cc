@@ -17,6 +17,8 @@
 
 */
 
+#include "picture_asset_writer.h"
+
 /* Check that recovery from a partially-written MXF works */
 BOOST_AUTO_TEST_CASE (recovery)
 {
