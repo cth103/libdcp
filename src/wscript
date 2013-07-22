@@ -60,6 +60,7 @@ def build(bld):
               metadata.h
               mxf_asset.h
               picture_asset.h
+              picture_asset_writer.h
               picture_frame.h
               rgb_xyz.h
               rec709_linearised_gamma_lut.h
