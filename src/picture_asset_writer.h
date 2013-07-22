@@ -23,6 +23,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 #include "metadata.h"
+#include "types.h"
 
 namespace libdcp {
 
@@ -49,14 +50,11 @@ struct FrameInfo
 class PictureAssetWriter : public boost::noncopyable
 {
 public:
-	virtual FrameInfo write (uint8_t *, int) = 0;
-	virtual void fake_write (int) = 0;
-	virtual void finalize () = 0;
-	
 protected:
+	template <class P, class Q>
+	friend void start (PictureAssetWriter *, boost::shared_ptr<P>, Q *, uint8_t *, int);
 
 	PictureAssetWriter (bool, MXFMetadata const &);
-	virtual void start (uint8_t *, int) = 0;
 	
 	/** Number of picture frames written to the asset so far */
 	int _frames_written;
@@ -80,7 +78,7 @@ protected:
 class MonoPictureAssetWriter : public PictureAssetWriter
 {
 public:
-	FrameInfo write (uint8_t* data, int size);
+	FrameInfo write (uint8_t *, int);
 	void fake_write (int size);
 	void finalize ();
 
@@ -103,7 +101,7 @@ private:
 class StereoPictureAssetWriter : public PictureAssetWriter
 {
 public:
-	FrameInfo write (uint8_t* data, int size);
+	FrameInfo write (uint8_t *, int, Eye);
 	void fake_write (int size);
 	void finalize ();
 

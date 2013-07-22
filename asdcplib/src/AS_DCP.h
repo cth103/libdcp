@@ -1268,11 +1268,11 @@ namespace ASDCP {
 	  virtual MXF::OPAtomHeader& OPAtomHeader();
 	  virtual MXF::OPAtomIndexFooter& OPAtomIndexFooter();
 
-	  // Open the file for writing. The file must not exist. Returns error if
+	  // Open the file for writing. The file must not exist unless overwrite is true. Returns error if
 	  // the operation cannot be completed or if nonsensical data is discovered
 	  // in the essence descriptor.
 	  Result_t OpenWrite(const char* filename, const WriterInfo&,
-			     const PictureDescriptor&, ui32_t HeaderSize = 16384);
+			     const PictureDescriptor&, ui32_t HeaderSize, bool overwrite);
 
 	  // Writes a pair of frames of essence to the MXF file. If the optional AESEncContext
 	  // argument is present, the essence is encrypted prior to writing.
@@ -1287,11 +1287,16 @@ namespace ASDCP {
 	  // RESULT_SPHASE will be returned if phase is reversed. The first frame
 	  // written must be left eye.
 	  Result_t WriteFrame(const FrameBuffer&, StereoscopicPhase_t phase,
-			      AESEncContext* = 0, HMACContext* = 0);
+			      AESEncContext* = 0, HMACContext* = 0, std::string* hash = 0);
 
+	  Result_t FakeWriteFrame(int size);
+	      
 	  // Closes the MXF file, writing the index and revised header.  Returns
 	  // RESULT_SPHASE if WriteFrame was called an odd number of times.
 	  Result_t Finalize();
+
+	  // Return the current file offset in the MXF file that we are writing
+	  ui64_t Tell() const;
 	};
 
       //

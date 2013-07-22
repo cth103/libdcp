@@ -71,7 +71,7 @@ struct StereoPictureAssetWriter::ASDCPState
 	{}
 	
 	ASDCP::JP2K::CodestreamParser j2k_parser;
-	ASDCP::JP2K::SFrameBuffer frame_buffer;
+	ASDCP::JP2K::FrameBuffer frame_buffer;
 	ASDCP::JP2K::MXFSWriter mxf_writer;
 	ASDCP::WriterInfo writer_info;
 	ASDCP::JP2K::PictureDescriptor picture_descriptor;
@@ -97,7 +97,7 @@ StereoPictureAssetWriter::StereoPictureAssetWriter (StereoPictureAsset* asset, b
 }
 
 template <class P, class Q>
-void start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint8_t* data, int size)
+void libdcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint8_t* data, int size)
 {
 	if (ASDCP_FAILURE (state->j2k_parser.OpenReadFrame (data, size, state->frame_buffer))) {
 		boost::throw_exception (MiscError ("could not parse J2K frame"));
@@ -125,49 +125,66 @@ void start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint8_t* 
 void
 MonoPictureAssetWriter::start (uint8_t* data, int size)
 {
-	::start (this, _state, _asset, data, size);
+	libdcp::start (this, _state, _asset, data, size);
 }
 
 void
 StereoPictureAssetWriter::start (uint8_t* data, int size)
 {
-	::start (this, _state, _asset, data, size);
-}
-
-template <class P, class Q>
-FrameInfo write (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint8_t* data, int size)
-{
-	assert (!writer->_finalized);
-
-	if (!writer->_started) {
-		writer->start (data, size);
-	}
-
- 	if (ASDCP_FAILURE (state->j2k_parser.OpenReadFrame (data, size, state->frame_buffer))) {
- 		boost::throw_exception (MiscError ("could not parse J2K frame"));
- 	}
-
-	uint64_t const before_offset = state->mxf_writer.Tell ();
-
-	string hash;
-	if (ASDCP_FAILURE (state->mxf_writer.WriteFrame (state->frame_buffer, 0, 0, &hash))) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", asset->path().string()));
-	}
-
-	++asset->_frames_written;
-	return FrameInfo (before_offset, state->mxf_writer.Tell() - before_offset, hash);
+	libdcp::start (this, _state, _asset, data, size);
 }
 
 FrameInfo
 MonoPictureAssetWriter::write (uint8_t* data, int size)
 {
-	return ::write (this, _state, _asset, data, size);
+	assert (!_finalized);
+
+	if (!_started) {
+		start (data, size);
+	}
+
+ 	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
+ 		boost::throw_exception (MiscError ("could not parse J2K frame"));
+ 	}
+
+	uint64_t const before_offset = _state->mxf_writer.Tell ();
+
+	string hash;
+	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, 0, 0, &hash))) {
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
+	}
+
+	++_frames_written;
+	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 
 FrameInfo
-StereoPictureAssetWriter::write (uint8_t* data, int size)
+StereoPictureAssetWriter::write (uint8_t* data, int size, Eye eye)
 {
-	return ::write (this, _state, _asset, data, size);
+	assert (!_finalized);
+
+	if (!_started) {
+		start (data, size);
+	}
+
+ 	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
+ 		boost::throw_exception (MiscError ("could not parse J2K frame"));
+ 	}
+
+	uint64_t const before_offset = _state->mxf_writer.Tell ();
+
+	string hash;
+	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (
+				   _state->frame_buffer,
+				   (eye == EYE_LEFT) ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
+				   0, 0, &hash)
+		    )) {
+		
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
+	}
+
+	++_frames_written;
+	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 
 void

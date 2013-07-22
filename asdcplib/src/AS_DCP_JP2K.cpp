@@ -1182,7 +1182,7 @@ public:
 
   //
   Result_t WriteFrame(const FrameBuffer& FrameBuf, StereoscopicPhase_t phase,
-		      AESEncContext* Ctx, HMACContext* HMAC)
+		      AESEncContext* Ctx, HMACContext* HMAC, std::string* hash)
   {
     if ( m_NextPhase != phase )
       return RESULT_SPHASE;
@@ -1190,11 +1190,11 @@ public:
     if ( phase == SP_LEFT )
       {
 	m_NextPhase = SP_RIGHT;
-	return lh__Writer::WriteFrame(FrameBuf, true, Ctx, HMAC);
+	return lh__Writer::WriteFrame(FrameBuf, true, Ctx, HMAC, hash);
       }
 
     m_NextPhase = SP_LEFT;
-    return lh__Writer::WriteFrame(FrameBuf, false, Ctx, HMAC);
+    return lh__Writer::WriteFrame(FrameBuf, false, Ctx, HMAC, hash);
   }
 
   //
@@ -1253,7 +1253,7 @@ ASDCP::JP2K::MXFSWriter::OPAtomIndexFooter()
 // the operation cannot be completed.
 ASDCP::Result_t
 ASDCP::JP2K::MXFSWriter::OpenWrite(const char* filename, const WriterInfo& Info,
-				   const PictureDescriptor& PDesc, ui32_t HeaderSize)
+				   const PictureDescriptor& PDesc, ui32_t HeaderSize, bool overwrite)
 {
   if ( Info.LabelSetType == LS_MXF_SMPTE )
     m_Writer = new h__SWriter(DefaultSMPTEDict());
@@ -1276,7 +1276,7 @@ ASDCP::JP2K::MXFSWriter::OpenWrite(const char* filename, const WriterInfo& Info,
 
   m_Writer->m_Info = Info;
 
-  Result_t result = m_Writer->OpenWrite(filename, ASDCP::ESS_JPEG_2000_S, HeaderSize, false);
+  Result_t result = m_Writer->OpenWrite(filename, ASDCP::ESS_JPEG_2000_S, HeaderSize, overwrite);
 
   if ( ASDCP_SUCCESS(result) )
     {
@@ -1315,10 +1315,10 @@ ASDCP::JP2K::MXFSWriter::WriteFrame(const SFrameBuffer& FrameBuf, AESEncContext*
   if ( m_Writer.empty() )
     return RESULT_INIT;
 
-  Result_t result = m_Writer->WriteFrame(FrameBuf.Left, SP_LEFT, Ctx, HMAC);
+  Result_t result = m_Writer->WriteFrame(FrameBuf.Left, SP_LEFT, Ctx, HMAC, 0);
 
   if ( ASDCP_SUCCESS(result) )
-    result = m_Writer->WriteFrame(FrameBuf.Right, SP_RIGHT, Ctx, HMAC);
+    result = m_Writer->WriteFrame(FrameBuf.Right, SP_RIGHT, Ctx, HMAC, 0);
 
   return result;
 }
@@ -1329,12 +1329,21 @@ ASDCP::JP2K::MXFSWriter::WriteFrame(const SFrameBuffer& FrameBuf, AESEncContext*
 // error occurs.
 ASDCP::Result_t
 ASDCP::JP2K::MXFSWriter::WriteFrame(const FrameBuffer& FrameBuf, StereoscopicPhase_t phase,
-				    AESEncContext* Ctx, HMACContext* HMAC)
+				    AESEncContext* Ctx, HMACContext* HMAC, std::string* hash)
 {
   if ( m_Writer.empty() )
     return RESULT_INIT;
 
-  return m_Writer->WriteFrame(FrameBuf, phase, Ctx, HMAC);
+  return m_Writer->WriteFrame(FrameBuf, phase, Ctx, HMAC, hash);
+}
+
+ASDCP::Result_t
+ASDCP::JP2K::MXFSWriter::FakeWriteFrame(int size)
+{
+  if ( m_Writer.empty() )
+    return RESULT_INIT;
+
+  return m_Writer->FakeWriteFrame(size, true);
 }
 
 // Closes the MXF file, writing the index and other closing information.
@@ -1345,6 +1354,12 @@ ASDCP::JP2K::MXFSWriter::Finalize()
     return RESULT_INIT;
 
   return m_Writer->Finalize();
+}
+
+ui64_t
+ASDCP::JP2K::MXFSWriter::Tell() const
+{
+	return m_Writer->m_File.Tell();
 }
 
 //
