@@ -50,6 +50,9 @@ struct FrameInfo
 class PictureAssetWriter : public boost::noncopyable
 {
 public:
+	virtual void finalize () = 0;
+	virtual void fake_write (int) = 0;
+	
 protected:
 	template <class P, class Q>
 	friend void start (PictureAssetWriter *, boost::shared_ptr<P>, Q *, uint8_t *, int);
