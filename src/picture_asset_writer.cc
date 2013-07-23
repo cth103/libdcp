@@ -52,9 +52,9 @@ PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, bool overwrite, MXF
 	
 }
 
-struct ASDCPStateBase
+struct ASDCPState
 {
-	ASDCPStateBase ()
+	ASDCPState ()
 		: frame_buffer (4 * Kumu::Megabyte)
 	{}
 	
@@ -64,12 +64,12 @@ struct ASDCPStateBase
 	ASDCP::JP2K::PictureDescriptor picture_descriptor;
 };
 
-struct MonoPictureAssetWriter::ASDCPState : public ASDCPStateBase
+struct MonoPictureAssetWriter::MonoASDCPState : public ASDCPState
 {
 	ASDCP::JP2K::MXFWriter mxf_writer;
 };
 
-struct StereoPictureAssetWriter::ASDCPState : public ASDCPStateBase
+struct StereoPictureAssetWriter::StereoASDCPState : public ASDCPState
 {
 	ASDCP::JP2K::MXFSWriter mxf_writer;
 };
@@ -79,14 +79,14 @@ struct StereoPictureAssetWriter::ASDCPState : public ASDCPStateBase
  */
 MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, bool overwrite, MXFMetadata const & metadata)
 	: PictureAssetWriter (asset, overwrite, metadata)
-	, _state (new MonoPictureAssetWriter::ASDCPState)
+	, _state (new MonoPictureAssetWriter::MonoASDCPState)
 {
 
 }
 
 StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* asset, bool overwrite, MXFMetadata const & metadata)
 	: PictureAssetWriter (asset, overwrite, metadata)
-	, _state (new StereoPictureAssetWriter::ASDCPState)
+	, _state (new StereoPictureAssetWriter::StereoASDCPState)
 	, _next_eye (EYE_LEFT)
 {
 

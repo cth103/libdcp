@@ -101,8 +101,8 @@ private:
 	   ASDCP headers
 	*/
 	   
-	struct ASDCPState;
-	boost::shared_ptr<ASDCPState> _state;
+	struct MonoASDCPState;
+	boost::shared_ptr<MonoASDCPState> _state;
 };
 
 /** A helper class for writing to StereoPictureAssets progressively (i.e. writing frame-by-frame,
@@ -132,8 +132,8 @@ private:
 	   ASDCP headers
 	*/
 	   
-	struct ASDCPState;
-	boost::shared_ptr<ASDCPState> _state;
+	struct StereoASDCPState;
+	boost::shared_ptr<StereoASDCPState> _state;
 
 	libdcp::Eye _next_eye;
 };
