@@ -49,6 +49,7 @@ struct FrameInfo
 class PictureAssetWriter : public boost::noncopyable
 {
 public:
+	virtual ~PictureAssetWriter () {}
 	virtual FrameInfo write (uint8_t *, int) = 0;
 	virtual void finalize () = 0;
 	virtual void fake_write (int) = 0;
