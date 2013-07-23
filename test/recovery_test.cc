@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE (recovery)
 	boost::filesystem::remove_all ("build/test/baz");
 	boost::filesystem::create_directories ("build/test/baz");
 	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset ("build/test/baz", "video1.mxf", 24, libdcp::Size (32, 32)));
-	shared_ptr<libdcp::MonoPictureAssetWriter> writer = mp->start_write (false);
+	shared_ptr<libdcp::PictureAssetWriter> writer = mp->start_write (false);
 
 	int written_size = 0;
 	for (int i = 0; i < 24; ++i) {

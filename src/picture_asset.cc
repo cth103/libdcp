@@ -441,7 +441,7 @@ StereoPictureAsset::get_frame (int n) const
 	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n));
 }
 
-shared_ptr<MonoPictureAssetWriter>
+shared_ptr<PictureAssetWriter>
 MonoPictureAsset::start_write (bool overwrite, MXFMetadata const & metadata)
 {
 	/* XXX: can't we use shared_ptr here? */
@@ -460,7 +460,7 @@ StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int f
 
 }
 
-shared_ptr<StereoPictureAssetWriter>
+shared_ptr<PictureAssetWriter>
 StereoPictureAsset::start_write (bool overwrite, MXFMetadata const & metadata)
 {
 	/* XXX: can't we use shared_ptr here? */

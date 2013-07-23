@@ -27,8 +27,7 @@
 
 namespace libdcp {
 
-class MonoPictureAsset;	
-class StereoPictureAsset;	
+class PictureAsset;	
 
 struct FrameInfo
 {
@@ -50,6 +49,7 @@ struct FrameInfo
 class PictureAssetWriter : public boost::noncopyable
 {
 public:
+	virtual FrameInfo write (uint8_t *, int) = 0;
 	virtual void finalize () = 0;
 	virtual void fake_write (int) = 0;
 	
@@ -57,9 +57,14 @@ protected:
 	template <class P, class Q>
 	friend void start (PictureAssetWriter *, boost::shared_ptr<P>, Q *, uint8_t *, int);
 
-	PictureAssetWriter (bool, MXFMetadata const &);
+	PictureAssetWriter (PictureAsset *, bool, MXFMetadata const &);
+
+	PictureAsset* _asset;
 	
-	/** Number of picture frames written to the asset so far */
+	/** Number of picture frames written to the asset so far.  For stereo assets
+	 *  this will be incremented for each eye (i.e. there will be twice the number
+	 *  of frames as in a mono asset).
+	 */
 	int _frames_written;
 	bool _started;
 	/** true if finalize() has been called */
@@ -74,7 +79,7 @@ protected:
  *  Objects of this class can only be created with MonoPictureAsset::start_write().
  *
  *  Frames can be written to the MonoPictureAsset by calling write() with a JPEG2000 image
- *  (a verbatim .j2 file).  finalize() must be called after the last frame has been written.
+ *  (a verbatim .j2c file).  finalize() must be called after the last frame has been written.
  *  The action of finalize() can't be done in MonoPictureAssetWriter's destructor as it may
  *  throw an exception.
  */
@@ -88,7 +93,7 @@ public:
 private:
 	friend class MonoPictureAsset;
 
-	MonoPictureAssetWriter (MonoPictureAsset *, bool, MXFMetadata const &);
+	MonoPictureAssetWriter (PictureAsset *, bool, MXFMetadata const &);
 	void start (uint8_t *, int);
 
 	/* do this with an opaque pointer so we don't have to include
@@ -97,21 +102,29 @@ private:
 	   
 	struct ASDCPState;
 	boost::shared_ptr<ASDCPState> _state;
-
-	MonoPictureAsset* _asset;
 };
 
+/** A helper class for writing to StereoPictureAssets progressively (i.e. writing frame-by-frame,
+ *  rather than giving libdcp all the frames in one go).
+ *
+ *  Objects of this class can only be created with StereoPictureAsset::start_write().
+ *
+ *  Frames can be written to the MonoPictureAsset by calling write() with a JPEG2000 image
+ *  (a verbatim .j2c file).  finalize() must be called after the last frame has been written.
+ *  The action of finalize() can't be done in MonoPictureAssetWriter's destructor as it may
+ *  throw an exception.
+ */
 class StereoPictureAssetWriter : public PictureAssetWriter
 {
 public:
-	FrameInfo write (uint8_t *, int, Eye);
+	FrameInfo write (uint8_t *, int);
 	void fake_write (int size);
 	void finalize ();
 
 private:
 	friend class StereoPictureAsset;
 
-	StereoPictureAssetWriter (StereoPictureAsset *, bool, MXFMetadata const &);
+	StereoPictureAssetWriter (PictureAsset *, bool, MXFMetadata const &);
 	void start (uint8_t *, int);
 
 	/* do this with an opaque pointer so we don't have to include
@@ -121,7 +134,7 @@ private:
 	struct ASDCPState;
 	boost::shared_ptr<ASDCPState> _state;
 
-	StereoPictureAsset* _asset;
+	libdcp::Eye _next_eye;
 };
 
 }

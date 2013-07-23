@@ -34,8 +34,7 @@ namespace libdcp
 
 class MonoPictureFrame;	
 class StereoPictureFrame;
-class MonoPictureAssetWriter;
-class StereoPictureAssetWriter;
+class PictureAssetWriter;
 
 /** @brief An asset made up of JPEG2000 files */
 class PictureAsset : public MXFAsset
@@ -60,6 +59,8 @@ public:
 	 *  @param size Size of video frame images in pixels.
 	 */
 	PictureAsset (std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, bool encrypted, Size);
+
+	virtual boost::shared_ptr<PictureAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ()) = 0;
 	
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
@@ -154,7 +155,7 @@ public:
 	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
 
 	/** Start a progressive write to a MonoPictureAsset */
-	boost::shared_ptr<MonoPictureAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ());
+	boost::shared_ptr<PictureAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ());
 
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
@@ -183,7 +184,7 @@ public:
 	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
 
 	/** Start a progressive write to a StereoPictureAsset */
-	boost::shared_ptr<StereoPictureAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ());
+	boost::shared_ptr<PictureAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ());
 
 	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;

@@ -41,8 +41,9 @@ FrameInfo::write (ostream& s)
 }
 
 
-PictureAssetWriter::PictureAssetWriter (bool overwrite, MXFMetadata const & metadata)
-	: _frames_written (0)
+PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, bool overwrite, MXFMetadata const & metadata)
+	: _asset (asset)
+	, _frames_written (0)
 	, _started (false)
 	, _finalized (false)
 	, _overwrite (overwrite)
@@ -51,47 +52,42 @@ PictureAssetWriter::PictureAssetWriter (bool overwrite, MXFMetadata const & meta
 	
 }
 
-struct MonoPictureAssetWriter::ASDCPState
+struct ASDCPStateBase
 {
-	ASDCPState()
+	ASDCPStateBase ()
 		: frame_buffer (4 * Kumu::Megabyte)
 	{}
 	
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer;
-	ASDCP::JP2K::MXFWriter mxf_writer;
 	ASDCP::WriterInfo writer_info;
 	ASDCP::JP2K::PictureDescriptor picture_descriptor;
 };
 
-struct StereoPictureAssetWriter::ASDCPState
+struct MonoPictureAssetWriter::ASDCPState : public ASDCPStateBase
 {
-	ASDCPState()
-		: frame_buffer (4 * Kumu::Megabyte)
-	{}
-	
-	ASDCP::JP2K::CodestreamParser j2k_parser;
-	ASDCP::JP2K::FrameBuffer frame_buffer;
+	ASDCP::JP2K::MXFWriter mxf_writer;
+};
+
+struct StereoPictureAssetWriter::ASDCPState : public ASDCPStateBase
+{
 	ASDCP::JP2K::MXFSWriter mxf_writer;
-	ASDCP::WriterInfo writer_info;
-	ASDCP::JP2K::PictureDescriptor picture_descriptor;
 };
 
 /** @param a Asset to write to.  `a' must not be deleted while
  *  this writer class still exists, or bad things will happen.
  */
-MonoPictureAssetWriter::MonoPictureAssetWriter (MonoPictureAsset* asset, bool overwrite, MXFMetadata const & metadata)
-	: PictureAssetWriter (overwrite, metadata)
+MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, bool overwrite, MXFMetadata const & metadata)
+	: PictureAssetWriter (asset, overwrite, metadata)
 	, _state (new MonoPictureAssetWriter::ASDCPState)
-	, _asset (asset)
 {
 
 }
 
-StereoPictureAssetWriter::StereoPictureAssetWriter (StereoPictureAsset* asset, bool overwrite, MXFMetadata const & metadata)
-	: PictureAssetWriter (overwrite, metadata)
+StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* asset, bool overwrite, MXFMetadata const & metadata)
+	: PictureAssetWriter (asset, overwrite, metadata)
 	, _state (new StereoPictureAssetWriter::ASDCPState)
-	, _asset (asset)
+	, _next_eye (EYE_LEFT)
 {
 
 }
@@ -158,8 +154,12 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 
+/** Write a frame for one eye.  Frames must be written left, then right, then left etc.
+ *  @param data JPEG2000 data.
+ *  @param size Size of data.
+ */
 FrameInfo
-StereoPictureAssetWriter::write (uint8_t* data, int size, Eye eye)
+StereoPictureAssetWriter::write (uint8_t* data, int size)
 {
 	assert (!_finalized);
 
@@ -174,14 +174,19 @@ StereoPictureAssetWriter::write (uint8_t* data, int size, Eye eye)
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
-	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (
-				   _state->frame_buffer,
-				   (eye == EYE_LEFT) ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
-				   0, 0, &hash)
+	if (ASDCP_FAILURE (
+		    _state->mxf_writer.WriteFrame (
+			    _state->frame_buffer,
+			    _next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
+			    0,
+			    0,
+			    &hash)
 		    )) {
 		
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
 	}
+
+	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
 
 	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
@@ -209,6 +214,7 @@ StereoPictureAssetWriter::fake_write (int size)
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
 	}
 
+	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
 	++_frames_written;
 }
 
