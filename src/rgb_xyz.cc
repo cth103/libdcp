@@ -60,7 +60,7 @@ libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const LUT> 
 		uint8_t* argb_line = argb;
 		for (int x = 0; x < xyz_frame->size().width; ++x) {
 
-			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_x < 4096 && *xyz_z < 4096);
+			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
 			
 			/* In gamma LUT */
 			s.x = lut_in->lut()[*xyz_x++];

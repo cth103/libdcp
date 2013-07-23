@@ -21,10 +21,11 @@
 #define LIBDCP_LUT_H
 
 #include <cmath>
+#include <boost/utility.hpp>
 
 namespace libdcp {
 
-class LUT
+class LUT : boost::noncopyable
 {
 public:
 	LUT(int bit_depth, float gamma)

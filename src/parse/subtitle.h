@@ -32,7 +32,11 @@ class Font;
 class Text
 {
 public:
-	Text () {}
+	Text ()
+		: v_position (0)
+		, v_align (TOP)
+	{}
+	
 	Text (boost::shared_ptr<const cxml::Node> node);
 
 	float v_position;
@@ -61,7 +65,10 @@ private:
 class Font 
 {
 public:
-	Font () {}
+	Font ()
+		: size (0)
+	{}
+	
 	Font (boost::shared_ptr<const cxml::Node> node);
 	Font (std::list<boost::shared_ptr<Font> > const & font_nodes);
 

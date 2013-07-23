@@ -84,7 +84,6 @@ libdcp::make_digest (string filename)
 	SHA1_Init (&sha);
 	
 	Kumu::ByteString read_buffer (65536);
-	int done = 0;
 	while (1) {
 		ui32_t read = 0;
 		Kumu::Result_t r = reader.Read (read_buffer.Data(), read_buffer.Capacity(), &read);
@@ -96,7 +95,6 @@ libdcp::make_digest (string filename)
 		}
 		
 		SHA1_Update (&sha, read_buffer.Data(), read);
-		done += read;
 	}
 
 	byte_t byte_buffer[20];
