@@ -68,9 +68,27 @@ PictureAsset::PictureAsset (string directory, string mxf_name)
 }
 
 string
-PictureAsset::cpl_node_name () const
+MonoPictureAsset::cpl_node_name () const
 {
 	return "MainPicture";
+}
+
+int
+MonoPictureAsset::edit_rate_factor () const
+{
+	return 1;
+}
+
+string
+StereoPictureAsset::cpl_node_name () const
+{
+	return "MainStereoscopicPicture";
+}
+
+int
+StereoPictureAsset::edit_rate_factor () const
+{
+	return 2;
 }
 
 void
@@ -86,7 +104,7 @@ PictureAsset::write_to_cpl (xmlpp::Node* node) const
 
 	assert (i != c.end ());
 
-	(*i)->add_child ("FrameRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
+	(*i)->add_child ("FrameRate")->add_child_text (lexical_cast<string> (_edit_rate * edit_rate_factor ()) + " 1");
 	(*i)->add_child ("ScreenAspectRatio")->add_child_text (lexical_cast<string> (_size.width) + " " + lexical_cast<string> (_size.height));
 }
 

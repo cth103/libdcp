@@ -183,7 +183,6 @@ StereoPictureAssetWriter::write (uint8_t* data, int size, Eye eye)
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
 	}
 
-	++_frames_written;
 	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 
@@ -237,6 +236,6 @@ StereoPictureAssetWriter::finalize ()
 	}
 
 	_finalized = true;
-	_asset->set_intrinsic_duration (_frames_written);
-	_asset->set_duration (_frames_written);
+	_asset->set_intrinsic_duration (_frames_written / 2);
+	_asset->set_duration (_frames_written / 2);
 }

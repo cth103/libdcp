@@ -81,11 +81,9 @@ protected:
 
 private:
 	std::string key_type () const;
-	std::string cpl_node_name () const;
+	std::string cpl_node_name () const = 0;
+	virtual int edit_rate_factor () const = 0;
 };
-
-class MonoPictureAsset;
-
 
 /** A 2D (monoscopic) picture asset */
 class MonoPictureAsset : public PictureAsset
@@ -164,6 +162,8 @@ public:
 private:
 	std::string path_from_list (int f, std::vector<std::string> const & files) const;
 	void construct (boost::function<std::string (int)>, MXFMetadata const &);
+	std::string cpl_node_name () const;
+	int edit_rate_factor () const;
 };
 
 /** A 3D (stereoscopic) picture asset */	
@@ -187,6 +187,10 @@ public:
 
 	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
+
+private:
+	std::string cpl_node_name () const;
+	int edit_rate_factor () const;
 };
 	
 
