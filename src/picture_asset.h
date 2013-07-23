@@ -21,7 +21,7 @@
 #define LIBDCP_PICTURE_ASSET_H
 
 /** @file  src/picture_asset.h
- *  @brief An asset made up of JPEG2000 files
+ *  @brief An asset made up of JPEG2000 data
  */
 
 #include <openjpeg.h>
@@ -36,7 +36,7 @@ class MonoPictureFrame;
 class StereoPictureFrame;
 class PictureAssetWriter;
 
-/** @brief An asset made up of JPEG2000 files */
+/** @brief An asset made up of JPEG2000 data */
 class PictureAsset : public MXFAsset
 {
 public:
@@ -54,13 +54,26 @@ public:
 	 *  @param directory Directory where MXF file is.
 	 *  @param mxf_name Name of MXF file.
 	 *  @param progress Signal to use to inform of progres, or 0.
-	 *  @param fps Video Frames per second.
-	 *  @param intrinsic_duration Duration of all the frames in the asset.
+	 *  @param fps Video frames per second.
+	 *  @param intrinsic_duration Total number of frames in the asset.
 	 *  @param size Size of video frame images in pixels.
 	 */
-	PictureAsset (std::string directory, std::string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, bool encrypted, Size);
+	PictureAsset (
+		std::string directory,
+		std::string mxf_name,
+		boost::signals2::signal<void (float)>* progress,
+		int fps,
+		int intrinsic_duration,
+		bool encrypted,
+		Size
+		);
 
-	virtual boost::shared_ptr<PictureAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ()) = 0;
+	/** Start a progressive write to this asset.
+	 *  @param overwrite true to overwrite an existing MXF file; in this mode, writing can be resumed to a partially-written MXF; false if the
+	 *  MXF file does not exist.
+	 *  @param metadata MXF metadata to use.
+	 */
+	virtual boost::shared_ptr<PictureAssetWriter> start_write (bool overwrite, MXFMetadata const & metadata = MXFMetadata ()) = 0;
 	
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
@@ -98,7 +111,7 @@ public:
 	 *  @param mxf_name Name of MXF file to create.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Video frames per second.
-	 *  @param intrinsic_duration Length of the whole asset in frames.
+	 *  @param intrinsic_duration Total number of frames in the asset.
 	 *  @param size Size of images in pixels.
 	 *  @param encrypted true if asset should be encrypted.
 	 */
@@ -122,7 +135,7 @@ public:
 	 *  @param mxf_name Name of MXF file to create.
 	 *  @param progress Signal to inform of progress.
 	 *  @param fps Video frames per second.
-	 *  @param intrinsic_duration Length of the whole asset in frames.
+	 *  @param intrinsic_duration Total number of frames in the asset.
 	 *  @param size Size of images in pixels.
 	 *  @param encrypted true if asset should be encrypted.
 	 */
