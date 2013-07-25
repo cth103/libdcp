@@ -30,8 +30,19 @@ using boost::shared_ptr;
 using namespace libdcp;
 
 FrameInfo::FrameInfo (istream& s)
+	: offset (0)
+	, size (0)
 {
-	s >> offset >> size >> hash;
+	s >> offset >> size;
+
+	if (!s.good ()) {
+		/* Make sure we zero these if something bad happened, otherwise
+		   the caller might try to alloc lots of RAM.
+		*/
+		offset = size = 0;
+	}
+
+	s >> hash;
 }
 
 void
