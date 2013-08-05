@@ -17,7 +17,6 @@
 
 */
 
-#include <tiffio.h>
 #include "kdm.h"
 #include "picture_frame.h"
 #include "argb_frame.h"
