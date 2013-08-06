@@ -14,7 +14,6 @@ def configure(conf):
                               uselib_store = 'BOOST_TEST')
 
     conf.env.prepend_value('LINKFLAGS', '-Lsrc')
-    conf.env.append_value('LIB', 'tiff')
 
 def build(bld):
     obj = bld(features = 'cxx cxxprogram')
