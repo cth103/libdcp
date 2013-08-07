@@ -34,7 +34,7 @@ namespace libdcp {
 class SoundFrame
 {
 public:
-	SoundFrame (std::string mxf_path, int n);
+	SoundFrame (std::string mxf_path, int n, ASDCP::AESDecContext *);
 	~SoundFrame ();
 
 	uint8_t const * data () const;

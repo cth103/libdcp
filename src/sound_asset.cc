@@ -300,7 +300,7 @@ shared_ptr<const SoundFrame>
 SoundAsset::get_frame (int n) const
 {
 	/* XXX: should add on entry point here? */
-	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n));
+	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n, _decryption_context));
 }
 
 shared_ptr<SoundAssetWriter>
