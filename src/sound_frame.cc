@@ -25,7 +25,7 @@
 using namespace std;
 using namespace libdcp;
 
-SoundFrame::SoundFrame (string mxf_path, int n)
+SoundFrame::SoundFrame (string mxf_path, int n, ASDCP::AESDecContext* c)
 {
 	ASDCP::PCM::MXFReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (mxf_path.c_str()))) {
@@ -35,7 +35,7 @@ SoundFrame::SoundFrame (string mxf_path, int n)
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = new ASDCP::PCM::FrameBuffer (1 * Kumu::Megabyte);
 
-	if (ASDCP_FAILURE (reader.ReadFrame (n, *_buffer))) {
+	if (ASDCP_FAILURE (reader.ReadFrame (n, *_buffer, c))) {
 		boost::throw_exception (DCPReadError ("could not read audio frame"));
 	}
 }
