@@ -27,6 +27,7 @@ namespace ASDCP {
 	namespace PCM {
 		class FrameBuffer;
 	}
+	class AESDecContext;
 }
 
 namespace libdcp {
