@@ -50,7 +50,7 @@ XMLMetadata::set_issue_date_now ()
 	time_t now;
 	time (&now);
 	struct tm* tm = localtime (&now);
-	strftime (buffer, 64, "%Y-%m-%dT%I:%M:%S+00:00", tm);
+	strftime (buffer, 64, "%Y-%m-%dT%I:%M:%S%z", tm);
 	issue_date = string (buffer);
 }
 		
