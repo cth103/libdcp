@@ -100,7 +100,7 @@ libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const LUT> 
 }
 
 shared_ptr<libdcp::XYZFrame>
-libdcp::rgb_to_xyz (shared_ptr<const Image> rgb, shared_ptr<const LUT> lut_in, shared_ptr<const LUT> lut_out, float const colour_matrix[3][3])
+libdcp::rgb_to_xyz (shared_ptr<const Image> rgb, shared_ptr<const LUT> lut_in, shared_ptr<const LUT> lut_out, double const colour_matrix[3][3])
 {
 	assert (lut_in->bit_depth() == 12);
 	assert (lut_out->bit_depth() == 16);
