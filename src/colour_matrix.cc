@@ -23,19 +23,19 @@
    EasyDCP player, I think.
 */
 
-float const libdcp::colour_matrix::xyz_to_rgb[3][3] = {
+double const libdcp::colour_matrix::xyz_to_rgb[3][3] = {
 	{  3.24096989631653,   -1.5373831987381,  -0.498610764741898 },
 	{ -0.96924364566803,    1.87596750259399,  0.0415550582110882 },
 	{  0.0556300804018974, -0.203976958990097, 1.05697154998779 }
 };
 
-float const libdcp::colour_matrix::srgb_to_xyz[3][3] = {
+double const libdcp::colour_matrix::srgb_to_xyz[3][3] = {
 	{0.4124564, 0.3575761, 0.1804375},
 	{0.2126729, 0.7151522, 0.0721750},
 	{0.0193339, 0.1191920, 0.9503041}
 };
 
-float const libdcp::colour_matrix::rec709_to_xyz[3][3] = {
+double const libdcp::colour_matrix::rec709_to_xyz[3][3] = {
 	{0.4124564, 0.3575761, 0.1804375},
 	{0.2126729, 0.7151522, 0.0721750},
 	{0.0193339, 0.1191920, 0.9503041}
