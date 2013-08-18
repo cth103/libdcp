@@ -142,6 +142,10 @@ libdcp::rgb_to_xyz (shared_ptr<const Image> rgb, shared_ptr<const LUT> lut_in, s
 			d.x = d.x * DCI_COEFFICIENT * 65535;
 			d.y = d.y * DCI_COEFFICIENT * 65535;
 			d.z = d.z * DCI_COEFFICIENT * 65535;
+
+			assert (d.x >= 0 && d.x < 65536);
+			assert (d.y >= 0 && d.y < 65536);
+			assert (d.z >= 0 && d.z < 65536);
 			
 			/* Out gamma LUT */
 			xyz->data(0)[jn] = lut_out->lut()[(int) d.x] * 4096;
