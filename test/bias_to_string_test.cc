@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,47 +17,14 @@
 
 */
 
-#ifndef LIBDCP_METADATA_H
-#define LIBDCP_METADATA_H
+#include "metadata.h"
 
-/** @file  src/metadata.h
- *  @brief Metadata for writing to the DCP.
- */
-
-#include <string>
-
-class bias_to_string_test;
-
-namespace libdcp
+/** Test XMLMetadata::bias_to_string */
+BOOST_AUTO_TEST_CASE (bias_to_string_test)
 {
-
-class MXFMetadata
-{
-public:
-	MXFMetadata ();
-
-	std::string company_name;
-	std::string product_name;
-	std::string product_version;
-};
-
-class XMLMetadata
-{
-public:
-	XMLMetadata ();
-
-	void set_issue_date_now ();
-	
-	std::string issuer;
-	std::string creator;
-	std::string issue_date;
-
-private:
-	friend class ::bias_to_string_test;
-	
-	static std::string bias_to_string (int);
-};
-
+	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::bias_to_string (30), "+0030");
+	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::bias_to_string (60), "+0100");
+	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::bias_to_string (61), "+0101");
+	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::bias_to_string (7 * 60), "+0700");
+	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::bias_to_string (-11 * 60), "-1100");
 }
-
-#endif

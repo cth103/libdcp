@@ -21,6 +21,8 @@
  *  @brief Metadata for writing to the DCP.
  */
 
+#include <sstream>
+#include <iomanip>
 #include <time.h>
 #include "metadata.h"
 
@@ -50,7 +52,36 @@ XMLMetadata::set_issue_date_now ()
 	time_t now;
 	time (&now);
 	struct tm* tm = localtime (&now);
+#ifdef LIBDCP_POSIX	
 	strftime (buffer, 64, "%Y-%m-%dT%I:%M:%S%z", tm);
 	issue_date = string (buffer);
+#else
+	/* No %z for strftime on Windows: it will seemingly be interpreted as %Z and will
+	   output some localised string describing the timezone */
+	strftime (buffer, 64, "%Y-%m-%dT%I:%M:%S", tm);
+
+	TIME_ZONE_INFORMATION tz;
+	GetTimeZoneInformation (&tz);
+	issue_date = string (buffer) + bias_to_string (tz.Bias);
+#endif
 }
-		
+
+string
+XMLMetadata::bias_to_string (int b)
+{
+	bool const negative = (b < 0);
+	b = negative ? -b : b;
+
+	int const hours = b / 60;
+	int const minutes = b % 60;
+
+	stringstream o;
+	if (negative) {
+		o << "-";
+	} else {
+		o << "+";
+	}
+
+	o << setw(2) << setfill('0') << hours << setw(2) << setfill('0') << minutes;
+	return o.str ();
+}
