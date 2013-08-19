@@ -24,6 +24,9 @@
 #include <sstream>
 #include <iomanip>
 #include <time.h>
+#ifdef LIBDCP_WINDOWS
+#include <windows.h>
+#endif
 #include "metadata.h"
 
 using namespace std;
