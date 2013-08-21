@@ -52,25 +52,30 @@ void
 XMLMetadata::set_issue_date_now ()
 {
 	char buffer[64];
-	time_t now;
-	time (&now);
+	time_t now = time (0);
 	struct tm* tm = localtime (&now);
-#ifdef LIBDCP_POSIX	
-	strftime (buffer, 64, "%Y-%m-%dT%I:%M:%S%z", tm);
-	issue_date = string (buffer);
-#else
-	/* No %z for strftime on Windows: it will seemingly be interpreted as %Z and will
-	   output some localised string describing the timezone */
 	strftime (buffer, 64, "%Y-%m-%dT%I:%M:%S", tm);
 
+	int offset = 0;
+
+#ifdef LIBDCP_POSIX
+
+	offset = tm->tm_gmtoff / 60;
+	
+#else
 	TIME_ZONE_INFORMATION tz;
 	GetTimeZoneInformation (&tz);
-	issue_date = string (buffer) + bias_to_string (tz.Bias);
+	offset = tz.Bias;
 #endif
+	
+	issue_date = string (buffer) + utc_offset_to_string (offset);
 }
 
+/** @param b Offset from UTC to local time in minutes.
+ *  @return string of the form e.g. -01:00.
+ */
 string
-XMLMetadata::bias_to_string (int b)
+XMLMetadata::utc_offset_to_string (int b)
 {
 	bool const negative = (b < 0);
 	b = negative ? -b : b;
@@ -85,6 +90,6 @@ XMLMetadata::bias_to_string (int b)
 		o << "+";
 	}
 
-	o << setw(2) << setfill('0') << hours << setw(2) << setfill('0') << minutes;
+	o << setw(2) << setfill('0') << hours << ":" << setw(2) << setfill('0') << minutes;
 	return o.str ();
 }
