@@ -218,6 +218,7 @@ CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Encryptio
 	root->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	root->add_child("AnnotationText")->add_child_text (_name);
 	root->add_child("IssueDate")->add_child_text (metadata.issue_date);
+	root->add_child("Issuer")->add_child_text (metadata.issuer);
 	root->add_child("Creator")->add_child_text (metadata.creator);
 	root->add_child("ContentTitleText")->add_child_text (_name);
 	root->add_child("ContentKind")->add_child_text (content_kind_to_string (_content_kind));
@@ -231,7 +232,7 @@ CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Encryptio
 	xmlpp::Node* reel_list = root->add_child ("ReelList");
 	
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
-		(*i)->write_to_cpl (reel_list);
+		(*i)->write_to_cpl (reel_list, interop);
 	}
 
 	if (crypt) {

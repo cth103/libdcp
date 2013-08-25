@@ -92,7 +92,7 @@ StereoPictureAsset::edit_rate_factor () const
 }
 
 void
-PictureAsset::write_to_cpl (xmlpp::Node* node) const
+PictureAsset::write_to_cpl (xmlpp::Node* node, bool interop) const
 {
 	MXFAsset::write_to_cpl (node);
 	
@@ -105,7 +105,11 @@ PictureAsset::write_to_cpl (xmlpp::Node* node) const
 	assert (i != c.end ());
 
 	(*i)->add_child ("FrameRate")->add_child_text (lexical_cast<string> (_edit_rate * edit_rate_factor ()) + " 1");
-	(*i)->add_child ("ScreenAspectRatio")->add_child_text (lexical_cast<string> (_size.width) + " " + lexical_cast<string> (_size.height));
+	if (interop) {
+		(*i)->add_child ("ScreenAspectRatio")->add_child_text (lexical_cast<string> (float (_size.width) / _size.height));
+	} else {
+		(*i)->add_child ("ScreenAspectRatio")->add_child_text (lexical_cast<string> (_size.width) + " " + lexical_cast<string> (_size.height));
+	}
 }
 
 bool

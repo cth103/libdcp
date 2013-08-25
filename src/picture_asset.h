@@ -81,7 +81,7 @@ public:
 		return _size;
 	}
 
-	void write_to_cpl (xmlpp::Node *) const;
+	void write_to_cpl (xmlpp::Node *, bool) const;
 
 protected:	
 

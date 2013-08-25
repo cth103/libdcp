@@ -32,14 +32,14 @@ using boost::shared_ptr;
 using namespace libdcp;
 
 void
-Reel::write_to_cpl (xmlpp::Node* node) const
+Reel::write_to_cpl (xmlpp::Node* node, bool interop) const
 {
 	xmlpp::Node* reel = node->add_child ("Reel");
 	reel->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
 	xmlpp::Node* asset_list = reel->add_child ("AssetList");
 	
 	if (_main_picture) {
-		_main_picture->write_to_cpl (asset_list);
+		_main_picture->write_to_cpl (asset_list, interop);
 	}
 
 	if (_main_sound) {

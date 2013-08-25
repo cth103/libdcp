@@ -154,10 +154,19 @@ DCP::write_assetmap (string pkl_uuid, int pkl_length, bool interop, XMLMetadata 
 	}
 
 	root->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
-	root->add_child("Creator")->add_child_text (metadata.creator);
-	root->add_child("VolumeCount")->add_child_text ("1");
-	root->add_child("IssueDate")->add_child_text (metadata.issue_date);
-	root->add_child("Issuer")->add_child_text (metadata.issuer);
+	root->add_child("AnnotationText")->add_child_text ("Created by " + metadata.creator);
+	if (interop) {
+		root->add_child("VolumeCount")->add_child_text ("1");
+		root->add_child("IssueDate")->add_child_text (metadata.issue_date);
+		root->add_child("Issuer")->add_child_text (metadata.issuer);
+		root->add_child("Creator")->add_child_text (metadata.creator);
+	} else {
+		root->add_child("Creator")->add_child_text (metadata.creator);
+		root->add_child("VolumeCount")->add_child_text ("1");
+		root->add_child("IssueDate")->add_child_text (metadata.issue_date);
+		root->add_child("Issuer")->add_child_text (metadata.issuer);
+	}
+		
 	xmlpp::Node* asset_list = root->add_child ("AssetList");
 
 	xmlpp::Node* asset = asset_list->add_child ("Asset");
