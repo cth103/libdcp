@@ -286,7 +286,7 @@ libdcp::add_signer (xmlpp::Element* parent, CertificateChain const & certificate
 }
 
 void
-libdcp::sign (xmlpp::Element* parent, CertificateChain const & certificates, string const & signer_key)
+libdcp::sign (xmlpp::Element* parent, CertificateChain const & certificates, string const & signer_key, bool interop)
 {
 	add_signer (parent, certificates, "dsig");
 
@@ -295,7 +295,13 @@ libdcp::sign (xmlpp::Element* parent, CertificateChain const & certificates, str
 	{
 		xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
 		signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
-		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+
+	        if (interop) {
+			signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+		} else {
+			signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+		}
+		
 		{
 			xmlpp::Element* reference = signed_info->add_child("Reference", "dsig");
 			reference->set_attribute ("URI", "");

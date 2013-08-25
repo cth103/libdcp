@@ -64,21 +64,21 @@ DCP::DCP (string directory)
 }
 
 void
-DCP::write_xml (XMLMetadata const & metadata, shared_ptr<Encryption> crypt) const
+DCP::write_xml (XMLMetadata const & metadata, bool interop, shared_ptr<Encryption> crypt) const
 {
 	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
-		(*i)->write_xml (metadata, crypt);
+		(*i)->write_xml (interop, metadata, crypt);
 	}
 
 	string pkl_uuid = make_uuid ();
-	string pkl_path = write_pkl (pkl_uuid, metadata, crypt);
+	string pkl_path = write_pkl (pkl_uuid, interop, metadata, crypt);
 	
 	write_volindex ();
-	write_assetmap (pkl_uuid, boost::filesystem::file_size (pkl_path), metadata);
+	write_assetmap (pkl_uuid, boost::filesystem::file_size (pkl_path), interop, metadata);
 }
 
 std::string
-DCP::write_pkl (string pkl_uuid, XMLMetadata const & metadata, shared_ptr<Encryption> crypt) const
+DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, shared_ptr<Encryption> crypt) const
 {
 	assert (!_cpls.empty ());
 	
@@ -89,7 +89,13 @@ DCP::write_pkl (string pkl_uuid, XMLMetadata const & metadata, shared_ptr<Encryp
 	p /= s.str();
 
 	xmlpp::Document doc;
-	xmlpp::Element* pkl = doc.create_root_node("PackingList", "http://www.smpte-ra.org/schemas/429-8/2007/PKL");
+	xmlpp::Element* pkl;
+	if (interop) {
+		pkl = doc.create_root_node("PackingList", "http://www.digicine.com/PROTO-ASDCP-PKL-20040311#");
+	} else {
+		pkl = doc.create_root_node("PackingList", "http://www.smpte-ra.org/schemas/429-8/2007/PKL");
+	}
+	
 	if (crypt) {
 		pkl->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	}
@@ -112,7 +118,7 @@ DCP::write_pkl (string pkl_uuid, XMLMetadata const & metadata, shared_ptr<Encryp
 	}
 
 	if (crypt) {
-		sign (pkl, crypt->certificates, crypt->signer_key);
+		sign (pkl, crypt->certificates, crypt->signer_key, interop);
 	}
 		
 	doc.write_to_file_formatted (p.string (), "UTF-8");
@@ -133,14 +139,19 @@ DCP::write_volindex () const
 }
 
 void
-DCP::write_assetmap (string pkl_uuid, int pkl_length, XMLMetadata const & metadata) const
+DCP::write_assetmap (string pkl_uuid, int pkl_length, bool interop, XMLMetadata const & metadata) const
 {
 	boost::filesystem::path p;
 	p /= _directory;
 	p /= "ASSETMAP.xml";
 
 	xmlpp::Document doc;
-	xmlpp::Element* root = doc.create_root_node ("AssetMap", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
+	xmlpp::Element* root;
+	if (interop) {
+		root = doc.create_root_node ("AssetMap", "http://www.digicine.com/PROTO-ASDCP-AM-20040311#");
+	} else {
+		root = doc.create_root_node ("AssetMap", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
+	}
 
 	root->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
 	root->add_child("Creator")->add_child_text (metadata.creator);

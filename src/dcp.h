@@ -54,7 +54,7 @@ class KDM;
  *  @brief A class to create or read a DCP.
  */
 	
-class DCP
+class DCP : public boost::noncopyable
 {
 public:
 	/** Construct a DCP.  You can pass an existing DCP's directory
@@ -78,7 +78,7 @@ public:
 	/** Write the required XML files to the directory that was
 	 *  passed into the constructor.
 	 */
-	void write_xml (XMLMetadata const &, boost::shared_ptr<Encryption> crypt = boost::shared_ptr<Encryption> ()) const;
+	void write_xml (XMLMetadata const &, bool interop = false, boost::shared_ptr<Encryption> crypt = boost::shared_ptr<Encryption> ()) const;
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
@@ -111,7 +111,7 @@ private:
 	/** Write the PKL file.
 	 *  @param pkl_uuid UUID to use.
 	 */
-	std::string write_pkl (std::string pkl_uuid, XMLMetadata const &, boost::shared_ptr<Encryption>) const;
+	std::string write_pkl (std::string pkl_uuid, bool, XMLMetadata const &, boost::shared_ptr<Encryption>) const;
 	
 	/** Write the VOLINDEX file */
 	void write_volindex () const;
@@ -120,7 +120,7 @@ private:
 	 *  @param pkl_uuid UUID of our PKL.
 	 *  @param pkl_length Length of our PKL in bytes.
 	 */
-	void write_assetmap (std::string pkl_uuid, int pkl_length, XMLMetadata const &) const;
+	void write_assetmap (std::string pkl_uuid, int pkl_length, bool, XMLMetadata const &) const;
 
 	/** @return Assets in all this CPLs in this DCP */
 	std::list<boost::shared_ptr<const Asset> > assets () const;

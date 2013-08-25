@@ -88,7 +88,7 @@ public:
 	
 	bool equals (CPL const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
 	
-	void write_xml (XMLMetadata const &, boost::shared_ptr<Encryption>) const;
+	void write_xml (bool, XMLMetadata const &, boost::shared_ptr<Encryption>) const;
 	void write_to_assetmap (xmlpp::Node *) const;
 	void write_to_pkl (xmlpp::Node *) const;
 
@@ -98,6 +98,7 @@ public:
 		boost::shared_ptr<const Certificate>,
 		boost::posix_time::ptime from,
 		boost::posix_time::ptime until,
+		bool,
 		MXFMetadata const &,
 		XMLMetadata const &
 		) const;

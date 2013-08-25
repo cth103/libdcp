@@ -52,12 +52,13 @@ FrameInfo::write (ostream& s)
 }
 
 
-PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, bool overwrite, MXFMetadata const & metadata)
+PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, bool overwrite, bool interop, MXFMetadata const & metadata)
 	: _asset (asset)
 	, _frames_written (0)
 	, _started (false)
 	, _finalized (false)
 	, _overwrite (overwrite)
+	, _interop (interop)
 	, _metadata (metadata)
 {
 	
@@ -88,15 +89,15 @@ struct StereoPictureAssetWriter::ASDCPState : public ASDCPStateBase
 /** @param a Asset to write to.  `a' must not be deleted while
  *  this writer class still exists, or bad things will happen.
  */
-MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, bool overwrite, MXFMetadata const & metadata)
-	: PictureAssetWriter (asset, overwrite, metadata)
+MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, bool overwrite, bool interop, MXFMetadata const & metadata)
+	: PictureAssetWriter (asset, overwrite, interop, metadata)
 	, _state (new MonoPictureAssetWriter::ASDCPState)
 {
 
 }
 
-StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* asset, bool overwrite, MXFMetadata const & metadata)
-	: PictureAssetWriter (asset, overwrite, metadata)
+StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* asset, bool overwrite, bool interop, MXFMetadata const & metadata)
+	: PictureAssetWriter (asset, overwrite, interop, metadata)
 	, _state (new StereoPictureAssetWriter::ASDCPState)
 	, _next_eye (EYE_LEFT)
 {
@@ -113,7 +114,7 @@ void libdcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, u
 	state->j2k_parser.FillPictureDescriptor (state->picture_descriptor);
 	state->picture_descriptor.EditRate = ASDCP::Rational (asset->edit_rate(), 1);
 	
-	asset->fill_writer_info (&state->writer_info, asset->uuid(), writer->_metadata);
+	asset->fill_writer_info (&state->writer_info, asset->uuid(), writer->_interop, writer->_metadata);
 	
 	if (ASDCP_FAILURE (state->mxf_writer.OpenWrite (
 				   asset->path().string().c_str(),

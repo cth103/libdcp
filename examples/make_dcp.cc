@@ -75,7 +75,7 @@ main ()
 	   for 2K projectors.
 	*/
 	boost::shared_ptr<libdcp::MonoPictureAsset> picture_asset (
-		new libdcp::MonoPictureAsset (video_frame, "My Film DCP", "video.mxf", 0, 24, 48, false, libdcp::Size (1998, 1080))
+		new libdcp::MonoPictureAsset (video_frame, "My Film DCP", "video.mxf", 0, 24, 48, false, libdcp::Size (1998, 1080), false)
 		);
 
 	/* Now we will create a `sound asset', which is made up of a WAV file for each channel of audio.  Here we're using
@@ -95,7 +95,7 @@ main ()
 
 	/* Now we can create the sound asset using these files */
 	boost::shared_ptr<libdcp::SoundAsset> sound_asset (
-		new libdcp::SoundAsset (sound_files, "My Film DCP", "audio.mxf", 0, 24, 48, false)
+		new libdcp::SoundAsset (sound_files, "My Film DCP", "audio.mxf", 0, 24, 48, false, false)
 		);
 
 	/* Now that we have the assets, we can create a Reel to put them in and add it to the CPL */

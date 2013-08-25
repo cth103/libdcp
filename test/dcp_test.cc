@@ -47,6 +47,7 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 							 24,
 							 false,
 							 libdcp::Size (32, 32),
+							 false,
 							 mxf_meta
 							 ));
 
@@ -58,6 +59,7 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 						   24,
 						   24,
 						   2,
+						   false,
 						   false,
 						   mxf_meta
 						   ));

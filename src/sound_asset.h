@@ -43,7 +43,7 @@ public:
 private:
 	friend class SoundAsset;
 
-	SoundAssetWriter (SoundAsset *, MXFMetadata const &);
+	SoundAssetWriter (SoundAsset *, bool interop, MXFMetadata const &);
 
 	/* no copy construction */
 	SoundAssetWriter (SoundAssetWriter const &);
@@ -90,6 +90,7 @@ public:
 		int fps,
 		int intrinsic_duration,
 		bool encrypted,
+		bool interop,
 		MXFMetadata const & metadata = MXFMetadata ()
 		);
 
@@ -113,6 +114,7 @@ public:
 		int intrinsic_duration,
 		int channels,
 		bool encrypted,
+		bool interop,
 		MXFMetadata const & metadata = MXFMetadata ()
 		);
 
@@ -129,9 +131,8 @@ public:
 		int sampling_rate
 		);
 
-	boost::shared_ptr<SoundAssetWriter> start_write (MXFMetadata const & metadata = MXFMetadata ());
+	boost::shared_ptr<SoundAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ());
 	
-
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
@@ -146,7 +147,7 @@ public:
 
 private:
 	std::string key_type () const;
-	void construct (boost::function<std::string (Channel)> get_path, MXFMetadata const &);
+	void construct (boost::function<std::string (Channel)> get_path, bool interop, MXFMetadata const &);
 	std::string path_from_channel (Channel channel, std::vector<std::string> const & files);
 	std::string cpl_node_name () const;
 

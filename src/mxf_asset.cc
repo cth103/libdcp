@@ -87,13 +87,17 @@ MXFAsset::~MXFAsset ()
 }
 
 void
-MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid, MXFMetadata const & metadata)
+MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid, bool interop, MXFMetadata const & metadata)
 {
 	writer_info->ProductVersion = metadata.product_version;
 	writer_info->CompanyName = metadata.company_name;
 	writer_info->ProductName = metadata.product_name.c_str();
 
-	writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
+	if (interop) {
+		writer_info->LabelSetType = ASDCP::LS_MXF_INTEROP;
+	} else {
+		writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
+	}
 	unsigned int c;
 	Kumu::hex2bin (uuid.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
 	assert (c == Kumu::UUID_Length);

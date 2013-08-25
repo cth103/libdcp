@@ -68,7 +68,7 @@ extern boost::shared_ptr<XYZFrame> decompress_j2k (uint8_t* data, int64_t size, 
 
 extern void init ();
 
-extern void sign (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & signer_key);
+extern void sign (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & signer_key, bool interop);
 extern void add_signature_value (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & signer_key, std::string const & ns);
 extern void add_signer (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & ns);
 

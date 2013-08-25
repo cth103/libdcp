@@ -58,7 +58,7 @@ protected:
 	template <class P, class Q>
 	friend void start (PictureAssetWriter *, boost::shared_ptr<P>, Q *, uint8_t *, int);
 
-	PictureAssetWriter (PictureAsset *, bool, MXFMetadata const &);
+	PictureAssetWriter (PictureAsset *, bool, bool, MXFMetadata const &);
 
 	PictureAsset* _asset;
 	
@@ -71,6 +71,7 @@ protected:
 	/** true if finalize() has been called */
 	bool _finalized;
 	bool _overwrite;
+	bool _interop;
 	MXFMetadata _metadata;
 };
 
@@ -94,7 +95,7 @@ public:
 private:
 	friend class MonoPictureAsset;
 
-	MonoPictureAssetWriter (PictureAsset *, bool, MXFMetadata const &);
+	MonoPictureAssetWriter (PictureAsset *, bool, bool, MXFMetadata const &);
 	void start (uint8_t *, int);
 
 	/* do this with an opaque pointer so we don't have to include
@@ -125,7 +126,7 @@ public:
 private:
 	friend class StereoPictureAsset;
 
-	StereoPictureAssetWriter (PictureAsset *, bool, MXFMetadata const &);
+	StereoPictureAssetWriter (PictureAsset *, bool, bool, MXFMetadata const &);
 	void start (uint8_t *, int);
 
 	/* do this with an opaque pointer so we don't have to include

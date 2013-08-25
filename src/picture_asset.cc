@@ -181,11 +181,12 @@ MonoPictureAsset::MonoPictureAsset (
 	int intrinsic_duration,
 	bool encrypted,
 	Size size,
+	bool interop,
 	MXFMetadata const & metadata
 	)
 	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, encrypted, size)
 {
-	construct (get_path, metadata);
+	construct (get_path, interop, metadata);
 }
 
 MonoPictureAsset::MonoPictureAsset (
@@ -197,11 +198,12 @@ MonoPictureAsset::MonoPictureAsset (
 	int intrinsic_duration,
 	bool encrypted,
 	Size size,
+	bool interop,
 	MXFMetadata const & metadata
 	)
 	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, encrypted, size)
 {
-	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files), metadata);
+	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files), interop, metadata);
 }
 
 MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, Size size)
@@ -231,7 +233,7 @@ MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name)
 }
 
 void
-MonoPictureAsset::construct (boost::function<string (int)> get_path, MXFMetadata const & metadata)
+MonoPictureAsset::construct (boost::function<string (int)> get_path, bool interop, MXFMetadata const & metadata)
 {
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
@@ -244,7 +246,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path, MXFMetadata
 	picture_desc.EditRate = ASDCP::Rational (_edit_rate, 1);
 	
 	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info, _uuid, metadata);
+	fill_writer_info (&writer_info, _uuid, interop, metadata);
 	
 	ASDCP::JP2K::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc, 16384, false))) {
@@ -442,10 +444,10 @@ StereoPictureAsset::get_frame (int n) const
 }
 
 shared_ptr<PictureAssetWriter>
-MonoPictureAsset::start_write (bool overwrite, MXFMetadata const & metadata)
+MonoPictureAsset::start_write (bool overwrite, bool interop, MXFMetadata const & metadata)
 {
 	/* XXX: can't we use shared_ptr here? */
-	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, overwrite, metadata));
+	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, overwrite, interop, metadata));
 }
 
 string
@@ -461,9 +463,9 @@ StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int f
 }
 
 shared_ptr<PictureAssetWriter>
-StereoPictureAsset::start_write (bool overwrite, MXFMetadata const & metadata)
+StereoPictureAsset::start_write (bool overwrite, bool interop, MXFMetadata const & metadata)
 {
 	/* XXX: can't we use shared_ptr here? */
-	return shared_ptr<StereoPictureAssetWriter> (new StereoPictureAssetWriter (this, overwrite, metadata));
+	return shared_ptr<StereoPictureAssetWriter> (new StereoPictureAssetWriter (this, overwrite, interop, metadata));
 }
 

@@ -66,8 +66,9 @@ public:
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
 	 *  @param uuid uuid to use.
+	 *  @param true to label as interop, false for SMPTE.
 	 */
-	void fill_writer_info (ASDCP::WriterInfo* w, std::string uuid, MXFMetadata const & metadata);
+	void fill_writer_info (ASDCP::WriterInfo* w, std::string uuid, bool interop, MXFMetadata const & metadata);
 
 	void add_typed_key_id (xmlpp::Element *) const;
 

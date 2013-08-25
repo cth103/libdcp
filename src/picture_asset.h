@@ -73,7 +73,7 @@ public:
 	 *  MXF file does not exist.
 	 *  @param metadata MXF metadata to use.
 	 */
-	virtual boost::shared_ptr<PictureAssetWriter> start_write (bool overwrite, MXFMetadata const & metadata = MXFMetadata ()) = 0;
+	virtual boost::shared_ptr<PictureAssetWriter> start_write (bool overwrite, bool interop, MXFMetadata const & metadata = MXFMetadata ()) = 0;
 	
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
@@ -124,6 +124,7 @@ public:
 		int intrinsic_duration,
 		bool encrypted,
 		Size size,
+		bool interop,
 		MXFMetadata const & metadata = MXFMetadata ()
 		);
 
@@ -148,6 +149,7 @@ public:
 		int intrinsic_duration,
 		bool encrypted,
 		Size size,
+		bool interop,
 		MXFMetadata const & metadata = MXFMetadata ()
 		);
 
@@ -168,14 +170,14 @@ public:
 	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
 
 	/** Start a progressive write to a MonoPictureAsset */
-	boost::shared_ptr<PictureAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ());
+	boost::shared_ptr<PictureAssetWriter> start_write (bool, bool, MXFMetadata const & metadata = MXFMetadata ());
 
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 private:
 	std::string path_from_list (int f, std::vector<std::string> const & files) const;
-	void construct (boost::function<std::string (int)>, MXFMetadata const &);
+	void construct (boost::function<std::string (int)>, bool, MXFMetadata const &);
 	std::string cpl_node_name () const;
 	int edit_rate_factor () const;
 };
@@ -197,7 +199,7 @@ public:
 	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
 
 	/** Start a progressive write to a StereoPictureAsset */
-	boost::shared_ptr<PictureAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ());
+	boost::shared_ptr<PictureAssetWriter> start_write (bool, bool, MXFMetadata const & metadata = MXFMetadata ());
 
 	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;

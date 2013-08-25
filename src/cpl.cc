@@ -195,7 +195,7 @@ CPL::add_reel (shared_ptr<Reel> reel)
 }
 
 void
-CPL::write_xml (XMLMetadata const & metadata, shared_ptr<Encryption> crypt) const
+CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Encryption> crypt) const
 {
 	boost::filesystem::path p;
 	p /= _directory;
@@ -204,7 +204,12 @@ CPL::write_xml (XMLMetadata const & metadata, shared_ptr<Encryption> crypt) cons
 	p /= s.str();
 
 	xmlpp::Document doc;
-	xmlpp::Element* root = doc.create_root_node ("CompositionPlaylist", "http://www.smpte-ra.org/schemas/429-7/2006/CPL");
+	xmlpp::Element* root;
+	if (interop) {
+		root = doc.create_root_node ("CompositionPlaylist", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#");
+	} else {
+		root = doc.create_root_node ("CompositionPlaylist", "http://www.smpte-ra.org/schemas/429-7/2006/CPL");
+	}
 
 	if (crypt) {
 		root->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
@@ -230,7 +235,7 @@ CPL::write_xml (XMLMetadata const & metadata, shared_ptr<Encryption> crypt) cons
 	}
 
 	if (crypt) {
-		sign (root, crypt->certificates, crypt->signer_key);
+		sign (root, crypt->certificates, crypt->signer_key, interop);
 	}
 
 	doc.write_to_file_formatted (p.string (), "UTF-8");
@@ -334,6 +339,7 @@ CPL::make_kdm (
 	shared_ptr<const Certificate> recipient_cert,
 	boost::posix_time::ptime from,
 	boost::posix_time::ptime until,
+	bool interop,
 	MXFMetadata const & mxf_metadata,
 	XMLMetadata const & xml_metadata
 	) const
@@ -449,9 +455,17 @@ CPL::make_kdm (
 			signed_info->add_child("CanonicalizationMethod", "ds")->set_attribute(
 				"Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"
 				);
-			signed_info->add_child("SignatureMethod", "ds")->set_attribute(
-				"Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
-				);
+
+			if (interop) {
+				signed_info->add_child("SignatureMethod", "ds")->set_attribute(
+					"Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1"
+					);
+			} else {
+				signed_info->add_child("SignatureMethod", "ds")->set_attribute(
+					"Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
+					);
+			}
+			
 			{
 				xmlpp::Element* reference = signed_info->add_child("Reference", "ds");
 				reference->set_attribute("URI", "#ID_AuthenticatedPublic");
