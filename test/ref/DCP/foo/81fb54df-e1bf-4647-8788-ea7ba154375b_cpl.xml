@@ -3,6 +3,7 @@
   <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
   <AnnotationText>A Test DCP</AnnotationText>
   <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
+  <Issuer>OpenDCP 0.0.25</Issuer>
   <Creator>OpenDCP 0.0.25</Creator>
   <ContentTitleText>A Test DCP</ContentTitleText>
   <ContentKind>feature</ContentKind>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <AssetMap xmlns="http://www.smpte-ra.org/schemas/429-9/2007/AM">
   <Id>urn:uuid:b135d5cf-d180-43d8-b0b3-7373737b73bf</Id>
+  <AnnotationText>Created by OpenDCP 0.0.25</AnnotationText>
   <Creator>OpenDCP 0.0.25</Creator>
   <VolumeCount>1</VolumeCount>
   <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
@@ -25,7 +26,7 @@
           <Path>81fb54df-e1bf-4647-8788-ea7ba154375b_cpl.xml</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
-          <Length>1526</Length>
+          <Length>1560</Length>
         </Chunk>
       </ChunkList>
     </Asset>
