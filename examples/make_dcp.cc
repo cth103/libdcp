@@ -109,7 +109,7 @@ main ()
 	   is ready to ingest and play.
 	*/
 	libdcp::XMLMetadata metadata;
-	dcp.write_xml (metadata);
+	dcp.write_xml (false, metadata);
 
 	return 0;
 }

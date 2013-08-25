@@ -78,7 +78,7 @@ public:
 	/** Write the required XML files to the directory that was
 	 *  passed into the constructor.
 	 */
-	void write_xml (XMLMetadata const &, bool interop = false, boost::shared_ptr<Encryption> crypt = boost::shared_ptr<Encryption> ()) const;
+	void write_xml (bool interop, XMLMetadata const &, boost::shared_ptr<Encryption> crypt = boost::shared_ptr<Encryption> ()) const;
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.

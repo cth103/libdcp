@@ -64,7 +64,7 @@ DCP::DCP (string directory)
 }
 
 void
-DCP::write_xml (XMLMetadata const & metadata, bool interop, shared_ptr<Encryption> crypt) const
+DCP::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Encryption> crypt) const
 {
 	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
 		(*i)->write_xml (interop, metadata, crypt);

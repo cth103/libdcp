@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);
 
-	d.write_xml (xml_meta);
+	d.write_xml (false, xml_meta);
 
 	/* build/test/foo is checked against test/ref/DCP/foo by run-tests.sh */
 }
