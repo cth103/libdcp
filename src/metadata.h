@@ -26,7 +26,7 @@
 
 #include <string>
 
-class bias_to_string_test;
+class utc_offset_to_string_test;
 
 namespace libdcp
 {
@@ -53,9 +53,9 @@ public:
 	std::string issue_date;
 
 private:
-	friend class ::bias_to_string_test;
+	friend class ::utc_offset_to_string_test;
 	
-	static std::string bias_to_string (int);
+	static std::string utc_offset_to_string (int);
 };
 
 }

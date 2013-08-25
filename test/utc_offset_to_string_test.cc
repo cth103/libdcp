@@ -19,12 +19,12 @@
 
 #include "metadata.h"
 
-/** Test XMLMetadata::bias_to_string */
-BOOST_AUTO_TEST_CASE (bias_to_string_test)
+/** Test XMLMetadata::utc_offset_to_string */
+BOOST_AUTO_TEST_CASE (utc_offset_to_string_test)
 {
-	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::bias_to_string (30), "+0030");
-	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::bias_to_string (60), "+0100");
-	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::bias_to_string (61), "+0101");
-	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::bias_to_string (7 * 60), "+0700");
-	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::bias_to_string (-11 * 60), "-1100");
+	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::utc_offset_to_string (30), "+00:30");
+	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::utc_offset_to_string (60), "+01:00");
+	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::utc_offset_to_string (61), "+01:01");
+	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::utc_offset_to_string (7 * 60), "+07:00");
+	BOOST_CHECK_EQUAL (libdcp::XMLMetadata::utc_offset_to_string (-11 * 60), "-11:00");
 }

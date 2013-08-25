@@ -70,7 +70,7 @@ wav (libdcp::Channel)
 
 static string test_corpus = "../libdcp-test";
 
-#include "bias_to_string_test.cc"
+#include "utc_offset_to_string_test.cc"
 #include "lut_test.cc"
 #include "util_test.cc"
 #include "decryption_test.cc"
