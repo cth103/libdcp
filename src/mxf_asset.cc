@@ -144,9 +144,9 @@ MXFAsset::add_typed_key_id (xmlpp::Element* parent) const
 }
 
 void
-MXFAsset::write_to_cpl (xmlpp::Node* node) const
+MXFAsset::write_to_cpl (xmlpp::Node* node, bool interop) const
 {
-	xmlpp::Node* a = node->add_child (cpl_node_name ());
+	xmlpp::Node* a = node->add_child (cpl_node_name (), cpl_node_namespace (interop));
 	a->add_child ("Id")->add_child_text ("urn:uuid:" + _uuid);
 	a->add_child ("AnnotationText")->add_child_text (_file_name);
 	a->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");

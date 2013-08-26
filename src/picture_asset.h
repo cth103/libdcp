@@ -95,7 +95,6 @@ protected:
 
 private:
 	std::string key_type () const;
-	std::string cpl_node_name () const = 0;
 	virtual int edit_rate_factor () const = 0;
 };
 
@@ -206,6 +205,7 @@ public:
 
 private:
 	std::string cpl_node_name () const;
+	std::string cpl_node_namespace (bool) const;
 	int edit_rate_factor () const;
 };
 	

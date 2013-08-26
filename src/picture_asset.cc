@@ -85,6 +85,18 @@ StereoPictureAsset::cpl_node_name () const
 	return "MainStereoscopicPicture";
 }
 
+string
+StereoPictureAsset::cpl_node_namespace (bool interop) const
+{
+	if (interop) {
+		return "http://www.digicine.com/schemas/437-Y/2007/Main-Stereo-Picture-CPL";
+	} else {
+		return "http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL";
+	}
+
+	return "";
+}
+
 int
 StereoPictureAsset::edit_rate_factor () const
 {
@@ -94,7 +106,7 @@ StereoPictureAsset::edit_rate_factor () const
 void
 PictureAsset::write_to_cpl (xmlpp::Node* node, bool interop) const
 {
-	MXFAsset::write_to_cpl (node);
+	MXFAsset::write_to_cpl (node, interop);
 	
 	xmlpp::Node::NodeList c = node->get_children ();
 	xmlpp::Node::NodeList::iterator i = c.begin();

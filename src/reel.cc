@@ -43,11 +43,11 @@ Reel::write_to_cpl (xmlpp::Node* node, bool interop) const
 	}
 
 	if (_main_sound) {
-		_main_sound->write_to_cpl (asset_list);
+		_main_sound->write_to_cpl (asset_list, interop);
 	}
 
 	if (_main_subtitle) {
-		_main_subtitle->write_to_cpl (asset_list);
+		_main_subtitle->write_to_cpl (asset_list, interop);
 	}
 }
 	

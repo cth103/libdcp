@@ -61,7 +61,7 @@ public:
 
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
-	virtual void write_to_cpl (xmlpp::Node *) const;
+	virtual void write_to_cpl (xmlpp::Node *, bool interop) const;
 
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
@@ -89,6 +89,9 @@ public:
 protected:
 	virtual std::string key_type () const = 0;
 	virtual std::string cpl_node_name () const = 0;
+	virtual std::string cpl_node_namespace (bool) const {
+		return "";
+	}
 	
 	/** Signal to emit to report progress, or 0 */
 	boost::signals2::signal<void (float)>* _progress;
