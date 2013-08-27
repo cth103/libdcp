@@ -50,6 +50,10 @@ class XMLMetadata;
 class Encryption;
 class KDM;
 
+namespace parse {
+	class AssetMap;
+}
+
 /** @class DCP
  *  @brief A class to create or read a DCP.
  */
@@ -97,6 +101,16 @@ public:
 		return _cpls;
 	}
 
+	/** Add another DCP as a source of assets for this DCP.  This should be called before
+	 *  ::read() on the DCP that needs the extra assets.  For example
+	 *
+	 *  DCP original_version ("my_dcp_OV");
+	 *  DCP supplemental ("my_dcp_VF");
+	 *  supplemental.add_assets_from (original_version);
+	 *  supplemental.read ();
+	 */
+	void add_assets_from (libdcp::DCP const &);
+
 	bool encrypted () const;
 
 	void add_kdm (KDM const &);
@@ -122,7 +136,7 @@ private:
 	 */
 	void write_assetmap (std::string pkl_uuid, int pkl_length, bool, XMLMetadata const &) const;
 
-	/** @return Assets in all this CPLs in this DCP */
+	/** @return Assets in all the CPLs in this DCP */
 	std::list<boost::shared_ptr<const Asset> > assets () const;
 
 	struct Files {
@@ -135,6 +149,8 @@ private:
 	std::string _directory;
 	/** our CPLs */
 	std::list<boost::shared_ptr<CPL> > _cpls;
+
+	std::list<boost::shared_ptr<const parse::AssetMap> > _asset_maps;
 };
 
 }

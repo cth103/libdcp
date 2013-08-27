@@ -32,6 +32,7 @@ namespace libdcp {
 
 namespace parse {
 	class AssetMap;
+	class AssetMapAsset;
 }
 	
 class Asset;
@@ -46,7 +47,7 @@ class CPL
 {
 public:
 	CPL (std::string directory, std::string name, ContentKind content_kind, int length, int frames_per_second);
-	CPL (std::string directory, std::string file, boost::shared_ptr<const parse::AssetMap> asset_map, bool require_mxfs = true);
+	CPL (std::string directory, std::string file, std::list<boost::shared_ptr<const parse::AssetMap> > asset_maps, bool require_mxfs = true);
 
 	void add_reel (boost::shared_ptr<Reel> reel);
 	
@@ -106,6 +107,8 @@ public:
 	void add_kdm (KDM const &);
 	
 private:
+	boost::shared_ptr<parse::AssetMapAsset> asset_from_id (std::list<boost::shared_ptr<const parse::AssetMap> > asset_maps, std::string id) const;
+	
 	std::string _directory;
 	/** the name of the DCP */
 	std::string _name;

@@ -53,6 +53,8 @@ using std::list;
 using std::stringstream;
 using std::ofstream;
 using std::ostream;
+using std::copy;
+using std::back_inserter;
 using boost::shared_ptr;
 using boost::lexical_cast;
 using namespace libdcp;
@@ -269,8 +271,10 @@ DCP::read (bool require_mxfs)
 	/* Cross-check */
 	/* XXX */
 
+	_asset_maps.push_back (asset_map);
+
 	for (list<string>::iterator i = files.cpls.begin(); i != files.cpls.end(); ++i) {
-		_cpls.push_back (shared_ptr<CPL> (new CPL (_directory, *i, asset_map, require_mxfs)));
+		_cpls.push_back (shared_ptr<CPL> (new CPL (_directory, *i, _asset_maps, require_mxfs)));
 	}
 }
 
@@ -348,4 +352,10 @@ DCP::add_kdm (KDM const & kdm)
 			}				
 		}
 	}
+}
+
+void
+DCP::add_assets_from (DCP const & ov)
+{
+	copy (ov._asset_maps.begin(), ov._asset_maps.end(), back_inserter (_asset_maps));
 }

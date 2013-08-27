@@ -54,10 +54,10 @@ CPL::CPL (string directory, string name, ContentKind content_kind, int length, i
 /** Construct a CPL object from a XML file.
  *  @param directory The directory containing this CPL's DCP.
  *  @param file The CPL XML filename.
- *  @param asset_map The corresponding asset map.
+ *  @param asset_maps AssetMaps to look for assets in.
  *  @param require_mxfs true to throw an exception if a required MXF file does not exist.
  */
-CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMap> asset_map, bool require_mxfs)
+CPL::CPL (string directory, string file, list<shared_ptr<const parse::AssetMap> > asset_maps, bool require_mxfs)
 	: _directory (directory)
 	, _content_kind (FEATURE)
 	, _length (0)
@@ -79,7 +79,7 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 	/* Trim urn:uuid: off the front */
 	_id = cpl->id.substr (9);
 
-	for (list<shared_ptr<libdcp::parse::Reel> >::iterator i = cpl->reels.begin(); i != cpl->reels.end(); ++i) {
+	for (list<shared_ptr<parse::Reel> >::iterator i = cpl->reels.begin(); i != cpl->reels.end(); ++i) {
 
 		shared_ptr<parse::Picture> p;
 
@@ -107,7 +107,7 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 			try {
 				picture.reset (new MonoPictureAsset (
 						       _directory,
-						       asset_map->asset_from_id (p->id)->chunks.front()->path
+						       asset_from_id (asset_maps, p->id)->chunks.front()->path
 						       )
 					);
 
@@ -127,7 +127,7 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 			try {
 				picture.reset (new StereoPictureAsset (
 						       _directory,
-						       asset_map->asset_from_id (p->id)->chunks.front()->path,
+						       asset_from_id (asset_maps, p->id)->chunks.front()->path,
 						       _fps,
 						       p->duration
 						       )
@@ -153,7 +153,7 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 			try {
 				sound.reset (new SoundAsset (
 						     _directory,
-						     asset_map->asset_from_id ((*i)->asset_list->main_sound->id)->chunks.front()->path
+						     asset_from_id (asset_maps, (*i)->asset_list->main_sound->id)->chunks.front()->path
 						     )
 					);
 
@@ -176,7 +176,7 @@ CPL::CPL (string directory, string file, shared_ptr<const libdcp::parse::AssetMa
 			
 			subtitle.reset (new SubtitleAsset (
 						_directory,
-						asset_map->asset_from_id ((*i)->asset_list->main_subtitle->id)->chunks.front()->path
+					        asset_from_id (asset_maps, (*i)->asset_list->main_subtitle->id)->chunks.front()->path
 						)
 				);
 
@@ -507,4 +507,17 @@ CPL::add_kdm (KDM const & kdm)
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		(*i)->add_kdm (kdm);
 	}
+}
+
+shared_ptr<parse::AssetMapAsset>
+CPL::asset_from_id (list<shared_ptr<const parse::AssetMap> > asset_maps, string id) const
+{
+	for (list<shared_ptr<const parse::AssetMap> >::const_iterator i = asset_maps.begin(); i != asset_maps.end(); ++i) {
+		shared_ptr<parse::AssetMapAsset> a = (*i)->asset_from_id (id);
+		if (a) {
+			return a;
+		}
+	}
+
+	return shared_ptr<parse::AssetMapAsset> ();
 }
