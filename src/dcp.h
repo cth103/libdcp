@@ -150,7 +150,7 @@ private:
 	/** our CPLs */
 	std::list<boost::shared_ptr<CPL> > _cpls;
 
-	std::list<boost::shared_ptr<const parse::AssetMap> > _asset_maps;
+	std::list<PathAssetMap> _asset_maps;
 };
 
 }

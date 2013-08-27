@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2013 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,8 +37,11 @@ using std::stringstream;
 using std::ofstream;
 using std::ostream;
 using std::list;
+using std::pair;
+using std::make_pair;
 using boost::shared_ptr;
 using boost::lexical_cast;
+using boost::optional;
 using namespace libdcp;
 
 CPL::CPL (string directory, string name, ContentKind content_kind, int length, int frames_per_second)
@@ -57,7 +60,7 @@ CPL::CPL (string directory, string name, ContentKind content_kind, int length, i
  *  @param asset_maps AssetMaps to look for assets in.
  *  @param require_mxfs true to throw an exception if a required MXF file does not exist.
  */
-CPL::CPL (string directory, string file, list<shared_ptr<const parse::AssetMap> > asset_maps, bool require_mxfs)
+CPL::CPL (string directory, string file, list<PathAssetMap> asset_maps, bool require_mxfs)
 	: _directory (directory)
 	, _content_kind (FEATURE)
 	, _length (0)
@@ -104,10 +107,12 @@ CPL::CPL (string directory, string file, list<shared_ptr<const parse::AssetMap> 
 
 		if (!(*i)->asset_list->main_stereoscopic_picture && p->edit_rate == p->frame_rate) {
 
+			pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
+
 			try {
 				picture.reset (new MonoPictureAsset (
-						       _directory,
-						       asset_from_id (asset_maps, p->id)->chunks.front()->path
+						       asset.first,
+						       asset.second->chunks.front()->path
 						       )
 					);
 
@@ -125,9 +130,11 @@ CPL::CPL (string directory, string file, list<shared_ptr<const parse::AssetMap> 
 			
 		} else {
 			try {
+				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
+
 				picture.reset (new StereoPictureAsset (
-						       _directory,
-						       asset_from_id (asset_maps, p->id)->chunks.front()->path,
+						       asset.first,
+						       asset.second->chunks.front()->path,
 						       _fps,
 						       p->duration
 						       )
@@ -151,9 +158,11 @@ CPL::CPL (string directory, string file, list<shared_ptr<const parse::AssetMap> 
 		if ((*i)->asset_list->main_sound) {
 			
 			try {
+				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, (*i)->asset_list->main_sound->id);
+			
 				sound.reset (new SoundAsset (
-						     _directory,
-						     asset_from_id (asset_maps, (*i)->asset_list->main_sound->id)->chunks.front()->path
+						     asset.first,
+						     asset.second->chunks.front()->path
 						     )
 					);
 
@@ -174,9 +183,11 @@ CPL::CPL (string directory, string file, list<shared_ptr<const parse::AssetMap> 
 
 		if ((*i)->asset_list->main_subtitle) {
 			
+			pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, (*i)->asset_list->main_subtitle->id);
+
 			subtitle.reset (new SubtitleAsset (
-						_directory,
-					        asset_from_id (asset_maps, (*i)->asset_list->main_subtitle->id)->chunks.front()->path
+						asset.first,
+						asset.second->chunks.front()->path
 						)
 				);
 
@@ -509,15 +520,15 @@ CPL::add_kdm (KDM const & kdm)
 	}
 }
 
-shared_ptr<parse::AssetMapAsset>
-CPL::asset_from_id (list<shared_ptr<const parse::AssetMap> > asset_maps, string id) const
+pair<string, shared_ptr<const parse::AssetMapAsset> >
+CPL::asset_from_id (list<PathAssetMap> asset_maps, string id) const
 {
-	for (list<shared_ptr<const parse::AssetMap> >::const_iterator i = asset_maps.begin(); i != asset_maps.end(); ++i) {
-		shared_ptr<parse::AssetMapAsset> a = (*i)->asset_from_id (id);
+	for (list<PathAssetMap>::const_iterator i = asset_maps.begin(); i != asset_maps.end(); ++i) {
+		shared_ptr<parse::AssetMapAsset> a = i->second->asset_from_id (id);
 		if (a) {
-			return a;
+			return make_pair (i->first, a);
 		}
 	}
 
-	return shared_ptr<parse::AssetMapAsset> ();
+	return make_pair ("", shared_ptr<const parse::AssetMapAsset> ());
 }

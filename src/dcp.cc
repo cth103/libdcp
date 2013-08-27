@@ -55,6 +55,7 @@ using std::ofstream;
 using std::ostream;
 using std::copy;
 using std::back_inserter;
+using std::make_pair;
 using boost::shared_ptr;
 using boost::lexical_cast;
 using namespace libdcp;
@@ -271,7 +272,7 @@ DCP::read (bool require_mxfs)
 	/* Cross-check */
 	/* XXX */
 
-	_asset_maps.push_back (asset_map);
+	_asset_maps.push_back (make_pair (boost::filesystem::absolute (_directory).string(), asset_map));
 
 	for (list<string>::iterator i = files.cpls.begin(); i != files.cpls.end(); ++i) {
 		_cpls.push_back (shared_ptr<CPL> (new CPL (_directory, *i, _asset_maps, require_mxfs)));

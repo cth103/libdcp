@@ -29,6 +29,10 @@
 namespace libdcp
 {
 
+namespace parse {
+	class AssetMap;
+}
+
 /** Identifier for a sound channel */
 enum Channel {
 	LEFT = 0,      ///< left
@@ -140,6 +144,8 @@ public:
 extern bool operator== (Color const & a, Color const & b);
 extern bool operator!= (Color const & a, Color const & b);
 extern std::ostream & operator<< (std::ostream & s, Color const & c);
+
+typedef std::pair<std::string, boost::shared_ptr<const parse::AssetMap> > PathAssetMap;
 
 }
 

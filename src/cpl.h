@@ -24,6 +24,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/optional.hpp>
 #include <libxml++/libxml++.h>
 #include "types.h"
 #include "certificates.h"
@@ -47,7 +48,7 @@ class CPL
 {
 public:
 	CPL (std::string directory, std::string name, ContentKind content_kind, int length, int frames_per_second);
-	CPL (std::string directory, std::string file, std::list<boost::shared_ptr<const parse::AssetMap> > asset_maps, bool require_mxfs = true);
+	CPL (std::string directory, std::string file, std::list<PathAssetMap> asset_maps, bool require_mxfs = true);
 
 	void add_reel (boost::shared_ptr<Reel> reel);
 	
@@ -107,7 +108,7 @@ public:
 	void add_kdm (KDM const &);
 	
 private:
-	boost::shared_ptr<parse::AssetMapAsset> asset_from_id (std::list<boost::shared_ptr<const parse::AssetMap> > asset_maps, std::string id) const;
+	std::pair<std::string, boost::shared_ptr<const parse::AssetMapAsset> > asset_from_id (std::list<PathAssetMap>, std::string id) const;
 	
 	std::string _directory;
 	/** the name of the DCP */
