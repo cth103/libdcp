@@ -33,7 +33,8 @@ using namespace libdcp::parse;
 
 CPL::CPL (string file)
 {
-	cxml::File f (file, "CompositionPlaylist");
+	cxml::Document f ("CompositionPlaylist");
+	f.read_file (file);
 	
 	id = f.string_child ("Id");
 	annotation_text = f.optional_string_child ("AnnotationText").get_value_or ("");

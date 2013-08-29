@@ -30,7 +30,8 @@ using namespace libdcp::parse;
 
 PKL::PKL (string file)
 {
-	cxml::File f (file, "PackingList");
+	cxml::Document f ("PackingList");
+	f.read_file (file);
 	
 	id = f.string_child ("Id");
 	annotation_text = f.optional_string_child ("AnnotationText").get_value_or ("");

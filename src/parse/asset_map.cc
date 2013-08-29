@@ -33,7 +33,8 @@ using namespace libdcp::parse;
 
 AssetMap::AssetMap (string file)
 {
-	cxml::File f (file, "AssetMap");
+	cxml::Document f ("AssetMap");
+	f.read_file (file);
 
 	id = f.string_child ("Id");
 	creator = f.string_child ("Creator");

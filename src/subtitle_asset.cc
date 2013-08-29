@@ -56,7 +56,8 @@ SubtitleAsset::SubtitleAsset (string directory, string movie_title, string langu
 void
 SubtitleAsset::read_xml (string xml_file)
 {
-	shared_ptr<cxml::File> xml (new cxml::File (xml_file, "DCSubtitle"));
+	shared_ptr<cxml::Document> xml (new cxml::Document ("DCSubtitle"));
+	xml->read_file (xml_file);
 	
 	_uuid = xml->string_child ("SubtitleID");
 	_movie_title = xml->string_child ("MovieTitle");

@@ -56,7 +56,8 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 	
 	/* Read the KDM, decrypting it */
 
-	cxml::File f (kdm.string (), "DCinemaSecurityMessage");
+	cxml::Document f ("DCinemaSecurityMessage");
+	f.read_file (kdm.string ());
 
 	shared_ptr<cxml::Node> authenticated_private = f.node_child ("AuthenticatedPrivate");
 	list<shared_ptr<cxml::Node> > encrypted_keys = authenticated_private->node_children ("EncryptedKey");
