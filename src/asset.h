@@ -58,10 +58,10 @@ public:
 	virtual ~Asset() {}
 
 	/** Write details of the asset to a CPL AssetList node.
-	 *  @param p Parent node.
+	 *  @param p Parent element.
 	 *  @param i true to use the Interop standard, false for SMPTE.
 	 */
-	virtual void write_to_cpl (xmlpp::Node* p, bool i) const = 0;
+	virtual void write_to_cpl (xmlpp::Element* p, bool i) const = 0;
 
 	/** Write details of the asset to a PKL AssetList node.
 	 *  @param p Parent node.

@@ -240,7 +240,7 @@ CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Encryptio
 	}
 	root->add_child("RatingList");
 
-	xmlpp::Node* reel_list = root->add_child ("ReelList");
+	xmlpp::Element* reel_list = root->add_child ("ReelList");
 	
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		(*i)->write_to_cpl (reel_list, interop);

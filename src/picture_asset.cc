@@ -82,19 +82,19 @@ MonoPictureAsset::edit_rate_factor () const
 string
 StereoPictureAsset::cpl_node_name () const
 {
-	return "MainStereoscopicPicture";
+	return "msp-cpl:MainStereoscopicPicture";
 }
 
-string
-StereoPictureAsset::cpl_node_namespace (bool interop) const
+pair<string, string>
+StereoPictureAsset::cpl_node_attribute (bool interop) const
 {
 	if (interop) {
-		return "http://www.digicine.com/schemas/437-Y/2007/Main-Stereo-Picture-CPL";
+		return make_pair ("xmlns:msp-cpl", "http://www.digicine.com/schemas/437-Y/2007/Main-Stereo-Picture-CPL");
 	} else {
-		return "http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL";
+		return make_pair ("xmlns:msp-cpl", "http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL");
 	}
 
-	return "";
+	return make_pair ("", "");
 }
 
 int
@@ -104,7 +104,7 @@ StereoPictureAsset::edit_rate_factor () const
 }
 
 void
-PictureAsset::write_to_cpl (xmlpp::Node* node, bool interop) const
+PictureAsset::write_to_cpl (xmlpp::Element* node, bool interop) const
 {
 	MXFAsset::write_to_cpl (node, interop);
 	

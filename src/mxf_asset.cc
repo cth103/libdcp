@@ -37,6 +37,7 @@
 
 using std::string;
 using std::list;
+using std::pair;
 using boost::shared_ptr;
 using boost::lexical_cast;
 using boost::dynamic_pointer_cast;
@@ -144,9 +145,13 @@ MXFAsset::add_typed_key_id (xmlpp::Element* parent) const
 }
 
 void
-MXFAsset::write_to_cpl (xmlpp::Node* node, bool interop) const
+MXFAsset::write_to_cpl (xmlpp::Element* node, bool interop) const
 {
-	xmlpp::Node* a = node->add_child (cpl_node_name (), cpl_node_namespace (interop));
+	pair<string, string> const attr = cpl_node_attribute (interop);
+	xmlpp::Element* a = node->add_child (cpl_node_name ());
+	if (!attr.first.empty ()) {
+		a->set_attribute (attr.first, attr.second);
+	}
 	a->add_child ("Id")->add_child_text ("urn:uuid:" + _uuid);
 	a->add_child ("AnnotationText")->add_child_text (_file_name);
 	a->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");

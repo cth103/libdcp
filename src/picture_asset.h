@@ -81,7 +81,7 @@ public:
 		return _size;
 	}
 
-	void write_to_cpl (xmlpp::Node *, bool) const;
+	void write_to_cpl (xmlpp::Element *, bool) const;
 
 protected:	
 
@@ -205,7 +205,7 @@ public:
 
 private:
 	std::string cpl_node_name () const;
-	std::string cpl_node_namespace (bool) const;
+	std::pair<std::string, std::string> cpl_node_attribute (bool) const;
 	int edit_rate_factor () const;
 };
 	

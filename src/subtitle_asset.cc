@@ -278,7 +278,7 @@ SubtitleAsset::add (shared_ptr<Subtitle> s)
 }
 
 void
-SubtitleAsset::write_to_cpl (xmlpp::Node* node, bool) const
+SubtitleAsset::write_to_cpl (xmlpp::Element* node, bool) const
 {
 	/* XXX: should EditRate, Duration and IntrinsicDuration be in here? */
 
