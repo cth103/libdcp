@@ -25,6 +25,7 @@
 #define LIBDCP_TYPES_H
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 namespace libdcp
 {
