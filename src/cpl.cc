@@ -252,7 +252,7 @@ CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Encryptio
 
 	doc.write_to_file_formatted (p.string (), "UTF-8");
 
-	_digest = make_digest (p.string ());
+	_digest = make_digest (p.string (), 0);
 	_length = boost::filesystem::file_size (p.string ());
 }
 

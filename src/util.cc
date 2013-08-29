@@ -70,10 +70,12 @@ libdcp::make_uuid ()
 
 /** Create a digest for a file.
  *  @param filename File name.
+ *  @param progress Pointer to a progress reporting function, or 0.  The function will be called
+ *  with a progress value between 0 and 1.
  *  @return Digest.
  */
 string
-libdcp::make_digest (string filename)
+libdcp::make_digest (string filename, boost::function<void (float)>* progress)
 {
 	Kumu::FileReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (filename.c_str ()))) {
@@ -82,8 +84,12 @@ libdcp::make_digest (string filename)
 	
 	SHA_CTX sha;
 	SHA1_Init (&sha);
-	
-	Kumu::ByteString read_buffer (65536);
+
+	int const buffer_size = 65536;
+	Kumu::ByteString read_buffer (buffer_size);
+
+	Kumu::fsize_t done = 0;
+	Kumu::fsize_t const size = reader.Size ();
 	while (1) {
 		ui32_t read = 0;
 		Kumu::Result_t r = reader.Read (read_buffer.Data(), read_buffer.Capacity(), &read);
@@ -95,6 +101,11 @@ libdcp::make_digest (string filename)
 		}
 		
 		SHA1_Update (&sha, read_buffer.Data(), read);
+
+		if (progress) {
+			(*progress) (float (done) / size);
+			done += read;
+		}
 	}
 
 	byte_t byte_buffer[20];

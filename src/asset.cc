@@ -88,10 +88,20 @@ string
 Asset::digest () const
 {
 	if (_digest.empty ()) {
-		_digest = make_digest (path().string());
+		_digest = make_digest (path().string(), 0);
 	}
 
 	return _digest;
+}
+
+void
+Asset::compute_digest (boost::function<void (float)> progress)
+{
+	if (!_digest.empty ()) {
+		return;
+	}
+
+	_digest = make_digest (path().string(), &progress);
 }
 
 bool

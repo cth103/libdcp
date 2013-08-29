@@ -27,6 +27,7 @@
 #include <string>
 #include <stdint.h>
 #include <boost/shared_ptr.hpp>
+#include <boost/function.hpp>
 #include <openjpeg.h>
 #include "types.h"
 
@@ -60,7 +61,7 @@ extern bool operator== (Size const & a, Size const & b);
 extern bool operator!= (Size const & a, Size const & b);
 
 extern std::string make_uuid ();
-extern std::string make_digest (std::string filename);
+extern std::string make_digest (std::string filename, boost::function<void (float)> *);
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
 extern bool empty_or_white_space (std::string s);

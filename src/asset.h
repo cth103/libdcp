@@ -73,6 +73,14 @@ public:
 	 */
 	void write_to_assetmap (xmlpp::Node *) const;
 
+	/** Compute the digest for this asset.  Calling this is optional: if
+	 *  it is not called, the digest will be computed when required.  However,
+	 *  calling this method allows the caller to see the progress of the
+	 *  computation, which can be long for large assets.
+	 *  @param Called with progress between 0 and 1.
+	 */
+	void compute_digest (boost::function<void (float)> progress);
+
 	std::string uuid () const {
 		return _uuid;
 	}
