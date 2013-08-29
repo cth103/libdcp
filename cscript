@@ -4,8 +4,7 @@ def dependencies(target):
     if target.platform == 'windows':
         return ()
     else:
-        # XXX: should be some versions in here
-        return (('libcxml', None), ('openjpeg-cdist', None))
+        return (('libcxml', 'v0.05'), ('openjpeg-cdist', '6771627cfa63e315d2e23d81669cafcdc66ddc9f'))
 
 def build(target):
     cmd = './waf configure --prefix=%s' % target.work_dir_cscript()
