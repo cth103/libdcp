@@ -194,12 +194,16 @@ DCP::write_assetmap (string pkl_uuid, int pkl_length, bool interop, XMLMetadata 
 	doc.write_to_file_formatted (p.string (), "UTF-8");
 }
 
-
 void
 DCP::read (bool require_mxfs)
 {
-	Files files;
+	read_assets ();
+	read_cpls (require_mxfs);
+}
 
+void
+DCP::read_assets ()
+{
 	shared_ptr<parse::AssetMap> asset_map;
 	try {
 		boost::filesystem::path p = _directory;
@@ -217,7 +221,7 @@ DCP::read (bool require_mxfs)
 		}
 		
 	} catch (FileError& e) {
-		boost::throw_exception (FileError ("could not load AssetMap file", files.asset_map));
+		boost::throw_exception (FileError ("could not load AssetMap file", _files.asset_map));
 	}
 
 	for (list<shared_ptr<libdcp::parse::AssetMapAsset> >::const_iterator i = asset_map->assets.begin(); i != asset_map->assets.end(); ++i) {
@@ -244,37 +248,38 @@ DCP::read (bool require_mxfs)
 		delete p;
 
 		if (root == "CompositionPlaylist") {
-			files.cpls.push_back (t.string());
+			_files.cpls.push_back (t.string());
 		} else if (root == "PackingList") {
-			if (files.pkl.empty ()) {
-				files.pkl = t.string();
+			if (_files.pkl.empty ()) {
+				_files.pkl = t.string();
 			} else {
 				boost::throw_exception (DCPReadError ("duplicate PKLs found"));
 			}
 		}
 	}
 	
-	if (files.cpls.empty ()) {
+	if (_files.cpls.empty ()) {
 		boost::throw_exception (FileError ("no CPL files found", ""));
 	}
 
-	if (files.pkl.empty ()) {
+	if (_files.pkl.empty ()) {
 		boost::throw_exception (FileError ("no PKL file found", ""));
 	}
 
 	shared_ptr<parse::PKL> pkl;
 	try {
-		pkl.reset (new parse::PKL (files.pkl));
+		pkl.reset (new parse::PKL (_files.pkl));
 	} catch (FileError& e) {
-		boost::throw_exception (FileError ("could not load PKL file", files.pkl));
+		boost::throw_exception (FileError ("could not load PKL file", _files.pkl));
 	}
 
-	/* Cross-check */
-	/* XXX */
-
 	_asset_maps.push_back (make_pair (boost::filesystem::absolute (_directory).string(), asset_map));
+}
 
-	for (list<string>::iterator i = files.cpls.begin(); i != files.cpls.end(); ++i) {
+void
+DCP::read_cpls (bool require_mxfs)
+{
+	for (list<string>::iterator i = _files.cpls.begin(); i != _files.cpls.end(); ++i) {
 		_cpls.push_back (shared_ptr<CPL> (new CPL (_directory, *i, _asset_maps, require_mxfs)));
 	}
 }

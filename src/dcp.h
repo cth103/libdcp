@@ -69,15 +69,16 @@ public:
 	 */
 	DCP (std::string directory);
 
-	/** Read an existing DCP's data.
+	void read (bool require_mxfs = true);
+
+	/** Read an existing DCP's assets.
 	 *
 	 *  The DCP's XML metadata will be examined, and you can then look at the contents
 	 *  of the DCP.
-	 *
-	 *  @param require_mxfs true to throw an exception if MXF files are missing; setting to false
-	 *  can be useful for testing, but normally it should be set to true.
 	 */
-	void read (bool require_mxfs = true);
+	void read_assets ();
+
+	void read_cpls (bool require_mxfs = true);
 
 	/** Write the required XML files to the directory that was
 	 *  passed into the constructor.
@@ -144,6 +145,8 @@ private:
 		std::string pkl;
 		std::string asset_map;
 	};
+
+	Files _files;
 
 	/** the directory that we are writing to */
 	std::string _directory;
