@@ -370,14 +370,15 @@ CPL::make_kdm (
 		xmlAddID (0, doc->cobj(), (const xmlChar *) "ID_AuthenticatedPublic", authenticated_public->get_attribute("Id")->cobj());
 		
 		authenticated_public->add_child("MessageId")->add_child_text ("urn:uuid:" + make_uuid());
+		/* XXX: this should probably be different if interop == true */
 		authenticated_public->add_child("MessageType")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
 		authenticated_public->add_child("AnnotationText")->add_child_text (mxf_metadata.product_name);
 		authenticated_public->add_child("IssueDate")->add_child_text (xml_metadata.issue_date);
 
 		{
 			xmlpp::Element* signer = authenticated_public->add_child("Signer");
-			signer->add_child("X509IssuerName", "ds")->add_child_text (recipient_cert->issuer());
-			signer->add_child("X509SerialNumber", "ds")->add_child_text (recipient_cert->serial());
+			signer->add_child("X509IssuerName", "ds")->add_child_text (certificates.leaf()->issuer());
+			signer->add_child("X509SerialNumber", "ds")->add_child_text (certificates.leaf()->serial());
 		}
 
 		{
