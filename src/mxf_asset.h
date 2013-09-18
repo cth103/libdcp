@@ -97,7 +97,9 @@ protected:
 	boost::signals2::signal<void (float)>* _progress;
 	bool _encrypted;
 	ASDCP::AESEncContext* _encryption_context;
+	/** Key used to encrypt, or empty if _encryption is false */
 	std::string _key_value;
+	/** UUID of encryption key */
 	std::string _key_id;
 	ASDCP::AESDecContext* _decryption_context;
 };
