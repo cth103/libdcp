@@ -17,7 +17,7 @@
 
 */
 
-/* Load a certificate chain from build/test/data/.pem and then build
+/* Load a certificate chain from build/test/data/*.pem and then build
    an encrypted DCP and a KDM using it.
 */
 BOOST_AUTO_TEST_CASE (encryption)
