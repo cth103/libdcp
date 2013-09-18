@@ -61,6 +61,7 @@ MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<
 	, _decryption_context (0)
 {
 	if (_encrypted) {
+		/* Generate an encryption key and a UUID for it */
 		_key_id = make_uuid ();
 		uint8_t key_buffer[ASDCP::KeyLen];
 		Kumu::FortunaRNG rng;
