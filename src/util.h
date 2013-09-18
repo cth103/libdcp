@@ -75,6 +75,9 @@ extern void add_signer (xmlpp::Element* parent, CertificateChain const & certifi
 
 extern int base64_decode (std::string const & in, unsigned char* out, int out_length);
 
+extern std::string tm_to_string (struct tm *);
+extern std::string utc_offset_to_string (int);
+	
 }
 
 #endif

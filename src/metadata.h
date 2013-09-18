@@ -51,11 +51,6 @@ public:
 	std::string issuer;
 	std::string creator;
 	std::string issue_date;
-
-private:
-	friend class ::utc_offset_to_string_test;
-	
-	static std::string utc_offset_to_string (int);
 };
 
 }
