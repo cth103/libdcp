@@ -28,6 +28,8 @@
 #include <stdint.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/filesystem.hpp>
 #include <openjpeg.h>
 #include "types.h"
 
@@ -69,14 +71,15 @@ extern boost::shared_ptr<XYZFrame> decompress_j2k (uint8_t* data, int64_t size, 
 
 extern void init ();
 
-extern void sign (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & signer_key, bool interop);
-extern void add_signature_value (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & signer_key, std::string const & ns);
+extern void sign (xmlpp::Element* parent, CertificateChain const & certificates, boost::filesystem::path signer_key, bool interop);
+extern void add_signature_value (xmlpp::Element* parent, CertificateChain const & certificates, boost::filesystem::path signer_key, std::string const & ns);
 extern void add_signer (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & ns);
 
 extern int base64_decode (std::string const & in, unsigned char* out, int out_length);
 
 extern std::string tm_to_string (struct tm *);
 extern std::string utc_offset_to_string (int);
+extern std::string ptime_to_string (boost::posix_time::ptime);
 	
 }
 

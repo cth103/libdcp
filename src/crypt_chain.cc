@@ -47,6 +47,8 @@ static void command (char const * c)
 void
 libdcp::make_crypt_chain (boost::filesystem::path directory)
 {
+	boost::filesystem::path const cwd = boost::filesystem::current_path ();
+
 	boost::filesystem::current_path (directory);
 	command ("openssl genrsa -out ca.key 2048");
 
@@ -161,4 +163,6 @@ libdcp::make_crypt_chain (boost::filesystem::path directory)
 	}
 
 	command ("openssl x509 -req -sha256 -days 3648 -CA intermediate.signed.pem -CAkey intermediate.key -set_serial 7 -in leaf.csr -extfile leaf.cnf -extensions v3_ca -out leaf.signed.pem");
+
+	boost::filesystem::current_path (cwd);
 }

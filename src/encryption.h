@@ -17,7 +17,7 @@
 
 */
 
-#include <string>
+#include <boost/filesystem.hpp>
 #include "certificates.h"
 
 namespace libdcp {
@@ -25,13 +25,14 @@ namespace libdcp {
 class Encryption
 {
 public:
-	Encryption (CertificateChain c, std::string const & k)
+	Encryption (CertificateChain c, boost::filesystem::path k)
 		: certificates (c)
 		, signer_key (k)
 	{}
 
 	CertificateChain certificates;
-	std::string signer_key;
+	/** Filename of signer key */
+	boost::filesystem::path signer_key;
 };
 
 }

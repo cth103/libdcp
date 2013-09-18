@@ -20,6 +20,8 @@
 #ifndef LIBDCP_EXCEPTIONS_H
 #define LIBDCP_EXCEPTIONS_H
 
+#include <boost/filesystem.hpp>
+
 /** @file  src/exceptions.h
  *  @brief Exceptions thrown by libdcp.
  */
@@ -31,7 +33,7 @@ namespace libdcp
 class FileError : public std::exception
 {
 public:
-	FileError (std::string const & message, std::string const & filename)
+	FileError (std::string const & message, boost::filesystem::path filename)
 		: _message (message)
 		, _filename (filename)
 	{}
@@ -44,7 +46,7 @@ public:
 	}
 	
 	/** @return filename of file that was involved */
-	std::string filename () const {
+	boost::filesystem::path filename () const {
 		return _filename;
 	}
 
@@ -52,14 +54,14 @@ private:
 	/** error message */
 	std::string _message;
 	/** filename of file that was involved */
-	std::string _filename;
+	boost::filesystem::path _filename;
 };
 
 /** @brief An exception related to an MXF file */
 class MXFFileError : public FileError
 {
 public:
-	MXFFileError (std::string const & message, std::string const & filename)
+	MXFFileError (std::string const & message, boost::filesystem::path filename)
 		: FileError (message, filename)
 	{}
 };

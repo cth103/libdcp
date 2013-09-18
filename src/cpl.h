@@ -25,6 +25,7 @@
 #include <boost/function.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/optional.hpp>
+#include <boost/filesystem.hpp>
 #include <libxml++/libxml++.h>
 #include "types.h"
 #include "certificates.h"
@@ -96,7 +97,7 @@ public:
 
 	/** Make a KDM for this CPL.
 	 *  @param certificates
-	 *  @param signer_key
+	 *  @param signer_key Filename of private key to sign the KDM with.
 	 *  @param recipient_cert The certificate of the projector that this KDM is targeted at.  This will contain the
 	 *  projector's public key (P) which is used to encrypt the content keys.
 	 *  @param from Time that the KDM should be valid from.
@@ -105,7 +106,7 @@ public:
 	 */
 	boost::shared_ptr<xmlpp::Document> make_kdm (
 		CertificateChain const & certificates,
-		std::string const & signer_key,
+		boost::filesystem::path signer_key,
 		boost::shared_ptr<const Certificate> recipient_cert,
 		boost::posix_time::ptime from,
 		boost::posix_time::ptime until,

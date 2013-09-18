@@ -347,7 +347,7 @@ CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (NoteT
 shared_ptr<xmlpp::Document>
 CPL::make_kdm (
 	CertificateChain const & certificates,
-	string const & signer_key,
+	boost::filesystem::path signer_key,
 	shared_ptr<const Certificate> recipient_cert,
 	boost::posix_time::ptime from,
 	boost::posix_time::ptime until,
@@ -401,8 +401,8 @@ CPL::make_kdm (
 				kdm_required_extensions->add_child("CompositionPlaylistId")->add_child_text("urn:uuid:" + _id);
 				kdm_required_extensions->add_child("ContentTitleText")->add_child_text(_name);
 				kdm_required_extensions->add_child("ContentAuthenticator")->add_child_text(certificates.leaf()->thumbprint());
-				kdm_required_extensions->add_child("ContentKeysNotValidBefore")->add_child_text("XXX");
-				kdm_required_extensions->add_child("ContentKeysNotValidAfter")->add_child_text("XXX");
+				kdm_required_extensions->add_child("ContentKeysNotValidBefore")->add_child_text(ptime_to_string (from));
+				kdm_required_extensions->add_child("ContentKeysNotValidAfter")->add_child_text(ptime_to_string (until));
 
 				{
 					xmlpp::Element* authorized_device_info = kdm_required_extensions->add_child("AuthorizedDeviceInfo");

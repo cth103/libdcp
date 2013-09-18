@@ -239,13 +239,36 @@ libdcp::init ()
 	if (xmlSecInit() < 0) {
 		throw MiscError ("could not initialise xmlsec");
 	}
+
+#ifdef XMLSEC_CRYPTO_DYNAMIC_LOADING
+	if (xmlSecCryptoDLLoadLibrary(BAD_CAST XMLSEC_CRYPTO) < 0) {
+		throw MiscError ("unable to load default xmlsec-crypto library");
+	}
+#endif	
+
+	if (xmlSecCryptoAppInit(0) < 0) {
+		throw MiscError ("could not initialise crypto");
+	}
+
+	if (xmlSecCryptoInit() < 0) {
+		throw MiscError ("could not initialise xmlsec-crypto");
+	}
 }
 
+/** Sign an XML node.  This function takes a certificate chain (to prove that the sender is bona fide) and
+ *  a private key with which to sign the node.
+ *
+ *  @param parent Node to sign.
+ *  @param certificates Certificate chain for the signer.
+ *  @param signer_key Filename of the private key of the signer.
+ *  @param ns Namespace to use for the signature XML nodes.
+ */
 void
-libdcp::add_signature_value (xmlpp::Element* parent, CertificateChain const & certificates, string const & signer_key, string const & ns)
+libdcp::add_signature_value (xmlpp::Element* parent, CertificateChain const & certificates, boost::filesystem::path signer_key, string const & ns)
 {
 	parent->add_child("SignatureValue", ns);
-	
+
+	/* Add the certificate chain to a KeyInfo child node of parent */
 	xmlpp::Element* key_info = parent->add_child("KeyInfo", ns);
 	list<shared_ptr<Certificate> > c = certificates.leaf_to_root ();
 	for (list<shared_ptr<Certificate> >::iterator i = c.begin(); i != c.end(); ++i) {
@@ -260,23 +283,26 @@ libdcp::add_signature_value (xmlpp::Element* parent, CertificateChain const & ce
 		data->add_child("X509Certificate", ns)->add_child_text((*i)->certificate());
 	}
 
-	xmlSecKeysMngrPtr keys_manager = xmlSecKeysMngrCreate();
-	if (!keys_manager) {
-		throw MiscError ("could not create keys manager");
+	xmlSecDSigCtxPtr signature_context = xmlSecDSigCtxCreate (0);
+	if (signature_context == 0) {
+		throw MiscError ("could not create signature context");
 	}
-	
-	xmlSecDSigCtx signature_context;
-	
-	if (xmlSecDSigCtxInitialize (&signature_context, keys_manager) < 0) {
-		throw MiscError ("could not initialise XMLSEC context");
+
+	signature_context->signKey = xmlSecCryptoAppKeyLoad (signer_key.c_str(), xmlSecKeyDataFormatPem, 0, 0, 0);
+	if (signature_context->signKey == 0) {
+		throw FileError ("could not load private key file", signer_key);
 	}
-	
-	if (xmlSecDSigCtxSign (&signature_context, parent->cobj()) < 0) {
+
+	/* XXX: set key name to the file name: is this right? */
+	if (xmlSecKeySetName (signature_context->signKey, reinterpret_cast<const xmlChar *> (signer_key.c_str())) < 0) {
+		throw MiscError ("could not set key name");
+	}
+
+	if (xmlSecDSigCtxSign (signature_context, parent->cobj ()) < 0) {
 		throw MiscError ("could not sign");
 	}
-	
-	xmlSecDSigCtxFinalize (&signature_context);
-	xmlSecKeysMngrDestroy (keys_manager);
+
+	xmlSecDSigCtxDestroy (signature_context);
 }
 
 
@@ -298,8 +324,9 @@ libdcp::add_signer (xmlpp::Element* parent, CertificateChain const & certificate
 	}
 }
 
+/** @param signer_key Filename of private key to sign with */
 void
-libdcp::sign (xmlpp::Element* parent, CertificateChain const & certificates, string const & signer_key, bool interop)
+libdcp::sign (xmlpp::Element* parent, CertificateChain const & certificates, boost::filesystem::path signer_key, bool interop)
 {
 	add_signer (parent, certificates, "dsig");
 
@@ -411,4 +438,11 @@ libdcp::utc_offset_to_string (int b)
 
 	o << setw(2) << setfill('0') << hours << ":" << setw(2) << setfill('0') << minutes;
 	return o.str ();
+}
+
+string
+libdcp::ptime_to_string (boost::posix_time::ptime t)
+{
+	struct tm t_tm = boost::posix_time::to_tm (t);
+	return tm_to_string (&t_tm);
 }

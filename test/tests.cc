@@ -84,11 +84,11 @@ static string test_corpus = "../libdcp-test";
 #include "recovery_test.cc"
 #include "certificates_test.cc"
 
-//BOOST_AUTO_TEST_CASE (crypt_chain)
-//{
-//	boost::filesystem::remove_all ("build/test/crypt");
-//	boost::filesystem::create_directory ("build/test/crypt");
-//	libdcp::make_crypt_chain ("build/test/crypt");
-//}
+BOOST_AUTO_TEST_CASE (crypt_chain)
+{
+	boost::filesystem::remove_all ("build/test/crypt");
+	boost::filesystem::create_directory ("build/test/crypt");
+	libdcp::make_crypt_chain ("build/test/crypt");
+}
 
-//#include "encryption_test.cc"
+#include "encryption_test.cc"

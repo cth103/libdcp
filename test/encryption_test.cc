@@ -17,7 +17,7 @@
 
 */
 
-/* Load a certificate chain from build/test/data/*.pem and then build
+/* Load a certificate chain from build/test/data/ *.pem and then build
    an encrypted DCP and a KDM using it.
 */
 BOOST_AUTO_TEST_CASE (encryption)
@@ -39,9 +39,9 @@ BOOST_AUTO_TEST_CASE (encryption)
 	libdcp::DCP d ("build/test/DCP/bar");
 
 	libdcp::CertificateChain chain;
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/data/ca.self-signed.pem")));
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/data/intermediate.signed.pem")));
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/data/leaf.signed.pem")));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/crypt/ca.self-signed.pem")));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/crypt/intermediate.signed.pem")));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/crypt/leaf.signed.pem")));
 
 	shared_ptr<libdcp::Encryption> crypt (
 		new libdcp::Encryption (
@@ -61,6 +61,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 							 24,
 							 true,
 							 libdcp::Size (32, 32),
+							 false,
 							 mxf_metadata
 							 ));
 
@@ -73,13 +74,14 @@ BOOST_AUTO_TEST_CASE (encryption)
 						   24,
 						   2,
 						   true,
+						   false,
 						   mxf_metadata
 						   ));
 	
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);
 
-	d.write_xml (xml_metadata, crypt);
+	d.write_xml (false, xml_metadata, crypt);
 
 	shared_ptr<xmlpp::Document> kdm = cpl->make_kdm (
 		crypt->certificates,
@@ -87,6 +89,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 		crypt->certificates.leaf(),
 		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
 		boost::posix_time::time_from_string ("2013-01-08 00:00:00"),
+		false,
 		mxf_metadata,
 		xml_metadata
 		);
