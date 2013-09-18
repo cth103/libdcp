@@ -222,8 +222,8 @@ MonoPictureAsset::MonoPictureAsset (
 	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files), interop, metadata);
 }
 
-MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, Size size)
-	: PictureAsset (directory, mxf_name, 0, fps, 0, false, size)
+MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, Size size, bool encrypted)
+	: PictureAsset (directory, mxf_name, 0, fps, 0, encrypted, size)
 {
 
 }
@@ -472,8 +472,8 @@ PictureAsset::key_type () const
 	return "MDIK";
 }
 
-StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, Size size)
-	: PictureAsset (directory, mxf_name, 0, fps, 0, false, size)
+StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, Size size, bool encrypted)
+	: PictureAsset (directory, mxf_name, 0, fps, 0, encrypted, size)
 {
 
 }

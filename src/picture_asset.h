@@ -166,7 +166,7 @@ public:
 	 *  @param fps Video frames per second.
 	 *  @param size Size in pixels that the picture frames will be.
 	 */
-	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
+	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size, bool encrypted);
 
 	/** Start a progressive write to a MonoPictureAsset */
 	boost::shared_ptr<PictureAssetWriter> start_write (bool, bool, MXFMetadata const & metadata = MXFMetadata ());
@@ -195,7 +195,7 @@ public:
 	 *  @param fps Video frames per second.
 	 *  @param size Size in pixels that the picture frames will be.
 	 */
-	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
+	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size, bool encrypted);
 
 	/** Start a progressive write to a StereoPictureAsset */
 	boost::shared_ptr<PictureAssetWriter> start_write (bool, bool, MXFMetadata const & metadata = MXFMetadata ());
