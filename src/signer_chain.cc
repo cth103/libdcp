@@ -21,7 +21,7 @@
 #include <sstream>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include "crypt_chain.h"
+#include "signer_chain.h"
 #include "exceptions.h"
 
 using std::string;
@@ -45,7 +45,7 @@ static void command (char const * c)
 }
 
 void
-libdcp::make_crypt_chain (boost::filesystem::path directory)
+libdcp::make_signer_chain (boost::filesystem::path directory)
 {
 	boost::filesystem::path const cwd = boost::filesystem::current_path ();
 

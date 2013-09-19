@@ -14,7 +14,6 @@ def build(bld):
                  asset.cc
                  certificates.cc
                  colour_matrix.cc
-                 crypt_chain.cc
                  cpl.cc
                  dcp.cc        
                  dcp_time.cc
@@ -30,6 +29,7 @@ def build(bld):
                  reel.cc
                  rgb_xyz.cc
                  signer.cc
+                 signer_chain.cc
                  sound_asset.cc
                  sound_frame.cc
                  srgb_linearised_gamma_lut.cc
@@ -49,7 +49,6 @@ def build(bld):
               certificates.h
               colour_matrix.h
               cpl.h
-              crypt_chain.h
               dcp.h
               dcp_time.h
               exceptions.h
@@ -67,6 +66,7 @@ def build(bld):
               rec709_linearised_gamma_lut.h
               reel.h
               argb_frame.h
+              signer_chain.h
               sound_asset.h
               sound_frame.h
               srgb_linearised_gamma_lut.h

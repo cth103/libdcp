@@ -39,9 +39,9 @@ BOOST_AUTO_TEST_CASE (encryption)
 	libdcp::DCP d ("build/test/DCP/bar");
 
 	libdcp::CertificateChain chain;
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/crypt/ca.self-signed.pem")));
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/crypt/intermediate.signed.pem")));
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/crypt/leaf.signed.pem")));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/signer/ca.self-signed.pem")));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/signer/intermediate.signed.pem")));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/signer/leaf.signed.pem")));
 
 	shared_ptr<libdcp::Signer> signer (
 		new libdcp::Signer (

@@ -31,7 +31,7 @@
 #include "sound_asset.h"
 #include "reel.h"
 #include "certificates.h"
-#include "crypt_chain.h"
+#include "signer_chain.h"
 #include "gamma_lut.h"
 #include "cpl.h"
 #include "signer.h"
@@ -84,11 +84,11 @@ static string test_corpus = "../libdcp-test";
 #include "recovery_test.cc"
 #include "certificates_test.cc"
 
-BOOST_AUTO_TEST_CASE (crypt_chain)
+BOOST_AUTO_TEST_CASE (signer_chain)
 {
-	boost::filesystem::remove_all ("build/test/crypt");
-	boost::filesystem::create_directory ("build/test/crypt");
-	libdcp::make_crypt_chain ("build/test/crypt");
+	boost::filesystem::remove_all ("build/test/signer");
+	boost::filesystem::create_directory ("build/test/signer");
+	libdcp::make_signer_chain ("build/test/signer");
 }
 
 #include "encryption_test.cc"

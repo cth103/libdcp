@@ -21,6 +21,6 @@
 
 namespace libdcp {
 	
-void make_crypt_chain (boost::filesystem::path);
+void make_signer_chain (boost::filesystem::path);
 
 }
