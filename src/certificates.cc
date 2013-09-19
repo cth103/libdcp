@@ -57,11 +57,13 @@ Certificate::Certificate (boost::filesystem::path filename)
 }
 
 Certificate::Certificate (string cert)
+	: _certificate (0)
 {
 	read_string (cert);
 }
 
 Certificate::Certificate (Certificate const & other)
+	: _certificate (0)
 {
 	read_string (other.certificate (true));
 }
@@ -93,7 +95,7 @@ Certificate::operator= (Certificate const & other)
 	if (this == &other) {
 		return *this;
 	}
-	
+
 	X509_free (_certificate);
 	read_string (other.certificate ());
 
