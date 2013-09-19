@@ -24,6 +24,9 @@
 
 namespace libdcp {
 
+/** A single cipher for encrypting or decrypting an MXF.  One or more of these
+ *  are delivered in a KDM.
+ */
 class KDMCipher
 {
 public:
@@ -56,11 +59,13 @@ public:
 	std::string not_valid_after () const {
 		return _not_valid_after;
 	}
-	
+
+	/** The key as a hex string */
 	std::string key_string () const {
 		return _key_string;
 	}
 
+	/** The key as 16 raw bytes */
 	unsigned char const * key_raw () const {
 		return _key_raw;
 	}
