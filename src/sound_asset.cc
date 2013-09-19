@@ -49,11 +49,10 @@ SoundAsset::SoundAsset (
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
 	int intrinsic_duration,
-	bool encrypted,
 	bool interop,
 	MXFMetadata const & metadata
 	)
-	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration, encrypted)
+	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 	, _channels (files.size ())
 	, _sampling_rate (0)
 {
@@ -70,11 +69,10 @@ SoundAsset::SoundAsset (
 	int fps,
 	int intrinsic_duration,
 	int channels,
-	bool encrypted,
 	bool interop,
 	MXFMetadata const & metadata
 	)
-	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration, encrypted)
+	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 	, _channels (channels)
 	, _sampling_rate (0)
 {
@@ -104,8 +102,8 @@ SoundAsset::SoundAsset (string directory, string mxf_name)
 	_intrinsic_duration = desc.ContainerDuration;
 }
 
-SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int channels, int sampling_rate, bool encrypted)
-	: MXFAsset (directory, mxf_name, 0, fps, 0, encrypted)
+SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int channels, int sampling_rate)
+	: MXFAsset (directory, mxf_name, 0, fps, 0)
 	, _channels (channels)
 	, _sampling_rate (sampling_rate)
 {

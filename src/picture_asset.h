@@ -64,7 +64,6 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int intrinsic_duration,
-		bool encrypted,
 		Size
 		);
 
@@ -112,7 +111,6 @@ public:
 	 *  @param fps Video frames per second.
 	 *  @param intrinsic_duration Total number of frames in the asset.
 	 *  @param size Size of images in pixels.
-	 *  @param encrypted true if asset should be encrypted.
 	 */
 	MonoPictureAsset (
 		std::vector<std::string> const & files,
@@ -121,7 +119,6 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int intrinsic_duration,
-		bool encrypted,
 		Size size,
 		bool interop,
 		MXFMetadata const & metadata = MXFMetadata ()
@@ -137,7 +134,6 @@ public:
 	 *  @param fps Video frames per second.
 	 *  @param intrinsic_duration Total number of frames in the asset.
 	 *  @param size Size of images in pixels.
-	 *  @param encrypted true if asset should be encrypted.
 	 */
 	MonoPictureAsset (
 		boost::function<std::string (int)> get_path,
@@ -146,7 +142,6 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int intrinsic_duration,
-		bool encrypted,
 		Size size,
 		bool interop,
 		MXFMetadata const & metadata = MXFMetadata ()
@@ -166,7 +161,7 @@ public:
 	 *  @param fps Video frames per second.
 	 *  @param size Size in pixels that the picture frames will be.
 	 */
-	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size, bool encrypted);
+	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
 
 	/** Start a progressive write to a MonoPictureAsset */
 	boost::shared_ptr<PictureAssetWriter> start_write (bool, bool, MXFMetadata const & metadata = MXFMetadata ());
@@ -195,7 +190,7 @@ public:
 	 *  @param fps Video frames per second.
 	 *  @param size Size in pixels that the picture frames will be.
 	 */
-	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size, bool encrypted);
+	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
 
 	/** Start a progressive write to a StereoPictureAsset */
 	boost::shared_ptr<PictureAssetWriter> start_write (bool, bool, MXFMetadata const & metadata = MXFMetadata ());

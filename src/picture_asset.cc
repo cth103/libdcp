@@ -54,8 +54,8 @@ using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace libdcp;
 
-PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, bool encrypted, Size size)
-	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration, encrypted)
+PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, Size size)
+	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 	, _size (size)
 {
 
@@ -195,12 +195,11 @@ MonoPictureAsset::MonoPictureAsset (
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
 	int intrinsic_duration,
-	bool encrypted,
 	Size size,
 	bool interop,
 	MXFMetadata const & metadata
 	)
-	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, encrypted, size)
+	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, size)
 {
 	construct (get_path, interop, metadata);
 }
@@ -212,18 +211,17 @@ MonoPictureAsset::MonoPictureAsset (
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
 	int intrinsic_duration,
-	bool encrypted,
 	Size size,
 	bool interop,
 	MXFMetadata const & metadata
 	)
-	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, encrypted, size)
+	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, size)
 {
 	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files), interop, metadata);
 }
 
-MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, Size size, bool encrypted)
-	: PictureAsset (directory, mxf_name, 0, fps, 0, encrypted, size)
+MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, Size size)
+	: PictureAsset (directory, mxf_name, 0, fps, 0, size)
 {
 
 }
@@ -437,7 +435,7 @@ PictureAsset::frame_buffer_equals (
 
 
 StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int intrinsic_duration)
-	: PictureAsset (directory, mxf_name, 0, fps, intrinsic_duration, false, Size (0, 0))
+	: PictureAsset (directory, mxf_name, 0, fps, intrinsic_duration, Size (0, 0))
 {
 	ASDCP::JP2K::MXFSReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
@@ -472,8 +470,8 @@ PictureAsset::key_type () const
 	return "MDIK";
 }
 
-StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, Size size, bool encrypted)
-	: PictureAsset (directory, mxf_name, 0, fps, 0, encrypted, size)
+StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, Size size)
+	: PictureAsset (directory, mxf_name, 0, fps, 0, size)
 {
 
 }

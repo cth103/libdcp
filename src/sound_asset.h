@@ -79,7 +79,6 @@ public:
 	 *  @param length Length in frames.
 	 *  @param start_frame Frame in the source to start writing from.
 	 *  @param intrinsic_duration Length of the whole asset in frames.
-	 *  @param encrypted true if asset should be encrypted.
 	 *  Note that this is different to entry_point in that the asset will contain no data before start_frame.
 	 */
 	SoundAsset (
@@ -89,7 +88,6 @@ public:
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
 		int intrinsic_duration,
-		bool encrypted,
 		bool interop,
 		MXFMetadata const & metadata = MXFMetadata ()
 		);
@@ -103,7 +101,6 @@ public:
 	 *  @param fps Frames per second.
 	 *  @param intrinsic_duration Length of the whole asset in frames.
 	 *  @param channels Number of audio channels.
-	 *  @param encrypted true if asset should be encrypted.
 	 */
 	SoundAsset (
 		boost::function<std::string (Channel)> get_path,
@@ -113,7 +110,6 @@ public:
 		int fps,
 		int intrinsic_duration,
 		int channels,
-		bool encrypted,
 		bool interop,
 		MXFMetadata const & metadata = MXFMetadata ()
 		);
@@ -128,8 +124,7 @@ public:
 		std::string mxf_name,
 		int fps,
 		int channels,
-		int sampling_rate,
-		bool encrypted
+		int sampling_rate
 		);
 
 	boost::shared_ptr<SoundAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ());

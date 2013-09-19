@@ -444,21 +444,29 @@ CPL::make_kdm (
 		xmlpp::Element* authenticated_private = root->add_child("AuthenticatedPrivate");
 		authenticated_private->set_attribute ("Id", "ID_AuthenticatedPrivate");
 		xmlAddID (0, doc->cobj(), (const xmlChar *) "ID_AuthenticatedPrivate", authenticated_private->get_attribute("Id")->cobj());
-		{
-			xmlpp::Element* encrypted_key = authenticated_private->add_child ("EncryptedKey", "enc");
-			{
-				xmlpp::Element* encryption_method = encrypted_key->add_child ("EncryptionMethod", "enc");
-				encryption_method->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p");
-				encryption_method->add_child("DigestMethod", "ds")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
-			}
 
+		/* Hex keys that we have already written into the node */
+		list<Key> written_keys;
+
+		list<shared_ptr<const Asset> > a = assets();
+		for (list<shared_ptr<const Asset> >::iterator i = a.begin(); i != a.end(); ++i) {
+			/* XXX: non-MXF assets? */
+			shared_ptr<const MXFAsset> mxf = boost::dynamic_pointer_cast<const MXFAsset> (*i);
+			if (!mxf || find (written_keys.begin(), written_keys.end(), mxf->key ()) != written_keys.end ()) {
+				continue;
+			}
+			
+			xmlpp::Element* encrypted_key = authenticated_private->add_child ("EncryptedKey", "enc");
+			xmlpp::Element* encryption_method = encrypted_key->add_child ("EncryptionMethod", "enc");
+			encryption_method->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p");
+			encryption_method->add_child("DigestMethod", "ds")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
 			xmlpp::Element* cipher_data = authenticated_private->add_child ("CipherData", "enc");
-			cipher_data->add_child("CipherValue", "enc")->add_child_text("XXX");
+			cipher_data->add_child("CipherValue", "enc")->add_child_text(mxf->key()->hex());
+
+			written_keys.push_back (mxf->key().get());
 		}
 	}
 	
-	/* XXX: x2 one for each mxf? */
-
 	{
 		xmlpp::Element* signature = root->add_child("Signature", "ds");
 		

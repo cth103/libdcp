@@ -22,6 +22,7 @@
 
 #include <boost/signals2.hpp>
 #include "asset.h"
+#include "key.h"
 
 namespace ASDCP {
 	class AESEncContext;
@@ -32,7 +33,6 @@ namespace libdcp
 {
 
 class MXFMetadata;	
-class KDMCipher;
 
 /** @brief Parent class for assets which have MXF files */	
 class MXFAsset : public Asset
@@ -55,7 +55,13 @@ public:
 	 *  @param edit_rate Edit rate in frames per second (usually equal to the video frame rate).
 	 *  @param intrinsic_duration Duration of the whole asset in frames.
 	 */
-	MXFAsset (std::string directory, std::string file_name, boost::signals2::signal<void (float)>* progress, int edit_rate, int intrinsic_duration, bool encrypted);
+	MXFAsset (
+		std::string directory,
+		std::string file_name,
+		boost::signals2::signal<void (float)>* progress,
+		int edit_rate,
+		int intrinsic_duration
+		);
 
 	~MXFAsset ();
 
@@ -72,19 +78,23 @@ public:
 
 	void add_typed_key_id (xmlpp::Element *) const;
 
-	std::string key_id () const {
-		return _key_id;
-	}
-
-	void set_key_id (std::string k) {
-		_key_id = k;
-	}
-
 	bool encrypted () const {
 		return !_key_id.empty ();
 	}
 
-	void set_kdm_cipher (KDMCipher);
+	void set_key_id (std::string i) {
+		_key_id = i;
+	}
+
+	std::string key_id () const {
+		return _key_id;
+	}
+	
+	void set_key (Key);
+
+	boost::optional<Key> key () const {
+		return _key;
+	}
 	
 protected:
 	virtual std::string key_type () const = 0;
@@ -95,13 +105,10 @@ protected:
 	
 	/** Signal to emit to report progress, or 0 */
 	boost::signals2::signal<void (float)>* _progress;
-	bool _encrypted;
 	ASDCP::AESEncContext* _encryption_context;
-	/** Key used to encrypt, or empty if _encryption is false */
-	std::string _key_value;
-	/** UUID of encryption key */
-	std::string _key_id;
 	ASDCP::AESDecContext* _decryption_context;
+	std::string _key_id;
+	boost::optional<Key> _key;
 };
 
 }

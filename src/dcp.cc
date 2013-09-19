@@ -349,10 +349,10 @@ DCP::encrypted () const
 void
 DCP::add_kdm (KDM const & kdm)
 {
-	list<KDMCipher> ciphers = kdm.ciphers ();
+	list<KDMKey> keys = kdm.keys ();
 	
 	for (list<shared_ptr<CPL> >::iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
-		for (list<KDMCipher>::iterator j = ciphers.begin(); j != ciphers.end(); ++j) {
+		for (list<KDMKey>::iterator j = keys.begin(); j != keys.end(); ++j) {
 			if (j->cpl_id() == (*i)->id()) {
 				(*i)->add_kdm (kdm);
 			}				

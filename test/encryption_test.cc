@@ -39,9 +39,9 @@ BOOST_AUTO_TEST_CASE (encryption)
 	libdcp::DCP d ("build/test/DCP/bar");
 
 	libdcp::CertificateChain chain;
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/signer/ca.self-signed.pem")));
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/signer/intermediate.signed.pem")));
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/signer/leaf.signed.pem")));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/ca.self-signed.pem"))));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/intermediate.signed.pem"))));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/leaf.signed.pem"))));
 
 	shared_ptr<libdcp::Signer> signer (
 		new libdcp::Signer (
@@ -59,11 +59,12 @@ BOOST_AUTO_TEST_CASE (encryption)
 							 &d.Progress,
 							 24,
 							 24,
-							 true,
 							 libdcp::Size (32, 32),
 							 false,
 							 mxf_metadata
 							 ));
+
+	mp->set_key (libdcp::Key ());
 
 	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
 						   wav,
@@ -73,10 +74,11 @@ BOOST_AUTO_TEST_CASE (encryption)
 						   24,
 						   24,
 						   2,
-						   true,
 						   false,
 						   mxf_metadata
 						   ));
+
+	ms->set_key (libdcp::Key ());
 	
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);

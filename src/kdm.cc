@@ -80,7 +80,7 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 			throw MiscError (String::compose ("Could not decrypt KDM (%1)", ERR_error_string (ERR_get_error(), 0)));
 		}
 
-		_ciphers.push_back (KDMCipher (decrypted, decrypted_len));
+		_keys.push_back (KDMKey (decrypted, decrypted_len));
 		delete[] decrypted;
 	}
 
@@ -88,7 +88,7 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 }
 
 
-KDMCipher::KDMCipher (unsigned char const * raw, int len)
+KDMKey::KDMKey (unsigned char const * raw, int len)
 {
 	switch (len) {
 	case 134:
@@ -99,8 +99,7 @@ KDMCipher::KDMCipher (unsigned char const * raw, int len)
 		_key_id = get_uuid (&raw, 16);
 		_not_valid_before = get (&raw, 25);
 		_not_valid_after = get (&raw, 25);
-		memcpy (_key_raw, raw, 16);
-		_key_string = get_hex (&raw, 16);
+		_key = Key (raw);
 		break;
 	case 138:
 		/* SMPTE */
@@ -111,8 +110,7 @@ KDMCipher::KDMCipher (unsigned char const * raw, int len)
 		_key_id = get_uuid (&raw, 16);
 		_not_valid_before = get (&raw, 25);
 		_not_valid_after = get (&raw, 25);
-		memcpy (_key_raw, raw, 16);
-		_key_string = get_hex (&raw, 16);
+		_key = Key (raw);
 		break;
 	default:
 		assert (false);
@@ -120,7 +118,7 @@ KDMCipher::KDMCipher (unsigned char const * raw, int len)
 }
 
 string
-KDMCipher::get (unsigned char const ** p, int N) const
+KDMKey::get (unsigned char const ** p, int N) const
 {
 	string g;
 	for (int i = 0; i < N; ++i) {
@@ -132,7 +130,7 @@ KDMCipher::get (unsigned char const ** p, int N) const
 }
 
 string
-KDMCipher::get_uuid (unsigned char const ** p, int N) const
+KDMKey::get_uuid (unsigned char const ** p, int N) const
 {
 	stringstream g;
 	
@@ -142,19 +140,6 @@ KDMCipher::get_uuid (unsigned char const ** p, int N) const
 		if (i == 3 || i == 5 || i == 7 || i == 9) {
 			g << '-';
 		}
-	}
-
-	return g.str ();
-}
-
-string
-KDMCipher::get_hex (unsigned char const ** p, int N) const
-{
-	stringstream g;
-	
-	for (int i = 0; i < N; ++i) {
-		g << setw(2) << setfill('0') << hex << static_cast<int> (**p);
-		(*p)++;
 	}
 
 	return g.str ();

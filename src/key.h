@@ -17,24 +17,45 @@
 
 */
 
-/* Check that an exception is thrown when trying to create MXFs from non-existant sources */
-BOOST_AUTO_TEST_CASE (error_test)
+#ifndef LIBDCP_KEY_H
+#define LIBDCP_KEY_H
+
+#include <stdint.h>
+
+namespace libdcp {
+
+/** A key for encrypting MXFs */
+class Key
 {
-	/* Create an empty DCP */
-	libdcp::DCP d ("build/test/fred");
+public:
+	/** Create a new, random key */
+	Key ();
 
-	/* Random filename that does not exist */
-	vector<string> p;
-	p.push_back ("frobozz");
+	/** Create a Key from a raw key value */
+	Key (uint8_t const *);
 
-	/* Trying to create video/audio MXFs using a non-existant file should throw an exception */
-	BOOST_CHECK_THROW (
-		new libdcp::MonoPictureAsset (p, "build/test/fred", "video.mxf", &d.Progress, 24, 24, libdcp::Size (32, 32), false),
-		libdcp::FileError
-		);
-	
-	BOOST_CHECK_THROW (
-		new libdcp::SoundAsset (p, "build/test/fred", "audio.mxf", &d.Progress, 24, 24, false),
-		libdcp::FileError
-		);
+	/** Create a Key from a hex key value */
+	Key (std::string);
+
+	Key (Key const &);
+	~Key ();
+
+	Key& operator= (Key const &);
+
+	uint8_t* value () const {
+		return _value;
+	}
+
+	std::string hex () const;
+
+private:
+	/** Raw key value */
+	uint8_t* _value;
+};
+
+extern bool operator== (Key const & a, Key const & b);
+extern bool operator!= (Key const & a, Key const & b);
+
 }
+
+#endif

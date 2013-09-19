@@ -93,14 +93,14 @@ Reel::encrypted () const
 void
 Reel::add_kdm (KDM const & kdm)
 {
-	list<KDMCipher> ciphers = kdm.ciphers ();
+	list<KDMKey> keys = kdm.keys ();
 	
-	for (list<KDMCipher>::iterator i = ciphers.begin(); i != ciphers.end(); ++i) {
+	for (list<KDMKey>::iterator i = keys.begin(); i != keys.end(); ++i) {
 		if (i->key_id() == _main_picture->key_id()) {
-			_main_picture->set_kdm_cipher (*i);
+			_main_picture->set_key (i->key ());
 		}
 		if (i->key_id() == _main_sound->key_id()) {
-			_main_sound->set_kdm_cipher (*i);
+			_main_sound->set_key (i->key ());
 		}
 	}
 }

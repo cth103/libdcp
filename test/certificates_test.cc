@@ -21,9 +21,9 @@ BOOST_AUTO_TEST_CASE (certificates)
 {
 	libdcp::CertificateChain c;
 
-	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/ref/crypt/ca.self-signed.pem")));
-	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/ref/crypt/intermediate.signed.pem")));
-	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("test/ref/crypt/leaf.signed.pem")));
+	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
+	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
+	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
 
 	list<shared_ptr<libdcp::Certificate> > leaf_to_root = c.leaf_to_root ();
 
@@ -71,4 +71,7 @@ BOOST_AUTO_TEST_CASE (certificates)
 		"dnQualifier=ndND9A/cODo2rTdrbLVmfQnoaSc=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 
+	/* Check that reconstruction from a string works */
+	libdcp::Certificate test (c.root()->certificate (true));
+	BOOST_CHECK_EQUAL (test.certificate(), c.root()->certificate());
 }

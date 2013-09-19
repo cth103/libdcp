@@ -24,6 +24,7 @@
 #include <list>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/filesystem.hpp>
 #undef X509_NAME
 #include <openssl/x509.h>
 
@@ -35,18 +36,25 @@ namespace xmlpp {
 
 namespace libdcp {
 
-class Certificate : public boost::noncopyable
+class Certificate
 {
 public:
 	Certificate ()
 		: _certificate (0)
 	{}
 
-	Certificate (std::string const &);
+	Certificate (boost::filesystem::path);
+	Certificate (std::string);
 	Certificate (X509 *);
+	Certificate (Certificate const &);
 	~Certificate ();
 
-	std::string certificate () const;
+	Certificate& operator= (Certificate const &);
+
+	/** @param with_begin_end true to include BEGIN CERTIFICATE / END CERTIFICATE markers
+	 *  @return the whole certificate as a string.
+	 */
+	std::string certificate (bool with_begin_end = false) const;
 	std::string issuer () const;
 	std::string serial () const;
 	std::string subject () const;
@@ -54,6 +62,8 @@ public:
 	std::string thumbprint () const;
 
 private:
+	void read_string (std::string);
+	
 	static std::string name_for_xml (X509_NAME *);
 	static std::string asn_to_utf8 (ASN1_STRING *);
 	static std::string get_name_part (X509_NAME *, int);

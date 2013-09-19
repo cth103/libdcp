@@ -21,16 +21,17 @@
 #define LIBDCP_KDM_H
 
 #include <boost/filesystem.hpp>
+#include "key.h"
 
 namespace libdcp {
 
-/** A single cipher for encrypting or decrypting an MXF.  One or more of these
+/** A single key for encrypting or decrypting an MXF.  One or more of these
  *  are delivered in a KDM.
  */
-class KDMCipher
+class KDMKey
 {
 public:
-	KDMCipher (unsigned char const *, int);
+	KDMKey (unsigned char const *, int);
 
 	std::string structure_id () const {
 		return _structure_id;
@@ -47,11 +48,11 @@ public:
 	std::string key_type () const {
 		return _key_type;
 	}
-	
+
 	std::string key_id () const {
 		return _key_id;
 	}
-
+	
 	std::string not_valid_before () const {
 		return _not_valid_before;
 	}
@@ -60,30 +61,22 @@ public:
 		return _not_valid_after;
 	}
 
-	/** The key as a hex string */
-	std::string key_string () const {
-		return _key_string;
-	}
-
-	/** The key as 16 raw bytes */
-	unsigned char const * key_raw () const {
-		return _key_raw;
+	Key key () const {
+		return _key;
 	}
 	
 private:
 	std::string get (unsigned char const **, int) const;
 	std::string get_uuid (unsigned char const **, int) const;
-	std::string get_hex (unsigned char const **, int) const;
 	
 	std::string _structure_id;
 	std::string _signer_thumbprint;
 	std::string _cpl_id;
-	std::string _key_type;
-	std::string _key_id;
 	std::string _not_valid_before;
 	std::string _not_valid_after;
-	std::string _key_string;
-	unsigned char _key_raw[16];
+	std::string _key_type;
+	std::string _key_id;
+	Key _key;
 };
 
 class KDM
@@ -91,12 +84,12 @@ class KDM
 public:
 	KDM (boost::filesystem::path, boost::filesystem::path);
 
-	std::list<KDMCipher> ciphers () const {
-		return _ciphers;
+	std::list<KDMKey> keys () const {
+		return _keys;
 	}
 
 private:
-	std::list<KDMCipher> _ciphers;
+	std::list<KDMKey> _keys;
 };
 
 

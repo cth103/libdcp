@@ -43,7 +43,7 @@ Certificate::Certificate (X509* c)
 	
 }
 
-Certificate::Certificate (string const & filename)
+Certificate::Certificate (boost::filesystem::path filename)
 	: _certificate (0)
 {
 	FILE* f = fopen (filename.c_str(), "r");
@@ -56,13 +56,52 @@ Certificate::Certificate (string const & filename)
 	}
 }
 
+Certificate::Certificate (string cert)
+{
+	read_string (cert);
+}
+
+Certificate::Certificate (Certificate const & other)
+{
+	read_string (other.certificate (true));
+}
+
+void
+Certificate::read_string (string cert)
+{
+	BIO* bio = BIO_new_mem_buf (const_cast<char *> (cert.c_str ()), -1);
+	if (!bio) {
+		throw MiscError ("could not create memory BIO");
+	}
+
+	_certificate = PEM_read_bio_X509 (bio, 0, 0, 0);
+	if (!_certificate) {
+		throw MiscError ("could not read X509 certificate from memory BIO");
+	}
+
+	BIO_free (bio);
+}
+
 Certificate::~Certificate ()
 {
 	X509_free (_certificate);
 }
 
+Certificate &
+Certificate::operator= (Certificate const & other)
+{
+	if (this == &other) {
+		return *this;
+	}
+	
+	X509_free (_certificate);
+	read_string (other.certificate ());
+
+	return *this;
+}
+
 string
-Certificate::certificate () const
+Certificate::certificate (bool with_begin_end) const
 {
 	assert (_certificate);
 	
@@ -82,8 +121,11 @@ Certificate::certificate () const
 
 	BIO_free (bio);
 
-	boost::replace_all (s, "-----BEGIN CERTIFICATE-----\n", "");
-	boost::replace_all (s, "\n-----END CERTIFICATE-----\n", "");
+	if (!with_begin_end) {
+		boost::replace_all (s, "-----BEGIN CERTIFICATE-----\n", "");
+		boost::replace_all (s, "\n-----END CERTIFICATE-----\n", "");
+	}
+	
 	return s;
 }
 

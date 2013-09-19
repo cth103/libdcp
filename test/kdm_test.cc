@@ -26,19 +26,19 @@ BOOST_AUTO_TEST_CASE (kdm_test)
 		"test/data/private.key"
 		);
 
-	list<libdcp::KDMCipher> ciphers = kdm.ciphers ();
+	list<libdcp::KDMKey> keys = kdm.keys ();
 	
-	BOOST_CHECK_EQUAL (ciphers.size(), 2);
+	BOOST_CHECK_EQUAL (keys.size(), 2);
 
-	BOOST_CHECK_EQUAL (ciphers.front().cpl_id(), "eece17de-77e8-4a55-9347-b6bab5724b9f");
-	BOOST_CHECK_EQUAL (ciphers.front().key_id(), "4ac4f922-8239-4831-b23b-31426d0542c4");
-	BOOST_CHECK_EQUAL (ciphers.front().not_valid_before(), "2013-07-06T20:04:58+00:00");
-	BOOST_CHECK_EQUAL (ciphers.front().not_valid_after(), "2023-07-02T20:04:56+00:00");
-	BOOST_CHECK_EQUAL (ciphers.front().key_string(), "8a2729c3e5b65c45d78305462104c3fb");
+	BOOST_CHECK_EQUAL (keys.front().cpl_id(), "eece17de-77e8-4a55-9347-b6bab5724b9f");
+	BOOST_CHECK_EQUAL (keys.front().key_id(), "4ac4f922-8239-4831-b23b-31426d0542c4");
+	BOOST_CHECK_EQUAL (keys.front().not_valid_before(), "2013-07-06T20:04:58+00:00");
+	BOOST_CHECK_EQUAL (keys.front().not_valid_after(), "2023-07-02T20:04:56+00:00");
+	BOOST_CHECK_EQUAL (keys.front().key().hex(), "8a2729c3e5b65c45d78305462104c3fb");
 
-	BOOST_CHECK_EQUAL (ciphers.back().cpl_id(), "eece17de-77e8-4a55-9347-b6bab5724b9f");
-	BOOST_CHECK_EQUAL (ciphers.back().key_id(), "73baf5de-e195-4542-ab28-8a465f7d4079");
-	BOOST_CHECK_EQUAL (ciphers.back().not_valid_before(), "2013-07-06T20:04:58+00:00");
-	BOOST_CHECK_EQUAL (ciphers.back().not_valid_after(), "2023-07-02T20:04:56+00:00");
-	BOOST_CHECK_EQUAL (ciphers.back().key_string(), "5327fb7ec2e807bd57059615bf8a169d");
+	BOOST_CHECK_EQUAL (keys.back().cpl_id(), "eece17de-77e8-4a55-9347-b6bab5724b9f");
+	BOOST_CHECK_EQUAL (keys.back().key_id(), "73baf5de-e195-4542-ab28-8a465f7d4079");
+	BOOST_CHECK_EQUAL (keys.back().not_valid_before(), "2013-07-06T20:04:58+00:00");
+	BOOST_CHECK_EQUAL (keys.back().not_valid_after(), "2023-07-02T20:04:56+00:00");
+	BOOST_CHECK_EQUAL (keys.back().key().hex(), "5327fb7ec2e807bd57059615bf8a169d");
 }

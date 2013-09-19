@@ -46,46 +46,25 @@ using namespace libdcp;
 MXFAsset::MXFAsset (string directory, string file_name)
 	: Asset (directory, file_name)
 	, _progress (0)
-	, _encrypted (false)
 	, _encryption_context (0)
 	, _decryption_context (0)
 {
 
 }
 
-MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int edit_rate, int intrinsic_duration, bool encrypted)
+MXFAsset::MXFAsset (string directory, string file_name, boost::signals2::signal<void (float)>* progress, int edit_rate, int intrinsic_duration) 
 	: Asset (directory, file_name, edit_rate, intrinsic_duration)
 	, _progress (progress)
-	, _encrypted (encrypted)
 	, _encryption_context (0)
 	, _decryption_context (0)
 {
-	if (_encrypted) {
-		/* Generate an encryption key and a UUID for it */
-		_key_id = make_uuid ();
-		uint8_t key_buffer[ASDCP::KeyLen];
-		Kumu::FortunaRNG rng;
-		rng.FillRandom (key_buffer, ASDCP::KeyLen);
-		char key_string[ASDCP::KeyLen * 4];
-		Kumu::bin2hex (key_buffer, ASDCP::KeyLen, key_string, ASDCP::KeyLen * 4);
-		_key_value = key_string;
-			
-		_encryption_context = new ASDCP::AESEncContext;
-		if (ASDCP_FAILURE (_encryption_context->InitKey (key_buffer))) {
-			throw MiscError ("could not set up encryption context");
-		}
-
-		uint8_t cbc_buffer[ASDCP::CBC_BLOCK_SIZE];
-		
-		if (ASDCP_FAILURE (_encryption_context->SetIVec (rng.FillRandom (cbc_buffer, ASDCP::CBC_BLOCK_SIZE)))) {
-			throw MiscError ("could not set up CBC initialization vector");
-		}
-	}
+	
 }
 
 MXFAsset::~MXFAsset ()
 {
 	delete _encryption_context;
+	delete _decryption_context;
 }
 
 void
@@ -104,7 +83,7 @@ MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid, bool in
 	Kumu::hex2bin (uuid.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
 	assert (c == Kumu::UUID_Length);
 
-	if (_encrypted) {
+	if (_key) {
 		Kumu::GenRandomUUID (writer_info->ContextID);
 		writer_info->EncryptedEssence = true;
 
@@ -159,16 +138,35 @@ MXFAsset::write_to_cpl (xmlpp::Element* node, bool interop) const
 	a->add_child ("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
 	a->add_child ("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));
 	a->add_child ("Duration")->add_child_text (lexical_cast<string> (_duration));
-	if (_encrypted) {
+	if (!_key_id.empty ()) {
 		a->add_child("KeyId")->add_child_text ("urn:uuid:" + _key_id);
 	}
 }
 
 void
-MXFAsset::set_kdm_cipher (KDMCipher cipher)
+MXFAsset::set_key (Key key)
 {
+	_key = key;
+
+	if (_key_id.empty ()) {
+		/* No key ID so far; we now need one */
+		_key_id = make_uuid ();
+	}
+	
 	_decryption_context = new ASDCP::AESDecContext;
-	if (ASDCP_FAILURE (_decryption_context->InitKey (cipher.key_raw ()))) {
+	if (ASDCP_FAILURE (_decryption_context->InitKey (_key->value ()))) {
 		throw MiscError ("could not set up decryption context");
+	}
+
+	_encryption_context = new ASDCP::AESEncContext;
+	if (ASDCP_FAILURE (_encryption_context->InitKey (_key->value ()))) {
+		throw MiscError ("could not set up encryption context");
+	}
+	
+	uint8_t cbc_buffer[ASDCP::CBC_BLOCK_SIZE];
+	
+	Kumu::FortunaRNG rng;
+	if (ASDCP_FAILURE (_encryption_context->SetIVec (rng.FillRandom (cbc_buffer, ASDCP::CBC_BLOCK_SIZE)))) {
+		throw MiscError ("could not set up CBC initialization vector");
 	}
 }
