@@ -29,6 +29,7 @@ def build(bld):
                  rec709_linearised_gamma_lut.cc
                  reel.cc
                  rgb_xyz.cc
+                 signer.cc
                  sound_asset.cc
                  sound_frame.cc
                  srgb_linearised_gamma_lut.cc

@@ -34,7 +34,7 @@
 #include "crypt_chain.h"
 #include "gamma_lut.h"
 #include "cpl.h"
-#include "encryption.h"
+#include "signer.h"
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test

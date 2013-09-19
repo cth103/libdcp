@@ -43,8 +43,8 @@ BOOST_AUTO_TEST_CASE (encryption)
 	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/crypt/intermediate.signed.pem")));
 	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate ("build/test/crypt/leaf.signed.pem")));
 
-	shared_ptr<libdcp::Encryption> crypt (
-		new libdcp::Encryption (
+	shared_ptr<libdcp::Signer> signer (
+		new libdcp::Signer (
 			chain,
 			"test/data/signer.key"
 			)
@@ -81,12 +81,11 @@ BOOST_AUTO_TEST_CASE (encryption)
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);
 
-	d.write_xml (false, xml_metadata, crypt);
+	d.write_xml (false, xml_metadata, signer);
 
 	shared_ptr<xmlpp::Document> kdm = cpl->make_kdm (
-		crypt->certificates,
-		crypt->signer_key,
-		crypt->certificates.leaf(),
+		signer,
+		signer->certificates().leaf(),
 		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
 		boost::posix_time::time_from_string ("2013-01-08 00:00:00"),
 		false,

@@ -41,7 +41,7 @@ class Asset;
 class Reel;
 class XMLMetadata;
 class MXFMetadata;
-class Encryption;
+class Signer;
 class KDM;
 	
 /** @brief A CPL within a DCP */
@@ -91,22 +91,20 @@ public:
 	
 	bool equals (CPL const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
 	
-	void write_xml (bool, XMLMetadata const &, boost::shared_ptr<Encryption>) const;
+	void write_xml (bool, XMLMetadata const &, boost::shared_ptr<const Signer>) const;
 	void write_to_assetmap (xmlpp::Node *) const;
 	void write_to_pkl (xmlpp::Node *) const;
 
 	/** Make a KDM for this CPL.
-	 *  @param certificates
-	 *  @param signer_key Filename of private key to sign the KDM with.
+	 *  @param signer Details of the certificates and private key to sign the KDM with.
 	 *  @param recipient_cert The certificate of the projector that this KDM is targeted at.  This will contain the
-	 *  projector's public key (P) which is used to encrypt the content keys.
+	 *  projector's public key which is used to encrypt the content keys.
 	 *  @param from Time that the KDM should be valid from.
 	 *  @param until Time that the KDM should be valid until.
 	 *  @param interop true to generate an interop KDM, false for SMPTE.
 	 */
 	boost::shared_ptr<xmlpp::Document> make_kdm (
-		CertificateChain const & certificates,
-		boost::filesystem::path signer_key,
+		boost::shared_ptr<const Signer> signer,
 		boost::shared_ptr<const Certificate> recipient_cert,
 		boost::posix_time::ptime from,
 		boost::posix_time::ptime until,

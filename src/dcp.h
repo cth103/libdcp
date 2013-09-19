@@ -47,7 +47,7 @@ class SubtitleAsset;
 class Reel;
 class CPL;
 class XMLMetadata;
-class Encryption;
+class Signer;
 class KDM;
 
 namespace parse {
@@ -83,7 +83,7 @@ public:
 	/** Write the required XML files to the directory that was
 	 *  passed into the constructor.
 	 */
-	void write_xml (bool interop, XMLMetadata const &, boost::shared_ptr<Encryption> crypt = boost::shared_ptr<Encryption> ()) const;
+	void write_xml (bool interop, XMLMetadata const &, boost::shared_ptr<Signer> signer = boost::shared_ptr<Signer> ()) const;
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
@@ -126,7 +126,7 @@ private:
 	/** Write the PKL file.
 	 *  @param pkl_uuid UUID to use.
 	 */
-	std::string write_pkl (std::string pkl_uuid, bool, XMLMetadata const &, boost::shared_ptr<Encryption>) const;
+	std::string write_pkl (std::string pkl_uuid, bool, XMLMetadata const &, boost::shared_ptr<Signer>) const;
 	
 	/** Write the VOLINDEX file */
 	void write_volindex () const;

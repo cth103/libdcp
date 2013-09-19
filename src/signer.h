@@ -22,17 +22,28 @@
 
 namespace libdcp {
 
-class Encryption
+class Signer
 {
 public:
-	Encryption (CertificateChain c, boost::filesystem::path k)
-		: certificates (c)
-		, signer_key (k)
+	Signer (CertificateChain c, boost::filesystem::path k)
+		: _certificates (c)
+		, _key (k)
 	{}
 
-	CertificateChain certificates;
+	void sign (xmlpp::Element* parent, bool interop) const;
+	void add_signature_value (xmlpp::Element* parent, std::string ns) const;
+
+	CertificateChain const & certificates () const {
+		return _certificates;
+	}
+	
+private:	
+
+	void add_signer (xmlpp::Element* parent, std::string ns) const;
+	
+	CertificateChain _certificates;
 	/** Filename of signer key */
-	boost::filesystem::path signer_key;
+	boost::filesystem::path _key;
 };
 
 }

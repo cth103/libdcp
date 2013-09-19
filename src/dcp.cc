@@ -45,7 +45,7 @@
 #include "parse/asset_map.h"
 #include "reel.h"
 #include "cpl.h"
-#include "encryption.h"
+#include "signer.h"
 #include "kdm.h"
 
 using std::string;
@@ -67,21 +67,21 @@ DCP::DCP (string directory)
 }
 
 void
-DCP::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Encryption> crypt) const
+DCP::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Signer> signer) const
 {
 	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
-		(*i)->write_xml (interop, metadata, crypt);
+		(*i)->write_xml (interop, metadata, signer);
 	}
 
 	string pkl_uuid = make_uuid ();
-	string pkl_path = write_pkl (pkl_uuid, interop, metadata, crypt);
+	string pkl_path = write_pkl (pkl_uuid, interop, metadata, signer);
 	
 	write_volindex ();
 	write_assetmap (pkl_uuid, boost::filesystem::file_size (pkl_path), interop, metadata);
 }
 
 std::string
-DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, shared_ptr<Encryption> crypt) const
+DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, shared_ptr<Signer> signer) const
 {
 	assert (!_cpls.empty ());
 	
@@ -99,7 +99,7 @@ DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, sha
 		pkl = doc.create_root_node("PackingList", "http://www.smpte-ra.org/schemas/429-8/2007/PKL");
 	}
 	
-	if (crypt) {
+	if (signer) {
 		pkl->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	}
 
@@ -120,8 +120,8 @@ DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, sha
 		(*i)->write_to_pkl (asset_list);
 	}
 
-	if (crypt) {
-		sign (pkl, crypt->certificates, crypt->signer_key, interop);
+	if (signer) {
+		signer->sign (pkl, interop);
 	}
 		
 	doc.write_to_file_formatted (p.string (), "UTF-8");

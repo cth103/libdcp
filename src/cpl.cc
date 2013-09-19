@@ -28,7 +28,7 @@
 #include "parse/asset_map.h"
 #include "reel.h"
 #include "metadata.h"
-#include "encryption.h"
+#include "signer.h"
 #include "exceptions.h"
 #include "compose.hpp"
 
@@ -206,7 +206,7 @@ CPL::add_reel (shared_ptr<Reel> reel)
 }
 
 void
-CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Encryption> crypt) const
+CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<const Signer> signer) const
 {
 	boost::filesystem::path p;
 	p /= _directory;
@@ -222,7 +222,7 @@ CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Encryptio
 		root = doc.create_root_node ("CompositionPlaylist", "http://www.smpte-ra.org/schemas/429-7/2006/CPL");
 	}
 
-	if (crypt) {
+	if (signer) {
 		root->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	}
 	
@@ -246,8 +246,8 @@ CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Encryptio
 		(*i)->write_to_cpl (reel_list, interop);
 	}
 
-	if (crypt) {
-		sign (root, crypt->certificates, crypt->signer_key, interop);
+	if (signer) {
+		signer->sign (root, interop);
 	}
 
 	doc.write_to_file_formatted (p.string (), "UTF-8");
@@ -346,8 +346,7 @@ CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (NoteT
 
 shared_ptr<xmlpp::Document>
 CPL::make_kdm (
-	CertificateChain const & certificates,
-	boost::filesystem::path signer_key,
+	shared_ptr<const Signer> signer,
 	shared_ptr<const Certificate> recipient_cert,
 	boost::posix_time::ptime from,
 	boost::posix_time::ptime until,
@@ -376,9 +375,9 @@ CPL::make_kdm (
 		authenticated_public->add_child("IssueDate")->add_child_text (xml_metadata.issue_date);
 
 		{
-			xmlpp::Element* signer = authenticated_public->add_child("Signer");
-			signer->add_child("X509IssuerName", "ds")->add_child_text (certificates.leaf()->issuer());
-			signer->add_child("X509SerialNumber", "ds")->add_child_text (certificates.leaf()->serial());
+			xmlpp::Element* xml_signer = authenticated_public->add_child("Signer");
+			xml_signer->add_child("X509IssuerName", "ds")->add_child_text (signer->certificates().leaf()->issuer());
+			xml_signer->add_child("X509SerialNumber", "ds")->add_child_text (signer->certificates().leaf()->serial());
 		}
 
 		{
@@ -400,7 +399,7 @@ CPL::make_kdm (
 
 				kdm_required_extensions->add_child("CompositionPlaylistId")->add_child_text("urn:uuid:" + _id);
 				kdm_required_extensions->add_child("ContentTitleText")->add_child_text(_name);
-				kdm_required_extensions->add_child("ContentAuthenticator")->add_child_text(certificates.leaf()->thumbprint());
+				kdm_required_extensions->add_child("ContentAuthenticator")->add_child_text(signer->certificates().leaf()->thumbprint());
 				kdm_required_extensions->add_child("ContentKeysNotValidBefore")->add_child_text(ptime_to_string (from));
 				kdm_required_extensions->add_child("ContentKeysNotValidAfter")->add_child_text(ptime_to_string (until));
 
@@ -494,7 +493,7 @@ CPL::make_kdm (
 			}
 		}
 		
-		add_signature_value (signature, certificates, signer_key, "ds");
+		signer->add_signature_value (signature, "ds");
 	}
 
 	return doc;
