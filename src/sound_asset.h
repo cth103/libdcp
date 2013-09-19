@@ -128,7 +128,8 @@ public:
 		std::string mxf_name,
 		int fps,
 		int channels,
-		int sampling_rate
+		int sampling_rate,
+		bool encrypted
 		);
 
 	boost::shared_ptr<SoundAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ());

@@ -66,6 +66,7 @@ def build(bld):
               rec709_linearised_gamma_lut.h
               reel.h
               argb_frame.h
+              signer.h
               signer_chain.h
               sound_asset.h
               sound_frame.h

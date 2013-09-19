@@ -104,8 +104,8 @@ SoundAsset::SoundAsset (string directory, string mxf_name)
 	_intrinsic_duration = desc.ContainerDuration;
 }
 
-SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int channels, int sampling_rate)
-	: MXFAsset (directory, mxf_name, 0, fps, 0, false)
+SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int channels, int sampling_rate, bool encrypted)
+	: MXFAsset (directory, mxf_name, 0, fps, 0, encrypted)
 	, _channels (channels)
 	, _sampling_rate (sampling_rate)
 {
