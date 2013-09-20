@@ -61,7 +61,7 @@ PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, bool overwrite, boo
 	, _interop (interop)
 	, _metadata (metadata)
 {
-	
+
 }
 
 struct ASDCPStateBase
@@ -74,6 +74,7 @@ struct ASDCPStateBase
 	ASDCP::JP2K::FrameBuffer frame_buffer;
 	ASDCP::WriterInfo writer_info;
 	ASDCP::JP2K::PictureDescriptor picture_descriptor;
+	ASDCP::AESEncContext* encryption_context;
 };
 
 struct MonoPictureAssetWriter::ASDCPState : public ASDCPStateBase
@@ -93,7 +94,7 @@ MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, bool overwr
 	: PictureAssetWriter (asset, overwrite, interop, metadata)
 	, _state (new MonoPictureAssetWriter::ASDCPState)
 {
-
+	_state->encryption_context = asset->encryption_context ();
 }
 
 StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* asset, bool overwrite, bool interop, MXFMetadata const & metadata)
@@ -101,7 +102,7 @@ StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* asset, bool ov
 	, _state (new StereoPictureAssetWriter::ASDCPState)
 	, _next_eye (EYE_LEFT)
 {
-
+	_state->encryption_context = asset->encryption_context ();
 }
 
 template <class P, class Q>
@@ -158,7 +159,7 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
-	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, 0, 0, &hash))) {
+	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, _state->encryption_context, 0, &hash))) {
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
 	}
 
@@ -190,7 +191,7 @@ StereoPictureAssetWriter::write (uint8_t* data, int size)
 		    _state->mxf_writer.WriteFrame (
 			    _state->frame_buffer,
 			    _next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
-			    0,
+			    _state->encryption_context,
 			    0,
 			    &hash)
 		    )) {

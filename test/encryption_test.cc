@@ -64,7 +64,9 @@ BOOST_AUTO_TEST_CASE (encryption)
 							 mxf_metadata
 							 ));
 
-	mp->set_key (libdcp::Key ());
+	libdcp::Key key;
+
+	mp->set_key (key);
 
 	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
 						   wav,
@@ -78,7 +80,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 						   mxf_metadata
 						   ));
 
-	ms->set_key (libdcp::Key ());
+	ms->set_key (key);
 	
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);
@@ -88,6 +90,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 	shared_ptr<xmlpp::Document> kdm = cpl->make_kdm (
 		signer,
 		signer->certificates().leaf(),
+		key,
 		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
 		boost::posix_time::time_from_string ("2013-01-08 00:00:00"),
 		false,

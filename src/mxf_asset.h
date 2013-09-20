@@ -95,6 +95,10 @@ public:
 	boost::optional<Key> key () const {
 		return _key;
 	}
+
+	ASDCP::AESEncContext* encryption_context () const {
+		return _encryption_context;
+	}
 	
 protected:
 	virtual std::string key_type () const = 0;

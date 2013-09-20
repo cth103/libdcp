@@ -29,6 +29,7 @@
 #include <libxml++/libxml++.h>
 #include "types.h"
 #include "certificates.h"
+#include "key.h"
 
 namespace libdcp {
 
@@ -48,8 +49,8 @@ class KDM;
 class CPL
 {
 public:
-	CPL (std::string directory, std::string name, ContentKind content_kind, int length, int frames_per_second);
-	CPL (std::string directory, std::string file, std::list<PathAssetMap> asset_maps, bool require_mxfs = true);
+	CPL (boost::filesystem::path directory, std::string name, ContentKind content_kind, int length, int frames_per_second);
+	CPL (boost::filesystem::path, std::string file, std::list<PathAssetMap> asset_maps, bool require_mxfs = true);
 
 	void add_reel (boost::shared_ptr<Reel> reel);
 	
@@ -99,6 +100,7 @@ public:
 	 *  @param signer Details of the certificates and private key to sign the KDM with.
 	 *  @param recipient_cert The certificate of the projector that this KDM is targeted at.  This will contain the
 	 *  projector's public key which is used to encrypt the content keys.
+	 *  @param key Private key used to encrypt the MXFs referenced by this CPL.
 	 *  @param from Time that the KDM should be valid from.
 	 *  @param until Time that the KDM should be valid until.
 	 *  @param interop true to generate an interop KDM, false for SMPTE.
@@ -106,6 +108,7 @@ public:
 	boost::shared_ptr<xmlpp::Document> make_kdm (
 		boost::shared_ptr<const Signer> signer,
 		boost::shared_ptr<const Certificate> recipient_cert,
+		Key key,
 		boost::posix_time::ptime from,
 		boost::posix_time::ptime until,
 		bool interop,
@@ -118,7 +121,7 @@ public:
 private:
 	std::pair<std::string, boost::shared_ptr<const parse::AssetMapAsset> > asset_from_id (std::list<PathAssetMap>, std::string id) const;
 	
-	std::string _directory;
+	boost::filesystem::path _directory;
 	/** the name of the DCP */
 	std::string _name;
 	/** the content kind of the CPL */

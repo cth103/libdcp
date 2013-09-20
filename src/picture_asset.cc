@@ -479,7 +479,6 @@ StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int f
 shared_ptr<PictureAssetWriter>
 StereoPictureAsset::start_write (bool overwrite, bool interop, MXFMetadata const & metadata)
 {
-	/* XXX: can't we use shared_ptr here? */
 	return shared_ptr<StereoPictureAssetWriter> (new StereoPictureAssetWriter (this, overwrite, interop, metadata));
 }
 

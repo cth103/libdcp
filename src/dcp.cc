@@ -60,7 +60,7 @@ using boost::shared_ptr;
 using boost::lexical_cast;
 using namespace libdcp;
 
-DCP::DCP (string directory)
+DCP::DCP (boost::filesystem::path directory)
 	: _directory (directory)
 {
 	boost::filesystem::create_directories (directory);

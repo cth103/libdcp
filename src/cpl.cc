@@ -44,7 +44,7 @@ using boost::lexical_cast;
 using boost::optional;
 using namespace libdcp;
 
-CPL::CPL (string directory, string name, ContentKind content_kind, int length, int frames_per_second)
+CPL::CPL (boost::filesystem::path directory, string name, ContentKind content_kind, int length, int frames_per_second)
 	: _directory (directory)
 	, _name (name)
 	, _content_kind (content_kind)
@@ -60,7 +60,7 @@ CPL::CPL (string directory, string name, ContentKind content_kind, int length, i
  *  @param asset_maps AssetMaps to look for assets in.
  *  @param require_mxfs true to throw an exception if a required MXF file does not exist.
  */
-CPL::CPL (string directory, string file, list<PathAssetMap> asset_maps, bool require_mxfs)
+CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> asset_maps, bool require_mxfs)
 	: _directory (directory)
 	, _content_kind (FEATURE)
 	, _length (0)
@@ -348,6 +348,7 @@ shared_ptr<xmlpp::Document>
 CPL::make_kdm (
 	shared_ptr<const Signer> signer,
 	shared_ptr<const Certificate> recipient_cert,
+	Key key,
 	boost::posix_time::ptime from,
 	boost::posix_time::ptime until,
 	bool interop,
@@ -445,26 +446,12 @@ CPL::make_kdm (
 		authenticated_private->set_attribute ("Id", "ID_AuthenticatedPrivate");
 		xmlAddID (0, doc->cobj(), (const xmlChar *) "ID_AuthenticatedPrivate", authenticated_private->get_attribute("Id")->cobj());
 
-		/* Hex keys that we have already written into the node */
-		list<Key> written_keys;
-
-		list<shared_ptr<const Asset> > a = assets();
-		for (list<shared_ptr<const Asset> >::iterator i = a.begin(); i != a.end(); ++i) {
-			/* XXX: non-MXF assets? */
-			shared_ptr<const MXFAsset> mxf = boost::dynamic_pointer_cast<const MXFAsset> (*i);
-			if (!mxf || find (written_keys.begin(), written_keys.end(), mxf->key ()) != written_keys.end ()) {
-				continue;
-			}
-			
-			xmlpp::Element* encrypted_key = authenticated_private->add_child ("EncryptedKey", "enc");
-			xmlpp::Element* encryption_method = encrypted_key->add_child ("EncryptionMethod", "enc");
-			encryption_method->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p");
-			encryption_method->add_child("DigestMethod", "ds")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
-			xmlpp::Element* cipher_data = authenticated_private->add_child ("CipherData", "enc");
-			cipher_data->add_child("CipherValue", "enc")->add_child_text(mxf->key()->hex());
-
-			written_keys.push_back (mxf->key().get());
-		}
+		xmlpp::Element* encrypted_key = authenticated_private->add_child ("EncryptedKey", "enc");
+		xmlpp::Element* encryption_method = encrypted_key->add_child ("EncryptionMethod", "enc");
+		encryption_method->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p");
+		encryption_method->add_child("DigestMethod", "ds")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
+		xmlpp::Element* cipher_data = authenticated_private->add_child ("CipherData", "enc");
+		cipher_data->add_child("CipherValue", "enc")->add_child_text(key.hex());
 	}
 	
 	{

@@ -67,7 +67,7 @@ public:
 	 *
 	 *  @param directory Directory containing the DCP's files.
 	 */
-	DCP (std::string directory);
+	DCP (boost::filesystem::path directory);
 
 	void read (bool require_mxfs = true);
 
@@ -149,7 +149,7 @@ private:
 	Files _files;
 
 	/** the directory that we are writing to */
-	std::string _directory;
+	boost::filesystem::path _directory;
 	/** our CPLs */
 	std::list<boost::shared_ptr<CPL> > _cpls;
 
