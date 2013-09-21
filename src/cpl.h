@@ -100,7 +100,6 @@ public:
 	 *  @param signer Details of the certificates and private key to sign the KDM with.
 	 *  @param recipient_cert The certificate of the projector that this KDM is targeted at.  This will contain the
 	 *  projector's public key which is used to encrypt the content keys.
-	 *  @param key Private key used to encrypt the MXFs referenced by this CPL.
 	 *  @param from Time that the KDM should be valid from.
 	 *  @param until Time that the KDM should be valid until.
 	 *  @param interop true to generate an interop KDM, false for SMPTE.
@@ -108,7 +107,6 @@ public:
 	boost::shared_ptr<xmlpp::Document> make_kdm (
 		boost::shared_ptr<const Signer> signer,
 		boost::shared_ptr<const Certificate> recipient_cert,
-		Key key,
 		boost::posix_time::ptime from,
 		boost::posix_time::ptime until,
 		bool interop,

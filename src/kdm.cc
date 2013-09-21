@@ -44,13 +44,13 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 	   
 	FILE* private_key_file = fopen (private_key.string().c_str(), "r");
 	if (!private_key_file) {
-		throw FileError ("could not find RSA private key file", private_key.string ());
+		throw FileError ("could not find RSA private key file", private_key);
 	}
 	
 	RSA* rsa = PEM_read_RSAPrivateKey (private_key_file, 0, 0, 0);
 	fclose (private_key_file);	
 	if (!rsa) {
-		throw FileError ("could not read RSA private key file", private_key.string ());
+		throw FileError ("could not read RSA private key file", private_key);
 	}
 
 	
@@ -87,27 +87,41 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 	RSA_free (rsa);
 }
 
+KDMKey::KDMKey (shared_ptr<const Signer> signer, string cpl_id, string key_id, boost::posix_time::ptime from, boost::posix_time::ptime until, Key key)
+	: _cpl_id (cpl_id)
+	, _key_id (key_id),
+	, _not_valid_before (ptime_to_string (from))
+	, _not_valid_after (ptime_to_string (until))
+	, _key (key)
+{
+	/* Magic value specified by SMPTE S430-1-2006 */
+	_structure_id[] = { 0xf1, 0xdc, 0x12, 0x44, 0x60, 0x16, 0x9a, 0x0e, 0x85, 0xbc, 0x30, 0x06, 0x42, 0xf8, 0x66, 0xab };
+	
+	base64_decode (signer->certificates()->leaf()->thumbprint (), _signer_thumbprint, 20);
+}
 
-KDMKey::KDMKey (unsigned char const * raw, int len)
+KDMKey::KDMKey (uint8_t const * raw, int len)
 {
 	switch (len) {
 	case 134:
 		/* interop */
-		_structure_id = get (&raw, 16);
-		_signer_thumbprint = get (&raw, 20);
-		_cpl_id = get_uuid (&raw, 16);
-		_key_id = get_uuid (&raw, 16);
+		/* [0-15] is structure id (fixed sequence specified by standard) */
+		raw += 16;
+		get (_signer_thumbprint, &raw, 20);
+		_cpl_id = get_uuid (&raw);
+		_key_id = get_uuid (&raw);
 		_not_valid_before = get (&raw, 25);
 		_not_valid_after = get (&raw, 25);
 		_key = Key (raw);
 		break;
 	case 138:
 		/* SMPTE */
-		_structure_id = get (&raw, 16);
-		_signer_thumbprint = get (&raw, 20);
-		_cpl_id = get_uuid (&raw, 16);
+		/* [0-15] is structure id (fixed sequence specified by standard) */
+		raw += 16;
+		get (_signer_thumbprint, &raw, 20);
+		_cpl_id = get_uuid (&raw);
 		_key_type = get (&raw, 4);
-		_key_id = get_uuid (&raw, 16);
+		_key_id = get_uuid (&raw);
 		_not_valid_before = get (&raw, 25);
 		_not_valid_after = get (&raw, 25);
 		_key = Key (raw);
@@ -117,8 +131,32 @@ KDMKey::KDMKey (unsigned char const * raw, int len)
 	}
 }
 
+
 string
-KDMKey::get (unsigned char const ** p, int N) const
+KDMKey::base64 () const
+{
+	/* XXX: SMPTE only */
+	uint8_t block[138];
+	uint8_t* p = block;
+
+	/* Magic value specified by SMPTE S430-1-2006 */
+	uint8_t structure_id[] = { 0xf1, 0xdc, 0x12, 0x44, 0x60, 0x16, 0x9a, 0x0e, 0x85, 0xbc, 0x30, 0x06, 0x42, 0xf8, 0x66, 0xab };
+	put (&p, structure_id, 16);
+	put (&p, _signer_thumbprint, 20);
+	put_uuid (&p, _cpl_id);
+	put (&p, _key_type, 4);
+	put_uuid (&p, _key_id);
+	put (&p, _not_valid_before.c_str(), 25);
+	put (&p, _not_valid_after.c_str(), 25);
+	put (&p, _key.value(), ASDCP::KeyLen);
+
+	/* Lazy overallocation */
+	char string[138 * 2];
+	return Kumu::base64encode (block, 138, string, 138 * 2);
+}
+
+string
+KDMKey::get (uint8_t const ** p, int N) const
 {
 	string g;
 	for (int i = 0; i < N; ++i) {
@@ -129,12 +167,19 @@ KDMKey::get (unsigned char const ** p, int N) const
 	return g;
 }
 
+void
+KDMKey::get (uint8_t const * o, uint8_t const ** p, int N) const
+{
+	memcpy (o, *p, N);
+	*p += N;
+}
+
 string
-KDMKey::get_uuid (unsigned char const ** p, int N) const
+KDMKey::get_uuid (unsigned char const ** p) const
 {
 	stringstream g;
 	
-	for (int i = 0; i < N; ++i) {
+	for (int i = 0; i < 16; ++i) {
 		g << setw(2) << setfill('0') << hex << static_cast<int> (**p);
 		(*p)++;
 		if (i == 3 || i == 5 || i == 7 || i == 9) {
@@ -143,4 +188,22 @@ KDMKey::get_uuid (unsigned char const ** p, int N) const
 	}
 
 	return g.str ();
+}
+
+void
+KDMKey::put (uint8_t ** d, uint8_t const * s, int N) const
+{
+	memcpy (*d, s, N);
+	(*d) += N;
+}
+
+void
+KDMKey::put_uuid (uint8_t ** d, string id) const
+{
+	id.erase (id.remove (id.begin(), id.end(), "-"));
+	for (int i = 0; i < 32; i += 2) {
+		stringstream s;
+		s << id[i] << id[i + 1];
+		s >> *d++;
+	}
 }

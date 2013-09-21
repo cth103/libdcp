@@ -42,3 +42,4 @@ BOOST_AUTO_TEST_CASE (kdm_test)
 	BOOST_CHECK_EQUAL (keys.back().not_valid_after(), "2023-07-02T20:04:56+00:00");
 	BOOST_CHECK_EQUAL (keys.back().key().hex(), "5327fb7ec2e807bd57059615bf8a169d");
 }
+	

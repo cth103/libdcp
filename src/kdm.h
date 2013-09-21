@@ -28,49 +28,23 @@ namespace libdcp {
 /** A single key for encrypting or decrypting an MXF.  One or more of these
  *  are delivered in a KDM.
  */
-class KDMKey
+class KDMKey : public boost::noncopyable
 {
 public:
-	KDMKey (unsigned char const *, int);
-
-	std::string structure_id () const {
-		return _structure_id;
-	}
-	
-	std::string signer_thumbprint () const {
-		return _signer_thumbprint;
-	}
-	
-	std::string cpl_id () const {
-		return _cpl_id;
-	}
-	
-	std::string key_type () const {
-		return _key_type;
-	}
-
-	std::string key_id () const {
-		return _key_id;
-	}
-	
-	std::string not_valid_before () const {
-		return _not_valid_before;
-	}
-	
-	std::string not_valid_after () const {
-		return _not_valid_after;
-	}
+	KDMKey (uint8_t const *, int);
 
 	Key key () const {
 		return _key;
 	}
 	
 private:
-	std::string get (unsigned char const **, int) const;
-	std::string get_uuid (unsigned char const **, int) const;
+	void get (uint8_t *, uint8_t const **, int) const;
+	std::string get (uint8_t const **, int) const;
+	std::string get_uuid (uint8_t const **) const;
+	void put (uint8_t **, uint8_t const *, int) const;
+	void put_uuid (uint8_t **, std::string) const;
 	
-	std::string _structure_id;
-	std::string _signer_thumbprint;
+	uint8_t _signer_thumbprint[20];
 	std::string _cpl_id;
 	std::string _not_valid_before;
 	std::string _not_valid_after;
