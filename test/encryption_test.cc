@@ -99,4 +99,5 @@ BOOST_AUTO_TEST_CASE (encryption)
 		);
 
 	kdm->write_to_file_formatted ("build/test/bar.kdm.xml", "UTF-8");
+	system ("xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/bar.kdm.xml");
 }
