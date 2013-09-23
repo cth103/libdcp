@@ -18,6 +18,7 @@
 */
 
 #include "kdm.h"
+#include "xml/kdm_smpte.h"
 
 BOOST_AUTO_TEST_CASE (kdm_test)
 {
@@ -42,4 +43,18 @@ BOOST_AUTO_TEST_CASE (kdm_test)
 	BOOST_CHECK_EQUAL (keys.back().not_valid_after(), "2023-07-02T20:04:56+00:00");
 	BOOST_CHECK_EQUAL (keys.back().key().hex(), "5327fb7ec2e807bd57059615bf8a169d");
 }
-	
+
+/* Check that we can read in a KDM and then write it back out again the same */
+BOOST_AUTO_TEST_CASE (kdm_passthrough_test)
+{
+	libdcp::xml::DCinemaSecurityMessage kdm (
+		"test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml"
+		);
+
+	kdm.as_xml ("build/kdm.xml");
+	int const r = system (
+		"xmldiff -c test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml build/kdm.xml"
+		);
+
+	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
+}
