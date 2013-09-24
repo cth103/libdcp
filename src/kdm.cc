@@ -89,7 +89,7 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 KDM::KDM (
 	shared_ptr<const CPL> cpl, shared_ptr<const Signer> signer, shared_ptr<const Certificate> recipient_cert,
 	boost::posix_time::ptime not_valid_before, boost::posix_time::ptime not_valid_after,
-	MXFMetadata mxf_metadata, XMLMetadata xml_metadata
+	string annotation_text, string issue_date
 	)
 	: xml_kdm (new xml::DCinemaSecurityMessage)
 {
@@ -99,8 +99,8 @@ KDM::KDM (
 
 	apu.message_id = "urn:uuid:" + make_uuid ();
 	apu.message_type = "http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type";
-	apu.annotation_text = mxf_metadata.product_name;
-	apu.issue_date = xml_metadata.issue_date;
+	apu.annotation_text = annotation_text;
+	apu.issue_date = issue_date;
 	apu.signer.x509_issuer_name = signer->certificates().leaf()->issuer ();
 	apu.signer.x509_serial_number = signer->certificates().leaf()->serial ();
 	apu.recipient.x509_issuer_serial.x509_issuer_name = recipient_cert->issuer ();

@@ -99,7 +99,7 @@ public:
 	KDM (
 		boost::shared_ptr<const CPL> cpl, boost::shared_ptr<const Signer>, boost::shared_ptr<const Certificate> recipient_cert,
 		boost::posix_time::ptime not_valid_before, boost::posix_time::ptime not_valid_after,
-		MXFMetadata mxf_metadata, XMLMetadata xml_metadata
+		std::string annotation_text, std::string issue_date
 		);
 
 	std::list<KDMKey> keys () const {

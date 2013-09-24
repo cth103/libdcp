@@ -95,8 +95,8 @@ BOOST_AUTO_TEST_CASE (encryption)
 		signer->certificates().leaf(),
 		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
 		boost::posix_time::time_from_string ("2013-01-08 00:00:00"),
-		mxf_metadata,
-		xml_metadata
+		"libdcp",
+		"2012-07-17T04:45:18+00:00"
 		);
 
 	kdm.as_xml ("build/test/bar.kdm.xml");
