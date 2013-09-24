@@ -95,7 +95,7 @@ public:
 class AuthenticatedPublic
 {
 public:
-	AuthenticatedPublic ();
+	AuthenticatedPublic () {}
 	AuthenticatedPublic (boost::shared_ptr<const cxml::Node>);
 
 	void as_xml (Writer &, xmlpp::Element *) const;

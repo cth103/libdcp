@@ -63,12 +63,6 @@ DCinemaSecurityMessage::as_xml () const
 	return writer.document;
 }
 
-AuthenticatedPublic::AuthenticatedPublic ()
-	: message_id ("urn:uuid:" + make_uuid ())
-{
-
-}
-
 AuthenticatedPublic::AuthenticatedPublic (shared_ptr<const cxml::Node> node)
 	: message_id (node->string_child ("MessageId"))
 	, message_type (node->string_child ("MessageType"))

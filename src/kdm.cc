@@ -96,8 +96,9 @@ KDM::KDM (
 	xml::AuthenticatedPublic& apu = xml_kdm->authenticated_public;
 
 	/* AuthenticatedPublic */
-	
-	apu.message_type = "urn:uuid:" + make_uuid ();
+
+	apu.message_id = "urn:uuid:" + make_uuid ();
+	apu.message_type = "http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type";
 	apu.annotation_text = mxf_metadata.product_name;
 	apu.issue_date = xml_metadata.issue_date;
 	apu.signer.x509_issuer_name = signer->certificates().leaf()->issuer ();
