@@ -377,3 +377,11 @@ CPL::asset_from_id (list<PathAssetMap> asset_maps, string id) const
 
 	return make_pair ("", shared_ptr<const parse::AssetMapAsset> ());
 }
+
+void
+CPL::set_mxf_keys (Key key)
+{
+	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
+		(*i)->set_mxf_keys (key);
+	}
+}

@@ -24,6 +24,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <libxml++/libxml++.h>
+#include <libdcp/key.h>
 #include "types.h"
 
 namespace xmlpp {
@@ -66,6 +67,8 @@ public:
 	void write_to_cpl (xmlpp::Element *, bool) const;
 
 	bool encrypted () const;
+
+	void set_mxf_keys (libdcp::Key);
 	
 	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> notes) const;
 

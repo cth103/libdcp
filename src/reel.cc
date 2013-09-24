@@ -104,3 +104,14 @@ Reel::add_kdm (KDM const & kdm)
 		}
 	}
 }
+
+void
+Reel::set_mxf_keys (Key key)
+{
+	_main_picture->set_key (key);
+	if (_main_sound) {
+		_main_sound->set_key (key);
+	}
+
+	/* XXX: subtitle asset? */
+}

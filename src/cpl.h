@@ -86,6 +86,8 @@ public:
 
 	bool encrypted () const;
 
+	void set_mxf_keys (Key);
+
 	std::string id () const {
 		return _id;
 	}
