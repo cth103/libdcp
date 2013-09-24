@@ -31,7 +31,7 @@ public:
 	{}
 
 	void sign (xmlpp::Element* parent, bool interop) const;
-	void add_signature_value (xmlpp::Element* parent, std::string ns) const;
+	void add_signature_value (xmlpp::Node* parent, std::string ns) const;
 
 	CertificateChain const & certificates () const {
 		return _certificates;

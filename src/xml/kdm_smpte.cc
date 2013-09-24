@@ -17,14 +17,23 @@
 
 */
 
+#include <libxml/parser.h>
 #include <libxml++/libxml++.h>
 #include <libcxml/cxml.h>
 #include "kdm_smpte.h"
+#include "../exceptions.h"
+#include "../util.h"
 
 using std::list;
 using std::string;
 using boost::shared_ptr;
 using namespace libdcp::xml;
+
+Writer::Writer ()
+	: document (new xmlpp::Document)
+{
+
+}
 
 DCinemaSecurityMessage::DCinemaSecurityMessage (boost::filesystem::path file)
 {
@@ -38,19 +47,26 @@ DCinemaSecurityMessage::DCinemaSecurityMessage (boost::filesystem::path file)
 	f.done ();
 }
 
-void
-DCinemaSecurityMessage::as_xml (boost::filesystem::path file) const
+shared_ptr<xmlpp::Document>
+DCinemaSecurityMessage::as_xml () const
 {
-	xmlpp::Document doc;
-	xmlpp::Element* root = doc.create_root_node ("DCinemaSecurityMessage", "http://www.smpte-ra.org/schemas/430-3/2006/ETM");
+	Writer writer;
+	
+	xmlpp::Element* root = writer.document->create_root_node ("DCinemaSecurityMessage", "http://www.smpte-ra.org/schemas/430-3/2006/ETM");
 	root->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "ds");
 	root->set_namespace_declaration ("http://www.w3.org/2001/04/xmlenc#", "enc");
 
-	authenticated_public.as_xml (root->add_child ("AuthenticatedPublic"));
-	authenticated_private.as_xml (root->add_child ("AuthenticatedPrivate"));
-	signature.as_xml (root->add_child ("Signature", "ds"));
+	authenticated_public.as_xml (writer, root->add_child ("AuthenticatedPublic"));
+	authenticated_private.as_xml (writer, root->add_child ("AuthenticatedPrivate"));
+	signature.as_xml (writer, root->add_child ("Signature", "ds"));
 
-	doc.write_to_file_formatted (file.string (), "UTF-8");
+	return writer.document;
+}
+
+AuthenticatedPublic::AuthenticatedPublic ()
+	: message_id ("urn:uuid:" + make_uuid ())
+{
+
 }
 
 AuthenticatedPublic::AuthenticatedPublic (shared_ptr<const cxml::Node> node)
@@ -74,9 +90,12 @@ AuthenticatedPublic::AuthenticatedPublic (shared_ptr<const cxml::Node> node)
 		key_id_list.push_back (TypedKeyId (*i));
 	}
 
-	list<shared_ptr<cxml::Node> > fmf = c->node_child("ForensicMarkFlagList")->node_children("ForensicMarkFlag");
-	for (list<shared_ptr<cxml::Node> >::iterator i = fmf.begin(); i != fmf.end(); ++i) {
-		forensic_mark_flag_list.push_back ((*i)->content ());
+	shared_ptr<cxml::Node> fmfl = c->optional_node_child("ForensicMarkFlagList");
+	if (fmfl) {
+		list<shared_ptr<cxml::Node> > fmf = fmfl->node_children("ForensicMarkFlag");
+		for (list<shared_ptr<cxml::Node> >::iterator i = fmf.begin(); i != fmf.end(); ++i) {
+			forensic_mark_flag_list.push_back ((*i)->content ());
+		}
 	}
 
 	node->ignore_child ("NonCriticalExtensions");
@@ -84,9 +103,9 @@ AuthenticatedPublic::AuthenticatedPublic (shared_ptr<const cxml::Node> node)
 }
 
 void
-AuthenticatedPublic::as_xml (xmlpp::Element* node) const
+AuthenticatedPublic::as_xml (Writer& writer, xmlpp::Element* node) const
 {
-	node->set_attribute ("Id", "ID_AuthenticatedPublic");
+	writer.references["ID_AuthenticatedPublic"] = node->set_attribute ("Id", "ID_AuthenticatedPublic");
 	
 	node->add_child("MessageId")->add_child_text (message_id);
 	node->add_child("MessageType")->add_child_text (message_type);
@@ -195,9 +214,9 @@ AuthenticatedPrivate::AuthenticatedPrivate (shared_ptr<const cxml::Node> node)
 }
 
 void
-AuthenticatedPrivate::as_xml (xmlpp::Element* node) const
+AuthenticatedPrivate::as_xml (Writer& writer, xmlpp::Element* node) const
 {
-	node->set_attribute ("Id", "ID_AuthenticatedPrivate");
+	writer.references["ID_AuthenticatedPrivate"] = node->set_attribute ("Id", "ID_AuthenticatedPrivate");
 	
 	for (list<string>::const_iterator i = encrypted_keys.begin(); i != encrypted_keys.end(); ++i) {
 		xmlpp::Element* encrypted_key = node->add_child ("EncryptedKey", "enc");
@@ -215,7 +234,13 @@ Signature::Signature (shared_ptr<const cxml::Node> node)
 {
 	list<shared_ptr<cxml::Node> > refs = node->node_child("SignedInfo")->node_children ("Reference");
 	for (list<shared_ptr<cxml::Node> >::const_iterator i = refs.begin(); i != refs.end(); ++i) {
-		signed_info.push_back (Reference (*i));
+		if ((*i)->string_attribute("URI") == "#ID_AuthenticatedPublic") {
+			authenticated_public = Reference (*i);
+		} else if ((*i)->string_attribute("URI") == "#ID_AuthenticatedPrivate") {
+			authenticated_private = Reference (*i);
+		} else {
+			throw XMLError ("unrecognised reference URI");
+		}
 	}
 
 	list<shared_ptr<cxml::Node> > data = node->node_child("KeyInfo")->node_children ("X509Data");
@@ -226,15 +251,22 @@ Signature::Signature (shared_ptr<const cxml::Node> node)
 	node->done ();
 }
 
+Signature::Signature ()
+	: authenticated_public ("#ID_AuthenticatedPublic")
+	, authenticated_private ("#ID_AuthenticatedPrivate")
+{
+
+}
+
 void
-Signature::as_xml (xmlpp::Element* node) const
+Signature::as_xml (Writer& writer, xmlpp::Element* node) const
 {
 	xmlpp::Element* si = node->add_child ("SignedInfo", "ds");
 	si->add_child ("CanonicalizationMethod", "ds")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments");
 	si->add_child ("SignatureMethod", "ds")->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-	for (list<Reference>::const_iterator i = signed_info.begin(); i != signed_info.end(); ++i) {
-		i->as_xml (si);
-	}
+
+	authenticated_public.as_xml (writer, si);
+	authenticated_private.as_xml (writer, si);
 	
 	node->add_child("SignatureValue", "ds")->add_child_text (signature_value);
 
@@ -254,12 +286,16 @@ Reference::Reference (shared_ptr<const cxml::Node> node)
 }
 
 void
-Reference::as_xml (xmlpp::Element* node) const
+Reference::as_xml (Writer& writer, xmlpp::Element* node) const
 {
 	xmlpp::Element* reference = node->add_child ("Reference", "ds");
 	reference->set_attribute ("URI", uri);
 	reference->add_child("DigestMethod", "ds")->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#sha256");
 	reference->add_child("DigestValue", "ds")->add_child_text (digest_value);
+
+	if (!uri.empty ()) {
+		xmlAddID (0, writer.document->cobj(), (const xmlChar *) uri.substr(1).c_str(), writer.references[uri.substr(1)]->cobj ());
+	}
 }
 
 X509Data::X509Data (shared_ptr<const cxml::Node> node)

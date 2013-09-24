@@ -76,8 +76,6 @@ public:
 	 */
 	void fill_writer_info (ASDCP::WriterInfo* w, std::string uuid, bool interop, MXFMetadata const & metadata);
 
-	void add_typed_key_id (xmlpp::Element *) const;
-
 	bool encrypted () const {
 		return !_key_id.empty ();
 	}
@@ -99,9 +97,10 @@ public:
 	ASDCP::AESEncContext* encryption_context () const {
 		return _encryption_context;
 	}
+
+	virtual std::string key_type () const = 0;
 	
 protected:
-	virtual std::string key_type () const = 0;
 	virtual std::string cpl_node_name () const = 0;
 	virtual std::pair<std::string, std::string> cpl_node_attribute (bool) const {
 		return std::make_pair ("", "");

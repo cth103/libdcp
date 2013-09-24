@@ -117,14 +117,6 @@ MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::fun
 }
 
 void
-MXFAsset::add_typed_key_id (xmlpp::Element* parent) const
-{
-	xmlpp::Element* typed_key_id = parent->add_child("TypedKeyId");
-	typed_key_id->add_child("KeyType")->add_child_text(key_type ());
-	typed_key_id->add_child("KeyId")->add_child_text("urn:uuid:" + _key_id);
-}
-
-void
 MXFAsset::write_to_cpl (xmlpp::Element* node, bool interop) const
 {
 	pair<string, string> const attr = cpl_node_attribute (interop);

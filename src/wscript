@@ -1,3 +1,5 @@
+from waflib import TaskGen
+
 def build(bld):
     if bld.env.STATIC:
         obj = bld(features = 'cxx cxxstlib')
@@ -43,6 +45,7 @@ def build(bld):
                  parse/cpl.cc
                  parse/pkl.cc
                  parse/subtitle.cc
+                 xml/kdm_smpte.cc
                  """
 
     headers = """
@@ -83,4 +86,3 @@ def build(bld):
     bld.install_files('${PREFIX}/include/libdcp', headers)
     if bld.env.STATIC:
         bld.install_files('${PREFIX}/lib', 'libdcp.a')
-

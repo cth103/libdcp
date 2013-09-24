@@ -26,7 +26,16 @@
 #include <boost/filesystem.hpp>
 
 namespace libdcp {
-namespace xml {	
+namespace xml {
+
+class Writer
+{
+public:
+	Writer ();
+	
+	boost::shared_ptr<xmlpp::Document> document;
+	std::map<std::string, xmlpp::Attribute *> references;
+};
 
 class Signer
 {
@@ -69,6 +78,12 @@ class TypedKeyId
 {
 public:
 	TypedKeyId () {}
+
+	TypedKeyId (std::string t, std::string i)
+		: key_type (t)
+		, key_id (i)
+	{}
+	
 	TypedKeyId (boost::shared_ptr<const cxml::Node>);
 	
 	void as_xml (xmlpp::Element *) const;
@@ -80,10 +95,10 @@ public:
 class AuthenticatedPublic
 {
 public:
-	AuthenticatedPublic () {}
+	AuthenticatedPublic ();
 	AuthenticatedPublic (boost::shared_ptr<const cxml::Node>);
 
-	void as_xml (xmlpp::Element *) const;
+	void as_xml (Writer &, xmlpp::Element *) const;
 	
 	std::string message_id;
 	std::string message_type;
@@ -106,7 +121,7 @@ public:
 	AuthenticatedPrivate () {}
 	AuthenticatedPrivate (boost::shared_ptr<const cxml::Node>);
 	
-	void as_xml (xmlpp::Element *) const;
+	void as_xml (Writer &, xmlpp::Element *) const;
 	
 	std::list<std::string> encrypted_keys;
 };
@@ -127,9 +142,13 @@ class Reference
 {
 public:
 	Reference () {}
+	Reference (std::string u)
+		: uri (u)
+	{}
+		  
 	Reference (boost::shared_ptr<const cxml::Node>);
 
-	void as_xml (xmlpp::Element *) const;
+	void as_xml (Writer& writer, xmlpp::Element *) const;
 	
 	std::string uri;
 	std::string digest_value;
@@ -138,12 +157,13 @@ public:
 class Signature
 {
 public:
-	Signature () {}
+	Signature ();
 	Signature (boost::shared_ptr<const cxml::Node>);
 
-	void as_xml (xmlpp::Element *) const;
-	
-	std::list<Reference> signed_info;
+	void as_xml (Writer &, xmlpp::Element *) const;
+
+	Reference authenticated_public;
+	Reference authenticated_private;
 	std::string signature_value;
 	std::list<X509Data> key_info;
 };
@@ -151,9 +171,10 @@ public:
 class DCinemaSecurityMessage
 {
 public:
+	DCinemaSecurityMessage () {}
 	DCinemaSecurityMessage (boost::filesystem::path);
 
-	void as_xml (boost::filesystem::path) const;
+	boost::shared_ptr<xmlpp::Document> as_xml () const;
 	
 	AuthenticatedPublic authenticated_public;
 	AuthenticatedPrivate authenticated_private;

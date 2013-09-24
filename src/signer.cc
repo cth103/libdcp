@@ -21,6 +21,7 @@
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/dl.h>
 #include <xmlsec/app.h>
+#include <libcxml/cxml.h>
 #include "signer.h"
 #include "exceptions.h"
 
@@ -37,50 +38,45 @@ Signer::sign (xmlpp::Element* parent, bool interop) const
 
 	xmlpp::Element* signature = parent->add_child("Signature", "dsig");
 	
-	{
-		xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
-		signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
-
-	        if (interop) {
-			signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
-		} else {
-			signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-		}
-		
-		{
-			xmlpp::Element* reference = signed_info->add_child("Reference", "dsig");
-			reference->set_attribute ("URI", "");
-			{
-				xmlpp::Element* transforms = reference->add_child("Transforms", "dsig");
-				transforms->add_child("Transform", "dsig")->set_attribute (
-					"Algorithm", "http://www.w3.org/2000/09/xmldsig#enveloped-signature"
-					);
-			}
-			reference->add_child("DigestMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
-			/* This will be filled in by the signing later */
-			reference->add_child("DigestValue", "dsig");
-		}
+	xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
+	signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
+	
+	if (interop) {
+		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+	} else {
+		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
 	}
 	
+	xmlpp::Element* reference = signed_info->add_child("Reference", "dsig");
+	reference->set_attribute ("URI", "");
+
+	xmlpp::Element* transforms = reference->add_child("Transforms", "dsig");
+	transforms->add_child("Transform", "dsig")->set_attribute (
+		"Algorithm", "http://www.w3.org/2000/09/xmldsig#enveloped-signature"
+		);
+
+	reference->add_child("DigestMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
+	/* This will be filled in by the signing later */
+	reference->add_child("DigestValue", "dsig");
+
+	signature->add_child("SignatureValue", "dsig");
+	signature->add_child("KeyInfo", "dsig");
 	add_signature_value (signature, "dsig");
 }
 
 
-/** Sign an XML node.  This function takes a certificate chain (to prove that the sender is bona fide) and
- *  a private key with which to sign the node.
+/** Sign an XML node.
  *
  *  @param parent Node to sign.
- *  @param certificates Certificate chain for the signer.
- *  @param signer_key Filename of the private key of the signer.
  *  @param ns Namespace to use for the signature XML nodes.
  */
 void
-Signer::add_signature_value (xmlpp::Element* parent, string ns) const
+Signer::add_signature_value (xmlpp::Node* parent, string ns) const
 {
-	parent->add_child("SignatureValue", ns);
+	cxml::Node cp (parent);
+	xmlpp::Node* key_info = cp.node_child("KeyInfo")->node ();
 
-	/* Add the certificate chain to a KeyInfo child node of parent */
-	xmlpp::Element* key_info = parent->add_child("KeyInfo", ns);
+	/* Add the certificate chain to the KeyInfo child node of parent */
 	list<shared_ptr<Certificate> > c = _certificates.leaf_to_root ();
 	for (list<shared_ptr<Certificate> >::iterator i = c.begin(); i != c.end(); ++i) {
 		xmlpp::Element* data = key_info->add_child("X509Data", ns);

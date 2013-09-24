@@ -96,24 +96,6 @@ public:
 	void write_to_assetmap (xmlpp::Node *) const;
 	void write_to_pkl (xmlpp::Node *) const;
 
-	/** Make a KDM for this CPL.
-	 *  @param signer Details of the certificates and private key to sign the KDM with.
-	 *  @param recipient_cert The certificate of the projector that this KDM is targeted at.  This will contain the
-	 *  projector's public key which is used to encrypt the content keys.
-	 *  @param from Time that the KDM should be valid from.
-	 *  @param until Time that the KDM should be valid until.
-	 *  @param interop true to generate an interop KDM, false for SMPTE.
-	 */
-	boost::shared_ptr<xmlpp::Document> make_kdm (
-		boost::shared_ptr<const Signer> signer,
-		boost::shared_ptr<const Certificate> recipient_cert,
-		boost::posix_time::ptime from,
-		boost::posix_time::ptime until,
-		bool interop,
-		MXFMetadata const &,
-		XMLMetadata const &
-		) const;
-
 	void add_kdm (KDM const &);
 	
 private:

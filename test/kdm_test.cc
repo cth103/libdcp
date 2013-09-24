@@ -51,7 +51,8 @@ BOOST_AUTO_TEST_CASE (kdm_passthrough_test)
 		"test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml"
 		);
 
-	kdm.as_xml ("build/kdm.xml");
+	shared_ptr<xmlpp::Document> doc = kdm.as_xml ();
+	doc->write_to_file_formatted ("build/kdm.xml", "UTF-8");
 	int const r = system (
 		"xmldiff -c test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml build/kdm.xml"
 		);

@@ -17,6 +17,8 @@
 
 */
 
+#include "kdm.h"
+
 /* Load a certificate chain from build/test/data/ *.pem and then build
    an encrypted DCP and a KDM using it.
 */
@@ -87,17 +89,16 @@ BOOST_AUTO_TEST_CASE (encryption)
 
 	d.write_xml (false, xml_metadata, signer);
 
-	shared_ptr<xmlpp::Document> kdm = cpl->make_kdm (
+	libdcp::KDM kdm (
+		cpl,
 		signer,
 		signer->certificates().leaf(),
-		key,
 		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
 		boost::posix_time::time_from_string ("2013-01-08 00:00:00"),
-		false,
 		mxf_metadata,
 		xml_metadata
 		);
 
-	kdm->write_to_file_formatted ("build/test/bar.kdm.xml", "UTF-8");
+	kdm.as_xml ("build/test/bar.kdm.xml");
 	system ("xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/bar.kdm.xml");
 }
