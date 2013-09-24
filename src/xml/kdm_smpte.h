@@ -17,6 +17,18 @@
 
 */
 
+/** @file src/xml/kdm_smpte.h
+ *  @brief 1:1ish C++ representations of the XML schema for a SMPTE KDM.
+ *
+ *  This file contains classes which map pretty-much 1:1 to the elements in a SMPTE KDM
+ *  (Key Delivery Message).  The `main' KDM class contains a pointer to a DCinemaSecurityMessage
+ *  from this file.
+ *
+ *  This should probably have been automatically generated from the XSD,
+ *  but I think it's too much trouble considering that the XSD does not
+ *  change very often.
+ */
+
 #ifndef LIBDCP_XML_KDM_SMPTE_H
 #define LIBDCP_XML_KDM_SMPTE_H
 
