@@ -133,7 +133,7 @@ KDM::KDM (
 		shared_ptr<const MXFAsset> mxf = boost::dynamic_pointer_cast<const MXFAsset> (*i);
 		if (mxf) {
 			xml_kdm->authenticated_private.encrypted_keys.push_back (
-				KDMKey (signer, cpl->id (), mxf->key_id (), not_valid_before, not_valid_after, mxf->key().get()).base64 ()
+				KDMKey (signer, cpl->id (), mxf->key_id (), not_valid_before, not_valid_after, mxf->key().get()).encrypted_base64 (recipient_cert)
 				);
 		}
 	}
@@ -225,7 +225,7 @@ KDMKey::operator= (KDMKey const & other)
 }
 
 string
-KDMKey::base64 () const
+KDMKey::encrypted_base64 (shared_ptr<const Certificate> recipient_cert) const
 {
 	/* XXX: SMPTE only */
 	uint8_t block[138];
@@ -242,9 +242,17 @@ KDMKey::base64 () const
 	put (&p, _not_valid_after);
 	put (&p, _key.value(), ASDCP::KeyLen);
 
+	/* Encrypt using the projector's public key */
+	RSA* rsa = recipient_cert->public_key ();
+	unsigned char encrypted[RSA_size(rsa)];
+	int const encrypted_len = RSA_public_encrypt (138, block, encrypted, rsa, RSA_PKCS1_OAEP_PADDING);
+	if (encrypted_len == -1) {
+		throw MiscError (String::compose ("Could not encrypt KDM (%1)", ERR_error_string (ERR_get_error(), 0)));
+	}
+
 	/* Lazy overallocation */
-	char string[138 * 2];
-	return Kumu::base64encode (block, 138, string, 138 * 2);
+	char out[encrypted_len * 2];
+	return Kumu::base64encode (block, 138, out, 138 * 2);
 }
 
 string

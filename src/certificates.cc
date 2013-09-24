@@ -23,6 +23,7 @@
 #include <openssl/x509.h>
 #include <openssl/ssl.h>
 #include <openssl/asn1.h>
+#include <openssl/err.h>
 #include <libxml++/nodes/element.h>
 #include "KM_util.h"
 #include "certificates.h"
@@ -39,12 +40,14 @@ using namespace libdcp;
 /** @param c X509 certificate, which this object will take ownership of */
 Certificate::Certificate (X509* c)
 	: _certificate (c)
+	, _public_key (0)
 {
 	
 }
 
 Certificate::Certificate (boost::filesystem::path filename)
 	: _certificate (0)
+	, _public_key (0)
 {
 	FILE* f = fopen (filename.c_str(), "r");
 	if (!f) {
@@ -58,12 +61,14 @@ Certificate::Certificate (boost::filesystem::path filename)
 
 Certificate::Certificate (string cert)
 	: _certificate (0)
+	, _public_key (0)
 {
 	read_string (cert);
 }
 
 Certificate::Certificate (Certificate const & other)
 	: _certificate (0)
+	, _public_key (0)
 {
 	read_string (other.certificate (true));
 }
@@ -87,6 +92,7 @@ Certificate::read_string (string cert)
 Certificate::~Certificate ()
 {
 	X509_free (_certificate);
+	RSA_free (_public_key);
 }
 
 Certificate &
@@ -97,6 +103,10 @@ Certificate::operator= (Certificate const & other)
 	}
 
 	X509_free (_certificate);
+	_certificate = 0;
+	RSA_free (_public_key);
+	_public_key = 0;
+	
 	read_string (other.certificate ());
 
 	return *this;
@@ -222,6 +232,28 @@ Certificate::thumbprint () const
 
 	char digest_base64[64];
 	return Kumu::base64encode (digest, 20, digest_base64, 64);
+}
+
+RSA *
+Certificate::public_key () const
+{
+	assert (_certificate);
+
+	if (_public_key) {
+		return _public_key;
+	}
+
+	EVP_PKEY* key = X509_get_pubkey (_certificate);
+	if (!key) {
+		throw MiscError ("could not get public key from certificate");
+	}
+
+	_public_key = EVP_PKEY_get1_RSA (key);
+	if (!_public_key) {
+		throw MiscError (String::compose ("could not get RSA public key (%1)", ERR_error_string (ERR_get_error(), 0)));
+	}
+
+	return _public_key;
 }
 
 shared_ptr<Certificate>

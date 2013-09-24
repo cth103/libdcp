@@ -59,6 +59,9 @@ public:
 	std::string serial () const;
 	std::string subject () const;
 
+	/** @return RSA public key from this Certificate.  Caller must not free the returned value. */
+	RSA* public_key () const;
+
 	std::string thumbprint () const;
 
 private:
@@ -69,6 +72,7 @@ private:
 	static std::string get_name_part (X509_NAME *, int);
 
 	X509* _certificate;
+	mutable RSA* _public_key;
 };
 
 class CertificateChain

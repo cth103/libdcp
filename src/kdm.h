@@ -72,7 +72,7 @@ public:
 		return _key;
 	}
 
-	std::string base64 () const;
+	std::string encrypted_base64 (boost::shared_ptr<const Certificate>) const;
 	
 private:
 	void get (uint8_t *, uint8_t const **, int) const;
