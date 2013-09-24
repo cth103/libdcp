@@ -45,7 +45,6 @@ def build(bld):
                  parse/cpl.cc
                  parse/pkl.cc
                  parse/subtitle.cc
-                 xml/kdm_smpte.cc
                  """
 
     headers = """
