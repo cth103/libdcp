@@ -109,7 +109,7 @@ public:
 	void as_xml (boost::filesystem::path) const;
 
 private:
-	std::string _message_id;
+	/** Unencrypted MXF content keys */
 	std::list<KDMKey> _keys;
 
 	boost::shared_ptr<xml::DCinemaSecurityMessage> xml_kdm;
