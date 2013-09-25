@@ -54,14 +54,16 @@ using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace libdcp;
 
-PictureAsset::PictureAsset (string directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, Size size)
+PictureAsset::PictureAsset (
+	boost::filesystem::path directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, Size size
+	)
 	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
 	, _size (size)
 {
 
 }
 
-PictureAsset::PictureAsset (string directory, string mxf_name)
+PictureAsset::PictureAsset (boost::filesystem::path directory, string mxf_name)
 	: MXFAsset (directory, mxf_name)
 {
 
@@ -189,8 +191,8 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost:
 
 
 MonoPictureAsset::MonoPictureAsset (
-	boost::function<string (int)> get_path,
-	string directory,
+	boost::function<boost::filesystem::path (int)> get_path,
+	boost::filesystem::path directory,
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
@@ -205,8 +207,8 @@ MonoPictureAsset::MonoPictureAsset (
 }
 
 MonoPictureAsset::MonoPictureAsset (
-	vector<string> const & files,
-	string directory,
+	vector<boost::filesystem::path> const & files,
+	boost::filesystem::path directory,
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
@@ -220,13 +222,13 @@ MonoPictureAsset::MonoPictureAsset (
 	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files), interop, metadata);
 }
 
-MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name, int fps, Size size)
+MonoPictureAsset::MonoPictureAsset (boost::filesystem::path directory, string mxf_name, int fps, Size size)
 	: PictureAsset (directory, mxf_name, 0, fps, 0, size)
 {
 
 }
 
-MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name)
+MonoPictureAsset::MonoPictureAsset (boost::filesystem::path directory, string mxf_name)
 	: PictureAsset (directory, mxf_name)
 {
 	ASDCP::JP2K::MXFReader reader;
@@ -247,7 +249,7 @@ MonoPictureAsset::MonoPictureAsset (string directory, string mxf_name)
 }
 
 void
-MonoPictureAsset::construct (boost::function<string (int)> get_path, bool interop, MXFMetadata const & metadata)
+MonoPictureAsset::construct (boost::function<boost::filesystem::path (int)> get_path, bool interop, MXFMetadata const & metadata)
 {
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
@@ -269,7 +271,7 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path, bool intero
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 
-		string const path = get_path (i);
+		boost::filesystem::path const path = get_path (i);
 
 		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (path.c_str(), frame_buffer))) {
 			boost::throw_exception (FileError ("could not open JPEG2000 file for reading", path));
@@ -289,8 +291,8 @@ MonoPictureAsset::construct (boost::function<string (int)> get_path, bool intero
 	}
 }
 
-string
-MonoPictureAsset::path_from_list (int f, vector<string> const & files) const
+boost::filesystem::path
+MonoPictureAsset::path_from_list (int f, vector<boost::filesystem::path> const & files) const
 {
 	return files[f];
 }
@@ -434,7 +436,7 @@ PictureAsset::frame_buffer_equals (
 }
 
 
-StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, int intrinsic_duration)
+StereoPictureAsset::StereoPictureAsset (boost::filesystem::path directory, string mxf_name, int fps, int intrinsic_duration)
 	: PictureAsset (directory, mxf_name, 0, fps, intrinsic_duration, Size (0, 0))
 {
 	ASDCP::JP2K::MXFSReader reader;
@@ -470,7 +472,7 @@ PictureAsset::key_type () const
 	return "MDIK";
 }
 
-StereoPictureAsset::StereoPictureAsset (string directory, string mxf_name, int fps, Size size)
+StereoPictureAsset::StereoPictureAsset (boost::filesystem::path directory, string mxf_name, int fps, Size size)
 	: PictureAsset (directory, mxf_name, 0, fps, 0, size)
 {
 

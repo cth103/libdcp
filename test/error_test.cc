@@ -34,7 +34,7 @@ BOOST_AUTO_TEST_CASE (error_test)
 	libdcp::DCP d ("build/test/fred");
 
 	/* Random filename that does not exist */
-	vector<string> p;
+	vector<boost::filesystem::path> p;
 	p.push_back ("frobozz");
 
 	/* Trying to create video/audio MXFs using a non-existant file should throw an exception */

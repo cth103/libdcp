@@ -89,7 +89,7 @@ main ()
 	       Left surround
 	       Right surround
 	*/
-	std::vector<std::string> sound_files;
+	std::vector<boost::filesystem::path> sound_files;
 	sound_files.push_back ("examples/sine_440_-12dB.wav");
 	sound_files.push_back ("examples/sine_880_-12dB.wav");
 

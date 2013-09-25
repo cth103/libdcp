@@ -46,7 +46,7 @@ public:
 
 	KDMKey (
 		boost::shared_ptr<const Signer> signer,
-		std::string cpl_id, std::string key_id, boost::posix_time::ptime from, boost::posix_time::ptime until, Key key
+		std::string cpl_id, std::string key_type, std::string key_id, boost::posix_time::ptime from, boost::posix_time::ptime until, Key key
 		);
 	
 	KDMKey (KDMKey const &);

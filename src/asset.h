@@ -53,7 +53,7 @@ public:
 	 *  @param directory Directory where our XML or MXF file is.
 	 *  @param file_name Name of our file within directory, or empty to make one up based on UUID.
 	 */
-	Asset (std::string directory, std::string file_name = "", int edit_rate = 0, int intrinsic_duration = 0);
+	Asset (boost::filesystem::path directory, std::string file_name = "", int edit_rate = 0, int intrinsic_duration = 0);
 
 	virtual ~Asset() {}
 
@@ -130,7 +130,7 @@ protected:
 	std::string digest () const;
 
 	/** Directory that our MXF or XML file is in */
-	std::string _directory;
+	boost::filesystem::path _directory;
 	/** Name of our MXF or XML file */
 	std::string _file_name;
 	/** Our UUID */

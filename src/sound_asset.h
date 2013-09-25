@@ -82,8 +82,8 @@ public:
 	 *  Note that this is different to entry_point in that the asset will contain no data before start_frame.
 	 */
 	SoundAsset (
-		std::vector<std::string> const & files,
-		std::string directory,
+		std::vector<boost::filesystem::path> const & files,
+		boost::filesystem::path directory,
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
@@ -103,8 +103,8 @@ public:
 	 *  @param channels Number of audio channels.
 	 */
 	SoundAsset (
-		boost::function<std::string (Channel)> get_path,
-		std::string directory,
+		boost::function<boost::filesystem::path (Channel)> get_path,
+		boost::filesystem::path directory,
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
@@ -115,12 +115,12 @@ public:
 		);
 
 	SoundAsset (
-		std::string directory,
+		boost::filesystem::path directory,
 		std::string mxf_name
 		);
 
 	SoundAsset (
-		std::string directory,
+		boost::filesystem::path directory,
 		std::string mxf_name,
 		int fps,
 		int channels,
@@ -143,8 +143,8 @@ public:
 
 private:
 	std::string key_type () const;
-	void construct (boost::function<std::string (Channel)> get_path, bool interop, MXFMetadata const &);
-	std::string path_from_channel (Channel channel, std::vector<std::string> const & files);
+	void construct (boost::function<boost::filesystem::path (Channel)> get_path, bool interop, MXFMetadata const &);
+	boost::filesystem::path path_from_channel (Channel channel, std::vector<boost::filesystem::path> const & files);
 	std::string cpl_node_name () const;
 
 	/** Number of channels in the asset */

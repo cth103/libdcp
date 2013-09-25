@@ -46,7 +46,7 @@ public:
 	 *  @param directory Directory where MXF file is.
 	 *  @param mxf_name Name of MXF file.
 	 */
-	PictureAsset (std::string directory, std::string mxf_name);
+	PictureAsset (boost::filesystem::path directory, std::string mxf_name);
 
 	/** Construct a PictureAsset.
 	 *  This class will not write anything to disk in this constructor, but subclasses may.
@@ -59,7 +59,7 @@ public:
 	 *  @param size Size of video frame images in pixels.
 	 */
 	PictureAsset (
-		std::string directory,
+		boost::filesystem::path directory,
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
@@ -113,8 +113,8 @@ public:
 	 *  @param size Size of images in pixels.
 	 */
 	MonoPictureAsset (
-		std::vector<std::string> const & files,
-		std::string directory,
+		std::vector<boost::filesystem::path> const & files,
+		boost::filesystem::path directory,
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
@@ -136,8 +136,8 @@ public:
 	 *  @param size Size of images in pixels.
 	 */
 	MonoPictureAsset (
-		boost::function<std::string (int)> get_path,
-		std::string directory,
+		boost::function<boost::filesystem::path (int)> get_path,
+		boost::filesystem::path directory,
 		std::string mxf_name,
 		boost::signals2::signal<void (float)>* progress,
 		int fps,
@@ -151,7 +151,7 @@ public:
 	 *  @param directory Directory that the MXF is in.
 	 *  @param mxf_name The filename of the MXF within `directory'.
 	 */
-	MonoPictureAsset (std::string directory, std::string mxf_name);
+	MonoPictureAsset (boost::filesystem::path directory, std::string mxf_name);
 
 	/** Construct a MonoPictureAsset for progressive writing using
 	 *  start_write() and a MonoPictureAssetWriter.
@@ -161,7 +161,7 @@ public:
 	 *  @param fps Video frames per second.
 	 *  @param size Size in pixels that the picture frames will be.
 	 */
-	MonoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
+	MonoPictureAsset (boost::filesystem::path directory, std::string mxf_name, int fps, Size size);
 
 	/** Start a progressive write to a MonoPictureAsset */
 	boost::shared_ptr<PictureAssetWriter> start_write (bool, bool, MXFMetadata const & metadata = MXFMetadata ());
@@ -170,8 +170,8 @@ public:
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 private:
-	std::string path_from_list (int f, std::vector<std::string> const & files) const;
-	void construct (boost::function<std::string (int)>, bool, MXFMetadata const &);
+	boost::filesystem::path path_from_list (int f, std::vector<boost::filesystem::path> const & files) const;
+	void construct (boost::function<boost::filesystem::path (int)>, bool, MXFMetadata const &);
 	std::string cpl_node_name () const;
 	int edit_rate_factor () const;
 };
@@ -180,7 +180,7 @@ private:
 class StereoPictureAsset : public PictureAsset
 {
 public:
-	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, int intrinsic_duration);
+	StereoPictureAsset (boost::filesystem::path directory, std::string mxf_name, int fps, int intrinsic_duration);
 
 	/** Construct a StereoPictureAsset for progressive writing using
 	 *  start_write() and a StereoPictureAssetWriter.
@@ -190,7 +190,7 @@ public:
 	 *  @param fps Video frames per second.
 	 *  @param size Size in pixels that the picture frames will be.
 	 */
-	StereoPictureAsset (std::string directory, std::string mxf_name, int fps, Size size);
+	StereoPictureAsset (boost::filesystem::path directory, std::string mxf_name, int fps, Size size);
 
 	/** Start a progressive write to a StereoPictureAsset */
 	boost::shared_ptr<PictureAssetWriter> start_write (bool, bool, MXFMetadata const & metadata = MXFMetadata ());

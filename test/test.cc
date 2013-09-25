@@ -34,13 +34,13 @@ struct TestConfig
 
 BOOST_GLOBAL_FIXTURE (TestConfig);
 
-string
+boost::filesystem::path
 j2c (int)
 {
 	return "test/data/32x32_red_square.j2c";
 }
 
-string
+boost::filesystem::path
 wav (libdcp::Channel)
 {
 	return "test/data/1s_24-bit_48k_silence.wav";

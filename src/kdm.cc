@@ -133,7 +133,10 @@ KDM::KDM (
 		shared_ptr<const MXFAsset> mxf = boost::dynamic_pointer_cast<const MXFAsset> (*i);
 		if (mxf) {
 			xml_kdm->authenticated_private.encrypted_keys.push_back (
-				KDMKey (signer, cpl->id (), mxf->key_id (), not_valid_before, not_valid_after, mxf->key().get()).encrypted_base64 (recipient_cert)
+				KDMKey (
+					signer, cpl->id (), mxf->key_type (), mxf->key_id (),
+					not_valid_before, not_valid_after, mxf->key().get()
+					).encrypted_base64 (recipient_cert)
 				);
 		}
 	}
@@ -161,8 +164,11 @@ KDM::as_xml () const
 	return doc->write_to_string_formatted ("UTF-8");
 }
 
-KDMKey::KDMKey (shared_ptr<const Signer> signer, string cpl_id, string key_id, boost::posix_time::ptime from, boost::posix_time::ptime until, Key key)
+KDMKey::KDMKey (
+	shared_ptr<const Signer> signer, string cpl_id, string key_type, string key_id, boost::posix_time::ptime from, boost::posix_time::ptime until, Key key
+	)
 	: _cpl_id (cpl_id)
+	, _key_type (key_type)
 	, _key_id (key_id)
 	, _not_valid_before (ptime_to_string (from))
 	, _not_valid_after (ptime_to_string (until))
@@ -234,6 +240,10 @@ KDMKey::operator= (KDMKey const & other)
 string
 KDMKey::encrypted_base64 (shared_ptr<const Certificate> recipient_cert) const
 {
+	assert (_key_type.length() == 4);
+	assert (_not_valid_before.length() == 25);
+	assert (_not_valid_after.length() == 25);
+	
 	/* XXX: SMPTE only */
 	uint8_t block[138];
 	uint8_t* p = block;
@@ -252,14 +262,14 @@ KDMKey::encrypted_base64 (shared_ptr<const Certificate> recipient_cert) const
 	/* Encrypt using the projector's public key */
 	RSA* rsa = recipient_cert->public_key ();
 	unsigned char encrypted[RSA_size(rsa)];
-	int const encrypted_len = RSA_public_encrypt (138, block, encrypted, rsa, RSA_PKCS1_OAEP_PADDING);
+	int const encrypted_len = RSA_public_encrypt (p - block, block, encrypted, rsa, RSA_PKCS1_OAEP_PADDING);
 	if (encrypted_len == -1) {
 		throw MiscError (String::compose ("Could not encrypt KDM (%1)", ERR_error_string (ERR_get_error(), 0)));
 	}
 
 	/* Lazy overallocation */
 	char out[encrypted_len * 2];
-	return Kumu::base64encode (block, 138, out, 138 * 2);
+	return Kumu::base64encode (encrypted, encrypted_len, out, encrypted_len * 2);
 }
 
 string

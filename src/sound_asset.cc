@@ -43,8 +43,8 @@ using boost::lexical_cast;
 using namespace libdcp;
 
 SoundAsset::SoundAsset (
-	vector<string> const & files,
-	string directory,
+	vector<boost::filesystem::path> const & files,
+	boost::filesystem::path directory,
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
@@ -62,8 +62,8 @@ SoundAsset::SoundAsset (
 }
 
 SoundAsset::SoundAsset (
-	boost::function<string (Channel)> get_path,
-	string directory,
+	boost::function<boost::filesystem::path (Channel)> get_path,
+	boost::filesystem::path directory,
 	string mxf_name,
 	boost::signals2::signal<void (float)>* progress,
 	int fps,
@@ -81,7 +81,7 @@ SoundAsset::SoundAsset (
 	construct (get_path, interop, metadata);
 }
 
-SoundAsset::SoundAsset (string directory, string mxf_name)
+SoundAsset::SoundAsset (boost::filesystem::path directory, string mxf_name)
 	: MXFAsset (directory, mxf_name)
 	, _channels (0)
 {
@@ -102,7 +102,7 @@ SoundAsset::SoundAsset (string directory, string mxf_name)
 	_intrinsic_duration = desc.ContainerDuration;
 }
 
-SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int channels, int sampling_rate)
+SoundAsset::SoundAsset (boost::filesystem::path directory, string mxf_name, int fps, int channels, int sampling_rate)
 	: MXFAsset (directory, mxf_name, 0, fps, 0)
 	, _channels (channels)
 	, _sampling_rate (sampling_rate)
@@ -110,8 +110,8 @@ SoundAsset::SoundAsset (string directory, string mxf_name, int fps, int channels
 
 }
 
-string
-SoundAsset::path_from_channel (Channel channel, vector<string> const & files)
+boost::filesystem::path
+SoundAsset::path_from_channel (Channel channel, vector<boost::filesystem::path> const & files)
 {
 	unsigned int const c = int (channel);
 	assert (c < files.size ());
@@ -119,7 +119,7 @@ SoundAsset::path_from_channel (Channel channel, vector<string> const & files)
 }
 
 void
-SoundAsset::construct (boost::function<string (Channel)> get_path, bool interop, MXFMetadata const & metadata)
+SoundAsset::construct (boost::function<boost::filesystem::path (Channel)> get_path, bool interop, MXFMetadata const & metadata)
 {
 	ASDCP::Rational asdcp_edit_rate (_edit_rate, 1);
 
@@ -154,7 +154,7 @@ SoundAsset::construct (boost::function<string (Channel)> get_path, bool interop,
 
 	for (int i = 0; i < _channels; ++i) {
 
-		string const path = get_path (channels[i]);
+		boost::filesystem::path const path = get_path (channels[i]);
 		
 		if (ASDCP_FAILURE (pcm_parser_channel[i].OpenRead (path.c_str(), asdcp_edit_rate))) {
 			boost::throw_exception (FileError ("could not open WAV file for reading", path));

@@ -44,7 +44,7 @@ public:
 	 *  @param directory Directory where MXF file is.
 	 *  @param file_name Name of MXF file.
 	 */
-	MXFAsset (std::string directory, std::string file_name);
+	MXFAsset (boost::filesystem::path directory, std::string file_name);
 	
 	/** Construct an MXFAsset.
 	 *  This class will not write anything to disk in this constructor, but subclasses may.
@@ -56,7 +56,7 @@ public:
 	 *  @param intrinsic_duration Duration of the whole asset in frames.
 	 */
 	MXFAsset (
-		std::string directory,
+		boost::filesystem::path directory,
 		std::string file_name,
 		boost::signals2::signal<void (float)>* progress,
 		int edit_rate,

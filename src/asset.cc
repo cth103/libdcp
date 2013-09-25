@@ -37,7 +37,7 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-Asset::Asset (string directory, string file_name, int edit_rate, int intrinsic_duration)
+Asset::Asset (boost::filesystem::path directory, string file_name, int edit_rate, int intrinsic_duration)
 	: _directory (directory)
 	, _file_name (file_name)
 	, _uuid (make_uuid ())

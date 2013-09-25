@@ -36,6 +36,7 @@ def build(bld):
                  kdm_test.cc
                  subtitle_tests.cc
                  util_test.cc
+                 round_trip_test.cc
                  """
     obj.target = 'tests'
     obj.install_path = ''
