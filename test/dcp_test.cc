@@ -17,6 +17,18 @@
 
 */
 
+#include <boost/test/unit_test.hpp>
+#include "dcp.h"
+#include "metadata.h"
+#include "cpl.h"
+#include "picture_asset.h"
+#include "sound_asset.h"
+#include "reel.h"
+#include "test.h"
+#include "KM_util.h"
+
+using boost::shared_ptr;
+
 /* Test creation of a DCP from very simple inputs */
 BOOST_AUTO_TEST_CASE (dcp_test)
 {

@@ -17,6 +17,7 @@
 
 */
 
+#include <boost/test/unit_test.hpp>
 #include "opendcp_lut.h"
 #include "opendcp_lut.cc"
 #include "srgb_linearised_gamma_lut.h"

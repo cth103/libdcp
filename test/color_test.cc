@@ -17,6 +17,10 @@
 
 */
 
+#include <boost/test/unit_test.hpp>
+
+#include "util.h"
+
 /* Check that libdcp::Color works */
 BOOST_AUTO_TEST_CASE (color)
 {

@@ -17,8 +17,12 @@
 
 */
 
+#include <boost/test/unit_test.hpp>
 #include "kdm.h"
 #include "xml/kdm_smpte.h"
+
+using std::list;
+using boost::shared_ptr;
 
 BOOST_AUTO_TEST_CASE (kdm_test)
 {

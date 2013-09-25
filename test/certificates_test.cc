@@ -17,6 +17,12 @@
 
 */
 
+#include <boost/test/unit_test.hpp>
+#include "certificates.h"
+
+using std::list;
+using boost::shared_ptr;
+
 BOOST_AUTO_TEST_CASE (certificates)
 {
 	libdcp::CertificateChain c;

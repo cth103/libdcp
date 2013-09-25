@@ -18,8 +18,11 @@
 */
 
 #include <fstream>
+#include <boost/test/unit_test.hpp>
+#include "util.h"
 
 using std::ifstream;
+using std::string;
 
 BOOST_AUTO_TEST_CASE (bsae64_decode_test)
 {

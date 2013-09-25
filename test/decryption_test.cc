@@ -17,11 +17,18 @@
 
 */
 
+#include <boost/test/unit_test.hpp>
 #include "kdm.h"
+#include "dcp.h"
 #include "picture_frame.h"
+#include "cpl.h"
 #include "argb_frame.h"
+#include "picture_asset.h"
+#include "reel.h"
+#include "test.h"
 
 using boost::dynamic_pointer_cast;
+using boost::shared_ptr;
 
 static shared_ptr<const libdcp::ARGBFrame>
 get_frame (libdcp::DCP const & dcp)

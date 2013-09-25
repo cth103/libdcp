@@ -17,6 +17,9 @@
 
 */
 
+#include <boost/test/unit_test.hpp>
+#include "dcp_time.h"
+
 /** Check that libdcp::Time works */
 BOOST_AUTO_TEST_CASE (dcp_time)
 {

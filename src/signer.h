@@ -20,6 +20,11 @@
 #include <boost/filesystem.hpp>
 #include "certificates.h"
 
+namespace xmlpp {
+	class Element;
+	class Node;
+}
+
 namespace libdcp {
 
 class Signer

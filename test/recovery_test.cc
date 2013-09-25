@@ -17,7 +17,14 @@
 
 */
 
+#include <boost/test/unit_test.hpp>
+#include <boost/filesystem.hpp>
 #include "picture_asset_writer.h"
+#include "picture_asset.h"
+#include "KM_util.h"
+
+using std::string;
+using boost::shared_ptr;
 
 /* Check that recovery from a partially-written MXF works */
 BOOST_AUTO_TEST_CASE (recovery)

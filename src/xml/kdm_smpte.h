@@ -37,6 +37,9 @@
 #include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
 #include <libxml/parser.h>
+#include <libxml++/libxml++.h>
+#include <libcxml/cxml.h>
+#include "../exceptions.h"
 
 namespace libdcp {
 namespace xml {

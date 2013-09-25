@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,24 +17,34 @@
 
 */
 
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MODULE libdcp_test
 #include <boost/test/unit_test.hpp>
-#include "dcp.h"
-#include "cpl.h"
+#include "util.h"
 
-using std::list;
-using boost::shared_ptr;
+using std::string;
 
-/* Read DCP that is in git and make sure that basic stuff is read in correctly */
-BOOST_AUTO_TEST_CASE (read_dcp)
+struct TestConfig
 {
-	libdcp::DCP d ("test/ref/DCP/foo");
-	d.read ();
+	TestConfig()
+	{
+		libdcp::init ();
+	}
+};
 
-	list<shared_ptr<libdcp::CPL> > cpls = d.cpls ();
-	BOOST_CHECK_EQUAL (cpls.size(), 1);
+BOOST_GLOBAL_FIXTURE (TestConfig);
 
-	BOOST_CHECK_EQUAL (cpls.front()->name(), "A Test DCP");
-	BOOST_CHECK_EQUAL (cpls.front()->content_kind(), libdcp::FEATURE);
-	BOOST_CHECK_EQUAL (cpls.front()->frames_per_second(), 24);
-	BOOST_CHECK_EQUAL (cpls.front()->length(), 24);
+string
+j2c (int)
+{
+	return "test/data/32x32_red_square.j2c";
 }
+
+string
+wav (libdcp::Channel)
+{
+	return "test/data/1s_24-bit_48k_silence.wav";
+}
+
+string test_corpus = "../libdcp-test";
+

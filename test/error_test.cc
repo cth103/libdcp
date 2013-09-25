@@ -17,6 +17,16 @@
 
 */
 
+#include <boost/test/unit_test.hpp>
+#include "dcp.h"
+#include "picture_asset.h"
+#include "sound_asset.h"
+#include "util.h"
+#include "exceptions.h"
+
+using std::vector;
+using std::string;
+
 /* Check that an exception is thrown when trying to create MXFs from non-existant sources */
 BOOST_AUTO_TEST_CASE (error_test)
 {

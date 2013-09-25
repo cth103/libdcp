@@ -17,7 +17,20 @@
 
 */
 
+#include <boost/test/unit_test.hpp>
 #include "kdm.h"
+#include "KM_util.h"
+#include "metadata.h"
+#include "certificates.h"
+#include "dcp.h"
+#include "signer.h"
+#include "cpl.h"
+#include "picture_asset.h"
+#include "sound_asset.h"
+#include "reel.h"
+#include "test.h"
+
+using boost::shared_ptr;
 
 /* Load a certificate chain from build/test/data/ *.pem and then build
    an encrypted DCP and a KDM using it.

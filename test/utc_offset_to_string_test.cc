@@ -17,9 +17,11 @@
 
 */
 
+#include <boost/test/unit_test.hpp>
 #include "metadata.h"
+#include "util.h"
 
-/** Test XMLMetadata::utc_offset_to_string */
+/** Test libdcp::utc_offset_to_string */
 BOOST_AUTO_TEST_CASE (utc_offset_to_string_test)
 {
 	BOOST_CHECK_EQUAL (libdcp::utc_offset_to_string (30), "+00:30");

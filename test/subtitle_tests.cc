@@ -17,6 +17,12 @@
 
 */
 
+#include <boost/test/unit_test.hpp>
+#include "subtitle_asset.h"
+
+using std::list;
+using boost::shared_ptr;
+
 /* Load a subtitle asset from XML and check that it is read correctly */
 BOOST_AUTO_TEST_CASE (subtitles1)
 {
