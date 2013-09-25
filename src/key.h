@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/key.h
+ *  @brief Class to hold a key for encrypting MXFs.
+ */
+
 #ifndef LIBDCP_KEY_H
 #define LIBDCP_KEY_H
 
@@ -24,7 +28,9 @@
 
 namespace libdcp {
 
-/** A key for encrypting MXFs */
+/** @class Key
+ *  @brief A key for encrypting MXFs.
+ */
 class Key
 {
 public:
@@ -42,10 +48,12 @@ public:
 
 	Key& operator= (Key const &);
 
-	uint8_t* value () const {
+	/** @return Raw key value */
+	uint8_t const * value () const {
 		return _value;
 	}
 
+	/** @return Key value as a hexadecimal string */
 	std::string hex () const;
 
 private:
