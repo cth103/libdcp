@@ -24,10 +24,12 @@ def build(bld):
                  kdm.cc
                  key.cc
                  metadata.cc
+                 mono_picture_asset.cc
+                 mono_picture_asset_writer.cc
+                 mono_picture_frame.cc
                  mxf_asset.cc
                  picture_asset.cc
                  picture_asset_writer.cc
-                 picture_frame.cc
                  rec709_linearised_gamma_lut.cc
                  reel.cc
                  rgb_xyz.cc
@@ -36,6 +38,9 @@ def build(bld):
                  sound_asset.cc
                  sound_frame.cc
                  srgb_linearised_gamma_lut.cc
+                 stereo_picture_asset.cc
+                 stereo_picture_asset_writer.cc
+                 stereo_picture_frame.cc
                  subtitle_asset.cc
                  types.cc
                  util.cc
@@ -62,10 +67,10 @@ def build(bld):
               lut.h
               lut_cache.h
               metadata.h
+              mono_picture_frame.h
               mxf_asset.h
               picture_asset.h
               picture_asset_writer.h
-              picture_frame.h
               rgb_xyz.h
               rec709_linearised_gamma_lut.h
               reel.h
@@ -75,6 +80,7 @@ def build(bld):
               sound_asset.h
               sound_frame.h
               srgb_linearised_gamma_lut.h
+              stereo_picture_frame.h
               subtitle_asset.h
               types.h
               util.h

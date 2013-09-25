@@ -17,47 +17,37 @@
 
 */
 
-#include "AS_DCP.h"
-#include "KM_fileio.h"
-#include "picture_asset_writer.h"
-#include "exceptions.h"
-#include "picture_asset.h"
+#include <string>
+#include <stdint.h>
+#include <boost/shared_ptr.hpp>
+#include "types.h"
 
-using std::istream;
-using std::ostream;
-using std::string;
-using boost::shared_ptr;
-using namespace libdcp;
-
-FrameInfo::FrameInfo (istream& s)
-	: offset (0)
-	, size (0)
-{
-	s >> offset >> size;
-
-	if (!s.good ()) {
-		/* Make sure we zero these if something bad happened, otherwise
-		   the caller might try to alloc lots of RAM.
-		*/
-		offset = size = 0;
+namespace ASDCP {
+	namespace JP2K {
+		class SFrameBuffer;
 	}
-
-	s >> hash;
+	class AESDecContext;
 }
 
-void
-FrameInfo::write (ostream& s)
-{
-	s << offset << " " << size << " " << hash;
-}
+namespace libdcp {
 
+class ARGBFrame;
 
-PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, bool overwrite)
-	: _asset (asset)
-	, _frames_written (0)
-	, _started (false)
-	, _finalized (false)
-	, _overwrite (overwrite)
+/** A single frame of a 3D (stereoscopic) picture asset */	
+class StereoPictureFrame
 {
+public:
+	StereoPictureFrame (std::string mxf_path, int n);
+	~StereoPictureFrame ();
+
+	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye, int reduce = 0, float srgb_gamma = 2.4) const;
+	uint8_t const * left_j2k_data () const;
+	int left_j2k_size () const;
+	uint8_t const * right_j2k_data () const;
+	int right_j2k_size () const;
+
+private:
+	ASDCP::JP2K::SFrameBuffer* _buffer;
+};
 
 }

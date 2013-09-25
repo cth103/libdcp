@@ -20,10 +20,10 @@
 #include <boost/test/unit_test.hpp>
 #include "kdm.h"
 #include "dcp.h"
-#include "picture_frame.h"
+#include "mono_picture_frame.h"
 #include "cpl.h"
 #include "argb_frame.h"
-#include "picture_asset.h"
+#include "mono_picture_asset.h"
 #include "reel.h"
 #include "test.h"
 

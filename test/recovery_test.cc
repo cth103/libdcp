@@ -19,8 +19,8 @@
 
 #include <boost/test/unit_test.hpp>
 #include <boost/filesystem.hpp>
-#include "picture_asset_writer.h"
-#include "picture_asset.h"
+#include "mono_picture_asset_writer.h"
+#include "mono_picture_asset.h"
 #include "KM_util.h"
 
 using std::string;

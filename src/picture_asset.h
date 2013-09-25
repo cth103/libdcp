@@ -41,7 +41,6 @@ class PictureAsset : public MXFAsset
 {
 public:
 	/** Construct a PictureAsset.
-	 *  This class will not write anything to disk in this constructor, but subclasses may.
 	 *  
 	 *  @param directory Directory where MXF file is.
 	 *  @param mxf_name Name of MXF file.
@@ -83,49 +82,6 @@ protected:
 private:
 	std::string key_type () const;
 	virtual int edit_rate_factor () const = 0;
-};
-
-/** A 2D (monoscopic) picture asset */
-class MonoPictureAsset : public PictureAsset
-{
-public:
-	MonoPictureAsset (boost::filesystem::path directory, std::string mxf_name);
-
-	void read ();
-	void create (std::vector<boost::filesystem::path> const & files);
-	void create (boost::function<boost::filesystem::path (int)> get_path);
-
-	/** Start a progressive write to a MonoPictureAsset */
-	boost::shared_ptr<PictureAssetWriter> start_write (bool);
-
-	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
-	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
-
-private:
-	boost::filesystem::path path_from_list (int f, std::vector<boost::filesystem::path> const & files) const;
-	void construct (boost::function<boost::filesystem::path (int)>, bool, MXFMetadata const &);
-	std::string cpl_node_name () const;
-	int edit_rate_factor () const;
-};
-
-/** A 3D (stereoscopic) picture asset */	
-class StereoPictureAsset : public PictureAsset
-{
-public:
-	StereoPictureAsset (boost::filesystem::path directory, std::string mxf_name);
-
-	void read ();
-	
-	/** Start a progressive write to a StereoPictureAsset */
-	boost::shared_ptr<PictureAssetWriter> start_write (bool);
-
-	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
-	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
-
-private:
-	std::string cpl_node_name () const;
-	std::pair<std::string, std::string> cpl_node_attribute (bool) const;
-	int edit_rate_factor () const;
 };
 	
 

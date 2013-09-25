@@ -35,7 +35,6 @@
 #include "picture_asset.h"
 #include "util.h"
 #include "exceptions.h"
-#include "picture_frame.h"
 #include "xyz_frame.h"
 #include "picture_asset_writer.h"
 
@@ -144,158 +143,6 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost:
 	return true;
 }
 
-MonoPictureAsset::MonoPictureAsset (boost::filesystem::path directory, string mxf_name)
-	: PictureAsset (directory, mxf_name)
-{
-
-}
-
-void
-MonoPictureAsset::create (vector<boost::filesystem::path> const & files)
-{
-	create (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files));
-}
-
-void
-MonoPictureAsset::create (boost::function<boost::filesystem::path (int)> get_path)
-{
-	ASDCP::JP2K::CodestreamParser j2k_parser;
-	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
-	if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (get_path(0).c_str(), frame_buffer))) {
-		boost::throw_exception (FileError ("could not open JPEG2000 file for reading", get_path (0)));
-	}
-	
-	ASDCP::JP2K::PictureDescriptor picture_desc;
-	j2k_parser.FillPictureDescriptor (picture_desc);
-	picture_desc.EditRate = ASDCP::Rational (_edit_rate, 1);
-	
-	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info, _uuid, _interop, _metadata);
-	
-	ASDCP::JP2K::MXFWriter mxf_writer;
-	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc, 16384, false))) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for writing", path().string()));
-	}
-
-	for (int i = 0; i < _intrinsic_duration; ++i) {
-
-		boost::filesystem::path const path = get_path (i);
-
-		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (path.c_str(), frame_buffer))) {
-			boost::throw_exception (FileError ("could not open JPEG2000 file for reading", path));
-		}
-
-		if (ASDCP_FAILURE (mxf_writer.WriteFrame (frame_buffer, _encryption_context, 0))) {
-			boost::throw_exception (MXFFileError ("error in writing video MXF", this->path().string()));
-		}
-
-		if (_progress) {
-			(*_progress) (0.5 * float (i) / _intrinsic_duration);
-		}
-	}
-	
-	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
-		boost::throw_exception (MXFFileError ("error in finalising video MXF", path().string()));
-	}
-}
-
-void
-MonoPictureAsset::read ()
-{
-	ASDCP::JP2K::MXFReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
-	}
-	
-	ASDCP::JP2K::PictureDescriptor desc;
-	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
-		boost::throw_exception (DCPReadError ("could not read video MXF information"));
-	}
-
-	_size.width = desc.StoredWidth;
-	_size.height = desc.StoredHeight;
-	_edit_rate = desc.EditRate.Numerator;
-	assert (desc.EditRate.Denominator == 1);
-	_intrinsic_duration = desc.ContainerDuration;
-}
-
-boost::filesystem::path
-MonoPictureAsset::path_from_list (int f, vector<boost::filesystem::path> const & files) const
-{
-	return files[f];
-}
-
-shared_ptr<const MonoPictureFrame>
-MonoPictureAsset::get_frame (int n) const
-{
-	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n, _decryption_context));
-}
-
-bool
-MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
-{
-	if (!PictureAsset::equals (other, opt, note)) {
-		return false;
-	}
-
-	shared_ptr<const MonoPictureAsset> other_picture = dynamic_pointer_cast<const MonoPictureAsset> (other);
-	assert (other_picture);
-
-	for (int i = 0; i < _intrinsic_duration; ++i) {
-		if (i >= other_picture->intrinsic_duration()) {
-			return false;
-		}
-		
-		note (PROGRESS, "Comparing video frame " + lexical_cast<string> (i) + " of " + lexical_cast<string> (_intrinsic_duration));
-		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
-		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
-		
-		if (!frame_buffer_equals (
-			    i, opt, note,
-			    frame_A->j2k_data(), frame_A->j2k_size(),
-			    frame_B->j2k_data(), frame_B->j2k_size()
-			    )) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-bool
-StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
-{
-	if (!PictureAsset::equals (other, opt, note)) {
-		return false;
-	}
-	
-	shared_ptr<const StereoPictureAsset> other_picture = dynamic_pointer_cast<const StereoPictureAsset> (other);
-	assert (other_picture);
-
-	for (int i = 0; i < _intrinsic_duration; ++i) {
-		shared_ptr<const StereoPictureFrame> frame_A = get_frame (i);
-		shared_ptr<const StereoPictureFrame> frame_B = other_picture->get_frame (i);
-		
-		if (!frame_buffer_equals (
-			    i, opt, note,
-			    frame_A->left_j2k_data(), frame_A->left_j2k_size(),
-			    frame_B->left_j2k_data(), frame_B->left_j2k_size()
-			    )) {
-			return false;
-		}
-		
-		if (!frame_buffer_equals (
-			    i, opt, note,
-			    frame_A->right_j2k_data(), frame_A->right_j2k_size(),
-			    frame_B->right_j2k_data(), frame_B->right_j2k_size()
-			    )) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
 bool
 PictureAsset::frame_buffer_equals (
 	int frame, EqualityOptions opt, boost::function<void (NoteType, string)> note,
@@ -350,53 +197,28 @@ PictureAsset::frame_buffer_equals (
 	note (NOTE, "mean difference " + lexical_cast<string> (mean) + ", deviation " + lexical_cast<string> (std_dev));
 	
 	if (mean > opt.max_mean_pixel_error) {
-		note (ERROR, "mean " + lexical_cast<string>(mean) + " out of range " + lexical_cast<string>(opt.max_mean_pixel_error) + " in frame " + lexical_cast<string>(frame));
+		note (
+			ERROR,
+			"mean " + lexical_cast<string>(mean) +
+			" out of range " + lexical_cast<string>(opt.max_mean_pixel_error) +
+			" in frame " + lexical_cast<string>(frame)
+			);
+		
 		return false;
 	}
 
 	if (std_dev > opt.max_std_dev_pixel_error) {
-		note (ERROR, "standard deviation " + lexical_cast<string>(std_dev) + " out of range " + lexical_cast<string>(opt.max_std_dev_pixel_error) + " in frame " + lexical_cast<string>(frame));
+		note (
+			ERROR,
+			"standard deviation " + lexical_cast<string>(std_dev) +
+			" out of range " + lexical_cast<string>(opt.max_std_dev_pixel_error) +
+			" in frame " + lexical_cast<string>(frame)
+			);
+		
 		return false;
 	}
 
 	return true;
-}
-
-
-StereoPictureAsset::StereoPictureAsset (boost::filesystem::path directory, string mxf_name)
-	: PictureAsset (directory, mxf_name)
-{
-	
-}
-
-void
-StereoPictureAsset::read ()
-{
-	ASDCP::JP2K::MXFSReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
-	}
-	
-	ASDCP::JP2K::PictureDescriptor desc;
-	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
-		boost::throw_exception (DCPReadError ("could not read video MXF information"));
-	}
-
-	_size.width = desc.StoredWidth;
-	_size.height = desc.StoredHeight;
-}
-
-shared_ptr<const StereoPictureFrame>
-StereoPictureAsset::get_frame (int n) const
-{
-	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n));
-}
-
-shared_ptr<PictureAssetWriter>
-MonoPictureAsset::start_write (bool overwrite)
-{
-	/* XXX: can't we use shared_ptr here? */
-	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, overwrite));
 }
 
 string
@@ -405,45 +227,5 @@ PictureAsset::key_type () const
 	return "MDIK";
 }
 
-shared_ptr<PictureAssetWriter>
-StereoPictureAsset::start_write (bool overwrite)
-{
-	return shared_ptr<StereoPictureAssetWriter> (new StereoPictureAssetWriter (this, overwrite));
-}
 
-string
-MonoPictureAsset::cpl_node_name () const
-{
-	return "MainPicture";
-}
-
-int
-MonoPictureAsset::edit_rate_factor () const
-{
-	return 1;
-}
-
-string
-StereoPictureAsset::cpl_node_name () const
-{
-	return "msp-cpl:MainStereoscopicPicture";
-}
-
-pair<string, string>
-StereoPictureAsset::cpl_node_attribute (bool interop) const
-{
-	if (interop) {
-		return make_pair ("xmlns:msp-cpl", "http://www.digicine.com/schemas/437-Y/2007/Main-Stereo-Picture-CPL");
-	} else {
-		return make_pair ("xmlns:msp-cpl", "http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL");
-	}
-
-	return make_pair ("", "");
-}
-
-int
-StereoPictureAsset::edit_rate_factor () const
-{
-	return 2;
-}
 

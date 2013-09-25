@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2013 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 namespace ASDCP {
 	namespace JP2K {
 		class FrameBuffer;
-		class SFrameBuffer;
 	}
 	class AESDecContext;
 }
@@ -47,23 +46,6 @@ public:
 
 private:
 	ASDCP::JP2K::FrameBuffer* _buffer;
-};
-
-/** A single frame of a 3D (stereoscopic) picture asset */	
-class StereoPictureFrame
-{
-public:
-	StereoPictureFrame (std::string mxf_path, int n);
-	~StereoPictureFrame ();
-
-	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye, int reduce = 0, float srgb_gamma = 2.4) const;
-	uint8_t const * left_j2k_data () const;
-	int left_j2k_size () const;
-	uint8_t const * right_j2k_data () const;
-	int right_j2k_size () const;
-
-private:
-	ASDCP::JP2K::SFrameBuffer* _buffer;
 };
 
 }

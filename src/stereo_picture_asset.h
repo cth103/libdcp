@@ -17,47 +17,28 @@
 
 */
 
-#include "AS_DCP.h"
-#include "KM_fileio.h"
-#include "picture_asset_writer.h"
-#include "exceptions.h"
 #include "picture_asset.h"
 
-using std::istream;
-using std::ostream;
-using std::string;
-using boost::shared_ptr;
-using namespace libdcp;
-
-FrameInfo::FrameInfo (istream& s)
-	: offset (0)
-	, size (0)
+namespace libdcp {
+	
+/** A 3D (stereoscopic) picture asset */	
+class StereoPictureAsset : public PictureAsset
 {
-	s >> offset >> size;
+public:
+	StereoPictureAsset (boost::filesystem::path directory, std::string mxf_name);
 
-	if (!s.good ()) {
-		/* Make sure we zero these if something bad happened, otherwise
-		   the caller might try to alloc lots of RAM.
-		*/
-		offset = size = 0;
-	}
+	void read ();
+	
+	/** Start a progressive write to a StereoPictureAsset */
+	boost::shared_ptr<PictureAssetWriter> start_write (bool);
 
-	s >> hash;
-}
+	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
+	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
-void
-FrameInfo::write (ostream& s)
-{
-	s << offset << " " << size << " " << hash;
-}
-
-
-PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, bool overwrite)
-	: _asset (asset)
-	, _frames_written (0)
-	, _started (false)
-	, _finalized (false)
-	, _overwrite (overwrite)
-{
+private:
+	std::string cpl_node_name () const;
+	std::pair<std::string, std::string> cpl_node_attribute (bool) const;
+	int edit_rate_factor () const;
+};
 
 }

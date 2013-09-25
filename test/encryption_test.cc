@@ -25,7 +25,7 @@
 #include "dcp.h"
 #include "signer.h"
 #include "cpl.h"
-#include "picture_asset.h"
+#include "mono_picture_asset.h"
 #include "sound_asset.h"
 #include "reel.h"
 #include "test.h"

@@ -19,7 +19,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "dcp.h"
-#include "picture_asset.h"
+#include "mono_picture_asset.h"
 #include "sound_asset.h"
 #include "util.h"
 #include "exceptions.h"
