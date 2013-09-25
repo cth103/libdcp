@@ -43,7 +43,7 @@ public:
 private:
 	friend class SoundAsset;
 
-	SoundAssetWriter (SoundAsset *, bool interop, MXFMetadata const &);
+	SoundAssetWriter (SoundAsset *);
 
 	/* no copy construction */
 	SoundAssetWriter (SoundAssetWriter const &);
@@ -62,76 +62,27 @@ private:
 	bool _finalized;
 	int _frames_written;
 	int _frame_buffer_offset;
-	MXFMetadata _metadata;
 };
 
 /** @brief An asset made up of WAV files */
 class SoundAsset : public MXFAsset
 {
 public:
-	/** Construct a SoundAsset, generating the MXF from some WAV files.
-	 *  This may take some time; progress is indicated by emission of the Progress signal.
-	 *  @param files Pathnames of sound files, in the order Left, Right, Centre, Lfe (sub), Left surround, Right surround.
-	 *  @param directory Directory in which to create MXF file.
-	 *  @param mxf_name Name of MXF file to create.
-	 *  @param progress Signal to inform of progress.
-	 *  @param fps Frames per second.
-	 *  @param length Length in frames.
-	 *  @param start_frame Frame in the source to start writing from.
-	 *  @param intrinsic_duration Length of the whole asset in frames.
-	 *  Note that this is different to entry_point in that the asset will contain no data before start_frame.
-	 */
-	SoundAsset (
-		std::vector<boost::filesystem::path> const & files,
-		boost::filesystem::path directory,
-		std::string mxf_name,
-		boost::signals2::signal<void (float)>* progress,
-		int fps,
-		int intrinsic_duration,
-		bool interop,
-		MXFMetadata const & metadata = MXFMetadata ()
-		);
+	SoundAsset (boost::filesystem::path directory, std::string mxf_name);
 
-	/** Construct a SoundAsset, generating the MXF from some WAV files.
-	 *  This may take some time; progress is indicated by emission of the Progress signal.
-	 *  @param get_path Functor which returns a WAV file path for a given channel.
-	 *  @param directory Directory in which to create MXF file.
-	 *  @param mxf_name Name of MXF file to create.
-	 *  @param progress Signal to inform of progress.
-	 *  @param fps Frames per second.
-	 *  @param intrinsic_duration Length of the whole asset in frames.
-	 *  @param channels Number of audio channels.
-	 */
-	SoundAsset (
-		boost::function<boost::filesystem::path (Channel)> get_path,
-		boost::filesystem::path directory,
-		std::string mxf_name,
-		boost::signals2::signal<void (float)>* progress,
-		int fps,
-		int intrinsic_duration,
-		int channels,
-		bool interop,
-		MXFMetadata const & metadata = MXFMetadata ()
-		);
+	void read ();
+	void create (std::vector<boost::filesystem::path> const & files);
+	void create (boost::function<boost::filesystem::path (Channel)> get_path);
 
-	SoundAsset (
-		boost::filesystem::path directory,
-		std::string mxf_name
-		);
-
-	SoundAsset (
-		boost::filesystem::path directory,
-		std::string mxf_name,
-		int fps,
-		int channels,
-		int sampling_rate
-		);
-
-	boost::shared_ptr<SoundAssetWriter> start_write (bool, MXFMetadata const & metadata = MXFMetadata ());
+	boost::shared_ptr<SoundAssetWriter> start_write ();
 	
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
+
+	void set_channels (int c) {
+		_channels = c;
+	}
 	
 	int channels () const {
 		return _channels;
@@ -143,7 +94,7 @@ public:
 
 private:
 	std::string key_type () const;
-	void construct (boost::function<boost::filesystem::path (Channel)> get_path, bool interop, MXFMetadata const &);
+	void construct (boost::function<boost::filesystem::path (Channel)> get_path);
 	boost::filesystem::path path_from_channel (Channel channel, std::vector<boost::filesystem::path> const & files);
 	std::string cpl_node_name () const;
 

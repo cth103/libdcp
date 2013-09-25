@@ -38,13 +38,10 @@ BOOST_AUTO_TEST_CASE (error_test)
 	p.push_back ("frobozz");
 
 	/* Trying to create video/audio MXFs using a non-existant file should throw an exception */
-	BOOST_CHECK_THROW (
-		new libdcp::MonoPictureAsset (p, "build/test/fred", "video.mxf", &d.Progress, 24, 24, libdcp::Size (32, 32), false),
-		libdcp::FileError
-		);
+	libdcp::MonoPictureAsset pa ("build/test/fred", "video.mxf");
+	BOOST_CHECK_THROW (pa.create (p), libdcp::FileError);
 	
-	BOOST_CHECK_THROW (
-		new libdcp::SoundAsset (p, "build/test/fred", "audio.mxf", &d.Progress, 24, 24, false),
-		libdcp::FileError
-		);
+	libdcp::SoundAsset sa ("build/test/fred", "audio.mxf");
+	sa.set_channels (1);
+	BOOST_CHECK_THROW (sa.create (p), libdcp::FileError);
 }

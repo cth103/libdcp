@@ -23,6 +23,7 @@
 #include <boost/signals2.hpp>
 #include "asset.h"
 #include "key.h"
+#include "metadata.h"
 
 namespace ASDCP {
 	class AESEncContext;
@@ -46,35 +47,22 @@ public:
 	 */
 	MXFAsset (boost::filesystem::path directory, std::string file_name);
 	
-	/** Construct an MXFAsset.
-	 *  This class will not write anything to disk in this constructor, but subclasses may.
-	 *
-	 *  @param directory Directory where MXF file is.
-	 *  @param file_name Name of MXF file.
-	 *  @param progress Signal to use to inform of progress, or 0.
-	 *  @param edit_rate Edit rate in frames per second (usually equal to the video frame rate).
-	 *  @param intrinsic_duration Duration of the whole asset in frames.
-	 */
-	MXFAsset (
-		boost::filesystem::path directory,
-		std::string file_name,
-		boost::signals2::signal<void (float)>* progress,
-		int edit_rate,
-		int intrinsic_duration
-		);
-
 	~MXFAsset ();
 
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
-
 	virtual void write_to_cpl (xmlpp::Element *, bool interop) const;
-
+	virtual std::string key_type () const = 0;
+	
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
 	 *  @param uuid uuid to use.
 	 *  @param true to label as interop, false for SMPTE.
 	 */
 	void fill_writer_info (ASDCP::WriterInfo* w, std::string uuid, bool interop, MXFMetadata const & metadata);
+
+	void set_progress (boost::signals2::signal<void (float)>* progress) {
+		_progress = progress;
+	}
 
 	bool encrypted () const {
 		return !_key_id.empty ();
@@ -98,8 +86,22 @@ public:
 		return _encryption_context;
 	}
 
-	virtual std::string key_type () const = 0;
-	
+	void set_metadata (MXFMetadata m) {
+		_metadata = m;
+	}
+
+	MXFMetadata metadata () const {
+		return _metadata;
+	}
+
+	void set_interop (bool i) {
+		_interop = i;
+	}
+
+	bool interop () const {
+		return _interop;
+	}
+
 protected:
 	virtual std::string cpl_node_name () const = 0;
 	virtual std::pair<std::string, std::string> cpl_node_attribute (bool) const {
@@ -112,6 +114,8 @@ protected:
 	ASDCP::AESDecContext* _decryption_context;
 	std::string _key_id;
 	boost::optional<Key> _key;
+	MXFMetadata _metadata;
+	bool _interop;
 };
 
 }

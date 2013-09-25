@@ -54,55 +54,10 @@ using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace libdcp;
 
-PictureAsset::PictureAsset (
-	boost::filesystem::path directory, string mxf_name, boost::signals2::signal<void (float)>* progress, int fps, int intrinsic_duration, Size size
-	)
-	: MXFAsset (directory, mxf_name, progress, fps, intrinsic_duration)
-	, _size (size)
-{
-
-}
-
 PictureAsset::PictureAsset (boost::filesystem::path directory, string mxf_name)
 	: MXFAsset (directory, mxf_name)
 {
 
-}
-
-string
-MonoPictureAsset::cpl_node_name () const
-{
-	return "MainPicture";
-}
-
-int
-MonoPictureAsset::edit_rate_factor () const
-{
-	return 1;
-}
-
-string
-StereoPictureAsset::cpl_node_name () const
-{
-	return "msp-cpl:MainStereoscopicPicture";
-}
-
-pair<string, string>
-StereoPictureAsset::cpl_node_attribute (bool interop) const
-{
-	if (interop) {
-		return make_pair ("xmlns:msp-cpl", "http://www.digicine.com/schemas/437-Y/2007/Main-Stereo-Picture-CPL");
-	} else {
-		return make_pair ("xmlns:msp-cpl", "http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL");
-	}
-
-	return make_pair ("", "");
-}
-
-int
-StereoPictureAsset::edit_rate_factor () const
-{
-	return 2;
 }
 
 void
@@ -189,67 +144,20 @@ PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost:
 	return true;
 }
 
-
-MonoPictureAsset::MonoPictureAsset (
-	boost::function<boost::filesystem::path (int)> get_path,
-	boost::filesystem::path directory,
-	string mxf_name,
-	boost::signals2::signal<void (float)>* progress,
-	int fps,
-	int intrinsic_duration,
-	Size size,
-	bool interop,
-	MXFMetadata const & metadata
-	)
-	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, size)
-{
-	construct (get_path, interop, metadata);
-}
-
-MonoPictureAsset::MonoPictureAsset (
-	vector<boost::filesystem::path> const & files,
-	boost::filesystem::path directory,
-	string mxf_name,
-	boost::signals2::signal<void (float)>* progress,
-	int fps,
-	int intrinsic_duration,
-	Size size,
-	bool interop,
-	MXFMetadata const & metadata
-	)
-	: PictureAsset (directory, mxf_name, progress, fps, intrinsic_duration, size)
-{
-	construct (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files), interop, metadata);
-}
-
-MonoPictureAsset::MonoPictureAsset (boost::filesystem::path directory, string mxf_name, int fps, Size size)
-	: PictureAsset (directory, mxf_name, 0, fps, 0, size)
-{
-
-}
-
 MonoPictureAsset::MonoPictureAsset (boost::filesystem::path directory, string mxf_name)
 	: PictureAsset (directory, mxf_name)
 {
-	ASDCP::JP2K::MXFReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
-	}
-	
-	ASDCP::JP2K::PictureDescriptor desc;
-	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
-		boost::throw_exception (DCPReadError ("could not read video MXF information"));
-	}
 
-	_size.width = desc.StoredWidth;
-	_size.height = desc.StoredHeight;
-	_edit_rate = desc.EditRate.Numerator;
-	assert (desc.EditRate.Denominator == 1);
-	_intrinsic_duration = desc.ContainerDuration;
 }
 
 void
-MonoPictureAsset::construct (boost::function<boost::filesystem::path (int)> get_path, bool interop, MXFMetadata const & metadata)
+MonoPictureAsset::create (vector<boost::filesystem::path> const & files)
+{
+	create (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files));
+}
+
+void
+MonoPictureAsset::create (boost::function<boost::filesystem::path (int)> get_path)
 {
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
@@ -262,7 +170,7 @@ MonoPictureAsset::construct (boost::function<boost::filesystem::path (int)> get_
 	picture_desc.EditRate = ASDCP::Rational (_edit_rate, 1);
 	
 	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info, _uuid, interop, metadata);
+	fill_writer_info (&writer_info, _uuid, _interop, _metadata);
 	
 	ASDCP::JP2K::MXFWriter mxf_writer;
 	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc, 16384, false))) {
@@ -291,6 +199,26 @@ MonoPictureAsset::construct (boost::function<boost::filesystem::path (int)> get_
 	}
 }
 
+void
+MonoPictureAsset::read ()
+{
+	ASDCP::JP2K::MXFReader reader;
+	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
+	}
+	
+	ASDCP::JP2K::PictureDescriptor desc;
+	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
+	}
+
+	_size.width = desc.StoredWidth;
+	_size.height = desc.StoredHeight;
+	_edit_rate = desc.EditRate.Numerator;
+	assert (desc.EditRate.Denominator == 1);
+	_intrinsic_duration = desc.ContainerDuration;
+}
+
 boost::filesystem::path
 MonoPictureAsset::path_from_list (int f, vector<boost::filesystem::path> const & files) const
 {
@@ -302,7 +230,6 @@ MonoPictureAsset::get_frame (int n) const
 {
 	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n, _decryption_context));
 }
-
 
 bool
 MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
@@ -436,8 +363,14 @@ PictureAsset::frame_buffer_equals (
 }
 
 
-StereoPictureAsset::StereoPictureAsset (boost::filesystem::path directory, string mxf_name, int fps, int intrinsic_duration)
-	: PictureAsset (directory, mxf_name, 0, fps, intrinsic_duration, Size (0, 0))
+StereoPictureAsset::StereoPictureAsset (boost::filesystem::path directory, string mxf_name)
+	: PictureAsset (directory, mxf_name)
+{
+	
+}
+
+void
+StereoPictureAsset::read ()
 {
 	ASDCP::JP2K::MXFSReader reader;
 	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
@@ -460,10 +393,10 @@ StereoPictureAsset::get_frame (int n) const
 }
 
 shared_ptr<PictureAssetWriter>
-MonoPictureAsset::start_write (bool overwrite, bool interop, MXFMetadata const & metadata)
+MonoPictureAsset::start_write (bool overwrite)
 {
 	/* XXX: can't we use shared_ptr here? */
-	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, overwrite, interop, metadata));
+	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, overwrite));
 }
 
 string
@@ -472,15 +405,45 @@ PictureAsset::key_type () const
 	return "MDIK";
 }
 
-StereoPictureAsset::StereoPictureAsset (boost::filesystem::path directory, string mxf_name, int fps, Size size)
-	: PictureAsset (directory, mxf_name, 0, fps, 0, size)
+shared_ptr<PictureAssetWriter>
+StereoPictureAsset::start_write (bool overwrite)
 {
-
+	return shared_ptr<StereoPictureAssetWriter> (new StereoPictureAssetWriter (this, overwrite));
 }
 
-shared_ptr<PictureAssetWriter>
-StereoPictureAsset::start_write (bool overwrite, bool interop, MXFMetadata const & metadata)
+string
+MonoPictureAsset::cpl_node_name () const
 {
-	return shared_ptr<StereoPictureAssetWriter> (new StereoPictureAssetWriter (this, overwrite, interop, metadata));
+	return "MainPicture";
+}
+
+int
+MonoPictureAsset::edit_rate_factor () const
+{
+	return 1;
+}
+
+string
+StereoPictureAsset::cpl_node_name () const
+{
+	return "msp-cpl:MainStereoscopicPicture";
+}
+
+pair<string, string>
+StereoPictureAsset::cpl_node_attribute (bool interop) const
+{
+	if (interop) {
+		return make_pair ("xmlns:msp-cpl", "http://www.digicine.com/schemas/437-Y/2007/Main-Stereo-Picture-CPL");
+	} else {
+		return make_pair ("xmlns:msp-cpl", "http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL");
+	}
+
+	return make_pair ("", "");
+}
+
+int
+StereoPictureAsset::edit_rate_factor () const
+{
+	return 2;
 }
 

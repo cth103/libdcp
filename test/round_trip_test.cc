@@ -29,12 +29,17 @@
 #include "cpl.h"
 #include "picture_frame.h"
 #include "argb_frame.h"
+#include "signer_chain.h"
 
 using boost::shared_ptr;
 
 /* Build an encrypted picture MXF and a KDM for it and check that the KDM can be decrypted */
 BOOST_AUTO_TEST_CASE (round_trip_test)
 {
+	boost::filesystem::remove_all ("build/test/signer");
+	boost::filesystem::create_directory ("build/test/signer");
+	libdcp::make_signer_chain ("build/test/signer");
+	
 	libdcp::CertificateChain chain;
 	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/ca.self-signed.pem"))));
 	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/intermediate.signed.pem"))));
@@ -50,11 +55,11 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	boost::filesystem::path work_dir = "build/test/round_trip_test";
 	boost::filesystem::create_directory (work_dir);
 
-	libdcp::MXFMetadata mxf_metadata;
-
-	shared_ptr<libdcp::MonoPictureAsset> asset_A (
-		new libdcp::MonoPictureAsset (j2c, work_dir, "video.mxf", 0, 24, 24, libdcp::Size (32, 32), false, mxf_metadata)
-		);
+	shared_ptr<libdcp::MonoPictureAsset> asset_A (new libdcp::MonoPictureAsset (work_dir, "video.mxf"));
+	asset_A->set_edit_rate (24);
+	asset_A->set_intrinsic_duration (24);
+	asset_A->set_size (libdcp::Size (32, 32));
+	asset_A->create (j2c);
 
 	libdcp::Key key;
 

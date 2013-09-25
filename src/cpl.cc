@@ -107,15 +107,13 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 
 		if (!(*i)->asset_list->main_stereoscopic_picture && p->edit_rate == p->frame_rate) {
 
-			pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
-
 			try {
-				picture.reset (new MonoPictureAsset (
-						       asset.first,
-						       asset.second->chunks.front()->path
-						       )
-					);
+				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
 
+				picture.reset (new MonoPictureAsset (asset.first, asset.second->chunks.front()->path));
+
+				picture->read ();
+				picture->set_edit_rate (_fps);
 				picture->set_entry_point (p->entry_point);
 				picture->set_duration (p->duration);
 				if (p->key_id.length() > 9) {
@@ -132,14 +130,10 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 			try {
 				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
 
-				picture.reset (new StereoPictureAsset (
-						       asset.first,
-						       asset.second->chunks.front()->path,
-						       _fps,
-						       p->duration
-						       )
-					);
+				picture.reset (new StereoPictureAsset (asset.first, asset.second->chunks.front()->path));
 
+				picture->read ();
+				picture->set_edit_rate (_fps);
 				picture->set_entry_point (p->entry_point);
 				picture->set_duration (p->duration);
 				if (p->key_id.length() > 9) {
@@ -160,14 +154,10 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 			try {
 				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, (*i)->asset_list->main_sound->id);
 			
-				sound.reset (new SoundAsset (
-						     asset.first,
-						     asset.second->chunks.front()->path
-						     )
-					);
-
+				sound.reset (new SoundAsset (asset.first, asset.second->chunks.front()->path));
 				shared_ptr<parse::MainSound> s = (*i)->asset_list->main_sound;
 
+				sound->read ();
 				sound->set_entry_point (s->entry_point);
 				sound->set_duration (s->duration);
 				if (s->key_id.length() > 9) {
@@ -185,11 +175,7 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 			
 			pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, (*i)->asset_list->main_subtitle->id);
 
-			subtitle.reset (new SubtitleAsset (
-						asset.first,
-						asset.second->chunks.front()->path
-						)
-				);
+			subtitle.reset (new SubtitleAsset (asset.first, asset.second->chunks.front()->path));
 
 			subtitle->set_entry_point ((*i)->asset_list->main_subtitle->entry_point);
 			subtitle->set_duration ((*i)->asset_list->main_subtitle->duration);

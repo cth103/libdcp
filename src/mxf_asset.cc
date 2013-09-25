@@ -48,17 +48,9 @@ MXFAsset::MXFAsset (boost::filesystem::path directory, string file_name)
 	, _progress (0)
 	, _encryption_context (0)
 	, _decryption_context (0)
+	, _interop (false)
 {
 
-}
-
-MXFAsset::MXFAsset (boost::filesystem::path directory, string file_name, boost::signals2::signal<void (float)>* progress, int edit_rate, int intrinsic_duration) 
-	: Asset (directory, file_name, edit_rate, intrinsic_duration)
-	, _progress (progress)
-	, _encryption_context (0)
-	, _decryption_context (0)
-{
-	
 }
 
 MXFAsset::~MXFAsset ()

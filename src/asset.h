@@ -53,7 +53,7 @@ public:
 	 *  @param directory Directory where our XML or MXF file is.
 	 *  @param file_name Name of our file within directory, or empty to make one up based on UUID.
 	 */
-	Asset (boost::filesystem::path directory, std::string file_name = "", int edit_rate = 0, int intrinsic_duration = 0);
+	Asset (boost::filesystem::path directory, std::string file_name = "");
 
 	virtual ~Asset() {}
 
@@ -121,6 +121,10 @@ public:
 
 	void set_intrinsic_duration (int d) {
 		_intrinsic_duration = d;
+	}
+
+	void set_edit_rate (int r) {
+		_edit_rate = r;
 	}
 
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)>) const;

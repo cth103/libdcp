@@ -37,14 +37,14 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-Asset::Asset (boost::filesystem::path directory, string file_name, int edit_rate, int intrinsic_duration)
+Asset::Asset (boost::filesystem::path directory, string file_name)
 	: _directory (directory)
 	, _file_name (file_name)
 	, _uuid (make_uuid ())
-	, _edit_rate (edit_rate)
+	, _edit_rate (0)
 	, _entry_point (0)
-	, _intrinsic_duration (intrinsic_duration)
-	, _duration (intrinsic_duration)
+	, _intrinsic_duration (0)
+	, _duration (0)
 {
 	if (_file_name.empty ()) {
 		_file_name = _uuid + ".xml";

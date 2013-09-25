@@ -29,6 +29,7 @@
 #include "sound_asset.h"
 #include "reel.h"
 #include "test.h"
+#include "signer_chain.h"
 
 using boost::shared_ptr;
 
@@ -37,6 +38,10 @@ using boost::shared_ptr;
 */
 BOOST_AUTO_TEST_CASE (encryption)
 {
+	boost::filesystem::remove_all ("build/test/signer");
+	boost::filesystem::create_directory ("build/test/signer");
+	libdcp::make_signer_chain ("build/test/signer");
+	
 	Kumu::libdcp_test = true;
 
 	libdcp::MXFMetadata mxf_metadata;
@@ -66,36 +71,28 @@ BOOST_AUTO_TEST_CASE (encryption)
 		);
 
 	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/bar", "A Test DCP", libdcp::FEATURE, 24, 24));
-	
-	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset (
-							 j2c,
-							 "build/test/bar",
-							 "video.mxf",
-							 &d.Progress,
-							 24,
-							 24,
-							 libdcp::Size (32, 32),
-							 false,
-							 mxf_metadata
-							 ));
 
 	libdcp::Key key;
-
+	
+	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset ("build/test/bar", "video.mxf"));
+	mp->set_progress (&d.Progress);
+	mp->set_edit_rate (24);
+	mp->set_intrinsic_duration (24);
+	mp->set_duration (24);
+	mp->set_size (libdcp::Size (32, 32));
+	mp->set_metadata (mxf_metadata);
 	mp->set_key (key);
+	mp->create (j2c);
 
-	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset (
-						   wav,
-						   "build/test/bar",
-						   "audio.mxf",
-						   &(d.Progress),
-						   24,
-						   24,
-						   2,
-						   false,
-						   mxf_metadata
-						   ));
-
+	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset ("build/test/bar", "audio.mxf"));
+	ms->set_progress (&d.Progress);
+	ms->set_edit_rate (24);
+	ms->set_intrinsic_duration (24);
+	mp->set_duration (24);
+	ms->set_channels (2);
+	ms->set_metadata (mxf_metadata);
 	ms->set_key (key);
+	ms->create (wav);
 	
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);

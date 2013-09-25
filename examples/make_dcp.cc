@@ -64,19 +64,29 @@ main ()
 	/* And add the CPL to the DCP */
 	dcp.add_cpl (cpl);
 
-	/* Now make a `picture asset'.  This is a collection of the JPEG2000 files that make up the picture, one per frame.
-	   Here we're using a function (video_frame) to obtain the name of the JPEG2000 file for each frame.
+	/* Now make a `picture asset'.  This is a collection of the JPEG2000 files that make up the picture; one per frame.
+	   First, create the object.
+	*/
 
+	boost::shared_ptr<libdcp::MonoPictureAsset> picture_asset (
+		new libdcp::MonoPictureAsset ("My Film DCP", "video.mxf")
+		);
+
+	/* Now set up its parameters; we have the frame rate, the
+	   number of frames and the resolution of the frames;
+	   1998x1080 is the DCI Flat specification for 2K projectors.
+	*/
+
+	picture_asset->set_edit_rate (24);
+	picture_asset->set_intrinsic_duration (24);
+	picture_asset->set_size (libdcp::Size (1998, 1080));
+
+	/* Now we can create the asset itself.  Here using a function (video_frame) to obtain the name of the JPEG2000 file for each frame.
 	   The result will be an MXF file written to the directory "My Film DCP" (which should be the same as the DCP's
 	   directory above) called "video.mxf".
-
-	   The other parameters specify the entry_point (the frame at which the projector should start showing the picture),
-	   the frame rate, the number of frames and the resolution of the frames; 1998x1080 is the DCI Flat specification
-	   for 2K projectors.
 	*/
-	boost::shared_ptr<libdcp::MonoPictureAsset> picture_asset (
-		new libdcp::MonoPictureAsset (video_frame, "My Film DCP", "video.mxf", 0, 24, 48, libdcp::Size (1998, 1080), false)
-		);
+
+	picture_asset->create (video_frame);
 
 	/* Now we will create a `sound asset', which is made up of a WAV file for each channel of audio.  Here we're using
 	   stereo, so we add two WAV files to a vector.
@@ -94,9 +104,10 @@ main ()
 	sound_files.push_back ("examples/sine_880_-12dB.wav");
 
 	/* Now we can create the sound asset using these files */
-	boost::shared_ptr<libdcp::SoundAsset> sound_asset (
-		new libdcp::SoundAsset (sound_files, "My Film DCP", "audio.mxf", 0, 24, 48, false)
-		);
+	boost::shared_ptr<libdcp::SoundAsset> sound_asset (new libdcp::SoundAsset ("My Film DCP", "audio.mxf"));
+	sound_asset->set_edit_rate (24);
+	sound_asset->set_intrinsic_duration (48);
+	sound_asset->create (sound_files);
 
 	/* Now that we have the assets, we can create a Reel to put them in and add it to the CPL */
 	cpl->add_reel (

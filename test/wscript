@@ -21,7 +21,7 @@ def build(bld):
     obj.uselib = 'BOOST_TEST OPENJPEG CXML XMLSEC1'
     obj.use    = 'libdcp'
     obj.source = """
-                 test.cc
+                 test.cc 
                  certificates_test.cc
                  dcp_test.cc
                  encryption_test.cc
