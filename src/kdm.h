@@ -22,6 +22,7 @@
 
 #include <boost/filesystem.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "key.h"
 #include "metadata.h"
 
@@ -107,6 +108,7 @@ public:
 	}
 
 	void as_xml (boost::filesystem::path) const;
+	std::string as_xml () const;
 
 private:
 	/** Unencrypted MXF content keys */

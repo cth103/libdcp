@@ -154,6 +154,13 @@ KDM::as_xml (boost::filesystem::path path) const
 	doc->write_to_file_formatted (path.string(), "UTF-8");
 }
 
+string
+KDM::as_xml () const
+{
+	shared_ptr<xmlpp::Document> doc = xml_kdm->as_xml ();
+	return doc->write_to_string_formatted ("UTF-8");
+}
+
 KDMKey::KDMKey (shared_ptr<const Signer> signer, string cpl_id, string key_id, boost::posix_time::ptime from, boost::posix_time::ptime until, Key key)
 	: _cpl_id (cpl_id)
 	, _key_id (key_id)
