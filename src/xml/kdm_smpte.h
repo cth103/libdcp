@@ -170,6 +170,7 @@ public:
 		c = c->node_child ("KDMRequiredExtensions");
 		recipient = Recipient (c->node_child ("Recipient"));
 		composition_playlist_id = c->string_child ("CompositionPlaylistId");
+		content_authenticator = c->optional_string_child ("ContentAuthenticator");
 		content_title_text = c->string_child ("ContentTitleText");
 		content_keys_not_valid_before = c->string_child ("ContentKeysNotValidBefore");
 		content_keys_not_valid_after = c->string_child ("ContentKeysNotValidAfter");
@@ -209,6 +210,9 @@ public:
 		recipient.as_xml (kdm_required_extensions->add_child ("Recipient"));
 		
 		kdm_required_extensions->add_child("CompositionPlaylistId")->add_child_text (composition_playlist_id);
+		if (content_authenticator) {
+			kdm_required_extensions->add_child("ContentAuthenticator")->add_child_text (content_authenticator.get ());
+		}
 		kdm_required_extensions->add_child("ContentTitleText")->add_child_text (content_title_text);
 		kdm_required_extensions->add_child("ContentKeysNotValidBefore")->add_child_text (content_keys_not_valid_before);
 		kdm_required_extensions->add_child("ContentKeysNotValidAfter")->add_child_text (content_keys_not_valid_after);
@@ -234,6 +238,7 @@ public:
 	Signer signer;
 	Recipient recipient;
 	std::string composition_playlist_id;
+	boost::optional<std::string> content_authenticator;
 	std::string content_title_text;
 	std::string content_keys_not_valid_before;
 	std::string content_keys_not_valid_after;
