@@ -31,6 +31,7 @@
 #include "argb_frame.h"
 #include "signer_chain.h"
 
+using std::list;
 using boost::shared_ptr;
 
 /* Build an encrypted picture MXF and a KDM for it and check that the KDM can be decrypted */
@@ -85,6 +86,18 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	/* Reload the KDM, using our private key to decrypt it */
 	libdcp::KDM kdm_B (kdm_file, "build/test/signer/leaf.key");
+
+	/* Check that the decrypted KDMKeys are the same as the ones we started with */
+	BOOST_CHECK_EQUAL (kdm_A.keys().size(), kdm_B.keys().size());
+	list<libdcp::KDMKey> keys_A = kdm_A.keys ();
+	list<libdcp::KDMKey> keys_B = kdm_B.keys ();
+	list<libdcp::KDMKey>::const_iterator i = keys_A.begin();
+	list<libdcp::KDMKey>::const_iterator j = keys_B.begin();
+	while (i != keys_A.end ()) {
+		BOOST_CHECK (*i == *j);
+		++i;
+		++j;
+	}
 
 	/* Reload the picture MXF */
 	shared_ptr<libdcp::MonoPictureAsset> asset_B (
