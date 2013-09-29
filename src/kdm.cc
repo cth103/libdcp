@@ -46,7 +46,7 @@ using boost::shared_ptr;
 using namespace libdcp;
 
 KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
-	: xml_kdm (new xml::DCinemaSecurityMessage (kdm))
+	: _xml_kdm (new xml::DCinemaSecurityMessage (kdm))
 {
 	/* Read the private key */
 	   
@@ -63,7 +63,7 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 
 	/* Use it to decrypt the keys */
 
-	list<string> encrypted_keys = xml_kdm->authenticated_private.encrypted_keys;
+	list<string> encrypted_keys = _xml_kdm->authenticated_private.encrypted_keys;
 
 	for (list<string>::iterator i = encrypted_keys.begin(); i != encrypted_keys.end(); ++i) {
 
@@ -91,9 +91,9 @@ KDM::KDM (
 	boost::posix_time::ptime not_valid_before, boost::posix_time::ptime not_valid_after,
 	string annotation_text, string issue_date
 	)
-	: xml_kdm (new xml::DCinemaSecurityMessage)
+	: _xml_kdm (new xml::DCinemaSecurityMessage)
 {
-	xml::AuthenticatedPublic& apu = xml_kdm->authenticated_public;
+	xml::AuthenticatedPublic& apu = _xml_kdm->authenticated_public;
 
 	/* AuthenticatedPublic */
 
@@ -107,13 +107,18 @@ KDM::KDM (
 	apu.recipient.x509_issuer_serial.x509_serial_number = recipient_cert->serial ();
 	apu.recipient.x509_subject_name = recipient_cert->subject ();
 	apu.composition_playlist_id = "urn:uuid:" + cpl->id ();
+//	apu.content_authenticator = signer->certificates().leaf()->thumbprint ();
 	apu.content_title_text = cpl->name ();
 	apu.content_keys_not_valid_before = ptime_to_string (not_valid_before);
 	apu.content_keys_not_valid_after = ptime_to_string (not_valid_after);
 	apu.authorized_device_info.device_list_identifier = "urn:uuid:" + make_uuid ();
-	apu.authorized_device_info.device_list_description = recipient_cert->subject ();
+	string n = recipient_cert->common_name ();
+	if (n.find (".") != string::npos) {
+		n = n.substr (n.find (".") + 1);
+	}
+	apu.authorized_device_info.device_list_description = n;
 	apu.authorized_device_info.device_list.push_back (recipient_cert->thumbprint ());
-	
+
 	list<shared_ptr<const Asset> > assets = cpl->assets ();
 	for (list<shared_ptr<const Asset> >::iterator i = assets.begin(); i != assets.end(); ++i) {
 		/* XXX: non-MXF assets? */
@@ -132,35 +137,57 @@ KDM::KDM (
 		/* XXX: non-MXF assets? */
 		shared_ptr<const MXFAsset> mxf = boost::dynamic_pointer_cast<const MXFAsset> (*i);
 		if (mxf) {
-			xml_kdm->authenticated_private.encrypted_keys.push_back (
-				KDMKey (
+			KDMKey kkey (
 					signer, cpl->id (), mxf->key_type (), mxf->key_id (),
 					not_valid_before, not_valid_after, mxf->key().get()
-					).encrypted_base64 (recipient_cert)
 				);
+
+			_keys.push_back (kkey);
+			_xml_kdm->authenticated_private.encrypted_keys.push_back (kkey.encrypted_base64 (recipient_cert));
 		}
 	}
 
 	/* Signature */
 
-	shared_ptr<xmlpp::Document> doc = xml_kdm->as_xml ();
+	shared_ptr<xmlpp::Document> doc = _xml_kdm->as_xml ();
 	shared_ptr<cxml::Node> root (new cxml::Node (doc->get_root_node ()));
 	xmlpp::Node* signature = root->node_child("Signature")->node();
 	signer->add_signature_value (signature, "ds");
-	xml_kdm->signature = xml::Signature (shared_ptr<cxml::Node> (new cxml::Node (signature)));
+	doc->write_to_file_formatted ("/home/carl/foo.xml", "UTF-8");
+	_xml_kdm->signature = xml::Signature (shared_ptr<cxml::Node> (new cxml::Node (signature)));
 }
 
+KDM::KDM (KDM const & other)
+	: _keys (other._keys)
+	, _xml_kdm (new xml::DCinemaSecurityMessage (*other._xml_kdm.get()))
+{
+
+}
+
+KDM &
+KDM::operator= (KDM const & other)
+{
+	if (this == &other) {
+		return *this;
+	}
+
+	_keys = other._keys;
+	_xml_kdm.reset (new xml::DCinemaSecurityMessage (*other._xml_kdm.get ()));
+
+	return *this;
+}
+     
 void
 KDM::as_xml (boost::filesystem::path path) const
 {
-	shared_ptr<xmlpp::Document> doc = xml_kdm->as_xml ();
+	shared_ptr<xmlpp::Document> doc = _xml_kdm->as_xml ();
 	doc->write_to_file_formatted (path.string(), "UTF-8");
 }
 
 string
 KDM::as_xml () const
 {
-	shared_ptr<xmlpp::Document> doc = xml_kdm->as_xml ();
+	shared_ptr<xmlpp::Document> doc = _xml_kdm->as_xml ();
 	return doc->write_to_string_formatted ("UTF-8");
 }
 
@@ -225,7 +252,7 @@ KDMKey::operator= (KDMKey const & other)
 	if (&other == this) {
 		return *this;
 	}
-	
+
 	_cpl_id = other._cpl_id;
 	_key_type = other._key_type;
 	_key_id = other._key_id;
@@ -269,7 +296,17 @@ KDMKey::encrypted_base64 (shared_ptr<const Certificate> recipient_cert) const
 
 	/* Lazy overallocation */
 	char out[encrypted_len * 2];
-	return Kumu::base64encode (encrypted, encrypted_len, out, encrypted_len * 2);
+	Kumu::base64encode (encrypted, encrypted_len, out, encrypted_len * 2);
+	int const N = strlen (out);
+	stringstream lines;
+	for (int i = 0; i < N; ++i) {
+		if (i > 0 && (i % 64) == 0) {
+			lines << "\n";
+		}
+		lines << out[i];
+	}
+
+	return lines.str ();
 }
 
 string
@@ -329,8 +366,25 @@ KDMKey::put_uuid (uint8_t ** d, string id) const
 		stringstream s;
 		s << id[i] << id[i + 1];
 		int h;
-		s >> h;
+		s >> hex >> h;
 		**d = h;
 		(*d)++;
 	}
+}
+
+bool
+libdcp::operator== (libdcp::KDMKey const & a, libdcp::KDMKey const & b)
+{
+	if (memcmp (a._signer_thumbprint, b._signer_thumbprint, 20) != 0) {
+		return false;
+	}
+
+	return (
+		a._cpl_id == b._cpl_id &&
+		a._key_type == b._key_type &&
+		a._key_id == b._key_id &&
+		a._not_valid_before == b._not_valid_before &&
+		a._not_valid_after == b._not_valid_after &&
+		a._key == b._key
+		);
 }

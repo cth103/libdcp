@@ -30,6 +30,8 @@
 #include "key.h"
 #include "metadata.h"
 
+class kdm_key_test;
+
 namespace libdcp {
 
 namespace xml {
@@ -114,12 +116,16 @@ public:
 	std::string encrypted_base64 (boost::shared_ptr<const Certificate> cert) const;
 	
 private:
+	friend class ::kdm_key_test;
+	
 	void get (uint8_t *, uint8_t const **, int) const;
 	std::string get (uint8_t const **, int) const;
 	std::string get_uuid (uint8_t const **) const;
 	void put (uint8_t **, uint8_t const *, int) const;
 	void put (uint8_t **, std::string) const;
 	void put_uuid (uint8_t **, std::string) const;
+
+	friend bool operator== (KDMKey const &, KDMKey const &);
 	
 	uint8_t _signer_thumbprint[20];
 	std::string _cpl_id;
@@ -164,6 +170,9 @@ public:
 		std::string annotation_text, std::string issue_date
 		);
 
+	KDM (KDM const &);
+	KDM & operator= (KDM const &);
+
 	/** @return The unencrypted content keys from this KDM */
 	std::list<KDMKey> keys () const {
 		return _keys;
@@ -184,7 +193,7 @@ private:
 	std::list<KDMKey> _keys;
 
 	/** The KDM's contents, mapped 1:1-ish to the XML */
-	boost::shared_ptr<xml::DCinemaSecurityMessage> xml_kdm;
+	boost::shared_ptr<xml::DCinemaSecurityMessage> _xml_kdm;
 };
 
 

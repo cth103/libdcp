@@ -67,6 +67,7 @@ def build(bld):
               lut.h
               lut_cache.h
               metadata.h
+              mono_picture_asset.h
               mono_picture_frame.h
               mxf_asset.h
               picture_asset.h
@@ -80,6 +81,7 @@ def build(bld):
               sound_asset.h
               sound_frame.h
               srgb_linearised_gamma_lut.h
+              stereo_picture_asset.h
               stereo_picture_frame.h
               subtitle_asset.h
               types.h
