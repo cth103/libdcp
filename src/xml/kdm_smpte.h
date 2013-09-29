@@ -317,16 +317,12 @@ public:
 		node->done ();
 	}
 
-	void as_xml (Writer& writer, xmlpp::Element* node) const
+	void as_xml (xmlpp::Element* node) const
 	{
 		xmlpp::Element* reference = node->add_child ("Reference", "ds");
 		reference->set_attribute ("URI", uri);
 		reference->add_child("DigestMethod", "ds")->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#sha256");
 		reference->add_child("DigestValue", "ds")->add_child_text (digest_value);
-		
-		if (!uri.empty ()) {
-			xmlAddID (0, writer.document->cobj(), (const xmlChar *) uri.substr(1).c_str(), writer.references[uri.substr(1)]->cobj ());
-		}
 	}
 	
 	std::string uri;
@@ -364,14 +360,14 @@ public:
 		node->done ();
 	}
 	
-	void as_xml (Writer& writer, xmlpp::Element* node) const
+	void as_xml (xmlpp::Element* node) const
 	{
 		xmlpp::Element* si = node->add_child ("SignedInfo", "ds");
 		si->add_child ("CanonicalizationMethod", "ds")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments");
 		si->add_child ("SignatureMethod", "ds")->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
 		
-		authenticated_public.as_xml (writer, si);
-		authenticated_private.as_xml (writer, si);
+		authenticated_public.as_xml (si);
+		authenticated_private.as_xml (si);
 		
 		node->add_child("SignatureValue", "ds")->add_child_text (signature_value);
 		
@@ -413,7 +409,11 @@ public:
 		
 		authenticated_public.as_xml (writer, root->add_child ("AuthenticatedPublic"));
 		authenticated_private.as_xml (writer, root->add_child ("AuthenticatedPrivate"));
-		signature.as_xml (writer, root->add_child ("Signature", "ds"));
+		signature.as_xml (root->add_child ("Signature", "ds"));
+
+		for (std::map<std::string, xmlpp::Attribute*>::const_iterator i = writer.references.begin(); i != writer.references.end(); ++i) {
+			xmlAddID (0, writer.document->cobj(), (const xmlChar *) i->first.c_str(), i->second->cobj ());
+		}
 		
 		return writer.document;
 	}

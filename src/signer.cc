@@ -21,12 +21,14 @@
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/dl.h>
 #include <xmlsec/app.h>
+#include <xmlsec/crypto.h>
 #include <libcxml/cxml.h>
 #include "signer.h"
 #include "exceptions.h"
 
 using std::string;
 using std::list;
+using std::cout;
 using boost::shared_ptr;
 using namespace libdcp;
 

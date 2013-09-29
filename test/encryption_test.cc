@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 	shared_ptr<libdcp::Signer> signer (
 		new libdcp::Signer (
 			chain,
-			"test/data/signer.key"
+			"build/test/signer/leaf.key"
 			)
 		);
 
@@ -111,4 +111,11 @@ BOOST_AUTO_TEST_CASE (encryption)
 
 	kdm.as_xml ("build/test/bar.kdm.xml");
 	system ("xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/bar.kdm.xml");
+	system ("xmlsec1 verify "
+		"--pubkey-cert-pem build/test/signer/leaf.signed.pem "
+		"--trusted-pem build/test/signer/intermediate.signed.pem "
+		"--trusted-pem build/test/signer/ca.self-signed.pem "
+		"--id-attr:Id http://www.smpte-ra.org/schemas/430-3/2006/ETM:AuthenticatedPublic "
+		"--id-attr:Id http://www.smpte-ra.org/schemas/430-3/2006/ETM:AuthenticatedPrivate "
+		"build/test/bar.kdm.xml");
 }

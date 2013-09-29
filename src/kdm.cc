@@ -153,7 +153,6 @@ KDM::KDM (
 	shared_ptr<cxml::Node> root (new cxml::Node (doc->get_root_node ()));
 	xmlpp::Node* signature = root->node_child("Signature")->node();
 	signer->add_signature_value (signature, "ds");
-	doc->write_to_file_formatted ("/home/carl/foo.xml", "UTF-8");
 	_xml_kdm->signature = xml::Signature (shared_ptr<cxml::Node> (new cxml::Node (signature)));
 }
 
@@ -181,14 +180,20 @@ void
 KDM::as_xml (boost::filesystem::path path) const
 {
 	shared_ptr<xmlpp::Document> doc = _xml_kdm->as_xml ();
-	doc->write_to_file_formatted (path.string(), "UTF-8");
+	/* This must *not* be the _formatted version, otherwise the signature
+	   will be wrong.
+	*/
+	doc->write_to_file (path.string(), "UTF-8");
 }
 
 string
 KDM::as_xml () const
 {
 	shared_ptr<xmlpp::Document> doc = _xml_kdm->as_xml ();
-	return doc->write_to_string_formatted ("UTF-8");
+	/* This must *not* be the _formatted version, otherwise the signature
+	   will be wrong.
+	*/
+	return doc->write_to_string ("UTF-8");
 }
 
 KDMKey::KDMKey (
