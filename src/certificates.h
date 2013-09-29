@@ -58,6 +58,7 @@ public:
 	std::string issuer () const;
 	std::string serial () const;
 	std::string subject () const;
+	std::string common_name () const;
 
 	/** @return RSA public key from this Certificate.  Caller must not free the returned value. */
 	RSA* public_key () const;

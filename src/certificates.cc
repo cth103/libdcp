@@ -194,6 +194,14 @@ Certificate::subject () const
 }
 
 string
+Certificate::common_name () const
+{
+	assert (_certificate);
+
+	return get_name_part (X509_get_subject_name (_certificate), NID_commonName);
+}
+
+string
 Certificate::serial () const
 {
 	assert (_certificate);
