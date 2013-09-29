@@ -67,7 +67,7 @@ DCP::DCP (boost::filesystem::path directory)
 }
 
 void
-DCP::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Signer> signer) const
+DCP::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<const Signer> signer) const
 {
 	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
 		(*i)->write_xml (interop, metadata, signer);
@@ -81,7 +81,7 @@ DCP::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<Signer> s
 }
 
 std::string
-DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, shared_ptr<Signer> signer) const
+DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, shared_ptr<const Signer> signer) const
 {
 	assert (!_cpls.empty ());
 	
