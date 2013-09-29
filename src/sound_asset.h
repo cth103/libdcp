@@ -88,6 +88,10 @@ public:
 		return _channels;
 	}
 
+	void set_sampling_rate (int s) {
+		_sampling_rate = s;
+	}
+
 	int sampling_rate () const {
 		return _sampling_rate;
 	}
