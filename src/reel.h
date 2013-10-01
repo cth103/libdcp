@@ -24,7 +24,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <libxml++/libxml++.h>
-#include <libdcp/key.h>
+#include "key.h"
 #include "types.h"
 
 namespace xmlpp {
