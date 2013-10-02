@@ -1,0 +1,35 @@
+
+Read an existing DCP, adjust it, write it back out again, preserving things we didn't adjust;
+perhaps being variably strict and pointing out errors.
+Read multiple DCPs and pull bits out
+Create a new DCP without having to remember to fill in every detail
+
+Structures & their unique (important) components
+
+-- CPL
+"playlist"; entry points, durations of assets, frame rates, aspect ratios
+
+-- PKL
+Hashes, sizes
+
+-- ASSETMAP
+MXF filenames (also CPL/PKL filenames)
+
+-- VOLINDEX
+Nothing (unless we support multiple volumes)
+
+-- MXFs
+actual data
+
+
+Approaches
+
+1.
+Load a DCP -> we get some assets [each with hash, size, filename] and a CPL (pointing to assets via real pointer or ID)
+CPL its own class; then we can do things like 
+cpl = new CPL
+cpl->add_asset (picture, ...)
+DCP dcp (cpl);
+dcp.write_xml ();
+
+Can't see a drawback with this, and it's pretty much what is happening now.
