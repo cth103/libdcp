@@ -37,7 +37,7 @@ class ARGBFrame;
 class MonoPictureFrame
 {
 public:
-	MonoPictureFrame (std::string mxf_path, int n, ASDCP::AESDecContext *);
+	MonoPictureFrame (boost::filesystem::path mxf_path, int n, ASDCP::AESDecContext *);
 	~MonoPictureFrame ();
 
 	boost::shared_ptr<ARGBFrame> argb_frame (int reduce = 0, float srgb_gamma = 2.4) const;

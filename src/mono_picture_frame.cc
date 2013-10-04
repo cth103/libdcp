@@ -38,10 +38,10 @@ using namespace libdcp;
  *  @param mxf_path Path to the asset's MXF file.
  *  @param n Frame within the asset, not taking EntryPoint into account.
  */
-MonoPictureFrame::MonoPictureFrame (string mxf_path, int n, ASDCP::AESDecContext* c)
+MonoPictureFrame::MonoPictureFrame (boost::filesystem::path mxf_path, int n, ASDCP::AESDecContext* c)
 {
 	ASDCP::JP2K::MXFReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (mxf_path.c_str()))) {
+	if (ASDCP_FAILURE (reader.OpenRead (mxf_path.string().c_str()))) {
 		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path));
 	}
 

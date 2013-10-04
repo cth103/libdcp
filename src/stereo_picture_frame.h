@@ -37,7 +37,7 @@ class ARGBFrame;
 class StereoPictureFrame
 {
 public:
-	StereoPictureFrame (std::string mxf_path, int n);
+	StereoPictureFrame (boost::filesystem::path mxf_path, int n);
 	~StereoPictureFrame ();
 
 	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye, int reduce = 0, float srgb_gamma = 2.4) const;
