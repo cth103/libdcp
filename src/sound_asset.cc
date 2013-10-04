@@ -123,7 +123,7 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 
 		boost::filesystem::path const path = get_path (channels[i]);
 		
-		if (ASDCP_FAILURE (pcm_parser_channel[i].OpenRead (path.c_str(), asdcp_edit_rate))) {
+		if (ASDCP_FAILURE (pcm_parser_channel[i].OpenRead (path.string().c_str(), asdcp_edit_rate))) {
 			boost::throw_exception (FileError ("could not open WAV file for reading", path));
 		}
 
