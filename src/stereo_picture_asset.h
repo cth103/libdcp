@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_STEREO_PICTURE_ASSET_H
+#define LIBDCP_STEREO_PICTURE_ASSET_H
+
 #include "picture_asset.h"
 
 namespace libdcp {
@@ -42,3 +45,5 @@ private:
 };
 
 }
+
+#endif
