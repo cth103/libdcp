@@ -24,6 +24,8 @@
 #ifndef LIBDCP_TIME_H
 #define LIBDCP_TIME_H
 
+#include <stdint.h>
+
 namespace libdcp {
 
 /** @class Time

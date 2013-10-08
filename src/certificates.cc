@@ -49,7 +49,7 @@ Certificate::Certificate (boost::filesystem::path filename)
 	: _certificate (0)
 	, _public_key (0)
 {
-	FILE* f = fopen (filename.c_str(), "r");
+	FILE* f = fopen (filename.string().c_str(), "r");
 	if (!f) {
 		throw FileError ("could not open file", filename);
 	}

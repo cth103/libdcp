@@ -48,7 +48,7 @@ MonoPictureAsset::create (boost::function<boost::filesystem::path (int)> get_pat
 {
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
-	if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (get_path(0).c_str(), frame_buffer))) {
+	if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (get_path(0).string().c_str(), frame_buffer))) {
 		boost::throw_exception (FileError ("could not open JPEG2000 file for reading", get_path (0)));
 	}
 	
@@ -68,7 +68,7 @@ MonoPictureAsset::create (boost::function<boost::filesystem::path (int)> get_pat
 
 		boost::filesystem::path const path = get_path (i);
 
-		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (path.c_str(), frame_buffer))) {
+		if (ASDCP_FAILURE (j2k_parser.OpenReadFrame (path.string().c_str(), frame_buffer))) {
 			boost::throw_exception (FileError ("could not open JPEG2000 file for reading", path));
 		}
 
@@ -115,7 +115,7 @@ MonoPictureAsset::path_from_list (int f, vector<boost::filesystem::path> const &
 shared_ptr<const MonoPictureFrame>
 MonoPictureAsset::get_frame (int n) const
 {
-	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path().string(), n, _decryption_context));
+	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path(), n, _decryption_context));
 }
 
 bool
