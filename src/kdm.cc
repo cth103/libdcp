@@ -117,7 +117,12 @@ KDM::KDM (
 		n = n.substr (n.find (".") + 1);
 	}
 	apu.authorized_device_info.device_list_description = n;
-	apu.authorized_device_info.device_list.push_back (recipient_cert->thumbprint ());
+//	apu.authorized_device_info.device_list.push_back (recipient_cert->thumbprint ());
+
+	/* Sometimes digital_cinema_tools uses this magic thumbprint instead of that from an actual
+	   recipient certificate.  KDMs delivered to City Screen appear to use the same thing.
+	*/
+	apu.authorized_device_info.device_list.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
 
 	list<shared_ptr<const Asset> > assets = cpl->assets ();
 	for (list<shared_ptr<const Asset> >::iterator i = assets.begin(); i != assets.end(); ++i) {
