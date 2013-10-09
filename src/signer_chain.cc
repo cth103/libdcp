@@ -35,9 +35,9 @@ using std::ifstream;
 using std::stringstream;
 using std::cout;
 
-static void command (char const * c)
+static void command (string c)
 {
-	int const r = system (c);
+	int const r = system (c.c_str ());
 #ifdef LIBDCP_WINDOWS	
 	if (r) {
 #else
@@ -51,17 +51,18 @@ static void command (char const * c)
 
 /** Extract a public key from a private key and create a SHA1 digest of it.
  *  @param key Private key
+ *  @param openssl openssl binary name (or full path if openssl is not on the system path).
  *  @return SHA1 digest of corresponding public key, with escaped / characters.
  */
 	
 static string
-public_key_digest (boost::filesystem::path private_key)
+public_key_digest (boost::filesystem::path private_key, boost::filesystem::path openssl)
 {
 	boost::filesystem::path public_name = private_key.string() + ".public";
 	
 	/* Create the public key from the private key */
 	stringstream s;
-	s << "openssl rsa -outform PEM -pubout -in " << private_key.string() << " > " << public_name.string ();
+	s << openssl.string() << " rsa -outform PEM -pubout -in " << private_key.string() << " > " << public_name.string ();
 	command (s.str().c_str ());
 
 	/* Read in the public key from the file */
@@ -115,7 +116,7 @@ libdcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem:
 	boost::filesystem::path const cwd = boost::filesystem::current_path ();
 
 	boost::filesystem::current_path (directory);
-	command ("openssl genrsa -out ca.key 2048");
+	command (openssl.string() + " genrsa -out ca.key 2048");
 
 	{
 		ofstream f ("ca.cnf");
@@ -133,15 +134,17 @@ libdcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem:
 		  << "CN = Entity and dnQualifier\n";
 	}
 
-	string const ca_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION/dnQualifier=" + public_key_digest ("ca.key");
+	string const ca_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION/dnQualifier=" + public_key_digest ("ca.key", openssl);
 
 	{
 		stringstream c;
-		c << "openssl req -new -x509 -sha256 -config ca.cnf -days 3650 -set_serial 5 -subj " << ca_subject << " -key ca.key -outform PEM -out ca.self-signed.pem";
+		c << openssl.string()
+		  << " req -new -x509 -sha256 -config ca.cnf -days 3650 -set_serial 5"
+		  << " -subj " << ca_subject << " -key ca.key -outform PEM -out ca.self-signed.pem";
 		command (c.str().c_str());
 	}
 
-	command ("openssl genrsa -out intermediate.key 2048");
+	command (openssl.string() + " genrsa -out intermediate.key 2048");
 
 	{
 		ofstream f ("intermediate.cnf");
@@ -159,18 +162,23 @@ libdcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem:
 		  << "CN = Entity and dnQualifier\n";
 	}
 		
-	string const inter_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION/dnQualifier=" + public_key_digest ("intermediate.key");
+	string const inter_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION/dnQualifier="
+		+ public_key_digest ("intermediate.key", openssl);
 
 	{
 		stringstream s;
-		s << "openssl req -new -config intermediate.cnf -days 3649 -subj " << inter_subject << " -key intermediate.key -out intermediate.csr";
+		s << openssl.string() << " req -new -config intermediate.cnf -days 3649 -subj " << inter_subject << " -key intermediate.key -out intermediate.csr";
 		command (s.str().c_str());
 	}
 
 	
-	command ("openssl x509 -req -sha256 -days 3649 -CA ca.self-signed.pem -CAkey ca.key -set_serial 6 -in intermediate.csr -extfile intermediate.cnf -extensions v3_ca -out intermediate.signed.pem");
+	command (
+		openssl.string() +
+		" x509 -req -sha256 -days 3649 -CA ca.self-signed.pem -CAkey ca.key -set_serial 6"
+		" -in intermediate.csr -extfile intermediate.cnf -extensions v3_ca -out intermediate.signed.pem"
+		);
 
-	command ("openssl genrsa -out leaf.key 2048");
+	command (openssl.string() + " genrsa -out leaf.key 2048");
 
 	{
 		ofstream f ("leaf.cnf");
@@ -188,15 +196,20 @@ libdcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem:
 		  << "CN = Entity and dnQualifier\n";
 	}
 
-	string const leaf_subject = "/O=example.org/OU=example.org/CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION/dnQualifier=" + public_key_digest ("leaf.key");
+	string const leaf_subject = "/O=example.org/OU=example.org/CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION/dnQualifier="
+		+ public_key_digest ("leaf.key", openssl);
 
 	{
 		stringstream s;
-		s << "openssl req -new -config leaf.cnf -days 3648 -subj " << leaf_subject << " -key leaf.key -outform PEM -out leaf.csr";
+		s << openssl.string() << " req -new -config leaf.cnf -days 3648 -subj " << leaf_subject << " -key leaf.key -outform PEM -out leaf.csr";
 		command (s.str().c_str());
 	}
 
-	command ("openssl x509 -req -sha256 -days 3648 -CA intermediate.signed.pem -CAkey intermediate.key -set_serial 7 -in leaf.csr -extfile leaf.cnf -extensions v3_ca -out leaf.signed.pem");
+	command (
+		openssl.string() +
+		" x509 -req -sha256 -days 3648 -CA intermediate.signed.pem -CAkey intermediate.key"
+		" -set_serial 7 -in leaf.csr -extfile leaf.cnf -extensions v3_ca -out leaf.signed.pem"
+		);
 
 	boost::filesystem::current_path (cwd);
 }
