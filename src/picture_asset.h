@@ -29,6 +29,12 @@
 #include "util.h"
 #include "metadata.h"
 
+namespace ASDCP {
+	namespace JP2K {
+		class PictureDescriptor;
+	}
+}
+
 namespace libdcp
 {
 
@@ -57,8 +63,6 @@ public:
 	virtual void create (std::vector<boost::filesystem::path> const &) {}
 	virtual void create (boost::function<boost::filesystem::path (int)>) {}
 	
-	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
-
 	Size size () const {
 		return _size;
 	}
@@ -74,6 +78,10 @@ protected:
 	bool frame_buffer_equals (
 		int frame, EqualityOptions opt, boost::function<void (NoteType, std::string)> note,
 		uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
+		) const;
+
+	bool descriptor_equals (
+		ASDCP::JP2K::PictureDescriptor const & a, ASDCP::JP2K::PictureDescriptor const & b, boost::function<void (NoteType, std::string)>
 		) const;
 
 	/** picture size in pixels */

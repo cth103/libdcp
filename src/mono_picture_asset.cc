@@ -121,7 +121,30 @@ MonoPictureAsset::get_frame (int n) const
 bool
 MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (!PictureAsset::equals (other, opt, note)) {
+	if (!MXFAsset::equals (other, opt, note)) {
+		return false;
+	}
+
+	ASDCP::JP2K::MXFReader reader_A;
+	if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
+	}
+	
+	ASDCP::JP2K::MXFReader reader_B;
+	if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
+	}
+	
+	ASDCP::JP2K::PictureDescriptor desc_A;
+	if (ASDCP_FAILURE (reader_A.FillPictureDescriptor (desc_A))) {
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
+	}
+	ASDCP::JP2K::PictureDescriptor desc_B;
+	if (ASDCP_FAILURE (reader_B.FillPictureDescriptor (desc_B))) {
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
+	}
+	
+	if (!descriptor_equals (desc_A, desc_B, note)) {
 		return false;
 	}
 

@@ -81,61 +81,40 @@ PictureAsset::write_to_cpl (xmlpp::Element* node, bool interop) const
 }
 
 bool
-PictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+PictureAsset::descriptor_equals (
+	ASDCP::JP2K::PictureDescriptor const & a, ASDCP::JP2K::PictureDescriptor const & b, boost::function<void (NoteType, string)> note
+	) const
 {
-	if (!MXFAsset::equals (other, opt, note)) {
-		return false;
-	}
-		     
-	ASDCP::JP2K::MXFReader reader_A;
-	if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
-	}
-	
-	ASDCP::JP2K::MXFReader reader_B;
-	if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
-	}
-	
-	ASDCP::JP2K::PictureDescriptor desc_A;
-	if (ASDCP_FAILURE (reader_A.FillPictureDescriptor (desc_A))) {
-		boost::throw_exception (DCPReadError ("could not read video MXF information"));
-	}
-	ASDCP::JP2K::PictureDescriptor desc_B;
-	if (ASDCP_FAILURE (reader_B.FillPictureDescriptor (desc_B))) {
-		boost::throw_exception (DCPReadError ("could not read video MXF information"));
-	}
-	
 	if (
-		desc_A.EditRate != desc_B.EditRate ||
-		desc_A.SampleRate != desc_B.SampleRate ||
-		desc_A.StoredWidth != desc_B.StoredWidth ||
-		desc_A.StoredHeight != desc_B.StoredHeight ||
-		desc_A.AspectRatio != desc_B.AspectRatio ||
-		desc_A.Rsize != desc_B.Rsize ||
-		desc_A.Xsize != desc_B.Xsize ||
-		desc_A.Ysize != desc_B.Ysize ||
-		desc_A.XOsize != desc_B.XOsize ||
-		desc_A.YOsize != desc_B.YOsize ||
-		desc_A.XTsize != desc_B.XTsize ||
-		desc_A.YTsize != desc_B.YTsize ||
-		desc_A.XTOsize != desc_B.XTOsize ||
-		desc_A.YTOsize != desc_B.YTOsize ||
-		desc_A.Csize != desc_B.Csize
-//		desc_A.CodingStyleDefault != desc_B.CodingStyleDefault ||
-//		desc_A.QuantizationDefault != desc_B.QuantizationDefault
+		a.EditRate != b.EditRate ||
+		a.SampleRate != b.SampleRate ||
+		a.StoredWidth != b.StoredWidth ||
+		a.StoredHeight != b.StoredHeight ||
+		a.AspectRatio != b.AspectRatio ||
+		a.Rsize != b.Rsize ||
+		a.Xsize != b.Xsize ||
+		a.Ysize != b.Ysize ||
+		a.XOsize != b.XOsize ||
+		a.YOsize != b.YOsize ||
+		a.XTsize != b.XTsize ||
+		a.YTsize != b.YTsize ||
+		a.XTOsize != b.XTOsize ||
+		a.YTOsize != b.YTOsize ||
+		a.Csize != b.Csize
+//		a.CodingStyleDefault != b.CodingStyleDefault ||
+//		a.QuantizationDefault != b.QuantizationDefault
 		) {
 		
 		note (ERROR, "video MXF picture descriptors differ");
 		return false;
 	}
 
-	if (desc_A.ContainerDuration != desc_B.ContainerDuration) {
+	if (a.ContainerDuration != b.ContainerDuration) {
 		note (ERROR, "video container durations differ");
 	}
 	
 //		for (unsigned int j = 0; j < ASDCP::JP2K::MaxComponents; ++j) {
-//			if (desc_A.ImageComponents[j] != desc_B.ImageComponents[j]) {
+//			if (a.ImageComponents[j] != b.ImageComponents[j]) {
 //				notes.pack_start ("video MXF picture descriptors differ");
 //			}
 //		}
