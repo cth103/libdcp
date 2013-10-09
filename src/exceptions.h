@@ -34,7 +34,7 @@ class FileError : public std::exception
 {
 public:
 	FileError (std::string const & message, boost::filesystem::path filename)
-		: _message (message)
+		: _message (message + "(" + filename.string() + ")")
 		, _filename (filename)
 	{}
 			    
@@ -51,7 +51,7 @@ public:
 	}
 
 private:
-	/** error message */
+	/** message part */
 	std::string _message;
 	/** filename of file that was involved */
 	boost::filesystem::path _filename;
