@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 {
 	boost::filesystem::remove_all ("build/test/signer");
 	boost::filesystem::create_directory ("build/test/signer");
-	libdcp::make_signer_chain ("build/test/signer");
+	libdcp::make_signer_chain ("build/test/signer", "openssl");
 	
 	Kumu::libdcp_test = true;
 

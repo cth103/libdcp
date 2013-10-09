@@ -21,8 +21,13 @@
 #include <sstream>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <openssl/sha.h>
+#include <openssl/bio.h>
+#include <openssl/evp.h>
+#include "KM_util.h"
 #include "signer_chain.h"
 #include "exceptions.h"
+#include "util.h"
 
 using std::string;
 using std::ofstream;
@@ -44,8 +49,68 @@ static void command (char const * c)
 	}
 }
 
+/** Extract a public key from a private key and create a SHA1 digest of it.
+ *  @param key Private key
+ *  @return SHA1 digest of corresponding public key, with escaped / characters.
+ */
+	
+static string
+public_key_digest (boost::filesystem::path private_key)
+{
+	boost::filesystem::path public_name = private_key.string() + ".public";
+	
+	/* Create the public key from the private key */
+	stringstream s;
+	s << "openssl rsa -outform PEM -pubout -in " << private_key.string() << " > " << public_name.string ();
+	command (s.str().c_str ());
+
+	/* Read in the public key from the file */
+
+	string pub;
+	ifstream f (public_name.string().c_str ());
+
+	bool read = false;
+	while (1) {
+		string line;
+		getline (f, line);
+		if (line.length() >= 10 && line.substr(0, 10) == "-----BEGIN") {
+			read = true;
+		} else if (line.length() >= 8 && line.substr(0, 8) == "-----END") {
+			break;
+		} else if (read) {
+			pub += line;
+		}
+	}
+
+	/* Decode the base64 of the public key */
+		
+	unsigned char buffer[512];
+	int const N = libdcp::base64_decode (pub, buffer, 1024);
+
+	/* Hash it with SHA1 (without the first 24 bytes, for reasons that are not entirely clear) */
+
+	SHA_CTX context;
+	if (!SHA1_Init (&context)) {
+		throw libdcp::MiscError ("could not init SHA1 context");
+	}
+
+	if (!SHA1_Update (&context, buffer + 24, N - 24)) {
+		throw libdcp::MiscError ("could not update SHA1 digest");
+	}
+
+	unsigned char digest[SHA_DIGEST_LENGTH];
+	if (!SHA1_Final (digest, &context)) {
+		throw libdcp::MiscError ("could not finish SHA1 digest");
+	}
+
+	char digest_base64[64];
+	string dig = Kumu::base64encode (digest, SHA_DIGEST_LENGTH, digest_base64, 64);
+	boost::replace_all (dig, "/", "\\\\/");
+	return dig;
+}
+
 void
-libdcp::make_signer_chain (boost::filesystem::path directory)
+libdcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem::path openssl)
 {
 	boost::filesystem::path const cwd = boost::filesystem::current_path ();
 
@@ -68,18 +133,7 @@ libdcp::make_signer_chain (boost::filesystem::path directory)
 		  << "CN = Entity and dnQualifier\n";
 	}
 
-	command ("openssl rsa -outform PEM -pubout -in ca.key | openssl base64 -d | dd bs=1 skip=24 2>/dev/null | openssl sha1 -binary | openssl base64 > ca_dnq");
-
-	string ca_dnq;
-
-	{
-		ifstream f ("ca_dnq");
-		getline (f, ca_dnq);
-		/* XXX: is this right? */
-		boost::replace_all (ca_dnq, "/", "\\\\/");
-	}
-	
-	string const ca_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION/dnQualifier=" + ca_dnq;
+	string const ca_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION/dnQualifier=" + public_key_digest ("ca.key");
 
 	{
 		stringstream c;
@@ -104,18 +158,8 @@ libdcp::make_signer_chain (boost::filesystem::path directory)
 		  << "OU = Organization unit\n"
 		  << "CN = Entity and dnQualifier\n";
 	}
-
-	command ("openssl rsa -outform PEM -pubout -in intermediate.key | openssl base64 -d | dd bs=1 skip=24 2>/dev/null | openssl sha1 -binary | openssl base64 > inter_dnq");
-	
-	string inter_dnq;
-
-	{
-		ifstream f ("inter_dnq");
-		getline (f, inter_dnq);
-		boost::replace_all (inter_dnq, "/", "\\\\/");
-	}
 		
-	string const inter_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION/dnQualifier=" + inter_dnq;
+	string const inter_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION/dnQualifier=" + public_key_digest ("intermediate.key");
 
 	{
 		stringstream s;
@@ -144,17 +188,7 @@ libdcp::make_signer_chain (boost::filesystem::path directory)
 		  << "CN = Entity and dnQualifier\n";
 	}
 
-	command ("openssl rsa -outform PEM -pubout -in leaf.key | openssl base64 -d | dd bs=1 skip=24 2>/dev/null | openssl sha1 -binary | openssl base64 > leaf_dnq");
-	
-	string leaf_dnq;
-
-	{
-		ifstream f ("leaf_dnq");
-		getline (f, leaf_dnq);
-		boost::replace_all (leaf_dnq, "/", "\\\\/");
-	}
-
-	string const leaf_subject = "/O=example.org/OU=example.org/CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION/dnQualifier=" + leaf_dnq;
+	string const leaf_subject = "/O=example.org/OU=example.org/CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION/dnQualifier=" + public_key_digest ("leaf.key");
 
 	{
 		stringstream s;

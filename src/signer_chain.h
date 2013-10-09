@@ -20,7 +20,11 @@
 #include <boost/filesystem.hpp>
 
 namespace libdcp {
-	
-void make_signer_chain (boost::filesystem::path);
+
+/** Create a chain of certificates for signing things.
+ *  @param directory Directory to write files to.
+ *  @param openssl Name of openssl binary (if it is on the path) or full path.
+ */
+void make_signer_chain (boost::filesystem::path directory, boost::filesystem::path openssl);
 
 }

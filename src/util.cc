@@ -111,11 +111,11 @@ libdcp::make_digest (string filename, boost::function<void (float)>* progress)
 		}
 	}
 
-	byte_t byte_buffer[20];
+	byte_t byte_buffer[SHA_DIGEST_LENGTH];
 	SHA1_Final (byte_buffer, &sha);
 
 	char digest[64];
-	return Kumu::base64encode (byte_buffer, 20, digest, 64);
+	return Kumu::base64encode (byte_buffer, SHA_DIGEST_LENGTH, digest, 64);
 }
 
 /** Convert a content kind to a string which can be used in a
