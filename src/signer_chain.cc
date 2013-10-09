@@ -106,7 +106,11 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 
 	char digest_base64[64];
 	string dig = Kumu::base64encode (digest, SHA_DIGEST_LENGTH, digest_base64, 64);
+#ifdef LIBDCP_WINDOWS
+	boost::replace_all (dig, "/", "\\/");
+#else	
 	boost::replace_all (dig, "/", "\\\\/");
+#endif	
 	return dig;
 }
 
