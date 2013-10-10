@@ -124,7 +124,7 @@ DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, sha
 		signer->sign (pkl, interop);
 	}
 		
-	doc.write_to_file_formatted (p.string (), "UTF-8");
+	doc.write_to_file (p.string (), "UTF-8");
 	return p.string ();
 }
 
@@ -138,7 +138,7 @@ DCP::write_volindex () const
 	xmlpp::Document doc;
 	xmlpp::Element* root = doc.create_root_node ("VolumeIndex", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
 	root->add_child("Index")->add_child_text ("1");
-	doc.write_to_file_formatted (p.string (), "UTF-8");
+	doc.write_to_file (p.string (), "UTF-8");
 }
 
 void
@@ -191,7 +191,8 @@ DCP::write_assetmap (string pkl_uuid, int pkl_length, bool interop, XMLMetadata 
 		(*i)->write_to_assetmap (asset_list);
 	}
 
-	doc.write_to_file_formatted (p.string (), "UTF-8");
+	/* This must not be the _formatted version otherwise signature digests will be wrong */
+	doc.write_to_file (p.string (), "UTF-8");
 }
 
 void

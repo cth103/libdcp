@@ -54,8 +54,8 @@ BOOST_AUTO_TEST_CASE (encryption)
 	xml_metadata.creator = "OpenDCP 0.0.25";
 	xml_metadata.issue_date = "2012-07-17T04:45:18+00:00";
 	
-	boost::filesystem::remove_all ("build/test/bar");
-	boost::filesystem::create_directories ("build/test/bar");
+	boost::filesystem::remove_all ("build/test/DCP/bar");
+	boost::filesystem::create_directories ("build/test/DCP/bar");
 	libdcp::DCP d ("build/test/DCP/bar");
 
 	libdcp::CertificateChain chain;
@@ -70,11 +70,11 @@ BOOST_AUTO_TEST_CASE (encryption)
 			)
 		);
 
-	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/bar", "A Test DCP", libdcp::FEATURE, 24, 24));
+	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/DCP/bar", "A Test DCP", libdcp::FEATURE, 24, 24));
 
 	libdcp::Key key;
 	
-	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset ("build/test/bar", "video.mxf"));
+	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset ("build/test/DCP/bar", "video.mxf"));
 	mp->set_progress (&d.Progress);
 	mp->set_edit_rate (24);
 	mp->set_intrinsic_duration (24);
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 	mp->set_key (key);
 	mp->create (j2c);
 
-	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset ("build/test/bar", "audio.mxf"));
+	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset ("build/test/DCP/bar", "audio.mxf"));
 	ms->set_progress (&d.Progress);
 	ms->set_edit_rate (24);
 	ms->set_intrinsic_duration (24);
