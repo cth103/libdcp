@@ -63,7 +63,7 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	
 	/* Create the public key from the private key */
 	stringstream s;
-	s << openssl.string() << " rsa -outform PEM -pubout -in " << private_key.string() << " > " << public_name.string ();
+	s << "\"" << openssl.string() << "\" rsa -outform PEM -pubout -in " << private_key.string() << " > " << public_name.string ();
 	command (s.str().c_str ());
 
 	/* Read in the public key from the file */
@@ -120,8 +120,10 @@ libdcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem:
 {
 	boost::filesystem::path const cwd = boost::filesystem::current_path ();
 
+	string quoted_openssl = "\"" + openssl.string() + "\"";
+
 	boost::filesystem::current_path (directory);
-	command (openssl.string() + " genrsa -out ca.key 2048");
+	command (quoted_openssl + " genrsa -out ca.key 2048");
 
 	{
 		ofstream f ("ca.cnf");
@@ -143,13 +145,13 @@ libdcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem:
 
 	{
 		stringstream c;
-		c << openssl.string()
+		c << quoted_openssl
 		  << " req -new -x509 -sha256 -config ca.cnf -days 3650 -set_serial 5"
 		  << " -subj " << ca_subject << " -key ca.key -outform PEM -out ca.self-signed.pem";
 		command (c.str().c_str());
 	}
 
-	command (openssl.string() + " genrsa -out intermediate.key 2048");
+	command (quoted_openssl + " genrsa -out intermediate.key 2048");
 
 	{
 		ofstream f ("intermediate.cnf");
@@ -172,18 +174,19 @@ libdcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem:
 
 	{
 		stringstream s;
-		s << openssl.string() << " req -new -config intermediate.cnf -days 3649 -subj " << inter_subject << " -key intermediate.key -out intermediate.csr";
+		s << quoted_openssl
+		  << " req -new -config intermediate.cnf -days 3649 -subj " << inter_subject << " -key intermediate.key -out intermediate.csr";
 		command (s.str().c_str());
 	}
 
 	
 	command (
-		openssl.string() +
+		quoted_openssl +
 		" x509 -req -sha256 -days 3649 -CA ca.self-signed.pem -CAkey ca.key -set_serial 6"
 		" -in intermediate.csr -extfile intermediate.cnf -extensions v3_ca -out intermediate.signed.pem"
 		);
 
-	command (openssl.string() + " genrsa -out leaf.key 2048");
+	command (quoted_openssl + " genrsa -out leaf.key 2048");
 
 	{
 		ofstream f ("leaf.cnf");
@@ -206,12 +209,12 @@ libdcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem:
 
 	{
 		stringstream s;
-		s << openssl.string() << " req -new -config leaf.cnf -days 3648 -subj " << leaf_subject << " -key leaf.key -outform PEM -out leaf.csr";
+		s << quoted_openssl << " req -new -config leaf.cnf -days 3648 -subj " << leaf_subject << " -key leaf.key -outform PEM -out leaf.csr";
 		command (s.str().c_str());
 	}
 
 	command (
-		openssl.string() +
+		quoted_openssl +
 		" x509 -req -sha256 -days 3648 -CA intermediate.signed.pem -CAkey intermediate.key"
 		" -set_serial 7 -in leaf.csr -extfile leaf.cnf -extensions v3_ca -out leaf.signed.pem"
 		);
