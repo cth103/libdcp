@@ -35,16 +35,17 @@ using std::ifstream;
 using std::stringstream;
 using std::cout;
 
-static void command (string c)
+static void command (string cmd)
 {
-	int const r = system (c.c_str ());
+	int const r = system (cmd.c_str ());
 #ifdef LIBDCP_WINDOWS	
-	if (r) {
+	int const code = r;
 #else
-	if (WEXITSTATUS (r)) {
-#endif		
+	int const code = WEXITSTATUS (r);
+#endif
+	if (code) {
 		stringstream s;
-		s << "error in " << c << "\n";
+		s << "error " << code << " in " << cmd << " within " << boost::filesystem::current_path();
 		throw libdcp::MiscError (s.str());
 	}
 }
