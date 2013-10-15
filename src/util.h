@@ -54,6 +54,10 @@ struct Size {
 		: width (w)
 		, height (h)
 	{}
+
+	float ratio () const {
+		return float (width) / height;
+	}
 	
 	int width;
 	int height;
