@@ -109,6 +109,9 @@ private:
 	std::string _font;
 	bool _italic;
 	Color _color;
+	/** Size in points as if the screen height is 11 inches, so a 72pt font
+	 *  would be 1/11th of the screen height.
+	 */ 
 	int _size;
 	Time _in;
 	Time _out;
