@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_SUBTITLE_ASSET_H
+#define LIBDCP_SUBTITLE_ASSET_H
+
 #include <libcxml/cxml.h>
 #include "asset.h"
 #include "dcp_time.h"
@@ -115,6 +118,9 @@ private:
 	int _size;
 	Time _in;
 	Time _out;
+	/** Vertical position as a proportion of the screen height from the top
+	 *  (between 0 and 1)
+	 */
 	float _v_position;
 	VAlign _v_align;
 	std::string _text;
@@ -189,3 +195,5 @@ private:
 };
 
 }
+
+#endif
