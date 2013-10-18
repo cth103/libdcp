@@ -298,7 +298,7 @@ string
 libdcp::tm_to_string (struct tm* tm)
 {
 	char buffer[64];
-	strftime (buffer, 64, "%Y-%m-%dT%I:%M:%S", tm);
+	strftime (buffer, 64, "%Y-%m-%dT%H:%M:%S", tm);
 
 	int offset = 0;
 
