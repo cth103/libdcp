@@ -42,7 +42,7 @@ using boost::shared_ptr;
 using boost::lexical_cast;
 using namespace libdcp;
 
-SoundAsset::SoundAsset (boost::filesystem::path directory, string mxf_name)
+SoundAsset::SoundAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name)
 	: MXFAsset (directory, mxf_name)
 	, _channels (0)
 	, _sampling_rate (0)

@@ -87,11 +87,11 @@ public:
 
 	boost::filesystem::path path () const;
 
-	void set_directory (std::string d) {
+	void set_directory (boost::filesystem::path d) {
 		_directory = d;
 	}
 
-	void set_file_name (std::string f) {
+	void set_file_name (boost::filesystem::path f) {
 		_file_name = f;
 	}
 
