@@ -45,7 +45,7 @@ public:
 	 *  @param directory Directory where MXF file is.
 	 *  @param file_name Name of MXF file.
 	 */
-	MXFAsset (boost::filesystem::path directory, std::string file_name);
+	MXFAsset (boost::filesystem::path directory, boost::filesystem::path file_name);
 	
 	~MXFAsset ();
 

@@ -37,7 +37,7 @@ using namespace std;
 using namespace boost;
 using namespace libdcp;
 
-Asset::Asset (boost::filesystem::path directory, string file_name)
+Asset::Asset (boost::filesystem::path directory, boost::filesystem::path file_name)
 	: _directory (directory)
 	, _file_name (file_name)
 	, _uuid (make_uuid ())
@@ -56,7 +56,7 @@ Asset::write_to_pkl (xmlpp::Node* node) const
 {
 	xmlpp::Node* asset = node->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
-	asset->add_child("AnnotationText")->add_child_text (_file_name);
+	asset->add_child("AnnotationText")->add_child_text (_file_name.string ());
 	asset->add_child("Hash")->add_child_text (digest ());
 	asset->add_child("Size")->add_child_text (lexical_cast<string> (filesystem::file_size(path())));
 	asset->add_child("Type")->add_child_text ("application/mxf");
@@ -69,7 +69,7 @@ Asset::write_to_assetmap (xmlpp::Node* node) const
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
 	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
 	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
-	chunk->add_child("Path")->add_child_text (_file_name);
+	chunk->add_child("Path")->add_child_text (_file_name.string ());
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
 	chunk->add_child("Length")->add_child_text (lexical_cast<string> (filesystem::file_size(path())));

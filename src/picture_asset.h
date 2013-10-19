@@ -51,7 +51,7 @@ public:
 	 *  @param directory Directory where MXF file is.
 	 *  @param mxf_name Name of MXF file.
 	 */
-	PictureAsset (boost::filesystem::path directory, std::string mxf_name);
+	PictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name);
 
 	/** Start a progressive write to this asset.
 	 *  @param overwrite true to overwrite an existing MXF file; in this mode, writing can be resumed to a partially-written MXF; false if the

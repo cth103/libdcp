@@ -53,7 +53,7 @@ public:
 	 *  @param directory Directory where our XML or MXF file is.
 	 *  @param file_name Name of our file within directory, or empty to make one up based on UUID.
 	 */
-	Asset (boost::filesystem::path directory, std::string file_name = "");
+	Asset (boost::filesystem::path directory, boost::filesystem::path file_name = "");
 
 	virtual ~Asset() {}
 
@@ -136,7 +136,7 @@ protected:
 	/** Directory that our MXF or XML file is in */
 	boost::filesystem::path _directory;
 	/** Name of our MXF or XML file */
-	std::string _file_name;
+	boost::filesystem::path _file_name;
 	/** Our UUID */
 	std::string _uuid;
 	/** The edit rate; this is normally equal to the number of video frames per second */

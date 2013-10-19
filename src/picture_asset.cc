@@ -53,7 +53,7 @@ using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace libdcp;
 
-PictureAsset::PictureAsset (boost::filesystem::path directory, string mxf_name)
+PictureAsset::PictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name)
 	: MXFAsset (directory, mxf_name)
 {
 

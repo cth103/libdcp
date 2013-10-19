@@ -87,7 +87,7 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 	return true;
 }
 
-StereoPictureAsset::StereoPictureAsset (boost::filesystem::path directory, string mxf_name)
+StereoPictureAsset::StereoPictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name)
 	: PictureAsset (directory, mxf_name)
 {
 	

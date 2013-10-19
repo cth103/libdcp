@@ -28,7 +28,7 @@ namespace libdcp {
 class StereoPictureAsset : public PictureAsset
 {
 public:
-	StereoPictureAsset (boost::filesystem::path directory, std::string mxf_name);
+	StereoPictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name);
 
 	void read ();
 	

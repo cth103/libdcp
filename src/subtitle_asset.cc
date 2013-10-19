@@ -285,7 +285,7 @@ SubtitleAsset::write_to_cpl (xmlpp::Element* node, bool) const
 
 	xmlpp::Node* ms = node->add_child ("MainSubtitle");
 	ms->add_child("Id")->add_child_text("urn:uuid:" + _uuid);
-	ms->add_child("AnnotationText")->add_child_text (_file_name);
+	ms->add_child("AnnotationText")->add_child_text (_file_name.string ());
 	/* XXX */
 	ms->add_child("EntryPoint")->add_child_text ("0");
 }

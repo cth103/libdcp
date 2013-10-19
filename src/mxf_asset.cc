@@ -43,7 +43,7 @@ using boost::lexical_cast;
 using boost::dynamic_pointer_cast;
 using namespace libdcp;
 
-MXFAsset::MXFAsset (boost::filesystem::path directory, string file_name)
+MXFAsset::MXFAsset (boost::filesystem::path directory, boost::filesystem::path file_name)
 	: Asset (directory, file_name)
 	, _progress (0)
 	, _encryption_context (0)
@@ -117,7 +117,7 @@ MXFAsset::write_to_cpl (xmlpp::Element* node, bool interop) const
 		a->set_attribute (attr.first, attr.second);
 	}
 	a->add_child ("Id")->add_child_text ("urn:uuid:" + _uuid);
-	a->add_child ("AnnotationText")->add_child_text (_file_name);
+	a->add_child ("AnnotationText")->add_child_text (_file_name.string ());
 	a->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
 	a->add_child ("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
 	a->add_child ("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));

@@ -28,7 +28,7 @@ namespace libdcp {
 class MonoPictureAsset : public PictureAsset
 {
 public:
-	MonoPictureAsset (boost::filesystem::path directory, std::string mxf_name);
+	MonoPictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name);
 
 	void read ();
 	void create (std::vector<boost::filesystem::path> const & files);
