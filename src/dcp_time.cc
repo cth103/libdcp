@@ -51,8 +51,6 @@ Time::Time (int64_t ticks)
 	s = ticks / 250;
 	ticks -= int64_t (s) * 250;
 	t = ticks;
-
-	std::cout << "Hello: " << h << " " << m << " " << s << " " << t << "\n";
 }
 
 void
