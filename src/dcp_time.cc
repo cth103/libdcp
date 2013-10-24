@@ -42,6 +42,19 @@ Time::Time (int frame, int frames_per_second)
 	set (double (frame) / frames_per_second);
 }
 
+Time::Time (int64_t ticks)
+{
+	h = ticks / (60 * 60 * 25);
+	ticks -= int64_t (h) * 60 * 60 * 25;
+	m = ticks / (60 * 25);
+	ticks -= int64_t (m) * 60 * 25;
+	s = ticks / 25;
+	ticks -= int64_t (s) * 25;
+	t = ticks;
+
+	std::cout << "Hello: " << h << " " << m << " " << s << " " << t << "\n";
+}
+
 void
 Time::set (double ss)
 {
@@ -235,6 +248,6 @@ Time::to_string () const
 int64_t
 Time::to_ticks () const
 {
-	return t + s * 25 + m * 60 * 25 + h * 60 * 60 * 25;
+	return int64_t(t) + int64_t(s) * 25 + int64_t(m) * 60 * 25 + int64_t(h) * 60 * 60 * 25;
 }
 

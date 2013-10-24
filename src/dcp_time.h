@@ -39,6 +39,8 @@ class Time
 public:
 	Time () : h (0), m (0), s (0), t (0) {}
 
+	Time (int64_t ticks);
+
 	/** Construct a Time from a frame index (starting from 0)
 	 *  and a frames per second count.
 	 */
