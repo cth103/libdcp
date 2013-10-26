@@ -29,6 +29,7 @@ using std::istream;
 using std::ostream;
 using std::string;
 using boost::shared_ptr;
+using boost::lexical_cast;
 using namespace libdcp;
 
 struct MonoPictureAssetWriter::ASDCPState : public ASDCPStateBase
@@ -68,8 +69,9 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
-	if (ASDCP_FAILURE (_state->mxf_writer.WriteFrame (_state->frame_buffer, _state->encryption_context, 0, &hash))) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
+	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _state->encryption_context, 0, &hash);
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("error in writing video MXF (" + lexical_cast<string> (int(r)) + ")", _asset->path().string()));
 	}
 
 	++_frames_written;
