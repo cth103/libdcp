@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (t.m, 18);
 	BOOST_CHECK_EQUAL (t.h, 11);
 	BOOST_CHECK_EQUAL (t.to_string(), "11:18:34:73");
-	BOOST_CHECK_EQUAL (t.to_ticks(), 1017923);
+	BOOST_CHECK_EQUAL (t.to_ticks(), 10178573);
 
 	libdcp::Time a (3, 2, 3, 4);
 	libdcp::Time b (2, 3, 4, 5);
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (r.s, 58);
 	BOOST_CHECK_EQUAL (r.t, 249);
 	BOOST_CHECK_EQUAL (r.to_string(), "0:58:58:249");
-	BOOST_CHECK_EQUAL (r.to_ticks(), 88699);
+	BOOST_CHECK_EQUAL (r.to_ticks(), 884749);
 
 	a = libdcp::Time (1, 58, 56, 240);
 	b = libdcp::Time (1, 7, 12, 120);
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (r.s, 9);
 	BOOST_CHECK_EQUAL (r.t, 110);
 	BOOST_CHECK_EQUAL (r.to_string(), "3:6:9:110");
-	BOOST_CHECK_EQUAL (r.to_ticks(), 279335);
+	BOOST_CHECK_EQUAL (r.to_ticks(), 2792360);
 
 	a = libdcp::Time (24, 12, 6, 3);
 	b = libdcp::Time (16, 8, 4, 2);
