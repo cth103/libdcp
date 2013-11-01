@@ -212,6 +212,7 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 		boost::throw_exception (DCPReadError ("could not decode JPEG2000 codestream of " + lexical_cast<string> (size) + " bytes."));
 	}
 
+	opj_destroy_decompress (decoder);
 	opj_cio_close (cio);
 
 	image->x1 = rint (float(image->x1) / pow (2, reduce));
