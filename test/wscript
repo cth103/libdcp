@@ -21,23 +21,24 @@ def build(bld):
     obj.uselib = 'BOOST_TEST OPENJPEG CXML XMLSEC1'
     obj.use    = 'libdcp'
     obj.source = """
-                 test.cc 
-                 kdm_key_test.cc
                  certificates_test.cc
+                 color_test.cc
                  dcp_test.cc
+                 dcp_time_test.cc
+                 decryption_test.cc
                  encryption_test.cc
+                 error_test.cc
+                 frame_info_test.cc
+                 kdm_key_test.cc
+                 kdm_test.cc
                  lut_test.cc
                  read_dcp_test.cc
-                 color_test.cc
-                 dcp_time_test.cc
-                 error_test.cc
                  recovery_test.cc
-                 utc_offset_to_string_test.cc
-                 decryption_test.cc
-                 kdm_test.cc
-                 subtitle_tests.cc
-                 util_test.cc
                  round_trip_test.cc
+                 subtitle_tests.cc
+                 test.cc 
+                 utc_offset_to_string_test.cc
+                 util_test.cc
                  """
     obj.target = 'tests'
     obj.install_path = ''

@@ -20,7 +20,7 @@ elif [ "$1" == "--valgrind" ]; then
   shift
   LD_LIBRARY_PATH=build/src:build/asdcplib/src valgrind --tool="memcheck" build/test/tests
 else
-  LD_LIBRARY_PATH=build/src:build/asdcplib/src build/test/tests
+  LD_LIBRARY_PATH=build/src:build/asdcplib/src build/test/tests $*
 fi
 
 diff -ur test/ref/DCP/foo build/test/foo

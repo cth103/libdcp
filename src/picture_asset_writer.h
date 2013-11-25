@@ -39,7 +39,8 @@ struct FrameInfo
 
 	FrameInfo (std::istream& s);
 
-	void write (std::ostream& s);
+	void write (std::ostream& s) const;
+	void write (FILE *) const;
 	
 	uint64_t offset;
 	uint64_t size;

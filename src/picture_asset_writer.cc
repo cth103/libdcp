@@ -17,6 +17,8 @@
 
 */
 
+#include <inttypes.h>
+#include <stdint.h>
 #include "AS_DCP.h"
 #include "KM_fileio.h"
 #include "picture_asset_writer.h"
@@ -46,9 +48,15 @@ FrameInfo::FrameInfo (istream& s)
 }
 
 void
-FrameInfo::write (ostream& s)
+FrameInfo::write (ostream& s) const
 {
 	s << offset << " " << size << " " << hash;
+}
+
+void
+FrameInfo::write (FILE* f) const
+{
+	fprintf (f, "%" PRId64 " %" PRId64 " %s", offset, size, hash.c_str ());
 }
 
 
