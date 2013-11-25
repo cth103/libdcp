@@ -46,6 +46,7 @@
 #include "xyz_frame.h"
 
 using std::string;
+using std::wstring;
 using std::cout;
 using std::stringstream;
 using std::min;
