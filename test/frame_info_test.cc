@@ -23,7 +23,7 @@
 
 using namespace std;
 
-/* Test writing of frame_info_test with fstream and stdio */
+/* Test writing and reading of frame_info_test with fstream and stdio */
 BOOST_AUTO_TEST_CASE (frame_info_test)
 {
 	libdcp::FrameInfo a (8589934592, 17179869184, "thisisahash");
@@ -46,4 +46,15 @@ BOOST_AUTO_TEST_CASE (frame_info_test)
 	getline (c2, s2);
 
 	BOOST_CHECK_EQUAL (s1, s2);
+
+	ifstream l1 ("build/test/frame_info1");
+	libdcp::FrameInfo b1 (l1);
+
+	FILE* l2 = fopen ("build/test/frame_info2", "r");
+	BOOST_CHECK (l2);
+	libdcp::FrameInfo b2 (l2);
+
+	BOOST_CHECK_EQUAL (b1.offset, b2.offset);
+	BOOST_CHECK_EQUAL (b1.size, b2.size);
+	BOOST_CHECK_EQUAL (b1.hash, b2.hash);
 }

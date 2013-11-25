@@ -38,6 +38,7 @@ struct FrameInfo
 	{}
 
 	FrameInfo (std::istream& s);
+	FrameInfo (FILE *);
 
 	void write (std::ostream& s) const;
 	void write (FILE *) const;

@@ -47,6 +47,20 @@ FrameInfo::FrameInfo (istream& s)
 	s >> hash;
 }
 
+FrameInfo::FrameInfo (FILE* f)
+{
+	fscanf (f, "%" PRId64, &offset);
+	fscanf (f, "%" PRId64, &size);
+
+	if (ferror (f)) {
+		offset = size = 0;
+	}
+
+	char hash_buffer[128];
+	fscanf (f, "%s", hash_buffer);
+	hash = hash_buffer;
+}
+
 void
 FrameInfo::write (ostream& s) const
 {
