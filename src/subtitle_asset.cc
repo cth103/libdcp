@@ -302,12 +302,14 @@ struct SubtitleSorter {
 void
 SubtitleAsset::write_xml () const
 {
-	ofstream s (path().string().c_str());
-	write_xml (s);
+	FILE* f = fopen_boost (path (), "r");
+	Glib::ustring const s = xml_as_string ();
+	fwrite (s.c_str(), 1, s.length(), f);
+	fclose (f);
 }
 
-void
-SubtitleAsset::write_xml (ostream& s) const
+Glib::ustring
+SubtitleAsset::xml_as_string () const
 {
 	xmlpp::Document doc;
 	xmlpp::Element* root = doc.create_root_node ("DCSubtitle");
@@ -415,6 +417,6 @@ SubtitleAsset::write_xml (ostream& s) const
 		text->add_child_text ((*i)->text());
 	}
 
-	doc.write_to_stream_formatted (s, "UTF-8");
+	return doc.write_to_string_formatted ("UTF-8");
 }
 

@@ -84,6 +84,7 @@ extern int base64_decode (std::string const & in, unsigned char* out, int out_le
 extern std::string tm_to_string (struct tm *);
 extern std::string utc_offset_to_string (int);
 extern std::string ptime_to_string (boost::posix_time::ptime);
+extern FILE * fopen_boost (boost::filesystem::path, std::string);
 	
 }
 

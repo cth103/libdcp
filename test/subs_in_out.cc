@@ -12,6 +12,6 @@ int main (int argc, char* argv[])
 	
 	libdcp::SubtitleAsset s ("foo", "bar", "baz");
 	s.read_xml (argv[1]);
-	s.write_xml (cout);
+	cout << s.xml_as_string ();
 	return 0;
 }

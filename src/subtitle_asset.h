@@ -159,7 +159,7 @@ public:
 
 	void read_xml (std::string);
 	void write_xml () const;
-	void write_xml (std::ostream &) const;
+	Glib::ustring xml_as_string () const;
 
 private:
 	std::string font_id_to_name (std::string id) const;
