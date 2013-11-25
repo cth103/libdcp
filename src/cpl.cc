@@ -17,7 +17,6 @@
 
 */
 
-#include <fstream>
 #include <libxml/parser.h>
 #include "cpl.h"
 #include "parse/cpl.h"
@@ -35,7 +34,6 @@
 
 using std::string;
 using std::stringstream;
-using std::ofstream;
 using std::ostream;
 using std::list;
 using std::pair;

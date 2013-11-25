@@ -22,7 +22,6 @@
  */
 
 #include <iostream>
-#include <fstream>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <libxml++/nodes/element.h>

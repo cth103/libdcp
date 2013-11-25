@@ -25,7 +25,6 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
-#include <fstream>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <openjpeg.h>

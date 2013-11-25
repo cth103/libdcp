@@ -22,7 +22,6 @@
  */
 
 #include <sstream>
-#include <fstream>
 #include <iomanip>
 #include <cassert>
 #include <iostream>
@@ -51,7 +50,6 @@
 using std::string;
 using std::list;
 using std::stringstream;
-using std::ofstream;
 using std::ostream;
 using std::copy;
 using std::back_inserter;
