@@ -691,7 +691,7 @@ Kumu::FileReader::OpenRead(const char* filename) const
 
   int const wn = MultiByteToWideChar (CP_UTF8, 0, filename, -1, 0, 0);
   wchar_t* buffer = new wchar_t[wn];
-  if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn)) {
+  if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn) == 0) {
 	  delete[] buffer;
 	  return Kumu::RESULT_FAIL;
   }
@@ -825,7 +825,7 @@ Kumu::FileWriter::OpenWrite(const char* filename)
 
   int const wn = MultiByteToWideChar (CP_UTF8, 0, filename, -1, 0, 0);
   wchar_t* buffer = new wchar_t[wn];
-  if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn)) {
+  if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn) == 0) {
 	  delete[] buffer;
 	  return Kumu::RESULT_FAIL;
   }
@@ -862,7 +862,7 @@ Kumu::FileWriter::OpenModify(const char* filename)
 
   int const wn = MultiByteToWideChar (CP_UTF8, 0, filename, -1, 0, 0);
   wchar_t* buffer = new wchar_t[wn];
-  if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn)) {
+  if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn) == 0) {
 	  delete[] buffer;
 	  return Kumu::RESULT_FAIL;
   }
