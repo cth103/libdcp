@@ -109,8 +109,17 @@ do_stat(const char* path, fstat_t* stat_info)
 #ifdef KM_WIN32
   UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
 
-  if ( _stati64(path, stat_info) == (__int64)-1 )
+  int const wn = MultiByteToWideChar (CP_UTF8, 0, filename, -1, 0, 0);
+  wchar_t* buffer = new wchar_t[wn];
+  if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn) == 0) {
+	  delete[] buffer;
+	  return Kumu::RESULT_FAIL;
+  }
+
+  if ( _wstati64(buffer, stat_info) == (__int64)-1 )
     result = Kumu::RESULT_FILEOPEN;
+
+  delete[] buffer;
 
   ::SetErrorMode( prev );
 #else
@@ -695,7 +704,6 @@ Kumu::FileReader::OpenRead(const char* filename) const
 	  delete[] buffer;
 	  return Kumu::RESULT_FAIL;
   }
-
   const_cast<FileReader*>(this)->m_Handle = ::CreateFileW(buffer,
 			  (GENERIC_READ),                // open for reading
 			  FILE_SHARE_READ,               // share for reading
