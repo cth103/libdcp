@@ -689,8 +689,10 @@ Kumu::FileReader::OpenRead(const char* filename) const
   // suppress popup window on error
   UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
 
-  wchar_t buffer[1024];
-  if (MultiByteToWideChar (CP_UTF8, MB_PRECOMPOSED, filename, -1, buffer, 1024)) {
+  int const wn = MultiByteToWideChar (CP_UTF8, 0, filename, -1, 0, 0);
+  whar_t* buffer = new wchar_t[wn];
+  if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn)) {
+	  delete[] buffer;
 	  return Kumu::RESULT_FAIL;
   }
 
@@ -703,6 +705,8 @@ Kumu::FileReader::OpenRead(const char* filename) const
 			  NULL                           // no template file
 			  );
 
+  delete[] buffer;
+	  
   ::SetErrorMode(prev);
 
   return ( m_Handle == INVALID_HANDLE_VALUE ) ?
@@ -819,8 +823,10 @@ Kumu::FileWriter::OpenWrite(const char* filename)
   // suppress popup window on error
   UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
 
-  wchar_t buffer[1024];
-  if (MultiByteToWideChar (CP_UTF8, MB_PRECOMPOSED, filename, -1, buffer, 1024)) {
+  int const wn = MultiByteToWideChar (CP_UTF8, 0, filename, -1, 0, 0);
+  whar_t* buffer = new wchar_t[wn];
+  if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn)) {
+	  delete[] buffer;
 	  return Kumu::RESULT_FAIL;
   }
 
@@ -833,6 +839,8 @@ Kumu::FileWriter::OpenWrite(const char* filename)
 			  NULL                           // no template file
 			  );
 
+  delete[] buffer;
+  
   ::SetErrorMode(prev);
 
   if ( m_Handle == INVALID_HANDLE_VALUE )
@@ -852,8 +860,10 @@ Kumu::FileWriter::OpenModify(const char* filename)
   // suppress popup window on error
   UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
 
-  wchar_t buffer[1024];
-  if (MultiByteToWideChar (CP_UTF8, MB_PRECOMPOSED, filename, -1, buffer, 1024)) {
+  int const wn = MultiByteToWideChar (CP_UTF8, 0, filename, -1, 0, 0);
+  whar_t* buffer = new wchar_t[wn];
+  if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn)) {
+	  delete[] buffer;
 	  return Kumu::RESULT_FAIL;
   }
 
@@ -866,6 +876,8 @@ Kumu::FileWriter::OpenModify(const char* filename)
 			  NULL                           // no template file
 			  );
 
+  delete[] buffer;
+  
   ::SetErrorMode(prev);
 
   if ( m_Handle == INVALID_HANDLE_VALUE )
