@@ -690,7 +690,7 @@ Kumu::FileReader::OpenRead(const char* filename) const
   UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
 
   int const wn = MultiByteToWideChar (CP_UTF8, 0, filename, -1, 0, 0);
-  whar_t* buffer = new wchar_t[wn];
+  wchar_t* buffer = new wchar_t[wn];
   if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn)) {
 	  delete[] buffer;
 	  return Kumu::RESULT_FAIL;
@@ -824,7 +824,7 @@ Kumu::FileWriter::OpenWrite(const char* filename)
   UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
 
   int const wn = MultiByteToWideChar (CP_UTF8, 0, filename, -1, 0, 0);
-  whar_t* buffer = new wchar_t[wn];
+  wchar_t* buffer = new wchar_t[wn];
   if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn)) {
 	  delete[] buffer;
 	  return Kumu::RESULT_FAIL;
@@ -861,7 +861,7 @@ Kumu::FileWriter::OpenModify(const char* filename)
   UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
 
   int const wn = MultiByteToWideChar (CP_UTF8, 0, filename, -1, 0, 0);
-  whar_t* buffer = new wchar_t[wn];
+  wchar_t* buffer = new wchar_t[wn];
   if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn)) {
 	  delete[] buffer;
 	  return Kumu::RESULT_FAIL;
