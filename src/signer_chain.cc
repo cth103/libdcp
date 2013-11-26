@@ -37,11 +37,35 @@ using std::cout;
 
 static void command (string cmd)
 {
-	int const r = system (cmd.c_str ());
-#ifdef LIBDCP_WINDOWS	
-	int const code = r;
+#ifdef LIBDCP_WINDOWS
+	/* We need to use CreateProcessW on Windows so that the UTF-8/16 mess
+	   is handled correctly.
+	*/
+	int const wn = MultiByteToWideChar (CP_UTF8, 0, cmd.c_str(), -1, 0, 0);
+	wchar_t* buffer = new wchar_t[wn];
+	if (MultiByteToWideChar (CP_UTF8, 0, cmd.c_str(), -1, buffer, wn) == 0) {
+		delete[] buffer;
+		return;
+	}
+
+	int code = 1;
+
+	STARTUPINFOW startup_info;
+	memset (&startup_info, 0, sizeof (startup_info));
+	startup_info.cb = sizeof (startup_info);
+	PROCESS_INFORMATION process_info;
+	if (CreateProcessW (0, buffer, 0, 0, FALSE, CREATE_NO_WINDOW, 0, 0, &startup_info, &process_info)) {
+		WaitForSingleObject (process_info.hProcess, INFINITE);
+		CloseHandle (process_info.hProcess);
+		CloseHandle (process_info.hThread);
+		DWORD c;
+		GetExitCodeProcess (process_info.hProcess, &c);
+		code = c;
+	}
+
+	delete[] buffer;
 #else
-	int const code = WEXITSTATUS (r);
+	int const code = WEXITSTATUS (system (cmd.c_str ()));
 #endif
 	if (code) {
 		stringstream s;
@@ -63,7 +87,7 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	
 	/* Create the public key from the private key */
 	stringstream s;
-	s << "\"" << openssl.string() << "\" rsa -outform PEM -pubout -in " << private_key.string() << " > " << public_name.string ();
+	s << "\"" << openssl.string() << "\" rsa -outform PEM -pubout -in " << private_key.string() << " -out " << public_name.string ();
 	command (s.str().c_str ());
 
 	/* Read in the public key from the file */
@@ -72,7 +96,7 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	ifstream f (public_name.string().c_str ());
 
 	bool read = false;
-	while (1) {
+	while (f.good ()) {
 		string line;
 		getline (f, line);
 		if (line.length() >= 10 && line.substr(0, 10) == "-----BEGIN") {

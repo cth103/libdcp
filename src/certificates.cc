@@ -29,6 +29,7 @@
 #include "certificates.h"
 #include "compose.hpp"
 #include "exceptions.h"
+#include "util.h"
 
 using std::list;
 using std::string;
@@ -49,7 +50,7 @@ Certificate::Certificate (boost::filesystem::path filename)
 	: _certificate (0)
 	, _public_key (0)
 {
-	FILE* f = fopen (filename.string().c_str(), "r");
+	FILE* f = fopen_boost (filename, "r");
 	if (!f) {
 		throw FileError ("could not open file", filename);
 	}

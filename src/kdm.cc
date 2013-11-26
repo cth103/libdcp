@@ -50,7 +50,7 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 {
 	/* Read the private key */
 	   
-	FILE* private_key_file = fopen (private_key.string().c_str(), "r");
+	FILE* private_key_file = fopen_boost (private_key, "r");
 	if (!private_key_file) {
 		throw FileError ("could not find RSA private key file", private_key);
 	}
