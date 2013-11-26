@@ -109,9 +109,9 @@ do_stat(const char* path, fstat_t* stat_info)
 #ifdef KM_WIN32
   UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
 
-  int const wn = MultiByteToWideChar (CP_UTF8, 0, filename, -1, 0, 0);
+  int const wn = MultiByteToWideChar (CP_UTF8, 0, path, -1, 0, 0);
   wchar_t* buffer = new wchar_t[wn];
-  if (MultiByteToWideChar (CP_UTF8, 0, filename, -1, buffer, wn) == 0) {
+  if (MultiByteToWideChar (CP_UTF8, 0, path, -1, buffer, wn) == 0) {
 	  delete[] buffer;
 	  return Kumu::RESULT_FAIL;
   }
