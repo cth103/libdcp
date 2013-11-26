@@ -679,6 +679,7 @@ Kumu::FileWriter::StopHashing()
 //------------------------------------------------------------------------------------------
 //
 
+/** @param filename File name (UTF-8 encoded) */
 Kumu::Result_t
 Kumu::FileReader::OpenRead(const char* filename) const
 {
@@ -688,7 +689,12 @@ Kumu::FileReader::OpenRead(const char* filename) const
   // suppress popup window on error
   UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
 
-  const_cast<FileReader*>(this)->m_Handle = ::CreateFileA(filename,
+  wchar_t buffer[1024];
+  if (MultiByteToWideChar (CP_UTF8, MB_PRECOMPOSED, filename, -1, buffer, 1024)) {
+	  return Kumu::RESULT_FAIL;
+  }
+
+  const_cast<FileReader*>(this)->m_Handle = ::CreateFileW(buffer,
 			  (GENERIC_READ),                // open for reading
 			  FILE_SHARE_READ,               // share for reading
 			  NULL,                          // no security
@@ -803,7 +809,7 @@ Kumu::FileReader::Read(byte_t* buf, ui32_t buf_len, ui32_t* read_count) const
 //------------------------------------------------------------------------------------------
 //
 
-//
+/** @param filename File name (UTF-8 encoded) */
 Kumu::Result_t
 Kumu::FileWriter::OpenWrite(const char* filename)
 {
@@ -813,7 +819,12 @@ Kumu::FileWriter::OpenWrite(const char* filename)
   // suppress popup window on error
   UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
 
-  m_Handle = ::CreateFileA(filename,
+  wchar_t buffer[1024];
+  if (MultiByteToWideChar (CP_UTF8, MB_PRECOMPOSED, filename, -1, buffer, 1024)) {
+	  return Kumu::RESULT_FAIL;
+  }
+
+  m_Handle = ::CreateFileW(buffer,
 			  (GENERIC_WRITE|GENERIC_READ),  // open for reading
 			  FILE_SHARE_READ,               // share for reading
 			  NULL,                          // no security
@@ -831,7 +842,7 @@ Kumu::FileWriter::OpenWrite(const char* filename)
   return Kumu::RESULT_OK;
 }
 
-//
+/** @param filename File name (UTF-8 encoded) */
 Kumu::Result_t
 Kumu::FileWriter::OpenModify(const char* filename)
 {
@@ -841,7 +852,12 @@ Kumu::FileWriter::OpenModify(const char* filename)
   // suppress popup window on error
   UINT prev = ::SetErrorMode(SEM_FAILCRITICALERRORS|SEM_NOOPENFILEERRORBOX);
 
-  m_Handle = ::CreateFileA(filename,
+  wchar_t buffer[1024];
+  if (MultiByteToWideChar (CP_UTF8, MB_PRECOMPOSED, filename, -1, buffer, 1024)) {
+	  return Kumu::RESULT_FAIL;
+  }
+
+  m_Handle = ::CreateFileW(buffer,
 			  (GENERIC_WRITE|GENERIC_READ),  // open for reading
 			  FILE_SHARE_READ,               // share for reading
 			  NULL,                          // no security
