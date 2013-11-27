@@ -65,7 +65,8 @@ static void command (string cmd)
 
 	delete[] buffer;
 #else
-	int const code = WEXITSTATUS (system (cmd.c_str ()));
+	int const r = system (cmd.c_str ());
+	int const code = WEXITSTATUS (r);
 #endif
 	if (code) {
 		stringstream s;
