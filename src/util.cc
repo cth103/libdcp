@@ -161,13 +161,13 @@ libdcp::content_kind_to_string (ContentKind kind)
 libdcp::ContentKind
 libdcp::content_kind_from_string (string type)
 {
-	/* XXX: should probably just convert type to lower-case and have done with it */
+	transform (type.begin(), type.end(), type.begin(), ::tolower);
 	
 	if (type == "feature") {
 		return FEATURE;
 	} else if (type == "short") {
 		return SHORT;
-	} else if (type == "trailer" || type == "Trailer") {
+	} else if (type == "trailer") {
 		return TRAILER;
 	} else if (type == "test") {
 		return TEST;
@@ -175,7 +175,7 @@ libdcp::content_kind_from_string (string type)
 		return TRANSITIONAL;
 	} else if (type == "rating") {
 		return RATING;
-	} else if (type == "teaser" || type == "Teaser") {
+	} else if (type == "teaser") {
 		return TEASER;
 	} else if (type == "policy") {
 		return POLICY;
