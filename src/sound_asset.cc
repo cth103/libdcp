@@ -90,13 +90,16 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 	ASDCP::Rational asdcp_edit_rate (_edit_rate, 1);
 
 	assert (_channels > 0);
- 	ASDCP::PCM::WAVParser pcm_parser_channel[_channels];
-	if (pcm_parser_channel[0].OpenRead (get_path(LEFT).string().c_str(), asdcp_edit_rate)) {
+ 	ASDCP::PCM::WAVParser* pcm_parser_channel[_channels];
+	for (int i = 0; i < _channels; ++i) {
+		pcm_parser_channel[i] = new ASDCP::PCM::WAVParser ();
+	}
+	if (pcm_parser_channel[0]->OpenRead (get_path(LEFT).string().c_str(), asdcp_edit_rate)) {
 		boost::throw_exception (FileError ("could not open WAV file for reading", get_path(LEFT)));
 	}
 	
 	ASDCP::PCM::AudioDescriptor audio_desc;
-	pcm_parser_channel[0].FillAudioDescriptor (audio_desc);
+	pcm_parser_channel[0]->FillAudioDescriptor (audio_desc);
 	audio_desc.ChannelCount = 0;
 	audio_desc.BlockAlign = 0;
 	audio_desc.EditRate = asdcp_edit_rate;
@@ -116,22 +119,26 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 
 	assert (int(_channels) <= int(sizeof(channels) / sizeof(Channel)));
 
-	ASDCP::PCM::FrameBuffer frame_buffer_channel[_channels];
-	ASDCP::PCM::AudioDescriptor audio_desc_channel[_channels];
+	ASDCP::PCM::FrameBuffer* frame_buffer_channel[_channels];
+	ASDCP::PCM::AudioDescriptor* audio_desc_channel[_channels];
+	for (int i = 0; i < _channels; ++i) {
+		frame_buffer_channel[i] = new ASDCP::PCM::FrameBuffer ();
+		audio_desc_channel[i] = new ASDCP::PCM::AudioDescriptor ();
+	}
 
 	for (int i = 0; i < _channels; ++i) {
 
 		boost::filesystem::path const path = get_path (channels[i]);
 		
-		if (ASDCP_FAILURE (pcm_parser_channel[i].OpenRead (path.string().c_str(), asdcp_edit_rate))) {
+		if (ASDCP_FAILURE (pcm_parser_channel[i]->OpenRead (path.string().c_str(), asdcp_edit_rate))) {
 			boost::throw_exception (FileError ("could not open WAV file for reading", path));
 		}
 
-		pcm_parser_channel[i].FillAudioDescriptor (audio_desc_channel[i]);
-		frame_buffer_channel[i].Capacity (ASDCP::PCM::CalcFrameBufferSize (audio_desc_channel[i]));
+		pcm_parser_channel[i]->FillAudioDescriptor (*audio_desc_channel[i]);
+		frame_buffer_channel[i]->Capacity (ASDCP::PCM::CalcFrameBufferSize (*audio_desc_channel[i]));
 
-		audio_desc.ChannelCount += audio_desc_channel[i].ChannelCount;
-		audio_desc.BlockAlign += audio_desc_channel[i].BlockAlign;
+		audio_desc.ChannelCount += audio_desc_channel[i]->ChannelCount;
+		audio_desc.BlockAlign += audio_desc_channel[i]->BlockAlign;
 	}
 
 	ASDCP::PCM::FrameBuffer frame_buffer;
@@ -149,20 +156,20 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 
 		for (int j = 0; j < _channels; ++j) {
-			memset (frame_buffer_channel[j].Data(), 0, frame_buffer_channel[j].Capacity());
-			if (ASDCP_FAILURE (pcm_parser_channel[j].ReadFrame (frame_buffer_channel[j]))) {
+			memset (frame_buffer_channel[j]->Data(), 0, frame_buffer_channel[j]->Capacity());
+			if (ASDCP_FAILURE (pcm_parser_channel[j]->ReadFrame (*frame_buffer_channel[j]))) {
 				boost::throw_exception (MiscError ("could not read audio frame"));
 			}
 		}
 
 		byte_t *data_s = frame_buffer.Data();
 		byte_t *data_e = data_s + frame_buffer.Capacity();
-		byte_t sample_size = ASDCP::PCM::CalcSampleSize (audio_desc_channel[0]);
+		byte_t sample_size = ASDCP::PCM::CalcSampleSize (*audio_desc_channel[0]);
 		int offset = 0;
 
 		while (data_s < data_e) {
 			for (int j = 0; j < _channels; ++j) {
-				byte_t* frame = frame_buffer_channel[j].Data() + offset;
+				byte_t* frame = frame_buffer_channel[j]->Data() + offset;
 				memcpy (data_s, frame, sample_size);
 				data_s += sample_size;
 			}
@@ -178,7 +185,15 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 		}
 	}
 
-	if (ASDCP_FAILURE (mxf_writer.Finalize())) {
+	bool const failed = ASDCP_FAILURE (mxf_writer.Finalize());
+
+	for (int i = 0; i < _channels; ++i) {
+		delete pcm_parser_channel[i];
+		delete frame_buffer_channel[i];
+		delete audio_desc_channel[i];
+	}
+
+	if (failed) {
 		boost::throw_exception (MiscError ("could not finalise audio MXF"));
 	}
 }
