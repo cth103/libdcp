@@ -54,13 +54,18 @@ static void command (string cmd)
 	memset (&startup_info, 0, sizeof (startup_info));
 	startup_info.cb = sizeof (startup_info);
 	PROCESS_INFORMATION process_info;
+
+	/* XXX: this doesn't actually seem to work; failing commands end up with
+	   a return code of 0
+	*/
 	if (CreateProcessW (0, buffer, 0, 0, FALSE, CREATE_NO_WINDOW, 0, 0, &startup_info, &process_info)) {
 		WaitForSingleObject (process_info.hProcess, INFINITE);
+		DWORD c;
+		if (GetExitCodeProcess (process_info.hProcess, &c)) {
+			code = c;
+		}
 		CloseHandle (process_info.hProcess);
 		CloseHandle (process_info.hThread);
-		DWORD c;
-		GetExitCodeProcess (process_info.hProcess, &c);
-		code = c;
 	}
 
 	delete[] buffer;
@@ -85,7 +90,7 @@ static string
 public_key_digest (boost::filesystem::path private_key, boost::filesystem::path openssl)
 {
 	boost::filesystem::path public_name = private_key.string() + ".public";
-	
+
 	/* Create the public key from the private key */
 	stringstream s;
 	s << "\"" << openssl.string() << "\" rsa -outform PEM -pubout -in " << private_key.string() << " -out " << public_name.string ();
@@ -95,6 +100,9 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 
 	string pub;
 	ifstream f (public_name.string().c_str ());
+	if (!f.good ()) {
+		throw libdcp::MiscError ("public key not found");
+	}
 
 	bool read = false;
 	while (f.good ()) {

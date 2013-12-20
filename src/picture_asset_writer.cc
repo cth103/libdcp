@@ -49,8 +49,13 @@ FrameInfo::FrameInfo (istream& s)
 
 FrameInfo::FrameInfo (FILE* f)
 {
-	fscanf (f, "%" PRId64, &offset);
-	fscanf (f, "%" PRId64, &size);
+#ifdef LIBDCP_WINDOWS
+	fscanf (f, "%I64u", &offset);
+	fscanf (f, "%I64u", &size);
+#else	
+	fscanf (f, "%" SCNu64, &offset);
+	fscanf (f, "%" SCNu64, &size);
+#endif	
 
 	if (ferror (f)) {
 		offset = size = 0;
@@ -70,7 +75,11 @@ FrameInfo::write (ostream& s) const
 void
 FrameInfo::write (FILE* f) const
 {
-	fprintf (f, "%" PRId64 " %" PRId64 " %s", offset, size, hash.c_str ());
+#ifdef LIBDCP_WINDOWS	
+	fprintf (f, "%I64u %I64u %s", offset, size, hash.c_str ());
+#else	
+	fprintf (f, "%" PRIu64 " %" PRIu64 " %s", offset, size, hash.c_str ());
+#endif	
 }
 
 
