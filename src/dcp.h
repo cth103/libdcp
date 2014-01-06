@@ -129,7 +129,7 @@ private:
 	std::string write_pkl (std::string pkl_uuid, bool, XMLMetadata const &, boost::shared_ptr<const Signer>) const;
 	
 	/** Write the VOLINDEX file */
-	void write_volindex () const;
+	void write_volindex (bool) const;
 
 	/** Write the ASSETMAP file.
 	 *  @param pkl_uuid UUID of our PKL.

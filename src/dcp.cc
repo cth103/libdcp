@@ -74,7 +74,7 @@ DCP::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<const Sig
 	string pkl_uuid = make_uuid ();
 	string pkl_path = write_pkl (pkl_uuid, interop, metadata, signer);
 	
-	write_volindex ();
+	write_volindex (interop);
 	write_assetmap (pkl_uuid, boost::filesystem::file_size (pkl_path), interop, metadata);
 }
 
@@ -127,11 +127,15 @@ DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, sha
 }
 
 void
-DCP::write_volindex () const
+DCP::write_volindex (bool interop) const
 {
 	boost::filesystem::path p;
 	p /= _directory;
-	p /= "VOLINDEX.xml";
+	if (interop) {
+		p /= "VOLINDEX";
+	} else {
+		p /= "VOLINDEX.xml";
+	}
 
 	xmlpp::Document doc;
 	xmlpp::Element* root = doc.create_root_node ("VolumeIndex", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
@@ -144,7 +148,11 @@ DCP::write_assetmap (string pkl_uuid, int pkl_length, bool interop, XMLMetadata 
 {
 	boost::filesystem::path p;
 	p /= _directory;
-	p /= "ASSETMAP.xml";
+	if (interop) {
+		p /= "ASSETMAP";
+	} else {
+		p /= "ASSETMAP.xml";
+	}
 
 	xmlpp::Document doc;
 	xmlpp::Element* root;
