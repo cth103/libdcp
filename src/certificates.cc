@@ -19,6 +19,7 @@
 
 #include <sstream>
 #include <vector>
+#include <cerrno>
 #include <boost/algorithm/string.hpp>
 #include <openssl/x509.h>
 #include <openssl/ssl.h>
@@ -52,7 +53,7 @@ Certificate::Certificate (boost::filesystem::path filename)
 {
 	FILE* f = fopen_boost (filename, "r");
 	if (!f) {
-		throw FileError ("could not open file", filename);
+		throw FileError ("could not open file", filename, errno);
 	}
 	
 	if (!PEM_read_X509 (f, &_certificate, 0, 0)) {

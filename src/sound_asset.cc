@@ -60,8 +60,9 @@ void
 SoundAsset::read ()
 {
 	ASDCP::PCM::MXFReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
+	Kumu::Result_t r = reader.OpenRead (path().string().c_str());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
 	}
 
 	ASDCP::PCM::AudioDescriptor desc;
@@ -94,8 +95,10 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 	for (int i = 0; i < _channels; ++i) {
 		pcm_parser_channel[i] = new ASDCP::PCM::WAVParser ();
 	}
-	if (pcm_parser_channel[0]->OpenRead (get_path(LEFT).string().c_str(), asdcp_edit_rate)) {
-		boost::throw_exception (FileError ("could not open WAV file for reading", get_path(LEFT)));
+
+	Kumu::Result_t r = pcm_parser_channel[0]->OpenRead (get_path(LEFT).string().c_str(), asdcp_edit_rate);
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (FileError ("could not open WAV file for reading", get_path(LEFT), r));
 	}
 	
 	ASDCP::PCM::AudioDescriptor audio_desc;
@@ -130,8 +133,9 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 
 		boost::filesystem::path const path = get_path (channels[i]);
 		
-		if (ASDCP_FAILURE (pcm_parser_channel[i]->OpenRead (path.string().c_str(), asdcp_edit_rate))) {
-			boost::throw_exception (FileError ("could not open WAV file for reading", path));
+		Kumu::Result_t r = pcm_parser_channel[i]->OpenRead (path.string().c_str(), asdcp_edit_rate);
+		if (ASDCP_FAILURE (r)) {
+			boost::throw_exception (FileError ("could not open WAV file for reading", path, r));
 		}
 
 		pcm_parser_channel[i]->FillAudioDescriptor (*audio_desc_channel[i]);
@@ -149,8 +153,9 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 	MXFAsset::fill_writer_info (&writer_info, _uuid, _interop, _metadata);
 
 	ASDCP::PCM::MXFWriter mxf_writer;
-	if (ASDCP_FAILURE (mxf_writer.OpenWrite (path().string().c_str(), writer_info, audio_desc))) {
-		boost::throw_exception (FileError ("could not open audio MXF for writing", path().string()));
+	r = mxf_writer.OpenWrite (path().string().c_str(), writer_info, audio_desc);
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (FileError ("could not open audio MXF for writing", path().string(), r));
 	}
 	
 	for (int i = 0; i < _intrinsic_duration; ++i) {
@@ -212,13 +217,15 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::f
 	}
 		     
 	ASDCP::PCM::MXFReader reader_A;
-	if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
+	Kumu::Result_t r = reader_A.OpenRead (path().string().c_str());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
 	}
 
 	ASDCP::PCM::MXFReader reader_B;
-	if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
+	r = reader_B.OpenRead (other->path().string().c_str());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
 	}
 
 	ASDCP::PCM::AudioDescriptor desc_A;
@@ -327,8 +334,9 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
 	
 	_asset->fill_writer_info (&_state->writer_info, _asset->uuid (), _asset->interop(), _asset->metadata());
 	
-	if (ASDCP_FAILURE (_state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->audio_desc))) {
-		boost::throw_exception (FileError ("could not open audio MXF for writing", _asset->path().string()));
+	Kumu::Result_t r = _state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->audio_desc);
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (FileError ("could not open audio MXF for writing", _asset->path().string(), r));
 	}
 }
 

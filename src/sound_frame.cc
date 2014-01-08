@@ -28,8 +28,9 @@ using namespace libdcp;
 SoundFrame::SoundFrame (string mxf_path, int n, ASDCP::AESDecContext* c)
 {
 	ASDCP::PCM::MXFReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (mxf_path.c_str()))) {
-		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path));
+	Kumu::Result_t r = reader.OpenRead (mxf_path.c_str());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path, r));
 	}
 
 	/* XXX: unfortunate guesswork on this buffer size */

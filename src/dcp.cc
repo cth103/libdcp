@@ -228,7 +228,7 @@ DCP::read_assets ()
 		}
 		
 	} catch (FileError& e) {
-		boost::throw_exception (FileError ("could not load AssetMap file", _files.asset_map));
+		boost::throw_exception (FileError ("could not load AssetMap file", _files.asset_map, e.number ()));
 	}
 
 	for (list<shared_ptr<libdcp::parse::AssetMapAsset> >::const_iterator i = asset_map->assets.begin(); i != asset_map->assets.end(); ++i) {
@@ -266,18 +266,18 @@ DCP::read_assets ()
 	}
 	
 	if (_files.cpls.empty ()) {
-		boost::throw_exception (FileError ("no CPL files found", ""));
+		boost::throw_exception (DCPReadError ("no CPL files found"));
 	}
 
 	if (_files.pkl.empty ()) {
-		boost::throw_exception (FileError ("no PKL file found", ""));
+		boost::throw_exception (DCPReadError ("no PKL file found"));
 	}
 
 	shared_ptr<parse::PKL> pkl;
 	try {
 		pkl.reset (new parse::PKL (_files.pkl));
 	} catch (FileError& e) {
-		boost::throw_exception (FileError ("could not load PKL file", _files.pkl));
+		boost::throw_exception (FileError ("could not load PKL file", _files.pkl, e.number ()));
 	}
 
 	_asset_maps.push_back (make_pair (boost::filesystem::absolute (_directory).string(), asset_map));

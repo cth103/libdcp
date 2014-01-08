@@ -99,7 +99,7 @@ Signer::add_signature_value (xmlpp::Node* parent, string ns) const
 
 	signature_context->signKey = xmlSecCryptoAppKeyLoad (_key.string().c_str(), xmlSecKeyDataFormatPem, 0, 0, 0);
 	if (signature_context->signKey == 0) {
-		throw FileError ("could not load private key file", _key);
+		throw FileError ("could not load private key file", _key, 0);
 	}
 
 	/* XXX: set key name to the file name: is this right? */

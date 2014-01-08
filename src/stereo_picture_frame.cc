@@ -41,8 +41,9 @@ using namespace libdcp;
 StereoPictureFrame::StereoPictureFrame (boost::filesystem::path mxf_path, int n)
 {
 	ASDCP::JP2K::MXFSReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (mxf_path.string().c_str()))) {
-		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path));
+	Kumu::Result_t r = reader.OpenRead (mxf_path.string().c_str());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path, r));
 	}
 
 	/* XXX: unfortunate guesswork on this buffer size */

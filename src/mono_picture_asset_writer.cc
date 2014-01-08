@@ -71,7 +71,7 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 	string hash;
 	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _state->encryption_context, 0, &hash);
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF (" + lexical_cast<string> (int(r)) + ")", _asset->path().string()));
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string(), r));
 	}
 
 	++_frames_written;
@@ -84,8 +84,9 @@ MonoPictureAssetWriter::fake_write (int size)
 	assert (_started);
 	assert (!_finalized);
 
-	if (ASDCP_FAILURE (_state->mxf_writer.FakeWriteFrame (size))) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
+	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size);
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string(), r));
 	}
 
 	++_frames_written;
@@ -96,8 +97,9 @@ MonoPictureAssetWriter::finalize ()
 {
 	assert (!_finalized);
 	
-	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
-		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _asset->path().string()));
+	Kumu::Result_t r = _state->mxf_writer.Finalize();
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _asset->path().string(), r));
 	}
 
 	_finalized = true;

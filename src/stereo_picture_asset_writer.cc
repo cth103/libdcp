@@ -70,16 +70,16 @@ StereoPictureAssetWriter::write (uint8_t* data, int size)
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
-	if (ASDCP_FAILURE (
-		    _state->mxf_writer.WriteFrame (
-			    _state->frame_buffer,
-			    _next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
-			    _state->encryption_context,
-			    0,
-			    &hash)
-		    )) {
-		
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
+	Kumu::Result_t r = _state->mxf_writer.WriteFrame (
+		_state->frame_buffer,
+		_next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
+		_state->encryption_context,
+		0,
+		&hash
+		);
+
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string(), r));
 	}
 
 	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
@@ -94,8 +94,9 @@ StereoPictureAssetWriter::fake_write (int size)
 	assert (_started);
 	assert (!_finalized);
 
-	if (ASDCP_FAILURE (_state->mxf_writer.FakeWriteFrame (size))) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string()));
+	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size);
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string(), r));
 	}
 
 	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
@@ -107,8 +108,9 @@ StereoPictureAssetWriter::finalize ()
 {
 	assert (!_finalized);
 	
-	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
-		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _asset->path().string()));
+	Kumu::Result_t r = _state->mxf_writer.Finalize();
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _asset->path().string(), r));
 	}
 
 	_finalized = true;

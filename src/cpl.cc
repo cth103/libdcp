@@ -70,7 +70,7 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 	try {
 		cpl.reset (new parse::CPL (file));
 	} catch (FileError& e) {
-		boost::throw_exception (FileError ("could not load CPL file", file));
+		boost::throw_exception (FileError ("could not load CPL file", file, e.number ()));
 	}
 	
 	/* Now cherry-pick the required bits into our own data structure */

@@ -38,13 +38,15 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 	}
 
 	ASDCP::JP2K::MXFSReader reader_A;
-	if (ASDCP_FAILURE (reader_A.OpenRead (path().string().c_str()))) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
+	Kumu::Result_t r = reader_A.OpenRead (path().string().c_str());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
 	}
 	
 	ASDCP::JP2K::MXFSReader reader_B;
-	if (ASDCP_FAILURE (reader_B.OpenRead (other->path().string().c_str()))) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
+	r = reader_B.OpenRead (other->path().string().c_str());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc_A;
@@ -97,8 +99,9 @@ void
 StereoPictureAsset::read ()
 {
 	ASDCP::JP2K::MXFSReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (path().string().c_str()))) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string()));
+	Kumu::Result_t r = reader.OpenRead (path().string().c_str());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc;

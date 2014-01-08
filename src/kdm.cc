@@ -52,13 +52,13 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 	   
 	FILE* private_key_file = fopen_boost (private_key, "r");
 	if (!private_key_file) {
-		throw FileError ("could not find RSA private key file", private_key);
+		throw FileError ("could not find RSA private key file", private_key, errno);
 	}
 	
 	RSA* rsa = PEM_read_RSAPrivateKey (private_key_file, 0, 0, 0);
 	fclose (private_key_file);	
 	if (!rsa) {
-		throw FileError ("could not read RSA private key file", private_key);
+		throw FileError ("could not read RSA private key file", private_key, errno);
 	}
 
 	/* Use it to decrypt the keys */

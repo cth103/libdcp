@@ -82,8 +82,9 @@ string
 libdcp::make_digest (string filename, boost::function<void (float)>* progress)
 {
 	Kumu::FileReader reader;
-	if (ASDCP_FAILURE (reader.OpenRead (filename.c_str ()))) {
-		boost::throw_exception (FileError ("could not open file to compute digest", filename));
+	Kumu::Result_t r = reader.OpenRead (filename.c_str ());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (FileError ("could not open file to compute digest", filename, r));
 	}
 	
 	SHA_CTX sha;
@@ -101,7 +102,7 @@ libdcp::make_digest (string filename, boost::function<void (float)>* progress)
 		if (r == Kumu::RESULT_ENDOFFILE) {
 			break;
 		} else if (ASDCP_FAILURE (r)) {
-			boost::throw_exception (FileError ("could not read file to compute digest", filename));
+			boost::throw_exception (FileError ("could not read file to compute digest", filename, r));
 		}
 		
 		SHA1_Update (&sha, read_buffer.Data(), read);

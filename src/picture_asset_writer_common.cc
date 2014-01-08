@@ -44,15 +44,16 @@ void libdcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, u
 	
 	asset->fill_writer_info (&state->writer_info, asset->uuid(), writer->_asset->interop(), writer->_asset->metadata());
 	
-	if (ASDCP_FAILURE (state->mxf_writer.OpenWrite (
-				   asset->path().string().c_str(),
-				   state->writer_info,
-				   state->picture_descriptor,
-				   16384,
-				   writer->_overwrite)
-		    )) {
-		
-		boost::throw_exception (MXFFileError ("could not open MXF file for writing", asset->path().string()));
+	Kumu::Result_t r = state->mxf_writer.OpenWrite (
+		asset->path().string().c_str(),
+		state->writer_info,
+		state->picture_descriptor,
+		16384,
+		writer->_overwrite
+		);
+
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for writing", asset->path().string(), r));
 	}
 
 	writer->_started = true;
