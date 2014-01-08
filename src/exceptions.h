@@ -21,7 +21,6 @@
 #define LIBDCP_EXCEPTIONS_H
 
 #include <boost/filesystem.hpp>
-#include "compose.hpp"
 
 /** @file  src/exceptions.h
  *  @brief Exceptions thrown by libdcp.
@@ -34,12 +33,7 @@ namespace libdcp
 class FileError : public std::exception
 {
 public:
-	FileError (std::string const & message, boost::filesystem::path filename, int number)
-		: _message (String::compose ("%1 (error %2) (%3)", message, filename.string(), number))
-		, _filename (filename)
-		, _number (number)
-	{}
-			    
+	FileError (std::string const & message, boost::filesystem::path filename, int number);
 	~FileError () throw () {}
 
 	/** @return error message */
