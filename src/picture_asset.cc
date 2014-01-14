@@ -73,7 +73,9 @@ PictureAsset::write_to_cpl (xmlpp::Element* node, bool interop) const
 
 	(*i)->add_child ("FrameRate")->add_child_text (lexical_cast<string> (_edit_rate * edit_rate_factor ()) + " 1");
 	if (interop) {
-		(*i)->add_child ("ScreenAspectRatio")->add_child_text (lexical_cast<string> (float (_size.width) / _size.height));
+		stringstream s;
+		s << std::fixed << std::setprecision (2) << (float (_size.width) / _size.height);
+		(*i)->add_child ("ScreenAspectRatio")->add_child_text (s.str ());
 	} else {
 		(*i)->add_child ("ScreenAspectRatio")->add_child_text (lexical_cast<string> (_size.width) + " " + lexical_cast<string> (_size.height));
 	}
