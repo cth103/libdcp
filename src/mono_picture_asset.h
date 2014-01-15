@@ -31,7 +31,19 @@ public:
 	MonoPictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name);
 
 	void read ();
+
+	/** The following parameters must be set up (if required) before calling this:
+	 *      Interop mode (set_interop)
+	 *      Edit rate    (set_edit_rate)
+	 *      MXF Metadata (set_metadata)
+	 */
 	void create (std::vector<boost::filesystem::path> const & files);
+
+	/** The following parameters must be set up (if required) before calling this:
+	 *      Interop mode (set_interop)
+	 *      Edit rate    (set_edit_rate)
+	 *      MXF Metadata (set_metadata)
+	 */
 	void create (boost::function<boost::filesystem::path (int)> get_path);
 
 	/** Start a progressive write to a MonoPictureAsset */

@@ -54,6 +54,11 @@ public:
 	PictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name);
 
 	/** Start a progressive write to this asset.
+	 *  The following parameters must be set up (if required) before calling this:
+	 *      Interop mode (set_interop)
+	 *      Edit rate    (set_edit_rate)
+	 *      MXF Metadata (set_metadata)
+	 *      
 	 *  @param overwrite true to overwrite an existing MXF file; in this mode, writing can be resumed to a partially-written MXF; false if the
 	 *  MXF file does not exist.
 	 */

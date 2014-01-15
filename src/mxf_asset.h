@@ -94,6 +94,9 @@ public:
 		return _metadata;
 	}
 
+	/** Set whether or not the asset should be written in Interop mode.
+	 *  @param i true to use interop.
+	 */
 	void set_interop (bool i) {
 		_interop = i;
 	}
