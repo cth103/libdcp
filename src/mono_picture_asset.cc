@@ -58,7 +58,7 @@ MonoPictureAsset::create (boost::function<boost::filesystem::path (int)> get_pat
 	picture_desc.EditRate = ASDCP::Rational (_edit_rate, 1);
 	
 	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info, _uuid, _metadata);
+	fill_writer_info (&writer_info);
 	
 	ASDCP::JP2K::MXFWriter mxf_writer;
 	r = mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc, 16384, false);

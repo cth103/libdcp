@@ -55,9 +55,8 @@ public:
 	
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
-	 *  @param uuid uuid to use.
 	 */
-	void fill_writer_info (ASDCP::WriterInfo* w, std::string uuid, MXFMetadata const & metadata);
+	void fill_writer_info (ASDCP::WriterInfo* w);
 
 	void set_progress (boost::signals2::signal<void (float)>* progress) {
 		_progress = progress;

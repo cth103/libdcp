@@ -42,7 +42,7 @@ void libdcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, u
 	state->j2k_parser.FillPictureDescriptor (state->picture_descriptor);
 	state->picture_descriptor.EditRate = ASDCP::Rational (asset->edit_rate(), 1);
 	
-	asset->fill_writer_info (&state->writer_info, asset->uuid(), writer->_asset->metadata());
+	asset->fill_writer_info (&state->writer_info);
 	
 	Kumu::Result_t r = state->mxf_writer.OpenWrite (
 		asset->path().string().c_str(),

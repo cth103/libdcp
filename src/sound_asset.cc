@@ -150,7 +150,7 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 	frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (audio_desc));
 
 	ASDCP::WriterInfo writer_info;
-	MXFAsset::fill_writer_info (&writer_info, _uuid, _metadata);
+	MXFAsset::fill_writer_info (&writer_info);
 
 	ASDCP::PCM::MXFWriter mxf_writer;
 	r = mxf_writer.OpenWrite (path().string().c_str(), writer_info, audio_desc);
@@ -332,7 +332,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
 	_state->frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
 	memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
 	
-	_asset->fill_writer_info (&_state->writer_info, _asset->uuid (), _asset->metadata());
+	_asset->fill_writer_info (&_state->writer_info);
 	
 	Kumu::Result_t r = _state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->audio_desc);
 	if (ASDCP_FAILURE (r)) {
