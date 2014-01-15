@@ -35,7 +35,7 @@ using boost::dynamic_pointer_cast;
 using namespace libdcp;
 
 void
-Reel::write_to_cpl (xmlpp::Element* node, bool interop) const
+Reel::write_to_cpl (xmlpp::Element* node) const
 {
 	xmlpp::Element* reel = node->add_child ("Reel");
 	reel->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
@@ -43,20 +43,20 @@ Reel::write_to_cpl (xmlpp::Element* node, bool interop) const
 	
 	if (_main_picture && dynamic_pointer_cast<MonoPictureAsset> (_main_picture)) {
 		/* Mono pictures come before other stuff... */
-		_main_picture->write_to_cpl (asset_list, interop);
+		_main_picture->write_to_cpl (asset_list);
 	}
 
 	if (_main_sound) {
-		_main_sound->write_to_cpl (asset_list, interop);
+		_main_sound->write_to_cpl (asset_list);
 	}
 
 	if (_main_subtitle) {
-		_main_subtitle->write_to_cpl (asset_list, interop);
+		_main_subtitle->write_to_cpl (asset_list);
 	}
 
 	if (_main_picture && dynamic_pointer_cast<StereoPictureAsset> (_main_picture)) {
 		/* ... but stereo pictures must come after */
-		_main_picture->write_to_cpl (asset_list, interop);
+		_main_picture->write_to_cpl (asset_list);
 	}
 }
 	

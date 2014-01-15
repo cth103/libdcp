@@ -50,15 +50,14 @@ public:
 	~MXFAsset ();
 
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
-	virtual void write_to_cpl (xmlpp::Element *, bool interop) const;
+	virtual void write_to_cpl (xmlpp::Element *) const;
 	virtual std::string key_type () const = 0;
 	
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
 	 *  @param uuid uuid to use.
-	 *  @param true to label as interop, false for SMPTE.
 	 */
-	void fill_writer_info (ASDCP::WriterInfo* w, std::string uuid, bool interop, MXFMetadata const & metadata);
+	void fill_writer_info (ASDCP::WriterInfo* w, std::string uuid, MXFMetadata const & metadata);
 
 	void set_progress (boost::signals2::signal<void (float)>* progress) {
 		_progress = progress;
@@ -107,7 +106,7 @@ public:
 
 protected:
 	virtual std::string cpl_node_name () const = 0;
-	virtual std::pair<std::string, std::string> cpl_node_attribute (bool) const {
+	virtual std::pair<std::string, std::string> cpl_node_attribute () const {
 		return std::make_pair ("", "");
 	}
 	

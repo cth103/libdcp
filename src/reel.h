@@ -64,7 +64,7 @@ public:
 		return _main_subtitle;
 	}
 
-	void write_to_cpl (xmlpp::Element *, bool) const;
+	void write_to_cpl (xmlpp::Element *) const;
 
 	bool encrypted () const;
 

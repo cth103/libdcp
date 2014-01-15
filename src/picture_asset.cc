@@ -59,9 +59,9 @@ PictureAsset::PictureAsset (boost::filesystem::path directory, boost::filesystem
 }
 
 void
-PictureAsset::write_to_cpl (xmlpp::Element* node, bool interop) const
+PictureAsset::write_to_cpl (xmlpp::Element* node) const
 {
-	MXFAsset::write_to_cpl (node, interop);
+	MXFAsset::write_to_cpl (node);
 	
 	xmlpp::Node::NodeList c = node->get_children ();
 	xmlpp::Node::NodeList::iterator i = c.begin();
@@ -72,7 +72,7 @@ PictureAsset::write_to_cpl (xmlpp::Element* node, bool interop) const
 	assert (i != c.end ());
 
 	(*i)->add_child ("FrameRate")->add_child_text (lexical_cast<string> (_edit_rate * edit_rate_factor ()) + " 1");
-	if (interop) {
+	if (_interop) {
 		stringstream s;
 		s << std::fixed << std::setprecision (2) << (float (_size.width) / _size.height);
 		(*i)->add_child ("ScreenAspectRatio")->add_child_text (s.str ());

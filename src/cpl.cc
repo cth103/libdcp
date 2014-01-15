@@ -228,7 +228,7 @@ CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<const Sig
 	xmlpp::Element* reel_list = root->add_child ("ReelList");
 	
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
-		(*i)->write_to_cpl (reel_list, interop);
+		(*i)->write_to_cpl (reel_list);
 	}
 
 	if (signer) {

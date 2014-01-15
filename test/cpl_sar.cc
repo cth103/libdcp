@@ -30,12 +30,13 @@ using boost::shared_ptr;
 BOOST_AUTO_TEST_CASE (cpl_sar)
 {
 	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset ("build/test/foo", "video.mxf"));
+	mp->set_interop (true);
 
 	{
 		mp->set_size (libdcp::Size (1998, 1080));
 		xmlpp::Document doc;
 		xmlpp::Element* el = doc.create_root_node ("Test");
-		mp->write_to_cpl (el, true);
+		mp->write_to_cpl (el);
 		
 		cxml::Node node (el);
 		BOOST_CHECK_EQUAL (node.node_child("MainPicture")->string_child ("ScreenAspectRatio"), "1.85");
@@ -45,7 +46,7 @@ BOOST_AUTO_TEST_CASE (cpl_sar)
 		mp->set_size (libdcp::Size (2048, 858));
 		xmlpp::Document doc;
 		xmlpp::Element* el = doc.create_root_node ("Test");
-		mp->write_to_cpl (el, true);
+		mp->write_to_cpl (el);
 		
 		cxml::Node node (el);
 		BOOST_CHECK_EQUAL (node.node_child("MainPicture")->string_child ("ScreenAspectRatio"), "2.39");

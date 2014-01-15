@@ -132,9 +132,9 @@ StereoPictureAsset::cpl_node_name () const
 }
 
 pair<string, string>
-StereoPictureAsset::cpl_node_attribute (bool interop) const
+StereoPictureAsset::cpl_node_attribute () const
 {
-	if (interop) {
+	if (_interop) {
 		return make_pair ("xmlns:msp-cpl", "http://www.digicine.com/schemas/437-Y/2007/Main-Stereo-Picture-CPL");
 	} else {
 		return make_pair ("xmlns:msp-cpl", "http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL");

@@ -76,7 +76,7 @@ public:
 		_size = s;
 	}
 
-	void write_to_cpl (xmlpp::Element *, bool) const;
+	void write_to_cpl (xmlpp::Element *) const;
 
 protected:	
 

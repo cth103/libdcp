@@ -59,13 +59,13 @@ MXFAsset::~MXFAsset ()
 }
 
 void
-MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid, bool interop, MXFMetadata const & metadata)
+MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info, string uuid, MXFMetadata const & metadata)
 {
 	writer_info->ProductVersion = metadata.product_version;
 	writer_info->CompanyName = metadata.company_name;
 	writer_info->ProductName = metadata.product_name.c_str();
 
-	if (interop) {
+	if (_interop) {
 		writer_info->LabelSetType = ASDCP::LS_MXF_INTEROP;
 	} else {
 		writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
@@ -108,9 +108,9 @@ MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::fun
 }
 
 void
-MXFAsset::write_to_cpl (xmlpp::Element* node, bool interop) const
+MXFAsset::write_to_cpl (xmlpp::Element* node) const
 {
-	pair<string, string> const attr = cpl_node_attribute (interop);
+	pair<string, string> const attr = cpl_node_attribute ();
 	xmlpp::Element* a = node->add_child (cpl_node_name ());
 	if (!attr.first.empty ()) {
 		a->set_attribute (attr.first, attr.second);

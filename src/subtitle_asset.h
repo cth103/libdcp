@@ -139,7 +139,7 @@ public:
 	SubtitleAsset (std::string directory, std::string xml_file);
 	SubtitleAsset (std::string directory, std::string movie_title, std::string language);
 
-	void write_to_cpl (xmlpp::Element *, bool) const;
+	void write_to_cpl (xmlpp::Element *) const;
 	virtual bool equals (boost::shared_ptr<const Asset>, EqualityOptions, boost::function<void (NoteType, std::string)> note) const {
 		/* XXX */
 		note (ERROR, "subtitle assets not compared yet");

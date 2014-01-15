@@ -40,7 +40,7 @@ public:
 
 private:
 	std::string cpl_node_name () const;
-	std::pair<std::string, std::string> cpl_node_attribute (bool) const;
+	std::pair<std::string, std::string> cpl_node_attribute () const;
 	int edit_rate_factor () const;
 };
 
