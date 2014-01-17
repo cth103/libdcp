@@ -18,7 +18,7 @@
 */
 
 /** @file  src/dcp.h
- *  @brief A class to create a DCP.
+ *  @brief A class to create or read a DCP.
  */
 
 #ifndef LIBDCP_DCP_H
