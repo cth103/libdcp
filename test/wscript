@@ -4,19 +4,19 @@ def configure(conf):
     else:
         boost_lib_suffix = ''
 
-    conf.check_cxx(fragment = """
-                              #define BOOST_TEST_MODULE Config test\n
-    			      #include <boost/test/unit_test.hpp>\n
-                              int main() {}
-                              """,
-                              msg = 'Checking for boost unit testing library',
-                              lib = 'boost_unit_test_framework%s' % boost_lib_suffix,
-                              uselib_store = 'BOOST_TEST')
+    conf.check_cxx(fragment="""
+                            #define BOOST_TEST_MODULE Config test\n
+    			    #include <boost/test/unit_test.hpp>\n
+                            int main() {}
+                            """,
+                              msg='Checking for boost unit testing library',
+                              lib='boost_unit_test_framework%s' % boost_lib_suffix,
+                              uselib_store='BOOST_TEST')
 
     conf.env.prepend_value('LINKFLAGS', '-Lsrc')
 
 def build(bld):
-    obj = bld(features = 'cxx cxxprogram')
+    obj = bld(features='cxx cxxprogram')
     obj.name   = 'tests'
     obj.uselib = 'BOOST_TEST OPENJPEG CXML XMLSEC1'
     obj.use    = 'libdcp'
@@ -44,7 +44,7 @@ def build(bld):
     obj.target = 'tests'
     obj.install_path = ''
 
-    obj = bld(features = 'cxx cxxprogram')
+    obj = bld(features='cxx cxxprogram')
     obj.name   = 'subs_in_out'
     obj.uselib = 'BOOST_TEST OPENJPEG CXML'
     obj.use    = 'libdcp'
@@ -52,7 +52,7 @@ def build(bld):
     obj.target = 'subs_in_out'
     obj.install_path = ''
 
-    obj = bld(features = 'cxx cxxprogram')
+    obj = bld(features='cxx cxxprogram')
     obj.name   = 'rewrite_subs'
     obj.uselib = 'BOOST_TEST OPENJPEG CXML'
     obj.use    = 'libdcp'

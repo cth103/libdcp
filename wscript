@@ -6,10 +6,10 @@ VERSION = '1.00.0devel'
 
 def options(opt):
     opt.load('compiler_cxx')
-    opt.add_option('--target-windows', action='store_true', default = False, help = 'set up to do a cross-compile to Windows')
-    opt.add_option('--osx', action='store_true', default = False, help = 'set up to build on OS X')
-    opt.add_option('--enable-debug', action='store_true', default = False, help = 'build with debugging information and without optimisation')
-    opt.add_option('--static', action='store_true', default = False, help = 'build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
+    opt.add_option('--target-windows', action='store_true', default=False, help='set up to do a cross-compile to Windows')
+    opt.add_option('--target-osx', action='store_true', default=False, help='set up to build on OS X')
+    opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
+    opt.add_option('--static', action='store_true', default=False, help='build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -17,34 +17,34 @@ def configure(conf):
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
 
     conf.env.TARGET_WINDOWS = conf.options.target_windows
-    conf.env.STATIC = conf.options.static
-    conf.env.OSX = conf.options.osx
+    conf.env.TARGET_OSX = conf.options.target_osx
     conf.env.ENABLE_DEBUG = conf.options.enable_debug
+    conf.env.STATIC = conf.options.static
 
     if conf.options.target_windows:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_WINDOWS')
     else:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_POSIX')
 
-    if not conf.options.osx:
+    if not conf.options.target_osx:
         conf.env.append_value('CXXFLAGS', ['-Wno-unused-result'])
 
-    conf.check_cfg(package = 'openssl', args = '--cflags --libs', uselib_store = 'OPENSSL', mandatory = True)
-    conf.check_cfg(package = 'libxml++-2.6', args = '--cflags --libs', uselib_store = 'LIBXML++', mandatory = True)
-    conf.check_cfg(package = 'xmlsec1', args = '--cflags --libs', uselib_store = 'XMLSEC1', mandatory = True)
+    conf.check_cfg(package='openssl', args='--cflags --libs', uselib_store='OPENSSL', mandatory=True)
+    conf.check_cfg(package='libxml++-2.6', args='--cflags --libs', uselib_store='LIBXML++', mandatory=True)
+    conf.check_cfg(package='xmlsec1', args='--cflags --libs', uselib_store='XMLSEC1', mandatory=True)
     # Remove erroneous escaping of quotes from xmlsec1 defines
     conf.env.DEFINES_XMLSEC1 = [f.replace('\\', '') for f in conf.env.DEFINES_XMLSEC1]
 
     if conf.options.static:
-        conf.check_cc(fragment = """
-                       #include <stdio.h>\n
-                       #include <openjpeg.h>\n
-                       int main () {\n
-                       void* p = (void *) opj_image_create;\n
-                       return 0;\n
-                       }
-                       """,
-                       msg = 'Checking for library openjpeg', stlib = 'openjpeg', uselib_store = 'OPENJPEG', mandatory = True)
+        conf.check_cc(fragment="""
+                     #include <stdio.h>\n
+                     #include <openjpeg.h>\n
+                     int main () {\n
+                     void* p = (void *) opj_image_create;\n
+                     return 0;\n
+                     }
+                     """,
+                       msg='Checking for library openjpeg', stlib='openjpeg', uselib_store='OPENJPEG', mandatory=True)
         
         conf.env.HAVE_CXML = 1
         conf.env.STLIB_CXML = ['cxml']
@@ -64,42 +64,42 @@ def configure(conf):
         # Windows builds are any more reliable
         conf.env.append_value('CXXFLAGS', '-O2')
 
-    conf.check_cxx(fragment = """
-                              #include <boost/version.hpp>\n
-                              #if BOOST_VERSION < 104500\n
-                              #error boost too old\n
-                              #endif\n
-                              int main(void) { return 0; }\n
-                              """,
-                   mandatory = True,
-                   msg = 'Checking for boost library >= 1.45',
-                   okmsg = 'yes',
-                   errmsg = 'too old\nPlease install boost version 1.45 or higher.')
+    conf.check_cxx(fragment="""
+                            #include <boost/version.hpp>\n
+                            #if BOOST_VERSION < 104500\n
+                            #error boost too old\n
+                            #endif\n
+                            int main(void) { return 0; }\n
+                            """,
+                   mandatory=True,
+                   msg='Checking for boost library >= 1.45',
+                   okmsg='yes',
+                   errmsg='too old\nPlease install boost version 1.45 or higher.')
 
-    conf.check_cxx(fragment = """
-    			      #include <boost/filesystem.hpp>\n
-    			      int main() { boost::filesystem::copy_file ("a", "b"); }\n
-			      """,
-                   msg = 'Checking for boost filesystem library',
-                   libpath = '/usr/local/lib',
-                   lib = ['boost_filesystem%s' % boost_lib_suffix, 'boost_system%s' % boost_lib_suffix],
-                   uselib_store = 'BOOST_FILESYSTEM')
+    conf.check_cxx(fragment="""
+    			    #include <boost/filesystem.hpp>\n
+    			    int main() { boost::filesystem::copy_file ("a", "b"); }\n
+			    """,
+                   msg='Checking for boost filesystem library',
+                   libpath='/usr/local/lib',
+                   lib=['boost_filesystem%s' % boost_lib_suffix, 'boost_system%s' % boost_lib_suffix],
+                   uselib_store='BOOST_FILESYSTEM')
 
-    conf.check_cxx(fragment = """
-    			      #include <boost/signals2.hpp>\n
-    			      int main() { boost::signals2::signal<void (int)> x; }\n
-			      """,
-                   msg = 'Checking for boost signals2 library',
-                   uselib_store = 'BOOST_SIGNALS2')
+    conf.check_cxx(fragment="""
+    			    #include <boost/signals2.hpp>\n
+    			    int main() { boost::signals2::signal<void (int)> x; }\n
+			    """,
+                   msg='Checking for boost signals2 library',
+                   uselib_store='BOOST_SIGNALS2')
 
-    conf.check_cxx(fragment = """
-    			      #include <boost/date_time.hpp>\n
-    			      int main() { boost::gregorian::day_clock::local_day(); }\n
-			      """,
-                   msg = 'Checking for boost datetime library',
-                   libpath = '/usr/local/lib',
-                   lib = ['boost_date_time%s' % boost_lib_suffix, 'boost_system%s' % boost_lib_suffix],
-                   uselib_store = 'BOOST_DATETIME')
+    conf.check_cxx(fragment="""
+    			    #include <boost/date_time.hpp>\n
+    			    int main() { boost::gregorian::day_clock::local_day(); }\n
+			    """,
+                   msg='Checking for boost datetime library',
+                   libpath='/usr/local/lib',
+                   lib=['boost_date_time%s' % boost_lib_suffix, 'boost_system%s' % boost_lib_suffix],
+                   uselib_store='BOOST_DATETIME')
 
     conf.recurse('test')
     conf.recurse('asdcplib')
@@ -112,11 +112,11 @@ def build(bld):
     else:
         boost_lib_suffix = ''
 
-    bld(source = 'libdcp.pc.in',
-        version = VERSION,
-        includedir = '%s/include' % bld.env.PREFIX,
-        libs = "-L${libdir} -ldcp -lasdcp-libdcp -lkumu-libdcp -lboost_system%s" % boost_lib_suffix,
-        install_path = '${LIBDIR}/pkgconfig')
+    bld(source='libdcp.pc.in',
+        version=VERSION,
+        includedir='%s/include' % bld.env.PREFIX,
+        libs="-L${libdir} -ldcp -lasdcp-libdcp -lkumu-libdcp -lboost_system%s" % boost_lib_suffix,
+        install_path='${LIBDIR}/pkgconfig')
 
     bld.recurse('src')
     bld.recurse('tools')
