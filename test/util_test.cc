@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE (base64_decode_test)
 	}
 
 	unsigned char decoded[N];
-	int const r = libdcp::base64_decode (s, decoded, N);
+	int const r = dcp::base64_decode (s, decoded, N);
 	BOOST_CHECK_EQUAL (r, N);
 
 	for (int i = 0; i < N; ++i) {
@@ -57,16 +57,16 @@ BOOST_AUTO_TEST_CASE (base64_decode_test)
 
 BOOST_AUTO_TEST_CASE (content_kind_test)
 {
-	BOOST_CHECK_EQUAL (libdcp::content_kind_from_string ("feature"), libdcp::FEATURE);
-	BOOST_CHECK_EQUAL (libdcp::content_kind_from_string ("Feature"), libdcp::FEATURE);
-	BOOST_CHECK_EQUAL (libdcp::content_kind_from_string ("FeaturE"), libdcp::FEATURE);
-	BOOST_CHECK_EQUAL (libdcp::content_kind_from_string ("Short"), libdcp::SHORT);
-	BOOST_CHECK_EQUAL (libdcp::content_kind_from_string ("trailer"), libdcp::TRAILER);
-	BOOST_CHECK_EQUAL (libdcp::content_kind_from_string ("test"), libdcp::TEST);
-	BOOST_CHECK_EQUAL (libdcp::content_kind_from_string ("transitional"), libdcp::TRANSITIONAL);
-	BOOST_CHECK_EQUAL (libdcp::content_kind_from_string ("rating"), libdcp::RATING);
-	BOOST_CHECK_EQUAL (libdcp::content_kind_from_string ("teaser"), libdcp::TEASER);
-	BOOST_CHECK_EQUAL (libdcp::content_kind_from_string ("policy"), libdcp::POLICY);
-	BOOST_CHECK_EQUAL (libdcp::content_kind_from_string ("psa"), libdcp::PUBLIC_SERVICE_ANNOUNCEMENT);
-	BOOST_CHECK_EQUAL (libdcp::content_kind_from_string ("advertisement"), libdcp::ADVERTISEMENT);
+	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("feature"), dcp::FEATURE);
+	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("Feature"), dcp::FEATURE);
+	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("FeaturE"), dcp::FEATURE);
+	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("Short"), dcp::SHORT);
+	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("trailer"), dcp::TRAILER);
+	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("test"), dcp::TEST);
+	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("transitional"), dcp::TRANSITIONAL);
+	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("rating"), dcp::RATING);
+	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("teaser"), dcp::TEASER);
+	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("policy"), dcp::POLICY);
+	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("psa"), dcp::PUBLIC_SERVICE_ANNOUNCEMENT);
+	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("advertisement"), dcp::ADVERTISEMENT);
 }

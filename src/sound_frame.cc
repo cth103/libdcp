@@ -23,7 +23,7 @@
 #include "exceptions.h"
 
 using namespace std;
-using namespace libdcp;
+using namespace dcp;
 
 SoundFrame::SoundFrame (string mxf_path, int n, ASDCP::AESDecContext* c)
 {

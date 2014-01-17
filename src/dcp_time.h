@@ -28,7 +28,7 @@
 #include <iostream>
 #include <stdint.h>
 
-namespace libdcp {
+namespace dcp {
 
 /** @class Time
  *  @brief A representation of time within a DCP.

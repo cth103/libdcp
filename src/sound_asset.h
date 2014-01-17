@@ -28,7 +28,7 @@
 #include "types.h"
 #include "metadata.h"
 
-namespace libdcp
+namespace dcp
 {
 
 class SoundFrame;

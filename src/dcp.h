@@ -37,7 +37,7 @@ namespace xmlpp {
 }
 
 /** @brief Namespace for everything in libdcp */
-namespace libdcp
+namespace dcp
 {
 
 class Asset;	
@@ -110,7 +110,7 @@ public:
 	 *  supplemental.add_assets_from (original_version);
 	 *  supplemental.read ();
 	 */
-	void add_assets_from (libdcp::DCP const &);
+	void add_assets_from (DCP const &);
 
 	bool encrypted () const;
 

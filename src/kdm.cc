@@ -43,7 +43,7 @@ using std::setw;
 using std::setfill;
 using std::cout;
 using boost::shared_ptr;
-using namespace libdcp;
+using namespace dcp;
 
 KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 	: _xml_kdm (new xml::DCinemaSecurityMessage (kdm))
@@ -383,7 +383,7 @@ KDMKey::put_uuid (uint8_t ** d, string id) const
 }
 
 bool
-libdcp::operator== (libdcp::KDMKey const & a, libdcp::KDMKey const & b)
+dcp::operator== (dcp::KDMKey const & a, dcp::KDMKey const & b)
 {
 	if (memcmp (a._signer_thumbprint, b._signer_thumbprint, 20) != 0) {
 		return false;

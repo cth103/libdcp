@@ -29,7 +29,7 @@ using std::string;
 using std::stringstream;
 using std::setw;
 using std::setfill;
-using namespace libdcp;
+using namespace dcp;
 
 Key::Key ()
 	: _value (new uint8_t[ASDCP::KeyLen])
@@ -86,13 +86,13 @@ Key::hex () const
 }
 
 bool
-libdcp::operator== (Key const & a, Key const & b)
+dcp::operator== (Key const & a, Key const & b)
 {
 	return memcmp (a.value(), b.value(), ASDCP::KeyLen) == 0;
 }
 
 bool
-libdcp::operator!= (Key const & a, Key const & b)
+dcp::operator!= (Key const & a, Key const & b)
 {
 	return !(a == b);
 }

@@ -21,7 +21,7 @@
 #include "compose.hpp"
 
 using std::string;
-using namespace libdcp;
+using namespace dcp;
 
 FileError::FileError (std::string const & message, boost::filesystem::path filename, int number)
 	: _message (String::compose ("%1 (error %2) (%3)", message, filename.string(), number))

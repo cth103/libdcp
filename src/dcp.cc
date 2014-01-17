@@ -56,7 +56,7 @@ using std::back_inserter;
 using std::make_pair;
 using boost::shared_ptr;
 using boost::lexical_cast;
-using namespace libdcp;
+using namespace dcp;
 
 DCP::DCP (boost::filesystem::path directory)
 	: _directory (directory)
@@ -216,12 +216,12 @@ DCP::read_assets ()
 		boost::filesystem::path p = _directory;
 		p /= "ASSETMAP";
 		if (boost::filesystem::exists (p)) {
-			asset_map.reset (new libdcp::parse::AssetMap (p.string ()));
+			asset_map.reset (new dcp::parse::AssetMap (p.string ()));
 		} else {
 			p = _directory;
 			p /= "ASSETMAP.xml";
 			if (boost::filesystem::exists (p)) {
-				asset_map.reset (new libdcp::parse::AssetMap (p.string ()));
+				asset_map.reset (new dcp::parse::AssetMap (p.string ()));
 			} else {
 				boost::throw_exception (DCPReadError ("could not find AssetMap file"));
 			}
@@ -231,7 +231,7 @@ DCP::read_assets ()
 		boost::throw_exception (FileError ("could not load AssetMap file", _files.asset_map, e.number ()));
 	}
 
-	for (list<shared_ptr<libdcp::parse::AssetMapAsset> >::const_iterator i = asset_map->assets.begin(); i != asset_map->assets.end(); ++i) {
+	for (list<shared_ptr<dcp::parse::AssetMapAsset> >::const_iterator i = asset_map->assets.begin(); i != asset_map->assets.end(); ++i) {
 		if ((*i)->chunks.size() != 1) {
 			boost::throw_exception (XMLError ("unsupported asset chunk count"));
 		}

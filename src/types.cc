@@ -7,7 +7,7 @@
 #include "exceptions.h"
 
 using namespace std;
-using namespace libdcp;
+using namespace dcp;
 using namespace boost;
 
 Fraction::Fraction (string s)
@@ -22,13 +22,13 @@ Fraction::Fraction (string s)
 }
 
 bool
-libdcp::operator== (Fraction const & a, Fraction const & b)
+dcp::operator== (Fraction const & a, Fraction const & b)
 {
 	return (a.numerator == b.numerator && a.denominator == b.denominator);
 }
 
 bool
-libdcp::operator!= (Fraction const & a, Fraction const & b)
+dcp::operator!= (Fraction const & a, Fraction const & b)
 {
 	return (a.numerator != b.numerator || a.denominator != b.denominator);
 }
@@ -84,7 +84,7 @@ Color::to_argb_string () const
  *  @param b Second color to compare.
  */
 bool
-libdcp::operator== (Color const & a, Color const & b)
+dcp::operator== (Color const & a, Color const & b)
 {
 	return (a.r == b.r && a.g == b.g && a.b == b.b);
 }
@@ -94,20 +94,20 @@ libdcp::operator== (Color const & a, Color const & b)
  *  @param b Second color to compare.
  */
 bool
-libdcp::operator!= (Color const & a, Color const & b)
+dcp::operator!= (Color const & a, Color const & b)
 {
 	return !(a == b);
 }
 
 ostream &
-libdcp::operator<< (ostream& s, Color const & c)
+dcp::operator<< (ostream& s, Color const & c)
 {
 	s << "(" << c.r << ", " << c.g << ", " << c.b << ")";
 	return s;
 }
 
 string
-libdcp::effect_to_string (Effect e)
+dcp::effect_to_string (Effect e)
 {
 	switch (e) {
 	case NONE:
@@ -122,7 +122,7 @@ libdcp::effect_to_string (Effect e)
 }
 
 Effect
-libdcp::string_to_effect (string s)
+dcp::string_to_effect (string s)
 {
 	if (s == "none") {
 		return NONE;
@@ -136,7 +136,7 @@ libdcp::string_to_effect (string s)
 }
 
 string
-libdcp::valign_to_string (VAlign v)
+dcp::valign_to_string (VAlign v)
 {
 	switch (v) {
 	case TOP:
@@ -151,7 +151,7 @@ libdcp::valign_to_string (VAlign v)
 }
 
 VAlign
-libdcp::string_to_valign (string s)
+dcp::string_to_valign (string s)
 {
 	if (s == "top") {
 		return TOP;

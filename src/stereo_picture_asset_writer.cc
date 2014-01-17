@@ -29,7 +29,7 @@ using std::istream;
 using std::ostream;
 using std::string;
 using boost::shared_ptr;
-using namespace libdcp;
+using namespace dcp;
 
 struct StereoPictureAssetWriter::ASDCPState : public ASDCPStateBase
 {
@@ -47,7 +47,7 @@ StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* asset, bool ov
 void
 StereoPictureAssetWriter::start (uint8_t* data, int size)
 {
-	libdcp::start (this, _state, _asset, data, size);
+	dcp::start (this, _state, _asset, data, size);
 }
 
 /** Write a frame for one eye.  Frames must be written left, then right, then left etc.

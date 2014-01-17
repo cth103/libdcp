@@ -28,7 +28,7 @@ using std::pair;
 using std::make_pair;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
-using namespace libdcp;
+using namespace dcp;
 
 bool
 StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const

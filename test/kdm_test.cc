@@ -26,12 +26,12 @@ using boost::shared_ptr;
 
 BOOST_AUTO_TEST_CASE (kdm_test)
 {
-	libdcp::KDM kdm (
+	dcp::KDM kdm (
 		"test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml",
 		"test/data/private.key"
 		);
 
-	list<libdcp::KDMKey> keys = kdm.keys ();
+	list<dcp::KDMKey> keys = kdm.keys ();
 	
 	BOOST_CHECK_EQUAL (keys.size(), 2);
 
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE (kdm_test)
 /* Check that we can read in a KDM and then write it back out again the same */
 BOOST_AUTO_TEST_CASE (kdm_passthrough_test)
 {
-	libdcp::xml::DCinemaSecurityMessage kdm (
+	dcp::xml::DCinemaSecurityMessage kdm (
 		"test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml"
 		);
 

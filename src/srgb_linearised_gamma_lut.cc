@@ -19,7 +19,7 @@
 
 #include "srgb_linearised_gamma_lut.h"
 
-using namespace libdcp;
+using namespace dcp;
 
 LUTCache<SRGBLinearisedGammaLUT> SRGBLinearisedGammaLUT::cache;
 

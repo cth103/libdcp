@@ -21,7 +21,7 @@
 #include <stdexcept>
 #include "xyz_frame.h"
 
-using namespace libdcp;
+using namespace dcp;
 
 /** Construct an XYZFrame, taking ownership of the opj_image_t */
 XYZFrame::XYZFrame (opj_image_t* image)
@@ -70,9 +70,9 @@ XYZFrame::data (int c) const
 	return _opj_image->comps[c].data;
 }
 
-libdcp::Size
+dcp::Size
 XYZFrame::size () const
 {
 	/* XXX: this may not be right; x0 and y0 can presumably be non-zero */
-	return libdcp::Size (_opj_image->x1, _opj_image->y1);
+	return dcp::Size (_opj_image->x1, _opj_image->y1);
 }

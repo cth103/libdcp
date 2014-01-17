@@ -19,7 +19,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-namespace libdcp {
+namespace dcp {
 
 class ARGBFrame;	
 class XYZFrame;

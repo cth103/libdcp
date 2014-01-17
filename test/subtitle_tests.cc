@@ -26,398 +26,398 @@ using boost::shared_ptr;
 /* Load a subtitle asset from XML and check that it is read correctly */
 BOOST_AUTO_TEST_CASE (subtitles1)
 {
-	libdcp::SubtitleAsset subs ("test/data", "subs1.xml");
+	dcp::SubtitleAsset subs ("test/data", "subs1.xml");
 
 	BOOST_CHECK_EQUAL (subs.language(), "French");
 
-	list<shared_ptr<libdcp::Subtitle> > s = subs.subtitles_at (libdcp::Time (0, 0, 6, 1));
+	list<shared_ptr<dcp::Subtitle> > s = subs.subtitles_at (dcp::Time (0, 0, 6, 1));
 	BOOST_CHECK_EQUAL (s.size(), 1);
-	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.front().get()), dcp::Subtitle (
 				   "Arial",
 				   false,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   39,
-				   libdcp::Time (0, 0, 5, 198),
-				   libdcp::Time (0, 0, 7, 115),
+				   dcp::Time (0, 0, 5, 198),
+				   dcp::Time (0, 0, 7, 115),
 				   15,
-				   libdcp::BOTTOM,
+				   dcp::BOTTOM,
 				   "My jacket was Idi Amin's",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 1),
-				   libdcp::Time (0, 0, 0, 1)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 1),
+				   dcp::Time (0, 0, 0, 1)
 				   ));
 							 
-	s = subs.subtitles_at (libdcp::Time (0, 0, 7, 190));
+	s = subs.subtitles_at (dcp::Time (0, 0, 7, 190));
 	BOOST_CHECK_EQUAL (s.size(), 2);
-	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.front().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   39,
-				   libdcp::Time (0, 0, 7, 177),
-				   libdcp::Time (0, 0, 11, 31),
+				   dcp::Time (0, 0, 7, 177),
+				   dcp::Time (0, 0, 11, 31),
 				   21,
-				   libdcp::BOTTOM,
+				   dcp::BOTTOM,
 				   "My corset was H.M. The Queen's",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 1),
-				   libdcp::Time (0, 0, 0, 1)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 1),
+				   dcp::Time (0, 0, 0, 1)
 				   ));
-	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.back().get()), dcp::Subtitle (
 				   "Arial",
 				   false,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   39,
-				   libdcp::Time (0, 0, 7, 177),
-				   libdcp::Time (0, 0, 11, 31),
+				   dcp::Time (0, 0, 7, 177),
+				   dcp::Time (0, 0, 11, 31),
 				   15,
-				   libdcp::BOTTOM,
+				   dcp::BOTTOM,
 				   "My large wonderbra",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 1),
-				   libdcp::Time (0, 0, 0, 1)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 1),
+				   dcp::Time (0, 0, 0, 1)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 0, 11, 95));
+	s = subs.subtitles_at (dcp::Time (0, 0, 11, 95));
 	BOOST_CHECK_EQUAL (s.size(), 1);
-	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.back().get()), dcp::Subtitle (
 				   "Arial",
 				   false,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   39,
-				   libdcp::Time (0, 0, 11, 94),
-				   libdcp::Time (0, 0, 13, 63),
+				   dcp::Time (0, 0, 11, 94),
+				   dcp::Time (0, 0, 13, 63),
 				   15,
-				   libdcp::BOTTOM,
+				   dcp::BOTTOM,
 				   "Once belonged to the Shah",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 1),
-				   libdcp::Time (0, 0, 0, 1)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 1),
+				   dcp::Time (0, 0, 0, 1)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 0, 14, 42));
+	s = subs.subtitles_at (dcp::Time (0, 0, 14, 42));
 	BOOST_CHECK_EQUAL (s.size(), 1);
-	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.back().get()), dcp::Subtitle (
 				   "Arial",
 				   false,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   39,
-				   libdcp::Time (0, 0, 13, 104),
-				   libdcp::Time (0, 0, 15, 177),
+				   dcp::Time (0, 0, 13, 104),
+				   dcp::Time (0, 0, 15, 177),
 				   15,
-				   libdcp::BOTTOM,
+				   dcp::BOTTOM,
 				   "And these are Roy Hattersley's jeans",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 1),
-				   libdcp::Time (0, 0, 0, 1)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 1),
+				   dcp::Time (0, 0, 0, 1)
 				   ));
 }
 
 /** And similarly for another one */
 BOOST_AUTO_TEST_CASE (subtitles2)
 {
-	libdcp::SubtitleAsset subs ("test/data", "subs2.xml");
+	dcp::SubtitleAsset subs ("test/data", "subs2.xml");
 
-	list<shared_ptr<libdcp::Subtitle> > s = subs.subtitles_at (libdcp::Time (0, 0, 42, 100));
+	list<shared_ptr<dcp::Subtitle> > s = subs.subtitles_at (dcp::Time (0, 0, 42, 100));
 	BOOST_CHECK_EQUAL (s.size(), 2);
-	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.front().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 0, 41, 62),
-				   libdcp::Time (0, 0, 43, 52),
+				   dcp::Time (0, 0, 41, 62),
+				   dcp::Time (0, 0, 43, 52),
 				   89,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "At afternoon tea with John Peel",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
-	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.back().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 0, 41, 62),
-				   libdcp::Time (0, 0, 43, 52),
+				   dcp::Time (0, 0, 41, 62),
+				   dcp::Time (0, 0, 43, 52),
 				   95,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "I enquired if his accent was real",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 0, 50, 50));
+	s = subs.subtitles_at (dcp::Time (0, 0, 50, 50));
 	BOOST_CHECK_EQUAL (s.size(), 2);
-	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.front().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 0, 50, 42),
-				   libdcp::Time (0, 0, 52, 21),
+				   dcp::Time (0, 0, 50, 42),
+				   dcp::Time (0, 0, 52, 21),
 				   89,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "He said \"out of the house",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
-	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.back().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 0, 50, 42),
-				   libdcp::Time (0, 0, 52, 21),
+				   dcp::Time (0, 0, 50, 42),
+				   dcp::Time (0, 0, 52, 21),
 				   95,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "I'm incredibly scouse",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 1, 2, 300));
+	s = subs.subtitles_at (dcp::Time (0, 1, 2, 300));
 	BOOST_CHECK_EQUAL (s.size(), 2);
-	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.front().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 1, 2, 208),
-				   libdcp::Time (0, 1, 4, 10),
+				   dcp::Time (0, 1, 2, 208),
+				   dcp::Time (0, 1, 4, 10),
 				   89,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "At home it depends how I feel.\"",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
-	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.back().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 1, 2, 208),
-				   libdcp::Time (0, 1, 4, 10),
+				   dcp::Time (0, 1, 2, 208),
+				   dcp::Time (0, 1, 4, 10),
 				   95,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "I spent a long weekend in Brighton",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 1, 15, 50));
+	s = subs.subtitles_at (dcp::Time (0, 1, 15, 50));
 	BOOST_CHECK_EQUAL (s.size(), 2);
-	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.front().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 1, 15, 42),
-				   libdcp::Time (0, 1, 16, 42),
+				   dcp::Time (0, 1, 15, 42),
+				   dcp::Time (0, 1, 16, 42),
 				   89,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "With the legendary Miss Enid Blyton",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
-	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.back().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 1, 15, 42),
-				   libdcp::Time (0, 1, 16, 42),
+				   dcp::Time (0, 1, 15, 42),
+				   dcp::Time (0, 1, 16, 42),
 				   95,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "She said \"you be Noddy",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 1, 27, 200));
+	s = subs.subtitles_at (dcp::Time (0, 1, 27, 200));
 	BOOST_CHECK_EQUAL (s.size(), 2);
-	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.front().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 1, 27, 115),
-				   libdcp::Time (0, 1, 28, 208),
+				   dcp::Time (0, 1, 27, 115),
+				   dcp::Time (0, 1, 28, 208),
 				   89,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "That curious creature the Sphinx",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
-	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.back().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 1, 27, 115),
-				   libdcp::Time (0, 1, 28, 208),
+				   dcp::Time (0, 1, 27, 115),
+				   dcp::Time (0, 1, 28, 208),
 				   95,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "Is smarter than anyone thinks",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 1, 42, 300));
+	s = subs.subtitles_at (dcp::Time (0, 1, 42, 300));
 	BOOST_CHECK_EQUAL (s.size(), 2);
-	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.front().get()), dcp::Subtitle (
 				   "Arial",
 				   false,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 1, 42, 229),
-				   libdcp::Time (0, 1, 45, 62),
+				   dcp::Time (0, 1, 42, 229),
+				   dcp::Time (0, 1, 45, 62),
 				   89,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "It sits there and smirks",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
-	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.back().get()), dcp::Subtitle (
 				   "Arial",
 				   false,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 1, 42, 229),
-				   libdcp::Time (0, 1, 45, 62),
+				   dcp::Time (0, 1, 42, 229),
+				   dcp::Time (0, 1, 45, 62),
 				   95,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "And you don't think it works",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 1, 45, 200));
+	s = subs.subtitles_at (dcp::Time (0, 1, 45, 200));
 	BOOST_CHECK_EQUAL (s.size(), 2);
-	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.front().get()), dcp::Subtitle (
 				   "Arial",
 				   false,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 1, 45, 146),
-				   libdcp::Time (0, 1, 47, 94),
+				   dcp::Time (0, 1, 45, 146),
+				   dcp::Time (0, 1, 47, 94),
 				   89,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "Then when you're not looking, it winks.",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
-	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.back().get()), dcp::Subtitle (
 				   "Arial",
 				   false,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 1, 45, 146),
-				   libdcp::Time (0, 1, 47, 94),
+				   dcp::Time (0, 1, 45, 146),
+				   dcp::Time (0, 1, 47, 94),
 				   95,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "When it snows you will find Sister Sledge",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 1, 47, 249));
+	s = subs.subtitles_at (dcp::Time (0, 1, 47, 249));
 	BOOST_CHECK_EQUAL (s.size(), 2);
-	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.front().get()), dcp::Subtitle (
 				   "Arial",
 				   false,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 1, 47, 146),
-				   libdcp::Time (0, 1, 48, 167),
+				   dcp::Time (0, 1, 47, 146),
+				   dcp::Time (0, 1, 48, 167),
 				   89,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "Out mooning, at night, on the ledge",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
-	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.back().get()), dcp::Subtitle (
 				   "Arial",
 				   false,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 1, 47, 146),
-				   libdcp::Time (0, 1, 48, 167),
+				   dcp::Time (0, 1, 47, 146),
+				   dcp::Time (0, 1, 48, 167),
 				   95,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "One storey down",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 2, 6, 210));
+	s = subs.subtitles_at (dcp::Time (0, 2, 6, 210));
 	BOOST_CHECK_EQUAL (s.size(), 2);
-	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.front().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 2, 5, 208),
-				   libdcp::Time (0, 2, 7, 31),
+				   dcp::Time (0, 2, 5, 208),
+				   dcp::Time (0, 2, 7, 31),
 				   89,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "HELLO",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
-	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
+	BOOST_CHECK_EQUAL (*(s.back().get()), dcp::Subtitle (
 				   "Arial",
 				   true,
-				   libdcp::Color (255, 255, 255),
+				   dcp::Color (255, 255, 255),
 				   42,
-				   libdcp::Time (0, 2, 5, 208),
-				   libdcp::Time (0, 2, 7, 31),
+				   dcp::Time (0, 2, 5, 208),
+				   dcp::Time (0, 2, 7, 31),
 				   95,
-				   libdcp::TOP,
+				   dcp::TOP,
 				   "WORLD",
-				   libdcp::BORDER,
-				   libdcp::Color (0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0),
-				   libdcp::Time (0, 0, 0, 0)
+				   dcp::BORDER,
+				   dcp::Color (0, 0, 0),
+				   dcp::Time (0, 0, 0, 0),
+				   dcp::Time (0, 0, 0, 0)
 				   ));
 
 	

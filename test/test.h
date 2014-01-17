@@ -18,5 +18,5 @@
 */
 
 extern boost::filesystem::path j2c (int);
-extern boost::filesystem::path wav (libdcp::Channel);
+extern boost::filesystem::path wav (dcp::Channel);
 extern std::string test_corpus;

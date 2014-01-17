@@ -31,7 +31,7 @@
 
 using namespace std;
 using namespace boost;
-using namespace libdcp;
+using namespace dcp;
 
 Time::Time (int frame, int frames_per_second)
 	: h (0)
@@ -85,19 +85,19 @@ Time::Time (string time)
 }
 
 bool
-libdcp::operator== (Time const & a, Time const & b)
+dcp::operator== (Time const & a, Time const & b)
 {
 	return (a.h == b.h && a.m == b.m && a.s == b.s && a.t == b.t);
 }
 
 bool
-libdcp::operator!= (Time const & a, Time const & b)
+dcp::operator!= (Time const & a, Time const & b)
 {
 	return !(a == b);
 }
 
 bool
-libdcp::operator<= (Time const & a, Time const & b)
+dcp::operator<= (Time const & a, Time const & b)
 {
 	if (a.h != b.h) {
 		return a.h <= b.h;
@@ -119,7 +119,7 @@ libdcp::operator<= (Time const & a, Time const & b)
 }
 
 bool
-libdcp::operator< (Time const & a, Time const & b)
+dcp::operator< (Time const & a, Time const & b)
 {
 	if (a.h != b.h) {
 		return a.h < b.h;
@@ -141,7 +141,7 @@ libdcp::operator< (Time const & a, Time const & b)
 }
 
 bool
-libdcp::operator> (Time const & a, Time const & b)
+dcp::operator> (Time const & a, Time const & b)
 {
 	if (a.h != b.h) {
 		return a.h > b.h;
@@ -163,14 +163,14 @@ libdcp::operator> (Time const & a, Time const & b)
 }
 
 ostream &
-libdcp::operator<< (ostream& s, Time const & t)
+dcp::operator<< (ostream& s, Time const & t)
 {
 	s << t.h << ":" << t.m << ":" << t.s << "." << t.t;
 	return s;
 }
 
-libdcp::Time
-libdcp::operator+ (Time a, Time const & b)
+dcp::Time
+dcp::operator+ (Time a, Time const & b)
 {
 	Time r;
 
@@ -197,8 +197,8 @@ libdcp::operator+ (Time a, Time const & b)
 	return r;
 }
 
-libdcp::Time
-libdcp::operator- (Time a, Time const & b)
+dcp::Time
+dcp::operator- (Time a, Time const & b)
 {
 	Time r;
 
@@ -226,7 +226,7 @@ libdcp::operator- (Time a, Time const & b)
 }
 
 float
-libdcp::operator/ (Time a, Time const & b)
+dcp::operator/ (Time a, Time const & b)
 {
 	int64_t const at = a.h * 3600 * 250 + a.m * 60 * 250 + a.s * 250 + a.t;
 	int64_t const bt = b.h * 3600 * 250 + b.m * 60 * 250 + b.s * 250 + b.t;

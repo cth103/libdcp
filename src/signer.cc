@@ -30,7 +30,7 @@ using std::string;
 using std::list;
 using std::cout;
 using boost::shared_ptr;
-using namespace libdcp;
+using namespace dcp;
 
 /** @param signer_key Filename of private key to sign with */
 void

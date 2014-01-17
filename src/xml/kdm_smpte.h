@@ -41,7 +41,7 @@
 #include <libcxml/cxml.h>
 #include "../exceptions.h"
 
-namespace libdcp {
+namespace dcp {
 namespace xml {
 
 class Writer

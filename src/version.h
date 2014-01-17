@@ -1,5 +1,5 @@
 
-namespace libdcp {
+namespace dcp {
 
 extern char const * version;
 extern char const * git_commit;

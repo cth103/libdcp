@@ -34,7 +34,7 @@ using std::stringstream;
 using boost::shared_ptr;
 using boost::lexical_cast;
 using boost::optional;
-using namespace libdcp;
+using namespace dcp;
 
 SubtitleAsset::SubtitleAsset (string directory, string xml_file)
 	: Asset (directory, xml_file)
@@ -66,8 +66,8 @@ SubtitleAsset::read_xml (string xml_file)
 
 	xml->ignore_child ("LoadFont");
 
-	list<shared_ptr<libdcp::parse::Font> > font_nodes = type_children<libdcp::parse::Font> (xml, "Font");
-	_load_font_nodes = type_children<libdcp::parse::LoadFont> (xml, "LoadFont");
+	list<shared_ptr<dcp::parse::Font> > font_nodes = type_children<dcp::parse::Font> (xml, "Font");
+	_load_font_nodes = type_children<dcp::parse::LoadFont> (xml, "LoadFont");
 
 	/* Now make Subtitle objects to represent the raw XML nodes
 	   in a sane way.
@@ -80,16 +80,16 @@ SubtitleAsset::read_xml (string xml_file)
 void
 SubtitleAsset::examine_font_nodes (
 	shared_ptr<const cxml::Node> xml,
-	list<shared_ptr<libdcp::parse::Font> > const & font_nodes,
+	list<shared_ptr<dcp::parse::Font> > const & font_nodes,
 	ParseState& parse_state
 	)
 {
-	for (list<shared_ptr<libdcp::parse::Font> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
+	for (list<shared_ptr<dcp::parse::Font> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
 
 		parse_state.font_nodes.push_back (*i);
 		maybe_add_subtitle ((*i)->text, parse_state);
 
-		for (list<shared_ptr<libdcp::parse::Subtitle> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
+		for (list<shared_ptr<dcp::parse::Subtitle> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
 			parse_state.subtitle_nodes.push_back (*j);
 			examine_text_nodes (xml, (*j)->text_nodes, parse_state);
 			examine_font_nodes (xml, (*j)->font_nodes, parse_state);
@@ -106,11 +106,11 @@ SubtitleAsset::examine_font_nodes (
 void
 SubtitleAsset::examine_text_nodes (
 	shared_ptr<const cxml::Node> xml,
-	list<shared_ptr<libdcp::parse::Text> > const & text_nodes,
+	list<shared_ptr<dcp::parse::Text> > const & text_nodes,
 	ParseState& parse_state
 	)
 {
-	for (list<shared_ptr<libdcp::parse::Text> >::const_iterator i = text_nodes.begin(); i != text_nodes.end(); ++i) {
+	for (list<shared_ptr<dcp::parse::Text> >::const_iterator i = text_nodes.begin(); i != text_nodes.end(); ++i) {
 		parse_state.text_nodes.push_back (*i);
 		maybe_add_subtitle ((*i)->text, parse_state);
 		examine_font_nodes (xml, (*i)->font_nodes, parse_state);
@@ -132,9 +132,9 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 	assert (!parse_state.text_nodes.empty ());
 	assert (!parse_state.subtitle_nodes.empty ());
 	
-	libdcp::parse::Font effective_font (parse_state.font_nodes);
-	libdcp::parse::Text effective_text (*parse_state.text_nodes.back ());
-	libdcp::parse::Subtitle effective_subtitle (*parse_state.subtitle_nodes.back ());
+	dcp::parse::Font effective_font (parse_state.font_nodes);
+	dcp::parse::Text effective_text (*parse_state.text_nodes.back ());
+	dcp::parse::Subtitle effective_subtitle (*parse_state.subtitle_nodes.back ());
 
 	_subtitles.push_back (
 		shared_ptr<Subtitle> (
@@ -173,7 +173,7 @@ SubtitleAsset::subtitles_at (Time t) const
 std::string
 SubtitleAsset::font_id_to_name (string id) const
 {
-	list<shared_ptr<libdcp::parse::LoadFont> >::const_iterator i = _load_font_nodes.begin();
+	list<shared_ptr<dcp::parse::LoadFont> >::const_iterator i = _load_font_nodes.begin();
 	while (i != _load_font_nodes.end() && (*i)->id != id) {
 		++i;
 	}
@@ -233,7 +233,7 @@ Subtitle::size_in_pixels (int screen_height) const
 }
 
 bool
-libdcp::operator== (Subtitle const & a, Subtitle const & b)
+dcp::operator== (Subtitle const & a, Subtitle const & b)
 {
 	return (
 		a.font() == b.font() &&
@@ -253,7 +253,7 @@ libdcp::operator== (Subtitle const & a, Subtitle const & b)
 }
 
 ostream&
-libdcp::operator<< (ostream& s, Subtitle const & sub)
+dcp::operator<< (ostream& s, Subtitle const & sub)
 {
 	s << "\n`" << sub.text() << "' from " << sub.in() << " to " << sub.out() << ";\n"
 	  << "fade up " << sub.fade_up_time() << ", fade down " << sub.fade_down_time() << ";\n"

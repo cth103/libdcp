@@ -50,7 +50,7 @@ using std::cout;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
-using namespace libdcp;
+using namespace dcp;
 
 PictureAsset::PictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name)
 	: MXFAsset (directory, mxf_name)

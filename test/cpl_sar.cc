@@ -29,11 +29,11 @@ using boost::shared_ptr;
 */
 BOOST_AUTO_TEST_CASE (cpl_sar)
 {
-	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset ("build/test/foo", "video.mxf"));
+	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset ("build/test/foo", "video.mxf"));
 	mp->set_interop (true);
 
 	{
-		mp->set_size (libdcp::Size (1998, 1080));
+		mp->set_size (dcp::Size (1998, 1080));
 		xmlpp::Document doc;
 		xmlpp::Element* el = doc.create_root_node ("Test");
 		mp->write_to_cpl (el);
@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE (cpl_sar)
 	}
 
 	{
-		mp->set_size (libdcp::Size (2048, 858));
+		mp->set_size (dcp::Size (2048, 858));
 		xmlpp::Document doc;
 		xmlpp::Element* el = doc.create_root_node ("Test");
 		mp->write_to_cpl (el);

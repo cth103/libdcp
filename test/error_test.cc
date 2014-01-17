@@ -31,17 +31,17 @@ using std::string;
 BOOST_AUTO_TEST_CASE (error_test)
 {
 	/* Create an empty DCP */
-	libdcp::DCP d ("build/test/fred");
+	dcp::DCP d ("build/test/fred");
 
 	/* Random filename that does not exist */
 	vector<boost::filesystem::path> p;
 	p.push_back ("frobozz");
 
 	/* Trying to create video/audio MXFs using a non-existant file should throw an exception */
-	libdcp::MonoPictureAsset pa ("build/test/fred", "video.mxf");
-	BOOST_CHECK_THROW (pa.create (p), libdcp::FileError);
+	dcp::MonoPictureAsset pa ("build/test/fred", "video.mxf");
+	BOOST_CHECK_THROW (pa.create (p), dcp::FileError);
 	
-	libdcp::SoundAsset sa ("build/test/fred", "audio.mxf");
+	dcp::SoundAsset sa ("build/test/fred", "audio.mxf");
 	sa.set_channels (1);
-	BOOST_CHECK_THROW (sa.create (p), libdcp::FileError);
+	BOOST_CHECK_THROW (sa.create (p), dcp::FileError);
 }

@@ -15,7 +15,7 @@ using std::cerr;
 using std::cout;
 using std::list;
 using boost::shared_ptr;
-using namespace libdcp;
+using namespace dcp;
 
 static void
 help (string n)

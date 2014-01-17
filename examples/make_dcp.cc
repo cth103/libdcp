@@ -51,7 +51,7 @@ int
 main ()
 {
 	/* Make a DCP object.  "My Film DCP" is the directory name for the DCP */
-	libdcp::DCP dcp ("My Film DCP");
+	dcp::DCP dcp ("My Film DCP");
 	
 	/* Now make a CPL object.
 
@@ -59,7 +59,7 @@ main ()
 	   FEATURE is the type that the projector will list the DCP as.
 	   24 is the frame rate, and the DCP will be 48 frames long (ie 2 seconds at 24 fps).
 	*/	
-	boost::shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("My Film DCP", "My Film", libdcp::FEATURE, 24, 48));
+	boost::shared_ptr<dcp::CPL> cpl (new dcp::CPL ("My Film DCP", "My Film", dcp::FEATURE, 24, 48));
 
 	/* And add the CPL to the DCP */
 	dcp.add_cpl (cpl);
@@ -68,8 +68,8 @@ main ()
 	   First, create the object.
 	*/
 
-	boost::shared_ptr<libdcp::MonoPictureAsset> picture_asset (
-		new libdcp::MonoPictureAsset ("My Film DCP", "video.mxf")
+	boost::shared_ptr<dcp::MonoPictureAsset> picture_asset (
+		new dcp::MonoPictureAsset ("My Film DCP", "video.mxf")
 		);
 
 	/* Now set up its parameters; we have the frame rate, the
@@ -79,7 +79,7 @@ main ()
 
 	picture_asset->set_edit_rate (24);
 	picture_asset->set_intrinsic_duration (24);
-	picture_asset->set_size (libdcp::Size (1998, 1080));
+	picture_asset->set_size (dcp::Size (1998, 1080));
 
 	/* Now we can create the asset itself.  Here using a function (video_frame) to obtain the name of the JPEG2000 file for each frame.
 	   The result will be an MXF file written to the directory "My Film DCP" (which should be the same as the DCP's
@@ -104,22 +104,22 @@ main ()
 	sound_files.push_back ("examples/sine_880_-12dB.wav");
 
 	/* Now we can create the sound asset using these files */
-	boost::shared_ptr<libdcp::SoundAsset> sound_asset (new libdcp::SoundAsset ("My Film DCP", "audio.mxf"));
+	boost::shared_ptr<dcp::SoundAsset> sound_asset (new dcp::SoundAsset ("My Film DCP", "audio.mxf"));
 	sound_asset->set_edit_rate (24);
 	sound_asset->set_intrinsic_duration (48);
 	sound_asset->create (sound_files);
 
 	/* Now that we have the assets, we can create a Reel to put them in and add it to the CPL */
 	cpl->add_reel (
-		boost::shared_ptr<libdcp::Reel> (
-			new libdcp::Reel (picture_asset, sound_asset, boost::shared_ptr<libdcp::SubtitleAsset> ())
+		boost::shared_ptr<dcp::Reel> (
+			new dcp::Reel (picture_asset, sound_asset, boost::shared_ptr<dcp::SubtitleAsset> ())
 			)
 		);
 
 	/* Finally, we call this to write the XML description files to the DCP.  After this, the DCP
 	   is ready to ingest and play.
 	*/
-	libdcp::XMLMetadata metadata;
+	dcp::XMLMetadata metadata;
 	dcp.write_xml (false, metadata);
 
 	return 0;

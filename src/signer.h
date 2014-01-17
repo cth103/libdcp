@@ -25,7 +25,7 @@ namespace xmlpp {
 	class Node;
 }
 
-namespace libdcp {
+namespace dcp {
 
 class Signer
 {

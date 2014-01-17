@@ -30,7 +30,7 @@ using std::ostream;
 using std::string;
 using boost::shared_ptr;
 using boost::lexical_cast;
-using namespace libdcp;
+using namespace dcp;
 
 struct MonoPictureAssetWriter::ASDCPState : public ASDCPStateBase
 {
@@ -50,7 +50,7 @@ MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, bool overwr
 void
 MonoPictureAssetWriter::start (uint8_t* data, int size)
 {
-	libdcp::start (this, _state, _asset, data, size);
+	dcp::start (this, _state, _asset, data, size);
 }
 
 FrameInfo

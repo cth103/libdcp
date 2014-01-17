@@ -25,7 +25,7 @@
 #include "metadata.h"
 #include "types.h"
 
-namespace libdcp {
+namespace dcp {
 
 class PictureAsset;	
 

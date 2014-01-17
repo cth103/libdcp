@@ -19,7 +19,7 @@
 
 #include "rec709_linearised_gamma_lut.h"
 
-using namespace libdcp;
+using namespace dcp;
 
 LUTCache<Rec709LinearisedGammaLUT> Rec709LinearisedGammaLUT::cache;
 

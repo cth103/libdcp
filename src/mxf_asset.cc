@@ -40,7 +40,7 @@ using std::pair;
 using boost::shared_ptr;
 using boost::lexical_cast;
 using boost::dynamic_pointer_cast;
-using namespace libdcp;
+using namespace dcp;
 
 MXFAsset::MXFAsset (boost::filesystem::path directory, boost::filesystem::path file_name)
 	: Asset (directory, file_name)

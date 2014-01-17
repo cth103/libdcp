@@ -76,7 +76,7 @@ static void command (string cmd)
 	if (code) {
 		stringstream s;
 		s << "error " << code << " in " << cmd << " within " << boost::filesystem::current_path();
-		throw libdcp::MiscError (s.str());
+		throw dcp::MiscError (s.str());
 	}
 }
 
@@ -101,7 +101,7 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	string pub;
 	ifstream f (public_name.string().c_str ());
 	if (!f.good ()) {
-		throw libdcp::MiscError ("public key not found");
+		throw dcp::MiscError ("public key not found");
 	}
 
 	bool read = false;
@@ -120,22 +120,22 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	/* Decode the base64 of the public key */
 		
 	unsigned char buffer[512];
-	int const N = libdcp::base64_decode (pub, buffer, 1024);
+	int const N = dcp::base64_decode (pub, buffer, 1024);
 
 	/* Hash it with SHA1 (without the first 24 bytes, for reasons that are not entirely clear) */
 
 	SHA_CTX context;
 	if (!SHA1_Init (&context)) {
-		throw libdcp::MiscError ("could not init SHA1 context");
+		throw dcp::MiscError ("could not init SHA1 context");
 	}
 
 	if (!SHA1_Update (&context, buffer + 24, N - 24)) {
-		throw libdcp::MiscError ("could not update SHA1 digest");
+		throw dcp::MiscError ("could not update SHA1 digest");
 	}
 
 	unsigned char digest[SHA_DIGEST_LENGTH];
 	if (!SHA1_Final (digest, &context)) {
-		throw libdcp::MiscError ("could not finish SHA1 digest");
+		throw dcp::MiscError ("could not finish SHA1 digest");
 	}
 
 	char digest_base64[64];
@@ -149,7 +149,7 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 }
 
 void
-libdcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem::path openssl)
+dcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem::path openssl)
 {
 	boost::filesystem::path const cwd = boost::filesystem::current_path ();
 

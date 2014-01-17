@@ -9,7 +9,7 @@ using std::cout;
 using std::cerr;
 using std::list;
 using boost::shared_ptr;
-using namespace libdcp;
+using namespace dcp;
 
 int
 main (int argc, char* argv[])

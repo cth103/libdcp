@@ -29,7 +29,7 @@
 using std::string;
 using std::bad_cast;
 using boost::shared_ptr;
-using namespace libdcp::parse;
+using namespace dcp::parse;
 
 CPL::CPL (string file)
 {

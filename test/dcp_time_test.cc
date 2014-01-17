@@ -20,10 +20,10 @@
 #include <boost/test/unit_test.hpp>
 #include "dcp_time.h"
 
-/** Check that libdcp::Time works */
+/** Check that dcp::Time works */
 BOOST_AUTO_TEST_CASE (dcp_time)
 {
-	libdcp::Time t (977143, 24);
+	dcp::Time t (977143, 24);
 
 	BOOST_CHECK_EQUAL (t.t, 73);
 	BOOST_CHECK_EQUAL (t.s, 34);
@@ -32,10 +32,10 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (t.to_string(), "11:18:34:73");
 	BOOST_CHECK_EQUAL (t.to_ticks(), 10178573);
 
-	libdcp::Time a (3, 2, 3, 4);
-	libdcp::Time b (2, 3, 4, 5);
+	dcp::Time a (3, 2, 3, 4);
+	dcp::Time b (2, 3, 4, 5);
 
-	libdcp::Time r = a - b;
+	dcp::Time r = a - b;
 	BOOST_CHECK_EQUAL (r.h, 0);
 	BOOST_CHECK_EQUAL (r.m, 58);
 	BOOST_CHECK_EQUAL (r.s, 58);
@@ -43,8 +43,8 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (r.to_string(), "0:58:58:249");
 	BOOST_CHECK_EQUAL (r.to_ticks(), 884749);
 
-	a = libdcp::Time (1, 58, 56, 240);
-	b = libdcp::Time (1, 7, 12, 120);
+	a = dcp::Time (1, 58, 56, 240);
+	b = dcp::Time (1, 7, 12, 120);
 	r = a + b;
 	BOOST_CHECK_EQUAL (r.h, 3);
 	BOOST_CHECK_EQUAL (r.m, 6);
@@ -53,10 +53,10 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (r.to_string(), "3:6:9:110");
 	BOOST_CHECK_EQUAL (r.to_ticks(), 2792360);
 
-	a = libdcp::Time (24, 12, 6, 3);
-	b = libdcp::Time (16, 8, 4, 2);
+	a = dcp::Time (24, 12, 6, 3);
+	b = dcp::Time (16, 8, 4, 2);
 	BOOST_CHECK_CLOSE (a / b, 1.5, 1e-5);
 
-	BOOST_CHECK_EQUAL (libdcp::Time (4128391203LL).to_ticks(), 4128391203LL);
-	BOOST_CHECK_EQUAL (libdcp::Time (60000).to_ticks(), 60000);
+	BOOST_CHECK_EQUAL (dcp::Time (4128391203LL).to_ticks(), 4128391203LL);
+	BOOST_CHECK_EQUAL (dcp::Time (60000).to_ticks(), 60000);
 }

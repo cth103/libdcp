@@ -23,7 +23,7 @@
 #include "lut.h"
 #include "lut_cache.h"
 
-namespace libdcp {
+namespace dcp {
 
 class GammaLUT : public LUT
 {

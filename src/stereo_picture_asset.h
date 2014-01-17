@@ -22,7 +22,7 @@
 
 #include "picture_asset.h"
 
-namespace libdcp {
+namespace dcp {
 	
 /** A 3D (stereoscopic) picture asset */	
 class StereoPictureAsset : public PictureAsset

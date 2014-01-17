@@ -20,7 +20,7 @@
 #include "image.h"
 
 using boost::shared_ptr;
-using namespace libdcp;
+using namespace dcp;
 
 Image::Image (Size s)
 	: _size (s)

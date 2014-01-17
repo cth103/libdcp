@@ -32,7 +32,7 @@ using std::list;
 using std::cout;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
-using namespace libdcp;
+using namespace dcp;
 
 void
 Reel::write_to_cpl (xmlpp::Element* node) const

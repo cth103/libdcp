@@ -29,7 +29,7 @@ using std::vector;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
-using namespace libdcp;
+using namespace dcp;
 
 MonoPictureAsset::MonoPictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name)
 	: PictureAsset (directory, mxf_name)

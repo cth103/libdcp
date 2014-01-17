@@ -21,7 +21,7 @@
 #include "../dcp_time.h"
 #include "../types.h"
 
-namespace libdcp
+namespace dcp
 {
 
 namespace parse

@@ -31,7 +31,7 @@
 #include "certificates.h"
 #include "key.h"
 
-namespace libdcp {
+namespace dcp {
 
 namespace parse {
 	class AssetMap;

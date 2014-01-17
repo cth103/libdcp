@@ -29,19 +29,19 @@
 */
 BOOST_AUTO_TEST_CASE (lut_test)
 {
-	libdcp::SRGBLinearisedGammaLUT lut_in_srgb (12, 2.4);
+	dcp::SRGBLinearisedGammaLUT lut_in_srgb (12, 2.4);
 	for (int i = 0; i < 4096; ++i) {
 		/* Hmm; 1% isn't exactly great... */
 		BOOST_CHECK_CLOSE (opendcp::lut_in[0][i], lut_in_srgb.lut()[i], 1);
 	}
 
-	libdcp::Rec709LinearisedGammaLUT lut_in_rec709 (12, 1 / 0.45);
+	dcp::Rec709LinearisedGammaLUT lut_in_rec709 (12, 1 / 0.45);
 	for (int i = 0; i < 4096; ++i) {
 		/* Hmm; 1% isn't exactly great... */
 		BOOST_CHECK_CLOSE (opendcp::lut_in[1][i], lut_in_rec709.lut()[i], 1);
 	}
 
-	libdcp::GammaLUT lut_out (16, 1 / 2.6);
+	dcp::GammaLUT lut_out (16, 1 / 2.6);
 	for (int i = 0; i < 65536; ++i) {
 		BOOST_CHECK_CLOSE (opendcp::lut_out[0][i], lut_out.lut()[i] * 4096, 1);
 	}

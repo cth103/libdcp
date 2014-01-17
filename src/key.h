@@ -26,7 +26,7 @@
 
 #include <stdint.h>
 
-namespace libdcp {
+namespace dcp {
 
 /** @class Key
  *  @brief A key for encrypting MXFs.

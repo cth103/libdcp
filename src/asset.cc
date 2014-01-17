@@ -34,7 +34,7 @@
 
 using namespace std;
 using namespace boost;
-using namespace libdcp;
+using namespace dcp;
 
 Asset::Asset (boost::filesystem::path directory, boost::filesystem::path file_name)
 	: _directory (directory)

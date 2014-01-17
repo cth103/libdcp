@@ -23,7 +23,7 @@
 #include <cmath>
 #include <boost/utility.hpp>
 
-namespace libdcp {
+namespace dcp {
 
 class LUT : boost::noncopyable
 {

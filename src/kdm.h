@@ -32,7 +32,7 @@
 
 class kdm_key_test;
 
-namespace libdcp {
+namespace dcp {
 
 namespace xml {
 	class DCinemaSecurityMessage;

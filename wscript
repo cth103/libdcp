@@ -2,7 +2,7 @@ import subprocess
 import os
 
 APPNAME = 'libdcp'
-VERSION = '0.93pre'
+VERSION = '1.00.0devel'
 
 def options(opt):
     opt.load('compiler_cxx')
@@ -140,8 +140,8 @@ def create_version_cc(bld, version):
 
     try:
         text =  '#include "version.h"\n'
-        text += 'char const * libdcp::git_commit = \"%s\";\n' % commit
-        text += 'char const * libdcp::version = \"%s\";\n' % version
+        text += 'char const * dcp::git_commit = \"%s\";\n' % commit
+        text += 'char const * dcp::version = \"%s\";\n' % version
         if bld.env.ENABLE_DEBUG:
             debug_string = 'true'
         else:

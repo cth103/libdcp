@@ -32,7 +32,7 @@
 
 using std::string;
 using boost::shared_ptr;
-using namespace libdcp;
+using namespace dcp;
 
 /** Make a picture frame from a 3D (stereoscopic) asset.
  *  @param mxf_path Path to the asset's MXF file.

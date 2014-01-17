@@ -24,7 +24,7 @@
 #include "asset.h"
 #include "dcp_time.h"
 
-namespace libdcp
+namespace dcp
 {
 
 namespace parse

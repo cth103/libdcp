@@ -24,7 +24,7 @@
 #include <boost/utility.hpp>
 #include "picture_asset_writer.h"
 
-namespace libdcp {
+namespace dcp {
 
 /** A helper class for writing to MonoPictureAssets progressively (i.e. writing frame-by-frame,
  *  rather than giving libdcp all the frames in one go).

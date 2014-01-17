@@ -19,7 +19,7 @@
 
 #include "argb_frame.h"
 
-using namespace libdcp;
+using namespace dcp;
 
 /** Construct an empty ARGBFrame of a given size and with
  *  undefined contents.

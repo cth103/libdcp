@@ -24,7 +24,7 @@
 #include <boost/shared_ptr.hpp>
 #include "../xml.h"
 
-namespace libdcp {
+namespace dcp {
 
 namespace parse {
 

@@ -40,7 +40,7 @@ using std::vector;
 using std::list;
 using boost::shared_ptr;
 using boost::lexical_cast;
-using namespace libdcp;
+using namespace dcp;
 
 SoundAsset::SoundAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name)
 	: MXFAsset (directory, mxf_name)

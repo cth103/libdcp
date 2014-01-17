@@ -35,7 +35,7 @@ namespace ASDCP {
 	}
 }
 
-namespace libdcp
+namespace dcp
 {
 
 class MonoPictureFrame;	

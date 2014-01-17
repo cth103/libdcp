@@ -6,7 +6,7 @@
 
 using namespace std;
 using namespace boost;
-using namespace libdcp;
+using namespace dcp;
 
 static bool verbose = false;
 

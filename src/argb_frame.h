@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include "util.h"
 
-namespace libdcp
+namespace dcp
 {
 
 /** @class ARGBFrame

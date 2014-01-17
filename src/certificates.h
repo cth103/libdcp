@@ -34,7 +34,7 @@ namespace xmlpp {
 	class Element;
 }
 
-namespace libdcp {
+namespace dcp {
 
 class Certificate
 {

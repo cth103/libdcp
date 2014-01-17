@@ -33,7 +33,7 @@ struct ASDCPStateBase
 };
 
 template <class P, class Q>
-void libdcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint8_t* data, int size)
+void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint8_t* data, int size)
 {
 	if (ASDCP_FAILURE (state->j2k_parser.OpenReadFrame (data, size, state->frame_buffer))) {
 		boost::throw_exception (MiscError ("could not parse J2K frame"));

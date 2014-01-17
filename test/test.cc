@@ -28,7 +28,7 @@ struct TestConfig
 {
 	TestConfig()
 	{
-		libdcp::init ();
+		dcp::init ();
 	}
 };
 
@@ -41,7 +41,7 @@ j2c (int)
 }
 
 boost::filesystem::path
-wav (libdcp::Channel)
+wav (dcp::Channel)
 {
 	return "test/data/1s_24-bit_48k_silence.wav";
 }

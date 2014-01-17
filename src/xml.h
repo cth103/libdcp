@@ -23,7 +23,7 @@
 #include <libcxml/cxml.h>
 #include "exceptions.h"
 
-namespace libdcp
+namespace dcp
 {
 
 template <class T>

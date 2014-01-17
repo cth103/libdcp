@@ -39,7 +39,7 @@ namespace xmlpp {
 	class Element;
 }
 
-namespace libdcp
+namespace dcp
 {
 
 /** @brief Parent class for assets of DCPs

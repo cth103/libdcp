@@ -29,7 +29,7 @@ namespace ASDCP {
 	class AESDecContext;
 }
 
-namespace libdcp {
+namespace dcp {
 
 class ARGBFrame;
 

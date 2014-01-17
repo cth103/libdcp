@@ -21,7 +21,7 @@
 #include "gamma_lut.h"
 #include "lut_cache.h"
 
-using namespace libdcp;
+using namespace dcp;
 
 LUTCache<GammaLUT> GammaLUT::cache;
 

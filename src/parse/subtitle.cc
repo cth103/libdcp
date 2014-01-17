@@ -27,8 +27,8 @@ using std::list;
 using boost::shared_ptr;
 using boost::optional;
 using boost::lexical_cast;
-using namespace libdcp;
-using namespace libdcp::parse;
+using namespace dcp;
+using namespace dcp::parse;
 
 Font::Font (shared_ptr<const cxml::Node> node)
 {

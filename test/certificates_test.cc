@@ -25,15 +25,15 @@ using boost::shared_ptr;
 
 BOOST_AUTO_TEST_CASE (certificates)
 {
-	libdcp::CertificateChain c;
+	dcp::CertificateChain c;
 
-	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
-	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
-	c.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
+	c.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
+	c.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
+	c.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
 
-	list<shared_ptr<libdcp::Certificate> > leaf_to_root = c.leaf_to_root ();
+	list<shared_ptr<dcp::Certificate> > leaf_to_root = c.leaf_to_root ();
 
-	list<shared_ptr<libdcp::Certificate> >::iterator i = leaf_to_root.begin ();
+	list<shared_ptr<dcp::Certificate> >::iterator i = leaf_to_root.begin ();
 
 	/* Leaf */
 	BOOST_CHECK_EQUAL (*i, c.leaf ());
@@ -78,6 +78,6 @@ BOOST_AUTO_TEST_CASE (certificates)
 		);
 
 	/* Check that reconstruction from a string works */
-	libdcp::Certificate test (c.root()->certificate (true));
+	dcp::Certificate test (c.root()->certificate (true));
 	BOOST_CHECK_EQUAL (test.certificate(), c.root()->certificate());
 }

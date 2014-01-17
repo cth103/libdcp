@@ -37,7 +37,7 @@ using std::string;
 using std::stringstream;
 using std::vector;
 using boost::shared_ptr;
-using namespace libdcp;
+using namespace dcp;
 
 /** @param c X509 certificate, which this object will take ownership of */
 Certificate::Certificate (X509* c)

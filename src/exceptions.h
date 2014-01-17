@@ -26,7 +26,7 @@
  *  @brief Exceptions thrown by libdcp.
  */
 
-namespace libdcp
+namespace dcp
 {
 
 /** @brief An exception related to a file */

@@ -21,24 +21,24 @@
 
 #include "util.h"
 
-/* Check that libdcp::Color works */
+/* Check that dcp::Color works */
 BOOST_AUTO_TEST_CASE (color)
 {
-	libdcp::Color c ("FFFF0000");
+	dcp::Color c ("FFFF0000");
 
 	BOOST_CHECK_EQUAL (c.r, 255);
 	BOOST_CHECK_EQUAL (c.g, 0);
 	BOOST_CHECK_EQUAL (c.b, 0);
 	BOOST_CHECK_EQUAL (c.to_argb_string(), "FFFF0000");
 
-	c = libdcp::Color ("FF00FF00");
+	c = dcp::Color ("FF00FF00");
 
 	BOOST_CHECK_EQUAL (c.r, 0);
 	BOOST_CHECK_EQUAL (c.g, 255);
 	BOOST_CHECK_EQUAL (c.b, 0);
 	BOOST_CHECK_EQUAL (c.to_argb_string(), "FF00FF00");
 
-	c = libdcp::Color ("FF0000FF");
+	c = dcp::Color ("FF0000FF");
 
 	BOOST_CHECK_EQUAL (c.r, 0);
 	BOOST_CHECK_EQUAL (c.g, 0);

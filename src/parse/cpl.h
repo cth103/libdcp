@@ -26,7 +26,7 @@
 #include <libcxml/cxml.h>
 #include "../types.h"
 
-namespace libdcp {
+namespace dcp {
 
 namespace parse	{
 

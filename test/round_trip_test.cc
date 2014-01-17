@@ -39,15 +39,15 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 {
 	boost::filesystem::remove_all ("build/test/signer");
 	boost::filesystem::create_directory ("build/test/signer");
-	libdcp::make_signer_chain ("build/test/signer", "openssl");
+	dcp::make_signer_chain ("build/test/signer", "openssl");
 	
-	libdcp::CertificateChain chain;
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/ca.self-signed.pem"))));
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/intermediate.signed.pem"))));
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/leaf.signed.pem"))));
+	dcp::CertificateChain chain;
+	chain.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("build/test/signer/ca.self-signed.pem"))));
+	chain.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("build/test/signer/intermediate.signed.pem"))));
+	chain.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("build/test/signer/leaf.signed.pem"))));
 
-	shared_ptr<libdcp::Signer> signer (
-		new libdcp::Signer (
+	shared_ptr<dcp::Signer> signer (
+		new dcp::Signer (
 			chain,
 			"test/data/signer.key"
 			)
@@ -56,21 +56,21 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	boost::filesystem::path work_dir = "build/test/round_trip_test";
 	boost::filesystem::create_directory (work_dir);
 
-	shared_ptr<libdcp::MonoPictureAsset> asset_A (new libdcp::MonoPictureAsset (work_dir, "video.mxf"));
+	shared_ptr<dcp::MonoPictureAsset> asset_A (new dcp::MonoPictureAsset (work_dir, "video.mxf"));
 	asset_A->set_edit_rate (24);
 	asset_A->set_intrinsic_duration (24);
-	asset_A->set_size (libdcp::Size (32, 32));
+	asset_A->set_size (dcp::Size (32, 32));
 	asset_A->create (j2c);
 
-	libdcp::Key key;
+	dcp::Key key;
 
 	asset_A->set_key (key);
 
-	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL (work_dir, "A Test DCP", libdcp::FEATURE, 24, 24));
-	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (asset_A, shared_ptr<libdcp::SoundAsset> (), shared_ptr<libdcp::SubtitleAsset> ())));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL (work_dir, "A Test DCP", dcp::FEATURE, 24, 24));
+	cpl->add_reel (shared_ptr<dcp::Reel> (new dcp::Reel (asset_A, shared_ptr<dcp::SoundAsset> (), shared_ptr<dcp::SubtitleAsset> ())));
 
 	/* A KDM using our certificate chain's leaf key pair */
-	libdcp::KDM kdm_A (
+	dcp::KDM kdm_A (
 		cpl,
 		signer,
 		signer->certificates().leaf(),
@@ -85,14 +85,14 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	kdm_A.as_xml (kdm_file);
 
 	/* Reload the KDM, using our private key to decrypt it */
-	libdcp::KDM kdm_B (kdm_file, "build/test/signer/leaf.key");
+	dcp::KDM kdm_B (kdm_file, "build/test/signer/leaf.key");
 
 	/* Check that the decrypted KDMKeys are the same as the ones we started with */
 	BOOST_CHECK_EQUAL (kdm_A.keys().size(), kdm_B.keys().size());
-	list<libdcp::KDMKey> keys_A = kdm_A.keys ();
-	list<libdcp::KDMKey> keys_B = kdm_B.keys ();
-	list<libdcp::KDMKey>::const_iterator i = keys_A.begin();
-	list<libdcp::KDMKey>::const_iterator j = keys_B.begin();
+	list<dcp::KDMKey> keys_A = kdm_A.keys ();
+	list<dcp::KDMKey> keys_B = kdm_B.keys ();
+	list<dcp::KDMKey>::const_iterator i = keys_A.begin();
+	list<dcp::KDMKey>::const_iterator j = keys_B.begin();
 	while (i != keys_A.end ()) {
 		BOOST_CHECK (*i == *j);
 		++i;
@@ -100,14 +100,14 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	}
 
 	/* Reload the picture MXF */
-	shared_ptr<libdcp::MonoPictureAsset> asset_B (
-		new libdcp::MonoPictureAsset (work_dir, "video.mxf")
+	shared_ptr<dcp::MonoPictureAsset> asset_B (
+		new dcp::MonoPictureAsset (work_dir, "video.mxf")
 		);
 
 	asset_B->set_key (kdm_B.keys().front().key());
 
-	shared_ptr<libdcp::ARGBFrame> frame_A = asset_A->get_frame(0)->argb_frame ();
-	shared_ptr<libdcp::ARGBFrame> frame_B = asset_B->get_frame(0)->argb_frame ();
+	shared_ptr<dcp::ARGBFrame> frame_A = asset_A->get_frame(0)->argb_frame ();
+	shared_ptr<dcp::ARGBFrame> frame_B = asset_B->get_frame(0)->argb_frame ();
 	BOOST_CHECK_EQUAL (frame_A->size().width, frame_B->size().width);
 	BOOST_CHECK_EQUAL (frame_A->size().height, frame_B->size().height);
 	BOOST_CHECK_EQUAL (memcmp (frame_A->data(), frame_B->data(), frame_A->size().width * frame_A->size().height), 0);

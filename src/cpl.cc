@@ -41,7 +41,7 @@ using std::make_pair;
 using boost::shared_ptr;
 using boost::lexical_cast;
 using boost::optional;
-using namespace libdcp;
+using namespace dcp;
 
 CPL::CPL (boost::filesystem::path directory, string name, ContentKind content_kind, int length, int frames_per_second)
 	: _directory (directory)

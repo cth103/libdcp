@@ -31,7 +31,7 @@
 #include "util.h"
 
 using namespace std;
-using namespace libdcp;
+using namespace dcp;
 
 MXFMetadata::MXFMetadata ()
 	: company_name ("libdcp")

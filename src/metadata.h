@@ -28,7 +28,7 @@
 
 class utc_offset_to_string_test;
 
-namespace libdcp
+namespace dcp
 {
 
 class MXFMetadata

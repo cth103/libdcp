@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE (kdm_key_test)
 {
 	uint8_t foo[138];
 	memset (foo, 0, 138);
-	libdcp::KDMKey kkey (foo, 138);
+	dcp::KDMKey kkey (foo, 138);
 
 	uint8_t* raw = new uint8_t[16];
 	uint8_t* p = raw;

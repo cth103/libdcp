@@ -26,7 +26,7 @@
 
 using namespace std;
 using namespace boost;
-using namespace libdcp::parse;
+using namespace dcp::parse;
 
 PKL::PKL (string file)
 {

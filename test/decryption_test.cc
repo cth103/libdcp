@@ -30,15 +30,15 @@
 using boost::dynamic_pointer_cast;
 using boost::shared_ptr;
 
-static shared_ptr<const libdcp::ARGBFrame>
-get_frame (libdcp::DCP const & dcp)
+static shared_ptr<const dcp::ARGBFrame>
+get_frame (dcp::DCP const & dcp)
 {
-	shared_ptr<const libdcp::Reel> reel = dcp.cpls().front()->reels().front ();
-	shared_ptr<const libdcp::PictureAsset> picture = reel->main_picture ();
+	shared_ptr<const dcp::Reel> reel = dcp.cpls().front()->reels().front ();
+	shared_ptr<const dcp::PictureAsset> picture = reel->main_picture ();
 	BOOST_CHECK (picture);
 
-	shared_ptr<const libdcp::MonoPictureAsset> mono_picture = dynamic_pointer_cast<const libdcp::MonoPictureAsset> (picture);
-	shared_ptr<const libdcp::MonoPictureFrame> j2k_frame = mono_picture->get_frame (0);
+	shared_ptr<const dcp::MonoPictureAsset> mono_picture = dynamic_pointer_cast<const dcp::MonoPictureAsset> (picture);
+	shared_ptr<const dcp::MonoPictureFrame> j2k_frame = mono_picture->get_frame (0);
 	return j2k_frame->argb_frame ();
 }
 
@@ -47,25 +47,25 @@ BOOST_AUTO_TEST_CASE (decryption_test)
 {
 	boost::filesystem::path plaintext_path = test_corpus;
 	plaintext_path /= "TONEPLATES-SMPTE-PLAINTEXT_TST_F_XX-XX_ITL-TD_51-XX_2K_WOE_20111001_WOE_OV";
-	libdcp::DCP plaintext (plaintext_path.string ());
+	dcp::DCP plaintext (plaintext_path.string ());
 	plaintext.read ();
 	BOOST_CHECK_EQUAL (plaintext.encrypted (), false);
 
 	boost::filesystem::path encrypted_path = test_corpus;
 	encrypted_path /= "TONEPLATES-SMPTE-ENCRYPTED_TST_F_XX-XX_ITL-TD_51-XX_2K_WOE_20111001_WOE_OV";
-	libdcp::DCP encrypted (encrypted_path.string ());
+	dcp::DCP encrypted (encrypted_path.string ());
 	encrypted.read ();
 	BOOST_CHECK_EQUAL (encrypted.encrypted (), true);
 
-	libdcp::KDM kdm (
+	dcp::KDM kdm (
 		"test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml",
 		"test/data/private.key"
 		);
 
 	encrypted.add_kdm (kdm);
 
-	shared_ptr<const libdcp::ARGBFrame> plaintext_frame = get_frame (plaintext);
-	shared_ptr<const libdcp::ARGBFrame> encrypted_frame = get_frame (encrypted);
+	shared_ptr<const dcp::ARGBFrame> plaintext_frame = get_frame (plaintext);
+	shared_ptr<const dcp::ARGBFrame> encrypted_frame = get_frame (encrypted);
 
 	/* Check that plaintext and encrypted are the same */
 	BOOST_CHECK_EQUAL (plaintext_frame->stride(), encrypted_frame->stride());
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE (decryption_test)
 /** Load in a KDM that didn't work at first */
 BOOST_AUTO_TEST_CASE (failing_kdm_test)
 {
-	libdcp::KDM kdm (
+	dcp::KDM kdm (
 		"test/data/target.pem.crt.de5d4eba-e683-41ca-bdda-aa4ad96af3f4.kdm.xml",
 		"test/data/private.key"
 		);

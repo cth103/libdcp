@@ -17,7 +17,7 @@
 
 */
 
-namespace libdcp {
+namespace dcp {
 
 namespace colour_matrix {
 

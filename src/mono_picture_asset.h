@@ -22,7 +22,7 @@
 
 #include "picture_asset.h"
 
-namespace libdcp {
+namespace dcp {
 
 /** A 2D (monoscopic) picture asset */
 class MonoPictureAsset : public PictureAsset

@@ -56,13 +56,13 @@ using std::setw;
 using std::setfill;
 using boost::shared_ptr;
 using boost::lexical_cast;
-using namespace libdcp;
+using namespace dcp;
 
 /** Create a UUID.
  *  @return UUID.
  */
 string
-libdcp::make_uuid ()
+dcp::make_uuid ()
 {
 	char buffer[64];
 	Kumu::UUID id;
@@ -79,7 +79,7 @@ libdcp::make_uuid ()
  *  @return Digest.
  */
 string
-libdcp::make_digest (string filename, boost::function<void (float)>* progress)
+dcp::make_digest (string filename, boost::function<void (float)>* progress)
 {
 	Kumu::FileReader reader;
 	Kumu::Result_t r = reader.OpenRead (filename.c_str ());
@@ -126,7 +126,7 @@ libdcp::make_digest (string filename, boost::function<void (float)>* progress)
  *  @return string.
  */
 string
-libdcp::content_kind_to_string (ContentKind kind)
+dcp::content_kind_to_string (ContentKind kind)
 {
 	switch (kind) {
 	case FEATURE:
@@ -159,8 +159,8 @@ libdcp::content_kind_to_string (ContentKind kind)
  *  @param type Content kind string.
  *  @return libdcp ContentKind.
  */
-libdcp::ContentKind
-libdcp::content_kind_from_string (string type)
+dcp::ContentKind
+dcp::content_kind_from_string (string type)
 {
 	transform (type.begin(), type.end(), type.begin(), ::tolower);
 	
@@ -198,8 +198,8 @@ libdcp::content_kind_from_string (string type)
  *  This is useful for scaling 4K DCP images down to 2K.
  *  @return XYZ image.
  */
-shared_ptr<libdcp::XYZFrame>
-libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
+shared_ptr<dcp::XYZFrame>
+dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 {
 	opj_dinfo_t* decoder = opj_create_decompress (CODEC_J2K);
 	opj_dparameters_t parameters;
@@ -226,7 +226,7 @@ libdcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
  *  @return true if the string contains only space, newline or tab characters, or is empty.
  */
 bool
-libdcp::empty_or_white_space (string s)
+dcp::empty_or_white_space (string s)
 {
 	for (size_t i = 0; i < s.length(); ++i) {
 		if (s[i] != ' ' && s[i] != '\n' && s[i] != '\t') {
@@ -238,7 +238,7 @@ libdcp::empty_or_white_space (string s)
 }
 
 void
-libdcp::init ()
+dcp::init ()
 {
 	if (xmlSecInit() < 0) {
 		throw MiscError ("could not initialise xmlsec");
@@ -259,12 +259,12 @@ libdcp::init ()
 	}
 }
 
-bool libdcp::operator== (libdcp::Size const & a, libdcp::Size const & b)
+bool dcp::operator== (dcp::Size const & a, dcp::Size const & b)
 {
 	return (a.width == b.width && a.height == b.height);
 }
 
-bool libdcp::operator!= (libdcp::Size const & a, libdcp::Size const & b)
+bool dcp::operator!= (dcp::Size const & a, dcp::Size const & b)
 {
 	return !(a == b);
 }
@@ -273,7 +273,7 @@ bool libdcp::operator!= (libdcp::Size const & a, libdcp::Size const & b)
  *  this and the command-line base64 for some inputs.  Not sure why.
  */
 int
-libdcp::base64_decode (string const & in, unsigned char* out, int out_length)
+dcp::base64_decode (string const & in, unsigned char* out, int out_length)
 {
 	BIO* b64 = BIO_new (BIO_f_base64 ());
 
@@ -298,7 +298,7 @@ libdcp::base64_decode (string const & in, unsigned char* out, int out_length)
 }
 
 string
-libdcp::tm_to_string (struct tm* tm)
+dcp::tm_to_string (struct tm* tm)
 {
 	char buffer[64];
 	strftime (buffer, 64, "%Y-%m-%dT%H:%M:%S", tm);
@@ -320,7 +320,7 @@ libdcp::tm_to_string (struct tm* tm)
  *  @return string of the form e.g. -01:00.
  */
 string
-libdcp::utc_offset_to_string (int b)
+dcp::utc_offset_to_string (int b)
 {
 	bool const negative = (b < 0);
 	b = negative ? -b : b;
@@ -340,7 +340,7 @@ libdcp::utc_offset_to_string (int b)
 }
 
 string
-libdcp::ptime_to_string (boost::posix_time::ptime t)
+dcp::ptime_to_string (boost::posix_time::ptime t)
 {
 	struct tm t_tm = boost::posix_time::to_tm (t);
 	return tm_to_string (&t_tm);
@@ -352,7 +352,7 @@ libdcp::ptime_to_string (boost::posix_time::ptime t)
    with this wrapper.
 */
 FILE *
-libdcp::fopen_boost (boost::filesystem::path p, string t)
+dcp::fopen_boost (boost::filesystem::path p, string t)
 {
 #ifdef LIBDCP_WINDOWS
         wstring w (t.begin(), t.end());

@@ -20,7 +20,7 @@
 #include <openjpeg.h>
 #include "util.h"
 
-namespace libdcp {
+namespace dcp {
 
 class XYZFrame
 {
@@ -30,7 +30,7 @@ public:
 	~XYZFrame ();
 
 	int* data (int) const;
-	libdcp::Size size () const;
+	dcp::Size size () const;
 
 	opj_image_t* opj_image () const {
 		return _opj_image;

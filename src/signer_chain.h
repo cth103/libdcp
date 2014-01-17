@@ -19,7 +19,7 @@
 
 #include <boost/filesystem.hpp>
 
-namespace libdcp {
+namespace dcp {
 
 /** Create a chain of certificates for signing things.
  *  @param directory Directory to write files to.
