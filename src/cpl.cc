@@ -50,7 +50,7 @@ CPL::CPL (boost::filesystem::path directory, string name, ContentKind content_ki
 	, _length (length)
 	, _fps (frames_per_second)
 {
-	_id = make_uuid ();
+
 }
 
 /** Construct a CPL object from a XML file.

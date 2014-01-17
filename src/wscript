@@ -13,6 +13,7 @@ def build(bld):
     obj.use = 'libkumu-libdcp libasdcp-libdcp'
     obj.source = """
                  argb_frame.cc
+                 asset.cc
                  certificates.cc
                  colour_matrix.cc
                  content_asset.cc
@@ -29,6 +30,7 @@ def build(bld):
                  mono_picture_asset_writer.cc
                  mono_picture_frame.cc
                  mxf_asset.cc
+                 object.cc
                  picture_asset.cc
                  picture_asset_writer.cc
                  rec709_linearised_gamma_lut.cc
@@ -71,6 +73,7 @@ def build(bld):
               mono_picture_asset.h
               mono_picture_frame.h
               mxf_asset.h
+              object.h
               picture_asset.h
               picture_asset_writer.h
               rgb_xyz.h

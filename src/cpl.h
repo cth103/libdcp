@@ -30,6 +30,7 @@
 #include "types.h"
 #include "certificates.h"
 #include "key.h"
+#include "asset.h"
 
 namespace dcp {
 
@@ -45,8 +46,10 @@ class MXFMetadata;
 class Signer;
 class KDM;
 	
-/** @brief A CPL within a DCP */
-class CPL
+/** @class CPL
+ *  @brief A Composition Playlist.
+ */
+class CPL : public Asset
 {
 public:
 	CPL (boost::filesystem::path directory, std::string name, ContentKind content_kind, int length, int frames_per_second);
@@ -88,10 +91,6 @@ public:
 
 	void set_mxf_keys (Key);
 
-	std::string id () const {
-		return _id;
-	}
-	
 	bool equals (CPL const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
 	
 	void write_xml (bool, XMLMetadata const &, boost::shared_ptr<const Signer>) const;
@@ -115,8 +114,6 @@ private:
 	/** reels */
 	std::list<boost::shared_ptr<Reel> > _reels;
 
-	/** our UUID */
-	std::string _id;
 	/** a SHA1 digest of our XML */
 	mutable std::string _digest;
 };
