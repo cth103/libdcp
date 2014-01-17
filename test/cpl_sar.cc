@@ -20,7 +20,7 @@
 #include <boost/test/unit_test.hpp>
 #include <libcxml/cxml.h>
 #include "cpl.h"
-#include "mono_picture_asset.h"
+#include "mono_picture_mxf.h"
 
 using boost::shared_ptr;
 
@@ -29,7 +29,7 @@ using boost::shared_ptr;
 */
 BOOST_AUTO_TEST_CASE (cpl_sar)
 {
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset ("build/test/foo", "video.mxf"));
+	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF ("build/test/foo", "video.mxf"));
 	mp->set_interop (true);
 
 	{

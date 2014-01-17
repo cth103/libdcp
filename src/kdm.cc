@@ -32,7 +32,7 @@
 #include "exceptions.h"
 #include "signer.h"
 #include "cpl.h"
-#include "mxf_asset.h"
+#include "mxf.h"
 #include "xml/kdm_smpte.h"
 
 using std::list;
@@ -127,7 +127,7 @@ KDM::KDM (
 	list<shared_ptr<const ContentAsset> > assets = cpl->assets ();
 	for (list<shared_ptr<const ContentAsset> >::iterator i = assets.begin(); i != assets.end(); ++i) {
 		/* XXX: non-MXF assets? */
-		shared_ptr<const MXFAsset> mxf = boost::dynamic_pointer_cast<const MXFAsset> (*i);
+		shared_ptr<const MXF> mxf = boost::dynamic_pointer_cast<const MXF> (*i);
 		if (mxf) {
 			apu.key_id_list.push_back (xml::TypedKeyId (mxf->key_type(), "urn:uuid:" + mxf->key_id()));
 		}
@@ -140,7 +140,7 @@ KDM::KDM (
 
 	for (list<shared_ptr<const ContentAsset> >::iterator i = assets.begin(); i != assets.end(); ++i) {
 		/* XXX: non-MXF assets? */
-		shared_ptr<const MXFAsset> mxf = boost::dynamic_pointer_cast<const MXFAsset> (*i);
+		shared_ptr<const MXF> mxf = boost::dynamic_pointer_cast<const MXF> (*i);
 		if (mxf) {
 			KDMKey kkey (
 					signer, cpl->id (), mxf->key_type (), mxf->key_id (),

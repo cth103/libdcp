@@ -19,7 +19,8 @@
 
 #include <fstream>
 #include <boost/test/unit_test.hpp>
-#include "picture_asset_writer.h"
+#include "picture_mxf.h"
+#include "picture_mxf_writer.h"
 
 using namespace std;
 

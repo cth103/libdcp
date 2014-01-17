@@ -28,7 +28,7 @@
 #include <libxml++/nodes/element.h>
 #include "KM_fileio.h"
 #include "AS_DCP.h"
-#include "sound_asset.h"
+#include "sound_mxf.h"
 #include "util.h"
 #include "exceptions.h"
 #include "sound_frame.h"
@@ -42,8 +42,8 @@ using boost::shared_ptr;
 using boost::lexical_cast;
 using namespace dcp;
 
-SoundAsset::SoundAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name)
-	: MXFAsset (directory, mxf_name)
+SoundMXF::SoundMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name)
+	: MXF (directory, mxf_name)
 	, _channels (0)
 	, _sampling_rate (0)
 {
@@ -51,7 +51,7 @@ SoundAsset::SoundAsset (boost::filesystem::path directory, boost::filesystem::pa
 }
 
 void
-SoundAsset::read ()
+SoundMXF::read ()
 {
 	ASDCP::PCM::MXFReader reader;
 	Kumu::Result_t r = reader.OpenRead (path().string().c_str());
@@ -72,15 +72,15 @@ SoundAsset::read ()
 }
 
 string
-SoundAsset::cpl_node_name () const
+SoundMXF::cpl_node_name () const
 {
 	return "MainSound";
 }
 
 bool
-SoundAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+SoundMXF::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (!MXFAsset::equals (other, opt, note)) {
+	if (!MXF::equals (other, opt, note)) {
 		return false;
 	}
 		     
@@ -154,20 +154,20 @@ SoundAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, b
 }
 
 shared_ptr<const SoundFrame>
-SoundAsset::get_frame (int n) const
+SoundMXF::get_frame (int n) const
 {
 	/* XXX: should add on entry point here? */
 	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n, _decryption_context));
 }
 
-shared_ptr<SoundAssetWriter>
-SoundAsset::start_write ()
+shared_ptr<SoundMXFWriter>
+SoundMXF::start_write ()
 {
 	/* XXX: can't we use a shared_ptr here? */
-	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter (this));
+	return shared_ptr<SoundMXFWriter> (new SoundMXFWriter (this));
 }
 
-struct SoundAssetWriter::ASDCPState
+struct SoundMXFWriter::ASDCPState
 {
 	ASDCP::PCM::MXFWriter mxf_writer;
 	ASDCP::PCM::FrameBuffer frame_buffer;
@@ -176,8 +176,8 @@ struct SoundAssetWriter::ASDCPState
 	ASDCP::AESEncContext* encryption_context;
 };
 
-SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
-	: _state (new SoundAssetWriter::ASDCPState)
+SoundMXFWriter::SoundMXFWriter (SoundMXF* a)
+	: _state (new SoundMXFWriter::ASDCPState)
 	, _asset (a)
 	, _finalized (false)
 	, _frames_written (0)
@@ -209,7 +209,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
 }
 
 void
-SoundAssetWriter::write (float const * const * data, int frames)
+SoundMXFWriter::write (float const * const * data, int frames)
 {
 	for (int i = 0; i < frames; ++i) {
 
@@ -236,7 +236,7 @@ SoundAssetWriter::write (float const * const * data, int frames)
 }
 
 void
-SoundAssetWriter::write_current_frame ()
+SoundMXFWriter::write_current_frame ()
 {
 	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _state->encryption_context, 0);
 	if (ASDCP_FAILURE (r)) {
@@ -247,7 +247,7 @@ SoundAssetWriter::write_current_frame ()
 }
 
 void
-SoundAssetWriter::finalize ()
+SoundMXFWriter::finalize ()
 {
 	if (_frame_buffer_offset > 0) {
 		write_current_frame ();
@@ -263,7 +263,7 @@ SoundAssetWriter::finalize ()
 }
 
 string
-SoundAsset::key_type () const
+SoundMXF::key_type () const
 {
 	return "MDAK";
 }

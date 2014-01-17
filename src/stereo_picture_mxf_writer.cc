@@ -19,42 +19,43 @@
 
 #include "AS_DCP.h"
 #include "KM_fileio.h"
-#include "mono_picture_asset_writer.h"
+#include "stereo_picture_mxf_writer.h"
 #include "exceptions.h"
-#include "picture_asset.h"
+#include "picture_mxf.h"
 
-#include "picture_asset_writer_common.cc"
+#include "picture_mxf_writer_common.cc"
 
 using std::istream;
 using std::ostream;
 using std::string;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using namespace dcp;
 
-struct MonoPictureAssetWriter::ASDCPState : public ASDCPStateBase
+struct StereoPictureMXFWriter::ASDCPState : public ASDCPStateBase
 {
-	ASDCP::JP2K::MXFWriter mxf_writer;
+	ASDCP::JP2K::MXFSWriter mxf_writer;
 };
 
-/** @param a Asset to write to.  `a' must not be deleted while
- *  this writer class still exists, or bad things will happen.
- */
-MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, bool overwrite)
-	: PictureAssetWriter (asset, overwrite)
-	, _state (new MonoPictureAssetWriter::ASDCPState)
+StereoPictureMXFWriter::StereoPictureMXFWriter (PictureMXF* asset, bool overwrite)
+	: PictureMXFWriter (asset, overwrite)
+	, _state (new StereoPictureMXFWriter::ASDCPState)
+	, _next_eye (EYE_LEFT)
 {
 	_state->encryption_context = asset->encryption_context ();
 }
 
 void
-MonoPictureAssetWriter::start (uint8_t* data, int size)
+StereoPictureMXFWriter::start (uint8_t* data, int size)
 {
 	dcp::start (this, _state, _asset, data, size);
 }
 
+/** Write a frame for one eye.  Frames must be written left, then right, then left etc.
+ *  @param data JPEG2000 data.
+ *  @param size Size of data.
+ */
 FrameInfo
-MonoPictureAssetWriter::write (uint8_t* data, int size)
+StereoPictureMXFWriter::write (uint8_t* data, int size)
 {
 	assert (!_finalized);
 
@@ -69,17 +70,26 @@ MonoPictureAssetWriter::write (uint8_t* data, int size)
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
-	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _state->encryption_context, 0, &hash);
+	Kumu::Result_t r = _state->mxf_writer.WriteFrame (
+		_state->frame_buffer,
+		_next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
+		_state->encryption_context,
+		0,
+		&hash
+		);
+
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string(), r));
 	}
+
+	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
 
 	++_frames_written;
 	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 
 void
-MonoPictureAssetWriter::fake_write (int size)
+StereoPictureMXFWriter::fake_write (int size)
 {
 	assert (_started);
 	assert (!_finalized);
@@ -89,11 +99,12 @@ MonoPictureAssetWriter::fake_write (int size)
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string(), r));
 	}
 
+	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
 	++_frames_written;
 }
 
 void
-MonoPictureAssetWriter::finalize ()
+StereoPictureMXFWriter::finalize ()
 {
 	assert (!_finalized);
 	
@@ -103,7 +114,6 @@ MonoPictureAssetWriter::finalize ()
 	}
 
 	_finalized = true;
-	_asset->set_intrinsic_duration (_frames_written);
-	_asset->set_duration (_frames_written);
+	_asset->set_intrinsic_duration (_frames_written / 2);
+	_asset->set_duration (_frames_written / 2);
 }
-

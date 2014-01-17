@@ -20,10 +20,10 @@
 #include <libxml++/nodes/element.h>
 #include "reel.h"
 #include "util.h"
-#include "picture_asset.h"
-#include "mono_picture_asset.h"
-#include "stereo_picture_asset.h"
-#include "sound_asset.h"
+#include "picture_mxf.h"
+#include "mono_picture_mxf.h"
+#include "stereo_picture_mxf.h"
+#include "sound_mxf.h"
 #include "subtitle_asset.h"
 #include "kdm.h"
 
@@ -41,7 +41,7 @@ Reel::write_to_cpl (xmlpp::Element* node) const
 	reel->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
 	xmlpp::Element* asset_list = reel->add_child ("AssetList");
 	
-	if (_main_picture && dynamic_pointer_cast<MonoPictureAsset> (_main_picture)) {
+	if (_main_picture && dynamic_pointer_cast<MonoPictureMXF> (_main_picture)) {
 		/* Mono pictures come before other stuff... */
 		_main_picture->write_to_cpl (asset_list);
 	}
@@ -54,7 +54,7 @@ Reel::write_to_cpl (xmlpp::Element* node) const
 		_main_subtitle->write_to_cpl (asset_list);
 	}
 
-	if (_main_picture && dynamic_pointer_cast<StereoPictureAsset> (_main_picture)) {
+	if (_main_picture && dynamic_pointer_cast<StereoPictureMXF> (_main_picture)) {
 		/* ... but stereo pictures must come after */
 		_main_picture->write_to_cpl (asset_list);
 	}

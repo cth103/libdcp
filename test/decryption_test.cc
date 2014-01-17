@@ -23,7 +23,7 @@
 #include "mono_picture_frame.h"
 #include "cpl.h"
 #include "argb_frame.h"
-#include "mono_picture_asset.h"
+#include "mono_picture_mxf.h"
 #include "reel.h"
 #include "test.h"
 
@@ -34,10 +34,10 @@ static shared_ptr<const dcp::ARGBFrame>
 get_frame (dcp::DCP const & dcp)
 {
 	shared_ptr<const dcp::Reel> reel = dcp.cpls().front()->reels().front ();
-	shared_ptr<const dcp::PictureAsset> picture = reel->main_picture ();
+	shared_ptr<const dcp::PictureMXF> picture = reel->main_picture ();
 	BOOST_CHECK (picture);
 
-	shared_ptr<const dcp::MonoPictureAsset> mono_picture = dynamic_pointer_cast<const dcp::MonoPictureAsset> (picture);
+	shared_ptr<const dcp::MonoPictureMXF> mono_picture = dynamic_pointer_cast<const dcp::MonoPictureMXF> (picture);
 	shared_ptr<const dcp::MonoPictureFrame> j2k_frame = mono_picture->get_frame (0);
 	return j2k_frame->argb_frame ();
 }

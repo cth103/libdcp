@@ -35,19 +35,21 @@ namespace dcp
 
 class MXFMetadata;	
 
-/** @brief Parent class for assets which have MXF files */	
-class MXFAsset : public ContentAsset
+/** @class MXF
+ *  @brief Parent class for classes which represent MXF files.
+ */
+class MXF : public ContentAsset
 {
 public:
-	/** Construct an MXFAsset.
+	/** Construct an MXF.
 	 *  This class will not write anything to disk in this constructor, but subclasses may.
 	 *
 	 *  @param directory Directory where MXF file is.
 	 *  @param file_name Name of MXF file.
 	 */
-	MXFAsset (boost::filesystem::path directory, boost::filesystem::path file_name);
+	MXF (boost::filesystem::path directory, boost::filesystem::path file_name);
 	
-	~MXFAsset ();
+	~MXF ();
 
 	virtual bool equals (boost::shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 	virtual void write_to_cpl (xmlpp::Element *) const;

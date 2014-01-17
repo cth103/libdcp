@@ -28,7 +28,7 @@
 #include "AS_DCP.h"
 #include "KM_prng.h"
 #include "KM_util.h"
-#include "mxf_asset.h"
+#include "mxf.h"
 #include "util.h"
 #include "metadata.h"
 #include "exceptions.h"
@@ -42,7 +42,7 @@ using boost::lexical_cast;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
-MXFAsset::MXFAsset (boost::filesystem::path directory, boost::filesystem::path file_name)
+MXF::MXF (boost::filesystem::path directory, boost::filesystem::path file_name)
 	: ContentAsset (directory, file_name)
 	, _progress (0)
 	, _encryption_context (0)
@@ -52,14 +52,14 @@ MXFAsset::MXFAsset (boost::filesystem::path directory, boost::filesystem::path f
 
 }
 
-MXFAsset::~MXFAsset ()
+MXF::~MXF ()
 {
 	delete _encryption_context;
 	delete _decryption_context;
 }
 
 void
-MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info)
+MXF::fill_writer_info (ASDCP::WriterInfo* writer_info)
 {
 	writer_info->ProductVersion = _metadata.product_version;
 	writer_info->CompanyName = _metadata.company_name;
@@ -85,13 +85,13 @@ MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info)
 }
 
 bool
-MXFAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+MXF::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!ContentAsset::equals (other, opt, note)) {
 		return false;
 	}
 	
-	shared_ptr<const MXFAsset> other_mxf = dynamic_pointer_cast<const MXFAsset> (other);
+	shared_ptr<const MXF> other_mxf = dynamic_pointer_cast<const MXF> (other);
 	if (!other_mxf) {
 		note (ERROR, "comparing an MXF asset with a non-MXF asset");
 		return false;
@@ -108,7 +108,7 @@ MXFAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boo
 }
 
 void
-MXFAsset::write_to_cpl (xmlpp::Element* node) const
+MXF::write_to_cpl (xmlpp::Element* node) const
 {
 	pair<string, string> const attr = cpl_node_attribute ();
 	xmlpp::Element* a = node->add_child (cpl_node_name ());
@@ -127,7 +127,7 @@ MXFAsset::write_to_cpl (xmlpp::Element* node) const
 }
 
 void
-MXFAsset::set_key (Key key)
+MXF::set_key (Key key)
 {
 	_key = key;
 

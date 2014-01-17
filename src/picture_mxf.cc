@@ -31,11 +31,11 @@
 #include <libxml++/nodes/element.h>
 #include "AS_DCP.h"
 #include "KM_fileio.h"
-#include "picture_asset.h"
+#include "picture_mxf.h"
 #include "util.h"
 #include "exceptions.h"
 #include "xyz_frame.h"
-#include "picture_asset_writer.h"
+#include "picture_mxf_writer.h"
 
 using std::string;
 using std::ostream;
@@ -52,16 +52,16 @@ using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace dcp;
 
-PictureAsset::PictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name)
-	: MXFAsset (directory, mxf_name)
+PictureMXF::PictureMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name)
+	: MXF (directory, mxf_name)
 {
 
 }
 
 void
-PictureAsset::write_to_cpl (xmlpp::Element* node) const
+PictureMXF::write_to_cpl (xmlpp::Element* node) const
 {
-	MXFAsset::write_to_cpl (node);
+	MXF::write_to_cpl (node);
 	
 	xmlpp::Node::NodeList c = node->get_children ();
 	xmlpp::Node::NodeList::iterator i = c.begin();
@@ -82,7 +82,7 @@ PictureAsset::write_to_cpl (xmlpp::Element* node) const
 }
 
 bool
-PictureAsset::descriptor_equals (
+PictureMXF::descriptor_equals (
 	ASDCP::JP2K::PictureDescriptor const & a, ASDCP::JP2K::PictureDescriptor const & b, boost::function<void (NoteType, string)> note
 	) const
 {
@@ -124,7 +124,7 @@ PictureAsset::descriptor_equals (
 }
 
 bool
-PictureAsset::frame_buffer_equals (
+PictureMXF::frame_buffer_equals (
 	int frame, EqualityOptions opt, boost::function<void (NoteType, string)> note,
 	uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
 	) const
@@ -202,7 +202,7 @@ PictureAsset::frame_buffer_equals (
 }
 
 string
-PictureAsset::key_type () const
+PictureMXF::key_type () const
 {
 	return "MDIK";
 }

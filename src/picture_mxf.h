@@ -17,15 +17,15 @@
 
 */
 
-#ifndef LIBDCP_PICTURE_ASSET_H
-#define LIBDCP_PICTURE_ASSET_H
+#ifndef LIBDCP_PICTURE_MXF_H
+#define LIBDCP_PICTURE_MXF_H
 
 /** @file  src/picture_asset.h
  *  @brief An asset made up of JPEG2000 data
  */
 
 #include <openjpeg.h>
-#include "mxf_asset.h"
+#include "mxf.h"
 #include "util.h"
 #include "metadata.h"
 
@@ -40,10 +40,10 @@ namespace dcp
 
 class MonoPictureFrame;	
 class StereoPictureFrame;
-class PictureAssetWriter;
+class PictureMXFWriter;
 
 /** @brief An asset made up of JPEG2000 data */
-class PictureAsset : public MXFAsset
+class PictureMXF : public MXF
 {
 public:
 	/** Construct a PictureAsset.
@@ -51,7 +51,7 @@ public:
 	 *  @param directory Directory where MXF file is.
 	 *  @param mxf_name Name of MXF file.
 	 */
-	PictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name);
+	PictureMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name);
 
 	/** Start a progressive write to this asset.
 	 *  The following parameters must be set up (if required) before calling this:
@@ -62,7 +62,7 @@ public:
 	 *  @param overwrite true to overwrite an existing MXF file; in this mode, writing can be resumed to a partially-written MXF; false if the
 	 *  MXF file does not exist.
 	 */
-	virtual boost::shared_ptr<PictureAssetWriter> start_write (bool overwrite) = 0;
+	virtual boost::shared_ptr<PictureMXFWriter> start_write (bool overwrite) = 0;
 
 	virtual void read () = 0;
 	virtual void create (std::vector<boost::filesystem::path> const &) {}

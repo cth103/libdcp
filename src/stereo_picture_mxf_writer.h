@@ -22,7 +22,7 @@
 #include <fstream>
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
-#include "picture_asset_writer.h"
+#include "picture_mxf_writer.h"
 
 namespace dcp {
 
@@ -36,7 +36,7 @@ namespace dcp {
  *  The action of finalize() can't be done in MonoPictureAssetWriter's destructor as it may
  *  throw an exception.
  */
-class StereoPictureAssetWriter : public PictureAssetWriter
+class StereoPictureMXFWriter : public PictureMXFWriter
 {
 public:
 	FrameInfo write (uint8_t *, int);
@@ -44,9 +44,9 @@ public:
 	void finalize ();
 
 private:
-	friend class StereoPictureAsset;
+	friend class StereoPictureMXF;
 
-	StereoPictureAssetWriter (PictureAsset *, bool);
+	StereoPictureMXFWriter (PictureMXF *, bool);
 	void start (uint8_t *, int);
 
 	/* do this with an opaque pointer so we don't have to include

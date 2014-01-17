@@ -18,10 +18,10 @@
 */
 
 #include "AS_DCP.h"
-#include "stereo_picture_asset.h"
+#include "stereo_picture_mxf.h"
 #include "stereo_picture_frame.h"
 #include "exceptions.h"
-#include "stereo_picture_asset_writer.h"
+#include "stereo_picture_mxf_writer.h"
 
 using std::string;
 using std::pair;
@@ -31,9 +31,9 @@ using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 bool
-StereoPictureAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+StereoPictureMXF::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (!MXFAsset::equals (other, opt, note)) {
+	if (!MXF::equals (other, opt, note)) {
 		return false;
 	}
 
@@ -62,7 +62,7 @@ StereoPictureAsset::equals (shared_ptr<const ContentAsset> other, EqualityOption
 		return false;
 	}
 	
-	shared_ptr<const StereoPictureAsset> other_picture = dynamic_pointer_cast<const StereoPictureAsset> (other);
+	shared_ptr<const StereoPictureMXF> other_picture = dynamic_pointer_cast<const StereoPictureMXF> (other);
 	assert (other_picture);
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
@@ -89,14 +89,14 @@ StereoPictureAsset::equals (shared_ptr<const ContentAsset> other, EqualityOption
 	return true;
 }
 
-StereoPictureAsset::StereoPictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name)
-	: PictureAsset (directory, mxf_name)
+StereoPictureMXF::StereoPictureMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name)
+	: PictureMXF (directory, mxf_name)
 {
 	
 }
 
 void
-StereoPictureAsset::read ()
+StereoPictureMXF::read ()
 {
 	ASDCP::JP2K::MXFSReader reader;
 	Kumu::Result_t r = reader.OpenRead (path().string().c_str());
@@ -114,25 +114,25 @@ StereoPictureAsset::read ()
 }
 
 shared_ptr<const StereoPictureFrame>
-StereoPictureAsset::get_frame (int n) const
+StereoPictureMXF::get_frame (int n) const
 {
 	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n));
 }
 
-shared_ptr<PictureAssetWriter>
-StereoPictureAsset::start_write (bool overwrite)
+shared_ptr<PictureMXFWriter>
+StereoPictureMXF::start_write (bool overwrite)
 {
-	return shared_ptr<StereoPictureAssetWriter> (new StereoPictureAssetWriter (this, overwrite));
+	return shared_ptr<StereoPictureMXFWriter> (new StereoPictureMXFWriter (this, overwrite));
 }
 
 string
-StereoPictureAsset::cpl_node_name () const
+StereoPictureMXF::cpl_node_name () const
 {
 	return "msp-cpl:MainStereoscopicPicture";
 }
 
 pair<string, string>
-StereoPictureAsset::cpl_node_attribute () const
+StereoPictureMXF::cpl_node_attribute () const
 {
 	if (_interop) {
 		return make_pair ("xmlns:msp-cpl", "http://www.digicine.com/schemas/437-Y/2007/Main-Stereo-Picture-CPL");
@@ -144,7 +144,7 @@ StereoPictureAsset::cpl_node_attribute () const
 }
 
 int
-StereoPictureAsset::edit_rate_factor () const
+StereoPictureMXF::edit_rate_factor () const
 {
 	return 2;
 }

@@ -5,8 +5,8 @@
 #include "dcp.h"
 #include "exceptions.h"
 #include "reel.h"
-#include "sound_asset.h"
-#include "picture_asset.h"
+#include "sound_mxf.h"
+#include "picture_mxf.h"
 #include "subtitle_asset.h"
 #include "cpl.h"
 

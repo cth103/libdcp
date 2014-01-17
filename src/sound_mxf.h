@@ -24,7 +24,7 @@
  *  @brief An asset made up of PCM audio data files
  */
 
-#include "mxf_asset.h"
+#include "mxf.h"
 #include "types.h"
 #include "metadata.h"
 
@@ -32,22 +32,22 @@ namespace dcp
 {
 
 class SoundFrame;
-class SoundAsset;
+class SoundMXF;
 
-class SoundAssetWriter
+class SoundMXFWriter
 {
 public:
 	void write (float const * const *, int);
 	void finalize ();
 
 private:
-	friend class SoundAsset;
+	friend class SoundMXF;
 
-	SoundAssetWriter (SoundAsset *);
+	SoundMXFWriter (SoundMXF *);
 
 	/* no copy construction */
-	SoundAssetWriter (SoundAssetWriter const &);
-	SoundAssetWriter& operator= (SoundAssetWriter const &);
+	SoundMXFWriter (SoundMXFWriter const &);
+	SoundMXFWriter& operator= (SoundMXFWriter const &);
 	
 	void write_current_frame ();
 
@@ -58,21 +58,21 @@ private:
 	struct ASDCPState;
 	boost::shared_ptr<ASDCPState> _state;
 
-	SoundAsset* _asset;
+	SoundMXF* _asset;
 	bool _finalized;
 	int _frames_written;
 	int _frame_buffer_offset;
 };
 
 /** @brief An asset made up of WAV files */
-class SoundAsset : public MXFAsset
+class SoundMXF : public MXF
 {
 public:
-	SoundAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name);
+	SoundMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name);
 
 	void read ();
 
-	boost::shared_ptr<SoundAssetWriter> start_write ();
+	boost::shared_ptr<SoundMXFWriter> start_write ();
 	
 	bool equals (boost::shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 

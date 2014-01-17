@@ -27,7 +27,7 @@
 
 namespace dcp {
 
-class PictureAsset;	
+class PictureMXF;	
 
 struct FrameInfo
 {
@@ -48,21 +48,21 @@ struct FrameInfo
 	std::string hash;
 };
 
-class PictureAssetWriter : public boost::noncopyable
+class PictureMXFWriter : public boost::noncopyable
 {
 public:
-	virtual ~PictureAssetWriter () {}
+	virtual ~PictureMXFWriter () {}
 	virtual FrameInfo write (uint8_t *, int) = 0;
 	virtual void finalize () = 0;
 	virtual void fake_write (int) = 0;
 	
 protected:
 	template <class P, class Q>
-	friend void start (PictureAssetWriter *, boost::shared_ptr<P>, Q *, uint8_t *, int);
+	friend void start (PictureMXFWriter *, boost::shared_ptr<P>, Q *, uint8_t *, int);
 
-	PictureAssetWriter (PictureAsset *, bool);
+	PictureMXFWriter (PictureMXF *, bool);
 
-	PictureAsset* _asset;
+	PictureMXF* _asset;
 	
 	/** Number of picture frames written to the asset so far.  For stereo assets
 	 *  this will be incremented for each eye (i.e. there will be twice the number

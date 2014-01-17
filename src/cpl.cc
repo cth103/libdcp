@@ -21,9 +21,9 @@
 #include "cpl.h"
 #include "parse/cpl.h"
 #include "util.h"
-#include "mono_picture_asset.h"
-#include "stereo_picture_asset.h"
-#include "sound_asset.h"
+#include "mono_picture_mxf.h"
+#include "stereo_picture_mxf.h"
+#include "sound_mxf.h"
 #include "subtitle_asset.h"
 #include "parse/asset_map.h"
 #include "reel.h"
@@ -94,8 +94,8 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 		_fps = p->edit_rate.numerator;
 		_length += p->duration;
 
-		shared_ptr<PictureAsset> picture;
-		shared_ptr<SoundAsset> sound;
+		shared_ptr<PictureMXF> picture;
+		shared_ptr<SoundMXF> sound;
 		shared_ptr<SubtitleAsset> subtitle;
 
 		/* Some rather twisted logic to decide if we are 3D or not;
@@ -109,7 +109,7 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 			try {
 				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
 
-				picture.reset (new MonoPictureAsset (asset.first, asset.second->chunks.front()->path));
+				picture.reset (new MonoPictureMXF (asset.first, asset.second->chunks.front()->path));
 
 				picture->read ();
 				picture->set_edit_rate (_fps);
@@ -129,7 +129,7 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 			try {
 				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
 
-				picture.reset (new StereoPictureAsset (asset.first, asset.second->chunks.front()->path));
+				picture.reset (new StereoPictureMXF (asset.first, asset.second->chunks.front()->path));
 
 				picture->read ();
 				picture->set_edit_rate (_fps);
@@ -153,7 +153,7 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 			try {
 				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, (*i)->asset_list->main_sound->id);
 			
-				sound.reset (new SoundAsset (asset.first, asset.second->chunks.front()->path));
+				sound.reset (new SoundMXF (asset.first, asset.second->chunks.front()->path));
 				shared_ptr<parse::MainSound> s = (*i)->asset_list->main_sound;
 
 				sound->read ();

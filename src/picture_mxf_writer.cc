@@ -21,9 +21,9 @@
 #include <stdint.h>
 #include "AS_DCP.h"
 #include "KM_fileio.h"
-#include "picture_asset_writer.h"
+#include "picture_mxf_writer.h"
 #include "exceptions.h"
-#include "picture_asset.h"
+#include "picture_mxf.h"
 
 using std::istream;
 using std::ostream;
@@ -83,7 +83,7 @@ FrameInfo::write (FILE* f) const
 }
 
 
-PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, bool overwrite)
+PictureMXFWriter::PictureMXFWriter (PictureMXF* asset, bool overwrite)
 	: _asset (asset)
 	, _frames_written (0)
 	, _started (false)

@@ -22,8 +22,8 @@
 #include "certificates.h"
 #include "kdm.h"
 #include "signer.h"
-#include "mono_picture_asset.h"
-#include "sound_asset.h"
+#include "mono_picture_mxf.h"
+#include "sound_mxf.h"
 #include "reel.h"
 #include "test.h"
 #include "cpl.h"
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	boost::filesystem::path work_dir = "build/test/round_trip_test";
 	boost::filesystem::create_directory (work_dir);
 
-	shared_ptr<dcp::MonoPictureAsset> asset_A (new dcp::MonoPictureAsset (work_dir, "video.mxf"));
+	shared_ptr<dcp::MonoPictureMXF> asset_A (new dcp::MonoPictureMXF (work_dir, "video.mxf"));
 	asset_A->set_edit_rate (24);
 	asset_A->set_intrinsic_duration (24);
 	asset_A->set_size (dcp::Size (32, 32));
@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	asset_A->set_key (key);
 
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL (work_dir, "A Test DCP", dcp::FEATURE, 24, 24));
-	cpl->add_reel (shared_ptr<dcp::Reel> (new dcp::Reel (asset_A, shared_ptr<dcp::SoundAsset> (), shared_ptr<dcp::SubtitleAsset> ())));
+	cpl->add_reel (shared_ptr<dcp::Reel> (new dcp::Reel (asset_A, shared_ptr<dcp::SoundMXF> (), shared_ptr<dcp::SubtitleAsset> ())));
 
 	/* A KDM using our certificate chain's leaf key pair */
 	dcp::KDM kdm_A (
@@ -100,8 +100,8 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	}
 
 	/* Reload the picture MXF */
-	shared_ptr<dcp::MonoPictureAsset> asset_B (
-		new dcp::MonoPictureAsset (work_dir, "video.mxf")
+	shared_ptr<dcp::MonoPictureMXF> asset_B (
+		new dcp::MonoPictureMXF (work_dir, "video.mxf")
 		);
 
 	asset_B->set_key (kdm_B.keys().front().key());

@@ -17,23 +17,23 @@
 
 */
 
-#ifndef LIBDCP_STEREO_PICTURE_ASSET_H
-#define LIBDCP_STEREO_PICTURE_ASSET_H
+#ifndef LIBDCP_STEREO_PICTURE_MXF_H
+#define LIBDCP_STEREO_PICTURE_MXF_H
 
-#include "picture_asset.h"
+#include "picture_mxf.h"
 
 namespace dcp {
 	
 /** A 3D (stereoscopic) picture asset */	
-class StereoPictureAsset : public PictureAsset
+class StereoPictureMXF : public PictureMXF
 {
 public:
-	StereoPictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name);
+	StereoPictureMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name);
 
 	void read ();
 	
-	/** Start a progressive write to a StereoPictureAsset */
-	boost::shared_ptr<PictureAssetWriter> start_write (bool);
+	/** Start a progressive write to a StereoPictureMXF */
+	boost::shared_ptr<PictureMXFWriter> start_write (bool);
 
 	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;

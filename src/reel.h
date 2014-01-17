@@ -33,8 +33,8 @@ namespace xmlpp {
 
 namespace dcp {
 
-class PictureAsset;
-class SoundAsset;
+class PictureMXF;
+class SoundMXF;
 class SubtitleAsset;
 class KDM;	
 
@@ -43,8 +43,8 @@ class Reel
 {
 public:
 	Reel (
-		boost::shared_ptr<PictureAsset> picture,
-		boost::shared_ptr<SoundAsset> sound,
+		boost::shared_ptr<PictureMXF> picture,
+		boost::shared_ptr<SoundMXF> sound,
 		boost::shared_ptr<SubtitleAsset> subtitle
 		)
 		: _main_picture (picture)
@@ -52,11 +52,11 @@ public:
 		, _main_subtitle (subtitle)
 	{}
 	
-	boost::shared_ptr<const PictureAsset> main_picture () const {
+	boost::shared_ptr<const PictureMXF> main_picture () const {
 		return _main_picture;
 	}
 
-	boost::shared_ptr<const SoundAsset> main_sound () const {
+	boost::shared_ptr<const SoundMXF> main_sound () const {
 		return _main_sound;
 	}
 	
@@ -75,8 +75,8 @@ public:
 	void add_kdm (KDM const &);
 
 private:
-	boost::shared_ptr<PictureAsset> _main_picture;
-	boost::shared_ptr<SoundAsset> _main_sound;
+	boost::shared_ptr<PictureMXF> _main_picture;
+	boost::shared_ptr<SoundMXF> _main_sound;
 	boost::shared_ptr<SubtitleAsset> _main_subtitle;
 };
 

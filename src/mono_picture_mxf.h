@@ -17,23 +17,23 @@
 
 */
 
-#ifndef LIBDCP_MONO_PICTURE_ASSET_H
-#define LIBDCP_MONO_PICTURE_ASSET_H
+#ifndef LIBDCP_MONO_PICTURE_MXF_H
+#define LIBDCP_MONO_PICTURE_MXF_H
 
-#include "picture_asset.h"
+#include "picture_mxf.h"
 
 namespace dcp {
 
 /** A 2D (monoscopic) picture asset */
-class MonoPictureAsset : public PictureAsset
+class MonoPictureMXF : public PictureMXF
 {
 public:
-	MonoPictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name);
+	MonoPictureMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name);
 
 	void read ();
 
-	/** Start a progressive write to a MonoPictureAsset */
-	boost::shared_ptr<PictureAssetWriter> start_write (bool);
+	/** Start a progressive write to a MonoPictureMXF */
+	boost::shared_ptr<PictureMXFWriter> start_write (bool);
 
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;

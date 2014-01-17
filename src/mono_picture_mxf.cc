@@ -17,8 +17,8 @@
 
 */
 
-#include "mono_picture_asset.h"
-#include "mono_picture_asset_writer.h"
+#include "mono_picture_mxf.h"
+#include "mono_picture_mxf_writer.h"
 #include "AS_DCP.h"
 #include "KM_fileio.h"
 #include "exceptions.h"
@@ -31,14 +31,14 @@ using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace dcp;
 
-MonoPictureAsset::MonoPictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name)
-	: PictureAsset (directory, mxf_name)
+MonoPictureMXF::MonoPictureMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name)
+	: PictureMXF (directory, mxf_name)
 {
 
 }
 
 void
-MonoPictureAsset::read ()
+MonoPictureMXF::read ()
 {
 	ASDCP::JP2K::MXFReader reader;
 	Kumu::Result_t r = reader.OpenRead (path().string().c_str());
@@ -59,21 +59,21 @@ MonoPictureAsset::read ()
 }
 
 boost::filesystem::path
-MonoPictureAsset::path_from_list (int f, vector<boost::filesystem::path> const & files) const
+MonoPictureMXF::path_from_list (int f, vector<boost::filesystem::path> const & files) const
 {
 	return files[f];
 }
 
 shared_ptr<const MonoPictureFrame>
-MonoPictureAsset::get_frame (int n) const
+MonoPictureMXF::get_frame (int n) const
 {
 	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path(), n, _decryption_context));
 }
 
 bool
-MonoPictureAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+MonoPictureMXF::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (!MXFAsset::equals (other, opt, note)) {
+	if (!MXF::equals (other, opt, note)) {
 		return false;
 	}
 
@@ -102,7 +102,7 @@ MonoPictureAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions 
 		return false;
 	}
 
-	shared_ptr<const MonoPictureAsset> other_picture = dynamic_pointer_cast<const MonoPictureAsset> (other);
+	shared_ptr<const MonoPictureMXF> other_picture = dynamic_pointer_cast<const MonoPictureMXF> (other);
 	assert (other_picture);
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
@@ -126,21 +126,21 @@ MonoPictureAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions 
 	return true;
 }
 
-shared_ptr<PictureAssetWriter>
-MonoPictureAsset::start_write (bool overwrite)
+shared_ptr<PictureMXFWriter>
+MonoPictureMXF::start_write (bool overwrite)
 {
 	/* XXX: can't we use shared_ptr here? */
-	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, overwrite));
+	return shared_ptr<MonoPictureMXFWriter> (new MonoPictureMXFWriter (this, overwrite));
 }
 
 string
-MonoPictureAsset::cpl_node_name () const
+MonoPictureMXF::cpl_node_name () const
 {
 	return "MainPicture";
 }
 
 int
-MonoPictureAsset::edit_rate_factor () const
+MonoPictureMXF::edit_rate_factor () const
 {
 	return 1;
 }
