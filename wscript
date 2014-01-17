@@ -122,7 +122,7 @@ def build(bld):
     bld.recurse('tools')
     bld.recurse('test')
     bld.recurse('asdcplib')
-#    bld.recurse('examples')
+    bld.recurse('examples')
 
     bld.add_post_fun(post)
 

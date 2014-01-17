@@ -37,90 +37,71 @@
 #include "sound_asset.h"
 #include "reel.h"
 
-/* This method returns the filename of the JPEG2000 file to use for a given frame.
-   In this example, we are using the same file for each frame, so we don't bother
-   looking at the frame parameter, but it will called with frame=0, frame=1, ...
-*/
-std::string
-video_frame (int /* frame */)
-{
-	return "examples/help.j2c";
-}
-
 int
 main ()
 {
-	/* Make a DCP object.  "My Film DCP" is the directory name for the DCP */
-	dcp::DCP dcp ("My Film DCP");
+	/* Create a directory to put the DCP in */
+	boost::filesystem::create_directory ("DCP");
 	
-	/* Now make a CPL object.
-
-	   "My Film" is the title that will be shown on the projector / TMS when the DCP is ingested.
-	   FEATURE is the type that the projector will list the DCP as.
-	   24 is the frame rate, and the DCP will be 48 frames long (ie 2 seconds at 24 fps).
-	*/	
-	boost::shared_ptr<dcp::CPL> cpl (new dcp::CPL ("My Film DCP", "My Film", dcp::FEATURE, 24, 48));
-
-	/* And add the CPL to the DCP */
-	dcp.add_cpl (cpl);
-
-	/* Now make a `picture asset'.  This is a collection of the JPEG2000 files that make up the picture; one per frame.
-	   First, create the object.
+	/* Make a picture MXF.  This is a file which combines JPEG2000 files together to make
+	   up the video of the DCP.  First, create the object, specifying a frame rate of 24 frames
+	   per second.
 	*/
 
-	boost::shared_ptr<dcp::MonoPictureAsset> picture_asset (
-		new dcp::MonoPictureAsset ("My Film DCP", "video.mxf")
-		);
+	boost::shared_ptr<dcp::MonoPictureMXF> picture_mxf (new dcp::MonoPictureMXF (24));
 
-	/* Now set up its parameters; we have the frame rate, the
-	   number of frames and the resolution of the frames;
-	   1998x1080 is the DCI Flat specification for 2K projectors.
+	/* Start off a write to it */
+	boost::shared_ptr<dcp::MonoPictureMXFWriter> picture_writer = picture_mxf->start_write ("DCP/picture.mxf", false);
+
+	/* Write 24 frames of the same JPEG2000 file */
+	dcp::File picture ("examples/help.j2c");
+	for (int i = 0; i < 24; ++i) {
+		picture_writer->write (picture.data(), picture.size());
+	}
+
+	/* And finish off */
+	picture_writer->finalize ();
+
+	/* Now create a sound MXF.  As before, create an object and a writer.
+	   When creating the object we specify the sampling rate (48kHz) and the number of channels (2).
 	*/
+	boost::shared_ptr<dcp::SoundMXF> sound_mxf (new dcp::SoundMXF (48000, 2));
+	boost::shared_ptr<dcp::SoundMXFWriter> sound_writer = sound_mxf->start_write ("DCP/sound.mxf", false);
 
-	picture_asset->set_edit_rate (24);
-	picture_asset->set_intrinsic_duration (24);
-	picture_asset->set_size (dcp::Size (1998, 1080));
+	/* Write some sine waves */
+	float* audio[2];
+	audio[0] = new float[48000];
+	audio[1] = new float[48000];
+	for (int i = 0; i < 48000; ++i) {
+		audio[0][i] = sin (2 * M_PI * i * 440 / 48000) * 0.25;
+		audio[1][i] = sin (2 * M_PI * i * 880 / 48000) * 0.25;
+	}
+	sound_writer->write (audio, 48000);
 
-	/* Now we can create the asset itself.  Here using a function (video_frame) to obtain the name of the JPEG2000 file for each frame.
-	   The result will be an MXF file written to the directory "My Film DCP" (which should be the same as the DCP's
-	   directory above) called "video.mxf".
+	/* And tidy up */
+	delete[] audio[0];
+	delete[] audio[1];
+	sound_writer->finalize ();
+
+	/* Now create a reel */
+	shared_ptr<dcp::Reel> reel (new dcp::Reel ());
+
+	/* Add picture and sound to it.  The zeros are the `entry points', i.e. the first
+	   (video) frame from the MXFs that the reel should play.
 	*/
+	reel->add (picture, 0);
+	reel->add (sound, 0);
 
-	picture_asset->create (video_frame);
+	/* Make a CPL with this reel */
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("My film", dcp::FEATURE));
+	cpl->add (reel);
 
-	/* Now we will create a `sound asset', which is made up of a WAV file for each channel of audio.  Here we're using
-	   stereo, so we add two WAV files to a vector.
-
-	   We could add more files here to use more channels; the file order is:
-	       Left
-	       Right
-	       Centre
-	       LFE (sub)
-	       Left surround
-	       Right surround
-	*/
-	std::vector<boost::filesystem::path> sound_files;
-	sound_files.push_back ("examples/sine_440_-12dB.wav");
-	sound_files.push_back ("examples/sine_880_-12dB.wav");
-
-	/* Now we can create the sound asset using these files */
-	boost::shared_ptr<dcp::SoundAsset> sound_asset (new dcp::SoundAsset ("My Film DCP", "audio.mxf"));
-	sound_asset->set_edit_rate (24);
-	sound_asset->set_intrinsic_duration (48);
-	sound_asset->create (sound_files);
-
-	/* Now that we have the assets, we can create a Reel to put them in and add it to the CPL */
-	cpl->add_reel (
-		boost::shared_ptr<dcp::Reel> (
-			new dcp::Reel (picture_asset, sound_asset, boost::shared_ptr<dcp::SubtitleAsset> ())
-			)
-		);
-
-	/* Finally, we call this to write the XML description files to the DCP.  After this, the DCP
-	   is ready to ingest and play.
-	*/
-	dcp::XMLMetadata metadata;
-	dcp.write_xml (false, metadata);
-
+	/* Write the DCP */
+	list<shared_ptr<dcp::Asset> > assets;
+	asset.push_back (cpl);
+	asset.push_back (picture);
+	asset.push_back (sound);
+	dcp::write ("DCP", assets);
+	
 	return 0;
 }
