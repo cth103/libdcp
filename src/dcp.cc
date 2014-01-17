@@ -33,7 +33,6 @@
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
 #include "dcp.h"
-#include "asset.h"
 #include "sound_asset.h"
 #include "picture_asset.h"
 #include "subtitle_asset.h"
@@ -109,8 +108,8 @@ DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, sha
 	pkl->add_child("Creator")->add_child_text (metadata.creator);
 
 	xmlpp::Element* asset_list = pkl->add_child("AssetList");
-	list<shared_ptr<const Asset> > a = assets ();
-	for (list<shared_ptr<const Asset> >::const_iterator i = a.begin(); i != a.end(); ++i) {
+	list<shared_ptr<const ContentAsset> > a = assets ();
+	for (list<shared_ptr<const ContentAsset> >::const_iterator i = a.begin(); i != a.end(); ++i) {
 		(*i)->write_to_pkl (asset_list);
 	}
 	
@@ -192,8 +191,8 @@ DCP::write_assetmap (string pkl_uuid, int pkl_length, bool interop, XMLMetadata 
 		(*i)->write_to_assetmap (asset_list);
 	}
 
-	list<shared_ptr<const Asset> > a = assets ();
-	for (list<shared_ptr<const Asset> >::const_iterator i = a.begin(); i != a.end(); ++i) {
+	list<shared_ptr<const ContentAsset> > a = assets ();
+	for (list<shared_ptr<const ContentAsset> >::const_iterator i = a.begin(); i != a.end(); ++i) {
 		(*i)->write_to_assetmap (asset_list);
 	}
 
@@ -322,17 +321,17 @@ DCP::add_cpl (shared_ptr<CPL> cpl)
 class AssetComparator
 {
 public:
-	bool operator() (shared_ptr<const Asset> a, shared_ptr<const Asset> b) {
+	bool operator() (shared_ptr<const ContentAsset> a, shared_ptr<const ContentAsset> b) {
 		return a->uuid() < b->uuid();
 	}
 };
 
-list<shared_ptr<const Asset> >
+list<shared_ptr<const ContentAsset> >
 DCP::assets () const
 {
-	list<shared_ptr<const Asset> > a;
+	list<shared_ptr<const ContentAsset> > a;
 	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
-		list<shared_ptr<const Asset> > t = (*i)->assets ();
+		list<shared_ptr<const ContentAsset> > t = (*i)->assets ();
 		a.merge (t);
 	}
 

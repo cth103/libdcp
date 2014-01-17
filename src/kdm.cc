@@ -124,8 +124,8 @@ KDM::KDM (
 	*/
 	apu.authorized_device_info.device_list.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
 
-	list<shared_ptr<const Asset> > assets = cpl->assets ();
-	for (list<shared_ptr<const Asset> >::iterator i = assets.begin(); i != assets.end(); ++i) {
+	list<shared_ptr<const ContentAsset> > assets = cpl->assets ();
+	for (list<shared_ptr<const ContentAsset> >::iterator i = assets.begin(); i != assets.end(); ++i) {
 		/* XXX: non-MXF assets? */
 		shared_ptr<const MXFAsset> mxf = boost::dynamic_pointer_cast<const MXFAsset> (*i);
 		if (mxf) {
@@ -138,7 +138,7 @@ KDM::KDM (
 
 	/* AuthenticatedPrivate */
 
-	for (list<shared_ptr<const Asset> >::iterator i = assets.begin(); i != assets.end(); ++i) {
+	for (list<shared_ptr<const ContentAsset> >::iterator i = assets.begin(); i != assets.end(); ++i) {
 		/* XXX: non-MXF assets? */
 		shared_ptr<const MXFAsset> mxf = boost::dynamic_pointer_cast<const MXFAsset> (*i);
 		if (mxf) {

@@ -31,7 +31,7 @@ using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 bool
-StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+StereoPictureAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!MXFAsset::equals (other, opt, note)) {
 		return false;

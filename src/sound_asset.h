@@ -92,7 +92,7 @@ public:
 
 	boost::shared_ptr<SoundAssetWriter> start_write ();
 	
-	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
+	bool equals (boost::shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
 

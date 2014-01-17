@@ -17,10 +17,6 @@
 
 */
 
-/** @file  src/asset.cc
- *  @brief Parent class for assets of DCPs.
- */
-
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
@@ -28,7 +24,7 @@
 #include <libxml++/nodes/element.h>
 #include "AS_DCP.h"
 #include "KM_util.h"
-#include "asset.h"
+#include "content_asset.h"
 #include "util.h"
 #include "metadata.h"
 
@@ -36,7 +32,7 @@ using namespace std;
 using namespace boost;
 using namespace dcp;
 
-Asset::Asset (boost::filesystem::path directory, boost::filesystem::path file_name)
+ContentAsset::ContentAsset (boost::filesystem::path directory, boost::filesystem::path file_name)
 	: _directory (directory)
 	, _file_name (file_name)
 	, _uuid (make_uuid ())
@@ -51,7 +47,7 @@ Asset::Asset (boost::filesystem::path directory, boost::filesystem::path file_na
 }
 
 void
-Asset::write_to_pkl (xmlpp::Node* node) const
+ContentAsset::write_to_pkl (xmlpp::Node* node) const
 {
 	xmlpp::Node* asset = node->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
@@ -62,7 +58,7 @@ Asset::write_to_pkl (xmlpp::Node* node) const
 }
 
 void
-Asset::write_to_assetmap (xmlpp::Node* node) const
+ContentAsset::write_to_assetmap (xmlpp::Node* node) const
 {
 	xmlpp::Node* asset = node->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
@@ -75,7 +71,7 @@ Asset::write_to_assetmap (xmlpp::Node* node) const
 }
 
 filesystem::path
-Asset::path () const
+ContentAsset::path () const
 {
 	filesystem::path p;
 	p /= _directory;
@@ -84,7 +80,7 @@ Asset::path () const
 }
 
 string
-Asset::digest () const
+ContentAsset::digest () const
 {
 	if (_digest.empty ()) {
 		_digest = make_digest (path().string(), 0);
@@ -94,7 +90,7 @@ Asset::digest () const
 }
 
 void
-Asset::compute_digest (boost::function<void (float)> progress)
+ContentAsset::compute_digest (boost::function<void (float)> progress)
 {
 	if (!_digest.empty ()) {
 		return;
@@ -104,7 +100,7 @@ Asset::compute_digest (boost::function<void (float)> progress)
 }
 
 bool
-Asset::equals (shared_ptr<const Asset> other, EqualityOptions, boost::function<void (NoteType, string)> note) const
+ContentAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions, boost::function<void (NoteType, string)> note) const
 {
 	if (_edit_rate != other->_edit_rate) {
 		note (ERROR, "asset edit rates differ");

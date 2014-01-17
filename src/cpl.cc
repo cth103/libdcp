@@ -252,10 +252,10 @@ CPL::write_to_pkl (xmlpp::Node* node) const
 	asset->add_child("Type")->add_child_text ("text/xml");
 }
 
-list<shared_ptr<const Asset> >
+list<shared_ptr<const ContentAsset> >
 CPL::assets () const
 {
-	list<shared_ptr<const Asset> > a;
+	list<shared_ptr<const ContentAsset> > a;
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		if ((*i)->main_picture ()) {
 			a.push_back ((*i)->main_picture ());

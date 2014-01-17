@@ -37,14 +37,14 @@ using boost::optional;
 using namespace dcp;
 
 SubtitleAsset::SubtitleAsset (string directory, string xml_file)
-	: Asset (directory, xml_file)
+	: ContentAsset (directory, xml_file)
 	, _need_sort (false)
 {
 	read_xml (path().string());
 }
 
 SubtitleAsset::SubtitleAsset (string directory, string movie_title, string language)
-	: Asset (directory)
+	: ContentAsset (directory)
 	, _movie_title (movie_title)
 	, _reel_number ("1")
 	, _language (language)

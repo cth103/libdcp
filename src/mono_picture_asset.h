@@ -50,7 +50,7 @@ public:
 	boost::shared_ptr<PictureAssetWriter> start_write (bool);
 
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
-	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
+	bool equals (boost::shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 private:
 	boost::filesystem::path path_from_list (int f, std::vector<boost::filesystem::path> const & files) const;

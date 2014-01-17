@@ -21,7 +21,7 @@
 #define LIBDCP_MXF_ASSET_H
 
 #include <boost/signals2.hpp>
-#include "asset.h"
+#include "content_asset.h"
 #include "key.h"
 #include "metadata.h"
 
@@ -36,7 +36,7 @@ namespace dcp
 class MXFMetadata;	
 
 /** @brief Parent class for assets which have MXF files */	
-class MXFAsset : public Asset
+class MXFAsset : public ContentAsset
 {
 public:
 	/** Construct an MXFAsset.
@@ -49,7 +49,7 @@ public:
 	
 	~MXFAsset ();
 
-	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
+	virtual bool equals (boost::shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 	virtual void write_to_cpl (xmlpp::Element *) const;
 	virtual std::string key_type () const = 0;
 	

@@ -17,10 +17,6 @@
 
 */
 
-/** @file  src/asset.h
- *  @brief Parent class for assets of DCPs.
- */
-
 #ifndef LIBDCP_ASSET_H
 #define LIBDCP_ASSET_H
 
@@ -42,20 +38,17 @@ namespace xmlpp {
 namespace dcp
 {
 
-/** @brief Parent class for assets of DCPs
- *
- *  These are collections of pictures or sound.
- */
-class Asset
+/** XXX */
+class ContentAsset
 {
 public:
-	/** Construct an Asset.
+	/** Construct a ContentAsset.
 	 *  @param directory Directory where our XML or MXF file is.
 	 *  @param file_name Name of our file within directory, or empty to make one up based on UUID.
 	 */
-	Asset (boost::filesystem::path directory, boost::filesystem::path file_name = "");
+	ContentAsset (boost::filesystem::path directory, boost::filesystem::path file_name = "");
 
-	virtual ~Asset() {}
+	virtual ~ContentAsset() {}
 
 	/** Write details of the asset to a CPL AssetList node.
 	 *  @param p Parent element.
@@ -126,7 +119,7 @@ public:
 		_edit_rate = r;
 	}
 
-	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)>) const;
+	virtual bool equals (boost::shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)>) const;
 
 protected:
 	

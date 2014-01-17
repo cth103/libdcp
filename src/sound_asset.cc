@@ -210,7 +210,7 @@ SoundAsset::cpl_node_name () const
 }
 
 bool
-SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+SoundAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!MXFAsset::equals (other, opt, note)) {
 		return false;

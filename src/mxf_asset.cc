@@ -43,7 +43,7 @@ using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 MXFAsset::MXFAsset (boost::filesystem::path directory, boost::filesystem::path file_name)
-	: Asset (directory, file_name)
+	: ContentAsset (directory, file_name)
 	, _progress (0)
 	, _encryption_context (0)
 	, _decryption_context (0)
@@ -85,9 +85,9 @@ MXFAsset::fill_writer_info (ASDCP::WriterInfo* writer_info)
 }
 
 bool
-MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+MXFAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (!Asset::equals (other, opt, note)) {
+	if (!ContentAsset::equals (other, opt, note)) {
 		return false;
 	}
 	

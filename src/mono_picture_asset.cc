@@ -125,7 +125,7 @@ MonoPictureAsset::get_frame (int n) const
 }
 
 bool
-MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+MonoPictureAsset::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!MXFAsset::equals (other, opt, note)) {
 		return false;

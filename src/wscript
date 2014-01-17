@@ -13,9 +13,9 @@ def build(bld):
     obj.use = 'libkumu-libdcp libasdcp-libdcp'
     obj.source = """
                  argb_frame.cc
-                 asset.cc
                  certificates.cc
                  colour_matrix.cc
+                 content_asset.cc
                  cpl.cc
                  dcp.cc        
                  dcp_time.cc
