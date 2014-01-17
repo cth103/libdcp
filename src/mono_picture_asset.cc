@@ -38,60 +38,6 @@ MonoPictureAsset::MonoPictureAsset (boost::filesystem::path directory, boost::fi
 }
 
 void
-MonoPictureAsset::create (vector<boost::filesystem::path> const & files)
-{
-	create (boost::bind (&MonoPictureAsset::path_from_list, this, _1, files));
-}
-
-void
-MonoPictureAsset::create (boost::function<boost::filesystem::path (int)> get_path)
-{
-	ASDCP::JP2K::CodestreamParser j2k_parser;
-	ASDCP::JP2K::FrameBuffer frame_buffer (4 * Kumu::Megabyte);
-	Kumu::Result_t r = j2k_parser.OpenReadFrame (get_path(0).string().c_str(), frame_buffer);
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (FileError ("could not open JPEG2000 file for reading", get_path(0), r));
-	}
-	
-	ASDCP::JP2K::PictureDescriptor picture_desc;
-	j2k_parser.FillPictureDescriptor (picture_desc);
-	picture_desc.EditRate = ASDCP::Rational (_edit_rate, 1);
-	
-	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info);
-	
-	ASDCP::JP2K::MXFWriter mxf_writer;
-	r = mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc, 16384, false);
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for writing", path().string(), r));
-	}
-
-	for (int i = 0; i < _intrinsic_duration; ++i) {
-
-		boost::filesystem::path const path = get_path (i);
-
-		Kumu::Result_t r = j2k_parser.OpenReadFrame (path.string().c_str(), frame_buffer);
-		if (ASDCP_FAILURE (r)) {
-			boost::throw_exception (FileError ("could not open JPEG2000 file for reading", path, r));
-		}
-
-		r = mxf_writer.WriteFrame (frame_buffer, _encryption_context, 0);
-		if (ASDCP_FAILURE (r)) {
-			boost::throw_exception (MXFFileError ("error in writing video MXF", this->path().string(), r));
-		}
-
-		if (_progress) {
-			(*_progress) (0.5 * float (i) / _intrinsic_duration);
-		}
-	}
-	
-	r = mxf_writer.Finalize();
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in finalising video MXF", path().string(), r));
-	}
-}
-
-void
 MonoPictureAsset::read ()
 {
 	ASDCP::JP2K::MXFReader reader;

@@ -72,24 +72,6 @@ public:
 
 	void read ();
 
-	/** The following parameters must be set up (if required) before calling this:
-	 *      Interop mode (set_interop)
-	 *      Edit rate    (set_edit_rate)
-	 *      MXF Metadata (set_metadata)
-	 *      Channels     (set_channels)
-	 *      Intrinsic duration (set_intrinsic_duration)
-	 */
-	void create (std::vector<boost::filesystem::path> const & files);
-
-	/** The following parameters must be set up (if required) before calling this:
-	 *      Interop mode (set_interop)
-	 *      Edit rate    (set_edit_rate)
-	 *      MXF Metadata (set_metadata)
-	 *      Channels     (set_channels)
-	 *      Intrinsic duration (set_intrinsic_duration)
-	 */
-	void create (boost::function<boost::filesystem::path (Channel)> get_path);
-
 	boost::shared_ptr<SoundAssetWriter> start_write ();
 	
 	bool equals (boost::shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
@@ -115,7 +97,6 @@ public:
 private:
 	std::string key_type () const;
 	void construct (boost::function<boost::filesystem::path (Channel)> get_path);
-	boost::filesystem::path path_from_channel (Channel channel, std::vector<boost::filesystem::path> const & files);
 	std::string cpl_node_name () const;
 
 	/** Number of channels in the asset */

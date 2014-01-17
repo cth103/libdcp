@@ -20,15 +20,14 @@ def build(bld):
     obj.name   = 'tests'
     obj.uselib = 'BOOST_TEST OPENJPEG CXML XMLSEC1'
     obj.use    = 'libdcp'
+#                 dcp_test.cc
+#                 encryption_test.cc
     obj.source = """
                  certificates_test.cc
                  color_test.cc
                  cpl_sar.cc
-                 dcp_test.cc
                  dcp_time_test.cc
                  decryption_test.cc
-                 encryption_test.cc
-                 error_test.cc
                  frame_info_test.cc
                  kdm_key_test.cc
                  kdm_test.cc
