@@ -29,6 +29,7 @@ namespace libdcp {
 
 class PictureAsset;	
 
+/** Information about a single frame (either a monoscopic frame or a left *or* right eye stereoscopic frame) */	
 struct FrameInfo
 {
 	FrameInfo (uint64_t o, uint64_t s, std::string h)
