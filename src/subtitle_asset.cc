@@ -36,30 +36,14 @@ using boost::lexical_cast;
 using boost::optional;
 using namespace dcp;
 
-SubtitleAsset::SubtitleAsset (string directory, string xml_file)
-	: ContentAsset (directory, xml_file)
+SubtitleAsset::SubtitleAsset (boost::filesystem::path file)
+	: Content (file)
 	, _need_sort (false)
-{
-	read_xml (path().string());
-}
-
-SubtitleAsset::SubtitleAsset (string directory, string movie_title, string language)
-	: ContentAsset (directory)
-	, _movie_title (movie_title)
-	, _reel_number ("1")
-	, _language (language)
-	, _need_sort (false)
-{
-
-}
-
-void
-SubtitleAsset::read_xml (string xml_file)
 {
 	shared_ptr<cxml::Document> xml (new cxml::Document ("DCSubtitle"));
-	xml->read_file (xml_file);
+	xml->read_file (file);
 	
-	_uuid = xml->string_child ("SubtitleID");
+	_id = xml->string_child ("SubtitleID");
 	_movie_title = xml->string_child ("MovieTitle");
 	_reel_number = xml->string_child ("ReelNumber");
 	_language = xml->string_child ("Language");
@@ -75,6 +59,16 @@ SubtitleAsset::read_xml (string xml_file)
 
 	ParseState parse_state;
 	examine_font_nodes (xml, font_nodes, parse_state);
+}
+
+SubtitleAsset::SubtitleAsset (string directory, string movie_title, string language)
+	: Content (directory)
+	, _movie_title (movie_title)
+	, _reel_number ("1")
+	, _language (language)
+	, _need_sort (false)
+{
+
 }
 
 void
@@ -284,8 +278,8 @@ SubtitleAsset::write_to_cpl (xmlpp::Element* node) const
 	/* XXX: should EditRate, Duration and IntrinsicDuration be in here? */
 
 	xmlpp::Node* ms = node->add_child ("MainSubtitle");
-	ms->add_child("Id")->add_child_text("urn:uuid:" + _uuid);
-	ms->add_child("AnnotationText")->add_child_text (_file_name.string ());
+	ms->add_child("Id")->add_child_text("urn:uuid:" + _id);
+	ms->add_child("AnnotationText")->add_child_text (_file.string ());
 	/* XXX */
 	ms->add_child("EntryPoint")->add_child_text ("0");
 }
@@ -302,7 +296,7 @@ struct SubtitleSorter {
 void
 SubtitleAsset::write_xml () const
 {
-	FILE* f = fopen_boost (path (), "r");
+	FILE* f = fopen_boost (file (), "r");
 	Glib::ustring const s = xml_as_string ();
 	fwrite (s.c_str(), 1, s.length(), f);
 	fclose (f);
@@ -315,7 +309,7 @@ SubtitleAsset::xml_as_string () const
 	xmlpp::Element* root = doc.create_root_node ("DCSubtitle");
 	root->set_attribute ("Version", "1.0");
 
-	root->add_child("SubtitleID")->add_child_text (_uuid);
+	root->add_child("SubtitleID")->add_child_text (_id);
 	root->add_child("MovieTitle")->add_child_text (_movie_title);
 	root->add_child("ReelNumber")->add_child_text (lexical_cast<string> (_reel_number));
 	root->add_child("Language")->add_child_text (_language);

@@ -59,11 +59,10 @@ StereoPictureFrame::~StereoPictureFrame ()
 	delete _buffer;
 }
 
-/** @param reduce a factor by which to reduce the resolution
+/** @param eye Eye to return (EYE_LEFT or EYE_RIGHT).
+ *  @param reduce a factor by which to reduce the resolution
  *  of the image, expressed as a power of two (pass 0 for no
  *  reduction).
- *
- *  @param eye Eye to return (EYE_LEFT or EYE_RIGHT).
  *
  *  @return An ARGB representation of one of the eyes (left or right)
  *  of this frame.  This is ARGB in the Cairo sense, so that each

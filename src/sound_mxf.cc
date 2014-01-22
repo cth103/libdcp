@@ -42,21 +42,15 @@ using boost::shared_ptr;
 using boost::lexical_cast;
 using namespace dcp;
 
-SoundMXF::SoundMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name)
-	: MXF (directory, mxf_name)
+SoundMXF::SoundMXF (boost::filesystem::path file)
+	: MXF (file)
 	, _channels (0)
 	, _sampling_rate (0)
 {
-
-}
-
-void
-SoundMXF::read ()
-{
 	ASDCP::PCM::MXFReader reader;
-	Kumu::Result_t r = reader.OpenRead (path().string().c_str());
+	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file.string(), r));
 	}
 
 	ASDCP::PCM::AudioDescriptor desc;
@@ -78,22 +72,22 @@ SoundMXF::cpl_node_name () const
 }
 
 bool
-SoundMXF::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+SoundMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!MXF::equals (other, opt, note)) {
 		return false;
 	}
 		     
 	ASDCP::PCM::MXFReader reader_A;
-	Kumu::Result_t r = reader_A.OpenRead (path().string().c_str());
+	Kumu::Result_t r = reader_A.OpenRead (file().string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file().string(), r));
 	}
 
 	ASDCP::PCM::MXFReader reader_B;
-	r = reader_B.OpenRead (other->path().string().c_str());
+	r = reader_B.OpenRead (other->file().string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file().string(), r));
 	}
 
 	ASDCP::PCM::AudioDescriptor desc_A;
@@ -157,7 +151,7 @@ shared_ptr<const SoundFrame>
 SoundMXF::get_frame (int n) const
 {
 	/* XXX: should add on entry point here? */
-	return shared_ptr<const SoundFrame> (new SoundFrame (path().string(), n, _decryption_context));
+	return shared_ptr<const SoundFrame> (new SoundFrame (file().string(), n, _decryption_context));
 }
 
 shared_ptr<SoundMXFWriter>
@@ -202,9 +196,9 @@ SoundMXFWriter::SoundMXFWriter (SoundMXF* a)
 	
 	_asset->fill_writer_info (&_state->writer_info);
 	
-	Kumu::Result_t r = _state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->audio_desc);
+	Kumu::Result_t r = _state->mxf_writer.OpenWrite (_asset->file().string().c_str(), _state->writer_info, _state->audio_desc);
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (FileError ("could not open audio MXF for writing", _asset->path().string(), r));
+		boost::throw_exception (FileError ("could not open audio MXF for writing", _asset->file().string(), r));
 	}
 }
 

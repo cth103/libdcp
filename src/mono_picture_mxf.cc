@@ -31,19 +31,13 @@ using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace dcp;
 
-MonoPictureMXF::MonoPictureMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name)
-	: PictureMXF (directory, mxf_name)
-{
-
-}
-
-void
-MonoPictureMXF::read ()
+MonoPictureMXF::MonoPictureMXF (boost::filesystem::path file)
+	: PictureMXF (file)
 {
 	ASDCP::JP2K::MXFReader reader;
-	Kumu::Result_t r = reader.OpenRead (path().string().c_str());
+	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file.string(), r));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc;
@@ -58,35 +52,35 @@ MonoPictureMXF::read ()
 	_intrinsic_duration = desc.ContainerDuration;
 }
 
-boost::filesystem::path
-MonoPictureMXF::path_from_list (int f, vector<boost::filesystem::path> const & files) const
+MonoPictureMXF::MonoPictureMXF (int edit_rate)
+	: PictureMXF (edit_rate)
 {
-	return files[f];
+	
 }
 
 shared_ptr<const MonoPictureFrame>
 MonoPictureMXF::get_frame (int n) const
 {
-	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (path(), n, _decryption_context));
+	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (_file, n, _decryption_context));
 }
 
 bool
-MonoPictureMXF::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+MonoPictureMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!MXF::equals (other, opt, note)) {
 		return false;
 	}
 
 	ASDCP::JP2K::MXFReader reader_A;
-	Kumu::Result_t r = reader_A.OpenRead (path().string().c_str());
+	Kumu::Result_t r = reader_A.OpenRead (_file.string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", _file.string(), r));
 	}
 	
 	ASDCP::JP2K::MXFReader reader_B;
-	r = reader_B.OpenRead (other->path().string().c_str());
+	r = reader_B.OpenRead (other->file().string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", other->file().string(), r));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc_A;
@@ -127,10 +121,10 @@ MonoPictureMXF::equals (shared_ptr<const ContentAsset> other, EqualityOptions op
 }
 
 shared_ptr<PictureMXFWriter>
-MonoPictureMXF::start_write (bool overwrite)
+MonoPictureMXF::start_write (boost::filesystem::path file, bool overwrite)
 {
 	/* XXX: can't we use shared_ptr here? */
-	return shared_ptr<MonoPictureMXFWriter> (new MonoPictureMXFWriter (this, overwrite));
+	return shared_ptr<MonoPictureMXFWriter> (new MonoPictureMXFWriter (this, file, overwrite));
 }
 
 string

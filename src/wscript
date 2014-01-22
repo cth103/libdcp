@@ -16,7 +16,7 @@ def build(bld):
                  asset.cc
                  certificates.cc
                  colour_matrix.cc
-                 content_asset.cc
+                 content.cc
                  cpl.cc
                  dcp.cc        
                  dcp_time.cc

@@ -29,7 +29,7 @@ using boost::shared_ptr;
 */
 BOOST_AUTO_TEST_CASE (cpl_sar)
 {
-	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF ("build/test/foo", "video.mxf"));
+	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF ("build/test/foo/video.mxf"));
 	mp->set_interop (true);
 
 	{

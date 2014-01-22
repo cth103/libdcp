@@ -52,8 +52,14 @@ using boost::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace dcp;
 
-PictureMXF::PictureMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name)
-	: MXF (directory, mxf_name)
+PictureMXF::PictureMXF (boost::filesystem::path file)
+	: MXF (file)
+{
+
+}
+
+PictureMXF::PictureMXF (int edit_rate)
+	: MXF (edit_rate)
 {
 
 }

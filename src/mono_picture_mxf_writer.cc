@@ -40,8 +40,8 @@ struct MonoPictureMXFWriter::ASDCPState : public ASDCPStateBase
 /** @param a Asset to write to.  `a' must not be deleted while
  *  this writer class still exists, or bad things will happen.
  */
-MonoPictureMXFWriter::MonoPictureMXFWriter (PictureMXF* asset, bool overwrite)
-	: PictureMXFWriter (asset, overwrite)
+MonoPictureMXFWriter::MonoPictureMXFWriter (PictureMXF* asset, boost::filesystem::path file, bool overwrite)
+	: PictureMXFWriter (asset, file, overwrite)
 	, _state (new MonoPictureMXFWriter::ASDCPState)
 {
 	_state->encryption_context = asset->encryption_context ();
@@ -50,7 +50,7 @@ MonoPictureMXFWriter::MonoPictureMXFWriter (PictureMXF* asset, bool overwrite)
 void
 MonoPictureMXFWriter::start (uint8_t* data, int size)
 {
-	dcp::start (this, _state, _asset, data, size);
+	dcp::start (this, _state, _mxf, data, size);
 }
 
 FrameInfo
@@ -71,7 +71,7 @@ MonoPictureMXFWriter::write (uint8_t* data, int size)
 	string hash;
 	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _state->encryption_context, 0, &hash);
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string(), r));
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
 	}
 
 	++_frames_written;
@@ -86,7 +86,7 @@ MonoPictureMXFWriter::fake_write (int size)
 
 	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size);
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string(), r));
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _mxf->file().string(), r));
 	}
 
 	++_frames_written;
@@ -99,11 +99,11 @@ MonoPictureMXFWriter::finalize ()
 	
 	Kumu::Result_t r = _state->mxf_writer.Finalize();
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _asset->path().string(), r));
+		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _mxf->file().string(), r));
 	}
 
 	_finalized = true;
-	_asset->set_intrinsic_duration (_frames_written);
-	_asset->set_duration (_frames_written);
+	_mxf->set_intrinsic_duration (_frames_written);
+	_mxf->set_duration (_frames_written);
 }
 

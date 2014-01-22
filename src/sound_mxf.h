@@ -68,13 +68,11 @@ private:
 class SoundMXF : public MXF
 {
 public:
-	SoundMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name);
-
-	void read ();
+	SoundMXF (boost::filesystem::path file);
 
 	boost::shared_ptr<SoundMXFWriter> start_write ();
 	
-	bool equals (boost::shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
+	bool equals (boost::shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
 
@@ -96,7 +94,6 @@ public:
 
 private:
 	std::string key_type () const;
-	void construct (boost::function<boost::filesystem::path (Channel)> get_path);
 	std::string cpl_node_name () const;
 
 	/** Number of channels in the asset */

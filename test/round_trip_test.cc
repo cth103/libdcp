@@ -58,9 +58,14 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	shared_ptr<dcp::MonoPictureMXF> asset_A (new dcp::MonoPictureMXF (work_dir, "video.mxf"));
 	asset_A->set_edit_rate (24);
-	asset_A->set_intrinsic_duration (24);
-	asset_A->set_size (dcp::Size (32, 32));
-	asset_A->create (j2c);
+	shared_ptr<PictureMXFWriter> writer;
+	boost::filesystem::path mxf = work_dir + "video.mxf";
+	writer->start_write (mxf, false);
+	TestFile j2c ("test/data/32x32_red_square.j2c");
+	for (int i = 0; i < 24; ++i) {
+		writer->write (j2c.data (), j2c.size ());
+	}
+	writer->finalize ();
 
 	dcp::Key key;
 

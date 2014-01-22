@@ -26,10 +26,9 @@
 
 namespace dcp {
 
-/** A helper class for writing to MonoPictureAssets progressively (i.e. writing frame-by-frame,
- *  rather than giving libdcp all the frames in one go).
+/** A helper class for writing to MonoPictureMXFs.
  *
- *  Objects of this class can only be created with MonoPictureAsset::start_write().
+ *  Objects of this class can only be created with MonoPictureMXF::start_write().
  *
  *  Frames can be written to the MonoPictureAsset by calling write() with a JPEG2000 image
  *  (a verbatim .j2c file).  finalize() must be called after the last frame has been written.
@@ -46,7 +45,7 @@ public:
 private:
 	friend class MonoPictureMXF;
 
-	MonoPictureMXFWriter (PictureMXF *, bool);
+	MonoPictureMXFWriter (PictureMXF *, boost::filesystem::path file, bool);
 	void start (uint8_t *, int);
 
 	/* do this with an opaque pointer so we don't have to include

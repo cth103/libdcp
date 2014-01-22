@@ -33,19 +33,21 @@ struct ASDCPStateBase
 };
 
 template <class P, class Q>
-void dcp::start (PictureMXFWriter* writer, shared_ptr<P> state, Q* asset, uint8_t* data, int size)
+void dcp::start (PictureMXFWriter* writer, shared_ptr<P> state, Q* mxf, uint8_t* data, int size)
 {
+	mxf->set_file (writer->_file);
+	
 	if (ASDCP_FAILURE (state->j2k_parser.OpenReadFrame (data, size, state->frame_buffer))) {
 		boost::throw_exception (MiscError ("could not parse J2K frame"));
 	}
 
 	state->j2k_parser.FillPictureDescriptor (state->picture_descriptor);
-	state->picture_descriptor.EditRate = ASDCP::Rational (asset->edit_rate(), 1);
+	state->picture_descriptor.EditRate = ASDCP::Rational (mxf->edit_rate(), 1);
 	
-	asset->fill_writer_info (&state->writer_info);
+	mxf->fill_writer_info (&state->writer_info);
 	
 	Kumu::Result_t r = state->mxf_writer.OpenWrite (
-		asset->path().string().c_str(),
+		mxf->file().string().c_str(),
 		state->writer_info,
 		state->picture_descriptor,
 		16384,
@@ -53,7 +55,7 @@ void dcp::start (PictureMXFWriter* writer, shared_ptr<P> state, Q* asset, uint8_
 		);
 
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for writing", asset->path().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for writing", mxf->file().string(), r));
 	}
 
 	writer->_started = true;

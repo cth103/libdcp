@@ -33,8 +33,9 @@
 
 #include "dcp.h"
 #include "cpl.h"
-#include "mono_picture_asset.h"
-#include "sound_asset.h"
+#include "mono_picture_mxf.h"
+#include "mono_picture_mxf_writer.h"
+#include "sound_mxf.h"
 #include "reel.h"
 
 int

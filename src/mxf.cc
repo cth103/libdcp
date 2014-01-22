@@ -42,8 +42,8 @@ using boost::lexical_cast;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
-MXF::MXF (boost::filesystem::path directory, boost::filesystem::path file_name)
-	: ContentAsset (directory, file_name)
+MXF::MXF (boost::filesystem::path file)
+	: Content (file)
 	, _progress (0)
 	, _encryption_context (0)
 	, _decryption_context (0)
@@ -71,7 +71,7 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info)
 		writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
 	}
 	unsigned int c;
-	Kumu::hex2bin (_uuid.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
+	Kumu::hex2bin (_id.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
 	assert (c == Kumu::UUID_Length);
 
 	if (_key) {
@@ -85,9 +85,9 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info)
 }
 
 bool
-MXF::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+MXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (!ContentAsset::equals (other, opt, note)) {
+	if (!Content::equals (other, opt, note)) {
 		return false;
 	}
 	
@@ -97,7 +97,7 @@ MXF::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::f
 		return false;
 	}
 	
-	if (_file_name != other_mxf->_file_name) {
+	if (_file != other_mxf->file ()) {
 		note (ERROR, "MXF names differ");
 		if (!opt.mxf_names_can_differ) {
 			return false;
@@ -115,8 +115,8 @@ MXF::write_to_cpl (xmlpp::Element* node) const
 	if (!attr.first.empty ()) {
 		a->set_attribute (attr.first, attr.second);
 	}
-	a->add_child ("Id")->add_child_text ("urn:uuid:" + _uuid);
-	a->add_child ("AnnotationText")->add_child_text (_file_name.string ());
+	a->add_child ("Id")->add_child_text ("urn:uuid:" + _id);
+	a->add_child ("AnnotationText")->add_child_text (_file.string ());
 	a->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
 	a->add_child ("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
 	a->add_child ("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));

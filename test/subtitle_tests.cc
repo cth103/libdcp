@@ -26,7 +26,7 @@ using boost::shared_ptr;
 /* Load a subtitle asset from XML and check that it is read correctly */
 BOOST_AUTO_TEST_CASE (subtitles1)
 {
-	dcp::SubtitleAsset subs ("test/data", "subs1.xml");
+	dcp::SubtitleAsset subs ("test/data/subs1.xml");
 
 	BOOST_CHECK_EQUAL (subs.language(), "French");
 
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 /** And similarly for another one */
 BOOST_AUTO_TEST_CASE (subtitles2)
 {
-	dcp::SubtitleAsset subs ("test/data", "subs2.xml");
+	dcp::SubtitleAsset subs ("test/data/subs2.xml");
 
 	list<shared_ptr<dcp::Subtitle> > s = subs.subtitles_at (dcp::Time (0, 0, 42, 100));
 	BOOST_CHECK_EQUAL (s.size(), 2);

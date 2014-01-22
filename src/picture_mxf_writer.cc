@@ -83,8 +83,9 @@ FrameInfo::write (FILE* f) const
 }
 
 
-PictureMXFWriter::PictureMXFWriter (PictureMXF* asset, bool overwrite)
-	: _asset (asset)
+PictureMXFWriter::PictureMXFWriter (PictureMXF* mxf, boost::filesystem::path file, bool overwrite)
+	: _mxf (mxf)
+	, _file (file)
 	, _frames_written (0)
 	, _started (false)
 	, _finalized (false)

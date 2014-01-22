@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_OBJECT_H
+#define LIBDCP_OBJECT_H
+
 #include <string>
 
 namespace dcp {
@@ -27,6 +30,7 @@ class Object
 public:
 	Object ();
 	Object (std::string id);
+	virtual ~Object () {}
 
 	std::string id () const {
 		return _id;
@@ -37,3 +41,5 @@ protected:
 };
 	
 }
+
+#endif

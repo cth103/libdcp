@@ -40,7 +40,7 @@ namespace xmlpp {
 namespace dcp
 {
 
-class ContentAsset;	
+class Content;	
 class PictureAsset;
 class SoundAsset;
 class SubtitleAsset;
@@ -138,7 +138,7 @@ private:
 	void write_assetmap (std::string pkl_uuid, int pkl_length, bool, XMLMetadata const &) const;
 
 	/** @return Assets in all the CPLs in this DCP */
-	std::list<boost::shared_ptr<const ContentAsset> > assets () const;
+	std::list<boost::shared_ptr<const Content> > assets () const;
 
 	struct Files {
 		std::list<std::string> cpls;

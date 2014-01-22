@@ -109,15 +109,15 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 			try {
 				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
 
-				picture.reset (new MonoPictureMXF (asset.first, asset.second->chunks.front()->path));
+//				picture.reset (new MonoPictureMXF (asset.first, asset.second->chunks.front()->path));
 
-				picture->read ();
-				picture->set_edit_rate (_fps);
-				picture->set_entry_point (p->entry_point);
-				picture->set_duration (p->duration);
+//				picture->read ();
+//				picture->set_edit_rate (_fps);
+//				picture->set_entry_point (p->entry_point);
+//				picture->set_duration (p->duration);
 				if (p->key_id.length() > 9) {
 					/* Trim urn:uuid: */
-					picture->set_key_id (p->key_id.substr (9));
+//					picture->set_key_id (p->key_id.substr (9));
 				}
 			} catch (MXFFileError) {
 				if (require_mxfs) {
@@ -129,15 +129,15 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 			try {
 				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
 
-				picture.reset (new StereoPictureMXF (asset.first, asset.second->chunks.front()->path));
+//				picture.reset (new StereoPictureMXF (asset.first, asset.second->chunks.front()->path));
 
-				picture->read ();
-				picture->set_edit_rate (_fps);
-				picture->set_entry_point (p->entry_point);
-				picture->set_duration (p->duration);
+//				picture->read ();
+//				picture->set_edit_rate (_fps);
+//				picture->set_entry_point (p->entry_point);
+//				picture->set_duration (p->duration);
 				if (p->key_id.length() > 9) {
 					/* Trim urn:uuid: */
-					picture->set_key_id (p->key_id.substr (9));
+//					picture->set_key_id (p->key_id.substr (9));
 				}
 				
 			} catch (MXFFileError) {
@@ -153,16 +153,16 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 			try {
 				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, (*i)->asset_list->main_sound->id);
 			
-				sound.reset (new SoundMXF (asset.first, asset.second->chunks.front()->path));
-				shared_ptr<parse::MainSound> s = (*i)->asset_list->main_sound;
+//				sound.reset (new SoundMXF (asset.first, asset.second->chunks.front()->path));
+//				shared_ptr<parse::MainSound> s = (*i)->asset_list->main_sound;
 
-				sound->read ();
-				sound->set_entry_point (s->entry_point);
-				sound->set_duration (s->duration);
-				if (s->key_id.length() > 9) {
+//				sound->read ();
+//				sound->set_entry_point (s->entry_point);
+//				sound->set_duration (s->duration);
+//				if (s->key_id.length() > 9) {
 					/* Trim urn:uuid: */
-					sound->set_key_id (s->key_id.substr (9));
-				}
+//					sound->set_key_id (s->key_id.substr (9));
+//				}
 			} catch (MXFFileError) {
 				if (require_mxfs) {
 					throw;
@@ -172,15 +172,15 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 
 		if ((*i)->asset_list->main_subtitle) {
 			
-			pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, (*i)->asset_list->main_subtitle->id);
+//			pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, (*i)->asset_list->main_subtitle->id);
 
-			subtitle.reset (new SubtitleAsset (asset.first, asset.second->chunks.front()->path));
+//			subtitle.reset (new SubtitleAsset (asset.first, asset.second->chunks.front()->path));
 
-			subtitle->set_entry_point ((*i)->asset_list->main_subtitle->entry_point);
-			subtitle->set_duration ((*i)->asset_list->main_subtitle->duration);
+//			subtitle->set_entry_point ((*i)->asset_list->main_subtitle->entry_point);
+//			subtitle->set_duration ((*i)->asset_list->main_subtitle->duration);
 		}
 			
-		_reels.push_back (shared_ptr<Reel> (new Reel (picture, sound, subtitle)));
+//		_reels.push_back (shared_ptr<Reel> (new Reel (picture, sound, subtitle)));
 	}
 }
 
@@ -252,10 +252,10 @@ CPL::write_to_pkl (xmlpp::Node* node) const
 	asset->add_child("Type")->add_child_text ("text/xml");
 }
 
-list<shared_ptr<const ContentAsset> >
+list<shared_ptr<const Content> >
 CPL::assets () const
 {
-	list<shared_ptr<const ContentAsset> > a;
+	list<shared_ptr<const Content> > a;
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		if ((*i)->main_picture ()) {
 			a.push_back ((*i)->main_picture ());

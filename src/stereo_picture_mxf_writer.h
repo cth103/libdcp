@@ -46,7 +46,7 @@ public:
 private:
 	friend class StereoPictureMXF;
 
-	StereoPictureMXFWriter (PictureMXF *, bool);
+	StereoPictureMXFWriter (PictureMXF *, boost::filesystem::path file, bool);
 	void start (uint8_t *, int);
 
 	/* do this with an opaque pointer so we don't have to include

@@ -36,18 +36,18 @@ struct StereoPictureMXFWriter::ASDCPState : public ASDCPStateBase
 	ASDCP::JP2K::MXFSWriter mxf_writer;
 };
 
-StereoPictureMXFWriter::StereoPictureMXFWriter (PictureMXF* asset, bool overwrite)
-	: PictureMXFWriter (asset, overwrite)
+StereoPictureMXFWriter::StereoPictureMXFWriter (PictureMXF* mxf, boost::filesystem::path file, bool overwrite)
+	: PictureMXFWriter (mxf, file, overwrite)
 	, _state (new StereoPictureMXFWriter::ASDCPState)
 	, _next_eye (EYE_LEFT)
 {
-	_state->encryption_context = asset->encryption_context ();
+	_state->encryption_context = mxf->encryption_context ();
 }
 
 void
 StereoPictureMXFWriter::start (uint8_t* data, int size)
 {
-	dcp::start (this, _state, _asset, data, size);
+	dcp::start (this, _state, _mxf, data, size);
 }
 
 /** Write a frame for one eye.  Frames must be written left, then right, then left etc.
@@ -79,7 +79,7 @@ StereoPictureMXFWriter::write (uint8_t* data, int size)
 		);
 
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string(), r));
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _mxf->file().string(), r));
 	}
 
 	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
@@ -96,7 +96,7 @@ StereoPictureMXFWriter::fake_write (int size)
 
 	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size);
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string(), r));
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _mxf->file().string(), r));
 	}
 
 	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
@@ -110,10 +110,10 @@ StereoPictureMXFWriter::finalize ()
 	
 	Kumu::Result_t r = _state->mxf_writer.Finalize();
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _asset->path().string(), r));
+		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _mxf->file().string(), r));
 	}
 
 	_finalized = true;
-	_asset->set_intrinsic_duration (_frames_written / 2);
-	_asset->set_duration (_frames_written / 2);
+	_mxf->set_intrinsic_duration (_frames_written / 2);
+	_mxf->set_duration (_frames_written / 2);
 }

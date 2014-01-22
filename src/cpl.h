@@ -39,7 +39,7 @@ namespace parse {
 	class AssetMapAsset;
 }
 	
-class ContentAsset;
+class Content;
 class Reel;
 class XMLMetadata;
 class MXFMetadata;
@@ -85,7 +85,7 @@ public:
 		return _fps;
 	}
 
-	std::list<boost::shared_ptr<const ContentAsset> > assets () const;
+	std::list<boost::shared_ptr<const Content> > assets () const;
 
 	bool encrypted () const;
 

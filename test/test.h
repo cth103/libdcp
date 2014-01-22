@@ -17,6 +17,23 @@
 
 */
 
-extern boost::filesystem::path j2c (int);
-extern boost::filesystem::path wav (dcp::Channel);
 extern std::string test_corpus;
+
+class TestFile
+{
+public:
+	TestFile (boost::filesystem::path file);
+	~TestFile ();
+	
+	uint8_t* data () const {
+		return _data;
+	}
+
+	int64_t size () const {
+		return _size;
+	}
+
+private:
+	uint8_t* _data;
+	int64_t _size;
+};

@@ -21,7 +21,7 @@
 #define LIBDCP_MXF_ASSET_H
 
 #include <boost/signals2.hpp>
-#include "content_asset.h"
+#include "content.h"
 #include "key.h"
 #include "metadata.h"
 
@@ -38,20 +38,15 @@ class MXFMetadata;
 /** @class MXF
  *  @brief Parent class for classes which represent MXF files.
  */
-class MXF : public ContentAsset
+class MXF : public Content
 {
 public:
-	/** Construct an MXF.
-	 *  This class will not write anything to disk in this constructor, but subclasses may.
-	 *
-	 *  @param directory Directory where MXF file is.
-	 *  @param file_name Name of MXF file.
-	 */
-	MXF (boost::filesystem::path directory, boost::filesystem::path file_name);
+	MXF (boost::filesystem::path file);
+	MXF (int edit_rate);
 	
 	~MXF ();
 
-	virtual bool equals (boost::shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
+	virtual bool equals (boost::shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 	virtual void write_to_cpl (xmlpp::Element *) const;
 	virtual std::string key_type () const = 0;
 	

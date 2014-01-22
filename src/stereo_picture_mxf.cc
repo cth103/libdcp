@@ -31,22 +31,22 @@ using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 bool
-StereoPictureMXF::equals (shared_ptr<const ContentAsset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+StereoPictureMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!MXF::equals (other, opt, note)) {
 		return false;
 	}
 
 	ASDCP::JP2K::MXFSReader reader_A;
-	Kumu::Result_t r = reader_A.OpenRead (path().string().c_str());
+	Kumu::Result_t r = reader_A.OpenRead (file().string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file().string(), r));
 	}
 	
 	ASDCP::JP2K::MXFSReader reader_B;
-	r = reader_B.OpenRead (other->path().string().c_str());
+	r = reader_B.OpenRead (other->file().string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file().string(), r));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc_A;
@@ -89,19 +89,13 @@ StereoPictureMXF::equals (shared_ptr<const ContentAsset> other, EqualityOptions 
 	return true;
 }
 
-StereoPictureMXF::StereoPictureMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name)
-	: PictureMXF (directory, mxf_name)
-{
-	
-}
-
-void
-StereoPictureMXF::read ()
+StereoPictureMXF::StereoPictureMXF (boost::filesystem::path file)
+	: PictureMXF (file)
 {
 	ASDCP::JP2K::MXFSReader reader;
-	Kumu::Result_t r = reader.OpenRead (path().string().c_str());
+	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file.string(), r));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc;
@@ -116,13 +110,13 @@ StereoPictureMXF::read ()
 shared_ptr<const StereoPictureFrame>
 StereoPictureMXF::get_frame (int n) const
 {
-	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (path().string(), n));
+	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (file().string(), n));
 }
 
 shared_ptr<PictureMXFWriter>
-StereoPictureMXF::start_write (bool overwrite)
+StereoPictureMXF::start_write (boost::filesystem::path file, bool overwrite)
 {
-	return shared_ptr<StereoPictureMXFWriter> (new StereoPictureMXFWriter (this, overwrite));
+	return shared_ptr<StereoPictureMXFWriter> (new StereoPictureMXFWriter (this, file, overwrite));
 }
 
 string

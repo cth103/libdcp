@@ -55,15 +55,16 @@ public:
 	virtual FrameInfo write (uint8_t *, int) = 0;
 	virtual void finalize () = 0;
 	virtual void fake_write (int) = 0;
-	
+
 protected:
 	template <class P, class Q>
 	friend void start (PictureMXFWriter *, boost::shared_ptr<P>, Q *, uint8_t *, int);
 
-	PictureMXFWriter (PictureMXF *, bool);
+	PictureMXFWriter (PictureMXF *, boost::filesystem::path, bool);
 
-	PictureMXF* _asset;
-	
+	PictureMXF* _mxf;
+
+	boost::filesystem::path _file;
 	/** Number of picture frames written to the asset so far.  For stereo assets
 	 *  this will be incremented for each eye (i.e. there will be twice the number
 	 *  of frames as in a mono asset).

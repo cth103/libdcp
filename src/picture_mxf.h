@@ -46,28 +46,11 @@ class PictureMXFWriter;
 class PictureMXF : public MXF
 {
 public:
-	/** Construct a PictureAsset.
-	 *  
-	 *  @param directory Directory where MXF file is.
-	 *  @param mxf_name Name of MXF file.
-	 */
-	PictureMXF (boost::filesystem::path directory, boost::filesystem::path mxf_name);
+	PictureMXF (boost::filesystem::path file);
+	PictureMXF (int edit_rate);
 
-	/** Start a progressive write to this asset.
-	 *  The following parameters must be set up (if required) before calling this:
-	 *      Interop mode (set_interop)
-	 *      Edit rate    (set_edit_rate)
-	 *      MXF Metadata (set_metadata)
-	 *      
-	 *  @param overwrite true to overwrite an existing MXF file; in this mode, writing can be resumed to a partially-written MXF; false if the
-	 *  MXF file does not exist.
-	 */
-	virtual boost::shared_ptr<PictureMXFWriter> start_write (bool overwrite) = 0;
+	virtual boost::shared_ptr<PictureMXFWriter> start_write (boost::filesystem::path file, bool overwrite) = 0;
 
-	virtual void read () = 0;
-	virtual void create (std::vector<boost::filesystem::path> const &) {}
-	virtual void create (boost::function<boost::filesystem::path (int)>) {}
-	
 	Size size () const {
 		return _size;
 	}

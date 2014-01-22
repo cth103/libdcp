@@ -21,7 +21,7 @@
 #define LIBDCP_SUBTITLE_ASSET_H
 
 #include <libcxml/cxml.h>
-#include "content_asset.h"
+#include "content.h"
 #include "dcp_time.h"
 
 namespace dcp
@@ -133,14 +133,14 @@ private:
 bool operator== (Subtitle const & a, Subtitle const & b);
 std::ostream& operator<< (std::ostream& s, Subtitle const & sub);
 
-class SubtitleAsset : public ContentAsset
+class SubtitleAsset : public Content
 {
 public:
-	SubtitleAsset (std::string directory, std::string xml_file);
+	SubtitleAsset (boost::filesystem::path file);
 	SubtitleAsset (std::string directory, std::string movie_title, std::string language);
 
 	void write_to_cpl (xmlpp::Element *) const;
-	virtual bool equals (boost::shared_ptr<const ContentAsset>, EqualityOptions, boost::function<void (NoteType, std::string)> note) const {
+	virtual bool equals (boost::shared_ptr<const Content>, EqualityOptions, boost::function<void (NoteType, std::string)> note) const {
 		/* XXX */
 		note (ERROR, "subtitle assets not compared yet");
 		return true;
@@ -157,7 +157,6 @@ public:
 
 	void add (boost::shared_ptr<Subtitle>);
 
-	void read_xml (std::string);
 	void write_xml () const;
 	Glib::ustring xml_as_string () const;
 
