@@ -1197,6 +1197,23 @@ public:
     return lh__Writer::WriteFrame(FrameBuf, false, Ctx, HMAC, hash);
   }
 
+  Result_t FakeWriteFrame(int size, StereoscopicPhase_t phase)
+  {
+    if (m_NextPhase != phase)
+      {
+        return RESULT_SPHASE;
+      }
+
+    if (phase == SP_LEFT)
+      {
+        m_NextPhase = SP_RIGHT;
+	return lh__Writer::FakeWriteFrame(size, true);
+      }
+
+    m_NextPhase = SP_LEFT;
+    return lh__Writer::FakeWriteFrame(size, false);
+  }
+
   //
   Result_t Finalize()
   {
@@ -1338,12 +1355,12 @@ ASDCP::JP2K::MXFSWriter::WriteFrame(const FrameBuffer& FrameBuf, StereoscopicPha
 }
 
 ASDCP::Result_t
-ASDCP::JP2K::MXFSWriter::FakeWriteFrame(int size)
+ASDCP::JP2K::MXFSWriter::FakeWriteFrame(int size, StereoscopicPhase_t phase)
 {
   if ( m_Writer.empty() )
     return RESULT_INIT;
 
-  return m_Writer->FakeWriteFrame(size, true);
+  return m_Writer->FakeWriteFrame(size, phase);
 }
 
 // Closes the MXF file, writing the index and other closing information.

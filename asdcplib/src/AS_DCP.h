@@ -1289,7 +1289,7 @@ namespace ASDCP {
 	  Result_t WriteFrame(const FrameBuffer&, StereoscopicPhase_t phase,
 			      AESEncContext* = 0, HMACContext* = 0, std::string* hash = 0);
 
-	  Result_t FakeWriteFrame(int size);
+          Result_t FakeWriteFrame(int size, StereoscopicPhase_t phase);
 	      
 	  // Closes the MXF file, writing the index and revised header.  Returns
 	  // RESULT_SPHASE if WriteFrame was called an odd number of times.

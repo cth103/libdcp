@@ -94,7 +94,7 @@ StereoPictureAssetWriter::fake_write (int size)
 	assert (_started);
 	assert (!_finalized);
 
-	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size);
+	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size, _next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _asset->path().string(), r));
 	}
