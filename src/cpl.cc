@@ -83,6 +83,9 @@ CPL::CPL (boost::filesystem::path file)
 	f.done ();
 }
 
+/** Add a reel to this CPL.
+ *  @param reel Reel to add.
+ */
 void
 CPL::add (shared_ptr<Reel> reel)
 {

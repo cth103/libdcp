@@ -89,7 +89,7 @@ class CertificateChain
 public:
 	CertificateChain () {}
 
-	void add (boost::shared_ptr<Certificate>);
+	void add (boost::shared_ptr<Certificate> c);
 
 	boost::shared_ptr<Certificate> root () const;
 	boost::shared_ptr<Certificate> leaf () const;

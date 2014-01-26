@@ -18,7 +18,7 @@
 */
 
 /** @file  src/kdm.h
- *  @brief Handling of Key Delivery Messages (KDMs).
+ *  @brief KDM and KDMKey classes.
  */
 
 #ifndef LIBDCP_KDM_H

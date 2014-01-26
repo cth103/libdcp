@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,15 +17,10 @@
 
 */
 
-#include <iomanip>
-#include <algorithm>
-#include <boost/algorithm/string.hpp>
-#include <openssl/rsa.h>
-#include <openssl/pem.h>
-#include <openssl/err.h>
-#include <libcxml/cxml.h>
-#include "AS_DCP.h"
-#include "KM_util.h"
+/** @file  src/kdm.cc
+ *  @brief KDM and KDMKey classes.
+ */
+
 #include "util.h"
 #include "kdm.h"
 #include "compose.hpp"
@@ -34,6 +29,15 @@
 #include "cpl.h"
 #include "mxf.h"
 #include "xml/kdm_smpte.h"
+#include "AS_DCP.h"
+#include "KM_util.h"
+#include <libcxml/cxml.h>
+#include <openssl/rsa.h>
+#include <openssl/pem.h>
+#include <openssl/err.h>
+#include <boost/algorithm/string.hpp>
+#include <iomanip>
+#include <algorithm>
 
 using std::list;
 using std::string;

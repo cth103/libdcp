@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/text.cc
+ *  @brief Text class for parsing subtitle XML.
+ */
+
 #include "text.h"
 #include "xml.h"
 #include "font.h"
@@ -27,6 +31,10 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
+/** Read a &lt;Text&gt; node from a subtitle XML file, noting its contents
+ *  in this object's member variables.
+ *  @param node Node to read.
+ */
 Text::Text (shared_ptr<const cxml::Node> node)
 	: v_align (CENTER)
 {

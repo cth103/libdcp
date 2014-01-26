@@ -156,33 +156,33 @@ dcp::content_kind_to_string (ContentKind kind)
 
 /** Convert a string from a &lt;ContentKind&gt; node to a libdcp ContentKind.
  *  Reasonably tolerant about varying case.
- *  @param type Content kind string.
+ *  @param kind Content kind string.
  *  @return libdcp ContentKind.
  */
 dcp::ContentKind
-dcp::content_kind_from_string (string type)
+dcp::content_kind_from_string (string kind)
 {
-	transform (type.begin(), type.end(), type.begin(), ::tolower);
+	transform (kind.begin(), kind.end(), kind.begin(), ::tolower);
 	
-	if (type == "feature") {
+	if (kind == "feature") {
 		return FEATURE;
-	} else if (type == "short") {
+	} else if (kind == "short") {
 		return SHORT;
-	} else if (type == "trailer") {
+	} else if (kind == "trailer") {
 		return TRAILER;
-	} else if (type == "test") {
+	} else if (kind == "test") {
 		return TEST;
-	} else if (type == "transitional") {
+	} else if (kind == "transitional") {
 		return TRANSITIONAL;
-	} else if (type == "rating") {
+	} else if (kind == "rating") {
 		return RATING;
-	} else if (type == "teaser") {
+	} else if (kind == "teaser") {
 		return TEASER;
-	} else if (type == "policy") {
+	} else if (kind == "policy") {
 		return POLICY;
-	} else if (type == "psa") {
+	} else if (kind == "psa") {
 		return PUBLIC_SERVICE_ANNOUNCEMENT;
-	} else if (type == "advertisement") {
+	} else if (kind == "advertisement") {
 		return ADVERTISEMENT;
 	}
 

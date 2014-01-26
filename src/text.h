@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/text.h
+ *  @brief Text class for parsing subtitle XML.
+ */
+
 #include "types.h"
 #include <boost/shared_ptr.hpp>
 #include <list>

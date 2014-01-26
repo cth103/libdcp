@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,17 +17,21 @@
 
 */
 
-#include <fstream>
-#include <sstream>
-#include <boost/filesystem.hpp>
-#include <boost/algorithm/string.hpp>
-#include <openssl/sha.h>
-#include <openssl/bio.h>
-#include <openssl/evp.h>
-#include "KM_util.h"
+/** @file  src/signer_chain.cc
+ *  @brief Functions to make signer chains.
+ */
+
 #include "signer_chain.h"
 #include "exceptions.h"
 #include "util.h"
+#include "KM_util.h"
+#include <openssl/sha.h>
+#include <openssl/bio.h>
+#include <openssl/evp.h>
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
+#include <fstream>
+#include <sstream>
 
 using std::string;
 using std::ofstream;
@@ -35,7 +39,11 @@ using std::ifstream;
 using std::stringstream;
 using std::cout;
 
-static void command (string cmd)
+/** Run a shell command.
+ *  @param cmd Command to run (UTF8-encoded).
+ */
+static void
+command (string cmd)
 {
 #ifdef LIBDCP_WINDOWS
 	/* We need to use CreateProcessW on Windows so that the UTF-8/16 mess
@@ -81,11 +89,10 @@ static void command (string cmd)
 }
 
 /** Extract a public key from a private key and create a SHA1 digest of it.
- *  @param key Private key
+ *  @param private_key Private key
  *  @param openssl openssl binary name (or full path if openssl is not on the system path).
  *  @return SHA1 digest of corresponding public key, with escaped / characters.
  */
-	
 static string
 public_key_digest (boost::filesystem::path private_key, boost::filesystem::path openssl)
 {
@@ -148,6 +155,10 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	return dig;
 }
 
+/** Generate a chain of root, intermediate and leaf keys by running an OpenSSL binary.
+ *  @param directory Directory to write the files to.
+ *  @param openssl openssl binary path.
+ */
 void
 dcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem::path openssl)
 {
