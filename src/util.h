@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,14 +24,14 @@
  *  @brief Utility methods.
  */
 
-#include <string>
-#include <stdint.h>
+#include "types.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 #include <openjpeg.h>
-#include "types.h"
+#include <string>
+#include <stdint.h>
 
 namespace xmlpp {
 	class Element;
@@ -44,7 +44,8 @@ class CertificateChain;
 class GammaLUT;
 class XYZFrame;
 
-struct Size {
+struct Size
+{
 	Size ()
 		: width (0)
 		, height (0)

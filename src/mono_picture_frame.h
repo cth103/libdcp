@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,10 +17,16 @@
 
 */
 
+/** @file  src/mono_picture_frame.h
+ *  @brief MonoPictureFrame class.
+ */
+
+#include "types.h"
+#include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/filesystem.hpp>
 #include <string>
 #include <stdint.h>
-#include <boost/shared_ptr.hpp>
-#include "types.h"
 
 namespace ASDCP {
 	namespace JP2K {
@@ -33,8 +39,10 @@ namespace dcp {
 
 class ARGBFrame;
 
-/** A single frame of a 2D (monoscopic) picture asset */	
-class MonoPictureFrame
+/** @class MonoPictureFrame
+ *  @brief A single frame of a 2D (monoscopic) picture asset.
+ */
+class MonoPictureFrame : public boost::noncopyable
 {
 public:
 	MonoPictureFrame (boost::filesystem::path mxf_path, int n, ASDCP::AESDecContext *);

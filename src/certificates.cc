@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/certificates.cc
+ *  @brief Certificate and CertificateChain classes.
+ */
+
 #include "KM_util.h"
 #include "certificates.h"
 #include "compose.hpp"
@@ -160,7 +164,7 @@ Certificate::certificate (bool with_begin_end) const
 }
 
 /** @return Certificate's issuer, in the form
- *  dnqualifier=<dnQualififer>,CN=<commonName>,OU=<organizationalUnitName>,O=organizationName
+ *  dnqualifier=&lt;dnQualififer&gt;,CN=&lt;commonName&gt;,OU=&lt;organizationalUnitName&gt,O=&lt;organizationName&gt;
  *  and with + signs escaped to \+
  */
 string

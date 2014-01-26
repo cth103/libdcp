@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/object.h
+ *  @brief Object class.
+ */
+
 #ifndef LIBDCP_OBJECT_H
 #define LIBDCP_OBJECT_H
 

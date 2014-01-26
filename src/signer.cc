@@ -38,7 +38,7 @@ using namespace dcp;
 
 /** Add a &lt;Signer&gt; and &lt;ds:Signature&gt; nodes to an XML node.
  *  @param parent XML node to add to.
- *  @param interop true to use Interop standards, false for SMPTE.
+ *  @param standard INTEROP or SMPTE.
  */
 void
 Signer::sign (xmlpp::Element* parent, Standard standard) const

@@ -52,8 +52,6 @@ using std::string;
 using std::list;
 using std::stringstream;
 using std::ostream;
-using std::copy;
-using std::back_inserter;
 using std::make_pair;
 using std::map;
 using boost::shared_ptr;

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,14 +32,14 @@
 #ifndef LIBDCP_XML_KDM_SMPTE_H
 #define LIBDCP_XML_KDM_SMPTE_H
 
-#include <string>
-#include <list>
-#include <boost/optional.hpp>
-#include <boost/filesystem.hpp>
+#include "../exceptions.h"
+#include <libcxml/cxml.h>
 #include <libxml/parser.h>
 #include <libxml++/libxml++.h>
-#include <libcxml/cxml.h>
-#include "../exceptions.h"
+#include <boost/optional.hpp>
+#include <boost/filesystem.hpp>
+#include <string>
+#include <list>
 
 namespace dcp {
 namespace xml {

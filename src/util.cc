@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -121,7 +121,7 @@ dcp::make_digest (boost::filesystem::path filename, boost::function<void (float)
 }
 
 /** Convert a content kind to a string which can be used in a
- *  <ContentKind> node.
+ *  &lt;ContentKind&gt; node.
  *  @param kind ContentKind.
  *  @return string.
  */
@@ -154,7 +154,7 @@ dcp::content_kind_to_string (ContentKind kind)
 	assert (false);
 }
 
-/** Convert a string from a <ContentKind> node to a libdcp ContentKind.
+/** Convert a string from a &lt;ContentKind&gt; node to a libdcp ContentKind.
  *  Reasonably tolerant about varying case.
  *  @param type Content kind string.
  *  @return libdcp ContentKind.
@@ -237,6 +237,9 @@ dcp::empty_or_white_space (string s)
 	return true;
 }
 
+/** Set up various bits that the library needs.  Should be called one
+ *  by client applications.
+ */
 void
 dcp::init ()
 {
@@ -269,8 +272,14 @@ bool dcp::operator!= (dcp::Size const & a, dcp::Size const & b)
 	return !(a == b);
 }
 
-/** The base64 decode routine in KM_util.cpp gives different values to both
- *  this and the command-line base64 for some inputs.  Not sure why.
+/** Decode a base64 string.  The base64 decode routine in KM_util.cpp
+ *  gives different values to both this and the command-line base64
+ *  for some inputs.  Not sure why.
+ *
+ *  @param in base64-encoded string.
+ *  @param out Output buffer.
+ *  @param out_length Length of output buffer.
+ *  @return Number of characters written to the output buffer.
  */
 int
 dcp::base64_decode (string const & in, unsigned char* out, int out_length)
@@ -297,6 +306,11 @@ dcp::base64_decode (string const & in, unsigned char* out, int out_length)
 	return N;
 }
 
+/** Convert a struct tm to a string of the form
+ *  2014-01-26T21:39:00+01:00
+ *  @param tm struct tm.
+ *  @return Time as a string.
+ */
 string
 dcp::tm_to_string (struct tm* tm)
 {
@@ -339,6 +353,11 @@ dcp::utc_offset_to_string (int b)
 	return o.str ();
 }
 
+/** Convert a boost::posix_time::ptime to a string of the form
+ *  2014-01-26T21:39:00+01:00.
+ *  @param t boost::posix_time::ptime.
+ *  @return Time as a string.
+ */
 string
 dcp::ptime_to_string (boost::posix_time::ptime t)
 {
@@ -347,10 +366,14 @@ dcp::ptime_to_string (boost::posix_time::ptime t)
 }
 
 
-/* Apparently there is no way to create an ofstream using a UTF-8
-   filename under Windows.  We are hence reduced to using fopen
-   with this wrapper.
-*/
+/** @param p Path to open.
+ *  @param t mode flags, as for fopen(3).
+ *  @return FILE pointer or 0 on error.
+ *
+ *  Apparently there is no way to create an ofstream using a UTF-8
+ *  filename under Windows.  We are hence reduced to using fopen
+ *  with this wrapper.
+ */
 FILE *
 dcp::fopen_boost (boost::filesystem::path p, string t)
 {

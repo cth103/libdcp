@@ -39,7 +39,7 @@ namespace dcp {
  *  @brief Parent class for DCP assets, i.e. picture/sound/subtitles and CPLs.
  *
  *  Note that this class is not used for ReelAssets; they are just for the metadata
- *  that gets put into <Reel>s.
+ *  that gets put into &lt;Reel&gt;s.
  */
 class Asset : public Object
 {

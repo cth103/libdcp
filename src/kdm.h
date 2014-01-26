@@ -161,8 +161,8 @@ public:
 	 *  @param recipient_cert Certificate of the projector that this KDM is targeted at.
 	 *  @param not_valid_before Start of validity period.
 	 *  @param not_valid_after End of validity period.
-	 *  @param annotation_text Text for the <AnnotationText> node.
-	 *  @param issue_date Text for the <IssueDate> node.
+	 *  @param annotation_text Text for the &lt;AnnotationText&gt; node.
+	 *  @param issue_date Text for the &lt;IssueDate&gt; node.
 	 */
 	KDM (
 		boost::shared_ptr<const CPL> cpl, boost::shared_ptr<const Signer> signer, boost::shared_ptr<const Certificate> recipient_cert,

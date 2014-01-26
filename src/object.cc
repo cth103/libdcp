@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/object.cc
+ *  @brief Object class.
+ */
+
 #include "object.h"
 #include "util.h"
 
@@ -31,7 +35,7 @@ Object::Object ()
 }
 
 /** Create an Object with a given ID.
- *  @param ID to use.
+ *  @param id ID to use.
  */
 Object::Object (string id)
 	: _id (id)

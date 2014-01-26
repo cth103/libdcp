@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 */
 
 /** @file  src/dcp.h
- *  @brief A class to create or read a DCP.
+ *  @brief DCP class.
  */
 
 #ifndef LIBDCP_DCP_H
@@ -73,6 +73,7 @@ public:
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
 	 *  @param options Options to define what "equality" means.
+	 *  @param note Functor to handle notes made by the equality operation.
 	 *  @return true if the DCPs are equal according to EqualityOptions, otherwise false.
 	 */
 	bool equals (DCP const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
@@ -113,6 +114,7 @@ private:
 
 	/** the directory that we are writing to */
 	boost::filesystem::path _directory;
+	/** the assets that make up this DCP */
 	std::list<boost::shared_ptr<Asset> > _assets;
 };
 

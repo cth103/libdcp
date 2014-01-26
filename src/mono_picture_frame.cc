@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,9 +17,10 @@
 
 */
 
-#include <openjpeg.h>
-#include "AS_DCP.h"
-#include "KM_fileio.h"
+/** @file  src/mono_picture_frame.cc
+ *  @brief MonoPictureFrame class.
+ */
+
 #include "mono_picture_frame.h"
 #include "exceptions.h"
 #include "argb_frame.h"
@@ -27,6 +28,9 @@
 #include "util.h"
 #include "gamma_lut.h"
 #include "rgb_xyz.h"
+#include "KM_fileio.h"
+#include "AS_DCP.h"
+#include <openjpeg.h>
 
 #define DCI_GAMMA 2.6
 
@@ -37,6 +41,7 @@ using namespace dcp;
 /** Make a picture frame from a 2D (monoscopic) asset.
  *  @param mxf_path Path to the asset's MXF file.
  *  @param n Frame within the asset, not taking EntryPoint into account.
+ *  @param c Context for decryption, or 0.
  */
 MonoPictureFrame::MonoPictureFrame (boost::filesystem::path mxf_path, int n, ASDCP::AESDecContext* c)
 {
@@ -54,17 +59,20 @@ MonoPictureFrame::MonoPictureFrame (boost::filesystem::path mxf_path, int n, ASD
 	}
 }
 
+/** MonoPictureFrame destructor */
 MonoPictureFrame::~MonoPictureFrame ()
 {
 	delete _buffer;
 }
 
+/** @return Pointer to JPEG2000 data */
 uint8_t const *
 MonoPictureFrame::j2k_data () const
 {
 	return _buffer->RoData ();
 }
 
+/** @return Size of JPEG2000 data in bytes */
 int
 MonoPictureFrame::j2k_size () const
 {
@@ -74,11 +82,12 @@ MonoPictureFrame::j2k_size () const
 /** @param reduce a factor by which to reduce the resolution
  *  of the image, expressed as a power of two (pass 0 for no
  *  reduction).
+ *  @param srgb_gamma Reciprocal of output gamma to use after
+ *  the conversion from XYZ to RGB.
  *
  *  @return An ARGB representation of this frame.  This is ARGB in the
  *  Cairo sense, so that each pixel takes up 4 bytes; the first byte
  *  is blue, second green, third red and fourth alpha (always 255).
- *
  */
 shared_ptr<ARGBFrame>
 MonoPictureFrame::argb_frame (int reduce, float srgb_gamma) const
