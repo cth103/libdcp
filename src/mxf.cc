@@ -21,10 +21,6 @@
  *  @brief Parent class for assets of DCPs made up of MXF files.
  */
 
-#include <iostream>
-#include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
-#include <libxml++/nodes/element.h>
 #include "AS_DCP.h"
 #include "KM_prng.h"
 #include "KM_util.h"
@@ -33,6 +29,10 @@
 #include "metadata.h"
 #include "exceptions.h"
 #include "kdm.h"
+#include <libxml++/nodes/element.h>
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+#include <iostream>
 
 using std::string;
 using std::list;
@@ -42,12 +42,20 @@ using boost::lexical_cast;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
+MXF::MXF (Fraction edit_rate)
+	: Content (edit_rate)
+	, _progress (0)
+	, _encryption_context (0)
+	, _decryption_context (0)
+{
+
+}
+
 MXF::MXF (boost::filesystem::path file)
 	: Content (file)
 	, _progress (0)
 	, _encryption_context (0)
 	, _decryption_context (0)
-	, _interop (false)
 {
 
 }
@@ -59,13 +67,13 @@ MXF::~MXF ()
 }
 
 void
-MXF::fill_writer_info (ASDCP::WriterInfo* writer_info)
+MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, Standard standard)
 {
 	writer_info->ProductVersion = _metadata.product_version;
 	writer_info->CompanyName = _metadata.company_name;
 	writer_info->ProductName = _metadata.product_name.c_str();
 
-	if (_interop) {
+	if (standard == INTEROP) {
 		writer_info->LabelSetType = ASDCP::LS_MXF_INTEROP;
 	} else {
 		writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
@@ -105,25 +113,6 @@ MXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::functi
 	}
 	
 	return true;
-}
-
-void
-MXF::write_to_cpl (xmlpp::Element* node) const
-{
-	pair<string, string> const attr = cpl_node_attribute ();
-	xmlpp::Element* a = node->add_child (cpl_node_name ());
-	if (!attr.first.empty ()) {
-		a->set_attribute (attr.first, attr.second);
-	}
-	a->add_child ("Id")->add_child_text ("urn:uuid:" + _id);
-	a->add_child ("AnnotationText")->add_child_text (_file.string ());
-	a->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
-	a->add_child ("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
-	a->add_child ("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));
-	a->add_child ("Duration")->add_child_text (lexical_cast<string> (_duration));
-	if (!_key_id.empty ()) {
-		a->add_child("KeyId")->add_child_text ("urn:uuid:" + _key_id);
-	}
 }
 
 void

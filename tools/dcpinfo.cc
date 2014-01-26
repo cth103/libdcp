@@ -1,3 +1,22 @@
+/*
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+*/
+
 #include <iostream>
 #include <cstdlib>
 #include <boost/filesystem.hpp>
@@ -7,7 +26,11 @@
 #include "reel.h"
 #include "sound_mxf.h"
 #include "picture_mxf.h"
-#include "subtitle_asset.h"
+#include "subtitle_content.h"
+#include "reel_picture_asset.h"
+#include "reel_sound_asset.h"
+#include "reel_subtitle_asset.h"
+#include "subtitle_string.h"
 #include "cpl.h"
 
 using std::string;
@@ -70,7 +93,7 @@ main (int argc, char* argv[])
 	DCP* dcp = 0;
 	try {
 		dcp = new DCP (argv[optind]);
-		dcp->read (false);
+		dcp->read ();
 	} catch (FileError& e) {
 		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << " " << e.filename() << "\n";
 		exit (EXIT_FAILURE);
@@ -81,9 +104,7 @@ main (int argc, char* argv[])
 	list<shared_ptr<CPL> > cpls = dcp->cpls ();
 
 	for (list<shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
-		cout << "  CPL: " << (*i)->name() << "\n"
-		     << "    Length: " << (*i)->length() << "\n"
-		     << "    Frames per second: " << (*i)->frames_per_second() << "\n";
+		cout << "  CPL: " << (*i)->annotation_text() << "\n";
 		
 		list<shared_ptr<Reel> > reels = (*i)->reels ();
 
@@ -92,16 +113,22 @@ main (int argc, char* argv[])
 			cout << "    Reel " << R << "\n";
 			
 			if ((*j)->main_picture()) {
-				cout << "      Picture:  " << (*j)->main_picture()->size().width << "x" << (*j)->main_picture()->size().height << "\n";
+				cout << "      Picture:  "
+				     << (*j)->main_picture()->mxf()->size().width
+				     << "x"
+				     << (*j)->main_picture()->mxf()->size().height << "\n";
 			}
 			if ((*j)->main_sound()) {
-				cout << "      Sound:    " << (*j)->main_sound()->channels() << " channels at " << (*j)->main_sound()->sampling_rate() << "Hz\n";
+				cout << "      Sound:    "
+				     << (*j)->main_sound()->mxf()->channels()
+				     << " channels at "
+				     << (*j)->main_sound()->mxf()->sampling_rate() << "Hz\n";
 			}
 			if ((*j)->main_subtitle()) {
-				list<shared_ptr<Subtitle> > subs = (*j)->main_subtitle()->subtitles ();
-				cout << "      Subtitle: " << subs.size() << " subtitles in " << (*j)->main_subtitle()->language() << "\n";
+				list<shared_ptr<SubtitleString> > subs = (*j)->main_subtitle()->subtitle_content()->subtitles ();
+				cout << "      Subtitle: " << subs.size() << " subtitles in " << (*j)->main_subtitle()->subtitle_content()->language() << "\n";
 				if (subtitles) {
-					for (list<shared_ptr<Subtitle> >::const_iterator k = subs.begin(); k != subs.end(); ++k) {
+					for (list<shared_ptr<SubtitleString> >::const_iterator k = subs.begin(); k != subs.end(); ++k) {
 						cout << "        " << (*k)->text() << "\n";
 						cout << "          "
 						     << "font:" << (*k)->font() << "; "

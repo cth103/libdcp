@@ -24,12 +24,13 @@
 #ifndef LIBDCP_DCP_H
 #define LIBDCP_DCP_H
 
-#include <string>
-#include <vector>
-#include <boost/shared_ptr.hpp>
-#include <boost/signals2.hpp>
 #include "types.h"
 #include "certificates.h"
+#include "metadata.h"
+#include <boost/shared_ptr.hpp>
+#include <boost/signals2.hpp>
+#include <string>
+#include <vector>
 
 namespace xmlpp {
 	class Document;
@@ -41,14 +42,12 @@ namespace dcp
 {
 
 class Content;	
-class PictureAsset;
-class SoundAsset;
-class SubtitleAsset;
 class Reel;
 class CPL;
 class XMLMetadata;
 class Signer;
 class KDM;
+class Asset;
 
 namespace parse {
 	class AssetMap;
@@ -69,21 +68,7 @@ public:
 	 */
 	DCP (boost::filesystem::path directory);
 
-	void read (bool require_mxfs = true);
-
-	/** Read an existing DCP's assets.
-	 *
-	 *  The DCP's XML metadata will be examined, and you can then look at the contents
-	 *  of the DCP.
-	 */
-	void read_assets ();
-
-	void read_cpls (bool require_mxfs = true);
-
-	/** Write the required XML files to the directory that was
-	 *  passed into the constructor.
-	 */
-	void write_xml (bool interop, XMLMetadata const &, boost::shared_ptr<const Signer> signer = boost::shared_ptr<const Signer> ()) const;
+	void read ();
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
@@ -92,29 +77,19 @@ public:
 	 */
 	bool equals (DCP const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
 
-	/** Add a CPL to this DCP.
-	 *  @param cpl CPL to add.
-	 */
-	void add_cpl (boost::shared_ptr<CPL> cpl);
+	void add (boost::shared_ptr<Asset> asset);
 
-	/** @return The list of CPLs in this DCP */
-	std::list<boost::shared_ptr<CPL> > cpls () const {
-		return _cpls;
-	}
-
-	/** Add another DCP as a source of assets for this DCP.  This should be called before
-	 *  ::read() on the DCP that needs the extra assets.  For example
-	 *
-	 *  DCP original_version ("my_dcp_OV");
-	 *  DCP supplemental ("my_dcp_VF");
-	 *  supplemental.add_assets_from (original_version);
-	 *  supplemental.read ();
-	 */
-	void add_assets_from (DCP const &);
+	std::list<boost::shared_ptr<CPL> > cpls () const;
 
 	bool encrypted () const;
 
-	void add_kdm (KDM const &);
+	void add (KDM const &);
+
+	void write_xml (
+		Standard standard,
+		XMLMetadata metadata = XMLMetadata (),
+		boost::shared_ptr<const Signer> signer = boost::shared_ptr<const Signer> ()
+	);
 
 	/** Emitted with a parameter between 0 and 1 to indicate progress
 	 *  for long jobs.
@@ -126,34 +101,19 @@ private:
 	/** Write the PKL file.
 	 *  @param pkl_uuid UUID to use.
 	 */
-	std::string write_pkl (std::string pkl_uuid, bool, XMLMetadata const &, boost::shared_ptr<const Signer>) const;
+	boost::filesystem::path write_pkl (Standard standard, std::string pkl_uuid, XMLMetadata metadata, boost::shared_ptr<const Signer> signer) const;
 	
-	/** Write the VOLINDEX file */
-	void write_volindex (bool) const;
+	void write_volindex (Standard standard) const;
 
 	/** Write the ASSETMAP file.
 	 *  @param pkl_uuid UUID of our PKL.
 	 *  @param pkl_length Length of our PKL in bytes.
 	 */
-	void write_assetmap (std::string pkl_uuid, int pkl_length, bool, XMLMetadata const &) const;
-
-	/** @return Assets in all the CPLs in this DCP */
-	std::list<boost::shared_ptr<const Content> > assets () const;
-
-	struct Files {
-		std::list<std::string> cpls;
-		std::string pkl;
-		std::string asset_map;
-	};
-
-	Files _files;
+	void write_assetmap (Standard standard, std::string pkl_uuid, int pkl_length, XMLMetadata metadata) const;
 
 	/** the directory that we are writing to */
 	boost::filesystem::path _directory;
-	/** our CPLs */
-	std::list<boost::shared_ptr<CPL> > _cpls;
-
-	std::list<PathAssetMap> _asset_maps;
+	std::list<boost::shared_ptr<Asset> > _assets;
 };
 
 }

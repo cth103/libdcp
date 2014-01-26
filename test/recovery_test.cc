@@ -48,9 +48,8 @@ BOOST_AUTO_TEST_CASE (recovery)
 	
 	boost::filesystem::remove_all ("build/test/baz");
 	boost::filesystem::create_directories ("build/test/baz");
-	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF (24));
-	mp->set_size (dcp::Size (32, 32));
-	shared_ptr<dcp::PictureMXFWriter> writer = mp->start_write ("build/test/baz/video1.mxf", false);
+	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
+	shared_ptr<dcp::PictureMXFWriter> writer = mp->start_write ("build/test/baz/video1.mxf", dcp::SMPTE, false);
 
 	int written_size = 0;
 	for (int i = 0; i < 24; ++i) {
@@ -77,9 +76,8 @@ BOOST_AUTO_TEST_CASE (recovery)
 	Kumu::ResetTestRNG ();
 #endif	
 
-	mp.reset (new dcp::MonoPictureMXF (24));
-	mp->set_size (dcp::Size (32, 32));
-	writer = mp->start_write ("build/test/baz/video2.mxf", true);
+	mp.reset (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
+	writer = mp->start_write ("build/test/baz/video2.mxf", dcp::SMPTE, true);
 
 	writer->write (data, size);
 

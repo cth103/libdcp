@@ -33,7 +33,7 @@ struct ASDCPStateBase
 };
 
 template <class P, class Q>
-void dcp::start (PictureMXFWriter* writer, shared_ptr<P> state, Q* mxf, uint8_t* data, int size)
+void dcp::start (PictureMXFWriter* writer, shared_ptr<P> state, Standard standard, Q* mxf, uint8_t* data, int size)
 {
 	mxf->set_file (writer->_file);
 	
@@ -42,9 +42,9 @@ void dcp::start (PictureMXFWriter* writer, shared_ptr<P> state, Q* mxf, uint8_t*
 	}
 
 	state->j2k_parser.FillPictureDescriptor (state->picture_descriptor);
-	state->picture_descriptor.EditRate = ASDCP::Rational (mxf->edit_rate(), 1);
+	state->picture_descriptor.EditRate = ASDCP::Rational (mxf->edit_rate().numerator, mxf->edit_rate().denominator);
 	
-	mxf->fill_writer_info (&state->writer_info);
+	mxf->fill_writer_info (&state->writer_info, standard);
 	
 	Kumu::Result_t r = state->mxf_writer.OpenWrite (
 		mxf->file().string().c_str(),

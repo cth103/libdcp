@@ -33,8 +33,6 @@ BOOST_AUTO_TEST_CASE (read_dcp)
 	list<shared_ptr<dcp::CPL> > cpls = d.cpls ();
 	BOOST_CHECK_EQUAL (cpls.size(), 1);
 
-	BOOST_CHECK_EQUAL (cpls.front()->name(), "A Test DCP");
+	BOOST_CHECK_EQUAL (cpls.front()->annotation_text(), "A Test DCP");
 	BOOST_CHECK_EQUAL (cpls.front()->content_kind(), dcp::FEATURE);
-	BOOST_CHECK_EQUAL (cpls.front()->frames_per_second(), 24);
-	BOOST_CHECK_EQUAL (cpls.front()->length(), 24);
 }

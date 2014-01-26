@@ -17,20 +17,22 @@
 
 */
 
-#include <libxml/parser.h>
 #include "cpl.h"
-#include "parse/cpl.h"
 #include "util.h"
 #include "mono_picture_mxf.h"
 #include "stereo_picture_mxf.h"
 #include "sound_mxf.h"
-#include "subtitle_asset.h"
-#include "parse/asset_map.h"
+#include "subtitle_content.h"
 #include "reel.h"
 #include "metadata.h"
 #include "signer.h"
 #include "exceptions.h"
+#include "xml.h"
 #include "compose.hpp"
+#include "reel_picture_asset.h"
+#include "reel_sound_asset.h"
+#include "reel_subtitle_asset.h"
+#include <libxml/parser.h>
 
 using std::string;
 using std::stringstream;
@@ -43,165 +45,56 @@ using boost::lexical_cast;
 using boost::optional;
 using namespace dcp;
 
-CPL::CPL (boost::filesystem::path directory, string name, ContentKind content_kind, int length, int frames_per_second)
-	: _directory (directory)
-	, _name (name)
+CPL::CPL (string annotation_text, ContentKind content_kind)
+	: _annotation_text (annotation_text)
 	, _content_kind (content_kind)
-	, _length (length)
-	, _fps (frames_per_second)
+	, _length (0)
 {
 
 }
 
-/** Construct a CPL object from a XML file.
- *  @param directory The directory containing this CPL's DCP.
- *  @param file The CPL XML filename.
- *  @param asset_maps AssetMaps to look for assets in.
- *  @param require_mxfs true to throw an exception if a required MXF file does not exist.
- */
-CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> asset_maps, bool require_mxfs)
-	: _directory (directory)
-	, _content_kind (FEATURE)
+/** Construct a CPL object from a XML file */
+CPL::CPL (boost::filesystem::path file)
+	: _content_kind (FEATURE)
 	, _length (0)
-	, _fps (0)
 {
-	/* Read the XML */
-	shared_ptr<parse::CPL> cpl;
-	try {
-		cpl.reset (new parse::CPL (file));
-	} catch (FileError& e) {
-		boost::throw_exception (FileError ("could not load CPL file", file, e.number ()));
+	cxml::Document f ("CompositionPlaylist");
+	f.read_file (file);
+
+	_id = f.string_child ("Id");
+	_annotation_text = f.optional_string_child ("AnnotationText").get_value_or ("");
+	_issue_date = f.string_child ("IssueDate");
+	_creator = f.optional_string_child ("Creator").get_value_or ("");
+	_content_title_text = f.string_child ("ContentTitleText");
+	_content_kind = content_kind_from_string (f.string_child ("ContentKind"));
+	shared_ptr<cxml::Node> content_version = f.node_child ("ContentVersion");
+	if (content_version) {
+		_content_version_id = content_version->optional_string_child ("Id").get_value_or ("");
+		_content_version_label_text = content_version->string_child ("LabelText");
+		content_version->done ();
 	}
-	
-	/* Now cherry-pick the required bits into our own data structure */
-	
-	_name = cpl->annotation_text;
-	_content_kind = cpl->content_kind;
+	f.ignore_child ("RatingList");
+	_reels = type_grand_children<Reel> (f, "ReelList", "Reel");
 
-	/* Trim urn:uuid: off the front */
-	_id = cpl->id.substr (9);
+	f.ignore_child ("Issuer");
+	f.ignore_child ("Signer");
+	f.ignore_child ("Signature");
 
-	for (list<shared_ptr<parse::Reel> >::iterator i = cpl->reels.begin(); i != cpl->reels.end(); ++i) {
-
-		shared_ptr<parse::Picture> p;
-
-		if ((*i)->asset_list->main_picture) {
-			p = (*i)->asset_list->main_picture;
-		} else {
-			p = (*i)->asset_list->main_stereoscopic_picture;
-		}
-		
-		_fps = p->edit_rate.numerator;
-		_length += p->duration;
-
-		shared_ptr<PictureMXF> picture;
-		shared_ptr<SoundMXF> sound;
-		shared_ptr<SubtitleAsset> subtitle;
-
-		/* Some rather twisted logic to decide if we are 3D or not;
-		   some DCPs give a MainStereoscopicPicture to indicate 3D, others
-		   just have a FrameRate twice the EditRate and apparently
-		   expect you to divine the fact that they are hence 3D.
-		*/
-
-		if (!(*i)->asset_list->main_stereoscopic_picture && p->edit_rate == p->frame_rate) {
-
-			try {
-				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
-
-//				picture.reset (new MonoPictureMXF (asset.first, asset.second->chunks.front()->path));
-
-//				picture->read ();
-//				picture->set_edit_rate (_fps);
-//				picture->set_entry_point (p->entry_point);
-//				picture->set_duration (p->duration);
-				if (p->key_id.length() > 9) {
-					/* Trim urn:uuid: */
-//					picture->set_key_id (p->key_id.substr (9));
-				}
-			} catch (MXFFileError) {
-				if (require_mxfs) {
-					throw;
-				}
-			}
-			
-		} else {
-			try {
-				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
-
-//				picture.reset (new StereoPictureMXF (asset.first, asset.second->chunks.front()->path));
-
-//				picture->read ();
-//				picture->set_edit_rate (_fps);
-//				picture->set_entry_point (p->entry_point);
-//				picture->set_duration (p->duration);
-				if (p->key_id.length() > 9) {
-					/* Trim urn:uuid: */
-//					picture->set_key_id (p->key_id.substr (9));
-				}
-				
-			} catch (MXFFileError) {
-				if (require_mxfs) {
-					throw;
-				}
-			}
-			
-		}
-		
-		if ((*i)->asset_list->main_sound) {
-			
-			try {
-				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, (*i)->asset_list->main_sound->id);
-			
-//				sound.reset (new SoundMXF (asset.first, asset.second->chunks.front()->path));
-//				shared_ptr<parse::MainSound> s = (*i)->asset_list->main_sound;
-
-//				sound->read ();
-//				sound->set_entry_point (s->entry_point);
-//				sound->set_duration (s->duration);
-//				if (s->key_id.length() > 9) {
-					/* Trim urn:uuid: */
-//					sound->set_key_id (s->key_id.substr (9));
-//				}
-			} catch (MXFFileError) {
-				if (require_mxfs) {
-					throw;
-				}
-			}
-		}
-
-		if ((*i)->asset_list->main_subtitle) {
-			
-//			pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, (*i)->asset_list->main_subtitle->id);
-
-//			subtitle.reset (new SubtitleAsset (asset.first, asset.second->chunks.front()->path));
-
-//			subtitle->set_entry_point ((*i)->asset_list->main_subtitle->entry_point);
-//			subtitle->set_duration ((*i)->asset_list->main_subtitle->duration);
-		}
-			
-//		_reels.push_back (shared_ptr<Reel> (new Reel (picture, sound, subtitle)));
-	}
+	f.done ();
 }
 
 void
-CPL::add_reel (shared_ptr<Reel> reel)
+CPL::add (shared_ptr<Reel> reel)
 {
 	_reels.push_back (reel);
 }
 
 void
-CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<const Signer> signer) const
+CPL::write_xml (boost::filesystem::path file, Standard standard, XMLMetadata metadata, shared_ptr<const Signer> signer) const
 {
-	boost::filesystem::path p;
-	p /= _directory;
-	stringstream s;
-	s << _id << "_cpl.xml";
-	p /= s.str();
-
 	xmlpp::Document doc;
 	xmlpp::Element* root;
-	if (interop) {
+	if (standard == INTEROP) {
 		root = doc.create_root_node ("CompositionPlaylist", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#");
 	} else {
 		root = doc.create_root_node ("CompositionPlaylist", "http://www.smpte-ra.org/schemas/429-7/2006/CPL");
@@ -212,44 +105,34 @@ CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<const Sig
 	}
 	
 	root->add_child("Id")->add_child_text ("urn:uuid:" + _id);
-	root->add_child("AnnotationText")->add_child_text (_name);
+	root->add_child("AnnotationText")->add_child_text (_annotation_text);
 	root->add_child("IssueDate")->add_child_text (metadata.issue_date);
 	root->add_child("Issuer")->add_child_text (metadata.issuer);
 	root->add_child("Creator")->add_child_text (metadata.creator);
-	root->add_child("ContentTitleText")->add_child_text (_name);
+	root->add_child("ContentTitleText")->add_child_text (_content_version_label_text);
 	root->add_child("ContentKind")->add_child_text (content_kind_to_string (_content_kind));
 	{
 		xmlpp::Node* cv = root->add_child ("ContentVersion");
-		cv->add_child ("Id")->add_child_text ("urn:uri:" + _id + "_" + metadata.issue_date);
-		cv->add_child ("LabelText")->add_child_text (_id + "_" + metadata.issue_date);
+		cv->add_child ("Id")->add_child_text (_content_version_id);
+		cv->add_child ("LabelText")->add_child_text (_content_version_label_text);
 	}
 	root->add_child("RatingList");
 
 	xmlpp::Element* reel_list = root->add_child ("ReelList");
 	
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
-		(*i)->write_to_cpl (reel_list);
+		(*i)->write_to_cpl (reel_list, standard);
 	}
 
 	if (signer) {
-		signer->sign (root, interop);
+		signer->sign (root, standard);
 	}
 
 	/* This must not be the _formatted version otherwise signature digests will be wrong */
-	doc.write_to_file (p.string (), "UTF-8");
+	doc.write_to_file (file.string (), "UTF-8");
 
-	_digest = make_digest (p.string (), 0);
-	_length = boost::filesystem::file_size (p.string ());
-}
-
-void
-CPL::write_to_pkl (xmlpp::Node* node) const
-{
-	xmlpp::Node* asset = node->add_child ("Asset");
-	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
-	asset->add_child("Hash")->add_child_text (_digest);
-	asset->add_child("Size")->add_child_text (lexical_cast<string> (_length));
-	asset->add_child("Type")->add_child_text ("text/xml");
+	_digest = make_digest (file.string (), 0);
+	_length = boost::filesystem::file_size (file.string ());
 }
 
 list<shared_ptr<const Content> >
@@ -258,13 +141,13 @@ CPL::assets () const
 	list<shared_ptr<const Content> > a;
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		if ((*i)->main_picture ()) {
-			a.push_back ((*i)->main_picture ());
+			a.push_back ((*i)->main_picture()->mxf ());
 		}
 		if ((*i)->main_sound ()) {
-			a.push_back ((*i)->main_sound ());
+			a.push_back ((*i)->main_sound()->mxf ());
 		}
 		if ((*i)->main_subtitle ()) {
-			a.push_back ((*i)->main_subtitle ());
+			a.push_back ((*i)->main_subtitle()->subtitle_content ());
 		}
 	}
 
@@ -284,14 +167,12 @@ CPL::write_to_assetmap (xmlpp::Node* node) const
 	chunk->add_child("Length")->add_child_text(lexical_cast<string> (_length));
 }
 	
-	
-	
 bool
 CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (_name != other._name && !opt.cpl_names_can_differ) {
+	if (_annotation_text != other._annotation_text && !opt.cpl_annotation_texts_can_differ) {
 		stringstream s;
-		s << "names differ: " << _name << " vs " << other._name << "\n";
+		s << "annotation texts differ: " << _annotation_text << " vs " << other._annotation_text << "\n";
 		note (ERROR, s.str ());
 		return false;
 	}
@@ -299,16 +180,6 @@ CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (NoteT
 	if (_content_kind != other._content_kind) {
 		note (ERROR, "content kinds differ");
 		return false;
-	}
-
-	if (_fps != other._fps) {
-		note (ERROR, String::compose ("frames per second differ (%1 vs %2)", _fps, other._fps));
-		return false;
-	}
-
-	if (_length != other._length) {
-		stringstream s;
-		note (ERROR, String::compose ("lengths differ (%1 vs %2)", _length, other._length));
 	}
 
 	if (_reels.size() != other._reels.size()) {
@@ -344,24 +215,11 @@ CPL::encrypted () const
 }
 
 void
-CPL::add_kdm (KDM const & kdm)
+CPL::add (KDM const & kdm)
 {
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		(*i)->add_kdm (kdm);
 	}
-}
-
-pair<string, shared_ptr<const parse::AssetMapAsset> >
-CPL::asset_from_id (list<PathAssetMap> asset_maps, string id) const
-{
-	for (list<PathAssetMap>::const_iterator i = asset_maps.begin(); i != asset_maps.end(); ++i) {
-		shared_ptr<parse::AssetMapAsset> a = i->second->asset_from_id (id);
-		if (a) {
-			return make_pair (i->first, a);
-		}
-	}
-
-	return make_pair ("", shared_ptr<const parse::AssetMapAsset> ());
 }
 
 void

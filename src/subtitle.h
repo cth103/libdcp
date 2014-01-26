@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,33 +17,21 @@
 
 */
 
-#include "../xml.h"
-#include "../dcp_time.h"
-#include "../types.h"
+#ifndef LIBDCP_SUBTITLE_H
+#define LIBDCP_SUBTITLE_H
 
-namespace dcp
-{
+#include "dcp_time.h"
+#include <boost/shared_ptr.hpp>
+#include <list>
 
-namespace parse
-{
+namespace cxml {
+	class Node;
+}
 
-class Font;
+namespace dcp {
 
-class Text
-{
-public:
-	Text ()
-		: v_position (0)
-		, v_align (TOP)
-	{}
-	
-	Text (boost::shared_ptr<const cxml::Node> node);
-
-	float v_position;
-	VAlign v_align;
-	std::string text;
-	std::list<boost::shared_ptr<Font> > font_nodes;
-};
+class Font;	
+class Text;
 
 class Subtitle 
 {
@@ -62,39 +50,6 @@ private:
 	Time fade_time (boost::shared_ptr<const cxml::Node>, std::string name);
 };
 
-class Font 
-{
-public:
-	Font ()
-		: size (0)
-	{}
-	
-	Font (boost::shared_ptr<const cxml::Node> node);
-	Font (std::list<boost::shared_ptr<Font> > const & font_nodes);
-
-	std::string text;
-	std::string id;
-	int size;
-	boost::optional<bool> italic;
-	boost::optional<Color> color;
-	boost::optional<Effect> effect;
-	boost::optional<Color> effect_color;
-	
-	std::list<boost::shared_ptr<Subtitle> > subtitle_nodes;
-	std::list<boost::shared_ptr<Font> > font_nodes;
-	std::list<boost::shared_ptr<Text> > text_nodes;
-};
-
-class LoadFont 
-{
-public:
-	LoadFont () {}
-	LoadFont (boost::shared_ptr<const cxml::Node> node);
-
-	std::string id;
-	std::string uri;
-};
-
 }
 
-}
+#endif

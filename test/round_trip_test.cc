@@ -30,6 +30,9 @@
 #include "mono_picture_frame.h"
 #include "argb_frame.h"
 #include "signer_chain.h"
+#include "mono_picture_mxf_writer.h"
+#include "reel_picture_asset.h"
+#include "file.h"
 
 using std::list;
 using boost::shared_ptr;
@@ -56,12 +59,9 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	boost::filesystem::path work_dir = "build/test/round_trip_test";
 	boost::filesystem::create_directory (work_dir);
 
-	shared_ptr<dcp::MonoPictureMXF> asset_A (new dcp::MonoPictureMXF (work_dir, "video.mxf"));
-	asset_A->set_edit_rate (24);
-	shared_ptr<PictureMXFWriter> writer;
-	boost::filesystem::path mxf = work_dir + "video.mxf";
-	writer->start_write (mxf, false);
-	TestFile j2c ("test/data/32x32_red_square.j2c");
+	shared_ptr<dcp::MonoPictureMXF> mxf_A (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
+	shared_ptr<dcp::PictureMXFWriter> writer = mxf_A->start_write (work_dir / "video.mxf", dcp::SMPTE, false);
+	dcp::File j2c ("test/data/32x32_red_square.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data (), j2c.size ());
 	}
@@ -69,10 +69,12 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	dcp::Key key;
 
-	asset_A->set_key (key);
+	mxf_A->set_key (key);
 
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL (work_dir, "A Test DCP", dcp::FEATURE, 24, 24));
-	cpl->add_reel (shared_ptr<dcp::Reel> (new dcp::Reel (asset_A, shared_ptr<dcp::SoundMXF> (), shared_ptr<dcp::SubtitleAsset> ())));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
+	shared_ptr<dcp::Reel> reel (new dcp::Reel ());
+	reel->add (shared_ptr<dcp::ReelPictureAsset> (mxf_A, 0));
+	cpl->add (reel);
 
 	/* A KDM using our certificate chain's leaf key pair */
 	dcp::KDM kdm_A (
@@ -105,14 +107,14 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	}
 
 	/* Reload the picture MXF */
-	shared_ptr<dcp::MonoPictureMXF> asset_B (
-		new dcp::MonoPictureMXF (work_dir, "video.mxf")
+	shared_ptr<dcp::MonoPictureMXF> mxf_B (
+		new dcp::MonoPictureMXF (work_dir / "video.mxf")
 		);
 
-	asset_B->set_key (kdm_B.keys().front().key());
+	mxf_B->set_key (kdm_B.keys().front().key());
 
-	shared_ptr<dcp::ARGBFrame> frame_A = asset_A->get_frame(0)->argb_frame ();
-	shared_ptr<dcp::ARGBFrame> frame_B = asset_B->get_frame(0)->argb_frame ();
+	shared_ptr<dcp::ARGBFrame> frame_A = mxf_A->get_frame(0)->argb_frame ();
+	shared_ptr<dcp::ARGBFrame> frame_B = mxf_B->get_frame(0)->argb_frame ();
 	BOOST_CHECK_EQUAL (frame_A->size().width, frame_B->size().width);
 	BOOST_CHECK_EQUAL (frame_A->size().height, frame_B->size().height);
 	BOOST_CHECK_EQUAL (memcmp (frame_A->data(), frame_B->data(), frame_A->size().width * frame_A->size().height), 0);

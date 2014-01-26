@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,44 +17,30 @@
 
 */
 
-/** @file  src/parse/pkl.h
- *  @brief Classes used to parse a PKL
- */
+#ifndef LIBDCP_MXF_WRITER_H
+#define LIBDCP_MXF_WRITER_H
 
-#include <boost/shared_ptr.hpp>
-#include "../xml.h"
+#include <boost/filesystem.hpp>
 
 namespace dcp {
 
-namespace parse {
+class MXF;
 
-class PKLAsset
+class MXFWriter : public boost::noncopyable
 {
 public:
-	PKLAsset () {}
-	PKLAsset (boost::shared_ptr<const cxml::Node>);
+	virtual ~MXFWriter ();
+	virtual void finalize ();
 
-	std::string id;
-	std::string annotation_text;
-	std::string hash;
-	int64_t size;
-	std::string type;
-	std::string original_file_name;
+protected:
+	MXFWriter (MXF* mxf, boost::filesystem::path file);
+
+	MXF* _mxf;
+	boost::filesystem::path _file;
+	int64_t _frames_written;
+	bool _finalized;
 };
 
-class PKL
-{
-public:
-	PKL (std::string file);
-
-	std::string id;
-	std::string annotation_text;
-	std::string issue_date;
-	std::string issuer;
-	std::string creator;
-	std::list<boost::shared_ptr<PKLAsset> > assets;
-};
-	
 }
 
-}
+#endif

@@ -30,6 +30,48 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
+StereoPictureMXF::StereoPictureMXF (boost::filesystem::path file)
+	: PictureMXF (file)
+{
+	ASDCP::JP2K::MXFSReader reader;
+	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file.string(), r));
+	}
+	
+	ASDCP::JP2K::PictureDescriptor desc;
+	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
+	}
+
+	read_picture_descriptor (desc);
+}
+
+StereoPictureMXF::StereoPictureMXF (Fraction edit_rate)
+	: PictureMXF
+	  (edit_rate)
+{
+
+}
+
+shared_ptr<const StereoPictureFrame>
+StereoPictureMXF::get_frame (int n) const
+{
+	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (file().string(), n));
+}
+
+shared_ptr<PictureMXFWriter>
+StereoPictureMXF::start_write (boost::filesystem::path file, Standard standard, bool overwrite)
+{
+	return shared_ptr<StereoPictureMXFWriter> (new StereoPictureMXFWriter (this, file, standard, overwrite));
+}
+
+int
+StereoPictureMXF::edit_rate_factor () const
+{
+	return 2;
+}
+
 bool
 StereoPictureMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
@@ -87,58 +129,4 @@ StereoPictureMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, 
 	}
 
 	return true;
-}
-
-StereoPictureMXF::StereoPictureMXF (boost::filesystem::path file)
-	: PictureMXF (file)
-{
-	ASDCP::JP2K::MXFSReader reader;
-	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file.string(), r));
-	}
-	
-	ASDCP::JP2K::PictureDescriptor desc;
-	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
-		boost::throw_exception (DCPReadError ("could not read video MXF information"));
-	}
-
-	_size.width = desc.StoredWidth;
-	_size.height = desc.StoredHeight;
-}
-
-shared_ptr<const StereoPictureFrame>
-StereoPictureMXF::get_frame (int n) const
-{
-	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (file().string(), n));
-}
-
-shared_ptr<PictureMXFWriter>
-StereoPictureMXF::start_write (boost::filesystem::path file, bool overwrite)
-{
-	return shared_ptr<StereoPictureMXFWriter> (new StereoPictureMXFWriter (this, file, overwrite));
-}
-
-string
-StereoPictureMXF::cpl_node_name () const
-{
-	return "msp-cpl:MainStereoscopicPicture";
-}
-
-pair<string, string>
-StereoPictureMXF::cpl_node_attribute () const
-{
-	if (_interop) {
-		return make_pair ("xmlns:msp-cpl", "http://www.digicine.com/schemas/437-Y/2007/Main-Stereo-Picture-CPL");
-	} else {
-		return make_pair ("xmlns:msp-cpl", "http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL");
-	}
-
-	return make_pair ("", "");
-}
-
-int
-StereoPictureMXF::edit_rate_factor () const
-{
-	return 2;
 }

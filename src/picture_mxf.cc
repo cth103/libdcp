@@ -17,10 +17,6 @@
 
 */
 
-/** @file  src/picture_asset.cc
- *  @brief An asset made up of JPEG2000 files
- */
-
 #include <list>
 #include <stdexcept>
 #include <iostream>
@@ -58,33 +54,21 @@ PictureMXF::PictureMXF (boost::filesystem::path file)
 
 }
 
-PictureMXF::PictureMXF (int edit_rate)
+PictureMXF::PictureMXF (Fraction edit_rate)
 	: MXF (edit_rate)
 {
 
 }
 
 void
-PictureMXF::write_to_cpl (xmlpp::Element* node) const
+PictureMXF::read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const & desc)
 {
-	MXF::write_to_cpl (node);
-	
-	xmlpp::Node::NodeList c = node->get_children ();
-	xmlpp::Node::NodeList::iterator i = c.begin();
-	while (i != c.end() && (*i)->get_name() != cpl_node_name ()) {
-		++i;
-	}
-
-	assert (i != c.end ());
-
-	(*i)->add_child ("FrameRate")->add_child_text (lexical_cast<string> (_edit_rate * edit_rate_factor ()) + " 1");
-	if (_interop) {
-		stringstream s;
-		s << std::fixed << std::setprecision (2) << (float (_size.width) / _size.height);
-		(*i)->add_child ("ScreenAspectRatio")->add_child_text (s.str ());
-	} else {
-		(*i)->add_child ("ScreenAspectRatio")->add_child_text (lexical_cast<string> (_size.width) + " " + lexical_cast<string> (_size.height));
-	}
+	_size.width = desc.StoredWidth;
+	_size.height = desc.StoredHeight;
+	_edit_rate = Fraction (desc.EditRate.Numerator, desc.EditRate.Denominator);
+	_intrinsic_duration = desc.ContainerDuration;
+	_frame_rate = Fraction (desc.SampleRate.Numerator, desc.SampleRate.Denominator);
+	_screen_aspect_ratio = Fraction (desc.AspectRatio.Numerator, desc.AspectRatio.Denominator);
 }
 
 bool
@@ -212,6 +196,3 @@ PictureMXF::key_type () const
 {
 	return "MDIK";
 }
-
-
-

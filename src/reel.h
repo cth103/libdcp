@@ -20,51 +20,59 @@
 #ifndef LIBDCP_REEL_H
 #define LIBDCP_REEL_H
 
-#include <list>
-#include <boost/shared_ptr.hpp>
-#include <boost/function.hpp>
-#include <libxml++/libxml++.h>
 #include "key.h"
 #include "types.h"
+#include "ref.h"
+#include <libxml++/libxml++.h>
+#include <boost/shared_ptr.hpp>
+#include <boost/function.hpp>
+#include <list>
 
-namespace xmlpp {
+namespace cxml {
 	class Node;
 }
 
 namespace dcp {
 
-class PictureMXF;
-class SoundMXF;
-class SubtitleAsset;
-class KDM;	
+class KDM;
+class ReelAsset;
+class ReelPictureAsset;
+class ReelSoundAsset;
+class ReelSubtitleAsset;
 
 /** @brief A reel within a DCP; the part which actually contains picture, sound and subtitle data */	
-class Reel
+class Reel : public Object
 {
 public:
+	Reel () {}
+	
 	Reel (
-		boost::shared_ptr<PictureMXF> picture,
-		boost::shared_ptr<SoundMXF> sound,
-		boost::shared_ptr<SubtitleAsset> subtitle
+		boost::shared_ptr<ReelPictureAsset> picture,
+		boost::shared_ptr<ReelSoundAsset> sound,
+		boost::shared_ptr<ReelSubtitleAsset> subtitle
 		)
 		: _main_picture (picture)
 		, _main_sound (sound)
 		, _main_subtitle (subtitle)
 	{}
+
+	Reel (boost::shared_ptr<const cxml::Node>);
 	
-	boost::shared_ptr<const PictureMXF> main_picture () const {
+	boost::shared_ptr<ReelPictureAsset> main_picture () const {
 		return _main_picture;
 	}
 
-	boost::shared_ptr<const SoundMXF> main_sound () const {
+	boost::shared_ptr<ReelSoundAsset> main_sound () const {
 		return _main_sound;
 	}
 	
-	boost::shared_ptr<const SubtitleAsset> main_subtitle () const {
+	boost::shared_ptr<ReelSubtitleAsset> main_subtitle () const {
 		return _main_subtitle;
 	}
 
-	void write_to_cpl (xmlpp::Element *) const;
+	void add (boost::shared_ptr<ReelAsset> asset);
+
+	void write_to_cpl (xmlpp::Element* node, Standard standard) const;
 
 	bool encrypted () const;
 
@@ -75,9 +83,9 @@ public:
 	void add_kdm (KDM const &);
 
 private:
-	boost::shared_ptr<PictureMXF> _main_picture;
-	boost::shared_ptr<SoundMXF> _main_sound;
-	boost::shared_ptr<SubtitleAsset> _main_subtitle;
+	boost::shared_ptr<ReelPictureAsset> _main_picture;
+	boost::shared_ptr<ReelSoundAsset> _main_sound;
+	boost::shared_ptr<ReelSubtitleAsset> _main_subtitle;
 };
 
 }

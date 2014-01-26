@@ -25,6 +25,7 @@
 #define LIBDCP_KEY_H
 
 #include <stdint.h>
+#include <string>
 
 namespace dcp {
 

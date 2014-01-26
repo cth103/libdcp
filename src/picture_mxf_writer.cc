@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,13 +17,13 @@
 
 */
 
-#include <inttypes.h>
-#include <stdint.h>
-#include "AS_DCP.h"
 #include "KM_fileio.h"
 #include "picture_mxf_writer.h"
 #include "exceptions.h"
 #include "picture_mxf.h"
+#include "AS_DCP.h"
+#include <inttypes.h>
+#include <stdint.h>
 
 using std::istream;
 using std::ostream;
@@ -82,14 +82,12 @@ FrameInfo::write (FILE* f) const
 #endif	
 }
 
-
-PictureMXFWriter::PictureMXFWriter (PictureMXF* mxf, boost::filesystem::path file, bool overwrite)
-	: _mxf (mxf)
-	, _file (file)
-	, _frames_written (0)
+PictureMXFWriter::PictureMXFWriter (PictureMXF* mxf, boost::filesystem::path file, Standard standard, bool overwrite)
+	: MXFWriter (mxf, file)
+	, _picture_mxf (mxf)
 	, _started (false)
-	, _finalized (false)
+	, _standard (standard)
 	, _overwrite (overwrite)
 {
-
+	
 }

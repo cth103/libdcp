@@ -20,10 +20,10 @@
 #ifndef LIBDCP_MXF_ASSET_H
 #define LIBDCP_MXF_ASSET_H
 
-#include <boost/signals2.hpp>
 #include "content.h"
 #include "key.h"
 #include "metadata.h"
+#include <boost/signals2.hpp>
 
 namespace ASDCP {
 	class AESEncContext;
@@ -41,19 +41,23 @@ class MXFMetadata;
 class MXF : public Content
 {
 public:
+	MXF (Fraction edit_rate);
 	MXF (boost::filesystem::path file);
-	MXF (int edit_rate);
 	
 	~MXF ();
 
 	virtual bool equals (boost::shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
-	virtual void write_to_cpl (xmlpp::Element *) const;
 	virtual std::string key_type () const = 0;
+
+	std::string pkl_type () const {
+		return "application/x-smpte-mxf";
+	}
 	
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
+	 *  @param standard INTEROP or SMPTE.
 	 */
-	void fill_writer_info (ASDCP::WriterInfo* w);
+	void fill_writer_info (ASDCP::WriterInfo* w, Standard standard);
 
 	void set_progress (boost::signals2::signal<void (float)>* progress) {
 		_progress = progress;
@@ -89,23 +93,7 @@ public:
 		return _metadata;
 	}
 
-	/** Set whether or not the asset should be written in Interop mode.
-	 *  @param i true to use interop.
-	 */
-	void set_interop (bool i) {
-		_interop = i;
-	}
-
-	bool interop () const {
-		return _interop;
-	}
-
 protected:
-	virtual std::string cpl_node_name () const = 0;
-	virtual std::pair<std::string, std::string> cpl_node_attribute () const {
-		return std::make_pair ("", "");
-	}
-	
 	/** Signal to emit to report progress, or 0 */
 	boost::signals2::signal<void (float)>* _progress;
 	ASDCP::AESEncContext* _encryption_context;
@@ -113,7 +101,6 @@ protected:
 	std::string _key_id;
 	boost::optional<Key> _key;
 	MXFMetadata _metadata;
-	bool _interop;
 };
 
 }

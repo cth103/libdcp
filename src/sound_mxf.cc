@@ -32,6 +32,7 @@
 #include "util.h"
 #include "exceptions.h"
 #include "sound_frame.h"
+#include "sound_mxf_writer.h"
 
 using std::string;
 using std::stringstream;
@@ -60,15 +61,17 @@ SoundMXF::SoundMXF (boost::filesystem::path file)
 
 	_sampling_rate = desc.AudioSamplingRate.Numerator / desc.AudioSamplingRate.Denominator;
 	_channels = desc.ChannelCount;
-	_edit_rate = desc.EditRate.Numerator;
-	assert (desc.EditRate.Denominator == 1);
+	_edit_rate = Fraction (desc.EditRate.Numerator, desc.EditRate.Denominator);
+
 	_intrinsic_duration = desc.ContainerDuration;
 }
 
-string
-SoundMXF::cpl_node_name () const
+SoundMXF::SoundMXF (Fraction edit_rate, int sampling_rate, int channels)
+	: MXF (edit_rate)
+	, _channels (channels)
+	, _sampling_rate (sampling_rate)
 {
-	return "MainSound";
+
 }
 
 bool
@@ -155,105 +158,10 @@ SoundMXF::get_frame (int n) const
 }
 
 shared_ptr<SoundMXFWriter>
-SoundMXF::start_write ()
+SoundMXF::start_write (boost::filesystem::path file, Standard standard)
 {
 	/* XXX: can't we use a shared_ptr here? */
-	return shared_ptr<SoundMXFWriter> (new SoundMXFWriter (this));
-}
-
-struct SoundMXFWriter::ASDCPState
-{
-	ASDCP::PCM::MXFWriter mxf_writer;
-	ASDCP::PCM::FrameBuffer frame_buffer;
-	ASDCP::WriterInfo writer_info;
-	ASDCP::PCM::AudioDescriptor audio_desc;
-	ASDCP::AESEncContext* encryption_context;
-};
-
-SoundMXFWriter::SoundMXFWriter (SoundMXF* a)
-	: _state (new SoundMXFWriter::ASDCPState)
-	, _asset (a)
-	, _finalized (false)
-	, _frames_written (0)
-	, _frame_buffer_offset (0)
-{
-	_state->encryption_context = a->encryption_context ();
-	
-	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
-	_state->audio_desc.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
-	_state->audio_desc.AudioSamplingRate = ASDCP::Rational (_asset->sampling_rate(), 1);
-	_state->audio_desc.Locked = 0;
-	_state->audio_desc.ChannelCount = _asset->channels ();
-	_state->audio_desc.QuantizationBits = 24;
-	_state->audio_desc.BlockAlign = 3 * _asset->channels();
-	_state->audio_desc.AvgBps = _asset->sampling_rate() * _state->audio_desc.BlockAlign;
-	_state->audio_desc.LinkedTrackID = 0;
-	_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_NONE;
-	
-	_state->frame_buffer.Capacity (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
-	_state->frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
-	memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
-	
-	_asset->fill_writer_info (&_state->writer_info);
-	
-	Kumu::Result_t r = _state->mxf_writer.OpenWrite (_asset->file().string().c_str(), _state->writer_info, _state->audio_desc);
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (FileError ("could not open audio MXF for writing", _asset->file().string(), r));
-	}
-}
-
-void
-SoundMXFWriter::write (float const * const * data, int frames)
-{
-	for (int i = 0; i < frames; ++i) {
-
-		byte_t* out = _state->frame_buffer.Data() + _frame_buffer_offset;
-
-		/* Write one sample per channel */
-		for (int j = 0; j < _asset->channels(); ++j) {
-			int32_t const s = data[j][i] * (1 << 23);
-			*out++ = (s & 0xff);
-			*out++ = (s & 0xff00) >> 8;
-			*out++ = (s & 0xff0000) >> 16;
-		}
-		_frame_buffer_offset += 3 * _asset->channels();
-
-		assert (_frame_buffer_offset <= int (_state->frame_buffer.Capacity()));
-
-		/* Finish the MXF frame if required */
-		if (_frame_buffer_offset == int (_state->frame_buffer.Capacity())) {
-			write_current_frame ();
-			_frame_buffer_offset = 0;
-			memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
-		}
-	}
-}
-
-void
-SoundMXFWriter::write_current_frame ()
-{
-	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _state->encryption_context, 0);
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MiscError ("could not write audio MXF frame (" + lexical_cast<string> (int (r)) + ")"));
-	}
-
-	++_frames_written;
-}
-
-void
-SoundMXFWriter::finalize ()
-{
-	if (_frame_buffer_offset > 0) {
-		write_current_frame ();
-	}
-	
-	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
-		boost::throw_exception (MiscError ("could not finalise audio MXF"));
-	}
-
-	_finalized = true;
-	_asset->set_intrinsic_duration (_frames_written);
-	_asset->set_duration (_frames_written);
+	return shared_ptr<SoundMXFWriter> (new SoundMXFWriter (this, file, standard));
 }
 
 string

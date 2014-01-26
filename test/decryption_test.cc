@@ -24,6 +24,7 @@
 #include "cpl.h"
 #include "argb_frame.h"
 #include "mono_picture_mxf.h"
+#include "reel_picture_asset.h"
 #include "reel.h"
 #include "test.h"
 
@@ -34,7 +35,7 @@ static shared_ptr<const dcp::ARGBFrame>
 get_frame (dcp::DCP const & dcp)
 {
 	shared_ptr<const dcp::Reel> reel = dcp.cpls().front()->reels().front ();
-	shared_ptr<const dcp::PictureMXF> picture = reel->main_picture ();
+	shared_ptr<dcp::PictureMXF> picture = reel->main_picture()->mxf ();
 	BOOST_CHECK (picture);
 
 	shared_ptr<const dcp::MonoPictureMXF> mono_picture = dynamic_pointer_cast<const dcp::MonoPictureMXF> (picture);
@@ -62,7 +63,7 @@ BOOST_AUTO_TEST_CASE (decryption_test)
 		"test/data/private.key"
 		);
 
-	encrypted.add_kdm (kdm);
+	encrypted.add (kdm);
 
 	shared_ptr<const dcp::ARGBFrame> plaintext_frame = get_frame (plaintext);
 	shared_ptr<const dcp::ARGBFrame> encrypted_frame = get_frame (encrypted);

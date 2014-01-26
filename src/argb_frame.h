@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 */
 
 /** @file  src/argb_frame.h
- *  @brief Container for a single image from a picture asset.
+ *  @brief ARGBFrame class. 
  */
 
-#include <stdint.h>
 #include "util.h"
+#include <stdint.h>
 
 namespace dcp
 {
@@ -42,7 +42,7 @@ namespace dcp
  *
  *  Lines are packed so that the second row directly follows the first.
  */
-class ARGBFrame
+class ARGBFrame : boost::noncopyable
 {
 public:
 	ARGBFrame (Size size);
@@ -60,8 +60,8 @@ public:
 	}
 
 private:
-	Size _size;
-	uint8_t* _data;
+	Size _size;     ///< frame size in pixels
+	uint8_t* _data; ///< pointer to image data
 };
 
 }

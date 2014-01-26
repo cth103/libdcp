@@ -17,10 +17,11 @@
 
 */
 
-#include <boost/test/unit_test.hpp>
-#include <libcxml/cxml.h>
 #include "cpl.h"
+#include "reel_mono_picture_asset.h"
 #include "mono_picture_mxf.h"
+#include <libcxml/cxml.h>
+#include <boost/test/unit_test.hpp>
 
 using boost::shared_ptr;
 
@@ -29,24 +30,23 @@ using boost::shared_ptr;
 */
 BOOST_AUTO_TEST_CASE (cpl_sar)
 {
-	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF ("build/test/foo/video.mxf"));
-	mp->set_interop (true);
+	shared_ptr<dcp::ReelMonoPictureAsset> pa (new dcp::ReelMonoPictureAsset ());
 
 	{
-		mp->set_size (dcp::Size (1998, 1080));
+		pa->set_screen_aspect_ratio (dcp::Fraction (1998, 1080));
 		xmlpp::Document doc;
 		xmlpp::Element* el = doc.create_root_node ("Test");
-		mp->write_to_cpl (el);
+		pa->write_to_cpl (el, dcp::INTEROP);
 		
 		cxml::Node node (el);
 		BOOST_CHECK_EQUAL (node.node_child("MainPicture")->string_child ("ScreenAspectRatio"), "1.85");
 	}
 
 	{
-		mp->set_size (dcp::Size (2048, 858));
+		pa->set_screen_aspect_ratio (dcp::Fraction (2048, 858));
 		xmlpp::Document doc;
 		xmlpp::Element* el = doc.create_root_node ("Test");
-		mp->write_to_cpl (el);
+		pa->write_to_cpl (el, dcp::INTEROP);
 		
 		cxml::Node node (el);
 		BOOST_CHECK_EQUAL (node.node_child("MainPicture")->string_child ("ScreenAspectRatio"), "2.39");

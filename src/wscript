@@ -21,38 +21,48 @@ def build(bld):
                  dcp.cc        
                  dcp_time.cc
                  exceptions.cc
+                 file.cc
+                 font.cc
                  gamma_lut.cc
                  image.cc
                  kdm.cc
                  key.cc
+                 load_font.cc
                  metadata.cc
                  mono_picture_mxf.cc
                  mono_picture_mxf_writer.cc
                  mono_picture_frame.cc
                  mxf.cc
+                 mxf_writer.cc
                  object.cc
                  picture_mxf.cc
                  picture_mxf_writer.cc
                  rec709_linearised_gamma_lut.cc
                  reel.cc
+                 reel_asset.cc
+                 reel_mono_picture_asset.cc
+                 reel_picture_asset.cc
+                 reel_sound_asset.cc
+                 reel_stereo_picture_asset.cc
+                 reel_subtitle_asset.cc
                  rgb_xyz.cc
                  signer.cc
                  signer_chain.cc
                  sound_mxf.cc
+                 sound_mxf_writer.cc
                  sound_frame.cc
                  srgb_linearised_gamma_lut.cc
                  stereo_picture_mxf.cc
                  stereo_picture_mxf_writer.cc
                  stereo_picture_frame.cc
-                 subtitle_asset.cc
+                 subtitle.cc
+                 subtitle_content.cc
+                 subtitle_string.cc
+                 text.cc
                  types.cc
                  util.cc
                  version.cc
                  xyz_frame.cc
-                 parse/asset_map.cc
-                 parse/cpl.cc
-                 parse/pkl.cc
-                 parse/subtitle.cc
                  """
 
     headers = """

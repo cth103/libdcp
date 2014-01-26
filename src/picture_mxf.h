@@ -47,19 +47,27 @@ class PictureMXF : public MXF
 {
 public:
 	PictureMXF (boost::filesystem::path file);
-	PictureMXF (int edit_rate);
+	PictureMXF (Fraction edit_rate);
 
-	virtual boost::shared_ptr<PictureMXFWriter> start_write (boost::filesystem::path file, bool overwrite) = 0;
+	virtual boost::shared_ptr<PictureMXFWriter> start_write (boost::filesystem::path file, Standard standard, bool overwrite) = 0;
+
+	void write_to_pkl (xmlpp::Node* node) const;
 
 	Size size () const {
 		return _size;
 	}
 
-	void set_size (Size s) {
-		_size = s;
+	Fraction frame_rate () const {
+		return _frame_rate;
 	}
 
-	void write_to_cpl (xmlpp::Element *) const;
+	Fraction screen_aspect_ratio () const {
+		return _screen_aspect_ratio;
+	}
+
+	Fraction edit_rate () const {
+		return _edit_rate;
+	}
 
 protected:	
 
@@ -72,8 +80,12 @@ protected:
 		ASDCP::JP2K::PictureDescriptor const & a, ASDCP::JP2K::PictureDescriptor const & b, boost::function<void (NoteType, std::string)>
 		) const;
 
+	void read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const &);
+
 	/** picture size in pixels */
 	Size _size;
+	Fraction _frame_rate;
+	Fraction _screen_aspect_ratio;
 
 private:
 	std::string key_type () const;

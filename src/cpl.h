@@ -33,11 +33,6 @@
 #include "asset.h"
 
 namespace dcp {
-
-namespace parse {
-	class AssetMap;
-	class AssetMapAsset;
-}
 	
 class Content;
 class Reel;
@@ -52,16 +47,23 @@ class KDM;
 class CPL : public Asset
 {
 public:
-	CPL (boost::filesystem::path directory, std::string name, ContentKind content_kind, int length, int frames_per_second);
-	CPL (boost::filesystem::path, std::string file, std::list<PathAssetMap> asset_maps, bool require_mxfs = true);
+	CPL (std::string annotation_text, ContentKind content_kind);
+	CPL (boost::filesystem::path file);
 
-	void add_reel (boost::shared_ptr<Reel> reel);
-	
-	/** @return the length in frames */
-	int length () const {
-		return _length;
+	std::string pkl_type () const {
+		return "text/xml";
 	}
 
+	void add (boost::shared_ptr<Reel> reel);
+
+	std::string annotation_text () const {
+		return _annotation_text;
+	}
+	
+	std::string content_title_text () const {
+		return _content_title_text;
+	}
+	
 	/** @return the type of the content, used by media servers
 	 *  to categorise things (e.g. feature, trailer, etc.)
 	 */
@@ -73,18 +75,6 @@ public:
 		return _reels;
 	}
 
-	/** @return the CPL's name, as will be presented on projector
-	 *  media servers and theatre management systems.
-	 */
-	std::string name () const {
-		return _name;
-	}
-
-	/** @return the number of frames per second */
-	int frames_per_second () const {
-		return _fps;
-	}
-
 	std::list<boost::shared_ptr<const Content> > assets () const;
 
 	bool encrypted () const;
@@ -93,29 +83,27 @@ public:
 
 	bool equals (CPL const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
 	
-	void write_xml (bool, XMLMetadata const &, boost::shared_ptr<const Signer>) const;
+	void write_xml (boost::filesystem::path file, Standard standard, XMLMetadata, boost::shared_ptr<const Signer>) const;
 	void write_to_assetmap (xmlpp::Node *) const;
-	void write_to_pkl (xmlpp::Node *) const;
 
-	void add_kdm (KDM const &);
+	void add (KDM const &);
 	
 private:
-	std::pair<std::string, boost::shared_ptr<const parse::AssetMapAsset> > asset_from_id (std::list<PathAssetMap>, std::string id) const;
 	
-	boost::filesystem::path _directory;
-	/** the name of the DCP */
-	std::string _name;
-	/** the content kind of the CPL */
+	std::string _annotation_text;
+	std::string _issue_date;
+	std::string _creator;
+	std::string _content_title_text;
 	ContentKind _content_kind;
-	/** length in frames */
-	mutable int _length;
-	/** frames per second */
-	int _fps;
+	std::string _content_version_id;
+	std::string _content_version_label_text;
 	/** reels */
 	std::list<boost::shared_ptr<Reel> > _reels;
 
 	/** a SHA1 digest of our XML */
 	mutable std::string _digest;
+	/** length in bytes of the XML that we last wrote to disk */
+	mutable int64_t _length;
 };
 
 }

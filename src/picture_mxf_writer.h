@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,13 +17,14 @@
 
 */
 
+#include "metadata.h"
+#include "types.h"
+#include "mxf_writer.h"
+#include <boost/shared_ptr.hpp>
+#include <boost/utility.hpp>
 #include <stdint.h>
 #include <string>
 #include <fstream>
-#include <boost/shared_ptr.hpp>
-#include <boost/utility.hpp>
-#include "metadata.h"
-#include "types.h"
 
 namespace dcp {
 
@@ -49,31 +50,21 @@ struct FrameInfo
 	std::string hash;
 };
 
-class PictureMXFWriter : public boost::noncopyable
+class PictureMXFWriter : public MXFWriter
 {
 public:
-	virtual ~PictureMXFWriter () {}
 	virtual FrameInfo write (uint8_t *, int) = 0;
-	virtual void finalize () = 0;
 	virtual void fake_write (int) = 0;
 
 protected:
 	template <class P, class Q>
-	friend void start (PictureMXFWriter *, boost::shared_ptr<P>, Q *, uint8_t *, int);
+	friend void start (PictureMXFWriter *, boost::shared_ptr<P>, Standard, Q *, uint8_t *, int);
 
-	PictureMXFWriter (PictureMXF *, boost::filesystem::path, bool);
+	PictureMXFWriter (PictureMXF *, boost::filesystem::path, Standard standard, bool);
 
-	PictureMXF* _mxf;
-
-	boost::filesystem::path _file;
-	/** Number of picture frames written to the asset so far.  For stereo assets
-	 *  this will be incremented for each eye (i.e. there will be twice the number
-	 *  of frames as in a mono asset).
-	 */
-	int _frames_written;
+	PictureMXF* _picture_mxf;
 	bool _started;
-	/** true if finalize() has been called */
-	bool _finalized;
+	Standard _standard;
 	bool _overwrite;
 };
 

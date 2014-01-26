@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,16 +17,20 @@
 
 */
 
+/** @file  src/certificates.h
+ *  @brief Certificate and CertificateChain classes.
+ */
+
 #ifndef LIBDCP_CERTIFICATES_H
 #define LIBDCP_CERTIFICATES_H
 
-#include <string>
-#include <list>
+#undef X509_NAME
+#include <openssl/x509.h>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
-#undef X509_NAME
-#include <openssl/x509.h>
+#include <string>
+#include <list>
 
 class certificates;
 
@@ -36,6 +40,11 @@ namespace xmlpp {
 
 namespace dcp {
 
+/** @class Certificate
+ *  @brief A wrapper for an X509 certificate.
+ *
+ *  This class can take a Certificate from a file, a string or an OpenSSL X509 object.
+ */
 class Certificate
 {
 public:
@@ -51,16 +60,12 @@ public:
 
 	Certificate& operator= (Certificate const &);
 
-	/** @param with_begin_end true to include BEGIN CERTIFICATE / END CERTIFICATE markers
-	 *  @return the whole certificate as a string.
-	 */
 	std::string certificate (bool with_begin_end = false) const;
 	std::string issuer () const;
 	std::string serial () const;
 	std::string subject () const;
 	std::string common_name () const;
 
-	/** @return RSA public key from this Certificate.  Caller must not free the returned value. */
 	RSA* public_key () const;
 
 	std::string thumbprint () const;
@@ -76,6 +81,9 @@ private:
 	mutable RSA* _public_key;
 };
 
+/** @class CertificateChain
+ *  @brief A chain of any number of certificates, from root to leaf.
+ */
 class CertificateChain
 {
 public:

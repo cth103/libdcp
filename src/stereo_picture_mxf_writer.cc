@@ -36,8 +36,8 @@ struct StereoPictureMXFWriter::ASDCPState : public ASDCPStateBase
 	ASDCP::JP2K::MXFSWriter mxf_writer;
 };
 
-StereoPictureMXFWriter::StereoPictureMXFWriter (PictureMXF* mxf, boost::filesystem::path file, bool overwrite)
-	: PictureMXFWriter (mxf, file, overwrite)
+StereoPictureMXFWriter::StereoPictureMXFWriter (PictureMXF* mxf, boost::filesystem::path file, Standard standard, bool overwrite)
+	: PictureMXFWriter (mxf, file, standard, overwrite)
 	, _state (new StereoPictureMXFWriter::ASDCPState)
 	, _next_eye (EYE_LEFT)
 {
@@ -47,7 +47,7 @@ StereoPictureMXFWriter::StereoPictureMXFWriter (PictureMXF* mxf, boost::filesyst
 void
 StereoPictureMXFWriter::start (uint8_t* data, int size)
 {
-	dcp::start (this, _state, _mxf, data, size);
+	dcp::start (this, _state, _standard, _picture_mxf, data, size);
 }
 
 /** Write a frame for one eye.  Frames must be written left, then right, then left etc.
@@ -84,7 +84,10 @@ StereoPictureMXFWriter::write (uint8_t* data, int size)
 
 	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
 
-	++_frames_written;
+	if (_next_eye == EYE_LEFT) {
+		++_frames_written;
+	}
+			
 	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 
@@ -100,20 +103,18 @@ StereoPictureMXFWriter::fake_write (int size)
 	}
 
 	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
-	++_frames_written;
+	if (_next_eye == EYE_LEFT) {
+		++_frames_written;
+	}
 }
 
 void
 StereoPictureMXFWriter::finalize ()
 {
-	assert (!_finalized);
-	
 	Kumu::Result_t r = _state->mxf_writer.Finalize();
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _mxf->file().string(), r));
 	}
 
-	_finalized = true;
-	_mxf->set_intrinsic_duration (_frames_written / 2);
-	_mxf->set_duration (_frames_written / 2);
+	PictureMXFWriter::finalize ();
 }

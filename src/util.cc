@@ -21,22 +21,6 @@
  *  @brief Utility methods.
  */
 
-#include <stdexcept>
-#include <sstream>
-#include <iostream>
-#include <iomanip>
-#include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
-#include <openssl/sha.h>
-#include <libxml++/nodes/element.h>
-#include <libxml++/document.h>
-#include <xmlsec/xmldsig.h>
-#include <xmlsec/dl.h>
-#include <xmlsec/app.h>
-#include <xmlsec/crypto.h>
-#include "KM_util.h"
-#include "KM_fileio.h"
-#include "AS_DCP.h"
 #include "util.h"
 #include "exceptions.h"
 #include "types.h"
@@ -44,6 +28,22 @@
 #include "certificates.h"
 #include "gamma_lut.h"
 #include "xyz_frame.h"
+#include "KM_util.h"
+#include "KM_fileio.h"
+#include "AS_DCP.h"
+#include <xmlsec/xmldsig.h>
+#include <xmlsec/dl.h>
+#include <xmlsec/app.h>
+#include <xmlsec/crypto.h>
+#include <libxml++/nodes/element.h>
+#include <libxml++/document.h>
+#include <openssl/sha.h>
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+#include <stdexcept>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
 
 using std::string;
 using std::wstring;
@@ -79,10 +79,10 @@ dcp::make_uuid ()
  *  @return Digest.
  */
 string
-dcp::make_digest (string filename, boost::function<void (float)>* progress)
+dcp::make_digest (boost::filesystem::path filename, boost::function<void (float)>* progress)
 {
 	Kumu::FileReader reader;
-	Kumu::Result_t r = reader.OpenRead (filename.c_str ());
+	Kumu::Result_t r = reader.OpenRead (filename.string().c_str ());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (FileError ("could not open file to compute digest", filename, r));
 	}

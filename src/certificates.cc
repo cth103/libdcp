@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,25 +17,21 @@
 
 */
 
-#include <sstream>
-#include <vector>
-#include <cerrno>
-#include <boost/algorithm/string.hpp>
-#include <openssl/x509.h>
-#include <openssl/ssl.h>
-#include <openssl/asn1.h>
-#include <openssl/err.h>
-#include <libxml++/nodes/element.h>
 #include "KM_util.h"
 #include "certificates.h"
 #include "compose.hpp"
 #include "exceptions.h"
 #include "util.h"
+#include <libxml++/nodes/element.h>
+#include <openssl/x509.h>
+#include <openssl/ssl.h>
+#include <openssl/asn1.h>
+#include <openssl/err.h>
+#include <boost/algorithm/string.hpp>
+#include <cerrno>
 
 using std::list;
 using std::string;
-using std::stringstream;
-using std::vector;
 using boost::shared_ptr;
 using namespace dcp;
 
@@ -47,6 +43,9 @@ Certificate::Certificate (X509* c)
 	
 }
 
+/** Load an X509 certificate from a file.
+ *  @param filename File to load.
+ */
 Certificate::Certificate (boost::filesystem::path filename)
 	: _certificate (0)
 	, _public_key (0)
@@ -61,6 +60,9 @@ Certificate::Certificate (boost::filesystem::path filename)
 	}
 }
 
+/** Load an X509 certificate from a string.
+ *  @param cert String to read from.
+ */
 Certificate::Certificate (string cert)
 	: _certificate (0)
 	, _public_key (0)
@@ -68,6 +70,9 @@ Certificate::Certificate (string cert)
 	read_string (cert);
 }
 
+/** Copy constructor.
+ *  @param other Certificate to copy.
+ */
 Certificate::Certificate (Certificate const & other)
 	: _certificate (0)
 	, _public_key (0)
@@ -75,6 +80,9 @@ Certificate::Certificate (Certificate const & other)
 	read_string (other.certificate (true));
 }
 
+/** Read a certificate from a string.
+ *  @param cert String to read.
+ */
 void
 Certificate::read_string (string cert)
 {
@@ -91,12 +99,16 @@ Certificate::read_string (string cert)
 	BIO_free (bio);
 }
 
+/** Destructor */
 Certificate::~Certificate ()
 {
 	X509_free (_certificate);
 	RSA_free (_public_key);
 }
 
+/** operator= for Certificate.
+ *  @param other Certificate to read from.
+ */
 Certificate &
 Certificate::operator= (Certificate const & other)
 {
@@ -114,6 +126,10 @@ Certificate::operator= (Certificate const & other)
 	return *this;
 }
 
+/** Return the certificate as a string.
+ *  @param with_begin_end true to include the -----BEGIN CERTIFICATE--- / -----END CERTIFICATE----- markers.
+ *  @return Certificate string.
+ */
 string
 Certificate::certificate (bool with_begin_end) const
 {
@@ -143,6 +159,10 @@ Certificate::certificate (bool with_begin_end) const
 	return s;
 }
 
+/** @return Certificate's issuer, in the form
+ *  dnqualifier=<dnQualififer>,CN=<commonName>,OU=<organizationalUnitName>,O=organizationName
+ *  and with + signs escaped to \+
+ */
 string
 Certificate::issuer () const
 {
@@ -244,6 +264,7 @@ Certificate::thumbprint () const
 	return Kumu::base64encode (digest, 20, digest_base64, 64);
 }
 
+/** @return RSA public key from this Certificate.  Caller must not free the returned value. */
 RSA *
 Certificate::public_key () const
 {
@@ -266,6 +287,7 @@ Certificate::public_key () const
 	return _public_key;
 }
 
+/** @return Root certificate */
 shared_ptr<Certificate>
 CertificateChain::root () const
 {
@@ -273,6 +295,7 @@ CertificateChain::root () const
 	return _certificates.front ();
 }
 
+/** @return Leaf certificate */
 shared_ptr<Certificate>
 CertificateChain::leaf () const
 {
@@ -280,6 +303,7 @@ CertificateChain::leaf () const
 	return _certificates.back ();
 }
 
+/** @return Certificates in order from leaf to root */
 list<shared_ptr<Certificate> >
 CertificateChain::leaf_to_root () const
 {
@@ -288,6 +312,9 @@ CertificateChain::leaf_to_root () const
 	return c;
 }
 
+/** Add a certificate to the end of the chain.
+ *  @param c Certificate to add.
+ */
 void
 CertificateChain::add (shared_ptr<Certificate> c)
 {

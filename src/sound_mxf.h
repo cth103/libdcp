@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,12 +17,8 @@
 
 */
 
-#ifndef LIBDCP_SOUND_ASSET_H
-#define LIBDCP_SOUND_ASSET_H
-
-/** @file  src/sound_asset.h
- *  @brief An asset made up of PCM audio data files
- */
+#ifndef LIBDCP_SOUND_MXF_H
+#define LIBDCP_SOUND_MXF_H
 
 #include "mxf.h"
 #include "types.h"
@@ -32,45 +28,15 @@ namespace dcp
 {
 
 class SoundFrame;
-class SoundMXF;
+class SoundMXFWriter;
 
-class SoundMXFWriter
-{
-public:
-	void write (float const * const *, int);
-	void finalize ();
-
-private:
-	friend class SoundMXF;
-
-	SoundMXFWriter (SoundMXF *);
-
-	/* no copy construction */
-	SoundMXFWriter (SoundMXFWriter const &);
-	SoundMXFWriter& operator= (SoundMXFWriter const &);
-	
-	void write_current_frame ();
-
-	/* do this with an opaque pointer so we don't have to include
-	   ASDCP headers
-	*/
-	   
-	struct ASDCPState;
-	boost::shared_ptr<ASDCPState> _state;
-
-	SoundMXF* _asset;
-	bool _finalized;
-	int _frames_written;
-	int _frame_buffer_offset;
-};
-
-/** @brief An asset made up of WAV files */
 class SoundMXF : public MXF
 {
 public:
 	SoundMXF (boost::filesystem::path file);
+	SoundMXF (Fraction edit_rate, int sampling_rate, int channels);
 
-	boost::shared_ptr<SoundMXFWriter> start_write ();
+	boost::shared_ptr<SoundMXFWriter> start_write (boost::filesystem::path file, Standard standard);
 	
 	bool equals (boost::shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
@@ -94,7 +60,6 @@ public:
 
 private:
 	std::string key_type () const;
-	std::string cpl_node_name () const;
 
 	/** Number of channels in the asset */
 	int _channels;

@@ -23,12 +23,16 @@
 using std::string;
 using namespace dcp;
 
+/** Create an Object with a random ID. */
 Object::Object ()
 	: _id (make_uuid ())
 {
 
 }
 
+/** Create an Object with a given ID.
+ *  @param ID to use.
+ */
 Object::Object (string id)
 	: _id (id)
 {

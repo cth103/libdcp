@@ -1,5 +1,5 @@
 #include <iostream>
-#include "subtitle_asset.h"
+#include "subtitle_content.h"
 
 using namespace std;
 
@@ -10,7 +10,7 @@ int main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 	
-	dcp::SubtitleAsset s (argv[1]);
+	dcp::SubtitleContent s (argv[1]);
 	cout << s.xml_as_string ();
 	return 0;
 }

@@ -40,8 +40,8 @@ struct MonoPictureMXFWriter::ASDCPState : public ASDCPStateBase
 /** @param a Asset to write to.  `a' must not be deleted while
  *  this writer class still exists, or bad things will happen.
  */
-MonoPictureMXFWriter::MonoPictureMXFWriter (PictureMXF* asset, boost::filesystem::path file, bool overwrite)
-	: PictureMXFWriter (asset, file, overwrite)
+MonoPictureMXFWriter::MonoPictureMXFWriter (PictureMXF* asset, boost::filesystem::path file, Standard standard, bool overwrite)
+	: PictureMXFWriter (asset, file, standard, overwrite)
 	, _state (new MonoPictureMXFWriter::ASDCPState)
 {
 	_state->encryption_context = asset->encryption_context ();
@@ -50,7 +50,7 @@ MonoPictureMXFWriter::MonoPictureMXFWriter (PictureMXF* asset, boost::filesystem
 void
 MonoPictureMXFWriter::start (uint8_t* data, int size)
 {
-	dcp::start (this, _state, _mxf, data, size);
+	dcp::start (this, _state, _standard, _picture_mxf, data, size);
 }
 
 FrameInfo
@@ -95,15 +95,11 @@ MonoPictureMXFWriter::fake_write (int size)
 void
 MonoPictureMXFWriter::finalize ()
 {
-	assert (!_finalized);
-	
 	Kumu::Result_t r = _state->mxf_writer.Finalize();
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _mxf->file().string(), r));
 	}
 
-	_finalized = true;
-	_mxf->set_intrinsic_duration (_frames_written);
-	_mxf->set_duration (_frames_written);
+	PictureMXFWriter::finalize ();
 }
 

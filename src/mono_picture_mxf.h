@@ -24,6 +24,8 @@
 
 namespace dcp {
 
+class MonoPictureMXFWriter;	
+
 /** @class MonoPictureMXF
  *  @brief A 2D (monoscopic) picture MXF.
  */
@@ -38,10 +40,10 @@ public:
 	/** Create a MonoPictureMXF with a given edit rate.
 	 *  @param edit_rate Edit rate (i.e. frame rate) in frames per second.
 	 */
-	MonoPictureMXF (int edit_rate);
+	MonoPictureMXF (Fraction edit_rate);
 
 	/** Start a progressive write to a MonoPictureMXF */
-	boost::shared_ptr<PictureMXFWriter> start_write (boost::filesystem::path, bool);
+	boost::shared_ptr<PictureMXFWriter> start_write (boost::filesystem::path, Standard standard, bool);
 
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 	bool equals (boost::shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;

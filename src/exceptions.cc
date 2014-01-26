@@ -17,16 +17,26 @@
 
 */
 
+/** @file  src/exceptions.cc
+ *  @brief Exceptions thrown by libdcp.
+ */
+
 #include "exceptions.h"
 #include "compose.hpp"
 
 using std::string;
 using namespace dcp;
 
-FileError::FileError (std::string const & message, boost::filesystem::path filename, int number)
+FileError::FileError (string message, boost::filesystem::path filename, int number)
 	: _message (String::compose ("%1 (error %2) (%3)", message, filename.string(), number))
 	, _filename (filename)
 	, _number (number)
+{
+
+}
+
+UnresolvedRefError::UnresolvedRefError (string id)
+	: _message (String::compose ("Unresolved reference to asset id %1", id))
 {
 
 }

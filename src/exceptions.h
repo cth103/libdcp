@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ namespace dcp
 class FileError : public std::exception
 {
 public:
-	FileError (std::string const & message, boost::filesystem::path filename, int number);
+	FileError (std::string message, boost::filesystem::path filename, int number);
 	~FileError () throw () {}
 
 	/** @return error message */
@@ -63,7 +63,7 @@ private:
 class MXFFileError : public FileError
 {
 public:
-	MXFFileError (std::string const & message, boost::filesystem::path filename, int number)
+	MXFFileError (std::string message, boost::filesystem::path filename, int number)
 		: FileError (message, filename, number)
 	{}
 };
@@ -72,7 +72,7 @@ public:
 class MiscError : public std::exception
 {
 public:
-	MiscError (std::string const & message) : _message (message) {}
+	MiscError (std::string message) : _message (message) {}
 	~MiscError () throw () {}
 
 	/** @return error message */
@@ -89,7 +89,7 @@ private:
 class DCPReadError : public std::exception
 {
 public:
-	DCPReadError (std::string const & message) : _message (message) {}
+	DCPReadError (std::string message) : _message (message) {}
 	~DCPReadError () throw () {}
 
 	/** @return error message */
@@ -106,7 +106,7 @@ private:
 class XMLError : public std::exception
 {
 public:
-	XMLError (std::string const & message) : _message (message) {}
+	XMLError (std::string message) : _message (message) {}
 	~XMLError () throw () {}
 
 	/** @return error message */
@@ -116,6 +116,21 @@ public:
 
 private:
 	/** error message */
+	std::string _message;
+};
+
+class UnresolvedRefError : public std::exception
+{
+public:
+	UnresolvedRefError (std::string id);
+	~UnresolvedRefError () throw () {}
+
+	/** @return error message */
+	char const * what () const throw () {
+		return _message.c_str ();
+	}
+
+private:
 	std::string _message;
 };
 	

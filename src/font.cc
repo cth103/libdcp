@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,18 +17,16 @@
 
 */
 
-#include <boost/shared_ptr.hpp>
-#include <boost/optional.hpp>
-#include "subtitle.h"
-#include "../types.h"
+#include "font.h"
+#include "xml.h"
+#include "text.h"
+#include <libcxml/cxml.h>
 
 using std::string;
 using std::list;
 using boost::shared_ptr;
 using boost::optional;
-using boost::lexical_cast;
 using namespace dcp;
-using namespace dcp::parse;
 
 Font::Font (shared_ptr<const cxml::Node> node)
 {
@@ -81,55 +79,3 @@ Font::Font (list<shared_ptr<Font> > const & font_nodes)
 		}
 	}
 }
-
-LoadFont::LoadFont (shared_ptr<const cxml::Node> node)
-{
-	id = node->string_attribute ("Id");
-	uri = node->string_attribute ("URI");
-}
-	
-
-Subtitle::Subtitle (shared_ptr<const cxml::Node> node)
-{
-	in = Time (node->string_attribute ("TimeIn"));
-	out = Time (node->string_attribute ("TimeOut"));
-	font_nodes = type_children<Font> (node, "Font");
-	text_nodes = type_children<Text> (node, "Text");
-	fade_up_time = fade_time (node, "FadeUpTime");
-	fade_down_time = fade_time (node, "FadeDownTime");
-}
-
-Time
-Subtitle::fade_time (shared_ptr<const cxml::Node> node, string name)
-{
-	string const u = node->optional_string_attribute (name).get_value_or ("");
-	Time t;
-	
-	if (u.empty ()) {
-		t = Time (0, 0, 0, 20);
-	} else if (u.find (":") != string::npos) {
-		t = Time (u);
-	} else {
-		t = Time (0, 0, 0, lexical_cast<int> (u));
-	}
-
-	if (t > Time (0, 0, 8, 0)) {
-		t = Time (0, 0, 8, 0);
-	}
-
-	return t;
-}
-
-Text::Text (shared_ptr<const cxml::Node> node)
-	: v_align (CENTER)
-{
-	text = node->content ();
-	v_position = node->number_attribute<float> ("VPosition");
-	optional<string> v = node->optional_string_attribute ("VAlign");
-	if (v) {
-		v_align = string_to_valign (v.get ());
-	}
-
-	font_nodes = type_children<Font> (node, "Font");
-}
-

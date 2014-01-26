@@ -17,8 +17,13 @@
 
 */
 
-#include <boost/filesystem.hpp>
+/** @file  src/signer.h
+ *  @brief Signer class.
+ */
+
 #include "certificates.h"
+#include "types.h"
+#include <boost/filesystem.hpp>
 
 namespace xmlpp {
 	class Element;
@@ -27,15 +32,21 @@ namespace xmlpp {
 
 namespace dcp {
 
+/** @class Signer
+ *  @brief A class which can sign XML files.
+ */
 class Signer
 {
 public:
+	/** @param c Certificate chain to sign with.
+	 *  @param k Key to sign with.
+	 */
 	Signer (CertificateChain c, boost::filesystem::path k)
 		: _certificates (c)
 		, _key (k)
 	{}
 
-	void sign (xmlpp::Element* parent, bool interop) const;
+	void sign (xmlpp::Element* parent, Standard standard) const;
 	void add_signature_value (xmlpp::Node* parent, std::string ns) const;
 
 	CertificateChain const & certificates () const {
@@ -44,8 +55,7 @@ public:
 	
 private:	
 
-	void add_signer (xmlpp::Element* parent, std::string ns) const;
-	
+	/** Certificate chain to sign with */
 	CertificateChain _certificates;
 	/** Filename of signer key */
 	boost::filesystem::path _key;

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,14 +17,18 @@
 
 */
 
+/** @file  src/signer.cc
+ *  @brief Signer class.
+ */
+
+#include "signer.h"
+#include "exceptions.h"
+#include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/dl.h>
 #include <xmlsec/app.h>
 #include <xmlsec/crypto.h>
-#include <libcxml/cxml.h>
-#include "signer.h"
-#include "exceptions.h"
 
 using std::string;
 using std::list;
@@ -32,18 +36,30 @@ using std::cout;
 using boost::shared_ptr;
 using namespace dcp;
 
-/** @param signer_key Filename of private key to sign with */
+/** Add a &lt;Signer&gt; and &lt;ds:Signature&gt; nodes to an XML node.
+ *  @param parent XML node to add to.
+ *  @param interop true to use Interop standards, false for SMPTE.
+ */
 void
-Signer::sign (xmlpp::Element* parent, bool interop) const
+Signer::sign (xmlpp::Element* parent, Standard standard) const
 {
-	add_signer (parent, "dsig");
+	/* <Signer> */
+	
+	xmlpp::Element* signer = parent->add_child("Signer");
+	xmlpp::Element* data = signer->add_child("X509Data", "dsig");
+	xmlpp::Element* serial_element = data->add_child("X509IssuerSerial", "dsig");
+	serial_element->add_child("X509IssuerName", "dsig")->add_child_text (_certificates.leaf()->issuer());
+	serial_element->add_child("X509SerialNumber", "dsig")->add_child_text (_certificates.leaf()->serial());
+	data->add_child("X509SubjectName", "dsig")->add_child_text (_certificates.leaf()->subject());
 
+	/* <Signature> */
+	
 	xmlpp::Element* signature = parent->add_child("Signature", "dsig");
 	
 	xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
 	signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
 	
-	if (interop) {
+	if (standard == INTEROP) {
 		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
 	} else {
 		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
@@ -112,22 +128,4 @@ Signer::add_signature_value (xmlpp::Node* parent, string ns) const
 	}
 
 	xmlSecDSigCtxDestroy (signature_context);
-}
-
-void
-Signer::add_signer (xmlpp::Element* parent, string ns) const
-{
-	xmlpp::Element* signer = parent->add_child("Signer");
-
-	{
-		xmlpp::Element* data = signer->add_child("X509Data", ns);
-		
-		{
-			xmlpp::Element* serial_element = data->add_child("X509IssuerSerial", ns);
-			serial_element->add_child("X509IssuerName", ns)->add_child_text (_certificates.leaf()->issuer());
-			serial_element->add_child("X509SerialNumber", ns)->add_child_text (_certificates.leaf()->serial());
-		}
-		
-		data->add_child("X509SubjectName", ns)->add_child_text (_certificates.leaf()->subject());
-	}
 }

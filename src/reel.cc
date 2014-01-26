@@ -17,15 +17,19 @@
 
 */
 
-#include <libxml++/nodes/element.h>
 #include "reel.h"
 #include "util.h"
 #include "picture_mxf.h"
 #include "mono_picture_mxf.h"
 #include "stereo_picture_mxf.h"
 #include "sound_mxf.h"
-#include "subtitle_asset.h"
+#include "subtitle_content.h"
+#include "reel_mono_picture_asset.h"
+#include "reel_stereo_picture_asset.h"
+#include "reel_sound_asset.h"
+#include "reel_subtitle_asset.h"
 #include "kdm.h"
+#include <libxml++/nodes/element.h>
 
 using std::string;
 using std::list;
@@ -34,8 +38,37 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
+Reel::Reel (shared_ptr<const cxml::Node> node)
+	: Object (node->string_child ("Id"))
+{
+	shared_ptr<cxml::Node> asset_list = node->node_child ("AssetList");
+
+	shared_ptr<cxml::Node> main_picture = asset_list->optional_node_child ("MainPicture");
+	if (main_picture) {
+		_main_picture.reset (new ReelMonoPictureAsset (main_picture));
+	}
+	
+	shared_ptr<cxml::Node> main_stereoscopic_picture = asset_list->optional_node_child ("MainStereoscopicPicture");
+	if (main_stereoscopic_picture) {
+		_main_picture.reset (new ReelStereoPictureAsset (main_stereoscopic_picture));
+	}
+	
+	shared_ptr<cxml::Node> main_sound = asset_list->optional_node_child ("MainSound");
+	if (main_sound) {
+		_main_sound.reset (new ReelSoundAsset (main_sound));
+	}
+	
+	shared_ptr<cxml::Node> main_subtitle = asset_list->optional_node_child ("MainSubtitle");
+	if (main_subtitle) {
+		_main_subtitle.reset (new ReelSubtitleAsset (main_subtitle));
+	}
+
+	node->ignore_child ("AnnotationText");
+	node->done ();
+}
+
 void
-Reel::write_to_cpl (xmlpp::Element* node) const
+Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 {
 	xmlpp::Element* reel = node->add_child ("Reel");
 	reel->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
@@ -43,20 +76,20 @@ Reel::write_to_cpl (xmlpp::Element* node) const
 	
 	if (_main_picture && dynamic_pointer_cast<MonoPictureMXF> (_main_picture)) {
 		/* Mono pictures come before other stuff... */
-		_main_picture->write_to_cpl (asset_list);
+		_main_picture->write_to_cpl (asset_list, standard);
 	}
 
 	if (_main_sound) {
-		_main_sound->write_to_cpl (asset_list);
+		_main_sound->write_to_cpl (asset_list, standard);
 	}
 
 	if (_main_subtitle) {
-		_main_subtitle->write_to_cpl (asset_list);
+		_main_subtitle->write_to_cpl (asset_list, standard);
 	}
 
 	if (_main_picture && dynamic_pointer_cast<StereoPictureMXF> (_main_picture)) {
 		/* ... but stereo pictures must come after */
-		_main_picture->write_to_cpl (asset_list);
+		_main_picture->write_to_cpl (asset_list, standard);
 	}
 }
 	
@@ -106,10 +139,10 @@ Reel::add_kdm (KDM const & kdm)
 	
 	for (list<KDMKey>::iterator i = keys.begin(); i != keys.end(); ++i) {
 		if (i->key_id() == _main_picture->key_id()) {
-			_main_picture->set_key (i->key ());
+			_main_picture->mxf()->set_key (i->key ());
 		}
 		if (i->key_id() == _main_sound->key_id()) {
-			_main_sound->set_key (i->key ());
+			_main_sound->mxf()->set_key (i->key ());
 		}
 	}
 }
@@ -117,10 +150,25 @@ Reel::add_kdm (KDM const & kdm)
 void
 Reel::set_mxf_keys (Key key)
 {
-	_main_picture->set_key (key);
+	_main_picture->mxf()->set_key (key);
 	if (_main_sound) {
-		_main_sound->set_key (key);
+		_main_sound->mxf()->set_key (key);
 	}
 
 	/* XXX: subtitle asset? */
+}
+
+void
+Reel::add (shared_ptr<ReelAsset> asset)
+{
+	shared_ptr<ReelPictureAsset> p = dynamic_pointer_cast<ReelPictureAsset> (asset);
+	shared_ptr<ReelSoundAsset> so = dynamic_pointer_cast<ReelSoundAsset> (asset);
+	shared_ptr<ReelSubtitleAsset> su = dynamic_pointer_cast<ReelSubtitleAsset> (asset);
+	if (p) {
+		_main_picture = p;
+	} else if (so) {
+		_main_sound = so;
+	} else if (su) {
+		_main_subtitle = su;
+	}
 }

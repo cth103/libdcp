@@ -25,7 +25,7 @@ def build(bld):
     obj.source = """
                  certificates_test.cc
                  color_test.cc
-                 cpl_sar.cc
+                 cpl_sar_test.cc
                  dcp_time_test.cc
                  decryption_test.cc
                  frame_info_test.cc

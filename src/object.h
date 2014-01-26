@@ -24,7 +24,9 @@
 
 namespace dcp {
 
-/** Some part of a DCP that has a UUID */
+/** @class Object
+ *  @brief Some part of a DCP that has a UUID.
+ */
 class Object
 {
 public:
@@ -32,11 +34,13 @@ public:
 	Object (std::string id);
 	virtual ~Object () {}
 
+	/** @return ID */
 	std::string id () const {
 		return _id;
 	}
 
 protected:
+	/** ID */
 	std::string _id;
 };
 	

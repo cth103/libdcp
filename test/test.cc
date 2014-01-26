@@ -49,17 +49,3 @@ wav (dcp::Channel)
 
 string test_corpus = "../libdcp-test";
 
-TestFile::TestFile (boost::filesystem::path file)
-{
-	_size = boost::filesystem::file_size (file);
-	_data = new uint8_t[_size];
-	FILE* f = dcp::fopen_boost (file, "r");
-	assert (f);
-	fread (_data, 1, _size, f);
-	fclose (f);
-}
-
-TestFile::~TestFile ()
-{
-	delete[] _data;
-}

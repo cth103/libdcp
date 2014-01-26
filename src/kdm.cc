@@ -108,7 +108,7 @@ KDM::KDM (
 	apu.recipient.x509_subject_name = recipient_cert->subject ();
 	apu.composition_playlist_id = "urn:uuid:" + cpl->id ();
 //	apu.content_authenticator = signer->certificates().leaf()->thumbprint ();
-	apu.content_title_text = cpl->name ();
+	apu.content_title_text = cpl->content_title_text ();
 	apu.content_keys_not_valid_before = ptime_to_string (not_valid_before);
 	apu.content_keys_not_valid_after = ptime_to_string (not_valid_after);
 	apu.authorized_device_info.device_list_identifier = "urn:uuid:" + make_uuid ();

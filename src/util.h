@@ -67,7 +67,7 @@ extern bool operator== (Size const & a, Size const & b);
 extern bool operator!= (Size const & a, Size const & b);
 
 extern std::string make_uuid ();
-extern std::string make_digest (std::string filename, boost::function<void (float)> *);
+extern std::string make_digest (boost::filesystem::path filename, boost::function<void (float)> *);
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
 extern bool empty_or_white_space (std::string s);
@@ -75,7 +75,7 @@ extern boost::shared_ptr<XYZFrame> decompress_j2k (uint8_t* data, int64_t size, 
 
 extern void init ();
 
-extern void sign (xmlpp::Element* parent, CertificateChain const & certificates, boost::filesystem::path signer_key, bool interop);
+extern void sign (xmlpp::Element* parent, CertificateChain const & certificates, boost::filesystem::path signer_key, Standard standard);
 extern void add_signature_value (xmlpp::Element* parent, CertificateChain const & certificates, boost::filesystem::path signer_key, std::string const & ns);
 extern void add_signer (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & ns);
 

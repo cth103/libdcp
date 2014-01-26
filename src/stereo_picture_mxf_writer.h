@@ -17,12 +17,13 @@
 
 */
 
+#include "picture_mxf_writer.h"
+#include "types.h"
+#include <boost/shared_ptr.hpp>
+#include <boost/utility.hpp>
 #include <stdint.h>
 #include <string>
 #include <fstream>
-#include <boost/shared_ptr.hpp>
-#include <boost/utility.hpp>
-#include "picture_mxf_writer.h"
 
 namespace dcp {
 
@@ -46,7 +47,7 @@ public:
 private:
 	friend class StereoPictureMXF;
 
-	StereoPictureMXFWriter (PictureMXF *, boost::filesystem::path file, bool);
+	StereoPictureMXFWriter (PictureMXF *, boost::filesystem::path file, Standard, bool);
 	void start (uint8_t *, int);
 
 	/* do this with an opaque pointer so we don't have to include

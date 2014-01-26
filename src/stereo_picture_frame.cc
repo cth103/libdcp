@@ -63,6 +63,8 @@ StereoPictureFrame::~StereoPictureFrame ()
  *  @param reduce a factor by which to reduce the resolution
  *  of the image, expressed as a power of two (pass 0 for no
  *  reduction).
+ *  @param srgb_gamma Reciprocal of gamma to use when doing the
+ *  output gamma correction (after conversion from XYZ to RGB).
  *
  *  @return An ARGB representation of one of the eyes (left or right)
  *  of this frame.  This is ARGB in the Cairo sense, so that each

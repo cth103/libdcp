@@ -45,14 +45,10 @@ MonoPictureMXF::MonoPictureMXF (boost::filesystem::path file)
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
 
-	_size.width = desc.StoredWidth;
-	_size.height = desc.StoredHeight;
-	_edit_rate = desc.EditRate.Numerator;
-	assert (desc.EditRate.Denominator == 1);
-	_intrinsic_duration = desc.ContainerDuration;
+	read_picture_descriptor (desc);
 }
 
-MonoPictureMXF::MonoPictureMXF (int edit_rate)
+MonoPictureMXF::MonoPictureMXF (Fraction edit_rate)
 	: PictureMXF (edit_rate)
 {
 	
@@ -121,10 +117,10 @@ MonoPictureMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, bo
 }
 
 shared_ptr<PictureMXFWriter>
-MonoPictureMXF::start_write (boost::filesystem::path file, bool overwrite)
+MonoPictureMXF::start_write (boost::filesystem::path file, Standard standard, bool overwrite)
 {
 	/* XXX: can't we use shared_ptr here? */
-	return shared_ptr<MonoPictureMXFWriter> (new MonoPictureMXFWriter (this, file, overwrite));
+	return shared_ptr<MonoPictureMXFWriter> (new MonoPictureMXFWriter (this, file, standard, overwrite));
 }
 
 string
