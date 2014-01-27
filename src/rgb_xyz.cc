@@ -40,8 +40,8 @@ using namespace dcp;
 shared_ptr<ARGBFrame>
 dcp::xyz_to_rgb (
 	boost::shared_ptr<const XYZFrame> xyz_frame,
-	boost::shared_ptr<const LUT> lut_in,
-	boost::shared_ptr<const LUT> lut_out
+	boost::shared_ptr<const GammaLUT> lut_in,
+	boost::shared_ptr<const GammaLUT> lut_out
 	)
 {
 	int const max_colour = pow (2, lut_out->bit_depth()) - 1;
@@ -108,8 +108,8 @@ dcp::xyz_to_rgb (
 shared_ptr<dcp::XYZFrame>
 dcp::rgb_to_xyz (
 	boost::shared_ptr<const Image> rgb,
-	boost::shared_ptr<const LUT> lut_in,
-	boost::shared_ptr<const LUT> lut_out,
+	boost::shared_ptr<const GammaLUT> lut_in,
+	boost::shared_ptr<const GammaLUT> lut_out,
 	double const colour_matrix[3][3]
 	)
 {

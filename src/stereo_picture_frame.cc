@@ -20,7 +20,6 @@
 #include "stereo_picture_frame.h"
 #include "exceptions.h"
 #include "argb_frame.h"
-#include "lut.h"
 #include "util.h"
 #include "gamma_lut.h"
 #include "rgb_xyz.h"

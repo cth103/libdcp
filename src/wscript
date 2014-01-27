@@ -75,7 +75,6 @@ def build(bld):
               image.h
               kdm.h
               key.h
-              lut.h
               lut_cache.h
               metadata.h
               mono_picture_mxf.h

@@ -22,6 +22,7 @@
 
 #include <list>
 #include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
 
 template<class T>
 class LUTCache : public boost::noncopyable

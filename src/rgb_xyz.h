@@ -23,15 +23,15 @@ namespace dcp {
 
 class ARGBFrame;	
 class XYZFrame;
-class LUT;
+class GammaLUT;
 class Image;
 	
 extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (
-	boost::shared_ptr<const XYZFrame>, boost::shared_ptr<const LUT>, boost::shared_ptr<const LUT>
+	boost::shared_ptr<const XYZFrame>, boost::shared_ptr<const GammaLUT>, boost::shared_ptr<const GammaLUT>
 	);
 
 extern boost::shared_ptr<XYZFrame> rgb_to_xyz (
-	boost::shared_ptr<const Image>, boost::shared_ptr<const LUT>, boost::shared_ptr<const LUT>, double const colour_matrix[3][3]
+	boost::shared_ptr<const Image>, boost::shared_ptr<const GammaLUT>, boost::shared_ptr<const GammaLUT>, double const colour_matrix[3][3]
 	);
 	
 }

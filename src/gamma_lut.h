@@ -20,16 +20,37 @@
 #ifndef LIBDCP_GAMMA_LUT_H
 #define LIBDCP_GAMMA_LUT_H
 
-#include "lut.h"
 #include "lut_cache.h"
 
 namespace dcp {
 
-class GammaLUT : public LUT
+class GammaLUT
 {
 public:
-	GammaLUT (int bit_length, float gamma);
+	GammaLUT (int bit_depth, float gamma);
+
+	~GammaLUT () {
+		delete[] _lut;
+	}
+	
+	float const * lut () const {
+		return _lut;
+	}
+
+	int bit_depth () const {
+		return _bit_depth;
+	}
+
+	float gamma () const {
+		return _gamma;
+	}
+
 	static LUTCache<GammaLUT> cache;
+	
+private:
+	float* _lut;
+	int _bit_depth;
+	float _gamma;
 };
 
 }
