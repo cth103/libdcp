@@ -34,6 +34,7 @@ def configure(conf):
     conf.check_cfg(package='xmlsec1', args='--cflags --libs', uselib_store='XMLSEC1', mandatory=True)
     # Remove erroneous escaping of quotes from xmlsec1 defines
     conf.env.DEFINES_XMLSEC1 = [f.replace('\\', '') for f in conf.env.DEFINES_XMLSEC1]
+    conf.check_cfg(package='', path='Magick++-config', args='--cppflags --cxxflags --libs', uselib_store='MAGICK', mandatory=False)
 
     if conf.options.static:
         conf.check_cc(fragment="""

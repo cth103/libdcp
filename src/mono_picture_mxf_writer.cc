@@ -29,7 +29,6 @@ using std::istream;
 using std::ostream;
 using std::string;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using namespace dcp;
 
 struct MonoPictureMXFWriter::ASDCPState : public ASDCPStateBase

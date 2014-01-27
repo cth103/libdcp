@@ -19,6 +19,7 @@
 
 #include "reel_mono_picture_asset.h"
 #include "mono_picture_mxf.h"
+#include <libcxml/cxml.h>
 
 using std::string;
 using boost::shared_ptr;
@@ -38,7 +39,7 @@ ReelMonoPictureAsset::ReelMonoPictureAsset (boost::shared_ptr<MonoPictureMXF> mx
 ReelMonoPictureAsset::ReelMonoPictureAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelPictureAsset (node)
 {
-
+	node->done ();
 }
 
 string

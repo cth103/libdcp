@@ -94,6 +94,8 @@ public:
 		XMLMetadata,
 		boost::shared_ptr<const Signer>
 		) const;
+
+	void resolve_refs (std::list<boost::shared_ptr<Object> >);
 	
 private:
 	std::string _annotation_text;               ///< <AnnotationText>

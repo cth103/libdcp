@@ -28,6 +28,7 @@
 #include "certificates.h"
 #include "gamma_lut.h"
 #include "xyz_frame.h"
+#include "compose.hpp"
 #include "KM_util.h"
 #include "KM_fileio.h"
 #include "AS_DCP.h"
@@ -39,7 +40,6 @@
 #include <libxml++/document.h>
 #include <openssl/sha.h>
 #include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
@@ -55,7 +55,6 @@ using std::list;
 using std::setw;
 using std::setfill;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using namespace dcp;
 
 /** Create a UUID.
@@ -211,7 +210,7 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 	if (!image) {
 		opj_destroy_decompress (decoder);
 		opj_cio_close (cio);
-		boost::throw_exception (DCPReadError ("could not decode JPEG2000 codestream of " + lexical_cast<string> (size) + " bytes."));
+		boost::throw_exception (DCPReadError (String::compose ("could not decode JPEG2000 codestream of %1 bytes.", size)));
 	}
 
 	opj_destroy_decompress (decoder);

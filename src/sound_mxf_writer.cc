@@ -22,9 +22,7 @@
 #include "exceptions.h"
 #include "compose.hpp"
 #include "AS_DCP.h"
-#include <boost/lexical_cast.hpp>
 
-using boost::lexical_cast;
 using namespace dcp;
 
 struct SoundMXFWriter::ASDCPState

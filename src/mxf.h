@@ -98,6 +98,8 @@ public:
 	}
 
 protected:
+	void read_writer_info (ASDCP::WriterInfo const &);
+	
 	/** Signal to emit to report progress, or 0 */
 	boost::signals2::signal<void (float)>* _progress;
 	ASDCP::AESEncContext* _encryption_context;

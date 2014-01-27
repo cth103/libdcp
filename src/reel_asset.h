@@ -63,7 +63,7 @@ public:
 	}
 
 	/** @return a Ref to our actual content */
-	Ref<Content> content () const {
+	Ref<Content>& content () {
 		return _content;
 	}
 

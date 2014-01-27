@@ -133,7 +133,7 @@ Reel::encrypted () const
 }
 
 void
-Reel::add_kdm (KDM const & kdm)
+Reel::add (KDM const & kdm)
 {
 	list<KDMKey> keys = kdm.keys ();
 	
@@ -170,5 +170,21 @@ Reel::add (shared_ptr<ReelAsset> asset)
 		_main_sound = so;
 	} else if (su) {
 		_main_subtitle = su;
+	}
+}
+
+void
+Reel::resolve_refs (list<shared_ptr<Object> > objects)
+{
+	if (_main_picture) {
+		_main_picture->content().resolve (objects);
+	}
+
+	if (_main_sound) {
+		_main_sound->content().resolve (objects);
+	}
+
+	if (_main_subtitle) {
+		_main_subtitle->content().resolve (objects);
 	}
 }

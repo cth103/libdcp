@@ -86,6 +86,21 @@ extern std::string tm_to_string (struct tm *);
 extern std::string utc_offset_to_string (int);
 extern std::string ptime_to_string (boost::posix_time::ptime);
 extern FILE * fopen_boost (boost::filesystem::path, std::string);
+
+template <class F, class T>
+std::list<boost::shared_ptr<T> >
+list_of_type (std::list<boost::shared_ptr<F> > const & from)
+{
+	std::list<boost::shared_ptr<T> > out;
+	for (typename std::list<boost::shared_ptr<F> >::const_iterator i = from.begin(); i != from.end(); ++i) {
+		boost::shared_ptr<T> check = boost::dynamic_pointer_cast<T> (*i);
+		if (check) {
+			out.push_back (check);
+		}
+	}
+
+	return out;
+}
 	
 }
 

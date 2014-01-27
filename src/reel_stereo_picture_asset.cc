@@ -18,6 +18,7 @@
 */
 
 #include "reel_stereo_picture_asset.h"
+#include <libcxml/cxml.h>
 
 using std::string;
 using std::pair;
@@ -28,7 +29,7 @@ using namespace dcp;
 ReelStereoPictureAsset::ReelStereoPictureAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelPictureAsset (node)
 {
-
+	node->done ();
 }
 
 string

@@ -31,7 +31,6 @@
 #include "kdm.h"
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
 #include <iostream>
 
 using std::string;
@@ -146,4 +145,12 @@ MXF::set_key (Key key)
 	if (ASDCP_FAILURE (_encryption_context->SetIVec (rng.FillRandom (cbc_buffer, ASDCP::CBC_BLOCK_SIZE)))) {
 		throw MiscError ("could not set up CBC initialization vector");
 	}
+}
+
+void
+MXF::read_writer_info (ASDCP::WriterInfo const & info)
+{
+	char buffer[64];
+	Kumu::bin2UUIDhex (info.AssetUUID, 16, buffer, 64);
+	_id = buffer;
 }

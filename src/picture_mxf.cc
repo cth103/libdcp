@@ -22,12 +22,12 @@
 #include "exceptions.h"
 #include "xyz_frame.h"
 #include "picture_mxf_writer.h"
+#include "compose.hpp"
 #include "AS_DCP.h"
 #include "KM_fileio.h"
 #include <libxml++/nodes/element.h>
 #include <openjpeg.h>
 #include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
 #include <list>
 #include <stdexcept>
 #include <iostream>
@@ -44,8 +44,6 @@ using std::make_pair;
 using std::istream;
 using std::cout;
 using boost::shared_ptr;
-using boost::dynamic_pointer_cast;
-using boost::lexical_cast;
 using namespace dcp;
 
 PictureMXF::PictureMXF (boost::filesystem::path file)
@@ -138,7 +136,7 @@ PictureMXF::frame_buffer_equals (
 	for (int c = 0; c < 3; ++c) {
 		
 		if (image_A->size() != image_B->size()) {
-			note (ERROR, "image sizes for frame " + lexical_cast<string>(frame) + " differ");
+			note (ERROR, String::compose ("image sizes for frame %1 differ", frame));
 			return false;
 		}
 		
@@ -164,14 +162,12 @@ PictureMXF::frame_buffer_equals (
 	
 	double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
 	
-	note (NOTE, "mean difference " + lexical_cast<string> (mean) + ", deviation " + lexical_cast<string> (std_dev));
+	note (NOTE, String::compose ("mean difference %1, deviation %2", mean, std_dev));
 	
 	if (mean > opt.max_mean_pixel_error) {
 		note (
 			ERROR,
-			"mean " + lexical_cast<string>(mean) +
-			" out of range " + lexical_cast<string>(opt.max_mean_pixel_error) +
-			" in frame " + lexical_cast<string>(frame)
+			String::compose ("mean %1 out of range %2 in frame %3", mean, opt.max_mean_pixel_error, frame)
 			);
 		
 		return false;
@@ -180,9 +176,7 @@ PictureMXF::frame_buffer_equals (
 	if (std_dev > opt.max_std_dev_pixel_error) {
 		note (
 			ERROR,
-			"standard deviation " + lexical_cast<string>(std_dev) +
-			" out of range " + lexical_cast<string>(opt.max_std_dev_pixel_error) +
-			" in frame " + lexical_cast<string>(frame)
+			String::compose ("standard deviation %1 out of range %2 in frame %3", std_dev, opt.max_std_dev_pixel_error, frame)
 			);
 		
 		return false;

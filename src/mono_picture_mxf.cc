@@ -23,12 +23,12 @@
 #include "KM_fileio.h"
 #include "exceptions.h"
 #include "mono_picture_frame.h"
+#include "compose.hpp"
 
 using std::string;
 using std::vector;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
-using boost::lexical_cast;
 using namespace dcp;
 
 MonoPictureMXF::MonoPictureMXF (boost::filesystem::path file)
@@ -46,6 +46,13 @@ MonoPictureMXF::MonoPictureMXF (boost::filesystem::path file)
 	}
 
 	read_picture_descriptor (desc);
+	
+	ASDCP::WriterInfo info;
+	if (ASDCP_FAILURE (reader.FillWriterInfo (info))) {
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
+	}
+
+	read_writer_info (info);
 }
 
 MonoPictureMXF::MonoPictureMXF (Fraction edit_rate)
@@ -100,7 +107,7 @@ MonoPictureMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, bo
 			return false;
 		}
 		
-		note (PROGRESS, "Comparing video frame " + lexical_cast<string> (i) + " of " + lexical_cast<string> (_intrinsic_duration));
+		note (PROGRESS, String::compose ("Comparing video frame %1 of %2", i, _intrinsic_duration));
 		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
 		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
 		

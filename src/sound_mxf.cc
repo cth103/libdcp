@@ -26,11 +26,11 @@
 #include "exceptions.h"
 #include "sound_frame.h"
 #include "sound_mxf_writer.h"
+#include "compose.hpp"
 #include "KM_fileio.h"
 #include "AS_DCP.h"
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <stdexcept>
 
@@ -40,7 +40,6 @@ using std::ostream;
 using std::vector;
 using std::list;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using namespace dcp;
 
 SoundMXF::SoundMXF (boost::filesystem::path file)
@@ -64,6 +63,14 @@ SoundMXF::SoundMXF (boost::filesystem::path file)
 	_edit_rate = Fraction (desc.EditRate.Numerator, desc.EditRate.Denominator);
 
 	_intrinsic_duration = desc.ContainerDuration;
+
+	ASDCP::WriterInfo info;
+	if (ASDCP_FAILURE (reader.FillWriterInfo (info))) {
+		boost::throw_exception (DCPReadError ("could not read audio MXF information"));
+	}
+
+	read_writer_info (info);
+
 }
 
 SoundMXF::SoundMXF (Fraction edit_rate, int sampling_rate, int channels)
@@ -132,7 +139,7 @@ SoundMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::f
 		}
 		
 		if (buffer_A.Size() != buffer_B.Size()) {
-			note (ERROR, "sizes of audio data for frame " + lexical_cast<string>(i) + " differ");
+			note (ERROR, String::compose ("sizes of audio data for frame %1 differ", i));
 			return false;
 		}
 		
@@ -140,7 +147,7 @@ SoundMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::f
 			for (uint32_t i = 0; i < buffer_A.Size(); ++i) {
 				int const d = abs (buffer_A.RoData()[i] - buffer_B.RoData()[i]);
 				if (d > opt.max_audio_sample_error) {
-					note (ERROR, "PCM data difference of " + lexical_cast<string> (d));
+					note (ERROR, String::compose ("PCM data difference of %1", d));
 					return false;
 				}
 			}

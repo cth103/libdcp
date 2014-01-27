@@ -24,7 +24,6 @@
 #include "KM_util.h"
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/function.hpp>
 #include <iostream>
 

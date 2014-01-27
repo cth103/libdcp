@@ -10,7 +10,7 @@ def build(bld):
     obj = bld(features = 'cxx cxxprogram')
     obj.name   = 'read_dcp'
     obj.use    = 'libdcp'
-    obj.uselib = 'OPENJPEG CXML'
+    obj.uselib = 'OPENJPEG CXML MAGICK'
     obj.source = 'read_dcp.cc'
     obj.target = 'read_dcp'
     obj.install_path = ''

@@ -40,7 +40,6 @@
 #include <xmlsec/app.h>
 #include <libxml++/libxml++.h>
 #include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <sstream>
@@ -56,7 +55,6 @@ using std::make_pair;
 using std::map;
 using boost::shared_ptr;
 using boost::lexical_cast;
-using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 DCP::DCP (boost::filesystem::path directory)
@@ -81,9 +79,9 @@ DCP::read ()
 
 	cxml::Document asset_map ("AssetMap");
 	asset_map.read_file (asset_map_file);
-	list<shared_ptr<cxml::Node> > assets = asset_map.node_child("AssetList")->node_children ("Asset");
+	list<shared_ptr<cxml::Node> > asset_nodes = asset_map.node_child("AssetList")->node_children ("Asset");
 	map<string, boost::filesystem::path> paths;
-	for (list<shared_ptr<cxml::Node> >::const_iterator i = assets.begin(); i != assets.end(); ++i) {
+	for (list<shared_ptr<cxml::Node> >::const_iterator i = asset_nodes.begin(); i != asset_nodes.end(); ++i) {
 		if ((*i)->node_child("ChunkList")->node_children("Chunk").size() != 1) {
 			boost::throw_exception (XMLError ("unsupported asset chunk count"));
 		}
@@ -96,10 +94,11 @@ DCP::read ()
 	/* Read all the assets from the asset map */
 	
 	for (map<string, boost::filesystem::path>::const_iterator i = paths.begin(); i != paths.end(); ++i) {
-		if (boost::algorithm::ends_with (i->second.string(), ".xml")) {
+		boost::filesystem::path path = _directory / i->second;
+		if (boost::algorithm::ends_with (path.string(), ".xml")) {
 			xmlpp::DomParser* p = new xmlpp::DomParser;
 			try {
-				p->parse_file (i->second.string());
+				p->parse_file (path.string());
 			} catch (std::exception& e) {
 				delete p;
 				continue;
@@ -109,13 +108,13 @@ DCP::read ()
 			delete p;
 			
 			if (root == "CompositionPlaylist") {
-				_assets.push_back (shared_ptr<CPL> (new CPL (i->second)));
+				_assets.push_back (shared_ptr<CPL> (new CPL (path)));
 			} else if (root == "DCSubtitle") {
-				_assets.push_back (shared_ptr<SubtitleContent> (new SubtitleContent (i->second)));
+				_assets.push_back (shared_ptr<SubtitleContent> (new SubtitleContent (path)));
 			}
-		} else if (boost::algorithm::ends_with (i->second.string(), ".mxf")) {
+		} else if (boost::algorithm::ends_with (path.string(), ".mxf")) {
 			ASDCP::EssenceType_t type;
-			if (ASDCP::EssenceType (i->second.string().c_str(), type) != ASDCP::RESULT_OK) {
+			if (ASDCP::EssenceType (path.string().c_str(), type) != ASDCP::RESULT_OK) {
 				throw DCPReadError ("Could not find essence type");
 			}
 			switch (type) {
@@ -123,19 +122,24 @@ DCP::read ()
 				case ASDCP::ESS_MPEG2_VES:
 					throw DCPReadError ("MPEG2 video essences are not supported");
 				case ASDCP::ESS_JPEG_2000:
-					_assets.push_back (shared_ptr<MonoPictureMXF> (new MonoPictureMXF (i->second)));
+					_assets.push_back (shared_ptr<MonoPictureMXF> (new MonoPictureMXF (path)));
 					break;
 				case ASDCP::ESS_PCM_24b_48k:
 				case ASDCP::ESS_PCM_24b_96k:
-					_assets.push_back (shared_ptr<SoundMXF> (new SoundMXF (i->second)));
+					_assets.push_back (shared_ptr<SoundMXF> (new SoundMXF (path)));
 					break;
 				case ASDCP::ESS_JPEG_2000_S:
-					_assets.push_back (shared_ptr<StereoPictureMXF> (new StereoPictureMXF (i->second)));
+					_assets.push_back (shared_ptr<StereoPictureMXF> (new StereoPictureMXF (path)));
 					break;
 				default:
 					throw DCPReadError ("Unknown MXF essence type");
 				}
 		}
+	}
+
+	list<shared_ptr<CPL> > cpl = cpls ();
+	for (list<shared_ptr<CPL> >::const_iterator i = cpl.begin(); i != cpl.end(); ++i) {
+		(*i)->resolve_refs (list_of_type<Asset, Object> (assets ()));
 	}
 }
 
@@ -226,29 +230,16 @@ DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared
 	pkl->add_child("Id")->add_child_text ("urn:uuid:" + pkl_uuid);
 
 	/* XXX: this is a bit of a hack */
-	list<shared_ptr<Asset> >::const_iterator i = _assets.begin();
-	shared_ptr<CPL> first_cpl;
-	while (i != _assets.end()) {
-		first_cpl = dynamic_pointer_cast<CPL> (*i);
-		if (first_cpl) {
-			break;
-		}
-	}
-
-	assert (first_cpl);
-	pkl->add_child("AnnotationText")->add_child_text (first_cpl->annotation_text ());
+	assert (cpls().size() > 0);
+	pkl->add_child("AnnotationText")->add_child_text (cpls().front()->annotation_text ());
 	
 	pkl->add_child("IssueDate")->add_child_text (metadata.issue_date);
 	pkl->add_child("Issuer")->add_child_text (metadata.issuer);
 	pkl->add_child("Creator")->add_child_text (metadata.creator);
 
 	xmlpp::Element* asset_list = pkl->add_child("AssetList");
-
 	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
-		shared_ptr<Content> c = dynamic_pointer_cast<Content> (*i);
-		if (c) {
-			c->write_to_pkl (asset_list);
-		}
+		(*i)->write_to_pkl (asset_list);
 	}
 
 	if (signer) {
@@ -343,27 +334,15 @@ DCP::write_xml (
 	write_volindex (standard);
 	write_assetmap (standard, pkl_uuid, boost::filesystem::file_size (pkl_path), metadata);
 
-	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
-		shared_ptr<CPL> c = dynamic_pointer_cast<CPL> (*i);
-		if (c) {
-			string const filename = c->id() + "_cpl.xml";
-			c->write_xml (_directory / filename, standard, metadata, signer);
-		}
+	list<shared_ptr<CPL> > cpl = cpls ();
+	for (list<shared_ptr<CPL> >::const_iterator i = cpl.begin(); i != cpl.end(); ++i) {
+		string const filename = (*i)->id() + "_cpl.xml";
+		(*i)->write_xml (_directory / filename, standard, metadata, signer);
 	}
 }
 
 list<shared_ptr<CPL> >
 DCP::cpls () const
 {
-	list<shared_ptr<CPL> > cpls;
-	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
-		shared_ptr<CPL> c = dynamic_pointer_cast<CPL> (*i);
-		if (c) {
-			cpls.push_back (c);
-		}
-	}
-
-	return cpls;
+	return list_of_type<Asset, CPL> (_assets);
 }
-
-	

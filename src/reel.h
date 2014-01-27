@@ -39,6 +39,7 @@ class ReelAsset;
 class ReelPictureAsset;
 class ReelSoundAsset;
 class ReelSubtitleAsset;
+class Content;
 
 /** @brief A reel within a DCP; the part which actually refers to picture, sound and subtitle data */	
 class Reel : public Object
@@ -80,7 +81,9 @@ public:
 	
 	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> notes) const;
 
-	void add_kdm (KDM const &);
+	void add (KDM const &);
+
+	void resolve_refs (std::list<boost::shared_ptr<Object> >);
 
 private:
 	boost::shared_ptr<ReelPictureAsset> _main_picture;

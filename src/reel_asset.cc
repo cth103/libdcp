@@ -71,8 +71,6 @@ ReelAsset::ReelAsset (boost::shared_ptr<const cxml::Node> node)
 	if (_key_id.length() > 9) {
 		_key_id = _key_id.substr (9);
 	}
-	
-	node->done ();
 }
 
 void

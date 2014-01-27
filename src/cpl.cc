@@ -54,18 +54,22 @@ CPL::CPL (string annotation_text, ContentKind content_kind)
 
 /** Construct a CPL object from a XML file */
 CPL::CPL (boost::filesystem::path file)
-	: _content_kind (FEATURE)
+	: Asset (file)
+	, _content_kind (FEATURE)
 {
 	cxml::Document f ("CompositionPlaylist");
 	f.read_file (file);
 
 	_id = f.string_child ("Id");
+	if (_id.length() > 9) {
+		_id = _id.substr (9);
+	}
 	_annotation_text = f.optional_string_child ("AnnotationText").get_value_or ("");
 	_issue_date = f.string_child ("IssueDate");
 	_creator = f.optional_string_child ("Creator").get_value_or ("");
 	_content_title_text = f.string_child ("ContentTitleText");
 	_content_kind = content_kind_from_string (f.string_child ("ContentKind"));
-	shared_ptr<cxml::Node> content_version = f.node_child ("ContentVersion");
+	shared_ptr<cxml::Node> content_version = f.optional_node_child ("ContentVersion");
 	if (content_version) {
 		_content_version_id = content_version->optional_string_child ("Id").get_value_or ("");
 		_content_version_label_text = content_version->string_child ("LabelText");
@@ -205,7 +209,7 @@ void
 CPL::add (KDM const & kdm)
 {
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
-		(*i)->add_kdm (kdm);
+		(*i)->add (kdm);
 	}
 }
 
@@ -218,5 +222,13 @@ CPL::set_mxf_keys (Key key)
 {
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		(*i)->set_mxf_keys (key);
+	}
+}
+
+void
+CPL::resolve_refs (list<shared_ptr<Object> > objects)
+{
+	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
+		(*i)->resolve_refs (objects);
 	}
 }

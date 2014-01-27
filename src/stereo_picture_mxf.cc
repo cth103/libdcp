@@ -45,6 +45,13 @@ StereoPictureMXF::StereoPictureMXF (boost::filesystem::path file)
 	}
 
 	read_picture_descriptor (desc);
+
+	ASDCP::WriterInfo info;
+	if (ASDCP_FAILURE (reader.FillWriterInfo (info))) {
+		boost::throw_exception (DCPReadError ("could not read video MXF information"));
+	}
+
+	read_writer_info (info);
 }
 
 StereoPictureMXF::StereoPictureMXF (Fraction edit_rate)

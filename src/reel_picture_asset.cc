@@ -27,7 +27,6 @@ using std::bad_cast;
 using std::string;
 using std::stringstream;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using namespace dcp;
 
 ReelPictureAsset::ReelPictureAsset ()
