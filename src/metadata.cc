@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,17 +18,17 @@
 */
 
 /** @file  src/metadata.cc
- *  @brief Metadata for writing to the DCP.
+ *  @brief XMLMetadata and MXFMetadata classes.
  */
 
-#include <sstream>
-#include <iomanip>
-#include <time.h>
+#include "metadata.h"
+#include "util.h"
 #ifdef LIBDCP_WINDOWS
 #include <windows.h>
 #endif
-#include "metadata.h"
-#include "util.h"
+#include <sstream>
+#include <iomanip>
+#include <time.h>
 
 using namespace std;
 using namespace dcp;

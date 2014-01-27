@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,16 +18,16 @@
 */
 
 /** @file  src/dcp_time.cc
- *  @brief A representation of time within a DCP.
+ *  @brief Time class.
  */
 
-#include <iostream>
-#include <vector>
-#include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
-#include <cmath>
 #include "dcp_time.h"
 #include "exceptions.h"
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+#include <iostream>
+#include <vector>
+#include <cmath>
 
 using namespace std;
 using namespace boost;

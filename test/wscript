@@ -31,7 +31,6 @@ def build(bld):
                  frame_info_test.cc
                  kdm_key_test.cc
                  kdm_test.cc
-                 lut_test.cc
                  read_dcp_test.cc
                  recovery_test.cc
                  round_trip_test.cc

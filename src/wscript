@@ -37,7 +37,6 @@ def build(bld):
                  object.cc
                  picture_mxf.cc
                  picture_mxf_writer.cc
-                 rec709_linearised_gamma_lut.cc
                  reel.cc
                  reel_asset.cc
                  reel_mono_picture_asset.cc
@@ -51,7 +50,6 @@ def build(bld):
                  sound_mxf.cc
                  sound_mxf_writer.cc
                  sound_frame.cc
-                 srgb_linearised_gamma_lut.cc
                  stereo_picture_mxf.cc
                  stereo_picture_mxf_writer.cc
                  stereo_picture_frame.cc
@@ -87,14 +85,12 @@ def build(bld):
               picture_mxf.h
               picture_mxf_writer.h
               rgb_xyz.h
-              rec709_linearised_gamma_lut.h
               reel.h
               argb_frame.h
               signer.h
               signer_chain.h
               sound_mxf.h
               sound_frame.h
-              srgb_linearised_gamma_lut.h
               stereo_picture_mxf.h
               stereo_picture_frame.h
               subtitle_asset.h

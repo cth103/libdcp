@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 */
 
 /** @file  src/key.h
- *  @brief Class to hold a key for encrypting MXFs.
+ *  @brief Key class.
  */
 
 #ifndef LIBDCP_KEY_H

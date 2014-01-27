@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,17 +20,17 @@
 #ifndef LIBDCP_CPL_H
 #define LIBDCP_CPL_H
 
-#include <list>
+#include "types.h"
+#include "certificates.h"
+#include "key.h"
+#include "asset.h"
+#include <libxml++/libxml++.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
-#include <libxml++/libxml++.h>
-#include "types.h"
-#include "certificates.h"
-#include "key.h"
-#include "asset.h"
+#include <list>
 
 namespace dcp {
 	

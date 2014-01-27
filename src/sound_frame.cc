@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 
 */
 
-#include "AS_DCP.h"
-#include "KM_fileio.h"
 #include "sound_frame.h"
 #include "exceptions.h"
+#include "AS_DCP.h"
+#include "KM_fileio.h"
 
 using namespace std;
 using namespace dcp;

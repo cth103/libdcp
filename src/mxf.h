@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 
 */
 
-#ifndef LIBDCP_MXF_ASSET_H
-#define LIBDCP_MXF_ASSET_H
+#ifndef LIBDCP_MXF_H
+#define LIBDCP_MXF_H
 
 #include "content.h"
 #include "key.h"

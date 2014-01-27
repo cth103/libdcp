@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,13 +17,17 @@
 
 */
 
-#include <sstream>
-#include <string>
-#include <iomanip>
+/** @file  src/key.cc
+ *  @brief Key class.
+ */
+
+#include "key.h"
 #include "AS_DCP.h"
 #include "KM_prng.h"
 #include "KM_util.h"
-#include "key.h"
+#include <sstream>
+#include <string>
+#include <iomanip>
 
 using std::string;
 using std::stringstream;
