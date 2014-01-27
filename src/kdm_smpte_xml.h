@@ -17,7 +17,7 @@
 
 */
 
-/** @file src/xml/kdm_smpte.h
+/** @file src/kdm_smpte_xml.h
  *  @brief 1:1ish C++ representations of the XML schema for a SMPTE KDM.
  *
  *  This file contains classes which map pretty-much 1:1 to the elements in a SMPTE KDM
@@ -29,10 +29,10 @@
  *  change very often.
  */
 
-#ifndef LIBDCP_XML_KDM_SMPTE_H
-#define LIBDCP_XML_KDM_SMPTE_H
+#ifndef LIBDCP_KDM_SMPTE_XML_H
+#define LIBDCP_KDM_SMPTE_XML_H
 
-#include "../exceptions.h"
+#include "exceptions.h"
 #include <libcxml/cxml.h>
 #include <libxml/parser.h>
 #include <libxml++/libxml++.h>

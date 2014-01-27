@@ -28,7 +28,7 @@
 #include "signer.h"
 #include "cpl.h"
 #include "mxf.h"
-#include "xml/kdm_smpte.h"
+#include "kdm_smpte_xml.h"
 #include "AS_DCP.h"
 #include "KM_util.h"
 #include <libcxml/cxml.h>

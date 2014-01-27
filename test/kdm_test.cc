@@ -19,7 +19,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "kdm.h"
-#include "xml/kdm_smpte.h"
+#include "kdm_smpte_xml.h"
 
 using std::list;
 using boost::shared_ptr;
