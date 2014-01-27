@@ -21,18 +21,18 @@
  *  @brief An asset made up of WAV files
  */
 
-#include <iostream>
-#include <stdexcept>
-#include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
-#include <libxml++/nodes/element.h>
-#include "KM_fileio.h"
-#include "AS_DCP.h"
 #include "sound_mxf.h"
 #include "util.h"
 #include "exceptions.h"
 #include "sound_frame.h"
 #include "sound_mxf_writer.h"
+#include "KM_fileio.h"
+#include "AS_DCP.h"
+#include <libxml++/nodes/element.h>
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+#include <iostream>
+#include <stdexcept>
 
 using std::string;
 using std::stringstream;

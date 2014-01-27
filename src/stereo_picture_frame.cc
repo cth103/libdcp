@@ -17,9 +17,6 @@
 
 */
 
-#include <openjpeg.h>
-#include "AS_DCP.h"
-#include "KM_fileio.h"
 #include "stereo_picture_frame.h"
 #include "exceptions.h"
 #include "argb_frame.h"
@@ -27,6 +24,9 @@
 #include "util.h"
 #include "gamma_lut.h"
 #include "rgb_xyz.h"
+#include "AS_DCP.h"
+#include "KM_fileio.h"
+#include <openjpeg.h>
 
 #define DCI_GAMMA 2.6
 

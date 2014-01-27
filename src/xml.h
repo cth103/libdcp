@@ -20,8 +20,8 @@
 #ifndef LIBDCP_XML_H
 #define LIBDCP_XML_H
 
-#include <libcxml/cxml.h>
 #include "exceptions.h"
+#include <libcxml/cxml.h>
 
 namespace dcp
 {

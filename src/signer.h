@@ -35,7 +35,7 @@ namespace dcp {
 /** @class Signer
  *  @brief A class which can sign XML files.
  */
-class Signer
+class Signer : public boost::noncopyable
 {
 public:
 	/** @param c Certificate chain to sign with.

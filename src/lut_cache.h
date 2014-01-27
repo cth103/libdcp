@@ -24,7 +24,7 @@
 #include <boost/shared_ptr.hpp>
 
 template<class T>
-class LUTCache
+class LUTCache : public boost::noncopyable
 {
 public:
 	boost::shared_ptr<T> get (int bit_depth, float gamma)

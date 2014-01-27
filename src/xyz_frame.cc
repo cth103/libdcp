@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/xyz_frame.cc
+ *  @brief XZYFrame class.
+ */
+
 #include "xyz_frame.h"
 #include <cassert>
 #include <stdexcept>
@@ -30,6 +34,9 @@ XYZFrame::XYZFrame (opj_image_t* image)
 	assert (_opj_image->numcomps == 3);
 }
 
+/** Construct a new XYZFrame with undefined contents.
+ *  @param size Size for the frame in pixels.
+ */
 XYZFrame::XYZFrame (Size size)
 {
 	opj_image_cmptparm_t cmptparm[3];
@@ -58,11 +65,15 @@ XYZFrame::XYZFrame (Size size)
 	_opj_image->y1 = size.height;
 }
 
+/** XYZFrame destructor */
 XYZFrame::~XYZFrame ()
 {
 	opj_image_destroy (_opj_image);
 }
 
+/** @param c Component index (0, 1 or 2)
+ *  @return Pointer to the data for component c.
+ */
 int *
 XYZFrame::data (int c) const
 {
@@ -70,6 +81,7 @@ XYZFrame::data (int c) const
 	return _opj_image->comps[c].data;
 }
 
+/** @return Size of the image in pixels */
 dcp::Size
 XYZFrame::size () const
 {

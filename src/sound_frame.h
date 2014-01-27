@@ -20,8 +20,9 @@
 #ifndef LIBDCP_SOUND_FRAME_H
 #define LIBDCP_SOUND_FRAME_H
 
-#include <string>
+#include <boost/noncopyable.hpp>
 #include <stdint.h>
+#include <string>
 
 namespace ASDCP {
 	namespace PCM {
@@ -32,7 +33,7 @@ namespace ASDCP {
 
 namespace dcp {
 
-class SoundFrame
+class SoundFrame : public boost::noncopyable
 {
 public:
 	SoundFrame (std::string mxf_path, int n, ASDCP::AESDecContext *);

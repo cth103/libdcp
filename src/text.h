@@ -33,14 +33,18 @@ namespace dcp {
 
 class Font;
 
+/** @class Text
+ *  @brief Parser for Text nodes from subtitle XML.
+ */
 class Text
 {
 public:
+	/** Construct a default text node */
 	Text ()
 		: v_position (0)
 		, v_align (TOP)
 	{}
-	
+
 	Text (boost::shared_ptr<const cxml::Node> node);
 
 	float v_position;

@@ -17,11 +17,11 @@
 
 */
 
-#include "AS_DCP.h"
-#include "KM_fileio.h"
 #include "stereo_picture_mxf_writer.h"
 #include "exceptions.h"
 #include "picture_mxf.h"
+#include "AS_DCP.h"
+#include "KM_fileio.h"
 
 #include "picture_mxf_writer_common.cc"
 

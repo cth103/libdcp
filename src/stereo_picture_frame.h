@@ -17,10 +17,12 @@
 
 */
 
-#include <string>
-#include <stdint.h>
-#include <boost/shared_ptr.hpp>
 #include "types.h"
+#include <boost/shared_ptr.hpp>
+#include <boost/noncopyable.hpp>
+#include <boost/filesystem.hpp>
+#include <stdint.h>
+#include <string>
 
 namespace ASDCP {
 	namespace JP2K {
@@ -34,7 +36,7 @@ namespace dcp {
 class ARGBFrame;
 
 /** A single frame of a 3D (stereoscopic) picture asset */	
-class StereoPictureFrame
+class StereoPictureFrame : public boost::noncopyable
 {
 public:
 	StereoPictureFrame (boost::filesystem::path mxf_path, int n);

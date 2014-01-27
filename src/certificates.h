@@ -26,7 +26,6 @@
 
 #undef X509_NAME
 #include <openssl/x509.h>
-#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
 #include <string>

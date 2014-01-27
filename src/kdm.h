@@ -24,11 +24,11 @@
 #ifndef LIBDCP_KDM_H
 #define LIBDCP_KDM_H
 
+#include "key.h"
+#include "metadata.h"
 #include <boost/filesystem.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include "key.h"
-#include "metadata.h"
 
 class kdm_key_test;
 

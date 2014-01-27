@@ -17,12 +17,19 @@
 
 */
 
-#include <openjpeg.h>
+/** @file  src/xyz_frame.h
+ *  @brief XZYFrame class.
+ */
+
 #include "util.h"
+#include <openjpeg.h>
 
 namespace dcp {
 
-class XYZFrame
+/* @class XYZFrame
+ * @brief An image in XYZ colour.
+ */
+class XYZFrame : public boost::noncopyable
 {
 public:
 	XYZFrame (opj_image_t *);

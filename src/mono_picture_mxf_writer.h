@@ -17,12 +17,12 @@
 
 */
 
+#include "picture_mxf_writer.h"
+#include <boost/shared_ptr.hpp>
+#include <boost/utility.hpp>
 #include <stdint.h>
 #include <string>
 #include <fstream>
-#include <boost/shared_ptr.hpp>
-#include <boost/utility.hpp>
-#include "picture_mxf_writer.h"
 
 namespace dcp {
 

@@ -24,6 +24,7 @@
 #ifndef LIBDCP_OBJECT_H
 #define LIBDCP_OBJECT_H
 
+#include <boost/noncopyable.hpp>
 #include <string>
 
 namespace dcp {
@@ -31,7 +32,7 @@ namespace dcp {
 /** @class Object
  *  @brief Some part of a DCP that has a UUID.
  */
-class Object
+class Object : public boost::noncopyable
 {
 public:
 	Object ();
