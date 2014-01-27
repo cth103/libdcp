@@ -17,8 +17,8 @@
 
 */
 
-/** @file  src/sound_asset.cc
- *  @brief An asset made up of WAV files
+/** @file  src/sound_mxf.cc
+ *  @brief SoundMXF class.
  */
 
 #include "sound_mxf.h"

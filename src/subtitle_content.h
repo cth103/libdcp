@@ -46,7 +46,11 @@ public:
 		return "text/xml";
 	}
 	
-	virtual bool equals (boost::shared_ptr<const Content>, EqualityOptions, boost::function<void (NoteType, std::string)> note) const {
+	bool equals (
+		boost::shared_ptr<const Content>,
+		EqualityOptions,
+		boost::function<void (NoteType, std::string)> note
+		) const {
 		/* XXX */
 		note (ERROR, "subtitle content not compared yet");
 		return true;

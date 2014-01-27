@@ -91,7 +91,9 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 }
 
 KDM::KDM (
-	shared_ptr<const CPL> cpl, shared_ptr<const Signer> signer, shared_ptr<const Certificate> recipient_cert,
+	boost::shared_ptr<const CPL> cpl,
+	boost::shared_ptr<const Signer> signer,
+	boost::shared_ptr<const Certificate> recipient_cert,
 	boost::posix_time::ptime not_valid_before, boost::posix_time::ptime not_valid_after,
 	string annotation_text, string issue_date
 	)
@@ -206,7 +208,13 @@ KDM::as_xml () const
 }
 
 KDMKey::KDMKey (
-	shared_ptr<const Signer> signer, string cpl_id, string key_type, string key_id, boost::posix_time::ptime from, boost::posix_time::ptime until, Key key
+	boost::shared_ptr<const Signer> signer,
+	string cpl_id,
+	string key_type,
+	string key_id,
+	boost::posix_time::ptime from,
+	boost::posix_time::ptime until,
+	Key key
 	)
 	: _cpl_id (cpl_id)
 	, _key_type (key_type)
@@ -279,7 +287,7 @@ KDMKey::operator= (KDMKey const & other)
 }
 
 string
-KDMKey::encrypted_base64 (shared_ptr<const Certificate> recipient_cert) const
+KDMKey::encrypted_base64 (boost::shared_ptr<const Certificate> recipient_cert) const
 {
 	assert (_key_type.length() == 4);
 	assert (_not_valid_before.length() == 25);

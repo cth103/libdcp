@@ -17,19 +17,26 @@
 
 */
 
+/** @file  src/mxf_writer.h
+ *  @brief MXFWriter class.
+ */
+
 #include "mxf_writer.h"
 #include "mxf.h"
 
 using namespace dcp;
 
+/** Create an MXFWriter.
+ *  @param mxf MXF that we are writing.
+ *  @param file File to write to.
+ */
 MXFWriter::MXFWriter (MXF* mxf, boost::filesystem::path file)
 	: _mxf (mxf)
 	, _file (file)
 	, _frames_written (0)
 	, _finalized (false)
 {
-	mxf->_file = file;
-	mxf->_hash.clear ();
+	mxf->set_file (file);
 }
 
 MXFWriter::~MXFWriter ()

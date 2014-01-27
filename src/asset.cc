@@ -37,6 +37,10 @@ Asset::Asset ()
 
 }
 
+/** Create an Asset from a given file.  The ID will
+ *  be extracted from the file.
+ *  @param file File name.
+ */
 Asset::Asset (boost::filesystem::path file)
 	: _file (file)
 {
@@ -55,6 +59,8 @@ Asset::Asset (string id)
 void
 Asset::write_to_pkl (xmlpp::Node* node) const
 {
+	assert (!_file.empty ());
+	
 	xmlpp::Node* asset = node->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	asset->add_child("AnnotationText")->add_child_text (_id);
@@ -66,6 +72,8 @@ Asset::write_to_pkl (xmlpp::Node* node) const
 void
 Asset::write_to_assetmap (xmlpp::Node* node) const
 {
+	assert (!_file.empty ());
+
 	xmlpp::Node* asset = node->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
@@ -79,6 +87,8 @@ Asset::write_to_assetmap (xmlpp::Node* node) const
 string
 Asset::hash () const
 {
+	assert (!_file.empty ());
+		
 	if (!_hash.empty ()) {
 		_hash = make_digest (_file, 0);
 	}

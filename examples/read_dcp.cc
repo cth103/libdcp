@@ -17,31 +17,35 @@
 
 */
 
-#include "image.h"
+/* If you are using an installed libdcp, these #includes would need to be changed to
+#include <libdcp/dcp.h>
+#include <libdcp/cpl.h>
+#include <libdcp/mono_picture_asset.h>
+... etc. ...
+*/
 
-using boost::shared_ptr;
-using namespace dcp;
+#include "dcp.h"
 
-Image::Image (Size s)
-	: _size (s)
+/** @file examples/read_dcp.cc
+ *  @brief Shows how to read a DCP.
+ */
+
+int
+main ()
 {
+	/* Create a DCP, specifying where our existing data is */
+	dcp::DCP dcp ("/home/carl/diagonal.com/APPASSIONATA_TLR_F_UK-DEFR_CH_51_2K_LOK_20121115_DGL_OV");
+	/* Read the DCP to find out about it */
+	dcp.read ();
 
-}
+	if (dcp.encrypted ()) {
+		std::cout << "DCP is encrypted.\n";
+	} else {
+		std::cout << "DCP is not encrypted.\n";
+	}
 
-Image::Image (Image const & other)
-	: _size (other._size)
-{
+	std::cout << "DCP has " << dcp.cpls().size() << " CPLs.\n";
+	std::cout << "DCP has " << dcp.assets().size() << " assets.\n";
 
-}
-
-Image::Image (boost::shared_ptr<const Image> other)
-	: _size (other->_size)
-{
-
-}
-
-void
-Image::swap (Image& other)
-{
-	std::swap (_size, other._size);
+	return 0;
 }

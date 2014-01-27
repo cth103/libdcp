@@ -37,7 +37,7 @@ ReelPictureAsset::ReelPictureAsset ()
 
 }
 
-ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureMXF> content, int64_t entry_point)
+ReelPictureAsset::ReelPictureAsset (boost::shared_ptr<PictureMXF> content, int64_t entry_point)
 	: ReelAsset (content, entry_point)
 	, _frame_rate (content->frame_rate ())
 	, _screen_aspect_ratio (content->screen_aspect_ratio ())
@@ -45,7 +45,7 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureMXF> content, int64_t entr
 	
 }
 
-ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
+ReelPictureAsset::ReelPictureAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
 {
 	_frame_rate = Fraction (node->string_child ("FrameRate"));

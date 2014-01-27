@@ -24,13 +24,13 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
-ReelSubtitleAsset::ReelSubtitleAsset (shared_ptr<SubtitleContent> content, int64_t entry_point)
+ReelSubtitleAsset::ReelSubtitleAsset (boost::shared_ptr<SubtitleContent> content, int64_t entry_point)
 	: ReelAsset (content, entry_point)
 {
 
 }
 
-ReelSubtitleAsset::ReelSubtitleAsset (shared_ptr<const cxml::Node> node)
+ReelSubtitleAsset::ReelSubtitleAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
 {
 	node->ignore_child ("Language");

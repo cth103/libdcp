@@ -1,8 +1,16 @@
 def build(bld):
     obj = bld(features = 'cxx cxxprogram')
-    obj.name   = 'examples'
+    obj.name   = 'make_dcp'
     obj.use    = 'libdcp'
     obj.uselib = 'OPENJPEG CXML'
     obj.source = 'make_dcp.cc'
     obj.target = 'make_dcp'
+    obj.install_path = ''
+
+    obj = bld(features = 'cxx cxxprogram')
+    obj.name   = 'read_dcp'
+    obj.use    = 'libdcp'
+    obj.uselib = 'OPENJPEG CXML'
+    obj.source = 'read_dcp.cc'
+    obj.target = 'read_dcp'
     obj.install_path = ''

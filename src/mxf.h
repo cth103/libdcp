@@ -43,16 +43,20 @@ class MXF : public Content
 public:
 	MXF (Fraction edit_rate);
 	MXF (boost::filesystem::path file);
-	
 	~MXF ();
 
-	virtual bool equals (boost::shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 	virtual std::string key_type () const = 0;
-
+	
 	std::string pkl_type () const {
 		return "application/x-smpte-mxf";
 	}
 	
+	bool equals (
+		boost::shared_ptr<const Content> other,
+		EqualityOptions opt,
+		boost::function<void (NoteType, std::string)> note
+		) const;
+
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
 	 *  @param standard INTEROP or SMPTE.

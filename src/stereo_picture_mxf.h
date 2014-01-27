@@ -34,11 +34,13 @@ public:
 	/** Start a progressive write to a StereoPictureMXF */
 	boost::shared_ptr<PictureMXFWriter> start_write (boost::filesystem::path file, Standard, bool);
 
+	bool equals (
+		boost::shared_ptr<const Content> other,
+		EqualityOptions opt,
+		boost::function<void (NoteType, std::string)> note
+		) const;
+	
 	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
-	bool equals (boost::shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
-
-private:
-	int edit_rate_factor () const;
 };
 
 }

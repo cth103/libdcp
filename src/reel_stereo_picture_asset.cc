@@ -25,7 +25,7 @@ using std::make_pair;
 using boost::shared_ptr;
 using namespace dcp;
 
-ReelStereoPictureAsset::ReelStereoPictureAsset (shared_ptr<const cxml::Node> node)
+ReelStereoPictureAsset::ReelStereoPictureAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelPictureAsset (node)
 {
 

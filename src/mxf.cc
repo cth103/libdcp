@@ -115,6 +115,11 @@ MXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::functi
 	return true;
 }
 
+/** Set the (private) key that will be used to encrypt or decrypt this MXF's content.
+ *  This is the top-secret key that is distributed (itself encrypted) to cinemas
+ *  via Key Delivery Messages (KDMs).
+ *  @param key Key to use.
+ */
 void
 MXF::set_key (Key key)
 {

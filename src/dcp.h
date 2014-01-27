@@ -82,6 +82,11 @@ public:
 
 	std::list<boost::shared_ptr<CPL> > cpls () const;
 
+	/** @return All this DCP's assets (note that CPLs are assets) */
+	std::list<boost::shared_ptr<Asset> > assets () const {
+		return _assets;
+	}
+
 	bool encrypted () const;
 
 	void add (KDM const &);
@@ -102,7 +107,12 @@ private:
 	/** Write the PKL file.
 	 *  @param pkl_uuid UUID to use.
 	 */
-	boost::filesystem::path write_pkl (Standard standard, std::string pkl_uuid, XMLMetadata metadata, boost::shared_ptr<const Signer> signer) const;
+	boost::filesystem::path write_pkl (
+		Standard standard,
+		std::string pkl_uuid,
+		XMLMetadata metadata,
+		boost::shared_ptr<const Signer> signer
+		) const;
 	
 	void write_volindex (Standard standard) const;
 

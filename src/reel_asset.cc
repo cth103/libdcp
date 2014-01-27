@@ -40,7 +40,7 @@ ReelAsset::ReelAsset ()
 
 }
 
-ReelAsset::ReelAsset (shared_ptr<Content> content, int64_t entry_point)
+ReelAsset::ReelAsset (boost::shared_ptr<Content> content, int64_t entry_point)
 	: Object (content->id ())
 	, _content (content)
 	, _edit_rate (content->edit_rate ())
@@ -52,7 +52,7 @@ ReelAsset::ReelAsset (shared_ptr<Content> content, int64_t entry_point)
 
 }
 
-ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
+ReelAsset::ReelAsset (boost::shared_ptr<const cxml::Node> node)
 	: Object (node->string_child ("Id"))
 	, _content (_id)
 	, _annotation_text (node->optional_string_child ("AnnotationText").get_value_or (""))

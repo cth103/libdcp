@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/mxf_writer.h
+ *  @brief MXFWriter class.
+ */
+
 #ifndef LIBDCP_MXF_WRITER_H
 #define LIBDCP_MXF_WRITER_H
 
@@ -26,6 +30,12 @@ namespace dcp {
 
 class MXF;
 
+/** @class MXFWriter
+ *  @brief Parent class for classes which can write MXF files.
+ *
+ *  The MXFWriter lasts for the duration of the write and is then discarded.
+ *  They can only be created by calling start_write() on an MXF object.
+ */
 class MXFWriter : public boost::noncopyable
 {
 public:
@@ -35,9 +45,15 @@ public:
 protected:
 	MXFWriter (MXF* mxf, boost::filesystem::path file);
 
+	/** MXF that we are writing */
 	MXF* _mxf;
+	/** File that we are writing to */
 	boost::filesystem::path _file;
+	/** Number of `frames' written so far; the definition of a frame
+	 *  varies depending on the subclass.
+	 */
 	int64_t _frames_written;
+	/** true if finalize() has been called on this object */
 	bool _finalized;
 };
 

@@ -29,13 +29,13 @@ ReelMonoPictureAsset::ReelMonoPictureAsset ()
 
 }
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (shared_ptr<MonoPictureMXF> mxf, int64_t entry_point)
+ReelMonoPictureAsset::ReelMonoPictureAsset (boost::shared_ptr<MonoPictureMXF> mxf, int64_t entry_point)
 	: ReelPictureAsset (mxf, entry_point)
 {
 
 }
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (shared_ptr<const cxml::Node> node)
+ReelMonoPictureAsset::ReelMonoPictureAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelPictureAsset (node)
 {
 

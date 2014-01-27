@@ -48,7 +48,6 @@ using namespace dcp;
 CPL::CPL (string annotation_text, ContentKind content_kind)
 	: _annotation_text (annotation_text)
 	, _content_kind (content_kind)
-	, _length (0)
 {
 
 }
@@ -56,7 +55,6 @@ CPL::CPL (string annotation_text, ContentKind content_kind)
 /** Construct a CPL object from a XML file */
 CPL::CPL (boost::filesystem::path file)
 	: _content_kind (FEATURE)
-	, _length (0)
 {
 	cxml::Document f ("CompositionPlaylist");
 	f.read_file (file);
@@ -87,7 +85,7 @@ CPL::CPL (boost::filesystem::path file)
  *  @param reel Reel to add.
  */
 void
-CPL::add (shared_ptr<Reel> reel)
+CPL::add (boost::shared_ptr<Reel> reel)
 {
 	_reels.push_back (reel);
 }
@@ -134,8 +132,7 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, XMLMetadata met
 	/* This must not be the _formatted version otherwise signature digests will be wrong */
 	doc.write_to_file (file.string (), "UTF-8");
 
-	_digest = make_digest (file.string (), 0);
-	_length = boost::filesystem::file_size (file.string ());
+	set_file (file);
 }
 
 list<shared_ptr<const Content> >
@@ -155,19 +152,6 @@ CPL::assets () const
 	}
 
 	return a;
-}
-
-void
-CPL::write_to_assetmap (xmlpp::Node* node) const
-{
-	xmlpp::Node* asset = node->add_child ("Asset");
-	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
-	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
-	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
-	chunk->add_child("Path")->add_child_text (_id + "_cpl.xml");
-	chunk->add_child("VolumeIndex")->add_child_text ("1");
-	chunk->add_child("Offset")->add_child_text("0");
-	chunk->add_child("Length")->add_child_text(lexical_cast<string> (_length));
 }
 	
 bool
@@ -225,6 +209,10 @@ CPL::add (KDM const & kdm)
 	}
 }
 
+/** Set a private key for every MXF referenced by this CPL.  This will allow the data
+ *  to be decrypted or encrypted.
+ *  @param key Key to use.
+ */
 void
 CPL::set_mxf_keys (Key key)
 {

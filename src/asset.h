@@ -38,7 +38,7 @@ namespace dcp {
 /** @class Asset
  *  @brief Parent class for DCP assets, i.e. picture/sound/subtitles and CPLs.
  *
- *  Note that this class is not used for ReelAssets; they are just for the metadata
+ *  Note that this class is not used for ReelAssets; those are just for the metadata
  *  that gets put into &lt;Reel&gt;s.
  */
 class Asset : public Object
@@ -49,28 +49,40 @@ public:
 	Asset (std::string id);
 
 	virtual std::string pkl_type () const = 0;
-	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
-	
+	virtual bool equals (
+		boost::shared_ptr<const Asset> other,
+		EqualityOptions opt,
+		boost::function<void (NoteType, std::string)> note
+		) const;
+
+	/** Write details of the asset to a ASSETMAP.
+	 *  @param node Parent node.
+	 */
+	void write_to_assetmap (xmlpp::Node* node) const;
+
 	/** Write details of the asset to a PKL AssetList node.
 	 *  @param node Parent node.
 	 */
 	void write_to_pkl (xmlpp::Node* node) const;
-	void write_to_assetmap (xmlpp::Node* node) const;
 
 	boost::filesystem::path file () const {
 		return _file;
 	}
 
-	void set_file (boost::filesystem::path file) {
+	void set_file (boost::filesystem::path file) const {
 		_file = file;
+		_hash.clear ();
 	}
 
+	/** @return the hash of this asset's file.  It will be
+	 *  computed by this call if necessary.
+	 */
 	std::string hash () const;
 
 protected:
-	friend class MXFWriter;
-	
-	boost::filesystem::path _file;
+	/** The disk file that represents this asset, if one exists */
+	mutable boost::filesystem::path _file;
+	/** Hash of _file, or empty if the hash has not yet been computed */
 	mutable std::string _hash;
 };
 

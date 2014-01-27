@@ -54,8 +54,15 @@ public:
 		return "text/xml";
 	}
 
-	void add (boost::shared_ptr<Reel> reel);
+	bool equals (
+		CPL const & other,
+		EqualityOptions options,
+		boost::function<void (NoteType, std::string)> note
+		) const;
 
+	void add (boost::shared_ptr<Reel> reel);
+	void add (KDM const &);
+	
 	std::string annotation_text () const {
 		return _annotation_text;
 	}
@@ -81,29 +88,22 @@ public:
 
 	void set_mxf_keys (Key);
 
-	bool equals (CPL const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
-	
-	void write_xml (boost::filesystem::path file, Standard standard, XMLMetadata, boost::shared_ptr<const Signer>) const;
-	void write_to_assetmap (xmlpp::Node *) const;
-
-	void add (KDM const &);
+	void write_xml (
+		boost::filesystem::path file,
+		Standard standard,
+		XMLMetadata,
+		boost::shared_ptr<const Signer>
+		) const;
 	
 private:
-	
-	std::string _annotation_text;
-	std::string _issue_date;
-	std::string _creator;
-	std::string _content_title_text;
-	ContentKind _content_kind;
-	std::string _content_version_id;
-	std::string _content_version_label_text;
-	/** reels */
+	std::string _annotation_text;               ///< <AnnotationText>
+	std::string _issue_date;                    ///< <IssueDate>
+	std::string _creator;                       ///< <Creator>
+	std::string _content_title_text;            ///< <ContentTitleText>
+	ContentKind _content_kind;                  ///< <ContentKind>
+	std::string _content_version_id;            ///< <Id> in <ContentVersion>
+	std::string _content_version_label_text;    ///< <LabelText> in <ContentVersion>
 	std::list<boost::shared_ptr<Reel> > _reels;
-
-	/** a SHA1 digest of our XML */
-	mutable std::string _digest;
-	/** length in bytes of the XML that we last wrote to disk */
-	mutable int64_t _length;
 };
 
 }

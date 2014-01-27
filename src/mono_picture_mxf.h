@@ -45,12 +45,16 @@ public:
 	/** Start a progressive write to a MonoPictureMXF */
 	boost::shared_ptr<PictureMXFWriter> start_write (boost::filesystem::path, Standard standard, bool);
 
+	bool equals (
+		boost::shared_ptr<const Content> other,
+		EqualityOptions opt,
+		boost::function<void (NoteType, std::string)> note
+		) const;
+	
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
-	bool equals (boost::shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 private:
 	std::string cpl_node_name () const;
-	int edit_rate_factor () const;
 };
 
 }	

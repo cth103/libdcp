@@ -128,9 +128,3 @@ MonoPictureMXF::cpl_node_name () const
 {
 	return "MainPicture";
 }
-
-int
-MonoPictureMXF::edit_rate_factor () const
-{
-	return 1;
-}

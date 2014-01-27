@@ -32,6 +32,8 @@ public:
 	ReelPictureAsset (boost::shared_ptr<PictureMXF> content, int64_t entry_point);
 	ReelPictureAsset (boost::shared_ptr<const cxml::Node>);
 
+	virtual void write_to_cpl (xmlpp::Node* node, Standard standard) const;
+
 	boost::shared_ptr<PictureMXF> mxf () {
 		return boost::dynamic_pointer_cast<PictureMXF> (_content.object ());
 	}
@@ -39,8 +41,6 @@ public:
 	void set_screen_aspect_ratio (Fraction a) {
 		_screen_aspect_ratio = a;
 	}
-
-	virtual void write_to_cpl (xmlpp::Node* node, Standard standard) const;
 
 private:
 	Fraction _frame_rate;

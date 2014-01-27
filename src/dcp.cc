@@ -162,7 +162,7 @@ DCP::equals (DCP const & other, EqualityOptions opt, boost::function<void (NoteT
 }
 
 void
-DCP::add (shared_ptr<Asset> asset)
+DCP::add (boost::shared_ptr<Asset> asset)
 {
 	_assets.push_back (asset);
 }

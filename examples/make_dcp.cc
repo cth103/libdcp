@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 */
 
 /** @file examples/make_dcp.cc
- *  @brief Shows how to make a DCP from some JPEG2000 and WAV files.
+ *  @brief Shows how to make a DCP from some JPEG2000 and audio data.
  */
 
 #include <vector>

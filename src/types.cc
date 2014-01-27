@@ -29,6 +29,9 @@ using namespace std;
 using namespace dcp;
 using namespace boost;
 
+/** Construct a Fraction from a string of the form <numerator> <denominator>
+ *  e.g. "1 3".
+ */
 Fraction::Fraction (string s)
 {
 	vector<string> b;
@@ -52,6 +55,7 @@ dcp::operator!= (Fraction const & a, Fraction const & b)
 	return (a.numerator != b.numerator || a.denominator != b.denominator);
 }
 
+/** Construct a Color, initialising it to black. */
 Color::Color ()
 	: r (0)
 	, g (0)
@@ -60,6 +64,9 @@ Color::Color ()
 
 }
 
+/** Construct a Color from R, G and B.  The values run between
+ *  0 and 255.
+ */
 Color::Color (int r_, int g_, int b_)
 	: r (r_)
 	, g (g_)

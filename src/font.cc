@@ -28,7 +28,7 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
-Font::Font (shared_ptr<const cxml::Node> node)
+Font::Font (boost::shared_ptr<const cxml::Node> node)
 {
 	text = node->content ();
 	
@@ -52,7 +52,7 @@ Font::Font (shared_ptr<const cxml::Node> node)
 	text_nodes = type_children<Text> (node, "Text");
 }
 
-Font::Font (list<shared_ptr<Font> > const & font_nodes)
+Font::Font (std::list<boost::shared_ptr<Font> > const & font_nodes)
 	: size (0)
 	, italic (false)
 	, color ("FFFFFFFF")

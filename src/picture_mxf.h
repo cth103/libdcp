@@ -20,14 +20,14 @@
 #ifndef LIBDCP_PICTURE_MXF_H
 #define LIBDCP_PICTURE_MXF_H
 
-/** @file  src/picture_asset.h
- *  @brief An asset made up of JPEG2000 data
+/** @file  src/picture_mxf.h
+ *  @brief PictureMXF class.
  */
 
-#include <openjpeg.h>
 #include "mxf.h"
 #include "util.h"
 #include "metadata.h"
+#include <openjpeg.h>
 
 namespace ASDCP {
 	namespace JP2K {
@@ -42,16 +42,20 @@ class MonoPictureFrame;
 class StereoPictureFrame;
 class PictureMXFWriter;
 
-/** @brief An asset made up of JPEG2000 data */
+/** @class PictureMXF
+ *  @brief An asset made up of JPEG2000 data.
+ */
 class PictureMXF : public MXF
 {
 public:
 	PictureMXF (boost::filesystem::path file);
 	PictureMXF (Fraction edit_rate);
 
-	virtual boost::shared_ptr<PictureMXFWriter> start_write (boost::filesystem::path file, Standard standard, bool overwrite) = 0;
-
-	void write_to_pkl (xmlpp::Node* node) const;
+	virtual boost::shared_ptr<PictureMXFWriter> start_write (
+		boost::filesystem::path file,
+		Standard standard,
+		bool overwrite
+		) = 0;
 
 	Size size () const {
 		return _size;
@@ -65,10 +69,6 @@ public:
 		return _screen_aspect_ratio;
 	}
 
-	Fraction edit_rate () const {
-		return _edit_rate;
-	}
-
 protected:	
 
 	bool frame_buffer_equals (
@@ -77,7 +77,9 @@ protected:
 		) const;
 
 	bool descriptor_equals (
-		ASDCP::JP2K::PictureDescriptor const & a, ASDCP::JP2K::PictureDescriptor const & b, boost::function<void (NoteType, std::string)>
+		ASDCP::JP2K::PictureDescriptor const & a,
+		ASDCP::JP2K::PictureDescriptor const & b,
+		boost::function<void (NoteType, std::string)>
 		) const;
 
 	void read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const &);
@@ -89,7 +91,6 @@ protected:
 
 private:
 	std::string key_type () const;
-	virtual int edit_rate_factor () const = 0;
 };
 	
 

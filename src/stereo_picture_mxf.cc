@@ -66,12 +66,6 @@ StereoPictureMXF::start_write (boost::filesystem::path file, Standard standard, 
 	return shared_ptr<StereoPictureMXFWriter> (new StereoPictureMXFWriter (this, file, standard, overwrite));
 }
 
-int
-StereoPictureMXF::edit_rate_factor () const
-{
-	return 2;
-}
-
 bool
 StereoPictureMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {

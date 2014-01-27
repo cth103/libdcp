@@ -38,7 +38,11 @@ public:
 
 	boost::shared_ptr<SoundMXFWriter> start_write (boost::filesystem::path file, Standard standard);
 	
-	bool equals (boost::shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
+	bool equals (
+		boost::shared_ptr<const Content> other,
+		EqualityOptions opt,
+		boost::function<void (NoteType, std::string)> note
+		) const;
 
 	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
 

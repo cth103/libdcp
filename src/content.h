@@ -53,8 +53,13 @@ class Content : public Asset
 public:
 	Content (boost::filesystem::path file);
 	Content (Fraction edit_rate);
-
 	virtual ~Content () {}
+
+	bool equals (
+		boost::shared_ptr<const Content> other,
+		EqualityOptions opt,
+		boost::function<void (NoteType, std::string)>
+		) const;
 
 	Fraction edit_rate () const {
 		return _edit_rate;
@@ -63,8 +68,6 @@ public:
 	int64_t intrinsic_duration () const {
 		return _intrinsic_duration;
 	}
-
-	virtual bool equals (boost::shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, std::string)>) const;
 
 protected:
 	friend class MXFWriter;

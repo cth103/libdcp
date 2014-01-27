@@ -37,6 +37,13 @@ namespace dcp {
 
 class Content;
 
+/** @class ReelAsset
+ *  @brief An entry in a &lt;Reel&gt; which refers to a use of a piece of content.
+ *
+ *  This class encapsulates the XML that exists in a &lt;Reel&gt; to say
+ *  that a piece of content is used in this reel.  It does not
+ *  describe the content itself (but links to a Content object which does).
+ */
 class ReelAsset : public Object
 {
 public:
@@ -44,37 +51,61 @@ public:
 	ReelAsset (boost::shared_ptr<Content> content, int64_t entry_point);
 	ReelAsset (boost::shared_ptr<const cxml::Node>);
 
+	virtual void write_to_cpl (xmlpp::Node* node, Standard standard) const;
+
+	virtual bool equals (
+		boost::shared_ptr<const ReelAsset>,
+		EqualityOptions,
+		boost::function<void (NoteType, std::string)>)
+		const {
+		
+		return false;
+	}
+
+	/** @return a Ref to our actual content */
 	Ref<Content> content () const {
 		return _content;
 	}
 
+	/** @return true if a KeyId is specified for this asset, implying
+	 *  that its content is encrypted.
+	 */
 	bool encrypted () const {
 		return !_key_id.empty ();
 	}
 
+	/** @return Key ID to describe the key that encrypts this asset's;
+	 *  content.
+	 */
 	std::string key_id () const {
 		return _key_id;
 	}
 
-	virtual void write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, boost::function<void (NoteType, std::string)>) const {
-		return false;
-	}
-
 protected:
+	/** @return the node name that this asset uses in the CPL's <Reel> node
+	 *  e.g. MainPicture, MainSound etc.
+	 */
 	virtual std::string cpl_node_name () const = 0;
+
+	/** @return Any attribute that should be used on the asset's node in the
+	 *  CPL.
+	 */
 	virtual std::pair<std::string, std::string> cpl_node_attribute () const;
 
+	/** Reference to the content (MXF or XML file) that this reel entry
+	 *  applies to.
+	 */
 	Ref<Content> _content;
 
 private:
-	std::string _annotation_text;
-	Fraction _edit_rate;
-	int64_t _intrinsic_duration;
-	int64_t _entry_point;
-	int64_t _duration;
-	std::string _hash;
-	std::string _key_id;
+	
+	std::string _annotation_text; ///< The <AnnotationText> from the reel's entry for this asset
+	Fraction _edit_rate;          ///< The <EditRate> from the reel's entry for this asset
+	int64_t _intrinsic_duration;  ///< The <IntrinsicDuration> from the reel's entry for this asset
+	int64_t _entry_point;         ///< The <EntryPoint> from the reel's entry for this asset
+	int64_t _duration;            ///< The <Duration> from the reel's entry for this asset
+	std::string _hash;            ///< The <Hash> from the reel's entry for this asset
+	std::string _key_id;          ///< The <KeyId> from the reel's entry for this asset, or empty if there isn't one
 };
 
 }

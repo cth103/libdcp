@@ -28,7 +28,7 @@ using boost::shared_ptr;
 using boost::lexical_cast;
 using namespace dcp;
 
-Subtitle::Subtitle (shared_ptr<const cxml::Node> node)
+Subtitle::Subtitle (boost::shared_ptr<const cxml::Node> node)
 {
 	in = Time (node->string_attribute ("TimeIn"));
 	out = Time (node->string_attribute ("TimeOut"));

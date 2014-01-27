@@ -23,7 +23,7 @@
 using boost::shared_ptr;
 using namespace dcp;
 
-LoadFont::LoadFont (shared_ptr<const cxml::Node> node)
+LoadFont::LoadFont (boost::shared_ptr<const cxml::Node> node)
 {
 	id = node->string_attribute ("Id");
 	uri = node->string_attribute ("URI");

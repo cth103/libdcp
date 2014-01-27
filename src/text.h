@@ -44,7 +44,7 @@ public:
 		: v_position (0)
 		, v_align (TOP)
 	{}
-
+	
 	Text (boost::shared_ptr<const cxml::Node> node);
 
 	float v_position;

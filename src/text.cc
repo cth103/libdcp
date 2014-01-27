@@ -35,7 +35,7 @@ using namespace dcp;
  *  in this object's member variables.
  *  @param node Node to read.
  */
-Text::Text (shared_ptr<const cxml::Node> node)
+Text::Text (boost::shared_ptr<const cxml::Node> node)
 	: v_align (CENTER)
 {
 	text = node->content ();

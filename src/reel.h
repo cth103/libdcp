@@ -40,7 +40,7 @@ class ReelPictureAsset;
 class ReelSoundAsset;
 class ReelSubtitleAsset;
 
-/** @brief A reel within a DCP; the part which actually contains picture, sound and subtitle data */	
+/** @brief A reel within a DCP; the part which actually refers to picture, sound and subtitle data */	
 class Reel : public Object
 {
 public:

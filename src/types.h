@@ -85,12 +85,20 @@ enum Eye
 	EYE_LEFT,
 	EYE_RIGHT
 };
-	
+
+/** @class Fraction
+ *  @brief A fraction (i.e. a thing with an integer numerator and an integer denominator).
+ */
 class Fraction
 {
 public:
+	/** Construct a fraction of 0/0 */
 	Fraction () : numerator (0), denominator (0) {}
 	Fraction (std::string s);
+	/** Construct a fraction with a specified numerator and denominator.
+	 *  @param n Numerator.
+	 *  @param d Denominator.
+	 */
 	Fraction (int n, int d) : numerator (n), denominator (d) {}
 
 	int numerator;
