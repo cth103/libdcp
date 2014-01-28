@@ -56,6 +56,8 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	boost::filesystem::create_directories ("build/test/foo");
 	dcp::DCP d ("build/test/foo");
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
+	cpl->set_content_version_id ("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
+	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
 
 	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
 	mp->set_progress (&d.Progress);

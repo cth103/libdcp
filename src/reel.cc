@@ -74,7 +74,7 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 	reel->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
 	xmlpp::Element* asset_list = reel->add_child ("AssetList");
 	
-	if (_main_picture && dynamic_pointer_cast<MonoPictureMXF> (_main_picture)) {
+	if (_main_picture && dynamic_pointer_cast<ReelMonoPictureAsset> (_main_picture)) {
 		/* Mono pictures come before other stuff... */
 		_main_picture->write_to_cpl (asset_list, standard);
 	}
@@ -87,7 +87,7 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 		_main_subtitle->write_to_cpl (asset_list, standard);
 	}
 
-	if (_main_picture && dynamic_pointer_cast<StereoPictureMXF> (_main_picture)) {
+	if (_main_picture && dynamic_pointer_cast<ReelStereoPictureAsset> (_main_picture)) {
 		/* ... but stereo pictures must come after */
 		_main_picture->write_to_cpl (asset_list, standard);
 	}

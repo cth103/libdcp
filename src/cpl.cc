@@ -47,9 +47,18 @@ using namespace dcp;
 
 CPL::CPL (string annotation_text, ContentKind content_kind)
 	: _annotation_text (annotation_text)
+	/* default _content_title_text to _annotation_text */
+	, _content_title_text (annotation_text)
 	, _content_kind (content_kind)
+	, _content_version_id ("urn:uuid:" + make_uuid ())
 {
-
+	/* default _content_version_id to and _content_version_label to
+	   a random ID and the current time.
+	*/
+	time_t now = time (0);
+	struct tm* tm = localtime (&now);
+	_content_version_id = "urn:uuid:" + make_uuid() + tm_to_string (tm);
+	_content_version_label_text = _content_version_id;
 }
 
 /** Construct a CPL object from a XML file */
@@ -114,7 +123,7 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, XMLMetadata met
 	root->add_child("IssueDate")->add_child_text (metadata.issue_date);
 	root->add_child("Issuer")->add_child_text (metadata.issuer);
 	root->add_child("Creator")->add_child_text (metadata.creator);
-	root->add_child("ContentTitleText")->add_child_text (_content_version_label_text);
+	root->add_child("ContentTitleText")->add_child_text (_content_title_text);
 	root->add_child("ContentKind")->add_child_text (content_kind_to_string (_content_kind));
 	{
 		xmlpp::Node* cv = root->add_child ("ContentVersion");

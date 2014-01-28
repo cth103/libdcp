@@ -40,6 +40,10 @@ ReelAsset::ReelAsset ()
 
 }
 
+/** Construct a ReelAsset.
+ *  @param content Content that this asset refers to.
+ *  @param entry_point Entry point to use in that content.
+ */
 ReelAsset::ReelAsset (boost::shared_ptr<Content> content, int64_t entry_point)
 	: Object (content->id ())
 	, _content (content)
@@ -49,7 +53,8 @@ ReelAsset::ReelAsset (boost::shared_ptr<Content> content, int64_t entry_point)
 	, _duration (_intrinsic_duration - _entry_point)
 	, _hash (make_digest (content->file (), 0))
 {
-
+	/* default _annotation_text to the leaf name of our file */
+        _annotation_text = content->file().leaf().string ();
 }
 
 ReelAsset::ReelAsset (boost::shared_ptr<const cxml::Node> node)

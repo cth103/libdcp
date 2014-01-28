@@ -70,6 +70,14 @@ public:
 	std::string content_title_text () const {
 		return _content_title_text;
 	}
+
+	void set_content_version_id (std::string id) {
+		_content_version_id = id;
+	}
+
+	void set_content_version_label_text (std::string text) {
+		_content_version_label_text = text;
+	}
 	
 	/** @return the type of the content, used by media servers
 	 *  to categorise things (e.g. feature, trailer, etc.)

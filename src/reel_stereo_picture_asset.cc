@@ -18,6 +18,7 @@
 */
 
 #include "reel_stereo_picture_asset.h"
+#include "stereo_picture_mxf.h"
 #include <libcxml/cxml.h>
 
 using std::string;
@@ -25,6 +26,17 @@ using std::pair;
 using std::make_pair;
 using boost::shared_ptr;
 using namespace dcp;
+
+ReelStereoPictureAsset::ReelStereoPictureAsset ()
+{
+
+}
+
+ReelStereoPictureAsset::ReelStereoPictureAsset (boost::shared_ptr<StereoPictureMXF> mxf, int64_t entry_point)
+	: ReelPictureAsset (mxf, entry_point)
+{
+
+}
 
 ReelStereoPictureAsset::ReelStereoPictureAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelPictureAsset (node)

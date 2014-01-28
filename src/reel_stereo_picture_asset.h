@@ -21,9 +21,13 @@
 
 namespace dcp {
 
+class StereoPictureMXF;	
+
 class ReelStereoPictureAsset : public ReelPictureAsset
 {
 public:
+	ReelStereoPictureAsset ();
+	ReelStereoPictureAsset (boost::shared_ptr<StereoPictureMXF> content, int64_t entry_point);
 	ReelStereoPictureAsset (boost::shared_ptr<const cxml::Node>);
 
 private:
