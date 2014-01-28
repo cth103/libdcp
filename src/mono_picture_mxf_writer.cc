@@ -50,6 +50,7 @@ void
 MonoPictureMXFWriter::start (uint8_t* data, int size)
 {
 	dcp::start (this, _state, _standard, _picture_mxf, data, size);
+	_picture_mxf->set_frame_rate (_picture_mxf->edit_rate());
 }
 
 FrameInfo

@@ -23,6 +23,8 @@
 
 #include "asset.h"
 #include "util.h"
+#include "exceptions.h"
+#include "compose.hpp"
 #include <libxml++/libxml++.h>
 #include <boost/lexical_cast.hpp>
 
@@ -70,7 +72,7 @@ Asset::write_to_pkl (xmlpp::Node* node) const
 }
 
 void
-Asset::write_to_assetmap (xmlpp::Node* node) const
+Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 {
 	assert (!_file.empty ());
 
@@ -78,7 +80,11 @@ Asset::write_to_assetmap (xmlpp::Node* node) const
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
 	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
-	chunk->add_child("Path")->add_child_text (_file.string ());
+	boost::optional<boost::filesystem::path> path = relative_to_root (root, _file);
+	if (!path) {
+		throw MiscError (String::compose ("Asset %1 is not within the directory %2", _file, root));
+	}
+	chunk->add_child("Path")->add_child_text (path.get().string ());
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
 	chunk->add_child("Length")->add_child_text (lexical_cast<string> (boost::filesystem::file_size (_file)));
@@ -89,7 +95,7 @@ Asset::hash () const
 {
 	assert (!_file.empty ());
 		
-	if (!_hash.empty ()) {
+	if (_hash.empty ()) {
 		_hash = make_digest (_file, 0);
 	}
 
@@ -106,3 +112,11 @@ Asset::equals (boost::shared_ptr<const Asset> other, EqualityOptions, function<v
 
 	return true;
 }
+
+void
+Asset::set_file (boost::filesystem::path file) const
+{
+	_file = boost::filesystem::absolute (file);
+	_hash.clear ();
+}
+	

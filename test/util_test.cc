@@ -70,3 +70,46 @@ BOOST_AUTO_TEST_CASE (content_kind_test)
 	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("psa"), dcp::PUBLIC_SERVICE_ANNOUNCEMENT);
 	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("advertisement"), dcp::ADVERTISEMENT);
 }
+
+BOOST_AUTO_TEST_CASE (relative_to_root_test)
+{
+	{
+		boost::filesystem::path root = "a";
+		root /= "b";
+		
+		boost::filesystem::path file = "a";
+		file /= "b";
+		file /= "c";
+		
+		boost::optional<boost::filesystem::path> rel = dcp::relative_to_root (root, file);
+		BOOST_CHECK (rel);
+		BOOST_CHECK_EQUAL (rel.get(), boost::filesystem::path ("c"));
+	}
+
+	{
+		boost::filesystem::path root = "a";
+		root /= "b";
+		root /= "c";
+		
+		boost::filesystem::path file = "a";
+		file /= "b";
+		
+		boost::optional<boost::filesystem::path> rel = dcp::relative_to_root (root, file);
+		BOOST_CHECK (!rel);
+	}
+
+	{
+		boost::filesystem::path root = "a";
+		
+		boost::filesystem::path file = "a";
+		file /= "b";
+		file /= "c";
+		
+		boost::optional<boost::filesystem::path> rel = dcp::relative_to_root (root, file);
+		BOOST_CHECK (rel);
+
+		boost::filesystem::path check = "b";
+		check /= "c";
+		BOOST_CHECK_EQUAL (rel.get(), check);
+	}
+}

@@ -48,6 +48,7 @@ void
 StereoPictureMXFWriter::start (uint8_t* data, int size)
 {
 	dcp::start (this, _state, _standard, _picture_mxf, data, size);
+	_picture_mxf->set_frame_rate (Fraction (_picture_mxf->edit_rate().numerator * 2, _picture_mxf->edit_rate().denominator));
 }
 
 /** Write a frame for one eye.  Frames must be written left, then right, then left etc.

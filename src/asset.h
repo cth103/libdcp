@@ -58,7 +58,7 @@ public:
 	/** Write details of the asset to a ASSETMAP.
 	 *  @param node Parent node.
 	 */
-	void write_to_assetmap (xmlpp::Node* node) const;
+	void write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const;
 
 	/** Write details of the asset to a PKL AssetList node.
 	 *  @param node Parent node.
@@ -69,10 +69,7 @@ public:
 		return _file;
 	}
 
-	void set_file (boost::filesystem::path file) const {
-		_file = file;
-		_hash.clear ();
-	}
+	void set_file (boost::filesystem::path file) const;
 
 	/** @return the hash of this asset's file.  It will be
 	 *  computed by this call if necessary.

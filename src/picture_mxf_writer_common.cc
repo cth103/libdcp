@@ -43,6 +43,9 @@ void dcp::start (PictureMXFWriter* writer, shared_ptr<P> state, Standard standar
 
 	state->j2k_parser.FillPictureDescriptor (state->picture_descriptor);
 	state->picture_descriptor.EditRate = ASDCP::Rational (mxf->edit_rate().numerator, mxf->edit_rate().denominator);
+
+	mxf->set_size (Size (state->picture_descriptor.StoredWidth, state->picture_descriptor.StoredHeight));
+	mxf->set_screen_aspect_ratio (Fraction (state->picture_descriptor.AspectRatio.Numerator, state->picture_descriptor.AspectRatio.Denominator));
 	
 	mxf->fill_writer_info (&state->writer_info, standard);
 	

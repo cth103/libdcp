@@ -61,15 +61,27 @@ public:
 		return _size;
 	}
 
+	void set_size (Size s) {
+		_size = s;
+	}
+
 	Fraction frame_rate () const {
 		return _frame_rate;
+	}
+
+	void set_frame_rate (Fraction r) {
+		_frame_rate = r;
 	}
 
 	Fraction screen_aspect_ratio () const {
 		return _screen_aspect_ratio;
 	}
 
-protected:	
+	void set_screen_aspect_ratio (Fraction r) {
+		_screen_aspect_ratio = r;
+	}
+
+protected:
 
 	bool frame_buffer_equals (
 		int frame, EqualityOptions opt, boost::function<void (NoteType, std::string)> note,

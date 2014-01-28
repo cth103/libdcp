@@ -384,3 +384,26 @@ dcp::fopen_boost (boost::filesystem::path p, string t)
         return fopen (p.c_str(), t.c_str ());
 #endif
 }
+
+boost::optional<boost::filesystem::path>
+dcp::relative_to_root (boost::filesystem::path root, boost::filesystem::path file)
+{
+	boost::filesystem::path::const_iterator i = root.begin ();
+	boost::filesystem::path::const_iterator j = file.begin ();
+
+	while (i != root.end() && j != file.end() && *i == *j) {
+		++i;
+		++j;
+	}
+
+	if (i != root.end ()) {
+		return boost::optional<boost::filesystem::path> ();
+	}
+
+	boost::filesystem::path rel;
+	while (j != file.end ()) {
+		rel /= *j++;
+	}
+
+	return rel;
+}

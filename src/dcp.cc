@@ -61,6 +61,7 @@ DCP::DCP (boost::filesystem::path directory)
 	: _directory (directory)
 {
 	boost::filesystem::create_directories (directory);
+	_directory = boost::filesystem::canonical (_directory);
 }
 
 void
@@ -314,7 +315,7 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 	chunk->add_child("Length")->add_child_text (lexical_cast<string> (pkl_length));
 	
 	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
-		(*i)->write_to_assetmap (asset_list);
+		(*i)->write_to_assetmap (asset_list, _directory);
 	}
 
 	/* This must not be the _formatted version otherwise signature digests will be wrong */
