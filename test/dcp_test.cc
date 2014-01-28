@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,15 +17,22 @@
 
 */
 
-#include <boost/test/unit_test.hpp>
 #include "dcp.h"
 #include "metadata.h"
 #include "cpl.h"
-#include "mono_picture_asset.h"
-#include "sound_asset.h"
+#include "mono_picture_mxf.h"
+#include "picture_mxf_writer.h"
+#include "sound_mxf_writer.h"
+#include "sound_mxf.h"
+#include "subtitle_content.h"
 #include "reel.h"
 #include "test.h"
+#include "file.h"
+#include "reel_mono_picture_asset.h"
+#include "reel_sound_asset.h"
 #include "KM_util.h"
+#include <sndfile.h>
+#include <boost/test/unit_test.hpp>
 
 using boost::shared_ptr;
 
@@ -48,30 +55,51 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	boost::filesystem::remove_all ("build/test/foo");
 	boost::filesystem::create_directories ("build/test/foo");
 	dcp::DCP d ("build/test/foo");
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("build/test/foo", "A Test DCP", dcp::FEATURE, 24, 24));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
 
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset ("build/test/foo", "video.mxf"));
+	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
 	mp->set_progress (&d.Progress);
-	mp->set_edit_rate (24);
-	mp->set_intrinsic_duration (24);
-	mp->set_duration (24);
-	mp->set_size (dcp::Size (32, 32));
 	mp->set_metadata (mxf_meta);
-	mp->create (j2c);
+	shared_ptr<dcp::PictureMXFWriter> picture_writer = mp->start_write ("build/test/DCP/bar/video.mxf", dcp::SMPTE, false);
+	dcp::File j2c ("test/data/32x32_red_square.j2c");
+	for (int i = 0; i < 24; ++i) {
+		picture_writer->write (j2c.data (), j2c.size ());
+	}
+	picture_writer->finalize ();
 
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset ("build/test/foo", "audio.mxf"));
+	shared_ptr<dcp::SoundMXF> ms (new dcp::SoundMXF (dcp::Fraction (24, 1), 48000, 1));
 	ms->set_progress (&d.Progress);
-	ms->set_edit_rate (24);
-	ms->set_intrinsic_duration (24);
-	ms->set_duration (24);
-	ms->set_channels (2);
 	ms->set_metadata (mxf_meta);
-	ms->create (wav);
-	
-	cpl->add_reel (shared_ptr<dcp::Reel> (new dcp::Reel (mp, ms, shared_ptr<dcp::SubtitleAsset> ())));
-	d.add_cpl (cpl);
+	shared_ptr<dcp::SoundMXFWriter> sound_writer = ms->start_write ("build/test/DCP/bar/audio.mxf", dcp::SMPTE);
 
-	d.write_xml (false, xml_meta);
+	SF_INFO info;
+	info.format = 0;
+	SNDFILE* sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
+	BOOST_CHECK (sndfile);
+	float buffer[4096*6];
+	float* channels[1];
+	channels[0] = buffer;
+	while (1) {
+		sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
+		sound_writer->write (channels, N);
+		if (N < 4096) {
+			break;
+		}
+	}
+	
+	sound_writer->finalize ();
+	
+	cpl->add (shared_ptr<dcp::Reel> (
+			  new dcp::Reel (
+				  shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (mp, 0)),
+				  shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (ms, 0)),
+				  shared_ptr<dcp::ReelSubtitleAsset> ()
+				  )
+			  ));
+		  
+	d.add (cpl);
+
+	d.write_xml (dcp::SMPTE, xml_meta);
 
 	/* build/test/foo is checked against test/ref/DCP/foo by run-tests.sh */
 }

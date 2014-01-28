@@ -60,7 +60,7 @@ ReelAsset::ReelAsset (boost::shared_ptr<const cxml::Node> node)
 	, _intrinsic_duration (node->number_child<int64_t> ("IntrinsicDuration"))
 	, _entry_point (node->number_child<int64_t> ("EntryPoint"))
 	, _duration (node->number_child<int64_t> ("Duration"))
-	, _hash (node->string_child ("Hash"))
+	, _hash (node->optional_string_child ("Hash").get_value_or (""))
 	, _key_id (node->optional_string_child ("KeyId").get_value_or (""))
 {
 	if (_id.length() > 9) {

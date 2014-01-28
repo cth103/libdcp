@@ -328,17 +328,17 @@ DCP::write_xml (
 	shared_ptr<const Signer> signer
 	)
 {
-	string const pkl_uuid = make_uuid ();
-	boost::filesystem::path const pkl_path = write_pkl (standard, pkl_uuid, metadata, signer);
-	
-	write_volindex (standard);
-	write_assetmap (standard, pkl_uuid, boost::filesystem::file_size (pkl_path), metadata);
-
 	list<shared_ptr<CPL> > cpl = cpls ();
 	for (list<shared_ptr<CPL> >::const_iterator i = cpl.begin(); i != cpl.end(); ++i) {
 		string const filename = (*i)->id() + "_cpl.xml";
 		(*i)->write_xml (_directory / filename, standard, metadata, signer);
 	}
+
+	string const pkl_uuid = make_uuid ();
+	boost::filesystem::path const pkl_path = write_pkl (standard, pkl_uuid, metadata, signer);
+	
+	write_volindex (standard);
+	write_assetmap (standard, pkl_uuid, boost::filesystem::file_size (pkl_path), metadata);
 }
 
 list<shared_ptr<CPL> >

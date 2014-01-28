@@ -140,22 +140,22 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, XMLMetadata met
 }
 
 list<shared_ptr<const Content> >
-CPL::assets () const
+CPL::content () const
 {
-	list<shared_ptr<const Content> > a;
+	list<shared_ptr<const Content> > c;
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		if ((*i)->main_picture ()) {
-			a.push_back ((*i)->main_picture()->mxf ());
+			c.push_back ((*i)->main_picture()->mxf ());
 		}
 		if ((*i)->main_sound ()) {
-			a.push_back ((*i)->main_sound()->mxf ());
+			c.push_back ((*i)->main_sound()->mxf ());
 		}
 		if ((*i)->main_subtitle ()) {
-			a.push_back ((*i)->main_subtitle()->subtitle_content ());
+			c.push_back ((*i)->main_subtitle()->subtitle_content ());
 		}
 	}
 
-	return a;
+	return c;
 }
 	
 bool

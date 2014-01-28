@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 
 */
 
-#include <boost/test/unit_test.hpp>
 #include "kdm.h"
 #include "KM_util.h"
 #include "metadata.h"
@@ -25,18 +24,25 @@
 #include "dcp.h"
 #include "signer.h"
 #include "cpl.h"
-#include "mono_picture_asset.h"
-#include "sound_asset.h"
+#include "mono_picture_mxf.h"
+#include "picture_mxf_writer.h"
+#include "sound_mxf.h"
 #include "reel.h"
 #include "test.h"
+#include "file.h"
 #include "signer_chain.h"
+#include "subtitle_content.h"
+#include "reel_mono_picture_asset.h"
+#include "reel_sound_asset.h"
+#include <boost/test/unit_test.hpp>
+#include <boost/shared_ptr.hpp>
 
 using boost::shared_ptr;
 
 /* Load a certificate chain from build/test/data/ *.pem and then build
    an encrypted DCP and a KDM using it.
 */
-BOOST_AUTO_TEST_CASE (encryption)
+BOOST_AUTO_TEST_CASE (encryption_test)
 {
 	boost::filesystem::remove_all ("build/test/signer");
 	boost::filesystem::create_directory ("build/test/signer");
@@ -70,34 +76,29 @@ BOOST_AUTO_TEST_CASE (encryption)
 			)
 		);
 
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("build/test/DCP/bar", "A Test DCP", dcp::FEATURE, 24, 24));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
 
 	dcp::Key key;
 	
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset ("build/test/DCP/bar", "video.mxf"));
+	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
 	mp->set_progress (&d.Progress);
-	mp->set_edit_rate (24);
-	mp->set_intrinsic_duration (24);
-	mp->set_duration (24);
-	mp->set_size (dcp::Size (32, 32));
 	mp->set_metadata (mxf_metadata);
 	mp->set_key (key);
-	mp->create (j2c);
 
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset ("build/test/DCP/bar", "audio.mxf"));
-	ms->set_progress (&d.Progress);
-	ms->set_edit_rate (24);
-	ms->set_intrinsic_duration (24);
-	mp->set_duration (24);
-	ms->set_channels (2);
-	ms->set_metadata (mxf_metadata);
-	ms->set_key (key);
-	ms->create (wav);
-	
-	cpl->add_reel (shared_ptr<dcp::Reel> (new dcp::Reel (mp, ms, shared_ptr<dcp::SubtitleAsset> ())));
-	d.add_cpl (cpl);
+	shared_ptr<dcp::PictureMXFWriter> writer = mp->start_write ("build/test/DCP/bar/video.mxf", dcp::SMPTE, false);
+	dcp::File j2c ("test/data/32x32_red_square.j2c");
+	for (int i = 0; i < 24; ++i) {
+		writer->write (j2c.data (), j2c.size ());
+	}
+	writer->finalize ();
 
-	d.write_xml (false, xml_metadata, signer);
+	cpl->add (shared_ptr<dcp::Reel> (new dcp::Reel (
+						 shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (mp, 0)),
+						 shared_ptr<dcp::ReelSoundAsset> (),
+						 shared_ptr<dcp::ReelSubtitleAsset> ()
+						 )));
+	d.add (cpl);
+	d.write_xml (dcp::SMPTE, xml_metadata, signer);
 
 	dcp::KDM kdm (
 		cpl,

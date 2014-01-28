@@ -82,7 +82,7 @@ public:
 		return _reels;
 	}
 
-	std::list<boost::shared_ptr<const Content> > assets () const;
+	std::list<boost::shared_ptr<const Content> > content () const;
 
 	bool encrypted () const;
 

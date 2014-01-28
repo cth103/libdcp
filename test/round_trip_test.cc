@@ -17,8 +17,6 @@
 
 */
 
-#include <iostream>
-#include <boost/test/unit_test.hpp>
 #include "certificates.h"
 #include "kdm.h"
 #include "signer.h"
@@ -32,7 +30,10 @@
 #include "signer_chain.h"
 #include "mono_picture_mxf_writer.h"
 #include "reel_picture_asset.h"
+#include "reel_mono_picture_asset.h"
 #include "file.h"
+#include <boost/test/unit_test.hpp>
+#include <iostream>
 
 using std::list;
 using boost::shared_ptr;
@@ -73,7 +74,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
 	shared_ptr<dcp::Reel> reel (new dcp::Reel ());
-	reel->add (shared_ptr<dcp::ReelPictureAsset> (mxf_A, 0));
+	reel->add (shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (mxf_A, 0)));
 	cpl->add (reel);
 
 	/* A KDM using our certificate chain's leaf key pair */
@@ -111,6 +112,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 		new dcp::MonoPictureMXF (work_dir / "video.mxf")
 		);
 
+	BOOST_CHECK (!kdm_B.keys().empty ());
 	mxf_B->set_key (kdm_B.keys().front().key());
 
 	shared_ptr<dcp::ARGBFrame> frame_A = mxf_A->get_frame(0)->argb_frame ();
