@@ -74,8 +74,9 @@ CPL::CPL (boost::filesystem::path file)
 		_id = _id.substr (9);
 	}
 	_annotation_text = f.optional_string_child ("AnnotationText").get_value_or ("");
-	_issue_date = f.string_child ("IssueDate");
-	_creator = f.optional_string_child ("Creator").get_value_or ("");
+	_metadata.issuer = f.optional_string_child ("Issuer").get_value_or ("");
+	_metadata.creator = f.optional_string_child ("Creator").get_value_or ("");
+	_metadata.issue_date = f.string_child ("IssueDate");
 	_content_title_text = f.string_child ("ContentTitleText");
 	_content_kind = content_kind_from_string (f.string_child ("ContentKind"));
 	shared_ptr<cxml::Node> content_version = f.optional_node_child ("ContentVersion");
@@ -106,11 +107,10 @@ CPL::add (boost::shared_ptr<Reel> reel)
 /** Write an CompositonPlaylist XML file.
  *  @param file Filename to write.
  *  @param standard INTEROP or SMPTE.
- *  @param metadata Metadata to use.
  *  @param signer Signer to sign the CPL, or 0 to add no signature.
  */
 void
-CPL::write_xml (boost::filesystem::path file, Standard standard, XMLMetadata metadata, shared_ptr<const Signer> signer) const
+CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<const Signer> signer) const
 {
 	xmlpp::Document doc;
 	xmlpp::Element* root;
@@ -126,9 +126,9 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, XMLMetadata met
 	
 	root->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	root->add_child("AnnotationText")->add_child_text (_annotation_text);
-	root->add_child("IssueDate")->add_child_text (metadata.issue_date);
-	root->add_child("Issuer")->add_child_text (metadata.issuer);
-	root->add_child("Creator")->add_child_text (metadata.creator);
+	root->add_child("IssueDate")->add_child_text (_metadata.issue_date);
+	root->add_child("Issuer")->add_child_text (_metadata.issuer);
+	root->add_child("Creator")->add_child_text (_metadata.creator);
 	root->add_child("ContentTitleText")->add_child_text (_content_title_text);
 	root->add_child("ContentKind")->add_child_text (content_kind_to_string (_content_kind));
 	{

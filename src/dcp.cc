@@ -322,6 +322,11 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 	doc.write_to_file (p.string (), "UTF-8");
 }
 
+/** Write all the XML files for this DCP.
+ *  @param standand INTEROP or SMPTE.
+ *  @param metadata Metadata to use for PKL and asset map files.
+ *  @param signer Signer to use, or 0.
+ */
 void
 DCP::write_xml (
 	Standard standard,
@@ -332,7 +337,7 @@ DCP::write_xml (
 	list<shared_ptr<CPL> > cpl = cpls ();
 	for (list<shared_ptr<CPL> >::const_iterator i = cpl.begin(); i != cpl.end(); ++i) {
 		string const filename = (*i)->id() + "_cpl.xml";
-		(*i)->write_xml (_directory / filename, standard, metadata, signer);
+		(*i)->write_xml (_directory / filename, standard, signer);
 	}
 
 	string const pkl_uuid = make_uuid ();

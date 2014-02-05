@@ -24,6 +24,7 @@
 #include "certificates.h"
 #include "key.h"
 #include "asset.h"
+#include "metadata.h"
 #include <libxml++/libxml++.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
@@ -103,7 +104,6 @@ public:
 	void write_xml (
 		boost::filesystem::path file,
 		Standard standard,
-		XMLMetadata,
 		boost::shared_ptr<const Signer>
 		) const;
 
@@ -117,8 +117,10 @@ protected:
 
 private:
 	std::string _annotation_text;               ///< <AnnotationText>
-	std::string _issue_date;                    ///< <IssueDate>
-	std::string _creator;                       ///< <Creator>
+	/** <Issuer>, <Creator> and <IssueDate>.  These are grouped
+	 *  because they occur together in a few places.
+	 */
+	XMLMetadata _metadata;
 	std::string _content_title_text;            ///< <ContentTitleText>
 	ContentKind _content_kind;                  ///< <ContentKind>
 	std::string _content_version_id;            ///< <Id> in <ContentVersion>
