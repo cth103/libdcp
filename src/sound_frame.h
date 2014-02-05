@@ -25,6 +25,7 @@
 #define LIBDCP_SOUND_FRAME_H
 
 #include <boost/noncopyable.hpp>
+#include <boost/filesystem.hpp>
 #include <stdint.h>
 #include <string>
 

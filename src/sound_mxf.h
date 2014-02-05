@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/sound_mxf.h
+ *  @brief SoundMXF class
+ */
+
 #ifndef LIBDCP_SOUND_MXF_H
 #define LIBDCP_SOUND_MXF_H
 
@@ -30,6 +34,9 @@ namespace dcp
 class SoundFrame;
 class SoundMXFWriter;
 
+/** @class SoundMXF
+ *  @brief Representation of a MXF file containing sound
+ */
 class SoundMXF : public MXF
 {
 public:
@@ -46,18 +53,12 @@ public:
 
 	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
 
-	void set_channels (int c) {
-		_channels = c;
-	}
-	
+	/** @return number of channels */
 	int channels () const {
 		return _channels;
 	}
 
-	void set_sampling_rate (int s) {
-		_sampling_rate = s;
-	}
-
+	/** @return sampling rate in Hz */
 	int sampling_rate () const {
 		return _sampling_rate;
 	}
@@ -65,9 +66,8 @@ public:
 private:
 	std::string key_type () const;
 
-	/** Number of channels in the asset */
-	int _channels;
-	int _sampling_rate;
+	int _channels;      ///< number of channels
+	int _sampling_rate; ///< sampling rate in Hz
 };
 
 }
