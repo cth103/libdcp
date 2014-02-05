@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/reel_subtitle_asset.cc
+ *  @brief ReelSubtitleAsset class.
+ */
+
 #include "subtitle_content.h"
 #include "reel_subtitle_asset.h"
 

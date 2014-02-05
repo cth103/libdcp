@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/reel_picture_asset.h
+ *  @brief ReelPictureAsset class.
+ */
+
 #include "content.h"
 #include "reel_picture_asset.h"
 #include "picture_mxf.h"

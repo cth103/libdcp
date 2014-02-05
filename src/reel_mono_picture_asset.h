@@ -17,12 +17,22 @@
 
 */
 
+/** @file  src/reel_mono_picture_asset.h
+ *  @brief ReelMonoPictureAsset class.
+ */
+
+#ifndef LIBDCP_REEL_MONO_PICTURE_ASSET_H
+#define LIBDCP_REEL_MONO_PICTURE_ASSET_H
+
 #include "reel_picture_asset.h"
 
 namespace dcp {
 
 class MonoPictureMXF;	
 
+/** @class ReelMonoPictureAsset
+ *  @brief Part of a Reel's description which refers to a monoscopic picture MXF.
+ */
 class ReelMonoPictureAsset : public ReelPictureAsset
 {
 public:
@@ -36,5 +46,4 @@ private:
 
 }
 
-	
-		
+#endif

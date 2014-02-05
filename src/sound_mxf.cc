@@ -161,7 +161,7 @@ shared_ptr<const SoundFrame>
 SoundMXF::get_frame (int n) const
 {
 	/* XXX: should add on entry point here? */
-	return shared_ptr<const SoundFrame> (new SoundFrame (file().string(), n, _decryption_context));
+	return shared_ptr<const SoundFrame> (new SoundFrame (file(), n, _decryption_context));
 }
 
 shared_ptr<SoundMXFWriter>

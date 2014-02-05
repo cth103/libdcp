@@ -82,7 +82,7 @@ public:
 	}
 
 protected:
-	/** @return the node name that this asset uses in the CPL's <Reel> node
+	/** @return the node name that this asset uses in the CPL's &lt;Reel&gt; node
 	 *  e.g. MainPicture, MainSound etc.
 	 */
 	virtual std::string cpl_node_name () const = 0;

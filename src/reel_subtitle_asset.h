@@ -17,12 +17,22 @@
 
 */
 
+/** @file  src/reel_subtitle_asset.h
+ *  @brief ReelSubtitleAsset class.
+ */
+
+#ifndef LIBDCP_REEL_SUBTITLE_ASSET_H
+#define LIBDCP_REEL_SUBTITLE_ASSET_H
+
 #include "reel_asset.h"
 
 namespace dcp {
 
 class SubtitleContent;
 
+/** @class ReelSubtitleAsset
+ *  @brief Part of a Reel's description which refers to a subtitle XML file.
+ */
 class ReelSubtitleAsset : public ReelAsset
 {
 public:
@@ -38,3 +48,5 @@ private:
 };
 
 }
+
+#endif

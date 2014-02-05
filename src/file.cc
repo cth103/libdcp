@@ -17,11 +17,18 @@
 
 */
 
+/** @file  src/file.cc
+ *  @brief File class.
+ */
+
 #include "file.h"
 #include "util.h"
 
 using namespace dcp;
 
+/** Read a file into memory.
+ *  @param file to read.
+ */
 File::File (boost::filesystem::path file)
 {
 	_size = boost::filesystem::file_size (file);
@@ -32,6 +39,7 @@ File::File (boost::filesystem::path file)
 	fclose (f);
 }
 
+/** File destructor */
 File::~File ()
 {
 	delete[] _data;

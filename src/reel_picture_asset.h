@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/reel_picture_asset.h
+ *  @brief ReelPictureAsset class.
+ */
+
 #ifndef LIBDCP_REEL_PICTURE_ASSET_H
 #define LIBDCP_REEL_PICTURE_ASSET_H
 
@@ -25,6 +29,9 @@
 
 namespace dcp {
 
+/** @class ReelPictureAsset
+ *  @brief Part of a Reel's description which refers to a picture MXF.
+ */
 class ReelPictureAsset : public ReelAsset
 {
 public:

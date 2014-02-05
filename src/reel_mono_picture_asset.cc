@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/reel_mono_picture_asset.cc
+ *  @brief ReelMonoPictureAsset class.
+ */
+
 #include "reel_mono_picture_asset.h"
 #include "mono_picture_mxf.h"
 #include <libcxml/cxml.h>

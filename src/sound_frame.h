@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/sound_frame.h
+ *  @brief SoundFrame class.
+ */
+
 #ifndef LIBDCP_SOUND_FRAME_H
 #define LIBDCP_SOUND_FRAME_H
 
@@ -33,16 +37,20 @@ namespace ASDCP {
 
 namespace dcp {
 
+/** @class SoundFrame
+ *  @brief One &lsquo;frame&rsquo; of sound data from a MXF.
+ */
 class SoundFrame : public boost::noncopyable
 {
 public:
-	SoundFrame (std::string mxf_path, int n, ASDCP::AESDecContext *);
+	SoundFrame (boost::filesystem::path mxf_path, int n, ASDCP::AESDecContext *);
 	~SoundFrame ();
 
 	uint8_t const * data () const;
 	int size () const;
 
 private:
+	/** a buffer to hold the frame */
 	ASDCP::PCM::FrameBuffer* _buffer;
 };
 

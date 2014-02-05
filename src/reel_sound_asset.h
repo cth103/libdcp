@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/reel_sound_asset.h
+ *  @brief ReelSoundAsset class.
+ */
+
 #include "reel_asset.h"
 #include "sound_mxf.h"
 #include <boost/shared_ptr.hpp>
@@ -24,6 +28,9 @@
 
 namespace dcp {
 
+/** @class ReelSoundAsset
+ *  @brief Part of a Reel's description which refers to a sound MXF.
+ */
 class ReelSoundAsset : public ReelAsset
 {
 public:

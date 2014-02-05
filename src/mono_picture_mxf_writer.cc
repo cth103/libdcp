@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/mono_picture_mxf_writer.cc
+ *  @brief MonoPictureMXFWriter class
+ */
+
 #include "AS_DCP.h"
 #include "KM_fileio.h"
 #include "mono_picture_mxf_writer.h"

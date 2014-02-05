@@ -17,6 +17,13 @@
 
 */
 
+/** @file  src/mono_picture_mxf_writer.h
+ *  @brief MonoPictureMXFWriter class
+ */
+
+#ifndef LIBDCP_MONO_PICTURE_MXF_WRITER_H
+#define LIBDCP_MONO_PICTURE_MXF_WRITER_H
+
 #include "picture_mxf_writer.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
@@ -26,7 +33,8 @@
 
 namespace dcp {
 
-/** A helper class for writing to MonoPictureMXFs.
+/** @class MonoPictureMXFWriter
+ *  @brief A helper class for writing to MonoPictureMXFs
  *
  *  Objects of this class can only be created with MonoPictureMXF::start_write().
  *
@@ -57,3 +65,5 @@ private:
 };
 
 }
+
+#endif

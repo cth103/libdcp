@@ -26,10 +26,10 @@
 
 namespace dcp {
 
-/* @class XYZFrame
- * @brief An image in XYZ colour.
+/** @class XYZFrame
+ *  @brief An image in XYZ colour.
  *
- * This class is a thin wrapper of libopenjpeg's opj_image_t.
+ *  This class is a thin wrapper of libopenjpeg's opj_image_t.
  */
 class XYZFrame : public boost::noncopyable
 {

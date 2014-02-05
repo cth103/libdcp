@@ -20,7 +20,7 @@ An example of DCP creation is given in examples/make_dcp.cc.
 Reading existing DCPs
 --
 
-An example of DCP reading is given in example/read_dcp.cc.
+An example of DCP reading is given in examples/read_dcp.cc.
 */
 
 

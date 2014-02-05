@@ -45,6 +45,9 @@ class CertificateChain;
 class GammaLUT;
 class XYZFrame;
 
+/** @struct Size
+ *  @brief The integer, two-dimensional size of something.
+ */
 struct Size
 {
 	Size ()

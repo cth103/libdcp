@@ -17,10 +17,20 @@
 
 */
 
+/** @file  src/file.h
+ *  @brief File class.
+ */
+
+#ifndef LIBDCP_FILE_H
+#define LIBDCP_FILE_H
+
 #include <boost/filesystem.hpp>
 
 namespace dcp {
 
+/** @class File
+ *  @brief Helper class which loads a file into memory.
+ */
 class File
 {
 public:
@@ -36,8 +46,10 @@ public:
 	}
 
 private:
-	uint8_t* _data;
-	int64_t _size;
+	uint8_t* _data; ///< file's data
+	int64_t _size;  ///< data size in bytes
 };
 
 }
+
+#endif

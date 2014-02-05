@@ -17,6 +17,13 @@
 
 */
 
+/** @file  src/picture_mxf_writer.h
+ *  @brief PictureMXFWriter and FrameInfo classes.
+ */
+
+#ifndef LIBDCP_PICTURE_MXF_WRITER_H
+#define LIBDCP_PICTURE_MXF_WRITER_H
+
 #include "metadata.h"
 #include "types.h"
 #include "mxf_writer.h"
@@ -30,7 +37,9 @@ namespace dcp {
 
 class PictureMXF;	
 
-/** Information about a single frame (either a monoscopic frame or a left *or* right eye stereoscopic frame) */	
+/** @class FrameInfo
+ *  @brief Information about a single frame (either a monoscopic frame or a left *or* right eye stereoscopic frame)
+ */
 struct FrameInfo
 {
 	FrameInfo (uint64_t o, uint64_t s, std::string h)
@@ -50,6 +59,9 @@ struct FrameInfo
 	std::string hash;
 };
 
+/** @class PictureMXFWriter
+ *  @brief Parent class for classes which write picture MXF files.
+ */
 class PictureMXFWriter : public MXFWriter
 {
 public:
@@ -69,3 +81,5 @@ protected:
 };
 
 }
+
+#endif

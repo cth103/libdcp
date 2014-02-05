@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/reel_sound_asset.cc
+ *  @brief ReelSoundAsset class.
+ */
+
 #include "reel_sound_asset.h"
 #include <libcxml/cxml.h>
 

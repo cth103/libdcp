@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/reel_stereo_picture_asset.cc
+ *  @brief ReelStereoPictureAsset class.
+ */
+
 #include "reel_stereo_picture_asset.h"
 #include "stereo_picture_mxf.h"
 #include <libcxml/cxml.h>

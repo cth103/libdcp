@@ -17,12 +17,22 @@
 
 */
 
+/** @file  src/reel_stereo_picture_asset.h
+ *  @brief ReelStereoPictureAsset class.
+ */
+
+#ifndef LIBDCP_REEL_STEREO_PICTURE_ASSET_H
+#define LIBDCP_REEL_STEREO_PICTURE_ASSET_H
+
 #include "reel_picture_asset.h"
 
 namespace dcp {
 
 class StereoPictureMXF;	
 
+/** @class ReelStereoPictureAsset
+ *  @brief Part of a Reel's description which refers to a stereoscopic picture MXF.
+ */
 class ReelStereoPictureAsset : public ReelPictureAsset
 {
 public:
@@ -37,5 +47,5 @@ private:
 
 }
 
-	
-		
+#endif
+
