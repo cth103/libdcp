@@ -60,22 +60,22 @@ public:
 	void add (boost::shared_ptr<Reel> reel);
 	void add (KDM const &);
 
-	/** @return contents of the <AnnotationText> node */
+	/** @return contents of the &lt;AnnotationText&gt; node */
 	std::string annotation_text () const {
 		return _annotation_text;
 	}
 	
-	/** @return contents of the <ContentTitleText> node */
+	/** @return contents of the &lt;ContentTitleText&gt; node */
 	std::string content_title_text () const {
 		return _content_title_text;
 	}
 
-	/** @return contents of the <Id> node within <ContentVersion> */
+	/** @return contents of the &lt;Id&gt; node within &lt;ContentVersion&gt; */
 	void set_content_version_id (std::string id) {
 		_content_version_id = id;
 	}
 
-	/** @return contents of the <LabelText> node within <ContentVersion> */
+	/** @return contents of the &lt;LabelText&gt; node within &lt;ContentVersion&gt; */
 	void set_content_version_label_text (std::string text) {
 		_content_version_label_text = text;
 	}
@@ -116,15 +116,15 @@ protected:
 	}
 
 private:
-	std::string _annotation_text;               ///< <AnnotationText>
-	/** <Issuer>, <Creator> and <IssueDate>.  These are grouped
+	std::string _annotation_text;               ///< &lt;AnnotationText&gt;
+	/** &lt;Issuer&gt;, &lt;Creator&gt; and &lt;IssueDate&gt;.  These are grouped
 	 *  because they occur together in a few places.
 	 */
 	XMLMetadata _metadata;
-	std::string _content_title_text;            ///< <ContentTitleText>
-	ContentKind _content_kind;                  ///< <ContentKind>
-	std::string _content_version_id;            ///< <Id> in <ContentVersion>
-	std::string _content_version_label_text;    ///< <LabelText> in <ContentVersion>
+	std::string _content_title_text;            ///< &lt;ContentTitleText&gt;
+	ContentKind _content_kind;                  ///< &lt;ContentKind&gt;
+	std::string _content_version_id;            ///< &lt;Id&gt; in &lt;ContentVersion&gt;
+	std::string _content_version_label_text;    ///< &lt;LabelText&gt; in &lt;ContentVersion&gt;
 	std::list<boost::shared_ptr<Reel> > _reels;
 };
 
