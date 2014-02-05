@@ -50,10 +50,6 @@ public:
 	CPL (std::string annotation_text, ContentKind content_kind);
 	CPL (boost::filesystem::path file);
 
-	std::string pkl_type () const {
-		return "text/xml";
-	}
-
 	bool equals (
 		CPL const & other,
 		EqualityOptions options,
@@ -62,19 +58,23 @@ public:
 
 	void add (boost::shared_ptr<Reel> reel);
 	void add (KDM const &);
-	
+
+	/** @return contents of the <AnnotationText> node */
 	std::string annotation_text () const {
 		return _annotation_text;
 	}
 	
+	/** @return contents of the <ContentTitleText> node */
 	std::string content_title_text () const {
 		return _content_title_text;
 	}
 
+	/** @return contents of the <Id> node within <ContentVersion> */
 	void set_content_version_id (std::string id) {
 		_content_version_id = id;
 	}
 
+	/** @return contents of the <LabelText> node within <ContentVersion> */
 	void set_content_version_label_text (std::string text) {
 		_content_version_label_text = text;
 	}
@@ -86,10 +86,14 @@ public:
 		return _content_kind;
 	}
 
+	/** @return the reels in this CPL */
 	std::list<boost::shared_ptr<Reel> > reels () const {
 		return _reels;
 	}
 
+	/** @return the Content in this CPL across all its reels
+	 *  (Content is picture, sound and subtitles)
+	 */
 	std::list<boost::shared_ptr<const Content> > content () const;
 
 	bool encrypted () const;
@@ -104,7 +108,13 @@ public:
 		) const;
 
 	void resolve_refs (std::list<boost::shared_ptr<Object> >);
-	
+
+protected:
+	/** @return type string for PKLs for this asset */
+	std::string pkl_type () const {
+		return "text/xml";
+	}
+
 private:
 	std::string _annotation_text;               ///< <AnnotationText>
 	std::string _issue_date;                    ///< <IssueDate>

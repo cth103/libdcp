@@ -47,10 +47,6 @@ public:
 
 	virtual std::string key_type () const = 0;
 	
-	std::string pkl_type () const {
-		return "application/x-smpte-mxf";
-	}
-	
 	bool equals (
 		boost::shared_ptr<const Content> other,
 		EqualityOptions opt,
@@ -98,6 +94,10 @@ public:
 	}
 
 protected:
+	std::string pkl_type () const {
+		return "application/x-smpte-mxf";
+	}
+	
 	void read_writer_info (ASDCP::WriterInfo const &);
 	
 	/** Signal to emit to report progress, or 0 */

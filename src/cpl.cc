@@ -103,6 +103,12 @@ CPL::add (boost::shared_ptr<Reel> reel)
 	_reels.push_back (reel);
 }
 
+/** Write an CompositonPlaylist XML file.
+ *  @param file Filename to write.
+ *  @param standard INTEROP or SMPTE.
+ *  @param metadata Metadata to use.
+ *  @param signer Signer to sign the CPL, or 0 to add no signature.
+ */
 void
 CPL::write_xml (boost::filesystem::path file, Standard standard, XMLMetadata metadata, shared_ptr<const Signer> signer) const
 {
@@ -214,6 +220,10 @@ CPL::encrypted () const
 	return false;
 }
 
+/** Add a KDM to this CPL.  If the KDM is for any of this CPLs assets it will be used
+ *  to decrypt those assets.
+ *  @param kdm KDM.
+ */
 void
 CPL::add (KDM const & kdm)
 {

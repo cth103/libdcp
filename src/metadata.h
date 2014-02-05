@@ -31,6 +31,9 @@ class utc_offset_to_string_test;
 namespace dcp
 {
 
+/** @class MXFMetadata
+ *  @brief Metadata that is written to a MXF file's header
+ */
 class MXFMetadata
 {
 public:
@@ -41,6 +44,9 @@ public:
 	std::string product_version;
 };
 
+/** @class XMLMetadata
+ *  @brief Common metadata that is written to a few different XML files
+ */
 class XMLMetadata
 {
 public:

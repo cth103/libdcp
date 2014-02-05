@@ -42,10 +42,6 @@ public:
 	SubtitleContent (boost::filesystem::path file);
 	SubtitleContent (Fraction edit_rate, std::string movie_title, std::string language);
 
-	std::string pkl_type () const {
-		return "text/xml";
-	}
-	
 	bool equals (
 		boost::shared_ptr<const Content>,
 		EqualityOptions,
@@ -70,6 +66,11 @@ public:
 	void write_xml () const;
 	Glib::ustring xml_as_string () const;
 
+protected:
+	std::string pkl_type () const {
+		return "text/xml";
+	}
+	
 private:
 	std::string font_id_to_name (std::string id) const;
 

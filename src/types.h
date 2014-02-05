@@ -107,8 +107,16 @@ public:
 
 extern bool operator== (Fraction const & a, Fraction const & b);
 extern bool operator!= (Fraction const & a, Fraction const & b);
-	
-struct EqualityOptions {
+
+/** @struct EqualityOptions
+ *  @brief  A class to describe what "equality" means for a particular test.
+ *
+ *  When comparing things, we want to be able to ignore some differences;
+ *  this class expresses those differences.
+ */
+struct EqualityOptions
+{
+	/** Construct an EqualityOptions where nothing at all can differ */
 	EqualityOptions () 
 		: max_mean_pixel_error (0)
 		, max_std_dev_pixel_error (0)
@@ -117,10 +125,15 @@ struct EqualityOptions {
 		, mxf_names_can_differ (false)
 	{}
 
+	/** The maximum allowable mean difference in pixel value between two images */
 	double max_mean_pixel_error;
+	/** The maximum standard deviation of the differences in pixel value between two images */
 	double max_std_dev_pixel_error;
+	/** The maximum difference in audio sample value between two soundtracks */
 	int max_audio_sample_error;
+	/** true if the <AnnotationText> nodes of CPLs are allowed to differ */
 	bool cpl_annotation_texts_can_differ;
+	/** true if MXF filenames are allowed to differ */
 	bool mxf_names_can_differ;
 };
 

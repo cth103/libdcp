@@ -28,6 +28,8 @@ namespace dcp {
 
 /* @class XYZFrame
  * @brief An image in XYZ colour.
+ *
+ * This class is a thin wrapper of libopenjpeg's opj_image_t.
  */
 class XYZFrame : public boost::noncopyable
 {
@@ -39,12 +41,15 @@ public:
 	int* data (int) const;
 	dcp::Size size () const;
 
+	/** @return Pointer to opj_image_t struct.  The caller
+	 *  must not delete this.
+	 */
 	opj_image_t* opj_image () const {
 		return _opj_image;
 	}
 
 private:
-	opj_image_t* _opj_image;
+	opj_image_t* _opj_image; ///< opj_image_t that we are managing
 };
 
 }

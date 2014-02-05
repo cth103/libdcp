@@ -48,13 +48,15 @@ public:
 	ARGBFrame (Size size);
 	~ARGBFrame ();
 
+	/** @return pointer to the image data */
 	uint8_t* data () const {
 		return _data;
 	}
 
-	/** Length of one picture row in bytes */
+	/** @return length of one picture row in bytes */
 	int stride () const;
 
+	/** @return size of the picture in pixels */
 	Size size () const {
 		return _size;
 	}

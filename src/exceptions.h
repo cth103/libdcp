@@ -29,7 +29,9 @@
 namespace dcp
 {
 
-/** @brief An exception related to a file */
+/** @class FileError
+ *  @brief An exception related to a file
+ */
 class FileError : public std::exception
 {
 public:
@@ -59,7 +61,9 @@ private:
 	int _number;
 };
 
-/** @brief An exception related to an MXF file */
+/** @class MXFFileError
+ *  @brief An exception related to an MXF file
+ */
 class MXFFileError : public FileError
 {
 public:
@@ -68,7 +72,9 @@ public:
 	{}
 };
 	
-/** @brief A miscellaneous exception */
+/** @class MiscError
+ *  @brief A miscellaneous exception
+ */
 class MiscError : public std::exception
 {
 public:
@@ -85,7 +91,9 @@ private:
 	std::string _message;
 };
 
-/** @brief A DCP read exception */
+/** @class DCPReadError
+ *  @brief A DCP read exception
+ */
 class DCPReadError : public std::exception
 {
 public:
@@ -102,7 +110,9 @@ private:
 	std::string _message;
 };
 
-/** @brief An XML error */
+/** @class XMLError
+ *  @brief An XML error
+ */
 class XMLError : public std::exception
 {
 public:
@@ -119,6 +129,9 @@ private:
 	std::string _message;
 };
 
+/** @class UnresolvedRefError
+ *  @brief An exception caused by a reference (by UUID) to something which is not known
+ */
 class UnresolvedRefError : public std::exception
 {
 public:

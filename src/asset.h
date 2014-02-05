@@ -48,7 +48,6 @@ public:
 	Asset (boost::filesystem::path file);
 	Asset (std::string id);
 
-	virtual std::string pkl_type () const = 0;
 	virtual bool equals (
 		boost::shared_ptr<const Asset> other,
 		EqualityOptions opt,
@@ -77,6 +76,8 @@ public:
 	std::string hash () const;
 
 protected:
+	virtual std::string pkl_type () const = 0;
+	
 	/** The disk file that represents this asset, if one exists */
 	mutable boost::filesystem::path _file;
 	/** Hash of _file, or empty if the hash has not yet been computed */
