@@ -43,7 +43,6 @@ using namespace dcp;
 
 MXF::MXF (Fraction edit_rate)
 	: Content (edit_rate)
-	, _progress (0)
 	, _encryption_context (0)
 	, _decryption_context (0)
 {
@@ -52,7 +51,6 @@ MXF::MXF (Fraction edit_rate)
 
 MXF::MXF (boost::filesystem::path file)
 	: Content (file)
-	, _progress (0)
 	, _encryption_context (0)
 	, _decryption_context (0)
 {

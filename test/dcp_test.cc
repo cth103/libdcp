@@ -60,7 +60,6 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
 
 	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
-	mp->set_progress (&d.Progress);
 	mp->set_metadata (mxf_meta);
 	shared_ptr<dcp::PictureMXFWriter> picture_writer = mp->start_write ("build/test/foo/video.mxf", dcp::SMPTE, false);
 	dcp::File j2c ("test/data/32x32_red_square.j2c");
@@ -70,7 +69,6 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	picture_writer->finalize ();
 
 	shared_ptr<dcp::SoundMXF> ms (new dcp::SoundMXF (dcp::Fraction (24, 1), 48000, 1));
-	ms->set_progress (&d.Progress);
 	ms->set_metadata (mxf_meta);
 	shared_ptr<dcp::SoundMXFWriter> sound_writer = ms->start_write ("build/test/foo/audio.mxf", dcp::SMPTE);
 

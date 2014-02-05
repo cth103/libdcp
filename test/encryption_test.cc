@@ -81,7 +81,6 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	dcp::Key key;
 	
 	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
-	mp->set_progress (&d.Progress);
 	mp->set_metadata (mxf_metadata);
 	mp->set_key (key);
 

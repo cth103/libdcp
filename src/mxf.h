@@ -45,6 +45,7 @@ public:
 	MXF (boost::filesystem::path file);
 	~MXF ();
 
+	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */
 	virtual std::string key_type () const = 0;
 	
 	bool equals (
@@ -59,36 +60,43 @@ public:
 	 */
 	void fill_writer_info (ASDCP::WriterInfo* w, Standard standard);
 
-	void set_progress (boost::signals2::signal<void (float)>* progress) {
-		_progress = progress;
-	}
-
+	/** @return true if the data is encrypted */
 	bool encrypted () const {
 		return !_key_id.empty ();
 	}
 
+	/** Set the ID of the key that is used for encryption/decryption.
+	 *  @param i key ID.
+	 */
 	void set_key_id (std::string i) {
 		_key_id = i;
 	}
 
+	/** @return the ID of the key used for encryption/decryption, or an empty string */
 	std::string key_id () const {
 		return _key_id;
 	}
-	
+
 	void set_key (Key);
 
+	/** @return encryption/decryption key, if one has been set */
 	boost::optional<Key> key () const {
 		return _key;
 	}
 
+	/** @return encryption context, set up with any key that has been passed to set_key() */
 	ASDCP::AESEncContext* encryption_context () const {
 		return _encryption_context;
 	}
 
+	/** Set the metadata that is written to the MXF file.
+	 *  @param m Metadata.
+	 */
 	void set_metadata (MXFMetadata m) {
 		_metadata = m;
 	}
 
+	/** @return metadata from the MXF file */
 	MXFMetadata metadata () const {
 		return _metadata;
 	}
@@ -100,11 +108,11 @@ protected:
 	
 	void read_writer_info (ASDCP::WriterInfo const &);
 	
-	/** Signal to emit to report progress, or 0 */
-	boost::signals2::signal<void (float)>* _progress;
 	ASDCP::AESEncContext* _encryption_context;
 	ASDCP::AESDecContext* _decryption_context;
+	/** ID of the key used for encryption/decryption, or an empty string */
 	std::string _key_id;
+	/** Key used for encryption/decryption, if there is one */
 	boost::optional<Key> _key;
 	MXFMetadata _metadata;
 };

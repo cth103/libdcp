@@ -97,11 +97,6 @@ public:
 		boost::shared_ptr<const Signer> signer = boost::shared_ptr<const Signer> ()
 	);
 
-	/** Emitted with a parameter between 0 and 1 to indicate progress
-	 *  for long jobs.
-	 */
-	boost::signals2::signal<void (float)> Progress;
-
 private:
 
 	/** Write the PKL file.
