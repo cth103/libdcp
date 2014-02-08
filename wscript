@@ -115,7 +115,7 @@ def build(bld):
     bld(source = 'libdcp.pc.in',
         version = VERSION,
         includedir = '%s/include' % bld.env.PREFIX,
-        libs = "-L${libdir} -ldcp -lasdcp-libdcp -lkumu-libdcp -lboost_system%s" % boost_lib_suffix,
+        libs = "-L${libdir} -ldcp -lasdcp-libdcp -lkumu-libdcp -lcxml -lboost_system%s" % boost_lib_suffix,
         install_path = '${LIBDIR}/pkgconfig')
 
     bld.recurse('src')
