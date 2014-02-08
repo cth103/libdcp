@@ -112,6 +112,12 @@ public:
 		return _sampling_rate;
 	}
 
+protected:
+
+	std::string asdcp_kind () const {
+		return "Sound";
+	}
+	
 private:
 	std::string key_type () const;
 	void construct (boost::function<boost::filesystem::path (Channel)> get_path);

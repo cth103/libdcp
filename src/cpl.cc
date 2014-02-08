@@ -243,13 +243,17 @@ CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<const Sig
 }
 
 void
-CPL::write_to_pkl (xmlpp::Node* node) const
+CPL::write_to_pkl (xmlpp::Node* node, bool interop) const
 {
 	xmlpp::Node* asset = node->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	asset->add_child("Hash")->add_child_text (_digest);
 	asset->add_child("Size")->add_child_text (lexical_cast<string> (_length));
-	asset->add_child("Type")->add_child_text ("text/xml");
+	if (interop) {
+		asset->add_child("Type")->add_child_text ("text/xml;asdcpKind=CPL");
+	} else {
+		asset->add_child("Type")->add_child_text ("text/xml");
+	}
 }
 
 list<shared_ptr<const Asset> >

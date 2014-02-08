@@ -111,11 +111,11 @@ DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, sha
 	xmlpp::Element* asset_list = pkl->add_child("AssetList");
 	list<shared_ptr<const Asset> > a = assets ();
 	for (list<shared_ptr<const Asset> >::const_iterator i = a.begin(); i != a.end(); ++i) {
-		(*i)->write_to_pkl (asset_list);
+		(*i)->write_to_pkl (asset_list, interop);
 	}
 	
 	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
-		(*i)->write_to_pkl (asset_list);
+		(*i)->write_to_pkl (asset_list, interop);
 	}
 
 	if (signer) {
@@ -138,7 +138,12 @@ DCP::write_volindex (bool interop) const
 	}
 
 	xmlpp::Document doc;
-	xmlpp::Element* root = doc.create_root_node ("VolumeIndex", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
+	xmlpp::Element* root;
+	if (interop) {
+		root = doc.create_root_node ("VolumeIndex", "http://www.digicine.com/PROTO-ASDCP-AM-20040311#");
+	} else {
+		root = doc.create_root_node ("VolumeIndex", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
+	}
 	root->add_child("Index")->add_child_text ("1");
 	doc.write_to_file (p.string (), "UTF-8");
 }

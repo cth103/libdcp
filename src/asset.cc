@@ -31,6 +31,7 @@
 #include "asset.h"
 #include "util.h"
 #include "metadata.h"
+#include "compose.hpp"
 
 using namespace std;
 using namespace boost;
@@ -51,14 +52,18 @@ Asset::Asset (boost::filesystem::path directory, boost::filesystem::path file_na
 }
 
 void
-Asset::write_to_pkl (xmlpp::Node* node) const
+Asset::write_to_pkl (xmlpp::Node* node, bool interop) const
 {
 	xmlpp::Node* asset = node->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
 	asset->add_child("AnnotationText")->add_child_text (_file_name.string ());
 	asset->add_child("Hash")->add_child_text (digest ());
 	asset->add_child("Size")->add_child_text (lexical_cast<string> (filesystem::file_size(path())));
-	asset->add_child("Type")->add_child_text ("application/mxf");
+	if (interop) {
+		asset->add_child("Type")->add_child (String::compose ("application/x-smpte-mxf;asdcpKind=%1", asdcp_kind ()));
+	} else {
+		asset->add_child("Type")->add_child_text ("application/mxf");
+	}
 }
 
 void

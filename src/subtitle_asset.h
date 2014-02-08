@@ -161,6 +161,12 @@ public:
 	void write_xml () const;
 	Glib::ustring xml_as_string () const;
 
+protected:
+
+	std::string asdcp_kind () const {
+		return "Subtitle";
+	}
+
 private:
 	std::string font_id_to_name (std::string id) const;
 

@@ -78,7 +78,11 @@ public:
 
 	void write_to_cpl (xmlpp::Element *) const;
 
-protected:	
+protected:
+
+	std::string asdcp_kind () const {
+		return "Picture";
+	}
 
 	bool frame_buffer_equals (
 		int frame, EqualityOptions opt, boost::function<void (NoteType, std::string)> note,

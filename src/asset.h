@@ -65,7 +65,7 @@ public:
 	/** Write details of the asset to a PKL AssetList node.
 	 *  @param p Parent node.
 	 */
-	void write_to_pkl (xmlpp::Node *) const;
+	void write_to_pkl (xmlpp::Node *, bool interop) const;
 
 	/** Write details of the asset to a ASSETMAP stream.
 	 *  @param s Stream.
@@ -129,6 +129,9 @@ public:
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)>) const;
 
 protected:
+
+	/** @return Interop PKL asdcpKind for the &lt;Type&gt; tag e.g. Picture, Sound etc. */
+	virtual std::string asdcp_kind () const = 0;
 	
 	std::string digest () const;
 

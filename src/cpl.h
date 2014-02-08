@@ -96,7 +96,7 @@ public:
 	
 	void write_xml (bool, XMLMetadata const &, boost::shared_ptr<const Signer>) const;
 	void write_to_assetmap (xmlpp::Node *) const;
-	void write_to_pkl (xmlpp::Node *) const;
+	void write_to_pkl (xmlpp::Node *, bool) const;
 
 	void add_kdm (KDM const &);
 	
