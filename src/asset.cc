@@ -60,7 +60,7 @@ Asset::write_to_pkl (xmlpp::Node* node, bool interop) const
 	asset->add_child("Hash")->add_child_text (digest ());
 	asset->add_child("Size")->add_child_text (lexical_cast<string> (filesystem::file_size(path())));
 	if (interop) {
-		asset->add_child("Type")->add_child (String::compose ("application/x-smpte-mxf;asdcpKind=%1", asdcp_kind ()));
+		asset->add_child("Type")->add_child_text (String::compose ("application/x-smpte-mxf;asdcpKind=%1", asdcp_kind ()));
 	} else {
 		asset->add_child("Type")->add_child_text ("application/mxf");
 	}
