@@ -80,6 +80,7 @@ def build(bld):
               mono_picture_mxf.h
               mono_picture_frame.h
               mxf.h
+              mxf_writer.h
               object.h
               picture_mxf.h
               picture_mxf_writer.h
@@ -92,6 +93,7 @@ def build(bld):
               sound_frame.h
               stereo_picture_mxf.h
               stereo_picture_frame.h
+              subtitle.h
               types.h
               util.h
               version.h

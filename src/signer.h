@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_SIGNER_H
+#define LIBDCP_SIGNER_H
+
 /** @file  src/signer.h
  *  @brief Signer class.
  */
@@ -62,3 +65,5 @@ private:
 };
 
 }
+
+#endif
