@@ -94,6 +94,7 @@ def build(bld):
               stereo_picture_mxf.h
               stereo_picture_frame.h
               subtitle.h
+              subtitle_string.h
               types.h
               util.h
               version.h

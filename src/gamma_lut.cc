@@ -25,13 +25,26 @@ using namespace dcp;
 
 LUTCache<GammaLUT> GammaLUT::cache;
 
-GammaLUT::GammaLUT (int bit_depth, float gamma)
+GammaLUT::GammaLUT (int bit_depth, float gamma, bool linearised)
 	: _bit_depth (bit_depth)
 	, _gamma (gamma)
+	, _linearised (linearised)
 {
 	_lut = new float[int(std::pow(2.0f, _bit_depth))];
 	int const bit_length = pow (2, _bit_depth);
-	for (int i = 0; i < bit_length; ++i) {
-		_lut[i] = pow(float(i) / (bit_length - 1), gamma);
+
+	if (_linearised) {
+		for (int i = 0; i < bit_length; ++i) {
+			float const p = static_cast<float> (i) / (bit_length - 1);
+			if (p > 0.04045) {
+				_lut[i] = pow ((p + 0.055) / 1.055, gamma);
+			} else {
+				_lut[i] = p / 12.92;
+			}
+		}
+	} else {
+		for (int i = 0; i < bit_length; ++i) {
+			_lut[i] = pow(float(i) / (bit_length - 1), gamma);
+		}
 	}
 }

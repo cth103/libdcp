@@ -28,7 +28,7 @@ template<class T>
 class LUTCache : public boost::noncopyable
 {
 public:
-	boost::shared_ptr<T> get (int bit_depth, float gamma)
+	boost::shared_ptr<T> get (int bit_depth, float gamma, bool linearised)
 	{
 		for (typename std::list<boost::shared_ptr<T> >::iterator i = _cache.begin(); i != _cache.end(); ++i) {
 			if ((*i)->bit_depth() == bit_depth && (*i)->gamma() == gamma) {
@@ -36,7 +36,7 @@ public:
 			}
 		}
 
-		boost::shared_ptr<T> lut (new T (bit_depth, gamma));
+		boost::shared_ptr<T> lut (new T (bit_depth, gamma, linearised));
 		_cache.push_back (lut);
 		return lut;
 	}

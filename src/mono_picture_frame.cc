@@ -93,6 +93,6 @@ MonoPictureFrame::argb_frame (int reduce, float srgb_gamma) const
 {
 	return xyz_to_rgb (
 		decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce),
-		GammaLUT::cache.get (12, DCI_GAMMA), GammaLUT::cache.get (12, 1 / srgb_gamma)
+		GammaLUT::cache.get (12, DCI_GAMMA, false), GammaLUT::cache.get (12, 1 / srgb_gamma, false)
 		);
 }

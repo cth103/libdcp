@@ -27,7 +27,7 @@ namespace dcp {
 class GammaLUT
 {
 public:
-	GammaLUT (int bit_depth, float gamma);
+	GammaLUT (int bit_depth, float gamma, bool linearised);
 
 	~GammaLUT () {
 		delete[] _lut;
@@ -45,12 +45,17 @@ public:
 		return _gamma;
 	}
 
+	bool linearised () const {
+		return _linearised;
+	}
+
 	static LUTCache<GammaLUT> cache;
 	
 private:
 	float* _lut;
 	int _bit_depth;
 	float _gamma;
+	bool _linearised;
 };
 
 }
