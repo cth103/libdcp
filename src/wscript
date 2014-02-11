@@ -92,7 +92,6 @@ def build(bld):
               sound_frame.h
               stereo_picture_mxf.h
               stereo_picture_frame.h
-              subtitle_asset.h
               types.h
               util.h
               version.h
