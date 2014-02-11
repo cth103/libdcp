@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_SUBTITLE_STRING_H
+#define LIBDCP_SUBTITLE_STRING_H
+
 #include "types.h"
 #include "dcp_time.h"
 #include <string>
@@ -122,3 +125,5 @@ bool operator== (SubtitleString const & a, SubtitleString const & b);
 std::ostream& operator<< (std::ostream& s, SubtitleString const & sub);
 
 }
+
+#endif

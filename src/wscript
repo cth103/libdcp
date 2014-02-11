@@ -68,6 +68,7 @@ def build(bld):
               certificates.h
               colour_matrix.h
               cpl.h
+              content.h
               dcp.h
               dcp_time.h
               exceptions.h
@@ -86,6 +87,7 @@ def build(bld):
               picture_mxf_writer.h
               rgb_xyz.h
               reel.h
+              ref.h
               argb_frame.h
               signer.h
               signer_chain.h
