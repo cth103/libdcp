@@ -70,9 +70,10 @@ struct Size
 	
 extern bool operator== (Size const & a, Size const & b);
 extern bool operator!= (Size const & a, Size const & b);
+extern std::ostream& operator<< (std::ostream& s, Size const & a);
 
 extern std::string make_uuid ();
-extern std::string make_digest (boost::filesystem::path filename, boost::function<void (float)> *);
+extern std::string make_digest (boost::filesystem::path filename, boost::function<void (float)>);
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
 extern bool empty_or_white_space (std::string s);

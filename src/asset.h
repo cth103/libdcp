@@ -28,6 +28,7 @@
 #include "types.h"
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
+#include <boost/bind.hpp>
 
 namespace xmlpp {
 	class Node;
@@ -70,14 +71,12 @@ public:
 
 	void set_file (boost::filesystem::path file) const;
 
-	/** @return the hash of this asset's file.  It will be
-	 *  computed by this call if necessary.
-	 */
-	std::string hash () const;
+	/** @return the hash of this asset's file */
+	std::string hash (boost::function<void (float)> progress = 0) const;
 
 protected:
 	virtual std::string pkl_type () const = 0;
-	
+
 	/** The disk file that represents this asset, if one exists */
 	mutable boost::filesystem::path _file;
 	/** Hash of _file, or empty if the hash has not yet been computed */

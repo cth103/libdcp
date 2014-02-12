@@ -54,7 +54,10 @@ using std::max;
 using std::list;
 using std::setw;
 using std::setfill;
+using std::ostream;
 using boost::shared_ptr;
+using boost::optional;
+using boost::function;
 using namespace dcp;
 
 /** Create a UUID.
@@ -73,12 +76,12 @@ dcp::make_uuid ()
 
 /** Create a digest for a file.
  *  @param filename File name.
- *  @param progress Pointer to a progress reporting function, or 0.  The function will be called
+ *  @param progress Optional progress reporting function.  The function will be called
  *  with a progress value between 0 and 1.
  *  @return Digest.
  */
 string
-dcp::make_digest (boost::filesystem::path filename, boost::function<void (float)>* progress)
+dcp::make_digest (boost::filesystem::path filename, function<void (float)> progress)
 {
 	Kumu::FileReader reader;
 	Kumu::Result_t r = reader.OpenRead (filename.string().c_str ());
@@ -107,7 +110,7 @@ dcp::make_digest (boost::filesystem::path filename, boost::function<void (float)
 		SHA1_Update (&sha, read_buffer.Data(), read);
 
 		if (progress) {
-			(*progress) (float (done) / size);
+			progress (float (done) / size);
 			done += read;
 		}
 	}
@@ -271,6 +274,12 @@ bool dcp::operator!= (dcp::Size const & a, dcp::Size const & b)
 	return !(a == b);
 }
 
+ostream& dcp::operator<< (ostream& s, dcp::Size const & a)
+{
+	s << a.width << "x" << a.height;
+	return s;
+}
+
 /** Decode a base64 string.  The base64 decode routine in KM_util.cpp
  *  gives different values to both this and the command-line base64
  *  for some inputs.  Not sure why.
@@ -385,7 +394,7 @@ dcp::fopen_boost (boost::filesystem::path p, string t)
 #endif
 }
 
-boost::optional<boost::filesystem::path>
+optional<boost::filesystem::path>
 dcp::relative_to_root (boost::filesystem::path root, boost::filesystem::path file)
 {
 	boost::filesystem::path::const_iterator i = root.begin ();
@@ -397,7 +406,7 @@ dcp::relative_to_root (boost::filesystem::path root, boost::filesystem::path fil
 	}
 
 	if (i != root.end ()) {
-		return boost::optional<boost::filesystem::path> ();
+		return optional<boost::filesystem::path> ();
 	}
 
 	boost::filesystem::path rel;

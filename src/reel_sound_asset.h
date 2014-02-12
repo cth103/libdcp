@@ -40,6 +40,10 @@ public:
 	boost::shared_ptr<SoundMXF> mxf () {
 		return boost::dynamic_pointer_cast<SoundMXF> (_content.object ());
 	}
+
+	boost::shared_ptr<const SoundMXF> mxf () const {
+		return boost::dynamic_pointer_cast<const SoundMXF> (_content.object ());
+	}
 	
 private:
 	std::string cpl_node_name () const;

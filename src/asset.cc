@@ -31,6 +31,7 @@
 using std::string;
 using boost::lexical_cast;
 using boost::function;
+using boost::optional;
 using namespace dcp;
 
 /** Create an Asset with a randomly-generated ID */
@@ -80,7 +81,7 @@ Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
 	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
-	boost::optional<boost::filesystem::path> path = relative_to_root (root, _file);
+	optional<boost::filesystem::path> path = relative_to_root (root, _file);
 	if (!path) {
 		throw MiscError (String::compose ("Asset %1 is not within the directory %2", _file, root));
 	}
@@ -91,12 +92,12 @@ Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 }
 
 string
-Asset::hash () const
+Asset::hash (function<void (float)> progress) const
 {
 	assert (!_file.empty ());
 		
 	if (_hash.empty ()) {
-		_hash = make_digest (_file, 0);
+		_hash = make_digest (_file, progress);
 	}
 
 	return _hash;
