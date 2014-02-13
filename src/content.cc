@@ -20,6 +20,7 @@
 #include "content.h"
 #include "util.h"
 #include "metadata.h"
+#include "types.h"
 #include "AS_DCP.h"
 #include "KM_util.h"
 #include <libxml++/nodes/element.h>
