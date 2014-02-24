@@ -13,8 +13,8 @@ def build(bld):
     else:
         obj = bld(features = 'cxx cxxshlib')
 
-    obj.name = 'libkumu-libdcp'
-    obj.target = 'kumu-libdcp'
+    obj.name = 'libkumu-libdcp%s' % bld.env.API_VERSION
+    obj.target = 'kumu-libdcp%s' % bld.env.API_VERSION
     obj.uselib = 'OPENSSL BOOST_FILESYSTEM'
     obj.includes = ['.']
     obj.export_includes = ['.']
@@ -32,10 +32,10 @@ def build(bld):
     else:
         obj = bld(features = 'cxx cxxshlib')
 
-    obj.name = 'libasdcp-libdcp'
-    obj.target = 'asdcp-libdcp'
+    obj.name = 'libasdcp-libdcp%s' % bld.env.API_VERSION
+    obj.target = 'asdcp-libdcp%s' % bld.env.API_VERSION
     obj.uselib = 'OPENSSL'
-    obj.use = 'libkumu-libdcp'
+    obj.use = 'libkumu-libdcp%s' % bld.env.API_VERSION
     obj.includes = ['.']
     obj.export_includes = ['.']
     obj.source = """
@@ -67,5 +67,5 @@ def build(bld):
                  """
 
     if bld.env.STATIC:
-        bld.install_files('${PREFIX}/lib', 'libkumu-libdcp.a')
-        bld.install_files('${PREFIX}/lib', 'libasdcp-libdcp.a')
+        bld.install_files('${PREFIX}/lib', 'libkumu-libdcp%s.a' % bld.env.API_VERSION)
+        bld.install_files('${PREFIX}/lib', 'libasdcp-libdcp%s.a' % bld.env.API_VERSION)

@@ -3,6 +3,7 @@ import os
 
 APPNAME = 'libdcp'
 VERSION = '1.00.0devel'
+API_VERSION = '-1.0'
 
 def options(opt):
     opt.load('compiler_cxx')
@@ -20,6 +21,7 @@ def configure(conf):
     conf.env.TARGET_OSX = conf.options.target_osx
     conf.env.ENABLE_DEBUG = conf.options.enable_debug
     conf.env.STATIC = conf.options.static
+    conf.env.API_VERSION = API_VERSION
 
     if conf.options.target_windows:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_WINDOWS')
@@ -114,10 +116,10 @@ def build(bld):
     else:
         boost_lib_suffix = ''
 
-    bld(source='libdcp.pc.in',
+    bld(source='libdcp%s.pc.in' % bld.env.API_VERSION,
         version=VERSION,
-        includedir='%s/include' % bld.env.PREFIX,
-        libs="-L${libdir} -ldcp -lasdcp-libdcp -lkumu-libdcp -lboost_system%s" % boost_lib_suffix,
+        includedir='%s/include/libdcp%s' % (bld.env.PREFIX, bld.env.API_VERSION),
+        libs="-L${libdir} -ldcp%s -lasdcp-libdcp%s -lkumu-libdcp%s -lboost_system%s" % (API_VERSION, API_VERSION, API_VERSION, boost_lib_suffix),
         install_path='${LIBDIR}/pkgconfig')
 
     bld.recurse('src')

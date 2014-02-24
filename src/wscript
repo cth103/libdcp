@@ -6,11 +6,11 @@ def build(bld):
     else:
         obj = bld(features = 'cxx cxxshlib')
 
-    obj.name = 'libdcp'
-    obj.target = 'dcp'
+    obj.name = 'libdcp%s' % bld.env.API_VERSION
+    obj.target = 'dcp%s' % bld.env.API_VERSION
     obj.export_includes = ['.']
     obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1'
-    obj.use = 'libkumu-libdcp libasdcp-libdcp'
+    obj.use = 'libkumu-libdcp%s libasdcp-libdcp%s' % (bld.env.API_VERSION, bld.env.API_VERSION)
     obj.source = """
                  argb_frame.cc
                  asset.cc
@@ -110,6 +110,6 @@ def build(bld):
               xyz_frame.h
               """
 
-    bld.install_files('${PREFIX}/include/libdcp', headers)
+    bld.install_files('${PREFIX}/include/libdcp%s/dcp' % bld.env.API_VERSION, headers)
     if bld.env.STATIC:
-        bld.install_files('${PREFIX}/lib', 'libdcp.a')
+        bld.install_files('${PREFIX}/lib', 'libdcp%s.a' % bld.env.API_VERSION)
