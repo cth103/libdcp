@@ -18,9 +18,12 @@
 */
 
 #include <fstream>
+#include <cerrno>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <libxml++/nodes/element.h>
+#include "AS_DCP.h"
+#include "KM_util.h"
 #include "subtitle_asset.h"
 #include "parse/subtitle.h"
 #include "util.h"
@@ -31,16 +34,34 @@ using std::list;
 using std::ostream;
 using std::ofstream;
 using std::stringstream;
+using std::cout;
 using boost::shared_ptr;
 using boost::lexical_cast;
 using boost::optional;
 using namespace libdcp;
 
-SubtitleAsset::SubtitleAsset (string directory, string xml_file)
-	: Asset (directory, xml_file)
+SubtitleAsset::SubtitleAsset (string directory, string file)
+	: Asset (directory, file)
 	, _need_sort (false)
 {
-	read_xml (path().string());
+	/* Grotesque hack: we should look in the PKL to see what type this file is;
+	   instead we'll look at the first character to decide what to do.
+	   I think this is easily fixable (properly) in 1.0.
+	*/
+
+	FILE* f = fopen_boost (path(), "r");
+	if (!f) {
+		throw FileError ("Could not open file for reading", file, errno);
+	}
+	unsigned char test[1];
+	fread (test, 1, 1, f);
+	fclose (f);
+
+	if (test[0] == '<' || test[0] == 0xef) {
+		read_xml (path().string());
+	} else {
+		read_mxf (path().string());
+	}
 }
 
 SubtitleAsset::SubtitleAsset (string directory, string movie_title, string language)
@@ -54,13 +75,45 @@ SubtitleAsset::SubtitleAsset (string directory, string movie_title, string langu
 }
 
 void
+SubtitleAsset::read_mxf (string mxf_file)
+{
+	ASDCP::TimedText::MXFReader reader;
+	Kumu::Result_t r = reader.OpenRead (mxf_file.c_str ());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", mxf_file, r));
+	}
+
+	string s;
+	reader.ReadTimedTextResource (s, 0, 0);
+	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
+	stringstream t;
+	t << s;
+	xml->read_stream (t);
+	read_xml (xml);
+}
+
+void
 SubtitleAsset::read_xml (string xml_file)
 {
 	shared_ptr<cxml::Document> xml (new cxml::Document ("DCSubtitle"));
 	xml->read_file (xml_file);
+	read_xml (xml);
+}
+
+void
+SubtitleAsset::read_xml (shared_ptr<cxml::Document> xml)
+{
+	/* XXX: hacks aplenty in here; need separate parsers for DCSubtitle and SubtitleReel */
 	
-	_uuid = xml->string_child ("SubtitleID");
-	_movie_title = xml->string_child ("MovieTitle");
+	/* DCSubtitle */
+	optional<string> x = xml->optional_string_child ("SubtitleID");
+	if (!x) {
+		/* SubtitleReel */
+		x = xml->optional_string_child ("Id");
+	}
+	_uuid = x.get_value_or ("");
+
+	_movie_title = xml->optional_string_child ("MovieTitle");
 	_reel_number = xml->string_child ("ReelNumber");
 	_language = xml->string_child ("Language");
 
@@ -73,6 +126,12 @@ SubtitleAsset::read_xml (string xml_file)
 	   in a sane way.
 	*/
 
+	shared_ptr<cxml::Node> subtitle_list = xml->optional_node_child ("SubtitleList");
+	if (subtitle_list) {
+		list<shared_ptr<libdcp::parse::Font> > font = type_children<libdcp::parse::Font> (subtitle_list, "Font");
+		copy (font.begin(), font.end(), back_inserter (font_nodes));
+	}
+	
 	ParseState parse_state;
 	examine_font_nodes (xml, font_nodes, parse_state);
 }
@@ -182,7 +241,7 @@ SubtitleAsset::font_id_to_name (string id) const
 		return "";
 	}
 
-	if ((*i)->uri == "arial.ttf") {
+	if ((*i)->uri && (*i)->uri.get() == "arial.ttf") {
 		return "Arial";
 	}
 
@@ -316,7 +375,9 @@ SubtitleAsset::xml_as_string () const
 	root->set_attribute ("Version", "1.0");
 
 	root->add_child("SubtitleID")->add_child_text (_uuid);
-	root->add_child("MovieTitle")->add_child_text (_movie_title);
+	if (_movie_title) {
+		root->add_child("MovieTitle")->add_child_text (_movie_title.get ());
+	}
 	root->add_child("ReelNumber")->add_child_text (lexical_cast<string> (_reel_number));
 	root->add_child("Language")->add_child_text (_language);
 
@@ -327,7 +388,9 @@ SubtitleAsset::xml_as_string () const
 	if (!_load_font_nodes.empty ()) {
 		xmlpp::Element* load_font = root->add_child("LoadFont");
 		load_font->set_attribute("Id", _load_font_nodes.front()->id);
-		load_font->set_attribute("URI",  _load_font_nodes.front()->uri);
+		if (_load_font_nodes.front()->uri) {
+			load_font->set_attribute("URI",  _load_font_nodes.front()->uri.get ());
+		}
 	}
 
 	list<shared_ptr<Subtitle> > sorted = _subtitles;

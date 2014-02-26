@@ -92,7 +92,7 @@ public:
 	LoadFont (boost::shared_ptr<const cxml::Node> node);
 
 	std::string id;
-	std::string uri;
+	boost::optional<std::string> uri;
 };
 
 }

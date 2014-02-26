@@ -84,10 +84,14 @@ Font::Font (list<shared_ptr<Font> > const & font_nodes)
 
 LoadFont::LoadFont (shared_ptr<const cxml::Node> node)
 {
-	id = node->string_attribute ("Id");
-	uri = node->string_attribute ("URI");
+	optional<string> x = node->optional_string_attribute ("Id");
+	if (!x) {
+		x = node->optional_string_attribute ("ID");
+	}
+	id = x.get_value_or ("");
+		
+	uri = node->optional_string_attribute ("URI");
 }
-	
 
 Subtitle::Subtitle (shared_ptr<const cxml::Node> node)
 {
@@ -123,9 +127,19 @@ Subtitle::fade_time (shared_ptr<const cxml::Node> node, string name)
 Text::Text (shared_ptr<const cxml::Node> node)
 	: v_align (CENTER)
 {
+	/* Vertical position */
 	text = node->content ();
-	v_position = node->number_attribute<float> ("VPosition");
+	optional<float> x = node->optional_number_attribute<float> ("VPosition");
+	if (!x) {
+		x = node->number_attribute<float> ("Vposition");
+	}
+	v_position = x.get ();
+
+	/* Vertical alignment */
 	optional<string> v = node->optional_string_attribute ("VAlign");
+	if (!v) {
+		v = node->optional_string_attribute ("Valign");
+	}
 	if (v) {
 		v_align = string_to_valign (v.get ());
 	}

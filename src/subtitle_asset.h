@@ -169,6 +169,8 @@ protected:
 
 private:
 	std::string font_id_to_name (std::string id) const;
+	void read_mxf (std::string);
+	void read_xml (boost::shared_ptr<cxml::Document>);
 
 	struct ParseState {
 		std::list<boost::shared_ptr<parse::Font> > font_nodes;
@@ -190,7 +192,7 @@ private:
 		ParseState& parse_state
 		);
 
-	std::string _movie_title;
+	boost::optional<std::string> _movie_title;
 	/* strangely, this is sometimes a string */
 	std::string _reel_number;
 	std::string _language;
