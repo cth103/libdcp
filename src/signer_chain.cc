@@ -70,6 +70,7 @@ static void command (string cmd)
 
 	delete[] buffer;
 #else
+	cmd += " 2> /dev/null";
 	int const r = system (cmd.c_str ());
 	int const code = WEXITSTATUS (r);
 #endif

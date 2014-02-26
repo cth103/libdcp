@@ -44,13 +44,13 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	mxf_meta.product_name = "OpenDCP";
 	mxf_meta.product_version = "0.0.25";
 
-	/* We're making build/test/foo */
-	boost::filesystem::remove_all ("build/test/foo");
-	boost::filesystem::create_directories ("build/test/foo");
-	libdcp::DCP d ("build/test/foo");
-	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/foo", "A Test DCP", libdcp::FEATURE, 24, 24));
+	/* We're making build/test/DCP/foo */
+	boost::filesystem::remove_all ("build/test/DCP/foo");
+	boost::filesystem::create_directories ("build/test/DCP/foo");
+	libdcp::DCP d ("build/test/DCP/foo");
+	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/DCP/foo", "A Test DCP", libdcp::FEATURE, 24, 24));
 
-	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset ("build/test/foo", "video.mxf"));
+	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset ("build/test/DCP/foo", "video.mxf"));
 	mp->set_progress (&d.Progress);
 	mp->set_edit_rate (24);
 	mp->set_intrinsic_duration (24);
@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	mp->set_metadata (mxf_meta);
 	mp->create (j2c);
 
-	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset ("build/test/foo", "audio.mxf"));
+	shared_ptr<libdcp::SoundAsset> ms (new libdcp::SoundAsset ("build/test/DCP/foo", "audio.mxf"));
 	ms->set_progress (&d.Progress);
 	ms->set_edit_rate (24);
 	ms->set_intrinsic_duration (24);
@@ -73,5 +73,5 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 
 	d.write_xml (false, xml_meta);
 
-	/* build/test/foo is checked against test/ref/DCP/foo by run-tests.sh */
+	/* build/test/DCP/foo is checked against test/ref/DCP/foo by run-tests.sh */
 }

@@ -58,15 +58,16 @@ BOOST_AUTO_TEST_CASE (encryption)
 	boost::filesystem::create_directories ("build/test/DCP/bar");
 	libdcp::DCP d ("build/test/DCP/bar");
 
+	/* Use test/ref/crypt so this test is repeatable */
 	libdcp::CertificateChain chain;
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/ca.self-signed.pem"))));
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/intermediate.signed.pem"))));
-	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/leaf.signed.pem"))));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
+	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
 
 	shared_ptr<libdcp::Signer> signer (
 		new libdcp::Signer (
 			chain,
-			"build/test/signer/leaf.key"
+			"test/ref/crypt/leaf.key"
 			)
 		);
 
@@ -110,12 +111,21 @@ BOOST_AUTO_TEST_CASE (encryption)
 		);
 
 	kdm.as_xml ("build/test/bar.kdm.xml");
-	system ("xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/bar.kdm.xml");
-	system ("xmlsec1 verify "
-		"--pubkey-cert-pem build/test/signer/leaf.signed.pem "
-		"--trusted-pem build/test/signer/intermediate.signed.pem "
-		"--trusted-pem build/test/signer/ca.self-signed.pem "
+	
+	int r = system (
+		"xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/bar.kdm.xml "
+		"> build/test/xmllint.log 2>&1 < /dev/null"
+		);
+	
+	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
+		
+	r = system ("xmlsec1 verify "
+		"--pubkey-cert-pem test/ref/crypt/leaf.signed.pem "
+		"--trusted-pem test/ref/crypt/intermediate.signed.pem "
+		"--trusted-pem test/ref/crypt/ca.self-signed.pem "
 		"--id-attr:Id http://www.smpte-ra.org/schemas/430-3/2006/ETM:AuthenticatedPublic "
 		"--id-attr:Id http://www.smpte-ra.org/schemas/430-3/2006/ETM:AuthenticatedPrivate "
-		"build/test/bar.kdm.xml");
+		    "build/test/bar.kdm.xml > build/test/xmlsec1.log 2>&1 < /dev/null");
+	
+	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
 }
