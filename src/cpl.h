@@ -111,9 +111,7 @@ public:
 
 protected:
 	/** @return type string for PKLs for this asset */
-	std::string pkl_type () const {
-		return "text/xml";
-	}
+	std::string pkl_type (Standard standard) const;
 
 private:
 	std::string _annotation_text;               ///< &lt;AnnotationText&gt;

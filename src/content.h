@@ -71,6 +71,8 @@ public:
 
 protected:
 	friend class MXFWriter;
+
+	virtual std::string asdcp_kind () const = 0;
 	
 	Fraction _edit_rate;
 	int64_t _intrinsic_duration;

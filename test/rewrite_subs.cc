@@ -33,32 +33,39 @@ using namespace dcp;
 
 int
 main (int argc, char* argv[])
-try
 {
-	if (argc < 2) {
-		cerr << "Syntax: " << argv[0] << " <dcp>\n";
-		exit (EXIT_FAILURE);
-	}
-
-	DCP* dcp = new DCP (argv[1]);
-	dcp->read ();
-	
-	list<shared_ptr<CPL> > cpls = dcp->cpls ();
-	for (list<boost::shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
-
-		list<shared_ptr<Reel> > reels = (*i)->reels ();
-		for (list<shared_ptr<Reel> >::iterator j = reels.begin(); j != reels.end(); ++j) {
-
-			if ((*j)->main_subtitle()) {
-				(*j)->main_subtitle()->subtitle_content()->write_xml ();
+	try {
+		if (argc < 2) {
+			cerr << "Syntax: " << argv[0] << " <dcp>\n";
+			exit (EXIT_FAILURE);
+		}
+		
+		DCP* dcp = new DCP (argv[1]);
+		dcp->read ();
+		
+		list<shared_ptr<CPL> > cpls = dcp->cpls ();
+		for (list<boost::shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
+			
+			list<shared_ptr<Reel> > reels = (*i)->reels ();
+			for (list<shared_ptr<Reel> >::iterator j = reels.begin(); j != reels.end(); ++j) {
+				
+				if ((*j)->main_subtitle()) {
+					(*j)->main_subtitle()->subtitle_content()->write_xml ();
+				}
 			}
 		}
 	}
 
+	catch (FileError& e)
+	{
+		cerr << e.what() << " (" << e.filename() << ") when reading " << argv[1] << "\n";
+		exit (EXIT_FAILURE);
+	}
+	catch (DCPReadError& e)
+	{
+		cerr << e.what() << " when reading " << argv[1] << "\n";
+		exit (EXIT_FAILURE);
+	}
+	
 	return 0;
-}
-catch (FileError& e)
-{
-	cerr << e.what() << " (" << e.filename() << ")\n";
-	exit (EXIT_FAILURE);
 }

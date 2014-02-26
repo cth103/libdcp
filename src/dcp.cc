@@ -240,7 +240,7 @@ DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared
 
 	xmlpp::Element* asset_list = pkl->add_child("AssetList");
 	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
-		(*i)->write_to_pkl (asset_list);
+		(*i)->write_to_pkl (asset_list, standard);
 	}
 
 	if (signer) {
@@ -258,14 +258,31 @@ void
 DCP::write_volindex (Standard standard) const
 {
 	boost::filesystem::path p = _directory;
-	if (standard == INTEROP) {
+	switch (standard) {
+	case INTEROP:
 		p /= "VOLINDEX";
-	} else {
+		break;
+	case SMPTE:
 		p /= "VOLINDEX.xml";
+		break;
+	default:
+		assert (false);
 	}
 
 	xmlpp::Document doc;
-	xmlpp::Element* root = doc.create_root_node ("VolumeIndex", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
+	xmlpp::Element* root;
+
+	switch (standard) {
+	case INTEROP:
+		root = doc.create_root_node ("VolumeIndex", "http://www.digicine.com/PROTO-ASDCP-AM-20040311#");
+		break;
+	case SMPTE:
+		root = doc.create_root_node ("VolumeIndex", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
+		break;
+	default:
+		assert (false);
+	}
+	
 	root->add_child("Index")->add_child_text ("1");
 	doc.write_to_file (p.string (), "UTF-8");
 }
@@ -274,32 +291,50 @@ void
 DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMetadata metadata) const
 {
 	boost::filesystem::path p = _directory;
-	if (standard == INTEROP) {
+	
+	switch (standard) {
+	case INTEROP:
 		p /= "ASSETMAP";
-	} else {
+		break;
+	case SMPTE:
 		p /= "ASSETMAP.xml";
+		break;
+	default:
+		assert (false);
 	}
 
 	xmlpp::Document doc;
 	xmlpp::Element* root;
-	if (standard == INTEROP) {
+
+	switch (standard) {
+	case INTEROP:
 		root = doc.create_root_node ("AssetMap", "http://www.digicine.com/PROTO-ASDCP-AM-20040311#");
-	} else {
+		break;
+	case SMPTE:
 		root = doc.create_root_node ("AssetMap", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
+		break;
+	default:
+		assert (false);
 	}
 
 	root->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
 	root->add_child("AnnotationText")->add_child_text ("Created by " + metadata.creator);
-	if (standard == INTEROP) {
+
+	switch (standard) {
+	case INTEROP:
 		root->add_child("VolumeCount")->add_child_text ("1");
 		root->add_child("IssueDate")->add_child_text (metadata.issue_date);
 		root->add_child("Issuer")->add_child_text (metadata.issuer);
 		root->add_child("Creator")->add_child_text (metadata.creator);
-	} else {
+		break;
+	case SMPTE:
 		root->add_child("Creator")->add_child_text (metadata.creator);
 		root->add_child("VolumeCount")->add_child_text ("1");
 		root->add_child("IssueDate")->add_child_text (metadata.issue_date);
 		root->add_child("Issuer")->add_child_text (metadata.issuer);
+		break;
+	default:
+		assert (false);
 	}
 		
 	xmlpp::Node* asset_list = root->add_child ("AssetList");

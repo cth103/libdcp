@@ -62,8 +62,9 @@ public:
 
 	/** Write details of the asset to a PKL AssetList node.
 	 *  @param node Parent node.
+	 *  @param standard Standard to use.
 	 */
-	void write_to_pkl (xmlpp::Node* node) const;
+	void write_to_pkl (xmlpp::Node* node, Standard standard) const;
 
 	boost::filesystem::path file () const {
 		return _file;
@@ -75,7 +76,7 @@ public:
 	std::string hash (boost::function<void (float)> progress = 0) const;
 
 protected:
-	virtual std::string pkl_type () const = 0;
+	virtual std::string pkl_type (Standard standard) const = 0;
 
 	/** The disk file that represents this asset, if one exists */
 	mutable boost::filesystem::path _file;

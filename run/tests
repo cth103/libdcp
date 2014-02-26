@@ -1,0 +1,95 @@
+#!/bin/bash -e
+#
+# Run our test suite, which (amongst other things)
+# builds a couple of DCPs.
+# The outputs are compared against the ones
+# in test/ref/DCP, and an error is given
+# if anything is different.
+
+private=test/private
+work=build/test
+
+export LD_LIBRARY_PATH=build/src:build/asdcplib/src
+
+# Run the unit tests in test/
+if [ "$1" == "--debug" ]; then
+    shift
+    gdb --args $work/tests
+elif [ "$1" == "--valgrind" ]; then
+    shift
+    valgrind --tool="memcheck" $work/tests
+else
+    $work/tests $*
+fi
+
+if [ ! -e "test/private/info.log" ]; then
+    echo "Private data not found: some tests will not run"
+fi
+
+# Check the first DCP written by the unit tests
+diff -ur test/ref/DCP/foo $work/DCP/foo
+if [ "$?" != "0" ]; then
+    echo "FAIL: files differ"
+    exit 1
+fi
+
+# Check the second DCP written by the unit tests
+diff -ur test/ref/DCP/bar $work/DCP/bar
+if [ "$?" != "0" ]; then
+    echo "FAIL: files differ"
+    exit 1
+fi
+
+# Run dcpinfo on all the DCPs in private/metadata, writing $work/info.log
+rm -f $work/info.log
+for d in `find $private/metadata -mindepth 1 -maxdepth 1 -type d | sort`; do
+    if [ `basename $d` != ".git" ]; then
+        build/tools/dcpinfo -s $d >> $work/info.log
+        if [ "$?" != "0" ]; then
+            echo "FAIL: dcpinfo failed for $d"
+            exit 1
+        fi
+    fi
+done
+
+# Check info.log is what it should be
+diff -q $work/info.log $private/info.log
+if [ "$?" != "0" ]; then
+    echo "FAIL: dcpinfo output incorrect"
+    exit 1
+fi
+
+# Copy test/private into build/ then re-write the subtitles of every DCP using 
+# $work/rewrite_subs.  This tests round-trip of subtitle reading/writing.
+rm -f $work/info2.log
+rm -rf $work/private
+cp -r $private $work
+for d in `find $work/private/metadata -mindepth 1 -maxdepth 1 -type d | sort`; do
+    if [ `basename $d` != ".git" ]; then
+        $work/rewrite_subs $d
+        build/tools/dcpinfo -s $d >> $work/info2.log
+    fi
+done
+
+# Fudge the output
+sed -i "s/DCP: build\/test/DCP: test/g" $work/info2.log
+
+# And check it
+diff -q $work/info2.log $private/info.log
+if [ "$?" != "0" ]; then
+    echo "FAIL: dcpinfo output from rewrite incorrect"
+    exit 1
+fi
+
+# Dump the subs of JourneyToJah... (which has MXF-wrapped subtitles)
+# and check that they are right
+build/tools/dcpinfo -s $private/JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV >> $work/jah.log
+
+# Check a MXF written by the unit tests
+diff $work/baz/video1.mxf $work/baz/video2.mxf
+if [ "$?" != "0" ]; then
+    echo "FAIL: MXFs from recovery incorrect"
+    exit 1
+fi
+    
+echo "PASS"

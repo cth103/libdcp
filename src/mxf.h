@@ -102,10 +102,7 @@ public:
 	}
 
 protected:
-	std::string pkl_type () const {
-		return "application/x-smpte-mxf";
-	}
-	
+	std::string pkl_type (Standard standard) const;
 	void read_writer_info (ASDCP::WriterInfo const &);
 	
 	ASDCP::AESEncContext* _encryption_context;

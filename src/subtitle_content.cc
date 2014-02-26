@@ -34,6 +34,7 @@ using std::list;
 using std::ostream;
 using std::ofstream;
 using std::stringstream;
+using std::cout;
 using boost::shared_ptr;
 using boost::lexical_cast;
 using boost::optional;
@@ -59,7 +60,7 @@ SubtitleContent::SubtitleContent (boost::filesystem::path file)
 	/* Now make Subtitle objects to represent the raw XML nodes
 	   in a sane way.
 	*/
-
+	
 	ParseState parse_state;
 	examine_font_nodes (xml, font_nodes, parse_state);
 }
@@ -230,7 +231,7 @@ SubtitleContent::xml_as_string () const
 	if (!_load_font_nodes.empty ()) {
 		xmlpp::Element* load_font = root->add_child("LoadFont");
 		load_font->set_attribute("Id", _load_font_nodes.front()->id);
-		load_font->set_attribute("URI",  _load_font_nodes.front()->uri);
+		load_font->set_attribute("URI", _load_font_nodes.front()->uri);
 	}
 
 	list<shared_ptr<SubtitleString> > sorted = _subtitles;

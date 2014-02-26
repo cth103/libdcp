@@ -158,6 +158,7 @@ list<shared_ptr<const Content> >
 CPL::content () const
 {
 	list<shared_ptr<const Content> > c;
+
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		if ((*i)->main_picture ()) {
 			c.push_back ((*i)->main_picture()->mxf ());
@@ -251,3 +252,17 @@ CPL::resolve_refs (list<shared_ptr<Object> > objects)
 		(*i)->resolve_refs (objects);
 	}
 }
+
+string
+CPL::pkl_type (Standard standard) const
+{
+	switch (standard) {
+	case INTEROP:
+		return "text/xml;asdcpKind=CPL";
+	case SMPTE:
+		return "text/xml";
+	default:
+		assert (false);
+	}
+}
+	

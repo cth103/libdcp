@@ -65,6 +65,9 @@ public:
 
 private:
 	std::string key_type () const;
+	std::string asdcp_kind () const {
+		return "Sound";
+	}
 
 	int _channels;      ///< number of channels
 	int _sampling_rate; ///< sampling rate in Hz

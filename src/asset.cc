@@ -60,7 +60,7 @@ Asset::Asset (string id)
 }
 
 void
-Asset::write_to_pkl (xmlpp::Node* node) const
+Asset::write_to_pkl (xmlpp::Node* node, Standard standard) const
 {
 	assert (!_file.empty ());
 	
@@ -69,7 +69,7 @@ Asset::write_to_pkl (xmlpp::Node* node) const
 	asset->add_child("AnnotationText")->add_child_text (_id);
 	asset->add_child("Hash")->add_child_text (hash ());
 	asset->add_child("Size")->add_child_text (lexical_cast<string> (boost::filesystem::file_size (_file)));
-	asset->add_child("Type")->add_child_text (pkl_type ());
+	asset->add_child("Type")->add_child_text (pkl_type (standard));
 }
 
 void

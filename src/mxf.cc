@@ -29,6 +29,7 @@
 #include "metadata.h"
 #include "exceptions.h"
 #include "kdm.h"
+#include "compose.hpp"
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
 #include <iostream>
@@ -151,4 +152,17 @@ MXF::read_writer_info (ASDCP::WriterInfo const & info)
 	char buffer[64];
 	Kumu::bin2UUIDhex (info.AssetUUID, 16, buffer, 64);
 	_id = buffer;
+}
+
+string
+MXF::pkl_type (Standard standard) const
+{
+	switch (standard) {
+	case INTEROP:
+		return String::compose ("application/x-smpte-mxf;asdcpKind=%1", asdcp_kind ());
+	case SMPTE:
+		return "application/x-smpte-mxf";
+	default:
+		assert (false);
+	}
 }

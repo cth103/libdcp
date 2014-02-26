@@ -17,4 +17,4 @@
 
 */
 
-extern std::string test_corpus;
+extern std::string private_test;

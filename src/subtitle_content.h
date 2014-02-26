@@ -67,8 +67,12 @@ public:
 	Glib::ustring xml_as_string () const;
 
 protected:
-	std::string pkl_type () const {
+	std::string pkl_type (Standard) const {
 		return "text/xml";
+	}
+
+	std::string asdcp_kind () const {
+		return "Subtitle";
 	}
 	
 private:
