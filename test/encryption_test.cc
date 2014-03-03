@@ -116,8 +116,12 @@ BOOST_AUTO_TEST_CASE (encryption)
 		"xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/bar.kdm.xml "
 		"> build/test/xmllint.log 2>&1 < /dev/null"
 		);
-	
+
+#ifdef DCPOMATIC_POSIX	
 	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
+#else
+	BOOST_CHECK_EQUAL (r, 0);
+#endif	
 		
 	r = system ("xmlsec1 verify "
 		"--pubkey-cert-pem test/ref/crypt/leaf.signed.pem "
@@ -127,5 +131,9 @@ BOOST_AUTO_TEST_CASE (encryption)
 		"--id-attr:Id http://www.smpte-ra.org/schemas/430-3/2006/ETM:AuthenticatedPrivate "
 		    "build/test/bar.kdm.xml > build/test/xmlsec1.log 2>&1 < /dev/null");
 	
+#ifdef DCPOMATIC_POSIX	
 	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
+#else
+	BOOST_CHECK_EQUAL (r, 0);
+#endif	
 }
