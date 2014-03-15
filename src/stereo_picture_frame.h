@@ -24,7 +24,7 @@
 
 namespace ASDCP {
 	namespace JP2K {
-		class SFrameBuffer;
+		struct SFrameBuffer;
 	}
 	class AESDecContext;
 }

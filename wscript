@@ -27,7 +27,7 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_POSIX')
 
     if not conf.options.osx:
-        conf.env.append_value('CXXFLAGS', ['-Wno-unused-result'])
+        conf.env.append_value('CXXFLAGS', ['-Wno-unused-result', '-Wno-unused-parameter'])
 
     conf.check_cfg(package = 'openssl', args = '--cflags --libs', uselib_store = 'OPENSSL', mandatory = True)
     conf.check_cfg(package = 'libxml++-2.6', args = '--cflags --libs', uselib_store = 'LIBXML++', mandatory = True)

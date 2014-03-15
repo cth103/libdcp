@@ -32,7 +32,7 @@
 #include "types.h"
 
 namespace ASDCP {
-	class WriterInfo;
+	struct WriterInfo;
 }
 
 namespace xmlpp {
