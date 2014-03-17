@@ -29,6 +29,7 @@
 #include <xmlsec/dl.h>
 #include <xmlsec/app.h>
 #include <xmlsec/crypto.h>
+#include "compose.hpp"
 
 using std::string;
 using std::list;
