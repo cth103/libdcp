@@ -123,8 +123,9 @@ Signer::add_signature_value (xmlpp::Node* parent, string ns) const
 		throw MiscError ("could not set key name");
 	}
 
-	if (xmlSecDSigCtxSign (signature_context, parent->cobj ()) < 0) {
-		throw MiscError ("could not sign");
+	int const r = xmlSecDSigCtxSign (signature_context, parent->cobj ());
+	if (r < 0) {
+		throw MiscError (String::compose ("could not sign (%1)", r));
 	}
 
 	xmlSecDSigCtxDestroy (signature_context);

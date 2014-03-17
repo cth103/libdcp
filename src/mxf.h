@@ -30,6 +30,10 @@ namespace ASDCP {
 	class AESDecContext;
 }
 
+/* Undefine some stuff that the OS X 10.5 SDK defines */
+#undef Key
+#undef set_key
+
 namespace dcp
 {
 
