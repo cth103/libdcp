@@ -22,8 +22,11 @@ else
     $work/tests $*
 fi
 
-if [ ! -e "test/private/info.log" ]; then
-    echo "Private data not found: some tests will not run"
+# Check a MXF written by the unit tests
+diff $work/baz/video1.mxf $work/baz/video2.mxf
+if [ "$?" != "0" ]; then
+    echo "FAIL: MXFs from recovery incorrect"
+    exit 1
 fi
 
 # Check the first DCP written by the unit tests
@@ -37,6 +40,13 @@ fi
 diff -ur test/ref/DCP/bar $work/DCP/bar
 if [ "$?" != "0" ]; then
     echo "FAIL: files differ"
+    exit 1
+fi
+    
+# Everything beyond this point needs $private to exist
+if [ ! -e "$private/info.log" ]; then
+    echo ""
+    echo "Private data not found: some tests will not run."
     exit 1
 fi
 
@@ -85,11 +95,4 @@ fi
 # and check that they are right
 build/tools/dcpinfo -s $private/JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV >> $work/jah.log
 
-# Check a MXF written by the unit tests
-diff $work/baz/video1.mxf $work/baz/video2.mxf
-if [ "$?" != "0" ]; then
-    echo "FAIL: MXFs from recovery incorrect"
-    exit 1
-fi
-    
 echo "PASS"

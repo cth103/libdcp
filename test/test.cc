@@ -46,5 +46,5 @@ wav (libdcp::Channel)
 	return "test/data/1s_24-bit_48k_silence.wav";
 }
 
-string private_test = "test/private";
+string private_test = "../libdcp-test-private";
 
