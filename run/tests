@@ -6,20 +6,21 @@
 # in test/ref/DCP, and an error is given
 # if anything is different.
 
-private=test/private
+private=../libdcp-test-private
 work=build/test
+dcpinfo=build/tools/dcpinfo
 
 export LD_LIBRARY_PATH=build/src:build/asdcplib/src
 
 # Run the unit tests in test/
 if [ "$1" == "--debug" ]; then
     shift
-    gdb --args $work/tests
+    gdb --args $work/tests $private
 elif [ "$1" == "--valgrind" ]; then
     shift
-    valgrind --tool="memcheck" $work/tests
+    valgrind --tool="memcheck" $work/tests $private
 else
-    $work/tests $*
+    $work/tests $private $*
 fi
 
 # Check a MXF written by the unit tests
@@ -54,7 +55,7 @@ fi
 rm -f $work/info.log
 for d in `find $private/metadata -mindepth 1 -maxdepth 1 -type d | sort`; do
     if [ `basename $d` != ".git" ]; then
-        build/tools/dcpinfo -s $d >> $work/info.log
+        $dcpinfo -s $d >> $work/info.log
         if [ "$?" != "0" ]; then
             echo "FAIL: dcpinfo failed for $d"
             exit 1
@@ -73,11 +74,12 @@ fi
 # $work/rewrite_subs.  This tests round-trip of subtitle reading/writing.
 rm -f $work/info2.log
 rm -rf $work/private
-cp -r $private $work
+mkdir $work/private
+cp -r $private/* $work/private
 for d in `find $work/private/metadata -mindepth 1 -maxdepth 1 -type d | sort`; do
     if [ `basename $d` != ".git" ]; then
         $work/rewrite_subs $d
-        build/tools/dcpinfo -s $d >> $work/info2.log
+        $dcpinfo -s $d >> $work/info2.log
     fi
 done
 
@@ -93,6 +95,6 @@ fi
 
 # Dump the subs of JourneyToJah... (which has MXF-wrapped subtitles)
 # and check that they are right
-build/tools/dcpinfo -s $private/JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV >> $work/jah.log
+$dcpinfo -s $private/JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV >> $work/jah.log
 
 echo "PASS"

@@ -76,7 +76,7 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	cout << "DCP: " << argv[optind] << "\n";
+	cout << "DCP: " << boost::filesystem::path(argv[optind]).filename().string() << "\n";
 
 	list<shared_ptr<CPL> > cpls = dcp->cpls ();
 

@@ -24,11 +24,16 @@
 
 using std::string;
 
+string private_test;
+
 struct TestConfig
 {
 	TestConfig()
 	{
 		libdcp::init ();
+		if (boost::unit_test::framework::master_test_suite().argc >= 2) {
+			private_test = boost::unit_test::framework::master_test_suite().argv[1];
+		}
 	}
 };
 
@@ -46,5 +51,4 @@ wav (libdcp::Channel)
 	return "test/data/1s_24-bit_48k_silence.wav";
 }
 
-string private_test = "../libdcp-test-private";
 

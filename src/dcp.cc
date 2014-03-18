@@ -228,12 +228,12 @@ DCP::read_assets ()
 			if (boost::filesystem::exists (p)) {
 				asset_map.reset (new libdcp::parse::AssetMap (p.string ()));
 			} else {
-				boost::throw_exception (DCPReadError ("could not find AssetMap file"));
+				boost::throw_exception (FileError ("could not find AssetMap file", p, -1));
 			}
 		}
 		
 	} catch (FileError& e) {
-		boost::throw_exception (FileError ("could not load AssetMap file", _files.asset_map, e.number ()));
+		boost::throw_exception (FileError ("could not load AssetMap file", e.filename(), e.number ()));
 	}
 
 	for (list<shared_ptr<libdcp::parse::AssetMapAsset> >::const_iterator i = asset_map->assets.begin(); i != asset_map->assets.end(); ++i) {
