@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/encrypted_kdm.h
+ *  @brief EncryptedKDM class.
+ */
+
 #include "local_time.h"
 #include <boost/filesystem.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
@@ -34,11 +38,42 @@ namespace data {
 class Signer;	
 class Certificate;
 
+/** @class EncryptedKDM
+ *  @brief An encrypted KDM.
+ *
+ *  This is a KDM whose keys are encrypted using the target projector's private key.
+ *  An EncryptedKDM object can be initialised from a KDM XML file, or created from
+ *  a DecryptedKDM (using DecryptedKDM::encrypt).
+ */
 class EncryptedKDM
 {
 public:
-	/** Read a KDM from an XML file */
+	/** Read a KDM from an XML file.
+	 *  @param file XML file to read.
+	 */
 	EncryptedKDM (boost::filesystem::path file);
+
+	EncryptedKDM (EncryptedKDM const & kdm);
+	EncryptedKDM & operator= (EncryptedKDM const &);
+	~EncryptedKDM ();
+
+	/** Write this KDM as XML to a file.
+	 *  @param file File to write to.
+	 */
+	void as_xml (boost::filesystem::path file) const;
+
+	/** @return This KDM as XML */
+	std::string as_xml () const;
+
+	/** @return The base64-encoded and encrypted keys that this KDM delivers.
+	 *  Note that the returned `keys' contain more than just the asset decryption
+	 *  keys (also key id, CPL id etc.)
+	 */
+	std::list<std::string> keys () const;
+	
+private:
+
+	friend class DecryptedKDM;
 
 	/** Construct an EncryptedKDM from a set of details */
 	EncryptedKDM (
@@ -52,17 +87,7 @@ public:
 		std::list<std::pair<std::string, std::string> > key_ids,
 		std::list<std::string> keys
 		);
-
-	EncryptedKDM (EncryptedKDM const & kdm);
-	EncryptedKDM & operator= (EncryptedKDM const &);
-	~EncryptedKDM ();
-
-	void as_xml (boost::filesystem::path) const;
-	std::string as_xml () const;
-
-	std::list<std::string> keys () const;
 	
-private:
 	data::EncryptedKDMData* _data;
 };
 
