@@ -28,7 +28,8 @@
 #include "reel_stereo_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
-#include "kdm.h"
+#include "decrypted_kdm_key.h"
+#include "decrypted_kdm.h"
 #include <libxml++/nodes/element.h>
 
 using std::string;
@@ -133,15 +134,15 @@ Reel::encrypted () const
 }
 
 void
-Reel::add (KDM const & kdm)
+Reel::add (DecryptedKDM const & kdm)
 {
-	list<KDMKey> keys = kdm.keys ();
+	list<DecryptedKDMKey> keys = kdm.keys ();
 	
-	for (list<KDMKey>::iterator i = keys.begin(); i != keys.end(); ++i) {
-		if (i->key_id() == _main_picture->key_id()) {
+	for (list<DecryptedKDMKey>::iterator i = keys.begin(); i != keys.end(); ++i) {
+		if (i->id() == _main_picture->key_id()) {
 			_main_picture->mxf()->set_key (i->key ());
 		}
-		if (i->key_id() == _main_sound->key_id()) {
+		if (i->id() == _main_sound->key_id()) {
 			_main_sound->mxf()->set_key (i->key ());
 		}
 	}

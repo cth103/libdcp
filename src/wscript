@@ -20,14 +20,17 @@ def build(bld):
                  cpl.cc
                  dcp.cc        
                  dcp_time.cc
+                 decrypted_kdm.cc
+                 decrypted_kdm_key.cc
+                 encrypted_kdm.cc
                  exceptions.cc
                  file.cc
                  font.cc
                  gamma_lut.cc
                  image.cc
-                 kdm.cc
                  key.cc
                  load_font.cc
+                 local_time.cc
                  metadata.cc
                  mono_picture_mxf.cc
                  mono_picture_mxf_writer.cc
@@ -71,10 +74,11 @@ def build(bld):
               content.h
               dcp.h
               dcp_time.h
+              decrypted_kdm.h
+              encrypted_kdm.h
               exceptions.h
               gamma_lut.h
               image.h
-              kdm.h
               key.h
               lut_cache.h
               metadata.h

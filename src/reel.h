@@ -34,7 +34,7 @@ namespace cxml {
 
 namespace dcp {
 
-class KDM;
+class DecryptedKDM;
 class ReelAsset;
 class ReelPictureAsset;
 class ReelSoundAsset;
@@ -81,7 +81,7 @@ public:
 	
 	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> notes) const;
 
-	void add (KDM const &);
+	void add (DecryptedKDM const &);
 
 	void resolve_refs (std::list<boost::shared_ptr<Object> >);
 

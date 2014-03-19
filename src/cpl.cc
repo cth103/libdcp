@@ -32,6 +32,7 @@
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
+#include "local_time.h"
 #include <libxml/parser.h>
 
 using std::string;
@@ -55,9 +56,7 @@ CPL::CPL (string annotation_text, ContentKind content_kind)
 	/* default _content_version_id to and _content_version_label to
 	   a random ID and the current time.
 	*/
-	time_t now = time (0);
-	struct tm* tm = localtime (&now);
-	_content_version_id = "urn:uuid:" + make_uuid() + tm_to_string (tm);
+	_content_version_id = "urn:uuid:" + make_uuid() + LocalTime().as_string ();
 	_content_version_label_text = _content_version_id;
 }
 
@@ -226,7 +225,7 @@ CPL::encrypted () const
  *  @param kdm KDM.
  */
 void
-CPL::add (KDM const & kdm)
+CPL::add (DecryptedKDM const & kdm)
 {
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		(*i)->add (kdm);

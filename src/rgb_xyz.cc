@@ -23,6 +23,7 @@
 #include "gamma_lut.h"
 #include "image.h"
 #include "colour_matrix.h"
+#include <cmath>
 
 using std::min;
 using std::max;

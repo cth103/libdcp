@@ -28,7 +28,6 @@
 #include "util.h"
 #include "metadata.h"
 #include "exceptions.h"
-#include "kdm.h"
 #include "compose.hpp"
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
@@ -38,7 +37,6 @@ using std::string;
 using std::list;
 using std::pair;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 

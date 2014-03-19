@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,34 +17,12 @@
 
 */
 
-/** @file  src/exceptions.cc
- *  @brief Exceptions thrown by libdcp.
- */
+#include "decrypted_kdm_key.h"
 
-#include "exceptions.h"
-#include "compose.hpp"
-
-using std::string;
 using namespace dcp;
 
-FileError::FileError (string message, boost::filesystem::path filename, int number)
-	: _message (String::compose ("%1 (%2) (error %3)", message, filename.string(), number))
-	, _filename (filename)
-	, _number (number)
+bool
+dcp::operator== (dcp::DecryptedKDMKey const & a, dcp::DecryptedKDMKey const & b)
 {
-
+	return a.type() == b.type() && a.id() == b.id() && a.key() == b.key() && a.cpl_id() == b.cpl_id();
 }
-
-UnresolvedRefError::UnresolvedRefError (string id)
-	: _message (String::compose ("Unresolved reference to asset id %1", id))
-{
-
-}
-
-TimeFormatError::TimeFormatError (string bad_time)
-	: _message (String::compose ("Bad time string %1", bad_time))
-{
-
-}
-
-			    

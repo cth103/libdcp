@@ -41,6 +41,7 @@
 #include "file.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
+#include <cmath>
 
 int
 main ()

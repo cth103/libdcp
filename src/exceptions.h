@@ -146,7 +146,25 @@ public:
 private:
 	std::string _message;
 };
-	
+
+/** @class TimeFormatError
+ *  @brief A an error with a string passed to LocalTime.
+ */
+class TimeFormatError : public std::exception
+{
+public:
+	TimeFormatError (std::string bad_time);
+	~TimeFormatError () throw () {}
+
+	/** @return error message */
+	char const * what () const throw () {
+		return _message.c_str ();
+	}
+
+private:
+	std::string _message;
+};
+
 }
 
 #endif

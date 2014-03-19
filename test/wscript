@@ -29,14 +29,13 @@ def build(bld):
                  decryption_test.cc
                  encryption_test.cc
                  frame_info_test.cc
-                 kdm_key_test.cc
+                 local_time_test.cc
                  kdm_test.cc
                  read_dcp_test.cc
                  recovery_test.cc
                  round_trip_test.cc
                  subtitle_tests.cc
                  test.cc 
-                 utc_offset_to_string_test.cc
                  util_test.cc
                  """
     obj.target = 'tests'

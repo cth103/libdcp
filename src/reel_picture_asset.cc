@@ -26,6 +26,7 @@
 #include "picture_mxf.h"
 #include "compose.hpp"
 #include <libcxml/cxml.h>
+#include <iomanip>
 
 using std::bad_cast;
 using std::string;

@@ -18,7 +18,8 @@
 */
 
 #include "certificates.h"
-#include "kdm.h"
+#include "decrypted_kdm.h"
+#include "encrypted_kdm.h"
 #include "signer.h"
 #include "mono_picture_mxf.h"
 #include "sound_mxf.h"
@@ -78,29 +79,28 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	cpl->add (reel);
 
 	/* A KDM using our certificate chain's leaf key pair */
-	dcp::KDM kdm_A (
+	dcp::DecryptedKDM kdm_A (
 		cpl,
-		signer,
-		signer->certificates().leaf(),
-		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
-		boost::posix_time::time_from_string ("2013-01-08 00:00:00"),
+		dcp::LocalTime ("2013-01-01T00:00:00+00:00"),
+		dcp::LocalTime ("2013-01-08T00:00:00+00:00"),
 		"libdcp",
+		"test",
 		"2012-07-17T04:45:18+00:00"
 		);
 
 	boost::filesystem::path const kdm_file = work_dir / "kdm.xml";
 
-	kdm_A.as_xml (kdm_file);
+	kdm_A.encrypt(signer, signer->certificates().leaf()).as_xml (kdm_file);
 
 	/* Reload the KDM, using our private key to decrypt it */
-	dcp::KDM kdm_B (kdm_file, "build/test/signer/leaf.key");
+	dcp::DecryptedKDM kdm_B (dcp::EncryptedKDM (kdm_file), "build/test/signer/leaf.key");
 
 	/* Check that the decrypted KDMKeys are the same as the ones we started with */
 	BOOST_CHECK_EQUAL (kdm_A.keys().size(), kdm_B.keys().size());
-	list<dcp::KDMKey> keys_A = kdm_A.keys ();
-	list<dcp::KDMKey> keys_B = kdm_B.keys ();
-	list<dcp::KDMKey>::const_iterator i = keys_A.begin();
-	list<dcp::KDMKey>::const_iterator j = keys_B.begin();
+	list<dcp::DecryptedKDMKey> keys_A = kdm_A.keys ();
+	list<dcp::DecryptedKDMKey> keys_B = kdm_B.keys ();
+	list<dcp::DecryptedKDMKey>::const_iterator i = keys_A.begin();
+	list<dcp::DecryptedKDMKey>::const_iterator j = keys_B.begin();
 	while (i != keys_A.end ()) {
 		BOOST_CHECK (*i == *j);
 		++i;

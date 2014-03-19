@@ -17,7 +17,6 @@
 
 */
 
-#include "kdm.h"
 #include "KM_util.h"
 #include "metadata.h"
 #include "certificates.h"
@@ -35,6 +34,8 @@
 #include "subtitle_content.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
+#include "encrypted_kdm.h"
+#include "decrypted_kdm.h"
 #include <sndfile.h>
 #include <boost/test/unit_test.hpp>
 #include <boost/shared_ptr.hpp>
@@ -123,17 +124,16 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	d.add (cpl);
 	d.write_xml (dcp::SMPTE, xml_metadata, signer);
 
-	dcp::KDM kdm (
+	dcp::DecryptedKDM kdm (
 		cpl,
-		signer,
-		signer->certificates().leaf(),
-		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
-		boost::posix_time::time_from_string ("2017-01-08 00:00:00"),
+		dcp::LocalTime ("2013-01-01T00:00:00+00:00"),
+		dcp::LocalTime ("2017-01-08T00:00:00+00:00"),
 		"libdcp",
+		"test",
 		"2012-07-17T04:45:18+00:00"
 		);
 
-	kdm.as_xml ("build/test/bar.kdm.xml");
+	kdm.encrypt(signer, signer->certificates().leaf()).as_xml ("build/test/bar.kdm.xml");
 	
 	int r = system (
 		"xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/bar.kdm.xml "

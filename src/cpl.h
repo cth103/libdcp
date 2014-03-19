@@ -28,7 +28,6 @@
 #include <libxml++/libxml++.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
 #include <list>
@@ -40,7 +39,7 @@ class Reel;
 class XMLMetadata;
 class MXFMetadata;
 class Signer;
-class KDM;
+class DecryptedKDM;
 	
 /** @class CPL
  *  @brief A Composition Playlist.
@@ -58,7 +57,7 @@ public:
 		) const;
 
 	void add (boost::shared_ptr<Reel> reel);
-	void add (KDM const &);
+	void add (DecryptedKDM const &);
 
 	/** @return contents of the &lt;AnnotationText&gt; node */
 	std::string annotation_text () const {

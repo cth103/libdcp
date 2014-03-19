@@ -314,66 +314,6 @@ dcp::base64_decode (string const & in, unsigned char* out, int out_length)
 	return N;
 }
 
-/** Convert a struct tm to a string of the form
- *  2014-01-26T21:39:00+01:00
- *  @param tm struct tm.
- *  @return Time as a string.
- */
-string
-dcp::tm_to_string (struct tm* tm)
-{
-	char buffer[64];
-	strftime (buffer, 64, "%Y-%m-%dT%H:%M:%S", tm);
-
-	int offset = 0;
-
-#ifdef LIBDCP_POSIX
-	offset = tm->tm_gmtoff / 60;
-#else
-	TIME_ZONE_INFORMATION tz;
-	GetTimeZoneInformation (&tz);
-	offset = tz.Bias;
-#endif
-	
-	return string (buffer) + utc_offset_to_string (offset);
-}
-
-/** @param b Offset from UTC to local time in minutes.
- *  @return string of the form e.g. -01:00.
- */
-string
-dcp::utc_offset_to_string (int b)
-{
-	bool const negative = (b < 0);
-	b = negative ? -b : b;
-
-	int const hours = b / 60;
-	int const minutes = b % 60;
-
-	stringstream o;
-	if (negative) {
-		o << "-";
-	} else {
-		o << "+";
-	}
-
-	o << setw(2) << setfill('0') << hours << ":" << setw(2) << setfill('0') << minutes;
-	return o.str ();
-}
-
-/** Convert a boost::posix_time::ptime to a string of the form
- *  2014-01-26T21:39:00+01:00.
- *  @param t boost::posix_time::ptime.
- *  @return Time as a string.
- */
-string
-dcp::ptime_to_string (boost::posix_time::ptime t)
-{
-	struct tm t_tm = boost::posix_time::to_tm (t);
-	return tm_to_string (&t_tm);
-}
-
-
 /** @param p Path to open.
  *  @param t mode flags, as for fopen(3).
  *  @return FILE pointer or 0 on error.

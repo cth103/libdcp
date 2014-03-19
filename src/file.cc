@@ -23,6 +23,7 @@
 
 #include "file.h"
 #include "util.h"
+#include <stdio.h>
 
 using namespace dcp;
 

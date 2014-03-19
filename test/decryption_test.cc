@@ -18,10 +18,11 @@
 */
 
 #include <boost/test/unit_test.hpp>
-#include "kdm.h"
 #include "dcp.h"
 #include "mono_picture_frame.h"
 #include "cpl.h"
+#include "decrypted_kdm.h"
+#include "encrypted_kdm.h"
 #include "argb_frame.h"
 #include "mono_picture_mxf.h"
 #include "reel_picture_asset.h"
@@ -58,11 +59,11 @@ BOOST_AUTO_TEST_CASE (decryption_test)
 	encrypted.read ();
 	BOOST_CHECK_EQUAL (encrypted.encrypted (), true);
 
-	dcp::KDM kdm (
-		"test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml",
+	dcp::DecryptedKDM kdm (
+		dcp::EncryptedKDM ("test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml"),
 		"test/data/private.key"
 		);
-
+	
 	encrypted.add (kdm);
 
 	shared_ptr<const dcp::ARGBFrame> plaintext_frame = get_frame (plaintext);
@@ -78,8 +79,8 @@ BOOST_AUTO_TEST_CASE (decryption_test)
 /** Load in a KDM that didn't work at first */
 BOOST_AUTO_TEST_CASE (failing_kdm_test)
 {
-	dcp::KDM kdm (
-		"test/data/target.pem.crt.de5d4eba-e683-41ca-bdda-aa4ad96af3f4.kdm.xml",
+	dcp::DecryptedKDM kdm (
+		dcp::EncryptedKDM ("test/data/target.pem.crt.de5d4eba-e683-41ca-bdda-aa4ad96af3f4.kdm.xml"),
 		"test/data/private.key"
 		);
 }

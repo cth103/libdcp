@@ -46,7 +46,7 @@ class Reel;
 class CPL;
 class XMLMetadata;
 class Signer;
-class KDM;
+class DecryptedKDM;
 class Asset;
 
 namespace parse {
@@ -89,7 +89,7 @@ public:
 
 	bool encrypted () const;
 
-	void add (KDM const &);
+	void add (DecryptedKDM const &);
 
 	void write_xml (
 		Standard standard,

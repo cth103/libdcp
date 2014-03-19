@@ -27,7 +27,6 @@
 #include "types.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <openjpeg.h>
@@ -87,9 +86,6 @@ extern void add_signer (xmlpp::Element* parent, CertificateChain const & certifi
 
 extern int base64_decode (std::string const & in, unsigned char* out, int out_length);
 extern boost::optional<boost::filesystem::path> relative_to_root (boost::filesystem::path root, boost::filesystem::path file);
-extern std::string tm_to_string (struct tm *);
-extern std::string utc_offset_to_string (int);
-extern std::string ptime_to_string (boost::posix_time::ptime);
 extern FILE * fopen_boost (boost::filesystem::path, std::string);
 
 template <class F, class T>

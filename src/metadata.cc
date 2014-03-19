@@ -23,9 +23,7 @@
 
 #include "metadata.h"
 #include "util.h"
-#ifdef LIBDCP_WINDOWS
-#include <windows.h>
-#endif
+#include "local_time.h"
 #include <sstream>
 #include <iomanip>
 #include <time.h>
@@ -52,7 +50,5 @@ XMLMetadata::XMLMetadata ()
 void
 XMLMetadata::set_issue_date_now ()
 {
-	time_t now = time (0);
-	struct tm* tm = localtime (&now);
-	issue_date = tm_to_string (tm);
+	issue_date = LocalTime().as_string ();
 }

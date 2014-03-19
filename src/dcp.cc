@@ -33,9 +33,10 @@
 #include "reel.h"
 #include "cpl.h"
 #include "signer.h"
-#include "kdm.h"
 #include "compose.hpp"
 #include "AS_DCP.h"
+#include "decrypted_kdm.h"
+#include "decrypted_kdm_key.h"
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
 #include <libxml++/libxml++.h>
@@ -194,13 +195,13 @@ DCP::encrypted () const
 }
 
 void
-DCP::add (KDM const & kdm)
+DCP::add (DecryptedKDM const & kdm)
 {
-	list<KDMKey> keys = kdm.keys ();
+	list<DecryptedKDMKey> keys = kdm.keys ();
 	list<shared_ptr<CPL> > cpl = cpls ();
 	
 	for (list<shared_ptr<CPL> >::iterator i = cpl.begin(); i != cpl.end(); ++i) {
-		for (list<KDMKey>::iterator j = keys.begin(); j != keys.end(); ++j) {
+		for (list<DecryptedKDMKey>::iterator j = keys.begin(); j != keys.end(); ++j) {
 			if (j->cpl_id() == (*i)->id()) {
 				(*i)->add (kdm);
 			}				

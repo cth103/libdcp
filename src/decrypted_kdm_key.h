@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,16 +17,48 @@
 
 */
 
-#include <boost/test/unit_test.hpp>
-#include "metadata.h"
-#include "util.h"
+#ifndef LIBDCP_DECRYPTED_KDM_KEY_H
+#define LIBDCP_DECRYPTED_KDM_KEY_H
 
-/** Test dcp::utc_offset_to_string */
-BOOST_AUTO_TEST_CASE (utc_offset_to_string_test)
+#include "key.h"
+
+namespace dcp {
+
+class DecryptedKDMKey
 {
-	BOOST_CHECK_EQUAL (dcp::utc_offset_to_string (30), "+00:30");
-	BOOST_CHECK_EQUAL (dcp::utc_offset_to_string (60), "+01:00");
-	BOOST_CHECK_EQUAL (dcp::utc_offset_to_string (61), "+01:01");
-	BOOST_CHECK_EQUAL (dcp::utc_offset_to_string (7 * 60), "+07:00");
-	BOOST_CHECK_EQUAL (dcp::utc_offset_to_string (-11 * 60), "-11:00");
+public:
+	DecryptedKDMKey (std::string type, std::string id, Key key, std::string cpl_id)
+		: _type (type)
+		, _id (id)
+		, _key (key)
+		, _cpl_id (cpl_id)
+	{}
+
+	std::string type () const {
+		return _type;
+	}
+
+	std::string id () const {
+		return _id;
+	}
+
+	Key key () const {
+		return _key;
+	}
+
+	std::string cpl_id () const {
+		return _cpl_id;
+	}
+
+private:	
+	std::string _type;
+	std::string _id;
+	Key _key;
+	std::string _cpl_id;
+};
+
+bool operator== (DecryptedKDMKey const &, DecryptedKDMKey const &);
+
 }
+
+#endif

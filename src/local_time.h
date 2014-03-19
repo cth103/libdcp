@@ -17,34 +17,37 @@
 
 */
 
-/** @file  src/exceptions.cc
- *  @brief Exceptions thrown by libdcp.
- */
+#ifndef LIBDCP_LOCAL_TIME_H
+#define LIBDCP_LOCAL_TIME_H
 
-#include "exceptions.h"
-#include "compose.hpp"
+#include <string>
 
-using std::string;
-using namespace dcp;
+class local_time_test;
 
-FileError::FileError (string message, boost::filesystem::path filename, int number)
-	: _message (String::compose ("%1 (%2) (error %3)", message, filename.string(), number))
-	, _filename (filename)
-	, _number (number)
+namespace dcp {
+
+/** I tried to use boost for this, really I did */
+class LocalTime
 {
+public:
+	LocalTime ();
+	LocalTime (std::string);
+
+	std::string as_string () const;
+
+private:
+	friend class ::local_time_test;
+	
+	int _year;
+	int _month;
+	int _day;
+	int _hour;
+	int _minute;
+	int _second;
+	int _tz_hour;
+	int _tz_minute;
+};
 
 }
 
-UnresolvedRefError::UnresolvedRefError (string id)
-	: _message (String::compose ("Unresolved reference to asset id %1", id))
-{
-
-}
-
-TimeFormatError::TimeFormatError (string bad_time)
-	: _message (String::compose ("Bad time string %1", bad_time))
-{
-
-}
-
-			    
+#endif
