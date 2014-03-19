@@ -1,3 +1,0 @@
-[submodule "test/private"]
-	path = test/private
-	url = ../libdcp-test.git

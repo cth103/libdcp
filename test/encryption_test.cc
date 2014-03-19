@@ -26,6 +26,7 @@
 #include "cpl.h"
 #include "mono_picture_mxf.h"
 #include "picture_mxf_writer.h"
+#include "sound_mxf_writer.h"
 #include "sound_mxf.h"
 #include "reel.h"
 #include "test.h"
@@ -34,6 +35,7 @@
 #include "subtitle_content.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
+#include <sndfile.h>
 #include <boost/test/unit_test.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -92,9 +94,30 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	}
 	writer->finalize ();
 
+	shared_ptr<dcp::SoundMXF> ms (new dcp::SoundMXF (dcp::Fraction (24, 1), 48000, 1));
+	ms->set_key (key);
+	shared_ptr<dcp::SoundMXFWriter> sound_writer = ms->start_write ("build/test/DCP/bar/audio.mxf", dcp::SMPTE);
+	
+	SF_INFO info;
+	info.format = 0;
+	SNDFILE* sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
+	BOOST_CHECK (sndfile);
+	float buffer[4096*6];
+	float* channels[1];
+	channels[0] = buffer;
+	while (1) {
+		sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
+		sound_writer->write (channels, N);
+		if (N < 4096) {
+			break;
+		}
+	}
+	
+	sound_writer->finalize ();	
+
 	cpl->add (shared_ptr<dcp::Reel> (new dcp::Reel (
 						 shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (mp, 0)),
-						 shared_ptr<dcp::ReelSoundAsset> (),
+						 shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (ms, 0)),
 						 shared_ptr<dcp::ReelSubtitleAsset> ()
 						 )));
 	d.add (cpl);
@@ -105,7 +128,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 		signer,
 		signer->certificates().leaf(),
 		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
-		boost::posix_time::time_from_string ("2013-01-08 00:00:00"),
+		boost::posix_time::time_from_string ("2017-01-08 00:00:00"),
 		"libdcp",
 		"2012-07-17T04:45:18+00:00"
 		);

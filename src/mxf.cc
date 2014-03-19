@@ -161,7 +161,7 @@ MXF::pkl_type (Standard standard) const
 	case INTEROP:
 		return String::compose ("application/x-smpte-mxf;asdcpKind=%1", asdcp_kind ());
 	case SMPTE:
-		return "application/x-smpte-mxf";
+		return "application/mxf";
 	default:
 		assert (false);
 	}

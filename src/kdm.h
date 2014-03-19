@@ -32,11 +32,16 @@
 
 class kdm_key_test;
 
+namespace xmlpp {
+	class Element;
+	class Attribute;
+}
+
 namespace dcp {
 
 namespace xml {
 	class DCinemaSecurityMessage;
-};
+}
 
 class Signer;
 class Certificate;
@@ -82,7 +87,7 @@ public:
 		);
 	
 	KDMKey (KDMKey const &);
-
+	
 	KDMKey& operator= (KDMKey const &);
 
 	/** @return ID of the CPL that the KDM is for */
@@ -189,11 +194,30 @@ public:
 	std::string as_xml () const;
 
 private:
+	void authenticated_public (xmlpp::Element *, std::map<std::string, xmlpp::Attribute *>& references) const;
+	void authenticated_private (xmlpp::Element *, std::map<std::string, xmlpp::Attribute *>& references) const;
+	void signature (xmlpp::Element *, std::map<std::string, xmlpp::Attribute *> const & references) const;
+
 	/** Unencrypted MXF content keys */
 	std::list<KDMKey> _keys;
 
-	/** The KDM's contents, mapped 1:1-ish to the XML */
-	boost::shared_ptr<xml::DCinemaSecurityMessage> _xml_kdm;
+	/** AuthenticatedPublic/MessageId (without the urn:uuid: prefix) */
+	std::string _id;
+	/** AuthenticatedPublic/AnnotationText */
+	std::string _annotation_text;
+	/** AuthenticatedPublic/IssueDate */
+	std::string _issue_date;
+	/** Certificate of recipient */
+	boost::shared_ptr<const Certificate> _recipient_cert;
+	/** CPL that this KDM is for, or 0 if we do not have a CPL object */
+	boost::shared_ptr<const CPL> _cpl;
+	boost::shared_ptr<const Signer> _signer;
+	/** Start time for this KDM */
+	boost::posix_time::ptime _not_valid_before;
+	/** End time for this KDM */
+	boost::posix_time::ptime _not_valid_after;
+	/** KDMRequiredExtensions/AuthorizedDeviceInfo/DeviceListIdentifier */
+	std::string _device_list_identifier_id;
 };
 
 

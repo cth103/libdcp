@@ -42,6 +42,7 @@
 using std::list;
 using std::string;
 using std::stringstream;
+using std::map;
 using std::hex;
 using std::setw;
 using std::setfill;
@@ -50,7 +51,6 @@ using boost::shared_ptr;
 using namespace dcp;
 
 KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
-	: _xml_kdm (new xml::DCinemaSecurityMessage (kdm))
 {
 	/* Read the private key */
 	   
@@ -65,9 +65,20 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 		throw FileError ("could not read RSA private key file", private_key, errno);
 	}
 
-	/* Use it to decrypt the keys */
+	/* Read the encrypted keys from the XML */
+	/* XXX: this should be reading more stuff from the XML to fill our member variables */
 
-	list<string> encrypted_keys = _xml_kdm->authenticated_private.encrypted_keys;
+	list<string> encrypted_keys;
+	cxml::Document doc ("DCinemaSecurityMessage");
+	doc.read_file (kdm.string ());
+
+	shared_ptr<cxml::Node> authenticated_private = doc.node_child ("AuthenticatedPrivate");
+	list<shared_ptr<cxml::Node> > encrypted_key_tags = authenticated_private->node_children ("EncryptedKey");
+	for (list<shared_ptr<cxml::Node> >::const_iterator i = encrypted_key_tags.begin(); i != encrypted_key_tags.end(); ++i) {
+		encrypted_keys.push_back ((*i)->node_child("CipherData")->string_child ("CipherValue"));
+	}
+	
+	/* Use the private key to decrypt the keys */
 
 	for (list<string>::iterator i = encrypted_keys.begin(); i != encrypted_keys.end(); ++i) {
 
@@ -97,114 +108,168 @@ KDM::KDM (
 	boost::posix_time::ptime not_valid_before, boost::posix_time::ptime not_valid_after,
 	string annotation_text, string issue_date
 	)
-	: _xml_kdm (new xml::DCinemaSecurityMessage)
+	: _id (make_uuid ())
+	, _annotation_text (annotation_text)
+	, _issue_date (issue_date)
+	, _recipient_cert (recipient_cert)
+	, _cpl (cpl)
+	, _signer (signer)
+	, _not_valid_before (not_valid_before)
+	, _not_valid_after (not_valid_after)
+	, _device_list_identifier_id (make_uuid ())
 {
-	xml::AuthenticatedPublic& apu = _xml_kdm->authenticated_public;
-
-	/* AuthenticatedPublic */
-
-	apu.message_id = "urn:uuid:" + make_uuid ();
-	apu.message_type = "http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type";
-	apu.annotation_text = annotation_text;
-	apu.issue_date = issue_date;
-	apu.signer.x509_issuer_name = signer->certificates().leaf()->issuer ();
-	apu.signer.x509_serial_number = signer->certificates().leaf()->serial ();
-	apu.recipient.x509_issuer_serial.x509_issuer_name = recipient_cert->issuer ();
-	apu.recipient.x509_issuer_serial.x509_serial_number = recipient_cert->serial ();
-	apu.recipient.x509_subject_name = recipient_cert->subject ();
-	apu.composition_playlist_id = "urn:uuid:" + cpl->id ();
-//	apu.content_authenticator = signer->certificates().leaf()->thumbprint ();
-	apu.content_title_text = cpl->content_title_text ();
-	apu.content_keys_not_valid_before = ptime_to_string (not_valid_before);
-	apu.content_keys_not_valid_after = ptime_to_string (not_valid_after);
-	apu.authorized_device_info.device_list_identifier = "urn:uuid:" + make_uuid ();
-	string n = recipient_cert->common_name ();
-	if (n.find (".") != string::npos) {
-		n = n.substr (n.find (".") + 1);
-	}
-	apu.authorized_device_info.device_list_description = n;
-//	apu.authorized_device_info.device_list.push_back (recipient_cert->thumbprint ());
-
-	/* Sometimes digital_cinema_tools uses this magic thumbprint instead of that from an actual
-	   recipient certificate.  KDMs delivered to City Screen appear to use the same thing.
+	/* Set up our KDMKey objects.  This extracts Key objects from each MXF asset and
+	   puts them (with other stuff) into KDMKey objects.
 	*/
-	apu.authorized_device_info.device_list.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
-
 	list<shared_ptr<const Content> > content = cpl->content ();
 	for (list<shared_ptr<const Content> >::iterator i = content.begin(); i != content.end(); ++i) {
 		/* XXX: non-MXF assets? */
 		shared_ptr<const MXF> mxf = boost::dynamic_pointer_cast<const MXF> (*i);
 		if (mxf) {
-			apu.key_id_list.push_back (xml::TypedKeyId (mxf->key_type(), "urn:uuid:" + mxf->key_id()));
+			_keys.push_back (
+				KDMKey (
+					signer, cpl->id (), mxf->key_type (), mxf->key_id (),
+					not_valid_before, not_valid_after, mxf->key().get()
+					)
+				);
 		}
 	}
+}
 
-	apu.forensic_mark_flag_list.push_back ("http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
-	apu.forensic_mark_flag_list.push_back ("http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable");
+void
+KDM::authenticated_public (xmlpp::Element* node, map<string, xmlpp::Attribute *>& references) const
+{
+	references["ID_AuthenticatedPublic"] = node->set_attribute ("Id", "ID_AuthenticatedPublic");
+	node->add_child("MessageId")->add_child_text ("urn:uuid:" + _id);
+	node->add_child("MessageType")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
+	node->add_child("AnnotationText")->add_child_text (_annotation_text);
+	node->add_child("IssueDate")->add_child_text (_issue_date);
 
-	/* AuthenticatedPrivate */
+	/* Signer */
+	xmlpp::Element* signer = node->add_child ("Signer");
+	signer->add_child("X509IssuerName", "ds")->add_child_text (_signer->certificates().leaf()->issuer ());
+	signer->add_child("X509SerialNumber", "ds")->add_child_text (_signer->certificates().leaf()->serial ());
 
+	/* Everything else is in RequiredExtensions/KDMRequiredExtensions */
+	xmlpp::Element* kdm_required_extensions = node->add_child("RequiredExtensions")->add_child("KDMRequiredExtensions");
+	kdm_required_extensions->set_attribute ("xmlns", "http://www.smpte-ra.org/schemas/430-1/2006/KDM");
+
+	/* Recipient */
+	xmlpp::Element* recipient = kdm_required_extensions->add_child ("Recipient");
+	xmlpp::Element* x509_issuer_serial = recipient->add_child ("X509IssuerSerial");
+	x509_issuer_serial->add_child("X509IssuerName", "ds")->add_child_text (_recipient_cert->issuer ());
+	x509_issuer_serial->add_child("X509SerialNumber", "ds")->add_child_text (_recipient_cert->serial ());
+	recipient->add_child("X509SubjectName")->add_child_text (_recipient_cert->subject ());
+
+	kdm_required_extensions->add_child("CompositionPlaylistId")->add_child_text ("urn:uuid:" + _cpl->id ());
+	/* XXX: no ContentAuthenticator */
+	kdm_required_extensions->add_child("ContentTitleText")->add_child_text (_cpl->content_title_text ());
+	kdm_required_extensions->add_child("ContentKeysNotValidBefore")->add_child_text (ptime_to_string (_not_valid_before));
+	kdm_required_extensions->add_child("ContentKeysNotValidAfter")->add_child_text (ptime_to_string (_not_valid_after));
+
+	/* AuthorizedDeviceInfo */
+	xmlpp::Element* authorized_device_info = kdm_required_extensions->add_child("AuthorizedDeviceInfo");
+	authorized_device_info->add_child ("DeviceListIdentifier")->add_child_text ("urn:uuid:" + _device_list_identifier_id);
+	string n = _recipient_cert->common_name ();
+	if (n.find (".") != string::npos) {
+		n = n.substr (n.find (".") + 1);
+	}
+	authorized_device_info->add_child ("DeviceListDescription")->add_child_text (n);
+	xmlpp::Element* device_list = authorized_device_info->add_child ("DeviceList");
+	/* Sometimes digital_cinema_tools uses this magic thumbprint instead of that from an actual
+	   recipient certificate.  KDMs delivered to City Screen appear to use the same thing.
+	*/
+	device_list->add_child("CertificateThumbprint")->add_child_text ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
+	
+	/* KeyIdList */
+	xmlpp::Element* key_id_list = kdm_required_extensions->add_child("KeyIdList");
+	list<shared_ptr<const Content> > content = _cpl->content ();
 	for (list<shared_ptr<const Content> >::iterator i = content.begin(); i != content.end(); ++i) {
 		/* XXX: non-MXF assets? */
 		shared_ptr<const MXF> mxf = boost::dynamic_pointer_cast<const MXF> (*i);
 		if (mxf) {
-			KDMKey kkey (
-					signer, cpl->id (), mxf->key_type (), mxf->key_id (),
-					not_valid_before, not_valid_after, mxf->key().get()
-				);
-
-			_keys.push_back (kkey);
-			_xml_kdm->authenticated_private.encrypted_keys.push_back (kkey.encrypted_base64 (recipient_cert));
+			xmlpp::Element* typed_key_id = key_id_list->add_child ("TypedKeyId");
+			typed_key_id->add_child("KeyType")->add_child_text (mxf->key_type ());
+			typed_key_id->add_child("KeyId")->add_child_text ("urn:uuid:" + mxf->key_id ());
 		}
 	}
-
-	/* Signature */
-
-	shared_ptr<xmlpp::Document> doc = _xml_kdm->as_xml ();
-	shared_ptr<cxml::Node> root (new cxml::Node (doc->get_root_node ()));
-	xmlpp::Node* signature = root->node_child("Signature")->node();
-	signer->add_signature_value (signature, "ds");
-	_xml_kdm->signature = xml::Signature (shared_ptr<cxml::Node> (new cxml::Node (signature)));
+		
+	/* ForensicMarkFlagList */
+	xmlpp::Element* forensic_mark_flag_list = kdm_required_extensions->add_child ("ForensicMarkFlagList");
+	forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
+	forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable");
+		
+	node->add_child ("NonCriticalExtensions");
 }
 
-KDM::KDM (KDM const & other)
-	: _keys (other._keys)
-	, _xml_kdm (new xml::DCinemaSecurityMessage (*other._xml_kdm.get()))
+void
+KDM::authenticated_private (xmlpp::Element* node, map<string, xmlpp::Attribute *>& references) const
 {
+	references["ID_AuthenticatedPrivate"] = node->set_attribute ("Id", "ID_AuthenticatedPrivate");
 
-}
-
-KDM &
-KDM::operator= (KDM const & other)
-{
-	if (this == &other) {
-		return *this;
+	for (list<KDMKey>::const_iterator i = _keys.begin(); i != _keys.end(); ++i) {
+		xmlpp::Element* encrypted_key = node->add_child ("EncryptedKey", "enc");
+		xmlpp::Element* encryption_method = encrypted_key->add_child ("EncryptionMethod", "enc");
+		encryption_method->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p");
+		xmlpp::Element* digest_method = encryption_method->add_child ("DigestMethod", "ds");
+		digest_method->set_attribute ("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
+		xmlpp::Element* cipher_data = encrypted_key->add_child ("CipherData", "enc");
+		cipher_data->add_child("CipherValue", "enc")->add_child_text (i->encrypted_base64 (_recipient_cert));
 	}
-
-	_keys = other._keys;
-	_xml_kdm.reset (new xml::DCinemaSecurityMessage (*other._xml_kdm.get ()));
-
-	return *this;
 }
-     
+
+void
+KDM::signature (xmlpp::Element* node, map<string, xmlpp::Attribute *> const & references) const
+{
+	xmlpp::Element* signed_info = node->add_child ("SignedInfo", "ds");
+	signed_info->add_child ("CanonicalizationMethod", "ds")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments");
+	signed_info->add_child ("SignatureMethod", "ds")->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+
+	for (map<string, xmlpp::Attribute *>::const_iterator i = references.begin(); i != references.end(); ++i) {
+		xmlpp::Element* reference = signed_info->add_child ("Reference", "ds");
+		reference->set_attribute ("URI", "#" + i->first);
+		reference->add_child("DigestMethod", "ds")->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#sha256");
+		reference->add_child("DigestValue", "ds")->add_child_text ("");
+	}
+	
+	node->add_child("SignatureValue", "ds")->add_child_text ("");
+	node->add_child("KeyInfo", "ds");
+}
+
 void
 KDM::as_xml (boost::filesystem::path path) const
 {
-	shared_ptr<xmlpp::Document> doc = _xml_kdm->as_xml ();
-	/* This must *not* be the _formatted version, otherwise the signature
-	   will be wrong.
-	*/
-	doc->write_to_file (path.string(), "UTF-8");
+	FILE* f = fopen_boost (path, "w");
+	string const x = as_xml ();
+	fwrite (x.c_str(), 1, x.length(), f);
+	fclose (f);
 }
-
+       
 string
 KDM::as_xml () const
 {
-	shared_ptr<xmlpp::Document> doc = _xml_kdm->as_xml ();
+	xmlpp::Document document;
+	xmlpp::Element* root = document.create_root_node ("DCinemaSecurityMessage", "http://www.smpte-ra.org/schemas/430-3/2006/ETM");
+	root->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "ds");
+	root->set_namespace_declaration ("http://www.w3.org/2001/04/xmlenc#", "enc");
+
+	map<string, xmlpp::Attribute *> references;
+	authenticated_public (root->add_child ("AuthenticatedPublic"), references);
+	authenticated_private (root->add_child ("AuthenticatedPrivate"), references);
+
+	xmlpp::Element* signature_node = root->add_child ("Signature", "ds");
+	signature (signature_node, references);
+
+	for (map<string, xmlpp::Attribute*>::const_iterator i = references.begin(); i != references.end(); ++i) {
+		xmlAddID (0, document.cobj(), (const xmlChar *) i->first.c_str(), i->second->cobj ());
+	}
+
+	_signer->add_signature_value (signature_node, "ds");
+	
 	/* This must *not* be the _formatted version, otherwise the signature
 	   will be wrong.
 	*/
-	return doc->write_to_string ("UTF-8");
+	return document.write_to_string ("UTF-8");
 }
 
 KDMKey::KDMKey (
