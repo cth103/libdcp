@@ -30,12 +30,34 @@ LocalTime::LocalTime ()
 {
 	time_t now = time (0);
 	struct tm* tm = localtime (&now);
+
 	_year = tm->tm_year + 1900;
 	_month = tm->tm_mon + 1;
 	_day = tm->tm_mday + 1;
 	_hour = tm->tm_hour;
 	_minute = tm->tm_min;
 	_second = tm->tm_sec;
+
+	set_local_time_zone ();
+}
+
+LocalTime::LocalTime (boost::posix_time::ptime t)
+{
+	_year = t.date().year ();
+	_month = t.date().month ();
+	_day = t.date().day ();
+	_hour = t.time_of_day().hours ();
+	_minute = t.time_of_day().minutes ();
+	_second = t.time_of_day().seconds ();
+
+	set_local_time_zone ();
+}
+
+void
+LocalTime::set_local_time_zone ()
+{
+	time_t now = time (0);
+	struct tm* tm = localtime (&now);
 
 	int offset = 0;
 	
@@ -95,8 +117,24 @@ LocalTime::as_string () const
 	char buffer[32];
 	snprintf (
 		buffer, sizeof (buffer),
-		"%04d-%02d-%02dT%02d:%02d:%02d%s%02d:%02d",
-		_year, _month, _day, _hour, _minute, _second, (_tz_hour >= 0 ? "+" : "-"), abs (_tz_hour), _tz_minute
+		"%sT%s%s%02d:%02d",
+		date().c_str(), time_of_day().c_str(), (_tz_hour >= 0 ? "+" : "-"), abs (_tz_hour), _tz_minute
 		);
+	return buffer;
+}
+
+string
+LocalTime::date () const
+{
+	char buffer[32];
+	snprintf (buffer, sizeof (buffer), "%04d-%02d-%02d", _year, _month, _day);
+	return buffer;
+}
+
+string
+LocalTime::time_of_day () const
+{
+	char buffer[32];
+	snprintf (buffer, sizeof (buffer), "%02d:%02d:%02d", _hour, _minute, _second);
 	return buffer;
 }

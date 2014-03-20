@@ -75,11 +75,13 @@ def build(bld):
               dcp.h
               dcp_time.h
               decrypted_kdm.h
+              decrypted_kdm_key.h
               encrypted_kdm.h
               exceptions.h
               gamma_lut.h
               image.h
               key.h
+              local_time.h
               lut_cache.h
               metadata.h
               mono_picture_mxf.h

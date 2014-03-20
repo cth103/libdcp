@@ -58,6 +58,15 @@ BOOST_AUTO_TEST_CASE (local_time_test)
 		BOOST_CHECK_EQUAL (t._tz_hour, -9);
 		BOOST_CHECK_EQUAL (t._tz_minute, 30);
 		BOOST_CHECK_EQUAL (t.as_string(), "2011-11-20T01:06:59-09:30");
-	}	
+	}
+
+	/* Construction from boost::posix_time::ptime */
+	dcp::LocalTime b (boost::posix_time::time_from_string ("2002-01-20 19:03:56"));
+	BOOST_CHECK_EQUAL (b._year, 2002);
+	BOOST_CHECK_EQUAL (b._month, 1);
+	BOOST_CHECK_EQUAL (b._day, 20);
+	BOOST_CHECK_EQUAL (b._hour, 19);
+	BOOST_CHECK_EQUAL (b._minute, 3);
+	BOOST_CHECK_EQUAL (b._second, 56);
 }
 

@@ -21,6 +21,9 @@
  *  @brief EncryptedKDM class.
  */
 
+#ifndef LIBDCP_ENCRYPTED_KDM_H
+#define LIBDCP_ENCRYPTED_KDM_H
+
 #include "local_time.h"
 #include <boost/filesystem.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
@@ -92,3 +95,5 @@ private:
 };
 
 }
+
+#endif
