@@ -54,6 +54,7 @@ using std::stringstream;
 using std::ostream;
 using std::make_pair;
 using std::map;
+using std::cout;
 using boost::shared_ptr;
 using boost::lexical_cast;
 using namespace dcp;
@@ -76,7 +77,7 @@ DCP::read ()
 	} else if (boost::filesystem::exists (_directory / "ASSETMAP.xml")) {
 		asset_map_file = _directory / "ASSETMAP.xml";
 	} else {
-		boost::throw_exception (DCPReadError ("could not find AssetMap file"));
+		boost::throw_exception (DCPReadError (String::compose ("could not find AssetMap file `%1'", asset_map_file.string())));
 	}
 
 	cxml::Document asset_map ("AssetMap");
@@ -94,7 +95,6 @@ DCP::read ()
 	}
 
 	/* Read all the assets from the asset map */
-	
 	for (map<string, boost::filesystem::path>::const_iterator i = paths.begin(); i != paths.end(); ++i) {
 		boost::filesystem::path path = _directory / i->second;
 		if (boost::algorithm::ends_with (path.string(), ".xml")) {
@@ -149,7 +149,7 @@ bool
 DCP::equals (DCP const & other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (_assets.size() != other._assets.size()) {
-		note (ERROR, "Asset counts differ");
+		note (ERROR, String::compose ("Asset counts differ: %1 vs %2", _assets.size(), other._assets.size()));
 		return false;
 	}
 
