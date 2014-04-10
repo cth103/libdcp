@@ -96,7 +96,6 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	cout << "reading A.\n";
 	DCP* a = 0;
 	try {
 		a = new DCP (argv[optind]);
@@ -106,7 +105,6 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	cout << "reading B.\n";
 	DCP* b = 0;
 	try {
 		b = new DCP (argv[optind + 1]);
