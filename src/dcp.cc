@@ -55,8 +55,10 @@ using std::ostream;
 using std::make_pair;
 using std::map;
 using std::cout;
+using std::exception;
 using boost::shared_ptr;
 using boost::lexical_cast;
+using boost::algorithm::starts_with;
 using namespace dcp;
 
 DCP::DCP (boost::filesystem::path directory)
@@ -66,8 +68,18 @@ DCP::DCP (boost::filesystem::path directory)
 	_directory = boost::filesystem::canonical (_directory);
 }
 
+template<class T> void
+survivable_error (bool keep_going, list<string>* errors, T const & e)
+{
+	if (keep_going && errors) {
+		errors->push_back (e.what ());
+	} else {
+		throw e;
+	}
+}
+
 void
-DCP::read ()
+DCP::read (bool keep_going, list<string>* errors)
 {
 	/* Read the ASSETMAP */
 	
@@ -88,15 +100,22 @@ DCP::read ()
 		if ((*i)->node_child("ChunkList")->node_children("Chunk").size() != 1) {
 			boost::throw_exception (XMLError ("unsupported asset chunk count"));
 		}
-		paths.insert (make_pair (
-			(*i)->string_child ("Id"),
-			(*i)->node_child("ChunkList")->node_child("Chunk")->string_child ("Path")
-				      ));
+		string p = (*i)->node_child("ChunkList")->node_child("Chunk")->string_child ("Path");
+		if (starts_with (p, "file://")) {
+			p = p.substr (7);
+		}
+		paths.insert (make_pair ((*i)->string_child ("Id"), p));
 	}
 
 	/* Read all the assets from the asset map */
 	for (map<string, boost::filesystem::path>::const_iterator i = paths.begin(); i != paths.end(); ++i) {
 		boost::filesystem::path path = _directory / i->second;
+
+		if (!boost::filesystem::exists (path)) {
+			survivable_error (keep_going, errors, FileError ("file not found", path, -1));
+			continue;
+		}
+		
 		if (boost::algorithm::ends_with (path.string(), ".xml")) {
 			xmlpp::DomParser* p = new xmlpp::DomParser;
 			try {
