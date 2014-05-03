@@ -40,6 +40,7 @@
 #include <libxml++/document.h>
 #include <openssl/sha.h>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string.hpp>
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
@@ -58,6 +59,7 @@ using std::ostream;
 using boost::shared_ptr;
 using boost::optional;
 using boost::function;
+using boost::algorithm::trim;
 using namespace dcp;
 
 /** Create a UUID.
@@ -355,4 +357,14 @@ dcp::relative_to_root (boost::filesystem::path root, boost::filesystem::path fil
 	}
 
 	return rel;
+}
+
+bool
+dcp::ids_equal (string a, string b)
+{
+	transform (a.begin(), a.end(), a.begin(), ::tolower);
+	transform (b.begin(), b.end(), b.begin(), ::tolower);
+	trim (a);
+	trim (b);
+	return a == b;
 }
