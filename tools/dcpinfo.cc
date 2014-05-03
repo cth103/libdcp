@@ -32,6 +32,7 @@
 #include "reel_subtitle_asset.h"
 #include "subtitle_string.h"
 #include "cpl.h"
+#include "common.h"
 
 using std::string;
 using std::cerr;
@@ -44,8 +45,9 @@ static void
 help (string n)
 {
 	cerr << "Syntax: " << n << " [options] <DCP>\n"
-	     << "  -s, --subtitles   list all subtitles\n"
-	     << "  -k, --keep-going  carry on in the event of errors, if possible\n";
+	     << "  -s, --subtitles              list all subtitles\n"
+	     << "  -k, --keep-going             carry on in the event of errors, if possible\n"
+	     << "      --ignore-missing-assets  ignore missing asset files\n";
 }
 
 static void
@@ -104,18 +106,20 @@ main (int argc, char* argv[])
 {
 	bool subtitles = false;
 	bool keep_going = false;
+	bool ignore_missing_assets = false;
 	
 	int option_index = 0;
 	while (1) {
 		static struct option long_options[] = {
-			{ "version", no_argument, 0, 'v'},
-			{ "help", no_argument, 0, 'h'},
-			{ "subtitles", no_argument, 0, 's'},
-			{ "keep-going", no_argument, 0, 'k'},
+			{ "version", no_argument, 0, 'v' },
+			{ "help", no_argument, 0, 'h' },
+			{ "subtitles", no_argument, 0, 's' },
+			{ "keep-going", no_argument, 0, 'k' },
+			{ "ignore-missing-assets", no_argument, 0, 'A' },
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "vhsk", long_options, &option_index);
+		int c = getopt_long (argc, argv, "vhskA", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -134,6 +138,9 @@ main (int argc, char* argv[])
 		case 'k':
 			keep_going = true;
 			break;
+		case 'A':
+			ignore_missing_assets = true;
+			break;
 		}
 	}
 
@@ -148,7 +155,7 @@ main (int argc, char* argv[])
 	}
 
 	DCP* dcp = 0;
-	list<shared_ptr<DCPReadError> > errors;
+	DCP::ReadErrors errors;
 	try {
 		dcp = new DCP (argv[optind]);
 		dcp->read (keep_going, &errors);
@@ -162,7 +169,8 @@ main (int argc, char* argv[])
 	
 	cout << "DCP: " << boost::filesystem::path(argv[optind]).filename().string() << "\n";
 
-	for (list<shared_ptr<DCPReadError> >::const_iterator i = errors.begin(); i != errors.end(); ++i) {
+	dcp::filter_errors (errors, ignore_missing_assets);
+	for (DCP::ReadErrors::const_iterator i = errors.begin(); i != errors.end(); ++i) {
 		cerr << "Error: " << (*i)->what() << "\n";
 	}
 
@@ -181,7 +189,9 @@ main (int argc, char* argv[])
 				main_picture (*j);
 			} catch (UnresolvedRefError& e) {
 				if (keep_going) {
-					cerr << e.what() << " (for main picture)\n";
+					if (!ignore_missing_assets) {
+						cerr << e.what() << " (for main picture)\n";
+					}
 				} else {
 					throw;
 				}
@@ -191,7 +201,9 @@ main (int argc, char* argv[])
 				main_sound (*j);
 			} catch (UnresolvedRefError& e) {
 				if (keep_going) {
-					cerr << e.what() << " (for main sound)\n";
+					if (!ignore_missing_assets) {
+						cerr << e.what() << " (for main sound)\n";
+					}
 				} else {
 					throw;
 				}
@@ -201,7 +213,9 @@ main (int argc, char* argv[])
 				main_subtitle (*j, subtitles);
 			} catch (UnresolvedRefError& e) {
 				if (keep_going) {
-					cerr << e.what() << " (for main subtitle)\n";
+					if (!ignore_missing_assets) {
+						cerr << e.what() << " (for main subtitle)\n";
+					}
 				} else {
 					throw;
 				}

@@ -1,8 +1,28 @@
+/*
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+*/
+
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <getopt.h>
 #include "dcp.h"
 #include "exceptions.h"
+#include "common.h"
 
 using namespace std;
 using namespace boost;
@@ -14,13 +34,14 @@ static void
 help (string n)
 {
 	cerr << "Syntax: " << n << " [OPTION] <DCP> <DCP>\n"
-	     << "  -V, --version        show libdcp version\n"
-	     << "  -h, --help           show this help\n"
-	     << "  -v, --verbose        be verbose\n"
-	     << "  -n, --names          allow differing MXF names\n"
-	     << "  -m, --mean-pixel     maximum allowed mean pixel error (default 5)\n"
-	     << "  -s, --std-dev-pixel  maximum allowed standard deviation of pixel error (default 5)\n"
-	     << "  -k, --keep-going     carry on in the event of errors, if possible\n"
+	     << "  -V, --version                show libdcp version\n"
+	     << "  -h, --help                   show this help\n"
+	     << "  -v, --verbose                be verbose\n"
+	     << "  -n, --names                  allow differing MXF names\n"
+	     << "  -m, --mean-pixel             maximum allowed mean pixel error (default 5)\n"
+	     << "  -s, --std-dev-pixel          maximum allowed standard deviation of pixel error (default 5)\n"
+	     << "  -k, --keep-going             carry on in the event of errors, if possible\n"
+	     << "      --ignore-missing-assets  ignore missing asset files\n"
 	     << "\n"
 	     << "The <DCP>s are the DCP directories to compare.\n"
 	     << "Comparison is of metadata and content, ignoring timestamps\n"
@@ -35,6 +56,26 @@ note (NoteType t, string n)
 	}
 }
 
+DCP *
+load_dcp (boost::filesystem::path path, bool keep_going, bool ignore_missing_assets)
+{
+	DCP* dcp = 0;
+	try {
+		dcp = new DCP (path);
+		DCP::ReadErrors errors;
+		dcp->read (keep_going, &errors);
+		filter_errors (errors, ignore_missing_assets);
+		for (DCP::ReadErrors::const_iterator i = errors.begin(); i != errors.end(); ++i) {
+			cerr << (*i)->what() << "\n";
+		}
+	} catch (FileError& e) {
+		cerr << "Could not read DCP " << path.string() << "; " << e.what() << " " << e.filename() << "\n";
+		exit (EXIT_FAILURE);
+	}
+
+	return dcp;
+}
+
 int
 main (int argc, char* argv[])
 {
@@ -42,6 +83,7 @@ main (int argc, char* argv[])
 	options.max_mean_pixel_error = 5;
 	options.max_std_dev_pixel_error = 5;
 	bool keep_going = false;
+	bool ignore_missing_assets = false;
 	
 	int option_index = 0;
 	while (1) {
@@ -53,10 +95,11 @@ main (int argc, char* argv[])
 			{ "mean-pixel", required_argument, 0, 'm'},
 			{ "std-dev-pixel", required_argument, 0, 's'},
 			{ "keep-going", no_argument, 0, 'k'},
+			{ "ignore-missing-assets", no_argument, 0, 'A'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vhvnm:s:k", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhvnm:s:kA", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -84,6 +127,9 @@ main (int argc, char* argv[])
 		case 'k':
 			keep_going = true;
 			break;
+		case 'A':
+			ignore_missing_assets = true;
+			break;
 		}
 	}
 
@@ -102,31 +148,8 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	DCP* a = 0;
-	try {
-		a = new DCP (argv[optind]);
-		list<shared_ptr<DCPReadError> > errors;
-		a->read (keep_going, &errors);
-		for (list<shared_ptr<DCPReadError> >::const_iterator i = errors.begin(); i != errors.end(); ++i) {
-			cerr << (*i)->what() << "\n";
-		}
-	} catch (FileError& e) {
-		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << " " << e.filename() << "\n";
-		exit (EXIT_FAILURE);
-	}
-
-	DCP* b = 0;
-	try {
-		b = new DCP (argv[optind + 1]);
-		list<shared_ptr<DCPReadError> > errors;
-		b->read (keep_going, &errors);
-		for (list<shared_ptr<DCPReadError> >::const_iterator i = errors.begin(); i != errors.end(); ++i) {
-			cerr << (*i)->what() << "\n";
-		}
-	} catch (FileError& e) {
-		cerr << "Could not read DCP " << argv[optind + 1] << "; " << e.what() << " " << e.filename() << "\n";
-		exit (EXIT_FAILURE);
-	}
+	DCP* a = load_dcp (argv[optind], keep_going, ignore_missing_assets);
+	DCP* b = load_dcp (argv[optind + 1], keep_going, ignore_missing_assets);
 
 	/* I think this is just below the LSB at 16-bits (ie the 8th most significant bit at 24-bit) */
 	options.max_audio_sample_error = 255;

@@ -69,7 +69,7 @@ DCP::DCP (boost::filesystem::path directory)
 }
 
 template<class T> void
-survivable_error (bool keep_going, list<shared_ptr<DCPReadError> >* errors, T const & e)
+survivable_error (bool keep_going, dcp::DCP::ReadErrors* errors, T const & e)
 {
 	if (keep_going) {
 		if (errors) {
@@ -81,7 +81,7 @@ survivable_error (bool keep_going, list<shared_ptr<DCPReadError> >* errors, T co
 }
 
 void
-DCP::read (bool keep_going, list<shared_ptr<DCPReadError> >* errors)
+DCP::read (bool keep_going, ReadErrors* errors)
 {
 	/* Read the ASSETMAP */
 	

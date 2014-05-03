@@ -69,11 +69,13 @@ public:
 	 */
 	DCP (boost::filesystem::path directory);
 
+	typedef std::list<boost::shared_ptr<DCPReadError> > ReadErrors;
+	
 	/** Read the DCP's structure into this object.
 	 *  @param keep_going true to try to keep going in the face of (some) errors.
 	 *  @param errors List of errors that will be added to if keep_going is true.
 	 */
-	void read (bool keep_going = false, std::list<boost::shared_ptr<DCPReadError> >* errors = 0);
+	void read (bool keep_going = false, ReadErrors* errors = 0);
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
