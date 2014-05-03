@@ -20,6 +20,7 @@ help (string n)
 	     << "  -n, --names          allow differing MXF names\n"
 	     << "  -m, --mean-pixel     maximum allowed mean pixel error (default 5)\n"
 	     << "  -s, --std-dev-pixel  maximum allowed standard deviation of pixel error (default 5)\n"
+	     << "  -k, --keep-going     carry on in the event of errors, if possible\n"
 	     << "\n"
 	     << "The <DCP>s are the DCP directories to compare.\n"
 	     << "Comparison is of metadata and content, ignoring timestamps\n"
@@ -40,6 +41,7 @@ main (int argc, char* argv[])
 	EqualityOptions options;
 	options.max_mean_pixel_error = 5;
 	options.max_std_dev_pixel_error = 5;
+	bool keep_going = false;
 	
 	int option_index = 0;
 	while (1) {
@@ -50,10 +52,11 @@ main (int argc, char* argv[])
 			{ "names", no_argument, 0, 'n'},
 			{ "mean-pixel", required_argument, 0, 'm'},
 			{ "std-dev-pixel", required_argument, 0, 's'},
+			{ "keep-going", no_argument, 0, 'k'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vhvnm:s:", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhvnm:s:k", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -78,6 +81,9 @@ main (int argc, char* argv[])
 		case 's':
 			options.max_std_dev_pixel_error = atof (optarg);
 			break;
+		case 'k':
+			keep_going = true;
+			break;
 		}
 	}
 
@@ -99,7 +105,11 @@ main (int argc, char* argv[])
 	DCP* a = 0;
 	try {
 		a = new DCP (argv[optind]);
-		a->read ();
+		list<string> errors;
+		a->read (keep_going, &errors);
+		for (list<string>::const_iterator i = errors.begin(); i != errors.end(); ++i) {
+			cerr << *i << "\n";
+		}
 	} catch (FileError& e) {
 		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << " " << e.filename() << "\n";
 		exit (EXIT_FAILURE);
@@ -108,7 +118,11 @@ main (int argc, char* argv[])
 	DCP* b = 0;
 	try {
 		b = new DCP (argv[optind + 1]);
-		b->read ();
+		list<string> errors;
+		b->read (keep_going, &errors);
+		for (list<string>::const_iterator i = errors.begin(); i != errors.end(); ++i) {
+			cerr << *i << "\n";
+		}
 	} catch (FileError& e) {
 		cerr << "Could not read DCP " << argv[optind + 1] << "; " << e.what() << " " << e.filename() << "\n";
 		exit (EXIT_FAILURE);

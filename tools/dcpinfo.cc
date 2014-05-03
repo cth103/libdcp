@@ -44,13 +44,66 @@ static void
 help (string n)
 {
 	cerr << "Syntax: " << n << " [options] <DCP>\n"
-	     << "  -s, --subtitles  list all subtitles\n";
+	     << "  -s, --subtitles   list all subtitles\n"
+	     << "  -k, --keep-going  carry on in the event of errors, if possible\n";
+}
+
+static void
+main_picture (shared_ptr<Reel> reel)
+{
+	if (reel->main_picture() && reel->main_picture()->mxf()) {
+		cout << "      Picture:  "
+		     << reel->main_picture()->mxf()->size().width
+		     << "x"
+		     << reel->main_picture()->mxf()->size().height << "\n";
+	}
+}
+
+static void
+main_sound (shared_ptr<Reel> reel)
+{
+	if (reel->main_sound() && reel->main_sound()->mxf()) {
+		cout << "      Sound:    "
+		     << reel->main_sound()->mxf()->channels()
+		     << " channels at "
+		     << reel->main_sound()->mxf()->sampling_rate() << "Hz\n";
+	}
+}
+
+static void
+main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
+{
+	if (!reel->main_subtitle()) {
+		return;
+	}
+	
+	list<shared_ptr<SubtitleString> > subs = reel->main_subtitle()->subtitle_content()->subtitles ();
+	cout << "      Subtitle: " << subs.size() << " subtitles in " << reel->main_subtitle()->subtitle_content()->language() << "\n";
+	if (list_subtitles) {
+		for (list<shared_ptr<SubtitleString> >::const_iterator k = subs.begin(); k != subs.end(); ++k) {
+			cout << "        " << (*k)->text() << "\n";
+			cout << "          "
+			     << "font:" << (*k)->font() << "; "
+			     << "italic:" << (*k)->italic() << "; "
+			     << "color:" << (*k)->color() << "; "
+			     << "in:" << (*k)->in() << "; "
+			     << "out:" << (*k)->out() << "; "
+			     << "v_position:" << (*k)->v_position() << "; "
+			     << "v_align:" << (*k)->v_align() << "; "
+			     << "effect:" << (*k)->effect() << "; "
+			     << "effect_color:" << (*k)->effect_color() << "; "
+			     << "fade_up_time:" << (*k)->fade_up_time() << "; "
+			     << "fade_down_time:" << (*k)->fade_down_time() << "; "
+			     << "size: " << (*k)->size() << "\n";
+		}
+	}
 }
 
 int
 main (int argc, char* argv[])
 {
 	bool subtitles = false;
+	bool keep_going = false;
 	
 	int option_index = 0;
 	while (1) {
@@ -58,10 +111,11 @@ main (int argc, char* argv[])
 			{ "version", no_argument, 0, 'v'},
 			{ "help", no_argument, 0, 'h'},
 			{ "subtitles", no_argument, 0, 's'},
+			{ "keep-going", no_argument, 0, 'k'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "vhs", long_options, &option_index);
+		int c = getopt_long (argc, argv, "vhsk", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -77,6 +131,9 @@ main (int argc, char* argv[])
 		case 's':
 			subtitles = true;
 			break;
+		case 'k':
+			keep_going = true;
+			break;
 		}
 	}
 
@@ -91,15 +148,23 @@ main (int argc, char* argv[])
 	}
 
 	DCP* dcp = 0;
+	list<string> errors;
 	try {
 		dcp = new DCP (argv[optind]);
-		dcp->read ();
+		dcp->read (keep_going, &errors);
 	} catch (FileError& e) {
-		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << " " << e.filename() << "\n";
+		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << "\n";
+		exit (EXIT_FAILURE);
+	} catch (DCPReadError& e) {
+		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << "\n";
 		exit (EXIT_FAILURE);
 	}
-
+	
 	cout << "DCP: " << boost::filesystem::path(argv[optind]).filename().string() << "\n";
+
+	for (list<string>::const_iterator i = errors.begin(); i != errors.end(); ++i) {
+		cerr << "Error: " << *i << "\n";
+	}
 
 	list<shared_ptr<CPL> > cpls = dcp->cpls ();
 
@@ -111,41 +176,37 @@ main (int argc, char* argv[])
 		int R = 1;
 		for (list<shared_ptr<Reel> >::const_iterator j = reels.begin(); j != reels.end(); ++j) {
 			cout << "    Reel " << R << "\n";
-			
-			if ((*j)->main_picture()) {
-				cout << "      Picture:  "
-				     << (*j)->main_picture()->mxf()->size().width
-				     << "x"
-				     << (*j)->main_picture()->mxf()->size().height << "\n";
-			}
-			if ((*j)->main_sound()) {
-				cout << "      Sound:    "
-				     << (*j)->main_sound()->mxf()->channels()
-				     << " channels at "
-				     << (*j)->main_sound()->mxf()->sampling_rate() << "Hz\n";
-			}
-			if ((*j)->main_subtitle()) {
-				list<shared_ptr<SubtitleString> > subs = (*j)->main_subtitle()->subtitle_content()->subtitles ();
-				cout << "      Subtitle: " << subs.size() << " subtitles in " << (*j)->main_subtitle()->subtitle_content()->language() << "\n";
-				if (subtitles) {
-					for (list<shared_ptr<SubtitleString> >::const_iterator k = subs.begin(); k != subs.end(); ++k) {
-						cout << "        " << (*k)->text() << "\n";
-						cout << "          "
-						     << "font:" << (*k)->font() << "; "
-						     << "italic:" << (*k)->italic() << "; "
-						     << "color:" << (*k)->color() << "; "
-						     << "in:" << (*k)->in() << "; "
-						     << "out:" << (*k)->out() << "; "
-						     << "v_position:" << (*k)->v_position() << "; "
-						     << "v_align:" << (*k)->v_align() << "; "
-						     << "effect:" << (*k)->effect() << "; "
-						     << "effect_color:" << (*k)->effect_color() << "; "
-						     << "fade_up_time:" << (*k)->fade_up_time() << "; "
-						     << "fade_down_time:" << (*k)->fade_down_time() << "; "
-						     << "size: " << (*k)->size() << "\n";
-					}
+
+			try {
+				main_picture (*j);
+			} catch (UnresolvedRefError& e) {
+				if (keep_going) {
+					cerr << e.what() << " (for main picture)\n";
+				} else {
+					throw;
 				}
 			}
+
+			try {
+				main_sound (*j);
+			} catch (UnresolvedRefError& e) {
+				if (keep_going) {
+					cerr << e.what() << " (for main sound)\n";
+				} else {
+					throw;
+				}
+			}
+
+			try {
+				main_subtitle (*j, subtitles);
+			} catch (UnresolvedRefError& e) {
+				if (keep_going) {
+					cerr << e.what() << " (for main subtitle)\n";
+				} else {
+					throw;
+				}
+			}
+
 			++R;
 		}
 	}
