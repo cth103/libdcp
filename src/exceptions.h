@@ -105,9 +105,29 @@ public:
 		return _message.c_str ();
 	}
 
-private:
+protected:
+	DCPReadError () {}
+	
 	/** error message */
 	std::string _message;
+};
+
+class MissingAssetError : public DCPReadError
+{
+public:
+	enum AssetType {
+		MAIN_PICTURE,
+		MAIN_SOUND,
+		MAIN_SUBTITLE,
+		UNKNOWN
+	};
+	
+	MissingAssetError (boost::filesystem::path, AssetType = UNKNOWN);
+	~MissingAssetError () throw () {}
+
+private:
+	boost::filesystem::path _path;
+	AssetType _type;
 };
 
 /** @class XMLError

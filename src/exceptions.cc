@@ -47,4 +47,24 @@ TimeFormatError::TimeFormatError (string bad_time)
 
 }
 
-			    
+MissingAssetError::MissingAssetError (boost::filesystem::path path, AssetType type)
+	: _path (path)
+	, _type (type)
+{
+	string type_name;
+	switch (_type) {
+	case MAIN_PICTURE:
+		type_name = " for main picture";
+		break;
+	case MAIN_SOUND:
+		type_name = " for main sound";
+		break;
+	case MAIN_SUBTITLE:
+		type_name = " for main subtitle";
+		break;
+	case UNKNOWN:
+		break;
+	}
+	
+	_message = String::compose ("Missing asset %1%2", path.string(), type_name);
+}

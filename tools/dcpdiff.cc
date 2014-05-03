@@ -105,10 +105,10 @@ main (int argc, char* argv[])
 	DCP* a = 0;
 	try {
 		a = new DCP (argv[optind]);
-		list<string> errors;
+		list<shared_ptr<DCPReadError> > errors;
 		a->read (keep_going, &errors);
-		for (list<string>::const_iterator i = errors.begin(); i != errors.end(); ++i) {
-			cerr << *i << "\n";
+		for (list<shared_ptr<DCPReadError> >::const_iterator i = errors.begin(); i != errors.end(); ++i) {
+			cerr << (*i)->what() << "\n";
 		}
 	} catch (FileError& e) {
 		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << " " << e.filename() << "\n";
@@ -118,10 +118,10 @@ main (int argc, char* argv[])
 	DCP* b = 0;
 	try {
 		b = new DCP (argv[optind + 1]);
-		list<string> errors;
+		list<shared_ptr<DCPReadError> > errors;
 		b->read (keep_going, &errors);
-		for (list<string>::const_iterator i = errors.begin(); i != errors.end(); ++i) {
-			cerr << *i << "\n";
+		for (list<shared_ptr<DCPReadError> >::const_iterator i = errors.begin(); i != errors.end(); ++i) {
+			cerr << (*i)->what() << "\n";
 		}
 	} catch (FileError& e) {
 		cerr << "Could not read DCP " << argv[optind + 1] << "; " << e.what() << " " << e.filename() << "\n";

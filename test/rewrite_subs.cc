@@ -42,8 +42,7 @@ main (int argc, char* argv[])
 		}
 		
 		DCP* dcp = new DCP (argv[1]);
-		list<string> errors;
-		dcp->read (true, &errors);
+		dcp->read (true);
 		
 		list<shared_ptr<CPL> > cpls = dcp->cpls ();
 		for (list<boost::shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {

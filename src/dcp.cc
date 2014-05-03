@@ -69,17 +69,19 @@ DCP::DCP (boost::filesystem::path directory)
 }
 
 template<class T> void
-survivable_error (bool keep_going, list<string>* errors, T const & e)
+survivable_error (bool keep_going, list<shared_ptr<DCPReadError> >* errors, T const & e)
 {
-	if (keep_going && errors) {
-		errors->push_back (e.what ());
+	if (keep_going) {
+		if (errors) {
+			errors->push_back (shared_ptr<T> (new T (e)));
+		}
 	} else {
 		throw e;
 	}
 }
 
 void
-DCP::read (bool keep_going, list<string>* errors)
+DCP::read (bool keep_going, list<shared_ptr<DCPReadError> >* errors)
 {
 	/* Read the ASSETMAP */
 	
@@ -112,7 +114,7 @@ DCP::read (bool keep_going, list<string>* errors)
 		boost::filesystem::path path = _directory / i->second;
 
 		if (!boost::filesystem::exists (path)) {
-			survivable_error (keep_going, errors, FileError ("file not found", path, -1));
+			survivable_error (keep_going, errors, MissingAssetError (path));
 			continue;
 		}
 		

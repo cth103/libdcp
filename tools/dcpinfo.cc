@@ -148,7 +148,7 @@ main (int argc, char* argv[])
 	}
 
 	DCP* dcp = 0;
-	list<string> errors;
+	list<shared_ptr<DCPReadError> > errors;
 	try {
 		dcp = new DCP (argv[optind]);
 		dcp->read (keep_going, &errors);
@@ -162,8 +162,8 @@ main (int argc, char* argv[])
 	
 	cout << "DCP: " << boost::filesystem::path(argv[optind]).filename().string() << "\n";
 
-	for (list<string>::const_iterator i = errors.begin(); i != errors.end(); ++i) {
-		cerr << "Error: " << *i << "\n";
+	for (list<shared_ptr<DCPReadError> >::const_iterator i = errors.begin(); i != errors.end(); ++i) {
+		cerr << "Error: " << (*i)->what() << "\n";
 	}
 
 	list<shared_ptr<CPL> > cpls = dcp->cpls ();
