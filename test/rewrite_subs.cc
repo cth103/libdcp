@@ -28,6 +28,7 @@
 using std::cout;
 using std::cerr;
 using std::list;
+using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
@@ -41,7 +42,8 @@ main (int argc, char* argv[])
 		}
 		
 		DCP* dcp = new DCP (argv[1]);
-		dcp->read ();
+		list<string> errors;
+		dcp->read (true, &errors);
 		
 		list<shared_ptr<CPL> > cpls = dcp->cpls ();
 		for (list<boost::shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
