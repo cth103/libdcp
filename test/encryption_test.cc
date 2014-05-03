@@ -121,6 +121,9 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 						 shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (ms, 0)),
 						 shared_ptr<dcp::ReelSubtitleAsset> ()
 						 )));
+	cpl->set_content_version_id ("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
+	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
+	cpl->set_metadata (xml_metadata);
 	d.add (cpl);
 	d.write_xml (dcp::SMPTE, xml_metadata, signer);
 
