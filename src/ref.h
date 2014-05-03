@@ -26,6 +26,7 @@
 
 #include "exceptions.h"
 #include "object.h"
+#include "util.h"
 #include <boost/shared_ptr.hpp>
 #include <string>
 
@@ -69,7 +70,7 @@ public:
 	void resolve (std::list<boost::shared_ptr<Object> > objects)
 	{
 		typename std::list<boost::shared_ptr<Object> >::iterator i = objects.begin();
-		while (i != objects.end() && (*i)->id() != _id) {
+		while (i != objects.end() && !ids_equal ((*i)->id(), _id)) {
 			++i;
 		}
 
@@ -90,7 +91,7 @@ public:
 		if (!_object) {
 			throw UnresolvedRefError (_id);
 		}
-
+		
 		return _object;
 	}
 
@@ -101,7 +102,7 @@ public:
 		if (!_object) {
 			throw UnresolvedRefError (_id);
 		}
-
+		
 		return _object.get ();
 	}
 
