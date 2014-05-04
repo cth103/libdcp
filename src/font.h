@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/font.h
+ *  @brief Font class
+ */
+
 #include "types.h"
 #include "subtitle.h"
 #include <boost/shared_ptr.hpp>
@@ -28,7 +32,10 @@ namespace cxml {
 }
 
 namespace dcp {
-	
+
+/** @class Font
+ *  @brief Helper class for parsing subtitle XML.
+ */
 class Font 
 {
 public:

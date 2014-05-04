@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/subtitle_string.h
+ *  @brief SubtitleString class.
+ */
+
 #ifndef LIBDCP_SUBTITLE_STRING_H
 #define LIBDCP_SUBTITLE_STRING_H
 
@@ -26,6 +30,9 @@
 
 namespace dcp {
 
+/** @class SubtitleString
+ *  @brief A single line of subtitle text with all the associated attributes.
+ */
 class SubtitleString
 {
 public:
@@ -100,8 +107,11 @@ public:
 	int size_in_pixels (int screen_height) const;
 
 private:
+	/** font name */
 	std::string _font;
+	/** true if the text is italic */
 	bool _italic;
+	/** text colour */
 	Color _color;
 	/** Size in points as if the screen height is 11 inches, so a 72pt font
 	 *  would be 1/11th of the screen height.

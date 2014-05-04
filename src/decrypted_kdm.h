@@ -38,7 +38,7 @@ class CPL;
  *  @brief A decrypted KDM.
  *
  *  This is a KDM that has either been decrypted by a target private key, or one which
- *  has been created by some other means, ready for encryption later.
+ *  has been created (by some other means) ready for encryption later.
  *
  *  A DecryptedKDM object can be created either from an EncryptedKDM and private key file,
  *  or from the details of the MXFs that the KDM should protect.
@@ -54,7 +54,7 @@ public:
 	/** Construct a DecryptedKDM.
 	 *  @param cpl CPL that the keys are for.
 	 *  @param not_valid_before Start time for the KDM.
-	 *  @param not_valid_after ENd time for the KDM.
+	 *  @param not_valid_after End time for the KDM.
 	 */
 	DecryptedKDM (
 		boost::shared_ptr<const CPL> cpl,

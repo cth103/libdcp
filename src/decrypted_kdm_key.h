@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/decrypted_kdm_key.h
+ *  @brief DecryptedKDMKey class
+ */
+
 #ifndef LIBDCP_DECRYPTED_KDM_KEY_H
 #define LIBDCP_DECRYPTED_KDM_KEY_H
 
@@ -24,6 +28,9 @@
 
 namespace dcp {
 
+/** @class DecryptedKDMKey
+ *  @brief An un- or de-crypted key from a KDM.
+ */
 class DecryptedKDMKey
 {
 public:

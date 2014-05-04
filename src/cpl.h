@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/cpl.h
+ *  @brief CPL class.
+ */
+
 #ifndef LIBDCP_CPL_H
 #define LIBDCP_CPL_H
 
