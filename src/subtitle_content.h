@@ -34,12 +34,19 @@ class Subtitle;
 class LoadFont;
 
 /** @class SubtitleContent
- *  @brief A representation of an XML file containing subtitles.
+ *  @brief A representation of an XML or MXF file containing subtitles.
+ *
+ *  XXX: perhaps this should inhert from MXF, or there should be different
+ *  classes for XML and MXF subs.
  */
 class SubtitleContent : public Content
 {
 public:
-	SubtitleContent (boost::filesystem::path file);
+	/** Construct a SubtitleContent.
+	 *  @param file Filename.
+	 *  @param mxf true if the file is an MXF file, false for XML.
+	 */
+	SubtitleContent (boost::filesystem::path file, bool mxf);
 	SubtitleContent (Fraction edit_rate, std::string movie_title, std::string language);
 
 	bool equals (
@@ -98,7 +105,7 @@ private:
 		ParseState& parse_state
 		);
 
-	std::string _movie_title;
+	boost::optional<std::string> _movie_title;
 	/* strangely, this is sometimes a string */
 	std::string _reel_number;
 	std::string _language;

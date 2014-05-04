@@ -20,11 +20,18 @@
 #include "load_font.h"
 #include <libcxml/cxml.h>
 
+using std::string;
 using boost::shared_ptr;
+using boost::optional;
 using namespace dcp;
 
 LoadFont::LoadFont (boost::shared_ptr<const cxml::Node> node)
 {
-	id = node->string_attribute ("Id");
-	uri = node->string_attribute ("URI");
+	optional<string> x = node->optional_string_attribute ("Id");
+	if (!x) {
+		x = node->optional_string_attribute ("ID");
+	}
+	id = x.get_value_or ("");
+	
+	uri = node->optional_string_attribute ("URI");
 }

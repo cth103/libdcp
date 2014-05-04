@@ -148,7 +148,7 @@ void
 MXF::read_writer_info (ASDCP::WriterInfo const & info)
 {
 	char buffer[64];
-	Kumu::bin2UUIDhex (info.AssetUUID, 16, buffer, 64);
+	Kumu::bin2UUIDhex (info.AssetUUID, ASDCP::UUIDlen, buffer, sizeof (buffer));
 	_id = buffer;
 }
 

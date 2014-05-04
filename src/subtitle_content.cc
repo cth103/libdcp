@@ -24,6 +24,8 @@
 #include "text.h"
 #include "load_font.h"
 #include "subtitle_string.h"
+#include "AS_DCP.h"
+#include "KM_util.h"
 #include <libxml++/nodes/element.h>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
@@ -40,15 +42,42 @@ using boost::lexical_cast;
 using boost::optional;
 using namespace dcp;
 
-SubtitleContent::SubtitleContent (boost::filesystem::path file)
+SubtitleContent::SubtitleContent (boost::filesystem::path file, bool mxf)
 	: Content (file)
 	, _need_sort (false)
 {
-	shared_ptr<cxml::Document> xml (new cxml::Document ("DCSubtitle"));
-	xml->read_file (file);
+	shared_ptr<cxml::Document> xml;
 	
-	_id = xml->string_child ("SubtitleID");
-	_movie_title = xml->string_child ("MovieTitle");
+	if (mxf) {
+		ASDCP::TimedText::MXFReader reader;
+		Kumu::Result_t r = reader.OpenRead (file.string().c_str ());
+		if (ASDCP_FAILURE (r)) {
+			boost::throw_exception (MXFFileError ("could not open MXF file for reading", file, r));
+		}
+		
+		string s;
+		reader.ReadTimedTextResource (s, 0, 0);
+		xml.reset (new cxml::Document ("SubtitleReel"));
+		stringstream t;
+		t << s;
+		xml->read_stream (t);
+
+		ASDCP::WriterInfo info;
+		reader.FillWriterInfo (info);
+		
+		char buffer[64];
+		Kumu::bin2UUIDhex (info.AssetUUID, ASDCP::UUIDlen, buffer, sizeof (buffer));
+		_id = buffer;
+
+	} else {
+		xml.reset (new cxml::Document ("DCSubtitle"));
+		xml->read_file (file);
+		_id = xml->string_child ("SubtitleID");
+	}
+
+	/* XXX: hacks aplenty in here; probably need separate parsers for DCSubtitle and SubtitleReel */
+
+	_movie_title = xml->optional_string_child ("MovieTitle");
 	_reel_number = xml->string_child ("ReelNumber");
 	_language = xml->string_child ("Language");
 
@@ -60,6 +89,12 @@ SubtitleContent::SubtitleContent (boost::filesystem::path file)
 	/* Now make Subtitle objects to represent the raw XML nodes
 	   in a sane way.
 	*/
+
+	shared_ptr<cxml::Node> subtitle_list = xml->optional_node_child ("SubtitleList");
+	if (subtitle_list) {
+		list<shared_ptr<dcp::Font> > font = type_children<dcp::Font> (subtitle_list, "Font");
+		copy (font.begin(), font.end(), back_inserter (font_nodes));
+	}
 	
 	ParseState parse_state;
 	examine_font_nodes (xml, font_nodes, parse_state);
@@ -180,7 +215,7 @@ SubtitleContent::font_id_to_name (string id) const
 		return "";
 	}
 
-	if ((*i)->uri == "arial.ttf") {
+	if ((*i)->uri && (*i)->uri.get() == "arial.ttf") {
 		return "Arial";
 	}
 
@@ -220,7 +255,9 @@ SubtitleContent::xml_as_string () const
 	root->set_attribute ("Version", "1.0");
 
 	root->add_child("SubtitleID")->add_child_text (_id);
-	root->add_child("MovieTitle")->add_child_text (_movie_title);
+	if (_movie_title) {
+		root->add_child("MovieTitle")->add_child_text (_movie_title.get ());
+	}
 	root->add_child("ReelNumber")->add_child_text (lexical_cast<string> (_reel_number));
 	root->add_child("Language")->add_child_text (_language);
 
@@ -230,8 +267,10 @@ SubtitleContent::xml_as_string () const
 
 	if (!_load_font_nodes.empty ()) {
 		xmlpp::Element* load_font = root->add_child("LoadFont");
-		load_font->set_attribute("Id", _load_font_nodes.front()->id);
-		load_font->set_attribute("URI", _load_font_nodes.front()->uri);
+		load_font->set_attribute ("Id", _load_font_nodes.front()->id);
+		if (_load_font_nodes.front()->uri) {
+			load_font->set_attribute ("URI", _load_font_nodes.front()->uri.get ());
+		}
 	}
 
 	list<shared_ptr<SubtitleString> > sorted = _subtitles;

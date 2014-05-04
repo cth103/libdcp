@@ -39,7 +39,12 @@ Text::Text (boost::shared_ptr<const cxml::Node> node)
 	: v_align (CENTER)
 {
 	text = node->content ();
-	v_position = node->number_attribute<float> ("VPosition");
+	optional<float> x = node->optional_number_attribute<float> ("VPosition");
+	if (!x) {
+		x = node->number_attribute<float> ("Vposition");
+	}
+	v_position = x.get ();
+	
 	optional<string> v = node->optional_string_attribute ("VAlign");
 	if (v) {
 		v_align = string_to_valign (v.get ());

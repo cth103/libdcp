@@ -10,7 +10,7 @@ int main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 	
-	dcp::SubtitleContent s (argv[1]);
+	dcp::SubtitleContent s (argv[1], false);
 	cout << s.xml_as_string ();
 	return 0;
 }

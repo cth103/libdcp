@@ -133,7 +133,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 			if (root == "CompositionPlaylist") {
 				_assets.push_back (shared_ptr<CPL> (new CPL (path)));
 			} else if (root == "DCSubtitle") {
-				_assets.push_back (shared_ptr<SubtitleContent> (new SubtitleContent (path)));
+				_assets.push_back (shared_ptr<SubtitleContent> (new SubtitleContent (path, false)));
 			}
 		} else if (boost::algorithm::ends_with (path.string(), ".mxf")) {
 			ASDCP::EssenceType_t type;
@@ -153,6 +153,9 @@ DCP::read (bool keep_going, ReadErrors* errors)
 					break;
 				case ASDCP::ESS_JPEG_2000_S:
 					_assets.push_back (shared_ptr<StereoPictureMXF> (new StereoPictureMXF (path)));
+					break;
+				case ASDCP::ESS_TIMED_TEXT:
+					_assets.push_back (shared_ptr<SubtitleContent> (new SubtitleContent (path, true)));
 					break;
 				default:
 					throw DCPReadError ("Unknown MXF essence type");

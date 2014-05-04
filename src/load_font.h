@@ -18,6 +18,7 @@
 */
 
 #include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 
 namespace cxml {
 	class Node;
@@ -32,7 +33,7 @@ public:
 	LoadFont (boost::shared_ptr<const cxml::Node> node);
 
 	std::string id;
-	std::string uri;
+	boost::optional<std::string> uri;
 };
 
 }
