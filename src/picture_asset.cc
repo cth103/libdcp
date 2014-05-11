@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@
 #include "exceptions.h"
 #include "xyz_frame.h"
 #include "picture_asset_writer.h"
+#include "raw_convert.h"
 
 using std::string;
 using std::ostream;
@@ -71,13 +72,13 @@ PictureAsset::write_to_cpl (xmlpp::Element* node) const
 
 	assert (i != c.end ());
 
-	(*i)->add_child ("FrameRate")->add_child_text (lexical_cast<string> (_edit_rate * edit_rate_factor ()) + " 1");
+	(*i)->add_child ("FrameRate")->add_child_text (raw_convert<string> (_edit_rate * edit_rate_factor ()) + " 1");
 	if (_interop) {
 		stringstream s;
 		s << std::fixed << std::setprecision (2) << (float (_size.width) / _size.height);
 		(*i)->add_child ("ScreenAspectRatio")->add_child_text (s.str ());
 	} else {
-		(*i)->add_child ("ScreenAspectRatio")->add_child_text (lexical_cast<string> (_size.width) + " " + lexical_cast<string> (_size.height));
+		(*i)->add_child ("ScreenAspectRatio")->add_child_text (raw_convert<string> (_size.width) + " " + raw_convert<string> (_size.height));
 	}
 }
 

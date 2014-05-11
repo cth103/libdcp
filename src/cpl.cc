@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include "signer.h"
 #include "exceptions.h"
 #include "compose.hpp"
+#include "raw_convert.h"
 
 using std::string;
 using std::stringstream;
@@ -248,7 +249,7 @@ CPL::write_to_pkl (xmlpp::Node* node, bool interop) const
 	xmlpp::Node* asset = node->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	asset->add_child("Hash")->add_child_text (_digest);
-	asset->add_child("Size")->add_child_text (lexical_cast<string> (_length));
+	asset->add_child("Size")->add_child_text (raw_convert<string> (_length));
 	if (interop) {
 		asset->add_child("Type")->add_child_text ("text/xml;asdcpKind=CPL");
 	} else {
@@ -285,7 +286,7 @@ CPL::write_to_assetmap (xmlpp::Node* node) const
 	chunk->add_child("Path")->add_child_text (_id + "_cpl.xml");
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text("0");
-	chunk->add_child("Length")->add_child_text(lexical_cast<string> (_length));
+	chunk->add_child("Length")->add_child_text (raw_convert<string> (_length));
 }
 	
 	

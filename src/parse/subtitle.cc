@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/optional.hpp>
 #include "subtitle.h"
+#include "../raw_convert.h"
 #include "../types.h"
 
 using std::string;
@@ -114,7 +115,7 @@ Subtitle::fade_time (shared_ptr<const cxml::Node> node, string name)
 	} else if (u.find (":") != string::npos) {
 		t = Time (u);
 	} else {
-		t = Time (0, 0, 0, lexical_cast<int> (u));
+		t = Time (0, 0, 0, raw_convert<int> (u));
 	}
 
 	if (t > Time (0, 0, 8, 0)) {

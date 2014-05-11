@@ -23,7 +23,6 @@
 
 #include <iostream>
 #include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/function.hpp>
 #include <libxml++/nodes/element.h>
 #include "AS_DCP.h"
@@ -32,10 +31,10 @@
 #include "util.h"
 #include "metadata.h"
 #include "compose.hpp"
+#include "raw_convert.h"
 
 using std::string;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using namespace libdcp;
 
 Asset::Asset (boost::filesystem::path directory, boost::filesystem::path file_name)
@@ -59,7 +58,7 @@ Asset::write_to_pkl (xmlpp::Node* node, bool interop) const
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _uuid);
 	asset->add_child("AnnotationText")->add_child_text (_file_name.string ());
 	asset->add_child("Hash")->add_child_text (digest ());
-	asset->add_child("Size")->add_child_text (lexical_cast<string> (boost::filesystem::file_size(path())));
+	asset->add_child("Size")->add_child_text (raw_convert<string> (boost::filesystem::file_size(path())));
 	if (interop) {
 		asset->add_child("Type")->add_child_text (String::compose ("application/x-smpte-mxf;asdcpKind=%1", asdcp_kind ()));
 	} else {
@@ -77,7 +76,7 @@ Asset::write_to_assetmap (xmlpp::Node* node) const
 	chunk->add_child("Path")->add_child_text (_file_name.string ());
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
-	chunk->add_child("Length")->add_child_text (lexical_cast<string> (boost::filesystem::file_size(path())));
+	chunk->add_child("Length")->add_child_text (raw_convert<string> (boost::filesystem::file_size(path())));
 }
 
 boost::filesystem::path

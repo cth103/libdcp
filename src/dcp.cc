@@ -26,9 +26,7 @@
 #include <cassert>
 #include <iostream>
 #include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
 #include <libxml++/libxml++.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
@@ -46,6 +44,7 @@
 #include "cpl.h"
 #include "signer.h"
 #include "kdm.h"
+#include "raw_convert.h"
 
 using std::string;
 using std::list;
@@ -55,7 +54,6 @@ using std::copy;
 using std::back_inserter;
 using std::make_pair;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using namespace libdcp;
 
 DCP::DCP (boost::filesystem::path directory)
@@ -191,7 +189,7 @@ DCP::write_assetmap (string pkl_uuid, int pkl_length, bool interop, XMLMetadata 
 	chunk->add_child("Path")->add_child_text (pkl_uuid + "_pkl.xml");
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
-	chunk->add_child("Length")->add_child_text (lexical_cast<string> (pkl_length));
+	chunk->add_child("Length")->add_child_text (raw_convert<string> (pkl_length));
 	
 	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
 		(*i)->write_to_assetmap (asset_list);

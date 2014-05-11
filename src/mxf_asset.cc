@@ -23,7 +23,6 @@
 
 #include <iostream>
 #include <boost/filesystem.hpp>
-#include <boost/lexical_cast.hpp>
 #include <libxml++/nodes/element.h>
 #include "AS_DCP.h"
 #include "KM_prng.h"
@@ -33,12 +32,12 @@
 #include "metadata.h"
 #include "exceptions.h"
 #include "kdm.h"
+#include "raw_convert.h"
 
 using std::string;
 using std::list;
 using std::pair;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using boost::dynamic_pointer_cast;
 using namespace libdcp;
 
@@ -117,10 +116,10 @@ MXFAsset::write_to_cpl (xmlpp::Element* node) const
 	}
 	a->add_child ("Id")->add_child_text ("urn:uuid:" + _uuid);
 	a->add_child ("AnnotationText")->add_child_text (_file_name.string ());
-	a->add_child ("EditRate")->add_child_text (lexical_cast<string> (_edit_rate) + " 1");
-	a->add_child ("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
-	a->add_child ("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));
-	a->add_child ("Duration")->add_child_text (lexical_cast<string> (_duration));
+	a->add_child ("EditRate")->add_child_text (raw_convert<string> (_edit_rate) + " 1");
+	a->add_child ("IntrinsicDuration")->add_child_text (raw_convert<string> (_intrinsic_duration));
+	a->add_child ("EntryPoint")->add_child_text (raw_convert<string> (_entry_point));
+	a->add_child ("Duration")->add_child_text (raw_convert<string> (_duration));
 	if (!_key_id.empty ()) {
 		a->add_child("KeyId")->add_child_text ("urn:uuid:" + _key_id);
 	}
