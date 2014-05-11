@@ -27,7 +27,6 @@ using std::string;
 using std::list;
 using boost::shared_ptr;
 using boost::optional;
-using boost::lexical_cast;
 using namespace libdcp;
 using namespace libdcp::parse;
 
