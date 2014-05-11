@@ -73,6 +73,7 @@ def build(bld):
               mxf_asset.h
               picture_asset.h
               picture_asset_writer.h
+              raw_convert.h
               rgb_xyz.h
               rec709_linearised_gamma_lut.h
               reel.h
