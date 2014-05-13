@@ -112,14 +112,17 @@ protected:
 	std::string _message;
 };
 
+/** @class MissingAssetError
+ *  @brief An error of a missing asset.
+ */
 class MissingAssetError : public DCPReadError
 {
 public:
 	enum AssetType {
-		MAIN_PICTURE,
-		MAIN_SOUND,
-		MAIN_SUBTITLE,
-		UNKNOWN
+		MAIN_PICTURE,  //< main picture is missing
+		MAIN_SOUND,    //< main sound is missing
+		MAIN_SUBTITLE, //< main subtitle is missing
+		UNKNOWN        //< something is missing but we don't know what
 	};
 	
 	MissingAssetError (boost::filesystem::path, AssetType = UNKNOWN);
