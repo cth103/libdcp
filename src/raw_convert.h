@@ -18,6 +18,7 @@
 */
 
 #include <sstream>
+#include <iomanip>
 
 namespace libdcp {
 
@@ -30,6 +31,7 @@ raw_convert (Q v)
 {
 	std::stringstream s;
 	s.imbue (std::locale::classic ());
+	s << std::setprecision (16);
 	s << v;
 	P r;
 	s >> r;
