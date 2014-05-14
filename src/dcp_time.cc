@@ -21,10 +21,10 @@
  *  @brief Time class.
  */
 
+#include "raw_convert.h"
 #include "dcp_time.h"
 #include "exceptions.h"
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -78,10 +78,10 @@ Time::Time (string time)
 		boost::throw_exception (DCPReadError ("unrecognised time specification"));
 	}
 	
-	h = lexical_cast<int> (b[0]);
-	m = lexical_cast<int> (b[1]);
-	s = lexical_cast<int> (b[2]);
-	t = lexical_cast<int> (b[3]);
+	h = raw_convert<int> (b[0]);
+	m = raw_convert<int> (b[1]);
+	s = raw_convert<int> (b[2]);
+	t = raw_convert<int> (b[3]);
 }
 
 bool

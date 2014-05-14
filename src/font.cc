@@ -17,6 +17,8 @@
 
 */
 
+#include "types.h"
+#include "raw_convert.h"
 #include "font.h"
 #include "xml.h"
 #include "text.h"

@@ -91,6 +91,7 @@ def build(bld):
               object.h
               picture_mxf.h
               picture_mxf_writer.h
+              raw_convert.h
               rgb_xyz.h
               reel.h
               reel_asset.h

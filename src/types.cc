@@ -17,9 +17,9 @@
 
 */
 
+#include "raw_convert.h"
 #include "types.h"
 #include "exceptions.h"
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <vector>
 #include <cstdio>
@@ -39,8 +39,8 @@ Fraction::Fraction (string s)
 	if (b.size() != 2) {
 		boost::throw_exception (XMLError ("malformed fraction " + s + " in XML node"));
 	}
-	numerator = lexical_cast<int> (b[0]);
-	denominator = lexical_cast<int> (b[1]);
+	numerator = raw_convert<int> (b[0]);
+	denominator = raw_convert<int> (b[1]);
 }
 
 bool

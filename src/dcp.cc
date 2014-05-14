@@ -21,6 +21,7 @@
  *  @brief DCP class.
  */
 
+#include "raw_convert.h"
 #include "dcp.h"
 #include "sound_mxf.h"
 #include "picture_mxf.h"
@@ -42,7 +43,6 @@
 #include <libxml++/libxml++.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
 #include <sstream>
 #include <iomanip>
 #include <cassert>
@@ -57,7 +57,6 @@ using std::map;
 using std::cout;
 using std::exception;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using boost::algorithm::starts_with;
 using namespace dcp;
 
@@ -372,7 +371,7 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 	chunk->add_child("Path")->add_child_text (pkl_uuid + "_pkl.xml");
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
-	chunk->add_child("Length")->add_child_text (lexical_cast<string> (pkl_length));
+	chunk->add_child("Length")->add_child_text (raw_convert<string> (pkl_length));
 	
 	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
 		(*i)->write_to_assetmap (asset_list, _directory);

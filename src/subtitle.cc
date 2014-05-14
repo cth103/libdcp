@@ -22,6 +22,7 @@
 #include "font.h"
 #include "text.h"
 #include <libcxml/cxml.h>
+#include <boost/lexical_cast.hpp>
 
 using std::string;
 using boost::shared_ptr;

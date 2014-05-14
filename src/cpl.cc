@@ -17,6 +17,7 @@
 
 */
 
+#include "raw_convert.h"
 #include "cpl.h"
 #include "util.h"
 #include "mono_picture_mxf.h"
@@ -42,7 +43,6 @@ using std::list;
 using std::pair;
 using std::make_pair;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using boost::optional;
 using namespace dcp;
 

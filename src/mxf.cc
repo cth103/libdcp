@@ -21,6 +21,7 @@
  *  @brief Parent class for assets of DCPs made up of MXF files.
  */
 
+#include "raw_convert.h"
 #include "AS_DCP.h"
 #include "KM_prng.h"
 #include "KM_util.h"

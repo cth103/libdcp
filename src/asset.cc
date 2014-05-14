@@ -21,15 +21,14 @@
  *  @brief Asset class.
  */
 
+#include "raw_convert.h"
 #include "asset.h"
 #include "util.h"
 #include "exceptions.h"
 #include "compose.hpp"
 #include <libxml++/libxml++.h>
-#include <boost/lexical_cast.hpp>
 
 using std::string;
-using boost::lexical_cast;
 using boost::function;
 using boost::optional;
 using namespace dcp;
@@ -68,7 +67,7 @@ Asset::write_to_pkl (xmlpp::Node* node, Standard standard) const
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	asset->add_child("AnnotationText")->add_child_text (_id);
 	asset->add_child("Hash")->add_child_text (hash ());
-	asset->add_child("Size")->add_child_text (lexical_cast<string> (boost::filesystem::file_size (_file)));
+	asset->add_child("Size")->add_child_text (raw_convert<string> (boost::filesystem::file_size (_file)));
 	asset->add_child("Type")->add_child_text (pkl_type (standard));
 }
 
@@ -88,7 +87,7 @@ Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 	chunk->add_child("Path")->add_child_text (path.get().string ());
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
-	chunk->add_child("Length")->add_child_text (lexical_cast<string> (boost::filesystem::file_size (_file)));
+	chunk->add_child("Length")->add_child_text (raw_convert<string> (boost::filesystem::file_size (_file)));
 }
 
 string

@@ -17,6 +17,7 @@
 
 */
 
+#include "raw_convert.h"
 #include "subtitle_content.h"
 #include "util.h"
 #include "xml.h"
@@ -27,7 +28,6 @@
 #include "AS_DCP.h"
 #include "KM_util.h"
 #include <libxml++/nodes/element.h>
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <fstream>
 
@@ -38,7 +38,6 @@ using std::ofstream;
 using std::stringstream;
 using std::cout;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using boost::optional;
 using namespace dcp;
 
@@ -258,7 +257,7 @@ SubtitleContent::xml_as_string () const
 	if (_movie_title) {
 		root->add_child("MovieTitle")->add_child_text (_movie_title.get ());
 	}
-	root->add_child("ReelNumber")->add_child_text (lexical_cast<string> (_reel_number));
+	root->add_child("ReelNumber")->add_child_text (raw_convert<string> (_reel_number));
 	root->add_child("Language")->add_child_text (_language);
 
 	if (_load_font_nodes.size() > 1) {
@@ -326,7 +325,7 @@ SubtitleContent::xml_as_string () const
 			font->set_attribute ("Id", id);
 			font->set_attribute ("Italic", italic ? "yes" : "no");
 			font->set_attribute ("Color", color.to_argb_string());
-			font->set_attribute ("Size", lexical_cast<string> (size));
+			font->set_attribute ("Size", raw_convert<string> (size));
 			font->set_attribute ("Effect", effect_to_string (effect));
 			font->set_attribute ("EffectColor", effect_color.to_argb_string());
 			font->set_attribute ("Script", "normal");
@@ -342,11 +341,11 @@ SubtitleContent::xml_as_string () const
 			    )) {
 
 			subtitle = font->add_child ("Subtitle");
-			subtitle->set_attribute ("SpotNumber", lexical_cast<string> (spot_number++));
+			subtitle->set_attribute ("SpotNumber", raw_convert<string> (spot_number++));
 			subtitle->set_attribute ("TimeIn", (*i)->in().to_string());
 			subtitle->set_attribute ("TimeOut", (*i)->out().to_string());
-			subtitle->set_attribute ("FadeUpTime", lexical_cast<string> ((*i)->fade_up_time().to_ticks()));
-			subtitle->set_attribute ("FadeDownTime", lexical_cast<string> ((*i)->fade_down_time().to_ticks()));
+			subtitle->set_attribute ("FadeUpTime", raw_convert<string> ((*i)->fade_up_time().to_ticks()));
+			subtitle->set_attribute ("FadeDownTime", raw_convert<string> ((*i)->fade_down_time().to_ticks()));
 
 			last_in = (*i)->in ();
 			last_out = (*i)->out ();
@@ -356,7 +355,7 @@ SubtitleContent::xml_as_string () const
 
 		xmlpp::Element* text = subtitle->add_child ("Text");
 		text->set_attribute ("VAlign", valign_to_string ((*i)->v_align()));		
-		text->set_attribute ("VPosition", lexical_cast<string> ((*i)->v_position()));
+		text->set_attribute ("VPosition", raw_convert<string> ((*i)->v_position()));
 		text->add_child_text ((*i)->text());
 	}
 

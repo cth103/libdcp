@@ -17,6 +17,7 @@
 
 */
 
+#include "raw_convert.h"
 #include "reel_asset.h"
 #include "content.h"
 #include "compose.hpp"
@@ -26,7 +27,6 @@ using std::pair;
 using std::string;
 using std::make_pair;
 using boost::shared_ptr;
-using boost::lexical_cast;
 using namespace dcp;
 
 ReelAsset::ReelAsset ()
@@ -89,9 +89,9 @@ ReelAsset::write_to_cpl (xmlpp::Node* node, Standard) const
         a->add_child("Id")->add_child_text ("urn:uuid:" + _id);
         a->add_child("AnnotationText")->add_child_text (_annotation_text);
         a->add_child("EditRate")->add_child_text (String::compose ("%1 %2", _edit_rate.numerator, _edit_rate.denominator));
-        a->add_child("IntrinsicDuration")->add_child_text (lexical_cast<string> (_intrinsic_duration));
-        a->add_child("EntryPoint")->add_child_text (lexical_cast<string> (_entry_point));
-        a->add_child("Duration")->add_child_text (lexical_cast<string> (_duration));
+        a->add_child("IntrinsicDuration")->add_child_text (raw_convert<string> (_intrinsic_duration));
+        a->add_child("EntryPoint")->add_child_text (raw_convert<string> (_entry_point));
+        a->add_child("Duration")->add_child_text (raw_convert<string> (_duration));
         if (!_key_id.empty ()) {
                 a->add_child("KeyId")->add_child_text ("urn:uuid:" + _key_id);
         }
