@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include <iomanip>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/date_time/c_local_time_adjustor.hpp>
 #include <openssl/sha.h>
 #include <libxml++/nodes/element.h>
 #include <libxml++/document.h>
@@ -297,36 +298,33 @@ libdcp::base64_decode (string const & in, unsigned char* out, int out_length)
 	return N;
 }
 
+/** @param tm Local time.
+ *  @return String of the form 2014-04-02T18:05:23+04:00, where the UTC offset is derived
+ *  from the current system time zone.
+ */
 string
 libdcp::tm_to_string (struct tm* tm)
 {
 	char buffer[64];
 	strftime (buffer, 64, "%Y-%m-%dT%H:%M:%S", tm);
 
-	int offset = 0;
+	/* Compute current UTC offset */
+	boost::posix_time::ptime const utc_now = boost::posix_time::second_clock::universal_time ();
+	boost::posix_time::ptime const now = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local (utc_now);
 
-#ifdef LIBDCP_POSIX
-	offset = tm->tm_gmtoff / 60;
-#else
-	TIME_ZONE_INFORMATION tz;
-	GetTimeZoneInformation (&tz);
-	offset = tz.Bias;
-#endif
-	
-	return string (buffer) + utc_offset_to_string (offset);
+	return string (buffer) + utc_offset_to_string (now - utc_now);
 }
 
-/** @param b Offset from UTC to local time in minutes.
+/** @param b Offset from UTC to local time.
  *  @return string of the form e.g. -01:00.
  */
 string
-libdcp::utc_offset_to_string (int b)
+libdcp::utc_offset_to_string (boost::posix_time::time_duration b)
 {
-	bool const negative = (b < 0);
-	b = negative ? -b : b;
-
-	int const hours = b / 60;
-	int const minutes = b % 60;
+	bool const negative = b.is_negative ();
+	if (negative) {
+		b = boost::posix_time::time_duration (-b.hours(), b.minutes(), 0, 0);
+	}
 
 	stringstream o;
 	if (negative) {
@@ -335,7 +333,7 @@ libdcp::utc_offset_to_string (int b)
 		o << "+";
 	}
 
-	o << setw(2) << setfill('0') << hours << ":" << setw(2) << setfill('0') << minutes;
+	o << setw(2) << setfill('0') << b.hours() << ":" << setw(2) << setfill('0') << b.minutes();
 	return o.str ();
 }
 

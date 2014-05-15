@@ -86,6 +86,9 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 	RSA_free (rsa);
 }
 
+/** @param not_valid_before KDM not-valid-before time in local time.
+ *  @param not_valid_after KDM not-valid-after time in local time.
+ */
 KDM::KDM (
 	shared_ptr<const CPL> cpl, shared_ptr<const Signer> signer, shared_ptr<const Certificate> recipient_cert,
 	boost::posix_time::ptime not_valid_before, boost::posix_time::ptime not_valid_after,
