@@ -20,6 +20,7 @@
 #include "local_time.h"
 #include "exceptions.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/date_time/c_local_time_adjustor.hpp>
 #include <cstdio>
 
 using std::string;
@@ -56,28 +57,12 @@ LocalTime::LocalTime (boost::posix_time::ptime t)
 void
 LocalTime::set_local_time_zone ()
 {
-	time_t now = time (0);
-	struct tm* tm = localtime (&now);
+	boost::posix_time::ptime const utc_now = boost::posix_time::second_clock::universal_time ();
+	boost::posix_time::ptime const now = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local (utc_now);
+	boost::posix_time::time_duration offset = now - utc_now;
 
-	int offset = 0;
-	
-#ifdef LIBDCP_POSIX
-	offset = tm->tm_gmtoff / 60;
-#else
-	TIME_ZONE_INFORMATION tz;
-	GetTimeZoneInformation (&tz);
-	offset = tz.Bias;
-#endif
-
-	bool const negative = offset < 0;
-	offset = negative ? -offset : offset;
-
-	_tz_hour = offset / 60;
-	_tz_minute = offset % 60;
-
-	if (negative) {
-		_tz_hour = -_tz_hour;
-	}
+	_tz_hour = offset.hours ();
+	_tz_minute = offset.minutes ();
 }
 
 /** @param s A string of the form 2013-01-05T18:06:59+04:00 */

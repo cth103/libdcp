@@ -232,6 +232,10 @@ ASDCP::PCM::MXFReader::h__Reader::OpenRead(const char* filename)
 	}
     }
 
+  /* This check has been removed so that DCP-o-matic can use any edit rate
+     it wants.
+  */
+#if 0  
   // check for sample/frame rate sanity
   if ( ASDCP_SUCCESS(result)
        && m_ADesc.EditRate != EditRate_24
@@ -260,6 +264,7 @@ ASDCP::PCM::MXFReader::h__Reader::OpenRead(const char* filename)
 	  return RESULT_FORMAT;
 	}
     }
+#endif  
 
   if( ASDCP_SUCCESS(result) )
     result = InitMXFIndex();
@@ -483,6 +488,10 @@ ASDCP::PCM::MXFWriter::h__Writer::SetSourceStream(const AudioDescriptor& ADesc)
   if ( ! m_State.Test_INIT() )
     return RESULT_STATE;
 
+#if 0
+  /* This check has been removed so that DCP-o-matic can use anye dit rate
+     it wants.
+  */
   if ( ADesc.EditRate != EditRate_24
        && ADesc.EditRate != EditRate_25
        && ADesc.EditRate != EditRate_30
@@ -498,6 +507,7 @@ ASDCP::PCM::MXFWriter::h__Writer::SetSourceStream(const AudioDescriptor& ADesc)
 			     ADesc.EditRate.Numerator, ADesc.EditRate.Denominator);
       return RESULT_RAW_FORMAT;
     }
+#endif  
 
   if ( ADesc.AudioSamplingRate != SampleRate_48k && ADesc.AudioSamplingRate != SampleRate_96k )
     {
