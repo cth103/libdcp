@@ -51,8 +51,16 @@ namespace dcp
 class Content : public Asset
 {
 public:
+	/** Construct a Content object by reading a file.
+	 *  @param file File to read.
+	 */
 	Content (boost::filesystem::path file);
+
+	/** Construct a new piece of content with a specified edit rate.
+	 *  @param edit_rate Edit rate for the content.
+	 */
 	Content (Fraction edit_rate);
+	
 	virtual ~Content () {}
 
 	bool equals (
@@ -65,6 +73,9 @@ public:
 		return _edit_rate;
 	}
 
+	/** @return The total length of this content in video frames.
+	 *  The amount of content presented may be less than this.
+	 */
 	int64_t intrinsic_duration () const {
 		return _intrinsic_duration;
 	}
@@ -75,6 +86,9 @@ protected:
 	virtual std::string asdcp_kind () const = 0;
 	
 	Fraction _edit_rate;
+	/** The total length of this content in video frames.  The amount of
+	 *  content presented may be less than this.
+	 */
 	int64_t _intrinsic_duration;
 };
 

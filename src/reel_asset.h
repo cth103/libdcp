@@ -99,13 +99,13 @@ protected:
 
 private:
 	
-	std::string _annotation_text; ///< The <AnnotationText> from the reel's entry for this asset
-	Fraction _edit_rate;          ///< The <EditRate> from the reel's entry for this asset
-	int64_t _intrinsic_duration;  ///< The <IntrinsicDuration> from the reel's entry for this asset
-	int64_t _entry_point;         ///< The <EntryPoint> from the reel's entry for this asset
-	int64_t _duration;            ///< The <Duration> from the reel's entry for this asset
-	std::string _hash;            ///< The <Hash> from the reel's entry for this asset
-	std::string _key_id;          ///< The <KeyId> from the reel's entry for this asset, or empty if there isn't one
+	std::string _annotation_text; ///< The &lt;AnnotationText&gt; from the reel's entry for this asset
+	Fraction _edit_rate;          ///< The &lt;EditRate&gt; from the reel's entry for this asset
+	int64_t _intrinsic_duration;  ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset
+	int64_t _entry_point;         ///< The &lt;EntryPoint&gt; from the reel's entry for this asset
+	int64_t _duration;            ///< The &lt;Duration&gt; from the reel's entry for this asset
+	std::string _hash;            ///< The &lt;Hash&gt; from the reel's entry for this asset
+	std::string _key_id;          ///< The &lt;KeyId&gt; from the reel's entry for this asset, or empty if there isn't one
 };
 
 }
