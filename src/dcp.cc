@@ -196,14 +196,6 @@ DCP::add (boost::shared_ptr<Asset> asset)
 	_assets.push_back (asset);
 }
 
-class AssetComparator
-{
-public:
-	bool operator() (shared_ptr<const Content> a, shared_ptr<const Content> b) {
-		return a->id() < b->id();
-	}
-};
-
 bool
 DCP::encrypted () const
 {
