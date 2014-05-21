@@ -38,6 +38,8 @@ help (string n)
 	     << "  -h, --help                   show this help\n"
 	     << "  -v, --verbose                be verbose\n"
 	     << "  -n, --names                  allow differing MXF names\n"
+	     << "      --cpl-names              allow differing CPL annotation texts (backwards compatible)\n"
+	     << "      --cpl-annotation-texts   allow differing CPL annotation texts\n"
 	     << "  -m, --mean-pixel             maximum allowed mean pixel error (default 5)\n"
 	     << "  -s, --std-dev-pixel          maximum allowed standard deviation of pixel error (default 5)\n"
 	     << "  -k, --keep-going             carry on in the event of errors, if possible\n"
@@ -95,11 +97,14 @@ main (int argc, char* argv[])
 			{ "mean-pixel", required_argument, 0, 'm'},
 			{ "std-dev-pixel", required_argument, 0, 's'},
 			{ "keep-going", no_argument, 0, 'k'},
+			/* From here we're using random capital letters for the short option */
 			{ "ignore-missing-assets", no_argument, 0, 'A'},
+			{ "cpl-names", no_argument, 0, 'B'},
+			{ "cpl-annotation-texts", no_argument, 0, 'C'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vhvnm:s:kA", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhvnm:s:kAB", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -129,6 +134,10 @@ main (int argc, char* argv[])
 			break;
 		case 'A':
 			ignore_missing_assets = true;
+			break;
+		case 'B':
+		case 'C':
+			options.cpl_annotation_texts_can_differ = true;
 			break;
 		}
 	}
