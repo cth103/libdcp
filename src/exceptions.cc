@@ -23,11 +23,16 @@
 using std::string;
 using namespace libdcp;
 
-FileError::FileError (std::string const & message, boost::filesystem::path filename, int number)
-	: _message (String::compose ("%1 (%2) (error %3)", message, filename.string(), number))
+FileError::FileError (string const & message, boost::filesystem::path filename, int number)
+	: StringError (String::compose ("%1 (%2) (error %3)", message, filename.string(), number))
 	, _filename (filename)
 	, _number (number)
 {
 
 }
 
+NotEncryptedError::NotEncryptedError (string const & what)
+	: StringError (String::compose ("%1 asset is not encrypted", what))
+{
+
+}

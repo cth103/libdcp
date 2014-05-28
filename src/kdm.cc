@@ -158,6 +158,10 @@ KDM::KDM (
 		/* XXX: subtitle assets? */
 
 		if ((*i)->asset_list->main_picture) {
+			if ((*i)->asset_list->main_picture->key_id.empty ()) {
+				throw NotEncryptedError ("MainPicture");
+			}
+			
 			KDMKey kkey (
 				signer, cpl.id.substr (9), "MDIK", (*i)->asset_list->main_picture->key_id.substr (9),
 				not_valid_before, not_valid_after, key
@@ -168,6 +172,10 @@ KDM::KDM (
 		}
 
 		if ((*i)->asset_list->main_stereoscopic_picture) {
+			if ((*i)->asset_list->main_stereoscopic_picture->key_id.empty ()) {
+				throw NotEncryptedError ("MainStereoscopicPicture");
+			}
+
 			KDMKey kkey (
 				signer, cpl.id.substr (9), "MDIK", (*i)->asset_list->main_stereoscopic_picture->key_id.substr (9),
 				not_valid_before, not_valid_after, key
@@ -178,6 +186,10 @@ KDM::KDM (
 		}
 		
 		if ((*i)->asset_list->main_sound) {
+			if ((*i)->asset_list->main_sound->key_id.empty ()) {
+				throw NotEncryptedError ("MainSound");
+			}
+			
 			KDMKey kkey (
 				signer, cpl.id.substr (9), "MDAK", (*i)->asset_list->main_sound->key_id.substr (9),
 				not_valid_before, not_valid_after, key

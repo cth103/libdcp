@@ -29,18 +29,31 @@
 namespace libdcp
 {
 
-/** @brief An exception related to a file */
-class FileError : public std::exception
+class StringError : public std::exception
 {
 public:
-	FileError (std::string const & message, boost::filesystem::path filename, int number);
-	~FileError () throw () {}
+	StringError (std::string const & message)
+		: _message (message)
+	{}
+
+	~StringError () throw () {}
 
 	/** @return error message */
 	char const * what () const throw () {
 		return _message.c_str ();
 	}
-	
+
+private:
+	std::string _message;
+};
+
+/** @brief An exception related to a file */
+class FileError : public StringError
+{
+public:
+	FileError (std::string const & message, boost::filesystem::path filename, int number);
+	~FileError () throw () {}
+
 	/** @return filename of file that was involved */
 	boost::filesystem::path filename () const {
 		return _filename;
@@ -52,8 +65,6 @@ public:
 	}
 
 private:
-	/** message part */
-	std::string _message;
 	/** filename of file that was involved */
 	boost::filesystem::path _filename;
 	int _number;
@@ -69,54 +80,43 @@ public:
 };
 	
 /** @brief A miscellaneous exception */
-class MiscError : public std::exception
+class MiscError : public StringError
 {
 public:
-	MiscError (std::string const & message) : _message (message) {}
+	MiscError (std::string const & message)
+		: StringError (message)
+	{}
+	
 	~MiscError () throw () {}
-
-	/** @return error message */
-	char const * what () const throw () {
-		return _message.c_str ();
-	}
-
-private:
-	/** error message */
-	std::string _message;
 };
 
 /** @brief A DCP read exception */
-class DCPReadError : public std::exception
+class DCPReadError : public StringError
 {
 public:
-	DCPReadError (std::string const & message) : _message (message) {}
+	DCPReadError (std::string const & message)
+		: StringError (message)
+	{}
+	
 	~DCPReadError () throw () {}
-
-	/** @return error message */
-	char const * what () const throw () {
-		return _message.c_str ();
-	}
-
-private:
-	/** error message */
-	std::string _message;
 };
 
 /** @brief An XML error */
-class XMLError : public std::exception
+class XMLError : public StringError
 {
 public:
-	XMLError (std::string const & message) : _message (message) {}
+	XMLError (std::string const & message)
+		: StringError (message)
+	{}
+
 	~XMLError () throw () {}
+};
 
-	/** @return error message */
-	char const * what () const throw () {
-		return _message.c_str ();
-	}
-
-private:
-	/** error message */
-	std::string _message;
+class NotEncryptedError : public StringError
+{
+public:
+	NotEncryptedError (std::string const & asset);
+	~NotEncryptedError () throw () {}
 };
 	
 }
