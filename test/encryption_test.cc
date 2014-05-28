@@ -100,10 +100,13 @@ BOOST_AUTO_TEST_CASE (encryption)
 
 	d.write_xml (false, xml_metadata, signer);
 
+	boost::filesystem::path cpl_path = boost::filesystem::path ("build/test/DCP/bar") / (cpl->id() + "_cpl.xml");
+
 	libdcp::KDM kdm (
-		cpl,
+		cpl_path,
 		signer,
 		signer->certificates().leaf(),
+		key,
 		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
 		boost::posix_time::time_from_string ("2013-01-08 00:00:00"),
 		"libdcp",

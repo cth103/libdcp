@@ -156,16 +156,17 @@ public:
 	KDM (boost::filesystem::path kdm, boost::filesystem::path private_key);
 
 	/** Create a new KDM.
-	 *  @param cpl CPL that the KDM is for.
+	 *  @param cpl CPL file that the KDM is for.
 	 *  @param signer Certificate chain to sign the KDM with.
 	 *  @param recipient_cert Certificate of the projector that this KDM is targeted at.
+	 *  @param key Key used to encrypt all MXF data.
 	 *  @param not_valid_before Start of validity period.
 	 *  @param not_valid_after End of validity period.
 	 *  @param annotation_text Text for the <AnnotationText> node.
 	 *  @param issue_date Text for the <IssueDate> node.
 	 */
 	KDM (
-		boost::shared_ptr<const CPL> cpl, boost::shared_ptr<const Signer> signer, boost::shared_ptr<const Certificate> recipient_cert,
+		boost::filesystem::path cpl, boost::shared_ptr<const Signer> signer, boost::shared_ptr<const Certificate> recipient_cert, Key key,
 		boost::posix_time::ptime not_valid_before, boost::posix_time::ptime not_valid_after,
 		std::string annotation_text, std::string issue_date
 		);

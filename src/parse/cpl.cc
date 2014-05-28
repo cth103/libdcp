@@ -31,7 +31,7 @@ using std::bad_cast;
 using boost::shared_ptr;
 using namespace libdcp::parse;
 
-CPL::CPL (string file)
+CPL::CPL (boost::filesystem::path file)
 {
 	cxml::Document f ("CompositionPlaylist");
 	f.read_file (file);

@@ -68,12 +68,17 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL (work_dir, "A Test DCP", libdcp::FEATURE, 24, 24));
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (asset_A, shared_ptr<libdcp::SoundAsset> (), shared_ptr<libdcp::SubtitleAsset> ())));
+	libdcp::XMLMetadata metadata;
+	cpl->write_xml (true, metadata, signer);
+
+	boost::filesystem::path cpl_path = work_dir / (cpl->id() + "_cpl.xml");
 
 	/* A KDM using our certificate chain's leaf key pair */
 	libdcp::KDM kdm_A (
-		cpl,
+		cpl_path,
 		signer,
 		signer->certificates().leaf(),
+		key,
 		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
 		boost::posix_time::time_from_string ("2013-01-08 00:00:00"),
 		"libdcp",

@@ -145,7 +145,7 @@ class CPL
 {
 public:
 	/** Parse a CPL XML file into our member variables */
-	CPL (std::string file);
+	CPL (boost::filesystem::path file);
 
 	std::string id;
 	std::string annotation_text;

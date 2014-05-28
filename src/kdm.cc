@@ -34,6 +34,7 @@
 #include "cpl.h"
 #include "mxf_asset.h"
 #include "xml/kdm_smpte.h"
+#include "parse/cpl.h"
 
 using std::list;
 using std::string;
@@ -90,12 +91,20 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
  *  @param not_valid_after KDM not-valid-after time in local time.
  */
 KDM::KDM (
-	shared_ptr<const CPL> cpl, shared_ptr<const Signer> signer, shared_ptr<const Certificate> recipient_cert,
+	boost::filesystem::path cpl_file, shared_ptr<const Signer> signer, shared_ptr<const Certificate> recipient_cert, Key key,
 	boost::posix_time::ptime not_valid_before, boost::posix_time::ptime not_valid_after,
 	string annotation_text, string issue_date
 	)
 	: _xml_kdm (new xml::DCinemaSecurityMessage)
 {
+	/* This is all a bit of a hack, and should hopefully be nicer in libdcp1.
+	   We load in the CPL file using our parser here, and extract everything
+	   we need.  This is much better than needing the whole DCP and going through
+	   the dance of setting the MXF's keys and so on.
+	*/
+
+	parse::CPL cpl (cpl_file);
+	
 	xml::AuthenticatedPublic& apu = _xml_kdm->authenticated_public;
 
 	/* AuthenticatedPublic */
@@ -109,9 +118,9 @@ KDM::KDM (
 	apu.recipient.x509_issuer_serial.x509_issuer_name = recipient_cert->issuer ();
 	apu.recipient.x509_issuer_serial.x509_serial_number = recipient_cert->serial ();
 	apu.recipient.x509_subject_name = recipient_cert->subject ();
-	apu.composition_playlist_id = "urn:uuid:" + cpl->id ();
+	apu.composition_playlist_id = cpl.id;
 //	apu.content_authenticator = signer->certificates().leaf()->thumbprint ();
-	apu.content_title_text = cpl->name ();
+	apu.content_title_text = cpl.annotation_text;
 	apu.content_keys_not_valid_before = ptime_to_string (not_valid_before);
 	apu.content_keys_not_valid_after = ptime_to_string (not_valid_after);
 	apu.authorized_device_info.device_list_identifier = "urn:uuid:" + make_uuid ();
@@ -127,12 +136,16 @@ KDM::KDM (
 	*/
 	apu.authorized_device_info.device_list.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
 
-	list<shared_ptr<const Asset> > assets = cpl->assets ();
-	for (list<shared_ptr<const Asset> >::iterator i = assets.begin(); i != assets.end(); ++i) {
-		/* XXX: non-MXF assets? */
-		shared_ptr<const MXFAsset> mxf = boost::dynamic_pointer_cast<const MXFAsset> (*i);
-		if (mxf) {
-			apu.key_id_list.push_back (xml::TypedKeyId (mxf->key_type(), "urn:uuid:" + mxf->key_id()));
+	for (list<shared_ptr<parse::Reel> >::const_iterator i = cpl.reels.begin(); i != cpl.reels.end(); ++i) {
+		/* XXX: subtitle assets? */
+		if ((*i)->asset_list->main_picture) {
+			apu.key_id_list.push_back (xml::TypedKeyId ("MDIK", (*i)->asset_list->main_picture->key_id));
+		}
+		if ((*i)->asset_list->main_stereoscopic_picture) {
+			apu.key_id_list.push_back (xml::TypedKeyId ("MDIK", (*i)->asset_list->main_stereoscopic_picture->key_id));
+		}
+		if ((*i)->asset_list->main_sound) {
+			apu.key_id_list.push_back (xml::TypedKeyId ("MDAK", (*i)->asset_list->main_sound->key_id));
 		}
 	}
 
@@ -141,15 +154,35 @@ KDM::KDM (
 
 	/* AuthenticatedPrivate */
 
-	for (list<shared_ptr<const Asset> >::iterator i = assets.begin(); i != assets.end(); ++i) {
-		/* XXX: non-MXF assets? */
-		shared_ptr<const MXFAsset> mxf = boost::dynamic_pointer_cast<const MXFAsset> (*i);
-		if (mxf) {
+	for (list<shared_ptr<parse::Reel> >::iterator i = cpl.reels.begin(); i != cpl.reels.end(); ++i) {
+		/* XXX: subtitle assets? */
+
+		if ((*i)->asset_list->main_picture) {
 			KDMKey kkey (
-					signer, cpl->id (), mxf->key_type (), mxf->key_id (),
-					not_valid_before, not_valid_after, mxf->key().get()
+				signer, cpl.id.substr (9), "MDIK", (*i)->asset_list->main_picture->key_id.substr (9),
+				not_valid_before, not_valid_after, key
 				);
 
+			_keys.push_back (kkey);
+			_xml_kdm->authenticated_private.encrypted_keys.push_back (kkey.encrypted_base64 (recipient_cert));
+		}
+
+		if ((*i)->asset_list->main_stereoscopic_picture) {
+			KDMKey kkey (
+				signer, cpl.id.substr (9), "MDIK", (*i)->asset_list->main_stereoscopic_picture->key_id.substr (9),
+				not_valid_before, not_valid_after, key
+				);
+
+			_keys.push_back (kkey);
+			_xml_kdm->authenticated_private.encrypted_keys.push_back (kkey.encrypted_base64 (recipient_cert));
+		}
+		
+		if ((*i)->asset_list->main_sound) {
+			KDMKey kkey (
+				signer, cpl.id.substr (9), "MDAK", (*i)->asset_list->main_sound->key_id.substr (9),
+				not_valid_before, not_valid_after, key
+				);
+			
 			_keys.push_back (kkey);
 			_xml_kdm->authenticated_private.encrypted_keys.push_back (kkey.encrypted_base64 (recipient_cert));
 		}
