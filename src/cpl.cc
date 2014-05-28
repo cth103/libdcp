@@ -191,14 +191,16 @@ CPL::add_reel (shared_ptr<Reel> reel)
 	_reels.push_back (reel);
 }
 
+boost::filesystem::path
+CPL::filename () const
+{
+	return _directory / String::compose ("%1_cpl.xml", _id);
+}
+
 void
 CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<const Signer> signer) const
 {
-	boost::filesystem::path p;
-	p /= _directory;
-	stringstream s;
-	s << _id << "_cpl.xml";
-	p /= s.str();
+	boost::filesystem::path p = filename ();
 
 	xmlpp::Document doc;
 	xmlpp::Element* root;

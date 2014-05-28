@@ -91,6 +91,8 @@ public:
 	std::string id () const {
 		return _id;
 	}
+
+	boost::filesystem::path filename () const;
 	
 	bool equals (CPL const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
 	
