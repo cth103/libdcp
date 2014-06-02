@@ -6,10 +6,10 @@ VERSION = '0.95.0devel'
 
 def options(opt):
     opt.load('compiler_cxx')
-    opt.add_option('--target-windows', action='store_true', default = False, help = 'set up to do a cross-compile to Windows')
-    opt.add_option('--osx', action='store_true', default = False, help = 'set up to build on OS X')
-    opt.add_option('--enable-debug', action='store_true', default = False, help = 'build with debugging information and without optimisation')
-    opt.add_option('--static', action='store_true', default = False, help = 'build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
+    opt.add_option('--target-windows', action='store_true', default=False, help='set up to do a cross-compile to Windows')
+    opt.add_option('--osx', action='store_true', default=False, help='set up to build on OS X')
+    opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
+    opt.add_option('--static', action='store_true', default=False, help='build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
 
 def configure(conf):
     conf.load('compiler_cxx')
