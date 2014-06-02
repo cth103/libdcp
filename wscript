@@ -10,6 +10,7 @@ def options(opt):
     opt.add_option('--osx', action='store_true', default=False, help='set up to build on OS X')
     opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
     opt.add_option('--static', action='store_true', default=False, help='build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
+    opt.add_option('--valgrind', action='store_true', default=False, help='build with instructions to Valgrind to reduce false positives')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -25,6 +26,9 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_WINDOWS')
     else:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_POSIX')
+
+    if conf.options.valgrind:
+        conf.env.append_value('CXXFLAGS', '-DLIBDCP_VALGRIND')
 
     if not conf.options.osx:
         conf.env.append_value('CXXFLAGS', ['-Wno-unused-result', '-Wno-unused-parameter'])

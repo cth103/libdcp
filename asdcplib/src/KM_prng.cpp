@@ -39,7 +39,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <openssl/aes.h>
 #include <openssl/sha.h>
 #include <openssl/bn.h>
-
+#ifdef LIBDCP_VALGRIND
+#include <valgrind/memcheck.h>
+#endif
+  
 using namespace Kumu;
 
 
@@ -117,6 +120,10 @@ public:
     SHA1_Update(&SHA, (byte_t*)&m_Context, sizeof(m_Context));
     SHA1_Update(&SHA, key_fodder, RNG_KEY_SIZE);
     SHA1_Final(sha_buf, &SHA);
+
+#ifdef LIBDCP_VALGRIND
+    VALGRIND_MAKE_MEM_DEFINED (sha_buf, 20);
+#endif
 
     AutoMutex Lock(m_Lock);
     AES_set_encrypt_key(sha_buf, RNG_KEY_SIZE_BITS, &m_Context);
