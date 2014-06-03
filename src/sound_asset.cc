@@ -327,6 +327,10 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
 	_state->audio_desc.AvgBps = _asset->sampling_rate() * _state->audio_desc.BlockAlign;
 	_state->audio_desc.LinkedTrackID = 0;
 	_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_NONE;
+	/* I'm fairly sure this is not necessary, as ContainerDuration is written
+	   in ASDCP's WriteMXFFooter, but it stops a valgrind warning.
+	*/
+	_state->audio_desc.ContainerDuration = 0;
 	
 	_state->frame_buffer.Capacity (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
 	_state->frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
