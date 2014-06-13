@@ -29,20 +29,34 @@
 namespace dcp
 {
 
-/** @class FileError
- *  @brief An exception related to a file
- */
-class FileError : public std::exception
+class StringError : public std::exception
 {
 public:
-	FileError (std::string message, boost::filesystem::path filename, int number);
-	~FileError () throw () {}
+	StringError () {}
+	StringError (std::string message)
+		: _message (message)
+	{}
+			    
+	~StringError () throw () {}
 
 	/** @return error message */
 	char const * what () const throw () {
 		return _message.c_str ();
 	}
-	
+
+protected:
+	std::string _message;
+};
+
+/** @class FileError
+ *  @brief An exception related to a file
+ */
+class FileError : public StringError
+{
+public:
+	FileError (std::string message, boost::filesystem::path filename, int number);
+	~FileError () throw () {}
+
 	/** @return filename of file that was involved */
 	boost::filesystem::path filename () const {
 		return _filename;
@@ -54,8 +68,6 @@ public:
 	}
 
 private:
-	/** message part */
-	std::string _message;
 	/** filename of file that was involved */
 	boost::filesystem::path _filename;
 	int _number;
@@ -75,41 +87,26 @@ public:
 /** @class MiscError
  *  @brief A miscellaneous exception
  */
-class MiscError : public std::exception
+class MiscError : public StringError
 {
 public:
-	MiscError (std::string message) : _message (message) {}
-	~MiscError () throw () {}
-
-	/** @return error message */
-	char const * what () const throw () {
-		return _message.c_str ();
-	}
-
-private:
-	/** error message */
-	std::string _message;
+	MiscError (std::string message)
+		: StringError (message)
+	{}
 };
 
 /** @class DCPReadError
  *  @brief A DCP read exception
  */
-class DCPReadError : public std::exception
+class DCPReadError : public StringError
 {
 public:
-	DCPReadError (std::string message) : _message (message) {}
-	~DCPReadError () throw () {}
-
-	/** @return error message */
-	char const * what () const throw () {
-		return _message.c_str ();
-	}
+	DCPReadError (std::string message)
+		: StringError (message)
+	{}
 
 protected:
 	DCPReadError () {}
-	
-	/** error message */
-	std::string _message;
 };
 
 /** @class MissingAssetError
@@ -136,58 +133,39 @@ private:
 /** @class XMLError
  *  @brief An XML error
  */
-class XMLError : public std::exception
+class XMLError : public StringError
 {
 public:
-	XMLError (std::string message) : _message (message) {}
-	~XMLError () throw () {}
-
-	/** @return error message */
-	char const * what () const throw () {
-		return _message.c_str ();
-	}
-
-private:
-	/** error message */
-	std::string _message;
+	XMLError (std::string message)
+		: StringError (message)
+	{}
 };
 
 /** @class UnresolvedRefError
  *  @brief An exception caused by a reference (by UUID) to something which is not known
  */
-class UnresolvedRefError : public std::exception
+class UnresolvedRefError : public StringError
 {
 public:
 	UnresolvedRefError (std::string id);
-	~UnresolvedRefError () throw () {}
-
-	/** @return error message */
-	char const * what () const throw () {
-		return _message.c_str ();
-	}
-
-private:
-	std::string _message;
 };
 
 /** @class TimeFormatError
  *  @brief A an error with a string passed to LocalTime.
  */
-class TimeFormatError : public std::exception
+class TimeFormatError : public StringError
 {
 public:
 	TimeFormatError (std::string bad_time);
-	~TimeFormatError () throw () {}
-
-	/** @return error message */
-	char const * what () const throw () {
-		return _message.c_str ();
-	}
-
-private:
-	std::string _message;
 };
 
+class NotEncryptedError : public StringError
+{
+public:
+	NotEncryptedError (std::string const & asset_filename);
+	~NotEncryptedError () throw () {}
+};
+	
 }
 
 #endif

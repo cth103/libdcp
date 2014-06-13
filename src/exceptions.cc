@@ -28,7 +28,7 @@ using std::string;
 using namespace dcp;
 
 FileError::FileError (string message, boost::filesystem::path filename, int number)
-	: _message (String::compose ("%1 (%2) (error %3)", message, filename.string(), number))
+	: StringError (String::compose ("%1 (%2) (error %3)", message, filename.string(), number))
 	, _filename (filename)
 	, _number (number)
 {
@@ -36,13 +36,13 @@ FileError::FileError (string message, boost::filesystem::path filename, int numb
 }
 
 UnresolvedRefError::UnresolvedRefError (string id)
-	: _message (String::compose ("Unresolved reference to asset id %1", id))
+	: StringError (String::compose ("Unresolved reference to asset id %1", id))
 {
 
 }
 
 TimeFormatError::TimeFormatError (string bad_time)
-	: _message (String::compose ("Bad time string %1", bad_time))
+	: StringError (String::compose ("Bad time string %1", bad_time))
 {
 
 }
@@ -67,4 +67,10 @@ MissingAssetError::MissingAssetError (boost::filesystem::path path, AssetType ty
 	}
 	
 	_message = String::compose ("Missing asset %1%2", path.string(), type_name);
+}
+
+NotEncryptedError::NotEncryptedError (string const & what)
+	: StringError (String::compose ("%1 is not encrypted", what))
+{
+
 }

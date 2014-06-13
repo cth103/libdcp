@@ -202,6 +202,9 @@ DecryptedKDM::DecryptedKDM (
 		/* XXX: do non-MXF assets need keys? */
 		shared_ptr<const MXF> mxf = boost::dynamic_pointer_cast<const MXF> (*i);
 		if (mxf) {
+			if (mxf->key_id().empty ()) {
+				throw NotEncryptedError (mxf->file().string ());
+			}
 			_keys.push_back (DecryptedKDMKey (mxf->key_type(), mxf->key_id(), mxf->key().get (), cpl->id ()));
 		}
 	}
