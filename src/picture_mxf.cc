@@ -94,12 +94,12 @@ PictureMXF::descriptor_equals (
 //		a.QuantizationDefault != b.QuantizationDefault
 		) {
 		
-		note (ERROR, "video MXF picture descriptors differ");
+		note (DCP_ERROR, "video MXF picture descriptors differ");
 		return false;
 	}
 
 	if (a.ContainerDuration != b.ContainerDuration) {
-		note (ERROR, "video container durations differ");
+		note (DCP_ERROR, "video container durations differ");
 	}
 	
 //		for (unsigned int j = 0; j < ASDCP::JP2K::MaxComponents; ++j) {
@@ -118,7 +118,7 @@ PictureMXF::frame_buffer_equals (
 	) const
 {
 	if (size_A == size_B && memcmp (data_A, data_B, size_A) == 0) {
-		note (NOTE, "J2K identical");
+		note (DCP_NOTE, "J2K identical");
 		/* Easy result; the J2K data is identical */
 		return true;
 	}
@@ -136,7 +136,7 @@ PictureMXF::frame_buffer_equals (
 	for (int c = 0; c < 3; ++c) {
 		
 		if (image_A->size() != image_B->size()) {
-			note (ERROR, String::compose ("image sizes for frame %1 differ", frame));
+			note (DCP_ERROR, String::compose ("image sizes for frame %1 differ", frame));
 			return false;
 		}
 		
@@ -162,11 +162,11 @@ PictureMXF::frame_buffer_equals (
 	
 	double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
 	
-	note (NOTE, String::compose ("mean difference %1, deviation %2", mean, std_dev));
+	note (DCP_NOTE, String::compose ("mean difference %1, deviation %2", mean, std_dev));
 	
 	if (mean > opt.max_mean_pixel_error) {
 		note (
-			ERROR,
+			DCP_ERROR,
 			String::compose ("mean %1 out of range %2 in frame %3", mean, opt.max_mean_pixel_error, frame)
 			);
 		
@@ -175,7 +175,7 @@ PictureMXF::frame_buffer_equals (
 
 	if (std_dev > opt.max_std_dev_pixel_error) {
 		note (
-			ERROR,
+			DCP_ERROR,
 			String::compose ("standard deviation %1 out of range %2 in frame %3", std_dev, opt.max_std_dev_pixel_error, frame)
 			);
 		

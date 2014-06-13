@@ -137,13 +137,13 @@ struct EqualityOptions
 	bool mxf_names_can_differ;
 };
 
-/* Win32 defines this */	
-#undef ERROR
-
+/* I've been unable to make mingw happy with ERROR as a symbol, so
+   I'm using a DCP_ prefix here.
+*/
 enum NoteType {
-	PROGRESS,
-	ERROR,
-	NOTE
+	DCP_PROGRESS,
+	DCP_ERROR,
+	DCP_NOTE
 };
 
 enum Standard {

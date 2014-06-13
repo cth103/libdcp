@@ -27,9 +27,6 @@
 #include <boost/function.hpp>
 #include <iostream>
 
-/* We need this here for the #undef ERROR for Windows */
-#include "types.h"
-
 using namespace std;
 using namespace boost;
 using namespace dcp;
@@ -57,12 +54,12 @@ Content::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::fu
 	}
 	
 	if (_edit_rate != other->_edit_rate) {
-		note (ERROR, "content edit rates differ");
+		note (DCP_ERROR, "content edit rates differ");
 	 	return false;
 	}
 	
 	if (_intrinsic_duration != other->_intrinsic_duration) {
-	 	note (ERROR, "asset intrinsic durations differ");
+	 	note (DCP_ERROR, "asset intrinsic durations differ");
 		return false;
 	}
 

@@ -122,7 +122,7 @@ SoundMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::f
 //		desc_A.ChannelFormat != desc_B.ChannelFormat ||
 		) {
 		
-		note (ERROR, "audio MXF picture descriptors differ");
+		note (DCP_ERROR, "audio MXF picture descriptors differ");
 		return false;
 	}
 	
@@ -139,7 +139,7 @@ SoundMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::f
 		}
 		
 		if (buffer_A.Size() != buffer_B.Size()) {
-			note (ERROR, String::compose ("sizes of audio data for frame %1 differ", i));
+			note (DCP_ERROR, String::compose ("sizes of audio data for frame %1 differ", i));
 			return false;
 		}
 		
@@ -147,7 +147,7 @@ SoundMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::f
 			for (uint32_t i = 0; i < buffer_A.Size(); ++i) {
 				int const d = abs (buffer_A.RoData()[i] - buffer_B.RoData()[i]);
 				if (d > opt.max_audio_sample_error) {
-					note (ERROR, String::compose ("PCM data difference of %1", d));
+					note (DCP_ERROR, String::compose ("PCM data difference of %1", d));
 					return false;
 				}
 			}

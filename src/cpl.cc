@@ -179,17 +179,17 @@ CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (NoteT
 	if (_annotation_text != other._annotation_text && !opt.cpl_annotation_texts_can_differ) {
 		stringstream s;
 		s << "annotation texts differ: " << _annotation_text << " vs " << other._annotation_text << "\n";
-		note (ERROR, s.str ());
+		note (DCP_ERROR, s.str ());
 		return false;
 	}
 
 	if (_content_kind != other._content_kind) {
-		note (ERROR, "content kinds differ");
+		note (DCP_ERROR, "content kinds differ");
 		return false;
 	}
 
 	if (_reels.size() != other._reels.size()) {
-		note (ERROR, String::compose ("reel counts differ (%1 vs %2)", _reels.size(), other._reels.size()));
+		note (DCP_ERROR, String::compose ("reel counts differ (%1 vs %2)", _reels.size(), other._reels.size()));
 		return false;
 	}
 	

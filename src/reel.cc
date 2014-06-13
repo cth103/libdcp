@@ -98,7 +98,7 @@ bool
 Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if ((_main_picture && !other->_main_picture) || (!_main_picture && other->_main_picture)) {
-		note (ERROR, "reel has different assets");
+		note (DCP_ERROR, "reel has different assets");
 		return false;
 	}
 	
@@ -107,7 +107,7 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::f
 	}
 
 	if ((_main_sound && !other->_main_sound) || (!_main_sound && other->_main_sound)) {
-		note (ERROR, "reel has different assets");
+		note (DCP_ERROR, "reel has different assets");
 		return false;
 	}
 	
@@ -116,7 +116,7 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::f
 	}
 
 	if ((_main_subtitle && !other->_main_subtitle) || (!_main_subtitle && other->_main_subtitle)) {
-		note (ERROR, "reel has different assets");
+		note (DCP_ERROR, "reel has different assets");
 		return false;
 	}
 	

@@ -107,7 +107,7 @@ MonoPictureMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, bo
 			return false;
 		}
 		
-		note (PROGRESS, String::compose ("Comparing video frame %1 of %2", i, _intrinsic_duration));
+		note (DCP_PROGRESS, String::compose ("Comparing video frame %1 of %2", i, _intrinsic_duration));
 		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
 		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
 		

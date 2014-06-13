@@ -172,7 +172,7 @@ bool
 DCP::equals (DCP const & other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (_assets.size() != other._assets.size()) {
-		note (ERROR, String::compose ("Asset counts differ: %1 vs %2", _assets.size(), other._assets.size()));
+		note (DCP_ERROR, String::compose ("Asset counts differ: %1 vs %2", _assets.size(), other._assets.size()));
 		return false;
 	}
 

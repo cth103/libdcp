@@ -98,12 +98,12 @@ MXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::functi
 	
 	shared_ptr<const MXF> other_mxf = dynamic_pointer_cast<const MXF> (other);
 	if (!other_mxf) {
-		note (ERROR, "comparing an MXF asset with a non-MXF asset");
+		note (DCP_ERROR, "comparing an MXF asset with a non-MXF asset");
 		return false;
 	}
 	
 	if (_file != other_mxf->file ()) {
-		note (ERROR, "MXF names differ");
+		note (DCP_ERROR, "MXF names differ");
 		if (!opt.mxf_names_can_differ) {
 			return false;
 		}
