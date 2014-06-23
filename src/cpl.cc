@@ -178,6 +178,7 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 			subtitle.reset (new SubtitleAsset (asset.first, asset.second->chunks.front()->path));
 
 			subtitle->set_entry_point ((*i)->asset_list->main_subtitle->entry_point);
+			subtitle->set_edit_rate (_fps);
 			subtitle->set_duration ((*i)->asset_list->main_subtitle->duration);
 		}
 			
