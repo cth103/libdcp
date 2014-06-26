@@ -82,7 +82,8 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 		boost::posix_time::time_from_string ("2013-01-01 00:00:00"),
 		boost::posix_time::time_from_string ("2013-01-08 00:00:00"),
 		"libdcp",
-		"2012-07-17T04:45:18+00:00"
+		"2012-07-17T04:45:18+00:00",
+		libdcp::KDM::MODIFIED_TRANSITIONAL_1
 		);
 
 	boost::filesystem::path const kdm_file = work_dir / "kdm.xml";

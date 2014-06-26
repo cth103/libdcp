@@ -78,7 +78,12 @@ public:
 	 */
 	KDMKey (
 		boost::shared_ptr<const Signer> signer,
-		std::string cpl_id, std::string key_type, std::string key_id, boost::posix_time::ptime from, boost::posix_time::ptime until, Key key
+		std::string cpl_id,
+		std::string key_type,
+		std::string key_id,
+		boost::posix_time::ptime from,
+		boost::posix_time::ptime until,
+		Key key
 		);
 	
 	KDMKey (KDMKey const &);
@@ -155,6 +160,14 @@ public:
 	 */
 	KDM (boost::filesystem::path kdm, boost::filesystem::path private_key);
 
+	enum Formulation
+	{
+		MODIFIED_TRANSITIONAL_1,
+		DCI_ANY,
+		DCI_SPECIFIC
+	};
+
+	
 	/** Create a new KDM.
 	 *  @param cpl CPL file that the KDM is for.
 	 *  @param signer Certificate chain to sign the KDM with.
@@ -166,9 +179,13 @@ public:
 	 *  @param issue_date Text for the <IssueDate> node.
 	 */
 	KDM (
-		boost::filesystem::path cpl, boost::shared_ptr<const Signer> signer, boost::shared_ptr<const Certificate> recipient_cert, Key key,
+		boost::filesystem::path cpl,
+		boost::shared_ptr<const Signer> signer,
+		boost::shared_ptr<const Certificate> recipient_cert,
+		Key key,
 		boost::posix_time::ptime not_valid_before, boost::posix_time::ptime not_valid_after,
-		std::string annotation_text, std::string issue_date
+		std::string annotation_text, std::string issue_date,
+		Formulation formulation
 		);
 
 	KDM (KDM const &);

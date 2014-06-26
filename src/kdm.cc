@@ -91,9 +91,11 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
  *  @param not_valid_after KDM not-valid-after time in local time.
  */
 KDM::KDM (
-	boost::filesystem::path cpl_file, shared_ptr<const Signer> signer, shared_ptr<const Certificate> recipient_cert, Key key,
+	boost::filesystem::path cpl_file,
+	shared_ptr<const Signer> signer,
+	shared_ptr<const Certificate> recipient_cert, Key key,
 	boost::posix_time::ptime not_valid_before, boost::posix_time::ptime not_valid_after,
-	string annotation_text, string issue_date
+	string annotation_text, string issue_date, KDM::Formulation formulation
 	)
 	: _xml_kdm (new xml::DCinemaSecurityMessage)
 {
@@ -119,7 +121,9 @@ KDM::KDM (
 	apu.recipient.x509_issuer_serial.x509_serial_number = recipient_cert->serial ();
 	apu.recipient.x509_subject_name = recipient_cert->subject ();
 	apu.composition_playlist_id = cpl.id;
-//	apu.content_authenticator = signer->certificates().leaf()->thumbprint ();
+	if (formulation == DCI_ANY || formulation == DCI_SPECIFIC) {
+		apu.content_authenticator = signer->certificates().leaf()->thumbprint ();
+	}
 	apu.content_title_text = cpl.annotation_text;
 	apu.content_keys_not_valid_before = ptime_to_string (not_valid_before);
 	apu.content_keys_not_valid_after = ptime_to_string (not_valid_after);
@@ -129,12 +133,14 @@ KDM::KDM (
 		n = n.substr (n.find (".") + 1);
 	}
 	apu.authorized_device_info.device_list_description = n;
-//	apu.authorized_device_info.device_list.push_back (recipient_cert->thumbprint ());
 
-	/* Sometimes digital_cinema_tools uses this magic thumbprint instead of that from an actual
-	   recipient certificate.  KDMs delivered to City Screen appear to use the same thing.
-	*/
-	apu.authorized_device_info.device_list.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
+	if (formulation == MODIFIED_TRANSITIONAL_1 || formulation == DCI_ANY) {
+		/* Use the "assume trust" thumbprint */
+		apu.authorized_device_info.device_list.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
+	} else if (formulation == DCI_SPECIFIC) {
+		/* Use the recipient thumbprint */
+		apu.authorized_device_info.device_list.push_back (recipient_cert->thumbprint ());
+	}
 
 	for (list<shared_ptr<parse::Reel> >::const_iterator i = cpl.reels.begin(); i != cpl.reels.end(); ++i) {
 		/* XXX: subtitle assets? */
