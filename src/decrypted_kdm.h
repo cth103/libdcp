@@ -24,6 +24,7 @@
 #include "key.h"
 #include "local_time.h"
 #include "decrypted_kdm_key.h"
+#include "types.h"
 #include <boost/filesystem.hpp>
 
 namespace dcp {
@@ -75,9 +76,10 @@ public:
 	/** Encrypt this KDM's keys and sign the whole KDM.
 	 *  @param signer Signer.
 	 *  @param recipient Certificate of the projector/server which should receive this KDM's keys.
+	 *  @param formulation Formulation to use for the encrypted KDM.
 	 *  @return Encrypted KDM.
 	 */
-	EncryptedKDM encrypt (boost::shared_ptr<const Signer> signer, boost::shared_ptr<const Certificate> recipient) const;
+	EncryptedKDM encrypt (boost::shared_ptr<const Signer> signer, boost::shared_ptr<const Certificate> recipient, Formulation formulation) const;
 
 	/** @return This KDM's (decrypted) keys, which could be used to decrypt MXFs. */
 	std::list<DecryptedKDMKey> keys () const {

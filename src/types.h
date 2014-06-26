@@ -151,6 +151,12 @@ enum Standard {
 	SMPTE
 };
 
+enum Formulation {
+	MODIFIED_TRANSITIONAL_1,
+	DCI_ANY,
+	DCI_SPECIFIC
+};
+
 /** @class Color
  *  @brief An RGB color (aka colour).
  */

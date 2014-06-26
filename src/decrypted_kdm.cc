@@ -211,7 +211,7 @@ DecryptedKDM::DecryptedKDM (
 }
 
 EncryptedKDM
-DecryptedKDM::encrypt (shared_ptr<const Signer> signer, shared_ptr<const Certificate> recipient) const
+DecryptedKDM::encrypt (shared_ptr<const Signer> signer, shared_ptr<const Certificate> recipient, Formulation formulation) const
 {
 	list<pair<string, string> > key_ids;
 	list<string> keys;
@@ -273,6 +273,7 @@ DecryptedKDM::encrypt (shared_ptr<const Signer> signer, shared_ptr<const Certifi
 		_content_title_text,
 		_not_valid_before,
 		_not_valid_after,
+		formulation,
 		key_ids,
 		keys
 		);

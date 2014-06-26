@@ -25,6 +25,7 @@
 #define LIBDCP_ENCRYPTED_KDM_H
 
 #include "local_time.h"
+#include "types.h"
 #include <boost/filesystem.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
 
@@ -85,8 +86,9 @@ private:
 		std::string device_list_description,
 		std::string cpl_id,
 		std::string cpl_content_title_text,
-		LocalTime _not_valid_before,
-		LocalTime _not_valid_after,
+		LocalTime not_valid_before,
+		LocalTime not_valid_after,
+		Formulation formulation,
 		std::list<std::pair<std::string, std::string> > key_ids,
 		std::list<std::string> keys
 		);

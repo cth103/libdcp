@@ -265,13 +265,7 @@ public:
 class AuthorizedDeviceInfo
 {
 public:
-	AuthorizedDeviceInfo ()
-		: device_list_identifier (make_uuid ())
-		/* Sometimes digital_cinema_tools uses this magic thumbprint instead of that from an actual
-		   recipient certificate.  KDMs delivered to City Screen appear to use the same thing.
-		*/
-		, certificate_thumbprint ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=")
-	{}
+	AuthorizedDeviceInfo () {}
 	
 	AuthorizedDeviceInfo (shared_ptr<const cxml::Node> node)
 		: device_list_identifier (node->string_child ("DeviceListIdentifier").substr (9))
@@ -361,7 +355,9 @@ public:
 		
 		recipient.as_xml (node->add_child ("Recipient"));
 		node->add_child("CompositionPlaylistId")->add_child_text ("urn:uuid:" + composition_playlist_id);
-		/* XXX: no ContentAuthenticator */
+		if (content_authenticator) {
+			node->add_child("ContentAuthenticator")->add_child_text (content_authenticator.get ());
+		}
 		node->add_child("ContentTitleText")->add_child_text (content_title_text);
 		node->add_child("ContentKeysNotValidBefore")->add_child_text (not_valid_before.as_string ());
 		node->add_child("ContentKeysNotValidAfter")->add_child_text (not_valid_after.as_string ());
@@ -375,6 +371,7 @@ public:
 	
 	Recipient recipient;
 	string composition_playlist_id;
+	boost::optional<string> content_authenticator;
 	string content_title_text;
 	LocalTime not_valid_before;
 	LocalTime not_valid_after;
@@ -500,6 +497,7 @@ EncryptedKDM::EncryptedKDM (
 	string content_title_text,
 	LocalTime not_valid_before,
 	LocalTime not_valid_after,
+	Formulation formulation,
 	list<pair<string, string> > key_ids,
 	list<string> keys
 	)
@@ -517,9 +515,26 @@ EncryptedKDM::EncryptedKDM (
 	kre.recipient.x509_subject_name = recipient->subject ();
 	kre.authorized_device_info.device_list_description = device_list_description;
 	kre.composition_playlist_id = cpl_id;
+	if (formulation == DCI_ANY || formulation == DCI_SPECIFIC) {
+		kre.content_authenticator = signer->certificates().leaf()->thumbprint ();
+	}
 	kre.content_title_text = content_title_text;
 	kre.not_valid_before = not_valid_before;
 	kre.not_valid_after = not_valid_after;
+	kre.authorized_device_info.device_list_identifier = "urn:uuid:" + make_uuid ();
+	string n = recipient->common_name ();
+	if (n.find (".") != string::npos) {
+		n = n.substr (n.find (".") + 1);
+	}
+	kre.authorized_device_info.device_list_description = n;
+
+	if (formulation == MODIFIED_TRANSITIONAL_1 || formulation == DCI_ANY) {
+		/* Use the "assume trust" thumbprint */
+		kre.authorized_device_info.certificate_thumbprint = "2jmj7l5rSw0yVb/vlWAYkK/YBwk=";
+	} else if (formulation == DCI_SPECIFIC) {
+		/* Use the recipient thumbprint */
+		kre.authorized_device_info.certificate_thumbprint = recipient->thumbprint ();
+	}
 
 	for (list<pair<string, string> >::const_iterator i = key_ids.begin(); i != key_ids.end(); ++i) {
 		kre.key_id_list.typed_key_id.push_back (data::TypedKeyId (i->first, i->second));
