@@ -27,11 +27,11 @@ namespace dcp {
  */
 template <typename P, typename Q>
 P
-raw_convert (Q v)
+raw_convert (Q v, int precision = 16)
 {
 	std::stringstream s;
 	s.imbue (std::locale::classic ());
-	s << std::setprecision (16);
+	s << std::setprecision (precision);
 	s << v;
 	P r;
 	s >> r;
