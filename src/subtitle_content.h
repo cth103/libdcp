@@ -22,6 +22,7 @@
 
 #include "content.h"
 #include "dcp_time.h"
+#include "subtitle_string.h"
 #include <libcxml/cxml.h>
 
 namespace dcp
@@ -63,14 +64,14 @@ public:
 		return _language;
 	}
 
-	std::list<boost::shared_ptr<SubtitleString> > subtitles_at (Time t) const;
-	std::list<boost::shared_ptr<SubtitleString> > const & subtitles () const {
+	std::list<SubtitleString> subtitles_at (Time t) const;
+	std::list<SubtitleString> const & subtitles () const {
 		return _subtitles;
 	}
 
-	void add (boost::shared_ptr<SubtitleString>);
+	void add (SubtitleString);
 
-	void write_xml () const;
+	void write_xml (boost::filesystem::path) const;
 	Glib::ustring xml_as_string () const;
 
 protected:
@@ -111,7 +112,7 @@ private:
 	std::string _language;
 	std::list<boost::shared_ptr<LoadFont> > _load_font_nodes;
 
-	std::list<boost::shared_ptr<SubtitleString> > _subtitles;
+	std::list<SubtitleString> _subtitles;
 	bool _need_sort;
 };
 

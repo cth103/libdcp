@@ -99,6 +99,7 @@ def build(bld):
               reel_picture_asset.h
               reel_sound_asset.h
               reel_stereo_picture_asset.h
+              reel_subtitle_asset.h
               ref.h
               argb_frame.h
               signer.h

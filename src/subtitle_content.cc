@@ -169,32 +169,30 @@ SubtitleContent::maybe_add_subtitle (string text, ParseState const & parse_state
 	dcp::Subtitle effective_subtitle (*parse_state.subtitle_nodes.back ());
 
 	_subtitles.push_back (
-		shared_ptr<SubtitleString> (
-			new SubtitleString (
-				font_id_to_name (effective_font.id),
-				effective_font.italic.get(),
-				effective_font.color.get(),
-				effective_font.size,
-				effective_subtitle.in,
-				effective_subtitle.out,
-				effective_text.v_position,
-				effective_text.v_align,
-				text,
-				effective_font.effect ? effective_font.effect.get() : NONE,
-				effective_font.effect_color.get(),
-				effective_subtitle.fade_up_time,
-				effective_subtitle.fade_down_time
-				)
+		SubtitleString (
+			font_id_to_name (effective_font.id),
+			effective_font.italic.get(),
+			effective_font.color.get(),
+			effective_font.size,
+			effective_subtitle.in,
+			effective_subtitle.out,
+			effective_text.v_position,
+			effective_text.v_align,
+			text,
+			effective_font.effect ? effective_font.effect.get() : NONE,
+			effective_font.effect_color.get(),
+			effective_subtitle.fade_up_time,
+			effective_subtitle.fade_down_time
 			)
 		);
 }
 
-list<shared_ptr<SubtitleString> >
+list<SubtitleString>
 SubtitleContent::subtitles_at (Time t) const
 {
-	list<shared_ptr<SubtitleString> > s;
-	for (list<shared_ptr<SubtitleString> >::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
-		if ((*i)->in() <= t && t <= (*i)->out ()) {
+	list<SubtitleString> s;
+	for (list<SubtitleString>::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
+		if (i->in() <= t && t <= i->out ()) {
 			s.push_back (*i);
 		}
 	}
@@ -222,25 +220,25 @@ SubtitleContent::font_id_to_name (string id) const
 }
 
 void
-SubtitleContent::add (shared_ptr<SubtitleString> s)
+SubtitleContent::add (SubtitleString s)
 {
 	_subtitles.push_back (s);
 	_need_sort = true;
 }
 
 struct SubtitleSorter {
-	bool operator() (shared_ptr<SubtitleString> a, shared_ptr<SubtitleString> b) {
-		if (a->in() != b->in()) {
-			return a->in() < b->in();
+	bool operator() (SubtitleString const & a, SubtitleString const & b) {
+		if (a.in() != b.in()) {
+			return a.in() < b.in();
 		}
-		return a->v_position() < b->v_position();
+		return a.v_position() < b.v_position();
 	}
 };
 
 void
-SubtitleContent::write_xml () const
+SubtitleContent::write_xml (boost::filesystem::path p) const
 {
-	FILE* f = fopen_boost (file (), "r");
+	FILE* f = fopen_boost (p, "r");
 	Glib::ustring const s = xml_as_string ();
 	fwrite (s.c_str(), 1, s.length(), f);
 	fclose (f);
@@ -272,7 +270,7 @@ SubtitleContent::xml_as_string () const
 		}
 	}
 
-	list<shared_ptr<SubtitleString> > sorted = _subtitles;
+	list<SubtitleString> sorted = _subtitles;
 	if (_need_sort) {
 		sorted.sort (SubtitleSorter ());
 	}
@@ -294,7 +292,7 @@ SubtitleContent::xml_as_string () const
 	xmlpp::Element* font = 0;
 	xmlpp::Element* subtitle = 0;
 
-	for (list<shared_ptr<SubtitleString> >::iterator i = sorted.begin(); i != sorted.end(); ++i) {
+	for (list<SubtitleString>::iterator i = sorted.begin(); i != sorted.end(); ++i) {
 
 		/* We will start a new <Font>...</Font> whenever some font property changes.
 		   I suppose we should really make an optimal hierarchy of <Font> tags, but
@@ -302,18 +300,18 @@ SubtitleContent::xml_as_string () const
 		*/
 
 		bool const font_changed =
-			italic       != (*i)->italic()       ||
-			color        != (*i)->color()        ||
-			size         != (*i)->size()         ||
-			effect       != (*i)->effect()       ||
-			effect_color != (*i)->effect_color();
+			italic       != i->italic()       ||
+			color        != i->color()        ||
+			size         != i->size()         ||
+			effect       != i->effect()       ||
+			effect_color != i->effect_color();
 
 		if (font_changed) {
-			italic = (*i)->italic ();
-			color = (*i)->color ();
-			size = (*i)->size ();
-			effect = (*i)->effect ();
-			effect_color = (*i)->effect_color ();
+			italic = i->italic ();
+			color = i->color ();
+			size = i->size ();
+			effect = i->effect ();
+			effect_color = i->effect_color ();
 		}
 
 		if (!font || font_changed) {
@@ -334,29 +332,29 @@ SubtitleContent::xml_as_string () const
 		}
 
 		if (!subtitle || font_changed ||
-		    (last_in != (*i)->in() ||
-		     last_out != (*i)->out() ||
-		     last_fade_up_time != (*i)->fade_up_time() ||
-		     last_fade_down_time != (*i)->fade_down_time()
+		    (last_in != i->in() ||
+		     last_out != i->out() ||
+		     last_fade_up_time != i->fade_up_time() ||
+		     last_fade_down_time != i->fade_down_time()
 			    )) {
 
 			subtitle = font->add_child ("Subtitle");
 			subtitle->set_attribute ("SpotNumber", raw_convert<string> (spot_number++));
-			subtitle->set_attribute ("TimeIn", (*i)->in().to_string());
-			subtitle->set_attribute ("TimeOut", (*i)->out().to_string());
-			subtitle->set_attribute ("FadeUpTime", raw_convert<string> ((*i)->fade_up_time().to_ticks()));
-			subtitle->set_attribute ("FadeDownTime", raw_convert<string> ((*i)->fade_down_time().to_ticks()));
+			subtitle->set_attribute ("TimeIn", i->in().to_string());
+			subtitle->set_attribute ("TimeOut", i->out().to_string());
+			subtitle->set_attribute ("FadeUpTime", raw_convert<string> (i->fade_up_time().to_ticks()));
+			subtitle->set_attribute ("FadeDownTime", raw_convert<string> (i->fade_down_time().to_ticks()));
 
-			last_in = (*i)->in ();
-			last_out = (*i)->out ();
-			last_fade_up_time = (*i)->fade_up_time ();
-			last_fade_down_time = (*i)->fade_down_time ();
+			last_in = i->in ();
+			last_out = i->out ();
+			last_fade_up_time = i->fade_up_time ();
+			last_fade_down_time = i->fade_down_time ();
 		}
 
 		xmlpp::Element* text = subtitle->add_child ("Text");
-		text->set_attribute ("VAlign", valign_to_string ((*i)->v_align()));		
-		text->set_attribute ("VPosition", raw_convert<string> ((*i)->v_position()));
-		text->add_child_text ((*i)->text());
+		text->set_attribute ("VAlign", valign_to_string (i->v_align()));		
+		text->set_attribute ("VPosition", raw_convert<string> (i->v_position()));
+		text->add_child_text (i->text());
 	}
 
 	return doc.write_to_string_formatted ("UTF-8");

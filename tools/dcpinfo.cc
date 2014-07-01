@@ -79,24 +79,24 @@ main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
 		return;
 	}
 	
-	list<shared_ptr<SubtitleString> > subs = reel->main_subtitle()->subtitle_content()->subtitles ();
+	list<SubtitleString> subs = reel->main_subtitle()->subtitle_content()->subtitles ();
 	cout << "      Subtitle: " << subs.size() << " subtitles in " << reel->main_subtitle()->subtitle_content()->language() << "\n";
 	if (list_subtitles) {
-		for (list<shared_ptr<SubtitleString> >::const_iterator k = subs.begin(); k != subs.end(); ++k) {
-			cout << "        " << (*k)->text() << "\n";
+		for (list<SubtitleString>::const_iterator k = subs.begin(); k != subs.end(); ++k) {
+			cout << "        " << k->text() << "\n";
 			cout << "          "
-			     << "font:" << (*k)->font() << "; "
-			     << "italic:" << (*k)->italic() << "; "
-			     << "color:" << (*k)->color() << "; "
-			     << "in:" << (*k)->in() << "; "
-			     << "out:" << (*k)->out() << "; "
-			     << "v_position:" << (*k)->v_position() << "; "
-			     << "v_align:" << (*k)->v_align() << "; "
-			     << "effect:" << (*k)->effect() << "; "
-			     << "effect_color:" << (*k)->effect_color() << "; "
-			     << "fade_up_time:" << (*k)->fade_up_time() << "; "
-			     << "fade_down_time:" << (*k)->fade_down_time() << "; "
-			     << "size: " << (*k)->size() << "\n";
+			     << "font:" << k->font() << "; "
+			     << "italic:" << k->italic() << "; "
+			     << "color:" << k->color() << "; "
+			     << "in:" << k->in() << "; "
+			     << "out:" << k->out() << "; "
+			     << "v_position:" << k->v_position() << "; "
+			     << "v_align:" << k->v_align() << "; "
+			     << "effect:" << k->effect() << "; "
+			     << "effect_color:" << k->effect_color() << "; "
+			     << "fade_up_time:" << k->fade_up_time() << "; "
+			     << "fade_down_time:" << k->fade_down_time() << "; "
+			     << "size: " << k->size() << "\n";
 		}
 	}
 }
