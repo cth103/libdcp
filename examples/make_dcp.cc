@@ -25,9 +25,9 @@
 #include <string>
 
 /* If you are using an installed libdcp, these #includes would need to be changed to
-#include <libdcp/dcp.h>
-#include <libdcp/cpl.h>
-#include <libdcp/mono_picture_asset.h>
+#include <dcp/dcp.h>
+#include <dcp/cpl.h>
+#include <dcp/mono_picture_asset.h>
 ... etc. ...
 */
 
