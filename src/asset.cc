@@ -39,8 +39,7 @@ Asset::Asset ()
 
 }
 
-/** Create an Asset from a given file.  The ID will
- *  be extracted from the file.
+/** Create an Asset from a given file.
  *  @param file File name.
  */
 Asset::Asset (boost::filesystem::path file)

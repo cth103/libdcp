@@ -78,7 +78,7 @@ public:
 protected:
 	virtual std::string pkl_type (Standard standard) const = 0;
 
-	/** The disk file that represents this asset, if one exists */
+	/** The most recent disk file used to read or write this asset; may be empty */
 	mutable boost::filesystem::path _file;
 	/** Hash of _file, or empty if the hash has not yet been computed */
 	mutable std::string _hash;
