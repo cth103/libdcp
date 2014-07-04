@@ -36,7 +36,9 @@ Content::Content (boost::filesystem::path file)
 	, _edit_rate (24, 1)
 	, _intrinsic_duration (0)
 {
-
+	/* Note: the _edit_rate and _intrinsic_duration above are just defaults,
+	   the derived class must set these up according to `file'.
+	*/
 }
 
 Content::Content (Fraction edit_rate)

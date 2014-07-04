@@ -61,8 +61,6 @@ public:
 	 */
 	Content (Fraction edit_rate);
 	
-	virtual ~Content () {}
-
 	bool equals (
 		boost::shared_ptr<const Content> other,
 		EqualityOptions opt,
