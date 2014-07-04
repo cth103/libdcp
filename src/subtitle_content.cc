@@ -238,7 +238,11 @@ struct SubtitleSorter {
 void
 SubtitleContent::write_xml (boost::filesystem::path p) const
 {
-	FILE* f = fopen_boost (p, "r");
+	FILE* f = fopen_boost (p, "w");
+	if (!f) {
+		throw FileError ("Could not open file for writing", p, -1);
+	}
+	
 	Glib::ustring const s = xml_as_string ();
 	fwrite (s.c_str(), 1, s.length(), f);
 	fclose (f);
