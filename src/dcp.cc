@@ -63,7 +63,6 @@ using namespace dcp;
 DCP::DCP (boost::filesystem::path directory)
 	: _directory (directory)
 {
-	boost::filesystem::create_directories (directory);
 	_directory = boost::filesystem::canonical (_directory);
 }
 
