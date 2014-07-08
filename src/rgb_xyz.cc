@@ -32,14 +32,14 @@ using namespace dcp;
 
 #define DCI_COEFFICIENT (48.0 / 52.37)
 
-/** Convert an openjpeg XYZ image to RGB.
+/** Convert an openjpeg XYZ image to RGBA.
  *  @param xyz_frame Frame in XYZ.
  *  @param lut_in Input Gamma LUT to use.
  *  @param lut_out Output Gamma LUT to use.
  *  @return RGB image.
  */
 shared_ptr<ARGBFrame>
-dcp::xyz_to_rgb (
+dcp::xyz_to_rgba (
 	boost::shared_ptr<const XYZFrame> xyz_frame,
 	boost::shared_ptr<const GammaLUT> lut_in,
 	boost::shared_ptr<const GammaLUT> lut_out

@@ -84,7 +84,7 @@ StereoPictureFrame::argb_frame (Eye eye, int reduce, float srgb_gamma) const
 		break;
 	}
 	
-	return xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA, false), GammaLUT::cache.get (12, 1 / srgb_gamma, false));
+	return xyz_to_rgba (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA, false), GammaLUT::cache.get (12, 1 / srgb_gamma, false));
 }
 
 uint8_t const *

@@ -26,7 +26,7 @@ class XYZFrame;
 class GammaLUT;
 class Image;
 	
-extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (
+extern boost::shared_ptr<ARGBFrame> xyz_to_rgba (
 	boost::shared_ptr<const XYZFrame>, boost::shared_ptr<const GammaLUT>, boost::shared_ptr<const GammaLUT>
 	);
 
