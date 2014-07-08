@@ -45,6 +45,10 @@ public:
 		return boost::dynamic_pointer_cast<PictureMXF> (_content.object ());
 	}
 
+	Fraction frame_rate () const {
+		return _frame_rate;
+	}
+
 	void set_screen_aspect_ratio (Fraction a) {
 		_screen_aspect_ratio = a;
 	}

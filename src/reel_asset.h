@@ -74,6 +74,10 @@ public:
 		return !_key_id.empty ();
 	}
 
+	int64_t duration () const {
+		return _duration;
+	}
+
 	/** @return Key ID to describe the key that encrypts this asset's;
 	 *  content.
 	 */
