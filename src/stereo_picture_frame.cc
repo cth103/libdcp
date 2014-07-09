@@ -53,6 +53,11 @@ StereoPictureFrame::StereoPictureFrame (boost::filesystem::path mxf_path, int n)
 	}
 }
 
+StereoPictureFrame::StereoPictureFrame ()
+{
+	_buffer = new ASDCP::JP2K::SFrameBuffer (4 * Kumu::Megabyte);
+}
+
 StereoPictureFrame::~StereoPictureFrame ()
 {
 	delete _buffer;
@@ -109,6 +114,12 @@ StereoPictureFrame::left_j2k_data () const
 	return _buffer->Left.RoData ();
 }
 
+uint8_t*
+StereoPictureFrame::left_j2k_data ()
+{
+	return _buffer->Left.Data ();
+}
+
 int
 StereoPictureFrame::left_j2k_size () const
 {
@@ -119,6 +130,12 @@ uint8_t const *
 StereoPictureFrame::right_j2k_data () const
 {
 	return _buffer->Right.RoData ();
+}
+
+uint8_t*
+StereoPictureFrame::right_j2k_data ()
+{
+	return _buffer->Right.Data ();
 }
 
 int

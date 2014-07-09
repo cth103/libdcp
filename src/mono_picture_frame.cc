@@ -58,6 +58,11 @@ MonoPictureFrame::MonoPictureFrame (boost::filesystem::path mxf_path, int n, ASD
 	}
 }
 
+MonoPictureFrame::MonoPictureFrame ()
+{
+	_buffer = new ASDCP::JP2K::FrameBuffer (4 * Kumu::Megabyte);
+}
+
 /** MonoPictureFrame destructor */
 MonoPictureFrame::~MonoPictureFrame ()
 {
@@ -69,6 +74,13 @@ uint8_t const *
 MonoPictureFrame::j2k_data () const
 {
 	return _buffer->RoData ();
+}
+
+/** @return Pointer to JPEG2000 data */
+uint8_t *
+MonoPictureFrame::j2k_data ()
+{
+	return _buffer->Data ();
 }
 
 /** @return Size of JPEG2000 data in bytes */

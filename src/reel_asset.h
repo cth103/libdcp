@@ -74,6 +74,10 @@ public:
 		return !_key_id.empty ();
 	}
 
+	int64_t entry_point () const {
+		return _entry_point;
+	}
+
 	int64_t duration () const {
 		return _duration;
 	}
