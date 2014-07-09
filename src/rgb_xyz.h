@@ -18,6 +18,7 @@
 */
 
 #include <boost/shared_ptr.hpp>
+#include <stdint.h>
 
 namespace dcp {
 
@@ -30,6 +31,10 @@ extern boost::shared_ptr<ARGBFrame> xyz_to_rgba (
 	boost::shared_ptr<const XYZFrame>, boost::shared_ptr<const GammaLUT>, boost::shared_ptr<const GammaLUT>
 	);
 
+extern void xyz_to_rgb (
+	boost::shared_ptr<const XYZFrame>, boost::shared_ptr<const GammaLUT>, boost::shared_ptr<const GammaLUT>, uint8_t* buffer
+	);
+	
 extern boost::shared_ptr<XYZFrame> rgb_to_xyz (
 	boost::shared_ptr<const Image>, boost::shared_ptr<const GammaLUT>, boost::shared_ptr<const GammaLUT>, double const colour_matrix[3][3]
 	);

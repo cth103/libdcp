@@ -87,6 +87,22 @@ StereoPictureFrame::argb_frame (Eye eye, int reduce, float srgb_gamma) const
 	return xyz_to_rgba (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA, false), GammaLUT::cache.get (12, 1 / srgb_gamma, false));
 }
 
+void
+StereoPictureFrame::rgb_frame (Eye eye, uint8_t* buffer) const
+{
+	shared_ptr<XYZFrame> xyz_frame;
+	switch (eye) {
+	case LEFT:
+		xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->Left.RoData()), _buffer->Left.Size(), 0);
+		break;
+	case RIGHT:
+		xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->Right.RoData()), _buffer->Right.Size(), 0);
+		break;
+	}
+	
+	return xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA, false), GammaLUT::cache.get (12, 1 / 2.4, false), buffer);
+}
+
 uint8_t const *
 StereoPictureFrame::left_j2k_data () const
 {

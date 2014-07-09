@@ -106,6 +106,76 @@ dcp::xyz_to_rgba (
 	return argb_frame;
 }
 
+/** Convert an openjpeg XYZ image to RGB.
+ *  @param xyz_frame Frame in XYZ.
+ *  @param lut_in Input Gamma LUT to use.
+ *  @param lut_out Output Gamma LUT to use.
+ *  @param buffer Buffer to write RGB data to; will be written
+ *  as one byte R, one byte G, one byte B, one byte R etc. with
+ *  no padding at line ends.
+ */
+void
+dcp::xyz_to_rgb (
+	boost::shared_ptr<const XYZFrame> xyz_frame,
+	boost::shared_ptr<const GammaLUT> lut_in,
+	boost::shared_ptr<const GammaLUT> lut_out,
+	uint8_t* buffer
+	)
+{
+	int const max_colour = pow (2, lut_out->bit_depth()) - 1;
+
+	struct {
+		double x, y, z;
+	} s;
+	
+	struct {
+		double r, g, b;
+	} d;
+	
+	int* xyz_x = xyz_frame->data (0);
+	int* xyz_y = xyz_frame->data (1);
+	int* xyz_z = xyz_frame->data (2);
+
+	for (int y = 0; y < xyz_frame->size().height; ++y) {
+		uint8_t* buffer_line = buffer;
+		for (int x = 0; x < xyz_frame->size().width; ++x) {
+
+			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
+			
+			/* In gamma LUT */
+			s.x = lut_in->lut()[*xyz_x++];
+			s.y = lut_in->lut()[*xyz_y++];
+			s.z = lut_in->lut()[*xyz_z++];
+
+			/* DCI companding */
+			s.x /= DCI_COEFFICIENT;
+			s.y /= DCI_COEFFICIENT;
+			s.z /= DCI_COEFFICIENT;
+
+			/* XYZ to RGB */
+			d.r = ((s.x * colour_matrix::xyz_to_rgb[0][0]) + (s.y * colour_matrix::xyz_to_rgb[0][1]) + (s.z * colour_matrix::xyz_to_rgb[0][2]));
+			d.g = ((s.x * colour_matrix::xyz_to_rgb[1][0]) + (s.y * colour_matrix::xyz_to_rgb[1][1]) + (s.z * colour_matrix::xyz_to_rgb[1][2]));
+			d.b = ((s.x * colour_matrix::xyz_to_rgb[2][0]) + (s.y * colour_matrix::xyz_to_rgb[2][1]) + (s.z * colour_matrix::xyz_to_rgb[2][2]));
+			
+			d.r = min (d.r, 1.0);
+			d.r = max (d.r, 0.0);
+			
+			d.g = min (d.g, 1.0);
+			d.g = max (d.g, 0.0);
+			
+			d.b = min (d.b, 1.0);
+			d.b = max (d.b, 0.0);
+			
+			/* Out gamma LUT */
+			*buffer_line++ = lut_out->lut()[(int) (d.r * max_colour)] * 0xff;
+			*buffer_line++ = lut_out->lut()[(int) (d.g * max_colour)] * 0xff;
+			*buffer_line++ = lut_out->lut()[(int) (d.b * max_colour)] * 0xff;
+		}
+		
+		buffer += xyz_frame->size().width * 3;
+	}
+}
+
 shared_ptr<dcp::XYZFrame>
 dcp::rgb_to_xyz (
 	boost::shared_ptr<const Image> rgb,
