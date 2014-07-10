@@ -68,6 +68,7 @@ public:
 
 	std::string to_string () const;
 	int64_t to_ticks () const;
+	double to_seconds () const;
 
 private:
 	void set (double);

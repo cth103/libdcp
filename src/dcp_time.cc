@@ -249,3 +249,8 @@ Time::to_ticks () const
 	return int64_t(t) + int64_t(s) * 250 + int64_t(m) * 60 * 250 + int64_t(h) * 60 * 60 * 250;
 }
 
+double
+Time::to_seconds () const
+{
+	return double (to_ticks ()) / 250;
+}

@@ -101,6 +101,10 @@ public:
 	 */
 	Fraction (int n, int d) : numerator (n), denominator (d) {}
 
+	float as_float () const {
+		return float (numerator) / denominator;
+	}
+
 	int numerator;
 	int denominator;
 };
