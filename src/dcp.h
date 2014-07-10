@@ -62,7 +62,7 @@ class DCP : public boost::noncopyable
 {
 public:
 	/** Construct a DCP.  You can pass an existing DCP's directory
-	 *  as the parameter, or a non-existant folder to create a new
+	 *  as the parameter, or an empty folder to create a new
 	 *  DCP in.
 	 *
 	 *  @param directory Directory containing the DCP's files.
