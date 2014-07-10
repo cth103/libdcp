@@ -28,8 +28,8 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
-ReelSoundAsset::ReelSoundAsset (boost::shared_ptr<Content> content, int64_t entry_point)
-	: ReelAsset (content, entry_point)
+ReelSoundAsset::ReelSoundAsset (boost::shared_ptr<SoundMXF> content, int64_t entry_point)
+	: ReelAsset (content, content->edit_rate(), content->intrinsic_duration(), entry_point)
 {
 
 }

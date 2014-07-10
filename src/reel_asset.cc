@@ -42,15 +42,17 @@ ReelAsset::ReelAsset ()
 
 /** Construct a ReelAsset.
  *  @param content Content that this asset refers to.
+ *  @param edit_rate Edit rate for the content.
+ *  @param intrinsic_duration Intrinsic duration of this content.
  *  @param entry_point Entry point to use in that content.
  */
-ReelAsset::ReelAsset (boost::shared_ptr<Content> content, int64_t entry_point)
+ReelAsset::ReelAsset (boost::shared_ptr<Content> content, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: Object (content->id ())
 	, _content (content)
-	, _edit_rate (content->edit_rate ())
-	, _intrinsic_duration (content->intrinsic_duration ())
+	, _edit_rate (edit_rate)
+	, _intrinsic_duration (intrinsic_duration)
 	, _entry_point (entry_point)
-	, _duration (_intrinsic_duration - _entry_point)
+	, _duration (intrinsic_duration - entry_point)
 	, _hash (make_digest (content->file (), 0))
 {
 	/* default _annotation_text to the leaf name of our file */

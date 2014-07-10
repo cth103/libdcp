@@ -33,35 +33,14 @@ using namespace dcp;
 
 Content::Content (boost::filesystem::path file)
 	: Asset (file)
-	, _edit_rate (24, 1)
-	, _intrinsic_duration (0)
 {
-	/* Note: the _edit_rate and _intrinsic_duration above are just defaults,
-	   the derived class must set these up according to `file'.
-	*/
-}
-
-Content::Content (Fraction edit_rate)
-	: _edit_rate (edit_rate)
-	, _intrinsic_duration (0)
-{
-
+	
 }
 
 bool
 Content::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!Asset::equals (other, opt, note)) {
-		return false;
-	}
-	
-	if (_edit_rate != other->_edit_rate) {
-		note (DCP_ERROR, "content edit rates differ");
-	 	return false;
-	}
-	
-	if (_intrinsic_duration != other->_intrinsic_duration) {
-	 	note (DCP_ERROR, "asset intrinsic durations differ");
 		return false;
 	}
 

@@ -36,7 +36,7 @@ class SubtitleContent;
 class ReelSubtitleAsset : public ReelAsset
 {
 public:
-	ReelSubtitleAsset (boost::shared_ptr<SubtitleContent> content, int64_t entry_point);
+	ReelSubtitleAsset (boost::shared_ptr<SubtitleContent> content, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
 	ReelSubtitleAsset (boost::shared_ptr<const cxml::Node>);
 
 	boost::shared_ptr<SubtitleContent> subtitle_content () const {

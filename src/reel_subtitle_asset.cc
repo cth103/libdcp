@@ -28,8 +28,8 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
-ReelSubtitleAsset::ReelSubtitleAsset (boost::shared_ptr<SubtitleContent> content, int64_t entry_point)
-	: ReelAsset (content, entry_point)
+ReelSubtitleAsset::ReelSubtitleAsset (boost::shared_ptr<SubtitleContent> content, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: ReelAsset (content, edit_rate, intrinsic_duration, entry_point)
 {
 
 }

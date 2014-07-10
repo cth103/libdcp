@@ -48,7 +48,7 @@ public:
 	 *  @param mxf true if the file is an MXF file, false for XML.
 	 */
 	SubtitleContent (boost::filesystem::path file, bool mxf);
-	SubtitleContent (Fraction edit_rate, std::string movie_title, std::string language);
+	SubtitleContent (std::string movie_title, std::string language);
 
 	bool equals (
 		boost::shared_ptr<const Content>,
@@ -73,6 +73,8 @@ public:
 
 	void write_xml (boost::filesystem::path) const;
 	Glib::ustring xml_as_string () const;
+
+	Time latest_subtitle_out () const;
 
 protected:
 	std::string pkl_type (Standard) const {
@@ -113,7 +115,6 @@ private:
 	std::list<boost::shared_ptr<LoadFont> > _load_font_nodes;
 
 	std::list<SubtitleString> _subtitles;
-	bool _need_sort;
 };
 
 }

@@ -105,9 +105,28 @@ public:
 		return _metadata;
 	}
 
+	Fraction edit_rate () const {
+		return _edit_rate;
+	}
+
+	/** @return The total length of this content in video frames.
+	 *  The amount of content presented may be less than this.
+	 */
+	int64_t intrinsic_duration () const {
+		return _intrinsic_duration;
+	}
+	
 protected:
+	friend class MXFWriter;
+
 	std::string pkl_type (Standard standard) const;
 	void read_writer_info (ASDCP::WriterInfo const &);
+	
+	Fraction _edit_rate;
+	/** The total length of this content in video frames.  The amount of
+	 *  content presented may be less than this.
+	 */
+	int64_t _intrinsic_duration;
 	
 	ASDCP::AESEncContext* _encryption_context;
 	ASDCP::AESDecContext* _decryption_context;

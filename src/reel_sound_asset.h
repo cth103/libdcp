@@ -34,7 +34,7 @@ namespace dcp {
 class ReelSoundAsset : public ReelAsset
 {
 public:
-	ReelSoundAsset (boost::shared_ptr<Content> content, int64_t entry_point);
+	ReelSoundAsset (boost::shared_ptr<dcp::SoundMXF> content, int64_t entry_point);
 	ReelSoundAsset (boost::shared_ptr<const cxml::Node>);
 
 	boost::shared_ptr<SoundMXF> mxf () {

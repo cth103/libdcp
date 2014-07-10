@@ -43,7 +43,6 @@ using namespace dcp;
 
 SubtitleContent::SubtitleContent (boost::filesystem::path file, bool mxf)
 	: Content (file)
-	, _need_sort (false)
 {
 	shared_ptr<cxml::Document> xml;
 	
@@ -99,12 +98,10 @@ SubtitleContent::SubtitleContent (boost::filesystem::path file, bool mxf)
 	examine_font_nodes (xml, font_nodes, parse_state);
 }
 
-SubtitleContent::SubtitleContent (Fraction edit_rate, string movie_title, string language)
-	: Content (edit_rate)
-	, _movie_title (movie_title)
+SubtitleContent::SubtitleContent (string movie_title, string language)
+	: _movie_title (movie_title)
 	, _reel_number ("1")
 	, _language (language)
-	, _need_sort (false)
 {
 
 }
@@ -223,7 +220,6 @@ void
 SubtitleContent::add (SubtitleString s)
 {
 	_subtitles.push_back (s);
-	_need_sort = true;
 }
 
 struct SubtitleSorter {
@@ -277,9 +273,7 @@ SubtitleContent::xml_as_string () const
 	}
 
 	list<SubtitleString> sorted = _subtitles;
-	if (_need_sort) {
-		sorted.sort (SubtitleSorter ());
-	}
+	sorted.sort (SubtitleSorter ());
 
 	/* XXX: multiple fonts not supported */
 	/* XXX: script, underlined, weight not supported */
@@ -366,3 +360,15 @@ SubtitleContent::xml_as_string () const
 	return doc.write_to_string_formatted ("UTF-8");
 }
 
+Time
+SubtitleContent::latest_subtitle_out () const
+{
+	Time t;
+	for (list<SubtitleString>::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
+		if (i->out() > t) {
+			t = i->out ();
+		}
+	}
+
+	return t;
+}

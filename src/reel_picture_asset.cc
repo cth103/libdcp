@@ -42,7 +42,7 @@ ReelPictureAsset::ReelPictureAsset ()
 }
 
 ReelPictureAsset::ReelPictureAsset (boost::shared_ptr<PictureMXF> content, int64_t entry_point)
-	: ReelAsset (content, entry_point)
+	: ReelAsset (content, content->edit_rate(), content->intrinsic_duration(), entry_point)
 	, _frame_rate (content->frame_rate ())
 	, _screen_aspect_ratio (content->screen_aspect_ratio ())
 {
