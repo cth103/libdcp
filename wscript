@@ -11,6 +11,7 @@ def options(opt):
     opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
     opt.add_option('--static', action='store_true', default=False, help='build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
     opt.add_option('--valgrind', action='store_true', default=False, help='build with instructions to Valgrind to reduce false positives')
+    opt.add_option('--disable-tests', action='store_true', default=False, help='disable building of tests')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -21,6 +22,7 @@ def configure(conf):
     conf.env.STATIC = conf.options.static
     conf.env.OSX = conf.options.osx
     conf.env.ENABLE_DEBUG = conf.options.enable_debug
+    conf.env.DISABLE_TESTS = conf.options.disable_tests
 
     if conf.options.target_windows:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_WINDOWS')
@@ -105,7 +107,8 @@ def configure(conf):
                    lib = ['boost_date_time%s' % boost_lib_suffix, 'boost_system%s' % boost_lib_suffix],
                    uselib_store = 'BOOST_DATETIME')
 
-    conf.recurse('test')
+    if not conf.env.DISABLE_TESTS:
+        conf.recurse('test')
     conf.recurse('asdcplib')
 
 def build(bld):
@@ -124,7 +127,8 @@ def build(bld):
 
     bld.recurse('src')
     bld.recurse('tools')
-    bld.recurse('test')
+    if not bld.env.DISABLE_TESTS:
+        bld.recurse('test')
     bld.recurse('asdcplib')
     bld.recurse('examples')
 
