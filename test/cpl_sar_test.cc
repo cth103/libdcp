@@ -30,7 +30,12 @@ using boost::shared_ptr;
 */
 BOOST_AUTO_TEST_CASE (cpl_sar)
 {
-	shared_ptr<dcp::ReelMonoPictureAsset> pa (new dcp::ReelMonoPictureAsset ());
+	shared_ptr<dcp::ReelMonoPictureAsset> pa (
+		new dcp::ReelMonoPictureAsset (
+			shared_ptr<dcp::MonoPictureMXF> (new dcp::MonoPictureMXF ("test/ref/DCP/foo/video.mxf")),
+			0
+			)
+		);
 
 	{
 		pa->set_screen_aspect_ratio (dcp::Fraction (1998, 1080));

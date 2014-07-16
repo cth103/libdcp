@@ -97,6 +97,7 @@ ReelAsset::write_to_cpl (xmlpp::Node* node, Standard) const
         if (!_key_id.empty ()) {
                 a->add_child("KeyId")->add_child_text ("urn:uuid:" + _key_id);
         }
+	a->add_child("Hash")->add_child_text (_content.object()->hash ());
 }
 
 pair<string, string>

@@ -87,7 +87,7 @@ done
 sed -i "s/DCP: build\/test/DCP: test/g" $work/info2.log
 
 # And check it
-diff -q $work/info2.log $private/info.log
+diff -q $work/info2.log $private/info2.log
 if [ "$?" != "0" ]; then
     echo "FAIL: dcpinfo output from rewrite incorrect"
     exit 1
