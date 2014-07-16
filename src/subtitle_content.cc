@@ -240,7 +240,7 @@ SubtitleContent::write_xml (boost::filesystem::path p) const
 	}
 	
 	Glib::ustring const s = xml_as_string ();
-	fwrite (s.c_str(), 1, s.length(), f);
+	fwrite (s.c_str(), 1, s.bytes(), f);
 	fclose (f);
 
 	_file = p;
