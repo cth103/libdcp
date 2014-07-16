@@ -282,7 +282,8 @@ public:
 		xmlpp::Element* device_list = node->add_child ("DeviceList");
 		device_list->add_child("CertificateThumbprint")->add_child_text (certificate_thumbprint);
 	}
-	
+
+	/** DeviceListIdentifier without the urn:uuid: prefix */
 	string device_list_identifier;
 	string device_list_description;
 	string certificate_thumbprint;
@@ -521,7 +522,7 @@ EncryptedKDM::EncryptedKDM (
 	kre.content_title_text = content_title_text;
 	kre.not_valid_before = not_valid_before;
 	kre.not_valid_after = not_valid_after;
-	kre.authorized_device_info.device_list_identifier = "urn:uuid:" + make_uuid ();
+	kre.authorized_device_info.device_list_identifier = make_uuid ();
 	string n = recipient->common_name ();
 	if (n.find (".") != string::npos) {
 		n = n.substr (n.find (".") + 1);
