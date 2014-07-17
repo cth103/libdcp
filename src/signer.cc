@@ -114,7 +114,10 @@ Signer::add_signature_value (xmlpp::Node* parent, string ns) const
 		throw MiscError ("could not create signature context");
 	}
 
-	signature_context->signKey = xmlSecCryptoAppKeyLoad (_key.string().c_str(), xmlSecKeyDataFormatPem, 0, 0, 0);
+	signature_context->signKey = xmlSecCryptoAppKeyLoadMemory (
+		reinterpret_cast<const unsigned char *> (_key.c_str()), _key.size(), xmlSecKeyDataFormatPem, 0, 0, 0
+		);
+	
 	if (signature_context->signKey == 0) {
 		throw FileError ("could not load private key file", _key, 0);
 	}

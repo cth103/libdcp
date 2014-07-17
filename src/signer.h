@@ -42,9 +42,9 @@ class Signer : public boost::noncopyable
 {
 public:
 	/** @param c Certificate chain to sign with.
-	 *  @param k Key to sign with.
+	 *  @param k Key to sign with as a PEM-format string.
 	 */
-	Signer (CertificateChain c, boost::filesystem::path k)
+	Signer (CertificateChain c, std::string k)
 		: _certificates (c)
 		, _key (k)
 	{}
@@ -60,8 +60,8 @@ private:
 
 	/** Certificate chain to sign with */
 	CertificateChain _certificates;
-	/** Filename of signer key */
-	boost::filesystem::path _key;
+	/** Key to sign with as a PEM-format string */
+	std::string _key;
 };
 
 }

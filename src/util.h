@@ -88,6 +88,7 @@ extern void add_signer (xmlpp::Element* parent, CertificateChain const & certifi
 extern int base64_decode (std::string const & in, unsigned char* out, int out_length);
 extern boost::optional<boost::filesystem::path> relative_to_root (boost::filesystem::path root, boost::filesystem::path file);
 extern FILE * fopen_boost (boost::filesystem::path, std::string);
+extern std::string file_to_string (boost::filesystem::path);
 
 template <class F, class T>
 std::list<boost::shared_ptr<T> >

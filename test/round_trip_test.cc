@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	shared_ptr<dcp::Signer> signer (
 		new dcp::Signer (
 			chain,
-			"test/data/signer.key"
+			dcp::file_to_string ("test/data/signer.key")
 			)
 		);
 

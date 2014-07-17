@@ -368,3 +368,23 @@ dcp::ids_equal (string a, string b)
 	trim (b);
 	return a == b;
 }
+
+string
+dcp::file_to_string (boost::filesystem::path p)
+{
+	uintmax_t len = boost::filesystem::file_size (p);
+	char* c = new char[len];
+			   
+	FILE* f = fopen_boost (p, "r");
+	if (!f) {
+		return "";
+	}
+
+	fread (c, 1, len, f);
+	fclose (f);
+
+	string s (c);
+	delete[] c;
+
+	return s;
+}

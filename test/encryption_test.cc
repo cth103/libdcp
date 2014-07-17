@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	shared_ptr<dcp::Signer> signer (
 		new dcp::Signer (
 			chain,
-			"test/ref/crypt/leaf.key"
+			dcp::file_to_string ("test/ref/crypt/leaf.key")
 			)
 		);
 
