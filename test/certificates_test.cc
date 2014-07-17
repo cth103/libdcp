@@ -81,3 +81,18 @@ BOOST_AUTO_TEST_CASE (certificates)
 	dcp::Certificate test (c.root()->certificate (true));
 	BOOST_CHECK_EQUAL (test.certificate(), c.root()->certificate());
 }
+
+/** Check that dcp::CertificateChain::validate() basically works */
+BOOST_AUTO_TEST_CASE (certificates_validation)
+{
+	dcp::CertificateChain good;
+	good.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
+	good.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
+	good.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
+	BOOST_CHECK (good.verify ());
+
+	dcp::CertificateChain bad;
+	bad.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
+	bad.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
+	BOOST_CHECK (!bad.verify ());
+}

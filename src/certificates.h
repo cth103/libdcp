@@ -65,6 +65,10 @@ public:
 	std::string subject () const;
 	std::string common_name () const;
 
+	X509* x509 () const {
+		return _certificate;
+	}
+
 	RSA* public_key () const;
 
 	std::string thumbprint () const;
@@ -94,6 +98,8 @@ public:
 	boost::shared_ptr<Certificate> leaf () const;
 
 	std::list<boost::shared_ptr<Certificate> > leaf_to_root () const;
+
+	bool verify () const;
 
 private:
 	friend class ::certificates;

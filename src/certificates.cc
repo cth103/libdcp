@@ -324,3 +324,52 @@ CertificateChain::add (shared_ptr<Certificate> c)
 {
 	_certificates.push_back (c);
 }
+
+/** Verify the chain.
+ *  @return true if it's ok, false if not.
+ */
+bool
+CertificateChain::verify () const
+{
+	X509_STORE* store = X509_STORE_new ();
+	if (!store) {
+		return false;
+	}
+	
+	for (list<shared_ptr<Certificate> >::const_iterator i = _certificates.begin(); i != _certificates.end(); ++i) {
+		list<shared_ptr<Certificate> >::const_iterator j = i;
+		++j;
+		if (j ==  _certificates.end ()) {
+			break;
+		}
+
+		if (!X509_STORE_add_cert (store, (*i)->x509 ())) {
+			X509_STORE_free (store);
+			return false;
+		}
+
+		X509_STORE_CTX* ctx = X509_STORE_CTX_new ();
+		if (!ctx) {
+			X509_STORE_free (store);
+			return false;
+		}
+
+		X509_STORE_set_flags (store, 0);
+		if (!X509_STORE_CTX_init (ctx, store, (*j)->x509 (), 0)) {
+			X509_STORE_CTX_free (ctx);
+			X509_STORE_free (store);
+			return false;
+		}
+
+		int v = X509_verify_cert (ctx);
+		X509_STORE_CTX_free (ctx);
+
+		if (v == 0) {
+			X509_STORE_free (store);
+			return false;
+		}
+	}
+
+	X509_STORE_free (store);
+	return true;
+}
