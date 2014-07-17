@@ -91,8 +91,26 @@ BOOST_AUTO_TEST_CASE (certificates_validation)
 	good.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
 	BOOST_CHECK (good.verify ());
 
-	dcp::CertificateChain bad;
-	bad.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
-	bad.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
-	BOOST_CHECK (!bad.verify ());
+	dcp::CertificateChain bad1;
+	bad1.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
+	bad1.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
+	BOOST_CHECK (!bad1.verify ());
+
+	dcp::CertificateChain bad2;
+	bad2.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
+	bad2.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
+	bad2.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
+	BOOST_CHECK (!bad2.verify ());
+
+	dcp::CertificateChain bad3;
+	bad3.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
+	bad3.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
+	bad3.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
+	BOOST_CHECK (!bad3.verify ());
+
+	dcp::CertificateChain bad4;
+	bad4.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
+	bad4.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
+	bad4.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
+	BOOST_CHECK (!bad4.verify ());
 }
