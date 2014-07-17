@@ -23,6 +23,8 @@
 
 #include "signer.h"
 #include "exceptions.h"
+#include "certificate_chain.h"
+#include "util.h"
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 #include <xmlsec/xmldsig.h>
@@ -36,6 +38,20 @@ using std::list;
 using std::cout;
 using boost::shared_ptr;
 using namespace dcp;
+
+Signer::Signer (boost::filesystem::path openssl)
+{
+	boost::filesystem::path directory = make_certificate_chain (openssl);
+
+	_certificates.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (directory / "ca.self-signed.pem")));
+	_certificates.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (directory / "intermediate.signed.pem")));
+	_certificates.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (directory / "leaf.signed.pem")));
+
+	_key = dcp::file_to_string (directory / "leaf.key");
+
+	boost::filesystem::remove_all (directory);
+}
+	
 
 /** Add a &lt;Signer&gt; and &lt;ds:Signature&gt; nodes to an XML node.
  *  @param parent XML node to add to.
@@ -96,8 +112,8 @@ Signer::add_signature_value (xmlpp::Node* parent, string ns) const
 	xmlpp::Node* key_info = cp.node_child("KeyInfo")->node ();
 
 	/* Add the certificate chain to the KeyInfo child node of parent */
-	list<shared_ptr<Certificate> > c = _certificates.leaf_to_root ();
-	for (list<shared_ptr<Certificate> >::iterator i = c.begin(); i != c.end(); ++i) {
+	CertificateChain::List c = _certificates.leaf_to_root ();
+	for (CertificateChain::List::iterator i = c.begin(); i != c.end(); ++i) {
 		xmlpp::Element* data = key_info->add_child("X509Data", ns);
 		
 		{
@@ -133,4 +149,24 @@ Signer::add_signature_value (xmlpp::Node* parent, string ns) const
 	}
 
 	xmlSecDSigCtxDestroy (signature_context);
+}
+
+bool
+Signer::valid () const
+{
+	if (!_certificates.valid ()) {
+		return false;
+	}
+
+	BIO* bio = BIO_new_mem_buf (const_cast<char *> (_key.c_str ()), -1);
+	if (!bio) {
+		throw MiscError ("could not create memory BIO");
+	}
+	
+	RSA* private_key = PEM_read_bio_RSAPrivateKey (bio, 0, 0, 0);
+	RSA* public_key = _certificates.leaf()->public_key ();
+	bool const valid = !BN_cmp (private_key->n, public_key->n);
+	BIO_free (bio);
+
+	return valid;
 }

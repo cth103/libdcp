@@ -98,17 +98,16 @@ get (uint8_t ** p, int N)
 	return g;
 }
 
-DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, boost::filesystem::path private_key)
+DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 {
 	/* Read the private key */
-	   
-	FILE* private_key_file = fopen_boost (private_key, "r");
-	if (!private_key_file) {
-		throw FileError ("could not find RSA private key file", private_key, errno);
+
+	BIO* bio = BIO_new_mem_buf (const_cast<char *> (private_key.c_str ()), -1);
+	if (!bio) {
+		throw MiscError ("could not create memory BIO");
 	}
 	
-	RSA* rsa = PEM_read_RSAPrivateKey (private_key_file, 0, 0, 0);
-	fclose (private_key_file);	
+	RSA* rsa = PEM_read_bio_RSAPrivateKey (bio, 0, 0, 0);
 	if (!rsa) {
 		throw FileError ("could not read RSA private key file", private_key, errno);
 	}
@@ -180,6 +179,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, boost::filesystem::path pr
 	}
 
 	RSA_free (rsa);
+	BIO_free (bio);
 }
 
 DecryptedKDM::DecryptedKDM (

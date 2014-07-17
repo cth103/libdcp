@@ -21,7 +21,7 @@
  *  @brief Functions to make signer chains.
  */
 
-#include "signer_chain.h"
+#include "certificate_chain.h"
 #include "exceptions.h"
 #include "util.h"
 #include "KM_util.h"
@@ -156,18 +156,17 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	return dig;
 }
 
-/** Generate a chain of root, intermediate and leaf keys by running an OpenSSL binary.
- *  @param directory Directory to write the files to.
- *  @param openssl openssl binary path.
- */
-void
-dcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem::path openssl)
+boost::filesystem::path
+dcp::make_certificate_chain (boost::filesystem::path openssl)
 {
+	boost::filesystem::path directory = boost::filesystem::unique_path ();
+	boost::filesystem::create_directories (directory);
+	
 	boost::filesystem::path const cwd = boost::filesystem::current_path ();
+	boost::filesystem::current_path (directory);
 
 	string quoted_openssl = "\"" + openssl.string() + "\"";
 
-	boost::filesystem::current_path (directory);
 	command (quoted_openssl + " genrsa -out ca.key 2048");
 
 	{
@@ -265,4 +264,6 @@ dcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem::pa
 		);
 
 	boost::filesystem::current_path (cwd);
+
+	return directory;
 }

@@ -48,9 +48,9 @@ class DecryptedKDM
 {
 public:
 	/** @param kdm Encrypted KDM.
-	 *  @param private_key Private key file name.
+	 *  @param private_key Private key as a PEM-format string.
 	 */
-	DecryptedKDM (EncryptedKDM const & kdm, boost::filesystem::path private_key);
+	DecryptedKDM (EncryptedKDM const & kdm, std::string private_key);
 
 	/** Construct a DecryptedKDM.
 	 *  @param cpl CPL that the keys are for.

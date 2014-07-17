@@ -92,19 +92,19 @@ class CertificateChain
 public:
 	CertificateChain () {}
 
-	void add (boost::shared_ptr<Certificate> c);
-	void remove (boost::shared_ptr<Certificate> c);
+	void add (boost::shared_ptr<const Certificate> c);
+	void remove (boost::shared_ptr<const Certificate> c);
 	void remove (int);
 
-	boost::shared_ptr<Certificate> root () const;
-	boost::shared_ptr<Certificate> leaf () const;
+	boost::shared_ptr<const Certificate> root () const;
+	boost::shared_ptr<const Certificate> leaf () const;
 
-	typedef std::list<boost::shared_ptr<Certificate> > List;
+	typedef std::list<boost::shared_ptr<const Certificate> > List;
 	
 	List leaf_to_root () const;
 	List root_to_leaf () const;
 
-	bool verify () const;
+	bool valid () const;
 	bool attempt_reorder ();
 
 private:

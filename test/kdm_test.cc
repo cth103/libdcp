@@ -21,6 +21,7 @@
 #include <libxml++/libxml++.h>
 #include "encrypted_kdm.h"
 #include "decrypted_kdm.h"
+#include "util.h"
 
 using std::list;
 using std::stringstream;
@@ -30,7 +31,7 @@ BOOST_AUTO_TEST_CASE (kdm_test)
 {
 	dcp::DecryptedKDM kdm (
 		dcp::EncryptedKDM ("test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml"),
-		"test/data/private.key"
+		dcp::file_to_string ("test/data/private.key")
 		);
 
 	list<dcp::DecryptedKDMKey> keys = kdm.keys ();

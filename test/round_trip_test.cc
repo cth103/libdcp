@@ -28,7 +28,7 @@
 #include "cpl.h"
 #include "mono_picture_frame.h"
 #include "argb_frame.h"
-#include "signer_chain.h"
+#include "certificate_chain.h"
 #include "mono_picture_mxf_writer.h"
 #include "reel_picture_asset.h"
 #include "reel_mono_picture_asset.h"
@@ -42,21 +42,7 @@ using boost::shared_ptr;
 /* Build an encrypted picture MXF and a KDM for it and check that the KDM can be decrypted */
 BOOST_AUTO_TEST_CASE (round_trip_test)
 {
-	boost::filesystem::remove_all ("build/test/signer");
-	boost::filesystem::create_directory ("build/test/signer");
-	dcp::make_signer_chain ("build/test/signer", "openssl");
-	
-	dcp::CertificateChain chain;
-	chain.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("build/test/signer/ca.self-signed.pem"))));
-	chain.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("build/test/signer/intermediate.signed.pem"))));
-	chain.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("build/test/signer/leaf.signed.pem"))));
-
-	shared_ptr<dcp::Signer> signer (
-		new dcp::Signer (
-			chain,
-			dcp::file_to_string ("test/data/signer.key")
-			)
-		);
+	shared_ptr<dcp::Signer> signer (new dcp::Signer ("openssl"));
 
 	boost::filesystem::path work_dir = "build/test/round_trip_test";
 	boost::filesystem::create_directory (work_dir);
@@ -93,7 +79,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	kdm_A.encrypt(signer, signer->certificates().leaf(), dcp::MODIFIED_TRANSITIONAL_1).as_xml (kdm_file);
 
 	/* Reload the KDM, using our private key to decrypt it */
-	dcp::DecryptedKDM kdm_B (dcp::EncryptedKDM (kdm_file), "build/test/signer/leaf.key");
+	dcp::DecryptedKDM kdm_B (dcp::EncryptedKDM (kdm_file), signer->key ());
 
 	/* Check that the decrypted KDMKeys are the same as the ones we started with */
 	BOOST_CHECK_EQUAL (kdm_A.keys().size(), kdm_B.keys().size());

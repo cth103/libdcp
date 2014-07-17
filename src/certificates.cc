@@ -294,7 +294,7 @@ Certificate::public_key () const
 }
 
 /** @return Root certificate */
-shared_ptr<Certificate>
+shared_ptr<const Certificate>
 CertificateChain::root () const
 {
 	assert (!_certificates.empty());
@@ -302,7 +302,7 @@ CertificateChain::root () const
 }
 
 /** @return Leaf certificate */
-shared_ptr<Certificate>
+shared_ptr<const Certificate>
 CertificateChain::leaf () const
 {
 	assert (_certificates.size() >= 2);
@@ -329,13 +329,13 @@ CertificateChain::leaf_to_root () const
  *  @param c Certificate to add.
  */
 void
-CertificateChain::add (shared_ptr<Certificate> c)
+CertificateChain::add (shared_ptr<const Certificate> c)
 {
 	_certificates.push_back (c);
 }
 
 void
-CertificateChain::remove (shared_ptr<Certificate> c)
+CertificateChain::remove (shared_ptr<const Certificate> c)
 {
 	_certificates.remove (c);
 }
@@ -357,11 +357,12 @@ CertificateChain::remove (int i)
 	}
 }
 
-/** Verify the chain.
+/** Check to see if the chain is valid (i.e. root signs the intermediate, intermediate
+ *  signs the leaf and so on).
  *  @return true if it's ok, false if not.
  */
 bool
-CertificateChain::verify () const
+CertificateChain::valid () const
 {
 	X509_STORE* store = X509_STORE_new ();
 	if (!store) {
@@ -416,7 +417,7 @@ CertificateChain::attempt_reorder ()
 	List original = _certificates;
 	_certificates.sort ();
 	do {
-		if (verify ()) {
+		if (valid ()) {
 			return true;
 		}
 	} while (std::next_permutation (_certificates.begin(), _certificates.end ()));

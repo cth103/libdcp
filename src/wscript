@@ -14,6 +14,7 @@ def build(bld):
     obj.source = """
                  argb_frame.cc
                  asset.cc
+                 certificate_chain.cc
                  certificates.cc
                  colour_matrix.cc
                  content.cc
@@ -49,7 +50,6 @@ def build(bld):
                  reel_subtitle_asset.cc
                  rgb_xyz.cc
                  signer.cc
-                 signer_chain.cc
                  sound_mxf.cc
                  sound_mxf_writer.cc
                  sound_frame.cc
@@ -68,6 +68,7 @@ def build(bld):
 
     headers = """
               asset.h
+              certificate_chain.h
               certificates.h
               colour_matrix.h
               cpl.h
@@ -103,7 +104,6 @@ def build(bld):
               ref.h
               argb_frame.h
               signer.h
-              signer_chain.h
               sound_frame.h
               sound_mxf.h
               sound_mxf_writer.h

@@ -30,7 +30,6 @@
 #include "reel.h"
 #include "test.h"
 #include "file.h"
-#include "signer_chain.h"
 #include "subtitle_content.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
@@ -49,7 +48,6 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 {
 	boost::filesystem::remove_all ("build/test/signer");
 	boost::filesystem::create_directory ("build/test/signer");
-	dcp::make_signer_chain ("build/test/signer", "openssl");
 	
 	Kumu::libdcp_test = true;
 

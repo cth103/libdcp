@@ -38,9 +38,11 @@ namespace dcp {
 /** @class Signer
  *  @brief A class which can sign XML files.
  */
-class Signer : public boost::noncopyable
+class Signer
 {
 public:
+	Signer (boost::filesystem::path openssl);
+	
 	/** @param c Certificate chain to sign with.
 	 *  @param k Key to sign with as a PEM-format string.
 	 */
@@ -55,6 +57,20 @@ public:
 	CertificateChain const & certificates () const {
 		return _certificates;
 	}
+
+	CertificateChain& certificates () {
+		return _certificates;
+	}
+	
+	std::string key () const {
+		return _key;
+	}
+
+	void set_key (std::string k) {
+		_key = k;
+	}
+
+	bool valid () const;
 	
 private:	
 

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE (decryption_test)
 
 	dcp::DecryptedKDM kdm (
 		dcp::EncryptedKDM ("test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml"),
-		"test/data/private.key"
+		dcp::file_to_string ("test/data/private.key")
 		);
 	
 	encrypted.add (kdm);
@@ -81,6 +81,6 @@ BOOST_AUTO_TEST_CASE (failing_kdm_test)
 {
 	dcp::DecryptedKDM kdm (
 		dcp::EncryptedKDM ("test/data/target.pem.crt.de5d4eba-e683-41ca-bdda-aa4ad96af3f4.kdm.xml"),
-		"test/data/private.key"
+		dcp::file_to_string ("test/data/private.key")
 		);
 }

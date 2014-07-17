@@ -26,9 +26,13 @@
 namespace dcp {
 
 /** Create a chain of certificates for signing things.
- *  @param directory Directory to write files to.
  *  @param openssl Name of openssl binary (if it is on the path) or full path.
+ *  @return Directory (which should be deleted by the caller) containing:
+ *    - ca.self-signed.pem      self-signed root certificate
+ *    - intermediate.signed.pem intermediate certificate
+ *    - leaf.key                leaf certificate private key
+ *    - leaf.signed.pem         leaf certificate
  */
-void make_signer_chain (boost::filesystem::path directory, boost::filesystem::path openssl);
+boost::filesystem::path make_certificate_chain (boost::filesystem::path openssl);
 
 }
