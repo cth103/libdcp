@@ -93,17 +93,24 @@ public:
 	CertificateChain () {}
 
 	void add (boost::shared_ptr<Certificate> c);
+	void remove (boost::shared_ptr<Certificate> c);
+	void remove (int);
 
 	boost::shared_ptr<Certificate> root () const;
 	boost::shared_ptr<Certificate> leaf () const;
 
-	std::list<boost::shared_ptr<Certificate> > leaf_to_root () const;
+	typedef std::list<boost::shared_ptr<Certificate> > List;
+	
+	List leaf_to_root () const;
+	List root_to_leaf () const;
 
 	bool verify () const;
+	bool attempt_reorder ();
 
 private:
 	friend class ::certificates;
-	std::list<boost::shared_ptr<Certificate> > _certificates;
+
+	List _certificates;
 };
 
 }

@@ -33,9 +33,11 @@
 #include <openssl/err.h>
 #include <boost/algorithm/string.hpp>
 #include <cerrno>
+#include <algorithm>
 
 using std::list;
 using std::string;
+using std::cout;
 using boost::shared_ptr;
 using namespace dcp;
 
@@ -307,11 +309,18 @@ CertificateChain::leaf () const
 	return _certificates.back ();
 }
 
+/** @return Certificates in order from root to leaf */
+CertificateChain::List
+CertificateChain::root_to_leaf () const
+{
+	return _certificates;
+}
+
 /** @return Certificates in order from leaf to root */
-list<shared_ptr<Certificate> >
+CertificateChain::List
 CertificateChain::leaf_to_root () const
 {
-	list<shared_ptr<Certificate> > c = _certificates;
+	List c = _certificates;
 	c.reverse ();
 	return c;
 }
@@ -325,6 +334,29 @@ CertificateChain::add (shared_ptr<Certificate> c)
 	_certificates.push_back (c);
 }
 
+void
+CertificateChain::remove (shared_ptr<Certificate> c)
+{
+	_certificates.remove (c);
+}
+
+/** Remove the i'th certificate in the list, as listed
+ *  from root to leaf.
+ */
+void
+CertificateChain::remove (int i)
+{
+	List::iterator j = _certificates.begin ();
+        while (j != _certificates.end () && i > 0) {
+		--i;
+		++j;
+	}
+
+	if (j != _certificates.end ()) {
+		_certificates.erase (j);
+	}
+}
+
 /** Verify the chain.
  *  @return true if it's ok, false if not.
  */
@@ -335,9 +367,10 @@ CertificateChain::verify () const
 	if (!store) {
 		return false;
 	}
-	
-	for (list<shared_ptr<Certificate> >::const_iterator i = _certificates.begin(); i != _certificates.end(); ++i) {
-		list<shared_ptr<Certificate> >::const_iterator j = i;
+
+	for (List::const_iterator i = _certificates.begin(); i != _certificates.end(); ++i) {
+
+		List::const_iterator j = i;
 		++j;
 		if (j ==  _certificates.end ()) {
 			break;
@@ -372,4 +405,22 @@ CertificateChain::verify () const
 
 	X509_STORE_free (store);
 	return true;
+}
+
+/** @return true if the chain is now in order from root to leaf,
+ *  false if no correct order was found.
+ */
+bool
+CertificateChain::attempt_reorder ()
+{
+	List original = _certificates;
+	_certificates.sort ();
+	do {
+		if (verify ()) {
+			return true;
+		}
+	} while (std::next_permutation (_certificates.begin(), _certificates.end ()));
+
+	_certificates = original;
+	return false;
 }

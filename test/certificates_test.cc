@@ -82,35 +82,49 @@ BOOST_AUTO_TEST_CASE (certificates)
 	BOOST_CHECK_EQUAL (test.certificate(), c.root()->certificate());
 }
 
-/** Check that dcp::CertificateChain::validate() basically works */
+/** Check that dcp::CertificateChain::validate() and ::attempt_reorder() basically work */
 BOOST_AUTO_TEST_CASE (certificates_validation)
 {
-	dcp::CertificateChain good;
-	good.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
-	good.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
-	good.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
-	BOOST_CHECK (good.verify ());
+	dcp::CertificateChain good1;
+	good1.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
+	good1.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
+	good1.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
+	BOOST_CHECK (good1.verify ());
 
+	dcp::CertificateChain good2;
+	good2.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
+	BOOST_CHECK (good2.verify ());
+	
 	dcp::CertificateChain bad1;
 	bad1.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
 	bad1.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
 	BOOST_CHECK (!bad1.verify ());
+	BOOST_CHECK (!bad1.attempt_reorder ());
 
 	dcp::CertificateChain bad2;
 	bad2.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
 	bad2.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
 	bad2.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
 	BOOST_CHECK (!bad2.verify ());
+	BOOST_CHECK (bad2.attempt_reorder ());
 
 	dcp::CertificateChain bad3;
 	bad3.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
 	bad3.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
 	bad3.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
 	BOOST_CHECK (!bad3.verify ());
+	BOOST_CHECK (bad3.attempt_reorder ());
 
 	dcp::CertificateChain bad4;
 	bad4.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
 	bad4.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
 	bad4.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
 	BOOST_CHECK (!bad4.verify ());
+	BOOST_CHECK (bad4.attempt_reorder ());
+
+	dcp::CertificateChain bad5;
+	bad5.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
+	bad5.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
+	BOOST_CHECK (!bad5.verify ());
+	BOOST_CHECK (!bad5.attempt_reorder ());
 }
