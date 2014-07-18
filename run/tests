@@ -53,7 +53,7 @@ fi
 
 # Run dcpinfo on all the DCPs in private/metadata, writing $work/info.log
 rm -f $work/info.log
-for d in `find $private/metadata -mindepth 1 -maxdepth 1 -type d | sort`; do
+for d in `find $private/metadata -mindepth 1 -maxdepth 1 -type d | sort -f -d`; do
     if [ `basename $d` != ".git" ]; then
         $dcpinfo --ignore-missing-assets -k -s $d 2> /dev/null >> $work/info.log
         if [ "$?" != "0" ]; then
@@ -76,7 +76,7 @@ rm -f $work/info2.log
 rm -rf $work/private
 mkdir $work/private
 cp -r $private/* $work/private
-for d in `find $work/private/metadata -mindepth 1 -maxdepth 1 -type d | sort`; do
+for d in `find $work/private/metadata -mindepth 1 -maxdepth 1 -type d | sort -f -d`; do
     if [ `basename $d` != ".git" ]; then
         $work/rewrite_subs $d
         $dcpinfo --ignore-missing-assets -k -s $d >> $work/info2.log
