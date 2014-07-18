@@ -42,7 +42,7 @@ namespace dcp {
 /** @class Certificate
  *  @brief A wrapper for an X509 certificate.
  *
- *  This class can take a Certificate from a file, a string or an OpenSSL X509 object.
+ *  This class can take a Certificate from a string or an OpenSSL X509 object.
  */
 class Certificate
 {

@@ -317,6 +317,9 @@ CertificateChain::add (shared_ptr<const Certificate> c)
 	_certificates.push_back (c);
 }
 
+/** Remove a certificate from the chain.
+ *  @param c Certificate to remove.
+ */
 void
 CertificateChain::remove (shared_ptr<const Certificate> c)
 {
