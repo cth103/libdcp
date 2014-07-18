@@ -159,7 +159,7 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 boost::filesystem::path
 dcp::make_certificate_chain (boost::filesystem::path openssl)
 {
-	boost::filesystem::path directory = boost::filesystem::unique_path ();
+	boost::filesystem::path directory = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path ();
 	boost::filesystem::create_directories (directory);
 	
 	boost::filesystem::path const cwd = boost::filesystem::current_path ();
