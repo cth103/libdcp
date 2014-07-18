@@ -110,7 +110,7 @@ Certificate::operator= (Certificate const & other)
 	RSA_free (_public_key);
 	_public_key = 0;
 	
-	read_string (other.certificate ());
+	read_string (other.certificate (true));
 
 	return *this;
 }
