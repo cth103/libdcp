@@ -20,12 +20,12 @@ nasty details of encryption.
 
 == Dependencies
 
-boost filesystem, signals2 and unit testing libraries
+boost filesystem and signals2 libraries
 openssl
 libsigc++
 libxml++
 xmlsec
-openjpeg (1.5.0 or above)
+openjpeg (1.5.0 or 1.5.1)
 
 
 == Documentation
