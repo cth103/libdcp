@@ -24,6 +24,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 
+namespace dcp {
+
 template<class T>
 class LUTCache : public boost::noncopyable
 {
@@ -44,5 +46,7 @@ public:
 private:
 	std::list<boost::shared_ptr<T> > _cache;
 };
+
+}
 
 #endif
