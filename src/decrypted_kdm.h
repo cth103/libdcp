@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_DECRYPTED_KDM_H
+#define LIBDCP_DECRYPTED_KDM_H
+
 /** @file  src/decrypted_kdm.h
  *  @brief DecryptedKDM class.
  */
@@ -96,3 +99,5 @@ private:
 };
 
 }
+
+#endif
