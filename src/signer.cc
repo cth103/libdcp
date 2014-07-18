@@ -43,9 +43,9 @@ Signer::Signer (boost::filesystem::path openssl)
 {
 	boost::filesystem::path directory = make_certificate_chain (openssl);
 
-	_certificates.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (directory / "ca.self-signed.pem")));
-	_certificates.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (directory / "intermediate.signed.pem")));
-	_certificates.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (directory / "leaf.signed.pem")));
+	_certificates.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (dcp::file_to_string (directory / "ca.self-signed.pem"))));
+	_certificates.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (dcp::file_to_string (directory / "intermediate.signed.pem"))));
+	_certificates.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (dcp::file_to_string (directory / "leaf.signed.pem"))));
 
 	_key = dcp::file_to_string (directory / "leaf.key");
 

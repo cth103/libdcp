@@ -370,10 +370,14 @@ dcp::ids_equal (string a, string b)
 }
 
 string
-dcp::file_to_string (boost::filesystem::path p)
+dcp::file_to_string (boost::filesystem::path p, uintmax_t max_length)
 {
 	uintmax_t len = boost::filesystem::file_size (p);
-	char* c = new char[len];
+	if (len > max_length) {
+		throw MiscError ("Unexpectedly long file");
+	}
+	
+	char* c = new char[len + 1];
 			   
 	FILE* f = fopen_boost (p, "r");
 	if (!f) {
@@ -382,9 +386,32 @@ dcp::file_to_string (boost::filesystem::path p)
 
 	fread (c, 1, len, f);
 	fclose (f);
+	c[len] = '\0';
 
 	string s (c);
 	delete[] c;
 
 	return s;
+}
+
+/** @param key RSA private key in PEM format (optionally with -----BEGIN... / -----END...)
+ *  @return SHA1 fingerprint of key
+ */
+string
+dcp::private_key_fingerprint (string key)
+{
+	boost::replace_all (key, "-----BEGIN RSA PRIVATE KEY-----\n", "");
+	boost::replace_all (key, "\n-----END RSA PRIVATE KEY-----\n", "");
+
+	unsigned char buffer[4096];
+	int const N = base64_decode (key, buffer, sizeof (buffer));
+
+	SHA_CTX sha;
+	SHA1_Init (&sha);
+	SHA1_Update (&sha, buffer, N);
+	uint8_t digest[20];
+	SHA1_Final (digest, &sha);
+
+	char digest_base64[64];
+	return Kumu::base64encode (digest, 20, digest_base64, 64);
 }

@@ -49,23 +49,6 @@ Certificate::Certificate (X509* c)
 	
 }
 
-/** Load an X509 certificate from a file.
- *  @param filename File to load.
- */
-Certificate::Certificate (boost::filesystem::path filename)
-	: _certificate (0)
-	, _public_key (0)
-{
-	FILE* f = fopen_boost (filename, "r");
-	if (!f) {
-		throw FileError ("could not open file", filename, errno);
-	}
-	
-	if (!PEM_read_X509 (f, &_certificate, 0, 0)) {
-		throw MiscError ("could not read X509 certificate");
-	}
-}
-
 /** Load an X509 certificate from a string.
  *  @param cert String to read from.
  */
@@ -255,8 +238,8 @@ Certificate::thumbprint () const
 	uint8_t buffer[8192];
 	uint8_t* p = buffer;
 	i2d_X509_CINF (_certificate->cert_info, &p);
-	int const length = p - buffer;
-	if (length > 8192) {
+	unsigned int const length = p - buffer;
+	if (length > sizeof (buffer)) {
 		throw MiscError ("buffer too small to generate thumbprint");
 	}
 

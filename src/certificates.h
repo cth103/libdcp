@@ -51,7 +51,6 @@ public:
 		: _certificate (0)
 	{}
 
-	Certificate (boost::filesystem::path);
 	Certificate (std::string);
 	Certificate (X509 *);
 	Certificate (Certificate const &);

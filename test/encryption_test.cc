@@ -67,9 +67,9 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 
 	/* Use test/ref/crypt so this test is repeatable */
 	dcp::CertificateChain chain;
-	chain.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/ca.self-signed.pem"))));
-	chain.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/intermediate.signed.pem"))));
-	chain.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (boost::filesystem::path ("test/ref/crypt/leaf.signed.pem"))));
+	chain.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem"))));
+	chain.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem"))));
+	chain.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem"))));
 
 	shared_ptr<dcp::Signer> signer (
 		new dcp::Signer (
