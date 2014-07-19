@@ -12,7 +12,7 @@ def build(target, options):
     elif target.platform == 'windows':
         cmd += ' --target-windows'
     elif target.platform == 'osx':
-        cmd += ' --osx'
+        cmd += ' --target-osx'
 
     if target.debug:
         cmd += ' --enable-debug'
