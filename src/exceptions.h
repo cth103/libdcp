@@ -162,7 +162,7 @@ public:
 class NotEncryptedError : public StringError
 {
 public:
-	NotEncryptedError (std::string const & asset_filename);
+	NotEncryptedError (std::string const & what);
 	~NotEncryptedError () throw () {}
 };
 	

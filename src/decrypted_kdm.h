@@ -57,24 +57,19 @@ public:
 
 	/** Construct a DecryptedKDM.
 	 *  @param cpl CPL that the keys are for.
+	 *  @param key Key that was used to encrypt the MXFs.
 	 *  @param not_valid_before Start time for the KDM.
 	 *  @param not_valid_after End time for the KDM.
 	 */
 	DecryptedKDM (
 		boost::shared_ptr<const CPL> cpl,
+		Key key,
 		LocalTime not_valid_before,
 		LocalTime not_valid_after,
 		std::string annotation_text,
 		std::string content_title_text,
 		std::string issue_date
 		);
-
-	/** Add a key to this KDM.
-	 *  @param type Key type (MDIK, MDAK etc.)
-	 *  @param id Key id.
-	 *  @param key the key itself (which has been used to encrypt a MXF).
-	 */
-	void add_key (std::string type, std::string id, Key key);
 
 	/** Encrypt this KDM's keys and sign the whole KDM.
 	 *  @param signer Signer.

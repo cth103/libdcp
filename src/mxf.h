@@ -49,9 +49,6 @@ public:
 	MXF (boost::filesystem::path file);
 	~MXF ();
 
-	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */
-	virtual std::string key_type () const = 0;
-	
 	bool equals (
 		boost::shared_ptr<const Content> other,
 		EqualityOptions opt,

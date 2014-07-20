@@ -46,3 +46,9 @@ ReelSoundAsset::cpl_node_name () const
 {
 	return "MainSound";
 }
+
+string
+ReelSoundAsset::key_type () const
+{
+	return "MDAK";
+}

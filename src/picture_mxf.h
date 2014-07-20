@@ -102,7 +102,6 @@ protected:
 	Fraction _screen_aspect_ratio;
 
 private:
-	std::string key_type () const;
 	std::string asdcp_kind () const {
 		return "Picture";
 	}

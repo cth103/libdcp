@@ -1,7 +1,7 @@
 /*
     Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
 
-    This program is free software; you can redistribute it and/or modify
+    This program is free software; you -can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
     (at your option) any later version.
@@ -38,7 +38,7 @@
 
 namespace dcp {
 	
-class Content;
+class ReelAsset;
 class Reel;
 class XMLMetadata;
 class MXFMetadata;
@@ -95,10 +95,9 @@ public:
 		return _reels;
 	}
 
-	/** @return the Content in this CPL across all its reels
-	 *  (Content is picture, sound and subtitles)
+	/** @return the ReelAssets in this CPL in all reels.
 	 */
-	std::list<boost::shared_ptr<const Content> > content () const;
+	std::list<boost::shared_ptr<const ReelAsset> > reel_assets () const;
 
 	bool encrypted () const;
 

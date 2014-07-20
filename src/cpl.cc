@@ -153,20 +153,20 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	set_file (file);
 }
 
-list<shared_ptr<const Content> >
-CPL::content () const
+list<shared_ptr<const ReelAsset> >
+CPL::reel_assets () const
 {
-	list<shared_ptr<const Content> > c;
+	list<shared_ptr<const ReelAsset> > c;
 
 	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
 		if ((*i)->main_picture ()) {
-			c.push_back ((*i)->main_picture()->mxf ());
+			c.push_back ((*i)->main_picture());
 		}
 		if ((*i)->main_sound ()) {
-			c.push_back ((*i)->main_sound()->mxf ());
+			c.push_back ((*i)->main_sound());
 		}
 		if ((*i)->main_subtitle ()) {
-			c.push_back ((*i)->main_subtitle()->subtitle_content ());
+			c.push_back ((*i)->main_subtitle());
 		}
 	}
 

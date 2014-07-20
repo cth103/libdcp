@@ -67,6 +67,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	/* A KDM using our certificate chain's leaf key pair */
 	dcp::DecryptedKDM kdm_A (
 		cpl,
+		key,
 		dcp::LocalTime ("2013-01-01T00:00:00+00:00"),
 		dcp::LocalTime ("2013-01-08T00:00:00+00:00"),
 		"libdcp",

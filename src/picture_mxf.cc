@@ -184,9 +184,3 @@ PictureMXF::frame_buffer_equals (
 
 	return true;
 }
-
-string
-PictureMXF::key_type () const
-{
-	return "MDIK";
-}

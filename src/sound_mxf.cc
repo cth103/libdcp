@@ -170,9 +170,3 @@ SoundMXF::start_write (boost::filesystem::path file, Standard standard)
 	/* XXX: can't we use a shared_ptr here? */
 	return shared_ptr<SoundMXFWriter> (new SoundMXFWriter (this, file, standard));
 }
-
-string
-SoundMXF::key_type () const
-{
-	return "MDAK";
-}

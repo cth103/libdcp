@@ -33,6 +33,9 @@ public:
 	ReelMXFAsset (boost::shared_ptr<MXF> mxf, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	ReelMXFAsset (boost::shared_ptr<const cxml::Node>);
 
+	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */
+	virtual std::string key_type () const = 0;
+	
 	void write_to_cpl (xmlpp::Node* node, Standard standard) const;
 	
 	/** @return true if a KeyId is specified for this asset, implying

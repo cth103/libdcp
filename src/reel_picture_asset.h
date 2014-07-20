@@ -54,6 +54,8 @@ public:
 	}
 
 private:
+	std::string key_type () const;
+	
 	Fraction _frame_rate;
 	Fraction _screen_aspect_ratio;
 };

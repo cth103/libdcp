@@ -64,7 +64,6 @@ public:
 	}
 
 private:
-	std::string key_type () const;
 	std::string asdcp_kind () const {
 		return "Sound";
 	}

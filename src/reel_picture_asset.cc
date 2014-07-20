@@ -90,3 +90,9 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 			);
 	}
 }
+
+string
+ReelPictureAsset::key_type () const
+{
+	return "MDIK";
+}

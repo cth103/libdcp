@@ -46,6 +46,7 @@ public:
 	}
 	
 private:
+	std::string key_type () const;
 	std::string cpl_node_name () const;
 };
 

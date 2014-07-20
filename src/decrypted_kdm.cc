@@ -20,6 +20,7 @@
 #include "decrypted_kdm.h"
 #include "decrypted_kdm_key.h"
 #include "encrypted_kdm.h"
+#include "reel_mxf_asset.h"
 #include "util.h"
 #include "exceptions.h"
 #include "cpl.h"
@@ -184,6 +185,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 
 DecryptedKDM::DecryptedKDM (
 	boost::shared_ptr<const CPL> cpl,
+	Key key,
 	LocalTime not_valid_before,
 	LocalTime not_valid_after,
 	string annotation_text,
@@ -197,15 +199,15 @@ DecryptedKDM::DecryptedKDM (
 	, _issue_date (issue_date)
 {
 	/* Create DecryptedKDMKey objects for each MXF asset */
-	list<shared_ptr<const Content> > content = cpl->content ();
-	for (list<shared_ptr<const Content> >::iterator i = content.begin(); i != content.end(); ++i) {
+	list<shared_ptr<const ReelAsset> > assets = cpl->reel_assets ();
+	for (list<shared_ptr<const ReelAsset> >::iterator i = assets.begin(); i != assets.end(); ++i) {
 		/* XXX: do non-MXF assets need keys? */
-		shared_ptr<const MXF> mxf = boost::dynamic_pointer_cast<const MXF> (*i);
+		shared_ptr<const ReelMXFAsset> mxf = boost::dynamic_pointer_cast<const ReelMXFAsset> (*i);
 		if (mxf) {
 			if (mxf->key_id().empty ()) {
-				throw NotEncryptedError (mxf->file().string ());
+				throw NotEncryptedError (mxf->id());
 			}
-			_keys.push_back (DecryptedKDMKey (mxf->key_type(), mxf->key_id(), mxf->key().get (), cpl->id ()));
+			_keys.push_back (DecryptedKDMKey (mxf->key_type(), mxf->key_id(), key, cpl->id ()));
 		}
 	}
 }
