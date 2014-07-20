@@ -33,7 +33,7 @@
 #include <list>
 
 namespace ASDCP {
-	class WriterInfo;
+	struct WriterInfo;
 }
 
 namespace xmlpp {
@@ -59,7 +59,7 @@ public:
 	Content (boost::filesystem::path file);
 
 	bool equals (
-		boost::shared_ptr<const Content> other,
+		boost::shared_ptr<const Asset> other,
 		EqualityOptions opt,
 		boost::function<void (NoteType, std::string)>
 		) const;

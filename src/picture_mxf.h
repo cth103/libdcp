@@ -31,7 +31,7 @@
 
 namespace ASDCP {
 	namespace JP2K {
-		class PictureDescriptor;
+		struct PictureDescriptor;
 	}
 }
 
