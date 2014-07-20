@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	kdm_A.encrypt(signer, signer->certificates().leaf(), dcp::MODIFIED_TRANSITIONAL_1).as_xml (kdm_file);
 
 	/* Reload the KDM, using our private key to decrypt it */
-	dcp::DecryptedKDM kdm_B (dcp::EncryptedKDM (kdm_file), signer->key ());
+	dcp::DecryptedKDM kdm_B (dcp::EncryptedKDM (dcp::file_to_string (kdm_file)), signer->key ());
 
 	/* Check that the decrypted KDMKeys are the same as the ones we started with */
 	BOOST_CHECK_EQUAL (kdm_A.keys().size(), kdm_B.keys().size());

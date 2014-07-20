@@ -52,11 +52,7 @@ class Certificate;
 class EncryptedKDM
 {
 public:
-	/** Read a KDM from an XML file.
-	 *  @param file XML file to read.
-	 */
-	EncryptedKDM (boost::filesystem::path file);
-
+	EncryptedKDM (std::string);
 	EncryptedKDM (EncryptedKDM const & kdm);
 	EncryptedKDM & operator= (EncryptedKDM const &);
 	~EncryptedKDM ();

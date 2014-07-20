@@ -484,10 +484,11 @@ public:
 }
 }
 
-EncryptedKDM::EncryptedKDM (boost::filesystem::path file)
-	: _data (new data::EncryptedKDMData (shared_ptr<cxml::Node> (new cxml::Document ("DCinemaSecurityMessage", file))))
+EncryptedKDM::EncryptedKDM (string s)
 {
-	
+	shared_ptr<cxml::Document> doc (new cxml::Document ("DCinemaSecurityMessage"));
+	doc->read_string (s);
+	_data = new data::EncryptedKDMData (doc);
 }
 
 EncryptedKDM::EncryptedKDM (

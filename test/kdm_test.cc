@@ -30,7 +30,9 @@ using boost::shared_ptr;
 BOOST_AUTO_TEST_CASE (kdm_test)
 {
 	dcp::DecryptedKDM kdm (
-		dcp::EncryptedKDM ("test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml"),
+		dcp::EncryptedKDM (
+			dcp::file_to_string ("test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml")
+			),
 		dcp::file_to_string ("test/data/private.key")
 		);
 
@@ -51,7 +53,7 @@ BOOST_AUTO_TEST_CASE (kdm_test)
 BOOST_AUTO_TEST_CASE (kdm_passthrough_test)
 {
 	dcp::EncryptedKDM kdm (
-		"test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml"
+		dcp::file_to_string ("test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml")
 		);
 
 	shared_ptr<xmlpp::DomParser> parser (new xmlpp::DomParser ());
