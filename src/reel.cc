@@ -137,7 +137,7 @@ void
 Reel::add (DecryptedKDM const & kdm)
 {
 	list<DecryptedKDMKey> keys = kdm.keys ();
-	
+
 	for (list<DecryptedKDMKey>::iterator i = keys.begin(); i != keys.end(); ++i) {
 		if (i->id() == _main_picture->key_id()) {
 			_main_picture->mxf()->set_key (i->key ());
@@ -146,17 +146,6 @@ Reel::add (DecryptedKDM const & kdm)
 			_main_sound->mxf()->set_key (i->key ());
 		}
 	}
-}
-
-void
-Reel::set_mxf_keys (Key key)
-{
-	_main_picture->mxf()->set_key (key);
-	if (_main_sound) {
-		_main_sound->mxf()->set_key (key);
-	}
-
-	/* XXX: subtitle asset? */
 }
 
 void

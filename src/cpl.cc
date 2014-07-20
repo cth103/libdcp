@@ -232,18 +232,6 @@ CPL::add (DecryptedKDM const & kdm)
 	}
 }
 
-/** Set a private key for every MXF referenced by this CPL.  This will allow the data
- *  to be decrypted or encrypted.
- *  @param key Key to use.
- */
-void
-CPL::set_mxf_keys (Key key)
-{
-	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
-		(*i)->set_mxf_keys (key);
-	}
-}
-
 void
 CPL::resolve_refs (list<shared_ptr<Object> > objects)
 {

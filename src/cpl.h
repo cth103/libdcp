@@ -101,7 +101,6 @@ public:
 
 	bool encrypted () const;
 
-	void set_mxf_keys (Key);
 	void set_metadata (XMLMetadata m) {
 		_metadata = m;
 	}

@@ -77,8 +77,6 @@ public:
 
 	bool encrypted () const;
 
-	void set_mxf_keys (dcp::Key);
-	
 	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> notes) const;
 
 	void add (DecryptedKDM const &);
