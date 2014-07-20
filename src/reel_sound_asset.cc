@@ -28,14 +28,14 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
-ReelSoundAsset::ReelSoundAsset (boost::shared_ptr<SoundMXF> content, int64_t entry_point)
-	: ReelAsset (content, content->edit_rate(), content->intrinsic_duration(), entry_point)
+ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundMXF> content, int64_t entry_point)
+	: ReelMXFAsset (content, content->edit_rate(), content->intrinsic_duration(), entry_point)
 {
 
 }
 
-ReelSoundAsset::ReelSoundAsset (boost::shared_ptr<const cxml::Node> node)
-	: ReelAsset (node)
+ReelSoundAsset::ReelSoundAsset (shared_ptr<const cxml::Node> node)
+	: ReelMXFAsset (node)
 {
 	node->ignore_child ("Language");
 	node->done ();

@@ -46,7 +46,7 @@ ReelAsset::ReelAsset ()
  *  @param intrinsic_duration Intrinsic duration of this content.
  *  @param entry_point Entry point to use in that content.
  */
-ReelAsset::ReelAsset (boost::shared_ptr<Content> content, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+ReelAsset::ReelAsset (shared_ptr<Content> content, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: Object (content->id ())
 	, _content (content)
 	, _edit_rate (edit_rate)
@@ -59,7 +59,7 @@ ReelAsset::ReelAsset (boost::shared_ptr<Content> content, Fraction edit_rate, in
         _annotation_text = content->file().leaf().string ();
 }
 
-ReelAsset::ReelAsset (boost::shared_ptr<const cxml::Node> node)
+ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 	: Object (node->string_child ("Id"))
 	, _content (_id)
 	, _annotation_text (node->optional_string_child ("AnnotationText").get_value_or (""))
@@ -68,15 +68,10 @@ ReelAsset::ReelAsset (boost::shared_ptr<const cxml::Node> node)
 	, _entry_point (node->number_child<int64_t> ("EntryPoint"))
 	, _duration (node->number_child<int64_t> ("Duration"))
 	, _hash (node->optional_string_child ("Hash").get_value_or (""))
-	, _key_id (node->optional_string_child ("KeyId").get_value_or (""))
 {
 	if (_id.length() > 9) {
 		_id = _id.substr (9);
 		_content.set_id (_id);
-	}
-	
-	if (_key_id.length() > 9) {
-		_key_id = _key_id.substr (9);
 	}
 }
 
@@ -94,9 +89,6 @@ ReelAsset::write_to_cpl (xmlpp::Node* node, Standard) const
         a->add_child("IntrinsicDuration")->add_child_text (raw_convert<string> (_intrinsic_duration));
         a->add_child("EntryPoint")->add_child_text (raw_convert<string> (_entry_point));
         a->add_child("Duration")->add_child_text (raw_convert<string> (_duration));
-        if (!_key_id.empty ()) {
-                a->add_child("KeyId")->add_child_text ("urn:uuid:" + _key_id);
-        }
 	a->add_child("Hash")->add_child_text (_content.object()->hash ());
 }
 

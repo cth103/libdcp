@@ -41,16 +41,16 @@ ReelPictureAsset::ReelPictureAsset ()
 
 }
 
-ReelPictureAsset::ReelPictureAsset (boost::shared_ptr<PictureMXF> content, int64_t entry_point)
-	: ReelAsset (content, content->edit_rate(), content->intrinsic_duration(), entry_point)
+ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureMXF> content, int64_t entry_point)
+	: ReelMXFAsset (content, content->edit_rate(), content->intrinsic_duration(), entry_point)
 	, _frame_rate (content->frame_rate ())
 	, _screen_aspect_ratio (content->screen_aspect_ratio ())
 {
 	
 }
 
-ReelPictureAsset::ReelPictureAsset (boost::shared_ptr<const cxml::Node> node)
-	: ReelAsset (node)
+ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
+	: ReelMXFAsset (node)
 {
 	_frame_rate = Fraction (node->string_child ("FrameRate"));
 	try {
@@ -69,7 +69,7 @@ ReelPictureAsset::ReelPictureAsset (boost::shared_ptr<const cxml::Node> node)
 void
 ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	ReelAsset::write_to_cpl (node, standard);
+	ReelMXFAsset::write_to_cpl (node, standard);
 
 	xmlpp::Node::NodeList c = node->get_children ();
 	xmlpp::Node::NodeList::iterator i = c.begin();

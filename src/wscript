@@ -44,6 +44,7 @@ def build(bld):
                  reel.cc
                  reel_asset.cc
                  reel_mono_picture_asset.cc
+                 reel_mxf_asset.cc
                  reel_picture_asset.cc
                  reel_sound_asset.cc
                  reel_stereo_picture_asset.cc
@@ -97,6 +98,7 @@ def build(bld):
               reel.h
               reel_asset.h
               reel_mono_picture_asset.h
+              reel_mxf_asset.h
               reel_picture_asset.h
               reel_sound_asset.h
               reel_stereo_picture_asset.h

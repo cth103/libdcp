@@ -67,26 +67,12 @@ public:
 		return _content;
 	}
 
-	/** @return true if a KeyId is specified for this asset, implying
-	 *  that its content is encrypted.
-	 */
-	bool encrypted () const {
-		return !_key_id.empty ();
-	}
-
 	int64_t entry_point () const {
 		return _entry_point;
 	}
 
 	int64_t duration () const {
 		return _duration;
-	}
-
-	/** @return Key ID to describe the key that encrypts this asset's;
-	 *  content.
-	 */
-	std::string key_id () const {
-		return _key_id;
 	}
 
 protected:
@@ -113,7 +99,6 @@ private:
 	int64_t _entry_point;         ///< The &lt;EntryPoint&gt; from the reel's entry for this asset
 	int64_t _duration;            ///< The &lt;Duration&gt; from the reel's entry for this asset
 	std::string _hash;            ///< The &lt;Hash&gt; from the reel's entry for this asset
-	std::string _key_id;          ///< The &lt;KeyId&gt; from the reel's entry for this asset, or empty if there isn't one
 };
 
 }
