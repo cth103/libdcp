@@ -78,7 +78,7 @@ private:
 	/** Construct an EncryptedKDM from a set of details */
 	EncryptedKDM (
 		boost::shared_ptr<const Signer> signer,
-		boost::shared_ptr<const Certificate> recipient,
+		Certificate recipient,
 		std::string device_list_description,
 		std::string cpl_id,
 		std::string cpl_content_title_text,

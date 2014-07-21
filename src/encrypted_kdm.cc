@@ -493,7 +493,7 @@ EncryptedKDM::EncryptedKDM (string s)
 
 EncryptedKDM::EncryptedKDM (
 	shared_ptr<const Signer> signer,
-	shared_ptr<const Certificate> recipient,
+	Certificate recipient,
 	string device_list_description,
 	string cpl_id,
 	string content_title_text,
@@ -508,23 +508,23 @@ EncryptedKDM::EncryptedKDM (
 	/* Fill our XML-ish description in with the juicy bits that the caller has given */
 	
 	data::AuthenticatedPublic& aup = _data->authenticated_public;
-	aup.signer.x509_issuer_name = signer->certificates().leaf()->issuer ();
-	aup.signer.x509_serial_number = signer->certificates().leaf()->serial ();
+	aup.signer.x509_issuer_name = signer->certificates().leaf().issuer ();
+	aup.signer.x509_serial_number = signer->certificates().leaf().serial ();
 
 	data::KDMRequiredExtensions& kre = _data->authenticated_public.required_extensions.kdm_required_extensions;
-	kre.recipient.x509_issuer_serial.x509_issuer_name = recipient->issuer ();
-	kre.recipient.x509_issuer_serial.x509_serial_number = recipient->serial ();
-	kre.recipient.x509_subject_name = recipient->subject ();
+	kre.recipient.x509_issuer_serial.x509_issuer_name = recipient.issuer ();
+	kre.recipient.x509_issuer_serial.x509_serial_number = recipient.serial ();
+	kre.recipient.x509_subject_name = recipient.subject ();
 	kre.authorized_device_info.device_list_description = device_list_description;
 	kre.composition_playlist_id = cpl_id;
 	if (formulation == DCI_ANY || formulation == DCI_SPECIFIC) {
-		kre.content_authenticator = signer->certificates().leaf()->thumbprint ();
+		kre.content_authenticator = signer->certificates().leaf().thumbprint ();
 	}
 	kre.content_title_text = content_title_text;
 	kre.not_valid_before = not_valid_before;
 	kre.not_valid_after = not_valid_after;
 	kre.authorized_device_info.device_list_identifier = make_uuid ();
-	string n = recipient->common_name ();
+	string n = recipient.common_name ();
 	if (n.find (".") != string::npos) {
 		n = n.substr (n.find (".") + 1);
 	}
@@ -535,7 +535,7 @@ EncryptedKDM::EncryptedKDM (
 		kre.authorized_device_info.certificate_thumbprint = "2jmj7l5rSw0yVb/vlWAYkK/YBwk=";
 	} else if (formulation == DCI_SPECIFIC) {
 		/* Use the recipient thumbprint */
-		kre.authorized_device_info.certificate_thumbprint = recipient->thumbprint ();
+		kre.authorized_device_info.certificate_thumbprint = recipient.thumbprint ();
 	}
 
 	for (list<pair<string, string> >::const_iterator i = key_ids.begin(); i != key_ids.end(); ++i) {

@@ -213,7 +213,7 @@ DecryptedKDM::DecryptedKDM (
 }
 
 EncryptedKDM
-DecryptedKDM::encrypt (shared_ptr<const Signer> signer, shared_ptr<const Certificate> recipient, Formulation formulation) const
+DecryptedKDM::encrypt (shared_ptr<const Signer> signer, Certificate recipient, Formulation formulation) const
 {
 	list<pair<string, string> > key_ids;
 	list<string> keys;
@@ -229,7 +229,7 @@ DecryptedKDM::encrypt (shared_ptr<const Signer> signer, shared_ptr<const Certifi
 		uint8_t structure_id[] = { 0xf1, 0xdc, 0x12, 0x44, 0x60, 0x16, 0x9a, 0x0e, 0x85, 0xbc, 0x30, 0x06, 0x42, 0xf8, 0x66, 0xab };
 		put (&p, structure_id, 16);
 
-		base64_decode (signer->certificates().leaf()->thumbprint (), p, 20);
+		base64_decode (signer->certificates().leaf().thumbprint (), p, 20);
 		p += 20;
 		
 		put_uuid (&p, i->cpl_id ());
@@ -240,7 +240,7 @@ DecryptedKDM::encrypt (shared_ptr<const Signer> signer, shared_ptr<const Certifi
 		put (&p, i->key().value(), ASDCP::KeyLen);
 		
 		/* Encrypt using the projector's public key */
-		RSA* rsa = recipient->public_key ();
+		RSA* rsa = recipient.public_key ();
 		unsigned char encrypted[RSA_size(rsa)];
 		int const encrypted_len = RSA_public_encrypt (p - block, block, encrypted, rsa, RSA_PKCS1_OAEP_PADDING);
 		if (encrypted_len == -1) {
@@ -262,7 +262,7 @@ DecryptedKDM::encrypt (shared_ptr<const Signer> signer, shared_ptr<const Certifi
 		keys.push_back (lines.str ());
 	}
 
-	string device_list_description = recipient->common_name ();
+	string device_list_description = recipient.common_name ();
 	if (device_list_description.find (".") != string::npos) {
 		device_list_description = device_list_description.substr (device_list_description.find (".") + 1);
 	}

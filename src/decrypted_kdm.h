@@ -28,6 +28,7 @@
 #include "local_time.h"
 #include "decrypted_kdm_key.h"
 #include "types.h"
+#include "certificates.h"
 #include <boost/filesystem.hpp>
 
 namespace dcp {
@@ -35,7 +36,6 @@ namespace dcp {
 class DecryptedKDMKey;
 class EncryptedKDM;
 class Signer;
-class Certificate;
 class CPL;
 
 /** @class DecryptedKDM
@@ -77,7 +77,7 @@ public:
 	 *  @param formulation Formulation to use for the encrypted KDM.
 	 *  @return Encrypted KDM.
 	 */
-	EncryptedKDM encrypt (boost::shared_ptr<const Signer> signer, boost::shared_ptr<const Certificate> recipient, Formulation formulation) const;
+	EncryptedKDM encrypt (boost::shared_ptr<const Signer> signer, Certificate recipient, Formulation formulation) const;
 
 	/** @return This KDM's (decrypted) keys, which could be used to decrypt MXFs. */
 	std::list<DecryptedKDMKey> keys () const {

@@ -26,7 +26,6 @@
 
 #undef X509_NAME
 #include <openssl/x509.h>
-#include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
 #include <string>
 #include <list>
@@ -84,6 +83,10 @@ private:
 	mutable RSA* _public_key;
 };
 
+bool operator== (Certificate const & a, Certificate const & b);
+bool operator< (Certificate const & a, Certificate const & b);
+std::ostream& operator<< (std::ostream&s, Certificate const & c);
+
 /** @class CertificateChain
  *  @brief A chain of any number of certificates, from root to leaf.
  */
@@ -92,14 +95,14 @@ class CertificateChain
 public:
 	CertificateChain () {}
 
-	void add (boost::shared_ptr<const Certificate> c);
-	void remove (boost::shared_ptr<const Certificate> c);
+	void add (Certificate c);
+	void remove (Certificate c);
 	void remove (int);
 
-	boost::shared_ptr<const Certificate> root () const;
-	boost::shared_ptr<const Certificate> leaf () const;
+	Certificate root () const;
+	Certificate leaf () const;
 
-	typedef std::list<boost::shared_ptr<const Certificate> > List;
+	typedef std::list<Certificate> List;
 	
 	List leaf_to_root () const;
 	List root_to_leaf () const;

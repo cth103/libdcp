@@ -44,9 +44,9 @@ Signer::Signer (boost::filesystem::path openssl)
 {
 	boost::filesystem::path directory = make_certificate_chain (openssl);
 
-	_certificates.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (dcp::file_to_string (directory / "ca.self-signed.pem"))));
-	_certificates.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (dcp::file_to_string (directory / "intermediate.signed.pem"))));
-	_certificates.add (shared_ptr<dcp::Certificate> (new dcp::Certificate (dcp::file_to_string (directory / "leaf.signed.pem"))));
+	_certificates.add (dcp::Certificate (dcp::file_to_string (directory / "ca.self-signed.pem")));
+	_certificates.add (dcp::Certificate (dcp::file_to_string (directory / "intermediate.signed.pem")));
+	_certificates.add (dcp::Certificate (dcp::file_to_string (directory / "leaf.signed.pem")));
 
 	_key = dcp::file_to_string (directory / "leaf.key");
 
@@ -66,9 +66,9 @@ Signer::sign (xmlpp::Element* parent, Standard standard) const
 	xmlpp::Element* signer = parent->add_child("Signer");
 	xmlpp::Element* data = signer->add_child("X509Data", "dsig");
 	xmlpp::Element* serial_element = data->add_child("X509IssuerSerial", "dsig");
-	serial_element->add_child("X509IssuerName", "dsig")->add_child_text (_certificates.leaf()->issuer());
-	serial_element->add_child("X509SerialNumber", "dsig")->add_child_text (_certificates.leaf()->serial());
-	data->add_child("X509SubjectName", "dsig")->add_child_text (_certificates.leaf()->subject());
+	serial_element->add_child("X509IssuerName", "dsig")->add_child_text (_certificates.leaf().issuer());
+	serial_element->add_child("X509SerialNumber", "dsig")->add_child_text (_certificates.leaf().serial());
+	data->add_child("X509SubjectName", "dsig")->add_child_text (_certificates.leaf().subject());
 
 	/* <Signature> */
 	
@@ -119,11 +119,11 @@ Signer::add_signature_value (xmlpp::Node* parent, string ns) const
 		
 		{
 			xmlpp::Element* serial = data->add_child("X509IssuerSerial", ns);
-			serial->add_child("X509IssuerName", ns)->add_child_text((*i)->issuer ());
-			serial->add_child("X509SerialNumber", ns)->add_child_text((*i)->serial ());
+			serial->add_child("X509IssuerName", ns)->add_child_text (i->issuer ());
+			serial->add_child("X509SerialNumber", ns)->add_child_text (i->serial ());
 		}
 		
-		data->add_child("X509Certificate", ns)->add_child_text((*i)->certificate());
+		data->add_child("X509Certificate", ns)->add_child_text (i->certificate());
 	}
 
 	xmlSecDSigCtxPtr signature_context = xmlSecDSigCtxCreate (0);
@@ -165,7 +165,7 @@ Signer::valid () const
 	}
 	
 	RSA* private_key = PEM_read_bio_RSAPrivateKey (bio, 0, 0, 0);
-	RSA* public_key = _certificates.leaf()->public_key ();
+	RSA* public_key = _certificates.leaf().public_key ();
 	bool const valid = !BN_cmp (private_key->n, public_key->n);
 	BIO_free (bio);
 

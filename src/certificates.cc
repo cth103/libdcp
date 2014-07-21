@@ -38,7 +38,7 @@
 using std::list;
 using std::string;
 using std::cout;
-using boost::shared_ptr;
+using std::ostream;
 using namespace dcp;
 
 /** @param c X509 certificate, which this object will take ownership of */
@@ -276,8 +276,27 @@ Certificate::public_key () const
 	return _public_key;
 }
 
+bool
+dcp::operator== (Certificate const & a, Certificate const & b)
+{
+	return a.certificate() == b.certificate();
+}
+
+bool
+dcp::operator< (Certificate const & a, Certificate const & b)
+{
+	return a.certificate() < b.certificate();
+}
+
+ostream&
+dcp::operator<< (ostream& s, Certificate const & c)
+{
+	s << c.certificate();
+	return s;
+}
+
 /** @return Root certificate */
-shared_ptr<const Certificate>
+Certificate
 CertificateChain::root () const
 {
 	assert (!_certificates.empty());
@@ -285,7 +304,7 @@ CertificateChain::root () const
 }
 
 /** @return Leaf certificate */
-shared_ptr<const Certificate>
+Certificate
 CertificateChain::leaf () const
 {
 	assert (_certificates.size() >= 2);
@@ -312,7 +331,7 @@ CertificateChain::leaf_to_root () const
  *  @param c Certificate to add.
  */
 void
-CertificateChain::add (shared_ptr<const Certificate> c)
+CertificateChain::add (Certificate c)
 {
 	_certificates.push_back (c);
 }
@@ -321,7 +340,7 @@ CertificateChain::add (shared_ptr<const Certificate> c)
  *  @param c Certificate to remove.
  */
 void
-CertificateChain::remove (shared_ptr<const Certificate> c)
+CertificateChain::remove (Certificate c)
 {
 	_certificates.remove (c);
 }
@@ -363,7 +382,7 @@ CertificateChain::valid () const
 			break;
 		}
 
-		if (!X509_STORE_add_cert (store, (*i)->x509 ())) {
+		if (!X509_STORE_add_cert (store, i->x509 ())) {
 			X509_STORE_free (store);
 			return false;
 		}
@@ -375,7 +394,7 @@ CertificateChain::valid () const
 		}
 
 		X509_STORE_set_flags (store, 0);
-		if (!X509_STORE_CTX_init (ctx, store, (*j)->x509 (), 0)) {
+		if (!X509_STORE_CTX_init (ctx, store, j->x509 (), 0)) {
 			X509_STORE_CTX_free (ctx);
 			X509_STORE_free (store);
 			return false;
