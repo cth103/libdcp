@@ -44,6 +44,7 @@ using std::pair;
 using std::make_pair;
 using boost::shared_ptr;
 using boost::optional;
+using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 CPL::CPL (string annotation_text, ContentKind content_kind)
@@ -174,27 +175,32 @@ CPL::reel_assets () const
 }
 	
 bool
-CPL::equals (CPL const & other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (_annotation_text != other._annotation_text && !opt.cpl_annotation_texts_can_differ) {
+	shared_ptr<const CPL> other_cpl = dynamic_pointer_cast<const CPL> (other);
+	if (!other_cpl) {
+		return false;
+	}
+	
+	if (_annotation_text != other_cpl->_annotation_text && !opt.cpl_annotation_texts_can_differ) {
 		stringstream s;
-		s << "annotation texts differ: " << _annotation_text << " vs " << other._annotation_text << "\n";
+		s << "annotation texts differ: " << _annotation_text << " vs " << other_cpl->_annotation_text << "\n";
 		note (DCP_ERROR, s.str ());
 		return false;
 	}
 
-	if (_content_kind != other._content_kind) {
+	if (_content_kind != other_cpl->_content_kind) {
 		note (DCP_ERROR, "content kinds differ");
 		return false;
 	}
 
-	if (_reels.size() != other._reels.size()) {
-		note (DCP_ERROR, String::compose ("reel counts differ (%1 vs %2)", _reels.size(), other._reels.size()));
+	if (_reels.size() != other_cpl->_reels.size()) {
+		note (DCP_ERROR, String::compose ("reel counts differ (%1 vs %2)", _reels.size(), other_cpl->_reels.size()));
 		return false;
 	}
 	
 	list<shared_ptr<Reel> >::const_iterator a = _reels.begin ();
-	list<shared_ptr<Reel> >::const_iterator b = other._reels.begin ();
+	list<shared_ptr<Reel> >::const_iterator b = other_cpl->_reels.begin ();
 	
 	while (a != _reels.end ()) {
 		if (!(*a)->equals (*b, opt, note)) {

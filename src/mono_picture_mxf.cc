@@ -68,7 +68,7 @@ MonoPictureMXF::get_frame (int n) const
 }
 
 bool
-MonoPictureMXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+MonoPictureMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!MXF::equals (other, opt, note)) {
 		return false;

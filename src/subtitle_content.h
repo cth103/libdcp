@@ -51,7 +51,7 @@ public:
 	SubtitleContent (std::string movie_title, std::string language);
 
 	bool equals (
-		boost::shared_ptr<const Content>,
+		boost::shared_ptr<const Asset>,
 		EqualityOptions,
 		boost::function<void (NoteType, std::string)> note
 		) const {

@@ -55,7 +55,7 @@ public:
 	CPL (boost::filesystem::path file);
 
 	bool equals (
-		CPL const & other,
+		boost::shared_ptr<const Asset> other,
 		EqualityOptions options,
 		boost::function<void (NoteType, std::string)> note
 		) const;

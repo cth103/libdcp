@@ -46,7 +46,7 @@ public:
 	boost::shared_ptr<PictureMXFWriter> start_write (boost::filesystem::path, Standard standard, bool);
 
 	bool equals (
-		boost::shared_ptr<const Content> other,
+		boost::shared_ptr<const Asset> other,
 		EqualityOptions opt,
 		boost::function<void (NoteType, std::string)> note
 		) const;
