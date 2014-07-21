@@ -76,9 +76,9 @@ ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 }
 
 void
-ReelAsset::write_to_cpl (xmlpp::Node* node, Standard) const
+ReelAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-        pair<string, string> const attr = cpl_node_attribute ();
+        pair<string, string> const attr = cpl_node_attribute (standard);
         xmlpp::Element* a = node->add_child (cpl_node_name ());
         if (!attr.first.empty ()) {
                 a->set_attribute (attr.first, attr.second);
@@ -93,7 +93,7 @@ ReelAsset::write_to_cpl (xmlpp::Node* node, Standard) const
 }
 
 pair<string, string>
-ReelAsset::cpl_node_attribute () const
+ReelAsset::cpl_node_attribute (Standard) const
 {
 	return make_pair ("", "");
 }

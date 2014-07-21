@@ -50,7 +50,7 @@ public:
 	~MXF ();
 
 	bool equals (
-		boost::shared_ptr<const Content> other,
+		boost::shared_ptr<const Asset> other,
 		EqualityOptions opt,
 		boost::function<void (NoteType, std::string)> note
 		) const;

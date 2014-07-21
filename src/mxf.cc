@@ -92,7 +92,7 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, Standard standard)
 }
 
 bool
-MXF::equals (shared_ptr<const Content> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+MXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
 	if (!Content::equals (other, opt, note)) {
 		return false;

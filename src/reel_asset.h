@@ -84,7 +84,7 @@ protected:
 	/** @return Any attribute that should be used on the asset's node in the
 	 *  CPL.
 	 */
-	virtual std::pair<std::string, std::string> cpl_node_attribute () const;
+	virtual std::pair<std::string, std::string> cpl_node_attribute (Standard) const;
 
 	/** Reference to the content (MXF or XML file) that this reel entry
 	 *  applies to.
