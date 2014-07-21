@@ -40,6 +40,7 @@ public:
 	ReelPictureAsset (boost::shared_ptr<const cxml::Node>);
 
 	virtual void write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, boost::function<void (NoteType, std::string)>) const;
 
 	boost::shared_ptr<PictureMXF> mxf () {
 		return boost::dynamic_pointer_cast<PictureMXF> (_content.object ());

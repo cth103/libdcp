@@ -38,7 +38,6 @@ help (string n)
 	     << "  -h, --help                   show this help\n"
 	     << "  -v, --verbose                be verbose\n"
 	     << "  -n, --names                  allow differing MXF names\n"
-	     << "      --cpl-names              allow differing CPL annotation texts (backwards compatible)\n"
 	     << "      --cpl-annotation-texts   allow differing CPL annotation texts\n"
 	     << "  -m, --mean-pixel             maximum allowed mean pixel error (default 5)\n"
 	     << "  -s, --std-dev-pixel          maximum allowed standard deviation of pixel error (default 5)\n"
@@ -84,6 +83,7 @@ main (int argc, char* argv[])
 	EqualityOptions options;
 	options.max_mean_pixel_error = 5;
 	options.max_std_dev_pixel_error = 5;
+	options.reel_hashes_can_differ = true;
 	bool keep_going = false;
 	bool ignore_missing_assets = false;
 	
@@ -99,12 +99,11 @@ main (int argc, char* argv[])
 			{ "keep-going", no_argument, 0, 'k'},
 			/* From here we're using random capital letters for the short option */
 			{ "ignore-missing-assets", no_argument, 0, 'A'},
-			{ "cpl-names", no_argument, 0, 'B'},
 			{ "cpl-annotation-texts", no_argument, 0, 'C'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vhvnm:s:kAB", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhvnm:s:kA", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -165,9 +164,5 @@ main (int argc, char* argv[])
 
 	bool const equals = a->equals (*b, options, boost::bind (note, _1, _2));
 
-	if (equals) {
-		exit (EXIT_SUCCESS);
-	}
-
-	exit (EXIT_FAILURE);
+	exit (equals ? EXIT_SUCCESS : EXIT_FAILURE);
 }

@@ -32,6 +32,7 @@ using std::bad_cast;
 using std::string;
 using std::stringstream;
 using boost::shared_ptr;
+using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 ReelPictureAsset::ReelPictureAsset ()
@@ -95,4 +96,29 @@ string
 ReelPictureAsset::key_type () const
 {
 	return "MDIK";
+}
+
+bool
+ReelPictureAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const
+{
+	if (!ReelAsset::equals (other, opt, note)) {
+		return false;
+	}
+	
+	shared_ptr<const ReelPictureAsset> rpa = dynamic_pointer_cast<const ReelPictureAsset> (other);
+	if (!rpa) {
+		return false;
+	}
+
+	if (_frame_rate != rpa->_frame_rate) {
+		note (DCP_ERROR, "frame rates differ in reel");
+		return false;
+	}
+
+	if (_screen_aspect_ratio != rpa->_screen_aspect_ratio) {
+		note (DCP_ERROR, "screen aspect ratios differ in reel");
+		return false;
+	}
+
+	return true;
 }

@@ -100,22 +100,21 @@ MXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function
 	
 	shared_ptr<const MXF> other_mxf = dynamic_pointer_cast<const MXF> (other);
 	if (!other_mxf) {
-		note (DCP_ERROR, "comparing an MXF asset with a non-MXF asset");
 		return false;
 	}
 	
 	if (_edit_rate != other_mxf->_edit_rate) {
-		note (DCP_ERROR, "content edit rates differ");
+		note (DCP_ERROR, "MXF: edit rates differ");
 	 	return false;
 	}
 	
 	if (_intrinsic_duration != other_mxf->_intrinsic_duration) {
-	 	note (DCP_ERROR, "asset intrinsic durations differ");
+	 	note (DCP_ERROR, String::compose ("MXF: intrinsic durations differ (%1 vs %2)", _intrinsic_duration, other_mxf->_intrinsic_duration));
 		return false;
 	}
 
 	if (_file != other_mxf->file ()) {
-		note (DCP_ERROR, "MXF names differ");
+		note (DCP_ERROR, "MXF: names differ");
 		if (!opt.mxf_names_can_differ) {
 			return false;
 		}

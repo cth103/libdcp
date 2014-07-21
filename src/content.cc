@@ -36,13 +36,3 @@ Content::Content (boost::filesystem::path file)
 {
 	
 }
-
-bool
-Content::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
-{
-	if (!Asset::equals (other, opt, note)) {
-		return false;
-	}
-
-	return true;
-}

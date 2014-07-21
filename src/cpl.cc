@@ -42,6 +42,7 @@ using std::ostream;
 using std::list;
 using std::pair;
 using std::make_pair;
+using std::cout;
 using boost::shared_ptr;
 using boost::optional;
 using boost::dynamic_pointer_cast;
@@ -184,18 +185,18 @@ CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function
 	
 	if (_annotation_text != other_cpl->_annotation_text && !opt.cpl_annotation_texts_can_differ) {
 		stringstream s;
-		s << "annotation texts differ: " << _annotation_text << " vs " << other_cpl->_annotation_text << "\n";
+		s << "CPL: annotation texts differ: " << _annotation_text << " vs " << other_cpl->_annotation_text << "\n";
 		note (DCP_ERROR, s.str ());
 		return false;
 	}
 
 	if (_content_kind != other_cpl->_content_kind) {
-		note (DCP_ERROR, "content kinds differ");
+		note (DCP_ERROR, "CPL: content kinds differ");
 		return false;
 	}
 
 	if (_reels.size() != other_cpl->_reels.size()) {
-		note (DCP_ERROR, String::compose ("reel counts differ (%1 vs %2)", _reels.size(), other_cpl->_reels.size()));
+		note (DCP_ERROR, String::compose ("CPL: reel counts differ (%1 vs %2)", _reels.size(), other_cpl->_reels.size()));
 		return false;
 	}
 	

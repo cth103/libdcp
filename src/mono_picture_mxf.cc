@@ -27,6 +27,7 @@
 
 using std::string;
 using std::vector;
+using std::cout;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
@@ -70,6 +71,10 @@ MonoPictureMXF::get_frame (int n) const
 bool
 MonoPictureMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
+	if (!dynamic_pointer_cast<const MonoPictureMXF> (other)) {
+		return false;
+	}
+	
 	if (!MXF::equals (other, opt, note)) {
 		return false;
 	}

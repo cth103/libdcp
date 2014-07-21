@@ -127,6 +127,7 @@ struct EqualityOptions
 		, max_audio_sample_error (0)
 		, cpl_annotation_texts_can_differ (false)
 		, mxf_names_can_differ (false)
+		, reel_hashes_can_differ (false)
 	{}
 
 	/** The maximum allowable mean difference in pixel value between two images */
@@ -139,6 +140,8 @@ struct EqualityOptions
 	bool cpl_annotation_texts_can_differ;
 	/** true if MXF filenames are allowed to differ */
 	bool mxf_names_can_differ;
+	/** true if <Hash>es in Reels can differ */
+	bool reel_hashes_can_differ;
 };
 
 /* I've been unable to make mingw happy with ERROR as a symbol, so

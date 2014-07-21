@@ -50,6 +50,7 @@
 
 using std::string;
 using std::list;
+using std::cout;
 using std::stringstream;
 using std::ostream;
 using std::make_pair;
@@ -174,23 +175,28 @@ DCP::read (bool keep_going, ReadErrors* errors)
 bool
 DCP::equals (DCP const & other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
-	if (_assets.size() != other._assets.size()) {
-		note (DCP_ERROR, String::compose ("Asset counts differ: %1 vs %2", _assets.size(), other._assets.size()));
+	list<shared_ptr<CPL> > a = cpls ();
+	list<shared_ptr<CPL> > b = other.cpls ();
+	
+	if (a.size() != b.size()) {
+		note (DCP_ERROR, String::compose ("CPL counts differ: %1 vs %2", a.size(), b.size()));
 		return false;
 	}
 
-	list<shared_ptr<Asset> >::const_iterator a = _assets.begin ();
-	list<shared_ptr<Asset> >::const_iterator b = other._assets.begin ();
+	bool r = true;
 
-	while (a != _assets.end ()) {
-		if (!(*a)->equals (*b, opt, note)) {
-			return false;
+	for (list<shared_ptr<CPL> >::const_iterator i = a.begin(); i != a.end(); ++i) {
+		list<shared_ptr<CPL> >::const_iterator j = b.begin ();
+		while (j != b.end() && !(*j)->equals (*i, opt, note)) {
+			++j;
 		}
-		++a;
-		++b;
+
+		if (j == b.end ()) {
+			r = false;
+		}
 	}
 
-	return true;
+	return r;
 }
 
 void

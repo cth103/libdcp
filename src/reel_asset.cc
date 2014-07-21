@@ -25,6 +25,7 @@
 
 using std::pair;
 using std::string;
+using std::stringstream;
 using std::make_pair;
 using boost::shared_ptr;
 using namespace dcp;
@@ -96,4 +97,50 @@ pair<string, string>
 ReelAsset::cpl_node_attribute (Standard) const
 {
 	return make_pair ("", "");
+}
+
+bool
+ReelAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const
+{
+	if (_annotation_text != other->_annotation_text) {
+		stringstream s;
+		s << "Reel: annotation texts differ (" << _annotation_text << " vs " << other->_annotation_text << ")\n";
+		note (DCP_ERROR, s.str ());
+		return false;
+	}
+
+	if (_edit_rate != other->_edit_rate) {
+		note (DCP_ERROR, "Reel: edit rates differ");
+		return false;
+	}
+
+	if (_intrinsic_duration != other->_intrinsic_duration) {
+		note (DCP_ERROR, "Reel: intrinsic durations differ");
+		return false;
+	}
+
+	if (_entry_point != other->_entry_point) {
+		note (DCP_ERROR, "Reel: entry points differ");
+		return false;
+	}
+
+	if (_duration != other->_duration) {
+		note (DCP_ERROR, "Reel: durations differ");
+		return false;
+	}
+
+	if (_hash != other->_hash) {
+		if (!opt.reel_hashes_can_differ) {
+			note (DCP_ERROR, "Reel: hashes differ");
+			return false;
+		} else {
+			note (DCP_NOTE, "Reel: hashes differ");
+		}
+	}
+
+	if (_content.resolved () && other->_content.resolved ()) {
+		return _content->equals (other->_content.object (), opt, note);
+	}
+
+	return true;
 }

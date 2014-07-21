@@ -58,12 +58,6 @@ public:
 	 */
 	Content (boost::filesystem::path file);
 
-	bool equals (
-		boost::shared_ptr<const Asset> other,
-		EqualityOptions opt,
-		boost::function<void (NoteType, std::string)>
-		) const;
-
 protected:
 	virtual std::string asdcp_kind () const = 0;
 };

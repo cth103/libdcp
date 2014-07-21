@@ -105,7 +105,7 @@ bool
 Asset::equals (boost::shared_ptr<const Asset> other, EqualityOptions, function<void (NoteType, string)> note) const
 {
 	if (_hash != other->_hash) {
-		note (DCP_ERROR, "Asset hashes differ");
+		note (DCP_ERROR, "Asset: hashes differ");
 		return false;
 	}
 
