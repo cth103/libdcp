@@ -1,7 +1,7 @@
 import os
 
 def dependencies(target):
-    return (('libcxml', None), ('openjpeg-cdist', '9717d8f'))
+    return (('libcxml', None), ('openjpeg-cdist', '5d8bffd'))
 
 def build(target, options):
     cmd = './waf configure --prefix=%s' % target.directory
