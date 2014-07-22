@@ -114,9 +114,11 @@ MXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function
 	}
 
 	if (_file != other_mxf->file ()) {
-		note (DCP_ERROR, "MXF: names differ");
 		if (!opt.mxf_names_can_differ) {
+			note (DCP_ERROR, "MXF: names differ");
 			return false;
+		} else {
+			note (DCP_NOTE, "MXF: names differ");
 		}
 	}
 	
