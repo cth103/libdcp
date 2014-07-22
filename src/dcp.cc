@@ -94,7 +94,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 	} else if (boost::filesystem::exists (_directory / "ASSETMAP.xml")) {
 		asset_map_file = _directory / "ASSETMAP.xml";
 	} else {
-		boost::throw_exception (DCPReadError (String::compose ("could not find AssetMap file `%1'", asset_map_file.string())));
+		boost::throw_exception (DCPReadError (String::compose ("could not find AssetMap file in `%1'", _directory.string())));
 	}
 
 	cxml::Document asset_map ("AssetMap");

@@ -115,7 +115,7 @@ ReelAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, boost
 	}
 
 	if (_intrinsic_duration != other->_intrinsic_duration) {
-		note (DCP_ERROR, "Reel: intrinsic durations differ");
+		note (DCP_ERROR, String::compose ("Reel: intrinsic durations differ (%1 vs %2)", _intrinsic_duration, other->_intrinsic_duration));
 		return false;
 	}
 
