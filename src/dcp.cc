@@ -31,7 +31,6 @@
 #include "util.h"
 #include "metadata.h"
 #include "exceptions.h"
-#include "reel.h"
 #include "cpl.h"
 #include "signer.h"
 #include "compose.hpp"
@@ -43,15 +42,12 @@
 #include <libxml++/libxml++.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <sstream>
-#include <iomanip>
 #include <cassert>
 #include <iostream>
 
 using std::string;
 using std::list;
 using std::cout;
-using std::stringstream;
 using std::ostream;
 using std::make_pair;
 using std::map;
@@ -237,9 +233,7 @@ boost::filesystem::path
 DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared_ptr<const Signer> signer) const
 {
 	boost::filesystem::path p = _directory;
-	stringstream s;
-	s << pkl_uuid << "_pkl.xml";
-	p /= s.str();
+	p /= String::compose ("%1_pkl.xml", pkl_uuid);
 
 	xmlpp::Document doc;
 	xmlpp::Element* pkl;

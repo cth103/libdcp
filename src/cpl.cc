@@ -17,23 +17,17 @@
 
 */
 
-#include "raw_convert.h"
 #include "cpl.h"
 #include "util.h"
-#include "mono_picture_mxf.h"
-#include "stereo_picture_mxf.h"
-#include "sound_mxf.h"
-#include "subtitle_content.h"
 #include "reel.h"
 #include "metadata.h"
 #include "signer.h"
-#include "exceptions.h"
 #include "xml.h"
-#include "compose.hpp"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
 #include "local_time.h"
+#include "compose.hpp"
 #include <libxml/parser.h>
 
 using std::string;

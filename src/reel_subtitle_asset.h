@@ -25,6 +25,7 @@
 #define LIBDCP_REEL_SUBTITLE_ASSET_H
 
 #include "reel_asset.h"
+#include "subtitle_content.h"
 
 namespace dcp {
 
