@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_RAW_CONVERT_H
+#define LIBDCP_RAW_CONVERT_H
+
 #include <sstream>
 #include <iomanip>
 
@@ -39,3 +42,5 @@ raw_convert (Q v, int precision = 16)
 }
 
 };
+
+#endif
