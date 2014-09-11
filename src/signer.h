@@ -42,6 +42,15 @@ class Signer
 {
 public:
 	Signer (boost::filesystem::path openssl);
+
+	Signer (
+		boost::filesystem::path openssl,
+		std::string organisation,
+		std::string organisational_unit,
+		std::string root_common_name,
+		std::string intermediate_common_name,
+		std::string leaf_common_name
+		);
 	
 	/** @param c Certificate chain to sign with.
 	 *  @param k Key to sign with as a PEM-format string.
@@ -73,7 +82,8 @@ public:
 	bool valid () const;
 	
 private:	
-
+	void create (boost::filesystem::path directory);
+	
 	/** Certificate chain to sign with */
 	CertificateChain _certificates;
 	/** Key to sign with as a PEM-format string */

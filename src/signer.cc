@@ -42,8 +42,32 @@ using namespace dcp;
 
 Signer::Signer (boost::filesystem::path openssl)
 {
-	boost::filesystem::path directory = make_certificate_chain (openssl);
+	create (make_certificate_chain (openssl));
+}
 
+Signer::Signer (boost::filesystem::path openssl,
+		string organisation,
+		string organisational_unit,
+		string root_common_name,
+		string intermediate_common_name,
+		string leaf_common_name
+	)
+{
+	create (
+		make_certificate_chain (
+			openssl,
+			organisation,
+			organisational_unit,
+			root_common_name,
+			intermediate_common_name,
+			leaf_common_name
+			)
+		);
+}
+
+void
+Signer::create (boost::filesystem::path directory)
+{
 	_certificates.add (dcp::Certificate (dcp::file_to_string (directory / "ca.self-signed.pem")));
 	_certificates.add (dcp::Certificate (dcp::file_to_string (directory / "intermediate.signed.pem")));
 	_certificates.add (dcp::Certificate (dcp::file_to_string (directory / "leaf.signed.pem")));
@@ -52,7 +76,6 @@ Signer::Signer (boost::filesystem::path openssl)
 
 	boost::filesystem::remove_all (directory);
 }
-	
 
 /** Add a &lt;Signer&gt; and &lt;ds:Signature&gt; nodes to an XML node.
  *  @param parent XML node to add to.

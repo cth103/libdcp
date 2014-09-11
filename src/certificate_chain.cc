@@ -157,7 +157,14 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 }
 
 boost::filesystem::path
-dcp::make_certificate_chain (boost::filesystem::path openssl)
+dcp::make_certificate_chain (
+	boost::filesystem::path openssl,
+	string organisation,
+	string organisational_unit,
+	string root_common_name,
+	string intermediate_common_name,
+	string leaf_common_name
+	)
 {
 	boost::filesystem::path directory = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path ();
 	boost::filesystem::create_directories (directory);
@@ -185,7 +192,10 @@ dcp::make_certificate_chain (boost::filesystem::path openssl)
 		  << "CN = Entity and dnQualifier\n";
 	}
 
-	string const ca_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION/dnQualifier=" + public_key_digest ("ca.key", openssl);
+	string const ca_subject = "/O=" + organisation +
+		"/OU=" + organisational_unit +
+		"/CN=" + root_common_name +
+		"/dnQualifier=" + public_key_digest ("ca.key", openssl);
 
 	{
 		stringstream c;
@@ -213,8 +223,10 @@ dcp::make_certificate_chain (boost::filesystem::path openssl)
 		  << "CN = Entity and dnQualifier\n";
 	}
 		
-	string const inter_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION/dnQualifier="
-		+ public_key_digest ("intermediate.key", openssl);
+	string const inter_subject = "/O=" + organisation +
+		"/OU=" + organisational_unit +
+		"/CN=" + intermediate_common_name +
+		"/dnQualifier="	+ public_key_digest ("intermediate.key", openssl);
 
 	{
 		stringstream s;
@@ -248,8 +260,10 @@ dcp::make_certificate_chain (boost::filesystem::path openssl)
 		  << "CN = Entity and dnQualifier\n";
 	}
 
-	string const leaf_subject = "/O=example.org/OU=example.org/CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION/dnQualifier="
-		+ public_key_digest ("leaf.key", openssl);
+	string const leaf_subject = "/O=" + organisation +
+		"/OU=" + organisational_unit +
+		"/CN=" + leaf_common_name +
+		"/dnQualifier="	+ public_key_digest ("leaf.key", openssl);
 
 	{
 		stringstream s;

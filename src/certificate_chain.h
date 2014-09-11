@@ -33,6 +33,13 @@ namespace dcp {
  *    - leaf.key                leaf certificate private key
  *    - leaf.signed.pem         leaf certificate
  */
-boost::filesystem::path make_certificate_chain (boost::filesystem::path openssl);
-
+boost::filesystem::path make_certificate_chain (
+	boost::filesystem::path openssl,
+	std::string organisation = "example.org",
+	std::string organisational_unit = "example.org",
+	std::string root_common_name = ".smpte-430-2.ROOT.NOT_FOR_PRODUCTION",
+	std::string intermediate_common_name = ".smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION",
+	std::string leaf_common_name = "CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION"
+	);
+	
 }
