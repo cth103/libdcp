@@ -17,6 +17,7 @@
 
 */
 
+#include <iostream>
 #include <libxml++/libxml++.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/dl.h>
