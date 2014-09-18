@@ -201,7 +201,7 @@ dcp::make_certificate_chain (
 		stringstream c;
 		c << quoted_openssl
 		  << " req -new -x509 -sha256 -config ca.cnf -days 3650 -set_serial 5"
-		  << " -subj " << ca_subject << " -key ca.key -outform PEM -out ca.self-signed.pem";
+		  << " -subj \"" << ca_subject << "\" -key ca.key -outform PEM -out ca.self-signed.pem";
 		command (c.str().c_str());
 	}
 
@@ -231,7 +231,7 @@ dcp::make_certificate_chain (
 	{
 		stringstream s;
 		s << quoted_openssl
-		  << " req -new -config intermediate.cnf -days 3649 -subj " << inter_subject << " -key intermediate.key -out intermediate.csr";
+		  << " req -new -config intermediate.cnf -days 3649 -subj \"" << inter_subject << "\" -key intermediate.key -out intermediate.csr";
 		command (s.str().c_str());
 	}
 
@@ -267,7 +267,7 @@ dcp::make_certificate_chain (
 
 	{
 		stringstream s;
-		s << quoted_openssl << " req -new -config leaf.cnf -days 3648 -subj " << leaf_subject << " -key leaf.key -outform PEM -out leaf.csr";
+		s << quoted_openssl << " req -new -config leaf.cnf -days 3648 -subj \"" << leaf_subject << "\" -key leaf.key -outform PEM -out leaf.csr";
 		command (s.str().c_str());
 	}
 
