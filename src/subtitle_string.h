@@ -76,6 +76,9 @@ public:
 		return _text;
 	}
 
+	/** @return vertical position as a proportion of the screen height from the top
+	 *  (between 0 and 1)
+	 */
 	float v_position () const {
 		return _v_position;
 	}
@@ -105,6 +108,13 @@ public:
 	}
 	
 	int size_in_pixels (int screen_height) const;
+
+	/** @param p New vertical position as a proportion of the screen height
+	 *  from the top (between 0 and 1)
+	 */
+	void set_v_position (float p) {
+		_v_position = p;
+	}
 
 private:
 	/** font name */
