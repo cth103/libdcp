@@ -116,6 +116,10 @@ public:
 		_v_position = p;
 	}
 
+	void set_size (int s) {
+		_size = s;
+	}
+
 private:
 	/** font name */
 	std::string _font;
