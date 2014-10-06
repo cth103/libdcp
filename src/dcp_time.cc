@@ -59,12 +59,12 @@ Time::set (double ss)
 	t = (int (round (ss * 1000)) % 1000) / 4;
 	s = floor (ss);
 
-	if (s > 60) {
+	if (s >= 60) {
 		m = s / 60;
 		s -= m * 60;
 	}
 
-	if (m > 60) {
+	if (m >= 60) {
 		h = m / 60;
 		m -= h * 60;
 	}
