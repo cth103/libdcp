@@ -78,6 +78,10 @@ public:
 		return _text;
 	}
 
+	void set_text (std::string t) {
+		_text = t;
+	}
+
 	float v_position () const {
 		return _v_position;
 	}
