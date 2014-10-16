@@ -99,6 +99,9 @@ libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const LUT> 
 	return argb_frame;
 }
 
+/** Image must be packed RGB 16:16:16, 48bpp, 16R, 16G, 16B, with the 2-byte value for each R/G/B component stored as big-endian;
+ *  i.e. AV_PIX_FMT_RGB48BE.
+ */
 shared_ptr<libdcp::XYZFrame>
 libdcp::rgb_to_xyz (shared_ptr<const Image> rgb, shared_ptr<const LUT> lut_in, shared_ptr<const LUT> lut_out, double const colour_matrix[3][3])
 {
@@ -117,13 +120,13 @@ libdcp::rgb_to_xyz (shared_ptr<const Image> rgb, shared_ptr<const LUT> lut_in, s
 
 	int jn = 0;
 	for (int y = 0; y < rgb->size().height; ++y) {
-		uint8_t* p = rgb->data()[0] + y * rgb->stride()[0];
+		uint16_t* p = reinterpret_cast<uint16_t *> (rgb->data()[0] + y * rgb->stride()[0]);
 		for (int x = 0; x < rgb->size().width; ++x) {
 
-			/* In gamma LUT (converting 8-bit input to 12-bit) */
-			s.r = lut_in->lut()[*p++ << 4];
-			s.g = lut_in->lut()[*p++ << 4];
-			s.b = lut_in->lut()[*p++ << 4];
+			/* In gamma LUT (truncating 16-bit to 12-bit) */
+			s.r = lut_in->lut()[*p++ >> 4];
+			s.g = lut_in->lut()[*p++ >> 4];
+			s.b = lut_in->lut()[*p++ >> 4];
 			
 			/* RGB to XYZ Matrix */
 			d.x = ((s.r * colour_matrix[0][0]) +
