@@ -59,4 +59,16 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 
 	BOOST_CHECK_EQUAL (libdcp::Time (4128391203LL).to_ticks(), 4128391203LL);
 	BOOST_CHECK_EQUAL (libdcp::Time (60000).to_ticks(), 60000);
+
+	a = libdcp::Time (3600 * 24, 24);
+	BOOST_CHECK_EQUAL (a.h, 1);
+	BOOST_CHECK_EQUAL (a.m, 0);
+	BOOST_CHECK_EQUAL (a.s, 0);
+	BOOST_CHECK_EQUAL (a.t, 0);
+
+	a = libdcp::Time (60 * 24, 24);
+	BOOST_CHECK_EQUAL (a.h, 0);
+	BOOST_CHECK_EQUAL (a.m, 1);
+	BOOST_CHECK_EQUAL (a.s, 0);
+	BOOST_CHECK_EQUAL (a.t, 0);
 }

@@ -1,12 +1,12 @@
 import os
 
 def dependencies(target):
-    return (('libcxml', '7b4ecc3'), ('openjpeg-cdist', '13b69c2'))
+    return (('libcxml', 'v0.11.0'), ('openjpeg-cdist', '5d8bffd'))
 
 def build(target, options):
-    cmd = './waf configure --prefix=%s' % target.work_dir_cscript()
+    cmd = './waf configure --prefix=%s' % target.directory
     if target.platform == 'linux':
-        cmd += ' --static'
+        cmd += ' --static --disable-tests'
     elif target.platform == 'windows':
         cmd += ' --target-windows'
     elif target.platform == 'osx':

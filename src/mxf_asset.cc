@@ -123,6 +123,7 @@ MXFAsset::write_to_cpl (xmlpp::Element* node) const
 	if (!_key_id.empty ()) {
 		a->add_child("KeyId")->add_child_text ("urn:uuid:" + _key_id);
 	}
+	a->add_child ("Hash")->add_child_text (digest ());
 }
 
 void
