@@ -99,8 +99,8 @@ libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const LUT> 
 	return argb_frame;
 }
 
-/** Image must be packed RGB 16:16:16, 48bpp, 16R, 16G, 16B, with the 2-byte value for each R/G/B component stored as big-endian;
- *  i.e. AV_PIX_FMT_RGB48BE.
+/** Image must be packed RGB 16:16:16, 48bpp, 16R, 16G, 16B, with the 2-byte value for each R/G/B component stored as little-endian;
+ *  i.e. AV_PIX_FMT_RGB48LE.
  */
 shared_ptr<libdcp::XYZFrame>
 libdcp::rgb_to_xyz (shared_ptr<const Image> rgb, shared_ptr<const LUT> lut_in, shared_ptr<const LUT> lut_out, double const colour_matrix[3][3])
