@@ -161,3 +161,26 @@ libdcp::rgb_to_xyz (shared_ptr<const Image> rgb, shared_ptr<const LUT> lut_in, s
 
 	return xyz;
 }
+
+/** Image must be packed RGB 16:16:16, 48bpp, 16R, 16G, 16B, with the 2-byte value for each R/G/B component stored as little-endian;
+ *  i.e. AV_PIX_FMT_RGB48LE.
+ */
+shared_ptr<libdcp::XYZFrame>
+libdcp::xyz_to_xyz (shared_ptr<const Image> xyz_16)
+{
+	shared_ptr<XYZFrame> xyz_12 (new XYZFrame (xyz_16->size ()));
+
+	int jn = 0;
+	for (int y = 0; y < xyz_16->size().height; ++y) {
+		uint16_t* p = reinterpret_cast<uint16_t *> (xyz_16->data()[0] + y * xyz_16->stride()[0]);
+		for (int x = 0; x < xyz_16->size().width; ++x) {
+			/* Truncate 16-bit to 12-bit */
+			xyz_12->data(0)[jn] = *p++ >> 4;
+			xyz_12->data(1)[jn] = *p++ >> 4;
+			xyz_12->data(2)[jn] = *p++ >> 4;
+			++jn;
+		}
+	}
+	
+	return xyz_12;
+}
