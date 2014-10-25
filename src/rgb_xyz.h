@@ -38,5 +38,7 @@ extern void xyz_to_rgb (
 extern boost::shared_ptr<XYZFrame> rgb_to_xyz (
 	boost::shared_ptr<const Image>, boost::shared_ptr<const GammaLUT>, boost::shared_ptr<const GammaLUT>, double const colour_matrix[3][3]
 	);
+
+extern boost::shared_ptr<XYZFrame> xyz_to_xyz (boost::shared_ptr<const Image>);
 	
 }
