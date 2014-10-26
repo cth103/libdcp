@@ -12,6 +12,7 @@ def options(opt):
     opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
     opt.add_option('--static', action='store_true', default=False, help='build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
     opt.add_option('--disable-tests', action='store_true', default=False, help='disable building of tests')
+    opt.add_option('--disable-examples', action='store_true', default=False, help='disable building of examples')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -22,6 +23,7 @@ def configure(conf):
     conf.env.TARGET_OSX = conf.options.target_osx
     conf.env.ENABLE_DEBUG = conf.options.enable_debug
     conf.env.DISABLE_TESTS = conf.options.disable_tests
+    conf.env.DISABLE_EXAMPLES = conf.options.disable_examples
     conf.env.STATIC = conf.options.static
     conf.env.API_VERSION = API_VERSION
 
@@ -130,7 +132,8 @@ def build(bld):
     if not bld.env.DISABLE_TESTS:
         bld.recurse('test')
     bld.recurse('asdcplib')
-    bld.recurse('examples')
+    if not bld.env.DISABLE_EXAMPLES:
+        bld.recurse('examples')
 
     bld.add_post_fun(post)
 
