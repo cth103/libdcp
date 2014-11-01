@@ -71,4 +71,10 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (a.m, 1);
 	BOOST_CHECK_EQUAL (a.s, 0);
 	BOOST_CHECK_EQUAL (a.t, 0);
+
+	a = libdcp::Time (3425, 24);
+	BOOST_CHECK_EQUAL (a.h, 0);
+	BOOST_CHECK_EQUAL (a.m, 2);
+	BOOST_CHECK_EQUAL (a.m, 2);
+	BOOST_CHECK_EQUAL (a.t, 177);
 }
