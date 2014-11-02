@@ -154,7 +154,7 @@ public:
 		return _language;
 	}
 
-	std::list<boost::shared_ptr<Subtitle> > subtitles_at (Time t) const;
+	std::list<boost::shared_ptr<Subtitle> > subtitles_during (Time from, Time to) const;
 	std::list<boost::shared_ptr<Subtitle> > const & subtitles () const {
 		return _subtitles;
 	}

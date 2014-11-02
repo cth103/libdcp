@@ -216,11 +216,11 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 }
 
 list<shared_ptr<Subtitle> >
-SubtitleAsset::subtitles_at (Time t) const
+SubtitleAsset::subtitles_during (Time from, Time to) const
 {
 	list<shared_ptr<Subtitle> > s;
 	for (list<shared_ptr<Subtitle> >::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
-		if ((*i)->in() <= t && t <= (*i)->out ()) {
+		if ((*i)->out() >= from && (*i)->in() <= to) {
 			s.push_back (*i);
 		}
 	}

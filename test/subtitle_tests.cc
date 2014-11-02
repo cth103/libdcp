@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 
 	BOOST_CHECK_EQUAL (subs.language(), "French");
 
-	list<shared_ptr<libdcp::Subtitle> > s = subs.subtitles_at (libdcp::Time (0, 0, 6, 1));
+	list<shared_ptr<libdcp::Subtitle> > s = subs.subtitles_during (libdcp::Time (0, 0, 6, 1), libdcp::Time (0, 0, 6, 2));
 	BOOST_CHECK_EQUAL (s.size(), 1);
 	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
 				   "Arial",
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 				   libdcp::Time (0, 0, 0, 1)
 				   ));
 							 
-	s = subs.subtitles_at (libdcp::Time (0, 0, 7, 190));
+	s = subs.subtitles_during (libdcp::Time (0, 0, 7, 190), libdcp::Time (0, 0, 7, 191));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
 				   "Arial",
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 				   libdcp::Time (0, 0, 0, 1)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 0, 11, 95));
+	s = subs.subtitles_during (libdcp::Time (0, 0, 11, 95), libdcp::Time (0, 0, 11, 96));
 	BOOST_CHECK_EQUAL (s.size(), 1);
 	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
 				   "Arial",
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 				   libdcp::Time (0, 0, 0, 1)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 0, 14, 42));
+	s = subs.subtitles_during (libdcp::Time (0, 0, 14, 42), libdcp::Time (0, 0, 14, 43));
 	BOOST_CHECK_EQUAL (s.size(), 1);
 	BOOST_CHECK_EQUAL (*(s.back().get()), libdcp::Subtitle (
 				   "Arial",
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 {
 	libdcp::SubtitleAsset subs ("test/data", "subs2.xml");
 
-	list<shared_ptr<libdcp::Subtitle> > s = subs.subtitles_at (libdcp::Time (0, 0, 42, 100));
+	list<shared_ptr<libdcp::Subtitle> > s = subs.subtitles_during (libdcp::Time (0, 0, 42, 100), libdcp::Time (0, 0, 42, 101));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
 				   "Arial",
@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   libdcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 0, 50, 50));
+	s = subs.subtitles_during (libdcp::Time (0, 0, 50, 50), libdcp::Time (0, 0, 50, 51));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
 				   "Arial",
@@ -189,7 +189,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   libdcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 1, 2, 300));
+	s = subs.subtitles_during (libdcp::Time (0, 1, 2, 300), libdcp::Time (0, 1, 2, 301));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
 				   "Arial",
@@ -222,7 +222,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   libdcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 1, 15, 50));
+	s = subs.subtitles_during (libdcp::Time (0, 1, 15, 50), libdcp::Time (0, 1, 15, 51));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
 				   "Arial",
@@ -255,7 +255,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   libdcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 1, 27, 200));
+	s = subs.subtitles_during (libdcp::Time (0, 1, 27, 200), libdcp::Time (0, 1, 27, 201));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
 				   "Arial",
@@ -288,7 +288,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   libdcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 1, 42, 300));
+	s = subs.subtitles_during (libdcp::Time (0, 1, 42, 300), libdcp::Time (0, 1, 42, 301));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
 				   "Arial",
@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   libdcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 1, 45, 200));
+	s = subs.subtitles_during (libdcp::Time (0, 1, 45, 200), libdcp::Time (0, 1, 45, 201));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
 				   "Arial",
@@ -354,7 +354,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   libdcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 1, 47, 249));
+	s = subs.subtitles_during (libdcp::Time (0, 1, 47, 249), libdcp::Time (0, 1, 47, 250));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
 				   "Arial",
@@ -387,7 +387,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   libdcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (libdcp::Time (0, 2, 6, 210));
+	s = subs.subtitles_during (libdcp::Time (0, 2, 6, 210), libdcp::Time (0, 2, 6, 211));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
 				   "Arial",
@@ -419,7 +419,4 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   libdcp::Time (0, 0, 0, 0),
 				   libdcp::Time (0, 0, 0, 0)
 				   ));
-
-	
-	
 }

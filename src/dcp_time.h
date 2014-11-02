@@ -78,6 +78,7 @@ extern bool operator!= (Time const & a, Time const & b);
 extern bool operator<= (Time const & a, Time const & b);
 extern bool operator< (Time const & a, Time const & b);
 extern bool operator> (Time const & a, Time const & b);
+extern bool operator>= (Time const & a, Time const & b);
 extern std::ostream & operator<< (std::ostream & s, Time const & t);
 extern Time operator+ (Time a, Time const & b);	
 extern Time operator- (Time a, Time const & b);

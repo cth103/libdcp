@@ -99,23 +99,7 @@ libdcp::operator!= (Time const & a, Time const & b)
 bool
 libdcp::operator<= (Time const & a, Time const & b)
 {
-	if (a.h != b.h) {
-		return a.h <= b.h;
-	}
-
-	if (a.m != b.m) {
-		return a.m <= b.m;
-	}
-
-	if (a.s != b.s) {
-		return a.s <= b.s;
-	}
-
-	if (a.t != b.t) {
-		return a.t <= b.t;
-	}
-
-	return true;
+	return a < b || a == b;
 }
 
 bool
@@ -160,6 +144,12 @@ libdcp::operator> (Time const & a, Time const & b)
 	}
 
 	return true;
+}
+
+bool
+libdcp::operator>= (Time const & a, Time const & b)
+{
+	return a == b || a > b;
 }
 
 ostream &
