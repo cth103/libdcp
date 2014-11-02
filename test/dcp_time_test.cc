@@ -72,9 +72,16 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (a.s, 0);
 	BOOST_CHECK_EQUAL (a.t, 0);
 
+	/* Check rounding; 3424 is 142.666666666... seconds or 0.166666666... ticks */
+	a = libdcp::Time (3424, 24);
+	BOOST_CHECK_EQUAL (a.h, 0);
+	BOOST_CHECK_EQUAL (a.m, 2);
+	BOOST_CHECK_EQUAL (a.s, 22);
+	BOOST_CHECK_EQUAL (a.t, 167);
+
 	a = libdcp::Time (3425, 24);
 	BOOST_CHECK_EQUAL (a.h, 0);
 	BOOST_CHECK_EQUAL (a.m, 2);
-	BOOST_CHECK_EQUAL (a.m, 2);
+	BOOST_CHECK_EQUAL (a.s, 22);
 	BOOST_CHECK_EQUAL (a.t, 177);
 }

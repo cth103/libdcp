@@ -56,8 +56,8 @@ Time::Time (int64_t ticks)
 void
 Time::set (double ss)
 {
-	t = (int (round (ss * 1000)) % 1000) / 4;
 	s = floor (ss);
+	t = int (round (1000 * (ss - s) / 4));
 
 	if (s >= 60) {
 		m = s / 60;
