@@ -37,6 +37,24 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
+/** Make a picture frame from a JPEG2000 file.
+ *  @param path Path to JPEG2000 file.
+ */
+MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path)
+{
+	boost::uintmax_t const size = boost::filesystem::file_size (path);
+	_buffer = new ASDCP::JP2K::FrameBuffer (size);
+	FILE* f = fopen_boost (path, "r");
+	if (!f) {
+		boost::throw_exception (FileError ("could not open JPEG2000 file", path, errno));
+	}
+
+	fread (j2k_data(), 1, size, f);
+	fclose (f);
+
+	_buffer->Size (size);
+}
+
 /** Make a picture frame from a 2D (monoscopic) asset.
  *  @param mxf_path Path to the asset's MXF file.
  *  @param n Frame within the asset, not taking EntryPoint into account.
