@@ -123,7 +123,7 @@ private:
 	Time _in;
 	Time _out;
 	/** Vertical position as a proportion of the screen height from the top
-	 *  (between 0 and 1)
+	 *  (between 0 and 100).
 	 */
 	float _v_position;
 	VAlign _v_align;
