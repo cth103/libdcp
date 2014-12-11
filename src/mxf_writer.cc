@@ -41,7 +41,7 @@ MXFWriter::MXFWriter (MXF* mxf, boost::filesystem::path file)
 
 MXFWriter::~MXFWriter ()
 {
-	assert (_finalized);
+
 }
 
 void
