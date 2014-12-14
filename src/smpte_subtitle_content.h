@@ -17,19 +17,20 @@
 
 */
 
-#include "interop_subtitle_content.h"
-#include <iostream>
+#include "subtitle_content.h"
 
-using namespace std;
+namespace dcp {
 
-int main (int argc, char* argv[])
+class SMPTELoadFont;	
+
+class SMPTESubtitleContent : public SubtitleContent
 {
-	if (argc < 2) {
-		cerr << "Syntax: " << argv[0] << " <subtitle file>\n";
-		exit (EXIT_FAILURE);
-	}
-	
-	dcp::InteropSubtitleContent s (argv[1]);
-	cout << s.xml_as_string ();
-	return 0;
+public:
+	/** @param file MXF file */
+	SMPTESubtitleContent (boost::filesystem::path file);
+
+private:
+	std::list<boost::shared_ptr<SMPTELoadFont> > _load_font_nodes;
+};
+
 }

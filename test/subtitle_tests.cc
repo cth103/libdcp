@@ -17,24 +17,25 @@
 
 */
 
-#include "subtitle_content.h"
+#include "interop_subtitle_content.h"
 #include "subtitle_string.h"
 #include <boost/test/unit_test.hpp>
 
 using std::list;
+using std::string;
 using boost::shared_ptr;
 
 /* Load some subtitle content from XML and check that it is read correctly */
 BOOST_AUTO_TEST_CASE (subtitles1)
 {
-	dcp::SubtitleContent subs ("test/data/subs1.xml", false);
+	dcp::InteropSubtitleContent subs ("test/data/subs1.xml");
 
 	BOOST_CHECK_EQUAL (subs.language(), "French");
 
 	list<dcp::SubtitleString> s = subs.subtitles_at (dcp::Time (0, 0, 6, 1));
 	BOOST_CHECK_EQUAL (s.size(), 1);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFontId"),
 				   false,
 				   dcp::Color (255, 255, 255),
 				   39,
@@ -52,7 +53,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 	s = subs.subtitles_at (dcp::Time (0, 0, 7, 190));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFontId"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   39,
@@ -67,7 +68,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 				   dcp::Time (0, 0, 0, 1)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFontId"),
 				   false,
 				   dcp::Color (255, 255, 255),
 				   39,
@@ -85,7 +86,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 	s = subs.subtitles_at (dcp::Time (0, 0, 11, 95));
 	BOOST_CHECK_EQUAL (s.size(), 1);
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFontId"),
 				   false,
 				   dcp::Color (255, 255, 255),
 				   39,
@@ -103,7 +104,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 	s = subs.subtitles_at (dcp::Time (0, 0, 14, 42));
 	BOOST_CHECK_EQUAL (s.size(), 1);
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFontId"),
 				   false,
 				   dcp::Color (255, 255, 255),
 				   39,
@@ -122,12 +123,12 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 /** And similarly for another one */
 BOOST_AUTO_TEST_CASE (subtitles2)
 {
-	dcp::SubtitleContent subs ("test/data/subs2.xml", false);
+	dcp::InteropSubtitleContent subs ("test/data/subs2.xml");
 
 	list<dcp::SubtitleString> s = subs.subtitles_at (dcp::Time (0, 0, 42, 100));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -142,7 +143,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -160,7 +161,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 	s = subs.subtitles_at (dcp::Time (0, 0, 50, 50));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -175,7 +176,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -193,7 +194,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 	s = subs.subtitles_at (dcp::Time (0, 1, 2, 300));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -208,7 +209,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -226,7 +227,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 	s = subs.subtitles_at (dcp::Time (0, 1, 15, 50));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -241,7 +242,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -259,7 +260,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 	s = subs.subtitles_at (dcp::Time (0, 1, 27, 200));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -274,7 +275,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -292,7 +293,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 	s = subs.subtitles_at (dcp::Time (0, 1, 42, 300));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   false,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -307,7 +308,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   false,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -325,7 +326,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 	s = subs.subtitles_at (dcp::Time (0, 1, 45, 200));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   false,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -340,7 +341,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   false,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -358,7 +359,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 	s = subs.subtitles_at (dcp::Time (0, 1, 47, 249));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   false,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -373,7 +374,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   false,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -391,7 +392,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 	s = subs.subtitles_at (dcp::Time (0, 2, 6, 210));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   42,
@@ -406,7 +407,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
-				   "Arial",
+				   string ("theFont"),
 				   true,
 				   dcp::Color (255, 255, 255),
 				   42,

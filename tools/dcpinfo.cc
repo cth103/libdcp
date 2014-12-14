@@ -85,7 +85,7 @@ main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
 		for (list<SubtitleString>::const_iterator k = subs.begin(); k != subs.end(); ++k) {
 			cout << "        " << k->text() << "\n";
 			cout << "          "
-			     << "font:" << k->font() << "; "
+			     << "font:" << k->font().get_value_or("[default]") << "; "
 			     << "italic:" << k->italic() << "; "
 			     << "color:" << k->color() << "; "
 			     << "in:" << k->in() << "; "

@@ -25,7 +25,8 @@
 #include "dcp.h"
 #include "sound_mxf.h"
 #include "picture_mxf.h"
-#include "subtitle_content.h"
+#include "interop_subtitle_content.h"
+#include "smpte_subtitle_content.h"
 #include "mono_picture_mxf.h"
 #include "stereo_picture_mxf.h"
 #include "util.h"
@@ -132,7 +133,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 			if (root == "CompositionPlaylist") {
 				_assets.push_back (shared_ptr<CPL> (new CPL (path)));
 			} else if (root == "DCSubtitle") {
-				_assets.push_back (shared_ptr<SubtitleContent> (new SubtitleContent (path, false)));
+				_assets.push_back (shared_ptr<InteropSubtitleContent> (new InteropSubtitleContent (path)));
 			}
 		} else if (boost::algorithm::ends_with (path.string(), ".mxf")) {
 			ASDCP::EssenceType_t type;
@@ -154,7 +155,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 					_assets.push_back (shared_ptr<StereoPictureMXF> (new StereoPictureMXF (path)));
 					break;
 				case ASDCP::ESS_TIMED_TEXT:
-					_assets.push_back (shared_ptr<SubtitleContent> (new SubtitleContent (path, true)));
+					_assets.push_back (shared_ptr<SMPTESubtitleContent> (new SMPTESubtitleContent (path)));
 					break;
 				default:
 					throw DCPReadError ("Unknown MXF essence type");

@@ -17,19 +17,24 @@
 
 */
 
-#include "interop_subtitle_content.h"
-#include <iostream>
+#include "subtitle_content.h"
+#include <boost/filesystem.hpp>
 
-using namespace std;
+namespace dcp {
 
-int main (int argc, char* argv[])
+class InteropLoadFont;	
+
+class InteropSubtitleContent : public SubtitleContent
 {
-	if (argc < 2) {
-		cerr << "Syntax: " << argv[0] << " <subtitle file>\n";
-		exit (EXIT_FAILURE);
-	}
+public:
+	InteropSubtitleContent (std::string movie_title, std::string language);
+	InteropSubtitleContent (boost::filesystem::path file);
+
+	Glib::ustring xml_as_string () const;
 	
-	dcp::InteropSubtitleContent s (argv[1]);
-	cout << s.xml_as_string ();
-	return 0;
+private:
+	std::string _movie_title;
+	std::list<boost::shared_ptr<InteropLoadFont> > _load_font_nodes;
+};
+
 }

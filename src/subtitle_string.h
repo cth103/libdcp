@@ -26,6 +26,7 @@
 
 #include "types.h"
 #include "dcp_time.h"
+#include <boost/optional.hpp>
 #include <string>
 
 namespace dcp {
@@ -37,7 +38,7 @@ class SubtitleString
 {
 public:
 	SubtitleString (
-		std::string font,
+		boost::optional<std::string> font,
 		bool italic,
 		Color color,
 		int size,
@@ -52,8 +53,8 @@ public:
 		Time fade_down_time
 		);
 
-	/** @return font name */
-	std::string font () const {
+	/** @return font ID */
+	boost::optional<std::string> font () const {
 		return _font;
 	}
 
@@ -122,8 +123,8 @@ public:
 	}
 
 private:
-	/** font name */
-	std::string _font;
+	/** font ID */
+	boost::optional<std::string> _font;
 	/** true if the text is italic */
 	bool _italic;
 	/** text colour */

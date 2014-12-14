@@ -32,23 +32,15 @@ class SubtitleString;
 class Font;
 class Text;
 class Subtitle;
-class LoadFont;
 
 /** @class SubtitleContent
- *  @brief A representation of an XML or MXF file containing subtitles.
- *
- *  XXX: perhaps this should inhert from MXF, or there should be different
- *  classes for XML and MXF subs.
+ *  @brief A parent for classes representing a file containing subtitles.
  */
 class SubtitleContent : public Content
 {
 public:
-	/** Construct a SubtitleContent.
-	 *  @param file Filename.
-	 *  @param mxf true if the file is an MXF file, false for XML.
-	 */
-	SubtitleContent (boost::filesystem::path file, bool mxf);
-	SubtitleContent (std::string movie_title, std::string language);
+	SubtitleContent () {}
+	SubtitleContent (boost::filesystem::path file);
 
 	bool equals (
 		boost::shared_ptr<const Asset>,
@@ -72,11 +64,16 @@ public:
 	void add (SubtitleString);
 
 	void write_xml (boost::filesystem::path) const;
-	Glib::ustring xml_as_string () const;
+	virtual Glib::ustring xml_as_string () const {
+		/* XXX: this should be pure virtual when SMPTE writing is implemented */
+		return "";
+	}
 
 	Time latest_subtitle_out () const;
 
 protected:
+	void parse_common (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<dcp::Font> > font_nodes);
+	
 	std::string pkl_type (Standard) const {
 		return "text/xml";
 	}
@@ -85,9 +82,13 @@ protected:
 		return "Subtitle";
 	}
 	
-private:
-	std::string font_id_to_name (std::string id) const;
+	/* strangely, this is sometimes a string */
+	std::string _reel_number;
+	std::string _language;
 
+	std::list<SubtitleString> _subtitles;
+
+private:
 	struct ParseState {
 		std::list<boost::shared_ptr<Font> > font_nodes;
 		std::list<boost::shared_ptr<Text> > text_nodes;
@@ -107,14 +108,6 @@ private:
 		std::list<boost::shared_ptr<Text> > const & text_nodes,
 		ParseState& parse_state
 		);
-
-	boost::optional<std::string> _movie_title;
-	/* strangely, this is sometimes a string */
-	std::string _reel_number;
-	std::string _language;
-	std::list<boost::shared_ptr<LoadFont> > _load_font_nodes;
-
-	std::list<SubtitleString> _subtitles;
 };
 
 }

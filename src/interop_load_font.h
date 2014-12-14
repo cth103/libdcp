@@ -17,21 +17,23 @@
 
 */
 
-#include "load_font.h"
-#include <libcxml/cxml.h>
+#include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 
-using std::string;
-using boost::shared_ptr;
-using boost::optional;
-using namespace dcp;
+namespace cxml {
+	class Node;
+}
 
-LoadFont::LoadFont (boost::shared_ptr<const cxml::Node> node)
-{
-	optional<string> x = node->optional_string_attribute ("Id");
-	if (!x) {
-		x = node->optional_string_attribute ("ID");
-	}
-	id = x.get_value_or ("");
+namespace dcp {
 	
-	uri = node->optional_string_attribute ("URI");
+class InteropLoadFont 
+{
+public:
+	InteropLoadFont () {}
+	InteropLoadFont (boost::shared_ptr<const cxml::Node> node);
+
+	std::string id;
+	std::string uri;
+};
+
 }

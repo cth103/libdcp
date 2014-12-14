@@ -17,19 +17,23 @@
 
 */
 
-#include "interop_subtitle_content.h"
-#include <iostream>
+#include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 
-using namespace std;
+namespace cxml {
+	class Node;
+}
 
-int main (int argc, char* argv[])
-{
-	if (argc < 2) {
-		cerr << "Syntax: " << argv[0] << " <subtitle file>\n";
-		exit (EXIT_FAILURE);
-	}
+namespace dcp {
 	
-	dcp::InteropSubtitleContent s (argv[1]);
-	cout << s.xml_as_string ();
-	return 0;
+class SMPTELoadFont 
+{
+public:
+	SMPTELoadFont () {}
+	SMPTELoadFont (boost::shared_ptr<const cxml::Node> node);
+
+	std::string id;
+	std::string urn;
+};
+
 }

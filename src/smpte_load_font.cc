@@ -17,23 +17,15 @@
 
 */
 
-#include <boost/shared_ptr.hpp>
-#include <boost/optional.hpp>
+#include "smpte_load_font.h"
+#include <libcxml/cxml.h>
 
-namespace cxml {
-	class Node;
-}
+using std::string;
+using boost::shared_ptr;
+using namespace dcp;
 
-namespace dcp {
-	
-class LoadFont 
+SMPTELoadFont::SMPTELoadFont (shared_ptr<const cxml::Node> node)
 {
-public:
-	LoadFont () {}
-	LoadFont (boost::shared_ptr<const cxml::Node> node);
-
-	std::string id;
-	boost::optional<std::string> uri;
-};
-
+	id = node->string_attribute ("ID");
+	urn = node->content().substr (9);
 }

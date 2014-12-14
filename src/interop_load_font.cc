@@ -17,19 +17,21 @@
 
 */
 
-#include "interop_subtitle_content.h"
-#include <iostream>
+#include "interop_load_font.h"
+#include <libcxml/cxml.h>
 
-using namespace std;
+using std::string;
+using boost::shared_ptr;
+using boost::optional;
+using namespace dcp;
 
-int main (int argc, char* argv[])
+InteropLoadFont::InteropLoadFont (shared_ptr<const cxml::Node> node)
 {
-	if (argc < 2) {
-		cerr << "Syntax: " << argv[0] << " <subtitle file>\n";
-		exit (EXIT_FAILURE);
+	optional<string> x = node->optional_string_attribute ("Id");
+	if (!x) {
+		x = node->optional_string_attribute ("ID");
 	}
+	id = x.get_value_or ("");
 	
-	dcp::InteropSubtitleContent s (argv[1]);
-	cout << s.xml_as_string ();
-	return 0;
+	uri = node->string_attribute ("URI");
 }

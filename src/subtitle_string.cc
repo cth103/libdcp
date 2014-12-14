@@ -22,10 +22,11 @@
 
 using std::string;
 using std::ostream;
+using boost::optional;
 using namespace dcp;
 
 SubtitleString::SubtitleString (
-	string font,
+	optional<string> font,
 	bool italic,
 	Color color,
 	int size,
@@ -92,7 +93,7 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 {
 	s << "\n`" << sub.text() << "' from " << sub.in() << " to " << sub.out() << ";\n"
 	  << "fade up " << sub.fade_up_time() << ", fade down " << sub.fade_down_time() << ";\n"
-	  << "font " << sub.font() << ", ";
+	  << "font " << sub.font().get_value_or ("[default]") << ", ";
 
 	if (sub.italic()) {
 		s << "italic";
