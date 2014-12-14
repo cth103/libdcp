@@ -52,6 +52,7 @@ public:
 		Time fade_down_time
 		);
 
+	/** @return font name */
 	std::string font () const {
 		return _font;
 	}
