@@ -34,7 +34,7 @@ Font::Font (boost::shared_ptr<const cxml::Node> node)
 {
 	text = node->content ();
 	
-	id = node->optional_string_attribute ("Id").get_value_or ("");
+	id = node->optional_string_attribute ("Id");
 	size = node->optional_number_attribute<int64_t> ("Size").get_value_or (0);
 	italic = node->optional_bool_attribute ("Italic");
 	optional<string> c = node->optional_string_attribute ("Color");
@@ -61,7 +61,7 @@ Font::Font (std::list<boost::shared_ptr<Font> > const & font_nodes)
 	, effect_color ("FFFFFFFF")
 {
 	for (list<shared_ptr<Font> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
-		if (!(*i)->id.empty ()) {
+		if ((*i)->id) {
 			id = (*i)->id;
 		}
 		if ((*i)->size != 0) {

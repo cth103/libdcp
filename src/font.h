@@ -47,7 +47,7 @@ public:
 	Font (std::list<boost::shared_ptr<Font> > const & font_nodes);
 
 	std::string text;
-	std::string id;
+	boost::optional<std::string> id;
 	int size;
 	boost::optional<bool> italic;
 	boost::optional<Color> color;
