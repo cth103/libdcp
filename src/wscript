@@ -85,6 +85,7 @@ def build(bld):
               exceptions.h
               gamma_lut.h
               image.h
+              interop_subtitle_content.h
               key.h
               local_time.h
               lut_cache.h
@@ -109,6 +110,7 @@ def build(bld):
               ref.h
               argb_frame.h
               signer.h
+              smpte_subtitle_content.h
               sound_frame.h
               sound_mxf.h
               sound_mxf_writer.h
