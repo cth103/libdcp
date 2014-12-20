@@ -30,10 +30,14 @@ class InteropLoadFont
 {
 public:
 	InteropLoadFont () {}
+	InteropLoadFont (std::string id, std::string uri);
 	InteropLoadFont (boost::shared_ptr<const cxml::Node> node);
 
 	std::string id;
 	std::string uri;
 };
+
+bool operator== (InteropLoadFont const & a, InteropLoadFont const & b);
+bool operator!= (InteropLoadFont const & a, InteropLoadFont const & b);
 
 }

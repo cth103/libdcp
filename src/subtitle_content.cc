@@ -38,6 +38,8 @@ using std::stringstream;
 using std::cout;
 using boost::shared_ptr;
 using boost::optional;
+using boost::function;
+using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 SubtitleContent::SubtitleContent (boost::filesystem::path file)
@@ -183,4 +185,34 @@ SubtitleContent::latest_subtitle_out () const
 	}
 
 	return t;
+}
+
+bool
+SubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, function<void (NoteType, std::string)> note) const
+{
+	if (!Asset::equals (other_asset, options, note)) {
+		return false;
+	}
+	
+	shared_ptr<const SubtitleContent> other = dynamic_pointer_cast<const SubtitleContent> (other_asset);
+	if (!other) {
+		return false;
+	}
+
+	if (_reel_number != other->_reel_number) {
+		note (DCP_ERROR, "subtitle reel numbers differ");
+		return false;
+	}
+
+	if (_language != other->_language) {
+		note (DCP_ERROR, "subtitle languages differ");
+		return false;
+	}
+
+	if (_subtitles != other->_subtitles) {
+		note (DCP_ERROR, "subtitles differ");
+		return false;
+	}
+
+	return true;
 }

@@ -25,6 +25,13 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
+InteropLoadFont::InteropLoadFont (string id_, string uri_)
+	: id (id_)
+	, uri (uri_)
+{
+
+}
+
 InteropLoadFont::InteropLoadFont (shared_ptr<const cxml::Node> node)
 {
 	optional<string> x = node->optional_string_attribute ("Id");
@@ -34,4 +41,16 @@ InteropLoadFont::InteropLoadFont (shared_ptr<const cxml::Node> node)
 	id = x.get_value_or ("");
 	
 	uri = node->string_attribute ("URI");
+}
+
+bool
+dcp::operator== (InteropLoadFont const & a, InteropLoadFont const & b)
+{
+	return a.id == b.id && a.uri == b.uri;
+}
+
+bool
+dcp::operator!= (InteropLoadFont const & a, InteropLoadFont const & b)
+{
+	return !(a == b);
 }

@@ -30,9 +30,17 @@ public:
 	InteropSubtitleContent (std::string movie_title, std::string language);
 	InteropSubtitleContent (boost::filesystem::path file);
 
+	bool equals (
+		boost::shared_ptr<const Asset>,
+		EqualityOptions,
+		boost::function<void (NoteType, std::string)> note
+		) const;
+
 	std::list<boost::shared_ptr<InteropLoadFont> > load_font_nodes () const {
 		return _load_font_nodes;
 	}
+
+	void add_font (std::string id, std::string uri);
 	
 	Glib::ustring xml_as_string () const;
 

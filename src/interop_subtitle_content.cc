@@ -26,7 +26,9 @@
 using std::list;
 using std::string;
 using boost::shared_ptr;
+using boost::function;
 using boost::optional;
+using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 InteropSubtitleContent::InteropSubtitleContent (boost::filesystem::path file)
@@ -165,3 +167,46 @@ InteropSubtitleContent::xml_as_string () const
 	return doc.write_to_string_formatted ("UTF-8");
 }
 
+void
+InteropSubtitleContent::add_font (string id, string uri)
+{
+	_load_font_nodes.push_back (shared_ptr<InteropLoadFont> (new InteropLoadFont (id, uri)));
+}
+
+bool
+InteropSubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, function<void (NoteType, std::string)> note) const
+{
+	if (!SubtitleContent::equals (other_asset, options, note)) {
+		return false;
+	}
+	
+	shared_ptr<const InteropSubtitleContent> other = dynamic_pointer_cast<const InteropSubtitleContent> (other_asset);
+	if (!other) {
+		return false;
+	}
+
+	list<shared_ptr<InteropLoadFont> >::const_iterator i = _load_font_nodes.begin ();
+	list<shared_ptr<InteropLoadFont> >::const_iterator j = other->_load_font_nodes.begin ();
+
+	while (i != _load_font_nodes.end ()) {
+		if (j == _load_font_nodes.end ()) {
+			note (DCP_ERROR, "<LoadFont> nodes differ");
+			return false;
+		}
+
+		if (**i != **j) {
+			note (DCP_ERROR, "<LoadFont> nodes differ");
+			return false;
+		}
+
+		++i;
+		++j;
+	}
+
+	if (_movie_title != other->_movie_title) {
+		note (DCP_ERROR, "Subtitle movie titles differ");
+		return false;
+	}
+
+	return true;
+}

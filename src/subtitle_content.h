@@ -46,11 +46,7 @@ public:
 		boost::shared_ptr<const Asset>,
 		EqualityOptions,
 		boost::function<void (NoteType, std::string)> note
-		) const {
-		/* XXX */
-		note (DCP_ERROR, "subtitle content not compared yet");
-		return true;
-	}
+		) const;
 
 	std::string language () const {
 		return _language;
