@@ -39,7 +39,7 @@ class Subtitle;
 class SubtitleContent : public Content
 {
 public:
-	SubtitleContent () {}
+	SubtitleContent ();
 	SubtitleContent (boost::filesystem::path file);
 
 	bool equals (

@@ -42,6 +42,12 @@ using boost::function;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
+SubtitleContent::SubtitleContent ()
+	: _reel_number ("1")
+{
+
+}
+
 SubtitleContent::SubtitleContent (boost::filesystem::path file)
 	: Content (file)
 	, _reel_number ("1")
