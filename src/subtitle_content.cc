@@ -44,6 +44,7 @@ using namespace dcp;
 
 SubtitleContent::SubtitleContent (boost::filesystem::path file)
 	: Content (file)
+	, _reel_number ("1")
 {
 
 }
