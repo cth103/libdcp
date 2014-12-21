@@ -46,6 +46,10 @@ Text::Text (boost::shared_ptr<const cxml::Node> node)
 	v_position = x.get ();
 	
 	optional<string> v = node->optional_string_attribute ("VAlign");
+	if (!v) {
+		v = node->optional_string_attribute ("Valign");
+	}
+	
 	if (v) {
 		v_align = string_to_valign (v.get ());
 	}
