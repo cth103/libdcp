@@ -52,7 +52,7 @@ public:
 		return _language;
 	}
 
-	std::list<SubtitleString> subtitles_at (Time t) const;
+	std::list<SubtitleString> subtitles_during (Time from, Time to) const;
 	std::list<SubtitleString> const & subtitles () const {
 		return _subtitles;
 	}

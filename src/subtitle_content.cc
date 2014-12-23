@@ -148,11 +148,11 @@ SubtitleContent::maybe_add_subtitle (string text, ParseState const & parse_state
 }
 
 list<SubtitleString>
-SubtitleContent::subtitles_at (Time t) const
+SubtitleContent::subtitles_during (Time from, Time to) const
 {
 	list<SubtitleString> s;
 	for (list<SubtitleString>::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
-		if (i->in() <= t && t <= i->out ()) {
+		if (i->out() >= from && i->in() <= to) {
 			s.push_back (*i);
 		}
 	}

@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 
 	BOOST_CHECK_EQUAL (subs.language(), "French");
 
-	list<dcp::SubtitleString> s = subs.subtitles_at (dcp::Time (0, 0, 6, 1));
+	list<dcp::SubtitleString> s = subs.subtitles_during (dcp::Time (0, 0, 6, 1), dcp::Time (0, 0, 6, 2));
 	BOOST_CHECK_EQUAL (s.size(), 1);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
 				   string ("theFontId"),
@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 				   dcp::Time (0, 0, 0, 1)
 				   ));
 							 
-	s = subs.subtitles_at (dcp::Time (0, 0, 7, 190));
+	s = subs.subtitles_during (dcp::Time (0, 0, 7, 190), dcp::Time (0, 0, 7, 191));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
 				   string ("theFontId"),
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 				   dcp::Time (0, 0, 0, 1)
 				   ));
 
-	s = subs.subtitles_at (dcp::Time (0, 0, 11, 95));
+	s = subs.subtitles_during (dcp::Time (0, 0, 11, 95), dcp::Time (0, 0, 11, 96));
 	BOOST_CHECK_EQUAL (s.size(), 1);
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFontId"),
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 				   dcp::Time (0, 0, 0, 1)
 				   ));
 
-	s = subs.subtitles_at (dcp::Time (0, 0, 14, 42));
+	s = subs.subtitles_during (dcp::Time (0, 0, 14, 42), dcp::Time (0, 0, 14, 43));
 	BOOST_CHECK_EQUAL (s.size(), 1);
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFontId"),
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 {
 	dcp::InteropSubtitleContent subs ("test/data/subs2.xml");
 
-	list<dcp::SubtitleString> s = subs.subtitles_at (dcp::Time (0, 0, 42, 100));
+	list<dcp::SubtitleString> s = subs.subtitles_during (dcp::Time (0, 0, 42, 100), dcp::Time (0, 0, 42, 101));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
 				   string ("theFont"),
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (dcp::Time (0, 0, 50, 50));
+	s = subs.subtitles_during (dcp::Time (0, 0, 50, 50), dcp::Time (0, 0, 50, 51));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
 				   string ("theFont"),
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (dcp::Time (0, 1, 2, 300));
+	s = subs.subtitles_during (dcp::Time (0, 1, 2, 300), dcp::Time (0, 1, 2, 301));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
 				   string ("theFont"),
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (dcp::Time (0, 1, 15, 50));
+	s = subs.subtitles_during (dcp::Time (0, 1, 15, 50), dcp::Time (0, 1, 15, 51));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
 				   string ("theFont"),
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (dcp::Time (0, 1, 27, 200));
+	s = subs.subtitles_during (dcp::Time (0, 1, 27, 200), dcp::Time (0, 1, 27, 201));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
 				   string ("theFont"),
@@ -290,7 +290,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (dcp::Time (0, 1, 42, 300));
+	s = subs.subtitles_during (dcp::Time (0, 1, 42, 300), dcp::Time (0, 1, 42, 301));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
 				   string ("theFont"),
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (dcp::Time (0, 1, 45, 200));
+	s = subs.subtitles_during (dcp::Time (0, 1, 45, 200), dcp::Time (0, 1, 45, 201));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
 				   string ("theFont"),
@@ -356,7 +356,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (dcp::Time (0, 1, 47, 249));
+	s = subs.subtitles_during (dcp::Time (0, 1, 47, 249), dcp::Time (0, 1, 47, 250));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
 				   string ("theFont"),
@@ -389,7 +389,7 @@ BOOST_AUTO_TEST_CASE (subtitles2)
 				   dcp::Time (0, 0, 0, 0)
 				   ));
 
-	s = subs.subtitles_at (dcp::Time (0, 2, 6, 210));
+	s = subs.subtitles_during (dcp::Time (0, 2, 6, 210), dcp::Time (0, 2, 6, 211));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (
 				   string ("theFont"),
