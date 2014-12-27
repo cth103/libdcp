@@ -20,9 +20,10 @@
 #include "rgb_xyz.h"
 #include "argb_frame.h"
 #include "xyz_frame.h"
-#include "gamma_lut.h"
 #include "image.h"
 #include "colour_matrix.h"
+#include "colour_conversion.h"
+#include "transfer_function.h"
 #include <cmath>
 
 using std::min;
@@ -34,18 +35,15 @@ using namespace dcp;
 
 /** Convert an openjpeg XYZ image to RGBA.
  *  @param xyz_frame Frame in XYZ.
- *  @param lut_in Input Gamma LUT to use.
- *  @param lut_out Output Gamma LUT to use.
  *  @return RGB image.
  */
 shared_ptr<ARGBFrame>
 dcp::xyz_to_rgba (
 	boost::shared_ptr<const XYZFrame> xyz_frame,
-	boost::shared_ptr<const GammaLUT> lut_in,
-	boost::shared_ptr<const GammaLUT> lut_out
+	ColourConversion const & conversion
 	)
 {
-	int const max_colour = pow (2, lut_out->bit_depth()) - 1;
+	int const max_colour = pow (2, 12) - 1;
 
 	struct {
 		double x, y, z;
@@ -60,9 +58,12 @@ dcp::xyz_to_rgba (
 	int* xyz_z = xyz_frame->data (2);
 
 	shared_ptr<ARGBFrame> argb_frame (new ARGBFrame (xyz_frame->size ()));
-
 	uint8_t* argb = argb_frame->data ();
 	
+	float const * lut_in = conversion.in()->lut (16);
+	float const * lut_out = conversion.out()->lut (12);
+	boost::numeric::ublas::matrix<double> matrix = conversion.matrix ();
+
 	for (int y = 0; y < xyz_frame->size().height; ++y) {
 		uint8_t* argb_line = argb;
 		for (int x = 0; x < xyz_frame->size().width; ++x) {
@@ -70,9 +71,9 @@ dcp::xyz_to_rgba (
 			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
 			
 			/* In gamma LUT */
-			s.x = lut_in->lut()[*xyz_x++];
-			s.y = lut_in->lut()[*xyz_y++];
-			s.z = lut_in->lut()[*xyz_z++];
+			s.x = lut_in[*xyz_x++];
+			s.y = lut_in[*xyz_y++];
+			s.z = lut_in[*xyz_z++];
 
 			/* DCI companding */
 			s.x /= DCI_COEFFICIENT;
@@ -80,9 +81,9 @@ dcp::xyz_to_rgba (
 			s.z /= DCI_COEFFICIENT;
 
 			/* XYZ to RGB */
-			d.r = ((s.x * colour_matrix::xyz_to_rgb[0][0]) + (s.y * colour_matrix::xyz_to_rgb[0][1]) + (s.z * colour_matrix::xyz_to_rgb[0][2]));
-			d.g = ((s.x * colour_matrix::xyz_to_rgb[1][0]) + (s.y * colour_matrix::xyz_to_rgb[1][1]) + (s.z * colour_matrix::xyz_to_rgb[1][2]));
-			d.b = ((s.x * colour_matrix::xyz_to_rgb[2][0]) + (s.y * colour_matrix::xyz_to_rgb[2][1]) + (s.z * colour_matrix::xyz_to_rgb[2][2]));
+			d.r = ((s.x * matrix(0, 0)) + (s.y * matrix(0, 1)) + (s.z * matrix(0, 2)));
+			d.g = ((s.x * matrix(1, 0)) + (s.y * matrix(1, 1)) + (s.z * matrix(1, 2)));
+			d.b = ((s.x * matrix(2, 0)) + (s.y * matrix(2, 1)) + (s.z * matrix(2, 2)));
 			
 			d.r = min (d.r, 1.0);
 			d.r = max (d.r, 0.0);
@@ -94,9 +95,9 @@ dcp::xyz_to_rgba (
 			d.b = max (d.b, 0.0);
 			
 			/* Out gamma LUT */
-			*argb_line++ = lut_out->lut()[(int) (d.b * max_colour)] * 0xff;
-			*argb_line++ = lut_out->lut()[(int) (d.g * max_colour)] * 0xff;
-			*argb_line++ = lut_out->lut()[(int) (d.r * max_colour)] * 0xff;
+			*argb_line++ = lut_out[(int) (d.b * max_colour)] * 0xff;
+			*argb_line++ = lut_out[(int) (d.g * max_colour)] * 0xff;
+			*argb_line++ = lut_out[(int) (d.r * max_colour)] * 0xff;
 			*argb_line++ = 0xff;
 		}
 		
@@ -117,12 +118,11 @@ dcp::xyz_to_rgba (
 void
 dcp::xyz_to_rgb (
 	boost::shared_ptr<const XYZFrame> xyz_frame,
-	boost::shared_ptr<const GammaLUT> lut_in,
-	boost::shared_ptr<const GammaLUT> lut_out,
+	ColourConversion const & conversion,
 	uint8_t* buffer
 	)
 {
-	int const max_colour = pow (2, lut_out->bit_depth()) - 1;
+	int const max_colour = pow (2, 12) - 1;
 
 	struct {
 		double x, y, z;
@@ -136,6 +136,10 @@ dcp::xyz_to_rgb (
 	int* xyz_y = xyz_frame->data (1);
 	int* xyz_z = xyz_frame->data (2);
 
+	float const * lut_in = conversion.in()->lut (16);
+	float const * lut_out = conversion.out()->lut (12);
+	boost::numeric::ublas::matrix<double> matrix = conversion.matrix ();
+	
 	for (int y = 0; y < xyz_frame->size().height; ++y) {
 		uint8_t* buffer_line = buffer;
 		for (int x = 0; x < xyz_frame->size().width; ++x) {
@@ -143,9 +147,9 @@ dcp::xyz_to_rgb (
 			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
 			
 			/* In gamma LUT */
-			s.x = lut_in->lut()[*xyz_x++];
-			s.y = lut_in->lut()[*xyz_y++];
-			s.z = lut_in->lut()[*xyz_z++];
+			s.x = lut_in[*xyz_x++];
+			s.y = lut_in[*xyz_y++];
+			s.z = lut_in[*xyz_z++];
 
 			/* DCI companding */
 			s.x /= DCI_COEFFICIENT;
@@ -153,9 +157,9 @@ dcp::xyz_to_rgb (
 			s.z /= DCI_COEFFICIENT;
 
 			/* XYZ to RGB */
-			d.r = ((s.x * colour_matrix::xyz_to_rgb[0][0]) + (s.y * colour_matrix::xyz_to_rgb[0][1]) + (s.z * colour_matrix::xyz_to_rgb[0][2]));
-			d.g = ((s.x * colour_matrix::xyz_to_rgb[1][0]) + (s.y * colour_matrix::xyz_to_rgb[1][1]) + (s.z * colour_matrix::xyz_to_rgb[1][2]));
-			d.b = ((s.x * colour_matrix::xyz_to_rgb[2][0]) + (s.y * colour_matrix::xyz_to_rgb[2][1]) + (s.z * colour_matrix::xyz_to_rgb[2][2]));
+			d.r = ((s.x * matrix(0, 0)) + (s.y * matrix(0, 1)) + (s.z * matrix(0, 2)));
+			d.g = ((s.x * matrix(1, 0)) + (s.y * matrix(1, 1)) + (s.z * matrix(1, 2)));
+			d.b = ((s.x * matrix(2, 0)) + (s.y * matrix(2, 1)) + (s.z * matrix(2, 2)));
 			
 			d.r = min (d.r, 1.0);
 			d.r = max (d.r, 0.0);
@@ -167,9 +171,9 @@ dcp::xyz_to_rgb (
 			d.b = max (d.b, 0.0);
 			
 			/* Out gamma LUT */
-			*buffer_line++ = lut_out->lut()[(int) (d.r * max_colour)] * 0xff;
-			*buffer_line++ = lut_out->lut()[(int) (d.g * max_colour)] * 0xff;
-			*buffer_line++ = lut_out->lut()[(int) (d.b * max_colour)] * 0xff;
+			*buffer_line++ = lut_out[(int) (d.r * max_colour)] * 0xff;
+			*buffer_line++ = lut_out[(int) (d.g * max_colour)] * 0xff;
+			*buffer_line++ = lut_out[(int) (d.b * max_colour)] * 0xff;
 		}
 		
 		buffer += xyz_frame->size().width * 3;
@@ -182,14 +186,9 @@ dcp::xyz_to_rgb (
 shared_ptr<dcp::XYZFrame>
 dcp::rgb_to_xyz (
 	boost::shared_ptr<const Image> rgb,
-	boost::shared_ptr<const GammaLUT> lut_in,
-	boost::shared_ptr<const GammaLUT> lut_out,
-	double const colour_matrix[3][3]
+	ColourConversion const & conversion
 	)
 {
-	assert (lut_in->bit_depth() == 12);
-	assert (lut_out->bit_depth() == 16);
-	
 	shared_ptr<XYZFrame> xyz (new XYZFrame (rgb->size ()));
 
 	struct {
@@ -200,28 +199,24 @@ dcp::rgb_to_xyz (
 		double x, y, z;
 	} d;
 
+	float const * lut_in = conversion.in()->lut (12);
+	float const * lut_out = conversion.out()->lut (16);
+	boost::numeric::ublas::matrix<double> matrix = conversion.matrix ();
+
 	int jn = 0;
 	for (int y = 0; y < rgb->size().height; ++y) {
 		uint16_t* p = reinterpret_cast<uint16_t *> (rgb->data()[0] + y * rgb->stride()[0]);
 		for (int x = 0; x < rgb->size().width; ++x) {
 
 			/* In gamma LUT (converting 16-bit to 12-bit) */
-			s.r = lut_in->lut()[*p++ >> 4];
-			s.g = lut_in->lut()[*p++ >> 4];
-			s.b = lut_in->lut()[*p++ >> 4];
+			s.r = lut_in[*p++ >> 4];
+			s.g = lut_in[*p++ >> 4];
+			s.b = lut_in[*p++ >> 4];
 			
 			/* RGB to XYZ Matrix */
-			d.x = ((s.r * colour_matrix[0][0]) +
-			       (s.g * colour_matrix[0][1]) +
-			       (s.b * colour_matrix[0][2]));
-			
-			d.y = ((s.r * colour_matrix[1][0]) +
-			       (s.g * colour_matrix[1][1]) +
-			       (s.b * colour_matrix[1][2]));
-			
-			d.z = ((s.r * colour_matrix[2][0]) +
-			       (s.g * colour_matrix[2][1]) +
-			       (s.b * colour_matrix[2][2]));
+			d.x = ((s.r * matrix(0, 0)) + (s.g * matrix(0, 1)) + (s.b * matrix(0, 2)));
+			d.y = ((s.r * matrix(1, 0)) + (s.g * matrix(1, 1)) + (s.b * matrix(1, 2)));
+			d.z = ((s.r * matrix(2, 0)) + (s.g * matrix(2, 1)) + (s.b * matrix(2, 2)));
 			
 			/* DCI companding */
 			d.x = d.x * DCI_COEFFICIENT * 65535;
@@ -233,9 +228,9 @@ dcp::rgb_to_xyz (
 			assert (d.z >= 0 && d.z < 65536);
 			
 			/* Out gamma LUT */
-			xyz->data(0)[jn] = lut_out->lut()[(int) d.x] * 4096;
-			xyz->data(1)[jn] = lut_out->lut()[(int) d.y] * 4096;
-			xyz->data(2)[jn] = lut_out->lut()[(int) d.z] * 4096;
+			xyz->data(0)[jn] = lut_out[(int) d.x] * 4096;
+			xyz->data(1)[jn] = lut_out[(int) d.y] * 4096;
+			xyz->data(2)[jn] = lut_out[(int) d.z] * 4096;
 
 			++jn;
 		}

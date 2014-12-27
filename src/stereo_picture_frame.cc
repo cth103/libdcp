@@ -21,8 +21,8 @@
 #include "exceptions.h"
 #include "argb_frame.h"
 #include "util.h"
-#include "gamma_lut.h"
 #include "rgb_xyz.h"
+#include "colour_conversion.h"
 #include "AS_DCP.h"
 #include "KM_fileio.h"
 #include <openjpeg.h>
@@ -89,7 +89,7 @@ StereoPictureFrame::argb_frame (Eye eye, int reduce, float srgb_gamma) const
 		break;
 	}
 	
-	return xyz_to_rgba (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA, false), GammaLUT::cache.get (12, 1 / srgb_gamma, false));
+	return xyz_to_rgba (xyz_frame, ColourConversion::xyz_to_rgb);
 }
 
 void
@@ -105,7 +105,7 @@ StereoPictureFrame::rgb_frame (Eye eye, uint8_t* buffer) const
 		break;
 	}
 	
-	return xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA, false), GammaLUT::cache.get (12, 1 / 2.4, false), buffer);
+	return xyz_to_rgb (xyz_frame, ColourConversion::xyz_to_rgb, buffer);
 }
 
 uint8_t const *

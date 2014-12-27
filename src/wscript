@@ -6,6 +6,7 @@ def build(bld):
              asset.cc
              certificate_chain.cc
              certificates.cc
+             colour_conversion.cc
              colour_matrix.cc
              content.cc
              cpl.cc
@@ -17,13 +18,14 @@ def build(bld):
              exceptions.cc
              file.cc
              font.cc
-             gamma_lut.cc
+             gamma_transfer_function.cc
              image.cc
              interop_load_font.cc
              interop_subtitle_content.cc
              key.cc
              local_time.cc
              metadata.cc
+             modified_gamma_transfer_function.cc
              mono_picture_mxf.cc
              mono_picture_mxf_writer.cc
              mono_picture_frame.cc
@@ -54,6 +56,7 @@ def build(bld):
              subtitle_content.cc
              subtitle_string.cc
              text.cc
+             transfer_function.cc
              types.cc
              util.cc
              version.cc
@@ -64,6 +67,7 @@ def build(bld):
               asset.h
               certificate_chain.h
               certificates.h
+              colour_conversion.h
               colour_matrix.h
               cpl.h
               content.h
@@ -73,16 +77,16 @@ def build(bld):
               decrypted_kdm_key.h
               encrypted_kdm.h
               exceptions.h
-              gamma_lut.h
+              gamma_transfer_function.h
               image.h
               interop_load_font.h
               interop_subtitle_content.h
               key.h
               local_time.h
-              lut_cache.h
               metadata.h
               mono_picture_mxf.h
               mono_picture_frame.h
+              modified_gamma_transfer_function.h
               mxf.h
               mxf_writer.h
               object.h
@@ -111,6 +115,7 @@ def build(bld):
               subtitle.h
               subtitle_content.h
               subtitle_string.h
+              transfer_function.h
               types.h
               util.h
               version.h

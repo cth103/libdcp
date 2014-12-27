@@ -17,34 +17,31 @@
 
 */
 
-#include "gamma_lut.h"
-#include "lut_cache.h"
-#include <cmath>
+#ifndef LIBDCP_TRANSFER_FUNCTION_H
+#define LIBDCP_TRANSFER_FUNCTION_H
 
-using namespace dcp;
+#include <boost/noncopyable.hpp>
+#include <boost/shared_ptr.hpp>
+#include <map>
 
-LUTCache<GammaLUT> GammaLUT::cache;
+namespace dcp {
 
-GammaLUT::GammaLUT (int bit_depth, float gamma, bool linearised)
-	: _bit_depth (bit_depth)
-	, _gamma (gamma)
-	, _linearised (linearised)
+class TransferFunction : public boost::noncopyable
 {
-	_lut = new float[int(std::pow(2.0f, _bit_depth))];
-	int const bit_length = pow (2, _bit_depth);
+public:
+	virtual ~TransferFunction ();
 
-	if (_linearised) {
-		for (int i = 0; i < bit_length; ++i) {
-			float const p = static_cast<float> (i) / (bit_length - 1);
-			if (p > 0.04045) {
-				_lut[i] = pow ((p + 0.055) / 1.055, gamma);
-			} else {
-				_lut[i] = p / 12.92;
-			}
-		}
-	} else {
-		for (int i = 0; i < bit_length; ++i) {
-			_lut[i] = pow(float(i) / (bit_length - 1), gamma);
-		}
-	}
+	float const * lut (int bit_depth) const;
+
+	virtual bool about_equal (boost::shared_ptr<const TransferFunction> other, float epsilon) const = 0;
+
+protected:
+	virtual float * make_lut (int bit_depth) const = 0;
+
+private:	
+	mutable std::map<int, float*> _luts;
+};
+
 }
+
+#endif

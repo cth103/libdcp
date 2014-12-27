@@ -24,9 +24,9 @@
 #include "mono_picture_frame.h"
 #include "exceptions.h"
 #include "argb_frame.h"
-#include "gamma_lut.h"
 #include "util.h"
 #include "rgb_xyz.h"
+#include "colour_conversion.h"
 #include "KM_fileio.h"
 #include "AS_DCP.h"
 #include <openjpeg.h>
@@ -123,7 +123,7 @@ MonoPictureFrame::argb_frame (int reduce, float srgb_gamma) const
 {
 	return xyz_to_rgba (
 		decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce),
-		GammaLUT::cache.get (12, DCI_GAMMA, false), GammaLUT::cache.get (12, 1 / srgb_gamma, false)
+		ColourConversion::xyz_to_rgb
 		);
 }
 
@@ -132,7 +132,7 @@ MonoPictureFrame::rgb_frame (uint8_t* buffer) const
 {
 	xyz_to_rgb (
 		decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), 0),
-		GammaLUT::cache.get (12, DCI_GAMMA, false), GammaLUT::cache.get (12, 1 / 2.4, false),
+		ColourConversion::xyz_to_rgb,
 		buffer
 		);
 }

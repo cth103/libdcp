@@ -26,7 +26,6 @@
 #include "types.h"
 #include "argb_frame.h"
 #include "certificates.h"
-#include "gamma_lut.h"
 #include "xyz_frame.h"
 #include "compose.hpp"
 #include "KM_util.h"

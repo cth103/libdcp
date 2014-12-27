@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,36 +17,30 @@
 
 */
 
-#ifndef LIBDCP_LUT_CACHE_H
-#define LIBDCP_LUT_CACHE_H
+#include "transfer_function.h"
+#include <cmath>
 
-#include <list>
-#include <boost/shared_ptr.hpp>
-#include <boost/noncopyable.hpp>
+using std::pow;
+using std::map;
+using namespace dcp;
 
-namespace dcp {
-
-template<class T>
-class LUTCache : public boost::noncopyable
+TransferFunction::~TransferFunction ()
 {
-public:
-	boost::shared_ptr<T> get (int bit_depth, float gamma, bool linearised)
-	{
-		for (typename std::list<boost::shared_ptr<T> >::iterator i = _cache.begin(); i != _cache.end(); ++i) {
-			if ((*i)->bit_depth() == bit_depth && (*i)->gamma() == gamma) {
-				return *i;
-			}
-		}
-
-		boost::shared_ptr<T> lut (new T (bit_depth, gamma, linearised));
-		_cache.push_back (lut);
-		return lut;
+	for (map<int, float*>::const_iterator i = _luts.begin(); i != _luts.end(); ++i) {
+		delete[] i->second;
 	}
 
-private:
-	std::list<boost::shared_ptr<T> > _cache;
-};
-
+	_luts.clear ();
 }
 
-#endif
+float const *
+TransferFunction::lut (int bit_depth) const
+{
+	map<int, float*>::const_iterator i = _luts.find (bit_depth);
+	if (i != _luts.end ()) {
+		return i->second;
+	}
+
+	_luts[bit_depth] = make_lut (bit_depth);
+	return _luts[bit_depth];
+}

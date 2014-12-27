@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,19 +17,26 @@
 
 */
 
-#include <boost/shared_ptr.hpp>
-#include <stdint.h>
+#include "transfer_function.h"
 
 namespace dcp {
 
-class ARGBFrame;	
-class XYZFrame;
-class Image;
-class ColourConversion;
-	
-extern boost::shared_ptr<ARGBFrame> xyz_to_rgba (boost::shared_ptr<const XYZFrame>, ColourConversion const & conversion);
-extern void xyz_to_rgb (boost::shared_ptr<const XYZFrame>, ColourConversion const & conversion, uint8_t* buffer);
-extern boost::shared_ptr<XYZFrame> rgb_to_xyz (boost::shared_ptr<const Image>, ColourConversion const & conversion);
-extern boost::shared_ptr<XYZFrame> xyz_to_xyz (boost::shared_ptr<const Image>);
-	
+class GammaTransferFunction : public TransferFunction
+{
+public:
+	GammaTransferFunction (float gamma);
+
+	float gamma () const {
+		return _gamma;
+	}
+
+	bool about_equal (boost::shared_ptr<const TransferFunction> other, float epsilon) const;
+
+protected:
+	float * make_lut (int bit_depth) const;
+
+private:
+	float _gamma;
+};
+
 }

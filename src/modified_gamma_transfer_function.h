@@ -17,47 +17,46 @@
 
 */
 
-#ifndef LIBDCP_GAMMA_LUT_H
-#define LIBDCP_GAMMA_LUT_H
-
-#include "lut_cache.h"
+#include "transfer_function.h"
 
 namespace dcp {
 
-class GammaLUT
+/** A transfer function which for an input x gives an output y where
+ *
+ *  y = x / B                      for x <= threshold
+ *  y = ((x + A) / (1 + A))^power  for x >  threshold
+ */
+class ModifiedGammaTransferFunction : public TransferFunction
 {
 public:
-	GammaLUT (int bit_depth, float gamma, bool linearised);
+	ModifiedGammaTransferFunction (float power, float threshold, float A, float B);
 
-	~GammaLUT () {
-		delete[] _lut;
+	float power () const {
+		return _power;
 	}
+
+	float threshold () const {
+		return _threshold;
+	}
+
+	float A () const {
+		return _A;
+	}
+
+	float B () const {
+		return _B;
+	}
+
+	bool about_equal (boost::shared_ptr<const TransferFunction>, float epsilon) const;
 	
-	float const * lut () const {
-		return _lut;
-	}
-
-	int bit_depth () const {
-		return _bit_depth;
-	}
-
-	float gamma () const {
-		return _gamma;
-	}
-
-	bool linearised () const {
-		return _linearised;
-	}
-
-	static LUTCache<GammaLUT> cache;
+protected:
+	float * make_lut (int bit_depth) const;
 	
 private:
-	float* _lut;
-	int _bit_depth;
-	float _gamma;
-	bool _linearised;
+	float _power;
+	float _threshold;
+	float _A;
+	float _B;
 };
 
 }
-
-#endif

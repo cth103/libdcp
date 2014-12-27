@@ -28,6 +28,7 @@ def build(bld):
                  argb_frame_test.cc
                  certificates_test.cc
                  colour_test.cc
+                 colour_conversion_test.cc
                  cpl_sar_test.cc
                  dcp_test.cc
                  dcp_time_test.cc
