@@ -82,7 +82,7 @@ Colour::Colour (int r_, int g_, int b_)
 Colour::Colour (string argb_hex)
 {
 	int alpha;
-	if (sscanf (argb_hex.c_str(), "%2x%2x%2x%2x", &alpha, &r, &g, &b) < 4) {
+	if (sscanf (argb_hex.c_str(), "%2x%2x%2x%2x", &alpha, &r, &g, &b) != 4) {
 		boost::throw_exception (XMLError ("could not parse colour string"));
 	}
 }

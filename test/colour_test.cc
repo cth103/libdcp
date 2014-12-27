@@ -17,13 +17,22 @@
 
 */
 
+#include "util.h"
+#include "exceptions.h"
 #include <boost/test/unit_test.hpp>
 
-#include "util.h"
+using std::stringstream;
 
 /* Check that dcp::Colour works */
 BOOST_AUTO_TEST_CASE (colour)
 {
+	dcp::Colour z;
+
+	BOOST_CHECK_EQUAL (z.r, 0);
+	BOOST_CHECK_EQUAL (z.g, 0);
+	BOOST_CHECK_EQUAL (z.b, 0);
+	BOOST_CHECK_EQUAL (z.to_argb_string(), "FF000000");
+	
 	dcp::Colour c ("FFFF0000");
 
 	BOOST_CHECK_EQUAL (c.r, 255);
@@ -31,17 +40,25 @@ BOOST_AUTO_TEST_CASE (colour)
 	BOOST_CHECK_EQUAL (c.b, 0);
 	BOOST_CHECK_EQUAL (c.to_argb_string(), "FFFF0000");
 
-	c = dcp::Colour ("FF00FF00");
+	dcp::Colour d = dcp::Colour ("FF00FF00");
 
-	BOOST_CHECK_EQUAL (c.r, 0);
-	BOOST_CHECK_EQUAL (c.g, 255);
-	BOOST_CHECK_EQUAL (c.b, 0);
-	BOOST_CHECK_EQUAL (c.to_argb_string(), "FF00FF00");
+	BOOST_CHECK_EQUAL (d.r, 0);
+	BOOST_CHECK_EQUAL (d.g, 255);
+	BOOST_CHECK_EQUAL (d.b, 0);
+	BOOST_CHECK_EQUAL (d.to_argb_string(), "FF00FF00");
 
-	c = dcp::Colour ("FF0000FF");
+	dcp::Colour e = dcp::Colour ("FF0000FF");
 
-	BOOST_CHECK_EQUAL (c.r, 0);
-	BOOST_CHECK_EQUAL (c.g, 0);
-	BOOST_CHECK_EQUAL (c.b, 255);
-	BOOST_CHECK_EQUAL (c.to_argb_string(), "FF0000FF");
+	BOOST_CHECK_EQUAL (e.r, 0);
+	BOOST_CHECK_EQUAL (e.g, 0);
+	BOOST_CHECK_EQUAL (e.b, 255);
+	BOOST_CHECK_EQUAL (e.to_argb_string(), "FF0000FF");
+
+	BOOST_CHECK (c != d);
+
+	BOOST_CHECK_THROW (dcp::Colour ("001234"), dcp::XMLError);
+
+	stringstream s;
+	s << c;
+	BOOST_CHECK_EQUAL (s.str(), "(255, 0, 0)");
 }
