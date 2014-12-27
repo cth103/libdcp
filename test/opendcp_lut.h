@@ -49,7 +49,7 @@ enum LUT_OUT_ENUM {
     LO_MAX
 };
 
-extern float color_matrix[3][3][3];
+extern float colour_matrix[3][3][3];
 extern float lut_in[LI_MAX][4095+1];
 extern int lut_out[1][DCI_LUT_SIZE];
 

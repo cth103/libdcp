@@ -55,8 +55,8 @@ dcp::operator!= (Fraction const & a, Fraction const & b)
 	return (a.numerator != b.numerator || a.denominator != b.denominator);
 }
 
-/** Construct a Color, initialising it to black. */
-Color::Color ()
+/** Construct a Colour, initialising it to black. */
+Colour::Colour ()
 	: r (0)
 	, g (0)
 	, b (0)
@@ -64,10 +64,10 @@ Color::Color ()
 
 }
 
-/** Construct a Color from R, G and B.  The values run between
+/** Construct a Colour from R, G and B.  The values run between
  *  0 and 255.
  */
-Color::Color (int r_, int g_, int b_)
+Colour::Colour (int r_, int g_, int b_)
 	: r (r_)
 	, g (g_)
 	, b (b_)
@@ -75,11 +75,11 @@ Color::Color (int r_, int g_, int b_)
 
 }
 
-/** Construct a Color from an ARGB hex string; the alpha value is ignored.
+/** Construct a Colour from an ARGB hex string; the alpha value is ignored.
  *  @param argb_hex A string of the form AARRGGBB, where e.g. RR is a two-character
  *  hex value.
  */
-Color::Color (string argb_hex)
+Colour::Colour (string argb_hex)
 {
 	int alpha;
 	if (sscanf (argb_hex.c_str(), "%2x%2x%2x%2x", &alpha, &r, &g, &b) < 4) {
@@ -91,7 +91,7 @@ Color::Color (string argb_hex)
  *  hex value.  The alpha value will always be FF (ie 255; maximum alpha).
  */
 string
-Color::to_argb_string () const
+Colour::to_argb_string () const
 {
 	stringstream s;
 	s << "FF";
@@ -105,28 +105,28 @@ Color::to_argb_string () const
 	return t;
 }
 
-/** operator== for Colors.
- *  @param a First color to compare.
- *  @param b Second color to compare.
+/** operator== for Colours.
+ *  @param a First colour to compare.
+ *  @param b Second colour to compare.
  */
 bool
-dcp::operator== (Color const & a, Color const & b)
+dcp::operator== (Colour const & a, Colour const & b)
 {
 	return (a.r == b.r && a.g == b.g && a.b == b.b);
 }
 
-/** operator!= for Colors.
- *  @param a First color to compare.
- *  @param b Second color to compare.
+/** operator!= for Colours.
+ *  @param a First colour to compare.
+ *  @param b Second colour to compare.
  */
 bool
-dcp::operator!= (Color const & a, Color const & b)
+dcp::operator!= (Colour const & a, Colour const & b)
 {
 	return !(a == b);
 }
 
 ostream &
-dcp::operator<< (ostream& s, Color const & c)
+dcp::operator<< (ostream& s, Colour const & c)
 {
 	s << "(" << c.r << ", " << c.g << ", " << c.b << ")";
 	return s;

@@ -132,7 +132,7 @@ SubtitleContent::maybe_add_subtitle (string text, ParseState const & parse_state
 		SubtitleString (
 			effective_font.id,
 			effective_font.italic.get(),
-			effective_font.color.get(),
+			effective_font.colour.get(),
 			effective_font.size,
 			effective_subtitle.in,
 			effective_subtitle.out,
@@ -140,7 +140,7 @@ SubtitleContent::maybe_add_subtitle (string text, ParseState const & parse_state
 			effective_text.v_align,
 			text,
 			effective_font.effect ? effective_font.effect.get() : NONE,
-			effective_font.effect_color.get(),
+			effective_font.effect_colour.get(),
 			effective_subtitle.fade_up_time,
 			effective_subtitle.fade_down_time
 			)

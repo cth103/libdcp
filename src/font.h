@@ -50,9 +50,9 @@ public:
 	boost::optional<std::string> id;
 	int size;
 	boost::optional<bool> italic;
-	boost::optional<Color> color;
+	boost::optional<Colour> colour;
 	boost::optional<Effect> effect;
-	boost::optional<Color> effect_color;
+	boost::optional<Colour> effect_colour;
 	
 	std::list<boost::shared_ptr<Subtitle> > subtitle_nodes;
 	std::list<boost::shared_ptr<Font> > font_nodes;

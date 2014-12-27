@@ -19,7 +19,7 @@
 
 #include "colour_matrix.h"
 
-/* sRGB color matrix for XYZ -> RGB.  This is the same as the one used by the Fraunhofer
+/* sRGB colour matrix for XYZ -> RGB.  This is the same as the one used by the Fraunhofer
    EasyDCP player, I think.
 */
 

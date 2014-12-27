@@ -86,10 +86,10 @@ InteropSubtitleContent::xml_as_string () const
 
 	optional<string> font;
 	bool italic = false;
-	Color color;
+	Colour colour;
 	int size = 0;
 	Effect effect = NONE;
-	Color effect_color;
+	Colour effect_colour;
 	int spot_number = 1;
 	Time last_in;
 	Time last_out;
@@ -109,18 +109,18 @@ InteropSubtitleContent::xml_as_string () const
 		bool const font_changed =
 			font         != i->font()         ||
 			italic       != i->italic()       ||
-			color        != i->color()        ||
+			colour        != i->colour()        ||
 			size         != i->size()         ||
 			effect       != i->effect()       ||
-			effect_color != i->effect_color();
+			effect_colour != i->effect_colour();
 
 		if (font_changed) {
 			font = i->font ();
 			italic = i->italic ();
-			color = i->color ();
+			colour = i->colour ();
 			size = i->size ();
 			effect = i->effect ();
-			effect_color = i->effect_color ();
+			effect_colour = i->effect_colour ();
 		}
 
 		if (!font_element || font_changed) {
@@ -129,10 +129,10 @@ InteropSubtitleContent::xml_as_string () const
 				font_element->set_attribute ("Id", font.get ());
 			}
 			font_element->set_attribute ("Italic", italic ? "yes" : "no");
-			font_element->set_attribute ("Color", color.to_argb_string());
+			font_element->set_attribute ("Color", colour.to_argb_string());
 			font_element->set_attribute ("Size", raw_convert<string> (size));
 			font_element->set_attribute ("Effect", effect_to_string (effect));
-			font_element->set_attribute ("EffectColor", effect_color.to_argb_string());
+			font_element->set_attribute ("EffectColor", effect_colour.to_argb_string());
 			font_element->set_attribute ("Script", "normal");
 			font_element->set_attribute ("Underlined", "no");
 			font_element->set_attribute ("Weight", "normal");

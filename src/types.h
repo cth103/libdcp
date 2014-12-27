@@ -164,15 +164,15 @@ enum Formulation {
 	DCI_SPECIFIC
 };
 
-/** @class Color
- *  @brief An RGB color (aka colour).
+/** @class Colour
+ *  @brief An RGB colour.
  */
-class Color
+class Colour
 {
 public:
-	Color ();
-	Color (int r_, int g_, int b_);
-	Color (std::string argb_hex);
+	Colour ();
+	Colour (int r_, int g_, int b_);
+	Colour (std::string argb_hex);
 
 	int r; ///< red component, from 0 to 255
 	int g; ///< green component, from 0 to 255
@@ -181,9 +181,9 @@ public:
 	std::string to_argb_string () const;
 };
 
-extern bool operator== (Color const & a, Color const & b);
-extern bool operator!= (Color const & a, Color const & b);
-extern std::ostream & operator<< (std::ostream & s, Color const & c);
+extern bool operator== (Colour const & a, Colour const & b);
+extern bool operator!= (Colour const & a, Colour const & b);
+extern std::ostream & operator<< (std::ostream & s, Colour const & c);
 
 typedef std::pair<std::string, boost::shared_ptr<const parse::AssetMap> > PathAssetMap;
 

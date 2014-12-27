@@ -22,7 +22,7 @@ def build(bld):
     obj.use    = 'libdcp%s' % bld.env.API_VERSION
     obj.source = """
                  certificates_test.cc
-                 color_test.cc
+                 colour_test.cc
                  cpl_sar_test.cc
                  dcp_test.cc
                  dcp_time_test.cc

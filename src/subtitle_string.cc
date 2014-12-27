@@ -28,7 +28,7 @@ using namespace dcp;
 SubtitleString::SubtitleString (
 	optional<string> font,
 	bool italic,
-	Color color,
+	Colour colour,
 	int size,
 	Time in,
 	Time out,
@@ -36,13 +36,13 @@ SubtitleString::SubtitleString (
 	VAlign v_align,
 	string text,
 	Effect effect,
-	Color effect_color,
+	Colour effect_colour,
 	Time fade_up_time,
 	Time fade_down_time
 	)
 	: _font (font)
 	, _italic (italic)
-	, _color (color)
+	, _colour (colour)
 	, _size (size)
 	, _in (in)
 	, _out (out)
@@ -50,7 +50,7 @@ SubtitleString::SubtitleString (
 	, _v_align (v_align)
 	, _text (text)
 	, _effect (effect)
-	, _effect_color (effect_color)
+	, _effect_colour (effect_colour)
 	, _fade_up_time (fade_up_time)
 	, _fade_down_time (fade_down_time)
 {
@@ -74,7 +74,7 @@ dcp::operator== (SubtitleString const & a, SubtitleString const & b)
 	return (
 		a.font() == b.font() &&
 		a.italic() == b.italic() &&
-		a.color() == b.color() &&
+		a.colour() == b.colour() &&
 		a.size() == b.size() &&
 		a.in() == b.in() &&
 		a.out() == b.out() &&
@@ -82,7 +82,7 @@ dcp::operator== (SubtitleString const & a, SubtitleString const & b)
 		a.v_align() == b.v_align() &&
 		a.text() == b.text() &&
 		a.effect() == b.effect() &&
-		a.effect_color() == b.effect_color() &&
+		a.effect_colour() == b.effect_colour() &&
 		a.fade_up_time() == b.fade_up_time() &&
 		a.fade_down_time() == b.fade_down_time()
 		);
@@ -101,8 +101,8 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 		s << "non-italic";
 	}
 	
-	s << ", size " << sub.size() << ", color " << sub.color() << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align()) << ";\n"
-	  << "effect " << ((int) sub.effect()) << ", effect color " << sub.effect_color();
+	s << ", size " << sub.size() << ", colour " << sub.colour() << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align()) << ";\n"
+	  << "effect " << ((int) sub.effect()) << ", effect colour " << sub.effect_colour();
 
 	return s;
 }

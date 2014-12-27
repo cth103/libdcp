@@ -40,7 +40,7 @@ public:
 	SubtitleString (
 		boost::optional<std::string> font,
 		bool italic,
-		Color color,
+		Colour colour,
 		int size,
 		Time in,
 		Time out,
@@ -48,7 +48,7 @@ public:
 		VAlign v_align,
 		std::string text,
 		Effect effect,
-		Color effect_color,
+		Colour effect_colour,
 		Time fade_up_time,
 		Time fade_down_time
 		);
@@ -62,8 +62,8 @@ public:
 		return _italic;
 	}
 
-	Color color () const {
-		return _color;
+	Colour colour () const {
+		return _colour;
 	}
 
 	Time in () const {
@@ -93,8 +93,8 @@ public:
 		return _effect;
 	}
 
-	Color effect_color () const {
-		return _effect_color;
+	Colour effect_colour () const {
+		return _effect_colour;
 	}
 
 	Time fade_up_time () const {
@@ -128,7 +128,7 @@ private:
 	/** true if the text is italic */
 	bool _italic;
 	/** text colour */
-	Color _color;
+	Colour _colour;
 	/** Size in points as if the screen height is 11 inches, so a 72pt font
 	 *  would be 1/11th of the screen height.
 	 */ 
@@ -142,7 +142,7 @@ private:
 	VAlign _v_align;
 	std::string _text;
 	Effect _effect;
-	Color _effect_color;
+	Colour _effect_colour;
 	Time _fade_up_time;
 	Time _fade_down_time;
 };

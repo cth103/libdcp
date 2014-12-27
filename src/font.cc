@@ -39,7 +39,7 @@ Font::Font (boost::shared_ptr<const cxml::Node> node)
 	italic = node->optional_bool_attribute ("Italic");
 	optional<string> c = node->optional_string_attribute ("Color");
 	if (c) {
-		color = Color (c.get ());
+		colour = Colour (c.get ());
 	}
 	optional<string> const e = node->optional_string_attribute ("Effect");
 	if (e) {
@@ -47,7 +47,7 @@ Font::Font (boost::shared_ptr<const cxml::Node> node)
 	}
 	c = node->optional_string_attribute ( "EffectColor");
 	if (c) {
-		effect_color = Color (c.get ());
+		effect_colour = Colour (c.get ());
 	}
 	subtitle_nodes = type_children<Subtitle> (node, "Subtitle");
 	font_nodes = type_children<Font> (node, "Font");
@@ -57,8 +57,8 @@ Font::Font (boost::shared_ptr<const cxml::Node> node)
 Font::Font (std::list<boost::shared_ptr<Font> > const & font_nodes)
 	: size (0)
 	, italic (false)
-	, color ("FFFFFFFF")
-	, effect_color ("FFFFFFFF")
+	, colour ("FFFFFFFF")
+	, effect_colour ("FFFFFFFF")
 {
 	for (list<shared_ptr<Font> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
 		if ((*i)->id) {
@@ -70,14 +70,14 @@ Font::Font (std::list<boost::shared_ptr<Font> > const & font_nodes)
 		if ((*i)->italic) {
 			italic = (*i)->italic.get ();
 		}
-		if ((*i)->color) {
-			color = (*i)->color.get ();
+		if ((*i)->colour) {
+			colour = (*i)->colour.get ();
 		}
 		if ((*i)->effect) {
 			effect = (*i)->effect.get ();
 		}
-		if ((*i)->effect_color) {
-			effect_color = (*i)->effect_color.get ();
+		if ((*i)->effect_colour) {
+			effect_colour = (*i)->effect_colour.get ();
 		}
 	}
 }
