@@ -19,7 +19,11 @@ def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'tests'
     obj.uselib = 'BOOST_TEST OPENJPEG CXML XMLSEC1 SNDFILE'
-    obj.use    = 'libdcp%s' % bld.env.API_VERSION
+    if bld.env.HAVE_GCOV:
+        obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
+        obj.lib = ['gcov']
+    else:
+        obj.use = 'libdcp%s' % bld.env.API_VERSION
     obj.source = """
                  certificates_test.cc
                  colour_test.cc
@@ -28,6 +32,7 @@ def build(bld):
                  dcp_time_test.cc
                  decryption_test.cc
                  encryption_test.cc
+                 fraction_test.cc
                  frame_info_test.cc
                  local_time_test.cc
                  kdm_test.cc

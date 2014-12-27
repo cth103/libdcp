@@ -1,74 +1,64 @@
 from waflib import TaskGen
 
 def build(bld):
-    if bld.env.STATIC:
-        obj = bld(features = 'cxx cxxstlib')
-    else:
-        obj = bld(features = 'cxx cxxshlib')
-
-    obj.name = 'libdcp%s' % bld.env.API_VERSION
-    obj.target = 'dcp%s' % bld.env.API_VERSION
-    obj.export_includes = ['.']
-    obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1'
-    obj.use = 'libkumu-libdcp%s libasdcp-libdcp%s' % (bld.env.API_VERSION, bld.env.API_VERSION)
-    obj.source = """
-                 argb_frame.cc
-                 asset.cc
-                 certificate_chain.cc
-                 certificates.cc
-                 colour_matrix.cc
-                 content.cc
-                 cpl.cc
-                 dcp.cc        
-                 dcp_time.cc
-                 decrypted_kdm.cc
-                 decrypted_kdm_key.cc
-                 encrypted_kdm.cc
-                 exceptions.cc
-                 file.cc
-                 font.cc
-                 gamma_lut.cc
-                 image.cc
-                 interop_load_font.cc
-                 interop_subtitle_content.cc
-                 key.cc
-                 local_time.cc
-                 metadata.cc
-                 mono_picture_mxf.cc
-                 mono_picture_mxf_writer.cc
-                 mono_picture_frame.cc
-                 mxf.cc
-                 mxf_writer.cc
-                 object.cc
-                 picture_mxf.cc
-                 picture_mxf_writer.cc
-                 reel.cc
-                 reel_asset.cc
-                 reel_mono_picture_asset.cc
-                 reel_mxf_asset.cc
-                 reel_picture_asset.cc
-                 reel_sound_asset.cc
-                 reel_stereo_picture_asset.cc
-                 reel_subtitle_asset.cc
-                 rgb_xyz.cc
-                 signer.cc
-                 smpte_load_font.cc
-                 smpte_subtitle_content.cc
-                 sound_mxf.cc
-                 sound_mxf_writer.cc
-                 sound_frame.cc
-                 stereo_picture_mxf.cc
-                 stereo_picture_mxf_writer.cc
-                 stereo_picture_frame.cc
-                 subtitle.cc
-                 subtitle_content.cc
-                 subtitle_string.cc
-                 text.cc
-                 types.cc
-                 util.cc
-                 version.cc
-                 xyz_frame.cc
-                 """
+    source = """
+             argb_frame.cc
+             asset.cc
+             certificate_chain.cc
+             certificates.cc
+             colour_matrix.cc
+             content.cc
+             cpl.cc
+             dcp.cc        
+             dcp_time.cc
+             decrypted_kdm.cc
+             decrypted_kdm_key.cc
+             encrypted_kdm.cc
+             exceptions.cc
+             file.cc
+             font.cc
+             gamma_lut.cc
+             image.cc
+             interop_load_font.cc
+             interop_subtitle_content.cc
+             key.cc
+             local_time.cc
+             metadata.cc
+             mono_picture_mxf.cc
+             mono_picture_mxf_writer.cc
+             mono_picture_frame.cc
+             mxf.cc
+             mxf_writer.cc
+             object.cc
+             picture_mxf.cc
+             picture_mxf_writer.cc
+             reel.cc
+             reel_asset.cc
+             reel_mono_picture_asset.cc
+             reel_mxf_asset.cc
+             reel_picture_asset.cc
+             reel_sound_asset.cc
+             reel_stereo_picture_asset.cc
+             reel_subtitle_asset.cc
+             rgb_xyz.cc
+             signer.cc
+             smpte_load_font.cc
+             smpte_subtitle_content.cc
+             sound_mxf.cc
+             sound_mxf_writer.cc
+             sound_frame.cc
+             stereo_picture_mxf.cc
+             stereo_picture_mxf_writer.cc
+             stereo_picture_frame.cc
+             subtitle.cc
+             subtitle_content.cc
+             subtitle_string.cc
+             text.cc
+             types.cc
+             util.cc
+             version.cc
+             xyz_frame.cc
+             """
 
     headers = """
               asset.h
@@ -126,6 +116,29 @@ def build(bld):
               version.h
               xyz_frame.h
               """
+
+    # Main library
+    if bld.env.STATIC:
+        obj = bld(features='cxx cxxstlib')
+    else:
+        obj = bld(features='cxx cxxshlib')
+    obj.name = 'libdcp%s' % bld.env.API_VERSION
+    obj.target = 'dcp%s' % bld.env.API_VERSION
+    obj.export_includes = ['.']
+    obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1'
+    obj.use = 'libkumu-libdcp%s libasdcp-libdcp%s' % (bld.env.API_VERSION, bld.env.API_VERSION)
+    obj.source = source
+
+    # Library for gcov
+    if bld.is_defined('HAVE_GCOV'):
+        obj = bld(features='cxx cxxstlib')
+        obj.name = 'libdcp%s_gcov' % bld.env.API_VERSION
+        obj.target = 'dcp%s_gcov' % bld.env.API_VERSION
+        obj.export_includes = ['.']
+        obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1'
+        obj.use = 'libkumu-libdcp%s libasdcp-libdcp%s' % (bld.env.API_VERSION, bld.env.API_VERSION)
+        obj.source = source
+        obj.cppflags = ['-fprofile-arcs', '-ftest-coverage']
 
     bld.install_files('${PREFIX}/include/libdcp%s/dcp' % bld.env.API_VERSION, headers)
     if bld.env.STATIC:

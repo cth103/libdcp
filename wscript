@@ -111,6 +111,7 @@ def configure(conf):
 
     if not conf.env.DISABLE_TESTS:
         conf.recurse('test')
+        conf.check(lib='gcov', define_name='HAVE_GCOV', mandatory=False)
     conf.recurse('asdcplib')
 
 def build(bld):
