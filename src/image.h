@@ -38,10 +38,7 @@ public:
 	}
 
 protected:
-	void swap (Image &);
-	
 	Size _size;
-
 };
 
 }
