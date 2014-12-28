@@ -46,7 +46,7 @@ def build(bld):
                  recovery_test.cc
                  round_trip_test.cc
                  smpte_load_font_test.cc
-                 subtitle_tests.cc
+                 subtitle_test.cc
                  test.cc 
                  text_test.cc
                  util_test.cc

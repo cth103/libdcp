@@ -24,7 +24,6 @@ namespace dcp {
 class Image
 {
 public:
-
 	Image (Size);
 	Image (Image const &);
 	Image (boost::shared_ptr<const Image>);
