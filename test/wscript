@@ -35,6 +35,7 @@ def build(bld):
                  decryption_test.cc
                  effect_test.cc
                  encryption_test.cc
+                 exception_test.cc
                  fraction_test.cc
                  frame_info_test.cc
                  interop_load_font_test.cc
