@@ -27,7 +27,7 @@ using boost::shared_ptr;
 /* Read DCP that is in git and make sure that basic stuff is read in correctly */
 BOOST_AUTO_TEST_CASE (read_dcp)
 {
-	dcp::DCP d ("test/ref/DCP/foo");
+	dcp::DCP d ("test/ref/DCP/dcp_test1");
 	d.read ();
 
 	list<shared_ptr<dcp::CPL> > cpls = d.cpls ();

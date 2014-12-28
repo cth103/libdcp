@@ -37,7 +37,7 @@
 using std::string;
 using boost::shared_ptr;
 
-/** Test creation of a DCP from very simple inputs */
+/** Test creation of a 2D DCP from very simple inputs */
 BOOST_AUTO_TEST_CASE (dcp_test1)
 {
 	Kumu::libdcp_test = true;
@@ -52,10 +52,10 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 	mxf_meta.product_name = "OpenDCP";
 	mxf_meta.product_version = "0.0.25";
 
-	/* We're making build/test/foo */
-	boost::filesystem::remove_all ("build/test/DCP/foo");
-	boost::filesystem::create_directories ("build/test/DCP/foo");
-	dcp::DCP d ("build/test/DCP/foo");
+	/* We're making build/test/DCP/dcp_test1 */
+	boost::filesystem::remove_all ("build/test/DCP/dcp_test1");
+	boost::filesystem::create_directories ("build/test/DCP/dcp_test1");
+	dcp::DCP d ("build/test/DCP/dcp_test1");
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
 	cpl->set_content_version_id ("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
 	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 
 	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
 	mp->set_metadata (mxf_meta);
-	shared_ptr<dcp::PictureMXFWriter> picture_writer = mp->start_write ("build/test/DCP/foo/video.mxf", dcp::SMPTE, false);
+	shared_ptr<dcp::PictureMXFWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test1/video.mxf", dcp::SMPTE, false);
 	dcp::File j2c ("test/data/32x32_red_square.j2c");
 	for (int i = 0; i < 24; ++i) {
 		picture_writer->write (j2c.data (), j2c.size ());
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 
 	shared_ptr<dcp::SoundMXF> ms (new dcp::SoundMXF (dcp::Fraction (24, 1), 48000, 1));
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundMXFWriter> sound_writer = ms->start_write ("build/test/DCP/foo/audio.mxf", dcp::SMPTE);
+	shared_ptr<dcp::SoundMXFWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test1/audio.mxf", dcp::SMPTE);
 
 	SF_INFO info;
 	info.format = 0;
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 
 	d.write_xml (dcp::SMPTE, xml_meta);
 
-	/* build/test/DCP/foo is checked against test/ref/DCP/foo by run-tests.sh */
+	/* build/test/DCP/dcp_test1 is checked against test/ref/DCP/dcp_test1 by run-tests.sh */
 }
 
 static void
@@ -117,9 +117,9 @@ note (dcp::NoteType, string s)
 /** Test comparison of a DCP with itself */
 BOOST_AUTO_TEST_CASE (dcp_test2)
 {
-	dcp::DCP A ("test/ref/DCP/foo");
+	dcp::DCP A ("test/ref/DCP/dcp_test1");
 	A.read ();
-	dcp::DCP B ("test/ref/DCP/foo");
+	dcp::DCP B ("test/ref/DCP/dcp_test1");
 	B.read ();
 	
 	BOOST_CHECK (A.equals (B, dcp::EqualityOptions(), boost::bind (&note, _1, _2)));

@@ -31,7 +31,7 @@ if [ "$?" != "0" ]; then
 fi
 
 # Check the first DCP written by the unit tests
-diff -ur test/ref/DCP/foo $work/DCP/foo
+diff -ur test/ref/DCP/dcp_test1 $work/DCP/dcp_test1
 if [ "$?" != "0" ]; then
     echo "FAIL: files differ"
     exit 1
