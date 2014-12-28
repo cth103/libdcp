@@ -56,15 +56,25 @@ def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'subs_in_out'
     obj.uselib = 'BOOST_TEST OPENJPEG CXML'
-    obj.use    = 'libdcp%s' % bld.env.API_VERSION
+    if bld.env.HAVE_GCOV:
+        obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
+        obj.lib = ['gcov']
+    else:
+        obj.use = 'libdcp%s' % bld.env.API_VERSION
     obj.source = 'subs_in_out.cc'
     obj.target = 'subs_in_out'
     obj.install_path = ''
+    obj.cppflags = ['-fprofile-arcs', '-ftest-coverage', '-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
 
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'rewrite_subs'
     obj.uselib = 'BOOST_TEST OPENJPEG CXML'
-    obj.use    = 'libdcp%s' % bld.env.API_VERSION
+    if bld.env.HAVE_GCOV:
+        obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
+        obj.lib = ['gcov']
+    else:
+        obj.use = 'libdcp%s' % bld.env.API_VERSION
     obj.source = 'rewrite_subs.cc'
     obj.target = 'rewrite_subs'
     obj.install_path = ''
+    obj.cppflags = ['-fprofile-arcs', '-ftest-coverage', '-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
