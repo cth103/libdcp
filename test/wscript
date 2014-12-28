@@ -43,6 +43,7 @@ def build(bld):
                  read_dcp_test.cc
                  recovery_test.cc
                  round_trip_test.cc
+                 smpte_load_font_test.cc
                  subtitle_tests.cc
                  test.cc 
                  text_test.cc
