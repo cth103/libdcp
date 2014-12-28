@@ -25,18 +25,19 @@
 #define LIBDCP_FILE_H
 
 #include <boost/filesystem.hpp>
+#include <boost/noncopyable.hpp>
 
 namespace dcp {
 
 /** @class File
  *  @brief Helper class which loads a file into memory.
  */
-class File
+class File : public boost::noncopyable
 {
 public:
 	File (boost::filesystem::path file);
 	~File ();
-	
+
 	uint8_t* data () const {
 		return _data;
 	}
