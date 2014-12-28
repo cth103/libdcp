@@ -49,6 +49,7 @@ def build(bld):
                  """
     obj.target = 'tests'
     obj.install_path = ''
+    obj.cppflags = ['-fprofile-arcs', '-ftest-coverage', '-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
 
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'subs_in_out'

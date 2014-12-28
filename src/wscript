@@ -143,7 +143,7 @@ def build(bld):
         obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1'
         obj.use = 'libkumu-libdcp%s libasdcp-libdcp%s' % (bld.env.API_VERSION, bld.env.API_VERSION)
         obj.source = source
-        obj.cppflags = ['-fprofile-arcs', '-ftest-coverage']
+        obj.cppflags = ['-fprofile-arcs', '-ftest-coverage', '-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
 
     bld.install_files('${PREFIX}/include/libdcp%s/dcp' % bld.env.API_VERSION, headers)
     if bld.env.STATIC:
