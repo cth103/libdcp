@@ -17,12 +17,9 @@
 
 */
 
+#include <libcxml/cxml.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/optional.hpp>
-
-namespace cxml {
-	class Node;
-}
 
 namespace dcp {
 	
@@ -31,7 +28,7 @@ class InteropLoadFont
 public:
 	InteropLoadFont () {}
 	InteropLoadFont (std::string id, std::string uri);
-	InteropLoadFont (boost::shared_ptr<const cxml::Node> node);
+	InteropLoadFont (cxml::ConstNodePtr node);
 
 	std::string id;
 	std::string uri;

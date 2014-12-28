@@ -32,7 +32,7 @@ InteropLoadFont::InteropLoadFont (string id_, string uri_)
 
 }
 
-InteropLoadFont::InteropLoadFont (shared_ptr<const cxml::Node> node)
+InteropLoadFont::InteropLoadFont (cxml::ConstNodePtr node)
 {
 	optional<string> x = node->optional_string_attribute ("Id");
 	if (!x) {
