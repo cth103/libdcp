@@ -26,6 +26,7 @@
 #include "compose.hpp"
 #include "exceptions.h"
 #include "util.h"
+#include "dcp_assert.h"
 #include <libxml++/nodes/element.h>
 #include <openssl/x509.h>
 #include <openssl/ssl.h>
@@ -122,7 +123,7 @@ Certificate::operator= (Certificate const & other)
 string
 Certificate::certificate (bool with_begin_end) const
 {
-	assert (_certificate);
+	DCP_ASSERT (_certificate);
 	
 	BIO* bio = BIO_new (BIO_s_mem ());
 	if (!bio) {
@@ -155,7 +156,7 @@ Certificate::certificate (bool with_begin_end) const
 string
 Certificate::issuer () const
 {
-	assert (_certificate);
+	DCP_ASSERT (_certificate);
 	return name_for_xml (X509_get_issuer_name (_certificate));
 }
 
@@ -174,7 +175,7 @@ Certificate::get_name_part (X509_NAME* n, int nid)
 {
 	int p = -1;
 	p = X509_NAME_get_index_by_NID (n, nid, p);
-	assert (p != -1);
+	DCP_ASSERT (p != -1);
 	return asn_to_utf8 (X509_NAME_ENTRY_get_data (X509_NAME_get_entry (n, p)));
 }
 	
@@ -182,7 +183,7 @@ Certificate::get_name_part (X509_NAME* n, int nid)
 string
 Certificate::name_for_xml (X509_NAME * n)
 {
-	assert (n);
+	DCP_ASSERT (n);
 
 	string s = String::compose (
 		"dnQualifier=%1,CN=%2,OU=%3,O=%4",
@@ -199,7 +200,7 @@ Certificate::name_for_xml (X509_NAME * n)
 string
 Certificate::subject () const
 {
-	assert (_certificate);
+	DCP_ASSERT (_certificate);
 
 	return name_for_xml (X509_get_subject_name (_certificate));
 }
@@ -207,7 +208,7 @@ Certificate::subject () const
 string
 Certificate::common_name () const
 {
-	assert (_certificate);
+	DCP_ASSERT (_certificate);
 
 	return get_name_part (X509_get_subject_name (_certificate), NID_commonName);
 }
@@ -215,10 +216,10 @@ Certificate::common_name () const
 string
 Certificate::serial () const
 {
-	assert (_certificate);
+	DCP_ASSERT (_certificate);
 
 	ASN1_INTEGER* s = X509_get_serialNumber (_certificate);
-	assert (s);
+	DCP_ASSERT (s);
 	
 	BIGNUM* b = ASN1_INTEGER_to_BN (s, 0);
 	char* c = BN_bn2dec (b);
@@ -233,7 +234,7 @@ Certificate::serial () const
 string
 Certificate::thumbprint () const
 {
-	assert (_certificate);
+	DCP_ASSERT (_certificate);
 	
 	uint8_t buffer[8192];
 	uint8_t* p = buffer;
@@ -257,7 +258,7 @@ Certificate::thumbprint () const
 RSA *
 Certificate::public_key () const
 {
-	assert (_certificate);
+	DCP_ASSERT (_certificate);
 
 	if (_public_key) {
 		return _public_key;
@@ -299,7 +300,7 @@ dcp::operator<< (ostream& s, Certificate const & c)
 Certificate
 CertificateChain::root () const
 {
-	assert (!_certificates.empty());
+	DCP_ASSERT (!_certificates.empty());
 	return _certificates.front ();
 }
 
@@ -307,7 +308,7 @@ CertificateChain::root () const
 Certificate
 CertificateChain::leaf () const
 {
-	assert (_certificates.size() >= 2);
+	DCP_ASSERT (_certificates.size() >= 2);
 	return _certificates.back ();
 }
 

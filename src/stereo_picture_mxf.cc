@@ -22,6 +22,7 @@
 #include "stereo_picture_frame.h"
 #include "exceptions.h"
 #include "stereo_picture_mxf_writer.h"
+#include "dcp_assert.h"
 
 using std::string;
 using std::pair;
@@ -106,7 +107,7 @@ StereoPictureMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, bo
 	}
 	
 	shared_ptr<const StereoPictureMXF> other_picture = dynamic_pointer_cast<const StereoPictureMXF> (other);
-	assert (other_picture);
+	DCP_ASSERT (other_picture);
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 		shared_ptr<const StereoPictureFrame> frame_A = get_frame (i);

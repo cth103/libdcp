@@ -29,6 +29,7 @@
 #include "util.h"
 #include "metadata.h"
 #include "exceptions.h"
+#include "dcp_assert.h"
 #include "compose.hpp"
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
@@ -79,7 +80,7 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, Standard standard)
 	}
 	unsigned int c;
 	Kumu::hex2bin (_id.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
-	assert (c == Kumu::UUID_Length);
+	DCP_ASSERT (c == Kumu::UUID_Length);
 
 	if (_key) {
 		Kumu::GenRandomUUID (writer_info->ContextID);
@@ -87,7 +88,7 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, Standard standard)
 
 		unsigned int c;
 		Kumu::hex2bin (_key_id.c_str(), writer_info->CryptographicKeyID, Kumu::UUID_Length, &c);
-		assert (c == Kumu::UUID_Length);
+		DCP_ASSERT (c == Kumu::UUID_Length);
 	}
 }
 
@@ -175,6 +176,6 @@ MXF::pkl_type (Standard standard) const
 	case SMPTE:
 		return "application/mxf";
 	default:
-		assert (false);
+		DCP_ASSERT (false);
 	}
 }

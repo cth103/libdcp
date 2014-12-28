@@ -24,6 +24,7 @@
 #include "font.h"
 #include "text.h"
 #include "subtitle_string.h"
+#include "dcp_assert.h"
 #include "AS_DCP.h"
 #include "KM_util.h"
 #include <libxml++/nodes/element.h>
@@ -121,8 +122,8 @@ SubtitleContent::maybe_add_subtitle (string text, ParseState const & parse_state
 		return;
 	}
 
-	assert (!parse_state.text_nodes.empty ());
-	assert (!parse_state.subtitle_nodes.empty ());
+	DCP_ASSERT (!parse_state.text_nodes.empty ());
+	DCP_ASSERT (!parse_state.subtitle_nodes.empty ());
 	
 	dcp::Font effective_font (parse_state.font_nodes);
 	dcp::Text effective_text (*parse_state.text_nodes.back ());

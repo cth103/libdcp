@@ -20,6 +20,7 @@
 #include "sound_mxf_writer.h"
 #include "sound_mxf.h"
 #include "exceptions.h"
+#include "dcp_assert.h"
 #include "compose.hpp"
 #include "AS_DCP.h"
 
@@ -68,7 +69,7 @@ SoundMXFWriter::SoundMXFWriter (SoundMXF* m, boost::filesystem::path file, Stand
 void
 SoundMXFWriter::write (float const * const * data, int frames)
 {
-	assert (!_finalized);
+	DCP_ASSERT (!_finalized);
 	
 	for (int i = 0; i < frames; ++i) {
 
@@ -83,7 +84,7 @@ SoundMXFWriter::write (float const * const * data, int frames)
 		}
 		_frame_buffer_offset += 3 * _sound_mxf->channels();
 
-		assert (_frame_buffer_offset <= int (_state->frame_buffer.Capacity()));
+		DCP_ASSERT (_frame_buffer_offset <= int (_state->frame_buffer.Capacity()));
 
 		/* Finish the MXF frame if required */
 		if (_frame_buffer_offset == int (_state->frame_buffer.Capacity())) {

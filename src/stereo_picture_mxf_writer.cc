@@ -19,6 +19,7 @@
 
 #include "stereo_picture_mxf_writer.h"
 #include "exceptions.h"
+#include "dcp_assert.h"
 #include "picture_mxf.h"
 #include "AS_DCP.h"
 #include "KM_fileio.h"
@@ -58,7 +59,7 @@ StereoPictureMXFWriter::start (uint8_t* data, int size)
 FrameInfo
 StereoPictureMXFWriter::write (uint8_t* data, int size)
 {
-	assert (!_finalized);
+	DCP_ASSERT (!_finalized);
 
 	if (!_started) {
 		start (data, size);
@@ -95,8 +96,8 @@ StereoPictureMXFWriter::write (uint8_t* data, int size)
 void
 StereoPictureMXFWriter::fake_write (int size)
 {
-	assert (_started);
-	assert (!_finalized);
+	DCP_ASSERT (_started);
+	DCP_ASSERT (!_finalized);
 
 	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size, _next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT);
 	if (ASDCP_FAILURE (r)) {

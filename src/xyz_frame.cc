@@ -22,7 +22,7 @@
  */
 
 #include "xyz_frame.h"
-#include <cassert>
+#include "dcp_assert.h"
 #include <stdexcept>
 
 using namespace dcp;
@@ -31,7 +31,7 @@ using namespace dcp;
 XYZFrame::XYZFrame (opj_image_t* image)
 	: _opj_image (image)
 {
-	assert (_opj_image->numcomps == 3);
+	DCP_ASSERT (_opj_image->numcomps == 3);
 }
 
 /** Construct a new XYZFrame with undefined contents.
@@ -77,7 +77,7 @@ XYZFrame::~XYZFrame ()
 int *
 XYZFrame::data (int c) const
 {
-	assert (c >= 0 && c < 3);
+	DCP_ASSERT (c >= 0 && c < 3);
 	return _opj_image->comps[c].data;
 }
 

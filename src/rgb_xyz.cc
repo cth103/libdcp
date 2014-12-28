@@ -24,6 +24,7 @@
 #include "colour_matrix.h"
 #include "colour_conversion.h"
 #include "transfer_function.h"
+#include "dcp_assert.h"
 #include <cmath>
 
 using std::min;
@@ -68,7 +69,7 @@ dcp::xyz_to_rgba (
 		uint8_t* argb_line = argb;
 		for (int x = 0; x < xyz_frame->size().width; ++x) {
 
-			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
+			DCP_ASSERT (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
 			
 			/* In gamma LUT */
 			s.x = lut_in[*xyz_x++];
@@ -144,7 +145,7 @@ dcp::xyz_to_rgb (
 		uint8_t* buffer_line = buffer;
 		for (int x = 0; x < xyz_frame->size().width; ++x) {
 
-			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
+			DCP_ASSERT (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
 			
 			/* In gamma LUT */
 			s.x = lut_in[*xyz_x++];
@@ -223,9 +224,9 @@ dcp::rgb_to_xyz (
 			d.y = d.y * DCI_COEFFICIENT * 65535;
 			d.z = d.z * DCI_COEFFICIENT * 65535;
 
-			assert (d.x >= 0 && d.x < 65536);
-			assert (d.y >= 0 && d.y < 65536);
-			assert (d.z >= 0 && d.z < 65536);
+			DCP_ASSERT (d.x >= 0 && d.x < 65536);
+			DCP_ASSERT (d.y >= 0 && d.y < 65536);
+			DCP_ASSERT (d.z >= 0 && d.z < 65536);
 			
 			/* Out gamma LUT */
 			xyz->data(0)[jn] = lut_out[(int) d.x] * 4096;

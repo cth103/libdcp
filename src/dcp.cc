@@ -38,12 +38,12 @@
 #include "AS_DCP.h"
 #include "decrypted_kdm.h"
 #include "decrypted_kdm_key.h"
+#include "dcp_assert.h"
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
 #include <libxml++/libxml++.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <cassert>
 #include <iostream>
 
 using std::string;
@@ -251,7 +251,7 @@ DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared
 	pkl->add_child("Id")->add_child_text ("urn:uuid:" + pkl_uuid);
 
 	/* XXX: this is a bit of a hack */
-	assert (cpls().size() > 0);
+	DCP_ASSERT (cpls().size() > 0);
 	pkl->add_child("AnnotationText")->add_child_text (cpls().front()->annotation_text ());
 	
 	pkl->add_child("IssueDate")->add_child_text (metadata.issue_date);
@@ -286,7 +286,7 @@ DCP::write_volindex (Standard standard) const
 		p /= "VOLINDEX.xml";
 		break;
 	default:
-		assert (false);
+		DCP_ASSERT (false);
 	}
 
 	xmlpp::Document doc;
@@ -300,7 +300,7 @@ DCP::write_volindex (Standard standard) const
 		root = doc.create_root_node ("VolumeIndex", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
 		break;
 	default:
-		assert (false);
+		DCP_ASSERT (false);
 	}
 	
 	root->add_child("Index")->add_child_text ("1");
@@ -320,7 +320,7 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 		p /= "ASSETMAP.xml";
 		break;
 	default:
-		assert (false);
+		DCP_ASSERT (false);
 	}
 
 	xmlpp::Document doc;
@@ -334,7 +334,7 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 		root = doc.create_root_node ("AssetMap", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
 		break;
 	default:
-		assert (false);
+		DCP_ASSERT (false);
 	}
 
 	root->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
@@ -354,7 +354,7 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 		root->add_child("Issuer")->add_child_text (metadata.issuer);
 		break;
 	default:
-		assert (false);
+		DCP_ASSERT (false);
 	}
 		
 	xmlpp::Node* asset_list = root->add_child ("AssetList");

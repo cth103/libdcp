@@ -24,6 +24,7 @@
 #include "content.h"
 #include "reel_picture_asset.h"
 #include "picture_mxf.h"
+#include "dcp_assert.h"
 #include "compose.hpp"
 #include <libcxml/cxml.h>
 #include <iomanip>
@@ -78,7 +79,7 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 		++i;
 	}
 
-	assert (i != c.end ());
+	DCP_ASSERT (i != c.end ());
 	
 	(*i)->add_child ("FrameRate")->add_child_text (String::compose ("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
 	if (standard == INTEROP) {

@@ -23,6 +23,7 @@
 
 #include "file.h"
 #include "util.h"
+#include "dcp_assert.h"
 #include <stdio.h>
 
 using namespace dcp;
@@ -35,7 +36,7 @@ File::File (boost::filesystem::path file)
 	_size = boost::filesystem::file_size (file);
 	_data = new uint8_t[_size];
 	FILE* f = dcp::fopen_boost (file, "r");
-	assert (f);
+	DCP_ASSERT (f);
 	fread (_data, 1, _size, f);
 	fclose (f);
 }

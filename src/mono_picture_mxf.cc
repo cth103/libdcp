@@ -22,6 +22,7 @@
 #include "AS_DCP.h"
 #include "KM_fileio.h"
 #include "exceptions.h"
+#include "dcp_assert.h"
 #include "mono_picture_frame.h"
 #include "compose.hpp"
 
@@ -105,7 +106,7 @@ MonoPictureMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, boos
 	}
 
 	shared_ptr<const MonoPictureMXF> other_picture = dynamic_pointer_cast<const MonoPictureMXF> (other);
-	assert (other_picture);
+	DCP_ASSERT (other_picture);
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 		if (i >= other_picture->intrinsic_duration()) {

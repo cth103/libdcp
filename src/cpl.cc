@@ -27,6 +27,7 @@
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
 #include "local_time.h"
+#include "dcp_assert.h"
 #include "compose.hpp"
 #include <libxml/parser.h>
 
@@ -250,7 +251,7 @@ CPL::pkl_type (Standard standard) const
 	case SMPTE:
 		return "text/xml";
 	default:
-		assert (false);
+		DCP_ASSERT (false);
 	}
 }
 	

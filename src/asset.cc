@@ -25,6 +25,7 @@
 #include "asset.h"
 #include "util.h"
 #include "exceptions.h"
+#include "dcp_assert.h"
 #include "compose.hpp"
 #include <libxml++/libxml++.h>
 
@@ -51,7 +52,7 @@ Asset::Asset (boost::filesystem::path file)
 void
 Asset::write_to_pkl (xmlpp::Node* node, Standard standard) const
 {
-	assert (!_file.empty ());
+	DCP_ASSERT (!_file.empty ());
 	
 	xmlpp::Node* asset = node->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
@@ -64,7 +65,7 @@ Asset::write_to_pkl (xmlpp::Node* node, Standard standard) const
 void
 Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 {
-	assert (!_file.empty ());
+	DCP_ASSERT (!_file.empty ());
 
 	xmlpp::Node* asset = node->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
@@ -83,7 +84,7 @@ Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 string
 Asset::hash (function<void (float)> progress) const
 {
-	assert (!_file.empty ());
+	DCP_ASSERT (!_file.empty ());
 		
 	if (_hash.empty ()) {
 		_hash = make_digest (_file, progress);

@@ -26,6 +26,7 @@
 #include "mono_picture_mxf_writer.h"
 #include "exceptions.h"
 #include "picture_mxf.h"
+#include "dcp_assert.h"
 
 #include "picture_mxf_writer_common.cc"
 
@@ -60,7 +61,7 @@ MonoPictureMXFWriter::start (uint8_t* data, int size)
 FrameInfo
 MonoPictureMXFWriter::write (uint8_t* data, int size)
 {
-	assert (!_finalized);
+	DCP_ASSERT (!_finalized);
 
 	if (!_started) {
 		start (data, size);
@@ -85,8 +86,8 @@ MonoPictureMXFWriter::write (uint8_t* data, int size)
 void
 MonoPictureMXFWriter::fake_write (int size)
 {
-	assert (_started);
-	assert (!_finalized);
+	DCP_ASSERT (_started);
+	DCP_ASSERT (!_finalized);
 
 	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size);
 	if (ASDCP_FAILURE (r)) {

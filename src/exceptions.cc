@@ -74,3 +74,10 @@ NotEncryptedError::NotEncryptedError (string const & what)
 {
 
 }
+
+
+ProgrammingError::ProgrammingError (string file, int line)
+	: StringError (String::compose ("Programming error at %1:%2", file, line))
+{
+
+}

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,38 +17,6 @@
 
 */
 
-/** @file  src/mxf_writer.h
- *  @brief MXFWriter class.
- */
+#include "exceptions.h"
 
-#include "mxf_writer.h"
-#include "mxf.h"
-#include "dcp_assert.h"
-
-using namespace dcp;
-
-/** Create an MXFWriter.
- *  @param mxf MXF that we are writing.
- *  @param file File to write to.
- */
-MXFWriter::MXFWriter (MXF* mxf, boost::filesystem::path file)
-	: _mxf (mxf)
-	, _file (file)
-	, _frames_written (0)
-	, _finalized (false)
-{
-	mxf->set_file (file);
-}
-
-MXFWriter::~MXFWriter ()
-{
-
-}
-
-void
-MXFWriter::finalize ()
-{
-	DCP_ASSERT (!_finalized);
-	_finalized = true;
-	_mxf->_intrinsic_duration = _frames_written;
-}
+#define DCP_ASSERT(x) if (!(x)) throw ProgrammingError (__FILE__, __LINE__);

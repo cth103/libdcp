@@ -166,6 +166,12 @@ public:
 	~NotEncryptedError () throw () {}
 };
 	
+class ProgrammingError : public StringError
+{
+public:
+	ProgrammingError (std::string file, int line);
+};
+
 }
 
 #endif

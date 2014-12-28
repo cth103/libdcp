@@ -27,6 +27,7 @@
 #include "argb_frame.h"
 #include "certificates.h"
 #include "xyz_frame.h"
+#include "dcp_assert.h"
 #include "compose.hpp"
 #include "KM_util.h"
 #include "KM_fileio.h"
@@ -154,7 +155,7 @@ dcp::content_kind_to_string (ContentKind kind)
 		return "advertisement";
 	}
 
-	assert (false);
+	DCP_ASSERT (false);
 }
 
 /** Convert a string from a &lt;ContentKind&gt; node to a libdcp ContentKind.
@@ -189,7 +190,7 @@ dcp::content_kind_from_string (string kind)
 		return ADVERTISEMENT;
 	}
 
-	assert (false);
+	DCP_ASSERT (false);
 }
 
 /** Decompress a JPEG2000 image to a bitmap.

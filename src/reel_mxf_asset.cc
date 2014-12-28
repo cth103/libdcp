@@ -19,6 +19,7 @@
 
 #include "reel_mxf_asset.h"
 #include "mxf.h"
+#include "dcp_assert.h"
 #include <libcxml/cxml.h>
 
 using boost::shared_ptr;
@@ -57,7 +58,7 @@ ReelMXFAsset::write_to_cpl (xmlpp::Node* node, Standard s) const
 		++i;
 	}
 
-	assert (i != c.end ());
+	DCP_ASSERT (i != c.end ());
 	
         if (!_key_id.empty ()) {
                 (*i)->add_child("KeyId")->add_child_text ("urn:uuid:" + _key_id);

@@ -26,6 +26,7 @@
 #include "cpl.h"
 #include "mxf.h"
 #include "signer.h"
+#include "dcp_assert.h"
 #include "AS_DCP.h"
 #include "KM_util.h"
 #include "compose.hpp"
@@ -173,7 +174,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 			break;
 		}
 		default:
-			assert (false);
+			DCP_ASSERT (false);
 		}		
 		
 		delete[] decrypted;
