@@ -34,10 +34,11 @@
 #include <sndfile.h>
 #include <boost/test/unit_test.hpp>
 
+using std::string;
 using boost::shared_ptr;
 
-/* Test creation of a DCP from very simple inputs */
-BOOST_AUTO_TEST_CASE (dcp_test)
+/** Test creation of a DCP from very simple inputs */
+BOOST_AUTO_TEST_CASE (dcp_test1)
 {
 	Kumu::libdcp_test = true;
 
@@ -106,3 +107,21 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 
 	/* build/test/DCP/foo is checked against test/ref/DCP/foo by run-tests.sh */
 }
+
+static void
+note (dcp::NoteType, string s)
+{
+
+}
+
+/** Test comparison of a DCP with itself */
+BOOST_AUTO_TEST_CASE (dcp_test2)
+{
+	dcp::DCP A ("test/ref/DCP/foo");
+	A.read ();
+	dcp::DCP B ("test/ref/DCP/foo");
+	B.read ();
+	
+	BOOST_CHECK (A.equals (B, dcp::EqualityOptions(), boost::bind (&note, _1, _2)));
+}
+

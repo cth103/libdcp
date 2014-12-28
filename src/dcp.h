@@ -63,7 +63,8 @@ class DCP : public boost::noncopyable
 public:
 	/** Construct a DCP.  You can pass an existing DCP's directory
 	 *  as the parameter; alternatively, directory will be created
-	 *  if it does not exist.
+	 *  if it does not exist.  Note that if you pass an existing DCP
+	 *  into this constructor it will not be read until you call ::read().
 	 *
 	 *  @param directory Directory containing the DCP's files.
 	 */
