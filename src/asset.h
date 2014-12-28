@@ -47,7 +47,6 @@ class Asset : public Object
 public:
 	Asset ();
 	Asset (boost::filesystem::path file);
-	Asset (std::string id);
 
 	virtual bool equals (
 		boost::shared_ptr<const Asset> other,

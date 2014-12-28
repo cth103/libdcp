@@ -48,15 +48,6 @@ Asset::Asset (boost::filesystem::path file)
 
 }
 
-/** Create an Asset with a specified ID.
- *  @param id ID to use.
- */
-Asset::Asset (string id)
-	: Object (id)
-{
-
-}
-
 void
 Asset::write_to_pkl (xmlpp::Node* node, Standard standard) const
 {
