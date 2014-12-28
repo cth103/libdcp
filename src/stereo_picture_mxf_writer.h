@@ -40,7 +40,11 @@ namespace dcp {
 class StereoPictureMXFWriter : public PictureMXFWriter
 {
 public:
-	FrameInfo write (uint8_t *, int);
+	/** Write a frame for one eye.  Frames must be written left, then right, then left etc.
+	 *  @param data JPEG2000 data.
+	 *  @param size Size of data.
+	 */
+	FrameInfo write (uint8_t* data, int size);
 	void fake_write (int size);
 	void finalize ();
 

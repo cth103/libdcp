@@ -21,6 +21,7 @@
 #include "metadata.h"
 #include "cpl.h"
 #include "mono_picture_mxf.h"
+#include "stereo_picture_mxf.h"
 #include "picture_mxf_writer.h"
 #include "sound_mxf_writer.h"
 #include "sound_mxf.h"
@@ -29,6 +30,7 @@
 #include "test.h"
 #include "file.h"
 #include "reel_mono_picture_asset.h"
+#include "reel_stereo_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "KM_util.h"
 #include <sndfile.h>
@@ -108,6 +110,80 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 	/* build/test/DCP/dcp_test1 is checked against test/ref/DCP/dcp_test1 by run-tests.sh */
 }
 
+/** Test creation of a 3D DCP from very simple inputs */
+BOOST_AUTO_TEST_CASE (dcp_test2)
+{
+	Kumu::libdcp_test = true;
+
+	/* Some known metadata */
+	dcp::XMLMetadata xml_meta;
+	xml_meta.issuer = "OpenDCP 0.0.25";
+	xml_meta.creator = "OpenDCP 0.0.25";
+	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
+	dcp::MXFMetadata mxf_meta;
+	mxf_meta.company_name = "OpenDCP";
+	mxf_meta.product_name = "OpenDCP";
+	mxf_meta.product_version = "0.0.25";
+
+	/* We're making build/test/DCP/dcp_test2 */
+	boost::filesystem::remove_all ("build/test/DCP/dcp_test2");
+	boost::filesystem::create_directories ("build/test/DCP/dcp_test2");
+	dcp::DCP d ("build/test/DCP/dcp_test2");
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
+	cpl->set_content_version_id ("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
+	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
+	cpl->set_metadata (xml_meta);
+
+	shared_ptr<dcp::StereoPictureMXF> mp (new dcp::StereoPictureMXF (dcp::Fraction (24, 1)));
+	mp->set_metadata (mxf_meta);
+	shared_ptr<dcp::PictureMXFWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test2/video.mxf", dcp::SMPTE, false);
+	dcp::File j2c ("test/data/32x32_red_square.j2c");
+	for (int i = 0; i < 24; ++i) {
+		/* Left */
+		picture_writer->write (j2c.data (), j2c.size ());
+		/* Right */
+		picture_writer->write (j2c.data (), j2c.size ());
+	}
+	picture_writer->finalize ();
+
+	shared_ptr<dcp::SoundMXF> ms (new dcp::SoundMXF (dcp::Fraction (24, 1), 48000, 1));
+	ms->set_metadata (mxf_meta);
+	shared_ptr<dcp::SoundMXFWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf", dcp::SMPTE);
+
+	SF_INFO info;
+	info.format = 0;
+	SNDFILE* sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
+	BOOST_CHECK (sndfile);
+	float buffer[4096*6];
+	float* channels[1];
+	channels[0] = buffer;
+	while (1) {
+		sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
+		sound_writer->write (channels, N);
+		if (N < 4096) {
+			break;
+		}
+	}
+	
+	sound_writer->finalize ();
+	
+	cpl->add (shared_ptr<dcp::Reel> (
+			  new dcp::Reel (
+				  shared_ptr<dcp::ReelStereoPictureAsset> (new dcp::ReelStereoPictureAsset (mp, 0)),
+				  shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (ms, 0)),
+				  shared_ptr<dcp::ReelSubtitleAsset> ()
+				  )
+			  ));
+		  
+	d.add (cpl);
+	d.add (mp);
+	d.add (ms);
+
+	d.write_xml (dcp::SMPTE, xml_meta);
+
+	/* build/test/DCP/dcp_test2 is checked against test/ref/DCP/dcp_test2 by run-tests.sh */
+}
+
 static void
 note (dcp::NoteType, string s)
 {
@@ -115,7 +191,7 @@ note (dcp::NoteType, string s)
 }
 
 /** Test comparison of a DCP with itself */
-BOOST_AUTO_TEST_CASE (dcp_test2)
+BOOST_AUTO_TEST_CASE (dcp_test3)
 {
 	dcp::DCP A ("test/ref/DCP/dcp_test1");
 	A.read ();
@@ -123,5 +199,16 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	B.read ();
 	
 	BOOST_CHECK (A.equals (B, dcp::EqualityOptions(), boost::bind (&note, _1, _2)));
+}
+
+/** Test comparison of a DCP with a different DCP */
+BOOST_AUTO_TEST_CASE (dcp_test4)
+{
+	dcp::DCP A ("test/ref/DCP/dcp_test1");
+	A.read ();
+	dcp::DCP B ("test/ref/DCP/dcp_test2");
+	B.read ();
+	
+	BOOST_CHECK (!A.equals (B, dcp::EqualityOptions(), boost::bind (&note, _1, _2)));
 }
 
