@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,22 +17,17 @@
 
 */
 
-#include "subtitle_content.h"
+#include "smpte_subtitle_content.h"
+#include "test.h"
+#include <boost/test/unit_test.hpp>
 
-namespace dcp {
-
-class SMPTELoadFont;	
-
-class SMPTESubtitleContent : public SubtitleContent
+/** Load a SMPTE XML subtitle file */
+BOOST_AUTO_TEST_CASE (smpte_subtitle_test)
 {
-public:
-	/** @param file File name
-	 *  @param mxf true if `file' is a MXF, or false if it is an XML file.
-	 */
-	SMPTESubtitleContent (boost::filesystem::path file, bool mxf = true);
+	dcp::SMPTESubtitleContent sc (private_test / "8dfafe11-2bd1-4206-818b-afc109cfe7f6_reel1.xml", false);
 
-private:
-	std::list<boost::shared_ptr<SMPTELoadFont> > _load_font_nodes;
-};
-
+	BOOST_REQUIRE_EQUAL (sc.id(), "8dfafe11-2bd1-4206-818b-afc109cfe7f6");
+	BOOST_REQUIRE_EQUAL (sc.subtitles().size(), 159);
+	BOOST_REQUIRE_EQUAL (sc.subtitles().front().text(), "Jonas ?");
+	BOOST_REQUIRE_EQUAL (sc.subtitles().back().text(), "Come on.");
 }

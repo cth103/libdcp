@@ -31,29 +31,35 @@ using std::stringstream;
 using boost::shared_ptr;
 using namespace dcp;
 
-SMPTESubtitleContent::SMPTESubtitleContent (boost::filesystem::path file)
+SMPTESubtitleContent::SMPTESubtitleContent (boost::filesystem::path file, bool mxf)
 	: SubtitleContent (file)
 {
-	ASDCP::TimedText::MXFReader reader;
-	Kumu::Result_t r = reader.OpenRead (file.string().c_str ());
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file, r));
+	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
+	
+	if (mxf) {
+		ASDCP::TimedText::MXFReader reader;
+		Kumu::Result_t r = reader.OpenRead (file.string().c_str ());
+		if (ASDCP_FAILURE (r)) {
+			boost::throw_exception (MXFFileError ("could not open MXF file for reading", file, r));
+		}
+	
+		string s;
+		reader.ReadTimedTextResource (s, 0, 0);
+		stringstream t;
+		t << s;
+		xml->read_stream (t);
+
+		ASDCP::WriterInfo info;
+		reader.FillWriterInfo (info);
+		
+		char buffer[64];
+		Kumu::bin2UUIDhex (info.AssetUUID, ASDCP::UUIDlen, buffer, sizeof (buffer));
+		_id = buffer;
+	} else {
+		xml->read_file (file);
+		_id = xml->string_child("Id").substr (9);
 	}
 	
-	string s;
-	reader.ReadTimedTextResource (s, 0, 0);
-	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
-	stringstream t;
-	t << s;
-	xml->read_stream (t);
-	
-	ASDCP::WriterInfo info;
-	reader.FillWriterInfo (info);
-	
-	char buffer[64];
-	Kumu::bin2UUIDhex (info.AssetUUID, ASDCP::UUIDlen, buffer, sizeof (buffer));
-	_id = buffer;
-
 	_load_font_nodes = type_children<dcp::SMPTELoadFont> (xml, "LoadFont");
 
 	shared_ptr<cxml::Node> subtitle_list = xml->optional_node_child ("SubtitleList");

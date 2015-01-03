@@ -110,6 +110,9 @@ DCP::read (bool keep_going, ReadErrors* errors)
 	}
 
 	/* Read all the assets from the asset map */
+	/* XXX: I think we should be looking at the PKL here to decide type, not
+	   the extension of the file.
+	*/
 	for (map<string, boost::filesystem::path>::const_iterator i = paths.begin(); i != paths.end(); ++i) {
 		boost::filesystem::path path = _directory / i->second;
 
