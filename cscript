@@ -10,7 +10,7 @@ def build(target, options):
         if target.distro == 'centos':
             cmd += ' --disable-tests'
     elif target.platform == 'windows':
-        cmd += ' --target-windows'
+        cmd += ' --target-windows --disable-tests'
     elif target.platform == 'osx':
         cmd += ' --target-osx'
 
