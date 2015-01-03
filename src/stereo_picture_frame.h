@@ -44,7 +44,7 @@ public:
 	~StereoPictureFrame ();
 
 	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye, int reduce = 0, float srgb_gamma = 2.4) const;
-	void rgb_frame (Eye eye, uint8_t* buffer) const;
+	void rgb_frame (Eye eye, uint16_t* buffer) const;
 	uint8_t const * left_j2k_data () const;
 	uint8_t* left_j2k_data ();
 	int left_j2k_size () const;

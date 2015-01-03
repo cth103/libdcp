@@ -51,7 +51,7 @@ public:
 	~MonoPictureFrame ();
 
 	boost::shared_ptr<ARGBFrame> argb_frame (int reduce = 0, float srgb_gamma = 2.4) const;
-	void rgb_frame (uint8_t* buffer) const;
+	void rgb_frame (uint16_t* buffer) const;
 	uint8_t const * j2k_data () const;
 	uint8_t* j2k_data ();
 	int j2k_size () const;

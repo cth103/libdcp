@@ -28,7 +28,7 @@ class Image;
 class ColourConversion;
 	
 extern boost::shared_ptr<ARGBFrame> xyz_to_rgba (boost::shared_ptr<const XYZFrame>, ColourConversion const & conversion);
-extern void xyz_to_rgb (boost::shared_ptr<const XYZFrame>, ColourConversion const & conversion, uint8_t* buffer);
+extern void xyz_to_rgb (boost::shared_ptr<const XYZFrame>, ColourConversion const & conversion, uint16_t* buffer);
 extern boost::shared_ptr<XYZFrame> rgb_to_xyz (boost::shared_ptr<const Image>, ColourConversion const & conversion);
 extern boost::shared_ptr<XYZFrame> xyz_to_xyz (boost::shared_ptr<const Image>);
 	

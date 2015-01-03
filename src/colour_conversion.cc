@@ -26,22 +26,21 @@ using boost::shared_ptr;
 using namespace dcp;
 
 ColourConversion ColourConversion::srgb_to_xyz (
-	shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (2.4, 0.04045, 0.055, 12.92)),
+	shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (false, 2.4, 0.04045, 0.055, 12.92)),
 	dcp::colour_matrix::srgb_to_xyz,
-	shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
+	shared_ptr<const TransferFunction> (new GammaTransferFunction (true, 2.6))
 	);
 
-/* XXX: what sort of RGB is this...? */
-ColourConversion ColourConversion::xyz_to_rgb (
-	shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6)),
+ColourConversion ColourConversion::xyz_to_srgb (
+	shared_ptr<const TransferFunction> (new GammaTransferFunction (false, 2.6)),
 	dcp::colour_matrix::xyz_to_rgb,
-	shared_ptr<const TransferFunction> (new GammaTransferFunction (2.2))
+	shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (true, 2.4, 0.04045, 0.055, 12.92))
 	);
 
 ColourConversion ColourConversion::rec709_to_xyz (
-	shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (2.4, 0.081, 0.099, 4.5)),
+	shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (false, 2.4, 0.081, 0.099, 4.5)),
 	dcp::colour_matrix::srgb_to_xyz,
-	shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
+	shared_ptr<const TransferFunction> (new GammaTransferFunction (true, 2.6))
 	);
 
 ColourConversion::ColourConversion (

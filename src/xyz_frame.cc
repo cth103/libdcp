@@ -72,7 +72,7 @@ XYZFrame::~XYZFrame ()
 }
 
 /** @param c Component index (0, 1 or 2)
- *  @return Pointer to the data for component c.
+ *  @return Pointer to the data for component c; 12-bit values from 0-4095.
  */
 int *
 XYZFrame::data (int c) const

@@ -64,7 +64,7 @@ public:
 	bool about_equal (ColourConversion const & other, float epsilon) const;
 
 	static ColourConversion srgb_to_xyz;
-	static ColourConversion xyz_to_rgb;
+	static ColourConversion xyz_to_srgb;
 	static ColourConversion rec709_to_xyz;
 
 protected:

@@ -29,34 +29,34 @@ namespace dcp {
 class ModifiedGammaTransferFunction : public TransferFunction
 {
 public:
-	ModifiedGammaTransferFunction (float power, float threshold, float A, float B);
+	ModifiedGammaTransferFunction (bool inverse, double power, double threshold, double A, double B);
 
-	float power () const {
+	double power () const {
 		return _power;
 	}
 
-	float threshold () const {
+	double threshold () const {
 		return _threshold;
 	}
 
-	float A () const {
+	double A () const {
 		return _A;
 	}
 
-	float B () const {
+	double B () const {
 		return _B;
 	}
 
-	bool about_equal (boost::shared_ptr<const TransferFunction>, float epsilon) const;
+	bool about_equal (boost::shared_ptr<const TransferFunction>, double epsilon) const;
 	
 protected:
-	float * make_lut (int bit_depth) const;
+	double * make_lut (int bit_depth) const;
 	
 private:
-	float _power;
-	float _threshold;
-	float _A;
-	float _B;
+	double _power;
+	double _threshold;
+	double _A;
+	double _B;
 };
 
 }

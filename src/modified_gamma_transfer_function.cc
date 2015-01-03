@@ -25,8 +25,9 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
-ModifiedGammaTransferFunction::ModifiedGammaTransferFunction (float power, float threshold, float A, float B)
-	: _power (power)
+ModifiedGammaTransferFunction::ModifiedGammaTransferFunction (bool inverse, double power, double threshold, double A, double B)
+	: TransferFunction (inverse)
+	, _power (power)
 	, _threshold (threshold)
 	, _A (A)
 	, _B (B)
@@ -34,17 +35,29 @@ ModifiedGammaTransferFunction::ModifiedGammaTransferFunction (float power, float
 
 }
 
-float *
+double *
 ModifiedGammaTransferFunction::make_lut (int bit_depth) const
 {
 	int const bit_length = pow (2, bit_depth);
-	float* lut = new float[int(std::pow(2.0f, bit_depth))];
-	for (int i = 0; i < bit_length; ++i) {
-		float const p = static_cast<float> (i) / (bit_length - 1);
-		if (p > _threshold) {
-			lut[i] = pow ((p + _A) / (1 + _A), _power);
-		} else {
-			lut[i] = p / _B;
+	double* lut = new double[int(std::pow(2.0f, bit_depth))];
+	if (_inverse) {
+		double const threshold = _threshold / _B;
+		for (int i = 0; i < bit_length; ++i) {
+			double const p = static_cast<double> (i) / (bit_length - 1);
+			if (p > threshold) {
+				lut[i] = (1 + _A) * pow (p, 1 / _power) - _A;
+			} else {
+				lut[i] = p * _B;
+			}
+		}
+	} else {
+		for (int i = 0; i < bit_length; ++i) {
+			double const p = static_cast<double> (i) / (bit_length - 1);
+			if (p > _threshold) {
+				lut[i] = pow ((p + _A) / (1 + _A), _power);
+			} else {
+				lut[i] = p / _B;
+			}
 		}
 	}
 
@@ -52,8 +65,12 @@ ModifiedGammaTransferFunction::make_lut (int bit_depth) const
 }
 
 bool
-ModifiedGammaTransferFunction::about_equal (shared_ptr<const TransferFunction> other, float epsilon) const
+ModifiedGammaTransferFunction::about_equal (shared_ptr<const TransferFunction> other, double epsilon) const
 {
+	if (!TransferFunction::about_equal (other, epsilon)) {
+		return false;
+	}
+	
 	shared_ptr<const ModifiedGammaTransferFunction> o = dynamic_pointer_cast<const ModifiedGammaTransferFunction> (other);
 	if (!o) {
 		return false;

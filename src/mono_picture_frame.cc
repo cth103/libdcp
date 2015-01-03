@@ -123,16 +123,16 @@ MonoPictureFrame::argb_frame (int reduce, float srgb_gamma) const
 {
 	return xyz_to_rgba (
 		decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce),
-		ColourConversion::xyz_to_rgb
+		ColourConversion::xyz_to_srgb
 		);
 }
 
 void
-MonoPictureFrame::rgb_frame (uint8_t* buffer) const
+MonoPictureFrame::rgb_frame (uint16_t* buffer) const
 {
 	xyz_to_rgb (
 		decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), 0),
-		ColourConversion::xyz_to_rgb,
+		ColourConversion::xyz_to_srgb,
 		buffer
 		);
 }

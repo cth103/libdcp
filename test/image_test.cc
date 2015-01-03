@@ -44,11 +44,11 @@ public:
 
 	}
 
-	uint8_t** data () const {
+	uint16_t * const * data () const {
 		return 0;
 	}
 
-	int* stride () const {
+	int const * stride () const {
 		return 0;
 	}
 };

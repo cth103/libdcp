@@ -30,22 +30,22 @@ using namespace dcp;
 static void
 check_gamma (shared_ptr<const TransferFunction> tf, int bit_depth, float gamma)
 {
-	float const * lut = tf->lut (bit_depth);
+	double const * lut = tf->lut (bit_depth);
 	int const count = pow (2, bit_depth);
 
 	for (int i = 0; i < count; ++i) {
-		BOOST_CHECK_CLOSE (lut[i], pow (float(i) / (count - 1), gamma), 0.001);
+		BOOST_CHECK_CLOSE (lut[i], pow (double(i) / (count - 1), gamma), 0.001);
 	}
 }
 
 static void
-check_modified_gamma (shared_ptr<const TransferFunction> tf, int bit_depth, float power, float threshold, float A, float B)
+check_modified_gamma (shared_ptr<const TransferFunction> tf, int bit_depth, double power, double threshold, double A, double B)
 {
-	float const * lut = tf->lut (bit_depth);
+	double const * lut = tf->lut (bit_depth);
 	int const count = pow (2, bit_depth);
 
 	for (int i = 0; i < count; ++i) {
-		float const x = float(i) / (count - 1);
+		double const x = double(i) / (count - 1);
 		if (x > threshold) {
 			BOOST_CHECK_CLOSE (lut[i], pow ((x + A) / (1 + A), power), 0.001);
 		} else {
@@ -62,9 +62,9 @@ BOOST_AUTO_TEST_CASE (colour_conversion_test1)
 	check_modified_gamma (cc.in(), 12, 2.4, 0.04045, 0.055, 12.92);
 	check_modified_gamma (cc.in(), 16, 2.4, 0.04045, 0.055, 12.92);
 
-	check_gamma (cc.out(), 8, 2.6);
-	check_gamma (cc.out(), 12, 2.6);
-	check_gamma (cc.out(), 16, 2.6);
+	check_gamma (cc.out(), 8, 1 / 2.6);
+	check_gamma (cc.out(), 12, 1 / 2.6);
+	check_gamma (cc.out(), 16, 1 / 2.6);
 }
 
 BOOST_AUTO_TEST_CASE (colour_conversion_test2)
@@ -75,8 +75,8 @@ BOOST_AUTO_TEST_CASE (colour_conversion_test2)
 	check_modified_gamma (cc.in(), 12, 2.4, 0.081, 0.099, 4.5);
 	check_modified_gamma (cc.in(), 16, 2.4, 0.081, 0.099, 4.5);
 
-	check_gamma (cc.out(), 8, 2.6);
-	check_gamma (cc.out(), 12, 2.6);
-	check_gamma (cc.out(), 16, 2.6);
+	check_gamma (cc.out(), 8, 1 / 2.6);
+	check_gamma (cc.out(), 12, 1 / 2.6);
+	check_gamma (cc.out(), 16, 1 / 2.6);
 }
 

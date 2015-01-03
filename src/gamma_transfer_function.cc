@@ -25,27 +25,33 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
-GammaTransferFunction::GammaTransferFunction (float gamma)
-	: _gamma (gamma)
+GammaTransferFunction::GammaTransferFunction (bool inverse, double gamma)
+	: TransferFunction (inverse)
+	, _gamma (gamma)
 {
 
 }
 
-float *
+double *
 GammaTransferFunction::make_lut (int bit_depth) const
 {
 	int const bit_length = pow (2, bit_depth);
-	float* lut = new float[int(std::pow(2.0f, bit_depth))];
+	double* lut = new double[int(std::pow(2.0f, bit_depth))];
+	double const gamma = _inverse ? (1 / _gamma) : _gamma;
 	for (int i = 0; i < bit_length; ++i) {
-		lut[i] = pow(float(i) / (bit_length - 1), _gamma);
+		lut[i] = pow(double(i) / (bit_length - 1), gamma);
 	}
 
 	return lut;
 }
 
 bool
-GammaTransferFunction::about_equal (shared_ptr<const TransferFunction> other, float epsilon) const
+GammaTransferFunction::about_equal (shared_ptr<const TransferFunction> other, double epsilon) const
 {
+	if (!TransferFunction::about_equal (other, epsilon)) {
+		return false;
+	}
+	
 	shared_ptr<const GammaTransferFunction> o = dynamic_pointer_cast<const GammaTransferFunction> (other);
 	if (!o) {
 		return false;

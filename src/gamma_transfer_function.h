@@ -24,19 +24,19 @@ namespace dcp {
 class GammaTransferFunction : public TransferFunction
 {
 public:
-	GammaTransferFunction (float gamma);
+	GammaTransferFunction (bool inverse, double gamma);
 
-	float gamma () const {
+	double gamma () const {
 		return _gamma;
 	}
 
-	bool about_equal (boost::shared_ptr<const TransferFunction> other, float epsilon) const;
+	bool about_equal (boost::shared_ptr<const TransferFunction> other, double epsilon) const;
 
 protected:
-	float * make_lut (int bit_depth) const;
+	double * make_lut (int bit_depth) const;
 
 private:
-	float _gamma;
+	double _gamma;
 };
 
 }
