@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 using std::string;
 
-string private_test;
+boost::filesystem::path private_test;
 
 struct TestConfig
 {
@@ -39,17 +39,3 @@ struct TestConfig
 };
 
 BOOST_GLOBAL_FIXTURE (TestConfig);
-
-boost::filesystem::path
-j2c (int)
-{
-	return "test/data/32x32_red_square.j2c";
-}
-
-boost::filesystem::path
-wav (dcp::Channel)
-{
-	return "test/data/1s_24-bit_48k_silence.wav";
-}
-
-

@@ -97,11 +97,4 @@ fi
 # and check that they are right
 $dcpinfo -s $private/JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV >> $work/jah.log
 
-# Calculate coverage
-cd build
-gcovr --root=$(pwd) --keep
-lcov --capture --directory $(pwd) --base-directory $(pwd) --output-file test/coverage.info
-lcov --remove test/coverage.info "/usr*" -o test/coverage.info
-genhtml test/coverage.info --output-directory test/coverage
-
 echo "PASS"

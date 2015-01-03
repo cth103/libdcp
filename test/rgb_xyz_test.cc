@@ -34,7 +34,7 @@ public:
 	{
 		/* 48bpp */
 		_stride[0] = _size.width * 6;
-		_data[0] = new uint16_t[size.height * stride()[0] / 2];
+		_data[0] = new uint8_t[size.height * stride()[0]];
 	}
 
 	~SimpleImage ()
@@ -42,7 +42,7 @@ public:
 		delete[] _data[0];
 	}
 
-	uint16_t * const * data () const {
+	uint8_t * const * data () const {
 		return _data;
 	}
 
@@ -51,7 +51,7 @@ public:
 	}
 
 private:
-	uint16_t* _data[1];
+	uint8_t* _data[1];
 	int _stride[1];
 };
 
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 
 	shared_ptr<const dcp::Image> rgb (new SimpleImage (size));
 	for (int y = 0; y < size.height; ++y) {
-		uint16_t* p = rgb->data()[0] + y * rgb->stride()[0] / 2;
+		uint16_t* p = reinterpret_cast<uint16_t*> (rgb->data()[0] + y * rgb->stride()[0]);
 		for (int x = 0; x < size.width; ++x) {
 			/* Write a 12-bit random number for each component */
 			for (int c = 0; c < 3; ++c) {
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 	shared_ptr<dcp::XYZFrame> xyz = dcp::rgb_to_xyz (rgb, dcp::ColourConversion::srgb_to_xyz);
 
 	for (int y = 0; y < size.height; ++y) {
-		uint16_t* p = rgb->data()[0] + y * rgb->stride()[0] / 2;
+		uint16_t* p = reinterpret_cast<uint16_t*> (rgb->data()[0] + y * rgb->stride()[0]);
 		for (int x = 0; x < size.width; ++x) {
 
 			double cr = *p++ / 65535.0;

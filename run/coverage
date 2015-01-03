@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Calculate coverage
+cd build
+gcovr --root=$(pwd) --keep
+lcov --capture --directory $(pwd) --base-directory $(pwd) --output-file test/coverage.info
+lcov --remove test/coverage.info "/usr*" -o test/coverage.info
+genhtml test/coverage.info --output-directory test/coverage

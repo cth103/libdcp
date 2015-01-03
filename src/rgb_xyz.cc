@@ -203,7 +203,7 @@ dcp::rgb_to_xyz (
 
 	int jn = 0;
 	for (int y = 0; y < rgb->size().height; ++y) {
-		uint16_t* p = rgb->data()[0] + y * rgb->stride()[0] / 2;
+		uint16_t* p = reinterpret_cast<uint16_t*> (rgb->data()[0] + y * rgb->stride()[0]);
 		for (int x = 0; x < rgb->size().width; ++x) {
 
 			/* In gamma LUT (converting 16-bit to 12-bit) */
@@ -248,7 +248,7 @@ dcp::xyz_to_xyz (shared_ptr<const Image> xyz_16)
 
 	int jn = 0;
 	for (int y = 0; y < xyz_16->size().height; ++y) {
-		uint16_t* p = xyz_16->data()[0] + y * xyz_16->stride()[0] / 2;
+		uint16_t* p = reinterpret_cast<uint16_t*> (xyz_16->data()[0] + y * xyz_16->stride()[0]);
 		for (int x = 0; x < xyz_16->size().width; ++x) {
 			/* Truncate 16-bit to 12-bit */
 			xyz_12->data(0)[jn] = *p++ >> 4;

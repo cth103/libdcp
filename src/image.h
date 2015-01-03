@@ -29,7 +29,7 @@ public:
 	Image (boost::shared_ptr<const Image>);
 	
 	virtual ~Image () {}
-	virtual uint16_t * const * data () const = 0;
+	virtual uint8_t * const * data () const = 0;
 	/** @return array of strides in bytes */
 	virtual int const * stride () const = 0;
 

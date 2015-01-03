@@ -44,7 +44,7 @@ public:
 
 	}
 
-	uint16_t * const * data () const {
+	uint8_t * const * data () const {
 		return 0;
 	}
 
