@@ -39,3 +39,9 @@ Image::Image (boost::shared_ptr<const Image> other)
 {
 
 }
+
+void
+Image::swap (Image& other)
+{
+	std::swap (_size, other._size);
+}
