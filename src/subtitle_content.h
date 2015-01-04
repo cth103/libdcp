@@ -32,6 +32,7 @@ class SubtitleString;
 class Font;
 class Text;
 class Subtitle;
+class LoadFont;
 
 /** @class SubtitleContent
  *  @brief A parent for classes representing a file containing subtitles.
@@ -67,8 +68,10 @@ public:
 
 	Time latest_subtitle_out () const;
 
+	virtual std::list<boost::shared_ptr<LoadFont> > load_font_nodes () const = 0;
+
 protected:
-	void parse_common (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<dcp::Font> > font_nodes);
+	void parse_common (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<Font> > font_nodes);
 	
 	std::string pkl_type (Standard) const {
 		return "text/xml";

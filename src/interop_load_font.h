@@ -17,20 +17,20 @@
 
 */
 
+#include "load_font.h"
 #include <libcxml/cxml.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/optional.hpp>
 
 namespace dcp {
 	
-class InteropLoadFont 
+class InteropLoadFont : public LoadFont
 {
 public:
 	InteropLoadFont () {}
 	InteropLoadFont (std::string id, std::string uri);
 	InteropLoadFont (cxml::ConstNodePtr node);
 
-	std::string id;
 	std::string uri;
 };
 

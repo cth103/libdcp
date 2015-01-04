@@ -31,6 +31,8 @@ public:
 	 */
 	SMPTESubtitleContent (boost::filesystem::path file, bool mxf = true);
 
+	std::list<boost::shared_ptr<LoadFont> > load_font_nodes () const;
+	
 private:
 	std::list<boost::shared_ptr<SMPTELoadFont> > _load_font_nodes;
 };

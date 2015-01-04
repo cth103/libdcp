@@ -36,9 +36,7 @@ public:
 		boost::function<void (NoteType, std::string)> note
 		) const;
 
-	std::list<boost::shared_ptr<InteropLoadFont> > load_font_nodes () const {
-		return _load_font_nodes;
-	}
+	std::list<boost::shared_ptr<LoadFont> > load_font_nodes () const;
 
 	void add_font (std::string id, std::string uri);
 	

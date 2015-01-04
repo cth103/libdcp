@@ -26,7 +26,7 @@ using boost::optional;
 using namespace dcp;
 
 InteropLoadFont::InteropLoadFont (string id_, string uri_)
-	: id (id_)
+	: LoadFont (id_)
 	, uri (uri_)
 {
 

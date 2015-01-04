@@ -82,6 +82,7 @@ def build(bld):
               interop_load_font.h
               interop_subtitle_content.h
               key.h
+              load_font.h
               local_time.h
               metadata.h
               mono_picture_mxf.h

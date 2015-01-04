@@ -67,3 +67,11 @@ SMPTESubtitleContent::SMPTESubtitleContent (boost::filesystem::path file, bool m
 
 	parse_common (xml, font_nodes);
 }
+
+list<shared_ptr<LoadFont> >
+SMPTESubtitleContent::load_font_nodes () const
+{
+	list<shared_ptr<LoadFont> > lf;
+	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter (lf));
+	return lf;
+}

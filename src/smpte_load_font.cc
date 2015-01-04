@@ -25,7 +25,7 @@ using boost::shared_ptr;
 using namespace dcp;
 
 SMPTELoadFont::SMPTELoadFont (shared_ptr<const cxml::Node> node)
+	: LoadFont (node->string_attribute ("ID"))
 {
-	id = node->string_attribute ("ID");
 	urn = node->content().substr (9);
 }

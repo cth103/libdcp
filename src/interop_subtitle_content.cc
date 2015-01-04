@@ -210,3 +210,11 @@ InteropSubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOpt
 
 	return true;
 }
+
+list<shared_ptr<LoadFont> >
+InteropSubtitleContent::load_font_nodes () const
+{
+	list<shared_ptr<LoadFont> > lf;
+	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter (lf));
+	return lf;
+}

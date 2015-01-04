@@ -17,6 +17,7 @@
 
 */
 
+#include "load_font.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/optional.hpp>
 
@@ -26,13 +27,12 @@ namespace cxml {
 
 namespace dcp {
 	
-class SMPTELoadFont 
+class SMPTELoadFont : public LoadFont
 {
 public:
 	SMPTELoadFont () {}
 	SMPTELoadFont (boost::shared_ptr<const cxml::Node> node);
 
-	std::string id;
 	std::string urn;
 };
 
