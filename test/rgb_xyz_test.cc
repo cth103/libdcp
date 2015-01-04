@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 		}
 	}
 
-	shared_ptr<dcp::XYZFrame> xyz = dcp::rgb_to_xyz (rgb, dcp::ColourConversion::srgb_to_xyz);
+	shared_ptr<dcp::XYZFrame> xyz = dcp::rgb_to_xyz (rgb, dcp::ColourConversion::srgb_to_xyz ());
 
 	for (int y = 0; y < size.height; ++y) {
 		uint16_t* p = reinterpret_cast<uint16_t*> (rgb->data()[0] + y * rgb->stride()[0]);

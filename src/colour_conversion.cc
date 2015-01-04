@@ -25,23 +25,38 @@
 using boost::shared_ptr;
 using namespace dcp;
 
-ColourConversion ColourConversion::srgb_to_xyz (
-	shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (false, 2.4, 0.04045, 0.055, 12.92)),
-	dcp::colour_matrix::srgb_to_xyz,
-	shared_ptr<const TransferFunction> (new GammaTransferFunction (true, 2.6))
-	);
+ColourConversion const &
+ColourConversion::srgb_to_xyz ()
+{
+	static ColourConversion* c = new ColourConversion (
+		shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (false, 2.4, 0.04045, 0.055, 12.92)),
+		dcp::colour_matrix::srgb_to_xyz,
+		shared_ptr<const TransferFunction> (new GammaTransferFunction (true, 2.6))
+		);
+	return *c;
+}
 
-ColourConversion ColourConversion::xyz_to_srgb (
-	shared_ptr<const TransferFunction> (new GammaTransferFunction (false, 2.6)),
-	dcp::colour_matrix::xyz_to_rgb,
-	shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (true, 2.4, 0.04045, 0.055, 12.92))
-	);
+ColourConversion const &
+ColourConversion::xyz_to_srgb ()
+{
+	static ColourConversion* c = new ColourConversion (
+		shared_ptr<const TransferFunction> (new GammaTransferFunction (false, 2.6)),
+		dcp::colour_matrix::xyz_to_rgb,
+		shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (true, 2.4, 0.04045, 0.055, 12.92))
+		);
+	return *c;
+}
 
-ColourConversion ColourConversion::rec709_to_xyz (
-	shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (false, 2.4, 0.081, 0.099, 4.5)),
-	dcp::colour_matrix::srgb_to_xyz,
-	shared_ptr<const TransferFunction> (new GammaTransferFunction (true, 2.6))
-	);
+ColourConversion const &
+ColourConversion::rec709_to_xyz ()
+{
+	static ColourConversion* c = new ColourConversion (
+		shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (false, 2.4, 0.081, 0.099, 4.5)),
+		dcp::colour_matrix::srgb_to_xyz,
+		shared_ptr<const TransferFunction> (new GammaTransferFunction (true, 2.6))
+		);
+	return *c;
+}
 
 ColourConversion::ColourConversion (
 	shared_ptr<const TransferFunction> in,

@@ -63,9 +63,9 @@ public:
 
 	bool about_equal (ColourConversion const & other, float epsilon) const;
 
-	static ColourConversion srgb_to_xyz;
-	static ColourConversion xyz_to_srgb;
-	static ColourConversion rec709_to_xyz;
+	static ColourConversion const & srgb_to_xyz ();
+	static ColourConversion const & xyz_to_srgb ();
+	static ColourConversion const & rec709_to_xyz ();
 
 protected:
 	boost::shared_ptr<const TransferFunction> _in;

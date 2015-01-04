@@ -56,7 +56,7 @@ check_modified_gamma (shared_ptr<const TransferFunction> tf, int bit_depth, doub
 
 BOOST_AUTO_TEST_CASE (colour_conversion_test1)
 {
-	ColourConversion cc = ColourConversion::srgb_to_xyz;
+	ColourConversion cc = ColourConversion::srgb_to_xyz ();
 
 	check_modified_gamma (cc.in(), 8, 2.4, 0.04045, 0.055, 12.92);
 	check_modified_gamma (cc.in(), 12, 2.4, 0.04045, 0.055, 12.92);
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE (colour_conversion_test1)
 
 BOOST_AUTO_TEST_CASE (colour_conversion_test2)
 {
-	ColourConversion cc = ColourConversion::rec709_to_xyz;
+	ColourConversion cc = ColourConversion::rec709_to_xyz ();
 
 	check_modified_gamma (cc.in(), 8, 2.4, 0.081, 0.099, 4.5);
 	check_modified_gamma (cc.in(), 12, 2.4, 0.081, 0.099, 4.5);
