@@ -46,7 +46,7 @@ public:
 	bool equals (
 		boost::shared_ptr<const Asset>,
 		EqualityOptions,
-		boost::function<void (NoteType, std::string)> note
+		NoteHandler note
 		) const;
 
 	std::string language () const {

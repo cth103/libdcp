@@ -84,7 +84,7 @@ public:
 	 *  @param note Functor to handle notes made by the equality operation.
 	 *  @return true if the DCPs are equal according to EqualityOptions, otherwise false.
 	 */
-	bool equals (DCP const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
+	bool equals (DCP const & other, EqualityOptions options, NoteHandler note) const;
 
 	void add (boost::shared_ptr<Asset> asset);
 

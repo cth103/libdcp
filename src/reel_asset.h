@@ -52,7 +52,7 @@ public:
 	ReelAsset (boost::shared_ptr<const cxml::Node>);
 
 	virtual void write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, boost::function<void (NoteType, std::string)>) const;
+	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
 
 	/** @return a Ref to our actual content */
 	Ref<Content>& content () {

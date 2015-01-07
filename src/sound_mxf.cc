@@ -82,7 +82,7 @@ SoundMXF::SoundMXF (Fraction edit_rate, int sampling_rate, int channels)
 }
 
 bool
-SoundMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+SoundMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
 	if (!MXF::equals (other, opt, note)) {
 		return false;

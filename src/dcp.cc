@@ -173,7 +173,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 }
 
 bool
-DCP::equals (DCP const & other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+DCP::equals (DCP const & other, EqualityOptions opt, NoteHandler note) const
 {
 	list<shared_ptr<CPL> > a = cpls ();
 	list<shared_ptr<CPL> > b = other.cpls ();

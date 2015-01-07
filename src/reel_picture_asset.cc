@@ -100,7 +100,7 @@ ReelPictureAsset::key_type () const
 }
 
 bool
-ReelPictureAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const
+ReelPictureAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, NoteHandler note) const
 {
 	if (!ReelAsset::equals (other, opt, note)) {
 		return false;

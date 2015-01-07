@@ -25,6 +25,7 @@
 #define LIBDCP_TYPES_H
 
 #include <boost/shared_ptr.hpp>
+#include <boost/function.hpp>
 #include <string>
 
 namespace dcp
@@ -186,6 +187,9 @@ extern bool operator!= (Colour const & a, Colour const & b);
 extern std::ostream & operator<< (std::ostream & s, Colour const & c);
 
 typedef std::pair<std::string, boost::shared_ptr<const parse::AssetMap> > PathAssetMap;
+
+typedef boost::function<void (NoteType, std::string)> NoteHandler;
+
 
 }
 

@@ -100,7 +100,7 @@ ReelAsset::cpl_node_attribute (Standard) const
 }
 
 bool
-ReelAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const
+ReelAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, NoteHandler note) const
 {
 	if (_annotation_text != other->_annotation_text) {
 		stringstream s;

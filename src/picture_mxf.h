@@ -84,14 +84,14 @@ public:
 protected:
 
 	bool frame_buffer_equals (
-		int frame, EqualityOptions opt, boost::function<void (NoteType, std::string)> note,
+		int frame, EqualityOptions opt, NoteHandler note,
 		uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
 		) const;
 
 	bool descriptor_equals (
 		ASDCP::JP2K::PictureDescriptor const & a,
 		ASDCP::JP2K::PictureDescriptor const & b,
-		boost::function<void (NoteType, std::string)>
+		NoteHandler note
 		) const;
 
 	void read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const &);

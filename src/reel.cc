@@ -95,7 +95,7 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 }
 	
 bool
-Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandler note) const
 {
 	if ((_main_picture && !other->_main_picture) || (!_main_picture && other->_main_picture)) {
 		note (DCP_ERROR, "Reel: assets differ");

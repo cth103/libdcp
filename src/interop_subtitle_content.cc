@@ -26,7 +26,6 @@
 using std::list;
 using std::string;
 using boost::shared_ptr;
-using boost::function;
 using boost::optional;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
@@ -174,7 +173,7 @@ InteropSubtitleContent::add_font (string id, string uri)
 }
 
 bool
-InteropSubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, function<void (NoteType, std::string)> note) const
+InteropSubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, NoteHandler note) const
 {
 	if (!SubtitleContent::equals (other_asset, options, note)) {
 		return false;

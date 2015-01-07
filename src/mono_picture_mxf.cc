@@ -70,7 +70,7 @@ MonoPictureMXF::get_frame (int n) const
 }
 
 bool
-MonoPictureMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+MonoPictureMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
 	if (!dynamic_pointer_cast<const MonoPictureMXF> (other)) {
 		return false;

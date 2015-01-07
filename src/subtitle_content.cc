@@ -39,7 +39,6 @@ using std::stringstream;
 using std::cout;
 using boost::shared_ptr;
 using boost::optional;
-using boost::function;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
@@ -196,7 +195,7 @@ SubtitleContent::latest_subtitle_out () const
 }
 
 bool
-SubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, function<void (NoteType, std::string)> note) const
+SubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, NoteHandler note) const
 {
 	if (!Asset::equals (other_asset, options, note)) {
 		return false;

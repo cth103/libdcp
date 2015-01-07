@@ -57,7 +57,7 @@ public:
 	bool equals (
 		boost::shared_ptr<const Asset> other,
 		EqualityOptions options,
-		boost::function<void (NoteType, std::string)> note
+		NoteHandler note
 		) const;
 
 	void add (boost::shared_ptr<Reel> reel);

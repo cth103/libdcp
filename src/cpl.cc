@@ -171,7 +171,7 @@ CPL::reel_assets () const
 }
 	
 bool
-CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
+CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
 	shared_ptr<const CPL> other_cpl = dynamic_pointer_cast<const CPL> (other);
 	if (!other_cpl) {

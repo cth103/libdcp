@@ -33,7 +33,7 @@ public:
 	bool equals (
 		boost::shared_ptr<const Asset>,
 		EqualityOptions,
-		boost::function<void (NoteType, std::string)> note
+		NoteHandler note
 		) const;
 
 	std::list<boost::shared_ptr<LoadFont> > load_font_nodes () const;

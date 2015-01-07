@@ -77,7 +77,7 @@ public:
 
 	bool encrypted () const;
 
-	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> notes) const;
+	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandler notes) const;
 
 	void add (DecryptedKDM const &);
 

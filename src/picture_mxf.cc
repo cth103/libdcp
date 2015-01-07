@@ -71,7 +71,7 @@ PictureMXF::read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const & desc
 
 bool
 PictureMXF::descriptor_equals (
-	ASDCP::JP2K::PictureDescriptor const & a, ASDCP::JP2K::PictureDescriptor const & b, boost::function<void (NoteType, string)> note
+	ASDCP::JP2K::PictureDescriptor const & a, ASDCP::JP2K::PictureDescriptor const & b, NoteHandler note
 	) const
 {
 	if (
@@ -113,7 +113,7 @@ PictureMXF::descriptor_equals (
 
 bool
 PictureMXF::frame_buffer_equals (
-	int frame, EqualityOptions opt, boost::function<void (NoteType, string)> note,
+	int frame, EqualityOptions opt, NoteHandler note,
 	uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
 	) const
 {

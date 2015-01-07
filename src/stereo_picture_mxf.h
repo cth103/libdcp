@@ -37,7 +37,7 @@ public:
 	bool equals (
 		boost::shared_ptr<const Asset> other,
 		EqualityOptions opt,
-		boost::function<void (NoteType, std::string)> note
+		NoteHandler note
 		) const;
 	
 	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
