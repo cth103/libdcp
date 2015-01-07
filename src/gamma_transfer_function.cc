@@ -35,8 +35,8 @@ GammaTransferFunction::GammaTransferFunction (bool inverse, double gamma)
 double *
 GammaTransferFunction::make_lut (int bit_depth) const
 {
-	int const bit_length = pow (2, bit_depth);
-	double* lut = new double[int(std::pow(2.0f, bit_depth))];
+	int const bit_length = int(std::pow(2.0f, bit_depth));
+	double* lut = new double[bit_length];
 	double const gamma = _inverse ? (1 / _gamma) : _gamma;
 	for (int i = 0; i < bit_length; ++i) {
 		lut[i] = pow(double(i) / (bit_length - 1), gamma);

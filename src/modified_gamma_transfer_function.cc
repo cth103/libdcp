@@ -38,8 +38,8 @@ ModifiedGammaTransferFunction::ModifiedGammaTransferFunction (bool inverse, doub
 double *
 ModifiedGammaTransferFunction::make_lut (int bit_depth) const
 {
-	int const bit_length = pow (2, bit_depth);
-	double* lut = new double[int(std::pow(2.0f, bit_depth))];
+	int const bit_length = int(std::pow(2.0f, bit_depth));
+	double* lut = new double[bit_length];
 	if (_inverse) {
 		double const threshold = _threshold / _B;
 		for (int i = 0; i < bit_length; ++i) {
