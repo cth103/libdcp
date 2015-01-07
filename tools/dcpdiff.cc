@@ -37,7 +37,7 @@ help (string n)
 	     << "  -V, --version                show libdcp version\n"
 	     << "  -h, --help                   show this help\n"
 	     << "  -v, --verbose                be verbose\n"
-	     << "  -n, --names                  allow differing MXF names\n"
+	     << "  -n, --mxf-names              allow differing MXF names\n"
 	     << "      --cpl-annotation-texts   allow differing CPL annotation texts\n"
 	     << "  -m, --mean-pixel             maximum allowed mean pixel error (default 5)\n"
 	     << "  -s, --std-dev-pixel          maximum allowed standard deviation of pixel error (default 5)\n"
@@ -93,7 +93,7 @@ main (int argc, char* argv[])
 			{ "version", no_argument, 0, 'V'},
 			{ "help", no_argument, 0, 'h'},
 			{ "verbose", no_argument, 0, 'v'},
-			{ "names", no_argument, 0, 'n'},
+			{ "mxf-names", no_argument, 0, 'n'},
 			{ "mean-pixel", required_argument, 0, 'm'},
 			{ "std-dev-pixel", required_argument, 0, 's'},
 			{ "keep-going", no_argument, 0, 'k'},
