@@ -114,12 +114,12 @@ MXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 		return false;
 	}
 
-	if (_file != other_mxf->file ()) {
-		if (!opt.mxf_names_can_differ) {
-			note (DCP_ERROR, "MXF: names differ");
+	if (_file.leaf() != other_mxf->file().leaf()) {
+		if (!opt.mxf_filenames_can_differ) {
+			note (DCP_ERROR, "MXF: filenames differ");
 			return false;
 		} else {
-			note (DCP_NOTE, "MXF: names differ");
+			note (DCP_NOTE, "MXF: filenames differ");
 		}
 	}
 	
