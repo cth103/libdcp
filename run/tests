@@ -10,7 +10,7 @@ private=../libdcp-test-private
 work=build/test
 dcpinfo=build/tools/dcpinfo
 
-export LD_LIBRARY_PATH=build/src:build/asdcplib/src
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:build/src:build/asdcplib/src
 
 # Run the unit tests in test/
 if [ "$1" == "--debug" ]; then
