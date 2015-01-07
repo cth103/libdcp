@@ -25,11 +25,13 @@
 #include "colour_conversion.h"
 #include "transfer_function.h"
 #include "dcp_assert.h"
+#include "compose.hpp"
 #include <cmath>
 
 using std::min;
 using std::max;
 using boost::shared_ptr;
+using boost::optional;
 using namespace dcp;
 
 #define DCI_COEFFICIENT (48.0 / 52.37)
@@ -119,7 +121,8 @@ void
 dcp::xyz_to_rgb (
 	boost::shared_ptr<const XYZFrame> xyz_frame,
 	ColourConversion const & conversion,
-	uint16_t* buffer
+	uint16_t* buffer,
+	optional<NoteHandler> note
 	)
 {
 	struct {
@@ -143,12 +146,35 @@ dcp::xyz_to_rgb (
 		uint16_t* buffer_line = buffer;
 		for (int x = 0; x < xyz_frame->size().width; ++x) {
 
-			DCP_ASSERT (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
+			int cx = *xyz_x++;
+			int cy = *xyz_y++;
+			int cz = *xyz_z++;
 
+			if (cx < 0 || cx > 4095) {
+				if (note) {
+					note.get() (DCP_NOTE, String::compose ("XYZ value %1 out of range", cx));
+				}
+				cx = max (min (cx, 4095), 0);
+			}
+
+			if (cy < 0 || cy > 4095) {
+				if (note) {
+					note.get() (DCP_NOTE, String::compose ("XYZ value %1 out of range", cy));
+				}
+				cy = max (min (cy, 4095), 0);
+			}
+
+			if (cz < 0 || cz > 4095) {
+				if (note) {
+					note.get() (DCP_NOTE, String::compose ("XYZ value %1 out of range", cz));
+				}
+				cz = max (min (cz, 4095), 0);
+			}
+			
 			/* In gamma LUT */
-			s.x = lut_in[*xyz_x++];
-			s.y = lut_in[*xyz_y++];
-			s.z = lut_in[*xyz_z++];
+			s.x = lut_in[cx];
+			s.y = lut_in[cy];
+			s.z = lut_in[cz];
 
 			/* DCI companding */
 			s.x /= DCI_COEFFICIENT;

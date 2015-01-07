@@ -22,9 +22,13 @@
 #include "xyz_frame.h"
 #include "colour_conversion.h"
 #include <boost/test/unit_test.hpp>
+#include <boost/bind.hpp>
 
 using std::max;
+using std::list;
+using std::string;
 using boost::shared_ptr;
+using boost::optional;
 
 class SimpleImage : public dcp::Image
 {
@@ -126,4 +130,59 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 			BOOST_REQUIRE_CLOSE (cz * 4095, xyz->data(2)[y * size.width + x], 1);
 		}
 	}
+}
+
+static list<string> notes;
+
+static void
+note_handler (dcp::NoteType n, string s)
+{
+	BOOST_REQUIRE_EQUAL (n, dcp::DCP_NOTE);
+	notes.push_back (s);
+}
+
+/** Check that xyz_to_rgb clamps XYZ values correctly */
+BOOST_AUTO_TEST_CASE (xyz_rgb_range_test)
+{
+	shared_ptr<dcp::XYZFrame> xyz (new dcp::XYZFrame (dcp::Size (2, 2)));
+	
+	xyz->data(0)[0] = -4;
+	xyz->data(0)[1] = 6901;
+	xyz->data(0)[2] = 0;
+	xyz->data(0)[3] = 4095;
+	xyz->data(1)[0] = -4;
+	xyz->data(1)[1] = 6901;
+	xyz->data(1)[2] = 0;
+	xyz->data(1)[3] = 4095;
+	xyz->data(2)[0] = -4;
+	xyz->data(2)[1] = 6901;
+	xyz->data(2)[2] = 0;
+	xyz->data(2)[3] = 4095;
+
+	uint16_t buffer[12];
+
+	notes.clear ();
+	dcp::xyz_to_rgb (xyz, dcp::ColourConversion::xyz_to_srgb (), buffer, boost::optional<dcp::NoteHandler> (boost::bind (&note_handler, _1, _2)));
+
+	/* The 6 out-of-range samples should have been noted */
+	BOOST_REQUIRE_EQUAL (notes.size(), 6);
+	list<string>::const_iterator i = notes.begin ();
+	BOOST_REQUIRE_EQUAL (*i++, "XYZ value -4 out of range");
+	BOOST_REQUIRE_EQUAL (*i++, "XYZ value -4 out of range");
+	BOOST_REQUIRE_EQUAL (*i++, "XYZ value -4 out of range");
+	BOOST_REQUIRE_EQUAL (*i++, "XYZ value 6901 out of range");
+	BOOST_REQUIRE_EQUAL (*i++, "XYZ value 6901 out of range");
+	BOOST_REQUIRE_EQUAL (*i++, "XYZ value 6901 out of range");
+
+	/* And those samples should have been clamped, so check that they give the same result
+	   as inputs at the extremes (0 and 4095).
+	*/
+
+	BOOST_REQUIRE_EQUAL (buffer[0 * 3 + 0], buffer[2 * 3 + 1]);
+	BOOST_REQUIRE_EQUAL (buffer[0 * 3 + 1], buffer[2 * 3 + 1]);
+	BOOST_REQUIRE_EQUAL (buffer[0 * 3 + 2], buffer[2 * 3 + 2]);
+
+	BOOST_REQUIRE_EQUAL (buffer[1 * 3 + 0], buffer[3 * 3 + 0]);
+	BOOST_REQUIRE_EQUAL (buffer[1 * 3 + 1], buffer[3 * 3 + 1]);
+	BOOST_REQUIRE_EQUAL (buffer[1 * 3 + 2], buffer[3 * 3 + 2]);
 }
