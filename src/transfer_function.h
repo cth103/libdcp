@@ -22,6 +22,7 @@
 
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/thread/mutex.hpp>
 #include <map>
 
 namespace dcp {
@@ -43,8 +44,10 @@ protected:
 
 	bool _inverse;
 
-private:	
+private:
 	mutable std::map<int, double*> _luts;
+	/** mutex to protect _luts */
+	mutable boost::mutex _mutex;
 };
 
 }

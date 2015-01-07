@@ -33,6 +33,8 @@ TransferFunction::TransferFunction (bool inverse)
 
 TransferFunction::~TransferFunction ()
 {
+	boost::mutex::scoped_lock lm (_mutex);
+
 	for (map<int, double*>::const_iterator i = _luts.begin(); i != _luts.end(); ++i) {
 		delete[] i->second;
 	}
@@ -43,6 +45,8 @@ TransferFunction::~TransferFunction ()
 double const *
 TransferFunction::lut (int bit_depth) const
 {
+	boost::mutex::scoped_lock lm (_mutex);
+	
 	map<int, double*>::const_iterator i = _luts.find (bit_depth);
 	if (i != _luts.end ()) {
 		return i->second;
