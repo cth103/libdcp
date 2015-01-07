@@ -35,6 +35,7 @@
 
 using std::string;
 using boost::shared_ptr;
+using boost::optional;
 using namespace dcp;
 
 /** Make a picture frame from a JPEG2000 file.
@@ -128,11 +129,12 @@ MonoPictureFrame::argb_frame (int reduce, float srgb_gamma) const
 }
 
 void
-MonoPictureFrame::rgb_frame (uint16_t* buffer) const
+MonoPictureFrame::rgb_frame (uint16_t* buffer, optional<NoteHandler> note) const
 {
 	xyz_to_rgb (
 		decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), 0),
 		ColourConversion::xyz_to_srgb (),
-		buffer
+		buffer,
+		note
 		);
 }
