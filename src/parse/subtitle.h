@@ -37,7 +37,7 @@ public:
 		, v_align (TOP)
 	{}
 	
-	Text (boost::shared_ptr<const cxml::Node> node);
+	Text (boost::shared_ptr<const cxml::Node> node, boost::optional<int> tcr);
 
 	float v_position;
 	VAlign v_align;
@@ -49,7 +49,7 @@ class Subtitle
 {
 public:
 	Subtitle () {}
-	Subtitle (boost::shared_ptr<const cxml::Node> node);
+	Subtitle (boost::shared_ptr<const cxml::Node> node, boost::optional<int> tcr);
 
 	Time in;
 	Time out;
@@ -59,7 +59,7 @@ public:
 	std::list<boost::shared_ptr<Text> > text_nodes;
 
 private:
-	Time fade_time (boost::shared_ptr<const cxml::Node>, std::string name);
+	Time fade_time (boost::shared_ptr<const cxml::Node>, std::string name, boost::optional<int> tcr);
 };
 
 class Font 
@@ -69,7 +69,7 @@ public:
 		: size (0)
 	{}
 	
-	Font (boost::shared_ptr<const cxml::Node> node);
+	Font (boost::shared_ptr<const cxml::Node> node, boost::optional<int> tcr);
 	Font (std::list<boost::shared_ptr<Font> > const & font_nodes);
 
 	std::string text;

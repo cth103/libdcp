@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ using boost::optional;
 using namespace libdcp;
 using namespace libdcp::parse;
 
-Font::Font (shared_ptr<const cxml::Node> node)
+Font::Font (shared_ptr<const cxml::Node> node, optional<int> tcr)
 {
 	text = node->content ();
 	
@@ -49,9 +49,21 @@ Font::Font (shared_ptr<const cxml::Node> node)
 	if (c) {
 		effect_color = Color (c.get ());
 	}
-	subtitle_nodes = type_children<Subtitle> (node, "Subtitle");
-	font_nodes = type_children<Font> (node, "Font");
-	text_nodes = type_children<Text> (node, "Text");
+
+	list<cxml::NodePtr> s = node->node_children ("Subtitle");
+	for (list<cxml::NodePtr>::iterator i = s.begin(); i != s.end(); ++i) {
+		subtitle_nodes.push_back (shared_ptr<Subtitle> (new Subtitle (*i, tcr)));
+	}
+
+	list<cxml::NodePtr> f = node->node_children ("Font");
+	for (list<cxml::NodePtr>::iterator i = f.begin(); i != f.end(); ++i) {
+		font_nodes.push_back (shared_ptr<Font> (new Font (*i, tcr)));
+	}
+
+	list<cxml::NodePtr> t = node->node_children ("Text");
+	for (list<cxml::NodePtr>::iterator i = t.begin(); i != t.end(); ++i) {
+		text_nodes.push_back (shared_ptr<Text> (new Text (*i, tcr)));
+	}
 }
 
 Font::Font (list<shared_ptr<Font> > const & font_nodes)
@@ -93,38 +105,48 @@ LoadFont::LoadFont (shared_ptr<const cxml::Node> node)
 	uri = node->optional_string_attribute ("URI");
 }
 
-Subtitle::Subtitle (shared_ptr<const cxml::Node> node)
+/** @param tcr A timecode rate, if this subtitle is from a SMPTE file, or empty if it is Interop */
+Subtitle::Subtitle (shared_ptr<const cxml::Node> node, optional<int> tcr)
 {
-	in = Time (node->string_attribute ("TimeIn"));
-	out = Time (node->string_attribute ("TimeOut"));
-	font_nodes = type_children<Font> (node, "Font");
-	text_nodes = type_children<Text> (node, "Text");
-	fade_up_time = fade_time (node, "FadeUpTime");
-	fade_down_time = fade_time (node, "FadeDownTime");
+	in = Time (node->string_attribute ("TimeIn"), tcr.get_value_or (250));
+	out = Time (node->string_attribute ("TimeOut"), tcr.get_value_or (250));
+
+	list<cxml::NodePtr> f = node->node_children ("Font");
+	for (list<cxml::NodePtr>::iterator i = f.begin(); i != f.end(); ++i) {
+		font_nodes.push_back (shared_ptr<Font> (new Font (*i, tcr)));
+	}
+
+	list<cxml::NodePtr> t = node->node_children ("Text");
+	for (list<cxml::NodePtr>::iterator i = t.begin(); i != t.end(); ++i) {
+		text_nodes.push_back (shared_ptr<Text> (new Text (*i, tcr)));
+	}
+	
+	fade_up_time = fade_time (node, "FadeUpTime", tcr);
+	fade_down_time = fade_time (node, "FadeDownTime", tcr);
 }
 
 Time
-Subtitle::fade_time (shared_ptr<const cxml::Node> node, string name)
+Subtitle::fade_time (shared_ptr<const cxml::Node> node, string name, optional<int> tcr)
 {
 	string const u = node->optional_string_attribute (name).get_value_or ("");
 	Time t;
 	
 	if (u.empty ()) {
-		t = Time (0, 0, 0, 20);
+		t = Time (0, 0, 0, 20, 250);
 	} else if (u.find (":") != string::npos) {
-		t = Time (u);
+		t = Time (u, tcr.get_value_or(250));
 	} else {
-		t = Time (0, 0, 0, raw_convert<int> (u));
+		t = Time (0, 0, 0, raw_convert<int> (u), tcr.get_value_or(250));
 	}
 
-	if (t > Time (0, 0, 8, 0)) {
-		t = Time (0, 0, 8, 0);
+	if (t > Time (0, 0, 8, 0, 250)) {
+		t = Time (0, 0, 8, 0, 250);
 	}
 
 	return t;
 }
 
-Text::Text (shared_ptr<const cxml::Node> node)
+Text::Text (shared_ptr<const cxml::Node> node, optional<int> tcr)
 	: v_align (CENTER)
 {
 	/* Vertical position */
@@ -144,6 +166,9 @@ Text::Text (shared_ptr<const cxml::Node> node)
 		v_align = string_to_valign (v.get ());
 	}
 
-	font_nodes = type_children<Font> (node, "Font");
+	list<cxml::NodePtr> f = node->node_children ("Font");
+	for (list<cxml::NodePtr>::iterator i = f.begin(); i != f.end(); ++i) {
+		font_nodes.push_back (shared_ptr<Font> (new Font (*i, tcr)));
+	}
 }
 

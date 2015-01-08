@@ -37,40 +37,41 @@ namespace libdcp {
 class Time
 {
 public:
-	Time () : h (0), m (0), s (0), t (0) {}
+	Time () : h (0), m (0), s (0), e (0) {}
 
-	Time (int64_t ticks);
-
-	/** Construct a Time from a frame index (starting from 0)
-	 *  and a frames per second count.
+	/** Construct a Time from a frame index (starting from 0),
+	 *  a frames per second count and a timecode rate.
 	 */
-	Time (int frame, int frames_per_second);
+	Time (int frame, int frames_per_second, int tcr);
 
-	/** Construct a Time from hours, minutes, seconds and ticks.
+	/** Construct a Time from hours, minutes, seconds, editable units and timecode rate.
 	 *  @param h_ Hours.
 	 *  @param m_ Minutes.
 	 *  @param s_ Seconds.
-	 *  @param t_ Ticks (where 1 tick is 4 milliseconds).
+	 *  @param e_ Editable units
+	 *  @param tcr_ Timecode rate
 	 */
-	Time (int h_, int m_, int s_, int t_)
+	Time (int h_, int m_, int s_, int e_, int tcr_)
 		: h (h_)
 		, m (m_)
 		, s (s_)
-		, t (t_)
+		, e (e_)
+		, tcr (tcr_)
 	{}
-
-	Time (std::string time);
-
-	int h; ///< hours
-	int m; ///< minutes
-	int s; ///< seconds
-	int t; ///< `ticks', where 1 tick is 4 milliseconds
+	
+	Time (std::string time, int tcr_);
+	
+	int h;   ///< hours
+	int m;   ///< minutes
+	int s;   ///< seconds
+	int e;   ///< `editable units', where 1 editable unit is 1/tcr seconds
+	int tcr; ///< time code rate; the number of editable units per second
 
 	std::string to_string () const;
-	int64_t to_ticks () const;
+	int64_t to_editable_units (int tcr_) const;
 
 private:
-	void set (double);
+	void set (double seconds, int tcr);
 };
 
 extern bool operator== (Time const & a, Time const & b);
@@ -80,8 +81,8 @@ extern bool operator< (Time const & a, Time const & b);
 extern bool operator> (Time const & a, Time const & b);
 extern bool operator>= (Time const & a, Time const & b);
 extern std::ostream & operator<< (std::ostream & s, Time const & t);
-extern Time operator+ (Time a, Time const & b);	
-extern Time operator- (Time a, Time const & b);
+extern Time operator+ (Time a, Time b);	
+extern Time operator- (Time a, Time b);
 extern float operator/ (Time a, Time const & b);
 
 }

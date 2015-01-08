@@ -88,21 +88,27 @@ SubtitleAsset::read_mxf (string mxf_file)
 	stringstream t;
 	t << s;
 	xml->read_stream (t);
-	read_xml (xml);
+	read_xml (xml, true);
 }
 
 void
 SubtitleAsset::read_xml (string xml_file)
 {
-	shared_ptr<cxml::Document> xml (new cxml::Document ("DCSubtitle"));
-	xml->read_file (xml_file);
-	read_xml (xml);
+	try {
+		shared_ptr<cxml::Document> xml (new cxml::Document ("DCSubtitle"));
+		xml->read_file (xml_file);
+		read_xml (xml, false);
+	} catch (cxml::Error& e) {
+		shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
+		xml->read_file (xml_file);
+		read_xml (xml, true);
+	}		
 }
 
 void
-SubtitleAsset::read_xml (shared_ptr<cxml::Document> xml)
+SubtitleAsset::read_xml (shared_ptr<cxml::Document> xml, bool smpte)
 {
-	/* XXX: hacks aplenty in here; need separate parsers for DCSubtitle and SubtitleReel */
+	/* XXX: hacks aplenty in here; need separate parsers for DCSubtitle (Interop) and SubtitleReel (SMPTE) */
 	
 	/* DCSubtitle */
 	optional<string> x = xml->optional_string_child ("SubtitleID");
@@ -116,9 +122,19 @@ SubtitleAsset::read_xml (shared_ptr<cxml::Document> xml)
 	_reel_number = xml->string_child ("ReelNumber");
 	_language = xml->string_child ("Language");
 
+	optional<int> tcr;
+	if (smpte) {
+		tcr = xml->optional_number_child<int> ("TimeCodeRate");
+	}
+
 	xml->ignore_child ("LoadFont");
 
-	list<shared_ptr<libdcp::parse::Font> > font_nodes = type_children<libdcp::parse::Font> (xml, "Font");
+	list<shared_ptr<parse::Font> > font_nodes;
+	list<cxml::NodePtr> f = xml->node_children ("Font");
+	for (list<cxml::NodePtr>::iterator i = f.begin(); i != f.end(); ++i) {
+		font_nodes.push_back (shared_ptr<parse::Font> (new parse::Font (*i, tcr)));
+	}
+
 	_load_font_nodes = type_children<libdcp::parse::LoadFont> (xml, "LoadFont");
 
 	/* Now make Subtitle objects to represent the raw XML nodes
@@ -127,8 +143,11 @@ SubtitleAsset::read_xml (shared_ptr<cxml::Document> xml)
 
 	shared_ptr<cxml::Node> subtitle_list = xml->optional_node_child ("SubtitleList");
 	if (subtitle_list) {
-		list<shared_ptr<libdcp::parse::Font> > font = type_children<libdcp::parse::Font> (subtitle_list, "Font");
-		copy (font.begin(), font.end(), back_inserter (font_nodes));
+		list<shared_ptr<parse::Font> > font;
+		list<cxml::NodePtr> f = subtitle_list->node_children ("Font");
+		for (list<cxml::NodePtr>::iterator i = f.begin(); i != f.end(); ++i) {
+			font_nodes.push_back (shared_ptr<parse::Font> (new parse::Font (*i, tcr)));
+		}
 	}
 	
 	ParseState parse_state;
@@ -464,8 +483,8 @@ SubtitleAsset::xml_as_string () const
 			subtitle->set_attribute ("SpotNumber", raw_convert<string> (spot_number++));
 			subtitle->set_attribute ("TimeIn", (*i)->in().to_string());
 			subtitle->set_attribute ("TimeOut", (*i)->out().to_string());
-			subtitle->set_attribute ("FadeUpTime", raw_convert<string> ((*i)->fade_up_time().to_ticks()));
-			subtitle->set_attribute ("FadeDownTime", raw_convert<string> ((*i)->fade_down_time().to_ticks()));
+			subtitle->set_attribute ("FadeUpTime", raw_convert<string> ((*i)->fade_up_time().to_editable_units(250)));
+			subtitle->set_attribute ("FadeDownTime", raw_convert<string> ((*i)->fade_down_time().to_editable_units(250)));
 
 			last_in = (*i)->in ();
 			last_out = (*i)->out ();

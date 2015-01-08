@@ -174,7 +174,7 @@ protected:
 private:
 	std::string font_id_to_name (std::string id) const;
 	void read_mxf (std::string);
-	void read_xml (boost::shared_ptr<cxml::Document>);
+	void read_xml (boost::shared_ptr<cxml::Document>, bool smpte);
 
 	struct ParseState {
 		std::list<boost::shared_ptr<parse::Font> > font_nodes;
