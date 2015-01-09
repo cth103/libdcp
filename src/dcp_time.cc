@@ -225,8 +225,8 @@ libdcp::operator- (Time a, Time b)
 float
 libdcp::operator/ (Time a, Time const & b)
 {
-	float const as = a.h * 3600 * 250 + a.m * 60 * 250 + a.s * float (a.e) / a.tcr;
-	float const bs = b.h * 3600 * 250 + b.m * 60 * 250 + b.s * float (b.e) / b.tcr;
+	float const as = a.h * 3600 + a.m * 60 + a.s * float (a.e) / a.tcr;
+	float const bs = b.h * 3600 + b.m * 60 + b.s * float (b.e) / b.tcr;
 	return as / bs;
 }
 
