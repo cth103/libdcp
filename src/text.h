@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 
 #include "types.h"
 #include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 #include <list>
 
 namespace cxml {
@@ -45,7 +46,7 @@ public:
 		, v_align (TOP)
 	{}
 	
-	Text (boost::shared_ptr<const cxml::Node> node);
+	Text (boost::shared_ptr<const cxml::Node> node, int tcr);
 
 	float v_position;
 	VAlign v_align;

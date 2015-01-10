@@ -23,13 +23,10 @@
 
 #include "types.h"
 #include "subtitle.h"
+#include <libcxml/cxml.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/optional.hpp>
 #include <list>
-
-namespace cxml {
-	class Node;
-}
 
 namespace dcp {
 
@@ -43,7 +40,7 @@ public:
 		: size (0)
 	{}
 	
-	Font (boost::shared_ptr<const cxml::Node> node);
+	Font (cxml::ConstNodePtr node, int tcr);
 	Font (std::list<boost::shared_ptr<Font> > const & font_nodes);
 
 	std::string text;

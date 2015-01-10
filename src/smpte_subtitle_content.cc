@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,10 +24,12 @@
 #include "xml.h"
 #include "AS_DCP.h"
 #include "KM_util.h"
+#include <boost/foreach.hpp>
 
 using std::string;
 using std::list;
 using std::stringstream;
+using std::cout;
 using boost::shared_ptr;
 using namespace dcp;
 
@@ -62,8 +64,15 @@ SMPTESubtitleContent::SMPTESubtitleContent (boost::filesystem::path file, bool m
 	
 	_load_font_nodes = type_children<dcp::SMPTELoadFont> (xml, "LoadFont");
 
+	int tcr = xml->number_child<int> ("TimeCodeRate");
+
 	shared_ptr<cxml::Node> subtitle_list = xml->optional_node_child ("SubtitleList");
-	list<shared_ptr<dcp::Font> > font_nodes = type_children<dcp::Font> (subtitle_list, "Font");
+
+	list<cxml::NodePtr> f = subtitle_list->node_children ("Font");
+	list<shared_ptr<dcp::Font> > font_nodes;
+	BOOST_FOREACH (cxml::NodePtr& i, f) {
+		font_nodes.push_back (shared_ptr<Font> (new Font (i, tcr)));
+	}
 
 	parse_common (xml, font_nodes);
 }

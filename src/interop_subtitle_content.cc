@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,9 +22,11 @@
 #include "xml.h"
 #include "raw_convert.h"
 #include "font.h"
+#include <boost/foreach.hpp>
 
 using std::list;
 using std::string;
+using std::cout;
 using boost::shared_ptr;
 using boost::optional;
 using boost::dynamic_pointer_cast;
@@ -38,9 +40,13 @@ InteropSubtitleContent::InteropSubtitleContent (boost::filesystem::path file)
 	_id = xml->string_child ("SubtitleID");
 
 	_movie_title = xml->string_child ("MovieTitle");
-
 	_load_font_nodes = type_children<dcp::InteropLoadFont> (xml, "LoadFont");
-	list<shared_ptr<dcp::Font> > font_nodes = type_children<dcp::Font> (xml, "Font");
+
+	list<cxml::NodePtr> f = xml->node_children ("Font");
+	list<shared_ptr<dcp::Font> > font_nodes;
+	BOOST_FOREACH (cxml::NodePtr& i, f) {
+		font_nodes.push_back (shared_ptr<Font> (new Font (i, 250)));
+	}
 
 	parse_common (xml, font_nodes);
 }
@@ -148,8 +154,8 @@ InteropSubtitleContent::xml_as_string () const
 			subtitle_element->set_attribute ("SpotNumber", raw_convert<string> (spot_number++));
 			subtitle_element->set_attribute ("TimeIn", i->in().to_string());
 			subtitle_element->set_attribute ("TimeOut", i->out().to_string());
-			subtitle_element->set_attribute ("FadeUpTime", raw_convert<string> (i->fade_up_time().to_ticks()));
-			subtitle_element->set_attribute ("FadeDownTime", raw_convert<string> (i->fade_down_time().to_ticks()));
+			subtitle_element->set_attribute ("FadeUpTime", raw_convert<string> (i->fade_up_time().to_editable_units(250)));
+			subtitle_element->set_attribute ("FadeDownTime", raw_convert<string> (i->fade_down_time().to_editable_units(250)));
 
 			last_in = i->in ();
 			last_out = i->out ();

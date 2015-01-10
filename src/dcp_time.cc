@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,31 +33,23 @@ using namespace std;
 using namespace boost;
 using namespace dcp;
 
-Time::Time (int frame, int frames_per_second)
+Time::Time (int frame, int frames_per_second, int tcr_)
 	: h (0)
 	, m (0)
 	, s (0)
-	, t (0)
+	, e (0)
+	, tcr (tcr_)
 {
-	set (double (frame) / frames_per_second);
-}
-
-Time::Time (int64_t ticks)
-{
-	h = ticks / (60 * 60 * 250);
-	ticks -= int64_t (h) * 60 * 60 * 250;
-	m = ticks / (60 * 250);
-	ticks -= int64_t (m) * 60 * 250;
-	s = ticks / 250;
-	ticks -= int64_t (s) * 250;
-	t = ticks;
+	set (double (frame) / frames_per_second, tcr);
 }
 
 void
-Time::set (double ss)
+Time::set (double seconds, int tcr_)
 {
-	s = floor (ss);
-	t = int (round (1000 * (ss - s) / 4));
+	s = floor (seconds);
+	tcr = tcr_;
+	
+	e = int (round ((seconds - s) * tcr));
 
 	if (s >= 60) {
 		m = s / 60;
@@ -70,7 +62,8 @@ Time::set (double ss)
 	}
 }
 
-Time::Time (string time)
+Time::Time (string time, int tcr_)
+	: tcr (tcr_)
 {
 	vector<string> b;
 	split (b, time, is_any_of (":"));
@@ -81,13 +74,13 @@ Time::Time (string time)
 	h = raw_convert<int> (b[0]);
 	m = raw_convert<int> (b[1]);
 	s = raw_convert<int> (b[2]);
-	t = raw_convert<int> (b[3]);
+	e = raw_convert<int> (b[3]);
 }
 
 bool
 dcp::operator== (Time const & a, Time const & b)
 {
-	return (a.h == b.h && a.m == b.m && a.s == b.s && a.t == b.t);
+	return (a.h == b.h && a.m == b.m && a.s == b.s && (a.e * b.tcr) == (b.e * a.tcr));
 }
 
 bool
@@ -123,8 +116,8 @@ dcp::operator< (Time const & a, Time const & b)
 		return a.s < b.s;
 	}
 
-	if (a.t != b.t) {
-		return a.t < b.t;
+	if ((a.e * b.tcr) != (b.e * a.tcr)) {
+		return (a.e * b.tcr) < (b.e * a.tcr);
 	}
 
 	return true;
@@ -145,8 +138,8 @@ dcp::operator> (Time const & a, Time const & b)
 		return a.s > b.s;
 	}
 
-	if (a.t != b.t) {
-		return a.t > b.t;
+	if ((a.e * b.tcr) != (b.e * a.tcr)) {
+		return (a.e * b.tcr) > (b.e * a.tcr);
 	}
 
 	return true;
@@ -155,18 +148,27 @@ dcp::operator> (Time const & a, Time const & b)
 ostream &
 dcp::operator<< (ostream& s, Time const & t)
 {
-	s << t.h << ":" << t.m << ":" << t.s << "." << t.t;
+	s << t.h << ":" << t.m << ":" << t.s << "." << t.e;
 	return s;
 }
 
 dcp::Time
-dcp::operator+ (Time a, Time const & b)
+dcp::operator+ (Time a, Time b)
 {
 	Time r;
 
-	r.t = a.t + b.t;
-	if (r.t >= 250) {
-		r.t -= 250;
+	/* Make sure we have a common tcr */
+	if (a.tcr != b.tcr) {
+		a.e *= b.tcr;
+		b.e *= a.tcr;
+		r.tcr = a.tcr * b.tcr;
+	} else {
+		r.tcr = a.tcr;
+	}
+
+	r.e = a.e + b.e;
+	if (r.e >= r.tcr) {
+		r.e -= r.tcr;
 		r.s++;
 	}
 
@@ -188,13 +190,22 @@ dcp::operator+ (Time a, Time const & b)
 }
 
 dcp::Time
-dcp::operator- (Time a, Time const & b)
+dcp::operator- (Time a, Time b)
 {
 	Time r;
 
-	r.t = a.t - b.t;
-	if (r.t < 0) {
-		r.t += 250;
+	/* Make sure we have a common tcr */
+	if (a.tcr != b.tcr) {
+		a.e *= b.tcr;
+		b.e *= a.tcr;
+		r.tcr = a.tcr * b.tcr;
+	} else {
+		r.tcr = a.tcr;
+	}
+	
+	r.e = a.e - b.e;
+	if (r.e < 0) {
+		r.e += r.tcr;
 		r.s--;
 	}
 
@@ -218,29 +229,22 @@ dcp::operator- (Time a, Time const & b)
 float
 dcp::operator/ (Time a, Time const & b)
 {
-	int64_t const at = a.h * 3600 * 250 + a.m * 60 * 250 + a.s * 250 + a.t;
-	int64_t const bt = b.h * 3600 * 250 + b.m * 60 * 250 + b.s * 250 + b.t;
+	int64_t const at = a.h * 3600 + a.m * 60 + a.s * float (a.e) / a.tcr;
+	int64_t const bt = b.h * 3600 + b.m * 60 + b.s * float (b.e) / b.tcr;
 	return float (at) / bt;
 }
 
-/** @return A string of the form h:m:s:t */
+/** @return A string of the form h:m:s:e */
 string
 Time::to_string () const
 {
 	stringstream str;
-	str << h << ":" << m << ":" << s << ":" << t;
+	str << h << ":" << m << ":" << s << ":" << e;
 	return str.str ();
 }
 
-/** @return This time in ticks */
 int64_t
-Time::to_ticks () const
+Time::to_editable_units (int tcr_) const
 {
-	return int64_t(t) + int64_t(s) * 250 + int64_t(m) * 60 * 250 + int64_t(h) * 60 * 60 * 250;
-}
-
-double
-Time::to_seconds () const
-{
-	return double (to_ticks ()) / 250;
+	return (int64_t(e) * float (tcr_ / tcr)) + int64_t(s) * tcr_ + int64_t(m) * 60 * tcr_ + int64_t(h) * 60 * 60 * tcr_;
 }

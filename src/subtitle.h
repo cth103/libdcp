@@ -22,6 +22,7 @@
 
 #include "dcp_time.h"
 #include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 #include <list>
 
 namespace cxml {
@@ -37,7 +38,7 @@ class Subtitle
 {
 public:
 	Subtitle () {}
-	Subtitle (boost::shared_ptr<const cxml::Node> node);
+	Subtitle (boost::shared_ptr<const cxml::Node> node, int tcr);
 
 	Time in;
 	Time out;
@@ -47,7 +48,7 @@ public:
 	std::list<boost::shared_ptr<Text> > text_nodes;
 
 private:
-	Time fade_time (boost::shared_ptr<const cxml::Node>, std::string name);
+	Time fade_time (boost::shared_ptr<const cxml::Node>, std::string name, int tcr);
 };
 
 }

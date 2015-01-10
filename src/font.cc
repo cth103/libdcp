@@ -23,6 +23,7 @@
 #include "xml.h"
 #include "text.h"
 #include <libcxml/cxml.h>
+#include <boost/foreach.hpp>
 
 using std::string;
 using std::list;
@@ -30,7 +31,7 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
-Font::Font (boost::shared_ptr<const cxml::Node> node)
+Font::Font (cxml::ConstNodePtr node, int tcr)
 {
 	text = node->content ();
 	
@@ -49,9 +50,21 @@ Font::Font (boost::shared_ptr<const cxml::Node> node)
 	if (c) {
 		effect_colour = Colour (c.get ());
 	}
-	subtitle_nodes = type_children<Subtitle> (node, "Subtitle");
-	font_nodes = type_children<Font> (node, "Font");
-	text_nodes = type_children<Text> (node, "Text");
+
+	list<cxml::NodePtr> s = node->node_children ("Subtitle");
+	BOOST_FOREACH (cxml::NodePtr& i, s) {
+		subtitle_nodes.push_back (shared_ptr<Subtitle> (new Subtitle (i, tcr)));
+	}
+
+	list<cxml::NodePtr> f = node->node_children ("Font");
+	BOOST_FOREACH (cxml::NodePtr& i, f) {
+		font_nodes.push_back (shared_ptr<Font> (new Font (i, tcr)));
+	}
+	
+	list<cxml::NodePtr> t = node->node_children ("Text");
+	BOOST_FOREACH (cxml::NodePtr& i, t) {
+		text_nodes.push_back (shared_ptr<Text> (new Text (i, tcr)));
+	}
 }
 
 Font::Font (std::list<boost::shared_ptr<Font> > const & font_nodes)

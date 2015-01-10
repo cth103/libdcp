@@ -25,8 +25,10 @@
 #include "xml.h"
 #include "font.h"
 #include <libcxml/cxml.h>
+#include <boost/foreach.hpp>
 
 using std::string;
+using std::list;
 using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
@@ -35,7 +37,7 @@ using namespace dcp;
  *  in this object's member variables.
  *  @param node Node to read.
  */
-Text::Text (boost::shared_ptr<const cxml::Node> node)
+Text::Text (boost::shared_ptr<const cxml::Node> node, int tcr)
 	: v_align (CENTER)
 {
 	text = node->content ();
@@ -54,5 +56,8 @@ Text::Text (boost::shared_ptr<const cxml::Node> node)
 		v_align = string_to_valign (v.get ());
 	}
 
-	font_nodes = type_children<Font> (node, "Font");
+	list<cxml::NodePtr> f = node->node_children ("Font");
+	BOOST_FOREACH (cxml::NodePtr& i, f) {
+		font_nodes.push_back (shared_ptr<Font> (new Font (i, tcr)));
+	}
 }
