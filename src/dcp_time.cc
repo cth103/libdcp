@@ -34,13 +34,8 @@ using namespace boost;
 using namespace dcp;
 
 Time::Time (int frame, int frames_per_second, int tcr_)
-	: h (0)
-	, m (0)
-	, s (0)
-	, e (0)
-	, tcr (tcr_)
 {
-	set (double (frame) / frames_per_second, tcr);
+	set (double (frame) / frames_per_second, tcr_);
 }
 
 Time::Time (double seconds)
@@ -59,11 +54,15 @@ Time::set (double seconds, int tcr_)
 	if (s >= 60) {
 		m = s / 60;
 		s -= m * 60;
+	} else {
+		m = 0;
 	}
 
 	if (m >= 60) {
 		h = m / 60;
 		m -= h * 60;
+	} else {
+		h = 0;
 	}
 }
 
