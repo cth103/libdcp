@@ -59,6 +59,8 @@ public:
 		, tcr (tcr_)
 	{}
 
+	Time (double seconds);
+
 	Time (std::string time, int tcr);
 
 	int h; ///<   hours
@@ -68,6 +70,7 @@ public:
 	int tcr; ///< timecode rate: the number of editable units per second.
 
 	std::string to_string () const;
+	double to_seconds () const;
 	int64_t to_editable_units (int tcr_) const;
 
 private:

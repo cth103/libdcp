@@ -43,6 +43,11 @@ Time::Time (int frame, int frames_per_second, int tcr_)
 	set (double (frame) / frames_per_second, tcr);
 }
 
+Time::Time (double seconds)
+{
+	set (seconds, 24);
+}
+
 void
 Time::set (double seconds, int tcr_)
 {
@@ -247,4 +252,10 @@ int64_t
 Time::to_editable_units (int tcr_) const
 {
 	return (int64_t(e) * float (tcr_ / tcr)) + int64_t(s) * tcr_ + int64_t(m) * 60 * tcr_ + int64_t(h) * 60 * 60 * tcr_;
+}
+
+double
+Time::to_seconds () const
+{
+	return h * 3600 + m * 60 + s + double(e) / tcr;
 }
