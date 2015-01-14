@@ -187,16 +187,12 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState& parse_state)
 	libdcp::parse::Text effective_text (*parse_state.text_nodes.back ());
 	libdcp::parse::Subtitle effective_subtitle (*parse_state.subtitle_nodes.back ());
 
-	cout << "Maybe add " << text << "\n";
-
 	shared_ptr<Subtitle> c = parse_state.current;
 	if (!c ||
 	    effective_subtitle.in != c->in() ||
 	    effective_subtitle.out != c->out() ||
 	    effective_text.v_position != c->v_position() ||
 	    effective_text.v_align != c->v_align()) {
-
-		cout << "(reset)\n";
 
 		parse_state.current.reset (
 			new Subtitle (
