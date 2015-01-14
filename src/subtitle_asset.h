@@ -180,21 +180,11 @@ private:
 		std::list<boost::shared_ptr<parse::Font> > font_nodes;
 		std::list<boost::shared_ptr<parse::Text> > text_nodes;
 		std::list<boost::shared_ptr<parse::Subtitle> > subtitle_nodes;
+		boost::shared_ptr<Subtitle> current;
 	};
 
-	void maybe_add_subtitle (std::string text, ParseState const & parse_state);
-	
-	void examine_font_nodes (
-		boost::shared_ptr<const cxml::Node> xml,
-		std::list<boost::shared_ptr<parse::Font> > const & font_nodes,
-		ParseState& parse_state
-		);
-	
-	void examine_text_nodes (
-		boost::shared_ptr<const cxml::Node> xml,
-		std::list<boost::shared_ptr<parse::Text> > const & text_nodes,
-		ParseState& parse_state
-		);
+	void parse_node (xmlpp::Node* node, ParseState& parse_state, boost::optional<int> tcr);
+	void maybe_add_subtitle (std::string text, ParseState& parse_state);
 
 	boost::optional<std::string> _movie_title;
 	/* strangely, this is sometimes a string */

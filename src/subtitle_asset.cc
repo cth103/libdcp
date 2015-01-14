@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -127,76 +127,50 @@ SubtitleAsset::read_xml (shared_ptr<cxml::Document> xml, bool smpte)
 		tcr = xml->optional_number_child<int> ("TimeCodeRate");
 	}
 
-	xml->ignore_child ("LoadFont");
-
-	list<shared_ptr<parse::Font> > font_nodes;
-	list<cxml::NodePtr> f = xml->node_children ("Font");
-	for (list<cxml::NodePtr>::iterator i = f.begin(); i != f.end(); ++i) {
-		font_nodes.push_back (shared_ptr<parse::Font> (new parse::Font (*i, tcr)));
-	}
-
 	_load_font_nodes = type_children<libdcp::parse::LoadFont> (xml, "LoadFont");
 
 	/* Now make Subtitle objects to represent the raw XML nodes
 	   in a sane way.
 	*/
 
-	shared_ptr<cxml::Node> subtitle_list = xml->optional_node_child ("SubtitleList");
-	if (subtitle_list) {
-		list<shared_ptr<parse::Font> > font;
-		list<cxml::NodePtr> f = subtitle_list->node_children ("Font");
-		for (list<cxml::NodePtr>::iterator i = f.begin(); i != f.end(); ++i) {
-			font_nodes.push_back (shared_ptr<parse::Font> (new parse::Font (*i, tcr)));
-		}
-	}
-	
 	ParseState parse_state;
-	examine_font_nodes (xml, font_nodes, parse_state);
+	parse_node (xml->node(), parse_state, tcr);
 }
 
 void
-SubtitleAsset::examine_font_nodes (
-	shared_ptr<const cxml::Node> xml,
-	list<shared_ptr<libdcp::parse::Font> > const & font_nodes,
-	ParseState& parse_state
-	)
+SubtitleAsset::parse_node (xmlpp::Node* node, ParseState& parse_state, optional<int> tcr)
 {
-	for (list<shared_ptr<libdcp::parse::Font> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
-
-		parse_state.font_nodes.push_back (*i);
-		maybe_add_subtitle ((*i)->text, parse_state);
-
-		for (list<shared_ptr<libdcp::parse::Subtitle> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
-			parse_state.subtitle_nodes.push_back (*j);
-			examine_text_nodes (xml, (*j)->text_nodes, parse_state);
-			examine_font_nodes (xml, (*j)->font_nodes, parse_state);
-			parse_state.subtitle_nodes.pop_back ();
+	xmlpp::Node::NodeList children = node->get_children ();
+	for (xmlpp::Node::NodeList::const_iterator i = children.begin(); i != children.end(); ++i) {
+		xmlpp::ContentNode* c = dynamic_cast<xmlpp::ContentNode *> (*i);
+		if (c) {
+			maybe_add_subtitle (c->get_content (), parse_state);
 		}
-	
-		examine_font_nodes (xml, (*i)->font_nodes, parse_state);
-		examine_text_nodes (xml, (*i)->text_nodes, parse_state);
-		
-		parse_state.font_nodes.pop_back ();
+
+		xmlpp::Element* e = dynamic_cast<xmlpp::Element *> (*i);
+		if (e) {
+                        cxml::ConstNodePtr n (new cxml::Node (e));
+                        if (n->name() == "Font") {
+                                parse_state.font_nodes.push_back (shared_ptr<parse::Font> (new parse::Font (n, tcr)));
+                                parse_node (e, parse_state, tcr);
+                                parse_state.font_nodes.pop_back ();
+                        } else if (n->name() == "Text") {
+                                parse_state.text_nodes.push_back (shared_ptr<parse::Text> (new parse::Text (n, tcr)));
+                                parse_node (e, parse_state, tcr);
+                                parse_state.text_nodes.pop_back ();
+                        } else if (n->name() == "Subtitle") {
+                                parse_state.subtitle_nodes.push_back (shared_ptr<parse::Subtitle> (new parse::Subtitle (n, tcr)));
+                                parse_node (e, parse_state, tcr);
+                                parse_state.subtitle_nodes.pop_back ();
+                        } else if (n->name() == "SubtitleList") {
+                                parse_node (e, parse_state, tcr);
+                        }
+		}
 	}
 }
 
 void
-SubtitleAsset::examine_text_nodes (
-	shared_ptr<const cxml::Node> xml,
-	list<shared_ptr<libdcp::parse::Text> > const & text_nodes,
-	ParseState& parse_state
-	)
-{
-	for (list<shared_ptr<libdcp::parse::Text> >::const_iterator i = text_nodes.begin(); i != text_nodes.end(); ++i) {
-		parse_state.text_nodes.push_back (*i);
-		maybe_add_subtitle ((*i)->text, parse_state);
-		examine_font_nodes (xml, (*i)->font_nodes, parse_state);
-		parse_state.text_nodes.pop_back ();
-	}
-}
-
-void
-SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
+SubtitleAsset::maybe_add_subtitle (string text, ParseState& parse_state)
 {
 	if (empty_or_white_space (text)) {
 		return;
@@ -213,8 +187,18 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 	libdcp::parse::Text effective_text (*parse_state.text_nodes.back ());
 	libdcp::parse::Subtitle effective_subtitle (*parse_state.subtitle_nodes.back ());
 
-	_subtitles.push_back (
-		shared_ptr<Subtitle> (
+	cout << "Maybe add " << text << "\n";
+
+	shared_ptr<Subtitle> c = parse_state.current;
+	if (!c ||
+	    effective_subtitle.in != c->in() ||
+	    effective_subtitle.out != c->out() ||
+	    effective_text.v_position != c->v_position() ||
+	    effective_text.v_align != c->v_align()) {
+
+		cout << "(reset)\n";
+
+		parse_state.current.reset (
 			new Subtitle (
 				font_id_to_name (effective_font.id),
 				effective_font.italic.get(),
@@ -224,14 +208,22 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 				effective_subtitle.out,
 				effective_text.v_position,
 				effective_text.v_align,
-				text,
+				"",
 				effective_font.effect ? effective_font.effect.get() : NONE,
 				effective_font.effect_color.get(),
 				effective_subtitle.fade_up_time,
 				effective_subtitle.fade_down_time
 				)
-			)
-		);
+			);
+		
+		_subtitles.push_back (parse_state.current);
+	}
+	
+	if (effective_font.italic.get()) {
+		parse_state.current->set_text (parse_state.current->text() + "<i>" + text + "</i>");
+	} else {
+		parse_state.current->set_text (parse_state.current->text() + text);
+	}
 }
 
 list<shared_ptr<Subtitle> >

@@ -444,6 +444,29 @@ BOOST_AUTO_TEST_CASE (subtitles3)
 				   libdcp::Time (0, 0, 0, 0, 25),
 				   libdcp::Time (0, 0, 0, 0, 25)
 				   ));
+}
 
+/* <Font italic="yes"> in the middle of a string */
+BOOST_AUTO_TEST_CASE (subtitles4)
+{
+	libdcp::SubtitleAsset subs ("test/data", "subs4.xml");
 
+	list<shared_ptr<libdcp::Subtitle> > s = subs.subtitles_during (libdcp::Time (0, 0, 0, 0, 25), libdcp::Time (0, 0, 7, 0, 25));
+
+	BOOST_REQUIRE_EQUAL (s.size(), 1);
+	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (
+				   "",
+				   false,
+				   libdcp::Color (255, 255, 255),
+				   42,
+				   libdcp::Time (0, 0, 4, 21, 25),
+				   libdcp::Time (0, 0, 6, 5, 25),
+				   8,
+				   libdcp::BOTTOM,
+				   "Hello <i>there</i> world",
+				   libdcp::BORDER,
+				   libdcp::Color (0, 0, 0),
+				   libdcp::Time (0, 0, 0, 0, 25),
+				   libdcp::Time (0, 0, 0, 0, 25)
+				   ));
 }
