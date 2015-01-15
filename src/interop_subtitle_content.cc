@@ -165,7 +165,7 @@ InteropSubtitleContent::xml_as_string () const
 
 		xmlpp::Element* text = subtitle_element->add_child ("Text");
 		text->set_attribute ("VAlign", valign_to_string (i->v_align()));		
-		text->set_attribute ("VPosition", raw_convert<string> (i->v_position()));
+		text->set_attribute ("VPosition", raw_convert<string> (i->v_position(), 6));
 		text->add_child_text (i->text());
 	}
 
