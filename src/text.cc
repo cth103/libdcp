@@ -45,7 +45,7 @@ Text::Text (boost::shared_ptr<const cxml::Node> node, int tcr)
 	if (!x) {
 		x = node->number_attribute<float> ("Vposition");
 	}
-	v_position = x.get ();
+	v_position = x.get () / 100;
 	
 	optional<string> v = node->optional_string_attribute ("VAlign");
 	if (!v) {
