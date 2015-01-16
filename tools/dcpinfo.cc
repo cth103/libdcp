@@ -111,6 +111,7 @@ main (int argc, char* argv[])
 						     << "out:" << (*k)->out() << "; "
 						     << "v_position:" << (*k)->v_position() << "; "
 						     << "v_align:" << (*k)->v_align() << "; "
+						     << "h_align:" << (*k)->h_align() << "; "
 						     << "effect:" << (*k)->effect() << "; "
 						     << "effect_color:" << (*k)->effect_color() << "; "
 						     << "fade_up_time:" << (*k)->fade_up_time() << "; "

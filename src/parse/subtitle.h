@@ -34,13 +34,14 @@ class Text
 public:
 	Text ()
 		: v_position (0)
-		, v_align (TOP)
+		, v_align (VERTICAL_TOP)
 	{}
 	
 	Text (boost::shared_ptr<const cxml::Node> node, boost::optional<int> tcr);
 
 	float v_position;
 	VAlign v_align;
+	HAlign h_align;
 	std::string text;
 	std::list<boost::shared_ptr<Font> > font_nodes;
 };
