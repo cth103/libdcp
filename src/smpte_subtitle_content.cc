@@ -84,3 +84,11 @@ SMPTESubtitleContent::load_font_nodes () const
 	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter (lf));
 	return lf;
 }
+
+bool
+SMPTESubtitleContent::valid_mxf (boost::filesystem::path file)
+{
+	ASDCP::TimedText::MXFReader reader;
+	Kumu::Result_t r = reader.OpenRead (file.string().c_str ());
+	return !ASDCP_FAILURE (r);
+}
