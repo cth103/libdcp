@@ -47,6 +47,7 @@ public:
 		Time out,
 		float v_position,
 		VAlign v_align,
+		HAlign h_align,
 		std::string text,
 		Effect effect,
 		Color effect_color,
@@ -90,6 +91,10 @@ public:
 		return _v_align;
 	}
 
+	HAlign h_align () const {
+		return _h_align;
+	}
+
 	Effect effect () const {
 		return _effect;
 	}
@@ -127,6 +132,7 @@ private:
 	 */
 	float _v_position;
 	VAlign _v_align;
+	HAlign _h_align;
 	std::string _text;
 	Effect _effect;
 	Color _effect_color;

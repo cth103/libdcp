@@ -72,13 +72,23 @@ extern Effect string_to_effect (std::string s);
 
 enum VAlign
 {
-	TOP,
-	CENTER,
-	BOTTOM
+	VERTICAL_TOP,
+	VERTICAL_CENTER,
+	VERTICAL_BOTTOM
 };
 
 extern std::string valign_to_string (VAlign a);
 extern VAlign string_to_valign (std::string s);
+
+enum HAlign
+{
+	HORIZONTAL_LEFT,
+	HORIZONTAL_CENTER,
+	HORIZONTAL_RIGHT
+};
+
+extern std::string halign_to_string (HAlign a);
+extern HAlign string_to_halign (std::string s);
 
 enum Eye
 {

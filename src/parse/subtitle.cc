@@ -147,7 +147,8 @@ Subtitle::fade_time (shared_ptr<const cxml::Node> node, string name, optional<in
 }
 
 Text::Text (shared_ptr<const cxml::Node> node, optional<int> tcr)
-	: v_align (CENTER)
+	: v_align (VERTICAL_CENTER)
+	, h_align (HORIZONTAL_CENTER)
 {
 	/* Vertical position */
 	text = node->content ();
@@ -164,6 +165,15 @@ Text::Text (shared_ptr<const cxml::Node> node, optional<int> tcr)
 	}
 	if (v) {
 		v_align = string_to_valign (v.get ());
+	}
+
+	/* Horizontal alignment */
+	optional<string> h = node->optional_string_attribute ("HAlign");
+	if (!h) {
+		h = node->optional_string_attribute ("Halign");
+	}
+	if (h) {
+		h_align = string_to_halign (h.get ());
 	}
 
 	list<cxml::NodePtr> f = node->node_children ("Font");

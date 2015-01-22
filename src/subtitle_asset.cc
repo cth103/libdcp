@@ -187,16 +187,13 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState& parse_state)
 	libdcp::parse::Text effective_text (*parse_state.text_nodes.back ());
 	libdcp::parse::Subtitle effective_subtitle (*parse_state.subtitle_nodes.back ());
 
-	cout << "Maybe add " << text << "\n";
-
 	shared_ptr<Subtitle> c = parse_state.current;
 	if (!c ||
 	    effective_subtitle.in != c->in() ||
 	    effective_subtitle.out != c->out() ||
 	    effective_text.v_position != c->v_position() ||
-	    effective_text.v_align != c->v_align()) {
-
-		cout << "(reset)\n";
+	    effective_text.v_align != c->v_align() ||
+	    effective_text.h_align != c->h_align()) {
 
 		parse_state.current.reset (
 			new Subtitle (
@@ -208,6 +205,7 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState& parse_state)
 				effective_subtitle.out,
 				effective_text.v_position,
 				effective_text.v_align,
+				effective_text.h_align,
 				"",
 				effective_font.effect ? effective_font.effect.get() : NONE,
 				effective_font.effect_color.get(),
@@ -267,6 +265,7 @@ Subtitle::Subtitle (
 	Time out,
 	float v_position,
 	VAlign v_align,
+	HAlign h_align,
 	string text,
 	Effect effect,
 	Color effect_color,
@@ -281,6 +280,7 @@ Subtitle::Subtitle (
 	, _out (out)
 	, _v_position (v_position)
 	, _v_align (v_align)
+	, _h_align (h_align)
 	, _text (text)
 	, _effect (effect)
 	, _effect_color (effect_color)
@@ -313,6 +313,7 @@ libdcp::operator== (Subtitle const & a, Subtitle const & b)
 		a.out() == b.out() &&
 		a.v_position() == b.v_position() &&
 		a.v_align() == b.v_align() &&
+		a.h_align() == b.h_align() &&
 		a.text() == b.text() &&
 		a.effect() == b.effect() &&
 		a.effect_color() == b.effect_color() &&
@@ -334,7 +335,8 @@ libdcp::operator<< (ostream& s, Subtitle const & sub)
 		s << "non-italic";
 	}
 	
-	s << ", size " << sub.size() << ", color " << sub.color() << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align()) << ";\n"
+	s << ", size " << sub.size() << ", color " << sub.color()
+	  << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align()) << ", halign " << ((int) sub.h_align()) << "; "
 	  << "effect " << ((int) sub.effect()) << ", effect color " << sub.effect_color();
 
 	return s;
@@ -486,6 +488,7 @@ SubtitleAsset::xml_as_string () const
 
 		xmlpp::Element* text = subtitle->add_child ("Text");
 		text->set_attribute ("VAlign", valign_to_string ((*i)->v_align()));		
+		text->set_attribute ("HAlign", halign_to_string ((*i)->h_align()));
 		text->set_attribute ("VPosition", raw_convert<string> ((*i)->v_position()));
 		text->add_child_text ((*i)->text());
 	}
