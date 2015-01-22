@@ -46,7 +46,7 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 	ASDCP::JP2K::MXFSReader reader_B;
 	r = reader_B.OpenRead (other->path().string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", other->path().string(), r));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc_A;
