@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 */
 
 #include "subtitle_content.h"
+#include <boost/filesystem.hpp>
 
 namespace dcp {
 
@@ -32,6 +33,8 @@ public:
 	SMPTESubtitleContent (boost::filesystem::path file, bool mxf = true);
 
 	std::list<boost::shared_ptr<LoadFont> > load_font_nodes () const;
+
+	static bool valid_mxf (boost::filesystem::path);
 	
 private:
 	std::list<boost::shared_ptr<SMPTELoadFont> > _load_font_nodes;
