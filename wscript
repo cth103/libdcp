@@ -1,5 +1,6 @@
 import subprocess
 import os
+import sys
 
 APPNAME = 'libdcp'
 VERSION = '1.00.0devel'
@@ -8,7 +9,6 @@ API_VERSION = '-1.0'
 def options(opt):
     opt.load('compiler_cxx')
     opt.add_option('--target-windows', action='store_true', default=False, help='set up to do a cross-compile to Windows')
-    opt.add_option('--target-osx', action='store_true', default=False, help='set up to build on OS X')
     opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
     opt.add_option('--static', action='store_true', default=False, help='build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
     opt.add_option('--disable-tests', action='store_true', default=False, help='disable building of tests')
@@ -20,7 +20,7 @@ def configure(conf):
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
 
     conf.env.TARGET_WINDOWS = conf.options.target_windows
-    conf.env.TARGET_OSX = conf.options.target_osx
+    conf.env.TARGET_OSX = sys.platform == 'darwin'
     conf.env.ENABLE_DEBUG = conf.options.enable_debug
     conf.env.DISABLE_TESTS = conf.options.disable_tests
     conf.env.DISABLE_EXAMPLES = conf.options.disable_examples
@@ -32,7 +32,7 @@ def configure(conf):
     else:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_POSIX')
 
-    if not conf.options.target_osx:
+    if not conf.env.TARGET_OSX:
         conf.env.append_value('CXXFLAGS', ['-Wno-unused-result', '-Wno-unused-parameter'])
 
     conf.check_cfg(package='openssl', args='--cflags --libs', uselib_store='OPENSSL', mandatory=True)
