@@ -31,10 +31,10 @@ static void
 check_gamma (shared_ptr<const TransferFunction> tf, int bit_depth, float gamma)
 {
 	double const * lut = tf->lut (bit_depth);
-	int const count = pow (2, bit_depth);
+	int const count = rint (pow (2.0, bit_depth));
 
 	for (int i = 0; i < count; ++i) {
-		BOOST_CHECK_CLOSE (lut[i], pow (double(i) / (count - 1), gamma), 0.001);
+		BOOST_CHECK_CLOSE (lut[i], pow (float(i) / (count - 1), gamma), 0.001);
 	}
 }
 
@@ -42,7 +42,7 @@ static void
 check_modified_gamma (shared_ptr<const TransferFunction> tf, int bit_depth, double power, double threshold, double A, double B)
 {
 	double const * lut = tf->lut (bit_depth);
-	int const count = pow (2, bit_depth);
+	int const count = rint (pow (2.0, bit_depth));
 
 	for (int i = 0; i < count; ++i) {
 		double const x = double(i) / (count - 1);

@@ -120,7 +120,7 @@ MonoPictureFrame::j2k_size () const
  *  is blue, second green, third red and fourth alpha (always 255).
  */
 shared_ptr<ARGBFrame>
-MonoPictureFrame::argb_frame (int reduce, float srgb_gamma) const
+MonoPictureFrame::argb_frame (int reduce) const
 {
 	return xyz_to_rgba (
 		decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce),

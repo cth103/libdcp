@@ -36,7 +36,6 @@
 
 using std::string;
 using std::list;
-using std::cout;
 using boost::shared_ptr;
 using namespace dcp;
 

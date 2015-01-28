@@ -23,7 +23,6 @@
 #include "util.h"
 
 using std::list;
-using std::cout;
 using std::string;
 using boost::shared_ptr;
 

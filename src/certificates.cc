@@ -38,7 +38,6 @@
 
 using std::list;
 using std::string;
-using std::cout;
 using std::ostream;
 using namespace dcp;
 

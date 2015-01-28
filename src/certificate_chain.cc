@@ -37,7 +37,6 @@ using std::string;
 using std::ofstream;
 using std::ifstream;
 using std::stringstream;
-using std::cout;
 
 /** Run a shell command.
  *  @param cmd Command to run (UTF8-encoded).

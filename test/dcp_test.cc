@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 }
 
 static void
-note (dcp::NoteType, string s)
+note (dcp::NoteType, string)
 {
 
 }
