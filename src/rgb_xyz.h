@@ -29,14 +29,21 @@ class XYZImage;
 class Image;
 class ColourConversion;
 	
-extern boost::shared_ptr<ARGBImage> xyz_to_rgba (boost::shared_ptr<const XYZImage>, ColourConversion const & conversion);
+extern void xyz_to_rgba (
+	boost::shared_ptr<const XYZImage>,
+	ColourConversion const & conversion,
+	uint8_t* rgba
+	);
+	
 extern void xyz_to_rgb (
 	boost::shared_ptr<const XYZImage>,
 	ColourConversion const & conversion,
-	boost::shared_ptr<Image> rgb,
+	uint8_t* rgb,
+	int stride,
 	boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()
 	);
-extern boost::shared_ptr<XYZImage> rgb_to_xyz (boost::shared_ptr<const Image>, ColourConversion const & conversion);
-extern boost::shared_ptr<XYZImage> xyz_to_xyz (boost::shared_ptr<const Image>);
+	
+extern boost::shared_ptr<XYZImage> rgb_to_xyz (uint8_t const * rgb, dcp::Size size, int stride, ColourConversion const & conversion);
+extern boost::shared_ptr<XYZImage> xyz_to_xyz (uint8_t const * xyz, dcp::Size size, int stride);
 	
 }

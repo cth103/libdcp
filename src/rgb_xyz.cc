@@ -18,9 +18,7 @@
 */
 
 #include "rgb_xyz.h"
-#include "argb_image.h"
 #include "xyz_image.h"
-#include "image.h"
 #include "colour_matrix.h"
 #include "colour_conversion.h"
 #include "transfer_function.h"
@@ -36,14 +34,26 @@ using namespace dcp;
 
 #define DCI_COEFFICIENT (48.0 / 52.37)
 
-/** Convert an openjpeg XYZ image to RGBA.
+/** Convert an XYZ image to RGBA.
  *  @param xyz_image Image in XYZ.
- *  @return RGB image.
+ *  @param conversion Colour conversion to use.
+ *  @param argb Buffer to fill with RGBA data.  The format of the data is:
+ *
+ *  <pre>
+ *  Byte   /- 0 -------|- 1 --------|- 2 --------|- 3 --------|- 4 --------|- 5 --------| ...
+ *         |(0, 0) Blue|(0, 0)Green |(0, 0) Red  |(0, 0) Alpha|(0, 1) Blue |(0, 1) Green| ...
+ *  </pre>
+ *
+ *  So that the first byte is the blue component of the pixel at x=0, y=0, the second
+ *  is the green component, and so on.
+ *
+ *  Lines are packed so that the second row directly follows the first.
  */
-shared_ptr<ARGBImage>
+void
 dcp::xyz_to_rgba (
 	boost::shared_ptr<const XYZImage> xyz_image,
-	ColourConversion const & conversion
+	ColourConversion const & conversion,
+	uint8_t* argb
 	)
 {
 	int const max_colour = pow (2, 12) - 1;
@@ -60,16 +70,16 @@ dcp::xyz_to_rgba (
 	int* xyz_y = xyz_image->data (1);
 	int* xyz_z = xyz_image->data (2);
 
-	shared_ptr<ARGBImage> argb_image (new ARGBImage (xyz_image->size ()));
-	uint8_t* argb = argb_image->data ();
-	
 	double const * lut_in = conversion.in()->lut (16);
 	double const * lut_out = conversion.out()->lut (12);
 	boost::numeric::ublas::matrix<double> matrix = conversion.matrix ();
 
-	for (int y = 0; y < xyz_image->size().height; ++y) {
+	int const height = xyz_image->size().height;
+	int const width = xyz_image->size().width;
+	
+	for (int y = 0; y < height; ++y) {
 		uint8_t* argb_line = argb;
-		for (int x = 0; x < xyz_image->size().width; ++x) {
+		for (int x = 0; x < width; ++x) {
 
 			DCP_ASSERT (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
 			
@@ -103,26 +113,27 @@ dcp::xyz_to_rgba (
 			*argb_line++ = lut_out[int(rint(d.r * max_colour))] * 0xff;
 			*argb_line++ = 0xff;
 		}
-		
-		argb += argb_image->stride ();
-	}
 
-	return argb_image;
+		/* 4 bytes per pixel */
+		argb += width * 4;
+	}
 }
 
-/** Convert an openjpeg XYZ image to RGB.
+/** Convert an XYZ image to 48bpp RGB.
  *  @param xyz_image Frame in XYZ.
  *  @param conversion Colour conversion to use.
- *  @param rgb Image to write RGB data to; must have space to be
- *  filled with packed RGB 16:16:16, 48bpp, 16R, 16G, 16B,
- *  with the 2-byte value for each R/G/B component stored as
- *  little-endian; i.e. AV_PIX_FMT_RGB48LE.
+ *  @param rgb Buffer to fill with RGB data.  Format is packed RGB
+ *  16:16:16, 48bpp, 16R, 16G, 16B, with the 2-byte value for each
+ *  R/G/B component stored as little-endian; i.e. AV_PIX_FMT_RGB48LE.
+ *  @param stride Stride for RGB data in bytes.
+ *  @param note Optional handler for any notes that may be made during the conversion (e.g. when clamping occurs).
  */
 void
 dcp::xyz_to_rgb (
 	shared_ptr<const XYZImage> xyz_image,
 	ColourConversion const & conversion,
-	shared_ptr<Image> rgb,
+	uint8_t* rgb,
+	int stride,
 	optional<NoteHandler> note
 	)
 {
@@ -144,7 +155,7 @@ dcp::xyz_to_rgb (
 	boost::numeric::ublas::matrix<double> matrix = conversion.matrix ();
 	
 	for (int y = 0; y < xyz_image->size().height; ++y) {
-		uint16_t* rgb_line = reinterpret_cast<uint16_t*> (rgb->data()[0] + y * rgb->stride()[0]);
+		uint16_t* rgb_line = reinterpret_cast<uint16_t*> (rgb + y * stride);
 		for (int x = 0; x < xyz_image->size().width; ++x) {
 
 			int cx = *xyz_x++;
@@ -203,16 +214,21 @@ dcp::xyz_to_rgb (
 	}
 }
 
-/** rgb must be packed RGB 16:16:16, 48bpp, 16R, 16G, 16B, with the 2-byte value for each R/G/B component stored as little-endian;
- *  i.e. AV_PIX_FMT_RGB48LE.
+/** @param rgb RGB data; packed RGB 16:16:16, 48bpp, 16R, 16G, 16B,
+ *  with the 2-byte value for each R/G/B component stored as
+ *  little-endian; i.e. AV_PIX_FMT_RGB48LE.
+ *  @param size of RGB image in pixels.
+ *  @param stride of RGB data in bytes.
  */
 shared_ptr<dcp::XYZImage>
 dcp::rgb_to_xyz (
-	boost::shared_ptr<const Image> rgb,
+	uint8_t const * rgb,
+	dcp::Size size,
+	int stride,
 	ColourConversion const & conversion
 	)
 {
-	shared_ptr<XYZImage> xyz (new XYZImage (rgb->size ()));
+	shared_ptr<XYZImage> xyz (new XYZImage (size));
 
 	struct {
 		double r, g, b;
@@ -227,9 +243,9 @@ dcp::rgb_to_xyz (
 	boost::numeric::ublas::matrix<double> matrix = conversion.matrix ();
 
 	int jn = 0;
-	for (int y = 0; y < rgb->size().height; ++y) {
-		uint16_t* p = reinterpret_cast<uint16_t*> (rgb->data()[0] + y * rgb->stride()[0]);
-		for (int x = 0; x < rgb->size().width; ++x) {
+	for (int y = 0; y < size.height; ++y) {
+		uint16_t const * p = reinterpret_cast<uint16_t const *> (rgb + y * stride);
+		for (int x = 0; x < size.width; ++x) {
 
 			/* In gamma LUT (converting 16-bit to 12-bit) */
 			s.r = lut_in[*p++ >> 4];
@@ -263,18 +279,19 @@ dcp::rgb_to_xyz (
 }
 
 
-/** Image must be packed RGB 16:16:16, 48bpp, 16R, 16G, 16B, with the 2-byte value for each R/G/B component stored as little-endian;
- *  i.e. AV_PIX_FMT_RGB48LE.
+/** @param xyz_16 XYZ image data in packed 16:16:16, 48bpp, 16X, 16Y,
+ *  16Z, with the 2-byte value for each X/Y/Z component stored as
+ *  little-endian.
  */
 shared_ptr<dcp::XYZImage>
-dcp::xyz_to_xyz (shared_ptr<const Image> xyz_16)
+dcp::xyz_to_xyz (uint8_t const * xyz_16, dcp::Size size, int stride)
 {
-	shared_ptr<XYZImage> xyz_12 (new XYZImage (xyz_16->size ()));
+	shared_ptr<XYZImage> xyz_12 (new XYZImage (size));
 
 	int jn = 0;
-	for (int y = 0; y < xyz_16->size().height; ++y) {
-		uint16_t* p = reinterpret_cast<uint16_t*> (xyz_16->data()[0] + y * xyz_16->stride()[0]);
-		for (int x = 0; x < xyz_16->size().width; ++x) {
+	for (int y = 0; y < size.height; ++y) {
+		uint16_t const * p = reinterpret_cast<uint16_t const *> (xyz_16 + y * stride);
+		for (int x = 0; x < size.width; ++x) {
 			/* Truncate 16-bit to 12-bit */
 			xyz_12->data(0)[jn] = *p++ >> 4;
 			xyz_12->data(1)[jn] = *p++ >> 4;

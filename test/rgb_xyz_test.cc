@@ -17,47 +17,19 @@
 
 */
 
-#include "image.h"
 #include "rgb_xyz.h"
 #include "xyz_image.h"
 #include "colour_conversion.h"
 #include <boost/test/unit_test.hpp>
 #include <boost/bind.hpp>
+#include <boost/scoped_array.hpp>
 
 using std::max;
 using std::list;
 using std::string;
 using boost::shared_ptr;
 using boost::optional;
-
-class SimpleImage : public dcp::Image
-{
-public:
-	SimpleImage (dcp::Size size)
-		: Image (size)
-	{
-		/* 48bpp */
-		_stride[0] = _size.width * 6;
-		_data[0] = new uint8_t[size.height * stride()[0]];
-	}
-
-	~SimpleImage ()
-	{
-		delete[] _data[0];
-	}
-
-	uint8_t * const * data () const {
-		return _data;
-	}
-
-	int const * stride () const {
-		return _stride;
-	}
-
-private:
-	uint8_t* _data[1];
-	int _stride[1];
-};
+using boost::scoped_array;
 
 /** Convert a test image from sRGB to XYZ and check that the transforms are right */
 BOOST_AUTO_TEST_CASE (rgb_xyz_test)
@@ -65,9 +37,9 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 	unsigned int seed = 0;
 	dcp::Size const size (640, 480);
 
-	shared_ptr<const dcp::Image> rgb (new SimpleImage (size));
+	scoped_array<uint8_t> rgb (new uint8_t[size.width * size.height * 6]);
 	for (int y = 0; y < size.height; ++y) {
-		uint16_t* p = reinterpret_cast<uint16_t*> (rgb->data()[0] + y * rgb->stride()[0]);
+		uint16_t* p = reinterpret_cast<uint16_t*> (rgb.get() + y * size.width * 6);
 		for (int x = 0; x < size.width; ++x) {
 			/* Write a 12-bit random number for each component */
 			for (int c = 0; c < 3; ++c) {
@@ -77,10 +49,10 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 		}
 	}
 
-	shared_ptr<dcp::XYZImage> xyz = dcp::rgb_to_xyz (rgb, dcp::ColourConversion::srgb_to_xyz ());
+	shared_ptr<dcp::XYZImage> xyz = dcp::rgb_to_xyz (rgb.get(), size, size.width * 6, dcp::ColourConversion::srgb_to_xyz ());
 
 	for (int y = 0; y < size.height; ++y) {
-		uint16_t* p = reinterpret_cast<uint16_t*> (rgb->data()[0] + y * rgb->stride()[0]);
+		uint16_t* p = reinterpret_cast<uint16_t*> (rgb.get() + y * size.width * 6);
 		for (int x = 0; x < size.width; ++x) {
 
 			double cr = *p++ / 65535.0;
@@ -159,10 +131,10 @@ BOOST_AUTO_TEST_CASE (xyz_rgb_range_test)
 	xyz->data(2)[2] = 0;
 	xyz->data(2)[3] = 4095;
 
-	shared_ptr<SimpleImage> image (new SimpleImage (dcp::Size (2, 2)));
+	scoped_array<uint8_t> rgb (new uint8_t[2 * 2 * 6]);
 
 	notes.clear ();
-	dcp::xyz_to_rgb (xyz, dcp::ColourConversion::xyz_to_srgb (), image, boost::optional<dcp::NoteHandler> (boost::bind (&note_handler, _1, _2)));
+	dcp::xyz_to_rgb (xyz, dcp::ColourConversion::xyz_to_srgb (), rgb.get(), 2 * 6, boost::optional<dcp::NoteHandler> (boost::bind (&note_handler, _1, _2)));
 
 	/* The 6 out-of-range samples should have been noted */
 	BOOST_REQUIRE_EQUAL (notes.size(), 6);
@@ -178,7 +150,7 @@ BOOST_AUTO_TEST_CASE (xyz_rgb_range_test)
 	   as inputs at the extremes (0 and 4095).
 	*/
 
-	uint16_t* buffer = reinterpret_cast<uint16_t*> (image->data()[0]);
+	uint16_t* buffer = reinterpret_cast<uint16_t*> (rgb.get ());
 	BOOST_REQUIRE_EQUAL (buffer[0 * 3 + 0], buffer[2 * 3 + 1]);
 	BOOST_REQUIRE_EQUAL (buffer[0 * 3 + 1], buffer[2 * 3 + 1]);
 	BOOST_REQUIRE_EQUAL (buffer[0 * 3 + 2], buffer[2 * 3 + 2]);

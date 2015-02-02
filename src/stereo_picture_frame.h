@@ -28,13 +28,11 @@ namespace ASDCP {
 	namespace JP2K {
 		struct SFrameBuffer;
 	}
-	class AESDecContext;
 }
 
 namespace dcp {
 
-class ARGBImage;
-class Image;
+class XYZImage;
 
 /** A single frame of a 3D (stereoscopic) picture asset */	
 class StereoPictureFrame : public boost::noncopyable
@@ -44,11 +42,12 @@ public:
 	StereoPictureFrame ();
 	~StereoPictureFrame ();
 
-	boost::shared_ptr<ARGBImage> argb_image (Eye eye, int reduce = 0) const;
-	void rgb_frame (Eye eye, boost::shared_ptr<Image>) const;
+	boost::shared_ptr<XYZImage> xyz_image (Eye eye, int reduce = 0) const;
+
 	uint8_t const * left_j2k_data () const;
 	uint8_t* left_j2k_data ();
 	int left_j2k_size () const;
+	
 	uint8_t const * right_j2k_data () const;
 	uint8_t* right_j2k_data ();
 	int right_j2k_size () const;

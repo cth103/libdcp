@@ -23,7 +23,6 @@
 
 #include "mono_picture_frame.h"
 #include "exceptions.h"
-#include "argb_image.h"
 #include "util.h"
 #include "rgb_xyz.h"
 #include "colour_conversion.h"
@@ -112,29 +111,9 @@ MonoPictureFrame::j2k_size () const
 /** @param reduce a factor by which to reduce the resolution
  *  of the image, expressed as a power of two (pass 0 for no
  *  reduction).
- *  @param srgb_gamma Reciprocal of output gamma to use after
- *  the conversion from XYZ to RGB.
- *
- *  @return An ARGB representation of this frame.  This is ARGB in the
- *  Cairo sense, so that each pixel takes up 4 bytes; the first byte
- *  is blue, second green, third red and fourth alpha (always 255).
  */
-shared_ptr<ARGBImage>
-MonoPictureFrame::argb_image (int reduce) const
+shared_ptr<XYZImage>
+MonoPictureFrame::xyz_image (int reduce) const
 {
-	return xyz_to_rgba (
-		decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce),
-		ColourConversion::xyz_to_srgb ()
-		);
-}
-
-void
-MonoPictureFrame::rgb_frame (shared_ptr<Image> rgb, optional<NoteHandler> note) const
-{
-	xyz_to_rgb (
-		decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), 0),
-		ColourConversion::xyz_to_srgb (),
-		rgb,
-		note
-		);
+	return decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce);
 }

@@ -2,7 +2,6 @@ from waflib import TaskGen
 
 def build(bld):
     source = """
-             argb_image.cc
              asset.cc
              certificate_chain.cc
              certificates.cc
@@ -19,7 +18,6 @@ def build(bld):
              file.cc
              font.cc
              gamma_transfer_function.cc
-             image.cc
              interop_load_font.cc
              interop_subtitle_content.cc
              key.cc
@@ -78,7 +76,6 @@ def build(bld):
               encrypted_kdm.h
               exceptions.h
               gamma_transfer_function.h
-              image.h
               interop_load_font.h
               interop_subtitle_content.h
               key.h
@@ -104,7 +101,6 @@ def build(bld):
               reel_stereo_picture_asset.h
               reel_subtitle_asset.h
               ref.h
-              argb_image.h
               signer.h
               smpte_load_font.h
               smpte_subtitle_content.h

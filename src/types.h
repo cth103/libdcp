@@ -35,6 +35,29 @@ namespace parse {
 	class AssetMap;
 }
 
+/** @struct Size
+ *  @brief The integer, two-dimensional size of something.
+ */
+struct Size
+{
+	Size ()
+		: width (0)
+		, height (0)
+	{}
+
+	Size (int w, int h)
+		: width (w)
+		, height (h)
+	{}
+
+	float ratio () const {
+		return float (width) / height;
+	}
+	
+	int width;
+	int height;
+};
+
 /** Identifier for a sound channel */
 enum Channel {
 	LEFT = 0,      ///< left

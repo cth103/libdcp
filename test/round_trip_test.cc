@@ -27,17 +27,21 @@
 #include "test.h"
 #include "cpl.h"
 #include "mono_picture_frame.h"
-#include "argb_image.h"
 #include "certificate_chain.h"
 #include "mono_picture_mxf_writer.h"
 #include "reel_picture_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "file.h"
+#include "xyz_image.h"
+#include "rgb_xyz.h"
+#include "colour_conversion.h"
 #include <boost/test/unit_test.hpp>
+#include <boost/scoped_array.hpp>
 #include <iostream>
 
 using std::list;
 using boost::shared_ptr;
+using boost::scoped_array;
 
 /* Build an encrypted picture MXF and a KDM for it and check that the KDM can be decrypted */
 BOOST_AUTO_TEST_CASE (round_trip_test)
@@ -102,9 +106,16 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	BOOST_CHECK (!kdm_B.keys().empty ());
 	mxf_B->set_key (kdm_B.keys().front().key());
 
-	shared_ptr<dcp::ARGBImage> frame_A = mxf_A->get_frame(0)->argb_image ();
-	shared_ptr<dcp::ARGBImage> frame_B = mxf_B->get_frame(0)->argb_image ();
-	BOOST_CHECK_EQUAL (frame_A->size().width, frame_B->size().width);
-	BOOST_CHECK_EQUAL (frame_A->size().height, frame_B->size().height);
-	BOOST_CHECK_EQUAL (memcmp (frame_A->data(), frame_B->data(), frame_A->size().width * frame_A->size().height), 0);
+	shared_ptr<dcp::XYZImage> xyz_A = mxf_A->get_frame(0)->xyz_image ();
+	shared_ptr<dcp::XYZImage> xyz_B = mxf_B->get_frame(0)->xyz_image ();
+
+	scoped_array<uint8_t> frame_A (new uint8_t[xyz_A->size().width * xyz_A->size().height * 4]);
+	dcp::xyz_to_rgba (xyz_A, dcp::ColourConversion::xyz_to_srgb(), frame_A.get());
+	
+	scoped_array<uint8_t> frame_B (new uint8_t[xyz_B->size().width * xyz_B->size().height * 4]);
+	dcp::xyz_to_rgba (xyz_B, dcp::ColourConversion::xyz_to_srgb(), frame_B.get());
+
+	BOOST_CHECK_EQUAL (xyz_A->size().width, xyz_B->size().width);
+	BOOST_CHECK_EQUAL (xyz_A->size().height, xyz_B->size().height);
+	BOOST_CHECK_EQUAL (memcmp (frame_A.get(), frame_B.get(), xyz_A->size().width * xyz_A->size().height * 4), 0);
 }

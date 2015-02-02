@@ -24,7 +24,6 @@
 #include "util.h"
 #include "exceptions.h"
 #include "types.h"
-#include "argb_image.h"
 #include "certificates.h"
 #include "xyz_image.h"
 #include "dcp_assert.h"

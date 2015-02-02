@@ -38,8 +38,7 @@ namespace ASDCP {
 
 namespace dcp {
 
-class ARGBImage;
-class Image;
+class XYZImage;
 
 /** @class MonoPictureFrame
  *  @brief A single frame of a 2D (monoscopic) picture asset.
@@ -52,8 +51,8 @@ public:
 	MonoPictureFrame ();
 	~MonoPictureFrame ();
 
-	boost::shared_ptr<ARGBImage> argb_image (int reduce = 0) const;
-	void rgb_frame (boost::shared_ptr<Image> rgb, boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()) const;
+	boost::shared_ptr<XYZImage> xyz_image (int reduce = 0) const;
+
 	uint8_t const * j2k_data () const;
 	uint8_t* j2k_data ();
 	int j2k_size () const;

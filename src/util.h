@@ -43,29 +43,6 @@ class ARGBImage;
 class CertificateChain;
 class GammaLUT;
 class XYZImage;
-
-/** @struct Size
- *  @brief The integer, two-dimensional size of something.
- */
-struct Size
-{
-	Size ()
-		: width (0)
-		, height (0)
-	{}
-
-	Size (int w, int h)
-		: width (w)
-		, height (h)
-	{}
-
-	float ratio () const {
-		return float (width) / height;
-	}
-	
-	int width;
-	int height;
-};
 	
 extern bool operator== (Size const & a, Size const & b);
 extern bool operator!= (Size const & a, Size const & b);

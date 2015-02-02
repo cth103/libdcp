@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,8 +32,11 @@
 #include "stereo_picture_mxf.h"
 #include "sound_mxf.h"
 #include "subtitle_content.h"
-#include "argb_image.h"
+#include "xyz_image.h"
+#include "colour_conversion.h"
+#include "rgb_xyz.h"
 #include <Magick++.h>
+#include <boost/scoped_array.hpp>
 
 /** @file examples/read_dcp.cc
  *  @brief Shows how to read a DCP.
@@ -80,10 +83,14 @@ main ()
 	/* Get the 1000th frame of it */
 	boost::shared_ptr<const dcp::MonoPictureFrame> picture_frame_j2k = picture_mxf->get_frame(999);
 
-	/* Get a ARGB copy of it */
-	boost::shared_ptr<dcp::ARGBImage> picture_image_rgb = picture_frame_j2k->argb_image ();
+	/* Get the frame as an XYZ image */
+	boost::shared_ptr<const dcp::XYZImage> picture_image_xyz = picture_frame_j2k->xyz_image ();
 
-	Magick::Image image (picture_image_rgb->size().width, picture_image_rgb->size().height, "BGRA", Magick::CharPixel, picture_image_rgb->data ());
+	/* Convert to ARGB */
+	boost::scoped_array<uint8_t> rgba (new uint8_t[picture_image_xyz->size().width * picture_image_xyz->size().height * 4]);
+	dcp::xyz_to_rgba (picture_image_xyz, dcp::ColourConversion::xyz_to_srgb(), rgba.get ());
+
+	Magick::Image image (picture_image_xyz->size().width, picture_image_xyz->size().height, "BGRA", Magick::CharPixel, rgba.get ());
 	image.write ("frame.png");
 
 	return 0;
