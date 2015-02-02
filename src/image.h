@@ -38,7 +38,7 @@ public:
 	}
 
 protected:
-	void swap (Image& other);
+	virtual void swap (Image& other);
 	
 	Size _size;
 };
