@@ -2,7 +2,7 @@ from waflib import TaskGen
 
 def build(bld):
     source = """
-             argb_frame.cc
+             argb_image.cc
              asset.cc
              certificate_chain.cc
              certificates.cc
@@ -60,7 +60,7 @@ def build(bld):
              types.cc
              util.cc
              version.cc
-             xyz_frame.cc
+             xyz_image.cc
              """
 
     headers = """
@@ -104,7 +104,7 @@ def build(bld):
               reel_stereo_picture_asset.h
               reel_subtitle_asset.h
               ref.h
-              argb_frame.h
+              argb_image.h
               signer.h
               smpte_load_font.h
               smpte_subtitle_content.h
@@ -120,7 +120,7 @@ def build(bld):
               types.h
               util.h
               version.h
-              xyz_frame.h
+              xyz_image.h
               """
 
     # Main library

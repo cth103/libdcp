@@ -23,7 +23,7 @@
 
 #include "mono_picture_frame.h"
 #include "exceptions.h"
-#include "argb_frame.h"
+#include "argb_image.h"
 #include "util.h"
 #include "rgb_xyz.h"
 #include "colour_conversion.h"
@@ -119,8 +119,8 @@ MonoPictureFrame::j2k_size () const
  *  Cairo sense, so that each pixel takes up 4 bytes; the first byte
  *  is blue, second green, third red and fourth alpha (always 255).
  */
-shared_ptr<ARGBFrame>
-MonoPictureFrame::argb_frame (int reduce) const
+shared_ptr<ARGBImage>
+MonoPictureFrame::argb_image (int reduce) const
 {
 	return xyz_to_rgba (
 		decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce),

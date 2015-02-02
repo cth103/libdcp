@@ -17,13 +17,13 @@
 
 */
 
-#include "argb_frame.h"
+#include "argb_image.h"
 #include <boost/test/unit_test.hpp>
 
-/** Very simple tests of ARGBFrame */
-BOOST_AUTO_TEST_CASE (argb_frame_test)
+/** Very simple tests of ARGBImage */
+BOOST_AUTO_TEST_CASE (argb_image_test)
 {
-	dcp::ARGBFrame f (dcp::Size (100, 200));
+	dcp::ARGBImage f (dcp::Size (100, 200));
 
 	BOOST_CHECK (f.data() != 0);
 	BOOST_CHECK_EQUAL (f.stride(), 100 * 4);

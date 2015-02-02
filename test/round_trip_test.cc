@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include "test.h"
 #include "cpl.h"
 #include "mono_picture_frame.h"
-#include "argb_frame.h"
+#include "argb_image.h"
 #include "certificate_chain.h"
 #include "mono_picture_mxf_writer.h"
 #include "reel_picture_asset.h"
@@ -102,8 +102,8 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	BOOST_CHECK (!kdm_B.keys().empty ());
 	mxf_B->set_key (kdm_B.keys().front().key());
 
-	shared_ptr<dcp::ARGBFrame> frame_A = mxf_A->get_frame(0)->argb_frame ();
-	shared_ptr<dcp::ARGBFrame> frame_B = mxf_B->get_frame(0)->argb_frame ();
+	shared_ptr<dcp::ARGBImage> frame_A = mxf_A->get_frame(0)->argb_image ();
+	shared_ptr<dcp::ARGBImage> frame_B = mxf_B->get_frame(0)->argb_image ();
 	BOOST_CHECK_EQUAL (frame_A->size().width, frame_B->size().width);
 	BOOST_CHECK_EQUAL (frame_A->size().height, frame_B->size().height);
 	BOOST_CHECK_EQUAL (memcmp (frame_A->data(), frame_B->data(), frame_A->size().width * frame_A->size().height), 0);

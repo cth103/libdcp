@@ -38,7 +38,7 @@ namespace ASDCP {
 
 namespace dcp {
 
-class ARGBFrame;
+class ARGBImage;
 class Image;
 
 /** @class MonoPictureFrame
@@ -52,7 +52,7 @@ public:
 	MonoPictureFrame ();
 	~MonoPictureFrame ();
 
-	boost::shared_ptr<ARGBFrame> argb_frame (int reduce = 0) const;
+	boost::shared_ptr<ARGBImage> argb_image (int reduce = 0) const;
 	void rgb_frame (boost::shared_ptr<Image> rgb, boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()) const;
 	uint8_t const * j2k_data () const;
 	uint8_t* j2k_data ();

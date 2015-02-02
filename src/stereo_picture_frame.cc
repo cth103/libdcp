@@ -19,7 +19,7 @@
 
 #include "stereo_picture_frame.h"
 #include "exceptions.h"
-#include "argb_frame.h"
+#include "argb_image.h"
 #include "util.h"
 #include "rgb_xyz.h"
 #include "colour_conversion.h"
@@ -74,36 +74,36 @@ StereoPictureFrame::~StereoPictureFrame ()
  *  third red and fourth alpha (always 255).
  *
  */
-shared_ptr<ARGBFrame>
-StereoPictureFrame::argb_frame (Eye eye, int reduce) const
+shared_ptr<ARGBImage>
+StereoPictureFrame::argb_image (Eye eye, int reduce) const
 {
-	shared_ptr<XYZFrame> xyz_frame;
+	shared_ptr<XYZImage> xyz_image;
 	switch (eye) {
 	case LEFT:
-		xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->Left.RoData()), _buffer->Left.Size(), reduce);
+		xyz_image = decompress_j2k (const_cast<uint8_t*> (_buffer->Left.RoData()), _buffer->Left.Size(), reduce);
 		break;
 	case RIGHT:
-		xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->Right.RoData()), _buffer->Right.Size(), reduce);
+		xyz_image = decompress_j2k (const_cast<uint8_t*> (_buffer->Right.RoData()), _buffer->Right.Size(), reduce);
 		break;
 	}
 	
-	return xyz_to_rgba (xyz_frame, ColourConversion::xyz_to_srgb ());
+	return xyz_to_rgba (xyz_image, ColourConversion::xyz_to_srgb ());
 }
 
 void
 StereoPictureFrame::rgb_frame (Eye eye, shared_ptr<Image> image) const
 {
-	shared_ptr<XYZFrame> xyz_frame;
+	shared_ptr<XYZImage> xyz_image;
 	switch (eye) {
 	case LEFT:
-		xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->Left.RoData()), _buffer->Left.Size(), 0);
+		xyz_image = decompress_j2k (const_cast<uint8_t*> (_buffer->Left.RoData()), _buffer->Left.Size(), 0);
 		break;
 	case RIGHT:
-		xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->Right.RoData()), _buffer->Right.Size(), 0);
+		xyz_image = decompress_j2k (const_cast<uint8_t*> (_buffer->Right.RoData()), _buffer->Right.Size(), 0);
 		break;
 	}
 	
-	return xyz_to_rgb (xyz_frame, ColourConversion::xyz_to_srgb (), image);
+	return xyz_to_rgb (xyz_image, ColourConversion::xyz_to_srgb (), image);
 }
 
 uint8_t const *

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 
 */
 
-/** @file  src/xyz_frame.h
- *  @brief XZYFrame class.
+/** @file  src/xyz_image.h
+ *  @brief XYZImage class.
  */
 
 #include "util.h"
@@ -26,17 +26,17 @@
 
 namespace dcp {
 
-/** @class XYZFrame
+/** @class XYZImage
  *  @brief An image in XYZ colour.
  *
  *  This class is a thin wrapper of libopenjpeg's opj_image_t.
  */
-class XYZFrame : public boost::noncopyable
+class XYZImage : public boost::noncopyable
 {
 public:
-	XYZFrame (opj_image_t *);
-	XYZFrame (Size);
-	~XYZFrame ();
+	XYZImage (opj_image_t *);
+	XYZImage (Size);
+	~XYZImage ();
 
 	int* data (int) const;
 	dcp::Size size () const;

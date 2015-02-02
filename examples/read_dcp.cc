@@ -32,7 +32,7 @@
 #include "stereo_picture_mxf.h"
 #include "sound_mxf.h"
 #include "subtitle_content.h"
-#include "argb_frame.h"
+#include "argb_image.h"
 #include <Magick++.h>
 
 /** @file examples/read_dcp.cc
@@ -81,9 +81,9 @@ main ()
 	boost::shared_ptr<const dcp::MonoPictureFrame> picture_frame_j2k = picture_mxf->get_frame(999);
 
 	/* Get a ARGB copy of it */
-	boost::shared_ptr<dcp::ARGBFrame> picture_frame_rgb = picture_frame_j2k->argb_frame ();
+	boost::shared_ptr<dcp::ARGBImage> picture_image_rgb = picture_frame_j2k->argb_image ();
 
-	Magick::Image image (picture_frame_rgb->size().width, picture_frame_rgb->size().height, "BGRA", Magick::CharPixel, picture_frame_rgb->data ());
+	Magick::Image image (picture_image_rgb->size().width, picture_image_rgb->size().height, "BGRA", Magick::CharPixel, picture_image_rgb->data ());
 	image.write ("frame.png");
 
 	return 0;

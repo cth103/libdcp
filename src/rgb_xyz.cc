@@ -18,8 +18,8 @@
 */
 
 #include "rgb_xyz.h"
-#include "argb_frame.h"
-#include "xyz_frame.h"
+#include "argb_image.h"
+#include "xyz_image.h"
 #include "image.h"
 #include "colour_matrix.h"
 #include "colour_conversion.h"
@@ -37,12 +37,12 @@ using namespace dcp;
 #define DCI_COEFFICIENT (48.0 / 52.37)
 
 /** Convert an openjpeg XYZ image to RGBA.
- *  @param xyz_frame Frame in XYZ.
+ *  @param xyz_image Image in XYZ.
  *  @return RGB image.
  */
-shared_ptr<ARGBFrame>
+shared_ptr<ARGBImage>
 dcp::xyz_to_rgba (
-	boost::shared_ptr<const XYZFrame> xyz_frame,
+	boost::shared_ptr<const XYZImage> xyz_image,
 	ColourConversion const & conversion
 	)
 {
@@ -56,20 +56,20 @@ dcp::xyz_to_rgba (
 		double r, g, b;
 	} d;
 	
-	int* xyz_x = xyz_frame->data (0);
-	int* xyz_y = xyz_frame->data (1);
-	int* xyz_z = xyz_frame->data (2);
+	int* xyz_x = xyz_image->data (0);
+	int* xyz_y = xyz_image->data (1);
+	int* xyz_z = xyz_image->data (2);
 
-	shared_ptr<ARGBFrame> argb_frame (new ARGBFrame (xyz_frame->size ()));
-	uint8_t* argb = argb_frame->data ();
+	shared_ptr<ARGBImage> argb_image (new ARGBImage (xyz_image->size ()));
+	uint8_t* argb = argb_image->data ();
 	
 	double const * lut_in = conversion.in()->lut (16);
 	double const * lut_out = conversion.out()->lut (12);
 	boost::numeric::ublas::matrix<double> matrix = conversion.matrix ();
 
-	for (int y = 0; y < xyz_frame->size().height; ++y) {
+	for (int y = 0; y < xyz_image->size().height; ++y) {
 		uint8_t* argb_line = argb;
-		for (int x = 0; x < xyz_frame->size().width; ++x) {
+		for (int x = 0; x < xyz_image->size().width; ++x) {
 
 			DCP_ASSERT (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
 			
@@ -104,14 +104,14 @@ dcp::xyz_to_rgba (
 			*argb_line++ = 0xff;
 		}
 		
-		argb += argb_frame->stride ();
+		argb += argb_image->stride ();
 	}
 
-	return argb_frame;
+	return argb_image;
 }
 
 /** Convert an openjpeg XYZ image to RGB.
- *  @param xyz_frame Frame in XYZ.
+ *  @param xyz_image Frame in XYZ.
  *  @param conversion Colour conversion to use.
  *  @param rgb Image to write RGB data to; must have space to be
  *  filled with packed RGB 16:16:16, 48bpp, 16R, 16G, 16B,
@@ -120,7 +120,7 @@ dcp::xyz_to_rgba (
  */
 void
 dcp::xyz_to_rgb (
-	shared_ptr<const XYZFrame> xyz_frame,
+	shared_ptr<const XYZImage> xyz_image,
 	ColourConversion const & conversion,
 	shared_ptr<Image> rgb,
 	optional<NoteHandler> note
@@ -135,17 +135,17 @@ dcp::xyz_to_rgb (
 	} d;
 
 	/* These should be 12-bit values from 0-4095 */
-	int* xyz_x = xyz_frame->data (0);
-	int* xyz_y = xyz_frame->data (1);
-	int* xyz_z = xyz_frame->data (2);
+	int* xyz_x = xyz_image->data (0);
+	int* xyz_y = xyz_image->data (1);
+	int* xyz_z = xyz_image->data (2);
 
 	double const * lut_in = conversion.in()->lut (12);
 	double const * lut_out = conversion.out()->lut (16);
 	boost::numeric::ublas::matrix<double> matrix = conversion.matrix ();
 	
-	for (int y = 0; y < xyz_frame->size().height; ++y) {
+	for (int y = 0; y < xyz_image->size().height; ++y) {
 		uint16_t* rgb_line = reinterpret_cast<uint16_t*> (rgb->data()[0] + y * rgb->stride()[0]);
-		for (int x = 0; x < xyz_frame->size().width; ++x) {
+		for (int x = 0; x < xyz_image->size().width; ++x) {
 
 			int cx = *xyz_x++;
 			int cy = *xyz_y++;
@@ -206,13 +206,13 @@ dcp::xyz_to_rgb (
 /** rgb must be packed RGB 16:16:16, 48bpp, 16R, 16G, 16B, with the 2-byte value for each R/G/B component stored as little-endian;
  *  i.e. AV_PIX_FMT_RGB48LE.
  */
-shared_ptr<dcp::XYZFrame>
+shared_ptr<dcp::XYZImage>
 dcp::rgb_to_xyz (
 	boost::shared_ptr<const Image> rgb,
 	ColourConversion const & conversion
 	)
 {
-	shared_ptr<XYZFrame> xyz (new XYZFrame (rgb->size ()));
+	shared_ptr<XYZImage> xyz (new XYZImage (rgb->size ()));
 
 	struct {
 		double r, g, b;
@@ -266,10 +266,10 @@ dcp::rgb_to_xyz (
 /** Image must be packed RGB 16:16:16, 48bpp, 16R, 16G, 16B, with the 2-byte value for each R/G/B component stored as little-endian;
  *  i.e. AV_PIX_FMT_RGB48LE.
  */
-shared_ptr<dcp::XYZFrame>
+shared_ptr<dcp::XYZImage>
 dcp::xyz_to_xyz (shared_ptr<const Image> xyz_16)
 {
-	shared_ptr<XYZFrame> xyz_12 (new XYZFrame (xyz_16->size ()));
+	shared_ptr<XYZImage> xyz_12 (new XYZImage (xyz_16->size ()));
 
 	int jn = 0;
 	for (int y = 0; y < xyz_16->size().height; ++y) {

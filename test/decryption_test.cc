@@ -23,7 +23,7 @@
 #include "cpl.h"
 #include "decrypted_kdm.h"
 #include "encrypted_kdm.h"
-#include "argb_frame.h"
+#include "argb_image.h"
 #include "mono_picture_mxf.h"
 #include "reel_picture_asset.h"
 #include "reel.h"
@@ -32,7 +32,7 @@
 using boost::dynamic_pointer_cast;
 using boost::shared_ptr;
 
-static shared_ptr<const dcp::ARGBFrame>
+static shared_ptr<const dcp::ARGBImage>
 get_frame (dcp::DCP const & dcp)
 {
 	shared_ptr<const dcp::Reel> reel = dcp.cpls().front()->reels().front ();
@@ -41,7 +41,7 @@ get_frame (dcp::DCP const & dcp)
 
 	shared_ptr<const dcp::MonoPictureMXF> mono_picture = dynamic_pointer_cast<const dcp::MonoPictureMXF> (picture);
 	shared_ptr<const dcp::MonoPictureFrame> j2k_frame = mono_picture->get_frame (0);
-	return j2k_frame->argb_frame ();
+	return j2k_frame->argb_image ();
 }
 
 /** Decrypt an encrypted test DCP and check that its first frame is the same as the unencrypted version */
@@ -68,8 +68,8 @@ BOOST_AUTO_TEST_CASE (decryption_test)
 	
 	encrypted.add (kdm);
 
-	shared_ptr<const dcp::ARGBFrame> plaintext_frame = get_frame (plaintext);
-	shared_ptr<const dcp::ARGBFrame> encrypted_frame = get_frame (encrypted);
+	shared_ptr<const dcp::ARGBImage> plaintext_frame = get_frame (plaintext);
+	shared_ptr<const dcp::ARGBImage> encrypted_frame = get_frame (encrypted);
 
 	/* Check that plaintext and encrypted are the same */
 	BOOST_CHECK_EQUAL (plaintext_frame->stride(), encrypted_frame->stride());

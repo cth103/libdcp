@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 #include "image.h"
 #include "rgb_xyz.h"
-#include "xyz_frame.h"
+#include "xyz_image.h"
 #include "colour_conversion.h"
 #include <boost/test/unit_test.hpp>
 #include <boost/bind.hpp>
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 		}
 	}
 
-	shared_ptr<dcp::XYZFrame> xyz = dcp::rgb_to_xyz (rgb, dcp::ColourConversion::srgb_to_xyz ());
+	shared_ptr<dcp::XYZImage> xyz = dcp::rgb_to_xyz (rgb, dcp::ColourConversion::srgb_to_xyz ());
 
 	for (int y = 0; y < size.height; ++y) {
 		uint16_t* p = reinterpret_cast<uint16_t*> (rgb->data()[0] + y * rgb->stride()[0]);
@@ -144,7 +144,7 @@ note_handler (dcp::NoteType n, string s)
 /** Check that xyz_to_rgb clamps XYZ values correctly */
 BOOST_AUTO_TEST_CASE (xyz_rgb_range_test)
 {
-	shared_ptr<dcp::XYZFrame> xyz (new dcp::XYZFrame (dcp::Size (2, 2)));
+	shared_ptr<dcp::XYZImage> xyz (new dcp::XYZImage (dcp::Size (2, 2)));
 	
 	xyz->data(0)[0] = -4;
 	xyz->data(0)[1] = 6901;

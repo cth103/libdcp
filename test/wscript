@@ -25,7 +25,7 @@ def build(bld):
     else:
         obj.use = 'libdcp%s' % bld.env.API_VERSION
     obj.source = """
-                 argb_frame_test.cc
+                 argb_image_test.cc
                  certificates_test.cc
                  colour_test.cc
                  colour_conversion_test.cc

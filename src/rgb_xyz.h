@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,19 +24,19 @@
 
 namespace dcp {
 
-class ARGBFrame;	
-class XYZFrame;
+class ARGBImage;	
+class XYZImage;
 class Image;
 class ColourConversion;
 	
-extern boost::shared_ptr<ARGBFrame> xyz_to_rgba (boost::shared_ptr<const XYZFrame>, ColourConversion const & conversion);
+extern boost::shared_ptr<ARGBImage> xyz_to_rgba (boost::shared_ptr<const XYZImage>, ColourConversion const & conversion);
 extern void xyz_to_rgb (
-	boost::shared_ptr<const XYZFrame>,
+	boost::shared_ptr<const XYZImage>,
 	ColourConversion const & conversion,
 	boost::shared_ptr<Image> rgb,
 	boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()
 	);
-extern boost::shared_ptr<XYZFrame> rgb_to_xyz (boost::shared_ptr<const Image>, ColourConversion const & conversion);
-extern boost::shared_ptr<XYZFrame> xyz_to_xyz (boost::shared_ptr<const Image>);
+extern boost::shared_ptr<XYZImage> rgb_to_xyz (boost::shared_ptr<const Image>, ColourConversion const & conversion);
+extern boost::shared_ptr<XYZImage> xyz_to_xyz (boost::shared_ptr<const Image>);
 	
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,33 +17,33 @@
 
 */
 
-/** @file  src/argb_frame.cc
- *  @brief ARGBFrame class. 
+/** @file  src/argb_image.cc
+ *  @brief ARGBImage class. 
  */
 
-#include "argb_frame.h"
+#include "argb_image.h"
 
 using namespace dcp;
 
-/** Construct an empty ARGBFrame of a given size and with
+/** Construct an empty ARGBImage of a given size and with
  *  undefined contents.
  *  @param size Size in pixels.
  */
-ARGBFrame::ARGBFrame (Size size)
+ARGBImage::ARGBImage (Size size)
 	: _size (size)
 {
 	_data = new uint8_t[_size.width * _size.height * 4];
 }
 
 
-ARGBFrame::~ARGBFrame ()
+ARGBImage::~ARGBImage ()
 {
 	delete[] _data;
 }
 
 /** @return The stride, in bytes; that is, the number of bytes per row of the image */
 int
-ARGBFrame::stride () const
+ARGBImage::stride () const
 {
 	return _size.width * 4;
 }

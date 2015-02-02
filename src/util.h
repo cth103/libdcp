@@ -39,10 +39,10 @@ namespace xmlpp {
 
 namespace dcp {
 
-class ARGBFrame;
+class ARGBImage;
 class CertificateChain;
 class GammaLUT;
-class XYZFrame;
+class XYZImage;
 
 /** @struct Size
  *  @brief The integer, two-dimensional size of something.
@@ -76,7 +76,7 @@ extern std::string make_digest (boost::filesystem::path filename, boost::functio
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
 extern bool empty_or_white_space (std::string s);
-extern boost::shared_ptr<XYZFrame> decompress_j2k (uint8_t* data, int64_t size, int reduce);
+extern boost::shared_ptr<XYZImage> decompress_j2k (uint8_t* data, int64_t size, int reduce);
 extern bool ids_equal (std::string a, std::string b);
 
 extern void init ();

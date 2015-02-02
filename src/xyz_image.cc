@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,27 +17,27 @@
 
 */
 
-/** @file  src/xyz_frame.cc
- *  @brief XZYFrame class.
+/** @file  src/xyz_image.cc
+ *  @brief XYZImage class.
  */
 
-#include "xyz_frame.h"
+#include "xyz_image.h"
 #include "dcp_assert.h"
 #include <stdexcept>
 
 using namespace dcp;
 
-/** Construct an XYZFrame, taking ownership of the opj_image_t */
-XYZFrame::XYZFrame (opj_image_t* image)
+/** Construct an XYZImage, taking ownership of the opj_image_t */
+XYZImage::XYZImage (opj_image_t* image)
 	: _opj_image (image)
 {
 	DCP_ASSERT (_opj_image->numcomps == 3);
 }
 
-/** Construct a new XYZFrame with undefined contents.
+/** Construct a new XYZImage with undefined contents.
  *  @param size Size for the frame in pixels.
  */
-XYZFrame::XYZFrame (Size size)
+XYZImage::XYZImage (Size size)
 {
 	opj_image_cmptparm_t cmptparm[3];
 	
@@ -65,8 +65,8 @@ XYZFrame::XYZFrame (Size size)
 	_opj_image->y1 = size.height;
 }
 
-/** XYZFrame destructor */
-XYZFrame::~XYZFrame ()
+/** XYZImage destructor */
+XYZImage::~XYZImage ()
 {
 	opj_image_destroy (_opj_image);
 }
@@ -75,7 +75,7 @@ XYZFrame::~XYZFrame ()
  *  @return Pointer to the data for component c; 12-bit values from 0-4095.
  */
 int *
-XYZFrame::data (int c) const
+XYZImage::data (int c) const
 {
 	DCP_ASSERT (c >= 0 && c < 3);
 	return _opj_image->comps[c].data;
@@ -83,7 +83,7 @@ XYZFrame::data (int c) const
 
 /** @return Size of the image in pixels */
 dcp::Size
-XYZFrame::size () const
+XYZImage::size () const
 {
 	/* XXX: this may not be right; x0 and y0 can presumably be non-zero */
 	return dcp::Size (_opj_image->x1, _opj_image->y1);

@@ -20,7 +20,7 @@
 #include "picture_mxf.h"
 #include "util.h"
 #include "exceptions.h"
-#include "xyz_frame.h"
+#include "xyz_image.h"
 #include "picture_mxf_writer.h"
 #include "compose.hpp"
 #include "AS_DCP.h"
@@ -124,8 +124,8 @@ PictureMXF::frame_buffer_equals (
 	}
 		
 	/* Decompress the images to bitmaps */
-	shared_ptr<XYZFrame> image_A = decompress_j2k (const_cast<uint8_t*> (data_A), size_A, 0);
-	shared_ptr<XYZFrame> image_B = decompress_j2k (const_cast<uint8_t*> (data_B), size_B, 0);
+	shared_ptr<XYZImage> image_A = decompress_j2k (const_cast<uint8_t*> (data_A), size_A, 0);
+	shared_ptr<XYZImage> image_B = decompress_j2k (const_cast<uint8_t*> (data_B), size_B, 0);
 	
 	/* Compare them */
 	

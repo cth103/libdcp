@@ -17,8 +17,8 @@
 
 */
 
-/** @file  src/argb_frame.h
- *  @brief ARGBFrame class. 
+/** @file  src/argb_image.h
+ *  @brief ARGBImage class. 
  */
 
 #include "util.h"
@@ -27,7 +27,7 @@
 namespace dcp
 {
 
-/** @class ARGBFrame
+/** @class ARGBImage
  *  @brief A single frame of picture data held in an ARGB buffer.
  *
  *  The format of the data is:
@@ -44,11 +44,11 @@ namespace dcp
  *
  *  XXX: this should probably be an Image...?
  */
-class ARGBFrame : boost::noncopyable
+class ARGBImage : boost::noncopyable
 {
 public:
-	ARGBFrame (Size size);
-	~ARGBFrame ();
+	ARGBImage (Size size);
+	~ARGBImage ();
 
 	/** @return pointer to the image data */
 	uint8_t* data () const {

@@ -24,9 +24,9 @@
 #include "util.h"
 #include "exceptions.h"
 #include "types.h"
-#include "argb_frame.h"
+#include "argb_image.h"
 #include "certificates.h"
-#include "xyz_frame.h"
+#include "xyz_image.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
 #include "KM_util.h"
@@ -202,7 +202,7 @@ dcp::content_kind_from_string (string kind)
  *  This is useful for scaling 4K DCP images down to 2K.
  *  @return XYZ image.
  */
-shared_ptr<dcp::XYZFrame>
+shared_ptr<dcp::XYZImage>
 dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 {
 	opj_dinfo_t* decoder = opj_create_decompress (CODEC_J2K);
@@ -223,7 +223,7 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 
 	image->x1 = rint (float(image->x1) / pow (2, reduce));
 	image->y1 = rint (float(image->y1) / pow (2, reduce));
-	return shared_ptr<XYZFrame> (new XYZFrame (image));
+	return shared_ptr<XYZImage> (new XYZImage (image));
 }
 
 /** @param s A string.
