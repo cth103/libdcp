@@ -91,7 +91,7 @@ StereoPictureFrame::argb_frame (Eye eye, int reduce) const
 }
 
 void
-StereoPictureFrame::rgb_frame (Eye eye, uint16_t* buffer) const
+StereoPictureFrame::rgb_frame (Eye eye, shared_ptr<Image> image) const
 {
 	shared_ptr<XYZFrame> xyz_frame;
 	switch (eye) {
@@ -103,7 +103,7 @@ StereoPictureFrame::rgb_frame (Eye eye, uint16_t* buffer) const
 		break;
 	}
 	
-	return xyz_to_rgb (xyz_frame, ColourConversion::xyz_to_srgb (), buffer);
+	return xyz_to_rgb (xyz_frame, ColourConversion::xyz_to_srgb (), image);
 }
 
 uint8_t const *

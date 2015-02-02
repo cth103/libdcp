@@ -33,7 +33,7 @@ extern boost::shared_ptr<ARGBFrame> xyz_to_rgba (boost::shared_ptr<const XYZFram
 extern void xyz_to_rgb (
 	boost::shared_ptr<const XYZFrame>,
 	ColourConversion const & conversion,
-	uint16_t* buffer,
+	boost::shared_ptr<Image> rgb,
 	boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()
 	);
 extern boost::shared_ptr<XYZFrame> rgb_to_xyz (boost::shared_ptr<const Image>, ColourConversion const & conversion);

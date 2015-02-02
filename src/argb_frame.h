@@ -41,6 +41,8 @@ namespace dcp
  *  is the green component, and so on.
  *
  *  Lines are packed so that the second row directly follows the first.
+ *
+ *  XXX: this should probably be an Image...?
  */
 class ARGBFrame : boost::noncopyable
 {

@@ -34,6 +34,7 @@ namespace ASDCP {
 namespace dcp {
 
 class ARGBFrame;
+class Image;
 
 /** A single frame of a 3D (stereoscopic) picture asset */	
 class StereoPictureFrame : public boost::noncopyable
@@ -44,7 +45,7 @@ public:
 	~StereoPictureFrame ();
 
 	boost::shared_ptr<ARGBFrame> argb_frame (Eye eye, int reduce = 0) const;
-	void rgb_frame (Eye eye, uint16_t* buffer) const;
+	void rgb_frame (Eye eye, boost::shared_ptr<Image>) const;
 	uint8_t const * left_j2k_data () const;
 	uint8_t* left_j2k_data ();
 	int left_j2k_size () const;

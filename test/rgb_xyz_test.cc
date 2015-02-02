@@ -159,10 +159,10 @@ BOOST_AUTO_TEST_CASE (xyz_rgb_range_test)
 	xyz->data(2)[2] = 0;
 	xyz->data(2)[3] = 4095;
 
-	uint16_t buffer[12];
+	shared_ptr<SimpleImage> image (new SimpleImage (dcp::Size (2, 2)));
 
 	notes.clear ();
-	dcp::xyz_to_rgb (xyz, dcp::ColourConversion::xyz_to_srgb (), buffer, boost::optional<dcp::NoteHandler> (boost::bind (&note_handler, _1, _2)));
+	dcp::xyz_to_rgb (xyz, dcp::ColourConversion::xyz_to_srgb (), image, boost::optional<dcp::NoteHandler> (boost::bind (&note_handler, _1, _2)));
 
 	/* The 6 out-of-range samples should have been noted */
 	BOOST_REQUIRE_EQUAL (notes.size(), 6);
@@ -178,6 +178,7 @@ BOOST_AUTO_TEST_CASE (xyz_rgb_range_test)
 	   as inputs at the extremes (0 and 4095).
 	*/
 
+	uint16_t* buffer = reinterpret_cast<uint16_t*> (image->data()[0]);
 	BOOST_REQUIRE_EQUAL (buffer[0 * 3 + 0], buffer[2 * 3 + 1]);
 	BOOST_REQUIRE_EQUAL (buffer[0 * 3 + 1], buffer[2 * 3 + 1]);
 	BOOST_REQUIRE_EQUAL (buffer[0 * 3 + 2], buffer[2 * 3 + 2]);

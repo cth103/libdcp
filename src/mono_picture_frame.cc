@@ -129,12 +129,12 @@ MonoPictureFrame::argb_frame (int reduce) const
 }
 
 void
-MonoPictureFrame::rgb_frame (uint16_t* buffer, optional<NoteHandler> note) const
+MonoPictureFrame::rgb_frame (shared_ptr<Image> rgb, optional<NoteHandler> note) const
 {
 	xyz_to_rgb (
 		decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), 0),
 		ColourConversion::xyz_to_srgb (),
-		buffer,
+		rgb,
 		note
 		);
 }

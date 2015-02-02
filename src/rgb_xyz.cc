@@ -113,15 +113,16 @@ dcp::xyz_to_rgba (
 /** Convert an openjpeg XYZ image to RGB.
  *  @param xyz_frame Frame in XYZ.
  *  @param conversion Colour conversion to use.
- *  @param buffer Buffer to write RGB data to; rgb will be packed RGB
- *  16:16:16, 48bpp, 16R, 16G, 16B, with the 2-byte value for each
- *  R/G/B component stored as little-endian; i.e. AV_PIX_FMT_RGB48LE.
+ *  @param rgb Image to write RGB data to; must have space to be
+ *  filled with packed RGB 16:16:16, 48bpp, 16R, 16G, 16B,
+ *  with the 2-byte value for each R/G/B component stored as
+ *  little-endian; i.e. AV_PIX_FMT_RGB48LE.
  */
 void
 dcp::xyz_to_rgb (
-	boost::shared_ptr<const XYZFrame> xyz_frame,
+	shared_ptr<const XYZFrame> xyz_frame,
 	ColourConversion const & conversion,
-	uint16_t* buffer,
+	shared_ptr<Image> rgb,
 	optional<NoteHandler> note
 	)
 {
@@ -143,7 +144,7 @@ dcp::xyz_to_rgb (
 	boost::numeric::ublas::matrix<double> matrix = conversion.matrix ();
 	
 	for (int y = 0; y < xyz_frame->size().height; ++y) {
-		uint16_t* buffer_line = buffer;
+		uint16_t* rgb_line = reinterpret_cast<uint16_t*> (rgb->data()[0] + y * rgb->stride()[0]);
 		for (int x = 0; x < xyz_frame->size().width; ++x) {
 
 			int cx = *xyz_x++;
@@ -195,12 +196,10 @@ dcp::xyz_to_rgb (
 			d.b = min (d.b, 1.0);
 			d.b = max (d.b, 0.0);
 
-			*buffer_line++ = rint(lut_out[int(rint(d.r * 65535))] * 65535);
-			*buffer_line++ = rint(lut_out[int(rint(d.g * 65535))] * 65535);
-			*buffer_line++ = rint(lut_out[int(rint(d.b * 65535))] * 65535);
+			*rgb_line++ = rint(lut_out[int(rint(d.r * 65535))] * 65535);
+			*rgb_line++ = rint(lut_out[int(rint(d.g * 65535))] * 65535);
+			*rgb_line++ = rint(lut_out[int(rint(d.b * 65535))] * 65535);
 		}
-		
-		buffer += xyz_frame->size().width * 3;
 	}
 }
 
