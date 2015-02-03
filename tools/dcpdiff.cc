@@ -114,11 +114,11 @@ main (int argc, char* argv[])
 			/* From here we're using random capital letters for the short option */
 			{ "ignore-missing-assets", no_argument, 0, 'A'},
 			{ "cpl-annotation-texts", no_argument, 0, 'C'},
-			{ "key", no_argument, 0, 'D'},
+			{ "key", required_argument, 0, 'D'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vhvnm:s:kACD", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhvnm:s:kACD:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -154,7 +154,7 @@ main (int argc, char* argv[])
 			options.cpl_annotation_texts_can_differ = true;
 			break;
 		case 'D':
-			key = optarg;
+			key = string (optarg);
 			break;
 		}
 	}
