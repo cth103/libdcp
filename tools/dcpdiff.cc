@@ -22,11 +22,19 @@
 #include "common.h"
 #include "mxf.h"
 #include <getopt.h>
+#include <boost/optional.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
 #include <iostream>
+#include <list>
 
-using namespace std;
-using namespace boost;
+using std::list;
+using std::cerr;
+using std::cout;
+using std::string;
+using boost::shared_ptr;
+using boost::optional;
+using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 static bool verbose = false;
@@ -81,7 +89,7 @@ load_dcp (boost::filesystem::path path, bool keep_going, bool ignore_missing_ass
 				}
 			}
 		}
-		
+
 	} catch (FileError& e) {
 		cerr << "Could not read DCP " << path.string() << "; " << e.what() << " " << e.filename() << "\n";
 		exit (EXIT_FAILURE);
@@ -164,12 +172,12 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	if (!filesystem::exists (argv[optind])) {
+	if (!boost::filesystem::exists (argv[optind])) {
 		cerr << argv[0] << ": DCP " << argv[optind] << " not found.\n";
 		exit (EXIT_FAILURE);
 	}
 
-	if (!filesystem::exists (argv[optind + 1])) {
+	if (!boost::filesystem::exists (argv[optind + 1])) {
 		cerr << argv[0] << ": DCP " << argv[optind + 1] << " not found.\n";
 		exit (EXIT_FAILURE);
 	}
