@@ -17,15 +17,24 @@
 
 */
 
-#include <iostream>
-#include <boost/filesystem.hpp>
-#include <getopt.h>
 #include "dcp.h"
 #include "exceptions.h"
 #include "common.h"
+#include "mxf.h"
+#include <getopt.h>
+#include <boost/optional.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/filesystem.hpp>
+#include <iostream>
+#include <list>
 
-using namespace std;
-using namespace boost;
+using std::list;
+using std::cerr;
+using std::cout;
+using std::string;
+using boost::shared_ptr;
+using boost::optional;
+using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 static bool verbose = false;
@@ -41,6 +50,7 @@ help (string n)
 	     << "      --cpl-annotation-texts   allow differing CPL annotation texts\n"
 	     << "  -m, --mean-pixel             maximum allowed mean pixel error (default 5)\n"
 	     << "  -s, --std-dev-pixel          maximum allowed standard deviation of pixel error (default 5)\n"
+	     << "      --key                    hexadecimal key to use to decrypt MXFs\n"
 	     << "  -k, --keep-going             carry on in the event of errors, if possible\n"
 	     << "      --ignore-missing-assets  ignore missing asset files\n"
 	     << "\n"
@@ -58,7 +68,7 @@ note (NoteType t, string n)
 }
 
 DCP *
-load_dcp (boost::filesystem::path path, bool keep_going, bool ignore_missing_assets)
+load_dcp (boost::filesystem::path path, bool keep_going, bool ignore_missing_assets, optional<string> key)
 {
 	DCP* dcp = 0;
 	try {
@@ -69,6 +79,17 @@ load_dcp (boost::filesystem::path path, bool keep_going, bool ignore_missing_ass
 		for (DCP::ReadErrors::const_iterator i = errors.begin(); i != errors.end(); ++i) {
 			cerr << (*i)->what() << "\n";
 		}
+
+		if (key) {
+			list<shared_ptr<Asset> > assets = dcp->assets ();
+			for (list<shared_ptr<Asset> >::const_iterator i = assets.begin(); i != assets.end(); ++i) {
+				shared_ptr<MXF> mxf = dynamic_pointer_cast<MXF> (*i);
+				if (mxf) {
+					mxf->set_key (Key (key.get ()));
+				}
+			}
+		}
+
 	} catch (FileError& e) {
 		cerr << "Could not read DCP " << path.string() << "; " << e.what() << " " << e.filename() << "\n";
 		exit (EXIT_FAILURE);
@@ -86,6 +107,7 @@ main (int argc, char* argv[])
 	options.reel_hashes_can_differ = true;
 	bool keep_going = false;
 	bool ignore_missing_assets = false;
+	optional<string> key;
 	
 	int option_index = 0;
 	while (1) {
@@ -100,10 +122,11 @@ main (int argc, char* argv[])
 			/* From here we're using random capital letters for the short option */
 			{ "ignore-missing-assets", no_argument, 0, 'A'},
 			{ "cpl-annotation-texts", no_argument, 0, 'C'},
+			{ "key", required_argument, 0, 'D'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vhvnm:s:kA", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhvnm:s:kACD:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -138,6 +161,9 @@ main (int argc, char* argv[])
 		case 'C':
 			options.cpl_annotation_texts_can_differ = true;
 			break;
+		case 'D':
+			key = string (optarg);
+			break;
 		}
 	}
 
@@ -146,18 +172,18 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	if (!filesystem::exists (argv[optind])) {
+	if (!boost::filesystem::exists (argv[optind])) {
 		cerr << argv[0] << ": DCP " << argv[optind] << " not found.\n";
 		exit (EXIT_FAILURE);
 	}
 
-	if (!filesystem::exists (argv[optind + 1])) {
+	if (!boost::filesystem::exists (argv[optind + 1])) {
 		cerr << argv[0] << ": DCP " << argv[optind + 1] << " not found.\n";
 		exit (EXIT_FAILURE);
 	}
 
-	DCP* a = load_dcp (argv[optind], keep_going, ignore_missing_assets);
-	DCP* b = load_dcp (argv[optind + 1], keep_going, ignore_missing_assets);
+	DCP* a = load_dcp (argv[optind], keep_going, ignore_missing_assets, key);
+	DCP* b = load_dcp (argv[optind + 1], keep_going, ignore_missing_assets, key);
 
 	/* I think this is just below the LSB at 16-bits (ie the 8th most significant bit at 24-bit) */
 	options.max_audio_sample_error = 255;
