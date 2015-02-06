@@ -12,7 +12,7 @@ def build(target, options):
     elif target.platform == 'windows':
         cmd += ' --target-windows --disable-tests'
     elif target.platform == 'osx':
-        cmd += ' --target-osx --disable-tests'
+        cmd += ' --disable-tests'
 
     if target.debug:
         cmd += ' --enable-debug'
