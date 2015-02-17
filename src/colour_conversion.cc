@@ -51,7 +51,7 @@ ColourConversion const &
 ColourConversion::rec709_to_xyz ()
 {
 	static ColourConversion* c = new ColourConversion (
-		shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (false, 2.4, 0.081, 0.099, 4.5)),
+		shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (false, 1 / 0.45, 0.081, 0.099, 4.5)),
 		dcp::colour_matrix::rgb_to_xyz,
 		shared_ptr<const TransferFunction> (new GammaTransferFunction (true, 2.6))
 		);
