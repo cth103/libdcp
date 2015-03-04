@@ -176,11 +176,11 @@ Certificate::name_for_xml (X509_NAME * n)
 	assert (n);
 
 	string s = String::compose (
-		"dnQualifier=%1,CN=%2,OU=%3,O=%4",
-		get_name_part (n, NID_dnQualifier),
-		get_name_part (n, NID_commonName),
+		"O=%1,OU=%2,CN=%3,dnQualifier=%4",
+		get_name_part (n, NID_organizationName),
 		get_name_part (n, NID_organizationalUnitName),
-		get_name_part (n, NID_organizationName)
+		get_name_part (n, NID_commonName),
+		get_name_part (n, NID_dnQualifier)
 		);
 	
 	boost::replace_all (s, "+", "\\+");
