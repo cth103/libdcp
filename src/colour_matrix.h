@@ -23,6 +23,7 @@ namespace colour_matrix {
 
 extern double const xyz_to_rgb[3][3];
 extern double const srgb_to_xyz[3][3];
+extern double const rec601_to_xyz[3][3];
 extern double const rec709_to_xyz[3][3];
 
 }	

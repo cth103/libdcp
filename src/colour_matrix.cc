@@ -29,6 +29,13 @@ double const libdcp::colour_matrix::xyz_to_rgb[3][3] = {
 	{  0.0556300804018974, -0.203976958990097, 1.05697154998779 }
 };
 
+/* From Dennis Couzin via email */
+double const libdcp::colour_matrix::rec601_to_xyz[3][3] = {
+	{ 0.3935276, 0.3652562, 0.1916771 },
+	{ 0.2123800, 0.7010562, 0.0865638 },
+	{ 0.0187394, 0.1119333, 0.9583854 }
+};
+
 /* These are the same, but kept as two separate variables for backwards compatibility;
    the confusion is fixed in the 1.0 branch.
 */
