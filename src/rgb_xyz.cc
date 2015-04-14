@@ -103,7 +103,10 @@ libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const LUT> 
  *  i.e. AV_PIX_FMT_RGB48LE.
  */
 shared_ptr<libdcp::XYZFrame>
-libdcp::rgb_to_xyz (shared_ptr<const Image> rgb, shared_ptr<const LUT> lut_in, shared_ptr<const LUT> lut_out, double const colour_matrix[3][3])
+libdcp::rgb_to_xyz (
+	shared_ptr<const Image> rgb, shared_ptr<const LUT> lut_in, shared_ptr<const LUT> lut_out,
+	double const rgb_to_xyz[3][3], double const bradford[3][3]
+	)
 {
 	assert (lut_in->bit_depth() == 12);
 	assert (lut_out->bit_depth() == 16);
@@ -118,6 +121,10 @@ libdcp::rgb_to_xyz (shared_ptr<const Image> rgb, shared_ptr<const LUT> lut_in, s
 		double x, y, z;
 	} d;
 
+	struct {
+		double x, y, z;
+	} e;
+
 	int jn = 0;
 	for (int y = 0; y < rgb->size().height; ++y) {
 		uint16_t* p = reinterpret_cast<uint16_t *> (rgb->data()[0] + y * rgb->stride()[0]);
@@ -129,31 +136,44 @@ libdcp::rgb_to_xyz (shared_ptr<const Image> rgb, shared_ptr<const LUT> lut_in, s
 			s.b = lut_in->lut()[*p++ >> 4];
 			
 			/* RGB to XYZ Matrix */
-			d.x = ((s.r * colour_matrix[0][0]) +
-			       (s.g * colour_matrix[0][1]) +
-			       (s.b * colour_matrix[0][2]));
+			d.x = ((s.r * rgb_to_xyz[0][0]) +
+			       (s.g * rgb_to_xyz[0][1]) +
+			       (s.b * rgb_to_xyz[0][2]));
 			
-			d.y = ((s.r * colour_matrix[1][0]) +
-			       (s.g * colour_matrix[1][1]) +
-			       (s.b * colour_matrix[1][2]));
+			d.y = ((s.r * rgb_to_xyz[1][0]) +
+			       (s.g * rgb_to_xyz[1][1]) +
+			       (s.b * rgb_to_xyz[1][2]));
 			
-			d.z = ((s.r * colour_matrix[2][0]) +
-			       (s.g * colour_matrix[2][1]) +
-			       (s.b * colour_matrix[2][2]));
+			d.z = ((s.r * rgb_to_xyz[2][0]) +
+			       (s.g * rgb_to_xyz[2][1]) +
+			       (s.b * rgb_to_xyz[2][2]));
+
+			/* Bradford matrix */
+			e.x = ((d.x * bradford[0][0]) +
+			       (d.y * bradford[0][1]) +
+			       (d.z * bradford[0][2]));
+
+			e.y = ((d.x * bradford[1][0]) +
+			       (d.y * bradford[1][1]) +
+			       (d.z * bradford[1][2]));
+
+			e.z = ((d.x * bradford[2][0]) +
+			       (d.y * bradford[2][1]) +
+			       (d.z * bradford[2][2]));
 			
 			/* DCI companding */
-			d.x = d.x * DCI_COEFFICIENT * 65535;
-			d.y = d.y * DCI_COEFFICIENT * 65535;
-			d.z = d.z * DCI_COEFFICIENT * 65535;
+			e.x = e.x * DCI_COEFFICIENT * 65535;
+			e.y = e.y * DCI_COEFFICIENT * 65535;
+			e.z = e.z * DCI_COEFFICIENT * 65535;
 
-			assert (d.x >= 0 && d.x < 65536);
-			assert (d.y >= 0 && d.y < 65536);
-			assert (d.z >= 0 && d.z < 65536);
+			assert (e.x >= 0 && e.x < 65536);
+			assert (e.y >= 0 && e.y < 65536);
+			assert (e.z >= 0 && e.z < 65536);
 			
 			/* Out gamma LUT */
-			xyz->data(0)[jn] = lut_out->lut()[(int) d.x] * 4096;
-			xyz->data(1)[jn] = lut_out->lut()[(int) d.y] * 4096;
-			xyz->data(2)[jn] = lut_out->lut()[(int) d.z] * 4096;
+			xyz->data(0)[jn] = lut_out->lut()[(int) e.x] * 4096;
+			xyz->data(1)[jn] = lut_out->lut()[(int) e.y] * 4096;
+			xyz->data(2)[jn] = lut_out->lut()[(int) e.z] * 4096;
 
 			++jn;
 		}

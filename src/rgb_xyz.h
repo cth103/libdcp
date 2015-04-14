@@ -31,7 +31,8 @@ extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (
 	);
 
 extern boost::shared_ptr<XYZFrame> rgb_to_xyz (
-	boost::shared_ptr<const Image>, boost::shared_ptr<const LUT>, boost::shared_ptr<const LUT>, double const colour_matrix[3][3]
+	boost::shared_ptr<const Image>, boost::shared_ptr<const LUT>, boost::shared_ptr<const LUT>,
+	double const rgb_to_xyz[3][3], double const bradford[3][3]
 	);
 
 extern boost::shared_ptr<XYZFrame> xyz_to_xyz (boost::shared_ptr<const Image>);
