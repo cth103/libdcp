@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,58 +30,6 @@ using std::ostream;
 using std::string;
 using boost::shared_ptr;
 using namespace libdcp;
-
-FrameInfo::FrameInfo (istream& s)
-	: offset (0)
-	, size (0)
-{
-	s >> offset >> size;
-
-	if (!s.good ()) {
-		/* Make sure we zero these if something bad happened, otherwise
-		   the caller might try to alloc lots of RAM.
-		*/
-		offset = size = 0;
-	}
-
-	s >> hash;
-}
-
-FrameInfo::FrameInfo (FILE* f)
-{
-#ifdef LIBDCP_WINDOWS
-	fscanf (f, "%I64u", &offset);
-	fscanf (f, "%I64u", &size);
-#else	
-	fscanf (f, "%" SCNu64, &offset);
-	fscanf (f, "%" SCNu64, &size);
-#endif	
-
-	if (ferror (f)) {
-		offset = size = 0;
-	}
-
-	char hash_buffer[128];
-	fscanf (f, "%s", hash_buffer);
-	hash = hash_buffer;
-}
-
-void
-FrameInfo::write (ostream& s) const
-{
-	s << offset << " " << size << " " << hash;
-}
-
-void
-FrameInfo::write (FILE* f) const
-{
-#ifdef LIBDCP_WINDOWS	
-	fprintf (f, "%I64u %I64u %s", offset, size, hash.c_str ());
-#else	
-	fprintf (f, "%" PRIu64 " %" PRIu64 " %s", offset, size, hash.c_str ());
-#endif	
-}
-
 
 PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, bool overwrite)
 	: _asset (asset)

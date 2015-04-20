@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2013 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_PICTURE_ASSET_WRITER_H
+#define LIBDCP_PICTURE_ASSET_WRITER_H
+
 #include <stdint.h>
 #include <string>
 #include <fstream>
@@ -32,18 +35,17 @@ class PictureAsset;
 /** Information about a single frame (either a monoscopic frame or a left *or* right eye stereoscopic frame) */	
 struct FrameInfo
 {
+	FrameInfo ()
+		: offset (0)
+		, size (0)
+	{}
+	
 	FrameInfo (uint64_t o, uint64_t s, std::string h)
 		: offset (o)
 		, size (s)
 		, hash (h)
 	{}
 
-	FrameInfo (std::istream& s);
-	FrameInfo (FILE *);
-
-	void write (std::ostream& s) const;
-	void write (FILE *) const;
-	
 	uint64_t offset;
 	uint64_t size;
 	std::string hash;
@@ -77,3 +79,5 @@ protected:
 };
 
 }
+
+#endif

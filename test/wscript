@@ -29,7 +29,6 @@ def build(bld):
                  decryption_test.cc
                  encryption_test.cc
                  error_test.cc
-                 frame_info_test.cc
                  kdm_key_test.cc
                  kdm_test.cc
                  lut_test.cc
