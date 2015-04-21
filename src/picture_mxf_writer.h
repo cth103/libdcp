@@ -42,18 +42,17 @@ class PictureMXF;
  */
 struct FrameInfo
 {
+	FrameInfo ()
+		: offset (0)
+		, size (0)
+	{}
+		  
 	FrameInfo (uint64_t o, uint64_t s, std::string h)
 		: offset (o)
 		, size (s)
 		, hash (h)
 	{}
 
-	FrameInfo (std::istream& s);
-	FrameInfo (FILE *);
-
-	void write (std::ostream& s) const;
-	void write (FILE *) const;
-	
 	uint64_t offset;
 	uint64_t size;
 	std::string hash;
