@@ -168,7 +168,7 @@ ColourConversion::xyz_to_rgb () const
 	DCP_ASSERT (r == 0);
 
 	/* create identity matrix of inverse */
-	boost::numeric::ublas::matrix<double> xyz_to_rgb;
+	boost::numeric::ublas::matrix<double> xyz_to_rgb (3, 3);
 	xyz_to_rgb.assign (boost::numeric::ublas::identity_matrix<double> (A.size1 ()));
 
 	/* backsubstitute to get the inverse */
