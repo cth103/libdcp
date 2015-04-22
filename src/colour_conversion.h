@@ -129,6 +129,7 @@ public:
 	static ColourConversion const & srgb_to_xyz ();
 	static ColourConversion const & rec601_to_xyz ();
 	static ColourConversion const & rec709_to_xyz ();
+	static ColourConversion const & p3_to_xyz ();
 
 protected:
 	boost::shared_ptr<const TransferFunction> _in;

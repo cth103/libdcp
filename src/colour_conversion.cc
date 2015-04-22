@@ -81,6 +81,22 @@ ColourConversion::rec709_to_xyz ()
 	return *c;
 }
 
+ColourConversion const &
+ColourConversion::p3_to_xyz ()
+{
+	static ColourConversion* c = new ColourConversion (
+		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6)),
+		YUV_TO_RGB_REC709,
+		Chromaticity (0.68, 0.32),
+		Chromaticity (0.265, 0.69),
+		Chromaticity (0.15, 0.06),
+		Chromaticity (0.314, 0.351),
+		optional<Chromaticity> (),
+		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
+		);
+	return *c;
+}
+
 ColourConversion::ColourConversion (
 	shared_ptr<const TransferFunction> in,
 	YUVToRGB yuv_to_rgb,
