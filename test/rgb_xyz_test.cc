@@ -134,7 +134,9 @@ BOOST_AUTO_TEST_CASE (xyz_rgb_range_test)
 	scoped_array<uint8_t> rgb (new uint8_t[2 * 2 * 6]);
 
 	notes.clear ();
-	dcp::xyz_to_rgb (xyz, dcp::ColourConversion::xyz_to_srgb (), rgb.get(), 2 * 6, boost::optional<dcp::NoteHandler> (boost::bind (&note_handler, _1, _2)));
+	dcp::xyz_to_rgb (
+		xyz, dcp::ColourConversion::srgb_to_xyz (), rgb.get(), 2 * 6, boost::optional<dcp::NoteHandler> (boost::bind (&note_handler, _1, _2))
+		);
 
 	/* The 6 out-of-range samples should have been noted */
 	BOOST_REQUIRE_EQUAL (notes.size(), 6);

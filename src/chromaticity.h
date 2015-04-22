@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,26 +17,38 @@
 
 */
 
-#include "transfer_function.h"
+#ifndef DCP_CHROMATICITY_H
+#define DCP_CHROMATICITY_H
+
+#include <cmath>
 
 namespace dcp {
 
-class GammaTransferFunction : public TransferFunction
+class Chromaticity
 {
 public:
-	GammaTransferFunction (double gamma);
+	Chromaticity ()
+		: x (0)
+		, y (0)
+	{}
 
-	double gamma () const {
-		return _gamma;
+	Chromaticity (double x_, double y_)
+		: x (x_)
+		, y (y_)
+	{}
+		
+	double x;
+	double y;
+
+	double z () const {
+		return 1 - x - y;
 	}
 
-	bool about_equal (boost::shared_ptr<const TransferFunction> other, double epsilon) const;
-
-protected:
-	double * make_lut (int bit_depth, bool inverse) const;
-
-private:
-	double _gamma;
+	bool about_equal (Chromaticity const & other, float epsilon) const {
+		return std::fabs (x - other.x) < epsilon && std::fabs (y - other.y) < epsilon;
+	}
 };
 
 }
+
+#endif

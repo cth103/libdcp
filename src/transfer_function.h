@@ -30,22 +30,18 @@ namespace dcp {
 class TransferFunction : public boost::noncopyable
 {
 public:
-	TransferFunction (bool inverse);
-	
 	virtual ~TransferFunction ();
 
 	/** @return A look-up table (of size 2^bit_depth) whose values range from 0 to 1 */
-	double const * lut (int bit_depth) const;
+	double const * lut (int bit_depth, bool inverse) const;
 
-	virtual bool about_equal (boost::shared_ptr<const TransferFunction> other, double epsilon) const;
+	virtual bool about_equal (boost::shared_ptr<const TransferFunction> other, double epsilon) const = 0;
 
 protected:
-	virtual double * make_lut (int bit_depth) const = 0;
-
-	bool _inverse;
+	virtual double * make_lut (int bit_depth, bool inverse) const = 0;
 
 private:
-	mutable std::map<int, double*> _luts;
+	mutable std::map<std::pair<int, bool>, double*> _luts;
 	/** mutex to protect _luts */
 	mutable boost::mutex _mutex;
 };

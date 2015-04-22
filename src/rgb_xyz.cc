@@ -70,9 +70,9 @@ dcp::xyz_to_rgba (
 	int* xyz_y = xyz_image->data (1);
 	int* xyz_z = xyz_image->data (2);
 
-	double const * lut_in = conversion.in()->lut (16);
-	double const * lut_out = conversion.out()->lut (12);
-	boost::numeric::ublas::matrix<double> matrix = conversion.matrix ();
+	double const * lut_in = conversion.in()->lut (16, true);
+	double const * lut_out = conversion.out()->lut (12, false);
+	boost::numeric::ublas::matrix<double> const matrix = conversion.xyz_to_rgb ();
 
 	int const height = xyz_image->size().height;
 	int const width = xyz_image->size().width;
@@ -150,9 +150,9 @@ dcp::xyz_to_rgb (
 	int* xyz_y = xyz_image->data (1);
 	int* xyz_z = xyz_image->data (2);
 
-	double const * lut_in = conversion.in()->lut (12);
-	double const * lut_out = conversion.out()->lut (16);
-	boost::numeric::ublas::matrix<double> matrix = conversion.matrix ();
+	double const * lut_in = conversion.in()->lut (12, true);
+	double const * lut_out = conversion.out()->lut (16, false);
+	boost::numeric::ublas::matrix<double> const matrix = conversion.xyz_to_rgb ();
 	
 	for (int y = 0; y < xyz_image->size().height; ++y) {
 		uint16_t* rgb_line = reinterpret_cast<uint16_t*> (rgb + y * stride);
@@ -238,9 +238,14 @@ dcp::rgb_to_xyz (
 		double x, y, z;
 	} d;
 
-	double const * lut_in = conversion.in()->lut (12);
-	double const * lut_out = conversion.out()->lut (16);
-	boost::numeric::ublas::matrix<double> matrix = conversion.matrix ();
+	struct {
+		double x, y, z;
+	} e;
+	
+	double const * lut_in = conversion.in()->lut (12, false);
+	double const * lut_out = conversion.out()->lut (16, true);
+	boost::numeric::ublas::matrix<double> const rgb_to_xyz = conversion.rgb_to_xyz ();
+	boost::numeric::ublas::matrix<double> const bradford = conversion.bradford ();
 
 	int jn = 0;
 	for (int y = 0; y < size.height; ++y) {
@@ -253,23 +258,27 @@ dcp::rgb_to_xyz (
 			s.b = lut_in[*p++ >> 4];
 
 			/* RGB to XYZ Matrix */
-			d.x = ((s.r * matrix(0, 0)) + (s.g * matrix(0, 1)) + (s.b * matrix(0, 2)));
-			d.y = ((s.r * matrix(1, 0)) + (s.g * matrix(1, 1)) + (s.b * matrix(1, 2)));
-			d.z = ((s.r * matrix(2, 0)) + (s.g * matrix(2, 1)) + (s.b * matrix(2, 2)));
+			d.x = ((s.r * rgb_to_xyz(0, 0)) + (s.g * rgb_to_xyz(0, 1)) + (s.b * rgb_to_xyz(0, 2)));
+			d.y = ((s.r * rgb_to_xyz(1, 0)) + (s.g * rgb_to_xyz(1, 1)) + (s.b * rgb_to_xyz(1, 2)));
+			d.z = ((s.r * rgb_to_xyz(2, 0)) + (s.g * rgb_to_xyz(2, 1)) + (s.b * rgb_to_xyz(2, 2)));
+
+			e.x = ((d.x * bradford(0, 0)) + (d.y * bradford(0, 1)) + (d.z * bradford(0, 2)));
+			e.y = ((d.x * bradford(1, 0)) + (d.y * bradford(1, 1)) + (d.z * bradford(1, 2)));
+			e.z = ((d.x * bradford(2, 0)) + (d.y * bradford(2, 1)) + (d.z * bradford(2, 2)));
 			
 			/* DCI companding */
-			d.x = d.x * DCI_COEFFICIENT * 65535;
-			d.y = d.y * DCI_COEFFICIENT * 65535;
-			d.z = d.z * DCI_COEFFICIENT * 65535;
+			e.x = e.x * DCI_COEFFICIENT * 65535;
+			e.y = e.y * DCI_COEFFICIENT * 65535;
+			e.z = e.z * DCI_COEFFICIENT * 65535;
 
-			DCP_ASSERT (d.x >= 0 && d.x < 65536);
-			DCP_ASSERT (d.y >= 0 && d.y < 65536);
-			DCP_ASSERT (d.z >= 0 && d.z < 65536);
+			DCP_ASSERT (e.x >= 0 && e.x < 65536);
+			DCP_ASSERT (e.y >= 0 && e.y < 65536);
+			DCP_ASSERT (e.z >= 0 && e.z < 65536);
 			
 			/* Out gamma LUT */
-			xyz->data(0)[jn] = lut_out[int(rint(d.x))] * 4095;
-			xyz->data(1)[jn] = lut_out[int(rint(d.y))] * 4095;
-			xyz->data(2)[jn] = lut_out[int(rint(d.z))] * 4095;
+			xyz->data(0)[jn] = lut_out[int(rint(e.x))] * 4095;
+			xyz->data(1)[jn] = lut_out[int(rint(e.y))] * 4095;
+			xyz->data(2)[jn] = lut_out[int(rint(e.z))] * 4095;
 
 			++jn;
 		}

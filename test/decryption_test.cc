@@ -50,7 +50,7 @@ get_frame (dcp::DCP const & dcp)
 	shared_ptr<dcp::XYZImage> xyz = j2k_frame->xyz_image();
 
 	uint8_t* argb = new uint8_t[xyz->size().width * xyz->size().height * 4];
-	dcp::xyz_to_rgba (j2k_frame->xyz_image(), dcp::ColourConversion::xyz_to_srgb(), argb);
+	dcp::xyz_to_rgba (j2k_frame->xyz_image(), dcp::ColourConversion::srgb_to_xyz(), argb);
 	return make_pair (argb, xyz->size ());
 }
 

@@ -25,9 +25,8 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
-ModifiedGammaTransferFunction::ModifiedGammaTransferFunction (bool inverse, double power, double threshold, double A, double B)
-	: TransferFunction (inverse)
-	, _power (power)
+ModifiedGammaTransferFunction::ModifiedGammaTransferFunction (double power, double threshold, double A, double B)
+	: _power (power)
 	, _threshold (threshold)
 	, _A (A)
 	, _B (B)
@@ -36,11 +35,11 @@ ModifiedGammaTransferFunction::ModifiedGammaTransferFunction (bool inverse, doub
 }
 
 double *
-ModifiedGammaTransferFunction::make_lut (int bit_depth) const
+ModifiedGammaTransferFunction::make_lut (int bit_depth, bool inverse) const
 {
 	int const bit_length = int(std::pow(2.0f, bit_depth));
 	double* lut = new double[bit_length];
-	if (_inverse) {
+	if (inverse) {
 		double const threshold = _threshold / _B;
 		for (int i = 0; i < bit_length; ++i) {
 			double const p = static_cast<double> (i) / (bit_length - 1);
@@ -67,10 +66,6 @@ ModifiedGammaTransferFunction::make_lut (int bit_depth) const
 bool
 ModifiedGammaTransferFunction::about_equal (shared_ptr<const TransferFunction> other, double epsilon) const
 {
-	if (!TransferFunction::about_equal (other, epsilon)) {
-		return false;
-	}
-	
 	shared_ptr<const ModifiedGammaTransferFunction> o = dynamic_pointer_cast<const ModifiedGammaTransferFunction> (other);
 	if (!o) {
 		return false;

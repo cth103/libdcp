@@ -65,6 +65,7 @@ def build(bld):
               asset.h
               certificate_chain.h
               certificates.h
+              chromaticity.h
               colour_conversion.h
               colour_matrix.h
               cpl.h

@@ -22,20 +22,16 @@
 
 using std::pow;
 using std::map;
+using std::pair;
+using std::make_pair;
 using boost::shared_ptr;
 using namespace dcp;
-
-TransferFunction::TransferFunction (bool inverse)
-	: _inverse (inverse)
-{
-
-}
 
 TransferFunction::~TransferFunction ()
 {
 	boost::mutex::scoped_lock lm (_mutex);
 
-	for (map<int, double*>::const_iterator i = _luts.begin(); i != _luts.end(); ++i) {
+	for (map<pair<int, bool>, double*>::const_iterator i = _luts.begin(); i != _luts.end(); ++i) {
 		delete[] i->second;
 	}
 
@@ -43,21 +39,15 @@ TransferFunction::~TransferFunction ()
 }
 
 double const *
-TransferFunction::lut (int bit_depth) const
+TransferFunction::lut (int bit_depth, bool inverse) const
 {
 	boost::mutex::scoped_lock lm (_mutex);
 	
-	map<int, double*>::const_iterator i = _luts.find (bit_depth);
+	map<pair<int, bool>, double*>::const_iterator i = _luts.find (make_pair (bit_depth, inverse));
 	if (i != _luts.end ()) {
 		return i->second;
 	}
 
-	_luts[bit_depth] = make_lut (bit_depth);
-	return _luts[bit_depth];
-}
-
-bool
-TransferFunction::about_equal (shared_ptr<const TransferFunction> other, double) const
-{
-	return _inverse == other->_inverse;
+	_luts[make_pair(bit_depth, inverse)] = make_lut (bit_depth, inverse);
+	return _luts[make_pair(bit_depth, inverse)];
 }

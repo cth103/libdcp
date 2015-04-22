@@ -29,7 +29,7 @@ namespace dcp {
 class ModifiedGammaTransferFunction : public TransferFunction
 {
 public:
-	ModifiedGammaTransferFunction (bool inverse, double power, double threshold, double A, double B);
+	ModifiedGammaTransferFunction (double power, double threshold, double A, double B);
 
 	double power () const {
 		return _power;
@@ -50,7 +50,7 @@ public:
 	bool about_equal (boost::shared_ptr<const TransferFunction>, double epsilon) const;
 	
 protected:
-	double * make_lut (int bit_depth) const;
+	double * make_lut (int bit_depth, bool inverse) const;
 	
 private:
 	double _power;
