@@ -17,6 +17,9 @@
 
 */
 
+#ifndef DCP_COLOUR_CONVERSION_H
+#define DCP_COLOUR_CONVERSION_H
+
 #include "chromaticity.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
@@ -140,3 +143,5 @@ protected:
 };
 
 }
+
+#endif
