@@ -37,7 +37,7 @@ namespace xmlpp {
 namespace dcp {
 
 /** @class Asset
- *  @brief Parent class for DCP assets, i.e. picture/sound/subtitles and CPLs.
+ *  @brief Parent class for DCP assets, i.e. picture, sound, subtitles, CPLs, fonts.
  *
  *  Note that this class is not used for ReelAssets; those are just for the metadata
  *  that gets put into &lt;Reel&gt;s.
