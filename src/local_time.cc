@@ -34,7 +34,7 @@ LocalTime::LocalTime ()
 
 	_year = tm->tm_year + 1900;
 	_month = tm->tm_mon + 1;
-	_day = tm->tm_mday + 1;
+	_day = tm->tm_mday;
 	_hour = tm->tm_hour;
 	_minute = tm->tm_min;
 	_second = tm->tm_sec;
