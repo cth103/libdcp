@@ -25,6 +25,7 @@ using std::ostream;
 using boost::optional;
 using namespace dcp;
 
+/** @param v_position Vertical position as a fraction of the screen height (between 0 and 1) from v_align */
 SubtitleString::SubtitleString (
 	optional<string> font,
 	bool italic,

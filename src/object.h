@@ -27,6 +27,8 @@
 #include <boost/noncopyable.hpp>
 #include <string>
 
+class write_subtitle_test;
+
 namespace dcp {
 
 /** @class Object
@@ -45,6 +47,8 @@ public:
 	}
 
 protected:
+	friend class ::write_subtitle_test;
+	
 	/** ID */
 	std::string _id;
 };

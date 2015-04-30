@@ -18,3 +18,5 @@
 */
 
 extern boost::filesystem::path private_test;
+extern void check_xml (xmlpp::Element* ref, xmlpp::Element* test, std::list<std::string> ignore);
+extern void check_xml (std::string ref, std::string test, std::list<std::string> ignore);

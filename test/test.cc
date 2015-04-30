@@ -19,11 +19,13 @@
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test
-#include <boost/test/unit_test.hpp>
 #include "util.h"
 #include "test.h"
+#include <libxml++/libxml++.h>
+#include <boost/test/unit_test.hpp>
 
 using std::string;
+using std::list;
 
 boost::filesystem::path private_test;
 
@@ -37,5 +39,71 @@ struct TestConfig
 		}
 	}
 };
+
+void
+check_xml (xmlpp::Element* ref, xmlpp::Element* test, list<string> ignore)
+{
+	BOOST_CHECK_EQUAL (ref->get_name (), test->get_name ());
+	BOOST_CHECK_EQUAL (ref->get_namespace_prefix (), test->get_namespace_prefix ());
+
+	if (find (ignore.begin(), ignore.end(), ref->get_name()) != ignore.end ()) {
+		return;
+	}
+
+	xmlpp::Element::NodeList ref_children = ref->get_children ();
+	xmlpp::Element::NodeList test_children = test->get_children ();
+	BOOST_CHECK_EQUAL (ref_children.size (), test_children.size ());
+
+	xmlpp::Element::NodeList::iterator k = ref_children.begin ();
+	xmlpp::Element::NodeList::iterator l = test_children.begin ();
+	while (k != ref_children.end ()) {
+
+		/* XXX: should be doing xmlpp::EntityReference, xmlpp::XIncludeEnd, xmlpp::XIncludeStart */
+
+		xmlpp::Element* ref_el = dynamic_cast<xmlpp::Element*> (*k);
+		xmlpp::Element* test_el = dynamic_cast<xmlpp::Element*> (*l);
+		BOOST_CHECK ((ref_el && test_el) || (!ref_el && !test_el));
+		if (ref_el && test_el) {
+			check_xml (ref_el, test_el, ignore);
+		}
+
+		xmlpp::ContentNode* ref_cn = dynamic_cast<xmlpp::ContentNode*> (*k);
+		xmlpp::ContentNode* test_cn = dynamic_cast<xmlpp::ContentNode*> (*l);
+		BOOST_CHECK ((ref_cn && test_cn) || (!ref_cn && !test_cn));
+		if (ref_cn && test_cn) {
+			BOOST_CHECK_EQUAL (ref_cn->get_content(), test_cn->get_content ());
+		}
+
+		++k;
+		++l;
+	}
+
+	xmlpp::Element::AttributeList ref_attributes = ref->get_attributes ();
+	xmlpp::Element::AttributeList test_attributes = test->get_attributes ();
+	BOOST_CHECK_EQUAL (ref_attributes.size(), test_attributes.size ());
+
+	xmlpp::Element::AttributeList::const_iterator m = ref_attributes.begin();
+	xmlpp::Element::AttributeList::const_iterator n = test_attributes.begin();
+	while (m != ref_attributes.end ()) {
+		BOOST_CHECK_EQUAL ((*m)->get_name(), (*n)->get_name());
+		BOOST_CHECK_EQUAL ((*m)->get_value(), (*n)->get_value());
+
+		++m;
+		++n;
+	}
+}
+
+void
+check_xml (string ref, string test, list<string> ignore)
+{
+	xmlpp::DomParser* ref_parser = new xmlpp::DomParser ();
+	ref_parser->parse_memory (ref);
+	xmlpp::Element* ref_root = ref_parser->get_document()->get_root_node ();
+	xmlpp::DomParser* test_parser = new xmlpp::DomParser ();
+	test_parser->parse_memory (test);
+	xmlpp::Element* test_root = test_parser->get_document()->get_root_node ();
+
+	check_xml (ref_root, test_root, ignore);
+}
 
 BOOST_GLOBAL_FIXTURE (TestConfig);
