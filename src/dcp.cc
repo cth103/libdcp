@@ -44,6 +44,7 @@
 #include <libxml++/libxml++.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
 #include <iostream>
 
 using std::string;
@@ -98,15 +99,15 @@ DCP::read (bool keep_going, ReadErrors* errors)
 	asset_map.read_file (asset_map_file);
 	list<shared_ptr<cxml::Node> > asset_nodes = asset_map.node_child("AssetList")->node_children ("Asset");
 	map<string, boost::filesystem::path> paths;
-	for (list<shared_ptr<cxml::Node> >::const_iterator i = asset_nodes.begin(); i != asset_nodes.end(); ++i) {
-		if ((*i)->node_child("ChunkList")->node_children("Chunk").size() != 1) {
+	BOOST_FOREACH (shared_ptr<cxml::Node> i, asset_nodes) {
+		if (i->node_child("ChunkList")->node_children("Chunk").size() != 1) {
 			boost::throw_exception (XMLError ("unsupported asset chunk count"));
 		}
-		string p = (*i)->node_child("ChunkList")->node_child("Chunk")->string_child ("Path");
+		string p = i->node_child("ChunkList")->node_child("Chunk")->string_child ("Path");
 		if (starts_with (p, "file://")) {
 			p = p.substr (7);
 		}
-		paths.insert (make_pair ((*i)->string_child ("Id"), p));
+		paths.insert (make_pair (i->string_child ("Id"), p));
 	}
 
 	/* Read all the assets from the asset map */
@@ -166,9 +167,8 @@ DCP::read (bool keep_going, ReadErrors* errors)
 		}
 	}
 
-	list<shared_ptr<CPL> > cpl = cpls ();
-	for (list<shared_ptr<CPL> >::const_iterator i = cpl.begin(); i != cpl.end(); ++i) {
-		(*i)->resolve_refs (list_of_type<Asset, Object> (assets ()));
+	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
+		i->resolve_refs (list_of_type<Asset, Object> (assets ()));
 	}
 }
 
@@ -185,9 +185,9 @@ DCP::equals (DCP const & other, EqualityOptions opt, NoteHandler note) const
 
 	bool r = true;
 
-	for (list<shared_ptr<CPL> >::const_iterator i = a.begin(); i != a.end(); ++i) {
+	BOOST_FOREACH (shared_ptr<CPL> i, a) {
 		list<shared_ptr<CPL> >::const_iterator j = b.begin ();
-		while (j != b.end() && !(*j)->equals (*i, opt, note)) {
+		while (j != b.end() && !(*j)->equals (i, opt, note)) {
 			++j;
 		}
 
@@ -208,9 +208,8 @@ DCP::add (boost::shared_ptr<Asset> asset)
 bool
 DCP::encrypted () const
 {
-	list<shared_ptr<CPL> > cpl = cpls ();
-	for (list<shared_ptr<CPL> >::const_iterator i = cpl.begin(); i != cpl.end(); ++i) {
-		if ((*i)->encrypted ()) {
+	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
+		if (i->encrypted ()) {
 			return true;
 		}
 	}
@@ -222,12 +221,11 @@ void
 DCP::add (DecryptedKDM const & kdm)
 {
 	list<DecryptedKDMKey> keys = kdm.keys ();
-	list<shared_ptr<CPL> > cpl = cpls ();
-	
-	for (list<shared_ptr<CPL> >::iterator i = cpl.begin(); i != cpl.end(); ++i) {
-		for (list<DecryptedKDMKey>::iterator j = keys.begin(); j != keys.end(); ++j) {
-			if (j->cpl_id() == (*i)->id()) {
-				(*i)->add (kdm);
+
+	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
+		BOOST_FOREACH (DecryptedKDMKey const & j, kdm.keys ()) {
+			if (j.cpl_id() == i->id()) {
+				i->add (kdm);
 			}				
 		}
 	}
@@ -262,8 +260,8 @@ DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared
 	pkl->add_child("Creator")->add_child_text (metadata.creator);
 
 	xmlpp::Element* asset_list = pkl->add_child("AssetList");
-	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
-		(*i)->write_to_pkl (asset_list, standard);
+	BOOST_FOREACH (shared_ptr<Asset> i, _assets) {
+		i->write_to_pkl (asset_list, standard);
 	}
 
 	if (signer) {
@@ -371,9 +369,9 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
 	chunk->add_child("Length")->add_child_text (raw_convert<string> (pkl_length));
-	
-	for (list<shared_ptr<Asset> >::const_iterator i = _assets.begin(); i != _assets.end(); ++i) {
-		(*i)->write_to_assetmap (asset_list, _directory);
+
+	BOOST_FOREACH (shared_ptr<Asset> i, _assets) {
+		i->write_to_assetmap (asset_list, _directory);
 	}
 
 	/* This must not be the _formatted version otherwise signature digests will be wrong */
@@ -392,10 +390,9 @@ DCP::write_xml (
 	shared_ptr<const Signer> signer
 	)
 {
-	list<shared_ptr<CPL> > cpl = cpls ();
-	for (list<shared_ptr<CPL> >::const_iterator i = cpl.begin(); i != cpl.end(); ++i) {
-		string const filename = (*i)->id() + "_cpl.xml";
-		(*i)->write_xml (_directory / filename, standard, signer);
+	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
+		string const filename = i->id() + "_cpl.xml";
+		i->write_xml (_directory / filename, standard, signer);
 	}
 
 	string const pkl_uuid = make_uuid ();

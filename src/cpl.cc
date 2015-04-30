@@ -30,6 +30,7 @@
 #include "dcp_assert.h"
 #include "compose.hpp"
 #include <libxml/parser.h>
+#include <boost/foreach.hpp>
 
 using std::string;
 using std::stringstream;
@@ -135,9 +136,9 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	root->add_child("RatingList");
 
 	xmlpp::Element* reel_list = root->add_child ("ReelList");
-	
-	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
-		(*i)->write_to_cpl (reel_list, standard);
+
+	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+		i->write_to_cpl (reel_list, standard);
 	}
 
 	if (signer) {
@@ -155,15 +156,15 @@ CPL::reel_assets () const
 {
 	list<shared_ptr<const ReelAsset> > c;
 
-	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
-		if ((*i)->main_picture ()) {
-			c.push_back ((*i)->main_picture());
+	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+		if (i->main_picture ()) {
+			c.push_back (i->main_picture());
 		}
-		if ((*i)->main_sound ()) {
-			c.push_back ((*i)->main_sound());
+		if (i->main_sound ()) {
+			c.push_back (i->main_sound());
 		}
-		if ((*i)->main_subtitle ()) {
-			c.push_back ((*i)->main_subtitle());
+		if (i->main_subtitle ()) {
+			c.push_back (i->main_subtitle());
 		}
 	}
 
@@ -213,8 +214,8 @@ CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 bool
 CPL::encrypted () const
 {
-	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
-		if ((*i)->encrypted ()) {
+	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+		if (i->encrypted ()) {
 			return true;
 		}
 	}
@@ -229,16 +230,16 @@ CPL::encrypted () const
 void
 CPL::add (DecryptedKDM const & kdm)
 {
-	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
-		(*i)->add (kdm);
+	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+		i->add (kdm);
 	}
 }
 
 void
 CPL::resolve_refs (list<shared_ptr<Object> > objects)
 {
-	for (list<shared_ptr<Reel> >::const_iterator i = _reels.begin(); i != _reels.end(); ++i) {
-		(*i)->resolve_refs (objects);
+	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+		i->resolve_refs (objects);
 	}
 }
 

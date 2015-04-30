@@ -33,6 +33,7 @@
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
 #include <openssl/err.h>
+#include <boost/foreach.hpp>
 
 using std::list;
 using std::string;
@@ -116,12 +117,10 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 
 	/* Use the private key to decrypt the keys */
 
-	list<string> const encrypted_keys = kdm.keys ();
-	for (list<string>::const_iterator i = encrypted_keys.begin(); i != encrypted_keys.end(); ++i) {
-
+	BOOST_FOREACH (string const & i, kdm.keys ()) {
 		/* Decode the base-64-encoded cipher value from the KDM */
 		unsigned char cipher_value[256];
-		int const cipher_value_len = base64_decode (*i, cipher_value, sizeof (cipher_value));
+		int const cipher_value_len = base64_decode (i, cipher_value, sizeof (cipher_value));
 
 		/* Decrypt it */
 		unsigned char * decrypted = new unsigned char[RSA_size(rsa)];
@@ -200,10 +199,9 @@ DecryptedKDM::DecryptedKDM (
 	, _issue_date (issue_date)
 {
 	/* Create DecryptedKDMKey objects for each MXF asset */
-	list<shared_ptr<const ReelAsset> > assets = cpl->reel_assets ();
-	for (list<shared_ptr<const ReelAsset> >::iterator i = assets.begin(); i != assets.end(); ++i) {
+	BOOST_FOREACH(shared_ptr<const ReelAsset> i, cpl->reel_assets ()) {
 		/* XXX: do non-MXF assets need keys? */
-		shared_ptr<const ReelMXFAsset> mxf = boost::dynamic_pointer_cast<const ReelMXFAsset> (*i);
+		shared_ptr<const ReelMXFAsset> mxf = boost::dynamic_pointer_cast<const ReelMXFAsset> (i);
 		if (mxf) {
 			if (mxf->key_id().empty ()) {
 				throw NotEncryptedError (mxf->id());
@@ -218,9 +216,8 @@ DecryptedKDM::encrypt (shared_ptr<const Signer> signer, Certificate recipient, F
 {
 	list<pair<string, string> > key_ids;
 	list<string> keys;
-	for (list<DecryptedKDMKey>::const_iterator i = _keys.begin(); i != _keys.end(); ++i) {
-
-		key_ids.push_back (make_pair (i->type(), i->id ()));
+	BOOST_FOREACH (DecryptedKDMKey const & i, _keys) {
+		key_ids.push_back (make_pair (i.type(), i.id ()));
 
 		/* XXX: SMPTE only */
 		uint8_t block[138];
@@ -233,12 +230,12 @@ DecryptedKDM::encrypt (shared_ptr<const Signer> signer, Certificate recipient, F
 		base64_decode (signer->certificates().leaf().thumbprint (), p, 20);
 		p += 20;
 		
-		put_uuid (&p, i->cpl_id ());
-		put (&p, i->type ());
-		put_uuid (&p, i->id ());
+		put_uuid (&p, i.cpl_id ());
+		put (&p, i.type ());
+		put_uuid (&p, i.id ());
 		put (&p, _not_valid_before.as_string ());
 		put (&p, _not_valid_after.as_string ());
-		put (&p, i->key().value(), ASDCP::KeyLen);
+		put (&p, i.key().value(), ASDCP::KeyLen);
 		
 		/* Encrypt using the projector's public key */
 		RSA* rsa = recipient.public_key ();
