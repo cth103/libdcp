@@ -12,6 +12,10 @@ dcpinfo=build/tools/dcpinfo
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:build/src:build/asdcplib/src
 
+for c in xmlsec1 xmldiff; do
+  hash $c 2>/dev/null || { echo >&2 "$c required but not found; aborting"; exit 1; }
+done
+
 # Run the unit tests in test/
 if [ "$1" == "--debug" ]; then
     shift
