@@ -31,10 +31,6 @@
 namespace dcp
 {
 
-namespace parse {
-	class AssetMap;
-}
-
 /** @struct Size
  *  @brief The integer, two-dimensional size of something.
  */
@@ -208,8 +204,6 @@ public:
 extern bool operator== (Colour const & a, Colour const & b);
 extern bool operator!= (Colour const & a, Colour const & b);
 extern std::ostream & operator<< (std::ostream & s, Colour const & c);
-
-typedef std::pair<std::string, boost::shared_ptr<const parse::AssetMap> > PathAssetMap;
 
 typedef boost::function<void (NoteType, std::string)> NoteHandler;
 

@@ -50,10 +50,6 @@ class DecryptedKDM;
 class Asset;
 class DCPReadError;
 
-namespace parse {
-	class AssetMap;
-}
-
 /** @class DCP
  *  @brief A class to create or read a DCP.
  */
