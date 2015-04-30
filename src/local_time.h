@@ -47,12 +47,12 @@ private:
 	void set_local_time_zone ();
 
 	/* Local time */
-	int _year;
-	int _month;
-	int _day;
-	int _hour;
-	int _minute;
-	int _second;
+	int _year;   ///< year
+	int _month;  ///< month number of the year (1-12)
+	int _day;    ///< day number of the month (1-31)
+	int _hour;   ///< hour number of the day (0-23)
+	int _minute; ///< minute number of the hour (0-59)
+	int _second; ///< second number of the minute (0-59)
 
 	/* Amount by which this time is offset from UTC */
 	int _tz_hour;
