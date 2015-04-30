@@ -52,7 +52,7 @@ check_xml (xmlpp::Element* ref, xmlpp::Element* test, list<string> ignore)
 
 	xmlpp::Element::NodeList ref_children = ref->get_children ();
 	xmlpp::Element::NodeList test_children = test->get_children ();
-	BOOST_CHECK_EQUAL (ref_children.size (), test_children.size ());
+	BOOST_REQUIRE_EQUAL (ref_children.size (), test_children.size ());
 
 	xmlpp::Element::NodeList::iterator k = ref_children.begin ();
 	xmlpp::Element::NodeList::iterator l = test_children.begin ();

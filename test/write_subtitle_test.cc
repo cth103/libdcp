@@ -29,25 +29,44 @@ using boost::shared_ptr;
 /* Write some subtitle content as Interop XML and check that it is right */
 BOOST_AUTO_TEST_CASE (write_subtitle_test)
 {
-	dcp::SubtitleString s (
-		string ("Arial"),
-		false,
-		dcp::Colour (255, 255, 255),
-		48,
-		dcp::Time (0, 4,  9, 22, 24),
-		dcp::Time (0, 4, 11, 22, 24),
-		0.8,
-		dcp::TOP,
-		"Hello world",
-		dcp::NONE,
-		dcp::Colour (0, 0, 0),
-		dcp::Time (0, 0, 0, 0, 24),
-		dcp::Time (0, 0, 0, 0, 24)
-		);
-		
 	dcp::InteropSubtitleContent c ("Test", "EN");
-	c.add (s);
 
+	c.add (
+		dcp::SubtitleString (
+			string ("Frutiger"),
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			dcp::Time (0, 4,  9, 22, 24),
+			dcp::Time (0, 4, 11, 22, 24),
+			0.8,
+			dcp::TOP,
+			"Hello world",
+			dcp::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24)
+			)
+		);
+
+	c.add (
+		dcp::SubtitleString (
+			boost::optional<string> (),
+			true,
+			dcp::Colour (128, 0, 64),
+			91,
+			dcp::Time (5, 41,  0, 21, 24),
+			dcp::Time (6, 12, 15, 21, 24),
+			0.4,
+			dcp::BOTTOM,
+			"What's going on",
+			dcp::BORDER,
+			dcp::Colour (1, 2, 3),
+			dcp::Time (1, 2, 3, 4, 24),
+			dcp::Time (5, 6, 7, 8, 24)
+			)
+		);
+	
 	c._id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
 
 	check_xml (
@@ -57,9 +76,14 @@ BOOST_AUTO_TEST_CASE (write_subtitle_test)
 		"  <MovieTitle>Test</MovieTitle>\n"
 		"  <ReelNumber>1</ReelNumber>\n"
 		"  <Language>EN</Language>\n"
-		"  <Font Id=\"Arial\" Italic=\"no\" Color=\"FFFFFFFF\" Size=\"48\" Effect=\"none\" EffectColor=\"FF000000\" Script=\"normal\" Underlined=\"no\" Weight=\"normal\">\n"
+		"  <Font Id=\"Frutiger\" Italic=\"no\" Color=\"FFFFFFFF\" Size=\"48\" Effect=\"none\" EffectColor=\"FF000000\" Script=\"normal\" Underlined=\"no\" Weight=\"normal\">\n"
 		"    <Subtitle SpotNumber=\"1\" TimeIn=\"0:4:9:22\" TimeOut=\"0:4:11:22\" FadeUpTime=\"0\" FadeDownTime=\"0\">\n"
 		"      <Text VAlign=\"top\" VPosition=\"80\">Hello world</Text>\n"
+		"    </Subtitle>\n"
+		"  </Font>\n"
+		"  <Font Italic=\"yes\" Color=\"FF800040\" Size=\"91\" Effect=\"border\" EffectColor=\"FF010203\" Script=\"normal\" Underlined=\"no\" Weight=\"normal\">\n"
+		"    <Subtitle SpotNumber=\"2\" TimeIn=\"5:41:0:21\" TimeOut=\"6:12:15:21\" FadeUpTime=\"930790\" FadeDownTime=\"4591830\">\n"
+		"      <Text VAlign=\"bottom\" VPosition=\"40\">What's going on</Text>\n"
 		"    </Subtitle>\n"
 		"  </Font>\n"
 		"</DCSubtitle>",
