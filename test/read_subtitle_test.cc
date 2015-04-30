@@ -26,7 +26,7 @@ using std::string;
 using boost::shared_ptr;
 
 /* Load some subtitle content from XML and check that it is read correctly */
-BOOST_AUTO_TEST_CASE (subtitles1)
+BOOST_AUTO_TEST_CASE (read_subtitle_test1)
 {
 	dcp::InteropSubtitleContent subs ("test/data/subs1.xml");
 
@@ -121,7 +121,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 }
 
 /** And similarly for another one */
-BOOST_AUTO_TEST_CASE (subtitles2)
+BOOST_AUTO_TEST_CASE (read_subtitle_test2)
 {
 	dcp::InteropSubtitleContent subs ("test/data/subs2.xml");
 

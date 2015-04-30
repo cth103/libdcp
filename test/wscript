@@ -40,12 +40,12 @@ def build(bld):
                  local_time_test.cc
                  kdm_test.cc
                  read_dcp_test.cc
+                 read_subtitle_test.cc
                  recovery_test.cc
                  rgb_xyz_test.cc
                  round_trip_test.cc
                  smpte_load_font_test.cc
                  smpte_subtitle_test.cc
-                 subtitle_test.cc
                  test.cc 
                  text_test.cc
                  util_test.cc
