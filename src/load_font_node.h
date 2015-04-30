@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,24 +17,19 @@
 
 */
 
-#include "load_font.h"
-#include <libcxml/cxml.h>
-#include <boost/shared_ptr.hpp>
-#include <boost/optional.hpp>
+#include <string>
 
 namespace dcp {
-	
-class InteropLoadFont : public LoadFont
+
+class LoadFontNode
 {
 public:
-	InteropLoadFont () {}
-	InteropLoadFont (std::string id, std::string uri);
-	InteropLoadFont (cxml::ConstNodePtr node);
-
-	std::string uri;
+	LoadFontNode () {}
+	LoadFontNode (std::string id_)
+		: id (id_)
+	{}
+	
+	std::string id;
 };
-
-bool operator== (InteropLoadFont const & a, InteropLoadFont const & b);
-bool operator!= (InteropLoadFont const & a, InteropLoadFont const & b);
 
 }

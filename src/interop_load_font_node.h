@@ -17,23 +17,24 @@
 
 */
 
-#include "load_font.h"
+#include "load_font_node.h"
+#include <libcxml/cxml.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/optional.hpp>
 
-namespace cxml {
-	class Node;
-}
-
 namespace dcp {
 	
-class SMPTELoadFont : public LoadFont
+class InteropLoadFontNode : public LoadFontNode
 {
 public:
-	SMPTELoadFont () {}
-	SMPTELoadFont (boost::shared_ptr<const cxml::Node> node);
+	InteropLoadFontNode () {}
+	InteropLoadFontNode (std::string id, std::string uri);
+	InteropLoadFontNode (cxml::ConstNodePtr node);
 
-	std::string urn;
+	std::string uri;
 };
+
+bool operator== (InteropLoadFontNode const & a, InteropLoadFontNode const & b);
+bool operator!= (InteropLoadFontNode const & a, InteropLoadFontNode const & b);
 
 }

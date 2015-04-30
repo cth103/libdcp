@@ -18,10 +18,10 @@
 */
 
 #include "interop_subtitle_content.h"
-#include "interop_load_font.h"
+#include "interop_load_font_node.h"
 #include "xml.h"
 #include "raw_convert.h"
-#include "font.h"
+#include "font_node.h"
 #include <boost/foreach.hpp>
 
 using std::list;
@@ -40,12 +40,12 @@ InteropSubtitleContent::InteropSubtitleContent (boost::filesystem::path file)
 	_id = xml->string_child ("SubtitleID");
 
 	_movie_title = xml->string_child ("MovieTitle");
-	_load_font_nodes = type_children<dcp::InteropLoadFont> (xml, "LoadFont");
+	_load_font_nodes = type_children<dcp::InteropLoadFontNode> (xml, "LoadFont");
 
 	list<cxml::NodePtr> f = xml->node_children ("Font");
-	list<shared_ptr<dcp::Font> > font_nodes;
+	list<shared_ptr<dcp::FontNode> > font_nodes;
 	BOOST_FOREACH (cxml::NodePtr& i, f) {
-		font_nodes.push_back (shared_ptr<Font> (new Font (i, 250)));
+		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, 250)));
 	}
 
 	parse_common (xml, font_nodes);
@@ -78,7 +78,7 @@ InteropSubtitleContent::xml_as_string () const
 	root->add_child("ReelNumber")->add_child_text (raw_convert<string> (_reel_number));
 	root->add_child("Language")->add_child_text (_language);
 
-	for (list<shared_ptr<InteropLoadFont> >::const_iterator i = _load_font_nodes.begin(); i != _load_font_nodes.end(); ++i) {
+	for (list<shared_ptr<InteropLoadFontNode> >::const_iterator i = _load_font_nodes.begin(); i != _load_font_nodes.end(); ++i) {
 		xmlpp::Element* load_font = root->add_child("LoadFont");
 		load_font->set_attribute ("Id", (*i)->id);
 		load_font->set_attribute ("URI", (*i)->uri);
@@ -175,7 +175,7 @@ InteropSubtitleContent::xml_as_string () const
 void
 InteropSubtitleContent::add_font (string id, string uri)
 {
-	_load_font_nodes.push_back (shared_ptr<InteropLoadFont> (new InteropLoadFont (id, uri)));
+	_load_font_nodes.push_back (shared_ptr<InteropLoadFontNode> (new InteropLoadFontNode (id, uri)));
 }
 
 bool
@@ -190,8 +190,8 @@ InteropSubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOpt
 		return false;
 	}
 
-	list<shared_ptr<InteropLoadFont> >::const_iterator i = _load_font_nodes.begin ();
-	list<shared_ptr<InteropLoadFont> >::const_iterator j = other->_load_font_nodes.begin ();
+	list<shared_ptr<InteropLoadFontNode> >::const_iterator i = _load_font_nodes.begin ();
+	list<shared_ptr<InteropLoadFontNode> >::const_iterator j = other->_load_font_nodes.begin ();
 
 	while (i != _load_font_nodes.end ()) {
 		if (j == _load_font_nodes.end ()) {
@@ -216,10 +216,10 @@ InteropSubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOpt
 	return true;
 }
 
-list<shared_ptr<LoadFont> >
+list<shared_ptr<LoadFontNode> >
 InteropSubtitleContent::load_font_nodes () const
 {
-	list<shared_ptr<LoadFont> > lf;
+	list<shared_ptr<LoadFontNode> > lf;
 	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter (lf));
 	return lf;
 }

@@ -17,40 +17,15 @@
 
 */
 
-#ifndef LIBDCP_SUBTITLE_H
-#define LIBDCP_SUBTITLE_H
+#include "smpte_load_font_node.h"
+#include <libcxml/cxml.h>
 
-#include "dcp_time.h"
-#include <boost/shared_ptr.hpp>
-#include <boost/optional.hpp>
-#include <list>
+using std::string;
+using boost::shared_ptr;
+using namespace dcp;
 
-namespace cxml {
-	class Node;
-}
-
-namespace dcp {
-
-class Font;	
-class Text;
-
-class Subtitle 
+SMPTELoadFontNode::SMPTELoadFontNode (shared_ptr<const cxml::Node> node)
+	: LoadFontNode (node->string_attribute ("ID"))
 {
-public:
-	Subtitle () {}
-	Subtitle (boost::shared_ptr<const cxml::Node> node, int tcr);
-
-	Time in;
-	Time out;
-	Time fade_up_time;
-	Time fade_down_time;
-	std::list<boost::shared_ptr<Font> > font_nodes;
-	std::list<boost::shared_ptr<Text> > text_nodes;
-
-private:
-	Time fade_time (boost::shared_ptr<const cxml::Node>, std::string name, int tcr);
-};
-
+	urn = node->content().substr (9);
 }
-
-#endif

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 namespace dcp {
 
-class InteropLoadFont;	
+class InteropLoadFontNode;
 
 class InteropSubtitleContent : public SubtitleContent
 {
@@ -36,7 +36,7 @@ public:
 		NoteHandler note
 		) const;
 
-	std::list<boost::shared_ptr<LoadFont> > load_font_nodes () const;
+	std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const;
 
 	void add_font (std::string id, std::string uri);
 	
@@ -44,7 +44,7 @@ public:
 
 private:
 	std::string _movie_title;
-	std::list<boost::shared_ptr<InteropLoadFont> > _load_font_nodes;
+	std::list<boost::shared_ptr<InteropLoadFontNode> > _load_font_nodes;
 };
 
 }

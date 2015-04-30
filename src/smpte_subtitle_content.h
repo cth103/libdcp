@@ -22,7 +22,7 @@
 
 namespace dcp {
 
-class SMPTELoadFont;	
+class SMPTELoadFontNode;
 
 class SMPTESubtitleContent : public SubtitleContent
 {
@@ -32,12 +32,12 @@ public:
 	 */
 	SMPTESubtitleContent (boost::filesystem::path file, bool mxf = true);
 
-	std::list<boost::shared_ptr<LoadFont> > load_font_nodes () const;
+	std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const;
 
 	static bool valid_mxf (boost::filesystem::path);
 	
 private:
-	std::list<boost::shared_ptr<SMPTELoadFont> > _load_font_nodes;
+	std::list<boost::shared_ptr<SMPTELoadFontNode> > _load_font_nodes;
 };
 
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,10 +29,10 @@ namespace dcp
 {
 
 class SubtitleString;	
-class Font;
-class Text;
-class Subtitle;
-class LoadFont;
+class FontNode;
+class TextNode;
+class SubtitleNode;
+class LoadFontNode;
 
 /** @class SubtitleContent
  *  @brief A parent for classes representing a file containing subtitles.
@@ -68,10 +68,10 @@ public:
 
 	Time latest_subtitle_out () const;
 
-	virtual std::list<boost::shared_ptr<LoadFont> > load_font_nodes () const = 0;
+	virtual std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const = 0;
 
 protected:
-	void parse_common (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<Font> > font_nodes);
+	void parse_common (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<FontNode> > font_nodes);
 	
 	std::string pkl_type (Standard) const {
 		return "text/xml";
@@ -89,22 +89,22 @@ protected:
 
 private:
 	struct ParseState {
-		std::list<boost::shared_ptr<Font> > font_nodes;
-		std::list<boost::shared_ptr<Text> > text_nodes;
-		std::list<boost::shared_ptr<Subtitle> > subtitle_nodes;
+		std::list<boost::shared_ptr<FontNode> > font_nodes;
+		std::list<boost::shared_ptr<TextNode> > text_nodes;
+		std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
 	};
 
 	void maybe_add_subtitle (std::string text, ParseState const & parse_state);
 	
 	void examine_font_nodes (
 		boost::shared_ptr<const cxml::Node> xml,
-		std::list<boost::shared_ptr<Font> > const & font_nodes,
+		std::list<boost::shared_ptr<FontNode> > const & font_nodes,
 		ParseState& parse_state
 		);
 	
 	void examine_text_nodes (
 		boost::shared_ptr<const cxml::Node> xml,
-		std::list<boost::shared_ptr<Text> > const & text_nodes,
+		std::list<boost::shared_ptr<TextNode> > const & text_nodes,
 		ParseState& parse_state
 		);
 };

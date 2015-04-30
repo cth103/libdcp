@@ -21,8 +21,8 @@
 #include "subtitle_content.h"
 #include "util.h"
 #include "xml.h"
-#include "font.h"
-#include "text.h"
+#include "font_node.h"
+#include "text_node.h"
 #include "subtitle_string.h"
 #include "dcp_assert.h"
 #include "AS_DCP.h"
@@ -56,7 +56,7 @@ SubtitleContent::SubtitleContent (boost::filesystem::path file)
 }
 
 void
-SubtitleContent::parse_common (shared_ptr<cxml::Document> xml, list<shared_ptr<dcp::Font> > font_nodes)
+SubtitleContent::parse_common (shared_ptr<cxml::Document> xml, list<shared_ptr<dcp::FontNode> > font_nodes)
 {
 	_reel_number = xml->string_child ("ReelNumber");
 	_language = xml->string_child ("Language");
@@ -72,16 +72,16 @@ SubtitleContent::parse_common (shared_ptr<cxml::Document> xml, list<shared_ptr<d
 void
 SubtitleContent::examine_font_nodes (
 	shared_ptr<const cxml::Node> xml,
-	list<shared_ptr<dcp::Font> > const & font_nodes,
+	list<shared_ptr<dcp::FontNode> > const & font_nodes,
 	ParseState& parse_state
 	)
 {
-	for (list<shared_ptr<dcp::Font> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
+	for (list<shared_ptr<dcp::FontNode> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
 
 		parse_state.font_nodes.push_back (*i);
 		maybe_add_subtitle ((*i)->text, parse_state);
 
-		for (list<shared_ptr<dcp::Subtitle> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
+		for (list<shared_ptr<dcp::SubtitleNode> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
 			parse_state.subtitle_nodes.push_back (*j);
 			examine_text_nodes (xml, (*j)->text_nodes, parse_state);
 			examine_font_nodes (xml, (*j)->font_nodes, parse_state);
@@ -98,11 +98,11 @@ SubtitleContent::examine_font_nodes (
 void
 SubtitleContent::examine_text_nodes (
 	shared_ptr<const cxml::Node> xml,
-	list<shared_ptr<dcp::Text> > const & text_nodes,
+	list<shared_ptr<dcp::TextNode> > const & text_nodes,
 	ParseState& parse_state
 	)
 {
-	for (list<shared_ptr<dcp::Text> >::const_iterator i = text_nodes.begin(); i != text_nodes.end(); ++i) {
+	for (list<shared_ptr<dcp::TextNode> >::const_iterator i = text_nodes.begin(); i != text_nodes.end(); ++i) {
 		parse_state.text_nodes.push_back (*i);
 		maybe_add_subtitle ((*i)->text, parse_state);
 		examine_font_nodes (xml, (*i)->font_nodes, parse_state);
@@ -124,9 +124,9 @@ SubtitleContent::maybe_add_subtitle (string text, ParseState const & parse_state
 	DCP_ASSERT (!parse_state.text_nodes.empty ());
 	DCP_ASSERT (!parse_state.subtitle_nodes.empty ());
 	
-	dcp::Font effective_font (parse_state.font_nodes);
-	dcp::Text effective_text (*parse_state.text_nodes.back ());
-	dcp::Subtitle effective_subtitle (*parse_state.subtitle_nodes.back ());
+	dcp::FontNode effective_font (parse_state.font_nodes);
+	dcp::TextNode effective_text (*parse_state.text_nodes.back ());
+	dcp::SubtitleNode effective_subtitle (*parse_state.subtitle_nodes.back ());
 
 	_subtitles.push_back (
 		SubtitleString (

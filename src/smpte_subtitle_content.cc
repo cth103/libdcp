@@ -18,8 +18,8 @@
 */
 
 #include "smpte_subtitle_content.h"
-#include "smpte_load_font.h"
-#include "font.h"
+#include "smpte_load_font_node.h"
+#include "font_node.h"
 #include "exceptions.h"
 #include "xml.h"
 #include "AS_DCP.h"
@@ -62,25 +62,25 @@ SMPTESubtitleContent::SMPTESubtitleContent (boost::filesystem::path file, bool m
 		_id = xml->string_child("Id").substr (9);
 	}
 	
-	_load_font_nodes = type_children<dcp::SMPTELoadFont> (xml, "LoadFont");
+	_load_font_nodes = type_children<dcp::SMPTELoadFontNode> (xml, "LoadFont");
 
 	int tcr = xml->number_child<int> ("TimeCodeRate");
 
 	shared_ptr<cxml::Node> subtitle_list = xml->optional_node_child ("SubtitleList");
 
 	list<cxml::NodePtr> f = subtitle_list->node_children ("Font");
-	list<shared_ptr<dcp::Font> > font_nodes;
+	list<shared_ptr<dcp::FontNode> > font_nodes;
 	BOOST_FOREACH (cxml::NodePtr& i, f) {
-		font_nodes.push_back (shared_ptr<Font> (new Font (i, tcr)));
+		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, tcr)));
 	}
 
 	parse_common (xml, font_nodes);
 }
 
-list<shared_ptr<LoadFont> >
+list<shared_ptr<LoadFontNode> >
 SMPTESubtitleContent::load_font_nodes () const
 {
-	list<shared_ptr<LoadFont> > lf;
+	list<shared_ptr<LoadFontNode> > lf;
 	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter (lf));
 	return lf;
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 */
 
-#include "interop_load_font.h"
+#include "interop_load_font_node.h"
 #include <libcxml/cxml.h>
 
 using std::string;
@@ -25,14 +25,14 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
-InteropLoadFont::InteropLoadFont (string id_, string uri_)
-	: LoadFont (id_)
+InteropLoadFontNode::InteropLoadFontNode (string id_, string uri_)
+	: LoadFontNode (id_)
 	, uri (uri_)
 {
 
 }
 
-InteropLoadFont::InteropLoadFont (cxml::ConstNodePtr node)
+InteropLoadFontNode::InteropLoadFontNode (cxml::ConstNodePtr node)
 {
 	optional<string> x = node->optional_string_attribute ("Id");
 	if (!x) {
@@ -44,13 +44,13 @@ InteropLoadFont::InteropLoadFont (cxml::ConstNodePtr node)
 }
 
 bool
-dcp::operator== (InteropLoadFont const & a, InteropLoadFont const & b)
+dcp::operator== (InteropLoadFontNode const & a, InteropLoadFontNode const & b)
 {
 	return a.id == b.id && a.uri == b.uri;
 }
 
 bool
-dcp::operator!= (InteropLoadFont const & a, InteropLoadFont const & b)
+dcp::operator!= (InteropLoadFontNode const & a, InteropLoadFontNode const & b)
 {
 	return !(a == b);
 }

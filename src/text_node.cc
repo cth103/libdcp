@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
 */
 
 /** @file  src/text.cc
- *  @brief Text class for parsing subtitle XML.
+ *  @brief TextNode class for parsing subtitle XML.
  */
 
-#include "text.h"
+#include "text_node.h"
 #include "xml.h"
-#include "font.h"
+#include "font_node.h"
 #include <libcxml/cxml.h>
 #include <boost/foreach.hpp>
 
@@ -37,7 +37,7 @@ using namespace dcp;
  *  in this object's member variables.
  *  @param node Node to read.
  */
-Text::Text (boost::shared_ptr<const cxml::Node> node, int tcr)
+TextNode::TextNode (boost::shared_ptr<const cxml::Node> node, int tcr)
 	: v_align (CENTER)
 {
 	text = node->content ();
@@ -58,6 +58,6 @@ Text::Text (boost::shared_ptr<const cxml::Node> node, int tcr)
 
 	list<cxml::NodePtr> f = node->node_children ("Font");
 	BOOST_FOREACH (cxml::NodePtr& i, f) {
-		font_nodes.push_back (shared_ptr<Font> (new Font (i, tcr)));
+		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, tcr)));
 	}
 }

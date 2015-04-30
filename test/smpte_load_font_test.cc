@@ -17,7 +17,7 @@
 
 */
 
-#include "smpte_load_font.h"
+#include "smpte_load_font_node.h"
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
@@ -27,9 +27,9 @@ BOOST_AUTO_TEST_CASE (smpte_load_font_test1)
 	xmlpp::Document doc;
 	xmlpp::Element* text = doc.create_root_node("Font");
 
-	text->set_attribute("ID", "my-great-id");
-	text->add_child_text("urn:uuid:my-great-urn");
-	dcp::SMPTELoadFont lf (cxml::ConstNodePtr (new cxml::Node (text)));
+	text->set_attribute ("ID", "my-great-id");
+	text->add_child_text ("urn:uuid:my-great-urn");
+	dcp::SMPTELoadFontNode lf (cxml::ConstNodePtr (new cxml::Node (text)));
 
 	BOOST_CHECK_EQUAL (lf.id, "my-great-id");
 	BOOST_CHECK_EQUAL (lf.urn, "my-great-urn");

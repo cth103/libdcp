@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
 
 #include "types.h"
 #include "raw_convert.h"
-#include "font.h"
+#include "font_node.h"
 #include "xml.h"
-#include "text.h"
+#include "text_node.h"
 #include <libcxml/cxml.h>
 #include <boost/foreach.hpp>
 
@@ -31,7 +31,7 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
-Font::Font (cxml::ConstNodePtr node, int tcr)
+FontNode::FontNode (cxml::ConstNodePtr node, int tcr)
 {
 	text = node->content ();
 	
@@ -53,27 +53,27 @@ Font::Font (cxml::ConstNodePtr node, int tcr)
 
 	list<cxml::NodePtr> s = node->node_children ("Subtitle");
 	BOOST_FOREACH (cxml::NodePtr& i, s) {
-		subtitle_nodes.push_back (shared_ptr<Subtitle> (new Subtitle (i, tcr)));
+		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, tcr)));
 	}
 
 	list<cxml::NodePtr> f = node->node_children ("Font");
 	BOOST_FOREACH (cxml::NodePtr& i, f) {
-		font_nodes.push_back (shared_ptr<Font> (new Font (i, tcr)));
+		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, tcr)));
 	}
 	
 	list<cxml::NodePtr> t = node->node_children ("Text");
 	BOOST_FOREACH (cxml::NodePtr& i, t) {
-		text_nodes.push_back (shared_ptr<Text> (new Text (i, tcr)));
+		text_nodes.push_back (shared_ptr<TextNode> (new TextNode (i, tcr)));
 	}
 }
 
-Font::Font (std::list<boost::shared_ptr<Font> > const & font_nodes)
+FontNode::FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes)
 	: size (0)
 	, italic (false)
 	, colour ("FFFFFFFF")
 	, effect_colour ("FFFFFFFF")
 {
-	for (list<shared_ptr<Font> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
+	for (list<shared_ptr<FontNode> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
 		if ((*i)->id) {
 			id = (*i)->id;
 		}

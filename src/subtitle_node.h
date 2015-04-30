@@ -17,11 +17,10 @@
 
 */
 
-/** @file  src/text.h
- *  @brief Text class for parsing subtitle XML.
- */
+#ifndef LIBDCP_SUBTITLE_NODE_H
+#define LIBDCP_SUBTITLE_NODE_H
 
-#include "types.h"
+#include "dcp_time.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/optional.hpp>
 #include <list>
@@ -32,26 +31,26 @@ namespace cxml {
 
 namespace dcp {
 
-class Font;
+class FontNode;	
+class TextNode;
 
-/** @class Text
- *  @brief Parser for Text nodes from subtitle XML.
- */
-class Text
+class SubtitleNode
 {
 public:
-	/** Construct a default text node */
-	Text ()
-		: v_position (0)
-		, v_align (TOP)
-	{}
-	
-	Text (boost::shared_ptr<const cxml::Node> node, int tcr);
+	SubtitleNode () {}
+	SubtitleNode (boost::shared_ptr<const cxml::Node> node, int tcr);
 
-	float v_position;
-	VAlign v_align;
-	std::string text;
-	std::list<boost::shared_ptr<Font> > font_nodes;
+	Time in;
+	Time out;
+	Time fade_up_time;
+	Time fade_down_time;
+	std::list<boost::shared_ptr<FontNode> > font_nodes;
+	std::list<boost::shared_ptr<TextNode> > text_nodes;
+
+private:
+	Time fade_time (boost::shared_ptr<const cxml::Node>, std::string name, int tcr);
 };
 
 }
+
+#endif

@@ -17,10 +17,10 @@
 
 */
 
-#include "subtitle.h"
+#include "subtitle_node.h"
 #include "xml.h"
-#include "font.h"
-#include "text.h"
+#include "font_node.h"
+#include "text_node.h"
 #include <libcxml/cxml.h>
 #include <boost/lexical_cast.hpp>
 
@@ -31,19 +31,19 @@ using boost::shared_ptr;
 using boost::lexical_cast;
 using namespace dcp;
 
-Subtitle::Subtitle (boost::shared_ptr<const cxml::Node> node, int tcr)
+SubtitleNode::SubtitleNode (boost::shared_ptr<const cxml::Node> node, int tcr)
 {
 	in = Time (node->string_attribute ("TimeIn"), tcr);
 	out = Time (node->string_attribute ("TimeOut"), tcr);
 
 	list<cxml::NodePtr> f = node->node_children ("Font");
 	for (list<cxml::NodePtr>::iterator i = f.begin(); i != f.end(); ++i) {
-		font_nodes.push_back (shared_ptr<Font> (new Font (*i, tcr)));
+		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (*i, tcr)));
 	}
 
 	list<cxml::NodePtr> t = node->node_children ("Text");
 	for (list<cxml::NodePtr>::iterator i = t.begin(); i != t.end(); ++i) {
-		text_nodes.push_back (shared_ptr<Text> (new Text (*i, tcr)));
+		text_nodes.push_back (shared_ptr<TextNode> (new TextNode (*i, tcr)));
 	}
 	
 	fade_up_time = fade_time (node, "FadeUpTime", tcr);
@@ -51,7 +51,7 @@ Subtitle::Subtitle (boost::shared_ptr<const cxml::Node> node, int tcr)
 }
 
 Time
-Subtitle::fade_time (shared_ptr<const cxml::Node> node, string name, int tcr)
+SubtitleNode::fade_time (shared_ptr<const cxml::Node> node, string name, int tcr)
 {
 	string const u = node->optional_string_attribute (name).get_value_or ("");
 	Time t;

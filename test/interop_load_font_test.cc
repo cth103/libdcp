@@ -17,14 +17,14 @@
 
 */
 
-#include "interop_load_font.h"
+#include "interop_load_font_node.h"
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE (interop_load_font_test1)
 {
-	dcp::InteropLoadFont lf ("my-great-id", "my-great-uri");
+	dcp::InteropLoadFontNode lf ("my-great-id", "my-great-uri");
 	BOOST_CHECK_EQUAL (lf.id, "my-great-id");
 	BOOST_CHECK_EQUAL (lf.uri, "my-great-uri");
 }
@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE (interop_load_font_test2)
 
 	text->set_attribute("Id", "my-great-id");
 	text->set_attribute("URI", "my-great-uri");
-	dcp::InteropLoadFont lf (cxml::ConstNodePtr (new cxml::Node (text)));
+	dcp::InteropLoadFontNode lf (cxml::ConstNodePtr (new cxml::Node (text)));
 
 	BOOST_CHECK_EQUAL (lf.id, "my-great-id");
 }
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE (interop_load_font_test3)
 
 	text->set_attribute("ID", "my-great-id");
 	text->set_attribute("URI", "my-great-uri");
-	dcp::InteropLoadFont lf (cxml::ConstNodePtr (new cxml::Node (text)));
+	dcp::InteropLoadFontNode lf (cxml::ConstNodePtr (new cxml::Node (text)));
 
 	BOOST_CHECK_EQUAL (lf.id, "my-great-id");
 }
@@ -57,9 +57,9 @@ BOOST_AUTO_TEST_CASE (interop_load_font_test3)
 /** Test operator== and operator!= */
 BOOST_AUTO_TEST_CASE (interop_load_font_test4)
 {
-	dcp::InteropLoadFont A ("my-create-id", "my-great-uri");
-	dcp::InteropLoadFont B ("my-create-id", "my-great-uri");
-	dcp::InteropLoadFont C ("my-create-id", "another-great-uri");
+	dcp::InteropLoadFontNode A ("my-create-id", "my-great-uri");
+	dcp::InteropLoadFontNode B ("my-create-id", "my-great-uri");
+	dcp::InteropLoadFontNode C ("my-create-id", "another-great-uri");
 
 	BOOST_CHECK (A == B);
 	BOOST_CHECK (B != C);

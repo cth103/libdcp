@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 
 */
 
-/** @file  src/font.h
- *  @brief Font class
+/** @file  src/font_node.h
+ *  @brief FontNode class
  */
 
 #include "types.h"
-#include "subtitle.h"
+#include "subtitle_node.h"
 #include <libcxml/cxml.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/optional.hpp>
@@ -33,15 +33,15 @@ namespace dcp {
 /** @class Font
  *  @brief Helper class for parsing subtitle XML.
  */
-class Font 
+class FontNode
 {
 public:
-	Font ()
+	FontNode ()
 		: size (0)
 	{}
 	
-	Font (cxml::ConstNodePtr node, int tcr);
-	Font (std::list<boost::shared_ptr<Font> > const & font_nodes);
+	FontNode (cxml::ConstNodePtr node, int tcr);
+	FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes);
 
 	std::string text;
 	boost::optional<std::string> id;
@@ -51,9 +51,9 @@ public:
 	boost::optional<Effect> effect;
 	boost::optional<Colour> effect_colour;
 	
-	std::list<boost::shared_ptr<Subtitle> > subtitle_nodes;
-	std::list<boost::shared_ptr<Font> > font_nodes;
-	std::list<boost::shared_ptr<Text> > text_nodes;
+	std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
+	std::list<boost::shared_ptr<FontNode> > font_nodes;
+	std::list<boost::shared_ptr<TextNode> > text_nodes;
 };
 
 }

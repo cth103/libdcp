@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,15 +17,23 @@
 
 */
 
-#include "smpte_load_font.h"
-#include <libcxml/cxml.h>
+#include "load_font_node.h"
+#include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 
-using std::string;
-using boost::shared_ptr;
-using namespace dcp;
+namespace cxml {
+	class Node;
+}
 
-SMPTELoadFont::SMPTELoadFont (shared_ptr<const cxml::Node> node)
-	: LoadFont (node->string_attribute ("ID"))
+namespace dcp {
+	
+class SMPTELoadFontNode : public LoadFontNode
 {
-	urn = node->content().substr (9);
+public:
+	SMPTELoadFontNode () {}
+	SMPTELoadFontNode (boost::shared_ptr<const cxml::Node> node);
+
+	std::string urn;
+};
+
 }
