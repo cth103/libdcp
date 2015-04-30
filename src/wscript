@@ -16,6 +16,7 @@ def build(bld):
              encrypted_kdm.cc
              exceptions.cc
              file.cc
+             font.cc
              font_node.cc
              gamma_transfer_function.cc
              interop_load_font_node.cc
@@ -76,11 +77,12 @@ def build(bld):
               decrypted_kdm_key.h
               encrypted_kdm.h
               exceptions.h
+              font.h
               gamma_transfer_function.h
-              interop_load_font.h
+              interop_load_font_node.h
               interop_subtitle_content.h
               key.h
-              load_font.h
+              load_font_node.h
               local_time.h
               metadata.h
               mono_picture_mxf.h
@@ -103,14 +105,14 @@ def build(bld):
               reel_subtitle_asset.h
               ref.h
               signer.h
-              smpte_load_font.h
+              smpte_load_font_node.h
               smpte_subtitle_content.h
               sound_frame.h
               sound_mxf.h
               sound_mxf_writer.h
               stereo_picture_mxf.h
               stereo_picture_frame.h
-              subtitle.h
+              subtitle_node.h
               subtitle_content.h
               subtitle_string.h
               transfer_function.h
