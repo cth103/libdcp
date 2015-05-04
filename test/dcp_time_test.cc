@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	/* Another arbitrary tcr (30) */
 	a = libdcp::Time (24, 12, 6, 3, 30);
 	b = libdcp::Time (16, 8, 4, 2, 30);
-	BOOST_CHECK_CLOSE (a / b, 1.5, 1e-5);
+	BOOST_CHECK_CLOSE (a / b, 1.5, 1e-3);
 
 	a = libdcp::Time (3600 * 24, 24, 250);
 	BOOST_CHECK_EQUAL (a.h, 1);
