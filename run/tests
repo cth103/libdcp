@@ -53,7 +53,7 @@ fi
 
 # Run dcpinfo on all the DCPs in private/metadata, writing $work/info.log
 rm -f $work/info.log
-for d in `find $private/metadata -mindepth 1 -maxdepth 1 -type d | sort`; do
+for d in `find $private/metadata -mindepth 1 -maxdepth 1 -type d | sort -f`; do
     if [ `basename $d` != ".git" ]; then
         $dcpinfo -s $d >> $work/info.log
         if [ "$?" != "0" ]; then
