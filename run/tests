@@ -6,7 +6,7 @@
 # in test/ref/DCP, and an error is given
 # if anything is different.
 
-private=../libdcp-test-private
+private=../libdcp1-test-private
 work=build/test
 dcpinfo=build/tools/dcpinfo
 
