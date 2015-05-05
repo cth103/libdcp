@@ -76,7 +76,7 @@ rm -f $work/info2.log
 rm -rf $work/private
 mkdir $work/private
 cp -r $private/* $work/private
-for d in `find $work/private/metadata -mindepth 1 -maxdepth 1 -type d | sort`; do
+for d in `find $work/private/metadata -mindepth 1 -maxdepth 1 -type d | sort -fd`; do
     if [ `basename $d` != ".git" ]; then
         $work/rewrite_subs $d
         $dcpinfo -s $d >> $work/info2.log
