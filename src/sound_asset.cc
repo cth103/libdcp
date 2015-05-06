@@ -115,9 +115,12 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 		LFE,
 		LS,
 		RS,
-		/* XXX: not quite sure what these should be yet */
-		CHANNEL_7,
-		CHANNEL_8
+		HI,
+		VI,
+		LC,
+		RC,
+		BSL,
+		BSR
 	};
 
 	assert (int(_channels) <= int(sizeof(channels) / sizeof(Channel)));

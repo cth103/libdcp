@@ -42,8 +42,12 @@ enum Channel {
 	LFE = 3,       ///< low-frequency effects (sub)
 	LS = 4,        ///< left surround
 	RS = 5,        ///< right surround
-	CHANNEL_7 = 6, ///< channel 7; not sure what this should be called
-	CHANNEL_8 = 7  ///< channel 8; not sure what this should be called
+	HI = 6,
+	VI = 7,
+	LC = 8,
+	RC = 9,
+	BSL = 10,
+	BSR = 111
 };
 
 enum ContentKind
