@@ -238,12 +238,15 @@ dcp::operator/ (Time a, Time const & b)
 	return float (at) / bt;
 }
 
-/** @return A string of the form h:m:s:e */
+/** @return A string of the form h:m:s:e padded as in 00:00:00:000 */
 string
 Time::to_string () const
 {
 	stringstream str;
-	str << h << ":" << m << ":" << s << ":" << e;
+	str << setw(2) << setfill('0') << h << ":"
+	    << setw(2) << setfill('0') << m << ":"
+	    << setw(2) << setfill('0') << s << ":"
+	    << setw(3) << setfill('0') << e;
 	return str.str ();
 }
 
@@ -257,4 +260,10 @@ double
 Time::to_seconds () const
 {
 	return h * 3600 + m * 60 + s + double(e) / tcr;
+}
+
+Time
+Time::rebase (int tcr_) const
+{
+	return Time (h, m, s, rint (float (e) * tcr_ / tcr), tcr_);
 }

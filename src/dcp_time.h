@@ -72,6 +72,7 @@ public:
 	std::string to_string () const;
 	double to_seconds () const;
 	int64_t to_editable_units (int tcr_) const;
+	Time rebase (int tcr_) const;
 
 private:
 	void set (double seconds, int tcr);

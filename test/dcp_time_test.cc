@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (t.s, 34);
 	BOOST_CHECK_EQUAL (t.m, 18);
 	BOOST_CHECK_EQUAL (t.h, 11);
-	BOOST_CHECK_EQUAL (t.to_string(), "11:18:34:73");
+	BOOST_CHECK_EQUAL (t.to_string(), "11:18:34:073");
 
 	/* Use a tcr of 24 so that the editable event is a frame */
 	dcp::Time a (3, 2, 3, 4, 24);
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (r.m, 58);
 	BOOST_CHECK_EQUAL (r.s, 58);
 	BOOST_CHECK_EQUAL (r.e, 23);
-	BOOST_CHECK_EQUAL (r.to_string(), "0:58:58:23");
+	BOOST_CHECK_EQUAL (r.to_string(), "00:58:58:023");
 
 	/* Different tcr (25) */
 	a = dcp::Time (1, 58, 56, 2, 25);
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (r.m, 6);
 	BOOST_CHECK_EQUAL (r.s, 8);
 	BOOST_CHECK_EQUAL (r.e, 3);
-	BOOST_CHECK_EQUAL (r.to_string(), "3:6:8:3");
+	BOOST_CHECK_EQUAL (r.to_string(), "03:06:08:003");
 
 	/* Another arbitrary tcr (30) */
 	a = dcp::Time (24, 12, 6, 3, 30);
@@ -88,4 +88,10 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	b = dcp::Time (0, 0, 0, 4, 48);
 	r = a + b;
 	BOOST_CHECK_EQUAL (r, dcp::Time (0, 0, 0, 240, 1152));
+
+	/* Check rebase() */
+	a = dcp::Time (1, 58, 56, 2, 25);
+	BOOST_CHECK_EQUAL (a.rebase (250), dcp::Time (1, 58, 56, 20, 250));
+	b = dcp::Time (9, 12, 41, 17, 99);
+	BOOST_CHECK_EQUAL (b.rebase (250), dcp::Time (9, 12, 41, 43, 250));
 }
