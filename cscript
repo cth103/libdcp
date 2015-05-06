@@ -7,6 +7,8 @@ def build(target, options):
     cmd = './waf configure --prefix=%s' % target.directory
     if target.platform == 'linux':
         cmd += ' --static'
+        if target.distro == 'centos':
+            cmd += ' --disable-tests'
     elif target.platform == 'windows':
         cmd += ' --target-windows'
     elif target.platform == 'osx':
