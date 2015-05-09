@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,8 +62,12 @@ enum Channel {
 	LFE = 3,       ///< low-frequency effects (sub)
 	LS = 4,        ///< left surround
 	RS = 5,        ///< right surround
-	CHANNEL_7 = 6, ///< channel 7; not sure what this should be called
-	CHANNEL_8 = 7  ///< channel 8; not sure what this should be called
+	HI = 6,
+	VI = 7,
+	LC = 8,
+	RC = 9,
+	BSL = 10,
+	BSR = 11
 };
 
 enum ContentKind
