@@ -194,7 +194,7 @@ InteropSubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOpt
 	list<shared_ptr<InteropLoadFontNode> >::const_iterator j = other->_load_font_nodes.begin ();
 
 	while (i != _load_font_nodes.end ()) {
-		if (j == _load_font_nodes.end ()) {
+		if (j == other->_load_font_nodes.end ()) {
 			note (DCP_ERROR, "<LoadFont> nodes differ");
 			return false;
 		}
