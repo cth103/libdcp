@@ -2,7 +2,7 @@ import subprocess
 import os
 
 APPNAME = 'libdcp'
-VERSION = '0.100.0devel'
+VERSION = '0.101.0'
 
 def options(opt):
     opt.load('compiler_cxx')
