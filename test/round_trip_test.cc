@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	libdcp::XMLMetadata metadata;
 	cpl->write_xml (true, metadata, signer);
 
-	boost::filesystem::path cpl_path = work_dir / (cpl->id() + "_cpl.xml");
+	boost::filesystem::path cpl_path = work_dir / ("cpl_" + cpl->id() + ".xml");
 
 	/* A KDM using our certificate chain's leaf key pair */
 	libdcp::KDM kdm_A (

@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 
 	d.write_xml (false, xml_metadata, signer);
 
-	boost::filesystem::path cpl_path = boost::filesystem::path ("build/test/DCP/bar") / (cpl->id() + "_cpl.xml");
+	boost::filesystem::path cpl_path = boost::filesystem::path ("build/test/DCP/bar") / ("cpl_" + cpl->id() + ".xml");
 
 	libdcp::KDM kdm (
 		cpl_path,
