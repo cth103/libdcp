@@ -47,7 +47,7 @@ enum Channel {
 	LC = 8,
 	RC = 9,
 	BSL = 10,
-	BSR = 111
+	BSR = 11
 };
 
 enum ContentKind
