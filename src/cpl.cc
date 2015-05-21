@@ -195,7 +195,7 @@ CPL::add_reel (shared_ptr<Reel> reel)
 boost::filesystem::path
 CPL::filename () const
 {
-	return _directory / String::compose ("%1_cpl.xml", _id);
+	return _directory / String::compose ("cpl_%1.xml", _id);
 }
 
 void
@@ -286,7 +286,7 @@ CPL::write_to_assetmap (xmlpp::Node* node) const
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
 	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
-	chunk->add_child("Path")->add_child_text (_id + "_cpl.xml");
+	chunk->add_child("Path")->add_child_text ("cpl_" + _id + ".xml");
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text("0");
 	chunk->add_child("Length")->add_child_text (raw_convert<string> (_length));

@@ -84,7 +84,7 @@ DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, sha
 	boost::filesystem::path p;
 	p /= _directory;
 	stringstream s;
-	s << pkl_uuid << "_pkl.xml";
+	s << "pkl_" << pkl_uuid << ".xml";
 	p /= s.str();
 
 	xmlpp::Document doc;
@@ -186,7 +186,7 @@ DCP::write_assetmap (string pkl_uuid, int pkl_length, bool interop, XMLMetadata 
 	asset->add_child("PackingList")->add_child_text ("true");
 	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
 	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
-	chunk->add_child("Path")->add_child_text (pkl_uuid + "_pkl.xml");
+	chunk->add_child("Path")->add_child_text ("pkl_" + pkl_uuid + ".xml");
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
 	chunk->add_child("Length")->add_child_text (raw_convert<string> (pkl_length));
