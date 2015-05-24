@@ -235,7 +235,7 @@ boost::filesystem::path
 DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared_ptr<const Signer> signer) const
 {
 	boost::filesystem::path p = _directory;
-	p /= String::compose ("%1_pkl.xml", pkl_uuid);
+	p /= String::compose ("pkl_%1.xml", pkl_uuid);
 
 	xmlpp::Document doc;
 	xmlpp::Element* pkl;
@@ -365,7 +365,7 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 	asset->add_child("PackingList")->add_child_text ("true");
 	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
 	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
-	chunk->add_child("Path")->add_child_text (pkl_uuid + "_pkl.xml");
+	chunk->add_child("Path")->add_child_text ("pkl_" + pkl_uuid + ".xml");
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
 	chunk->add_child("Length")->add_child_text (raw_convert<string> (pkl_length));
@@ -391,7 +391,7 @@ DCP::write_xml (
 	)
 {
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
-		string const filename = i->id() + "_cpl.xml";
+		string const filename = "cpl_" + i->id() + ".xml";
 		i->write_xml (_directory / filename, standard, signer);
 	}
 
