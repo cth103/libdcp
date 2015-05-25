@@ -151,6 +151,7 @@ struct EqualityOptions
 		, max_audio_sample_error (0)
 		, cpl_annotation_texts_can_differ (false)
 		, mxf_filenames_can_differ (false)
+		, reel_annotation_texts_can_differ (false)
 		, reel_hashes_can_differ (false)
 	{}
 
@@ -164,6 +165,8 @@ struct EqualityOptions
 	bool cpl_annotation_texts_can_differ;
 	/** true if MXF file leafnames are allowed to differ */
 	bool mxf_filenames_can_differ;
+	/** true if the <AnnotationText> nodes of Reels are allowed to differ */
+	bool reel_annotation_texts_can_differ;
 	/** true if <Hash>es in Reels can differ */
 	bool reel_hashes_can_differ;
 };

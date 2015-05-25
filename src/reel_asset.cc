@@ -105,8 +105,12 @@ ReelAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, NoteH
 	if (_annotation_text != other->_annotation_text) {
 		stringstream s;
 		s << "Reel: annotation texts differ (" << _annotation_text << " vs " << other->_annotation_text << ")\n";
-		note (DCP_ERROR, s.str ());
-		return false;
+		if (!opt.reel_annotation_texts_can_differ) {
+			note (DCP_ERROR, s.str ());
+			return false;
+		} else {
+			note (DCP_NOTE, s.str ());
+		}
 	}
 
 	if (_edit_rate != other->_edit_rate) {
