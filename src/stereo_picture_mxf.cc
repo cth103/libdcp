@@ -110,8 +110,18 @@ StereoPictureMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 	DCP_ASSERT (other_picture);
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
-		shared_ptr<const StereoPictureFrame> frame_A = get_frame (i);
-		shared_ptr<const StereoPictureFrame> frame_B = other_picture->get_frame (i);
+		shared_ptr<const StereoPictureFrame> frame_A;
+		shared_ptr<const StereoPictureFrame> frame_B;
+		try {
+			frame_A = get_frame (i);
+			frame_B = other_picture->get_frame (i);
+		} catch (DCPReadError& e) {
+			/* If there was a problem reading the frame data we'll just assume
+			   the two frames are not equal.
+			*/
+			note (DCP_ERROR, e.what ());
+			return false;
+		}
 		
 		if (!frame_buffer_equals (
 			    i, opt, note,
