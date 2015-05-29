@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/colour_conversion.h
+ *  @brief ColourConversion class.
+ */
+
 #ifndef DCP_COLOUR_CONVERSION_H
 #define DCP_COLOUR_CONVERSION_H
 
@@ -35,6 +39,10 @@ enum YUVToRGB {
 	YUV_TO_RGB_COUNT
 };
 
+/** @class ColourConversion
+ *  @brief A representation of all the parameters involved the colourspace conversion
+ *  of a YUV image to XYZ (via RGB).
+ */
 class ColourConversion
 {
 public:
@@ -132,7 +140,9 @@ public:
 	static ColourConversion const & p3_to_xyz ();
 
 protected:
+	/** Input transfer function (probably a gamma function, or something similar) */
 	boost::shared_ptr<const TransferFunction> _in;
+	/** Conversion to use from YUV to RGB */
 	YUVToRGB _yuv_to_rgb;
 	Chromaticity _red;
 	Chromaticity _green;
@@ -140,6 +150,7 @@ protected:
 	Chromaticity _white;
 	/** White point that we are adjusting to using a Bradford matrix */
 	boost::optional<Chromaticity> _adjusted_white;
+	/** Output transfer function (probably an inverse gamma function, or something similar) */
 	boost::shared_ptr<const TransferFunction> _out;
 };
 

@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/smpte_load_font_node.h
+ *  @brief SMPTELoadFontNode class.
+ */
+
 #include "load_font_node.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/optional.hpp>
@@ -27,6 +31,9 @@ namespace cxml {
 
 namespace dcp {
 	
+/** @class SMPTELoadFontNode
+ *  @brief Parser for LoadFont nodes from SMPTE subtitle XML.
+ */
 class SMPTELoadFontNode : public LoadFontNode
 {
 public:
