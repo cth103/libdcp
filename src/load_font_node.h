@@ -17,10 +17,17 @@
 
 */
 
+/** @file  src/load_font_node.h
+ *  @brief LoadFontNode class.
+ */
+
 #include <string>
 
 namespace dcp {
 
+/** @class LoadFontNode
+ *  @brief Parser for LoadFont nodes from subtitle XML.
+ */
 class LoadFontNode
 {
 public:

@@ -24,6 +24,7 @@
 #include "colour_conversion.h"
 #include "AS_DCP.h"
 #include "KM_fileio.h"
+#include "compose.hpp"
 #include <openjpeg.h>
 
 #define DCI_GAMMA 2.6
@@ -48,7 +49,7 @@ StereoPictureFrame::StereoPictureFrame (boost::filesystem::path mxf_path, int n)
 	_buffer = new ASDCP::JP2K::SFrameBuffer (4 * Kumu::Megabyte);
 
 	if (ASDCP_FAILURE (reader.ReadFrame (n, *_buffer))) {
-		boost::throw_exception (DCPReadError ("could not read video frame"));
+		boost::throw_exception (DCPReadError (String::compose ("could not read video frame %1 of %2", n, mxf_path.string())));
 	}
 }
 

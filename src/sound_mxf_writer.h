@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/sound_mxf_writer.h
+ *  @brief SoundMXFWriter class.
+ */
+
 #include "mxf_writer.h"
 #include "types.h"
 #include <boost/shared_ptr.hpp>
@@ -27,6 +31,15 @@ namespace dcp {
 class SoundFrame;
 class SoundMXF;
 
+/** @class SoundMXFWriter
+ *  @brief A helper class for writing to SoundMXFs.
+ *
+ *  Objects of this class can only be created with SoundMXF::start_write().
+ *
+ *  Sound samples can be written to the SoundMXF by calling write() with
+ *  a buffer of float values.  finalize() must be called after the last samples
+ *  have been written.
+ */
 class SoundMXFWriter : public MXFWriter
 {
 public:

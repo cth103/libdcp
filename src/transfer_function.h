@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/transfer_function.h
+ *  @brief TransferFunction class.
+ */
+
 #ifndef LIBDCP_TRANSFER_FUNCTION_H
 #define LIBDCP_TRANSFER_FUNCTION_H
 
@@ -27,6 +31,9 @@
 
 namespace dcp {
 
+/** @class TransferFunction
+ *  @brief A transfer function represented by a lookup table.
+ */
 class TransferFunction : public boost::noncopyable
 {
 public:
@@ -38,6 +45,7 @@ public:
 	virtual bool about_equal (boost::shared_ptr<const TransferFunction> other, double epsilon) const = 0;
 
 protected:
+	/** Make a LUT and return an array allocated by new */
 	virtual double * make_lut (int bit_depth, bool inverse) const = 0;
 
 private:

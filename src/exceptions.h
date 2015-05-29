@@ -29,6 +29,9 @@
 namespace dcp
 {
 
+/** @class StringError
+ *  @brief An exception that uses a std::string to store its error message.
+ */
 class StringError : public std::exception
 {
 public:
@@ -159,13 +162,20 @@ public:
 	TimeFormatError (std::string bad_time);
 };
 
+/** @class NotEncryptedError
+ *  @brief An error raised when creating a DecryptedKDM object for assets that are not
+ *  encrypted.
+ */
 class NotEncryptedError : public StringError
 {
 public:
 	NotEncryptedError (std::string const & what);
 	~NotEncryptedError () throw () {}
 };
-	
+
+/** @class ProgrammingError
+ *  @brief An exception thrown when a DCP_ASSERT fails; something that should not happen.
+ */
 class ProgrammingError : public StringError
 {
 public:

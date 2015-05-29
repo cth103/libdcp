@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/chromaticity.h
+ *  @brief Chromaticity class.
+ */
+
 #ifndef DCP_CHROMATICITY_H
 #define DCP_CHROMATICITY_H
 
@@ -24,6 +28,9 @@
 
 namespace dcp {
 
+/** @class Chromaticity
+ *  @brief A representation of a x,y,z chromaticity, where z = 1 - x - y
+ */
 class Chromaticity
 {
 public:
@@ -36,7 +43,7 @@ public:
 		: x (x_)
 		, y (y_)
 	{}
-		
+
 	double x;
 	double y;
 
@@ -44,6 +51,7 @@ public:
 		return 1 - x - y;
 	}
 
+	/** @return true if this Chromaticity's x and y are within epsilon of other */
 	bool about_equal (Chromaticity const & other, float epsilon) const {
 		return std::fabs (x - other.x) < epsilon && std::fabs (y - other.y) < epsilon;
 	}
