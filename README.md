@@ -1,24 +1,26 @@
-== libdcp
+libdcp
+======
 
 Hello.
 
 
-== Acknowledgements
+Acknowledgements
+================
 
 Wolfgang Woehl's cinemaslides was most informative on the
 nasty details of encryption.
 
 
+Building
+========
+
+    ./waf configure
+    ./waf
+    sudo ./waf install
 
 
-== Building:
-
-./waf configure
-./waf
-./waf install
-
-
-== Dependencies
+Dependencies
+============
 
 boost filesystem, signals2 and unit testing libraries
 openssl
@@ -28,7 +30,8 @@ xmlsec
 openjpeg (1.5.0 or above)
 
 
-== Documentation
+Documentation
+=============
 
 Run doxygen in the top-level directory and then see build/doc/html/index.html.
 
