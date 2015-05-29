@@ -18,8 +18,8 @@
 */
 
 /* If you are using an installed libdcp, these #includes would need to be changed to
-#include <libdcp/dcp.h>
-#include <libdcp/picture_mxf.h>
+#include <dcp/dcp.h>
+#include <dcp/picture_mxf.h>
 ... etc. ...
 */
 
