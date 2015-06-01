@@ -40,12 +40,12 @@ BOOST_AUTO_TEST_CASE (certificates)
 	
 	BOOST_CHECK_EQUAL (
 		c.leaf()->issuer(),
-		"O=example.org,OU=example.org,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,dnQualifier=bmtwThq3srgxIAeRMjX6BFhgLDw="
+		"dnQualifier=bmtwThq3srgxIAeRMjX6BFhgLDw=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 
 	BOOST_CHECK_EQUAL (
 		c.leaf()->subject(),
-		"O=example.org,OU=example.org,CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION,dnQualifier=d95fGDzERNdxfYPgphvAR8A18L4="
+		"dnQualifier=d95fGDzERNdxfYPgphvAR8A18L4=,CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 	
 	++i;
@@ -53,12 +53,12 @@ BOOST_AUTO_TEST_CASE (certificates)
 	/* Intermediate */
 	BOOST_CHECK_EQUAL (
 		(*i)->issuer(),
-		"O=example.org,OU=example.org,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,dnQualifier=ndND9A/cODo2rTdrbLVmfQnoaSc="
+		"dnQualifier=ndND9A/cODo2rTdrbLVmfQnoaSc=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 
 	BOOST_CHECK_EQUAL (
 		(*i)->subject(),
-		"O=example.org,OU=example.org,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,dnQualifier=bmtwThq3srgxIAeRMjX6BFhgLDw="
+		"dnQualifier=bmtwThq3srgxIAeRMjX6BFhgLDw=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 	
 	++i;
@@ -67,14 +67,14 @@ BOOST_AUTO_TEST_CASE (certificates)
 	BOOST_CHECK_EQUAL (*i, c.root ());
 	BOOST_CHECK_EQUAL (
 		c.root()->issuer(),
-		"O=example.org,OU=example.org,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,dnQualifier=ndND9A/cODo2rTdrbLVmfQnoaSc="
+		"dnQualifier=ndND9A/cODo2rTdrbLVmfQnoaSc=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 
 	BOOST_CHECK_EQUAL (c.root()->serial(), "5");
 
 	BOOST_CHECK_EQUAL (
 		c.root()->subject(),
-		"O=example.org,OU=example.org,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,dnQualifier=ndND9A/cODo2rTdrbLVmfQnoaSc="
+		"dnQualifier=ndND9A/cODo2rTdrbLVmfQnoaSc=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 
 	/* Check that reconstruction from a string works */
