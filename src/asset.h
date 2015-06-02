@@ -65,6 +65,7 @@ public:
 	 */
 	void write_to_pkl (xmlpp::Node* node, Standard standard) const;
 
+	/** @return the most recent disk file used to read or write this asset; may be empty */
 	boost::filesystem::path file () const {
 		return _file;
 	}

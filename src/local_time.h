@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/local_time.h
+ *  @brief LocalTime class.
+ */
+
 #ifndef LIBDCP_LOCAL_TIME_H
 #define LIBDCP_LOCAL_TIME_H
 
@@ -27,7 +31,11 @@ class local_time_test;
 
 namespace dcp {
 
-/** I tried to use boost for this, really I did, but I could not get it
+/** @class LocalTime
+ *  @brief A representation of a local time (down to the second), including its offset
+ *  from GMT.
+ *
+ *  I tried to use boost for this, really I did, but I could not get it
  *  to parse strings of the required format (those that include time zones).
  */
 class LocalTime
@@ -54,9 +62,8 @@ private:
 	int _minute; ///< minute number of the hour (0-59)
 	int _second; ///< second number of the minute (0-59)
 
-	/* Amount by which this time is offset from UTC */
-	int _tz_hour;
-	int _tz_minute;
+	int _tz_hour;   ///< hours by which this time is offset from UTC
+	int _tz_minute; ///< minutes by which this time is offset from UTC
 };
 
 }

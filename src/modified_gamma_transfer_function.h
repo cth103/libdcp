@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/modified_gamma_transfer_function.h
+ *  @brief ModifiedGammaTransferFunction class.
+ */
+
 #include "transfer_function.h"
 
 namespace dcp {

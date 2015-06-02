@@ -104,6 +104,12 @@ Asset::equals (boost::shared_ptr<const Asset> other, EqualityOptions, NoteHandle
 	return true;
 }
 
+/** Set the file that holds this asset on disk.  Calling this function
+ *  clears this object's store of its hash, so you should call ::hash
+ *  after this.
+ *
+ *  @param file New file's path.
+ */
 void
 Asset::set_file (boost::filesystem::path file) const
 {
