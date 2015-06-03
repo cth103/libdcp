@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -137,6 +137,8 @@ SubtitleContent::maybe_add_subtitle (string text, ParseState const & parse_state
 			effective_font.aspect_adjust.get_value_or (1.0),
 			effective_subtitle.in,
 			effective_subtitle.out,
+			effective_text.h_position,
+			effective_text.h_align,
 			effective_text.v_position,
 			effective_text.v_align,
 			text,

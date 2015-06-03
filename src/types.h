@@ -94,11 +94,21 @@ enum Effect
 extern std::string effect_to_string (Effect e);
 extern Effect string_to_effect (std::string s);
 
+enum HAlign
+{
+	HALIGN_LEFT,   ///< horizontal position is distance from left of screen to left of subtitle
+	HALIGN_CENTER, ///< horizontal position is distance from centre of screen to centre of subtitle
+	HALIGN_RIGHT,  ///< horizontal position is distance from right of screen to right of subtitle
+};
+
+extern std::string halign_to_string (HAlign a);
+extern HAlign string_to_halign (std::string s);
+
 enum VAlign
 {
-	TOP,
-	CENTER,
-	BOTTOM
+	VALIGN_TOP,    ///< vertical position is distance from top of screen to top of subtitle
+	VALIGN_CENTER, ///< vertical position is distance from centre of screen to centre of subtitle
+	VALIGN_BOTTOM  ///< vertical position is distance from bottom of screen to bottom of subtitle
 };
 
 extern std::string valign_to_string (VAlign a);
@@ -217,7 +227,12 @@ typedef boost::function<void (NoteType, std::string)> NoteHandler;
 /** Maximum absolute difference between dcp::SubtitleString::aspect_adjust values that
  *  are considered equal.
  */
-#define ASPECT_ADJUST_EPSILON (1e-3)
+const float ASPECT_ADJUST_EPSILON = 1e-3;
+
+/** Maximum absolute difference between dcp::SubtitleString alignment values that
+ *  are considered equal.
+ */
+const float ALIGN_EPSILON = 1e-3;
 
 }
 

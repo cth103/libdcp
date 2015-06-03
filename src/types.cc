@@ -162,32 +162,59 @@ dcp::string_to_effect (string s)
 }
 
 string
+dcp::halign_to_string (HAlign h)
+{
+	switch (h) {
+	case HALIGN_LEFT:
+		return "left";
+	case HALIGN_CENTER:
+		return "center";
+	case HALIGN_RIGHT:
+		return "right";
+	}
+
+	boost::throw_exception (MiscError ("unknown subtitle halign type"));
+}
+
+HAlign
+dcp::string_to_halign (string s)
+{
+	if (s == "left") {
+		return HALIGN_LEFT;
+	} else if (s == "center") {
+		return HALIGN_CENTER;
+	} else if (s == "right") {
+		return HALIGN_RIGHT;
+	}
+	
+	boost::throw_exception (DCPReadError ("unknown subtitle halign type"));
+}
+
+string
 dcp::valign_to_string (VAlign v)
 {
 	switch (v) {
-	case TOP:
+	case VALIGN_TOP:
 		return "top";
-	case CENTER:
+	case VALIGN_CENTER:
 		return "center";
-	case BOTTOM:
+	case VALIGN_BOTTOM:
 		return "bottom";
 	}
 
-	boost::throw_exception (MiscError ("unknown valign type"));
+	boost::throw_exception (MiscError ("unknown subtitle valign type"));
 }
 
 VAlign
 dcp::string_to_valign (string s)
 {
 	if (s == "top") {
-		return TOP;
+		return VALIGN_TOP;
 	} else if (s == "center") {
-		return CENTER;
+		return VALIGN_CENTER;
 	} else if (s == "bottom") {
-		return BOTTOM;
+		return VALIGN_BOTTOM;
 	}
 	
 	boost::throw_exception (DCPReadError ("unknown subtitle valign type"));
 }
-
-		

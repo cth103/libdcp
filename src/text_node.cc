@@ -38,22 +38,43 @@ using namespace dcp;
  *  @param node Node to read.
  */
 TextNode::TextNode (boost::shared_ptr<const cxml::Node> node, int tcr)
-	: v_align (CENTER)
+	: h_position (0)
+	, h_align (HALIGN_CENTER)
+	, v_position (0)
+	, v_align (VALIGN_CENTER)
 {
 	text = node->content ();
-	optional<float> x = node->optional_number_attribute<float> ("VPosition");
-	if (!x) {
-		x = node->number_attribute<float> ("Vposition");
+
+	optional<float> hp = node->optional_number_attribute<float> ("HPosition");
+	if (!hp) {
+		hp = node->optional_number_attribute<float> ("Hposition");
 	}
-	v_position = x.get () / 100;
-	
-	optional<string> v = node->optional_string_attribute ("VAlign");
-	if (!v) {
-		v = node->optional_string_attribute ("Valign");
+	if (hp) {
+		h_position = hp.get () / 100;
 	}
 	
-	if (v) {
-		v_align = string_to_valign (v.get ());
+	optional<string> ha = node->optional_string_attribute ("HAlign");
+	if (!ha) {
+		ha = node->optional_string_attribute ("Halign");
+	}
+	if (ha) {
+		h_align = string_to_halign (ha.get ());
+	}
+	
+	optional<float> vp = node->optional_number_attribute<float> ("VPosition");
+	if (!vp) {
+		vp = node->optional_number_attribute<float> ("Vposition");
+	}
+	if (vp) {
+		v_position = vp.get () / 100;
+	}
+	
+	optional<string> va = node->optional_string_attribute ("VAlign");
+	if (!va) {
+		va = node->optional_string_attribute ("Valign");
+	}
+	if (va) {
+		v_align = string_to_valign (va.get ());
 	}
 
 	list<cxml::NodePtr> f = node->node_children ("Font");

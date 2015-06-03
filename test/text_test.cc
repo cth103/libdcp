@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE (text_test1)
 
 	dcp::TextNode t (cxml::NodePtr (new cxml::Node (text)), 250);
 	BOOST_CHECK_CLOSE (t.v_position, 0.042, 0.001);
-	BOOST_CHECK_EQUAL (t.v_align, dcp::TOP);
+	BOOST_CHECK_EQUAL (t.v_align, dcp::VALIGN_TOP);
 	BOOST_CHECK_EQUAL (t.text, "Hello world");
 }
 
@@ -48,6 +48,6 @@ BOOST_AUTO_TEST_CASE (text_test2)
 
 	dcp::TextNode t (cxml::NodePtr (new cxml::Node (text)), 250);
 	BOOST_CHECK_CLOSE (t.v_position, 0.042, 0.001);
-	BOOST_CHECK_EQUAL (t.v_align, dcp::TOP);
+	BOOST_CHECK_EQUAL (t.v_align, dcp::VALIGN_TOP);
 	BOOST_CHECK_EQUAL (t.text, "Hello world");
 }

@@ -45,6 +45,8 @@ public:
 		float aspect_adjust,
 		Time in,
 		Time out,
+		float h_position,
+		HAlign h_align,
 		float v_position,
 		VAlign v_align,
 		std::string text,
@@ -77,6 +79,14 @@ public:
 
 	std::string text () const {
 		return _text;
+	}
+
+	float h_position () const {
+		return _h_position;
+	}
+
+	HAlign h_align () const {
+		return _h_align;
 	}
 
 	/** @return vertical position as a proportion of the screen height from the top
@@ -149,6 +159,11 @@ private:
 	float _aspect_adjust;
 	Time _in;
 	Time _out;
+	/** Horizontal position as a proportion of the screen width from the _h_align
+	 *  (between 0 and 1)
+	 */
+	float _h_position;
+	HAlign _h_align;
 	/** Vertical position as a proportion of the screen height from the _v_align
 	 *  (between 0 and 1)
 	 */

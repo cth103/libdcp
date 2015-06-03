@@ -35,6 +35,8 @@ SubtitleString::SubtitleString (
 	float aspect_adjust,
 	Time in,
 	Time out,
+	float h_position,
+	HAlign h_align,
 	float v_position,
 	VAlign v_align,
 	string text,
@@ -50,6 +52,8 @@ SubtitleString::SubtitleString (
 	, _aspect_adjust (aspect_adjust)
 	, _in (in)
 	, _out (out)
+	, _h_position (h_position)
+	, _h_align (h_align)
 	, _v_position (v_position)
 	, _v_align (v_align)
 	, _text (text)
@@ -83,6 +87,8 @@ dcp::operator== (SubtitleString const & a, SubtitleString const & b)
 		fabs (a.aspect_adjust() - b.aspect_adjust()) < ASPECT_ADJUST_EPSILON &&
 		a.in() == b.in() &&
 		a.out() == b.out() &&
+		a.h_position() == b.h_position() &&
+		a.h_align() == b.h_align() &&
 		a.v_position() == b.v_position() &&
 		a.v_align() == b.v_align() &&
 		a.text() == b.text() &&
@@ -107,7 +113,8 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 	}
 	
 	s << ", size " << sub.size() << ", aspect " << sub.aspect_adjust() << ", colour " << sub.colour()
-	  << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align()) << ";\n"
+	  << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align()) << ",\n"
+	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align()) << ";\n"
 	  << "effect " << ((int) sub.effect()) << ", effect colour " << sub.effect_colour();
 
 	return s;

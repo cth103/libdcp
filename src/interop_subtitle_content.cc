@@ -171,6 +171,12 @@ InteropSubtitleContent::xml_as_string () const
 		}
 
 		xmlpp::Element* text = subtitle_element->add_child ("Text");
+		if (i->h_align() != HALIGN_CENTER) {
+			text->set_attribute ("HAlign", halign_to_string (i->h_align ()));
+		}
+		if (i->h_position() > ALIGN_EPSILON) {
+			text->set_attribute ("HPosition", raw_convert<string> (i->h_position() * 100, 6));
+		}
 		text->set_attribute ("VAlign", valign_to_string (i->v_align()));		
 		text->set_attribute ("VPosition", raw_convert<string> (i->v_position() * 100, 6));
 		text->add_child_text (i->text());
