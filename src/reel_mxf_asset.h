@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/reel_mxf_asset.h
+ *  @brief ReelMXFAsset
+ */
+
 #ifndef LIBDCP_REEL_MXF_ASSET_H
 #define LIBDCP_REEL_MXF_ASSET_H
 
@@ -24,8 +28,11 @@
 
 namespace dcp {
 
-class MXF;	
+class MXF;
 
+/** @class ReelMXFAsset
+ *  @brief Part of a Reel's description which refers to an MXF.
+ */
 class ReelMXFAsset : public ReelAsset
 {
 public:

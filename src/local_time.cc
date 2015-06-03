@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/local_time.cc
+ *  @brief LocalTime class.
+ */
+
 #include "local_time.h"
 #include "exceptions.h"
 #include <boost/lexical_cast.hpp>
@@ -27,6 +31,7 @@ using std::string;
 using boost::lexical_cast;
 using namespace dcp;
 
+/** Construct a LocalTime from the current time */
 LocalTime::LocalTime ()
 {
 	time_t now = time (0);
@@ -42,6 +47,9 @@ LocalTime::LocalTime ()
 	set_local_time_zone ();
 }
 
+/** Construct a LocalTime from a boost::posix_time::ptime using the local
+ *  time zone.
+ */
 LocalTime::LocalTime (boost::posix_time::ptime t)
 {
 	_year = t.date().year ();
@@ -54,6 +62,7 @@ LocalTime::LocalTime (boost::posix_time::ptime t)
 	set_local_time_zone ();
 }
 
+/** Set our UTC offset to be according to the local time zone */
 void
 LocalTime::set_local_time_zone ()
 {
@@ -96,6 +105,7 @@ LocalTime::LocalTime (string s)
 	}
 }
 
+/** @return A string of the form 2013-01-05T18:06:59+04:00 */
 string
 LocalTime::as_string () const
 {
@@ -108,6 +118,7 @@ LocalTime::as_string () const
 	return buffer;
 }
 
+/** @return The date in the form YYYY-MM-DD */
 string
 LocalTime::date () const
 {
@@ -116,6 +127,7 @@ LocalTime::date () const
 	return buffer;
 }
 
+/** @return The time in the form HH:MM:SS */
 string
 LocalTime::time_of_day () const
 {

@@ -42,14 +42,19 @@ public:
 	virtual void write_to_cpl (xmlpp::Node* node, Standard standard) const;
 	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
 
+	/** @return the PictureMXF that this object refers to */
 	boost::shared_ptr<PictureMXF> mxf () {
 		return boost::dynamic_pointer_cast<PictureMXF> (_content.object ());
 	}
 
+	/** @return picture frame rate */
 	Fraction frame_rate () const {
 		return _frame_rate;
 	}
 
+	/** Set the ScreenAspectRatio of this asset.
+	 *  @param a New aspect ratio.
+	 */
 	void set_screen_aspect_ratio (Fraction a) {
 		_screen_aspect_ratio = a;
 	}
