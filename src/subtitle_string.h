@@ -131,6 +131,10 @@ public:
 		_size = s;
 	}
 
+	void set_aspect_adjust (float a) {
+		_aspect_adjust = a;
+	}
+
 private:
 	/** font ID */
 	boost::optional<std::string> _font;
