@@ -214,6 +214,10 @@ extern std::ostream & operator<< (std::ostream & s, Colour const & c);
 
 typedef boost::function<void (NoteType, std::string)> NoteHandler;
 
+/** Maximum absolute difference between dcp::SubtitleString::aspect_adjust values that
+ *  are considered equal.
+ */
+#define ASPECT_ADJUST_EPSILON (1e-3)
 
 }
 

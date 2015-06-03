@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ public:
 		bool italic,
 		Colour colour,
 		int size,
+		float aspect_adjust,
 		Time in,
 		Time out,
 		float v_position,
@@ -108,8 +109,16 @@ public:
 	int size () const {
 		return _size;
 	}
-	
+
 	int size_in_pixels (int screen_height) const;
+
+	/** @return Aspect ratio `adjustment' of the font size.
+	 *  Values greater than 1 widen each character, values less than 1 narrow each character,
+	 *  and the value must be between 0.25 and 4.
+	 */
+	float aspect_adjust () const {
+		return _aspect_adjust;
+	}
 
 	/** @param p New vertical position as a proportion of the screen height
 	 *  from the top (between 0 and 1)
@@ -133,6 +142,7 @@ private:
 	 *  would be 1/11th of the screen height.
 	 */ 
 	int _size;
+	float _aspect_adjust;
 	Time _in;
 	Time _out;
 	/** Vertical position as a proportion of the screen height from the _v_align

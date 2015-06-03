@@ -46,6 +46,7 @@ public:
 	std::string text;
 	boost::optional<std::string> id;
 	int size;
+	boost::optional<float> aspect_adjust;
 	boost::optional<bool> italic;
 	boost::optional<Colour> colour;
 	boost::optional<Effect> effect;

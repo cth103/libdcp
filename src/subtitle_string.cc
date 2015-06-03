@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 #include "subtitle_string.h"
 #include "xml.h"
+#include <cmath>
 
 using std::string;
 using std::ostream;
@@ -31,6 +32,7 @@ SubtitleString::SubtitleString (
 	bool italic,
 	Colour colour,
 	int size,
+	float aspect_adjust,
 	Time in,
 	Time out,
 	float v_position,
@@ -45,6 +47,7 @@ SubtitleString::SubtitleString (
 	, _italic (italic)
 	, _colour (colour)
 	, _size (size)
+	, _aspect_adjust (aspect_adjust)
 	, _in (in)
 	, _out (out)
 	, _v_position (v_position)
@@ -77,6 +80,7 @@ dcp::operator== (SubtitleString const & a, SubtitleString const & b)
 		a.italic() == b.italic() &&
 		a.colour() == b.colour() &&
 		a.size() == b.size() &&
+		fabs (a.aspect_adjust() - b.aspect_adjust()) < ASPECT_ADJUST_EPSILON &&
 		a.in() == b.in() &&
 		a.out() == b.out() &&
 		a.v_position() == b.v_position() &&
@@ -102,7 +106,8 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 		s << "non-italic";
 	}
 	
-	s << ", size " << sub.size() << ", colour " << sub.colour() << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align()) << ";\n"
+	s << ", size " << sub.size() << ", aspect " << sub.aspect_adjust() << ", colour " << sub.colour()
+	  << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align()) << ";\n"
 	  << "effect " << ((int) sub.effect()) << ", effect colour " << sub.effect_colour();
 
 	return s;

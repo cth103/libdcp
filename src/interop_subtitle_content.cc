@@ -23,6 +23,7 @@
 #include "raw_convert.h"
 #include "font_node.h"
 #include <boost/foreach.hpp>
+#include <cmath>
 
 using std::list;
 using std::string;
@@ -93,6 +94,7 @@ InteropSubtitleContent::xml_as_string () const
 	bool italic = false;
 	Colour colour;
 	int size = 0;
+	float aspect_adjust = 1.0;
 	Effect effect = NONE;
 	Colour effect_colour;
 	int spot_number = 1;
@@ -112,11 +114,12 @@ InteropSubtitleContent::xml_as_string () const
 		*/
 
 		bool const font_changed =
-			font         != i->font()         ||
-			italic       != i->italic()       ||
+			font          != i->font()          ||
+			italic        != i->italic()        ||
 			colour        != i->colour()        ||
-			size         != i->size()         ||
-			effect       != i->effect()       ||
+			size          != i->size()          ||
+			fabs (aspect_adjust - i->aspect_adjust()) > ASPECT_ADJUST_EPSILON ||
+			effect        != i->effect()        ||
 			effect_colour != i->effect_colour();
 
 		if (font_changed) {
@@ -124,6 +127,7 @@ InteropSubtitleContent::xml_as_string () const
 			italic = i->italic ();
 			colour = i->colour ();
 			size = i->size ();
+			aspect_adjust = i->aspect_adjust ();
 			effect = i->effect ();
 			effect_colour = i->effect_colour ();
 		}
@@ -136,6 +140,9 @@ InteropSubtitleContent::xml_as_string () const
 			font_element->set_attribute ("Italic", italic ? "yes" : "no");
 			font_element->set_attribute ("Color", colour.to_argb_string());
 			font_element->set_attribute ("Size", raw_convert<string> (size));
+			if (fabs (aspect_adjust - 1.0) > ASPECT_ADJUST_EPSILON) {
+				font_element->set_attribute ("AspectAdjust", raw_convert<string> (aspect_adjust));
+			}
 			font_element->set_attribute ("Effect", effect_to_string (effect));
 			font_element->set_attribute ("EffectColor", effect_colour.to_argb_string());
 			font_element->set_attribute ("Script", "normal");

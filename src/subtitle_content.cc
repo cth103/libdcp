@@ -131,16 +131,17 @@ SubtitleContent::maybe_add_subtitle (string text, ParseState const & parse_state
 	_subtitles.push_back (
 		SubtitleString (
 			effective_font.id,
-			effective_font.italic.get(),
-			effective_font.colour.get(),
+			effective_font.italic.get_value_or (false),
+			effective_font.colour.get_value_or (dcp::Colour (255, 255, 255)),
 			effective_font.size,
+			effective_font.aspect_adjust.get_value_or (1.0),
 			effective_subtitle.in,
 			effective_subtitle.out,
 			effective_text.v_position,
 			effective_text.v_align,
 			text,
-			effective_font.effect ? effective_font.effect.get() : NONE,
-			effective_font.effect_colour.get(),
+			effective_font.effect.get_value_or (NONE),
+			effective_font.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
 			effective_subtitle.fade_up_time,
 			effective_subtitle.fade_down_time
 			)
