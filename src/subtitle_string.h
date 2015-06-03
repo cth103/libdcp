@@ -130,6 +130,10 @@ public:
 		return _aspect_adjust;
 	}
 
+	void set_h_position (float p) {
+		_h_position = p;
+	}
+
 	/** @param p New vertical position as a proportion of the screen height
 	 *  from the top (between 0 and 1)
 	 */
