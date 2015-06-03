@@ -113,9 +113,9 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 	}
 	
 	s << ", size " << sub.size() << ", aspect " << sub.aspect_adjust() << ", colour " << sub.colour()
-	  << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align()) << ",\n"
-	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align()) << ";\n"
-	  << "effect " << ((int) sub.effect()) << ", effect colour " << sub.effect_colour();
+	  << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align())
+	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align())
+	  << ", effect " << ((int) sub.effect()) << ", effect colour " << sub.effect_colour();
 
 	return s;
 }

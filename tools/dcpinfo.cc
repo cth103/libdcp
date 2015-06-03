@@ -17,10 +17,6 @@
 
 */
 
-#include <iostream>
-#include <cstdlib>
-#include <boost/filesystem.hpp>
-#include <getopt.h>
 #include "dcp.h"
 #include "exceptions.h"
 #include "reel.h"
@@ -33,6 +29,11 @@
 #include "subtitle_string.h"
 #include "cpl.h"
 #include "common.h"
+#include <getopt.h>
+#include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
+#include <iostream>
+#include <cstdlib>
 
 using std::string;
 using std::cerr;
@@ -82,21 +83,8 @@ main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
 	list<SubtitleString> subs = reel->main_subtitle()->subtitle_content()->subtitles ();
 	cout << "      Subtitle: " << subs.size() << " subtitles in " << reel->main_subtitle()->subtitle_content()->language() << "\n";
 	if (list_subtitles) {
-		for (list<SubtitleString>::const_iterator k = subs.begin(); k != subs.end(); ++k) {
-			cout << "        " << k->text() << "\n";
-			cout << "          "
-			     << "font:" << k->font().get_value_or("[default]") << "; "
-			     << "italic:" << k->italic() << "; "
-			     << "color:" << k->colour() << "; "
-			     << "in:" << k->in() << "; "
-			     << "out:" << k->out() << "; "
-			     << "v_position:" << k->v_position() << "; "
-			     << "v_align:" << k->v_align() << "; "
-			     << "effect:" << k->effect() << "; "
-			     << "effect_color:" << k->effect_colour() << "; "
-			     << "fade_up_time:" << k->fade_up_time() << "; "
-			     << "fade_down_time:" << k->fade_down_time() << "; "
-			     << "size: " << k->size() << "\n";
+		BOOST_FOREACH (SubtitleString const& k, subs) {
+			cout << k << "\n";
 		}
 	}
 }
