@@ -21,14 +21,14 @@
 #include "decrypted_kdm.h"
 #include "encrypted_kdm.h"
 #include "signer.h"
-#include "mono_picture_mxf.h"
-#include "sound_mxf.h"
+#include "mono_picture_asset.h"
+#include "sound_asset.h"
 #include "reel.h"
 #include "test.h"
 #include "cpl.h"
 #include "mono_picture_frame.h"
 #include "certificate_chain.h"
-#include "mono_picture_mxf_writer.h"
+#include "mono_picture_asset_writer.h"
 #include "reel_picture_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "file.h"
@@ -43,7 +43,7 @@ using std::list;
 using boost::shared_ptr;
 using boost::scoped_array;
 
-/* Build an encrypted picture MXF and a KDM for it and check that the KDM can be decrypted */
+/* Build an encrypted picture asset and a KDM for it and check that the KDM can be decrypted */
 BOOST_AUTO_TEST_CASE (round_trip_test)
 {
 	shared_ptr<dcp::Signer> signer (new dcp::Signer ("openssl"));
@@ -51,8 +51,8 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	boost::filesystem::path work_dir = "build/test/round_trip_test";
 	boost::filesystem::create_directory (work_dir);
 
-	shared_ptr<dcp::MonoPictureMXF> mxf_A (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
-	shared_ptr<dcp::PictureMXFWriter> writer = mxf_A->start_write (work_dir / "video.mxf", dcp::SMPTE, false);
+	shared_ptr<dcp::MonoPictureAsset> asset_A (new dcp::MonoPictureAsset (dcp::Fraction (24, 1)));
+	shared_ptr<dcp::PictureAssetWriter> writer = asset_A->start_write (work_dir / "video.mxf", dcp::SMPTE, false);
 	dcp::File j2c ("test/data/32x32_red_square.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data (), j2c.size ());
@@ -61,11 +61,11 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	dcp::Key key;
 
-	mxf_A->set_key (key);
+	asset_A->set_key (key);
 
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
 	shared_ptr<dcp::Reel> reel (new dcp::Reel ());
-	reel->add (shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (mxf_A, 0)));
+	reel->add (shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (asset_A, 0)));
 	cpl->add (reel);
 
 	/* A KDM using our certificate chain's leaf key pair */
@@ -98,16 +98,16 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 		++j;
 	}
 
-	/* Reload the picture MXF */
-	shared_ptr<dcp::MonoPictureMXF> mxf_B (
-		new dcp::MonoPictureMXF (work_dir / "video.mxf")
+	/* Reload the picture asset */
+	shared_ptr<dcp::MonoPictureAsset> asset_B (
+		new dcp::MonoPictureAsset (work_dir / "video.mxf")
 		);
 
 	BOOST_CHECK (!kdm_B.keys().empty ());
-	mxf_B->set_key (kdm_B.keys().front().key());
+	asset_B->set_key (kdm_B.keys().front().key());
 
-	shared_ptr<dcp::XYZImage> xyz_A = mxf_A->get_frame(0)->xyz_image ();
-	shared_ptr<dcp::XYZImage> xyz_B = mxf_B->get_frame(0)->xyz_image ();
+	shared_ptr<dcp::XYZImage> xyz_A = asset_A->get_frame(0)->xyz_image ();
+	shared_ptr<dcp::XYZImage> xyz_B = asset_B->get_frame(0)->xyz_image ();
 
 	scoped_array<uint8_t> frame_A (new uint8_t[xyz_A->size().width * xyz_A->size().height * 4]);
 	dcp::xyz_to_rgba (xyz_A, dcp::ColourConversion::srgb_to_xyz(), frame_A.get());

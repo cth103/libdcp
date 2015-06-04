@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,16 +28,16 @@
 
 namespace dcp {
 
-class MonoPictureMXF;	
+class MonoPictureAsset;	
 
 /** @class ReelMonoPictureAsset
- *  @brief Part of a Reel's description which refers to a monoscopic picture MXF.
+ *  @brief Part of a Reel's description which refers to a monoscopic picture asset.
  */
 class ReelMonoPictureAsset : public ReelPictureAsset
 {
 public:
 	ReelMonoPictureAsset ();
-	ReelMonoPictureAsset (boost::shared_ptr<MonoPictureMXF> content, int64_t entry_point);
+	ReelMonoPictureAsset (boost::shared_ptr<MonoPictureAsset> asset, int64_t entry_point);
 	ReelMonoPictureAsset (boost::shared_ptr<const cxml::Node>);
 
 private:

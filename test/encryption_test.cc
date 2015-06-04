@@ -23,10 +23,10 @@
 #include "dcp.h"
 #include "signer.h"
 #include "cpl.h"
-#include "mono_picture_mxf.h"
-#include "picture_mxf_writer.h"
-#include "sound_mxf_writer.h"
-#include "sound_mxf.h"
+#include "mono_picture_asset.h"
+#include "picture_asset_writer.h"
+#include "sound_asset_writer.h"
+#include "sound_asset.h"
 #include "reel.h"
 #include "test.h"
 #include "file.h"
@@ -82,20 +82,20 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 
 	dcp::Key key;
 	
-	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
+	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1)));
 	mp->set_metadata (mxf_metadata);
 	mp->set_key (key);
 
-	shared_ptr<dcp::PictureMXFWriter> writer = mp->start_write ("build/test/DCP/encryption_test/video.mxf", dcp::SMPTE, false);
+	shared_ptr<dcp::PictureAssetWriter> writer = mp->start_write ("build/test/DCP/encryption_test/video.mxf", dcp::SMPTE, false);
 	dcp::File j2c ("test/data/32x32_red_square.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data (), j2c.size ());
 	}
 	writer->finalize ();
 
-	shared_ptr<dcp::SoundMXF> ms (new dcp::SoundMXF (dcp::Fraction (24, 1), 48000, 1));
+	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1));
 	ms->set_key (key);
-	shared_ptr<dcp::SoundMXFWriter> sound_writer = ms->start_write ("build/test/DCP/encryption_test/audio.mxf", dcp::SMPTE);
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/encryption_test/audio.mxf", dcp::SMPTE);
 	
 	SF_INFO info;
 	info.format = 0;

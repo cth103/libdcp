@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,22 +17,22 @@
 
 */
 
-#ifndef LIBDCP_STEREO_PICTURE_MXF_H
-#define LIBDCP_STEREO_PICTURE_MXF_H
+#ifndef LIBDCP_STEREO_PICTURE_ASSET_H
+#define LIBDCP_STEREO_PICTURE_ASSET_H
 
-#include "picture_mxf.h"
+#include "picture_asset.h"
 
 namespace dcp {
 	
 /** A 3D (stereoscopic) picture asset */	
-class StereoPictureMXF : public PictureMXF
+class StereoPictureAsset : public PictureAsset
 {
 public:
-	StereoPictureMXF (boost::filesystem::path file);
-	StereoPictureMXF (Fraction edit_rate);
+	StereoPictureAsset (boost::filesystem::path file);
+	StereoPictureAsset (Fraction edit_rate);
 
-	/** Start a progressive write to a StereoPictureMXF */
-	boost::shared_ptr<PictureMXFWriter> start_write (boost::filesystem::path file, Standard, bool);
+	/** Start a progressive write to a StereoPictureAsset */
+	boost::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path file, Standard, bool);
 
 	bool equals (
 		boost::shared_ptr<const Asset> other,

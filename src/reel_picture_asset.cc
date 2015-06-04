@@ -22,7 +22,7 @@
  */
 
 #include "reel_picture_asset.h"
-#include "picture_mxf.h"
+#include "picture_asset.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
 #include <libcxml/cxml.h>
@@ -43,7 +43,7 @@ ReelPictureAsset::ReelPictureAsset ()
 
 }
 
-ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureMXF> asset, int64_t entry_point)
+ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entry_point)
 	: ReelMXFAsset (asset, asset->key_id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 	, _frame_rate (asset->frame_rate ())
 	, _screen_aspect_ratio (asset->screen_aspect_ratio ())

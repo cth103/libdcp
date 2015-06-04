@@ -17,12 +17,12 @@
 
 */
 
-/** @file  src/sound_mxf.h
- *  @brief SoundMXF class
+/** @file  src/sound_asset.h
+ *  @brief SoundAsset class
  */
 
-#ifndef LIBDCP_SOUND_MXF_H
-#define LIBDCP_SOUND_MXF_H
+#ifndef LIBDCP_SOUND_ASSET_H
+#define LIBDCP_SOUND_ASSET_H
 
 #include "mxf.h"
 #include "types.h"
@@ -32,18 +32,18 @@ namespace dcp
 {
 
 class SoundFrame;
-class SoundMXFWriter;
+class SoundAssetWriter;
 
-/** @class SoundMXF
- *  @brief Representation of a MXF file containing sound
+/** @class SoundAsset
+ *  @brief Representation of a sound asset
  */
-class SoundMXF : public Asset, public MXF
+class SoundAsset : public Asset, public MXF
 {
 public:
-	SoundMXF (boost::filesystem::path file);
-	SoundMXF (Fraction edit_rate, int sampling_rate, int channels);
+	SoundAsset (boost::filesystem::path file);
+	SoundAsset (Fraction edit_rate, int sampling_rate, int channels);
 
-	boost::shared_ptr<SoundMXFWriter> start_write (boost::filesystem::path file, Standard standard);
+	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file, Standard standard);
 	
 	bool equals (
 		boost::shared_ptr<const Asset> other,
@@ -72,7 +72,7 @@ public:
 	}
 	
 private:
-	friend class SoundMXFWriter;
+	friend class SoundAssetWriter;
 	
 	std::string pkl_type (Standard standard) const;
 

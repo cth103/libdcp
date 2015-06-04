@@ -46,7 +46,6 @@ help (string n)
 	     << "  -V, --version                show libdcp version\n"
 	     << "  -h, --help                   show this help\n"
 	     << "  -v, --verbose                be verbose\n"
-	     << "  -n, --mxf-filenames          allow differing MXF filenames\n"
 	     << "      --cpl-annotation-texts   allow differing CPL annotation texts\n"
 	     << "  -m, --mean-pixel             maximum allowed mean pixel error (default 5)\n"
 	     << "  -s, --std-dev-pixel          maximum allowed standard deviation of pixel error (default 5)\n"
@@ -115,7 +114,6 @@ main (int argc, char* argv[])
 			{ "version", no_argument, 0, 'V'},
 			{ "help", no_argument, 0, 'h'},
 			{ "verbose", no_argument, 0, 'v'},
-			{ "mxf-filenames", no_argument, 0, 'n'},
 			{ "mean-pixel", required_argument, 0, 'm'},
 			{ "std-dev-pixel", required_argument, 0, 's'},
 			{ "keep-going", no_argument, 0, 'k'},
@@ -126,7 +124,7 @@ main (int argc, char* argv[])
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vhvnm:s:kACD:", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhvm:s:kACD:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -141,9 +139,6 @@ main (int argc, char* argv[])
 			exit (EXIT_SUCCESS);
 		case 'v':
 			verbose = true;
-			break;
-		case 'n':
-			options.mxf_filenames_can_differ = true;
 			break;
 		case 'm':
 			options.max_mean_pixel_error = atof (optarg);

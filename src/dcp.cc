@@ -23,12 +23,12 @@
 
 #include "raw_convert.h"
 #include "dcp.h"
-#include "sound_mxf.h"
-#include "picture_mxf.h"
+#include "sound_asset.h"
+#include "picture_asset.h"
 #include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
-#include "mono_picture_mxf.h"
-#include "stereo_picture_mxf.h"
+#include "mono_picture_asset.h"
+#include "stereo_picture_asset.h"
 #include "util.h"
 #include "metadata.h"
 #include "exceptions.h"
@@ -149,14 +149,14 @@ DCP::read (bool keep_going, ReadErrors* errors)
 				case ASDCP::ESS_MPEG2_VES:
 					throw DCPReadError ("MPEG2 video essences are not supported");
 				case ASDCP::ESS_JPEG_2000:
-					_assets.push_back (shared_ptr<MonoPictureMXF> (new MonoPictureMXF (path)));
+					_assets.push_back (shared_ptr<MonoPictureAsset> (new MonoPictureAsset (path)));
 					break;
 				case ASDCP::ESS_PCM_24b_48k:
 				case ASDCP::ESS_PCM_24b_96k:
-					_assets.push_back (shared_ptr<SoundMXF> (new SoundMXF (path)));
+					_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (path)));
 					break;
 				case ASDCP::ESS_JPEG_2000_S:
-					_assets.push_back (shared_ptr<StereoPictureMXF> (new StereoPictureMXF (path)));
+					_assets.push_back (shared_ptr<StereoPictureAsset> (new StereoPictureAsset (path)));
 					break;
 				case ASDCP::ESS_TIMED_TEXT:
 					_assets.push_back (shared_ptr<SMPTESubtitleAsset> (new SMPTESubtitleAsset (path)));

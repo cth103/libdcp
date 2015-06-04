@@ -17,14 +17,18 @@
 
 */
 
-#include "stereo_picture_mxf_writer.h"
-#include "exceptions.h"
-#include "dcp_assert.h"
-#include "picture_mxf.h"
+/** @file  src/mono_picture_asset_writer.cc
+ *  @brief MonoPictureAssetWriter class
+ */
+
 #include "AS_DCP.h"
 #include "KM_fileio.h"
+#include "mono_picture_asset_writer.h"
+#include "exceptions.h"
+#include "picture_asset.h"
+#include "dcp_assert.h"
 
-#include "picture_mxf_writer_common.cc"
+#include "picture_asset_writer_common.cc"
 
 using std::istream;
 using std::ostream;
@@ -32,32 +36,30 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
-struct StereoPictureMXFWriter::ASDCPState : public ASDCPStateBase
+struct MonoPictureAssetWriter::ASDCPState : public ASDCPStateBase
 {
-	ASDCP::JP2K::MXFSWriter mxf_writer;
+	ASDCP::JP2K::MXFWriter mxf_writer;
 };
 
-StereoPictureMXFWriter::StereoPictureMXFWriter (PictureMXF* mxf, boost::filesystem::path file, Standard standard, bool overwrite)
-	: PictureMXFWriter (mxf, file, standard, overwrite)
-	, _state (new StereoPictureMXFWriter::ASDCPState)
-	, _next_eye (EYE_LEFT)
+/** @param a Asset to write to.  `a' must not be deleted while
+ *  this writer class still exists, or bad things will happen.
+ */
+MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, boost::filesystem::path file, Standard standard, bool overwrite)
+	: PictureAssetWriter (asset, file, standard, overwrite)
+	, _state (new MonoPictureAssetWriter::ASDCPState)
 {
 
 }
 
 void
-StereoPictureMXFWriter::start (uint8_t* data, int size)
+MonoPictureAssetWriter::start (uint8_t* data, int size)
 {
-	dcp::start (this, _state, _standard, _picture_mxf, data, size);
-	_picture_mxf->set_frame_rate (Fraction (_picture_mxf->edit_rate().numerator * 2, _picture_mxf->edit_rate().denominator));
+	dcp::start (this, _state, _standard, _picture_asset, data, size);
+	_picture_asset->set_frame_rate (_picture_asset->edit_rate());
 }
 
-/** Write a frame for one eye.  Frames must be written left, then right, then left etc.
- *  @param data JPEG2000 data.
- *  @param size Size of data.
- */
 FrameInfo
-StereoPictureMXFWriter::write (uint8_t* data, int size)
+MonoPictureAssetWriter::write (uint8_t* data, int size)
 {
 	DCP_ASSERT (!_finalized);
 
@@ -72,52 +74,38 @@ StereoPictureMXFWriter::write (uint8_t* data, int size)
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
-	Kumu::Result_t r = _state->mxf_writer.WriteFrame (
-		_state->frame_buffer,
-		_next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
-		_encryption_context,
-		0,
-		&hash
-		);
-
+	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _encryption_context, 0, &hash);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
 	}
 
-	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
-
-	if (_next_eye == EYE_LEFT) {
-		++_frames_written;
-	}
-			
+	++_frames_written;
 	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 
 void
-StereoPictureMXFWriter::fake_write (int size)
+MonoPictureAssetWriter::fake_write (int size)
 {
 	DCP_ASSERT (_started);
 	DCP_ASSERT (!_finalized);
 
-	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size, _next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT);
+	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
 	}
 
-	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
-	if (_next_eye == EYE_LEFT) {
-		++_frames_written;
-	}
+	++_frames_written;
 }
 
 void
-StereoPictureMXFWriter::finalize ()
+MonoPictureAssetWriter::finalize ()
 {
 	Kumu::Result_t r = _state->mxf_writer.Finalize();
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _file.string(), r));
 	}
 
-	_picture_mxf->_intrinsic_duration = _frames_written;
-	PictureMXFWriter::finalize ();
+	_picture_asset->_intrinsic_duration = _frames_written;
+	PictureAssetWriter::finalize ();
 }
+

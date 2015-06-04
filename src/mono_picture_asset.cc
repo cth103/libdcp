@@ -17,24 +17,25 @@
 
 */
 
+#include "mono_picture_asset.h"
+#include "mono_picture_asset_writer.h"
 #include "AS_DCP.h"
-#include "stereo_picture_mxf.h"
-#include "stereo_picture_frame.h"
+#include "KM_fileio.h"
 #include "exceptions.h"
-#include "stereo_picture_mxf_writer.h"
 #include "dcp_assert.h"
+#include "mono_picture_frame.h"
+#include "compose.hpp"
 
 using std::string;
-using std::pair;
-using std::make_pair;
+using std::vector;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
-StereoPictureMXF::StereoPictureMXF (boost::filesystem::path file)
-	: PictureMXF (file)
+MonoPictureAsset::MonoPictureAsset (boost::filesystem::path file)
+	: PictureAsset (file)
 {
-	ASDCP::JP2K::MXFSReader reader;
+	ASDCP::JP2K::MXFReader reader;
 	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file.string(), r));
@@ -46,7 +47,7 @@ StereoPictureMXF::StereoPictureMXF (boost::filesystem::path file)
 	}
 
 	read_picture_descriptor (desc);
-
+	
 	ASDCP::WriterInfo info;
 	if (ASDCP_FAILURE (reader.FillWriterInfo (info))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
@@ -55,38 +56,35 @@ StereoPictureMXF::StereoPictureMXF (boost::filesystem::path file)
 	_id = read_writer_info (info);
 }
 
-StereoPictureMXF::StereoPictureMXF (Fraction edit_rate)
-	: PictureMXF
-	  (edit_rate)
+MonoPictureAsset::MonoPictureAsset (Fraction edit_rate)
+	: PictureAsset (edit_rate)
 {
-
+	
 }
 
-shared_ptr<const StereoPictureFrame>
-StereoPictureMXF::get_frame (int n) const
+shared_ptr<const MonoPictureFrame>
+MonoPictureAsset::get_frame (int n) const
 {
-	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (file().string(), n));
-}
-
-shared_ptr<PictureMXFWriter>
-StereoPictureMXF::start_write (boost::filesystem::path file, Standard standard, bool overwrite)
-{
-	return shared_ptr<StereoPictureMXFWriter> (new StereoPictureMXFWriter (this, file, standard, overwrite));
+	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (_file, n, _decryption_context));
 }
 
 bool
-StereoPictureMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
+MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
-	ASDCP::JP2K::MXFSReader reader_A;
-	Kumu::Result_t r = reader_A.OpenRead (file().string().c_str());
+	if (!dynamic_pointer_cast<const MonoPictureAsset> (other)) {
+		return false;
+	}
+
+	ASDCP::JP2K::MXFReader reader_A;
+	Kumu::Result_t r = reader_A.OpenRead (_file.string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", _file.string(), r));
 	}
 	
-	ASDCP::JP2K::MXFSReader reader_B;
+	ASDCP::JP2K::MXFReader reader_B;
 	r = reader_B.OpenRead (other->file().string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", other->file().string(), r));
 	}
 	
 	ASDCP::JP2K::PictureDescriptor desc_A;
@@ -101,40 +99,40 @@ StereoPictureMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 	if (!descriptor_equals (desc_A, desc_B, note)) {
 		return false;
 	}
-	
-	shared_ptr<const StereoPictureMXF> other_picture = dynamic_pointer_cast<const StereoPictureMXF> (other);
+
+	shared_ptr<const MonoPictureAsset> other_picture = dynamic_pointer_cast<const MonoPictureAsset> (other);
 	DCP_ASSERT (other_picture);
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
-		shared_ptr<const StereoPictureFrame> frame_A;
-		shared_ptr<const StereoPictureFrame> frame_B;
-		try {
-			frame_A = get_frame (i);
-			frame_B = other_picture->get_frame (i);
-		} catch (DCPReadError& e) {
-			/* If there was a problem reading the frame data we'll just assume
-			   the two frames are not equal.
-			*/
-			note (DCP_ERROR, e.what ());
+		if (i >= other_picture->intrinsic_duration()) {
 			return false;
 		}
 		
-		if (!frame_buffer_equals (
-			    i, opt, note,
-			    frame_A->left_j2k_data(), frame_A->left_j2k_size(),
-			    frame_B->left_j2k_data(), frame_B->left_j2k_size()
-			    )) {
-			return false;
-		}
+		note (DCP_PROGRESS, String::compose ("Comparing video frame %1 of %2", i, _intrinsic_duration));
+		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
+		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
 		
 		if (!frame_buffer_equals (
 			    i, opt, note,
-			    frame_A->right_j2k_data(), frame_A->right_j2k_size(),
-			    frame_B->right_j2k_data(), frame_B->right_j2k_size()
+			    frame_A->j2k_data(), frame_A->j2k_size(),
+			    frame_B->j2k_data(), frame_B->j2k_size()
 			    )) {
 			return false;
 		}
 	}
 
 	return true;
+}
+
+shared_ptr<PictureAssetWriter>
+MonoPictureAsset::start_write (boost::filesystem::path file, Standard standard, bool overwrite)
+{
+	/* XXX: can't we use shared_ptr here? */
+	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, file, standard, overwrite));
+}
+
+string
+MonoPictureAsset::cpl_node_name () const
+{
+	return "MainPicture";
 }

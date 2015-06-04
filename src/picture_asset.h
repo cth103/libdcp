@@ -17,11 +17,11 @@
 
 */
 
-#ifndef LIBDCP_PICTURE_MXF_H
-#define LIBDCP_PICTURE_MXF_H
+#ifndef LIBDCP_PICTURE_ASSET_H
+#define LIBDCP_PICTURE_ASSET_H
 
-/** @file  src/picture_mxf.h
- *  @brief PictureMXF class.
+/** @file  src/picture_asset.h
+ *  @brief PictureAsset class.
  */
 
 #include "mxf.h"
@@ -40,18 +40,18 @@ namespace dcp
 
 class MonoPictureFrame;	
 class StereoPictureFrame;
-class PictureMXFWriter;
+class PictureAssetWriter;
 
-/** @class PictureMXF
+/** @class PictureAsset
  *  @brief An asset made up of JPEG2000 data.
  */
-class PictureMXF : public Asset, public MXF
+class PictureAsset : public Asset, public MXF
 {
 public:
-	PictureMXF (boost::filesystem::path file);
-	PictureMXF (Fraction edit_rate);
+	PictureAsset (boost::filesystem::path file);
+	PictureAsset (Fraction edit_rate);
 
-	virtual boost::shared_ptr<PictureMXFWriter> start_write (
+	virtual boost::shared_ptr<PictureAssetWriter> start_write (
 		boost::filesystem::path file,
 		Standard standard,
 		bool overwrite
@@ -90,8 +90,8 @@ public:
 	}
 
 protected:
-	friend class MonoPictureMXFWriter;
-	friend class StereoPictureMXFWriter;
+	friend class MonoPictureAssetWriter;
+	friend class StereoPictureAssetWriter;
 
 	bool frame_buffer_equals (
 		int frame, EqualityOptions opt, NoteHandler note,

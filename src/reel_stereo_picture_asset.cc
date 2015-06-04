@@ -22,7 +22,7 @@
  */
 
 #include "reel_stereo_picture_asset.h"
-#include "stereo_picture_mxf.h"
+#include "stereo_picture_asset.h"
 #include <libcxml/cxml.h>
 
 using std::string;
@@ -36,7 +36,7 @@ ReelStereoPictureAsset::ReelStereoPictureAsset ()
 
 }
 
-ReelStereoPictureAsset::ReelStereoPictureAsset (boost::shared_ptr<StereoPictureMXF> mxf, int64_t entry_point)
+ReelStereoPictureAsset::ReelStereoPictureAsset (boost::shared_ptr<StereoPictureAsset> mxf, int64_t entry_point)
 	: ReelPictureAsset (mxf, entry_point)
 {
 

@@ -18,9 +18,9 @@
 */
 
 #include "KM_fileio.h"
-#include "picture_mxf_writer.h"
+#include "picture_asset_writer.h"
 #include "exceptions.h"
-#include "picture_mxf.h"
+#include "picture_asset.h"
 #include "AS_DCP.h"
 #include <inttypes.h>
 #include <stdint.h>
@@ -31,12 +31,12 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
-PictureMXFWriter::PictureMXFWriter (PictureMXF* mxf, boost::filesystem::path file, Standard standard, bool overwrite)
-	: MXFWriter (mxf, file)
-	, _picture_mxf (mxf)
+PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, boost::filesystem::path file, Standard standard, bool overwrite)
+	: AssetWriter (asset, file)
+	, _picture_asset (asset)
 	, _started (false)
 	, _standard (standard)
 	, _overwrite (overwrite)
 {
-	mxf->set_file (file);
+	asset->set_file (file);
 }

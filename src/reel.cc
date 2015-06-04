@@ -19,10 +19,10 @@
 
 #include "reel.h"
 #include "util.h"
-#include "picture_mxf.h"
-#include "mono_picture_mxf.h"
-#include "stereo_picture_mxf.h"
-#include "sound_mxf.h"
+#include "picture_asset.h"
+#include "mono_picture_asset.h"
+#include "stereo_picture_asset.h"
+#include "sound_asset.h"
 #include "subtitle_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_stereo_picture_asset.h"
@@ -140,10 +140,10 @@ Reel::add (DecryptedKDM const & kdm)
 
 	for (list<DecryptedKDMKey>::iterator i = keys.begin(); i != keys.end(); ++i) {
 		if (i->id() == _main_picture->key_id()) {
-			_main_picture->mxf()->set_key (i->key ());
+			_main_picture->asset()->set_key (i->key ());
 		}
 		if (i->id() == _main_sound->key_id()) {
-			_main_sound->mxf()->set_key (i->key ());
+			_main_sound->asset()->set_key (i->key ());
 		}
 	}
 }
@@ -167,14 +167,14 @@ void
 Reel::resolve_refs (list<shared_ptr<Object> > objects)
 {
 	if (_main_picture) {
-		_main_picture->asset().resolve (objects);
+		_main_picture->asset_ref().resolve (objects);
 	}
 
 	if (_main_sound) {
-		_main_sound->asset().resolve (objects);
+		_main_sound->asset_ref().resolve (objects);
 	}
 
 	if (_main_subtitle) {
-		_main_subtitle->asset().resolve (objects);
+		_main_subtitle->asset_ref().resolve (objects);
 	}
 }

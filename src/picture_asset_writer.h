@@ -17,16 +17,16 @@
 
 */
 
-/** @file  src/picture_mxf_writer.h
- *  @brief PictureMXFWriter and FrameInfo classes.
+/** @file  src/picture_asset_writer.h
+ *  @brief PictureAssetWriter and FrameInfo classes.
  */
 
-#ifndef LIBDCP_PICTURE_MXF_WRITER_H
-#define LIBDCP_PICTURE_MXF_WRITER_H
+#ifndef LIBDCP_PICTURE_ASSET_WRITER_H
+#define LIBDCP_PICTURE_ASSET_WRITER_H
 
 #include "metadata.h"
 #include "types.h"
-#include "mxf_writer.h"
+#include "asset_writer.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 #include <stdint.h>
@@ -35,7 +35,7 @@
 
 namespace dcp {
 
-class PictureMXF;	
+class PictureAsset;	
 
 /** @class FrameInfo
  *  @brief Information about a single frame (either a monoscopic frame or a left *or* right eye stereoscopic frame)
@@ -58,10 +58,10 @@ struct FrameInfo
 	std::string hash;
 };
 
-/** @class PictureMXFWriter
- *  @brief Parent class for classes which write picture MXF files.
+/** @class PictureAssetWriter
+ *  @brief Parent class for classes which write picture assets.
  */
-class PictureMXFWriter : public MXFWriter
+class PictureAssetWriter : public AssetWriter
 {
 public:
 	virtual FrameInfo write (uint8_t *, int) = 0;
@@ -69,11 +69,11 @@ public:
 
 protected:
 	template <class P, class Q>
-	friend void start (PictureMXFWriter *, boost::shared_ptr<P>, Standard, Q *, uint8_t *, int);
+	friend void start (PictureAssetWriter *, boost::shared_ptr<P>, Standard, Q *, uint8_t *, int);
 
-	PictureMXFWriter (PictureMXF *, boost::filesystem::path, Standard standard, bool);
+	PictureAssetWriter (PictureAsset *, boost::filesystem::path, Standard standard, bool);
 
-	PictureMXF* _picture_mxf;
+	PictureAsset* _picture_asset;
 	bool _started;
 	Standard _standard;
 	bool _overwrite;

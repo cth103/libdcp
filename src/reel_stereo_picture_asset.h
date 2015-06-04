@@ -28,7 +28,7 @@
 
 namespace dcp {
 
-class StereoPictureMXF;	
+class StereoPictureAsset;	
 
 /** @class ReelStereoPictureAsset
  *  @brief Part of a Reel's description which refers to a stereoscopic picture MXF.
@@ -37,7 +37,7 @@ class ReelStereoPictureAsset : public ReelPictureAsset
 {
 public:
 	ReelStereoPictureAsset ();
-	ReelStereoPictureAsset (boost::shared_ptr<StereoPictureMXF> content, int64_t entry_point);
+	ReelStereoPictureAsset (boost::shared_ptr<StereoPictureAsset> content, int64_t entry_point);
 	ReelStereoPictureAsset (boost::shared_ptr<const cxml::Node>);
 
 private:

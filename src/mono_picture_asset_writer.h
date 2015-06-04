@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,8 +17,14 @@
 
 */
 
-#include "picture_mxf_writer.h"
-#include "types.h"
+/** @file  src/mono_picture_asset_writer.h
+ *  @brief MonoPictureAssetWriter class
+ */
+
+#ifndef LIBDCP_MONO_PICTURE_ASSET_WRITER_H
+#define LIBDCP_MONO_PICTURE_ASSET_WRITER_H
+
+#include "picture_asset_writer.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 #include <stdint.h>
@@ -27,31 +33,27 @@
 
 namespace dcp {
 
-/** A helper class for writing to StereoPictureAssets progressively (i.e. writing frame-by-frame,
- *  rather than giving libdcp all the frames in one go).
+/** @class MonoPictureAssetWriter
+ *  @brief A helper class for writing to MonoPictureAssets
  *
- *  Objects of this class can only be created with StereoPictureAsset::start_write().
+ *  Objects of this class can only be created with MonoPictureAsset::start_write().
  *
  *  Frames can be written to the MonoPictureAsset by calling write() with a JPEG2000 image
  *  (a verbatim .j2c file).  finalize() must be called after the last frame has been written.
  *  The action of finalize() can't be done in MonoPictureAssetWriter's destructor as it may
  *  throw an exception.
  */
-class StereoPictureMXFWriter : public PictureMXFWriter
+class MonoPictureAssetWriter : public PictureAssetWriter
 {
 public:
-	/** Write a frame for one eye.  Frames must be written left, then right, then left etc.
-	 *  @param data JPEG2000 data.
-	 *  @param size Size of data.
-	 */
-	FrameInfo write (uint8_t* data, int size);
+	FrameInfo write (uint8_t *, int);
 	void fake_write (int size);
 	void finalize ();
 
 private:
-	friend class StereoPictureMXF;
+	friend class MonoPictureAsset;
 
-	StereoPictureMXFWriter (PictureMXF *, boost::filesystem::path file, Standard, bool);
+	MonoPictureAssetWriter (PictureAsset *, boost::filesystem::path file, Standard standard, bool);
 	void start (uint8_t *, int);
 
 	/* do this with an opaque pointer so we don't have to include
@@ -60,8 +62,8 @@ private:
 	   
 	struct ASDCPState;
 	boost::shared_ptr<ASDCPState> _state;
-
-	dcp::Eye _next_eye;
 };
 
 }
+
+#endif

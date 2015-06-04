@@ -33,10 +33,10 @@
 
 #include "dcp.h"
 #include "cpl.h"
-#include "mono_picture_mxf.h"
-#include "mono_picture_mxf_writer.h"
-#include "sound_mxf.h"
-#include "sound_mxf_writer.h"
+#include "mono_picture_asset.h"
+#include "mono_picture_asset_writer.h"
+#include "sound_asset.h"
+#include "sound_asset_writer.h"
 #include "reel.h"
 #include "file.h"
 #include "reel_mono_picture_asset.h"
@@ -49,15 +49,15 @@ main ()
 	/* Create a directory to put the DCP in */
 	boost::filesystem::create_directory ("DCP");
 	
-	/* Make a picture MXF.  This is a file which combines JPEG2000 files together to make
+	/* Make a picture asset.  This is a file which combines JPEG2000 files together to make
 	   up the video of the DCP.  First, create the object, specifying a frame rate of 24 frames
 	   per second.
 	*/
 
-	boost::shared_ptr<dcp::MonoPictureMXF> picture_mxf (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
+	boost::shared_ptr<dcp::MonoPictureAsset> picture_asset (new dcp::MonoPictureAsset (dcp::Fraction (24, 1)));
 
 	/* Start off a write to it */
-	boost::shared_ptr<dcp::PictureMXFWriter> picture_writer = picture_mxf->start_write ("DCP/picture.mxf", dcp::SMPTE, false);
+	boost::shared_ptr<dcp::PictureAssetWriter> picture_writer = picture_asset->start_write ("DCP/picture.mxf", dcp::SMPTE, false);
 
 	/* Write 24 frames of the same JPEG2000 file */
 	dcp::File picture ("examples/help.j2c");
@@ -71,8 +71,8 @@ main ()
 	/* Now create a sound MXF.  As before, create an object and a writer.
 	   When creating the object we specify the sampling rate (48kHz) and the number of channels (2).
 	*/
-	boost::shared_ptr<dcp::SoundMXF> sound_mxf (new dcp::SoundMXF (dcp::Fraction (24, 1), 48000, 2));
-	boost::shared_ptr<dcp::SoundMXFWriter> sound_writer = sound_mxf->start_write ("DCP/sound.mxf", dcp::SMPTE);
+	boost::shared_ptr<dcp::SoundAsset> sound_asset (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 2));
+	boost::shared_ptr<dcp::SoundAssetWriter> sound_writer = sound_asset->start_write ("DCP/sound.mxf", dcp::SMPTE);
 
 	/* Write some sine waves */
 	float* audio[2];
@@ -93,10 +93,10 @@ main ()
 	boost::shared_ptr<dcp::Reel> reel (new dcp::Reel ());
 
 	/* Add picture and sound to it.  The zeros are the `entry points', i.e. the first
-	   (video) frame from the MXFs that the reel should play.
+	   (video) frame from the assets that the reel should play.
 	*/
-	reel->add (boost::shared_ptr<dcp::ReelPictureAsset> (new dcp::ReelMonoPictureAsset (picture_mxf, 0)));
-	reel->add (boost::shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (sound_mxf, 0)));
+	reel->add (boost::shared_ptr<dcp::ReelPictureAsset> (new dcp::ReelMonoPictureAsset (picture_asset, 0)));
+	reel->add (boost::shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (sound_asset, 0)));
 
 	/* Make a CPL with this reel */
 	boost::shared_ptr<dcp::CPL> cpl (new dcp::CPL ("My film", dcp::FEATURE));
@@ -105,8 +105,8 @@ main ()
 	/* Write the DCP */
 	dcp::DCP dcp ("DCP");
 	dcp.add (cpl);
-	dcp.add (picture_mxf);
-	dcp.add (sound_mxf);
+	dcp.add (picture_asset);
+	dcp.add (sound_asset);
 	dcp.write_xml (dcp::SMPTE);
 	
 	return 0;

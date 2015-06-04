@@ -18,14 +18,14 @@
 */
 
 /** @file  src/sound_mxf.cc
- *  @brief SoundMXF class.
+ *  @brief SoundAsset class.
  */
 
-#include "sound_mxf.h"
+#include "sound_asset.h"
 #include "util.h"
 #include "exceptions.h"
 #include "sound_frame.h"
-#include "sound_mxf_writer.h"
+#include "sound_asset_writer.h"
 #include "compose.hpp"
 #include "KM_fileio.h"
 #include "AS_DCP.h"
@@ -43,11 +43,8 @@ using std::list;
 using boost::shared_ptr;
 using namespace dcp;
 
-SoundMXF::SoundMXF (boost::filesystem::path file)
+SoundAsset::SoundAsset (boost::filesystem::path file)
 	: Asset (file)
-	, _intrinsic_duration (0)
-	, _channels (0)
-	, _sampling_rate (0)
 {
 	ASDCP::PCM::MXFReader reader;
 	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
@@ -74,7 +71,7 @@ SoundMXF::SoundMXF (boost::filesystem::path file)
 	_id = read_writer_info (info);
 }
 
-SoundMXF::SoundMXF (Fraction edit_rate, int sampling_rate, int channels)
+SoundAsset::SoundAsset (Fraction edit_rate, int sampling_rate, int channels)
 	: _edit_rate (edit_rate)
 	, _intrinsic_duration (0)
 	, _channels (channels)
@@ -84,7 +81,7 @@ SoundMXF::SoundMXF (Fraction edit_rate, int sampling_rate, int channels)
 }
 
 bool
-SoundMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
+SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
 	ASDCP::PCM::MXFReader reader_A;
 	Kumu::Result_t r = reader_A.OpenRead (file().string().c_str());
@@ -156,21 +153,21 @@ SoundMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandle
 }
 
 shared_ptr<const SoundFrame>
-SoundMXF::get_frame (int n) const
+SoundAsset::get_frame (int n) const
 {
 	/* XXX: should add on entry point here? */
 	return shared_ptr<const SoundFrame> (new SoundFrame (file(), n, _decryption_context));
 }
 
-shared_ptr<SoundMXFWriter>
-SoundMXF::start_write (boost::filesystem::path file, Standard standard)
+shared_ptr<SoundAssetWriter>
+SoundAsset::start_write (boost::filesystem::path file, Standard standard)
 {
 	/* XXX: can't we use a shared_ptr here? */
-	return shared_ptr<SoundMXFWriter> (new SoundMXFWriter (this, file, standard));
+	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter (this, file, standard));
 }
 
 string
-SoundMXF::pkl_type (Standard standard) const
+SoundAsset::pkl_type (Standard standard) const
 {
 	switch (standard) {
 	case INTEROP:

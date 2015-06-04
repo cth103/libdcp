@@ -37,19 +37,19 @@ using namespace dcp;
  *  @param mxf_path Path to the asset's MXF file.
  *  @param n Frame within the asset, not taking EntryPoint into account.
  */
-StereoPictureFrame::StereoPictureFrame (boost::filesystem::path mxf_path, int n)
+StereoPictureFrame::StereoPictureFrame (boost::filesystem::path path, int n)
 {
 	ASDCP::JP2K::MXFSReader reader;
-	Kumu::Result_t r = reader.OpenRead (mxf_path.string().c_str());
+	Kumu::Result_t r = reader.OpenRead (path.string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path, r));
+		boost::throw_exception (FileError ("could not open MXF file for reading", path, r));
 	}
 
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = new ASDCP::JP2K::SFrameBuffer (4 * Kumu::Megabyte);
 
 	if (ASDCP_FAILURE (reader.ReadFrame (n, *_buffer))) {
-		boost::throw_exception (DCPReadError (String::compose ("could not read video frame %1 of %2", n, mxf_path.string())));
+		boost::throw_exception (DCPReadError (String::compose ("could not read video frame %1 of %2", n, path.string())));
 	}
 }
 

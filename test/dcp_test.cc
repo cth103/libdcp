@@ -20,11 +20,11 @@
 #include "dcp.h"
 #include "metadata.h"
 #include "cpl.h"
-#include "mono_picture_mxf.h"
-#include "stereo_picture_mxf.h"
-#include "picture_mxf_writer.h"
-#include "sound_mxf_writer.h"
-#include "sound_mxf.h"
+#include "mono_picture_asset.h"
+#include "stereo_picture_asset.h"
+#include "picture_asset_writer.h"
+#include "sound_asset_writer.h"
+#include "sound_asset.h"
 #include "reel.h"
 #include "test.h"
 #include "file.h"
@@ -62,18 +62,18 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
 	cpl->set_metadata (xml_meta);
 
-	shared_ptr<dcp::MonoPictureMXF> mp (new dcp::MonoPictureMXF (dcp::Fraction (24, 1)));
+	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1)));
 	mp->set_metadata (mxf_meta);
-	shared_ptr<dcp::PictureMXFWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test1/video.mxf", dcp::SMPTE, false);
+	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test1/video.mxf", dcp::SMPTE, false);
 	dcp::File j2c ("test/data/32x32_red_square.j2c");
 	for (int i = 0; i < 24; ++i) {
 		picture_writer->write (j2c.data (), j2c.size ());
 	}
 	picture_writer->finalize ();
 
-	shared_ptr<dcp::SoundMXF> ms (new dcp::SoundMXF (dcp::Fraction (24, 1), 48000, 1));
+	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1));
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundMXFWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test1/audio.mxf", dcp::SMPTE);
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test1/audio.mxf", dcp::SMPTE);
 
 	SF_INFO info;
 	info.format = 0;
@@ -133,9 +133,9 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
 	cpl->set_metadata (xml_meta);
 
-	shared_ptr<dcp::StereoPictureMXF> mp (new dcp::StereoPictureMXF (dcp::Fraction (24, 1)));
+	shared_ptr<dcp::StereoPictureAsset> mp (new dcp::StereoPictureAsset (dcp::Fraction (24, 1)));
 	mp->set_metadata (mxf_meta);
-	shared_ptr<dcp::PictureMXFWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test2/video.mxf", dcp::SMPTE, false);
+	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test2/video.mxf", dcp::SMPTE, false);
 	dcp::File j2c ("test/data/32x32_red_square.j2c");
 	for (int i = 0; i < 24; ++i) {
 		/* Left */
@@ -145,9 +145,9 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	}
 	picture_writer->finalize ();
 
-	shared_ptr<dcp::SoundMXF> ms (new dcp::SoundMXF (dcp::Fraction (24, 1), 48000, 1));
+	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1));
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundMXFWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf", dcp::SMPTE);
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf", dcp::SMPTE);
 
 	SF_INFO info;
 	info.format = 0;

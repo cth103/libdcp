@@ -20,8 +20,8 @@
 #include "dcp.h"
 #include "exceptions.h"
 #include "reel.h"
-#include "sound_mxf.h"
-#include "picture_mxf.h"
+#include "sound_asset.h"
+#include "picture_asset.h"
 #include "subtitle_asset.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
@@ -54,22 +54,22 @@ help (string n)
 static void
 main_picture (shared_ptr<Reel> reel)
 {
-	if (reel->main_picture() && reel->main_picture()->mxf()) {
+	if (reel->main_picture() && reel->main_picture()->asset()) {
 		cout << "      Picture:  "
-		     << reel->main_picture()->mxf()->size().width
+		     << reel->main_picture()->asset()->size().width
 		     << "x"
-		     << reel->main_picture()->mxf()->size().height << "\n";
+		     << reel->main_picture()->asset()->size().height << "\n";
 	}
 }
 
 static void
 main_sound (shared_ptr<Reel> reel)
 {
-	if (reel->main_sound() && reel->main_sound()->mxf()) {
+	if (reel->main_sound() && reel->main_sound()->asset()) {
 		cout << "      Sound:    "
-		     << reel->main_sound()->mxf()->channels()
+		     << reel->main_sound()->asset()->channels()
 		     << " channels at "
-		     << reel->main_sound()->mxf()->sampling_rate() << "Hz\n";
+		     << reel->main_sound()->asset()->sampling_rate() << "Hz\n";
 	}
 }
 

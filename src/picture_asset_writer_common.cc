@@ -32,7 +32,7 @@ struct ASDCPStateBase
 };
 
 template <class P, class Q>
-void dcp::start (PictureMXFWriter* writer, shared_ptr<P> state, Standard standard, Q* mxf, uint8_t* data, int size)
+void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard standard, Q* mxf, uint8_t* data, int size)
 {
 	mxf->set_file (writer->_file);
 	

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 
 */
 
-/** @file  src/mxf_writer.h
- *  @brief MXFWriter class.
+/** @file  src/asset_writer.h
+ *  @brief AssetWriter class.
  */
 
-#ifndef LIBDCP_MXF_WRITER_H
-#define LIBDCP_MXF_WRITER_H
+#ifndef LIBDCP_ASSET_WRITER_H
+#define LIBDCP_ASSET_WRITER_H
 
 #include <boost/filesystem.hpp>
 
@@ -34,20 +34,20 @@ namespace dcp {
 
 class MXF;
 
-/** @class MXFWriter
- *  @brief Parent class for classes which can write MXF files.
+/** @class AssetWriter
+ *  @brief Parent class for classes which can write MXF-based assets.
  *
- *  The MXFWriter lasts for the duration of the write and is then discarded.
- *  They can only be created by calling start_write() on an MXF object.
+ *  The AssetWriter lasts for the duration of the write and is then discarded.
+ *  They can only be created by calling start_write() on an appropriate Asset object.
  */
-class MXFWriter : public boost::noncopyable
+class AssetWriter : public boost::noncopyable
 {
 public:
-	virtual ~MXFWriter ();
+	virtual ~AssetWriter ();
 	virtual void finalize ();
 
 protected:
-	MXFWriter (MXF* mxf, boost::filesystem::path file);
+	AssetWriter (MXF* mxf, boost::filesystem::path file);
 
 	/** MXF that we are writing */
 	MXF* _mxf;

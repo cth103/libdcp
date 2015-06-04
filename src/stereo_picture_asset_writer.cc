@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,18 +17,14 @@
 
 */
 
-/** @file  src/mono_picture_mxf_writer.cc
- *  @brief MonoPictureMXFWriter class
- */
-
+#include "stereo_picture_asset_writer.h"
+#include "exceptions.h"
+#include "dcp_assert.h"
+#include "picture_asset.h"
 #include "AS_DCP.h"
 #include "KM_fileio.h"
-#include "mono_picture_mxf_writer.h"
-#include "exceptions.h"
-#include "picture_mxf.h"
-#include "dcp_assert.h"
 
-#include "picture_mxf_writer_common.cc"
+#include "picture_asset_writer_common.cc"
 
 using std::istream;
 using std::ostream;
@@ -36,30 +32,32 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
-struct MonoPictureMXFWriter::ASDCPState : public ASDCPStateBase
+struct StereoPictureAssetWriter::ASDCPState : public ASDCPStateBase
 {
-	ASDCP::JP2K::MXFWriter mxf_writer;
+	ASDCP::JP2K::MXFSWriter mxf_writer;
 };
 
-/** @param a Asset to write to.  `a' must not be deleted while
- *  this writer class still exists, or bad things will happen.
- */
-MonoPictureMXFWriter::MonoPictureMXFWriter (PictureMXF* asset, boost::filesystem::path file, Standard standard, bool overwrite)
-	: PictureMXFWriter (asset, file, standard, overwrite)
-	, _state (new MonoPictureMXFWriter::ASDCPState)
+StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* mxf, boost::filesystem::path file, Standard standard, bool overwrite)
+	: PictureAssetWriter (mxf, file, standard, overwrite)
+	, _state (new StereoPictureAssetWriter::ASDCPState)
+	, _next_eye (EYE_LEFT)
 {
 
 }
 
 void
-MonoPictureMXFWriter::start (uint8_t* data, int size)
+StereoPictureAssetWriter::start (uint8_t* data, int size)
 {
-	dcp::start (this, _state, _standard, _picture_mxf, data, size);
-	_picture_mxf->set_frame_rate (_picture_mxf->edit_rate());
+	dcp::start (this, _state, _standard, _picture_asset, data, size);
+	_picture_asset->set_frame_rate (Fraction (_picture_asset->edit_rate().numerator * 2, _picture_asset->edit_rate().denominator));
 }
 
+/** Write a frame for one eye.  Frames must be written left, then right, then left etc.
+ *  @param data JPEG2000 data.
+ *  @param size Size of data.
+ */
 FrameInfo
-MonoPictureMXFWriter::write (uint8_t* data, int size)
+StereoPictureAssetWriter::write (uint8_t* data, int size)
 {
 	DCP_ASSERT (!_finalized);
 
@@ -74,38 +72,52 @@ MonoPictureMXFWriter::write (uint8_t* data, int size)
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
-	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _encryption_context, 0, &hash);
+	Kumu::Result_t r = _state->mxf_writer.WriteFrame (
+		_state->frame_buffer,
+		_next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
+		_encryption_context,
+		0,
+		&hash
+		);
+
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
 	}
 
-	++_frames_written;
+	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
+
+	if (_next_eye == EYE_LEFT) {
+		++_frames_written;
+	}
+			
 	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 
 void
-MonoPictureMXFWriter::fake_write (int size)
+StereoPictureAssetWriter::fake_write (int size)
 {
 	DCP_ASSERT (_started);
 	DCP_ASSERT (!_finalized);
 
-	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size);
+	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size, _next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
 	}
 
-	++_frames_written;
+	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
+	if (_next_eye == EYE_LEFT) {
+		++_frames_written;
+	}
 }
 
 void
-MonoPictureMXFWriter::finalize ()
+StereoPictureAssetWriter::finalize ()
 {
 	Kumu::Result_t r = _state->mxf_writer.Finalize();
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _file.string(), r));
 	}
 
-	_picture_mxf->_intrinsic_duration = _frames_written;
-	PictureMXFWriter::finalize ();
+	_picture_asset->_intrinsic_duration = _frames_written;
+	PictureAssetWriter::finalize ();
 }
-

@@ -19,7 +19,7 @@
 
 /* If you are using an installed libdcp, these #includes would need to be changed to
 #include <dcp/dcp.h>
-#include <dcp/picture_mxf.h>
+#include <dcp/picture_asset.h>
 ... etc. ...
 */
 
@@ -28,9 +28,9 @@
 #include "reel.h"
 #include "reel_picture_asset.h"
 #include "mono_picture_frame.h"
-#include "mono_picture_mxf.h"
-#include "stereo_picture_mxf.h"
-#include "sound_mxf.h"
+#include "mono_picture_asset.h"
+#include "stereo_picture_asset.h"
+#include "sound_asset.h"
 #include "subtitle_asset.h"
 #include "xyz_image.h"
 #include "colour_conversion.h"
@@ -60,11 +60,11 @@ main ()
 	std::list<boost::shared_ptr<dcp::Asset> > assets = dcp.assets ();
 	std::cout << "DCP has " << assets.size() << " assets.\n";
 	for (std::list<boost::shared_ptr<dcp::Asset> >::const_iterator i = assets.begin(); i != assets.end(); ++i) {
-		if (boost::dynamic_pointer_cast<dcp::MonoPictureMXF> (*i)) {
+		if (boost::dynamic_pointer_cast<dcp::MonoPictureAsset> (*i)) {
 			std::cout << "2D picture\n";
-		} else if (boost::dynamic_pointer_cast<dcp::StereoPictureMXF> (*i)) {
+		} else if (boost::dynamic_pointer_cast<dcp::StereoPictureAsset> (*i)) {
 			std::cout << "3D picture\n";
-		} else if (boost::dynamic_pointer_cast<dcp::SoundMXF> (*i)) {
+		} else if (boost::dynamic_pointer_cast<dcp::SoundAsset> (*i)) {
 			std::cout << "Sound\n";
 		} else if (boost::dynamic_pointer_cast<dcp::SubtitleAsset> (*i)) {
 			std::cout << "Subtitle\n";
@@ -77,11 +77,13 @@ main ()
 	/* Take the first CPL */
 	boost::shared_ptr<dcp::CPL> cpl = dcp.cpls().front ();
 
-	/* Get the MXF of the picture asset in the first reel */
-	boost::shared_ptr<dcp::MonoPictureMXF> picture_mxf = boost::dynamic_pointer_cast<dcp::MonoPictureMXF> (cpl->reels().front()->main_picture()->mxf ());
+	/* Get the picture asset in the first reel */
+	boost::shared_ptr<dcp::MonoPictureAsset> picture_asset = boost::dynamic_pointer_cast<dcp::MonoPictureAsset> (
+		cpl->reels().front()->main_picture()->asset()
+		);
 
 	/* Get the 1000th frame of it */
-	boost::shared_ptr<const dcp::MonoPictureFrame> picture_frame_j2k = picture_mxf->get_frame(999);
+	boost::shared_ptr<const dcp::MonoPictureFrame> picture_frame_j2k = picture_asset->get_frame(999);
 
 	/* Get the frame as an XYZ image */
 	boost::shared_ptr<const dcp::XYZImage> picture_image_xyz = picture_frame_j2k->xyz_image ();

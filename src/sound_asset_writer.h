@@ -17,44 +17,41 @@
 
 */
 
-/** @file  src/mono_picture_mxf_writer.h
- *  @brief MonoPictureMXFWriter class
+/** @file  src/sound_asset_writer.h
+ *  @brief SoundAssetWriter class.
  */
 
-#ifndef LIBDCP_MONO_PICTURE_MXF_WRITER_H
-#define LIBDCP_MONO_PICTURE_MXF_WRITER_H
-
-#include "picture_mxf_writer.h"
+#include "asset_writer.h"
+#include "types.h"
 #include <boost/shared_ptr.hpp>
-#include <boost/utility.hpp>
-#include <stdint.h>
-#include <string>
-#include <fstream>
+#include <boost/filesystem.hpp>
 
 namespace dcp {
 
-/** @class MonoPictureMXFWriter
- *  @brief A helper class for writing to MonoPictureMXFs
+class SoundFrame;
+class SoundAsset;
+
+/** @class SoundAssetWriter
+ *  @brief A helper class for writing to SoundAssets.
  *
- *  Objects of this class can only be created with MonoPictureMXF::start_write().
+ *  Objects of this class can only be created with SoundAsset::start_write().
  *
- *  Frames can be written to the MonoPictureMXF by calling write() with a JPEG2000 image
- *  (a verbatim .j2c file).  finalize() must be called after the last frame has been written.
- *  The action of finalize() can't be done in MonoPictureAssetWriter's destructor as it may
- *  throw an exception.
+ *  Sound samples can be written to the SoundAsset by calling write() with
+ *  a buffer of float values.  finalize() must be called after the last samples
+ *  have been written.
  */
-class MonoPictureMXFWriter : public PictureMXFWriter
+class SoundAssetWriter : public AssetWriter
 {
 public:
-	FrameInfo write (uint8_t *, int);
-	void fake_write (int size);
+	void write (float const * const *, int);
 	void finalize ();
 
 private:
-	friend class MonoPictureMXF;
+	friend class SoundAsset;
 
-	MonoPictureMXFWriter (PictureMXF *, boost::filesystem::path file, Standard standard, bool);
-	void start (uint8_t *, int);
+	SoundAssetWriter (SoundAsset *, boost::filesystem::path, Standard standard);
+
+	void write_current_frame ();
 
 	/* do this with an opaque pointer so we don't have to include
 	   ASDCP headers
@@ -62,8 +59,10 @@ private:
 	   
 	struct ASDCPState;
 	boost::shared_ptr<ASDCPState> _state;
+
+	SoundAsset* _sound_asset;
+	int _frame_buffer_offset;
 };
 
 }
 
-#endif

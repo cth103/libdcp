@@ -25,26 +25,26 @@
 #define LIBDCP_REEL_PICTURE_ASSET_H
 
 #include "reel_mxf_asset.h"
-#include "picture_mxf.h"
+#include "picture_asset.h"
 
 namespace dcp {
 
 /** @class ReelPictureAsset
- *  @brief Part of a Reel's description which refers to a picture MXF.
+ *  @brief Part of a Reel's description which refers to a picture asset.
  */
 class ReelPictureAsset : public ReelMXFAsset
 {
 public:
 	ReelPictureAsset ();
-	ReelPictureAsset (boost::shared_ptr<PictureMXF> asset, int64_t entry_point);
+	ReelPictureAsset (boost::shared_ptr<PictureAsset> asset, int64_t entry_point);
 	ReelPictureAsset (boost::shared_ptr<const cxml::Node>);
 
 	virtual void write_to_cpl (xmlpp::Node* node, Standard standard) const;
 	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
 
-	/** @return the PictureMXF that this object refers to */
-	boost::shared_ptr<PictureMXF> mxf () {
-		return boost::dynamic_pointer_cast<PictureMXF> (_asset.object ());
+	/** @return the PictureAsset that this object refers to */
+	boost::shared_ptr<PictureAsset> asset () {
+		return boost::dynamic_pointer_cast<PictureAsset> (_asset_ref.object ());
 	}
 
 	/** @return picture frame rate */

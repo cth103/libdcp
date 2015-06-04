@@ -30,7 +30,7 @@
 namespace dcp {
 
 /** @class Key
- *  @brief A key for decrypting/encrypting MXFs.
+ *  @brief A key for decrypting/encrypting assets.
  */
 class Key
 {

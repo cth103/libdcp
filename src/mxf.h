@@ -39,7 +39,7 @@ namespace dcp
 {
 
 class MXFMetadata;
-class PictureMXFWriter;	
+class PictureAssetWriter;	
 
 /** @class MXF
  *  @brief Parent class for classes which represent MXF files.
@@ -88,7 +88,7 @@ public:
 	
 protected:
 	template <class P, class Q>
-	friend void start (PictureMXFWriter* writer, boost::shared_ptr<P> state, Standard standard, Q* mxf, uint8_t* data, int size);
+	friend void start (PictureAssetWriter* writer, boost::shared_ptr<P> state, Standard standard, Q* mxf, uint8_t* data, int size);
 
 	std::string read_writer_info (ASDCP::WriterInfo const &);
 	/** Fill in a ADSCP::WriteInfo struct.

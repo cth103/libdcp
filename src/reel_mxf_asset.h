@@ -37,7 +37,7 @@ class ReelMXFAsset : public ReelAsset
 {
 public:
 	ReelMXFAsset ();
-	ReelMXFAsset (boost::shared_ptr<Asset> mxf, boost::optional<std::string> key_id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	ReelMXFAsset (boost::shared_ptr<Asset> asset, boost::optional<std::string> key_id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	ReelMXFAsset (boost::shared_ptr<const cxml::Node>);
 
 	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */

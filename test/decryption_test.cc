@@ -22,7 +22,7 @@
 #include "cpl.h"
 #include "decrypted_kdm.h"
 #include "encrypted_kdm.h"
-#include "mono_picture_mxf.h"
+#include "mono_picture_asset.h"
 #include "reel_picture_asset.h"
 #include "reel.h"
 #include "test.h"
@@ -42,10 +42,10 @@ pair<uint8_t*, dcp::Size>
 get_frame (dcp::DCP const & dcp)
 {
 	shared_ptr<const dcp::Reel> reel = dcp.cpls().front()->reels().front ();
-	shared_ptr<dcp::PictureMXF> picture = reel->main_picture()->mxf ();
+	shared_ptr<dcp::PictureAsset> picture = reel->main_picture()->asset ();
 	BOOST_CHECK (picture);
 
-	shared_ptr<const dcp::MonoPictureMXF> mono_picture = dynamic_pointer_cast<const dcp::MonoPictureMXF> (picture);
+	shared_ptr<const dcp::MonoPictureAsset> mono_picture = dynamic_pointer_cast<const dcp::MonoPictureAsset> (picture);
 	shared_ptr<const dcp::MonoPictureFrame> j2k_frame = mono_picture->get_frame (0);
 	shared_ptr<dcp::XYZImage> xyz = j2k_frame->xyz_image();
 

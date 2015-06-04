@@ -17,11 +17,11 @@
 
 */
 
-#include "picture_mxf.h"
+#include "picture_asset.h"
 #include "util.h"
 #include "exceptions.h"
 #include "xyz_image.h"
-#include "picture_mxf_writer.h"
+#include "picture_asset_writer.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
 #include "AS_DCP.h"
@@ -47,14 +47,14 @@ using std::cout;
 using boost::shared_ptr;
 using namespace dcp;
 
-PictureMXF::PictureMXF (boost::filesystem::path file)
+PictureAsset::PictureAsset (boost::filesystem::path file)
 	: Asset (file)
 	, _intrinsic_duration (0)
 {
 
 }
 
-PictureMXF::PictureMXF (Fraction edit_rate)
+PictureAsset::PictureAsset (Fraction edit_rate)
 	: _edit_rate (edit_rate)
 	, _intrinsic_duration (0)
 {
@@ -62,7 +62,7 @@ PictureMXF::PictureMXF (Fraction edit_rate)
 }
 
 void
-PictureMXF::read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const & desc)
+PictureAsset::read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const & desc)
 {
 	_size.width = desc.StoredWidth;
 	_size.height = desc.StoredHeight;
@@ -73,7 +73,7 @@ PictureMXF::read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const & desc
 }
 
 bool
-PictureMXF::descriptor_equals (
+PictureAsset::descriptor_equals (
 	ASDCP::JP2K::PictureDescriptor const & a, ASDCP::JP2K::PictureDescriptor const & b, NoteHandler note
 	) const
 {
@@ -115,7 +115,7 @@ PictureMXF::descriptor_equals (
 }
 
 bool
-PictureMXF::frame_buffer_equals (
+PictureAsset::frame_buffer_equals (
 	int frame, EqualityOptions opt, NoteHandler note,
 	uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
 	) const
@@ -189,7 +189,7 @@ PictureMXF::frame_buffer_equals (
 }
 
 string
-PictureMXF::pkl_type (Standard standard) const
+PictureAsset::pkl_type (Standard standard) const
 {
 	switch (standard) {
 	case INTEROP:

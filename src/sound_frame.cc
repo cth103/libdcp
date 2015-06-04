@@ -29,12 +29,12 @@
 using namespace std;
 using namespace dcp;
 
-SoundFrame::SoundFrame (boost::filesystem::path mxf_path, int n, ASDCP::AESDecContext* c)
+SoundFrame::SoundFrame (boost::filesystem::path path, int n, ASDCP::AESDecContext* c)
 {
 	ASDCP::PCM::MXFReader reader;
-	Kumu::Result_t r = reader.OpenRead (mxf_path.string().c_str());
+	Kumu::Result_t r = reader.OpenRead (path.string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path, r));
+		boost::throw_exception (FileError ("could not open MXF file for reading", path, r));
 	}
 
 	/* XXX: unfortunate guesswork on this buffer size */

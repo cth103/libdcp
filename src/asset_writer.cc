@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,11 +17,11 @@
 
 */
 
-/** @file  src/mxf_writer.h
- *  @brief MXFWriter class.
+/** @file  src/asset_writer.h
+ *  @brief AssetWriter class.
  */
 
-#include "mxf_writer.h"
+#include "asset_writer.h"
 #include "mxf.h"
 #include "dcp_assert.h"
 #include "AS_DCP.h"
@@ -29,11 +29,11 @@
 
 using namespace dcp;
 
-/** Create an MXFWriter.
+/** Create an AssetWriter.
  *  @param mxf MXF that we are writing.
  *  @param file File to write to.
  */
-MXFWriter::MXFWriter (MXF* mxf, boost::filesystem::path file)
+AssetWriter::AssetWriter (MXF* mxf, boost::filesystem::path file)
 	: _mxf (mxf)
 	, _file (file)
 	, _frames_written (0)
@@ -55,13 +55,13 @@ MXFWriter::MXFWriter (MXF* mxf, boost::filesystem::path file)
 	}
 }
 
-MXFWriter::~MXFWriter ()
+AssetWriter::~AssetWriter ()
 {
 	delete _encryption_context;
 }
 
 void
-MXFWriter::finalize ()
+AssetWriter::finalize ()
 {
 	DCP_ASSERT (!_finalized);
 	_finalized = true;

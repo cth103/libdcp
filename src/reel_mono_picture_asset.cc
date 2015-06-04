@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  */
 
 #include "reel_mono_picture_asset.h"
-#include "mono_picture_mxf.h"
+#include "mono_picture_asset.h"
 #include <libcxml/cxml.h>
 
 using std::string;
@@ -34,8 +34,8 @@ ReelMonoPictureAsset::ReelMonoPictureAsset ()
 
 }
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (boost::shared_ptr<MonoPictureMXF> mxf, int64_t entry_point)
-	: ReelPictureAsset (mxf, entry_point)
+ReelMonoPictureAsset::ReelMonoPictureAsset (boost::shared_ptr<MonoPictureAsset> asset, int64_t entry_point)
+	: ReelPictureAsset (asset, entry_point)
 {
 
 }

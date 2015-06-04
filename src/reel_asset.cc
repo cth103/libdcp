@@ -33,7 +33,7 @@ using namespace dcp;
 
 ReelAsset::ReelAsset ()
 	: Object (make_uuid ())
-	, _asset (_id)
+	, _asset_ref (_id)
 	, _edit_rate (Fraction (24, 1))
 	, _intrinsic_duration (0)
 	, _entry_point (0)
@@ -50,7 +50,7 @@ ReelAsset::ReelAsset ()
  */
 ReelAsset::ReelAsset (shared_ptr<Asset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: Object (asset->id ())
-	, _asset (asset)
+	, _asset_ref (asset)
 	, _edit_rate (edit_rate)
 	, _intrinsic_duration (intrinsic_duration)
 	, _entry_point (entry_point)
@@ -63,7 +63,7 @@ ReelAsset::ReelAsset (shared_ptr<Asset> asset, Fraction edit_rate, int64_t intri
 
 ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 	: Object (node->string_child ("Id"))
-	, _asset (_id)
+	, _asset_ref (_id)
 	, _annotation_text (node->optional_string_child ("AnnotationText").get_value_or (""))
 	, _edit_rate (Fraction (node->string_child ("EditRate")))
 	, _intrinsic_duration (node->number_child<int64_t> ("IntrinsicDuration"))
@@ -73,7 +73,7 @@ ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 {
 	if (_id.length() > 9) {
 		_id = _id.substr (9);
-		_asset.set_id (_id);
+		_asset_ref.set_id (_id);
 	}
 }
 
@@ -91,7 +91,7 @@ ReelAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
         a->add_child("IntrinsicDuration")->add_child_text (raw_convert<string> (_intrinsic_duration));
         a->add_child("EntryPoint")->add_child_text (raw_convert<string> (_entry_point));
         a->add_child("Duration")->add_child_text (raw_convert<string> (_duration));
-	a->add_child("Hash")->add_child_text (_asset.object()->hash ());
+	a->add_child("Hash")->add_child_text (_asset_ref.object()->hash ());
 }
 
 pair<string, string>
@@ -143,8 +143,8 @@ ReelAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, NoteH
 		}
 	}
 
-	if (_asset.resolved () && other->_asset.resolved ()) {
-		return _asset->equals (other->_asset.object (), opt, note);
+	if (_asset_ref.resolved () && other->_asset_ref.resolved ()) {
+		return _asset_ref->equals (other->_asset_ref.object (), opt, note);
 	}
 
 	return true;

@@ -19,7 +19,7 @@
 
 #include "cpl.h"
 #include "reel_mono_picture_asset.h"
-#include "mono_picture_mxf.h"
+#include "mono_picture_asset.h"
 #include <libcxml/cxml.h>
 #include <boost/test/unit_test.hpp>
 
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE (cpl_sar)
 {
 	shared_ptr<dcp::ReelMonoPictureAsset> pa (
 		new dcp::ReelMonoPictureAsset (
-			shared_ptr<dcp::MonoPictureMXF> (new dcp::MonoPictureMXF ("test/ref/DCP/dcp_test1/video.mxf")),
+			shared_ptr<dcp::MonoPictureAsset> (new dcp::MonoPictureAsset ("test/ref/DCP/dcp_test1/video.mxf")),
 			0
 			)
 		);

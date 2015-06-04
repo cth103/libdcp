@@ -56,16 +56,16 @@ MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path)
 }
 
 /** Make a picture frame from a 2D (monoscopic) asset.
- *  @param mxf_path Path to the asset's MXF file.
+ *  @param path Path to the asset's MXF file.
  *  @param n Frame within the asset, not taking EntryPoint into account.
  *  @param c Context for decryption, or 0.
  */
-MonoPictureFrame::MonoPictureFrame (boost::filesystem::path mxf_path, int n, ASDCP::AESDecContext* c)
+MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path, int n, ASDCP::AESDecContext* c)
 {
 	ASDCP::JP2K::MXFReader reader;
-	Kumu::Result_t r = reader.OpenRead (mxf_path.string().c_str());
+	Kumu::Result_t r = reader.OpenRead (path.string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (FileError ("could not open MXF file for reading", mxf_path, r));
+		boost::throw_exception (FileError ("could not open MXF file for reading", path, r));
 	}
 
 	/* XXX: unfortunate guesswork on this buffer size */

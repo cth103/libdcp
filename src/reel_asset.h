@@ -55,8 +55,8 @@ public:
 	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
 
 	/** @return a Ref to our actual asset */
-	Ref<Asset>& asset () {
-		return _asset;
+	Ref<Asset>& asset_ref () {
+		return _asset_ref;
 	}
 
 	int64_t entry_point () const {
@@ -81,7 +81,7 @@ protected:
 	/** Reference to the asset (MXF or XML file) that this reel entry
 	 *  applies to.
 	 */
-	Ref<Asset> _asset;
+	Ref<Asset> _asset_ref;
 
 private:
 	

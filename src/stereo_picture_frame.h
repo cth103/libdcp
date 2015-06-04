@@ -38,7 +38,7 @@ class XYZImage;
 class StereoPictureFrame : public boost::noncopyable
 {
 public:
-	StereoPictureFrame (boost::filesystem::path mxf_path, int n);
+	StereoPictureFrame (boost::filesystem::path path, int n);
 	StereoPictureFrame ();
 	~StereoPictureFrame ();
 

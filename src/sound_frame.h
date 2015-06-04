@@ -44,7 +44,7 @@ namespace dcp {
 class SoundFrame : public boost::noncopyable
 {
 public:
-	SoundFrame (boost::filesystem::path mxf_path, int n, ASDCP::AESDecContext *);
+	SoundFrame (boost::filesystem::path path, int n, ASDCP::AESDecContext *);
 	~SoundFrame ();
 
 	uint8_t const * data () const;

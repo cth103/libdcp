@@ -46,7 +46,7 @@ class XYZImage;
 class MonoPictureFrame : public boost::noncopyable
 {
 public:
-	MonoPictureFrame (boost::filesystem::path mxf_path, int n, ASDCP::AESDecContext *);
+	MonoPictureFrame (boost::filesystem::path path, int n, ASDCP::AESDecContext *);
 	MonoPictureFrame (boost::filesystem::path path);
 	MonoPictureFrame ();
 	~MonoPictureFrame ();

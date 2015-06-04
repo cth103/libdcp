@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,33 +17,33 @@
 
 */
 
-#ifndef LIBDCP_MONO_PICTURE_MXF_H
-#define LIBDCP_MONO_PICTURE_MXF_H
+#ifndef LIBDCP_MONO_PICTURE_ASSET_H
+#define LIBDCP_MONO_PICTURE_ASSET_H
 
-#include "picture_mxf.h"
+#include "picture_asset.h"
 
 namespace dcp {
 
-class MonoPictureMXFWriter;	
+class MonoPictureAssetWriter;	
 
-/** @class MonoPictureMXF
- *  @brief A 2D (monoscopic) picture MXF.
+/** @class MonoPictureAsset
+ *  @brief A 2D (monoscopic) picture asset.
  */
-class MonoPictureMXF : public PictureMXF
+class MonoPictureAsset : public PictureAsset
 {
 public:
-	/** Create a MonoPictureMXF by reading a file.
-	 *  @param file MXF file to read.
+	/** Create a MonoPictureAsset by reading a file.
+	 *  @param file Asset file to read.
 	 */
-	MonoPictureMXF (boost::filesystem::path file);
+	MonoPictureAsset (boost::filesystem::path file);
 
-	/** Create a MonoPictureMXF with a given edit rate.
+	/** Create a MonoPictureAsset with a given edit rate.
 	 *  @param edit_rate Edit rate (i.e. frame rate) in frames per second.
 	 */
-	MonoPictureMXF (Fraction edit_rate);
+	MonoPictureAsset (Fraction edit_rate);
 
-	/** Start a progressive write to a MonoPictureMXF */
-	boost::shared_ptr<PictureMXFWriter> start_write (boost::filesystem::path, Standard standard, bool);
+	/** Start a progressive write to a MonoPictureAsset */
+	boost::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path, Standard standard, bool);
 
 	bool equals (
 		boost::shared_ptr<const Asset> other,

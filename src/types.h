@@ -160,7 +160,6 @@ struct EqualityOptions
 		, max_std_dev_pixel_error (0)
 		, max_audio_sample_error (0)
 		, cpl_annotation_texts_can_differ (false)
-		, mxf_filenames_can_differ (false)
 		, reel_annotation_texts_can_differ (false)
 		, reel_hashes_can_differ (false)
 	{}
@@ -173,8 +172,6 @@ struct EqualityOptions
 	int max_audio_sample_error;
 	/** true if the <AnnotationText> nodes of CPLs are allowed to differ */
 	bool cpl_annotation_texts_can_differ;
-	/** true if MXF file leafnames are allowed to differ */
-	bool mxf_filenames_can_differ;
 	/** true if the <AnnotationText> nodes of Reels are allowed to differ */
 	bool reel_annotation_texts_can_differ;
 	/** true if <Hash>es in Reels can differ */
