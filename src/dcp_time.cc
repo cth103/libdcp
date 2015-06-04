@@ -240,7 +240,7 @@ dcp::operator/ (Time a, Time const & b)
 
 /** @return A string of the form h:m:s:e padded as in 00:00:00:000 */
 string
-Time::to_string () const
+Time::as_string () const
 {
 	stringstream str;
 	str << setw(2) << setfill('0') << h << ":"
@@ -251,13 +251,13 @@ Time::to_string () const
 }
 
 int64_t
-Time::to_editable_units (int tcr_) const
+Time::as_editable_units (int tcr_) const
 {
 	return (int64_t(e) * float (tcr_ / tcr)) + int64_t(s) * tcr_ + int64_t(m) * 60 * tcr_ + int64_t(h) * 60 * 60 * tcr_;
 }
 
 double
-Time::to_seconds () const
+Time::as_seconds () const
 {
 	return h * 3600 + m * 60 + s + double(e) / tcr;
 }

@@ -159,10 +159,10 @@ InteropSubtitleContent::xml_as_string () const
 
 			subtitle_element = font_element->add_child ("Subtitle");
 			subtitle_element->set_attribute ("SpotNumber", raw_convert<string> (spot_number++));
-			subtitle_element->set_attribute ("TimeIn", i->in().to_string());
-			subtitle_element->set_attribute ("TimeOut", i->out().to_string());
-			subtitle_element->set_attribute ("FadeUpTime", raw_convert<string> (i->fade_up_time().to_editable_units(250)));
-			subtitle_element->set_attribute ("FadeDownTime", raw_convert<string> (i->fade_down_time().to_editable_units(250)));
+			subtitle_element->set_attribute ("TimeIn", i->in().as_string());
+			subtitle_element->set_attribute ("TimeOut", i->out().as_string());
+			subtitle_element->set_attribute ("FadeUpTime", raw_convert<string> (i->fade_up_time().as_editable_units(250)));
+			subtitle_element->set_attribute ("FadeDownTime", raw_convert<string> (i->fade_down_time().as_editable_units(250)));
 
 			last_in = i->in ();
 			last_out = i->out ();

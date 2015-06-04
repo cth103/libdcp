@@ -69,9 +69,9 @@ public:
 	int e; ///<   editable units (where 1 editable unit is 1 / tcr_ seconds)
 	int tcr; ///< timecode rate: the number of editable units per second.
 
-	std::string to_string () const;
-	double to_seconds () const;
-	int64_t to_editable_units (int tcr_) const;
+	std::string as_string () const;
+	double as_seconds () const;
+	int64_t as_editable_units (int tcr_) const;
 	Time rebase (int tcr_) const;
 
 private:
