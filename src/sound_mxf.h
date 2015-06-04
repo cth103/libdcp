@@ -74,9 +74,7 @@ public:
 private:
 	friend class SoundMXFWriter;
 	
-	std::string asdcp_kind () const {
-		return "Sound";
-	}
+	std::string pkl_type (Standard standard) const;
 
 	Fraction _edit_rate;
 	/** The total length of this content in video frames.  The amount of

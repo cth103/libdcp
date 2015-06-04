@@ -107,8 +107,6 @@ public:
 protected:
 	friend class MXFWriter;
 
-	virtual std::string asdcp_kind () const = 0;
-	std::string pkl_type (Standard standard) const;
 	void read_writer_info (ASDCP::WriterInfo const &);
 	
 	ASDCP::AESEncContext* _encryption_context;

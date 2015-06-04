@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "exceptions.h"
 #include "xyz_image.h"
 #include "picture_mxf_writer.h"
+#include "dcp_assert.h"
 #include "compose.hpp"
 #include "AS_DCP.h"
 #include "KM_fileio.h"
@@ -185,4 +186,17 @@ PictureMXF::frame_buffer_equals (
 	}
 
 	return true;
+}
+
+string
+PictureMXF::pkl_type (Standard standard) const
+{
+	switch (standard) {
+	case INTEROP:
+		return "application/x-smpte-mxf;asdcpKind=Picture";
+	case SMPTE:
+		return "application/mxf";
+	default:
+		DCP_ASSERT (false);
+	}
 }

@@ -117,9 +117,7 @@ protected:
 	Fraction _screen_aspect_ratio;
 
 private:
-	std::string asdcp_kind () const {
-		return "Picture";
-	}
+	std::string pkl_type (Standard standard) const;
 };
 	
 

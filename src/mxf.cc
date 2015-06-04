@@ -153,16 +153,3 @@ MXF::read_writer_info (ASDCP::WriterInfo const & info)
 	Kumu::bin2UUIDhex (info.AssetUUID, ASDCP::UUIDlen, buffer, sizeof (buffer));
 	_id = buffer;
 }
-
-string
-MXF::pkl_type (Standard standard) const
-{
-	switch (standard) {
-	case INTEROP:
-		return String::compose ("application/x-smpte-mxf;asdcpKind=%1", asdcp_kind ());
-	case SMPTE:
-		return "application/mxf";
-	default:
-		DCP_ASSERT (false);
-	}
-}

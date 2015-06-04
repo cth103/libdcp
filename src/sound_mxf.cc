@@ -29,6 +29,7 @@
 #include "compose.hpp"
 #include "KM_fileio.h"
 #include "AS_DCP.h"
+#include "dcp_assert.h"
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
 #include <iostream>
@@ -171,4 +172,17 @@ SoundMXF::start_write (boost::filesystem::path file, Standard standard)
 {
 	/* XXX: can't we use a shared_ptr here? */
 	return shared_ptr<SoundMXFWriter> (new SoundMXFWriter (this, file, standard));
+}
+
+string
+SoundMXF::pkl_type (Standard standard) const
+{
+	switch (standard) {
+	case INTEROP:
+		return "application/x-smpte-mxf;asdcpKind=Sound";
+	case SMPTE:
+		return "application/mxf";
+	default:
+		DCP_ASSERT (false);
+	}
 }
