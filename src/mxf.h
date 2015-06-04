@@ -95,7 +95,7 @@ protected:
 	 *  @param w struct to fill in.
 	 *  @param standard INTEROP or SMPTE.
 	 */
-	void fill_writer_info (ASDCP::WriterInfo* w, std::string id, Standard standard);
+	void fill_writer_info (ASDCP::WriterInfo* w, std::string id, Standard standard) const;
 
 	ASDCP::AESDecContext* _decryption_context;
 	/** ID of the key used for encryption/decryption, if there is one */

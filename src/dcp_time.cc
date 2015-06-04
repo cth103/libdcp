@@ -66,6 +66,7 @@ Time::set (double seconds, int tcr_)
 	}
 }
 
+/** @param time String of the form HH:MM:SS:EE */
 Time::Time (string time, int tcr_)
 	: tcr (tcr_)
 {

@@ -30,6 +30,7 @@ using boost::shared_ptr;
 BOOST_AUTO_TEST_CASE (write_subtitle_test)
 {
 	dcp::InteropSubtitleAsset c ("Test", "EN");
+	c.set_reel_number ("1");
 
 	c.add (
 		dcp::SubtitleString (
@@ -83,12 +84,12 @@ BOOST_AUTO_TEST_CASE (write_subtitle_test)
 		"  <ReelNumber>1</ReelNumber>\n"
 		"  <Language>EN</Language>\n"
 		"  <Font Id=\"Frutiger\" Italic=\"no\" Color=\"FFFFFFFF\" Size=\"48\" Effect=\"none\" EffectColor=\"FF000000\" Script=\"normal\" Underlined=\"no\" Weight=\"normal\">\n"
-		"    <Subtitle SpotNumber=\"1\" TimeIn=\"00:04:09:022\" TimeOut=\"00:04:11:022\" FadeUpTime=\"0\" FadeDownTime=\"0\">\n"
+		"    <Subtitle SpotNumber=\"1\" TimeIn=\"00:04:09:229\" TimeOut=\"00:04:11:229\" FadeUpTime=\"0\" FadeDownTime=\"0\">\n"
 		"      <Text VAlign=\"top\" VPosition=\"80\">Hello world</Text>\n"
 		"    </Subtitle>\n"
 		"  </Font>\n"
 		"  <Font Italic=\"yes\" Color=\"FF800040\" Size=\"91\" Effect=\"border\" EffectColor=\"FF010203\" Script=\"normal\" Underlined=\"no\" Weight=\"normal\">\n"
-		"    <Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:021\" TimeOut=\"06:12:15:021\" FadeUpTime=\"930790\" FadeDownTime=\"4591830\">\n"
+		"    <Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:219\" TimeOut=\"06:12:15:219\" FadeUpTime=\"930790\" FadeDownTime=\"4591830\">\n"
 		"      <Text VAlign=\"bottom\" VPosition=\"40\">What's going on</Text>\n"
 		"    </Subtitle>\n"
 		"  </Font>\n"

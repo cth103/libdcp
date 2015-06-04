@@ -25,6 +25,10 @@
 #include "subtitle_string.h"
 #include <libcxml/cxml.h>
 
+namespace xmlpp {
+	class Element;
+}
+
 namespace dcp
 {
 
@@ -49,10 +53,6 @@ public:
 		NoteHandler note
 		) const;
 
-	std::string language () const {
-		return _language;
-	}
-
 	std::list<SubtitleString> subtitles_during (Time from, Time to) const;
 	std::list<SubtitleString> const & subtitles () const {
 		return _subtitles;
@@ -60,11 +60,8 @@ public:
 
 	void add (SubtitleString);
 
-	void write_xml (boost::filesystem::path) const;
-	virtual Glib::ustring xml_as_string () const {
-		/* XXX: this should be pure virtual when SMPTE writing is implemented */
-		return "";
-	}
+	virtual void write (boost::filesystem::path) const = 0;
+	virtual Glib::ustring xml_as_string () const = 0;
 
 	Time latest_subtitle_out () const;
 
@@ -73,18 +70,14 @@ public:
 protected:
 	void parse_common (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<FontNode> > font_nodes);
 	
-	std::string pkl_type (Standard) const {
-		return "text/xml";
-	}
+	virtual std::string pkl_type (Standard) const = 0;
 
 	std::string asdcp_kind () const {
 		return "Subtitle";
 	}
-	
-	/* strangely, this is sometimes a string */
-	std::string _reel_number;
-	std::string _language;
 
+	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, std::string xmlns) const;
+	
 	std::list<SubtitleString> _subtitles;
 
 private:

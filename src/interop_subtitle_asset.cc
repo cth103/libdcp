@@ -22,9 +22,11 @@
 #include "xml.h"
 #include "raw_convert.h"
 #include "font_node.h"
+#include "util.h"
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
 #include <cmath>
+#include <cstdio>
 
 using std::list;
 using std::string;
@@ -40,7 +42,8 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 	shared_ptr<cxml::Document> xml (new cxml::Document ("DCSubtitle"));
 	xml->read_file (file);
 	_id = xml->string_child ("SubtitleID");
-
+	_reel_number = xml->string_child ("ReelNumber");
+	_language = xml->string_child ("Language");
 	_movie_title = xml->string_child ("MovieTitle");
 	_load_font_nodes = type_children<dcp::InteropLoadFontNode> (xml, "LoadFont");
 
@@ -58,15 +61,6 @@ InteropSubtitleAsset::InteropSubtitleAsset (string movie_title, string language)
 {
 	_language = language;
 }
-
-struct SubtitleSorter {
-	bool operator() (SubtitleString const & a, SubtitleString const & b) {
-		if (a.in() != b.in()) {
-			return a.in() < b.in();
-		}
-		return a.v_position() < b.v_position();
-	}
-};
 
 Glib::ustring
 InteropSubtitleAsset::xml_as_string () const
@@ -86,102 +80,7 @@ InteropSubtitleAsset::xml_as_string () const
 		load_font->set_attribute ("URI", (*i)->uri);
 	}
 
-	list<SubtitleString> sorted = _subtitles;
-	sorted.sort (SubtitleSorter ());
-
-	/* XXX: script, underlined, weight not supported */
-
-	optional<string> font;
-	bool italic = false;
-	Colour colour;
-	int size = 0;
-	float aspect_adjust = 1.0;
-	Effect effect = NONE;
-	Colour effect_colour;
-	int spot_number = 1;
-	Time last_in;
-	Time last_out;
-	Time last_fade_up_time;
-	Time last_fade_down_time;
-
-	xmlpp::Element* font_element = 0;
-	xmlpp::Element* subtitle_element = 0;
-
-	for (list<SubtitleString>::iterator i = sorted.begin(); i != sorted.end(); ++i) {
-
-		/* We will start a new <Font>...</Font> whenever some font property changes.
-		   I suppose we should really make an optimal hierarchy of <Font> tags, but
-		   that seems hard.
-		*/
-
-		bool const font_changed =
-			font          != i->font()          ||
-			italic        != i->italic()        ||
-			colour        != i->colour()        ||
-			size          != i->size()          ||
-			fabs (aspect_adjust - i->aspect_adjust()) > ASPECT_ADJUST_EPSILON ||
-			effect        != i->effect()        ||
-			effect_colour != i->effect_colour();
-
-		if (font_changed) {
-			font = i->font ();
-			italic = i->italic ();
-			colour = i->colour ();
-			size = i->size ();
-			aspect_adjust = i->aspect_adjust ();
-			effect = i->effect ();
-			effect_colour = i->effect_colour ();
-		}
-
-		if (!font_element || font_changed) {
-			font_element = root->add_child ("Font");
-			if (font) {
-				font_element->set_attribute ("Id", font.get ());
-			}
-			font_element->set_attribute ("Italic", italic ? "yes" : "no");
-			font_element->set_attribute ("Color", colour.to_argb_string());
-			font_element->set_attribute ("Size", raw_convert<string> (size));
-			if (fabs (aspect_adjust - 1.0) > ASPECT_ADJUST_EPSILON) {
-				font_element->set_attribute ("AspectAdjust", raw_convert<string> (aspect_adjust));
-			}
-			font_element->set_attribute ("Effect", effect_to_string (effect));
-			font_element->set_attribute ("EffectColor", effect_colour.to_argb_string());
-			font_element->set_attribute ("Script", "normal");
-			font_element->set_attribute ("Underlined", "no");
-			font_element->set_attribute ("Weight", "normal");
-		}
-
-		if (!subtitle_element || font_changed ||
-		    (last_in != i->in() ||
-		     last_out != i->out() ||
-		     last_fade_up_time != i->fade_up_time() ||
-		     last_fade_down_time != i->fade_down_time()
-			    )) {
-
-			subtitle_element = font_element->add_child ("Subtitle");
-			subtitle_element->set_attribute ("SpotNumber", raw_convert<string> (spot_number++));
-			subtitle_element->set_attribute ("TimeIn", i->in().as_string());
-			subtitle_element->set_attribute ("TimeOut", i->out().as_string());
-			subtitle_element->set_attribute ("FadeUpTime", raw_convert<string> (i->fade_up_time().as_editable_units(250)));
-			subtitle_element->set_attribute ("FadeDownTime", raw_convert<string> (i->fade_down_time().as_editable_units(250)));
-
-			last_in = i->in ();
-			last_out = i->out ();
-			last_fade_up_time = i->fade_up_time ();
-			last_fade_down_time = i->fade_down_time ();
-		}
-
-		xmlpp::Element* text = subtitle_element->add_child ("Text");
-		if (i->h_align() != HALIGN_CENTER) {
-			text->set_attribute ("HAlign", halign_to_string (i->h_align ()));
-		}
-		if (i->h_position() > ALIGN_EPSILON) {
-			text->set_attribute ("HPosition", raw_convert<string> (i->h_position() * 100, 6));
-		}
-		text->set_attribute ("VAlign", valign_to_string (i->v_align()));		
-		text->set_attribute ("VPosition", raw_convert<string> (i->v_position() * 100, 6));
-		text->add_child_text (i->text());
-	}
+	subtitles_as_xml (root, 250, "");
 
 	return doc.write_to_string_formatted ("UTF-8");
 }
@@ -236,4 +135,20 @@ InteropSubtitleAsset::load_font_nodes () const
 	list<shared_ptr<LoadFontNode> > lf;
 	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter (lf));
 	return lf;
+}
+
+/** Write this content to an XML file */
+void
+InteropSubtitleAsset::write (boost::filesystem::path p) const
+{
+	FILE* f = fopen_boost (p, "w");
+	if (!f) {
+		throw FileError ("Could not open file for writing", p, -1);
+	}
+	
+	Glib::ustring const s = xml_as_string ();
+	fwrite (s.c_str(), 1, s.bytes(), f);
+	fclose (f);
+
+	_file = p;
 }

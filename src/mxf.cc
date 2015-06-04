@@ -54,7 +54,7 @@ MXF::~MXF ()
 }
 
 void
-MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id, Standard standard)
+MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id, Standard standard) const
 {
 	writer_info->ProductVersion = _metadata.product_version;
 	writer_info->CompanyName = _metadata.company_name;

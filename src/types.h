@@ -139,6 +139,8 @@ public:
 		return float (numerator) / denominator;
 	}
 
+	std::string as_string () const;
+
 	int numerator;
 	int denominator;
 };

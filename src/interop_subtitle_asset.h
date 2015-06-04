@@ -41,8 +41,41 @@ public:
 	void add_font (std::string id, std::string uri);
 	
 	Glib::ustring xml_as_string () const;
+	void write (boost::filesystem::path path) const;
+
+	void set_reel_number (std::string n) {
+		_reel_number = n;
+	}
+
+	void set_language (std::string l) {
+		_language = l;
+	}
+
+	void set_movie_title (std::string m) {
+		_movie_title = m;
+	}
+
+	std::string reel_number () const {
+		return _reel_number;
+	}
+	
+	std::string language () const {
+		return _language;
+	}
+
+	std::string movie_title () const {
+		return _movie_title;
+	}
+
+protected:
+	
+	std::string pkl_type (Standard) const {
+		return "text/xml";
+	}
 
 private:
+	std::string _reel_number;
+	std::string _language;
 	std::string _movie_title;
 	std::list<boost::shared_ptr<InteropLoadFontNode> > _load_font_nodes;
 };

@@ -1,17 +1,17 @@
 #!/bin/bash -e
 #
-# Run our test suite, which (amongst other things)
-# builds a couple of DCPs.
-# The outputs are compared against the ones
-# in test/ref/DCP, and an error is given
-# if anything is different.
+# Run our test suite.
 
+# Private test data; this is stuff that is non-distributable
 private=../libdcp1-test-private
+# Work directory
 work=build/test
+# Path to dcpinfo tool
 dcpinfo=build/tools/dcpinfo
 
 export LD_LIBRARY_PATH=build/src:build/asdcplib/src:$LD_LIBRARY_PATH
 
+# Make sure we have the required tools
 for c in xmlsec1 xmldiff; do
   hash $c 2>/dev/null || { echo >&2 "$c required but not found; aborting"; exit 1; }
 done
@@ -63,6 +63,8 @@ if [ ! -e "$private/info.log" ]; then
 fi
 
 # Run dcpinfo on all the DCPs in private/metadata, writing $work/info.log
+# This writes details of the CPLs and all subtitle details, so it checks
+# if the code is reading subtitle files correctly.
 rm -f $work/info.log
 for d in `find $private/metadata -mindepth 1 -maxdepth 1 -type d | sort -f -d`; do
     if [ `basename $d` != ".git" ]; then
@@ -81,8 +83,9 @@ if [ "$?" != "0" ]; then
     exit 1
 fi
 
-# Copy test/private into build/ then re-write the subtitles of every DCP using 
+# Copy $private into build/ then re-write the subtitles of every DCP using 
 # $work/rewrite_subs.  This tests round-trip of subtitle reading/writing.
+# Note that all the subs in $private/metadata are Interop.
 rm -f $work/info2.log
 rm -rf $work/private
 mkdir $work/private
@@ -104,8 +107,12 @@ if [ "$?" != "0" ]; then
     exit 1
 fi
 
-# Dump the subs of JourneyToJah... (which has MXF-wrapped subtitles)
+# Dump the subs of JourneyToJah... (which has MXF-wrapped SMPTE subtitles)
 # and check that they are right
 $dcpinfo -s $private/data/JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV >> $work/jah.log
+
+# Rewrite the subs of JourneyToJah... 
+#cp -r $private/data/JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV $work/
+#$work/rewrite_subs $WORK/Jou
 
 echo "PASS"

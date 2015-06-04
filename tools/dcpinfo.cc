@@ -27,6 +27,8 @@
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
 #include "subtitle_string.h"
+#include "interop_subtitle_asset.h"
+#include "smpte_subtitle_asset.h"
 #include "cpl.h"
 #include "common.h"
 #include <getopt.h>
@@ -40,6 +42,7 @@ using std::cerr;
 using std::cout;
 using std::list;
 using boost::shared_ptr;
+using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 static void
@@ -81,7 +84,15 @@ main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
 	}
 	
 	list<SubtitleString> subs = reel->main_subtitle()->subtitle_asset()->subtitles ();
-	cout << "      Subtitle: " << subs.size() << " subtitles in " << reel->main_subtitle()->subtitle_asset()->language() << "\n";
+	cout << "      Subtitle: " << subs.size() << " subtitles";
+	shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (reel->main_subtitle()->subtitle_asset());
+	if (iop) {
+		cout << " in " << iop->language() << "\n";
+	}
+	shared_ptr<SMPTESubtitleAsset> smpte = dynamic_pointer_cast<SMPTESubtitleAsset> (reel->main_subtitle()->subtitle_asset());
+	if (smpte && smpte->language ()) {
+		cout << " in " << smpte->language().get() << "\n";
+	}
 	if (list_subtitles) {
 		BOOST_FOREACH (SubtitleString const& k, subs) {
 			cout << k << "\n";

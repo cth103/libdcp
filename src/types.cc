@@ -20,6 +20,7 @@
 #include "raw_convert.h"
 #include "types.h"
 #include "exceptions.h"
+#include "compose.hpp"
 #include <boost/algorithm/string.hpp>
 #include <vector>
 #include <cstdio>
@@ -41,6 +42,12 @@ Fraction::Fraction (string s)
 	}
 	numerator = raw_convert<int> (b[0]);
 	denominator = raw_convert<int> (b[1]);
+}
+
+string
+Fraction::as_string () const
+{
+	return String::compose ("%1 %2", numerator, denominator);
 }
 
 bool
