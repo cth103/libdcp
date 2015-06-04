@@ -21,12 +21,12 @@
  *  @brief ReelPictureAsset class.
  */
 
-#include "content.h"
 #include "reel_picture_asset.h"
 #include "picture_mxf.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
 #include <libcxml/cxml.h>
+#include <libxml++/libxml++.h>
 #include <iomanip>
 
 using std::bad_cast;
@@ -43,10 +43,10 @@ ReelPictureAsset::ReelPictureAsset ()
 
 }
 
-ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureMXF> content, int64_t entry_point)
-	: ReelMXFAsset (content, content->edit_rate(), content->intrinsic_duration(), entry_point)
-	, _frame_rate (content->frame_rate ())
-	, _screen_aspect_ratio (content->screen_aspect_ratio ())
+ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureMXF> asset, int64_t entry_point)
+	: ReelMXFAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
+	, _frame_rate (asset->frame_rate ())
+	, _screen_aspect_ratio (asset->screen_aspect_ratio ())
 {
 	
 }

@@ -7,7 +7,6 @@ def build(bld):
              certificates.cc
              colour_conversion.cc
              colour_matrix.cc
-             content.cc
              cpl.cc
              dcp.cc        
              dcp_time.cc
@@ -70,7 +69,6 @@ def build(bld):
               colour_conversion.h
               colour_matrix.h
               cpl.h
-              content.h
               dcp.h
               dcp_time.h
               decrypted_kdm.h

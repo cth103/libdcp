@@ -41,7 +41,7 @@ public:
 	ReelSubtitleAsset (boost::shared_ptr<const cxml::Node>);
 
 	boost::shared_ptr<SubtitleContent> subtitle_content () const {
-		return boost::dynamic_pointer_cast<SubtitleContent> (_content.object ());
+		return boost::dynamic_pointer_cast<SubtitleContent> (_asset.object ());
 	}
 
 private:	

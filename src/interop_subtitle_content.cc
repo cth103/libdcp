@@ -22,6 +22,7 @@
 #include "xml.h"
 #include "raw_convert.h"
 #include "font_node.h"
+#include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
 #include <cmath>
 

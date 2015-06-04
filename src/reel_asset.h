@@ -35,7 +35,7 @@ namespace xmlpp {
 
 namespace dcp {
 
-class Content;
+class Asset;
 
 /** @class ReelAsset
  *  @brief An entry in a &lt;Reel&gt; which refers to a use of a piece of content.
@@ -48,15 +48,15 @@ class ReelAsset : public Object
 {
 public:
 	ReelAsset ();
-	ReelAsset (boost::shared_ptr<Content> content, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	ReelAsset (boost::shared_ptr<Asset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	ReelAsset (boost::shared_ptr<const cxml::Node>);
 
 	virtual void write_to_cpl (xmlpp::Node* node, Standard standard) const;
 	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
 
-	/** @return a Ref to our actual content */
-	Ref<Content>& content () {
-		return _content;
+	/** @return a Ref to our actual asset */
+	Ref<Asset>& asset () {
+		return _asset;
 	}
 
 	int64_t entry_point () const {
@@ -78,10 +78,10 @@ protected:
 	 */
 	virtual std::pair<std::string, std::string> cpl_node_attribute (Standard) const;
 
-	/** Reference to the content (MXF or XML file) that this reel entry
+	/** Reference to the asset (MXF or XML file) that this reel entry
 	 *  applies to.
 	 */
-	Ref<Content> _content;
+	Ref<Asset> _asset;
 
 private:
 	

@@ -36,7 +36,7 @@ class ReelPictureAsset : public ReelMXFAsset
 {
 public:
 	ReelPictureAsset ();
-	ReelPictureAsset (boost::shared_ptr<PictureMXF> content, int64_t entry_point);
+	ReelPictureAsset (boost::shared_ptr<PictureMXF> asset, int64_t entry_point);
 	ReelPictureAsset (boost::shared_ptr<const cxml::Node>);
 
 	virtual void write_to_cpl (xmlpp::Node* node, Standard standard) const;
@@ -44,7 +44,7 @@ public:
 
 	/** @return the PictureMXF that this object refers to */
 	boost::shared_ptr<PictureMXF> mxf () {
-		return boost::dynamic_pointer_cast<PictureMXF> (_content.object ());
+		return boost::dynamic_pointer_cast<PictureMXF> (_asset.object ());
 	}
 
 	/** @return picture frame rate */

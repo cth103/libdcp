@@ -167,14 +167,14 @@ void
 Reel::resolve_refs (list<shared_ptr<Object> > objects)
 {
 	if (_main_picture) {
-		_main_picture->content().resolve (objects);
+		_main_picture->asset().resolve (objects);
 	}
 
 	if (_main_sound) {
-		_main_sound->content().resolve (objects);
+		_main_sound->asset().resolve (objects);
 	}
 
 	if (_main_subtitle) {
-		_main_subtitle->content().resolve (objects);
+		_main_subtitle->asset().resolve (objects);
 	}
 }

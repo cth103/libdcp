@@ -20,7 +20,7 @@
 #ifndef LIBDCP_SUBTITLE_CONTENT_H
 #define LIBDCP_SUBTITLE_CONTENT_H
 
-#include "content.h"
+#include "asset.h"
 #include "dcp_time.h"
 #include "subtitle_string.h"
 #include <libcxml/cxml.h>
@@ -37,7 +37,7 @@ class LoadFontNode;
 /** @class SubtitleContent
  *  @brief A parent for classes representing a file containing subtitles.
  */
-class SubtitleContent : public Content
+class SubtitleContent : public Asset
 {
 public:
 	SubtitleContent ();

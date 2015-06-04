@@ -52,7 +52,7 @@ MXF::MXF (Fraction edit_rate)
 }
 
 MXF::MXF (boost::filesystem::path file)
-	: Content (file)
+	: Asset (file)
 	, _intrinsic_duration (0)
 	, _encryption_context (0)
 	, _decryption_context (0)
@@ -95,7 +95,7 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, Standard standard)
 bool
 MXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
-	if (!Content::equals (other, opt, note)) {
+	if (!Asset::equals (other, opt, note)) {
 		return false;
 	}
 	

@@ -49,7 +49,7 @@ SubtitleContent::SubtitleContent ()
 }
 
 SubtitleContent::SubtitleContent (boost::filesystem::path file)
-	: Content (file)
+	: Asset (file)
 	, _reel_number ("1")
 {
 

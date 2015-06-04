@@ -41,12 +41,12 @@ public:
 
 	/** @return the SoundMXF that this object refers to */
 	boost::shared_ptr<SoundMXF> mxf () {
-		return boost::dynamic_pointer_cast<SoundMXF> (_content.object ());
+		return boost::dynamic_pointer_cast<SoundMXF> (_asset.object ());
 	}
 
 	/** @return the SoundMXF that this object refers to */
 	boost::shared_ptr<const SoundMXF> mxf () const {
-		return boost::dynamic_pointer_cast<const SoundMXF> (_content.object ());
+		return boost::dynamic_pointer_cast<const SoundMXF> (_asset.object ());
 	}
 	
 private:

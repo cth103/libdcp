@@ -20,14 +20,16 @@
 #ifndef LIBDCP_MXF_H
 #define LIBDCP_MXF_H
 
-#include "content.h"
+#include "asset.h"
 #include "key.h"
 #include "metadata.h"
+
 #include <boost/signals2.hpp>
 
 namespace ASDCP {
 	class AESEncContext;
 	class AESDecContext;
+	class WriterInfo;
 }
 
 /* Undefine some stuff that the OS X 10.5 SDK defines */
@@ -42,7 +44,7 @@ class MXFMetadata;
 /** @class MXF
  *  @brief Parent class for classes which represent MXF files.
  */
-class MXF : public Content
+class MXF : public Asset
 {
 public:
 	MXF (Fraction edit_rate);
@@ -116,6 +118,7 @@ public:
 protected:
 	friend class MXFWriter;
 
+	virtual std::string asdcp_kind () const = 0;
 	std::string pkl_type (Standard standard) const;
 	void read_writer_info (ASDCP::WriterInfo const &);
 	
