@@ -79,12 +79,12 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, Standard standard)
 	Kumu::hex2bin (_id.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
 	DCP_ASSERT (c == Kumu::UUID_Length);
 
-	if (_key) {
+	if (_key_id) {
 		Kumu::GenRandomUUID (writer_info->ContextID);
 		writer_info->EncryptedEssence = true;
 
 		unsigned int c;
-		Kumu::hex2bin (_key_id.c_str(), writer_info->CryptographicKeyID, Kumu::UUID_Length, &c);
+		Kumu::hex2bin (_key_id.get().c_str(), writer_info->CryptographicKeyID, Kumu::UUID_Length, &c);
 		DCP_ASSERT (c == Kumu::UUID_Length);
 	}
 }
@@ -123,7 +123,7 @@ MXF::set_key (Key key)
 {
 	_key = key;
 
-	if (_key_id.empty ()) {
+	if (!_key_id) {
 		/* No key ID so far; we now need one */
 		_key_id = make_uuid ();
 	}

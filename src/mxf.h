@@ -60,7 +60,7 @@ public:
 
 	/** @return true if the data is encrypted */
 	bool encrypted () const {
-		return !_key_id.empty ();
+		return _key_id;
 	}
 
 	/** Set the ID of the key that is used for encryption/decryption.
@@ -70,8 +70,8 @@ public:
 		_key_id = i;
 	}
 
-	/** @return the ID of the key used for encryption/decryption, or an empty string */
-	std::string key_id () const {
+	/** @return the ID of the key used for encryption/decryption, if there is one */
+	boost::optional<std::string> key_id () const {
 		return _key_id;
 	}
 
@@ -112,8 +112,8 @@ protected:
 
 	ASDCP::AESEncContext* _encryption_context;
 	ASDCP::AESDecContext* _decryption_context;
-	/** ID of the key used for encryption/decryption, or an empty string */
-	std::string _key_id;
+	/** ID of the key used for encryption/decryption, if there is one */
+	boost::optional<std::string> _key_id;
 	/** Key used for encryption/decryption, if there is one */
 	boost::optional<Key> _key;
 	MXFMetadata _metadata;

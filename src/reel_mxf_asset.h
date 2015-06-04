@@ -47,18 +47,18 @@ public:
 	 *  that its content is encrypted.
 	 */
 	bool encrypted () const {
-		return !_key_id.empty ();
+		return _key_id;
 	}
 
-	/** @return Key ID to describe the key that encrypts this asset's;
-	 *  content.
+	/** @return Key ID to describe the key that encrypts this asset's
+	 *  content, if there is one.
 	 */
-	std::string key_id () const {
+	boost::optional<std::string> key_id () const {
 		return _key_id;
 	}
 
 private:
-	std::string _key_id;          ///< The &lt;KeyId&gt; from the reel's entry for this asset, or empty if there isn't one
+	boost::optional<std::string> _key_id; ///< The &lt;KeyId&gt; from the reel's entry for this asset, if there is one
 };
 
 }

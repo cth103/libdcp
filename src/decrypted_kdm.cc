@@ -203,10 +203,10 @@ DecryptedKDM::DecryptedKDM (
 		/* XXX: do non-MXF assets need keys? */
 		shared_ptr<const ReelMXFAsset> mxf = boost::dynamic_pointer_cast<const ReelMXFAsset> (i);
 		if (mxf) {
-			if (mxf->key_id().empty ()) {
+			if (!mxf->key_id ()) {
 				throw NotEncryptedError (mxf->id());
 			}
-			_keys.push_back (DecryptedKDMKey (mxf->key_type(), mxf->key_id(), key, cpl->id ()));
+			_keys.push_back (DecryptedKDMKey (mxf->key_type(), mxf->key_id().get(), key, cpl->id ()));
 		}
 	}
 }
