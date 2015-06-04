@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,24 +32,24 @@ struct ASDCPStateBase
 };
 
 template <class P, class Q>
-void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard standard, Q* mxf, uint8_t* data, int size)
+void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard standard, Q* asset, uint8_t* data, int size)
 {
-	mxf->set_file (writer->_file);
+	asset->set_file (writer->_file);
 	
 	if (ASDCP_FAILURE (state->j2k_parser.OpenReadFrame (data, size, state->frame_buffer))) {
 		boost::throw_exception (MiscError ("could not parse J2K frame"));
 	}
 
 	state->j2k_parser.FillPictureDescriptor (state->picture_descriptor);
-	state->picture_descriptor.EditRate = ASDCP::Rational (mxf->edit_rate().numerator, mxf->edit_rate().denominator);
+	state->picture_descriptor.EditRate = ASDCP::Rational (asset->edit_rate().numerator, asset->edit_rate().denominator);
 
-	mxf->set_size (Size (state->picture_descriptor.StoredWidth, state->picture_descriptor.StoredHeight));
-	mxf->set_screen_aspect_ratio (Fraction (state->picture_descriptor.AspectRatio.Numerator, state->picture_descriptor.AspectRatio.Denominator));
+	asset->set_size (Size (state->picture_descriptor.StoredWidth, state->picture_descriptor.StoredHeight));
+	asset->set_screen_aspect_ratio (Fraction (state->picture_descriptor.AspectRatio.Numerator, state->picture_descriptor.AspectRatio.Denominator));
 	
-	mxf->fill_writer_info (&state->writer_info, mxf->id(), standard);
+	asset->fill_writer_info (&state->writer_info, asset->id(), standard);
 	
 	Kumu::Result_t r = state->mxf_writer.OpenWrite (
-		mxf->file().string().c_str(),
+		asset->file().string().c_str(),
 		state->writer_info,
 		state->picture_descriptor,
 		16384,
@@ -57,7 +57,7 @@ void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard stand
 		);
 
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for writing", mxf->file().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for writing", asset->file().string(), r));
 	}
 
 	writer->_started = true;

@@ -24,7 +24,6 @@
 #include "util.h"
 #include "exceptions.h"
 #include "cpl.h"
-#include "mxf.h"
 #include "signer.h"
 #include "dcp_assert.h"
 #include "AS_DCP.h"
@@ -198,14 +197,14 @@ DecryptedKDM::DecryptedKDM (
 	, _content_title_text (content_title_text)
 	, _issue_date (issue_date)
 {
-	/* Create DecryptedKDMKey objects for each MXF asset */
+	/* Create DecryptedKDMKey objects for each encryptable asset */
 	BOOST_FOREACH(shared_ptr<const ReelAsset> i, cpl->reel_assets ()) {
-		shared_ptr<const ReelEncryptableAsset> mxf = boost::dynamic_pointer_cast<const ReelEncryptableAsset> (i);
-		if (mxf) {
-			if (!mxf->key_id ()) {
-				throw NotEncryptedError (mxf->id());
+		shared_ptr<const ReelEncryptableAsset> asset = boost::dynamic_pointer_cast<const ReelEncryptableAsset> (i);
+		if (asset) {
+			if (!asset->key_id ()) {
+				throw NotEncryptedError (asset->id());
 			}
-			_keys.push_back (DecryptedKDMKey (mxf->key_type(), mxf->key_id().get(), key, cpl->id ()));
+			_keys.push_back (DecryptedKDMKey (asset->key_type(), asset->key_id().get(), key, cpl->id ()));
 		}
 	}
 }
