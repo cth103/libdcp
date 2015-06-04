@@ -48,7 +48,7 @@ MonoPictureMXFWriter::MonoPictureMXFWriter (PictureMXF* asset, boost::filesystem
 	: PictureMXFWriter (asset, file, standard, overwrite)
 	, _state (new MonoPictureMXFWriter::ASDCPState)
 {
-	_state->encryption_context = asset->encryption_context ();
+
 }
 
 void
@@ -74,7 +74,7 @@ MonoPictureMXFWriter::write (uint8_t* data, int size)
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
-	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _state->encryption_context, 0, &hash);
+	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _encryption_context, 0, &hash);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
 	}

@@ -24,6 +24,8 @@
 #include "mxf_writer.h"
 #include "mxf.h"
 #include "dcp_assert.h"
+#include "AS_DCP.h"
+#include "KM_prng.h"
 
 using namespace dcp;
 
@@ -36,13 +38,28 @@ MXFWriter::MXFWriter (MXF* mxf, boost::filesystem::path file)
 	, _file (file)
 	, _frames_written (0)
 	, _finalized (false)
+	, _encryption_context (0)
 {
 	mxf->set_file (file);
+
+	if (mxf->key ()) {
+		_encryption_context = new ASDCP::AESEncContext;
+		if (ASDCP_FAILURE (_encryption_context->InitKey (mxf->key()->value ()))) {
+			throw MiscError ("could not set up encryption context");
+		}
+		
+		uint8_t cbc_buffer[ASDCP::CBC_BLOCK_SIZE];
+		
+		Kumu::FortunaRNG rng;
+		if (ASDCP_FAILURE (_encryption_context->SetIVec (rng.FillRandom (cbc_buffer, ASDCP::CBC_BLOCK_SIZE)))) {
+			throw MiscError ("could not set up CBC initialization vector");
+		}
+	}
 }
 
 MXFWriter::~MXFWriter ()
 {
-
+	delete _encryption_context;
 }
 
 void

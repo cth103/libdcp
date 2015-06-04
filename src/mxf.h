@@ -82,11 +82,6 @@ public:
 		return _key;
 	}
 
-	/** @return encryption context, set up with any key that has been passed to set_key() */
-	ASDCP::AESEncContext* encryption_context () const {
-		return _encryption_context;
-	}
-
 	/** Set the metadata that is written to the MXF file.
 	 *  @param m Metadata.
 	 */
@@ -110,7 +105,6 @@ protected:
 	 */
 	void fill_writer_info (ASDCP::WriterInfo* w, Standard standard);
 
-	ASDCP::AESEncContext* _encryption_context;
 	ASDCP::AESDecContext* _decryption_context;
 	/** ID of the key used for encryption/decryption, if there is one */
 	boost::optional<std::string> _key_id;

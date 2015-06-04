@@ -43,15 +43,13 @@ using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 MXF::MXF ()
-	: _encryption_context (0)
-	, _decryption_context (0)
+	: _decryption_context (0)
 {
 
 }
 
 MXF::MXF (boost::filesystem::path file)
 	: Asset (file)
-	, _encryption_context (0)
 	, _decryption_context (0)
 {
 
@@ -59,7 +57,6 @@ MXF::MXF (boost::filesystem::path file)
 
 MXF::~MXF ()
 {
-	delete _encryption_context;
 	delete _decryption_context;
 }
 
@@ -131,18 +128,6 @@ MXF::set_key (Key key)
 	_decryption_context = new ASDCP::AESDecContext;
 	if (ASDCP_FAILURE (_decryption_context->InitKey (_key->value ()))) {
 		throw MiscError ("could not set up decryption context");
-	}
-
-	_encryption_context = new ASDCP::AESEncContext;
-	if (ASDCP_FAILURE (_encryption_context->InitKey (_key->value ()))) {
-		throw MiscError ("could not set up encryption context");
-	}
-	
-	uint8_t cbc_buffer[ASDCP::CBC_BLOCK_SIZE];
-	
-	Kumu::FortunaRNG rng;
-	if (ASDCP_FAILURE (_encryption_context->SetIVec (rng.FillRandom (cbc_buffer, ASDCP::CBC_BLOCK_SIZE)))) {
-		throw MiscError ("could not set up CBC initialization vector");
 	}
 }
 

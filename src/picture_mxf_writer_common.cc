@@ -29,7 +29,6 @@ struct ASDCPStateBase
 	ASDCP::JP2K::FrameBuffer frame_buffer;
 	ASDCP::WriterInfo writer_info;
 	ASDCP::JP2K::PictureDescriptor picture_descriptor;
-	ASDCP::AESEncContext* encryption_context;
 };
 
 template <class P, class Q>

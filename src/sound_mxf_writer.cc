@@ -32,7 +32,6 @@ struct SoundMXFWriter::ASDCPState
 	ASDCP::PCM::FrameBuffer frame_buffer;
 	ASDCP::WriterInfo writer_info;
 	ASDCP::PCM::AudioDescriptor audio_desc;
-	ASDCP::AESEncContext* encryption_context;
 };
 
 SoundMXFWriter::SoundMXFWriter (SoundMXF* m, boost::filesystem::path file, Standard standard)
@@ -41,8 +40,6 @@ SoundMXFWriter::SoundMXFWriter (SoundMXF* m, boost::filesystem::path file, Stand
 	, _sound_mxf (m)
 	, _frame_buffer_offset (0)
 {
-	_state->encryption_context = m->encryption_context ();
-	
 	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
 	_state->audio_desc.EditRate = ASDCP::Rational (_sound_mxf->edit_rate().numerator, _sound_mxf->edit_rate().denominator);
 	_state->audio_desc.AudioSamplingRate = ASDCP::Rational (_sound_mxf->sampling_rate(), 1);
@@ -98,7 +95,7 @@ SoundMXFWriter::write (float const * const * data, int frames)
 void
 SoundMXFWriter::write_current_frame ()
 {
-	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _state->encryption_context, 0);
+	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _encryption_context, 0);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MiscError (String::compose ("could not write audio MXF frame (%1)", int (r))));
 	}

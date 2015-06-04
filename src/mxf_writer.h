@@ -26,6 +26,10 @@
 
 #include <boost/filesystem.hpp>
 
+namespace ASDCP {
+	class AESEncContext;
+}
+
 namespace dcp {
 
 class MXF;
@@ -55,6 +59,7 @@ protected:
 	int64_t _frames_written;
 	/** true if finalize() has been called on this object */
 	bool _finalized;
+	ASDCP::AESEncContext* _encryption_context;
 };
 
 }

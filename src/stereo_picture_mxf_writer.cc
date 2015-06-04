@@ -42,7 +42,7 @@ StereoPictureMXFWriter::StereoPictureMXFWriter (PictureMXF* mxf, boost::filesyst
 	, _state (new StereoPictureMXFWriter::ASDCPState)
 	, _next_eye (EYE_LEFT)
 {
-	_state->encryption_context = mxf->encryption_context ();
+
 }
 
 void
@@ -75,7 +75,7 @@ StereoPictureMXFWriter::write (uint8_t* data, int size)
 	Kumu::Result_t r = _state->mxf_writer.WriteFrame (
 		_state->frame_buffer,
 		_next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
-		_state->encryption_context,
+		_encryption_context,
 		0,
 		&hash
 		);

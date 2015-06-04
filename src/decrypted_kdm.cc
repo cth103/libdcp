@@ -200,7 +200,6 @@ DecryptedKDM::DecryptedKDM (
 {
 	/* Create DecryptedKDMKey objects for each MXF asset */
 	BOOST_FOREACH(shared_ptr<const ReelAsset> i, cpl->reel_assets ()) {
-		/* XXX: do non-MXF assets need keys? */
 		shared_ptr<const ReelMXFAsset> mxf = boost::dynamic_pointer_cast<const ReelMXFAsset> (i);
 		if (mxf) {
 			if (!mxf->key_id ()) {
