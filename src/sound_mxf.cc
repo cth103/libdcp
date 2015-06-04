@@ -71,8 +71,7 @@ SoundMXF::SoundMXF (boost::filesystem::path file)
 		boost::throw_exception (DCPReadError ("could not read audio MXF information"));
 	}
 
-	read_writer_info (info);
-
+	_id = read_writer_info (info);
 }
 
 SoundMXF::SoundMXF (Fraction edit_rate, int sampling_rate, int channels)

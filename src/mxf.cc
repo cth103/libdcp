@@ -131,10 +131,16 @@ MXF::set_key (Key key)
 	}
 }
 
-void
+string
 MXF::read_writer_info (ASDCP::WriterInfo const & info)
 {
 	char buffer[64];
+
+	Kumu::bin2UUIDhex (info.CryptographicKeyID, ASDCP::UUIDlen, buffer, sizeof (buffer));
+	_key_id = buffer;
+
+	_metadata.read (info);
+	
 	Kumu::bin2UUIDhex (info.AssetUUID, ASDCP::UUIDlen, buffer, sizeof (buffer));
-	_id = buffer;
+	return buffer;
 }

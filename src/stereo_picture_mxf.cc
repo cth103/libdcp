@@ -52,7 +52,7 @@ StereoPictureMXF::StereoPictureMXF (boost::filesystem::path file)
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
 
-	read_writer_info (info);
+	_id = read_writer_info (info);
 }
 
 StereoPictureMXF::StereoPictureMXF (Fraction edit_rate)

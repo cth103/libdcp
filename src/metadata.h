@@ -28,6 +28,10 @@
 
 class utc_offset_to_string_test;
 
+namespace ASDCP {
+	class WriterInfo;
+}
+
 namespace dcp
 {
 
@@ -38,6 +42,8 @@ class MXFMetadata
 {
 public:
 	MXFMetadata ();
+
+	void read (ASDCP::WriterInfo const & info);
 
 	std::string company_name;
 	std::string product_name;

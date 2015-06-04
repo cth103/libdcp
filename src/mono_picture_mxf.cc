@@ -53,7 +53,7 @@ MonoPictureMXF::MonoPictureMXF (boost::filesystem::path file)
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
 
-	read_writer_info (info);
+	_id = read_writer_info (info);
 }
 
 MonoPictureMXF::MonoPictureMXF (Fraction edit_rate)

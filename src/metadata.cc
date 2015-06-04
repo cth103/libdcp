@@ -24,6 +24,7 @@
 #include "metadata.h"
 #include "util.h"
 #include "local_time.h"
+#include "AS_DCP.h"
 #include <sstream>
 #include <iomanip>
 #include <time.h>
@@ -39,6 +40,13 @@ MXFMetadata::MXFMetadata ()
 
 }
 
+void
+MXFMetadata::read (ASDCP::WriterInfo const & info)
+{
+	company_name = info.CompanyName;
+	product_name = info.ProductName;
+	product_version = info.ProductVersion;
+}
 
 XMLMetadata::XMLMetadata ()
 	: issuer ("libdcp" LIBDCP_VERSION)

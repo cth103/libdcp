@@ -98,7 +98,7 @@ protected:
 	template <class P, class Q>
 	friend void start (PictureMXFWriter* writer, boost::shared_ptr<P> state, Standard standard, Q* mxf, uint8_t* data, int size);
 
-	void read_writer_info (ASDCP::WriterInfo const &);
+	std::string read_writer_info (ASDCP::WriterInfo const &);
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
 	 *  @param standard INTEROP or SMPTE.
