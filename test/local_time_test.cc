@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -60,13 +60,41 @@ BOOST_AUTO_TEST_CASE (local_time_test)
 		BOOST_CHECK_EQUAL (t.as_string(), "2011-11-20T01:06:59-09:30");
 	}
 
-	/* Construction from boost::posix_time::ptime */
-	dcp::LocalTime b (boost::posix_time::time_from_string ("2002-01-20 19:03:56"));
-	BOOST_CHECK_EQUAL (b._year, 2002);
-	BOOST_CHECK_EQUAL (b._month, 1);
-	BOOST_CHECK_EQUAL (b._day, 20);
-	BOOST_CHECK_EQUAL (b._hour, 19);
-	BOOST_CHECK_EQUAL (b._minute, 3);
-	BOOST_CHECK_EQUAL (b._second, 56);
+	{
+		dcp::LocalTime t ("2011-11-20T01:06:59.456-09:30");
+		BOOST_CHECK_EQUAL (t._year, 2011);
+		BOOST_CHECK_EQUAL (t._month, 11);
+		BOOST_CHECK_EQUAL (t._day, 20);
+		BOOST_CHECK_EQUAL (t._hour, 1);
+		BOOST_CHECK_EQUAL (t._minute, 6);
+		BOOST_CHECK_EQUAL (t._second, 59);
+		BOOST_CHECK_EQUAL (t._millisecond, 456);
+		BOOST_CHECK_EQUAL (t._tz_hour, -9);
+		BOOST_CHECK_EQUAL (t._tz_minute, 30);
+		BOOST_CHECK_EQUAL (t.as_string(true), "2011-11-20T01:06:59.456-09:30");
+	}
+
+	{
+		/* Construction from boost::posix_time::ptime */
+		dcp::LocalTime b (boost::posix_time::time_from_string ("2002-01-20 19:03:56"));
+		BOOST_CHECK_EQUAL (b._year, 2002);
+		BOOST_CHECK_EQUAL (b._month, 1);
+		BOOST_CHECK_EQUAL (b._day, 20);
+		BOOST_CHECK_EQUAL (b._hour, 19);
+		BOOST_CHECK_EQUAL (b._minute, 3);
+		BOOST_CHECK_EQUAL (b._second, 56);
+	}
+
+	{
+		/* Construction from boost::posix_time::ptime with milliseconds */
+		dcp::LocalTime b (boost::posix_time::time_from_string ("2002-01-20 19:03:56.491"));
+		BOOST_CHECK_EQUAL (b._year, 2002);
+		BOOST_CHECK_EQUAL (b._month, 1);
+		BOOST_CHECK_EQUAL (b._day, 20);
+		BOOST_CHECK_EQUAL (b._hour, 19);
+		BOOST_CHECK_EQUAL (b._minute, 3);
+		BOOST_CHECK_EQUAL (b._second, 56);
+		BOOST_CHECK_EQUAL (b._millisecond, 491);
+	}
 }
 

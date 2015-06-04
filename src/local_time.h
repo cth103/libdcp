@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,10 +33,12 @@ namespace dcp {
 
 /** @class LocalTime
  *  @brief A representation of a local time (down to the second), including its offset
- *  from GMT.
+ *  from GMT (equivalent to xs:dateTime).
  *
  *  I tried to use boost for this, really I did, but I could not get it
  *  to parse strings of the required format (those that include time zones).
+ *
+ *  See http://www.w3.org/TR/xmlschema-2/#dateTime
  */
 class LocalTime
 {
@@ -45,9 +47,9 @@ public:
 	LocalTime (boost::posix_time::ptime);
 	LocalTime (std::string);
 
-	std::string as_string () const;
+	std::string as_string (bool with_millisecond = false) const;
 	std::string date () const;
-	std::string time_of_day () const;
+	std::string time_of_day (bool with_millisecond = false) const;
 
 private:
 	friend class ::local_time_test;
@@ -61,6 +63,7 @@ private:
 	int _hour;   ///< hour number of the day (0-23)
 	int _minute; ///< minute number of the hour (0-59)
 	int _second; ///< second number of the minute (0-59)
+	int _millisecond; ///< millisecond number of the second (0-999)
 
 	int _tz_hour;   ///< hours by which this time is offset from UTC
 	int _tz_minute; ///< minutes by which this time is offset from UTC
