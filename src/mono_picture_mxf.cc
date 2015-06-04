@@ -74,10 +74,6 @@ MonoPictureMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, Note
 	if (!dynamic_pointer_cast<const MonoPictureMXF> (other)) {
 		return false;
 	}
-	
-	if (!MXF::equals (other, opt, note)) {
-		return false;
-	}
 
 	ASDCP::JP2K::MXFReader reader_A;
 	Kumu::Result_t r = reader_A.OpenRead (_file.string().c_str());

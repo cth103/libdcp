@@ -38,5 +38,5 @@ PictureMXFWriter::PictureMXFWriter (PictureMXF* mxf, boost::filesystem::path fil
 	, _standard (standard)
 	, _overwrite (overwrite)
 {
-	
+	mxf->set_file (file);
 }

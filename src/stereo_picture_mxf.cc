@@ -77,10 +77,6 @@ StereoPictureMXF::start_write (boost::filesystem::path file, Standard standard, 
 bool
 StereoPictureMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
-	if (!MXF::equals (other, opt, note)) {
-		return false;
-	}
-
 	ASDCP::JP2K::MXFSReader reader_A;
 	Kumu::Result_t r = reader_A.OpenRead (file().string().c_str());
 	if (ASDCP_FAILURE (r)) {

@@ -27,7 +27,6 @@
 #include <boost/signals2.hpp>
 
 namespace ASDCP {
-	class AESEncContext;
 	class AESDecContext;
 	class WriterInfo;
 }
@@ -45,18 +44,11 @@ class PictureMXFWriter;
 /** @class MXF
  *  @brief Parent class for classes which represent MXF files.
  */
-class MXF : public Asset
+class MXF
 {
 public:
 	MXF ();
-	MXF (boost::filesystem::path file);
-	~MXF ();
-
-	bool equals (
-		boost::shared_ptr<const Asset> other,
-		EqualityOptions opt,
-		NoteHandler note
-		) const;
+	virtual ~MXF ();
 
 	/** @return true if the data is encrypted */
 	bool encrypted () const {
@@ -103,7 +95,7 @@ protected:
 	 *  @param w struct to fill in.
 	 *  @param standard INTEROP or SMPTE.
 	 */
-	void fill_writer_info (ASDCP::WriterInfo* w, Standard standard);
+	void fill_writer_info (ASDCP::WriterInfo* w, std::string id, Standard standard);
 
 	ASDCP::AESDecContext* _decryption_context;
 	/** ID of the key used for encryption/decryption, if there is one */

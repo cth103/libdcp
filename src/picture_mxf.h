@@ -45,7 +45,7 @@ class PictureMXFWriter;
 /** @class PictureMXF
  *  @brief An asset made up of JPEG2000 data.
  */
-class PictureMXF : public MXF
+class PictureMXF : public Asset, public MXF
 {
 public:
 	PictureMXF (boost::filesystem::path file);

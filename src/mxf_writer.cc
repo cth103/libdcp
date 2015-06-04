@@ -40,8 +40,6 @@ MXFWriter::MXFWriter (MXF* mxf, boost::filesystem::path file)
 	, _finalized (false)
 	, _encryption_context (0)
 {
-	mxf->set_file (file);
-
 	if (mxf->key ()) {
 		_encryption_context = new ASDCP::AESEncContext;
 		if (ASDCP_FAILURE (_encryption_context->InitKey (mxf->key()->value ()))) {

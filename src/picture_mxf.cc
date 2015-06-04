@@ -48,7 +48,7 @@ using boost::shared_ptr;
 using namespace dcp;
 
 PictureMXF::PictureMXF (boost::filesystem::path file)
-	: MXF (file)
+	: Asset (file)
 	, _intrinsic_duration (0)
 {
 

@@ -23,7 +23,9 @@
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 
+using std::string;
 using boost::shared_ptr;
+using boost::optional;
 using namespace dcp;
 
 ReelMXFAsset::ReelMXFAsset ()
@@ -32,9 +34,9 @@ ReelMXFAsset::ReelMXFAsset ()
 
 }
 
-ReelMXFAsset::ReelMXFAsset (shared_ptr<MXF> mxf, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelAsset (mxf, edit_rate, intrinsic_duration, entry_point)
-	, _key_id (mxf->key_id ())
+ReelMXFAsset::ReelMXFAsset (shared_ptr<Asset> asset, optional<string> key_id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: ReelAsset (asset, edit_rate, intrinsic_duration, entry_point)
+	, _key_id (key_id)
 {
 
 }

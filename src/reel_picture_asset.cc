@@ -44,7 +44,7 @@ ReelPictureAsset::ReelPictureAsset ()
 }
 
 ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureMXF> asset, int64_t entry_point)
-	: ReelMXFAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
+	: ReelMXFAsset (asset, asset->key_id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 	, _frame_rate (asset->frame_rate ())
 	, _screen_aspect_ratio (asset->screen_aspect_ratio ())
 {

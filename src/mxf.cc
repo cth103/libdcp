@@ -48,20 +48,13 @@ MXF::MXF ()
 
 }
 
-MXF::MXF (boost::filesystem::path file)
-	: Asset (file)
-	, _decryption_context (0)
-{
-
-}
-
 MXF::~MXF ()
 {
 	delete _decryption_context;
 }
 
 void
-MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, Standard standard)
+MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id, Standard standard)
 {
 	writer_info->ProductVersion = _metadata.product_version;
 	writer_info->CompanyName = _metadata.company_name;
@@ -73,7 +66,7 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, Standard standard)
 		writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
 	}
 	unsigned int c;
-	Kumu::hex2bin (_id.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
+	Kumu::hex2bin (id.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
 	DCP_ASSERT (c == Kumu::UUID_Length);
 
 	if (_key_id) {
@@ -84,30 +77,6 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, Standard standard)
 		Kumu::hex2bin (_key_id.get().c_str(), writer_info->CryptographicKeyID, Kumu::UUID_Length, &c);
 		DCP_ASSERT (c == Kumu::UUID_Length);
 	}
-}
-
-bool
-MXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
-{
-	if (!Asset::equals (other, opt, note)) {
-		return false;
-	}
-	
-	shared_ptr<const MXF> other_mxf = dynamic_pointer_cast<const MXF> (other);
-	if (!other_mxf) {
-		return false;
-	}
-	
-	if (_file.leaf() != other_mxf->file().leaf()) {
-		if (!opt.mxf_filenames_can_differ) {
-			note (DCP_ERROR, "MXF: filenames differ");
-			return false;
-		} else {
-			note (DCP_NOTE, "MXF: filenames differ");
-		}
-	}
-	
-	return true;
 }
 
 /** Set the (private) key that will be used to encrypt or decrypt this MXF's content.

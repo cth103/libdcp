@@ -55,12 +55,14 @@ SoundMXFWriter::SoundMXFWriter (SoundMXF* m, boost::filesystem::path file, Stand
 	_state->frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
 	memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
 	
-	_sound_mxf->fill_writer_info (&_state->writer_info, standard);
+	_sound_mxf->fill_writer_info (&_state->writer_info, _sound_mxf->id(), standard);
 	
 	Kumu::Result_t r = _state->mxf_writer.OpenWrite (file.string().c_str(), _state->writer_info, _state->audio_desc);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (FileError ("could not open audio MXF for writing", file.string(), r));
 	}
+
+	_sound_mxf->set_file (file);
 }
 
 void

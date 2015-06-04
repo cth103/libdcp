@@ -37,7 +37,7 @@ class SoundMXFWriter;
 /** @class SoundMXF
  *  @brief Representation of a MXF file containing sound
  */
-class SoundMXF : public MXF
+class SoundMXF : public Asset, public MXF
 {
 public:
 	SoundMXF (boost::filesystem::path file);

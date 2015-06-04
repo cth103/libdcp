@@ -44,7 +44,7 @@ using boost::shared_ptr;
 using namespace dcp;
 
 SoundMXF::SoundMXF (boost::filesystem::path file)
-	: MXF (file)
+	: Asset (file)
 	, _intrinsic_duration (0)
 	, _channels (0)
 	, _sampling_rate (0)
@@ -86,10 +86,6 @@ SoundMXF::SoundMXF (Fraction edit_rate, int sampling_rate, int channels)
 bool
 SoundMXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
-	if (!MXF::equals (other, opt, note)) {
-		return false;
-	}
-		     
 	ASDCP::PCM::MXFReader reader_A;
 	Kumu::Result_t r = reader_A.OpenRead (file().string().c_str());
 	if (ASDCP_FAILURE (r)) {

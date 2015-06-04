@@ -81,7 +81,7 @@ StereoPictureMXFWriter::write (uint8_t* data, int size)
 		);
 
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _mxf->file().string(), r));
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
 	}
 
 	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
@@ -101,7 +101,7 @@ StereoPictureMXFWriter::fake_write (int size)
 
 	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size, _next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT);
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _mxf->file().string(), r));
+		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
 	}
 
 	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
@@ -115,7 +115,7 @@ StereoPictureMXFWriter::finalize ()
 {
 	Kumu::Result_t r = _state->mxf_writer.Finalize();
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _mxf->file().string(), r));
+		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _file.string(), r));
 	}
 
 	_picture_mxf->_intrinsic_duration = _frames_written;

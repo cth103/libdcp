@@ -46,7 +46,7 @@ void dcp::start (PictureMXFWriter* writer, shared_ptr<P> state, Standard standar
 	mxf->set_size (Size (state->picture_descriptor.StoredWidth, state->picture_descriptor.StoredHeight));
 	mxf->set_screen_aspect_ratio (Fraction (state->picture_descriptor.AspectRatio.Numerator, state->picture_descriptor.AspectRatio.Denominator));
 	
-	mxf->fill_writer_info (&state->writer_info, standard);
+	mxf->fill_writer_info (&state->writer_info, mxf->id(), standard);
 	
 	Kumu::Result_t r = state->mxf_writer.OpenWrite (
 		mxf->file().string().c_str(),
