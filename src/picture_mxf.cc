@@ -48,12 +48,14 @@ using namespace dcp;
 
 PictureMXF::PictureMXF (boost::filesystem::path file)
 	: MXF (file)
+	, _intrinsic_duration (0)
 {
 
 }
 
 PictureMXF::PictureMXF (Fraction edit_rate)
-	: MXF (edit_rate)
+	: _edit_rate (edit_rate)
+	, _intrinsic_duration (0)
 {
 
 }

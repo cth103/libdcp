@@ -42,22 +42,19 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
-MXF::MXF (Fraction edit_rate)
-	: _edit_rate (edit_rate)
-	, _intrinsic_duration (0)
-	, _encryption_context (0)
+MXF::MXF ()
+	: _encryption_context (0)
 	, _decryption_context (0)
 {
-	/* _intrinsic_duration must be set up up by a subclass */
+
 }
 
 MXF::MXF (boost::filesystem::path file)
 	: Asset (file)
-	, _intrinsic_duration (0)
 	, _encryption_context (0)
 	, _decryption_context (0)
 {
-	/* _edit_rate and _intrinsic_duration must be set up up by a subclass */
+
 }
 
 MXF::~MXF ()
@@ -104,16 +101,6 @@ MXF::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 		return false;
 	}
 	
-	if (_edit_rate != other_mxf->_edit_rate) {
-		note (DCP_ERROR, "MXF: edit rates differ");
-	 	return false;
-	}
-	
-	if (_intrinsic_duration != other_mxf->_intrinsic_duration) {
-	 	note (DCP_ERROR, String::compose ("MXF: intrinsic durations differ (%1 vs %2)", _intrinsic_duration, other_mxf->_intrinsic_duration));
-		return false;
-	}
-
 	if (_file.leaf() != other_mxf->file().leaf()) {
 		if (!opt.mxf_filenames_can_differ) {
 			note (DCP_ERROR, "MXF: filenames differ");

@@ -117,5 +117,6 @@ SoundMXFWriter::finalize ()
 		boost::throw_exception (MiscError ("could not finalise audio MXF"));
 	}
 
+	_sound_mxf->_intrinsic_duration = _frames_written;
 	MXFWriter::finalize ();
 }

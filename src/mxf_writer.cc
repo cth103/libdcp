@@ -50,5 +50,4 @@ MXFWriter::finalize ()
 {
 	DCP_ASSERT (!_finalized);
 	_finalized = true;
-	_mxf->_intrinsic_duration = _frames_written;
 }

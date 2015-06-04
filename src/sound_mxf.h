@@ -63,11 +63,26 @@ public:
 		return _sampling_rate;
 	}
 
+	Fraction edit_rate () const {
+		return _edit_rate;
+	}
+
+	int64_t intrinsic_duration () const {
+		return _intrinsic_duration;
+	}
+	
 private:
+	friend class SoundMXFWriter;
+	
 	std::string asdcp_kind () const {
 		return "Sound";
 	}
 
+	Fraction _edit_rate;
+	/** The total length of this content in video frames.  The amount of
+	 *  content presented may be less than this.
+	 */
+	int64_t _intrinsic_duration;
 	int _channels;      ///< number of channels
 	int _sampling_rate; ///< sampling rate in Hz
 };

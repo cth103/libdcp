@@ -118,5 +118,6 @@ StereoPictureMXFWriter::finalize ()
 		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _mxf->file().string(), r));
 	}
 
+	_picture_mxf->_intrinsic_duration = _frames_written;
 	PictureMXFWriter::finalize ();
 }

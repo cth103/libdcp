@@ -44,6 +44,7 @@ using namespace dcp;
 
 SoundMXF::SoundMXF (boost::filesystem::path file)
 	: MXF (file)
+	, _intrinsic_duration (0)
 	, _channels (0)
 	, _sampling_rate (0)
 {
@@ -74,7 +75,8 @@ SoundMXF::SoundMXF (boost::filesystem::path file)
 }
 
 SoundMXF::SoundMXF (Fraction edit_rate, int sampling_rate, int channels)
-	: MXF (edit_rate)
+	: _edit_rate (edit_rate)
+	, _intrinsic_duration (0)
 	, _channels (channels)
 	, _sampling_rate (sampling_rate)
 {

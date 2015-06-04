@@ -81,7 +81,17 @@ public:
 		_screen_aspect_ratio = r;
 	}
 
+	Fraction edit_rate () const {
+		return _edit_rate;
+	}
+
+	int64_t intrinsic_duration () const {
+		return _intrinsic_duration;
+	}
+
 protected:
+	friend class MonoPictureMXFWriter;
+	friend class StereoPictureMXFWriter;
 
 	bool frame_buffer_equals (
 		int frame, EqualityOptions opt, NoteHandler note,
@@ -96,6 +106,11 @@ protected:
 
 	void read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const &);
 
+	Fraction _edit_rate;
+	/** The total length of this content in video frames.  The amount of
+	 *  content presented may be less than this.
+	 */
+	int64_t _intrinsic_duration;
 	/** picture size in pixels */
 	Size _size;
 	Fraction _frame_rate;
