@@ -30,7 +30,7 @@
 #include "reel.h"
 #include "test.h"
 #include "file.h"
-#include "subtitle_content.h"
+#include "subtitle_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "encrypted_kdm.h"

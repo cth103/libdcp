@@ -17,7 +17,7 @@
 
 */
 
-#include "smpte_subtitle_content.h"
+#include "smpte_subtitle_asset.h"
 #include "smpte_load_font_node.h"
 #include "font_node.h"
 #include "exceptions.h"
@@ -33,8 +33,8 @@ using std::cout;
 using boost::shared_ptr;
 using namespace dcp;
 
-SMPTESubtitleContent::SMPTESubtitleContent (boost::filesystem::path file, bool mxf)
-	: SubtitleContent (file)
+SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file, bool mxf)
+	: SubtitleAsset (file)
 {
 	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
 	
@@ -78,7 +78,7 @@ SMPTESubtitleContent::SMPTESubtitleContent (boost::filesystem::path file, bool m
 }
 
 list<shared_ptr<LoadFontNode> >
-SMPTESubtitleContent::load_font_nodes () const
+SMPTESubtitleAsset::load_font_nodes () const
 {
 	list<shared_ptr<LoadFontNode> > lf;
 	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter (lf));
@@ -86,7 +86,7 @@ SMPTESubtitleContent::load_font_nodes () const
 }
 
 bool
-SMPTESubtitleContent::valid_mxf (boost::filesystem::path file)
+SMPTESubtitleAsset::valid_mxf (boost::filesystem::path file)
 {
 	ASDCP::TimedText::MXFReader reader;
 	Kumu::Result_t r = reader.OpenRead (file.string().c_str ());

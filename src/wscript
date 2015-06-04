@@ -19,7 +19,7 @@ def build(bld):
              font_node.cc
              gamma_transfer_function.cc
              interop_load_font_node.cc
-             interop_subtitle_content.cc
+             interop_subtitle_asset.cc
              key.cc
              local_time.cc
              metadata.cc
@@ -43,7 +43,7 @@ def build(bld):
              rgb_xyz.cc
              signer.cc
              smpte_load_font_node.cc
-             smpte_subtitle_content.cc
+             smpte_subtitle_asset.cc
              sound_mxf.cc
              sound_mxf_writer.cc
              sound_frame.cc
@@ -51,7 +51,7 @@ def build(bld):
              stereo_picture_mxf_writer.cc
              stereo_picture_frame.cc
              subtitle_node.cc
-             subtitle_content.cc
+             subtitle_asset.cc
              subtitle_string.cc
              text_node.cc
              transfer_function.cc
@@ -78,7 +78,7 @@ def build(bld):
               font.h
               gamma_transfer_function.h
               interop_load_font_node.h
-              interop_subtitle_content.h
+              interop_subtitle_asset.h
               key.h
               load_font_node.h
               local_time.h
@@ -104,14 +104,14 @@ def build(bld):
               ref.h
               signer.h
               smpte_load_font_node.h
-              smpte_subtitle_content.h
+              smpte_subtitle_asset.h
               sound_frame.h
               sound_mxf.h
               sound_mxf_writer.h
               stereo_picture_mxf.h
               stereo_picture_frame.h
               subtitle_node.h
-              subtitle_content.h
+              subtitle_asset.h
               subtitle_string.h
               transfer_function.h
               types.h

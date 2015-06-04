@@ -17,14 +17,14 @@
 
 */
 
-#include "smpte_subtitle_content.h"
+#include "smpte_subtitle_asset.h"
 #include "test.h"
 #include <boost/test/unit_test.hpp>
 
 /** Load a SMPTE XML subtitle file */
 BOOST_AUTO_TEST_CASE (smpte_subtitle_test)
 {
-	dcp::SMPTESubtitleContent sc (private_test / "8dfafe11-2bd1-4206-818b-afc109cfe7f6_reel1.xml", false);
+	dcp::SMPTESubtitleAsset sc (private_test / "8dfafe11-2bd1-4206-818b-afc109cfe7f6_reel1.xml", false);
 
 	BOOST_REQUIRE_EQUAL (sc.id(), "8dfafe11-2bd1-4206-818b-afc109cfe7f6");
 	BOOST_REQUIRE_EQUAL (sc.subtitles().size(), 159);

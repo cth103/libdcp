@@ -18,7 +18,7 @@
 */
 
 #include "raw_convert.h"
-#include "subtitle_content.h"
+#include "subtitle_asset.h"
 #include "util.h"
 #include "xml.h"
 #include "font_node.h"
@@ -42,13 +42,13 @@ using boost::optional;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
-SubtitleContent::SubtitleContent ()
+SubtitleAsset::SubtitleAsset ()
 	: _reel_number ("1")
 {
 
 }
 
-SubtitleContent::SubtitleContent (boost::filesystem::path file)
+SubtitleAsset::SubtitleAsset (boost::filesystem::path file)
 	: Asset (file)
 	, _reel_number ("1")
 {
@@ -56,7 +56,7 @@ SubtitleContent::SubtitleContent (boost::filesystem::path file)
 }
 
 void
-SubtitleContent::parse_common (shared_ptr<cxml::Document> xml, list<shared_ptr<dcp::FontNode> > font_nodes)
+SubtitleAsset::parse_common (shared_ptr<cxml::Document> xml, list<shared_ptr<dcp::FontNode> > font_nodes)
 {
 	_reel_number = xml->string_child ("ReelNumber");
 	_language = xml->string_child ("Language");
@@ -70,7 +70,7 @@ SubtitleContent::parse_common (shared_ptr<cxml::Document> xml, list<shared_ptr<d
 }
 
 void
-SubtitleContent::examine_font_nodes (
+SubtitleAsset::examine_font_nodes (
 	shared_ptr<const cxml::Node> xml,
 	list<shared_ptr<dcp::FontNode> > const & font_nodes,
 	ParseState& parse_state
@@ -96,7 +96,7 @@ SubtitleContent::examine_font_nodes (
 }
 
 void
-SubtitleContent::examine_text_nodes (
+SubtitleAsset::examine_text_nodes (
 	shared_ptr<const cxml::Node> xml,
 	list<shared_ptr<dcp::TextNode> > const & text_nodes,
 	ParseState& parse_state
@@ -111,7 +111,7 @@ SubtitleContent::examine_text_nodes (
 }
 
 void
-SubtitleContent::maybe_add_subtitle (string text, ParseState const & parse_state)
+SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 {
 	if (empty_or_white_space (text)) {
 		return;
@@ -151,7 +151,7 @@ SubtitleContent::maybe_add_subtitle (string text, ParseState const & parse_state
 }
 
 list<SubtitleString>
-SubtitleContent::subtitles_during (Time from, Time to) const
+SubtitleAsset::subtitles_during (Time from, Time to) const
 {
 	list<SubtitleString> s;
 	for (list<SubtitleString>::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
@@ -164,13 +164,13 @@ SubtitleContent::subtitles_during (Time from, Time to) const
 }
 
 void
-SubtitleContent::add (SubtitleString s)
+SubtitleAsset::add (SubtitleString s)
 {
 	_subtitles.push_back (s);
 }
 
 void
-SubtitleContent::write_xml (boost::filesystem::path p) const
+SubtitleAsset::write_xml (boost::filesystem::path p) const
 {
 	FILE* f = fopen_boost (p, "w");
 	if (!f) {
@@ -185,7 +185,7 @@ SubtitleContent::write_xml (boost::filesystem::path p) const
 }
 
 Time
-SubtitleContent::latest_subtitle_out () const
+SubtitleAsset::latest_subtitle_out () const
 {
 	Time t;
 	for (list<SubtitleString>::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
@@ -198,13 +198,13 @@ SubtitleContent::latest_subtitle_out () const
 }
 
 bool
-SubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, NoteHandler note) const
+SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, NoteHandler note) const
 {
 	if (!Asset::equals (other_asset, options, note)) {
 		return false;
 	}
 	
-	shared_ptr<const SubtitleContent> other = dynamic_pointer_cast<const SubtitleContent> (other_asset);
+	shared_ptr<const SubtitleAsset> other = dynamic_pointer_cast<const SubtitleAsset> (other_asset);
 	if (!other) {
 		return false;
 	}

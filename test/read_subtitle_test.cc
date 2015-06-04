@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 */
 
-#include "interop_subtitle_content.h"
+#include "interop_subtitle_asset.h"
 #include "subtitle_string.h"
 #include <boost/test/unit_test.hpp>
 
@@ -28,7 +28,7 @@ using boost::shared_ptr;
 /* Load some subtitle content from XML and check that it is read correctly */
 BOOST_AUTO_TEST_CASE (read_subtitle_test1)
 {
-	dcp::InteropSubtitleContent subs ("test/data/subs1.xml");
+	dcp::InteropSubtitleAsset subs ("test/data/subs1.xml");
 
 	BOOST_CHECK_EQUAL (subs.language(), "French");
 
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE (read_subtitle_test1)
 /** And similarly for another one */
 BOOST_AUTO_TEST_CASE (read_subtitle_test2)
 {
-	dcp::InteropSubtitleContent subs ("test/data/subs2.xml");
+	dcp::InteropSubtitleAsset subs ("test/data/subs2.xml");
 
 	list<dcp::SubtitleString> s = subs.subtitles_during (dcp::Time (0, 0, 42, 100, 250), dcp::Time (0, 0, 42, 101, 250));
 	BOOST_REQUIRE_EQUAL (s.size(), 2);

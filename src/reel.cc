@@ -23,7 +23,7 @@
 #include "mono_picture_mxf.h"
 #include "stereo_picture_mxf.h"
 #include "sound_mxf.h"
-#include "subtitle_content.h"
+#include "subtitle_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_stereo_picture_asset.h"
 #include "reel_sound_asset.h"

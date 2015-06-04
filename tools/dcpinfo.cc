@@ -22,7 +22,7 @@
 #include "reel.h"
 #include "sound_mxf.h"
 #include "picture_mxf.h"
-#include "subtitle_content.h"
+#include "subtitle_asset.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
@@ -80,8 +80,8 @@ main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
 		return;
 	}
 	
-	list<SubtitleString> subs = reel->main_subtitle()->subtitle_content()->subtitles ();
-	cout << "      Subtitle: " << subs.size() << " subtitles in " << reel->main_subtitle()->subtitle_content()->language() << "\n";
+	list<SubtitleString> subs = reel->main_subtitle()->subtitle_asset()->subtitles ();
+	cout << "      Subtitle: " << subs.size() << " subtitles in " << reel->main_subtitle()->subtitle_asset()->language() << "\n";
 	if (list_subtitles) {
 		BOOST_FOREACH (SubtitleString const& k, subs) {
 			cout << k << "\n";

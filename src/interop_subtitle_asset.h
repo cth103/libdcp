@@ -17,27 +17,34 @@
 
 */
 
-#include "subtitle_content.h"
+#include "subtitle_asset.h"
 #include <boost/filesystem.hpp>
 
 namespace dcp {
 
-class SMPTELoadFontNode;
+class InteropLoadFontNode;
 
-class SMPTESubtitleContent : public SubtitleContent
+class InteropSubtitleAsset : public SubtitleAsset
 {
 public:
-	/** @param file File name
-	 *  @param mxf true if `file' is a MXF, or false if it is an XML file.
-	 */
-	SMPTESubtitleContent (boost::filesystem::path file, bool mxf = true);
+	InteropSubtitleAsset (std::string movie_title, std::string language);
+	InteropSubtitleAsset (boost::filesystem::path file);
+
+	bool equals (
+		boost::shared_ptr<const Asset>,
+		EqualityOptions,
+		NoteHandler note
+		) const;
 
 	std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const;
 
-	static bool valid_mxf (boost::filesystem::path);
+	void add_font (std::string id, std::string uri);
 	
+	Glib::ustring xml_as_string () const;
+
 private:
-	std::list<boost::shared_ptr<SMPTELoadFontNode> > _load_font_nodes;
+	std::string _movie_title;
+	std::list<boost::shared_ptr<InteropLoadFontNode> > _load_font_nodes;
 };
 
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 */
 
-#include "interop_subtitle_content.h"
+#include "interop_subtitle_asset.h"
 #include <iostream>
 
 using namespace std;
@@ -29,7 +29,7 @@ int main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 	
-	dcp::InteropSubtitleContent s (argv[1]);
+	dcp::InteropSubtitleAsset s (argv[1]);
 	cout << s.xml_as_string ();
 	return 0;
 }

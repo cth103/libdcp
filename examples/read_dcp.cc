@@ -31,7 +31,7 @@
 #include "mono_picture_mxf.h"
 #include "stereo_picture_mxf.h"
 #include "sound_mxf.h"
-#include "subtitle_content.h"
+#include "subtitle_asset.h"
 #include "xyz_image.h"
 #include "colour_conversion.h"
 #include "rgb_xyz.h"
@@ -66,7 +66,7 @@ main ()
 			std::cout << "3D picture\n";
 		} else if (boost::dynamic_pointer_cast<dcp::SoundMXF> (*i)) {
 			std::cout << "Sound\n";
-		} else if (boost::dynamic_pointer_cast<dcp::SubtitleContent> (*i)) {
+		} else if (boost::dynamic_pointer_cast<dcp::SubtitleAsset> (*i)) {
 			std::cout << "Subtitle\n";
 		} else if (boost::dynamic_pointer_cast<dcp::CPL> (*i)) {
 			std::cout << "CPL\n";

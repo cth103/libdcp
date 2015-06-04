@@ -17,7 +17,7 @@
 
 */
 
-#include "interop_subtitle_content.h"
+#include "interop_subtitle_asset.h"
 #include "subtitle_string.h"
 #include "test.h"
 #include <boost/test/unit_test.hpp>
@@ -29,7 +29,7 @@ using boost::shared_ptr;
 /* Write some subtitle content as Interop XML and check that it is right */
 BOOST_AUTO_TEST_CASE (write_subtitle_test)
 {
-	dcp::InteropSubtitleContent c ("Test", "EN");
+	dcp::InteropSubtitleAsset c ("Test", "EN");
 
 	c.add (
 		dcp::SubtitleString (

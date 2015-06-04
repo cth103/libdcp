@@ -17,7 +17,7 @@
 
 */
 
-#include "interop_subtitle_content.h"
+#include "interop_subtitle_asset.h"
 #include "interop_load_font_node.h"
 #include "xml.h"
 #include "raw_convert.h"
@@ -34,8 +34,8 @@ using boost::optional;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
-InteropSubtitleContent::InteropSubtitleContent (boost::filesystem::path file)
-	: SubtitleContent (file)
+InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
+	: SubtitleAsset (file)
 {
 	shared_ptr<cxml::Document> xml (new cxml::Document ("DCSubtitle"));
 	xml->read_file (file);
@@ -53,7 +53,7 @@ InteropSubtitleContent::InteropSubtitleContent (boost::filesystem::path file)
 	parse_common (xml, font_nodes);
 }
 
-InteropSubtitleContent::InteropSubtitleContent (string movie_title, string language)
+InteropSubtitleAsset::InteropSubtitleAsset (string movie_title, string language)
 	: _movie_title (movie_title)
 {
 	_language = language;
@@ -69,7 +69,7 @@ struct SubtitleSorter {
 };
 
 Glib::ustring
-InteropSubtitleContent::xml_as_string () const
+InteropSubtitleAsset::xml_as_string () const
 {
 	xmlpp::Document doc;
 	xmlpp::Element* root = doc.create_root_node ("DCSubtitle");
@@ -187,19 +187,19 @@ InteropSubtitleContent::xml_as_string () const
 }
 
 void
-InteropSubtitleContent::add_font (string id, string uri)
+InteropSubtitleAsset::add_font (string id, string uri)
 {
 	_load_font_nodes.push_back (shared_ptr<InteropLoadFontNode> (new InteropLoadFontNode (id, uri)));
 }
 
 bool
-InteropSubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, NoteHandler note) const
+InteropSubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, NoteHandler note) const
 {
-	if (!SubtitleContent::equals (other_asset, options, note)) {
+	if (!SubtitleAsset::equals (other_asset, options, note)) {
 		return false;
 	}
 	
-	shared_ptr<const InteropSubtitleContent> other = dynamic_pointer_cast<const InteropSubtitleContent> (other_asset);
+	shared_ptr<const InteropSubtitleAsset> other = dynamic_pointer_cast<const InteropSubtitleAsset> (other_asset);
 	if (!other) {
 		return false;
 	}
@@ -231,7 +231,7 @@ InteropSubtitleContent::equals (shared_ptr<const Asset> other_asset, EqualityOpt
 }
 
 list<shared_ptr<LoadFontNode> >
-InteropSubtitleContent::load_font_nodes () const
+InteropSubtitleAsset::load_font_nodes () const
 {
 	list<shared_ptr<LoadFontNode> > lf;
 	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter (lf));

@@ -29,8 +29,8 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
-ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundMXF> content, int64_t entry_point)
-	: ReelMXFAsset (content, content->edit_rate(), content->intrinsic_duration(), entry_point)
+ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundMXF> asset, int64_t entry_point)
+	: ReelMXFAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 {
 
 }

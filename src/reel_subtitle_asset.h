@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@
 #define LIBDCP_REEL_SUBTITLE_ASSET_H
 
 #include "reel_asset.h"
-#include "subtitle_content.h"
+#include "subtitle_asset.h"
 
 namespace dcp {
 
-class SubtitleContent;
+class SubtitleAsset;
 
 /** @class ReelSubtitleAsset
  *  @brief Part of a Reel's description which refers to a subtitle XML file.
@@ -37,11 +37,11 @@ class SubtitleContent;
 class ReelSubtitleAsset : public ReelAsset
 {
 public:
-	ReelSubtitleAsset (boost::shared_ptr<SubtitleContent> content, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
+	ReelSubtitleAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
 	ReelSubtitleAsset (boost::shared_ptr<const cxml::Node>);
 
-	boost::shared_ptr<SubtitleContent> subtitle_content () const {
-		return boost::dynamic_pointer_cast<SubtitleContent> (_asset.object ());
+	boost::shared_ptr<SubtitleAsset> subtitle_asset () const {
+		return boost::dynamic_pointer_cast<SubtitleAsset> (_asset.object ());
 	}
 
 private:	

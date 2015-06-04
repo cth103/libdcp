@@ -21,15 +21,15 @@
  *  @brief ReelSubtitleAsset class.
  */
 
-#include "subtitle_content.h"
+#include "subtitle_asset.h"
 #include "reel_subtitle_asset.h"
 
 using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
-ReelSubtitleAsset::ReelSubtitleAsset (boost::shared_ptr<SubtitleContent> content, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelAsset (content, edit_rate, intrinsic_duration, entry_point)
+ReelSubtitleAsset::ReelSubtitleAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: ReelAsset (asset, edit_rate, intrinsic_duration, entry_point)
 {
 
 }

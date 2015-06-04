@@ -21,7 +21,7 @@
 #include "dcp.h"
 #include "cpl.h"
 #include "reel.h"
-#include "subtitle_content.h"
+#include "subtitle_asset.h"
 #include "reel_subtitle_asset.h"
 #include "exceptions.h"
 
@@ -51,7 +51,7 @@ main (int argc, char* argv[])
 			for (list<shared_ptr<Reel> >::iterator j = reels.begin(); j != reels.end(); ++j) {
 				
 				if ((*j)->main_subtitle()) {
-					(*j)->main_subtitle()->subtitle_content()->write_xml ((*j)->main_subtitle()->subtitle_content()->file ());
+					(*j)->main_subtitle()->subtitle_asset()->write_xml ((*j)->main_subtitle()->subtitle_asset()->file ());
 				}
 			}
 		}

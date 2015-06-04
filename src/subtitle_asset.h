@@ -17,8 +17,8 @@
 
 */
 
-#ifndef LIBDCP_SUBTITLE_CONTENT_H
-#define LIBDCP_SUBTITLE_CONTENT_H
+#ifndef LIBDCP_SUBTITLE_ASSET_H
+#define LIBDCP_SUBTITLE_ASSET_H
 
 #include "asset.h"
 #include "dcp_time.h"
@@ -34,14 +34,14 @@ class TextNode;
 class SubtitleNode;
 class LoadFontNode;
 
-/** @class SubtitleContent
+/** @class SubtitleAsset
  *  @brief A parent for classes representing a file containing subtitles.
  */
-class SubtitleContent : public Asset
+class SubtitleAsset : public Asset
 {
 public:
-	SubtitleContent ();
-	SubtitleContent (boost::filesystem::path file);
+	SubtitleAsset ();
+	SubtitleAsset (boost::filesystem::path file);
 
 	bool equals (
 		boost::shared_ptr<const Asset>,

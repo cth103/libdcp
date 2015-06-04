@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 #include "picture_mxf_writer.h"
 #include "sound_mxf_writer.h"
 #include "sound_mxf.h"
-#include "subtitle_content.h"
 #include "reel.h"
 #include "test.h"
 #include "file.h"
