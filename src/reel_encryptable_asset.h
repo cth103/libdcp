@@ -17,28 +17,32 @@
 
 */
 
-/** @file  src/reel_mxf_asset.h
- *  @brief ReelMXFAsset
+/** @file  src/reel_encryptable_asset.h
+ *  @brief ReelEncryptableAsset
  */
 
-#ifndef LIBDCP_REEL_MXF_ASSET_H
-#define LIBDCP_REEL_MXF_ASSET_H
+#ifndef LIBDCP_REEL_ENCRYPTABLE_ASSET_H
+#define LIBDCP_REEL_ENCRYPTABLE_ASSET_H
 
 #include "reel_asset.h"
 
 namespace dcp {
 
-class MXF;
-
-/** @class ReelMXFAsset
- *  @brief Part of a Reel's description which refers to an MXF.
+/** @class ReelEncryptableAsset
+ *  @brief Part of a Reel's description which refers to an asset which can be encrypted.
  */
-class ReelMXFAsset : public ReelAsset
+class ReelEncryptableAsset : public ReelAsset
 {
 public:
-	ReelMXFAsset ();
-	ReelMXFAsset (boost::shared_ptr<Asset> asset, boost::optional<std::string> key_id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
-	ReelMXFAsset (boost::shared_ptr<const cxml::Node>);
+	ReelEncryptableAsset ();
+	ReelEncryptableAsset (
+		boost::shared_ptr<Asset> asset,
+		boost::optional<std::string> key_id,
+		Fraction edit_rate,
+		int64_t intrinsic_duration,
+		int64_t entry_point
+		);
+	ReelEncryptableAsset (boost::shared_ptr<const cxml::Node>);
 
 	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */
 	virtual std::string key_type () const = 0;

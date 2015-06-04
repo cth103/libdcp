@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ ReelPictureAsset::ReelPictureAsset ()
 }
 
 ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelMXFAsset (asset, asset->key_id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
+	: ReelEncryptableAsset (asset, asset->key_id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 	, _frame_rate (asset->frame_rate ())
 	, _screen_aspect_ratio (asset->screen_aspect_ratio ())
 {
@@ -52,7 +52,7 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entr
 }
 
 ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
-	: ReelMXFAsset (node)
+	: ReelEncryptableAsset (node)
 {
 	_frame_rate = Fraction (node->string_child ("FrameRate"));
 	try {

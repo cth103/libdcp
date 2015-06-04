@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #ifndef LIBDCP_REEL_PICTURE_ASSET_H
 #define LIBDCP_REEL_PICTURE_ASSET_H
 
-#include "reel_mxf_asset.h"
+#include "reel_encryptable_asset.h"
 #include "picture_asset.h"
 
 namespace dcp {
@@ -32,7 +32,7 @@ namespace dcp {
 /** @class ReelPictureAsset
  *  @brief Part of a Reel's description which refers to a picture asset.
  */
-class ReelPictureAsset : public ReelMXFAsset
+class ReelPictureAsset : public ReelEncryptableAsset
 {
 public:
 	ReelPictureAsset ();

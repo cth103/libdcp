@@ -17,7 +17,7 @@
 
 */
 
-#include "reel_mxf_asset.h"
+#include "reel_encryptable_asset.h"
 #include "mxf.h"
 #include "dcp_assert.h"
 #include <libcxml/cxml.h>
@@ -28,20 +28,22 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
-ReelMXFAsset::ReelMXFAsset ()
+ReelEncryptableAsset::ReelEncryptableAsset ()
 	: ReelAsset ()
 {
 
 }
 
-ReelMXFAsset::ReelMXFAsset (shared_ptr<Asset> asset, optional<string> key_id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+ReelEncryptableAsset::ReelEncryptableAsset (
+	shared_ptr<Asset> asset, optional<string> key_id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point
+	)
 	: ReelAsset (asset, edit_rate, intrinsic_duration, entry_point)
 	, _key_id (key_id)
 {
 
 }
 
-ReelMXFAsset::ReelMXFAsset (shared_ptr<const cxml::Node> node)
+ReelEncryptableAsset::ReelEncryptableAsset (shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
 	, _key_id (node->optional_string_child ("KeyId"))
 {
@@ -51,7 +53,7 @@ ReelMXFAsset::ReelMXFAsset (shared_ptr<const cxml::Node> node)
 }
 
 void
-ReelMXFAsset::write_to_cpl (xmlpp::Node* node, Standard s) const
+ReelEncryptableAsset::write_to_cpl (xmlpp::Node* node, Standard s) const
 {
 	ReelAsset::write_to_cpl (node, s);
 

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "decrypted_kdm.h"
 #include "decrypted_kdm_key.h"
 #include "encrypted_kdm.h"
-#include "reel_mxf_asset.h"
+#include "reel_encryptable_asset.h"
 #include "util.h"
 #include "exceptions.h"
 #include "cpl.h"
@@ -200,7 +200,7 @@ DecryptedKDM::DecryptedKDM (
 {
 	/* Create DecryptedKDMKey objects for each MXF asset */
 	BOOST_FOREACH(shared_ptr<const ReelAsset> i, cpl->reel_assets ()) {
-		shared_ptr<const ReelMXFAsset> mxf = boost::dynamic_pointer_cast<const ReelMXFAsset> (i);
+		shared_ptr<const ReelEncryptableAsset> mxf = boost::dynamic_pointer_cast<const ReelEncryptableAsset> (i);
 		if (mxf) {
 			if (!mxf->key_id ()) {
 				throw NotEncryptedError (mxf->id());

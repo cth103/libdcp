@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *  @brief ReelSoundAsset class.
  */
 
-#include "reel_mxf_asset.h"
+#include "reel_encryptable_asset.h"
 #include "sound_asset.h"
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -31,7 +31,7 @@ namespace dcp {
 /** @class ReelSoundAsset
  *  @brief Part of a Reel's description which refers to a sound MXF.
  */
-class ReelSoundAsset : public ReelMXFAsset
+class ReelSoundAsset : public ReelEncryptableAsset
 {
 public:
 	ReelSoundAsset (boost::shared_ptr<dcp::SoundAsset> content, int64_t entry_point);
