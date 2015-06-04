@@ -39,7 +39,8 @@ namespace ASDCP {
 namespace dcp
 {
 
-class MXFMetadata;	
+class MXFMetadata;
+class PictureMXFWriter;	
 
 /** @class MXF
  *  @brief Parent class for classes which represent MXF files.
@@ -56,12 +57,6 @@ public:
 		EqualityOptions opt,
 		NoteHandler note
 		) const;
-
-	/** Fill in a ADSCP::WriteInfo struct.
-	 *  @param w struct to fill in.
-	 *  @param standard INTEROP or SMPTE.
-	 */
-	void fill_writer_info (ASDCP::WriterInfo* w, Standard standard);
 
 	/** @return true if the data is encrypted */
 	bool encrypted () const {
@@ -105,10 +100,16 @@ public:
 	}
 	
 protected:
-	friend class MXFWriter;
+	template <class P, class Q>
+	friend void start (PictureMXFWriter* writer, boost::shared_ptr<P> state, Standard standard, Q* mxf, uint8_t* data, int size);
 
 	void read_writer_info (ASDCP::WriterInfo const &);
-	
+	/** Fill in a ADSCP::WriteInfo struct.
+	 *  @param w struct to fill in.
+	 *  @param standard INTEROP or SMPTE.
+	 */
+	void fill_writer_info (ASDCP::WriterInfo* w, Standard standard);
+
 	ASDCP::AESEncContext* _encryption_context;
 	ASDCP::AESDecContext* _decryption_context;
 	/** ID of the key used for encryption/decryption, or an empty string */
