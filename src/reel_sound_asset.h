@@ -30,7 +30,7 @@
 namespace dcp {
 
 /** @class ReelSoundAsset
- *  @brief Part of a Reel's description which refers to a sound MXF.
+ *  @brief Part of a Reel's description which refers to a sound asset.
  */
 class ReelSoundAsset : public ReelAsset, public ReelMXF
 {

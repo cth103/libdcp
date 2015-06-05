@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/smpte_subtitle_asset.h
+ *  @brief SMPTESubtitleAsset class.
+ */
+
 #include "subtitle_asset.h"
 #include "local_time.h"
 #include "mxf.h"
@@ -26,6 +30,9 @@ namespace dcp {
 
 class SMPTELoadFontNode;
 
+/** @class SMPTESubtitleAsset
+ *  @brief A set of subtitles to be read and/or written in the SMPTE format.
+ */
 class SMPTESubtitleAsset : public SubtitleAsset, public MXF
 {
 public:
@@ -45,9 +52,42 @@ public:
 	Glib::ustring xml_as_string () const;
 	void write (boost::filesystem::path path) const;
 
-	/** @return language, if one was specified */
+	/** @return title of the film that these subtitles are for,
+	 *  to be presented to the user.
+	 */
+	std::string content_title_text () const {
+		return _content_title_text;
+	}
+
+	/** @return language as a xs:language, if one was specified */
 	boost::optional<std::string> language () const {
 		return _language;
+	}
+
+	/** @return annotation text, to be presented to the user */
+	boost::optional<std::string> annotation_text () const {
+		return _annotation_text;
+	}
+
+	/** @return file creation time and date */
+	LocalTime issue_date () const {
+		return _issue_date;
+	}
+
+	Fraction edit_rate () const {
+		return _edit_rate;
+	}
+
+	/** @return subdivision of 1 second that is used for subtitle times;
+	 *  e.g. a time_code_rate of 250 means that a subtitle time of 0:0:0:001
+	 *  represents 4ms.
+	 */
+	int time_code_rate () const {
+		return _time_code_rate;
+	}
+
+	boost::optional<Time> start_time () const {
+		return _start_time;
 	}
 	
 	static bool valid_mxf (boost::filesystem::path);
@@ -60,10 +100,10 @@ protected:
 	
 private:
 	std::string _content_title_text;
+	boost::optional<std::string> _language;
 	boost::optional<std::string> _annotation_text;
 	LocalTime _issue_date;
 	boost::optional<int> _reel_number;
-	boost::optional<std::string> _language;
 	Fraction _edit_rate;
 	int _time_code_rate;
 	boost::optional<Time> _start_time;

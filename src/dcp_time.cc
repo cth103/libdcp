@@ -38,11 +38,22 @@ Time::Time (int frame, int frames_per_second, int tcr_)
 	set (double (frame) / frames_per_second, tcr_);
 }
 
+/** Construct a Time with a timecode rate of 24 and using the supplied
+ *  number of seconds.
+ *
+ *  @param seconds A number of seconds.
+ */
 Time::Time (double seconds)
 {
 	set (seconds, 24);
 }
 
+/** Construct a Time with specified timecode rate and using the supplied
+ *  number of seconds.
+ *
+ *  @param seconds A number of seconds.
+ *  @param tcr_ Timecode rate to use.
+ */
 void
 Time::set (double seconds, int tcr_)
 {
@@ -66,7 +77,7 @@ Time::set (double seconds, int tcr_)
 	}
 }
 
-/** @param time String of the form HH:MM:SS:EE */
+/** @param time String of the form HH:MM:SS:EE[E] */
 Time::Time (string time, int tcr_)
 	: tcr (tcr_)
 {
@@ -251,18 +262,26 @@ Time::as_string () const
 	return str.str ();
 }
 
+/** @param tcr_ Timecode rate with which the return value should be counted.
+ *  @return the total number of editable units that this time consists of at the specified timecode rate.
+ *  For example, as_editable_units (24) returns the total time in frames at 24fps.
+ */
 int64_t
 Time::as_editable_units (int tcr_) const
 {
 	return (int64_t(e) * float (tcr_ / tcr)) + int64_t(s) * tcr_ + int64_t(m) * 60 * tcr_ + int64_t(h) * 60 * 60 * tcr_;
 }
 
+/** @return the total number of seconds that this time consists of */
 double
 Time::as_seconds () const
 {
 	return h * 3600 + m * 60 + s + double(e) / tcr;
 }
 
+/** @param tcr_ New timecode rate.
+ *  @return A new Time which is this time at the spcified new timecode rate.
+ */
 Time
 Time::rebase (int tcr_) const
 {

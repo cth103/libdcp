@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/smpte_subtitle_asset.cc
+ *  @brief SMPTESubtitleAsset class.
+ */
+
 #include "smpte_subtitle_asset.h"
 #include "smpte_load_font_node.h"
 #include "font_node.h"
@@ -39,6 +43,10 @@ using boost::split;
 using boost::is_any_of;
 using namespace dcp;
 
+/** Construct a SMPTESubtitleAsset by reading an XML or MXF file.
+ *  @param file Filename.
+ *  @param mxf true if file is an MXF, false if it is XML.
+ */
 SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file, bool mxf)
 	: SubtitleAsset (file)
 {
@@ -59,10 +67,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file, bool mxf)
 
 		ASDCP::WriterInfo info;
 		reader.FillWriterInfo (info);
-		
-		char buffer[64];
-		Kumu::bin2UUIDhex (info.AssetUUID, ASDCP::UUIDlen, buffer, sizeof (buffer));
-		_id = buffer;
+		_id = read_writer_info (info);
 	} else {
 		xml->read_file (file);
 		_id = xml->string_child("Id").substr (9);

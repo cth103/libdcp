@@ -39,7 +39,7 @@ namespace ASDCP {
 namespace dcp {
 
 /** @class SoundFrame
- *  @brief One &lsquo;frame&rsquo; of sound data from a MXF.
+ *  @brief One &lsquo;frame&rsquo; of sound data from a SoundAsset.
  */
 class SoundFrame : public boost::noncopyable
 {

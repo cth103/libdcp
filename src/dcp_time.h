@@ -33,10 +33,10 @@ namespace dcp {
 /** @class Time
  *  @brief A representation of time within a DCP.
  */
-	
 class Time
 {
 public:
+	/** Construct a zero Time */
 	Time () : h (0), m (0), s (0), e (0), tcr (1) {}
 
 	/** Construct a Time from a frame index (starting from 0),

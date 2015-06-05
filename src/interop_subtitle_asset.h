@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/interop_subtitle_asset.h
+ *  @brief InteropSubtitleAsset class.
+ */
+
 #include "subtitle_asset.h"
 #include <boost/filesystem.hpp>
 
@@ -24,6 +28,11 @@ namespace dcp {
 
 class InteropLoadFontNode;
 
+/** @class InteropSubtitleAsset
+ *  @brief A set of subtitles to be read and/or written in the Inter-Op format.
+ *
+ *  Inter-Op subtitles are sometimes known as CineCanvas.
+ */
 class InteropSubtitleAsset : public SubtitleAsset
 {
 public:
@@ -43,26 +52,39 @@ public:
 	Glib::ustring xml_as_string () const;
 	void write (boost::filesystem::path path) const;
 
+	/** Set the reel number or sub-element identifier
+	 *  of these subtitles.
+	 *  @param n New reel number.
+	 */
 	void set_reel_number (std::string n) {
 		_reel_number = n;
 	}
 
+	/** Set the language tag of these subtitles.
+	 *  @param l New language.
+	 */
 	void set_language (std::string l) {
 		_language = l;
 	}
 
+	/** @return title of the movie that the subtitles are for */
 	void set_movie_title (std::string m) {
 		_movie_title = m;
 	}
 
+	/** @return reel number or sub-element of a programme that
+	 *  these subtitles refer to.
+	 */
 	std::string reel_number () const {
 		return _reel_number;
 	}
-	
+
+	/** @return language used in the subtitles */
 	std::string language () const {
 		return _language;
 	}
 
+	/** @return movie title that these subtitles are for */
 	std::string movie_title () const {
 		return _movie_title;
 	}

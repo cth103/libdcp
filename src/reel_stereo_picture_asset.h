@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ namespace dcp {
 class StereoPictureAsset;	
 
 /** @class ReelStereoPictureAsset
- *  @brief Part of a Reel's description which refers to a stereoscopic picture MXF.
+ *  @brief Part of a Reel's description which refers to a stereoscopic picture asset.
  */
 class ReelStereoPictureAsset : public ReelPictureAsset
 {
