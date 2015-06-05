@@ -42,7 +42,7 @@ class MXFMetadata;
 class PictureAssetWriter;	
 
 /** @class MXF
- *  @brief Parent class for classes which represent MXF files.
+ *  @brief Parent for classes which represent MXF files.
  */
 class MXF
 {
