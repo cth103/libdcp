@@ -122,7 +122,11 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	cpl->set_content_version_id ("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
 	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
 	cpl->set_metadata (xml_metadata);
+	
 	d.add (cpl);
+	d.add (mp);
+	d.add (ms);
+
 	d.write_xml (dcp::SMPTE, xml_metadata, signer);
 
 	dcp::DecryptedKDM kdm (
@@ -135,7 +139,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 		"2012-07-17T04:45:18+00:00"
 		);
 
-	kdm.encrypt(signer, signer->certificates().leaf(), dcp::MODIFIED_TRANSITIONAL_1).as_xml ("build/test/encryption_test.kdm.xml");
+	kdm.encrypt (signer, signer->certificates().leaf(), dcp::MODIFIED_TRANSITIONAL_1).as_xml ("build/test/encryption_test.kdm.xml");
 	
 	int r = system (
 		"xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/encryption_test.kdm.xml "
