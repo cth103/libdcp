@@ -87,10 +87,10 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 			);
 	}
 
-        if (!key_id ().empty ()) {
+        if (key_id ()) {
 		/* Find <Hash> */
 		xmlpp::Node* hash = find_child (mp, "Hash");
-		mp->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id ());
+		mp->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id().get ());
         }
 }
 

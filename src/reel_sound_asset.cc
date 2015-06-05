@@ -24,6 +24,7 @@
 #include "reel_sound_asset.h"
 #include "dcp_assert.h"
 #include <libcxml/cxml.h>
+#include <libxml++/libxml++.h>
 
 using std::string;
 using boost::shared_ptr;
@@ -59,11 +60,11 @@ ReelSoundAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
 	ReelAsset::write_to_cpl (node, standard);
 
-        if (!key_id ().empty ()) {
+        if (key_id ()) {
 		/* Find <MainSound> */
 		xmlpp::Node* ms = find_child (node, cpl_node_name ());
 		/* Find <Hash> */
 		xmlpp::Node* hash = find_child (ms, "Hash");
-		ms->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id ());
+		ms->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id().get ());
         }
 }
