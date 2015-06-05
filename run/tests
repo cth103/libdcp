@@ -34,15 +34,22 @@ if [ "$?" != "0" ]; then
     exit 1
 fi
 
-# Check the first DCP written by the unit tests
+# Check the DCP written by dcp_test1
 diff -ur test/ref/DCP/dcp_test1 $work/DCP/dcp_test1
 if [ "$?" != "0" ]; then
     echo "FAIL: files differ"
     exit 1
 fi
 
-# Check the second DCP written by the unit tests
-diff -ur test/ref/DCP/bar $work/DCP/bar
+# Check the DCP written by dcp_test2
+diff -ur test/ref/DCP/dcp_test2 $work/DCP/dcp_test2
+if [ "$?" != "0" ]; then
+    echo "FAIL: files differ"
+    exit 1
+fi
+
+# Check the DCP written by encryption_test
+diff -ur test/ref/DCP/encryption_test $work/DCP/encryption_test
 if [ "$?" != "0" ]; then
     echo "FAIL: files differ"
     exit 1

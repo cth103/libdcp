@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -61,9 +61,9 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	xml_metadata.creator = "OpenDCP 0.0.25";
 	xml_metadata.issue_date = "2012-07-17T04:45:18+00:00";
 	
-	boost::filesystem::remove_all ("build/test/DCP/bar");
-	boost::filesystem::create_directories ("build/test/DCP/bar");
-	dcp::DCP d ("build/test/DCP/bar");
+	boost::filesystem::remove_all ("build/test/DCP/encryption_test");
+	boost::filesystem::create_directories ("build/test/DCP/encryption_test");
+	dcp::DCP d ("build/test/DCP/encryption_test");
 
 	/* Use test/ref/crypt so this test is repeatable */
 	dcp::CertificateChain chain;
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	mp->set_metadata (mxf_metadata);
 	mp->set_key (key);
 
-	shared_ptr<dcp::PictureMXFWriter> writer = mp->start_write ("build/test/DCP/bar/video.mxf", dcp::SMPTE, false);
+	shared_ptr<dcp::PictureMXFWriter> writer = mp->start_write ("build/test/DCP/encryption_test/video.mxf", dcp::SMPTE, false);
 	dcp::File j2c ("test/data/32x32_red_square.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data (), j2c.size ());
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 
 	shared_ptr<dcp::SoundMXF> ms (new dcp::SoundMXF (dcp::Fraction (24, 1), 48000, 1));
 	ms->set_key (key);
-	shared_ptr<dcp::SoundMXFWriter> sound_writer = ms->start_write ("build/test/DCP/bar/audio.mxf", dcp::SMPTE);
+	shared_ptr<dcp::SoundMXFWriter> sound_writer = ms->start_write ("build/test/DCP/encryption_test/audio.mxf", dcp::SMPTE);
 	
 	SF_INFO info;
 	info.format = 0;
@@ -135,10 +135,10 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 		"2012-07-17T04:45:18+00:00"
 		);
 
-	kdm.encrypt(signer, signer->certificates().leaf(), dcp::MODIFIED_TRANSITIONAL_1).as_xml ("build/test/bar.kdm.xml");
+	kdm.encrypt(signer, signer->certificates().leaf(), dcp::MODIFIED_TRANSITIONAL_1).as_xml ("build/test/encryption_test.kdm.xml");
 	
 	int r = system (
-		"xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/bar.kdm.xml "
+		"xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/encryption_test.kdm.xml "
 		"> build/test/xmllint.log 2>&1 < /dev/null"
 		);
 
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 		"--trusted-pem test/ref/crypt/ca.self-signed.pem "
 		"--id-attr:Id http://www.smpte-ra.org/schemas/430-3/2006/ETM:AuthenticatedPublic "
 		"--id-attr:Id http://www.smpte-ra.org/schemas/430-3/2006/ETM:AuthenticatedPrivate "
-		    "build/test/bar.kdm.xml > build/test/xmlsec1.log 2>&1 < /dev/null");
+		    "build/test/encryption_test.kdm.xml > build/test/xmlsec1.log 2>&1 < /dev/null");
 	
 #ifdef LIBDCP_POSIX	
 	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
