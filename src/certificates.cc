@@ -178,21 +178,27 @@ Certificate::get_name_part (X509_NAME* n, int nid)
 	return asn_to_utf8 (X509_NAME_ENTRY_get_data (X509_NAME_get_entry (n, p)));
 }
 	
-
 string
-Certificate::name_for_xml (X509_NAME * n)
+Certificate::name_for_xml (X509_NAME* name)
 {
-	DCP_ASSERT (n);
+	assert (name);
 
-	string s = String::compose (
-		"O=%1,OU=%2,CN=%3,dnQualifier=%4",
-		get_name_part (n, NID_organizationName),
-		get_name_part (n, NID_organizationalUnitName),
-		get_name_part (n, NID_commonName),
-		get_name_part (n, NID_dnQualifier)
-		);
-	
-	boost::replace_all (s, "+", "\\+");
+	BIO* bio = BIO_new (BIO_s_mem ());
+	if (!bio) {
+		throw MiscError ("could not create memory BIO");
+	}
+
+	X509_NAME_print_ex (bio, name, 0, XN_FLAG_RFC2253);
+	int n = BIO_pending (bio);
+	char* result = new char[n + 1];
+	n = BIO_read (bio, result, n);
+	result[n] = '\0';
+
+	BIO_free (bio);
+
+	string s = result;
+	delete[] result;
+
 	return s;
 }
 
