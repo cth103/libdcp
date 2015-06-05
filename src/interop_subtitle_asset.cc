@@ -53,7 +53,7 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, 250)));
 	}
 
-	parse_common (xml, font_nodes);
+	parse_subtitles (xml, font_nodes);
 }
 
 InteropSubtitleAsset::InteropSubtitleAsset (string movie_title, string language)

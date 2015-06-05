@@ -101,7 +101,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file, bool mxf)
 		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, _time_code_rate)));
 	}
 	
-	parse_common (xml, font_nodes);
+	parse_subtitles (xml, font_nodes);
 }
 
 list<shared_ptr<LoadFontNode> >

@@ -40,6 +40,11 @@ class LoadFontNode;
 
 /** @class SubtitleAsset
  *  @brief A parent for classes representing a file containing subtitles.
+ *
+ *  This class holds a list of SubtitleString objects which it can extract
+ *  from the appropriate part of either an Interop or SMPTE XML file.
+ *  Its subclasses InteropSubtitleAsset and SMPTESubtitleAsset handle the
+ *  differences between the two types.
  */
 class SubtitleAsset : public Asset
 {
@@ -68,19 +73,17 @@ public:
 	virtual std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const = 0;
 
 protected:
-	void parse_common (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<FontNode> > font_nodes);
-	
-	virtual std::string pkl_type (Standard) const = 0;
-
-	std::string asdcp_kind () const {
-		return "Subtitle";
-	}
+	void parse_subtitles (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<FontNode> > font_nodes);
 
 	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, std::string xmlns) const;
-	
+
+	/** All our subtitles, in no particular order */
 	std::list<SubtitleString> _subtitles;
 
 private:
+	/** @struct ParseState
+	 *  @brief  A struct to hold state when parsing a subtitle XML file.
+	 */
 	struct ParseState {
 		std::list<boost::shared_ptr<FontNode> > font_nodes;
 		std::list<boost::shared_ptr<TextNode> > text_nodes;
