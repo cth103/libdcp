@@ -43,8 +43,6 @@ public:
 	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */
 	virtual std::string key_type () const = 0;
 	
-	void write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	
 	/** @return true if a KeyId is specified for this asset, implying
 	 *  that its content is encrypted.
 	 */

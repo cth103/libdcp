@@ -37,6 +37,8 @@ public:
 	ReelSoundAsset (boost::shared_ptr<dcp::SoundMXF> content, int64_t entry_point);
 	ReelSoundAsset (boost::shared_ptr<const cxml::Node>);
 
+	void write_to_cpl (xmlpp::Node* node, Standard standard) const;
+
 	/** @return the SoundMXF that this object refers to */
 	boost::shared_ptr<SoundMXF> mxf () {
 		return boost::dynamic_pointer_cast<SoundMXF> (_content.object ());

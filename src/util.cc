@@ -414,3 +414,16 @@ dcp::private_key_fingerprint (string key)
 	char digest_base64[64];
 	return Kumu::base64encode (digest, 20, digest_base64, 64);
 }
+
+xmlpp::Node *
+dcp::find_child (xmlpp::Node const * node, string name)
+{
+	xmlpp::Node::NodeList c = node->get_children ();
+	xmlpp::Node::NodeList::iterator i = c.begin();
+	while (i != c.end() && (*i)->get_name() != name) {
+		++i;
+	}
+
+	DCP_ASSERT (i != c.end ());
+	return *i;
+}

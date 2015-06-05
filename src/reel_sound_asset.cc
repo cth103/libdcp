@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
  */
 
 #include "reel_sound_asset.h"
+#include "dcp_assert.h"
 #include <libcxml/cxml.h>
 
 using std::string;
@@ -51,4 +52,18 @@ string
 ReelSoundAsset::key_type () const
 {
 	return "MDAK";
+}
+
+void
+ReelSoundAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+{
+	ReelAsset::write_to_cpl (node, standard);
+
+        if (!key_id ().empty ()) {
+		/* Find <MainSound> */
+		xmlpp::Node* ms = find_child (node, cpl_node_name ());
+		/* Find <Hash> */
+		xmlpp::Node* hash = find_child (ms, "Hash");
+		ms->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id ());
+        }
 }

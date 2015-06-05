@@ -71,26 +71,27 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
 void
 ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	ReelMXFAsset::write_to_cpl (node, standard);
+	ReelAsset::write_to_cpl (node, standard);
 
-	xmlpp::Node::NodeList c = node->get_children ();
-	xmlpp::Node::NodeList::iterator i = c.begin();
-	while (i != c.end() && (*i)->get_name() != cpl_node_name ()) {
-		++i;
-	}
-
-	DCP_ASSERT (i != c.end ());
+	/* Find <MainPicture> */
+	xmlpp::Node* mp = find_child (node, cpl_node_name ());
 	
-	(*i)->add_child ("FrameRate")->add_child_text (String::compose ("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
+	mp->add_child ("FrameRate")->add_child_text (String::compose ("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
 	if (standard == INTEROP) {
 		stringstream s;
 		s << std::fixed << std::setprecision (2) << (float (_screen_aspect_ratio.numerator) / _screen_aspect_ratio.denominator);
-		(*i)->add_child ("ScreenAspectRatio")->add_child_text (s.str ());
+		mp->add_child ("ScreenAspectRatio")->add_child_text (s.str ());
 	} else {
-		(*i)->add_child ("ScreenAspectRatio")->add_child_text (
+		mp->add_child ("ScreenAspectRatio")->add_child_text (
 			String::compose ("%1 %2", _screen_aspect_ratio.numerator, _screen_aspect_ratio.denominator)
 			);
 	}
+
+        if (!key_id ().empty ()) {
+		/* Find <Hash> */
+		xmlpp::Node* hash = find_child (mp, "Hash");
+		mp->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id ());
+        }
 }
 
 string
