@@ -32,14 +32,14 @@ using namespace dcp;
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundAsset> asset, int64_t entry_point)
 	: ReelAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
-	, ReelEncryptableAsset (asset->key_id())
+	, ReelMXF (asset->key_id())
 {
 
 }
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
-	, ReelEncryptableAsset (node)
+	, ReelMXF (node)
 {
 	node->ignore_child ("Language");
 	node->done ();

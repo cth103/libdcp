@@ -17,7 +17,7 @@
 
 */
 
-#include "reel_encryptable_asset.h"
+#include "reel_mxf.h"
 #include "mxf.h"
 #include "dcp_assert.h"
 #include <libcxml/cxml.h>
@@ -28,13 +28,13 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
-ReelEncryptableAsset::ReelEncryptableAsset (optional<string> key_id)
+ReelMXF::ReelMXF (optional<string> key_id)
 	: _key_id (key_id)
 {
 
 }
 
-ReelEncryptableAsset::ReelEncryptableAsset (shared_ptr<const cxml::Node> node)
+ReelMXF::ReelMXF (shared_ptr<const cxml::Node> node)
 	: _key_id (node->optional_string_child ("KeyId"))
 {
 	if (_key_id && _key_id.get().length() > 9) {

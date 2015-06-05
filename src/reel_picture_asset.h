@@ -24,7 +24,7 @@
 #ifndef LIBDCP_REEL_PICTURE_ASSET_H
 #define LIBDCP_REEL_PICTURE_ASSET_H
 
-#include "reel_encryptable_asset.h"
+#include "reel_mxf.h"
 #include "reel_asset.h"
 #include "picture_asset.h"
 
@@ -33,7 +33,7 @@ namespace dcp {
 /** @class ReelPictureAsset
  *  @brief Part of a Reel's description which refers to a picture asset.
  */
-class ReelPictureAsset : public ReelAsset, public ReelEncryptableAsset
+class ReelPictureAsset : public ReelAsset, public ReelMXF
 {
 public:
 	ReelPictureAsset ();

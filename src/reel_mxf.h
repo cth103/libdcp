@@ -17,8 +17,8 @@
 
 */
 
-/** @file  src/reel_encryptable_asset.h
- *  @brief ReelEncryptableAsset
+/** @file  src/reel_mxf.h
+ *  @brief ReelMXF
  */
 
 #ifndef LIBDCP_REEL_ENCRYPTABLE_ASSET_H
@@ -34,15 +34,15 @@ namespace cxml {
 
 namespace dcp {
 
-/** @class ReelEncryptableAsset
+/** @class ReelMXF
  *  @brief Part of a Reel's description which refers to an asset which can be encrypted.
  */
-class ReelEncryptableAsset
+class ReelMXF
 {
 public:
-	ReelEncryptableAsset () {}
-	ReelEncryptableAsset (boost::optional<std::string> key_id);
-	ReelEncryptableAsset (boost::shared_ptr<const cxml::Node>);
+	ReelMXF () {}
+	ReelMXF (boost::optional<std::string> key_id);
+	ReelMXF (boost::shared_ptr<const cxml::Node>);
 
 	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */
 	virtual std::string key_type () const = 0;
