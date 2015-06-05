@@ -24,24 +24,24 @@
 #ifndef LIBDCP_REEL_ENCRYPTABLE_ASSET_H
 #define LIBDCP_REEL_ENCRYPTABLE_ASSET_H
 
-#include "reel_asset.h"
+#include <boost/optional.hpp>
+#include <boost/shared_ptr.hpp>
+#include <string>
+
+namespace cxml {
+	class Node;
+}
 
 namespace dcp {
 
 /** @class ReelEncryptableAsset
  *  @brief Part of a Reel's description which refers to an asset which can be encrypted.
  */
-class ReelEncryptableAsset : public ReelAsset
+class ReelEncryptableAsset
 {
 public:
-	ReelEncryptableAsset ();
-	ReelEncryptableAsset (
-		boost::shared_ptr<Asset> asset,
-		boost::optional<std::string> key_id,
-		Fraction edit_rate,
-		int64_t intrinsic_duration,
-		int64_t entry_point
-		);
+	ReelEncryptableAsset () {}
+	ReelEncryptableAsset (boost::optional<std::string> key_id);
 	ReelEncryptableAsset (boost::shared_ptr<const cxml::Node>);
 
 	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */

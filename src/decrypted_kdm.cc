@@ -21,6 +21,7 @@
 #include "decrypted_kdm_key.h"
 #include "encrypted_kdm.h"
 #include "reel_encryptable_asset.h"
+#include "reel_asset.h"
 #include "util.h"
 #include "exceptions.h"
 #include "cpl.h"
@@ -199,12 +200,13 @@ DecryptedKDM::DecryptedKDM (
 {
 	/* Create DecryptedKDMKey objects for each encryptable asset */
 	BOOST_FOREACH(shared_ptr<const ReelAsset> i, cpl->reel_assets ()) {
-		shared_ptr<const ReelEncryptableAsset> asset = boost::dynamic_pointer_cast<const ReelEncryptableAsset> (i);
-		if (asset) {
-			if (!asset->key_id ()) {
-				throw NotEncryptedError (asset->id());
+		shared_ptr<const ReelEncryptableAsset> mxf = boost::dynamic_pointer_cast<const ReelEncryptableAsset> (i);
+		shared_ptr<const ReelAsset> asset = boost::dynamic_pointer_cast<const ReelAsset> (i);
+		if (asset && mxf) {
+			if (!mxf->key_id ()) {
+				throw NotEncryptedError (asset->id ());
 			}
-			_keys.push_back (DecryptedKDMKey (asset->key_type(), asset->key_id().get(), key, cpl->id ()));
+			_keys.push_back (DecryptedKDMKey (mxf->key_type(), mxf->key_id().get(), key, cpl->id ()));
 		}
 	}
 }

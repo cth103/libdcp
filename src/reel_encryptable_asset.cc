@@ -28,24 +28,14 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
-ReelEncryptableAsset::ReelEncryptableAsset ()
-	: ReelAsset ()
-{
-
-}
-
-ReelEncryptableAsset::ReelEncryptableAsset (
-	shared_ptr<Asset> asset, optional<string> key_id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point
-	)
-	: ReelAsset (asset, edit_rate, intrinsic_duration, entry_point)
-	, _key_id (key_id)
+ReelEncryptableAsset::ReelEncryptableAsset (optional<string> key_id)
+	: _key_id (key_id)
 {
 
 }
 
 ReelEncryptableAsset::ReelEncryptableAsset (shared_ptr<const cxml::Node> node)
-	: ReelAsset (node)
-	, _key_id (node->optional_string_child ("KeyId"))
+	: _key_id (node->optional_string_child ("KeyId"))
 {
 	if (_key_id && _key_id.get().length() > 9) {
 		_key_id = _key_id.get().substr (9);

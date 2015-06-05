@@ -31,13 +31,15 @@ using boost::shared_ptr;
 using namespace dcp;
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundAsset> asset, int64_t entry_point)
-	: ReelEncryptableAsset (asset, asset->key_id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
+	: ReelAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
+	, ReelEncryptableAsset (asset->key_id())
 {
 
 }
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<const cxml::Node> node)
-	: ReelEncryptableAsset (node)
+	: ReelAsset (node)
+	, ReelEncryptableAsset (node)
 {
 	node->ignore_child ("Language");
 	node->done ();
