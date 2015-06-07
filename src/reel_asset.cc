@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/reel_asset.cc
+ *  @brief ReelAsset class.
+ */
+
 #include "raw_convert.h"
 #include "reel_asset.h"
 #include "asset.h"
@@ -32,8 +36,7 @@ using boost::shared_ptr;
 using namespace dcp;
 
 ReelAsset::ReelAsset ()
-	: Object (make_uuid ())
-	, _asset_ref (_id)
+	: _asset_ref (_id)
 	, _edit_rate (Fraction (24, 1))
 	, _intrinsic_duration (0)
 	, _entry_point (0)
