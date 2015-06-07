@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/font.cc
+ *  @brief Font class.
+ */
+
 #include "font.h"
 
 using std::string;

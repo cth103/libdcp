@@ -172,9 +172,9 @@ struct EqualityOptions
 	double max_std_dev_pixel_error;
 	/** The maximum difference in audio sample value between two soundtracks */
 	int max_audio_sample_error;
-	/** true if the <AnnotationText> nodes of CPLs are allowed to differ */
+	/** true if the &lt;AnnotationText&gt; nodes of CPLs are allowed to differ */
 	bool cpl_annotation_texts_can_differ;
-	/** true if the <AnnotationText> nodes of Reels are allowed to differ */
+	/** true if the &lt;AnnotationText&gt; nodes of Reels are allowed to differ */
 	bool reel_annotation_texts_can_differ;
 	/** true if <Hash>es in Reels can differ */
 	bool reel_hashes_can_differ;

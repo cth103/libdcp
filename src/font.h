@@ -18,13 +18,16 @@
 */
 
 /** @file  src/font.h
- *  @brief A (truetype) font asset for subtitles in a DCP.
+ *  @brief Font class.
  */
 
 #include "asset.h"
 
 namespace dcp {
 
+/** @class Font
+ *  @brief A (truetype) font asset for subtitles in a DCP.
+ */
 class Font : public Asset
 {
 public:

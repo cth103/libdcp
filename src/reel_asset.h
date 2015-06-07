@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,6 +16,10 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 */
+
+/** @file  src/reel_asset.h
+ *  @brief ReelAsset class.
+ */
 
 #ifndef LIBDCP_REEL_ASSET_H
 #define LIBDCP_REEL_ASSET_H
@@ -84,7 +88,6 @@ protected:
 	Ref<Asset> _asset_ref;
 
 private:
-	
 	std::string _annotation_text; ///< The &lt;AnnotationText&gt; from the reel's entry for this asset
 	Fraction _edit_rate;          ///< The &lt;EditRate&gt; from the reel's entry for this asset
 	int64_t _intrinsic_duration;  ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset

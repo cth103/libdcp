@@ -30,7 +30,7 @@
 
 namespace dcp {
 
-/** @class Font
+/** @class FontNode
  *  @brief Helper class for parsing subtitle XML.
  */
 class FontNode

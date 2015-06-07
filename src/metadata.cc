@@ -55,6 +55,7 @@ XMLMetadata::XMLMetadata ()
 	set_issue_date_now ();
 }
 
+/** Set the issue date to the current local time */
 void
 XMLMetadata::set_issue_date_now ()
 {

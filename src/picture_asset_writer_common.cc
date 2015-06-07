@@ -19,6 +19,8 @@
 
 using boost::shared_ptr;
 
+namespace dcp {
+
 struct ASDCPStateBase
 {
 	ASDCPStateBase ()
@@ -30,6 +32,8 @@ struct ASDCPStateBase
 	ASDCP::WriterInfo writer_info;
 	ASDCP::JP2K::PictureDescriptor picture_descriptor;
 };
+
+}
 
 template <class P, class Q>
 void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard standard, Q* asset, uint8_t* data, int size)
