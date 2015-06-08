@@ -29,6 +29,7 @@
 #include <cstdio>
 
 using std::string;
+using std::ostream;
 using boost::lexical_cast;
 using namespace dcp;
 
@@ -155,4 +156,25 @@ LocalTime::time_of_day (bool with_millisecond) const
 		snprintf (buffer, sizeof (buffer), "%02d:%02d:%02d", _hour, _minute, _second);
 	}
 	return buffer;
+}
+
+bool
+LocalTime::operator== (LocalTime const & other) const
+{
+	return _year == other._year && _month == other._month && _day == other._day &&
+		_hour == other._hour && _second == other._second && _millisecond == other._millisecond &&
+		_tz_hour == other._tz_hour && _tz_minute == other._tz_minute;
+}
+
+bool
+LocalTime::operator!= (LocalTime const & other) const
+{
+	return !(*this == other);
+}
+
+ostream&
+dcp::operator<< (ostream& s, LocalTime const & t)
+{
+	s << t.as_string ();
+	return s;
 }

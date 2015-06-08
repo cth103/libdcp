@@ -18,19 +18,31 @@
 */
 
 #include "interop_subtitle_asset.h"
+#include "interop_load_font_node.h"
 #include "subtitle_string.h"
 #include <boost/test/unit_test.hpp>
 
 using std::list;
 using std::string;
 using boost::shared_ptr;
+using boost::dynamic_pointer_cast;
 
-/* Load some subtitle content from XML and check that it is read correctly */
-BOOST_AUTO_TEST_CASE (read_subtitle_test1)
+/** Load some subtitle content from Interop XML and check that it is read correctly */
+BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 {
 	dcp::InteropSubtitleAsset subs ("test/data/subs1.xml");
 
+	BOOST_CHECK_EQUAL (subs.id(), "cab5c268-222b-41d2-88ae-6d6999441b17");
+	BOOST_CHECK_EQUAL (subs.movie_title(), "Movie Title");
+	BOOST_CHECK_EQUAL (subs.reel_number(), "1");
 	BOOST_CHECK_EQUAL (subs.language(), "French");
+
+	list<shared_ptr<dcp::LoadFontNode> > lfn = subs.load_font_nodes ();
+	BOOST_REQUIRE_EQUAL (lfn.size(), 1);
+	shared_ptr<dcp::InteropLoadFontNode> interop_lfn = dynamic_pointer_cast<dcp::InteropLoadFontNode> (lfn.front ());
+	BOOST_REQUIRE (interop_lfn);
+	BOOST_CHECK_EQUAL (interop_lfn->id, "theFontId");
+	BOOST_CHECK_EQUAL (interop_lfn->uri, "arial.ttf");
 
 	list<dcp::SubtitleString> s = subs.subtitles_during (dcp::Time (0, 0, 6, 1, 250), dcp::Time (0, 0, 6, 2, 250));
 	BOOST_REQUIRE_EQUAL (s.size(), 1);
@@ -136,7 +148,7 @@ BOOST_AUTO_TEST_CASE (read_subtitle_test1)
 }
 
 /** And similarly for another one */
-BOOST_AUTO_TEST_CASE (read_subtitle_test2)
+BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 {
 	dcp::InteropSubtitleAsset subs ("test/data/subs2.xml");
 

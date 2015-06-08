@@ -27,6 +27,7 @@ using std::list;
 using std::stringstream;
 using boost::shared_ptr;
 
+/** Check reading and decryption of a KDM */
 BOOST_AUTO_TEST_CASE (kdm_test)
 {
 	dcp::DecryptedKDM kdm (
@@ -49,7 +50,7 @@ BOOST_AUTO_TEST_CASE (kdm_test)
 	BOOST_CHECK_EQUAL (keys.back().key().hex(), "5327fb7ec2e807bd57059615bf8a169d");
 }
 
-/* Check that we can read in a KDM and then write it back out again the same */
+/** Check that we can read in a KDM and then write it back out again the same */
 BOOST_AUTO_TEST_CASE (kdm_passthrough_test)
 {
 	dcp::EncryptedKDM kdm (

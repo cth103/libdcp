@@ -147,6 +147,7 @@ public:
 
 extern bool operator== (Fraction const & a, Fraction const & b);
 extern bool operator!= (Fraction const & a, Fraction const & b);
+extern std::ostream& operator<< (std::ostream& s, Fraction const & f);	
 
 /** @struct EqualityOptions
  *  @brief  A class to describe what "equality" means for a particular test.

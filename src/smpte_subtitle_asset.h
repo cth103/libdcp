@@ -36,6 +36,8 @@ class SMPTELoadFontNode;
 class SMPTESubtitleAsset : public SubtitleAsset, public MXF
 {
 public:
+	SMPTESubtitleAsset ();
+	
 	/** @param file File name
 	 *  @param mxf true if `file' is a MXF, or false if it is an XML file.
 	 */
@@ -51,6 +53,22 @@ public:
 
 	Glib::ustring xml_as_string () const;
 	void write (boost::filesystem::path path) const;
+
+	void set_content_title_text (std::string t) {
+		_content_title_text = t;
+	}
+
+	void set_language (std::string l) {
+		_language = l;
+	}
+
+	void set_edit_rate (Fraction e) {
+		_edit_rate = e;
+	}
+
+	void set_time_code_rate (int t) {
+		_time_code_rate = t;
+	}
 
 	/** @return title of the film that these subtitles are for,
 	 *  to be presented to the user.
@@ -72,6 +90,10 @@ public:
 	/** @return file creation time and date */
 	LocalTime issue_date () const {
 		return _issue_date;
+	}
+
+	boost::optional<int> reel_number () const {
+		return _reel_number;
 	}
 
 	Fraction edit_rate () const {

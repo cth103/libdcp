@@ -39,6 +39,7 @@
 #include "decrypted_kdm.h"
 #include "decrypted_kdm_key.h"
 #include "dcp_assert.h"
+#include "reel_asset.h"
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
 #include <libxml++/libxml++.h>
@@ -114,6 +115,12 @@ DCP::read (bool keep_going, ReadErrors* errors)
 	/* XXX: I think we should be looking at the PKL here to decide type, not
 	   the extension of the file.
 	*/
+
+	/* Make a list of non-CPL assets so that we can resolve the references
+	   from the CPL.
+	*/
+	list<shared_ptr<Asset> > other_assets;
+	
 	for (map<string, boost::filesystem::path>::const_iterator i = paths.begin(); i != paths.end(); ++i) {
 		boost::filesystem::path path = _directory / i->second;
 
@@ -122,7 +129,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 			continue;
 		}
 		
-		if (boost::algorithm::ends_with (path.string(), ".xml")) {
+		if (boost::filesystem::extension (path) == ".xml") {
 			xmlpp::DomParser* p = new xmlpp::DomParser;
 			try {
 				p->parse_file (path.string());
@@ -135,11 +142,11 @@ DCP::read (bool keep_going, ReadErrors* errors)
 			delete p;
 			
 			if (root == "CompositionPlaylist") {
-				_assets.push_back (shared_ptr<CPL> (new CPL (path)));
+				_cpls.push_back (shared_ptr<CPL> (new CPL (path)));
 			} else if (root == "DCSubtitle") {
-				_assets.push_back (shared_ptr<InteropSubtitleAsset> (new InteropSubtitleAsset (path)));
+				other_assets.push_back (shared_ptr<InteropSubtitleAsset> (new InteropSubtitleAsset (path)));
 			}
-		} else if (boost::algorithm::ends_with (path.string(), ".mxf")) {
+		} else if (boost::filesystem::extension (path) == ".mxf") {
 			ASDCP::EssenceType_t type;
 			if (ASDCP::EssenceType (path.string().c_str(), type) != ASDCP::RESULT_OK) {
 				throw DCPReadError ("Could not find essence type");
@@ -149,26 +156,26 @@ DCP::read (bool keep_going, ReadErrors* errors)
 				case ASDCP::ESS_MPEG2_VES:
 					throw DCPReadError ("MPEG2 video essences are not supported");
 				case ASDCP::ESS_JPEG_2000:
-					_assets.push_back (shared_ptr<MonoPictureAsset> (new MonoPictureAsset (path)));
+					other_assets.push_back (shared_ptr<MonoPictureAsset> (new MonoPictureAsset (path)));
 					break;
 				case ASDCP::ESS_PCM_24b_48k:
 				case ASDCP::ESS_PCM_24b_96k:
-					_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (path)));
+					other_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (path)));
 					break;
 				case ASDCP::ESS_JPEG_2000_S:
-					_assets.push_back (shared_ptr<StereoPictureAsset> (new StereoPictureAsset (path)));
+					other_assets.push_back (shared_ptr<StereoPictureAsset> (new StereoPictureAsset (path)));
 					break;
 				case ASDCP::ESS_TIMED_TEXT:
-					_assets.push_back (shared_ptr<SMPTESubtitleAsset> (new SMPTESubtitleAsset (path)));
+					other_assets.push_back (shared_ptr<SMPTESubtitleAsset> (new SMPTESubtitleAsset (path)));
 					break;
 				default:
 					throw DCPReadError ("Unknown MXF essence type");
-				}
+			}
 		}
 	}
 
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
-		i->resolve_refs (list_of_type<Asset, Object> (assets ()));
+		i->resolve_refs (list_of_type<Asset, Object> (other_assets));
 	}
 }
 
@@ -200,9 +207,9 @@ DCP::equals (DCP const & other, EqualityOptions opt, NoteHandler note) const
 }
 
 void
-DCP::add (boost::shared_ptr<Asset> asset)
+DCP::add (boost::shared_ptr<CPL> cpl)
 {
-	_assets.push_back (asset);
+	_cpls.push_back (cpl);
 }
 
 bool
@@ -260,7 +267,7 @@ DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared
 	pkl->add_child("Creator")->add_child_text (metadata.creator);
 
 	xmlpp::Element* asset_list = pkl->add_child("AssetList");
-	BOOST_FOREACH (shared_ptr<Asset> i, _assets) {
+	BOOST_FOREACH (shared_ptr<Asset> i, assets ()) {
 		i->write_to_pkl (asset_list, standard);
 	}
 
@@ -370,7 +377,7 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 	chunk->add_child("Offset")->add_child_text ("0");
 	chunk->add_child("Length")->add_child_text (raw_convert<string> (pkl_length));
 
-	BOOST_FOREACH (shared_ptr<Asset> i, _assets) {
+	BOOST_FOREACH (shared_ptr<Asset> i, assets ()) {
 		i->write_to_assetmap (asset_list, _directory);
 	}
 
@@ -405,5 +412,20 @@ DCP::write_xml (
 list<shared_ptr<CPL> >
 DCP::cpls () const
 {
-	return list_of_type<Asset, CPL> (_assets);
+	return _cpls;
+}
+
+/** @return All assest (including CPLs) */
+list<shared_ptr<Asset> >
+DCP::assets () const
+{
+	list<shared_ptr<Asset> > assets;
+	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
+		assets.push_back (i);
+		BOOST_FOREACH (shared_ptr<const ReelAsset> j, i->reel_assets ()) {
+			assets.push_back (j->asset_ref().object ());
+		}
+	}
+
+	return assets;
 }

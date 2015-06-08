@@ -62,6 +62,13 @@ dcp::operator!= (Fraction const & a, Fraction const & b)
 	return (a.numerator != b.numerator || a.denominator != b.denominator);
 }
 
+ostream&
+dcp::operator<< (ostream& s, Fraction const & f)
+{
+	s << f.numerator << "/" << f.denominator;
+	return s;
+}
+
 /** Construct a Colour, initialising it to black. */
 Colour::Colour ()
 	: r (0)

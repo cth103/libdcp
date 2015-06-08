@@ -43,6 +43,12 @@ using boost::split;
 using boost::is_any_of;
 using namespace dcp;
 
+SMPTESubtitleAsset::SMPTESubtitleAsset ()
+	: _time_code_rate (0)
+{
+	
+}
+
 /** Construct a SMPTESubtitleAsset by reading an XML or MXF file.
  *  @param file Filename.
  *  @param mxf true if file is an MXF, false if it is XML.
@@ -177,16 +183,19 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	memcpy (descriptor.AssetID, writer_info.AssetUUID, ASDCP::UUIDlen);
 	descriptor.ContainerDuration = latest_subtitle_out().as_editable_units (_edit_rate.numerator / _edit_rate.denominator);
 
-	/* XXX: fonts into descriptor? */
+	/* XXX: should write fonts into the file somehow */
 	
 	ASDCP::TimedText::MXFWriter writer;
-	Kumu::Result_t r = writer.OpenWrite (p.string().c_str(), writer_info, descriptor);
+	ASDCP::Result_t r = writer.OpenWrite (p.string().c_str(), writer_info, descriptor);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (FileError ("could not open subtitle MXF for writing", p.string(), r));
 	}
 
 	/* XXX: no encryption */
-	writer.WriteTimedTextResource (xml_as_string ());
+	r = writer.WriteTimedTextResource (xml_as_string ());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("could not write XML to timed text resource", p.string(), r));
+	}
 
 	writer.Finalize ();
 

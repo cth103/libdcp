@@ -22,6 +22,7 @@
 
 using std::string;
 
+/** Test exception classes */
 BOOST_AUTO_TEST_CASE (exception_test)
 {
 	BOOST_CHECK_EQUAL (string (dcp::FileError ("foo", "bar", 42).what()), "foo (bar) (error 42)");

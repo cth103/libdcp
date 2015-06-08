@@ -23,7 +23,7 @@
 
 using std::stringstream;
 
-/* Check that dcp::Colour works */
+/** Check that dcp::Colour works */
 BOOST_AUTO_TEST_CASE (colour)
 {
 	dcp::Colour z;

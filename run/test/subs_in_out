@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LD_LIBRARY_PATH=build/src
+export LD_LIBRARY_PATH=build/src:build/asdcplib/src:$LD_LIBRARY_PATH
 if [ "$1" == "--debug" ]; then
     shift
     gdb --args build/test/subs_in_out "$@"

@@ -36,7 +36,7 @@ class InteropLoadFontNode;
 class InteropSubtitleAsset : public SubtitleAsset
 {
 public:
-	InteropSubtitleAsset (std::string movie_title, std::string language);
+	InteropSubtitleAsset ();
 	InteropSubtitleAsset (boost::filesystem::path file);
 
 	bool equals (

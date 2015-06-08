@@ -82,14 +82,10 @@ public:
 	 */
 	bool equals (DCP const & other, EqualityOptions options, NoteHandler note) const;
 
-	void add (boost::shared_ptr<Asset> asset);
+	void add (boost::shared_ptr<CPL> cpl);
 
 	std::list<boost::shared_ptr<CPL> > cpls () const;
-
-	/** @return All this DCP's assets (note that CPLs are assets) */
-	std::list<boost::shared_ptr<Asset> > assets () const {
-		return _assets;
-	}
+	std::list<boost::shared_ptr<Asset> > assets () const;
 
 	bool encrypted () const;
 
@@ -123,8 +119,8 @@ private:
 
 	/** the directory that we are writing to */
 	boost::filesystem::path _directory;
-	/** the assets that make up this DCP */
-	std::list<boost::shared_ptr<Asset> > _assets;
+	/** the CPLs that make up this DCP */
+	std::list<boost::shared_ptr<CPL> > _cpls;
 };
 
 }

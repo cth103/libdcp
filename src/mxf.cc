@@ -36,6 +36,7 @@
 #include <iostream>
 
 using std::string;
+using std::cout;
 using std::list;
 using std::pair;
 using boost::shared_ptr;
@@ -105,8 +106,10 @@ MXF::read_writer_info (ASDCP::WriterInfo const & info)
 {
 	char buffer[64];
 
-	Kumu::bin2UUIDhex (info.CryptographicKeyID, ASDCP::UUIDlen, buffer, sizeof (buffer));
-	_key_id = buffer;
+	if (info.EncryptedEssence) {
+		Kumu::bin2UUIDhex (info.CryptographicKeyID, ASDCP::UUIDlen, buffer, sizeof (buffer));
+		_key_id = buffer;
+	}
 
 	_metadata.read (info);
 	

@@ -101,8 +101,6 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 			  ));
 		  
 	d.add (cpl);
-	d.add (mp);
-	d.add (ms);
 
 	d.write_xml (dcp::SMPTE, xml_meta);
 
@@ -175,8 +173,6 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 			  ));
 		  
 	d.add (cpl);
-	d.add (mp);
-	d.add (ms);
 
 	d.write_xml (dcp::SMPTE, xml_meta);
 

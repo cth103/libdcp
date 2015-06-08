@@ -22,6 +22,7 @@
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
 
+/** Test dcp::SMPTELoadFontNode */
 BOOST_AUTO_TEST_CASE (smpte_load_font_test1)
 {
 	xmlpp::Document doc;
