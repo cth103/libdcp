@@ -51,6 +51,9 @@ public:
 	std::string date () const;
 	std::string time_of_day (bool with_millisecond = false) const;
 
+	bool operator== (LocalTime const & other) const;
+	bool operator!= (LocalTime const & other) const;
+	
 private:
 	friend class ::local_time_test;
 
@@ -68,6 +71,9 @@ private:
 	int _tz_hour;   ///< hours by which this time is offset from UTC
 	int _tz_minute; ///< minutes by which this time is offset from UTC
 };
+
+std::ostream&
+operator<< (std::ostream& s, LocalTime const & t);
 
 }
 

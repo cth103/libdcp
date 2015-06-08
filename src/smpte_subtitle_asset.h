@@ -74,6 +74,10 @@ public:
 		return _issue_date;
 	}
 
+	boost::optional<int> reel_number () const {
+		return _reel_number;
+	}
+
 	Fraction edit_rate () const {
 		return _edit_rate;
 	}
