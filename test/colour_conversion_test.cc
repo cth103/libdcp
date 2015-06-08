@@ -54,6 +54,7 @@ check_modified_gamma (shared_ptr<const TransferFunction> tf, int bit_depth, bool
 	}
 }
 
+/** Check that the gamma correction LUTs are right for sRGB */
 BOOST_AUTO_TEST_CASE (colour_conversion_test1)
 {
 	ColourConversion cc = ColourConversion::srgb_to_xyz ();
@@ -67,6 +68,7 @@ BOOST_AUTO_TEST_CASE (colour_conversion_test1)
 	check_gamma (cc.out(), 16, true, 1 / 2.6);
 }
 
+/** Check that the gamma correction LUTs are right for REC709 */
 BOOST_AUTO_TEST_CASE (colour_conversion_test2)
 {
 	ColourConversion cc = ColourConversion::rec709_to_xyz ();

@@ -32,6 +32,7 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
+/** Load a DCP then re-write its subtitle XML or MXF in-place */
 int
 main (int argc, char* argv[])
 {

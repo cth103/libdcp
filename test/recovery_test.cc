@@ -26,7 +26,7 @@
 using std::string;
 using boost::shared_ptr;
 
-/* Check that recovery from a partially-written MXF works */
+/** Check that recovery from a partially-written MXF works */
 BOOST_AUTO_TEST_CASE (recovery)
 {
 	Kumu::libdcp_test = true;

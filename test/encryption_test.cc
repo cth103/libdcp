@@ -41,9 +41,9 @@
 
 using boost::shared_ptr;
 
-/* Load a certificate chain from build/test/data/ *.pem and then build
-   an encrypted DCP and a KDM using it.
-*/
+/** Load a certificate chain from build/test/data/ *.pem and then build
+ *  an encrypted DCP and a KDM using it.
+ */
 BOOST_AUTO_TEST_CASE (encryption_test)
 {
 	boost::filesystem::remove_all ("build/test/signer");

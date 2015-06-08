@@ -35,6 +35,8 @@ public:
 	LoadFontNode (std::string id_)
 		: id (id_)
 	{}
+
+	virtual ~LoadFontNode () {}
 	
 	std::string id;
 };

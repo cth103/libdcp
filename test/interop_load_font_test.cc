@@ -22,6 +22,7 @@
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
 
+/** Test dcp::InteropLoadFont's simple constructor */
 BOOST_AUTO_TEST_CASE (interop_load_font_test1)
 {
 	dcp::InteropLoadFontNode lf ("my-great-id", "my-great-uri");
@@ -29,6 +30,7 @@ BOOST_AUTO_TEST_CASE (interop_load_font_test1)
 	BOOST_CHECK_EQUAL (lf.uri, "my-great-uri");
 }
 
+/** Test dcp::InteropLoadFont's XML constructor */
 BOOST_AUTO_TEST_CASE (interop_load_font_test2)
 {
 	xmlpp::Document doc;

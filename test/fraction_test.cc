@@ -21,6 +21,7 @@
 #include "exceptions.h"
 #include <boost/test/unit_test.hpp>
 
+/** Test dcp::Fraction */
 BOOST_AUTO_TEST_CASE (fraction_test)
 {
 	dcp::Fraction f (42, 26);

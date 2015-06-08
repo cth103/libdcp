@@ -25,9 +25,9 @@
 
 using boost::shared_ptr;
 
-/* Test for a reported bug where <ScreenAspectRatio> in Interop files uses
-   excessive decimal places and (sometimes) the wrong decimal point character.
-*/
+/** Test for a reported bug where <ScreenAspectRatio> in Interop files uses
+ *  excessive decimal places and (sometimes) the wrong decimal point character.
+ */
 BOOST_AUTO_TEST_CASE (cpl_sar)
 {
 	shared_ptr<dcp::ReelMonoPictureAsset> pa (
