@@ -54,6 +54,22 @@ public:
 	Glib::ustring xml_as_string () const;
 	void write (boost::filesystem::path path) const;
 
+	void set_content_title_text (std::string t) {
+		_content_title_text = t;
+	}
+
+	void set_language (std::string l) {
+		_language = l;
+	}
+
+	void set_edit_rate (Fraction e) {
+		_edit_rate = e;
+	}
+
+	void set_time_code_rate (int t) {
+		_time_code_rate = t;
+	}
+
 	/** @return title of the film that these subtitles are for,
 	 *  to be presented to the user.
 	 */
