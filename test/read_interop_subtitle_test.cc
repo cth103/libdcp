@@ -28,7 +28,7 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 
 /** Load some subtitle content from Interop XML and check that it is read correctly */
-BOOST_AUTO_TEST_CASE (read_subtitle_test1)
+BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 {
 	dcp::InteropSubtitleAsset subs ("test/data/subs1.xml");
 
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE (read_subtitle_test1)
 }
 
 /** And similarly for another one */
-BOOST_AUTO_TEST_CASE (read_subtitle_test2)
+BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 {
 	dcp::InteropSubtitleAsset subs ("test/data/subs2.xml");
 
