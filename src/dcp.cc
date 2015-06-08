@@ -122,7 +122,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 			continue;
 		}
 		
-		if (boost::algorithm::ends_with (path.string(), ".xml")) {
+		if (boost::filesystem::extension (path) == ".xml") {
 			xmlpp::DomParser* p = new xmlpp::DomParser;
 			try {
 				p->parse_file (path.string());
@@ -139,7 +139,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 			} else if (root == "DCSubtitle") {
 				_assets.push_back (shared_ptr<InteropSubtitleAsset> (new InteropSubtitleAsset (path)));
 			}
-		} else if (boost::algorithm::ends_with (path.string(), ".mxf")) {
+		} else if (boost::filesystem::extension (path) == ".mxf") {
 			ASDCP::EssenceType_t type;
 			if (ASDCP::EssenceType (path.string().c_str(), type) != ASDCP::RESULT_OK) {
 				throw DCPReadError ("Could not find essence type");
@@ -163,7 +163,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 					break;
 				default:
 					throw DCPReadError ("Unknown MXF essence type");
-				}
+			}
 		}
 	}
 
