@@ -105,8 +105,6 @@ main ()
 	/* Write the DCP */
 	dcp::DCP dcp ("DCP");
 	dcp.add (cpl);
-	dcp.add (picture_asset);
-	dcp.add (sound_asset);
 	dcp.write_xml (dcp::SMPTE);
 	
 	return 0;

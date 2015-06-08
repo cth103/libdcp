@@ -124,8 +124,6 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	cpl->set_metadata (xml_metadata);
 	
 	d.add (cpl);
-	d.add (mp);
-	d.add (ms);
 
 	d.write_xml (dcp::SMPTE, xml_metadata, signer);
 

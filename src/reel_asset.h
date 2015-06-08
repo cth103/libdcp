@@ -55,10 +55,15 @@ public:
 	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
 
 	/** @return a Ref to our actual asset */
-	Ref<Asset>& asset_ref () {
+	Ref<Asset> const & asset_ref () const {
 		return _asset_ref;
 	}
 
+	/** @return a Ref to our actual asset */
+	Ref<Asset>& asset_ref () {
+		return _asset_ref;
+	}
+	
 	int64_t entry_point () const {
 		return _entry_point;
 	}
