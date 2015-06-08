@@ -24,6 +24,7 @@
 using std::ifstream;
 using std::string;
 
+/** Test dcp::base64_decode */
 BOOST_AUTO_TEST_CASE (base64_decode_test)
 {
 	int const N = 256;
@@ -55,6 +56,7 @@ BOOST_AUTO_TEST_CASE (base64_decode_test)
 	}
 }
 
+/** Test dcp::content_kind_from_string */
 BOOST_AUTO_TEST_CASE (content_kind_test)
 {
 	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("feature"), dcp::FEATURE);
@@ -71,6 +73,7 @@ BOOST_AUTO_TEST_CASE (content_kind_test)
 	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("advertisement"), dcp::ADVERTISEMENT);
 }
 
+/** Test dcp::relative_to_root */
 BOOST_AUTO_TEST_CASE (relative_to_root_test)
 {
 	{
