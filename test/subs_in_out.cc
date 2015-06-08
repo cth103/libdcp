@@ -18,18 +18,30 @@
 */
 
 #include "interop_subtitle_asset.h"
+#include "smpte_subtitle_asset.h"
 #include <iostream>
 
 using namespace std;
 
-int main (int argc, char* argv[])
+int
+main (int argc, char* argv[])
 {
-	if (argc < 2) {
+	if (argc != 2) {
 		cerr << "Syntax: " << argv[0] << " <subtitle file>\n";
 		exit (EXIT_FAILURE);
 	}
-	
-	dcp::InteropSubtitleAsset s (argv[1]);
-	cout << s.xml_as_string ();
+
+	try {
+		dcp::InteropSubtitleAsset sc (argv[1]);
+		cout << sc.xml_as_string ();
+	} catch (exception& e) {
+		cerr << "Could not load as interop: " << e.what() << "\n";
+		try {
+			dcp::SMPTESubtitleAsset sc (argv[1]);
+			cout << sc.xml_as_string().raw ();
+		} catch (exception& e) {
+			cerr << "Could not load as SMPTE (" << e.what() << ")\n";
+		}
+	}
 	return 0;
 }
