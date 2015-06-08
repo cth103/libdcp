@@ -36,6 +36,8 @@ class SMPTELoadFontNode;
 class SMPTESubtitleAsset : public SubtitleAsset, public MXF
 {
 public:
+	SMPTESubtitleAsset ();
+	
 	/** @param file File name
 	 *  @param mxf true if `file' is a MXF, or false if it is an XML file.
 	 */

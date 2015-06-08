@@ -43,6 +43,12 @@ using boost::split;
 using boost::is_any_of;
 using namespace dcp;
 
+SMPTESubtitleAsset::SMPTESubtitleAsset ()
+	: _time_code_rate (0)
+{
+	
+}
+
 /** Construct a SMPTESubtitleAsset by reading an XML or MXF file.
  *  @param file Filename.
  *  @param mxf true if file is an MXF, false if it is XML.

@@ -29,8 +29,10 @@ using boost::shared_ptr;
 /* Write some subtitle content as Interop XML and check that it is right */
 BOOST_AUTO_TEST_CASE (write_subtitle_test)
 {
-	dcp::InteropSubtitleAsset c ("Test", "EN");
+	dcp::InteropSubtitleAsset c;
 	c.set_reel_number ("1");
+	c.set_language ("EN");
+	c.set_movie_title ("Test");
 
 	c.add (
 		dcp::SubtitleString (

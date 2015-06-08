@@ -56,10 +56,9 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 	parse_subtitles (xml, font_nodes);
 }
 
-InteropSubtitleAsset::InteropSubtitleAsset (string movie_title, string language)
-	: _movie_title (movie_title)
+InteropSubtitleAsset::InteropSubtitleAsset ()
 {
-	_language = language;
+	
 }
 
 Glib::ustring
