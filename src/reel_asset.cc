@@ -29,6 +29,7 @@
 #include <libxml++/libxml++.h>
 
 using std::pair;
+using std::cout;
 using std::string;
 using std::stringstream;
 using std::make_pair;

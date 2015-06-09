@@ -44,4 +44,7 @@ public:
 	std::string urn;
 };
 
+bool operator== (SMPTELoadFontNode const & a, SMPTELoadFontNode const & b);
+bool operator!= (SMPTELoadFontNode const & a, SMPTELoadFontNode const & b);
+	
 }

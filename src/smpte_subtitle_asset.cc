@@ -45,6 +45,7 @@ using boost::shared_ptr;
 using boost::split;
 using boost::is_any_of;
 using boost::shared_array;
+using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 SMPTESubtitleAsset::SMPTESubtitleAsset ()
@@ -264,8 +265,75 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 bool
 SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, NoteHandler note) const
 {
-	/* XXX */
-	return false;
+	if (!SubtitleAsset::equals (other_asset, options, note)) {
+		return false;
+	}
+
+	shared_ptr<const SMPTESubtitleAsset> other = dynamic_pointer_cast<const SMPTESubtitleAsset> (other_asset);
+	if (!other) {
+		note (DCP_ERROR, "Subtitles are in different standards");
+		return false;
+	}
+
+	list<shared_ptr<SMPTELoadFontNode> >::const_iterator i = _load_font_nodes.begin ();
+	list<shared_ptr<SMPTELoadFontNode> >::const_iterator j = other->_load_font_nodes.begin ();
+
+	while (i != _load_font_nodes.end ()) {
+		if (j == other->_load_font_nodes.end ()) {
+			note (DCP_ERROR, "<LoadFont> nodes differ");
+			return false;
+		}
+
+		if (**i != **j) {
+			note (DCP_ERROR, "<LoadFont> nodes differ");
+			return false;
+		}
+
+		++i;
+		++j;
+	}
+
+	if (_content_title_text != other->_content_title_text) {
+		note (DCP_ERROR, "Subtitle content title texts differ");
+		return false;
+	}
+	
+	if (_language != other->_language) {
+		note (DCP_ERROR, "Subtitle languages differ");
+		return false;
+	}
+
+	if (_annotation_text != other->_annotation_text) {
+		note (DCP_ERROR, "Subtitle annotation texts differ");
+		return false;
+	}
+	
+	if (_issue_date != other->_issue_date) {
+		note (DCP_ERROR, "Subtitle issue dates differ");
+		return false;
+	}
+	
+	if (_reel_number != other->_reel_number) {
+		note (DCP_ERROR, "Subtitle reel numbers differ");
+		return false;
+	}
+	
+	if (_edit_rate != other->_edit_rate) {
+		note (DCP_ERROR, "Subtitle edit rates differ");
+		return false;
+	}
+
+	if (_time_code_rate != other->_time_code_rate) {
+		note (DCP_ERROR, "Subtitle time code rates differ");
+		return false;
+	}
+	
+	if (_start_time != other->_start_time) {
+		note (DCP_ERROR, "Subtitle start times differ");
+		return false;
+	}
+
+	return true;
 }
 
 void

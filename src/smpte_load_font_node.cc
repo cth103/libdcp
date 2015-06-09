@@ -37,3 +37,15 @@ SMPTELoadFontNode::SMPTELoadFontNode (shared_ptr<const cxml::Node> node)
 {
 	
 }
+
+bool
+dcp::operator== (SMPTELoadFontNode const & a, SMPTELoadFontNode const & b)
+{
+	return a.id == b.id && a.urn == b.urn;
+}
+
+bool
+dcp::operator!= (SMPTELoadFontNode const & a, SMPTELoadFontNode const & b)
+{
+	return !(a == b);
+}
