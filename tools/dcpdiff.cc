@@ -47,6 +47,7 @@ help (string n)
 	     << "  -h, --help                   show this help\n"
 	     << "  -v, --verbose                be verbose\n"
 	     << "      --cpl-annotation-texts   allow differing CPL annotation texts\n"
+	     << "      --reel-annotation-texts  allow differing reel annotation texts\n"
 	     << "  -m, --mean-pixel             maximum allowed mean pixel error (default 5)\n"
 	     << "  -s, --std-dev-pixel          maximum allowed standard deviation of pixel error (default 5)\n"
 	     << "      --key                    hexadecimal key to use to decrypt MXFs\n"
@@ -104,6 +105,7 @@ main (int argc, char* argv[])
 	options.max_mean_pixel_error = 5;
 	options.max_std_dev_pixel_error = 5;
 	options.reel_hashes_can_differ = true;
+	options.reel_annotation_texts_can_differ = false;
 	bool keep_going = false;
 	bool ignore_missing_assets = false;
 	optional<string> key;
@@ -121,10 +123,11 @@ main (int argc, char* argv[])
 			{ "ignore-missing-assets", no_argument, 0, 'A'},
 			{ "cpl-annotation-texts", no_argument, 0, 'C'},
 			{ "key", required_argument, 0, 'D'},
+			{ "reel-annotation-texts", no_argument, 0, 'E'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vhvm:s:kACD:", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhvm:s:kACD:E", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -158,6 +161,9 @@ main (int argc, char* argv[])
 			break;
 		case 'D':
 			key = string (optarg);
+			break;
+		case 'E':
+			options.reel_annotation_texts_can_differ = true;
 			break;
 		}
 	}
