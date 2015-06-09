@@ -49,35 +49,29 @@ SMPTESubtitleAsset::SMPTESubtitleAsset ()
 	
 }
 
-/** Construct a SMPTESubtitleAsset by reading an XML or MXF file.
+/** Construct a SMPTESubtitleAsset by reading an MXF file.
  *  @param file Filename.
- *  @param mxf true if file is an MXF, false if it is XML.
  */
-SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file, bool mxf)
+SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	: SubtitleAsset (file)
 {
 	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
 	
-	if (mxf) {
-		ASDCP::TimedText::MXFReader reader;
-		Kumu::Result_t r = reader.OpenRead (file.string().c_str ());
-		if (ASDCP_FAILURE (r)) {
-			boost::throw_exception (MXFFileError ("could not open MXF file for reading", file, r));
-		}
-	
-		string s;
-		reader.ReadTimedTextResource (s, 0, 0);
-		stringstream t;
-		t << s;
-		xml->read_stream (t);
-
-		ASDCP::WriterInfo info;
-		reader.FillWriterInfo (info);
-		_id = read_writer_info (info);
-	} else {
-		xml->read_file (file);
-		_id = xml->string_child("Id").substr (9);
+	ASDCP::TimedText::MXFReader reader;
+	Kumu::Result_t r = reader.OpenRead (file.string().c_str ());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file, r));
 	}
+	
+	string s;
+	reader.ReadTimedTextResource (s, 0, 0);
+	stringstream t;
+	t << s;
+	xml->read_stream (t);
+	
+	ASDCP::WriterInfo info;
+	reader.FillWriterInfo (info);
+	_id = read_writer_info (info);
 	
 	_load_font_nodes = type_children<dcp::SMPTELoadFontNode> (xml, "LoadFont");
 

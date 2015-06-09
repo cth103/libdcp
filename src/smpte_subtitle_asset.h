@@ -39,9 +39,8 @@ public:
 	SMPTESubtitleAsset ();
 	
 	/** @param file File name
-	 *  @param mxf true if `file' is a MXF, or false if it is an XML file.
 	 */
-	SMPTESubtitleAsset (boost::filesystem::path file, bool mxf = true);
+	SMPTESubtitleAsset (boost::filesystem::path file);
 
 	bool equals (
 		boost::shared_ptr<const Asset>,
