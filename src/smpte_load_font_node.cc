@@ -24,8 +24,16 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
+SMPTELoadFontNode::SMPTELoadFontNode (string id, string urn_)
+	: LoadFontNode (id)
+	, urn (urn_)
+{
+
+}
+
 SMPTELoadFontNode::SMPTELoadFontNode (shared_ptr<const cxml::Node> node)
 	: LoadFontNode (node->string_attribute ("ID"))
+	, urn (node->content().substr (9))
 {
-	urn = node->content().substr (9);
+	
 }

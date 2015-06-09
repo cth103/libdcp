@@ -26,9 +26,11 @@
 #include "font_node.h"
 #include "exceptions.h"
 #include "xml.h"
+#include "raw_convert.h"
+#include "dcp_assert.h"
+#include "util.h"
 #include "AS_DCP.h"
 #include "KM_util.h"
-#include "raw_convert.h"
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
@@ -38,13 +40,16 @@ using std::list;
 using std::stringstream;
 using std::cout;
 using std::vector;
+using std::map;
 using boost::shared_ptr;
 using boost::split;
 using boost::is_any_of;
+using boost::shared_array;
 using namespace dcp;
 
 SMPTESubtitleAsset::SMPTESubtitleAsset ()
-	: _time_code_rate (0)
+	: _edit_rate (24, 1)
+	, _time_code_rate (24)
 {
 	
 }
@@ -55,24 +60,25 @@ SMPTESubtitleAsset::SMPTESubtitleAsset ()
 SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	: SubtitleAsset (file)
 {
-	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
-	
 	ASDCP::TimedText::MXFReader reader;
 	Kumu::Result_t r = reader.OpenRead (file.string().c_str ());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file, r));
 	}
+
+	/* Read the subtitle XML */
 	
 	string s;
 	reader.ReadTimedTextResource (s, 0, 0);
 	stringstream t;
 	t << s;
+	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
 	xml->read_stream (t);
 	
 	ASDCP::WriterInfo info;
 	reader.FillWriterInfo (info);
 	_id = read_writer_info (info);
-	
+
 	_load_font_nodes = type_children<dcp::SMPTELoadFontNode> (xml, "LoadFont");
 
 	_content_title_text = xml->string_child ("ContentTitleText");
@@ -107,6 +113,42 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	}
 	
 	parse_subtitles (xml, font_nodes);
+
+	/* Read fonts */
+
+	ASDCP::TimedText::TimedTextDescriptor text_descriptor;
+	reader.FillTimedTextDescriptor (text_descriptor);
+	for (
+		ASDCP::TimedText::ResourceList_t::const_iterator i = text_descriptor.ResourceList.begin();
+		i != text_descriptor.ResourceList.end();
+		++i) {
+
+		if (i->Type == ASDCP::TimedText::MT_OPENTYPE) {
+			ASDCP::TimedText::FrameBuffer buffer;
+			buffer.Capacity (10 * 1024 * 1024);
+			reader.ReadAncillaryResource (i->ResourceID, buffer);
+
+			char id[64];
+			Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof (id));
+
+			shared_array<uint8_t> data (new uint8_t[buffer.Size()]);
+			memcpy (data.get(), buffer.RoData(), buffer.Size());
+
+			/* The IDs in the MXF have a 9 character prefix of unknown origin and meaning... */
+			string check_id = string (id).substr (9);
+
+			list<shared_ptr<SMPTELoadFontNode> >::const_iterator j = _load_font_nodes.begin ();
+			while (j != _load_font_nodes.end() && (*j)->urn != check_id) {
+				++j;
+			}
+
+			if (j != _load_font_nodes.end ()) {
+				_fonts[(*j)->id] = FontData (data, buffer.Size ());
+			}
+		}
+	}
+	
+	
 }
 
 list<shared_ptr<LoadFontNode> >
@@ -172,13 +214,23 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	ASDCP::TimedText::TimedTextDescriptor descriptor;
 	descriptor.EditRate = ASDCP::Rational (_edit_rate.numerator, _edit_rate.denominator);
 	descriptor.EncodingName = "UTF-8";
-	descriptor.ResourceList.clear ();
+
+	BOOST_FOREACH (shared_ptr<dcp::SMPTELoadFontNode> i, _load_font_nodes) {
+		map<string, FontData>::const_iterator j = _fonts.find (i->id);
+		if (j != _fonts.end ()) {
+			ASDCP::TimedText::TimedTextResourceDescriptor res;
+			unsigned int c;
+			Kumu::hex2bin (i->urn.c_str(), res.ResourceID, Kumu::UUID_Length, &c);
+			DCP_ASSERT (c == Kumu::UUID_Length);
+			res.Type = ASDCP::TimedText::MT_OPENTYPE;
+			descriptor.ResourceList.push_back (res);
+		}
+	}
+	
 	descriptor.NamespaceName = "dcst";
 	memcpy (descriptor.AssetID, writer_info.AssetUUID, ASDCP::UUIDlen);
 	descriptor.ContainerDuration = latest_subtitle_out().as_editable_units (_edit_rate.numerator / _edit_rate.denominator);
 
-	/* XXX: should write fonts into the file somehow */
-	
 	ASDCP::TimedText::MXFWriter writer;
 	ASDCP::Result_t r = writer.OpenWrite (p.string().c_str(), writer_info, descriptor);
 	if (ASDCP_FAILURE (r)) {
@@ -189,6 +241,19 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	r = writer.WriteTimedTextResource (xml_as_string ());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not write XML to timed text resource", p.string(), r));
+	}
+
+	BOOST_FOREACH (shared_ptr<dcp::SMPTELoadFontNode> i, _load_font_nodes) {
+		map<string, FontData>::const_iterator j = _fonts.find (i->id);
+		if (j != _fonts.end ()) {
+			ASDCP::TimedText::FrameBuffer buffer;
+			buffer.SetData (j->second.data.get(), j->second.size);
+			buffer.Size (j->second.size);
+			r = writer.WriteAncillaryResource (buffer);
+			if (ASDCP_FAILURE (r)) {
+				boost::throw_exception (MXFFileError ("could not write font to timed text resource", p.string(), r));
+			}
+		}
 	}
 
 	writer.Finalize ();
@@ -206,5 +271,6 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 void
 SMPTESubtitleAsset::add_font (string id, boost::filesystem::path file)
 {
-	/* XXX */
+	add_font_data (id, file);
+	_load_font_nodes.push_back (shared_ptr<SMPTELoadFontNode> (new SMPTELoadFontNode (id, make_uuid ())));
 }

@@ -31,6 +31,7 @@ namespace xmlpp {
 }
 
 struct interop_dcp_font_test;
+struct smpte_dcp_font_test;
 
 namespace dcp
 {
@@ -78,6 +79,7 @@ public:
 
 protected:
 	friend struct ::interop_dcp_font_test;
+	friend struct ::smpte_dcp_font_test;
 	
 	void parse_subtitles (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<FontNode> > font_nodes);
 	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, std::string xmlns) const;
@@ -94,20 +96,16 @@ protected:
 			: data (data_)
 			, size (size_)
 		{}
-
-		FontData (boost::shared_array<uint8_t> data_, boost::uintmax_t size_, boost::filesystem::path file_)
-			: data (data_)
-			, size (size_)
-			, file (file_)
-		{}
 		
 		boost::shared_array<uint8_t> data;
 		boost::uintmax_t size;
-		mutable boost::filesystem::path file;
+		/** .ttf file that this data was last written to */
+		mutable boost::optional<boost::filesystem::path> file;
 	};
 
 	/** Font data, keyed by a subclass-dependent identifier.
-	 *  For Interop fonts, the string is the font ID from the subtitle file.
+	 *  For Interop, the string is the font ID from the subtitle file.
+	 *  For SMPTE, the string is the font's URN from the subtitle file.
 	 */
 	std::map<std::string, FontData> _fonts;
 	

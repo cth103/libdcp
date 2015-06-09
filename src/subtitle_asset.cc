@@ -324,5 +324,5 @@ SubtitleAsset::add_font_data (string id, boost::filesystem::path file)
 		throw FileError ("could not read font file", file, -1);
 	}
 
-	_fonts[id] = FontData (data, size, file);
+	_fonts[id] = FontData (data, size);
 }

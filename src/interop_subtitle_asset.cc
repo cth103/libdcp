@@ -36,6 +36,7 @@ using std::cout;
 using std::cerr;
 using std::map;
 using boost::shared_ptr;
+using boost::shared_array;
 using boost::optional;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
@@ -192,6 +193,7 @@ void
 InteropSubtitleAsset::add_font_assets (list<shared_ptr<Asset> >& assets)
 {
 	for (map<string, FontData>::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
-		assets.push_back (shared_ptr<Font> (new Font (i->second.file)));
+		DCP_ASSERT (i->second.file);
+		assets.push_back (shared_ptr<Font> (new Font (i->second.file.get ())));
 	}
 }

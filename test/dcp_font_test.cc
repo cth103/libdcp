@@ -18,6 +18,7 @@
 */
 
 #include "interop_subtitle_asset.h"
+#include "smpte_subtitle_asset.h"
 #include "dcp.h"
 #include "cpl.h"
 #include "test.h"
@@ -68,5 +69,43 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 	fread (ref.get(), 1, size, f);
 	fclose (f);
 
+	BOOST_CHECK_EQUAL (memcmp (subs2->_fonts["theFontId"].data.get(), ref.get(), size), 0);
+}
+
+/** Create a DCP with SMPTE subtitles and check that the font is written and read back correctly */
+BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
+{
+	boost::filesystem::path directory = "build/test/smpte_dcp_font_test";
+	dcp::DCP dcp (directory);
+
+	shared_ptr<dcp::SMPTESubtitleAsset> subs (new dcp::SMPTESubtitleAsset ());
+	subs->add_font ("theFontId", "test/data/dummy.ttf");
+	subs->write (directory / "frobozz.mxf");
+
+	shared_ptr<dcp::Reel> reel (new dcp::Reel ());
+	reel->add (shared_ptr<dcp::ReelAsset> (new dcp::ReelSubtitleAsset (subs, dcp::Fraction (24, 1), 24, 0)));
+
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("", dcp::TRAILER));
+	cpl->add (reel);
+
+	dcp.add (cpl);
+	dcp.write_xml (dcp::SMPTE);
+
+	dcp::DCP dcp2 (directory);
+	dcp2.read ();
+	shared_ptr<dcp::SubtitleAsset> subs2 = dynamic_pointer_cast<dcp::SubtitleAsset> (
+		dcp2.cpls().front()->reels().front()->main_subtitle()->asset_ref().object()
+		);
+	BOOST_REQUIRE (subs2);
+	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1);
+
+	boost::uintmax_t const size = boost::filesystem::file_size ("test/data/dummy.ttf");
+	FILE* f = dcp::fopen_boost ("test/data/dummy.ttf", "r");
+	BOOST_REQUIRE (f);
+	shared_array<uint8_t> ref (new uint8_t[size]);
+	fread (ref.get(), 1, size, f);
+	fclose (f);
+
+	BOOST_REQUIRE (subs2->_fonts["theFontId"].data);
 	BOOST_CHECK_EQUAL (memcmp (subs2->_fonts["theFontId"].data.get(), ref.get(), size), 0);
 }
