@@ -47,10 +47,12 @@ public:
 
 	std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const;
 
-	void add_font (std::string id, std::string uri);
+	void add_font (std::string id, boost::filesystem::path file);
 	
 	Glib::ustring xml_as_string () const;
 	void write (boost::filesystem::path path) const;
+	void resolve_fonts (std::list<boost::shared_ptr<Object> > objects);
+	void add_font_assets (std::list<boost::shared_ptr<Asset> >& assets);
 
 	/** Set the reel number or sub-element identifier
 	 *  of these subtitles.

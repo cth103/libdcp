@@ -26,7 +26,7 @@
 namespace dcp {
 
 /** @class Font
- *  @brief A (truetype) font asset for subtitles in a DCP.
+ *  @brief A (truetype) font asset for subtitles in an Interop DCP.
  */
 class Font : public Asset
 {

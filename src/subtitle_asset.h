@@ -24,10 +24,13 @@
 #include "dcp_time.h"
 #include "subtitle_string.h"
 #include <libcxml/cxml.h>
+#include <boost/shared_array.hpp>
 
 namespace xmlpp {
 	class Element;
 }
+
+struct interop_dcp_font_test;
 
 namespace dcp
 {
@@ -64,6 +67,7 @@ public:
 	}
 
 	void add (SubtitleString);
+	virtual void add_font (std::string id, boost::filesystem::path file) = 0;
 
 	virtual void write (boost::filesystem::path) const = 0;
 	virtual Glib::ustring xml_as_string () const = 0;
@@ -73,13 +77,40 @@ public:
 	virtual std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const = 0;
 
 protected:
+	friend struct ::interop_dcp_font_test;
+	
 	void parse_subtitles (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<FontNode> > font_nodes);
-
 	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, std::string xmlns) const;
+	void add_font_data (std::string id, boost::filesystem::path file);
 
 	/** All our subtitles, in no particular order */
 	std::list<SubtitleString> _subtitles;
 
+	class FontData {
+	public:
+		FontData () {}
+		
+		FontData (boost::shared_array<uint8_t> data_, boost::uintmax_t size_)
+			: data (data_)
+			, size (size_)
+		{}
+
+		FontData (boost::shared_array<uint8_t> data_, boost::uintmax_t size_, boost::filesystem::path file_)
+			: data (data_)
+			, size (size_)
+			, file (file_)
+		{}
+		
+		boost::shared_array<uint8_t> data;
+		boost::uintmax_t size;
+		mutable boost::filesystem::path file;
+	};
+
+	/** Font data, keyed by a subclass-dependent identifier.
+	 *  For Interop fonts, the string is the font ID from the subtitle file.
+	 */
+	std::map<std::string, FontData> _fonts;
+	
 private:
 	/** @struct ParseState
 	 *  @brief  A struct to hold state when parsing a subtitle XML file.

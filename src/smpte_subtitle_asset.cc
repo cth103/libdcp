@@ -209,3 +209,8 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 	return false;
 }
 
+void
+SMPTESubtitleAsset::add_font (string id, boost::filesystem::path file)
+{
+	/* XXX */
+}

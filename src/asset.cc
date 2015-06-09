@@ -71,10 +71,16 @@ Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
 	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
-	optional<boost::filesystem::path> path = relative_to_root (root, _file);
+
+	optional<boost::filesystem::path> path = relative_to_root (
+		boost::filesystem::canonical (root),
+		boost::filesystem::canonical (_file)
+		);
+	
 	if (!path) {
 		throw MiscError (String::compose ("Asset %1 is not within the directory %2", _file, root));
 	}
+	
 	chunk->add_child("Path")->add_child_text (path.get().string ());
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");

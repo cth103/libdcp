@@ -29,6 +29,7 @@
 #include "KM_util.h"
 #include <libxml++/nodes/element.h>
 #include <boost/algorithm/string.hpp>
+#include <boost/shared_array.hpp>
 #include <fstream>
 
 using std::string;
@@ -37,7 +38,9 @@ using std::ostream;
 using std::ofstream;
 using std::stringstream;
 using std::cout;
+using std::cerr;
 using boost::shared_ptr;
+using boost::shared_array;
 using boost::optional;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
@@ -304,4 +307,22 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, strin
 	}
 }
 
-       
+void
+SubtitleAsset::add_font_data (string id, boost::filesystem::path file)
+{
+	boost::uintmax_t size = boost::filesystem::file_size (file);
+	FILE* f = fopen_boost (file, "r");
+	if (!f) {
+		throw FileError ("could not open font file for reading", file, errno);
+	}
+
+	shared_array<uint8_t> data (new uint8_t[size]);
+	size_t const read = fread (data.get(), 1, size, f);
+	fclose (f);
+	
+	if (read != size) {
+		throw FileError ("could not read font file", file, -1);
+	}
+
+	_fonts[id] = FontData (data, size, file);
+}

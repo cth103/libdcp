@@ -23,6 +23,8 @@
 #include "raw_convert.h"
 #include "font_node.h"
 #include "util.h"
+#include "font.h"
+#include "dcp_assert.h"
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
 #include <cmath>
@@ -31,6 +33,8 @@
 using std::list;
 using std::string;
 using std::cout;
+using std::cerr;
+using std::map;
 using boost::shared_ptr;
 using boost::optional;
 using boost::dynamic_pointer_cast;
@@ -85,9 +89,10 @@ InteropSubtitleAsset::xml_as_string () const
 }
 
 void
-InteropSubtitleAsset::add_font (string id, string uri)
+InteropSubtitleAsset::add_font (string id, boost::filesystem::path file)
 {
-	_load_font_nodes.push_back (shared_ptr<InteropLoadFontNode> (new InteropLoadFontNode (id, uri)));
+	add_font_data (id, file);
+	_load_font_nodes.push_back (shared_ptr<InteropLoadFontNode> (new InteropLoadFontNode (id, file.leaf().string ())));
 }
 
 bool
@@ -136,7 +141,7 @@ InteropSubtitleAsset::load_font_nodes () const
 	return lf;
 }
 
-/** Write this content to an XML file */
+/** Write this content to an XML file with its fonts alongside */
 void
 InteropSubtitleAsset::write (boost::filesystem::path p) const
 {
@@ -150,4 +155,43 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 	fclose (f);
 
 	_file = p;
+
+	BOOST_FOREACH (shared_ptr<InteropLoadFontNode> i, _load_font_nodes) {
+		boost::filesystem::path file = p.parent_path() / i->uri;
+		FILE* f = fopen_boost (file, "w");
+		if (!f) {
+			throw FileError ("could not open font file for writing", file, errno);
+		}
+		map<string, FontData>::const_iterator j = _fonts.find (i->id);
+		if (j != _fonts.end ()) {
+			fwrite (j->second.data.get(), 1, j->second.size, f);
+			j->second.file = file;
+		}
+		fclose (f);
+	}
+}
+
+void
+InteropSubtitleAsset::resolve_fonts (list<shared_ptr<Object> > objects)
+{
+	BOOST_FOREACH (shared_ptr<Object> i, objects) {
+		shared_ptr<Font> font = dynamic_pointer_cast<Font> (i);
+		if (!font) {
+			continue;
+		}
+
+		BOOST_FOREACH (shared_ptr<InteropLoadFontNode> j, _load_font_nodes) {
+			if (j->uri == font->file().leaf().string ()) {
+				add_font_data (j->id, font->file ());
+			}
+		}
+	}
+}
+
+void
+InteropSubtitleAsset::add_font_assets (list<shared_ptr<Asset> >& assets)
+{
+	for (map<string, FontData>::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
+		assets.push_back (shared_ptr<Font> (new Font (i->second.file)));
+	}
 }

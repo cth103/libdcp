@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "smpte_subtitle_asset.h"
 #include "mono_picture_asset.h"
 #include "stereo_picture_asset.h"
+#include "reel_subtitle_asset.h"
 #include "util.h"
 #include "metadata.h"
 #include "exceptions.h"
@@ -40,6 +41,7 @@
 #include "decrypted_kdm_key.h"
 #include "dcp_assert.h"
 #include "reel_asset.h"
+#include "font.h"
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
 #include <libxml++/libxml++.h>
@@ -55,8 +57,10 @@ using std::ostream;
 using std::make_pair;
 using std::map;
 using std::cout;
+using std::cerr;
 using std::exception;
 using boost::shared_ptr;
+using boost::dynamic_pointer_cast;
 using boost::algorithm::starts_with;
 using namespace dcp;
 
@@ -117,7 +121,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 	*/
 
 	/* Make a list of non-CPL assets so that we can resolve the references
-	   from the CPL.
+	   from the CPLs.
 	*/
 	list<shared_ptr<Asset> > other_assets;
 	
@@ -171,6 +175,8 @@ DCP::read (bool keep_going, ReadErrors* errors)
 				default:
 					throw DCPReadError ("Unknown MXF essence type");
 			}
+		} else if (boost::filesystem::extension (path) == ".ttf") {
+			other_assets.push_back (shared_ptr<Font> (new Font (path)));
 		}
 	}
 
@@ -423,7 +429,13 @@ DCP::assets () const
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
 		assets.push_back (i);
 		BOOST_FOREACH (shared_ptr<const ReelAsset> j, i->reel_assets ()) {
-			assets.push_back (j->asset_ref().object ());
+			shared_ptr<Asset> o = j->asset_ref().object ();
+			assets.push_back (o);
+			/* More Interop special-casing */
+			shared_ptr<InteropSubtitleAsset> sub = dynamic_pointer_cast<InteropSubtitleAsset> (o);
+			if (sub) {
+				sub->add_font_assets (assets);
+			}
 		}
 	}
 

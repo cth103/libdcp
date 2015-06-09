@@ -23,8 +23,11 @@
 #include "test.h"
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
+#include <cstdio>
 
 using std::string;
+using std::min;
+using std::stringstream;
 using std::list;
 
 boost::filesystem::path private_test;
@@ -104,6 +107,45 @@ check_xml (string ref, string test, list<string> ignore)
 	xmlpp::Element* test_root = test_parser->get_document()->get_root_node ();
 
 	check_xml (ref_root, test_root, ignore);
+}
+
+void
+check_file (boost::filesystem::path ref, boost::filesystem::path check)
+{
+	uintmax_t N = boost::filesystem::file_size (ref);
+	BOOST_CHECK_EQUAL (N, boost::filesystem::file_size (check));
+	FILE* ref_file = dcp::fopen_boost (ref, "rb");
+	BOOST_CHECK (ref_file);
+	FILE* check_file = dcp::fopen_boost (check, "rb");
+	BOOST_CHECK (check_file);
+	
+	int const buffer_size = 65536;
+	uint8_t* ref_buffer = new uint8_t[buffer_size];
+	uint8_t* check_buffer = new uint8_t[buffer_size];
+
+	stringstream error;
+	error << "File " << check.string() << " differs from reference " << ref.string();
+	
+	while (N) {
+		uintmax_t this_time = min (uintmax_t (buffer_size), N);
+		size_t r = fread (ref_buffer, 1, this_time, ref_file);
+		BOOST_CHECK_EQUAL (r, this_time);
+		r = fread (check_buffer, 1, this_time, check_file);
+		BOOST_CHECK_EQUAL (r, this_time);
+
+		BOOST_CHECK_MESSAGE (memcmp (ref_buffer, check_buffer, this_time) == 0, error.str ());
+		if (memcmp (ref_buffer, check_buffer, this_time)) {
+			break;
+		}
+		
+		N -= this_time;
+	}
+
+	delete[] ref_buffer;
+	delete[] check_buffer;
+
+	fclose (ref_file);
+	fclose (check_file);
 }
 
 BOOST_GLOBAL_FIXTURE (TestConfig);

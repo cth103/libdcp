@@ -53,6 +53,7 @@ public:
 
 	Glib::ustring xml_as_string () const;
 	void write (boost::filesystem::path path) const;
+	void add_font (std::string id, boost::filesystem::path file);
 
 	void set_content_title_text (std::string t) {
 		_content_title_text = t;

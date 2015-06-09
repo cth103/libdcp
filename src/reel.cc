@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include "reel_subtitle_asset.h"
 #include "decrypted_kdm_key.h"
 #include "decrypted_kdm.h"
+#include "interop_subtitle_asset.h"
 #include <libxml++/nodes/element.h>
 
 using std::string;
@@ -176,5 +177,11 @@ Reel::resolve_refs (list<shared_ptr<Object> > objects)
 
 	if (_main_subtitle) {
 		_main_subtitle->asset_ref().resolve (objects);
+
+		/* Interop subtitle handling is all special cases */
+		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (_main_subtitle->asset_ref().object ());
+		if (iop) {
+			iop->resolve_fonts (objects);
+		}
 	}
 }
