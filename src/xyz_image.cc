@@ -72,7 +72,7 @@ XYZImage::~XYZImage ()
 }
 
 /** @param c Component index (0, 1 or 2)
- *  @return Pointer to the data for component c; 12-bit values from 0-4095.
+ *  @return Pointer to the data for component c.
  */
 int *
 XYZImage::data (int c) const
