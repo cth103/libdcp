@@ -153,7 +153,7 @@ dcp::xyz_to_rgb (
 	double const * lut_in = conversion.in()->lut (12, true);
 	double const * lut_out = conversion.out()->lut (16, false);
 	boost::numeric::ublas::matrix<double> const matrix = conversion.xyz_to_rgb ();
-	
+
 	for (int y = 0; y < xyz_image->size().height; ++y) {
 		uint16_t* rgb_line = reinterpret_cast<uint16_t*> (rgb + y * stride);
 		for (int x = 0; x < xyz_image->size().width; ++x) {
@@ -218,7 +218,7 @@ dcp::xyz_to_rgb (
  *  with the 2-byte value for each R/G/B component stored as
  *  little-endian; i.e. AV_PIX_FMT_RGB48LE.
  *  @param size of RGB image in pixels.
- *  @param stride of RGB data in bytes.
+ *  @param stride of RGB data in pixels.
  */
 shared_ptr<dcp::XYZImage>
 dcp::rgb_to_xyz (
