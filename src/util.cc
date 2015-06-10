@@ -204,17 +204,43 @@ dcp::content_kind_from_string (string kind)
 shared_ptr<dcp::XYZImage>
 dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 {
-	opj_dinfo_t* decoder = opj_create_decompress (CODEC_J2K);
+	uint8_t const jp2_magic[] = {
+		0x00,
+		0x00,
+		0x00,
+		0x0c,
+		'j',
+		'P',
+		0x20,
+		0x20
+	};
+	
+	OPJ_CODEC_FORMAT format = CODEC_J2K;
+	if (size >= int (sizeof (jp2_magic)) && memcmp (data, jp2_magic, sizeof (jp2_magic)) == 0) {
+		format = CODEC_JP2;
+	}
+	
+	opj_dinfo_t* decoder = opj_create_decompress (format);
+	if (!decoder) {
+		boost::throw_exception (DCPReadError ("could not create JPEG2000 decompresser"));
+	}
 	opj_dparameters_t parameters;
 	opj_set_default_decoder_parameters (&parameters);
 	parameters.cp_reduce = reduce;
 	opj_setup_decoder (decoder, &parameters);
 	opj_cio_t* cio = opj_cio_open ((opj_common_ptr) decoder, data, size);
+	if (!cio) {
+		boost::throw_exception (DCPReadError ("could not create JPEG2000 memory stream"));
+	}
 	opj_image_t* image = opj_decode (decoder, cio);
 	if (!image) {
 		opj_destroy_decompress (decoder);
 		opj_cio_close (cio);
-		boost::throw_exception (DCPReadError (String::compose ("could not decode JPEG2000 codestream of %1 bytes.", size)));
+		if (format == CODEC_J2K) {
+			boost::throw_exception (DCPReadError (String::compose ("could not decode JPEG2000 codestream of %1 bytes.", size)));
+		} else {
+			boost::throw_exception (DCPReadError (String::compose ("could not decode JP2 file of %1 bytes.", size)));
+		}
 	}
 
 	opj_destroy_decompress (decoder);
