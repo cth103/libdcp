@@ -309,8 +309,12 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 	}
 	
 	if (_issue_date != other->_issue_date) {
-		note (DCP_ERROR, "Subtitle issue dates differ");
-		return false;
+		if (options.issue_dates_can_differ) {
+			note (DCP_NOTE, "Subtitle issue dates differ");
+		} else {
+			note (DCP_ERROR, "Subtitle issue dates differ");
+			return false;
+		}
 	}
 	
 	if (_reel_number != other->_reel_number) {
