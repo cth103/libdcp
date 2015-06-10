@@ -17,8 +17,8 @@
 
 */
 
-/** @file  src/xyz_image.h
- *  @brief XYZImage class.
+/** @file  src/openjpeg_image.h
+ *  @brief OpenJPEGImage class.
  */
 
 #include "util.h"
@@ -26,17 +26,15 @@
 
 namespace dcp {
 
-/** @class XYZImage
- *  @brief An image in XYZ colour.
- *
- *  This class is a thin wrapper of libopenjpeg's opj_image_t.
+/** @class OpenJPEGImage
+ *  @brief A wrapper of libopenjpeg's opj_image_t.
  */
-class XYZImage : public boost::noncopyable
+class OpenJPEGImage : public boost::noncopyable
 {
 public:
-	XYZImage (opj_image_t *);
-	XYZImage (Size);
-	~XYZImage ();
+	OpenJPEGImage (opj_image_t *);
+	OpenJPEGImage (Size);
+	~OpenJPEGImage ();
 
 	int* data (int) const;
 	dcp::Size size () const;

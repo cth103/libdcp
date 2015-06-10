@@ -18,7 +18,7 @@
 */
 
 #include "rgb_xyz.h"
-#include "xyz_image.h"
+#include "openjpeg_image.h"
 #include "colour_conversion.h"
 #include <boost/test/unit_test.hpp>
 #include <boost/bind.hpp>
@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 		}
 	}
 
-	shared_ptr<dcp::XYZImage> xyz = dcp::rgb_to_xyz (rgb.get(), size, size.width * 6, dcp::ColourConversion::srgb_to_xyz ());
+	shared_ptr<dcp::OpenJPEGImage> xyz = dcp::rgb_to_xyz (rgb.get(), size, size.width * 6, dcp::ColourConversion::srgb_to_xyz ());
 
 	for (int y = 0; y < size.height; ++y) {
 		uint16_t* p = reinterpret_cast<uint16_t*> (rgb.get() + y * size.width * 6);
@@ -116,7 +116,7 @@ note_handler (dcp::NoteType n, string s)
 /** Check that xyz_to_rgb clamps XYZ values correctly */
 BOOST_AUTO_TEST_CASE (xyz_rgb_range_test)
 {
-	shared_ptr<dcp::XYZImage> xyz (new dcp::XYZImage (dcp::Size (2, 2)));
+	shared_ptr<dcp::OpenJPEGImage> xyz (new dcp::OpenJPEGImage (dcp::Size (2, 2)));
 	
 	xyz->data(0)[0] = -4;
 	xyz->data(0)[1] = 6901;

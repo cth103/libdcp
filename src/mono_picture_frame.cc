@@ -112,7 +112,7 @@ MonoPictureFrame::j2k_size () const
  *  of the image, expressed as a power of two (pass 0 for no
  *  reduction).
  */
-shared_ptr<XYZImage>
+shared_ptr<OpenJPEGImage>
 MonoPictureFrame::xyz_image (int reduce) const
 {
 	return decompress_j2k (const_cast<uint8_t*> (_buffer->RoData()), _buffer->Size(), reduce);

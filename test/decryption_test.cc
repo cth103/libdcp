@@ -26,7 +26,7 @@
 #include "reel_picture_asset.h"
 #include "reel.h"
 #include "test.h"
-#include "xyz_image.h"
+#include "openjpeg_image.h"
 #include "rgb_xyz.h"
 #include "colour_conversion.h"
 #include <boost/test/unit_test.hpp>
@@ -47,7 +47,7 @@ get_frame (dcp::DCP const & dcp)
 
 	shared_ptr<const dcp::MonoPictureAsset> mono_picture = dynamic_pointer_cast<const dcp::MonoPictureAsset> (picture);
 	shared_ptr<const dcp::MonoPictureFrame> j2k_frame = mono_picture->get_frame (0);
-	shared_ptr<dcp::XYZImage> xyz = j2k_frame->xyz_image();
+	shared_ptr<dcp::OpenJPEGImage> xyz = j2k_frame->xyz_image();
 
 	uint8_t* argb = new uint8_t[xyz->size().width * xyz->size().height * 4];
 	dcp::xyz_to_rgba (j2k_frame->xyz_image(), dcp::ColourConversion::srgb_to_xyz(), argb);

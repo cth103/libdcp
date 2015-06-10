@@ -17,27 +17,27 @@
 
 */
 
-/** @file  src/xyz_image.cc
- *  @brief XYZImage class.
+/** @file  src/openjpeg_image.cc
+ *  @brief OpenJPEGImage class.
  */
 
-#include "xyz_image.h"
+#include "openjpeg_image.h"
 #include "dcp_assert.h"
 #include <stdexcept>
 
 using namespace dcp;
 
-/** Construct an XYZImage, taking ownership of the opj_image_t */
-XYZImage::XYZImage (opj_image_t* image)
+/** Construct an OpenJPEGImage, taking ownership of the opj_image_t */
+OpenJPEGImage::OpenJPEGImage (opj_image_t* image)
 	: _opj_image (image)
 {
 	DCP_ASSERT (_opj_image->numcomps == 3);
 }
 
-/** Construct a new XYZImage with undefined contents.
+/** Construct a new OpenJPEGImage with undefined contents.
  *  @param size Size for the frame in pixels.
  */
-XYZImage::XYZImage (Size size)
+OpenJPEGImage::OpenJPEGImage (Size size)
 {
 	opj_image_cmptparm_t cmptparm[3];
 	
@@ -65,8 +65,8 @@ XYZImage::XYZImage (Size size)
 	_opj_image->y1 = size.height;
 }
 
-/** XYZImage destructor */
-XYZImage::~XYZImage ()
+/** OpenJPEGImage destructor */
+OpenJPEGImage::~OpenJPEGImage ()
 {
 	opj_image_destroy (_opj_image);
 }
@@ -75,7 +75,7 @@ XYZImage::~XYZImage ()
  *  @return Pointer to the data for component c.
  */
 int *
-XYZImage::data (int c) const
+OpenJPEGImage::data (int c) const
 {
 	DCP_ASSERT (c >= 0 && c < 3);
 	return _opj_image->comps[c].data;
@@ -83,7 +83,7 @@ XYZImage::data (int c) const
 
 /** @return Size of the image in pixels */
 dcp::Size
-XYZImage::size () const
+OpenJPEGImage::size () const
 {
 	/* XXX: this may not be right; x0 and y0 can presumably be non-zero */
 	return dcp::Size (_opj_image->x1, _opj_image->y1);

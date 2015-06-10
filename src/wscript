@@ -30,6 +30,7 @@ def build(bld):
              mxf.cc
              asset_writer.cc
              object.cc
+             openjpeg_image.cc
              picture_asset.cc
              picture_asset_writer.cc
              reel.cc
@@ -58,7 +59,6 @@ def build(bld):
              types.cc
              util.cc
              version.cc
-             xyz_image.cc
              """
 
     headers = """
@@ -90,6 +90,7 @@ def build(bld):
               mxf.h
               asset_writer.h
               object.h
+              openjpeg_image.h
               picture_asset.h
               picture_asset_writer.h
               raw_convert.h
@@ -118,7 +119,6 @@ def build(bld):
               types.h
               util.h
               version.h
-              xyz_image.h
               """
 
     # Main library

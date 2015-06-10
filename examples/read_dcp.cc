@@ -32,7 +32,7 @@
 #include "stereo_picture_asset.h"
 #include "sound_asset.h"
 #include "subtitle_asset.h"
-#include "xyz_image.h"
+#include "openjpeg_image.h"
 #include "colour_conversion.h"
 #include "rgb_xyz.h"
 #include <Magick++.h>
@@ -86,7 +86,7 @@ main ()
 	boost::shared_ptr<const dcp::MonoPictureFrame> picture_frame_j2k = picture_asset->get_frame(999);
 
 	/* Get the frame as an XYZ image */
-	boost::shared_ptr<const dcp::XYZImage> picture_image_xyz = picture_frame_j2k->xyz_image ();
+	boost::shared_ptr<const dcp::OpenJPEGImage> picture_image_xyz = picture_frame_j2k->xyz_image ();
 
 	/* Convert to ARGB */
 	boost::scoped_array<uint8_t> rgba (new uint8_t[picture_image_xyz->size().width * picture_image_xyz->size().height * 4]);

@@ -32,7 +32,7 @@ namespace ASDCP {
 
 namespace dcp {
 
-class XYZImage;
+class OpenJPEGImage;
 
 /** A single frame of a 3D (stereoscopic) picture asset */	
 class StereoPictureFrame : public boost::noncopyable
@@ -42,7 +42,7 @@ public:
 	StereoPictureFrame ();
 	~StereoPictureFrame ();
 
-	boost::shared_ptr<XYZImage> xyz_image (Eye eye, int reduce = 0) const;
+	boost::shared_ptr<OpenJPEGImage> xyz_image (Eye eye, int reduce = 0) const;
 
 	uint8_t const * left_j2k_data () const;
 	uint8_t* left_j2k_data ();

@@ -25,7 +25,7 @@
 #include "exceptions.h"
 #include "types.h"
 #include "certificates.h"
-#include "xyz_image.h"
+#include "openjpeg_image.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
 #include "KM_util.h"
@@ -199,9 +199,9 @@ dcp::content_kind_from_string (string kind)
  *  e.g. 0 reduces by (2^0 == 1), ie keeping the same size.
  *       1 reduces by (2^1 == 2), ie halving the size of the image.
  *  This is useful for scaling 4K DCP images down to 2K.
- *  @return XYZ image.
+ *  @return OpenJPEGImage.
  */
-shared_ptr<dcp::XYZImage>
+shared_ptr<dcp::OpenJPEGImage>
 dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 {
 	uint8_t const jp2_magic[] = {
@@ -248,7 +248,7 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 
 	image->x1 = rint (float(image->x1) / pow (2, reduce));
 	image->y1 = rint (float(image->y1) / pow (2, reduce));
-	return shared_ptr<XYZImage> (new XYZImage (image));
+	return shared_ptr<OpenJPEGImage> (new OpenJPEGImage (image));
 }
 
 /** @param s A string.

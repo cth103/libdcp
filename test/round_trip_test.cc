@@ -32,7 +32,7 @@
 #include "reel_picture_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "file.h"
-#include "xyz_image.h"
+#include "openjpeg_image.h"
 #include "rgb_xyz.h"
 #include "colour_conversion.h"
 #include <boost/test/unit_test.hpp>
@@ -106,8 +106,8 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	BOOST_CHECK (!kdm_B.keys().empty ());
 	asset_B->set_key (kdm_B.keys().front().key());
 
-	shared_ptr<dcp::XYZImage> xyz_A = asset_A->get_frame(0)->xyz_image ();
-	shared_ptr<dcp::XYZImage> xyz_B = asset_B->get_frame(0)->xyz_image ();
+	shared_ptr<dcp::OpenJPEGImage> xyz_A = asset_A->get_frame(0)->xyz_image ();
+	shared_ptr<dcp::OpenJPEGImage> xyz_B = asset_B->get_frame(0)->xyz_image ();
 
 	scoped_array<uint8_t> frame_A (new uint8_t[xyz_A->size().width * xyz_A->size().height * 4]);
 	dcp::xyz_to_rgba (xyz_A, dcp::ColourConversion::srgb_to_xyz(), frame_A.get());

@@ -68,7 +68,7 @@ StereoPictureFrame::~StereoPictureFrame ()
  *  of the image, expressed as a power of two (pass 0 for no
  *  reduction).
  */
-shared_ptr<XYZImage>
+shared_ptr<OpenJPEGImage>
 StereoPictureFrame::xyz_image (Eye eye, int reduce) const
 {
 	switch (eye) {
@@ -78,7 +78,7 @@ StereoPictureFrame::xyz_image (Eye eye, int reduce) const
 		return decompress_j2k (const_cast<uint8_t*> (_buffer->Right.RoData()), _buffer->Right.Size(), reduce);
 	}
 	
-	return shared_ptr<XYZImage> ();
+	return shared_ptr<OpenJPEGImage> ();
 }
 
 uint8_t const *

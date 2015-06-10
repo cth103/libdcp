@@ -38,7 +38,7 @@ namespace ASDCP {
 
 namespace dcp {
 
-class XYZImage;
+class OpenJPEGImage;
 
 /** @class MonoPictureFrame
  *  @brief A single frame of a 2D (monoscopic) picture asset.
@@ -51,7 +51,7 @@ public:
 	MonoPictureFrame ();
 	~MonoPictureFrame ();
 
-	boost::shared_ptr<XYZImage> xyz_image (int reduce = 0) const;
+	boost::shared_ptr<OpenJPEGImage> xyz_image (int reduce = 0) const;
 
 	uint8_t const * j2k_data () const;
 	uint8_t* j2k_data ();

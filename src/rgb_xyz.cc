@@ -18,7 +18,7 @@
 */
 
 #include "rgb_xyz.h"
-#include "xyz_image.h"
+#include "openjpeg_image.h"
 #include "colour_matrix.h"
 #include "colour_conversion.h"
 #include "transfer_function.h"
@@ -51,7 +51,7 @@ using namespace dcp;
  */
 void
 dcp::xyz_to_rgba (
-	boost::shared_ptr<const XYZImage> xyz_image,
+	boost::shared_ptr<const OpenJPEGImage> xyz_image,
 	ColourConversion const & conversion,
 	uint8_t* argb
 	)
@@ -130,7 +130,7 @@ dcp::xyz_to_rgba (
  */
 void
 dcp::xyz_to_rgb (
-	shared_ptr<const XYZImage> xyz_image,
+	shared_ptr<const OpenJPEGImage> xyz_image,
 	ColourConversion const & conversion,
 	uint8_t* rgb,
 	int stride,
@@ -220,7 +220,7 @@ dcp::xyz_to_rgb (
  *  @param size of RGB image in pixels.
  *  @param stride of RGB data in pixels.
  */
-shared_ptr<dcp::XYZImage>
+shared_ptr<dcp::OpenJPEGImage>
 dcp::rgb_to_xyz (
 	uint8_t const * rgb,
 	dcp::Size size,
@@ -228,7 +228,7 @@ dcp::rgb_to_xyz (
 	ColourConversion const & conversion
 	)
 {
-	shared_ptr<XYZImage> xyz (new XYZImage (size));
+	shared_ptr<OpenJPEGImage> xyz (new OpenJPEGImage (size));
 
 	struct {
 		double r, g, b;
@@ -292,10 +292,10 @@ dcp::rgb_to_xyz (
  *  16Z, with the 2-byte value for each X/Y/Z component stored as
  *  little-endian.
  */
-shared_ptr<dcp::XYZImage>
+shared_ptr<dcp::OpenJPEGImage>
 dcp::xyz_to_xyz (uint8_t const * xyz_16, dcp::Size size, int stride)
 {
-	shared_ptr<XYZImage> xyz_12 (new XYZImage (size));
+	shared_ptr<OpenJPEGImage> xyz_12 (new OpenJPEGImage (size));
 
 	int jn = 0;
 	for (int y = 0; y < size.height; ++y) {
