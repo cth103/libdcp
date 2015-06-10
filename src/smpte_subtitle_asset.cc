@@ -284,7 +284,7 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 			return false;
 		}
 
-		if (**i != **j) {
+		if ((*i)->id != (*j)->id) {
 			note (DCP_ERROR, "<LoadFont> nodes differ");
 			return false;
 		}
