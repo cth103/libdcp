@@ -41,7 +41,7 @@
 #include "decrypted_kdm_key.h"
 #include "dcp_assert.h"
 #include "reel_asset.h"
-#include "font.h"
+#include "font_asset.h"
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
 #include <libxml++/libxml++.h>
@@ -176,7 +176,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 					throw DCPReadError ("Unknown MXF essence type");
 			}
 		} else if (boost::filesystem::extension (path) == ".ttf") {
-			other_assets.push_back (shared_ptr<Font> (new Font (path)));
+			other_assets.push_back (shared_ptr<FontAsset> (new FontAsset (path)));
 		}
 	}
 

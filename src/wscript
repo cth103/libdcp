@@ -15,7 +15,7 @@ def build(bld):
              encrypted_kdm.cc
              exceptions.cc
              file.cc
-             font.cc
+             font_asset.cc
              font_node.cc
              gamma_transfer_function.cc
              interop_load_font_node.cc
@@ -71,11 +71,12 @@ def build(bld):
               cpl.h
               dcp.h
               dcp_time.h
+              data.h
               decrypted_kdm.h
               decrypted_kdm_key.h
               encrypted_kdm.h
               exceptions.h
-              font.h
+              font_asset.h
               gamma_transfer_function.h
               interop_load_font_node.h
               interop_subtitle_asset.h

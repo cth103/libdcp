@@ -144,7 +144,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 			}
 
 			if (j != _load_font_nodes.end ()) {
-				_fonts[(*j)->id] = FontData (data, buffer.Size ());
+				_fonts[(*j)->id] = FileData (data, buffer.Size ());
 			}
 		}
 	}
@@ -217,7 +217,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	descriptor.EncodingName = "UTF-8";
 
 	BOOST_FOREACH (shared_ptr<dcp::SMPTELoadFontNode> i, _load_font_nodes) {
-		map<string, FontData>::const_iterator j = _fonts.find (i->id);
+		map<string, FileData>::const_iterator j = _fonts.find (i->id);
 		if (j != _fonts.end ()) {
 			ASDCP::TimedText::TimedTextResourceDescriptor res;
 			unsigned int c;
@@ -245,7 +245,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	}
 
 	BOOST_FOREACH (shared_ptr<dcp::SMPTELoadFontNode> i, _load_font_nodes) {
-		map<string, FontData>::const_iterator j = _fonts.find (i->id);
+		map<string, FileData>::const_iterator j = _fonts.find (i->id);
 		if (j != _fonts.end ()) {
 			ASDCP::TimedText::FrameBuffer buffer;
 			buffer.SetData (j->second.data.get(), j->second.size);

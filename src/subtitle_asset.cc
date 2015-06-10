@@ -39,6 +39,7 @@ using std::ofstream;
 using std::stringstream;
 using std::cout;
 using std::cerr;
+using std::map;
 using boost::shared_ptr;
 using boost::shared_array;
 using boost::optional;
@@ -324,5 +325,15 @@ SubtitleAsset::add_font_data (string id, boost::filesystem::path file)
 		throw FileError ("could not read font file", file, -1);
 	}
 
-	_fonts[id] = FontData (data, size);
+	_fonts[id] = FileData (data, size);
+}
+
+map<string, Data>
+SubtitleAsset::fonts () const
+{
+	map<string, Data> out;
+	for (map<string, FileData>::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
+		out[i->first] = i->second;
+	}
+	return out;
 }

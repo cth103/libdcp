@@ -23,6 +23,7 @@
 #include "asset.h"
 #include "dcp_time.h"
 #include "subtitle_string.h"
+#include "data.h"
 #include <libcxml/cxml.h>
 #include <boost/shared_array.hpp>
 
@@ -69,6 +70,7 @@ public:
 
 	void add (SubtitleString);
 	virtual void add_font (std::string id, boost::filesystem::path file) = 0;
+	std::map<std::string, Data> fonts () const;
 
 	virtual void write (boost::filesystem::path) const = 0;
 	virtual Glib::ustring xml_as_string () const = 0;
@@ -88,17 +90,14 @@ protected:
 	/** All our subtitles, in no particular order */
 	std::list<SubtitleString> _subtitles;
 
-	class FontData {
+	class FileData : public Data {
 	public:
-		FontData () {}
+		FileData () {}
 		
-		FontData (boost::shared_array<uint8_t> data_, boost::uintmax_t size_)
-			: data (data_)
-			, size (size_)
+		FileData (boost::shared_array<uint8_t> data_, boost::uintmax_t size_)
+			: Data (data_, size_)
 		{}
 		
-		boost::shared_array<uint8_t> data;
-		boost::uintmax_t size;
 		/** .ttf file that this data was last written to */
 		mutable boost::optional<boost::filesystem::path> file;
 	};
@@ -107,7 +106,7 @@ protected:
 	 *  For Interop, the string is the font ID from the subtitle file.
 	 *  For SMPTE, the string is the font's URN from the subtitle file.
 	 */
-	std::map<std::string, FontData> _fonts;
+	std::map<std::string, FileData> _fonts;
 	
 private:
 	/** @struct ParseState

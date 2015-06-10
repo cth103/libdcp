@@ -23,7 +23,7 @@
 #include "raw_convert.h"
 #include "font_node.h"
 #include "util.h"
-#include "font.h"
+#include "font_asset.h"
 #include "dcp_assert.h"
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
@@ -163,7 +163,7 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 		if (!f) {
 			throw FileError ("could not open font file for writing", file, errno);
 		}
-		map<string, FontData>::const_iterator j = _fonts.find (i->id);
+		map<string, FileData>::const_iterator j = _fonts.find (i->id);
 		if (j != _fonts.end ()) {
 			fwrite (j->second.data.get(), 1, j->second.size, f);
 			j->second.file = file;
@@ -176,7 +176,7 @@ void
 InteropSubtitleAsset::resolve_fonts (list<shared_ptr<Object> > objects)
 {
 	BOOST_FOREACH (shared_ptr<Object> i, objects) {
-		shared_ptr<Font> font = dynamic_pointer_cast<Font> (i);
+		shared_ptr<FontAsset> font = dynamic_pointer_cast<FontAsset> (i);
 		if (!font) {
 			continue;
 		}
@@ -192,8 +192,8 @@ InteropSubtitleAsset::resolve_fonts (list<shared_ptr<Object> > objects)
 void
 InteropSubtitleAsset::add_font_assets (list<shared_ptr<Asset> >& assets)
 {
-	for (map<string, FontData>::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
+	for (map<string, FileData>::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
 		DCP_ASSERT (i->second.file);
-		assets.push_back (shared_ptr<Font> (new Font (i->second.file.get ())));
+		assets.push_back (shared_ptr<FontAsset> (new FontAsset (i->second.file.get ())));
 	}
 }

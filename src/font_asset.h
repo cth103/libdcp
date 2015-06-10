@@ -17,24 +17,24 @@
 
 */
 
-/** @file  src/font.cc
- *  @brief Font class.
+/** @file  src/font_asset.h
+ *  @brief FontAsset class.
  */
 
-#include "font.h"
+#include "asset.h"
 
-using std::string;
+namespace dcp {
 
-using namespace dcp;
-
-Font::Font (boost::filesystem::path file)
-	: Asset (file)
+/** @class FontAsset
+ *  @brief A (truetype) font asset for subtitles in an Interop DCP.
+ */
+class FontAsset : public Asset
 {
+public:
+	FontAsset (boost::filesystem::path file);
+	
+private:
+	std::string pkl_type (Standard standard) const;
+};
 
-}
-
-string
-Font::pkl_type (Standard) const
-{
-	return "application/ttf";
 }

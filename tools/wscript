@@ -11,3 +11,9 @@ def build(bld):
     obj.source = 'dcpinfo.cc common.cc'
     obj.target = 'dcpinfo'
 
+    obj = bld(features = 'cxx cxxprogram')
+    obj.use = ['libdcp%s' % bld.env.API_VERSION]
+    obj.uselib = 'OPENJPEG CXML'
+    obj.source = 'dcpdumpsub.cc'
+    obj.target = 'dcpdumpsub'
+
