@@ -295,7 +295,7 @@ dcp::rgb_to_xyz (
 		}
 	}
 
-	if (clamped) {
+	if (clamped && note) {
 		note.get() (DCP_NOTE, String::compose ("%1 XYZ value(s) clamped", clamped));
 	}
 
