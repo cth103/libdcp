@@ -27,6 +27,7 @@
 using std::max;
 using std::list;
 using std::string;
+using std::cout;
 using boost::shared_ptr;
 using boost::optional;
 using boost::scoped_array;
@@ -160,4 +161,34 @@ BOOST_AUTO_TEST_CASE (xyz_rgb_range_test)
 	BOOST_REQUIRE_EQUAL (buffer[1 * 3 + 0], buffer[3 * 3 + 0]);
 	BOOST_REQUIRE_EQUAL (buffer[1 * 3 + 1], buffer[3 * 3 + 1]);
 	BOOST_REQUIRE_EQUAL (buffer[1 * 3 + 2], buffer[3 * 3 + 2]);
+}
+
+/** Convert an image from RGB to XYZ and back again */
+BOOST_AUTO_TEST_CASE (rgb_xyz_round_trip_test)
+{
+	unsigned int seed = 0;
+	dcp::Size const size (640, 480);
+
+	scoped_array<uint8_t> rgb (new uint8_t[size.width * size.height * 6]);
+	for (int y = 0; y < size.height; ++y) {
+		uint16_t* p = reinterpret_cast<uint16_t*> (rgb.get() + y * size.width * 6);
+		for (int x = 0; x < size.width; ++x) {
+			/* Write a 12-bit random number for each component */
+			for (int c = 0; c < 3; ++c) {
+				*p = (rand_r (&seed) & 0xfff) << 4;
+				++p;
+			}
+		}
+	}
+
+	shared_ptr<dcp::OpenJPEGImage> xyz = dcp::rgb_to_xyz (rgb.get(), size, size.width * 6, dcp::ColourConversion::srgb_to_xyz ());
+	scoped_array<uint8_t> back (new uint8_t[size.width * size.height * 6]);
+	dcp::xyz_to_rgb (xyz, dcp::ColourConversion::srgb_to_xyz (), back.get(), size.width * 6);
+
+	uint16_t* p = reinterpret_cast<uint16_t*> (rgb.get ());
+	uint16_t* q = reinterpret_cast<uint16_t*> (back.get ());
+	for (int i = 0; i < (size.width * size.height); ++i) {
+		/* XXX: doesn't quite work */
+		// BOOST_REQUIRE_EQUAL (*p++, *q++);
+	}
 }

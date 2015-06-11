@@ -82,3 +82,23 @@ BOOST_AUTO_TEST_CASE (colour_conversion_test2)
 	check_gamma (cc.out(), 16, true, 1 / 2.6);
 }
 
+/** Check that the xyz_to_rgb matrix is the inverse of the rgb_to_xyz one */
+BOOST_AUTO_TEST_CASE (colour_conversion_matrix_test)
+{
+	ColourConversion c = ColourConversion::srgb_to_xyz ();
+
+	boost::numeric::ublas::matrix<double> A = c.rgb_to_xyz ();
+	boost::numeric::ublas::matrix<double> B = c.xyz_to_rgb ();
+
+	BOOST_CHECK_CLOSE (A(0, 0) * B(0, 0) + A(0, 1) * B(1, 0) + A(0, 2) * B(2, 0), 1, 0.1);
+	BOOST_CHECK (fabs (A(0, 0) * B(0, 1) + A(0, 1) * B(1, 1) + A(0, 2) * B(2, 1)) < 1e-6);
+	BOOST_CHECK (fabs (A(0, 0) * B(0, 2) + A(0, 1) * B(1, 2) + A(0, 2) * B(2, 2)) < 1e-6);
+
+	BOOST_CHECK (fabs (A(1, 0) * B(0, 0) + A(1, 1) * B(1, 0) + A(1, 2) * B(2, 0)) < 1e-6);
+	BOOST_CHECK_CLOSE (A(1, 0) * B(0, 1) + A(1, 1) * B(1, 1) + A(1, 2) * B(2, 1), 1, 0.1);
+	BOOST_CHECK (fabs (A(1, 0) * B(0, 2) + A(1, 1) * B(1, 2) + A(1, 2) * B(2, 2)) < 1e-6);
+
+	BOOST_CHECK (fabs (A(2, 0) * B(0, 0) + A(2, 1) * B(1, 0) + A(2, 2) * B(2, 0)) < 1e-6);
+	BOOST_CHECK (fabs (A(2, 0) * B(0, 1) + A(2, 1) * B(1, 1) + A(2, 2) * B(2, 1)) < 1e-6);
+	BOOST_CHECK_CLOSE (A(2, 0) * B(0, 2) + A(2, 1) * B(1, 2) + A(2, 2) * B(2, 2), 1, 0.1);
+}

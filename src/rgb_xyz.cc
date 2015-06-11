@@ -28,6 +28,7 @@
 
 using std::min;
 using std::max;
+using std::cout;
 using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
@@ -70,8 +71,8 @@ dcp::xyz_to_rgba (
 	int* xyz_y = xyz_image->data (1);
 	int* xyz_z = xyz_image->data (2);
 
-	double const * lut_in = conversion.in()->lut (16, true);
-	double const * lut_out = conversion.out()->lut (12, false);
+	double const * lut_in = conversion.out()->lut (12, false);
+	double const * lut_out = conversion.in()->lut (16, true);
 	boost::numeric::ublas::matrix<double> const matrix = conversion.xyz_to_rgb ();
 
 	int const height = xyz_image->size().height;
@@ -150,8 +151,8 @@ dcp::xyz_to_rgb (
 	int* xyz_y = xyz_image->data (1);
 	int* xyz_z = xyz_image->data (2);
 
-	double const * lut_in = conversion.in()->lut (12, true);
-	double const * lut_out = conversion.out()->lut (16, false);
+	double const * lut_in = conversion.out()->lut (12, false);
+	double const * lut_out = conversion.in()->lut (16, true);
 	boost::numeric::ublas::matrix<double> const matrix = conversion.xyz_to_rgb ();
 
 	for (int y = 0; y < xyz_image->size().height; ++y) {
