@@ -43,7 +43,14 @@ extern void xyz_to_rgb (
 	boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()
 	);
 	
-extern boost::shared_ptr<OpenJPEGImage> rgb_to_xyz (uint8_t const * rgb, dcp::Size size, int stride, ColourConversion const & conversion);
+extern boost::shared_ptr<OpenJPEGImage> rgb_to_xyz (
+	uint8_t const * rgb,
+	dcp::Size size,
+	int stride,
+	ColourConversion const & conversion,
+	boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()
+	);
+	
 extern boost::shared_ptr<OpenJPEGImage> xyz_to_xyz (uint8_t const * xyz, dcp::Size size, int stride);
 	
 }

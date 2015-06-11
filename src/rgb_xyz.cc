@@ -225,7 +225,8 @@ dcp::rgb_to_xyz (
 	uint8_t const * rgb,
 	dcp::Size size,
 	int stride,
-	ColourConversion const & conversion
+	ColourConversion const & conversion,
+	optional<NoteHandler> note
 	)
 {
 	shared_ptr<OpenJPEGImage> xyz (new OpenJPEGImage (size));
@@ -247,6 +248,7 @@ dcp::rgb_to_xyz (
 	boost::numeric::ublas::matrix<double> const rgb_to_xyz = conversion.rgb_to_xyz ();
 	boost::numeric::ublas::matrix<double> const bradford = conversion.bradford ();
 
+	int clamped = 0;
 	int jn = 0;
 	for (int y = 0; y < size.height; ++y) {
 		uint16_t const * p = reinterpret_cast<uint16_t const *> (rgb + y * stride);
@@ -271,10 +273,19 @@ dcp::rgb_to_xyz (
 			e.y = e.y * DCI_COEFFICIENT * 65535;
 			e.z = e.z * DCI_COEFFICIENT * 65535;
 
-			DCP_ASSERT (e.x >= 0 && e.x < 65536);
-			DCP_ASSERT (e.y >= 0 && e.y < 65536);
-			DCP_ASSERT (e.z >= 0 && e.z < 65536);
+			/* Clamp */
+
+			if (e.x < 0 || e.y < 0 || e.z < 0 || e.x > 65535 || e.y > 65535 || e.z > 65535) {
+				++clamped;
+			}
 			
+			e.x = max (0.0d, e.x);
+			e.y = max (0.0d, e.y);
+			e.z = max (0.0d, e.z);
+			e.x = min (65535.0d, e.x);
+			e.y = min (65535.0d, e.y);
+			e.z = min (65535.0d, e.z);
+
 			/* Out gamma LUT */
 			xyz->data(0)[jn] = lut_out[int(rint(e.x))] * 4095;
 			xyz->data(1)[jn] = lut_out[int(rint(e.y))] * 4095;
@@ -282,6 +293,10 @@ dcp::rgb_to_xyz (
 
 			++jn;
 		}
+	}
+
+	if (clamped) {
+		note.get() (DCP_NOTE, String::compose ("%1 XYZ value(s) clamped", clamped));
 	}
 
 	return xyz;
