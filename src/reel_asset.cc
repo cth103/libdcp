@@ -27,6 +27,7 @@
 #include "compose.hpp"
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
+#include <iostream>
 
 using std::pair;
 using std::cout;
