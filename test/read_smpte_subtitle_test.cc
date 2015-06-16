@@ -22,6 +22,7 @@
 #include "local_time.h"
 #include "smpte_load_font_node.h"
 #include <boost/test/unit_test.hpp>
+#include <boost/optional.hpp>
 
 using std::list;
 using boost::shared_ptr;
