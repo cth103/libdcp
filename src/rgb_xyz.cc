@@ -280,12 +280,12 @@ dcp::rgb_to_xyz (
 				++clamped;
 			}
 			
-			e.x = max (0.0d, e.x);
-			e.y = max (0.0d, e.y);
-			e.z = max (0.0d, e.z);
-			e.x = min (65535.0d, e.x);
-			e.y = min (65535.0d, e.y);
-			e.z = min (65535.0d, e.z);
+			e.x = max (0.0, e.x);
+			e.y = max (0.0, e.y);
+			e.z = max (0.0, e.z);
+			e.x = min (65535.0, e.x);
+			e.y = min (65535.0, e.y);
+			e.z = min (65535.0, e.z);
 
 			/* Out gamma LUT */
 			xyz->data(0)[jn] = lut_out[int(rint(e.x))] * 4095;
