@@ -185,10 +185,12 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_round_trip_test)
 	scoped_array<uint8_t> back (new uint8_t[size.width * size.height * 6]);
 	dcp::xyz_to_rgb (xyz, dcp::ColourConversion::srgb_to_xyz (), back.get(), size.width * 6);
 
+#if 0	
 	uint16_t* p = reinterpret_cast<uint16_t*> (rgb.get ());
 	uint16_t* q = reinterpret_cast<uint16_t*> (back.get ());
 	for (int i = 0; i < (size.width * size.height); ++i) {
 		/* XXX: doesn't quite work */
 		// BOOST_REQUIRE_EQUAL (*p++, *q++);
 	}
+#endif		
 }
