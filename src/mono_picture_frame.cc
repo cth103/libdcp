@@ -44,7 +44,7 @@ MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path)
 {
 	boost::uintmax_t const size = boost::filesystem::file_size (path);
 	_buffer = new ASDCP::JP2K::FrameBuffer (size);
-	FILE* f = fopen_boost (path, "r");
+	FILE* f = fopen_boost (path, "rb");
 	if (!f) {
 		boost::throw_exception (FileError ("could not open JPEG2000 file", path, errno));
 	}

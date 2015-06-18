@@ -35,7 +35,7 @@ File::File (boost::filesystem::path file)
 {
 	_size = boost::filesystem::file_size (file);
 	_data = new uint8_t[_size];
-	FILE* f = dcp::fopen_boost (file, "r");
+	FILE* f = dcp::fopen_boost (file, "rb");
 	DCP_ASSERT (f);
 	fread (_data, 1, _size, f);
 	fclose (f);

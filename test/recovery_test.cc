@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE (recovery)
 	boost::filesystem::resize_file ("build/test/baz/video2.mxf", 16384 + 353 * 11);
 
 	{
-		FILE* f = fopen ("build/test/baz/video2.mxf", "r+");
+		FILE* f = fopen ("build/test/baz/video2.mxf", "rb+");
 		rewind (f);
 		char zeros[256];
 		memset (zeros, 0, 256);

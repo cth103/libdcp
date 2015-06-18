@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1);
 
 	boost::uintmax_t const size = boost::filesystem::file_size ("test/data/dummy.ttf");
-	FILE* f = dcp::fopen_boost ("test/data/dummy.ttf", "r");
+	FILE* f = dcp::fopen_boost ("test/data/dummy.ttf", "rb");
 	BOOST_REQUIRE (f);
 	shared_array<uint8_t> ref (new uint8_t[size]);
 	fread (ref.get(), 1, size, f);
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
 	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1);
 
 	boost::uintmax_t const size = boost::filesystem::file_size ("test/data/dummy.ttf");
-	FILE* f = dcp::fopen_boost ("test/data/dummy.ttf", "r");
+	FILE* f = dcp::fopen_boost ("test/data/dummy.ttf", "rb");
 	BOOST_REQUIRE (f);
 	shared_array<uint8_t> ref (new uint8_t[size]);
 	fread (ref.get(), 1, size, f);
