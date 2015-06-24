@@ -18,6 +18,8 @@
 */
 
 #include <boost/shared_array.hpp>
+#include <boost/filesystem.hpp>
+#include <stdint.h>
 
 namespace dcp {
 
@@ -30,6 +32,8 @@ public:
 		: data (data_)
 		, size (size_)
 	{}
+
+	Data (boost::filesystem::path file);
 
 	boost::shared_array<uint8_t> data;
 	boost::uintmax_t size;

@@ -17,24 +17,26 @@
 
 */
 
-/** @file  src/font_asset.cc
- *  @brief FontAsset class.
- */
-
-#include "font_asset.h"
-
-using std::string;
+#include "data.h"
+#include "util.h"
+#include "exceptions.h"
+#include <cstdio>
 
 using namespace dcp;
 
-FontAsset::FontAsset (string id, boost::filesystem::path file)
-	: Asset (id, file)
+Data::Data (boost::filesystem::path file)
 {
+	FILE* f = fopen_boost (file, "rb");
+	if (!f) {
+		throw FileError ("could not open file for reading", file, errno);
+	}
 
-}
+	size = boost::filesystem::file_size (file);
+	data.reset (new uint8_t[size]);
+	size_t const read = fread (data.get(), 1, size, f);
+	fclose (f);
 
-string
-FontAsset::pkl_type (Standard) const
-{
-	return "application/ttf";
+	if (read != size) {
+		throw FileError ("could not read file", file, -1);
+	}
 }

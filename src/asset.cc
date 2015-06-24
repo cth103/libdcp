@@ -49,6 +49,13 @@ Asset::Asset (boost::filesystem::path file)
 
 }
 
+Asset::Asset (string id, boost::filesystem::path file)
+	: Object (id)
+	, _file (file)
+{
+
+}
+
 void
 Asset::write_to_pkl (xmlpp::Node* node, Standard standard) const
 {

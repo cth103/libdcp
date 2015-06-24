@@ -144,7 +144,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 			}
 
 			if (j != _load_font_nodes.end ()) {
-				_fonts[(*j)->id] = FileData (data, buffer.Size ());
+				_fonts.push_back (Font ((*j)->id, (*j)->urn, Data (data, buffer.Size ())));
 			}
 		}
 	}
@@ -217,7 +217,10 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	descriptor.EncodingName = "UTF-8";
 
 	BOOST_FOREACH (shared_ptr<dcp::SMPTELoadFontNode> i, _load_font_nodes) {
-		map<string, FileData>::const_iterator j = _fonts.find (i->id);
+		list<Font>::const_iterator j = _fonts.begin ();
+		while (j != _fonts.end() && j->load_id != i->id) {
+			++j;
+		}
 		if (j != _fonts.end ()) {
 			ASDCP::TimedText::TimedTextResourceDescriptor res;
 			unsigned int c;
@@ -245,11 +248,14 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	}
 
 	BOOST_FOREACH (shared_ptr<dcp::SMPTELoadFontNode> i, _load_font_nodes) {
-		map<string, FileData>::const_iterator j = _fonts.find (i->id);
+		list<Font>::const_iterator j = _fonts.begin ();
+		while (j != _fonts.end() && j->load_id != i->id) {
+			++j;
+		}
 		if (j != _fonts.end ()) {
 			ASDCP::TimedText::FrameBuffer buffer;
-			buffer.SetData (j->second.data.get(), j->second.size);
-			buffer.Size (j->second.size);
+			buffer.SetData (j->data.data.get(), j->data.size);
+			buffer.Size (j->data.size);
 			r = writer.WriteAncillaryResource (buffer);
 			if (ASDCP_FAILURE (r)) {
 				boost::throw_exception (MXFFileError ("could not write font to timed text resource", p.string(), r));
@@ -341,8 +347,9 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 }
 
 void
-SMPTESubtitleAsset::add_font (string id, boost::filesystem::path file)
+SMPTESubtitleAsset::add_font (string load_id, boost::filesystem::path file)
 {
-	add_font_data (id, file);
-	_load_font_nodes.push_back (shared_ptr<SMPTELoadFontNode> (new SMPTELoadFontNode (id, make_uuid ())));
+	string const uuid = make_uuid ();
+	_fonts.push_back (Font (load_id, uuid, file));
+	_load_font_nodes.push_back (shared_ptr<SMPTELoadFontNode> (new SMPTELoadFontNode (load_id, uuid)));
 }
