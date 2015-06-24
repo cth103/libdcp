@@ -103,7 +103,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 	if (ASDCP_FAILURE (reader_B.FillAudioDescriptor (desc_B))) {
 		boost::throw_exception (DCPReadError ("could not read audio MXF information"));
 	}
-	
+
 	if (
 		desc_A.EditRate != desc_B.EditRate ||
 		desc_A.AudioSamplingRate != desc_B.AudioSamplingRate ||
@@ -116,28 +116,28 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 		desc_A.ContainerDuration != desc_B.ContainerDuration
 //		desc_A.ChannelFormat != desc_B.ChannelFormat ||
 		) {
-		
+
 		note (DCP_ERROR, "audio MXF picture descriptors differ");
 		return false;
 	}
-	
+
 	ASDCP::PCM::FrameBuffer buffer_A (1 * Kumu::Megabyte);
 	ASDCP::PCM::FrameBuffer buffer_B (1 * Kumu::Megabyte);
-	
+
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 		if (ASDCP_FAILURE (reader_A.ReadFrame (i, buffer_A))) {
 			boost::throw_exception (DCPReadError ("could not read audio frame"));
 		}
-		
+
 		if (ASDCP_FAILURE (reader_B.ReadFrame (i, buffer_B))) {
 			boost::throw_exception (DCPReadError ("could not read audio frame"));
 		}
-		
+
 		if (buffer_A.Size() != buffer_B.Size()) {
 			note (DCP_ERROR, String::compose ("sizes of audio data for frame %1 differ", i));
 			return false;
 		}
-		
+
 		if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
 			for (uint32_t i = 0; i < buffer_A.Size(); ++i) {
 				int const d = abs (buffer_A.RoData()[i] - buffer_B.RoData()[i]);

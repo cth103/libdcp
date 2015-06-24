@@ -158,7 +158,7 @@ private:
 	Colour _colour;
 	/** Size in points as if the screen height is 11 inches, so a 72pt font
 	 *  would be 1/11th of the screen height.
-	 */ 
+	 */
 	int _size;
 	float _aspect_adjust;
 	Time _in;

@@ -63,7 +63,7 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 
 InteropSubtitleAsset::InteropSubtitleAsset ()
 {
-	
+
 }
 
 Glib::ustring
@@ -102,7 +102,7 @@ InteropSubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptio
 	if (!SubtitleAsset::equals (other_asset, options, note)) {
 		return false;
 	}
-	
+
 	shared_ptr<const InteropSubtitleAsset> other = dynamic_pointer_cast<const InteropSubtitleAsset> (other_asset);
 	if (!other) {
 		return false;
@@ -150,7 +150,7 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 	if (!f) {
 		throw FileError ("Could not open file for writing", p, -1);
 	}
-	
+
 	Glib::ustring const s = xml_as_string ();
 	fwrite (s.c_str(), 1, s.bytes(), f);
 	fclose (f);

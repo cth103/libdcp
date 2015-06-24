@@ -38,7 +38,7 @@ BOOST_AUTO_TEST_CASE (kdm_test)
 		);
 
 	list<dcp::DecryptedKDMKey> keys = kdm.keys ();
-	
+
 	BOOST_CHECK_EQUAL (keys.size(), 2);
 
 	BOOST_CHECK_EQUAL (keys.front().cpl_id(), "eece17de-77e8-4a55-9347-b6bab5724b9f");
@@ -66,9 +66,9 @@ BOOST_AUTO_TEST_CASE (kdm_passthrough_test)
 		"xmldiff -c test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml build/kdm.xml"
 		);
 
-#ifdef LIBDCP_WINDOWS	
+#ifdef LIBDCP_WINDOWS
 	BOOST_CHECK_EQUAL (r, 0);
-#else	
+#else
 	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
-#endif	
+#endif
 }

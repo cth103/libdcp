@@ -24,17 +24,17 @@
 
 namespace dcp {
 
-class ARGBImage;	
+class ARGBImage;
 class OpenJPEGImage;
 class Image;
 class ColourConversion;
-	
+
 extern void xyz_to_rgba (
 	boost::shared_ptr<const OpenJPEGImage>,
 	ColourConversion const & conversion,
 	uint8_t* rgba
 	);
-	
+
 extern void xyz_to_rgb (
 	boost::shared_ptr<const OpenJPEGImage>,
 	ColourConversion const & conversion,
@@ -42,7 +42,7 @@ extern void xyz_to_rgb (
 	int stride,
 	boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()
 	);
-	
+
 extern boost::shared_ptr<OpenJPEGImage> rgb_to_xyz (
 	uint8_t const * rgb,
 	dcp::Size size,
@@ -50,7 +50,7 @@ extern boost::shared_ptr<OpenJPEGImage> rgb_to_xyz (
 	ColourConversion const & conversion,
 	boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()
 	);
-	
+
 extern boost::shared_ptr<OpenJPEGImage> xyz_to_xyz (uint8_t const * xyz, dcp::Size size, int stride);
-	
+
 }

@@ -45,7 +45,7 @@ SubtitleNode::SubtitleNode (boost::shared_ptr<const cxml::Node> node, int tcr)
 	for (list<cxml::NodePtr>::iterator i = t.begin(); i != t.end(); ++i) {
 		text_nodes.push_back (shared_ptr<TextNode> (new TextNode (*i, tcr)));
 	}
-	
+
 	fade_up_time = fade_time (node, "FadeUpTime", tcr);
 	fade_down_time = fade_time (node, "FadeDownTime", tcr);
 }
@@ -55,7 +55,7 @@ SubtitleNode::fade_time (shared_ptr<const cxml::Node> node, string name, int tcr
 {
 	string const u = node->optional_string_attribute (name).get_value_or ("");
 	Time t;
-	
+
 	if (u.empty ()) {
 		t = Time (0, 0, 0, 20, 250);
 	} else if (u.find (":") != string::npos) {

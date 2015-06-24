@@ -28,7 +28,7 @@
 
 namespace dcp {
 
-class MonoPictureAsset;	
+class MonoPictureAsset;
 
 /** @class ReelMonoPictureAsset
  *  @brief Part of a Reel's description which refers to a monoscopic picture asset.

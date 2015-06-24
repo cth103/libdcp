@@ -39,7 +39,7 @@ public:
 	FontNode ()
 		: size (0)
 	{}
-	
+
 	FontNode (cxml::ConstNodePtr node, int tcr);
 	FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes);
 
@@ -51,7 +51,7 @@ public:
 	boost::optional<Colour> colour;
 	boost::optional<Effect> effect;
 	boost::optional<Colour> effect_colour;
-	
+
 	std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
 	std::list<boost::shared_ptr<FontNode> > font_nodes;
 	std::list<boost::shared_ptr<TextNode> > text_nodes;

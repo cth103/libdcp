@@ -37,7 +37,7 @@ struct smpte_dcp_font_test;
 namespace dcp
 {
 
-class SubtitleString;	
+class SubtitleString;
 class FontNode;
 class TextNode;
 class SubtitleNode;
@@ -82,7 +82,7 @@ public:
 protected:
 	friend struct ::interop_dcp_font_test;
 	friend struct ::smpte_dcp_font_test;
-	
+
 	void parse_subtitles (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<FontNode> > font_nodes);
 	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, std::string xmlns) const;
 	void add_font_data (std::string id, boost::filesystem::path file);
@@ -93,11 +93,11 @@ protected:
 	class FileData : public Data {
 	public:
 		FileData () {}
-		
+
 		FileData (boost::shared_array<uint8_t> data_, boost::uintmax_t size_)
 			: Data (data_, size_)
 		{}
-		
+
 		/** .ttf file that this data was last written to */
 		mutable boost::optional<boost::filesystem::path> file;
 	};
@@ -107,7 +107,7 @@ protected:
 	 *  For SMPTE, the string is the font's URN from the subtitle file.
 	 */
 	std::map<std::string, FileData> _fonts;
-	
+
 private:
 	/** @struct ParseState
 	 *  @brief  A struct to hold state when parsing a subtitle XML file.
@@ -119,13 +119,13 @@ private:
 	};
 
 	void maybe_add_subtitle (std::string text, ParseState const & parse_state);
-	
+
 	void examine_font_nodes (
 		boost::shared_ptr<const cxml::Node> xml,
 		std::list<boost::shared_ptr<FontNode> > const & font_nodes,
 		ParseState& parse_state
 		);
-	
+
 	void examine_text_nodes (
 		boost::shared_ptr<const cxml::Node> xml,
 		std::list<boost::shared_ptr<TextNode> > const & text_nodes,

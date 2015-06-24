@@ -59,7 +59,7 @@ Time::set (double seconds, int tcr_)
 {
 	s = floor (seconds);
 	tcr = tcr_;
-	
+
 	e = int (round ((seconds - s) * tcr));
 
 	if (s >= 60) {
@@ -86,7 +86,7 @@ Time::Time (string time, int tcr_)
 	if (b.size() != 4) {
 		boost::throw_exception (DCPReadError ("unrecognised time specification"));
 	}
-	
+
 	h = raw_convert<int> (b[0]);
 	m = raw_convert<int> (b[1]);
 	s = raw_convert<int> (b[2]);
@@ -218,7 +218,7 @@ dcp::operator- (Time a, Time b)
 	} else {
 		r.tcr = a.tcr;
 	}
-	
+
 	r.e = a.e - b.e;
 	if (r.e < 0) {
 		r.e += r.tcr;

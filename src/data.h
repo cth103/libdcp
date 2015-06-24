@@ -20,17 +20,17 @@
 #include <boost/shared_array.hpp>
 
 namespace dcp {
-	
+
 class Data
 {
 public:
 	Data () {}
-	
+
 	Data (boost::shared_array<uint8_t> data_, boost::uintmax_t size_)
 		: data (data_)
 		, size (size_)
 	{}
-	
+
 	boost::shared_array<uint8_t> data;
 	boost::uintmax_t size;
 };

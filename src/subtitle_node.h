@@ -31,7 +31,7 @@ namespace cxml {
 
 namespace dcp {
 
-class FontNode;	
+class FontNode;
 class TextNode;
 
 class SubtitleNode

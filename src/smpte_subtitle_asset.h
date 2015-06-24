@@ -37,7 +37,7 @@ class SMPTESubtitleAsset : public SubtitleAsset, public MXF
 {
 public:
 	SMPTESubtitleAsset ();
-	
+
 	/** @param file File name
 	 */
 	SMPTESubtitleAsset (boost::filesystem::path file);
@@ -47,7 +47,7 @@ public:
 		EqualityOptions,
 		NoteHandler note
 		) const;
-	
+
 	std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const;
 
 	Glib::ustring xml_as_string () const;
@@ -111,15 +111,15 @@ public:
 	boost::optional<Time> start_time () const {
 		return _start_time;
 	}
-	
+
 	static bool valid_mxf (boost::filesystem::path);
 
 protected:
-	
+
 	std::string pkl_type (Standard) const {
 		return "application/mxf";
 	}
-	
+
 private:
 	std::string _content_title_text;
 	boost::optional<std::string> _language;
@@ -129,7 +129,7 @@ private:
 	Fraction _edit_rate;
 	int _time_code_rate;
 	boost::optional<Time> _start_time;
-	
+
 	std::list<boost::shared_ptr<SMPTELoadFontNode> > _load_font_nodes;
 };
 

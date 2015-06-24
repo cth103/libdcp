@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE (write_subtitle_test)
 			dcp::Time (5, 6, 7, 8, 24)
 			)
 		);
-	
+
 	c._id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
 
 	check_xml (

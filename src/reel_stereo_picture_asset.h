@@ -28,7 +28,7 @@
 
 namespace dcp {
 
-class StereoPictureAsset;	
+class StereoPictureAsset;
 
 /** @class ReelStereoPictureAsset
  *  @brief Part of a Reel's description which refers to a stereoscopic picture asset.

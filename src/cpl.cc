@@ -120,7 +120,7 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	if (signer) {
 		root->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	}
-	
+
 	root->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	root->add_child("AnnotationText")->add_child_text (_annotation_text);
 	root->add_child("IssueDate")->add_child_text (_metadata.issue_date);
@@ -170,7 +170,7 @@ CPL::reel_assets () const
 
 	return c;
 }
-	
+
 bool
 CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
@@ -178,7 +178,7 @@ CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 	if (!other_cpl) {
 		return false;
 	}
-	
+
 	if (_annotation_text != other_cpl->_annotation_text && !opt.cpl_annotation_texts_can_differ) {
 		stringstream s;
 		s << "CPL: annotation texts differ: " << _annotation_text << " vs " << other_cpl->_annotation_text << "\n";
@@ -195,10 +195,10 @@ CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 		note (DCP_ERROR, String::compose ("CPL: reel counts differ (%1 vs %2)", _reels.size(), other_cpl->_reels.size()));
 		return false;
 	}
-	
+
 	list<shared_ptr<Reel> >::const_iterator a = _reels.begin ();
 	list<shared_ptr<Reel> >::const_iterator b = other_cpl->_reels.begin ();
-	
+
 	while (a != _reels.end ()) {
 		if (!(*a)->equals (*b, opt, note)) {
 			return false;
@@ -255,4 +255,4 @@ CPL::pkl_type (Standard standard) const
 		DCP_ASSERT (false);
 	}
 }
-	
+

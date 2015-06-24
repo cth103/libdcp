@@ -83,10 +83,10 @@ SubtitleAsset::examine_font_nodes (
 			examine_font_nodes (xml, (*j)->font_nodes, parse_state);
 			parse_state.subtitle_nodes.pop_back ();
 		}
-	
+
 		examine_font_nodes (xml, (*i)->font_nodes, parse_state);
 		examine_text_nodes (xml, (*i)->text_nodes, parse_state);
-		
+
 		parse_state.font_nodes.pop_back ();
 	}
 }
@@ -112,14 +112,14 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 	if (empty_or_white_space (text)) {
 		return;
 	}
-	
+
 	if (parse_state.text_nodes.empty() || parse_state.subtitle_nodes.empty ()) {
 		return;
 	}
 
 	DCP_ASSERT (!parse_state.text_nodes.empty ());
 	DCP_ASSERT (!parse_state.subtitle_nodes.empty ());
-	
+
 	dcp::FontNode effective_font (parse_state.font_nodes);
 	dcp::TextNode effective_text (*parse_state.text_nodes.back ());
 	dcp::SubtitleNode effective_subtitle (*parse_state.subtitle_nodes.back ());
@@ -184,7 +184,7 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 	if (!Asset::equals (other_asset, options, note)) {
 		return false;
 	}
-	
+
 	shared_ptr<const SubtitleAsset> other = dynamic_pointer_cast<const SubtitleAsset> (other_asset);
 	if (!other) {
 		return false;
@@ -302,7 +302,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, strin
 		if (i->h_position() > ALIGN_EPSILON) {
 			text->set_attribute ("HPosition", raw_convert<string> (i->h_position() * 100, 6));
 		}
-		text->set_attribute ("VAlign", valign_to_string (i->v_align()));		
+		text->set_attribute ("VAlign", valign_to_string (i->v_align()));
 		text->set_attribute ("VPosition", raw_convert<string> (i->v_position() * 100, 6));
 		text->add_child_text (i->text());
 	}
@@ -320,7 +320,7 @@ SubtitleAsset::add_font_data (string id, boost::filesystem::path file)
 	shared_array<uint8_t> data (new uint8_t[size]);
 	size_t const read = fread (data.get(), 1, size, f);
 	fclose (f);
-	
+
 	if (read != size) {
 		throw FileError ("could not read font file", file, -1);
 	}

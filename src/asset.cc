@@ -53,7 +53,7 @@ void
 Asset::write_to_pkl (xmlpp::Node* node, Standard standard) const
 {
 	DCP_ASSERT (!_file.empty ());
-	
+
 	xmlpp::Node* asset = node->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	asset->add_child("AnnotationText")->add_child_text (_id);
@@ -76,11 +76,11 @@ Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 		boost::filesystem::canonical (root),
 		boost::filesystem::canonical (_file)
 		);
-	
+
 	if (!path) {
 		throw MiscError (String::compose ("Asset %1 is not within the directory %2", _file, root));
 	}
-	
+
 	chunk->add_child("Path")->add_child_text (path.get().string ());
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
@@ -91,7 +91,7 @@ string
 Asset::hash (function<void (float)> progress) const
 {
 	DCP_ASSERT (!_file.empty ());
-		
+
 	if (_hash.empty ()) {
 		_hash = make_digest (_file, progress);
 	}
@@ -122,4 +122,4 @@ Asset::set_file (boost::filesystem::path file) const
 	_file = boost::filesystem::absolute (file);
 	_hash.clear ();
 }
-	
+

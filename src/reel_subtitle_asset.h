@@ -44,7 +44,7 @@ public:
 		return boost::dynamic_pointer_cast<SubtitleAsset> (_asset_ref.object ());
 	}
 
-private:	
+private:
 	std::string cpl_node_name () const;
 };
 

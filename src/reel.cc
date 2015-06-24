@@ -49,17 +49,17 @@ Reel::Reel (boost::shared_ptr<const cxml::Node> node)
 	if (main_picture) {
 		_main_picture.reset (new ReelMonoPictureAsset (main_picture));
 	}
-	
+
 	shared_ptr<cxml::Node> main_stereoscopic_picture = asset_list->optional_node_child ("MainStereoscopicPicture");
 	if (main_stereoscopic_picture) {
 		_main_picture.reset (new ReelStereoPictureAsset (main_stereoscopic_picture));
 	}
-	
+
 	shared_ptr<cxml::Node> main_sound = asset_list->optional_node_child ("MainSound");
 	if (main_sound) {
 		_main_sound.reset (new ReelSoundAsset (main_sound));
 	}
-	
+
 	shared_ptr<cxml::Node> main_subtitle = asset_list->optional_node_child ("MainSubtitle");
 	if (main_subtitle) {
 		_main_subtitle.reset (new ReelSubtitleAsset (main_subtitle));
@@ -75,7 +75,7 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 	xmlpp::Element* reel = node->add_child ("Reel");
 	reel->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
 	xmlpp::Element* asset_list = reel->add_child ("AssetList");
-	
+
 	if (_main_picture && dynamic_pointer_cast<ReelMonoPictureAsset> (_main_picture)) {
 		/* Mono pictures come before other stuff... */
 		_main_picture->write_to_cpl (asset_list, standard);
@@ -94,7 +94,7 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 		_main_picture->write_to_cpl (asset_list, standard);
 	}
 }
-	
+
 bool
 Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandler note) const
 {
@@ -102,7 +102,7 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 		note (DCP_ERROR, "Reel: assets differ");
 		return false;
 	}
-	
+
 	if (_main_picture && !_main_picture->equals (other->_main_picture, opt, note)) {
 		return false;
 	}
@@ -111,7 +111,7 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 		note (DCP_ERROR, "Reel: assets differ");
 		return false;
 	}
-	
+
 	if (_main_sound && !_main_sound->equals (other->_main_sound, opt, note)) {
 		return false;
 	}
@@ -120,7 +120,7 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 		note (DCP_ERROR, "Reel: assets differ");
 		return false;
 	}
-	
+
 	if (_main_subtitle && !_main_subtitle->equals (other->_main_subtitle, opt, note)) {
 		return false;
 	}

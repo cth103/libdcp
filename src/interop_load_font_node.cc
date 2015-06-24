@@ -39,7 +39,7 @@ InteropLoadFontNode::InteropLoadFontNode (cxml::ConstNodePtr node)
 		x = node->optional_string_attribute ("ID");
 	}
 	id = x.get_value_or ("");
-	
+
 	uri = node->string_attribute ("URI");
 }
 

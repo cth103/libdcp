@@ -118,7 +118,7 @@ note_handler (dcp::NoteType n, string s)
 BOOST_AUTO_TEST_CASE (xyz_rgb_range_test)
 {
 	shared_ptr<dcp::OpenJPEGImage> xyz (new dcp::OpenJPEGImage (dcp::Size (2, 2)));
-	
+
 	xyz->data(0)[0] = -4;
 	xyz->data(0)[1] = 6901;
 	xyz->data(0)[2] = 0;
@@ -185,12 +185,12 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_round_trip_test)
 	scoped_array<uint8_t> back (new uint8_t[size.width * size.height * 6]);
 	dcp::xyz_to_rgb (xyz, dcp::ColourConversion::srgb_to_xyz (), back.get(), size.width * 6);
 
-#if 0	
+#if 0
 	uint16_t* p = reinterpret_cast<uint16_t*> (rgb.get ());
 	uint16_t* q = reinterpret_cast<uint16_t*> (back.get ());
 	for (int i = 0; i < (size.width * size.height); ++i) {
 		/* XXX: doesn't quite work */
 		// BOOST_REQUIRE_EQUAL (*p++, *q++);
 	}
-#endif		
+#endif
 }

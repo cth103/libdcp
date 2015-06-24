@@ -59,7 +59,7 @@ private:
 	/* do this with an opaque pointer so we don't have to include
 	   ASDCP headers
 	*/
-	   
+
 	struct ASDCPState;
 	boost::shared_ptr<ASDCPState> _state;
 };

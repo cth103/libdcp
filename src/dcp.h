@@ -41,7 +41,7 @@ namespace xmlpp {
 namespace dcp
 {
 
-class Content;	
+class Content;
 class Reel;
 class CPL;
 class XMLMetadata;
@@ -53,7 +53,7 @@ class DCPReadError;
 /** @class DCP
  *  @brief A class to create or read a DCP.
  */
-	
+
 class DCP : public boost::noncopyable
 {
 public:
@@ -67,7 +67,7 @@ public:
 	DCP (boost::filesystem::path directory);
 
 	typedef std::list<boost::shared_ptr<DCPReadError> > ReadErrors;
-	
+
 	/** Read the DCP's structure into this object.
 	 *  @param keep_going true to try to keep going in the face of (some) errors.
 	 *  @param errors List of errors that will be added to if keep_going is true.
@@ -108,7 +108,7 @@ private:
 		XMLMetadata metadata,
 		boost::shared_ptr<const Signer> signer
 		) const;
-	
+
 	void write_volindex (Standard standard) const;
 
 	/** Write the ASSETMAP file.

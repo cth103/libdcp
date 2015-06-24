@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE (local_time_test)
 	BOOST_CHECK_THROW (dcp::LocalTime ("2013!01-05T18:06:59+04:00"), dcp::TimeFormatError);
 
 	/* Correctly-formatted */
-	
+
 	{
 		dcp::LocalTime t ("2013-01-05T18:06:59+04:00");
 		BOOST_CHECK_EQUAL (t._year, 2013);

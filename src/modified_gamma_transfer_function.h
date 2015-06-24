@@ -52,10 +52,10 @@ public:
 	}
 
 	bool about_equal (boost::shared_ptr<const TransferFunction>, double epsilon) const;
-	
+
 protected:
 	double * make_lut (int bit_depth, bool inverse) const;
-	
+
 private:
 	double _power;
 	double _threshold;

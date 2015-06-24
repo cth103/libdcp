@@ -30,7 +30,7 @@ namespace cxml {
 }
 
 namespace dcp {
-	
+
 /** @class SMPTELoadFontNode
  *  @brief Parser for LoadFont nodes from SMPTE subtitle XML.
  */
@@ -46,5 +46,5 @@ public:
 
 bool operator== (SMPTELoadFontNode const & a, SMPTELoadFontNode const & b);
 bool operator!= (SMPTELoadFontNode const & a, SMPTELoadFontNode const & b);
-	
+
 }

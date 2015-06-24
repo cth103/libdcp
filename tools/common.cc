@@ -31,7 +31,7 @@ dcp::filter_errors (dcp::DCP::ReadErrors& errors, bool ignore_missing_assets)
 
 		DCP::ReadErrors::iterator tmp = i;
 		++tmp;
-		
+
 		if (ignore_missing_assets && dynamic_pointer_cast<MissingAssetError> (*i)) {
 			errors.erase (i);
 		}

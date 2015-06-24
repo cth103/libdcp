@@ -51,7 +51,7 @@ public:
 		std::string intermediate_common_name,
 		std::string leaf_common_name
 		);
-	
+
 	/** @param c Certificate chain to sign with.
 	 *  @param k Key to sign with as a PEM-format string.
 	 */
@@ -70,7 +70,7 @@ public:
 	CertificateChain& certificates () {
 		return _certificates;
 	}
-	
+
 	std::string key () const {
 		return _key;
 	}
@@ -80,10 +80,10 @@ public:
 	}
 
 	bool valid () const;
-	
-private:	
+
+private:
 	void create (boost::filesystem::path directory);
-	
+
 	/** Certificate chain to sign with */
 	CertificateChain _certificates;
 	/** Key to sign with as a PEM-format string */

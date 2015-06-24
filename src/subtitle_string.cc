@@ -72,7 +72,7 @@ SubtitleString::size_in_pixels (int screen_height) const
 	   height is 11 inches, so a 72pt font would be 1/11th of the screen
 	   height.
 	*/
-	
+
 	return _size * screen_height / (11 * 72);
 }
 
@@ -111,7 +111,7 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 	} else {
 		s << "non-italic";
 	}
-	
+
 	s << ", size " << sub.size() << ", aspect " << sub.aspect_adjust() << ", colour " << sub.colour()
 	  << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align())
 	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align())

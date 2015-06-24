@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   dcp::Time (0, 0, 0, 1, 250),
 				   dcp::Time (0, 0, 0, 1, 250)
 				   ));
-							 
+
 	s = subs.subtitles_during (dcp::Time (0, 0, 7, 190, 250), dcp::Time (0, 0, 7, 191, 250));
 	BOOST_REQUIRE_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (s.front(), dcp::SubtitleString (

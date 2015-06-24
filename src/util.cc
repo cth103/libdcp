@@ -89,7 +89,7 @@ dcp::make_digest (boost::filesystem::path filename, function<void (float)> progr
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (FileError ("could not open file to compute digest", filename, r));
 	}
-	
+
 	SHA_CTX sha;
 	SHA1_Init (&sha);
 
@@ -101,13 +101,13 @@ dcp::make_digest (boost::filesystem::path filename, function<void (float)> progr
 	while (1) {
 		ui32_t read = 0;
 		Kumu::Result_t r = reader.Read (read_buffer.Data(), read_buffer.Capacity(), &read);
-		
+
 		if (r == Kumu::RESULT_ENDOFFILE) {
 			break;
 		} else if (ASDCP_FAILURE (r)) {
 			boost::throw_exception (FileError ("could not read file to compute digest", filename, r));
 		}
-		
+
 		SHA1_Update (&sha, read_buffer.Data(), read);
 
 		if (progress) {
@@ -166,7 +166,7 @@ dcp::ContentKind
 dcp::content_kind_from_string (string kind)
 {
 	transform (kind.begin(), kind.end(), kind.begin(), ::tolower);
-	
+
 	if (kind == "feature") {
 		return FEATURE;
 	} else if (kind == "short") {
@@ -214,12 +214,12 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 		0x20,
 		0x20
 	};
-	
+
 	OPJ_CODEC_FORMAT format = CODEC_J2K;
 	if (size >= int (sizeof (jp2_magic)) && memcmp (data, jp2_magic, sizeof (jp2_magic)) == 0) {
 		format = CODEC_JP2;
 	}
-	
+
 	opj_dinfo_t* decoder = opj_create_decompress (format);
 	if (!decoder) {
 		boost::throw_exception (DCPReadError ("could not create JPEG2000 decompresser"));
@@ -280,7 +280,7 @@ dcp::init ()
 	if (xmlSecCryptoDLLoadLibrary(BAD_CAST XMLSEC_CRYPTO) < 0) {
 		throw MiscError ("unable to load default xmlsec-crypto library");
 	}
-#endif	
+#endif
 
 	if (xmlSecCryptoAppInit(0) < 0) {
 		throw MiscError ("could not initialise crypto");
@@ -332,7 +332,7 @@ dcp::base64_decode (string const & in, unsigned char* out, int out_length)
 			*p++ = in[i];
 		}
 	}
-		
+
 	BIO* bmem = BIO_new_mem_buf (in_buffer, p - in_buffer);
 	bmem = BIO_push (b64, bmem);
 	int const N = BIO_read (bmem, out, out_length);
@@ -401,9 +401,9 @@ dcp::file_to_string (boost::filesystem::path p, uintmax_t max_length)
 	if (len > max_length) {
 		throw MiscError ("Unexpectedly long file");
 	}
-	
+
 	char* c = new char[len + 1];
-			   
+
 	FILE* f = fopen_boost (p, "r");
 	if (!f) {
 		return "";

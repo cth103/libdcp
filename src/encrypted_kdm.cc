@@ -35,19 +35,19 @@ using namespace dcp;
 
 namespace dcp {
 
-/** Namespace for classes used to hold our data; they are internal to this .cc file */	
+/** Namespace for classes used to hold our data; they are internal to this .cc file */
 namespace data {
 
 class Signer
 {
 public:
 	Signer () {}
-	
+
 	Signer (shared_ptr<const cxml::Node> node)
 		: x509_issuer_name (node->string_child ("X509IssuerName"))
 		, x509_serial_number (node->string_child ("X509SerialNumber"))
 	{
-		
+
 	}
 
 	void as_xml (xmlpp::Element* node) const
@@ -55,7 +55,7 @@ public:
 		node->add_child("X509IssuerName", "ds")->add_child_text (x509_issuer_name);
 		node->add_child("X509SerialNumber", "ds")->add_child_text (x509_serial_number);
 	}
-	
+
 	string x509_issuer_name;
 	string x509_serial_number;
 };
@@ -64,7 +64,7 @@ class X509Data
 {
 public:
 	X509Data () {}
-	
+
 	X509Data (boost::shared_ptr<const cxml::Node> node)
 		: x509_issuer_serial (Signer (node->node_child ("X509IssuerSerial")))
 		, x509_certificate (node->string_child ("X509Certificate"))
@@ -77,16 +77,16 @@ public:
 		x509_issuer_serial.as_xml (node->add_child ("X509IssuerSerial", "ds"));
 		node->add_child("X509Certificate", "ds")->add_child_text (x509_certificate);
 	}
-	
+
 	Signer x509_issuer_serial;
 	std::string x509_certificate;
 };
-	
+
 class Reference
 {
 public:
 	Reference () {}
-	
+
 	Reference (string u)
 		: uri (u)
 	{}
@@ -97,14 +97,14 @@ public:
 	{
 
 	}
-	
+
 	void as_xml (xmlpp::Element* node) const
 	{
 		node->set_attribute ("URI", uri);
 		node->add_child("DigestMethod", "ds")->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#sha256");
 		node->add_child("DigestValue", "ds")->add_child_text (digest_value);
 	}
-	
+
 	string uri;
 	string digest_value;
 };
@@ -140,16 +140,16 @@ public:
 		node->add_child ("SignatureMethod", "ds")->set_attribute (
 			"Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
 			);
-		
+
 		authenticated_public.as_xml (node->add_child ("Reference", "ds"));
 		authenticated_private.as_xml (node->add_child ("Reference", "ds"));
 	}
-		
+
 private:
 	Reference authenticated_public;
 	Reference authenticated_private;
 };
-	
+
 class Signature
 {
 public:
@@ -169,7 +169,7 @@ public:
 	{
 		signed_info.as_xml (node->add_child ("SignedInfo", "ds"));
 		node->add_child("SignatureValue", "ds")->add_child_text (signature_value);
-		
+
 		xmlpp::Element* key_info_node = node->add_child ("KeyInfo", "ds");
 		for (std::list<X509Data>::const_iterator i = x509_data.begin(); i != x509_data.end(); ++i) {
 			i->as_xml (key_info_node->add_child ("X509Data", "ds"));
@@ -185,7 +185,7 @@ class AuthenticatedPrivate
 {
 public:
 	AuthenticatedPrivate () {}
-	
+
 	AuthenticatedPrivate (shared_ptr<const cxml::Node> node)
 	{
 		list<shared_ptr<cxml::Node> > encrypted_key_nodes = node->node_children ("EncryptedKey");
@@ -208,7 +208,7 @@ public:
 			cipher_data->add_child("CipherValue", "enc")->add_child_text (*i);
 		}
 	}
-	
+
 	list<string> encrypted_key;
 };
 
@@ -216,7 +216,7 @@ class TypedKeyId
 {
 public:
 	TypedKeyId () {}
-	
+
 	TypedKeyId (shared_ptr<const cxml::Node> node)
 		: key_type (node->string_child ("KeyType"))
 		, key_id (node->string_child ("KeyId").substr (9))
@@ -243,7 +243,7 @@ class KeyIdList
 {
 public:
 	KeyIdList () {}
-	
+
 	KeyIdList (shared_ptr<const cxml::Node> node)
 	{
 		list<shared_ptr<cxml::Node> > typed_key_id_nodes = node->node_children ("TypedKeyId");
@@ -266,7 +266,7 @@ class AuthorizedDeviceInfo
 {
 public:
 	AuthorizedDeviceInfo () {}
-	
+
 	AuthorizedDeviceInfo (shared_ptr<const cxml::Node> node)
 		: device_list_identifier (node->string_child ("DeviceListIdentifier").substr (9))
 		, device_list_description (node->string_child ("DeviceListDescription"))
@@ -293,7 +293,7 @@ class X509IssuerSerial
 {
 public:
 	X509IssuerSerial () {}
-	
+
 	X509IssuerSerial (shared_ptr<const cxml::Node> node)
 		: x509_issuer_name (node->string_child ("X509IssuerName"))
 		, x509_serial_number (node->string_child ("X509SerialNumber"))
@@ -315,7 +315,7 @@ class Recipient
 {
 public:
 	Recipient () {}
-	
+
 	Recipient (shared_ptr<const cxml::Node> node)
 		: x509_issuer_serial (node->node_child ("X509IssuerSerial"))
 		, x509_subject_name (node->string_child ("X509SubjectName"))
@@ -328,7 +328,7 @@ public:
 		x509_issuer_serial.as_xml (node->add_child ("X509IssuerSerial"));
 		node->add_child("X509SubjectName")->add_child_text (x509_subject_name);
 	}
-	
+
 	X509IssuerSerial x509_issuer_serial;
 	string x509_subject_name;
 };
@@ -337,7 +337,7 @@ class KDMRequiredExtensions
 {
 public:
 	KDMRequiredExtensions () {}
-	
+
 	KDMRequiredExtensions (shared_ptr<const cxml::Node> node)
 		: recipient (node->node_child ("Recipient"))
 		, composition_playlist_id (node->string_child ("CompositionPlaylistId").substr (9))
@@ -353,7 +353,7 @@ public:
 	void as_xml (xmlpp::Element* node) const
 	{
 		node->set_attribute ("xmlns", "http://www.smpte-ra.org/schemas/430-1/2006/KDM");
-		
+
 		recipient.as_xml (node->add_child ("Recipient"));
 		node->add_child("CompositionPlaylistId")->add_child_text ("urn:uuid:" + composition_playlist_id);
 		if (content_authenticator) {
@@ -364,12 +364,12 @@ public:
 		node->add_child("ContentKeysNotValidAfter")->add_child_text (not_valid_after.as_string ());
 		authorized_device_info.as_xml (node->add_child ("AuthorizedDeviceInfo"));
 		key_id_list.as_xml (node->add_child ("KeyIdList"));
-		
+
 		xmlpp::Element* forensic_mark_flag_list = node->add_child ("ForensicMarkFlagList");
 		forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
 		forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable");
 	}
-	
+
 	Recipient recipient;
 	string composition_playlist_id;
 	boost::optional<string> content_authenticator;
@@ -384,7 +384,7 @@ class RequiredExtensions
 {
 public:
 	RequiredExtensions () {}
-	
+
 	RequiredExtensions (shared_ptr<const cxml::Node> node)
 		: kdm_required_extensions (node->node_child ("KDMRequiredExtensions"))
 	{
@@ -395,7 +395,7 @@ public:
 	{
 		kdm_required_extensions.as_xml (node->add_child ("KDMRequiredExtensions"));
 	}
-	
+
 	KDMRequiredExtensions kdm_required_extensions;
 };
 
@@ -406,7 +406,7 @@ public:
 		: message_id (make_uuid ())
 		, issue_date (LocalTime().as_string ())
 	{}
-	
+
 	AuthenticatedPublic (shared_ptr<const cxml::Node> node)
 		: message_id (node->string_child ("MessageId").substr (9))
 		, annotation_text (node->string_child ("AnnotationText"))
@@ -420,7 +420,7 @@ public:
 	void as_xml (xmlpp::Element* node, map<string, xmlpp::Attribute *>& references) const
 	{
 		references["ID_AuthenticatedPublic"] = node->set_attribute ("Id", "ID_AuthenticatedPublic");
-		
+
 		node->add_child("MessageId")->add_child_text ("urn:uuid:" + message_id);
 		node->add_child("MessageType")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
 		node->add_child("AnnotationText")->add_child_text (annotation_text);
@@ -449,13 +449,13 @@ public:
 	{
 
 	}
-	
+
 	EncryptedKDMData (shared_ptr<const cxml::Node> node)
 		: authenticated_public (node->node_child ("AuthenticatedPublic"))
 		, authenticated_private (node->node_child ("AuthenticatedPrivate"))
 		, signature (node->node_child ("Signature"))
 	{
-		
+
 	}
 
 	shared_ptr<xmlpp::Document> as_xml () const
@@ -506,7 +506,7 @@ EncryptedKDM::EncryptedKDM (
 	: _data (new data::EncryptedKDMData)
 {
 	/* Fill our XML-ish description in with the juicy bits that the caller has given */
-	
+
 	data::AuthenticatedPublic& aup = _data->authenticated_public;
 	aup.signer.x509_issuer_name = signer->certificates().leaf().issuer ();
 	aup.signer.x509_serial_number = signer->certificates().leaf().serial ();
@@ -589,7 +589,7 @@ EncryptedKDM::as_xml (boost::filesystem::path path) const
 	fwrite (x.c_str(), 1, x.length(), f);
 	fclose (f);
 }
-       
+
 string
 EncryptedKDM::as_xml () const
 {

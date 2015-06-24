@@ -52,7 +52,7 @@ TextNode::TextNode (boost::shared_ptr<const cxml::Node> node, int tcr)
 	if (hp) {
 		h_position = hp.get () / 100;
 	}
-	
+
 	optional<string> ha = node->optional_string_attribute ("HAlign");
 	if (!ha) {
 		ha = node->optional_string_attribute ("Halign");
@@ -60,7 +60,7 @@ TextNode::TextNode (boost::shared_ptr<const cxml::Node> node, int tcr)
 	if (ha) {
 		h_align = string_to_halign (ha.get ());
 	}
-	
+
 	optional<float> vp = node->optional_number_attribute<float> ("VPosition");
 	if (!vp) {
 		vp = node->optional_number_attribute<float> ("Vposition");
@@ -68,7 +68,7 @@ TextNode::TextNode (boost::shared_ptr<const cxml::Node> node, int tcr)
 	if (vp) {
 		v_position = vp.get () / 100;
 	}
-	
+
 	optional<string> va = node->optional_string_attribute ("VAlign");
 	if (!va) {
 		va = node->optional_string_attribute ("Valign");

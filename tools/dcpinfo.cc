@@ -82,7 +82,7 @@ main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
 	if (!reel->main_subtitle()) {
 		return;
 	}
-	
+
 	list<SubtitleString> subs = reel->main_subtitle()->subtitle_asset()->subtitles ();
 	cout << "      Subtitle: " << subs.size() << " subtitles";
 	shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (reel->main_subtitle()->subtitle_asset());
@@ -106,7 +106,7 @@ main (int argc, char* argv[])
 	bool subtitles = false;
 	bool keep_going = false;
 	bool ignore_missing_assets = false;
-	
+
 	int option_index = 0;
 	while (1) {
 		static struct option long_options[] = {
@@ -165,7 +165,7 @@ main (int argc, char* argv[])
 		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << "\n";
 		exit (EXIT_FAILURE);
 	}
-	
+
 	cout << "DCP: " << boost::filesystem::path(argv[optind]).filename().string() << "\n";
 
 	dcp::filter_errors (errors, ignore_missing_assets);
@@ -177,7 +177,7 @@ main (int argc, char* argv[])
 
 	for (list<shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
 		cout << "  CPL: " << (*i)->annotation_text() << "\n";
-		
+
 		list<shared_ptr<Reel> > reels = (*i)->reels ();
 
 		int R = 1;

@@ -39,7 +39,7 @@ StereoPictureAsset::StereoPictureAsset (boost::filesystem::path file)
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file.string(), r));
 	}
-	
+
 	ASDCP::JP2K::PictureDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
@@ -82,13 +82,13 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file().string(), r));
 	}
-	
+
 	ASDCP::JP2K::MXFSReader reader_B;
 	r = reader_B.OpenRead (other->file().string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file().string(), r));
 	}
-	
+
 	ASDCP::JP2K::PictureDescriptor desc_A;
 	if (ASDCP_FAILURE (reader_A.FillPictureDescriptor (desc_A))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
@@ -97,11 +97,11 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 	if (ASDCP_FAILURE (reader_B.FillPictureDescriptor (desc_B))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
-	
+
 	if (!descriptor_equals (desc_A, desc_B, note)) {
 		return false;
 	}
-	
+
 	shared_ptr<const StereoPictureAsset> other_picture = dynamic_pointer_cast<const StereoPictureAsset> (other);
 	DCP_ASSERT (other_picture);
 
@@ -118,7 +118,7 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 			note (DCP_ERROR, e.what ());
 			return false;
 		}
-		
+
 		if (!frame_buffer_equals (
 			    i, opt, note,
 			    frame_A->left_j2k_data(), frame_A->left_j2k_size(),
@@ -126,7 +126,7 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 			    )) {
 			return false;
 		}
-		
+
 		if (!frame_buffer_equals (
 			    i, opt, note,
 			    frame_A->right_j2k_data(), frame_A->right_j2k_size(),

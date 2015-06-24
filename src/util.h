@@ -44,7 +44,7 @@ class ARGBImage;
 class CertificateChain;
 class GammaLUT;
 class OpenJPEGImage;
-	
+
 extern bool operator== (Size const & a, Size const & b);
 extern bool operator!= (Size const & a, Size const & b);
 extern std::ostream& operator<< (std::ostream& s, Size const & a);
@@ -84,7 +84,7 @@ list_of_type (std::list<boost::shared_ptr<F> > const & from)
 
 	return out;
 }
-	
+
 }
 
 #endif
