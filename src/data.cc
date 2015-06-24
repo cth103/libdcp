@@ -17,26 +17,26 @@
 
 */
 
-#include <boost/shared_array.hpp>
-#include <boost/filesystem.hpp>
-#include <stdint.h>
+#include "data.h"
+#include "util.h"
+#include "exceptions.h"
+#include <cstdio>
 
-namespace dcp {
+using namespace dcp;
 
-class Data
+Data::Data (boost::filesystem::path file)
 {
-public:
-	Data () {}
+	FILE* f = fopen_boost (file, "rb");
+	if (!f) {
+		throw FileError ("could not open file for reading", file, errno);
+	}
 
-	Data (boost::shared_array<uint8_t> data_, boost::uintmax_t size_)
-		: data (data_)
-		, size (size_)
-	{}
+	size = boost::filesystem::file_size (file);
+	data.reset (new uint8_t[size]);
+	size_t const read = fread (data.get(), 1, size, f);
+	fclose (f);
 
-	Data (boost::filesystem::path file);
-
-	boost::shared_array<uint8_t> data;
-	boost::uintmax_t size;
-};
-
+	if (read != size) {
+		throw FileError ("could not read file", file, -1);
+	}
 }

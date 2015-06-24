@@ -98,6 +98,10 @@ protected:
 			: Data (data_, size_)
 		{}
 
+		FileData (boost::filesystem::path file_)
+			: Data (file_)
+		{}
+
 		/** .ttf file that this data was last written to */
 		mutable boost::optional<boost::filesystem::path> file;
 	};

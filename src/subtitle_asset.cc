@@ -311,21 +311,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, strin
 void
 SubtitleAsset::add_font_data (string id, boost::filesystem::path file)
 {
-	boost::uintmax_t size = boost::filesystem::file_size (file);
-	FILE* f = fopen_boost (file, "rb");
-	if (!f) {
-		throw FileError ("could not open font file for reading", file, errno);
-	}
-
-	shared_array<uint8_t> data (new uint8_t[size]);
-	size_t const read = fread (data.get(), 1, size, f);
-	fclose (f);
-
-	if (read != size) {
-		throw FileError ("could not read font file", file, -1);
-	}
-
-	_fonts[id] = FileData (data, size);
+	_fonts[id] = FileData (file);
 }
 
 map<string, Data>
