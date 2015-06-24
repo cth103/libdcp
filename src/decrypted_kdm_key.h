@@ -57,7 +57,7 @@ public:
 		return _cpl_id;
 	}
 
-private:	
+private:
 	std::string _type;
 	std::string _id;
 	Key _key;

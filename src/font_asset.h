@@ -32,7 +32,7 @@ class FontAsset : public Asset
 {
 public:
 	FontAsset (boost::filesystem::path file);
-	
+
 private:
 	std::string pkl_type (Standard standard) const;
 };

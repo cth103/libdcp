@@ -62,11 +62,11 @@ dcp::xyz_to_rgba (
 	struct {
 		double x, y, z;
 	} s;
-	
+
 	struct {
 		double r, g, b;
 	} d;
-	
+
 	int* xyz_x = xyz_image->data (0);
 	int* xyz_y = xyz_image->data (1);
 	int* xyz_z = xyz_image->data (2);
@@ -77,13 +77,13 @@ dcp::xyz_to_rgba (
 
 	int const height = xyz_image->size().height;
 	int const width = xyz_image->size().width;
-	
+
 	for (int y = 0; y < height; ++y) {
 		uint8_t* argb_line = argb;
 		for (int x = 0; x < width; ++x) {
 
 			DCP_ASSERT (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
-			
+
 			/* In gamma LUT */
 			s.x = lut_in[*xyz_x++];
 			s.y = lut_in[*xyz_y++];
@@ -98,16 +98,16 @@ dcp::xyz_to_rgba (
 			d.r = ((s.x * matrix(0, 0)) + (s.y * matrix(0, 1)) + (s.z * matrix(0, 2)));
 			d.g = ((s.x * matrix(1, 0)) + (s.y * matrix(1, 1)) + (s.z * matrix(1, 2)));
 			d.b = ((s.x * matrix(2, 0)) + (s.y * matrix(2, 1)) + (s.z * matrix(2, 2)));
-			
+
 			d.r = min (d.r, 1.0);
 			d.r = max (d.r, 0.0);
-			
+
 			d.g = min (d.g, 1.0);
 			d.g = max (d.g, 0.0);
-			
+
 			d.b = min (d.b, 1.0);
 			d.b = max (d.b, 0.0);
-			
+
 			/* Out gamma LUT */
 			*argb_line++ = lut_out[int(rint(d.b * max_colour))] * 0xff;
 			*argb_line++ = lut_out[int(rint(d.g * max_colour))] * 0xff;
@@ -141,7 +141,7 @@ dcp::xyz_to_rgb (
 	struct {
 		double x, y, z;
 	} s;
-	
+
 	struct {
 		double r, g, b;
 	} d;
@@ -183,7 +183,7 @@ dcp::xyz_to_rgb (
 				}
 				cz = max (min (cz, 4095), 0);
 			}
-			
+
 			/* In gamma LUT */
 			s.x = lut_in[cx];
 			s.y = lut_in[cy];
@@ -198,13 +198,13 @@ dcp::xyz_to_rgb (
 			d.r = ((s.x * matrix(0, 0)) + (s.y * matrix(0, 1)) + (s.z * matrix(0, 2)));
 			d.g = ((s.x * matrix(1, 0)) + (s.y * matrix(1, 1)) + (s.z * matrix(1, 2)));
 			d.b = ((s.x * matrix(2, 0)) + (s.y * matrix(2, 1)) + (s.z * matrix(2, 2)));
-			
+
 			d.r = min (d.r, 1.0);
 			d.r = max (d.r, 0.0);
-			
+
 			d.g = min (d.g, 1.0);
 			d.g = max (d.g, 0.0);
-			
+
 			d.b = min (d.b, 1.0);
 			d.b = max (d.b, 0.0);
 
@@ -243,7 +243,7 @@ dcp::rgb_to_xyz (
 	struct {
 		double x, y, z;
 	} e;
-	
+
 	double const * lut_in = conversion.in()->lut (12, false);
 	double const * lut_out = conversion.out()->lut (16, true);
 	boost::numeric::ublas::matrix<double> const rgb_to_xyz = conversion.rgb_to_xyz ();
@@ -268,7 +268,7 @@ dcp::rgb_to_xyz (
 			e.x = ((d.x * bradford(0, 0)) + (d.y * bradford(0, 1)) + (d.z * bradford(0, 2)));
 			e.y = ((d.x * bradford(1, 0)) + (d.y * bradford(1, 1)) + (d.z * bradford(1, 2)));
 			e.z = ((d.x * bradford(2, 0)) + (d.y * bradford(2, 1)) + (d.z * bradford(2, 2)));
-			
+
 			/* DCI companding */
 			e.x = e.x * DCI_COEFFICIENT * 65535;
 			e.y = e.y * DCI_COEFFICIENT * 65535;
@@ -279,7 +279,7 @@ dcp::rgb_to_xyz (
 			if (e.x < 0 || e.y < 0 || e.z < 0 || e.x > 65535 || e.y > 65535 || e.z > 65535) {
 				++clamped;
 			}
-			
+
 			e.x = max (0.0, e.x);
 			e.y = max (0.0, e.y);
 			e.z = max (0.0, e.z);
@@ -324,6 +324,6 @@ dcp::xyz_to_xyz (uint8_t const * xyz_16, dcp::Size size, int stride)
 			++jn;
 		}
 	}
-	
+
 	return xyz_12;
 }

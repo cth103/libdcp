@@ -48,7 +48,7 @@ class ColourConversion
 public:
 	ColourConversion ()
 	{}
-	
+
 	ColourConversion (
 		boost::shared_ptr<const TransferFunction> in,
 		YUVToRGB yuv_to_rgb,
@@ -87,7 +87,7 @@ public:
 	boost::optional<Chromaticity> adjusted_white () const {
 		return _adjusted_white;
 	}
-	
+
 	boost::shared_ptr<const TransferFunction> out () const {
 		return _out;
 	}
@@ -123,7 +123,7 @@ public:
 	void unset_adjusted_white () {
 		_adjusted_white = boost::optional<Chromaticity> ();
 	}
-	
+
 	void set_out (boost::shared_ptr<const TransferFunction> f) {
 		_out = f;
 	}

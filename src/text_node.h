@@ -47,7 +47,7 @@ public:
 		, v_position (0)
 		, v_align (VALIGN_TOP)
 	{}
-	
+
 	TextNode (boost::shared_ptr<const cxml::Node> node, int tcr);
 
 	float h_position;

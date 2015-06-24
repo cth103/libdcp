@@ -48,11 +48,11 @@ public:
 
 protected:
 	friend class ::write_subtitle_test;
-	
+
 	/** ID */
 	std::string _id;
 };
-	
+
 }
 
 #endif

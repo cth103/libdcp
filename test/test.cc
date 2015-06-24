@@ -118,14 +118,14 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 	BOOST_CHECK (ref_file);
 	FILE* check_file = dcp::fopen_boost (check, "rb");
 	BOOST_CHECK (check_file);
-	
+
 	int const buffer_size = 65536;
 	uint8_t* ref_buffer = new uint8_t[buffer_size];
 	uint8_t* check_buffer = new uint8_t[buffer_size];
 
 	stringstream error;
 	error << "File " << check.string() << " differs from reference " << ref.string();
-	
+
 	while (N) {
 		uintmax_t this_time = min (uintmax_t (buffer_size), N);
 		size_t r = fread (ref_buffer, 1, this_time, ref_file);
@@ -137,7 +137,7 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 		if (memcmp (ref_buffer, check_buffer, this_time)) {
 			break;
 		}
-		
+
 		N -= this_time;
 	}
 

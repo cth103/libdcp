@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE (decryption_test)
 			),
 		dcp::file_to_string ("test/data/private.key")
 		);
-	
+
 	encrypted.add (kdm);
 
 	pair<uint8_t *, dcp::Size> plaintext_frame = get_frame (plaintext);
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE (decryption_test)
 	/* Check that plaintext and encrypted are the same */
 
 	BOOST_CHECK_EQUAL (plaintext_frame.second, encrypted_frame.second);
-	
+
 	BOOST_CHECK_EQUAL (
 		memcmp (
 			plaintext_frame.first,

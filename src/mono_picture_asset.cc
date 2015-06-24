@@ -40,14 +40,14 @@ MonoPictureAsset::MonoPictureAsset (boost::filesystem::path file)
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file.string(), r));
 	}
-	
+
 	ASDCP::JP2K::PictureDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
 
 	read_picture_descriptor (desc);
-	
+
 	ASDCP::WriterInfo info;
 	if (ASDCP_FAILURE (reader.FillWriterInfo (info))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
@@ -59,7 +59,7 @@ MonoPictureAsset::MonoPictureAsset (boost::filesystem::path file)
 MonoPictureAsset::MonoPictureAsset (Fraction edit_rate)
 	: PictureAsset (edit_rate)
 {
-	
+
 }
 
 shared_ptr<const MonoPictureFrame>
@@ -80,13 +80,13 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", _file.string(), r));
 	}
-	
+
 	ASDCP::JP2K::MXFReader reader_B;
 	r = reader_B.OpenRead (other->file().string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", other->file().string(), r));
 	}
-	
+
 	ASDCP::JP2K::PictureDescriptor desc_A;
 	if (ASDCP_FAILURE (reader_A.FillPictureDescriptor (desc_A))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
@@ -95,7 +95,7 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 	if (ASDCP_FAILURE (reader_B.FillPictureDescriptor (desc_B))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
-	
+
 	if (!descriptor_equals (desc_A, desc_B, note)) {
 		return false;
 	}
@@ -107,11 +107,11 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 		if (i >= other_picture->intrinsic_duration()) {
 			return false;
 		}
-		
+
 		note (DCP_PROGRESS, String::compose ("Comparing video frame %1 of %2", i, _intrinsic_duration));
 		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
 		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
-		
+
 		if (!frame_buffer_equals (
 			    i, opt, note,
 			    frame_A->j2k_data(), frame_A->j2k_size(),

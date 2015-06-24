@@ -109,7 +109,7 @@ main (int argc, char* argv[])
 	bool keep_going = false;
 	bool ignore_missing_assets = false;
 	optional<string> key;
-	
+
 	int option_index = 0;
 	while (1) {
 		static struct option long_options[] = {

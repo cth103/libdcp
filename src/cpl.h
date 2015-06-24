@@ -37,14 +37,14 @@
 #include <list>
 
 namespace dcp {
-	
+
 class ReelAsset;
 class Reel;
 class XMLMetadata;
 class MXFMetadata;
 class Signer;
 class DecryptedKDM;
-	
+
 /** @class CPL
  *  @brief A Composition Playlist.
  */
@@ -67,7 +67,7 @@ public:
 	std::string annotation_text () const {
 		return _annotation_text;
 	}
-	
+
 	/** @return contents of the &lt;ContentTitleText&gt; node */
 	std::string content_title_text () const {
 		return _content_title_text;
@@ -82,7 +82,7 @@ public:
 	void set_content_version_label_text (std::string text) {
 		_content_version_label_text = text;
 	}
-	
+
 	/** @return the type of the content, used by media servers
 	 *  to categorise things (e.g. feature, trailer, etc.)
 	 */

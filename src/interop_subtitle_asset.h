@@ -48,7 +48,7 @@ public:
 	std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const;
 
 	void add_font (std::string id, boost::filesystem::path file);
-	
+
 	Glib::ustring xml_as_string () const;
 	void write (boost::filesystem::path path) const;
 	void resolve_fonts (std::list<boost::shared_ptr<Object> > objects);
@@ -92,7 +92,7 @@ public:
 	}
 
 protected:
-	
+
 	std::string pkl_type (Standard) const {
 		return "text/xml";
 	}

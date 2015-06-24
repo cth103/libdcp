@@ -41,12 +41,12 @@ class ReelSoundAsset;
 class ReelSubtitleAsset;
 class Content;
 
-/** @brief A reel within a DCP; the part which actually refers to picture, sound and subtitle data */	
+/** @brief A reel within a DCP; the part which actually refers to picture, sound and subtitle data */
 class Reel : public Object
 {
 public:
 	Reel () {}
-	
+
 	Reel (
 		boost::shared_ptr<ReelPictureAsset> picture,
 		boost::shared_ptr<ReelSoundAsset> sound,
@@ -58,7 +58,7 @@ public:
 	{}
 
 	Reel (boost::shared_ptr<const cxml::Node>);
-	
+
 	boost::shared_ptr<ReelPictureAsset> main_picture () const {
 		return _main_picture;
 	}
@@ -66,7 +66,7 @@ public:
 	boost::shared_ptr<ReelSoundAsset> main_sound () const {
 		return _main_sound;
 	}
-	
+
 	boost::shared_ptr<ReelSubtitleAsset> main_subtitle () const {
 		return _main_subtitle;
 	}

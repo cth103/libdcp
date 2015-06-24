@@ -28,7 +28,7 @@ using std::string;
 BOOST_AUTO_TEST_CASE (base64_decode_test)
 {
 	int const N = 256;
-	
+
 	ifstream f ("test/data/base64_test");
 	BOOST_CHECK (f.good ());
 	string s;
@@ -79,11 +79,11 @@ BOOST_AUTO_TEST_CASE (relative_to_root_test)
 	{
 		boost::filesystem::path root = "a";
 		root /= "b";
-		
+
 		boost::filesystem::path file = "a";
 		file /= "b";
 		file /= "c";
-		
+
 		boost::optional<boost::filesystem::path> rel = dcp::relative_to_root (root, file);
 		BOOST_CHECK (rel);
 		BOOST_CHECK_EQUAL (rel.get(), boost::filesystem::path ("c"));
@@ -93,21 +93,21 @@ BOOST_AUTO_TEST_CASE (relative_to_root_test)
 		boost::filesystem::path root = "a";
 		root /= "b";
 		root /= "c";
-		
+
 		boost::filesystem::path file = "a";
 		file /= "b";
-		
+
 		boost::optional<boost::filesystem::path> rel = dcp::relative_to_root (root, file);
 		BOOST_CHECK (!rel);
 	}
 
 	{
 		boost::filesystem::path root = "a";
-		
+
 		boost::filesystem::path file = "a";
 		file /= "b";
 		file /= "c";
-		
+
 		boost::optional<boost::filesystem::path> rel = dcp::relative_to_root (root, file);
 		BOOST_CHECK (rel);
 

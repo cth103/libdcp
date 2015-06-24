@@ -116,7 +116,7 @@ ColourConversion::ColourConversion (
 	, _adjusted_white (adjusted_white)
 	, _out (out)
 {
-	
+
 }
 
 bool
@@ -189,7 +189,7 @@ ColourConversion::xyz_to_rgb () const
 
 	/* backsubstitute to get the inverse */
 	lu_substitute (A, pm, xyz_to_rgb);
-	
+
 	return xyz_to_rgb;
 }
 

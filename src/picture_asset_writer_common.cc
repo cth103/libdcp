@@ -26,7 +26,7 @@ struct ASDCPStateBase
 	ASDCPStateBase ()
 		: frame_buffer (4 * Kumu::Megabyte)
 	{}
-	
+
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer;
 	ASDCP::WriterInfo writer_info;
@@ -39,7 +39,7 @@ template <class P, class Q>
 void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard standard, Q* asset, uint8_t* data, int size)
 {
 	asset->set_file (writer->_file);
-	
+
 	if (ASDCP_FAILURE (state->j2k_parser.OpenReadFrame (data, size, state->frame_buffer))) {
 		boost::throw_exception (MiscError ("could not parse J2K frame"));
 	}
@@ -49,9 +49,9 @@ void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard stand
 
 	asset->set_size (Size (state->picture_descriptor.StoredWidth, state->picture_descriptor.StoredHeight));
 	asset->set_screen_aspect_ratio (Fraction (state->picture_descriptor.AspectRatio.Numerator, state->picture_descriptor.AspectRatio.Denominator));
-	
+
 	asset->fill_writer_info (&state->writer_info, asset->id(), standard);
-	
+
 	Kumu::Result_t r = state->mxf_writer.OpenWrite (
 		asset->file().string().c_str(),
 		state->writer_info,

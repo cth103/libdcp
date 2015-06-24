@@ -89,7 +89,7 @@ StereoPictureAssetWriter::write (uint8_t* data, int size)
 	if (_next_eye == EYE_LEFT) {
 		++_frames_written;
 	}
-			
+
 	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 

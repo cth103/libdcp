@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE (colour)
 	BOOST_CHECK_EQUAL (z.g, 0);
 	BOOST_CHECK_EQUAL (z.b, 0);
 	BOOST_CHECK_EQUAL (z.to_argb_string(), "FF000000");
-	
+
 	dcp::Colour c ("FFFF0000");
 
 	BOOST_CHECK_EQUAL (c.r, 255);

@@ -89,9 +89,9 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 			break;
 		}
 	}
-	
+
 	sound_writer->finalize ();
-	
+
 	cpl->add (shared_ptr<dcp::Reel> (
 			  new dcp::Reel (
 				  shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (mp, 0)),
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 				  shared_ptr<dcp::ReelSubtitleAsset> ()
 				  )
 			  ));
-		  
+
 	d.add (cpl);
 
 	d.write_xml (dcp::SMPTE, xml_meta);
@@ -161,9 +161,9 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 			break;
 		}
 	}
-	
+
 	sound_writer->finalize ();
-	
+
 	cpl->add (shared_ptr<dcp::Reel> (
 			  new dcp::Reel (
 				  shared_ptr<dcp::ReelStereoPictureAsset> (new dcp::ReelStereoPictureAsset (mp, 0)),
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 				  shared_ptr<dcp::ReelSubtitleAsset> ()
 				  )
 			  ));
-		  
+
 	d.add (cpl);
 
 	d.write_xml (dcp::SMPTE, xml_meta);
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE (dcp_test3)
 	A.read ();
 	dcp::DCP B ("test/ref/DCP/dcp_test1");
 	B.read ();
-	
+
 	BOOST_CHECK (A.equals (B, dcp::EqualityOptions(), boost::bind (&note, _1, _2)));
 }
 
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE (dcp_test4)
 	A.read ();
 	dcp::DCP B ("test/ref/DCP/dcp_test2");
 	B.read ();
-	
+
 	BOOST_CHECK (!A.equals (B, dcp::EqualityOptions(), boost::bind (&note, _1, _2)));
 }
 

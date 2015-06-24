@@ -39,7 +39,7 @@ namespace dcp
 {
 
 class MXFMetadata;
-class PictureAssetWriter;	
+class PictureAssetWriter;
 
 /** @class MXF
  *  @brief Parent for classes which represent MXF files.
@@ -85,7 +85,7 @@ public:
 	MXFMetadata metadata () const {
 		return _metadata;
 	}
-	
+
 protected:
 	template <class P, class Q>
 	friend void start (PictureAssetWriter* writer, boost::shared_ptr<P> state, Standard standard, Q* mxf, uint8_t* data, int size);

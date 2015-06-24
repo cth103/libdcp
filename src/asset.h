@@ -19,7 +19,7 @@
 
 /** @file  src/asset.h
  *  @brief Asset class.
- */ 
+ */
 
 #ifndef LIBDCP_ASSET_H
 #define LIBDCP_ASSET_H

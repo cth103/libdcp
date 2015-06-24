@@ -34,7 +34,7 @@ namespace dcp {
 
 class OpenJPEGImage;
 
-/** A single frame of a 3D (stereoscopic) picture asset */	
+/** A single frame of a 3D (stereoscopic) picture asset */
 class StereoPictureFrame : public boost::noncopyable
 {
 public:
@@ -47,7 +47,7 @@ public:
 	uint8_t const * left_j2k_data () const;
 	uint8_t* left_j2k_data ();
 	int left_j2k_size () const;
-	
+
 	uint8_t const * right_j2k_data () const;
 	uint8_t* right_j2k_data ();
 	int right_j2k_size () const;

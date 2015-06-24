@@ -45,9 +45,9 @@ AssetWriter::AssetWriter (MXF* mxf, boost::filesystem::path file)
 		if (ASDCP_FAILURE (_encryption_context->InitKey (mxf->key()->value ()))) {
 			throw MiscError ("could not set up encryption context");
 		}
-		
+
 		uint8_t cbc_buffer[ASDCP::CBC_BLOCK_SIZE];
-		
+
 		Kumu::FortunaRNG rng;
 		if (ASDCP_FAILURE (_encryption_context->SetIVec (rng.FillRandom (cbc_buffer, ASDCP::CBC_BLOCK_SIZE)))) {
 			throw MiscError ("could not set up CBC initialization vector");

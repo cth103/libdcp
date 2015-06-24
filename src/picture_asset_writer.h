@@ -35,7 +35,7 @@
 
 namespace dcp {
 
-class PictureAsset;	
+class PictureAsset;
 
 /** @class FrameInfo
  *  @brief Information about a single frame (either a monoscopic frame or a left *or* right eye stereoscopic frame)
@@ -46,7 +46,7 @@ struct FrameInfo
 		: offset (0)
 		, size (0)
 	{}
-		  
+
 	FrameInfo (uint64_t o, uint64_t s, std::string h)
 		: offset (o)
 		, size (s)

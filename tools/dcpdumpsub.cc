@@ -41,7 +41,7 @@ int
 main (int argc, char* argv[])
 {
 	bool extract_fonts = true;
-	
+
 	int option_index = 0;
 	while (1) {
 		static struct option long_options[] = {

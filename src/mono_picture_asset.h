@@ -24,7 +24,7 @@
 
 namespace dcp {
 
-class MonoPictureAssetWriter;	
+class MonoPictureAssetWriter;
 
 /** @class MonoPictureAsset
  *  @brief A 2D (monoscopic) picture asset.
@@ -50,13 +50,13 @@ public:
 		EqualityOptions opt,
 		NoteHandler note
 		) const;
-	
+
 	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 
 private:
 	std::string cpl_node_name () const;
 };
 
-}	
+}
 
 #endif

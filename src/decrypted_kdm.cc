@@ -77,7 +77,7 @@ static string
 get_uuid (unsigned char ** p)
 {
 	stringstream g;
-	
+
 	for (int i = 0; i < 16; ++i) {
 		g << setw(2) << setfill('0') << hex << static_cast<int> (**p);
 		(*p)++;
@@ -109,7 +109,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 	if (!bio) {
 		throw MiscError ("could not create memory BIO");
 	}
-	
+
 	RSA* rsa = PEM_read_bio_RSAPrivateKey (bio, 0, 0, 0);
 	if (!rsa) {
 		throw FileError ("could not read RSA private key file", private_key, errno);
@@ -174,8 +174,8 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 		}
 		default:
 			DCP_ASSERT (false);
-		}		
-		
+		}
+
 		delete[] decrypted;
 	}
 
@@ -229,14 +229,14 @@ DecryptedKDM::encrypt (shared_ptr<const Signer> signer, Certificate recipient, F
 
 		base64_decode (signer->certificates().leaf().thumbprint (), p, 20);
 		p += 20;
-		
+
 		put_uuid (&p, i.cpl_id ());
 		put (&p, i.type ());
 		put_uuid (&p, i.id ());
 		put (&p, _not_valid_before.as_string ());
 		put (&p, _not_valid_after.as_string ());
 		put (&p, i.key().value(), ASDCP::KeyLen);
-		
+
 		/* Encrypt using the projector's public key */
 		RSA* rsa = recipient.public_key ();
 		unsigned char encrypted[RSA_size(rsa)];
@@ -244,7 +244,7 @@ DecryptedKDM::encrypt (shared_ptr<const Signer> signer, Certificate recipient, F
 		if (encrypted_len == -1) {
 			throw MiscError (String::compose ("Could not encrypt KDM (%1)", ERR_error_string (ERR_get_error(), 0)));
 		}
-		
+
 		/* Lazy overallocation */
 		char out[encrypted_len * 2];
 		Kumu::base64encode (encrypted, encrypted_len, out, encrypted_len * 2);
@@ -256,7 +256,7 @@ DecryptedKDM::encrypt (shared_ptr<const Signer> signer, Certificate recipient, F
 			}
 			lines << out[i];
 		}
-		
+
 		keys.push_back (lines.str ());
 	}
 

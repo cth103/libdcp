@@ -91,7 +91,7 @@ public:
 		if (!_object) {
 			throw UnresolvedRefError (_id);
 		}
-		
+
 		return _object;
 	}
 
@@ -102,7 +102,7 @@ public:
 		if (!_object) {
 			throw UnresolvedRefError (_id);
 		}
-		
+
 		return _object.get ();
 	}
 

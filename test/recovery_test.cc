@@ -44,8 +44,8 @@ BOOST_AUTO_TEST_CASE (recovery)
 #ifdef LIBDCP_POSIX
 	/* XXX: fix this posix-only stuff */
 	Kumu::ResetTestRNG ();
-#endif	
-	
+#endif
+
 	boost::filesystem::remove_all ("build/test/baz");
 	boost::filesystem::create_directories ("build/test/baz");
 	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1)));
@@ -72,9 +72,9 @@ BOOST_AUTO_TEST_CASE (recovery)
 		fclose (f);
 	}
 
-#ifdef LIBDCP_POSIX	
+#ifdef LIBDCP_POSIX
 	Kumu::ResetTestRNG ();
-#endif	
+#endif
 
 	mp.reset (new dcp::MonoPictureAsset (dcp::Fraction (24, 1)));
 	writer = mp->start_write ("build/test/baz/video2.mxf", dcp::SMPTE, true);
@@ -88,6 +88,6 @@ BOOST_AUTO_TEST_CASE (recovery)
 	for (int i = 4; i < 24; ++i) {
 		writer->write (data, size);
 	}
-	
+
 	writer->finalize ();
 }

@@ -39,7 +39,7 @@ public:
 	StringError (std::string message)
 		: _message (message)
 	{}
-			    
+
 	~StringError () throw () {}
 
 	/** @return error message */
@@ -86,7 +86,7 @@ public:
 		: FileError (message, filename, number)
 	{}
 };
-	
+
 /** @class MiscError
  *  @brief A miscellaneous exception
  */
@@ -124,7 +124,7 @@ public:
 		MAIN_SUBTITLE, //< main subtitle is missing
 		UNKNOWN        //< something is missing but we don't know what
 	};
-	
+
 	MissingAssetError (boost::filesystem::path, AssetType = UNKNOWN);
 	~MissingAssetError () throw () {}
 

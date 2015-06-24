@@ -49,7 +49,7 @@ struct Size
 	float ratio () const {
 		return float (width) / height;
 	}
-	
+
 	int width;
 	int height;
 };
@@ -147,7 +147,7 @@ public:
 
 extern bool operator== (Fraction const & a, Fraction const & b);
 extern bool operator!= (Fraction const & a, Fraction const & b);
-extern std::ostream& operator<< (std::ostream& s, Fraction const & f);	
+extern std::ostream& operator<< (std::ostream& s, Fraction const & f);
 
 /** @struct EqualityOptions
  *  @brief  A class to describe what "equality" means for a particular test.
@@ -158,7 +158,7 @@ extern std::ostream& operator<< (std::ostream& s, Fraction const & f);
 struct EqualityOptions
 {
 	/** Construct an EqualityOptions where nothing at all can differ */
-	EqualityOptions () 
+	EqualityOptions ()
 		: max_mean_pixel_error (0)
 		, max_std_dev_pixel_error (0)
 		, max_audio_sample_error (0)

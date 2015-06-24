@@ -39,7 +39,7 @@ namespace data {
 	class EncryptedKDMData;
 }
 
-class Signer;	
+class Signer;
 class Certificate;
 
 /** @class EncryptedKDM
@@ -70,7 +70,7 @@ public:
 	 *  keys (also key id, CPL id etc.)
 	 */
 	std::list<std::string> keys () const;
-	
+
 private:
 
 	friend class DecryptedKDM;
@@ -88,7 +88,7 @@ private:
 		std::list<std::pair<std::string, std::string> > key_ids,
 		std::list<std::string> keys
 		);
-	
+
 	data::EncryptedKDMData* _data;
 };
 

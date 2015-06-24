@@ -65,7 +65,7 @@ MissingAssetError::MissingAssetError (boost::filesystem::path path, AssetType ty
 	case UNKNOWN:
 		break;
 	}
-	
+
 	_message = String::compose ("Missing asset %1%2", path.string(), type_name);
 }
 

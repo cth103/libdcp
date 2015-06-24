@@ -94,7 +94,7 @@ MXF::set_key (Key key)
 		/* No key ID so far; we now need one */
 		_key_id = make_uuid ();
 	}
-	
+
 	_decryption_context = new ASDCP::AESDecContext;
 	if (ASDCP_FAILURE (_decryption_context->InitKey (_key->value ()))) {
 		throw MiscError ("could not set up decryption context");
@@ -112,7 +112,7 @@ MXF::read_writer_info (ASDCP::WriterInfo const & info)
 	}
 
 	_metadata.read (info);
-	
+
 	Kumu::bin2UUIDhex (info.AssetUUID, ASDCP::UUIDlen, buffer, sizeof (buffer));
 	return buffer;
 }

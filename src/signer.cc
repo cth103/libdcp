@@ -84,7 +84,7 @@ void
 Signer::sign (xmlpp::Element* parent, Standard standard) const
 {
 	/* <Signer> */
-	
+
 	xmlpp::Element* signer = parent->add_child("Signer");
 	xmlpp::Element* data = signer->add_child("X509Data", "dsig");
 	xmlpp::Element* serial_element = data->add_child("X509IssuerSerial", "dsig");
@@ -93,18 +93,18 @@ Signer::sign (xmlpp::Element* parent, Standard standard) const
 	data->add_child("X509SubjectName", "dsig")->add_child_text (_certificates.leaf().subject());
 
 	/* <Signature> */
-	
+
 	xmlpp::Element* signature = parent->add_child("Signature", "dsig");
-	
+
 	xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
 	signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
-	
+
 	if (standard == INTEROP) {
 		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
 	} else {
 		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
 	}
-	
+
 	xmlpp::Element* reference = signed_info->add_child("Reference", "dsig");
 	reference->set_attribute ("URI", "");
 
@@ -138,13 +138,13 @@ Signer::add_signature_value (xmlpp::Node* parent, string ns) const
 	CertificateChain::List c = _certificates.leaf_to_root ();
 	for (CertificateChain::List::iterator i = c.begin(); i != c.end(); ++i) {
 		xmlpp::Element* data = key_info->add_child("X509Data", ns);
-		
+
 		{
 			xmlpp::Element* serial = data->add_child("X509IssuerSerial", ns);
 			serial->add_child("X509IssuerName", ns)->add_child_text (i->issuer ());
 			serial->add_child("X509SerialNumber", ns)->add_child_text (i->serial ());
 		}
-		
+
 		data->add_child("X509Certificate", ns)->add_child_text (i->certificate());
 	}
 
@@ -156,7 +156,7 @@ Signer::add_signature_value (xmlpp::Node* parent, string ns) const
 	signature_context->signKey = xmlSecCryptoAppKeyLoadMemory (
 		reinterpret_cast<const unsigned char *> (_key.c_str()), _key.size(), xmlSecKeyDataFormatPem, 0, 0, 0
 		);
-	
+
 	if (signature_context->signKey == 0) {
 		throw FileError ("could not load private key file", _key, 0);
 	}
@@ -185,7 +185,7 @@ Signer::valid () const
 	if (!bio) {
 		throw MiscError ("could not create memory BIO");
 	}
-	
+
 	RSA* private_key = PEM_read_bio_RSAPrivateKey (bio, 0, 0, 0);
 	RSA* public_key = _certificates.leaf().public_key ();
 	bool const valid = !BN_cmp (private_key->n, public_key->n);

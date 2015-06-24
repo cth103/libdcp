@@ -23,8 +23,8 @@
 #include "picture_asset.h"
 
 namespace dcp {
-	
-/** A 3D (stereoscopic) picture asset */	
+
+/** A 3D (stereoscopic) picture asset */
 class StereoPictureAsset : public PictureAsset
 {
 public:
@@ -39,7 +39,7 @@ public:
 		EqualityOptions opt,
 		NoteHandler note
 		) const;
-	
+
 	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
 };
 

@@ -38,7 +38,7 @@ namespace ASDCP {
 namespace dcp
 {
 
-class MonoPictureFrame;	
+class MonoPictureFrame;
 class StereoPictureFrame;
 class PictureAssetWriter;
 
@@ -119,7 +119,7 @@ protected:
 private:
 	std::string pkl_type (Standard standard) const;
 };
-	
+
 
 }
 

@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE (certificates)
 
 	/* Leaf */
 	BOOST_CHECK_EQUAL (*i, c.leaf ());
-	
+
 	BOOST_CHECK_EQUAL (
 		c.leaf().issuer(),
 		"dnQualifier=6eat8r33US71avuQEojmH\\+bjk84=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE (certificates)
 		c.leaf().subject(),
 		"dnQualifier=QFVlym7fuql6bPOnY38aaO1ZPW4=,CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
-	
+
 	++i;
 
 	/* Intermediate */
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE (certificates)
 		i->subject(),
 		"dnQualifier=6eat8r33US71avuQEojmH\\+bjk84=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
-	
+
 	++i;
 
 	/* Root */
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE (certificates_validation)
 	dcp::CertificateChain good2;
 	good2.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
 	BOOST_CHECK (good2.valid ());
-	
+
 	dcp::CertificateChain bad1;
 	bad1.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
 	bad1.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));

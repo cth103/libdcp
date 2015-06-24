@@ -42,7 +42,7 @@ double const *
 TransferFunction::lut (int bit_depth, bool inverse) const
 {
 	boost::mutex::scoped_lock lm (_mutex);
-	
+
 	map<pair<int, bool>, double*>::const_iterator i = _luts.find (make_pair (bit_depth, inverse));
 	if (i != _luts.end ()) {
 		return i->second;

@@ -34,7 +34,7 @@ using namespace dcp;
 FontNode::FontNode (cxml::ConstNodePtr node, int tcr)
 {
 	text = node->content ();
-	
+
 	id = node->optional_string_attribute ("Id");
 	size = node->optional_number_attribute<int64_t> ("Size").get_value_or (0);
 	aspect_adjust = node->optional_number_attribute<float> ("AspectAdjust");
@@ -61,7 +61,7 @@ FontNode::FontNode (cxml::ConstNodePtr node, int tcr)
 	BOOST_FOREACH (cxml::NodePtr& i, f) {
 		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, tcr)));
 	}
-	
+
 	list<cxml::NodePtr> t = node->node_children ("Text");
 	BOOST_FOREACH (cxml::NodePtr& i, t) {
 		text_nodes.push_back (shared_ptr<TextNode> (new TextNode (i, tcr)));

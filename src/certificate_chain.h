@@ -41,5 +41,5 @@ boost::filesystem::path make_certificate_chain (
 	std::string intermediate_common_name = ".smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION",
 	std::string leaf_common_name = "CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION"
 	);
-	
+
 }

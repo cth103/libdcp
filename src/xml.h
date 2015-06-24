@@ -44,7 +44,7 @@ template <class T>
 boost::shared_ptr<T> type_child (boost::shared_ptr<const cxml::Node> node, std::string name) {
 	return boost::shared_ptr<T> (new T (node->node_child (name)));
 }
-	
+
 template <class T>
 boost::shared_ptr<T>
 optional_type_child (boost::shared_ptr<const cxml::Node> node, std::string name)
@@ -70,7 +70,7 @@ type_children (boost::shared_ptr<const cxml::Node> node, std::string name)
 {
 	return type_children<T> (*node.get(), name);
 }
-	
+
 template <class T>
 std::list<boost::shared_ptr<T> >
 type_grand_children (cxml::Node const & node, std::string name, std::string sub)
@@ -85,7 +85,7 @@ type_grand_children (boost::shared_ptr<const cxml::Node> node, std::string name,
 {
 	return type_grand_children<T> (*node.get(), name, sub);
 }
-	
+
 }
 
 #endif

@@ -77,7 +77,7 @@ StereoPictureFrame::xyz_image (Eye eye, int reduce) const
 	case RIGHT:
 		return decompress_j2k (const_cast<uint8_t*> (_buffer->Right.RoData()), _buffer->Right.Size(), reduce);
 	}
-	
+
 	return shared_ptr<OpenJPEGImage> ();
 }
 

@@ -44,7 +44,7 @@ public:
 	SoundAsset (Fraction edit_rate, int sampling_rate, int channels);
 
 	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file, Standard standard);
-	
+
 	bool equals (
 		boost::shared_ptr<const Asset> other,
 		EqualityOptions opt,
@@ -70,10 +70,10 @@ public:
 	int64_t intrinsic_duration () const {
 		return _intrinsic_duration;
 	}
-	
+
 private:
 	friend class SoundAssetWriter;
-	
+
 	std::string pkl_type (Standard standard) const;
 
 	Fraction _edit_rate;

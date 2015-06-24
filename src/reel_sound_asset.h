@@ -49,7 +49,7 @@ public:
 	boost::shared_ptr<const SoundAsset> asset () const {
 		return boost::dynamic_pointer_cast<const SoundAsset> (_asset_ref.object ());
 	}
-	
+
 private:
 	std::string key_type () const;
 	std::string cpl_node_name () const;

@@ -125,7 +125,7 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	}
 
 	/* Decode the base64 of the public key */
-		
+
 	unsigned char buffer[512];
 	int const N = dcp::base64_decode (pub, buffer, 1024);
 
@@ -149,9 +149,9 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	string dig = Kumu::base64encode (digest, SHA_DIGEST_LENGTH, digest_base64, 64);
 #ifdef LIBDCP_WINDOWS
 	boost::replace_all (dig, "/", "\\/");
-#else	
+#else
 	boost::replace_all (dig, "/", "\\\\/");
-#endif	
+#endif
 	return dig;
 }
 
@@ -167,7 +167,7 @@ dcp::make_certificate_chain (
 {
 	boost::filesystem::path directory = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path ();
 	boost::filesystem::create_directories (directory);
-	
+
 	boost::filesystem::path const cwd = boost::filesystem::current_path ();
 	boost::filesystem::current_path (directory);
 
@@ -221,7 +221,7 @@ dcp::make_certificate_chain (
 		  << "OU = Organization unit\n"
 		  << "CN = Entity and dnQualifier\n";
 	}
-		
+
 	string const inter_subject = "/O=" + organisation +
 		"/OU=" + organisational_unit +
 		"/CN=" + intermediate_common_name +
@@ -234,7 +234,7 @@ dcp::make_certificate_chain (
 		command (s.str().c_str());
 	}
 
-	
+
 	command (
 		quoted_openssl +
 		" x509 -req -sha256 -days 3649 -CA ca.self-signed.pem -CAkey ca.key -set_serial 6"

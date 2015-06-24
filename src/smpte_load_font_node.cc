@@ -35,7 +35,7 @@ SMPTELoadFontNode::SMPTELoadFontNode (shared_ptr<const cxml::Node> node)
 	: LoadFontNode (node->string_attribute ("ID"))
 	, urn (node->content().substr (9))
 {
-	
+
 }
 
 bool

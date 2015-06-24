@@ -49,7 +49,7 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entr
 	, _frame_rate (asset->frame_rate ())
 	, _screen_aspect_ratio (asset->screen_aspect_ratio ())
 {
-	
+
 }
 
 ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
@@ -77,7 +77,7 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 
 	/* Find <MainPicture> */
 	xmlpp::Node* mp = find_child (node, cpl_node_name ());
-	
+
 	mp->add_child ("FrameRate")->add_child_text (String::compose ("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
 	if (standard == INTEROP) {
 		stringstream s;
@@ -108,7 +108,7 @@ ReelPictureAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt
 	if (!ReelAsset::equals (other, opt, note)) {
 		return false;
 	}
-	
+
 	shared_ptr<const ReelPictureAsset> rpa = dynamic_pointer_cast<const ReelPictureAsset> (other);
 	if (!rpa) {
 		return false;
