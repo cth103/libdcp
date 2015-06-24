@@ -70,7 +70,7 @@ DCP::DCP (boost::filesystem::path directory)
 	if (!boost::filesystem::exists (directory)) {
 		boost::filesystem::create_directories (directory);
 	}
-	
+
 	_directory = boost::filesystem::canonical (_directory);
 }
 
@@ -90,7 +90,7 @@ void
 DCP::read (bool keep_going, ReadErrors* errors)
 {
 	/* Read the ASSETMAP */
-	
+
 	boost::filesystem::path asset_map_file;
 	if (boost::filesystem::exists (_directory / "ASSETMAP")) {
 		asset_map_file = _directory / "ASSETMAP";
@@ -124,7 +124,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 	   from the CPLs.
 	*/
 	list<shared_ptr<Asset> > other_assets;
-	
+
 	for (map<string, boost::filesystem::path>::const_iterator i = paths.begin(); i != paths.end(); ++i) {
 		boost::filesystem::path path = _directory / i->second;
 
@@ -132,7 +132,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 			survivable_error (keep_going, errors, MissingAssetError (path));
 			continue;
 		}
-		
+
 		if (boost::filesystem::extension (path) == ".xml") {
 			xmlpp::DomParser* p = new xmlpp::DomParser;
 			try {
@@ -141,10 +141,10 @@ DCP::read (bool keep_going, ReadErrors* errors)
 				delete p;
 				continue;
 			}
-			
+
 			string const root = p->get_document()->get_root_node()->get_name ();
 			delete p;
-			
+
 			if (root == "CompositionPlaylist") {
 				_cpls.push_back (shared_ptr<CPL> (new CPL (path)));
 			} else if (root == "DCSubtitle") {
@@ -190,7 +190,7 @@ DCP::equals (DCP const & other, EqualityOptions opt, NoteHandler note) const
 {
 	list<shared_ptr<CPL> > a = cpls ();
 	list<shared_ptr<CPL> > b = other.cpls ();
-	
+
 	if (a.size() != b.size()) {
 		note (DCP_ERROR, String::compose ("CPL counts differ: %1 vs %2", a.size(), b.size()));
 		return false;
@@ -239,7 +239,7 @@ DCP::add (DecryptedKDM const & kdm)
 		BOOST_FOREACH (DecryptedKDMKey const & j, kdm.keys ()) {
 			if (j.cpl_id() == i->id()) {
 				i->add (kdm);
-			}				
+			}
 		}
 	}
 }
@@ -257,7 +257,7 @@ DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared
 	} else {
 		pkl = doc.create_root_node("PackingList", "http://www.smpte-ra.org/schemas/429-8/2007/PKL");
 	}
-	
+
 	if (signer) {
 		pkl->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	}
@@ -267,7 +267,7 @@ DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared
 	/* XXX: this is a bit of a hack */
 	DCP_ASSERT (cpls().size() > 0);
 	pkl->add_child("AnnotationText")->add_child_text (cpls().front()->annotation_text ());
-	
+
 	pkl->add_child("IssueDate")->add_child_text (metadata.issue_date);
 	pkl->add_child("Issuer")->add_child_text (metadata.issuer);
 	pkl->add_child("Creator")->add_child_text (metadata.creator);
@@ -280,7 +280,7 @@ DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared
 	if (signer) {
 		signer->sign (pkl, standard);
 	}
-		
+
 	doc.write_to_file (p.string (), "UTF-8");
 	return p.string ();
 }
@@ -316,7 +316,7 @@ DCP::write_volindex (Standard standard) const
 	default:
 		DCP_ASSERT (false);
 	}
-	
+
 	root->add_child("Index")->add_child_text ("1");
 	doc.write_to_file (p.string (), "UTF-8");
 }
@@ -325,7 +325,7 @@ void
 DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMetadata metadata) const
 {
 	boost::filesystem::path p = _directory;
-	
+
 	switch (standard) {
 	case INTEROP:
 		p /= "ASSETMAP";
@@ -370,7 +370,7 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 	default:
 		DCP_ASSERT (false);
 	}
-		
+
 	xmlpp::Node* asset_list = root->add_child ("AssetList");
 
 	xmlpp::Node* asset = asset_list->add_child ("Asset");
@@ -410,7 +410,7 @@ DCP::write_xml (
 
 	string const pkl_uuid = make_uuid ();
 	boost::filesystem::path const pkl_path = write_pkl (standard, pkl_uuid, metadata, signer);
-	
+
 	write_volindex (standard);
 	write_assetmap (standard, pkl_uuid, boost::filesystem::file_size (pkl_path), metadata);
 }
@@ -421,7 +421,7 @@ DCP::cpls () const
 	return _cpls;
 }
 
-/** @return All assest (including CPLs) */
+/** @return All assets (including CPLs) */
 list<shared_ptr<Asset> >
 DCP::assets () const
 {
