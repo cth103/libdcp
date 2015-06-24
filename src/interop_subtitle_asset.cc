@@ -164,7 +164,7 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 			throw FileError ("could not open font file for writing", file, errno);
 		}
 		list<Font>::const_iterator j = _fonts.begin ();
-		while (j->load_id != i->id) {
+		while (j != _fonts.end() && j->load_id != i->id) {
 			++j;
 		}
 		if (j != _fonts.end ()) {
