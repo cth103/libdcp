@@ -90,10 +90,10 @@ InteropSubtitleAsset::xml_as_string () const
 }
 
 void
-InteropSubtitleAsset::add_font (string id, boost::filesystem::path file)
+InteropSubtitleAsset::add_font (string load_id, boost::filesystem::path file)
 {
-	add_font_data (id, file);
-	_load_font_nodes.push_back (shared_ptr<InteropLoadFontNode> (new InteropLoadFontNode (id, file.leaf().string ())));
+	_fonts.push_back (Font (load_id, make_uuid(), file));
+	_load_font_nodes.push_back (shared_ptr<InteropLoadFontNode> (new InteropLoadFontNode (load_id, file.leaf().string ())));
 }
 
 bool
@@ -163,10 +163,13 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 		if (!f) {
 			throw FileError ("could not open font file for writing", file, errno);
 		}
-		map<string, FileData>::const_iterator j = _fonts.find (i->id);
+		list<Font>::const_iterator j = _fonts.begin ();
+		while (j->load_id != i->id) {
+			++j;
+		}
 		if (j != _fonts.end ()) {
-			fwrite (j->second.data.get(), 1, j->second.size, f);
-			j->second.file = file;
+			fwrite (j->data.data.get(), 1, j->data.size, f);
+			j->file = file;
 		}
 		fclose (f);
 	}
@@ -183,7 +186,7 @@ InteropSubtitleAsset::resolve_fonts (list<shared_ptr<Object> > objects)
 
 		BOOST_FOREACH (shared_ptr<InteropLoadFontNode> j, _load_font_nodes) {
 			if (j->uri == font->file().leaf().string ()) {
-				add_font_data (j->id, font->file ());
+				_fonts.push_back (Font (j->id, i->id(), font->file ()));
 			}
 		}
 	}
@@ -192,8 +195,8 @@ InteropSubtitleAsset::resolve_fonts (list<shared_ptr<Object> > objects)
 void
 InteropSubtitleAsset::add_font_assets (list<shared_ptr<Asset> >& assets)
 {
-	for (map<string, FileData>::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
-		DCP_ASSERT (i->second.file);
-		assets.push_back (shared_ptr<FontAsset> (new FontAsset (i->second.file.get ())));
+	BOOST_FOREACH (Font const & i, _fonts) {
+		DCP_ASSERT (i.file);
+		assets.push_back (shared_ptr<FontAsset> (new FontAsset (i.uuid, i.file.get ())));
 	}
 }

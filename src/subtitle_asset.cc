@@ -30,6 +30,7 @@
 #include <libxml++/nodes/element.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/shared_array.hpp>
+#include <boost/foreach.hpp>
 #include <fstream>
 
 using std::string;
@@ -308,18 +309,12 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, strin
 	}
 }
 
-void
-SubtitleAsset::add_font_data (string id, boost::filesystem::path file)
-{
-	_fonts[id] = FileData (file);
-}
-
 map<string, Data>
-SubtitleAsset::fonts () const
+SubtitleAsset::fonts_with_load_ids () const
 {
 	map<string, Data> out;
-	for (map<string, FileData>::const_iterator i = _fonts.begin(); i != _fonts.end(); ++i) {
-		out[i->first] = i->second;
+	BOOST_FOREACH (Font const & i, _fonts) {
+		out[i.load_id] = i.data;
 	}
 	return out;
 }

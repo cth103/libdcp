@@ -176,7 +176,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 					throw DCPReadError ("Unknown MXF essence type");
 			}
 		} else if (boost::filesystem::extension (path) == ".ttf") {
-			other_assets.push_back (shared_ptr<FontAsset> (new FontAsset (path)));
+			other_assets.push_back (shared_ptr<FontAsset> (new FontAsset (i->first, path)));
 		}
 	}
 

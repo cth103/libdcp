@@ -47,7 +47,7 @@ public:
 
 	std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const;
 
-	void add_font (std::string id, boost::filesystem::path file);
+	void add_font (std::string load_id, boost::filesystem::path file);
 
 	Glib::ustring xml_as_string () const;
 	void write (boost::filesystem::path path) const;

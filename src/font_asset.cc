@@ -27,8 +27,8 @@ using std::string;
 
 using namespace dcp;
 
-FontAsset::FontAsset (boost::filesystem::path file)
-	: Asset (file)
+FontAsset::FontAsset (string id, boost::filesystem::path file)
+	: Asset (id, file)
 {
 
 }

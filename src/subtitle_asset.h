@@ -70,7 +70,7 @@ public:
 
 	void add (SubtitleString);
 	virtual void add_font (std::string id, boost::filesystem::path file) = 0;
-	std::map<std::string, Data> fonts () const;
+	std::map<std::string, Data> fonts_with_load_ids () const;
 
 	virtual void write (boost::filesystem::path) const = 0;
 	virtual Glib::ustring xml_as_string () const = 0;
@@ -85,32 +85,34 @@ protected:
 
 	void parse_subtitles (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<FontNode> > font_nodes);
 	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, std::string xmlns) const;
-	void add_font_data (std::string id, boost::filesystem::path file);
 
 	/** All our subtitles, in no particular order */
 	std::list<SubtitleString> _subtitles;
 
-	class FileData : public Data {
+	class Font
+	{
 	public:
-		FileData () {}
-
-		FileData (boost::shared_array<uint8_t> data_, boost::uintmax_t size_)
-			: Data (data_, size_)
+		Font (std::string load_id_, std::string uuid_, boost::filesystem::path file_)
+			: load_id (load_id_)
+			, uuid (uuid_)
+			, data (file_)
+			, file (file_)
 		{}
 
-		FileData (boost::filesystem::path file_)
-			: Data (file_)
+		Font (std::string load_id_, std::string uuid_, Data data_)
+			: load_id (load_id_)
+			, uuid (uuid_)
+			, data (data_)
 		{}
-
-		/** .ttf file that this data was last written to */
+		
+		std::string load_id;
+		std::string uuid;
+		Data data;
+		/** .ttf file that this data was last written to, if applicable */
 		mutable boost::optional<boost::filesystem::path> file;
 	};
 
-	/** Font data, keyed by a subclass-dependent identifier.
-	 *  For Interop, the string is the font ID from the subtitle file.
-	 *  For SMPTE, the string is the font's URN from the subtitle file.
-	 */
-	std::map<std::string, FileData> _fonts;
+	std::list<Font> _fonts;
 
 private:
 	/** @struct ParseState

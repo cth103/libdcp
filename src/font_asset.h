@@ -31,7 +31,7 @@ namespace dcp {
 class FontAsset : public Asset
 {
 public:
-	FontAsset (boost::filesystem::path file);
+	FontAsset (std::string id, boost::filesystem::path file);
 
 private:
 	std::string pkl_type (Standard standard) const;
