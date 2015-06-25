@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE (cpl_sar)
 		xmlpp::Document doc;
 		xmlpp::Element* el = doc.create_root_node ("Test");
 		mp->write_to_cpl (el);
-		
+
 		cxml::Node node (el);
 		BOOST_CHECK_EQUAL (node.node_child("MainPicture")->string_child ("ScreenAspectRatio"), "1.85");
 	}
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE (cpl_sar)
 		xmlpp::Document doc;
 		xmlpp::Element* el = doc.create_root_node ("Test");
 		mp->write_to_cpl (el);
-		
+
 		cxml::Node node (el);
 		BOOST_CHECK_EQUAL (node.node_child("MainPicture")->string_child ("ScreenAspectRatio"), "2.39");
 	}

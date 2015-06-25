@@ -180,7 +180,7 @@ libdcp::string_to_valign (string s)
 	} else if (s == "bottom") {
 		return VERTICAL_BOTTOM;
 	}
-	
+
 	boost::throw_exception (DCPReadError ("unknown subtitle valign type"));
 }
 
@@ -209,6 +209,6 @@ libdcp::string_to_halign (string s)
 	} else if (s == "right") {
 		return HORIZONTAL_RIGHT;
 	}
-	
+
 	boost::throw_exception (DCPReadError ("unknown subtitle halign type"));
 }

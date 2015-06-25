@@ -59,6 +59,6 @@ private:
 	int edit_rate_factor () const;
 };
 
-}	
+}
 
 #endif

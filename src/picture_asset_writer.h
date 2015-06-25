@@ -30,16 +30,16 @@
 
 namespace libdcp {
 
-class PictureAsset;	
+class PictureAsset;
 
-/** Information about a single frame (either a monoscopic frame or a left *or* right eye stereoscopic frame) */	
+/** Information about a single frame (either a monoscopic frame or a left *or* right eye stereoscopic frame) */
 struct FrameInfo
 {
 	FrameInfo ()
 		: offset (0)
 		, size (0)
 	{}
-	
+
 	FrameInfo (uint64_t o, uint64_t s, std::string h)
 		: offset (o)
 		, size (s)
@@ -58,7 +58,7 @@ public:
 	virtual FrameInfo write (uint8_t *, int) = 0;
 	virtual void finalize () = 0;
 	virtual void fake_write (int) = 0;
-	
+
 protected:
 	template <class P, class Q>
 	friend void start (PictureAssetWriter *, boost::shared_ptr<P>, Q *, uint8_t *, int);
@@ -66,7 +66,7 @@ protected:
 	PictureAssetWriter (PictureAsset *, bool);
 
 	PictureAsset* _asset;
-	
+
 	/** Number of picture frames written to the asset so far.  For stereo assets
 	 *  this will be incremented for each eye (i.e. there will be twice the number
 	 *  of frames as in a mono asset).

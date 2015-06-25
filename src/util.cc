@@ -87,7 +87,7 @@ libdcp::make_digest (string filename, boost::function<void (float)>* progress)
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (FileError ("could not open file to compute digest", filename, r));
 	}
-	
+
 	SHA_CTX sha;
 	SHA1_Init (&sha);
 
@@ -99,13 +99,13 @@ libdcp::make_digest (string filename, boost::function<void (float)>* progress)
 	while (1) {
 		ui32_t read = 0;
 		Kumu::Result_t r = reader.Read (read_buffer.Data(), read_buffer.Capacity(), &read);
-		
+
 		if (r == Kumu::RESULT_ENDOFFILE) {
 			break;
 		} else if (ASDCP_FAILURE (r)) {
 			boost::throw_exception (FileError ("could not read file to compute digest", filename, r));
 		}
-		
+
 		SHA1_Update (&sha, read_buffer.Data(), read);
 
 		if (progress) {
@@ -164,7 +164,7 @@ libdcp::ContentKind
 libdcp::content_kind_from_string (string type)
 {
 	transform (type.begin(), type.end(), type.begin(), ::tolower);
-	
+
 	if (type == "feature") {
 		return FEATURE;
 	} else if (type == "short") {
@@ -249,7 +249,7 @@ libdcp::init ()
 	if (xmlSecCryptoDLLoadLibrary(BAD_CAST XMLSEC_CRYPTO) < 0) {
 		throw MiscError ("unable to load default xmlsec-crypto library");
 	}
-#endif	
+#endif
 
 	if (xmlSecCryptoAppInit(0) < 0) {
 		throw MiscError ("could not initialise crypto");
@@ -289,7 +289,7 @@ libdcp::base64_decode (string const & in, unsigned char* out, int out_length)
 			*p++ = in[i];
 		}
 	}
-		
+
 	BIO* bmem = BIO_new_mem_buf (in_buffer, p - in_buffer);
 	bmem = BIO_push (b64, bmem);
 	int const N = BIO_read (bmem, out, out_length);

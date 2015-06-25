@@ -38,7 +38,7 @@ namespace ASDCP {
 namespace libdcp
 {
 
-class MonoPictureFrame;	
+class MonoPictureFrame;
 class StereoPictureFrame;
 class PictureAssetWriter;
 
@@ -47,7 +47,7 @@ class PictureAsset : public MXFAsset
 {
 public:
 	/** Construct a PictureAsset.
-	 *  
+	 *
 	 *  @param directory Directory where MXF file is.
 	 *  @param mxf_name Name of MXF file.
 	 */
@@ -58,7 +58,7 @@ public:
 	 *      Interop mode (set_interop)
 	 *      Edit rate    (set_edit_rate)
 	 *      MXF Metadata (set_metadata)
-	 *      
+	 *
 	 *  @param overwrite true to overwrite an existing MXF file; in this mode, writing can be resumed to a partially-written MXF; false if the
 	 *  MXF file does not exist.
 	 */
@@ -67,7 +67,7 @@ public:
 	virtual void read () = 0;
 	virtual void create (std::vector<boost::filesystem::path> const &) {}
 	virtual void create (boost::function<boost::filesystem::path (int)>) {}
-	
+
 	Size size () const {
 		return _size;
 	}
@@ -100,7 +100,7 @@ private:
 	std::string key_type () const;
 	virtual int edit_rate_factor () const = 0;
 };
-	
+
 
 }
 

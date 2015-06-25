@@ -24,7 +24,7 @@ struct ASDCPStateBase
 	ASDCPStateBase ()
 		: frame_buffer (4 * Kumu::Megabyte)
 	{}
-	
+
 	ASDCP::JP2K::CodestreamParser j2k_parser;
 	ASDCP::JP2K::FrameBuffer frame_buffer;
 	ASDCP::WriterInfo writer_info;
@@ -41,9 +41,9 @@ void libdcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, u
 
 	state->j2k_parser.FillPictureDescriptor (state->picture_descriptor);
 	state->picture_descriptor.EditRate = ASDCP::Rational (asset->edit_rate(), 1);
-	
+
 	asset->fill_writer_info (&state->writer_info);
-	
+
 	Kumu::Result_t r = state->mxf_writer.OpenWrite (
 		asset->path().string().c_str(),
 		state->writer_info,

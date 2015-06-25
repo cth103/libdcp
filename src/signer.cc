@@ -41,16 +41,16 @@ Signer::sign (xmlpp::Element* parent, bool interop) const
 	add_signer (parent, "dsig");
 
 	xmlpp::Element* signature = parent->add_child("Signature", "dsig");
-	
+
 	xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
 	signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
-	
+
 	if (interop) {
 		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
 	} else {
 		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
 	}
-	
+
 	xmlpp::Element* reference = signed_info->add_child("Reference", "dsig");
 	reference->set_attribute ("URI", "");
 
@@ -84,13 +84,13 @@ Signer::add_signature_value (xmlpp::Node* parent, string ns) const
 	list<shared_ptr<Certificate> > c = _certificates.leaf_to_root ();
 	for (list<shared_ptr<Certificate> >::iterator i = c.begin(); i != c.end(); ++i) {
 		xmlpp::Element* data = key_info->add_child("X509Data", ns);
-		
+
 		{
 			xmlpp::Element* serial = data->add_child("X509IssuerSerial", ns);
 			serial->add_child("X509IssuerName", ns)->add_child_text((*i)->issuer ());
 			serial->add_child("X509SerialNumber", ns)->add_child_text((*i)->serial ());
 		}
-		
+
 		data->add_child("X509Certificate", ns)->add_child_text((*i)->certificate());
 	}
 
@@ -124,13 +124,13 @@ Signer::add_signer (xmlpp::Element* parent, string ns) const
 
 	{
 		xmlpp::Element* data = signer->add_child("X509Data", ns);
-		
+
 		{
 			xmlpp::Element* serial_element = data->add_child("X509IssuerSerial", ns);
 			serial_element->add_child("X509IssuerName", ns)->add_child_text (_certificates.leaf()->issuer());
 			serial_element->add_child("X509SerialNumber", ns)->add_child_text (_certificates.leaf()->serial());
 		}
-		
+
 		data->add_child("X509SubjectName", ns)->add_child_text (_certificates.leaf()->subject());
 	}
 }

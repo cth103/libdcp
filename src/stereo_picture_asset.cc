@@ -42,13 +42,13 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
 	}
-	
+
 	ASDCP::JP2K::MXFSReader reader_B;
 	r = reader_B.OpenRead (other->path().string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", other->path().string(), r));
 	}
-	
+
 	ASDCP::JP2K::PictureDescriptor desc_A;
 	if (ASDCP_FAILURE (reader_A.FillPictureDescriptor (desc_A))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
@@ -57,18 +57,18 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 	if (ASDCP_FAILURE (reader_B.FillPictureDescriptor (desc_B))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
-	
+
 	if (!descriptor_equals (desc_A, desc_B, note)) {
 		return false;
 	}
-	
+
 	shared_ptr<const StereoPictureAsset> other_picture = dynamic_pointer_cast<const StereoPictureAsset> (other);
 	assert (other_picture);
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 		shared_ptr<const StereoPictureFrame> frame_A = get_frame (i);
 		shared_ptr<const StereoPictureFrame> frame_B = other_picture->get_frame (i);
-		
+
 		if (!frame_buffer_equals (
 			    i, opt, note,
 			    frame_A->left_j2k_data(), frame_A->left_j2k_size(),
@@ -76,7 +76,7 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 			    )) {
 			return false;
 		}
-		
+
 		if (!frame_buffer_equals (
 			    i, opt, note,
 			    frame_A->right_j2k_data(), frame_A->right_j2k_size(),
@@ -92,7 +92,7 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 StereoPictureAsset::StereoPictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name)
 	: PictureAsset (directory, mxf_name)
 {
-	
+
 }
 
 void
@@ -103,7 +103,7 @@ StereoPictureAsset::read ()
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
 	}
-	
+
 	ASDCP::JP2K::PictureDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));

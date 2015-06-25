@@ -43,11 +43,11 @@ libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const LUT> 
 	struct {
 		double x, y, z;
 	} s;
-	
+
 	struct {
 		double r, g, b;
 	} d;
-	
+
 	int* xyz_x = xyz_frame->data (0);
 	int* xyz_y = xyz_frame->data (1);
 	int* xyz_z = xyz_frame->data (2);
@@ -55,13 +55,13 @@ libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const LUT> 
 	shared_ptr<ARGBFrame> argb_frame (new ARGBFrame (xyz_frame->size ()));
 
 	uint8_t* argb = argb_frame->data ();
-	
+
 	for (int y = 0; y < xyz_frame->size().height; ++y) {
 		uint8_t* argb_line = argb;
 		for (int x = 0; x < xyz_frame->size().width; ++x) {
 
 			assert (*xyz_x >= 0 && *xyz_y >= 0 && *xyz_z >= 0 && *xyz_x < 4096 && *xyz_y < 4096 && *xyz_z < 4096);
-			
+
 			/* In gamma LUT */
 			s.x = lut_in->lut()[*xyz_x++];
 			s.y = lut_in->lut()[*xyz_y++];
@@ -76,23 +76,23 @@ libdcp::xyz_to_rgb (shared_ptr<const XYZFrame> xyz_frame, shared_ptr<const LUT> 
 			d.r = ((s.x * colour_matrix::xyz_to_rgb[0][0]) + (s.y * colour_matrix::xyz_to_rgb[0][1]) + (s.z * colour_matrix::xyz_to_rgb[0][2]));
 			d.g = ((s.x * colour_matrix::xyz_to_rgb[1][0]) + (s.y * colour_matrix::xyz_to_rgb[1][1]) + (s.z * colour_matrix::xyz_to_rgb[1][2]));
 			d.b = ((s.x * colour_matrix::xyz_to_rgb[2][0]) + (s.y * colour_matrix::xyz_to_rgb[2][1]) + (s.z * colour_matrix::xyz_to_rgb[2][2]));
-			
+
 			d.r = min (d.r, 1.0);
 			d.r = max (d.r, 0.0);
-			
+
 			d.g = min (d.g, 1.0);
 			d.g = max (d.g, 0.0);
-			
+
 			d.b = min (d.b, 1.0);
 			d.b = max (d.b, 0.0);
-			
+
 			/* Out gamma LUT */
 			*argb_line++ = lut_out->lut()[(int) (d.b * max_colour)] * 0xff;
 			*argb_line++ = lut_out->lut()[(int) (d.g * max_colour)] * 0xff;
 			*argb_line++ = lut_out->lut()[(int) (d.r * max_colour)] * 0xff;
 			*argb_line++ = 0xff;
 		}
-		
+
 		argb += argb_frame->stride ();
 	}
 
@@ -110,7 +110,7 @@ libdcp::rgb_to_xyz (
 {
 	assert (lut_in->bit_depth() == 12);
 	assert (lut_out->bit_depth() == 16);
-	
+
 	shared_ptr<XYZFrame> xyz (new XYZFrame (rgb->size ()));
 
 	struct {
@@ -134,16 +134,16 @@ libdcp::rgb_to_xyz (
 			s.r = lut_in->lut()[*p++ >> 4];
 			s.g = lut_in->lut()[*p++ >> 4];
 			s.b = lut_in->lut()[*p++ >> 4];
-			
+
 			/* RGB to XYZ Matrix */
 			d.x = ((s.r * rgb_to_xyz[0][0]) +
 			       (s.g * rgb_to_xyz[0][1]) +
 			       (s.b * rgb_to_xyz[0][2]));
-			
+
 			d.y = ((s.r * rgb_to_xyz[1][0]) +
 			       (s.g * rgb_to_xyz[1][1]) +
 			       (s.b * rgb_to_xyz[1][2]));
-			
+
 			d.z = ((s.r * rgb_to_xyz[2][0]) +
 			       (s.g * rgb_to_xyz[2][1]) +
 			       (s.b * rgb_to_xyz[2][2]));
@@ -160,7 +160,7 @@ libdcp::rgb_to_xyz (
 			e.z = ((d.x * bradford[2][0]) +
 			       (d.y * bradford[2][1]) +
 			       (d.z * bradford[2][2]));
-			
+
 			/* DCI companding */
 			e.x = e.x * DCI_COEFFICIENT * 65535;
 			e.y = e.y * DCI_COEFFICIENT * 65535;
@@ -169,7 +169,7 @@ libdcp::rgb_to_xyz (
 			assert (e.x >= 0 && e.x < 65536);
 			assert (e.y >= 0 && e.y < 65536);
 			assert (e.z >= 0 && e.z < 65536);
-			
+
 			/* Out gamma LUT */
 			xyz->data(0)[jn] = lut_out->lut()[(int) e.x] * 4096;
 			xyz->data(1)[jn] = lut_out->lut()[(int) e.y] * 4096;
@@ -201,6 +201,6 @@ libdcp::xyz_to_xyz (shared_ptr<const Image> xyz_16)
 			++jn;
 		}
 	}
-	
+
 	return xyz_12;
 }

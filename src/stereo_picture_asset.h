@@ -23,15 +23,15 @@
 #include "picture_asset.h"
 
 namespace libdcp {
-	
-/** A 3D (stereoscopic) picture asset */	
+
+/** A 3D (stereoscopic) picture asset */
 class StereoPictureAsset : public PictureAsset
 {
 public:
 	StereoPictureAsset (boost::filesystem::path directory, boost::filesystem::path mxf_name);
 
 	void read ();
-	
+
 	/** Start a progressive write to a StereoPictureAsset */
 	boost::shared_ptr<PictureAssetWriter> start_write (bool);
 

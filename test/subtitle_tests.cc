@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE (subtitles1)
 				   libdcp::Time (0, 0, 0, 1, 250),
 				   libdcp::Time (0, 0, 0, 1, 250)
 				   ));
-							 
+
 	s = subs.subtitles_during (libdcp::Time (0, 0, 7, 190, 250), libdcp::Time (0, 0, 7, 191, 250));
 	BOOST_CHECK_EQUAL (s.size(), 2);
 	BOOST_CHECK_EQUAL (*(s.front().get()), libdcp::Subtitle (

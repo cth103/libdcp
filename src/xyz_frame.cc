@@ -33,7 +33,7 @@ XYZFrame::XYZFrame (opj_image_t* image)
 XYZFrame::XYZFrame (Size size)
 {
 	opj_image_cmptparm_t cmptparm[3];
-	
+
 	for (int i = 0; i < 3; ++i) {
 		cmptparm[i].dx = 1;
 		cmptparm[i].dy = 1;

@@ -63,7 +63,7 @@ void
 PictureAsset::write_to_cpl (xmlpp::Element* node) const
 {
 	MXFAsset::write_to_cpl (node);
-	
+
 	xmlpp::Node::NodeList c = node->get_children ();
 	xmlpp::Node::NodeList::iterator i = c.begin();
 	while (i != c.end() && (*i)->get_name() != cpl_node_name ()) {
@@ -106,7 +106,7 @@ PictureAsset::descriptor_equals (
 //		a.CodingStyleDefault != b.CodingStyleDefault ||
 //		a.QuantizationDefault != b.QuantizationDefault
 		) {
-		
+
 		note (ERROR, "video MXF picture descriptors differ");
 		return false;
 	}
@@ -114,7 +114,7 @@ PictureAsset::descriptor_equals (
 	if (a.ContainerDuration != b.ContainerDuration) {
 		note (ERROR, "video container durations differ");
 	}
-	
+
 //		for (unsigned int j = 0; j < ASDCP::JP2K::MaxComponents; ++j) {
 //			if (a.ImageComponents[j] != b.ImageComponents[j]) {
 //				notes.pack_start ("video MXF picture descriptors differ");
@@ -135,24 +135,24 @@ PictureAsset::frame_buffer_equals (
 		/* Easy result; the J2K data is identical */
 		return true;
 	}
-		
+
 	/* Decompress the images to bitmaps */
 	shared_ptr<XYZFrame> image_A = decompress_j2k (const_cast<uint8_t*> (data_A), size_A, 0);
 	shared_ptr<XYZFrame> image_B = decompress_j2k (const_cast<uint8_t*> (data_B), size_B, 0);
-	
+
 	/* Compare them */
-	
+
 	vector<int> abs_diffs (image_A->size().width * image_A->size().height * 3);
 	int d = 0;
 	int max_diff = 0;
-	
+
 	for (int c = 0; c < 3; ++c) {
-		
+
 		if (image_A->size() != image_B->size()) {
 			note (ERROR, "image sizes for frame " + lexical_cast<string>(frame) + " differ");
 			return false;
 		}
-		
+
 		int const pixels = image_A->size().width * image_A->size().height;
 		for (int j = 0; j < pixels; ++j) {
 			int const t = abs (image_A->data(c)[j] - image_B->data(c)[j]);
@@ -160,23 +160,23 @@ PictureAsset::frame_buffer_equals (
 			max_diff = max (max_diff, t);
 		}
 	}
-		
+
 	uint64_t total = 0;
 	for (vector<int>::iterator j = abs_diffs.begin(); j != abs_diffs.end(); ++j) {
 		total += *j;
 	}
-	
+
 	double const mean = double (total) / abs_diffs.size ();
-	
+
 	uint64_t total_squared_deviation = 0;
 	for (vector<int>::iterator j = abs_diffs.begin(); j != abs_diffs.end(); ++j) {
 		total_squared_deviation += pow (*j - mean, 2);
 	}
-	
+
 	double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
-	
+
 	note (NOTE, "mean difference " + lexical_cast<string> (mean) + ", deviation " + lexical_cast<string> (std_dev));
-	
+
 	if (mean > opt.max_mean_pixel_error) {
 		note (
 			ERROR,
@@ -184,7 +184,7 @@ PictureAsset::frame_buffer_equals (
 			" out of range " + lexical_cast<string>(opt.max_mean_pixel_error) +
 			" in frame " + lexical_cast<string>(frame)
 			);
-		
+
 		return false;
 	}
 
@@ -195,7 +195,7 @@ PictureAsset::frame_buffer_equals (
 			" out of range " + lexical_cast<string>(opt.max_std_dev_pixel_error) +
 			" in frame " + lexical_cast<string>(frame)
 			);
-		
+
 		return false;
 	}
 

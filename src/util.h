@@ -58,11 +58,11 @@ struct Size {
 	float ratio () const {
 		return float (width) / height;
 	}
-	
+
 	int width;
 	int height;
 };
-	
+
 extern bool operator== (Size const & a, Size const & b);
 extern bool operator!= (Size const & a, Size const & b);
 
@@ -85,7 +85,7 @@ extern std::string tm_to_string (struct tm *);
 extern std::string utc_offset_to_string (boost::posix_time::time_duration);
 extern std::string ptime_to_string (boost::posix_time::ptime);
 extern FILE * fopen_boost (boost::filesystem::path, std::string);
-	
+
 }
 
 #endif

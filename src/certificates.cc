@@ -44,7 +44,7 @@ Certificate::Certificate (X509* c)
 	: _certificate (c)
 	, _public_key (0)
 {
-	
+
 }
 
 Certificate::Certificate (boost::filesystem::path filename)
@@ -55,7 +55,7 @@ Certificate::Certificate (boost::filesystem::path filename)
 	if (!f) {
 		throw FileError ("could not open file", filename, errno);
 	}
-	
+
 	if (!PEM_read_X509 (f, &_certificate, 0, 0)) {
 		throw MiscError ("could not read X509 certificate");
 	}
@@ -108,7 +108,7 @@ Certificate::operator= (Certificate const & other)
 	_certificate = 0;
 	RSA_free (_public_key);
 	_public_key = 0;
-	
+
 	read_string (other.certificate ());
 
 	return *this;
@@ -118,12 +118,12 @@ string
 Certificate::certificate (bool with_begin_end) const
 {
 	assert (_certificate);
-	
+
 	BIO* bio = BIO_new (BIO_s_mem ());
 	if (!bio) {
 		throw MiscError ("could not create memory BIO");
 	}
-	
+
 	PEM_write_bio_X509 (bio, _certificate);
 
 	string s;
@@ -139,7 +139,7 @@ Certificate::certificate (bool with_begin_end) const
 		boost::replace_all (s, "-----BEGIN CERTIFICATE-----\n", "");
 		boost::replace_all (s, "\n-----END CERTIFICATE-----\n", "");
 	}
-	
+
 	return s;
 }
 
@@ -216,11 +216,11 @@ Certificate::serial () const
 
 	ASN1_INTEGER* s = X509_get_serialNumber (_certificate);
 	assert (s);
-	
+
 	BIGNUM* b = ASN1_INTEGER_to_BN (s, 0);
 	char* c = BN_bn2dec (b);
 	BN_free (b);
-	
+
 	string st (c);
 	OPENSSL_free (c);
 
@@ -231,7 +231,7 @@ string
 Certificate::thumbprint () const
 {
 	assert (_certificate);
-	
+
 	uint8_t buffer[8192];
 	uint8_t* p = buffer;
 	i2d_X509_CINF (_certificate->cert_info, &p);

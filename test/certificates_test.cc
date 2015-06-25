@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE (certificates)
 
 	/* Leaf */
 	BOOST_CHECK_EQUAL (*i, c.leaf ());
-	
+
 	BOOST_CHECK_EQUAL (
 		c.leaf()->issuer(),
 		"dnQualifier=bmtwThq3srgxIAeRMjX6BFhgLDw=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE (certificates)
 		c.leaf()->subject(),
 		"dnQualifier=d95fGDzERNdxfYPgphvAR8A18L4=,CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
-	
+
 	++i;
 
 	/* Intermediate */
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE (certificates)
 		(*i)->subject(),
 		"dnQualifier=bmtwThq3srgxIAeRMjX6BFhgLDw=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
-	
+
 	++i;
 
 	/* Root */

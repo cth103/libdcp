@@ -52,14 +52,14 @@ MonoPictureAsset::create (boost::function<boost::filesystem::path (int)> get_pat
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (FileError ("could not open JPEG2000 file for reading", get_path(0), r));
 	}
-	
+
 	ASDCP::JP2K::PictureDescriptor picture_desc;
 	j2k_parser.FillPictureDescriptor (picture_desc);
 	picture_desc.EditRate = ASDCP::Rational (_edit_rate, 1);
-	
+
 	ASDCP::WriterInfo writer_info;
 	fill_writer_info (&writer_info);
-	
+
 	ASDCP::JP2K::MXFWriter mxf_writer;
 	r = mxf_writer.OpenWrite (path().string().c_str(), writer_info, picture_desc, 16384, false);
 	if (ASDCP_FAILURE (r)) {
@@ -84,7 +84,7 @@ MonoPictureAsset::create (boost::function<boost::filesystem::path (int)> get_pat
 			(*_progress) (0.5 * float (i) / _intrinsic_duration);
 		}
 	}
-	
+
 	r = mxf_writer.Finalize();
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in finalising video MXF", path().string(), r));
@@ -99,7 +99,7 @@ MonoPictureAsset::read ()
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
 	}
-	
+
 	ASDCP::JP2K::PictureDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
@@ -136,13 +136,13 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, bo
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
 	}
-	
+
 	ASDCP::JP2K::MXFReader reader_B;
 	r = reader_B.OpenRead (other->path().string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", path().string(), r));
 	}
-	
+
 	ASDCP::JP2K::PictureDescriptor desc_A;
 	if (ASDCP_FAILURE (reader_A.FillPictureDescriptor (desc_A))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
@@ -151,7 +151,7 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, bo
 	if (ASDCP_FAILURE (reader_B.FillPictureDescriptor (desc_B))) {
 		boost::throw_exception (DCPReadError ("could not read video MXF information"));
 	}
-	
+
 	if (!descriptor_equals (desc_A, desc_B, note)) {
 		return false;
 	}
@@ -163,11 +163,11 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, bo
 		if (i >= other_picture->intrinsic_duration()) {
 			return false;
 		}
-		
+
 		note (PROGRESS, "Comparing video frame " + lexical_cast<string> (i) + " of " + lexical_cast<string> (_intrinsic_duration));
 		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
 		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
-		
+
 		if (!frame_buffer_equals (
 			    i, opt, note,
 			    frame_A->j2k_data(), frame_A->j2k_size(),

@@ -115,7 +115,7 @@ Asset::equals (shared_ptr<const Asset> other, EqualityOptions, boost::function<v
 		note (ERROR, "asset edit rates differ");
 		return false;
 	}
-	
+
 	if (_intrinsic_duration != other->_intrinsic_duration) {
 		note (ERROR, "asset intrinsic durations differ");
 	}

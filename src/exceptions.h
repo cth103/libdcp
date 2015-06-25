@@ -78,7 +78,7 @@ public:
 		: FileError (message, filename, number)
 	{}
 };
-	
+
 /** @brief A miscellaneous exception */
 class MiscError : public StringError
 {
@@ -86,7 +86,7 @@ public:
 	MiscError (std::string const & message)
 		: StringError (message)
 	{}
-	
+
 	~MiscError () throw () {}
 };
 
@@ -97,7 +97,7 @@ public:
 	DCPReadError (std::string const & message)
 		: StringError (message)
 	{}
-	
+
 	~DCPReadError () throw () {}
 };
 
@@ -118,7 +118,7 @@ public:
 	NotEncryptedError (std::string const & asset);
 	~NotEncryptedError () throw () {}
 };
-	
+
 }
 
 #endif

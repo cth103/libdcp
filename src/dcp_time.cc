@@ -73,7 +73,7 @@ Time::Time (string time, int tcr_)
 	if (b.size() != 4) {
 		boost::throw_exception (DCPReadError ("unrecognised time specification"));
 	}
-	
+
 	h = raw_convert<int> (b[0]);
 	m = raw_convert<int> (b[1]);
 	s = raw_convert<int> (b[2]);
@@ -198,7 +198,7 @@ libdcp::operator- (Time a, Time b)
 	} else {
 		r.tcr = a.tcr;
 	}
-	
+
 	r.e = a.e - b.e;
 	if (r.e < 0) {
 		r.e += a.tcr;

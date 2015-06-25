@@ -36,9 +36,9 @@ namespace libdcp {
 class PictureAsset;
 class SoundAsset;
 class SubtitleAsset;
-class KDM;	
+class KDM;
 
-/** @brief A reel within a DCP; the part which actually contains picture, sound and subtitle data */	
+/** @brief A reel within a DCP; the part which actually contains picture, sound and subtitle data */
 class Reel
 {
 public:
@@ -51,7 +51,7 @@ public:
 		, _main_sound (sound)
 		, _main_subtitle (subtitle)
 	{}
-	
+
 	boost::shared_ptr<const PictureAsset> main_picture () const {
 		return _main_picture;
 	}
@@ -59,7 +59,7 @@ public:
 	boost::shared_ptr<const SoundAsset> main_sound () const {
 		return _main_sound;
 	}
-	
+
 	boost::shared_ptr<const SubtitleAsset> main_subtitle () const {
 		return _main_subtitle;
 	}
@@ -69,7 +69,7 @@ public:
 	bool encrypted () const;
 
 	void set_mxf_keys (libdcp::Key);
-	
+
 	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> notes) const;
 
 	void add_kdm (KDM const &);

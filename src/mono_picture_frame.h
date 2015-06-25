@@ -33,7 +33,7 @@ namespace libdcp {
 
 class ARGBFrame;
 
-/** A single frame of a 2D (monoscopic) picture asset */	
+/** A single frame of a 2D (monoscopic) picture asset */
 class MonoPictureFrame
 {
 public:

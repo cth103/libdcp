@@ -37,9 +37,9 @@ namespace ASDCP {
 namespace libdcp
 {
 
-class MXFMetadata;	
+class MXFMetadata;
 
-/** @brief Parent class for assets which have MXF files */	
+/** @brief Parent class for assets which have MXF files */
 class MXFAsset : public Asset
 {
 public:
@@ -50,13 +50,13 @@ public:
 	 *  @param file_name Name of MXF file.
 	 */
 	MXFAsset (boost::filesystem::path directory, boost::filesystem::path file_name);
-	
+
 	~MXFAsset ();
 
 	virtual bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 	virtual void write_to_cpl (xmlpp::Element *) const;
 	virtual std::string key_type () const = 0;
-	
+
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
 	 */
@@ -77,7 +77,7 @@ public:
 	std::string key_id () const {
 		return _key_id;
 	}
-	
+
 	void set_key (Key);
 
 	boost::optional<Key> key () const {
@@ -112,7 +112,7 @@ protected:
 	virtual std::pair<std::string, std::string> cpl_node_attribute () const {
 		return std::make_pair ("", "");
 	}
-	
+
 	/** Signal to emit to report progress, or 0 */
 	boost::signals2::signal<void (float)>* _progress;
 	ASDCP::AESEncContext* _encryption_context;

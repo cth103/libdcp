@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE (dcp_test)
 	ms->set_channels (2);
 	ms->set_metadata (mxf_meta);
 	ms->create (wav);
-	
+
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);
 

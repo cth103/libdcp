@@ -89,20 +89,20 @@ MXFAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::fun
 	if (!Asset::equals (other, opt, note)) {
 		return false;
 	}
-	
+
 	shared_ptr<const MXFAsset> other_mxf = dynamic_pointer_cast<const MXFAsset> (other);
 	if (!other_mxf) {
 		note (ERROR, "comparing an MXF asset with a non-MXF asset");
 		return false;
 	}
-	
+
 	if (_file_name != other_mxf->_file_name) {
 		note (ERROR, "MXF names differ");
 		if (!opt.mxf_names_can_differ) {
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -135,7 +135,7 @@ MXFAsset::set_key (Key key)
 		/* No key ID so far; we now need one */
 		_key_id = make_uuid ();
 	}
-	
+
 	_decryption_context = new ASDCP::AESDecContext;
 	if (ASDCP_FAILURE (_decryption_context->InitKey (_key->value ()))) {
 		throw MiscError ("could not set up decryption context");
@@ -145,9 +145,9 @@ MXFAsset::set_key (Key key)
 	if (ASDCP_FAILURE (_encryption_context->InitKey (_key->value ()))) {
 		throw MiscError ("could not set up encryption context");
 	}
-	
+
 	uint8_t cbc_buffer[ASDCP::CBC_BLOCK_SIZE];
-	
+
 	Kumu::FortunaRNG rng;
 	if (ASDCP_FAILURE (_encryption_context->SetIVec (rng.FillRandom (cbc_buffer, ASDCP::CBC_BLOCK_SIZE)))) {
 		throw MiscError ("could not set up CBC initialization vector");

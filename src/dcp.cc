@@ -71,7 +71,7 @@ DCP::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<const Sig
 
 	string pkl_uuid = make_uuid ();
 	string pkl_path = write_pkl (pkl_uuid, interop, metadata, signer);
-	
+
 	write_volindex (interop);
 	write_assetmap (pkl_uuid, boost::filesystem::file_size (pkl_path), interop, metadata);
 }
@@ -80,7 +80,7 @@ std::string
 DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, shared_ptr<const Signer> signer) const
 {
 	assert (!_cpls.empty ());
-	
+
 	boost::filesystem::path p;
 	p /= _directory;
 	stringstream s;
@@ -94,7 +94,7 @@ DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, sha
 	} else {
 		pkl = doc.create_root_node("PackingList", "http://www.smpte-ra.org/schemas/429-8/2007/PKL");
 	}
-	
+
 	if (signer) {
 		pkl->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	}
@@ -111,7 +111,7 @@ DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, sha
 	for (list<shared_ptr<const Asset> >::const_iterator i = a.begin(); i != a.end(); ++i) {
 		(*i)->write_to_pkl (asset_list, interop);
 	}
-	
+
 	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
 		(*i)->write_to_pkl (asset_list, interop);
 	}
@@ -119,7 +119,7 @@ DCP::write_pkl (string pkl_uuid, bool interop, XMLMetadata const & metadata, sha
 	if (signer) {
 		signer->sign (pkl, interop);
 	}
-		
+
 	doc.write_to_file (p.string (), "UTF-8");
 	return p.string ();
 }
@@ -178,7 +178,7 @@ DCP::write_assetmap (string pkl_uuid, int pkl_length, bool interop, XMLMetadata 
 		root->add_child("IssueDate")->add_child_text (metadata.issue_date);
 		root->add_child("Issuer")->add_child_text (metadata.issuer);
 	}
-		
+
 	xmlpp::Node* asset_list = root->add_child ("AssetList");
 
 	xmlpp::Node* asset = asset_list->add_child ("Asset");
@@ -190,7 +190,7 @@ DCP::write_assetmap (string pkl_uuid, int pkl_length, bool interop, XMLMetadata 
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
 	chunk->add_child("Length")->add_child_text (raw_convert<string> (pkl_length));
-	
+
 	for (list<shared_ptr<CPL> >::const_iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
 		(*i)->write_to_assetmap (asset_list);
 	}
@@ -229,7 +229,7 @@ DCP::read_assets ()
 				boost::throw_exception (FileError ("could not find AssetMap file", p, -1));
 			}
 		}
-		
+
 	} catch (FileError& e) {
 		boost::throw_exception (FileError ("could not load AssetMap file", e.filename(), e.number ()));
 	}
@@ -241,7 +241,7 @@ DCP::read_assets ()
 
 		boost::filesystem::path t = _directory;
 		t /= (*i)->chunks.front()->path;
-		
+
 		if (boost::algorithm::ends_with (t.string(), ".mxf") || boost::algorithm::ends_with (t.string(), ".ttf")) {
 			continue;
 		}
@@ -267,7 +267,7 @@ DCP::read_assets ()
 			}
 		}
 	}
-	
+
 	if (_files.cpls.empty ()) {
 		boost::throw_exception (DCPReadError ("no CPL files found"));
 	}
@@ -360,12 +360,12 @@ void
 DCP::add_kdm (KDM const & kdm)
 {
 	list<KDMKey> keys = kdm.keys ();
-	
+
 	for (list<shared_ptr<CPL> >::iterator i = _cpls.begin(); i != _cpls.end(); ++i) {
 		for (list<KDMKey>::iterator j = keys.begin(); j != keys.end(); ++j) {
 			if (j->cpl_id() == (*i)->id()) {
 				(*i)->add_kdm (kdm);
-			}				
+			}
 		}
 	}
 }

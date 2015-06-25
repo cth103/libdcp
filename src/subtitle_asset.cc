@@ -102,14 +102,14 @@ SubtitleAsset::read_xml (string xml_file)
 		shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
 		xml->read_file (xml_file);
 		read_xml (xml, true);
-	}		
+	}
 }
 
 void
 SubtitleAsset::read_xml (shared_ptr<cxml::Document> xml, bool smpte)
 {
 	/* XXX: hacks aplenty in here; need separate parsers for DCSubtitle (Interop) and SubtitleReel (SMPTE) */
-	
+
 	/* DCSubtitle */
 	optional<string> x = xml->optional_string_child ("SubtitleID");
 	if (!x) {
@@ -175,14 +175,14 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState& parse_state)
 	if (empty_or_white_space (text)) {
 		return;
 	}
-	
+
 	if (parse_state.text_nodes.empty() || parse_state.subtitle_nodes.empty ()) {
 		return;
 	}
 
 	assert (!parse_state.text_nodes.empty ());
 	assert (!parse_state.subtitle_nodes.empty ());
-	
+
 	libdcp::parse::Font effective_font (parse_state.font_nodes);
 	libdcp::parse::Text effective_text (*parse_state.text_nodes.back ());
 	libdcp::parse::Subtitle effective_subtitle (*parse_state.subtitle_nodes.back ());
@@ -213,10 +213,10 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState& parse_state)
 				effective_subtitle.fade_down_time
 				)
 			);
-		
+
 		_subtitles.push_back (parse_state.current);
 	}
-	
+
 	if (effective_font.italic.get()) {
 		parse_state.current->set_text (parse_state.current->text() + "<i>" + text + "</i>");
 	} else {
@@ -297,7 +297,7 @@ Subtitle::size_in_pixels (int screen_height) const
 	   height is 11 inches, so a 72pt font would be 1/11th of the screen
 	   height.
 	*/
-	
+
 	return _size * screen_height / (11 * 72);
 }
 
@@ -334,7 +334,7 @@ libdcp::operator<< (ostream& s, Subtitle const & sub)
 	} else {
 		s << "non-italic";
 	}
-	
+
 	s << ", size " << sub.size() << ", color " << sub.color()
 	  << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align()) << ", halign " << ((int) sub.h_align()) << "; "
 	  << "effect " << ((int) sub.effect()) << ", effect color " << sub.effect_color();
@@ -487,7 +487,7 @@ SubtitleAsset::xml_as_string () const
 		}
 
 		xmlpp::Element* text = subtitle->add_child ("Text");
-		text->set_attribute ("VAlign", valign_to_string ((*i)->v_align()));		
+		text->set_attribute ("VAlign", valign_to_string ((*i)->v_align()));
 		text->set_attribute ("HAlign", halign_to_string ((*i)->h_align()));
 		text->set_attribute ("VPosition", raw_convert<string> ((*i)->v_position()));
 		text->add_child_text ((*i)->text());

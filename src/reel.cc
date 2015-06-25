@@ -40,7 +40,7 @@ Reel::write_to_cpl (xmlpp::Element* node) const
 	xmlpp::Element* reel = node->add_child ("Reel");
 	reel->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
 	xmlpp::Element* asset_list = reel->add_child ("AssetList");
-	
+
 	if (_main_picture && dynamic_pointer_cast<MonoPictureAsset> (_main_picture)) {
 		/* Mono pictures come before other stuff... */
 		_main_picture->write_to_cpl (asset_list);
@@ -59,7 +59,7 @@ Reel::write_to_cpl (xmlpp::Element* node) const
 		_main_picture->write_to_cpl (asset_list);
 	}
 }
-	
+
 bool
 Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::function<void (NoteType, string)> note) const
 {
@@ -67,7 +67,7 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::f
 		note (ERROR, "reel has different assets");
 		return false;
 	}
-	
+
 	if (_main_picture && !_main_picture->equals (other->_main_picture, opt, note)) {
 		return false;
 	}
@@ -76,7 +76,7 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::f
 		note (ERROR, "reel has different assets");
 		return false;
 	}
-	
+
 	if (_main_sound && !_main_sound->equals (other->_main_sound, opt, note)) {
 		return false;
 	}
@@ -85,7 +85,7 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, boost::f
 		note (ERROR, "reel has different assets");
 		return false;
 	}
-	
+
 	if (_main_subtitle && !_main_subtitle->equals (other->_main_subtitle, opt, note)) {
 		return false;
 	}
@@ -103,7 +103,7 @@ void
 Reel::add_kdm (KDM const & kdm)
 {
 	list<KDMKey> keys = kdm.keys ();
-	
+
 	for (list<KDMKey>::iterator i = keys.begin(); i != keys.end(); ++i) {
 		if (i->key_id() == _main_picture->key_id()) {
 			_main_picture->set_key (i->key ());

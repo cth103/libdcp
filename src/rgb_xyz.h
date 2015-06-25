@@ -21,11 +21,11 @@
 
 namespace libdcp {
 
-class ARGBFrame;	
+class ARGBFrame;
 class XYZFrame;
 class LUT;
 class Image;
-	
+
 extern boost::shared_ptr<ARGBFrame> xyz_to_rgb (
 	boost::shared_ptr<const XYZFrame>, boost::shared_ptr<const LUT>, boost::shared_ptr<const LUT>
 	);
@@ -36,5 +36,5 @@ extern boost::shared_ptr<XYZFrame> rgb_to_xyz (
 	);
 
 extern boost::shared_ptr<XYZFrame> xyz_to_xyz (boost::shared_ptr<const Image>);
-	
+
 }

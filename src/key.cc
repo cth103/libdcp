@@ -68,7 +68,7 @@ Key::operator= (Key const & other)
 	if (this == &other) {
 		return *this;
 	}
-	
+
 	memcpy (_value, other._value, ASDCP::KeyLen);
 	return *this;
 }
@@ -77,7 +77,7 @@ string
 Key::hex () const
 {
 	stringstream g;
-	
+
 	for (unsigned int i = 0; i < ASDCP::KeyLen; ++i) {
 		g << setw(2) << setfill('0') << std::hex << static_cast<int> (_value[i]);
 	}

@@ -85,7 +85,7 @@ public:
 		boost::posix_time::ptime until,
 		Key key
 		);
-	
+
 	KDMKey (KDMKey const &);
 
 	KDMKey& operator= (KDMKey const &);
@@ -94,7 +94,7 @@ public:
 	std::string cpl_id () const {
 		return _cpl_id;
 	}
-	
+
 	/** @return ID of the key */
 	std::string key_id () const {
 		return _key_id;
@@ -119,10 +119,10 @@ public:
 	 *  @return The data block encrypted with a certificate's public key and converted to base 64.
 	 */
 	std::string encrypted_base64 (boost::shared_ptr<const Certificate> cert) const;
-	
+
 private:
 	friend class ::kdm_key_test;
-	
+
 	void get (uint8_t *, uint8_t const **, int) const;
 	std::string get (uint8_t const **, int) const;
 	std::string get_uuid (uint8_t const **) const;
@@ -131,7 +131,7 @@ private:
 	void put_uuid (uint8_t **, std::string) const;
 
 	friend bool operator== (KDMKey const &, KDMKey const &);
-	
+
 	uint8_t _signer_thumbprint[20];
 	std::string _cpl_id;
 	std::string _key_type;
@@ -167,7 +167,7 @@ public:
 		DCI_SPECIFIC
 	};
 
-	
+
 	/** Create a new KDM.
 	 *  @param cpl CPL file that the KDM is for.
 	 *  @param signer Certificate chain to sign the KDM with.

@@ -100,7 +100,7 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (FileError ("could not open WAV file for reading", get_path(LEFT), r));
 	}
-	
+
 	ASDCP::PCM::AudioDescriptor audio_desc;
 	pcm_parser_channel[0]->FillAudioDescriptor (audio_desc);
 	audio_desc.ChannelCount = 0;
@@ -135,7 +135,7 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 	for (int i = 0; i < _channels; ++i) {
 
 		boost::filesystem::path const path = get_path (channels[i]);
-		
+
 		Kumu::Result_t r = pcm_parser_channel[i]->OpenRead (path.string().c_str(), asdcp_edit_rate);
 		if (ASDCP_FAILURE (r)) {
 			boost::throw_exception (FileError ("could not open WAV file for reading", path, r));
@@ -160,7 +160,7 @@ SoundAsset::create (boost::function<boost::filesystem::path (Channel)> get_path)
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (FileError ("could not open audio MXF for writing", path().string(), r));
 	}
-	
+
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 
 		for (int j = 0; j < _channels; ++j) {
@@ -218,7 +218,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::f
 	if (!MXFAsset::equals (other, opt, note)) {
 		return false;
 	}
-		     
+
 	ASDCP::PCM::MXFReader reader_A;
 	Kumu::Result_t r = reader_A.OpenRead (path().string().c_str());
 	if (ASDCP_FAILURE (r)) {
@@ -239,7 +239,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::f
 	if (ASDCP_FAILURE (reader_B.FillAudioDescriptor (desc_B))) {
 		boost::throw_exception (DCPReadError ("could not read audio MXF information"));
 	}
-	
+
 	if (
 		desc_A.EditRate != desc_B.EditRate ||
 		desc_A.AudioSamplingRate != desc_B.AudioSamplingRate ||
@@ -252,28 +252,28 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, boost::f
 		desc_A.ContainerDuration != desc_B.ContainerDuration
 //		desc_A.ChannelFormat != desc_B.ChannelFormat ||
 		) {
-		
+
 		note (ERROR, "audio MXF picture descriptors differ");
 		return false;
 	}
-	
+
 	ASDCP::PCM::FrameBuffer buffer_A (1 * Kumu::Megabyte);
 	ASDCP::PCM::FrameBuffer buffer_B (1 * Kumu::Megabyte);
-	
+
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 		if (ASDCP_FAILURE (reader_A.ReadFrame (i, buffer_A))) {
 			boost::throw_exception (DCPReadError ("could not read audio frame"));
 		}
-		
+
 		if (ASDCP_FAILURE (reader_B.ReadFrame (i, buffer_B))) {
 			boost::throw_exception (DCPReadError ("could not read audio frame"));
 		}
-		
+
 		if (buffer_A.Size() != buffer_B.Size()) {
 			note (ERROR, "sizes of audio data for frame " + lexical_cast<string>(i) + " differ");
 			return false;
 		}
-		
+
 		if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
 			for (uint32_t i = 0; i < buffer_A.Size(); ++i) {
 				int const d = abs (buffer_A.RoData()[i] - buffer_B.RoData()[i]);
@@ -319,7 +319,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
 	, _frame_buffer_offset (0)
 {
 	_state->encryption_context = a->encryption_context ();
-	
+
 	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
 	_state->audio_desc.EditRate = ASDCP::Rational (_asset->edit_rate(), 1);
 	_state->audio_desc.AudioSamplingRate = ASDCP::Rational (_asset->sampling_rate(), 1);
@@ -334,13 +334,13 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* a)
 	   in ASDCP's WriteMXFFooter, but it stops a valgrind warning.
 	*/
 	_state->audio_desc.ContainerDuration = 0;
-	
+
 	_state->frame_buffer.Capacity (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
 	_state->frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
 	memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
-	
+
 	_asset->fill_writer_info (&_state->writer_info);
-	
+
 	Kumu::Result_t r = _state->mxf_writer.OpenWrite (_asset->path().string().c_str(), _state->writer_info, _state->audio_desc);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (FileError ("could not open audio MXF for writing", _asset->path().string(), r));
@@ -391,7 +391,7 @@ SoundAssetWriter::finalize ()
 	if (_frame_buffer_offset > 0) {
 		write_current_frame ();
 	}
-	
+
 	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
 		boost::throw_exception (MiscError ("could not finalise audio MXF"));
 	}

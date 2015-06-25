@@ -86,7 +86,7 @@ static void command (string cmd)
  *  @param openssl openssl binary name (or full path if openssl is not on the system path).
  *  @return SHA1 digest of corresponding public key, with escaped / characters.
  */
-	
+
 static string
 public_key_digest (boost::filesystem::path private_key, boost::filesystem::path openssl)
 {
@@ -119,7 +119,7 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	}
 
 	/* Decode the base64 of the public key */
-		
+
 	unsigned char buffer[512];
 	int const N = libdcp::base64_decode (pub, buffer, 1024);
 
@@ -143,9 +143,9 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	string dig = Kumu::base64encode (digest, SHA_DIGEST_LENGTH, digest_base64, 64);
 #ifdef LIBDCP_WINDOWS
 	boost::replace_all (dig, "/", "\\/");
-#else	
+#else
 	boost::replace_all (dig, "/", "\\\\/");
-#endif	
+#endif
 	return dig;
 }
 
@@ -202,7 +202,7 @@ libdcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem:
 		  << "OU = Organization unit\n"
 		  << "CN = Entity and dnQualifier\n";
 	}
-		
+
 	string const inter_subject = "/O=example.org/OU=example.org/CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION/dnQualifier="
 		+ public_key_digest ("intermediate.key", openssl);
 
@@ -213,7 +213,7 @@ libdcp::make_signer_chain (boost::filesystem::path directory, boost::filesystem:
 		command (s.str().c_str());
 	}
 
-	
+
 	command (
 		quoted_openssl +
 		" x509 -req -sha256 -days 3649 -CA ca.self-signed.pem -CAkey ca.key -set_serial 6"

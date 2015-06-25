@@ -99,7 +99,7 @@ enum Eye
 	EYE_LEFT,
 	EYE_RIGHT
 };
-	
+
 class Fraction
 {
 public:
@@ -113,9 +113,9 @@ public:
 
 extern bool operator== (Fraction const & a, Fraction const & b);
 extern bool operator!= (Fraction const & a, Fraction const & b);
-	
+
 struct EqualityOptions {
-	EqualityOptions () 
+	EqualityOptions ()
 		: max_mean_pixel_error (0)
 		, max_std_dev_pixel_error (0)
 		, max_audio_sample_error (0)
@@ -130,7 +130,7 @@ struct EqualityOptions {
 	bool mxf_names_can_differ;
 };
 
-/* Win32 defines this */	
+/* Win32 defines this */
 #undef ERROR
 
 enum NoteType {

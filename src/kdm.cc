@@ -50,14 +50,14 @@ KDM::KDM (boost::filesystem::path kdm, boost::filesystem::path private_key)
 	: _xml_kdm (new xml::DCinemaSecurityMessage (kdm))
 {
 	/* Read the private key */
-	   
+
 	FILE* private_key_file = fopen_boost (private_key, "r");
 	if (!private_key_file) {
 		throw FileError ("could not find RSA private key file", private_key, errno);
 	}
-	
+
 	RSA* rsa = PEM_read_RSAPrivateKey (private_key_file, 0, 0, 0);
-	fclose (private_key_file);	
+	fclose (private_key_file);
 	if (!rsa) {
 		throw FileError ("could not read RSA private key file", private_key, errno);
 	}
@@ -106,7 +106,7 @@ KDM::KDM (
 	*/
 
 	parse::CPL cpl (cpl_file);
-	
+
 	xml::AuthenticatedPublic& apu = _xml_kdm->authenticated_public;
 
 	/* AuthenticatedPublic */
@@ -167,7 +167,7 @@ KDM::KDM (
 			if ((*i)->asset_list->main_picture->key_id.empty ()) {
 				throw NotEncryptedError ("MainPicture");
 			}
-			
+
 			KDMKey kkey (
 				signer, cpl.id.substr (9), "MDIK", (*i)->asset_list->main_picture->key_id.substr (9),
 				not_valid_before, not_valid_after, key
@@ -190,17 +190,17 @@ KDM::KDM (
 			_keys.push_back (kkey);
 			_xml_kdm->authenticated_private.encrypted_keys.push_back (kkey.encrypted_base64 (recipient_cert));
 		}
-		
+
 		if ((*i)->asset_list->main_sound) {
 			if ((*i)->asset_list->main_sound->key_id.empty ()) {
 				throw NotEncryptedError ("MainSound");
 			}
-			
+
 			KDMKey kkey (
 				signer, cpl.id.substr (9), "MDAK", (*i)->asset_list->main_sound->key_id.substr (9),
 				not_valid_before, not_valid_after, key
 				);
-			
+
 			_keys.push_back (kkey);
 			_xml_kdm->authenticated_private.encrypted_keys.push_back (kkey.encrypted_base64 (recipient_cert));
 		}
@@ -234,7 +234,7 @@ KDM::operator= (KDM const & other)
 
 	return *this;
 }
-     
+
 void
 KDM::as_xml (boost::filesystem::path path) const
 {
@@ -334,7 +334,7 @@ KDMKey::encrypted_base64 (shared_ptr<const Certificate> recipient_cert) const
 	assert (_key_type.length() == 4);
 	assert (_not_valid_before.length() == 25);
 	assert (_not_valid_after.length() == 25);
-	
+
 	/* XXX: SMPTE only */
 	uint8_t block[138];
 	uint8_t* p = block;
@@ -396,7 +396,7 @@ string
 KDMKey::get_uuid (unsigned char const ** p) const
 {
 	stringstream g;
-	
+
 	for (int i = 0; i < 16; ++i) {
 		g << setw(2) << setfill('0') << hex << static_cast<int> (**p);
 		(*p)++;

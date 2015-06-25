@@ -83,7 +83,7 @@ StereoPictureFrame::argb_frame (Eye eye, int reduce, float srgb_gamma) const
 		xyz_frame = decompress_j2k (const_cast<uint8_t*> (_buffer->Right.RoData()), _buffer->Right.Size(), reduce);
 		break;
 	}
-	
+
 	return xyz_to_rgb (xyz_frame, GammaLUT::cache.get (12, DCI_GAMMA), GammaLUT::cache.get (12, 1 / srgb_gamma));
 }
 

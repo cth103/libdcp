@@ -33,7 +33,7 @@ namespace libdcp {
 
 class ARGBFrame;
 
-/** A single frame of a 3D (stereoscopic) picture asset */	
+/** A single frame of a 3D (stereoscopic) picture asset */
 class StereoPictureFrame
 {
 public:

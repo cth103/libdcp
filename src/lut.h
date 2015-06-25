@@ -39,7 +39,7 @@ public:
 	virtual ~LUT() {
 		delete[] _lut;
 	}
-	
+
 	float const * lut() const {
 		return _lut;
 	}

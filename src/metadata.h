@@ -47,7 +47,7 @@ public:
 	XMLMetadata ();
 
 	void set_issue_date_now ();
-	
+
 	std::string issuer;
 	std::string creator;
 	std::string issue_date;

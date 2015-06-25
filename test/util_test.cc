@@ -27,7 +27,7 @@ using std::string;
 BOOST_AUTO_TEST_CASE (base64_decode_test)
 {
 	int const N = 256;
-	
+
 	ifstream f ("test/data/base64_test");
 	BOOST_CHECK (f.good ());
 	string s;

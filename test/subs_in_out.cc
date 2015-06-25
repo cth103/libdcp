@@ -9,7 +9,7 @@ int main (int argc, char* argv[])
 		cerr << "Syntax: " << argv[0] << " <subtitle file>\n";
 		exit (EXIT_FAILURE);
 	}
-	
+
 	libdcp::SubtitleAsset s ("foo", "bar", "baz");
 	s.read_xml (argv[1]);
 	cout << s.xml_as_string ();

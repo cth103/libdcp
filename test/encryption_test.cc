@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 	boost::filesystem::remove_all ("build/test/signer");
 	boost::filesystem::create_directory ("build/test/signer");
 	libdcp::make_signer_chain ("build/test/signer", "openssl");
-	
+
 	Kumu::libdcp_test = true;
 
 	libdcp::MXFMetadata mxf_metadata;
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 	xml_metadata.issuer = "OpenDCP 0.0.25";
 	xml_metadata.creator = "OpenDCP 0.0.25";
 	xml_metadata.issue_date = "2012-07-17T04:45:18+00:00";
-	
+
 	boost::filesystem::remove_all ("build/test/DCP/bar");
 	boost::filesystem::create_directories ("build/test/DCP/bar");
 	libdcp::DCP d ("build/test/DCP/bar");
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 	shared_ptr<libdcp::CPL> cpl (new libdcp::CPL ("build/test/DCP/bar", "A Test DCP", libdcp::FEATURE, 24, 24));
 
 	libdcp::Key key;
-	
+
 	shared_ptr<libdcp::MonoPictureAsset> mp (new libdcp::MonoPictureAsset ("build/test/DCP/bar", "video.mxf"));
 	mp->set_progress (&d.Progress);
 	mp->set_edit_rate (24);
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE (encryption)
 	ms->set_metadata (mxf_metadata);
 	ms->set_key (key);
 	ms->create (wav);
-	
+
 	cpl->add_reel (shared_ptr<libdcp::Reel> (new libdcp::Reel (mp, ms, shared_ptr<libdcp::SubtitleAsset> ())));
 	d.add_cpl (cpl);
 
@@ -115,18 +115,18 @@ BOOST_AUTO_TEST_CASE (encryption)
 		);
 
 	kdm.as_xml ("build/test/bar.kdm.xml");
-	
+
 	int r = system (
 		"xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/bar.kdm.xml "
 		"> build/test/xmllint.log 2>&1 < /dev/null"
 		);
 
-#ifdef DCPOMATIC_POSIX	
+#ifdef DCPOMATIC_POSIX
 	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
 #else
 	BOOST_CHECK_EQUAL (r, 0);
-#endif	
-		
+#endif
+
 	r = system ("xmlsec1 verify "
 		"--pubkey-cert-pem test/ref/crypt/leaf.signed.pem "
 		"--trusted-pem test/ref/crypt/intermediate.signed.pem "
@@ -134,10 +134,10 @@ BOOST_AUTO_TEST_CASE (encryption)
 		"--id-attr:Id http://www.smpte-ra.org/schemas/430-3/2006/ETM:AuthenticatedPublic "
 		"--id-attr:Id http://www.smpte-ra.org/schemas/430-3/2006/ETM:AuthenticatedPrivate "
 		    "build/test/bar.kdm.xml > build/test/xmlsec1.log 2>&1 < /dev/null");
-	
-#ifdef DCPOMATIC_POSIX	
+
+#ifdef DCPOMATIC_POSIX
 	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
 #else
 	BOOST_CHECK_EQUAL (r, 0);
-#endif	
+#endif
 }

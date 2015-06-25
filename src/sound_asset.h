@@ -48,13 +48,13 @@ private:
 	/* no copy construction */
 	SoundAssetWriter (SoundAssetWriter const &);
 	SoundAssetWriter& operator= (SoundAssetWriter const &);
-	
+
 	void write_current_frame ();
 
 	/* do this with an opaque pointer so we don't have to include
 	   ASDCP headers
 	*/
-	   
+
 	struct ASDCPState;
 	boost::shared_ptr<ASDCPState> _state;
 
@@ -91,7 +91,7 @@ public:
 	void create (boost::function<boost::filesystem::path (Channel)> get_path);
 
 	boost::shared_ptr<SoundAssetWriter> start_write ();
-	
+
 	bool equals (boost::shared_ptr<const Asset> other, EqualityOptions opt, boost::function<void (NoteType, std::string)> note) const;
 
 	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
@@ -99,7 +99,7 @@ public:
 	void set_channels (int c) {
 		_channels = c;
 	}
-	
+
 	int channels () const {
 		return _channels;
 	}
@@ -117,7 +117,7 @@ protected:
 	std::string asdcp_kind () const {
 		return "Sound";
 	}
-	
+
 private:
 	std::string key_type () const;
 	void construct (boost::function<boost::filesystem::path (Channel)> get_path);

@@ -28,7 +28,7 @@ public:
 	Image (Size);
 	Image (Image const &);
 	Image (boost::shared_ptr<const Image>);
-	
+
 	virtual ~Image () {}
 	virtual uint8_t** data () const = 0;
 	virtual int* stride () const = 0;
@@ -39,7 +39,7 @@ public:
 
 protected:
 	void swap (Image &);
-	
+
 	Size _size;
 
 };

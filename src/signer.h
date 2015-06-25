@@ -41,11 +41,11 @@ public:
 	CertificateChain const & certificates () const {
 		return _certificates;
 	}
-	
-private:	
+
+private:
 
 	void add_signer (xmlpp::Element* parent, std::string ns) const;
-	
+
 	CertificateChain _certificates;
 	/** Filename of signer key */
 	boost::filesystem::path _key;

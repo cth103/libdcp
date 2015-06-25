@@ -101,11 +101,11 @@ public:
 	int duration () const {
 		return _duration;
 	}
-	
+
 	int intrinsic_duration () const {
 		return _intrinsic_duration;
 	}
-	
+
 	int edit_rate () const {
 		return _edit_rate;
 	}
@@ -113,7 +113,7 @@ public:
 	void set_entry_point (int e) {
 		_entry_point = e;
 	}
-	
+
 	void set_duration (int d) {
 		_duration = d;
 	}
@@ -132,7 +132,7 @@ protected:
 
 	/** @return Interop PKL asdcpKind for the &lt;Type&gt; tag e.g. Picture, Sound etc. */
 	virtual std::string asdcp_kind () const = 0;
-	
+
 	std::string digest () const;
 
 	/** Directory that our MXF or XML file is in */
@@ -150,7 +150,7 @@ protected:
 	/** Length to present in frames */
 	int _duration;
 
-private:	
+private:
 	/** Digest of our MXF or XML file */
 	mutable std::string _digest;
 };

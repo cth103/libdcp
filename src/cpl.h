@@ -37,14 +37,14 @@ namespace parse {
 	class AssetMap;
 	class AssetMapAsset;
 }
-	
+
 class Asset;
 class Reel;
 class XMLMetadata;
 class MXFMetadata;
 class Signer;
 class KDM;
-	
+
 /** @brief A CPL within a DCP */
 class CPL
 {
@@ -53,7 +53,7 @@ public:
 	CPL (boost::filesystem::path, std::string file, std::list<PathAssetMap> asset_maps, bool require_mxfs = true);
 
 	void add_reel (boost::shared_ptr<Reel> reel);
-	
+
 	/** @return the length in frames */
 	int length () const {
 		return _length;
@@ -93,18 +93,18 @@ public:
 	}
 
 	boost::filesystem::path filename () const;
-	
+
 	bool equals (CPL const & other, EqualityOptions options, boost::function<void (NoteType, std::string)> note) const;
-	
+
 	void write_xml (bool, XMLMetadata const &, boost::shared_ptr<const Signer>) const;
 	void write_to_assetmap (xmlpp::Node *) const;
 	void write_to_pkl (xmlpp::Node *, bool) const;
 
 	void add_kdm (KDM const &);
-	
+
 private:
 	std::pair<std::string, boost::shared_ptr<const parse::AssetMapAsset> > asset_from_id (std::list<PathAssetMap>, std::string id) const;
-	
+
 	boost::filesystem::path _directory;
 	/** the name of the DCP */
 	std::string _name;

@@ -95,7 +95,7 @@ void
 MonoPictureAssetWriter::finalize ()
 {
 	assert (!_finalized);
-	
+
 	Kumu::Result_t r = _state->mxf_writer.Finalize();
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _asset->path().string(), r));

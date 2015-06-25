@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	boost::filesystem::remove_all ("build/test/signer");
 	boost::filesystem::create_directory ("build/test/signer");
 	libdcp::make_signer_chain ("build/test/signer", "openssl");
-	
+
 	libdcp::CertificateChain chain;
 	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/ca.self-signed.pem"))));
 	chain.add (shared_ptr<libdcp::Certificate> (new libdcp::Certificate (boost::filesystem::path ("build/test/signer/intermediate.signed.pem"))));
