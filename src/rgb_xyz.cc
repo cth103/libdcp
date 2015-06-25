@@ -166,9 +166,12 @@ libdcp::rgb_to_xyz (
 			e.y = e.y * DCI_COEFFICIENT * 65535;
 			e.z = e.z * DCI_COEFFICIENT * 65535;
 
-			assert (e.x >= 0 && e.x < 65536);
-			assert (e.y >= 0 && e.y < 65536);
-			assert (e.z >= 0 && e.z < 65536);
+			e.x = max (0.0, e.x);
+			e.y = max (0.0, e.y);
+			e.z = max (0.0, e.z);
+			e.x = min (65535.0, e.x);
+			e.y = min (65535.0, e.y);
+			e.z = min (65535.0, e.z);
 
 			/* Out gamma LUT */
 			xyz->data(0)[jn] = lut_out->lut()[(int) e.x] * 4096;
