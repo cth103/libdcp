@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ ColourConversion const &
 ColourConversion::rec601_to_xyz ()
 {
 	static ColourConversion* c = new ColourConversion (
-		shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (1 / 0.45, 0.081, 0.099, 4.5)),
+		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.2)),
 		YUV_TO_RGB_REC601,
 		Chromaticity (0.64, 0.33),
 		Chromaticity (0.3, 0.6),
@@ -68,7 +68,7 @@ ColourConversion const &
 ColourConversion::rec709_to_xyz ()
 {
 	static ColourConversion* c = new ColourConversion (
-		shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (1 / 0.45, 0.081, 0.099, 4.5)),
+		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.2)),
 		YUV_TO_RGB_REC709,
 		Chromaticity (0.64, 0.33),
 		Chromaticity (0.3, 0.6),
