@@ -73,9 +73,9 @@ BOOST_AUTO_TEST_CASE (colour_conversion_test2)
 {
 	ColourConversion cc = ColourConversion::rec709_to_xyz ();
 
-	check_modified_gamma (cc.in(), 8, false, 1 / 0.45, 0.081, 0.099, 4.5);
-	check_modified_gamma (cc.in(), 12, false, 1 / 0.45, 0.081, 0.099, 4.5);
-	check_modified_gamma (cc.in(), 16, false, 1 / 0.45, 0.081, 0.099, 4.5);
+	check_gamma (cc.in(), 8, false, 2.2);
+	check_gamma (cc.in(), 12, false, 2.2);
+	check_gamma (cc.in(), 16, false, 2.2);
 
 	check_gamma (cc.out(), 8, true, 1 / 2.6);
 	check_gamma (cc.out(), 12, true, 1 / 2.6);
