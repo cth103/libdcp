@@ -148,8 +148,6 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 			}
 		}
 	}
-
-
 }
 
 list<shared_ptr<LoadFontNode> >
