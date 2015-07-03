@@ -304,7 +304,11 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, strin
 			text->set_attribute ("HPosition", raw_convert<string> (i->h_position() * 100, 6));
 		}
 		text->set_attribute ("VAlign", valign_to_string (i->v_align()));
-		text->set_attribute ("VPosition", raw_convert<string> (i->v_position() * 100, 6));
+		if (i->v_position() > ALIGN_EPSILON) {
+			text->set_attribute ("VPosition", raw_convert<string> (i->v_position() * 100, 6));
+		} else {
+			text->set_attribute ("VPosition", "0");
+		}
 		text->add_child_text (i->text());
 	}
 }
