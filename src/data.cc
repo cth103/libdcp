@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/data.cc
+ *  @brief Data class.
+ */
+
 #include "data.h"
 #include "util.h"
 #include "exceptions.h"
@@ -24,6 +28,9 @@
 
 using namespace dcp;
 
+/** Construct a Data object from the contents of a file.
+ *  @param file File to read.
+ */
 Data::Data (boost::filesystem::path file)
 {
 	FILE* f = fopen_boost (file, "rb");

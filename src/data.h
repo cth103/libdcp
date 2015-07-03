@@ -17,12 +17,17 @@
 
 */
 
+/** @file  src/data.h
+ *  @brief Data class.
+ */
+
 #include <boost/shared_array.hpp>
 #include <boost/filesystem.hpp>
 #include <stdint.h>
 
 namespace dcp {
 
+/** A block of arbitrary data */
 class Data
 {
 public:

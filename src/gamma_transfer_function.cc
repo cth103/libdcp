@@ -17,6 +17,10 @@
 
 */
 
+/** @file  src/gamma_transfer_function.cc
+ *  @brief GammaTransferFunction class.
+ */
+
 #include "gamma_transfer_function.h"
 #include <cmath>
 

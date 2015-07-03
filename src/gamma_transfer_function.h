@@ -17,10 +17,17 @@
 
 */
 
+/** @file  src/gamma_transfer_function.h
+ *  @brief GammaTransferFunction class.
+ */
+
 #include "transfer_function.h"
 
 namespace dcp {
 
+/** A description of a gamma function of the f(x) = x^g where
+ *  g is the gamma.
+ */
 class GammaTransferFunction : public TransferFunction
 {
 public:
