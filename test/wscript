@@ -37,6 +37,7 @@ def build(bld):
                  encryption_test.cc
                  exception_test.cc
                  fraction_test.cc
+                 gamma_transfer_function_test.cc
                  interop_load_font_test.cc
                  local_time_test.cc
                  kdm_test.cc
@@ -47,7 +48,7 @@ def build(bld):
                  rgb_xyz_test.cc
                  round_trip_test.cc
                  smpte_load_font_test.cc
-                 test.cc 
+                 test.cc
                  text_test.cc
                  util_test.cc
                  write_subtitle_test.cc
