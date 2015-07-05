@@ -31,6 +31,7 @@
 #include "util.h"
 #include "AS_DCP.h"
 #include "KM_util.h"
+#include "compose.hpp"
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
@@ -55,30 +56,39 @@ SMPTESubtitleAsset::SMPTESubtitleAsset ()
 
 }
 
-/** Construct a SMPTESubtitleAsset by reading an MXF file.
+/** Construct a SMPTESubtitleAsset by reading an MXF or XML file.
  *  @param file Filename.
  */
 SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	: SubtitleAsset (file)
 {
-	ASDCP::TimedText::MXFReader reader;
-	Kumu::Result_t r = reader.OpenRead (file.string().c_str ());
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file, r));
-	}
-
-	/* Read the subtitle XML */
-
-	string s;
-	reader.ReadTimedTextResource (s, 0, 0);
-	stringstream t;
-	t << s;
 	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
-	xml->read_stream (t);
 
-	ASDCP::WriterInfo info;
-	reader.FillWriterInfo (info);
-	_id = read_writer_info (info);
+	shared_ptr<ASDCP::TimedText::MXFReader> reader (new ASDCP::TimedText::MXFReader ());
+	Kumu::Result_t r = reader->OpenRead (file.string().c_str ());
+
+	if (!ASDCP_FAILURE (r)) {
+		string s;
+		reader->ReadTimedTextResource (s, 0, 0);
+		stringstream t;
+		t << s;
+		xml->read_stream (t);
+		ASDCP::WriterInfo info;
+		reader->FillWriterInfo (info);
+		_id = read_writer_info (info);
+	} else {
+		reader.reset ();
+		try {
+			xml->read_file (file);
+			_id = xml->string_child ("Id").substr (9);
+		} catch (cxml::Error& e) {
+			boost::throw_exception (
+				DCPReadError (
+					String::compose ("could not read subtitles from %1; MXF failed with %2, XML failed with %3", file, static_cast<int> (r), e.what ())
+					)
+				);
+		}
+	}
 
 	_load_font_nodes = type_children<dcp::SMPTELoadFontNode> (xml, "LoadFont");
 
@@ -115,10 +125,16 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 
 	parse_subtitles (xml, font_nodes);
 
-	/* Read fonts */
+	if (reader) {
+		read_fonts (reader);
+	}
+}
 
+void
+SMPTESubtitleAsset::read_fonts (shared_ptr<ASDCP::TimedText::MXFReader> reader)
+{
 	ASDCP::TimedText::TimedTextDescriptor text_descriptor;
-	reader.FillTimedTextDescriptor (text_descriptor);
+	reader->FillTimedTextDescriptor (text_descriptor);
 	for (
 		ASDCP::TimedText::ResourceList_t::const_iterator i = text_descriptor.ResourceList.begin();
 		i != text_descriptor.ResourceList.end();
@@ -127,7 +143,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 		if (i->Type == ASDCP::TimedText::MT_OPENTYPE) {
 			ASDCP::TimedText::FrameBuffer buffer;
 			buffer.Capacity (10 * 1024 * 1024);
-			reader.ReadAncillaryResource (i->ResourceID, buffer);
+			reader->ReadAncillaryResource (i->ResourceID, buffer);
 
 			char id[64];
 			Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof (id));

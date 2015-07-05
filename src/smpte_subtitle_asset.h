@@ -26,6 +26,12 @@
 #include "mxf.h"
 #include <boost/filesystem.hpp>
 
+namespace ASDCP {
+	namespace TimedText {
+		class MXFReader;
+	}
+}
+
 namespace dcp {
 
 class SMPTELoadFontNode;
@@ -121,6 +127,8 @@ protected:
 	}
 
 private:
+	void read_fonts (boost::shared_ptr<ASDCP::TimedText::MXFReader>);
+
 	std::string _content_title_text;
 	boost::optional<std::string> _language;
 	boost::optional<std::string> _annotation_text;
