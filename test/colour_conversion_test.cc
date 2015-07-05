@@ -102,3 +102,41 @@ BOOST_AUTO_TEST_CASE (colour_conversion_matrix_test)
 	BOOST_CHECK (fabs (A(2, 0) * B(0, 1) + A(2, 1) * B(1, 1) + A(2, 2) * B(2, 1)) < 1e-6);
 	BOOST_CHECK_CLOSE (A(2, 0) * B(0, 2) + A(2, 1) * B(1, 2) + A(2, 2) * B(2, 2), 1, 0.1);
 }
+
+BOOST_AUTO_TEST_CASE (colour_conversion_bradford_test)
+{
+	ColourConversion c = ColourConversion::srgb_to_xyz ();
+
+	/* CIE "A" illuminant from http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
+	   un-normalised using a factor k where k = 1 / (1 + x + z)
+	*/
+	c.set_adjusted_white (Chromaticity (0.447576324, 0.407443172));
+
+	boost::numeric::ublas::matrix<double> b = c.bradford ();
+
+	/* Check the conversion matrix against the one quoted on brucelindbloom.com */
+	BOOST_CHECK_CLOSE (b(0, 0), 1.2164557, 0.1);
+	BOOST_CHECK_CLOSE (b(0, 1), 0.1109905, 0.1);
+	BOOST_CHECK_CLOSE (b(0, 2), -0.1549325, 0.1);
+	BOOST_CHECK_CLOSE (b(1, 0), 0.1533326, 0.1);
+	BOOST_CHECK_CLOSE (b(1, 1), 0.9152313, 0.1);
+	BOOST_CHECK_CLOSE (b(1, 2), -0.0559953, 0.1);
+	BOOST_CHECK_CLOSE (b(2, 0), -0.0239469, 0.1);
+	BOOST_CHECK_CLOSE (b(2, 1), 0.0358984, 0.1);
+	BOOST_CHECK_CLOSE (b(2, 2), 0.3147529, 0.1);
+
+	/* Same for CIE "B" illuminant */
+	c.set_adjusted_white (Chromaticity (0.99072 * 0.351747305, 0.351747305));
+
+	b = c.bradford ();
+
+	BOOST_CHECK_CLOSE (b(0, 0), 1.0641402, 0.1);
+	BOOST_CHECK_CLOSE (b(0, 1), 0.0325780, 0.1);
+	BOOST_CHECK_CLOSE (b(0, 2), -0.0489436, 0.1);
+	BOOST_CHECK_CLOSE (b(1, 0), 0.0446103, 0.1);
+	BOOST_CHECK_CLOSE (b(1, 1), 0.9766379, 0.1);
+	BOOST_CHECK_CLOSE (b(1, 2), -0.0174854, 0.1);
+	BOOST_CHECK_CLOSE (b(2, 0), -0.0078485, 0.1);
+	BOOST_CHECK_CLOSE (b(2, 1), 0.0119945, 0.1);
+	BOOST_CHECK_CLOSE (b(2, 2), 0.7785377, 0.1);
+}
