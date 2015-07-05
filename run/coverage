@@ -1,5 +1,7 @@
 #!/bin/bash
 
+run/tests
+
 # Calculate coverage
 cd build
 gcovr --root=$(pwd) --keep
