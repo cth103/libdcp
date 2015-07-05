@@ -148,11 +148,11 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 }
 
 list<SubtitleString>
-SubtitleAsset::subtitles_during (Time from, Time to) const
+SubtitleAsset::subtitles_during (Time from, Time to, bool starting) const
 {
 	list<SubtitleString> s;
 	for (list<SubtitleString>::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
-		if (i->out() >= from && i->in() <= to) {
+		if ((starting && from <= i->in() && i->in() < to) || (!starting && i->out() >= from && i->in() <= to)) {
 			s.push_back (*i);
 		}
 	}

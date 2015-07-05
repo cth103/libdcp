@@ -63,7 +63,7 @@ public:
 		NoteHandler note
 		) const;
 
-	std::list<SubtitleString> subtitles_during (Time from, Time to) const;
+	std::list<SubtitleString> subtitles_during (Time from, Time to, bool starting) const;
 	std::list<SubtitleString> const & subtitles () const {
 		return _subtitles;
 	}
