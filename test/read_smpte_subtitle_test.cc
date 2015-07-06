@@ -23,6 +23,7 @@
 #include "smpte_load_font_node.h"
 #include <boost/test/unit_test.hpp>
 #include <boost/optional.hpp>
+#include <boost/optional/optional_io.hpp>
 
 using std::list;
 using boost::shared_ptr;
