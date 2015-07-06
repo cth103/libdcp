@@ -34,6 +34,8 @@ namespace xmlpp {
 	class Node;
 }
 
+struct asset_test;
+
 namespace dcp {
 
 /** @class Asset
@@ -77,6 +79,8 @@ public:
 	std::string hash (boost::function<void (float)> progress = 0) const;
 
 protected:
+	friend struct ::asset_test;
+
 	virtual std::string pkl_type (Standard standard) const = 0;
 
 	/** The most recent disk file used to read or write this asset; may be empty */
