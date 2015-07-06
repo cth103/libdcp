@@ -36,7 +36,7 @@ BOOST_AUTO_TEST_CASE (sound_frame_test)
 
 	BOOST_REQUIRE_EQUAL (frame.size(), channels * frame_length * 3);
 
-	boost::filesystem::path ref_file = private_test / "frame.wav";
+	boost::filesystem::path ref_file = private_test / "data" / "frame.wav";
 	SF_INFO info;
 	info.format = 0;
 	SNDFILE* sndfile = sf_open (ref_file.string().c_str(), SFM_READ, &info);
