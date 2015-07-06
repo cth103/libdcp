@@ -20,6 +20,7 @@
 #include <boost/test/unit_test.hpp>
 #include "test.h"
 #include "sound_frame.h"
+#include "exceptions.h"
 #include <sndfile.h>
 
 BOOST_AUTO_TEST_CASE (sound_frame_test)
@@ -32,6 +33,8 @@ BOOST_AUTO_TEST_CASE (sound_frame_test)
 		42,
 		0
 		);
+
+	BOOST_REQUIRE_EQUAL (frame.size(), channels * frame_length * 3);
 
 	boost::filesystem::path ref_file = private_test / "frame.wav";
 	SF_INFO info;
@@ -52,4 +55,15 @@ BOOST_AUTO_TEST_CASE (sound_frame_test)
 		BOOST_REQUIRE_EQUAL (x, y);
 		p += 3;
 	}
+}
+
+BOOST_AUTO_TEST_CASE (sound_frame_test2)
+{
+	BOOST_CHECK_THROW (dcp::SoundFrame ("frobozz", 42, 0), dcp::FileError);
+	BOOST_CHECK_THROW (dcp::SoundFrame (
+				   private_test /
+				   "TONEPLATES-SMPTE-PLAINTEXT_TST_F_XX-XX_ITL-TD_51-XX_2K_WOE_20111001_WOE_OV/pcm_95734608-5d47-4d3f-bf5f-9e9186b66afa_.mxf",
+				   999999999, 0
+				   ), dcp::DCPReadError
+		);
 }
