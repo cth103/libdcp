@@ -48,6 +48,7 @@ def build(bld):
                  rgb_xyz_test.cc
                  round_trip_test.cc
                  smpte_load_font_test.cc
+                 sound_frame_test.cc
                  test.cc
                  text_test.cc
                  util_test.cc

@@ -17,6 +17,8 @@
 
 */
 
+#include <boost/filesystem.hpp>
+
 namespace xmlpp {
 	class Element;
 }
