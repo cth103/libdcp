@@ -25,6 +25,7 @@
  */
 
 #include "certificates.h"
+#include "certificate_chain.h"
 #include "types.h"
 #include <boost/filesystem.hpp>
 

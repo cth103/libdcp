@@ -21,9 +21,42 @@
  *  @brief Functions to make signer chains.
  */
 
+#ifndef LIBDCP_CERTIFICATE_CHAIN_H
+#define LIBDCP_CERTIFICATE_CHAIN_H
+
+#include "certificates.h"
 #include <boost/filesystem.hpp>
 
 namespace dcp {
+
+/** @class CertificateChain
+ *  @brief A chain of any number of certificates, from root to leaf.
+ */
+class CertificateChain
+{
+public:
+	CertificateChain () {}
+
+	void add (Certificate c);
+	void remove (Certificate c);
+	void remove (int);
+
+	Certificate root () const;
+	Certificate leaf () const;
+
+	typedef std::list<Certificate> List;
+
+	List leaf_to_root () const;
+	List root_to_leaf () const;
+
+	bool valid () const;
+	bool attempt_reorder ();
+
+private:
+	friend class ::certificates;
+
+	List _certificates;
+};
 
 /** Create a chain of certificates for signing things.
  *  @param openssl Name of openssl binary (if it is on the path) or full path.
@@ -43,3 +76,5 @@ boost::filesystem::path make_certificate_chain (
 	);
 
 }
+
+#endif

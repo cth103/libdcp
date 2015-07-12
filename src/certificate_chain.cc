@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "certificate_chain.h"
 #include "exceptions.h"
 #include "util.h"
+#include "dcp_assert.h"
 #include "KM_util.h"
 #include <openssl/sha.h>
 #include <openssl/bio.h>
@@ -37,6 +38,7 @@ using std::string;
 using std::ofstream;
 using std::ifstream;
 using std::stringstream;
+using namespace dcp;
 
 /** Run a shell command.
  *  @param cmd Command to run (UTF8-encoded).
@@ -279,4 +281,140 @@ dcp::make_certificate_chain (
 	boost::filesystem::current_path (cwd);
 
 	return directory;
+}
+
+/** @return Root certificate */
+Certificate
+CertificateChain::root () const
+{
+	DCP_ASSERT (!_certificates.empty());
+	return _certificates.front ();
+}
+
+/** @return Leaf certificate */
+Certificate
+CertificateChain::leaf () const
+{
+	DCP_ASSERT (_certificates.size() >= 2);
+	return _certificates.back ();
+}
+
+/** @return Certificates in order from root to leaf */
+CertificateChain::List
+CertificateChain::root_to_leaf () const
+{
+	return _certificates;
+}
+
+/** @return Certificates in order from leaf to root */
+CertificateChain::List
+CertificateChain::leaf_to_root () const
+{
+	List c = _certificates;
+	c.reverse ();
+	return c;
+}
+
+/** Add a certificate to the end of the chain.
+ *  @param c Certificate to add.
+ */
+void
+CertificateChain::add (Certificate c)
+{
+	_certificates.push_back (c);
+}
+
+/** Remove a certificate from the chain.
+ *  @param c Certificate to remove.
+ */
+void
+CertificateChain::remove (Certificate c)
+{
+	_certificates.remove (c);
+}
+
+/** Remove the i'th certificate in the list, as listed
+ *  from root to leaf.
+ */
+void
+CertificateChain::remove (int i)
+{
+	List::iterator j = _certificates.begin ();
+        while (j != _certificates.end () && i > 0) {
+		--i;
+		++j;
+	}
+
+	if (j != _certificates.end ()) {
+		_certificates.erase (j);
+	}
+}
+
+/** Check to see if the chain is valid (i.e. root signs the intermediate, intermediate
+ *  signs the leaf and so on).
+ *  @return true if it's ok, false if not.
+ */
+bool
+CertificateChain::valid () const
+{
+	X509_STORE* store = X509_STORE_new ();
+	if (!store) {
+		return false;
+	}
+
+	for (List::const_iterator i = _certificates.begin(); i != _certificates.end(); ++i) {
+
+		List::const_iterator j = i;
+		++j;
+		if (j ==  _certificates.end ()) {
+			break;
+		}
+
+		if (!X509_STORE_add_cert (store, i->x509 ())) {
+			X509_STORE_free (store);
+			return false;
+		}
+
+		X509_STORE_CTX* ctx = X509_STORE_CTX_new ();
+		if (!ctx) {
+			X509_STORE_free (store);
+			return false;
+		}
+
+		X509_STORE_set_flags (store, 0);
+		if (!X509_STORE_CTX_init (ctx, store, j->x509 (), 0)) {
+			X509_STORE_CTX_free (ctx);
+			X509_STORE_free (store);
+			return false;
+		}
+
+		int v = X509_verify_cert (ctx);
+		X509_STORE_CTX_free (ctx);
+
+		if (v == 0) {
+			X509_STORE_free (store);
+			return false;
+		}
+	}
+
+	X509_STORE_free (store);
+	return true;
+}
+
+/** @return true if the chain is now in order from root to leaf,
+ *  false if no correct order was found.
+ */
+bool
+CertificateChain::attempt_reorder ()
+{
+	List original = _certificates;
+	_certificates.sort ();
+	do {
+		if (valid ()) {
+			return true;
+		}
+	} while (std::next_permutation (_certificates.begin(), _certificates.end ()));
+
+	_certificates = original;
+	return false;
 }

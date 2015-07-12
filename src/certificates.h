@@ -91,35 +91,6 @@ bool operator== (Certificate const & a, Certificate const & b);
 bool operator< (Certificate const & a, Certificate const & b);
 std::ostream& operator<< (std::ostream&s, Certificate const & c);
 
-/** @class CertificateChain
- *  @brief A chain of any number of certificates, from root to leaf.
- */
-class CertificateChain
-{
-public:
-	CertificateChain () {}
-
-	void add (Certificate c);
-	void remove (Certificate c);
-	void remove (int);
-
-	Certificate root () const;
-	Certificate leaf () const;
-
-	typedef std::list<Certificate> List;
-
-	List leaf_to_root () const;
-	List root_to_leaf () const;
-
-	bool valid () const;
-	bool attempt_reorder ();
-
-private:
-	friend class ::certificates;
-
-	List _certificates;
-};
-
 }
 
 #endif
