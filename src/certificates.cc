@@ -211,11 +211,27 @@ Certificate::subject () const
 }
 
 string
-Certificate::common_name () const
+Certificate::subject_common_name () const
 {
 	DCP_ASSERT (_certificate);
 
 	return get_name_part (X509_get_subject_name (_certificate), NID_commonName);
+}
+
+string
+Certificate::subject_organization_name () const
+{
+	DCP_ASSERT (_certificate);
+
+	return get_name_part (X509_get_subject_name (_certificate), NID_organizationName);
+}
+
+string
+Certificate::subject_organizational_unit_name () const
+{
+	DCP_ASSERT (_certificate);
+
+	return get_name_part (X509_get_subject_name (_certificate), NID_organizationalUnitName);
 }
 
 string

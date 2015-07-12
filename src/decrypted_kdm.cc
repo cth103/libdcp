@@ -260,7 +260,7 @@ DecryptedKDM::encrypt (shared_ptr<const Signer> signer, Certificate recipient, F
 		keys.push_back (lines.str ());
 	}
 
-	string device_list_description = recipient.common_name ();
+	string device_list_description = recipient.subject_common_name ();
 	if (device_list_description.find (".") != string::npos) {
 		device_list_description = device_list_description.substr (device_list_description.find (".") + 1);
 	}

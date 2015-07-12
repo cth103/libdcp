@@ -59,10 +59,14 @@ public:
 	Certificate& operator= (Certificate const &);
 
 	std::string certificate (bool with_begin_end = false) const;
-	std::string issuer () const;
 	std::string serial () const;
+
+	std::string issuer () const;
+
 	std::string subject () const;
-	std::string common_name () const;
+	std::string subject_common_name () const;
+	std::string subject_organization_name () const;
+	std::string subject_organizational_unit_name () const;
 
 	X509* x509 () const {
 		return _certificate;

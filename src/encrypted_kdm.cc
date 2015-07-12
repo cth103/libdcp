@@ -524,7 +524,7 @@ EncryptedKDM::EncryptedKDM (
 	kre.not_valid_before = not_valid_before;
 	kre.not_valid_after = not_valid_after;
 	kre.authorized_device_info.device_list_identifier = make_uuid ();
-	string n = recipient.common_name ();
+	string n = recipient.subject_common_name ();
 	if (n.find (".") != string::npos) {
 		n = n.substr (n.find (".") + 1);
 	}
