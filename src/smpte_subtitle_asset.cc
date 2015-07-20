@@ -151,11 +151,8 @@ SMPTESubtitleAsset::read_fonts (shared_ptr<ASDCP::TimedText::MXFReader> reader)
 			shared_array<uint8_t> data (new uint8_t[buffer.Size()]);
 			memcpy (data.get(), buffer.RoData(), buffer.Size());
 
-			/* The IDs in the MXF have a 9 character prefix which I think is urn:uuid: */
-			string check_id = string (id).substr (9);
-
 			list<shared_ptr<SMPTELoadFontNode> >::const_iterator j = _load_font_nodes.begin ();
-			while (j != _load_font_nodes.end() && (*j)->urn != check_id) {
+			while (j != _load_font_nodes.end() && (*j)->urn != id) {
 				++j;
 			}
 
