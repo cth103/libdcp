@@ -263,13 +263,13 @@ Time::as_string () const
 }
 
 /** @param tcr_ Timecode rate with which the return value should be counted.
- *  @return the total number of editable units that this time consists of at the specified timecode rate.
- *  For example, as_editable_units (24) returns the total time in frames at 24fps.
+ *  @return the total number of editable units that this time consists of at the specified timecode rate, rounded up
+ *  to the nearest editable unit. For example, as_editable_units (24) returns the total time in frames at 24fps.
  */
 int64_t
 Time::as_editable_units (int tcr_) const
 {
-	return (int64_t(e) * float (tcr_ / tcr)) + int64_t(s) * tcr_ + int64_t(m) * 60 * tcr_ + int64_t(h) * 60 * 60 * tcr_;
+	return ceil (int64_t(e) * double (tcr_) / tcr) + int64_t(s) * tcr_ + int64_t(m) * 60 * tcr_ + int64_t(h) * 60 * 60 * tcr_;
 }
 
 /** @return the total number of seconds that this time consists of */
