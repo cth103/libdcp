@@ -151,7 +151,7 @@ SMPTESubtitleAsset::read_fonts (shared_ptr<ASDCP::TimedText::MXFReader> reader)
 			shared_array<uint8_t> data (new uint8_t[buffer.Size()]);
 			memcpy (data.get(), buffer.RoData(), buffer.Size());
 
-			/* The IDs in the MXF have a 9 character prefix of unknown origin and meaning... */
+			/* The IDs in the MXF have a 9 character prefix which I think is urn:uuid: */
 			string check_id = string (id).substr (9);
 
 			list<shared_ptr<SMPTELoadFontNode> >::const_iterator j = _load_font_nodes.begin ();
@@ -210,7 +210,7 @@ SMPTESubtitleAsset::xml_as_string () const
 
 	BOOST_FOREACH (shared_ptr<SMPTELoadFontNode> i, _load_font_nodes) {
 		xmlpp::Element* load_font = root->add_child("LoadFont", "dcst");
-		load_font->add_child_text (i->urn);
+		load_font->add_child_text ("urn:uuid:" + i->urn);
 		load_font->set_attribute ("ID", i->id);
 	}
 
