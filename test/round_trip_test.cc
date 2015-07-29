@@ -17,7 +17,7 @@
 
 */
 
-#include "certificates.h"
+#include "certificate.h"
 #include "decrypted_kdm.h"
 #include "encrypted_kdm.h"
 #include "signer.h"

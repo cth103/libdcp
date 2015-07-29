@@ -22,7 +22,7 @@
  */
 
 #include "KM_util.h"
-#include "certificates.h"
+#include "certificate.h"
 #include "compose.hpp"
 #include "exceptions.h"
 #include "util.h"

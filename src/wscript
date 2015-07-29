@@ -4,7 +4,7 @@ def build(bld):
     source = """
              asset.cc
              certificate_chain.cc
-             certificates.cc
+             certificate.cc
              colour_conversion.cc
              colour_matrix.cc
              cpl.cc
@@ -65,7 +65,7 @@ def build(bld):
     headers = """
               asset.h
               certificate_chain.h
-              certificates.h
+              certificate.h
               chromaticity.h
               colour_conversion.h
               colour_matrix.h

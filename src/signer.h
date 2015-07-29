@@ -24,7 +24,7 @@
  *  @brief Signer class.
  */
 
-#include "certificates.h"
+#include "certificate.h"
 #include "certificate_chain.h"
 #include "types.h"
 #include <boost/filesystem.hpp>

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #ifndef LIBDCP_CERTIFICATE_CHAIN_H
 #define LIBDCP_CERTIFICATE_CHAIN_H
 
-#include "certificates.h"
+#include "certificate.h"
 #include <boost/filesystem.hpp>
 
 namespace dcp {

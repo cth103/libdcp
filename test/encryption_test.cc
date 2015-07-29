@@ -19,7 +19,7 @@
 
 #include "KM_util.h"
 #include "metadata.h"
-#include "certificates.h"
+#include "certificate.h"
 #include "dcp.h"
 #include "signer.h"
 #include "cpl.h"

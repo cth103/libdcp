@@ -28,7 +28,7 @@
 #include "local_time.h"
 #include "decrypted_kdm_key.h"
 #include "types.h"
-#include "certificates.h"
+#include "certificate.h"
 #include <boost/filesystem.hpp>
 
 namespace dcp {

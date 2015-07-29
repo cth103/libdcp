@@ -18,7 +18,7 @@
 */
 
 #include <boost/test/unit_test.hpp>
-#include "certificates.h"
+#include "certificate.h"
 #include "signer.h"
 #include "util.h"
 

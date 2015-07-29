@@ -25,7 +25,7 @@
 #define LIBDCP_DCP_H
 
 #include "types.h"
-#include "certificates.h"
+#include "certificate.h"
 #include "metadata.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>

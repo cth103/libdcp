@@ -24,7 +24,7 @@
 #include "util.h"
 #include "exceptions.h"
 #include "types.h"
-#include "certificates.h"
+#include "certificate.h"
 #include "openjpeg_image.h"
 #include "dcp_assert.h"
 #include "compose.hpp"

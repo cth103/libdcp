@@ -25,7 +25,7 @@
 #define LIBDCP_CPL_H
 
 #include "types.h"
-#include "certificates.h"
+#include "certificate.h"
 #include "key.h"
 #include "asset.h"
 #include "metadata.h"
