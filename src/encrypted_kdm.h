@@ -39,7 +39,7 @@ namespace data {
 	class EncryptedKDMData;
 }
 
-class Signer;
+class CertificateChain;
 class Certificate;
 
 /** @class EncryptedKDM
@@ -77,7 +77,7 @@ private:
 
 	/** Construct an EncryptedKDM from a set of details */
 	EncryptedKDM (
-		boost::shared_ptr<const Signer> signer,
+		boost::shared_ptr<const CertificateChain> signer,
 		Certificate recipient,
 		std::string device_list_description,
 		std::string cpl_id,

@@ -20,7 +20,7 @@
 #include "certificate.h"
 #include "decrypted_kdm.h"
 #include "encrypted_kdm.h"
-#include "signer.h"
+#include "certificate_chain.h"
 #include "mono_picture_asset.h"
 #include "sound_asset.h"
 #include "reel.h"
@@ -46,7 +46,7 @@ using boost::scoped_array;
 /** Build an encrypted picture asset and a KDM for it and check that the KDM can be decrypted */
 BOOST_AUTO_TEST_CASE (round_trip_test)
 {
-	shared_ptr<dcp::Signer> signer (new dcp::Signer ("openssl"));
+	shared_ptr<dcp::CertificateChain> signer (new dcp::CertificateChain ("openssl"));
 
 	boost::filesystem::path work_dir = "build/test/round_trip_test";
 	boost::filesystem::create_directory (work_dir);
@@ -81,10 +81,10 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	boost::filesystem::path const kdm_file = work_dir / "kdm.xml";
 
-	kdm_A.encrypt(signer, signer->certificates().leaf(), dcp::MODIFIED_TRANSITIONAL_1).as_xml (kdm_file);
+	kdm_A.encrypt(signer, signer->leaf(), dcp::MODIFIED_TRANSITIONAL_1).as_xml (kdm_file);
 
 	/* Reload the KDM, using our private key to decrypt it */
-	dcp::DecryptedKDM kdm_B (dcp::EncryptedKDM (dcp::file_to_string (kdm_file)), signer->key ());
+	dcp::DecryptedKDM kdm_B (dcp::EncryptedKDM (dcp::file_to_string (kdm_file)), signer->key().get ());
 
 	/* Check that the decrypted KDMKeys are the same as the ones we started with */
 	BOOST_CHECK_EQUAL (kdm_A.keys().size(), kdm_B.keys().size());

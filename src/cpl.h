@@ -42,7 +42,7 @@ class ReelAsset;
 class Reel;
 class XMLMetadata;
 class MXFMetadata;
-class Signer;
+class CertificateChain;
 class DecryptedKDM;
 
 /** @class CPL
@@ -108,7 +108,7 @@ public:
 	void write_xml (
 		boost::filesystem::path file,
 		Standard standard,
-		boost::shared_ptr<const Signer>
+		boost::shared_ptr<const CertificateChain>
 		) const;
 
 	void resolve_refs (std::list<boost::shared_ptr<Object> >);

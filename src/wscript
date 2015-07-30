@@ -43,7 +43,6 @@ def build(bld):
              reel_stereo_picture_asset.cc
              reel_subtitle_asset.cc
              rgb_xyz.cc
-             signer.cc
              smpte_load_font_node.cc
              smpte_subtitle_asset.cc
              sound_asset.cc
@@ -105,7 +104,6 @@ def build(bld):
               reel_stereo_picture_asset.h
               reel_subtitle_asset.h
               ref.h
-              signer.h
               smpte_load_font_node.h
               smpte_subtitle_asset.h
               sound_frame.h

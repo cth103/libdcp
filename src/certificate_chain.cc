@@ -26,11 +26,20 @@
 #include "util.h"
 #include "dcp_assert.h"
 #include "KM_util.h"
+#include "compose.hpp"
+#include <libcxml/cxml.h>
+#include <libxml++/libxml++.h>
+#include <xmlsec/xmldsig.h>
+#include <xmlsec/dl.h>
+#include <xmlsec/app.h>
+#include <xmlsec/crypto.h>
 #include <openssl/sha.h>
 #include <openssl/bio.h>
 #include <openssl/evp.h>
+#include <openssl/pem.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
 #include <fstream>
 #include <sstream>
 
@@ -157,8 +166,7 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	return dig;
 }
 
-boost::filesystem::path
-dcp::make_certificate_chain (
+CertificateChain::CertificateChain (
 	boost::filesystem::path openssl,
 	string organisation,
 	string organisational_unit,
@@ -280,7 +288,13 @@ dcp::make_certificate_chain (
 
 	boost::filesystem::current_path (cwd);
 
-	return directory;
+	_certificates.push_back (dcp::Certificate (dcp::file_to_string (directory / "ca.self-signed.pem")));
+	_certificates.push_back (dcp::Certificate (dcp::file_to_string (directory / "intermediate.signed.pem")));
+	_certificates.push_back (dcp::Certificate (dcp::file_to_string (directory / "leaf.signed.pem")));
+
+	_key = dcp::file_to_string (directory / "leaf.key");
+
+	boost::filesystem::remove_all (directory);
 }
 
 /** @return Root certificate */
@@ -351,12 +365,15 @@ CertificateChain::remove (int i)
 }
 
 /** Check to see if the chain is valid (i.e. root signs the intermediate, intermediate
- *  signs the leaf and so on).
+ *  signs the leaf and so on) and that the private key (if there is one) matches the
+ *  leaf certificate.
  *  @return true if it's ok, false if not.
  */
 bool
 CertificateChain::valid () const
 {
+	/* Check the certificate chain */
+
 	X509_STORE* store = X509_STORE_new ();
 	if (!store) {
 		return false;
@@ -398,7 +415,24 @@ CertificateChain::valid () const
 	}
 
 	X509_STORE_free (store);
-	return true;
+
+	/* Check that the leaf certificate matches the private key, if there is one */
+
+	if (!_key) {
+		return true;
+	}
+
+	BIO* bio = BIO_new_mem_buf (const_cast<char *> (_key->c_str ()), -1);
+	if (!bio) {
+		throw MiscError ("could not create memory BIO");
+	}
+
+	RSA* private_key = PEM_read_bio_RSAPrivateKey (bio, 0, 0, 0);
+	RSA* public_key = leaf().public_key ();
+	bool const valid = !BN_cmp (private_key->n, public_key->n);
+	BIO_free (bio);
+
+	return valid;
 }
 
 /** @return true if the chain is now in order from root to leaf,
@@ -417,4 +451,102 @@ CertificateChain::attempt_reorder ()
 
 	_certificates = original;
 	return false;
+}
+
+/** Add a &lt;Signer&gt; and &lt;ds:Signature&gt; nodes to an XML node.
+ *  @param parent XML node to add to.
+ *  @param standard INTEROP or SMPTE.
+ */
+void
+CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
+{
+	/* <Signer> */
+
+	xmlpp::Element* signer = parent->add_child("Signer");
+	xmlpp::Element* data = signer->add_child("X509Data", "dsig");
+	xmlpp::Element* serial_element = data->add_child("X509IssuerSerial", "dsig");
+	serial_element->add_child("X509IssuerName", "dsig")->add_child_text (leaf().issuer());
+	serial_element->add_child("X509SerialNumber", "dsig")->add_child_text (leaf().serial());
+	data->add_child("X509SubjectName", "dsig")->add_child_text (leaf().subject());
+
+	/* <Signature> */
+
+	xmlpp::Element* signature = parent->add_child("Signature", "dsig");
+
+	xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
+	signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
+
+	if (standard == INTEROP) {
+		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+	} else {
+		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+	}
+
+	xmlpp::Element* reference = signed_info->add_child("Reference", "dsig");
+	reference->set_attribute ("URI", "");
+
+	xmlpp::Element* transforms = reference->add_child("Transforms", "dsig");
+	transforms->add_child("Transform", "dsig")->set_attribute (
+		"Algorithm", "http://www.w3.org/2000/09/xmldsig#enveloped-signature"
+		);
+
+	reference->add_child("DigestMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
+	/* This will be filled in by the signing later */
+	reference->add_child("DigestValue", "dsig");
+
+	signature->add_child("SignatureValue", "dsig");
+	signature->add_child("KeyInfo", "dsig");
+	add_signature_value (signature, "dsig");
+}
+
+
+/** Sign an XML node.
+ *
+ *  @param parent Node to sign.
+ *  @param ns Namespace to use for the signature XML nodes.
+ */
+void
+CertificateChain::add_signature_value (xmlpp::Node* parent, string ns) const
+{
+	cxml::Node cp (parent);
+	xmlpp::Node* key_info = cp.node_child("KeyInfo")->node ();
+
+	/* Add the certificate chain to the KeyInfo child node of parent */
+	CertificateChain::List c = leaf_to_root ();
+	BOOST_FOREACH (Certificate const & i, leaf_to_root ()) {
+		xmlpp::Element* data = key_info->add_child("X509Data", ns);
+
+		{
+			xmlpp::Element* serial = data->add_child("X509IssuerSerial", ns);
+			serial->add_child("X509IssuerName", ns)->add_child_text (i.issuer ());
+			serial->add_child("X509SerialNumber", ns)->add_child_text (i.serial ());
+		}
+
+		data->add_child("X509Certificate", ns)->add_child_text (i.certificate());
+	}
+
+	xmlSecDSigCtxPtr signature_context = xmlSecDSigCtxCreate (0);
+	if (signature_context == 0) {
+		throw MiscError ("could not create signature context");
+	}
+
+	signature_context->signKey = xmlSecCryptoAppKeyLoadMemory (
+		reinterpret_cast<const unsigned char *> (_key->c_str()), _key->size(), xmlSecKeyDataFormatPem, 0, 0, 0
+		);
+
+	if (signature_context->signKey == 0) {
+		throw StringError ("could not read private key");
+	}
+
+	/* XXX: set key name to the PEM string: this can't be right! */
+	if (xmlSecKeySetName (signature_context->signKey, reinterpret_cast<const xmlChar *> (_key->c_str())) < 0) {
+		throw MiscError ("could not set key name");
+	}
+
+	int const r = xmlSecDSigCtxSign (signature_context, parent->cobj ());
+	if (r < 0) {
+		throw MiscError (String::compose ("could not sign (%1)", r));
+	}
+
+	xmlSecDSigCtxDestroy (signature_context);
 }

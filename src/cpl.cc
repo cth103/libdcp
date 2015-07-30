@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "util.h"
 #include "reel.h"
 #include "metadata.h"
-#include "signer.h"
+#include "certificate_chain.h"
 #include "xml.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
@@ -107,7 +107,7 @@ CPL::add (boost::shared_ptr<Reel> reel)
  *  @param signer Signer to sign the CPL, or 0 to add no signature.
  */
 void
-CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<const Signer> signer) const
+CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<const CertificateChain> signer) const
 {
 	xmlpp::Document doc;
 	xmlpp::Element* root;
@@ -255,4 +255,3 @@ CPL::pkl_type (Standard standard) const
 		DCP_ASSERT (false);
 	}
 }
-

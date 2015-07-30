@@ -25,7 +25,7 @@
 #include "util.h"
 #include "exceptions.h"
 #include "cpl.h"
-#include "signer.h"
+#include "certificate_chain.h"
 #include "dcp_assert.h"
 #include "AS_DCP.h"
 #include "KM_util.h"
@@ -212,7 +212,7 @@ DecryptedKDM::DecryptedKDM (
 }
 
 EncryptedKDM
-DecryptedKDM::encrypt (shared_ptr<const Signer> signer, Certificate recipient, Formulation formulation) const
+DecryptedKDM::encrypt (shared_ptr<const CertificateChain> signer, Certificate recipient, Formulation formulation) const
 {
 	list<pair<string, string> > key_ids;
 	list<string> keys;
@@ -227,7 +227,7 @@ DecryptedKDM::encrypt (shared_ptr<const Signer> signer, Certificate recipient, F
 		uint8_t structure_id[] = { 0xf1, 0xdc, 0x12, 0x44, 0x60, 0x16, 0x9a, 0x0e, 0x85, 0xbc, 0x30, 0x06, 0x42, 0xf8, 0x66, 0xab };
 		put (&p, structure_id, 16);
 
-		base64_decode (signer->certificates().leaf().thumbprint (), p, 20);
+		base64_decode (signer->leaf().thumbprint (), p, 20);
 		p += 20;
 
 		put_uuid (&p, i.cpl_id ());

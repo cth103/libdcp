@@ -25,7 +25,13 @@
 #define LIBDCP_CERTIFICATE_CHAIN_H
 
 #include "certificate.h"
+#include "types.h"
 #include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
+
+namespace xmlpp {
+	class Node;
+}
 
 namespace dcp {
 
@@ -36,6 +42,23 @@ class CertificateChain
 {
 public:
 	CertificateChain () {}
+
+	/** Create a chain of certificates for signing things.
+	 *  @param openssl Name of openssl binary (if it is on the path) or full path.
+	 *  @return Directory (which should be deleted by the caller) containing:
+	 *    - ca.self-signed.pem      self-signed root certificate
+	 *    - intermediate.signed.pem intermediate certificate
+	 *    - leaf.key                leaf certificate private key
+	 *    - leaf.signed.pem         leaf certificate
+	 */
+	CertificateChain (
+		boost::filesystem::path openssl,
+		std::string organisation = "example.org",
+		std::string organisational_unit = "example.org",
+		std::string root_common_name = ".smpte-430-2.ROOT.NOT_FOR_PRODUCTION",
+		std::string intermediate_common_name = ".smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION",
+		std::string leaf_common_name = "CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION"
+		);
 
 	void add (Certificate c);
 	void remove (Certificate c);
@@ -52,28 +75,24 @@ public:
 	bool valid () const;
 	bool attempt_reorder ();
 
+	void sign (xmlpp::Element* parent, Standard standard) const;
+	void add_signature_value (xmlpp::Node* parent, std::string ns) const;
+
+	boost::optional<std::string> key () const {
+		return _key;
+	}
+
+	void set_key (std::string k) {
+		_key = k;
+	}
+
 private:
 	friend class ::certificates;
 
 	List _certificates;
+	/** Leaf certificate's private key, if known */
+	boost::optional<std::string> _key;
 };
-
-/** Create a chain of certificates for signing things.
- *  @param openssl Name of openssl binary (if it is on the path) or full path.
- *  @return Directory (which should be deleted by the caller) containing:
- *    - ca.self-signed.pem      self-signed root certificate
- *    - intermediate.signed.pem intermediate certificate
- *    - leaf.key                leaf certificate private key
- *    - leaf.signed.pem         leaf certificate
- */
-boost::filesystem::path make_certificate_chain (
-	boost::filesystem::path openssl,
-	std::string organisation = "example.org",
-	std::string organisational_unit = "example.org",
-	std::string root_common_name = ".smpte-430-2.ROOT.NOT_FOR_PRODUCTION",
-	std::string intermediate_common_name = ".smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION",
-	std::string leaf_common_name = "CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION"
-	);
 
 }
 

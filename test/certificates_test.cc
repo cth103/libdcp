@@ -19,7 +19,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "certificate.h"
-#include "signer.h"
+#include "certificate_chain.h"
 #include "util.h"
 
 using std::list;
@@ -141,11 +141,11 @@ BOOST_AUTO_TEST_CASE (signer_validation)
 	chain.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
 	chain.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
 	chain.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
-	dcp::Signer signer (chain, dcp::file_to_string ("test/ref/crypt/leaf.key"));
-	BOOST_CHECK (signer.valid ());
+	chain.set_key (dcp::file_to_string ("test/ref/crypt/leaf.key"));
+	BOOST_CHECK (chain.valid ());
 
 	/* Put in an unrelated key and the signer should no longer be valid */
-	dcp::Signer another_signer ("openssl");
-	signer.set_key (another_signer.key ());
-	BOOST_CHECK (!signer.valid ());
+	dcp::CertificateChain another_chain ("openssl");
+	chain.set_key (another_chain.key().get ());
+	BOOST_CHECK (!chain.valid ());
 }

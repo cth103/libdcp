@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 
 */
 
-/** @file  src/certificates.h
- *  @brief Certificate and CertificateChain classes.
+/** @file  src/certificate.h
+ *  @brief Certificate class.
  */
 
-#ifndef LIBDCP_CERTIFICATES_H
-#define LIBDCP_CERTIFICATES_H
+#ifndef LIBDCP_CERTIFICATE_H
+#define LIBDCP_CERTIFICATE_H
 
 #undef X509_NAME
 #include <openssl/x509.h>

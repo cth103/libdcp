@@ -59,10 +59,6 @@ extern bool ids_equal (std::string a, std::string b);
 
 extern void init ();
 
-extern void sign (xmlpp::Element* parent, CertificateChain const & certificates, boost::filesystem::path signer_key, Standard standard);
-extern void add_signature_value (xmlpp::Element* parent, CertificateChain const & certificates, boost::filesystem::path signer_key, std::string const & ns);
-extern void add_signer (xmlpp::Element* parent, CertificateChain const & certificates, std::string const & ns);
-
 extern int base64_decode (std::string const & in, unsigned char* out, int out_length);
 extern boost::optional<boost::filesystem::path> relative_to_root (boost::filesystem::path root, boost::filesystem::path file);
 extern FILE * fopen_boost (boost::filesystem::path, std::string);

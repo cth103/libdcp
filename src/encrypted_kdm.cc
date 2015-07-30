@@ -19,7 +19,7 @@
 
 #include "encrypted_kdm.h"
 #include "util.h"
-#include "signer.h"
+#include "certificate_chain.h"
 #include <libcxml/cxml.h>
 #include <libxml++/document.h>
 #include <libxml++/nodes/element.h>
@@ -492,7 +492,7 @@ EncryptedKDM::EncryptedKDM (string s)
 }
 
 EncryptedKDM::EncryptedKDM (
-	shared_ptr<const Signer> signer,
+	shared_ptr<const CertificateChain> signer,
 	Certificate recipient,
 	string device_list_description,
 	string cpl_id,
@@ -508,8 +508,8 @@ EncryptedKDM::EncryptedKDM (
 	/* Fill our XML-ish description in with the juicy bits that the caller has given */
 
 	data::AuthenticatedPublic& aup = _data->authenticated_public;
-	aup.signer.x509_issuer_name = signer->certificates().leaf().issuer ();
-	aup.signer.x509_serial_number = signer->certificates().leaf().serial ();
+	aup.signer.x509_issuer_name = signer->leaf().issuer ();
+	aup.signer.x509_serial_number = signer->leaf().serial ();
 
 	data::KDMRequiredExtensions& kre = _data->authenticated_public.required_extensions.kdm_required_extensions;
 	kre.recipient.x509_issuer_serial.x509_issuer_name = recipient.issuer ();
@@ -518,7 +518,7 @@ EncryptedKDM::EncryptedKDM (
 	kre.authorized_device_info.device_list_description = device_list_description;
 	kre.composition_playlist_id = cpl_id;
 	if (formulation == DCI_ANY || formulation == DCI_SPECIFIC) {
-		kre.content_authenticator = signer->certificates().leaf().thumbprint ();
+		kre.content_authenticator = signer->leaf().thumbprint ();
 	}
 	kre.content_title_text = content_title_text;
 	kre.not_valid_before = not_valid_before;

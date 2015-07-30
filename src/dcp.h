@@ -45,7 +45,7 @@ class Content;
 class Reel;
 class CPL;
 class XMLMetadata;
-class Signer;
+class CertificateChain;
 class DecryptedKDM;
 class Asset;
 class DCPReadError;
@@ -94,7 +94,7 @@ public:
 	void write_xml (
 		Standard standard,
 		XMLMetadata metadata = XMLMetadata (),
-		boost::shared_ptr<const Signer> signer = boost::shared_ptr<const Signer> ()
+		boost::shared_ptr<const CertificateChain> signer = boost::shared_ptr<const CertificateChain> ()
 	);
 
 private:
@@ -106,7 +106,7 @@ private:
 		Standard standard,
 		std::string pkl_uuid,
 		XMLMetadata metadata,
-		boost::shared_ptr<const Signer> signer
+		boost::shared_ptr<const CertificateChain> signer
 		) const;
 
 	void write_volindex (Standard standard) const;

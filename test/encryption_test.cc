@@ -21,7 +21,7 @@
 #include "metadata.h"
 #include "certificate.h"
 #include "dcp.h"
-#include "signer.h"
+#include "certificate_chain.h"
 #include "cpl.h"
 #include "mono_picture_asset.h"
 #include "picture_asset_writer.h"
@@ -66,17 +66,11 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	dcp::DCP d ("build/test/DCP/encryption_test");
 
 	/* Use test/ref/crypt so this test is repeatable */
-	dcp::CertificateChain chain;
-	chain.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
-	chain.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
-	chain.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
-
-	shared_ptr<dcp::Signer> signer (
-		new dcp::Signer (
-			chain,
-			dcp::file_to_string ("test/ref/crypt/leaf.key")
-			)
-		);
+	shared_ptr<dcp::CertificateChain> signer (new dcp::CertificateChain ());
+	signer->add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
+	signer->add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
+	signer->add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
+	signer->set_key (dcp::file_to_string ("test/ref/crypt/leaf.key"));
 
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
 
@@ -138,7 +132,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 		"2012-07-17T04:45:18+00:00"
 		);
 
-	kdm.encrypt (signer, signer->certificates().leaf(), dcp::MODIFIED_TRANSITIONAL_1).as_xml ("build/test/encryption_test.kdm.xml");
+	kdm.encrypt (signer, signer->leaf(), dcp::MODIFIED_TRANSITIONAL_1).as_xml ("build/test/encryption_test.kdm.xml");
 
 	int r = system (
 		"xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/encryption_test.kdm.xml "

@@ -34,7 +34,7 @@
 #include "metadata.h"
 #include "exceptions.h"
 #include "cpl.h"
-#include "signer.h"
+#include "certificate_chain.h"
 #include "compose.hpp"
 #include "AS_DCP.h"
 #include "decrypted_kdm.h"
@@ -245,7 +245,7 @@ DCP::add (DecryptedKDM const & kdm)
 }
 
 boost::filesystem::path
-DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared_ptr<const Signer> signer) const
+DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared_ptr<const CertificateChain> signer) const
 {
 	boost::filesystem::path p = _directory;
 	p /= String::compose ("pkl_%1.xml", pkl_uuid);
@@ -400,7 +400,7 @@ void
 DCP::write_xml (
 	Standard standard,
 	XMLMetadata metadata,
-	shared_ptr<const Signer> signer
+	shared_ptr<const CertificateChain> signer
 	)
 {
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
