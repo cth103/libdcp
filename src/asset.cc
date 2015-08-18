@@ -94,7 +94,7 @@ Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 	*/
 
 	string path_string = path.get().string ();
-	boost::replace_all (path_string, "\\/", "/");
+	boost::replace_all (path_string, "\\", "/");
 
 	chunk->add_child("Path")->add_child_text (path_string);
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
