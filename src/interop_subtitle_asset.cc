@@ -159,7 +159,7 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 
 	BOOST_FOREACH (shared_ptr<InteropLoadFontNode> i, _load_font_nodes) {
 		boost::filesystem::path file = p.parent_path() / i->uri;
-		FILE* f = fopen_boost (file, "w");
+		FILE* f = fopen_boost (file, "wb");
 		if (!f) {
 			throw FileError ("could not open font file for writing", file, errno);
 		}
