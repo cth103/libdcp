@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "dcp_assert.h"
 #include "compose.hpp"
 #include <libxml++/libxml++.h>
+#include <boost/algorithm/string.hpp>
 
 using std::string;
 using boost::function;
@@ -88,7 +89,14 @@ Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 		throw MiscError (String::compose ("Asset %1 is not within the directory %2", _file, root));
 	}
 
-	chunk->add_child("Path")->add_child_text (path.get().string ());
+	/* On Windows path.string() will contain back-slashes; replace these with
+	   forward-slashes.  XXX: perhaps there is a nicer way to do this with boost.
+	*/
+
+	string path_string = path.get().string ();
+	boost::replace_all (path_string, "\\/", "/");
+
+	chunk->add_child("Path")->add_child_text (path_string);
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
 	chunk->add_child("Length")->add_child_text (raw_convert<string> (boost::filesystem::file_size (_file)));
@@ -129,4 +137,3 @@ Asset::set_file (boost::filesystem::path file) const
 	_file = boost::filesystem::absolute (file);
 	_hash.clear ();
 }
-
