@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -75,6 +75,12 @@ dcp::xyz_to_rgba (
 	double const * lut_out = conversion.in()->lut (16, true);
 	boost::numeric::ublas::matrix<double> const matrix = conversion.xyz_to_rgb ();
 
+	double fast_matrix[9] = {
+		matrix (0, 0), matrix (0, 1), matrix (0, 2),
+		matrix (1, 0), matrix (1, 1), matrix (1, 2),
+		matrix (2, 0), matrix (2, 1), matrix (2, 2)
+	};
+
 	int const height = xyz_image->size().height;
 	int const width = xyz_image->size().width;
 
@@ -95,9 +101,9 @@ dcp::xyz_to_rgba (
 			s.z /= DCI_COEFFICIENT;
 
 			/* XYZ to RGB */
-			d.r = ((s.x * matrix(0, 0)) + (s.y * matrix(0, 1)) + (s.z * matrix(0, 2)));
-			d.g = ((s.x * matrix(1, 0)) + (s.y * matrix(1, 1)) + (s.z * matrix(1, 2)));
-			d.b = ((s.x * matrix(2, 0)) + (s.y * matrix(2, 1)) + (s.z * matrix(2, 2)));
+			d.r = ((s.x * fast_matrix[0]) + (s.y * fast_matrix[1]) + (s.z * fast_matrix[2]));
+			d.g = ((s.x * fast_matrix[3]) + (s.y * fast_matrix[4]) + (s.z * fast_matrix[5]));
+			d.b = ((s.x * fast_matrix[6]) + (s.y * fast_matrix[7]) + (s.z * fast_matrix[8]));
 
 			d.r = min (d.r, 1.0);
 			d.r = max (d.r, 0.0);
@@ -109,9 +115,9 @@ dcp::xyz_to_rgba (
 			d.b = max (d.b, 0.0);
 
 			/* Out gamma LUT */
-			*argb_line++ = lut_out[int(rint(d.b * max_colour))] * 0xff;
-			*argb_line++ = lut_out[int(rint(d.g * max_colour))] * 0xff;
-			*argb_line++ = lut_out[int(rint(d.r * max_colour))] * 0xff;
+			*argb_line++ = lut_out[lrint(d.b * max_colour)] * 0xff;
+			*argb_line++ = lut_out[lrint(d.g * max_colour)] * 0xff;
+			*argb_line++ = lut_out[lrint(d.r * max_colour)] * 0xff;
 			*argb_line++ = 0xff;
 		}
 
@@ -155,9 +161,18 @@ dcp::xyz_to_rgb (
 	double const * lut_out = conversion.in()->lut (16, true);
 	boost::numeric::ublas::matrix<double> const matrix = conversion.xyz_to_rgb ();
 
-	for (int y = 0; y < xyz_image->size().height; ++y) {
+	double fast_matrix[9] = {
+		matrix (0, 0), matrix (0, 1), matrix (0, 2),
+		matrix (1, 0), matrix (1, 1), matrix (1, 2),
+		matrix (2, 0), matrix (2, 1), matrix (2, 2)
+	};
+
+	int const height = xyz_image->size().height;
+	int const width = xyz_image->size().height;
+
+	for (int y = 0; y < height; ++y) {
 		uint16_t* rgb_line = reinterpret_cast<uint16_t*> (rgb + y * stride);
-		for (int x = 0; x < xyz_image->size().width; ++x) {
+		for (int x = 0; x < width; ++x) {
 
 			int cx = *xyz_x++;
 			int cy = *xyz_y++;
@@ -195,9 +210,9 @@ dcp::xyz_to_rgb (
 			s.z /= DCI_COEFFICIENT;
 
 			/* XYZ to RGB */
-			d.r = ((s.x * matrix(0, 0)) + (s.y * matrix(0, 1)) + (s.z * matrix(0, 2)));
-			d.g = ((s.x * matrix(1, 0)) + (s.y * matrix(1, 1)) + (s.z * matrix(1, 2)));
-			d.b = ((s.x * matrix(2, 0)) + (s.y * matrix(2, 1)) + (s.z * matrix(2, 2)));
+			d.r = ((s.x * fast_matrix[0]) + (s.y * fast_matrix[1]) + (s.z * fast_matrix[2]));
+			d.g = ((s.x * fast_matrix[3]) + (s.y * fast_matrix[4]) + (s.z * fast_matrix[5]));
+			d.b = ((s.x * fast_matrix[6]) + (s.y * fast_matrix[7]) + (s.z * fast_matrix[8]));
 
 			d.r = min (d.r, 1.0);
 			d.r = max (d.r, 0.0);
@@ -208,9 +223,9 @@ dcp::xyz_to_rgb (
 			d.b = min (d.b, 1.0);
 			d.b = max (d.b, 0.0);
 
-			*rgb_line++ = rint(lut_out[int(rint(d.r * 65535))] * 65535);
-			*rgb_line++ = rint(lut_out[int(rint(d.g * 65535))] * 65535);
-			*rgb_line++ = rint(lut_out[int(rint(d.b * 65535))] * 65535);
+			*rgb_line++ = lrint(lut_out[lrint(d.r * 65535)] * 65535);
+			*rgb_line++ = lrint(lut_out[lrint(d.g * 65535)] * 65535);
+			*rgb_line++ = lrint(lut_out[lrint(d.b * 65535)] * 65535);
 		}
 	}
 }
@@ -240,17 +255,28 @@ dcp::rgb_to_xyz (
 		double x, y, z;
 	} d;
 
-	struct {
-		double x, y, z;
-	} e;
-
 	double const * lut_in = conversion.in()->lut (12, false);
 	double const * lut_out = conversion.out()->lut (16, true);
 	boost::numeric::ublas::matrix<double> const rgb_to_xyz = conversion.rgb_to_xyz ();
 	boost::numeric::ublas::matrix<double> const bradford = conversion.bradford ();
 
+	/* This is is the product of the RGB to XYZ matrix, the Bradford transform and the DCI companding */
+	double fast_matrix[9] = {
+		(bradford (0, 0) * rgb_to_xyz (0, 0) + bradford (0, 1) * rgb_to_xyz (1, 0) + bradford (0, 2) * rgb_to_xyz (2, 0)) * DCI_COEFFICIENT * 65535,
+		(bradford (0, 0) * rgb_to_xyz (0, 1) + bradford (0, 1) * rgb_to_xyz (1, 1) + bradford (0, 2) * rgb_to_xyz (2, 1)) * DCI_COEFFICIENT * 65535,
+		(bradford (0, 0) * rgb_to_xyz (0, 2) + bradford (0, 1) * rgb_to_xyz (1, 2) + bradford (0, 2) * rgb_to_xyz (2, 2)) * DCI_COEFFICIENT * 65535,
+		(bradford (1, 0) * rgb_to_xyz (0, 0) + bradford (1, 1) * rgb_to_xyz (1, 0) + bradford (1, 2) * rgb_to_xyz (2, 0)) * DCI_COEFFICIENT * 65535,
+		(bradford (1, 0) * rgb_to_xyz (0, 1) + bradford (1, 1) * rgb_to_xyz (1, 1) + bradford (1, 2) * rgb_to_xyz (2, 1)) * DCI_COEFFICIENT * 65535,
+		(bradford (1, 0) * rgb_to_xyz (0, 2) + bradford (1, 1) * rgb_to_xyz (1, 2) + bradford (1, 2) * rgb_to_xyz (2, 2)) * DCI_COEFFICIENT * 65535,
+		(bradford (2, 0) * rgb_to_xyz (0, 0) + bradford (2, 1) * rgb_to_xyz (1, 0) + bradford (2, 2) * rgb_to_xyz (2, 0)) * DCI_COEFFICIENT * 65535,
+		(bradford (2, 0) * rgb_to_xyz (0, 1) + bradford (2, 1) * rgb_to_xyz (1, 1) + bradford (2, 2) * rgb_to_xyz (2, 1)) * DCI_COEFFICIENT * 65535,
+		(bradford (2, 0) * rgb_to_xyz (0, 2) + bradford (2, 1) * rgb_to_xyz (1, 2) + bradford (2, 2) * rgb_to_xyz (2, 2)) * DCI_COEFFICIENT * 65535
+			};
+
 	int clamped = 0;
-	int jn = 0;
+	int* xyz_x = xyz->data (0);
+	int* xyz_y = xyz->data (1);
+	int* xyz_z = xyz->data (2);
 	for (int y = 0; y < size.height; ++y) {
 		uint16_t const * p = reinterpret_cast<uint16_t const *> (rgb + y * stride);
 		for (int x = 0; x < size.width; ++x) {
@@ -260,39 +286,28 @@ dcp::rgb_to_xyz (
 			s.g = lut_in[*p++ >> 4];
 			s.b = lut_in[*p++ >> 4];
 
-			/* RGB to XYZ Matrix */
-			d.x = ((s.r * rgb_to_xyz(0, 0)) + (s.g * rgb_to_xyz(0, 1)) + (s.b * rgb_to_xyz(0, 2)));
-			d.y = ((s.r * rgb_to_xyz(1, 0)) + (s.g * rgb_to_xyz(1, 1)) + (s.b * rgb_to_xyz(1, 2)));
-			d.z = ((s.r * rgb_to_xyz(2, 0)) + (s.g * rgb_to_xyz(2, 1)) + (s.b * rgb_to_xyz(2, 2)));
-
-			e.x = ((d.x * bradford(0, 0)) + (d.y * bradford(0, 1)) + (d.z * bradford(0, 2)));
-			e.y = ((d.x * bradford(1, 0)) + (d.y * bradford(1, 1)) + (d.z * bradford(1, 2)));
-			e.z = ((d.x * bradford(2, 0)) + (d.y * bradford(2, 1)) + (d.z * bradford(2, 2)));
-
-			/* DCI companding */
-			e.x = e.x * DCI_COEFFICIENT * 65535;
-			e.y = e.y * DCI_COEFFICIENT * 65535;
-			e.z = e.z * DCI_COEFFICIENT * 65535;
+			/* RGB to XYZ, Bradford transform and DCI companding */
+			d.x = s.r * fast_matrix[0] + s.g * fast_matrix[1] + s.b * fast_matrix[2];
+			d.y = s.r * fast_matrix[3] + s.g * fast_matrix[4] + s.b * fast_matrix[5];
+			d.z = s.r * fast_matrix[6] + s.g * fast_matrix[7] + s.b * fast_matrix[8];
 
 			/* Clamp */
 
-			if (e.x < 0 || e.y < 0 || e.z < 0 || e.x > 65535 || e.y > 65535 || e.z > 65535) {
+			if (d.x < 0 || d.y < 0 || d.z < 0 || d.x > 65535 || d.y > 65535 || d.z > 65535) {
 				++clamped;
 			}
 
-			e.x = max (0.0, e.x);
-			e.y = max (0.0, e.y);
-			e.z = max (0.0, e.z);
-			e.x = min (65535.0, e.x);
-			e.y = min (65535.0, e.y);
-			e.z = min (65535.0, e.z);
+			d.x = max (0.0, d.x);
+			d.y = max (0.0, d.y);
+			d.z = max (0.0, d.z);
+			d.x = min (65535.0, d.x);
+			d.y = min (65535.0, d.y);
+			d.z = min (65535.0, d.z);
 
 			/* Out gamma LUT */
-			xyz->data(0)[jn] = lut_out[int(rint(e.x))] * 4095;
-			xyz->data(1)[jn] = lut_out[int(rint(e.y))] * 4095;
-			xyz->data(2)[jn] = lut_out[int(rint(e.z))] * 4095;
-
-			++jn;
+			*xyz_x++ = lut_out[lrint(d.x)] * 4095;
+			*xyz_y++ = lut_out[lrint(d.y)] * 4095;
+			*xyz_z++ = lut_out[lrint(d.z)] * 4095;
 		}
 	}
 
