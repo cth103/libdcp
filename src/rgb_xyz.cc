@@ -168,7 +168,7 @@ dcp::xyz_to_rgb (
 	};
 
 	int const height = xyz_image->size().height;
-	int const width = xyz_image->size().height;
+	int const width = xyz_image->size().width;
 
 	for (int y = 0; y < height; ++y) {
 		uint16_t* rgb_line = reinterpret_cast<uint16_t*> (rgb + y * stride);
