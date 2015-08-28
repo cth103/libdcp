@@ -40,6 +40,7 @@ BOOST_AUTO_TEST_CASE (sound_frame_test)
 	SF_INFO info;
 	info.format = 0;
 	SNDFILE* sndfile = sf_open (ref_file.string().c_str(), SFM_READ, &info);
+	BOOST_REQUIRE (sndfile);
 
 	int ref_data[frame_length * channels];
 	int const read = sf_readf_int (sndfile, ref_data, frame_length);
