@@ -4,7 +4,7 @@ import sys
 import distutils.spawn
 
 APPNAME = 'libdcp'
-VERSION = '1.2.1'
+VERSION = '1.2.1devel'
 API_VERSION = '-1.0'
 
 def options(opt):
