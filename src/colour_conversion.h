@@ -47,6 +47,7 @@ class ColourConversion
 {
 public:
 	ColourConversion ()
+		: _yuv_to_rgb (YUV_TO_RGB_REC601)
 	{}
 
 	ColourConversion (

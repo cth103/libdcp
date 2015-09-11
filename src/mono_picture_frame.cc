@@ -28,6 +28,7 @@
 #include "colour_conversion.h"
 #include "KM_fileio.h"
 #include "AS_DCP.h"
+#include "compose.hpp"
 #include <openjpeg.h>
 
 #define DCI_GAMMA 2.6
@@ -72,7 +73,7 @@ MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path, int n, ASDCP::
 	_buffer = new ASDCP::JP2K::FrameBuffer (4 * Kumu::Megabyte);
 
 	if (ASDCP_FAILURE (reader.ReadFrame (n, *_buffer, c))) {
-		boost::throw_exception (DCPReadError ("could not read video frame"));
+		boost::throw_exception (DCPReadError (String::compose ("could not read video frame %1 of %2", n, path.string())));
 	}
 }
 
