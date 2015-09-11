@@ -269,7 +269,7 @@ public:
 
 	AuthorizedDeviceInfo (shared_ptr<const cxml::Node> node)
 		: device_list_identifier (node->string_child ("DeviceListIdentifier").substr (9))
-		, device_list_description (node->string_child ("DeviceListDescription"))
+		, device_list_description (node->optional_string_child ("DeviceListDescription"))
 		, certificate_thumbprint (node->node_child("DeviceList")->string_child ("CertificateThumbprint"))
 	{
 
@@ -278,14 +278,16 @@ public:
 	void as_xml (xmlpp::Element* node) const
 	{
 		node->add_child ("DeviceListIdentifier")->add_child_text ("urn:uuid:" + device_list_identifier);
-		node->add_child ("DeviceListDescription")->add_child_text (device_list_description);
+		if (device_list_description) {
+			node->add_child ("DeviceListDescription")->add_child_text (device_list_description.get());
+		}
 		xmlpp::Element* device_list = node->add_child ("DeviceList");
 		device_list->add_child("CertificateThumbprint")->add_child_text (certificate_thumbprint);
 	}
 
 	/** DeviceListIdentifier without the urn:uuid: prefix */
 	string device_list_identifier;
-	string device_list_description;
+	boost::optional<string> device_list_description;
 	string certificate_thumbprint;
 };
 
