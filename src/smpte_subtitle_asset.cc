@@ -187,7 +187,7 @@ SMPTESubtitleAsset::xml_as_string () const
 	root->set_namespace_declaration ("http://www.smpte-ra.org/schemas/428-7/2010/DCST", "dcst");
 	root->set_namespace_declaration ("http://www.w3.org/2001/XMLSchema", "xs");
 
-	root->add_child("ID", "dcst")->add_child_text (_id);
+	root->add_child("Id", "dcst")->add_child_text ("urn:uuid:" + _id);
 	root->add_child("ContentTitleText", "dcst")->add_child_text (_content_title_text);
 	if (_annotation_text) {
 		root->add_child("AnnotationText", "dcst")->add_child_text (_annotation_text.get ());
