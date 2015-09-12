@@ -68,6 +68,10 @@ public:
 		_language = l;
 	}
 
+	void set_reel_number (int r) {
+		_reel_number = r;
+	}
+
 	void set_edit_rate (Fraction e) {
 		_edit_rate = e;
 	}
