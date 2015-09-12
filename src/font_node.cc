@@ -47,7 +47,7 @@ FontNode::FontNode (cxml::ConstNodePtr node, int tcr)
 	if (e) {
 		effect = string_to_effect (e.get ());
 	}
-	c = node->optional_string_attribute ( "EffectColor");
+	c = node->optional_string_attribute ("EffectColor");
 	if (c) {
 		effect_colour = Colour (c.get ());
 	}
