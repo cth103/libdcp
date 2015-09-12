@@ -250,15 +250,21 @@ dcp::operator/ (Time a, Time const & b)
 	return float (at) / bt;
 }
 
-/** @return A string of the form h:m:s:e padded as in 00:00:00:000 */
+/** @return A string of the form h:m:s:e padded as in 00:00:00:000 (for Interop) or 00:00:00:00 (for SMPTE) */
 string
-Time::as_string () const
+Time::as_string (Standard standard) const
 {
 	stringstream str;
 	str << setw(2) << setfill('0') << h << ":"
 	    << setw(2) << setfill('0') << m << ":"
-	    << setw(2) << setfill('0') << s << ":"
-	    << setw(3) << setfill('0') << e;
+	    << setw(2) << setfill('0') << s << ":";
+
+	if (standard == SMPTE) {
+		str << setw(2) << setfill('0') << e;
+	} else {
+		str << setw(3) << setfill('0') << e;
+	}
+
 	return str.str ();
 }
 

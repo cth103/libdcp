@@ -208,11 +208,16 @@ struct SubtitleSorter {
 	}
 };
 
+/** @param standard Standard (INTEROP or SMPTE); this is used rather than putting things in the child
+ *  class because the differences between the two are fairly subtle.
+ */
 void
-SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, string xmlns) const
+SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Standard standard) const
 {
 	list<SubtitleString> sorted = _subtitles;
 	sorted.sort (SubtitleSorter ());
+
+	string const xmlns = standard == SMPTE ? "dcst" : "";
 
 	/* XXX: script, underlined, weight not supported */
 
@@ -261,7 +266,11 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, strin
 		if (!font_element || font_changed) {
 			font_element = root->add_child ("Font", xmlns);
 			if (font) {
-				font_element->set_attribute ("Id", font.get ());
+				if (standard == SMPTE) {
+					font_element->set_attribute ("ID", font.get ());
+				} else {
+					font_element->set_attribute ("Id", font.get ());
+				}
 			}
 			font_element->set_attribute ("Italic", italic ? "yes" : "no");
 			font_element->set_attribute ("Color", colour.to_argb_string());
@@ -272,7 +281,11 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, strin
 			font_element->set_attribute ("Effect", effect_to_string (effect));
 			font_element->set_attribute ("EffectColor", effect_colour.to_argb_string());
 			font_element->set_attribute ("Script", "normal");
-			font_element->set_attribute ("Underlined", "no");
+			if (standard == SMPTE) {
+				font_element->set_attribute ("Underline", "no");
+			} else {
+				font_element->set_attribute ("Underlined", "no");
+			}
 			font_element->set_attribute ("Weight", "normal");
 		}
 
@@ -285,10 +298,15 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, strin
 
 			subtitle_element = font_element->add_child ("Subtitle", xmlns);
 			subtitle_element->set_attribute ("SpotNumber", raw_convert<string> (spot_number++));
-			subtitle_element->set_attribute ("TimeIn", i->in().rebase(time_code_rate).as_string());
-			subtitle_element->set_attribute ("TimeOut", i->out().rebase(time_code_rate).as_string());
-			subtitle_element->set_attribute ("FadeUpTime", raw_convert<string> (i->fade_up_time().as_editable_units(time_code_rate)));
-			subtitle_element->set_attribute ("FadeDownTime", raw_convert<string> (i->fade_down_time().as_editable_units(time_code_rate)));
+			subtitle_element->set_attribute ("TimeIn", i->in().rebase(time_code_rate).as_string(standard));
+			subtitle_element->set_attribute ("TimeOut", i->out().rebase(time_code_rate).as_string(standard));
+			if (standard == SMPTE) {
+				subtitle_element->set_attribute ("FadeUpTime", i->fade_up_time().rebase(time_code_rate).as_string(standard));
+				subtitle_element->set_attribute ("FadeDownTime", i->fade_down_time().rebase(time_code_rate).as_string(standard));
+			} else {
+				subtitle_element->set_attribute ("FadeUpTime", raw_convert<string> (i->fade_up_time().as_editable_units(time_code_rate)));
+				subtitle_element->set_attribute ("FadeDownTime", raw_convert<string> (i->fade_down_time().as_editable_units(time_code_rate)));
+			}
 
 			last_in = i->in ();
 			last_out = i->out ();
@@ -298,16 +316,36 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, strin
 
 		xmlpp::Element* text = subtitle_element->add_child ("Text", xmlns);
 		if (i->h_align() != HALIGN_CENTER) {
-			text->set_attribute ("HAlign", halign_to_string (i->h_align ()));
+			if (standard == SMPTE) {
+				text->set_attribute ("Halign", halign_to_string (i->h_align ()));
+			} else {
+				text->set_attribute ("HAlign", halign_to_string (i->h_align ()));
+			}
 		}
 		if (i->h_position() > ALIGN_EPSILON) {
-			text->set_attribute ("HPosition", raw_convert<string> (i->h_position() * 100, 6));
+			if (standard == SMPTE) {
+				text->set_attribute ("Hposition", raw_convert<string> (i->h_position() * 100, 6));
+			} else {
+				text->set_attribute ("HPosition", raw_convert<string> (i->h_position() * 100, 6));
+			}
 		}
-		text->set_attribute ("VAlign", valign_to_string (i->v_align()));
-		if (i->v_position() > ALIGN_EPSILON) {
-			text->set_attribute ("VPosition", raw_convert<string> (i->v_position() * 100, 6));
+		if (standard == SMPTE) {
+			text->set_attribute ("Valign", valign_to_string (i->v_align()));
 		} else {
-			text->set_attribute ("VPosition", "0");
+			text->set_attribute ("VAlign", valign_to_string (i->v_align()));
+		}
+		if (i->v_position() > ALIGN_EPSILON) {
+			if (standard == SMPTE) {
+				text->set_attribute ("Vposition", raw_convert<string> (i->v_position() * 100, 6));
+			} else {
+				text->set_attribute ("VPosition", raw_convert<string> (i->v_position() * 100, 6));
+			}
+		} else {
+			if (standard == SMPTE) {
+				text->set_attribute ("Vposition", "0");
+			} else {
+				text->set_attribute ("VPosition", "0");
+			}
 		}
 		text->add_child_text (i->text());
 	}

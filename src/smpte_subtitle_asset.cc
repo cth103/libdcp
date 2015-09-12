@@ -202,7 +202,7 @@ SMPTESubtitleAsset::xml_as_string () const
 	root->add_child("EditRate", "dcst")->add_child_text (_edit_rate.as_string ());
 	root->add_child("TimeCodeRate", "dcst")->add_child_text (raw_convert<string> (_time_code_rate));
 	if (_start_time) {
-		root->add_child("StartTime", "dcst")->add_child_text (_start_time.get().as_string ());
+		root->add_child("StartTime", "dcst")->add_child_text (_start_time.get().as_string (SMPTE));
 	}
 
 	BOOST_FOREACH (shared_ptr<SMPTELoadFontNode> i, _load_font_nodes) {
@@ -211,7 +211,7 @@ SMPTESubtitleAsset::xml_as_string () const
 		load_font->set_attribute ("ID", i->id);
 	}
 
-	subtitles_as_xml (root->add_child ("SubtitleList", "dcst"), _time_code_rate, "dcst");
+	subtitles_as_xml (root->add_child ("SubtitleList", "dcst"), _time_code_rate, SMPTE);
 
 	return doc.write_to_string_formatted ("UTF-8");
 }

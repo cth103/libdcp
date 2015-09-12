@@ -84,7 +84,7 @@ InteropSubtitleAsset::xml_as_string () const
 		load_font->set_attribute ("URI", (*i)->uri);
 	}
 
-	subtitles_as_xml (root, 250, "");
+	subtitles_as_xml (root, 250, INTEROP);
 
 	return doc.write_to_string_formatted ("UTF-8");
 }

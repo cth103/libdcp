@@ -24,6 +24,7 @@
 #ifndef LIBDCP_TIME_H
 #define LIBDCP_TIME_H
 
+#include "types.h"
 #include <stdint.h>
 #include <string>
 #include <iostream>
@@ -71,7 +72,7 @@ public:
 	int e; ///<   editable units (where 1 editable unit is 1 / tcr_ seconds)
 	int tcr; ///< timecode rate: the number of editable units per second.
 
-	std::string as_string () const;
+	std::string as_string (Standard standard) const;
 	double as_seconds () const;
 	int64_t as_editable_units (int tcr_) const;
 	Time rebase (int tcr_) const;
