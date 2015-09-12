@@ -80,6 +80,10 @@ public:
 		_time_code_rate = t;
 	}
 
+	void set_start_time (Time t) {
+		_start_time = t;
+	}
+
 	/** @return title of the film that these subtitles are for,
 	 *  to be presented to the user.
 	 */
