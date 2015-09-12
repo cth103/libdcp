@@ -51,11 +51,11 @@ CPL::CPL (string annotation_text, ContentKind content_kind)
 	, _content_kind (content_kind)
 	, _content_version_id ("urn:uuid:" + make_uuid ())
 {
-	/* default _content_version_id to and _content_version_label to
+	/* default _content_version_id to a random ID and _content_version_label to
 	   a random ID and the current time.
 	*/
-	_content_version_id = "urn:uuid:" + make_uuid() + LocalTime().as_string ();
-	_content_version_label_text = _content_version_id;
+	_content_version_id = "urn:uuid:" + make_uuid();
+	_content_version_label_text = _content_version_id + LocalTime().as_string ();
 }
 
 /** Construct a CPL object from a XML file */
