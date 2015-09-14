@@ -109,6 +109,9 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 
 			try {
 				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
+				if (!asset.second) {
+					throw DCPReadError (String::compose ("could not find asset %1", p->id.substr (9)));
+				}
 
 				picture.reset (new MonoPictureAsset (asset.first, asset.second->chunks.front()->path));
 
@@ -129,6 +132,9 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 		} else {
 			try {
 				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, p->id);
+				if (!asset.second) {
+					throw DCPReadError (String::compose ("could not find asset %1", p->id.substr (9)));
+				}
 
 				picture.reset (new StereoPictureAsset (asset.first, asset.second->chunks.front()->path));
 
@@ -153,6 +159,9 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 
 			try {
 				pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, (*i)->asset_list->main_sound->id);
+				if (!asset.second) {
+					throw DCPReadError (String::compose ("could not find asset %1", p->id.substr (9)));
+				}
 
 				sound.reset (new SoundAsset (asset.first, asset.second->chunks.front()->path));
 				shared_ptr<parse::MainSound> s = (*i)->asset_list->main_sound;
@@ -174,6 +183,9 @@ CPL::CPL (boost::filesystem::path directory, string file, list<PathAssetMap> ass
 		if ((*i)->asset_list->main_subtitle) {
 
 			pair<string, shared_ptr<const parse::AssetMapAsset> > asset = asset_from_id (asset_maps, (*i)->asset_list->main_subtitle->id);
+			if (!asset.second) {
+				throw DCPReadError (String::compose ("could not find asset %1", p->id.substr (9)));
+			}
 
 			subtitle.reset (new SubtitleAsset (asset.first, asset.second->chunks.front()->path));
 
