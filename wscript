@@ -2,7 +2,7 @@ import subprocess
 import os
 
 APPNAME = 'libdcp'
-VERSION = '0.101.0devel'
+VERSION = '0.104.0devel'
 
 def options(opt):
     opt.load('compiler_cxx')
@@ -51,12 +51,12 @@ def configure(conf):
                        }
                        """,
                        msg='Checking for library openjpeg', stlib='openjpeg', uselib_store='OPENJPEG', mandatory=True)
-        
+
         conf.env.HAVE_CXML = 1
         conf.env.STLIB_CXML = ['cxml']
     else:
         conf.check_cfg(package='libopenjpeg', args='--cflags --libs', uselib_store='OPENJPEG', mandatory=True)
-        conf.check_cfg(package='libcxml', atleast_version='0.11.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
+        conf.check_cfg(package='libcxml', atleast_version='0.12.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
 
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'
