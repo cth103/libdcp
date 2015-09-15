@@ -44,7 +44,7 @@ class AssetWriter : public boost::noncopyable
 {
 public:
 	virtual ~AssetWriter ();
-	virtual void finalize ();
+	virtual bool finalize ();
 
 protected:
 	AssetWriter (MXF* mxf, boost::filesystem::path file);

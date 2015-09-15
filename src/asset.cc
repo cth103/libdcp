@@ -75,19 +75,22 @@ Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 {
 	DCP_ASSERT (!_file.empty ());
 
-	xmlpp::Node* asset = node->add_child ("Asset");
-	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
-	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
-	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
-
 	optional<boost::filesystem::path> path = relative_to_root (
 		boost::filesystem::canonical (root),
 		boost::filesystem::canonical (_file)
 		);
 
 	if (!path) {
-		throw MiscError (String::compose ("Asset %1 is not within the directory %2", _file, root));
+		/* The path of this asset is not within our DCP, so we assume it's an external
+		   (referenced) one.
+		*/
+		return;
 	}
+
+	xmlpp::Node* asset = node->add_child ("Asset");
+	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
+	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
+	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
 
 	/* On Windows path.string() will contain back-slashes; replace these with
 	   forward-slashes.  XXX: perhaps there is a nicer way to do this with boost.

@@ -68,6 +68,10 @@ public:
 		return _asset_ref;
 	}
 
+	int64_t intrinsic_duration () const {
+		return _intrinsic_duration;
+	}
+
 	int64_t entry_point () const {
 		return _entry_point;
 	}

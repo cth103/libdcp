@@ -108,7 +108,7 @@ SoundAssetWriter::write_current_frame ()
 	++_frames_written;
 }
 
-void
+bool
 SoundAssetWriter::finalize ()
 {
 	if (_frame_buffer_offset > 0) {
@@ -120,5 +120,5 @@ SoundAssetWriter::finalize ()
 	}
 
 	_sound_asset->_intrinsic_duration = _frames_written;
-	AssetWriter::finalize ();
+	return AssetWriter::finalize ();
 }

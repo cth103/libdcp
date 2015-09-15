@@ -46,7 +46,7 @@ public:
 	 */
 	FrameInfo write (uint8_t* data, int size);
 	void fake_write (int size);
-	void finalize ();
+	bool finalize ();
 
 private:
 	friend class StereoPictureAsset;

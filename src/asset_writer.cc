@@ -61,9 +61,11 @@ AssetWriter::~AssetWriter ()
 	delete _encryption_context;
 }
 
-void
+/** @return true if anything was written by this writer */
+bool
 AssetWriter::finalize ()
 {
 	DCP_ASSERT (!_finalized);
 	_finalized = true;
+	return _started;
 }

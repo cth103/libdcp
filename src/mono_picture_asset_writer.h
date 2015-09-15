@@ -48,7 +48,7 @@ class MonoPictureAssetWriter : public PictureAssetWriter
 public:
 	FrameInfo write (uint8_t *, int);
 	void fake_write (int size);
-	void finalize ();
+	bool finalize ();
 
 private:
 	friend class MonoPictureAsset;

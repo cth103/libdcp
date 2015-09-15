@@ -97,15 +97,16 @@ MonoPictureAssetWriter::fake_write (int size)
 	++_frames_written;
 }
 
-void
+bool
 MonoPictureAssetWriter::finalize ()
 {
-	Kumu::Result_t r = _state->mxf_writer.Finalize();
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in finalizing video MXF", _file.string(), r));
+	if (_started) {
+		Kumu::Result_t r = _state->mxf_writer.Finalize();
+		if (ASDCP_FAILURE (r)) {
+			boost::throw_exception (MXFFileError ("error in finalizing video MXF", _file.string(), r));
+		}
 	}
 
 	_picture_asset->_intrinsic_duration = _frames_written;
-	PictureAssetWriter::finalize ();
+	return PictureAssetWriter::finalize ();
 }
-

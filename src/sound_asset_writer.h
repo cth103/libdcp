@@ -44,7 +44,7 @@ class SoundAssetWriter : public AssetWriter
 {
 public:
 	void write (float const * const *, int);
-	void finalize ();
+	bool finalize ();
 
 private:
 	friend class SoundAsset;
@@ -65,4 +65,3 @@ private:
 };
 
 }
-
