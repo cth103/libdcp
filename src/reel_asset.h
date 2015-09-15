@@ -46,7 +46,7 @@ class Asset;
  *
  *  This class encapsulates the XML that exists in a &lt;Reel&gt; to say
  *  that a piece of content is used in this reel.  It does not
- *  describe the content itself (but links to a Content object which does).
+ *  describe the content itself (but links to an Asset object which does).
  */
 class ReelAsset : public Object
 {
