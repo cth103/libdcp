@@ -174,7 +174,9 @@ Certificate::get_name_part (X509_NAME* n, int nid)
 {
 	int p = -1;
 	p = X509_NAME_get_index_by_NID (n, nid, p);
-	DCP_ASSERT (p != -1);
+	if (p == -1) {
+		return "";
+	}
 	return asn_to_utf8 (X509_NAME_ENTRY_get_data (X509_NAME_get_entry (n, p)));
 }
 
