@@ -74,7 +74,6 @@ protected:
 	PictureAssetWriter (PictureAsset *, boost::filesystem::path, Standard standard, bool);
 
 	PictureAsset* _picture_asset;
-	bool _started;
 	Standard _standard;
 	bool _overwrite;
 };

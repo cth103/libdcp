@@ -56,19 +56,22 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 	memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
 
 	_sound_asset->fill_writer_info (&_state->writer_info, _sound_asset->id(), standard);
-
-	Kumu::Result_t r = _state->mxf_writer.OpenWrite (file.string().c_str(), _state->writer_info, _state->audio_desc);
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (FileError ("could not open audio MXF for writing", file.string(), r));
-	}
-
-	_sound_asset->set_file (file);
 }
 
 void
 SoundAssetWriter::write (float const * const * data, int frames)
 {
 	DCP_ASSERT (!_finalized);
+
+	if (!_started) {
+		Kumu::Result_t r = _state->mxf_writer.OpenWrite (_file.string().c_str(), _state->writer_info, _state->audio_desc);
+		if (ASDCP_FAILURE (r)) {
+			boost::throw_exception (FileError ("could not open audio MXF for writing", _file.string(), r));
+		}
+
+		_sound_asset->set_file (_file);
+		_started = true;
+	}
 
 	for (int i = 0; i < frames; ++i) {
 
@@ -112,7 +115,7 @@ SoundAssetWriter::finalize ()
 		write_current_frame ();
 	}
 
-	if (ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
+	if (_started && ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
 		boost::throw_exception (MiscError ("could not finalise audio MXF"));
 	}
 

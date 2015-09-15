@@ -34,7 +34,6 @@ using namespace dcp;
 PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, boost::filesystem::path file, Standard standard, bool overwrite)
 	: AssetWriter (asset, file)
 	, _picture_asset (asset)
-	, _started (false)
 	, _standard (standard)
 	, _overwrite (overwrite)
 {

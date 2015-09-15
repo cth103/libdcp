@@ -38,6 +38,7 @@ AssetWriter::AssetWriter (MXF* mxf, boost::filesystem::path file)
 	, _file (file)
 	, _frames_written (0)
 	, _finalized (false)
+	, _started (false)
 	, _encryption_context (0)
 {
 	if (mxf->key ()) {
