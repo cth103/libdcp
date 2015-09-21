@@ -35,7 +35,7 @@ CPL::CPL (boost::filesystem::path file)
 {
 	cxml::Document f ("CompositionPlaylist");
 	f.read_file (file);
-	
+
 	id = f.string_child ("Id");
 	annotation_text = f.optional_string_child ("AnnotationText").get_value_or ("");
 	issue_date = f.string_child ("IssueDate");
@@ -75,6 +75,9 @@ CPLAssetList::CPLAssetList (shared_ptr<const cxml::Node> node)
 	main_stereoscopic_picture = optional_type_child<MainStereoscopicPicture> (node, "MainStereoscopicPicture");
 	main_sound = optional_type_child<MainSound> (node, "MainSound");
 	main_subtitle = optional_type_child<MainSubtitle> (node, "MainSubtitle");
+
+	/* Ignore Atmos metadata */
+	node->ignore_child ("axd:AuxData");
 
 	node->done ();
 }
@@ -128,10 +131,10 @@ MainSound::MainSound (shared_ptr<const cxml::Node> node)
 	entry_point = node->number_child<int64_t> ("EntryPoint");
 	duration = node->number_child<int64_t> ("Duration");
 	key_id = node->optional_string_child ("KeyId").get_value_or ("");
-	
+
 	node->ignore_child ("Hash");
 	node->ignore_child ("Language");
-	
+
 	node->done ();
 }
 
@@ -146,6 +149,6 @@ MainSubtitle::MainSubtitle (shared_ptr<const cxml::Node> node)
 
 	node->ignore_child ("Hash");
 	node->ignore_child ("Language");
-	
+
 	node->done ();
 }
