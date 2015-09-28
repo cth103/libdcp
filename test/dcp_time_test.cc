@@ -93,5 +93,8 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	a = dcp::Time (1, 58, 56, 2, 25);
 	BOOST_CHECK_EQUAL (a.rebase (250), dcp::Time (1, 58, 56, 20, 250));
 	b = dcp::Time (9, 12, 41, 17, 99);
-	BOOST_CHECK_EQUAL (b.rebase (250), dcp::Time (9, 12, 41, 43, 250));
+	BOOST_CHECK_EQUAL (b.rebase (250), dcp::Time (9, 12, 41, 42, 250));
+	/* We must round down in rebase() */
+	a = dcp::Time (0, 2, 57, 999, 1000);
+	BOOST_CHECK_EQUAL (a.rebase (250), dcp::Time (0, 2, 57, 249, 250));
 }

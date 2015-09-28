@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE (write_subtitle_test)
 		"    </Subtitle>\n"
 		"  </Font>\n"
 		"  <Font Italic=\"yes\" Color=\"FF800040\" Size=\"91\" Effect=\"border\" EffectColor=\"FF010203\" Script=\"normal\" Underlined=\"no\" Weight=\"normal\">\n"
-		"    <Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:219\" TimeOut=\"06:12:15:219\" FadeUpTime=\"930792\" FadeDownTime=\"4591834\">\n"
+		"    <Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:218\" TimeOut=\"06:12:15:218\" FadeUpTime=\"930792\" FadeDownTime=\"4591834\">\n"
 		"      <Text VAlign=\"bottom\" VPosition=\"40\">What's going on</Text>\n"
 		"    </Subtitle>\n"
 		"  </Font>\n"

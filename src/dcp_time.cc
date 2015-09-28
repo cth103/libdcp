@@ -291,5 +291,5 @@ Time::as_seconds () const
 Time
 Time::rebase (int tcr_) const
 {
-	return Time (h, m, s, rint (float (e) * tcr_ / tcr), tcr_);
+	return Time (h, m, s, floor (float (e) * tcr_ / tcr), tcr_);
 }
