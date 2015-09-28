@@ -46,6 +46,10 @@ public:
 	virtual ~AssetWriter ();
 	virtual bool finalize ();
 
+	int64_t frames_written () const {
+		return _frames_written;
+	}
+
 protected:
 	AssetWriter (MXF* mxf, boost::filesystem::path file);
 
