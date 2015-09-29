@@ -260,10 +260,9 @@ DCP::read_assets ()
 		if (root == "CompositionPlaylist") {
 			_files.cpls.push_back (t.string());
 		} else if (root == "PackingList") {
+			/* This is a hack; ignore second and subsequent PKLs */
 			if (_files.pkl.empty ()) {
 				_files.pkl = t.string();
-			} else {
-				boost::throw_exception (DCPReadError ("duplicate PKLs found"));
 			}
 		}
 	}
