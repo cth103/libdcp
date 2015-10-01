@@ -9,6 +9,8 @@ def build(target, options):
         cmd += ' --static'
         if target.distro == 'centos':
             cmd += ' --disable-tests'
+        if target.distro == 'debian' and target.version == 'unstable':
+            target.append_with_space('CXXFLAGS', '-std=c++11')
     elif target.platform == 'windows':
         cmd += ' --target-windows --disable-tests'
     elif target.platform == 'osx':

@@ -52,7 +52,7 @@ public:
 
 	/** @return true if the data is encrypted */
 	bool encrypted () const {
-		return _key_id;
+		return static_cast<bool>(_key_id);
 	}
 
 	/** Set the ID of the key that is used for encryption/decryption.

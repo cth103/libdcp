@@ -108,7 +108,7 @@ public:
 
 	/** @return true if a shared_ptr is known for this Ref */
 	bool resolved () const {
-		return _object;
+		return static_cast<bool>(_object);
 	}
 
 private:

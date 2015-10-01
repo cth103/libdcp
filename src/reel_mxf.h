@@ -51,7 +51,7 @@ public:
 	 *  that its content is encrypted.
 	 */
 	bool encrypted () const {
-		return _key_id;
+		return static_cast<bool>(_key_id);
 	}
 
 	/** @return Key ID to describe the key that encrypts this asset's
