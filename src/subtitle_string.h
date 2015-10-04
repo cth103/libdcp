@@ -130,6 +130,14 @@ public:
 		return _aspect_adjust;
 	}
 
+	void set_in (Time i) {
+		_in = i;
+	}
+
+	void set_out (Time o) {
+		_out = o;
+	}
+
 	void set_h_position (float p) {
 		_h_position = p;
 	}
