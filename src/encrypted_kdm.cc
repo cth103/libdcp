@@ -608,3 +608,21 @@ EncryptedKDM::keys () const
 {
 	return _data->authenticated_private.encrypted_key;
 }
+
+string
+EncryptedKDM::annotation_text () const
+{
+	return _data->authenticated_public.annotation_text;
+}
+
+string
+EncryptedKDM::content_title_text () const
+{
+	return _data->authenticated_public.required_extensions.kdm_required_extensions.content_title_text;
+}
+
+string
+EncryptedKDM::issue_date () const
+{
+	return _data->authenticated_public.issue_date;
+}

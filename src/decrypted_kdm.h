@@ -84,6 +84,18 @@ public:
 		return _keys;
 	}
 
+	std::string annotation_text () const {
+		return _annotation_text;
+	}
+
+	std::string content_title_text () const {
+		return _content_title_text;
+	}
+
+	std::string issue_date () const {
+		return _issue_date;
+	}
+
 private:
 	LocalTime _not_valid_before;
 	LocalTime _not_valid_after;

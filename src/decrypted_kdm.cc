@@ -181,6 +181,10 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 
 	RSA_free (rsa);
 	BIO_free (bio);
+
+	_annotation_text = kdm.annotation_text ();
+	_content_title_text = kdm.content_title_text ();
+	_issue_date = kdm.issue_date ();
 }
 
 DecryptedKDM::DecryptedKDM (
