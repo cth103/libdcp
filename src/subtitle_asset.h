@@ -68,7 +68,7 @@ public:
 		return _subtitles;
 	}
 
-	void add (SubtitleString);
+	virtual void add (SubtitleString);
 	virtual void add_font (std::string id, boost::filesystem::path file) = 0;
 	std::map<std::string, Data> fonts_with_load_ids () const;
 

@@ -50,7 +50,8 @@ using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 SMPTESubtitleAsset::SMPTESubtitleAsset ()
-	: _edit_rate (24, 1)
+	: _intrinsic_duration (0)
+	, _edit_rate (24, 1)
 	, _time_code_rate (24)
 {
 
@@ -126,40 +127,43 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	parse_subtitles (xml, font_nodes);
 
 	if (reader) {
-		read_fonts (reader);
-	}
-}
+		ASDCP::TimedText::TimedTextDescriptor descriptor;
+		reader->FillTimedTextDescriptor (descriptor);
 
-void
-SMPTESubtitleAsset::read_fonts (shared_ptr<ASDCP::TimedText::MXFReader> reader)
-{
-	ASDCP::TimedText::TimedTextDescriptor text_descriptor;
-	reader->FillTimedTextDescriptor (text_descriptor);
-	for (
-		ASDCP::TimedText::ResourceList_t::const_iterator i = text_descriptor.ResourceList.begin();
-		i != text_descriptor.ResourceList.end();
-		++i) {
+		/* Load fonts */
 
-		if (i->Type == ASDCP::TimedText::MT_OPENTYPE) {
-			ASDCP::TimedText::FrameBuffer buffer;
-			buffer.Capacity (10 * 1024 * 1024);
-			reader->ReadAncillaryResource (i->ResourceID, buffer);
+		for (
+			ASDCP::TimedText::ResourceList_t::const_iterator i = descriptor.ResourceList.begin();
+			i != descriptor.ResourceList.end();
+			++i) {
 
-			char id[64];
-			Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof (id));
+			if (i->Type == ASDCP::TimedText::MT_OPENTYPE) {
+				ASDCP::TimedText::FrameBuffer buffer;
+				buffer.Capacity (10 * 1024 * 1024);
+				reader->ReadAncillaryResource (i->ResourceID, buffer);
 
-			shared_array<uint8_t> data (new uint8_t[buffer.Size()]);
-			memcpy (data.get(), buffer.RoData(), buffer.Size());
+				char id[64];
+				Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof (id));
 
-			list<shared_ptr<SMPTELoadFontNode> >::const_iterator j = _load_font_nodes.begin ();
-			while (j != _load_font_nodes.end() && (*j)->urn != id) {
-				++j;
-			}
+				shared_array<uint8_t> data (new uint8_t[buffer.Size()]);
+				memcpy (data.get(), buffer.RoData(), buffer.Size());
 
-			if (j != _load_font_nodes.end ()) {
-				_fonts.push_back (Font ((*j)->id, (*j)->urn, Data (data, buffer.Size ())));
+				list<shared_ptr<SMPTELoadFontNode> >::const_iterator j = _load_font_nodes.begin ();
+				while (j != _load_font_nodes.end() && (*j)->urn != id) {
+					++j;
+				}
+
+				if (j != _load_font_nodes.end ()) {
+					_fonts.push_back (Font ((*j)->id, (*j)->urn, Data (data, buffer.Size ())));
+				}
 			}
 		}
+
+		/* Get intrinsic duration */
+		_intrinsic_duration = descriptor.ContainerDuration;
+	} else {
+		/* Guess intrinsic duration */
+		_intrinsic_duration = latest_subtitle_out().as_editable_units (_edit_rate.numerator / _edit_rate.denominator);
 	}
 }
 
@@ -244,7 +248,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 
 	descriptor.NamespaceName = "dcst";
 	memcpy (descriptor.AssetID, writer_info.AssetUUID, ASDCP::UUIDlen);
-	descriptor.ContainerDuration = latest_subtitle_out().as_editable_units (_edit_rate.numerator / _edit_rate.denominator);
+	descriptor.ContainerDuration = _intrinsic_duration;
 
 	ASDCP::TimedText::MXFWriter writer;
 	ASDCP::Result_t r = writer.OpenWrite (p.string().c_str(), writer_info, descriptor);
@@ -363,4 +367,11 @@ SMPTESubtitleAsset::add_font (string load_id, boost::filesystem::path file)
 	string const uuid = make_uuid ();
 	_fonts.push_back (Font (load_id, uuid, file));
 	_load_font_nodes.push_back (shared_ptr<SMPTELoadFontNode> (new SMPTELoadFontNode (load_id, uuid)));
+}
+
+void
+SMPTESubtitleAsset::add (dcp::SubtitleString s)
+{
+	SubtitleAsset::add (s);
+	_intrinsic_duration = latest_subtitle_out().as_editable_units (_edit_rate.numerator / _edit_rate.denominator);
 }

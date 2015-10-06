@@ -58,6 +58,7 @@ public:
 
 	Glib::ustring xml_as_string () const;
 	void write (boost::filesystem::path path) const;
+	void add (SubtitleString);
 	void add_font (std::string id, boost::filesystem::path file);
 
 	void set_content_title_text (std::string t) {
@@ -82,6 +83,10 @@ public:
 
 	void set_start_time (Time t) {
 		_start_time = t;
+	}
+
+	void set_intrinsic_duration (int64_t d) {
+		_intrinsic_duration = d;
 	}
 
 	/** @return title of the film that these subtitles are for,
@@ -137,6 +142,10 @@ protected:
 private:
 	void read_fonts (boost::shared_ptr<ASDCP::TimedText::MXFReader>);
 
+	/** The total length of this content in video frames.  The amount of
+	 *  content presented may be less than this.
+	 */
+	int64_t _intrinsic_duration;
 	std::string _content_title_text;
 	boost::optional<std::string> _language;
 	boost::optional<std::string> _annotation_text;
