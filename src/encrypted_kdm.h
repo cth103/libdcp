@@ -96,6 +96,8 @@ private:
 	data::EncryptedKDMData* _data;
 };
 
+extern bool operator== (EncryptedKDM const & a, EncryptedKDM const & b);
+
 }
 
 #endif

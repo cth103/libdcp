@@ -55,7 +55,23 @@ public:
 	 */
 	DecryptedKDM (EncryptedKDM const & kdm, std::string private_key);
 
-	/** Construct a DecryptedKDM.
+	/** Create an empty DecryptedKDM.  After creation you must call
+	 *  add_key() to add each key that you want in the KDM.
+	 *
+	 *  @param not_valid_before Start time for the KDM.
+	 *  @param not_valid_after End time for the KDM.
+	 */
+	DecryptedKDM (
+		LocalTime not_valid_before,
+		LocalTime not_valid_after,
+		std::string annotation_text,
+		std::string content_title_text,
+		std::string issue_date
+		);
+
+	/** Create a DecryptedKDM by taking a CPL and setting up to encrypt each of its
+	 *  assets with the same symmetric key.
+	 *
 	 *  @param cpl CPL that the keys are for.
 	 *  @param key Key that was used to encrypt the assets.
 	 *  @param not_valid_before Start time for the KDM.
@@ -78,6 +94,9 @@ public:
 	 *  @return Encrypted KDM.
 	 */
 	EncryptedKDM encrypt (boost::shared_ptr<const CertificateChain> signer, Certificate recipient, Formulation formulation) const;
+
+	void add_key (std::string type, std::string key_id, Key key, std::string cpl_id);
+	void add_key (DecryptedKDMKey key);
 
 	/** @return This KDM's (decrypted) keys, which could be used to decrypt assets. */
 	std::list<DecryptedKDMKey> keys () const {

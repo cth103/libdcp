@@ -188,6 +188,22 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 }
 
 DecryptedKDM::DecryptedKDM (
+	LocalTime not_valid_before,
+	LocalTime not_valid_after,
+	string annotation_text,
+	string content_title_text,
+	string issue_date
+	)
+	: _not_valid_before (not_valid_before)
+	, _not_valid_after (not_valid_after)
+	, _annotation_text (annotation_text)
+	, _content_title_text (content_title_text)
+	, _issue_date (issue_date)
+{
+
+}
+
+DecryptedKDM::DecryptedKDM (
 	boost::shared_ptr<const CPL> cpl,
 	Key key,
 	LocalTime not_valid_before,
@@ -213,6 +229,23 @@ DecryptedKDM::DecryptedKDM (
 			_keys.push_back (DecryptedKDMKey (mxf->key_type(), mxf->key_id().get(), key, cpl->id ()));
 		}
 	}
+}
+
+/** @param type (MDIK, MDAK etc.)
+ *  @param key_id Key ID.
+ *  @param key The actual symmetric key.
+ *  @param cpl_id ID of CPL that the key is for.
+ */
+void
+DecryptedKDM::add_key (string type, string key_id, Key key, string cpl_id)
+{
+	_keys.push_back (DecryptedKDMKey (type, key_id, key, cpl_id));
+}
+
+void
+DecryptedKDM::add_key (DecryptedKDMKey key)
+{
+	_keys.push_back (key);
 }
 
 EncryptedKDM

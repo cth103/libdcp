@@ -626,3 +626,10 @@ EncryptedKDM::issue_date () const
 {
 	return _data->authenticated_public.issue_date;
 }
+
+bool
+dcp::operator== (EncryptedKDM const & a, EncryptedKDM const & b)
+{
+	/* Not exactly efficient... */
+	return a.as_xml() == b.as_xml();
+}
