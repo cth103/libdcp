@@ -66,7 +66,7 @@ InteropSubtitleAsset::InteropSubtitleAsset ()
 
 }
 
-Glib::ustring
+string
 InteropSubtitleAsset::xml_as_string () const
 {
 	xmlpp::Document doc;
@@ -151,8 +151,9 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 		throw FileError ("Could not open file for writing", p, -1);
 	}
 
-	Glib::ustring const s = xml_as_string ();
-	fwrite (s.c_str(), 1, s.bytes(), f);
+	string const s = xml_as_string ();
+	/* length() here gives bytes not characters */
+	fwrite (s.c_str(), 1, s.length(), f);
 	fclose (f);
 
 	_file = p;

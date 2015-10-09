@@ -49,7 +49,7 @@ public:
 
 	void add_font (std::string load_id, boost::filesystem::path file);
 
-	Glib::ustring xml_as_string () const;
+	std::string xml_as_string () const;
 	void write (boost::filesystem::path path) const;
 	void resolve_fonts (std::list<boost::shared_ptr<Object> > objects);
 	void add_font_assets (std::list<boost::shared_ptr<Asset> >& assets);

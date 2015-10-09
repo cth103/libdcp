@@ -183,7 +183,7 @@ SMPTESubtitleAsset::valid_mxf (boost::filesystem::path file)
 	return !ASDCP_FAILURE (r);
 }
 
-Glib::ustring
+string
 SMPTESubtitleAsset::xml_as_string () const
 {
 	xmlpp::Document doc;

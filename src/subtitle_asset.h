@@ -73,7 +73,7 @@ public:
 	std::map<std::string, Data> fonts_with_load_ids () const;
 
 	virtual void write (boost::filesystem::path) const = 0;
-	virtual Glib::ustring xml_as_string () const = 0;
+	virtual std::string xml_as_string () const = 0;
 
 	Time latest_subtitle_out () const;
 
