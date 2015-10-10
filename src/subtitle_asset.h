@@ -26,6 +26,7 @@
 #include "data.h"
 #include <libcxml/cxml.h>
 #include <boost/shared_array.hpp>
+#include <map>
 
 namespace xmlpp {
 	class Element;
