@@ -38,7 +38,7 @@ main (int argc, char* argv[])
 		cerr << "Could not load as interop: " << e.what() << "\n";
 		try {
 			dcp::SMPTESubtitleAsset sc (argv[1]);
-			cout << sc.xml_as_string().raw ();
+			cout << sc.xml_as_string();
 		} catch (exception& e) {
 			cerr << "Could not load as SMPTE (" << e.what() << ")\n";
 		}
