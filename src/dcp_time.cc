@@ -38,14 +38,14 @@ Time::Time (int frame, int frames_per_second, int tcr_)
 	set (double (frame) / frames_per_second, tcr_);
 }
 
-/** Construct a Time with a timecode rate of 24 and using the supplied
- *  number of seconds.
+/** Construct a Time from a number of seconds and a timecode rate.
  *
  *  @param seconds A number of seconds.
+ *  @param tcr_ Timecode rate.
  */
-Time::Time (double seconds)
+Time::Time (double seconds, int tcr_)
 {
-	set (seconds, 24);
+	set (seconds, tcr_);
 }
 
 /** Construct a Time with specified timecode rate and using the supplied

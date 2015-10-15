@@ -89,6 +89,9 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	r = a + b;
 	BOOST_CHECK_EQUAL (r, dcp::Time (0, 0, 0, 240, 1152));
 
+	/* Check rounding on conversion from seconds */
+	BOOST_CHECK_EQUAL (dcp::Time (80.990, 1000), dcp::Time (0, 1, 20, 990, 1000));
+
 	/* Check rebase() */
 	a = dcp::Time (1, 58, 56, 2, 25);
 	BOOST_CHECK_EQUAL (a.rebase (250), dcp::Time (1, 58, 56, 20, 250));

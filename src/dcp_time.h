@@ -62,7 +62,7 @@ public:
 		, tcr (tcr_)
 	{}
 
-	Time (double seconds);
+	Time (double seconds, int tcr);
 
 	Time (std::string time, int tcr);
 
