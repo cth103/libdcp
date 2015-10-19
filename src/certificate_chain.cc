@@ -46,6 +46,7 @@
 using std::string;
 using std::ofstream;
 using std::ifstream;
+using std::runtime_error;
 using std::stringstream;
 using namespace dcp;
 
@@ -535,7 +536,7 @@ CertificateChain::add_signature_value (xmlpp::Node* parent, string ns) const
 		);
 
 	if (signature_context->signKey == 0) {
-		throw StringError ("could not read private key");
+		throw runtime_error ("could not read private key");
 	}
 
 	/* XXX: set key name to the PEM string: this can't be right! */

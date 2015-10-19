@@ -25,10 +25,11 @@
 #include "compose.hpp"
 
 using std::string;
+using std::runtime_error;
 using namespace dcp;
 
 FileError::FileError (string message, boost::filesystem::path filename, int number)
-	: StringError (String::compose ("%1 (%2) (error %3)", message, filename.string(), number))
+	: runtime_error (String::compose ("%1 (%2) (error %3)", message, filename.string(), number))
 	, _filename (filename)
 	, _number (number)
 {
@@ -36,48 +37,36 @@ FileError::FileError (string message, boost::filesystem::path filename, int numb
 }
 
 UnresolvedRefError::UnresolvedRefError (string id)
-	: StringError (String::compose ("Unresolved reference to asset id %1", id))
+	: runtime_error (String::compose ("Unresolved reference to asset id %1", id))
 {
 
 }
 
 TimeFormatError::TimeFormatError (string bad_time)
-	: StringError (String::compose ("Bad time string %1", bad_time))
+	: runtime_error (String::compose ("Bad time string %1", bad_time))
 {
 
 }
 
 MissingAssetError::MissingAssetError (boost::filesystem::path path, AssetType type)
-	: _path (path)
-	, _type (type)
+	: DCPReadError (
+		type == MAIN_PICTURE    ? String::compose ("missing asset %1 for main picture", path.string()) :
+		(type == MAIN_SOUND     ? String::compose ("missing asset %1 for main sound", path.string()) :
+		 (type == MAIN_SUBTITLE ? String::compose ("missing asset %1 for main subtitle", path.string()) :
+		  String::compose ("missing asset %1", path.string()))))
 {
-	string type_name;
-	switch (_type) {
-	case MAIN_PICTURE:
-		type_name = " for main picture";
-		break;
-	case MAIN_SOUND:
-		type_name = " for main sound";
-		break;
-	case MAIN_SUBTITLE:
-		type_name = " for main subtitle";
-		break;
-	case UNKNOWN:
-		break;
-	}
 
-	_message = String::compose ("Missing asset %1%2", path.string(), type_name);
 }
 
 NotEncryptedError::NotEncryptedError (string const & what)
-	: StringError (String::compose ("%1 is not encrypted", what))
+	: runtime_error (String::compose ("%1 is not encrypted", what))
 {
 
 }
 
 
 ProgrammingError::ProgrammingError (string file, int line)
-	: StringError (String::compose ("Programming error at %1:%2", file, line))
+	: runtime_error (String::compose ("Programming error at %1:%2", file, line))
 {
 
 }

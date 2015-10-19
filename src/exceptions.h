@@ -29,32 +29,10 @@
 namespace dcp
 {
 
-/** @class StringError
- *  @brief An exception that uses a std::string to store its error message.
- */
-class StringError : public std::exception
-{
-public:
-	StringError () {}
-	StringError (std::string message)
-		: _message (message)
-	{}
-
-	~StringError () throw () {}
-
-	/** @return error message */
-	char const * what () const throw () {
-		return _message.c_str ();
-	}
-
-protected:
-	std::string _message;
-};
-
 /** @class FileError
  *  @brief An exception related to a file
  */
-class FileError : public StringError
+class FileError : public std::runtime_error
 {
 public:
 	FileError (std::string message, boost::filesystem::path filename, int number);
@@ -90,26 +68,23 @@ public:
 /** @class MiscError
  *  @brief A miscellaneous exception
  */
-class MiscError : public StringError
+class MiscError : public std::runtime_error
 {
 public:
 	MiscError (std::string message)
-		: StringError (message)
+		: std::runtime_error (message)
 	{}
 };
 
 /** @class DCPReadError
  *  @brief A DCP read exception
  */
-class DCPReadError : public StringError
+class DCPReadError : public std::runtime_error
 {
 public:
 	DCPReadError (std::string message)
-		: StringError (message)
+		: std::runtime_error (message)
 	{}
-
-protected:
-	DCPReadError () {}
 };
 
 /** @class MissingAssetError
@@ -127,27 +102,23 @@ public:
 
 	MissingAssetError (boost::filesystem::path, AssetType = UNKNOWN);
 	~MissingAssetError () throw () {}
-
-private:
-	boost::filesystem::path _path;
-	AssetType _type;
 };
 
 /** @class XMLError
  *  @brief An XML error
  */
-class XMLError : public StringError
+class XMLError : public std::runtime_error
 {
 public:
 	XMLError (std::string message)
-		: StringError (message)
+		: std::runtime_error (message)
 	{}
 };
 
 /** @class UnresolvedRefError
  *  @brief An exception caused by a reference (by UUID) to something which is not known
  */
-class UnresolvedRefError : public StringError
+class UnresolvedRefError : public std::runtime_error
 {
 public:
 	UnresolvedRefError (std::string id);
@@ -156,7 +127,7 @@ public:
 /** @class TimeFormatError
  *  @brief A an error with a string passed to LocalTime.
  */
-class TimeFormatError : public StringError
+class TimeFormatError : public std::runtime_error
 {
 public:
 	TimeFormatError (std::string bad_time);
@@ -166,7 +137,7 @@ public:
  *  @brief An error raised when creating a DecryptedKDM object for assets that are not
  *  encrypted.
  */
-class NotEncryptedError : public StringError
+class NotEncryptedError : public std::runtime_error
 {
 public:
 	NotEncryptedError (std::string const & what);
@@ -176,7 +147,7 @@ public:
 /** @class ProgrammingError
  *  @brief An exception thrown when a DCP_ASSERT fails; something that should not happen.
  */
-class ProgrammingError : public StringError
+class ProgrammingError : public std::runtime_error
 {
 public:
 	ProgrammingError (std::string file, int line);
