@@ -63,7 +63,7 @@ def configure(conf):
                      }
                      """,
                        msg='Checking for library openjpeg', stlib='openjpeg', uselib_store='OPENJPEG', mandatory=True)
-        
+
         conf.env.HAVE_CXML = 1
         conf.env.STLIB_CXML = ['cxml']
     else:
@@ -180,3 +180,6 @@ def create_version_cc(bld, version):
 def post(ctx):
     if ctx.cmd == 'install':
         ctx.exec_command('/sbin/ldconfig')
+
+def tags(bld):
+    os.system('etags src/*.cc src/*.h')
