@@ -58,9 +58,21 @@ Asset::Asset (string id, boost::filesystem::path file)
 }
 
 void
-Asset::write_to_pkl (xmlpp::Node* node, Standard standard) const
+Asset::write_to_pkl (xmlpp::Node* node, boost::filesystem::path root, Standard standard) const
 {
 	DCP_ASSERT (!_file.empty ());
+
+	optional<boost::filesystem::path> path = relative_to_root (
+		boost::filesystem::canonical (root),
+		boost::filesystem::canonical (_file)
+		);
+
+	if (!path) {
+		/* The path of this asset is not within our DCP, so we assume it's an external
+		   (referenced) one.
+		*/
+		return;
+	}
 
 	xmlpp::Node* asset = node->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);

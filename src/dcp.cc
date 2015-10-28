@@ -274,7 +274,7 @@ DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared
 
 	xmlpp::Element* asset_list = pkl->add_child("AssetList");
 	BOOST_FOREACH (shared_ptr<Asset> i, assets ()) {
-		i->write_to_pkl (asset_list, standard);
+		i->write_to_pkl (asset_list, _directory, standard);
 	}
 
 	if (signer) {

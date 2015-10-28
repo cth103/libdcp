@@ -66,7 +66,7 @@ public:
 	 *  @param node Parent node.
 	 *  @param standard Standard to use.
 	 */
-	void write_to_pkl (xmlpp::Node* node, Standard standard) const;
+	void write_to_pkl (xmlpp::Node* node, boost::filesystem::path root, Standard standard) const;
 
 	/** @return the most recent disk file used to read or write this asset; may be empty */
 	boost::filesystem::path file () const {
