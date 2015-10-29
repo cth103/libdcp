@@ -48,7 +48,7 @@ public:
 		, v_align (VALIGN_TOP)
 	{}
 
-	TextNode (boost::shared_ptr<const cxml::Node> node, int tcr);
+	TextNode (boost::shared_ptr<const cxml::Node> node, int tcr, std::string font_id_attribute);
 
 	float h_position;
 	HAlign h_align;

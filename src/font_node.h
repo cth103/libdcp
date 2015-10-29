@@ -40,7 +40,7 @@ public:
 		: size (0)
 	{}
 
-	FontNode (cxml::ConstNodePtr node, int tcr);
+	FontNode (cxml::ConstNodePtr node, int tcr, std::string font_id_attribute);
 	FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes);
 
 	std::string text;
