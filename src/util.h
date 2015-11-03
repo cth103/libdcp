@@ -29,7 +29,6 @@
 #include <boost/function.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
-#include <openjpeg.h>
 #include <string>
 #include <stdint.h>
 

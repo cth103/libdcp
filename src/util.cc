@@ -31,6 +31,7 @@
 #include "KM_util.h"
 #include "KM_fileio.h"
 #include "AS_DCP.h"
+#include <openjpeg.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/dl.h>
 #include <xmlsec/app.h>

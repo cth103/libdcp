@@ -27,7 +27,6 @@
 #include "mxf.h"
 #include "util.h"
 #include "metadata.h"
-#include <openjpeg.h>
 
 namespace ASDCP {
 	namespace JP2K {

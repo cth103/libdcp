@@ -22,7 +22,9 @@
  */
 
 #include "util.h"
-#include <openjpeg.h>
+
+struct opj_image;
+typedef struct opj_image opj_image_t;
 
 namespace dcp {
 

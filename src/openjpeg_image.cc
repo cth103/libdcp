@@ -23,6 +23,7 @@
 
 #include "openjpeg_image.h"
 #include "dcp_assert.h"
+#include <openjpeg.h>
 #include <stdexcept>
 
 using namespace dcp;
