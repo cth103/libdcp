@@ -403,13 +403,12 @@ dcp::file_to_string (boost::filesystem::path p, uintmax_t max_length)
 		throw MiscError ("Unexpectedly long file");
 	}
 
-	char* c = new char[len + 1];
-
 	FILE* f = fopen_boost (p, "r");
 	if (!f) {
-		return "";
+		throw FileError ("could not open file", p, errno);
 	}
 
+	char* c = new char[len + 1];
 	fread (c, 1, len, f);
 	fclose (f);
 	c[len] = '\0';
