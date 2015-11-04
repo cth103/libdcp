@@ -408,12 +408,12 @@ dcp::file_to_string (boost::filesystem::path p, uintmax_t max_length)
 		throw FileError ("could not open file", p, errno);
 	}
 
-	char* c = new char[len + 1];
-	fread (c, 1, len, f);
+	char* c = new char[len];
+	/* This may read less than `len' if we are on Windows and we have CRLF in the file */
+	int const N = fread (c, 1, len, f);
 	fclose (f);
-	c[len] = '\0';
 
-	string s (c);
+	string s (c, N);
 	delete[] c;
 
 	return s;
