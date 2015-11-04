@@ -231,8 +231,13 @@ public:
 
 	void as_xml (xmlpp::Element* node) const
 	{
-		node->add_child("KeyType")->add_child_text (key_type);
+		xmlpp::Element* type = node->add_child("KeyType");
+		type->add_child_text (key_type);
 		node->add_child("KeyId")->add_child_text ("urn:uuid:" + key_id);
+		/* XXX: this feels like a bit of a hack */
+		if (key_type == "MDEK") {
+			type->set_attribute ("scope", "http://www.dolby.com/cp850/2012/KDM#kdm-key-type");
+		}
 	}
 
 	string key_type;
