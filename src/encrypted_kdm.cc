@@ -358,10 +358,10 @@ public:
 
 		recipient.as_xml (node->add_child ("Recipient"));
 		node->add_child("CompositionPlaylistId")->add_child_text ("urn:uuid:" + composition_playlist_id);
+		node->add_child("ContentTitleText")->add_child_text (content_title_text);
 		if (content_authenticator) {
 			node->add_child("ContentAuthenticator")->add_child_text (content_authenticator.get ());
 		}
-		node->add_child("ContentTitleText")->add_child_text (content_title_text);
 		node->add_child("ContentKeysNotValidBefore")->add_child_text (not_valid_before.as_string ());
 		node->add_child("ContentKeysNotValidAfter")->add_child_text (not_valid_after.as_string ());
 		authorized_device_info.as_xml (node->add_child ("AuthorizedDeviceInfo"));
