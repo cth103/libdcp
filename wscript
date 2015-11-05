@@ -68,7 +68,7 @@ def configure(conf):
         conf.env.STLIB_CXML = ['cxml']
     else:
         conf.check_cfg(package='libopenjpeg', args='--cflags --libs', uselib_store='OPENJPEG', mandatory=True)
-        conf.check_cfg(package='libcxml', atleast_version='0.08', args='--cflags --libs', uselib_store='CXML', mandatory=True)
+        conf.check_cfg(package='libcxml', atleast_version='0.14.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
 
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'
