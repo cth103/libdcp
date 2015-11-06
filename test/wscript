@@ -18,7 +18,7 @@ def configure(conf):
 def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'tests'
-    obj.uselib = 'BOOST_TEST OPENJPEG CXML XMLSEC1 SNDFILE'
+    obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM OPENJPEG CXML XMLSEC1 SNDFILE'
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.lib = ['gcov']
@@ -61,7 +61,7 @@ def build(bld):
 
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'subs_in_out'
-    obj.uselib = 'BOOST_TEST OPENJPEG CXML'
+    obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM OPENJPEG CXML'
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.lib = ['gcov']
@@ -74,7 +74,7 @@ def build(bld):
 
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'rewrite_subs'
-    obj.uselib = 'BOOST_TEST OPENJPEG CXML'
+    obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM OPENJPEG CXML'
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.lib = ['gcov']
