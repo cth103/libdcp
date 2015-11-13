@@ -2,6 +2,7 @@ import subprocess
 import os
 import sys
 import distutils.spawn
+from waflib import Logs
 
 APPNAME = 'libdcp'
 VERSION = '1.2.8devel'

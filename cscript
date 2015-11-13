@@ -1,7 +1,7 @@
 import os
 
 def dependencies(target):
-    return (('libcxml', 'v0.14.0'), ('openjpeg-cdist', '5d8bffd'))
+    return (('libcxml', '5f7703a'), ('openjpeg-cdist', '5d8bffd'))
 
 def build(target, options):
     cmd = './waf configure --disable-examples --prefix=%s' % target.directory
@@ -9,7 +9,7 @@ def build(target, options):
         cmd += ' --static'
         if target.distro == 'centos':
             cmd += ' --disable-tests'
-        if target.distro == 'debian' and target.version == 'unstable':
+        if (target.distro == 'debian' and target.version == 'unstable' or target.distro == 'fedora' and target.version == '23'):
             target.append_with_space('CXXFLAGS', '-std=c++11')
     elif target.platform == 'windows':
         cmd += ' --target-windows --disable-tests'
