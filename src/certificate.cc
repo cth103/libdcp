@@ -39,7 +39,12 @@
 using std::list;
 using std::string;
 using std::ostream;
+using std::min;
+using std::stringstream;
 using namespace dcp;
+
+static string const begin_certificate = "-----BEGIN CERTIFICATE-----";
+static string const end_certificate = "-----END CERTIFICATE-----";
 
 /** @param c X509 certificate, which this object will take ownership of */
 Certificate::Certificate (X509* c)
@@ -75,7 +80,48 @@ Certificate::Certificate (Certificate const & other)
 void
 Certificate::read_string (string cert)
 {
-	BIO* bio = BIO_new_mem_buf (const_cast<char *> (cert.c_str ()), -1);
+	/* Reformat cert so that it has line breaks every 64 characters.
+	   See http://comments.gmane.org/gmane.comp.encryption.openssl.user/55593
+	*/
+
+	stringstream s (cert);
+	string line;
+
+	/* BEGIN */
+	getline (s, line);
+	boost::algorithm::trim (line);
+	if (line != begin_certificate) {
+		throw MiscError ("missing BEGIN line in certificate");
+	}
+
+	/* The base64 data */
+	bool got_end = false;
+	string base64 = "";
+	while (getline (s, line)) {
+		boost::algorithm::trim (line);
+		if (line == end_certificate) {
+			got_end = true;
+			break;
+		}
+		base64 += line;
+	}
+
+	if (!got_end) {
+		throw MiscError ("missing END line in certificate");
+	}
+
+	/* Make up the fixed version */
+
+	string fixed = begin_certificate + "\n";
+	while (!base64.empty ()) {
+		size_t const t = min (size_t(64), base64.length());
+		fixed += base64.substr (0, t) + "\n";
+		base64 = base64.substr (t, base64.length() - t);
+	}
+
+	fixed += end_certificate;
+
+	BIO* bio = BIO_new_mem_buf (const_cast<char *> (fixed.c_str ()), -1);
 	if (!bio) {
 		throw MiscError ("could not create memory BIO");
 	}
@@ -141,8 +187,8 @@ Certificate::certificate (bool with_begin_end) const
 	BIO_free (bio);
 
 	if (!with_begin_end) {
-		boost::replace_all (s, "-----BEGIN CERTIFICATE-----\n", "");
-		boost::replace_all (s, "\n-----END CERTIFICATE-----\n", "");
+		boost::replace_all (s, begin_certificate + "\n", "");
+		boost::replace_all (s, "\n" + end_certificate + "\n", "");
 	}
 
 	return s;
