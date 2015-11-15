@@ -25,8 +25,10 @@
 #include <libxml++/nodes/element.h>
 #include <libxml/parser.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/foreach.hpp>
 
 using std::list;
+using std::vector;
 using std::string;
 using std::map;
 using std::pair;
@@ -275,9 +277,10 @@ public:
 	AuthorizedDeviceInfo (shared_ptr<const cxml::Node> node)
 		: device_list_identifier (node->string_child ("DeviceListIdentifier").substr (9))
 		, device_list_description (node->optional_string_child ("DeviceListDescription"))
-		, certificate_thumbprint (node->node_child("DeviceList")->string_child ("CertificateThumbprint"))
 	{
-
+		BOOST_FOREACH (cxml::ConstNodePtr i, node->node_child("DeviceList")->node_children("CertificateThumbprint")) {
+			certificate_thumbprints.push_back (i->content ());
+		}
 	}
 
 	void as_xml (xmlpp::Element* node) const
@@ -287,13 +290,15 @@ public:
 			node->add_child ("DeviceListDescription")->add_child_text (device_list_description.get());
 		}
 		xmlpp::Element* device_list = node->add_child ("DeviceList");
-		device_list->add_child("CertificateThumbprint")->add_child_text (certificate_thumbprint);
+		BOOST_FOREACH (string i, certificate_thumbprints) {
+			device_list->add_child("CertificateThumbprint")->add_child_text (i);
+		}
 	}
 
 	/** DeviceListIdentifier without the urn:uuid: prefix */
 	string device_list_identifier;
 	boost::optional<string> device_list_description;
-	string certificate_thumbprint;
+	std::list<string> certificate_thumbprints;
 };
 
 class X509IssuerSerial
@@ -501,6 +506,7 @@ EncryptedKDM::EncryptedKDM (string s)
 EncryptedKDM::EncryptedKDM (
 	shared_ptr<const CertificateChain> signer,
 	Certificate recipient,
+	vector<Certificate> trusted_devices,
 	string device_list_description,
 	string cpl_id,
 	string content_title_text,
@@ -539,10 +545,13 @@ EncryptedKDM::EncryptedKDM (
 
 	if (formulation == MODIFIED_TRANSITIONAL_1 || formulation == DCI_ANY) {
 		/* Use the "assume trust" thumbprint */
-		kre.authorized_device_info.certificate_thumbprint = "2jmj7l5rSw0yVb/vlWAYkK/YBwk=";
+		kre.authorized_device_info.certificate_thumbprints.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
 	} else if (formulation == DCI_SPECIFIC) {
-		/* Use the recipient thumbprint */
-		kre.authorized_device_info.certificate_thumbprint = recipient.thumbprint ();
+		/* Use the recipient and other trusted device thumbprints */
+		kre.authorized_device_info.certificate_thumbprints.push_back (recipient.thumbprint ());
+		BOOST_FOREACH (Certificate const & i, trusted_devices) {
+			kre.authorized_device_info.certificate_thumbprints.push_back (i.thumbprint ());
+		}
 	}
 
 	for (list<pair<string, string> >::const_iterator i = key_ids.begin(); i != key_ids.end(); ++i) {

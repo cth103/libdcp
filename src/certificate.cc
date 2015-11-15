@@ -66,7 +66,9 @@ Certificate::Certificate (Certificate const & other)
 	: _certificate (0)
 	, _public_key (0)
 {
-	read_string (other.certificate (true));
+	if (other._certificate) {
+		read_string (other.certificate (true));
+	}
 }
 
 /** Read a certificate from a string.

@@ -36,6 +36,7 @@
 #include <boost/foreach.hpp>
 
 using std::list;
+using std::vector;
 using std::string;
 using std::stringstream;
 using std::setw;
@@ -249,7 +250,7 @@ DecryptedKDM::add_key (DecryptedKDMKey key)
 }
 
 EncryptedKDM
-DecryptedKDM::encrypt (shared_ptr<const CertificateChain> signer, Certificate recipient, Formulation formulation) const
+DecryptedKDM::encrypt (shared_ptr<const CertificateChain> signer, Certificate recipient, vector<Certificate> trusted_devices, Formulation formulation) const
 {
 	list<pair<string, string> > key_ids;
 	list<string> keys;
@@ -305,6 +306,7 @@ DecryptedKDM::encrypt (shared_ptr<const CertificateChain> signer, Certificate re
 	return EncryptedKDM (
 		signer,
 		recipient,
+		trusted_devices,
 		device_list_description,
 		_keys.front().cpl_id (),
 		_content_title_text,

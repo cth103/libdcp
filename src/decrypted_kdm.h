@@ -90,10 +90,17 @@ public:
 	/** Encrypt this KDM's keys and sign the whole KDM.
 	 *  @param signer Chain to sign with.
 	 *  @param recipient Certificate of the projector/server which should receive this KDM's keys.
+	 *  @param trusted_devices Extra trusted devices which should be written to the KDM (recipient will be written
+	 *  as a trusted device automatically and does not need to be included in this list).
 	 *  @param formulation Formulation to use for the encrypted KDM.
 	 *  @return Encrypted KDM.
 	 */
-	EncryptedKDM encrypt (boost::shared_ptr<const CertificateChain> signer, Certificate recipient, Formulation formulation) const;
+	EncryptedKDM encrypt (
+		boost::shared_ptr<const CertificateChain> signer,
+		Certificate recipient,
+		std::vector<Certificate> trusted_devices,
+		Formulation formulation
+		) const;
 
 	void add_key (std::string type, std::string key_id, Key key, std::string cpl_id);
 	void add_key (DecryptedKDMKey key);
