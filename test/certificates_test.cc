@@ -21,13 +21,15 @@
 #include "certificate.h"
 #include "certificate_chain.h"
 #include "util.h"
+#include "exceptions.h"
+#include "test.h"
 
 using std::list;
 using std::string;
 using boost::shared_ptr;
 
 /** Check that loading certificates from files via strings works */
-BOOST_AUTO_TEST_CASE (certificates)
+BOOST_AUTO_TEST_CASE (certificates1)
 {
 	dcp::CertificateChain c;
 
@@ -84,6 +86,15 @@ BOOST_AUTO_TEST_CASE (certificates)
 	/* Check that reconstruction from a string works */
 	dcp::Certificate test (c.root().certificate (true));
 	BOOST_CHECK_EQUAL (test.certificate(), c.root().certificate());
+}
+
+/** Check some more certificate-from-strings */
+BOOST_AUTO_TEST_CASE (certificates2)
+{
+	dcp::Certificate c (dcp::file_to_string (private_test / "CA.GDC-TECH.COM_SA2100_A14903.crt.crt"));
+	BOOST_CHECK_EQUAL (c.certificate(true), dcp::file_to_string (private_test / "CA.GDC-TECH.COM_SA2100_A14903.crt.crt.reformatted"));
+
+	BOOST_CHECK_THROW (dcp::Certificate ("foo"), dcp::MiscError);
 }
 
 /** Check that dcp::CertificateChain::valid() and ::attempt_reorder() basically work */
