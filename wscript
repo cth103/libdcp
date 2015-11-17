@@ -14,6 +14,7 @@ def options(opt):
     opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
     opt.add_option('--static', action='store_true', default=False, help='build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
     opt.add_option('--disable-tests', action='store_true', default=False, help='disable building of tests')
+    opt.add_option('--disable-gcov', action='store_true', default=False, help='don''t use gcov in tests')
     opt.add_option('--disable-examples', action='store_true', default=False, help='disable building of examples')
 
 def configure(conf):
@@ -122,7 +123,8 @@ def configure(conf):
 
     if not conf.env.DISABLE_TESTS:
         conf.recurse('test')
-        conf.check(lib='gcov', define_name='HAVE_GCOV', mandatory=False)
+        if not conf.options.disable_gcov:
+            conf.check(lib='gcov', define_name='HAVE_GCOV', mandatory=False)
     conf.recurse('asdcplib')
 
 def build(bld):
