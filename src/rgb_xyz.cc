@@ -305,9 +305,9 @@ dcp::rgb_to_xyz (
 			d.z = min (65535.0, d.z);
 
 			/* Out gamma LUT */
-			*xyz_x++ = lut_out[lrint(d.x)] * 4095;
-			*xyz_y++ = lut_out[lrint(d.y)] * 4095;
-			*xyz_z++ = lut_out[lrint(d.z)] * 4095;
+			*xyz_x++ = lrint (lut_out[lrint(d.x)] * 4095);
+			*xyz_y++ = lrint (lut_out[lrint(d.y)] * 4095);
+			*xyz_z++ = lrint (lut_out[lrint(d.z)] * 4095);
 		}
 	}
 
