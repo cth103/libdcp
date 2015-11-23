@@ -35,7 +35,7 @@ using boost::scoped_array;
 /** Convert a test image from sRGB to XYZ and check that the transforms are right */
 BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 {
-	unsigned int seed = 0;
+	srand (0);
 	dcp::Size const size (640, 480);
 
 	scoped_array<uint8_t> rgb (new uint8_t[size.width * size.height * 6]);
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 		for (int x = 0; x < size.width; ++x) {
 			/* Write a 12-bit random number for each component */
 			for (int c = 0; c < 3; ++c) {
-				*p = (rand_r (&seed) & 0xfff) << 4;
+				*p = (rand () & 0xfff) << 4;
 				++p;
 			}
 		}
@@ -166,7 +166,7 @@ BOOST_AUTO_TEST_CASE (xyz_rgb_range_test)
 /** Convert an image from RGB to XYZ and back again */
 BOOST_AUTO_TEST_CASE (rgb_xyz_round_trip_test)
 {
-	unsigned int seed = 0;
+	srand (0);
 	dcp::Size const size (640, 480);
 
 	scoped_array<uint8_t> rgb (new uint8_t[size.width * size.height * 6]);
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_round_trip_test)
 		for (int x = 0; x < size.width; ++x) {
 			/* Write a 12-bit random number for each component */
 			for (int c = 0; c < 3; ++c) {
-				*p = (rand_r (&seed) & 0xfff) << 4;
+				*p = (rand () & 0xfff) << 4;
 				++p;
 			}
 		}

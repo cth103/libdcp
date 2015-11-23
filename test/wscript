@@ -9,9 +9,9 @@ def configure(conf):
     			    #include <boost/test/unit_test.hpp>\n
                             int main() {}
                             """,
-                              msg='Checking for boost unit testing library',
-                              lib='boost_unit_test_framework%s' % boost_lib_suffix,
-                              uselib_store='BOOST_TEST')
+                   msg='Checking for boost unit testing library',
+                   lib='boost_unit_test_framework%s' % boost_lib_suffix,
+                   uselib_store='BOOST_TEST')
 
     conf.env.prepend_value('LINKFLAGS', '-Lsrc')
 
@@ -19,9 +19,12 @@ def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'tests'
     obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM OPENJPEG CXML XMLSEC1 SNDFILE'
+    obj.cppflags = ['-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.lib = ['gcov']
+        obj.cppflags.append('-ftest-coverage')
+        obj.cppflags.append('-fprofile-arcs')
     else:
         obj.use = 'libdcp%s' % bld.env.API_VERSION
     obj.source = """
@@ -57,30 +60,33 @@ def build(bld):
                  """
     obj.target = 'tests'
     obj.install_path = ''
-    obj.cppflags = ['-fprofile-arcs', '-ftest-coverage', '-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
 
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'subs_in_out'
     obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM OPENJPEG CXML'
+    obj.cppflags = ['-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.lib = ['gcov']
+        obj.cppflags.append('-ftest-coverage')
+        obj.cppflags.append('-fprofile-arcs')
     else:
         obj.use = 'libdcp%s' % bld.env.API_VERSION
     obj.source = 'subs_in_out.cc'
     obj.target = 'subs_in_out'
     obj.install_path = ''
-    obj.cppflags = ['-fprofile-arcs', '-ftest-coverage', '-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
 
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'rewrite_subs'
     obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM OPENJPEG CXML'
+    obj.cppflags = ['-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.lib = ['gcov']
+        obj.cppflags.append('-ftest-coverage')
+        obj.cppflags.append('-fprofile-arcs')
     else:
         obj.use = 'libdcp%s' % bld.env.API_VERSION
     obj.source = 'rewrite_subs.cc'
     obj.target = 'rewrite_subs'
     obj.install_path = ''
-    obj.cppflags = ['-fprofile-arcs', '-ftest-coverage', '-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
