@@ -547,8 +547,12 @@ EncryptedKDM::EncryptedKDM (
 		/* Use the "assume trust" thumbprint */
 		kre.authorized_device_info.certificate_thumbprints.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
 	} else if (formulation == DCI_SPECIFIC) {
-		/* Use the recipient and other trusted device thumbprints */
-		kre.authorized_device_info.certificate_thumbprints.push_back (recipient.thumbprint ());
+		/* As I read the standard we should use the recipient
+		   /and/ other trusted device thumbprints here.  MJD
+		   reports that this doesn't work with his setup;
+		   a working KDM does not include the recipient's
+		   thumbprint (recipient.thumbprint()).
+		*/
 		BOOST_FOREACH (Certificate const & i, trusted_devices) {
 			kre.authorized_device_info.certificate_thumbprints.push_back (i.thumbprint ());
 		}
