@@ -78,10 +78,10 @@ SubtitleAsset::examine_subtitle_nodes (
 	ParseState& parse_state
 	)
 {
-	for (list<shared_ptr<dcp::SubtitleNode> >::const_iterator j = subtitle_nodes.begin(); j != subtitle_nodes.end(); ++j) {
-		parse_state.subtitle_nodes.push_back (*j);
-		examine_text_nodes (xml, (*j)->text_nodes, parse_state);
-		examine_font_nodes (xml, (*j)->font_nodes, parse_state);
+	BOOST_FOREACH (shared_ptr<dcp::SubtitleNode> i, subtitle_nodes) {
+		parse_state.subtitle_nodes.push_back (i);
+		examine_text_nodes (xml, i->text_nodes, parse_state);
+		examine_font_nodes (xml, i->font_nodes, parse_state);
 		parse_state.subtitle_nodes.pop_back ();
 	}
 }
@@ -93,15 +93,14 @@ SubtitleAsset::examine_font_nodes (
 	ParseState& parse_state
 	)
 {
-	for (list<shared_ptr<dcp::FontNode> >::const_iterator i = font_nodes.begin(); i != font_nodes.end(); ++i) {
+	BOOST_FOREACH (shared_ptr<dcp::FontNode> i, font_nodes) {
 
-		parse_state.font_nodes.push_back (*i);
-		maybe_add_subtitle ((*i)->text, parse_state);
+		parse_state.font_nodes.push_back (i);
+		maybe_add_subtitle (i->text, parse_state);
 
-		examine_subtitle_nodes (xml, (*i)->subtitle_nodes, parse_state);
-
-		examine_font_nodes (xml, (*i)->font_nodes, parse_state);
-		examine_text_nodes (xml, (*i)->text_nodes, parse_state);
+		examine_subtitle_nodes (xml, i->subtitle_nodes, parse_state);
+		examine_font_nodes (xml, i->font_nodes, parse_state);
+		examine_text_nodes (xml, i->text_nodes, parse_state);
 
 		parse_state.font_nodes.pop_back ();
 	}
@@ -114,10 +113,10 @@ SubtitleAsset::examine_text_nodes (
 	ParseState& parse_state
 	)
 {
-	for (list<shared_ptr<dcp::TextNode> >::const_iterator i = text_nodes.begin(); i != text_nodes.end(); ++i) {
-		parse_state.text_nodes.push_back (*i);
-		maybe_add_subtitle ((*i)->text, parse_state);
-		examine_font_nodes (xml, (*i)->font_nodes, parse_state);
+	BOOST_FOREACH (shared_ptr<dcp::TextNode> i, text_nodes) {
+		parse_state.text_nodes.push_back (i);
+		maybe_add_subtitle (i->text, parse_state);
+		examine_font_nodes (xml, i->font_nodes, parse_state);
 		parse_state.text_nodes.pop_back ();
 	}
 }
@@ -166,9 +165,9 @@ list<SubtitleString>
 SubtitleAsset::subtitles_during (Time from, Time to, bool starting) const
 {
 	list<SubtitleString> s;
-	for (list<SubtitleString>::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
-		if ((starting && from <= i->in() && i->in() < to) || (!starting && i->out() >= from && i->in() <= to)) {
-			s.push_back (*i);
+	BOOST_FOREACH (SubtitleString const & i, _subtitles) {
+		if ((starting && from <= i.in() && i.in() < to) || (!starting && i.out() >= from && i.in() <= to)) {
+			s.push_back (i);
 		}
 	}
 
@@ -185,9 +184,9 @@ Time
 SubtitleAsset::latest_subtitle_out () const
 {
 	Time t;
-	for (list<SubtitleString>::const_iterator i = _subtitles.begin(); i != _subtitles.end(); ++i) {
-		if (i->out() > t) {
-			t = i->out ();
+	BOOST_FOREACH (SubtitleString const & i, _subtitles) {
+		if (i.out() > t) {
+			t = i.out ();
 		}
 	}
 
@@ -252,7 +251,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Stand
 	xmlpp::Element* font_element = 0;
 	xmlpp::Element* subtitle_element = 0;
 
-	for (list<SubtitleString>::iterator i = sorted.begin(); i != sorted.end(); ++i) {
+	BOOST_FOREACH (SubtitleString const & i, sorted) {
 
 		/* We will start a new <Font>...</Font> whenever some font property changes.
 		   I suppose we should really make an optimal hierarchy of <Font> tags, but
@@ -260,22 +259,22 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Stand
 		*/
 
 		bool const font_changed =
-			font          != i->font()          ||
-			italic        != i->italic()        ||
-			colour        != i->colour()        ||
-			size          != i->size()          ||
-			fabs (aspect_adjust - i->aspect_adjust()) > ASPECT_ADJUST_EPSILON ||
-			effect        != i->effect()        ||
-			effect_colour != i->effect_colour();
+			font          != i.font()          ||
+			italic        != i.italic()        ||
+			colour        != i.colour()        ||
+			size          != i.size()          ||
+			fabs (aspect_adjust - i.aspect_adjust()) > ASPECT_ADJUST_EPSILON ||
+			effect        != i.effect()        ||
+			effect_colour != i.effect_colour();
 
 		if (font_changed) {
-			font = i->font ();
-			italic = i->italic ();
-			colour = i->colour ();
-			size = i->size ();
-			aspect_adjust = i->aspect_adjust ();
-			effect = i->effect ();
-			effect_colour = i->effect_colour ();
+			font = i.font ();
+			italic = i.italic ();
+			colour = i.colour ();
+			size = i.size ();
+			aspect_adjust = i.aspect_adjust ();
+			effect = i.effect ();
+			effect_colour = i.effect_colour ();
 		}
 
 		if (!font_element || font_changed) {
@@ -305,55 +304,55 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Stand
 		}
 
 		if (!subtitle_element || font_changed ||
-		    (last_in != i->in() ||
-		     last_out != i->out() ||
-		     last_fade_up_time != i->fade_up_time() ||
-		     last_fade_down_time != i->fade_down_time()
+		    (last_in != i.in() ||
+		     last_out != i.out() ||
+		     last_fade_up_time != i.fade_up_time() ||
+		     last_fade_down_time != i.fade_down_time()
 			    )) {
 
 			subtitle_element = font_element->add_child ("Subtitle", xmlns);
 			subtitle_element->set_attribute ("SpotNumber", raw_convert<string> (spot_number++));
-			subtitle_element->set_attribute ("TimeIn", i->in().rebase(time_code_rate).as_string(standard));
-			subtitle_element->set_attribute ("TimeOut", i->out().rebase(time_code_rate).as_string(standard));
+			subtitle_element->set_attribute ("TimeIn", i.in().rebase(time_code_rate).as_string(standard));
+			subtitle_element->set_attribute ("TimeOut", i.out().rebase(time_code_rate).as_string(standard));
 			if (standard == SMPTE) {
-				subtitle_element->set_attribute ("FadeUpTime", i->fade_up_time().rebase(time_code_rate).as_string(standard));
-				subtitle_element->set_attribute ("FadeDownTime", i->fade_down_time().rebase(time_code_rate).as_string(standard));
+				subtitle_element->set_attribute ("FadeUpTime", i.fade_up_time().rebase(time_code_rate).as_string(standard));
+				subtitle_element->set_attribute ("FadeDownTime", i.fade_down_time().rebase(time_code_rate).as_string(standard));
 			} else {
-				subtitle_element->set_attribute ("FadeUpTime", raw_convert<string> (i->fade_up_time().as_editable_units(time_code_rate)));
-				subtitle_element->set_attribute ("FadeDownTime", raw_convert<string> (i->fade_down_time().as_editable_units(time_code_rate)));
+				subtitle_element->set_attribute ("FadeUpTime", raw_convert<string> (i.fade_up_time().as_editable_units(time_code_rate)));
+				subtitle_element->set_attribute ("FadeDownTime", raw_convert<string> (i.fade_down_time().as_editable_units(time_code_rate)));
 			}
 
-			last_in = i->in ();
-			last_out = i->out ();
-			last_fade_up_time = i->fade_up_time ();
-			last_fade_down_time = i->fade_down_time ();
+			last_in = i.in ();
+			last_out = i.out ();
+			last_fade_up_time = i.fade_up_time ();
+			last_fade_down_time = i.fade_down_time ();
 		}
 
 		xmlpp::Element* text = subtitle_element->add_child ("Text", xmlns);
-		if (i->h_align() != HALIGN_CENTER) {
+		if (i.h_align() != HALIGN_CENTER) {
 			if (standard == SMPTE) {
-				text->set_attribute ("Halign", halign_to_string (i->h_align ()));
+				text->set_attribute ("Halign", halign_to_string (i.h_align ()));
 			} else {
-				text->set_attribute ("HAlign", halign_to_string (i->h_align ()));
+				text->set_attribute ("HAlign", halign_to_string (i.h_align ()));
 			}
 		}
-		if (i->h_position() > ALIGN_EPSILON) {
+		if (i.h_position() > ALIGN_EPSILON) {
 			if (standard == SMPTE) {
-				text->set_attribute ("Hposition", raw_convert<string> (i->h_position() * 100, 6));
+				text->set_attribute ("Hposition", raw_convert<string> (i.h_position() * 100, 6));
 			} else {
-				text->set_attribute ("HPosition", raw_convert<string> (i->h_position() * 100, 6));
+				text->set_attribute ("HPosition", raw_convert<string> (i.h_position() * 100, 6));
 			}
 		}
 		if (standard == SMPTE) {
-			text->set_attribute ("Valign", valign_to_string (i->v_align()));
+			text->set_attribute ("Valign", valign_to_string (i.v_align()));
 		} else {
-			text->set_attribute ("VAlign", valign_to_string (i->v_align()));
+			text->set_attribute ("VAlign", valign_to_string (i.v_align()));
 		}
-		if (i->v_position() > ALIGN_EPSILON) {
+		if (i.v_position() > ALIGN_EPSILON) {
 			if (standard == SMPTE) {
-				text->set_attribute ("Vposition", raw_convert<string> (i->v_position() * 100, 6));
+				text->set_attribute ("Vposition", raw_convert<string> (i.v_position() * 100, 6));
 			} else {
-				text->set_attribute ("VPosition", raw_convert<string> (i->v_position() * 100, 6));
+				text->set_attribute ("VPosition", raw_convert<string> (i.v_position() * 100, 6));
 			}
 		} else {
 			if (standard == SMPTE) {
@@ -362,7 +361,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Stand
 				text->set_attribute ("VPosition", "0");
 			}
 		}
-		text->add_child_text (i->text());
+		text->add_child_text (i.text());
 	}
 }
 

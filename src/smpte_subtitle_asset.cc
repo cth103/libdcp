@@ -118,15 +118,13 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 
 	shared_ptr<cxml::Node> subtitle_list = xml->optional_node_child ("SubtitleList");
 
-	list<cxml::NodePtr> f = subtitle_list->node_children ("Font");
 	list<shared_ptr<dcp::FontNode> > font_nodes;
-	BOOST_FOREACH (cxml::NodePtr& i, f) {
+	BOOST_FOREACH (cxml::NodePtr const & i, subtitle_list->node_children ("Font")) {
 		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, _time_code_rate, "ID")));
 	}
 
-	f = subtitle_list->node_children ("Subtitle");
 	list<shared_ptr<dcp::SubtitleNode> > subtitle_nodes;
-	BOOST_FOREACH (cxml::NodePtr& i, f) {
+	BOOST_FOREACH (cxml::NodePtr const & i, subtitle_list->node_children ("Subtitle")) {
 		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, _time_code_rate, "ID")));
 	}
 

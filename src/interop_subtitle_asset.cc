@@ -52,15 +52,13 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 	_movie_title = xml->string_child ("MovieTitle");
 	_load_font_nodes = type_children<dcp::InteropLoadFontNode> (xml, "LoadFont");
 
-	list<cxml::NodePtr> f = xml->node_children ("Font");
 	list<shared_ptr<dcp::FontNode> > font_nodes;
-	BOOST_FOREACH (cxml::NodePtr& i, f) {
+	BOOST_FOREACH (cxml::NodePtr const & i, xml->node_children ("Font")) {
 		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, 250, "Id")));
 	}
 
-	f = xml->node_children ("Subtitle");
 	list<shared_ptr<dcp::SubtitleNode> > subtitle_nodes;
-	BOOST_FOREACH (cxml::NodePtr& i, f) {
+	BOOST_FOREACH (cxml::NodePtr const & i, xml->node_children ("Subtitle")) {
 		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, 250, "Id")));
 	}
 
