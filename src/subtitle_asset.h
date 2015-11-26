@@ -138,6 +138,12 @@ private:
 		std::list<boost::shared_ptr<TextNode> > const & text_nodes,
 		ParseState& parse_state
 		);
+
+	void examine_subtitle_nodes (
+		boost::shared_ptr<const cxml::Node> xml,
+		std::list<boost::shared_ptr<SubtitleNode> > const & subtitle_nodes,
+		ParseState& parse_state
+		);
 };
 
 }

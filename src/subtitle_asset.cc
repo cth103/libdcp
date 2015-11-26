@@ -67,6 +67,21 @@ SubtitleAsset::parse_subtitles (shared_ptr<cxml::Document> xml, list<shared_ptr<
 }
 
 void
+SubtitleAsset::examine_subtitle_nodes (
+	shared_ptr<const cxml::Node> xml,
+	list<shared_ptr<dcp::SubtitleNode> > const & subtitle_nodes,
+	ParseState& parse_state
+	)
+{
+	for (list<shared_ptr<dcp::SubtitleNode> >::const_iterator j = subtitle_nodes.begin(); j != subtitle_nodes.end(); ++j) {
+		parse_state.subtitle_nodes.push_back (*j);
+		examine_text_nodes (xml, (*j)->text_nodes, parse_state);
+		examine_font_nodes (xml, (*j)->font_nodes, parse_state);
+		parse_state.subtitle_nodes.pop_back ();
+	}
+}
+
+void
 SubtitleAsset::examine_font_nodes (
 	shared_ptr<const cxml::Node> xml,
 	list<shared_ptr<dcp::FontNode> > const & font_nodes,
@@ -78,12 +93,7 @@ SubtitleAsset::examine_font_nodes (
 		parse_state.font_nodes.push_back (*i);
 		maybe_add_subtitle ((*i)->text, parse_state);
 
-		for (list<shared_ptr<dcp::SubtitleNode> >::iterator j = (*i)->subtitle_nodes.begin(); j != (*i)->subtitle_nodes.end(); ++j) {
-			parse_state.subtitle_nodes.push_back (*j);
-			examine_text_nodes (xml, (*j)->text_nodes, parse_state);
-			examine_font_nodes (xml, (*j)->font_nodes, parse_state);
-			parse_state.subtitle_nodes.pop_back ();
-		}
+		examine_subtitle_nodes (xml, (*i)->subtitle_nodes, parse_state);
 
 		examine_font_nodes (xml, (*i)->font_nodes, parse_state);
 		examine_text_nodes (xml, (*i)->text_nodes, parse_state);
