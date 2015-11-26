@@ -54,7 +54,7 @@ if [ "$?" != "0" ]; then
     echo "FAIL: files differ"
     exit 1
 fi
-    
+
 # Everything beyond this point needs $private to exist
 if [ ! -e "$private/info.log" ]; then
     echo ""
@@ -83,7 +83,7 @@ if [ "$?" != "0" ]; then
     exit 1
 fi
 
-# Copy $private into build/ then re-write the subtitles of every DCP using 
+# Copy $private into build/ then re-write the subtitles of every DCP using
 # $work/rewrite_subs.  This tests round-trip of subtitle reading/writing.
 # Note that all the subs in $private/metadata are Interop.
 rm -f $work/info2.log
@@ -110,5 +110,13 @@ fi
 # Dump the subs of JourneyToJah... (which has MXF-wrapped SMPTE subtitles)
 # and check that they are right
 $dcpinfo -s $private/data/JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV >> $work/jah.log
+
+# Parse some problematic subs and check that we get it right
+run/test/subs_in_out $private/TunaBoat_Icelandic_Reel1_V1_8sec.xml > $work/tuna.xml
+diff -q $private/TunaBoat_Icelandic_Reel1_V1_8sec.parsed.xml $work/tuna.xml
+if [ "$?" != "0" ]; then
+    echo "FAIL: output of parse check 1 invalid"
+    exit 1
+fi
 
 echo "PASS"
