@@ -124,7 +124,13 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, _time_code_rate, "ID")));
 	}
 
-	parse_subtitles (xml, font_nodes);
+	f = subtitle_list->node_children ("Subtitle");
+	list<shared_ptr<dcp::SubtitleNode> > subtitle_nodes;
+	BOOST_FOREACH (cxml::NodePtr& i, f) {
+		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, _time_code_rate, "ID")));
+	}
+
+	parse_subtitles (xml, font_nodes, subtitle_nodes);
 
 	if (reader) {
 		ASDCP::TimedText::TimedTextDescriptor descriptor;

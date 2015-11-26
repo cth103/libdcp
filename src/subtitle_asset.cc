@@ -59,11 +59,16 @@ SubtitleAsset::SubtitleAsset (boost::filesystem::path file)
 }
 
 void
-SubtitleAsset::parse_subtitles (shared_ptr<cxml::Document> xml, list<shared_ptr<dcp::FontNode> > font_nodes)
+SubtitleAsset::parse_subtitles (
+	shared_ptr<cxml::Document> xml,
+	list<shared_ptr<dcp::FontNode> > font_nodes,
+	list<shared_ptr<dcp::SubtitleNode> > subtitle_nodes
+	)
 {
 	/* Make Subtitle objects to represent the raw XML nodes in a sane way */
 	ParseState parse_state;
 	examine_font_nodes (xml, font_nodes, parse_state);
+	examine_subtitle_nodes (xml, subtitle_nodes, parse_state);
 }
 
 void

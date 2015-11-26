@@ -58,7 +58,13 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, 250, "Id")));
 	}
 
-	parse_subtitles (xml, font_nodes);
+	f = xml->node_children ("Subtitle");
+	list<shared_ptr<dcp::SubtitleNode> > subtitle_nodes;
+	BOOST_FOREACH (cxml::NodePtr& i, f) {
+		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, 250, "Id")));
+	}
+
+	parse_subtitles (xml, font_nodes, subtitle_nodes);
 }
 
 InteropSubtitleAsset::InteropSubtitleAsset ()

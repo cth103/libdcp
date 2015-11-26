@@ -84,7 +84,12 @@ protected:
 	friend struct ::interop_dcp_font_test;
 	friend struct ::smpte_dcp_font_test;
 
-	void parse_subtitles (boost::shared_ptr<cxml::Document> xml, std::list<boost::shared_ptr<FontNode> > font_nodes);
+	void parse_subtitles (
+		boost::shared_ptr<cxml::Document> xml,
+		std::list<boost::shared_ptr<FontNode> > font_nodes,
+		std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes
+		);
+
 	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Standard standard) const;
 
 	/** All our subtitles, in no particular order */
