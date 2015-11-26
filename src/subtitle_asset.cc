@@ -67,12 +67,12 @@ SubtitleAsset::parse_subtitles (
 {
 	/* Make Subtitle objects to represent the raw XML nodes in a sane way */
 	ParseState parse_state;
-	examine_font_nodes (xml, font_nodes, parse_state);
-	examine_subtitle_nodes (xml, subtitle_nodes, parse_state);
+	examine_nodes (xml, font_nodes, parse_state);
+	examine_nodes (xml, subtitle_nodes, parse_state);
 }
 
 void
-SubtitleAsset::examine_subtitle_nodes (
+SubtitleAsset::examine_nodes (
 	shared_ptr<const cxml::Node> xml,
 	list<shared_ptr<dcp::SubtitleNode> > const & subtitle_nodes,
 	ParseState& parse_state
@@ -80,14 +80,14 @@ SubtitleAsset::examine_subtitle_nodes (
 {
 	BOOST_FOREACH (shared_ptr<dcp::SubtitleNode> i, subtitle_nodes) {
 		parse_state.subtitle_nodes.push_back (i);
-		examine_text_nodes (xml, i->text_nodes, parse_state);
-		examine_font_nodes (xml, i->font_nodes, parse_state);
+		examine_nodes (xml, i->text_nodes, parse_state);
+		examine_nodes (xml, i->font_nodes, parse_state);
 		parse_state.subtitle_nodes.pop_back ();
 	}
 }
 
 void
-SubtitleAsset::examine_font_nodes (
+SubtitleAsset::examine_nodes (
 	shared_ptr<const cxml::Node> xml,
 	list<shared_ptr<dcp::FontNode> > const & font_nodes,
 	ParseState& parse_state
@@ -98,16 +98,16 @@ SubtitleAsset::examine_font_nodes (
 		parse_state.font_nodes.push_back (i);
 		maybe_add_subtitle (i->text, parse_state);
 
-		examine_subtitle_nodes (xml, i->subtitle_nodes, parse_state);
-		examine_font_nodes (xml, i->font_nodes, parse_state);
-		examine_text_nodes (xml, i->text_nodes, parse_state);
+		examine_nodes (xml, i->subtitle_nodes, parse_state);
+		examine_nodes (xml, i->font_nodes, parse_state);
+		examine_nodes (xml, i->text_nodes, parse_state);
 
 		parse_state.font_nodes.pop_back ();
 	}
 }
 
 void
-SubtitleAsset::examine_text_nodes (
+SubtitleAsset::examine_nodes (
 	shared_ptr<const cxml::Node> xml,
 	list<shared_ptr<dcp::TextNode> > const & text_nodes,
 	ParseState& parse_state
@@ -116,7 +116,7 @@ SubtitleAsset::examine_text_nodes (
 	BOOST_FOREACH (shared_ptr<dcp::TextNode> i, text_nodes) {
 		parse_state.text_nodes.push_back (i);
 		maybe_add_subtitle (i->text, parse_state);
-		examine_font_nodes (xml, i->font_nodes, parse_state);
+		examine_nodes (xml, i->font_nodes, parse_state);
 		parse_state.text_nodes.pop_back ();
 	}
 }
