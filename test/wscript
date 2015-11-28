@@ -90,3 +90,11 @@ def build(bld):
     obj.source = 'rewrite_subs.cc'
     obj.target = 'rewrite_subs'
     obj.install_path = ''
+
+    obj = bld(features='cxx cxxprogram')
+    obj.name   = 'bench'
+    obj.uselib = 'BOOST_FILESYSTEM OPENJPEG CXML'
+    obj.use = 'libdcp%s' % bld.env.API_VERSION
+    obj.source = 'bench.cc'
+    obj.target = 'bench'
+    obj.install_path = ''

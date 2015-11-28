@@ -171,7 +171,7 @@ def create_version_cc(bld, version):
             debug_string = 'true'
         else:
             debug_string = 'false'
-        text += 'bool const built_with_debug = %s;\n' % debug_string
+        text += 'bool const dcp::built_with_debug = %s;\n' % debug_string
         print('Writing version information to src/version.cc')
         o = open('src/version.cc', 'w')
         o.write(text)

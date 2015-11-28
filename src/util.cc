@@ -252,6 +252,119 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 	return shared_ptr<OpenJPEGImage> (new OpenJPEGImage (image));
 }
 
+Data
+dcp::compress_j2k (shared_ptr<OpenJPEGImage> xyz, int bandwidth, int frames_per_second, bool threed, bool fourk)
+{
+	/* Set the max image and component sizes based on frame_rate */
+	int max_cs_len = ((float) bandwidth) / 8 / frames_per_second;
+	if (threed) {
+		/* In 3D we have only half the normal bandwidth per eye */
+		max_cs_len /= 2;
+	}
+	int const max_comp_size = max_cs_len / 1.25;
+
+	/* get a J2K compressor handle */
+	opj_cinfo_t* cinfo = opj_create_compress (CODEC_J2K);
+	if (cinfo == 0) {
+		throw MiscError ("could not create JPEG2000 encoder");
+	}
+
+	/* Set encoding parameters to default values */
+	opj_cparameters_t parameters;
+	opj_set_default_encoder_parameters (&parameters);
+
+	/* Set default cinema parameters */
+	parameters.tile_size_on = false;
+	parameters.cp_tdx = 1;
+	parameters.cp_tdy = 1;
+
+	/* Tile part */
+	parameters.tp_flag = 'C';
+	parameters.tp_on = 1;
+
+	/* Tile and Image shall be at (0,0) */
+	parameters.cp_tx0 = 0;
+	parameters.cp_ty0 = 0;
+	parameters.image_offset_x0 = 0;
+	parameters.image_offset_y0 = 0;
+
+	/* Codeblock size = 32x32 */
+	parameters.cblockw_init = 32;
+	parameters.cblockh_init = 32;
+	parameters.csty |= 0x01;
+
+	/* The progression order shall be CPRL */
+	parameters.prog_order = CPRL;
+
+	/* No ROI */
+	parameters.roi_compno = -1;
+
+	parameters.subsampling_dx = 1;
+	parameters.subsampling_dy = 1;
+
+	/* 9-7 transform */
+	parameters.irreversible = 1;
+
+	parameters.tcp_rates[0] = 0;
+	parameters.tcp_numlayers++;
+	parameters.cp_disto_alloc = 1;
+	parameters.cp_rsiz = fourk ? CINEMA4K : CINEMA2K;
+	if (fourk) {
+		parameters.numpocs = 2;
+		parameters.POC[0].tile = 1;
+		parameters.POC[0].resno0 = 0;
+		parameters.POC[0].compno0 = 0;
+		parameters.POC[0].layno1 = 1;
+		parameters.POC[0].resno1 = parameters.numresolution - 1;
+		parameters.POC[0].compno1 = 3;
+		parameters.POC[0].prg1 = CPRL;
+		parameters.POC[1].tile = 1;
+		parameters.POC[1].resno0 = parameters.numresolution - 1;
+		parameters.POC[1].compno0 = 0;
+		parameters.POC[1].layno1 = 1;
+		parameters.POC[1].resno1 = parameters.numresolution;
+		parameters.POC[1].compno1 = 3;
+		parameters.POC[1].prg1 = CPRL;
+	}
+
+	parameters.cp_comment = strdup ("libdcp");
+	parameters.cp_cinema = fourk ? CINEMA4K_24 : CINEMA2K_24;
+
+	/* 3 components, so use MCT */
+	parameters.tcp_mct = 1;
+
+	/* set max image */
+	parameters.max_comp_size = max_comp_size;
+	parameters.tcp_rates[0] = ((float) (3 * xyz->size().width * xyz->size().height * 12)) / (max_cs_len * 8);
+
+	/* Set event manager to null (openjpeg 1.3 bug) */
+	cinfo->event_mgr = 0;
+
+	/* Setup the encoder parameters using the current image and user parameters */
+	opj_setup_encoder (cinfo, &parameters, xyz->opj_image ());
+
+	opj_cio_t* cio = opj_cio_open ((opj_common_ptr) cinfo, 0, 0);
+	if (cio == 0) {
+		opj_destroy_compress (cinfo);
+		throw MiscError ("could not open JPEG2000 stream");
+	}
+
+	int const r = opj_encode (cinfo, cio, xyz->opj_image(), 0);
+	if (r == 0) {
+		opj_cio_close (cio);
+		opj_destroy_compress (cinfo);
+		throw MiscError ("JPEG2000 encoding failed");
+	}
+
+	Data enc (cio->buffer, cio_tell (cio));
+
+	opj_cio_close (cio);
+	free (parameters.cp_comment);
+	opj_destroy_compress (cinfo);
+
+	return enc;
+}
+
 /** @param s A string.
  *  @return true if the string contains only space, newline or tab characters, or is empty.
  */

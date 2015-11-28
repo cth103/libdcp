@@ -17,6 +17,9 @@
 
 */
 
+#ifndef LIBDCP_DATA_H
+#define LIBDCP_DATA_H
+
 /** @file  src/data.h
  *  @brief Data class.
  */
@@ -38,6 +41,8 @@ public:
 		, size (size_)
 	{}
 
+	Data (uint8_t const * data, boost::uintmax_t size_);
+
 	Data (boost::filesystem::path file);
 
 	boost::shared_array<uint8_t> data;
@@ -45,3 +50,5 @@ public:
 };
 
 }
+
+#endif

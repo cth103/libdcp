@@ -3,6 +3,6 @@ namespace dcp {
 
 extern char const * version;
 extern char const * git_commit;
-extern bool built_with_debug;
+extern bool const built_with_debug;
 
 }

@@ -25,6 +25,7 @@
  */
 
 #include "types.h"
+#include "data.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/filesystem.hpp>
@@ -54,6 +55,7 @@ extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
 extern bool empty_or_white_space (std::string s);
 extern boost::shared_ptr<OpenJPEGImage> decompress_j2k (uint8_t* data, int64_t size, int reduce);
+extern Data compress_j2k (boost::shared_ptr<OpenJPEGImage>, int bandwith, int frames_per_second, bool threed, bool fourk);
 extern bool ids_equal (std::string a, std::string b);
 
 extern void init ();

@@ -47,3 +47,10 @@ Data::Data (boost::filesystem::path file)
 		throw FileError ("could not read file", file, -1);
 	}
 }
+
+Data::Data (uint8_t const * data_, boost::uintmax_t size_)
+	: data (new uint8_t[size])
+	, size (size_)
+{
+	memcpy (data.get(), data_, size);
+}

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Private test data; this is stuff that is non-distributable
+private=../libdcp1-test-private
+
+export LD_LIBRARY_PATH=build/src:build/asdcplib/src:$LD_LIBRARY_PATH
+build/test/bench $private
