@@ -21,12 +21,45 @@
 #include "test.h"
 #include "util.h"
 #include "version.h"
+#include "openjpeg_image.h"
+#include <openjpeg.h>
 #include <sys/time.h>
 #include <iostream>
 
 using std::cout;
 using std::cerr;
 using boost::shared_ptr;
+
+class Timer
+{
+public:
+	Timer ()
+		: _total (0)
+	{
+
+	}
+
+	void start ()
+	{
+		gettimeofday (&_start, 0);
+	}
+
+	void stop ()
+	{
+		struct timeval stop;
+		gettimeofday (&stop, 0);
+		_total += (stop.tv_sec + stop.tv_usec / 1000000) - (_start.tv_sec + _start.tv_usec / 1000000);
+	}
+
+	double get ()
+	{
+		return _total;
+	}
+
+private:
+	double _total;
+	struct timeval _start;
+};
 
 /** Run some basic benchmarks of JPEG2000 encoding / decoding */
 int
@@ -37,54 +70,26 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	int const decompress_count = 100;
-	int const compress_count = 100;
+	int const count = 50;
 	int const j2k_bandwidth = 100000000;
 
-	struct timeval start;
 	dcp::Data j2k (boost::filesystem::path (argv[1]) / "thx.j2c");
 
-	gettimeofday (&start, 0);
+	Timer decompress;
+	Timer compress;
 
-	shared_ptr<dcp::OpenJPEGImage> xyz;
-	for (int i = 0; i < decompress_count; ++i) {
-		xyz = dcp::decompress_j2k (j2k, 0);
-		cout << (i + 1) << " ";
-		cout.flush ();
-	}
-	cout << "\n";
-
-	struct timeval stop;
-	gettimeofday (&stop, 0);
-
-	double start_seconds = start.tv_sec + double(start.tv_usec) / 1000000;
-	double stop_seconds = stop.tv_sec + double(stop.tv_usec) / 1000000;
-	if (dcp::built_with_debug) {
-		cout << "Decompress (debug build): ";
-	} else {
-		cout << "Decompress: ";
-	}
-	cout << decompress_count / (stop_seconds - start_seconds) << " fps.\n";
-
-	gettimeofday (&start, 0);
-
-	for (int i = 0; i < compress_count; ++i) {
+	for (int i = 0; i < count; ++i) {
+		decompress.start ();
+		shared_ptr<dcp::OpenJPEGImage> xyz = dcp::decompress_j2k (j2k, 0);
+		decompress.stop ();
+		compress.start ();
 		dcp::compress_j2k (xyz, j2k_bandwidth, 24, false, false);
+		compress.stop ();
 		cout << (i + 1) << " ";
 		cout.flush ();
 	}
 	cout << "\n";
 
-	gettimeofday (&stop, 0);
-
-	start_seconds = start.tv_sec + double(start.tv_usec) / 1000000;
-	stop_seconds = stop.tv_sec + double(stop.tv_usec) / 1000000;
-	if (dcp::built_with_debug) {
-		cout << "Compress (debug build) ";
-	} else {
-		cout << "Compress ";
-	}
-
-	cout << (j2k_bandwidth / 1000000) << "Mbps: "
-	     << compress_count / (stop_seconds - start_seconds) << " fps.\n";
+	cout << "Decompress: " << count / decompress.get() << " fps.\n";
+	cout << "Compress:   " << count / compress.get() << " fps.\n";
 }
