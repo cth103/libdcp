@@ -50,6 +50,7 @@ main (int argc, char* argv[])
 	for (int i = 0; i < decompress_count; ++i) {
 		xyz = dcp::decompress_j2k (j2k, 0);
 		cout << (i + 1) << " ";
+		cout.flush ();
 	}
 	cout << "\n";
 
@@ -70,6 +71,7 @@ main (int argc, char* argv[])
 	for (int i = 0; i < compress_count; ++i) {
 		dcp::compress_j2k (xyz, j2k_bandwidth, 24, false, false);
 		cout << (i + 1) << " ";
+		cout.flush ();
 	}
 	cout << "\n";
 
@@ -84,5 +86,5 @@ main (int argc, char* argv[])
 	}
 
 	cout << (j2k_bandwidth / 1000000) << "Mbps: "
-	     << compress_count / (stop_seconds - start_seconds) << " fps.";
+	     << compress_count / (stop_seconds - start_seconds) << " fps.\n";
 }
