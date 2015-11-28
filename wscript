@@ -61,20 +61,12 @@ def configure(conf):
     conf.check_cfg(package='sndfile', args='--cflags --libs', uselib_store='SNDFILE', mandatory=False)
 
     if conf.options.static:
-        conf.check_cc(fragment="""
-                     #include <stdio.h>\n
-                     #include <openjpeg.h>\n
-                     int main () {\n
-                     void* p = (void *) opj_image_create;\n
-                     return 0;\n
-                     }
-                     """,
-                       msg='Checking for library openjpeg', stlib='openjpeg', uselib_store='OPENJPEG', mandatory=True)
-
+        conf.check_cfg(package='libopenjp2', args='--cflags', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
+        conf.env.STLIB_OPENJPEG = ['openjpeg']
         conf.env.HAVE_CXML = 1
         conf.env.STLIB_CXML = ['cxml']
     else:
-        conf.check_cfg(package='libopenjpeg', args='--cflags --libs', uselib_store='OPENJPEG', mandatory=True)
+        conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
         conf.check_cfg(package='libcxml', atleast_version='0.14.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
 
     if conf.options.target_windows:
