@@ -48,14 +48,16 @@ main (int argc, char* argv[])
 
 	shared_ptr<dcp::OpenJPEGImage> xyz;
 	for (int i = 0; i < decompress_count; ++i) {
-		xyz = dcp::decompress_j2k (j2k.data.get(), j2k.size, 0);
+		xyz = dcp::decompress_j2k (j2k, 0);
+		cout << (i + 1) << " ";
 	}
+	cout << "\n";
 
 	struct timeval stop;
 	gettimeofday (&stop, 0);
 
 	double start_seconds = start.tv_sec + double(start.tv_usec) / 1000000;
-	double stop_seconds = stop.tv_sec + double(start.tv_usec) / 1000000;
+	double stop_seconds = stop.tv_sec + double(stop.tv_usec) / 1000000;
 	if (dcp::built_with_debug) {
 		cout << "Decompress (debug build): ";
 	} else {
@@ -67,12 +69,14 @@ main (int argc, char* argv[])
 
 	for (int i = 0; i < compress_count; ++i) {
 		dcp::compress_j2k (xyz, j2k_bandwidth, 24, false, false);
+		cout << (i + 1) << " ";
 	}
+	cout << "\n";
 
 	gettimeofday (&stop, 0);
 
 	start_seconds = start.tv_sec + double(start.tv_usec) / 1000000;
-	stop_seconds = stop.tv_sec + double(start.tv_usec) / 1000000;
+	stop_seconds = stop.tv_sec + double(stop.tv_usec) / 1000000;
 	if (dcp::built_with_debug) {
 		cout << "Compress (debug build) ";
 	} else {

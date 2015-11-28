@@ -193,6 +193,12 @@ dcp::content_kind_from_string (string kind)
 	DCP_ASSERT (false);
 }
 
+shared_ptr<dcp::OpenJPEGImage>
+dcp::decompress_j2k (Data data, int reduce)
+{
+	return dcp::decompress_j2k (data.data.get(), data.size, reduce);
+}
+
 /** Decompress a JPEG2000 image to a bitmap.
  *  @param data JPEG2000 data.
  *  @param size Size of data in bytes.
