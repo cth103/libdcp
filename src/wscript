@@ -81,6 +81,7 @@ def build(bld):
               gamma_transfer_function.h
               interop_load_font_node.h
               interop_subtitle_asset.h
+              j2k.h
               key.h
               load_font_node.h
               local_time.h
