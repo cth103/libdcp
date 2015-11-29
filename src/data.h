@@ -20,33 +20,37 @@
 #ifndef LIBDCP_DATA_H
 #define LIBDCP_DATA_H
 
-/** @file  src/data.h
- *  @brief Data class.
- */
-
 #include <boost/shared_array.hpp>
 #include <boost/filesystem.hpp>
 #include <stdint.h>
 
 namespace dcp {
 
-/** A block of arbitrary data */
 class Data
 {
 public:
-	Data () {}
-
-	Data (boost::shared_array<uint8_t> data_, boost::uintmax_t size_)
-		: data (data_)
-		, size (size_)
-	{}
-
-	Data (uint8_t const * data, boost::uintmax_t size_);
-
+	Data ();
+	Data (int size);
+	Data (uint8_t const * data, int size);
+	Data (boost::shared_array<uint8_t> data, int size);
 	Data (boost::filesystem::path file);
 
-	boost::shared_array<uint8_t> data;
-	boost::uintmax_t size;
+	virtual ~Data () {}
+
+	void write (boost::filesystem::path file) const;
+	void write_via_temp (boost::filesystem::path temp, boost::filesystem::path final) const;
+
+	boost::shared_array<uint8_t> data () const {
+		return _data;
+	}
+
+	int size () const {
+		return _size;
+	}
+
+private:
+	boost::shared_array<uint8_t> _data;
+	int _size;
 };
 
 }

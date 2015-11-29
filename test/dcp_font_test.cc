@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 	fread (ref.get(), 1, size, f);
 	fclose (f);
 
-	BOOST_CHECK_EQUAL (memcmp (subs2->_fonts.front().data.data.get(), ref.get(), size), 0);
+	BOOST_CHECK_EQUAL (memcmp (subs2->_fonts.front().data.data().get(), ref.get(), size), 0);
 }
 
 /** Create a DCP with SMPTE subtitles and check that the font is written and read back correctly */
@@ -106,6 +106,6 @@ BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
 	fread (ref.get(), 1, size, f);
 	fclose (f);
 
-	BOOST_REQUIRE (subs2->_fonts.front().data.data);
-	BOOST_CHECK_EQUAL (memcmp (subs2->_fonts.front().data.data.get(), ref.get(), size), 0);
+	BOOST_REQUIRE (subs2->_fonts.front().data.data());
+	BOOST_CHECK_EQUAL (memcmp (subs2->_fonts.front().data.data().get(), ref.get(), size), 0);
 }

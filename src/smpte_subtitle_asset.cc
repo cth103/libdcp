@@ -273,8 +273,8 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 		}
 		if (j != _fonts.end ()) {
 			ASDCP::TimedText::FrameBuffer buffer;
-			buffer.SetData (j->data.data.get(), j->data.size);
-			buffer.Size (j->data.size);
+			buffer.SetData (j->data.data().get(), j->data.size());
+			buffer.Size (j->data.size());
 			r = writer.WriteAncillaryResource (buffer);
 			if (ASDCP_FAILURE (r)) {
 				boost::throw_exception (MXFFileError ("could not write font to timed text resource", p.string(), r));

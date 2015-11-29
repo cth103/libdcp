@@ -35,7 +35,7 @@ using namespace dcp;
 shared_ptr<dcp::OpenJPEGImage>
 dcp::decompress_j2k (Data data, int reduce)
 {
-	return dcp::decompress_j2k (data.data.get(), data.size, reduce);
+	return dcp::decompress_j2k (data.data().get(), data.size(), reduce);
 }
 
 class ReadBuffer
@@ -153,7 +153,7 @@ public:
 	OPJ_SIZE_T write (void* buffer, OPJ_SIZE_T nb_bytes)
 	{
 		DCP_ASSERT ((_offset + nb_bytes) < MAX_J2K_SIZE);
-		memcpy (_data.data.get() + _offset, buffer, nb_bytes);
+		memcpy (_data.data().get() + _offset, buffer, nb_bytes);
 		_offset += nb_bytes;
 		return nb_bytes;
 	}

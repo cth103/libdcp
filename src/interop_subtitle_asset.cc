@@ -173,7 +173,7 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 			++j;
 		}
 		if (j != _fonts.end ()) {
-			fwrite (j->data.data.get(), 1, j->data.size, f);
+			fwrite (j->data.data().get(), 1, j->data.size(), f);
 			j->file = file;
 		}
 		fclose (f);
