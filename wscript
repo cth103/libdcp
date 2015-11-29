@@ -62,7 +62,7 @@ def configure(conf):
 
     if conf.options.static:
         conf.check_cfg(package='libopenjp2', args='--cflags', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
-        conf.env.STLIB_OPENJPEG = ['openjpeg']
+        conf.env.STLIB_OPENJPEG = ['openjp2']
         conf.env.HAVE_CXML = 1
         conf.env.STLIB_CXML = ['cxml']
     else:
