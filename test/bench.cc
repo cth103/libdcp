@@ -78,12 +78,13 @@ main (int argc, char* argv[])
 	Timer decompress;
 	Timer compress;
 
+	dcp::Data recomp;
 	for (int i = 0; i < count; ++i) {
 		decompress.start ();
 		shared_ptr<dcp::OpenJPEGImage> xyz = dcp::decompress_j2k (j2k, 0);
 		decompress.stop ();
 		compress.start ();
-		dcp::compress_j2k (xyz, j2k_bandwidth, 24, false, false);
+		recomp = dcp::compress_j2k (xyz, j2k_bandwidth, 24, false, false);
 		compress.stop ();
 		cout << (i + 1) << " ";
 		cout.flush ();
@@ -92,4 +93,8 @@ main (int argc, char* argv[])
 
 	cout << "Decompress: " << count / decompress.get() << " fps.\n";
 	cout << "Compress:   " << count / compress.get() << " fps.\n";
+
+	FILE* f = fopen ("check.j2c", "wb");
+	fwrite (recomp.data.get(), 1, recomp.size, f);
+	fclose (f);
 }
