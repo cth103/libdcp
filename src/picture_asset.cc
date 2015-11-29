@@ -26,6 +26,7 @@
 #include "compose.hpp"
 #include "AS_DCP.h"
 #include "KM_fileio.h"
+#include "j2k.h"
 #include <libxml++/nodes/element.h>
 #include <openjpeg.h>
 #include <boost/filesystem.hpp>

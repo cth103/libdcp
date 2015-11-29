@@ -25,6 +25,7 @@
 #include "AS_DCP.h"
 #include "KM_fileio.h"
 #include "compose.hpp"
+#include "j2k.h"
 #include <openjpeg.h>
 
 #define DCI_GAMMA 2.6

@@ -21,6 +21,7 @@ def build(bld):
              gamma_transfer_function.cc
              interop_load_font_node.cc
              interop_subtitle_asset.cc
+             j2k.cc
              key.cc
              local_time.cc
              metadata.cc

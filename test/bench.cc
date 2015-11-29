@@ -21,6 +21,7 @@
 #include "test.h"
 #include "util.h"
 #include "version.h"
+#include "j2k.h"
 #include "openjpeg_image.h"
 #include <openjpeg.h>
 #include <sys/time.h>
