@@ -5,7 +5,7 @@ import distutils.spawn
 from waflib import Logs
 
 APPNAME = 'libdcp'
-VERSION = '1.2.10'
+VERSION = '1.2.10devel'
 API_VERSION = '-1.0'
 
 def options(opt):
