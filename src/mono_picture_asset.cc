@@ -103,6 +103,8 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 	shared_ptr<const MonoPictureAsset> other_picture = dynamic_pointer_cast<const MonoPictureAsset> (other);
 	DCP_ASSERT (other_picture);
 
+	bool result = true;
+
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 		if (i >= other_picture->intrinsic_duration()) {
 			return false;
@@ -117,11 +119,14 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 			    frame_A->j2k_data(), frame_A->j2k_size(),
 			    frame_B->j2k_data(), frame_B->j2k_size()
 			    )) {
-			return false;
+			result = false;
+			if (!opt.keep_going) {
+				return result;
+			}
 		}
 	}
 
-	return true;
+	return result;
 }
 
 shared_ptr<PictureAssetWriter>

@@ -105,6 +105,8 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 	shared_ptr<const StereoPictureAsset> other_picture = dynamic_pointer_cast<const StereoPictureAsset> (other);
 	DCP_ASSERT (other_picture);
 
+	bool result = true;
+
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 		shared_ptr<const StereoPictureFrame> frame_A;
 		shared_ptr<const StereoPictureFrame> frame_B;
@@ -124,7 +126,10 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 			    frame_A->left_j2k_data(), frame_A->left_j2k_size(),
 			    frame_B->left_j2k_data(), frame_B->left_j2k_size()
 			    )) {
-			return false;
+			result = false;
+			if (!opt.keep_going) {
+				return result;
+			}
 		}
 
 		if (!frame_buffer_equals (
@@ -132,9 +137,12 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 			    frame_A->right_j2k_data(), frame_A->right_j2k_size(),
 			    frame_B->right_j2k_data(), frame_B->right_j2k_size()
 			    )) {
-			return false;
+			result = false;
+			if (!opt.keep_going) {
+				return result;
+			}
 		}
 	}
 
-	return true;
+	return result;
 }

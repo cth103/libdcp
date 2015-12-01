@@ -106,7 +106,7 @@ main (int argc, char* argv[])
 	options.max_std_dev_pixel_error = 5;
 	options.reel_hashes_can_differ = true;
 	options.reel_annotation_texts_can_differ = false;
-	bool keep_going = false;
+	options.keep_going = false;
 	bool ignore_missing_assets = false;
 	optional<string> key;
 
@@ -150,7 +150,7 @@ main (int argc, char* argv[])
 			options.max_std_dev_pixel_error = atof (optarg);
 			break;
 		case 'k':
-			keep_going = true;
+			options.keep_going = true;
 			break;
 		case 'A':
 			ignore_missing_assets = true;
@@ -183,8 +183,8 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	DCP* a = load_dcp (argv[optind], keep_going, ignore_missing_assets, key);
-	DCP* b = load_dcp (argv[optind + 1], keep_going, ignore_missing_assets, key);
+	DCP* a = load_dcp (argv[optind], options.keep_going, ignore_missing_assets, key);
+	DCP* b = load_dcp (argv[optind + 1], options.keep_going, ignore_missing_assets, key);
 
 	/* I think this is just below the LSB at 16-bits (ie the 8th most significant bit at 24-bit) */
 	options.max_audio_sample_error = 255;

@@ -166,6 +166,7 @@ struct EqualityOptions
 		, reel_annotation_texts_can_differ (false)
 		, reel_hashes_can_differ (false)
 		, issue_dates_can_differ (false)
+		, keep_going (false)
 	{}
 
 	/** The maximum allowable mean difference in pixel value between two images */
@@ -182,6 +183,7 @@ struct EqualityOptions
 	bool reel_hashes_can_differ;
 	/** true if IssueDate nodes can differ */
 	bool issue_dates_can_differ;
+	bool keep_going;
 };
 
 /* I've been unable to make mingw happy with ERROR as a symbol, so
