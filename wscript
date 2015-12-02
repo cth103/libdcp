@@ -16,6 +16,7 @@ def options(opt):
     opt.add_option('--disable-tests', action='store_true', default=False, help='disable building of tests')
     opt.add_option('--disable-gcov', action='store_true', default=False, help='don''t use gcov in tests')
     opt.add_option('--disable-examples', action='store_true', default=False, help='disable building of examples')
+    opt.add_option('--enable-openmp', action='store_true', default=False, help='enable use of OpenMP')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -37,6 +38,10 @@ def configure(conf):
 
     if not conf.env.TARGET_OSX:
         conf.env.append_value('CXXFLAGS', ['-Wno-unused-result', '-Wno-unused-parameter'])
+
+    if conf.options.enable_openmp:
+        conf.env.append_value('CXXFLAGS', '-fopenmp')
+        conf.env.LIB_OPENMP = ['gomp']
 
     conf.check_cfg(package='openssl', args='--cflags --libs', uselib_store='OPENSSL', mandatory=True)
     conf.check_cfg(package='libxml++-2.6', args='--cflags --libs', uselib_store='LIBXML++', mandatory=True)

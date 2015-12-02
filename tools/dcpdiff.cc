@@ -48,6 +48,7 @@ help (string n)
 	     << "  -v, --verbose                be verbose\n"
 	     << "      --cpl-annotation-texts   allow differing CPL annotation texts\n"
 	     << "      --reel-annotation-texts  allow differing reel annotation texts\n"
+	     << "  -a, --annotation-texts       allow different CPL and reel annotation texts\n"
 	     << "  -m, --mean-pixel             maximum allowed mean pixel error (default 5)\n"
 	     << "  -s, --std-dev-pixel          maximum allowed standard deviation of pixel error (default 5)\n"
 	     << "      --key                    hexadecimal key to use to decrypt MXFs\n"
@@ -119,6 +120,7 @@ main (int argc, char* argv[])
 			{ "mean-pixel", required_argument, 0, 'm'},
 			{ "std-dev-pixel", required_argument, 0, 's'},
 			{ "keep-going", no_argument, 0, 'k'},
+			{ "annotation-texts", no_argument, 0, 'a'},
 			/* From here we're using random capital letters for the short option */
 			{ "ignore-missing-assets", no_argument, 0, 'A'},
 			{ "cpl-annotation-texts", no_argument, 0, 'C'},
@@ -127,7 +129,7 @@ main (int argc, char* argv[])
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vhvm:s:kACD:E", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhvm:s:kaACD:E", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -151,6 +153,9 @@ main (int argc, char* argv[])
 			break;
 		case 'k':
 			options.keep_going = true;
+			break;
+		case 'a':
+			options.cpl_annotation_texts_can_differ = options.reel_annotation_texts_can_differ = true;
 			break;
 		case 'A':
 			ignore_missing_assets = true;

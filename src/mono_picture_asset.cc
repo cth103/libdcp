@@ -105,23 +105,23 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 
 	bool result = true;
 
+#pragma omp parallel for
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 		if (i >= other_picture->intrinsic_duration()) {
-			return false;
+			result = false;
 		}
 
-		note (DCP_PROGRESS, String::compose ("Comparing video frame %1 of %2", i, _intrinsic_duration));
-		shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
-		shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
+		if (result || opt.keep_going) {
+			note (DCP_PROGRESS, String::compose ("Comparing video frame %1 of %2", i, _intrinsic_duration));
+			shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
+			shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
 
-		if (!frame_buffer_equals (
-			    i, opt, note,
-			    frame_A->j2k_data(), frame_A->j2k_size(),
-			    frame_B->j2k_data(), frame_B->j2k_size()
-			    )) {
-			result = false;
-			if (!opt.keep_going) {
-				return result;
+			if (!frame_buffer_equals (
+				    i, opt, note,
+				    frame_A->j2k_data(), frame_A->j2k_size(),
+				    frame_B->j2k_data(), frame_B->j2k_size()
+				    )) {
+				result = false;
 			}
 		}
 	}
