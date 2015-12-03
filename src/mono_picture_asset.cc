@@ -28,6 +28,8 @@
 
 using std::string;
 using std::vector;
+using std::list;
+using std::pair;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
