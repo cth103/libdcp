@@ -65,6 +65,7 @@ note (NoteType t, string n)
 {
 	if (t == DCP_ERROR || verbose) {
 		cout << " " << n << "\n";
+		cout.flush ();
 	}
 }
 
