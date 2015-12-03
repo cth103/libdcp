@@ -1,0 +1,25 @@
+#!/usr/bin/python
+
+import sys
+import matplotlib.pylab as plt
+import numpy
+
+mean = None
+deviation = None
+
+with open(sys.argv[1], 'r') as f:
+    for l in f:
+        l = l.strip()
+        s = l.split()
+        if l.startswith('Compared'):
+            N = int(s[3])
+            if mean is None:
+                mean = numpy.zeros(int(s[5]))
+                deviation = numpy.zeros(int(s[5]))
+        elif l.startswith('mean'):
+            mean[N] = float(s[2])
+            deviation[N] = float(s[5])
+
+plt.plot(mean)
+plt.plot(deviation)
+plt.show()
