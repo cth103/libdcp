@@ -68,6 +68,12 @@ MonoPictureAsset::get_frame (int n) const
 	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (_file, n, _decryption_context));
 }
 
+static void
+storing_note_handler (list<pair<NoteType, string> >& notes, NoteType t, string s)
+{
+	notes.push_back (make_pair (t, s));
+}
+
 bool
 MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
@@ -112,16 +118,26 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 		}
 
 		if (result || opt.keep_going) {
+
+#pragma omp critical
 			note (DCP_PROGRESS, String::compose ("Comparing video frame %1 of %2", i, _intrinsic_duration));
+
 			shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
 			shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
 
+			list<pair<NoteType, string> > notes;
+
 			if (!frame_buffer_equals (
-				    i, opt, note,
+				    i, opt, bind (&storing_note_handler, notes, _1, _2),
 				    frame_A->j2k_data(), frame_A->j2k_size(),
 				    frame_B->j2k_data(), frame_B->j2k_size()
 				    )) {
 				result = false;
+			}
+
+#pragma omp critical
+			for (list<pair<NoteType, string> >::const_iterator i = notes.begin(); i != notes.end(); ++i) {
+				note (i->first, i->second);
 			}
 		}
 	}
