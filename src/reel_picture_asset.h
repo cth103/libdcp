@@ -60,6 +60,10 @@ public:
 		_screen_aspect_ratio = a;
 	}
 
+	Fraction screen_aspect_ratio () const {
+		return _screen_aspect_ratio;
+	}
+
 private:
 	std::string key_type () const;
 
