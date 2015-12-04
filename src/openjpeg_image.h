@@ -40,6 +40,8 @@ public:
 
 	int* data (int) const;
 	dcp::Size size () const;
+	int precision (int component) const;
+	bool srgb () const;
 
 	/** @return Pointer to opj_image_t struct.  The caller
 	 *  must not delete this.

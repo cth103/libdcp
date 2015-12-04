@@ -89,3 +89,15 @@ OpenJPEGImage::size () const
 	/* XXX: this may not be right; x0 and y0 can presumably be non-zero */
 	return dcp::Size (_opj_image->x1, _opj_image->y1);
 }
+
+int
+OpenJPEGImage::precision (int component) const
+{
+	return _opj_image->comps[component].prec;
+}
+
+bool
+OpenJPEGImage::srgb () const
+{
+	return _opj_image->color_space == OPJ_CLRSPC_SRGB;
+}
