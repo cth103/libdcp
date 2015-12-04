@@ -60,13 +60,13 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
 	try {
 		_screen_aspect_ratio = Fraction (node->string_child ("ScreenAspectRatio"));
 	} catch (XMLError& e) {
-		/* Maybe it's not a fraction */
-	}
-	try {
-		float f = node->number_child<float> ("ScreenAspectRatio");
-		_screen_aspect_ratio = Fraction (f * 1000, 1000);
-	} catch (bad_cast& e) {
+		/* It's not a fraction */
+		try {
+			float f = node->number_child<float> ("ScreenAspectRatio");
+			_screen_aspect_ratio = Fraction (f * 1000, 1000);
+		} catch (bad_cast& e) {
 
+		}
 	}
 }
 
