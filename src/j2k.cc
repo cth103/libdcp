@@ -158,6 +158,12 @@ public:
 		return nb_bytes;
 	}
 
+	OPJ_BOOL seek (OPJ_SIZE_T nb_bytes)
+	{
+		_offset = nb_bytes;
+		return OPJ_TRUE;
+	}
+
 	Data data () const {
 		return _data;
 	}
@@ -178,6 +184,13 @@ write_free_function (void* data)
 {
 	delete reinterpret_cast<WriteBuffer*>(data);
 }
+
+static OPJ_BOOL
+seek_function (OPJ_OFF_T nb_bytes, void* data)
+{
+	return reinterpret_cast<WriteBuffer*>(data)->seek (nb_bytes);
+}
+
 
 Data
 dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frames_per_second, bool threed, bool fourk)
@@ -275,6 +288,7 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 	}
 
 	opj_stream_set_write_function (stream, write_function);
+	opj_stream_set_seek_function (stream, seek_function);
 	WriteBuffer* buffer = new WriteBuffer ();
 	opj_stream_set_user_data (stream, buffer, write_free_function);
 
@@ -289,6 +303,8 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 	}
 
 	if (!opj_end_compress (encoder, stream)) {
+		opj_destroy_codec (encoder);
+		opj_stream_destroy (stream);
 		throw MiscError ("could not end JPEG2000 encoding");
 	}
 
