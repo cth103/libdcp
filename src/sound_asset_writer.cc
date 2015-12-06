@@ -24,6 +24,8 @@
 #include "compose.hpp"
 #include "AS_DCP.h"
 
+using std::min;
+using std::max;
 using namespace dcp;
 
 struct SoundAssetWriter::ASDCPState
@@ -63,6 +65,8 @@ SoundAssetWriter::write (float const * const * data, int frames)
 {
 	DCP_ASSERT (!_finalized);
 
+	static float const clip = 1.0f - (1.0f / pow (2, 23));
+
 	if (!_started) {
 		Kumu::Result_t r = _state->mxf_writer.OpenWrite (_file.string().c_str(), _state->writer_info, _state->audio_desc);
 		if (ASDCP_FAILURE (r)) {
@@ -79,7 +83,8 @@ SoundAssetWriter::write (float const * const * data, int frames)
 
 		/* Write one sample per channel */
 		for (int j = 0; j < _sound_asset->channels(); ++j) {
-			int32_t const s = data[j][i] * (1 << 23);
+			/* Convert sample to 24-bit int, clipping if necessary. */
+			int32_t const s = min (clip, max (-clip, data[j][i])) * (1 << 23);
 			*out++ = (s & 0xff);
 			*out++ = (s & 0xff00) >> 8;
 			*out++ = (s & 0xff0000) >> 16;
