@@ -48,8 +48,13 @@ public:
 		return _size;
 	}
 
+	void set_size (int s) {
+		_size = s;
+	}
+
 private:
 	boost::shared_array<uint8_t> _data;
+	/** amount of `valid' data in _data; the array may be larger */
 	int _size;
 };
 

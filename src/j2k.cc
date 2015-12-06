@@ -25,6 +25,7 @@
 #include "compose.hpp"
 #include <openjpeg.h>
 #include <cmath>
+#include <iostream>
 
 using std::min;
 using std::pow;
@@ -148,13 +149,18 @@ public:
 	WriteBuffer ()
 		: _data (shared_array<uint8_t> (new uint8_t[MAX_J2K_SIZE]), MAX_J2K_SIZE)
 		, _offset (0)
-	{}
+	{
+		_data.set_size (0);
+	}
 
 	OPJ_SIZE_T write (void* buffer, OPJ_SIZE_T nb_bytes)
 	{
 		DCP_ASSERT ((_offset + nb_bytes) < MAX_J2K_SIZE);
 		memcpy (_data.data().get() + _offset, buffer, nb_bytes);
 		_offset += nb_bytes;
+		if (_offset > OPJ_SIZE_T (_data.size())) {
+			_data.set_size (_offset);
+		}
 		return nb_bytes;
 	}
 
@@ -164,7 +170,8 @@ public:
 		return OPJ_TRUE;
 	}
 
-	Data data () const {
+	Data data () const
+	{
 		return _data;
 	}
 
@@ -191,93 +198,37 @@ seek_function (OPJ_OFF_T nb_bytes, void* data)
 	return reinterpret_cast<WriteBuffer*>(data)->seek (nb_bytes);
 }
 
+static void
+error_callback (char const * msg, void *)
+{
+	throw MiscError (msg);
+}
 
 Data
 dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frames_per_second, bool threed, bool fourk)
 {
-	/* XXX: should probably use opj_set_*_handler */
-
-	/* Set the max image and component sizes based on frame_rate */
-	int max_cs_len = ((float) bandwidth) / 8 / frames_per_second;
-	if (threed) {
-		/* In 3D we have only half the normal bandwidth per eye */
-		max_cs_len /= 2;
-	}
-	int const max_comp_size = max_cs_len / 1.25;
-
 	/* get a J2K compressor handle */
 	opj_codec_t* encoder = opj_create_compress (OPJ_CODEC_J2K);
 	if (encoder == 0) {
 		throw MiscError ("could not create JPEG2000 encoder");
 	}
 
+	opj_set_error_handler (encoder, error_callback, 0);
+
 	/* Set encoding parameters to default values */
 	opj_cparameters_t parameters;
 	opj_set_default_encoder_parameters (&parameters);
-
-	/* Set default cinema parameters */
-	parameters.tile_size_on = OPJ_FALSE;
-	parameters.cp_tdx = 1;
-	parameters.cp_tdy = 1;
-
-	/* Tile part */
-	parameters.tp_flag = 'C';
-	parameters.tp_on = 1;
-
-	/* Tile and Image shall be at (0,0) */
-	parameters.cp_tx0 = 0;
-	parameters.cp_ty0 = 0;
-	parameters.image_offset_x0 = 0;
-	parameters.image_offset_y0 = 0;
-
-	/* Codeblock size = 32x32 */
-	parameters.cblockw_init = 32;
-	parameters.cblockh_init = 32;
-	parameters.csty |= 0x01;
-
-	/* The progression order shall be CPRL */
-	parameters.prog_order = OPJ_CPRL;
-
-	/* No ROI */
-	parameters.roi_compno = -1;
-
-	parameters.subsampling_dx = 1;
-	parameters.subsampling_dy = 1;
-
-	/* 9-7 transform */
-	parameters.irreversible = 1;
-
-	parameters.tcp_rates[0] = 0;
-	parameters.tcp_numlayers++;
-	parameters.cp_disto_alloc = 1;
-	parameters.cp_rsiz = fourk ? OPJ_CINEMA4K : OPJ_CINEMA2K;
-	if (fourk) {
-		parameters.numpocs = 2;
-		parameters.POC[0].tile = 1;
-		parameters.POC[0].resno0 = 0;
-		parameters.POC[0].compno0 = 0;
-		parameters.POC[0].layno1 = 1;
-		parameters.POC[0].resno1 = parameters.numresolution - 1;
-		parameters.POC[0].compno1 = 3;
-		parameters.POC[0].prg1 = OPJ_CPRL;
-		parameters.POC[1].tile = 1;
-		parameters.POC[1].resno0 = parameters.numresolution - 1;
-		parameters.POC[1].compno0 = 0;
-		parameters.POC[1].layno1 = 1;
-		parameters.POC[1].resno1 = parameters.numresolution;
-		parameters.POC[1].compno1 = 3;
-		parameters.POC[1].prg1 = OPJ_CPRL;
-	}
-
+	parameters.rsiz = fourk ? OPJ_PROFILE_CINEMA_4K : OPJ_PROFILE_CINEMA_2K;
 	parameters.cp_comment = strdup ("libdcp");
-	parameters.cp_cinema = fourk ? OPJ_CINEMA4K_24 : OPJ_CINEMA2K_24;
-
-	/* 3 components, so use MCT */
-	parameters.tcp_mct = 1;
 
 	/* set max image */
-	parameters.max_comp_size = max_comp_size;
-	parameters.tcp_rates[0] = ((float) (3 * xyz->size().width * xyz->size().height * 12)) / (max_cs_len * 8);
+	parameters.max_cs_size = (bandwidth / 8) / frames_per_second;
+	if (threed) {
+		/* In 3D we have only half the normal bandwidth per eye */
+		parameters.max_cs_size /= 2;
+	}
+	parameters.max_comp_size = parameters.max_cs_size / 1.25;
+	parameters.tcp_numlayers = 1;
 
 	/* Setup the encoder parameters using the current image and user parameters */
 	opj_setup_encoder (encoder, &parameters, xyz->opj_image());
