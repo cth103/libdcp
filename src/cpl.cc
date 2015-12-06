@@ -255,6 +255,7 @@ CPL::write_xml (bool interop, XMLMetadata const & metadata, shared_ptr<const Sig
 	doc.write_to_file (p.string (), "UTF-8");
 
 	_digest = make_digest (p.string (), 0);
+	/* XXX: completely wrong! */
 	_length = boost::filesystem::file_size (p.string ());
 }
 
