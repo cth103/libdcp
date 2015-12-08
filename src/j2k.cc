@@ -136,8 +136,8 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 	opj_destroy_codec (decoder);
 	opj_stream_destroy (stream);
 
-	image->x1 = rint (float(image->x1) / pow (2.0, reduce));
-	image->y1 = rint (float(image->y1) / pow (2.0, reduce));
+	image->x1 = rint (float(image->x1) / pow (2.0f, reduce));
+	image->y1 = rint (float(image->y1) / pow (2.0f, reduce));
 	return shared_ptr<OpenJPEGImage> (new OpenJPEGImage (image));
 }
 
