@@ -29,7 +29,7 @@
 class utc_offset_to_string_test;
 
 namespace ASDCP {
-	class WriterInfo;
+	struct WriterInfo;
 }
 
 namespace dcp
