@@ -36,8 +36,8 @@ def configure(conf):
     else:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_POSIX')
 
-    if not conf.env.TARGET_OSX:
-        conf.env.append_value('CXXFLAGS', ['-Wno-unused-result', '-Wno-unused-parameter'])
+    if conf.env.TARGET_OSX:
+        conf.env.append_value('CXXFLAGS', ['-Wno-unused-result', '-Wno-unused-parameter', '-Wno-unused-local-typedef'])
 
     if conf.options.enable_openmp:
         conf.env.append_value('CXXFLAGS', '-fopenmp')
