@@ -28,7 +28,7 @@
 
 namespace ASDCP {
 	class AESDecContext;
-	class WriterInfo;
+	struct WriterInfo;
 }
 
 /* Undefine some stuff that the OS X 10.5 SDK defines */
