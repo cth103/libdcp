@@ -229,6 +229,7 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 	}
 	parameters.max_comp_size = parameters.max_cs_size / 1.25;
 	parameters.tcp_numlayers = 1;
+	parameters.tcp_mct = 1;
 
 	/* Setup the encoder parameters using the current image and user parameters */
 	opj_setup_encoder (encoder, &parameters, xyz->opj_image());
