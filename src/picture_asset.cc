@@ -166,7 +166,7 @@ PictureAsset::frame_buffer_equals (
 
 	double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
 
-	note (DCP_NOTE, String::compose ("mean difference %1, deviation %2", mean, std_dev));
+	note (DCP_NOTE, String::compose ("mean difference %1 deviation %2", mean, std_dev));
 
 	if (mean > opt.max_mean_pixel_error) {
 		note (
