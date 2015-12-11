@@ -90,8 +90,11 @@ Certificate::read_string (string cert)
 	string line;
 
 	/* BEGIN */
-	getline (s, line);
-	boost::algorithm::trim (line);
+	do {
+		getline (s, line);
+		boost::algorithm::trim (line);
+	} while (s.good() && line != begin_certificate);
+
 	if (line != begin_certificate) {
 		throw MiscError ("missing BEGIN line in certificate");
 	}

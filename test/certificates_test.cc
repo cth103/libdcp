@@ -91,9 +91,17 @@ BOOST_AUTO_TEST_CASE (certificates1)
 /** Check some more certificate-from-strings */
 BOOST_AUTO_TEST_CASE (certificates2)
 {
-	dcp::Certificate c (dcp::file_to_string (private_test / "CA.GDC-TECH.COM_SA2100_A14903.crt.crt"));
-	BOOST_CHECK_EQUAL (c.certificate(true), dcp::file_to_string (private_test / "CA.GDC-TECH.COM_SA2100_A14903.crt.crt.reformatted"));
+	{
+		dcp::Certificate c (dcp::file_to_string (private_test / "CA.GDC-TECH.COM_SA2100_A14903.crt.crt"));
+		BOOST_CHECK_EQUAL (c.certificate(true), dcp::file_to_string (private_test / "CA.GDC-TECH.COM_SA2100_A14903.crt.crt.reformatted"));
+	}
 
+	{
+		dcp::Certificate c (dcp::file_to_string (private_test / "usl-cert.pem"));
+		BOOST_CHECK_EQUAL (c.certificate(true), dcp::file_to_string (private_test / "usl-cert.pem.trimmed"));
+	}
+
+	BOOST_CHECK_THROW (dcp::Certificate (dcp::file_to_string (private_test / "no-begin.pem")), dcp::MiscError);
 	BOOST_CHECK_THROW (dcp::Certificate ("foo"), dcp::MiscError);
 }
 
