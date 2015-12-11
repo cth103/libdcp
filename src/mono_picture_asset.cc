@@ -121,16 +121,13 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 
 		if (result || opt.keep_going) {
 
-#pragma omp critical
-			note (DCP_PROGRESS, String::compose ("Comparing video frame %1 of %2", i, _intrinsic_duration));
-
 			shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
 			shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
 
 			list<pair<NoteType, string> > notes;
 
 			if (!frame_buffer_equals (
-				    i, opt, bind (&storing_note_handler, notes, _1, _2),
+				    i, opt, bind (&storing_note_handler, boost::ref(notes), _1, _2),
 				    frame_A->j2k_data(), frame_A->j2k_size(),
 				    frame_B->j2k_data(), frame_B->j2k_size()
 				    )) {
@@ -138,8 +135,11 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 			}
 
 #pragma omp critical
-			for (list<pair<NoteType, string> >::const_iterator i = notes.begin(); i != notes.end(); ++i) {
-				note (i->first, i->second);
+			{
+				note (DCP_PROGRESS, String::compose ("Compared video frame %1 of %2", i, _intrinsic_duration));
+				for (list<pair<NoteType, string> >::const_iterator i = notes.begin(); i != notes.end(); ++i) {
+					note (i->first, i->second);
+				}
 			}
 		}
 	}
