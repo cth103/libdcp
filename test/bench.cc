@@ -49,7 +49,7 @@ public:
 	{
 		struct timeval stop;
 		gettimeofday (&stop, 0);
-		_total += (stop.tv_sec + stop.tv_usec / 1000000) - (_start.tv_sec + _start.tv_usec / 1000000);
+		_total += (stop.tv_sec + stop.tv_usec / 1e6) - (_start.tv_sec + _start.tv_usec / 1e6);
 	}
 
 	double get ()
@@ -71,7 +71,7 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	int const count = 50;
+	int const count = 100;
 	int const j2k_bandwidth = 100000000;
 
 	dcp::Data j2k (boost::filesystem::path (argv[1]) / "thx.j2c");
