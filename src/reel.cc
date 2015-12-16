@@ -36,6 +36,7 @@
 using std::string;
 using std::list;
 using std::cout;
+using std::max;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
@@ -184,4 +185,22 @@ Reel::resolve_refs (list<shared_ptr<Asset> > assets)
 			iop->resolve_fonts (assets);
 		}
 	}
+}
+
+int64_t
+Reel::duration () const
+{
+	int64_t d = 0;
+
+	if (_main_picture) {
+		d = max (d, _main_picture->duration ());
+	}
+	if (_main_sound) {
+		d = max (d, _main_sound->duration ());
+	}
+	if (_main_subtitle) {
+		d = max (d, _main_subtitle->duration ());
+	}
+
+	return d;
 }

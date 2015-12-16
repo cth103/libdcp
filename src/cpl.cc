@@ -255,3 +255,13 @@ CPL::pkl_type (Standard standard) const
 		DCP_ASSERT (false);
 	}
 }
+
+int64_t
+CPL::duration () const
+{
+	int64_t d = 0;
+	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+		d += i->duration ();
+	}
+	return d;
+}

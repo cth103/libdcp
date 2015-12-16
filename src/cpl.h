@@ -113,6 +113,8 @@ public:
 
 	void resolve_refs (std::list<boost::shared_ptr<Asset> >);
 
+	int64_t duration () const;
+
 protected:
 	/** @return type string for PKLs for this asset */
 	std::string pkl_type (Standard standard) const;

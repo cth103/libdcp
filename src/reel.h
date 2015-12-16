@@ -71,6 +71,8 @@ public:
 		return _main_subtitle;
 	}
 
+	int64_t duration () const;
+
 	void add (boost::shared_ptr<ReelAsset> asset);
 
 	void write_to_cpl (xmlpp::Element* node, Standard standard) const;
