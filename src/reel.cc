@@ -165,23 +165,23 @@ Reel::add (shared_ptr<ReelAsset> asset)
 }
 
 void
-Reel::resolve_refs (list<shared_ptr<Object> > objects)
+Reel::resolve_refs (list<shared_ptr<Asset> > assets)
 {
 	if (_main_picture) {
-		_main_picture->asset_ref().resolve (objects);
+		_main_picture->asset_ref().resolve (assets);
 	}
 
 	if (_main_sound) {
-		_main_sound->asset_ref().resolve (objects);
+		_main_sound->asset_ref().resolve (assets);
 	}
 
 	if (_main_subtitle) {
-		_main_subtitle->asset_ref().resolve (objects);
+		_main_subtitle->asset_ref().resolve (assets);
 
 		/* Interop subtitle handling is all special cases */
-		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (_main_subtitle->asset_ref().object ());
+		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (_main_subtitle->asset_ref().asset ());
 		if (iop) {
-			iop->resolve_fonts (objects);
+			iop->resolve_fonts (assets);
 		}
 	}
 }

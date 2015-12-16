@@ -44,8 +44,13 @@ public:
 	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
 
 	/** @return the PictureAsset that this object refers to */
+	boost::shared_ptr<const PictureAsset> asset () const {
+		return boost::dynamic_pointer_cast<const PictureAsset> (_asset_ref.asset ());
+	}
+
+	/** @return the PictureAsset that this object refers to */
 	boost::shared_ptr<PictureAsset> asset () {
-		return boost::dynamic_pointer_cast<PictureAsset> (_asset_ref.object ());
+		return boost::dynamic_pointer_cast<PictureAsset> (_asset_ref.asset ());
 	}
 
 	/** @return picture frame rate */

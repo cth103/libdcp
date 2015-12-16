@@ -97,6 +97,8 @@ public:
 		boost::shared_ptr<const CertificateChain> signer = boost::shared_ptr<const CertificateChain> ()
 	);
 
+	void resolve_refs (std::list<boost::shared_ptr<Asset> > assets);
+
 private:
 
 	/** Write the PKL file.

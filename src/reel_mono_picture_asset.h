@@ -25,6 +25,7 @@
 #define LIBDCP_REEL_MONO_PICTURE_ASSET_H
 
 #include "reel_picture_asset.h"
+#include "mono_picture_asset.h"
 
 namespace dcp {
 
@@ -39,6 +40,16 @@ public:
 	ReelMonoPictureAsset ();
 	ReelMonoPictureAsset (boost::shared_ptr<MonoPictureAsset> asset, int64_t entry_point);
 	ReelMonoPictureAsset (boost::shared_ptr<const cxml::Node>);
+
+	/** @return the MonoPictureAsset that this object refers to */
+	boost::shared_ptr<const MonoPictureAsset> mono_asset () const {
+		return boost::dynamic_pointer_cast<const MonoPictureAsset> (_asset_ref.asset ());
+	}
+
+	/** @return the MonoPictureAsset that this object refers to */
+	boost::shared_ptr<MonoPictureAsset> mono_asset () {
+		return boost::dynamic_pointer_cast<MonoPictureAsset> (_asset_ref.asset ());
+	}
 
 private:
 	std::string cpl_node_name () const;

@@ -59,12 +59,12 @@ public:
 	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
 
 	/** @return a Ref to our actual asset */
-	Ref<Asset> const & asset_ref () const {
+	Ref const & asset_ref () const {
 		return _asset_ref;
 	}
 
 	/** @return a Ref to our actual asset */
-	Ref<Asset>& asset_ref () {
+	Ref & asset_ref () {
 		return _asset_ref;
 	}
 
@@ -98,7 +98,7 @@ protected:
 	/** Reference to the asset (MXF or XML file) that this reel entry
 	 *  applies to.
 	 */
-	Ref<Asset> _asset_ref;
+	Ref _asset_ref;
 
 private:
 	std::string _annotation_text; ///< The &lt;AnnotationText&gt; from the reel's entry for this asset

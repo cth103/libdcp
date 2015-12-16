@@ -25,6 +25,7 @@
 #define LIBDCP_REEL_STEREO_PICTURE_ASSET_H
 
 #include "reel_picture_asset.h"
+#include "stereo_picture_asset.h"
 
 namespace dcp {
 
@@ -40,6 +41,16 @@ public:
 	ReelStereoPictureAsset (boost::shared_ptr<StereoPictureAsset> content, int64_t entry_point);
 	ReelStereoPictureAsset (boost::shared_ptr<const cxml::Node>);
 
+	/** @return the StereoPictureAsset that this object refers to */
+	boost::shared_ptr<const StereoPictureAsset> stereo_asset () const {
+		return boost::dynamic_pointer_cast<const StereoPictureAsset> (_asset_ref.asset ());
+	}
+
+	/** @return the StereoPictureAsset that this object refers to */
+	boost::shared_ptr<StereoPictureAsset> stereo_asset () {
+		return boost::dynamic_pointer_cast<StereoPictureAsset> (_asset_ref.asset ());
+	}
+
 private:
 	std::string cpl_node_name () const;
 	std::pair<std::string, std::string> cpl_node_attribute (Standard standard) const;
@@ -48,4 +59,3 @@ private:
 }
 
 #endif
-

@@ -181,9 +181,9 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 }
 
 void
-InteropSubtitleAsset::resolve_fonts (list<shared_ptr<Object> > objects)
+InteropSubtitleAsset::resolve_fonts (list<shared_ptr<Asset> > assets)
 {
-	BOOST_FOREACH (shared_ptr<Object> i, objects) {
+	BOOST_FOREACH (shared_ptr<Asset> i, assets) {
 		shared_ptr<FontAsset> font = dynamic_pointer_cast<FontAsset> (i);
 		if (!font) {
 			continue;

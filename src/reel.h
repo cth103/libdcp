@@ -81,7 +81,7 @@ public:
 
 	void add (DecryptedKDM const &);
 
-	void resolve_refs (std::list<boost::shared_ptr<Object> >);
+	void resolve_refs (std::list<boost::shared_ptr<Asset> >);
 
 private:
 	boost::shared_ptr<ReelPictureAsset> _main_picture;

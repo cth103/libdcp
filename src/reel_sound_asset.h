@@ -42,12 +42,12 @@ public:
 
 	/** @return the SoundAsset that this object refers to */
 	boost::shared_ptr<SoundAsset> asset () {
-		return boost::dynamic_pointer_cast<SoundAsset> (_asset_ref.object ());
+		return boost::dynamic_pointer_cast<SoundAsset> (_asset_ref.asset ());
 	}
 
 	/** @return the SoundAsset that this object refers to */
 	boost::shared_ptr<const SoundAsset> asset () const {
-		return boost::dynamic_pointer_cast<const SoundAsset> (_asset_ref.object ());
+		return boost::dynamic_pointer_cast<const SoundAsset> (_asset_ref.asset ());
 	}
 
 private:
@@ -56,4 +56,3 @@ private:
 };
 
 }
-

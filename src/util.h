@@ -65,21 +65,6 @@ extern std::string file_to_string (boost::filesystem::path, uintmax_t max_length
 extern std::string private_key_fingerprint (std::string key);
 extern xmlpp::Node* find_child (xmlpp::Node const * node, std::string name);
 
-template <class F, class T>
-std::list<boost::shared_ptr<T> >
-list_of_type (std::list<boost::shared_ptr<F> > const & from)
-{
-	std::list<boost::shared_ptr<T> > out;
-	for (typename std::list<boost::shared_ptr<F> >::const_iterator i = from.begin(); i != from.end(); ++i) {
-		boost::shared_ptr<T> check = boost::dynamic_pointer_cast<T> (*i);
-		if (check) {
-			out.push_back (check);
-		}
-	}
-
-	return out;
-}
-
 }
 
 #endif

@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 	dcp::DCP dcp2 (directory);
 	dcp2.read ();
 	shared_ptr<dcp::SubtitleAsset> subs2 = dynamic_pointer_cast<dcp::SubtitleAsset> (
-		dcp2.cpls().front()->reels().front()->main_subtitle()->asset_ref().object()
+		dcp2.cpls().front()->reels().front()->main_subtitle()->asset_ref().asset()
 		);
 	BOOST_REQUIRE (subs2);
 	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1);
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
 	dcp::DCP dcp2 (directory);
 	dcp2.read ();
 	shared_ptr<dcp::SubtitleAsset> subs2 = dynamic_pointer_cast<dcp::SubtitleAsset> (
-		dcp2.cpls().front()->reels().front()->main_subtitle()->asset_ref().object()
+		dcp2.cpls().front()->reels().front()->main_subtitle()->asset_ref().asset()
 		);
 	BOOST_REQUIRE (subs2);
 	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1);

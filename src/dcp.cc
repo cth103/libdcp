@@ -181,7 +181,15 @@ DCP::read (bool keep_going, ReadErrors* errors)
 	}
 
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
-		i->resolve_refs (list_of_type<Asset, Object> (other_assets));
+		i->resolve_refs (other_assets);
+	}
+}
+
+void
+DCP::resolve_refs (list<shared_ptr<Asset> > assets)
+{
+	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
+		i->resolve_refs (assets);
 	}
 }
 
@@ -429,7 +437,7 @@ DCP::assets () const
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
 		assets.push_back (i);
 		BOOST_FOREACH (shared_ptr<const ReelAsset> j, i->reel_assets ()) {
-			shared_ptr<Asset> o = j->asset_ref().object ();
+			shared_ptr<Asset> o = j->asset_ref().asset ();
 			assets.push_back (o);
 			/* More Interop special-casing */
 			shared_ptr<InteropSubtitleAsset> sub = dynamic_pointer_cast<InteropSubtitleAsset> (o);

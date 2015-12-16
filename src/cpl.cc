@@ -236,10 +236,10 @@ CPL::add (DecryptedKDM const & kdm)
 }
 
 void
-CPL::resolve_refs (list<shared_ptr<Object> > objects)
+CPL::resolve_refs (list<shared_ptr<Asset> > assets)
 {
 	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
-		i->resolve_refs (objects);
+		i->resolve_refs (assets);
 	}
 }
 

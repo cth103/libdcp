@@ -111,7 +111,7 @@ public:
 		boost::shared_ptr<const CertificateChain>
 		) const;
 
-	void resolve_refs (std::list<boost::shared_ptr<Object> >);
+	void resolve_refs (std::list<boost::shared_ptr<Asset> >);
 
 protected:
 	/** @return type string for PKLs for this asset */

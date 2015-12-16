@@ -96,7 +96,7 @@ ReelAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
         a->add_child("IntrinsicDuration")->add_child_text (raw_convert<string> (_intrinsic_duration));
         a->add_child("EntryPoint")->add_child_text (raw_convert<string> (_entry_point));
         a->add_child("Duration")->add_child_text (raw_convert<string> (_duration));
-	a->add_child("Hash")->add_child_text (_asset_ref.object()->hash ());
+	a->add_child("Hash")->add_child_text (_asset_ref.asset()->hash ());
 }
 
 pair<string, string>
@@ -149,7 +149,7 @@ ReelAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, NoteH
 	}
 
 	if (_asset_ref.resolved () && other->_asset_ref.resolved ()) {
-		return _asset_ref->equals (other->_asset_ref.object (), opt, note);
+		return _asset_ref->equals (other->_asset_ref.asset(), opt, note);
 	}
 
 	return true;
