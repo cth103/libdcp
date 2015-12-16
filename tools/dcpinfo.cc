@@ -83,13 +83,13 @@ main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
 		return;
 	}
 
-	list<SubtitleString> subs = reel->main_subtitle()->subtitle_asset()->subtitles ();
+	list<SubtitleString> subs = reel->main_subtitle()->asset()->subtitles ();
 	cout << "      Subtitle: " << subs.size() << " subtitles";
-	shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (reel->main_subtitle()->subtitle_asset());
+	shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (reel->main_subtitle()->asset());
 	if (iop) {
 		cout << " in " << iop->language() << "\n";
 	}
-	shared_ptr<SMPTESubtitleAsset> smpte = dynamic_pointer_cast<SMPTESubtitleAsset> (reel->main_subtitle()->subtitle_asset());
+	shared_ptr<SMPTESubtitleAsset> smpte = dynamic_pointer_cast<SMPTESubtitleAsset> (reel->main_subtitle()->asset());
 	if (smpte && smpte->language ()) {
 		cout << " in " << smpte->language().get() << "\n";
 	}

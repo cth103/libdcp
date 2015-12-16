@@ -40,7 +40,7 @@ public:
 	ReelSubtitleAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
 	ReelSubtitleAsset (boost::shared_ptr<const cxml::Node>);
 
-	boost::shared_ptr<SubtitleAsset> subtitle_asset () const {
+	boost::shared_ptr<SubtitleAsset> asset () const {
 		return boost::dynamic_pointer_cast<SubtitleAsset> (_asset_ref.object ());
 	}
 
