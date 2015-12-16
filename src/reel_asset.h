@@ -68,6 +68,10 @@ public:
 		return _asset_ref;
 	}
 
+	Fraction edit_rate () const {
+		return _edit_rate;
+	}
+
 	int64_t intrinsic_duration () const {
 		return _intrinsic_duration;
 	}
