@@ -77,7 +77,7 @@ CPLAssetList::CPLAssetList (shared_ptr<const cxml::Node> node)
 	main_subtitle = optional_type_child<MainSubtitle> (node, "MainSubtitle");
 
 	/* Ignore Atmos metadata */
-	node->ignore_child ("axd:AuxData");
+	node->ignore_child ("AuxData");
 
 	node->done ();
 }
