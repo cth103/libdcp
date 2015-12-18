@@ -60,7 +60,7 @@ ReelAsset::ReelAsset (shared_ptr<Asset> asset, Fraction edit_rate, int64_t intri
 	, _intrinsic_duration (intrinsic_duration)
 	, _entry_point (entry_point)
 	, _duration (intrinsic_duration - entry_point)
-	, _hash (make_digest (asset->file (), 0))
+	, _hash (asset->hash ())
 {
 	/* default _annotation_text to the leaf name of our file */
         _annotation_text = asset->file().leaf().string ();
