@@ -74,6 +74,7 @@ public:
 	std::string annotation_text () const;
 	std::string content_title_text () const;
 	std::string issue_date () const;
+	std::string cpl_id () const;
 
 private:
 

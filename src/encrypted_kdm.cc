@@ -613,11 +613,6 @@ EncryptedKDM::as_xml (boost::filesystem::path path) const
 string
 EncryptedKDM::as_xml () const
 {
-	xmlpp::Document document;
-	xmlpp::Element* root = document.create_root_node ("DCinemaSecurityMessage", "http://www.smpte-ra.org/schemas/430-3/2006/ETM");
-	root->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "ds");
-	root->set_namespace_declaration ("http://www.w3.org/2001/04/xmlenc#", "enc");
-
 	return _data->as_xml()->write_to_string ("UTF-8");
 }
 
@@ -637,6 +632,12 @@ string
 EncryptedKDM::content_title_text () const
 {
 	return _data->authenticated_public.required_extensions.kdm_required_extensions.content_title_text;
+}
+
+string
+EncryptedKDM::cpl_id () const
+{
+	return _data->authenticated_public.required_extensions.kdm_required_extensions.composition_playlist_id;
 }
 
 string
