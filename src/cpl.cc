@@ -66,10 +66,7 @@ CPL::CPL (boost::filesystem::path file)
 	cxml::Document f ("CompositionPlaylist");
 	f.read_file (file);
 
-	_id = f.string_child ("Id");
-	if (_id.length() > 9) {
-		_id = _id.substr (9);
-	}
+	_id = remove_urn_uuid (f.string_child ("Id"));
 	_annotation_text = f.optional_string_child ("AnnotationText").get_value_or ("");
 	_metadata.issuer = f.optional_string_child ("Issuer").get_value_or ("");
 	_metadata.creator = f.optional_string_child ("Creator").get_value_or ("");

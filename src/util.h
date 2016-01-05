@@ -55,7 +55,7 @@ extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
 extern bool empty_or_white_space (std::string s);
 extern bool ids_equal (std::string a, std::string b);
-
+extern std::string remove_urn_uuid (std::string raw);
 extern void init ();
 
 extern int base64_decode (std::string const & in, unsigned char* out, int out_length);

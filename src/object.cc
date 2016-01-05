@@ -22,6 +22,7 @@
  */
 
 #include "object.h"
+#include "dcp_assert.h"
 #include "util.h"
 
 using std::string;
@@ -40,5 +41,5 @@ Object::Object ()
 Object::Object (string id)
 	: _id (id)
 {
-
+	DCP_ASSERT (_id.substr(0, 9) != "urn:uuid:");
 }

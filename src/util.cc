@@ -395,3 +395,10 @@ dcp::find_child (xmlpp::Node const * node, string name)
 	DCP_ASSERT (i != c.end ());
 	return *i;
 }
+
+string
+dcp::remove_urn_uuid (string raw)
+{
+	DCP_ASSERT (raw.substr(0, 9) == "urn:uuid:");
+	return raw.substr (9);
+}

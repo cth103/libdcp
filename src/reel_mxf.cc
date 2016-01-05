@@ -18,6 +18,7 @@
 */
 
 #include "reel_mxf.h"
+#include "util.h"
 #include "mxf.h"
 #include "dcp_assert.h"
 #include <libcxml/cxml.h>
@@ -37,7 +38,7 @@ ReelMXF::ReelMXF (optional<string> key_id)
 ReelMXF::ReelMXF (shared_ptr<const cxml::Node> node)
 	: _key_id (node->optional_string_child ("KeyId"))
 {
-	if (_key_id && _key_id.get().length() > 9) {
-		_key_id = _key_id.get().substr (9);
+	if (_key_id) {
+		_key_id = remove_urn_uuid (*_key_id);
 	}
 }

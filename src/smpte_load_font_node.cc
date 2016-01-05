@@ -18,6 +18,7 @@
 */
 
 #include "smpte_load_font_node.h"
+#include "util.h"
 #include <libcxml/cxml.h>
 
 using std::string;
@@ -33,7 +34,7 @@ SMPTELoadFontNode::SMPTELoadFontNode (string id, string urn_)
 
 SMPTELoadFontNode::SMPTELoadFontNode (shared_ptr<const cxml::Node> node)
 	: LoadFontNode (node->string_attribute ("ID"))
-	, urn (node->content().substr (9))
+	, urn (remove_urn_uuid (node->content()))
 {
 
 }

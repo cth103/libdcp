@@ -67,7 +67,7 @@ ReelAsset::ReelAsset (shared_ptr<Asset> asset, Fraction edit_rate, int64_t intri
 }
 
 ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
-	: Object (node->string_child ("Id"))
+	: Object (remove_urn_uuid (node->string_child ("Id")))
 	, _asset_ref (_id)
 	, _annotation_text (node->optional_string_child ("AnnotationText").get_value_or (""))
 	, _edit_rate (Fraction (node->string_child ("EditRate")))
@@ -76,10 +76,7 @@ ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 	, _duration (node->number_child<int64_t> ("Duration"))
 	, _hash (node->optional_string_child ("Hash").get_value_or (""))
 {
-	if (_id.length() > 9) {
-		_id = _id.substr (9);
-		_asset_ref.set_id (_id);
-	}
+
 }
 
 void

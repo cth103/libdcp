@@ -81,7 +81,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 		reader.reset ();
 		try {
 			xml->read_file (file);
-			_id = xml->string_child ("Id").substr (9);
+			_id = remove_urn_uuid (xml->string_child ("Id"));
 		} catch (cxml::Error& e) {
 			boost::throw_exception (
 				DCPReadError (

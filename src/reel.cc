@@ -42,7 +42,7 @@ using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 Reel::Reel (boost::shared_ptr<const cxml::Node> node)
-	: Object (node->string_child ("Id"))
+	: Object (remove_urn_uuid (node->string_child ("Id")))
 {
 	shared_ptr<cxml::Node> asset_list = node->node_child ("AssetList");
 

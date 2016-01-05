@@ -221,7 +221,7 @@ public:
 
 	TypedKeyId (shared_ptr<const cxml::Node> node)
 		: key_type (node->string_child ("KeyType"))
-		, key_id (node->string_child ("KeyId").substr (9))
+		, key_id (remove_urn_uuid (node->string_child ("KeyId")))
 	{
 
 	}
@@ -275,7 +275,7 @@ public:
 	AuthorizedDeviceInfo () {}
 
 	AuthorizedDeviceInfo (shared_ptr<const cxml::Node> node)
-		: device_list_identifier (node->string_child ("DeviceListIdentifier").substr (9))
+		: device_list_identifier (remove_urn_uuid (node->string_child ("DeviceListIdentifier")))
 		, device_list_description (node->optional_string_child ("DeviceListDescription"))
 	{
 		BOOST_FOREACH (cxml::ConstNodePtr i, node->node_child("DeviceList")->node_children("CertificateThumbprint")) {
@@ -352,7 +352,7 @@ public:
 
 	KDMRequiredExtensions (shared_ptr<const cxml::Node> node)
 		: recipient (node->node_child ("Recipient"))
-		, composition_playlist_id (node->string_child ("CompositionPlaylistId").substr (9))
+		, composition_playlist_id (remove_urn_uuid (node->string_child ("CompositionPlaylistId")))
 		, content_title_text (node->string_child ("ContentTitleText"))
 		, not_valid_before (node->string_child ("ContentKeysNotValidBefore"))
 		, not_valid_after (node->string_child ("ContentKeysNotValidAfter"))
@@ -420,7 +420,7 @@ public:
 	{}
 
 	AuthenticatedPublic (shared_ptr<const cxml::Node> node)
-		: message_id (node->string_child ("MessageId").substr (9))
+		: message_id (remove_urn_uuid (node->string_child ("MessageId")))
 		, annotation_text (node->string_child ("AnnotationText"))
 		, issue_date (node->string_child ("IssueDate"))
 		, signer (node->node_child ("Signer"))

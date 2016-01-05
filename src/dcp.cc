@@ -112,7 +112,7 @@ DCP::read (bool keep_going, ReadErrors* errors)
 		if (starts_with (p, "file://")) {
 			p = p.substr (7);
 		}
-		paths.insert (make_pair (i->string_child ("Id"), p));
+		paths.insert (make_pair (remove_urn_uuid (i->string_child ("Id")), p));
 	}
 
 	/* Read all the assets from the asset map */
