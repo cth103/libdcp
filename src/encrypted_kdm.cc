@@ -202,9 +202,13 @@ public:
 
 		for (list<string>::const_iterator i = encrypted_key.begin(); i != encrypted_key.end(); ++i) {
 			xmlpp::Element* encrypted_key = node->add_child ("EncryptedKey", "enc");
+			/* XXX: hack for testing with Dolby */
+			encrypted_key->set_namespace_declaration ("http://www.w3.org/2001/04/xmlenc#", "enc");
 			xmlpp::Element* encryption_method = encrypted_key->add_child ("EncryptionMethod", "enc");
 			encryption_method->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p");
 			xmlpp::Element* digest_method = encryption_method->add_child ("DigestMethod", "ds");
+			/* XXX: hack for testing with Dolby */
+			digest_method->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "ds");
 			digest_method->set_attribute ("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
 			xmlpp::Element* cipher_data = encrypted_key->add_child ("CipherData", "enc");
 			cipher_data->add_child("CipherValue", "enc")->add_child_text (*i);
@@ -416,6 +420,8 @@ class AuthenticatedPublic
 public:
 	AuthenticatedPublic ()
 		: message_id (make_uuid ())
+		  /* XXX: hack for Dolby to see if there must be a not-empty annotation text */
+		, annotation_text ("none")
 		, issue_date (LocalTime().as_string ())
 	{}
 

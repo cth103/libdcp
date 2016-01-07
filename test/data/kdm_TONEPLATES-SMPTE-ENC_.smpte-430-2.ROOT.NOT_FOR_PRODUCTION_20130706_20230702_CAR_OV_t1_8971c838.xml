@@ -49,9 +49,9 @@
     <NonCriticalExtensions/>
   </AuthenticatedPublic>
   <AuthenticatedPrivate Id="ID_AuthenticatedPrivate">
-    <enc:EncryptedKey>
+    <enc:EncryptedKey xmlns:enc="http://www.w3.org/2001/04/xmlenc#">
       <enc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p">
-        <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"/>
       </enc:EncryptionMethod>
       <enc:CipherData>
         <enc:CipherValue>BGMEgy18q3BwOD6jMrgxlwjI/FKUVTgcRe1gpTUxg52HZr9Iu3iQo+AhO6hg4ti1
@@ -62,9 +62,9 @@ uC18F2Ad9g1wUf0BITDrtdjC19yTGoPYD+VHuUZvZrIHs5Otw4Buhg1+N3VDc0vz
 ffYMzb6hsGwaYKVzPw2W3A==</enc:CipherValue>
       </enc:CipherData>
     </enc:EncryptedKey>
-    <enc:EncryptedKey>
+    <enc:EncryptedKey xmlns:enc="http://www.w3.org/2001/04/xmlenc#">
       <enc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p">
-        <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" xmlns:ds="http://www.w3.org/2000/09/xmldsig#"/>
       </enc:EncryptionMethod>
       <enc:CipherData>
         <enc:CipherValue>PAWbXs8QI1+opF9jrcuwqcM1QIl6/pB4zlzvBMpmidiwgqozox1DIMgTt5K9wqV5
