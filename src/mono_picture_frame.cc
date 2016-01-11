@@ -32,8 +32,6 @@
 #include "j2k.h"
 #include <openjpeg.h>
 
-#define DCI_GAMMA 2.6
-
 using std::string;
 using boost::shared_ptr;
 using boost::optional;
