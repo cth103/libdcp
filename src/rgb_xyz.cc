@@ -57,7 +57,7 @@ dcp::xyz_to_rgba (
 	uint8_t* argb
 	)
 {
-	int const max_colour = pow (2, 12) - 1;
+	int const max_colour = pow (2, 16) - 1;
 
 	struct {
 		double x, y, z;
