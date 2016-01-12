@@ -43,12 +43,12 @@ public:
 
 	/** @return the StereoPictureAsset that this object refers to */
 	boost::shared_ptr<const StereoPictureAsset> stereo_asset () const {
-		return boost::dynamic_pointer_cast<const StereoPictureAsset> (_asset_ref.asset ());
+		return asset_of_type<const StereoPictureAsset> ();
 	}
 
 	/** @return the StereoPictureAsset that this object refers to */
 	boost::shared_ptr<StereoPictureAsset> stereo_asset () {
-		return boost::dynamic_pointer_cast<StereoPictureAsset> (_asset_ref.asset ());
+		return asset_of_type<StereoPictureAsset> ();
 	}
 
 private:

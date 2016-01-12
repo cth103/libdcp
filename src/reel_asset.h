@@ -85,6 +85,17 @@ public:
 	}
 
 protected:
+
+	template <class T>
+	boost::shared_ptr<T> asset_of_type () const {
+		return boost::dynamic_pointer_cast<T> (_asset_ref.asset ());
+	}
+
+	template <class T>
+	boost::shared_ptr<T> asset_of_type () {
+		return boost::dynamic_pointer_cast<T> (_asset_ref.asset ());
+	}
+
 	/** @return the node name that this asset uses in the CPL's &lt;Reel&gt; node
 	 *  e.g. MainPicture, MainSound etc.
 	 */

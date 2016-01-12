@@ -43,12 +43,12 @@ public:
 
 	/** @return the MonoPictureAsset that this object refers to */
 	boost::shared_ptr<const MonoPictureAsset> mono_asset () const {
-		return boost::dynamic_pointer_cast<const MonoPictureAsset> (_asset_ref.asset ());
+		return asset_of_type<const MonoPictureAsset> ();
 	}
 
 	/** @return the MonoPictureAsset that this object refers to */
 	boost::shared_ptr<MonoPictureAsset> mono_asset () {
-		return boost::dynamic_pointer_cast<MonoPictureAsset> (_asset_ref.asset ());
+		return asset_of_type<MonoPictureAsset> ();
 	}
 
 private:
