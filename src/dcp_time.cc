@@ -33,7 +33,7 @@ using namespace std;
 using namespace boost;
 using namespace dcp;
 
-Time::Time (int frame, int frames_per_second, int tcr_)
+Time::Time (int frame, double frames_per_second, int tcr_)
 {
 	set (double (frame) / frames_per_second, tcr_);
 }

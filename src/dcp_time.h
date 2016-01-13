@@ -45,7 +45,7 @@ public:
 	 *  @param frames_per_second Frames per second.
 	 *  @param tcr Timecode rate.
 	 */
-	Time (int frame, int frames_per_second, int tcr);
+	Time (int frame, double frames_per_second, int tcr);
 
 	/** Construct a Time from hours, minutes, seconds, editable units and a timecode rate.
 	 *  @param h_ Hours.
