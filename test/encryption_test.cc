@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	boost::filesystem::remove_all ("build/test/signer");
 	boost::filesystem::create_directory ("build/test/signer");
 
-	Kumu::libdcp_test = true;
+	Kumu::cth_test = true;
 
 	dcp::MXFMetadata mxf_metadata;
 	mxf_metadata.company_name = "OpenDCP";

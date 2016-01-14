@@ -30,7 +30,7 @@ def options(opt):
     opt.load('compiler_cxx')
     opt.add_option('--target-windows', action='store_true', default=False, help='set up to do a cross-compile to Windows')
     opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
-    opt.add_option('--static', action='store_true', default=False, help='build libdcp and in-tree dependencies statically, and link statically to openjpeg and cxml')
+    opt.add_option('--static', action='store_true', default=False, help='build libdcp statically, and link statically to openjpeg, cxml, asdcplib-cth')
     opt.add_option('--disable-tests', action='store_true', default=False, help='disable building of tests')
     opt.add_option('--disable-gcov', action='store_true', default=False, help='don''t use gcov in tests')
     opt.add_option('--disable-examples', action='store_true', default=False, help='disable building of examples')
@@ -83,9 +83,12 @@ def configure(conf):
         conf.env.STLIB_OPENJPEG = ['openjp2']
         conf.env.HAVE_CXML = 1
         conf.env.STLIB_CXML = ['cxml']
+        conf.env.HAVE_ASDCPLIB_CTH = 1
+        conf.env.STATIC_ASDCPLIB_CTH = ['asdcplib-cth', 'kumu-cth']
     else:
         conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
         conf.check_cfg(package='libcxml', atleast_version='0.14.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
+        conf.check_cfg(package='libasdcp-cth', atleast_version='2.5.11-cth1', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
 
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'
@@ -140,7 +143,6 @@ def configure(conf):
         conf.recurse('test')
         if not conf.options.disable_gcov:
             conf.check(lib='gcov', define_name='HAVE_GCOV', mandatory=False)
-    conf.recurse('asdcplib')
 
 def build(bld):
     create_version_cc(bld, VERSION)
@@ -160,7 +162,6 @@ def build(bld):
     bld.recurse('tools')
     if not bld.env.DISABLE_TESTS:
         bld.recurse('test')
-    bld.recurse('asdcplib')
     if not bld.env.DISABLE_EXAMPLES:
         bld.recurse('examples')
 

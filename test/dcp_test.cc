@@ -41,7 +41,7 @@ using boost::shared_ptr;
 /** Test creation of a 2D DCP from very simple inputs */
 BOOST_AUTO_TEST_CASE (dcp_test1)
 {
-	Kumu::libdcp_test = true;
+	Kumu::cth_test = true;
 
 	/* Some known metadata */
 	dcp::XMLMetadata xml_meta;
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 /** Test creation of a 3D DCP from very simple inputs */
 BOOST_AUTO_TEST_CASE (dcp_test2)
 {
-	Kumu::libdcp_test = true;
+	Kumu::cth_test = true;
 
 	/* Some known metadata */
 	dcp::XMLMetadata xml_meta;
@@ -206,4 +206,3 @@ BOOST_AUTO_TEST_CASE (dcp_test4)
 
 	BOOST_CHECK (!A.equals (B, dcp::EqualityOptions(), boost::bind (&note, _1, _2)));
 }
-

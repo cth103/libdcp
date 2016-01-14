@@ -29,7 +29,7 @@ using boost::shared_ptr;
 /** Check that recovery from a partially-written MXF works */
 BOOST_AUTO_TEST_CASE (recovery)
 {
-	Kumu::libdcp_test = true;
+	Kumu::cth_test = true;
 
 	string const picture = "test/data/32x32_red_square.j2c";
 	int const size = boost::filesystem::file_size (picture);
