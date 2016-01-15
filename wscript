@@ -155,7 +155,7 @@ def build(bld):
     bld(source='libdcp%s.pc.in' % bld.env.API_VERSION,
         version=VERSION,
         includedir='%s/include/libdcp%s' % (bld.env.PREFIX, bld.env.API_VERSION),
-        libs="-L${libdir} -ldcp%s -lasdcp-libdcp%s -lkumu-libdcp%s -lcxml -lboost_system%s" % (API_VERSION, bld.env.API_VERSION, bld.env.API_VERSION, boost_lib_suffix),
+        libs="-L${libdir} -ldcp%s -lcxml -lboost_system%s" % (bld.env.API_VERSION, boost_lib_suffix),
         install_path='${LIBDIR}/pkgconfig')
 
     bld.recurse('src')
