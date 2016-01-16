@@ -48,7 +48,7 @@ class MonoPictureFrame : public boost::noncopyable
 public:
 	MonoPictureFrame (boost::filesystem::path path, int n, ASDCP::AESDecContext *);
 	MonoPictureFrame (boost::filesystem::path path);
-	MonoPictureFrame ();
+	MonoPictureFrame (uint8_t const * data, int size);
 	~MonoPictureFrame ();
 
 	boost::shared_ptr<OpenJPEGImage> xyz_image (int reduce = 0) const;

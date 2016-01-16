@@ -76,9 +76,11 @@ MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path, int n, ASDCP::
 	}
 }
 
-MonoPictureFrame::MonoPictureFrame ()
+MonoPictureFrame::MonoPictureFrame (uint8_t const * data, int size)
 {
-	_buffer = new ASDCP::JP2K::FrameBuffer (4 * Kumu::Megabyte);
+	_buffer = new ASDCP::JP2K::FrameBuffer (size);
+	_buffer->Size (size);
+	memcpy (_buffer->Data(), data, size);
 }
 
 /** MonoPictureFrame destructor */
