@@ -17,12 +17,13 @@
 
 */
 
-#include <boost/test/unit_test.hpp>
 #include "certificate.h"
 #include "certificate_chain.h"
 #include "util.h"
 #include "exceptions.h"
 #include "test.h"
+#include <boost/test/unit_test.hpp>
+#include <iostream>
 
 using std::list;
 using std::string;
@@ -54,6 +55,8 @@ BOOST_AUTO_TEST_CASE (certificates1)
 		"dnQualifier=QFVlym7fuql6bPOnY38aaO1ZPW4=,CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 
+	BOOST_CHECK (!c.leaf().extra_data ());
+
 	++i;
 
 	/* Intermediate */
@@ -66,6 +69,8 @@ BOOST_AUTO_TEST_CASE (certificates1)
 		i->subject(),
 		"dnQualifier=6eat8r33US71avuQEojmH\\+bjk84=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
+
+	BOOST_CHECK (!i->extra_data ());
 
 	++i;
 
@@ -83,6 +88,8 @@ BOOST_AUTO_TEST_CASE (certificates1)
 		"dnQualifier=DCnRdHFbcv4ANVUq2\\+wMVALFSec=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 
+	BOOST_CHECK (!c.root().extra_data ());
+
 	/* Check that reconstruction from a string works */
 	dcp::Certificate test (c.root().certificate (true));
 	BOOST_CHECK_EQUAL (test.certificate(), c.root().certificate());
@@ -94,11 +101,18 @@ BOOST_AUTO_TEST_CASE (certificates2)
 	{
 		dcp::Certificate c (dcp::file_to_string (private_test / "CA.GDC-TECH.COM_SA2100_A14903.crt.crt"));
 		BOOST_CHECK_EQUAL (c.certificate(true), dcp::file_to_string (private_test / "CA.GDC-TECH.COM_SA2100_A14903.crt.crt.reformatted"));
+		BOOST_CHECK (!c.extra_data ());
 	}
 
 	{
 		dcp::Certificate c (dcp::file_to_string (private_test / "usl-cert.pem"));
 		BOOST_CHECK_EQUAL (c.certificate(true), dcp::file_to_string (private_test / "usl-cert.pem.trimmed"));
+		BOOST_CHECK (!c.extra_data ());
+	}
+
+	{
+		dcp::Certificate c (dcp::file_to_string (private_test / "chain.pem"));
+		BOOST_CHECK (c.extra_data ());
 	}
 
 	BOOST_CHECK_THROW (dcp::Certificate (dcp::file_to_string (private_test / "no-begin.pem")), dcp::MiscError);

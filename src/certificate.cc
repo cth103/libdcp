@@ -34,6 +34,7 @@
 #include <openssl/err.h>
 #include <boost/algorithm/string.hpp>
 #include <cerrno>
+#include <iostream>
 #include <algorithm>
 
 using std::list;
@@ -50,6 +51,7 @@ static string const end_certificate = "-----END CERTIFICATE-----";
 Certificate::Certificate (X509* c)
 	: _certificate (c)
 	, _public_key (0)
+	, _extra_data (false)
 {
 
 }
@@ -61,7 +63,7 @@ Certificate::Certificate (string cert)
 	: _certificate (0)
 	, _public_key (0)
 {
-	read_string (cert);
+	_extra_data = read_string (cert);
 }
 
 /** Copy constructor.
@@ -70,6 +72,7 @@ Certificate::Certificate (string cert)
 Certificate::Certificate (Certificate const & other)
 	: _certificate (0)
 	, _public_key (0)
+	, _extra_data (other._extra_data)
 {
 	if (other._certificate) {
 		read_string (other.certificate (true));
@@ -78,8 +81,9 @@ Certificate::Certificate (Certificate const & other)
 
 /** Read a certificate from a string.
  *  @param cert String to read.
+ *  @return true if there is extra stuff after the end of the certificate, false if not.
  */
-void
+bool
 Certificate::read_string (string cert)
 {
 	/* Reformat cert so that it has line breaks every 64 characters.
@@ -137,6 +141,12 @@ Certificate::read_string (string cert)
 	}
 
 	BIO_free (bio);
+
+	line.clear ();
+	if (s.good ()) {
+		getline (s, line);
+	}
+	return !line.empty();
 }
 
 /** Destructor */
@@ -160,6 +170,7 @@ Certificate::operator= (Certificate const & other)
 	_certificate = 0;
 	RSA_free (_public_key);
 	_public_key = 0;
+	_extra_data = other._extra_data;
 
 	read_string (other.certificate (true));
 

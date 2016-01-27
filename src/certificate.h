@@ -76,8 +76,12 @@ public:
 
 	std::string thumbprint () const;
 
+	bool extra_data () const {
+		return _extra_data;
+	}
+
 private:
-	void read_string (std::string);
+	bool read_string (std::string);
 
 	static std::string name_for_xml (X509_NAME *);
 	static std::string asn_to_utf8 (ASN1_STRING *);
@@ -85,6 +89,10 @@ private:
 
 	X509* _certificate;
 	mutable RSA* _public_key;
+	/** true if extra data was found when this certificate was read
+	    from a string.
+	*/
+	bool _extra_data;
 };
 
 bool operator== (Certificate const & a, Certificate const & b);
