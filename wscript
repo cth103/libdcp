@@ -83,12 +83,13 @@ def configure(conf):
         conf.env.STLIB_OPENJPEG = ['openjp2']
         conf.env.HAVE_CXML = 1
         conf.env.STLIB_CXML = ['cxml']
+        conf.check_cfg(package='libasdcp-cth', atleast_version='0.0.1', args='--cflags', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.env.HAVE_ASDCPLIB_CTH = 1
-        conf.env.STATIC_ASDCPLIB_CTH = ['asdcplib-cth', 'kumu-cth']
+        conf.env.STLIB_ASDCPLIB_CTH = ['asdcp-cth', 'kumu-cth']
     else:
         conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
         conf.check_cfg(package='libcxml', atleast_version='0.14.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
-        conf.check_cfg(package='libasdcp-cth', atleast_version='2.5.11-cth1', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
+        conf.check_cfg(package='libasdcp-cth', atleast_version='0.0.1', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
 
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'
