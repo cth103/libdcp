@@ -1,18 +1,18 @@
 def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.use = ['libdcp%s' % bld.env.API_VERSION]
-    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH'
+    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL'
     obj.source = 'dcpdiff.cc common.cc'
     obj.target = 'dcpdiff'
 
     obj = bld(features='cxx cxxprogram')
     obj.use = ['libdcp%s' % bld.env.API_VERSION]
-    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH'
+    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL'
     obj.source = 'dcpinfo.cc common.cc'
     obj.target = 'dcpinfo'
 
     obj = bld(features='cxx cxxprogram')
     obj.use = ['libdcp%s' % bld.env.API_VERSION]
-    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH'
+    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL'
     obj.source = 'dcpdumpsub.cc'
     obj.target = 'dcpdumpsub'

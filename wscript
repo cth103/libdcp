@@ -20,7 +20,7 @@ import subprocess
 import os
 import sys
 import distutils.spawn
-from waflib import Logs
+from waflib import Logs, Context
 
 APPNAME = 'libdcp'
 VERSION = '1.2.10devel'
@@ -82,6 +82,7 @@ def configure(conf):
         conf.check_cfg(package='libopenjp2', args='--cflags', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
         conf.env.STLIB_OPENJPEG = ['openjp2']
         conf.env.HAVE_CXML = 1
+        conf.env.LIB_CXML = ['xml++-2.6', 'glibmm-2.4']
         conf.env.STLIB_CXML = ['cxml']
         conf.check_cfg(package='libasdcp-cth', atleast_version='0.0.1', args='--cflags', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.env.HAVE_ASDCPLIB_CTH = 1
@@ -144,6 +145,13 @@ def configure(conf):
         conf.recurse('test')
         if not conf.options.disable_gcov:
             conf.check(lib='gcov', define_name='HAVE_GCOV', mandatory=False)
+
+    # libxml++ 2.39.1 and later must be built with -std=c++11
+    libxmlpp_version = conf.cmd_and_log(['pkg-config', '--modversion', 'libxml++-2.6'], output=Context.STDOUT, quiet=Context.BOTH)
+    s = libxmlpp_version.split('.')
+    v = (int(s[0]) << 16) | (int(s[1]) << 8) | int(s[2])
+    if v >= 0x022701:
+        conf.env.append_value('CXXFLAGS', '-std=c++11')
 
 def build(bld):
     create_version_cc(bld, VERSION)
