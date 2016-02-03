@@ -23,13 +23,16 @@
 #include "key.h"
 #include "types.h"
 #include "ref.h"
-#include <libxml++/libxml++.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <list>
 
 namespace cxml {
 	class Node;
+}
+
+namespace xmlpp {
+	class Element;
 }
 
 namespace dcp {

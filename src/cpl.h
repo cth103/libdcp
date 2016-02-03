@@ -29,7 +29,6 @@
 #include "key.h"
 #include "asset.h"
 #include "metadata.h"
-#include <libxml++/libxml++.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/optional.hpp>

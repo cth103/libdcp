@@ -30,6 +30,7 @@
 #include "dcp_assert.h"
 #include "compose.hpp"
 #include <libxml/parser.h>
+#include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
 
 using std::string;

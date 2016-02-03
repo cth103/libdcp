@@ -21,6 +21,7 @@
 #include "reel_mono_picture_asset.h"
 #include "mono_picture_asset.h"
 #include <libcxml/cxml.h>
+#include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
 
 using boost::shared_ptr;
