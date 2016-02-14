@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2016 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,16 +24,19 @@
 #include "reel_picture_asset.h"
 #include "picture_asset.h"
 #include "dcp_assert.h"
+#include "raw_convert.h"
 #include "compose.hpp"
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 #include <iomanip>
+#include <cmath>
 
 using std::bad_cast;
 using std::string;
 using std::stringstream;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
+using boost::optional;
 using namespace dcp;
 
 ReelPictureAsset::ReelPictureAsset ()
@@ -80,9 +83,26 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 
 	mp->add_child ("FrameRate")->add_child_text (String::compose ("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
 	if (standard == INTEROP) {
-		stringstream s;
-		s << std::fixed << std::setprecision (2) << (float (_screen_aspect_ratio.numerator) / _screen_aspect_ratio.denominator);
-		mp->add_child ("ScreenAspectRatio")->add_child_text (s.str ());
+
+		/* Allowed values for this tag from the standard */
+		float allowed[] = { 1.33, 1.66, 1.77, 1.85, 2.00, 2.39 };
+		int const num_allowed = sizeof(allowed) / sizeof(float);
+
+		/* Actual ratio */
+		float ratio = float (_screen_aspect_ratio.numerator) / _screen_aspect_ratio.denominator;
+
+		/* Pick the closest and use that */
+		optional<float> closest;
+		optional<float> error;
+		for (int i = 0; i < num_allowed; ++i) {
+			float const e = fabsf (allowed[i] - ratio);
+			if (!closest || e < error.get()) {
+				closest = allowed[i];
+				error = e;
+			}
+		}
+
+		mp->add_child ("ScreenAspectRatio")->add_child_text (raw_convert<string> (closest.get(), 2, true));
 	} else {
 		mp->add_child ("ScreenAspectRatio")->add_child_text (
 			String::compose ("%1 %2", _screen_aspect_ratio.numerator, _screen_aspect_ratio.denominator)

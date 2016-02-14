@@ -24,10 +24,25 @@
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
 
+using std::string;
 using boost::shared_ptr;
+
+static void
+check (shared_ptr<dcp::ReelMonoPictureAsset> pa, dcp::Fraction far, string sar)
+{
+	pa->set_screen_aspect_ratio (far);
+	xmlpp::Document doc;
+	xmlpp::Element* el = doc.create_root_node ("Test");
+	pa->write_to_cpl (el, dcp::INTEROP);
+
+	cxml::Node node (el);
+	BOOST_CHECK_EQUAL (node.node_child("MainPicture")->string_child ("ScreenAspectRatio"), sar);
+}
 
 /** Test for a reported bug where <ScreenAspectRatio> in Interop files uses
  *  excessive decimal places and (sometimes) the wrong decimal point character.
+ *  Also check that we correctly use one of the allowed <ScreenAspectRatio>
+ *  values with Interop.
  */
 BOOST_AUTO_TEST_CASE (cpl_sar)
 {
@@ -38,23 +53,39 @@ BOOST_AUTO_TEST_CASE (cpl_sar)
 			)
 		);
 
-	{
-		pa->set_screen_aspect_ratio (dcp::Fraction (1998, 1080));
-		xmlpp::Document doc;
-		xmlpp::Element* el = doc.create_root_node ("Test");
-		pa->write_to_cpl (el, dcp::INTEROP);
+	/* Easy ones */
+	check (pa, dcp::Fraction (1998, 1080), "1.85");
+	check (pa, dcp::Fraction (2048, 858), "2.39");
 
-		cxml::Node node (el);
-		BOOST_CHECK_EQUAL (node.node_child("MainPicture")->string_child ("ScreenAspectRatio"), "1.85");
-	}
+	/* Check the use of the allowed values */
 
-	{
-		pa->set_screen_aspect_ratio (dcp::Fraction (2048, 858));
-		xmlpp::Document doc;
-		xmlpp::Element* el = doc.create_root_node ("Test");
-		pa->write_to_cpl (el, dcp::INTEROP);
+	/* Just less then, equal to and just more than 1.33 */
+	check (pa, dcp::Fraction (1200, 1000), "1.33");
+	check (pa, dcp::Fraction (1330, 1000), "1.33");
+	check (pa, dcp::Fraction (1430, 1000), "1.33");
 
-		cxml::Node node (el);
-		BOOST_CHECK_EQUAL (node.node_child("MainPicture")->string_child ("ScreenAspectRatio"), "2.39");
-	}
+	/* Same for 1.66 */
+	check (pa, dcp::Fraction (1600, 1000), "1.66");
+	check (pa, dcp::Fraction (1660, 1000), "1.66");
+	check (pa, dcp::Fraction (1670, 1000), "1.66");
+
+	/* 1.77 */
+	check (pa, dcp::Fraction (1750, 1000), "1.77");
+	check (pa, dcp::Fraction (1770, 1000), "1.77");
+	check (pa, dcp::Fraction (1800, 1000), "1.77");
+
+	/* 1.85 */
+	check (pa, dcp::Fraction (1820, 1000), "1.85");
+	check (pa, dcp::Fraction (1850, 1000), "1.85");
+	check (pa, dcp::Fraction (1910, 1000), "1.85");
+
+	/* 2.00 */
+	check (pa, dcp::Fraction (1999, 1000), "2.00");
+	check (pa, dcp::Fraction (2000, 1000), "2.00");
+	check (pa, dcp::Fraction (2001, 1000), "2.00");
+
+	/* 2.39 */
+	check (pa, dcp::Fraction (2350, 1000), "2.39");
+	check (pa, dcp::Fraction (2390, 1000), "2.39");
+	check (pa, dcp::Fraction (2500, 1000), "2.39");
 }

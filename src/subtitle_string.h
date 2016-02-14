@@ -89,7 +89,8 @@ public:
 		return _h_align;
 	}
 
-	/** @return vertical position as a proportion of the screen height from the top
+	/** @return vertical position as a proportion of the screen height from the
+	 *  vertical alignment point.
 	 *  (between 0 and 1)
 	 */
 	float v_position () const {
