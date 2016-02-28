@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -177,4 +177,12 @@ SoundAsset::pkl_type (Standard standard) const
 	default:
 		DCP_ASSERT (false);
 	}
+}
+
+bool
+SoundAsset::valid_mxf (boost::filesystem::path file)
+{
+	ASDCP::PCM::MXFReader reader;
+	Kumu::Result_t r = reader.OpenRead (file.string().c_str ());
+	return !ASDCP_FAILURE (r);
 }
