@@ -24,10 +24,12 @@
 #ifndef LIBDCP_ASSET_WRITER_H
 #define LIBDCP_ASSET_WRITER_H
 
+#include "types.h"
 #include <boost/filesystem.hpp>
 
 namespace ASDCP {
 	class AESEncContext;
+	class HMACContext;
 }
 
 namespace dcp {
@@ -51,7 +53,7 @@ public:
 	}
 
 protected:
-	AssetWriter (MXF* mxf, boost::filesystem::path file);
+	AssetWriter (MXF* mxf, boost::filesystem::path file, Standard standard);
 
 	/** MXF that we are writing */
 	MXF* _mxf;
@@ -66,6 +68,7 @@ protected:
 	/** true if something has been written to this asset */
 	bool _started;
 	ASDCP::AESEncContext* _encryption_context;
+	ASDCP::HMACContext* _hmac_context;
 };
 
 }

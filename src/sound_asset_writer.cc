@@ -37,7 +37,7 @@ struct SoundAssetWriter::ASDCPState
 };
 
 SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, Standard standard)
-	: AssetWriter (asset, file)
+	: AssetWriter (asset, file, standard)
 	, _state (new SoundAssetWriter::ASDCPState)
 	, _sound_asset (asset)
 	, _frame_buffer_offset (0)
@@ -105,7 +105,7 @@ SoundAssetWriter::write (float const * const * data, int frames)
 void
 SoundAssetWriter::write_current_frame ()
 {
-	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _encryption_context, 0);
+	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _encryption_context, _hmac_context);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MiscError (String::compose ("could not write audio MXF frame (%1)", int (r))));
 	}

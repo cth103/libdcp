@@ -32,7 +32,7 @@ using boost::shared_ptr;
 using namespace dcp;
 
 PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, boost::filesystem::path file, Standard standard, bool overwrite)
-	: AssetWriter (asset, file)
+	: AssetWriter (asset, file, standard)
 	, _picture_asset (asset)
 	, _standard (standard)
 	, _overwrite (overwrite)

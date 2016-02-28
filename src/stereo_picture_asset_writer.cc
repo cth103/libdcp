@@ -76,7 +76,7 @@ StereoPictureAssetWriter::write (uint8_t* data, int size)
 		_state->frame_buffer,
 		_next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
 		_encryption_context,
-		0,
+		_hmac_context,
 		&hash
 		);
 

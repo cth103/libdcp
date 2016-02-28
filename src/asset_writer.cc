@@ -33,13 +33,14 @@ using namespace dcp;
  *  @param mxf MXF that we are writing.
  *  @param file File to write to.
  */
-AssetWriter::AssetWriter (MXF* mxf, boost::filesystem::path file)
+AssetWriter::AssetWriter (MXF* mxf, boost::filesystem::path file, Standard standard)
 	: _mxf (mxf)
 	, _file (file)
 	, _frames_written (0)
 	, _finalized (false)
 	, _started (false)
 	, _encryption_context (0)
+	, _hmac_context (0)
 {
 	if (mxf->key ()) {
 		_encryption_context = new ASDCP::AESEncContext;
@@ -53,12 +54,26 @@ AssetWriter::AssetWriter (MXF* mxf, boost::filesystem::path file)
 		if (ASDCP_FAILURE (_encryption_context->SetIVec (rng.FillRandom (cbc_buffer, ASDCP::CBC_BLOCK_SIZE)))) {
 			throw MiscError ("could not set up CBC initialization vector");
 		}
+
+		_hmac_context = new ASDCP::HMACContext;
+
+		ASDCP::LabelSet_t type;
+		if (standard == INTEROP) {
+			type = ASDCP::LS_MXF_INTEROP;
+		} else {
+			type = ASDCP::LS_MXF_SMPTE;
+		}
+
+		if (ASDCP_FAILURE (_hmac_context->InitKey (mxf->key()->value(), type))) {
+			throw MiscError ("could not set up HMAC context");
+		}
 	}
 }
 
 AssetWriter::~AssetWriter ()
 {
 	delete _encryption_context;
+	delete _hmac_context;
 }
 
 /** @return true if anything was written by this writer */
