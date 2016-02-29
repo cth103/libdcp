@@ -71,8 +71,11 @@ public:
 	/** Read the DCP's structure into this object.
 	 *  @param keep_going true to try to keep going in the face of (some) errors.
 	 *  @param errors List of errors that will be added to if keep_going is true.
+	 *  @param ignore_incorrect_picture_mxf_type true to try loading MXF files marked as monoscopic
+	 *  as stereoscopic if the monoscopic load fails; fixes problems some 3D DCPs that (I think)
+	 *  have an incorrect descriptor in their MXF.
 	 */
-	void read (bool keep_going = false, ReadErrors* errors = 0);
+	void read (bool keep_going = false, ReadErrors* errors = 0, bool ignore_incorrect_picture_mxf_type = false);
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.

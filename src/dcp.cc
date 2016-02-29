@@ -87,7 +87,7 @@ survivable_error (bool keep_going, dcp::DCP::ReadErrors* errors, T const & e)
 }
 
 void
-DCP::read (bool keep_going, ReadErrors* errors)
+DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mxf_type)
 {
 	/* Read the ASSETMAP */
 
@@ -160,7 +160,16 @@ DCP::read (bool keep_going, ReadErrors* errors)
 				case ASDCP::ESS_MPEG2_VES:
 					throw DCPReadError ("MPEG2 video essences are not supported");
 				case ASDCP::ESS_JPEG_2000:
-					other_assets.push_back (shared_ptr<MonoPictureAsset> (new MonoPictureAsset (path)));
+					try {
+						other_assets.push_back (shared_ptr<MonoPictureAsset> (new MonoPictureAsset (path)));
+					} catch (dcp::MXFFileError& e) {
+						if (ignore_incorrect_picture_mxf_type && e.number() == ASDCP::RESULT_SFORMAT) {
+							/* Tried to load it as mono but the error says it's stereo; try that instead */
+							other_assets.push_back (shared_ptr<StereoPictureAsset> (new StereoPictureAsset (path)));
+						} else {
+							throw;
+						}
+					}
 					break;
 				case ASDCP::ESS_PCM_24b_48k:
 				case ASDCP::ESS_PCM_24b_96k:
