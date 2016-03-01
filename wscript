@@ -90,7 +90,7 @@ def configure(conf):
     else:
         conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
         conf.check_cfg(package='libcxml', atleast_version='0.14.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
-        conf.check_cfg(package='libasdcp-cth', atleast_version='0.0.1', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
+        conf.check_cfg(package='libasdcp-cth', atleast_version='0.1.0', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
 
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'
