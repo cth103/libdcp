@@ -70,6 +70,8 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id, Standard stand
 	Kumu::hex2bin (id.c_str(), writer_info->AssetUUID, Kumu::UUID_Length, &c);
 	DCP_ASSERT (c == Kumu::UUID_Length);
 
+	writer_info->UsesHMAC = true;
+
 	if (_key_id) {
 		Kumu::GenRandomUUID (writer_info->ContextID);
 		writer_info->EncryptedEssence = true;
