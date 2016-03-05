@@ -67,6 +67,22 @@ LocalTime::LocalTime (boost::posix_time::ptime t)
 	set_local_time_zone ();
 }
 
+/** Construct a LocalTime from a boost::posix_time::ptime and a time zone offset */
+LocalTime::LocalTime (boost::posix_time::ptime t, int tz_hour, int tz_minute)
+{
+	_year = t.date().year ();
+	_month = t.date().month ();
+	_day = t.date().day ();
+	_hour = t.time_of_day().hours ();
+	_minute = t.time_of_day().minutes ();
+	_second = t.time_of_day().seconds ();
+	_millisecond = t.time_of_day().fractional_seconds () / 1000;
+	DCP_ASSERT (_millisecond < 1000);
+
+	_tz_hour = tz_hour;
+	_tz_minute = tz_minute;
+}
+
 /** Set our UTC offset to be according to the local time zone */
 void
 LocalTime::set_local_time_zone ()
