@@ -23,9 +23,9 @@
 #include "version.h"
 #include "j2k.h"
 #include "openjpeg_image.h"
-#include <openjpeg.h>
 #include <sys/time.h>
 #include <iostream>
+#include <cstdio>
 
 using std::cout;
 using std::cerr;

@@ -26,7 +26,6 @@
 #include "KM_fileio.h"
 #include "compose.hpp"
 #include "j2k.h"
-#include <openjpeg.h>
 
 using std::string;
 using boost::shared_ptr;

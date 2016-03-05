@@ -28,7 +28,6 @@
 #include "KM_fileio.h"
 #include "j2k.h"
 #include <libxml++/nodes/element.h>
-#include <openjpeg.h>
 #include <boost/filesystem.hpp>
 #include <list>
 #include <stdexcept>
