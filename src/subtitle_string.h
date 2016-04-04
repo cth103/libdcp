@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ public:
 	SubtitleString (
 		boost::optional<std::string> font,
 		bool italic,
+		bool bold,
 		Colour colour,
 		int size,
 		float aspect_adjust,
@@ -63,6 +64,10 @@ public:
 
 	bool italic () const {
 		return _italic;
+	}
+
+	bool bold () const {
+		return _bold;
 	}
 
 	Colour colour () const {
@@ -163,6 +168,8 @@ private:
 	boost::optional<std::string> _font;
 	/** true if the text is italic */
 	bool _italic;
+	/** true if the weight is bold, false for normal */
+	bool _bold;
 	/** text colour */
 	Colour _colour;
 	/** Size in points as if the screen height is 11 inches, so a 72pt font

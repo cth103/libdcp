@@ -38,6 +38,7 @@ BOOST_AUTO_TEST_CASE (write_subtitle_test)
 		dcp::SubtitleString (
 			string ("Frutiger"),
 			false,
+			false,
 			dcp::Colour (255, 255, 255),
 			48,
 			1.0,
@@ -59,6 +60,7 @@ BOOST_AUTO_TEST_CASE (write_subtitle_test)
 		dcp::SubtitleString (
 			boost::optional<string> (),
 			true,
+			false,
 			dcp::Colour (128, 0, 64),
 			91,
 			1.0,

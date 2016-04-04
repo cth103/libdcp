@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ using namespace dcp;
 SubtitleString::SubtitleString (
 	optional<string> font,
 	bool italic,
+	bool bold,
 	Colour colour,
 	int size,
 	float aspect_adjust,
@@ -47,6 +48,7 @@ SubtitleString::SubtitleString (
 	)
 	: _font (font)
 	, _italic (italic)
+	, _bold (bold)
 	, _colour (colour)
 	, _size (size)
 	, _aspect_adjust (aspect_adjust)
@@ -82,6 +84,7 @@ dcp::operator== (SubtitleString const & a, SubtitleString const & b)
 	return (
 		a.font() == b.font() &&
 		a.italic() == b.italic() &&
+		a.bold() == b.bold() &&
 		a.colour() == b.colour() &&
 		a.size() == b.size() &&
 		fabs (a.aspect_adjust() - b.aspect_adjust()) < ASPECT_ADJUST_EPSILON &&
@@ -107,12 +110,18 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 	  << "font " << sub.font().get_value_or ("[default]") << ", ";
 
 	if (sub.italic()) {
-		s << "italic";
+		s << "italic, ";
 	} else {
-		s << "non-italic";
+		s << "non-italic, ";
 	}
 
-	s << ", size " << sub.size() << ", aspect " << sub.aspect_adjust() << ", colour " << sub.colour()
+	if (sub.bold()) {
+		s << "bold, ";
+	} else {
+		s << "normal, ";
+	}
+
+	s << "size " << sub.size() << ", aspect " << sub.aspect_adjust() << ", colour " << sub.colour()
 	  << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align())
 	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align())
 	  << ", effect " << ((int) sub.effect()) << ", effect colour " << sub.effect_colour();

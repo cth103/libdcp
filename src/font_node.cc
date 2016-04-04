@@ -39,6 +39,7 @@ FontNode::FontNode (cxml::ConstNodePtr node, int tcr, string font_id_attribute)
 	size = node->optional_number_attribute<int64_t> ("Size").get_value_or (0);
 	aspect_adjust = node->optional_number_attribute<float> ("AspectAdjust");
 	italic = node->optional_bool_attribute ("Italic");
+	bold = node->optional_string_attribute("Weight").get_value_or("normal") == "bold";
 	optional<string> c = node->optional_string_attribute ("Color");
 	if (c) {
 		colour = Colour (c.get ());
@@ -71,6 +72,7 @@ FontNode::FontNode (cxml::ConstNodePtr node, int tcr, string font_id_attribute)
 FontNode::FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes)
 	: size (0)
 	, italic (false)
+	, bold (false)
 	, colour ("FFFFFFFF")
 	, effect_colour ("FFFFFFFF")
 {
@@ -86,6 +88,9 @@ FontNode::FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes)
 		}
 		if ((*i)->italic) {
 			italic = (*i)->italic.get ();
+		}
+		if ((*i)->bold) {
+			bold = (*i)->bold.get ();
 		}
 		if ((*i)->colour) {
 			colour = (*i)->colour.get ();

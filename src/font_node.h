@@ -48,6 +48,7 @@ public:
 	int size;
 	boost::optional<float> aspect_adjust;
 	boost::optional<bool> italic;
+	boost::optional<bool> bold;
 	boost::optional<Colour> colour;
 	boost::optional<Effect> effect;
 	boost::optional<Colour> effect_colour;

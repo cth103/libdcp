@@ -26,7 +26,7 @@ using boost::shared_ptr;
 class DummyAsset : public dcp::Asset
 {
 protected:
-	std::string pkl_type (dcp::Standard standard) const {
+	std::string pkl_type (dcp::Standard) const {
 		return "none";
 	}
 };
