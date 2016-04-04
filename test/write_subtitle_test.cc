@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE (write_subtitle_test)
 		dcp::SubtitleString (
 			boost::optional<string> (),
 			true,
-			false,
+			true,
 			dcp::Colour (128, 0, 64),
 			91,
 			1.0,
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE (write_subtitle_test)
 		"      <Text VAlign=\"top\" VPosition=\"80\">Hello world</Text>\n"
 		"    </Subtitle>\n"
 		"  </Font>\n"
-		"  <Font Italic=\"yes\" Color=\"FF800040\" Size=\"91\" Effect=\"border\" EffectColor=\"FF010203\" Script=\"normal\" Underlined=\"no\" Weight=\"normal\">\n"
+		"  <Font Italic=\"yes\" Color=\"FF800040\" Size=\"91\" Effect=\"border\" EffectColor=\"FF010203\" Script=\"normal\" Underlined=\"no\" Weight=\"bold\">\n"
 		"    <Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:218\" TimeOut=\"06:12:15:218\" FadeUpTime=\"930792\" FadeDownTime=\"4591834\">\n"
 		"      <Text VAlign=\"bottom\" VPosition=\"40\">What's going on</Text>\n"
 		"    </Subtitle>\n"

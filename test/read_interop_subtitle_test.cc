@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFontId"),
 				   false,
-				   false,
+				   true,
 				   dcp::Colour (255, 255, 255),
 				   39,
 				   1.0,

@@ -20,8 +20,10 @@
     <Subtitle SpotNumber="3" TimeIn="00:00:11:094" TimeOut="00:00:13:063" FadeUpTime="1" FadeDownTime="1">
       <Text VAlign="bottom" VPosition="15.0">Once belonged to the Shah</Text>
     </Subtitle>
-    <Subtitle SpotNumber="4" TimeIn="00:00:13:104" TimeOut="00:00:15:177" FadeUpTime="1" FadeDownTime="1">
-      <Text VAlign="bottom" VPosition="15.0">And these are Roy Hattersley's jeans</Text>
-    </Subtitle>
+    <Font Weight="bold">
+      <Subtitle SpotNumber="4" TimeIn="00:00:13:104" TimeOut="00:00:15:177" FadeUpTime="1" FadeDownTime="1">
+	<Text VAlign="bottom" VPosition="15.0">And these are Roy Hattersley's jeans</Text>
+      </Subtitle>
+    </Font>
   </Font>
 </DCSubtitle>
