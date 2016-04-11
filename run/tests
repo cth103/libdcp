@@ -23,6 +23,9 @@ if [ "$1" == "--debug" ]; then
 elif [ "$1" == "--valgrind" ]; then
     shift
     valgrind --tool="memcheck" $work/tests $private
+elif [ "$1" == "--callgrind" ]; then
+    shift
+    valgrind --tool="callgrind" $work/tests $private $*
 else
     $work/tests $private $*
 fi
