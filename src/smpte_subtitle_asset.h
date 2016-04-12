@@ -69,6 +69,10 @@ public:
 		_language = l;
 	}
 
+	void set_issue_date (LocalTime t) {
+		_issue_date = t;
+	}
+
 	void set_reel_number (int r) {
 		_reel_number = r;
 	}

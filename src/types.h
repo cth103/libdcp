@@ -114,6 +114,18 @@ enum VAlign
 extern std::string valign_to_string (VAlign a);
 extern VAlign string_to_valign (std::string s);
 
+/** Direction for subtitle test */
+enum Direction
+{
+	DIRECTION_LTR, ///< left-to-right
+	DIRECTION_RTL, ///< right-to-left
+	DIRECTION_TTB, ///< top-to-bottom
+	DIRECTION_BTT  ///< bottom-to-top
+};
+
+extern std::string direction_to_string (Direction a);
+extern Direction string_to_direction (std::string s);
+
 enum Eye
 {
 	EYE_LEFT,

@@ -40,6 +40,7 @@ SubtitleString::SubtitleString (
 	HAlign h_align,
 	float v_position,
 	VAlign v_align,
+	Direction direction,
 	string text,
 	Effect effect,
 	Colour effect_colour,
@@ -58,6 +59,7 @@ SubtitleString::SubtitleString (
 	, _h_align (h_align)
 	, _v_position (v_position)
 	, _v_align (v_align)
+	, _direction (direction)
 	, _text (text)
 	, _effect (effect)
 	, _effect_colour (effect_colour)
@@ -94,6 +96,7 @@ dcp::operator== (SubtitleString const & a, SubtitleString const & b)
 		a.h_align() == b.h_align() &&
 		a.v_position() == b.v_position() &&
 		a.v_align() == b.v_align() &&
+		a.direction() == b.direction() &&
 		a.text() == b.text() &&
 		a.effect() == b.effect() &&
 		a.effect_colour() == b.effect_colour() &&
@@ -124,6 +127,7 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 	s << "size " << sub.size() << ", aspect " << sub.aspect_adjust() << ", colour " << sub.colour()
 	  << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align())
 	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align())
+	  << ", direction " << ((int) sub.direction())
 	  << ", effect " << ((int) sub.effect()) << ", effect colour " << sub.effect_colour();
 
 	return s;

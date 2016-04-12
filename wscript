@@ -58,7 +58,7 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', ['-Wno-unused-result', '-Wno-unused-parameter', '-Wno-unused-local-typedef'])
 
     if conf.options.enable_openmp:
-        conf.env.append_value('CXXFLAGS', '-fopenmp')
+        conf.env.append_value('CXXFLAGS', ['-fopenmp', '-DLIBDCP_OPENMP'])
         conf.env.LIB_OPENMP = ['gomp']
 
     conf.check_cfg(package='openssl', args='--cflags --libs', uselib_store='OPENSSL', mandatory=True)

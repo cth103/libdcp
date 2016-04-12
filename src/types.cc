@@ -232,3 +232,36 @@ dcp::string_to_valign (string s)
 
 	boost::throw_exception (DCPReadError ("unknown subtitle valign type"));
 }
+
+string
+dcp::direction_to_string (Direction v)
+{
+	switch (v) {
+	case DIRECTION_LTR:
+		return "ltr";
+	case DIRECTION_RTL:
+		return "rtl";
+	case DIRECTION_TTB:
+		return "ttb";
+	case DIRECTION_BTT:
+		return "btt";
+	}
+
+	boost::throw_exception (MiscError ("unknown subtitle direction type"));
+}
+
+Direction
+dcp::string_to_direction (string s)
+{
+	if (s == "ltr") {
+		return DIRECTION_LTR;
+	} else if (s == "rtl") {
+		return DIRECTION_RTL;
+	} else if (s == "ttb") {
+		return DIRECTION_TTB;
+	} else if (s == "btt") {
+		return DIRECTION_BTT;
+	}
+
+	boost::throw_exception (DCPReadError ("unknown subtitle direction type"));
+}

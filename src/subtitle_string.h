@@ -50,6 +50,7 @@ public:
 		HAlign h_align,
 		float v_position,
 		VAlign v_align,
+		Direction direction,
 		std::string text,
 		Effect effect,
 		Colour effect_colour,
@@ -104,6 +105,10 @@ public:
 
 	VAlign v_align () const {
 		return _v_align;
+	}
+
+	Direction direction () const {
+		return _direction;
 	}
 
 	Effect effect () const {
@@ -189,6 +194,7 @@ private:
 	 */
 	float _v_position;
 	VAlign _v_align;
+	Direction _direction;
 	std::string _text;
 	Effect _effect;
 	Colour _effect_colour;

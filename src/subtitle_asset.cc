@@ -153,6 +153,7 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 			effective_text.h_align,
 			effective_text.v_position,
 			effective_text.v_align,
+			effective_text.direction,
 			text,
 			effective_font.effect.get_value_or (NONE),
 			effective_font.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
@@ -333,6 +334,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Stand
 		}
 
 		xmlpp::Element* text = subtitle_element->add_child ("Text", xmlns);
+
 		if (i.h_align() != HALIGN_CENTER) {
 			if (standard == SMPTE) {
 				text->set_attribute ("Halign", halign_to_string (i.h_align ()));
@@ -340,6 +342,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Stand
 				text->set_attribute ("HAlign", halign_to_string (i.h_align ()));
 			}
 		}
+
 		if (i.h_position() > ALIGN_EPSILON) {
 			if (standard == SMPTE) {
 				text->set_attribute ("Hposition", raw_convert<string> (i.h_position() * 100, 6));
@@ -347,11 +350,13 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Stand
 				text->set_attribute ("HPosition", raw_convert<string> (i.h_position() * 100, 6));
 			}
 		}
+
 		if (standard == SMPTE) {
 			text->set_attribute ("Valign", valign_to_string (i.v_align()));
 		} else {
 			text->set_attribute ("VAlign", valign_to_string (i.v_align()));
 		}
+
 		if (i.v_position() > ALIGN_EPSILON) {
 			if (standard == SMPTE) {
 				text->set_attribute ("Vposition", raw_convert<string> (i.v_position() * 100, 6));
@@ -365,6 +370,14 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Stand
 				text->set_attribute ("VPosition", "0");
 			}
 		}
+
+		/* Interop only supports "horizontal" or "vertical" for direction, so only write this
+		   for SMPTE.
+		*/
+		if (i.direction() != DIRECTION_LTR && standard == SMPTE) {
+			text->set_attribute ("Direction", direction_to_string (i.direction ()));
+		}
+
 		text->add_child_text (i.text());
 	}
 }

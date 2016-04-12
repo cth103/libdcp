@@ -22,7 +22,6 @@
 #include <boost/bind.hpp>
 #include <boost/test/unit_test.hpp>
 #include <sys/time.h>
-#include <iostream>
 
 void progress (float)
 {
@@ -43,13 +42,5 @@ BOOST_AUTO_TEST_CASE (make_digest_test)
 	data.write ("build/test/random");
 
 	/* Hash it */
-	struct timeval A;
-	gettimeofday (&A, 0);
-	for (int i = 0; i < 64; ++i) {
-		BOOST_CHECK_EQUAL (dcp::make_digest ("build/test/random", boost::bind (&progress, _1)), "GKbk/V3fcRtP5MaPdSmAGNbKkaU=");
-	}
-	struct timeval B;
-	gettimeofday (&B, 0);
-
-	std::cout << ((B.tv_sec + B.tv_usec / 1e6) - (A.tv_sec + A.tv_usec / 1e6)) << "\n";
+	BOOST_CHECK_EQUAL (dcp::make_digest ("build/test/random", boost::bind (&progress, _1)), "GKbk/V3fcRtP5MaPdSmAGNbKkaU=");
 }

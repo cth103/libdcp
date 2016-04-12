@@ -32,10 +32,10 @@
 			</Subtitle>
 			<Subtitle SpotNumber="4" TimeIn="00:01:15:042" TimeOut="00:01:16:042" FadeUpTime="0" FadeDownTime="0">
 				<Font Italic="yes">
-					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5">With the legendary Miss Enid Blyton</Text>
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5" Direction="rtl">With the legendary Miss Enid Blyton</Text>
 				</Font>
 				<Font Italic="yes">
-					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5">She said "you be Noddy</Text>
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5" Direction="ttb">She said "you be Noddy</Text>
 				</Font>
 			</Subtitle>
 			<Subtitle SpotNumber="5" TimeIn="00:01:20:219" TimeOut="00:01:22:073" FadeUpTime="0" FadeDownTime="0">
@@ -48,7 +48,7 @@
 			</Subtitle>
 			<Subtitle SpotNumber="6" TimeIn="00:01:27:115" TimeOut="00:01:28:208" FadeUpTime="0" FadeDownTime="0">
 				<Font Italic="yes">
-					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5">That curious creature the Sphinx</Text>
+					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="89" ZPosition="0.5" Direction="btt">That curious creature the Sphinx</Text>
 				</Font>
 				<Font Italic="yes">
 					<Text HAlign="center" HPosition="0" VAlign="top" VPosition="95" ZPosition="0.5">Is smarter than anyone thinks</Text>

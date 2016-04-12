@@ -42,6 +42,7 @@ TextNode::TextNode (boost::shared_ptr<const cxml::Node> node, int tcr, string fo
 	, h_align (HALIGN_CENTER)
 	, v_position (0)
 	, v_align (VALIGN_CENTER)
+	, direction (DIRECTION_LTR)
 {
 	text = node->content ();
 
@@ -75,6 +76,11 @@ TextNode::TextNode (boost::shared_ptr<const cxml::Node> node, int tcr, string fo
 	}
 	if (va) {
 		v_align = string_to_valign (va.get ());
+	}
+
+	optional<string> d = node->optional_string_attribute ("Direction");
+	if (d) {
+		direction = string_to_direction (d.get ());
 	}
 
 	list<cxml::NodePtr> f = node->node_children ("Font");

@@ -46,6 +46,7 @@ public:
 		, h_align (HALIGN_LEFT)
 		, v_position (0)
 		, v_align (VALIGN_TOP)
+		, direction (DIRECTION_LTR)
 	{}
 
 	TextNode (boost::shared_ptr<const cxml::Node> node, int tcr, std::string font_id_attribute);
@@ -54,6 +55,7 @@ public:
 	HAlign h_align;
 	float v_position;
 	VAlign v_align;
+	Direction direction;
 	std::string text;
 	std::list<boost::shared_ptr<FontNode> > font_nodes;
 };

@@ -113,7 +113,10 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 
 	bool result = true;
 
+#ifdef LIBDCP_OPENMP
 #pragma omp parallel for
+#endif
+
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 		if (i >= other_picture->intrinsic_duration()) {
 			result = false;
@@ -134,7 +137,9 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 				result = false;
 			}
 
+#ifdef LIBDCP_OPENMP
 #pragma omp critical
+#endif
 			{
 				note (DCP_PROGRESS, String::compose ("Compared video frame %1 of %2", i, _intrinsic_duration));
 				for (list<pair<NoteType, string> >::const_iterator i = notes.begin(); i != notes.end(); ++i) {
