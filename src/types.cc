@@ -253,11 +253,11 @@ dcp::direction_to_string (Direction v)
 Direction
 dcp::string_to_direction (string s)
 {
-	if (s == "ltr") {
+	if (s == "ltr" || s == "horizontal") {
 		return DIRECTION_LTR;
 	} else if (s == "rtl") {
 		return DIRECTION_RTL;
-	} else if (s == "ttb") {
+	} else if (s == "ttb" || s == "vertical") {
 		return DIRECTION_TTB;
 	} else if (s == "btt") {
 		return DIRECTION_BTT;
