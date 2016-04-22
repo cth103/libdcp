@@ -142,11 +142,12 @@ Certificate::read_string (string cert)
 
 	BIO_free (bio);
 
+	/* See if there are any non-blank lines after the certificate that we read */
 	line.clear ();
-	if (s.good ()) {
+	while (s.good() && line.empty()) {
 		getline (s, line);
 	}
-	return !line.empty();
+	return (s.good() && !line.empty());
 }
 
 /** Destructor */
