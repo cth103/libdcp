@@ -104,14 +104,7 @@ Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
 	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
 
-	/* On Windows path.string() will contain back-slashes; replace these with
-	   forward-slashes.  XXX: perhaps there is a nicer way to do this with boost.
-	*/
-
-	string path_string = path.get().string ();
-	boost::replace_all (path_string, "\\", "/");
-
-	chunk->add_child("Path")->add_child_text (path_string);
+	chunk->add_child("Path")->add_child_text (path.get().generic_string());
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
 	chunk->add_child("Length")->add_child_text (raw_convert<string> (boost::filesystem::file_size (_file)));
