@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2016 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ using std::string;
 using std::map;
 using std::pair;
 using boost::shared_ptr;
+using boost::optional;
 using namespace dcp;
 
 namespace dcp {
@@ -427,7 +428,7 @@ public:
 
 	AuthenticatedPublic (shared_ptr<const cxml::Node> node)
 		: message_id (remove_urn_uuid (node->string_child ("MessageId")))
-		, annotation_text (node->string_child ("AnnotationText"))
+		, annotation_text (node->optional_string_child ("AnnotationText"))
 		, issue_date (node->string_child ("IssueDate"))
 		, signer (node->node_child ("Signer"))
 		, required_extensions (node->node_child ("RequiredExtensions"))
@@ -441,7 +442,9 @@ public:
 
 		node->add_child("MessageId")->add_child_text ("urn:uuid:" + message_id);
 		node->add_child("MessageType")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
-		node->add_child("AnnotationText")->add_child_text (annotation_text);
+		if (annotation_text) {
+			node->add_child("AnnotationText")->add_child_text (annotation_text.get ());
+		}
 		node->add_child("IssueDate")->add_child_text (issue_date);
 
 		signer.as_xml (node->add_child ("Signer"));
@@ -451,7 +454,7 @@ public:
 	}
 
 	string message_id;
-	string annotation_text;
+	optional<string> annotation_text;
 	string issue_date;
 	Signer signer;
 	RequiredExtensions required_extensions;
@@ -628,7 +631,7 @@ EncryptedKDM::keys () const
 	return _data->authenticated_private.encrypted_key;
 }
 
-string
+optional<string>
 EncryptedKDM::annotation_text () const
 {
 	return _data->authenticated_public.annotation_text;

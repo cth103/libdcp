@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2016 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@
 #include "types.h"
 #include "certificate.h"
 #include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
 
 namespace dcp {
 
@@ -110,7 +111,7 @@ public:
 		return _keys;
 	}
 
-	std::string annotation_text () const {
+	boost::optional<std::string> annotation_text () const {
 		return _annotation_text;
 	}
 
@@ -125,7 +126,7 @@ public:
 private:
 	LocalTime _not_valid_before;
 	LocalTime _not_valid_after;
-	std::string _annotation_text;
+	boost::optional<std::string> _annotation_text;
 	std::string _content_title_text;
 	std::string _issue_date;
 	std::list<DecryptedKDMKey> _keys;

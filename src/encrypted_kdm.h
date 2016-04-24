@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2016 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
 #include "local_time.h"
 #include "types.h"
 #include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
 
 namespace cxml {
@@ -71,7 +72,7 @@ public:
 	 */
 	std::list<std::string> keys () const;
 
-	std::string annotation_text () const;
+	boost::optional<std::string> annotation_text () const;
 	std::string content_title_text () const;
 	std::string issue_date () const;
 	std::string cpl_id () const;
