@@ -89,6 +89,7 @@ private:
 		std::string device_list_description,
 		std::string cpl_id,
 		std::string cpl_content_title_text,
+		boost::optional<std::string> annotation_text,
 		LocalTime not_valid_before,
 		LocalTime not_valid_after,
 		Formulation formulation,
