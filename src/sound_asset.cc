@@ -41,6 +41,7 @@ using std::ostream;
 using std::vector;
 using std::list;
 using boost::shared_ptr;
+using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 SoundAsset::SoundAsset (boost::filesystem::path file)
@@ -121,26 +122,21 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 		return false;
 	}
 
-	ASDCP::PCM::FrameBuffer buffer_A (1 * Kumu::Megabyte);
-	ASDCP::PCM::FrameBuffer buffer_B (1 * Kumu::Megabyte);
+	shared_ptr<const SoundAsset> other_sound = dynamic_pointer_cast<const SoundAsset> (other);
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
-		if (ASDCP_FAILURE (reader_A.ReadFrame (i, buffer_A))) {
-			boost::throw_exception (DCPReadError ("could not read audio frame"));
-		}
 
-		if (ASDCP_FAILURE (reader_B.ReadFrame (i, buffer_B))) {
-			boost::throw_exception (DCPReadError ("could not read audio frame"));
-		}
+		shared_ptr<const SoundFrame> frame_A = get_frame (i);
+		shared_ptr<const SoundFrame> frame_B = other_sound->get_frame (i);
 
-		if (buffer_A.Size() != buffer_B.Size()) {
+		if (frame_A->size() != frame_B->size()) {
 			note (DCP_ERROR, String::compose ("sizes of audio data for frame %1 differ", i));
 			return false;
 		}
 
-		if (memcmp (buffer_A.RoData(), buffer_B.RoData(), buffer_A.Size()) != 0) {
-			for (uint32_t i = 0; i < buffer_A.Size(); ++i) {
-				int const d = abs (buffer_A.RoData()[i] - buffer_B.RoData()[i]);
+		if (memcmp (frame_A->data(), frame_B->data(), frame_A->size()) != 0) {
+			for (int i = 0; i < frame_A->size(); ++i) {
+				int const d = abs (frame_A->data()[i] - frame_B->data()[i]);
 				if (d > opt.max_audio_sample_error) {
 					note (DCP_ERROR, String::compose ("PCM data difference of %1", d));
 					return false;
