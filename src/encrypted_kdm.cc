@@ -519,6 +519,7 @@ EncryptedKDM::EncryptedKDM (
 	string device_list_description,
 	string cpl_id,
 	string content_title_text,
+	optional<string> annotation_text,
 	LocalTime not_valid_before,
 	LocalTime not_valid_after,
 	Formulation formulation,
@@ -532,6 +533,7 @@ EncryptedKDM::EncryptedKDM (
 	data::AuthenticatedPublic& aup = _data->authenticated_public;
 	aup.signer.x509_issuer_name = signer->leaf().issuer ();
 	aup.signer.x509_serial_number = signer->leaf().serial ();
+	aup.annotation_text = annotation_text;
 
 	data::KDMRequiredExtensions& kre = _data->authenticated_public.required_extensions.kdm_required_extensions;
 	kre.recipient.x509_issuer_serial.x509_issuer_name = recipient.issuer ();

@@ -310,6 +310,7 @@ DecryptedKDM::encrypt (shared_ptr<const CertificateChain> signer, Certificate re
 		device_list_description,
 		_keys.front().cpl_id (),
 		_content_title_text,
+		_annotation_text,
 		_not_valid_before,
 		_not_valid_after,
 		formulation,
