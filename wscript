@@ -38,7 +38,10 @@ def options(opt):
 
 def configure(conf):
     conf.load('compiler_cxx')
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-Wno-maybe-uninitialized', '-D_FILE_OFFSET_BITS=64', '-D__STDC_FORMAT_MACROS'])
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-D_FILE_OFFSET_BITS=64', '-D__STDC_FORMAT_MACROS'])
+    gcc = conf.env['CC_VERSION']
+    if gcc[0] >= 4 and gcc[1] > 1:
+        conf.env.append_value('CXXFLAGS', ['-Wno-maybe-uninitialized'])
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
 
     conf.env.TARGET_WINDOWS = conf.options.target_windows
