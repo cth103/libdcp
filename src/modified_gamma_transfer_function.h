@@ -25,10 +25,15 @@
 
 namespace dcp {
 
-/** A transfer function which for an input x gives an output y where
+/** A transfer function which for an input x gives a linear output y where
  *
  *  y = x / B                      for x <= threshold
  *  y = ((x + A) / (1 + A))^power  for x >  threshold
+ *
+ *  The reverse transform is
+ *
+ *  x = y * B                          for y <= threshold / B
+ *  x = (1 + A) * y ^ (1 / power) - A  for y >  threshold / B
  */
 class ModifiedGammaTransferFunction : public TransferFunction
 {

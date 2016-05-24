@@ -139,6 +139,8 @@ public:
 	static ColourConversion const & rec601_to_xyz ();
 	static ColourConversion const & rec709_to_xyz ();
 	static ColourConversion const & p3_to_xyz ();
+	static ColourConversion const & rec1886_to_xyz ();
+	static ColourConversion const & rec2020_to_xyz ();
 
 protected:
 	/** Input transfer function (probably a gamma function, or something similar) */
