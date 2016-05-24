@@ -45,6 +45,9 @@ using boost::optional;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
+static string const cpl_interop_ns = "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#";
+static string const cpl_smpte_ns   = "http://www.smpte-ra.org/schemas/429-7/2006/CPL";
+
 CPL::CPL (string annotation_text, ContentKind content_kind)
 	: _annotation_text (annotation_text)
 	/* default _content_title_text to _annotation_text */
@@ -110,9 +113,9 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	xmlpp::Document doc;
 	xmlpp::Element* root;
 	if (standard == INTEROP) {
-		root = doc.create_root_node ("CompositionPlaylist", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#");
+		root = doc.create_root_node ("CompositionPlaylist", cpl_interop_ns);
 	} else {
-		root = doc.create_root_node ("CompositionPlaylist", "http://www.smpte-ra.org/schemas/429-7/2006/CPL");
+		root = doc.create_root_node ("CompositionPlaylist", cpl_smpte_ns);
 	}
 
 	if (signer) {

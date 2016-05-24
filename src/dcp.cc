@@ -64,6 +64,13 @@ using boost::dynamic_pointer_cast;
 using boost::algorithm::starts_with;
 using namespace dcp;
 
+static string const assetmap_interop_ns = "http://www.digicine.com/PROTO-ASDCP-AM-20040311#";
+static string const assetmap_smpte_ns   = "http://www.smpte-ra.org/schemas/429-9/2007/AM";
+static string const pkl_interop_ns      = "http://www.digicine.com/PROTO-ASDCP-PKL-20040311#";
+static string const pkl_smpte_ns        = "http://www.smpte-ra.org/schemas/429-8/2007/PKL";
+static string const volindex_interop_ns = "http://www.digicine.com/PROTO-ASDCP-AM-20040311#";
+static string const volindex_smpte_ns   = "http://www.smpte-ra.org/schemas/429-9/2007/AM";
+
 DCP::DCP (boost::filesystem::path directory)
 	: _directory (directory)
 {
@@ -270,9 +277,9 @@ DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared
 	xmlpp::Document doc;
 	xmlpp::Element* pkl;
 	if (standard == INTEROP) {
-		pkl = doc.create_root_node("PackingList", "http://www.digicine.com/PROTO-ASDCP-PKL-20040311#");
+		pkl = doc.create_root_node("PackingList", pkl_interop_ns);
 	} else {
-		pkl = doc.create_root_node("PackingList", "http://www.smpte-ra.org/schemas/429-8/2007/PKL");
+		pkl = doc.create_root_node("PackingList", pkl_smpte_ns);
 	}
 
 	if (signer) {
@@ -325,10 +332,10 @@ DCP::write_volindex (Standard standard) const
 
 	switch (standard) {
 	case INTEROP:
-		root = doc.create_root_node ("VolumeIndex", "http://www.digicine.com/PROTO-ASDCP-AM-20040311#");
+		root = doc.create_root_node ("VolumeIndex", volindex_interop_ns);
 		break;
 	case SMPTE:
-		root = doc.create_root_node ("VolumeIndex", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
+		root = doc.create_root_node ("VolumeIndex", volindex_smpte_ns);
 		break;
 	default:
 		DCP_ASSERT (false);
@@ -359,10 +366,10 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 
 	switch (standard) {
 	case INTEROP:
-		root = doc.create_root_node ("AssetMap", "http://www.digicine.com/PROTO-ASDCP-AM-20040311#");
+		root = doc.create_root_node ("AssetMap", assetmap_interop_ns);
 		break;
 	case SMPTE:
-		root = doc.create_root_node ("AssetMap", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
+		root = doc.create_root_node ("AssetMap", assetmap_smpte_ns);
 		break;
 	default:
 		DCP_ASSERT (false);
