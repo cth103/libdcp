@@ -70,6 +70,14 @@ CPL::CPL (boost::filesystem::path file)
 	cxml::Document f ("CompositionPlaylist");
 	f.read_file (file);
 
+	if (f.namespace_uri() == cpl_interop_ns) {
+		_standard = INTEROP;
+	} else if (f.namespace_uri() == cpl_smpte_ns) {
+		_standard = SMPTE;
+	} else {
+		boost::throw_exception (XMLError ("Unrecognised CPL namespace " + f.namespace_uri()));
+	}
+
 	_id = remove_urn_uuid (f.string_child ("Id"));
 	_annotation_text = f.optional_string_child ("AnnotationText").get_value_or ("");
 	_metadata.issuer = f.optional_string_child ("Issuer").get_value_or ("");

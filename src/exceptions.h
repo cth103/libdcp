@@ -153,6 +153,12 @@ public:
 	ProgrammingError (std::string file, int line);
 };
 
+class MismatchedStandardError : public DCPReadError
+{
+public:
+	MismatchedStandardError ();
+};
+
 }
 
 #endif

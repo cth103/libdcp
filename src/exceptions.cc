@@ -70,3 +70,9 @@ ProgrammingError::ProgrammingError (string file, int line)
 {
 
 }
+
+MismatchedStandardError::MismatchedStandardError ()
+	: DCPReadError ("DCP contains both Interop and SMPTE parts")
+{
+
+}

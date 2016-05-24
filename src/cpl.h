@@ -114,6 +114,10 @@ public:
 
 	int64_t duration () const;
 
+	boost::optional<Standard> standard () const {
+		return _standard;
+	}
+
 protected:
 	/** @return type string for PKLs for this asset */
 	std::string pkl_type (Standard standard) const;
@@ -129,6 +133,9 @@ private:
 	std::string _content_version_id;            ///< &lt;Id&gt; in &lt;ContentVersion&gt;
 	std::string _content_version_label_text;    ///< &lt;LabelText&gt; in &lt;ContentVersion&gt;
 	std::list<boost::shared_ptr<Reel> > _reels;
+
+	/** Standard of CPL that was read in */
+	boost::optional<Standard> _standard;
 };
 
 }
