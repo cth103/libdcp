@@ -97,6 +97,44 @@ ColourConversion::p3_to_xyz ()
 	return *c;
 }
 
+ColourConversion const &
+ColourConversion::rec1886_to_xyz ()
+{
+	/* According to Olivier on DCP-o-matic bug #832, Rec. 1886 is Rec. 709 with
+	   2.4 gamma, so here goes ...
+	*/
+	static ColourConversion* c = new ColourConversion (
+		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.4)),
+		YUV_TO_RGB_REC709,
+		Chromaticity (0.64, 0.33),
+		Chromaticity (0.3, 0.6),
+		Chromaticity (0.15, 0.06),
+		/* D65 */
+		Chromaticity (0.3127, 0.329),
+		optional<Chromaticity> (),
+		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
+		);
+	return *c;
+}
+
+ColourConversion const &
+ColourConversion::rec2020_to_xyz ()
+{
+	/* From Wikipedia */
+	static ColourConversion* c = new ColourConversion (
+		shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (1 / 0.45, 0.08145, 0.0993, 4.5)),
+		YUV_TO_RGB_REC709,
+		Chromaticity (0.708, 0.292),
+		Chromaticity (0.170, 0.797),
+		Chromaticity (0.131, 0.046),
+		/* D65 */
+		Chromaticity (0.3127, 0.329),
+		optional<Chromaticity> (),
+		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
+		);
+	return *c;
+}
+
 ColourConversion::ColourConversion (
 	shared_ptr<const TransferFunction> in,
 	YUVToRGB yuv_to_rgb,

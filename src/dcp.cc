@@ -64,6 +64,13 @@ using boost::dynamic_pointer_cast;
 using boost::algorithm::starts_with;
 using namespace dcp;
 
+static string const assetmap_interop_ns = "http://www.digicine.com/PROTO-ASDCP-AM-20040311#";
+static string const assetmap_smpte_ns   = "http://www.smpte-ra.org/schemas/429-9/2007/AM";
+static string const pkl_interop_ns      = "http://www.digicine.com/PROTO-ASDCP-PKL-20040311#";
+static string const pkl_smpte_ns        = "http://www.smpte-ra.org/schemas/429-8/2007/PKL";
+static string const volindex_interop_ns = "http://www.digicine.com/PROTO-ASDCP-AM-20040311#";
+static string const volindex_smpte_ns   = "http://www.smpte-ra.org/schemas/429-9/2007/AM";
+
 DCP::DCP (boost::filesystem::path directory)
 	: _directory (directory)
 {
@@ -74,6 +81,7 @@ DCP::DCP (boost::filesystem::path directory)
 	_directory = boost::filesystem::canonical (_directory);
 }
 
+/** Call this instead of throwing an exception if the error can be tolerated */
 template<class T> void
 survivable_error (bool keep_going, dcp::DCP::ReadErrors* errors, T const & e)
 {
@@ -101,7 +109,16 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 	}
 
 	cxml::Document asset_map ("AssetMap");
+
 	asset_map.read_file (asset_map_file);
+	if (asset_map.namespace_uri() == assetmap_interop_ns) {
+		_standard = INTEROP;
+	} else if (asset_map.namespace_uri() == assetmap_smpte_ns) {
+		_standard = SMPTE;
+	} else {
+		boost::throw_exception (XMLError ("Unrecognised Assetmap namespace " + asset_map.namespace_uri()));
+	}
+
 	list<shared_ptr<cxml::Node> > asset_nodes = asset_map.node_child("AssetList")->node_children ("Asset");
 	map<string, boost::filesystem::path> paths;
 	BOOST_FOREACH (shared_ptr<cxml::Node> i, asset_nodes) {
@@ -146,11 +163,23 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 			delete p;
 
 			if (root == "CompositionPlaylist") {
-				_cpls.push_back (shared_ptr<CPL> (new CPL (path)));
+				shared_ptr<CPL> cpl (new CPL (path));
+				if (_standard && cpl->standard() && cpl->standard().get() != _standard.get()) {
+					survivable_error (keep_going, errors, MismatchedStandardError ());
+				}
+				_cpls.push_back (cpl);
 			} else if (root == "DCSubtitle") {
+				if (_standard && _standard.get() == SMPTE) {
+					survivable_error (keep_going, errors, MismatchedStandardError ());
+				}
 				other_assets.push_back (shared_ptr<InteropSubtitleAsset> (new InteropSubtitleAsset (path)));
 			}
 		} else if (boost::filesystem::extension (path) == ".mxf") {
+
+			/* XXX: asdcplib does not appear to support discovery of read MXFs standard
+			   (Interop / SMPTE)
+			*/
+
 			ASDCP::EssenceType_t type;
 			if (ASDCP::EssenceType (path.string().c_str(), type) != ASDCP::RESULT_OK) {
 				throw DCPReadError ("Could not find essence type");
@@ -270,9 +299,9 @@ DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared
 	xmlpp::Document doc;
 	xmlpp::Element* pkl;
 	if (standard == INTEROP) {
-		pkl = doc.create_root_node("PackingList", "http://www.digicine.com/PROTO-ASDCP-PKL-20040311#");
+		pkl = doc.create_root_node("PackingList", pkl_interop_ns);
 	} else {
-		pkl = doc.create_root_node("PackingList", "http://www.smpte-ra.org/schemas/429-8/2007/PKL");
+		pkl = doc.create_root_node("PackingList", pkl_smpte_ns);
 	}
 
 	if (signer) {
@@ -325,10 +354,10 @@ DCP::write_volindex (Standard standard) const
 
 	switch (standard) {
 	case INTEROP:
-		root = doc.create_root_node ("VolumeIndex", "http://www.digicine.com/PROTO-ASDCP-AM-20040311#");
+		root = doc.create_root_node ("VolumeIndex", volindex_interop_ns);
 		break;
 	case SMPTE:
-		root = doc.create_root_node ("VolumeIndex", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
+		root = doc.create_root_node ("VolumeIndex", volindex_smpte_ns);
 		break;
 	default:
 		DCP_ASSERT (false);
@@ -359,10 +388,10 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 
 	switch (standard) {
 	case INTEROP:
-		root = doc.create_root_node ("AssetMap", "http://www.digicine.com/PROTO-ASDCP-AM-20040311#");
+		root = doc.create_root_node ("AssetMap", assetmap_interop_ns);
 		break;
 	case SMPTE:
-		root = doc.create_root_node ("AssetMap", "http://www.smpte-ra.org/schemas/429-9/2007/AM");
+		root = doc.create_root_node ("AssetMap", assetmap_smpte_ns);
 		break;
 	default:
 		DCP_ASSERT (false);

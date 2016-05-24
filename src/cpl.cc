@@ -45,6 +45,9 @@ using boost::optional;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
+static string const cpl_interop_ns = "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#";
+static string const cpl_smpte_ns   = "http://www.smpte-ra.org/schemas/429-7/2006/CPL";
+
 CPL::CPL (string annotation_text, ContentKind content_kind)
 	: _annotation_text (annotation_text)
 	/* default _content_title_text to _annotation_text */
@@ -66,6 +69,14 @@ CPL::CPL (boost::filesystem::path file)
 {
 	cxml::Document f ("CompositionPlaylist");
 	f.read_file (file);
+
+	if (f.namespace_uri() == cpl_interop_ns) {
+		_standard = INTEROP;
+	} else if (f.namespace_uri() == cpl_smpte_ns) {
+		_standard = SMPTE;
+	} else {
+		boost::throw_exception (XMLError ("Unrecognised CPL namespace " + f.namespace_uri()));
+	}
 
 	_id = remove_urn_uuid (f.string_child ("Id"));
 	_annotation_text = f.optional_string_child ("AnnotationText").get_value_or ("");
@@ -110,9 +121,9 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	xmlpp::Document doc;
 	xmlpp::Element* root;
 	if (standard == INTEROP) {
-		root = doc.create_root_node ("CompositionPlaylist", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#");
+		root = doc.create_root_node ("CompositionPlaylist", cpl_interop_ns);
 	} else {
-		root = doc.create_root_node ("CompositionPlaylist", "http://www.smpte-ra.org/schemas/429-7/2006/CPL");
+		root = doc.create_root_node ("CompositionPlaylist", cpl_smpte_ns);
 	}
 
 	if (signer) {

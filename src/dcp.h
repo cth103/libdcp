@@ -102,6 +102,11 @@ public:
 
 	void resolve_refs (std::list<boost::shared_ptr<Asset> > assets);
 
+	/** @return Standard of a DCP that was read in */
+	boost::optional<Standard> standard () const {
+		return _standard;
+	}
+
 private:
 
 	/** Write the PKL file.
@@ -126,6 +131,9 @@ private:
 	boost::filesystem::path _directory;
 	/** the CPLs that make up this DCP */
 	std::list<boost::shared_ptr<CPL> > _cpls;
+
+	/** Standard of DCP that was read in */
+	boost::optional<Standard> _standard;
 };
 
 }
