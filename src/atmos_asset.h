@@ -32,6 +32,14 @@ public:
 
 	std::string pkl_type (Standard) const;
 
+	Fraction edit_rate () const {
+		return _edit_rate;
+	}
+
+	int64_t intrinsic_duration () const {
+		return _intrinsic_duration;
+	}
+
 	/** @return frame number of the frame to align with the FFOA of the picture track */
 	int first_frame () const {
 		return _first_frame;
@@ -48,6 +56,8 @@ public:
 	}
 
 private:
+	Fraction _edit_rate;
+	int64_t _intrinsic_duration;
 	int _first_frame;
 	int _max_channel_count;
 	int _max_object_count;

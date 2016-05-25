@@ -31,6 +31,7 @@
 #include "decrypted_kdm_key.h"
 #include "decrypted_kdm.h"
 #include "interop_subtitle_asset.h"
+#include "reel_atmos_asset.h"
 #include <libxml++/nodes/element.h>
 
 using std::string;
@@ -66,6 +67,11 @@ Reel::Reel (boost::shared_ptr<const cxml::Node> node)
 		_main_subtitle.reset (new ReelSubtitleAsset (main_subtitle));
 	}
 
+	shared_ptr<cxml::Node> atmos = asset_list->optional_node_child ("axd:AuxData");
+	if (atmos) {
+		_atmos.reset (new ReelAtmosAsset (atmos));
+	}
+
 	node->ignore_child ("AnnotationText");
 	node->done ();
 }
@@ -93,6 +99,10 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 	if (_main_picture && dynamic_pointer_cast<ReelStereoPictureAsset> (_main_picture)) {
 		/* ... but stereo pictures must come after */
 		_main_picture->write_to_cpl (asset_list, standard);
+	}
+
+	if (_atmos) {
+		_atmos->write_to_cpl (asset_list, standard);
 	}
 }
 
@@ -126,13 +136,26 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 		return false;
 	}
 
+	if ((_atmos && !other->_atmos) || (!_atmos && other->_atmos)) {
+		note (DCP_ERROR, "Reel: assets differ");
+		return false;
+	}
+
+	if (_atmos && !_atmos->equals (other->_atmos, opt, note)) {
+		return false;
+	}
+
 	return true;
 }
 
 bool
 Reel::encrypted () const
 {
-	return ((_main_picture && _main_picture->encrypted ()) || (_main_sound && _main_sound->encrypted ()));
+	return (
+		(_main_picture && _main_picture->encrypted ()) ||
+		(_main_sound && _main_sound->encrypted ()) ||
+		(_atmos && _atmos->encrypted ())
+		);
 }
 
 void
@@ -147,6 +170,9 @@ Reel::add (DecryptedKDM const & kdm)
 		if (i->id() == _main_sound->key_id()) {
 			_main_sound->asset()->set_key (i->key ());
 		}
+		if (i->id() == _atmos->key_id()) {
+			_atmos->asset()->set_key (i->key ());
+		}
 	}
 }
 
@@ -156,12 +182,15 @@ Reel::add (shared_ptr<ReelAsset> asset)
 	shared_ptr<ReelPictureAsset> p = dynamic_pointer_cast<ReelPictureAsset> (asset);
 	shared_ptr<ReelSoundAsset> so = dynamic_pointer_cast<ReelSoundAsset> (asset);
 	shared_ptr<ReelSubtitleAsset> su = dynamic_pointer_cast<ReelSubtitleAsset> (asset);
+	shared_ptr<ReelAtmosAsset> a = dynamic_pointer_cast<ReelAtmosAsset> (asset);
 	if (p) {
 		_main_picture = p;
 	} else if (so) {
 		_main_sound = so;
 	} else if (su) {
 		_main_subtitle = su;
+	} else if (a) {
+		_atmos = a;
 	}
 }
 
@@ -185,6 +214,10 @@ Reel::resolve_refs (list<shared_ptr<Asset> > assets)
 			iop->resolve_fonts (assets);
 		}
 	}
+
+	if (_atmos) {
+		_atmos->asset_ref().resolve (assets);
+	}
 }
 
 int64_t
@@ -200,6 +233,9 @@ Reel::duration () const
 	}
 	if (_main_subtitle) {
 		d = max (d, _main_subtitle->duration ());
+	}
+	if (_atmos) {
+		d = max (d, _atmos->duration ());
 	}
 
 	return d;

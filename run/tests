@@ -51,6 +51,13 @@ if [ "$?" != "0" ]; then
     exit 1
 fi
 
+# Check the DCP written by dcp_test5
+diff -ur test/ref/DCP/dcp_test5 $work/DCP/dcp_test5
+if [ "$?" != "0" ]; then
+    echo "FAIL: files differ"
+    exit 1
+fi
+
 # Check the DCP written by encryption_test
 diff -ur test/ref/DCP/encryption_test $work/DCP/encryption_test
 if [ "$?" != "0" ]; then

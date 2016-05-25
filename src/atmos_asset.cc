@@ -38,6 +38,8 @@ AtmosAsset::AtmosAsset (boost::filesystem::path file)
 		boost::throw_exception (DCPReadError ("could not read Atmos MXF information"));
 	}
 
+	_edit_rate = Fraction (desc.EditRate.Numerator, desc.EditRate.Denominator);
+	_intrinsic_duration = desc.ContainerDuration;
 	_first_frame = desc.FirstFrame;
 	_max_channel_count = desc.MaxChannelCount;
 	_max_object_count = desc.MaxObjectCount;

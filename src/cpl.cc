@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
+#include "reel_atmos_asset.h"
 #include "local_time.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
@@ -174,6 +175,9 @@ CPL::reel_assets () const
 		}
 		if (i->main_subtitle ()) {
 			c.push_back (i->main_subtitle());
+		}
+		if (i->atmos ()) {
+			c.push_back (i->atmos());
 		}
 	}
 

@@ -22,7 +22,8 @@
 #include <boost/test/unit_test.hpp>
 #include <iostream>
 
-BOOST_AUTO_TEST_CASE (atmos_test)
+/** Check basic read of an Atmos asset */
+BOOST_AUTO_TEST_CASE (atmos_read_test)
 {
 	dcp::AtmosAsset a (private_test / "20160218_NameOfFilm_FTR_OV_EN_A_dcs_r01.mxf");
 	BOOST_CHECK_EQUAL (a.first_frame(), 192);

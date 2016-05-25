@@ -42,6 +42,7 @@ class ReelAsset;
 class ReelPictureAsset;
 class ReelSoundAsset;
 class ReelSubtitleAsset;
+class ReelAtmosAsset;
 class Content;
 
 /** @brief A reel within a DCP; the part which actually refers to picture, sound and subtitle data */
@@ -52,12 +53,14 @@ public:
 
 	Reel (
 		boost::shared_ptr<ReelPictureAsset> picture,
-		boost::shared_ptr<ReelSoundAsset> sound,
-		boost::shared_ptr<ReelSubtitleAsset> subtitle
+		boost::shared_ptr<ReelSoundAsset> sound = boost::shared_ptr<ReelSoundAsset> (),
+		boost::shared_ptr<ReelSubtitleAsset> subtitle = boost::shared_ptr<ReelSubtitleAsset> (),
+		boost::shared_ptr<ReelAtmosAsset> atmos = boost::shared_ptr<ReelAtmosAsset> ()
 		)
 		: _main_picture (picture)
 		, _main_sound (sound)
 		, _main_subtitle (subtitle)
+		, _atmos (atmos)
 	{}
 
 	Reel (boost::shared_ptr<const cxml::Node>);
@@ -72,6 +75,10 @@ public:
 
 	boost::shared_ptr<ReelSubtitleAsset> main_subtitle () const {
 		return _main_subtitle;
+	}
+
+	boost::shared_ptr<ReelAtmosAsset> atmos () const {
+		return _atmos;
 	}
 
 	int64_t duration () const;
@@ -92,6 +99,7 @@ private:
 	boost::shared_ptr<ReelPictureAsset> _main_picture;
 	boost::shared_ptr<ReelSoundAsset> _main_sound;
 	boost::shared_ptr<ReelSubtitleAsset> _main_subtitle;
+	boost::shared_ptr<ReelAtmosAsset> _atmos;
 };
 
 }
