@@ -164,13 +164,13 @@ Reel::add (DecryptedKDM const & kdm)
 	list<DecryptedKDMKey> keys = kdm.keys ();
 
 	for (list<DecryptedKDMKey>::iterator i = keys.begin(); i != keys.end(); ++i) {
-		if (i->id() == _main_picture->key_id()) {
+		if (_main_picture && i->id() == _main_picture->key_id()) {
 			_main_picture->asset()->set_key (i->key ());
 		}
-		if (i->id() == _main_sound->key_id()) {
+		if (_main_sound && i->id() == _main_sound->key_id()) {
 			_main_sound->asset()->set_key (i->key ());
 		}
-		if (i->id() == _atmos->key_id()) {
+		if (_atmos && i->id() == _atmos->key_id()) {
 			_atmos->asset()->set_key (i->key ());
 		}
 	}
