@@ -47,6 +47,7 @@ def build(bld):
         obj.use = 'libdcp%s' % bld.env.API_VERSION
     obj.source = """
                  asset_test.cc
+                 atmos_test.cc
                  certificates_test.cc
                  colour_test.cc
                  colour_conversion_test.cc

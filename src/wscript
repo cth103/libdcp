@@ -21,6 +21,7 @@ from waflib import TaskGen
 def build(bld):
     source = """
              asset.cc
+             atmos_asset.cc
              certificate_chain.cc
              certificate.cc
              colour_conversion.cc
@@ -83,6 +84,7 @@ def build(bld):
 
     headers = """
               asset.h
+              atmos_asset.h
               certificate_chain.h
               certificate.h
               chromaticity.h
