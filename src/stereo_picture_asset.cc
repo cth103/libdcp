@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -23,6 +23,7 @@
 #include "stereo_picture_frame.h"
 #include "exceptions.h"
 #include "stereo_picture_asset_writer.h"
+#include "stereo_picture_asset_reader.h"
 #include "dcp_assert.h"
 
 using std::string;
@@ -63,16 +64,16 @@ StereoPictureAsset::StereoPictureAsset (Fraction edit_rate)
 
 }
 
-shared_ptr<const StereoPictureFrame>
-StereoPictureAsset::get_frame (int n) const
-{
-	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (file().string(), n));
-}
-
 shared_ptr<PictureAssetWriter>
 StereoPictureAsset::start_write (boost::filesystem::path file, Standard standard, bool overwrite)
 {
 	return shared_ptr<StereoPictureAssetWriter> (new StereoPictureAssetWriter (this, file, standard, overwrite));
+}
+
+shared_ptr<StereoPictureAssetReader>
+StereoPictureAsset::start_read () const
+{
+	return shared_ptr<StereoPictureAssetReader> (new StereoPictureAssetReader (this));
 }
 
 bool
@@ -106,14 +107,17 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 	shared_ptr<const StereoPictureAsset> other_picture = dynamic_pointer_cast<const StereoPictureAsset> (other);
 	DCP_ASSERT (other_picture);
 
+	shared_ptr<const StereoPictureAssetReader> reader = start_read ();
+	shared_ptr<const StereoPictureAssetReader> other_reader = other_picture->start_read ();
+
 	bool result = true;
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 		shared_ptr<const StereoPictureFrame> frame_A;
 		shared_ptr<const StereoPictureFrame> frame_B;
 		try {
-			frame_A = get_frame (i);
-			frame_B = other_picture->get_frame (i);
+			frame_A = reader->get_frame (i);
+			frame_B = other_reader->get_frame (i);
 		} catch (DCPReadError& e) {
 			/* If there was a problem reading the frame data we'll just assume
 			   the two frames are not equal.

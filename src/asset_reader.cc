@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -18,41 +18,25 @@
 
 */
 
-/** @file  src/sound_frame.cc
- *  @brief SoundFrame class.
- */
-
-#include "sound_frame.h"
+#include "asset_reader.h"
+#include "mxf.h"
 #include "exceptions.h"
 #include "AS_DCP.h"
-#include "KM_fileio.h"
 
-using namespace std;
 using namespace dcp;
 
-SoundFrame::SoundFrame (ASDCP::PCM::MXFReader* reader, int n, ASDCP::AESDecContext* c)
+AssetReader::AssetReader (MXF const * mxf)
+	: _decryption_context (0)
 {
-	/* XXX: unfortunate guesswork on this buffer size */
-	_buffer = new ASDCP::PCM::FrameBuffer (1 * Kumu::Megabyte);
-
-	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c))) {
-		boost::throw_exception (DCPReadError ("could not read audio frame"));
+	if (mxf->key()) {
+		_decryption_context = new ASDCP::AESDecContext;
+		if (ASDCP_FAILURE (_decryption_context->InitKey (mxf->key()->value ()))) {
+			throw MiscError ("could not set up decryption context");
+		}
 	}
 }
 
-SoundFrame::~SoundFrame ()
+AssetReader::~AssetReader ()
 {
-	delete _buffer;
-}
-
-uint8_t const *
-SoundFrame::data () const
-{
-	return _buffer->RoData();
-}
-
-int
-SoundFrame::size () const
-{
-	return _buffer->Size ();
+	delete _decryption_context;
 }

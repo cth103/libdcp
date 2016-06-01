@@ -47,8 +47,7 @@ class PictureAssetWriter;
 class MXF
 {
 public:
-	MXF ();
-	virtual ~MXF ();
+	virtual ~MXF () {}
 
 	/** @return true if the data is encrypted */
 	bool encrypted () const {
@@ -97,7 +96,6 @@ protected:
 	 */
 	void fill_writer_info (ASDCP::WriterInfo* w, std::string id, Standard standard) const;
 
-	ASDCP::AESDecContext* _decryption_context;
 	/** ID of the key used for encryption/decryption, if there is one */
 	boost::optional<std::string> _key_id;
 	/** Key used for encryption/decryption, if there is one */

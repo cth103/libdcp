@@ -25,6 +25,7 @@
 namespace dcp {
 
 class MonoPictureAssetWriter;
+class MonoPictureAssetReader;
 
 /** @class MonoPictureAsset
  *  @brief A 2D (monoscopic) picture asset.
@@ -44,14 +45,13 @@ public:
 
 	/** Start a progressive write to a MonoPictureAsset */
 	boost::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path, Standard standard, bool);
+	boost::shared_ptr<MonoPictureAssetReader> start_read () const;
 
 	bool equals (
 		boost::shared_ptr<const Asset> other,
 		EqualityOptions opt,
 		NoteHandler note
 		) const;
-
-	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
 
 private:
 	std::string cpl_node_name () const;

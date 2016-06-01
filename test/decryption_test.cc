@@ -23,6 +23,7 @@
 #include "decrypted_kdm.h"
 #include "encrypted_kdm.h"
 #include "mono_picture_asset.h"
+#include "mono_picture_asset_reader.h"
 #include "reel_picture_asset.h"
 #include "reel.h"
 #include "test.h"
@@ -46,7 +47,8 @@ get_frame (dcp::DCP const & dcp)
 	BOOST_CHECK (picture);
 
 	shared_ptr<const dcp::MonoPictureAsset> mono_picture = dynamic_pointer_cast<const dcp::MonoPictureAsset> (picture);
-	shared_ptr<const dcp::MonoPictureFrame> j2k_frame = mono_picture->get_frame (0);
+	shared_ptr<const dcp::MonoPictureAssetReader> reader = mono_picture->start_read ();
+	shared_ptr<const dcp::MonoPictureFrame> j2k_frame = reader->get_frame (0);
 	shared_ptr<dcp::OpenJPEGImage> xyz = j2k_frame->xyz_image();
 
 	uint8_t* argb = new uint8_t[xyz->size().width * xyz->size().height * 4];

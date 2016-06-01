@@ -27,6 +27,7 @@
 #include "exceptions.h"
 #include "sound_frame.h"
 #include "sound_asset_writer.h"
+#include "sound_asset_reader.h"
 #include "compose.hpp"
 #include "KM_fileio.h"
 #include "AS_DCP.h"
@@ -125,10 +126,13 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 
 	shared_ptr<const SoundAsset> other_sound = dynamic_pointer_cast<const SoundAsset> (other);
 
+	shared_ptr<const SoundAssetReader> reader = start_read ();
+	shared_ptr<const SoundAssetReader> other_reader = other_sound->start_read ();
+
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 
-		shared_ptr<const SoundFrame> frame_A = get_frame (i);
-		shared_ptr<const SoundFrame> frame_B = other_sound->get_frame (i);
+		shared_ptr<const SoundFrame> frame_A = reader->get_frame (i);
+		shared_ptr<const SoundFrame> frame_B = other_reader->get_frame (i);
 
 		if (frame_A->size() != frame_B->size()) {
 			note (DCP_ERROR, String::compose ("sizes of audio data for frame %1 differ", i));
@@ -149,18 +153,17 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 	return true;
 }
 
-shared_ptr<const SoundFrame>
-SoundAsset::get_frame (int n) const
-{
-	/* XXX: should add on entry point here? */
-	return shared_ptr<const SoundFrame> (new SoundFrame (file(), n, _decryption_context));
-}
-
 shared_ptr<SoundAssetWriter>
 SoundAsset::start_write (boost::filesystem::path file, Standard standard)
 {
 	/* XXX: can't we use a shared_ptr here? */
 	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter (this, file, standard));
+}
+
+shared_ptr<SoundAssetReader>
+SoundAsset::start_read () const
+{
+	return shared_ptr<SoundAssetReader> (new SoundAssetReader (this));
 }
 
 string

@@ -29,6 +29,7 @@
 #include "reel_picture_asset.h"
 #include "mono_picture_frame.h"
 #include "mono_picture_asset.h"
+#include "mono_picture_asset_reader.h"
 #include "stereo_picture_asset.h"
 #include "sound_asset.h"
 #include "subtitle_asset.h"
@@ -82,8 +83,11 @@ main ()
 		cpl->reels().front()->main_picture()->asset()
 		);
 
+	/* Get a reader for it */
+	boost::shared_ptr<dcp::MonoPictureAssetReader> picture_asset_reader = picture_asset->start_read();
+
 	/* Get the 1000th frame of it */
-	boost::shared_ptr<const dcp::MonoPictureFrame> picture_frame_j2k = picture_asset->get_frame(999);
+	boost::shared_ptr<const dcp::MonoPictureFrame> picture_frame_j2k = picture_asset_reader->get_frame(999);
 
 	/* Get the frame as an XYZ image */
 	boost::shared_ptr<const dcp::OpenJPEGImage> picture_image_xyz = picture_frame_j2k->xyz_image ();

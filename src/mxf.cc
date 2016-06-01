@@ -44,17 +44,6 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
-MXF::MXF ()
-	: _decryption_context (0)
-{
-
-}
-
-MXF::~MXF ()
-{
-	delete _decryption_context;
-}
-
 void
 MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id, Standard standard) const
 {
@@ -96,11 +85,6 @@ MXF::set_key (Key key)
 	if (!_key_id) {
 		/* No key ID so far; we now need one */
 		_key_id = make_uuid ();
-	}
-
-	_decryption_context = new ASDCP::AESDecContext;
-	if (ASDCP_FAILURE (_decryption_context->InitKey (_key->value ()))) {
-		throw MiscError ("could not set up decryption context");
 	}
 }
 

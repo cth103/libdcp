@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,48 +17,32 @@
 
 */
 
-/** @file  src/sound_frame.h
- *  @brief SoundFrame class.
- */
-
-#ifndef LIBDCP_SOUND_FRAME_H
-#define LIBDCP_SOUND_FRAME_H
-
-#include <boost/noncopyable.hpp>
-#include <boost/filesystem.hpp>
-#include <stdint.h>
-#include <string>
+#include "asset_reader.h"
+#include <boost/shared_ptr.hpp>
 
 namespace ASDCP {
 	namespace PCM {
-		class FrameBuffer;
 		class MXFReader;
 	}
-	class AESDecContext;
 }
 
 namespace dcp {
 
-/** @class SoundFrame
- *  @brief One &lsquo;frame&rsquo; of sound data from a SoundAsset.
- */
-class SoundFrame : public boost::noncopyable
+class SoundFrame;
+class SoundAsset;
+
+class SoundAssetReader : public AssetReader
 {
 public:
-	~SoundFrame ();
-
-	uint8_t const * data () const;
-	int size () const;
+	~SoundAssetReader ();
+	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
 
 private:
-	friend class SoundAssetReader;
+	friend class SoundAsset;
 
-	SoundFrame (ASDCP::PCM::MXFReader* reader, int n, ASDCP::AESDecContext *);
+	SoundAssetReader (SoundAsset const * asset);
 
-	/** a buffer to hold the frame */
-	ASDCP::PCM::FrameBuffer* _buffer;
+	ASDCP::PCM::MXFReader* _reader;
 };
 
 }
-
-#endif

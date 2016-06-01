@@ -33,6 +33,7 @@ namespace dcp
 
 class SoundFrame;
 class SoundAssetWriter;
+class SoundAssetReader;
 
 /** @class SoundAsset
  *  @brief Representation of a sound asset
@@ -44,14 +45,13 @@ public:
 	SoundAsset (Fraction edit_rate, int sampling_rate, int channels);
 
 	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file, Standard standard);
+	boost::shared_ptr<SoundAssetReader> start_read () const;
 
 	bool equals (
 		boost::shared_ptr<const Asset> other,
 		EqualityOptions opt,
 		NoteHandler note
 		) const;
-
-	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
 
 	/** @return number of channels */
 	int channels () const {

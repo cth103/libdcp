@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,7 +27,9 @@
 namespace ASDCP {
 	namespace JP2K {
 		struct SFrameBuffer;
+		class MXFSReader;
 	}
+	class AESDecContext;
 }
 
 namespace dcp {
@@ -38,7 +40,6 @@ class OpenJPEGImage;
 class StereoPictureFrame : public boost::noncopyable
 {
 public:
-	StereoPictureFrame (boost::filesystem::path path, int n);
 	StereoPictureFrame ();
 	~StereoPictureFrame ();
 
@@ -53,6 +54,10 @@ public:
 	int right_j2k_size () const;
 
 private:
+	friend class StereoPictureAssetReader;
+
+	StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, ASDCP::AESDecContext *);
+
 	ASDCP::JP2K::SFrameBuffer* _buffer;
 };
 

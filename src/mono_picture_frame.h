@@ -32,6 +32,7 @@
 namespace ASDCP {
 	namespace JP2K {
 		class FrameBuffer;
+		class MXFReader;
 	}
 	class AESDecContext;
 }
@@ -46,7 +47,6 @@ class OpenJPEGImage;
 class MonoPictureFrame : public boost::noncopyable
 {
 public:
-	MonoPictureFrame (boost::filesystem::path path, int n, ASDCP::AESDecContext *);
 	MonoPictureFrame (boost::filesystem::path path);
 	MonoPictureFrame (uint8_t const * data, int size);
 	~MonoPictureFrame ();
@@ -58,6 +58,10 @@ public:
 	int j2k_size () const;
 
 private:
+	friend class MonoPictureAssetReader;
+
+	MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, ASDCP::AESDecContext *);
+
 	ASDCP::JP2K::FrameBuffer* _buffer;
 };
 

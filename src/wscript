@@ -21,6 +21,8 @@ from waflib import TaskGen
 def build(bld):
     source = """
              asset.cc
+             asset_reader.cc
+             asset_writer.cc
              atmos_asset.cc
              certificate_chain.cc
              certificate.cc
@@ -46,10 +48,10 @@ def build(bld):
              metadata.cc
              modified_gamma_transfer_function.cc
              mono_picture_asset.cc
+             mono_picture_asset_reader.cc
              mono_picture_asset_writer.cc
              mono_picture_frame.cc
              mxf.cc
-             asset_writer.cc
              object.cc
              openjpeg_image.cc
              picture_asset.cc
@@ -68,9 +70,11 @@ def build(bld):
              smpte_load_font_node.cc
              smpte_subtitle_asset.cc
              sound_asset.cc
+             sound_asset_reader.cc
              sound_asset_writer.cc
              sound_frame.cc
              stereo_picture_asset.cc
+             stereo_picture_asset_reader.cc
              stereo_picture_asset_writer.cc
              stereo_picture_frame.cc
              subtitle_node.cc
@@ -85,6 +89,8 @@ def build(bld):
 
     headers = """
               asset.h
+              asset_reader.h
+              asset_writer.h
               atmos_asset.h
               certificate_chain.h
               certificate.h
@@ -109,10 +115,10 @@ def build(bld):
               local_time.h
               metadata.h
               mono_picture_asset.h
+              mono_picture_asset_reader.h
               mono_picture_frame.h
               modified_gamma_transfer_function.h
               mxf.h
-              asset_writer.h
               object.h
               openjpeg_image.h
               picture_asset.h
@@ -133,8 +139,11 @@ def build(bld):
               smpte_subtitle_asset.h
               sound_frame.h
               sound_asset.h
+              sound_asset_reader.h
               sound_asset_writer.h
               stereo_picture_asset.h
+              stereo_picture_asset_reader.h
+              stereo_picture_asset_writer.h
               stereo_picture_frame.h
               subtitle_node.h
               subtitle_asset.h

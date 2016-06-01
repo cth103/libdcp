@@ -24,6 +24,8 @@
 
 namespace dcp {
 
+class StereoPictureAssetReader;
+
 /** A 3D (stereoscopic) picture asset */
 class StereoPictureAsset : public PictureAsset
 {
@@ -33,14 +35,13 @@ public:
 
 	/** Start a progressive write to a StereoPictureAsset */
 	boost::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path file, Standard, bool);
+	boost::shared_ptr<StereoPictureAssetReader> start_read () const;
 
 	bool equals (
 		boost::shared_ptr<const Asset> other,
 		EqualityOptions opt,
 		NoteHandler note
 		) const;
-
-	boost::shared_ptr<const StereoPictureFrame> get_frame (int n) const;
 };
 
 }

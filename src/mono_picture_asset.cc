@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -20,6 +20,7 @@
 
 #include "mono_picture_asset.h"
 #include "mono_picture_asset_writer.h"
+#include "mono_picture_asset_reader.h"
 #include "AS_DCP.h"
 #include "KM_fileio.h"
 #include "exceptions.h"
@@ -63,12 +64,6 @@ MonoPictureAsset::MonoPictureAsset (Fraction edit_rate)
 	: PictureAsset (edit_rate)
 {
 
-}
-
-shared_ptr<const MonoPictureFrame>
-MonoPictureAsset::get_frame (int n) const
-{
-	return shared_ptr<const MonoPictureFrame> (new MonoPictureFrame (_file, n, _decryption_context));
 }
 
 static void
@@ -118,6 +113,9 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 #pragma omp parallel for
 #endif
 
+	shared_ptr<MonoPictureAssetReader> reader = start_read ();
+	shared_ptr<MonoPictureAssetReader> other_reader = other_picture->start_read ();
+
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 		if (i >= other_picture->intrinsic_duration()) {
 			result = false;
@@ -125,8 +123,8 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 
 		if (result || opt.keep_going) {
 
-			shared_ptr<const MonoPictureFrame> frame_A = get_frame (i);
-			shared_ptr<const MonoPictureFrame> frame_B = other_picture->get_frame (i);
+			shared_ptr<const MonoPictureFrame> frame_A = reader->get_frame (i);
+			shared_ptr<const MonoPictureFrame> frame_B = other_reader->get_frame (i);
 
 			list<pair<NoteType, string> > notes;
 
@@ -158,6 +156,12 @@ MonoPictureAsset::start_write (boost::filesystem::path file, Standard standard, 
 {
 	/* XXX: can't we use shared_ptr here? */
 	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, file, standard, overwrite));
+}
+
+shared_ptr<MonoPictureAssetReader>
+MonoPictureAsset::start_read () const
+{
+	return shared_ptr<MonoPictureAssetReader> (new MonoPictureAssetReader (this));
 }
 
 string

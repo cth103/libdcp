@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,14 +27,14 @@
 
 namespace dcp {
 
-/** A helper class for writing to StereoPictureAssets progressively (i.e. writing frame-by-frame,
- *  rather than giving libdcp all the frames in one go).
+/** @class StereoPictureAssetWriter
+ *  @brief A helper class for writing to StereoPictureAssets.
  *
  *  Objects of this class can only be created with StereoPictureAsset::start_write().
  *
- *  Frames can be written to the MonoPictureAsset by calling write() with a JPEG2000 image
+ *  Frames can be written to the StereoPictureAsset by calling write() with a JPEG2000 image
  *  (a verbatim .j2c file).  finalize() must be called after the last frame has been written.
- *  The action of finalize() can't be done in MonoPictureAssetWriter's destructor as it may
+ *  The action of finalize() can't be done in StereoPictureAssetWriter's destructor as it may
  *  throw an exception.
  */
 class StereoPictureAssetWriter : public PictureAssetWriter
