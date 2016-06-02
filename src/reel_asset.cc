@@ -74,7 +74,7 @@ ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 	, _intrinsic_duration (node->number_child<int64_t> ("IntrinsicDuration"))
 	, _entry_point (node->number_child<int64_t> ("EntryPoint"))
 	, _duration (node->number_child<int64_t> ("Duration"))
-	, _hash (node->optional_string_child ("Hash").get_value_or (""))
+	, _hash (node->optional_string_child ("Hash"))
 {
 
 }
@@ -93,7 +93,9 @@ ReelAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
         a->add_child("IntrinsicDuration")->add_child_text (raw_convert<string> (_intrinsic_duration));
         a->add_child("EntryPoint")->add_child_text (raw_convert<string> (_entry_point));
         a->add_child("Duration")->add_child_text (raw_convert<string> (_duration));
-	a->add_child("Hash")->add_child_text (_asset_ref.asset()->hash ());
+	if (_hash) {
+		a->add_child("Hash")->add_child_text (_hash.get());
+	}
 }
 
 pair<string, string>

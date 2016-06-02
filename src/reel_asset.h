@@ -84,6 +84,13 @@ public:
 		return _duration;
 	}
 
+	/** @return the asset's hash, if this ReelAsset has been created from one,
+	 *  otherwise the hash written to the CPL for this asset (if present).
+	 */
+	boost::optional<std::string> hash () const {
+		return _hash;
+	}
+
 protected:
 
 	template <class T>
@@ -117,7 +124,8 @@ private:
 	int64_t _intrinsic_duration;  ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset
 	int64_t _entry_point;         ///< The &lt;EntryPoint&gt; from the reel's entry for this asset
 	int64_t _duration;            ///< The &lt;Duration&gt; from the reel's entry for this asset
-	std::string _hash;            ///< The &lt;Hash&gt; from the reel's entry for this asset
+	/** Either our asset's computed hash or the hash read in from the CPL, if it's present */
+	boost::optional<std::string> _hash;
 };
 
 }
