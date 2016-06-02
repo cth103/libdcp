@@ -513,7 +513,6 @@ CertificateChain::add_signature_value (xmlpp::Node* parent, string ns) const
 	xmlpp::Node* key_info = cp.node_child("KeyInfo")->node ();
 
 	/* Add the certificate chain to the KeyInfo child node of parent */
-	CertificateChain::List c = leaf_to_root ();
 	BOOST_FOREACH (Certificate const & i, leaf_to_root ()) {
 		xmlpp::Element* data = key_info->add_child("X509Data", ns);
 
