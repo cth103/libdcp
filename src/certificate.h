@@ -49,6 +49,7 @@ public:
 	Certificate ()
 		: _certificate (0)
 		, _public_key (0)
+		, _extra_data (false)
 	{}
 
 	Certificate (std::string);
