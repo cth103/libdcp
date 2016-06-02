@@ -115,11 +115,11 @@ Asset::hash (function<void (float)> progress) const
 {
 	DCP_ASSERT (!_file.empty ());
 
-	if (_hash.empty ()) {
+	if (!_hash) {
 		_hash = make_digest (_file, progress);
 	}
 
-	return _hash;
+	return _hash.get();
 }
 
 bool
@@ -143,5 +143,5 @@ void
 Asset::set_file (boost::filesystem::path file) const
 {
 	_file = boost::filesystem::absolute (file);
-	_hash.clear ();
+	_hash = optional<string> ();
 }

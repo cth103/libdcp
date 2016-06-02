@@ -29,6 +29,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
+#include <boost/optional.hpp>
 
 namespace xmlpp {
 	class Node;
@@ -79,14 +80,17 @@ public:
 	std::string hash (boost::function<void (float)> progress = 0) const;
 
 protected:
+
+	/** The most recent disk file used to read or write this asset; may be empty */
+	mutable boost::filesystem::path _file;
+
+private:
 	friend struct ::asset_test;
 
 	virtual std::string pkl_type (Standard standard) const = 0;
 
-	/** The most recent disk file used to read or write this asset; may be empty */
-	mutable boost::filesystem::path _file;
-	/** Hash of _file, or empty if the hash has not yet been computed */
-	mutable std::string _hash;
+	/** Hash of _file if it has been computed */
+	mutable boost::optional<std::string> _hash;
 };
 
 }
