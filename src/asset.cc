@@ -145,3 +145,9 @@ Asset::set_file (boost::filesystem::path file) const
 	_file = boost::filesystem::absolute (file);
 	_hash = optional<string> ();
 }
+
+void
+Asset::set_hash (string hash)
+{
+	_hash = hash;
+}

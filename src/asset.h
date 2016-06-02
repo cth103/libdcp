@@ -79,6 +79,8 @@ public:
 	/** @return the hash of this asset's file */
 	std::string hash (boost::function<void (float)> progress = 0) const;
 
+	void set_hash (std::string hash);
+
 protected:
 
 	/** The most recent disk file used to read or write this asset; may be empty */
