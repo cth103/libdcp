@@ -20,6 +20,8 @@
 #ifndef LIBDCP_ASSET_READER_H
 #define LIBDCP_ASSET_READER_H
 
+#include <boost/noncopyable.hpp>
+
 namespace ASDCP {
 	class AESDecContext;
 }
@@ -28,7 +30,7 @@ namespace dcp {
 
 class MXF;
 
-class AssetReader
+class AssetReader : public boost::noncopyable
 {
 public:
 	AssetReader (MXF const * mxf);
