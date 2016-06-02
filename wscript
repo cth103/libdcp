@@ -61,6 +61,9 @@ def configure(conf):
     if conf.env.TARGET_OSX:
         conf.env.append_value('CXXFLAGS', ['-Wno-unused-result', '-Wno-unused-parameter', '-Wno-unused-local-typedef'])
 
+    # Disable libxml++ deprecation warnings for now
+    conf.env.append_value('CXXFLAGS', ['-Wno-deprecated-declarations'])
+
     if conf.options.enable_openmp:
         conf.env.append_value('CXXFLAGS', ['-fopenmp', '-DLIBDCP_OPENMP'])
         conf.env.LIB_OPENMP = ['gomp']
