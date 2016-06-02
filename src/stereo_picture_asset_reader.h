@@ -40,7 +40,7 @@ public:
 private:
 	friend class StereoPictureAsset;
 
-	StereoPictureAssetReader (StereoPictureAsset const *);
+	explicit StereoPictureAssetReader (StereoPictureAsset const *);
 
 	ASDCP::JP2K::MXFSReader* _reader;
 };

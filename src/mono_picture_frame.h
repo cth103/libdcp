@@ -47,7 +47,7 @@ class OpenJPEGImage;
 class MonoPictureFrame : public boost::noncopyable
 {
 public:
-	MonoPictureFrame (boost::filesystem::path path);
+	explicit MonoPictureFrame (boost::filesystem::path path);
 	MonoPictureFrame (uint8_t const * data, int size);
 	~MonoPictureFrame ();
 

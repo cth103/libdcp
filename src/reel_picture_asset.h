@@ -38,7 +38,7 @@ class ReelPictureAsset : public ReelAsset, public ReelMXF
 public:
 	ReelPictureAsset ();
 	ReelPictureAsset (boost::shared_ptr<PictureAsset> asset, int64_t entry_point);
-	ReelPictureAsset (boost::shared_ptr<const cxml::Node>);
+	explicit ReelPictureAsset (boost::shared_ptr<const cxml::Node>);
 
 	virtual void write_to_cpl (xmlpp::Node* node, Standard standard) const;
 	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;

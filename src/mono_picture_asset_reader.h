@@ -40,7 +40,7 @@ public:
 private:
 	friend class MonoPictureAsset;
 
-	MonoPictureAssetReader (MonoPictureAsset const *);
+	explicit MonoPictureAssetReader (MonoPictureAsset const *);
 
 	ASDCP::JP2K::MXFReader* _reader;
 };

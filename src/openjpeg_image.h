@@ -34,8 +34,8 @@ namespace dcp {
 class OpenJPEGImage : public boost::noncopyable
 {
 public:
-	OpenJPEGImage (opj_image_t *);
-	OpenJPEGImage (Size);
+	explicit OpenJPEGImage (opj_image_t *);
+	explicit OpenJPEGImage (Size);
 	~OpenJPEGImage ();
 
 	int* data (int) const;

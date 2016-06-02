@@ -44,9 +44,9 @@ class LocalTime
 {
 public:
 	LocalTime ();
-	LocalTime (boost::posix_time::ptime);
+	explicit LocalTime (boost::posix_time::ptime);
 	LocalTime (boost::posix_time::ptime, int tz_hour, int tz_minute);
-	LocalTime (std::string);
+	explicit LocalTime (std::string);
 
 	std::string as_string (bool with_millisecond = false) const;
 	std::string date () const;

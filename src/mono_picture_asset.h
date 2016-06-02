@@ -36,12 +36,12 @@ public:
 	/** Create a MonoPictureAsset by reading a file.
 	 *  @param file Asset file to read.
 	 */
-	MonoPictureAsset (boost::filesystem::path file);
+	explicit MonoPictureAsset (boost::filesystem::path file);
 
 	/** Create a MonoPictureAsset with a given edit rate.
 	 *  @param edit_rate Edit rate (i.e. frame rate) in frames per second.
 	 */
-	MonoPictureAsset (Fraction edit_rate);
+	explicit MonoPictureAsset (Fraction edit_rate);
 
 	/** Start a progressive write to a MonoPictureAsset */
 	boost::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path, Standard standard, bool);

@@ -30,10 +30,10 @@ class Data
 {
 public:
 	Data ();
-	Data (int size);
+	explicit Data (int size);
 	Data (uint8_t const * data, int size);
 	Data (boost::shared_array<uint8_t> data, int size);
-	Data (boost::filesystem::path file);
+	explicit Data (boost::filesystem::path file);
 
 	virtual ~Data () {}
 

@@ -53,7 +53,7 @@ class Certificate;
 class EncryptedKDM
 {
 public:
-	EncryptedKDM (std::string);
+	explicit EncryptedKDM (std::string);
 	EncryptedKDM (EncryptedKDM const & kdm);
 	EncryptedKDM & operator= (EncryptedKDM const &);
 	~EncryptedKDM ();

@@ -64,7 +64,7 @@ public:
 	 *
 	 *  @param directory Directory containing the DCP's files.
 	 */
-	DCP (boost::filesystem::path directory);
+	explicit DCP (boost::filesystem::path directory);
 
 	typedef std::list<boost::shared_ptr<DCPReadError> > ReadErrors;
 

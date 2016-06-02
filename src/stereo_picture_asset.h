@@ -30,8 +30,8 @@ class StereoPictureAssetReader;
 class StereoPictureAsset : public PictureAsset
 {
 public:
-	StereoPictureAsset (boost::filesystem::path file);
-	StereoPictureAsset (Fraction edit_rate);
+	explicit StereoPictureAsset (boost::filesystem::path file);
+	explicit StereoPictureAsset (Fraction edit_rate);
 
 	/** Start a progressive write to a StereoPictureAsset */
 	boost::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path file, Standard, bool);

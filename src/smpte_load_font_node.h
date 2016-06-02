@@ -39,7 +39,7 @@ class SMPTELoadFontNode : public LoadFontNode
 public:
 	SMPTELoadFontNode () {}
 	SMPTELoadFontNode (std::string id, std::string urn);
-	SMPTELoadFontNode (boost::shared_ptr<const cxml::Node> node);
+	explicit SMPTELoadFontNode (boost::shared_ptr<const cxml::Node> node);
 
 	std::string urn;
 };

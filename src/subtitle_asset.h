@@ -56,7 +56,7 @@ class SubtitleAsset : public Asset
 {
 public:
 	SubtitleAsset ();
-	SubtitleAsset (boost::filesystem::path file);
+	explicit SubtitleAsset (boost::filesystem::path file);
 
 	bool equals (
 		boost::shared_ptr<const Asset>,

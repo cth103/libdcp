@@ -140,7 +140,7 @@ class Fraction
 public:
 	/** Construct a fraction of 0/0 */
 	Fraction () : numerator (0), denominator (0) {}
-	Fraction (std::string s);
+	explicit Fraction (std::string s);
 	/** Construct a fraction with a specified numerator and denominator.
 	 *  @param n Numerator.
 	 *  @param d Denominator.
@@ -226,7 +226,7 @@ class Colour
 public:
 	Colour ();
 	Colour (int r_, int g_, int b_);
-	Colour (std::string argb_hex);
+	explicit Colour (std::string argb_hex);
 
 	int r; ///< red component, from 0 to 255
 	int g; ///< green component, from 0 to 255

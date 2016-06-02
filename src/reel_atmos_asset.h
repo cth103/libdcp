@@ -39,7 +39,7 @@ class ReelAtmosAsset : public ReelAsset, public ReelMXF
 {
 public:
 	ReelAtmosAsset (boost::shared_ptr<AtmosAsset> asset, int64_t entry_point);
-	ReelAtmosAsset (boost::shared_ptr<const cxml::Node>);
+	explicit ReelAtmosAsset (boost::shared_ptr<const cxml::Node>);
 
 	boost::shared_ptr<AtmosAsset> asset () const {
 		return asset_of_type<AtmosAsset> ();

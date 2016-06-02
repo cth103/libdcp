@@ -39,7 +39,7 @@ class Object : public boost::noncopyable
 {
 public:
 	Object ();
-	Object (std::string id);
+	explicit Object (std::string id);
 	virtual ~Object () {}
 
 	/** @return ID */

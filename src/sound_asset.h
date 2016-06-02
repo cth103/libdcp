@@ -41,7 +41,7 @@ class SoundAssetReader;
 class SoundAsset : public Asset, public MXF
 {
 public:
-	SoundAsset (boost::filesystem::path file);
+	explicit SoundAsset (boost::filesystem::path file);
 	SoundAsset (Fraction edit_rate, int sampling_rate, int channels);
 
 	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file, Standard standard);

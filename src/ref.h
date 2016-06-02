@@ -47,12 +47,12 @@ class Ref
 {
 public:
 	/** Initialise a Ref with an ID but no shared_ptr */
-	Ref (std::string id)
+	explicit Ref (std::string id)
 		: _id (id)
 	{}
 
 	/** Initialise a Ref with a shared_ptr to an asset */
-	Ref (boost::shared_ptr<Asset> asset)
+	explicit Ref (boost::shared_ptr<Asset> asset)
 		: _id (asset->id ())
 		, _asset (asset)
 	{}

@@ -31,7 +31,7 @@ namespace dcp {
 class GammaTransferFunction : public TransferFunction
 {
 public:
-	GammaTransferFunction (double gamma);
+	explicit GammaTransferFunction (double gamma);
 
 	double gamma () const {
 		return _gamma;

@@ -39,10 +39,10 @@ public:
 	Key ();
 
 	/** Create a Key from a raw key value */
-	Key (uint8_t const *);
+	explicit Key (uint8_t const *);
 
 	/** Create a Key from a hex key value */
-	Key (std::string);
+	explicit Key (std::string);
 
 	Key (Key const &);
 	~Key ();

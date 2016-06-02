@@ -40,7 +40,7 @@ public:
 private:
 	friend class SoundAsset;
 
-	SoundAssetReader (SoundAsset const * asset);
+	explicit SoundAssetReader (SoundAsset const * asset);
 
 	ASDCP::PCM::MXFReader* _reader;
 };

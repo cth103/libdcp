@@ -49,7 +49,7 @@ class Asset : public Object
 {
 public:
 	Asset ();
-	Asset (boost::filesystem::path file);
+	explicit Asset (boost::filesystem::path file);
 	Asset (std::string id, boost::filesystem::path file);
 
 	virtual bool equals (

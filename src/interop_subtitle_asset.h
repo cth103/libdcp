@@ -37,7 +37,7 @@ class InteropSubtitleAsset : public SubtitleAsset
 {
 public:
 	InteropSubtitleAsset ();
-	InteropSubtitleAsset (boost::filesystem::path file);
+	explicit InteropSubtitleAsset (boost::filesystem::path file);
 
 	bool equals (
 		boost::shared_ptr<const Asset>,

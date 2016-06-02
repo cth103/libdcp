@@ -35,7 +35,7 @@ namespace dcp {
 class File : public boost::noncopyable
 {
 public:
-	File (boost::filesystem::path file);
+	explicit File (boost::filesystem::path file);
 	~File ();
 
 	uint8_t* data () const {

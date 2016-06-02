@@ -28,7 +28,7 @@ namespace dcp {
 class AtmosAsset : public Asset, public MXF
 {
 public:
-	AtmosAsset (boost::filesystem::path file);
+	explicit AtmosAsset (boost::filesystem::path file);
 
 	std::string pkl_type (Standard) const;
 

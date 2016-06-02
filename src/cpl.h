@@ -51,7 +51,7 @@ class CPL : public Asset
 {
 public:
 	CPL (std::string annotation_text, ContentKind content_kind);
-	CPL (boost::filesystem::path file);
+	explicit CPL (boost::filesystem::path file);
 
 	bool equals (
 		boost::shared_ptr<const Asset> other,

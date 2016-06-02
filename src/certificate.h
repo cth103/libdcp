@@ -52,8 +52,8 @@ public:
 		, _extra_data (false)
 	{}
 
-	Certificate (std::string);
-	Certificate (X509 *);
+	explicit Certificate (std::string);
+	explicit Certificate (X509 *);
 	Certificate (Certificate const &);
 	~Certificate ();
 

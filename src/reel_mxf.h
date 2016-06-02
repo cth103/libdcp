@@ -41,8 +41,8 @@ class ReelMXF
 {
 public:
 	ReelMXF () {}
-	ReelMXF (boost::optional<std::string> key_id);
-	ReelMXF (boost::shared_ptr<const cxml::Node>);
+	explicit ReelMXF (boost::optional<std::string> key_id);
+	explicit ReelMXF (boost::shared_ptr<const cxml::Node>);
 	virtual ~ReelMXF () {}
 
 	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */

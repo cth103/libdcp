@@ -46,7 +46,7 @@ public:
 
 	/** @param file File name
 	 */
-	SMPTESubtitleAsset (boost::filesystem::path file);
+	explicit SMPTESubtitleAsset (boost::filesystem::path file);
 
 	bool equals (
 		boost::shared_ptr<const Asset>,

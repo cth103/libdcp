@@ -63,7 +63,7 @@ public:
 		, _atmos (atmos)
 	{}
 
-	Reel (boost::shared_ptr<const cxml::Node>);
+	explicit Reel (boost::shared_ptr<const cxml::Node>);
 
 	boost::shared_ptr<ReelPictureAsset> main_picture () const {
 		return _main_picture;

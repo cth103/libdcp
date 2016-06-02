@@ -39,7 +39,7 @@ class ReelMonoPictureAsset : public ReelPictureAsset
 public:
 	ReelMonoPictureAsset ();
 	ReelMonoPictureAsset (boost::shared_ptr<MonoPictureAsset> asset, int64_t entry_point);
-	ReelMonoPictureAsset (boost::shared_ptr<const cxml::Node>);
+	explicit ReelMonoPictureAsset (boost::shared_ptr<const cxml::Node>);
 
 	/** @return the MonoPictureAsset that this object refers to */
 	boost::shared_ptr<const MonoPictureAsset> mono_asset () const {

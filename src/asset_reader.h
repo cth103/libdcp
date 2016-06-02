@@ -33,7 +33,7 @@ class MXF;
 class AssetReader : public boost::noncopyable
 {
 public:
-	AssetReader (MXF const * mxf);
+	explicit AssetReader (MXF const * mxf);
 	virtual ~AssetReader ();
 
 protected:

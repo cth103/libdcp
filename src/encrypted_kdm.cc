@@ -46,7 +46,7 @@ class Signer
 public:
 	Signer () {}
 
-	Signer (shared_ptr<const cxml::Node> node)
+	explicit Signer (shared_ptr<const cxml::Node> node)
 		: x509_issuer_name (node->string_child ("X509IssuerName"))
 		, x509_serial_number (node->string_child ("X509SerialNumber"))
 	{
@@ -68,7 +68,7 @@ class X509Data
 public:
 	X509Data () {}
 
-	X509Data (boost::shared_ptr<const cxml::Node> node)
+	explicit X509Data (boost::shared_ptr<const cxml::Node> node)
 		: x509_issuer_serial (Signer (node->node_child ("X509IssuerSerial")))
 		, x509_certificate (node->string_child ("X509Certificate"))
 	{
@@ -90,11 +90,11 @@ class Reference
 public:
 	Reference () {}
 
-	Reference (string u)
+	explicit Reference (string u)
 		: uri (u)
 	{}
 
-	Reference (shared_ptr<const cxml::Node> node)
+	explicit Reference (shared_ptr<const cxml::Node> node)
 		: uri (node->string_attribute ("URI"))
 		, digest_value (node->string_child ("DigestValue"))
 	{
@@ -120,7 +120,7 @@ public:
 		, authenticated_private ("#ID_AuthenticatedPrivate")
 	{}
 
-	SignedInfo (shared_ptr<const cxml::Node> node)
+	explicit SignedInfo (shared_ptr<const cxml::Node> node)
 	{
 		list<shared_ptr<cxml::Node> > references = node->node_children ("Reference");
 		for (list<shared_ptr<cxml::Node> >::const_iterator i = references.begin(); i != references.end(); ++i) {
@@ -158,7 +158,7 @@ class Signature
 public:
 	Signature () {}
 
-	Signature (shared_ptr<const cxml::Node> node)
+	explicit Signature (shared_ptr<const cxml::Node> node)
 		: signed_info (node->node_child ("SignedInfo"))
 		, signature_value (node->string_child ("SignatureValue"))
 	{
@@ -189,7 +189,7 @@ class AuthenticatedPrivate
 public:
 	AuthenticatedPrivate () {}
 
-	AuthenticatedPrivate (shared_ptr<const cxml::Node> node)
+	explicit AuthenticatedPrivate (shared_ptr<const cxml::Node> node)
 	{
 		list<shared_ptr<cxml::Node> > encrypted_key_nodes = node->node_children ("EncryptedKey");
 		for (list<shared_ptr<cxml::Node> >::const_iterator i = encrypted_key_nodes.begin(); i != encrypted_key_nodes.end(); ++i) {
@@ -224,7 +224,7 @@ class TypedKeyId
 public:
 	TypedKeyId () {}
 
-	TypedKeyId (shared_ptr<const cxml::Node> node)
+	explicit TypedKeyId (shared_ptr<const cxml::Node> node)
 		: key_type (node->string_child ("KeyType"))
 		, key_id (remove_urn_uuid (node->string_child ("KeyId")))
 	{
@@ -256,7 +256,7 @@ class KeyIdList
 public:
 	KeyIdList () {}
 
-	KeyIdList (shared_ptr<const cxml::Node> node)
+	explicit KeyIdList (shared_ptr<const cxml::Node> node)
 	{
 		list<shared_ptr<cxml::Node> > typed_key_id_nodes = node->node_children ("TypedKeyId");
 		for (list<shared_ptr<cxml::Node> >::const_iterator i = typed_key_id_nodes.begin(); i != typed_key_id_nodes.end(); ++i) {
@@ -279,7 +279,7 @@ class AuthorizedDeviceInfo
 public:
 	AuthorizedDeviceInfo () {}
 
-	AuthorizedDeviceInfo (shared_ptr<const cxml::Node> node)
+	explicit AuthorizedDeviceInfo (shared_ptr<const cxml::Node> node)
 		: device_list_identifier (remove_urn_uuid (node->string_child ("DeviceListIdentifier")))
 		, device_list_description (node->optional_string_child ("DeviceListDescription"))
 	{
@@ -311,7 +311,7 @@ class X509IssuerSerial
 public:
 	X509IssuerSerial () {}
 
-	X509IssuerSerial (shared_ptr<const cxml::Node> node)
+	explicit X509IssuerSerial (shared_ptr<const cxml::Node> node)
 		: x509_issuer_name (node->string_child ("X509IssuerName"))
 		, x509_serial_number (node->string_child ("X509SerialNumber"))
 	{
@@ -333,7 +333,7 @@ class Recipient
 public:
 	Recipient () {}
 
-	Recipient (shared_ptr<const cxml::Node> node)
+	explicit Recipient (shared_ptr<const cxml::Node> node)
 		: x509_issuer_serial (node->node_child ("X509IssuerSerial"))
 		, x509_subject_name (node->string_child ("X509SubjectName"))
 	{
@@ -355,7 +355,7 @@ class KDMRequiredExtensions
 public:
 	KDMRequiredExtensions () {}
 
-	KDMRequiredExtensions (shared_ptr<const cxml::Node> node)
+	explicit KDMRequiredExtensions (shared_ptr<const cxml::Node> node)
 		: recipient (node->node_child ("Recipient"))
 		, composition_playlist_id (remove_urn_uuid (node->string_child ("CompositionPlaylistId")))
 		, content_title_text (node->string_child ("ContentTitleText"))
@@ -402,7 +402,7 @@ class RequiredExtensions
 public:
 	RequiredExtensions () {}
 
-	RequiredExtensions (shared_ptr<const cxml::Node> node)
+	explicit RequiredExtensions (shared_ptr<const cxml::Node> node)
 		: kdm_required_extensions (node->node_child ("KDMRequiredExtensions"))
 	{
 
@@ -426,7 +426,7 @@ public:
 		, issue_date (LocalTime().as_string ())
 	{}
 
-	AuthenticatedPublic (shared_ptr<const cxml::Node> node)
+	explicit AuthenticatedPublic (shared_ptr<const cxml::Node> node)
 		: message_id (remove_urn_uuid (node->string_child ("MessageId")))
 		, annotation_text (node->optional_string_child ("AnnotationText"))
 		, issue_date (node->string_child ("IssueDate"))
@@ -471,7 +471,7 @@ public:
 
 	}
 
-	EncryptedKDMData (shared_ptr<const cxml::Node> node)
+	explicit EncryptedKDMData (shared_ptr<const cxml::Node> node)
 		: authenticated_public (node->node_child ("AuthenticatedPublic"))
 		, authenticated_private (node->node_child ("AuthenticatedPrivate"))
 		, signature (node->node_child ("Signature"))

@@ -32,7 +32,7 @@ class LoadFontNode
 {
 public:
 	LoadFontNode () {}
-	LoadFontNode (std::string id_)
+	explicit LoadFontNode (std::string id_)
 		: id (id_)
 	{}
 

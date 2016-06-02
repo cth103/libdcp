@@ -71,7 +71,7 @@ public:
 class MiscError : public std::runtime_error
 {
 public:
-	MiscError (std::string message)
+	explicit MiscError (std::string message)
 		: std::runtime_error (message)
 	{}
 };
@@ -82,7 +82,7 @@ public:
 class DCPReadError : public std::runtime_error
 {
 public:
-	DCPReadError (std::string message)
+	explicit DCPReadError (std::string message)
 		: std::runtime_error (message)
 	{}
 };
@@ -110,7 +110,7 @@ public:
 class XMLError : public std::runtime_error
 {
 public:
-	XMLError (std::string message)
+	explicit XMLError (std::string message)
 		: std::runtime_error (message)
 	{}
 };
@@ -121,7 +121,7 @@ public:
 class UnresolvedRefError : public std::runtime_error
 {
 public:
-	UnresolvedRefError (std::string id);
+	explicit UnresolvedRefError (std::string id);
 };
 
 /** @class TimeFormatError
@@ -130,7 +130,7 @@ public:
 class TimeFormatError : public std::runtime_error
 {
 public:
-	TimeFormatError (std::string bad_time);
+	explicit TimeFormatError (std::string bad_time);
 };
 
 /** @class NotEncryptedError
@@ -140,7 +140,7 @@ public:
 class NotEncryptedError : public std::runtime_error
 {
 public:
-	NotEncryptedError (std::string const & what);
+	explicit NotEncryptedError (std::string const & what);
 	~NotEncryptedError () throw () {}
 };
 

@@ -29,7 +29,7 @@ class InteropLoadFontNode : public LoadFontNode
 public:
 	InteropLoadFontNode () {}
 	InteropLoadFontNode (std::string id, std::string uri);
-	InteropLoadFontNode (cxml::ConstNodePtr node);
+	explicit InteropLoadFontNode (cxml::ConstNodePtr node);
 
 	std::string uri;
 };

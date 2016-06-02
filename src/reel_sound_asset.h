@@ -36,7 +36,7 @@ class ReelSoundAsset : public ReelAsset, public ReelMXF
 {
 public:
 	ReelSoundAsset (boost::shared_ptr<dcp::SoundAsset> content, int64_t entry_point);
-	ReelSoundAsset (boost::shared_ptr<const cxml::Node>);
+	explicit ReelSoundAsset (boost::shared_ptr<const cxml::Node>);
 
 	void write_to_cpl (xmlpp::Node* node, Standard standard) const;
 
