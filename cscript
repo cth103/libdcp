@@ -1,7 +1,7 @@
 import os
 
 def dependencies(target):
-    return (('libcxml', 'v0.15.1'), ('openjpeg2-cdist', '94bdab1'), ('asdcplib-cth', 'v0.1.1'))
+    return (('libcxml', 'v0.15.1'), ('openjpeg2-cdist', '94bdab1'), ('asdcplib-cth', '5f32ac0'))
 
 def build(target, options):
     cmd = './waf configure --disable-examples --prefix=%s' % target.directory
