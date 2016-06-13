@@ -19,6 +19,9 @@
 
 #include <boost/test/unit_test.hpp>
 #include "dcp_time.h"
+#include "exceptions.h"
+
+using boost::optional;
 
 /** Check that dcp::Time works */
 BOOST_AUTO_TEST_CASE (dcp_time)
@@ -100,4 +103,36 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	/* We must round down in rebase() */
 	a = dcp::Time (0, 2, 57, 999, 1000);
 	BOOST_CHECK_EQUAL (a.rebase (250), dcp::Time (0, 2, 57, 249, 250));
+
+	/* Check some allowed constructions from string */
+
+	/* Interop type 1 */
+	a = dcp::Time ("01:23:45:123", optional<int>());
+	BOOST_CHECK_EQUAL (a, dcp::Time (1, 23, 45, 123, 250));
+	/* Interop type 2 */
+	a = dcp::Time ("01:23:45.123", optional<int>());
+	BOOST_CHECK_EQUAL (a, dcp::Time (1, 23, 45, 123, 1000));
+	/* SMPTE */
+	a = dcp::Time ("01:23:45:12", 250);
+	BOOST_CHECK_EQUAL (a, dcp::Time (1, 23, 45, 12, 250));
+
+	/* Check some disallowed constructions from string */
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45:1234", optional<int>()), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45:1234:66", optional<int>()), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45:", optional<int>()), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23::123", optional<int>()), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01::45:123", optional<int>()), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time (":23:45:123", optional<int>()), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45.1234", optional<int>()), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45.1234.66", optional<int>()), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45.", optional<int>()), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:.123", optional<int>()), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01::45.123", optional<int>()), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time (":23:45.123", optional<int>()), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45:123", 250), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45:123:66", 250), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45:", 250), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23::123", 250), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01::45:123", 250), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time (":23:45:123", 250), dcp::DCPReadError);
 }

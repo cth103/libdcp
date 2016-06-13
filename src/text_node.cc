@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -51,7 +51,7 @@ using namespace dcp;
  *  in this object's member variables.
  *  @param node Node to read.
  */
-TextNode::TextNode (boost::shared_ptr<const cxml::Node> node, int tcr, string font_id_attribute)
+TextNode::TextNode (boost::shared_ptr<const cxml::Node> node, optional<int> tcr, string font_id_attribute)
 	: h_position (0)
 	, h_align (HALIGN_CENTER)
 	, v_position (0)

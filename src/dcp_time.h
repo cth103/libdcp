@@ -39,6 +39,7 @@
 #define LIBDCP_TIME_H
 
 #include "types.h"
+#include <boost/optional.hpp>
 #include <stdint.h>
 #include <string>
 #include <iostream>
@@ -78,7 +79,7 @@ public:
 
 	Time (double seconds, int tcr);
 
-	Time (std::string time, int tcr);
+	Time (std::string time, boost::optional<int> tcr);
 
 	int h; ///<   hours
 	int m; ///<   minutes

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -45,7 +45,7 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
-FontNode::FontNode (cxml::ConstNodePtr node, int tcr, string font_id_attribute)
+FontNode::FontNode (cxml::ConstNodePtr node, optional<int> tcr, string font_id_attribute)
 {
 	text = node->content ();
 

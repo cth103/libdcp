@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -52,7 +52,7 @@ class SubtitleNode
 {
 public:
 	SubtitleNode () {}
-	SubtitleNode (boost::shared_ptr<const cxml::Node> node, int tcr, std::string font_id_attribute);
+	SubtitleNode (boost::shared_ptr<const cxml::Node> node, boost::optional<int> tcr, std::string font_id_attribute);
 
 	Time in;
 	Time out;
@@ -62,7 +62,7 @@ public:
 	std::list<boost::shared_ptr<TextNode> > text_nodes;
 
 private:
-	Time fade_time (boost::shared_ptr<const cxml::Node>, std::string name, int tcr);
+	Time fade_time (boost::shared_ptr<const cxml::Node>, std::string name, boost::optional<int> tcr);
 };
 
 }

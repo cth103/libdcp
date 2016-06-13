@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -45,7 +45,8 @@ using boost::shared_ptr;
 using boost::lexical_cast;
 using namespace dcp;
 
-SubtitleNode::SubtitleNode (boost::shared_ptr<const cxml::Node> node, int tcr, string font_id_attribute)
+/** @param tcr Timecode rate for SMPTE, or empty for Interop */
+SubtitleNode::SubtitleNode (boost::shared_ptr<const cxml::Node> node, optional<int> tcr, string font_id_attribute)
 {
 	in = Time (node->string_attribute ("TimeIn"), tcr);
 	out = Time (node->string_attribute ("TimeOut"), tcr);
@@ -65,7 +66,7 @@ SubtitleNode::SubtitleNode (boost::shared_ptr<const cxml::Node> node, int tcr, s
 }
 
 Time
-SubtitleNode::fade_time (shared_ptr<const cxml::Node> node, string name, int tcr)
+SubtitleNode::fade_time (shared_ptr<const cxml::Node> node, string name, optional<int> tcr)
 {
 	string const u = node->optional_string_attribute (name).get_value_or ("");
 	Time t;
@@ -75,7 +76,7 @@ SubtitleNode::fade_time (shared_ptr<const cxml::Node> node, string name, int tcr
 	} else if (u.find (":") != string::npos) {
 		t = Time (u, tcr);
 	} else {
-		t = Time (0, 0, 0, lexical_cast<int> (u), tcr);
+		t = Time (0, 0, 0, lexical_cast<int> (u), tcr.get_value_or(250));
 	}
 
 	if (t > Time (0, 0, 8, 0, 250)) {
