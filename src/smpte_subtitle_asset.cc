@@ -99,7 +99,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 		} catch (cxml::Error& e) {
 			boost::throw_exception (
 				DCPReadError (
-					String::compose ("could not read subtitles from %1; MXF failed with %2, XML failed with %3", file, static_cast<int> (r), e.what ())
+					String::compose ("MXF failed with %1, XML failed with %2", file, static_cast<int> (r), e.what ())
 					)
 				);
 		}
