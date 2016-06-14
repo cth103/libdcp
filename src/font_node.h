@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -54,7 +54,7 @@ public:
 		: size (0)
 	{}
 
-	FontNode (cxml::ConstNodePtr node, int tcr, std::string font_id_attribute);
+	FontNode (cxml::ConstNodePtr node, boost::optional<int> tcr, std::string font_id_attribute);
 	explicit FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes);
 
 	std::string text;

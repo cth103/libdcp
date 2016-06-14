@@ -68,12 +68,12 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 
 	list<shared_ptr<dcp::FontNode> > font_nodes;
 	BOOST_FOREACH (cxml::NodePtr const & i, xml->node_children ("Font")) {
-		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, 250, "Id")));
+		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, optional<int>(), "Id")));
 	}
 
 	list<shared_ptr<dcp::SubtitleNode> > subtitle_nodes;
 	BOOST_FOREACH (cxml::NodePtr const & i, xml->node_children ("Subtitle")) {
-		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, 250, "Id")));
+		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, optional<int>(), "Id")));
 	}
 
 	parse_subtitles (xml, font_nodes, subtitle_nodes);

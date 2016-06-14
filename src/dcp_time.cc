@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -38,7 +38,9 @@
 #include "raw_convert.h"
 #include "dcp_time.h"
 #include "exceptions.h"
+#include "compose.hpp"
 #include <boost/algorithm/string.hpp>
+#include <boost/optional.hpp>
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -91,20 +93,80 @@ Time::set (double seconds, int tcr_)
 	}
 }
 
-/** @param time String of the form HH:MM:SS:EE[E] */
-Time::Time (string time, int tcr_)
-	: tcr (tcr_)
+/** @param time String of the form
+ *     HH:MM:SS:EE                          for SMPTE
+ *     HH:MM:SS:E[E[E]] or HH:MM:SS.s[s[s]] for Interop
+ *  where HH are hours, MM minutes, SS seconds, EE editable units and
+ *  sss millseconds.
+ *
+ *  @param tcr_ Timecode rate if this is a SMPTE time, otherwise empty for an Interop time.
+ */
+Time::Time (string time, optional<int> tcr_)
 {
 	vector<string> b;
 	split (b, time, is_any_of (":"));
-	if (b.size() != 4) {
-		boost::throw_exception (DCPReadError ("unrecognised time specification"));
+
+	if (b.size() < 3 || b[0].empty() || b[1].empty() || b[0].length() > 2 || b[1].length() > 2) {
+		boost::throw_exception (DCPReadError (String::compose ("unrecognised time specification %1", time)));
 	}
 
-	h = raw_convert<int> (b[0]);
-	m = raw_convert<int> (b[1]);
-	s = raw_convert<int> (b[2]);
-	e = raw_convert<int> (b[3]);
+	if (!tcr_) {
+		/* Interop */
+		if (b.size() == 3) {
+			/* HH:MM:SS.s[s[s]] */
+			vector<string> bs;
+			split (bs, b[2], is_any_of ("."));
+			if (bs.size() != 2) {
+				boost::throw_exception (DCPReadError (String::compose ("unrecognised time specification %1", time)));
+			}
+
+			h = raw_convert<int> (b[0]);
+			m = raw_convert<int> (b[1]);
+			if (bs[0].empty() || bs[0].length() > 2) {
+				boost::throw_exception (DCPReadError (String::compose ("unrecognised time specification %1; %2 has bad length", time, bs[0])));
+			}
+			s = raw_convert<int> (bs[0]);
+			if (bs[1].empty() || bs[1].length() > 3) {
+				boost::throw_exception (DCPReadError (String::compose ("unrecognised time specification %1; %2 has bad length", time, bs[1])));
+			}
+			e = raw_convert<int> (bs[1]);
+			tcr = 1000;
+		} else if (b.size() == 4) {
+			/* HH:MM:SS:EE[E] */
+			h = raw_convert<int> (b[0]);
+			m = raw_convert<int> (b[1]);
+			if (b[2].empty() || b[2].length() > 2) {
+				boost::throw_exception (DCPReadError (String::compose ("unrecognised time specification %1; %2 has bad length", time, b[2])));
+			}
+			s = raw_convert<int> (b[2]);
+			if (b[3].empty() || b[3].length() > 3) {
+				boost::throw_exception (DCPReadError (String::compose ("unrecognised time specification %1; %2 has bad length", time, b[3])));
+			}
+			e = raw_convert<int> (b[3]);
+			tcr = 250;
+		} else {
+			boost::throw_exception (DCPReadError (String::compose ("unrecognised time specification %1", time)));
+		}
+
+	} else {
+		/* SMPTE: HH:MM:SS:EE */
+		split (b, time, is_any_of (":"));
+		if (b.size() != 4) {
+			boost::throw_exception (DCPReadError (String::compose ("unrecognised time specification %1; does not have 4 parts", time)));
+		}
+
+		h = raw_convert<int> (b[0]);
+		m = raw_convert<int> (b[1]);
+		if (b[2].empty() || b[2].length() > 2) {
+			boost::throw_exception (DCPReadError (String::compose ("unrecognised time specification %1; %2 has bad length", time, b[2])));
+		}
+		s = raw_convert<int> (b[2]);
+		if (b[3].empty() || b[3].length() > 2) {
+			boost::throw_exception (DCPReadError (String::compose ("unrecognised time specification %1; %2 has bad length", time, b[3])));
+		}
+		e = raw_convert<int> (b[3]);
+		tcr = tcr_.get();
+	}
 }
 
 bool

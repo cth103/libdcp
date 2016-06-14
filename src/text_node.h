@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -63,7 +63,7 @@ public:
 		, direction (DIRECTION_LTR)
 	{}
 
-	TextNode (boost::shared_ptr<const cxml::Node> node, int tcr, std::string font_id_attribute);
+	TextNode (boost::shared_ptr<const cxml::Node> node, boost::optional<int> tcr, std::string font_id_attribute);
 
 	float h_position;
 	HAlign h_align;
