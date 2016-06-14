@@ -50,6 +50,7 @@ def options(opt):
     opt.add_option('--disable-gcov', action='store_true', default=False, help='don''t use gcov in tests')
     opt.add_option('--disable-examples', action='store_true', default=False, help='disable building of examples')
     opt.add_option('--enable-openmp', action='store_true', default=False, help='enable use of OpenMP')
+    opt.add_option('--jpeg', default='oj2', help='specify JPEG library to build with: oj1 or oj2 for OpenJPEG 1.5.x or OpenJPEG 2.1.x respectively')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -82,6 +83,13 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', ['-fopenmp', '-DLIBDCP_OPENMP'])
         conf.env.LIB_OPENMP = ['gomp']
 
+    if conf.options.jpeg == 'oj1':
+        conf.env.append_value('CXXFLAGS', ['-DLIBDCP_OPENJPEG1'])
+    elif conf.options.jpeg == 'oj2':
+        conf.env.append_value('CXXFLAGS', ['-DLIBDCP_OPENJPEG2'])
+    else:
+        Logs.error('Invalid --jpeg value %s' % conf.options.jpeg)
+
     conf.check_cfg(package='openssl', args='--cflags --libs', uselib_store='OPENSSL', mandatory=True)
     conf.check_cfg(package='libxml++-2.6', args='--cflags --libs', uselib_store='LIBXML++', mandatory=True)
     conf.check_cfg(package='xmlsec1', args='--cflags --libs', uselib_store='XMLSEC1', mandatory=True)
@@ -95,23 +103,30 @@ def configure(conf):
         image = conf.check_cfg(package='ImageMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
         graphics = conf.check_cfg(package='GraphicsMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
         if image is None and graphics is None:
-            Logs.pprint('RED', 'Neither ImageMagick++ nor GraphicsMagick++ found: one or the other is required')
+            Logs.error('Neither ImageMagick++ nor GraphicsMagick++ found: one or the other is required')
 
     conf.check_cfg(package='sndfile', args='--cflags --libs', uselib_store='SNDFILE', mandatory=False)
 
     if conf.options.static:
-        conf.check_cfg(package='libopenjp2', args='--cflags', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
-        conf.env.STLIB_OPENJPEG = ['openjp2']
-        conf.env.HAVE_CXML = 1
-        conf.env.LIB_CXML = ['xml++-2.6', 'glibmm-2.4']
-        conf.env.STLIB_CXML = ['cxml']
+        if conf.options.jpeg == 'oj2':
+            conf.check_cfg(package='libopenjp2', args='--cflags', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
+            conf.env.STLIB_OPENJPEG = ['openjp2']
+        elif conf.options.jpeg == 'oj1':
+            conf.check_cfg(package='libopenjpeg1', args='--cflags', atleast_version='1.5.0', uselib_store='OPENJPEG', mandatory=True)
+            conf.env.STLIB_OPENJPEG = ['openjpeg']
         conf.check_cfg(package='libasdcp-cth', atleast_version='0.0.1', args='--cflags', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.env.HAVE_ASDCPLIB_CTH = 1
         conf.env.STLIB_ASDCPLIB_CTH = ['asdcp-cth', 'kumu-cth']
+        conf.env.HAVE_CXML = 1
+        conf.env.LIB_CXML = ['xml++-2.6', 'glibmm-2.4']
+        conf.env.STLIB_CXML = ['cxml']
     else:
-        conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
-        conf.check_cfg(package='libcxml', atleast_version='0.15.1', args='--cflags --libs', uselib_store='CXML', mandatory=True)
+        if conf.options.jpeg == 'oj2':
+            conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
+        elif conf.options.jpeg == 'oj1':
+            conf.check_cfg(package='libopenjpeg1', args='--cflags --libs', atleast_version='1.5.0', uselib_store='OPENJPEG', mandatory=True)
         conf.check_cfg(package='libasdcp-cth', atleast_version='0.1.0', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
+        conf.check_cfg(package='libcxml', atleast_version='0.15.1', args='--cflags --libs', uselib_store='CXML', mandatory=True)
 
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'

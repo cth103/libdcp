@@ -42,6 +42,10 @@
 
 using namespace dcp;
 
+#ifdef LIBDCP_OPENJPEG1
+#define OPJ_CLRSPC_SRGB CLRSPC_SRGB
+#endif
+
 /** Construct an OpenJPEGImage, taking ownership of the opj_image_t */
 OpenJPEGImage::OpenJPEGImage (opj_image_t* image)
 	: _opj_image (image)
