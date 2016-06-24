@@ -40,6 +40,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 			string ("Frutiger"),
 			false,
 			false,
+			false,
 			dcp::Colour (255, 255, 255),
 			48,
 			1.0,
@@ -61,6 +62,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 	c.add (
 		dcp::SubtitleString (
 			boost::optional<string> (),
+			true,
 			true,
 			true,
 			dcp::Colour (128, 0, 64),
@@ -95,7 +97,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 		"      <Text VAlign=\"top\" VPosition=\"80\">Hello world</Text>\n"
 		"    </Subtitle>\n"
 		"  </Font>\n"
-		"  <Font Italic=\"yes\" Color=\"FF800040\" Size=\"91\" Effect=\"border\" EffectColor=\"FF010203\" Script=\"normal\" Underlined=\"no\" Weight=\"bold\">\n"
+		"  <Font Italic=\"yes\" Color=\"FF800040\" Size=\"91\" Effect=\"border\" EffectColor=\"FF010203\" Script=\"normal\" Underlined=\"yes\" Weight=\"bold\">\n"
 		"    <Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:218\" TimeOut=\"06:12:15:218\" FadeUpTime=\"930792\" FadeDownTime=\"4591834\">\n"
 		"      <Text VAlign=\"bottom\" VPosition=\"40\">What's going on</Text>\n"
 		"    </Subtitle>\n"
@@ -119,6 +121,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 			string ("Frutiger"),
 			false,
 			false,
+			false,
 			dcp::Colour (255, 255, 255),
 			48,
 			1.0,
@@ -140,6 +143,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 	c.add (
 		dcp::SubtitleString (
 			boost::optional<string> (),
+			true,
 			true,
 			true,
 			dcp::Colour (128, 0, 64),
@@ -179,7 +183,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 		"        <dcst:Text Valign=\"top\" Vposition=\"80\">Hello world</dcst:Text>\n"
 		"      </dcst:Subtitle>\n"
 		"    </dcst:Font>\n"
-		"    <dcst:Font Italic=\"yes\" Color=\"FF800040\" Size=\"91\" Effect=\"border\" EffectColor=\"FF010203\" Script=\"normal\" Underline=\"no\" Weight=\"bold\">\n"
+		"    <dcst:Font Italic=\"yes\" Color=\"FF800040\" Size=\"91\" Effect=\"border\" EffectColor=\"FF010203\" Script=\"normal\" Underline=\"yes\" Weight=\"bold\">\n"
 		"      <dcst:Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:21\" TimeOut=\"06:12:15:21\" FadeUpTime=\"01:02:03:04\" FadeDownTime=\"05:06:07:08\">\n"
 		"        <dcst:Text Valign=\"bottom\" Vposition=\"40\" Direction=\"rtl\">What's going on</dcst:Text>\n"
 		"      </dcst:Subtitle>\n"

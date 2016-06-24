@@ -45,6 +45,7 @@ SubtitleString::SubtitleString (
 	optional<string> font,
 	bool italic,
 	bool bold,
+	bool underline,
 	Colour colour,
 	int size,
 	float aspect_adjust,
@@ -64,6 +65,7 @@ SubtitleString::SubtitleString (
 	: _font (font)
 	, _italic (italic)
 	, _bold (bold)
+	, _underline (underline)
 	, _colour (colour)
 	, _size (size)
 	, _aspect_adjust (aspect_adjust)
@@ -101,6 +103,7 @@ dcp::operator== (SubtitleString const & a, SubtitleString const & b)
 		a.font() == b.font() &&
 		a.italic() == b.italic() &&
 		a.bold() == b.bold() &&
+		a.underline() == b.underline() &&
 		a.colour() == b.colour() &&
 		a.size() == b.size() &&
 		fabs (a.aspect_adjust() - b.aspect_adjust()) < ASPECT_ADJUST_EPSILON &&
@@ -136,6 +139,10 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 		s << "bold, ";
 	} else {
 		s << "normal, ";
+	}
+
+	if (sub.underline()) {
+		s << "underlined, ";
 	}
 
 	s << "size " << sub.size() << ", aspect " << sub.aspect_adjust() << ", colour " << sub.colour()

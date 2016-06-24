@@ -158,6 +158,7 @@ SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
 			effective_font.id,
 			effective_font.italic.get_value_or (false),
 			effective_font.bold.get_value_or (false),
+			effective_font.underline.get_value_or (false),
 			effective_font.colour.get_value_or (dcp::Colour (255, 255, 255)),
 			effective_font.size,
 			effective_font.aspect_adjust.get_value_or (1.0),
@@ -249,11 +250,12 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Stand
 
 	string const xmlns = standard == SMPTE ? "dcst" : "";
 
-	/* XXX: script, underlined not supported */
+	/* XXX: script not supported */
 
 	optional<string> font;
 	bool italic = false;
 	bool bold = false;
+	bool underline = false;
 	Colour colour;
 	int size = 0;
 	float aspect_adjust = 1.0;
@@ -279,6 +281,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Stand
 			font          != i.font()          ||
 			italic        != i.italic()        ||
 			bold          != i.bold()          ||
+			underline     != i.underline()     ||
 			colour        != i.colour()        ||
 			size          != i.size()          ||
 			fabs (aspect_adjust - i.aspect_adjust()) > ASPECT_ADJUST_EPSILON ||
@@ -289,6 +292,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Stand
 			font = i.font ();
 			italic = i.italic ();
 			bold = i.bold ();
+			underline = i.underline ();
 			colour = i.colour ();
 			size = i.size ();
 			aspect_adjust = i.aspect_adjust ();
@@ -315,9 +319,9 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Stand
 			font_element->set_attribute ("EffectColor", effect_colour.to_argb_string());
 			font_element->set_attribute ("Script", "normal");
 			if (standard == SMPTE) {
-				font_element->set_attribute ("Underline", "no");
+				font_element->set_attribute ("Underline", underline ? "yes" : "no");
 			} else {
-				font_element->set_attribute ("Underlined", "no");
+				font_element->set_attribute ("Underlined", underline ? "yes" : "no");
 			}
 			font_element->set_attribute ("Weight", bold ? "bold" : "normal");
 		}

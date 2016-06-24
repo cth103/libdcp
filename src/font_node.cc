@@ -58,6 +58,11 @@ FontNode::FontNode (cxml::ConstNodePtr node, optional<int> tcr, Standard standar
 	aspect_adjust = node->optional_number_attribute<float> ("AspectAdjust");
 	italic = node->optional_bool_attribute ("Italic");
 	bold = node->optional_string_attribute("Weight").get_value_or("normal") == "bold";
+	if (standard == INTEROP) {
+		underline = node->optional_bool_attribute ("Underlined");
+	} else {
+		underline = node->optional_bool_attribute ("Underline");
+	}
 	optional<string> c = node->optional_string_attribute ("Color");
 	if (c) {
 		colour = Colour (c.get ());
@@ -91,6 +96,7 @@ FontNode::FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes)
 	: size (0)
 	, italic (false)
 	, bold (false)
+	, underline (false)
 	, colour ("FFFFFFFF")
 	, effect_colour ("FFFFFFFF")
 {
@@ -109,6 +115,9 @@ FontNode::FontNode (std::list<boost::shared_ptr<FontNode> > const & font_nodes)
 		}
 		if ((*i)->bold) {
 			bold = (*i)->bold.get ();
+		}
+		if ((*i)->underline) {
+			underline = (*i)->underline.get ();
 		}
 		if ((*i)->colour) {
 			colour = (*i)->colour.get ();

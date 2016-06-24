@@ -55,6 +55,7 @@ public:
 		boost::optional<std::string> font,
 		bool italic,
 		bool bold,
+		bool underline,
 		Colour colour,
 		int size,
 		float aspect_adjust,
@@ -83,6 +84,10 @@ public:
 
 	bool bold () const {
 		return _bold;
+	}
+
+	bool underline () const {
+		return _underline;
 	}
 
 	Colour colour () const {
@@ -189,6 +194,8 @@ private:
 	bool _italic;
 	/** true if the weight is bold, false for normal */
 	bool _bold;
+	/** true to enable underlining, false otherwise */
+	bool _underline;
 	/** text colour */
 	Colour _colour;
 	/** Size in points as if the screen height is 11 inches, so a 72pt font

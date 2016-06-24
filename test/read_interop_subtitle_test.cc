@@ -50,6 +50,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   string ("theFontId"),
 				   false,
 				   false,
+				   false,
 				   dcp::Colour (255, 255, 255),
 				   39,
 				   1.0,
@@ -73,6 +74,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   string ("theFontId"),
 				   true,
 				   false,
+				   false,
 				   dcp::Colour (255, 255, 255),
 				   39,
 				   1.0,
@@ -91,6 +93,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFontId"),
+				   false,
 				   false,
 				   false,
 				   dcp::Colour (255, 255, 255),
@@ -116,6 +119,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   string ("theFontId"),
 				   false,
 				   false,
+				   false,
 				   dcp::Colour (255, 255, 255),
 				   39,
 				   1.0,
@@ -138,6 +142,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFontId"),
 				   false,
+				   true,
 				   true,
 				   dcp::Colour (255, 255, 255),
 				   39,
@@ -168,6 +173,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   string ("theFont"),
 				   true,
 				   false,
+				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
 				   1.0,
@@ -187,6 +193,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFont"),
 				   true,
+				   false,
 				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
@@ -211,6 +218,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   string ("theFont"),
 				   true,
 				   false,
+				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
 				   1.0,
@@ -230,6 +238,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFont"),
 				   true,
+				   false,
 				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
@@ -254,6 +263,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   string ("theFont"),
 				   true,
 				   false,
+				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
 				   1.0,
@@ -273,6 +283,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFont"),
 				   true,
+				   false,
 				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
@@ -297,6 +308,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   string ("theFont"),
 				   true,
 				   false,
+				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
 				   1.0,
@@ -316,6 +328,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFont"),
 				   true,
+				   false,
 				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
@@ -340,6 +353,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   string ("theFont"),
 				   true,
 				   false,
+				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
 				   1.0,
@@ -359,6 +373,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFont"),
 				   true,
+				   false,
 				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
@@ -383,6 +398,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   string ("theFont"),
 				   false,
 				   false,
+				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
 				   1.0,
@@ -401,6 +417,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFont"),
+				   false,
 				   false,
 				   false,
 				   dcp::Colour (255, 255, 255),
@@ -426,6 +443,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   string ("theFont"),
 				   false,
 				   false,
+				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
 				   1.0,
@@ -444,6 +462,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFont"),
+				   false,
 				   false,
 				   false,
 				   dcp::Colour (255, 255, 255),
@@ -469,6 +488,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   string ("theFont"),
 				   false,
 				   false,
+				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
 				   1.0,
@@ -487,6 +507,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   ));
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFont"),
+				   false,
 				   false,
 				   false,
 				   dcp::Colour (255, 255, 255),
@@ -512,6 +533,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   string ("theFont"),
 				   true,
 				   false,
+				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
 				   1.0,
@@ -531,6 +553,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 	BOOST_CHECK_EQUAL (s.back(), dcp::SubtitleString (
 				   string ("theFont"),
 				   true,
+				   false,
 				   false,
 				   dcp::Colour (255, 255, 255),
 				   42,
