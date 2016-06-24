@@ -91,19 +91,27 @@ SoundAssetWriter::write (float const * const * data, int frames)
 		_started = true;
 	}
 
+	int const ch = _sound_asset->channels ();
+
 	for (int i = 0; i < frames; ++i) {
 
 		byte_t* out = _state->frame_buffer.Data() + _frame_buffer_offset;
 
 		/* Write one sample per channel */
-		for (int j = 0; j < _sound_asset->channels(); ++j) {
+		for (int j = 0; j < ch; ++j) {
 			/* Convert sample to 24-bit int, clipping if necessary. */
-			int32_t const s = min (clip, max (-clip, data[j][i])) * (1 << 23);
+			float x = data[j][i];
+			if (x > clip) {
+				x = clip;
+			} else if (x < -clip) {
+				x = -clip;
+			}
+			int32_t const s = x * (1 << 23);
 			*out++ = (s & 0xff);
 			*out++ = (s & 0xff00) >> 8;
 			*out++ = (s & 0xff0000) >> 16;
 		}
-		_frame_buffer_offset += 3 * _sound_asset->channels();
+		_frame_buffer_offset += 3 * ch;
 
 		DCP_ASSERT (_frame_buffer_offset <= int (_state->frame_buffer.Capacity()));
 
