@@ -52,7 +52,7 @@ class SubtitleNode
 {
 public:
 	SubtitleNode () {}
-	SubtitleNode (boost::shared_ptr<const cxml::Node> node, boost::optional<int> tcr, std::string font_id_attribute);
+	SubtitleNode (boost::shared_ptr<const cxml::Node> node, boost::optional<int> tcr, Standard standard);
 
 	Time in;
 	Time out;

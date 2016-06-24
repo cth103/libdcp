@@ -51,7 +51,7 @@ using namespace dcp;
  *  in this object's member variables.
  *  @param node Node to read.
  */
-TextNode::TextNode (boost::shared_ptr<const cxml::Node> node, optional<int> tcr, string font_id_attribute)
+TextNode::TextNode (boost::shared_ptr<const cxml::Node> node, optional<int> tcr, Standard standard)
 	: h_position (0)
 	, h_align (HALIGN_CENTER)
 	, v_position (0)
@@ -99,6 +99,6 @@ TextNode::TextNode (boost::shared_ptr<const cxml::Node> node, optional<int> tcr,
 
 	list<cxml::NodePtr> f = node->node_children ("Font");
 	BOOST_FOREACH (cxml::NodePtr& i, f) {
-		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, tcr, font_id_attribute)));
+		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, tcr, standard)));
 	}
 }

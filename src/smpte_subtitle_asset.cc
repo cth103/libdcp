@@ -134,12 +134,12 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 
 	list<shared_ptr<dcp::FontNode> > font_nodes;
 	BOOST_FOREACH (cxml::NodePtr const & i, subtitle_list->node_children ("Font")) {
-		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, _time_code_rate, "ID")));
+		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, _time_code_rate, SMPTE)));
 	}
 
 	list<shared_ptr<dcp::SubtitleNode> > subtitle_nodes;
 	BOOST_FOREACH (cxml::NodePtr const & i, subtitle_list->node_children ("Subtitle")) {
-		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, _time_code_rate, "ID")));
+		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, _time_code_rate, SMPTE)));
 	}
 
 	parse_subtitles (xml, font_nodes, subtitle_nodes);

@@ -45,11 +45,15 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
-FontNode::FontNode (cxml::ConstNodePtr node, optional<int> tcr, string font_id_attribute)
+FontNode::FontNode (cxml::ConstNodePtr node, optional<int> tcr, Standard standard)
 {
 	text = node->content ();
 
-	id = node->optional_string_attribute (font_id_attribute);
+	if (standard == INTEROP) {
+		id = node->optional_string_attribute ("Id");
+	} else {
+		id = node->optional_string_attribute ("ID");
+	}
 	size = node->optional_number_attribute<int64_t> ("Size").get_value_or (0);
 	aspect_adjust = node->optional_number_attribute<float> ("AspectAdjust");
 	italic = node->optional_bool_attribute ("Italic");
@@ -69,17 +73,17 @@ FontNode::FontNode (cxml::ConstNodePtr node, optional<int> tcr, string font_id_a
 
 	list<cxml::NodePtr> s = node->node_children ("Subtitle");
 	BOOST_FOREACH (cxml::NodePtr& i, s) {
-		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, tcr, font_id_attribute)));
+		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, tcr, standard)));
 	}
 
 	list<cxml::NodePtr> f = node->node_children ("Font");
 	BOOST_FOREACH (cxml::NodePtr& i, f) {
-		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, tcr, font_id_attribute)));
+		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, tcr, standard)));
 	}
 
 	list<cxml::NodePtr> t = node->node_children ("Text");
 	BOOST_FOREACH (cxml::NodePtr& i, t) {
-		text_nodes.push_back (shared_ptr<TextNode> (new TextNode (i, tcr, font_id_attribute)));
+		text_nodes.push_back (shared_ptr<TextNode> (new TextNode (i, tcr, standard)));
 	}
 }
 

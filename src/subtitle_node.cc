@@ -46,19 +46,19 @@ using boost::lexical_cast;
 using namespace dcp;
 
 /** @param tcr Timecode rate for SMPTE, or empty for Interop */
-SubtitleNode::SubtitleNode (boost::shared_ptr<const cxml::Node> node, optional<int> tcr, string font_id_attribute)
+SubtitleNode::SubtitleNode (boost::shared_ptr<const cxml::Node> node, optional<int> tcr, Standard standard)
 {
 	in = Time (node->string_attribute ("TimeIn"), tcr);
 	out = Time (node->string_attribute ("TimeOut"), tcr);
 
 	list<cxml::NodePtr> f = node->node_children ("Font");
 	for (list<cxml::NodePtr>::iterator i = f.begin(); i != f.end(); ++i) {
-		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (*i, tcr, font_id_attribute)));
+		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (*i, tcr, standard)));
 	}
 
 	list<cxml::NodePtr> t = node->node_children ("Text");
 	for (list<cxml::NodePtr>::iterator i = t.begin(); i != t.end(); ++i) {
-		text_nodes.push_back (shared_ptr<TextNode> (new TextNode (*i, tcr, font_id_attribute)));
+		text_nodes.push_back (shared_ptr<TextNode> (new TextNode (*i, tcr, standard)));
 	}
 
 	fade_up_time = fade_time (node, "FadeUpTime", tcr);

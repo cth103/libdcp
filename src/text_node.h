@@ -63,7 +63,7 @@ public:
 		, direction (DIRECTION_LTR)
 	{}
 
-	TextNode (boost::shared_ptr<const cxml::Node> node, boost::optional<int> tcr, std::string font_id_attribute);
+	TextNode (boost::shared_ptr<const cxml::Node> node, boost::optional<int> tcr, Standard standard);
 
 	float h_position;
 	HAlign h_align;
