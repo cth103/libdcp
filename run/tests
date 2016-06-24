@@ -28,6 +28,10 @@ elif [ "$1" == "--callgrind" ]; then
     valgrind --tool="callgrind" $work/tests $private $*
 else
     $work/tests $private $*
+    if [ "$?" != "0" ]; then
+	echo "FAIL: unit tests"
+        exit 1
+    fi
 fi
 
 # Check a MXF written by the unit tests
