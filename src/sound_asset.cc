@@ -120,21 +120,48 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 		boost::throw_exception (DCPReadError ("could not read audio MXF information"));
 	}
 
-	if (
-		desc_A.EditRate != desc_B.EditRate ||
-		desc_A.AudioSamplingRate != desc_B.AudioSamplingRate ||
-		desc_A.Locked != desc_B.Locked ||
-		desc_A.ChannelCount != desc_B.ChannelCount ||
-		desc_A.QuantizationBits != desc_B.QuantizationBits ||
-		desc_A.BlockAlign != desc_B.BlockAlign ||
-		desc_A.AvgBps != desc_B.AvgBps ||
-		desc_A.LinkedTrackID != desc_B.LinkedTrackID ||
-		desc_A.ContainerDuration != desc_B.ContainerDuration
-//		desc_A.ChannelFormat != desc_B.ChannelFormat ||
-		) {
-
-		note (DCP_ERROR, "audio MXF picture descriptors differ");
+	if (desc_A.EditRate != desc_B.EditRate) {
+		note (
+			DCP_ERROR,
+			String::compose (
+				"audio edit rates differ: %1/%2 cf %3/%4",
+				desc_A.EditRate.Numerator, desc_A.EditRate.Denominator, desc_B.EditRate.Numerator, desc_B.EditRate.Denominator
+				)
+			);
 		return false;
+	} else if (desc_A.AudioSamplingRate != desc_B.AudioSamplingRate) {
+		note (
+			DCP_ERROR,
+			String::compose (
+				"audio sampling rates differ: %1 cf %2",
+				desc_A.AudioSamplingRate.Numerator, desc_A.AudioSamplingRate.Denominator,
+				desc_B.AudioSamplingRate.Numerator, desc_B.AudioSamplingRate.Numerator
+				)
+			);
+		return false;
+	} else if (desc_A.Locked != desc_B.Locked) {
+		note (DCP_ERROR, String::compose ("audio locked flags differ: %1 cf %2", desc_A.Locked, desc_B.Locked));
+		return false;
+	} else if (desc_A.ChannelCount != desc_B.ChannelCount) {
+		note (DCP_ERROR, String::compose ("audio channel counts differ: %1 cf %2", desc_A.ChannelCount, desc_B.ChannelCount));
+		return false;
+	} else if (desc_A.QuantizationBits != desc_B.QuantizationBits) {
+		note (DCP_ERROR, String::compose ("audio bits per sample differ: %1 cf %2", desc_A.QuantizationBits, desc_B.QuantizationBits));
+		return false;
+	} else if (desc_A.BlockAlign != desc_B.BlockAlign) {
+		note (DCP_ERROR, String::compose ("audio bytes per sample differ: %1 cf %2", desc_A.BlockAlign, desc_B.BlockAlign));
+		return false;
+	} else if (desc_A.AvgBps != desc_B.AvgBps) {
+		note (DCP_ERROR, String::compose ("audio average bps differ: %1 cf %2", desc_A.AvgBps, desc_B.AvgBps));
+		return false;
+	} else if (desc_A.LinkedTrackID != desc_B.LinkedTrackID) {
+		note (DCP_ERROR, String::compose ("audio linked track IDs differ: %1 cf %2", desc_A.LinkedTrackID, desc_B.LinkedTrackID));
+		return false;
+	} else if (desc_A.ContainerDuration != desc_B.ContainerDuration) {
+		note (DCP_ERROR, String::compose ("audio container durations differ: %1 cf %2", desc_A.ContainerDuration, desc_B.ContainerDuration));
+		return false;
+	} else if (desc_A.ChannelFormat != desc_B.ChannelFormat) {
+		/* XXX */
 	}
 
 	shared_ptr<const SoundAsset> other_sound = dynamic_pointer_cast<const SoundAsset> (other);
