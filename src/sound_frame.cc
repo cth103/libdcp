@@ -37,8 +37,8 @@
 
 #include "sound_frame.h"
 #include "exceptions.h"
-#include "AS_DCP.h"
-#include "KM_fileio.h"
+#include <asdcp/AS_DCP.h>
+#include <asdcp/KM_fileio.h>
 
 using namespace std;
 using namespace dcp;

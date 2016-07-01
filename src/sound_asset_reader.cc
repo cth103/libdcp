@@ -35,7 +35,7 @@
 #include "sound_asset.h"
 #include "sound_frame.h"
 #include "exceptions.h"
-#include "AS_DCP.h"
+#include <asdcp/AS_DCP.h>
 
 using boost::shared_ptr;
 using namespace dcp;

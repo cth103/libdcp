@@ -35,8 +35,8 @@
 #include "exceptions.h"
 #include "dcp_assert.h"
 #include "picture_asset.h"
-#include "AS_DCP.h"
-#include "KM_fileio.h"
+#include <asdcp/AS_DCP.h>
+#include <asdcp/KM_fileio.h>
 
 #include "picture_asset_writer_common.cc"
 

@@ -38,9 +38,9 @@
 #include "picture_asset_writer.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
-#include "AS_DCP.h"
-#include "KM_fileio.h"
 #include "j2k.h"
+#include <asdcp/AS_DCP.h>
+#include <asdcp/KM_fileio.h>
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
 #include <list>

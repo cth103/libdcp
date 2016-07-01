@@ -38,8 +38,8 @@
 #include "asset_writer.h"
 #include "mxf.h"
 #include "dcp_assert.h"
-#include "AS_DCP.h"
-#include "KM_prng.h"
+#include <asdcp/AS_DCP.h>
+#include <asdcp/KM_prng.h>
 
 using namespace dcp;
 

@@ -39,8 +39,8 @@
 #include "text_node.h"
 #include "subtitle_string.h"
 #include "dcp_assert.h"
-#include "AS_DCP.h"
-#include "KM_util.h"
+#include <asdcp/AS_DCP.h>
+#include <asdcp/KM_util.h>
 #include <libxml++/nodes/element.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/shared_array.hpp>

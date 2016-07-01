@@ -36,9 +36,9 @@
  */
 
 #include "key.h"
-#include "AS_DCP.h"
-#include "KM_prng.h"
-#include "KM_util.h"
+#include <asdcp/AS_DCP.h>
+#include <asdcp/KM_prng.h>
+#include <asdcp/KM_util.h>
 #include <sstream>
 #include <string>
 #include <iomanip>

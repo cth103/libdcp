@@ -33,7 +33,7 @@
 #include "reel_stereo_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_atmos_asset.h"
-#include "KM_util.h"
+#include <asdcp/KM_util.h>
 #include <sndfile.h>
 #include <boost/test/unit_test.hpp>
 

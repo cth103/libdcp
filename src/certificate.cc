@@ -35,12 +35,12 @@
  *  @brief Certificate class.
  */
 
-#include "KM_util.h"
 #include "certificate.h"
 #include "compose.hpp"
 #include "exceptions.h"
 #include "util.h"
 #include "dcp_assert.h"
+#include <asdcp/KM_util.h>
 #include <libxml++/nodes/element.h>
 #include <openssl/x509.h>
 #include <openssl/ssl.h>

@@ -35,7 +35,7 @@
 #include "mono_picture_asset.h"
 #include "mono_picture_frame.h"
 #include "exceptions.h"
-#include "AS_DCP.h"
+#include <asdcp/AS_DCP.h>
 
 using namespace dcp;
 using boost::shared_ptr;

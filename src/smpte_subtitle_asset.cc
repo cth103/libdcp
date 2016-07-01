@@ -43,9 +43,9 @@
 #include "raw_convert.h"
 #include "dcp_assert.h"
 #include "util.h"
-#include "AS_DCP.h"
-#include "KM_util.h"
 #include "compose.hpp"
+#include <asdcp/AS_DCP.h>
+#include <asdcp/KM_util.h>
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>

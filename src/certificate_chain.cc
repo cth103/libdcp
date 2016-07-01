@@ -39,8 +39,8 @@
 #include "exceptions.h"
 #include "util.h"
 #include "dcp_assert.h"
-#include "KM_util.h"
 #include "compose.hpp"
+#include <asdcp/KM_util.h>
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 #include <xmlsec/xmldsig.h>

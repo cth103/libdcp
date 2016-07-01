@@ -42,9 +42,9 @@
 #include "sound_asset_writer.h"
 #include "sound_asset_reader.h"
 #include "compose.hpp"
-#include "KM_fileio.h"
-#include "AS_DCP.h"
 #include "dcp_assert.h"
+#include <asdcp/KM_fileio.h>
+#include <asdcp/AS_DCP.h>
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
 #include <iostream>

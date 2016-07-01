@@ -41,9 +41,9 @@
 #include "cpl.h"
 #include "certificate_chain.h"
 #include "dcp_assert.h"
-#include "AS_DCP.h"
-#include "KM_util.h"
 #include "compose.hpp"
+#include <asdcp/AS_DCP.h>
+#include <asdcp/KM_util.h>
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
 #include <openssl/err.h>

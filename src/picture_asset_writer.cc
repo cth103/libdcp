@@ -31,11 +31,11 @@
     files in the program, then also delete it here.
 */
 
-#include "KM_fileio.h"
 #include "picture_asset_writer.h"
 #include "exceptions.h"
 #include "picture_asset.h"
-#include "AS_DCP.h"
+#include <asdcp/KM_fileio.h>
+#include <asdcp/AS_DCP.h>
 #include <inttypes.h>
 #include <stdint.h>
 

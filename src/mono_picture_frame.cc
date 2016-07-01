@@ -40,10 +40,10 @@
 #include "util.h"
 #include "rgb_xyz.h"
 #include "colour_conversion.h"
-#include "KM_fileio.h"
-#include "AS_DCP.h"
 #include "compose.hpp"
 #include "j2k.h"
+#include <asdcp/KM_fileio.h>
+#include <asdcp/AS_DCP.h>
 
 using std::string;
 using boost::shared_ptr;

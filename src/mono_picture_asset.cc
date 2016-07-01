@@ -34,12 +34,12 @@
 #include "mono_picture_asset.h"
 #include "mono_picture_asset_writer.h"
 #include "mono_picture_asset_reader.h"
-#include "AS_DCP.h"
-#include "KM_fileio.h"
 #include "exceptions.h"
 #include "dcp_assert.h"
 #include "mono_picture_frame.h"
 #include "compose.hpp"
+#include <asdcp/AS_DCP.h>
+#include <asdcp/KM_fileio.h>
 
 using std::string;
 using std::vector;

@@ -33,7 +33,7 @@
 
 #include "atmos_asset.h"
 #include "exceptions.h"
-#include "AS_DCP.h"
+#include <asdcp/AS_DCP.h>
 
 using std::string;
 using namespace dcp;

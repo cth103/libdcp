@@ -17,7 +17,6 @@
     along with libdcp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "KM_util.h"
 #include "metadata.h"
 #include "certificate.h"
 #include "dcp.h"
@@ -35,6 +34,7 @@
 #include "reel_sound_asset.h"
 #include "encrypted_kdm.h"
 #include "decrypted_kdm.h"
+#include <asdcp/KM_util.h>
 #include <sndfile.h>
 #include <boost/test/unit_test.hpp>
 #include <boost/shared_ptr.hpp>

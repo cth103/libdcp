@@ -50,12 +50,12 @@
 #include "cpl.h"
 #include "certificate_chain.h"
 #include "compose.hpp"
-#include "AS_DCP.h"
 #include "decrypted_kdm.h"
 #include "decrypted_kdm_key.h"
 #include "dcp_assert.h"
 #include "reel_asset.h"
 #include "font_asset.h"
+#include <asdcp/AS_DCP.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
 #include <libxml++/libxml++.h>

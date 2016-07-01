@@ -31,13 +31,13 @@
     files in the program, then also delete it here.
 */
 
-#include "AS_DCP.h"
 #include "stereo_picture_asset.h"
 #include "stereo_picture_frame.h"
 #include "exceptions.h"
 #include "stereo_picture_asset_writer.h"
 #include "stereo_picture_asset_reader.h"
 #include "dcp_assert.h"
+#include <asdcp/AS_DCP.h>
 
 using std::string;
 using std::pair;

@@ -34,7 +34,7 @@
 #include "asset_reader.h"
 #include "mxf.h"
 #include "exceptions.h"
-#include "AS_DCP.h"
+#include <asdcp/AS_DCP.h>
 
 using namespace dcp;
 

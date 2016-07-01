@@ -36,15 +36,15 @@
  */
 
 #include "raw_convert.h"
-#include "AS_DCP.h"
-#include "KM_prng.h"
-#include "KM_util.h"
 #include "mxf.h"
 #include "util.h"
 #include "metadata.h"
 #include "exceptions.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
+#include <asdcp/AS_DCP.h>
+#include <asdcp/KM_prng.h>
+#include <asdcp/KM_util.h>
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
 #include <iostream>

@@ -36,7 +36,7 @@
 #include "exceptions.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
-#include "AS_DCP.h"
+#include <asdcp/AS_DCP.h>
 
 using std::min;
 using std::max;

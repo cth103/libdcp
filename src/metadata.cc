@@ -38,7 +38,7 @@
 #include "metadata.h"
 #include "util.h"
 #include "local_time.h"
-#include "AS_DCP.h"
+#include <asdcp/AS_DCP.h>
 #include <sstream>
 #include <iomanip>
 #include <time.h>
