@@ -38,7 +38,7 @@ import distutils.spawn
 from waflib import Logs, Context
 
 APPNAME = 'libdcp'
-VERSION = '1.3.4'
+VERSION = '1.3.4devel'
 API_VERSION = '-1.0'
 
 def options(opt):
