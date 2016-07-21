@@ -39,8 +39,6 @@
 #include <inttypes.h>
 #include <stdint.h>
 
-using std::istream;
-using std::ostream;
 using std::string;
 using boost::shared_ptr;
 using namespace dcp;

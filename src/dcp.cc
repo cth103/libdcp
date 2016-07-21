@@ -62,12 +62,10 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
-#include <iostream>
 
 using std::string;
 using std::list;
 using std::cout;
-using std::ostream;
 using std::make_pair;
 using std::map;
 using std::cout;

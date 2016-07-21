@@ -49,8 +49,6 @@
 #include <boost/foreach.hpp>
 
 using std::string;
-using std::stringstream;
-using std::ostream;
 using std::list;
 using std::pair;
 using std::make_pair;
@@ -207,9 +205,8 @@ CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 	}
 
 	if (_annotation_text != other_cpl->_annotation_text && !opt.cpl_annotation_texts_can_differ) {
-		stringstream s;
-		s << "CPL: annotation texts differ: " << _annotation_text << " vs " << other_cpl->_annotation_text << "\n";
-		note (DCP_ERROR, s.str ());
+		string const s = "CPL: annotation texts differ: " + _annotation_text + " vs " + other_cpl->_annotation_text + "\n";
+		note (DCP_ERROR, s);
 		return false;
 	}
 

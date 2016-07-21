@@ -40,8 +40,6 @@
 
 #include "picture_asset_writer_common.cc"
 
-using std::istream;
-using std::ostream;
 using std::string;
 using boost::shared_ptr;
 using namespace dcp;

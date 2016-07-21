@@ -52,8 +52,6 @@
 
 using std::string;
 using std::list;
-using std::stringstream;
-using std::cout;
 using std::vector;
 using std::map;
 using boost::shared_ptr;
@@ -85,9 +83,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	if (!ASDCP_FAILURE (r)) {
 		string s;
 		reader->ReadTimedTextResource (s, 0, 0);
-		stringstream t;
-		t << s;
-		xml->read_stream (t);
+		xml->read_string (s);
 		ASDCP::WriterInfo info;
 		reader->FillWriterInfo (info);
 		_id = read_writer_info (info);

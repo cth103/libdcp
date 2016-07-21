@@ -47,12 +47,9 @@
 #include <asdcp/AS_DCP.h>
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
-#include <iostream>
 #include <stdexcept>
 
 using std::string;
-using std::stringstream;
-using std::ostream;
 using std::vector;
 using std::list;
 using boost::shared_ptr;
