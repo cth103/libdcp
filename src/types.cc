@@ -121,7 +121,7 @@ Colour::Colour (string argb_hex)
 string
 Colour::to_argb_string () const
 {
-	stringstream s;
+	locked_stringstream s;
 	s << "FF";
 	s << hex
 	  << setw(2) << setfill('0') << r

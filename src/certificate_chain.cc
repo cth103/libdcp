@@ -55,13 +55,11 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 #include <fstream>
-#include <sstream>
 
 using std::string;
 using std::ofstream;
 using std::ifstream;
 using std::runtime_error;
-using std::stringstream;
 using namespace dcp;
 
 /** Run a shell command.
@@ -108,7 +106,7 @@ command (string cmd)
 	int const code = WEXITSTATUS (r);
 #endif
 	if (code) {
-		stringstream s;
+		locked_stringstream s;
 		s << "error " << code << " in " << cmd << " within " << boost::filesystem::current_path();
 		throw dcp::MiscError (s.str());
 	}
@@ -125,7 +123,7 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	boost::filesystem::path public_name = private_key.string() + ".public";
 
 	/* Create the public key from the private key */
-	stringstream s;
+	locked_stringstream s;
 	s << "\"" << openssl.string() << "\" rsa -outform PEM -pubout -in " << private_key.string() << " -out " << public_name.string ();
 	command (s.str().c_str ());
 
@@ -222,7 +220,7 @@ CertificateChain::CertificateChain (
 		"/dnQualifier=" + public_key_digest ("ca.key", openssl);
 
 	{
-		stringstream c;
+		locked_stringstream c;
 		c << quoted_openssl
 		  << " req -new -x509 -sha256 -config ca.cnf -days 3650 -set_serial 5"
 		  << " -subj \"" << ca_subject << "\" -key ca.key -outform PEM -out ca.self-signed.pem";
@@ -253,7 +251,7 @@ CertificateChain::CertificateChain (
 		"/dnQualifier="	+ public_key_digest ("intermediate.key", openssl);
 
 	{
-		stringstream s;
+		locked_stringstream s;
 		s << quoted_openssl
 		  << " req -new -config intermediate.cnf -days 3649 -subj \"" << inter_subject << "\" -key intermediate.key -out intermediate.csr";
 		command (s.str().c_str());
@@ -290,7 +288,7 @@ CertificateChain::CertificateChain (
 		"/dnQualifier="	+ public_key_digest ("leaf.key", openssl);
 
 	{
-		stringstream s;
+		locked_stringstream s;
 		s << quoted_openssl << " req -new -config leaf.cnf -days 3648 -subj \"" << leaf_subject << "\" -key leaf.key -outform PEM -out leaf.csr";
 		command (s.str().c_str());
 	}

@@ -21,13 +21,13 @@
 #define BOOST_TEST_MODULE libdcp_test
 #include "util.h"
 #include "test.h"
+#include <locked_sstream.h>
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
 #include <cstdio>
 
 using std::string;
 using std::min;
-using std::stringstream;
 using std::list;
 
 boost::filesystem::path private_test;
@@ -123,7 +123,7 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 	uint8_t* ref_buffer = new uint8_t[buffer_size];
 	uint8_t* check_buffer = new uint8_t[buffer_size];
 
-	stringstream error;
+	locked_stringstream error;
 	error << "File " << check.string() << " differs from reference " << ref.string();
 
 	while (N) {

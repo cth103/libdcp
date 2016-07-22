@@ -36,15 +36,14 @@
  */
 
 #include "key.h"
+#include <locked_sstream.h>
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_prng.h>
 #include <asdcp/KM_util.h>
-#include <sstream>
 #include <string>
 #include <iomanip>
 
 using std::string;
-using std::stringstream;
 using std::setw;
 using std::setfill;
 using namespace dcp;
@@ -94,7 +93,7 @@ Key::operator= (Key const & other)
 string
 Key::hex () const
 {
-	stringstream g;
+	locked_stringstream g;
 
 	for (unsigned int i = 0; i < ASDCP::KeyLen; ++i) {
 		g << setw(2) << setfill('0') << std::hex << static_cast<int> (_value[i]);

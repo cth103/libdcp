@@ -52,7 +52,6 @@
 using std::list;
 using std::vector;
 using std::string;
-using std::stringstream;
 using std::setw;
 using std::setfill;
 using std::hex;
@@ -79,7 +78,7 @@ put_uuid (uint8_t ** d, string id)
 {
         id.erase (std::remove (id.begin(), id.end(), '-'));
         for (int i = 0; i < 32; i += 2) {
-                stringstream s;
+                locked_stringstream s;
                 s << id[i] << id[i + 1];
                 int h;
                 s >> hex >> h;
@@ -91,7 +90,7 @@ put_uuid (uint8_t ** d, string id)
 static string
 get_uuid (unsigned char ** p)
 {
-	stringstream g;
+	locked_stringstream g;
 
 	for (int i = 0; i < 16; ++i) {
 		g << setw(2) << setfill('0') << hex << static_cast<int> (**p);
@@ -301,7 +300,7 @@ DecryptedKDM::encrypt (shared_ptr<const CertificateChain> signer, Certificate re
 		char out[encrypted_len * 2];
 		Kumu::base64encode (encrypted, encrypted_len, out, encrypted_len * 2);
 		int const N = strlen (out);
-		stringstream lines;
+		locked_stringstream lines;
 		for (int i = 0; i < N; ++i) {
 			if (i > 0 && (i % 64) == 0) {
 				lines << "\n";

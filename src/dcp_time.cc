@@ -330,7 +330,7 @@ dcp::operator/ (Time a, Time const & b)
 string
 Time::as_string (Standard standard) const
 {
-	stringstream str;
+	locked_stringstream str;
 	str << setw(2) << setfill('0') << h << ":"
 	    << setw(2) << setfill('0') << m << ":"
 	    << setw(2) << setfill('0') << s << ":";
