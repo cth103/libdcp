@@ -19,9 +19,8 @@
 
 #include "util.h"
 #include "exceptions.h"
+#include <locked_sstream.h>
 #include <boost/test/unit_test.hpp>
-
-using std::stringstream;
 
 /** Check that dcp::Colour works */
 BOOST_AUTO_TEST_CASE (colour)
@@ -58,7 +57,7 @@ BOOST_AUTO_TEST_CASE (colour)
 
 	BOOST_CHECK_THROW (dcp::Colour ("001234"), dcp::XMLError);
 
-	stringstream s;
+	locked_stringstream s;
 	s << c;
 	BOOST_CHECK_EQUAL (s.str(), "(255, 0, 0)");
 }

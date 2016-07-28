@@ -47,7 +47,6 @@
 
 using std::bad_cast;
 using std::string;
-using std::stringstream;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using boost::optional;

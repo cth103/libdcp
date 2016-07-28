@@ -55,7 +55,6 @@ using std::list;
 using std::string;
 using std::ostream;
 using std::min;
-using std::stringstream;
 using namespace dcp;
 
 static string const begin_certificate = "-----BEGIN CERTIFICATE-----";
@@ -104,7 +103,7 @@ Certificate::read_string (string cert)
 	   See http://comments.gmane.org/gmane.comp.encryption.openssl.user/55593
 	*/
 
-	stringstream s (cert);
+	locked_stringstream s (cert);
 	string line;
 
 	/* BEGIN */

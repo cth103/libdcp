@@ -45,19 +45,13 @@
 #include <boost/filesystem.hpp>
 #include <list>
 #include <stdexcept>
-#include <iostream>
-#include <sstream>
 
 using std::string;
-using std::ostream;
 using std::list;
 using std::vector;
 using std::max;
-using std::stringstream;
 using std::pair;
 using std::make_pair;
-using std::istream;
-using std::cout;
 using boost::shared_ptr;
 using namespace dcp;
 

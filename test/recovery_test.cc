@@ -54,6 +54,7 @@ BOOST_AUTO_TEST_CASE (recovery)
 	int written_size = 0;
 	for (int i = 0; i < 24; ++i) {
 		dcp::FrameInfo info = writer->write (data, size);
+		BOOST_CHECK_EQUAL (info.hash, "cb90485a97ea5f7555cedc8a7afd473b");
 		written_size = info.size;
 	}
 

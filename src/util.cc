@@ -55,14 +55,12 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <stdexcept>
-#include <sstream>
 #include <iostream>
 #include <iomanip>
 
 using std::string;
 using std::wstring;
 using std::cout;
-using std::stringstream;
 using std::min;
 using std::max;
 using std::list;

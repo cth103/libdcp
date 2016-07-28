@@ -39,7 +39,6 @@
 #include "util.h"
 #include "local_time.h"
 #include <asdcp/AS_DCP.h>
-#include <sstream>
 #include <iomanip>
 #include <time.h>
 

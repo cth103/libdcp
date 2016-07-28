@@ -41,12 +41,10 @@
 #include "compose.hpp"
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
-#include <iostream>
 
 using std::pair;
 using std::cout;
 using std::string;
-using std::stringstream;
 using std::make_pair;
 using boost::shared_ptr;
 using namespace dcp;
@@ -122,13 +120,12 @@ bool
 ReelAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, NoteHandler note) const
 {
 	if (_annotation_text != other->_annotation_text) {
-		stringstream s;
-		s << "Reel: annotation texts differ (" << _annotation_text << " vs " << other->_annotation_text << ")\n";
+		string const s = "Reel: annotation texts differ (" + _annotation_text + " vs " + other->_annotation_text + ")\n";
 		if (!opt.reel_annotation_texts_can_differ) {
-			note (DCP_ERROR, s.str ());
+			note (DCP_ERROR, s);
 			return false;
 		} else {
-			note (DCP_NOTE, s.str ());
+			note (DCP_NOTE, s);
 		}
 	}
 

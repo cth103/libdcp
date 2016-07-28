@@ -17,14 +17,13 @@
     along with libdcp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <boost/test/unit_test.hpp>
-#include <libxml++/libxml++.h>
 #include "encrypted_kdm.h"
 #include "decrypted_kdm.h"
 #include "util.h"
+#include <libxml++/libxml++.h>
+#include <boost/test/unit_test.hpp>
 
 using std::list;
-using std::stringstream;
 using boost::shared_ptr;
 
 /** Check reading and decryption of a KDM */
@@ -58,9 +57,7 @@ BOOST_AUTO_TEST_CASE (kdm_passthrough_test)
 		);
 
 	shared_ptr<xmlpp::DomParser> parser (new xmlpp::DomParser ());
-	stringstream s;
-	s << kdm.as_xml ();
-	parser->parse_stream (s);
+	parser->parse_memory (kdm.as_xml ());
 	parser->get_document()->write_to_file_formatted ("build/kdm.xml", "UTF-8");
 	int const r = system (
 		"xmldiff -c test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml build/kdm.xml"

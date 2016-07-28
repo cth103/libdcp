@@ -34,7 +34,7 @@
 #ifndef LIBDCP_RAW_CONVERT_H
 #define LIBDCP_RAW_CONVERT_H
 
-#include <sstream>
+#include <locked_sstream.h>
 #include <iomanip>
 
 namespace dcp {
@@ -46,7 +46,7 @@ template <typename P, typename Q>
 P
 raw_convert (Q v, int precision = 16, bool fixed = false)
 {
-	std::stringstream s;
+	locked_stringstream s;
 	s.imbue (std::locale::classic ());
 	s << std::setprecision (precision);
 	if (fixed) {

@@ -45,13 +45,9 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/shared_array.hpp>
 #include <boost/foreach.hpp>
-#include <fstream>
 
 using std::string;
 using std::list;
-using std::ostream;
-using std::ofstream;
-using std::stringstream;
 using std::cout;
 using std::cerr;
 using std::map;
