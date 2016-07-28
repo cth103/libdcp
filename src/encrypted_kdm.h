@@ -90,6 +90,8 @@ public:
 	std::string content_title_text () const;
 	std::string issue_date () const;
 	std::string cpl_id () const;
+	LocalTime not_valid_before() const;
+	LocalTime not_valid_after() const;
 
 private:
 

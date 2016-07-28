@@ -671,6 +671,18 @@ EncryptedKDM::issue_date () const
 	return _data->authenticated_public.issue_date;
 }
 
+LocalTime
+EncryptedKDM::not_valid_before () const
+{
+	return _data->authenticated_public.required_extensions.kdm_required_extensions.not_valid_before;
+}
+
+LocalTime
+EncryptedKDM::not_valid_after () const
+{
+	return _data->authenticated_public.required_extensions.kdm_required_extensions.not_valid_after;
+}
+
 bool
 dcp::operator== (EncryptedKDM const & a, EncryptedKDM const & b)
 {
