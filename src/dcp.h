@@ -41,6 +41,7 @@
 #include "types.h"
 #include "certificate.h"
 #include "metadata.h"
+#include "filename_format.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>
 #include <string>
@@ -111,7 +112,8 @@ public:
 	void write_xml (
 		Standard standard,
 		XMLMetadata metadata = XMLMetadata (),
-		boost::shared_ptr<const CertificateChain> signer = boost::shared_ptr<const CertificateChain> ()
+		boost::shared_ptr<const CertificateChain> signer = boost::shared_ptr<const CertificateChain> (),
+		FilenameFormat filename_format = FilenameFormat("%t_%i")
 	);
 
 	void resolve_refs (std::list<boost::shared_ptr<Asset> > assets);
@@ -127,6 +129,7 @@ private:
 	 *  @param pkl_uuid UUID to use.
 	 */
 	boost::filesystem::path write_pkl (
+		std::string file,
 		Standard standard,
 		std::string pkl_uuid,
 		XMLMetadata metadata,

@@ -51,6 +51,7 @@ def build(bld):
              encrypted_kdm.cc
              exceptions.cc
              file.cc
+             filename_format.cc
              font_asset.cc
              font_node.cc
              gamma_transfer_function.cc
@@ -66,6 +67,7 @@ def build(bld):
              mono_picture_asset_writer.cc
              mono_picture_frame.cc
              mxf.cc
+             name_format.cc
              object.cc
              openjpeg_image.cc
              picture_asset.cc
@@ -119,6 +121,7 @@ def build(bld):
               decrypted_kdm_key.h
               encrypted_kdm.h
               exceptions.h
+              filename_format.h
               font_asset.h
               gamma_transfer_function.h
               interop_load_font_node.h
@@ -133,6 +136,7 @@ def build(bld):
               mono_picture_frame.h
               modified_gamma_transfer_function.h
               mxf.h
+              name_format.h
               object.h
               openjpeg_image.h
               picture_asset.h

@@ -303,10 +303,10 @@ DCP::add (DecryptedKDM const & kdm)
 }
 
 boost::filesystem::path
-DCP::write_pkl (Standard standard, string pkl_uuid, XMLMetadata metadata, shared_ptr<const CertificateChain> signer) const
+DCP::write_pkl (string file, Standard standard, string pkl_uuid, XMLMetadata metadata, shared_ptr<const CertificateChain> signer) const
 {
 	boost::filesystem::path p = _directory;
-	p /= String::compose ("pkl_%1.xml", pkl_uuid);
+	p /= file;
 
 	xmlpp::Document doc;
 	xmlpp::Element* pkl;
@@ -458,16 +458,22 @@ void
 DCP::write_xml (
 	Standard standard,
 	XMLMetadata metadata,
-	shared_ptr<const CertificateChain> signer
+	shared_ptr<const CertificateChain> signer,
+	FilenameFormat filename_format
 	)
 {
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
-		string const filename = "cpl_" + i->id() + ".xml";
-		i->write_xml (_directory / filename, standard, signer);
+		NameFormat::Map values;
+		values["type"] = "cpl";
+		values["id"] = i->id();
+		i->write_xml (_directory / (filename_format.get(values) + ".xml"), standard, signer);
 	}
 
 	string const pkl_uuid = make_uuid ();
-	boost::filesystem::path const pkl_path = write_pkl (standard, pkl_uuid, metadata, signer);
+	NameFormat::Map values;
+	values["type"] = "pkl";
+	values["id"] = pkl_uuid;
+	boost::filesystem::path const pkl_path = write_pkl (filename_format.get(values) + ".xml", standard, pkl_uuid, metadata, signer);
 
 	write_volindex (standard);
 	write_assetmap (standard, pkl_uuid, boost::filesystem::file_size (pkl_path), metadata);
