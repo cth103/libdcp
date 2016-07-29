@@ -353,7 +353,7 @@ dcp::file_to_string (boost::filesystem::path p, uintmax_t max_length)
 {
 	uintmax_t len = boost::filesystem::file_size (p);
 	if (len > max_length) {
-		throw MiscError ("Unexpectedly long file");
+		throw MiscError (String::compose ("Unexpectedly long file (%1)", p.string()));
 	}
 
 	FILE* f = fopen_boost (p, "r");
