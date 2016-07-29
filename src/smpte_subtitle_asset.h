@@ -164,6 +164,7 @@ private:
 	 *  content presented may be less than this.
 	 */
 	int64_t _intrinsic_duration;
+	/** <ContentTitleText> from the asset */
 	std::string _content_title_text;
 	boost::optional<std::string> _language;
 	boost::optional<std::string> _annotation_text;

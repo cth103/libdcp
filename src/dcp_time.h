@@ -56,7 +56,7 @@ public:
 	Time () : h (0), m (0), s (0), e (0), tcr (1) {}
 
 	/** Construct a Time.
-	 *  @param Frame index (starting from 0).
+	 *  @param frame Frame index (starting from 0).
 	 *  @param frames_per_second Frames per second.
 	 *  @param tcr Timecode rate.
 	 */

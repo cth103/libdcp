@@ -103,6 +103,7 @@ protected:
 private:
 	friend struct ::asset_test;
 
+	/** @return type string for PKLs for this asset */
 	virtual std::string pkl_type (Standard standard) const = 0;
 
 	/** Hash of _file if it has been computed */

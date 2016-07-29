@@ -64,6 +64,10 @@ Asset::Asset (boost::filesystem::path file)
 
 }
 
+/** Create an Asset from a given file with a known ID.
+ *  @param file File name.
+ *  @param id ID.
+ */
 Asset::Asset (string id, boost::filesystem::path file)
 	: Object (id)
 	, _file (file)
