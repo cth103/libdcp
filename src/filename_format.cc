@@ -39,6 +39,8 @@ using namespace dcp;
 FilenameFormat::FilenameFormat (string specification)
 	: NameFormat (specification)
 {
-	add ("type", 't', "asset type (j2c/pcm/sub/pkl/cpl)");
-	add ("id", 'i', "unique ID");
+	/* asset type */
+	add ('t');
+	/* unique ID */
+	add ('i');
 }

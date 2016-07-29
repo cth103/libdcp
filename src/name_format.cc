@@ -65,21 +65,9 @@ filter (string c)
 }
 
 void
-NameFormat::add (string name, char placeholder, string title)
+NameFormat::add (char placeholder)
 {
-	_components.push_back (Component (name, placeholder, title));
-}
-
-optional<NameFormat::Component>
-NameFormat::component_by_placeholder (char p) const
-{
-	BOOST_FOREACH (Component const & i, _components) {
-		if (i.placeholder == p) {
-			return i;
-		}
-	}
-
-	return optional<Component> ();
+	_components.push_back (placeholder);
 }
 
 string
@@ -89,9 +77,9 @@ NameFormat::get (Map values) const
 	for (size_t i = 0; i < _specification.length(); ++i) {
 		bool done = false;
 		if (_specification[i] == '%' && (i < _specification.length() - 1)) {
-			optional<Component> c = component_by_placeholder (_specification[i + 1]);
-			if (c) {
-				result += filter (values[c->name]);
+			Map::const_iterator j = values.find(_specification[i + 1]);
+			if (j != values.end()) {
+				result += filter (j->second);
 				++i;
 				done = true;
 			}

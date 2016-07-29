@@ -43,20 +43,7 @@ namespace dcp {
 class NameFormat
 {
 public:
-	struct Component
-	{
-		Component (std::string name_, char placeholder_, std::string title_)
-			: name (name_)
-			, placeholder (placeholder_)
-			, title (title_)
-		{}
-
-		std::string name;
-		char placeholder;
-		std::string title;
-	};
-
-	std::list<Component> components () const {
+	std::list<char> components () const {
 		return _components;
 	}
 
@@ -68,7 +55,7 @@ public:
 		_specification = specification;
 	}
 
-	typedef std::map<std::string, std::string> Map;
+	typedef std::map<char, std::string> Map;
 
 	std::string get (Map) const;
 
@@ -79,12 +66,11 @@ protected:
 		: _specification (specification)
 	{}
 
-	void add (std::string name, char placeholder, std::string title);
+	void add (char placeholder);
 
 private:
-	boost::optional<NameFormat::Component> component_by_placeholder (char p) const;
-
-	std::list<Component> _components;
+	/** placeholders for each component */
+	std::list<char> _components;
 	std::string _specification;
 };
 
