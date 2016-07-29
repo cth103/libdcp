@@ -43,4 +43,8 @@ FilenameFormat::FilenameFormat (string specification)
 	add ('t');
 	/* unique ID */
 	add ('i');
+	/* reel index */
+	add ('r');
+	/* reel count */
+	add ('n');
 }
