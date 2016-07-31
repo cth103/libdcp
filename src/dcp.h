@@ -41,7 +41,7 @@
 #include "types.h"
 #include "certificate.h"
 #include "metadata.h"
-#include "filename_format.h"
+#include "name_format.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>
 #include <string>
@@ -113,7 +113,7 @@ public:
 		Standard standard,
 		XMLMetadata metadata = XMLMetadata (),
 		boost::shared_ptr<const CertificateChain> signer = boost::shared_ptr<const CertificateChain> (),
-		FilenameFormat filename_format = FilenameFormat("%t_%i")
+		NameFormat name_format = NameFormat("%t_%i")
 	);
 
 	void resolve_refs (std::list<boost::shared_ptr<Asset> > assets);

@@ -51,7 +51,6 @@ def build(bld):
              encrypted_kdm.cc
              exceptions.cc
              file.cc
-             filename_format.cc
              font_asset.cc
              font_node.cc
              gamma_transfer_function.cc
@@ -121,7 +120,6 @@ def build(bld):
               decrypted_kdm_key.h
               encrypted_kdm.h
               exceptions.h
-              filename_format.h
               font_asset.h
               gamma_transfer_function.h
               interop_load_font_node.h

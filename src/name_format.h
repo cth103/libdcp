@@ -43,9 +43,11 @@ namespace dcp {
 class NameFormat
 {
 public:
-	std::list<char> components () const {
-		return _components;
-	}
+	NameFormat () {}
+
+	NameFormat (std::string specification)
+		: _specification (specification)
+	{}
 
 	std::string specification () const {
 		return _specification;
@@ -59,18 +61,7 @@ public:
 
 	std::string get (Map) const;
 
-protected:
-	NameFormat () {}
-
-	NameFormat (std::string specification)
-		: _specification (specification)
-	{}
-
-	void add (char placeholder);
-
 private:
-	/** placeholders for each component */
-	std::list<char> _components;
 	std::string _specification;
 };
 

@@ -64,12 +64,6 @@ filter (string c)
 	return o;
 }
 
-void
-NameFormat::add (char placeholder)
-{
-	_components.push_back (placeholder);
-}
-
 string
 NameFormat::get (Map values) const
 {
