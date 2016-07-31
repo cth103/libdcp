@@ -47,4 +47,6 @@ FilenameFormat::FilenameFormat (string specification)
 	add ('r');
 	/* reel count */
 	add ('n');
+	/* content name */
+	add ('c');
 }
