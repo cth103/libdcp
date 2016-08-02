@@ -577,6 +577,7 @@ EncryptedKDM::EncryptedKDM (
 		   reports that this doesn't work with his setup;
 		   a working KDM does not include the recipient's
 		   thumbprint (recipient.thumbprint()).
+		   Waimea uses only the trusted devices here, too.
 		*/
 		BOOST_FOREACH (Certificate const & i, trusted_devices) {
 			kre.authorized_device_info.certificate_thumbprints.push_back (i.thumbprint ());
