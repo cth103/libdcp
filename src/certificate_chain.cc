@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -561,4 +561,15 @@ CertificateChain::add_signature_value (xmlpp::Node* parent, string ns) const
 	}
 
 	xmlSecDSigCtxDestroy (signature_context);
+}
+
+string
+CertificateChain::chain () const
+{
+	string o;
+	BOOST_FOREACH (Certificate const &i, root_to_leaf ()) {
+		o += i.certificate(true);
+	}
+
+	return o;
 }

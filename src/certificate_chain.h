@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -99,6 +99,8 @@ public:
 	void set_key (std::string k) {
 		_key = k;
 	}
+
+	std::string chain () const;
 
 private:
 	friend class ::certificates;
