@@ -43,7 +43,6 @@
 #include <libxml++/libxml++.h>
 
 using std::pair;
-using std::cout;
 using std::string;
 using std::make_pair;
 using boost::shared_ptr;
