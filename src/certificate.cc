@@ -103,34 +103,55 @@ Certificate::read_string (string cert)
 	   See http://comments.gmane.org/gmane.comp.encryption.openssl.user/55593
 	*/
 
-	locked_stringstream s (cert);
+	list<string> lines;
 	string line;
 
-	/* BEGIN */
-	do {
-		getline (s, line);
-		boost::algorithm::trim (line);
-	} while (s.good() && line != begin_certificate);
+	for (size_t i = 0; i < cert.length(); ++i) {
+		line += cert[i];
+		if (cert[i] == '\r' || cert[i] == '\n') {
+			boost::algorithm::trim (line);
+			lines.push_back (line);
+			line = "";
+		}
+	}
 
-	if (line != begin_certificate) {
+	if (!line.empty()) {
+		boost::algorithm::trim (line);
+		lines.push_back (line);
+	}
+
+	list<string>::iterator i = lines.begin ();
+
+	/* BEGIN */
+	while (i != lines.end() && *i != begin_certificate) {
+		++i;
+	}
+
+	if (i == lines.end()) {
 		throw MiscError ("missing BEGIN line in certificate");
 	}
+
+	/* Skip over the BEGIN line */
+	++i;
 
 	/* The base64 data */
 	bool got_end = false;
 	string base64 = "";
-	while (getline (s, line)) {
-		boost::algorithm::trim (line);
-		if (line == end_certificate) {
+	while (i != lines.end()) {
+		if (*i == end_certificate) {
 			got_end = true;
 			break;
 		}
-		base64 += line;
+		base64 += *i;
+		++i;
 	}
 
 	if (!got_end) {
 		throw MiscError ("missing END line in certificate");
 	}
+
+	/* Skip over the END line */
+	++i;
 
 	/* Make up the fixed version */
 
@@ -156,11 +177,10 @@ Certificate::read_string (string cert)
 	BIO_free (bio);
 
 	/* See if there are any non-blank lines after the certificate that we read */
-	line.clear ();
-	while (s.good() && line.empty()) {
-		getline (s, line);
+	while (i != lines.end() && i->empty()) {
+		++i;
 	}
-	return (s.good() && !line.empty());
+	return i != lines.end();
 }
 
 /** Destructor */
