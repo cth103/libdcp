@@ -299,15 +299,15 @@ DecryptedKDM::encrypt (shared_ptr<const CertificateChain> signer, Certificate re
 		char out[encrypted_len * 2];
 		Kumu::base64encode (encrypted, encrypted_len, out, encrypted_len * 2);
 		int const N = strlen (out);
-		locked_stringstream lines;
+		string lines;
 		for (int i = 0; i < N; ++i) {
 			if (i > 0 && (i % 64) == 0) {
-				lines << "\n";
+				lines += "\n";
 			}
-			lines << out[i];
+			lines += out[i];
 		}
 
-		keys.push_back (lines.str ());
+		keys.push_back (lines);
 	}
 
 	string device_list_description = recipient.subject_common_name ();
