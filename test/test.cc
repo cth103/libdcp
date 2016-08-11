@@ -21,7 +21,6 @@
 #define BOOST_TEST_MODULE libdcp_test
 #include "util.h"
 #include "test.h"
-#include <locked_sstream.h>
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
 #include <cstdio>
@@ -123,8 +122,8 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 	uint8_t* ref_buffer = new uint8_t[buffer_size];
 	uint8_t* check_buffer = new uint8_t[buffer_size];
 
-	locked_stringstream error;
-	error << "File " << check.string() << " differs from reference " << ref.string();
+	string error;
+	error = "File " + check.string() + " differs from reference " + ref.string();
 
 	while (N) {
 		uintmax_t this_time = min (uintmax_t (buffer_size), N);
@@ -133,7 +132,7 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 		r = fread (check_buffer, 1, this_time, check_file);
 		BOOST_CHECK_EQUAL (r, this_time);
 
-		BOOST_CHECK_MESSAGE (memcmp (ref_buffer, check_buffer, this_time) == 0, error.str ());
+		BOOST_CHECK_MESSAGE (memcmp (ref_buffer, check_buffer, this_time) == 0, error);
 		if (memcmp (ref_buffer, check_buffer, this_time)) {
 			break;
 		}
