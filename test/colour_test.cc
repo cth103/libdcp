@@ -19,7 +19,6 @@
 
 #include "util.h"
 #include "exceptions.h"
-#include <locked_sstream.h>
 #include <boost/test/unit_test.hpp>
 
 /** Check that dcp::Colour works */
