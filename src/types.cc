@@ -121,16 +121,9 @@ Colour::Colour (string argb_hex)
 string
 Colour::to_argb_string () const
 {
-	locked_stringstream s;
-	s << "FF";
-	s << hex
-	  << setw(2) << setfill('0') << r
-	  << setw(2) << setfill('0') << g
-	  << setw(2) << setfill('0') << b;
-
-	string t = s.str();
-	to_upper (t);
-	return t;
+	char buffer[9];
+	snprintf (buffer, sizeof(buffer), "FF%02X%02X%02X", r, g, b);
+	return buffer;
 }
 
 /** operator== for Colours.

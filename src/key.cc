@@ -36,7 +36,7 @@
  */
 
 #include "key.h"
-#include <locked_sstream.h>
+#include "dcp_assert.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_prng.h>
 #include <asdcp/KM_util.h>
@@ -93,13 +93,17 @@ Key::operator= (Key const & other)
 string
 Key::hex () const
 {
-	locked_stringstream g;
+	DCP_ASSERT (ASDCP::KeyLen == 16);
 
-	for (unsigned int i = 0; i < ASDCP::KeyLen; ++i) {
-		g << setw(2) << setfill('0') << std::hex << static_cast<int> (_value[i]);
-	}
+	char buffer[33];
+	snprintf (
+		buffer, sizeof(buffer),
+		"%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx",
+		_value[0], _value[1], _value[2], _value[3], _value[4], _value[5], _value[6], _value[7],
+		_value[8], _value[9], _value[10], _value[11], _value[12], _value[13], _value[14], _value[15]
+		);
 
-	return g.str ();
+	return buffer;
 }
 
 bool
