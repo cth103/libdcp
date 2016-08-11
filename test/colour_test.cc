@@ -56,8 +56,4 @@ BOOST_AUTO_TEST_CASE (colour)
 	BOOST_CHECK (c != d);
 
 	BOOST_CHECK_THROW (dcp::Colour ("001234"), dcp::XMLError);
-
-	locked_stringstream s;
-	s << c;
-	BOOST_CHECK_EQUAL (s.str(), "(255, 0, 0)");
 }
