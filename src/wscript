@@ -59,6 +59,7 @@ def build(bld):
              j2k.cc
              key.cc
              local_time.cc
+             locale_convert.cc
              metadata.cc
              modified_gamma_transfer_function.cc
              mono_picture_asset.cc
@@ -71,6 +72,7 @@ def build(bld):
              openjpeg_image.cc
              picture_asset.cc
              picture_asset_writer.cc
+             raw_convert.cc
              reel.cc
              reel_asset.cc
              reel_atmos_asset.cc
@@ -128,6 +130,7 @@ def build(bld):
               key.h
               load_font_node.h
               local_time.h
+              locale_convert.h
               metadata.h
               mono_picture_asset.h
               mono_picture_asset_reader.h

@@ -81,6 +81,7 @@ def build(bld):
                  local_time_test.cc
                  make_digest_test.cc
                  kdm_test.cc
+                 raw_convert_test.cc
                  read_dcp_test.cc
                  read_interop_subtitle_test.cc
                  read_smpte_subtitle_test.cc

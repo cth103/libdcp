@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,22 +31,19 @@
     files in the program, then also delete it here.
 */
 
-#ifndef LIBDCP_RAW_CONVERT_H
-#define LIBDCP_RAW_CONVERT_H
+#ifndef LIBDCP_LOCALE_CONVERT_H
+#define LIBDCP_LOCALE_CONVERT_H
 
 #include <boost/static_assert.hpp>
-#include <iomanip>
+#include <string>
 
 namespace dcp {
 
-/** A sort-of version of boost::lexical_cast that does uses the "C"
- *  locale (i.e. no thousands separators and a . for the decimal separator).
- */
 template <typename P, typename Q>
 P
-raw_convert (Q v, int precision = 16, bool fixed = false)
+locale_convert (Q x, int precision = 16, bool fixed = false)
 {
-	/* We can't write a generic version of raw_convert; all required
+	/* We can't write a generic version of locale_convert; all required
 	   versions must be specialised.
 	*/
 	BOOST_STATIC_ASSERT (sizeof (Q) == 0);
@@ -54,59 +51,51 @@ raw_convert (Q v, int precision = 16, bool fixed = false)
 
 template <>
 std::string
-raw_convert (int v, int, bool);
+locale_convert (int x, int, bool);
 
 template <>
 std::string
-raw_convert (int64_t v, int, bool);
+locale_convert (int64_t x, int, bool);
 
 template <>
 std::string
-raw_convert (uint64_t v, int, bool);
+locale_convert (uint64_t x, int, bool);
 
 template <>
 std::string
-raw_convert (float v, int, bool);
+locale_convert (float x, int precision, bool fixed);
 
 template <>
 std::string
-raw_convert (double v, int, bool);
+locale_convert (double x, int precision, bool fixed);
 
 template <>
 std::string
-raw_convert (char const * v, int, bool);
+locale_convert (std::string x, int, bool);
 
 template <>
 std::string
-raw_convert (char* v, int, bool);
+locale_convert (char* x, int, bool);
 
 template <>
 std::string
-raw_convert (std::string v, int, bool);
+locale_convert (char const * x, int, bool);
 
 template <>
 int
-raw_convert (std::string v, int, bool);
+locale_convert (std::string x, int, bool);
 
 template <>
-int
-raw_convert (char const * v, int, bool);
-
-template <>
-float
-raw_convert (std::string v, int, bool);
+int64_t
+locale_convert (std::string x, int, bool);
 
 template <>
 float
-raw_convert (char const * v, int, bool);
+locale_convert (std::string x, int, bool);
 
 template <>
 double
-raw_convert (std::string v, int, bool);
-
-template <>
-double
-raw_convert (char const * v, int, bool);
+locale_convert (std::string x, int, bool);
 
 }
 
