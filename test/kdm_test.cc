@@ -69,3 +69,33 @@ BOOST_AUTO_TEST_CASE (kdm_passthrough_test)
 	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
 #endif
 }
+
+/** Test some of the utility methods of DecryptedKDM */
+BOOST_AUTO_TEST_CASE (decrypted_kdm_test)
+{
+	uint8_t* data = new uint8_t[16];
+	uint8_t* p = data;
+	dcp::DecryptedKDM::put_uuid (&p, "8971c838-d0c3-405d-bc57-43afa9d91242");
+
+	BOOST_CHECK_EQUAL (data[0], 0x89);
+	BOOST_CHECK_EQUAL (data[1], 0x71);
+	BOOST_CHECK_EQUAL (data[2], 0xc8);
+	BOOST_CHECK_EQUAL (data[3], 0x38);
+	BOOST_CHECK_EQUAL (data[4], 0xd0);
+	BOOST_CHECK_EQUAL (data[5], 0xc3);
+	BOOST_CHECK_EQUAL (data[6], 0x40);
+	BOOST_CHECK_EQUAL (data[7], 0x5d);
+	BOOST_CHECK_EQUAL (data[8], 0xbc);
+	BOOST_CHECK_EQUAL (data[9], 0x57);
+	BOOST_CHECK_EQUAL (data[10], 0x43);
+	BOOST_CHECK_EQUAL (data[11], 0xaf);
+	BOOST_CHECK_EQUAL (data[12], 0xa9);
+	BOOST_CHECK_EQUAL (data[13], 0xd9);
+	BOOST_CHECK_EQUAL (data[14], 0x12);
+	BOOST_CHECK_EQUAL (data[15], 0x42);
+
+	p = data;
+	BOOST_CHECK_EQUAL (dcp::DecryptedKDM::get_uuid (&p), "8971c838-d0c3-405d-bc57-43afa9d91242");
+
+	delete[] data;
+}

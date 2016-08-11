@@ -46,6 +46,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 
+class decrypted_kdm_test;
+
 namespace dcp {
 
 class DecryptedKDMKey;
@@ -138,6 +140,12 @@ public:
 	}
 
 private:
+
+	friend class ::decrypted_kdm_test;
+
+	static void put_uuid (uint8_t ** d, std::string id);
+	static std::string get_uuid (unsigned char ** p);
+
 	LocalTime _not_valid_before;
 	LocalTime _not_valid_after;
 	boost::optional<std::string> _annotation_text;

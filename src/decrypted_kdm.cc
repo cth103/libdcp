@@ -73,34 +73,33 @@ put (uint8_t ** d, uint8_t const * s, int N)
         (*d) += N;
 }
 
-static void
-put_uuid (uint8_t ** d, string id)
+void
+DecryptedKDM::put_uuid (uint8_t ** d, string id)
 {
-        id.erase (std::remove (id.begin(), id.end(), '-'));
-        for (int i = 0; i < 32; i += 2) {
-                locked_stringstream s;
-                s << id[i] << id[i + 1];
-                int h;
-                s >> hex >> h;
-                **d = h;
-                (*d)++;
-        }
+	/* 32 hex digits plus some hyphens */
+	DCP_ASSERT (id.length() == 36);
+	sscanf (
+		id.c_str(),
+		"%02hhx%02hhx%02hhx%02hhx-%02hhx%02hhx-%02hhx%02hhx-%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx",
+		*d + 0, *d + 1, *d + 2, *d + 3, *d + 4, *d + 5, *d + 6, *d + 7,
+		*d + 8,	*d + 9, *d + 10, *d + 11, *d + 12, *d + 13, *d + 14, *d + 15
+		);
+
+	*d += 16;
 }
 
-static string
-get_uuid (unsigned char ** p)
+string
+DecryptedKDM::get_uuid (unsigned char ** p)
 {
-	locked_stringstream g;
+	char buffer[37];
+	snprintf (
+		buffer, sizeof(buffer), "%02hhx%02hhx%02hhx%02hhx-%02hhx%02hhx-%02hhx%02hhx-%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx",
+		(*p)[0], (*p)[1], (*p)[2], (*p)[3], (*p)[4], (*p)[5], (*p)[6], (*p)[7],
+		(*p)[8], (*p)[9], (*p)[10], (*p)[11], (*p)[12], (*p)[13], (*p)[14], (*p)[15]
+		);
 
-	for (int i = 0; i < 16; ++i) {
-		g << setw(2) << setfill('0') << hex << static_cast<int> (**p);
-		(*p)++;
-		if (i == 3 || i == 5 || i == 7 || i == 9) {
-			g << '-';
-		}
-	}
-
-	return g.str ();
+	*p += 16;
+	return buffer;
 }
 
 static string
