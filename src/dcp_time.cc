@@ -330,18 +330,15 @@ dcp::operator/ (Time a, Time const & b)
 string
 Time::as_string (Standard standard) const
 {
-	locked_stringstream str;
-	str << setw(2) << setfill('0') << h << ":"
-	    << setw(2) << setfill('0') << m << ":"
-	    << setw(2) << setfill('0') << s << ":";
+	char buffer[64];
 
 	if (standard == SMPTE) {
-		str << setw(2) << setfill('0') << e;
+		snprintf (buffer, sizeof(buffer), "%02d:%02d:%02d:%02d", h, m, s, e);
 	} else {
-		str << setw(3) << setfill('0') << e;
+		snprintf (buffer, sizeof(buffer), "%02d:%02d:%02d:%03d", h, m, s, e);
 	}
 
-	return str.str ();
+	return buffer;
 }
 
 /** @param tcr_ Timecode rate with which the return value should be counted.
