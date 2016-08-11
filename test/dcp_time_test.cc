@@ -55,6 +55,7 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (r.s, 8);
 	BOOST_CHECK_EQUAL (r.e, 3);
 	BOOST_CHECK_EQUAL (r.as_string(dcp::INTEROP), "03:06:08:003");
+	BOOST_CHECK_EQUAL (r.as_string(dcp::SMPTE), "03:06:08:03");
 
 	/* Another arbitrary tcr (30) */
 	a = dcp::Time (24, 12, 6, 3, 30);
