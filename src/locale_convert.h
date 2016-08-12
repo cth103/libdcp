@@ -36,6 +36,8 @@
 
 #include <boost/static_assert.hpp>
 #include <string>
+#include <stdint.h>
+#include <cstdio>
 
 namespace dcp {
 
