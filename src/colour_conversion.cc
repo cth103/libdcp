@@ -134,9 +134,8 @@ ColourConversion::rec1886_to_xyz ()
 ColourConversion const &
 ColourConversion::rec2020_to_xyz ()
 {
-	/* From Wikipedia */
 	static ColourConversion* c = new ColourConversion (
-		shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (1 / 0.45, 0.08145, 0.0993, 4.5)),
+		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.4)),
 		YUV_TO_RGB_REC709,
 		Chromaticity (0.708, 0.292),
 		Chromaticity (0.170, 0.797),
