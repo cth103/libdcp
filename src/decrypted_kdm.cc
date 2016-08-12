@@ -78,7 +78,11 @@ DecryptedKDM::put_uuid (uint8_t ** d, string id)
 {
 	/* 32 hex digits plus some hyphens */
 	DCP_ASSERT (id.length() == 36);
+#ifdef LIBDCP_WINDOWS
+	__mingw_sscanf (
+#else
 	sscanf (
+#endif
 		id.c_str(),
 		"%02hhx%02hhx%02hhx%02hhx-%02hhx%02hhx-%02hhx%02hhx-%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx",
 		*d + 0, *d + 1, *d + 2, *d + 3, *d + 4, *d + 5, *d + 6, *d + 7,

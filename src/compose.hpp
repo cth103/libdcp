@@ -124,7 +124,23 @@ namespace StringPrivate
   inline void write(std::string& s, const int64_t& obj)
   {
     char buffer[64];
+#ifdef LIBDCP_WINDOWS
+    __mingw_snprintf(buffer, 64, "%" PRId64, obj);
+#else
     snprintf(buffer, 64, "%" PRId64, obj);
+#endif
+    s += buffer;
+  }
+
+  template <>
+  inline void write(std::string& s, const uint64_t& obj)
+  {
+    char buffer[64];
+#ifdef LIBDCP_WINDOWS
+    __mingw_snprintf(buffer, 64, "%" PRIu64, obj);
+#else
+    snprintf(buffer, 64, "%" PRIu64, obj);
+#endif
     s += buffer;
   }
 
@@ -141,14 +157,6 @@ namespace StringPrivate
   {
     char buffer[64];
     snprintf(buffer, 64, "%ud", obj);
-    s += buffer;
-  }
-
-  template <>
-  inline void write(std::string& s, const long unsigned int& obj)
-  {
-    char buffer[64];
-    snprintf(buffer, 64, "%lu", obj);
     s += buffer;
   }
 
