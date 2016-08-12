@@ -66,6 +66,13 @@ dcp::raw_convert (int v, int precision, bool fixed)
 
 template <>
 string
+dcp::raw_convert (unsigned int v, int precision, bool fixed)
+{
+	return make_raw (locale_convert<string> (v, precision, fixed));
+}
+
+template <>
+string
 dcp::raw_convert (int64_t v, int precision, bool fixed)
 {
 	return make_raw (locale_convert<string> (v, precision, fixed));

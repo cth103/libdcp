@@ -48,6 +48,15 @@ dcp::locale_convert (int x, int, bool)
 
 template<>
 string
+dcp::locale_convert (unsigned int x, int, bool)
+{
+	char buffer[64];
+	snprintf (buffer, sizeof(buffer), "%ud", x);
+	return buffer;
+}
+
+template<>
+string
 dcp::locale_convert (int64_t x, int, bool)
 {
 	char buffer[64];

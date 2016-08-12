@@ -59,6 +59,10 @@ raw_convert (int v, int, bool);
 
 template <>
 std::string
+raw_convert (unsigned int v, int, bool);
+
+template <>
+std::string
 raw_convert (int64_t v, int, bool);
 
 template <>

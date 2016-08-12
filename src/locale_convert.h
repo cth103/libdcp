@@ -57,6 +57,10 @@ locale_convert (int x, int, bool);
 
 template <>
 std::string
+locale_convert (unsigned int x, int, bool);
+
+template <>
+std::string
 locale_convert (int64_t x, int, bool);
 
 template <>
