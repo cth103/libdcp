@@ -44,6 +44,7 @@
 #include "dcp_assert.h"
 #include "util.h"
 #include "compose.hpp"
+#include "encryption_context.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_util.h>
 #include <libxml++/libxml++.h>
@@ -238,6 +239,8 @@ SMPTESubtitleAsset::xml_as_string () const
 void
 SMPTESubtitleAsset::write (boost::filesystem::path p) const
 {
+	EncryptionContext enc (key (), SMPTE);
+
 	ASDCP::WriterInfo writer_info;
 	fill_writer_info (&writer_info, _id, SMPTE);
 
@@ -271,7 +274,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	}
 
 	/* XXX: no encryption */
-	r = writer.WriteTimedTextResource (xml_as_string ());
+	r = writer.WriteTimedTextResource (xml_as_string (), enc.encryption(), enc.hmac());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not write XML to timed text resource", p.string(), r));
 	}
@@ -285,7 +288,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 			ASDCP::TimedText::FrameBuffer buffer;
 			buffer.SetData (j->data.data().get(), j->data.size());
 			buffer.Size (j->data.size());
-			r = writer.WriteAncillaryResource (buffer);
+			r = writer.WriteAncillaryResource (buffer, enc.encryption(), enc.hmac());
 			if (ASDCP_FAILURE (r)) {
 				boost::throw_exception (MXFFileError ("could not write font to timed text resource", p.string(), r));
 			}

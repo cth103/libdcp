@@ -49,6 +49,7 @@ def build(bld):
              decrypted_kdm.cc
              decrypted_kdm_key.cc
              encrypted_kdm.cc
+             encryption_context.cc
              exceptions.cc
              file.cc
              font_asset.cc
@@ -121,6 +122,7 @@ def build(bld):
               decrypted_kdm.h
               decrypted_kdm_key.h
               encrypted_kdm.h
+              encryption_context.h
               exceptions.h
               font_asset.h
               gamma_transfer_function.h

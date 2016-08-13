@@ -36,6 +36,7 @@
 #include "exceptions.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
+#include "encryption_context.h"
 #include <asdcp/AS_DCP.h>
 
 using std::min;
@@ -127,7 +128,7 @@ SoundAssetWriter::write (float const * const * data, int frames)
 void
 SoundAssetWriter::write_current_frame ()
 {
-	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _encryption_context, _hmac_context);
+	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _encryption_context->encryption(), _encryption_context->hmac());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MiscError (String::compose ("could not write audio MXF frame (%1)", int (r))));
 	}

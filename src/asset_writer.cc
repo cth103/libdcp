@@ -38,6 +38,7 @@
 #include "asset_writer.h"
 #include "mxf.h"
 #include "dcp_assert.h"
+#include "encryption_context.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_prng.h>
 
@@ -53,41 +54,9 @@ AssetWriter::AssetWriter (MXF* mxf, boost::filesystem::path file, Standard stand
 	, _frames_written (0)
 	, _finalized (false)
 	, _started (false)
-	, _encryption_context (0)
-	, _hmac_context (0)
+	, _encryption_context (new EncryptionContext (mxf->key(), standard))
 {
-	if (mxf->key ()) {
-		_encryption_context = new ASDCP::AESEncContext;
-		if (ASDCP_FAILURE (_encryption_context->InitKey (mxf->key()->value ()))) {
-			throw MiscError ("could not set up encryption context");
-		}
 
-		uint8_t cbc_buffer[ASDCP::CBC_BLOCK_SIZE];
-
-		Kumu::FortunaRNG rng;
-		if (ASDCP_FAILURE (_encryption_context->SetIVec (rng.FillRandom (cbc_buffer, ASDCP::CBC_BLOCK_SIZE)))) {
-			throw MiscError ("could not set up CBC initialization vector");
-		}
-
-		_hmac_context = new ASDCP::HMACContext;
-
-		ASDCP::LabelSet_t type;
-		if (standard == INTEROP) {
-			type = ASDCP::LS_MXF_INTEROP;
-		} else {
-			type = ASDCP::LS_MXF_SMPTE;
-		}
-
-		if (ASDCP_FAILURE (_hmac_context->InitKey (mxf->key()->value(), type))) {
-			throw MiscError ("could not set up HMAC context");
-		}
-	}
-}
-
-AssetWriter::~AssetWriter ()
-{
-	delete _encryption_context;
-	delete _hmac_context;
 }
 
 /** @return true if anything was written by this writer */

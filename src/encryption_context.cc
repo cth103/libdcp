@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,55 +31,50 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/asset_writer.h
- *  @brief AssetWriter class.
- */
+#include "encryption_context.h"
+#include "exceptions.h"
+#include <asdcp/AS_DCP.h>
+#include <asdcp/KM_prng.h>
 
-#ifndef LIBDCP_ASSET_WRITER_H
-#define LIBDCP_ASSET_WRITER_H
+using boost::optional;
+using namespace dcp;
 
-#include "types.h"
-#include <boost/filesystem.hpp>
-
-namespace dcp {
-
-class MXF;
-class EncryptionContext;
-
-/** @class AssetWriter
- *  @brief Parent class for classes which can write MXF-based assets.
- *
- *  The AssetWriter lasts for the duration of the write and is then discarded.
- *  They can only be created by calling start_write() on an appropriate Asset object.
- */
-class AssetWriter : public boost::noncopyable
+EncryptionContext::EncryptionContext (optional<Key> key, Standard standard)
+	: _encryption (0)
+	, _hmac (0)
 {
-public:
-	virtual ~AssetWriter () {}
-	virtual bool finalize ();
-
-	int64_t frames_written () const {
-		return _frames_written;
+	if (!key) {
+		return;
 	}
 
-protected:
-	AssetWriter (MXF* mxf, boost::filesystem::path file, Standard standard);
+	_encryption = new ASDCP::AESEncContext;
+	if (ASDCP_FAILURE (_encryption->InitKey (key->value ()))) {
+		throw MiscError ("could not set up encryption context");
+	}
 
-	/** MXF that we are writing */
-	MXF* _mxf;
-	/** File that we are writing to */
-	boost::filesystem::path _file;
-	/** Number of `frames' written so far; the definition of a frame
-	 *  varies depending on the subclass.
-	 */
-	int64_t _frames_written;
-	/** true if finalize() has been called on this object */
-	bool _finalized;
-	/** true if something has been written to this asset */
-	bool _started;
-	boost::shared_ptr<EncryptionContext> _encryption_context;
-};
+	uint8_t cbc_buffer[ASDCP::CBC_BLOCK_SIZE];
 
+	Kumu::FortunaRNG rng;
+	if (ASDCP_FAILURE (_encryption->SetIVec (rng.FillRandom (cbc_buffer, ASDCP::CBC_BLOCK_SIZE)))) {
+		throw MiscError ("could not set up CBC initialization vector");
+	}
+
+	_hmac = new ASDCP::HMACContext;
+
+	ASDCP::LabelSet_t type;
+	if (standard == INTEROP) {
+		type = ASDCP::LS_MXF_INTEROP;
+	} else {
+		type = ASDCP::LS_MXF_SMPTE;
+	}
+
+	if (ASDCP_FAILURE (_hmac->InitKey (key->value(), type))) {
+		throw MiscError ("could not set up HMAC context");
+	}
 }
 
-#endif
+EncryptionContext::~EncryptionContext ()
+{
+	delete _encryption;
+	delete _hmac;
+}
