@@ -38,6 +38,7 @@
 #include "colour_conversion.h"
 #include "compose.hpp"
 #include "j2k.h"
+#include "decryption_context.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
 
@@ -49,12 +50,12 @@ using namespace dcp;
  *  @param reader Reader for the MXF file.
  *  @param n Frame within the asset, not taking EntryPoint into account.
  */
-StereoPictureFrame::StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, ASDCP::AESDecContext* c)
+StereoPictureFrame::StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, shared_ptr<DecryptionContext> c)
 {
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = new ASDCP::JP2K::SFrameBuffer (4 * Kumu::Megabyte);
 
-	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c))) {
+	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->decryption()))) {
 		boost::throw_exception (DCPReadError (String::compose ("could not read video frame %1 of %2", n)));
 	}
 }

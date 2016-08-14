@@ -34,22 +34,13 @@
 #include "asset_reader.h"
 #include "mxf.h"
 #include "exceptions.h"
+#include "decryption_context.h"
 #include <asdcp/AS_DCP.h>
 
 using namespace dcp;
 
 AssetReader::AssetReader (MXF const * mxf)
-	: _decryption_context (0)
+	: _decryption_context (new DecryptionContext (mxf->key ()))
 {
-	if (mxf->key()) {
-		_decryption_context = new ASDCP::AESDecContext;
-		if (ASDCP_FAILURE (_decryption_context->InitKey (mxf->key()->value ()))) {
-			throw MiscError ("could not set up decryption context");
-		}
-	}
-}
 
-AssetReader::~AssetReader ()
-{
-	delete _decryption_context;
 }

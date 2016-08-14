@@ -49,6 +49,7 @@ namespace ASDCP {
 namespace dcp {
 
 class SMPTELoadFontNode;
+class DecryptionContext;
 
 /** @class SMPTESubtitleAsset
  *  @brief A set of subtitles to be read and/or written in the SMPTE format.
@@ -74,6 +75,7 @@ public:
 	void write (boost::filesystem::path path) const;
 	void add (SubtitleString);
 	void add_font (std::string id, boost::filesystem::path file);
+	void set_key (Key key);
 
 	void set_content_title_text (std::string t) {
 		_content_title_text = t;
@@ -159,6 +161,8 @@ protected:
 
 private:
 	void read_fonts (boost::shared_ptr<ASDCP::TimedText::MXFReader>);
+	void parse_xml (boost::shared_ptr<cxml::Document> xml);
+	void read_mxf_descriptor (boost::shared_ptr<ASDCP::TimedText::MXFReader> reader, boost::shared_ptr<DecryptionContext> dec);
 
 	/** The total length of this content in video frames.  The amount of
 	 *  content presented may be less than this.

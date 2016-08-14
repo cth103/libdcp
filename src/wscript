@@ -47,6 +47,7 @@ def build(bld):
              dcp.cc
              dcp_time.cc
              decrypted_kdm.cc
+             decryption_context.cc
              decrypted_kdm_key.cc
              encrypted_kdm.cc
              encryption_context.cc

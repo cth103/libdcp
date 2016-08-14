@@ -35,23 +35,21 @@
 #define LIBDCP_ASSET_READER_H
 
 #include <boost/noncopyable.hpp>
-
-namespace ASDCP {
-	class AESDecContext;
-}
+#include <boost/shared_ptr.hpp>
 
 namespace dcp {
 
 class MXF;
+class DecryptionContext;
 
 class AssetReader : public boost::noncopyable
 {
 public:
 	explicit AssetReader (MXF const * mxf);
-	virtual ~AssetReader ();
+	virtual ~AssetReader () {}
 
 protected:
-	ASDCP::AESDecContext* _decryption_context;
+	boost::shared_ptr<DecryptionContext> _decryption_context;
 };
 
 }

@@ -39,6 +39,7 @@
 #define LIBDCP_REEL_SUBTITLE_ASSET_H
 
 #include "reel_asset.h"
+#include "reel_mxf.h"
 #include "subtitle_asset.h"
 
 namespace dcp {
@@ -46,19 +47,22 @@ namespace dcp {
 class SubtitleAsset;
 
 /** @class ReelSubtitleAsset
- *  @brief Part of a Reel's description which refers to a subtitle XML file.
+ *  @brief Part of a Reel's description which refers to a subtitle XML/MXF file.
  */
-class ReelSubtitleAsset : public ReelAsset
+class ReelSubtitleAsset : public ReelAsset, public ReelMXF
 {
 public:
 	ReelSubtitleAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
 	explicit ReelSubtitleAsset (boost::shared_ptr<const cxml::Node>);
+
+	void write_to_cpl (xmlpp::Node* node, Standard standard) const;
 
 	boost::shared_ptr<SubtitleAsset> asset () const {
 		return asset_of_type<SubtitleAsset> ();
 	}
 
 private:
+	std::string key_type () const;
 	std::string cpl_node_name () const;
 };
 

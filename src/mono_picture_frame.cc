@@ -42,6 +42,7 @@
 #include "colour_conversion.h"
 #include "compose.hpp"
 #include "j2k.h"
+#include "decryption_context.h"
 #include <asdcp/KM_fileio.h>
 #include <asdcp/AS_DCP.h>
 
@@ -73,12 +74,12 @@ MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path)
  *  @param n Frame within the asset, not taking EntryPoint into account.
  *  @param c Context for decryption, or 0.
  */
-MonoPictureFrame::MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, ASDCP::AESDecContext* c)
+MonoPictureFrame::MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, shared_ptr<DecryptionContext> c)
 {
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = new ASDCP::JP2K::FrameBuffer (4 * Kumu::Megabyte);
 
-	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c))) {
+	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->decryption()))) {
 		boost::throw_exception (DCPReadError (String::compose ("could not read video frame %1", n)));
 	}
 }

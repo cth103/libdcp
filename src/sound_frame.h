@@ -53,6 +53,8 @@ namespace ASDCP {
 
 namespace dcp {
 
+class DecryptionContext;
+
 /** @class SoundFrame
  *  @brief One &lsquo;frame&rsquo; of sound data from a SoundAsset.
  */
@@ -67,7 +69,7 @@ public:
 private:
 	friend class SoundAssetReader;
 
-	SoundFrame (ASDCP::PCM::MXFReader* reader, int n, ASDCP::AESDecContext *);
+	SoundFrame (ASDCP::PCM::MXFReader* reader, int n, boost::shared_ptr<DecryptionContext>);
 
 	/** a buffer to hold the frame */
 	ASDCP::PCM::FrameBuffer* _buffer;

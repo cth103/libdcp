@@ -54,6 +54,7 @@ namespace ASDCP {
 namespace dcp {
 
 class OpenJPEGImage;
+class DecryptionContext;
 
 /** @class MonoPictureFrame
  *  @brief A single frame of a 2D (monoscopic) picture asset.
@@ -74,7 +75,7 @@ public:
 private:
 	friend class MonoPictureAssetReader;
 
-	MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, ASDCP::AESDecContext *);
+	MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, boost::shared_ptr<DecryptionContext>);
 
 	ASDCP::JP2K::FrameBuffer* _buffer;
 };

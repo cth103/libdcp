@@ -37,19 +37,25 @@
 
 #include "subtitle_asset.h"
 #include "reel_subtitle_asset.h"
+#include "smpte_subtitle_asset.h"
+#include <libxml++/libxml++.h>
 
 using std::string;
 using boost::shared_ptr;
+using boost::dynamic_pointer_cast;
+using boost::optional;
 using namespace dcp;
 
 ReelSubtitleAsset::ReelSubtitleAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelAsset (asset, edit_rate, intrinsic_duration, entry_point)
+	, ReelMXF (dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : optional<string>())
 {
 
 }
 
 ReelSubtitleAsset::ReelSubtitleAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
+	, ReelMXF (node)
 {
 	node->ignore_child ("Language");
 	node->done ();
@@ -59,4 +65,24 @@ string
 ReelSubtitleAsset::cpl_node_name () const
 {
 	return "MainSubtitle";
+}
+
+string
+ReelSubtitleAsset::key_type () const
+{
+	return "MDSK";
+}
+
+void
+ReelSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+{
+	ReelAsset::write_to_cpl (node, standard);
+
+        if (key_id ()) {
+		/* Find <MainSubtitle> */
+		xmlpp::Node* ms = find_child (node, cpl_node_name ());
+		/* Find <Hash> */
+		xmlpp::Node* hash = find_child (ms, "Hash");
+		ms->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id().get ());
+	}
 }

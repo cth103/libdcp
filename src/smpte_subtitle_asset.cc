@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -45,6 +45,7 @@
 #include "util.h"
 #include "compose.hpp"
 #include "encryption_context.h"
+#include "decryption_context.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_util.h>
 #include <libxml++/libxml++.h>
@@ -79,19 +80,26 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
 
 	shared_ptr<ASDCP::TimedText::MXFReader> reader (new ASDCP::TimedText::MXFReader ());
-	Kumu::Result_t r = reader->OpenRead (file.string().c_str ());
-
+	Kumu::Result_t r = reader->OpenRead (_file.string().c_str ());
 	if (!ASDCP_FAILURE (r)) {
-		string s;
-		reader->ReadTimedTextResource (s, 0, 0);
-		xml->read_string (s);
+		/* MXF-wrapped */
 		ASDCP::WriterInfo info;
 		reader->FillWriterInfo (info);
 		_id = read_writer_info (info);
+		if (!_key_id) {
+			/* Not encrypted; read it in now */
+			string s;
+			reader->ReadTimedTextResource (s);
+			xml->read_string (s);
+			parse_xml (xml);
+			read_mxf_descriptor (reader, shared_ptr<DecryptionContext> (new DecryptionContext ()));
+		}
 	} else {
-		reader.reset ();
+		/* Plain XML */
 		try {
+			xml.reset (new cxml::Document ("SubtitleReel"));
 			xml->read_file (file);
+			parse_xml (xml);
 			_id = remove_urn_uuid (xml->string_child ("Id"));
 		} catch (cxml::Error& e) {
 			boost::throw_exception (
@@ -101,7 +109,11 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 				);
 		}
 	}
+}
 
+void
+SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
+{
 	_load_font_nodes = type_children<dcp::SMPTELoadFontNode> (xml, "LoadFont");
 
 	_content_title_text = xml->string_child ("ContentTitleText");
@@ -141,45 +153,80 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 
 	parse_subtitles (xml, font_nodes, subtitle_nodes);
 
-	if (reader) {
-		ASDCP::TimedText::TimedTextDescriptor descriptor;
-		reader->FillTimedTextDescriptor (descriptor);
+	/* Guess intrinsic duration */
+	_intrinsic_duration = latest_subtitle_out().as_editable_units (_edit_rate.numerator / _edit_rate.denominator);
+}
 
-		/* Load fonts */
+void
+SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader> reader, shared_ptr<DecryptionContext> dec)
+{
+	ASDCP::TimedText::TimedTextDescriptor descriptor;
+	reader->FillTimedTextDescriptor (descriptor);
 
-		for (
-			ASDCP::TimedText::ResourceList_t::const_iterator i = descriptor.ResourceList.begin();
-			i != descriptor.ResourceList.end();
-			++i) {
+	/* Load fonts */
 
-			if (i->Type == ASDCP::TimedText::MT_OPENTYPE) {
-				ASDCP::TimedText::FrameBuffer buffer;
-				buffer.Capacity (10 * 1024 * 1024);
-				reader->ReadAncillaryResource (i->ResourceID, buffer);
+	for (
+		ASDCP::TimedText::ResourceList_t::const_iterator i = descriptor.ResourceList.begin();
+		i != descriptor.ResourceList.end();
+		++i) {
 
-				char id[64];
-				Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof (id));
+		if (i->Type == ASDCP::TimedText::MT_OPENTYPE) {
+			ASDCP::TimedText::FrameBuffer buffer;
+			buffer.Capacity (10 * 1024 * 1024);
+			reader->ReadAncillaryResource (i->ResourceID, buffer, dec->decryption());
 
-				shared_array<uint8_t> data (new uint8_t[buffer.Size()]);
-				memcpy (data.get(), buffer.RoData(), buffer.Size());
+			char id[64];
+			Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof (id));
 
-				list<shared_ptr<SMPTELoadFontNode> >::const_iterator j = _load_font_nodes.begin ();
-				while (j != _load_font_nodes.end() && (*j)->urn != id) {
-					++j;
-				}
+			shared_array<uint8_t> data (new uint8_t[buffer.Size()]);
+			memcpy (data.get(), buffer.RoData(), buffer.Size());
 
-				if (j != _load_font_nodes.end ()) {
-					_fonts.push_back (Font ((*j)->id, (*j)->urn, Data (data, buffer.Size ())));
-				}
+			list<shared_ptr<SMPTELoadFontNode> >::const_iterator j = _load_font_nodes.begin ();
+			while (j != _load_font_nodes.end() && (*j)->urn != id) {
+				++j;
+			}
+
+			if (j != _load_font_nodes.end ()) {
+				_fonts.push_back (Font ((*j)->id, (*j)->urn, Data (data, buffer.Size ())));
 			}
 		}
-
-		/* Get intrinsic duration */
-		_intrinsic_duration = descriptor.ContainerDuration;
-	} else {
-		/* Guess intrinsic duration */
-		_intrinsic_duration = latest_subtitle_out().as_editable_units (_edit_rate.numerator / _edit_rate.denominator);
 	}
+
+	/* Get intrinsic duration */
+	_intrinsic_duration = descriptor.ContainerDuration;
+}
+
+void
+SMPTESubtitleAsset::set_key (Key key)
+{
+	MXF::set_key (key);
+
+	if (!_key_id || _file.empty()) {
+		/* Either we don't have any data to read, or it wasn't
+		   encrypted, so we don't need to do anything else.
+		*/
+		return;
+	}
+
+	/* Our data was encrypted; now we can decrypt it */
+
+	shared_ptr<ASDCP::TimedText::MXFReader> reader (new ASDCP::TimedText::MXFReader ());
+	Kumu::Result_t r = reader->OpenRead (_file.string().c_str ());
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (
+			DCPReadError (
+				String::compose ("Could not read encrypted subtitle MXF (%1)", _file, static_cast<int> (r))
+				)
+			);
+	}
+
+	string s;
+	shared_ptr<DecryptionContext> dec (new DecryptionContext (key));
+	reader->ReadTimedTextResource (s, dec->decryption());
+	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
+	xml->read_string (s);
+	parse_xml (xml);
+	read_mxf_descriptor (reader, dec);
 }
 
 list<shared_ptr<LoadFontNode> >

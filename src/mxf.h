@@ -80,7 +80,7 @@ public:
 		return _key_id;
 	}
 
-	void set_key (Key);
+	virtual void set_key (Key);
 
 	/** @return encryption/decryption key, if one has been set */
 	boost::optional<Key> key () const {

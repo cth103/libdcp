@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -45,6 +45,7 @@
 #include "decrypted_kdm_key.h"
 #include "decrypted_kdm.h"
 #include "interop_subtitle_asset.h"
+#include "smpte_subtitle_asset.h"
 #include "reel_atmos_asset.h"
 #include <libxml++/nodes/element.h>
 
@@ -183,6 +184,12 @@ Reel::add (DecryptedKDM const & kdm)
 		}
 		if (_main_sound && i->id() == _main_sound->key_id()) {
 			_main_sound->asset()->set_key (i->key ());
+		}
+		if (_main_subtitle && i->id() == _main_subtitle->key_id()) {
+			shared_ptr<SMPTESubtitleAsset> s = dynamic_pointer_cast<SMPTESubtitleAsset> (_main_subtitle->asset());
+			if (s) {
+				s->set_key (i->key ());
+			}
 		}
 		if (_atmos && i->id() == _atmos->key_id()) {
 			_atmos->asset()->set_key (i->key ());

@@ -49,6 +49,7 @@ namespace ASDCP {
 namespace dcp {
 
 class OpenJPEGImage;
+class DecryptionContext;
 
 /** A single frame of a 3D (stereoscopic) picture asset */
 class StereoPictureFrame : public boost::noncopyable
@@ -70,7 +71,7 @@ public:
 private:
 	friend class StereoPictureAssetReader;
 
-	StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, ASDCP::AESDecContext *);
+	StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, boost::shared_ptr<DecryptionContext>);
 
 	ASDCP::JP2K::SFrameBuffer* _buffer;
 };
