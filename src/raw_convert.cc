@@ -135,6 +135,15 @@ dcp::raw_convert (string v, int, bool)
 }
 
 template <>
+string
+dcp::raw_convert (char v, int, bool)
+{
+	string s;
+	s += v;
+	return s;
+}
+
+template <>
 int
 dcp::raw_convert (string v, int precision, bool fixed)
 {

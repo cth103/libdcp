@@ -97,6 +97,10 @@ std::string
 raw_convert (std::string v, int, bool);
 
 template <>
+std::string
+raw_convert (char v, int, bool);
+
+template <>
 int
 raw_convert (std::string v, int, bool);
 

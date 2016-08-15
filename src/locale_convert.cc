@@ -152,6 +152,15 @@ dcp::locale_convert (char const * x, int, bool)
 
 template<>
 string
+dcp::locale_convert (char x, int, bool)
+{
+	string s;
+	s += x;
+	return s;
+}
+
+template<>
+string
 dcp::locale_convert (boost::filesystem::path x, int, bool)
 {
 	return x.string();
