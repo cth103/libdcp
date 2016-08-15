@@ -34,9 +34,9 @@
 #ifndef LIBDCP_LOCALE_CONVERT_H
 #define LIBDCP_LOCALE_CONVERT_H
 
+#include <boost/filesystem.hpp>
 #include <boost/static_assert.hpp>
 #include <string>
-#include <stdint.h>
 #include <cstdio>
 
 namespace dcp {
@@ -61,11 +61,19 @@ locale_convert (unsigned int x, int, bool);
 
 template <>
 std::string
-locale_convert (int64_t x, int, bool);
+locale_convert (long int x, int, bool);
 
 template <>
 std::string
-locale_convert (uint64_t x, int, bool);
+locale_convert (unsigned long int x, int, bool);
+
+template <>
+std::string
+locale_convert (long long int x, int, bool);
+
+template <>
+std::string
+locale_convert (unsigned long long int x, int, bool);
 
 template <>
 std::string
@@ -86,6 +94,10 @@ locale_convert (char* x, int, bool);
 template <>
 std::string
 locale_convert (char const * x, int, bool);
+
+template <>
+std::string
+locale_convert (boost::filesystem::path x, int, bool);
 
 template <>
 int

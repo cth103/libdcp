@@ -51,25 +51,51 @@ string
 dcp::locale_convert (unsigned int x, int, bool)
 {
 	char buffer[64];
-	snprintf (buffer, sizeof(buffer), "%ud", x);
+	snprintf (buffer, sizeof(buffer), "%u", x);
 	return buffer;
 }
 
 template<>
 string
-dcp::locale_convert (int64_t x, int, bool)
+dcp::locale_convert (long int x, int, bool)
 {
 	char buffer[64];
-	snprintf (buffer, sizeof(buffer), "%" PRId64, x);
+	snprintf (buffer, sizeof(buffer), "%ld", x);
 	return buffer;
 }
 
 template<>
 string
-dcp::locale_convert (uint64_t x, int, bool)
+dcp::locale_convert (unsigned long int x, int, bool)
 {
 	char buffer[64];
-	snprintf (buffer, sizeof(buffer), "%" PRIu64, x);
+	snprintf (buffer, sizeof(buffer), "%lu", x);
+	return buffer;
+}
+
+template<>
+string
+dcp::locale_convert (long long int x, int, bool)
+{
+	char buffer[64];
+#ifdef LIBDCP_WINDOWS
+	__mingw_snprintf (buffer, sizeof(buffer), "%lld", x);
+#else
+	snprintf (buffer, sizeof(buffer), "%lld", x);
+#endif
+	return buffer;
+}
+
+template<>
+string
+dcp::locale_convert (unsigned long long int x, int, bool)
+{
+	char buffer[64];
+#ifdef LIBDCP_WINDOWS
+	__mingw_snprintf (buffer, sizeof(buffer), "%llu", x);
+#else
+	snprintf (buffer, sizeof(buffer), "%llu", x);
+#endif
 	return buffer;
 }
 
@@ -122,6 +148,13 @@ string
 dcp::locale_convert (char const * x, int, bool)
 {
 	return x;
+}
+
+template<>
+string
+dcp::locale_convert (boost::filesystem::path x, int, bool)
+{
+	return x.string();
 }
 
 template<>

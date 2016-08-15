@@ -36,7 +36,6 @@
 
 #include <boost/static_assert.hpp>
 #include <iomanip>
-#include <stdint.h>
 
 namespace dcp {
 
@@ -63,11 +62,19 @@ raw_convert (unsigned int v, int, bool);
 
 template <>
 std::string
-raw_convert (int64_t v, int, bool);
+raw_convert (long int v, int, bool);
 
 template <>
 std::string
-raw_convert (uint64_t v, int, bool);
+raw_convert (unsigned long int v, int, bool);
+
+template <>
+std::string
+raw_convert (long long int v, int, bool);
+
+template <>
+std::string
+raw_convert (unsigned long long int v, int, bool);
 
 template <>
 std::string
