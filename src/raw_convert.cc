@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -36,6 +36,7 @@
 #include <boost/algorithm/string.hpp>
 
 using std::string;
+using std::wstring;
 
 static
 string
@@ -141,6 +142,14 @@ dcp::raw_convert (char v, int, bool)
 	string s;
 	s += v;
 	return s;
+}
+
+template <>
+string
+dcp::raw_convert (wchar_t const * v, int, bool)
+{
+	wstring w (v);
+	return string (w.begin(), w.end());
 }
 
 template <>
