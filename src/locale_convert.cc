@@ -36,6 +36,7 @@
 #include <inttypes.h>
 
 using std::string;
+using std::wstring;
 
 template<>
 string
@@ -148,6 +149,14 @@ string
 dcp::locale_convert (char const * x, int, bool)
 {
 	return x;
+}
+
+template<>
+string
+dcp::locale_convert (wchar_t const * x, int, bool)
+{
+	wstring s (x);
+	return string (s.begin(), s.end());
 }
 
 template<>

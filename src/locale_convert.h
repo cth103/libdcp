@@ -97,6 +97,10 @@ locale_convert (char const * x, int, bool);
 
 template <>
 std::string
+locale_convert (wchar_t const * x, int, bool);
+
+template <>
+std::string
 locale_convert (char x, int, bool);
 
 template <>
