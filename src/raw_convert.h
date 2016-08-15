@@ -62,19 +62,19 @@ raw_convert (unsigned int v, int, bool);
 
 template <>
 std::string
-raw_convert (long int v, int, bool);
+raw_convert (long v, int, bool);
 
 template <>
 std::string
-raw_convert (unsigned long int v, int, bool);
+raw_convert (unsigned long v, int, bool);
 
 template <>
 std::string
-raw_convert (long long int v, int, bool);
+raw_convert (long long v, int, bool);
 
 template <>
 std::string
-raw_convert (unsigned long long int v, int, bool);
+raw_convert (unsigned long long v, int, bool);
 
 template <>
 std::string
