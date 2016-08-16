@@ -302,6 +302,7 @@ DCP::add (DecryptedKDM const & kdm)
 	}
 }
 
+/** @return full pathname of PKL file that was written */
 boost::filesystem::path
 DCP::write_pkl (string file, Standard standard, string pkl_uuid, XMLMetadata metadata, shared_ptr<const CertificateChain> signer) const
 {
@@ -380,7 +381,7 @@ DCP::write_volindex (Standard standard) const
 }
 
 void
-DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMetadata metadata) const
+DCP::write_assetmap (Standard standard, string pkl_uuid, boost::filesystem::path pkl_path, XMLMetadata metadata) const
 {
 	boost::filesystem::path p = _directory;
 
@@ -436,10 +437,10 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, int pkl_length, XMLMeta
 	asset->add_child("PackingList")->add_child_text ("true");
 	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
 	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
-	chunk->add_child("Path")->add_child_text ("pkl_" + pkl_uuid + ".xml");
+	chunk->add_child("Path")->add_child_text (pkl_path.filename().string());
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
-	chunk->add_child("Length")->add_child_text (raw_convert<string> (pkl_length));
+	chunk->add_child("Length")->add_child_text (raw_convert<string> (boost::filesystem::file_size (pkl_path)));
 
 	BOOST_FOREACH (shared_ptr<Asset> i, assets ()) {
 		i->write_to_assetmap (asset_list, _directory);
@@ -476,7 +477,7 @@ DCP::write_xml (
 	boost::filesystem::path const pkl_path = write_pkl (name_format.get(values) + ".xml", standard, pkl_uuid, metadata, signer);
 
 	write_volindex (standard);
-	write_assetmap (standard, pkl_uuid, boost::filesystem::file_size (pkl_path), metadata);
+	write_assetmap (standard, pkl_uuid, pkl_path, metadata);
 }
 
 list<shared_ptr<CPL> >

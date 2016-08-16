@@ -140,9 +140,9 @@ private:
 
 	/** Write the ASSETMAP file.
 	 *  @param pkl_uuid UUID of our PKL.
-	 *  @param pkl_length Length of our PKL in bytes.
+	 *  @param pkl_path Pathname of our PKL file.
 	 */
-	void write_assetmap (Standard standard, std::string pkl_uuid, int pkl_length, XMLMetadata metadata) const;
+	void write_assetmap (Standard standard, std::string pkl_uuid, boost::filesystem::path pkl_path, XMLMetadata metadata) const;
 
 	/** the directory that we are writing to */
 	boost::filesystem::path _directory;
