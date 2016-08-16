@@ -251,7 +251,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	float buffer[4096*6];
 	float* channels[1];
 	channels[0] = buffer;
-	while (1) {
+	while (true) {
 		sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
 		sound_writer->write (channels, N);
 		if (N < 4096) {
