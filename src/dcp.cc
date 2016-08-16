@@ -466,15 +466,13 @@ DCP::write_xml (
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
 		NameFormat::Map values;
 		values['t'] = "cpl";
-		values['i'] = i->id();
-		i->write_xml (_directory / (name_format.get(values) + ".xml"), standard, signer);
+		i->write_xml (_directory / (name_format.get(values, "_" + i->id() + ".xml")), standard, signer);
 	}
 
 	string const pkl_uuid = make_uuid ();
 	NameFormat::Map values;
 	values['t'] = "pkl";
-	values['i'] = pkl_uuid;
-	boost::filesystem::path const pkl_path = write_pkl (name_format.get(values) + ".xml", standard, pkl_uuid, metadata, signer);
+	boost::filesystem::path const pkl_path = write_pkl (name_format.get(values, "_" + pkl_uuid + ".xml"), standard, pkl_uuid, metadata, signer);
 
 	write_volindex (standard);
 	write_assetmap (standard, pkl_uuid, pkl_path, metadata);

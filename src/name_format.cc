@@ -65,7 +65,7 @@ filter (string c)
 }
 
 string
-NameFormat::get (Map values) const
+NameFormat::get (Map values, string suffix) const
 {
 	string result;
 	for (size_t i = 0; i < _specification.length(); ++i) {
@@ -84,7 +84,7 @@ NameFormat::get (Map values) const
 		}
 	}
 
-	return result;
+	return result + suffix;
 }
 
 bool

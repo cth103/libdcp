@@ -59,7 +59,7 @@ public:
 
 	typedef std::map<char, std::string> Map;
 
-	std::string get (Map) const;
+	std::string get (Map, std::string suffix) const;
 
 private:
 	std::string _specification;

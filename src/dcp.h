@@ -113,7 +113,7 @@ public:
 		Standard standard,
 		XMLMetadata metadata = XMLMetadata (),
 		boost::shared_ptr<const CertificateChain> signer = boost::shared_ptr<const CertificateChain> (),
-		NameFormat name_format = NameFormat("%t_%i")
+		NameFormat name_format = NameFormat("%t")
 	);
 
 	void resolve_refs (std::list<boost::shared_ptr<Asset> > assets);
