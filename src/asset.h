@@ -83,8 +83,8 @@ public:
 	 */
 	void write_to_pkl (xmlpp::Node* node, boost::filesystem::path root, Standard standard) const;
 
-	/** @return the most recent disk file used to read or write this asset; may be empty */
-	boost::filesystem::path file () const {
+	/** @return the most recent disk file used to read or write this asset, if there is one */
+	boost::optional<boost::filesystem::path> file () const {
 		return _file;
 	}
 
@@ -97,8 +97,8 @@ public:
 
 protected:
 
-	/** The most recent disk file used to read or write this asset; may be empty */
-	mutable boost::filesystem::path _file;
+	/** The most recent disk file used to read or write this asset */
+	mutable boost::optional<boost::filesystem::path> _file;
 
 private:
 	friend struct ::asset_test;

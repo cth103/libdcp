@@ -67,7 +67,7 @@ void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard stand
 	asset->fill_writer_info (&state->writer_info, asset->id(), standard);
 
 	Kumu::Result_t r = state->mxf_writer.OpenWrite (
-		asset->file().string().c_str(),
+		asset->file()->string().c_str(),
 		state->writer_info,
 		state->picture_descriptor,
 		16384,
@@ -75,7 +75,7 @@ void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard stand
 		);
 
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for writing", asset->file().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for writing", asset->file()->string(), r));
 	}
 
 	writer->_started = true;

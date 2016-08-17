@@ -35,6 +35,7 @@
 #include "sound_asset.h"
 #include "sound_frame.h"
 #include "exceptions.h"
+#include "dcp_assert.h"
 #include <asdcp/AS_DCP.h>
 
 using boost::shared_ptr;
@@ -44,10 +45,11 @@ SoundAssetReader::SoundAssetReader (SoundAsset const * asset)
 	: AssetReader (asset)
 {
 	_reader = new ASDCP::PCM::MXFReader ();
-	Kumu::Result_t const r = _reader->OpenRead (asset->file().string().c_str());
+	DCP_ASSERT (asset->file ());
+	Kumu::Result_t const r = _reader->OpenRead (asset->file()->string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		delete _reader;
-		boost::throw_exception (FileError ("could not open MXF file for reading", asset->file(), r));
+		boost::throw_exception (FileError ("could not open MXF file for reading", asset->file().get(), r));
 	}
 }
 

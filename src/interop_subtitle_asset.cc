@@ -204,8 +204,8 @@ InteropSubtitleAsset::resolve_fonts (list<shared_ptr<Asset> > assets)
 		}
 
 		BOOST_FOREACH (shared_ptr<InteropLoadFontNode> j, _load_font_nodes) {
-			if (j->uri == font->file().leaf().string ()) {
-				_fonts.push_back (Font (j->id, i->id(), font->file ()));
+			if (font->file() && j->uri == font->file()->leaf().string ()) {
+				_fonts.push_back (Font (j->id, i->id(), font->file().get()));
 			}
 		}
 	}

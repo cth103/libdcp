@@ -72,7 +72,7 @@ main ()
 		} else if (boost::dynamic_pointer_cast<dcp::CPL> (*i)) {
 			std::cout << "CPL\n";
 		}
-		std::cout << "\t" << (*i)->file().leaf().string() << "\n";
+		std::cout << "\t" << (*i)->file()->leaf().string() << "\n";
 	}
 
 	/* Take the first CPL */

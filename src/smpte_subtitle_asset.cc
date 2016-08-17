@@ -80,7 +80,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
 
 	shared_ptr<ASDCP::TimedText::MXFReader> reader (new ASDCP::TimedText::MXFReader ());
-	Kumu::Result_t r = reader->OpenRead (_file.string().c_str ());
+	Kumu::Result_t r = reader->OpenRead (_file->string().c_str ());
 	if (!ASDCP_FAILURE (r)) {
 		/* MXF-wrapped */
 		ASDCP::WriterInfo info;
@@ -201,7 +201,7 @@ SMPTESubtitleAsset::set_key (Key key)
 {
 	MXF::set_key (key);
 
-	if (!_key_id || _file.empty()) {
+	if (!_key_id || !_file) {
 		/* Either we don't have any data to read, or it wasn't
 		   encrypted, so we don't need to do anything else.
 		*/
@@ -211,11 +211,11 @@ SMPTESubtitleAsset::set_key (Key key)
 	/* Our data was encrypted; now we can decrypt it */
 
 	shared_ptr<ASDCP::TimedText::MXFReader> reader (new ASDCP::TimedText::MXFReader ());
-	Kumu::Result_t r = reader->OpenRead (_file.string().c_str ());
+	Kumu::Result_t r = reader->OpenRead (_file->string().c_str ());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (
 			DCPReadError (
-				String::compose ("Could not read encrypted subtitle MXF (%1)", _file, static_cast<int> (r))
+				String::compose ("Could not read encrypted subtitle MXF (%1)", static_cast<int> (r))
 				)
 			);
 	}

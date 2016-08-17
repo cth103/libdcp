@@ -97,15 +97,16 @@ bool
 SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
 	ASDCP::PCM::MXFReader reader_A;
-	Kumu::Result_t r = reader_A.OpenRead (file().string().c_str());
+	DCP_ASSERT (file ());
+	Kumu::Result_t r = reader_A.OpenRead (file()->string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file()->string(), r));
 	}
 
 	ASDCP::PCM::MXFReader reader_B;
-	r = reader_B.OpenRead (other->file().string().c_str());
+	r = reader_B.OpenRead (other->file()->string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file().string(), r));
+		boost::throw_exception (MXFFileError ("could not open MXF file for reading", other->file()->string(), r));
 	}
 
 	ASDCP::PCM::AudioDescriptor desc_A;

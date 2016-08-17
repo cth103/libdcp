@@ -78,11 +78,11 @@ Asset::Asset (string id, boost::filesystem::path file)
 void
 Asset::write_to_pkl (xmlpp::Node* node, boost::filesystem::path root, Standard standard) const
 {
-	DCP_ASSERT (!_file.empty ());
+	DCP_ASSERT (_file);
 
 	optional<boost::filesystem::path> path = relative_to_root (
 		boost::filesystem::canonical (root),
-		boost::filesystem::canonical (_file)
+		boost::filesystem::canonical (_file.get())
 		);
 
 	if (!path) {
@@ -96,18 +96,18 @@ Asset::write_to_pkl (xmlpp::Node* node, boost::filesystem::path root, Standard s
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	asset->add_child("AnnotationText")->add_child_text (_id);
 	asset->add_child("Hash")->add_child_text (hash ());
-	asset->add_child("Size")->add_child_text (raw_convert<string> (boost::filesystem::file_size (_file)));
+	asset->add_child("Size")->add_child_text (raw_convert<string> (boost::filesystem::file_size (_file.get())));
 	asset->add_child("Type")->add_child_text (pkl_type (standard));
 }
 
 void
 Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 {
-	DCP_ASSERT (!_file.empty ());
+	DCP_ASSERT (_file);
 
 	optional<boost::filesystem::path> path = relative_to_root (
 		boost::filesystem::canonical (root),
-		boost::filesystem::canonical (_file)
+		boost::filesystem::canonical (_file.get())
 		);
 
 	if (!path) {
@@ -125,16 +125,16 @@ Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 	chunk->add_child("Path")->add_child_text (path.get().generic_string());
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
-	chunk->add_child("Length")->add_child_text (raw_convert<string> (boost::filesystem::file_size (_file)));
+	chunk->add_child("Length")->add_child_text (raw_convert<string> (boost::filesystem::file_size (_file.get())));
 }
 
 string
 Asset::hash (function<void (float)> progress) const
 {
-	DCP_ASSERT (!_file.empty ());
+	DCP_ASSERT (_file);
 
 	if (!_hash) {
-		_hash = make_digest (_file, progress);
+		_hash = make_digest (_file.get(), progress);
 	}
 
 	return _hash.get();

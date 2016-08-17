@@ -74,7 +74,9 @@ ReelAsset::ReelAsset (shared_ptr<Asset> asset, Fraction edit_rate, int64_t intri
 	, _hash (asset->hash ())
 {
 	/* default _annotation_text to the leaf name of our file */
-        _annotation_text = asset->file().leaf().string ();
+	if (asset->file ()) {
+		_annotation_text = asset->file()->leaf().string ();
+	}
 }
 
 ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)

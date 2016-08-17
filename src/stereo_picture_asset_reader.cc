@@ -35,6 +35,7 @@
 #include "stereo_picture_asset.h"
 #include "stereo_picture_frame.h"
 #include "exceptions.h"
+#include "dcp_assert.h"
 #include <asdcp/AS_DCP.h>
 
 using namespace dcp;
@@ -44,10 +45,11 @@ StereoPictureAssetReader::StereoPictureAssetReader (StereoPictureAsset const * a
 	: AssetReader (asset)
 {
 	_reader = new ASDCP::JP2K::MXFSReader ();
-	Kumu::Result_t const r = _reader->OpenRead (asset->file().string().c_str());
+	DCP_ASSERT (asset->file ());
+	Kumu::Result_t const r = _reader->OpenRead (asset->file()->string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		delete _reader;
-		boost::throw_exception (FileError ("could not open MXF file for reading", asset->file(), r));
+		boost::throw_exception (FileError ("could not open MXF file for reading", asset->file().get(), r));
 	}
 }
 
