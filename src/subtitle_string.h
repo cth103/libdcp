@@ -187,6 +187,10 @@ public:
 		_aspect_adjust = a;
 	}
 
+	void set_text (std::string t) {
+		_text = t;
+	}
+
 private:
 	/** font ID */
 	boost::optional<std::string> _font;
