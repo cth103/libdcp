@@ -136,4 +136,18 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_THROW (dcp::Time ("01:23::123", 250), dcp::DCPReadError);
 	BOOST_CHECK_THROW (dcp::Time ("01::45:123", 250), dcp::DCPReadError);
 	BOOST_CHECK_THROW (dcp::Time (":23:45:123", 250), dcp::DCPReadError);
+
+	/* Check operator< and operator> */
+	BOOST_CHECK (dcp::Time (3, 2, 3, 4, 24) < dcp::Time (3, 2, 3, 5, 24));
+	BOOST_CHECK (!(dcp::Time (3, 2, 3, 4, 24) < dcp::Time (3, 2, 3, 4, 24)));
+	BOOST_CHECK (dcp::Time (3, 2, 3, 5, 24) > dcp::Time (3, 2, 3, 4, 24));
+	BOOST_CHECK (!(dcp::Time (3, 2, 3, 4, 24) > dcp::Time (3, 2, 3, 4, 24)));
+	BOOST_CHECK (dcp::Time (6, 0, 0, 0, 24) < dcp::Time (7, 0, 0, 0, 24));
+	BOOST_CHECK (dcp::Time (0, 6, 0, 0, 24) < dcp::Time (0, 7, 0, 0, 24));
+	BOOST_CHECK (dcp::Time (0, 0, 6, 0, 24) < dcp::Time (0, 0, 7, 0, 24));
+	BOOST_CHECK (dcp::Time (0, 0, 0, 6, 24) < dcp::Time (0, 0, 0, 7, 24));
+	BOOST_CHECK (dcp::Time (7, 0, 0, 0, 24) > dcp::Time (6, 0, 0, 0, 24));
+	BOOST_CHECK (dcp::Time (0, 7, 0, 0, 24) > dcp::Time (0, 6, 0, 0, 24));
+	BOOST_CHECK (dcp::Time (0, 0, 7, 0, 24) > dcp::Time (0, 0, 6, 0, 24));
+	BOOST_CHECK (dcp::Time (0, 0, 0, 7, 24) > dcp::Time (0, 0, 0, 6, 24));
 }

@@ -208,11 +208,7 @@ dcp::operator< (Time const & a, Time const & b)
 		return a.s < b.s;
 	}
 
-	if ((a.e * b.tcr) != (b.e * a.tcr)) {
-		return (a.e * b.tcr) < (b.e * a.tcr);
-	}
-
-	return true;
+	return (a.e * b.tcr) < (b.e * a.tcr);
 }
 
 bool
@@ -230,11 +226,7 @@ dcp::operator> (Time const & a, Time const & b)
 		return a.s > b.s;
 	}
 
-	if ((a.e * b.tcr) != (b.e * a.tcr)) {
-		return (a.e * b.tcr) > (b.e * a.tcr);
-	}
-
-	return true;
+	return (a.e * b.tcr) > (b.e * a.tcr);
 }
 
 ostream &
