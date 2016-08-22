@@ -67,4 +67,6 @@ extern boost::shared_ptr<OpenJPEGImage> rgb_to_xyz (
 
 extern boost::shared_ptr<OpenJPEGImage> xyz_to_xyz (uint8_t const * xyz, dcp::Size size, int stride);
 
+extern void combined_rgb_to_xyz (ColourConversion const & conversion, double* matrix);
+
 }

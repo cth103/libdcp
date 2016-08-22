@@ -244,6 +244,35 @@ dcp::xyz_to_rgb (
 	}
 }
 
+/** @param conversion Colour conversion.
+ *  @param matrix Filled in with the product of the RGB to XYZ matrix, the Bradford transform and the DCI companding.
+ */
+void
+dcp::combined_rgb_to_xyz (ColourConversion const & conversion, double* matrix)
+{
+	boost::numeric::ublas::matrix<double> const rgb_to_xyz = conversion.rgb_to_xyz ();
+	boost::numeric::ublas::matrix<double> const bradford = conversion.bradford ();
+
+	matrix[0] = (bradford (0, 0) * rgb_to_xyz (0, 0) + bradford (0, 1) * rgb_to_xyz (1, 0) + bradford (0, 2) * rgb_to_xyz (2, 0))
+		* DCI_COEFFICIENT * 65535;
+	matrix[1] = (bradford (0, 0) * rgb_to_xyz (0, 1) + bradford (0, 1) * rgb_to_xyz (1, 1) + bradford (0, 2) * rgb_to_xyz (2, 1))
+		* DCI_COEFFICIENT * 65535;
+	matrix[2] = (bradford (0, 0) * rgb_to_xyz (0, 2) + bradford (0, 1) * rgb_to_xyz (1, 2) + bradford (0, 2) * rgb_to_xyz (2, 2))
+		* DCI_COEFFICIENT * 65535;
+	matrix[3] = (bradford (1, 0) * rgb_to_xyz (0, 0) + bradford (1, 1) * rgb_to_xyz (1, 0) + bradford (1, 2) * rgb_to_xyz (2, 0))
+		* DCI_COEFFICIENT * 65535;
+	matrix[4] = (bradford (1, 0) * rgb_to_xyz (0, 1) + bradford (1, 1) * rgb_to_xyz (1, 1) + bradford (1, 2) * rgb_to_xyz (2, 1))
+		* DCI_COEFFICIENT * 65535;
+	matrix[5] = (bradford (1, 0) * rgb_to_xyz (0, 2) + bradford (1, 1) * rgb_to_xyz (1, 2) + bradford (1, 2) * rgb_to_xyz (2, 2))
+		* DCI_COEFFICIENT * 65535;
+	matrix[6] = (bradford (2, 0) * rgb_to_xyz (0, 0) + bradford (2, 1) * rgb_to_xyz (1, 0) + bradford (2, 2) * rgb_to_xyz (2, 0))
+		* DCI_COEFFICIENT * 65535;
+	matrix[7] = (bradford (2, 0) * rgb_to_xyz (0, 1) + bradford (2, 1) * rgb_to_xyz (1, 1) + bradford (2, 2) * rgb_to_xyz (2, 1))
+		* DCI_COEFFICIENT * 65535;
+	matrix[8] = (bradford (2, 0) * rgb_to_xyz (0, 2) + bradford (2, 1) * rgb_to_xyz (1, 2) + bradford (2, 2) * rgb_to_xyz (2, 2))
+		* DCI_COEFFICIENT * 65535;
+}
+
 /** @param rgb RGB data; packed RGB 16:16:16, 48bpp, 16R, 16G, 16B,
  *  with the 2-byte value for each R/G/B component stored as
  *  little-endian; i.e. AV_PIX_FMT_RGB48LE.
@@ -271,21 +300,10 @@ dcp::rgb_to_xyz (
 
 	double const * lut_in = conversion.in()->lut (12, false);
 	double const * lut_out = conversion.out()->lut (16, true);
-	boost::numeric::ublas::matrix<double> const rgb_to_xyz = conversion.rgb_to_xyz ();
-	boost::numeric::ublas::matrix<double> const bradford = conversion.bradford ();
 
 	/* This is is the product of the RGB to XYZ matrix, the Bradford transform and the DCI companding */
-	double fast_matrix[9] = {
-		(bradford (0, 0) * rgb_to_xyz (0, 0) + bradford (0, 1) * rgb_to_xyz (1, 0) + bradford (0, 2) * rgb_to_xyz (2, 0)) * DCI_COEFFICIENT * 65535,
-		(bradford (0, 0) * rgb_to_xyz (0, 1) + bradford (0, 1) * rgb_to_xyz (1, 1) + bradford (0, 2) * rgb_to_xyz (2, 1)) * DCI_COEFFICIENT * 65535,
-		(bradford (0, 0) * rgb_to_xyz (0, 2) + bradford (0, 1) * rgb_to_xyz (1, 2) + bradford (0, 2) * rgb_to_xyz (2, 2)) * DCI_COEFFICIENT * 65535,
-		(bradford (1, 0) * rgb_to_xyz (0, 0) + bradford (1, 1) * rgb_to_xyz (1, 0) + bradford (1, 2) * rgb_to_xyz (2, 0)) * DCI_COEFFICIENT * 65535,
-		(bradford (1, 0) * rgb_to_xyz (0, 1) + bradford (1, 1) * rgb_to_xyz (1, 1) + bradford (1, 2) * rgb_to_xyz (2, 1)) * DCI_COEFFICIENT * 65535,
-		(bradford (1, 0) * rgb_to_xyz (0, 2) + bradford (1, 1) * rgb_to_xyz (1, 2) + bradford (1, 2) * rgb_to_xyz (2, 2)) * DCI_COEFFICIENT * 65535,
-		(bradford (2, 0) * rgb_to_xyz (0, 0) + bradford (2, 1) * rgb_to_xyz (1, 0) + bradford (2, 2) * rgb_to_xyz (2, 0)) * DCI_COEFFICIENT * 65535,
-		(bradford (2, 0) * rgb_to_xyz (0, 1) + bradford (2, 1) * rgb_to_xyz (1, 1) + bradford (2, 2) * rgb_to_xyz (2, 1)) * DCI_COEFFICIENT * 65535,
-		(bradford (2, 0) * rgb_to_xyz (0, 2) + bradford (2, 1) * rgb_to_xyz (1, 2) + bradford (2, 2) * rgb_to_xyz (2, 2)) * DCI_COEFFICIENT * 65535
-			};
+	double fast_matrix[9];
+	combined_rgb_to_xyz (conversion, fast_matrix);
 
 	int clamped = 0;
 	int* xyz_x = xyz->data (0);
