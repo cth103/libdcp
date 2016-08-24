@@ -65,6 +65,7 @@
 
 using std::string;
 using std::list;
+using std::vector;
 using std::cout;
 using std::make_pair;
 using std::map;
@@ -503,4 +504,17 @@ DCP::assets () const
 	}
 
 	return assets;
+}
+
+/** Given a list of files that make up 1 or more DCPs, return the DCP directories */
+vector<boost::filesystem::path>
+DCP::directories_from_files (vector<boost::filesystem::path> files)
+{
+	vector<boost::filesystem::path> d;
+	BOOST_FOREACH (boost::filesystem::path i, files) {
+		if (i.filename() == "ASSETMAP" || i.filename() == "ASSETMAP.xml") {
+			d.push_back (i.parent_path ());
+		}
+	}
+	return d;
 }

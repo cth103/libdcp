@@ -123,6 +123,8 @@ public:
 		return _standard;
 	}
 
+	static std::vector<boost::filesystem::path> directories_from_files (std::vector<boost::filesystem::path> files);
+
 private:
 
 	/** Write the PKL file.
