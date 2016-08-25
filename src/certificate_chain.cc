@@ -55,6 +55,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 #include <fstream>
+#include <iostream>
 
 using std::string;
 using std::ofstream;
@@ -310,6 +311,24 @@ CertificateChain::CertificateChain (
 	_key = dcp::file_to_string (directory / "leaf.key");
 
 	boost::filesystem::remove_all (directory);
+}
+
+CertificateChain::CertificateChain (string s)
+{
+	while (true) {
+		try {
+			Certificate c;
+			s = c.read_string (s);
+			_certificates.push_back (c);
+		} catch (MiscError& e) {
+			/* Failed to read a certificate, just stop */
+			break;
+		}
+	}
+
+	if (!attempt_reorder ()) {
+		throw MiscError ("could not find certificate chain order");
+	}
 }
 
 /** @return Root certificate */

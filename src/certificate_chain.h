@@ -74,6 +74,8 @@ public:
 		std::string leaf_common_name = "CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION"
 		);
 
+	explicit CertificateChain (std::string);
+
 	void add (Certificate c);
 	void remove (Certificate c);
 	void remove (int);

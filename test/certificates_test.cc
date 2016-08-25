@@ -55,8 +55,6 @@ BOOST_AUTO_TEST_CASE (certificates1)
 		"dnQualifier=QFVlym7fuql6bPOnY38aaO1ZPW4=,CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 
-	BOOST_CHECK (!c.leaf().extra_data ());
-
 	++i;
 
 	/* Intermediate */
@@ -69,8 +67,6 @@ BOOST_AUTO_TEST_CASE (certificates1)
 		i->subject(),
 		"dnQualifier=6eat8r33US71avuQEojmH\\+bjk84=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
-
-	BOOST_CHECK (!i->extra_data ());
 
 	++i;
 
@@ -88,8 +84,6 @@ BOOST_AUTO_TEST_CASE (certificates1)
 		"dnQualifier=DCnRdHFbcv4ANVUq2\\+wMVALFSec=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
 		);
 
-	BOOST_CHECK (!c.root().extra_data ());
-
 	/* Check that reconstruction from a string works */
 	dcp::Certificate test (c.root().certificate (true));
 	BOOST_CHECK_EQUAL (test.certificate(), c.root().certificate());
@@ -101,18 +95,16 @@ BOOST_AUTO_TEST_CASE (certificates2)
 	{
 		dcp::Certificate c (dcp::file_to_string (private_test / "CA.GDC-TECH.COM_SA2100_A14903.crt.crt"));
 		BOOST_CHECK_EQUAL (c.certificate(true), dcp::file_to_string (private_test / "CA.GDC-TECH.COM_SA2100_A14903.crt.crt.reformatted"));
-		BOOST_CHECK (!c.extra_data ());
 	}
 
 	{
 		dcp::Certificate c (dcp::file_to_string (private_test / "usl-cert.pem"));
 		BOOST_CHECK_EQUAL (c.certificate(true), dcp::file_to_string (private_test / "usl-cert.pem.trimmed"));
-		BOOST_CHECK (!c.extra_data ());
 	}
 
 	{
-		dcp::Certificate c (dcp::file_to_string (private_test / "chain.pem"));
-		BOOST_CHECK (c.extra_data ());
+		/* This is a chain, not an individual certificate, so it should throw an exception */
+		BOOST_CHECK_THROW (dcp::Certificate (dcp::file_to_string (private_test / "chain.pem")), dcp::MiscError);
 	}
 
 	BOOST_CHECK_THROW (dcp::Certificate (dcp::file_to_string (private_test / "no-begin.pem")), dcp::MiscError);
@@ -178,7 +170,17 @@ BOOST_AUTO_TEST_CASE (signer_validation)
 	BOOST_CHECK (chain.valid ());
 
 	/* Put in an unrelated key and the signer should no longer be valid */
-	dcp::CertificateChain another_chain ("openssl");
+	dcp::CertificateChain another_chain (boost::filesystem::path ("openssl"));
 	chain.set_key (another_chain.key().get ());
 	BOOST_CHECK (!chain.valid ());
+}
+
+/** Check reading of a certificate chain from a string */
+BOOST_AUTO_TEST_CASE (certificate_chain_from_string)
+{
+	dcp::CertificateChain a (dcp::file_to_string (private_test / "chain.pem"));
+	BOOST_CHECK_EQUAL (a.root_to_leaf().size(), 3);
+
+	dcp::CertificateChain b (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem"));
+	BOOST_CHECK_EQUAL (b.root_to_leaf().size(), 1);
 }

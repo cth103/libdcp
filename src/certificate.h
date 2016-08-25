@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -63,7 +63,6 @@ public:
 	Certificate ()
 		: _certificate (0)
 		, _public_key (0)
-		, _extra_data (false)
 	{}
 
 	explicit Certificate (std::string);
@@ -72,6 +71,8 @@ public:
 	~Certificate ();
 
 	Certificate& operator= (Certificate const &);
+
+	std::string read_string (std::string);
 
 	std::string certificate (bool with_begin_end = false) const;
 	std::string serial () const;
@@ -91,12 +92,7 @@ public:
 
 	std::string thumbprint () const;
 
-	bool extra_data () const {
-		return _extra_data;
-	}
-
 private:
-	bool read_string (std::string);
 
 	static std::string name_for_xml (X509_NAME *);
 	static std::string asn_to_utf8 (ASN1_STRING *);
@@ -104,10 +100,6 @@ private:
 
 	X509* _certificate;
 	mutable RSA* _public_key;
-	/** true if extra data was found when this certificate was read
-	    from a string.
-	*/
-	bool _extra_data;
 };
 
 bool operator== (Certificate const & a, Certificate const & b);

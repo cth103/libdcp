@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -64,7 +64,6 @@ static string const end_certificate = "-----END CERTIFICATE-----";
 Certificate::Certificate (X509* c)
 	: _certificate (c)
 	, _public_key (0)
-	, _extra_data (false)
 {
 
 }
@@ -76,7 +75,10 @@ Certificate::Certificate (string cert)
 	: _certificate (0)
 	, _public_key (0)
 {
-	_extra_data = read_string (cert);
+	string const s = read_string (cert);
+	if (!s.empty ()) {
+		throw MiscError ("unexpected data after certificate");
+	}
 }
 
 /** Copy constructor.
@@ -85,7 +87,6 @@ Certificate::Certificate (string cert)
 Certificate::Certificate (Certificate const & other)
 	: _certificate (0)
 	, _public_key (0)
-	, _extra_data (other._extra_data)
 {
 	if (other._certificate) {
 		read_string (other.certificate (true));
@@ -94,9 +95,9 @@ Certificate::Certificate (Certificate const & other)
 
 /** Read a certificate from a string.
  *  @param cert String to read.
- *  @return true if there is extra stuff after the end of the certificate, false if not.
+ *  @return remaining part of the input string after the certificate which was read.
  */
-bool
+string
 Certificate::read_string (string cert)
 {
 	/* Reformat cert so that it has line breaks every 64 characters.
@@ -176,11 +177,16 @@ Certificate::read_string (string cert)
 
 	BIO_free (bio);
 
-	/* See if there are any non-blank lines after the certificate that we read */
-	while (i != lines.end() && i->empty()) {
+	string extra;
+
+	while (i != lines.end()) {
+		if (!i->empty()) {
+			extra += *i + "\n";
+		}
 		++i;
 	}
-	return i != lines.end();
+
+	return extra;
 }
 
 /** Destructor */
@@ -204,7 +210,6 @@ Certificate::operator= (Certificate const & other)
 	_certificate = 0;
 	RSA_free (_public_key);
 	_public_key = 0;
-	_extra_data = other._extra_data;
 
 	read_string (other.certificate (true));
 
