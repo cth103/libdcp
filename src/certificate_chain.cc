@@ -343,7 +343,7 @@ CertificateChain::root () const
 Certificate
 CertificateChain::leaf () const
 {
-	DCP_ASSERT (_certificates.size() >= 2);
+	DCP_ASSERT (!_certificates.empty());
 	return _certificates.back ();
 }
 
