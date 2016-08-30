@@ -98,11 +98,32 @@ protected:
 	friend struct ::interop_dcp_font_test;
 	friend struct ::smpte_dcp_font_test;
 
-	void parse_subtitles (
-		boost::shared_ptr<cxml::Document> xml,
-		std::list<boost::shared_ptr<FontNode> > font_nodes,
-		std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes
-		);
+	struct ParseState {
+		boost::optional<std::string> font_id;
+		boost::optional<int64_t> size;
+		boost::optional<float> aspect_adjust;
+		boost::optional<bool> italic;
+		boost::optional<bool> bold;
+		boost::optional<bool> underline;
+		boost::optional<Colour> colour;
+		boost::optional<Effect> effect;
+		boost::optional<Colour> effect_colour;
+		boost::optional<float> h_position;
+		boost::optional<HAlign> h_align;
+		boost::optional<float> v_position;
+		boost::optional<VAlign> v_align;
+		boost::optional<Direction> direction;
+		boost::optional<Time> in;
+		boost::optional<Time> out;
+		boost::optional<Time> fade_up_time;
+		boost::optional<Time> fade_down_time;
+	};
+
+	void parse_subtitles (xmlpp::Element const * node, std::list<ParseState>& state, boost::optional<int> tcr, Standard standard);
+	ParseState font_node_state (xmlpp::Element const * node, Standard standard) const;
+	ParseState text_node_state (xmlpp::Element const * node) const;
+	ParseState subtitle_node_state (xmlpp::Element const * node, boost::optional<int> tcr) const;
+	Time fade_time (xmlpp::Element const * node, std::string name, boost::optional<int> tcr) const;
 
 	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Standard standard) const;
 
@@ -135,34 +156,7 @@ protected:
 	std::list<Font> _fonts;
 
 private:
-	/** @struct ParseState
-	 *  @brief  A struct to hold state when parsing a subtitle XML file.
-	 */
-	struct ParseState {
-		std::list<boost::shared_ptr<FontNode> > font_nodes;
-		std::list<boost::shared_ptr<TextNode> > text_nodes;
-		std::list<boost::shared_ptr<SubtitleNode> > subtitle_nodes;
-	};
-
-	void maybe_add_subtitle (std::string text, ParseState const & parse_state);
-
-	void examine_nodes (
-		boost::shared_ptr<const cxml::Node> xml,
-		std::list<boost::shared_ptr<FontNode> > const & font_nodes,
-		ParseState& parse_state
-		);
-
-	void examine_nodes (
-		boost::shared_ptr<const cxml::Node> xml,
-		std::list<boost::shared_ptr<TextNode> > const & text_nodes,
-		ParseState& parse_state
-		);
-
-	void examine_nodes (
-		boost::shared_ptr<const cxml::Node> xml,
-		std::list<boost::shared_ptr<SubtitleNode> > const & subtitle_nodes,
-		ParseState& parse_state
-		);
+	void maybe_add_subtitle (std::string text, std::list<ParseState> const & parse_state);
 };
 
 }

@@ -92,7 +92,6 @@ def build(bld):
                  smpte_load_font_test.cc
                  sound_frame_test.cc
                  test.cc
-                 text_test.cc
                  util_test.cc
                  write_subtitle_test.cc
                  """

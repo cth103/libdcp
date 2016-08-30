@@ -54,7 +54,6 @@ def build(bld):
              exceptions.cc
              file.cc
              font_asset.cc
-             font_node.cc
              gamma_transfer_function.cc
              interop_load_font_node.cc
              interop_subtitle_asset.cc
@@ -96,10 +95,8 @@ def build(bld):
              stereo_picture_asset_reader.cc
              stereo_picture_asset_writer.cc
              stereo_picture_frame.cc
-             subtitle_node.cc
              subtitle_asset.cc
              subtitle_string.cc
-             text_node.cc
              transfer_function.cc
              types.cc
              util.cc
@@ -167,7 +164,6 @@ def build(bld):
               stereo_picture_asset_reader.h
               stereo_picture_asset_writer.h
               stereo_picture_frame.h
-              subtitle_node.h
               subtitle_asset.h
               subtitle_string.h
               transfer_function.h

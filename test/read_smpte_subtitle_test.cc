@@ -65,3 +65,29 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test)
 	BOOST_CHECK_EQUAL (sc.subtitles().back().in(), dcp::Time (0, 1, 57, 17, 25));
 	BOOST_CHECK_EQUAL (sc.subtitles().back().out(), dcp::Time (0, 1, 58, 12, 25));
 }
+
+/** And another one featuring <Font> within <Text> */
+BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test2)
+{
+	dcp::SMPTESubtitleAsset sc (private_test / "olsson.xml");
+
+	BOOST_REQUIRE_EQUAL (sc.subtitles().size(), 6);
+	list<dcp::SubtitleString>::const_iterator i = sc.subtitles().begin();
+	BOOST_CHECK_EQUAL (i->text(), "Testing is ");
+	BOOST_CHECK (!i->italic());
+	++i;
+	BOOST_CHECK_EQUAL (i->text(), "really");
+	BOOST_CHECK (i->italic());
+	++i;
+	BOOST_CHECK_EQUAL (i->text(), " fun!");
+	BOOST_CHECK (!i->italic());
+	++i;
+	BOOST_CHECK_EQUAL (i->text(), "This is the ");
+	BOOST_CHECK (!i->italic());
+	++i;
+	BOOST_CHECK_EQUAL (i->text(), "second");
+	BOOST_CHECK (i->italic());
+	++i;
+	BOOST_CHECK_EQUAL (i->text(), " line!");
+	BOOST_CHECK (!i->italic());
+}

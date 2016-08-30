@@ -37,7 +37,6 @@
 
 #include "smpte_subtitle_asset.h"
 #include "smpte_load_font_node.h"
-#include "font_node.h"
 #include "exceptions.h"
 #include "xml.h"
 #include "raw_convert.h"
@@ -139,19 +138,16 @@ SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 		_start_time = Time (xml->string_child ("StartTime"), _time_code_rate);
 	}
 
-	shared_ptr<cxml::Node> subtitle_list = xml->optional_node_child ("SubtitleList");
+	/* Now we need to drop down to xmlpp */
 
-	list<shared_ptr<dcp::FontNode> > font_nodes;
-	BOOST_FOREACH (cxml::NodePtr const & i, subtitle_list->node_children ("Font")) {
-		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, _time_code_rate, SMPTE)));
+	list<ParseState> ps;
+	xmlpp::Node::NodeList c = xml->node()->get_children ();
+	for (xmlpp::Node::NodeList::const_iterator i = c.begin(); i != c.end(); ++i) {
+		xmlpp::Element const * e = dynamic_cast<xmlpp::Element const *> (*i);
+		if (e && e->get_name() == "SubtitleList") {
+			parse_subtitles (e, ps, _time_code_rate, SMPTE);
+		}
 	}
-
-	list<shared_ptr<dcp::SubtitleNode> > subtitle_nodes;
-	BOOST_FOREACH (cxml::NodePtr const & i, subtitle_list->node_children ("Subtitle")) {
-		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, _time_code_rate, SMPTE)));
-	}
-
-	parse_subtitles (xml, font_nodes, subtitle_nodes);
 
 	/* Guess intrinsic duration */
 	_intrinsic_duration = latest_subtitle_out().as_editable_units (_edit_rate.numerator / _edit_rate.denominator);

@@ -32,17 +32,17 @@
 */
 
 #include "raw_convert.h"
+#include "compose.hpp"
 #include "subtitle_asset.h"
 #include "util.h"
 #include "xml.h"
-#include "font_node.h"
-#include "text_node.h"
 #include "subtitle_string.h"
 #include "dcp_assert.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_util.h>
 #include <libxml++/nodes/element.h>
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/shared_array.hpp>
 #include <boost/foreach.hpp>
 
@@ -55,6 +55,7 @@ using boost::shared_ptr;
 using boost::shared_array;
 using boost::optional;
 using boost::dynamic_pointer_cast;
+using boost::lexical_cast;
 using namespace dcp;
 
 SubtitleAsset::SubtitleAsset ()
@@ -68,108 +69,289 @@ SubtitleAsset::SubtitleAsset (boost::filesystem::path file)
 
 }
 
-void
-SubtitleAsset::parse_subtitles (
-	shared_ptr<cxml::Document> xml,
-	list<shared_ptr<dcp::FontNode> > font_nodes,
-	list<shared_ptr<dcp::SubtitleNode> > subtitle_nodes
-	)
+string
+string_attribute (xmlpp::Element const * node, string name)
 {
-	/* Make Subtitle objects to represent the raw XML nodes in a sane way */
-	ParseState parse_state;
-	examine_nodes (xml, font_nodes, parse_state);
-	examine_nodes (xml, subtitle_nodes, parse_state);
-}
-
-void
-SubtitleAsset::examine_nodes (
-	shared_ptr<const cxml::Node> xml,
-	list<shared_ptr<dcp::SubtitleNode> > const & subtitle_nodes,
-	ParseState& parse_state
-	)
-{
-	BOOST_FOREACH (shared_ptr<dcp::SubtitleNode> i, subtitle_nodes) {
-		parse_state.subtitle_nodes.push_back (i);
-		examine_nodes (xml, i->text_nodes, parse_state);
-		examine_nodes (xml, i->font_nodes, parse_state);
-		parse_state.subtitle_nodes.pop_back ();
+	xmlpp::Attribute* a = node->get_attribute (name);
+	if (!a) {
+		throw XMLError (String::compose ("missing attribute %1", name));
 	}
+	return string (a->get_value ());
 }
 
-void
-SubtitleAsset::examine_nodes (
-	shared_ptr<const cxml::Node> xml,
-	list<shared_ptr<dcp::FontNode> > const & font_nodes,
-	ParseState& parse_state
-	)
+optional<string>
+optional_string_attribute (xmlpp::Element const * node, string name)
 {
-	BOOST_FOREACH (shared_ptr<dcp::FontNode> i, font_nodes) {
-
-		parse_state.font_nodes.push_back (i);
-		maybe_add_subtitle (i->text, parse_state);
-
-		examine_nodes (xml, i->subtitle_nodes, parse_state);
-		examine_nodes (xml, i->font_nodes, parse_state);
-		examine_nodes (xml, i->text_nodes, parse_state);
-
-		parse_state.font_nodes.pop_back ();
+	xmlpp::Attribute* a = node->get_attribute (name);
+	if (!a) {
+		return optional<string>();
 	}
+	return string (a->get_value ());
 }
 
-void
-SubtitleAsset::examine_nodes (
-	shared_ptr<const cxml::Node> xml,
-	list<shared_ptr<dcp::TextNode> > const & text_nodes,
-	ParseState& parse_state
-	)
+optional<bool>
+optional_bool_attribute (xmlpp::Element const * node, string name)
 {
-	BOOST_FOREACH (shared_ptr<dcp::TextNode> i, text_nodes) {
-		parse_state.text_nodes.push_back (i);
-		maybe_add_subtitle (i->text, parse_state);
-		examine_nodes (xml, i->font_nodes, parse_state);
-		parse_state.text_nodes.pop_back ();
+	optional<string> s = optional_string_attribute (node, name);
+	if (!s) {
+		return optional<bool> ();
 	}
+
+	return (s.get() == "1" || s.get() == "yes");
+}
+
+template <class T>
+optional<T>
+optional_number_attribute (xmlpp::Element const * node, string name)
+{
+	boost::optional<std::string> s = optional_string_attribute (node, name);
+	if (!s) {
+		return boost::optional<T> ();
+	}
+
+	std::string t = s.get ();
+	boost::erase_all (t, " ");
+	locked_stringstream u;
+	u.imbue (std::locale::classic ());
+	u << t;
+	T n;
+	u >> n;
+	return n;
+}
+
+SubtitleAsset::ParseState
+SubtitleAsset::font_node_state (xmlpp::Element const * node, Standard standard) const
+{
+	ParseState ps;
+
+	if (standard == INTEROP) {
+		ps.font_id = optional_string_attribute (node, "Id");
+	} else {
+		ps.font_id = optional_string_attribute (node, "ID");
+	}
+	ps.size = optional_number_attribute<int64_t> (node, "Size");
+	ps.aspect_adjust = optional_number_attribute<float> (node, "AspectAdjust");
+	ps.italic = optional_bool_attribute (node, "Italic");
+	ps.bold = optional_string_attribute(node, "Weight").get_value_or("normal") == "bold";
+	if (standard == INTEROP) {
+		ps.underline = optional_bool_attribute (node, "Underlined");
+	} else {
+		ps.underline = optional_bool_attribute (node, "Underline");
+	}
+	optional<string> c = optional_string_attribute (node, "Color");
+	if (c) {
+		ps.colour = Colour (c.get ());
+	}
+	optional<string> const e = optional_string_attribute (node, "Effect");
+	if (e) {
+		ps.effect = string_to_effect (e.get ());
+	}
+	c = optional_string_attribute (node, "EffectColor");
+	if (c) {
+		ps.effect_colour = Colour (c.get ());
+	}
+
+	return ps;
+}
+
+SubtitleAsset::ParseState
+SubtitleAsset::text_node_state (xmlpp::Element const * node) const
+{
+	ParseState ps;
+
+	optional<float> hp = optional_number_attribute<float> (node, "HPosition");
+	if (!hp) {
+		hp = optional_number_attribute<float> (node, "Hposition");
+	}
+	if (hp) {
+		ps.h_position = hp.get () / 100;
+	}
+
+	optional<string> ha = optional_string_attribute (node, "HAlign");
+	if (!ha) {
+		ha = optional_string_attribute (node, "Halign");
+	}
+	if (ha) {
+		ps.h_align = string_to_halign (ha.get ());
+	}
+
+	optional<float> vp = optional_number_attribute<float> (node, "VPosition");
+	if (!vp) {
+		vp = optional_number_attribute<float> (node, "Vposition");
+	}
+	if (vp) {
+		ps.v_position = vp.get () / 100;
+	}
+
+	optional<string> va = optional_string_attribute (node, "VAlign");
+	if (!va) {
+		va = optional_string_attribute (node, "Valign");
+	}
+	if (va) {
+		ps.v_align = string_to_valign (va.get ());
+	}
+
+	optional<string> d = optional_string_attribute (node, "Direction");
+	if (d) {
+		ps.direction = string_to_direction (d.get ());
+	}
+
+	return ps;
+}
+
+SubtitleAsset::ParseState
+SubtitleAsset::subtitle_node_state (xmlpp::Element const * node, optional<int> tcr) const
+{
+	ParseState ps;
+	ps.in = Time (string_attribute(node, "TimeIn"), tcr);
+	ps.out = Time (string_attribute(node, "TimeOut"), tcr);
+	ps.fade_up_time = fade_time (node, "FadeUpTime", tcr);
+	ps.fade_down_time = fade_time (node, "FadeDownTime", tcr);
+	return ps;
+}
+
+Time
+SubtitleAsset::fade_time (xmlpp::Element const * node, string name, optional<int> tcr) const
+{
+	string const u = optional_string_attribute(node, name).get_value_or ("");
+	Time t;
+
+	if (u.empty ()) {
+		t = Time (0, 0, 0, 20, 250);
+	} else if (u.find (":") != string::npos) {
+		t = Time (u, tcr);
+	} else {
+		t = Time (0, 0, 0, lexical_cast<int> (u), tcr.get_value_or(250));
+	}
+
+	if (t > Time (0, 0, 8, 0, 250)) {
+		t = Time (0, 0, 8, 0, 250);
+	}
+
+	return t;
 }
 
 void
-SubtitleAsset::maybe_add_subtitle (string text, ParseState const & parse_state)
+SubtitleAsset::parse_subtitles (xmlpp::Element const * node, list<ParseState>& state, optional<int> tcr, Standard standard)
+{
+	if (node->get_name() == "Font") {
+		state.push_back (font_node_state (node, standard));
+	} else if (node->get_name() == "Subtitle") {
+		state.push_back (subtitle_node_state (node, tcr));
+	} else if (node->get_name() == "Text") {
+		state.push_back (text_node_state (node));
+	} else if (node->get_name() == "SubtitleList") {
+		state.push_back (ParseState ());
+	} else {
+		throw XMLError ("unexpected node " + node->get_name());
+	}
+
+	xmlpp::Node::NodeList c = node->get_children ();
+	for (xmlpp::Node::NodeList::const_iterator i = c.begin(); i != c.end(); ++i) {
+		xmlpp::ContentNode const * v = dynamic_cast<xmlpp::ContentNode const *> (*i);
+		if (v) {
+			maybe_add_subtitle (v->get_content(), state);
+		}
+		xmlpp::Element const * e = dynamic_cast<xmlpp::Element const *> (*i);
+		if (e) {
+			parse_subtitles (e, state, tcr, standard);
+		}
+	}
+
+	state.pop_back ();
+}
+
+void
+SubtitleAsset::maybe_add_subtitle (string text, list<ParseState> const & parse_state)
 {
 	if (empty_or_white_space (text)) {
 		return;
 	}
 
-	if (parse_state.text_nodes.empty() || parse_state.subtitle_nodes.empty ()) {
+	ParseState ps;
+	BOOST_FOREACH (ParseState const & i, parse_state) {
+		if (i.font_id) {
+			ps.font_id = i.font_id.get();
+		}
+		if (i.size) {
+			ps.size = i.size.get();
+		}
+		if (i.aspect_adjust) {
+			ps.aspect_adjust = i.aspect_adjust.get();
+		}
+		if (i.italic) {
+			ps.italic = i.italic.get();
+		}
+		if (i.bold) {
+			ps.bold = i.bold.get();
+		}
+		if (i.underline) {
+			ps.underline = i.underline.get();
+		}
+		if (i.colour) {
+			ps.colour = i.colour.get();
+		}
+		if (i.effect) {
+			ps.effect = i.effect.get();
+		}
+		if (i.effect_colour) {
+			ps.effect_colour = i.effect_colour.get();
+		}
+		if (i.h_position) {
+			ps.h_position = i.h_position.get();
+		}
+		if (i.h_align) {
+			ps.h_align = i.h_align.get();
+		}
+		if (i.v_position) {
+			ps.v_position = i.v_position.get();
+		}
+		if (i.v_align) {
+			ps.v_align = i.v_align.get();
+		}
+		if (i.direction) {
+			ps.direction = i.direction.get();
+		}
+		if (i.in) {
+			ps.in = i.in.get();
+		}
+		if (i.out) {
+			ps.out = i.out.get();
+		}
+		if (i.fade_up_time) {
+			ps.fade_up_time = i.fade_up_time.get();
+		}
+		if (i.fade_down_time) {
+			ps.fade_down_time = i.fade_down_time.get();
+		}
+	}
+
+	if (!ps.in || !ps.out) {
+		/* We're not in a <Text> node; just ignore this content */
 		return;
 	}
 
-	DCP_ASSERT (!parse_state.text_nodes.empty ());
-	DCP_ASSERT (!parse_state.subtitle_nodes.empty ());
-
-	dcp::FontNode effective_font (parse_state.font_nodes);
-	dcp::TextNode effective_text (*parse_state.text_nodes.back ());
-	dcp::SubtitleNode effective_subtitle (*parse_state.subtitle_nodes.back ());
-
 	_subtitles.push_back (
 		SubtitleString (
-			effective_font.id,
-			effective_font.italic.get_value_or (false),
-			effective_font.bold.get_value_or (false),
-			effective_font.underline.get_value_or (false),
-			effective_font.colour.get_value_or (dcp::Colour (255, 255, 255)),
-			effective_font.size,
-			effective_font.aspect_adjust.get_value_or (1.0),
-			effective_subtitle.in,
-			effective_subtitle.out,
-			effective_text.h_position,
-			effective_text.h_align,
-			effective_text.v_position,
-			effective_text.v_align,
-			effective_text.direction,
+			ps.font_id,
+			ps.italic.get_value_or (false),
+			ps.bold.get_value_or (false),
+			ps.underline.get_value_or (false),
+			ps.colour.get_value_or (dcp::Colour (255, 255, 255)),
+			ps.size.get_value_or (42),
+			ps.aspect_adjust.get_value_or (1.0),
+			ps.in.get(),
+			ps.out.get(),
+			ps.h_position.get_value_or(0),
+			ps.h_align.get_value_or(HALIGN_CENTER),
+			ps.v_position.get_value_or(0),
+			ps.v_align.get_value_or(VALIGN_CENTER),
+			ps.direction.get_value_or (DIRECTION_LTR),
 			text,
-			effective_font.effect.get_value_or (NONE),
-			effective_font.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
-			effective_subtitle.fade_up_time,
-			effective_subtitle.fade_down_time
+			ps.effect.get_value_or (NONE),
+			ps.effect_colour.get_value_or (dcp::Colour (255, 255, 255)),
+			ps.fade_up_time.get_value_or(Time()),
+			ps.fade_down_time.get_value_or(Time())
 			)
 		);
 }
