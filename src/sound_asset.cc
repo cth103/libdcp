@@ -192,10 +192,10 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 }
 
 shared_ptr<SoundAssetWriter>
-SoundAsset::start_write (boost::filesystem::path file, Standard standard, ChannelAssignment assign)
+SoundAsset::start_write (boost::filesystem::path file, Standard standard)
 {
 	/* XXX: can't we use a shared_ptr here? */
-	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter (this, file, standard, assign));
+	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter (this, file, standard));
 }
 
 shared_ptr<SoundAssetReader>

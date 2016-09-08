@@ -51,7 +51,7 @@ struct SoundAssetWriter::ASDCPState
 	ASDCP::PCM::AudioDescriptor audio_desc;
 };
 
-SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, Standard standard, ChannelAssignment assign)
+SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, Standard standard)
 	: AssetWriter (asset, file, standard)
 	, _state (new SoundAssetWriter::ASDCPState)
 	, _sound_asset (asset)
@@ -69,23 +69,10 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 	if (standard == INTEROP) {
 		_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_NONE;
 	} else {
-		switch (assign) {
-		case CHANNEL_ASSIGNMENT_51:
-			_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_CFG_1;
-			break;
-		case CHANNEL_ASSIGNMENT_61:
-			_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_CFG_2;
-			break;
-		case CHANNEL_ASSIGNMENT_71:
-			_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_CFG_3;
-			break;
-		case CHANNEL_ASSIGNMENT_WTF:
-			_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_CFG_4;
-			break;
-		case CHANNEL_ASSIGNMENT_71_DS:
-			_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_CFG_5;
-			break;
-		}
+		/* Just use WTF ("wild track format") for SMPTE for now; searches suggest that this
+		   uses the same assignment as Interop.
+		*/
+		_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_CFG_4;
 	}
 
 	_state->frame_buffer.Capacity (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));

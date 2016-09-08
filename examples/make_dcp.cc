@@ -72,7 +72,7 @@ main ()
 	   When creating the object we specify the sampling rate (48kHz) and the number of channels (2).
 	*/
 	boost::shared_ptr<dcp::SoundAsset> sound_asset (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 2));
-	boost::shared_ptr<dcp::SoundAssetWriter> sound_writer = sound_asset->start_write ("DCP/sound.mxf", dcp::SMPTE, dcp::CHANNEL_ASSIGNMENT_51);
+	boost::shared_ptr<dcp::SoundAssetWriter> sound_writer = sound_asset->start_write ("DCP/sound.mxf", dcp::SMPTE);
 
 	/* Write some sine waves */
 	float* audio[2];
