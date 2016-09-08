@@ -365,7 +365,9 @@ dcp::xyz_to_xyz (uint8_t const * xyz_16, dcp::Size size, int stride)
 		uint16_t const * p = reinterpret_cast<uint16_t const *> (xyz_16 + y * stride);
 		for (int x = 0; x < size.width; ++x) {
 			/* Truncate 16-bit to 12-bit */
+			cout << *p << " ";
 			xyz_12->data(0)[jn] = *p++ >> 4;
+			cout << xyz_12->data(0)[jn] << "\n";
 			xyz_12->data(1)[jn] = *p++ >> 4;
 			xyz_12->data(2)[jn] = *p++ >> 4;
 			++jn;

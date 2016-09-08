@@ -48,7 +48,7 @@ main ()
 {
 	/* Create a directory to put the DCP in */
 	boost::filesystem::create_directory ("DCP");
-	
+
 	/* Make a picture asset.  This is a file which combines JPEG2000 files together to make
 	   up the video of the DCP.  First, create the object, specifying a frame rate of 24 frames
 	   per second.
@@ -72,7 +72,7 @@ main ()
 	   When creating the object we specify the sampling rate (48kHz) and the number of channels (2).
 	*/
 	boost::shared_ptr<dcp::SoundAsset> sound_asset (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 2));
-	boost::shared_ptr<dcp::SoundAssetWriter> sound_writer = sound_asset->start_write ("DCP/sound.mxf", dcp::SMPTE);
+	boost::shared_ptr<dcp::SoundAssetWriter> sound_writer = sound_asset->start_write ("DCP/sound.mxf", dcp::SMPTE, dcp::CHANNEL_ASSIGNMENT_51);
 
 	/* Write some sine waves */
 	float* audio[2];
@@ -106,6 +106,6 @@ main ()
 	dcp::DCP dcp ("DCP");
 	dcp.add (cpl);
 	dcp.write_xml (dcp::SMPTE);
-	
+
 	return 0;
 }

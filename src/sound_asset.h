@@ -58,7 +58,7 @@ public:
 	explicit SoundAsset (boost::filesystem::path file);
 	SoundAsset (Fraction edit_rate, int sampling_rate, int channels);
 
-	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file, Standard standard);
+	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file, Standard standard, ChannelAssignment assign);
 	boost::shared_ptr<SoundAssetReader> start_read () const;
 
 	bool equals (

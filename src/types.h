@@ -232,6 +232,20 @@ enum Formulation {
 	DCI_SPECIFIC
 };
 
+/** Possible channel assignments for SMPTE DCP audio */
+enum ChannelAssignment {
+	/** L/R/C/Lfe/Ls/Rs/HI/VI */
+	CHANNEL_ASSIGNMENT_51,
+	/** L/R/C/Lfe/Ls/Rs/Cs/unused/HI/VI */
+	CHANNEL_ASSIGNMENT_61,
+	/** L/R/C/Lfe/Ls/Rs/Lc/Rc/HI/VI */
+	CHANNEL_ASSIGNMENT_71,
+	/** "Wild track format"; no assignment */
+	CHANNEL_ASSIGNMENT_WTF,
+	/** L/R/C/Lfe/Ls/Rs/Lrs/Rrs/HI/VI */
+	CHANNEL_ASSIGNMENT_71_DS
+};
+
 /** @class Colour
  *  @brief An RGB colour.
  */

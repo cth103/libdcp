@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 
 	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1));
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test1/audio.mxf", dcp::SMPTE);
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test1/audio.mxf", dcp::SMPTE, dcp::CHANNEL_ASSIGNMENT_51);
 
 	SF_INFO info;
 	info.format = 0;
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 
 	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1));
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf", dcp::SMPTE);
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf", dcp::SMPTE, dcp::CHANNEL_ASSIGNMENT_51);
 
 	SF_INFO info;
 	info.format = 0;
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 
 	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1));
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test5/audio.mxf", dcp::SMPTE);
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test5/audio.mxf", dcp::SMPTE, dcp::CHANNEL_ASSIGNMENT_51);
 
 	SF_INFO info;
 	info.format = 0;
