@@ -79,8 +79,10 @@ MonoPictureFrame::MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, share
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = new ASDCP::JP2K::FrameBuffer (4 * Kumu::Megabyte);
 
-	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->decryption()))) {
-		boost::throw_exception (DCPReadError (String::compose ("could not read video frame %1", n)));
+	ASDCP::Result_t const r = reader->ReadFrame (n, *_buffer, c->decryption());
+
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (DCPReadError (String::compose ("could not read video frame %1 (%2)", n, static_cast<int>(r))));
 	}
 }
 
