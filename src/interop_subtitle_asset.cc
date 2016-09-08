@@ -35,7 +35,6 @@
 #include "interop_load_font_node.h"
 #include "xml.h"
 #include "raw_convert.h"
-#include "font_node.h"
 #include "util.h"
 #include "font_asset.h"
 #include "dcp_assert.h"
@@ -66,17 +65,16 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 	_movie_title = xml->string_child ("MovieTitle");
 	_load_font_nodes = type_children<dcp::InteropLoadFontNode> (xml, "LoadFont");
 
-	list<shared_ptr<dcp::FontNode> > font_nodes;
-	BOOST_FOREACH (cxml::NodePtr const & i, xml->node_children ("Font")) {
-		font_nodes.push_back (shared_ptr<FontNode> (new FontNode (i, optional<int>(), INTEROP)));
-	}
+	/* Now we need to drop down to xmlpp */
 
-	list<shared_ptr<dcp::SubtitleNode> > subtitle_nodes;
-	BOOST_FOREACH (cxml::NodePtr const & i, xml->node_children ("Subtitle")) {
-		subtitle_nodes.push_back (shared_ptr<SubtitleNode> (new SubtitleNode (i, optional<int>(), INTEROP)));
+	list<ParseState> ps;
+	xmlpp::Node::NodeList c = xml->node()->get_children ();
+	for (xmlpp::Node::NodeList::const_iterator i = c.begin(); i != c.end(); ++i) {
+		xmlpp::Element const * e = dynamic_cast<xmlpp::Element const *> (*i);
+		if (e && (e->get_name() == "Font" || e->get_name() == "Subtitle")) {
+			parse_subtitles (e, ps, optional<int>(), INTEROP);
+		}
 	}
-
-	parse_subtitles (xml, font_nodes, subtitle_nodes);
 }
 
 InteropSubtitleAsset::InteropSubtitleAsset ()
