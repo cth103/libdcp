@@ -185,11 +185,11 @@ dcp::locale_convert (string x, int, bool)
 }
 
 template<>
-int64_t
+long int
 dcp::locale_convert (string x, int, bool)
 {
-	int64_t y = 0;
-	sscanf (x.c_str(), "%" PRId64, &y);
+	long int y = 0;
+	sscanf (x.c_str(), "%ld", &y);
 	return y;
 }
 
