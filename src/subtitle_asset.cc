@@ -111,12 +111,7 @@ optional_number_attribute (xmlpp::Element const * node, string name)
 
 	std::string t = s.get ();
 	boost::erase_all (t, " ");
-	locked_stringstream u;
-	u.imbue (std::locale::classic ());
-	u << t;
-	T n;
-	u >> n;
-	return n;
+	return raw_convert<T> (t);
 }
 
 SubtitleAsset::ParseState
