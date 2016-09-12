@@ -185,11 +185,20 @@ dcp::locale_convert (string x, int, bool)
 }
 
 template<>
-long int
+long
 dcp::locale_convert (string x, int, bool)
 {
 	long int y = 0;
 	sscanf (x.c_str(), "%ld", &y);
+	return y;
+}
+
+template<>
+long long
+dcp::locale_convert (string x, int, bool)
+{
+	long long y = 0;
+	sscanf (x.c_str(), "%lld", &y);
 	return y;
 }
 
