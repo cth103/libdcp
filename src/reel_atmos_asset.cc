@@ -41,6 +41,8 @@
 #include <libxml++/libxml++.h>
 
 using std::string;
+using std::pair;
+using std::make_pair;
 using boost::shared_ptr;
 using namespace dcp;
 
@@ -53,6 +55,7 @@ ReelAtmosAsset::ReelAtmosAsset (boost::shared_ptr<AtmosAsset> asset, int64_t ent
 ReelAtmosAsset::ReelAtmosAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
 {
+	node->ignore_child ("DataType");
 	node->done ();
 }
 
@@ -60,6 +63,12 @@ string
 ReelAtmosAsset::cpl_node_name () const
 {
 	return "axd:AuxData";
+}
+
+pair<string, string>
+ReelAtmosAsset::cpl_node_namespace () const
+{
+	return make_pair ("http://www.dolby.com/schemas/2012/AD", "axd");
 }
 
 string

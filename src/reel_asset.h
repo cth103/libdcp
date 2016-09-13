@@ -122,10 +122,11 @@ protected:
 	 */
 	virtual std::string cpl_node_name () const = 0;
 
-	/** @return Any attribute that should be used on the asset's node in the
-	 *  CPL.
-	 */
+	/** @return Any attribute that should be used on the asset's node in the CPL */
 	virtual std::pair<std::string, std::string> cpl_node_attribute (Standard) const;
+
+	/** @return Any namespace that should be used on the asset's node in the CPL */
+	virtual std::pair<std::string, std::string> cpl_node_namespace () const;
 
 	/** Reference to the asset (MXF or XML file) that this reel entry
 	 *  applies to.

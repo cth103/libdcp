@@ -278,3 +278,17 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 
 	/* build/test/DCP/dcp_test5 is checked against test/ref/DCP/dcp_test5 by run/tests */
 }
+
+/** Basic tests of reading a 2D DCP with an Atmos track */
+BOOST_AUTO_TEST_CASE (dcp_test6)
+{
+	dcp::DCP dcp ("test/ref/DCP/dcp_test5");
+	dcp.read ();
+
+	BOOST_REQUIRE_EQUAL (dcp.cpls().size(), 1);
+	BOOST_REQUIRE_EQUAL (dcp.cpls().front()->reels().size(), 1);
+	BOOST_CHECK (dcp.cpls().front()->reels().front()->main_picture());
+	BOOST_CHECK (dcp.cpls().front()->reels().front()->main_sound());
+	BOOST_CHECK (!dcp.cpls().front()->reels().front()->main_subtitle());
+	BOOST_CHECK (dcp.cpls().front()->reels().front()->atmos());
+}

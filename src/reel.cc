@@ -82,7 +82,7 @@ Reel::Reel (boost::shared_ptr<const cxml::Node> node)
 		_main_subtitle.reset (new ReelSubtitleAsset (main_subtitle));
 	}
 
-	shared_ptr<cxml::Node> atmos = asset_list->optional_node_child ("axd:AuxData");
+	shared_ptr<cxml::Node> atmos = asset_list->optional_node_child ("AuxData");
 	if (atmos) {
 		_atmos.reset (new ReelAtmosAsset (atmos));
 	}
