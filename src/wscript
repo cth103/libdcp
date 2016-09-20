@@ -92,6 +92,7 @@ def build(bld):
              stereo_picture_asset_writer.cc
              stereo_picture_frame.cc
              subtitle_asset.cc
+             subtitle_asset_internal.cc
              subtitle_string.cc
              transfer_function.cc
              types.cc

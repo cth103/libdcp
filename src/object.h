@@ -43,6 +43,7 @@
 
 class write_interop_subtitle_test;
 class write_smpte_subtitle_test;
+class write_smpte_subtitle_test2;
 
 namespace dcp {
 
@@ -64,6 +65,7 @@ public:
 protected:
 	friend class ::write_interop_subtitle_test;
 	friend class ::write_smpte_subtitle_test;
+	friend class ::write_smpte_subtitle_test2;
 
 	/** ID */
 	std::string _id;

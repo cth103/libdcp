@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -34,6 +34,7 @@
 #include "raw_convert.h"
 #include "compose.hpp"
 #include "subtitle_asset.h"
+#include "subtitle_asset_internal.h"
 #include "util.h"
 #include "xml.h"
 #include "subtitle_string.h"
@@ -51,6 +52,7 @@ using std::list;
 using std::cout;
 using std::cerr;
 using std::map;
+using std::distance;
 using boost::shared_ptr;
 using boost::shared_array;
 using boost::optional;
@@ -403,7 +405,8 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 	return true;
 }
 
-struct SubtitleSorter {
+struct SubtitleSorter
+{
 	bool operator() (SubtitleString const & a, SubtitleString const & b) {
 		if (a.in() != b.in()) {
 			return a.in() < b.in();
@@ -412,165 +415,144 @@ struct SubtitleSorter {
 	}
 };
 
+void
+SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
+{
+	if (part->children.empty ()) {
+		return;
+	}
+
+	/* Pull up from children */
+	BOOST_FOREACH (shared_ptr<order::Part> i, part->children) {
+		pull_fonts (i);
+	}
+
+	if (part->parent) {
+		/* Establish the common font features that each of part's children have;
+		   these features go into part's font.
+		*/
+		part->font = part->children.front()->font;
+		BOOST_FOREACH (shared_ptr<order::Part> i, part->children) {
+			part->font.take_intersection (i->font);
+		}
+
+		/* Remove common values from part's children's fonts */
+		BOOST_FOREACH (shared_ptr<order::Part> i, part->children) {
+			i->font.take_difference (part->font);
+		}
+	}
+
+	/* Merge adjacent children with the same font */
+	list<shared_ptr<order::Part> >::const_iterator i = part->children.begin();
+	list<shared_ptr<order::Part> > merged;
+
+	while (i != part->children.end()) {
+
+		if ((*i)->font.empty ()) {
+			merged.push_back (*i);
+			++i;
+		} else {
+			list<shared_ptr<order::Part> >::const_iterator j = i;
+			++j;
+			while (j != part->children.end() && (*i)->font == (*j)->font) {
+				++j;
+			}
+			if (distance (i, j) == 1) {
+				merged.push_back (*i);
+				++i;
+			} else {
+				shared_ptr<order::Part> group (new order::Part (part, (*i)->font));
+				for (list<shared_ptr<order::Part> >::const_iterator k = i; k != j; ++k) {
+					(*k)->font.clear ();
+					group->children.push_back (*k);
+				}
+				merged.push_back (group);
+				i = j;
+			}
+		}
+	}
+
+	part->children = merged;
+}
+
 /** @param standard Standard (INTEROP or SMPTE); this is used rather than putting things in the child
  *  class because the differences between the two are fairly subtle.
  */
 void
-SubtitleAsset::subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Standard standard) const
+SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, Standard standard) const
 {
 	list<SubtitleString> sorted = _subtitles;
 	sorted.sort (SubtitleSorter ());
 
-	string const xmlns = standard == SMPTE ? "dcst" : "";
+	/* Gather our subtitles into a hierarchy of Subtitle/Text/String objects, writing
+	   font information into the bottom level (String) objects.
+	*/
 
-	/* XXX: script not supported */
+	shared_ptr<order::Part> root (new order::Part (shared_ptr<order::Part> ()));
+	shared_ptr<order::Subtitle> subtitle;
+	shared_ptr<order::Text> text;
 
-	optional<string> font;
-	bool italic = false;
-	bool bold = false;
-	bool underline = false;
-	Colour colour;
-	int size = 0;
-	float aspect_adjust = 1.0;
-	Effect effect = NONE;
-	Colour effect_colour;
-	int spot_number = 1;
 	Time last_in;
 	Time last_out;
 	Time last_fade_up_time;
 	Time last_fade_down_time;
-
-	xmlpp::Element* font_element = 0;
-	xmlpp::Element* subtitle_element = 0;
+	HAlign last_h_align;
+	float last_h_position;
+	VAlign last_v_align;
+	float last_v_position;
+	Direction last_direction;
 
 	BOOST_FOREACH (SubtitleString const & i, sorted) {
-
-		/* We will start a new <Font>...</Font> whenever some font property changes.
-		   I suppose we should really make an optimal hierarchy of <Font> tags, but
-		   that seems hard.
-		*/
-
-		bool const font_changed =
-			font          != i.font()          ||
-			italic        != i.italic()        ||
-			bold          != i.bold()          ||
-			underline     != i.underline()     ||
-			colour        != i.colour()        ||
-			size          != i.size()          ||
-			fabs (aspect_adjust - i.aspect_adjust()) > ASPECT_ADJUST_EPSILON ||
-			effect        != i.effect()        ||
-			effect_colour != i.effect_colour();
-
-		if (font_changed) {
-			font = i.font ();
-			italic = i.italic ();
-			bold = i.bold ();
-			underline = i.underline ();
-			colour = i.colour ();
-			size = i.size ();
-			aspect_adjust = i.aspect_adjust ();
-			effect = i.effect ();
-			effect_colour = i.effect_colour ();
-		}
-
-		if (!font_element || font_changed) {
-			font_element = root->add_child ("Font", xmlns);
-			if (font) {
-				if (standard == SMPTE) {
-					font_element->set_attribute ("ID", font.get ());
-				} else {
-					font_element->set_attribute ("Id", font.get ());
-				}
-			}
-			font_element->set_attribute ("Italic", italic ? "yes" : "no");
-			font_element->set_attribute ("Color", colour.to_argb_string());
-			font_element->set_attribute ("Size", raw_convert<string> (size));
-			if (fabs (aspect_adjust - 1.0) > ASPECT_ADJUST_EPSILON) {
-				font_element->set_attribute ("AspectAdjust", raw_convert<string> (aspect_adjust));
-			}
-			font_element->set_attribute ("Effect", effect_to_string (effect));
-			font_element->set_attribute ("EffectColor", effect_colour.to_argb_string());
-			font_element->set_attribute ("Script", "normal");
-			if (standard == SMPTE) {
-				font_element->set_attribute ("Underline", underline ? "yes" : "no");
-			} else {
-				font_element->set_attribute ("Underlined", underline ? "yes" : "no");
-			}
-			font_element->set_attribute ("Weight", bold ? "bold" : "normal");
-		}
-
-		if (!subtitle_element || font_changed ||
+		if (!subtitle ||
 		    (last_in != i.in() ||
 		     last_out != i.out() ||
 		     last_fade_up_time != i.fade_up_time() ||
-		     last_fade_down_time != i.fade_down_time()
-			    )) {
+		     last_fade_down_time != i.fade_down_time())
+			) {
 
-			subtitle_element = font_element->add_child ("Subtitle", xmlns);
-			subtitle_element->set_attribute ("SpotNumber", raw_convert<string> (spot_number++));
-			subtitle_element->set_attribute ("TimeIn", i.in().rebase(time_code_rate).as_string(standard));
-			subtitle_element->set_attribute ("TimeOut", i.out().rebase(time_code_rate).as_string(standard));
-			if (standard == SMPTE) {
-				subtitle_element->set_attribute ("FadeUpTime", i.fade_up_time().rebase(time_code_rate).as_string(standard));
-				subtitle_element->set_attribute ("FadeDownTime", i.fade_down_time().rebase(time_code_rate).as_string(standard));
-			} else {
-				subtitle_element->set_attribute ("FadeUpTime", raw_convert<string> (i.fade_up_time().as_editable_units(time_code_rate)));
-				subtitle_element->set_attribute ("FadeDownTime", raw_convert<string> (i.fade_down_time().as_editable_units(time_code_rate)));
-			}
+			subtitle.reset (new order::Subtitle (root, i.in(), i.out(), i.fade_up_time(), i.fade_down_time()));
+			root->children.push_back (subtitle);
 
 			last_in = i.in ();
 			last_out = i.out ();
 			last_fade_up_time = i.fade_up_time ();
 			last_fade_down_time = i.fade_down_time ();
+			text.reset ();
 		}
 
-		xmlpp::Element* text = subtitle_element->add_child ("Text", xmlns);
+		if (!text ||
+		    last_h_align != i.h_align() ||
+		    fabs(last_h_position - i.h_position()) > ALIGN_EPSILON ||
+		    last_v_align != i.v_align() ||
+		    fabs(last_v_position - i.v_position()) > ALIGN_EPSILON ||
+		    last_direction != i.direction()
+			) {
 
-		if (i.h_align() != HALIGN_CENTER) {
-			if (standard == SMPTE) {
-				text->set_attribute ("Halign", halign_to_string (i.h_align ()));
-			} else {
-				text->set_attribute ("HAlign", halign_to_string (i.h_align ()));
-			}
+			text.reset (new order::Text (subtitle, i.h_align(), i.h_position(), i.v_align(), i.v_position(), i.direction()));
+			subtitle->children.push_back (text);
+
+			last_h_align = i.h_align ();
+			last_h_position = i.h_position ();
+			last_v_align = i.v_align ();
+			last_v_position = i.v_position ();
+			last_direction = i.direction ();
 		}
 
-		if (i.h_position() > ALIGN_EPSILON) {
-			if (standard == SMPTE) {
-				text->set_attribute ("Hposition", raw_convert<string> (i.h_position() * 100, 6));
-			} else {
-				text->set_attribute ("HPosition", raw_convert<string> (i.h_position() * 100, 6));
-			}
-		}
-
-		if (standard == SMPTE) {
-			text->set_attribute ("Valign", valign_to_string (i.v_align()));
-		} else {
-			text->set_attribute ("VAlign", valign_to_string (i.v_align()));
-		}
-
-		if (i.v_position() > ALIGN_EPSILON) {
-			if (standard == SMPTE) {
-				text->set_attribute ("Vposition", raw_convert<string> (i.v_position() * 100, 6));
-			} else {
-				text->set_attribute ("VPosition", raw_convert<string> (i.v_position() * 100, 6));
-			}
-		} else {
-			if (standard == SMPTE) {
-				text->set_attribute ("Vposition", "0");
-			} else {
-				text->set_attribute ("VPosition", "0");
-			}
-		}
-
-		/* Interop only supports "horizontal" or "vertical" for direction, so only write this
-		   for SMPTE.
-		*/
-		if (i.direction() != DIRECTION_LTR && standard == SMPTE) {
-			text->set_attribute ("Direction", direction_to_string (i.direction ()));
-		}
-
-		text->add_child_text (i.text());
+		text->children.push_back (shared_ptr<order::String> (new order::String (text, order::Font (i, standard), i.text())));
 	}
+
+	/* Pull font changes as high up the hierarchy as we can */
+
+	pull_fonts (root);
+
+	/* Write XML */
+
+	order::Context context;
+	context.time_code_rate = time_code_rate;
+	context.standard = standard;
+	context.spot_number = 1;
+
+	root->write_xml (xml_root, context);
 }
 
 map<string, Data>

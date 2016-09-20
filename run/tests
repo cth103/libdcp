@@ -19,7 +19,7 @@ done
 # Run the unit tests in test/
 if [ "$1" == "--debug" ]; then
     shift
-    gdb --args $work/tests $private
+    gdb --args $work/tests $private $*
 elif [ "$1" == "--valgrind" ]; then
     shift
     valgrind --tool="memcheck" $work/tests $private

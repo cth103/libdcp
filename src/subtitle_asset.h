@@ -48,6 +48,9 @@ namespace xmlpp {
 
 struct interop_dcp_font_test;
 struct smpte_dcp_font_test;
+struct pull_fonts_test1;
+struct pull_fonts_test2;
+struct pull_fonts_test3;
 
 namespace dcp
 {
@@ -57,6 +60,11 @@ class FontNode;
 class TextNode;
 class SubtitleNode;
 class LoadFontNode;
+
+namespace order {
+	class Part;
+	class Context;
+}
 
 /** @class SubtitleAsset
  *  @brief A parent for classes representing a file containing subtitles.
@@ -156,7 +164,13 @@ protected:
 	std::list<Font> _fonts;
 
 private:
+	friend struct ::pull_fonts_test1;
+	friend struct ::pull_fonts_test2;
+	friend struct ::pull_fonts_test3;
+
 	void maybe_add_subtitle (std::string text, std::list<ParseState> const & parse_state);
+
+	static void pull_fonts (boost::shared_ptr<order::Part> part);
 };
 
 }
