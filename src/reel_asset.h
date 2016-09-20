@@ -90,8 +90,16 @@ public:
 		return _intrinsic_duration;
 	}
 
+	void set_entry_point (int64_t e) {
+		_entry_point = e;
+	}
+
 	int64_t entry_point () const {
 		return _entry_point;
+	}
+
+	void set_duration (int64_t d) {
+		_duration = d;
 	}
 
 	int64_t duration () const {
