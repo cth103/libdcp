@@ -236,15 +236,18 @@ DecryptedKDM::DecryptedKDM (
 	, _issue_date (issue_date)
 {
 	/* Create DecryptedKDMKey objects for each encryptable asset */
+	bool did_one = false;
 	BOOST_FOREACH(shared_ptr<const ReelAsset> i, cpl->reel_assets ()) {
 		shared_ptr<const ReelMXF> mxf = boost::dynamic_pointer_cast<const ReelMXF> (i);
 		shared_ptr<const ReelAsset> asset = boost::dynamic_pointer_cast<const ReelAsset> (i);
-		if (asset && mxf) {
-			if (!mxf->key_id ()) {
-				throw NotEncryptedError (asset->id ());
-			}
+		if (asset && mxf && mxf->key_id ()) {
 			_keys.push_back (DecryptedKDMKey (mxf->key_type(), mxf->key_id().get(), key, cpl->id ()));
+			did_one = true;
 		}
+	}
+
+	if (!did_one) {
+		throw NotEncryptedError (cpl->id ());
 	}
 }
 
