@@ -36,6 +36,7 @@
 
 #include "dcp_assert.h"
 #include "asset.h"
+#include "decryption_context.h"
 #include <asdcp/AS_DCP.h>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -48,7 +49,8 @@ template <class R, class F>
 class AssetReader : public boost::noncopyable
 {
 public:
-	explicit AssetReader (Asset const * asset)
+	explicit AssetReader (Asset const * asset, boost::optional<Key> key)
+		: _decryption_context (new DecryptionContext (key))
 	{
 		_reader = new R ();
 		DCP_ASSERT (asset->file ());
