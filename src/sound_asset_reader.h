@@ -32,6 +32,7 @@
 */
 
 #include "asset_reader.h"
+#include "sound_frame.h"
 #include <boost/shared_ptr.hpp>
 
 namespace ASDCP {
@@ -42,7 +43,6 @@ namespace ASDCP {
 
 namespace dcp {
 
-class SoundFrame;
 class SoundAsset;
 
 class SoundAssetReader : public AssetReader

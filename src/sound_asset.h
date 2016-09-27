@@ -41,11 +41,11 @@
 #include "mxf.h"
 #include "types.h"
 #include "metadata.h"
+#include "sound_frame.h"
 
 namespace dcp
 {
 
-class SoundFrame;
 class SoundAssetWriter;
 class SoundAssetReader;
 

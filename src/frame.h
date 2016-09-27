@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,42 +31,45 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/sound_frame.cc
- *  @brief SoundFrame class.
- */
-
-#include "sound_frame.h"
-#include "exceptions.h"
 #include "decryption_context.h"
-#include <asdcp/AS_DCP.h>
+#include "exceptions.h"
 #include <asdcp/KM_fileio.h>
+#include <asdcp/AS_DCP.h>
+#include <boost/noncopyable.hpp>
 
-using namespace dcp;
-using boost::shared_ptr;
+namespace dcp {
 
-SoundFrame::SoundFrame (ASDCP::PCM::MXFReader* reader, int n, shared_ptr<DecryptionContext> c)
+template <class R, class B>
+class Frame : public boost::noncopyable
 {
-	/* XXX: unfortunate guesswork on this buffer size */
-	_buffer = new ASDCP::PCM::FrameBuffer (1 * Kumu::Megabyte);
+public:
+	Frame (R* reader, int n, boost::shared_ptr<const DecryptionContext> c)
+	{
+		/* XXX: unfortunate guesswork on this buffer size */
+		_buffer = new B (Kumu::Megabyte);
 
-	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->decryption()))) {
-		boost::throw_exception (DCPReadError ("could not read audio frame"));
+		if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->decryption()))) {
+			boost::throw_exception (DCPReadError ("could not read frame"));
+		}
 	}
-}
 
-SoundFrame::~SoundFrame ()
-{
-	delete _buffer;
-}
+	~Frame ()
+	{
+		delete _buffer;
+	}
 
-uint8_t const *
-SoundFrame::data () const
-{
-	return _buffer->RoData();
-}
+	uint8_t const * data () const
+	{
+		return _buffer->RoData ();
+	}
 
-int
-SoundFrame::size () const
-{
-	return _buffer->Size ();
+	int size () const
+	{
+		return _buffer->Size ();
+	}
+
+private:
+	B* _buffer;
+};
+
 }

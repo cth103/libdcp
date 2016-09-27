@@ -90,7 +90,6 @@ def build(bld):
              sound_asset.cc
              sound_asset_reader.cc
              sound_asset_writer.cc
-             sound_frame.cc
              stereo_picture_asset.cc
              stereo_picture_asset_reader.cc
              stereo_picture_asset_writer.cc
