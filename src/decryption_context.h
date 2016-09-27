@@ -31,6 +31,9 @@
     files in the program, then also delete it here.
 */
 
+#ifndef LIBDCP_DECRYPTION_CONTEXT_H
+#define LIBDCP_DECRYPTION_CONTEXT_H
+
 #include "key.h"
 #include <boost/optional.hpp>
 
@@ -55,3 +58,5 @@ private:
 };
 
 }
+
+#endif

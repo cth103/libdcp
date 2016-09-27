@@ -37,6 +37,7 @@ def build(bld):
              asset.cc
              asset_writer.cc
              atmos_asset.cc
+             atmos_asset_writer.cc
              certificate_chain.cc
              certificate.cc
              colour_conversion.cc
@@ -103,6 +104,8 @@ def build(bld):
               asset_reader.h
               asset_writer.h
               atmos_asset.h
+              atmos_asset_reader.h
+              atmos_asset_writer.h
               certificate_chain.h
               certificate.h
               chromaticity.h

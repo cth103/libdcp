@@ -31,70 +31,18 @@
     files in the program, then also delete it here.
 */
 
-#ifndef LIBDCP_ATMOS_ASSET_H
-#define LIBDCP_ATMOS_ASSET_H
+/** @file  src/atmos_frame.h
+ *  @brief AtmosFrame class.
+ */
 
-#include "asset.h"
-#include "mxf.h"
-#include "atmos_asset_reader.h"
+#ifndef LIBDCP_ATMOS_FRAME_H
+#define LIBDCP_ATMOS_FRAME_H
+
+#include "frame.h"
 
 namespace dcp {
 
-class AtmosAssetWriter;
-
-class AtmosAsset : public Asset, public MXF
-{
-public:
-	AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_count, int max_object_count, std::string atmos_id, int atmos_version);
-	explicit AtmosAsset (boost::filesystem::path file);
-
-	boost::shared_ptr<AtmosAssetWriter> start_write (boost::filesystem::path file);
-	boost::shared_ptr<AtmosAssetReader> start_read () const;
-
-	std::string pkl_type (Standard) const;
-
-	Fraction edit_rate () const {
-		return _edit_rate;
-	}
-
-	int64_t intrinsic_duration () const {
-		return _intrinsic_duration;
-	}
-
-	/** @return frame number of the frame to align with the FFOA of the picture track */
-	int first_frame () const {
-		return _first_frame;
-	}
-
-	/** @return maximum number of channels in bitstream */
-	int max_channel_count () const {
-		return _max_channel_count;
-	}
-
-	/** @return maximum number of objects in bitstream */
-	int max_object_count () const {
-		return _max_object_count;
-	}
-
-	std::string atmos_id () const {
-		return _atmos_id;
-	}
-
-	int atmos_version () const {
-		return _atmos_version;
-	}
-
-private:
-	friend class AtmosAssetWriter;
-
-	Fraction _edit_rate;
-	int64_t _intrinsic_duration;
-	int _first_frame;
-	int _max_channel_count;
-	int _max_object_count;
-	std::string _atmos_id;
-	int _atmos_version;
-};
+typedef Frame<ASDCP::ATMOS::MXFReader, ASDCP::DCData::FrameBuffer> AtmosFrame;
 
 }
 

@@ -31,6 +31,9 @@
     files in the program, then also delete it here.
 */
 
+#ifndef LIBDCP_FRAME_H
+#define LIBDCP_FRAME_H
+
 #include "decryption_context.h"
 #include "exceptions.h"
 #include <asdcp/KM_fileio.h>
@@ -73,3 +76,5 @@ private:
 };
 
 }
+
+#endif
