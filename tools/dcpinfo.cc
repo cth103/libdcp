@@ -122,7 +122,7 @@ main (int argc, char* argv[])
 	bool ignore_missing_assets = false;
 
 	int option_index = 0;
-	while (1) {
+	while (true) {
 		static struct option long_options[] = {
 			{ "version", no_argument, 0, 'v' },
 			{ "help", no_argument, 0, 'h' },
@@ -140,7 +140,7 @@ main (int argc, char* argv[])
 
 		switch (c) {
 		case 'v':
-			cout << "dcpdiff version " << LIBDCP_VERSION << "\n";
+			cout << "libdcp version " << LIBDCP_VERSION << "\n";
 			exit (EXIT_SUCCESS);
 		case 'h':
 			help (argv[0]);
