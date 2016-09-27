@@ -35,10 +35,9 @@
 #define LIBDCP_STEREO_PICTURE_ASSET_H
 
 #include "picture_asset.h"
+#include "stereo_picture_asset_reader.h"
 
 namespace dcp {
-
-class StereoPictureAssetReader;
 
 /** A 3D (stereoscopic) picture asset */
 class StereoPictureAsset : public PictureAsset

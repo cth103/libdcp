@@ -32,6 +32,7 @@
 */
 
 #include "types.h"
+#include "stereo_picture_asset_reader.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/filesystem.hpp>
@@ -69,7 +70,7 @@ public:
 	int right_j2k_size () const;
 
 private:
-	friend class StereoPictureAssetReader;
+	friend StereoPictureAssetReader;
 
 	StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, boost::shared_ptr<DecryptionContext>);
 

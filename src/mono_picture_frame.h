@@ -36,6 +36,7 @@
  */
 
 #include "types.h"
+#include "mono_picture_asset_reader.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/filesystem.hpp>
@@ -73,7 +74,7 @@ public:
 	int j2k_size () const;
 
 private:
-	friend class MonoPictureAssetReader;
+	friend MonoPictureAssetReader;
 
 	MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, boost::shared_ptr<DecryptionContext>);
 

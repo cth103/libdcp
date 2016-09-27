@@ -34,21 +34,43 @@
 #ifndef LIBDCP_ASSET_READER_H
 #define LIBDCP_ASSET_READER_H
 
+#include "dcp_assert.h"
+#include "asset.h"
+#include <asdcp/AS_DCP.h>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace dcp {
 
-class MXF;
 class DecryptionContext;
 
+template <class R, class F>
 class AssetReader : public boost::noncopyable
 {
 public:
-	explicit AssetReader (MXF const * mxf);
-	virtual ~AssetReader () {}
+	explicit AssetReader (Asset const * asset)
+	{
+		_reader = new R ();
+		DCP_ASSERT (asset->file ());
+		Kumu::Result_t const r = _reader->OpenRead (asset->file()->string().c_str());
+		if (ASDCP_FAILURE (r)) {
+			delete _reader;
+			boost::throw_exception (FileError ("could not open MXF file for reading", asset->file().get(), r));
+		}
+	}
+
+	~AssetReader ()
+	{
+		delete _reader;
+	}
+
+	boost::shared_ptr<const F> get_frame (int n) const
+	{
+		return boost::shared_ptr<const F> (new F (_reader, n, _decryption_context));
+	}
 
 protected:
+	R* _reader;
 	boost::shared_ptr<DecryptionContext> _decryption_context;
 };
 

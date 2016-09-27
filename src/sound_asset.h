@@ -42,12 +42,12 @@
 #include "types.h"
 #include "metadata.h"
 #include "sound_frame.h"
+#include "sound_asset_reader.h"
 
 namespace dcp
 {
 
 class SoundAssetWriter;
-class SoundAssetReader;
 
 /** @class SoundAsset
  *  @brief Representation of a sound asset
