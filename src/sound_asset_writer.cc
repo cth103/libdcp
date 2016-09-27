@@ -48,38 +48,38 @@ struct SoundAssetWriter::ASDCPState
 	ASDCP::PCM::MXFWriter mxf_writer;
 	ASDCP::PCM::FrameBuffer frame_buffer;
 	ASDCP::WriterInfo writer_info;
-	ASDCP::PCM::AudioDescriptor audio_desc;
+	ASDCP::PCM::AudioDescriptor desc;
 };
 
 SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, Standard standard)
 	: AssetWriter (asset, file, standard)
 	, _state (new SoundAssetWriter::ASDCPState)
-	, _sound_asset (asset)
+	, _asset (asset)
 	, _frame_buffer_offset (0)
 {
 	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
-	_state->audio_desc.EditRate = ASDCP::Rational (_sound_asset->edit_rate().numerator, _sound_asset->edit_rate().denominator);
-	_state->audio_desc.AudioSamplingRate = ASDCP::Rational (_sound_asset->sampling_rate(), 1);
-	_state->audio_desc.Locked = 0;
-	_state->audio_desc.ChannelCount = _sound_asset->channels ();
-	_state->audio_desc.QuantizationBits = 24;
-	_state->audio_desc.BlockAlign = 3 * _sound_asset->channels();
-	_state->audio_desc.AvgBps = _sound_asset->sampling_rate() * _state->audio_desc.BlockAlign;
-	_state->audio_desc.LinkedTrackID = 0;
+	_state->desc.EditRate = ASDCP::Rational (_asset->edit_rate().numerator, _asset->edit_rate().denominator);
+	_state->desc.AudioSamplingRate = ASDCP::Rational (_asset->sampling_rate(), 1);
+	_state->desc.Locked = 0;
+	_state->desc.ChannelCount = _asset->channels ();
+	_state->desc.QuantizationBits = 24;
+	_state->desc.BlockAlign = 3 * _asset->channels();
+	_state->desc.AvgBps = _asset->sampling_rate() * _state->desc.BlockAlign;
+	_state->desc.LinkedTrackID = 0;
 	if (standard == INTEROP) {
-		_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_NONE;
+		_state->desc.ChannelFormat = ASDCP::PCM::CF_NONE;
 	} else {
 		/* Just use WTF ("wild track format") for SMPTE for now; searches suggest that this
 		   uses the same assignment as Interop.
 		*/
-		_state->audio_desc.ChannelFormat = ASDCP::PCM::CF_CFG_4;
+		_state->desc.ChannelFormat = ASDCP::PCM::CF_CFG_4;
 	}
 
-	_state->frame_buffer.Capacity (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
-	_state->frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_state->audio_desc));
+	_state->frame_buffer.Capacity (ASDCP::PCM::CalcFrameBufferSize (_state->desc));
+	_state->frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_state->desc));
 	memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
 
-	_sound_asset->fill_writer_info (&_state->writer_info, _sound_asset->id(), standard);
+	_asset->fill_writer_info (&_state->writer_info, _asset->id(), standard);
 }
 
 void
@@ -90,16 +90,16 @@ SoundAssetWriter::write (float const * const * data, int frames)
 	static float const clip = 1.0f - (1.0f / pow (2, 23));
 
 	if (!_started) {
-		Kumu::Result_t r = _state->mxf_writer.OpenWrite (_file.string().c_str(), _state->writer_info, _state->audio_desc);
+		Kumu::Result_t r = _state->mxf_writer.OpenWrite (_file.string().c_str(), _state->writer_info, _state->desc);
 		if (ASDCP_FAILURE (r)) {
 			boost::throw_exception (FileError ("could not open audio MXF for writing", _file.string(), r));
 		}
 
-		_sound_asset->set_file (_file);
+		_asset->set_file (_file);
 		_started = true;
 	}
 
-	int const ch = _sound_asset->channels ();
+	int const ch = _asset->channels ();
 
 	for (int i = 0; i < frames; ++i) {
 
@@ -154,6 +154,6 @@ SoundAssetWriter::finalize ()
 		boost::throw_exception (MiscError ("could not finalise audio MXF"));
 	}
 
-	_sound_asset->_intrinsic_duration = _frames_written;
+	_asset->_intrinsic_duration = _frames_written;
 	return AssetWriter::finalize ();
 }

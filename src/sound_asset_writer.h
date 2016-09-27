@@ -74,7 +74,7 @@ private:
 	struct ASDCPState;
 	boost::shared_ptr<ASDCPState> _state;
 
-	SoundAsset* _sound_asset;
+	SoundAsset* _asset;
 	int _frame_buffer_offset;
 };
 
