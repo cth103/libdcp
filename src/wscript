@@ -106,6 +106,7 @@ def build(bld):
               atmos_asset.h
               atmos_asset_reader.h
               atmos_asset_writer.h
+              atmos_frame.h
               certificate_chain.h
               certificate.h
               chromaticity.h
