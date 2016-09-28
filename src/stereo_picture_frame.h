@@ -70,7 +70,10 @@ public:
 	int right_j2k_size () const;
 
 private:
-	friend StereoPictureAssetReader;
+	/* XXX: this is a bit of a shame, but I tried friend StereoPictureAssetReader and it's
+	   rejected by some (seemingly older) GCCs.
+	*/
+	friend AssetReader<ASDCP::JP2K::MXFSReader, StereoPictureFrame>;
 
 	StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, boost::shared_ptr<DecryptionContext>);
 
