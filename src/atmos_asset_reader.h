@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,42 +31,11 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/sound_frame.cc
- *  @brief SoundFrame class.
- */
+#include "asset_reader.h"
+#include "atmos_frame.h"
 
-#include "sound_frame.h"
-#include "exceptions.h"
-#include "decryption_context.h"
-#include <asdcp/AS_DCP.h>
-#include <asdcp/KM_fileio.h>
+namespace dcp {
 
-using namespace dcp;
-using boost::shared_ptr;
+typedef AssetReader<ASDCP::ATMOS::MXFReader, AtmosFrame> AtmosAssetReader;
 
-SoundFrame::SoundFrame (ASDCP::PCM::MXFReader* reader, int n, shared_ptr<DecryptionContext> c)
-{
-	/* XXX: unfortunate guesswork on this buffer size */
-	_buffer = new ASDCP::PCM::FrameBuffer (1 * Kumu::Megabyte);
-
-	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->decryption()))) {
-		boost::throw_exception (DCPReadError ("could not read audio frame"));
-	}
-}
-
-SoundFrame::~SoundFrame ()
-{
-	delete _buffer;
-}
-
-uint8_t const *
-SoundFrame::data () const
-{
-	return _buffer->RoData();
-}
-
-int
-SoundFrame::size () const
-{
-	return _buffer->Size ();
 }

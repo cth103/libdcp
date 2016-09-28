@@ -31,16 +31,43 @@
     files in the program, then also delete it here.
 */
 
-#include "asset_reader.h"
-#include "mxf.h"
-#include "exceptions.h"
-#include "decryption_context.h"
-#include <asdcp/AS_DCP.h>
+/** @file  src/atmos_asset_writer.h
+ *  @brief AtmosAssetWriter class.
+ */
 
-using namespace dcp;
+#include "asset_writer.h"
+#include "types.h"
+#include "atmos_frame.h"
+#include <boost/shared_ptr.hpp>
+#include <boost/filesystem.hpp>
 
-AssetReader::AssetReader (MXF const * mxf)
-	: _decryption_context (new DecryptionContext (mxf->key ()))
+namespace dcp {
+
+class AtmosAsset;
+
+/** @class AtmosAssetWriter
+ *  @brief A helper class for writing to AtmosAssets.
+ *
+ *  Objects of this class can only be created with AtmosAsset::start_write().
+ */
+class AtmosAssetWriter : public AssetWriter
 {
+public:
+	void write (uint8_t const * data, int size);
+	bool finalize ();
+
+private:
+	friend class AtmosAsset;
+
+	AtmosAssetWriter (AtmosAsset *, boost::filesystem::path);
+
+	/* do this with an opaque pointer so we don't have to include
+	   ASDCP headers
+	*/
+	struct ASDCPState;
+	boost::shared_ptr<ASDCPState> _state;
+
+	AtmosAsset* _asset;
+};
 
 }

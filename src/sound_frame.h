@@ -38,42 +38,12 @@
 #ifndef LIBDCP_SOUND_FRAME_H
 #define LIBDCP_SOUND_FRAME_H
 
-#include <boost/noncopyable.hpp>
-#include <boost/filesystem.hpp>
-#include <stdint.h>
-#include <string>
-
-namespace ASDCP {
-	namespace PCM {
-		class FrameBuffer;
-		class MXFReader;
-	}
-	class AESDecContext;
-}
+#include "frame.h"
+#include <asdcp/AS_DCP.h>
 
 namespace dcp {
 
-class DecryptionContext;
-
-/** @class SoundFrame
- *  @brief One &lsquo;frame&rsquo; of sound data from a SoundAsset.
- */
-class SoundFrame : public boost::noncopyable
-{
-public:
-	~SoundFrame ();
-
-	uint8_t const * data () const;
-	int size () const;
-
-private:
-	friend class SoundAssetReader;
-
-	SoundFrame (ASDCP::PCM::MXFReader* reader, int n, boost::shared_ptr<DecryptionContext>);
-
-	/** a buffer to hold the frame */
-	ASDCP::PCM::FrameBuffer* _buffer;
-};
+typedef Frame<ASDCP::PCM::MXFReader, ASDCP::PCM::FrameBuffer> SoundFrame;
 
 }
 

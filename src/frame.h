@@ -31,35 +31,50 @@
     files in the program, then also delete it here.
 */
 
-#include "sound_asset_reader.h"
-#include "sound_asset.h"
-#include "sound_frame.h"
+#ifndef LIBDCP_FRAME_H
+#define LIBDCP_FRAME_H
+
+#include "decryption_context.h"
 #include "exceptions.h"
-#include "dcp_assert.h"
+#include <asdcp/KM_fileio.h>
 #include <asdcp/AS_DCP.h>
+#include <boost/noncopyable.hpp>
 
-using boost::shared_ptr;
-using namespace dcp;
+namespace dcp {
 
-SoundAssetReader::SoundAssetReader (SoundAsset const * asset)
-	: AssetReader (asset)
+template <class R, class B>
+class Frame : public boost::noncopyable
 {
-	_reader = new ASDCP::PCM::MXFReader ();
-	DCP_ASSERT (asset->file ());
-	Kumu::Result_t const r = _reader->OpenRead (asset->file()->string().c_str());
-	if (ASDCP_FAILURE (r)) {
-		delete _reader;
-		boost::throw_exception (FileError ("could not open MXF file for reading", asset->file().get(), r));
+public:
+	Frame (R* reader, int n, boost::shared_ptr<const DecryptionContext> c)
+	{
+		/* XXX: unfortunate guesswork on this buffer size */
+		_buffer = new B (Kumu::Megabyte);
+
+		if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->decryption()))) {
+			boost::throw_exception (DCPReadError ("could not read frame"));
+		}
 	}
+
+	~Frame ()
+	{
+		delete _buffer;
+	}
+
+	uint8_t const * data () const
+	{
+		return _buffer->RoData ();
+	}
+
+	int size () const
+	{
+		return _buffer->Size ();
+	}
+
+private:
+	B* _buffer;
+};
+
 }
 
-SoundAssetReader::~SoundAssetReader ()
-{
-	delete _reader;
-}
-
-shared_ptr<const SoundFrame>
-SoundAssetReader::get_frame (int n) const
-{
-	return shared_ptr<const SoundFrame> (new SoundFrame (_reader, n, _decryption_context));
-}
+#endif

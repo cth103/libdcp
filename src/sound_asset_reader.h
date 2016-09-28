@@ -32,31 +32,9 @@
 */
 
 #include "asset_reader.h"
-#include <boost/shared_ptr.hpp>
-
-namespace ASDCP {
-	namespace PCM {
-		class MXFReader;
-	}
-}
 
 namespace dcp {
 
-class SoundFrame;
-class SoundAsset;
-
-class SoundAssetReader : public AssetReader
-{
-public:
-	~SoundAssetReader ();
-	boost::shared_ptr<const SoundFrame> get_frame (int n) const;
-
-private:
-	friend class SoundAsset;
-
-	explicit SoundAssetReader (SoundAsset const * asset);
-
-	ASDCP::PCM::MXFReader* _reader;
-};
+typedef AssetReader<ASDCP::PCM::MXFReader, SoundFrame> SoundAssetReader;
 
 }

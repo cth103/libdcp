@@ -32,31 +32,11 @@
 */
 
 #include "asset_reader.h"
-#include <boost/shared_ptr.hpp>
-
-namespace ASDCP {
-	namespace JP2K {
-		class MXFReader;
-	}
-}
 
 namespace dcp {
 
 class MonoPictureFrame;
-class MonoPictureAsset;
 
-class MonoPictureAssetReader : public AssetReader
-{
-public:
-	~MonoPictureAssetReader ();
-	boost::shared_ptr<const MonoPictureFrame> get_frame (int n) const;
-
-private:
-	friend class MonoPictureAsset;
-
-	explicit MonoPictureAssetReader (MonoPictureAsset const *);
-
-	ASDCP::JP2K::MXFReader* _reader;
-};
+typedef AssetReader<ASDCP::JP2K::MXFReader, MonoPictureFrame> MonoPictureAssetReader;
 
 }

@@ -35,11 +35,11 @@
 #define LIBDCP_MONO_PICTURE_ASSET_H
 
 #include "picture_asset.h"
+#include "mono_picture_asset_reader.h"
 
 namespace dcp {
 
 class MonoPictureAssetWriter;
-class MonoPictureAssetReader;
 
 /** @class MonoPictureAsset
  *  @brief A 2D (monoscopic) picture asset.

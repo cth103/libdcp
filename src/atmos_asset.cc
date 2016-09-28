@@ -32,11 +32,26 @@
 */
 
 #include "atmos_asset.h"
+#include "atmos_asset_reader.h"
+#include "atmos_asset_writer.h"
 #include "exceptions.h"
 #include <asdcp/AS_DCP.h>
 
 using std::string;
+using boost::shared_ptr;
 using namespace dcp;
+
+AtmosAsset::AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_count, int max_object_count, string atmos_id, int atmos_version)
+	: _edit_rate (edit_rate)
+	, _intrinsic_duration (0)
+	, _first_frame (first_frame)
+	, _max_channel_count (max_channel_count)
+	, _max_object_count (max_object_count)
+	, _atmos_id (atmos_id)
+	, _atmos_version (atmos_version)
+{
+
+}
 
 AtmosAsset::AtmosAsset (boost::filesystem::path file)
 	: Asset (file)
@@ -57,10 +72,28 @@ AtmosAsset::AtmosAsset (boost::filesystem::path file)
 	_first_frame = desc.FirstFrame;
 	_max_channel_count = desc.MaxChannelCount;
 	_max_object_count = desc.MaxObjectCount;
+
+	char id[64];
+	Kumu::bin2UUIDhex (desc.AtmosID, ASDCP::UUIDlen, id, sizeof (id));
+	_atmos_id = id;
+
+	_atmos_version = desc.AtmosVersion;
 }
 
 string
 AtmosAsset::pkl_type (Standard) const
 {
 	return "application/mxf";
+}
+
+shared_ptr<AtmosAssetReader>
+AtmosAsset::start_read () const
+{
+	return shared_ptr<AtmosAssetReader> (new AtmosAssetReader (this, key ()));
+}
+
+shared_ptr<AtmosAssetWriter>
+AtmosAsset::start_write (boost::filesystem::path file)
+{
+	return shared_ptr<AtmosAssetWriter> (new AtmosAssetWriter (this, file));
 }

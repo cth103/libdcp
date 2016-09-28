@@ -35,9 +35,9 @@ from waflib import TaskGen
 def build(bld):
     source = """
              asset.cc
-             asset_reader.cc
              asset_writer.cc
              atmos_asset.cc
+             atmos_asset_writer.cc
              certificate_chain.cc
              certificate.cc
              colour_conversion.cc
@@ -64,7 +64,6 @@ def build(bld):
              metadata.cc
              modified_gamma_transfer_function.cc
              mono_picture_asset.cc
-             mono_picture_asset_reader.cc
              mono_picture_asset_writer.cc
              mono_picture_frame.cc
              mxf.cc
@@ -88,11 +87,8 @@ def build(bld):
              smpte_load_font_node.cc
              smpte_subtitle_asset.cc
              sound_asset.cc
-             sound_asset_reader.cc
              sound_asset_writer.cc
-             sound_frame.cc
              stereo_picture_asset.cc
-             stereo_picture_asset_reader.cc
              stereo_picture_asset_writer.cc
              stereo_picture_frame.cc
              subtitle_asset.cc
@@ -108,6 +104,8 @@ def build(bld):
               asset_reader.h
               asset_writer.h
               atmos_asset.h
+              atmos_asset_reader.h
+              atmos_asset_writer.h
               certificate_chain.h
               certificate.h
               chromaticity.h
@@ -115,10 +113,12 @@ def build(bld):
               colour_matrix.h
               cpl.h
               dcp.h
+              dcp_assert.h
               dcp_time.h
               data.h
               decrypted_kdm.h
               decrypted_kdm_key.h
+              decryption_context.h
               encrypted_kdm.h
               encryption_context.h
               exceptions.h

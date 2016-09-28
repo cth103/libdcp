@@ -176,7 +176,7 @@ MonoPictureAsset::start_write (boost::filesystem::path file, Standard standard, 
 shared_ptr<MonoPictureAssetReader>
 MonoPictureAsset::start_read () const
 {
-	return shared_ptr<MonoPictureAssetReader> (new MonoPictureAssetReader (this));
+	return shared_ptr<MonoPictureAssetReader> (new MonoPictureAssetReader (this, key ()));
 }
 
 string

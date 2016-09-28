@@ -36,13 +36,20 @@
 
 #include "asset.h"
 #include "mxf.h"
+#include "atmos_asset_reader.h"
 
 namespace dcp {
+
+class AtmosAssetWriter;
 
 class AtmosAsset : public Asset, public MXF
 {
 public:
+	AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_count, int max_object_count, std::string atmos_id, int atmos_version);
 	explicit AtmosAsset (boost::filesystem::path file);
+
+	boost::shared_ptr<AtmosAssetWriter> start_write (boost::filesystem::path file);
+	boost::shared_ptr<AtmosAssetReader> start_read () const;
 
 	std::string pkl_type (Standard) const;
 
@@ -69,12 +76,24 @@ public:
 		return _max_object_count;
 	}
 
+	std::string atmos_id () const {
+		return _atmos_id;
+	}
+
+	int atmos_version () const {
+		return _atmos_version;
+	}
+
 private:
+	friend class AtmosAssetWriter;
+
 	Fraction _edit_rate;
 	int64_t _intrinsic_duration;
 	int _first_frame;
 	int _max_channel_count;
 	int _max_object_count;
+	std::string _atmos_id;
+	int _atmos_version;
 };
 
 }

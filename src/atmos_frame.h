@@ -31,35 +31,19 @@
     files in the program, then also delete it here.
 */
 
-#include "stereo_picture_asset_reader.h"
-#include "stereo_picture_asset.h"
-#include "stereo_picture_frame.h"
-#include "exceptions.h"
-#include "dcp_assert.h"
-#include <asdcp/AS_DCP.h>
+/** @file  src/atmos_frame.h
+ *  @brief AtmosFrame class.
+ */
 
-using namespace dcp;
-using boost::shared_ptr;
+#ifndef LIBDCP_ATMOS_FRAME_H
+#define LIBDCP_ATMOS_FRAME_H
 
-StereoPictureAssetReader::StereoPictureAssetReader (StereoPictureAsset const * asset)
-	: AssetReader (asset)
-{
-	_reader = new ASDCP::JP2K::MXFSReader ();
-	DCP_ASSERT (asset->file ());
-	Kumu::Result_t const r = _reader->OpenRead (asset->file()->string().c_str());
-	if (ASDCP_FAILURE (r)) {
-		delete _reader;
-		boost::throw_exception (FileError ("could not open MXF file for reading", asset->file().get(), r));
-	}
+#include "frame.h"
+
+namespace dcp {
+
+typedef Frame<ASDCP::ATMOS::MXFReader, ASDCP::DCData::FrameBuffer> AtmosFrame;
+
 }
 
-StereoPictureAssetReader::~StereoPictureAssetReader ()
-{
-	delete _reader;
-}
-
-shared_ptr<const StereoPictureFrame>
-StereoPictureAssetReader::get_frame (int n) const
-{
-	return shared_ptr<const StereoPictureFrame> (new StereoPictureFrame (_reader, n, _decryption_context));
-}
+#endif

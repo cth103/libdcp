@@ -86,7 +86,7 @@ StereoPictureAsset::start_write (boost::filesystem::path file, Standard standard
 shared_ptr<StereoPictureAssetReader>
 StereoPictureAsset::start_read () const
 {
-	return shared_ptr<StereoPictureAssetReader> (new StereoPictureAssetReader (this));
+	return shared_ptr<StereoPictureAssetReader> (new StereoPictureAssetReader (this, key ()));
 }
 
 bool

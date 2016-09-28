@@ -37,12 +37,12 @@
 
 #include "asset_writer.h"
 #include "types.h"
+#include "sound_frame.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
 
 namespace dcp {
 
-class SoundFrame;
 class SoundAsset;
 
 /** @class SoundAssetWriter
@@ -74,7 +74,7 @@ private:
 	struct ASDCPState;
 	boost::shared_ptr<ASDCPState> _state;
 
-	SoundAsset* _sound_asset;
+	SoundAsset* _asset;
 	int _frame_buffer_offset;
 };
 
