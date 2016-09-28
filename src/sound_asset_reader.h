@@ -32,6 +32,7 @@
 */
 
 #include "asset_reader.h"
+#include "sound_frame.h"
 
 namespace dcp {
 

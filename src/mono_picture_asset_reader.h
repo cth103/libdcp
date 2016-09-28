@@ -31,12 +31,16 @@
     files in the program, then also delete it here.
 */
 
+#ifndef LIBDCP_MONO_PICTURE_ASSET_READER_H
+#define LIBDCP_MONO_PICTURE_ASSET_READER_H
+
 #include "asset_reader.h"
+#include "mono_picture_frame.h"
 
 namespace dcp {
-
-class MonoPictureFrame;
 
 typedef AssetReader<ASDCP::JP2K::MXFReader, MonoPictureFrame> MonoPictureAssetReader;
 
 }
+
+#endif

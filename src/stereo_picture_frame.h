@@ -31,8 +31,11 @@
     files in the program, then also delete it here.
 */
 
+#ifndef LIBDCP_STEREO_PICTURE_FRAME_H
+#define LIBDCP_STEREO_PICTURE_FRAME_H
+
 #include "types.h"
-#include "stereo_picture_asset_reader.h"
+#include "asset_reader.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/filesystem.hpp>
@@ -81,3 +84,5 @@ private:
 };
 
 }
+
+#endif

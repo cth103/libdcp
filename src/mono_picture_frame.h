@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+#ifndef LIBDCP_MONO_PICTURE_FRAME_H
+#define LIBDCP_MONO_PICTURE_FRAME_H
+
 /** @file  src/mono_picture_frame.h
  *  @brief MonoPictureFrame class.
  */
 
 #include "types.h"
-#include "mono_picture_asset_reader.h"
+#include "asset_reader.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/filesystem.hpp>
@@ -77,7 +80,7 @@ private:
 	/* XXX: this is a bit of a shame, but I tried friend MonoPictureAssetReader and it's
 	   rejected by some (seemingly older) GCCs.
 	*/
-	friend class AssetReader<ASDCP::JP2K::MXFReader, MonoPictureFrame>;
+	friend AssetReader<ASDCP::JP2K::MXFReader, MonoPictureFrame>;
 
 	MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, boost::shared_ptr<DecryptionContext>);
 
@@ -85,3 +88,5 @@ private:
 };
 
 }
+
+#endif
