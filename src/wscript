@@ -118,6 +118,7 @@ def build(bld):
               data.h
               decrypted_kdm.h
               decrypted_kdm_key.h
+              decryption_context.h
               encrypted_kdm.h
               encryption_context.h
               exceptions.h
