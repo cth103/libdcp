@@ -202,7 +202,11 @@ long long
 dcp::locale_convert (string x, int, bool)
 {
 	long long y = 0;
+#ifdef LIBDCP_WINDOWS
+	__mingw_sscanf (x.c_str(), "%lld", &y);
+#else
 	sscanf (x.c_str(), "%lld", &y);
+#endif
 	return y;
 }
 
