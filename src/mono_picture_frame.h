@@ -80,7 +80,7 @@ private:
 	/* XXX: this is a bit of a shame, but I tried friend MonoPictureAssetReader and it's
 	   rejected by some (seemingly older) GCCs.
 	*/
-	friend AssetReader<ASDCP::JP2K::MXFReader, MonoPictureFrame>;
+	friend class AssetReader<ASDCP::JP2K::MXFReader, MonoPictureFrame>;
 
 	MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, boost::shared_ptr<DecryptionContext>);
 
