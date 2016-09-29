@@ -61,7 +61,11 @@ string
 dcp::locale_convert (long int x, int, bool)
 {
 	char buffer[64];
+#ifdef LIBDCP_WINDOWS
+	__mingw_snprintf (buffer, sizeof(buffer), "%ld", x);
+#else
 	snprintf (buffer, sizeof(buffer), "%ld", x);
+#endif
 	return buffer;
 }
 
