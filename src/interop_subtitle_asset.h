@@ -108,7 +108,7 @@ public:
 protected:
 
 	std::string pkl_type (Standard) const {
-		return "text/xml";
+		return "text/xml;asdcpKind=Subtitle";
 	}
 
 private:
