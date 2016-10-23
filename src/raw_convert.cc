@@ -38,13 +38,15 @@
 using std::string;
 using std::wstring;
 
+/** @param v Numeric value as an ASCII string */
 static
 string
 make_raw (string v)
 {
 	struct lconv* lc = localeconv ();
-	boost::algorithm::replace_all (v, lc->decimal_point, ".");
+	/* thousands_sep may be . so remove them before changing decimal points */
 	boost::algorithm::replace_all (v, lc->thousands_sep, "");
+	boost::algorithm::replace_all (v, lc->decimal_point, ".");
 	return v;
 }
 
