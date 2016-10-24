@@ -96,5 +96,17 @@ BOOST_AUTO_TEST_CASE (local_time_test)
 		BOOST_CHECK_EQUAL (b._second, 56);
 		BOOST_CHECK_EQUAL (b._millisecond, 491);
 	}
-}
 
+	{
+		dcp::LocalTime b ("2015-11-18T19:26:45");
+		BOOST_CHECK_EQUAL (b._year, 2015);
+		BOOST_CHECK_EQUAL (b._month, 11);
+		BOOST_CHECK_EQUAL (b._day, 18);
+		BOOST_CHECK_EQUAL (b._hour, 19);
+		BOOST_CHECK_EQUAL (b._minute, 26);
+		BOOST_CHECK_EQUAL (b._second, 45);
+		BOOST_CHECK_EQUAL (b._millisecond, 0);
+		BOOST_CHECK_EQUAL (b._tz_hour, 0);
+		BOOST_CHECK_EQUAL (b._tz_minute, 0);
+	}
+}

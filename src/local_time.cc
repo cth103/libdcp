@@ -109,22 +109,45 @@ LocalTime::set_local_time_zone ()
 	_tz_minute = offset.minutes ();
 }
 
-/** @param s A string of the form 2013-01-05T18:06:59[.123]+04:00 */
+/** @param s A string of the form 2013-01-05T18:06:59[.123][+04:00] */
 LocalTime::LocalTime (string s)
 {
-	/* 2013-01-05T18:06:59+04:00 or 2013-01-05T18:06:59.123+04:00 */
-        /* 0123456789012345678901234 or 01234567890123456789012345678 */
+	/* 2013-01-05T18:06:59 or 2013-01-05T18:06:59.123 or 2013-01-05T18:06:59+04:00 or 2013-01-05T18:06:59.123+04:00 */
+	/* 0123456789012345678 or 01234567890123456789012 or 0123456789012345678901234 or 01234567890123456789012345678 */
 
-	if (s.length() < 25) {
+	if (s.length() < 19) {
 		throw TimeFormatError (s);
 	}
 
-	/* Check incidental characters */
-	bool const common = s[4] == '-' && s[7] == '-' && s[10] == 'T' && s[13] == ':' && s[16] == ':';
-	bool const without_millisecond = common && s[22] == ':';
-	bool const with_millisecond = common && s[19] == '.' && s[26] == ':';
+	bool with_millisecond = false;
+	bool with_tz = false;
 
-	if (!with_millisecond && !without_millisecond) {
+	switch (s.length ()) {
+	case 19:
+		break;
+	case 23:
+		with_millisecond = true;
+		break;
+	case 25:
+		with_tz = true;
+		break;
+	case 29:
+		with_millisecond = with_tz = true;
+		break;
+	default:
+		throw TimeFormatError (s);
+	}
+
+	int const tz_pos = with_millisecond ? 23 : 19;
+
+	/* Check incidental characters */
+	if (s[4] != '-' || s[7] != '-' || s[10] != 'T' || s[13] != ':' || s[16] != ':') {
+		throw TimeFormatError (s);
+	}
+	if (with_millisecond && s[19] != '.') {
+		throw TimeFormatError (s);
+	}
+	if (with_tz && s[tz_pos] != '+' && s[tz_pos] != '-') {
 		throw TimeFormatError (s);
 	}
 
@@ -134,22 +157,12 @@ LocalTime::LocalTime (string s)
 	_hour = lexical_cast<int> (s.substr (11, 2));
 	_minute = lexical_cast<int> (s.substr (14, 2));
 	_second = lexical_cast<int> (s.substr (17, 2));
-	if (without_millisecond) {
-		_millisecond = 0;
-		_tz_hour = lexical_cast<int> (s.substr (20, 2));
-		_tz_minute = lexical_cast<int> (s.substr (23, 2));
-	} else {
-		_millisecond = lexical_cast<int> (s.substr (20, 3));
-		_tz_hour = lexical_cast<int> (s.substr (24, 2));
-		_tz_minute = lexical_cast<int> (s.substr (27, 2));
-	}
+	_millisecond = with_millisecond ? lexical_cast<int> (s.substr (20, 3)) : 0;
+	_tz_hour = with_tz ? lexical_cast<int> (s.substr (tz_pos + 1, 2)) : 0;
+	_tz_minute = with_tz ? lexical_cast<int> (s.substr (tz_pos + 4, 2)) : 0;
 
-	int const plus_minus_position = with_millisecond ? 23 : 19;
-
-	if (s[plus_minus_position] == '-') {
+	if (with_tz && s[tz_pos] == '-') {
 		_tz_hour = -_tz_hour;
-	} else if (s[plus_minus_position] != '+') {
-		throw TimeFormatError (s);
 	}
 }
 
