@@ -57,6 +57,12 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
+MXF::MXF ()
+	: _context_id (make_uuid ())
+{
+
+}
+
 void
 MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id, Standard standard) const
 {
@@ -76,7 +82,7 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id, Standard stand
 	writer_info->UsesHMAC = true;
 
 	if (_key_id) {
-		Kumu::GenRandomUUID (writer_info->ContextID);
+		Kumu::hex2bin (_context_id.c_str(), writer_info->ContextID, Kumu::UUID_Length, &c);
 		writer_info->EncryptedEssence = true;
 
 		unsigned int c;

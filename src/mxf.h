@@ -61,6 +61,7 @@ class PictureAssetWriter;
 class MXF
 {
 public:
+	MXF ();
 	virtual ~MXF () {}
 
 	/** @return true if the data is encrypted */
@@ -85,6 +86,18 @@ public:
 	/** @return encryption/decryption key, if one has been set */
 	boost::optional<Key> key () const {
 		return _key;
+	}
+
+	/** Set the context ID to be used when encrypting.
+	 *  @param id New ID.
+	 */
+	void set_context_id (std::string id) {
+		_context_id = id;
+	}
+
+	/** @return context ID used when encrypting; this starts off as a random value */
+	std::string context_id () const {
+		return _context_id;
 	}
 
 	/** Set the metadata that is written to the MXF file.
@@ -114,6 +127,7 @@ protected:
 	boost::optional<std::string> _key_id;
 	/** Key used for encryption/decryption, if there is one */
 	boost::optional<Key> _key;
+	std::string _context_id;
 	MXFMetadata _metadata;
 };
 
