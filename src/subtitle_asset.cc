@@ -85,9 +85,7 @@ SubtitleAsset::read_mxf (string mxf_file)
 	string s;
 	reader.ReadTimedTextResource (s, 0, 0);
 	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
-	stringstream t;
-	t << s;
-	xml->read_stream (t);
+	xml->read_string (s);
 	read_xml (xml, true);
 }
 
@@ -495,4 +493,3 @@ SubtitleAsset::xml_as_string () const
 
 	return doc.write_to_string_formatted ("UTF-8");
 }
-

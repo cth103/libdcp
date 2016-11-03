@@ -33,7 +33,7 @@ using namespace libdcp::parse;
 Font::Font (shared_ptr<const cxml::Node> node, optional<int> tcr)
 {
 	text = node->content ();
-	
+
 	id = node->optional_string_attribute ("Id").get_value_or ("");
 	size = node->optional_number_attribute<int64_t> ("Size").get_value_or (0);
 	italic = node->optional_bool_attribute ("Italic");
@@ -101,7 +101,7 @@ LoadFont::LoadFont (shared_ptr<const cxml::Node> node)
 		x = node->optional_string_attribute ("ID");
 	}
 	id = x.get_value_or ("");
-		
+
 	uri = node->optional_string_attribute ("URI");
 }
 
@@ -120,7 +120,7 @@ Subtitle::Subtitle (shared_ptr<const cxml::Node> node, optional<int> tcr)
 	for (list<cxml::NodePtr>::iterator i = t.begin(); i != t.end(); ++i) {
 		text_nodes.push_back (shared_ptr<Text> (new Text (*i, tcr)));
 	}
-	
+
 	fade_up_time = fade_time (node, "FadeUpTime", tcr);
 	fade_down_time = fade_time (node, "FadeDownTime", tcr);
 }
@@ -130,7 +130,7 @@ Subtitle::fade_time (shared_ptr<const cxml::Node> node, string name, optional<in
 {
 	string const u = node->optional_string_attribute (name).get_value_or ("");
 	Time t;
-	
+
 	if (u.empty ()) {
 		t = Time (0, 0, 0, 20, 250);
 	} else if (u.find (":") != string::npos) {
@@ -154,31 +154,26 @@ Text::Text (shared_ptr<const cxml::Node> node, optional<int> tcr)
 	text = node->content ();
 	optional<float> x = node->optional_number_attribute<float> ("VPosition");
 	if (!x) {
-		x = node->number_attribute<float> ("Vposition");
+		x = node->optional_number_attribute<float> ("Vposition");
 	}
-	v_position = x.get ();
+	v_position = x.get_value_or(0);
 
 	/* Vertical alignment */
 	optional<string> v = node->optional_string_attribute ("VAlign");
 	if (!v) {
 		v = node->optional_string_attribute ("Valign");
 	}
-	if (v) {
-		v_align = string_to_valign (v.get ());
-	}
+	v_align = string_to_valign (v.get_value_or("center"));
 
 	/* Horizontal alignment */
 	optional<string> h = node->optional_string_attribute ("HAlign");
 	if (!h) {
 		h = node->optional_string_attribute ("Halign");
 	}
-	if (h) {
-		h_align = string_to_halign (h.get ());
-	}
+	h_align = string_to_halign (h.get_value_or("center"));
 
 	list<cxml::NodePtr> f = node->node_children ("Font");
 	for (list<cxml::NodePtr>::iterator i = f.begin(); i != f.end(); ++i) {
 		font_nodes.push_back (shared_ptr<Font> (new Font (*i, tcr)));
 	}
 }
-
