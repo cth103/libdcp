@@ -53,6 +53,28 @@ OpenJPEGImage::OpenJPEGImage (opj_image_t* image)
 	DCP_ASSERT (_opj_image->numcomps == 3);
 }
 
+OpenJPEGImage::OpenJPEGImage (OpenJPEGImage const & other)
+{
+	_opj_image = reinterpret_cast<opj_image_t*> (malloc (sizeof (opj_image_t)));
+	DCP_ASSERT (_opj_image);
+	memcpy (_opj_image, other._opj_image, sizeof (opj_image_t));
+
+	int const data_size = _opj_image->x1 * _opj_image->y1 * 4;
+
+	_opj_image->comps = reinterpret_cast<opj_image_comp_t*> (malloc (_opj_image->numcomps * sizeof (opj_image_comp_t)));
+	DCP_ASSERT (_opj_image->comps);
+	memcpy (_opj_image->comps, other._opj_image->comps, _opj_image->numcomps * sizeof (opj_image_comp_t));
+	for (unsigned int i = 0; i < _opj_image->numcomps; ++i) {
+		_opj_image->comps[i].data = reinterpret_cast<OPJ_INT32*> (malloc (data_size));
+		DCP_ASSERT (_opj_image->comps[i].data);
+		memcpy (_opj_image->comps[i].data, other._opj_image->comps[i].data, data_size);
+	}
+
+	_opj_image->icc_profile_buf = reinterpret_cast<OPJ_BYTE*> (malloc (_opj_image->icc_profile_len));
+	DCP_ASSERT (_opj_image->icc_profile_buf);
+	memcpy (_opj_image->icc_profile_buf, other._opj_image->icc_profile_buf, _opj_image->icc_profile_len);
+}
+
 /** Construct a new OpenJPEGImage with undefined contents.
  *  @param size Size for the frame in pixels.
  */

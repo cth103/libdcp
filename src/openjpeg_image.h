@@ -45,15 +45,16 @@ namespace dcp {
 /** @class OpenJPEGImage
  *  @brief A wrapper of libopenjpeg's opj_image_t.
  */
-class OpenJPEGImage : public boost::noncopyable
+class OpenJPEGImage
 {
 public:
 	explicit OpenJPEGImage (opj_image_t *);
+	explicit OpenJPEGImage (OpenJPEGImage const & other);
 	explicit OpenJPEGImage (Size);
 	~OpenJPEGImage ();
 
 	int* data (int) const;
-	dcp::Size size () const;
+	Size size () const;
 	int precision (int component) const;
 	bool srgb () const;
 
