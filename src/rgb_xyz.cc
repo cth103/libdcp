@@ -276,8 +276,8 @@ dcp::combined_rgb_to_xyz (ColourConversion const & conversion, double* matrix)
 /** @param rgb RGB data; packed RGB 16:16:16, 48bpp, 16R, 16G, 16B,
  *  with the 2-byte value for each R/G/B component stored as
  *  little-endian; i.e. AV_PIX_FMT_RGB48LE.
- *  @param size of RGB image in pixels.
- *  @param stride of RGB data in pixels.
+ *  @param size size of RGB image in pixels.
+ *  @param size stride of RGB data in pixels.
  */
 shared_ptr<dcp::OpenJPEGImage>
 dcp::rgb_to_xyz (
