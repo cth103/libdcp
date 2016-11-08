@@ -126,6 +126,17 @@ Colour::to_argb_string () const
 	return buffer;
 }
 
+/** @return An RGB string of the form RRGGBB, where e.g. RR is a two-character
+ *  hex value.
+ */
+string
+Colour::to_rgb_string () const
+{
+	char buffer[7];
+	snprintf (buffer, sizeof(buffer), "%02X%02X%02X", r, g, b);
+	return buffer;
+}
+
 /** operator== for Colours.
  *  @param a First colour to compare.
  *  @param b Second colour to compare.

@@ -246,6 +246,7 @@ public:
 	int g; ///< green component, from 0 to 255
 	int b; ///< blue component, from 0 to 255
 
+	std::string to_rgb_string () const;
 	std::string to_argb_string () const;
 };
 
