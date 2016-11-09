@@ -55,7 +55,10 @@ check_xml (xmlpp::Element* ref, xmlpp::Element* test, list<string> ignore)
 
 	xmlpp::Element::NodeList ref_children = ref->get_children ();
 	xmlpp::Element::NodeList test_children = test->get_children ();
-	BOOST_REQUIRE_MESSAGE (ref_children.size () == test_children.size (), "child counts of " << ref->get_name() << " differ");
+	BOOST_REQUIRE_MESSAGE (
+		ref_children.size () == test_children.size (),
+		"child counts of " << ref->get_name() << " differ; ref has " << ref_children.size() << ", test has " << test_children.size()
+		);
 
 	xmlpp::Element::NodeList::iterator k = ref_children.begin ();
 	xmlpp::Element::NodeList::iterator l = test_children.begin ();
