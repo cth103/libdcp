@@ -53,6 +53,11 @@ OpenJPEGImage::OpenJPEGImage (opj_image_t* image)
 	DCP_ASSERT (_opj_image->numcomps == 3);
 }
 
+#ifdef LIBDCP_OPENJPEG1
+typedef int32_t OPJ_INT32;
+typedef uint8_t OPJ_BYTE;
+#endif
+
 OpenJPEGImage::OpenJPEGImage (OpenJPEGImage const & other)
 {
 	_opj_image = reinterpret_cast<opj_image_t*> (malloc (sizeof (opj_image_t)));
