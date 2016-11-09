@@ -278,7 +278,7 @@ SMPTESubtitleAsset::xml_as_string () const
 
 	subtitles_as_xml (root->add_child ("SubtitleList", "dcst"), _time_code_rate, SMPTE);
 
-	return doc.write_to_string_formatted ("UTF-8");
+	return doc.write_to_string ("UTF-8");
 }
 
 /** Write this content to a MXF file */
