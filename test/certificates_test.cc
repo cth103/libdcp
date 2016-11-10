@@ -44,6 +44,7 @@ BOOST_AUTO_TEST_CASE (certificates1)
 
 	/* Leaf */
 	BOOST_CHECK_EQUAL (*i, c.leaf ());
+	BOOST_CHECK_EQUAL (i->thumbprint(), "EZg5wDcihccWqwdg59Y8D+IJpYM=");
 
 	BOOST_CHECK_EQUAL (
 		c.leaf().issuer(),
@@ -58,6 +59,7 @@ BOOST_AUTO_TEST_CASE (certificates1)
 	++i;
 
 	/* Intermediate */
+	BOOST_CHECK_EQUAL (i->thumbprint(), "GwM6ex2UVlWclH8f1uV7W1n0EEU=");
 	BOOST_CHECK_EQUAL (
 		i->issuer(),
 		"dnQualifier=DCnRdHFbcv4ANVUq2\\+wMVALFSec=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
@@ -72,6 +74,7 @@ BOOST_AUTO_TEST_CASE (certificates1)
 
 	/* Root */
 	BOOST_CHECK_EQUAL (*i, c.root ());
+	BOOST_CHECK_EQUAL (i->thumbprint(), "zU8NVNwI2PYejmSYRntG7c6sdTw=");
 	BOOST_CHECK_EQUAL (
 		c.root().issuer(),
 		"dnQualifier=DCnRdHFbcv4ANVUq2\\+wMVALFSec=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"

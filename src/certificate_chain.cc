@@ -51,6 +51,7 @@
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
+#include <openssl/rsa.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
@@ -463,7 +464,17 @@ CertificateChain::valid () const
 
 	RSA* private_key = PEM_read_bio_RSAPrivateKey (bio, 0, 0, 0);
 	RSA* public_key = leaf().public_key ();
+
+#if OPENSSL_VERSION_NUMBER > 0x10100000L
+#warning "Using new OpenSSL API"
+	BIGNUM const * private_key_n;
+	RSA_get0_key(private_key, &private_key_n, 0, 0);
+	BIGNUM const * public_key_n;
+	RSA_get0_key(public_key, &public_key_n, 0, 0);
+	bool const valid = !BN_cmp (private_key_n, public_key_n);
+#else
 	bool const valid = !BN_cmp (private_key->n, public_key->n);
+#endif
 	BIO_free (bio);
 
 	return valid;
