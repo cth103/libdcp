@@ -114,7 +114,7 @@ def configure(conf):
         elif conf.options.jpeg == 'oj1':
             conf.check_cfg(package='libopenjpeg1', args='--cflags', atleast_version='1.5.0', uselib_store='OPENJPEG', mandatory=True)
             conf.env.STLIB_OPENJPEG = ['openjpeg']
-        conf.check_cfg(package='libasdcp-cth', atleast_version='0.0.1', args='--cflags', uselib_store='ASDCPLIB_CTH', mandatory=True)
+        conf.check_cfg(package='libasdcp-cth', atleast_version='0.1.3', args='--cflags', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.env.HAVE_ASDCPLIB_CTH = 1
         conf.env.STLIB_ASDCPLIB_CTH = ['asdcp-cth', 'kumu-cth']
         conf.env.HAVE_CXML = 1
@@ -125,7 +125,7 @@ def configure(conf):
             conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
         elif conf.options.jpeg == 'oj1':
             conf.check_cfg(package='libopenjpeg1', args='--cflags --libs', atleast_version='1.5.0', uselib_store='OPENJPEG', mandatory=True)
-        conf.check_cfg(package='libasdcp-cth', atleast_version='0.1.0', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
+        conf.check_cfg(package='libasdcp-cth', atleast_version='0.1.3', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.check_cfg(package='libcxml', atleast_version='0.15.2', args='--cflags --libs', uselib_store='CXML', mandatory=True)
 
     if conf.options.target_windows:
