@@ -141,6 +141,12 @@ OpenJPEGImage::precision (int component) const
 	return _opj_image->comps[component].prec;
 }
 
+int
+OpenJPEGImage::factor (int component) const
+{
+	return _opj_image->comps[component].factor;
+}
+
 bool
 OpenJPEGImage::srgb () const
 {
