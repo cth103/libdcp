@@ -90,3 +90,9 @@ MismatchedStandardError::MismatchedStandardError ()
 {
 
 }
+
+KDMDecryptionError::KDMDecryptionError (std::string message)
+	: runtime_error (String::compose ("Could not decrypt KDM (%1)", message))
+{
+
+}

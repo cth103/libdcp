@@ -144,7 +144,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 		int const decrypted_len = RSA_private_decrypt (cipher_value_len, cipher_value, decrypted, rsa, RSA_PKCS1_OAEP_PADDING);
 		if (decrypted_len == -1) {
 			delete[] decrypted;
-			throw MiscError (String::compose ("Could not decrypt KDM (%1)", ERR_error_string (ERR_get_error(), 0)));
+			throw KDMDecryptionError (ERR_error_string (ERR_get_error(), 0));
 		}
 
 		unsigned char* p = decrypted;

@@ -173,6 +173,12 @@ public:
 	MismatchedStandardError ();
 };
 
+class KDMDecryptionError : public std::runtime_error
+{
+public:
+	KDMDecryptionError (std::string message);
+};
+
 }
 
 #endif
