@@ -53,8 +53,7 @@ ColourConversion::srgb_to_xyz ()
 		Chromaticity (0.64, 0.33),
 		Chromaticity (0.3, 0.6),
 		Chromaticity (0.15, 0.06),
-		/* D65 */
-		Chromaticity (0.3127, 0.329),
+		Chromaticity::D65 (),
 		optional<Chromaticity> (),
 		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
 		);
@@ -70,8 +69,7 @@ ColourConversion::rec601_to_xyz ()
 		Chromaticity (0.64, 0.33),
 		Chromaticity (0.3, 0.6),
 		Chromaticity (0.15, 0.06),
-		/* D65 */
-		Chromaticity (0.3127, 0.329),
+		Chromaticity::D65 (),
 		optional<Chromaticity> (),
 		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
 		);
@@ -87,8 +85,7 @@ ColourConversion::rec709_to_xyz ()
 		Chromaticity (0.64, 0.33),
 		Chromaticity (0.3, 0.6),
 		Chromaticity (0.15, 0.06),
-		/* D65 */
-		Chromaticity (0.3127, 0.329),
+		Chromaticity::D65 (),
 		optional<Chromaticity> (),
 		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
 		);
@@ -123,8 +120,7 @@ ColourConversion::rec1886_to_xyz ()
 		Chromaticity (0.64, 0.33),
 		Chromaticity (0.3, 0.6),
 		Chromaticity (0.15, 0.06),
-		/* D65 */
-		Chromaticity (0.3127, 0.329),
+		Chromaticity::D65 (),
 		optional<Chromaticity> (),
 		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
 		);
@@ -140,8 +136,7 @@ ColourConversion::rec2020_to_xyz ()
 		Chromaticity (0.708, 0.292),
 		Chromaticity (0.170, 0.797),
 		Chromaticity (0.131, 0.046),
-		/* D65 */
-		Chromaticity (0.3127, 0.329),
+		Chromaticity::D65 (),
 		optional<Chromaticity> (),
 		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
 		);

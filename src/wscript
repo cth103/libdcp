@@ -40,6 +40,7 @@ def build(bld):
              atmos_asset_writer.cc
              certificate_chain.cc
              certificate.cc
+             chromaticity.cc
              colour_conversion.cc
              colour_matrix.cc
              cpl.cc

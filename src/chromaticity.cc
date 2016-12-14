@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,48 +31,12 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/chromaticity.h
- *  @brief Chromaticity class.
- */
+#include "chromaticity.h"
 
-#ifndef DCP_CHROMATICITY_H
-#define DCP_CHROMATICITY_H
+using namespace dcp;
 
-#include <cmath>
-
-namespace dcp {
-
-/** @class Chromaticity
- *  @brief A representation of a x,y,z chromaticity, where z = 1 - x - y
- */
-class Chromaticity
+Chromaticity
+Chromaticity::D65 ()
 {
-public:
-	Chromaticity ()
-		: x (0)
-		, y (0)
-	{}
-
-	Chromaticity (double x_, double y_)
-		: x (x_)
-		, y (y_)
-	{}
-
-	double x;
-	double y;
-
-	double z () const {
-		return 1 - x - y;
-	}
-
-	/** @return true if this Chromaticity's x and y are within epsilon of other */
-	bool about_equal (Chromaticity const & other, float epsilon) const {
-		return std::fabs (x - other.x) < epsilon && std::fabs (y - other.y) < epsilon;
-	}
-
-	static Chromaticity D65 ();
-};
-
+	return Chromaticity (0.3127, 0.329);
 }
-
-#endif
