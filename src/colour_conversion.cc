@@ -34,6 +34,8 @@
 #include "colour_conversion.h"
 #include "gamma_transfer_function.h"
 #include "modified_gamma_transfer_function.h"
+#include "s_gamut3_transfer_function.h"
+#include "identity_transfer_function.h"
 #include "colour_matrix.h"
 #include "dcp_assert.h"
 #include <boost/numeric/ublas/matrix.hpp>
@@ -143,6 +145,25 @@ ColourConversion::rec2020_to_xyz ()
 	return *c;
 }
 
+/** Sony S-Gamut3/S-Log3 */
+ColourConversion const &
+ColourConversion::s_gamut3_to_xyz ()
+{
+	static ColourConversion* c = new ColourConversion (
+		shared_ptr<const TransferFunction> (new SGamut3TransferFunction ()),
+		YUV_TO_RGB_REC709,
+		Chromaticity (0.73, 0.280),
+		Chromaticity (0.140, 0.855),
+		Chromaticity (0.100, -0.050),
+		Chromaticity::D65 (),
+		optional<Chromaticity> (),
+		shared_ptr<const TransferFunction> (new IdentityTransferFunction ())
+		);
+	return *c;
+}
+
+
+
 ColourConversion::ColourConversion (
 	shared_ptr<const TransferFunction> in,
 	YUVToRGB yuv_to_rgb,
@@ -174,7 +195,9 @@ ColourConversion::about_equal (ColourConversion const & other, float epsilon) co
 	    !_green.about_equal (other._green, epsilon) ||
 	    !_blue.about_equal (other._blue, epsilon) ||
 	    !_white.about_equal (other._white, epsilon) ||
-	    !_out->about_equal (other._out, epsilon)) {
+	    (!_out && other._out) ||
+	    (_out && !other._out) ||
+	    (_out && !_out->about_equal (other._out, epsilon))) {
 		return false;
 	}
 

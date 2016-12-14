@@ -56,6 +56,7 @@ def build(bld):
              file.cc
              font_asset.cc
              gamma_transfer_function.cc
+             identity_transfer_function.cc
              interop_load_font_node.cc
              interop_subtitle_asset.cc
              j2k.cc
@@ -85,6 +86,7 @@ def build(bld):
              reel_subtitle_asset.cc
              ref.cc
              rgb_xyz.cc
+             s_gamut3_transfer_function.cc
              smpte_load_font_node.cc
              smpte_subtitle_asset.cc
              sound_asset.cc
@@ -128,6 +130,7 @@ def build(bld):
               font_asset.h
               frame.h
               gamma_transfer_function.h
+              identity_transfer_function.h
               interop_load_font_node.h
               interop_subtitle_asset.h
               j2k.h
@@ -158,6 +161,7 @@ def build(bld):
               reel_stereo_picture_asset.h
               reel_subtitle_asset.h
               ref.h
+              s_gamut3_transfer_function.h
               smpte_load_font_node.h
               smpte_subtitle_asset.h
               sound_frame.h
