@@ -393,7 +393,9 @@ public:
 		}
 		node->add_child("ContentKeysNotValidBefore")->add_child_text (not_valid_before.as_string ());
 		node->add_child("ContentKeysNotValidAfter")->add_child_text (not_valid_after.as_string ());
-		authorized_device_info.as_xml (node->add_child ("AuthorizedDeviceInfo"));
+		if (authorized_device_info) {
+			authorized_device_info->as_xml (node->add_child ("AuthorizedDeviceInfo"));
+		}
 		key_id_list.as_xml (node->add_child ("KeyIdList"));
 
 		xmlpp::Element* forensic_mark_flag_list = node->add_child ("ForensicMarkFlagList");
@@ -407,7 +409,7 @@ public:
 	string content_title_text;
 	LocalTime not_valid_before;
 	LocalTime not_valid_after;
-	AuthorizedDeviceInfo authorized_device_info;
+	boost::optional<AuthorizedDeviceInfo> authorized_device_info;
 	KeyIdList key_id_list;
 };
 
@@ -559,26 +561,30 @@ EncryptedKDM::EncryptedKDM (
 	kre.content_title_text = content_title_text;
 	kre.not_valid_before = not_valid_before;
 	kre.not_valid_after = not_valid_after;
-	kre.authorized_device_info.device_list_identifier = make_uuid ();
-	string n = recipient.subject_common_name ();
-	if (n.find (".") != string::npos) {
-		n = n.substr (n.find (".") + 1);
-	}
-	kre.authorized_device_info.device_list_description = n;
 
-	if (formulation == MODIFIED_TRANSITIONAL_1 || formulation == DCI_ANY) {
-		/* Use the "assume trust" thumbprint */
-		kre.authorized_device_info.certificate_thumbprints.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
-	} else if (formulation == DCI_SPECIFIC) {
-		/* As I read the standard we should use the recipient
-		   /and/ other trusted device thumbprints here.  MJD
-		   reports that this doesn't work with his setup;
-		   a working KDM does not include the recipient's
-		   thumbprint (recipient.thumbprint()).
-		   Waimea uses only the trusted devices here, too.
-		*/
-		BOOST_FOREACH (Certificate const & i, trusted_devices) {
-			kre.authorized_device_info.certificate_thumbprints.push_back (i.thumbprint ());
+	if (formulation != MODIFIED_TRANSITIONAL_TEST) {
+		kre.authorized_device_info = data::AuthorizedDeviceInfo ();
+		kre.authorized_device_info->device_list_identifier = make_uuid ();
+		string n = recipient.subject_common_name ();
+		if (n.find (".") != string::npos) {
+			n = n.substr (n.find (".") + 1);
+		}
+		kre.authorized_device_info->device_list_description = n;
+
+		if (formulation == MODIFIED_TRANSITIONAL_1 || formulation == DCI_ANY) {
+			/* Use the "assume trust" thumbprint */
+			kre.authorized_device_info->certificate_thumbprints.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
+		} else if (formulation == DCI_SPECIFIC) {
+			/* As I read the standard we should use the recipient
+			   /and/ other trusted device thumbprints here.  MJD
+			   reports that this doesn't work with his setup;
+			   a working KDM does not include the recipient's
+			   thumbprint (recipient.thumbprint()).
+			   Waimea uses only the trusted devices here, too.
+			*/
+			BOOST_FOREACH (Certificate const & i, trusted_devices) {
+				kre.authorized_device_info->certificate_thumbprints.push_back (i.thumbprint ());
+			}
 		}
 	}
 

@@ -229,7 +229,9 @@ enum Standard {
 enum Formulation {
 	MODIFIED_TRANSITIONAL_1,
 	DCI_ANY,
-	DCI_SPECIFIC
+	DCI_SPECIFIC,
+	/** For testing: adds no AuthorizedDeviceInfo tag */
+	MODIFIED_TRANSITIONAL_TEST
 };
 
 /** @class Colour
