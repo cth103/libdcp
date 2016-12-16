@@ -530,7 +530,6 @@ EncryptedKDM::EncryptedKDM (
 	shared_ptr<const CertificateChain> signer,
 	Certificate recipient,
 	vector<Certificate> trusted_devices,
-	string device_list_description,
 	string cpl_id,
 	string content_title_text,
 	optional<string> annotation_text,
@@ -553,7 +552,6 @@ EncryptedKDM::EncryptedKDM (
 	kre.recipient.x509_issuer_serial.x509_issuer_name = recipient.issuer ();
 	kre.recipient.x509_issuer_serial.x509_serial_number = recipient.serial ();
 	kre.recipient.x509_subject_name = recipient.subject ();
-	kre.authorized_device_info.device_list_description = device_list_description;
 	kre.composition_playlist_id = cpl_id;
 	if (formulation == DCI_ANY || formulation == DCI_SPECIFIC) {
 		kre.content_authenticator = signer->leaf().thumbprint ();

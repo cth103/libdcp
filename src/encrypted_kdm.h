@@ -102,7 +102,6 @@ private:
 		boost::shared_ptr<const CertificateChain> signer,
 		Certificate recipient,
 		std::vector<Certificate> trusted_devices,
-		std::string device_list_description,
 		std::string cpl_id,
 		std::string cpl_content_title_text,
 		boost::optional<std::string> annotation_text,
