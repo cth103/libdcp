@@ -50,7 +50,7 @@ struct ASDCPStateBase
 }
 
 template <class P, class Q>
-void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard standard, Q* asset, uint8_t* data, int size)
+void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard standard, Q* asset, uint8_t const * data, int size)
 {
 	asset->set_file (writer->_file);
 

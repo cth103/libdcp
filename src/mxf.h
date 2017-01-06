@@ -114,7 +114,7 @@ public:
 
 protected:
 	template <class P, class Q>
-	friend void start (PictureAssetWriter* writer, boost::shared_ptr<P> state, Standard standard, Q* mxf, uint8_t* data, int size);
+	friend void start (PictureAssetWriter* writer, boost::shared_ptr<P> state, Standard standard, Q* mxf, uint8_t const * data, int size);
 
 	std::string read_writer_info (ASDCP::WriterInfo const &);
 	/** Fill in a ADSCP::WriteInfo struct.

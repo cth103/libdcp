@@ -59,7 +59,7 @@ namespace dcp {
 class MonoPictureAssetWriter : public PictureAssetWriter
 {
 public:
-	FrameInfo write (uint8_t *, int);
+	FrameInfo write (uint8_t const *, int);
 	void fake_write (int size);
 	bool finalize ();
 
@@ -67,7 +67,7 @@ private:
 	friend class MonoPictureAsset;
 
 	MonoPictureAssetWriter (PictureAsset *, boost::filesystem::path file, Standard standard, bool);
-	void start (uint8_t *, int);
+	void start (uint8_t const *, int);
 
 	/* do this with an opaque pointer so we don't have to include
 	   ASDCP headers

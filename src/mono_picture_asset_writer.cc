@@ -65,14 +65,14 @@ MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, boost::file
 }
 
 void
-MonoPictureAssetWriter::start (uint8_t* data, int size)
+MonoPictureAssetWriter::start (uint8_t const * data, int size)
 {
 	dcp::start (this, _state, _standard, _picture_asset, data, size);
 	_picture_asset->set_frame_rate (_picture_asset->edit_rate());
 }
 
 FrameInfo
-MonoPictureAssetWriter::write (uint8_t* data, int size)
+MonoPictureAssetWriter::write (uint8_t const * data, int size)
 {
 	DCP_ASSERT (!_finalized);
 

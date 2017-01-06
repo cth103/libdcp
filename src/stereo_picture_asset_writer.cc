@@ -59,7 +59,7 @@ StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* mxf, boost::fi
 }
 
 void
-StereoPictureAssetWriter::start (uint8_t* data, int size)
+StereoPictureAssetWriter::start (uint8_t const * data, int size)
 {
 	dcp::start (this, _state, _standard, _picture_asset, data, size);
 	_picture_asset->set_frame_rate (Fraction (_picture_asset->edit_rate().numerator * 2, _picture_asset->edit_rate().denominator));
@@ -70,7 +70,7 @@ StereoPictureAssetWriter::start (uint8_t* data, int size)
  *  @param size Size of data.
  */
 FrameInfo
-StereoPictureAssetWriter::write (uint8_t* data, int size)
+StereoPictureAssetWriter::write (uint8_t const * data, int size)
 {
 	DCP_ASSERT (!_finalized);
 

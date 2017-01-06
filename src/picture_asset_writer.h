@@ -77,12 +77,12 @@ struct FrameInfo
 class PictureAssetWriter : public AssetWriter
 {
 public:
-	virtual FrameInfo write (uint8_t *, int) = 0;
+	virtual FrameInfo write (uint8_t const *, int) = 0;
 	virtual void fake_write (int) = 0;
 
 protected:
 	template <class P, class Q>
-	friend void start (PictureAssetWriter *, boost::shared_ptr<P>, Standard, Q *, uint8_t *, int);
+	friend void start (PictureAssetWriter *, boost::shared_ptr<P>, Standard, Q *, uint8_t const *, int);
 
 	PictureAssetWriter (PictureAsset *, boost::filesystem::path, Standard standard, bool);
 

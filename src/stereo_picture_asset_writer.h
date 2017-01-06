@@ -58,7 +58,7 @@ public:
 	 *  @param data JPEG2000 data.
 	 *  @param size Size of data.
 	 */
-	FrameInfo write (uint8_t* data, int size);
+	FrameInfo write (uint8_t const * data, int size);
 	void fake_write (int size);
 	bool finalize ();
 
@@ -66,7 +66,7 @@ private:
 	friend class StereoPictureAsset;
 
 	StereoPictureAssetWriter (PictureAsset *, boost::filesystem::path file, Standard, bool);
-	void start (uint8_t *, int);
+	void start (uint8_t const *, int);
 
 	/* do this with an opaque pointer so we don't have to include
 	   ASDCP headers
