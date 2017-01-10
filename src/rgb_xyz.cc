@@ -33,7 +33,6 @@
 
 #include "rgb_xyz.h"
 #include "openjpeg_image.h"
-#include "colour_matrix.h"
 #include "colour_conversion.h"
 #include "transfer_function.h"
 #include "dcp_assert.h"

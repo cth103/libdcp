@@ -42,7 +42,6 @@ def build(bld):
              certificate.cc
              chromaticity.cc
              colour_conversion.cc
-             colour_matrix.cc
              cpl.cc
              data.cc
              dcp.cc
@@ -115,7 +114,6 @@ def build(bld):
               certificate.h
               chromaticity.h
               colour_conversion.h
-              colour_matrix.h
               cpl.h
               dcp.h
               dcp_assert.h

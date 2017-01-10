@@ -36,7 +36,6 @@
 #include "modified_gamma_transfer_function.h"
 #include "s_gamut3_transfer_function.h"
 #include "identity_transfer_function.h"
-#include "colour_matrix.h"
 #include "dcp_assert.h"
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/numeric/ublas/lu.hpp>
