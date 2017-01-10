@@ -75,6 +75,11 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 		_state->desc.ChannelFormat = ASDCP::PCM::CF_CFG_4;
 	}
 
+	/* I'm fairly sure this is not necessary, as ContainerDuration is written
+	   in ASDCP's WriteMXFFooter, but it stops a valgrind warning.
+	*/
+	_state->desc.ContainerDuration = 0;
+
 	_state->frame_buffer.Capacity (ASDCP::PCM::CalcFrameBufferSize (_state->desc));
 	_state->frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_state->desc));
 	memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
