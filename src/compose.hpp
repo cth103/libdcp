@@ -42,6 +42,8 @@
 #include <inttypes.h>
 #include <cstdio>
 
+namespace dcp {
+
 namespace StringPrivate
 {
   // the actual composition class - using string::compose is cleaner, so we
@@ -388,5 +390,6 @@ namespace String
   }
 }
 
+}
 
 #endif // STRING_COMPOSE_H

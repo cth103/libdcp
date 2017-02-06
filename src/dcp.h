@@ -39,6 +39,7 @@
 #define LIBDCP_DCP_H
 
 #include "types.h"
+#include "util.h"
 #include "certificate.h"
 #include "metadata.h"
 #include "name_format.h"
