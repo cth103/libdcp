@@ -98,6 +98,8 @@ public:
 		, font (font_)
 	{}
 
+	virtual ~Part () {}
+
 	virtual xmlpp::Element* as_xml (xmlpp::Element* parent, Context &) const;
 	void write_xml (xmlpp::Element* parent, order::Context& context) const;
 
