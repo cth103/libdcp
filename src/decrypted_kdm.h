@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2017 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -54,6 +54,7 @@ class DecryptedKDMKey;
 class EncryptedKDM;
 class CertificateChain;
 class CPL;
+class ReelMXF;
 
 /** @class DecryptedKDM
  *  @brief A decrypted KDM.
@@ -79,6 +80,19 @@ public:
 	 *  @param not_valid_after End time for the KDM.
 	 */
 	DecryptedKDM (
+		LocalTime not_valid_before,
+		LocalTime not_valid_after,
+		std::string annotation_text,
+		std::string content_title_text,
+		std::string issue_date
+		);
+
+	/** Construct a DecryptedKDM containing a given set of keys.
+	 *  @param keys Keys to be included in the DecryptedKDM.
+	 */
+	DecryptedKDM (
+		std::string cpl_id,
+		std::map<boost::shared_ptr<const ReelMXF>, Key> keys,
 		LocalTime not_valid_before,
 		LocalTime not_valid_after,
 		std::string annotation_text,

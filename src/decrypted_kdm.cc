@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2017 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -56,6 +56,7 @@ using std::setw;
 using std::setfill;
 using std::hex;
 using std::pair;
+using std::map;
 using boost::shared_ptr;
 using namespace dcp;
 
@@ -165,7 +166,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 			/* 93 is not-valid-after (a string) [25 bytes] */
 			p += 25;
 			/* 118 is the key [ASDCP::KeyLen bytes] */
-			_keys.push_back (DecryptedKDMKey ("", key_id, Key (p), cpl_id));
+			add_key ("", key_id, Key (p), cpl_id);
 			break;
 		}
 		case 138:
@@ -186,7 +187,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 			/* 97 is not-valid-after (a string) [25 bytes] */
 			p += 25;
 			/* 112 is the key [ASDCP::KeyLen bytes] */
-			_keys.push_back (DecryptedKDMKey (key_type, key_id, Key (p), cpl_id));
+			add_key (key_type, key_id, Key (p), cpl_id);
 			break;
 		}
 		default:
@@ -221,7 +222,27 @@ DecryptedKDM::DecryptedKDM (
 }
 
 DecryptedKDM::DecryptedKDM (
-	boost::shared_ptr<const CPL> cpl,
+	string cpl_id,
+	map<shared_ptr<const ReelMXF>, Key> keys,
+	LocalTime not_valid_before,
+	LocalTime not_valid_after,
+	string annotation_text,
+	string content_title_text,
+	string issue_date
+	)
+	: _not_valid_before (not_valid_before)
+	, _not_valid_after (not_valid_after)
+	, _annotation_text (annotation_text)
+	, _content_title_text (content_title_text)
+	, _issue_date (issue_date)
+{
+	for (map<shared_ptr<const ReelMXF>, Key>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
+		add_key (i->first->key_type(), i->first->key_id().get(), i->second, cpl_id);
+	}
+}
+
+DecryptedKDM::DecryptedKDM (
+	shared_ptr<const CPL> cpl,
 	Key key,
 	LocalTime not_valid_before,
 	LocalTime not_valid_after,
@@ -239,9 +260,8 @@ DecryptedKDM::DecryptedKDM (
 	bool did_one = false;
 	BOOST_FOREACH(shared_ptr<const ReelAsset> i, cpl->reel_assets ()) {
 		shared_ptr<const ReelMXF> mxf = boost::dynamic_pointer_cast<const ReelMXF> (i);
-		shared_ptr<const ReelAsset> asset = boost::dynamic_pointer_cast<const ReelAsset> (i);
-		if (asset && mxf && mxf->key_id ()) {
-			_keys.push_back (DecryptedKDMKey (mxf->key_type(), mxf->key_id().get(), key, cpl->id ()));
+		if (mxf && mxf->key_id ()) {
+			add_key (mxf->key_type(), mxf->key_id().get(), key, cpl->id ());
 			did_one = true;
 		}
 	}
