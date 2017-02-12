@@ -77,6 +77,7 @@ public:
 	std::string issuer;
 	std::string creator;
 	std::string issue_date;
+	std::string annotation_text;
 };
 
 }

@@ -64,6 +64,7 @@ MXFMetadata::read (ASDCP::WriterInfo const & info)
 XMLMetadata::XMLMetadata ()
 	: issuer ("libdcp" LIBDCP_VERSION)
 	, creator ("libdcp" LIBDCP_VERSION)
+	, annotation_text ("Created by libdcp" LIBDCP_VERSION)
 {
 	set_issue_date_now ();
 }

@@ -323,11 +323,7 @@ DCP::write_pkl (string file, Standard standard, string pkl_uuid, XMLMetadata met
 	}
 
 	pkl->add_child("Id")->add_child_text ("urn:uuid:" + pkl_uuid);
-
-	/* XXX: this is a bit of a hack */
-	DCP_ASSERT (cpls().size() > 0);
-	pkl->add_child("AnnotationText")->add_child_text (cpls().front()->annotation_text ());
-
+	pkl->add_child("AnnotationText")->add_child_text (metadata.annotation_text);
 	pkl->add_child("IssueDate")->add_child_text (metadata.issue_date);
 	pkl->add_child("Issuer")->add_child_text (metadata.issuer);
 	pkl->add_child("Creator")->add_child_text (metadata.creator);
@@ -412,7 +408,7 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, boost::filesystem::path
 	}
 
 	root->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
-	root->add_child("AnnotationText")->add_child_text ("Created by " + metadata.creator);
+	root->add_child("AnnotationText")->add_child_text (metadata.annotation_text);
 
 	switch (standard) {
 	case INTEROP:
