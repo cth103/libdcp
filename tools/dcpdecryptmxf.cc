@@ -56,7 +56,7 @@ static void
 help (string n)
 {
 	cerr << "Syntax: " << n << " [OPTION] <MXF>]\n"
-	     << "  -v, --version      show DCP-o-matic version\n"
+	     << "  -v, --version      show libdcp version\n"
 	     << "  -h, --help         show this help\n"
 	     << "  -o, --output       output filename\n"
 	     << "  -k, --kdm          KDM file\n"
