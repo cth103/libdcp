@@ -61,6 +61,9 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
+/* Magic value specified by SMPTE S430-1-2006 */
+static uint8_t smpte_structure_id[] = { 0xf1, 0xdc, 0x12, 0x44, 0x60, 0x16, 0x9a, 0x0e, 0x85, 0xbc, 0x30, 0x06, 0x42, 0xf8, 0x66, 0xab };
+
 static void
 put (uint8_t ** d, string s)
 {
@@ -174,6 +177,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 		{
 			/* SMPTE */
 			/* 0 is structure id (fixed sequence specified by standard) [16 bytes] */
+			DCP_ASSERT (memcmp (p, smpte_structure_id, 16) == 0);
 			p += 16;
 			/* 16 is is signer thumbprint [20 bytes] */
 			p += 20;
@@ -303,9 +307,7 @@ DecryptedKDM::encrypt (shared_ptr<const CertificateChain> signer, Certificate re
 		uint8_t block[138];
 		uint8_t* p = block;
 
-		/* Magic value specified by SMPTE S430-1-2006 */
-		uint8_t structure_id[] = { 0xf1, 0xdc, 0x12, 0x44, 0x60, 0x16, 0x9a, 0x0e, 0x85, 0xbc, 0x30, 0x06, 0x42, 0xf8, 0x66, 0xab };
-		put (&p, structure_id, 16);
+		put (&p, smpte_structure_id, 16);
 
 		base64_decode (signer->leaf().thumbprint (), p, 20);
 		p += 20;
