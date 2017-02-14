@@ -90,8 +90,9 @@ public:
 	std::string content_title_text () const;
 	std::string issue_date () const;
 	std::string cpl_id () const;
-	LocalTime not_valid_before() const;
-	LocalTime not_valid_after() const;
+	LocalTime not_valid_before () const;
+	LocalTime not_valid_after () const;
+	std::string recipient_x509_subject_name () const;
 
 private:
 

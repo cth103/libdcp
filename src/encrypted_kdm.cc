@@ -688,6 +688,12 @@ EncryptedKDM::not_valid_after () const
 	return _data->authenticated_public.required_extensions.kdm_required_extensions.not_valid_after;
 }
 
+string
+EncryptedKDM::recipient_x509_subject_name () const
+{
+	return _data->authenticated_public.required_extensions.kdm_required_extensions.recipient.x509_subject_name;
+}
+
 bool
 dcp::operator== (EncryptedKDM const & a, EncryptedKDM const & b)
 {
