@@ -47,6 +47,7 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 
 	/* Some known metadata */
 	dcp::XMLMetadata xml_meta;
+	xml_meta.annotation_text = "Created by libdcp";
 	xml_meta.issuer = "OpenDCP 0.0.25";
 	xml_meta.creator = "OpenDCP 0.0.25";
 	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
@@ -115,6 +116,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 
 	/* Some known metadata */
 	dcp::XMLMetadata xml_meta;
+	xml_meta.annotation_text = "Created by libdcp";
 	xml_meta.issuer = "OpenDCP 0.0.25";
 	xml_meta.creator = "OpenDCP 0.0.25";
 	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
@@ -214,6 +216,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 
 	/* Some known metadata */
 	dcp::XMLMetadata xml_meta;
+	xml_meta.annotation_text = "Created by libdcp";
 	xml_meta.issuer = "OpenDCP 0.0.25";
 	xml_meta.creator = "OpenDCP 0.0.25";
 	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";

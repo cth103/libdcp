@@ -9,7 +9,7 @@ work=build/test
 # Path to dcpinfo tool
 dcpinfo=build/tools/dcpinfo
 
-export LD_LIBRARY_PATH=build/src:build/asdcplib/src:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=build/src:build/asdcplib/src:/home/c.hetherington/lib:$LD_LIBRARY_PATH
 
 # Make sure we have the required tools
 for c in xmlsec1 xmldiff; do

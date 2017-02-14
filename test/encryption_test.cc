@@ -58,6 +58,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	mxf_metadata.product_version = "0.0.25";
 
 	dcp::XMLMetadata xml_metadata;
+	xml_metadata.annotation_text = "Created by libdcp";
 	xml_metadata.issuer = "OpenDCP 0.0.25";
 	xml_metadata.creator = "OpenDCP 0.0.25";
 	xml_metadata.issue_date = "2012-07-17T04:45:18+00:00";
