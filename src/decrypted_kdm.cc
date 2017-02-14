@@ -170,7 +170,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 			/* 93 is not-valid-after (a string) [25 bytes] */
 			p += 25;
 			/* 118 is the key [ASDCP::KeyLen bytes] */
-			add_key (optional<string>(), key_id, Key (p), cpl_id);
+			add_key (optional<string>(), key_id, Key (p), cpl_id, INTEROP);
 			break;
 		}
 		case 138:
@@ -192,7 +192,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 			/* 97 is not-valid-after (a string) [25 bytes] */
 			p += 25;
 			/* 112 is the key [ASDCP::KeyLen bytes] */
-			add_key (key_type, key_id, Key (p), cpl_id);
+			add_key (key_type, key_id, Key (p), cpl_id, SMPTE);
 			break;
 		}
 		default:
@@ -242,7 +242,7 @@ DecryptedKDM::DecryptedKDM (
 	, _issue_date (issue_date)
 {
 	for (map<shared_ptr<const ReelMXF>, Key>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
-		add_key (i->first->key_type(), i->first->key_id().get(), i->second, cpl_id);
+		add_key (i->first->key_type(), i->first->key_id().get(), i->second, cpl_id, SMPTE);
 	}
 }
 
@@ -266,7 +266,7 @@ DecryptedKDM::DecryptedKDM (
 	BOOST_FOREACH(shared_ptr<const ReelAsset> i, cpl->reel_assets ()) {
 		shared_ptr<const ReelMXF> mxf = boost::dynamic_pointer_cast<const ReelMXF> (i);
 		if (mxf && mxf->key_id ()) {
-			add_key (mxf->key_type(), mxf->key_id().get(), key, cpl->id ());
+			add_key (mxf->key_type(), mxf->key_id().get(), key, cpl->id(), SMPTE);
 			did_one = true;
 		}
 	}
@@ -282,9 +282,9 @@ DecryptedKDM::DecryptedKDM (
  *  @param cpl_id ID of CPL that the key is for.
  */
 void
-DecryptedKDM::add_key (optional<string> type, string key_id, Key key, string cpl_id)
+DecryptedKDM::add_key (optional<string> type, string key_id, Key key, string cpl_id, Standard standard)
 {
-	_keys.push_back (DecryptedKDMKey (type, key_id, key, cpl_id));
+	_keys.push_back (DecryptedKDMKey (type, key_id, key, cpl_id, standard));
 }
 
 void
@@ -294,7 +294,9 @@ DecryptedKDM::add_key (DecryptedKDMKey key)
 }
 
 EncryptedKDM
-DecryptedKDM::encrypt (shared_ptr<const CertificateChain> signer, Certificate recipient, vector<Certificate> trusted_devices, Formulation formulation) const
+DecryptedKDM::encrypt (
+	shared_ptr<const CertificateChain> signer, Certificate recipient, vector<Certificate> trusted_devices, Formulation formulation
+	) const
 {
 	list<pair<string, string> > key_ids;
 	list<string> keys;

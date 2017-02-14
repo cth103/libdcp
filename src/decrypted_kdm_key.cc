@@ -38,5 +38,10 @@ using namespace dcp;
 bool
 dcp::operator== (dcp::DecryptedKDMKey const & a, dcp::DecryptedKDMKey const & b)
 {
-	return a.type() == b.type() && a.id() == b.id() && a.key() == b.key() && a.cpl_id() == b.cpl_id();
+	return a.type() == b.type()
+		&& a.id() == b.id()
+		&& a.key() == b.key()
+		&& a.cpl_id() == b.cpl_id()
+		&& a.standard() == b.standard()
+		&& a.signer_thumbprint() == b.signer_thumbprint();
 }

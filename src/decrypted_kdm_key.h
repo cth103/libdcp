@@ -39,6 +39,7 @@
 #define LIBDCP_DECRYPTED_KDM_KEY_H
 
 #include "key.h"
+#include "types.h"
 #include <boost/optional.hpp>
 
 namespace dcp {
@@ -49,11 +50,13 @@ namespace dcp {
 class DecryptedKDMKey
 {
 public:
-	DecryptedKDMKey (boost::optional<std::string> type, std::string id, Key key, std::string cpl_id)
+	DecryptedKDMKey (boost::optional<std::string> type, std::string id, Key key, std::string cpl_id, Standard standard, std::string signer_thumbprint)
 		: _type (type)
 		, _id (id)
 		, _key (key)
 		, _cpl_id (cpl_id)
+		, _standard (standard)
+		, _signer_thumbprint (signer_thumbprint)
 	{}
 
 	boost::optional<std::string> type () const {
@@ -72,11 +75,21 @@ public:
 		return _cpl_id;
 	}
 
+	Standard standard () const {
+		return _standard;
+	}
+
+	std::string signer_thumbprint () const {
+		return _signer_thumbprint;
+	}
+
 private:
 	boost::optional<std::string> _type;
 	std::string _id;
 	Key _key;
 	std::string _cpl_id;
+	Standard _standard;
+	std::string _signer_thumbprint;
 };
 
 bool operator== (DecryptedKDMKey const &, DecryptedKDMKey const &);

@@ -102,11 +102,12 @@ main (int argc, char* argv[])
 			cout << "\nKeys";
 			BOOST_FOREACH (dcp::DecryptedKDMKey i, dec_kdm.keys ()) {
 				cout << "\n";
-				cout << "\tID:   " << i.id() << "\n";
+				cout << "\tID:       " << i.id() << "\n";
+				cout << "\tStandard: " << (i.standard() == dcp::SMPTE ? "SMPTE" : "Interop") << "\n";
 				if (i.type()) {
-					cout << "\tType: " << i.type().get() << "\n";
+					cout << "\tType:     " << i.type().get() << "\n";
 				}
-				cout << "\tKey:  " << i.key().hex() << "\n";
+				cout << "\tKey:      " << i.key().hex() << "\n";
 			}
 		} catch (dcp::KDMDecryptionError& e) {
 			cerr << e.what() << "\n";
