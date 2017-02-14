@@ -58,6 +58,7 @@ using std::hex;
 using std::pair;
 using std::map;
 using boost::shared_ptr;
+using boost::optional;
 using namespace dcp;
 
 static void
@@ -166,7 +167,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 			/* 93 is not-valid-after (a string) [25 bytes] */
 			p += 25;
 			/* 118 is the key [ASDCP::KeyLen bytes] */
-			add_key ("", key_id, Key (p), cpl_id);
+			add_key (optional<string>(), key_id, Key (p), cpl_id);
 			break;
 		}
 		case 138:
@@ -277,7 +278,7 @@ DecryptedKDM::DecryptedKDM (
  *  @param cpl_id ID of CPL that the key is for.
  */
 void
-DecryptedKDM::add_key (string type, string key_id, Key key, string cpl_id)
+DecryptedKDM::add_key (optional<string> type, string key_id, Key key, string cpl_id)
 {
 	_keys.push_back (DecryptedKDMKey (type, key_id, key, cpl_id));
 }
@@ -294,7 +295,9 @@ DecryptedKDM::encrypt (shared_ptr<const CertificateChain> signer, Certificate re
 	list<pair<string, string> > key_ids;
 	list<string> keys;
 	BOOST_FOREACH (DecryptedKDMKey const & i, _keys) {
-		key_ids.push_back (make_pair (i.type(), i.id ()));
+		/* We're making SMPTE keys so we must have a type for each one */
+		DCP_ASSERT (i.type());
+		key_ids.push_back (make_pair (i.type().get(), i.id ()));
 
 		/* XXX: SMPTE only */
 		uint8_t block[138];
@@ -308,7 +311,7 @@ DecryptedKDM::encrypt (shared_ptr<const CertificateChain> signer, Certificate re
 		p += 20;
 
 		put_uuid (&p, i.cpl_id ());
-		put (&p, i.type ());
+		put (&p, i.type().get());
 		put_uuid (&p, i.id ());
 		put (&p, _not_valid_before.as_string ());
 		put (&p, _not_valid_after.as_string ());

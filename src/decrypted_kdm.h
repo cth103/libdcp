@@ -133,7 +133,7 @@ public:
 		Formulation formulation
 		) const;
 
-	void add_key (std::string type, std::string key_id, Key key, std::string cpl_id);
+	void add_key (boost::optional<std::string> type, std::string key_id, Key key, std::string cpl_id);
 	void add_key (DecryptedKDMKey key);
 
 	/** @return This KDM's (decrypted) keys, which could be used to decrypt assets. */

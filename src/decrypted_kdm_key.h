@@ -39,6 +39,7 @@
 #define LIBDCP_DECRYPTED_KDM_KEY_H
 
 #include "key.h"
+#include <boost/optional.hpp>
 
 namespace dcp {
 
@@ -48,14 +49,14 @@ namespace dcp {
 class DecryptedKDMKey
 {
 public:
-	DecryptedKDMKey (std::string type, std::string id, Key key, std::string cpl_id)
+	DecryptedKDMKey (boost::optional<std::string> type, std::string id, Key key, std::string cpl_id)
 		: _type (type)
 		, _id (id)
 		, _key (key)
 		, _cpl_id (cpl_id)
 	{}
 
-	std::string type () const {
+	boost::optional<std::string> type () const {
 		return _type;
 	}
 
@@ -72,7 +73,7 @@ public:
 	}
 
 private:
-	std::string _type;
+	boost::optional<std::string> _type;
 	std::string _id;
 	Key _key;
 	std::string _cpl_id;

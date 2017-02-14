@@ -103,7 +103,9 @@ main (int argc, char* argv[])
 			BOOST_FOREACH (dcp::DecryptedKDMKey i, dec_kdm.keys ()) {
 				cout << "\n";
 				cout << "\tID:   " << i.id() << "\n";
-				cout << "\tType: " << i.type() << "\n";
+				if (i.type()) {
+					cout << "\tType: " << i.type().get() << "\n";
+				}
 				cout << "\tKey:  " << i.key().hex() << "\n";
 			}
 		} catch (dcp::KDMDecryptionError& e) {
