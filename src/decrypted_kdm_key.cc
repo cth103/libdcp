@@ -42,6 +42,5 @@ dcp::operator== (dcp::DecryptedKDMKey const & a, dcp::DecryptedKDMKey const & b)
 		&& a.id() == b.id()
 		&& a.key() == b.key()
 		&& a.cpl_id() == b.cpl_id()
-		&& a.standard() == b.standard()
-		&& a.signer_thumbprint() == b.signer_thumbprint();
+		&& a.standard() == b.standard();
 }

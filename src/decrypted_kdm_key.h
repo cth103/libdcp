@@ -50,13 +50,12 @@ namespace dcp {
 class DecryptedKDMKey
 {
 public:
-	DecryptedKDMKey (boost::optional<std::string> type, std::string id, Key key, std::string cpl_id, Standard standard, std::string signer_thumbprint)
+	DecryptedKDMKey (boost::optional<std::string> type, std::string id, Key key, std::string cpl_id, Standard standard)
 		: _type (type)
 		, _id (id)
 		, _key (key)
 		, _cpl_id (cpl_id)
 		, _standard (standard)
-		, _signer_thumbprint (signer_thumbprint)
 	{}
 
 	boost::optional<std::string> type () const {
@@ -79,17 +78,12 @@ public:
 		return _standard;
 	}
 
-	std::string signer_thumbprint () const {
-		return _signer_thumbprint;
-	}
-
 private:
 	boost::optional<std::string> _type;
 	std::string _id;
 	Key _key;
 	std::string _cpl_id;
 	Standard _standard;
-	std::string _signer_thumbprint;
 };
 
 bool operator== (DecryptedKDMKey const &, DecryptedKDMKey const &);
