@@ -224,7 +224,7 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 					other_assets.push_back (shared_ptr<SMPTESubtitleAsset> (new SMPTESubtitleAsset (path)));
 					break;
 				default:
-					throw DCPReadError ("Unknown MXF essence type");
+					throw DCPReadError (String::compose ("Unknown MXF essence type %1 in %2", int(type), path.string()));
 			}
 		} else if (boost::filesystem::extension (path) == ".ttf") {
 			other_assets.push_back (shared_ptr<FontAsset> (new FontAsset (i->first, path)));
