@@ -102,7 +102,7 @@ InteropSubtitleAsset::xml_as_string () const
 
 	subtitles_as_xml (root, 250, INTEROP);
 
-	return doc.write_to_string ("UTF-8");
+	return doc.write_to_string_formatted ("UTF-8");
 }
 
 void
