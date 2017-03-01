@@ -31,29 +31,30 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/sound_frame.h
- *  @brief SoundFrame class.
- */
-
-#ifndef LIBDCP_SOUND_FRAME_H
-#define LIBDCP_SOUND_FRAME_H
-
-#include "frame.h"
+#include "sound_frame.h"
 #include <asdcp/AS_DCP.h>
+#include <iostream>
 
-namespace dcp {
+using std::cout;
+using namespace dcp;
 
-class SoundFrame : public Frame<ASDCP::PCM::MXFReader, ASDCP::PCM::FrameBuffer>
+SoundFrame::SoundFrame (ASDCP::PCM::MXFReader* reader, int n, boost::shared_ptr<const DecryptionContext> c)
+	: Frame (reader, n, c)
 {
-public:
-	SoundFrame (ASDCP::PCM::MXFReader* reader, int n, boost::shared_ptr<const DecryptionContext> c);
-	int samples () const;
-	int32_t get (int channel, int sample) const;
-
-private:
-	int _channels;
-};
-
+	ASDCP::PCM::AudioDescriptor desc;
+	reader->FillAudioDescriptor (desc);
+	_channels = desc.ChannelCount;
 }
 
-#endif
+int32_t
+SoundFrame::get (int channel, int frame) const
+{
+	uint8_t const * d = data() + (frame * _channels * 3) + (channel * 3);
+	return d[0] | (d[1] << 8) | (d[2] << 16);
+}
+
+int
+SoundFrame::samples () const
+{
+	return size() / (_channels * 3);
+}

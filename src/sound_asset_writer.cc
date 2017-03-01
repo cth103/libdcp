@@ -38,9 +38,11 @@
 #include "compose.hpp"
 #include "encryption_context.h"
 #include <asdcp/AS_DCP.h>
+#include <iostream>
 
 using std::min;
 using std::max;
+using std::cout;
 using namespace dcp;
 
 struct SoundAssetWriter::ASDCPState

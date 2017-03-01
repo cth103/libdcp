@@ -90,6 +90,7 @@ def build(bld):
              smpte_subtitle_asset.cc
              sound_asset.cc
              sound_asset_writer.cc
+             sound_frame.cc
              stereo_picture_asset.cc
              stereo_picture_asset_writer.cc
              stereo_picture_frame.cc
