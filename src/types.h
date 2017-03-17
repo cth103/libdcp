@@ -68,6 +68,10 @@ struct Size
 	int height;
 };
 
+extern bool operator== (Size const & a, Size const & b);
+extern bool operator!= (Size const & a, Size const & b);
+extern std::ostream& operator<< (std::ostream& s, Size const & a);
+
 /** Identifier for a sound channel */
 enum Channel {
 	LEFT = 0,      ///< left

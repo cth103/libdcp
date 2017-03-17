@@ -245,22 +245,6 @@ dcp::init ()
 	}
 }
 
-bool dcp::operator== (dcp::Size const & a, dcp::Size const & b)
-{
-	return (a.width == b.width && a.height == b.height);
-}
-
-bool dcp::operator!= (dcp::Size const & a, dcp::Size const & b)
-{
-	return !(a == b);
-}
-
-ostream& dcp::operator<< (ostream& s, dcp::Size const & a)
-{
-	s << a.width << "x" << a.height;
-	return s;
-}
-
 /** Decode a base64 string.  The base64 decode routine in KM_util.cpp
  *  gives different values to both this and the command-line base64
  *  for some inputs.  Not sure why.

@@ -44,6 +44,22 @@ using namespace std;
 using namespace dcp;
 using namespace boost;
 
+bool dcp::operator== (dcp::Size const & a, dcp::Size const & b)
+{
+	return (a.width == b.width && a.height == b.height);
+}
+
+bool dcp::operator!= (dcp::Size const & a, dcp::Size const & b)
+{
+	return !(a == b);
+}
+
+ostream& dcp::operator<< (ostream& s, dcp::Size const & a)
+{
+	s << a.width << "x" << a.height;
+	return s;
+}
+
 /** Construct a Fraction from a string of the form <numerator> <denominator>
  *  e.g. "1 3".
  */
