@@ -94,7 +94,7 @@ main ()
 
 	/* Convert to ARGB */
 	boost::scoped_array<uint8_t> rgba (new uint8_t[picture_image_xyz->size().width * picture_image_xyz->size().height * 4]);
-	dcp::xyz_to_rgba (picture_image_xyz, dcp::ColourConversion::srgb_to_xyz(), rgba.get ());
+	dcp::xyz_to_rgba (picture_image_xyz, dcp::ColourConversion::srgb_to_xyz(), rgba.get(), picture_image_xyz->size().width * 4);
 
 	Magick::Image image (picture_image_xyz->size().width, picture_image_xyz->size().height, "BGRA", Magick::CharPixel, rgba.get ());
 	image.write ("frame.png");

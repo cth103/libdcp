@@ -112,10 +112,10 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	shared_ptr<dcp::OpenJPEGImage> xyz_B = asset_B->start_read()->get_frame(0)->xyz_image ();
 
 	scoped_array<uint8_t> frame_A (new uint8_t[xyz_A->size().width * xyz_A->size().height * 4]);
-	dcp::xyz_to_rgba (xyz_A, dcp::ColourConversion::srgb_to_xyz(), frame_A.get());
+	dcp::xyz_to_rgba (xyz_A, dcp::ColourConversion::srgb_to_xyz(), frame_A.get(), xyz_A->size().width * 4);
 
 	scoped_array<uint8_t> frame_B (new uint8_t[xyz_B->size().width * xyz_B->size().height * 4]);
-	dcp::xyz_to_rgba (xyz_B, dcp::ColourConversion::srgb_to_xyz(), frame_B.get());
+	dcp::xyz_to_rgba (xyz_B, dcp::ColourConversion::srgb_to_xyz(), frame_B.get(), xyz_B->size().width * 4);
 
 	BOOST_CHECK_EQUAL (xyz_A->size().width, xyz_B->size().width);
 	BOOST_CHECK_EQUAL (xyz_A->size().height, xyz_B->size().height);

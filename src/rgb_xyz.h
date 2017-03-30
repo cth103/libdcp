@@ -46,7 +46,8 @@ class ColourConversion;
 extern void xyz_to_rgba (
 	boost::shared_ptr<const OpenJPEGImage>,
 	ColourConversion const & conversion,
-	uint8_t* rgba
+	uint8_t* rgba,
+	int stride
 	);
 
 extern void xyz_to_rgb (

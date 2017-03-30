@@ -67,7 +67,8 @@ void
 dcp::xyz_to_rgba (
 	boost::shared_ptr<const OpenJPEGImage> xyz_image,
 	ColourConversion const & conversion,
-	uint8_t* argb
+	uint8_t* argb,
+	int stride
 	)
 {
 	int const max_colour = pow (2, 16) - 1;
@@ -134,8 +135,7 @@ dcp::xyz_to_rgba (
 			*argb_line++ = 0xff;
 		}
 
-		/* 4 bytes per pixel */
-		argb += width * 4;
+		argb += stride;
 	}
 }
 
