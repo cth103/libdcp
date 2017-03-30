@@ -545,6 +545,14 @@ EncryptedKDM::EncryptedKDM (
 {
 	/* Fill our XML-ish description in with the juicy bits that the caller has given */
 
+	/* Our ideas about the KDM types are:
+	 *
+	 * Type                      Trusted-device thumb  ContentAuthenticator
+	 * MODIFIED_TRANSITIONAL_1   assume-trust          No
+	 * DCI_ANY                   assume-trust          Yes
+	 * DCI_SPECIFIC              as specified          Yes
+	 */
+
 	data::AuthenticatedPublic& aup = _data->authenticated_public;
 	aup.signer.x509_issuer_name = signer->leaf().issuer ();
 	aup.signer.x509_serial_number = signer->leaf().serial ();
