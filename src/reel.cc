@@ -230,9 +230,11 @@ Reel::resolve_refs (list<shared_ptr<Asset> > assets)
 		_main_subtitle->asset_ref().resolve (assets);
 
 		/* Interop subtitle handling is all special cases */
-		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (_main_subtitle->asset_ref().asset ());
-		if (iop) {
-			iop->resolve_fonts (assets);
+		if (_main_subtitle->asset_ref().resolved()) {
+			shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (_main_subtitle->asset_ref().asset());
+			if (iop) {
+				iop->resolve_fonts (assets);
+			}
 		}
 	}
 
