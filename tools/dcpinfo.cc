@@ -71,22 +71,28 @@ help (string n)
 static void
 main_picture (shared_ptr<Reel> reel)
 {
-	if (reel->main_picture() && reel->main_picture()->asset()) {
-		cout << "      Picture:  "
-		     << reel->main_picture()->asset()->size().width
-		     << "x"
-		     << reel->main_picture()->asset()->size().height << "\n";
+	if (reel->main_picture()) {
+		cout << "      Picture ID:  " << reel->main_picture()->id() << "\n";
+		if (reel->main_picture()->asset()) {
+			cout << "      Picture:     "
+			     << reel->main_picture()->asset()->size().width
+			     << "x"
+			     << reel->main_picture()->asset()->size().height << "\n";
+		}
 	}
 }
 
 static void
 main_sound (shared_ptr<Reel> reel)
 {
-	if (reel->main_sound() && reel->main_sound()->asset()) {
-		cout << "      Sound:    "
-		     << reel->main_sound()->asset()->channels()
-		     << " channels at "
-		     << reel->main_sound()->asset()->sampling_rate() << "Hz\n";
+	if (reel->main_sound()) {
+		cout << "      Sound ID:    " << reel->main_sound()->id() << "\n";
+		if (reel->main_sound()->asset()) {
+			cout << "      Sound:       "
+			     << reel->main_sound()->asset()->channels()
+			     << " channels at "
+			     << reel->main_sound()->asset()->sampling_rate() << "Hz\n";
+		}
 	}
 }
 
@@ -97,8 +103,10 @@ main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
 		return;
 	}
 
+	cout << "      Subtitle ID: " << reel->main_subtitle()->id() << "\n";
+
 	list<SubtitleString> subs = reel->main_subtitle()->asset()->subtitles ();
-	cout << "      Subtitle: " << subs.size() << " subtitles";
+	cout << "      Subtitle:    " << subs.size() << " subtitles";
 	shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (reel->main_subtitle()->asset());
 	if (iop) {
 		cout << " in " << iop->language() << "\n";
@@ -180,7 +188,7 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	cout << "DCP: " << boost::filesystem::path(argv[optind]).filename().string() << "\n";
+	cout << "DCP: " << boost::filesystem::path(argv[optind]).string() << "\n";
 
 	dcp::filter_errors (errors, ignore_missing_assets);
 	for (DCP::ReadErrors::const_iterator i = errors.begin(); i != errors.end(); ++i) {
