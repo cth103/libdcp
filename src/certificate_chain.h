@@ -88,7 +88,7 @@ public:
 	List leaf_to_root () const;
 	List root_to_leaf () const;
 
-	bool valid () const;
+	bool valid (std::string* reason = 0) const;
 	bool attempt_reorder ();
 
 	void sign (xmlpp::Element* parent, Standard standard) const;

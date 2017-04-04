@@ -402,18 +402,21 @@ CertificateChain::remove (int i)
 /** Check to see if the chain is valid (i.e. root signs the intermediate, intermediate
  *  signs the leaf and so on) and that the private key (if there is one) matches the
  *  leaf certificate.
+ *  @param valid if non-0 and the CertificateChain is not valid, this is filled in with
+ *  an explanation.
  *  @return true if it's ok, false if not.
  */
 bool
-CertificateChain::valid () const
+CertificateChain::valid (string* reason) const
 {
 	/* Check the certificate chain */
 
 	X509_STORE* store = X509_STORE_new ();
 	if (!store) {
-		return false;
+		throw MiscError ("could not create X509 store");
 	}
 
+	int n = 1;
 	for (List::const_iterator i = _certificates.begin(); i != _certificates.end(); ++i) {
 
 		List::const_iterator j = i;
@@ -424,19 +427,25 @@ CertificateChain::valid () const
 
 		if (!X509_STORE_add_cert (store, i->x509 ())) {
 			X509_STORE_free (store);
+			if (reason) {
+				*reason = "X509_STORE_add_cert failed";
+			}
 			return false;
 		}
 
 		X509_STORE_CTX* ctx = X509_STORE_CTX_new ();
 		if (!ctx) {
 			X509_STORE_free (store);
-			return false;
+			throw MiscError ("could not create X509 store context");
 		}
 
 		X509_STORE_set_flags (store, 0);
-		if (!X509_STORE_CTX_init (ctx, store, j->x509 (), 0)) {
+		if (!X509_STORE_CTX_init (ctx, store, j->x509(), 0)) {
 			X509_STORE_CTX_free (ctx);
 			X509_STORE_free (store);
+			if (reason) {
+				*reason = "X509_STORE_CTX_init failed";
+			}
 			return false;
 		}
 
@@ -445,8 +454,13 @@ CertificateChain::valid () const
 
 		if (v == 0) {
 			X509_STORE_free (store);
+			if (reason) {
+				*reason = String::compose ("X509_verify_cert failed for certificate number %1", n);
+			}
 			return false;
 		}
+
+		++n;
 	}
 
 	X509_STORE_free (store);
@@ -476,6 +490,10 @@ CertificateChain::valid () const
 	bool const valid = !BN_cmp (private_key->n, public_key->n);
 #endif
 	BIO_free (bio);
+
+	if (!valid && reason) {
+		*reason = "leaf certificate does not match private key";
+	}
 
 	return valid;
 }
