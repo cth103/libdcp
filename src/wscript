@@ -188,7 +188,6 @@ def build(bld):
     obj.target = 'dcp%s' % bld.env.API_VERSION
     obj.export_includes = ['.']
     obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1 ASDCPLIB_CTH'
-    obj.use = 'libkumu-libdcp%s libasdcp-libdcp%s' % (bld.env.API_VERSION, bld.env.API_VERSION)
     obj.source = source
 
     # Library for gcov
