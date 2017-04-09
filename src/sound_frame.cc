@@ -39,7 +39,7 @@ using std::cout;
 using namespace dcp;
 
 SoundFrame::SoundFrame (ASDCP::PCM::MXFReader* reader, int n, boost::shared_ptr<const DecryptionContext> c)
-	: Frame (reader, n, c)
+	: Frame<ASDCP::PCM::MXFReader, ASDCP::PCM::FrameBuffer> (reader, n, c)
 {
 	ASDCP::PCM::AudioDescriptor desc;
 	reader->FillAudioDescriptor (desc);
