@@ -174,7 +174,7 @@ LocalTime::as_string (bool with_millisecond) const
 	snprintf (
 		buffer, sizeof (buffer),
 		"%sT%s%s%02d:%02d",
-		date().c_str(), time_of_day(with_millisecond).c_str(), (_tz_hour >= 0 ? "+" : "-"), abs (_tz_hour), _tz_minute
+		date().c_str(), time_of_day(true, with_millisecond).c_str(), (_tz_hour >= 0 ? "+" : "-"), abs (_tz_hour), _tz_minute
 		);
 	return buffer;
 }
@@ -190,13 +190,16 @@ LocalTime::date () const
 
 /** @return The time in the form HH:MM:SS or HH:MM:SS.mmm */
 string
-LocalTime::time_of_day (bool with_millisecond) const
+LocalTime::time_of_day (bool with_second, bool with_millisecond) const
 {
 	char buffer[32];
+	DCP_ASSERT(!(with_millisecond && !with_second));
 	if (with_millisecond) {
 		snprintf (buffer, sizeof (buffer), "%02d:%02d:%02d.%03d", _hour, _minute, _second, _millisecond);
-	} else {
+	} else if (with_second) {
 		snprintf (buffer, sizeof (buffer), "%02d:%02d:%02d", _hour, _minute, _second);
+	} else {
+		snprintf (buffer, sizeof (buffer), "%02d:%02d", _hour, _minute);
 	}
 	return buffer;
 }

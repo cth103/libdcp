@@ -64,7 +64,7 @@ public:
 
 	std::string as_string (bool with_millisecond = false) const;
 	std::string date () const;
-	std::string time_of_day (bool with_millisecond = false) const;
+	std::string time_of_day (bool with_second, bool with_millisecond) const;
 
 	bool operator== (LocalTime const & other) const;
 	bool operator!= (LocalTime const & other) const;
