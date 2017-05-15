@@ -104,6 +104,7 @@ main (int argc, char* argv[])
 				cout << "\n";
 				cout << "\tID:       " << i.id() << "\n";
 				cout << "\tStandard: " << (i.standard() == dcp::SMPTE ? "SMPTE" : "Interop") << "\n";
+				cout << "\tCPL ID:   " << i.cpl_id() << "\n";
 				if (i.type()) {
 					cout << "\tType:     " << i.type().get() << "\n";
 				}
