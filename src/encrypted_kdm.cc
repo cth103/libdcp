@@ -258,6 +258,8 @@ public:
 		/* XXX: this feels like a bit of a hack */
 		if (key_type == "MDEK") {
 			type->set_attribute ("scope", "http://www.dolby.com/cp850/2012/KDM#kdm-key-type");
+		} else {
+			type->set_attribute ("scope", "http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
 		}
 	}
 

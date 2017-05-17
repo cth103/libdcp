@@ -32,11 +32,11 @@
         </AuthorizedDeviceInfo>
         <KeyIdList>
           <TypedKeyId>
-            <KeyType>MDIK</KeyType>
+            <KeyType scope="http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type">MDIK</KeyType>
             <KeyId>urn:uuid:4ac4f922-8239-4831-b23b-31426d0542c4</KeyId>
           </TypedKeyId>
           <TypedKeyId>
-            <KeyType>MDAK</KeyType>
+            <KeyType scope="http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type">MDAK</KeyType>
             <KeyId>urn:uuid:73baf5de-e195-4542-ab28-8a465f7d4079</KeyId>
           </TypedKeyId>
         </KeyIdList>

@@ -20,8 +20,10 @@
 #include "encrypted_kdm.h"
 #include "decrypted_kdm.h"
 #include "util.h"
+#include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
+#include <boost/foreach.hpp>
 
 using std::list;
 using boost::shared_ptr;
@@ -98,4 +100,29 @@ BOOST_AUTO_TEST_CASE (decrypted_kdm_test)
 	BOOST_CHECK_EQUAL (dcp::DecryptedKDM::get_uuid (&p), "8971c838-d0c3-405d-bc57-43afa9d91242");
 
 	delete[] data;
+}
+
+/** Check that <KeyType> tags have the scope attribute.
+ *  Wolfgang Woehl believes this is compulsory and I am more-or-less inclined to agree.
+ */
+BOOST_AUTO_TEST_CASE (kdm_key_type_scope)
+{
+	dcp::EncryptedKDM kdm (
+		dcp::file_to_string ("test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml")
+		);
+
+	cxml::Document doc;
+	doc.read_string (kdm.as_xml ());
+
+	list<cxml::NodePtr> typed_key_ids = doc.node_child("AuthenticatedPublic")->
+		node_child("RequiredExtensions")->
+		node_child("KDMRequiredExtensions")->
+		node_child("KeyIdList")->
+		node_children("TypedKeyId");
+
+	BOOST_FOREACH (cxml::NodePtr i, typed_key_ids) {
+		BOOST_FOREACH (cxml::NodePtr j, i->node_children("KeyType")) {
+			BOOST_CHECK (j->string_attribute("scope") == "http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
+		}
+	}
 }
