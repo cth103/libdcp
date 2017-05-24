@@ -179,6 +179,12 @@ public:
 	KDMDecryptionError (std::string message);
 };
 
+class KDMFormatError : public std::runtime_error
+{
+public:
+	KDMFormatError (std::string message);
+};
+
 }
 
 #endif

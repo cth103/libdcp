@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2017 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -34,6 +34,7 @@
 #include "encrypted_kdm.h"
 #include "util.h"
 #include "certificate_chain.h"
+#include "exceptions.h"
 #include <libcxml/cxml.h>
 #include <libxml++/document.h>
 #include <libxml++/nodes/element.h>
@@ -525,9 +526,13 @@ public:
 
 EncryptedKDM::EncryptedKDM (string s)
 {
-	shared_ptr<cxml::Document> doc (new cxml::Document ("DCinemaSecurityMessage"));
-	doc->read_string (s);
-	_data = new data::EncryptedKDMData (doc);
+	try {
+		shared_ptr<cxml::Document> doc (new cxml::Document ("DCinemaSecurityMessage"));
+		doc->read_string (s);
+		_data = new data::EncryptedKDMData (doc);
+	} catch (xmlpp::parse_error& e) {
+		throw KDMFormatError (e.what ());
+	}
 }
 
 EncryptedKDM::EncryptedKDM (

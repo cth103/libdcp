@@ -96,3 +96,9 @@ KDMDecryptionError::KDMDecryptionError (std::string message)
 {
 
 }
+
+KDMFormatError::KDMFormatError (std::string message)
+	: runtime_error (String::compose ("Could not parse KDM (%1)", message))
+{
+
+}
