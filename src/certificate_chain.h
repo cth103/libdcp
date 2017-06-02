@@ -107,6 +107,7 @@ public:
 private:
 	friend class ::certificates;
 
+	/** Our certificates, not in any particular order */
 	List _certificates;
 	/** Leaf certificate's private key, if known */
 	boost::optional<std::string> _key;
