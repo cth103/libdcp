@@ -243,6 +243,8 @@ dcp::init ()
 	if (xmlSecCryptoInit() < 0) {
 		throw MiscError ("could not initialise xmlsec-crypto");
 	}
+
+	OpenSSL_add_all_algorithms();
 }
 
 /** Decode a base64 string.  The base64 decode routine in KM_util.cpp

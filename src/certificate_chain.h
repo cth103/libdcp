@@ -47,6 +47,15 @@ namespace xmlpp {
 	class Node;
 }
 
+struct certificates_validation1;
+struct certificates_validation2;
+struct certificates_validation3;
+struct certificates_validation4;
+struct certificates_validation5;
+struct certificates_validation6;
+struct certificates_validation7;
+struct certificates_validation8;
+
 namespace dcp {
 
 /** @class CertificateChain
@@ -87,9 +96,11 @@ public:
 
 	List leaf_to_root () const;
 	List root_to_leaf () const;
+	List unordered () const;
 
 	bool valid (std::string* reason = 0) const;
-	bool attempt_reorder ();
+	bool chain_valid () const;
+	bool private_key_valid () const;
 
 	void sign (xmlpp::Element* parent, Standard standard) const;
 	void add_signature_value (xmlpp::Node* parent, std::string ns) const;
@@ -106,6 +117,16 @@ public:
 
 private:
 	friend class ::certificates;
+	friend class ::certificates_validation1;
+	friend class ::certificates_validation2;
+	friend class ::certificates_validation3;
+	friend class ::certificates_validation4;
+	friend class ::certificates_validation5;
+	friend class ::certificates_validation6;
+	friend class ::certificates_validation7;
+	friend class ::certificates_validation8;
+
+	bool chain_valid (List const & chain) const;
 
 	/** Our certificates, not in any particular order */
 	List _certificates;

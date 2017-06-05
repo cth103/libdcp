@@ -185,6 +185,12 @@ public:
 	KDMFormatError (std::string message);
 };
 
+class CertificateChainError : public std::runtime_error
+{
+public:
+	CertificateChainError (std::string message);
+};
+
 }
 
 #endif

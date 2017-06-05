@@ -114,51 +114,101 @@ BOOST_AUTO_TEST_CASE (certificates2)
 	BOOST_CHECK_THROW (dcp::Certificate ("foo"), dcp::MiscError);
 }
 
-/** Check that dcp::CertificateChain::valid() and ::attempt_reorder() basically work */
-BOOST_AUTO_TEST_CASE (certificates_validation)
+/** Check that dcp::CertificateChain::chain_valid() and ::root_to_leaf() basically work */
+BOOST_AUTO_TEST_CASE (certificates_validation1)
 {
-	dcp::CertificateChain good1;
-	good1.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
-	good1.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
-	good1.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
-	BOOST_CHECK (good1.valid ());
+	dcp::CertificateChain good;
+	good.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
+	good.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
+	good.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
+	BOOST_CHECK (good.chain_valid(good._certificates));
+}
 
-	dcp::CertificateChain good2;
-	good2.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
-	BOOST_CHECK (good2.valid ());
+/** Check that dcp::CertificateChain::chain_valid() and ::root_to_leaf() basically work */
+BOOST_AUTO_TEST_CASE (certificates_validation2)
+{
+	dcp::CertificateChain good;
+	good.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
+	BOOST_CHECK (good.chain_valid(good._certificates));
+}
 
-	dcp::CertificateChain bad1;
-	bad1.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
-	bad1.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
-	BOOST_CHECK (!bad1.valid ());
-	BOOST_CHECK (!bad1.attempt_reorder ());
+/** Check that dcp::CertificateChain::chain_valid() and ::root_to_leaf() basically work */
+BOOST_AUTO_TEST_CASE (certificates_validation3)
+{
+	dcp::CertificateChain bad;
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
+	BOOST_CHECK (!bad.chain_valid(bad._certificates));
+	BOOST_CHECK_THROW (bad.root_to_leaf(), dcp::CertificateChainError);
+}
 
-	dcp::CertificateChain bad2;
-	bad2.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
-	bad2.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
-	bad2.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
-	BOOST_CHECK (!bad2.valid ());
-	BOOST_CHECK (bad2.attempt_reorder ());
+/** Check that dcp::CertificateChain::chain_valid() and ::root_to_leaf() basically work */
+BOOST_AUTO_TEST_CASE (certificates_validation4)
+{
+	dcp::CertificateChain bad;
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
+	BOOST_CHECK (!bad.chain_valid(bad._certificates));
+	BOOST_CHECK_NO_THROW (bad.root_to_leaf());
+}
 
-	dcp::CertificateChain bad3;
-	bad3.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
-	bad3.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
-	bad3.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
-	BOOST_CHECK (!bad3.valid ());
-	BOOST_CHECK (bad3.attempt_reorder ());
+/** Check that dcp::CertificateChain::chain_valid() and ::root_to_leaf() basically work */
+BOOST_AUTO_TEST_CASE (certificates_validation5)
+{
+	dcp::CertificateChain bad;
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
+	BOOST_CHECK (!bad.chain_valid(bad._certificates));
+	BOOST_CHECK_NO_THROW (bad.root_to_leaf());
+}
 
-	dcp::CertificateChain bad4;
-	bad4.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
-	bad4.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
-	bad4.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
-	BOOST_CHECK (!bad4.valid ());
-	BOOST_CHECK (bad4.attempt_reorder ());
+/** Check that dcp::CertificateChain::chain_valid() and ::root_to_leaf() basically work */
+BOOST_AUTO_TEST_CASE (certificates_validation6)
+{
+	dcp::CertificateChain bad;
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
+	BOOST_CHECK (!bad.chain_valid(bad._certificates));
+	BOOST_CHECK_NO_THROW (bad.root_to_leaf());
+}
 
-	dcp::CertificateChain bad5;
-	bad5.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
-	bad5.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
-	BOOST_CHECK (!bad5.valid ());
-	BOOST_CHECK (!bad5.attempt_reorder ());
+/** Check that dcp::CertificateChain::chain_valid() and ::root_to_leaf() basically work */
+BOOST_AUTO_TEST_CASE (certificates_validation7)
+{
+	dcp::CertificateChain bad;
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
+	BOOST_CHECK (!bad.chain_valid(bad._certificates));
+	BOOST_CHECK_THROW (bad.root_to_leaf(), dcp::CertificateChainError);
+}
+
+/** Check that dcp::CertificateChain::chain_valid() and ::root_to_leaf() basically work */
+BOOST_AUTO_TEST_CASE (certificates_validation8)
+{
+	dcp::CertificateChain bad;
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
+	bad.add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
+	BOOST_CHECK (!bad.chain_valid(bad._certificates));
+	BOOST_CHECK_THROW (bad.root_to_leaf(), dcp::CertificateChainError);
+}
+
+/** Check that we can create a valid chain */
+BOOST_AUTO_TEST_CASE (certificates_validation9)
+{
+	dcp::CertificateChain good (
+		boost::filesystem::path ("openssl"),
+		"dcpomatic.com",
+		"dcpomatic.com",
+		".dcpomatic.smpte-430-2.ROOT",
+		".dcpomatic.smpte-430-2.INTERMEDIATE",
+		"CS.dcpomatic.smpte-430-2.LEAF"
+		);
+
+	BOOST_CHECK_NO_THROW (good.root_to_leaf());
 }
 
 /** Check that dcp::Signer::valid() basically works */

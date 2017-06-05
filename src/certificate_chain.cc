@@ -327,9 +327,8 @@ CertificateChain::CertificateChain (string s)
 		}
 	}
 
-	if (!attempt_reorder ()) {
-		throw MiscError ("could not find certificate chain order");
-	}
+	/* This will throw an exception if the chain cannot be ordered */
+	leaf_to_root ();
 }
 
 /** @return Root certificate */
@@ -337,7 +336,7 @@ Certificate
 CertificateChain::root () const
 {
 	DCP_ASSERT (!_certificates.empty());
-	return _certificates.front ();
+	return root_to_leaf().front ();
 }
 
 /** @return Leaf certificate */
@@ -345,26 +344,25 @@ Certificate
 CertificateChain::leaf () const
 {
 	DCP_ASSERT (!_certificates.empty());
-	return _certificates.back ();
-}
-
-/** @return Certificates in order from root to leaf */
-CertificateChain::List
-CertificateChain::root_to_leaf () const
-{
-	return _certificates;
+	return root_to_leaf().back ();
 }
 
 /** @return Certificates in order from leaf to root */
 CertificateChain::List
 CertificateChain::leaf_to_root () const
 {
-	List c = _certificates;
-	c.reverse ();
-	return c;
+	List l = root_to_leaf ();
+	l.reverse ();
+	return l;
 }
 
-/** Add a certificate to the end of the chain.
+CertificateChain::List
+CertificateChain::unordered () const
+{
+	return _certificates;
+}
+
+/** Add a certificate to the chain.
  *  @param c Certificate to add.
  */
 void
@@ -399,38 +397,47 @@ CertificateChain::remove (int i)
 	}
 }
 
-/** Check to see if the chain is valid (i.e. root signs the intermediate, intermediate
+bool
+CertificateChain::chain_valid () const
+{
+	return chain_valid (_certificates);
+}
+
+/** Check to see if a chain is valid (i.e. root signs the intermediate, intermediate
  *  signs the leaf and so on) and that the private key (if there is one) matches the
  *  leaf certificate.
- *  @param valid if non-0 and the CertificateChain is not valid, this is filled in with
- *  an explanation.
  *  @return true if it's ok, false if not.
  */
 bool
-CertificateChain::valid (string* reason) const
+CertificateChain::chain_valid (List const & chain) const
 {
-	/* Check the certificate chain */
+        /* Here I am taking a chain of certificates A/B/C/D and checking validity of B wrt A,
+	   C wrt B and D wrt C.  It also appears necessary to check the issuer of B/C/D matches
+	   the subject of A/B/C; I don't understand why.  I'm sure there's a better way of doing
+	   this with OpenSSL but the documentation does not appear not likely to reveal it
+	   any time soon.
+	*/
 
 	X509_STORE* store = X509_STORE_new ();
 	if (!store) {
 		throw MiscError ("could not create X509 store");
 	}
 
-	int n = 1;
-	for (List::const_iterator i = _certificates.begin(); i != _certificates.end(); ++i) {
+	/* Put all the certificates into the store */
+	for (List::const_iterator i = chain.begin(); i != chain.end(); ++i) {
+		if (!X509_STORE_add_cert (store, i->x509 ())) {
+			X509_STORE_free (store);
+			return false;
+		}
+	}
+
+	/* Verify each one */
+	for (List::const_iterator i = chain.begin(); i != chain.end(); ++i) {
 
 		List::const_iterator j = i;
 		++j;
-		if (j ==  _certificates.end ()) {
+		if (j == chain.end ()) {
 			break;
-		}
-
-		if (!X509_STORE_add_cert (store, i->x509 ())) {
-			X509_STORE_free (store);
-			if (reason) {
-				*reason = "X509_STORE_add_cert failed";
-			}
-			return false;
 		}
 
 		X509_STORE_CTX* ctx = X509_STORE_CTX_new ();
@@ -443,32 +450,44 @@ CertificateChain::valid (string* reason) const
 		if (!X509_STORE_CTX_init (ctx, store, j->x509(), 0)) {
 			X509_STORE_CTX_free (ctx);
 			X509_STORE_free (store);
-			if (reason) {
-				*reason = "X509_STORE_CTX_init failed";
-			}
-			return false;
+			throw MiscError ("could not initialise X509 store context");
 		}
 
-		int v = X509_verify_cert (ctx);
+		int const v = X509_verify_cert (ctx);
 		X509_STORE_CTX_free (ctx);
 
-		if (v == 0) {
+		if (v != 1) {
 			X509_STORE_free (store);
-			if (reason) {
-				*reason = String::compose ("X509_verify_cert failed for certificate number %1", n);
-			}
 			return false;
 		}
 
-		++n;
+		/* I don't know why OpenSSL doesn't check this in verify_cert, but without this check
+		   the certificates_validation8 test fails.
+		*/
+		if (j->issuer() != i->subject()) {
+			X509_STORE_free (store);
+			return false;
+		}
+
 	}
 
 	X509_STORE_free (store);
 
-	/* Check that the leaf certificate matches the private key, if there is one */
+	return true;
+}
+
+/** Check that there is a valid private key for the leaf certificate.
+ *  Will return true if there are no certificates.
+ */
+bool
+CertificateChain::private_key_valid () const
+{
+	if (_certificates.empty ()) {
+		return true;
+	}
 
 	if (!_key) {
-		return true;
+		return false;
 	}
 
 	BIO* bio = BIO_new_mem_buf (const_cast<char *> (_key->c_str ()), -1);
@@ -491,29 +510,44 @@ CertificateChain::valid (string* reason) const
 #endif
 	BIO_free (bio);
 
-	if (!valid && reason) {
-		*reason = "leaf certificate does not match private key";
-	}
-
 	return valid;
 }
 
-/** @return true if the chain is now in order from root to leaf,
- *  false if no correct order was found.
- */
 bool
-CertificateChain::attempt_reorder ()
+CertificateChain::valid (string* reason) const
 {
-	List original = _certificates;
-	_certificates.sort ();
-	do {
-		if (valid ()) {
-			return true;
+	try {
+		root_to_leaf ();
+	} catch (CertificateChainError& e) {
+		if (reason) {
+			*reason = "certificates do not form a chain";
 		}
-	} while (std::next_permutation (_certificates.begin(), _certificates.end ()));
+		return false;
+	}
 
-	_certificates = original;
-	return false;
+	if (!private_key_valid ()) {
+		if (reason) {
+			*reason = "private key does not exist, or does not match leaf certificate";
+		}
+		return false;
+	}
+
+	return true;
+}
+
+/** @return Certificates in order from root to leaf */
+CertificateChain::List
+CertificateChain::root_to_leaf () const
+{
+	List rtl = _certificates;
+	rtl.sort ();
+	do {
+		if (chain_valid (rtl)) {
+			return rtl;
+		}
+	} while (std::next_permutation (rtl.begin(), rtl.end()));
+
+	throw CertificateChainError ("certificate chain is not consistent");
 }
 
 /** Add a &lt;Signer&gt; and &lt;ds:Signature&gt; nodes to an XML node.

@@ -102,3 +102,9 @@ KDMFormatError::KDMFormatError (std::string message)
 {
 
 }
+
+CertificateChainError::CertificateChainError (std::string message)
+	: runtime_error (message)
+{
+
+}
