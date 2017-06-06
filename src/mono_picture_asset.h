@@ -46,7 +46,6 @@ class MonoPictureAssetWriter;
  */
 class MonoPictureAsset : public PictureAsset
 {
-
 public:
 	/** Create a MonoPictureAsset by reading a file.
 	 *  @param file Asset file to read.
