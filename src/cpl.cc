@@ -62,12 +62,12 @@ static string const cpl_interop_ns = "http://www.digicine.com/PROTO-ASDCP-CPL-20
 static string const cpl_smpte_ns   = "http://www.smpte-ra.org/schemas/429-7/2006/CPL";
 
 CPL::CPL (string annotation_text, ContentKind content_kind)
-	: _annotation_text (annotation_text)
-	/* default _content_title_text to _annotation_text */
-	, _content_title_text (annotation_text)
+	/* default _content_title_text to annotation_text */
+	: _content_title_text (annotation_text)
 	, _content_kind (content_kind)
 	, _content_version_id ("urn:uuid:" + make_uuid ())
 {
+	_metadata.annotation_text = annotation_text;
 	/* default _content_version_id to a random ID and _content_version_label to
 	   a random ID and the current time.
 	*/
@@ -92,7 +92,7 @@ CPL::CPL (boost::filesystem::path file)
 	}
 
 	_id = remove_urn_uuid (f.string_child ("Id"));
-	_annotation_text = f.optional_string_child ("AnnotationText").get_value_or ("");
+	_metadata.annotation_text = f.optional_string_child ("AnnotationText").get_value_or ("");
 	_metadata.issuer = f.optional_string_child ("Issuer").get_value_or ("");
 	_metadata.creator = f.optional_string_child ("Creator").get_value_or ("");
 	_metadata.issue_date = f.string_child ("IssueDate");
@@ -144,7 +144,7 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	}
 
 	root->add_child("Id")->add_child_text ("urn:uuid:" + _id);
-	root->add_child("AnnotationText")->add_child_text (_annotation_text);
+	root->add_child("AnnotationText")->add_child_text (_metadata.annotation_text);
 	root->add_child("IssueDate")->add_child_text (_metadata.issue_date);
 	root->add_child("Issuer")->add_child_text (_metadata.issuer);
 	root->add_child("Creator")->add_child_text (_metadata.creator);
@@ -204,8 +204,8 @@ CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 		return false;
 	}
 
-	if (_annotation_text != other_cpl->_annotation_text && !opt.cpl_annotation_texts_can_differ) {
-		string const s = "CPL: annotation texts differ: " + _annotation_text + " vs " + other_cpl->_annotation_text + "\n";
+	if (_metadata.annotation_text != other_cpl->_metadata.annotation_text && !opt.cpl_annotation_texts_can_differ) {
+		string const s = "CPL: annotation texts differ: " + _metadata.annotation_text + " vs " + other_cpl->_metadata.annotation_text + "\n";
 		note (DCP_ERROR, s);
 		return false;
 	}

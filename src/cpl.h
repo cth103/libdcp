@@ -78,12 +78,20 @@ public:
 
 	/** @return contents of the &lt;AnnotationText&gt; node */
 	std::string annotation_text () const {
-		return _annotation_text;
+		return _metadata.annotation_text;
+	}
+
+	void set_annotation_text (std::string at) {
+		_metadata.annotation_text = at;
 	}
 
 	/** @return contents of the &lt;ContentTitleText&gt; node */
 	std::string content_title_text () const {
 		return _content_title_text;
+	}
+
+	void set_content_title_text (std::string ct) {
+		_content_title_text = ct;
 	}
 
 	/** @return contents of the &lt;Id&gt; node within &lt;ContentVersion&gt; */
@@ -137,9 +145,8 @@ protected:
 	std::string pkl_type (Standard standard) const;
 
 private:
-	std::string _annotation_text;               ///< &lt;AnnotationText&gt;
-	/** &lt;Issuer&gt;, &lt;Creator&gt; and &lt;IssueDate&gt;.  These are grouped
-	 *  because they occur together in a few places.
+	/** &lt;Issuer&gt;, &lt;Creator&gt;, &lt;IssueDate&gt; and &lt;AnnotationText&gt.
+	 *  These are grouped because they occur together in a few places.
 	 */
 	XMLMetadata _metadata;
 	std::string _content_title_text;            ///< &lt;ContentTitleText&gt;

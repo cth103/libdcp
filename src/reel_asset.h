@@ -113,6 +113,10 @@ public:
 		return _hash;
 	}
 
+	void set_annotation_text (std::string at) {
+		_annotation_text = at;
+	}
+
 protected:
 
 	template <class T>
