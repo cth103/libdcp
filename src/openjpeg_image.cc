@@ -85,6 +85,32 @@ OpenJPEGImage::OpenJPEGImage (OpenJPEGImage const & other)
  */
 OpenJPEGImage::OpenJPEGImage (Size size)
 {
+	create (size);
+}
+
+/** @param data_16 XYZ/RGB image data in packed 16:16:16, 48bpp with
+ *  the 2-byte value for each component stored as little-endian.
+ */
+OpenJPEGImage::OpenJPEGImage (uint8_t const * data_16, dcp::Size size, int stride)
+{
+	create (size);
+
+	int jn = 0;
+	for (int y = 0; y < size.height; ++y) {
+		uint16_t const * p = reinterpret_cast<uint16_t const *> (data_16 + y * stride);
+		for (int x = 0; x < size.width; ++x) {
+			/* Truncate 16-bit to 12-bit */
+			_opj_image->comps[0].data[jn] = *p++ >> 4;
+			_opj_image->comps[1].data[jn] = *p++ >> 4;
+			_opj_image->comps[2].data[jn] = *p++ >> 4;
+			++jn;
+		}
+	}
+}
+
+void
+OpenJPEGImage::create (Size size)
+{
 	opj_image_cmptparm_t cmptparm[3];
 
 	for (int i = 0; i < 3; ++i) {

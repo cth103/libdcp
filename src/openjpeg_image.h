@@ -51,6 +51,7 @@ public:
 	explicit OpenJPEGImage (opj_image_t *);
 	explicit OpenJPEGImage (OpenJPEGImage const & other);
 	explicit OpenJPEGImage (Size);
+	OpenJPEGImage (uint8_t const * in_16, dcp::Size size, int stride);
 	~OpenJPEGImage ();
 
 	int* data (int) const;
@@ -67,6 +68,8 @@ public:
 	}
 
 private:
+	void create (Size size);
+
 	opj_image_t* _opj_image; ///< opj_image_t that we are managing
 };
 

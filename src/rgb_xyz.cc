@@ -348,28 +348,3 @@ dcp::rgb_to_xyz (
 
 	return xyz;
 }
-
-
-/** @param xyz_16 XYZ image data in packed 16:16:16, 48bpp, 16X, 16Y,
- *  16Z, with the 2-byte value for each X/Y/Z component stored as
- *  little-endian.
- */
-shared_ptr<dcp::OpenJPEGImage>
-dcp::xyz_to_xyz (uint8_t const * xyz_16, dcp::Size size, int stride)
-{
-	shared_ptr<OpenJPEGImage> xyz_12 (new OpenJPEGImage (size));
-
-	int jn = 0;
-	for (int y = 0; y < size.height; ++y) {
-		uint16_t const * p = reinterpret_cast<uint16_t const *> (xyz_16 + y * stride);
-		for (int x = 0; x < size.width; ++x) {
-			/* Truncate 16-bit to 12-bit */
-			xyz_12->data(0)[jn] = *p++ >> 4;
-			xyz_12->data(1)[jn] = *p++ >> 4;
-			xyz_12->data(2)[jn] = *p++ >> 4;
-			++jn;
-		}
-	}
-
-	return xyz_12;
-}
