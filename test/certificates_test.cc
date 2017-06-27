@@ -211,6 +211,13 @@ BOOST_AUTO_TEST_CASE (certificates_validation9)
 	BOOST_CHECK_NO_THROW (good.root_to_leaf());
 }
 
+/** Check that we can create a valid chain */
+BOOST_AUTO_TEST_CASE (certificates_validation10)
+{
+	dcp::CertificateChain good (boost::filesystem::path ("openssl"));
+	BOOST_CHECK_NO_THROW (good.root_to_leaf());
+}
+
 /** Check that dcp::Signer::valid() basically works */
 BOOST_AUTO_TEST_CASE (signer_validation)
 {
