@@ -69,7 +69,6 @@ using std::vector;
 using std::cout;
 using std::make_pair;
 using std::map;
-using std::cout;
 using std::cerr;
 using std::exception;
 using boost::shared_ptr;
@@ -481,14 +480,20 @@ DCP::cpls () const
 	return _cpls;
 }
 
-/** @return All assets (including CPLs) */
+/** @param ignore_unresolved true to silently ignore unresolved assets, otherwise
+ *  an exception is thrown if they are found.
+ *  @return All assets (including CPLs).
+ */
 list<shared_ptr<Asset> >
-DCP::assets () const
+DCP::assets (bool ignore_unresolved) const
 {
 	list<shared_ptr<Asset> > assets;
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
 		assets.push_back (i);
 		BOOST_FOREACH (shared_ptr<const ReelAsset> j, i->reel_assets ()) {
+			if (ignore_unresolved && !j->asset_ref().resolved()) {
+				continue;
+			}
 			shared_ptr<Asset> o = j->asset_ref().asset ();
 			assets.push_back (o);
 			/* More Interop special-casing */

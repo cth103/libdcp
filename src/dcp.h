@@ -104,7 +104,7 @@ public:
 	void add (boost::shared_ptr<CPL> cpl);
 
 	std::list<boost::shared_ptr<CPL> > cpls () const;
-	std::list<boost::shared_ptr<Asset> > assets () const;
+	std::list<boost::shared_ptr<Asset> > assets (bool ignore_unresolved = false) const;
 
 	bool encrypted () const;
 
