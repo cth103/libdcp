@@ -97,7 +97,7 @@ Key::hex () const
 
 	char buffer[33];
 #ifdef LIBDCP_WINDOWS
-	gnu_snprintf (
+	__mingw_snprintf (
 #else
 	snprintf (
 #endif
