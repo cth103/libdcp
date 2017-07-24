@@ -62,7 +62,7 @@ using namespace dcp;
 static void
 help (string n)
 {
-	cerr << "Syntax: " << n << " [options] <DCP>\n"
+	cerr << "Syntax: " << n << " [options] [<DCP>] [<CPL>]\n"
 	     << "  -s, --subtitles              list all subtitles\n"
 	     << "  -k, --keep-going             carry on in the event of errors, if possible\n"
 	     << "      --ignore-missing-assets  ignore missing asset files\n";
@@ -72,7 +72,10 @@ static void
 main_picture (shared_ptr<Reel> reel)
 {
 	if (reel->main_picture()) {
-		cout << "      Picture ID:  " << reel->main_picture()->id() << "\n";
+		cout << "      Picture ID:  " << reel->main_picture()->id()
+		     << " entry " << reel->main_picture()->entry_point()
+		     << " duration " << reel->main_picture()->duration()
+		     << " intrinsic " << reel->main_picture()->intrinsic_duration() << "\n";
 		if (reel->main_picture()->asset()) {
 			cout << "      Picture:     "
 			     << reel->main_picture()->asset()->size().width
@@ -86,7 +89,10 @@ static void
 main_sound (shared_ptr<Reel> reel)
 {
 	if (reel->main_sound()) {
-		cout << "      Sound ID:    " << reel->main_sound()->id() << "\n";
+		cout << "      Sound ID:    " << reel->main_sound()->id()
+		     << " entry " << reel->main_picture()->entry_point()
+		     << " duration " << reel->main_picture()->duration()
+		     << " intrinsic " << reel->main_picture()->intrinsic_duration() << "\n";
 		if (reel->main_sound()->asset()) {
 			cout << "      Sound:       "
 			     << reel->main_sound()->asset()->channels()
@@ -171,43 +177,48 @@ main (int argc, char* argv[])
 	}
 
 	if (!boost::filesystem::exists (argv[optind])) {
-		cerr << argv[0] << ": DCP " << argv[optind] << " not found.\n";
+		cerr << argv[0] << ": DCP or CPL " << argv[optind] << " not found.\n";
 		exit (EXIT_FAILURE);
 	}
 
-	DCP* dcp = 0;
-	DCP::ReadErrors errors;
-	try {
-		dcp = new DCP (argv[optind]);
-		dcp->read (keep_going, &errors);
-	} catch (FileError& e) {
-		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << "\n";
-		exit (EXIT_FAILURE);
-	} catch (DCPReadError& e) {
-		cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << "\n";
-		exit (EXIT_FAILURE);
+	list<shared_ptr<CPL> > cpls;
+	if (boost::filesystem::is_directory(argv[optind])) {
+		DCP* dcp = 0;
+		DCP::ReadErrors errors;
+		try {
+			dcp = new DCP (argv[optind]);
+			dcp->read (keep_going, &errors);
+		} catch (FileError& e) {
+			cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << "\n";
+			exit (EXIT_FAILURE);
+		} catch (DCPReadError& e) {
+			cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << "\n";
+			exit (EXIT_FAILURE);
+		}
+
+		cout << "DCP: " << boost::filesystem::path(argv[optind]).string() << "\n";
+
+		dcp::filter_errors (errors, ignore_missing_assets);
+		for (DCP::ReadErrors::const_iterator i = errors.begin(); i != errors.end(); ++i) {
+			cerr << "Error: " << (*i)->what() << "\n";
+		}
+
+		cpls = dcp->cpls ();
+	} else {
+		cpls.push_back (shared_ptr<CPL>(new CPL(boost::filesystem::path(argv[optind]))));
+		keep_going = true;
+		ignore_missing_assets = true;
 	}
 
-	cout << "DCP: " << boost::filesystem::path(argv[optind]).string() << "\n";
-
-	dcp::filter_errors (errors, ignore_missing_assets);
-	for (DCP::ReadErrors::const_iterator i = errors.begin(); i != errors.end(); ++i) {
-		cerr << "Error: " << (*i)->what() << "\n";
-	}
-
-	list<shared_ptr<CPL> > cpls = dcp->cpls ();
-
-	for (list<shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
-		cout << "  CPL: " << (*i)->annotation_text() << "\n";
-
-		list<shared_ptr<Reel> > reels = (*i)->reels ();
+	BOOST_FOREACH (shared_ptr<CPL> i, cpls) {
+		cout << "  CPL: " << i->annotation_text() << "\n";
 
 		int R = 1;
-		for (list<shared_ptr<Reel> >::const_iterator j = reels.begin(); j != reels.end(); ++j) {
+		BOOST_FOREACH (shared_ptr<Reel> j, i->reels()) {
 			cout << "    Reel " << R << "\n";
 
 			try {
-				main_picture (*j);
+				main_picture (j);
 			} catch (UnresolvedRefError& e) {
 				if (keep_going) {
 					if (!ignore_missing_assets) {
@@ -219,7 +230,7 @@ main (int argc, char* argv[])
 			}
 
 			try {
-				main_sound (*j);
+				main_sound (j);
 			} catch (UnresolvedRefError& e) {
 				if (keep_going) {
 					if (!ignore_missing_assets) {
@@ -231,7 +242,7 @@ main (int argc, char* argv[])
 			}
 
 			try {
-				main_subtitle (*j, subtitles);
+				main_subtitle (j, subtitles);
 			} catch (UnresolvedRefError& e) {
 				if (keep_going) {
 					if (!ignore_missing_assets) {
