@@ -41,7 +41,7 @@ def dependencies(target, options):
 
 def build(target, options):
     cmd = './waf configure --disable-examples --prefix=%s' % target.directory
-    if 'jpeg' in options:
+    if options is not None and 'jpeg' in options:
         cmd += ' --jpeg=%s' % options['jpeg']
     if target.platform == 'linux':
         cmd += ' --static'
