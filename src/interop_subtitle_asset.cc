@@ -192,6 +192,10 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 	}
 }
 
+/** Look at a supplied list of assets and find the fonts.  Then match these
+ *  fonts up with anything requested by a <LoadFont> so that _fonts contains
+ *  a list of font ID, load ID and data.
+ */
 void
 InteropSubtitleAsset::resolve_fonts (list<shared_ptr<Asset> > assets)
 {
@@ -209,7 +213,7 @@ InteropSubtitleAsset::resolve_fonts (list<shared_ptr<Asset> > assets)
 					break;
 				}
 			}
-			
+
 			if (!got && font->file() && j->uri == font->file()->leaf().string()) {
 				_fonts.push_back (Font (j->id, i->id(), font->file().get()));
 			}

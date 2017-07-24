@@ -161,6 +161,7 @@ protected:
 		mutable boost::optional<boost::filesystem::path> file;
 	};
 
+	/** TTF font data that we need */
 	std::list<Font> _fonts;
 
 private:
