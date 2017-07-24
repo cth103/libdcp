@@ -96,7 +96,11 @@ Key::hex () const
 	DCP_ASSERT (ASDCP::KeyLen == 16);
 
 	char buffer[33];
+#ifdef LIBDCP_WINDOWS
+	gnu_snprintf (
+#else
 	snprintf (
+#endif
 		buffer, sizeof(buffer),
 		"%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx",
 		_value[0], _value[1], _value[2], _value[3], _value[4], _value[5], _value[6], _value[7],
