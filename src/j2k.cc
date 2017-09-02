@@ -274,6 +274,9 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 	/* Set encoding parameters to default values */
 	opj_cparameters_t parameters;
 	opj_set_default_encoder_parameters (&parameters);
+	if (fourk) {
+		parameters.numresolution = 7;
+	}
 	parameters.rsiz = fourk ? OPJ_PROFILE_CINEMA_4K : OPJ_PROFILE_CINEMA_2K;
 	parameters.cp_comment = strdup ("libdcp");
 
@@ -352,6 +355,9 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 	/* Set encoding parameters to default values */
 	opj_cparameters_t parameters;
 	opj_set_default_encoder_parameters (&parameters);
+	if (fourk) {
+		parameters.numresolution = 7;
+	}
 
 	/* Set default cinema parameters */
 	parameters.tile_size_on = false;
