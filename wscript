@@ -83,6 +83,9 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', ['-fopenmp', '-DLIBDCP_OPENMP'])
         conf.env.LIB_OPENMP = ['gomp']
 
+    if not conf.env.TARGET_WINDOWS:
+        conf.env.append_value('LINKFLAGS', '-pthread')
+
     if conf.options.jpeg == 'oj1':
         conf.env.append_value('CXXFLAGS', ['-DLIBDCP_OPENJPEG1'])
     elif conf.options.jpeg == 'oj2':
