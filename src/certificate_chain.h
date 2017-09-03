@@ -116,15 +116,15 @@ public:
 	std::string chain () const;
 
 private:
-	friend class ::certificates;
-	friend class ::certificates_validation1;
-	friend class ::certificates_validation2;
-	friend class ::certificates_validation3;
-	friend class ::certificates_validation4;
-	friend class ::certificates_validation5;
-	friend class ::certificates_validation6;
-	friend class ::certificates_validation7;
-	friend class ::certificates_validation8;
+	friend struct ::certificates;
+	friend struct ::certificates_validation1;
+	friend struct ::certificates_validation2;
+	friend struct ::certificates_validation3;
+	friend struct ::certificates_validation4;
+	friend struct ::certificates_validation5;
+	friend struct ::certificates_validation6;
+	friend struct ::certificates_validation7;
+	friend struct ::certificates_validation8;
 
 	bool chain_valid (List const & chain) const;
 
