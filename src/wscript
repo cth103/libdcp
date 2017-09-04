@@ -77,6 +77,7 @@ def build(bld):
              reel.cc
              reel_asset.cc
              reel_atmos_asset.cc
+             reel_closed_caption_asset.cc
              reel_mono_picture_asset.cc
              reel_mxf.cc
              reel_picture_asset.cc
@@ -153,6 +154,7 @@ def build(bld):
               reel.h
               reel_asset.h
               reel_atmos_asset.h
+              reel_closed_caption_asset.h
               reel_mono_picture_asset.h
               reel_mxf.h
               reel_picture_asset.h

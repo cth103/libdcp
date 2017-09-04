@@ -66,7 +66,7 @@ public:
 
 private:
 	std::string key_type () const;
-	std::string cpl_node_name () const;
+	std::string cpl_node_name (Standard standard) const;
 };
 
 }

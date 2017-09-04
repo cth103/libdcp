@@ -66,7 +66,7 @@ public:
 	}
 
 private:
-	std::string cpl_node_name () const;
+	std::string cpl_node_name (Standard standard) const;
 	std::pair<std::string, std::string> cpl_node_attribute (Standard standard) const;
 };
 

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2017 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -47,6 +47,7 @@
 #include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "reel_atmos_asset.h"
+#include "reel_closed_caption_asset.h"
 #include <libxml++/nodes/element.h>
 
 using std::string;
@@ -82,6 +83,16 @@ Reel::Reel (boost::shared_ptr<const cxml::Node> node)
 		_main_subtitle.reset (new ReelSubtitleAsset (main_subtitle));
 	}
 
+	/* XXX: it's not ideal that we silently tolerate Interop or SMPTE nodes here */
+	shared_ptr<cxml::Node> closed_caption = asset_list->optional_node_child ("cc-cpl:MainClosedCaption");
+	if (closed_caption) {
+		_closed_caption.reset (new ReelClosedCaptionAsset (closed_caption));
+	}
+	closed_caption = asset_list->optional_node_child ("tt:ClosedCaption");
+	if (closed_caption) {
+		_closed_caption.reset (new ReelClosedCaptionAsset (closed_caption));
+	}
+
 	shared_ptr<cxml::Node> atmos = asset_list->optional_node_child ("AuxData");
 	if (atmos) {
 		_atmos.reset (new ReelAtmosAsset (atmos));
@@ -109,6 +120,10 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 
 	if (_main_subtitle) {
 		_main_subtitle->write_to_cpl (asset_list, standard);
+	}
+
+	if (_closed_caption) {
+		_closed_caption->write_to_cpl (asset_list, standard);
 	}
 
 	if (_main_picture && dynamic_pointer_cast<ReelStereoPictureAsset> (_main_picture)) {
@@ -151,6 +166,10 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 		return false;
 	}
 
+	if (_closed_caption && !_closed_caption->equals (other->_closed_caption, opt, note)) {
+		return false;
+	}
+
 	if ((_atmos && !other->_atmos) || (!_atmos && other->_atmos)) {
 		note (DCP_ERROR, "Reel: assets differ");
 		return false;
@@ -169,6 +188,8 @@ Reel::encrypted () const
 	return (
 		(_main_picture && _main_picture->encrypted ()) ||
 		(_main_sound && _main_sound->encrypted ()) ||
+		(_main_subtitle && _main_subtitle->encrypted ()) ||
+		(_closed_caption && _closed_caption->encrypted ()) ||
 		(_atmos && _atmos->encrypted ())
 		);
 }
@@ -191,6 +212,12 @@ Reel::add (DecryptedKDM const & kdm)
 				s->set_key (i->key ());
 			}
 		}
+		if (_closed_caption && i->id() == _closed_caption->key_id()) {
+			shared_ptr<SMPTESubtitleAsset> s = dynamic_pointer_cast<SMPTESubtitleAsset> (_closed_caption->asset());
+			if (s) {
+				s->set_key (i->key ());
+			}
+		}
 		if (_atmos && i->id() == _atmos->key_id()) {
 			_atmos->asset()->set_key (i->key ());
 		}
@@ -203,6 +230,7 @@ Reel::add (shared_ptr<ReelAsset> asset)
 	shared_ptr<ReelPictureAsset> p = dynamic_pointer_cast<ReelPictureAsset> (asset);
 	shared_ptr<ReelSoundAsset> so = dynamic_pointer_cast<ReelSoundAsset> (asset);
 	shared_ptr<ReelSubtitleAsset> su = dynamic_pointer_cast<ReelSubtitleAsset> (asset);
+	shared_ptr<ReelClosedCaptionAsset> c = dynamic_pointer_cast<ReelClosedCaptionAsset> (asset);
 	shared_ptr<ReelAtmosAsset> a = dynamic_pointer_cast<ReelAtmosAsset> (asset);
 	if (p) {
 		_main_picture = p;
@@ -210,6 +238,8 @@ Reel::add (shared_ptr<ReelAsset> asset)
 		_main_sound = so;
 	} else if (su) {
 		_main_subtitle = su;
+	} else if (c) {
+		_closed_caption = c;
 	} else if (a) {
 		_atmos = a;
 	}
@@ -238,6 +268,18 @@ Reel::resolve_refs (list<shared_ptr<Asset> > assets)
 		}
 	}
 
+	if (_closed_caption) {
+		_closed_caption->asset_ref().resolve(assets);
+
+		/* Interop subtitle handling is all special cases */
+		if (_closed_caption->asset_ref().resolved()) {
+			shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (_closed_caption->asset_ref().asset());
+			if (iop) {
+				iop->resolve_fonts (assets);
+			}
+		}
+	}
+
 	if (_atmos) {
 		_atmos->asset_ref().resolve (assets);
 	}
@@ -256,6 +298,9 @@ Reel::duration () const
 	}
 	if (_main_subtitle) {
 		d = max (d, _main_subtitle->duration ());
+	}
+	if (_closed_caption) {
+		d = max (d, _closed_caption->duration ());
 	}
 	if (_atmos) {
 		d = max (d, _atmos->duration ());

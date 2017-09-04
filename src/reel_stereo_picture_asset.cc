@@ -63,7 +63,7 @@ ReelStereoPictureAsset::ReelStereoPictureAsset (boost::shared_ptr<const cxml::No
 }
 
 string
-ReelStereoPictureAsset::cpl_node_name () const
+ReelStereoPictureAsset::cpl_node_name (Standard) const
 {
 	return "msp-cpl:MainStereoscopicPicture";
 }
@@ -71,11 +71,12 @@ ReelStereoPictureAsset::cpl_node_name () const
 pair<string, string>
 ReelStereoPictureAsset::cpl_node_attribute (Standard standard) const
 {
-	if (standard == INTEROP) {
+	switch (standard) {
+	case INTEROP:
 		return make_pair ("xmlns:msp-cpl", "http://www.digicine.com/schemas/437-Y/2007/Main-Stereo-Picture-CPL");
-	} else {
+	case SMPTE:
 		return make_pair ("xmlns:msp-cpl", "http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL");
 	}
 
-	return make_pair ("", "");
+	DCP_ASSERT (false);
 }

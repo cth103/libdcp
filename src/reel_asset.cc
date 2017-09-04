@@ -95,12 +95,12 @@ ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 void
 ReelAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-        xmlpp::Element* a = node->add_child (cpl_node_name ());
+        xmlpp::Element* a = node->add_child (cpl_node_name (standard));
         pair<string, string> const attr = cpl_node_attribute (standard);
         if (!attr.first.empty ()) {
                 a->set_attribute (attr.first, attr.second);
         }
-        pair<string, string> const ns = cpl_node_namespace ();
+        pair<string, string> const ns = cpl_node_namespace (standard);
         if (!ns.first.empty ()) {
                 a->set_namespace_declaration (ns.first, ns.second);
         }
@@ -122,7 +122,7 @@ ReelAsset::cpl_node_attribute (Standard) const
 }
 
 pair<string, string>
-ReelAsset::cpl_node_namespace () const
+ReelAsset::cpl_node_namespace (Standard) const
 {
 	return make_pair ("", "");
 }

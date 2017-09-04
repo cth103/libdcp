@@ -92,7 +92,7 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 	ReelAsset::write_to_cpl (node, standard);
 
 	/* Find <MainPicture> */
-	xmlpp::Node* mp = find_child (node, cpl_node_name ());
+	xmlpp::Node* mp = find_child (node, cpl_node_name (standard));
 
 	mp->add_child ("FrameRate")->add_child_text (String::compose ("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
 	if (standard == INTEROP) {

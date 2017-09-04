@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2017 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -60,13 +60,13 @@ ReelAtmosAsset::ReelAtmosAsset (boost::shared_ptr<const cxml::Node> node)
 }
 
 string
-ReelAtmosAsset::cpl_node_name () const
+ReelAtmosAsset::cpl_node_name (Standard) const
 {
 	return "axd:AuxData";
 }
 
 pair<string, string>
-ReelAtmosAsset::cpl_node_namespace () const
+ReelAtmosAsset::cpl_node_namespace (Standard) const
 {
 	return make_pair ("http://www.dolby.com/schemas/2012/AD", "axd");
 }
@@ -83,6 +83,6 @@ ReelAtmosAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 	ReelAsset::write_to_cpl (node, standard);
 
 	/* Find <axd:AuxData> */
-	xmlpp::Node* mp = find_child (node, cpl_node_name ());
+	xmlpp::Node* mp = find_child (node, cpl_node_name (standard));
 	mp->add_child("axd:DataType")->add_child_text ("urn:smpte:ul:060e2b34.04010105.0e090604.00000000");
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2017 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -63,8 +63,8 @@ public:
 
 private:
 	std::string key_type () const;
-	std::string cpl_node_name () const;
-	std::pair<std::string, std::string> cpl_node_namespace () const;
+	std::string cpl_node_name (Standard standard) const;
+	std::pair<std::string, std::string> cpl_node_namespace (Standard) const;
 };
 
 }

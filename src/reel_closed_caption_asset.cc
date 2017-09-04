@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2017 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,27 +31,32 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/reel_sound_asset.cc
- *  @brief ReelSoundAsset class.
+/** @file  src/reel_closed_caption_asset.cc
+ *  @brief ReelClosedCaptionAsset class.
  */
 
-#include "reel_sound_asset.h"
+#include "subtitle_asset.h"
+#include "reel_closed_caption_asset.h"
+#include "smpte_subtitle_asset.h"
 #include "dcp_assert.h"
-#include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 
 using std::string;
+using std::pair;
+using std::make_pair;
 using boost::shared_ptr;
+using boost::dynamic_pointer_cast;
+using boost::optional;
 using namespace dcp;
 
-ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundAsset> asset, int64_t entry_point)
-	: ReelAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
-	, ReelMXF (asset->key_id())
+ReelClosedCaptionAsset::ReelClosedCaptionAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: ReelAsset (asset, edit_rate, intrinsic_duration, entry_point)
+	, ReelMXF (dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : optional<string>())
 {
 
 }
 
-ReelSoundAsset::ReelSoundAsset (shared_ptr<const cxml::Node> node)
+ReelClosedCaptionAsset::ReelClosedCaptionAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
 	, ReelMXF (node)
 {
@@ -60,27 +65,47 @@ ReelSoundAsset::ReelSoundAsset (shared_ptr<const cxml::Node> node)
 }
 
 string
-ReelSoundAsset::cpl_node_name (Standard) const
+ReelClosedCaptionAsset::cpl_node_name (Standard standard) const
 {
-	return "MainSound";
+	switch (standard) {
+	case INTEROP:
+		return "cc-cpl:MainClosedCaption";
+	case SMPTE:
+		return "tt:ClosedCaption";
+	}
+
+	DCP_ASSERT (false);
+}
+
+pair<string, string>
+ReelClosedCaptionAsset::cpl_node_namespace (Standard standard) const
+{
+	switch (standard) {
+	case INTEROP:
+		return make_pair ("http://www.digicine.com/PROTO-ASDCP-CC-CPL-20070926#", "cc-cpl");
+	case SMPTE:
+		return make_pair ("http://www.smpte-ra.org/schemas/429-12/2008/TT", "tt");
+	}
+
+	DCP_ASSERT (false);
 }
 
 string
-ReelSoundAsset::key_type () const
+ReelClosedCaptionAsset::key_type () const
 {
-	return "MDAK";
+	return "MDSK";
 }
 
 void
-ReelSoundAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+ReelClosedCaptionAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
 	ReelAsset::write_to_cpl (node, standard);
 
         if (key_id ()) {
-		/* Find <MainSound> */
+		/* Find our main tag */
 		xmlpp::Node* ms = find_child (node, cpl_node_name (standard));
 		/* Find <Hash> */
 		xmlpp::Node* hash = find_child (ms, "Hash");
 		ms->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id().get ());
-        }
+	}
 }

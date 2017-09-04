@@ -31,12 +31,12 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/reel_subtitle_asset.h
- *  @brief ReelSubtitleAsset class.
+/** @file  src/reel_closed_caption_asset.h
+ *  @brief ReelClosedCaptionAsset class.
  */
 
-#ifndef LIBDCP_REEL_SUBTITLE_ASSET_H
-#define LIBDCP_REEL_SUBTITLE_ASSET_H
+#ifndef LIBDCP_REEL_CLOSED_CAPTION_ASSET_H
+#define LIBDCP_REEL_CLOSED_CAPTION_ASSET_H
 
 #include "reel_asset.h"
 #include "reel_mxf.h"
@@ -46,14 +46,14 @@ namespace dcp {
 
 class SubtitleAsset;
 
-/** @class ReelSubtitleAsset
- *  @brief Part of a Reel's description which refers to a subtitle XML/MXF file.
+/** @class ReelClosedCaptionAsset
+ *  @brief Part of a Reel's description which refers to a closed caption XML/MXF file.
  */
-class ReelSubtitleAsset : public ReelAsset, public ReelMXF
+class ReelClosedCaptionAsset : public ReelAsset, public ReelMXF
 {
 public:
-	ReelSubtitleAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
-	explicit ReelSubtitleAsset (boost::shared_ptr<const cxml::Node>);
+	ReelClosedCaptionAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
+	explicit ReelClosedCaptionAsset (boost::shared_ptr<const cxml::Node>);
 
 	void write_to_cpl (xmlpp::Node* node, Standard standard) const;
 
@@ -64,6 +64,7 @@ public:
 private:
 	std::string key_type () const;
 	std::string cpl_node_name (Standard standard) const;
+	std::pair<std::string, std::string> cpl_node_namespace (Standard standard) const;
 };
 
 }

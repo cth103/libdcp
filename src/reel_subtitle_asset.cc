@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2017 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -62,7 +62,7 @@ ReelSubtitleAsset::ReelSubtitleAsset (boost::shared_ptr<const cxml::Node> node)
 }
 
 string
-ReelSubtitleAsset::cpl_node_name () const
+ReelSubtitleAsset::cpl_node_name (Standard) const
 {
 	return "MainSubtitle";
 }
@@ -80,7 +80,7 @@ ReelSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 
         if (key_id ()) {
 		/* Find <MainSubtitle> */
-		xmlpp::Node* ms = find_child (node, cpl_node_name ());
+		xmlpp::Node* ms = find_child (node, cpl_node_name (standard));
 		/* Find <Hash> */
 		xmlpp::Node* hash = find_child (ms, "Hash");
 		ms->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id().get ());
