@@ -40,6 +40,7 @@
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
+#include "reel_closed_caption_asset.h"
 #include "reel_atmos_asset.h"
 #include "local_time.h"
 #include "dcp_assert.h"
@@ -187,6 +188,9 @@ CPL::reel_assets () const
 		}
 		if (i->main_subtitle ()) {
 			c.push_back (i->main_subtitle());
+		}
+		if (i->closed_caption ()) {
+			c.push_back (i->closed_caption());
 		}
 		if (i->atmos ()) {
 			c.push_back (i->atmos());

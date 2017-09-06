@@ -49,6 +49,7 @@
 #include "reel_atmos_asset.h"
 #include "reel_closed_caption_asset.h"
 #include <libxml++/nodes/element.h>
+#include <boost/foreach.hpp>
 
 using std::string;
 using std::list;
@@ -84,11 +85,10 @@ Reel::Reel (boost::shared_ptr<const cxml::Node> node)
 	}
 
 	/* XXX: it's not ideal that we silently tolerate Interop or SMPTE nodes here */
-	shared_ptr<cxml::Node> closed_caption = asset_list->optional_node_child ("cc-cpl:MainClosedCaption");
-	if (closed_caption) {
-		_closed_caption.reset (new ReelClosedCaptionAsset (closed_caption));
+	shared_ptr<cxml::Node> closed_caption = asset_list->optional_node_child ("MainClosedCaption");
+	if (!closed_caption) {
+		closed_caption = asset_list->optional_node_child ("ClosedCaption");
 	}
-	closed_caption = asset_list->optional_node_child ("tt:ClosedCaption");
 	if (closed_caption) {
 		_closed_caption.reset (new ReelClosedCaptionAsset (closed_caption));
 	}

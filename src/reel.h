@@ -92,6 +92,10 @@ public:
 		return _main_subtitle;
 	}
 
+	boost::shared_ptr<ReelClosedCaptionAsset> closed_caption () const {
+		return _closed_caption;
+	}
+
 	boost::shared_ptr<ReelAtmosAsset> atmos () const {
 		return _atmos;
 	}
