@@ -63,6 +63,7 @@ help (string n)
 	     << "  -p, --private-key  private key file\n";
 }
 
+/* XXX: this method is unused */
 int
 atmos (
 	ASDCP::ATMOS::MXFReader& reader,
@@ -181,6 +182,8 @@ main (int argc, char* argv[])
 
 	dcp::EncryptedKDM encrypted_kdm (dcp::file_to_string (kdm_file.get ()));
 	dcp::DecryptedKDM decrypted_kdm (encrypted_kdm, dcp::file_to_string (private_key_file.get()));
+
+	/* XXX: only works for Atmos! */
 
 	try {
 		dcp::AtmosAsset in (input_file);
