@@ -32,7 +32,11 @@
 */
 
 #include "smpte_subtitle_asset.h"
+#include "decrypted_kdm.h"
+#include "decrypted_kdm_key.h"
+#include "encrypted_kdm.h"
 #include "util.h"
+#include <boost/foreach.hpp>
 #include <getopt.h>
 #include <cstdlib>
 #include <string>
@@ -42,29 +46,36 @@ using std::string;
 using std::cout;
 using std::cerr;
 using std::map;
+using boost::optional;
 
 static void
 help (string n)
 {
 	cerr << "Syntax: " << n << " [OPTION] <MXF>\n"
-	     << "  -h, --help                   show this help\n"
-	     << "  -n, --no-fonts               don't extract fonts\n";
+	     << "  -h, --help         show this help\n"
+	     << "  -n, --no-fonts     don't extract fonts\n"
+	     << "  -k, --kdm          KDM file\n"
+	     << "  -p, --private-key  private key file\n";
 }
 
 int
 main (int argc, char* argv[])
 {
 	bool extract_fonts = true;
+	optional<boost::filesystem::path> kdm_file;
+	optional<boost::filesystem::path> private_key_file;
 
 	int option_index = 0;
 	while (1) {
 		static struct option long_options[] = {
 			{ "help", no_argument, 0, 'h'},
 			{ "no-fonts", no_argument, 0, 'n'},
+			{ "kdm", required_argument, 0, 'k'},
+			{ "private-key", required_argument, 0, 'p'},
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "hn", long_options, &option_index);
+		int c = getopt_long (argc, argv, "hnk:p:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -77,6 +88,12 @@ main (int argc, char* argv[])
 		case 'n':
 			extract_fonts = false;
 			break;
+		case 'k':
+			kdm_file = optarg;
+			break;
+		case 'p':
+			private_key_file = optarg;
+			break;
 		}
 	}
 
@@ -86,6 +103,27 @@ main (int argc, char* argv[])
 	}
 
 	dcp::SMPTESubtitleAsset sub (argv[optind]);
+
+	if (sub.key_id() && (!kdm_file || !private_key_file)) {
+		cerr << "Subtitle MXF is encrypted so you must provide a KDM and private key.\n";
+		exit (EXIT_FAILURE);
+	}
+
+	if (sub.key_id()) {
+		dcp::EncryptedKDM encrypted_kdm (dcp::file_to_string (kdm_file.get ()));
+		dcp::DecryptedKDM decrypted_kdm (encrypted_kdm, dcp::file_to_string (private_key_file.get()));
+		bool done = false;
+		BOOST_FOREACH (dcp::DecryptedKDMKey const & i, decrypted_kdm.keys()) {
+			if (i.id() == *sub.key_id()) {
+				sub.set_key (i.key ());
+				done = true;
+			}
+		}
+		if (!done) {
+			cerr << "Could not find required key in KDM.\n";
+			exit (EXIT_FAILURE);
+		}
+	}
 
 	cout << sub.xml_as_string() << "\n";
 
