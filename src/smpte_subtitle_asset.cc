@@ -198,11 +198,17 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 void
 SMPTESubtitleAsset::set_key (Key key)
 {
+	/* See if we already have a key; if we do, and we have a file, we'll already
+	   have read that file.
+	*/
+	bool const had_key = static_cast<bool> (_key);
+
 	MXF::set_key (key);
 
-	if (!_key_id || !_file) {
-		/* Either we don't have any data to read, or it wasn't
-		   encrypted, so we don't need to do anything else.
+	if (!_key_id || !_file || had_key) {
+		/* Either we don't have any data to read, it wasn't
+		   encrypted, or we've already read it, so we don't
+		   need to do anything else.
 		*/
 		return;
 	}
