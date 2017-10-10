@@ -116,7 +116,6 @@ public:
 	std::string chain () const;
 
 private:
-	friend struct ::certificates;
 	friend struct ::certificates_validation1;
 	friend struct ::certificates_validation2;
 	friend struct ::certificates_validation3;

@@ -44,8 +44,6 @@
 #include <string>
 #include <list>
 
-class certificates;
-
 namespace xmlpp {
 	class Element;
 }
