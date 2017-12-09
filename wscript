@@ -1,5 +1,5 @@
 #
-#    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+#    Copyright (C) 2012-2017 Carl Hetherington <cth@carlh.net>
 #
 #    This file is part of libdcp.
 #
@@ -184,13 +184,6 @@ def configure(conf):
         conf.recurse('test')
         if not conf.options.disable_gcov:
             conf.check(lib='gcov', define_name='HAVE_GCOV', mandatory=False)
-
-    # libxml++ 2.39.1 and later must be built with -std=c++11
-    libxmlpp_version = conf.cmd_and_log(['pkg-config', '--modversion', 'libxml++-2.6'], output=Context.STDOUT, quiet=Context.BOTH)
-    s = libxmlpp_version.split('.')
-    v = (int(s[0]) << 16) | (int(s[1]) << 8) | int(s[2])
-    if v >= 0x022701:
-        conf.env.append_value('CXXFLAGS', '-std=c++11')
 
 def build(bld):
     create_version_cc(bld, VERSION)
