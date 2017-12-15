@@ -1,5 +1,5 @@
 #
-#    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+#    Copyright (C) 2012-2017 Carl Hetherington <cth@carlh.net>
 #
 #    This file is part of libdcp.
 #
@@ -51,10 +51,13 @@ def options(opt):
     opt.add_option('--disable-examples', action='store_true', default=False, help='disable building of examples')
     opt.add_option('--enable-openmp', action='store_true', default=False, help='enable use of OpenMP')
     opt.add_option('--jpeg', default='oj2', help='specify JPEG library to build with: oj1 or oj2 for OpenJPEG 1.5.x or OpenJPEG 2.1.x respectively')
+    opt.add_option('--force-cpp11', action='store_true', default=False, help='force use of C++11')
 
 def configure(conf):
     conf.load('compiler_cxx')
     conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-D_FILE_OFFSET_BITS=64', '-D__STDC_FORMAT_MACROS'])
+    if conf.options.force_cpp11:
+        conf.env.append_value('CXXFLAGS', ['-std=c++11', '-DBOOST_NO_CXX11_SCOPED_ENUMS'])
     gcc = conf.env['CC_VERSION']
     if int(gcc[0]) >= 4 and int(gcc[1]) > 1:
         conf.env.append_value('CXXFLAGS', ['-Wno-maybe-uninitialized'])
@@ -184,13 +187,6 @@ def configure(conf):
         conf.recurse('test')
         if not conf.options.disable_gcov:
             conf.check(lib='gcov', define_name='HAVE_GCOV', mandatory=False)
-
-    # libxml++ 2.39.1 and later must be built with -std=c++11
-    libxmlpp_version = conf.cmd_and_log(['pkg-config', '--modversion', 'libxml++-2.6'], output=Context.STDOUT, quiet=Context.BOTH)
-    s = libxmlpp_version.split('.')
-    v = (int(s[0]) << 16) | (int(s[1]) << 8) | int(s[2])
-    if v >= 0x022701:
-        conf.env.append_value('CXXFLAGS', '-std=c++11')
 
 def build(bld):
     create_version_cc(bld, VERSION)

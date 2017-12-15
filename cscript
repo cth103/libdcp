@@ -1,5 +1,5 @@
 #
-#    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+#    Copyright (C) 2012-2017 Carl Hetherington <cth@carlh.net>
 #
 #    This file is part of libdcp.
 #
@@ -35,9 +35,9 @@ import os
 
 def dependencies(target, options):
     if (target.platform == 'windows' and target.version == 'xp') or (options is not None and 'jpeg' in options and options['jpeg'] == 'oj1'):
-        return (('libcxml', '25e945f'), ('openjpeg-cdist',  '4233dd7'), ('asdcplib-cth', 'f3b0fb8'))
+        return (('libcxml', 'a8d8cba'), ('openjpeg-cdist',  '4233dd7'), ('asdcplib-cth', 'f3b0fb8'))
     else:
-        return (('libcxml', '25e945f'), ('openjpeg2-cdist', '4ce711a'), ('asdcplib-cth', 'f3b0fb8'))
+        return (('libcxml', 'a8d8cba'), ('openjpeg2-cdist', '4ce711a'), ('asdcplib-cth', 'f3b0fb8'))
 
 def build(target, options):
     cmd = './waf configure --disable-examples --prefix=%s' % target.directory
@@ -47,8 +47,15 @@ def build(target, options):
         cmd += ' --static'
         if target.distro == 'centos':
             cmd += ' --disable-tests'
-        if (target.distro == 'debian' and target.version == 'unstable' or target.distro == 'fedora' and target.version == '23'):
-            target.append_with_space('CXXFLAGS', '-std=c++11')
+            if target.version == '7':
+                # Centos 7 ships with glibmm 2.50.0 which requires C++11
+                # but its compiler (gcc 4.8.5) defaults to C++97.  Go figure.
+                # I worry that this will cause ABI problems but I don't have
+                # a better solution.
+                cmd += ' --force-cpp11'
+        if target.distro == 'mageia' and target.version == '6':
+            # Mageia 6 pulls the same stunt except it's libxml++ that requires C++11
+            cmd += ' --force-cpp11'
     elif target.platform == 'windows':
         cmd += ' --target-windows --disable-gcov --disable-tests'
         if target.version == 'xp':
