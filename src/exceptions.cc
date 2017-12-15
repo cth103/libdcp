@@ -91,8 +91,8 @@ MismatchedStandardError::MismatchedStandardError ()
 
 }
 
-KDMDecryptionError::KDMDecryptionError (std::string message)
-	: runtime_error (String::compose ("Could not decrypt KDM (%1)", message))
+KDMDecryptionError::KDMDecryptionError (std::string message, int cipher_length, int modulus_dmax)
+	: runtime_error (String::compose ("Could not decrypt KDM (%1) (%2/%3)", message, cipher_length, modulus_dmax))
 {
 
 }

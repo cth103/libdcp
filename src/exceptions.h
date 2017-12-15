@@ -176,7 +176,7 @@ public:
 class KDMDecryptionError : public std::runtime_error
 {
 public:
-	KDMDecryptionError (std::string message);
+	KDMDecryptionError (std::string message, int cipher_length, int modulus_dmax);
 };
 
 class KDMFormatError : public std::runtime_error
