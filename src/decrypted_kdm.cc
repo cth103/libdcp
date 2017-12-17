@@ -153,7 +153,11 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 		int const decrypted_len = RSA_private_decrypt (cipher_value_len, cipher_value, decrypted, rsa, RSA_PKCS1_OAEP_PADDING);
 		if (decrypted_len == -1) {
 			delete[] decrypted;
+#if OPENSSL_VERSION_NUMBER > 0x10100000L
+			throw KDMDecryptionError (ERR_error_string (ERR_get_error(), 0), cipher_value_len, RSA_bits(rsa));
+#else
 			throw KDMDecryptionError (ERR_error_string (ERR_get_error(), 0), cipher_value_len, rsa->n->dmax);
+#endif
 		}
 
 		unsigned char* p = decrypted;
