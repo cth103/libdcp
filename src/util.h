@@ -74,6 +74,7 @@ extern FILE * fopen_boost (boost::filesystem::path, std::string);
 extern std::string file_to_string (boost::filesystem::path, uintmax_t max_length = 65536);
 extern std::string private_key_fingerprint (std::string key);
 extern xmlpp::Node* find_child (xmlpp::Node const * node, std::string name);
+extern std::string openjpeg_version();
 
 }
 

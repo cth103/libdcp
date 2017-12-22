@@ -42,6 +42,7 @@
 #include "openjpeg_image.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
+#include <openjpeg.h>
 #include <asdcp/KM_util.h>
 #include <asdcp/KM_fileio.h>
 #include <asdcp/AS_DCP.h>
@@ -398,4 +399,10 @@ dcp::remove_urn_uuid (string raw)
 {
 	DCP_ASSERT (raw.substr(0, 9) == "urn:uuid:");
 	return raw.substr (9);
+}
+
+string
+dcp::openjpeg_version ()
+{
+	return opj_version ();
 }
