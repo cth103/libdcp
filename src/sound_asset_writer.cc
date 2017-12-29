@@ -93,6 +93,7 @@ void
 SoundAssetWriter::write (float const * const * data, int frames)
 {
 	DCP_ASSERT (!_finalized);
+	DCP_ASSERT (frames > 0);
 
 	static float const clip = 1.0f - (1.0f / pow (2, 23));
 
@@ -157,8 +158,11 @@ SoundAssetWriter::finalize ()
 		write_current_frame ();
 	}
 
-	if (_started && ASDCP_FAILURE (_state->mxf_writer.Finalize())) {
-		boost::throw_exception (MiscError ("could not finalise audio MXF"));
+	if (_started) {
+		ASDCP::Result_t const r = _state->mxf_writer.Finalize();
+		if (ASDCP_FAILURE(r)) {
+			boost::throw_exception (MiscError (String::compose ("could not finalise audio MXF (%1)", int(r))));
+		}
 	}
 
 	_asset->_intrinsic_duration = _frames_written;
