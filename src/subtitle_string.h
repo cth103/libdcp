@@ -191,6 +191,26 @@ public:
 		_text = t;
 	}
 
+	void set_colour (dcp::Colour c) {
+		_colour = c;
+	}
+
+	void set_effect (Effect e) {
+		_effect = e;
+	}
+
+	void set_effect_colour (dcp::Colour c) {
+		_effect_colour = c;
+	}
+
+	void set_fade_up_time (dcp::Time t) {
+		_fade_up_time = t;
+	}
+
+	void set_fade_down_time (dcp::Time t) {
+		_fade_down_time = t;
+	}
+
 private:
 	/** font ID */
 	boost::optional<std::string> _font;
