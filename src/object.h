@@ -42,6 +42,7 @@
 #include <string>
 
 class write_interop_subtitle_test;
+class write_interop_subtitle_test2;
 class write_smpte_subtitle_test;
 class write_smpte_subtitle_test2;
 
@@ -64,6 +65,7 @@ public:
 
 protected:
 	friend class ::write_interop_subtitle_test;
+	friend class ::write_interop_subtitle_test2;
 	friend class ::write_smpte_subtitle_test;
 	friend class ::write_smpte_subtitle_test2;
 

@@ -217,6 +217,88 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 		);
 }
 
+/** Write some subtitle content as Interop XML and check that it is right.
+ *  This test includes some horizontal alignment.
+ */
+BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
+{
+	dcp::InteropSubtitleAsset c;
+	c.set_reel_number ("1");
+	c.set_language ("EN");
+	c.set_movie_title ("Test");
+
+	c.add (
+		dcp::SubtitleString (
+			string ("Frutiger"),
+			false,
+			false,
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			1.0,
+			dcp::Time (0, 4,  9, 22, 24),
+			dcp::Time (0, 4, 11, 22, 24),
+			-0.2,
+			dcp::HALIGN_CENTER,
+			0.8,
+			dcp::VALIGN_TOP,
+			dcp::DIRECTION_LTR,
+			"Hello world",
+			dcp::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24)
+			)
+		);
+
+	c.add (
+		dcp::SubtitleString (
+			boost::optional<string> (),
+			true,
+			true,
+			true,
+			dcp::Colour (128, 0, 64),
+			91,
+			1.0,
+			dcp::Time (5, 41,  0, 21, 24),
+			dcp::Time (6, 12, 15, 21, 24),
+			-0.2,
+			dcp::HALIGN_CENTER,
+			0.4,
+			dcp::VALIGN_BOTTOM,
+			dcp::DIRECTION_LTR,
+			"What's going on",
+			dcp::BORDER,
+			dcp::Colour (1, 2, 3),
+			dcp::Time (1, 2, 3, 4, 24),
+			dcp::Time (5, 6, 7, 8, 24)
+			)
+		);
+
+	c._id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
+
+	check_xml (
+		"<DCSubtitle Version=\"1.0\">"
+		  "<SubtitleID>a6c58cff-3e1e-4b38-acec-a42224475ef6</SubtitleID>"
+		  "<MovieTitle>Test</MovieTitle>"
+		  "<ReelNumber>1</ReelNumber>"
+		  "<Language>EN</Language>"
+		  "<Font AspectAdjust=\"1.0\" Color=\"FFFFFFFF\" Effect=\"none\" EffectColor=\"FF000000\" Id=\"Frutiger\" Italic=\"no\" Script=\"normal\" Size=\"48\" Underlined=\"no\" Weight=\"normal\">"
+		    "<Subtitle SpotNumber=\"1\" TimeIn=\"00:04:09:229\" TimeOut=\"00:04:11:229\" FadeUpTime=\"0\" FadeDownTime=\"0\">"
+		      "<Text HPosition=\"-20\" VAlign=\"top\" VPosition=\"80\">Hello world</Text>"
+		    "</Subtitle>"
+		  "</Font>"
+		  "<Font AspectAdjust=\"1.0\" Color=\"FF800040\" Effect=\"border\" EffectColor=\"FF010203\" Italic=\"yes\" Script=\"normal\" Size=\"91\" Underlined=\"yes\" Weight=\"bold\">"
+		    "<Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:218\" TimeOut=\"06:12:15:218\" FadeUpTime=\"930792\" FadeDownTime=\"4591834\">"
+		      "<Text HPosition=\"-20\" VAlign=\"bottom\" VPosition=\"40\">What's going on</Text>"
+		    "</Subtitle>"
+		  "</Font>"
+		"</DCSubtitle>",
+		c.xml_as_string (),
+		list<string> ()
+		);
+}
+
 /* Write some subtitle content as SMPTE XML and check that it is right */
 BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 {

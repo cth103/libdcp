@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -33,6 +33,7 @@
 
 #include "subtitle_asset_internal.h"
 #include "subtitle_string.h"
+#include <cmath>
 
 using std::string;
 using std::map;
@@ -156,7 +157,7 @@ order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 		}
 	}
 
-	if (_h_position > ALIGN_EPSILON) {
+	if (fabs(_h_position) > ALIGN_EPSILON) {
 		if (context.standard == SMPTE) {
 			e->set_attribute ("Hposition", raw_convert<string> (_h_position * 100, 6));
 		} else {
@@ -170,7 +171,7 @@ order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 		e->set_attribute ("VAlign", valign_to_string (_v_align));
 	}
 
-	if (_v_position > ALIGN_EPSILON) {
+	if (fabs(_v_position) > ALIGN_EPSILON) {
 		if (context.standard == SMPTE) {
 			e->set_attribute ("Vposition", raw_convert<string> (_v_position * 100, 6));
 		} else {
