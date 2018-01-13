@@ -3,7 +3,7 @@
 # Run our test suite.
 
 # Private test data; this is stuff that is non-distributable
-private=../libdcp1-test-private
+private=../libdcp-test-private
 # Work directory
 work=build/test
 # Path to dcpinfo tool
