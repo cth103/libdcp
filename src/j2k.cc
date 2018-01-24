@@ -90,6 +90,12 @@ read_free_function (void* data)
 	delete reinterpret_cast<ReadBuffer*>(data);
 }
 
+static void
+error_callback (char const * msg, void *)
+{
+	throw MiscError (msg);
+}
+
 /** Decompress a JPEG2000 image to a bitmap.
  *  @param data JPEG2000 data.
  *  @param size Size of data in bytes.
@@ -102,6 +108,8 @@ read_free_function (void* data)
 shared_ptr<dcp::OpenJPEGImage>
 dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 {
+	DCP_ASSERT (reduce >= 0);
+
 	uint8_t const jp2_magic[] = {
 		0x00,
 		0x00,
@@ -131,6 +139,8 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 	if (!stream) {
 		throw MiscError ("could not create JPEG2000 stream");
 	}
+
+	opj_set_error_handler(decoder, error_callback, 00);
 
 	opj_stream_set_read_function (stream, read_function);
 	ReadBuffer* buffer = new ReadBuffer (data, size);
@@ -249,12 +259,6 @@ static OPJ_BOOL
 seek_function (OPJ_OFF_T nb_bytes, void* data)
 {
 	return reinterpret_cast<WriteBuffer*>(data)->seek (nb_bytes);
-}
-
-static void
-error_callback (char const * msg, void *)
-{
-	throw MiscError (msg);
 }
 
 /** @xyz Picture to compress.  Parts of xyz's data WILL BE OVERWRITTEN by libopenjpeg so xyz cannot be re-used
