@@ -306,6 +306,8 @@ DecryptedKDM::encrypt (
 	shared_ptr<const CertificateChain> signer, Certificate recipient, vector<Certificate> trusted_devices, Formulation formulation
 	) const
 {
+	DCP_ASSERT (!_keys.empty ());
+
 	list<pair<string, string> > key_ids;
 	list<string> keys;
 	BOOST_FOREACH (DecryptedKDMKey const & i, _keys) {
