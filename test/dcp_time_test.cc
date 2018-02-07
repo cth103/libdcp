@@ -96,14 +96,13 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	/* Check rounding on conversion from seconds */
 	BOOST_CHECK_EQUAL (dcp::Time (80.990, 1000), dcp::Time (0, 1, 20, 990, 1000));
 
-	/* Check rebase() */
+	/* Check rebase */
 	a = dcp::Time (1, 58, 56, 2, 25);
-	BOOST_CHECK_EQUAL (a.rebase (250), dcp::Time (1, 58, 56, 20, 250));
+	BOOST_CHECK_EQUAL (a.rebase(250), dcp::Time(1, 58, 56, 20, 250));
 	b = dcp::Time (9, 12, 41, 17, 99);
-	BOOST_CHECK_EQUAL (b.rebase (250), dcp::Time (9, 12, 41, 42, 250));
-	/* We must round down in rebase() */
+	BOOST_CHECK_EQUAL (b.rebase(250), dcp::Time(9, 12, 41, 43, 250));
 	a = dcp::Time (0, 2, 57, 999, 1000);
-	BOOST_CHECK_EQUAL (a.rebase (250), dcp::Time (0, 2, 57, 249, 250));
+	BOOST_CHECK_EQUAL (a.rebase(250), dcp::Time(0, 2, 57, 250, 250));
 
 	/* Check some allowed constructions from string */
 
