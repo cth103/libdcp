@@ -66,6 +66,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset ()
 	: _intrinsic_duration (0)
 	, _edit_rate (24, 1)
 	, _time_code_rate (24)
+	, _xml_id (make_uuid ())
 {
 
 }
@@ -99,7 +100,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 			xml.reset (new cxml::Document ("SubtitleReel"));
 			xml->read_file (file);
 			parse_xml (xml);
-			_id = remove_urn_uuid (xml->string_child ("Id"));
+			_id = _xml_id = remove_urn_uuid (xml->string_child ("Id"));
 		} catch (cxml::Error& e) {
 			boost::throw_exception (
 				DCPReadError (
@@ -116,6 +117,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 void
 SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 {
+	_xml_id = remove_urn_uuid(xml->string_child("Id"));
 	_load_font_nodes = type_children<dcp::SMPTELoadFontNode> (xml, "LoadFont");
 
 	_content_title_text = xml->string_child ("ContentTitleText");
@@ -258,7 +260,7 @@ SMPTESubtitleAsset::xml_as_string () const
 	root->set_namespace_declaration ("http://www.smpte-ra.org/schemas/428-7/2010/DCST", "dcst");
 	root->set_namespace_declaration ("http://www.w3.org/2001/XMLSchema", "xs");
 
-	root->add_child("Id", "dcst")->add_child_text ("urn:uuid:" + _id);
+	root->add_child("Id", "dcst")->add_child_text ("urn:uuid:" + _xml_id);
 	root->add_child("ContentTitleText", "dcst")->add_child_text (_content_title_text);
 	if (_annotation_text) {
 		root->add_child("AnnotationText", "dcst")->add_child_text (_annotation_text.get ());

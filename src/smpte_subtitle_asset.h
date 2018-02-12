@@ -151,6 +151,10 @@ public:
 		return _start_time;
 	}
 
+	std::string xml_id () const {
+		return _xml_id;
+	}
+
 	static bool valid_mxf (boost::filesystem::path);
 
 protected:
@@ -160,6 +164,9 @@ protected:
 	}
 
 private:
+	friend struct ::write_smpte_subtitle_test;
+	friend struct ::write_smpte_subtitle_test2;
+
 	void read_fonts (boost::shared_ptr<ASDCP::TimedText::MXFReader>);
 	void parse_xml (boost::shared_ptr<cxml::Document> xml);
 	void read_mxf_descriptor (boost::shared_ptr<ASDCP::TimedText::MXFReader> reader, boost::shared_ptr<DecryptionContext> dec);
@@ -179,6 +186,10 @@ private:
 	boost::optional<Time> _start_time;
 
 	std::list<boost::shared_ptr<SMPTELoadFontNode> > _load_font_nodes;
+	/** UUID for the XML inside the MXF, which should be different to the ID of the MXF according to
+	 *  Doremi's 2.8.18 release notes.
+	 */
+	std::string _xml_id;
 };
 
 }

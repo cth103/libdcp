@@ -356,7 +356,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 			)
 		);
 
-	c._id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
+	c._xml_id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
 
 	check_xml (
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -541,7 +541,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			)
 		);
 
-	c._id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
+	c._xml_id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
 
 	check_xml (
 		c.xml_as_string (),
