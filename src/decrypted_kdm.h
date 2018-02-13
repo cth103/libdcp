@@ -130,7 +130,9 @@ public:
 		boost::shared_ptr<const CertificateChain> signer,
 		Certificate recipient,
 		std::vector<Certificate> trusted_devices,
-		Formulation formulation
+		Formulation formulation,
+		int disable_forensic_marking_picture,
+		int disable_forensic_marking_audio
 		) const;
 
 	void add_key (boost::optional<std::string> type, std::string key_id, Key key, std::string cpl_id, Standard standard);

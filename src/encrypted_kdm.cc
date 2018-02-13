@@ -41,6 +41,7 @@
 #include <libxml/parser.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/foreach.hpp>
+#include <boost/format.hpp>
 
 using std::list;
 using std::vector;
@@ -401,9 +402,19 @@ public:
 		}
 		key_id_list.as_xml (node->add_child ("KeyIdList"));
 
-		xmlpp::Element* forensic_mark_flag_list = node->add_child ("ForensicMarkFlagList");
-		forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
-		forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable");
+		if (disable_forensic_marking_picture || disable_forensic_marking_audio) {
+			xmlpp::Element* forensic_mark_flag_list = node->add_child ("ForensicMarkFlagList");
+			if (disable_forensic_marking_picture) {
+				forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
+			}
+			if (disable_forensic_marking_audio) {
+				string mrkflg = "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable";
+				if (disable_forensic_marking_audio != -1) {
+					mrkflg = str (boost::format (mrkflg + "-above-channel-%u") % disable_forensic_marking_audio);
+				}
+				forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text (mrkflg);
+			}
+		}
 	}
 
 	Recipient recipient;
@@ -412,6 +423,8 @@ public:
 	string content_title_text;
 	LocalTime not_valid_before;
 	LocalTime not_valid_after;
+	int disable_forensic_marking_picture;
+	int disable_forensic_marking_audio;
 	boost::optional<AuthorizedDeviceInfo> authorized_device_info;
 	KeyIdList key_id_list;
 };
@@ -545,6 +558,8 @@ EncryptedKDM::EncryptedKDM (
 	LocalTime not_valid_before,
 	LocalTime not_valid_after,
 	Formulation formulation,
+	int disable_forensic_marking_picture,
+	int disable_forensic_marking_audio,
 	list<pair<string, string> > key_ids,
 	list<string> keys
 	)
@@ -577,6 +592,8 @@ EncryptedKDM::EncryptedKDM (
 	kre.content_title_text = content_title_text;
 	kre.not_valid_before = not_valid_before;
 	kre.not_valid_after = not_valid_after;
+	kre.disable_forensic_marking_picture = disable_forensic_marking_picture;
+	kre.disable_forensic_marking_audio = disable_forensic_marking_audio;
 
 	if (formulation != MODIFIED_TRANSITIONAL_TEST) {
 		kre.authorized_device_info = data::AuthorizedDeviceInfo ();

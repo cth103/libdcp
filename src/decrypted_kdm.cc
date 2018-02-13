@@ -303,7 +303,7 @@ DecryptedKDM::add_key (DecryptedKDMKey key)
 
 EncryptedKDM
 DecryptedKDM::encrypt (
-	shared_ptr<const CertificateChain> signer, Certificate recipient, vector<Certificate> trusted_devices, Formulation formulation
+	shared_ptr<const CertificateChain> signer, Certificate recipient, vector<Certificate> trusted_devices, Formulation formulation, int disable_forensic_marking_picture, int disable_forensic_marking_audio
 	) const
 {
 	DCP_ASSERT (!_keys.empty ());
@@ -369,6 +369,8 @@ DecryptedKDM::encrypt (
 		_not_valid_before,
 		_not_valid_after,
 		formulation,
+		disable_forensic_marking_picture,
+		disable_forensic_marking_audio,
 		key_ids,
 		keys
 		);

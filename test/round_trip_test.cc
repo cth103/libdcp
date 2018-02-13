@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	boost::filesystem::path const kdm_file = work_dir / "kdm.xml";
 
-	kdm_A.encrypt(signer, signer->leaf(), vector<dcp::Certificate>(), dcp::MODIFIED_TRANSITIONAL_1).as_xml (kdm_file);
+	kdm_A.encrypt(signer, signer->leaf(), vector<dcp::Certificate>(), dcp::MODIFIED_TRANSITIONAL_1, -1, -1).as_xml (kdm_file);
 
 	/* Reload the KDM, using our private key to decrypt it */
 	dcp::DecryptedKDM kdm_B (dcp::EncryptedKDM (dcp::file_to_string (kdm_file)), signer->key().get ());

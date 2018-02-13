@@ -110,6 +110,8 @@ private:
 		LocalTime not_valid_before,
 		LocalTime not_valid_after,
 		Formulation formulation,
+		int disable_forensic_marking_picture,
+		int disable_forensic_marking_audio,
 		std::list<std::pair<std::string, std::string> > key_ids,
 		std::list<std::string> keys
 		);

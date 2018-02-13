@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 		"2012-07-17T04:45:18+00:00"
 		);
 
-	kdm.encrypt (signer, signer->leaf(), vector<dcp::Certificate>(), dcp::MODIFIED_TRANSITIONAL_1).as_xml ("build/test/encryption_test.kdm.xml");
+	kdm.encrypt (signer, signer->leaf(), vector<dcp::Certificate>(), dcp::MODIFIED_TRANSITIONAL_1, -1, -1).as_xml ("build/test/encryption_test.kdm.xml");
 
 	int r = system (
 		"xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/encryption_test.kdm.xml "
