@@ -148,7 +148,10 @@ kdm_forensic_test (cxml::Document& doc, int picture, int audio)
 		signer, signer->leaf(), vector<dcp::Certificate>(), dcp::MODIFIED_TRANSITIONAL_1, picture, audio
 		);
 
-	doc.read_string (kdm.as_xml ());
+	/* Check that we can pass this through correctly */
+	BOOST_CHECK_EQUAL (kdm.as_xml(), dcp::EncryptedKDM(kdm.as_xml()).as_xml());
+
+	doc.read_string (kdm.as_xml());
 
 	return doc.node_child("AuthenticatedPublic")->
 		node_child("RequiredExtensions")->
