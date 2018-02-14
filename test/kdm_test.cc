@@ -19,13 +19,17 @@
 
 #include "encrypted_kdm.h"
 #include "decrypted_kdm.h"
+#include "certificate_chain.h"
 #include "util.h"
+#include "test.h"
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
 #include <boost/foreach.hpp>
 
 using std::list;
+using std::string;
+using std::vector;
 using boost::shared_ptr;
 
 /** Check reading and decryption of a KDM */
@@ -125,4 +129,83 @@ BOOST_AUTO_TEST_CASE (kdm_key_type_scope)
 			BOOST_CHECK (j->string_attribute("scope") == "http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
 		}
 	}
+}
+
+static cxml::ConstNodePtr
+kdm_forensic_test (cxml::Document& doc, int picture, int audio)
+{
+	dcp::DecryptedKDM decrypted (
+		dcp::EncryptedKDM (
+			dcp::file_to_string ("test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml")
+			),
+		dcp::file_to_string ("test/data/private.key")
+		);
+
+	shared_ptr<dcp::CertificateChain> signer(new dcp::CertificateChain(dcp::file_to_string("test/data/certificate_chain")));
+	signer->set_key(dcp::file_to_string("test/data/private.key"));
+
+	dcp::EncryptedKDM kdm = decrypted.encrypt (
+		signer, signer->leaf(), vector<dcp::Certificate>(), dcp::MODIFIED_TRANSITIONAL_1, picture, audio
+		);
+
+	doc.read_string (kdm.as_xml ());
+
+	return doc.node_child("AuthenticatedPublic")->
+		node_child("RequiredExtensions")->
+		node_child("KDMRequiredExtensions")->
+		optional_node_child("ForensicMarkFlagList");
+}
+
+/** Check ForensicMarkFlagList handling: disable picture and all audio */
+BOOST_AUTO_TEST_CASE (kdm_forensic_test1)
+{
+	cxml::Document doc;
+	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, -1, -1);
+	BOOST_REQUIRE (forensic);
+	list<cxml::NodePtr> flags = forensic->node_children("ForensicMarkFlag");
+	BOOST_REQUIRE_EQUAL (flags.size(), 2);
+	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
+	BOOST_CHECK_EQUAL (flags.back()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable");
+}
+
+/** Check ForensicMarkFlagList handling: disable picture but not audio */
+BOOST_AUTO_TEST_CASE (kdm_forensic_test2)
+{
+	cxml::Document doc;
+	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, -1, 0);
+	BOOST_REQUIRE (forensic);
+	list<cxml::NodePtr> flags = forensic->node_children("ForensicMarkFlag");
+	BOOST_REQUIRE_EQUAL (flags.size(), 1);
+	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
+}
+
+/** Check ForensicMarkFlagList handling: disable audio but not picture */
+BOOST_AUTO_TEST_CASE (kdm_forensic_test3)
+{
+	cxml::Document doc;
+	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, 0, -1);
+	BOOST_REQUIRE (forensic);
+	list<cxml::NodePtr> flags = forensic->node_children("ForensicMarkFlag");
+	BOOST_REQUIRE_EQUAL (flags.size(), 1);
+	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable");
+}
+
+/** Check ForensicMarkFlagList handling: disable picture and audio above channel 3 */
+BOOST_AUTO_TEST_CASE (kdm_forensic_test4)
+{
+	cxml::Document doc;
+	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, -1, 3);
+	BOOST_REQUIRE (forensic);
+	list<cxml::NodePtr> flags = forensic->node_children("ForensicMarkFlag");
+	BOOST_REQUIRE_EQUAL (flags.size(), 2);
+	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
+	BOOST_CHECK_EQUAL (flags.back()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable-above-channel-3");
+}
+
+/** Check ForensicMarkFlagList handling: disable neither */
+BOOST_AUTO_TEST_CASE (kdm_forensic_test5)
+{
+	cxml::Document doc;
+	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, 0, 0);
+	BOOST_CHECK (!forensic);
 }
