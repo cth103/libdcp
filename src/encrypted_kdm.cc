@@ -610,18 +610,18 @@ EncryptedKDM::EncryptedKDM (
 		} else if (formulation == MULTIPLE_MODIFIED_TRANSITIONAL_1 || formulation == DCI_SPECIFIC) {
 			if (trusted_devices.empty ()) {
 				/* Fall back on the "assume trust" thumbprint so we
-					 can generate "modified-transitional-1" KDMs
-					 together with "multiple-modified-transitional-1"
-					 KDMs in one go, and similarly for "dci-any" etc.
+				   can generate "modified-transitional-1" KDMs
+				   together with "multiple-modified-transitional-1"
+				   KDMs in one go, and similarly for "dci-any" etc.
 				*/
 				kre.authorized_device_info->certificate_thumbprints.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
 			} else {
 				/* As I read the standard we should use the
-					 recipient /and/ other trusted device thumbprints
-					 here. MJD reports that this doesn't work with
-					 his setup; a working KDM does not include the
-					 recipient's thumbprint (recipient.thumbprint()).
-					 Waimea uses only the trusted devices here, too.
+				   recipient /and/ other trusted device thumbprints
+				   here. MJD reports that this doesn't work with
+				   his setup; a working KDM does not include the
+				   recipient's thumbprint (recipient.thumbprint()).
+				   Waimea uses only the trusted devices here, too.
 				*/
 				BOOST_FOREACH (Certificate const & i, trusted_devices) {
 					kre.authorized_device_info->certificate_thumbprints.push_back (i.thumbprint ());
