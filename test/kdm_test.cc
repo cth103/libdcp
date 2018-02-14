@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,7 @@ using std::list;
 using std::string;
 using std::vector;
 using boost::shared_ptr;
+using boost::optional;
 
 /** Check reading and decryption of a KDM */
 BOOST_AUTO_TEST_CASE (kdm_test)
@@ -132,7 +133,7 @@ BOOST_AUTO_TEST_CASE (kdm_key_type_scope)
 }
 
 static cxml::ConstNodePtr
-kdm_forensic_test (cxml::Document& doc, int picture, int audio)
+kdm_forensic_test (cxml::Document& doc, bool picture, optional<int> audio)
 {
 	dcp::DecryptedKDM decrypted (
 		dcp::EncryptedKDM (
@@ -163,7 +164,7 @@ kdm_forensic_test (cxml::Document& doc, int picture, int audio)
 BOOST_AUTO_TEST_CASE (kdm_forensic_test1)
 {
 	cxml::Document doc;
-	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, -1, -1);
+	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, true, 0);
 	BOOST_REQUIRE (forensic);
 	list<cxml::NodePtr> flags = forensic->node_children("ForensicMarkFlag");
 	BOOST_REQUIRE_EQUAL (flags.size(), 2);
@@ -175,7 +176,7 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test1)
 BOOST_AUTO_TEST_CASE (kdm_forensic_test2)
 {
 	cxml::Document doc;
-	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, -1, 0);
+	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, true, optional<int>());
 	BOOST_REQUIRE (forensic);
 	list<cxml::NodePtr> flags = forensic->node_children("ForensicMarkFlag");
 	BOOST_REQUIRE_EQUAL (flags.size(), 1);
@@ -186,7 +187,7 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test2)
 BOOST_AUTO_TEST_CASE (kdm_forensic_test3)
 {
 	cxml::Document doc;
-	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, 0, -1);
+	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, false, 0);
 	BOOST_REQUIRE (forensic);
 	list<cxml::NodePtr> flags = forensic->node_children("ForensicMarkFlag");
 	BOOST_REQUIRE_EQUAL (flags.size(), 1);
@@ -197,7 +198,7 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test3)
 BOOST_AUTO_TEST_CASE (kdm_forensic_test4)
 {
 	cxml::Document doc;
-	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, -1, 3);
+	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, true, 3);
 	BOOST_REQUIRE (forensic);
 	list<cxml::NodePtr> flags = forensic->node_children("ForensicMarkFlag");
 	BOOST_REQUIRE_EQUAL (flags.size(), 2);
@@ -209,6 +210,6 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test4)
 BOOST_AUTO_TEST_CASE (kdm_forensic_test5)
 {
 	cxml::Document doc;
-	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, 0, 0);
+	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, false, optional<int>());
 	BOOST_CHECK (!forensic);
 }

@@ -124,6 +124,9 @@ public:
 	 *  @param trusted_devices Extra trusted devices which should be written to the KDM (recipient will be written
 	 *  as a trusted device automatically and does not need to be included in this list).
 	 *  @param formulation Formulation to use for the encrypted KDM.
+	 *  @param disable_forensic_marking_picture true to disable forensic marking of picture.
+	 *  @param disable_forensic_marking_audio if not set, don't disable forensic marking of audio.  If set to 0,
+	 *  disable all forensic marking; if set above 0, disable forensic marking above that channel.
 	 *  @return Encrypted KDM.
 	 */
 	EncryptedKDM encrypt (
@@ -131,8 +134,8 @@ public:
 		Certificate recipient,
 		std::vector<Certificate> trusted_devices,
 		Formulation formulation,
-		int disable_forensic_marking_picture,
-		int disable_forensic_marking_audio
+		bool disable_forensic_marking_picture,
+		boost::optional<int> disable_forensic_marking_audio
 		) const;
 
 	void add_key (boost::optional<std::string> type, std::string key_id, Key key, std::string cpl_id, Standard standard);

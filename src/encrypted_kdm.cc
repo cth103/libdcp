@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2017 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -35,6 +35,7 @@
 #include "util.h"
 #include "certificate_chain.h"
 #include "exceptions.h"
+#include "compose.hpp"
 #include <libcxml/cxml.h>
 #include <libxml++/document.h>
 #include <libxml++/nodes/element.h>
@@ -384,14 +385,14 @@ public:
 		, authorized_device_info (node->node_child ("AuthorizedDeviceInfo"))
 		, key_id_list (node->node_child ("KeyIdList"))
 	{
-		disable_forensic_marking_picture = 0;
-		disable_forensic_marking_audio = 0;
+		disable_forensic_marking_picture = false;
+		disable_forensic_marking_audio = optional<int>();
 		if (node->optional_node_child("ForensicMarkFlagList")) {
 			BOOST_FOREACH (cxml::ConstNodePtr i, node->node_child("ForensicMarkFlagList")->node_children("ForensicMarkFlag")) {
 				if (i->content() == picture_disable) {
-					disable_forensic_marking_picture = -1;
+					disable_forensic_marking_picture = true;
 				} else if (starts_with(i->content(), audio_disable)) {
-					disable_forensic_marking_audio = -1;
+					disable_forensic_marking_audio = 0;
 					string const above = audio_disable + "-above-channel-";
 					if (starts_with(i->content(), above)) {
 						string above_number = i->content().substr(above.length());
@@ -429,8 +430,8 @@ public:
 			}
 			if (disable_forensic_marking_audio) {
 				string mrkflg = audio_disable;
-				if (disable_forensic_marking_audio != -1) {
-					mrkflg = str (boost::format (mrkflg + "-above-channel-%u") % disable_forensic_marking_audio);
+				if (*disable_forensic_marking_audio > 0) {
+					mrkflg += String::compose ("-above-channel-%1", *disable_forensic_marking_audio);
 				}
 				forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text (mrkflg);
 			}
@@ -443,8 +444,8 @@ public:
 	string content_title_text;
 	LocalTime not_valid_before;
 	LocalTime not_valid_after;
-	int disable_forensic_marking_picture;
-	int disable_forensic_marking_audio;
+	bool disable_forensic_marking_picture;
+	optional<int> disable_forensic_marking_audio;
 	boost::optional<AuthorizedDeviceInfo> authorized_device_info;
 	KeyIdList key_id_list;
 
@@ -585,8 +586,8 @@ EncryptedKDM::EncryptedKDM (
 	LocalTime not_valid_before,
 	LocalTime not_valid_after,
 	Formulation formulation,
-	int disable_forensic_marking_picture,
-	int disable_forensic_marking_audio,
+	bool disable_forensic_marking_picture,
+	optional<int> disable_forensic_marking_audio,
 	list<pair<string, string> > key_ids,
 	list<string> keys
 	)
