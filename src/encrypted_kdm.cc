@@ -552,12 +552,13 @@ EncryptedKDM::EncryptedKDM (
 {
 	/* Fill our XML-ish description in with the juicy bits that the caller has given */
 
-	/* Our ideas about the KDM types are:
+	/* Our ideas, based on http://isdcf.com/papers/ISDCF-Doc5-kdm-certs.pdf, about the KDM types are:
 	 *
-	 * Type                      Trusted-device thumb  ContentAuthenticator
-	 * MODIFIED_TRANSITIONAL_1   assume-trust          No
-	 * DCI_ANY                   assume-trust          Yes
-	 * DCI_SPECIFIC              as specified          Yes
+	 * Type                               Trusted-device thumb  ContentAuthenticator
+	 * MODIFIED_TRANSITIONAL_1            assume-trust          No
+	 * MULTIPLE_MODIFIED_TRANSITIONAL_1   as specified          No
+	 * DCI_ANY                            assume-trust          Yes
+	 * DCI_SPECIFIC                       as specified          Yes
 	 */
 
 	data::AuthenticatedPublic& aup = _data->authenticated_public;
@@ -589,16 +590,25 @@ EncryptedKDM::EncryptedKDM (
 		if (formulation == MODIFIED_TRANSITIONAL_1 || formulation == DCI_ANY) {
 			/* Use the "assume trust" thumbprint */
 			kre.authorized_device_info->certificate_thumbprints.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
-		} else if (formulation == DCI_SPECIFIC) {
-			/* As I read the standard we should use the recipient
-			   /and/ other trusted device thumbprints here.  MJD
-			   reports that this doesn't work with his setup;
-			   a working KDM does not include the recipient's
-			   thumbprint (recipient.thumbprint()).
-			   Waimea uses only the trusted devices here, too.
-			*/
-			BOOST_FOREACH (Certificate const & i, trusted_devices) {
-				kre.authorized_device_info->certificate_thumbprints.push_back (i.thumbprint ());
+		} else if (formulation == MULTIPLE_MODIFIED_TRANSITIONAL_1 || formulation == DCI_SPECIFIC) {
+			if (trusted_devices.empty ()) {
+				/* Fall back on the "assume trust" thumbprint so we
+					 can generate "modified-transitional-1" KDMs
+					 together with "multiple-modified-transitional-1"
+					 KDMs in one go, and similarly for "dci-any" etc.
+				*/
+				kre.authorized_device_info->certificate_thumbprints.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
+			} else {
+				/* As I read the standard we should use the
+					 recipient /and/ other trusted device thumbprints
+					 here. MJD reports that this doesn't work with
+					 his setup; a working KDM does not include the
+					 recipient's thumbprint (recipient.thumbprint()).
+					 Waimea uses only the trusted devices here, too.
+				*/
+				BOOST_FOREACH (Certificate const & i, trusted_devices) {
+					kre.authorized_device_info->certificate_thumbprints.push_back (i.thumbprint ());
+				}
 			}
 		}
 	}
