@@ -10,6 +10,8 @@ Acknowledgements
 Wolfgang Woehl's cinemaslides was most informative on the
 nasty details of encryption.
 
+libdcp is written by Carl Hetherington and Mart Jansink
+
 
 Building
 ========
