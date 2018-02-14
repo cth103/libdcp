@@ -677,6 +677,12 @@ EncryptedKDM::keys () const
 	return _data->authenticated_private.encrypted_key;
 }
 
+string
+EncryptedKDM::id () const
+{
+	return _data->authenticated_public.message_id;
+}
+
 optional<string>
 EncryptedKDM::annotation_text () const
 {
