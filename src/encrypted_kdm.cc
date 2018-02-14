@@ -39,6 +39,7 @@
 #include <libxml++/document.h>
 #include <libxml++/nodes/element.h>
 #include <libxml/parser.h>
+#include <boost/algorithm/string.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
@@ -50,6 +51,7 @@ using std::map;
 using std::pair;
 using boost::shared_ptr;
 using boost::optional;
+using boost::starts_with;
 using namespace dcp;
 
 namespace dcp {
@@ -382,7 +384,25 @@ public:
 		, authorized_device_info (node->node_child ("AuthorizedDeviceInfo"))
 		, key_id_list (node->node_child ("KeyIdList"))
 	{
-
+		disable_forensic_marking_picture = 0;
+		disable_forensic_marking_audio = 0;
+		if (node->optional_node_child("ForensicMarkFlagList")) {
+			BOOST_FOREACH (cxml::ConstNodePtr i, node->node_child("ForensicMarkFlagList")->node_children("ForensicMarkFlag")) {
+				if (i->content() == picture_disable) {
+					disable_forensic_marking_picture = -1;
+				} else if (starts_with(i->content(), audio_disable)) {
+					disable_forensic_marking_audio = -1;
+					string const above = audio_disable + "-above-channel-";
+					if (starts_with(i->content(), above)) {
+						string above_number = i->content().substr(above.length());
+						if (above_number == "") {
+							throw KDMFormatError("Badly-formatted ForensicMarkFlag");
+						}
+						disable_forensic_marking_audio = atoi(above_number.c_str());
+					}
+				}
+			}
+		}
 	}
 
 	void as_xml (xmlpp::Element* node) const
@@ -405,10 +425,10 @@ public:
 		if (disable_forensic_marking_picture || disable_forensic_marking_audio) {
 			xmlpp::Element* forensic_mark_flag_list = node->add_child ("ForensicMarkFlagList");
 			if (disable_forensic_marking_picture) {
-				forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
+				forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text(picture_disable);
 			}
 			if (disable_forensic_marking_audio) {
-				string mrkflg = "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable";
+				string mrkflg = audio_disable;
 				if (disable_forensic_marking_audio != -1) {
 					mrkflg = str (boost::format (mrkflg + "-above-channel-%u") % disable_forensic_marking_audio);
 				}
@@ -427,7 +447,14 @@ public:
 	int disable_forensic_marking_audio;
 	boost::optional<AuthorizedDeviceInfo> authorized_device_info;
 	KeyIdList key_id_list;
+
+private:
+	static const string picture_disable;
+	static const string audio_disable;
 };
+
+const string KDMRequiredExtensions::picture_disable = "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable";
+const string KDMRequiredExtensions::audio_disable = "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable";
 
 class RequiredExtensions
 {
