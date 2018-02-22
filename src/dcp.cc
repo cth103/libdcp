@@ -38,6 +38,7 @@
 #include "raw_convert.h"
 #include "dcp.h"
 #include "sound_asset.h"
+#include "atmos_asset.h"
 #include "picture_asset.h"
 #include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
@@ -221,6 +222,9 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 					break;
 				case ASDCP::ESS_TIMED_TEXT:
 					other_assets.push_back (shared_ptr<SMPTESubtitleAsset> (new SMPTESubtitleAsset (path)));
+					break;
+			        case ASDCP::ESS_DCDATA_DOLBY_ATMOS:
+					other_assets.push_back (shared_ptr<AtmosAsset> (new AtmosAsset (path)));
 					break;
 				default:
 					throw DCPReadError (String::compose ("Unknown MXF essence type %1 in %2", int(type), path.string()));
