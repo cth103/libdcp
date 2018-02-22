@@ -75,12 +75,16 @@ main_picture (shared_ptr<Reel> reel)
 		cout << "      Picture ID:  " << reel->main_picture()->id()
 		     << " entry " << reel->main_picture()->entry_point()
 		     << " duration " << reel->main_picture()->duration()
-		     << " intrinsic " << reel->main_picture()->intrinsic_duration() << "\n";
-		if (reel->main_picture()->asset()) {
-			cout << "      Picture:     "
-			     << reel->main_picture()->asset()->size().width
-			     << "x"
-			     << reel->main_picture()->asset()->size().height << "\n";
+		     << " intrinsic " << reel->main_picture()->intrinsic_duration();
+		if (reel->main_picture()->asset_ref().resolved()) {
+			if (reel->main_picture()->asset()) {
+				cout << "\n      Picture:     "
+				     << reel->main_picture()->asset()->size().width
+				     << "x"
+				     << reel->main_picture()->asset()->size().height << "\n";
+			}
+		} else {
+			cout << " - not present in this DCP.\n";
 		}
 	}
 }
@@ -92,12 +96,16 @@ main_sound (shared_ptr<Reel> reel)
 		cout << "      Sound ID:    " << reel->main_sound()->id()
 		     << " entry " << reel->main_picture()->entry_point()
 		     << " duration " << reel->main_picture()->duration()
-		     << " intrinsic " << reel->main_picture()->intrinsic_duration() << "\n";
-		if (reel->main_sound()->asset()) {
-			cout << "      Sound:       "
-			     << reel->main_sound()->asset()->channels()
-			     << " channels at "
-			     << reel->main_sound()->asset()->sampling_rate() << "Hz\n";
+		     << " intrinsic " << reel->main_picture()->intrinsic_duration();
+		if (reel->main_sound()->asset_ref().resolved()) {
+			if (reel->main_sound()->asset()) {
+				cout << "\n      Sound:       "
+				     << reel->main_sound()->asset()->channels()
+				     << " channels at "
+				     << reel->main_sound()->asset()->sampling_rate() << "Hz\n";
+			}
+		} else {
+			cout << " - not present in this DCP.\n";
 		}
 	}
 }
@@ -109,22 +117,26 @@ main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
 		return;
 	}
 
-	cout << "      Subtitle ID: " << reel->main_subtitle()->id() << "\n";
+	cout << "      Subtitle ID: " << reel->main_subtitle()->id();
 
-	list<SubtitleString> subs = reel->main_subtitle()->asset()->subtitles ();
-	cout << "      Subtitle:    " << subs.size() << " subtitles";
-	shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (reel->main_subtitle()->asset());
-	if (iop) {
-		cout << " in " << iop->language() << "\n";
-	}
-	shared_ptr<SMPTESubtitleAsset> smpte = dynamic_pointer_cast<SMPTESubtitleAsset> (reel->main_subtitle()->asset());
-	if (smpte && smpte->language ()) {
-		cout << " in " << smpte->language().get() << "\n";
-	}
-	if (list_subtitles) {
-		BOOST_FOREACH (SubtitleString const& k, subs) {
-			cout << k << "\n";
+	if (reel->main_subtitle()->asset_ref().resolved()) {
+		list<SubtitleString> subs = reel->main_subtitle()->asset()->subtitles ();
+		cout << "\n      Subtitle:    " << subs.size() << " subtitles";
+		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (reel->main_subtitle()->asset());
+		if (iop) {
+			cout << " in " << iop->language() << "\n";
 		}
+		shared_ptr<SMPTESubtitleAsset> smpte = dynamic_pointer_cast<SMPTESubtitleAsset> (reel->main_subtitle()->asset());
+		if (smpte && smpte->language ()) {
+			cout << " in " << smpte->language().get() << "\n";
+		}
+		if (list_subtitles) {
+			BOOST_FOREACH (SubtitleString const& k, subs) {
+				cout << k << "\n";
+			}
+		}
+	} else {
+		cout << " - not present in this DCP.\n";
 	}
 }
 
