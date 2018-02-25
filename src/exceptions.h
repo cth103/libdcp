@@ -103,6 +103,8 @@ public:
 
 	DCPReadError (std::string message, std::string detail);
 
+	~DCPReadError() throw () {}
+
 	std::string message () const {
 		return _message;
 	}
