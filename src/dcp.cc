@@ -169,7 +169,7 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 				p->parse_file (path.string());
 			} catch (std::exception& e) {
 				delete p;
-				continue;
+				throw DCPReadError(String::compose("XML error in %1", path.string()), e.what());
 			}
 
 			string const root = p->get_document()->get_root_node()->get_name ();

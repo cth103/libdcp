@@ -108,3 +108,11 @@ CertificateChainError::CertificateChainError (std::string message)
 {
 
 }
+
+DCPReadError::DCPReadError (string message, string detail)
+	: runtime_error(String::compose("%1 (%2)", message, detail))
+	, _message(message)
+	, _detail(detail)
+{
+
+}
