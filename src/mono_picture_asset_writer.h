@@ -66,7 +66,7 @@ public:
 private:
 	friend class MonoPictureAsset;
 
-	MonoPictureAssetWriter (PictureAsset *, boost::filesystem::path file, Standard standard, bool);
+	MonoPictureAssetWriter (PictureAsset *, boost::filesystem::path file, bool);
 	void start (uint8_t const *, int);
 
 	/* do this with an opaque pointer so we don't have to include

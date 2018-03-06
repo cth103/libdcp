@@ -63,7 +63,7 @@ public:
 	}
 
 protected:
-	AssetWriter (MXF* mxf, boost::filesystem::path file, Standard standard);
+	AssetWriter (MXF* mxf, boost::filesystem::path file);
 
 	/** MXF that we are writing */
 	MXF* _mxf;

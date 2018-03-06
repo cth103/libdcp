@@ -55,6 +55,7 @@ using std::make_pair;
 using boost::shared_ptr;
 using namespace dcp;
 
+/** Load a PictureAsset from a file */
 PictureAsset::PictureAsset (boost::filesystem::path file)
 	: Asset (file)
 	, _intrinsic_duration (0)
@@ -62,8 +63,10 @@ PictureAsset::PictureAsset (boost::filesystem::path file)
 
 }
 
-PictureAsset::PictureAsset (Fraction edit_rate)
-	: _edit_rate (edit_rate)
+/** Create a new PictureAsset with a given edit rate and standard */
+PictureAsset::PictureAsset (Fraction edit_rate, Standard standard)
+	: MXF (standard)
+	, _edit_rate (edit_rate)
 	, _intrinsic_duration (0)
 {
 

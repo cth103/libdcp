@@ -63,7 +63,8 @@ using boost::dynamic_pointer_cast;
 using namespace dcp;
 
 SMPTESubtitleAsset::SMPTESubtitleAsset ()
-	: _intrinsic_duration (0)
+	: MXF (SMPTE)
+	, _intrinsic_duration (0)
 	, _edit_rate (24, 1)
 	, _time_code_rate (24)
 	, _xml_id (make_uuid ())
@@ -293,10 +294,10 @@ SMPTESubtitleAsset::xml_as_string () const
 void
 SMPTESubtitleAsset::write (boost::filesystem::path p) const
 {
-	EncryptionContext enc (key (), SMPTE);
+	EncryptionContext enc (key(), SMPTE);
 
 	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info, _id, SMPTE);
+	fill_writer_info (&writer_info, _id);
 
 	ASDCP::TimedText::TimedTextDescriptor descriptor;
 	descriptor.EditRate = ASDCP::Rational (_edit_rate.numerator, _edit_rate.denominator);

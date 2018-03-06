@@ -62,11 +62,10 @@ class PictureAsset : public Asset, public MXF
 {
 public:
 	explicit PictureAsset (boost::filesystem::path file);
-	explicit PictureAsset (Fraction edit_rate);
+	explicit PictureAsset (Fraction edit_rate, Standard standard);
 
 	virtual boost::shared_ptr<PictureAssetWriter> start_write (
 		boost::filesystem::path file,
-		Standard standard,
 		bool overwrite
 		) = 0;
 

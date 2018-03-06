@@ -73,8 +73,8 @@ MonoPictureAsset::MonoPictureAsset (boost::filesystem::path file)
 	_id = read_writer_info (info);
 }
 
-MonoPictureAsset::MonoPictureAsset (Fraction edit_rate)
-	: PictureAsset (edit_rate)
+MonoPictureAsset::MonoPictureAsset (Fraction edit_rate, Standard standard)
+	: PictureAsset (edit_rate, standard)
 {
 
 }
@@ -167,10 +167,10 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 }
 
 shared_ptr<PictureAssetWriter>
-MonoPictureAsset::start_write (boost::filesystem::path file, Standard standard, bool overwrite)
+MonoPictureAsset::start_write (boost::filesystem::path file, bool overwrite)
 {
 	/* XXX: can't we use shared_ptr here? */
-	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, file, standard, overwrite));
+	return shared_ptr<MonoPictureAssetWriter> (new MonoPictureAssetWriter (this, file, overwrite));
 }
 
 shared_ptr<MonoPictureAssetReader>

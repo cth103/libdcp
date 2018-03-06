@@ -50,7 +50,7 @@ struct ASDCPStateBase
 }
 
 template <class P, class Q>
-void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard standard, Q* asset, uint8_t const * data, int size)
+void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint8_t const * data, int size)
 {
 	asset->set_file (writer->_file);
 
@@ -64,7 +64,7 @@ void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Standard stand
 	asset->set_size (Size (state->picture_descriptor.StoredWidth, state->picture_descriptor.StoredHeight));
 	asset->set_screen_aspect_ratio (Fraction (state->picture_descriptor.AspectRatio.Numerator, state->picture_descriptor.AspectRatio.Denominator));
 
-	asset->fill_writer_info (&state->writer_info, asset->id(), standard);
+	asset->fill_writer_info (&state->writer_info, asset->id());
 
 	Kumu::Result_t r = state->mxf_writer.OpenWrite (
 		asset->file()->string().c_str(),

@@ -54,10 +54,10 @@ main ()
 	   per second.
 	*/
 
-	boost::shared_ptr<dcp::MonoPictureAsset> picture_asset (new dcp::MonoPictureAsset (dcp::Fraction (24, 1)));
+	boost::shared_ptr<dcp::MonoPictureAsset> picture_asset (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
 
 	/* Start off a write to it */
-	boost::shared_ptr<dcp::PictureAssetWriter> picture_writer = picture_asset->start_write ("DCP/picture.mxf", dcp::SMPTE, false);
+	boost::shared_ptr<dcp::PictureAssetWriter> picture_writer = picture_asset->start_write ("DCP/picture.mxf", false);
 
 	/* Write 24 frames of the same JPEG2000 file */
 	dcp::File picture ("examples/help.j2c");
@@ -71,8 +71,8 @@ main ()
 	/* Now create a sound MXF.  As before, create an object and a writer.
 	   When creating the object we specify the sampling rate (48kHz) and the number of channels (2).
 	*/
-	boost::shared_ptr<dcp::SoundAsset> sound_asset (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 2));
-	boost::shared_ptr<dcp::SoundAssetWriter> sound_writer = sound_asset->start_write ("DCP/sound.mxf", dcp::SMPTE);
+	boost::shared_ptr<dcp::SoundAsset> sound_asset (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 2, dcp::SMPTE));
+	boost::shared_ptr<dcp::SoundAssetWriter> sound_writer = sound_asset->start_write ("DCP/sound.mxf");
 
 	/* Write some sine waves */
 	float* audio[2];

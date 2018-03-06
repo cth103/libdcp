@@ -45,8 +45,8 @@ check (unsigned int* seed, shared_ptr<dcp::PictureAssetWriter> writer, string ha
 /** Test the hashing of data written to JPEG2000 MXFs with some random inputs */
 BOOST_AUTO_TEST_CASE (frame_info_hash_test)
 {
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1)));
-	shared_ptr<dcp::PictureAssetWriter> writer = mp->start_write ("build/test/frame_info_hash_test.mxf", dcp::SMPTE, false);
+	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
+	shared_ptr<dcp::PictureAssetWriter> writer = mp->start_write ("build/test/frame_info_hash_test.mxf", false);
 
 	unsigned int seed = 42;
 

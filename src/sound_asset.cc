@@ -84,8 +84,9 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 	_id = read_writer_info (info);
 }
 
-SoundAsset::SoundAsset (Fraction edit_rate, int sampling_rate, int channels)
-	: _edit_rate (edit_rate)
+SoundAsset::SoundAsset (Fraction edit_rate, int sampling_rate, int channels, Standard standard)
+	: MXF (standard)
+	, _edit_rate (edit_rate)
 	, _intrinsic_duration (0)
 	, _channels (channels)
 	, _sampling_rate (sampling_rate)
@@ -192,10 +193,10 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 }
 
 shared_ptr<SoundAssetWriter>
-SoundAsset::start_write (boost::filesystem::path file, Standard standard)
+SoundAsset::start_write (boost::filesystem::path file)
 {
 	/* XXX: can't we use a shared_ptr here? */
-	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter (this, file, standard));
+	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter (this, file));
 }
 
 shared_ptr<SoundAssetReader>

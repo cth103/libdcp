@@ -63,7 +63,7 @@ public:
 private:
 	friend class SoundAsset;
 
-	SoundAssetWriter (SoundAsset *, boost::filesystem::path, Standard standard);
+	SoundAssetWriter (SoundAsset *, boost::filesystem::path);
 
 	void write_current_frame ();
 

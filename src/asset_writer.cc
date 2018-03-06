@@ -48,13 +48,13 @@ using namespace dcp;
  *  @param mxf MXF that we are writing.
  *  @param file File to write to.
  */
-AssetWriter::AssetWriter (MXF* mxf, boost::filesystem::path file, Standard standard)
+AssetWriter::AssetWriter (MXF* mxf, boost::filesystem::path file)
 	: _mxf (mxf)
 	, _file (file)
 	, _frames_written (0)
 	, _finalized (false)
 	, _started (false)
-	, _encryption_context (new EncryptionContext (mxf->key(), standard))
+	, _encryption_context (new EncryptionContext (mxf->key(), mxf->standard()))
 {
 
 }

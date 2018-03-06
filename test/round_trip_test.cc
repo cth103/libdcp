@@ -53,8 +53,8 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	boost::filesystem::path work_dir = "build/test/round_trip_test";
 	boost::filesystem::create_directory (work_dir);
 
-	shared_ptr<dcp::MonoPictureAsset> asset_A (new dcp::MonoPictureAsset (dcp::Fraction (24, 1)));
-	shared_ptr<dcp::PictureAssetWriter> writer = asset_A->start_write (work_dir / "video.mxf", dcp::SMPTE, false);
+	shared_ptr<dcp::MonoPictureAsset> asset_A (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
+	shared_ptr<dcp::PictureAssetWriter> writer = asset_A->start_write (work_dir / "video.mxf", false);
 	dcp::File j2c ("test/data/32x32_red_square.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data (), j2c.size ());

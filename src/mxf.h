@@ -37,6 +37,7 @@
 #include "asset.h"
 #include "key.h"
 #include "metadata.h"
+#include "dcp_assert.h"
 
 #include <boost/signals2.hpp>
 
@@ -61,7 +62,7 @@ class PictureAssetWriter;
 class MXF
 {
 public:
-	MXF ();
+	MXF (Standard standard);
 	virtual ~MXF () {}
 
 	/** @return true if the data is encrypted */
@@ -112,16 +113,22 @@ public:
 		return _metadata;
 	}
 
+	Standard standard () const {
+		DCP_ASSERT (_standard);
+		return *_standard;
+	}
+
 protected:
 	template <class P, class Q>
-	friend void start (PictureAssetWriter* writer, boost::shared_ptr<P> state, Standard standard, Q* mxf, uint8_t const * data, int size);
+	friend void start (PictureAssetWriter* writer, boost::shared_ptr<P> state, Q* mxf, uint8_t const * data, int size);
+
+	MXF ();
 
 	std::string read_writer_info (ASDCP::WriterInfo const &);
 	/** Fill in a ADSCP::WriteInfo struct.
 	 *  @param w struct to fill in.
-	 *  @param standard INTEROP or SMPTE.
 	 */
-	void fill_writer_info (ASDCP::WriterInfo* w, std::string id, Standard standard) const;
+	void fill_writer_info (ASDCP::WriterInfo* w, std::string id) const;
 
 	/** ID of the key used for encryption/decryption, if there is one */
 	boost::optional<std::string> _key_id;
@@ -129,6 +136,7 @@ protected:
 	boost::optional<Key> _key;
 	std::string _context_id;
 	MXFMetadata _metadata;
+	boost::optional<Standard> _standard;
 };
 
 }

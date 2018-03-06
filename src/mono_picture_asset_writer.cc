@@ -57,8 +57,8 @@ struct MonoPictureAssetWriter::ASDCPState : public ASDCPStateBase
 /** @param a Asset to write to.  `a' must not be deleted while
  *  this writer class still exists, or bad things will happen.
  */
-MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, boost::filesystem::path file, Standard standard, bool overwrite)
-	: PictureAssetWriter (asset, file, standard, overwrite)
+MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, boost::filesystem::path file, bool overwrite)
+	: PictureAssetWriter (asset, file, overwrite)
 	, _state (new MonoPictureAssetWriter::ASDCPState)
 {
 
@@ -67,7 +67,7 @@ MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, boost::file
 void
 MonoPictureAssetWriter::start (uint8_t const * data, int size)
 {
-	dcp::start (this, _state, _standard, _picture_asset, data, size);
+	dcp::start (this, _state, _picture_asset, data, size);
 	_picture_asset->set_frame_rate (_picture_asset->edit_rate());
 }
 

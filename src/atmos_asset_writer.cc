@@ -52,7 +52,7 @@ struct AtmosAssetWriter::ASDCPState
 };
 
 AtmosAssetWriter::AtmosAssetWriter (AtmosAsset* asset, boost::filesystem::path file)
-	: AssetWriter (asset, file, SMPTE)
+	: AssetWriter (asset, file)
 	, _state (new AtmosAssetWriter::ASDCPState)
 	, _asset (asset)
 {
@@ -67,7 +67,7 @@ AtmosAssetWriter::AtmosAssetWriter (AtmosAsset* asset, boost::filesystem::path f
 
 	_state->desc.AtmosVersion = 0;
 
-	_asset->fill_writer_info (&_state->writer_info, _asset->id(), SMPTE);
+	_asset->fill_writer_info (&_state->writer_info, _asset->id());
 }
 
 void

@@ -82,12 +82,11 @@ public:
 
 protected:
 	template <class P, class Q>
-	friend void start (PictureAssetWriter *, boost::shared_ptr<P>, Standard, Q *, uint8_t const *, int);
+	friend void start (PictureAssetWriter *, boost::shared_ptr<P>, Q *, uint8_t const *, int);
 
-	PictureAssetWriter (PictureAsset *, boost::filesystem::path, Standard standard, bool);
+	PictureAssetWriter (PictureAsset *, boost::filesystem::path, bool);
 
 	PictureAsset* _picture_asset;
-	Standard _standard;
 	bool _overwrite;
 };
 

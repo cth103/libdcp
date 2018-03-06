@@ -54,11 +54,12 @@ public:
 
 	/** Create a MonoPictureAsset with a given edit rate.
 	 *  @param edit_rate Edit rate (i.e. frame rate) in frames per second.
+	 *  @param standard DCP standard (INTEROP or SMPTE).
 	 */
-	explicit MonoPictureAsset (Fraction edit_rate);
+	explicit MonoPictureAsset (Fraction edit_rate, Standard standard);
 
 	/** Start a progressive write to a MonoPictureAsset */
-	boost::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path, Standard standard, bool);
+	boost::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path, bool);
 	boost::shared_ptr<MonoPictureAssetReader> start_read () const;
 
 	bool equals (

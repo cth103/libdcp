@@ -56,9 +56,9 @@ class SoundAsset : public Asset, public MXF
 {
 public:
 	explicit SoundAsset (boost::filesystem::path file);
-	SoundAsset (Fraction edit_rate, int sampling_rate, int channels);
+	SoundAsset (Fraction edit_rate, int sampling_rate, int channels, Standard standard);
 
-	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file, Standard standard);
+	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file);
 	boost::shared_ptr<SoundAssetReader> start_read () const;
 
 	bool equals (

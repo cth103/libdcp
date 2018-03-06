@@ -42,7 +42,8 @@ using boost::shared_ptr;
 using namespace dcp;
 
 AtmosAsset::AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_count, int max_object_count, string atmos_id, int atmos_version)
-	: _edit_rate (edit_rate)
+	: MXF (SMPTE)
+	, _edit_rate (edit_rate)
 	, _intrinsic_duration (0)
 	, _first_frame (first_frame)
 	, _max_channel_count (max_channel_count)
@@ -55,6 +56,7 @@ AtmosAsset::AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_cou
 
 AtmosAsset::AtmosAsset (boost::filesystem::path file)
 	: Asset (file)
+	, MXF (SMPTE)
 {
 	ASDCP::ATMOS::MXFReader reader;
 	Kumu::Result_t r = reader.OpenRead (file.string().c_str());

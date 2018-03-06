@@ -65,7 +65,7 @@ public:
 private:
 	friend class StereoPictureAsset;
 
-	StereoPictureAssetWriter (PictureAsset *, boost::filesystem::path file, Standard, bool);
+	StereoPictureAssetWriter (PictureAsset *, boost::filesystem::path file, bool);
 	void start (uint8_t const *, int);
 
 	/* do this with an opaque pointer so we don't have to include

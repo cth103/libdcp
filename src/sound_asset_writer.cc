@@ -53,8 +53,8 @@ struct SoundAssetWriter::ASDCPState
 	ASDCP::PCM::AudioDescriptor desc;
 };
 
-SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, Standard standard)
-	: AssetWriter (asset, file, standard)
+SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file)
+	: AssetWriter (asset, file)
 	, _state (new SoundAssetWriter::ASDCPState)
 	, _asset (asset)
 	, _frame_buffer_offset (0)
@@ -68,7 +68,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 	_state->desc.BlockAlign = 3 * _asset->channels();
 	_state->desc.AvgBps = _asset->sampling_rate() * _state->desc.BlockAlign;
 	_state->desc.LinkedTrackID = 0;
-	if (standard == INTEROP) {
+	if (asset->standard() == INTEROP) {
 		_state->desc.ChannelFormat = ASDCP::PCM::CF_NONE;
 	} else {
 		/* Just use WTF ("wild track format") for SMPTE for now; searches suggest that this
@@ -86,7 +86,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 	_state->frame_buffer.Size (ASDCP::PCM::CalcFrameBufferSize (_state->desc));
 	memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
 
-	_asset->fill_writer_info (&_state->writer_info, _asset->id(), standard);
+	_asset->fill_writer_info (&_state->writer_info, _asset->id());
 }
 
 void

@@ -50,8 +50,8 @@ struct StereoPictureAssetWriter::ASDCPState : public ASDCPStateBase
 	ASDCP::JP2K::MXFSWriter mxf_writer;
 };
 
-StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* mxf, boost::filesystem::path file, Standard standard, bool overwrite)
-	: PictureAssetWriter (mxf, file, standard, overwrite)
+StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* mxf, boost::filesystem::path file, bool overwrite)
+	: PictureAssetWriter (mxf, file, overwrite)
 	, _state (new StereoPictureAssetWriter::ASDCPState)
 	, _next_eye (EYE_LEFT)
 {
@@ -61,7 +61,7 @@ StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* mxf, boost::fi
 void
 StereoPictureAssetWriter::start (uint8_t const * data, int size)
 {
-	dcp::start (this, _state, _standard, _picture_asset, data, size);
+	dcp::start (this, _state, _picture_asset, data, size);
 	_picture_asset->set_frame_rate (Fraction (_picture_asset->edit_rate().numerator * 2, _picture_asset->edit_rate().denominator));
 }
 

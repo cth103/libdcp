@@ -43,10 +43,9 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
-PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, boost::filesystem::path file, Standard standard, bool overwrite)
-	: AssetWriter (asset, file, standard)
+PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, boost::filesystem::path file, bool overwrite)
+	: AssetWriter (asset, file)
 	, _picture_asset (asset)
-	, _standard (standard)
 	, _overwrite (overwrite)
 {
 	asset->set_file (file);

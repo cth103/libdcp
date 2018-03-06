@@ -60,17 +60,27 @@ using namespace dcp;
 MXF::MXF ()
 	: _context_id (make_uuid ())
 {
+	/* Subclasses can create MXFs with unspecified _standard but are expected to fill
+	   _standard in once the MXF is read.
+	*/
+}
+
+MXF::MXF (Standard standard)
+	: _context_id (make_uuid ())
+	, _standard (standard)
+{
 
 }
 
 void
-MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id, Standard standard) const
+MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id) const
 {
 	writer_info->ProductVersion = _metadata.product_version;
 	writer_info->CompanyName = _metadata.company_name;
 	writer_info->ProductName = _metadata.product_name.c_str();
 
-	if (standard == INTEROP) {
+	DCP_ASSERT (_standard);
+	if (_standard == INTEROP) {
 		writer_info->LabelSetType = ASDCP::LS_MXF_INTEROP;
 	} else {
 		writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
@@ -115,6 +125,17 @@ MXF::read_writer_info (ASDCP::WriterInfo const & info)
 	if (info.EncryptedEssence) {
 		Kumu::bin2UUIDhex (info.CryptographicKeyID, ASDCP::UUIDlen, buffer, sizeof (buffer));
 		_key_id = buffer;
+	}
+
+	switch (info.LabelSetType) {
+	case ASDCP::LS_MXF_INTEROP:
+		_standard = INTEROP;
+		break;
+	case ASDCP::LS_MXF_SMPTE:
+		_standard = SMPTE;
+		break;
+	default:
+		DCP_ASSERT (false);
 	}
 
 	_metadata.read (info);
