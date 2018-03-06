@@ -114,8 +114,8 @@ def build(bld):
               certificate.h
               chromaticity.h
               colour_conversion.h
-              context.h
               cpl.h
+              crypto_context.h
               dcp.h
               dcp_assert.h
               dcp_time.h
