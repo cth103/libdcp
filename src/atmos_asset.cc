@@ -91,7 +91,7 @@ AtmosAsset::pkl_type (Standard) const
 shared_ptr<AtmosAssetReader>
 AtmosAsset::start_read () const
 {
-	return shared_ptr<AtmosAssetReader> (new AtmosAssetReader (this, key ()));
+	return shared_ptr<AtmosAssetReader> (new AtmosAssetReader (this, key(), SMPTE));
 }
 
 shared_ptr<AtmosAssetWriter>

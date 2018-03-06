@@ -39,7 +39,7 @@
 #include "exceptions.h"
 #include "picture_asset.h"
 #include "dcp_assert.h"
-#include "encryption_context.h"
+#include "crypto_context.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
 
@@ -87,7 +87,7 @@ MonoPictureAssetWriter::write (uint8_t const * data, int size)
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
-	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _encryption_context->encryption(), _encryption_context->hmac(), &hash);
+	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _crypto_context->context(), _crypto_context->hmac(), &hash);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
 	}

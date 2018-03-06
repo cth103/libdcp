@@ -33,7 +33,7 @@
 
 #include "encrypted_kdm.h"
 #include "decrypted_kdm.h"
-#include "decryption_context.h"
+#include "crypto_context.h"
 #include "key.h"
 #include "util.h"
 #include "atmos_asset.h"
@@ -98,7 +98,7 @@ atmos (
 		exit (EXIT_FAILURE);
 	}
 
-	dcp::DecryptionContext dc (key.get());
+	dcp::DecryptionContext dc (key.get(), dcp::SMPTE);
 
 	ASDCP::ATMOS::AtmosDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillAtmosDescriptor (desc))) {
@@ -109,7 +109,7 @@ atmos (
 	ASDCP::DCData::FrameBuffer buffer (Kumu::Megabyte);
 
 	for (size_t i = 0; i < desc.ContainerDuration; ++i) {
-		reader.ReadFrame (i, buffer, dc.decryption(), 0);
+		reader.ReadFrame (i, buffer, dc.context(), 0);
 	}
 
 	return 0;

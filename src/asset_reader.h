@@ -36,21 +36,19 @@
 
 #include "dcp_assert.h"
 #include "asset.h"
-#include "decryption_context.h"
+#include "crypto_context.h"
 #include <asdcp/AS_DCP.h>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace dcp {
 
-class DecryptionContext;
-
 template <class R, class F>
 class AssetReader : public boost::noncopyable
 {
 public:
-	explicit AssetReader (Asset const * asset, boost::optional<Key> key)
-		: _decryption_context (new DecryptionContext (key))
+	explicit AssetReader (Asset const * asset, boost::optional<Key> key, Standard standard)
+		: _crypto_context (new DecryptionContext (key, standard))
 	{
 		_reader = new R ();
 		DCP_ASSERT (asset->file ());
@@ -68,12 +66,12 @@ public:
 
 	boost::shared_ptr<const F> get_frame (int n) const
 	{
-		return boost::shared_ptr<const F> (new F (_reader, n, _decryption_context));
+		return boost::shared_ptr<const F> (new F (_reader, n, _crypto_context));
 	}
 
 protected:
 	R* _reader;
-	boost::shared_ptr<DecryptionContext> _decryption_context;
+	boost::shared_ptr<DecryptionContext> _crypto_context;
 };
 
 }

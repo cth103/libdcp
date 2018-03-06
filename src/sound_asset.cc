@@ -202,7 +202,7 @@ SoundAsset::start_write (boost::filesystem::path file)
 shared_ptr<SoundAssetReader>
 SoundAsset::start_read () const
 {
-	return shared_ptr<SoundAssetReader> (new SoundAssetReader (this, key ()));
+	return shared_ptr<SoundAssetReader> (new SoundAssetReader (this, key(), standard()));
 }
 
 string

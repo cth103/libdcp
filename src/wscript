@@ -47,10 +47,8 @@ def build(bld):
              dcp.cc
              dcp_time.cc
              decrypted_kdm.cc
-             decryption_context.cc
              decrypted_kdm_key.cc
              encrypted_kdm.cc
-             encryption_context.cc
              exceptions.cc
              file.cc
              font_asset.cc
@@ -116,6 +114,7 @@ def build(bld):
               certificate.h
               chromaticity.h
               colour_conversion.h
+              context.h
               cpl.h
               dcp.h
               dcp_assert.h
@@ -123,9 +122,7 @@ def build(bld):
               data.h
               decrypted_kdm.h
               decrypted_kdm_key.h
-              decryption_context.h
               encrypted_kdm.h
-              encryption_context.h
               exceptions.h
               font_asset.h
               frame.h

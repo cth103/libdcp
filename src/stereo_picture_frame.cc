@@ -38,7 +38,7 @@
 #include "colour_conversion.h"
 #include "compose.hpp"
 #include "j2k.h"
-#include "decryption_context.h"
+#include "crypto_context.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
 
@@ -55,7 +55,7 @@ StereoPictureFrame::StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, 
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = new ASDCP::JP2K::SFrameBuffer (4 * Kumu::Megabyte);
 
-	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->decryption()))) {
+	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->context(), c->hmac()))) {
 		boost::throw_exception (DCPReadError (String::compose ("could not read video frame %1 of %2", n)));
 	}
 }

@@ -34,7 +34,7 @@
 #ifndef LIBDCP_FRAME_H
 #define LIBDCP_FRAME_H
 
-#include "decryption_context.h"
+#include "crypto_context.h"
 #include "exceptions.h"
 #include <asdcp/KM_fileio.h>
 #include <asdcp/AS_DCP.h>
@@ -51,7 +51,7 @@ public:
 		/* XXX: unfortunate guesswork on this buffer size */
 		_buffer = new B (Kumu::Megabyte);
 
-		if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->decryption()))) {
+		if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->context(), c->hmac()))) {
 			boost::throw_exception (DCPReadError ("could not read frame"));
 		}
 	}

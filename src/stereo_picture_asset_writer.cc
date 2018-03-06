@@ -35,7 +35,7 @@
 #include "exceptions.h"
 #include "dcp_assert.h"
 #include "picture_asset.h"
-#include "encryption_context.h"
+#include "crypto_context.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
 
@@ -88,8 +88,8 @@ StereoPictureAssetWriter::write (uint8_t const * data, int size)
 	Kumu::Result_t r = _state->mxf_writer.WriteFrame (
 		_state->frame_buffer,
 		_next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
-		_encryption_context->encryption(),
-		_encryption_context->hmac(),
+		_crypto_context->context(),
+		_crypto_context->hmac(),
 		&hash
 		);
 

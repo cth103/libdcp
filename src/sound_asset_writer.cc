@@ -36,7 +36,7 @@
 #include "exceptions.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
-#include "encryption_context.h"
+#include "crypto_context.h"
 #include <asdcp/AS_DCP.h>
 #include <iostream>
 
@@ -143,7 +143,7 @@ SoundAssetWriter::write (float const * const * data, int frames)
 void
 SoundAssetWriter::write_current_frame ()
 {
-	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _encryption_context->encryption(), _encryption_context->hmac());
+	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _crypto_context->context(), _crypto_context->hmac());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MiscError (String::compose ("could not write audio MXF frame (%1)", int (r))));
 	}

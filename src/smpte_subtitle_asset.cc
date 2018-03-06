@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -43,8 +43,8 @@
 #include "dcp_assert.h"
 #include "util.h"
 #include "compose.hpp"
-#include "encryption_context.h"
-#include "decryption_context.h"
+#include "crypto_context.h"
+#include "crypto_context.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_util.h>
 #include <libxml++/libxml++.h>
@@ -60,6 +60,7 @@ using boost::split;
 using boost::is_any_of;
 using boost::shared_array;
 using boost::dynamic_pointer_cast;
+using boost::optional;
 using namespace dcp;
 
 SMPTESubtitleAsset::SMPTESubtitleAsset ()
@@ -93,7 +94,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 			reader->ReadTimedTextResource (s);
 			xml->read_string (s);
 			parse_xml (xml);
-			read_mxf_descriptor (reader, shared_ptr<DecryptionContext> (new DecryptionContext ()));
+			read_mxf_descriptor (reader, shared_ptr<DecryptionContext> (new DecryptionContext (optional<Key>(), SMPTE)));
 		}
 	} else {
 		/* Plain XML */
@@ -175,7 +176,7 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 		if (i->Type == ASDCP::TimedText::MT_OPENTYPE) {
 			ASDCP::TimedText::FrameBuffer buffer;
 			buffer.Capacity (10 * 1024 * 1024);
-			reader->ReadAncillaryResource (i->ResourceID, buffer, dec->decryption());
+			reader->ReadAncillaryResource (i->ResourceID, buffer, dec->context(), dec->hmac());
 
 			char id[64];
 			Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof (id));
@@ -229,8 +230,8 @@ SMPTESubtitleAsset::set_key (Key key)
 	}
 
 	string s;
-	shared_ptr<DecryptionContext> dec (new DecryptionContext (key));
-	reader->ReadTimedTextResource (s, dec->decryption());
+	shared_ptr<DecryptionContext> dec (new DecryptionContext (key, SMPTE));
+	reader->ReadTimedTextResource (s, dec->context(), dec->hmac());
 	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
 	xml->read_string (s);
 	parse_xml (xml);
@@ -329,7 +330,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	}
 
 	/* XXX: no encryption */
-	r = writer.WriteTimedTextResource (xml_as_string (), enc.encryption(), enc.hmac());
+	r = writer.WriteTimedTextResource (xml_as_string (), enc.context(), enc.hmac());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not write XML to timed text resource", p.string(), r));
 	}
@@ -343,7 +344,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 			ASDCP::TimedText::FrameBuffer buffer;
 			buffer.SetData (j->data.data().get(), j->data.size());
 			buffer.Size (j->data.size());
-			r = writer.WriteAncillaryResource (buffer, enc.encryption(), enc.hmac());
+			r = writer.WriteAncillaryResource (buffer, enc.context(), enc.hmac());
 			if (ASDCP_FAILURE (r)) {
 				boost::throw_exception (MXFFileError ("could not write font to timed text resource", p.string(), r));
 			}

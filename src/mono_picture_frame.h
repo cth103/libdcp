@@ -58,7 +58,6 @@ namespace ASDCP {
 namespace dcp {
 
 class OpenJPEGImage;
-class DecryptionContext;
 
 /** @class MonoPictureFrame
  *  @brief A single frame of a 2D (monoscopic) picture asset.

@@ -38,7 +38,7 @@
 #include "asset_writer.h"
 #include "mxf.h"
 #include "dcp_assert.h"
-#include "encryption_context.h"
+#include "crypto_context.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_prng.h>
 
@@ -54,7 +54,7 @@ AssetWriter::AssetWriter (MXF* mxf, boost::filesystem::path file)
 	, _frames_written (0)
 	, _finalized (false)
 	, _started (false)
-	, _encryption_context (new EncryptionContext (mxf->key(), mxf->standard()))
+	, _crypto_context (new EncryptionContext (mxf->key(), mxf->standard()))
 {
 
 }

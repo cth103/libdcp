@@ -39,12 +39,12 @@
 #define LIBDCP_ASSET_WRITER_H
 
 #include "types.h"
+#include "crypto_context.h"
 #include <boost/filesystem.hpp>
 
 namespace dcp {
 
 class MXF;
-class EncryptionContext;
 
 /** @class AssetWriter
  *  @brief Parent class for classes which can write MXF-based assets.
@@ -77,7 +77,7 @@ protected:
 	bool _finalized;
 	/** true if something has been written to this asset */
 	bool _started;
-	boost::shared_ptr<EncryptionContext> _encryption_context;
+	boost::shared_ptr<EncryptionContext> _crypto_context;
 };
 
 }

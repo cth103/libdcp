@@ -53,7 +53,6 @@ namespace ASDCP {
 namespace dcp {
 
 class OpenJPEGImage;
-class DecryptionContext;
 
 /** A single frame of a 3D (stereoscopic) picture asset */
 class StereoPictureFrame : public boost::noncopyable
