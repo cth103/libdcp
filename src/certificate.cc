@@ -408,6 +408,22 @@ Certificate::public_key () const
 	return _public_key;
 }
 
+static bool string_is_utf8 (X509_NAME* n, int nid)
+{
+	int p = -1;
+	p = X509_NAME_get_index_by_NID (n, nid, p);
+	return p != -1 && X509_NAME_ENTRY_get_data(X509_NAME_get_entry(n, p))->type == V_ASN1_UTF8STRING;
+}
+
+bool
+Certificate::has_utf8_strings () const
+{
+	X509_NAME* n = X509_get_subject_name (_certificate);
+	return string_is_utf8(n, NID_commonName) ||
+		string_is_utf8(n, NID_organizationName) ||
+		string_is_utf8(n, NID_organizationalUnitName);
+}
+
 bool
 dcp::operator== (Certificate const & a, Certificate const & b)
 {

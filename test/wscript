@@ -94,6 +94,7 @@ def build(bld):
                  sound_frame_test.cc
                  test.cc
                  util_test.cc
+                 utf8_test.cc
                  write_subtitle_test.cc
                  """
     obj.target = 'tests'

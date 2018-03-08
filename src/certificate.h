@@ -90,6 +90,8 @@ public:
 
 	std::string thumbprint () const;
 
+	bool has_utf8_strings () const;
+
 private:
 
 	static std::string name_for_xml (X509_NAME *);
