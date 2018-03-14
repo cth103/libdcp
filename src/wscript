@@ -99,6 +99,7 @@ def build(bld):
              transfer_function.cc
              types.cc
              util.cc
+             verify.cc
              version.cc
              """
 
@@ -175,6 +176,7 @@ def build(bld):
               transfer_function.h
               types.h
               util.h
+              verify.h
               version.h
               """
 
