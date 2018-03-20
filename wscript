@@ -55,6 +55,7 @@ def options(opt):
 
 def configure(conf):
     conf.load('compiler_cxx')
+    conf.load('clang_compilation_database', tooldir=['waf-tools'])
     conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-D_FILE_OFFSET_BITS=64', '-D__STDC_FORMAT_MACROS'])
     if conf.options.force_cpp11:
         conf.env.append_value('CXXFLAGS', ['-std=c++11', '-DBOOST_NO_CXX11_SCOPED_ENUMS'])
