@@ -33,19 +33,37 @@
 
 #include "verify.h"
 #include "dcp.h"
+#include "cpl.h"
+#include "reel.h"
+#include "reel_picture_asset.h"
+#include "reel_sound_asset.h"
 #include "exceptions.h"
 #include <boost/foreach.hpp>
 #include <list>
 #include <vector>
+#include <iostream>
 
 using std::list;
 using std::vector;
+using std::string;
+using std::cout;
 using boost::shared_ptr;
+using boost::optional;
+using boost::function;
 
 using namespace dcp;
 
+static bool
+verify_asset (shared_ptr<ReelAsset> asset, function<void (float)> progress)
+{
+	string actual_hash = asset->asset_ref()->hash(progress);
+	optional<string> cpl_hash = asset->hash();
+	DCP_ASSERT (cpl_hash);
+	return actual_hash != *cpl_hash;
+}
+
 list<VerificationNote>
-dcp::verify (vector<boost::filesystem::path> directories)
+dcp::verify (vector<boost::filesystem::path> directories, function<void (string, optional<boost::filesystem::path>)> stage, function<void (float)> progress)
 {
 	list<VerificationNote> notes;
 
@@ -54,14 +72,38 @@ dcp::verify (vector<boost::filesystem::path> directories)
 		dcps.push_back (shared_ptr<DCP> (new DCP (i)));
 	}
 
-	BOOST_FOREACH (shared_ptr<DCP> i, dcps) {
+	BOOST_FOREACH (shared_ptr<DCP> dcp, dcps) {
+		stage ("Checking DCP", dcp->directory());
 		DCP::ReadErrors errors;
 		try {
-			i->read (true, &errors);
+			dcp->read (true, &errors);
 		} catch (DCPReadError& e) {
 			notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, e.what ()));
 		} catch (XMLError& e) {
 			notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, e.what ()));
+		}
+
+		BOOST_FOREACH (shared_ptr<CPL> cpl, dcp->cpls()) {
+			stage ("Checking CPL", cpl->file());
+			BOOST_FOREACH (shared_ptr<Reel> reel, cpl->reels()) {
+				stage ("Checking reel", optional<boost::filesystem::path>());
+				if (reel->main_picture()) {
+					stage ("Checking picture asset hash", reel->main_picture()->asset()->file());
+					if (verify_asset (reel->main_picture(), progress)) {
+						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "Picture asset hash is incorrect"));
+					} else {
+						cout << "pic ok.\n";
+					}
+				}
+				if (reel->main_sound()) {
+					stage ("Checking sound asset hash", reel->main_sound()->asset()->file());
+					if (verify_asset (reel->main_sound(), progress)) {
+						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "Sound asset hash is incorrect"));
+					} else {
+						cout << "sounds ok.\n";
+					}
+				}
+			}
 		}
 	}
 

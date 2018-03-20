@@ -124,6 +124,10 @@ public:
 		return _standard;
 	}
 
+	boost::filesystem::path directory () const {
+		return _directory;
+	}
+
 	static std::vector<boost::filesystem::path> directories_from_files (std::vector<boost::filesystem::path> files);
 
 private:

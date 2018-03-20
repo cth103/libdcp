@@ -35,6 +35,8 @@
 #define LIBDCP_VERIFY_H
 
 #include <boost/filesystem.hpp>
+#include <boost/function.hpp>
+#include <boost/optional.hpp>
 #include <string>
 #include <list>
 #include <vector>
@@ -71,7 +73,11 @@ private:
 	std::string _note;
 };
 
-std::list<VerificationNote> verify (std::vector<boost::filesystem::path> directories);
+std::list<VerificationNote> verify (
+	std::vector<boost::filesystem::path> directories,
+	boost::function<void (std::string, boost::optional<boost::filesystem::path>)> stage,
+	boost::function<void (float)> progress
+	);
 
 }
 

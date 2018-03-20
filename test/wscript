@@ -96,6 +96,7 @@ def build(bld):
                  util_test.cc
                  utf8_test.cc
                  write_subtitle_test.cc
+                 verify_test.cc
                  """
     obj.target = 'tests'
     obj.install_path = ''
