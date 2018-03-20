@@ -59,9 +59,9 @@ dcp::verify (vector<boost::filesystem::path> directories)
 		try {
 			i->read (true, &errors);
 		} catch (DCPReadError& e) {
-			notes.push_back (VerificationNote (VerificationNote::ERROR, e.what ()));
+			notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, e.what ()));
 		} catch (XMLError& e) {
-			notes.push_back (VerificationNote (VerificationNote::ERROR, e.what ()));
+			notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, e.what ()));
 		}
 	}
 

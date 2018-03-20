@@ -44,10 +44,13 @@ namespace dcp {
 class VerificationNote
 {
 public:
+	/* I've been unable to make mingw happy with ERROR as a symbol, so
+	   I'm using a VERIFY_ prefix here.
+	*/
 	enum Type {
-		ERROR,
-		WARNING,
-		NOTE
+		VERIFY_ERROR,
+		VERIFY_WARNING,
+		VERIFY_NOTE
 	};
 
 	VerificationNote (Type type, std::string note)
