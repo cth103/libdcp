@@ -321,10 +321,6 @@ DCP::write_pkl (string file, Standard standard, string pkl_uuid, XMLMetadata met
 		pkl = doc.create_root_node("PackingList", pkl_smpte_ns);
 	}
 
-	if (signer) {
-		pkl->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
-	}
-
 	pkl->add_child("Id")->add_child_text ("urn:uuid:" + pkl_uuid);
 	pkl->add_child("AnnotationText")->add_child_text (metadata.annotation_text);
 	pkl->add_child("IssueDate")->add_child_text (metadata.issue_date);

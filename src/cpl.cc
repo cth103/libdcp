@@ -140,10 +140,6 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 		root = doc.create_root_node ("CompositionPlaylist", cpl_smpte_ns);
 	}
 
-	if (signer) {
-		root->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
-	}
-
 	root->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	root->add_child("AnnotationText")->add_child_text (_metadata.annotation_text);
 	root->add_child("IssueDate")->add_child_text (_metadata.issue_date);

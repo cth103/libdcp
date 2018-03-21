@@ -563,6 +563,7 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
 	/* <Signer> */
 
 	xmlpp::Element* signer = parent->add_child("Signer");
+	signer->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	xmlpp::Element* data = signer->add_child("X509Data", "dsig");
 	xmlpp::Element* serial_element = data->add_child("X509IssuerSerial", "dsig");
 	serial_element->add_child("X509IssuerName", "dsig")->add_child_text (leaf().issuer());
@@ -571,7 +572,9 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
 
 	/* <Signature> */
 
-	xmlpp::Element* signature = parent->add_child("Signature", "dsig");
+	xmlpp::Element* signature = parent->add_child("Signature");
+	signature->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
+	signature->set_namespace ("dsig");
 
 	xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
 	signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
