@@ -32,7 +32,7 @@ check (unsigned int* seed, shared_ptr<dcp::PictureAssetWriter> writer, string ha
 	shared_ptr<dcp::OpenJPEGImage> xyz (new dcp::OpenJPEGImage (dcp::Size (1998, 1080)));
 	for (int c = 0; c < 3; ++c) {
 		for (int p = 0; p < (1998 * 1080); ++p) {
-			xyz->data(c)[p] = rand_r (seed);
+			xyz->data(c)[p] = rand_r (seed) & 0xfff;
 		}
 	}
 
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE (frame_info_hash_test)
 	unsigned int seed = 42;
 
 	/* Check a few random frames */
-	check (&seed, writer, "7ddfb4f5cec76f95138c4377a829dd6f");
-	check (&seed, writer, "d6a91028bab60995b4fc49fbccd5c2ba");
-	check (&seed, writer, "9d8653644f49f692e4bbac34106a4897");
+	check (&seed, writer, "c039c5a0e5d20bc646f7e9c10e2d5874");
+	check (&seed, writer, "d9e694cfe84544c54a869c128ba39343");
+	check (&seed, writer, "fafb05a0039cb9fc604279c90a13cb87");
 }
