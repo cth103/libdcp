@@ -91,16 +91,12 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 					stage ("Checking picture asset hash", reel->main_picture()->asset()->file());
 					if (verify_asset (reel->main_picture(), progress)) {
 						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "Picture asset hash is incorrect"));
-					} else {
-						cout << "pic ok.\n";
 					}
 				}
 				if (reel->main_sound()) {
 					stage ("Checking sound asset hash", reel->main_sound()->asset()->file());
 					if (verify_asset (reel->main_sound(), progress)) {
 						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "Sound asset hash is incorrect"));
-					} else {
-						cout << "sounds ok.\n";
 					}
 				}
 			}
