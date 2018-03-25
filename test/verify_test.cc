@@ -33,6 +33,7 @@
 
 #include "verify.h"
 #include <boost/test/unit_test.hpp>
+#include <cstdio>
 
 using std::list;
 using std::pair;
