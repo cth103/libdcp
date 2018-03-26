@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	boost::filesystem::remove_all ("build/test/verify_test1");
 	boost::filesystem::create_directory ("build/test/verify_test1");
 	for (boost::filesystem::directory_iterator i("test/ref/DCP/dcp_test1"); i != boost::filesystem::directory_iterator(); ++i) {
-		boost::filesystem::copy (i->path(), "build/test/verify_test1" / i->path().filename());
+		boost::filesystem::copy_file (i->path(), "build/test/verify_test1" / i->path().filename());
 	}
 
 	vector<boost::filesystem::path> directories;
