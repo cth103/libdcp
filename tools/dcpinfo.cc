@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -43,6 +43,7 @@
 #include "subtitle_string.h"
 #include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
+#include "mono_picture_asset.h"
 #include "cpl.h"
 #include "common.h"
 #include <getopt.h>
@@ -50,11 +51,15 @@
 #include <boost/foreach.hpp>
 #include <iostream>
 #include <cstdlib>
+#include <cinttypes>
 
 using std::string;
 using std::cerr;
 using std::cout;
 using std::list;
+using std::pair;
+using std::min;
+using std::max;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
@@ -64,28 +69,55 @@ help (string n)
 {
 	cerr << "Syntax: " << n << " [options] [<DCP>] [<CPL>]\n"
 	     << "  -s, --subtitles              list all subtitles\n"
+	     << "  -p, --picture                analyse picture\n"
 	     << "  -k, --keep-going             carry on in the event of errors, if possible\n"
 	     << "      --ignore-missing-assets  ignore missing asset files\n";
 }
 
-static void
-main_picture (shared_ptr<Reel> reel)
+static double
+mbits_per_second (int size, Fraction frame_rate)
 {
-	if (reel->main_picture()) {
-		cout << "      Picture ID:  " << reel->main_picture()->id()
-		     << " entry " << reel->main_picture()->entry_point()
-		     << " duration " << reel->main_picture()->duration()
-		     << " intrinsic " << reel->main_picture()->intrinsic_duration();
-		if (reel->main_picture()->asset_ref().resolved()) {
-			if (reel->main_picture()->asset()) {
-				cout << "\n      Picture:     "
-				     << reel->main_picture()->asset()->size().width
-				     << "x"
-				     << reel->main_picture()->asset()->size().height << "\n";
-			}
-		} else {
-			cout << " - not present in this DCP.\n";
+	return size * 8 * frame_rate.as_float() / 1e6;
+}
+
+static void
+main_picture (shared_ptr<Reel> reel, bool analyse)
+{
+	if (!reel->main_picture()) {
+		return;
+	}
+
+	cout << "      Picture ID:  " << reel->main_picture()->id()
+	     << " entry " << reel->main_picture()->entry_point()
+	     << " duration " << reel->main_picture()->duration()
+	     << " intrinsic " << reel->main_picture()->intrinsic_duration();
+
+	if (reel->main_picture()->asset_ref().resolved()) {
+		if (reel->main_picture()->asset()) {
+			cout << "\n      Picture:     "
+			     << reel->main_picture()->asset()->size().width
+			     << "x"
+			     << reel->main_picture()->asset()->size().height << "\n";
 		}
+
+		shared_ptr<MonoPictureAsset> ma = dynamic_pointer_cast<MonoPictureAsset>(reel->main_picture()->asset());
+		if (analyse && ma) {
+			shared_ptr<MonoPictureAssetReader> reader = ma->start_read ();
+			pair<int, int> j2k_size_range (INT_MAX, 0);
+			for (int64_t i = 0; i < ma->intrinsic_duration(); ++i) {
+				shared_ptr<const MonoPictureFrame> frame = reader->get_frame (i);
+				printf("Frame %" PRId64 " J2K size %7d\n", i, frame->j2k_size());
+				j2k_size_range.first = min(j2k_size_range.first, frame->j2k_size());
+				j2k_size_range.second = max(j2k_size_range.second, frame->j2k_size());
+			}
+			printf(
+				"J2K size ranges from %d (%.1f Mbit/s) to %d (%.1f Mbit/s)\n",
+				j2k_size_range.first, mbits_per_second(j2k_size_range.first, ma->frame_rate()),
+				j2k_size_range.second, mbits_per_second(j2k_size_range.second, ma->frame_rate())
+				);
+		}
+	} else {
+		cout << " - not present in this DCP.\n";
 	}
 }
 
@@ -145,6 +177,7 @@ main (int argc, char* argv[])
 {
 	bool subtitles = false;
 	bool keep_going = false;
+	bool picture = false;
 	bool ignore_missing_assets = false;
 
 	int option_index = 0;
@@ -154,11 +187,12 @@ main (int argc, char* argv[])
 			{ "help", no_argument, 0, 'h' },
 			{ "subtitles", no_argument, 0, 's' },
 			{ "keep-going", no_argument, 0, 'k' },
+			{ "picture", no_argument, 0, 'p' },
 			{ "ignore-missing-assets", no_argument, 0, 'A' },
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "vhskA", long_options, &option_index);
+		int c = getopt_long (argc, argv, "vhskpA", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -176,6 +210,9 @@ main (int argc, char* argv[])
 			break;
 		case 'k':
 			keep_going = true;
+			break;
+		case 'p':
+			picture = true;
 			break;
 		case 'A':
 			ignore_missing_assets = true;
@@ -230,7 +267,7 @@ main (int argc, char* argv[])
 			cout << "    Reel " << R << "\n";
 
 			try {
-				main_picture (j);
+				main_picture (j, picture);
 			} catch (UnresolvedRefError& e) {
 				if (keep_going) {
 					if (!ignore_missing_assets) {
