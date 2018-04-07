@@ -292,6 +292,10 @@ DCP::encrypted () const
 	return false;
 }
 
+/** Add a KDM to decrypt this DCP.  This method must be called after DCP::read()
+ *  or the KDM you specify will be ignored.
+ *  @param kdm KDM to use.
+ */
 void
 DCP::add (DecryptedKDM const & kdm)
 {
