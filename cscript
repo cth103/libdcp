@@ -32,6 +32,7 @@
 #
 
 import os
+import shutil
 
 def dependencies(target, options):
     if (target.platform == 'windows' and target.version == 'xp') or (options is not None and 'jpeg' in options and options['jpeg'] == 'oj1'):
@@ -69,6 +70,25 @@ def build(target, options):
 
     target.command(cmd)
     target.command('./waf build install')
+
+def package(target, version):
+    if target.platform == 'windows':
+        d = 'build/libdcp-%s' % version
+        os.mkdir(d)
+        for f in ['asdcp-cth.dll', 'cxml-0.dll', 'dcp-1.0.dll', 'kumu-cth.dll', 'libopenjp2.dll', 'dcpinfo.exe']:
+            shutil.copyfile('%s/bin/%s' % (target.directory, f), os.path.join(d, f))
+
+        if target.bits == 32:
+            shutil.copyfile('%s/bin/libgcc_s_sjlj-1.dll' % target.windows_prefix, os.path.join(d, 'libgcc_s_sjlj-1.dll'))
+        else:
+            shutil.copyfile('%s/bin/libgcc_s_seh-1.dll' % target.windows_prefix, os.path.join(d, 'libgcc_s_seh-1.dll'))
+
+        for f in ['libstdc++-6.dll', 'libboost_filesystem-mt.dll', 'libboost_system-mt.dll', 'libeay32.dll', 'libglibmm-2.4-1.dll', 'libxml++-2.6-2.dll',
+                  'libxml2-2.dll', 'libxmlsec1-openssl.dll', 'libxmlsec1.dll', 'zlib1.dll', 'libglib-2.0-0.dll', 'libgmodule-2.0-0.dll', 'libgobject-2.0-0.dll',
+                  'libsigc-2.0-0.dll', 'libiconv-2.dll', 'liblzma-5.dll', 'libxslt-1.dll', 'libintl-8.dll', 'libpcre-1.dll', 'libffi-6.dll']:
+            shutil.copyfile('%s/bin/%s' % (target.windows_prefix, f), os.path.join(d, f))
+        target.command('cd build && zip -9 -r libdcp-%s.zip libdcp-%s' % (version, version))
+        return os.path.abspath('build/libdcp-%s.zip' % version)
 
 def make_doxygen(target):
     os.makedirs('build/doc')
