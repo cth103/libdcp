@@ -44,6 +44,8 @@
 #include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "mono_picture_asset.h"
+#include "encrypted_kdm.h"
+#include "decrypted_kdm.h"
 #include "cpl.h"
 #include "common.h"
 #include <getopt.h>
@@ -60,8 +62,10 @@ using std::list;
 using std::pair;
 using std::min;
 using std::max;
+using std::exception;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
+using boost::optional;
 using namespace dcp;
 
 static void
@@ -70,7 +74,10 @@ help (string n)
 	cerr << "Syntax: " << n << " [options] [<DCP>] [<CPL>]\n"
 	     << "  -s, --subtitles              list all subtitles\n"
 	     << "  -p, --picture                analyse picture\n"
+	     << "  -d, --decompress             decompress picture when analysing (this is slow)\n"
 	     << "  -k, --keep-going             carry on in the event of errors, if possible\n"
+	     << "      --kdm                    KDM to decrypt DCP\n"
+	     << "      --private-key            private key for the certificate that the KDM is targeted at\n"
 	     << "      --ignore-missing-assets  ignore missing asset files\n";
 }
 
@@ -81,7 +88,7 @@ mbits_per_second (int size, Fraction frame_rate)
 }
 
 static void
-main_picture (shared_ptr<Reel> reel, bool analyse)
+main_picture (shared_ptr<Reel> reel, bool analyse, bool decompress)
 {
 	if (!reel->main_picture()) {
 		return;
@@ -106,9 +113,21 @@ main_picture (shared_ptr<Reel> reel, bool analyse)
 			pair<int, int> j2k_size_range (INT_MAX, 0);
 			for (int64_t i = 0; i < ma->intrinsic_duration(); ++i) {
 				shared_ptr<const MonoPictureFrame> frame = reader->get_frame (i);
-				printf("Frame %" PRId64 " J2K size %7d\n", i, frame->j2k_size());
+				printf("Frame %" PRId64 " J2K size %7d", i, frame->j2k_size());
 				j2k_size_range.first = min(j2k_size_range.first, frame->j2k_size());
 				j2k_size_range.second = max(j2k_size_range.second, frame->j2k_size());
+
+				if (decompress) {
+					try {
+						frame->xyz_image();
+						printf(" decrypted OK");
+					} catch (exception& e) {
+						printf(" decryption FAILED");
+					}
+				}
+
+				printf("\n");
+
 			}
 			printf(
 				"J2K size ranges from %d (%.1f Mbit/s) to %d (%.1f Mbit/s)\n",
@@ -178,7 +197,10 @@ main (int argc, char* argv[])
 	bool subtitles = false;
 	bool keep_going = false;
 	bool picture = false;
+	bool decompress = false;
 	bool ignore_missing_assets = false;
+	optional<boost::filesystem::path> kdm;
+	optional<boost::filesystem::path> private_key;
 
 	int option_index = 0;
 	while (true) {
@@ -188,11 +210,14 @@ main (int argc, char* argv[])
 			{ "subtitles", no_argument, 0, 's' },
 			{ "keep-going", no_argument, 0, 'k' },
 			{ "picture", no_argument, 0, 'p' },
+			{ "decompress", no_argument, 0, 'd' },
 			{ "ignore-missing-assets", no_argument, 0, 'A' },
+			{ "kdm", required_argument, 0, 'B' },
+			{ "private-key", required_argument, 0, 'C' },
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "vhskpA", long_options, &option_index);
+		int c = getopt_long (argc, argv, "vhskpdAB:C:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -214,8 +239,17 @@ main (int argc, char* argv[])
 		case 'p':
 			picture = true;
 			break;
+		case 'd':
+			decompress = true;
+			break;
 		case 'A':
 			ignore_missing_assets = true;
+			break;
+		case 'B':
+			kdm = optarg;
+			break;
+		case 'C':
+			private_key = optarg;
 			break;
 		}
 	}
@@ -237,11 +271,17 @@ main (int argc, char* argv[])
 		try {
 			dcp = new DCP (argv[optind]);
 			dcp->read (keep_going, &errors);
+			if (kdm && private_key) {
+				dcp->add(DecryptedKDM(EncryptedKDM(file_to_string(*kdm)), file_to_string(*private_key)));
+			}
 		} catch (FileError& e) {
 			cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << "\n";
 			exit (EXIT_FAILURE);
 		} catch (DCPReadError& e) {
 			cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << "\n";
+			exit (EXIT_FAILURE);
+		} catch (KDMDecryptionError& e) {
+			cerr << e.what() << "\n";
 			exit (EXIT_FAILURE);
 		}
 
@@ -267,7 +307,7 @@ main (int argc, char* argv[])
 			cout << "    Reel " << R << "\n";
 
 			try {
-				main_picture (j, picture);
+				main_picture (j, picture, decompress);
 			} catch (UnresolvedRefError& e) {
 				if (keep_going) {
 					if (!ignore_missing_assets) {
