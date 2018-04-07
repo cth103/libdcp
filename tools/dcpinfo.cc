@@ -53,7 +53,7 @@
 #include <boost/foreach.hpp>
 #include <iostream>
 #include <cstdlib>
-#include <cinttypes>
+#include <inttypes.h>
 
 using std::string;
 using std::cerr;
