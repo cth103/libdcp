@@ -87,8 +87,9 @@ def package(target, version):
                   'libxml2-2.dll', 'libxmlsec1-openssl.dll', 'libxmlsec1.dll', 'zlib1.dll', 'libglib-2.0-0.dll', 'libgmodule-2.0-0.dll', 'libgobject-2.0-0.dll',
                   'libsigc-2.0-0.dll', 'libiconv-2.dll', 'liblzma-5.dll', 'libxslt-1.dll', 'libintl-8.dll', 'libpcre-1.dll', 'libffi-6.dll']:
             shutil.copyfile('%s/bin/%s' % (target.windows_prefix, f), os.path.join(d, f))
-        target.command('cd build && zip -9 -r libdcp-%s.zip libdcp-%s' % (version, version))
-        return os.path.abspath('build/libdcp-%s.zip' % version)
+        zip = 'libdcp-windows-%d.%s.zip' % (target.bits, version)
+        target.command('cd build && zip -9 -r %s libdcp-%s' % (zip, version))
+        return os.path.abspath('build/%s' % zip)
 
 def make_doxygen(target):
     os.makedirs('build/doc')
