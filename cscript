@@ -87,7 +87,7 @@ def package(target, version):
                   'libxml2-2.dll', 'libxmlsec1-openssl.dll', 'libxmlsec1.dll', 'zlib1.dll', 'libglib-2.0-0.dll', 'libgmodule-2.0-0.dll', 'libgobject-2.0-0.dll',
                   'libsigc-2.0-0.dll', 'libiconv-2.dll', 'liblzma-5.dll', 'libxslt-1.dll', 'libintl-8.dll', 'libpcre-1.dll', 'libffi-6.dll']:
             shutil.copyfile('%s/bin/%s' % (target.windows_prefix, f), os.path.join(d, f))
-        zip = 'libdcp-windows-%d.%s.zip' % (target.bits, version)
+        zip = 'libdcp-%s-windows-%d.zip' % (version, target.bits)
         target.command('cd build && zip -9 -r %s libdcp-%s' % (zip, version))
         return os.path.abspath('build/%s' % zip)
 
