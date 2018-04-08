@@ -34,6 +34,7 @@
 import subprocess
 import os
 import sys
+import shlex
 import distutils.spawn
 from waflib import Logs, Context
 
