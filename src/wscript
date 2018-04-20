@@ -71,6 +71,7 @@ def build(bld):
              openjpeg_image.cc
              picture_asset.cc
              picture_asset_writer.cc
+             pkl.cc
              raw_convert.cc
              reel.cc
              reel_asset.cc

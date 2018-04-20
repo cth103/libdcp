@@ -56,6 +56,7 @@
 #include "dcp_assert.h"
 #include "reel_asset.h"
 #include "font_asset.h"
+#include "pkl.h"
 #include <asdcp/AS_DCP.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
@@ -74,13 +75,15 @@ using std::cerr;
 using std::exception;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
+using boost::optional;
 using boost::algorithm::starts_with;
 using namespace dcp;
 
 static string const assetmap_interop_ns = "http://www.digicine.com/PROTO-ASDCP-AM-20040311#";
 static string const assetmap_smpte_ns   = "http://www.smpte-ra.org/schemas/429-9/2007/AM";
-static string const pkl_interop_ns      = "http://www.digicine.com/PROTO-ASDCP-PKL-20040311#";
-static string const pkl_smpte_ns        = "http://www.smpte-ra.org/schemas/429-8/2007/PKL";
+/* XXX: these can be removed when PKL is all in pkl.cc */
+static string const pkl_interop_ns = "http://www.digicine.com/PROTO-ASDCP-PKL-20040311#";
+static string const pkl_smpte_ns   = "http://www.smpte-ra.org/schemas/429-8/2007/PKL";
 static string const volindex_interop_ns = "http://www.digicine.com/PROTO-ASDCP-VL-20040311#";
 static string const volindex_smpte_ns   = "http://www.smpte-ra.org/schemas/429-9/2007/AM";
 
@@ -134,6 +137,7 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 
 	list<shared_ptr<cxml::Node> > asset_nodes = asset_map.node_child("AssetList")->node_children ("Asset");
 	map<string, boost::filesystem::path> paths;
+	optional<boost::filesystem::path> pkl_path;
 	BOOST_FOREACH (shared_ptr<cxml::Node> i, asset_nodes) {
 		if (i->node_child("ChunkList")->node_children("Chunk").size() != 1) {
 			boost::throw_exception (XMLError ("unsupported asset chunk count"));
@@ -143,7 +147,17 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 			p = p.substr (7);
 		}
 		paths.insert (make_pair (remove_urn_uuid (i->string_child ("Id")), p));
+		optional<string> pkl_bool = i->optional_string_child("PackingList");
+		if (pkl_bool && *pkl_bool == "true") {
+			pkl_path = p;
+		}
 	}
+
+	if (!pkl_path) {
+		boost::throw_exception (XMLError ("No packing list found in asset map"));
+	}
+
+	_pkl.reset (new PKL (_directory / *pkl_path));
 
 	/* Read all the assets from the asset map */
 	/* XXX: I think we should be looking at the PKL here to decide type, not
@@ -310,40 +324,6 @@ DCP::add (DecryptedKDM const & kdm)
 	}
 }
 
-/** @return full pathname of PKL file that was written */
-boost::filesystem::path
-DCP::write_pkl (string file, Standard standard, string pkl_uuid, XMLMetadata metadata, shared_ptr<const CertificateChain> signer) const
-{
-	boost::filesystem::path p = _directory;
-	p /= file;
-
-	xmlpp::Document doc;
-	xmlpp::Element* pkl;
-	if (standard == INTEROP) {
-		pkl = doc.create_root_node("PackingList", pkl_interop_ns);
-	} else {
-		pkl = doc.create_root_node("PackingList", pkl_smpte_ns);
-	}
-
-	pkl->add_child("Id")->add_child_text ("urn:uuid:" + pkl_uuid);
-	pkl->add_child("AnnotationText")->add_child_text (metadata.annotation_text);
-	pkl->add_child("IssueDate")->add_child_text (metadata.issue_date);
-	pkl->add_child("Issuer")->add_child_text (metadata.issuer);
-	pkl->add_child("Creator")->add_child_text (metadata.creator);
-
-	xmlpp::Element* asset_list = pkl->add_child("AssetList");
-	BOOST_FOREACH (shared_ptr<Asset> i, assets ()) {
-		i->write_to_pkl (asset_list, _directory, standard);
-	}
-
-	if (signer) {
-		signer->sign (pkl, standard);
-	}
-
-	doc.write_to_file (p.string (), "UTF-8");
-	return p.string ();
-}
-
 /** Write the VOLINDEX file.
  *  @param standard DCP standard to use (INTEROP or SMPTE)
  */
@@ -469,13 +449,20 @@ DCP::write_xml (
 		i->write_xml (_directory / (name_format.get(values, "_" + i->id() + ".xml")), standard, signer);
 	}
 
-	string const pkl_uuid = make_uuid ();
+	if (!_pkl) {
+		_pkl.reset (new PKL (standard, metadata.annotation_text, metadata.issue_date, metadata.issuer, metadata.creator));
+		BOOST_FOREACH (shared_ptr<Asset> i, assets ()) {
+			i->add_to_pkl (_pkl, _directory);
+		}
+	}
+
 	NameFormat::Map values;
 	values['t'] = "pkl";
-	boost::filesystem::path const pkl_path = write_pkl (name_format.get(values, "_" + pkl_uuid + ".xml"), standard, pkl_uuid, metadata, signer);
+	boost::filesystem::path pkl_path = _directory / name_format.get(values, "_" + _pkl->id() + ".xml");
+	_pkl->write (pkl_path, signer);
 
 	write_volindex (standard);
-	write_assetmap (standard, pkl_uuid, pkl_path, metadata);
+	write_assetmap (standard, _pkl->id(), pkl_path, metadata);
 }
 
 list<shared_ptr<CPL> >

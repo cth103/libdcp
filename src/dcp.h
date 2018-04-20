@@ -57,6 +57,7 @@ namespace xmlpp {
 namespace dcp
 {
 
+class PKL;
 class Content;
 class Reel;
 class CPL;
@@ -128,20 +129,16 @@ public:
 		return _directory;
 	}
 
+	/** @return PKL if this DCP was read from an existing one, or if write_xml() has been called on it.
+	 *  If neither is true, this method returns 0.
+	 */
+	boost::shared_ptr<PKL> pkl () const {
+		return _pkl;
+	}
+
 	static std::vector<boost::filesystem::path> directories_from_files (std::vector<boost::filesystem::path> files);
 
 private:
-
-	/** Write the PKL file.
-	 *  @param pkl_uuid UUID to use.
-	 */
-	boost::filesystem::path write_pkl (
-		std::string file,
-		Standard standard,
-		std::string pkl_uuid,
-		XMLMetadata metadata,
-		boost::shared_ptr<const CertificateChain> signer
-		) const;
 
 	void write_volindex (Standard standard) const;
 
@@ -155,6 +152,7 @@ private:
 	boost::filesystem::path _directory;
 	/** the CPLs that make up this DCP */
 	std::list<boost::shared_ptr<CPL> > _cpls;
+	boost::shared_ptr<PKL> _pkl;
 
 	/** Standard of DCP that was read in */
 	boost::optional<Standard> _standard;

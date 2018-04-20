@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -41,11 +41,13 @@
 #include "exceptions.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
+#include "pkl.h"
 #include <libxml++/libxml++.h>
 #include <boost/algorithm/string.hpp>
 
 using std::string;
 using boost::function;
+using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
@@ -76,7 +78,7 @@ Asset::Asset (string id, boost::filesystem::path file)
 }
 
 void
-Asset::write_to_pkl (xmlpp::Node* node, boost::filesystem::path root, Standard standard) const
+Asset::add_to_pkl (shared_ptr<PKL> pkl, boost::filesystem::path root) const
 {
 	DCP_ASSERT (_file);
 
@@ -92,12 +94,7 @@ Asset::write_to_pkl (xmlpp::Node* node, boost::filesystem::path root, Standard s
 		return;
 	}
 
-	xmlpp::Node* asset = node->add_child ("Asset");
-	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
-	asset->add_child("AnnotationText")->add_child_text (_id);
-	asset->add_child("Hash")->add_child_text (hash ());
-	asset->add_child("Size")->add_child_text (raw_convert<string> (boost::filesystem::file_size (_file.get())));
-	asset->add_child("Type")->add_child_text (pkl_type (standard));
+	pkl->add_asset (_id, _id, hash(), boost::filesystem::file_size (_file.get()), pkl_type (pkl->standard()));
 }
 
 void

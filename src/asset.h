@@ -40,6 +40,7 @@
 
 #include "object.h"
 #include "types.h"
+#include "pkl.h"
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
@@ -77,11 +78,7 @@ public:
 	 */
 	void write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const;
 
-	/** Write details of the asset to a PKL AssetList node.
-	 *  @param node Parent node.
-	 *  @param standard Standard to use.
-	 */
-	void write_to_pkl (xmlpp::Node* node, boost::filesystem::path root, Standard standard) const;
+	void add_to_pkl (boost::shared_ptr<PKL> pkl, boost::filesystem::path root) const;
 
 	/** @return the most recent disk file used to read or write this asset, if there is one */
 	boost::optional<boost::filesystem::path> file () const {
