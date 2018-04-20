@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	notes = dcp::verify (directories, &stage, &progress);
 	BOOST_CHECK_EQUAL (notes.size(), 2);
 	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (notes.front().note(), "Picture asset hash is incorrect");
+	BOOST_CHECK_EQUAL (notes.front().note(), "Picture asset hash is incorrect.");
 	BOOST_CHECK_EQUAL (notes.back().type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (notes.back().note(), "Sound asset hash is incorrect");
+	BOOST_CHECK_EQUAL (notes.back().note(), "Sound asset hash is incorrect.");
 }
