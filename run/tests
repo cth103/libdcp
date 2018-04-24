@@ -27,7 +27,9 @@ elif [ "$1" == "--callgrind" ]; then
     shift
     valgrind --tool="callgrind" $work/tests $private $*
 else
-    $work/tests $* -- $private
+    # This gives a warning from newer boost versions but doing it
+    # as $work/tests $* -- $private fails on older boost versions.
+    $work/tests $private $*
     if [ "$?" != "0" ]; then
 	echo "FAIL: unit tests"
         exit 1
