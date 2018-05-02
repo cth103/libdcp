@@ -102,7 +102,9 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	b = dcp::Time (9, 12, 41, 17, 99);
 	BOOST_CHECK_EQUAL (b.rebase(250), dcp::Time(9, 12, 41, 43, 250));
 	a = dcp::Time (0, 2, 57, 999, 1000);
-	BOOST_CHECK_EQUAL (a.rebase(250), dcp::Time(0, 2, 57, 250, 250));
+	BOOST_CHECK_EQUAL (a.rebase(250), dcp::Time(0, 2, 58, 0, 250));
+	a = dcp::Time (0, 47, 9, 998, 1000);
+	BOOST_CHECK_EQUAL (a.rebase(250), dcp::Time(0, 47, 10, 0, 250));
 
 	/* Check some allowed constructions from string */
 
