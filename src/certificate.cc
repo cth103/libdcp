@@ -365,7 +365,6 @@ Certificate::thumbprint () const
 	uint8_t* p = buffer;
 
 #if OPENSSL_VERSION_NUMBER > 0x10100000L
-#warning "Using new OpenSSL API"
 	i2d_re_X509_tbs(_certificate, &p);
 #else
 	i2d_X509_CINF (_certificate->cert_info, &p);
