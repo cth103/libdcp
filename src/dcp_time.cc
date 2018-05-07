@@ -39,6 +39,7 @@
 #include "dcp_time.h"
 #include "exceptions.h"
 #include "compose.hpp"
+#include "dcp_assert.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/optional.hpp>
 #include <iostream>
@@ -356,5 +357,22 @@ Time::as_seconds () const
 Time
 Time::rebase (int tcr_) const
 {
-	return Time (h, m, s, lrintf (float (e) * tcr_ / tcr), tcr_);
+	long int e_ = lrintf (float (e) * tcr_ / tcr);
+	int s_ = s;
+	if (e_ >= tcr_) {
+		e_ -= tcr_;
+		++s_;
+	}
+	int m_ = m;
+	if (s_ >= 60) {
+		s_ -= 60;
+		++m_;
+	}
+	int h_ = h;
+	if (m_ >= 60) {
+		m_ -= 60;
+		++h_;
+	}
+
+	return Time (h_, m_, s_, e_, tcr_);
 }
