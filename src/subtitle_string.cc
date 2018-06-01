@@ -62,25 +62,18 @@ SubtitleString::SubtitleString (
 	Time fade_up_time,
 	Time fade_down_time
 	)
-	: _font (font)
+	: Subtitle (in, out, h_position, h_align, v_position, v_align, fade_up_time, fade_down_time)
+	, _font (font)
 	, _italic (italic)
 	, _bold (bold)
 	, _underline (underline)
 	, _colour (colour)
 	, _size (size)
 	, _aspect_adjust (aspect_adjust)
-	, _in (in)
-	, _out (out)
-	, _h_position (h_position)
-	, _h_align (h_align)
-	, _v_position (v_position)
-	, _v_align (v_align)
 	, _direction (direction)
 	, _text (text)
 	, _effect (effect)
 	, _effect_colour (effect_colour)
-	, _fade_up_time (fade_up_time)
-	, _fade_down_time (fade_down_time)
 {
 
 }

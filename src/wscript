@@ -93,6 +93,7 @@ def build(bld):
              stereo_picture_asset.cc
              stereo_picture_asset_writer.cc
              stereo_picture_frame.cc
+             subtitle.cc
              subtitle_asset.cc
              subtitle_asset_internal.cc
              subtitle_string.cc
@@ -171,6 +172,7 @@ def build(bld):
               stereo_picture_asset_reader.h
               stereo_picture_asset_writer.h
               stereo_picture_frame.h
+              subtitle.h
               subtitle_asset.h
               subtitle_string.h
               transfer_function.h
