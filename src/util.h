@@ -54,7 +54,6 @@ namespace xmlpp {
 
 namespace dcp {
 
-class ARGBImage;
 class CertificateChain;
 class GammaLUT;
 class OpenJPEGImage;

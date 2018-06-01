@@ -38,7 +38,6 @@
 
 namespace dcp {
 
-class ARGBImage;
 class OpenJPEGImage;
 class Image;
 class ColourConversion;
