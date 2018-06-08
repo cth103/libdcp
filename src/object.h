@@ -64,10 +64,10 @@ public:
 	}
 
 protected:
-	friend class ::write_interop_subtitle_test;
-	friend class ::write_interop_subtitle_test2;
-	friend class ::write_smpte_subtitle_test;
-	friend class ::write_smpte_subtitle_test2;
+	friend struct ::write_interop_subtitle_test;
+	friend struct ::write_interop_subtitle_test2;
+	friend struct ::write_smpte_subtitle_test;
+	friend struct ::write_smpte_subtitle_test2;
 
 	/** ID */
 	std::string _id;
