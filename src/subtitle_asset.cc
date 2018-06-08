@@ -346,7 +346,7 @@ SubtitleAsset::maybe_add_subtitle (string text, list<ParseState> const & parse_s
 			ps.direction.get_value_or (DIRECTION_LTR),
 			text,
 			ps.effect.get_value_or (NONE),
-			ps.effect_colour.get_value_or (dcp::Colour (255, 255, 255)),
+			ps.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
 			ps.fade_up_time.get_value_or(Time()),
 			ps.fade_down_time.get_value_or(Time())
 			)
