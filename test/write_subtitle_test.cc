@@ -146,50 +146,54 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 	c.set_movie_title ("Test");
 
 	c.add (
-		dcp::SubtitleString (
-			string ("Frutiger"),
-			false,
-			false,
-			false,
-			dcp::Colour (255, 255, 255),
-			48,
-			1.0,
-			dcp::Time (0, 4,  9, 22, 24),
-			dcp::Time (0, 4, 11, 22, 24),
-			0,
-			dcp::HALIGN_CENTER,
-			0.8,
-			dcp::VALIGN_TOP,
-			dcp::DIRECTION_LTR,
-			"Hello world",
-			dcp::NONE,
-			dcp::Colour (0, 0, 0),
-			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString (
+				string ("Frutiger"),
+				false,
+				false,
+				false,
+				dcp::Colour (255, 255, 255),
+				48,
+				1.0,
+				dcp::Time (0, 4,  9, 22, 24),
+				dcp::Time (0, 4, 11, 22, 24),
+				0,
+				dcp::HALIGN_CENTER,
+				0.8,
+				dcp::VALIGN_TOP,
+				dcp::DIRECTION_LTR,
+				"Hello world",
+				dcp::NONE,
+				dcp::Colour (0, 0, 0),
+				dcp::Time (0, 0, 0, 0, 24),
+				dcp::Time (0, 0, 0, 0, 24)
+				)
 			)
 		);
 
 	c.add (
-		dcp::SubtitleString (
-			boost::optional<string> (),
-			true,
-			true,
-			true,
-			dcp::Colour (128, 0, 64),
-			91,
-			1.0,
-			dcp::Time (5, 41,  0, 21, 24),
-			dcp::Time (6, 12, 15, 21, 24),
-			0,
-			dcp::HALIGN_CENTER,
-			0.4,
-			dcp::VALIGN_BOTTOM,
-			dcp::DIRECTION_LTR,
-			"What's going on",
-			dcp::BORDER,
-			dcp::Colour (1, 2, 3),
-			dcp::Time (1, 2, 3, 4, 24),
-			dcp::Time (5, 6, 7, 8, 24)
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString (
+				boost::optional<string> (),
+				true,
+				true,
+				true,
+				dcp::Colour (128, 0, 64),
+				91,
+				1.0,
+				dcp::Time (5, 41,  0, 21, 24),
+				dcp::Time (6, 12, 15, 21, 24),
+				0,
+				dcp::HALIGN_CENTER,
+				0.4,
+				dcp::VALIGN_BOTTOM,
+				dcp::DIRECTION_LTR,
+				"What's going on",
+				dcp::BORDER,
+				dcp::Colour (1, 2, 3),
+				dcp::Time (1, 2, 3, 4, 24),
+				dcp::Time (5, 6, 7, 8, 24)
+				)
 			)
 		);
 
@@ -228,50 +232,54 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 	c.set_movie_title ("Test");
 
 	c.add (
-		dcp::SubtitleString (
-			string ("Frutiger"),
-			false,
-			false,
-			false,
-			dcp::Colour (255, 255, 255),
-			48,
-			1.0,
-			dcp::Time (0, 4,  9, 22, 24),
-			dcp::Time (0, 4, 11, 22, 24),
-			-0.2,
-			dcp::HALIGN_CENTER,
-			0.8,
-			dcp::VALIGN_TOP,
-			dcp::DIRECTION_LTR,
-			"Hello world",
-			dcp::NONE,
-			dcp::Colour (0, 0, 0),
-			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString (
+				string ("Frutiger"),
+				false,
+				false,
+				false,
+				dcp::Colour (255, 255, 255),
+				48,
+				1.0,
+				dcp::Time (0, 4,  9, 22, 24),
+				dcp::Time (0, 4, 11, 22, 24),
+				-0.2,
+				dcp::HALIGN_CENTER,
+				0.8,
+				dcp::VALIGN_TOP,
+				dcp::DIRECTION_LTR,
+				"Hello world",
+				dcp::NONE,
+				dcp::Colour (0, 0, 0),
+				dcp::Time (0, 0, 0, 0, 24),
+				dcp::Time (0, 0, 0, 0, 24)
+				)
 			)
 		);
 
 	c.add (
-		dcp::SubtitleString (
-			boost::optional<string> (),
-			true,
-			true,
-			true,
-			dcp::Colour (128, 0, 64),
-			91,
-			1.0,
-			dcp::Time (5, 41,  0, 21, 24),
-			dcp::Time (6, 12, 15, 21, 24),
-			-0.2,
-			dcp::HALIGN_CENTER,
-			0.4,
-			dcp::VALIGN_BOTTOM,
-			dcp::DIRECTION_LTR,
-			"What's going on",
-			dcp::BORDER,
-			dcp::Colour (1, 2, 3),
-			dcp::Time (1, 2, 3, 4, 24),
-			dcp::Time (5, 6, 7, 8, 24)
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString (
+				boost::optional<string> (),
+				true,
+				true,
+				true,
+				dcp::Colour (128, 0, 64),
+				91,
+				1.0,
+				dcp::Time (5, 41,  0, 21, 24),
+				dcp::Time (6, 12, 15, 21, 24),
+				-0.2,
+				dcp::HALIGN_CENTER,
+				0.4,
+				dcp::VALIGN_BOTTOM,
+				dcp::DIRECTION_LTR,
+				"What's going on",
+				dcp::BORDER,
+				dcp::Colour (1, 2, 3),
+				dcp::Time (1, 2, 3, 4, 24),
+				dcp::Time (5, 6, 7, 8, 24)
+				)
 			)
 		);
 
@@ -309,50 +317,54 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
 	c.add (
-		dcp::SubtitleString (
-			string ("Frutiger"),
-			false,
-			false,
-			false,
-			dcp::Colour (255, 255, 255),
-			48,
-			1.0,
-			dcp::Time (0, 4,  9, 22, 24),
-			dcp::Time (0, 4, 11, 22, 24),
-			0,
-			dcp::HALIGN_CENTER,
-			0.8,
-			dcp::VALIGN_TOP,
-			dcp::DIRECTION_LTR,
-			"Hello world",
-			dcp::NONE,
-			dcp::Colour (0, 0, 0),
-			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString (
+				string ("Frutiger"),
+				false,
+				false,
+				false,
+				dcp::Colour (255, 255, 255),
+				48,
+				1.0,
+				dcp::Time (0, 4,  9, 22, 24),
+				dcp::Time (0, 4, 11, 22, 24),
+				0,
+				dcp::HALIGN_CENTER,
+				0.8,
+				dcp::VALIGN_TOP,
+				dcp::DIRECTION_LTR,
+				"Hello world",
+				dcp::NONE,
+				dcp::Colour (0, 0, 0),
+				dcp::Time (0, 0, 0, 0, 24),
+				dcp::Time (0, 0, 0, 0, 24)
+				)
 			)
 		);
 
 	c.add (
-		dcp::SubtitleString (
-			boost::optional<string> (),
-			true,
-			true,
-			true,
-			dcp::Colour (128, 0, 64),
-			91,
-			1.0,
-			dcp::Time (5, 41,  0, 21, 24),
-			dcp::Time (6, 12, 15, 21, 24),
-			0,
-			dcp::HALIGN_CENTER,
-			0.4,
-			dcp::VALIGN_BOTTOM,
-			dcp::DIRECTION_RTL,
-			"What's going on",
-			dcp::BORDER,
-			dcp::Colour (1, 2, 3),
-			dcp::Time (1, 2, 3, 4, 24),
-			dcp::Time (5, 6, 7, 8, 24)
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString (
+				boost::optional<string> (),
+				true,
+				true,
+				true,
+				dcp::Colour (128, 0, 64),
+				91,
+				1.0,
+				dcp::Time (5, 41,  0, 21, 24),
+				dcp::Time (6, 12, 15, 21, 24),
+				0,
+				dcp::HALIGN_CENTER,
+				0.4,
+				dcp::VALIGN_BOTTOM,
+				dcp::DIRECTION_RTL,
+				"What's going on",
+				dcp::BORDER,
+				dcp::Colour (1, 2, 3),
+				dcp::Time (1, 2, 3, 4, 24),
+				dcp::Time (5, 6, 7, 8, 24)
+				)
 			)
 		);
 
@@ -398,146 +410,158 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
 	c.add (
-		dcp::SubtitleString (
-			string ("Arial"),
-			false,
-			false,
-			false,
-			dcp::Colour (255, 255, 255),
-			48,
-			1.0,
-			dcp::Time (0, 0, 1, 0, 24),
-			dcp::Time (0, 0, 9, 0, 24),
-			0,
-			dcp::HALIGN_CENTER,
-			0.8,
-			dcp::VALIGN_TOP,
-			dcp::DIRECTION_LTR,
-			"Testing is ",
-			dcp::NONE,
-			dcp::Colour (0, 0, 0),
-			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString (
+				string ("Arial"),
+				false,
+				false,
+				false,
+				dcp::Colour (255, 255, 255),
+				48,
+				1.0,
+				dcp::Time (0, 0, 1, 0, 24),
+				dcp::Time (0, 0, 9, 0, 24),
+				0,
+				dcp::HALIGN_CENTER,
+				0.8,
+				dcp::VALIGN_TOP,
+				dcp::DIRECTION_LTR,
+				"Testing is ",
+				dcp::NONE,
+				dcp::Colour (0, 0, 0),
+				dcp::Time (0, 0, 0, 0, 24),
+				dcp::Time (0, 0, 0, 0, 24)
+				)
 			)
 		);
 
 	c.add (
-		dcp::SubtitleString (
-			string ("Arial"),
-			true,
-			false,
-			false,
-			dcp::Colour (255, 255, 255),
-			48,
-			1.0,
-			dcp::Time (0, 0, 1, 0, 24),
-			dcp::Time (0, 0, 9, 0, 24),
-			0,
-			dcp::HALIGN_CENTER,
-			0.8,
-			dcp::VALIGN_TOP,
-			dcp::DIRECTION_LTR,
-			"really",
-			dcp::NONE,
-			dcp::Colour (0, 0, 0),
-			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString (
+				string ("Arial"),
+				true,
+				false,
+				false,
+				dcp::Colour (255, 255, 255),
+				48,
+				1.0,
+				dcp::Time (0, 0, 1, 0, 24),
+				dcp::Time (0, 0, 9, 0, 24),
+				0,
+				dcp::HALIGN_CENTER,
+				0.8,
+				dcp::VALIGN_TOP,
+				dcp::DIRECTION_LTR,
+				"really",
+				dcp::NONE,
+				dcp::Colour (0, 0, 0),
+				dcp::Time (0, 0, 0, 0, 24),
+				dcp::Time (0, 0, 0, 0, 24)
+				)
 			)
 		);
 
 	c.add (
-		dcp::SubtitleString (
-			string ("Arial"),
-			false,
-			false,
-			false,
-			dcp::Colour (255, 255, 255),
-			48,
-			1.0,
-			dcp::Time (0, 0, 1, 0, 24),
-			dcp::Time (0, 0, 9, 0, 24),
-			0,
-			dcp::HALIGN_CENTER,
-			0.8,
-			dcp::VALIGN_TOP,
-			dcp::DIRECTION_LTR,
-			" fun",
-			dcp::NONE,
-			dcp::Colour (0, 0, 0),
-			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString (
+				string ("Arial"),
+				false,
+				false,
+				false,
+				dcp::Colour (255, 255, 255),
+				48,
+				1.0,
+				dcp::Time (0, 0, 1, 0, 24),
+				dcp::Time (0, 0, 9, 0, 24),
+				0,
+				dcp::HALIGN_CENTER,
+				0.8,
+				dcp::VALIGN_TOP,
+				dcp::DIRECTION_LTR,
+				" fun",
+				dcp::NONE,
+				dcp::Colour (0, 0, 0),
+				dcp::Time (0, 0, 0, 0, 24),
+				dcp::Time (0, 0, 0, 0, 24)
+				)
 			)
 		);
 
 	c.add (
-		dcp::SubtitleString (
-			string ("Arial"),
-			false,
-			false,
-			false,
-			dcp::Colour (255, 255, 255),
-			48,
-			1.0,
-			dcp::Time (0, 0, 1, 0, 24),
-			dcp::Time (0, 0, 9, 0, 24),
-			0,
-			dcp::HALIGN_CENTER,
-			0.9,
-			dcp::VALIGN_TOP,
-			dcp::DIRECTION_LTR,
-			"This is the ",
-			dcp::NONE,
-			dcp::Colour (0, 0, 0),
-			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString (
+				string ("Arial"),
+				false,
+				false,
+				false,
+				dcp::Colour (255, 255, 255),
+				48,
+				1.0,
+				dcp::Time (0, 0, 1, 0, 24),
+				dcp::Time (0, 0, 9, 0, 24),
+				0,
+				dcp::HALIGN_CENTER,
+				0.9,
+				dcp::VALIGN_TOP,
+				dcp::DIRECTION_LTR,
+				"This is the ",
+				dcp::NONE,
+				dcp::Colour (0, 0, 0),
+				dcp::Time (0, 0, 0, 0, 24),
+				dcp::Time (0, 0, 0, 0, 24)
+				)
 			)
 		);
 
 	c.add (
-		dcp::SubtitleString (
-			string ("Arial"),
-			true,
-			false,
-			false,
-			dcp::Colour (255, 255, 255),
-			48,
-			1.0,
-			dcp::Time (0, 0, 1, 0, 24),
-			dcp::Time (0, 0, 9, 0, 24),
-			0,
-			dcp::HALIGN_CENTER,
-			0.9,
-			dcp::VALIGN_TOP,
-			dcp::DIRECTION_LTR,
-			"second",
-			dcp::NONE,
-			dcp::Colour (0, 0, 0),
-			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString (
+				string ("Arial"),
+				true,
+				false,
+				false,
+				dcp::Colour (255, 255, 255),
+				48,
+				1.0,
+				dcp::Time (0, 0, 1, 0, 24),
+				dcp::Time (0, 0, 9, 0, 24),
+				0,
+				dcp::HALIGN_CENTER,
+				0.9,
+				dcp::VALIGN_TOP,
+				dcp::DIRECTION_LTR,
+				"second",
+				dcp::NONE,
+				dcp::Colour (0, 0, 0),
+				dcp::Time (0, 0, 0, 0, 24),
+				dcp::Time (0, 0, 0, 0, 24)
+				)
 			)
 		);
 
 	c.add (
-		dcp::SubtitleString (
-			string ("Arial"),
-			false,
-			false,
-			false,
-			dcp::Colour (255, 255, 255),
-			48,
-			1.0,
-			dcp::Time (0, 0, 1, 0, 24),
-			dcp::Time (0, 0, 9, 0, 24),
-			0,
-			dcp::HALIGN_CENTER,
-			0.9,
-			dcp::VALIGN_TOP,
-			dcp::DIRECTION_LTR,
-			" line",
-			dcp::NONE,
-			dcp::Colour (0, 0, 0),
-			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString (
+				string ("Arial"),
+				false,
+				false,
+				false,
+				dcp::Colour (255, 255, 255),
+				48,
+				1.0,
+				dcp::Time (0, 0, 1, 0, 24),
+				dcp::Time (0, 0, 9, 0, 24),
+				0,
+				dcp::HALIGN_CENTER,
+				0.9,
+				dcp::VALIGN_TOP,
+				dcp::DIRECTION_LTR,
+				" line",
+				dcp::NONE,
+				dcp::Colour (0, 0, 0),
+				dcp::Time (0, 0, 0, 0, 24),
+				dcp::Time (0, 0, 0, 0, 24)
+				)
 			)
 		);
 

@@ -72,6 +72,8 @@ private:
 	int _size;
 };
 
+bool operator==(Data const & a, Data const & b);
+
 }
 
 #endif

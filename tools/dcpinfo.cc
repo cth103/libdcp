@@ -41,6 +41,7 @@
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
 #include "subtitle_string.h"
+#include "subtitle_image.h"
 #include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "mono_picture_asset.h"
@@ -171,7 +172,7 @@ main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
 	cout << "      Subtitle ID: " << reel->main_subtitle()->id();
 
 	if (reel->main_subtitle()->asset_ref().resolved()) {
-		list<SubtitleString> subs = reel->main_subtitle()->asset()->subtitles ();
+		list<shared_ptr<Subtitle> > subs = reel->main_subtitle()->asset()->subtitles ();
 		cout << "\n      Subtitle:    " << subs.size() << " subtitles";
 		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (reel->main_subtitle()->asset());
 		if (iop) {
@@ -182,8 +183,15 @@ main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
 			cout << " in " << smpte->language().get() << "\n";
 		}
 		if (list_subtitles) {
-			BOOST_FOREACH (SubtitleString const& k, subs) {
-				cout << k << "\n";
+			BOOST_FOREACH (shared_ptr<Subtitle> k, subs) {
+				shared_ptr<SubtitleString> ks = dynamic_pointer_cast<SubtitleString> (k);
+				if (ks) {
+					cout << *ks << "\n";
+				}
+				shared_ptr<SubtitleImage> is = dynamic_pointer_cast<SubtitleImage> (k);
+				if (is) {
+					cout << *is << "\n";
+				}
 			}
 		}
 	} else {

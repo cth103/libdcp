@@ -33,6 +33,7 @@
 
 #include "subtitle_image.h"
 
+using std::ostream;
 using namespace dcp;
 
 SubtitleImage::SubtitleImage (
@@ -50,4 +51,37 @@ SubtitleImage::SubtitleImage (
 	, _png_image (png_image)
 {
 
+}
+
+bool
+dcp::operator== (SubtitleImage const & a, SubtitleImage const & b)
+{
+	return (
+		a.png_image() == b.png_image(),
+		a.in() == b.in() &&
+		a.out() == b.out() &&
+		a.h_position() == b.h_position() &&
+		a.h_align() == b.h_align() &&
+		a.v_position() == b.v_position() &&
+		a.v_align() == b.v_align() &&
+		a.fade_up_time() == b.fade_up_time() &&
+		a.fade_down_time() == b.fade_down_time()
+		);
+}
+
+bool
+dcp::operator!= (SubtitleImage const & a, SubtitleImage const & b)
+{
+	return !(a == b);
+}
+
+ostream&
+dcp::operator<< (ostream& s, SubtitleImage const & sub)
+{
+	s << "\n[IMAGE] from " << sub.in() << " to " << sub.out() << ";\n"
+	  << "fade up " << sub.fade_up_time() << ", fade down " << sub.fade_down_time() << ";\n"
+	  << "v pos " << sub.v_position() << ", valign " << ((int) sub.v_align())
+	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align()) << "\n";
+
+	return s;
 }

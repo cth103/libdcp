@@ -65,9 +65,17 @@ public:
 		Time fade_down_time
 		);
 
+	Data png_image () const {
+		return _png_image;
+	}
+
 private:
 	Data _png_image;
 };
+
+bool operator== (SubtitleImage const & a, SubtitleImage const & b);
+bool operator!= (SubtitleImage const & a, SubtitleImage const & b);
+std::ostream& operator<< (std::ostream& s, SubtitleImage const & sub);
 
 }
 

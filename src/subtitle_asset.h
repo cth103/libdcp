@@ -69,7 +69,7 @@ namespace order {
 /** @class SubtitleAsset
  *  @brief A parent for classes representing a file containing subtitles.
  *
- *  This class holds a list of SubtitleString objects which it can extract
+ *  This class holds a list of Subtitle objects which it can extract
  *  from the appropriate part of either an Interop or SMPTE XML file.
  *  Its subclasses InteropSubtitleAsset and SMPTESubtitleAsset handle the
  *  differences between the two types.
@@ -86,12 +86,12 @@ public:
 		NoteHandler note
 		) const;
 
-	std::list<SubtitleString> subtitles_during (Time from, Time to, bool starting) const;
-	std::list<SubtitleString> const & subtitles () const {
+	std::list<boost::shared_ptr<Subtitle> > subtitles_during (Time from, Time to, bool starting) const;
+	std::list<boost::shared_ptr<Subtitle> > const & subtitles () const {
 		return _subtitles;
 	}
 
-	virtual void add (SubtitleString);
+	virtual void add (boost::shared_ptr<Subtitle>);
 	virtual void add_font (std::string id, boost::filesystem::path file) = 0;
 	std::map<std::string, Data> fonts_with_load_ids () const;
 
@@ -136,7 +136,7 @@ protected:
 	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Standard standard) const;
 
 	/** All our subtitles, in no particular order */
-	std::list<SubtitleString> _subtitles;
+	std::list<boost::shared_ptr<Subtitle> > _subtitles;
 
 	class Font
 	{

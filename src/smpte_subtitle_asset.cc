@@ -443,7 +443,7 @@ SMPTESubtitleAsset::add_font (string load_id, boost::filesystem::path file)
 }
 
 void
-SMPTESubtitleAsset::add (dcp::SubtitleString s)
+SMPTESubtitleAsset::add (shared_ptr<Subtitle> s)
 {
 	SubtitleAsset::add (s);
 	_intrinsic_duration = latest_subtitle_out().as_editable_units (_edit_rate.numerator / _edit_rate.denominator);

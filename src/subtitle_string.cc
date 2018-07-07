@@ -115,6 +115,12 @@ dcp::operator== (SubtitleString const & a, SubtitleString const & b)
 		);
 }
 
+bool
+dcp::operator!= (SubtitleString const & a, SubtitleString const & b)
+{
+	return !(a == b);
+}
+
 ostream&
 dcp::operator<< (ostream& s, SubtitleString const & sub)
 {

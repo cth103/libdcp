@@ -36,29 +36,34 @@
 
 using std::string;
 using boost::optional;
+using boost::shared_ptr;
 
 BOOST_AUTO_TEST_CASE (smpte_subtitle_id_test)
 {
 	dcp::SMPTESubtitleAsset subs;
-	subs.add(dcp::SubtitleString(
-			 optional<string>(),
-			 false, false, false,
-			 dcp::Colour(),
-			 64,
-			 1,
-			 dcp::Time(0, 1, 2, 3, 24),
-			 dcp::Time(0, 2, 2, 3, 24),
-			 0.5,
-			 dcp::HALIGN_CENTER,
-			 0.5,
-			 dcp::VALIGN_CENTER,
-			 dcp::DIRECTION_LTR,
-			 "Hello",
-			 dcp::NONE,
-			 dcp::Colour(),
-			 dcp::Time(0, 0, 0, 0, 24),
-			 dcp::Time(0, 0, 0, 0, 24)
-			 ));
+	subs.add(
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleString(
+				optional<string>(),
+				false, false, false,
+				dcp::Colour(),
+				64,
+				1,
+				dcp::Time(0, 1, 2, 3, 24),
+				dcp::Time(0, 2, 2, 3, 24),
+				0.5,
+				dcp::HALIGN_CENTER,
+				0.5,
+				dcp::VALIGN_CENTER,
+				dcp::DIRECTION_LTR,
+				"Hello",
+				dcp::NONE,
+				dcp::Colour(),
+				dcp::Time(0, 0, 0, 0, 24),
+				dcp::Time(0, 0, 0, 0, 24)
+				)
+			)
+		);
 	subs.write("build/test/smpte_subtitle_id_test.mxf");
 
 	dcp::SMPTESubtitleAsset check("build/test/smpte_subtitle_id_test.mxf");

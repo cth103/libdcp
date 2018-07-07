@@ -73,7 +73,7 @@ public:
 
 	std::string xml_as_string () const;
 	void write (boost::filesystem::path path) const;
-	void add (SubtitleString);
+	void add (boost::shared_ptr<Subtitle>);
 	void add_font (std::string id, boost::filesystem::path file);
 	void set_key (Key key);
 

@@ -31,6 +31,9 @@
     files in the program, then also delete it here.
 */
 
+#ifndef LIBDCP_SUBTITLE_H
+#define LIBDCP_SUBTITLE_H
+
 /** @file  src/subtitle.h
  *  @brief Subtitle class.
  */
@@ -53,6 +56,8 @@ public:
 		Time fade_down_time
 		);
 
+	virtual ~Subtitle () {}
+
 	Time in () const {
 		return _in;
 	}
@@ -60,7 +65,6 @@ public:
 	Time out () const {
 		return _out;
 	}
-
 
 	float h_position () const {
 		return _h_position;
@@ -136,3 +140,5 @@ protected:
 };
 
 }
+
+#endif

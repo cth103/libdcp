@@ -66,7 +66,7 @@ class Font
 public:
 	Font () {}
 
-	Font (SubtitleString const & s, Standard standard);
+	Font (boost::shared_ptr<SubtitleString> s, Standard standard);
 
 	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const;
 

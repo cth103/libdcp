@@ -37,6 +37,7 @@
 
 using std::string;
 using std::map;
+using boost::shared_ptr;
 using namespace dcp;
 
 string
@@ -45,28 +46,28 @@ order::Context::xmlns () const
 	return standard == SMPTE ? "dcst" : "";
 }
 
-order::Font::Font (SubtitleString const & s, Standard standard)
+order::Font::Font (shared_ptr<SubtitleString> s, Standard standard)
 {
-	if (s.font()) {
+	if (s->font()) {
 		if (standard == SMPTE) {
-			_values["ID"] = s.font().get ();
+			_values["ID"] = s->font().get ();
 		} else {
-			_values["Id"] = s.font().get ();
+			_values["Id"] = s->font().get ();
 		}
 	}
-	_values["Italic"] = s.italic() ? "yes" : "no";
-	_values["Color"] = s.colour().to_argb_string();
-	_values["Size"] = raw_convert<string> (s.size());
-	_values["AspectAdjust"] = raw_convert<string>(s.aspect_adjust(), 1, true);
-	_values["Effect"] = effect_to_string (s.effect());
-	_values["EffectColor"] = s.effect_colour().to_argb_string();
+	_values["Italic"] = s->italic() ? "yes" : "no";
+	_values["Color"] = s->colour().to_argb_string();
+	_values["Size"] = raw_convert<string> (s->size());
+	_values["AspectAdjust"] = raw_convert<string>(s->aspect_adjust(), 1, true);
+	_values["Effect"] = effect_to_string (s->effect());
+	_values["EffectColor"] = s->effect_colour().to_argb_string();
 	_values["Script"] = "normal";
 	if (standard == SMPTE) {
-		_values["Underline"] = s.underline() ? "yes" : "no";
+		_values["Underline"] = s->underline() ? "yes" : "no";
 	} else {
-		_values["Underlined"] = s.underline() ? "yes" : "no";
+		_values["Underlined"] = s->underline() ? "yes" : "no";
 	}
-	_values["Weight"] = s.bold() ? "bold" : "normal";
+	_values["Weight"] = s->bold() ? "bold" : "normal";
 }
 
 xmlpp::Element*

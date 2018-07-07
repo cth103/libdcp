@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -38,6 +38,7 @@
 #include "util.h"
 #include "xml.h"
 #include "subtitle_string.h"
+#include "subtitle_image.h"
 #include "dcp_assert.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_util.h>
@@ -329,36 +330,38 @@ SubtitleAsset::maybe_add_subtitle (string text, list<ParseState> const & parse_s
 	}
 
 	_subtitles.push_back (
-		SubtitleString (
-			ps.font_id,
-			ps.italic.get_value_or (false),
-			ps.bold.get_value_or (false),
-			ps.underline.get_value_or (false),
-			ps.colour.get_value_or (dcp::Colour (255, 255, 255)),
-			ps.size.get_value_or (42),
-			ps.aspect_adjust.get_value_or (1.0),
-			ps.in.get(),
-			ps.out.get(),
-			ps.h_position.get_value_or(0),
-			ps.h_align.get_value_or(HALIGN_CENTER),
-			ps.v_position.get_value_or(0),
-			ps.v_align.get_value_or(VALIGN_CENTER),
-			ps.direction.get_value_or (DIRECTION_LTR),
-			text,
-			ps.effect.get_value_or (NONE),
-			ps.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
-			ps.fade_up_time.get_value_or(Time()),
-			ps.fade_down_time.get_value_or(Time())
+		shared_ptr<Subtitle> (
+			new SubtitleString (
+				ps.font_id,
+				ps.italic.get_value_or (false),
+				ps.bold.get_value_or (false),
+				ps.underline.get_value_or (false),
+				ps.colour.get_value_or (dcp::Colour (255, 255, 255)),
+				ps.size.get_value_or (42),
+				ps.aspect_adjust.get_value_or (1.0),
+				ps.in.get(),
+				ps.out.get(),
+				ps.h_position.get_value_or(0),
+				ps.h_align.get_value_or(HALIGN_CENTER),
+				ps.v_position.get_value_or(0),
+				ps.v_align.get_value_or(VALIGN_CENTER),
+				ps.direction.get_value_or (DIRECTION_LTR),
+				text,
+				ps.effect.get_value_or (NONE),
+				ps.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
+				ps.fade_up_time.get_value_or(Time()),
+				ps.fade_down_time.get_value_or(Time())
+				)
 			)
 		);
 }
 
-list<SubtitleString>
+list<shared_ptr<Subtitle> >
 SubtitleAsset::subtitles_during (Time from, Time to, bool starting) const
 {
-	list<SubtitleString> s;
-	BOOST_FOREACH (SubtitleString const & i, _subtitles) {
-		if ((starting && from <= i.in() && i.in() < to) || (!starting && i.out() >= from && i.in() <= to)) {
+	list<shared_ptr<Subtitle> > s;
+	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
+		if ((starting && from <= i->in() && i->in() < to) || (!starting && i->out() >= from && i->in() <= to)) {
 			s.push_back (i);
 		}
 	}
@@ -367,7 +370,7 @@ SubtitleAsset::subtitles_during (Time from, Time to, bool starting) const
 }
 
 void
-SubtitleAsset::add (SubtitleString s)
+SubtitleAsset::add (shared_ptr<Subtitle> s)
 {
 	_subtitles.push_back (s);
 }
@@ -376,9 +379,9 @@ Time
 SubtitleAsset::latest_subtitle_out () const
 {
 	Time t;
-	BOOST_FOREACH (SubtitleString const & i, _subtitles) {
-		if (i.out() > t) {
-			t = i.out ();
+	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
+		if (i->out() > t) {
+			t = i->out ();
 		}
 	}
 
@@ -397,9 +400,34 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 		return false;
 	}
 
-	if (_subtitles != other->_subtitles) {
+	if (_subtitles.size() != other->_subtitles.size()) {
 		note (DCP_ERROR, "subtitles differ");
 		return false;
+	}
+
+	list<shared_ptr<Subtitle> >::const_iterator i = _subtitles.begin ();
+	list<shared_ptr<Subtitle> >::const_iterator j = other->_subtitles.begin ();
+
+	while (i != _subtitles.end()) {
+		shared_ptr<SubtitleString> string_i = dynamic_pointer_cast<SubtitleString> (*i);
+		shared_ptr<SubtitleString> string_j = dynamic_pointer_cast<SubtitleString> (*j);
+		shared_ptr<SubtitleImage> image_i = dynamic_pointer_cast<SubtitleImage> (*i);
+		shared_ptr<SubtitleImage> image_j = dynamic_pointer_cast<SubtitleImage> (*j);
+
+		if ((string_i && !string_j) || (image_i && !image_j)) {
+			note (DCP_ERROR, "subtitles differ");
+			return false;
+		}
+
+		if (string_i && *string_i != *string_j) {
+			note (DCP_ERROR, "subtitles differ");
+			return false;
+		}
+
+		if (image_i && *image_i != *image_j) {
+			note (DCP_ERROR, "subtitles differ");
+			return false;
+		}
 	}
 
 	return true;
@@ -407,11 +435,11 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 
 struct SubtitleSorter
 {
-	bool operator() (SubtitleString const & a, SubtitleString const & b) {
-		if (a.in() != b.in()) {
-			return a.in() < b.in();
+	bool operator() (shared_ptr<Subtitle> a, shared_ptr<Subtitle> b) {
+		if (a->in() != b->in()) {
+			return a->in() < b->in();
 		}
-		return a.v_position() < b.v_position();
+		return a->v_position() < b->v_position();
 	}
 };
 
@@ -481,7 +509,7 @@ SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
 void
 SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, Standard standard) const
 {
-	list<SubtitleString> sorted = _subtitles;
+	list<shared_ptr<Subtitle> > sorted = _subtitles;
 	sorted.sort (SubtitleSorter ());
 
 	/* Gather our subtitles into a hierarchy of Subtitle/Text/String objects, writing
@@ -502,43 +530,48 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 	float last_v_position;
 	Direction last_direction;
 
-	BOOST_FOREACH (SubtitleString const & i, sorted) {
+	BOOST_FOREACH (shared_ptr<Subtitle> i, sorted) {
 		if (!subtitle ||
-		    (last_in != i.in() ||
-		     last_out != i.out() ||
-		     last_fade_up_time != i.fade_up_time() ||
-		     last_fade_down_time != i.fade_down_time())
+		    (last_in != i->in() ||
+		     last_out != i->out() ||
+		     last_fade_up_time != i->fade_up_time() ||
+		     last_fade_down_time != i->fade_down_time())
 			) {
 
-			subtitle.reset (new order::Subtitle (root, i.in(), i.out(), i.fade_up_time(), i.fade_down_time()));
+			subtitle.reset (new order::Subtitle (root, i->in(), i->out(), i->fade_up_time(), i->fade_down_time()));
 			root->children.push_back (subtitle);
 
-			last_in = i.in ();
-			last_out = i.out ();
-			last_fade_up_time = i.fade_up_time ();
-			last_fade_down_time = i.fade_down_time ();
+			last_in = i->in ();
+			last_out = i->out ();
+			last_fade_up_time = i->fade_up_time ();
+			last_fade_down_time = i->fade_down_time ();
 			text.reset ();
 		}
 
-		if (!text ||
-		    last_h_align != i.h_align() ||
-		    fabs(last_h_position - i.h_position()) > ALIGN_EPSILON ||
-		    last_v_align != i.v_align() ||
-		    fabs(last_v_position - i.v_position()) > ALIGN_EPSILON ||
-		    last_direction != i.direction()
-			) {
+		shared_ptr<SubtitleString> is = dynamic_pointer_cast<SubtitleString>(i);
 
-			text.reset (new order::Text (subtitle, i.h_align(), i.h_position(), i.v_align(), i.v_position(), i.direction()));
-			subtitle->children.push_back (text);
+		if (is) {
+			if (!text ||
+			    last_h_align != is->h_align() ||
+			    fabs(last_h_position - is->h_position()) > ALIGN_EPSILON ||
+			    last_v_align != is->v_align() ||
+			    fabs(last_v_position - is->v_position()) > ALIGN_EPSILON ||
+			    last_direction != is->direction()
+				) {
+				text.reset (new order::Text (subtitle, is->h_align(), is->h_position(), is->v_align(), is->v_position(), is->direction()));
+				subtitle->children.push_back (text);
 
-			last_h_align = i.h_align ();
-			last_h_position = i.h_position ();
-			last_v_align = i.v_align ();
-			last_v_position = i.v_position ();
-			last_direction = i.direction ();
+				last_h_align = is->h_align ();
+				last_h_position = is->h_position ();
+				last_v_align = is->v_align ();
+				last_v_position = is->v_position ();
+				last_direction = is->direction ();
+			}
+
+			text->children.push_back (shared_ptr<order::String> (new order::String (text, order::Font (is, standard), is->text())));
 		}
 
-		text->children.push_back (shared_ptr<order::String> (new order::String (text, order::Font (i, standard), i.text())));
+		/* XXX: image */
 	}
 
 	/* Pull font changes as high up the hierarchy as we can */

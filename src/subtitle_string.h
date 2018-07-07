@@ -172,6 +172,7 @@ private:
 };
 
 bool operator== (SubtitleString const & a, SubtitleString const & b);
+bool operator!= (SubtitleString const & a, SubtitleString const & b);
 std::ostream& operator<< (std::ostream& s, SubtitleString const & sub);
 
 }
