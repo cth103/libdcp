@@ -549,7 +549,6 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 		}
 
 		shared_ptr<SubtitleString> is = dynamic_pointer_cast<SubtitleString>(i);
-
 		if (is) {
 			if (!text ||
 			    last_h_align != is->h_align() ||
@@ -571,7 +570,13 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 			text->children.push_back (shared_ptr<order::String> (new order::String (text, order::Font (is, standard), is->text())));
 		}
 
-		/* XXX: image */
+		shared_ptr<SubtitleImage> ii = dynamic_pointer_cast<SubtitleImage>(i);
+		if (ii) {
+			text.reset ();
+			subtitle->children.push_back (
+				shared_ptr<order::Image> (new order::Image (subtitle, ii->png_image(), ii->h_align(), ii->h_position(), ii->v_align(), ii->v_position()))
+				);
+		}
 	}
 
 	/* Pull font changes as high up the hierarchy as we can */
@@ -584,6 +589,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 	context.time_code_rate = time_code_rate;
 	context.standard = standard;
 	context.spot_number = 1;
+	context.image_number = 0;
 
 	root->write_xml (xml_root, context);
 }

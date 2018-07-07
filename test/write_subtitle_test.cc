@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -20,8 +20,10 @@
 #include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "subtitle_string.h"
+#include "subtitle_image.h"
 #include "subtitle_asset_internal.h"
 #include "test.h"
+#include "util.h"
 #include <boost/test/unit_test.hpp>
 
 using std::list;
@@ -305,6 +307,43 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 		c.xml_as_string (),
 		list<string> ()
 		);
+}
+
+/* Write some subtitle content as Interop XML using bitmaps and check that it is right */
+BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
+{
+	dcp::InteropSubtitleAsset c;
+	c.set_reel_number ("1");
+	c.set_language ("EN");
+	c.set_movie_title ("Test");
+
+	c.add (
+		shared_ptr<dcp::Subtitle> (
+			new dcp::SubtitleImage (
+				dcp::Data ("test/data/sub.png"),
+				dcp::Time (0, 4,  9, 22, 24),
+				dcp::Time (0, 4, 11, 22, 24),
+				0,
+				dcp::HALIGN_CENTER,
+				0.8,
+				dcp::VALIGN_TOP,
+				dcp::Time (0, 0, 0, 0, 24),
+				dcp::Time (0, 0, 0, 0, 24)
+				)
+			)
+		);
+
+	c._id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
+
+	boost::filesystem::create_directories ("build/test/write_interop_subtitle_test3");
+	c.write ("build/test/write_interop_subtitle_test3/subs.xml");
+
+	check_xml (
+		dcp::file_to_string("test/data/write_interop_subtitle_test3.xml"),
+		dcp::file_to_string("build/test/write_interop_subtitle_test3/subs.xml"),
+		list<string>()
+		);
+	check_file ("build/test/write_interop_subtitle_test3/sub_0.png", "test/data/sub.png");
 }
 
 /* Write some subtitle content as SMPTE XML and check that it is right */

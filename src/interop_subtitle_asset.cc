@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -33,11 +33,13 @@
 
 #include "interop_subtitle_asset.h"
 #include "interop_load_font_node.h"
+#include "subtitle_asset_internal.h"
 #include "xml.h"
 #include "raw_convert.h"
 #include "util.h"
 #include "font_asset.h"
 #include "dcp_assert.h"
+#include "subtitle_image.h"
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
 #include <cmath>
@@ -63,7 +65,7 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 	_reel_number = xml->string_child ("ReelNumber");
 	_language = xml->string_child ("Language");
 	_movie_title = xml->string_child ("MovieTitle");
-	_load_font_nodes = type_children<dcp::InteropLoadFontNode> (xml, "LoadFont");
+	_load_font_nodes = type_children<InteropLoadFontNode> (xml, "LoadFont");
 
 	/* Now we need to drop down to xmlpp */
 
@@ -174,6 +176,16 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 
 	_file = p;
 
+	/* Image subtitles */
+	int n = 0;
+	BOOST_FOREACH (shared_ptr<dcp::Subtitle> i, _subtitles) {
+		shared_ptr<dcp::SubtitleImage> im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
+		if (im) {
+			im->png_image().write (p.parent_path() / image_subtitle_file (n++));
+		}
+	}
+
+	/* Fonts */
 	BOOST_FOREACH (shared_ptr<InteropLoadFontNode> i, _load_font_nodes) {
 		boost::filesystem::path file = p.parent_path() / i->uri;
 		FILE* f = fopen_boost (file, "wb");

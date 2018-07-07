@@ -37,6 +37,7 @@
 #include "raw_convert.h"
 #include "types.h"
 #include "dcp_time.h"
+#include "data.h"
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
 
@@ -59,6 +60,7 @@ struct Context
 	int time_code_rate;
 	Standard standard;
 	int spot_number;
+	int image_number;
 };
 
 class Font
@@ -163,7 +165,32 @@ private:
 	Time _fade_down;
 };
 
+class Image : public Part
+{
+public:
+	Image (boost::shared_ptr<Part> parent, Data png_data, HAlign h_align, float h_position, VAlign v_align, float v_position)
+		: Part (parent)
+		, _png_data (png_data)
+		, _h_align (h_align)
+		, _h_position (h_position)
+		, _v_align (v_align)
+		, _v_position (v_position)
+	{}
+
+	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const;
+
+private:
+	Data _png_data;
+	HAlign _h_align;
+	float _h_position;
+	VAlign _v_align;
+	float _v_position;
+};
+
 }
+
+std::string image_subtitle_file (int n);
+
 }
 
 #endif

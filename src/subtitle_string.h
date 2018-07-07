@@ -137,7 +137,7 @@ public:
 		_text = t;
 	}
 
-	void set_colour (dcp::Colour c) {
+	void set_colour (Colour c) {
 		_colour = c;
 	}
 
@@ -145,7 +145,7 @@ public:
 		_effect = e;
 	}
 
-	void set_effect_colour (dcp::Colour c) {
+	void set_effect_colour (Colour c) {
 		_effect_colour = c;
 	}
 

@@ -33,6 +33,7 @@
 
 #include "subtitle_asset_internal.h"
 #include "subtitle_string.h"
+#include "compose.hpp"
 #include <cmath>
 
 using std::string;
@@ -145,38 +146,36 @@ order::Part::write_xml (xmlpp::Element* parent, order::Context& context) const
 	}
 }
 
-xmlpp::Element*
-order::Text::as_xml (xmlpp::Element* parent, Context& context) const
+static void
+position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, float h_position, VAlign v_align, float v_position)
 {
-	xmlpp::Element* e = parent->add_child ("Text", context.xmlns());
-
-	if (_h_align != HALIGN_CENTER) {
+	if (h_align != HALIGN_CENTER) {
 		if (context.standard == SMPTE) {
-			e->set_attribute ("Halign", halign_to_string (_h_align));
+			e->set_attribute ("Halign", halign_to_string (h_align));
 		} else {
-			e->set_attribute ("HAlign", halign_to_string (_h_align));
+			e->set_attribute ("HAlign", halign_to_string (h_align));
 		}
 	}
 
-	if (fabs(_h_position) > ALIGN_EPSILON) {
+	if (fabs(h_position) > ALIGN_EPSILON) {
 		if (context.standard == SMPTE) {
-			e->set_attribute ("Hposition", raw_convert<string> (_h_position * 100, 6));
+			e->set_attribute ("Hposition", raw_convert<string> (h_position * 100, 6));
 		} else {
-			e->set_attribute ("HPosition", raw_convert<string> (_h_position * 100, 6));
+			e->set_attribute ("HPosition", raw_convert<string> (h_position * 100, 6));
 		}
 	}
 
 	if (context.standard == SMPTE) {
-		e->set_attribute ("Valign", valign_to_string (_v_align));
+		e->set_attribute ("Valign", valign_to_string (v_align));
 	} else {
-		e->set_attribute ("VAlign", valign_to_string (_v_align));
+		e->set_attribute ("VAlign", valign_to_string (v_align));
 	}
 
-	if (fabs(_v_position) > ALIGN_EPSILON) {
+	if (fabs(v_position) > ALIGN_EPSILON) {
 		if (context.standard == SMPTE) {
-			e->set_attribute ("Vposition", raw_convert<string> (_v_position * 100, 6));
+			e->set_attribute ("Vposition", raw_convert<string> (v_position * 100, 6));
 		} else {
-			e->set_attribute ("VPosition", raw_convert<string> (_v_position * 100, 6));
+			e->set_attribute ("VPosition", raw_convert<string> (v_position * 100, 6));
 		}
 	} else {
 		if (context.standard == SMPTE) {
@@ -185,6 +184,14 @@ order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 			e->set_attribute ("VPosition", "0");
 		}
 	}
+}
+
+xmlpp::Element*
+order::Text::as_xml (xmlpp::Element* parent, Context& context) const
+{
+	xmlpp::Element* e = parent->add_child ("Text", context.xmlns());
+
+	position_align (e, context, _h_align, _h_position, _v_align, _v_position);
 
 	/* Interop only supports "horizontal" or "vertical" for direction, so only write this
 	   for SMPTE.
@@ -223,4 +230,21 @@ void
 order::Font::clear ()
 {
 	_values.clear ();
+}
+
+xmlpp::Element *
+order::Image::as_xml (xmlpp::Element* parent, Context& context) const
+{
+	xmlpp::Element* e = parent->add_child ("Image", context.xmlns());
+
+	position_align (e, context, _h_align, _h_position, _v_align, _v_position);
+	e->add_child_text (image_subtitle_file (context.image_number++));
+
+	return e;
+}
+
+string
+dcp::image_subtitle_file (int n)
+{
+	return String::compose ("sub_%1.png", n);
 }

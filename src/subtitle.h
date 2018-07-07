@@ -113,11 +113,11 @@ public:
 		_v_position = p;
 	}
 
-	void set_fade_up_time (dcp::Time t) {
+	void set_fade_up_time (Time t) {
 		_fade_up_time = t;
 	}
 
-	void set_fade_down_time (dcp::Time t) {
+	void set_fade_down_time (Time t) {
 		_fade_down_time = t;
 	}
 
