@@ -60,7 +60,6 @@ struct Context
 	int time_code_rate;
 	Standard standard;
 	int spot_number;
-	int image_number;
 };
 
 class Font
@@ -168,9 +167,10 @@ private:
 class Image : public Part
 {
 public:
-	Image (boost::shared_ptr<Part> parent, Data png_data, HAlign h_align, float h_position, VAlign v_align, float v_position)
+	Image (boost::shared_ptr<Part> parent, std::string id, Data png_data, HAlign h_align, float h_position, VAlign v_align, float v_position)
 		: Part (parent)
 		, _png_data (png_data)
+		, _id (id)
 		, _h_align (h_align)
 		, _h_position (h_position)
 		, _v_align (v_align)
@@ -181,6 +181,7 @@ public:
 
 private:
 	Data _png_data;
+	std::string _id; ///< the ID of this image (index for Interop, UUID for SMPTE)
 	HAlign _h_align;
 	float _h_position;
 	VAlign _v_align;
@@ -188,8 +189,6 @@ private:
 };
 
 }
-
-std::string image_subtitle_file (int n);
 
 }
 

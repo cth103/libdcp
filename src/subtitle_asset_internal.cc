@@ -238,13 +238,11 @@ order::Image::as_xml (xmlpp::Element* parent, Context& context) const
 	xmlpp::Element* e = parent->add_child ("Image", context.xmlns());
 
 	position_align (e, context, _h_align, _h_position, _v_align, _v_position);
-	e->add_child_text (image_subtitle_file (context.image_number++));
+	if (context.standard == SMPTE) {
+		e->add_child_text (_id);
+	} else {
+		e->add_child_text (_id + ".png");
+	}
 
 	return e;
-}
-
-string
-dcp::image_subtitle_file (int n)
-{
-	return String::compose ("sub_%1.png", n);
 }

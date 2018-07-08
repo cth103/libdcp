@@ -56,6 +56,7 @@ namespace dcp
 {
 
 class SubtitleString;
+class SubtitleImage;
 class FontNode;
 class TextNode;
 class SubtitleNode;
@@ -163,6 +164,10 @@ protected:
 
 	/** TTF font data that we need */
 	std::list<Font> _fonts;
+
+	/** Map of image subtitles to UUIDs */
+	typedef std::map<boost::shared_ptr<dcp::SubtitleImage>, std::string> ImageUUIDMap;
+	ImageUUIDMap _image_subtitle_uuid;
 
 private:
 	friend struct ::pull_fonts_test1;

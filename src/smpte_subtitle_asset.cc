@@ -44,7 +44,7 @@
 #include "util.h"
 #include "compose.hpp"
 #include "crypto_context.h"
-#include "crypto_context.h"
+#include "subtitle_image.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_util.h>
 #include <libxml++/libxml++.h>
@@ -304,6 +304,8 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	descriptor.EditRate = ASDCP::Rational (_edit_rate.numerator, _edit_rate.denominator);
 	descriptor.EncodingName = "UTF-8";
 
+	/* Font references */
+
 	BOOST_FOREACH (shared_ptr<dcp::SMPTELoadFontNode> i, _load_font_nodes) {
 		list<Font>::const_iterator j = _fonts.begin ();
 		while (j != _fonts.end() && j->load_id != i->id) {
@@ -319,6 +321,17 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 		}
 	}
 
+	/* Image subtitle references */
+
+	for (ImageUUIDMap::const_iterator i = _image_subtitle_uuid.begin(); i != _image_subtitle_uuid.end(); ++i) {
+		ASDCP::TimedText::TimedTextResourceDescriptor res;
+		unsigned int c;
+		Kumu::hex2bin (i->second.c_str(), res.ResourceID, Kumu::UUID_Length, &c);
+		DCP_ASSERT (c == Kumu::UUID_Length);
+		res.Type = ASDCP::TimedText::MT_PNG;
+		descriptor.ResourceList.push_back (res);
+	}
+
 	descriptor.NamespaceName = "dcst";
 	memcpy (descriptor.AssetID, writer_info.AssetUUID, ASDCP::UUIDlen);
 	descriptor.ContainerDuration = _intrinsic_duration;
@@ -329,11 +342,12 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 		boost::throw_exception (FileError ("could not open subtitle MXF for writing", p.string(), r));
 	}
 
-	/* XXX: no encryption */
 	r = writer.WriteTimedTextResource (xml_as_string (), enc.context(), enc.hmac());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not write XML to timed text resource", p.string(), r));
 	}
+
+	/* Font payload */
 
 	BOOST_FOREACH (shared_ptr<dcp::SMPTELoadFontNode> i, _load_font_nodes) {
 		list<Font>::const_iterator j = _fonts.begin ();
@@ -348,6 +362,18 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 			if (ASDCP_FAILURE (r)) {
 				boost::throw_exception (MXFFileError ("could not write font to timed text resource", p.string(), r));
 			}
+		}
+	}
+
+	/* Image subtitle payload */
+
+	for (ImageUUIDMap::const_iterator i = _image_subtitle_uuid.begin(); i != _image_subtitle_uuid.end(); ++i) {
+		ASDCP::TimedText::FrameBuffer buffer;
+		buffer.SetData (i->first->png_image().data().get(), i->first->png_image().size());
+		buffer.Size (i->first->png_image().size());
+		r = writer.WriteAncillaryResource (buffer, enc.context(), enc.hmac());
+		if (ASDCP_FAILURE(r)) {
+			boost::throw_exception (MXFFileError ("could not write PNG data to timed text resource", p.string(), r));
 		}
 	}
 

@@ -39,9 +39,11 @@
 #include "util.h"
 #include "font_asset.h"
 #include "dcp_assert.h"
+#include "compose.hpp"
 #include "subtitle_image.h"
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
+#include <boost/weak_ptr.hpp>
 #include <cmath>
 #include <cstdio>
 
@@ -177,11 +179,12 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 	_file = p;
 
 	/* Image subtitles */
-	int n = 0;
 	BOOST_FOREACH (shared_ptr<dcp::Subtitle> i, _subtitles) {
 		shared_ptr<dcp::SubtitleImage> im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
 		if (im) {
-			im->png_image().write (p.parent_path() / image_subtitle_file (n++));
+			ImageUUIDMap::const_iterator uuid = _image_subtitle_uuid.find(im);
+			DCP_ASSERT (uuid != _image_subtitle_uuid.end());
+			im->png_image().write (p.parent_path() / String::compose("%1.png", uuid->second));
 		}
 	}
 

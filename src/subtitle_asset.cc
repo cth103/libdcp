@@ -373,6 +373,11 @@ void
 SubtitleAsset::add (shared_ptr<Subtitle> s)
 {
 	_subtitles.push_back (s);
+
+	shared_ptr<SubtitleImage> si = dynamic_pointer_cast<SubtitleImage> (s);
+	if (si) {
+		_image_subtitle_uuid[si] = make_uuid ();
+	}
 }
 
 Time
@@ -573,8 +578,10 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 		shared_ptr<SubtitleImage> ii = dynamic_pointer_cast<SubtitleImage>(i);
 		if (ii) {
 			text.reset ();
+			ImageUUIDMap::const_iterator uuid = _image_subtitle_uuid.find(ii);
+			DCP_ASSERT (uuid != _image_subtitle_uuid.end());
 			subtitle->children.push_back (
-				shared_ptr<order::Image> (new order::Image (subtitle, ii->png_image(), ii->h_align(), ii->h_position(), ii->v_align(), ii->v_position()))
+				shared_ptr<order::Image> (new order::Image (subtitle, uuid->second, ii->png_image(), ii->h_align(), ii->h_position(), ii->v_align(), ii->v_position()))
 				);
 		}
 	}
@@ -589,7 +596,6 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 	context.time_code_rate = time_code_rate;
 	context.standard = standard;
 	context.spot_number = 1;
-	context.image_number = 0;
 
 	root->write_xml (xml_root, context);
 }
