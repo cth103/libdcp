@@ -80,7 +80,12 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 		}
 	}
 
-	/* XXX: now find SubtitleImages in _subtitles and load their PNG */
+	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
+		shared_ptr<SubtitleImage> si = dynamic_pointer_cast<SubtitleImage>(i);
+		if (si) {
+			si->set_png_image (Data (file.parent_path() / String::compose("%1.png", si->id())));
+		}
+	}
 }
 
 InteropSubtitleAsset::InteropSubtitleAsset ()

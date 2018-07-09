@@ -20,7 +20,9 @@
 #include "interop_subtitle_asset.h"
 #include "interop_load_font_node.h"
 #include "subtitle_string.h"
+#include "subtitle_image.h"
 #include <boost/test/unit_test.hpp>
+#include <iostream>
 
 using std::list;
 using std::string;
@@ -600,4 +602,9 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 BOOST_AUTO_TEST_CASE (read_interop_subtitle_test3)
 {
 	dcp::InteropSubtitleAsset subs ("test/data/subs3.xml");
+
+	BOOST_REQUIRE_EQUAL (subs.subtitles().size(), 1);
+	shared_ptr<dcp::SubtitleImage> si = dynamic_pointer_cast<dcp::SubtitleImage>(subs.subtitles().front());
+	BOOST_REQUIRE (si);
+	BOOST_CHECK (si->png_image() == dcp::Data("test/data/822bd341-c751-45b1-94d2-410e4ffcff1b.png"));
 }

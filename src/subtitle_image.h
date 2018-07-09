@@ -82,6 +82,10 @@ public:
 		return _png_image;
 	}
 
+	void set_png_image (Data d) {
+		_png_image = d;
+	}
+
 	std::string id () const {
 		return _id;
 	}

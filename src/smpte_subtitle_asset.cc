@@ -173,17 +173,19 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 		i != descriptor.ResourceList.end();
 		++i) {
 
-		if (i->Type == ASDCP::TimedText::MT_OPENTYPE) {
-			ASDCP::TimedText::FrameBuffer buffer;
-			buffer.Capacity (10 * 1024 * 1024);
-			reader->ReadAncillaryResource (i->ResourceID, buffer, dec->context(), dec->hmac());
+		ASDCP::TimedText::FrameBuffer buffer;
+		buffer.Capacity (10 * 1024 * 1024);
+		reader->ReadAncillaryResource (i->ResourceID, buffer, dec->context(), dec->hmac());
 
-			char id[64];
-			Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof (id));
+		char id[64];
+		Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof (id));
 
-			shared_array<uint8_t> data (new uint8_t[buffer.Size()]);
-			memcpy (data.get(), buffer.RoData(), buffer.Size());
+		shared_array<uint8_t> data (new uint8_t[buffer.Size()]);
+		memcpy (data.get(), buffer.RoData(), buffer.Size());
 
+		switch (i->Type) {
+		case ASDCP::TimedText::MT_OPENTYPE:
+		{
 			list<shared_ptr<SMPTELoadFontNode> >::const_iterator j = _load_font_nodes.begin ();
 			while (j != _load_font_nodes.end() && (*j)->urn != id) {
 				++j;
@@ -192,10 +194,24 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 			if (j != _load_font_nodes.end ()) {
 				_fonts.push_back (Font ((*j)->id, (*j)->urn, Data (data, buffer.Size ())));
 			}
+			break;
+		}
+		case ASDCP::TimedText::MT_PNG:
+		{
+			list<shared_ptr<Subtitle> >::const_iterator j = _subtitles.begin ();
+			while (j != _subtitles.end() && ((!dynamic_pointer_cast<SubtitleImage>(*j)) || dynamic_pointer_cast<SubtitleImage>(*j)->id() != id)) {
+				++j;
+			}
+
+			if (j != _subtitles.end()) {
+				dynamic_pointer_cast<SubtitleImage>(*j)->set_png_image (Data(data, buffer.Size()));
+			}
+			break;
+		}
+		default:
+			break;
 		}
 	}
-
-	/* XXX: load PNG and attach them to _subtitles */
 
 	/* Get intrinsic duration */
 	_intrinsic_duration = descriptor.ContainerDuration;
