@@ -606,5 +606,5 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test3)
 	BOOST_REQUIRE_EQUAL (subs.subtitles().size(), 1);
 	shared_ptr<dcp::SubtitleImage> si = dynamic_pointer_cast<dcp::SubtitleImage>(subs.subtitles().front());
 	BOOST_REQUIRE (si);
-	BOOST_CHECK (si->png_image() == dcp::Data("test/data/822bd341-c751-45b1-94d2-410e4ffcff1b.png"));
+	BOOST_CHECK (si->png_image() == dcp::Data("test/data/sub.png"));
 }

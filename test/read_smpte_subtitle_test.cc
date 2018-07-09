@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -21,6 +21,7 @@
 #include "test.h"
 #include "local_time.h"
 #include "smpte_load_font_node.h"
+#include "subtitle_image.h"
 #include <boost/test/unit_test.hpp>
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>
@@ -104,4 +105,15 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test2)
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), " line!");
 	BOOST_CHECK (!is->italic());
+}
+
+/** And another one featuring image subtitles */
+BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test3)
+{
+	dcp::SMPTESubtitleAsset subs ("test/data/subs.mxf");
+
+	BOOST_REQUIRE_EQUAL (subs.subtitles().size(), 1);
+	shared_ptr<dcp::SubtitleImage> si = dynamic_pointer_cast<dcp::SubtitleImage>(subs.subtitles().front());
+	BOOST_REQUIRE (si);
+	BOOST_CHECK (si->png_image() == dcp::Data("test/data/sub.png"));
 }
