@@ -111,5 +111,5 @@ Data::write_via_temp (boost::filesystem::path temp, boost::filesystem::path fina
 bool
 dcp::operator== (Data const & a, Data const & b)
 {
-	return (a.size() == b.size() && memcmp (a.data().get(), b.data().get(), a.size() == 0));
+	return (a.size() == b.size() && memcmp (a.data().get(), b.data().get(), a.size()) == 0);
 }
