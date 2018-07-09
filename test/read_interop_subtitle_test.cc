@@ -595,3 +595,9 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Time (0, 0, 0, 0, 250)
 				   ));
 }
+
+/** And one with bitmap subtitles */
+BOOST_AUTO_TEST_CASE (read_interop_subtitle_test3)
+{
+	dcp::InteropSubtitleAsset subs ("test/data/subs3.xml");
+}

@@ -152,11 +152,9 @@ SubtitleAsset::font_node_state (xmlpp::Element const * node, Standard standard) 
 	return ps;
 }
 
-SubtitleAsset::ParseState
-SubtitleAsset::text_node_state (xmlpp::Element const * node) const
+void
+SubtitleAsset::position_align (SubtitleAsset::ParseState& ps, xmlpp::Element const * node) const
 {
-	ParseState ps;
-
 	optional<float> hp = optional_number_attribute<float> (node, "HPosition");
 	if (!hp) {
 		hp = optional_number_attribute<float> (node, "Hposition");
@@ -189,10 +187,33 @@ SubtitleAsset::text_node_state (xmlpp::Element const * node) const
 		ps.v_align = string_to_valign (va.get ());
 	}
 
+}
+
+SubtitleAsset::ParseState
+SubtitleAsset::text_node_state (xmlpp::Element const * node) const
+{
+	ParseState ps;
+
+	position_align (ps, node);
+
 	optional<string> d = optional_string_attribute (node, "Direction");
 	if (d) {
 		ps.direction = string_to_direction (d.get ());
 	}
+
+	ps.type = ParseState::TEXT;
+
+	return ps;
+}
+
+SubtitleAsset::ParseState
+SubtitleAsset::image_node_state (xmlpp::Element const * node) const
+{
+	ParseState ps;
+
+	position_align (ps, node);
+
+	ps.type = ParseState::IMAGE;
 
 	return ps;
 }
@@ -240,6 +261,8 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, list<ParseState>& s
 		state.push_back (text_node_state (node));
 	} else if (node->get_name() == "SubtitleList") {
 		state.push_back (ParseState ());
+	} else if (node->get_name() == "Image") {
+		state.push_back (image_node_state (node));
 	} else {
 		throw XMLError ("unexpected node " + node->get_name());
 	}
@@ -248,7 +271,7 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, list<ParseState>& s
 	for (xmlpp::Node::NodeList::const_iterator i = c.begin(); i != c.end(); ++i) {
 		xmlpp::ContentNode const * v = dynamic_cast<xmlpp::ContentNode const *> (*i);
 		if (v) {
-			maybe_add_subtitle (v->get_content(), state);
+			maybe_add_subtitle (v->get_content(), state, standard);
 		}
 		xmlpp::Element const * e = dynamic_cast<xmlpp::Element const *> (*i);
 		if (e) {
@@ -260,7 +283,7 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, list<ParseState>& s
 }
 
 void
-SubtitleAsset::maybe_add_subtitle (string text, list<ParseState> const & parse_state)
+SubtitleAsset::maybe_add_subtitle (string text, list<ParseState> const & parse_state, Standard standard)
 {
 	if (empty_or_white_space (text)) {
 		return;
@@ -322,38 +345,66 @@ SubtitleAsset::maybe_add_subtitle (string text, list<ParseState> const & parse_s
 		if (i.fade_down_time) {
 			ps.fade_down_time = i.fade_down_time.get();
 		}
+		if (i.type) {
+			ps.type = i.type.get();
+		}
 	}
 
 	if (!ps.in || !ps.out) {
-		/* We're not in a <Text> node; just ignore this content */
+		/* We're not in a <Subtitle> node; just ignore this content */
 		return;
 	}
 
-	_subtitles.push_back (
-		shared_ptr<Subtitle> (
-			new SubtitleString (
-				ps.font_id,
-				ps.italic.get_value_or (false),
-				ps.bold.get_value_or (false),
-				ps.underline.get_value_or (false),
-				ps.colour.get_value_or (dcp::Colour (255, 255, 255)),
-				ps.size.get_value_or (42),
-				ps.aspect_adjust.get_value_or (1.0),
-				ps.in.get(),
-				ps.out.get(),
-				ps.h_position.get_value_or(0),
-				ps.h_align.get_value_or(HALIGN_CENTER),
-				ps.v_position.get_value_or(0),
-				ps.v_align.get_value_or(VALIGN_CENTER),
-				ps.direction.get_value_or (DIRECTION_LTR),
-				text,
-				ps.effect.get_value_or (NONE),
-				ps.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
-				ps.fade_up_time.get_value_or(Time()),
-				ps.fade_down_time.get_value_or(Time())
+	DCP_ASSERT (ps.type);
+
+	switch (ps.type.get()) {
+	case ParseState::TEXT:
+		_subtitles.push_back (
+			shared_ptr<Subtitle> (
+				new SubtitleString (
+					ps.font_id,
+					ps.italic.get_value_or (false),
+					ps.bold.get_value_or (false),
+					ps.underline.get_value_or (false),
+					ps.colour.get_value_or (dcp::Colour (255, 255, 255)),
+					ps.size.get_value_or (42),
+					ps.aspect_adjust.get_value_or (1.0),
+					ps.in.get(),
+					ps.out.get(),
+					ps.h_position.get_value_or(0),
+					ps.h_align.get_value_or(HALIGN_CENTER),
+					ps.v_position.get_value_or(0),
+					ps.v_align.get_value_or(VALIGN_CENTER),
+					ps.direction.get_value_or (DIRECTION_LTR),
+					text,
+					ps.effect.get_value_or (NONE),
+					ps.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
+					ps.fade_up_time.get_value_or(Time()),
+					ps.fade_down_time.get_value_or(Time())
+					)
 				)
-			)
-		);
+			);
+		break;
+	case ParseState::IMAGE:
+		/* Add a subtitle with no image data and we'll fill that in later */
+		_subtitles.push_back (
+			shared_ptr<Subtitle> (
+				new SubtitleImage (
+					Data (),
+					standard == INTEROP ? text.substr(0, text.size() - 4) : text,
+					ps.in.get(),
+					ps.out.get(),
+					ps.h_position.get_value_or(0),
+					ps.h_align.get_value_or(HALIGN_CENTER),
+					ps.v_position.get_value_or(0),
+					ps.v_align.get_value_or(VALIGN_CENTER),
+					ps.fade_up_time.get_value_or(Time()),
+					ps.fade_down_time.get_value_or(Time())
+					)
+				)
+			);
+		break;
+	}
 }
 
 list<shared_ptr<Subtitle> >
@@ -373,11 +424,6 @@ void
 SubtitleAsset::add (shared_ptr<Subtitle> s)
 {
 	_subtitles.push_back (s);
-
-	shared_ptr<SubtitleImage> si = dynamic_pointer_cast<SubtitleImage> (s);
-	if (si) {
-		_image_subtitle_uuid[si] = make_uuid ();
-	}
 }
 
 Time
@@ -578,10 +624,8 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 		shared_ptr<SubtitleImage> ii = dynamic_pointer_cast<SubtitleImage>(i);
 		if (ii) {
 			text.reset ();
-			ImageUUIDMap::const_iterator uuid = _image_subtitle_uuid.find(ii);
-			DCP_ASSERT (uuid != _image_subtitle_uuid.end());
 			subtitle->children.push_back (
-				shared_ptr<order::Image> (new order::Image (subtitle, uuid->second, ii->png_image(), ii->h_align(), ii->h_position(), ii->v_align(), ii->v_position()))
+				shared_ptr<order::Image> (new order::Image (subtitle, ii->id(), ii->png_image(), ii->h_align(), ii->h_position(), ii->v_align(), ii->v_position()))
 				);
 		}
 	}

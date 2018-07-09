@@ -181,7 +181,7 @@ public:
 
 private:
 	Data _png_data;
-	std::string _id; ///< the ID of this image (index for Interop, UUID for SMPTE)
+	std::string _id; ///< the ID of this image
 	HAlign _h_align;
 	float _h_position;
 	VAlign _v_align;

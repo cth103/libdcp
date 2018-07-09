@@ -195,6 +195,8 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 		}
 	}
 
+	/* XXX: load PNG and attach them to _subtitles */
+
 	/* Get intrinsic duration */
 	_intrinsic_duration = descriptor.ContainerDuration;
 }
@@ -323,13 +325,16 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 
 	/* Image subtitle references */
 
-	for (ImageUUIDMap::const_iterator i = _image_subtitle_uuid.begin(); i != _image_subtitle_uuid.end(); ++i) {
-		ASDCP::TimedText::TimedTextResourceDescriptor res;
-		unsigned int c;
-		Kumu::hex2bin (i->second.c_str(), res.ResourceID, Kumu::UUID_Length, &c);
-		DCP_ASSERT (c == Kumu::UUID_Length);
-		res.Type = ASDCP::TimedText::MT_PNG;
-		descriptor.ResourceList.push_back (res);
+	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
+		shared_ptr<SubtitleImage> si = dynamic_pointer_cast<SubtitleImage>(i);
+		if (si) {
+			ASDCP::TimedText::TimedTextResourceDescriptor res;
+			unsigned int c;
+			Kumu::hex2bin (si->id().c_str(), res.ResourceID, Kumu::UUID_Length, &c);
+			DCP_ASSERT (c == Kumu::UUID_Length);
+			res.Type = ASDCP::TimedText::MT_PNG;
+			descriptor.ResourceList.push_back (res);
+		}
 	}
 
 	descriptor.NamespaceName = "dcst";
@@ -367,13 +372,16 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 
 	/* Image subtitle payload */
 
-	for (ImageUUIDMap::const_iterator i = _image_subtitle_uuid.begin(); i != _image_subtitle_uuid.end(); ++i) {
-		ASDCP::TimedText::FrameBuffer buffer;
-		buffer.SetData (i->first->png_image().data().get(), i->first->png_image().size());
-		buffer.Size (i->first->png_image().size());
-		r = writer.WriteAncillaryResource (buffer, enc.context(), enc.hmac());
-		if (ASDCP_FAILURE(r)) {
-			boost::throw_exception (MXFFileError ("could not write PNG data to timed text resource", p.string(), r));
+	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
+		shared_ptr<SubtitleImage> si = dynamic_pointer_cast<SubtitleImage>(i);
+		if (si) {
+			ASDCP::TimedText::FrameBuffer buffer;
+			buffer.SetData (si->png_image().data().get(), si->png_image().size());
+			buffer.Size (si->png_image().size());
+			r = writer.WriteAncillaryResource (buffer, enc.context(), enc.hmac());
+			if (ASDCP_FAILURE(r)) {
+				boost::throw_exception (MXFFileError ("could not write PNG data to timed text resource", p.string(), r));
+			}
 		}
 	}
 

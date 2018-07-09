@@ -126,13 +126,20 @@ protected:
 		boost::optional<Time> out;
 		boost::optional<Time> fade_up_time;
 		boost::optional<Time> fade_down_time;
+		enum Type {
+			TEXT,
+			IMAGE
+		};
+		boost::optional<Type> type;
 	};
 
 	void parse_subtitles (xmlpp::Element const * node, std::list<ParseState>& state, boost::optional<int> tcr, Standard standard);
 	ParseState font_node_state (xmlpp::Element const * node, Standard standard) const;
 	ParseState text_node_state (xmlpp::Element const * node) const;
+	ParseState image_node_state (xmlpp::Element const * node) const;
 	ParseState subtitle_node_state (xmlpp::Element const * node, boost::optional<int> tcr) const;
 	Time fade_time (xmlpp::Element const * node, std::string name, boost::optional<int> tcr) const;
+	void position_align (ParseState& ps, xmlpp::Element const * node) const;
 
 	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Standard standard) const;
 
@@ -165,16 +172,12 @@ protected:
 	/** TTF font data that we need */
 	std::list<Font> _fonts;
 
-	/** Map of image subtitles to UUIDs */
-	typedef std::map<boost::shared_ptr<dcp::SubtitleImage>, std::string> ImageUUIDMap;
-	ImageUUIDMap _image_subtitle_uuid;
-
 private:
 	friend struct ::pull_fonts_test1;
 	friend struct ::pull_fonts_test2;
 	friend struct ::pull_fonts_test3;
 
-	void maybe_add_subtitle (std::string text, std::list<ParseState> const & parse_state);
+	void maybe_add_subtitle (std::string text, std::list<ParseState> const & parse_state, Standard standard);
 
 	static void pull_fonts (boost::shared_ptr<order::Part> part);
 };

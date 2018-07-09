@@ -79,6 +79,8 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 			parse_subtitles (e, ps, optional<int>(), INTEROP);
 		}
 	}
+
+	/* XXX: now find SubtitleImages in _subtitles and load their PNG */
 }
 
 InteropSubtitleAsset::InteropSubtitleAsset ()
@@ -182,9 +184,7 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 	BOOST_FOREACH (shared_ptr<dcp::Subtitle> i, _subtitles) {
 		shared_ptr<dcp::SubtitleImage> im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
 		if (im) {
-			ImageUUIDMap::const_iterator uuid = _image_subtitle_uuid.find(im);
-			DCP_ASSERT (uuid != _image_subtitle_uuid.end());
-			im->png_image().write (p.parent_path() / String::compose("%1.png", uuid->second));
+			im->png_image().write (p.parent_path() / String::compose("%1.png", im->id()));
 		}
 	}
 

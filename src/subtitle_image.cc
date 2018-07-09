@@ -32,8 +32,10 @@
 */
 
 #include "subtitle_image.h"
+#include "util.h"
 
 using std::ostream;
+using std::string;
 using namespace dcp;
 
 SubtitleImage::SubtitleImage (
@@ -49,6 +51,26 @@ SubtitleImage::SubtitleImage (
 	)
 	: Subtitle (in, out, h_position, h_align, v_position, v_align, fade_up_time, fade_down_time)
 	, _png_image (png_image)
+	, _id (make_uuid ())
+{
+
+}
+
+SubtitleImage::SubtitleImage (
+	Data png_image,
+	string id,
+	Time in,
+	Time out,
+	float h_position,
+	HAlign h_align,
+	float v_position,
+	VAlign v_align,
+	Time fade_up_time,
+	Time fade_down_time
+	)
+	: Subtitle (in, out, h_position, h_align, v_position, v_align, fade_up_time, fade_down_time)
+	, _png_image (png_image)
+	, _id (id)
 {
 
 }
@@ -57,7 +79,8 @@ bool
 dcp::operator== (SubtitleImage const & a, SubtitleImage const & b)
 {
 	return (
-		a.png_image() == b.png_image(),
+		a.png_image() == b.png_image() &&
+		a.id() == b.id() &&
 		a.in() == b.in() &&
 		a.out() == b.out() &&
 		a.h_position() == b.h_position() &&

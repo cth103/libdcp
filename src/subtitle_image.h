@@ -65,12 +65,30 @@ public:
 		Time fade_down_time
 		);
 
+	SubtitleImage (
+		Data png_image,
+		std::string id,
+		Time in,
+		Time out,
+		float h_position,
+		HAlign h_align,
+		float v_position,
+		VAlign v_align,
+		Time fade_up_time,
+		Time fade_down_time
+		);
+
 	Data png_image () const {
 		return _png_image;
 	}
 
+	std::string id () const {
+		return _id;
+	}
+
 private:
 	Data _png_image;
+	std::string _id;
 };
 
 bool operator== (SubtitleImage const & a, SubtitleImage const & b);
