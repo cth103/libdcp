@@ -502,7 +502,6 @@ CertificateChain::private_key_valid () const
 	RSA* public_key = leaf().public_key ();
 
 #if OPENSSL_VERSION_NUMBER > 0x10100000L
-#warning "Using new OpenSSL API"
 	BIGNUM const * private_key_n;
 	RSA_get0_key(private_key, &private_key_n, 0, 0);
 	BIGNUM const * public_key_n;
