@@ -479,6 +479,9 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 			note (DCP_ERROR, "subtitles differ");
 			return false;
 		}
+
+		++i;
+		++j;
 	}
 
 	return true;
