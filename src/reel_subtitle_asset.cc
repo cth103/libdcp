@@ -78,7 +78,10 @@ ReelSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
 	ReelAsset::write_to_cpl (node, standard);
 
-        if (key_id ()) {
+	/* XXX: couldn't this stuff be in the parent class?  All child
+	   classes seem to do the same thing...?
+	*/
+	if (key_id ()) {
 		/* Find <MainSubtitle> */
 		xmlpp::Node* ms = find_child (node, cpl_node_name (standard));
 		/* Find <Hash> */
