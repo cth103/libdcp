@@ -140,7 +140,7 @@ bool
 Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandler note) const
 {
 	if ((_main_picture && !other->_main_picture) || (!_main_picture && other->_main_picture)) {
-		note (DCP_ERROR, "Reel: assets differ");
+		note (DCP_ERROR, "Reel: picture assets differ");
 		return false;
 	}
 
@@ -149,7 +149,7 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 	}
 
 	if ((_main_sound && !other->_main_sound) || (!_main_sound && other->_main_sound)) {
-		note (DCP_ERROR, "Reel: assets differ");
+		note (DCP_ERROR, "Reel: sound assets differ");
 		return false;
 	}
 
@@ -158,7 +158,7 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 	}
 
 	if ((_main_subtitle && !other->_main_subtitle) || (!_main_subtitle && other->_main_subtitle)) {
-		note (DCP_ERROR, "Reel: assets differ");
+		note (DCP_ERROR, "Reel: subtitle assets differ");
 		return false;
 	}
 
@@ -171,7 +171,7 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 	}
 
 	if ((_atmos && !other->_atmos) || (!_atmos && other->_atmos)) {
-		note (DCP_ERROR, "Reel: assets differ");
+		note (DCP_ERROR, "Reel: atmos assets differ");
 		return false;
 	}
 
