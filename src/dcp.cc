@@ -81,9 +81,6 @@ using namespace dcp;
 
 static string const assetmap_interop_ns = "http://www.digicine.com/PROTO-ASDCP-AM-20040311#";
 static string const assetmap_smpte_ns   = "http://www.smpte-ra.org/schemas/429-9/2007/AM";
-/* XXX: these can be removed when PKL is all in pkl.cc */
-static string const pkl_interop_ns = "http://www.digicine.com/PROTO-ASDCP-PKL-20040311#";
-static string const pkl_smpte_ns   = "http://www.smpte-ra.org/schemas/429-8/2007/PKL";
 static string const volindex_interop_ns = "http://www.digicine.com/PROTO-ASDCP-VL-20040311#";
 static string const volindex_smpte_ns   = "http://www.smpte-ra.org/schemas/429-9/2007/AM";
 
