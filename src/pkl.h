@@ -36,6 +36,7 @@
 
 #include "object.h"
 #include "types.h"
+#include "util.h"
 #include "certificate_chain.h"
 #include <libcxml/cxml.h>
 #include <boost/filesystem.hpp>
@@ -59,6 +60,8 @@ public:
 		return _standard;
 	}
 
+	std::string hash (std::string id) const;
+
 	void add_asset (std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type);
 	void write (boost::filesystem::path file, boost::shared_ptr<const CertificateChain> signer) const;
 
@@ -68,7 +71,8 @@ private:
 	{
 	public:
 		Asset (cxml::ConstNodePtr node)
-			: annotation_text (node->optional_string_child("AnnotationText"))
+			: Object (remove_urn_uuid(node->string_child("Id")))
+			, annotation_text (node->optional_string_child("AnnotationText"))
 			, hash (node->string_child("Hash"))
 			, size (node->number_child<int64_t>("Size"))
 			, type (node->string_child("Type"))

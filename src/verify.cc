@@ -53,13 +53,35 @@ using boost::function;
 
 using namespace dcp;
 
-static bool
-verify_asset (shared_ptr<ReelAsset> asset, function<void (float)> progress)
+enum Result {
+	RESULT_GOOD,
+	RESULT_CPL_PKL_DIFFER,
+	RESULT_BAD
+};
+
+static Result
+verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelAsset> reel_asset, function<void (float)> progress)
 {
-	string actual_hash = asset->asset_ref()->hash(progress);
-	optional<string> cpl_hash = asset->hash();
-	DCP_ASSERT (cpl_hash);
-	return actual_hash != *cpl_hash;
+	string const actual_hash = reel_asset->asset_ref()->hash(progress);
+
+	shared_ptr<PKL> pkl = dcp->pkl();
+	/* We've read this DCP in so it must have a PKL */
+	DCP_ASSERT (pkl);
+
+	shared_ptr<Asset> asset = reel_asset->asset_ref().asset();
+	cout << "looking for hash of " << reel_asset->asset_ref()->id() << "\n";
+	string const pkl_hash = pkl->hash (reel_asset->asset_ref()->id());
+
+	optional<string> cpl_hash = reel_asset->hash();
+	if (cpl_hash && *cpl_hash != pkl_hash) {
+		return RESULT_CPL_PKL_DIFFER;
+	}
+
+	if (actual_hash != pkl_hash) {
+		return RESULT_BAD;
+	}
+
+	return RESULT_GOOD;
 }
 
 list<VerificationNote>
@@ -89,14 +111,30 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 				stage ("Checking reel", optional<boost::filesystem::path>());
 				if (reel->main_picture()) {
 					stage ("Checking picture asset hash", reel->main_picture()->asset()->file());
-					if (verify_asset (reel->main_picture(), progress)) {
+					Result const r = verify_asset (dcp, reel->main_picture(), progress);
+					switch (r) {
+					case RESULT_BAD:
 						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "Picture asset hash is incorrect."));
+						break;
+					case RESULT_CPL_PKL_DIFFER:
+						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "PKL and CPL hashes differ for picture asset."));
+						break;
+					default:
+						break;
 					}
 				}
 				if (reel->main_sound()) {
 					stage ("Checking sound asset hash", reel->main_sound()->asset()->file());
-					if (verify_asset (reel->main_sound(), progress)) {
+					Result const r = verify_asset (dcp, reel->main_sound(), progress);
+					switch (r) {
+					case RESULT_BAD:
 						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "Sound asset hash is incorrect."));
+						break;
+					case RESULT_CPL_PKL_DIFFER:
+						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "PKL and CPL hashes differ for sound asset."));
+						break;
+					default:
+						break;
 					}
 				}
 			}

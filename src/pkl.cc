@@ -35,6 +35,7 @@
 #include "exceptions.h"
 #include "util.h"
 #include "raw_convert.h"
+#include "dcp_assert.h"
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
 
@@ -111,4 +112,16 @@ PKL::write (boost::filesystem::path file, shared_ptr<const CertificateChain> sig
 	}
 
 	doc.write_to_file (file.string(), "UTF-8");
+}
+
+string
+PKL::hash (string id) const
+{
+	BOOST_FOREACH (shared_ptr<Asset> i, _asset_list) {
+		if (i->id() == id) {
+			return i->hash;
+		}
+	}
+
+	DCP_ASSERT (false);
 }

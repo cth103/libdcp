@@ -32,8 +32,10 @@
 */
 
 #include "verify.h"
+#include "util.h"
 #include <boost/test/unit_test.hpp>
 #include <cstdio>
+#include <iostream>
 
 using std::list;
 using std::pair;
@@ -64,9 +66,13 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 		boost::filesystem::copy_file (i->path(), "build/test/verify_test1" / i->path().filename());
 	}
 
+	/* Check DCP as-is (should be OK) */
+
 	vector<boost::filesystem::path> directories;
 	directories.push_back ("build/test/verify_test1");
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+
+	boost::filesystem::path const cpl_file = "build/test/verify_test1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
 
 	list<pair<string, optional<boost::filesystem::path> > >::const_iterator st = stages.begin();
 	BOOST_CHECK_EQUAL (st->first, "Checking DCP");
@@ -75,7 +81,7 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking CPL");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical("build/test/verify_test1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml"));
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(cpl_file));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking reel");
 	BOOST_REQUIRE (!st->second);
@@ -91,6 +97,8 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	BOOST_REQUIRE (st == stages.end());
 
 	BOOST_CHECK_EQUAL (notes.size(), 0);
+
+	/* Corrupt the MXFs and check that this is spotted */
 
 	FILE* mod = fopen("build/test/verify_test1/video.mxf", "r+b");
 	BOOST_REQUIRE (mod);
@@ -111,4 +119,29 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	BOOST_CHECK_EQUAL (notes.front().note(), "Picture asset hash is incorrect.");
 	BOOST_CHECK_EQUAL (notes.back().type(), dcp::VerificationNote::VERIFY_ERROR);
 	BOOST_CHECK_EQUAL (notes.back().note(), "Sound asset hash is incorrect.");
+
+	/* Corrupt the hashes in the CPL and check that the disagreement between CPL and PKL is spotted */
+	string const cpl = dcp::file_to_string (cpl_file);
+	string hacked_cpl = "";
+	for (size_t i = 0; i < (cpl.length() - 6); ++i) {
+		if (cpl.substr(i, 6) == "<Hash>") {
+			hacked_cpl += "<Hash>x";
+			i += 6;
+		} else {
+			hacked_cpl += cpl[i];
+		}
+	}
+	hacked_cpl += "list>";
+
+	FILE* f = fopen(cpl_file.string().c_str(), "w");
+	fwrite(hacked_cpl.c_str(), hacked_cpl.length(), 1, f);
+	fclose(f);
+
+	notes = dcp::verify (directories, &stage, &progress);
+	BOOST_CHECK_EQUAL (notes.size(), 2);
+	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
+	BOOST_CHECK_EQUAL (notes.front().note(), "PKL and CPL hashes differ for picture asset.");
+	BOOST_CHECK_EQUAL (notes.back().type(), dcp::VerificationNote::VERIFY_ERROR);
+	BOOST_CHECK_EQUAL (notes.back().note(), "PKL and CPL hashes differ for sound asset.");
+
 }
