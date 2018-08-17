@@ -83,7 +83,7 @@ AtmosAsset::AtmosAsset (boost::filesystem::path file)
 }
 
 string
-AtmosAsset::pkl_type (Standard) const
+AtmosAsset::static_pkl_type (Standard)
 {
 	return "application/mxf";
 }

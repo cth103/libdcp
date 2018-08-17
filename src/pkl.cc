@@ -38,6 +38,7 @@
 #include "dcp_assert.h"
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
+#include <iostream>
 
 using std::string;
 using boost::shared_ptr;
@@ -120,6 +121,18 @@ PKL::hash (string id) const
 	BOOST_FOREACH (shared_ptr<Asset> i, _asset_list) {
 		if (i->id() == id) {
 			return i->hash;
+		}
+	}
+
+	DCP_ASSERT (false);
+}
+
+string
+PKL::type (string id) const
+{
+	BOOST_FOREACH (shared_ptr<Asset> i, _asset_list) {
+		if (i->id() == id) {
+			return i->type;
 		}
 	}
 

@@ -200,7 +200,7 @@ PictureAsset::frame_buffer_equals (
 }
 
 string
-PictureAsset::pkl_type (Standard standard) const
+PictureAsset::static_pkl_type (Standard standard)
 {
 	switch (standard) {
 	case INTEROP:
@@ -210,4 +210,10 @@ PictureAsset::pkl_type (Standard standard) const
 	default:
 		DCP_ASSERT (false);
 	}
+}
+
+string
+PictureAsset::pkl_type (Standard standard) const
+{
+	return static_pkl_type (standard);
 }

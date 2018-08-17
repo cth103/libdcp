@@ -105,10 +105,14 @@ public:
 		return _movie_title;
 	}
 
+	static std::string static_pkl_type (Standard) {
+		return "text/xml;asdcpKind=Subtitle";
+	}
+
 protected:
 
-	std::string pkl_type (Standard) const {
-		return "text/xml;asdcpKind=Subtitle";
+	std::string pkl_type (Standard s) const {
+		return static_pkl_type (s);
 	}
 
 private:

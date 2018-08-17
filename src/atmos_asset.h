@@ -51,7 +51,10 @@ public:
 	boost::shared_ptr<AtmosAssetWriter> start_write (boost::filesystem::path file);
 	boost::shared_ptr<AtmosAssetReader> start_read () const;
 
-	std::string pkl_type (Standard) const;
+	static std::string static_pkl_type (Standard);
+	std::string pkl_type (Standard s) const {
+		return static_pkl_type (s);
+	}
 
 	Fraction edit_rate () const {
 		return _edit_rate;

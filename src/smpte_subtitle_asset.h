@@ -156,11 +156,14 @@ public:
 	}
 
 	static bool valid_mxf (boost::filesystem::path);
+	static std::string static_pkl_type (Standard) {
+		return "application/mxf";
+	}
 
 protected:
 
-	std::string pkl_type (Standard) const {
-		return "application/mxf";
+	std::string pkl_type (Standard s) const {
+		return static_pkl_type (s);
 	}
 
 private:

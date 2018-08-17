@@ -48,7 +48,7 @@ FontAsset::FontAsset (string id, boost::filesystem::path file)
 }
 
 string
-FontAsset::pkl_type (Standard) const
+FontAsset::static_pkl_type (Standard)
 {
 	return "application/ttf";
 }

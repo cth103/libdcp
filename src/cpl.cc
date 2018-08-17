@@ -270,6 +270,12 @@ CPL::resolve_refs (list<shared_ptr<Asset> > assets)
 string
 CPL::pkl_type (Standard standard) const
 {
+	return static_pkl_type (standard);
+}
+
+string
+CPL::static_pkl_type (Standard standard)
+{
 	switch (standard) {
 	case INTEROP:
 		return "text/xml;asdcpKind=CPL";

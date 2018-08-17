@@ -110,7 +110,7 @@ survivable_error (bool keep_going, dcp::DCP::ReadErrors* errors, T const & e)
 void
 DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mxf_type)
 {
-	/* Read the ASSETMAP */
+	/* Read the ASSETMAP and PKL */
 
 	boost::filesystem::path asset_map_file;
 	if (boost::filesystem::exists (_directory / "ASSETMAP")) {
@@ -143,10 +143,11 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 		if (starts_with (p, "file://")) {
 			p = p.substr (7);
 		}
-		paths.insert (make_pair (remove_urn_uuid (i->string_child ("Id")), p));
 		optional<string> pkl_bool = i->optional_string_child("PackingList");
 		if (pkl_bool && *pkl_bool == "true") {
 			pkl_path = p;
+		} else {
+			paths.insert (make_pair (remove_urn_uuid (i->string_child ("Id")), p));
 		}
 	}
 
@@ -157,11 +158,8 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 	_pkl.reset (new PKL (_directory / *pkl_path));
 
 	/* Read all the assets from the asset map */
-	/* XXX: I think we should be looking at the PKL here to decide type, not
-	   the extension of the file.
-	*/
 
-	/* Make a list of non-CPL assets so that we can resolve the references
+	/* Make a list of non-CPL/PKL assets so that we can resolve the references
 	   from the CPLs.
 	*/
 	list<shared_ptr<Asset> > other_assets;
@@ -174,7 +172,9 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 			continue;
 		}
 
-		if (boost::filesystem::extension (path) == ".xml") {
+		string const pkl_type = _pkl->type(i->first);
+
+		if (pkl_type == CPL::static_pkl_type(*_standard) || pkl_type == InteropSubtitleAsset::static_pkl_type(*_standard)) {
 			xmlpp::DomParser* p = new xmlpp::DomParser;
 			try {
 				p->parse_file (path.string());
@@ -198,7 +198,12 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 				}
 				other_assets.push_back (shared_ptr<InteropSubtitleAsset> (new InteropSubtitleAsset (path)));
 			}
-		} else if (boost::filesystem::extension (path) == ".mxf") {
+		} else if (
+			pkl_type == PictureAsset::static_pkl_type(*_standard) ||
+			pkl_type == SoundAsset::static_pkl_type(*_standard) ||
+			pkl_type == AtmosAsset::static_pkl_type(*_standard) ||
+			pkl_type == SMPTESubtitleAsset::static_pkl_type(*_standard)
+			) {
 
 			/* XXX: asdcplib does not appear to support discovery of read MXFs standard
 			   (Interop / SMPTE)
@@ -240,7 +245,7 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 				default:
 					throw DCPReadError (String::compose ("Unknown MXF essence type %1 in %2", int(type), path.string()));
 			}
-		} else if (boost::filesystem::extension (path) == ".ttf") {
+		} else if (pkl_type == FontAsset::static_pkl_type(*_standard)) {
 			other_assets.push_back (shared_ptr<FontAsset> (new FontAsset (i->first, path)));
 		}
 	}

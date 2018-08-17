@@ -101,6 +101,8 @@ public:
 		return _intrinsic_duration;
 	}
 
+	static std::string static_pkl_type (Standard standard);
+
 protected:
 	friend class MonoPictureAssetWriter;
 	friend class StereoPictureAssetWriter;

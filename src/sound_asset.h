@@ -86,11 +86,14 @@ public:
 	}
 
 	static bool valid_mxf (boost::filesystem::path);
+	static std::string static_pkl_type (Standard standard);
 
 private:
 	friend class SoundAssetWriter;
 
-	std::string pkl_type (Standard standard) const;
+	std::string pkl_type (Standard standard) const {
+		return static_pkl_type (standard);
+	}
 
 	Fraction _edit_rate;
 	/** The total length of this content in video frames.  The amount of

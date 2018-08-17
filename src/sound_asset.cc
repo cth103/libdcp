@@ -206,7 +206,7 @@ SoundAsset::start_read () const
 }
 
 string
-SoundAsset::pkl_type (Standard standard) const
+SoundAsset::static_pkl_type (Standard standard)
 {
 	switch (standard) {
 	case INTEROP:

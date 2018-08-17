@@ -140,6 +140,8 @@ public:
 		return _standard;
 	}
 
+	static std::string static_pkl_type (Standard standard);
+
 protected:
 	/** @return type string for PKLs for this asset */
 	std::string pkl_type (Standard standard) const;
