@@ -69,7 +69,6 @@ verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelAsset> reel_asset, function<vo
 	DCP_ASSERT (pkl);
 
 	shared_ptr<Asset> asset = reel_asset->asset_ref().asset();
-	cout << "looking for hash of " << reel_asset->asset_ref()->id() << "\n";
 	string const pkl_hash = pkl->hash (reel_asset->asset_ref()->id());
 
 	optional<string> cpl_hash = reel_asset->hash();
