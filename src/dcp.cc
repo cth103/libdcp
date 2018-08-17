@@ -143,12 +143,26 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 		if (starts_with (p, "file://")) {
 			p = p.substr (7);
 		}
-		optional<string> pkl_bool = i->optional_string_child("PackingList");
-		if (pkl_bool && *pkl_bool == "true") {
-			pkl_path = p;
-		} else {
-			paths.insert (make_pair (remove_urn_uuid (i->string_child ("Id")), p));
+		switch (*_standard) {
+		case INTEROP:
+			if (i->optional_node_child("PackingList")) {
+				pkl_path = p;
+			} else {
+				paths.insert (make_pair (remove_urn_uuid (i->string_child ("Id")), p));
+			}
+			break;
+		case SMPTE:
+		{
+			optional<string> pkl_bool = i->optional_string_child("PackingList");
+			if (pkl_bool && *pkl_bool == "true") {
+				pkl_path = p;
+			} else {
+				paths.insert (make_pair (remove_urn_uuid (i->string_child ("Id")), p));
+			}
+			break;
 		}
+		}
+
 	}
 
 	if (!pkl_path) {
