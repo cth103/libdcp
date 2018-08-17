@@ -150,6 +150,7 @@ def build(bld):
               openjpeg_image.h
               picture_asset.h
               picture_asset_writer.h
+              pkl.h
               raw_convert.h
               rgb_xyz.h
               reel.h
