@@ -85,12 +85,13 @@ Reel::Reel (boost::shared_ptr<const cxml::Node> node)
 	}
 
 	/* XXX: it's not ideal that we silently tolerate Interop or SMPTE nodes here */
-	shared_ptr<cxml::Node> closed_caption = asset_list->optional_node_child ("MainClosedCaption");
-	if (!closed_caption) {
-		closed_caption = asset_list->optional_node_child ("ClosedCaption");
+	/* XXX: not sure if Interop supports multiple closed captions */
+	list<shared_ptr<cxml::Node> > closed_captions = asset_list->node_children ("MainClosedCaption");
+	if (closed_captions.empty()) {
+		closed_captions = asset_list->node_children ("ClosedCaption");
 	}
-	if (closed_caption) {
-		_closed_caption.reset (new ReelClosedCaptionAsset (closed_caption));
+	BOOST_FOREACH (shared_ptr<cxml::Node> i, closed_captions) {
+		_closed_captions.push_back (shared_ptr<ReelClosedCaptionAsset>(new ReelClosedCaptionAsset(i)));
 	}
 
 	shared_ptr<cxml::Node> atmos = asset_list->optional_node_child ("AuxData");
@@ -122,8 +123,8 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 		_main_subtitle->write_to_cpl (asset_list, standard);
 	}
 
-	if (_closed_caption) {
-		_closed_caption->write_to_cpl (asset_list, standard);
+	BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> i, _closed_captions) {
+		i->write_to_cpl (asset_list, standard);
 	}
 
 	if (_main_picture && dynamic_pointer_cast<ReelStereoPictureAsset> (_main_picture)) {
@@ -166,8 +167,18 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 		return false;
 	}
 
-	if (_closed_caption && !_closed_caption->equals (other->_closed_caption, opt, note)) {
+	if (_closed_captions.size() != other->_closed_captions.size()) {
 		return false;
+	}
+
+	list<shared_ptr<ReelClosedCaptionAsset> >::const_iterator i = _closed_captions.begin();
+	list<shared_ptr<ReelClosedCaptionAsset> >::const_iterator j = other->_closed_captions.begin();
+	while (i != _closed_captions.end()) {
+		if (!(*i)->equals(*j, opt, note)) {
+			return false;
+		}
+		++i;
+		++j;
 	}
 
 	if ((_atmos && !other->_atmos) || (!_atmos && other->_atmos)) {
@@ -185,11 +196,18 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 bool
 Reel::encrypted () const
 {
+	bool ecc = false;
+	BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> i, _closed_captions) {
+		if (i->encrypted()) {
+			ecc = true;
+		}
+	}
+
 	return (
 		(_main_picture && _main_picture->encrypted ()) ||
 		(_main_sound && _main_sound->encrypted ()) ||
 		(_main_subtitle && _main_subtitle->encrypted ()) ||
-		(_closed_caption && _closed_caption->encrypted ()) ||
+		ecc ||
 		(_atmos && _atmos->encrypted ())
 		);
 }
@@ -212,10 +230,12 @@ Reel::add (DecryptedKDM const & kdm)
 				s->set_key (i->key ());
 			}
 		}
-		if (_closed_caption && i->id() == _closed_caption->key_id()) {
-			shared_ptr<SMPTESubtitleAsset> s = dynamic_pointer_cast<SMPTESubtitleAsset> (_closed_caption->asset());
-			if (s) {
-				s->set_key (i->key ());
+		BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> j, _closed_captions) {
+			if (i->id() == j->key_id()) {
+				shared_ptr<SMPTESubtitleAsset> s = dynamic_pointer_cast<SMPTESubtitleAsset> (j->asset());
+				if (s) {
+					s->set_key (i->key ());
+				}
 			}
 		}
 		if (_atmos && i->id() == _atmos->key_id()) {
@@ -239,7 +259,7 @@ Reel::add (shared_ptr<ReelAsset> asset)
 	} else if (su) {
 		_main_subtitle = su;
 	} else if (c) {
-		_closed_caption = c;
+		_closed_captions.push_back (c);
 	} else if (a) {
 		_atmos = a;
 	}
@@ -268,12 +288,12 @@ Reel::resolve_refs (list<shared_ptr<Asset> > assets)
 		}
 	}
 
-	if (_closed_caption) {
-		_closed_caption->asset_ref().resolve(assets);
+	BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> i, _closed_captions) {
+		i->asset_ref().resolve(assets);
 
 		/* Interop subtitle handling is all special cases */
-		if (_closed_caption->asset_ref().resolved()) {
-			shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (_closed_caption->asset_ref().asset());
+		if (i->asset_ref().resolved()) {
+			shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (i->asset_ref().asset());
 			if (iop) {
 				iop->resolve_fonts (assets);
 			}
@@ -299,8 +319,8 @@ Reel::duration () const
 	if (_main_subtitle) {
 		d = max (d, _main_subtitle->duration ());
 	}
-	if (_closed_caption) {
-		d = max (d, _closed_caption->duration ());
+	BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> i, _closed_captions) {
+		d = max (d, i->duration());
 	}
 	if (_atmos) {
 		d = max (d, _atmos->duration ());

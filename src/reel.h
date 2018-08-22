@@ -92,8 +92,8 @@ public:
 		return _main_subtitle;
 	}
 
-	boost::shared_ptr<ReelClosedCaptionAsset> closed_caption () const {
-		return _closed_caption;
+	std::list<boost::shared_ptr<ReelClosedCaptionAsset> > closed_captions () const {
+		return _closed_captions;
 	}
 
 	boost::shared_ptr<ReelAtmosAsset> atmos () const {
@@ -118,7 +118,7 @@ private:
 	boost::shared_ptr<ReelPictureAsset> _main_picture;
 	boost::shared_ptr<ReelSoundAsset> _main_sound;
 	boost::shared_ptr<ReelSubtitleAsset> _main_subtitle;
-	boost::shared_ptr<ReelClosedCaptionAsset> _closed_caption;
+	std::list<boost::shared_ptr<ReelClosedCaptionAsset> > _closed_captions;
 	boost::shared_ptr<ReelAtmosAsset> _atmos;
 };
 

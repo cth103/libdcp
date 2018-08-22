@@ -185,8 +185,8 @@ CPL::reel_assets () const
 		if (i->main_subtitle ()) {
 			c.push_back (i->main_subtitle());
 		}
-		if (i->closed_caption ()) {
-			c.push_back (i->closed_caption());
+		BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> j, i->closed_captions()) {
+			c.push_back (j);
 		}
 		if (i->atmos ()) {
 			c.push_back (i->atmos());
