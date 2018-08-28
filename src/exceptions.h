@@ -99,6 +99,7 @@ class DCPReadError : public std::runtime_error
 public:
 	explicit DCPReadError (std::string message)
 		: std::runtime_error(message)
+		, _message(message)
 	{}
 
 	DCPReadError (std::string message, std::string detail);
