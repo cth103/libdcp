@@ -86,15 +86,12 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
 	}
 }
 
-void
+xmlpp::Node*
 ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	ReelAsset::write_to_cpl (node, standard);
+	xmlpp::Node* asset = ReelAsset::write_to_cpl (node, standard);
 
-	/* Find <MainPicture> */
-	xmlpp::Node* mp = find_child (node, cpl_node_name (standard));
-
-	mp->add_child ("FrameRate")->add_child_text (String::compose ("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
+	asset->add_child("FrameRate")->add_child_text(String::compose("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
 	if (standard == INTEROP) {
 
 		/* Allowed values for this tag from the standard */
@@ -115,18 +112,20 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 			}
 		}
 
-		mp->add_child ("ScreenAspectRatio")->add_child_text (raw_convert<string> (closest.get(), 2, true));
+		asset->add_child ("ScreenAspectRatio")->add_child_text (raw_convert<string> (closest.get(), 2, true));
 	} else {
-		mp->add_child ("ScreenAspectRatio")->add_child_text (
+		asset->add_child ("ScreenAspectRatio")->add_child_text (
 			String::compose ("%1 %2", _screen_aspect_ratio.numerator, _screen_aspect_ratio.denominator)
 			);
 	}
 
         if (key_id ()) {
 		/* Find <Hash> */
-		xmlpp::Node* hash = find_child (mp, "Hash");
-		mp->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id().get ());
+		xmlpp::Node* hash = find_child (asset, "Hash");
+		asset->add_child_before(hash, "KeyId")->add_child_text("urn:uuid:" + key_id().get());
         }
+
+	return asset;
 }
 
 string

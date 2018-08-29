@@ -55,16 +55,30 @@ public:
 	ReelClosedCaptionAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
 	explicit ReelClosedCaptionAsset (boost::shared_ptr<const cxml::Node>);
 
-	void write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
 
 	boost::shared_ptr<SubtitleAsset> asset () const {
 		return asset_of_type<SubtitleAsset> ();
+	}
+
+	void set_language (std::string l) {
+		_language = l;
+	}
+
+	void unset_language () {
+		_language = boost::optional<std::string> ();
+	}
+
+	boost::optional<std::string> language () const {
+		return _language;
 	}
 
 private:
 	std::string key_type () const;
 	std::string cpl_node_name (Standard standard) const;
 	std::pair<std::string, std::string> cpl_node_namespace (Standard standard) const;
+
+	boost::optional<std::string> _language;
 };
 
 }

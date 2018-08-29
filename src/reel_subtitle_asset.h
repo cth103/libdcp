@@ -55,7 +55,7 @@ public:
 	ReelSubtitleAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelSubtitleAsset (boost::shared_ptr<const cxml::Node>);
 
-	void write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
 
 	boost::shared_ptr<SubtitleAsset> asset () const {
 		return asset_of_type<SubtitleAsset> ();

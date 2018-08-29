@@ -59,7 +59,7 @@ public:
 		return asset_of_type<AtmosAsset> ();
 	}
 
-	void write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
 
 private:
 	std::string key_type () const;

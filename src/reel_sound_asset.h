@@ -52,7 +52,7 @@ public:
 	ReelSoundAsset (boost::shared_ptr<dcp::SoundAsset> content, int64_t entry_point);
 	explicit ReelSoundAsset (boost::shared_ptr<const cxml::Node>);
 
-	void write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
 
 	/** @return the SoundAsset that this object refers to */
 	boost::shared_ptr<SoundAsset> asset () {

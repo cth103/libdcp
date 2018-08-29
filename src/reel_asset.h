@@ -69,7 +69,7 @@ public:
 	ReelAsset (boost::shared_ptr<Asset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelAsset (boost::shared_ptr<const cxml::Node>);
 
-	virtual void write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
 	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
 
 	/** @return a Ref to our actual asset */
@@ -111,6 +111,10 @@ public:
 	 */
 	boost::optional<std::string> hash () const {
 		return _hash;
+	}
+
+	std::string annotation_text () const {
+		return _annotation_text;
 	}
 
 	void set_annotation_text (std::string at) {

@@ -60,7 +60,7 @@ ReelClosedCaptionAsset::ReelClosedCaptionAsset (boost::shared_ptr<const cxml::No
 	: ReelAsset (node)
 	, ReelMXF (node)
 {
-	node->ignore_child ("Language");
+	_language = node->optional_string_child ("Language");
 	node->done ();
 }
 
@@ -96,16 +96,20 @@ ReelClosedCaptionAsset::key_type () const
 	return "MDSK";
 }
 
-void
+xmlpp::Node *
 ReelClosedCaptionAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	ReelAsset::write_to_cpl (node, standard);
+	xmlpp::Node* asset = ReelAsset::write_to_cpl (node, standard);
 
-        if (key_id ()) {
-		/* Find our main tag */
-		xmlpp::Node* ms = find_child (node, cpl_node_name (standard));
+        if (key_id()) {
 		/* Find <Hash> */
-		xmlpp::Node* hash = find_child (ms, "Hash");
-		ms->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id().get ());
+		xmlpp::Node* hash = find_child (asset, "Hash");
+		asset->add_child_before(hash, "KeyId")->add_child_text("urn:uuid:" + key_id().get());
 	}
+
+	if (_language) {
+		asset->add_child("Language")->add_child_text(*_language);
+	}
+
+	return asset;
 }

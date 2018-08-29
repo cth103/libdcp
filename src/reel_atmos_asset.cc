@@ -77,12 +77,10 @@ ReelAtmosAsset::key_type () const
 	return "MDEK";
 }
 
-void
+xmlpp::Node *
 ReelAtmosAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	ReelAsset::write_to_cpl (node, standard);
-
-	/* Find <axd:AuxData> */
-	xmlpp::Node* mp = find_child (node, cpl_node_name (standard));
-	mp->add_child("axd:DataType")->add_child_text ("urn:smpte:ul:060e2b34.04010105.0e090604.00000000");
+	xmlpp::Node* asset = ReelAsset::write_to_cpl (node, standard);
+	asset->add_child("axd:DataType")->add_child_text("urn:smpte:ul:060e2b34.04010105.0e090604.00000000");
+	return asset;
 }

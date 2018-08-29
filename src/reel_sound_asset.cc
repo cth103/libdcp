@@ -71,16 +71,16 @@ ReelSoundAsset::key_type () const
 	return "MDAK";
 }
 
-void
+xmlpp::Node *
 ReelSoundAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	ReelAsset::write_to_cpl (node, standard);
+	xmlpp::Node* asset = ReelAsset::write_to_cpl (node, standard);
 
         if (key_id ()) {
-		/* Find <MainSound> */
-		xmlpp::Node* ms = find_child (node, cpl_node_name (standard));
 		/* Find <Hash> */
-		xmlpp::Node* hash = find_child (ms, "Hash");
-		ms->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id().get ());
+		xmlpp::Node* hash = find_child (asset, "Hash");
+		asset->add_child_before(hash, "KeyId")->add_child_text("urn:uuid:" + key_id().get());
         }
+
+	return asset;
 }

@@ -73,19 +73,16 @@ ReelSubtitleAsset::key_type () const
 	return "MDSK";
 }
 
-void
+xmlpp::Node *
 ReelSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	ReelAsset::write_to_cpl (node, standard);
+	xmlpp::Node* asset = ReelAsset::write_to_cpl (node, standard);
 
-	/* XXX: couldn't this stuff be in the parent class?  All child
-	   classes seem to do the same thing...?
-	*/
 	if (key_id ()) {
-		/* Find <MainSubtitle> */
-		xmlpp::Node* ms = find_child (node, cpl_node_name (standard));
 		/* Find <Hash> */
-		xmlpp::Node* hash = find_child (ms, "Hash");
-		ms->add_child_before (hash, "KeyId")->add_child_text ("urn:uuid:" + key_id().get ());
+		xmlpp::Node* hash = find_child (asset, "Hash");
+		asset->add_child_before(hash, "KeyId")->add_child_text("urn:uuid:" + key_id().get());
 	}
+
+	return asset;
 }
