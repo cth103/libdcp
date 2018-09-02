@@ -83,7 +83,7 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
 		shared_ptr<SubtitleImage> si = dynamic_pointer_cast<SubtitleImage>(i);
 		if (si) {
-			si->set_png_image (Data (file.parent_path() / String::compose("%1.png", si->id())));
+			si->read_png_file (file.parent_path() / String::compose("%1.png", si->id()));
 		}
 	}
 }
@@ -189,7 +189,7 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 	BOOST_FOREACH (shared_ptr<dcp::Subtitle> i, _subtitles) {
 		shared_ptr<dcp::SubtitleImage> im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
 		if (im) {
-			im->png_image().write (p.parent_path() / String::compose("%1.png", im->id()));
+			im->write_png_file(p.parent_path() / String::compose("%1.png", im->id()));
 		}
 	}
 
@@ -247,5 +247,33 @@ InteropSubtitleAsset::add_font_assets (list<shared_ptr<Asset> >& assets)
 	BOOST_FOREACH (Font const & i, _fonts) {
 		DCP_ASSERT (i.file);
 		assets.push_back (shared_ptr<FontAsset> (new FontAsset (i.uuid, i.file.get ())));
+	}
+}
+
+void
+InteropSubtitleAsset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
+{
+	Asset::write_to_assetmap (node, root);
+
+	BOOST_FOREACH (shared_ptr<dcp::Subtitle> i, _subtitles) {
+		shared_ptr<dcp::SubtitleImage> im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
+		if (im) {
+			DCP_ASSERT (im->file());
+			write_file_to_assetmap (node, root, im->file().get(), im->id());
+		}
+	}
+}
+
+void
+InteropSubtitleAsset::add_to_pkl (shared_ptr<PKL> pkl, boost::filesystem::path root) const
+{
+	Asset::add_to_pkl (pkl, root);
+
+	BOOST_FOREACH (shared_ptr<dcp::Subtitle> i, _subtitles) {
+		shared_ptr<dcp::SubtitleImage> im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
+		if (im) {
+			Data png_image = im->png_image ();
+			pkl->add_asset (im->id(), optional<string>(), make_digest(png_image), png_image.size(), "image/png");
+		}
 	}
 }

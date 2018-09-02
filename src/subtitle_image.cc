@@ -75,6 +75,20 @@ SubtitleImage::SubtitleImage (
 
 }
 
+void
+SubtitleImage::read_png_file (boost::filesystem::path file)
+{
+	_file = file;
+	_png_image = Data (file);
+}
+
+void
+SubtitleImage::write_png_file (boost::filesystem::path file) const
+{
+	_file = file;
+	png_image().write (file);
+}
+
 bool
 dcp::operator== (SubtitleImage const & a, SubtitleImage const & b)
 {

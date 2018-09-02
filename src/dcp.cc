@@ -162,7 +162,6 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 			break;
 		}
 		}
-
 	}
 
 	if (!pkl_path) {
@@ -261,6 +260,8 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 			}
 		} else if (pkl_type == FontAsset::static_pkl_type(*_standard)) {
 			other_assets.push_back (shared_ptr<FontAsset> (new FontAsset (i->first, path)));
+		} else if (pkl_type == "image/png") {
+			/* It's an Interop PNG subtitle; let it go */
 		} else {
 			throw DCPReadError (String::compose("Unknown asset type %1 in PKL", pkl_type));
 		}

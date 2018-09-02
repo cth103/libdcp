@@ -82,17 +82,26 @@ public:
 		return _png_image;
 	}
 
-	void set_png_image (Data d) {
-		_png_image = d;
+	void set_png_image (Data png) {
+		_png_image = png;
 	}
+
+	void read_png_file (boost::filesystem::path file);
+	void write_png_file (boost::filesystem::path file) const;
 
 	std::string id () const {
 		return _id;
 	}
 
+	/** @return the most recent disk file used to read or write this asset, if there is one */
+	boost::optional<boost::filesystem::path> file () const {
+		return _file;
+	}
+
 private:
 	Data _png_image;
 	std::string _id;
+	mutable boost::optional<boost::filesystem::path> _file;
 };
 
 bool operator== (SubtitleImage const & a, SubtitleImage const & b);

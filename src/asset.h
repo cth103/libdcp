@@ -76,9 +76,9 @@ public:
 	/** Write details of the asset to a ASSETMAP.
 	 *  @param node Parent node.
 	 */
-	void write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const;
+	virtual void write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const;
 
-	void add_to_pkl (boost::shared_ptr<PKL> pkl, boost::filesystem::path root) const;
+	virtual void add_to_pkl (boost::shared_ptr<PKL> pkl, boost::filesystem::path root) const;
 
 	/** @return the most recent disk file used to read or write this asset, if there is one */
 	boost::optional<boost::filesystem::path> file () const {
@@ -96,6 +96,8 @@ protected:
 
 	/** The most recent disk file used to read or write this asset */
 	mutable boost::optional<boost::filesystem::path> _file;
+
+	static void write_file_to_assetmap (xmlpp::Node* node, boost::filesystem::path root, boost::filesystem::path file, std::string id);
 
 private:
 	friend struct ::asset_test;

@@ -22,6 +22,10 @@
 #include "subtitle_string.h"
 #include "subtitle_image.h"
 #include "subtitle_asset_internal.h"
+#include "reel_subtitle_asset.h"
+#include "reel.h"
+#include "cpl.h"
+#include "dcp.h"
 #include "test.h"
 #include "util.h"
 #include <boost/test/unit_test.hpp>
@@ -312,12 +316,12 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 /* Write some subtitle content as Interop XML using bitmaps and check that it is right */
 BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 {
-	dcp::InteropSubtitleAsset c;
-	c.set_reel_number ("1");
-	c.set_language ("EN");
-	c.set_movie_title ("Test");
+	shared_ptr<dcp::InteropSubtitleAsset> c (new dcp::InteropSubtitleAsset());
+	c->set_reel_number ("1");
+	c->set_language ("EN");
+	c->set_movie_title ("Test");
 
-	c.add (
+	c->add (
 		shared_ptr<dcp::Subtitle> (
 			new dcp::SubtitleImage (
 				dcp::Data ("test/data/sub.png"),
@@ -333,17 +337,43 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 			)
 		);
 
-	c._id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
-
+	c->_id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
 	boost::filesystem::create_directories ("build/test/write_interop_subtitle_test3");
-	c.write ("build/test/write_interop_subtitle_test3/subs.xml");
+	c->write ("build/test/write_interop_subtitle_test3/subs.xml");
+
+	shared_ptr<dcp::Reel> reel (new dcp::Reel());
+	reel->add(shared_ptr<dcp::ReelSubtitleAsset>(new dcp::ReelSubtitleAsset(c, dcp::Fraction(24, 1), 6046, 0)));
+
+	dcp::XMLMetadata xml_meta;
+	xml_meta.issue_date = "2018-09-02T04:45:18+00:00";
+
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("My film", dcp::FEATURE));
+	cpl->add (reel);
+	cpl->set_metadata (xml_meta);
+	cpl->set_content_version_label_text ("foo");
+
+	dcp::DCP dcp ("build/test/write_interop_subtitle_test3");
+	dcp.add (cpl);
+	dcp.write_xml (dcp::INTEROP, xml_meta);
 
 	check_xml (
-		dcp::file_to_string("test/data/write_interop_subtitle_test3.xml"),
+		dcp::file_to_string("test/ref/write_interop_subtitle_test3/subs.xml"),
 		dcp::file_to_string("build/test/write_interop_subtitle_test3/subs.xml"),
 		list<string>()
 		);
 	check_file ("build/test/write_interop_subtitle_test3/822bd341-c751-45b1-94d2-410e4ffcff1b.png", "test/data/sub.png");
+
+	check_xml (
+		dcp::file_to_string("test/ref/write_interop_subtitle_test3/ASSETMAP"),
+		dcp::file_to_string("build/test/write_interop_subtitle_test3/ASSETMAP"),
+		list<string>()
+		);
+
+	check_xml (
+		dcp::file_to_string("test/ref/write_interop_subtitle_test3/pkl.xml"),
+		dcp::file_to_string("build/test/write_interop_subtitle_test3/pkl_8d98d2e1-d2a1-458f-b96b-295e5b5d0860.xml"),
+		list<string>()
+		);
 }
 
 /* Write some subtitle content as SMPTE XML and check that it is right */

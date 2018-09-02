@@ -101,10 +101,15 @@ void
 Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 {
 	DCP_ASSERT (_file);
+	write_file_to_assetmap (node, root, _file.get(), _id);
+}
 
+void
+Asset::write_file_to_assetmap (xmlpp::Node* node, boost::filesystem::path root, boost::filesystem::path file, string id)
+{
 	optional<boost::filesystem::path> path = relative_to_root (
 		boost::filesystem::canonical (root),
-		boost::filesystem::canonical (_file.get())
+		boost::filesystem::canonical (file)
 		);
 
 	if (!path) {
@@ -115,14 +120,14 @@ Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
 	}
 
 	xmlpp::Node* asset = node->add_child ("Asset");
-	asset->add_child("Id")->add_child_text ("urn:uuid:" + _id);
+	asset->add_child("Id")->add_child_text ("urn:uuid:" + id);
 	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
 	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
 
 	chunk->add_child("Path")->add_child_text (path.get().generic_string());
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
-	chunk->add_child("Length")->add_child_text (raw_convert<string> (boost::filesystem::file_size (_file.get())));
+	chunk->add_child("Length")->add_child_text (raw_convert<string> (boost::filesystem::file_size (file)));
 }
 
 string

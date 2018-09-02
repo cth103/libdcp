@@ -88,6 +88,17 @@ dcp::make_uuid ()
 	return string (buffer);
 }
 
+string
+dcp::make_digest (Data data)
+{
+	SHA_CTX sha;
+	SHA1_Init (&sha);
+	SHA1_Update (&sha, data.data().get(), data.size());
+	byte_t byte_buffer[SHA_DIGEST_LENGTH];
+	SHA1_Final (byte_buffer, &sha);
+	char digest[64];
+	return Kumu::base64encode (byte_buffer, SHA_DIGEST_LENGTH, digest, 64);
+}
 
 /** Create a digest for a file.
  *  @param filename File name.

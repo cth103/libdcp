@@ -59,6 +59,9 @@ public:
 		NoteHandler note
 		) const;
 
+	void write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const;
+	void add_to_pkl (boost::shared_ptr<PKL> pkl, boost::filesystem::path root) const;
+
 	std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const;
 
 	void add_font (std::string load_id, boost::filesystem::path file);
