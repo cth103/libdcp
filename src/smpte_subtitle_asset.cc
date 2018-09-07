@@ -47,6 +47,7 @@
 #include "subtitle_image.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_util.h>
+#include <asdcp/KM_log.h>
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
@@ -268,7 +269,9 @@ bool
 SMPTESubtitleAsset::valid_mxf (boost::filesystem::path file)
 {
 	ASDCP::TimedText::MXFReader reader;
+	Kumu::DefaultLogSink().UnsetFilterFlag(Kumu::LOG_ALLOW_ALL);
 	Kumu::Result_t r = reader.OpenRead (file.string().c_str ());
+	Kumu::DefaultLogSink().SetFilterFlag(Kumu::LOG_ALLOW_ALL);
 	return !ASDCP_FAILURE (r);
 }
 
