@@ -36,9 +36,9 @@ import shutil
 
 def dependencies(target, options):
     if (target.platform == 'windows' and target.version == 'xp') or (options is not None and 'jpeg' in options and options['jpeg'] == 'oj1'):
-        return (('libcxml', 'e09e783'), ('openjpeg-cdist',  '4233dd7'), ('asdcplib-cth', 'b536bc0'))
+        return (('libcxml', '6dd54f6'), ('openjpeg-cdist',  '4233dd7'), ('asdcplib-cth', 'b536bc0'))
     else:
-        return (('libcxml', 'e09e783'), ('openjpeg2-cdist', 'c40a3b8'), ('asdcplib-cth', 'b536bc0'))
+        return (('libcxml', '6dd54f6'), ('openjpeg2-cdist', 'c40a3b8'), ('asdcplib-cth', 'b536bc0'))
 
 def build(target, options):
     cmd = './waf configure --disable-examples --prefix=%s' % target.directory
