@@ -68,6 +68,7 @@ public:
 
 	bool operator== (LocalTime const & other) const;
 	bool operator!= (LocalTime const & other) const;
+	bool operator< (LocalTime const & other) const;
 
 private:
 	friend class ::local_time_test;
