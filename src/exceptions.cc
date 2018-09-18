@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -68,6 +68,12 @@ MissingAssetError::MissingAssetError (boost::filesystem::path path, AssetType ty
 		(type == MAIN_SOUND     ? String::compose ("Missing asset %1 for main sound", path.string()) :
 		 (type == MAIN_SUBTITLE ? String::compose ("Missing asset %1 for main subtitle", path.string()) :
 		  String::compose ("Missing asset %1", path.string()))))
+{
+
+}
+
+BadContentKindError::BadContentKindError (string content_kind)
+	: DCPReadError (String::compose("Bad content kind '%1'", content_kind))
 {
 
 }

@@ -214,7 +214,7 @@ dcp::content_kind_from_string (string kind)
 		return ADVERTISEMENT;
 	}
 
-	DCP_ASSERT (false);
+	throw BadContentKindError (kind);
 }
 
 /** @param s A string.

@@ -136,6 +136,12 @@ public:
 	~MissingAssetError () throw () {}
 };
 
+class BadContentKindError : public DCPReadError
+{
+public:
+	BadContentKindError (std::string content_kind);
+};
+
 /** @class XMLError
  *  @brief An XML error
  */
