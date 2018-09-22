@@ -52,7 +52,6 @@ using std::list;
 using std::cout;
 using std::cerr;
 using std::map;
-using std::distance;
 using boost::shared_ptr;
 using boost::shared_array;
 using boost::optional;
@@ -457,7 +456,7 @@ SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
 			while (j != part->children.end() && (*i)->font == (*j)->font) {
 				++j;
 			}
-			if (distance (i, j) == 1) {
+			if (std::distance (i, j) == 1) {
 				merged.push_back (*i);
 				++i;
 			} else {
