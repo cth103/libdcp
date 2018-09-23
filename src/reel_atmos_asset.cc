@@ -54,6 +54,7 @@ ReelAtmosAsset::ReelAtmosAsset (boost::shared_ptr<AtmosAsset> asset, int64_t ent
 
 ReelAtmosAsset::ReelAtmosAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
+	, ReelMXF (node)
 {
 	node->ignore_child ("DataType");
 	node->done ();
