@@ -64,19 +64,28 @@ verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelAsset> reel_asset, function<vo
 {
 	string const actual_hash = reel_asset->asset_ref()->hash(progress);
 
-	shared_ptr<PKL> pkl = dcp->pkl();
-	/* We've read this DCP in so it must have a PKL */
-	DCP_ASSERT (pkl);
+	list<shared_ptr<PKL> > pkls = dcp->pkls();
+	/* We've read this DCP in so it must have at least one PKL */
+	DCP_ASSERT (!pkls.empty());
 
 	shared_ptr<Asset> asset = reel_asset->asset_ref().asset();
-	string const pkl_hash = pkl->hash (reel_asset->asset_ref()->id());
+
+	optional<string> pkl_hash;
+	BOOST_FOREACH (shared_ptr<PKL> i, pkls) {
+		pkl_hash = i->hash (reel_asset->asset_ref()->id());
+		if (pkl_hash) {
+			break;
+		}
+	}
+
+	DCP_ASSERT (pkl_hash);
 
 	optional<string> cpl_hash = reel_asset->hash();
-	if (cpl_hash && *cpl_hash != pkl_hash) {
+	if (cpl_hash && *cpl_hash != *pkl_hash) {
 		return RESULT_CPL_PKL_DIFFER;
 	}
 
-	if (actual_hash != pkl_hash) {
+	if (actual_hash != *pkl_hash) {
 		return RESULT_BAD;
 	}
 

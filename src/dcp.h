@@ -129,11 +129,11 @@ public:
 		return _directory;
 	}
 
-	/** @return PKL if this DCP was read from an existing one, or if write_xml() has been called on it.
-	 *  If neither is true, this method returns 0.
+	/** @return PKLs if this DCP was read from an existing one, or if write_xml() has been called on it.
+	 *  If neither is true, this method returns an empty list.
 	 */
-	boost::shared_ptr<PKL> pkl () const {
-		return _pkl;
+	std::list<boost::shared_ptr<PKL> > pkls () const {
+		return _pkls;
 	}
 
 	static std::vector<boost::filesystem::path> directories_from_files (std::vector<boost::filesystem::path> files);
@@ -152,7 +152,7 @@ private:
 	boost::filesystem::path _directory;
 	/** the CPLs that make up this DCP */
 	std::list<boost::shared_ptr<CPL> > _cpls;
-	boost::shared_ptr<PKL> _pkl;
+	std::list<boost::shared_ptr<PKL> > _pkls;
 
 	/** Standard of DCP that was read in */
 	boost::optional<Standard> _standard;

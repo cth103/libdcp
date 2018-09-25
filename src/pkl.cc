@@ -42,6 +42,7 @@
 
 using std::string;
 using boost::shared_ptr;
+using boost::optional;
 using namespace dcp;
 
 static string const pkl_interop_ns = "http://www.digicine.com/PROTO-ASDCP-PKL-20040311#";
@@ -115,7 +116,7 @@ PKL::write (boost::filesystem::path file, shared_ptr<const CertificateChain> sig
 	doc.write_to_file (file.string(), "UTF-8");
 }
 
-string
+optional<string>
 PKL::hash (string id) const
 {
 	BOOST_FOREACH (shared_ptr<Asset> i, _asset_list) {
@@ -124,10 +125,10 @@ PKL::hash (string id) const
 		}
 	}
 
-	DCP_ASSERT (false);
+	return optional<string>();
 }
 
-string
+optional<string>
 PKL::type (string id) const
 {
 	BOOST_FOREACH (shared_ptr<Asset> i, _asset_list) {
@@ -136,5 +137,5 @@ PKL::type (string id) const
 		}
 	}
 
-	DCP_ASSERT (false);
+	return optional<string>();
 }

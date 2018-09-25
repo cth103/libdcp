@@ -134,7 +134,7 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 
 	list<shared_ptr<cxml::Node> > asset_nodes = asset_map.node_child("AssetList")->node_children ("Asset");
 	map<string, boost::filesystem::path> paths;
-	optional<boost::filesystem::path> pkl_path;
+	list<boost::filesystem::path> pkl_paths;
 	BOOST_FOREACH (shared_ptr<cxml::Node> i, asset_nodes) {
 		if (i->node_child("ChunkList")->node_children("Chunk").size() != 1) {
 			boost::throw_exception (XMLError ("unsupported asset chunk count"));
@@ -146,7 +146,7 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 		switch (*_standard) {
 		case INTEROP:
 			if (i->optional_node_child("PackingList")) {
-				pkl_path = p;
+				pkl_paths.push_back (p);
 			} else {
 				paths.insert (make_pair (remove_urn_uuid (i->string_child ("Id")), p));
 			}
@@ -155,7 +155,7 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 		{
 			optional<string> pkl_bool = i->optional_string_child("PackingList");
 			if (pkl_bool && *pkl_bool == "true") {
-				pkl_path = p;
+				pkl_paths.push_back (p);
 			} else {
 				paths.insert (make_pair (remove_urn_uuid (i->string_child ("Id")), p));
 			}
@@ -164,11 +164,13 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 		}
 	}
 
-	if (!pkl_path) {
-		boost::throw_exception (XMLError ("No packing list found in asset map"));
+	if (pkl_paths.empty()) {
+		boost::throw_exception (XMLError ("No packing lists found in asset map"));
 	}
 
-	_pkl.reset (new PKL (_directory / *pkl_path));
+	BOOST_FOREACH (boost::filesystem::path i, pkl_paths) {
+		_pkls.push_back (shared_ptr<PKL>(new PKL(_directory / i)));
+	}
 
 	/* Read all the assets from the asset map */
 
@@ -185,9 +187,17 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 			continue;
 		}
 
-		string const pkl_type = _pkl->type(i->first);
+		optional<string> pkl_type;
+		BOOST_FOREACH (shared_ptr<PKL> j, _pkls) {
+			pkl_type = j->type(i->first);
+			if (pkl_type) {
+				break;
+			}
+		}
 
-		if (pkl_type == CPL::static_pkl_type(*_standard) || pkl_type == InteropSubtitleAsset::static_pkl_type(*_standard)) {
+		DCP_ASSERT (pkl_type);
+
+		if (*pkl_type == CPL::static_pkl_type(*_standard) || *pkl_type == InteropSubtitleAsset::static_pkl_type(*_standard)) {
 			xmlpp::DomParser* p = new xmlpp::DomParser;
 			try {
 				p->parse_file (path.string());
@@ -212,10 +222,10 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 				other_assets.push_back (shared_ptr<InteropSubtitleAsset> (new InteropSubtitleAsset (path)));
 			}
 		} else if (
-			pkl_type == PictureAsset::static_pkl_type(*_standard) ||
-			pkl_type == SoundAsset::static_pkl_type(*_standard) ||
-			pkl_type == AtmosAsset::static_pkl_type(*_standard) ||
-			pkl_type == SMPTESubtitleAsset::static_pkl_type(*_standard)
+			*pkl_type == PictureAsset::static_pkl_type(*_standard) ||
+			*pkl_type == SoundAsset::static_pkl_type(*_standard) ||
+			*pkl_type == AtmosAsset::static_pkl_type(*_standard) ||
+			*pkl_type == SMPTESubtitleAsset::static_pkl_type(*_standard)
 			) {
 
 			/* XXX: asdcplib does not appear to support discovery of read MXFs standard
@@ -258,12 +268,12 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 				default:
 					throw DCPReadError (String::compose ("Unknown MXF essence type %1 in %2", int(type), path.string()));
 			}
-		} else if (pkl_type == FontAsset::static_pkl_type(*_standard)) {
+		} else if (*pkl_type == FontAsset::static_pkl_type(*_standard)) {
 			other_assets.push_back (shared_ptr<FontAsset> (new FontAsset (i->first, path)));
-		} else if (pkl_type == "image/png") {
+		} else if (*pkl_type == "image/png") {
 			/* It's an Interop PNG subtitle; let it go */
 		} else {
-			throw DCPReadError (String::compose("Unknown asset type %1 in PKL", pkl_type));
+			throw DCPReadError (String::compose("Unknown asset type %1 in PKL", *pkl_type));
 		}
 	}
 
@@ -468,20 +478,25 @@ DCP::write_xml (
 		i->write_xml (_directory / (name_format.get(values, "_" + i->id() + ".xml")), standard, signer);
 	}
 
-	if (!_pkl) {
-		_pkl.reset (new PKL (standard, metadata.annotation_text, metadata.issue_date, metadata.issuer, metadata.creator));
+	shared_ptr<PKL> pkl;
+
+	if (_pkls.empty()) {
+		pkl.reset (new PKL (standard, metadata.annotation_text, metadata.issue_date, metadata.issuer, metadata.creator));
+		_pkls.push_back (pkl);
 		BOOST_FOREACH (shared_ptr<Asset> i, assets ()) {
-			i->add_to_pkl (_pkl, _directory);
+			i->add_to_pkl (pkl, _directory);
 		}
+        } else {
+		pkl = _pkls.front ();
 	}
 
 	NameFormat::Map values;
 	values['t'] = "pkl";
-	boost::filesystem::path pkl_path = _directory / name_format.get(values, "_" + _pkl->id() + ".xml");
-	_pkl->write (pkl_path, signer);
+	boost::filesystem::path pkl_path = _directory / name_format.get(values, "_" + pkl->id() + ".xml");
+	pkl->write (pkl_path, signer);
 
 	write_volindex (standard);
-	write_assetmap (standard, _pkl->id(), pkl_path, metadata);
+	write_assetmap (standard, pkl->id(), pkl_path, metadata);
 }
 
 list<shared_ptr<CPL> >
