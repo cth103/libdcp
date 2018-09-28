@@ -102,6 +102,9 @@ enum ContentKind
 	ADVERTISEMENT
 };
 
+extern std::string content_kind_to_string (ContentKind kind);
+extern ContentKind content_kind_from_string (std::string kind);
+
 enum Effect
 {
 	NONE,
