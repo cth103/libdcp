@@ -61,8 +61,6 @@ class OpenJPEGImage;
 extern std::string make_uuid ();
 extern std::string make_digest (boost::filesystem::path filename, boost::function<void (float)>);
 extern std::string make_digest (Data data);
-extern std::string content_kind_to_string (ContentKind kind);
-extern ContentKind content_kind_from_string (std::string kind);
 extern bool empty_or_white_space (std::string s);
 extern bool ids_equal (std::string a, std::string b);
 extern std::string remove_urn_uuid (std::string raw);

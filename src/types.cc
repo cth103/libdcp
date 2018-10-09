@@ -35,6 +35,7 @@
 #include "types.h"
 #include "exceptions.h"
 #include "compose.hpp"
+#include "dcp_assert.h"
 #include <boost/algorithm/string.hpp>
 #include <vector>
 #include <cstdio>
@@ -298,4 +299,73 @@ dcp::string_to_direction (string s)
 	}
 
 	boost::throw_exception (DCPReadError ("unknown subtitle direction type"));
+}
+
+/** Convert a content kind to a string which can be used in a
+ *  &lt;ContentKind&gt; node.
+ *  @param kind ContentKind.
+ *  @return string.
+ */
+string
+dcp::content_kind_to_string (ContentKind kind)
+{
+	switch (kind) {
+	case FEATURE:
+		return "feature";
+	case SHORT:
+		return "short";
+	case TRAILER:
+		return "trailer";
+	case TEST:
+		return "test";
+	case TRANSITIONAL:
+		return "transitional";
+	case RATING:
+		return "rating";
+	case TEASER:
+		return "teaser";
+	case POLICY:
+		return "policy";
+	case PUBLIC_SERVICE_ANNOUNCEMENT:
+		return "psa";
+	case ADVERTISEMENT:
+		return "advertisement";
+	}
+
+	DCP_ASSERT (false);
+}
+
+/** Convert a string from a &lt;ContentKind&gt; node to a libdcp ContentKind.
+ *  Reasonably tolerant about varying case.
+ *  @param kind Content kind string.
+ *  @return libdcp ContentKind.
+ */
+dcp::ContentKind
+dcp::content_kind_from_string (string kind)
+{
+	transform (kind.begin(), kind.end(), kind.begin(), ::tolower);
+
+	if (kind == "feature") {
+		return FEATURE;
+	} else if (kind == "short") {
+		return SHORT;
+	} else if (kind == "trailer") {
+		return TRAILER;
+	} else if (kind == "test") {
+		return TEST;
+	} else if (kind == "transitional") {
+		return TRANSITIONAL;
+	} else if (kind == "rating") {
+		return RATING;
+	} else if (kind == "teaser") {
+		return TEASER;
+	} else if (kind == "policy") {
+		return POLICY;
+	} else if (kind == "psa") {
+		return PUBLIC_SERVICE_ANNOUNCEMENT;
+	} else if (kind == "advertisement") {
+		return ADVERTISEMENT;
+	}
+
+	throw BadContentKindError (kind);
 }
