@@ -198,6 +198,33 @@ dcp::locale_convert (boost::filesystem::path x, int, bool)
 }
 
 template<>
+unsigned char
+dcp::locale_convert (string x, int, bool)
+{
+	unsigned char y = 0;
+	sscanf (x.c_str(), "%hhu", &y);
+	return y;
+}
+
+template<>
+unsigned short int
+dcp::locale_convert (string x, int, bool)
+{
+	unsigned short int y = 0;
+	sscanf (x.c_str(), "%hu", &y);
+	return y;
+}
+
+template<>
+unsigned int
+dcp::locale_convert (string x, int, bool)
+{
+	int y = 0;
+	sscanf (x.c_str(), "%u", &y);
+	return y;
+}
+
+template<>
 int
 dcp::locale_convert (string x, int, bool)
 {

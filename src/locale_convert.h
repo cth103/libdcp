@@ -116,6 +116,18 @@ std::string
 locale_convert (boost::filesystem::path x, int, bool);
 
 template <>
+unsigned char
+locale_convert (std::string x, int, bool);
+
+template <>
+unsigned short int
+locale_convert (std::string x, int, bool);
+
+template <>
+unsigned int
+locale_convert (std::string x, int, bool);
+
+template <>
 int
 locale_convert (std::string x, int, bool);
 

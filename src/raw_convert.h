@@ -113,6 +113,14 @@ std::string
 raw_convert (char v, int, bool);
 
 template <>
+unsigned char
+raw_convert (std::string v, int, bool);
+
+template <>
+unsigned short int
+raw_convert (std::string v, int, bool);
+
+template <>
 int
 raw_convert (std::string v, int, bool);
 
