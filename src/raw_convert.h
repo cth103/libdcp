@@ -54,6 +54,14 @@ raw_convert (Q v, int precision = 16, bool fixed = false)
 
 template <>
 std::string
+raw_convert (unsigned char v, int, bool);
+
+template <>
+std::string
+raw_convert (unsigned short int v, int, bool);
+
+template <>
+std::string
 raw_convert (int v, int, bool);
 
 template <>

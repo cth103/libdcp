@@ -53,6 +53,14 @@ locale_convert (Q x, int precision = 16, bool fixed = false)
 
 template <>
 std::string
+locale_convert (unsigned char x, int, bool);
+
+template <>
+std::string
+locale_convert (unsigned short int x, int, bool);
+
+template <>
+std::string
 locale_convert (int x, int, bool);
 
 template <>

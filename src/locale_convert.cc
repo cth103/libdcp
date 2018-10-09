@@ -40,6 +40,24 @@ using std::wstring;
 
 template<>
 string
+dcp::locale_convert (unsigned char x, int, bool)
+{
+	char buffer[64];
+	snprintf (buffer, sizeof(buffer), "%hhd", x);
+	return buffer;
+}
+
+template<>
+string
+dcp::locale_convert (unsigned short int x, int, bool)
+{
+	char buffer[64];
+	snprintf (buffer, sizeof(buffer), "%hd", x);
+	return buffer;
+}
+
+template<>
+string
 dcp::locale_convert (int x, int, bool)
 {
 	char buffer[64];
