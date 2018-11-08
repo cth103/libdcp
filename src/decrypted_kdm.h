@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2017 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -121,7 +121,7 @@ public:
 	/** Encrypt this KDM's keys and sign the whole KDM.
 	 *  @param signer Chain to sign with.
 	 *  @param recipient Certificate of the projector/server which should receive this KDM's keys.
-	 *  @param trusted_devices Extra trusted devices which should be written to the KDM (recipient will be written
+	 *  @param trusted_devices Thumbprints of extra trusted devices which should be written to the KDM (recipient will be written
 	 *  as a trusted device automatically and does not need to be included in this list).
 	 *  @param formulation Formulation to use for the encrypted KDM.
 	 *  @param disable_forensic_marking_picture true to disable forensic marking of picture.
@@ -132,7 +132,7 @@ public:
 	EncryptedKDM encrypt (
 		boost::shared_ptr<const CertificateChain> signer,
 		Certificate recipient,
-		std::vector<Certificate> trusted_devices,
+		std::vector<std::string> trusted_devices,
 		Formulation formulation,
 		bool disable_forensic_marking_picture,
 		boost::optional<int> disable_forensic_marking_audio

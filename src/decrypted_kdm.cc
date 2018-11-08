@@ -305,7 +305,7 @@ EncryptedKDM
 DecryptedKDM::encrypt (
 	shared_ptr<const CertificateChain> signer,
 	Certificate recipient,
-	vector<Certificate> trusted_devices,
+	vector<string> trusted_devices,
 	Formulation formulation,
 	bool disable_forensic_marking_picture,
 	optional<int> disable_forensic_marking_audio

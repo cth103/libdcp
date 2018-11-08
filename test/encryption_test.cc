@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -40,6 +40,7 @@
 #include <boost/shared_ptr.hpp>
 
 using std::vector;
+using std::string;
 using boost::shared_ptr;
 
 /** Load a certificate chain from build/test/data/ *.pem and then build
@@ -135,7 +136,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 		"2012-07-17T04:45:18+00:00"
 		);
 
-	kdm.encrypt (signer, signer->leaf(), vector<dcp::Certificate>(), dcp::MODIFIED_TRANSITIONAL_1, true, 0).as_xml ("build/test/encryption_test.kdm.xml");
+	kdm.encrypt (signer, signer->leaf(), vector<string>(), dcp::MODIFIED_TRANSITIONAL_1, true, 0).as_xml ("build/test/encryption_test.kdm.xml");
 
 	int r = system (
 		"xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/encryption_test.kdm.xml "

@@ -576,10 +576,11 @@ EncryptedKDM::EncryptedKDM (string s)
 	}
 }
 
+/** @param trusted_devices Trusted device thumbprints */
 EncryptedKDM::EncryptedKDM (
 	shared_ptr<const CertificateChain> signer,
 	Certificate recipient,
-	vector<Certificate> trusted_devices,
+	vector<string> trusted_devices,
 	string cpl_id,
 	string content_title_text,
 	optional<string> annotation_text,
@@ -651,8 +652,8 @@ EncryptedKDM::EncryptedKDM (
 				   recipient's thumbprint (recipient.thumbprint()).
 				   Waimea uses only the trusted devices here, too.
 				*/
-				BOOST_FOREACH (Certificate const & i, trusted_devices) {
-					kre.authorized_device_info->certificate_thumbprints.push_back (i.thumbprint ());
+				BOOST_FOREACH (string i, trusted_devices) {
+					kre.authorized_device_info->certificate_thumbprints.push_back (i);
 				}
 			}
 		}

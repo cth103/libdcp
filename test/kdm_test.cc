@@ -146,7 +146,7 @@ kdm_forensic_test (cxml::Document& doc, bool picture, optional<int> audio)
 	signer->set_key(dcp::file_to_string("test/data/private.key"));
 
 	dcp::EncryptedKDM kdm = decrypted.encrypt (
-		signer, signer->leaf(), vector<dcp::Certificate>(), dcp::MODIFIED_TRANSITIONAL_1, picture, audio
+		signer, signer->leaf(), vector<string>(), dcp::MODIFIED_TRANSITIONAL_1, picture, audio
 		);
 
 	/* Check that we can pass this through correctly */
