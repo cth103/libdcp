@@ -78,6 +78,12 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	cout << dcp::Certificate(dcp::file_to_string(argv[optind])).thumbprint() << "\n";
+	try {
+		cout << dcp::Certificate(dcp::file_to_string(argv[optind])).thumbprint() << "\n";
+	} catch (boost::filesystem::filesystem_error& e) {
+		cerr << e.what() << "\n";
+		return -1;
+	}
+
 	return 0;
 }
