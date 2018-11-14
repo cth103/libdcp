@@ -170,6 +170,32 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	set_file (file);
 }
 
+list<shared_ptr<ReelAsset> >
+CPL::reel_assets ()
+{
+	list<shared_ptr<ReelAsset> > c;
+
+	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+		if (i->main_picture ()) {
+			c.push_back (i->main_picture());
+		}
+		if (i->main_sound ()) {
+			c.push_back (i->main_sound());
+		}
+		if (i->main_subtitle ()) {
+			c.push_back (i->main_subtitle());
+		}
+		BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> j, i->closed_captions()) {
+			c.push_back (j);
+		}
+		if (i->atmos ()) {
+			c.push_back (i->atmos());
+		}
+	}
+
+	return c;
+}
+
 list<shared_ptr<const ReelAsset> >
 CPL::reel_assets () const
 {

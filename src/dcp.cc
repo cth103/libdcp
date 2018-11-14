@@ -57,6 +57,7 @@
 #include "reel_asset.h"
 #include "font_asset.h"
 #include "pkl.h"
+#include "asset_factory.h"
 #include <asdcp/AS_DCP.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
@@ -228,46 +229,7 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 			*pkl_type == SMPTESubtitleAsset::static_pkl_type(*_standard)
 			) {
 
-			/* XXX: asdcplib does not appear to support discovery of read MXFs standard
-			   (Interop / SMPTE)
-			*/
-
-			ASDCP::EssenceType_t type;
-			if (ASDCP::EssenceType (path.string().c_str(), type) != ASDCP::RESULT_OK) {
-				throw DCPReadError ("Could not find essence type");
-			}
-			switch (type) {
-				case ASDCP::ESS_UNKNOWN:
-				case ASDCP::ESS_MPEG2_VES:
-					throw DCPReadError ("MPEG2 video essences are not supported");
-				case ASDCP::ESS_JPEG_2000:
-					try {
-						other_assets.push_back (shared_ptr<MonoPictureAsset> (new MonoPictureAsset (path)));
-					} catch (dcp::MXFFileError& e) {
-						if (ignore_incorrect_picture_mxf_type && e.number() == ASDCP::RESULT_SFORMAT) {
-							/* Tried to load it as mono but the error says it's stereo; try that instead */
-							other_assets.push_back (shared_ptr<StereoPictureAsset> (new StereoPictureAsset (path)));
-						} else {
-							throw;
-						}
-					}
-					break;
-				case ASDCP::ESS_PCM_24b_48k:
-				case ASDCP::ESS_PCM_24b_96k:
-					other_assets.push_back (shared_ptr<SoundAsset> (new SoundAsset (path)));
-					break;
-				case ASDCP::ESS_JPEG_2000_S:
-					other_assets.push_back (shared_ptr<StereoPictureAsset> (new StereoPictureAsset (path)));
-					break;
-				case ASDCP::ESS_TIMED_TEXT:
-					other_assets.push_back (shared_ptr<SMPTESubtitleAsset> (new SMPTESubtitleAsset (path)));
-					break;
-			        case ASDCP::ESS_DCDATA_DOLBY_ATMOS:
-					other_assets.push_back (shared_ptr<AtmosAsset> (new AtmosAsset (path)));
-					break;
-				default:
-					throw DCPReadError (String::compose ("Unknown MXF essence type %1 in %2", int(type), path.string()));
-			}
+			other_assets.push_back (asset_factory(path, ignore_incorrect_picture_mxf_type));
 		} else if (*pkl_type == FontAsset::static_pkl_type(*_standard)) {
 			other_assets.push_back (shared_ptr<FontAsset> (new FontAsset (i->first, path)));
 		} else if (*pkl_type == "image/png") {

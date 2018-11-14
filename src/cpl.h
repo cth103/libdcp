@@ -119,6 +119,7 @@ public:
 	/** @return the ReelAssets in this CPL in all reels.
 	 */
 	std::list<boost::shared_ptr<const ReelAsset> > reel_assets () const;
+	std::list<boost::shared_ptr<ReelAsset> > reel_assets ();
 
 	bool encrypted () const;
 

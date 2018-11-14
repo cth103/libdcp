@@ -35,6 +35,7 @@ from waflib import TaskGen
 def build(bld):
     source = """
              asset.cc
+             asset_factory.cc
              asset_writer.cc
              atmos_asset.cc
              atmos_asset_writer.cc
