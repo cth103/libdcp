@@ -98,6 +98,7 @@ main_picture (shared_ptr<Reel> reel, bool analyse, bool decompress)
 	cout << "      Picture ID:  " << reel->main_picture()->id()
 	     << " entry " << reel->main_picture()->entry_point()
 	     << " duration " << reel->main_picture()->duration()
+	     << " (" << dcp::Time(reel->main_picture()->duration(), reel->main_picture()->frame_rate().as_float(), reel->main_picture()->frame_rate().as_float()).as_string(dcp::SMPTE) << ")"
 	     << " intrinsic " << reel->main_picture()->intrinsic_duration();
 
 	if (reel->main_picture()->asset_ref().resolved()) {
