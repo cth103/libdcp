@@ -127,6 +127,18 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 			BOOST_FOREACH (shared_ptr<Reel> reel, cpl->reels()) {
 				stage ("Checking reel", optional<boost::filesystem::path>());
 				if (reel->main_picture()) {
+					/* Check reel stuff */
+					Fraction const frame_rate = reel->main_picture()->frame_rate();
+					if (frame_rate.denominator != 1 ||
+					    (frame_rate.numerator != 24 &&
+					     frame_rate.numerator != 25 &&
+					     frame_rate.numerator != 30 &&
+					     frame_rate.numerator != 48 &&
+					     frame_rate.numerator != 50 &&
+					     frame_rate.numerator != 60)) {
+						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "Invalid frame rate for picture"));
+					}
+					/* Check asset */
 					stage ("Checking picture asset hash", reel->main_picture()->asset()->file());
 					Result const r = verify_asset (dcp, reel->main_picture(), progress);
 					switch (r) {

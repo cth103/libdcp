@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE (verify_test2)
 
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
 
-	BOOST_CHECK_EQUAL (notes.size(), 2);
+	BOOST_REQUIRE_EQUAL (notes.size(), 2);
 	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
 	BOOST_CHECK_EQUAL (notes.front().note(), "Picture asset hash is incorrect.");
 	BOOST_CHECK_EQUAL (notes.back().type(), dcp::VerificationNote::VERIFY_ERROR);
@@ -178,6 +178,26 @@ BOOST_AUTO_TEST_CASE (verify_test4)
 
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
 
-	BOOST_CHECK_EQUAL (notes.size(), 1);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1);
 	BOOST_CHECK_EQUAL (notes.front().note(), "Bad content kind 'xfeature'");
+}
+
+/* FrameRate */
+BOOST_AUTO_TEST_CASE (verify_test5)
+{
+	vector<boost::filesystem::path> directories = setup (5);
+
+	boost::filesystem::path const cpl_file = "build/test/verify_test5/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
+
+	string cpl = dcp::file_to_string (cpl_file);
+	boost::algorithm::replace_all (cpl, "<FrameRate>24 1", "<FrameRate>99 1");
+	FILE* f = fopen(cpl_file.string().c_str(), "w");
+	fwrite(cpl.c_str(), cpl.length(), 1, f);
+	fclose(f);
+
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+
+	BOOST_REQUIRE_EQUAL (notes.size(), 2);
+	BOOST_CHECK_EQUAL (notes.front().note(), "CPL hash is incorrect.");
+	BOOST_CHECK_EQUAL (notes.back().note(), "Invalid frame rate for picture");
 }
