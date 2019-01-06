@@ -33,6 +33,7 @@
 
 #include "verify.h"
 #include "util.h"
+#include "compose.hpp"
 #include <boost/test/unit_test.hpp>
 #include <boost/algorithm/string.hpp>
 #include <cstdio>
@@ -59,17 +60,25 @@ progress (float)
 
 }
 
-/* Check DCP as-is (should be OK) */
-BOOST_AUTO_TEST_CASE (verify_test1)
+static vector<boost::filesystem::path>
+setup (int n)
 {
-	boost::filesystem::remove_all ("build/test/verify_test1");
-	boost::filesystem::create_directory ("build/test/verify_test1");
+	boost::filesystem::remove_all (dcp::String::compose("build/test/verify_test%1", n));
+	boost::filesystem::create_directory (dcp::String::compose("build/test/verify_test%1", n));
 	for (boost::filesystem::directory_iterator i("test/ref/DCP/dcp_test1"); i != boost::filesystem::directory_iterator(); ++i) {
-		boost::filesystem::copy_file (i->path(), "build/test/verify_test1" / i->path().filename());
+		boost::filesystem::copy_file (i->path(), dcp::String::compose("build/test/verify_test%1", n) / i->path().filename());
 	}
 
 	vector<boost::filesystem::path> directories;
-	directories.push_back ("build/test/verify_test1");
+	directories.push_back (dcp::String::compose("build/test/verify_test%1", n));
+	return directories;
+
+}
+
+/* Check DCP as-is (should be OK) */
+BOOST_AUTO_TEST_CASE (verify_test1)
+{
+	vector<boost::filesystem::path> directories = setup (1);
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
 
 	boost::filesystem::path const cpl_file = "build/test/verify_test1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
@@ -102,11 +111,7 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 /* Corrupt the MXFs and check that this is spotted */
 BOOST_AUTO_TEST_CASE (verify_test2)
 {
-	boost::filesystem::remove_all ("build/test/verify_test2");
-	boost::filesystem::create_directory ("build/test/verify_test2");
-	for (boost::filesystem::directory_iterator i("test/ref/DCP/dcp_test1"); i != boost::filesystem::directory_iterator(); ++i) {
-		boost::filesystem::copy_file (i->path(), "build/test/verify_test2" / i->path().filename());
-	}
+	vector<boost::filesystem::path> directories = setup (2);
 
 	FILE* mod = fopen("build/test/verify_test2/video.mxf", "r+b");
 	BOOST_REQUIRE (mod);
@@ -121,9 +126,8 @@ BOOST_AUTO_TEST_CASE (verify_test2)
 	BOOST_REQUIRE (fwrite (&x, sizeof(x), 1, mod) == 1);
 	fclose (mod);
 
-	vector<boost::filesystem::path> directories;
-	directories.push_back ("build/test/verify_test2");
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+
 	BOOST_CHECK_EQUAL (notes.size(), 2);
 	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
 	BOOST_CHECK_EQUAL (notes.front().note(), "Picture asset hash is incorrect.");
@@ -134,14 +138,9 @@ BOOST_AUTO_TEST_CASE (verify_test2)
 /* Corrupt the hashes in the PKL and check that the disagreement between CPL and PKL is spotted */
 BOOST_AUTO_TEST_CASE (verify_test3)
 {
-	boost::filesystem::remove_all ("build/test/verify_test3");
-	boost::filesystem::create_directory ("build/test/verify_test3");
-	for (boost::filesystem::directory_iterator i("test/ref/DCP/dcp_test1"); i != boost::filesystem::directory_iterator(); ++i) {
-		boost::filesystem::copy_file (i->path(), "build/test/verify_test3" / i->path().filename());
-	}
+	vector<boost::filesystem::path> directories = setup (3);
 
 	boost::filesystem::path const pkl_file = "build/test/verify_test3/pkl_74e205d0-d145-42d2-8c49-7b55d058ca55.xml";
-	boost::filesystem::path const cpl_file = "build/test/verify_test3/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
 
 	string pkl = dcp::file_to_string (pkl_file);
 	boost::algorithm::replace_all (pkl, "<Hash>", "<Hash>x");
@@ -149,10 +148,9 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 	fwrite(pkl.c_str(), pkl.length(), 1, f);
 	fclose(f);
 
-	vector<boost::filesystem::path> directories;
-	directories.push_back ("build/test/verify_test3");
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
-	BOOST_CHECK_EQUAL (notes.size(), 3);
+
+	BOOST_REQUIRE_EQUAL (notes.size(), 3);
 	list<dcp::VerificationNote>::const_iterator i = notes.begin();
 	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_ERROR);
 	BOOST_CHECK_EQUAL (i->note(), "CPL hash is incorrect.");
@@ -168,11 +166,7 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 /* Corrupt the ContentKind in the CPL */
 BOOST_AUTO_TEST_CASE (verify_test4)
 {
-	boost::filesystem::remove_all ("build/test/verify_test4");
-	boost::filesystem::create_directory ("build/test/verify_test4");
-	for (boost::filesystem::directory_iterator i("test/ref/DCP/dcp_test1"); i != boost::filesystem::directory_iterator(); ++i) {
-		boost::filesystem::copy_file (i->path(), "build/test/verify_test4" / i->path().filename());
-	}
+	vector<boost::filesystem::path> directories = setup (4);
 
 	boost::filesystem::path const cpl_file = "build/test/verify_test4/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
 
@@ -182,9 +176,8 @@ BOOST_AUTO_TEST_CASE (verify_test4)
 	fwrite(cpl.c_str(), cpl.length(), 1, f);
 	fclose(f);
 
-	vector<boost::filesystem::path> directories;
-	directories.push_back ("build/test/verify_test4");
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+
 	BOOST_CHECK_EQUAL (notes.size(), 1);
 	BOOST_CHECK_EQUAL (notes.front().note(), "Bad content kind 'xfeature'");
 }
