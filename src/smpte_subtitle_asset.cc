@@ -357,7 +357,9 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	}
 
 	descriptor.NamespaceName = "dcst";
-	memcpy (descriptor.AssetID, writer_info.AssetUUID, ASDCP::UUIDlen);
+	unsigned int c;
+	Kumu::hex2bin (_xml_id.c_str(), descriptor.AssetID, ASDCP::UUIDlen, &c);
+	DCP_ASSERT (c == Kumu::UUID_Length);
 	descriptor.ContainerDuration = _intrinsic_duration;
 
 	ASDCP::TimedText::MXFWriter writer;
