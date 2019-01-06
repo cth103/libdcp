@@ -41,12 +41,12 @@
 #include <boost/noncopyable.hpp>
 #include <string>
 
-class write_interop_subtitle_test;
-class write_interop_subtitle_test2;
-class write_interop_subtitle_test3;
-class write_smpte_subtitle_test;
-class write_smpte_subtitle_test2;
-class write_smpte_subtitle_test3;
+struct write_interop_subtitle_test;
+struct write_interop_subtitle_test2;
+struct write_interop_subtitle_test3;
+struct write_smpte_subtitle_test;
+struct write_smpte_subtitle_test2;
+struct write_smpte_subtitle_test3;
 
 namespace dcp {
 

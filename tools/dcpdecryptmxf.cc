@@ -63,58 +63,6 @@ help (string n)
 	     << "  -p, --private-key  private key file\n";
 }
 
-/* XXX: this method is unused */
-int
-atmos (
-	ASDCP::ATMOS::MXFReader& reader,
-	boost::filesystem::path output_file,
-	dcp::DecryptedKDM kdm
-	)
-{
-	ASDCP::WriterInfo info;
-	if (ASDCP_FAILURE (reader.FillWriterInfo (info))) {
-		cerr << "Could not read ATMOS MXF information\n";
-		exit (EXIT_FAILURE);
-	}
-
-	if (!info.EncryptedEssence) {
-		cerr << "MXF is not encrypted!\n";
-		exit (EXIT_FAILURE);
-	}
-
-	char key_buffer[64];
-	Kumu::bin2UUIDhex (info.CryptographicKeyID, ASDCP::UUIDlen, key_buffer, sizeof (key_buffer));
-	string const key_id = key_buffer;
-
-	optional<dcp::Key> key;
-	BOOST_FOREACH (dcp::DecryptedKDMKey const & i, kdm.keys()) {
-		if (i.id() == key_id) {
-			key = i.key();
-		}
-	}
-
-	if (!key) {
-		cerr << "Could not find key in KDM.\n";
-		exit (EXIT_FAILURE);
-	}
-
-	dcp::DecryptionContext dc (key.get(), dcp::SMPTE);
-
-	ASDCP::ATMOS::AtmosDescriptor desc;
-	if (ASDCP_FAILURE (reader.FillAtmosDescriptor (desc))) {
-		cerr << "could not read ATMOS descriptor.\n";
-		exit (EXIT_FAILURE);
-	}
-
-	ASDCP::DCData::FrameBuffer buffer (Kumu::Megabyte);
-
-	for (size_t i = 0; i < desc.ContainerDuration; ++i) {
-		reader.ReadFrame (i, buffer, dc.context(), 0);
-	}
-
-	return 0;
-}
-
 int
 main (int argc, char* argv[])
 {
