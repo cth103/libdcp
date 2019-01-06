@@ -115,6 +115,15 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 
 		BOOST_FOREACH (shared_ptr<CPL> cpl, dcp->cpls()) {
 			stage ("Checking CPL", cpl->file());
+
+			/* Check that the CPL's hash corresponds to the PKL */
+			BOOST_FOREACH (shared_ptr<PKL> i, dcp->pkls()) {
+				optional<string> h = i->hash(cpl->id());
+				if (h && make_digest(Data(*cpl->file())) != *h) {
+					notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, "CPL hash is incorrect."));
+				}
+			}
+
 			BOOST_FOREACH (shared_ptr<Reel> reel, cpl->reels()) {
 				stage ("Checking reel", optional<boost::filesystem::path>());
 				if (reel->main_picture()) {
