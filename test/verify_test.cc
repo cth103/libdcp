@@ -73,6 +73,7 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
 
 	boost::filesystem::path const cpl_file = "build/test/verify_test1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
+	boost::filesystem::path const pkl_file = "build/test/verify_test1/pkl_74e205d0-d145-42d2-8c49-7b55d058ca55.xml";
 
 	list<pair<string, optional<boost::filesystem::path> > >::const_iterator st = stages.begin();
 	BOOST_CHECK_EQUAL (st->first, "Checking DCP");
@@ -120,28 +121,32 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	BOOST_CHECK_EQUAL (notes.back().type(), dcp::VerificationNote::VERIFY_ERROR);
 	BOOST_CHECK_EQUAL (notes.back().note(), "Sound asset hash is incorrect.");
 
-	/* Corrupt the hashes in the CPL and check that the disagreement between CPL and PKL is spotted */
-	string const cpl = dcp::file_to_string (cpl_file);
-	string hacked_cpl = "";
-	for (size_t i = 0; i < (cpl.length() - 6); ++i) {
-		if (cpl.substr(i, 6) == "<Hash>") {
-			hacked_cpl += "<Hash>x";
+	/* Corrupt the hashes in the PKL and check that the disagreement between CPL and PKL is spotted */
+	string const pkl = dcp::file_to_string (pkl_file);
+	string hacked_pkl = "";
+	for (size_t i = 0; i < pkl.length(); ++i) {
+		if (pkl.substr(i, 6) == "<Hash>") {
+			hacked_pkl += "<Hash>x";
 			i += 6;
 		} else {
-			hacked_cpl += cpl[i];
+			hacked_pkl += pkl[i];
 		}
 	}
-	hacked_cpl += "list>";
 
-	FILE* f = fopen(cpl_file.string().c_str(), "w");
-	fwrite(hacked_cpl.c_str(), hacked_cpl.length(), 1, f);
+	FILE* f = fopen(pkl_file.string().c_str(), "w");
+	fwrite(hacked_pkl.c_str(), hacked_pkl.length(), 1, f);
 	fclose(f);
 
 	notes = dcp::verify (directories, &stage, &progress);
-	BOOST_CHECK_EQUAL (notes.size(), 2);
-	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (notes.front().note(), "PKL and CPL hashes differ for picture asset.");
-	BOOST_CHECK_EQUAL (notes.back().type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (notes.back().note(), "PKL and CPL hashes differ for sound asset.");
-
+	BOOST_CHECK_EQUAL (notes.size(), 3);
+	list<dcp::VerificationNote>::const_iterator i = notes.begin();
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_ERROR);
+	BOOST_CHECK_EQUAL (i->note(), "CPL hash is incorrect.");
+	++i;
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_ERROR);
+	BOOST_CHECK_EQUAL (i->note(), "PKL and CPL hashes differ for picture asset.");
+	++i;
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_ERROR);
+	BOOST_CHECK_EQUAL (i->note(), "PKL and CPL hashes differ for sound asset.");
+	++i;
 }
