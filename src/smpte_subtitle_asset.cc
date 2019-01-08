@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -63,6 +63,8 @@ using boost::shared_array;
 using boost::dynamic_pointer_cast;
 using boost::optional;
 using namespace dcp;
+
+static string const subtitle_smpte_ns = "http://www.smpte-ra.org/schemas/428-7/2010/DCST";
 
 SMPTESubtitleAsset::SMPTESubtitleAsset ()
 	: MXF (SMPTE)
@@ -280,7 +282,7 @@ SMPTESubtitleAsset::xml_as_string () const
 {
 	xmlpp::Document doc;
 	xmlpp::Element* root = doc.create_root_node ("dcst:SubtitleReel");
-	root->set_namespace_declaration ("http://www.smpte-ra.org/schemas/428-7/2010/DCST", "dcst");
+	root->set_namespace_declaration (subtitle_smpte_ns, "dcst");
 	root->set_namespace_declaration ("http://www.w3.org/2001/XMLSchema", "xs");
 
 	root->add_child("Id", "dcst")->add_child_text ("urn:uuid:" + _xml_id);
@@ -356,7 +358,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 		}
 	}
 
-	descriptor.NamespaceName = "dcst";
+	descriptor.NamespaceName = subtitle_smpte_ns;
 	unsigned int c;
 	Kumu::hex2bin (_xml_id.c_str(), descriptor.AssetID, ASDCP::UUIDlen, &c);
 	DCP_ASSERT (c == Kumu::UUID_Length);
