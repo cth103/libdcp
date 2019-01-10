@@ -193,7 +193,7 @@ main (int argc, char* argv[])
 		}
 	}
 
-	if (argc <= optind || argc > (optind + 2)) {
+	if (argc <= (optind + 1) || argc > (optind + 2)) {
 		help (argv[0]);
 		exit (EXIT_FAILURE);
 	}
