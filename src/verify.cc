@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -38,6 +38,7 @@
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "exceptions.h"
+#include "compose.hpp"
 #include <boost/foreach.hpp>
 #include <list>
 #include <vector>
@@ -108,9 +109,9 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 		try {
 			dcp->read (true, &errors);
 		} catch (DCPReadError& e) {
-			notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, e.what ()));
+			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
 		} catch (XMLError& e) {
-			notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, e.what ()));
+			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
 		}
 
 		BOOST_FOREACH (shared_ptr<CPL> cpl, dcp->cpls()) {
@@ -120,7 +121,7 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 			BOOST_FOREACH (shared_ptr<PKL> i, dcp->pkls()) {
 				optional<string> h = i->hash(cpl->id());
 				if (h && make_digest(Data(*cpl->file())) != *h) {
-					notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, "CPL hash is incorrect."));
+					notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::CPL_HASH_INCORRECT));
 				}
 			}
 
@@ -136,17 +137,21 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 					     frame_rate.numerator != 48 &&
 					     frame_rate.numerator != 50 &&
 					     frame_rate.numerator != 60)) {
-						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "Invalid frame rate for picture"));
+						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_PICTURE_FRAME_RATE));
 					}
 					/* Check asset */
 					stage ("Checking picture asset hash", reel->main_picture()->asset()->file());
 					Result const r = verify_asset (dcp, reel->main_picture(), progress);
 					switch (r) {
 					case RESULT_BAD:
-						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "Picture asset hash is incorrect."));
+						notes.push_back (
+							VerificationNote(
+								VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_HASH_INCORRECT, *reel->main_picture()->asset()->file()
+								)
+							);
 						break;
 					case RESULT_CPL_PKL_DIFFER:
-						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "PKL and CPL hashes differ for picture asset."));
+						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE));
 						break;
 					default:
 						break;
@@ -157,10 +162,14 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 					Result const r = verify_asset (dcp, reel->main_sound(), progress);
 					switch (r) {
 					case RESULT_BAD:
-						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "Sound asset hash is incorrect."));
+						notes.push_back (
+							VerificationNote(
+								VerificationNote::VERIFY_ERROR, VerificationNote::SOUND_HASH_INCORRECT, *reel->main_sound()->asset()->file()
+								)
+							);
 						break;
 					case RESULT_CPL_PKL_DIFFER:
-						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, "PKL and CPL hashes differ for sound asset."));
+						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE));
 						break;
 					default:
 						break;

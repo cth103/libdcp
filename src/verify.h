@@ -51,26 +51,64 @@ public:
 	*/
 	enum Type {
 		VERIFY_ERROR,
-		VERIFY_WARNING,
-		VERIFY_NOTE
+		VERIFY_WARNING
 	};
 
-	VerificationNote (Type type, std::string note)
+	enum Code {
+		/** An error when reading the DCP.  note contains (probably technical) details. */
+		GENERAL_READ,
+		/** The hash of the CPL in the PKL does not agree with the CPL file */
+		CPL_HASH_INCORRECT,
+		/** Frame rate given in a reel for the main picture is not 24, 25, 30, 48, 50 or 60 */
+		INVALID_PICTURE_FRAME_RATE,
+		/** The hash of a main picture asset does not agree with the PKL file.  file contains the picture asset filename. */
+		PICTURE_HASH_INCORRECT,
+		/** The hash of a main picture is different in the CPL and PKL */
+		PKL_CPL_PICTURE_HASHES_DISAGREE,
+		/** The hash of a main sound asset does not agree with the PKL file.  file contains the sound asset filename. */
+		SOUND_HASH_INCORRECT,
+		/** The hash of a main sound is different in the CPL and PKL */
+		PKL_CPL_SOUND_HASHES_DISAGREE,
+	};
+
+	VerificationNote (Type type, Code code)
 		: _type (type)
+		, _code (code)
+	{}
+
+	VerificationNote (Type type, Code code, std::string note)
+		: _type (type)
+		, _code (code)
 		, _note (note)
+	{}
+
+	VerificationNote (Type type, Code code, boost::filesystem::path file)
+		: _type (type)
+		, _code (code)
+		, _file (file)
 	{}
 
 	Type type () const {
 		return _type;
 	}
 
-	std::string note () const {
+	Code code () const {
+		return _code;
+	}
+
+	boost::optional<std::string> note () const {
 		return _note;
+	}
+
+	boost::optional<boost::filesystem::path> file () const {
+		return _file;
 	}
 
 private:
 	Type _type;
-	std::string _note;
+	Code _code;
+	boost::optional<std::string> _note;
+	boost::optional<boost::filesystem::path> _file;
 };
 
 std::list<VerificationNote> verify (

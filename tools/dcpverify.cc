@@ -32,6 +32,7 @@
 */
 
 #include "verify.h"
+#include "compose.hpp"
 #include <boost/bind.hpp>
 #include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
@@ -70,6 +71,29 @@ void
 progress ()
 {
 
+}
+
+std::string
+note_to_string (dcp::VerificationNote note)
+{
+	switch (note.code()) {
+	case dcp::VerificationNote::GENERAL_READ:
+		return *note.note();
+	case dcp::VerificationNote::CPL_HASH_INCORRECT:
+		return "The hash of the CPL in the PKL does not agree with the CPL file";
+	case dcp::VerificationNote::INVALID_PICTURE_FRAME_RATE:
+		return "The picture in a reel has an invalid frame rate";
+	case dcp::VerificationNote::PICTURE_HASH_INCORRECT:
+		return dcp::String::compose("The hash of the picture asset %1 does not agree with the PKL file", note.file()->filename());
+	case dcp::VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE:
+		return "The PKL and CPL hashes disagree for a picture asset.";
+	case dcp::VerificationNote::SOUND_HASH_INCORRECT:
+		return dcp::String::compose("The hash of the sound asset %1 does not agree with the PKL file", note.file()->filename());
+	case dcp::VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE:
+		return "The PKL and CPL hashes disagree for a sound asset.";
+	}
+
+	return "";
 }
 
 int
@@ -117,14 +141,11 @@ main (int argc, char* argv[])
 	BOOST_FOREACH (dcp::VerificationNote i, notes) {
 		switch (i.type()) {
 		case dcp::VerificationNote::VERIFY_ERROR:
-			cout << "Error: " << i.note() << "\n";
+			cout << "Error: " << note_to_string(i) << "\n";
 			failed = true;
 			break;
 		case dcp::VerificationNote::VERIFY_WARNING:
-			cout << "Warning: " << i.note() << "\n";
-			break;
-		case dcp::VerificationNote::VERIFY_NOTE:
-			cout << "Note: " << i.note() << "\n";
+			cout << "Warning: " << note_to_string(i) << "\n";
 			break;
 		}
 	}

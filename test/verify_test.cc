@@ -130,9 +130,9 @@ BOOST_AUTO_TEST_CASE (verify_test2)
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 2);
 	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (notes.front().note(), "Picture asset hash is incorrect.");
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::PICTURE_HASH_INCORRECT);
 	BOOST_CHECK_EQUAL (notes.back().type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (notes.back().note(), "Sound asset hash is incorrect.");
+	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::SOUND_HASH_INCORRECT);
 }
 
 /* Corrupt the hashes in the PKL and check that the disagreement between CPL and PKL is spotted */
@@ -153,13 +153,13 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 	BOOST_REQUIRE_EQUAL (notes.size(), 3);
 	list<dcp::VerificationNote>::const_iterator i = notes.begin();
 	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (i->note(), "CPL hash is incorrect.");
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::CPL_HASH_INCORRECT);
 	++i;
 	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (i->note(), "PKL and CPL hashes differ for picture asset.");
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE);
 	++i;
 	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (i->note(), "PKL and CPL hashes differ for sound asset.");
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE);
 	++i;
 }
 
@@ -179,7 +179,8 @@ BOOST_AUTO_TEST_CASE (verify_test4)
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
-	BOOST_CHECK_EQUAL (notes.front().note(), "Bad content kind 'xfeature'");
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::GENERAL_READ);
+	BOOST_CHECK_EQUAL (*notes.front().note(), "Bad content kind 'xfeature'");
 }
 
 /* FrameRate */
@@ -198,6 +199,6 @@ BOOST_AUTO_TEST_CASE (verify_test5)
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 2);
-	BOOST_CHECK_EQUAL (notes.front().note(), "CPL hash is incorrect.");
-	BOOST_CHECK_EQUAL (notes.back().note(), "Invalid frame rate for picture");
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::CPL_HASH_INCORRECT);
+	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::INVALID_PICTURE_FRAME_RATE);
 }
