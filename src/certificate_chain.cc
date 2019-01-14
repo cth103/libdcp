@@ -639,11 +639,6 @@ CertificateChain::add_signature_value (xmlpp::Node* parent, string ns) const
 		throw runtime_error ("could not read private key");
 	}
 
-	/* XXX: set key name to the PEM string: this can't be right! */
-	if (xmlSecKeySetName (signature_context->signKey, reinterpret_cast<const xmlChar *> (_key->c_str())) < 0) {
-		throw MiscError ("could not set key name");
-	}
-
 	int const r = xmlSecDSigCtxSign (signature_context, parent->cobj ());
 	if (r < 0) {
 		throw MiscError (String::compose ("could not sign (%1)", r));
