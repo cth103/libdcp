@@ -66,14 +66,14 @@ CPL::CPL (string annotation_text, ContentKind content_kind)
 	/* default _content_title_text to annotation_text */
 	: _content_title_text (annotation_text)
 	, _content_kind (content_kind)
-	, _content_version_id ("urn:uuid:" + make_uuid ())
 {
 	_metadata.annotation_text = annotation_text;
 	/* default _content_version_id to a random ID and _content_version_label to
 	   a random ID and the current time.
 	*/
-	_content_version_id = "urn:uuid:" + make_uuid();
-	_content_version_label_text = _content_version_id + LocalTime().as_string ();
+	string const uuid = make_uuid();
+	_content_version_id = "urn:uuid:" + uuid;
+	_content_version_label_text = uuid + LocalTime().as_string ();
 }
 
 /** Construct a CPL object from a XML file */

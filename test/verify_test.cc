@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 {
 	vector<boost::filesystem::path> directories = setup (3);
 
-	boost::filesystem::path const pkl_file = "build/test/verify_test3/pkl_74e205d0-d145-42d2-8c49-7b55d058ca55.xml";
+	boost::filesystem::path const pkl_file = "build/test/verify_test3/pkl_ae8a9818-872a-4f86-8493-11dfdea03e09.xml";
 
 	string pkl = dcp::file_to_string (pkl_file);
 	boost::algorithm::replace_all (pkl, "<Hash>", "<Hash>x");
