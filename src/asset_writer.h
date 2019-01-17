@@ -41,6 +41,7 @@
 #include "types.h"
 #include "crypto_context.h"
 #include <boost/filesystem.hpp>
+#include <boost/noncopyable.hpp>
 
 namespace dcp {
 
