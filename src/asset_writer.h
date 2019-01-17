@@ -40,6 +40,7 @@
 
 #include "types.h"
 #include <boost/filesystem.hpp>
+#include <boost/noncopyable.hpp>
 
 namespace dcp {
 
