@@ -552,6 +552,33 @@ CertificateChain::root_to_leaf () const
 	throw CertificateChainError ("certificate chain is not consistent");
 }
 
+static string
+spaces (int n)
+{
+	string s = "";
+	for (int i = 0; i < n; ++i) {
+		s += " ";
+	}
+	return s;
+}
+
+static void
+indent (xmlpp::Element* element, int initial)
+{
+	xmlpp::Node* last = 0;
+	BOOST_FOREACH (xmlpp::Node * n, element->get_children()) {
+		xmlpp::Element* e = dynamic_cast<xmlpp::Element*>(n);
+		if (e) {
+			element->add_child_text_before (e, "\n" + spaces(initial + 2));
+			indent (e, initial + 2);
+			last = n;
+		}
+	}
+	if (last) {
+		element->add_child_text (last, "\n" + spaces(initial));
+	}
+}
+
 /** Add a &lt;Signer&gt; and &lt;ds:Signature&gt; nodes to an XML node.
  *  @param parent XML node to add to.
  *  @param standard INTEROP or SMPTE.
@@ -561,6 +588,7 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
 {
 	/* <Signer> */
 
+	parent->add_child_text("  ");
 	xmlpp::Element* signer = parent->add_child("Signer");
 	signer->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	xmlpp::Element* data = signer->add_child("X509Data", "dsig");
@@ -569,11 +597,15 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
 	serial_element->add_child("X509SerialNumber", "dsig")->add_child_text (leaf().serial());
 	data->add_child("X509SubjectName", "dsig")->add_child_text (leaf().subject());
 
+	indent (signer, 2);
+
 	/* <Signature> */
 
+	parent->add_child_text("\n  ");
 	xmlpp::Element* signature = parent->add_child("Signature");
 	signature->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	signature->set_namespace ("dsig");
+	parent->add_child_text("\n");
 
 	xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
 	signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
@@ -608,7 +640,7 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
  *  @param ns Namespace to use for the signature XML nodes.
  */
 void
-CertificateChain::add_signature_value (xmlpp::Node* parent, string ns) const
+CertificateChain::add_signature_value (xmlpp::Element* parent, string ns) const
 {
 	cxml::Node cp (parent);
 	xmlpp::Node* key_info = cp.node_child("KeyInfo")->node ();
@@ -639,6 +671,7 @@ CertificateChain::add_signature_value (xmlpp::Node* parent, string ns) const
 		throw runtime_error ("could not read private key");
 	}
 
+	indent (parent, 2);
 	int const r = xmlSecDSigCtxSign (signature_context, parent->cobj ());
 	if (r < 0) {
 		throw MiscError (String::compose ("could not sign (%1)", r));

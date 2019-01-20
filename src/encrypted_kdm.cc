@@ -670,7 +670,7 @@ EncryptedKDM::EncryptedKDM (
 	xmlpp::Node::NodeList children = doc->get_root_node()->get_children ();
 	for (xmlpp::Node::NodeList::const_iterator i = children.begin(); i != children.end(); ++i) {
 		if ((*i)->get_name() == "Signature") {
-			signer->add_signature_value (*i, "ds");
+			signer->add_signature_value (dynamic_cast<xmlpp::Element*>(*i), "ds");
 		}
 	}
 

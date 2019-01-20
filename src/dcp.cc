@@ -348,7 +348,7 @@ DCP::write_volindex (Standard standard) const
 	}
 
 	root->add_child("Index")->add_child_text ("1");
-	doc.write_to_file (p.string (), "UTF-8");
+	doc.write_to_file_formatted (p.string (), "UTF-8");
 }
 
 void
@@ -417,8 +417,7 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, boost::filesystem::path
 		i->write_to_assetmap (asset_list, _directory);
 	}
 
-	/* This must not be the _formatted version otherwise signature digests will be wrong */
-	doc.write_to_file (p.string (), "UTF-8");
+	doc.write_to_file_formatted (p.string (), "UTF-8");
 }
 
 /** Write all the XML files for this DCP.

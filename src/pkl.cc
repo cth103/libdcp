@@ -113,7 +113,7 @@ PKL::write (boost::filesystem::path file, shared_ptr<const CertificateChain> sig
 		signer->sign (pkl, _standard);
 	}
 
-	doc.write_to_file (file.string(), "UTF-8");
+	doc.write_to_file_formatted (file.string(), "UTF-8");
 }
 
 optional<string>
