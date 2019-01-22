@@ -134,6 +134,13 @@ public:
 
 	MissingAssetError (boost::filesystem::path, AssetType = UNKNOWN);
 	~MissingAssetError () throw () {}
+
+	boost::filesystem::path path () const {
+		return _path;
+	}
+
+private:
+	boost::filesystem::path _path;
 };
 
 class BadContentKindError : public DCPReadError

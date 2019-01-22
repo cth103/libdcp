@@ -64,10 +64,11 @@ TimeFormatError::TimeFormatError (string bad_time)
 
 MissingAssetError::MissingAssetError (boost::filesystem::path path, AssetType type)
 	: DCPReadError (
-		type == MAIN_PICTURE    ? String::compose ("Missing asset %1 for main picture", path.string()) :
-		(type == MAIN_SOUND     ? String::compose ("Missing asset %1 for main sound", path.string()) :
-		 (type == MAIN_SUBTITLE ? String::compose ("Missing asset %1 for main subtitle", path.string()) :
-		  String::compose ("Missing asset %1", path.string()))))
+		type == MAIN_PICTURE    ? String::compose ("Missing asset %1 for main picture", path.filename().string()) :
+		(type == MAIN_SOUND     ? String::compose ("Missing asset %1 for main sound", path.filename().string()) :
+		 (type == MAIN_SUBTITLE ? String::compose ("Missing asset %1 for main subtitle", path.filename().string()) :
+		  String::compose ("Missing asset %1", path.filename().string()))))
+	, _path (path)
 {
 
 }
