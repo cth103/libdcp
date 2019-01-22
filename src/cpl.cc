@@ -164,6 +164,8 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 		i->write_to_cpl (reel_list, standard);
 	}
 
+	indent (root, 0);
+
 	if (signer) {
 		signer->sign (root, standard);
 	}

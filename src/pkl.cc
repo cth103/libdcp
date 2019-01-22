@@ -109,6 +109,8 @@ PKL::write (boost::filesystem::path file, shared_ptr<const CertificateChain> sig
 		asset->add_child("Type")->add_child_text (i->type);
 	}
 
+	indent (pkl, 0);
+
 	if (signer) {
 		signer->sign (pkl, _standard);
 	}

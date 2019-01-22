@@ -552,33 +552,6 @@ CertificateChain::root_to_leaf () const
 	throw CertificateChainError ("certificate chain is not consistent");
 }
 
-static string
-spaces (int n)
-{
-	string s = "";
-	for (int i = 0; i < n; ++i) {
-		s += " ";
-	}
-	return s;
-}
-
-static void
-indent (xmlpp::Element* element, int initial)
-{
-	xmlpp::Node* last = 0;
-	BOOST_FOREACH (xmlpp::Node * n, element->get_children()) {
-		xmlpp::Element* e = dynamic_cast<xmlpp::Element*>(n);
-		if (e) {
-			element->add_child_text_before (e, "\n" + spaces(initial + 2));
-			indent (e, initial + 2);
-			last = n;
-		}
-	}
-	if (last) {
-		element->add_child_text (last, "\n" + spaces(initial));
-	}
-}
-
 /** Add a &lt;Signer&gt; and &lt;ds:Signature&gt; nodes to an XML node.
  *  @param parent XML node to add to.
  *  @param standard INTEROP or SMPTE.

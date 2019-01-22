@@ -55,6 +55,7 @@
 #include <openssl/sha.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
 #include <stdexcept>
 #include <iostream>
 #include <iomanip>
@@ -347,4 +348,31 @@ string
 dcp::openjpeg_version ()
 {
 	return opj_version ();
+}
+
+string
+dcp::spaces (int n)
+{
+	string s = "";
+	for (int i = 0; i < n; ++i) {
+		s += " ";
+	}
+	return s;
+}
+
+void
+dcp::indent (xmlpp::Element* element, int initial)
+{
+	xmlpp::Node* last = 0;
+	BOOST_FOREACH (xmlpp::Node * n, element->get_children()) {
+		xmlpp::Element* e = dynamic_cast<xmlpp::Element*>(n);
+		if (e) {
+			element->add_child_text_before (e, "\n" + spaces(initial + 2));
+			indent (e, initial + 2);
+			last = n;
+		}
+	}
+	if (last) {
+		element->add_child_text (last, "\n" + spaces(initial));
+	}
 }

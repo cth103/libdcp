@@ -73,6 +73,8 @@ extern std::string file_to_string (boost::filesystem::path, uintmax_t max_length
 extern std::string private_key_fingerprint (std::string key);
 extern xmlpp::Node* find_child (xmlpp::Node const * node, std::string name);
 extern std::string openjpeg_version();
+extern std::string spaces (int n);
+extern void indent (xmlpp::Element* element, int initial);
 
 }
 
