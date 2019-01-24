@@ -38,6 +38,7 @@
 #include "file.h"
 #include "util.h"
 #include "dcp_assert.h"
+#include "compose.hpp"
 #include <stdio.h>
 
 using namespace dcp;
@@ -51,7 +52,16 @@ File::File (boost::filesystem::path file)
 	_data = new uint8_t[_size];
 	FILE* f = dcp::fopen_boost (file, "rb");
 	DCP_ASSERT (f);
-	fread (_data, 1, _size, f);
+	int const N = fread (_data, 1, _size, f);
+	if (N != _size) {
+		if (ferror(f)) {
+			fclose (f);
+			throw FileError (String::compose("fread error %1", errno), file, errno);
+		} else {
+			fclose (f);
+			throw FileError ("unexpected short read", file, -1);
+		}
+	}
 	fclose (f);
 }
 
