@@ -1,10 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PackingList xmlns="http://www.smpte-ra.org/schemas/429-8/2007/PKL"><Id>urn:uuid:59730183-23bc-491e-906b-1dd453ff9d11</Id><AnnotationText>Created by libdcp</AnnotationText><IssueDate>2012-07-17T04:45:18+00:00</IssueDate><Issuer>OpenDCP 0.0.25</Issuer><Creator>OpenDCP 0.0.25</Creator><AssetList><Asset><Id>urn:uuid:b3eba4a0-f542-4937-b972-1cc4667ed01a</Id><AnnotationText>b3eba4a0-f542-4937-b972-1cc4667ed01a</AnnotationText><Hash>j6gZOjc2Ux34t7kLXkh8vPZboGU=</Hash><Size>8666</Size><Type>text/xml</Type></Asset><Asset><Id>urn:uuid:2d4e8308-7197-41b8-8a0a-07a939d74971</Id><AnnotationText>2d4e8308-7197-41b8-8a0a-07a939d74971</AnnotationText><Hash>K9qEC5Gd4ZDSe3+lGnPg7Wc9QnQ=</Hash><Size>29896</Size><Type>application/mxf</Type></Asset><Asset><Id>urn:uuid:99c2c0d0-7491-4ad0-86d5-4f0af19d71f6</Id><AnnotationText>99c2c0d0-7491-4ad0-86d5-4f0af19d71f6</AnnotationText><Hash>sskK3KhvnddXtjVricwXXuxLOQ0=</Hash><Size>165454</Size><Type>application/mxf</Type></Asset></AssetList><Signer xmlns:dsig="http://www.w3.org/2000/09/xmldsig#"><dsig:X509Data><dsig:X509IssuerSerial><dsig:X509IssuerName>dnQualifier=6eat8r33US71avuQEojmH\+bjk84=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org</dsig:X509IssuerName><dsig:X509SerialNumber>7</dsig:X509SerialNumber></dsig:X509IssuerSerial><dsig:X509SubjectName>dnQualifier=QFVlym7fuql6bPOnY38aaO1ZPW4=,CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION,OU=example.org,O=example.org</dsig:X509SubjectName></dsig:X509Data></Signer><dsig:Signature xmlns:dsig="http://www.w3.org/2000/09/xmldsig#"><dsig:SignedInfo><dsig:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><dsig:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/><dsig:Reference URI=""><dsig:Transforms><dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/></dsig:Transforms><dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><dsig:DigestValue>71HiZ+FnpdVHW69VVFepYh4Zyz8=</dsig:DigestValue></dsig:Reference></dsig:SignedInfo><dsig:SignatureValue>kBaGmW8rg7GS+IlieoK6FQf6sgAZaxLpDtvi2/YgeOrQ2nqWcw7Tn1ivSrRfA9rw
-nn0Q3LDZOw/r5UIi+BB0KBRCtjt+nPaO8Wn3H4GCIOl6HX/tUu0xlaGeBIaghnze
-d5WAG9NNitmtu/xYvIngX7i/33AFC686OmWA22H9hxMWXrClMYHUq17PVd/OxtL8
-2BiiOTsU6IeRWuoZD/GGKqYCczeM+IwXUOk8e79mFBGHxYELgYhf2j88h5/5IgCU
-akhJnjwSDAwMAmaGwdzsr5Ddr8Sc1MeZQ2gstVsXcanzUroCqe0qzjRW66bkPoTk
-1wJ3NZVLt6JSByp9hQ5qgw==</dsig:SignatureValue><dsig:KeyInfo><dsig:X509Data><dsig:X509IssuerSerial><dsig:X509IssuerName>dnQualifier=6eat8r33US71avuQEojmH\+bjk84=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org</dsig:X509IssuerName><dsig:X509SerialNumber>7</dsig:X509SerialNumber></dsig:X509IssuerSerial><dsig:X509Certificate>MIIEezCCA2OgAwIBAgIBBzANBgkqhkiG9w0BAQsFADCBijEUMBIGA1UEChMLZXhh
+<PackingList xmlns="http://www.smpte-ra.org/schemas/429-8/2007/PKL">
+  <Id>urn:uuid:59730183-23bc-491e-906b-1dd453ff9d11</Id>
+  <AnnotationText>Created by libdcp</AnnotationText>
+  <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
+  <Issuer>OpenDCP 0.0.25</Issuer>
+  <Creator>OpenDCP 0.0.25</Creator>
+  <AssetList>
+    <Asset>
+      <Id>urn:uuid:b3eba4a0-f542-4937-b972-1cc4667ed01a</Id>
+      <AnnotationText>b3eba4a0-f542-4937-b972-1cc4667ed01a</AnnotationText>
+      <Hash>tpUjR0kXbig8s2CocAWYClebhQ8=</Hash>
+      <Size>9376</Size>
+      <Type>text/xml</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:2d4e8308-7197-41b8-8a0a-07a939d74971</Id>
+      <AnnotationText>2d4e8308-7197-41b8-8a0a-07a939d74971</AnnotationText>
+      <Hash>K9qEC5Gd4ZDSe3+lGnPg7Wc9QnQ=</Hash>
+      <Size>29896</Size>
+      <Type>application/mxf</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:99c2c0d0-7491-4ad0-86d5-4f0af19d71f6</Id>
+      <AnnotationText>99c2c0d0-7491-4ad0-86d5-4f0af19d71f6</AnnotationText>
+      <Hash>sskK3KhvnddXtjVricwXXuxLOQ0=</Hash>
+      <Size>165454</Size>
+      <Type>application/mxf</Type>
+    </Asset>
+  </AssetList>
+  <Signer xmlns:dsig="http://www.w3.org/2000/09/xmldsig#">
+    <dsig:X509Data>
+      <dsig:X509IssuerSerial>
+        <dsig:X509IssuerName>dnQualifier=6eat8r33US71avuQEojmH\+bjk84=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org</dsig:X509IssuerName>
+        <dsig:X509SerialNumber>7</dsig:X509SerialNumber>
+      </dsig:X509IssuerSerial>
+      <dsig:X509SubjectName>dnQualifier=QFVlym7fuql6bPOnY38aaO1ZPW4=,CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION,OU=example.org,O=example.org</dsig:X509SubjectName>
+    </dsig:X509Data>
+  </Signer>
+  <dsig:Signature xmlns:dsig="http://www.w3.org/2000/09/xmldsig#">
+    <dsig:SignedInfo>
+      <dsig:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <dsig:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+      <dsig:Reference URI="">
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <dsig:DigestValue>Z7V1q5p+dQnsm0RpCUFh6IpuEqo=</dsig:DigestValue>
+      </dsig:Reference>
+    </dsig:SignedInfo>
+    <dsig:SignatureValue>0KCrTng/LtHmt0jGJmZbwjdijsF+P7vW4riIkSmt/Qsuo8JI3ZB3f2uuG2H5Xrgb
+gdfA+WB6CmSQzyia11gcRB/dc6C0fjkt+OqQF3BlVGpQLG7Mz/C+VsF4G8HBpjmU
+yFucBirohEyEEPffQXn7/sMA4jPCpW6ZBrLLFv/UtTje3jUXgGW7UdwN2QC/mO2P
+Tf4lavCNyV56moxm98PlYMJDeNSSY5fo9TP315LjycA4Y8ZYxFF965/K2dcD/B5p
+pmFwbW4HYiKzAHKfaj/UnohTllKiIK5QnGA1NjAxMPGvk/sTF6IIU5cxp6OOmdvI
+cO1bBzOAhcWerV2P+xz3Ag==</dsig:SignatureValue>
+    <dsig:KeyInfo>
+      <dsig:X509Data>
+        <dsig:X509IssuerSerial>
+          <dsig:X509IssuerName>dnQualifier=6eat8r33US71avuQEojmH\+bjk84=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org</dsig:X509IssuerName>
+          <dsig:X509SerialNumber>7</dsig:X509SerialNumber>
+        </dsig:X509IssuerSerial>
+        <dsig:X509Certificate>MIIEezCCA2OgAwIBAgIBBzANBgkqhkiG9w0BAQsFADCBijEUMBIGA1UEChMLZXhh
 bXBsZS5vcmcxFDASBgNVBAsTC2V4YW1wbGUub3JnMTUwMwYDVQQDFCwuc21wdGUt
 NDMwLTIuSU5URVJNRURJQVRFLk5PVF9GT1JfUFJPRFVDVElPTjElMCMGA1UELhMc
 NmVhdDhyMzNVUzcxYXZ1UUVvam1IK2Jqazg0PTAeFw0xNTA2MDUxMzIwMDhaFw0y
@@ -27,7 +84,14 @@ ZVzwGSxNyCMTmDm38ZmriNpV7FCNTLek4xmf21ITafC9nNxpbWA7l9bG5dRnktwa
 JSlHZKDKKVEUHJYu/47YUlmt4YNVo+zN0iB/QLXoHu6yGw3/N7z4sBDyLGGPl5mh
 sAxuXpFr1ruTQVqx483L7ie/p0GV9vsoAJQTRTnIcvEs7rVHxIWEsiOE8AZozW72
 jIBKSy9jsxSGYgmMgbdkrs5c2hBvVim5i58PIzSCo/lI/5WRREESZIyZ9zIBSwIS
-cYueAupiCrOxzY6Xg3GZlMbbHElp4MnDeV3zv90UAuZXomorCOcnutqUe36J63E=</dsig:X509Certificate></dsig:X509Data><dsig:X509Data><dsig:X509IssuerSerial><dsig:X509IssuerName>dnQualifier=DCnRdHFbcv4ANVUq2\+wMVALFSec=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org</dsig:X509IssuerName><dsig:X509SerialNumber>6</dsig:X509SerialNumber></dsig:X509IssuerSerial><dsig:X509Certificate>MIIEfzCCA2egAwIBAgIBBjANBgkqhkiG9w0BAQsFADCBgjEUMBIGA1UEChMLZXhh
+cYueAupiCrOxzY6Xg3GZlMbbHElp4MnDeV3zv90UAuZXomorCOcnutqUe36J63E=</dsig:X509Certificate>
+      </dsig:X509Data>
+      <dsig:X509Data>
+        <dsig:X509IssuerSerial>
+          <dsig:X509IssuerName>dnQualifier=DCnRdHFbcv4ANVUq2\+wMVALFSec=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org</dsig:X509IssuerName>
+          <dsig:X509SerialNumber>6</dsig:X509SerialNumber>
+        </dsig:X509IssuerSerial>
+        <dsig:X509Certificate>MIIEfzCCA2egAwIBAgIBBjANBgkqhkiG9w0BAQsFADCBgjEUMBIGA1UEChMLZXhh
 bXBsZS5vcmcxFDASBgNVBAsTC2V4YW1wbGUub3JnMS0wKwYDVQQDFCQuc21wdGUt
 NDMwLTIuUk9PVC5OT1RfRk9SX1BST0RVQ1RJT04xJTAjBgNVBC4THERDblJkSEZi
 Y3Y0QU5WVXEyK3dNVkFMRlNlYz0wHhcNMTUwNjA1MTMyMDA4WhcNMjUwNjAxMTMy
@@ -51,7 +115,14 @@ YVBQ9gouw5+pLM61r/ZTF+shiWA4C4cwWb1X/gw82TXD2wXch9IJmcblrfrabHkB
 Y3wyyn5unqHm+uy/ZsNzoTmRcrxnPua5DyZKxGBHV0TEDzJMUMgluRcQwRs0HmG1
 vWeROkXRWyYiY2QAdpINuQUKUqjtFTtOGcA3I/Hd7vUiqqxNr9fL0H/HDvAbEmIw
 +YSFJ9uFyESvls8Lv5tydwhnqJBIKk19/CDIwMAPZnyT1WT3XwnD5hVRYljpgjm5
-xwd0</dsig:X509Certificate></dsig:X509Data><dsig:X509Data><dsig:X509IssuerSerial><dsig:X509IssuerName>dnQualifier=DCnRdHFbcv4ANVUq2\+wMVALFSec=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org</dsig:X509IssuerName><dsig:X509SerialNumber>5</dsig:X509SerialNumber></dsig:X509IssuerSerial><dsig:X509Certificate>MIIEdzCCA1+gAwIBAgIBBTANBgkqhkiG9w0BAQsFADCBgjEUMBIGA1UEChMLZXhh
+xwd0</dsig:X509Certificate>
+      </dsig:X509Data>
+      <dsig:X509Data>
+        <dsig:X509IssuerSerial>
+          <dsig:X509IssuerName>dnQualifier=DCnRdHFbcv4ANVUq2\+wMVALFSec=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org</dsig:X509IssuerName>
+          <dsig:X509SerialNumber>5</dsig:X509SerialNumber>
+        </dsig:X509IssuerSerial>
+        <dsig:X509Certificate>MIIEdzCCA1+gAwIBAgIBBTANBgkqhkiG9w0BAQsFADCBgjEUMBIGA1UEChMLZXhh
 bXBsZS5vcmcxFDASBgNVBAsTC2V4YW1wbGUub3JnMS0wKwYDVQQDFCQuc21wdGUt
 NDMwLTIuUk9PVC5OT1RfRk9SX1BST0RVQ1RJT04xJTAjBgNVBC4THERDblJkSEZi
 Y3Y0QU5WVXEyK3dNVkFMRlNlYz0wHhcNMTUwNjA1MTMyMDA4WhcNMjUwNjAyMTMy
@@ -74,4 +145,8 @@ RvqxG7Li7enVyKF5798ckA17jCnkY/W9YwtjpgfEpjw9aGdCy6cviNu51jT5F9qg
 y0O2OXhtX47aS9G6r1m50cBmrciBxrqSTr6/co6jcRImRhTpvVcLcbv3emCLogBw
 9v93abXvbT+GZ6yc2OOArTZCFlrLW8XTDSDrPp/hida2NjZOrxJj6iFEh6+M+S7Z
 T/bwFNfuPDsDhtccoVt/hIM0imFnjKlwbo3HbJ3v+Lhy2oUS66d5ELHuuQnMuKFT
-pxf6/gl42q4gFbwBDp6jxy5L1J4LZGZIwsoTv6dFjo1MNttqmfMTheiwpQ==</dsig:X509Certificate></dsig:X509Data></dsig:KeyInfo></dsig:Signature></PackingList>
+pxf6/gl42q4gFbwBDp6jxy5L1J4LZGZIwsoTv6dFjo1MNttqmfMTheiwpQ==</dsig:X509Certificate>
+      </dsig:X509Data>
+    </dsig:KeyInfo>
+  </dsig:Signature>
+</PackingList>

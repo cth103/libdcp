@@ -1,2 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CompositionPlaylist xmlns="http://www.digicine.com/PROTO-ASDCP-CPL-20040511#"><Id>urn:uuid:1d513f84-5856-4f91-a88a-4d452cc6a28a</Id><AnnotationText>A Test DCP</AnnotationText><IssueDate>2012-07-17T04:45:18+00:00</IssueDate><Issuer>OpenDCP 0.0.25</Issuer><Creator>OpenDCP 0.0.25</Creator><ContentTitleText>A Test DCP</ContentTitleText><ContentKind>feature</ContentKind><ContentVersion><Id>urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00</Id><LabelText>81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00</LabelText></ContentVersion><RatingList/><ReelList><Reel><Id>urn:uuid:f3452d7a-2f0d-4758-b0ab-63432f863752</Id><AssetList><MainPicture><Id>urn:uuid:cb2b7aa9-a378-4392-86f8-df013863fdd0</Id><AnnotationText>video.mxf</AnnotationText><EditRate>24 1</EditRate><IntrinsicDuration>24</IntrinsicDuration><EntryPoint>0</EntryPoint><Duration>24</Duration><Hash>tdGCQpv8Yyz8FSafi+2UMEwbmW8=</Hash><FrameRate>24 1</FrameRate><ScreenAspectRatio>1.33</ScreenAspectRatio></MainPicture><MainSound><Id>urn:uuid:e63718c9-fa72-4dd9-a144-8736591b08b6</Id><AnnotationText>audio.mxf</AnnotationText><EditRate>24 1</EditRate><IntrinsicDuration>24</IntrinsicDuration><EntryPoint>0</EntryPoint><Duration>24</Duration><Hash>f5srKV6hTI6FRxgXGnhLPQqn12w=</Hash></MainSound></AssetList></Reel></ReelList></CompositionPlaylist>
+<CompositionPlaylist xmlns="http://www.digicine.com/PROTO-ASDCP-CPL-20040511#">
+  <Id>urn:uuid:1d513f84-5856-4f91-a88a-4d452cc6a28a</Id>
+  <AnnotationText>A Test DCP</AnnotationText>
+  <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
+  <Issuer>OpenDCP 0.0.25</Issuer>
+  <Creator>OpenDCP 0.0.25</Creator>
+  <ContentTitleText>A Test DCP</ContentTitleText>
+  <ContentKind>feature</ContentKind>
+  <ContentVersion>
+    <Id>urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00</Id>
+    <LabelText>81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00</LabelText>
+  </ContentVersion>
+  <RatingList/>
+  <ReelList>
+    <Reel>
+      <Id>urn:uuid:f3452d7a-2f0d-4758-b0ab-63432f863752</Id>
+      <AssetList>
+        <MainPicture>
+          <Id>urn:uuid:cb2b7aa9-a378-4392-86f8-df013863fdd0</Id>
+          <AnnotationText>video.mxf</AnnotationText>
+          <EditRate>24 1</EditRate>
+          <IntrinsicDuration>24</IntrinsicDuration>
+          <EntryPoint>0</EntryPoint>
+          <Duration>24</Duration>
+          <Hash>tdGCQpv8Yyz8FSafi+2UMEwbmW8=</Hash>
+          <FrameRate>24 1</FrameRate>
+          <ScreenAspectRatio>1.33</ScreenAspectRatio>
+        </MainPicture>
+        <MainSound>
+          <Id>urn:uuid:e63718c9-fa72-4dd9-a144-8736591b08b6</Id>
+          <AnnotationText>audio.mxf</AnnotationText>
+          <EditRate>24 1</EditRate>
+          <IntrinsicDuration>24</IntrinsicDuration>
+          <EntryPoint>0</EntryPoint>
+          <Duration>24</Duration>
+          <Hash>f5srKV6hTI6FRxgXGnhLPQqn12w=</Hash>
+        </MainSound>
+      </AssetList>
+    </Reel>
+  </ReelList>
+</CompositionPlaylist>

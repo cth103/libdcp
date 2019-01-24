@@ -1,2 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CompositionPlaylist xmlns="http://www.digicine.com/PROTO-ASDCP-CPL-20040511#"><Id>urn:uuid:f28b567b-3b9a-417a-aee4-6fc1a2c6a3af</Id><AnnotationText>Created by libdcp1.6.1devel</AnnotationText><IssueDate>2018-09-02T04:45:18+00:00</IssueDate><Issuer>libdcp1.6.1devel</Issuer><Creator>libdcp1.6.1devel</Creator><ContentTitleText>My film</ContentTitleText><ContentKind>feature</ContentKind><ContentVersion><Id>urn:uuid:9f134b47-ab8d-4c3c-adbf-f494b1544283</Id><LabelText>foo</LabelText></ContentVersion><RatingList/><ReelList><Reel><Id>urn:uuid:ab16cd50-686f-4015-9498-4a142ecb0696</Id><AssetList><MainSubtitle><Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</Id><AnnotationText>subs.xml</AnnotationText><EditRate>24 1</EditRate><IntrinsicDuration>6046</IntrinsicDuration><EntryPoint>0</EntryPoint><Duration>6046</Duration><Hash>rl+eBdjvZ0xaaaABGCpf6cm9G/Q=</Hash></MainSubtitle></AssetList></Reel></ReelList></CompositionPlaylist>
+<CompositionPlaylist xmlns="http://www.digicine.com/PROTO-ASDCP-CPL-20040511#">
+  <Id>urn:uuid:f28b567b-3b9a-417a-aee4-6fc1a2c6a3af</Id>
+  <AnnotationText>Created by libdcp1.6.1devel</AnnotationText>
+  <IssueDate>2018-09-02T04:45:18+00:00</IssueDate>
+  <Issuer>libdcp1.6.1devel</Issuer>
+  <Creator>libdcp1.6.1devel</Creator>
+  <ContentTitleText>My film</ContentTitleText>
+  <ContentKind>feature</ContentKind>
+  <ContentVersion>
+    <Id>urn:uuid:9f134b47-ab8d-4c3c-adbf-f494b1544283</Id>
+    <LabelText>foo</LabelText>
+  </ContentVersion>
+  <RatingList/>
+  <ReelList>
+    <Reel>
+      <Id>urn:uuid:ab16cd50-686f-4015-9498-4a142ecb0696</Id>
+      <AssetList>
+        <MainSubtitle>
+          <Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</Id>
+          <AnnotationText>subs.xml</AnnotationText>
+          <EditRate>24 1</EditRate>
+          <IntrinsicDuration>6046</IntrinsicDuration>
+          <EntryPoint>0</EntryPoint>
+          <Duration>6046</Duration>
+          <Hash>rl+eBdjvZ0xaaaABGCpf6cm9G/Q=</Hash>
+        </MainSubtitle>
+      </AssetList>
+    </Reel>
+  </ReelList>
+</CompositionPlaylist>

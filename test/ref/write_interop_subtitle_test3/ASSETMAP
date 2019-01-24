@@ -1,2 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<AssetMap xmlns="http://www.digicine.com/PROTO-ASDCP-AM-20040311#"><Id>urn:uuid:20a39790-cad4-4342-98d9-0b0cf1cb6027</Id><AnnotationText>Created by libdcp1.6.1devel</AnnotationText><VolumeCount>1</VolumeCount><IssueDate>2018-09-02T04:45:18+00:00</IssueDate><Issuer>libdcp1.6.1devel</Issuer><Creator>libdcp1.6.1devel</Creator><AssetList><Asset><Id>urn:uuid:f5aab304-8145-44e3-a265-aa8d8812d8a2</Id><PackingList>true</PackingList><ChunkList><Chunk><Path>pkl_f5aab304-8145-44e3-a265-aa8d8812d8a2.xml</Path><VolumeIndex>1</VolumeIndex><Offset>0</Offset><Length>993</Length></Chunk></ChunkList></Asset><Asset><Id>urn:uuid:f28b567b-3b9a-417a-aee4-6fc1a2c6a3af</Id><ChunkList><Chunk><Path>cpl_f28b567b-3b9a-417a-aee4-6fc1a2c6a3af.xml</Path><VolumeIndex>1</VolumeIndex><Offset>0</Offset><Length>970</Length></Chunk></ChunkList></Asset><Asset><Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</Id><ChunkList><Chunk><Path>subs.xml</Path><VolumeIndex>1</VolumeIndex><Offset>0</Offset><Length>414</Length></Chunk></ChunkList></Asset><Asset><Id>urn:uuid:ef5c6baa-be2d-4f86-9f15-b1acc792ee8b</Id><ChunkList><Chunk><Path>ef5c6baa-be2d-4f86-9f15-b1acc792ee8b.png</Path><VolumeIndex>1</VolumeIndex><Offset>0</Offset><Length>44935</Length></Chunk></ChunkList></Asset></AssetList></AssetMap>
+<AssetMap xmlns="http://www.digicine.com/PROTO-ASDCP-AM-20040311#">
+  <Id>urn:uuid:20a39790-cad4-4342-98d9-0b0cf1cb6027</Id>
+  <AnnotationText>Created by libdcp1.6.1devel</AnnotationText>
+  <VolumeCount>1</VolumeCount>
+  <IssueDate>2018-09-02T04:45:18+00:00</IssueDate>
+  <Issuer>libdcp1.6.1devel</Issuer>
+  <Creator>libdcp1.6.1devel</Creator>
+  <AssetList>
+    <Asset>
+      <Id>urn:uuid:f5aab304-8145-44e3-a265-aa8d8812d8a2</Id>
+      <PackingList>true</PackingList>
+      <ChunkList>
+        <Chunk>
+          <Path>pkl_f5aab304-8145-44e3-a265-aa8d8812d8a2.xml</Path>
+          <VolumeIndex>1</VolumeIndex>
+          <Offset>0</Offset>
+          <Length>1144</Length>
+        </Chunk>
+      </ChunkList>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:f28b567b-3b9a-417a-aee4-6fc1a2c6a3af</Id>
+      <ChunkList>
+        <Chunk>
+          <Path>cpl_f28b567b-3b9a-417a-aee4-6fc1a2c6a3af.xml</Path>
+          <VolumeIndex>1</VolumeIndex>
+          <Offset>0</Offset>
+          <Length>1143</Length>
+        </Chunk>
+      </ChunkList>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</Id>
+      <ChunkList>
+        <Chunk>
+          <Path>subs.xml</Path>
+          <VolumeIndex>1</VolumeIndex>
+          <Offset>0</Offset>
+          <Length>414</Length>
+        </Chunk>
+      </ChunkList>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:ef5c6baa-be2d-4f86-9f15-b1acc792ee8b</Id>
+      <ChunkList>
+        <Chunk>
+          <Path>ef5c6baa-be2d-4f86-9f15-b1acc792ee8b.png</Path>
+          <VolumeIndex>1</VolumeIndex>
+          <Offset>0</Offset>
+          <Length>44935</Length>
+        </Chunk>
+      </ChunkList>
+    </Asset>
+  </AssetList>
+</AssetMap>

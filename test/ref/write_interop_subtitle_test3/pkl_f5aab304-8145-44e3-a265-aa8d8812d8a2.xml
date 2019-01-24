@@ -1,2 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PackingList xmlns="http://www.digicine.com/PROTO-ASDCP-PKL-20040311#"><Id>urn:uuid:f5aab304-8145-44e3-a265-aa8d8812d8a2</Id><AnnotationText>Created by libdcp1.6.1devel</AnnotationText><IssueDate>2018-09-02T04:45:18+00:00</IssueDate><Issuer>libdcp1.6.1devel</Issuer><Creator>libdcp1.6.1devel</Creator><AssetList><Asset><Id>urn:uuid:f28b567b-3b9a-417a-aee4-6fc1a2c6a3af</Id><AnnotationText>f28b567b-3b9a-417a-aee4-6fc1a2c6a3af</AnnotationText><Hash>0OlJaTjmCJHDPsuc+h+cBcQq0rQ=</Hash><Size>970</Size><Type>text/xml;asdcpKind=CPL</Type></Asset><Asset><Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</Id><AnnotationText>a6c58cff-3e1e-4b38-acec-a42224475ef6</AnnotationText><Hash>rl+eBdjvZ0xaaaABGCpf6cm9G/Q=</Hash><Size>414</Size><Type>text/xml;asdcpKind=Subtitle</Type></Asset><Asset><Id>urn:uuid:ef5c6baa-be2d-4f86-9f15-b1acc792ee8b</Id><Hash>w0Xc4TUYpao08I0yPSDfFkaEwdg=</Hash><Size>44935</Size><Type>image/png</Type></Asset></AssetList></PackingList>
+<PackingList xmlns="http://www.digicine.com/PROTO-ASDCP-PKL-20040311#">
+  <Id>urn:uuid:f5aab304-8145-44e3-a265-aa8d8812d8a2</Id>
+  <AnnotationText>Created by libdcp1.6.1devel</AnnotationText>
+  <IssueDate>2018-09-02T04:45:18+00:00</IssueDate>
+  <Issuer>libdcp1.6.1devel</Issuer>
+  <Creator>libdcp1.6.1devel</Creator>
+  <AssetList>
+    <Asset>
+      <Id>urn:uuid:f28b567b-3b9a-417a-aee4-6fc1a2c6a3af</Id>
+      <AnnotationText>f28b567b-3b9a-417a-aee4-6fc1a2c6a3af</AnnotationText>
+      <Hash>IyBOY+bWfGsD1WgopUTZJPs9zGk=</Hash>
+      <Size>1143</Size>
+      <Type>text/xml;asdcpKind=CPL</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</Id>
+      <AnnotationText>a6c58cff-3e1e-4b38-acec-a42224475ef6</AnnotationText>
+      <Hash>rl+eBdjvZ0xaaaABGCpf6cm9G/Q=</Hash>
+      <Size>414</Size>
+      <Type>text/xml;asdcpKind=Subtitle</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:ef5c6baa-be2d-4f86-9f15-b1acc792ee8b</Id>
+      <Hash>w0Xc4TUYpao08I0yPSDfFkaEwdg=</Hash>
+      <Size>44935</Size>
+      <Type>image/png</Type>
+    </Asset>
+  </AssetList>
+</PackingList>

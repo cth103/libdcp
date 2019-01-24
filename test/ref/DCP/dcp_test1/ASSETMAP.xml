@@ -1,2 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<AssetMap xmlns="http://www.smpte-ra.org/schemas/429-9/2007/AM"><Id>urn:uuid:74e205d0-d145-42d2-8c49-7b55d058ca55</Id><AnnotationText>Created by libdcp</AnnotationText><Creator>OpenDCP 0.0.25</Creator><VolumeCount>1</VolumeCount><IssueDate>2012-07-17T04:45:18+00:00</IssueDate><Issuer>OpenDCP 0.0.25</Issuer><AssetList><Asset><Id>urn:uuid:ae8a9818-872a-4f86-8493-11dfdea03e09</Id><PackingList>true</PackingList><ChunkList><Chunk><Path>pkl_ae8a9818-872a-4f86-8493-11dfdea03e09.xml</Path><VolumeIndex>1</VolumeIndex><Offset>0</Offset><Length>1029</Length></Chunk></ChunkList></Asset><Asset><Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id><ChunkList><Chunk><Path>cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml</Path><VolumeIndex>1</VolumeIndex><Offset>0</Offset><Length>1374</Length></Chunk></ChunkList></Asset><Asset><Id>urn:uuid:1fab8bb0-cfaf-4225-ad6d-01768bc10470</Id><ChunkList><Chunk><Path>video.mxf</Path><VolumeIndex>1</VolumeIndex><Offset>0</Offset><Length>26080</Length></Chunk></ChunkList></Asset><Asset><Id>urn:uuid:9482e87d-292d-4e0e-a98d-c61822b60fe9</Id><ChunkList><Chunk><Path>audio.mxf</Path><VolumeIndex>1</VolumeIndex><Offset>0</Offset><Length>161326</Length></Chunk></ChunkList></Asset></AssetList></AssetMap>
+<AssetMap xmlns="http://www.smpte-ra.org/schemas/429-9/2007/AM">
+  <Id>urn:uuid:74e205d0-d145-42d2-8c49-7b55d058ca55</Id>
+  <AnnotationText>Created by libdcp</AnnotationText>
+  <Creator>OpenDCP 0.0.25</Creator>
+  <VolumeCount>1</VolumeCount>
+  <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
+  <Issuer>OpenDCP 0.0.25</Issuer>
+  <AssetList>
+    <Asset>
+      <Id>urn:uuid:ae8a9818-872a-4f86-8493-11dfdea03e09</Id>
+      <PackingList>true</PackingList>
+      <ChunkList>
+        <Chunk>
+          <Path>pkl_ae8a9818-872a-4f86-8493-11dfdea03e09.xml</Path>
+          <VolumeIndex>1</VolumeIndex>
+          <Offset>0</Offset>
+          <Length>1186</Length>
+        </Chunk>
+      </ChunkList>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
+      <ChunkList>
+        <Chunk>
+          <Path>cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml</Path>
+          <VolumeIndex>1</VolumeIndex>
+          <Offset>0</Offset>
+          <Length>1664</Length>
+        </Chunk>
+      </ChunkList>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:1fab8bb0-cfaf-4225-ad6d-01768bc10470</Id>
+      <ChunkList>
+        <Chunk>
+          <Path>video.mxf</Path>
+          <VolumeIndex>1</VolumeIndex>
+          <Offset>0</Offset>
+          <Length>26080</Length>
+        </Chunk>
+      </ChunkList>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:9482e87d-292d-4e0e-a98d-c61822b60fe9</Id>
+      <ChunkList>
+        <Chunk>
+          <Path>audio.mxf</Path>
+          <VolumeIndex>1</VolumeIndex>
+          <Offset>0</Offset>
+          <Length>161326</Length>
+        </Chunk>
+      </ChunkList>
+    </Asset>
+  </AssetList>
+</AssetMap>

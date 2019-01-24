@@ -1,2 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PackingList xmlns="http://www.smpte-ra.org/schemas/429-8/2007/PKL"><Id>urn:uuid:7574c611-f8de-4d20-98c4-2eb7dc87080a</Id><AnnotationText>Created by libdcp</AnnotationText><IssueDate>2012-07-17T04:45:18+00:00</IssueDate><Issuer>OpenDCP 0.0.25</Issuer><Creator>OpenDCP 0.0.25</Creator><AssetList><Asset><Id>urn:uuid:3a8a01d1-0e1c-4ff0-977d-63d32995a1fd</Id><AnnotationText>3a8a01d1-0e1c-4ff0-977d-63d32995a1fd</AnnotationText><Hash>YTUJGDd7IQ87f8TcIW+D2AzvYFE=</Hash><Size>1817</Size><Type>text/xml</Type></Asset><Asset><Id>urn:uuid:2527dbe5-41f7-4a22-a2d2-bd7cfeffbce1</Id><AnnotationText>2527dbe5-41f7-4a22-a2d2-bd7cfeffbce1</AnnotationText><Hash>VTsekMDdlNcYFFyTQIQdmaxpwfM=</Hash><Size>26080</Size><Type>application/mxf</Type></Asset><Asset><Id>urn:uuid:69827080-f731-4e4c-9c8a-ec568acdfacc</Id><AnnotationText>69827080-f731-4e4c-9c8a-ec568acdfacc</AnnotationText><Hash>466RYVbB8pyiP6RD6mjEjy4N8d4=</Hash><Size>161326</Size><Type>application/mxf</Type></Asset></AssetList></PackingList>
+<PackingList xmlns="http://www.smpte-ra.org/schemas/429-8/2007/PKL">
+  <Id>urn:uuid:7574c611-f8de-4d20-98c4-2eb7dc87080a</Id>
+  <AnnotationText>Created by libdcp</AnnotationText>
+  <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
+  <Issuer>OpenDCP 0.0.25</Issuer>
+  <Creator>OpenDCP 0.0.25</Creator>
+  <AssetList>
+    <Asset>
+      <Id>urn:uuid:3a8a01d1-0e1c-4ff0-977d-63d32995a1fd</Id>
+      <AnnotationText>3a8a01d1-0e1c-4ff0-977d-63d32995a1fd</AnnotationText>
+      <Hash>CRf+RPBXoJmN3aRUelk7NlZ13eM=</Hash>
+      <Size>2213</Size>
+      <Type>text/xml</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:2527dbe5-41f7-4a22-a2d2-bd7cfeffbce1</Id>
+      <AnnotationText>2527dbe5-41f7-4a22-a2d2-bd7cfeffbce1</AnnotationText>
+      <Hash>VTsekMDdlNcYFFyTQIQdmaxpwfM=</Hash>
+      <Size>26080</Size>
+      <Type>application/mxf</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:69827080-f731-4e4c-9c8a-ec568acdfacc</Id>
+      <AnnotationText>69827080-f731-4e4c-9c8a-ec568acdfacc</AnnotationText>
+      <Hash>466RYVbB8pyiP6RD6mjEjy4N8d4=</Hash>
+      <Size>161326</Size>
+      <Type>application/mxf</Type>
+    </Asset>
+  </AssetList>
+</PackingList>
