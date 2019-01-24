@@ -554,6 +554,7 @@ public:
 			xmlAddID (0, document->cobj(), (const xmlChar *) i->first.c_str(), i->second->cobj ());
 		}
 
+		indent (document->get_root_node(), 0);
 		return document;
 	}
 
@@ -670,7 +671,7 @@ EncryptedKDM::EncryptedKDM (
 	xmlpp::Node::NodeList children = doc->get_root_node()->get_children ();
 	for (xmlpp::Node::NodeList::const_iterator i = children.begin(); i != children.end(); ++i) {
 		if ((*i)->get_name() == "Signature") {
-			signer->add_signature_value (dynamic_cast<xmlpp::Element*>(*i), "ds");
+			signer->add_signature_value (dynamic_cast<xmlpp::Element*>(*i), "ds", false);
 		}
 	}
 

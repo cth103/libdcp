@@ -603,7 +603,7 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
 
 	signature->add_child("SignatureValue", "dsig");
 	signature->add_child("KeyInfo", "dsig");
-	add_signature_value (signature, "dsig");
+	add_signature_value (signature, "dsig", true);
 }
 
 
@@ -613,7 +613,7 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
  *  @param ns Namespace to use for the signature XML nodes.
  */
 void
-CertificateChain::add_signature_value (xmlpp::Element* parent, string ns) const
+CertificateChain::add_signature_value (xmlpp::Element* parent, string ns, bool add_indentation) const
 {
 	cxml::Node cp (parent);
 	xmlpp::Node* key_info = cp.node_child("KeyInfo")->node ();
@@ -644,7 +644,9 @@ CertificateChain::add_signature_value (xmlpp::Element* parent, string ns) const
 		throw runtime_error ("could not read private key");
 	}
 
-	indent (parent, 2);
+	if (add_indentation) {
+		indent (parent, 2);
+	}
 	int const r = xmlSecDSigCtxSign (signature_context, parent->cobj ());
 	if (r < 0) {
 		throw MiscError (String::compose ("could not sign (%1)", r));

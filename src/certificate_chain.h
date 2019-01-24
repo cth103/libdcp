@@ -103,7 +103,7 @@ public:
 	bool private_key_valid () const;
 
 	void sign (xmlpp::Element* parent, Standard standard) const;
-	void add_signature_value (xmlpp::Element* parent, std::string ns) const;
+	void add_signature_value (xmlpp::Element* parent, std::string ns, bool add_indentation) const;
 
 	boost::optional<std::string> key () const {
 		return _key;
