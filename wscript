@@ -43,11 +43,6 @@ APPNAME = 'libdcp'
 this_version = subprocess.Popen(shlex.split('git tag -l --points-at HEAD'), stdout=subprocess.PIPE).communicate()[0]
 last_version = subprocess.Popen(shlex.split('git describe --tags --abbrev=0'), stdout=subprocess.PIPE).communicate()[0]
 
-if isinstance(this_version, bytes):
-    this_version = this_version.decode('UTF-8')
-if isinstance(last_version, bytes):
-    last_version = last_version.decode('UTF-8')
-
 if this_version == '':
     VERSION = '%sdevel' % last_version[1:].strip()
 else:
