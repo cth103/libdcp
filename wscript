@@ -98,8 +98,6 @@ def configure(conf):
 
     if not conf.env.TARGET_WINDOWS:
         conf.env.append_value('LINKFLAGS', '-pthread')
-    if not conf.options.disable_gcov:
-        conf.env.append_value('LINKFLAGS', '-fprofile-arcs')
 
     if conf.options.jpeg == 'oj1':
         conf.env.append_value('CXXFLAGS', ['-DLIBDCP_OPENJPEG1'])
@@ -199,6 +197,7 @@ def configure(conf):
         conf.recurse('test')
         if not conf.options.disable_gcov:
             conf.check(lib='gcov', define_name='HAVE_GCOV', mandatory=False)
+            conf.env.append_value('LINKFLAGS', '-fprofile-arcs')
 
 def build(bld):
     create_version_cc(bld, VERSION)
