@@ -346,6 +346,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 
 	dcp::XMLMetadata xml_meta;
 	xml_meta.issue_date = "2018-09-02T04:45:18+00:00";
+	xml_meta.annotation_text = "Created by libdcp";
 
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("My film", dcp::FEATURE));
 	cpl->add (reel);
