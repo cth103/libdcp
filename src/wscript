@@ -200,7 +200,10 @@ def build(bld):
 
     # Library for gcov
     if bld.is_defined('HAVE_GCOV'):
-        obj = bld(features='cxx cxxshlib')
+        if bld.env.STATIC:
+            obj = bld(features='cxx cxxstlib')
+        else:
+            obj = bld(features='cxx cxxshlib')
         obj.name = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.target = 'dcp%s_gcov' % bld.env.API_VERSION
         obj.export_includes = ['.']
