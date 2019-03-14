@@ -115,6 +115,9 @@ main (int argc, char* argv[])
 		cout << "\t\tSubject organizational unit name: " << i.subject_organizational_unit_name() << "\n";
 		cout << "\t\tNot before: " << tm_to_string(i.not_before()) << "\n";
 		cout << "\t\tNot after:  " << tm_to_string(i.not_after()) << "\n";
+		if (i.has_utf8_strings()) {
+			cout << "\t\tUSES INCORRECT (UTF8) STRING ENCODING\n";
+		}
 	}
 
 	if (private_key_file) {
