@@ -43,11 +43,6 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
-ReelMonoPictureAsset::ReelMonoPictureAsset ()
-{
-
-}
-
 ReelMonoPictureAsset::ReelMonoPictureAsset (boost::shared_ptr<MonoPictureAsset> asset, int64_t entry_point)
 	: ReelPictureAsset (asset, entry_point)
 {

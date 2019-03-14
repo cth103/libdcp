@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -44,11 +44,6 @@ using std::pair;
 using std::make_pair;
 using boost::shared_ptr;
 using namespace dcp;
-
-ReelStereoPictureAsset::ReelStereoPictureAsset ()
-{
-
-}
 
 ReelStereoPictureAsset::ReelStereoPictureAsset (boost::shared_ptr<StereoPictureAsset> mxf, int64_t entry_point)
 	: ReelPictureAsset (mxf, entry_point)

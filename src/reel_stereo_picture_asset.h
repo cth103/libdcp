@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -51,7 +51,6 @@ class StereoPictureAsset;
 class ReelStereoPictureAsset : public ReelPictureAsset
 {
 public:
-	ReelStereoPictureAsset ();
 	ReelStereoPictureAsset (boost::shared_ptr<StereoPictureAsset> content, int64_t entry_point);
 	explicit ReelStereoPictureAsset (boost::shared_ptr<const cxml::Node>);
 

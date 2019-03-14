@@ -65,7 +65,6 @@ class Asset;
 class ReelAsset : public Object
 {
 public:
-	ReelAsset ();
 	ReelAsset (boost::shared_ptr<Asset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelAsset (boost::shared_ptr<const cxml::Node>);
 

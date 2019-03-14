@@ -52,13 +52,6 @@ using boost::dynamic_pointer_cast;
 using boost::optional;
 using namespace dcp;
 
-ReelPictureAsset::ReelPictureAsset ()
-	: _frame_rate (Fraction (24, 1))
-	, _screen_aspect_ratio (Fraction (1998, 1080))
-{
-
-}
-
 ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entry_point)
 	: ReelAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 	, ReelMXF (asset->key_id())

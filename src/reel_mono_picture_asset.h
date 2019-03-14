@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2017 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -51,7 +51,6 @@ class MonoPictureAsset;
 class ReelMonoPictureAsset : public ReelPictureAsset
 {
 public:
-	ReelMonoPictureAsset ();
 	ReelMonoPictureAsset (boost::shared_ptr<MonoPictureAsset> asset, int64_t entry_point);
 	explicit ReelMonoPictureAsset (boost::shared_ptr<const cxml::Node>);
 

@@ -50,7 +50,6 @@ namespace dcp {
 class ReelPictureAsset : public ReelAsset, public ReelMXF
 {
 public:
-	ReelPictureAsset ();
 	ReelPictureAsset (boost::shared_ptr<PictureAsset> asset, int64_t entry_point);
 	explicit ReelPictureAsset (boost::shared_ptr<const cxml::Node>);
 

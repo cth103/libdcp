@@ -48,16 +48,6 @@ using std::make_pair;
 using boost::shared_ptr;
 using namespace dcp;
 
-ReelAsset::ReelAsset ()
-	: _asset_ref (_id)
-	, _edit_rate (Fraction (24, 1))
-	, _intrinsic_duration (0)
-	, _entry_point (0)
-	, _duration (0)
-{
-
-}
-
 /** Construct a ReelAsset.
  *  @param asset Asset that this ReelAsset refers to.
  *  @param edit_rate Edit rate for the asset.
