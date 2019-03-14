@@ -276,6 +276,22 @@ const float ASPECT_ADJUST_EPSILON = 1e-3;
  */
 const float ALIGN_EPSILON = 1e-3;
 
+enum Marker {
+	FFOC, ///< first frame of composition
+	LFOC, ///< last frame of composition
+	FFTC, ///< first frame of title credits
+	LFTC, ///< last frame of title credits
+	FFOI, ///< first frame of intermission
+	LFOI, ///< last frame of intermission
+	FFEC, ///< first frame of end credits
+	LFEC, ///< last frame of end credits
+	FFMC, ///< first frame of moving credits
+	LFMC  ///< last frame of moving credits
+};
+
+std::string marker_to_string (Marker);
+Marker marker_from_string (std::string);
+
 }
 
 #endif

@@ -369,3 +369,60 @@ dcp::content_kind_from_string (string kind)
 
 	throw BadContentKindError (kind);
 }
+
+string
+dcp::marker_to_string (dcp::Marker m)
+{
+	switch (m) {
+	case FFOC:
+		return "FFOC";
+	case LFOC:
+		return "LFOC";
+	case FFTC:
+		return "FFTC";
+	case LFTC:
+		return "LFTC";
+	case FFOI:
+		return "FFOI";
+	case LFOI:
+		return "LFOI";
+	case FFEC:
+		return "FFEC";
+	case LFEC:
+		return "LFEC";
+	case FFMC:
+		return "FFMC";
+	case LFMC:
+		return "LFMC";
+	}
+
+	DCP_ASSERT (false);
+}
+
+dcp::Marker
+dcp::marker_from_string (string s)
+{
+	if (s == "FFOC") {
+		return FFOC;
+	} else if (s == "LFOC") {
+		return LFOC;
+	} else if (s == "FFTC") {
+		return FFTC;
+	} else if (s == "LFTC") {
+		return LFTC;
+	} else if (s == "FFOI") {
+		return FFOI;
+	} else if (s == "LFOI") {
+		return LFOI;
+	} else if (s == "FFEC") {
+		return FFEC;
+	} else if (s == "LFEC") {
+		return LFEC;
+	} else if (s == "FFMC") {
+		return FFMC;
+	} else if (s == "LFMC") {
+		return LFMC;
+	}
+
+	DCP_ASSERT (false);
+}
