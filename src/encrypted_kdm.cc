@@ -772,6 +772,17 @@ EncryptedKDM::recipient_x509_subject_name () const
 	return _data->authenticated_public.required_extensions.kdm_required_extensions.recipient.x509_subject_name;
 }
 
+CertificateChain
+EncryptedKDM::signer_certificate_chain () const
+{
+	CertificateChain chain;
+	BOOST_FOREACH (data::X509Data const & i, _data->signature.x509_data) {
+		string s = "-----BEGIN CERTIFICATE-----\n" + i.x509_certificate + "\n-----END CERTIFICATE-----";
+		chain.add (Certificate(s));
+	}
+	return chain;
+}
+
 bool
 dcp::operator== (EncryptedKDM const & a, EncryptedKDM const & b)
 {
