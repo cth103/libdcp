@@ -46,7 +46,7 @@ using boost::optional;
 static void
 help (string n)
 {
-	cerr << "Syntax: " << n << " [OPTION] <KDM>]\n"
+	cerr << "Syntax: " << n << " [OPTION] <KDM>\n"
 	     << "  -h, --help         show this help\n"
 	     << "  -p, --private-key  private key file\n";
 }
