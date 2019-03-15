@@ -62,6 +62,7 @@ using boost::is_any_of;
 using boost::shared_array;
 using boost::dynamic_pointer_cast;
 using boost::optional;
+using boost::starts_with;
 using namespace dcp;
 
 static string const subtitle_smpte_ns = "http://www.smpte-ra.org/schemas/428-7/2010/DCST";
@@ -115,6 +116,33 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 						)
 					)
 				);
+		}
+
+		/* Try to read PNG files from the same folder that the XML is in; the wisdom of this is
+		   debatable, at best...
+		*/
+		BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
+			shared_ptr<SubtitleImage> im = dynamic_pointer_cast<SubtitleImage>(i);
+			if (im && im->png_image().size() == 0) {
+				/* Even more dubious; allow <id>.png or urn:uuid:<id>.png */
+				boost::filesystem::path p = file.parent_path() / String::compose("%1.png", im->id());
+				if (boost::filesystem::is_regular_file(p)) {
+					im->read_png_file (p);
+				} else if (starts_with (im->id(), "urn:uuid:")) {
+					p = file.parent_path() / String::compose("%1.png", remove_urn_uuid(im->id()));
+					if (boost::filesystem::is_regular_file(p)) {
+						im->read_png_file (p);
+					}
+				}
+			}
+		}
+	}
+
+	/* Check that all required image data have been found */
+	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
+		shared_ptr<SubtitleImage> im = dynamic_pointer_cast<SubtitleImage>(i);
+		if (im && im->png_image().size() == 0) {
+			throw MissingSubtitleImageError (im->id());
 		}
 	}
 }
