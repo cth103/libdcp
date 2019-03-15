@@ -1,5 +1,5 @@
 #
-#    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
+#    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
 #
 #    This file is part of libdcp.
 #
@@ -80,6 +80,7 @@ def build(bld):
                  interop_load_font_test.cc
                  local_time_test.cc
                  make_digest_test.cc
+                 markers_test.cc
                  kdm_test.cc
                  raw_convert_test.cc
                  read_dcp_test.cc

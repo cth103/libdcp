@@ -50,7 +50,7 @@ using boost::optional;
 using namespace dcp;
 
 ReelClosedCaptionAsset::ReelClosedCaptionAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelAsset (asset, edit_rate, intrinsic_duration, entry_point)
+	: ReelAsset (asset->id(), edit_rate, intrinsic_duration, entry_point)
 	, ReelMXF (asset, dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : optional<string>())
 {
 

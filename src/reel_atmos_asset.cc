@@ -47,7 +47,7 @@ using boost::shared_ptr;
 using namespace dcp;
 
 ReelAtmosAsset::ReelAtmosAsset (boost::shared_ptr<AtmosAsset> asset, int64_t entry_point)
-	: ReelAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
+	: ReelAsset (asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 	, ReelMXF (asset, asset->key_id())
 {
 

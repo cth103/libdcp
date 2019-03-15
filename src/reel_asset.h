@@ -65,7 +65,7 @@ class Asset;
 class ReelAsset : public Object
 {
 public:
-	ReelAsset (boost::shared_ptr<Asset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	ReelAsset (std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelAsset (boost::shared_ptr<const cxml::Node>);
 
 	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const = 0;
@@ -119,12 +119,13 @@ protected:
 
 	xmlpp::Node* write_to_cpl_base (xmlpp::Node* node, Standard standard, boost::optional<std::string> hash) const;
 
+	int64_t _intrinsic_duration;  ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset
+	int64_t _duration;            ///< The &lt;Duration&gt; from the reel's entry for this asset
+
 private:
 	std::string _annotation_text; ///< The &lt;AnnotationText&gt; from the reel's entry for this asset
 	Fraction _edit_rate;          ///< The &lt;EditRate&gt; from the reel's entry for this asset
-	int64_t _intrinsic_duration;  ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset
 	int64_t _entry_point;         ///< The &lt;EntryPoint&gt; from the reel's entry for this asset
-	int64_t _duration;            ///< The &lt;Duration&gt; from the reel's entry for this asset
 };
 
 }

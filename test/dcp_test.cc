@@ -281,6 +281,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 				  shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (mp, 0)),
 				  shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (ms, 0)),
 				  shared_ptr<dcp::ReelSubtitleAsset> (),
+				  shared_ptr<dcp::ReelMarkersAsset> (),
 				  shared_ptr<dcp::ReelAtmosAsset> (new dcp::ReelAtmosAsset (am, 0))
 				  )
 			  ));

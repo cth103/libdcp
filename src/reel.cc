@@ -42,6 +42,7 @@
 #include "reel_stereo_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
+#include "reel_markers_asset.h"
 #include "decrypted_kdm_key.h"
 #include "decrypted_kdm.h"
 #include "interop_subtitle_asset.h"
@@ -84,6 +85,11 @@ Reel::Reel (boost::shared_ptr<const cxml::Node> node)
 		_main_subtitle.reset (new ReelSubtitleAsset (main_subtitle));
 	}
 
+	shared_ptr<cxml::Node> main_markers = asset_list->optional_node_child ("MainMarkers");
+	if (main_markers) {
+		_main_markers.reset (new ReelMarkersAsset (main_markers));
+	}
+
 	/* XXX: it's not ideal that we silently tolerate Interop or SMPTE nodes here */
 	/* XXX: not sure if Interop supports multiple closed captions */
 	list<shared_ptr<cxml::Node> > closed_captions = asset_list->node_children ("MainClosedCaption");
@@ -109,6 +115,10 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 	xmlpp::Element* reel = node->add_child ("Reel");
 	reel->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
 	xmlpp::Element* asset_list = reel->add_child ("AssetList");
+
+	if (_main_markers) {
+		_main_markers->write_to_cpl (asset_list, standard);
+	}
 
 	if (_main_picture && dynamic_pointer_cast<ReelMonoPictureAsset> (_main_picture)) {
 		/* Mono pictures come before other stuff... */
@@ -164,6 +174,10 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 	}
 
 	if (_main_subtitle && !_main_subtitle->equals (other->_main_subtitle, opt, note)) {
+		return false;
+	}
+
+	if (_main_markers && !_main_markers->equals (other->_main_markers, opt, note)) {
 		return false;
 	}
 
@@ -250,6 +264,7 @@ Reel::add (shared_ptr<ReelAsset> asset)
 	shared_ptr<ReelPictureAsset> p = dynamic_pointer_cast<ReelPictureAsset> (asset);
 	shared_ptr<ReelSoundAsset> so = dynamic_pointer_cast<ReelSoundAsset> (asset);
 	shared_ptr<ReelSubtitleAsset> su = dynamic_pointer_cast<ReelSubtitleAsset> (asset);
+	shared_ptr<ReelMarkersAsset> m = dynamic_pointer_cast<ReelMarkersAsset> (asset);
 	shared_ptr<ReelClosedCaptionAsset> c = dynamic_pointer_cast<ReelClosedCaptionAsset> (asset);
 	shared_ptr<ReelAtmosAsset> a = dynamic_pointer_cast<ReelAtmosAsset> (asset);
 	if (p) {
@@ -258,6 +273,8 @@ Reel::add (shared_ptr<ReelAsset> asset)
 		_main_sound = so;
 	} else if (su) {
 		_main_subtitle = su;
+	} else if (m) {
+		_main_markers = m;
 	} else if (c) {
 		_closed_captions.push_back (c);
 	} else if (a) {
@@ -318,6 +335,9 @@ Reel::duration () const
 	}
 	if (_main_subtitle) {
 		d = max (d, _main_subtitle->duration ());
+	}
+	if (_main_markers) {
+		d = max (d, _main_markers->duration ());
 	}
 	BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> i, _closed_captions) {
 		d = max (d, i->duration());

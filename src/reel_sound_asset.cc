@@ -45,7 +45,7 @@ using boost::shared_ptr;
 using namespace dcp;
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundAsset> asset, int64_t entry_point)
-	: ReelAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
+	: ReelAsset (asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 	, ReelMXF (asset, asset->key_id())
 {
 

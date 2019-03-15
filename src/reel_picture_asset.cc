@@ -53,7 +53,7 @@ using boost::optional;
 using namespace dcp;
 
 ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
+	: ReelAsset (asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 	, ReelMXF (asset, asset->key_id())
 	, _frame_rate (asset->frame_rate ())
 	, _screen_aspect_ratio (asset->screen_aspect_ratio ())

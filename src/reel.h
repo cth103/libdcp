@@ -56,11 +56,12 @@ class ReelAsset;
 class ReelPictureAsset;
 class ReelSoundAsset;
 class ReelSubtitleAsset;
+class ReelMarkersAsset;
 class ReelClosedCaptionAsset;
 class ReelAtmosAsset;
 class Content;
 
-/** @brief A reel within a DCP; the part which actually refers to picture, sound and subtitle data */
+/** @brief A reel within a DCP; the part which actually refers to picture, sound, subtitle, marker and Atmos data */
 class Reel : public Object
 {
 public:
@@ -70,11 +71,13 @@ public:
 		boost::shared_ptr<ReelPictureAsset> picture,
 		boost::shared_ptr<ReelSoundAsset> sound = boost::shared_ptr<ReelSoundAsset> (),
 		boost::shared_ptr<ReelSubtitleAsset> subtitle = boost::shared_ptr<ReelSubtitleAsset> (),
+		boost::shared_ptr<ReelMarkersAsset> markers = boost::shared_ptr<ReelMarkersAsset> (),
 		boost::shared_ptr<ReelAtmosAsset> atmos = boost::shared_ptr<ReelAtmosAsset> ()
 		)
 		: _main_picture (picture)
 		, _main_sound (sound)
 		, _main_subtitle (subtitle)
+		, _main_markers (markers)
 		, _atmos (atmos)
 	{}
 
@@ -90,6 +93,10 @@ public:
 
 	boost::shared_ptr<ReelSubtitleAsset> main_subtitle () const {
 		return _main_subtitle;
+	}
+
+	boost::shared_ptr<ReelMarkersAsset> main_markers () const {
+		return _main_markers;
 	}
 
 	std::list<boost::shared_ptr<ReelClosedCaptionAsset> > closed_captions () const {
@@ -118,6 +125,7 @@ private:
 	boost::shared_ptr<ReelPictureAsset> _main_picture;
 	boost::shared_ptr<ReelSoundAsset> _main_sound;
 	boost::shared_ptr<ReelSubtitleAsset> _main_subtitle;
+	boost::shared_ptr<ReelMarkersAsset> _main_markers;
 	std::list<boost::shared_ptr<ReelClosedCaptionAsset> > _closed_captions;
 	boost::shared_ptr<ReelAtmosAsset> _atmos;
 };

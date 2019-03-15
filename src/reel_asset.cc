@@ -50,31 +50,28 @@ using boost::optional;
 using namespace dcp;
 
 /** Construct a ReelAsset.
- *  @param asset Asset that this ReelAsset refers to.
+ *  @param id ID of this ReelAsset (which is that of the MXF, if there is one)
  *  @param edit_rate Edit rate for the asset.
  *  @param intrinsic_duration Intrinsic duration of this asset.
  *  @param entry_point Entry point to use in that asset.
  */
-ReelAsset::ReelAsset (shared_ptr<Asset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: Object (asset->id ())
-	, _edit_rate (edit_rate)
+ReelAsset::ReelAsset (string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: Object (id)
 	, _intrinsic_duration (intrinsic_duration)
-	, _entry_point (entry_point)
 	, _duration (intrinsic_duration - entry_point)
+	, _edit_rate (edit_rate)
+	, _entry_point (entry_point)
 {
-	/* default _annotation_text to the leaf name of our file */
-	if (asset->file ()) {
-		_annotation_text = asset->file()->leaf().string ();
-	}
+
 }
 
 ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 	: Object (remove_urn_uuid (node->string_child ("Id")))
+	, _intrinsic_duration (node->number_child<int64_t> ("IntrinsicDuration"))
+	, _duration (node->number_child<int64_t> ("Duration"))
 	, _annotation_text (node->optional_string_child ("AnnotationText").get_value_or (""))
 	, _edit_rate (Fraction (node->string_child ("EditRate")))
-	, _intrinsic_duration (node->number_child<int64_t> ("IntrinsicDuration"))
 	, _entry_point (node->number_child<int64_t> ("EntryPoint"))
-	, _duration (node->number_child<int64_t> ("Duration"))
 {
 
 }
