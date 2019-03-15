@@ -110,7 +110,7 @@ KDMFormatError::KDMFormatError (std::string message)
 
 }
 
-CertificateChainError::CertificateChainError (std::string message)
+CertificateChainError::CertificateChainError (string message)
 	: runtime_error (message)
 {
 
@@ -120,6 +120,12 @@ DCPReadError::DCPReadError (string message, string detail)
 	: runtime_error(String::compose("%1 (%2)", message, detail))
 	, _message(message)
 	, _detail(detail)
+{
+
+}
+
+MissingSubtitleImageError::MissingSubtitleImageError (string id)
+	: runtime_error (String::compose("Could not load image for subtitle %1", id))
 {
 
 }

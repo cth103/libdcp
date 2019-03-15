@@ -222,6 +222,12 @@ public:
 	CertificateChainError (std::string message);
 };
 
+class MissingSubtitleImageError : public std::runtime_error
+{
+public:
+	MissingSubtitleImageError (std::string id);
+};
+
 }
 
 #endif
