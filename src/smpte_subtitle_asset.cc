@@ -197,7 +197,7 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 	ASDCP::TimedText::TimedTextDescriptor descriptor;
 	reader->FillTimedTextDescriptor (descriptor);
 
-	/* Load fonts */
+	/* Load fonts and images */
 
 	for (
 		ASDCP::TimedText::ResourceList_t::const_iterator i = descriptor.ResourceList.begin();

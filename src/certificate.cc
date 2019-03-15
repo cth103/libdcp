@@ -337,6 +337,40 @@ Certificate::subject_organizational_unit_name () const
 	return get_name_part (X509_get_subject_name (_certificate), NID_organizationalUnitName);
 }
 
+static
+struct tm
+convert_time (ASN1_TIME const * time)
+{
+	struct tm t;
+	char const * s = (char const *) time->data;
+
+	if (time->type == V_ASN1_UTCTIME) {
+		sscanf(s, "%2d%2d%2d%2d%2d%2d", &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec);
+		if (t.tm_year < 70) {
+			t.tm_year += 100;
+		}
+	} else if (time->type == V_ASN1_GENERALIZEDTIME) {
+		sscanf(s, "%4d%2d%2d%2d%2d%2d", &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec);
+		t.tm_year -= 1900;
+	}
+
+	return t;
+}
+
+struct tm
+Certificate::not_before () const
+{
+	DCP_ASSERT (_certificate);
+	return convert_time(X509_get0_notBefore(_certificate));
+}
+
+struct tm
+Certificate::not_after () const
+{
+	DCP_ASSERT (_certificate);
+	return convert_time(X509_get0_notAfter(_certificate));
+}
+
 string
 Certificate::serial () const
 {
