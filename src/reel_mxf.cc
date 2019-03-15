@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -43,16 +43,39 @@ using boost::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
-ReelMXF::ReelMXF (optional<string> key_id)
-	: _key_id (key_id)
+ReelMXF::ReelMXF (shared_ptr<Asset> asset, optional<string> key_id)
+	: _asset_ref (asset)
+	, _key_id (key_id)
+	, _hash (asset->hash())
 {
 
 }
 
 ReelMXF::ReelMXF (shared_ptr<const cxml::Node> node)
-	: _key_id (node->optional_string_child ("KeyId"))
+	: _asset_ref (remove_urn_uuid(node->string_child("Id")))
+	, _key_id (node->optional_string_child ("KeyId"))
+	, _hash (node->optional_string_child ("Hash"))
 {
 	if (_key_id) {
 		_key_id = remove_urn_uuid (*_key_id);
 	}
+}
+
+bool
+ReelMXF::mxf_equals (shared_ptr<const ReelMXF> other, EqualityOptions opt, NoteHandler note) const
+{
+	if (_hash != other->_hash) {
+		if (!opt.reel_hashes_can_differ) {
+			note (DCP_ERROR, "Reel: hashes differ");
+			return false;
+		} else {
+			note (DCP_NOTE, "Reel: hashes differ");
+		}
+	}
+
+	if (_asset_ref.resolved() && other->_asset_ref.resolved()) {
+		return _asset_ref->equals (other->_asset_ref.asset(), opt, note);
+	}
+
+	return true;
 }

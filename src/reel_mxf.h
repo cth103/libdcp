@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -35,9 +35,10 @@
  *  @brief ReelMXF
  */
 
-#ifndef LIBDCP_REEL_ENCRYPTABLE_ASSET_H
-#define LIBDCP_REEL_ENCRYPTABLE_ASSET_H
+#ifndef LIBDCP_REEL_MXF_H
+#define LIBDCP_REEL_MXF_H
 
+#include "ref.h"
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -54,13 +55,29 @@ namespace dcp {
 class ReelMXF
 {
 public:
-	ReelMXF () {}
-	explicit ReelMXF (boost::optional<std::string> key_id);
+	explicit ReelMXF (boost::shared_ptr<Asset> asset, boost::optional<std::string> key_id);
 	explicit ReelMXF (boost::shared_ptr<const cxml::Node>);
 	virtual ~ReelMXF () {}
 
 	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */
 	virtual std::string key_type () const = 0;
+
+	/** @return a Ref to our actual asset */
+	Ref const & asset_ref () const {
+		return _asset_ref;
+	}
+
+	/** @return a Ref to our actual asset */
+	Ref & asset_ref () {
+		return _asset_ref;
+	}
+
+	/** @return the asset's hash, if this ReelMXF has been created from one,
+	 *  otherwise the hash written to the CPL for this asset (if present).
+	 */
+	boost::optional<std::string> hash () const {
+		return _hash;
+	}
 
 	/** @return true if a KeyId is specified for this asset, implying
 	 *  that its content is encrypted.
@@ -76,8 +93,29 @@ public:
 		return _key_id;
 	}
 
+	bool mxf_equals (boost::shared_ptr<const ReelMXF> other, EqualityOptions opt, NoteHandler note) const;
+
+protected:
+
+	template <class T>
+	boost::shared_ptr<T> asset_of_type () const {
+		return boost::dynamic_pointer_cast<T> (_asset_ref.asset ());
+	}
+
+	template <class T>
+	boost::shared_ptr<T> asset_of_type () {
+		return boost::dynamic_pointer_cast<T> (_asset_ref.asset ());
+	}
+
+	/** Reference to the asset (MXF or XML file) that this reel entry
+	 *  applies to.
+	 */
+	Ref _asset_ref;
+
 private:
 	boost::optional<std::string> _key_id; ///< The &lt;KeyId&gt; from the reel's entry for this asset, if there is one
+	/** Either our asset's computed hash or the hash read in from the CPL, if it's present */
+	boost::optional<std::string> _hash;
 };
 
 }

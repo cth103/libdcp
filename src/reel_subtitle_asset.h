@@ -56,6 +56,7 @@ public:
 	explicit ReelSubtitleAsset (boost::shared_ptr<const cxml::Node>);
 
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	bool equals (boost::shared_ptr<const ReelSubtitleAsset>, EqualityOptions, NoteHandler) const;
 
 	boost::shared_ptr<SubtitleAsset> asset () const {
 		return asset_of_type<SubtitleAsset> ();

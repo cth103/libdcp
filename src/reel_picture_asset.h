@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -54,7 +54,7 @@ public:
 	explicit ReelPictureAsset (boost::shared_ptr<const cxml::Node>);
 
 	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
+	bool equals (boost::shared_ptr<const ReelPictureAsset>, EqualityOptions, NoteHandler) const;
 
 	/** @return the PictureAsset that this object refers to */
 	boost::shared_ptr<const PictureAsset> asset () const {

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -53,6 +53,7 @@ public:
 	explicit ReelSoundAsset (boost::shared_ptr<const cxml::Node>);
 
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	bool equals (boost::shared_ptr<const ReelSoundAsset>, EqualityOptions, NoteHandler) const;
 
 	/** @return the SoundAsset that this object refers to */
 	boost::shared_ptr<SoundAsset> asset () {

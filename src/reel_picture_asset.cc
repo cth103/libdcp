@@ -54,7 +54,7 @@ using namespace dcp;
 
 ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entry_point)
 	: ReelAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
-	, ReelMXF (asset->key_id())
+	, ReelMXF (asset, asset->key_id())
 	, _frame_rate (asset->frame_rate ())
 	, _screen_aspect_ratio (asset->screen_aspect_ratio ())
 {
@@ -82,7 +82,7 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
 xmlpp::Node*
 ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	xmlpp::Node* asset = ReelAsset::write_to_cpl (node, standard);
+	xmlpp::Node* asset = write_to_cpl_base (node, standard, hash());
 
 	asset->add_child("FrameRate")->add_child_text(String::compose("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
 	if (standard == INTEROP) {
@@ -128,9 +128,12 @@ ReelPictureAsset::key_type () const
 }
 
 bool
-ReelPictureAsset::equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, NoteHandler note) const
+ReelPictureAsset::equals (shared_ptr<const ReelPictureAsset> other, EqualityOptions opt, NoteHandler note) const
 {
-	if (!ReelAsset::equals (other, opt, note)) {
+	if (!asset_equals (other, opt, note)) {
+		return false;
+	}
+	if (!mxf_equals (other, opt, note)) {
 		return false;
 	}
 

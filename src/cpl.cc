@@ -175,10 +175,10 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	set_file (file);
 }
 
-list<shared_ptr<ReelAsset> >
-CPL::reel_assets ()
+list<shared_ptr<ReelMXF> >
+CPL::reel_mxfs ()
 {
-	list<shared_ptr<ReelAsset> > c;
+	list<shared_ptr<ReelMXF> > c;
 
 	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
 		if (i->main_picture ()) {
@@ -201,10 +201,10 @@ CPL::reel_assets ()
 	return c;
 }
 
-list<shared_ptr<const ReelAsset> >
-CPL::reel_assets () const
+list<shared_ptr<const ReelMXF> >
+CPL::reel_mxfs () const
 {
-	list<shared_ptr<const ReelAsset> > c;
+	list<shared_ptr<const ReelMXF> > c;
 
 	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
 		if (i->main_picture ()) {

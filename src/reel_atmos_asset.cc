@@ -48,6 +48,7 @@ using namespace dcp;
 
 ReelAtmosAsset::ReelAtmosAsset (boost::shared_ptr<AtmosAsset> asset, int64_t entry_point)
 	: ReelAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
+	, ReelMXF (asset, asset->key_id())
 {
 
 }
@@ -81,7 +82,20 @@ ReelAtmosAsset::key_type () const
 xmlpp::Node *
 ReelAtmosAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	xmlpp::Node* asset = ReelAsset::write_to_cpl (node, standard);
+	xmlpp::Node* asset = write_to_cpl_base (node, standard, hash());
 	asset->add_child("axd:DataType")->add_child_text("urn:smpte:ul:060e2b34.04010105.0e090604.00000000");
 	return asset;
+}
+
+bool
+ReelAtmosAsset::equals (shared_ptr<const ReelAtmosAsset> other, EqualityOptions opt, NoteHandler note) const
+{
+	if (!asset_equals (other, opt, note)) {
+		return false;
+	}
+	if (!mxf_equals (other, opt, note)) {
+		return false;
+	}
+
+	return true;
 }

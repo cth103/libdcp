@@ -46,7 +46,7 @@ using namespace dcp;
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundAsset> asset, int64_t entry_point)
 	: ReelAsset (asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point)
-	, ReelMXF (asset->key_id())
+	, ReelMXF (asset, asset->key_id())
 {
 
 }
@@ -74,7 +74,7 @@ ReelSoundAsset::key_type () const
 xmlpp::Node *
 ReelSoundAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	xmlpp::Node* asset = ReelAsset::write_to_cpl (node, standard);
+	xmlpp::Node* asset = write_to_cpl_base (node, standard, hash());
 
         if (key_id ()) {
 		/* Find <Hash> */
@@ -83,4 +83,17 @@ ReelSoundAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
         }
 
 	return asset;
+}
+
+bool
+ReelSoundAsset::equals (shared_ptr<const ReelSoundAsset> other, EqualityOptions opt, NoteHandler note) const
+{
+	if (!asset_equals (other, opt, note)) {
+		return false;
+	}
+	if (!mxf_equals (other, opt, note)) {
+		return false;
+	}
+
+	return true;
 }

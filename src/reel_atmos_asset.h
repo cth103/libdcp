@@ -60,6 +60,7 @@ public:
 	}
 
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	bool equals (boost::shared_ptr<const ReelAtmosAsset>, EqualityOptions, NoteHandler) const;
 
 private:
 	std::string key_type () const;

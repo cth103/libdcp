@@ -48,7 +48,7 @@ using namespace dcp;
 
 ReelSubtitleAsset::ReelSubtitleAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelAsset (asset, edit_rate, intrinsic_duration, entry_point)
-	, ReelMXF (dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : optional<string>())
+	, ReelMXF (asset, dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : optional<string>())
 {
 
 }
@@ -76,7 +76,7 @@ ReelSubtitleAsset::key_type () const
 xmlpp::Node *
 ReelSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	xmlpp::Node* asset = ReelAsset::write_to_cpl (node, standard);
+	xmlpp::Node* asset = write_to_cpl_base (node, standard, hash());
 
 	if (key_id ()) {
 		/* Find <Hash> */
@@ -85,4 +85,17 @@ ReelSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 	}
 
 	return asset;
+}
+
+bool
+ReelSubtitleAsset::equals (shared_ptr<const ReelSubtitleAsset> other, EqualityOptions opt, NoteHandler note) const
+{
+	if (!asset_equals (other, opt, note)) {
+		return false;
+	}
+	if (!mxf_equals (other, opt, note)) {
+		return false;
+	}
+
+	return true;
 }

@@ -68,18 +68,7 @@ public:
 	ReelAsset (boost::shared_ptr<Asset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelAsset (boost::shared_ptr<const cxml::Node>);
 
-	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	virtual bool equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
-
-	/** @return a Ref to our actual asset */
-	Ref const & asset_ref () const {
-		return _asset_ref;
-	}
-
-	/** @return a Ref to our actual asset */
-	Ref & asset_ref () {
-		return _asset_ref;
-	}
+	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const = 0;
 
 	Fraction edit_rate () const {
 		return _edit_rate;
@@ -105,13 +94,6 @@ public:
 		return _duration;
 	}
 
-	/** @return the asset's hash, if this ReelAsset has been created from one,
-	 *  otherwise the hash written to the CPL for this asset (if present).
-	 */
-	boost::optional<std::string> hash () const {
-		return _hash;
-	}
-
 	std::string annotation_text () const {
 		return _annotation_text;
 	}
@@ -120,17 +102,9 @@ public:
 		_annotation_text = at;
 	}
 
+	bool asset_equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
+
 protected:
-
-	template <class T>
-	boost::shared_ptr<T> asset_of_type () const {
-		return boost::dynamic_pointer_cast<T> (_asset_ref.asset ());
-	}
-
-	template <class T>
-	boost::shared_ptr<T> asset_of_type () {
-		return boost::dynamic_pointer_cast<T> (_asset_ref.asset ());
-	}
 
 	/** @return the node name that this asset uses in the CPL's &lt;Reel&gt; node
 	 *  e.g. MainPicture, MainSound etc.
@@ -143,10 +117,7 @@ protected:
 	/** @return Any namespace that should be used on the asset's node in the CPL */
 	virtual std::pair<std::string, std::string> cpl_node_namespace (Standard) const;
 
-	/** Reference to the asset (MXF or XML file) that this reel entry
-	 *  applies to.
-	 */
-	Ref _asset_ref;
+	xmlpp::Node* write_to_cpl_base (xmlpp::Node* node, Standard standard, boost::optional<std::string> hash) const;
 
 private:
 	std::string _annotation_text; ///< The &lt;AnnotationText&gt; from the reel's entry for this asset
@@ -154,8 +125,6 @@ private:
 	int64_t _intrinsic_duration;  ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset
 	int64_t _entry_point;         ///< The &lt;EntryPoint&gt; from the reel's entry for this asset
 	int64_t _duration;            ///< The &lt;Duration&gt; from the reel's entry for this asset
-	/** Either our asset's computed hash or the hash read in from the CPL, if it's present */
-	boost::optional<std::string> _hash;
 };
 
 }

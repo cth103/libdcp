@@ -476,7 +476,7 @@ DCP::assets (bool ignore_unresolved) const
 	list<shared_ptr<Asset> > assets;
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
 		assets.push_back (i);
-		BOOST_FOREACH (shared_ptr<const ReelAsset> j, i->reel_assets ()) {
+		BOOST_FOREACH (shared_ptr<const ReelMXF> j, i->reel_mxfs()) {
 			if (ignore_unresolved && !j->asset_ref().resolved()) {
 				continue;
 			}

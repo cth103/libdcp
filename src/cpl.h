@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -51,7 +51,7 @@
 
 namespace dcp {
 
-class ReelAsset;
+class ReelMXF;
 class Reel;
 class XMLMetadata;
 class MXFMetadata;
@@ -116,10 +116,10 @@ public:
 		return _reels;
 	}
 
-	/** @return the ReelAssets in this CPL in all reels.
+	/** @return the ReelMXFs in this CPL in all reels.
 	 */
-	std::list<boost::shared_ptr<const ReelAsset> > reel_assets () const;
-	std::list<boost::shared_ptr<ReelAsset> > reel_assets ();
+	std::list<boost::shared_ptr<const ReelMXF> > reel_mxfs () const;
+	std::list<boost::shared_ptr<ReelMXF> > reel_mxfs ();
 
 	bool encrypted () const;
 

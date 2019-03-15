@@ -271,10 +271,9 @@ DecryptedKDM::DecryptedKDM (
 {
 	/* Create DecryptedKDMKey objects for each encryptable asset */
 	bool did_one = false;
-	BOOST_FOREACH(shared_ptr<const ReelAsset> i, cpl->reel_assets ()) {
-		shared_ptr<const ReelMXF> mxf = boost::dynamic_pointer_cast<const ReelMXF> (i);
-		if (mxf && mxf->key_id ()) {
-			add_key (mxf->key_type(), mxf->key_id().get(), key, cpl->id(), SMPTE);
+	BOOST_FOREACH(shared_ptr<const ReelMXF> i, cpl->reel_mxfs()) {
+		if (i->key_id()) {
+			add_key (i->key_type(), i->key_id().get(), key, cpl->id(), SMPTE);
 			did_one = true;
 		}
 	}

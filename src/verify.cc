@@ -61,19 +61,19 @@ enum Result {
 };
 
 static Result
-verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelAsset> reel_asset, function<void (float)> progress)
+verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelMXF> reel_mxf, function<void (float)> progress)
 {
-	string const actual_hash = reel_asset->asset_ref()->hash(progress);
+	string const actual_hash = reel_mxf->asset_ref()->hash(progress);
 
 	list<shared_ptr<PKL> > pkls = dcp->pkls();
 	/* We've read this DCP in so it must have at least one PKL */
 	DCP_ASSERT (!pkls.empty());
 
-	shared_ptr<Asset> asset = reel_asset->asset_ref().asset();
+	shared_ptr<Asset> asset = reel_mxf->asset_ref().asset();
 
 	optional<string> pkl_hash;
 	BOOST_FOREACH (shared_ptr<PKL> i, pkls) {
-		pkl_hash = i->hash (reel_asset->asset_ref()->id());
+		pkl_hash = i->hash (reel_mxf->asset_ref()->id());
 		if (pkl_hash) {
 			break;
 		}
@@ -81,7 +81,7 @@ verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelAsset> reel_asset, function<vo
 
 	DCP_ASSERT (pkl_hash);
 
-	optional<string> cpl_hash = reel_asset->hash();
+	optional<string> cpl_hash = reel_mxf->hash();
 	if (cpl_hash && *cpl_hash != *pkl_hash) {
 		return RESULT_CPL_PKL_DIFFER;
 	}
