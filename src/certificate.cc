@@ -361,14 +361,22 @@ struct tm
 Certificate::not_before () const
 {
 	DCP_ASSERT (_certificate);
+#if OPENSSL_VERSION_NUMBER > 0x10100000L
 	return convert_time(X509_get0_notBefore(_certificate));
+#else
+	return convert_time(X509_get_notBefore(_certificate));
+#endif
 }
 
 struct tm
 Certificate::not_after () const
 {
 	DCP_ASSERT (_certificate);
+#if OPENSSL_VERSION_NUMBER > 0x10100000L
 	return convert_time(X509_get0_notAfter(_certificate));
+#else
+	return convert_time(X509_get_notAfter(_certificate));
+#endif
 }
 
 string
