@@ -95,11 +95,17 @@ main_picture (shared_ptr<Reel> reel, bool analyse, bool decompress)
 		return;
 	}
 
-	cout << "      Picture ID:  " << reel->main_picture()->id()
-	     << " entry " << reel->main_picture()->entry_point()
-	     << " duration " << reel->main_picture()->duration()
-	     << " (" << dcp::Time(reel->main_picture()->duration(), reel->main_picture()->frame_rate().as_float(), reel->main_picture()->frame_rate().as_float()).as_string(dcp::SMPTE) << ")"
-	     << " intrinsic " << reel->main_picture()->intrinsic_duration();
+	cout << "      Picture ID:  " << reel->main_picture()->id();
+	if (reel->main_picture()->entry_point()) {
+		cout << " entry " << *reel->main_picture()->entry_point();
+	}
+	if (reel->main_picture()->duration()) {
+		cout << " duration " << *reel->main_picture()->duration()
+		     << " (" << dcp::Time(*reel->main_picture()->duration(), reel->main_picture()->frame_rate().as_float(), reel->main_picture()->frame_rate().as_float()).as_string(dcp::SMPTE) << ")"
+		     << " intrinsic " << reel->main_picture()->intrinsic_duration();
+	} else {
+		cout << " intrinsic duration " << reel->main_picture()->intrinsic_duration();
+	}
 
 	if (reel->main_picture()->asset_ref().resolved()) {
 		if (reel->main_picture()->asset()) {
@@ -146,10 +152,17 @@ static void
 main_sound (shared_ptr<Reel> reel)
 {
 	if (reel->main_sound()) {
-		cout << "      Sound ID:    " << reel->main_sound()->id()
-		     << " entry " << reel->main_picture()->entry_point()
-		     << " duration " << reel->main_picture()->duration()
-		     << " intrinsic " << reel->main_picture()->intrinsic_duration();
+		cout << "      Sound ID:    " << reel->main_sound()->id();
+		if (reel->main_sound()->entry_point()) {
+		     cout << " entry " << *reel->main_sound()->entry_point();
+		}
+		if (reel->main_sound()->duration()) {
+			cout << " duration " << *reel->main_sound()->duration()
+			     << " intrinsic " << reel->main_sound()->intrinsic_duration();
+		} else {
+			cout << " intrinsic duration " << reel->main_sound()->intrinsic_duration();
+		}
+
 		if (reel->main_sound()->asset_ref().resolved()) {
 			if (reel->main_sound()->asset()) {
 				cout << "\n      Sound:       "

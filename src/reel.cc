@@ -328,22 +328,22 @@ Reel::duration () const
 	int64_t d = 0;
 
 	if (_main_picture) {
-		d = max (d, _main_picture->duration ());
+		d = max (d, _main_picture->actual_duration());
 	}
 	if (_main_sound) {
-		d = max (d, _main_sound->duration ());
+		d = max (d, _main_sound->actual_duration());
 	}
 	if (_main_subtitle) {
-		d = max (d, _main_subtitle->duration ());
+		d = max (d, _main_subtitle->actual_duration());
 	}
 	if (_main_markers) {
-		d = max (d, _main_markers->duration ());
+		d = max (d, _main_markers->actual_duration());
 	}
 	BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> i, _closed_captions) {
-		d = max (d, i->duration());
+		d = max (d, i->actual_duration());
 	}
 	if (_atmos) {
-		d = max (d, _atmos->duration ());
+		d = max (d, _atmos->actual_duration());
 	}
 
 	return d;

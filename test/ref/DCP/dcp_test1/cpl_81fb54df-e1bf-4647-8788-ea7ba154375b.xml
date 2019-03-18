@@ -18,7 +18,7 @@
       <AssetList>
         <MainPicture>
           <Id>urn:uuid:1fab8bb0-cfaf-4225-ad6d-01768bc10470</Id>
-          <AnnotationText>video.mxf</AnnotationText>
+          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
@@ -29,7 +29,7 @@
         </MainPicture>
         <MainSound>
           <Id>urn:uuid:9482e87d-292d-4e0e-a98d-c61822b60fe9</Id>
-          <AnnotationText>audio.mxf</AnnotationText>
+          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>

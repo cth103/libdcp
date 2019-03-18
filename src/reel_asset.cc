@@ -68,10 +68,10 @@ ReelAsset::ReelAsset (string id, Fraction edit_rate, int64_t intrinsic_duration,
 ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 	: Object (remove_urn_uuid (node->string_child ("Id")))
 	, _intrinsic_duration (node->number_child<int64_t> ("IntrinsicDuration"))
-	, _duration (node->number_child<int64_t> ("Duration"))
+	, _duration (node->optional_number_child<int64_t>("Duration"))
 	, _annotation_text (node->optional_string_child ("AnnotationText").get_value_or (""))
 	, _edit_rate (Fraction (node->string_child ("EditRate")))
-	, _entry_point (node->number_child<int64_t> ("EntryPoint"))
+	, _entry_point (node->optional_number_child<int64_t>("EntryPoint"))
 {
 
 }
@@ -79,21 +79,25 @@ ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 xmlpp::Node*
 ReelAsset::write_to_cpl_base (xmlpp::Node* node, Standard standard, optional<string> hash) const
 {
-        xmlpp::Element* a = node->add_child (cpl_node_name (standard));
-        pair<string, string> const attr = cpl_node_attribute (standard);
-        if (!attr.first.empty ()) {
-                a->set_attribute (attr.first, attr.second);
-        }
-        pair<string, string> const ns = cpl_node_namespace (standard);
-        if (!ns.first.empty ()) {
-                a->set_namespace_declaration (ns.first, ns.second);
-        }
-        a->add_child("Id")->add_child_text ("urn:uuid:" + _id);
-        a->add_child("AnnotationText")->add_child_text (_annotation_text);
-        a->add_child("EditRate")->add_child_text (String::compose ("%1 %2", _edit_rate.numerator, _edit_rate.denominator));
-        a->add_child("IntrinsicDuration")->add_child_text (raw_convert<string> (_intrinsic_duration));
-        a->add_child("EntryPoint")->add_child_text (raw_convert<string> (_entry_point));
-        a->add_child("Duration")->add_child_text (raw_convert<string> (_duration));
+	xmlpp::Element* a = node->add_child (cpl_node_name (standard));
+	pair<string, string> const attr = cpl_node_attribute (standard);
+	if (!attr.first.empty ()) {
+		a->set_attribute (attr.first, attr.second);
+	}
+	pair<string, string> const ns = cpl_node_namespace (standard);
+	if (!ns.first.empty ()) {
+		a->set_namespace_declaration (ns.first, ns.second);
+	}
+	a->add_child("Id")->add_child_text ("urn:uuid:" + _id);
+	a->add_child("AnnotationText")->add_child_text (_annotation_text);
+	a->add_child("EditRate")->add_child_text (String::compose ("%1 %2", _edit_rate.numerator, _edit_rate.denominator));
+	a->add_child("IntrinsicDuration")->add_child_text (raw_convert<string> (_intrinsic_duration));
+	if (_entry_point) {
+		a->add_child("EntryPoint")->add_child_text(raw_convert<string>(*_entry_point));
+	}
+	if (_duration) {
+		a->add_child("Duration")->add_child_text(raw_convert<string>(*_duration));
+	}
 	if (hash) {
 		a->add_child("Hash")->add_child_text (hash.get());
 	}
@@ -146,4 +150,15 @@ ReelAsset::asset_equals (shared_ptr<const ReelAsset> other, EqualityOptions opt,
 	}
 
 	return true;
+}
+
+/** @return <Duration>, or <IntrinsicDuration> - <EntryPoint> if <Duration> is not present */
+int64_t
+ReelAsset::actual_duration () const
+{
+	if (_duration) {
+		return *_duration;
+	}
+
+	return _intrinsic_duration - _entry_point.get_value_or(0);
 }

@@ -82,7 +82,7 @@ public:
 		_entry_point = e;
 	}
 
-	int64_t entry_point () const {
+	boost::optional<int64_t> entry_point () const {
 		return _entry_point;
 	}
 
@@ -90,9 +90,11 @@ public:
 		_duration = d;
 	}
 
-	int64_t duration () const {
+	boost::optional<int64_t> duration () const {
 		return _duration;
 	}
+
+	int64_t actual_duration () const;
 
 	std::string annotation_text () const {
 		return _annotation_text;
@@ -119,13 +121,13 @@ protected:
 
 	xmlpp::Node* write_to_cpl_base (xmlpp::Node* node, Standard standard, boost::optional<std::string> hash) const;
 
-	int64_t _intrinsic_duration;  ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset
-	int64_t _duration;            ///< The &lt;Duration&gt; from the reel's entry for this asset
+	int64_t _intrinsic_duration;           ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset
+	boost::optional<int64_t> _duration;    ///< The &lt;Duration&gt; from the reel's entry for this asset, if present
 
 private:
-	std::string _annotation_text; ///< The &lt;AnnotationText&gt; from the reel's entry for this asset
-	Fraction _edit_rate;          ///< The &lt;EditRate&gt; from the reel's entry for this asset
-	int64_t _entry_point;         ///< The &lt;EntryPoint&gt; from the reel's entry for this asset
+	std::string _annotation_text;          ///< The &lt;AnnotationText&gt; from the reel's entry for this asset
+	Fraction _edit_rate;                   ///< The &lt;EditRate&gt; from the reel's entry for this asset
+	boost::optional<int64_t> _entry_point; ///< The &lt;EntryPoint&gt; from the reel's entry for this asset
 };
 
 }

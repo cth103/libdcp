@@ -18,7 +18,7 @@
       <AssetList>
         <MainSound>
           <Id>urn:uuid:e5c3091b-f61e-459c-9faf-210bd4d3c7bf</Id>
-          <AnnotationText>audio.mxf</AnnotationText>
+          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
@@ -27,7 +27,7 @@
         </MainSound>
         <msp-cpl:MainStereoscopicPicture xmlns:msp-cpl="http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL">
           <Id>urn:uuid:63c3aece-c581-4603-b612-75e43f0c0430</Id>
-          <AnnotationText>video.mxf</AnnotationText>
+          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>

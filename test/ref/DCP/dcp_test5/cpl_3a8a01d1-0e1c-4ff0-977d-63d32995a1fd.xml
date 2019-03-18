@@ -18,7 +18,7 @@
       <AssetList>
         <MainPicture>
           <Id>urn:uuid:2527dbe5-41f7-4a22-a2d2-bd7cfeffbce1</Id>
-          <AnnotationText>video.mxf</AnnotationText>
+          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
@@ -29,7 +29,7 @@
         </MainPicture>
         <MainSound>
           <Id>urn:uuid:69827080-f731-4e4c-9c8a-ec568acdfacc</Id>
-          <AnnotationText>audio.mxf</AnnotationText>
+          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
@@ -38,7 +38,7 @@
         </MainSound>
         <axd:AuxData xmlns:axd="http://www.dolby.com/schemas/2012/AD">
           <Id>urn:uuid:f1f7e0bc-ee61-412a-ac0e-e0b165a364a8</Id>
-          <AnnotationText>20160218_NameOfFilm_FTR_OV_EN_A_dcs_r01.mxf</AnnotationText>
+          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>1489</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
