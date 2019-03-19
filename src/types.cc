@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -36,6 +36,7 @@
 #include "exceptions.h"
 #include "compose.hpp"
 #include "dcp_assert.h"
+#include <libxml++/libxml++.h>
 #include <boost/algorithm/string.hpp>
 #include <vector>
 #include <cstdio>
@@ -425,4 +426,31 @@ dcp::marker_from_string (string s)
 	}
 
 	DCP_ASSERT (false);
+}
+
+Rating::Rating (cxml::ConstNodePtr node)
+{
+	agency = node->string_child("Agency");
+	label = node->string_child("Label");
+	node->done ();
+}
+
+void
+Rating::as_xml (xmlpp::Element* parent) const
+{
+	parent->add_child("Agency")->add_child_text(agency);
+	parent->add_child("Label")->add_child_text(label);
+}
+
+bool
+dcp::operator== (Rating const & a, Rating const & b)
+{
+	return a.agency == b.agency && a.label == b.label;
+}
+
+ostream &
+dcp::operator<< (ostream& s, Rating const & r)
+{
+	s << r.agency << " " << r.label;
+	return s;
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -105,7 +105,12 @@ CPL::CPL (boost::filesystem::path file)
 		_content_version_label_text = content_version->string_child ("LabelText");
 		content_version->done ();
 	}
-	f.ignore_child ("RatingList");
+	cxml::ConstNodePtr rating_list = f.node_child ("RatingList");
+	if (rating_list) {
+		BOOST_FOREACH (cxml::ConstNodePtr i, rating_list->node_children("Rating")) {
+			_ratings.push_back (Rating(i));
+		}
+	}
 	_reels = type_grand_children<Reel> (f, "ReelList", "Reel");
 
 	f.ignore_child ("Issuer");
@@ -156,7 +161,10 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 		cv->add_child ("Id")->add_child_text (_content_version_id);
 		cv->add_child ("LabelText")->add_child_text (_content_version_label_text);
 	}
-	root->add_child("RatingList");
+	xmlpp::Element* rating_list = root->add_child("RatingList");
+	BOOST_FOREACH (Rating i, _ratings) {
+		i.as_xml (rating_list->add_child("Rating"));
+	}
 
 	xmlpp::Element* reel_list = root->add_child ("ReelList");
 

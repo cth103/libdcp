@@ -141,6 +141,14 @@ public:
 		return _standard;
 	}
 
+	std::list<Rating> ratings () const {
+		return _ratings;
+	}
+
+	void set_ratings (std::list<Rating> r) {
+		_ratings = r;
+	}
+
 	static std::string static_pkl_type (Standard standard);
 
 protected:
@@ -157,6 +165,7 @@ private:
 	std::string _content_version_id;            ///< &lt;Id&gt; in &lt;ContentVersion&gt;
 	std::string _content_version_label_text;    ///< &lt;LabelText&gt; in &lt;ContentVersion&gt;
 	std::list<boost::shared_ptr<Reel> > _reels;
+	std::list<Rating> _ratings;
 
 	/** Standard of CPL that was read in */
 	boost::optional<Standard> _standard;

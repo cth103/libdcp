@@ -38,9 +38,14 @@
 #ifndef LIBDCP_TYPES_H
 #define LIBDCP_TYPES_H
 
+#include <libcxml/cxml.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <string>
+
+namespace xmlpp {
+	class Element;
+}
 
 namespace dcp
 {
@@ -291,6 +296,27 @@ enum Marker {
 
 std::string marker_to_string (Marker);
 Marker marker_from_string (std::string);
+
+class Rating
+{
+public:
+	Rating (std::string agency_, std::string label_)
+		: agency (agency_)
+		, label (label_)
+	{}
+
+	explicit Rating (cxml::ConstNodePtr node);
+
+	void as_xml (xmlpp::Element* parent) const;
+
+	/** URI of the agency issuing the rating */
+	std::string agency;
+	/** Rating (e.g. PG, PG-13, 12A etc) */
+	std::string label;
+};
+
+extern bool operator== (Rating const & a, Rating const & b);
+extern std::ostream& operator<< (std::ostream& s, Rating const & r);
 
 }
 
