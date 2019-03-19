@@ -104,6 +104,9 @@ CPL::CPL (boost::filesystem::path file)
 		_content_version_id = content_version->optional_string_child ("Id").get_value_or ("");
 		_content_version_label_text = content_version->string_child ("LabelText");
 		content_version->done ();
+	} else if (_standard == SMPTE) {
+		/* ContentVersion is required in SMPTE */
+		throw XMLError ("Missing ContentVersion tag in CPL");
 	}
 	cxml::ConstNodePtr rating_list = f.node_child ("RatingList");
 	if (rating_list) {
