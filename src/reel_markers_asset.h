@@ -33,6 +33,7 @@
 
 #include "reel_asset.h"
 #include "dcp_time.h"
+#include <map>
 
 namespace dcp {
 
