@@ -99,11 +99,13 @@ main (int argc, char* argv[])
 	dcp::EncryptedKDM enc_kdm (dcp::file_to_string (kdm_file));
 
 	if (enc_kdm.annotation_text()) {
-		cout << "Annotation:    " << enc_kdm.annotation_text().get() << "\n";
+		cout << "Annotation:        " << enc_kdm.annotation_text().get() << "\n";
 	}
-	cout << "Content title: " << enc_kdm.content_title_text() << "\n";
-	cout << "CPL id:        " << enc_kdm.cpl_id() << "\n";
-	cout << "Recipient:     " << enc_kdm.recipient_x509_subject_name() << "\n";
+	cout << "Content title:    " << enc_kdm.content_title_text() << "\n";
+	cout << "CPL id:           " << enc_kdm.cpl_id() << "\n";
+	cout << "Recipient:        " << enc_kdm.recipient_x509_subject_name() << "\n";
+	cout << "Not valid before: " << enc_kdm.not_valid_before().as_string() << "\n";
+	cout << "Not valid after:  " << enc_kdm.not_valid_after().as_string() << "\n";
 
 	cout << "Signer chain:\n";
 	dcp::CertificateChain signer = enc_kdm.signer_certificate_chain ();
