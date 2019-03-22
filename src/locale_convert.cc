@@ -219,7 +219,7 @@ template<>
 unsigned int
 dcp::locale_convert (string x, int, bool)
 {
-	int y = 0;
+	unsigned int y = 0;
 	sscanf (x.c_str(), "%u", &y);
 	return y;
 }
