@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -104,7 +104,9 @@ enum ContentKind
 	TEASER,
 	POLICY,
 	PUBLIC_SERVICE_ANNOUNCEMENT,
-	ADVERTISEMENT
+	ADVERTISEMENT,
+	EPISODE,
+	PROMO
 };
 
 extern std::string content_kind_to_string (ContentKind kind);

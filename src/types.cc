@@ -331,6 +331,10 @@ dcp::content_kind_to_string (ContentKind kind)
 		return "psa";
 	case ADVERTISEMENT:
 		return "advertisement";
+	case EPISODE:
+		return "episode";
+	case PROMO:
+		return "promo";
 	}
 
 	DCP_ASSERT (false);
@@ -366,6 +370,10 @@ dcp::content_kind_from_string (string kind)
 		return PUBLIC_SERVICE_ANNOUNCEMENT;
 	} else if (kind == "advertisement") {
 		return ADVERTISEMENT;
+	} else if (kind == "episode") {
+		return EPISODE;
+	} else if (kind == "promo") {
+		return PROMO;
 	}
 
 	throw BadContentKindError (kind);
