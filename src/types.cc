@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -330,6 +330,10 @@ dcp::content_kind_to_string (ContentKind kind)
 		return "psa";
 	case ADVERTISEMENT:
 		return "advertisement";
+	case EPISODE:
+		return "episode";
+	case PROMO:
+		return "promo";
 	}
 
 	DCP_ASSERT (false);
@@ -365,6 +369,10 @@ dcp::content_kind_from_string (string kind)
 		return PUBLIC_SERVICE_ANNOUNCEMENT;
 	} else if (kind == "advertisement") {
 		return ADVERTISEMENT;
+	} else if (kind == "episode") {
+		return EPISODE;
+	} else if (kind == "promo") {
+		return PROMO;
 	}
 
 	throw BadContentKindError (kind);
