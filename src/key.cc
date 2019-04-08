@@ -90,6 +90,7 @@ Key::operator= (Key const & other)
 		return *this;
 	}
 
+	_length = other._length;
 	memcpy (_value, other._value, _length);
 	return *this;
 }
@@ -102,9 +103,9 @@ Key::hex () const
 	char* p = buffer;
 	for (int i = 0; i < _length; ++i) {
 #ifdef LIBDCP_WINDOWS
-		__mingw_snprintf (p, 3, "%02hhx", buffer[i]);
+		__mingw_snprintf (p, 3, "%02hhx", _value[i]);
 #else
-		snprintf (p, 3, "%02hhx", buffer[i]);
+		snprintf (p, 3, "%02hhx", _value[i]);
 #endif
 		p += 2;
 	}

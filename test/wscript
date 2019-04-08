@@ -83,6 +83,7 @@ def build(bld):
                  make_digest_test.cc
                  markers_test.cc
                  kdm_test.cc
+                 key_test.cc
                  raw_convert_test.cc
                  read_dcp_test.cc
                  read_interop_subtitle_test.cc

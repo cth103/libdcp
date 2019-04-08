@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,60 +31,18 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/key.h
- *  @brief Key class.
- */
+#include "key.h"
+#include <boost/test/unit_test.hpp>
+#include <iostream>
 
-#ifndef LIBDCP_KEY_H
-#define LIBDCP_KEY_H
+using std::string;
 
-#include <asdcp/AS_DCP.h>
-#include <stdint.h>
-#include <string>
-
-namespace dcp {
-
-/** @class Key
- *  @brief A key for decrypting/encrypting assets.
- */
-class Key
+BOOST_AUTO_TEST_CASE (key_hex_test)
 {
-public:
-	/** Create a new, random key */
-	explicit Key (int length = ASDCP::KeyLen);
-
-	/** Create a Key from a raw key value */
-	explicit Key (uint8_t const *, int length = ASDCP::KeyLen);
-
-	/** Create a Key from a hex key value */
-	explicit Key (std::string);
-
-	Key (Key const &);
-	Key& operator= (Key const &);
-
-	~Key ();
-
-	/** @return Raw key value */
-	uint8_t const * value () const {
-		return _value;
-	}
-
-	int length () const {
-		return _length;
-	}
-
-	/** @return Key value as a hexadecimal string */
-	std::string hex () const;
-
-private:
-	/** Raw key value */
-	uint8_t* _value;
-	int _length;
-};
-
-extern bool operator== (Key const & a, Key const & b);
-extern bool operator!= (Key const & a, Key const & b);
-
+	dcp::Key key (string("0123456789abcdef915a9157123ba218"));
+	BOOST_CHECK_EQUAL (key.hex(), "0123456789abcdef915a9157123ba218");
+	key = dcp::Key (string("af1a1b061389ddac62be8a19bbc52dff"));
+	BOOST_CHECK_EQUAL (key.hex(), "af1a1b061389ddac62be8a19bbc52dff");
+	key = dcp::Key (string("af1a1b061389ddac62be8a"));
+	BOOST_CHECK_EQUAL (key.hex(), "af1a1b061389ddac62be8a");
 }
-
-#endif
