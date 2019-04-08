@@ -38,6 +38,7 @@
 #ifndef LIBDCP_KEY_H
 #define LIBDCP_KEY_H
 
+#include <asdcp/AS_DCP.h>
 #include <stdint.h>
 #include <string>
 
@@ -50,10 +51,10 @@ class Key
 {
 public:
 	/** Create a new, random key */
-	Key ();
+	Key (int length = ASDCP::KeyLen);
 
 	/** Create a Key from a raw key value */
-	explicit Key (uint8_t const *);
+	explicit Key (uint8_t const *, int length = ASDCP::KeyLen);
 
 	/** Create a Key from a hex key value */
 	explicit Key (std::string);
@@ -68,12 +69,17 @@ public:
 		return _value;
 	}
 
+	int length () const {
+		return _length;
+	}
+
 	/** @return Key value as a hexadecimal string */
 	std::string hex () const;
 
 private:
 	/** Raw key value */
 	uint8_t* _value;
+	int _length;
 };
 
 extern bool operator== (Key const & a, Key const & b);

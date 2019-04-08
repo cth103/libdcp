@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -48,30 +48,34 @@ using std::setw;
 using std::setfill;
 using namespace dcp;
 
-Key::Key ()
-	: _value (new uint8_t[ASDCP::KeyLen])
+Key::Key (int length)
+	: _value (new uint8_t[length])
+	, _length (length)
 {
 	Kumu::FortunaRNG rng;
-	rng.FillRandom (_value, ASDCP::KeyLen);
+	rng.FillRandom (_value, _length);
 }
 
-Key::Key (uint8_t const * value)
-	: _value (new uint8_t[ASDCP::KeyLen])
+Key::Key (uint8_t const * value, int length)
+	: _value (new uint8_t[length])
+	, _length (length)
 {
-	memcpy (_value, value, ASDCP::KeyLen);
+	memcpy (_value, value, _length);
 }
 
 Key::Key (string value)
-	: _value (new uint8_t[ASDCP::KeyLen])
+	: _value (new uint8_t[value.length() / 2])
+	, _length (value.length() / 2)
 {
-	unsigned int length;
-	Kumu::hex2bin (value.c_str(), _value, ASDCP::KeyLen, &length);
+	unsigned int length_done;
+	Kumu::hex2bin (value.c_str(), _value, _length, &length_done);
 }
 
 Key::Key (Key const & other)
-	: _value (new uint8_t[ASDCP::KeyLen])
+	: _value (new uint8_t[other._length])
+	, _length (other._length)
 {
-	memcpy (_value, other._value, ASDCP::KeyLen);
+	memcpy (_value, other._value, _length);
 }
 
 Key::~Key ()
@@ -86,26 +90,24 @@ Key::operator= (Key const & other)
 		return *this;
 	}
 
-	memcpy (_value, other._value, ASDCP::KeyLen);
+	memcpy (_value, other._value, _length);
 	return *this;
 }
 
 string
 Key::hex () const
 {
-	DCP_ASSERT (ASDCP::KeyLen == 16);
+	char buffer[_length * 2 + 1];
 
-	char buffer[33];
+	char* p = buffer;
+	for (int i = 0; i < _length; ++i) {
 #ifdef LIBDCP_WINDOWS
-	__mingw_snprintf (
+		__mingw_snprintf (p, 3, "%02hhx", buffer[i]);
 #else
-	snprintf (
+		snprintf (p, 3, "%02hhx", buffer[i]);
 #endif
-		buffer, sizeof(buffer),
-		"%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx",
-		_value[0], _value[1], _value[2], _value[3], _value[4], _value[5], _value[6], _value[7],
-		_value[8], _value[9], _value[10], _value[11], _value[12], _value[13], _value[14], _value[15]
-		);
+		p += 2;
+	}
 
 	return buffer;
 }
@@ -113,7 +115,7 @@ Key::hex () const
 bool
 dcp::operator== (Key const & a, Key const & b)
 {
-	return memcmp (a.value(), b.value(), ASDCP::KeyLen) == 0;
+	return a.length() == b.length() && memcmp(a.value(), b.value(), a.length()) == 0;
 }
 
 bool
