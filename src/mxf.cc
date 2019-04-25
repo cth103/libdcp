@@ -135,7 +135,7 @@ MXF::read_writer_info (ASDCP::WriterInfo const & info)
 		_standard = SMPTE;
 		break;
 	default:
-		DCP_ASSERT (false);
+		throw DCPReadError ("Unrecognised label set type in MXF");
 	}
 
 	_metadata.read (info);
