@@ -64,7 +64,7 @@ class LoadFontNode;
 
 namespace order {
 	class Part;
-	class Context;
+	struct Context;
 }
 
 /** @class SubtitleAsset
