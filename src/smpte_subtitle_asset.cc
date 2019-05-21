@@ -393,7 +393,10 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	descriptor.ContainerDuration = _intrinsic_duration;
 
 	ASDCP::TimedText::MXFWriter writer;
-	ASDCP::Result_t r = writer.OpenWrite (p.string().c_str(), writer_info, descriptor);
+	/* This header size is a guess.  Empirically it seems that each subtitle reference is 90 bytes, and we need some extra.
+	   The defualt size is not enough for some feature-length PNG sub projects (see DCP-o-matic #1561).
+	*/
+	ASDCP::Result_t r = writer.OpenWrite (p.string().c_str(), writer_info, descriptor, _subtitles.size() * 90 + 16384);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (FileError ("could not open subtitle MXF for writing", p.string(), r));
 	}
