@@ -197,6 +197,13 @@ dcp::raw_convert (string v, int precision, bool fixed)
 }
 
 template <>
+unsigned long
+dcp::raw_convert (string v, int precision, bool fixed)
+{
+	return locale_convert<unsigned long> (make_local (v), precision, fixed);
+}
+
+template <>
 long long
 dcp::raw_convert (string v, int precision, bool fixed)
 {

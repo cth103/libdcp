@@ -136,6 +136,10 @@ long
 locale_convert (std::string x, int, bool);
 
 template <>
+unsigned long
+locale_convert (std::string x, int, bool);
+
+template <>
 long long
 locale_convert (std::string x, int, bool);
 
