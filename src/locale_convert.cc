@@ -269,6 +269,19 @@ dcp::locale_convert (string x, int, bool)
 }
 
 template<>
+unsigned long long
+dcp::locale_convert (string x, int, bool)
+{
+	unsigned long long y = 0;
+#ifdef LIBDCP_WINDOWS
+	__mingw_sscanf (x.c_str(), "%llud", &y);
+#else
+	sscanf (x.c_str(), "%llud", &y);
+#endif
+	return y;
+}
+
+template<>
 float
 dcp::locale_convert (string x, int, bool)
 {

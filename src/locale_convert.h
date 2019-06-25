@@ -144,6 +144,10 @@ long long
 locale_convert (std::string x, int, bool);
 
 template <>
+unsigned long long
+locale_convert (std::string x, int, bool);
+
+template <>
 float
 locale_convert (std::string x, int, bool);
 

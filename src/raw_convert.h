@@ -137,6 +137,10 @@ long long
 raw_convert (std::string v, int, bool);
 
 template <>
+unsigned long long
+raw_convert (std::string v, int, bool);
+
+template <>
 int
 raw_convert (char const * v, int, bool);
 
