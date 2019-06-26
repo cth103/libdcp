@@ -464,10 +464,11 @@ CertificateChain::chain_valid (List const & chain) const
 			return false;
 		}
 
-		/* I don't know why OpenSSL doesn't check this in verify_cert, but without this check
-		   the certificates_validation8 test fails.
+		/* I don't know why OpenSSL doesn't check this stuff
+		   in verify_cert, but without these checks the
+		   certificates_validation8 test fails.
 		*/
-		if (j->issuer() != i->subject()) {
+		if (j->issuer() != i->subject() || j->subject() == i->subject()) {
 			X509_STORE_free (store);
 			return false;
 		}
