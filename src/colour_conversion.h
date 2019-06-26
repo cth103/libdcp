@@ -40,6 +40,7 @@
 
 #include "chromaticity.h"
 #include <boost/shared_ptr.hpp>
+#include <boost/serialization/array_wrapper.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/optional.hpp>
 
