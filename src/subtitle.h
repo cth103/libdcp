@@ -58,10 +58,12 @@ public:
 
 	virtual ~Subtitle () {}
 
+	/** @return subtitle start time (relative to the start of the reel) */
 	Time in () const {
 		return _in;
 	}
 
+	/** @return subtitle finish time (relative to the start of the reel) */
 	Time out () const {
 		return _out;
 	}
