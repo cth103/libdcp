@@ -124,12 +124,12 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 
 	bool result = true;
 
+	shared_ptr<MonoPictureAssetReader> reader = start_read ();
+	shared_ptr<MonoPictureAssetReader> other_reader = other_picture->start_read ();
+
 #ifdef LIBDCP_OPENMP
 #pragma omp parallel for
 #endif
-
-	shared_ptr<MonoPictureAssetReader> reader = start_read ();
-	shared_ptr<MonoPictureAssetReader> other_reader = other_picture->start_read ();
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 		if (i >= other_picture->intrinsic_duration()) {
