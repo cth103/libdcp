@@ -1,5 +1,5 @@
 #
-#    Copyright (C) 2012-2017 Carl Hetherington <cth@carlh.net>
+#    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
 #
 #    This file is part of libdcp.
 #
@@ -95,6 +95,7 @@ def configure(conf):
     if conf.options.enable_openmp:
         conf.env.append_value('CXXFLAGS', ['-fopenmp', '-DLIBDCP_OPENMP'])
         conf.env.LIB_OPENMP = ['gomp']
+        conf.check_cxx(cxxflags='-fopenmp', msg='Checking that compiler supports -fopenmp')
 
     if not conf.env.TARGET_WINDOWS:
         conf.env.append_value('LINKFLAGS', '-pthread')
