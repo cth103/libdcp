@@ -11,6 +11,7 @@ Wolfgang Woehl's cinemaslides was most informative on the
 nasty details of encryption.
 
 libdcp is written by Carl Hetherington and Mart Jansink.
+Bugfixes were received from Philip Tschiemer.
 
 
 Building
