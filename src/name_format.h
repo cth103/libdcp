@@ -34,6 +34,7 @@
 #ifndef LIBDCP_NAME_FORMAT
 #define LIBDCP_NAME_FORMAT
 
+#include <string>
 #include <boost/optional.hpp>
 #include <map>
 #include <list>
