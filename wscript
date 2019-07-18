@@ -59,6 +59,7 @@ def options(opt):
     opt.add_option('--disable-gcov', action='store_true', default=False, help='don''t use gcov in tests')
     opt.add_option('--disable-examples', action='store_true', default=False, help='disable building of examples')
     opt.add_option('--enable-openmp', action='store_true', default=False, help='enable use of OpenMP')
+    opt.add_option('--openmp', default='gomp', help='Specify OpenMP Library to use: omp, gomp (default), iomp..')
     opt.add_option('--jpeg', default='oj2', help='specify JPEG library to build with: oj1 or oj2 for OpenJPEG 1.5.x or OpenJPEG 2.1.x respectively')
     opt.add_option('--force-cpp11', action='store_true', default=False, help='force use of C++11')
 
@@ -94,7 +95,8 @@ def configure(conf):
 
     if conf.options.enable_openmp:
         conf.env.append_value('CXXFLAGS', ['-fopenmp', '-DLIBDCP_OPENMP'])
-        conf.env.LIB_OPENMP = ['gomp']
+        conf.env.LIB_OPENMP = [conf.options.openmp]
+        conf.env.append_value('LDFLAGS', ['-l%s' % conf.options.openmp])
         conf.check_cxx(cxxflags='-fopenmp', msg='Checking that compiler supports -fopenmp')
 
     if not conf.env.TARGET_WINDOWS:
@@ -115,7 +117,7 @@ def configure(conf):
 
     # ImageMagick / GraphicsMagick
     if distutils.spawn.find_executable('Magick++-config'):
-        conf.check_cfg(package='', path='Magick++-config', args='--cppflags --cxxflags --libs', uselib_store='MAGICK', mandatory=True)
+        conf.check_cfg(package='', path='Magick++-config', args='--cppflags --cxxflags --libs', uselib_store='MAGICK', mandatory=True, msg='Checking for ImageMagick/GraphicsMagick')
     else:
         image = conf.check_cfg(package='ImageMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
         graphics = conf.check_cfg(package='GraphicsMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
