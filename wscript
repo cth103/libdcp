@@ -59,7 +59,7 @@ def options(opt):
     opt.add_option('--disable-gcov', action='store_true', default=False, help='don''t use gcov in tests')
     opt.add_option('--disable-examples', action='store_true', default=False, help='disable building of examples')
     opt.add_option('--enable-openmp', action='store_true', default=False, help='enable use of OpenMP')
-    opt.add_option('--openmp', default='gomp', help='Specify OpenMP Library to use: omp, gomp (default), iomp..')
+    opt.add_option('--openmp', default='gomp', help='specify OpenMP Library to use: omp, gomp (default), iomp')
     opt.add_option('--jpeg', default='oj2', help='specify JPEG library to build with: oj1 or oj2 for OpenJPEG 1.5.x or OpenJPEG 2.1.x respectively')
     opt.add_option('--force-cpp11', action='store_true', default=False, help='force use of C++11')
 
