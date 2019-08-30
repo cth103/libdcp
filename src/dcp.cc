@@ -173,7 +173,12 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 		_pkls.push_back (shared_ptr<PKL>(new PKL(_directory / i)));
 	}
 
-	/* Read all the assets from the asset map */
+	/* Now we have:
+	     paths - files in the DCP that are not PKLs.
+	     _pkls - PKL objects for each PKL.
+
+	   Read all the assets from the asset map.
+	 */
 
 	/* Make a list of non-CPL/PKL assets so that we can resolve the references
 	   from the CPLs.
@@ -183,11 +188,20 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 	for (map<string, boost::filesystem::path>::const_iterator i = paths.begin(); i != paths.end(); ++i) {
 		boost::filesystem::path path = _directory / i->second;
 
-		if (!boost::filesystem::exists (path)) {
+		if (i->second.empty()) {
+			/* I can't see how this is valid, but it's
+			   been seen in the wild with a DCP that
+			   claims to come from ClipsterDCI 5.10.0.5.
+			*/
+			survivable_error (keep_going, errors, EmptyAssetPathError(i->first));
+		}
+
+		if (i->second.empty() || !boost::filesystem::exists(path)) {
 			survivable_error (keep_going, errors, MissingAssetError (path));
 			continue;
 		}
 
+		/* Find the <Type> for this asset from the PKL that contains the asset */
 		optional<string> pkl_type;
 		BOOST_FOREACH (shared_ptr<PKL> j, _pkls) {
 			pkl_type = j->type(i->first);

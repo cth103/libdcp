@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -126,6 +126,15 @@ DCPReadError::DCPReadError (string message, string detail)
 
 MissingSubtitleImageError::MissingSubtitleImageError (string id)
 	: runtime_error (String::compose("Could not load image for subtitle %1", id))
+{
+
+}
+
+/** The <Path> in the ASSETMAP is empty for asset.  I can't see how this is valid,
+    but it's been seen in the wild with a DCP that claims to come from ClipsterDCI 5.10.0.5.
+ */
+EmptyAssetPathError::EmptyAssetPathError (string id)
+	: DCPReadError (String::compose("Asset map path is empty for asset %1", id))
 {
 
 }
