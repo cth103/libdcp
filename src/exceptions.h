@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -226,6 +226,12 @@ class MissingSubtitleImageError : public std::runtime_error
 {
 public:
 	MissingSubtitleImageError (std::string id);
+};
+
+class EmptyAssetPathError : public DCPReadError
+{
+public:
+	EmptyAssetPathError (std::string id);
 };
 
 }
