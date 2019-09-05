@@ -136,7 +136,8 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 					     frame_rate.numerator != 30 &&
 					     frame_rate.numerator != 48 &&
 					     frame_rate.numerator != 50 &&
-					     frame_rate.numerator != 60)) {
+					     frame_rate.numerator != 60 &&
+					     frame_rate.numerator != 96)) {
 						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_PICTURE_FRAME_RATE));
 					}
 					/* Check asset */
