@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<CompositionPlaylist xmlns="http://www.smpte-ra.org/schemas/429-7/2006/CPL" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#">
+<CompositionPlaylist xmlns="http://www.smpte-ra.org/schemas/429-7/2006/CPL">
   <Id>urn:uuid:b3eba4a0-f542-4937-b972-1cc4667ed01a</Id>
   <AnnotationText>A Test DCP</AnnotationText>
   <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
@@ -59,15 +59,15 @@
           <dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-        <dsig:DigestValue>lcdyVT8inONqxC5htOKbHp4CBo4=</dsig:DigestValue>
+        <dsig:DigestValue>qN5WO+a+mVCtHmRgSZX6w/XXyWc=</dsig:DigestValue>
       </dsig:Reference>
     </dsig:SignedInfo>
-    <dsig:SignatureValue>Z37dh5UV8iRaCV9c6QWxjER1j6UQPeUSL+m7+vqrm13aVjwhk2eURcppFhvM/RZi
-ukY0mOPQkQ+lrTNYRfQEvCRV+waMW4k22ivXafkNGXZ1axFLhj/bAoGVhYmBIGr9
-dvXcYmdI0exBcDugmioN8ZghhaaslS9+V1ylduZrATCsr5GBdtLQw4nqappam5jM
-BaRq9DZBj29Oc/guMpTCgHJEqBJggTxc8Zp4YAm+BF4xwYOzG6cU/s/jjoSPWmnH
-bgHfIsUnTCV4nFdG5bUjc1FmGAcOIJ1wDRXKdAWZflAGsDYsCQU2jlv7nMzc7sUD
-KNjYGw449Tso4F8bkfJ+ug==</dsig:SignatureValue>
+    <dsig:SignatureValue>l+mx7LqDE/KQP6DBHorrLhtoJedMCew8wKW0lY7aRMUJqd9kGlqupc5GWL69Dsyt
+puYN4pS28hAVIKjosL6Ko3U/c2S8Byu74S4oOEIVSQqEHF+ERu7ktwJRdhpkolny
+6B9CxwLmAPD5/P4rpOeKcS5mhWVzJAGIcEkN0yfW1UiqtXHccSdPgbrjOW53cV90
++g6WenW4+FZnEsXKmvYPe+DSSg7NyylZ++eCHJooPOpjWvU1F9qc+9o+CPBWbSGj
+2UaDzgfhaQGPllM94CgMsK+kA6K9ppX7qMzSGjKc/ggtqOkhyAitcnz8fl2n+NrX
+0CGcro2trQUD6j/0hRB7ZA==</dsig:SignatureValue>
     <dsig:KeyInfo>
       <dsig:X509Data>
         <dsig:X509IssuerSerial>
