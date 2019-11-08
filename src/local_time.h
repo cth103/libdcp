@@ -84,8 +84,11 @@ private:
 	int _second; ///< second number of the minute (0-59)
 	int _millisecond; ///< millisecond number of the second (0-999)
 
-	int _tz_hour;   ///< hours by which this time is offset from UTC
-	int _tz_minute; ///< minutes by which this time is offset from UTC
+	int _tz_hour; ///< hours by which this time is offset from UTC; can be negative
+	/** Minutes by which this time is offset from UTC; if _tz_hour is negative
+	 *  this will be either 0 or negative.
+	 */
+	int _tz_minute;
 };
 
 std::ostream&
