@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -81,7 +81,10 @@ LocalTime::LocalTime (boost::posix_time::ptime t)
 	set_local_time_zone ();
 }
 
-/** Construct a LocalTime from a boost::posix_time::ptime and a time zone offset */
+/** Construct a LocalTime from a boost::posix_time::ptime and a time zone offset.
+ *  @param tz_minute Offset from UTC in minutes; if the timezone is behind UTC this may be negative,
+ *  e.g. -04:30 would have tz_hour=-1 and tz_minute=-30.
+ */
 LocalTime::LocalTime (boost::posix_time::ptime t, int tz_hour, int tz_minute)
 {
 	_year = t.date().year ();
@@ -163,6 +166,7 @@ LocalTime::LocalTime (string s)
 
 	if (with_tz && s[tz_pos] == '-') {
 		_tz_hour = -_tz_hour;
+		_tz_minute = -_tz_minute;
 	}
 }
 
@@ -174,7 +178,7 @@ LocalTime::as_string (bool with_millisecond) const
 	snprintf (
 		buffer, sizeof (buffer),
 		"%sT%s%s%02d:%02d",
-		date().c_str(), time_of_day(true, with_millisecond).c_str(), (_tz_hour >= 0 ? "+" : "-"), abs (_tz_hour), _tz_minute
+		date().c_str(), time_of_day(true, with_millisecond).c_str(), (_tz_hour >= 0 ? "+" : "-"), abs (_tz_hour), abs(_tz_minute)
 		);
 	return buffer;
 }
