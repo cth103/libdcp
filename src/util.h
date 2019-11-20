@@ -69,7 +69,7 @@ extern void init ();
 extern int base64_decode (std::string const & in, unsigned char* out, int out_length);
 extern boost::optional<boost::filesystem::path> relative_to_root (boost::filesystem::path root, boost::filesystem::path file);
 extern FILE * fopen_boost (boost::filesystem::path, std::string);
-extern std::string file_to_string (boost::filesystem::path, uintmax_t max_length = 65536);
+extern std::string file_to_string (boost::filesystem::path, uintmax_t max_length = 1048576);
 extern std::string private_key_fingerprint (std::string key);
 extern xmlpp::Node* find_child (xmlpp::Node const * node, std::string name);
 extern std::string openjpeg_version();
