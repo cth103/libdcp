@@ -194,9 +194,10 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 			   claims to come from ClipsterDCI 5.10.0.5.
 			*/
 			survivable_error (keep_going, errors, EmptyAssetPathError(i->first));
+			continue;
 		}
 
-		if (i->second.empty() || !boost::filesystem::exists(path)) {
+		if (!boost::filesystem::exists(path)) {
 			survivable_error (keep_going, errors, MissingAssetError (path));
 			continue;
 		}
