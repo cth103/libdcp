@@ -354,6 +354,8 @@ convert_time (ASN1_TIME const * time)
 		t.tm_year -= 1900;
 	}
 
+	t.tm_mon--;
+
 	return t;
 }
 

@@ -258,3 +258,23 @@ BOOST_AUTO_TEST_CASE (certificate_chain_from_string)
 	dcp::CertificateChain b (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem"));
 	BOOST_CHECK_EQUAL (b.root_to_leaf().size(), 1);
 }
+
+/** Check not_before and not_after */
+BOOST_AUTO_TEST_CASE (certificate_not_before_after)
+{
+	dcp::Certificate c (dcp::file_to_string("test/ref/crypt/ca.self-signed.pem"));
+	struct tm not_before = c.not_before();
+	BOOST_CHECK_EQUAL (not_before.tm_sec, 8);
+	BOOST_CHECK_EQUAL (not_before.tm_min, 20);
+	BOOST_CHECK_EQUAL (not_before.tm_hour, 13);
+	BOOST_CHECK_EQUAL (not_before.tm_mday, 5);
+	BOOST_CHECK_EQUAL (not_before.tm_mon, 5);
+	BOOST_CHECK_EQUAL (not_before.tm_year, 115);
+	struct tm not_after = c.not_after();
+	BOOST_CHECK_EQUAL (not_after.tm_sec, 8);
+	BOOST_CHECK_EQUAL (not_after.tm_min, 20);
+	BOOST_CHECK_EQUAL (not_after.tm_hour, 13);
+	BOOST_CHECK_EQUAL (not_after.tm_mday, 2);
+	BOOST_CHECK_EQUAL (not_after.tm_mon, 5);
+	BOOST_CHECK_EQUAL (not_after.tm_year, 125);
+}
