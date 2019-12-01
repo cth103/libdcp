@@ -234,6 +234,19 @@ public:
 	EmptyAssetPathError (std::string id);
 };
 
+class BadKDMDateError : public std::runtime_error
+{
+public:
+	BadKDMDateError (bool starts_too_early);
+
+	bool starts_too_early () const {
+		return _starts_too_early;
+	}
+
+private:
+	bool _starts_too_early;
+};
+
 }
 
 #endif

@@ -40,6 +40,7 @@
 
 #include "types.h"
 #include "data.h"
+#include "local_time.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/filesystem.hpp>
@@ -75,6 +76,8 @@ extern xmlpp::Node* find_child (xmlpp::Node const * node, std::string name);
 extern std::string openjpeg_version();
 extern std::string spaces (int n);
 extern void indent (xmlpp::Element* element, int initial);
+extern bool day_less_than_or_equal (struct tm a, LocalTime b);
+extern bool day_greater_than_or_equal (struct tm a, LocalTime b);
 
 }
 

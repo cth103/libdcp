@@ -85,12 +85,17 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	reel->add (shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (asset_A, 0)));
 	cpl->add (reel);
 
+	dcp::LocalTime start;
+	start.set_year (start.year() + 1);
+	dcp::LocalTime end;
+	end.set_year (end.year() + 2);
+
 	/* A KDM using our certificate chain's leaf key pair */
 	dcp::DecryptedKDM kdm_A (
 		cpl,
 		key,
-		dcp::LocalTime ("2013-01-01T00:00:00+00:00"),
-		dcp::LocalTime ("2013-01-08T00:00:00+00:00"),
+		start,
+		end,
 		"libdcp",
 		"test",
 		"2012-07-17T04:45:18+00:00"

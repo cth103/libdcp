@@ -66,6 +66,22 @@ public:
 	std::string date () const;
 	std::string time_of_day (bool with_second, bool with_millisecond) const;
 
+	int day () const {
+		return _day;
+	}
+
+	int month () const {
+		return _month;
+	}
+
+	int year () const {
+		return _year;
+	}
+
+	void set_year (int y) {
+		_year = y;
+	}
+
 	bool operator== (LocalTime const & other) const;
 	bool operator!= (LocalTime const & other) const;
 	bool operator< (LocalTime const & other) const;

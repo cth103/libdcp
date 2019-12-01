@@ -138,3 +138,14 @@ EmptyAssetPathError::EmptyAssetPathError (string id)
 {
 
 }
+
+BadKDMDateError::BadKDMDateError (bool starts_too_early)
+	: runtime_error (
+		starts_too_early ?
+		"KDM validity period starts before or close to the start of the signing certificate validity period" :
+		"KDM validity ends after or close to the end of the signing certificate's validity period"
+		)
+	, _starts_too_early (starts_too_early)
+{
+
+}

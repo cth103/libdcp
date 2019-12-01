@@ -312,6 +312,14 @@ DecryptedKDM::encrypt (
 {
 	DCP_ASSERT (!_keys.empty ());
 
+	BOOST_FOREACH (dcp::Certificate i, signer->leaf_to_root()) {
+		if (day_greater_than_or_equal(i.not_before(), _not_valid_before)) {
+			throw BadKDMDateError (true);
+		} else if (day_less_than_or_equal(i.not_after(), _not_valid_after)) {
+			throw BadKDMDateError (false);
+		}
+	}
+
 	list<pair<string, string> > key_ids;
 	list<string> keys;
 	BOOST_FOREACH (DecryptedKDMKey const & i, _keys) {

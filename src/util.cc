@@ -376,3 +376,37 @@ dcp::indent (xmlpp::Element* element, int initial)
 		element->add_child_text (last, "\n" + spaces(initial));
 	}
 }
+
+/** @return true if the day represented by \ref a is less than or
+ *  equal to the one represented by \ref b, ignoring the time parts.
+ */
+bool
+dcp::day_less_than_or_equal (struct tm a, LocalTime b)
+{
+	if ((a.tm_year + 1900) != b.year()) {
+		return (a.tm_year + 1900) < b.year();
+	}
+
+	if ((a.tm_mon + 1) != b.month()) {
+		return (a.tm_mon + 1) < b.month();
+	}
+
+	return a.tm_mday <= b.day();
+}
+
+/** @return true if the day represented by \ref a is greater than or
+ *  equal to the one represented by \ref b, ignoring the time parts.
+ */
+bool
+dcp::day_greater_than_or_equal (struct tm a, LocalTime b)
+{
+	if ((a.tm_year + 1900) != b.year()) {
+		return (a.tm_year + 1900) > b.year();
+	}
+
+	if ((a.tm_mon + 1) != b.month()) {
+		return (a.tm_mon + 1) > b.month();
+	}
+
+	return a.tm_mday >= b.day();
+}
