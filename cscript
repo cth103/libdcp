@@ -76,7 +76,7 @@ def package(target, version):
     if target.platform == 'windows':
         d = 'build/libdcp-%s' % version
         os.mkdir(d)
-        for f in ['asdcp-cth.dll', 'cxml-0.dll', 'dcp-1.0.dll', 'kumu-cth.dll', 'libopenjp2.dll', 'dcpinfo.exe']:
+        for f in ['asdcp-carl.dll', 'cxml-0.dll', 'dcp-1.0.dll', 'kumu-carl.dll', 'libopenjp2.dll', 'dcpinfo.exe']:
             shutil.copyfile('%s/bin/%s' % (target.directory, f), os.path.join(d, f))
 
         if target.bits == 32:
