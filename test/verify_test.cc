@@ -75,6 +75,33 @@ setup (int n)
 
 }
 
+class Editor
+{
+public:
+	Editor (boost::filesystem::path path)
+		: _path(path)
+	{
+		_content = dcp::file_to_string (_path);
+	}
+
+	~Editor ()
+	{
+		FILE* f = fopen(_path.string().c_str(), "w");
+		BOOST_REQUIRE (f);
+		fwrite (_content.c_str(), _content.length(), 1, f);
+		fclose (f);
+	}
+
+	void replace (string a, string b)
+	{
+		boost::algorithm::replace_all (_content, a, b);
+	}
+
+private:
+	boost::filesystem::path _path;
+	std::string _content;
+};
+
 /* Check DCP as-is (should be OK) */
 BOOST_AUTO_TEST_CASE (verify_test1)
 {
@@ -140,13 +167,10 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 {
 	vector<boost::filesystem::path> directories = setup (3);
 
-	boost::filesystem::path const pkl_file = "build/test/verify_test3/pkl_ae8a9818-872a-4f86-8493-11dfdea03e09.xml";
-
-	string pkl = dcp::file_to_string (pkl_file);
-	boost::algorithm::replace_all (pkl, "<Hash>", "<Hash>x");
-	FILE* f = fopen(pkl_file.string().c_str(), "w");
-	fwrite(pkl.c_str(), pkl.length(), 1, f);
-	fclose(f);
+	{
+		Editor e ("build/test/verify_test3/pkl_ae8a9818-872a-4f86-8493-11dfdea03e09.xml");
+		e.replace ("<Hash>", "<Hash>x");
+	}
 
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
 
@@ -168,13 +192,10 @@ BOOST_AUTO_TEST_CASE (verify_test4)
 {
 	vector<boost::filesystem::path> directories = setup (4);
 
-	boost::filesystem::path const cpl_file = "build/test/verify_test4/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
-
-	string cpl = dcp::file_to_string (cpl_file);
-	boost::algorithm::replace_all (cpl, "<ContentKind>", "<ContentKind>x");
-	FILE* f = fopen(cpl_file.string().c_str(), "w");
-	fwrite(cpl.c_str(), cpl.length(), 1, f);
-	fclose(f);
+	{
+		Editor e ("build/test/verify_test4/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml");
+		e.replace ("<ContentKind>", "<ContentKind>x");
+	}
 
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
 
@@ -190,11 +211,10 @@ BOOST_AUTO_TEST_CASE (verify_test5)
 
 	boost::filesystem::path const cpl_file = "build/test/verify_test5/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
 
-	string cpl = dcp::file_to_string (cpl_file);
-	boost::algorithm::replace_all (cpl, "<FrameRate>24 1", "<FrameRate>99 1");
-	FILE* f = fopen(cpl_file.string().c_str(), "w");
-	fwrite(cpl.c_str(), cpl.length(), 1, f);
-	fclose(f);
+	{
+		Editor e ("build/test/verify_test5/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml");
+		e.replace ("<FrameRate>24 1", "<FrameRate>99 1");
+	}
 
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
 
@@ -202,3 +222,40 @@ BOOST_AUTO_TEST_CASE (verify_test5)
 	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::CPL_HASH_INCORRECT);
 	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::INVALID_PICTURE_FRAME_RATE);
 }
+
+/* Missing asset */
+BOOST_AUTO_TEST_CASE (verify_test6)
+{
+	vector<boost::filesystem::path> directories = setup (6);
+
+	boost::filesystem::remove ("build/test/verify_test6/video.mxf");
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+
+	BOOST_REQUIRE_EQUAL (notes.size(), 1);
+	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::GENERAL_READ);
+	BOOST_REQUIRE (static_cast<bool>(notes.front().note()));
+	BOOST_REQUIRE_EQUAL (notes.front().note().get(), "Missing asset video.mxf");
+}
+
+/* Empty asset filename in ASSETMAP */
+BOOST_AUTO_TEST_CASE (verify_test7)
+{
+	vector<boost::filesystem::path> directories = setup (7);
+
+	boost::filesystem::path const assetmap_file = "build/test/verify_test7/ASSETMAP.xml";
+
+	{
+		Editor e ("build/test/verify_test7/ASSETMAP.xml");
+		e.replace ("<Path>video.mxf</Path>", "<Path></Path>");
+	}
+
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+
+	BOOST_REQUIRE_EQUAL (notes.size(), 1);
+	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::GENERAL_READ);
+	BOOST_REQUIRE (static_cast<bool>(notes.front().note()));
+	BOOST_REQUIRE_EQUAL (notes.front().note().get(), "Asset map path is empty for asset 1fab8bb0-cfaf-4225-ad6d-01768bc10470");
+}
+
