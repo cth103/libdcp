@@ -75,8 +75,8 @@ make_simple (boost::filesystem::path path)
 	boost::filesystem::create_directories (path);
 	shared_ptr<dcp::DCP> d (new dcp::DCP (path));
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
-	cpl->set_content_version_id ("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
-	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
+	cpl->set_content_version_id ("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11");
+	cpl->set_content_version_label_text ("content-version-label-text");
 	cpl->set_metadata (xml_meta);
 
 	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));

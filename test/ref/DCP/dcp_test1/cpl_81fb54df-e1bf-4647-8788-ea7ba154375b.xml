@@ -8,8 +8,8 @@
   <ContentTitleText>A Test DCP</ContentTitleText>
   <ContentKind>feature</ContentKind>
   <ContentVersion>
-    <Id>urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00</Id>
-    <LabelText>81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00</LabelText>
+    <Id>urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11</Id>
+    <LabelText>content-version-label-text</LabelText>
   </ContentVersion>
   <RatingList/>
   <ReelList>
