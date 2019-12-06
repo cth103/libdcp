@@ -205,23 +205,49 @@ BOOST_AUTO_TEST_CASE (verify_test4)
 	BOOST_CHECK_EQUAL (*notes.front().note(), "Bad content kind 'xfeature'");
 }
 
-/* FrameRate */
-BOOST_AUTO_TEST_CASE (verify_test5)
+static
+void check_after_replace (int n, boost::filesystem::path file, string from, string to, dcp::VerificationNote::Code code1)
 {
-	vector<boost::filesystem::path> directories = setup (5);
-
-	boost::filesystem::path const cpl_file = "build/test/verify_test5/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
+	vector<boost::filesystem::path> directories = setup (n);
 
 	{
-		Editor e ("build/test/verify_test5/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml");
-		e.replace ("<FrameRate>24 1", "<FrameRate>99 1");
+		Editor e (file);
+		e.replace (from, to);
+	}
+
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+
+	BOOST_REQUIRE_EQUAL (notes.size(), 1);
+	BOOST_CHECK_EQUAL (notes.front().code(), code1);
+}
+
+static
+void check_after_replace (int n, boost::filesystem::path file, string from, string to, dcp::VerificationNote::Code code1, dcp::VerificationNote::Code code2)
+{
+	vector<boost::filesystem::path> directories = setup (n);
+
+	{
+		Editor e (file);
+		e.replace (from, to);
 	}
 
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 2);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::CPL_HASH_INCORRECT);
-	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::INVALID_PICTURE_FRAME_RATE);
+	BOOST_CHECK_EQUAL (notes.front().code(), code1);
+	BOOST_CHECK_EQUAL (notes.back().code(), code2);
+}
+
+/* FrameRate */
+BOOST_AUTO_TEST_CASE (verify_test5)
+{
+	check_after_replace (
+			5,
+			"build/test/verify_test5/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml",
+			"<FrameRate>24 1", "<FrameRate>99 1",
+			dcp::VerificationNote::CPL_HASH_INCORRECT,
+			dcp::VerificationNote::INVALID_PICTURE_FRAME_RATE
+			);
 }
 
 /* Missing asset */
@@ -240,35 +266,23 @@ BOOST_AUTO_TEST_CASE (verify_test6)
 /* Empty asset filename in ASSETMAP */
 BOOST_AUTO_TEST_CASE (verify_test7)
 {
-	vector<boost::filesystem::path> directories = setup (7);
-
-	{
-		Editor e ("build/test/verify_test7/ASSETMAP.xml");
-		e.replace ("<Path>video.mxf</Path>", "<Path></Path>");
-	}
-
-	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
-
-	BOOST_REQUIRE_EQUAL (notes.size(), 1);
-	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_WARNING);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::Code::EMPTY_ASSET_PATH);
+	check_after_replace (
+			7,
+			"build/test/verify_test7/ASSETMAP.xml",
+			"<Path>video.mxf</Path>", "<Path></Path>",
+			dcp::VerificationNote::Code::EMPTY_ASSET_PATH
+			);
 }
 
 /* Mismatched standard */
 BOOST_AUTO_TEST_CASE (verify_test8)
 {
-	vector<boost::filesystem::path> directories = setup (8);
-
-	{
-		Editor e ("build/test/verify_test8/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml");
-		e.replace ("http://www.smpte-ra.org/schemas/429-7/2006/CPL", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#");
-	}
-
-	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
-
-	BOOST_REQUIRE_EQUAL (notes.size(), 2);
-	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::Code::MISMATCHED_STANDARD);
-	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::Code::CPL_HASH_INCORRECT);
+	check_after_replace (
+			8,
+			"build/test/verify_test8/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml",
+			"http://www.smpte-ra.org/schemas/429-7/2006/CPL", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#",
+			dcp::VerificationNote::Code::MISMATCHED_STANDARD,
+			dcp::VerificationNote::Code::CPL_HASH_INCORRECT
+			);
 }
 
