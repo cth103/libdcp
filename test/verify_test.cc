@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -35,6 +35,7 @@
 #include "util.h"
 #include "compose.hpp"
 #include <boost/test/unit_test.hpp>
+#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <cstdio>
 #include <iostream>
@@ -241,8 +242,6 @@ BOOST_AUTO_TEST_CASE (verify_test7)
 {
 	vector<boost::filesystem::path> directories = setup (7);
 
-	boost::filesystem::path const assetmap_file = "build/test/verify_test7/ASSETMAP.xml";
-
 	{
 		Editor e ("build/test/verify_test7/ASSETMAP.xml");
 		e.replace ("<Path>video.mxf</Path>", "<Path></Path>");
@@ -253,5 +252,23 @@ BOOST_AUTO_TEST_CASE (verify_test7)
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
 	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_WARNING);
 	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::Code::EMPTY_ASSET_PATH);
+}
+
+/* Mismatched standard */
+BOOST_AUTO_TEST_CASE (verify_test8)
+{
+	vector<boost::filesystem::path> directories = setup (8);
+
+	{
+		Editor e ("build/test/verify_test8/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml");
+		e.replace ("http://www.smpte-ra.org/schemas/429-7/2006/CPL", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#");
+	}
+
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+
+	BOOST_REQUIRE_EQUAL (notes.size(), 2);
+	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::Code::MISMATCHED_STANDARD);
+	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::Code::CPL_HASH_INCORRECT);
 }
 
