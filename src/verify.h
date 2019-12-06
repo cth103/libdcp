@@ -77,6 +77,8 @@ public:
 		MISMATCHED_STANDARD,
 		/** A urn:uuid ID is badly formed */
 		BAD_URN_UUID,
+		/** A date is badly formed */
+		BAD_DATE,
 	};
 
 	VerificationNote (Type type, Code code)

@@ -39,8 +39,10 @@
 #include "reel_sound_asset.h"
 #include "exceptions.h"
 #include "compose.hpp"
+#include "raw_convert.h"
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/regex.hpp>
 #include <list>
 #include <vector>
 #include <iostream>
@@ -96,37 +98,44 @@ verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelMXF> reel_mxf, function<void (
 
 static
 bool
-hex (string s)
+good_urn_uuid (string id)
 {
-	for (size_t i = 0; i < s.length(); ++i) {
-		if (string("0123456789abcdef").find(s[i]) == string::npos) {
-			return false;
-		}
-	}
-
-	return true;
+	boost::regex ex("urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
+	return boost::regex_match (id, ex);
 }
 
 static
 bool
-good_urn_uuid (string id)
+good_date (string date)
 {
-	if (id.length() != 45) {
+	boost::regex ex("\\d{4}-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})[+-](\\d{2}):(\\d{2})");
+	boost::match_results<string::const_iterator> res;
+	if (!regex_match (date, res, ex, boost::match_default)) {
 		return false;
 	}
-
-	if (!boost::algorithm::starts_with(id, "urn:uuid:")) {
+	int const month = dcp::raw_convert<int>(res[1].str());
+	if (month < 1 || month > 12) {
 		return false;
 	}
-
-	if (id[17] != '-' || id[22] != '-' || id[27] != '-' || id[32] != '-') {
+	int const day = dcp::raw_convert<int>(res[2].str());
+	if (day < 1 || day > 31) {
 		return false;
 	}
-
-	if (!hex(id.substr(9, 8)) || !hex(id.substr(18, 4)) || !hex(id.substr(23, 4)) || !hex(id.substr(28, 4)) || !hex(id.substr(33, 8))) {
+	if (dcp::raw_convert<int>(res[3].str()) > 23) {
 		return false;
 	}
-
+	if (dcp::raw_convert<int>(res[4].str()) > 59) {
+		return false;
+	}
+	if (dcp::raw_convert<int>(res[5].str()) > 59) {
+		return false;
+	}
+	if (dcp::raw_convert<int>(res[6].str()) > 23) {
+		return false;
+	}
+	if (dcp::raw_convert<int>(res[7].str()) > 59) {
+		return false;
+	}
 	return true;
 }
 
@@ -157,6 +166,9 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 			cpl_doc.read_file (cpl->file().get());
 			if (!good_urn_uuid(cpl_doc.string_child("Id"))) {
 				notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::BAD_URN_UUID, string("CPL <Id> is malformed")));
+			}
+			if (!good_date(cpl_doc.string_child("IssueDate"))) {
+				notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::BAD_DATE, string("CPL <IssueDate> is malformed")));
 			}
 
 			/* Check that the CPL's hash corresponds to the PKL */
@@ -252,7 +264,9 @@ dcp::note_to_string (dcp::VerificationNote note)
 	case dcp::VerificationNote::MISMATCHED_STANDARD:
 		return "The DCP contains both SMPTE and Interop parts.";
 	case dcp::VerificationNote::BAD_URN_UUID:
-		return "There is a badly formed urn:uuid.";
+		return "There is a badly-formed urn:uuid.";
+	case dcp::VerificationNote::BAD_DATE:
+		return "There is a badly-formed date.";
 	}
 
 	return "";

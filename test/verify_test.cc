@@ -307,3 +307,13 @@ BOOST_AUTO_TEST_CASE (verify_test9)
 			);
 }
 
+/* Badly formatted <IssueDate> in CPL */
+BOOST_AUTO_TEST_CASE (verify_test10)
+{
+	check_after_replace (
+			10, &cpl,
+			"<IssueDate>", "<IssueDate>x",
+			dcp::VerificationNote::Code::BAD_DATE,
+			dcp::VerificationNote::Code::CPL_HASH_INCORRECT
+			);
+}
