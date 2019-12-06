@@ -170,8 +170,15 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 			if (!good_date(cpl_doc.string_child("IssueDate"))) {
 				notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::BAD_DATE, string("CPL <IssueDate> is malformed")));
 			}
+			/* ContentVersion/Id */
 			if (cpl->standard() && cpl->standard().get() == SMPTE && !good_urn_uuid(cpl_doc.node_child("ContentVersion")->string_child("Id"))) {
 				notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::BAD_URN_UUID, string("<ContentVersion> <Id> is malformed.")));
+			}
+			/* Reel/Id */
+			BOOST_FOREACH (cxml::ConstNodePtr i, cpl_doc.node_child("ReelList")->node_children("Reel")) {
+				if (!good_urn_uuid(i->string_child("Id"))) {
+					notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::BAD_URN_UUID, string("Reel <Id> is malformed")));
+				}
 			}
 
 			/* Check that the CPL's hash corresponds to the PKL */
