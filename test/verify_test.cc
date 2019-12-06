@@ -329,3 +329,15 @@ BOOST_AUTO_TEST_CASE (verify_test10)
 			dcp::VerificationNote::Code::CPL_HASH_INCORRECT
 			);
 }
+
+/* Badly formatted ContentVersion/Id */
+BOOST_AUTO_TEST_CASE (verify_test11)
+{
+	check_after_replace (
+			11, &cpl,
+			"<Id>urn:uuid:75ac29aa", "<Id>urn:uri:7fac29aa",
+			dcp::VerificationNote::Code::BAD_URN_UUID,
+			dcp::VerificationNote::Code::CPL_HASH_INCORRECT
+			);
+}
+
