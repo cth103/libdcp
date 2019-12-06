@@ -103,6 +103,15 @@ private:
 	std::string _content;
 };
 
+static
+void
+dump_notes (list<dcp::VerificationNote> const & notes)
+{
+	BOOST_FOREACH (dcp::VerificationNote i, notes) {
+		std::cout << dcp::note_to_string(i) << "\n";
+	}
+}
+
 /* Check DCP as-is (should be OK) */
 BOOST_AUTO_TEST_CASE (verify_test1)
 {
@@ -132,6 +141,8 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical("build/test/verify_test1/audio.mxf"));
 	++st;
 	BOOST_REQUIRE (st == stages.end());
+
+	dump_notes (notes);
 
 	BOOST_CHECK_EQUAL (notes.size(), 0);
 }
