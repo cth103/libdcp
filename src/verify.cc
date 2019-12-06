@@ -40,6 +40,7 @@
 #include "exceptions.h"
 #include "compose.hpp"
 #include <boost/foreach.hpp>
+#include <boost/algorithm/string.hpp>
 #include <list>
 #include <vector>
 #include <iostream>
@@ -93,6 +94,42 @@ verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelMXF> reel_mxf, function<void (
 	return RESULT_GOOD;
 }
 
+static
+bool
+hex (string s)
+{
+	for (size_t i = 0; i < s.length(); ++i) {
+		if (string("0123456789abcdef").find(s[i]) == string::npos) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+static
+bool
+good_urn_uuid (string id)
+{
+	if (id.length() != 45) {
+		return false;
+	}
+
+	if (!boost::algorithm::starts_with(id, "urn:uuid:")) {
+		return false;
+	}
+
+	if (id[17] != '-' || id[22] != '-' || id[27] != '-' || id[32] != '-') {
+		return false;
+	}
+
+	if (!hex(id.substr(9, 8)) || !hex(id.substr(18, 4)) || !hex(id.substr(23, 4)) || !hex(id.substr(28, 4)) || !hex(id.substr(33, 8))) {
+		return false;
+	}
+
+	return true;
+}
+
 list<VerificationNote>
 dcp::verify (vector<boost::filesystem::path> directories, function<void (string, optional<boost::filesystem::path>)> stage, function<void (float)> progress)
 {
@@ -108,13 +145,19 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 		try {
 			dcp->read (&notes);
 		} catch (DCPReadError& e) {
-			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
+			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::GENERAL_READ, string(e.what())));
 		} catch (XMLError& e) {
-			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
+			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::GENERAL_READ, string(e.what())));
 		}
 
 		BOOST_FOREACH (shared_ptr<CPL> cpl, dcp->cpls()) {
 			stage ("Checking CPL", cpl->file());
+
+			cxml::Document cpl_doc ("CompositionPlaylist");
+			cpl_doc.read_file (cpl->file().get());
+			if (!good_urn_uuid(cpl_doc.string_child("Id"))) {
+				notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::BAD_URN_UUID, string("CPL <Id> is malformed")));
+			}
 
 			/* Check that the CPL's hash corresponds to the PKL */
 			BOOST_FOREACH (shared_ptr<PKL> i, dcp->pkls()) {
@@ -140,24 +183,24 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_PICTURE_FRAME_RATE));
 					}
 					/* Check asset */
-                         if (reel->main_picture()->asset_ref().resolved()) {
-                             stage ("Checking picture asset hash", reel->main_picture()->asset()->file());
-                             Result const r = verify_asset (dcp, reel->main_picture(), progress);
-                             switch (r) {
-                                 case RESULT_BAD:
-                                     notes.push_back (
-                                             VerificationNote(
-                                                 VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_HASH_INCORRECT, *reel->main_picture()->asset()->file()
-                                                 )
-                                             );
-                                     break;
-                                 case RESULT_CPL_PKL_DIFFER:
-                                     notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE));
-                                     break;
-                                 default:
-                                     break;
-                             }
-                         }
+					if (reel->main_picture()->asset_ref().resolved()) {
+						stage ("Checking picture asset hash", reel->main_picture()->asset()->file());
+						Result const r = verify_asset (dcp, reel->main_picture(), progress);
+						switch (r) {
+						case RESULT_BAD:
+							notes.push_back (
+									VerificationNote(
+										VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_HASH_INCORRECT, *reel->main_picture()->asset()->file()
+										)
+									);
+							break;
+						case RESULT_CPL_PKL_DIFFER:
+							notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE));
+							break;
+						default:
+							break;
+						}
+					}
 				}
 				if (reel->main_sound() && reel->main_sound()->asset_ref().resolved()) {
 					stage ("Checking sound asset hash", reel->main_sound()->asset()->file());
@@ -165,10 +208,10 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 					switch (r) {
 					case RESULT_BAD:
 						notes.push_back (
-							VerificationNote(
-								VerificationNote::VERIFY_ERROR, VerificationNote::SOUND_HASH_INCORRECT, *reel->main_sound()->asset()->file()
-								)
-							);
+								VerificationNote(
+									VerificationNote::VERIFY_ERROR, VerificationNote::SOUND_HASH_INCORRECT, *reel->main_sound()->asset()->file()
+									)
+								);
 						break;
 					case RESULT_CPL_PKL_DIFFER:
 						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE));
@@ -208,6 +251,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "The file for an asset in the asset map cannot be found.";
 	case dcp::VerificationNote::MISMATCHED_STANDARD:
 		return "The DCP contains both SMPTE and Interop parts.";
+	case dcp::VerificationNote::BAD_URN_UUID:
+		return "There is a badly formed urn:uuid.";
 	}
 
 	return "";

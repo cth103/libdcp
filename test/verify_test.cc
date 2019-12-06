@@ -206,12 +206,19 @@ BOOST_AUTO_TEST_CASE (verify_test4)
 }
 
 static
-void check_after_replace (int n, boost::filesystem::path file, string from, string to, dcp::VerificationNote::Code code1)
+boost::filesystem::path
+cpl (int n)
+{
+	return dcp::String::compose("build/test/verify_test%1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml", n);
+}
+
+static
+void check_after_replace (int n, boost::function<boost::filesystem::path (int)> file, string from, string to, dcp::VerificationNote::Code code1)
 {
 	vector<boost::filesystem::path> directories = setup (n);
 
 	{
-		Editor e (file);
+		Editor e (file(n));
 		e.replace (from, to);
 	}
 
@@ -222,12 +229,12 @@ void check_after_replace (int n, boost::filesystem::path file, string from, stri
 }
 
 static
-void check_after_replace (int n, boost::filesystem::path file, string from, string to, dcp::VerificationNote::Code code1, dcp::VerificationNote::Code code2)
+void check_after_replace (int n, boost::function<boost::filesystem::path (int)> file, string from, string to, dcp::VerificationNote::Code code1, dcp::VerificationNote::Code code2)
 {
 	vector<boost::filesystem::path> directories = setup (n);
 
 	{
-		Editor e (file);
+		Editor e (file(n));
 		e.replace (from, to);
 	}
 
@@ -242,8 +249,7 @@ void check_after_replace (int n, boost::filesystem::path file, string from, stri
 BOOST_AUTO_TEST_CASE (verify_test5)
 {
 	check_after_replace (
-			5,
-			"build/test/verify_test5/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml",
+			5, &cpl,
 			"<FrameRate>24 1", "<FrameRate>99 1",
 			dcp::VerificationNote::CPL_HASH_INCORRECT,
 			dcp::VerificationNote::INVALID_PICTURE_FRAME_RATE
@@ -263,12 +269,18 @@ BOOST_AUTO_TEST_CASE (verify_test6)
 	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::Code::MISSING_ASSET);
 }
 
+static
+boost::filesystem::path
+assetmap (int n)
+{
+	return dcp::String::compose("build/test/verify_test%1/ASSETMAP.xml", n);
+}
+
 /* Empty asset filename in ASSETMAP */
 BOOST_AUTO_TEST_CASE (verify_test7)
 {
 	check_after_replace (
-			7,
-			"build/test/verify_test7/ASSETMAP.xml",
+			7, &assetmap,
 			"<Path>video.mxf</Path>", "<Path></Path>",
 			dcp::VerificationNote::Code::EMPTY_ASSET_PATH
 			);
@@ -278,11 +290,20 @@ BOOST_AUTO_TEST_CASE (verify_test7)
 BOOST_AUTO_TEST_CASE (verify_test8)
 {
 	check_after_replace (
-			8,
-			"build/test/verify_test8/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml",
+			8, &cpl,
 			"http://www.smpte-ra.org/schemas/429-7/2006/CPL", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#",
 			dcp::VerificationNote::Code::MISMATCHED_STANDARD,
 			dcp::VerificationNote::Code::CPL_HASH_INCORRECT
+			);
+}
+
+/* Badly formatted <Id> in CPL */
+BOOST_AUTO_TEST_CASE (verify_test9)
+{
+	check_after_replace (
+			9, &cpl,
+			"<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b", "<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375",
+			dcp::VerificationNote::Code::BAD_URN_UUID
 			);
 }
 

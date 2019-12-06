@@ -75,6 +75,8 @@ public:
 		MISSING_ASSET,
 		/** The DCP contains both SMPTE and Interop-standard components */
 		MISMATCHED_STANDARD,
+		/** A urn:uuid ID is badly formed */
+		BAD_URN_UUID,
 	};
 
 	VerificationNote (Type type, Code code)
