@@ -300,6 +300,7 @@ BOOST_AUTO_TEST_CASE (verify_test8)
 /* Badly formatted <Id> in CPL */
 BOOST_AUTO_TEST_CASE (verify_test9)
 {
+	/* There's no CPL_HASH_INCORRECT error here because it can't find the correct hash by ID (since the ID is wrong) */
 	check_after_replace (
 			9, &cpl,
 			"<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b", "<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375",
