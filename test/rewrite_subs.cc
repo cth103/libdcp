@@ -57,7 +57,7 @@ main (int argc, char* argv[])
 		}
 
 		DCP* dcp = new DCP (argv[1]);
-		dcp->read (true);
+		dcp->read ();
 
 		list<shared_ptr<CPL> > cpls = dcp->cpls ();
 		for (list<boost::shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {

@@ -105,17 +105,12 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 
 	BOOST_FOREACH (shared_ptr<DCP> dcp, dcps) {
 		stage ("Checking DCP", dcp->directory());
-		DCP::ReadErrors errors;
 		try {
-			dcp->read (true, &errors);
+			dcp->read (&notes);
 		} catch (DCPReadError& e) {
 			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
 		} catch (XMLError& e) {
 			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
-		}
-
-		BOOST_FOREACH (shared_ptr<DCPReadError> i, errors) {
-			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(i->what())));
 		}
 
 		BOOST_FOREACH (shared_ptr<CPL> cpl, dcp->cpls()) {
@@ -188,3 +183,33 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 
 	return notes;
 }
+
+string
+dcp::note_to_string (dcp::VerificationNote note)
+{
+	switch (note.code()) {
+	case dcp::VerificationNote::GENERAL_READ:
+		return *note.note();
+	case dcp::VerificationNote::CPL_HASH_INCORRECT:
+		return "The hash of the CPL in the PKL does not agree with the CPL file";
+	case dcp::VerificationNote::INVALID_PICTURE_FRAME_RATE:
+		return "The picture in a reel has an invalid frame rate";
+	case dcp::VerificationNote::PICTURE_HASH_INCORRECT:
+		return dcp::String::compose("The hash of the picture asset %1 does not agree with the PKL file", note.file()->filename());
+	case dcp::VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE:
+		return "The PKL and CPL hashes disagree for a picture asset.";
+	case dcp::VerificationNote::SOUND_HASH_INCORRECT:
+		return dcp::String::compose("The hash of the sound asset %1 does not agree with the PKL file", note.file()->filename());
+	case dcp::VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE:
+		return "The PKL and CPL hashes disagree for a sound asset.";
+	case dcp::VerificationNote::EMPTY_ASSET_PATH:
+		return "The asset map contains an empty asset path.";
+	case dcp::VerificationNote::MISSING_ASSET:
+		return "The file for an asset in the asset map cannot be found.";
+	case dcp::VerificationNote::MISMATCHED_STANDARD:
+		return "The DCP contains both SMPTE and Interop parts.";
+	}
+
+	return "";
+}
+

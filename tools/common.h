@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -17,10 +17,10 @@
     along with libdcp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "exceptions.h"
+#include "verify.h"
 
 namespace dcp {
 
-extern void filter_errors (std::list<boost::shared_ptr<DCPReadError> >& errors, bool ignore_missing_assets);
+extern void filter_notes (std::list<dcp::VerificationNote>& notes, bool ignore_missing_assets);
 
 }

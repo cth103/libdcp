@@ -62,17 +62,6 @@ TimeFormatError::TimeFormatError (string bad_time)
 
 }
 
-MissingAssetError::MissingAssetError (boost::filesystem::path path, AssetType type)
-	: DCPReadError (
-		type == MAIN_PICTURE    ? String::compose ("Missing asset %1 for main picture", path.filename().string()) :
-		(type == MAIN_SOUND     ? String::compose ("Missing asset %1 for main sound", path.filename().string()) :
-		 (type == MAIN_SUBTITLE ? String::compose ("Missing asset %1 for main subtitle", path.filename().string()) :
-		  String::compose ("Missing asset %1", path.filename().string()))))
-	, _path (path)
-{
-
-}
-
 BadContentKindError::BadContentKindError (string content_kind)
 	: DCPReadError (String::compose("Bad content kind '%1'", content_kind))
 {
@@ -88,12 +77,6 @@ NotEncryptedError::NotEncryptedError (string const & what)
 
 ProgrammingError::ProgrammingError (string file, int line)
 	: runtime_error (String::compose ("Programming error at %1:%2", file, line))
-{
-
-}
-
-MismatchedStandardError::MismatchedStandardError ()
-	: DCPReadError ("DCP contains both Interop and SMPTE parts")
 {
 
 }
@@ -126,15 +109,6 @@ DCPReadError::DCPReadError (string message, string detail)
 
 MissingSubtitleImageError::MissingSubtitleImageError (string id)
 	: runtime_error (String::compose("Could not load image for subtitle %1", id))
-{
-
-}
-
-/** The <Path> in the ASSETMAP is empty for asset.  I can't see how this is valid,
-    but it's been seen in the wild with a DCP that claims to come from ClipsterDCI 5.10.0.5.
- */
-EmptyAssetPathError::EmptyAssetPathError (string id)
-	: DCPReadError (String::compose("Asset map path is empty for asset %1", id))
 {
 
 }

@@ -39,15 +39,15 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 
 void
-dcp::filter_errors (dcp::DCP::ReadErrors& errors, bool ignore_missing_assets)
+dcp::filter_notes (list<dcp::VerificationNote>& notes, bool ignore_missing_assets)
 {
-	for (DCP::ReadErrors::iterator i = errors.begin(); i != errors.end(); ) {
+	for (list<dcp::VerificationNote>::iterator i = notes.begin(); i != notes.end(); ) {
 
-		DCP::ReadErrors::iterator tmp = i;
+		list<dcp::VerificationNote>::iterator tmp = i;
 		++tmp;
 
-		if (ignore_missing_assets && dynamic_pointer_cast<MissingAssetError> (*i)) {
-			errors.erase (i);
+		if (ignore_missing_assets && i->code() == dcp::VerificationNote::Code::MISSING_ASSET) {
+			notes.erase (i);
 		}
 
 		i = tmp;

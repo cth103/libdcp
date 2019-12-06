@@ -100,15 +100,15 @@ main (int argc, char* argv[])
 	/* Try to read it and report errors */
 
 	dcp::DCP dcp (dcp_dir);
-	dcp::DCP::ReadErrors errors;
+	list<dcp::VerificationNote> notes;
 	try {
-		dcp.read (true, &errors, true);
+		dcp.read (&notes, true);
 	} catch (dcp::DCPReadError& e) {
 		cout << "Error:" <<  e.what() << "\n";
 	}
 
-	BOOST_FOREACH (shared_ptr<dcp::DCPReadError> i, errors) {
-		cout << "Error: " << i->what() << "\n";
+	BOOST_FOREACH (dcp::VerificationNote i, notes) {
+		cout << "Error: " << dcp::note_to_string(i) << "\n";
 	}
 
 	/* Look for a CPL */

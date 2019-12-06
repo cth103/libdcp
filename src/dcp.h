@@ -43,6 +43,7 @@
 #include "certificate.h"
 #include "metadata.h"
 #include "name_format.h"
+#include "verify.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>
 #include <string>
@@ -83,16 +84,13 @@ public:
 	 */
 	explicit DCP (boost::filesystem::path directory);
 
-	typedef std::list<boost::shared_ptr<DCPReadError> > ReadErrors;
-
 	/** Read the DCP's structure into this object.
-	 *  @param keep_going true to try to keep going in the face of (some) errors.
-	 *  @param errors List of errors that will be added to if keep_going is true.
+	 *  @param notes List of notes that will be added to if non-0.
 	 *  @param ignore_incorrect_picture_mxf_type true to try loading MXF files marked as monoscopic
 	 *  as stereoscopic if the monoscopic load fails; fixes problems some 3D DCPs that (I think)
 	 *  have an incorrect descriptor in their MXF.
 	 */
-	void read (bool keep_going = false, ReadErrors* errors = 0, bool ignore_incorrect_picture_mxf_type = false);
+	void read (std::list<VerificationNote>* notes = 0, bool ignore_incorrect_picture_mxf_type = false);
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.

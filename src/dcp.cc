@@ -58,6 +58,7 @@
 #include "font_asset.h"
 #include "pkl.h"
 #include "asset_factory.h"
+#include "verify.h"
 #include <asdcp/AS_DCP.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
@@ -95,21 +96,19 @@ DCP::DCP (boost::filesystem::path directory)
 	_directory = boost::filesystem::canonical (_directory);
 }
 
-/** Call this instead of throwing an exception if the error can be tolerated */
-template<class T> void
-survivable_error (bool keep_going, dcp::DCP::ReadErrors* errors, T const & e)
-{
-	if (keep_going) {
-		if (errors) {
-			errors->push_back (shared_ptr<T> (new T (e)));
-		}
-	} else {
-		throw e;
-	}
-}
-
+/** Read a DCP.  This method does not do any deep checking of the DCP's validity, but
+ *  if it comes across any bad things it will do one of two things.
+ *
+ *  Errors that are so serious that they prevent the method from working will result
+ *  in an exception being thrown.  For example, a missing ASSETMAP means that the DCP
+ *  can't be read without a lot of guesswork, so this will throw.
+ *
+ *  Errors that are not fatal will be added to notes, if it's non-0.  For example,
+ *  if the DCP contains a mixture of Interop and SMPTE elements this will result
+ *  in a note being added to the list.
+ */
 void
-DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mxf_type)
+DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf_type)
 {
 	/* Read the ASSETMAP and PKL */
 
@@ -193,12 +192,16 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 			   been seen in the wild with a DCP that
 			   claims to come from ClipsterDCI 5.10.0.5.
 			*/
-			survivable_error (keep_going, errors, EmptyAssetPathError(i->first));
+			if (notes) {
+				notes->push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::EMPTY_ASSET_PATH));
+			}
 			continue;
 		}
 
 		if (!boost::filesystem::exists(path)) {
-			survivable_error (keep_going, errors, MissingAssetError (path));
+			if (notes) {
+				notes->push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISSING_ASSET));
+			}
 			continue;
 		}
 
@@ -227,13 +230,13 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 
 			if (root == "CompositionPlaylist") {
 				shared_ptr<CPL> cpl (new CPL (path));
-				if (_standard && cpl->standard() && cpl->standard().get() != _standard.get()) {
-					survivable_error (keep_going, errors, MismatchedStandardError ());
+				if (_standard && cpl->standard() && cpl->standard().get() != _standard.get() && notes) {
+					notes->push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_STANDARD));
 				}
 				_cpls.push_back (cpl);
 			} else if (root == "DCSubtitle") {
 				if (_standard && _standard.get() == SMPTE) {
-					survivable_error (keep_going, errors, MismatchedStandardError ());
+					notes->push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_STANDARD));
 				}
 				other_assets.push_back (shared_ptr<InteropSubtitleAsset> (new InteropSubtitleAsset (path)));
 			}

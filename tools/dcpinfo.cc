@@ -76,7 +76,6 @@ help (string n)
 	     << "  -s, --subtitles              list all subtitles\n"
 	     << "  -p, --picture                analyse picture\n"
 	     << "  -d, --decompress             decompress picture when analysing (this is slow)\n"
-	     << "  -k, --keep-going             carry on in the event of errors, if possible\n"
 	     << "      --kdm                    KDM to decrypt DCP\n"
 	     << "      --private-key            private key for the certificate that the KDM is targeted at\n"
 	     << "      --ignore-missing-assets  ignore missing asset files\n";
@@ -217,7 +216,6 @@ int
 main (int argc, char* argv[])
 {
 	bool subtitles = false;
-	bool keep_going = false;
 	bool picture = false;
 	bool decompress = false;
 	bool ignore_missing_assets = false;
@@ -230,7 +228,6 @@ main (int argc, char* argv[])
 			{ "version", no_argument, 0, 'v' },
 			{ "help", no_argument, 0, 'h' },
 			{ "subtitles", no_argument, 0, 's' },
-			{ "keep-going", no_argument, 0, 'k' },
 			{ "picture", no_argument, 0, 'p' },
 			{ "decompress", no_argument, 0, 'd' },
 			{ "ignore-missing-assets", no_argument, 0, 'A' },
@@ -239,7 +236,7 @@ main (int argc, char* argv[])
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "vhskpdAB:C:", long_options, &option_index);
+		int c = getopt_long (argc, argv, "vhspdAB:C:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -254,9 +251,6 @@ main (int argc, char* argv[])
 			exit (EXIT_SUCCESS);
 		case 's':
 			subtitles = true;
-			break;
-		case 'k':
-			keep_going = true;
 			break;
 		case 'p':
 			picture = true;
@@ -289,10 +283,10 @@ main (int argc, char* argv[])
 	list<shared_ptr<CPL> > cpls;
 	if (boost::filesystem::is_directory(argv[optind])) {
 		DCP* dcp = 0;
-		DCP::ReadErrors errors;
+		list<dcp::VerificationNote> notes;
 		try {
 			dcp = new DCP (argv[optind]);
-			dcp->read (keep_going, &errors);
+			dcp->read (&notes);
 			if (kdm && private_key) {
 				dcp->add(DecryptedKDM(EncryptedKDM(file_to_string(*kdm)), file_to_string(*private_key)));
 			}
@@ -309,15 +303,14 @@ main (int argc, char* argv[])
 
 		cout << "DCP: " << boost::filesystem::path(argv[optind]).string() << "\n";
 
-		dcp::filter_errors (errors, ignore_missing_assets);
-		for (DCP::ReadErrors::const_iterator i = errors.begin(); i != errors.end(); ++i) {
-			cerr << "Error: " << (*i)->what() << "\n";
+		dcp::filter_notes (notes, ignore_missing_assets);
+		BOOST_FOREACH (dcp::VerificationNote i, notes) {
+			cerr << "Error: " << note_to_string(i) << "\n";
 		}
 
 		cpls = dcp->cpls ();
 	} else {
 		cpls.push_back (shared_ptr<CPL>(new CPL(boost::filesystem::path(argv[optind]))));
-		keep_going = true;
 		ignore_missing_assets = true;
 	}
 
@@ -331,36 +324,24 @@ main (int argc, char* argv[])
 			try {
 				main_picture (j, picture, decompress);
 			} catch (UnresolvedRefError& e) {
-				if (keep_going) {
-					if (!ignore_missing_assets) {
-						cerr << e.what() << " (for main picture)\n";
-					}
-				} else {
-					throw;
+				if (!ignore_missing_assets) {
+					cerr << e.what() << " (for main picture)\n";
 				}
 			}
 
 			try {
 				main_sound (j);
 			} catch (UnresolvedRefError& e) {
-				if (keep_going) {
-					if (!ignore_missing_assets) {
-						cerr << e.what() << " (for main sound)\n";
-					}
-				} else {
-					throw;
+				if (!ignore_missing_assets) {
+					cerr << e.what() << " (for main sound)\n";
 				}
 			}
 
 			try {
 				main_subtitle (j, subtitles);
 			} catch (UnresolvedRefError& e) {
-				if (keep_going) {
-					if (!ignore_missing_assets) {
-						cerr << e.what() << " (for main subtitle)\n";
-					}
-				} else {
-					throw;
+				if (!ignore_missing_assets) {
+					cerr << e.what() << " (for main subtitle)\n";
 				}
 			}
 

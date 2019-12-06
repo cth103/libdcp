@@ -69,6 +69,12 @@ public:
 		SOUND_HASH_INCORRECT,
 		/** The hash of a main sound is different in the CPL and PKL */
 		PKL_CPL_SOUND_HASHES_DISAGREE,
+		/** An assetmap's <Path> entry is empty */
+		EMPTY_ASSET_PATH,
+		/** An file mentioned in an assetmap cannot be found */
+		MISSING_ASSET,
+		/** The DCP contains both SMPTE and Interop-standard components */
+		MISMATCHED_STANDARD,
 	};
 
 	VerificationNote (Type type, Code code)
@@ -116,6 +122,8 @@ std::list<VerificationNote> verify (
 	boost::function<void (std::string, boost::optional<boost::filesystem::path>)> stage,
 	boost::function<void (float)> progress
 	);
+
+std::string note_to_string (dcp::VerificationNote note);
 
 }
 

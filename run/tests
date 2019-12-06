@@ -91,7 +91,7 @@ fi
 rm -f $work/info.log
 for d in `find $private/metadata -mindepth 1 -maxdepth 1 -type d | sort -f -d`; do
     if [ `basename $d` != ".git" ]; then
-        $dcpinfo --ignore-missing-assets -k -s $d >> $work/info.log
+        $dcpinfo --ignore-missing-assets -s $d >> $work/info.log
         if [ "$?" != "0" ]; then
             echo "FAIL: dcpinfo failed for $d"
             exit 1
@@ -116,7 +116,7 @@ cp -r $private/* $work/private
 for d in `find $work/private/metadata -mindepth 1 -maxdepth 1 -type d | sort -f -d`; do
     if [ `basename $d` != ".git" ]; then
         $work/rewrite_subs $d
-        $dcpinfo --ignore-missing-assets -k -s $d >> $work/info2.log
+        $dcpinfo --ignore-missing-assets -s $d >> $work/info2.log
     fi
 done
 

@@ -119,30 +119,6 @@ private:
 	boost::optional<std::string> _detail;
 };
 
-/** @class MissingAssetError
- *  @brief An error of a missing asset.
- */
-class MissingAssetError : public DCPReadError
-{
-public:
-	enum AssetType {
-		MAIN_PICTURE,  //< main picture is missing
-		MAIN_SOUND,    //< main sound is missing
-		MAIN_SUBTITLE, //< main subtitle is missing
-		UNKNOWN        //< something is missing but we don't know what
-	};
-
-	MissingAssetError (boost::filesystem::path, AssetType = UNKNOWN);
-	~MissingAssetError () throw () {}
-
-	boost::filesystem::path path () const {
-		return _path;
-	}
-
-private:
-	boost::filesystem::path _path;
-};
-
 class BadContentKindError : public DCPReadError
 {
 public:
@@ -198,12 +174,6 @@ public:
 	ProgrammingError (std::string file, int line);
 };
 
-class MismatchedStandardError : public DCPReadError
-{
-public:
-	MismatchedStandardError ();
-};
-
 class KDMDecryptionError : public std::runtime_error
 {
 public:
@@ -226,12 +196,6 @@ class MissingSubtitleImageError : public std::runtime_error
 {
 public:
 	MissingSubtitleImageError (std::string id);
-};
-
-class EmptyAssetPathError : public DCPReadError
-{
-public:
-	EmptyAssetPathError (std::string id);
 };
 
 class BadKDMDateError : public std::runtime_error

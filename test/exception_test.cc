@@ -43,7 +43,4 @@ BOOST_AUTO_TEST_CASE (exception_test)
 	BOOST_CHECK_EQUAL (string (dcp::UnresolvedRefError ("foo").what()), "Unresolved reference to asset id foo");
 	BOOST_CHECK_EQUAL (string (dcp::NotEncryptedError ("foo").what()), "foo is not encrypted");
 	BOOST_CHECK_EQUAL (string (dcp::ProgrammingError ("foo", 42).what()), "Programming error at foo:42");
-	BOOST_CHECK_EQUAL (string (dcp::MissingAssetError ("foo", dcp::MissingAssetError::MAIN_PICTURE).what()), "Missing asset foo for main picture");
-	BOOST_CHECK_EQUAL (string (dcp::MissingAssetError ("foo", dcp::MissingAssetError::MAIN_SOUND).what()), "Missing asset foo for main sound");
-	BOOST_CHECK_EQUAL (string (dcp::MissingAssetError ("foo", dcp::MissingAssetError::MAIN_SUBTITLE).what()), "Missing asset foo for main subtitle");
 }

@@ -233,9 +233,7 @@ BOOST_AUTO_TEST_CASE (verify_test6)
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
 	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::GENERAL_READ);
-	BOOST_REQUIRE (static_cast<bool>(notes.front().note()));
-	BOOST_REQUIRE_EQUAL (notes.front().note().get(), "Missing asset video.mxf");
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::Code::MISSING_ASSET);
 }
 
 /* Empty asset filename in ASSETMAP */
@@ -253,9 +251,7 @@ BOOST_AUTO_TEST_CASE (verify_test7)
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
-	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::GENERAL_READ);
-	BOOST_REQUIRE (static_cast<bool>(notes.front().note()));
-	BOOST_REQUIRE_EQUAL (notes.front().note().get(), "Asset map path is empty for asset 1fab8bb0-cfaf-4225-ad6d-01768bc10470");
+	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_WARNING);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::Code::EMPTY_ASSET_PATH);
 }
 
