@@ -71,7 +71,7 @@ public:
 		PKL_CPL_SOUND_HASHES_DISAGREE,
 		/** An assetmap's <Path> entry is empty */
 		EMPTY_ASSET_PATH,
-		/** An file mentioned in an assetmap cannot be found */
+		/** An file mentioned in an asset map cannot be found */
 		MISSING_ASSET,
 		/** The DCP contains both SMPTE and Interop-standard components */
 		MISMATCHED_STANDARD,
@@ -96,6 +96,21 @@ public:
 		, _file (file)
 	{}
 
+	VerificationNote (Type type, Code code, std::string note, boost::filesystem::path file)
+		: _type (type)
+		, _code (code)
+		, _note (note)
+		, _file (file)
+	{}
+
+	VerificationNote (Type type, Code code, std::string note, boost::filesystem::path file, uint64_t line)
+		: _type (type)
+		, _code (code)
+		, _note (note)
+		, _file (file)
+		, _line (line)
+	{}
+
 	Type type () const {
 		return _type;
 	}
@@ -112,11 +127,19 @@ public:
 		return _file;
 	}
 
+	boost::optional<uint64_t> line () const {
+		return _line;
+	}
+
 private:
 	Type _type;
 	Code _code;
+	/** Further information about the error, if applicable */
 	boost::optional<std::string> _note;
+	/** Path of file containing the error, if applicable */
 	boost::optional<boost::filesystem::path> _file;
+	/** Error line number within _file, if applicable */
+	uint64_t _line;
 };
 
 std::list<VerificationNote> verify (

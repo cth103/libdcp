@@ -352,10 +352,15 @@ dcp::verify (
 
 			list<XMLValidationError> errors = validate_xml (cpl->file().get(), xsd_dtd_directory);
 			BOOST_FOREACH (XMLValidationError i, errors) {
-				notes.push_back (VerificationNote(
-							 VerificationNote::VERIFY_ERROR, VerificationNote::Code::XML_VALIDATION_ERROR,
-							 String::compose("%1 (file %2, line %3)", i.message(), cpl->file()->string(), i.line())
-							 ));
+				notes.push_back (
+					VerificationNote(
+						VerificationNote::VERIFY_ERROR,
+						VerificationNote::Code::XML_VALIDATION_ERROR,
+						i.message(),
+						cpl->file().get(),
+						i.line()
+						)
+					);
 			}
 
 			/* Check that the CPL's hash corresponds to the PKL */
@@ -388,13 +393,17 @@ dcp::verify (
 						switch (r) {
 						case RESULT_BAD:
 							notes.push_back (
-									VerificationNote(
-										VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_HASH_INCORRECT, *reel->main_picture()->asset()->file()
-										)
-									);
+								VerificationNote(
+									VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_HASH_INCORRECT, *reel->main_picture()->asset()->file()
+									)
+								);
 							break;
 						case RESULT_CPL_PKL_DIFFER:
-							notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE));
+							notes.push_back (
+								VerificationNote(
+									VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE, *reel->main_picture()->asset()->file()
+									)
+								);
 							break;
 						default:
 							break;
@@ -407,13 +416,17 @@ dcp::verify (
 					switch (r) {
 					case RESULT_BAD:
 						notes.push_back (
-								VerificationNote(
-									VerificationNote::VERIFY_ERROR, VerificationNote::SOUND_HASH_INCORRECT, *reel->main_sound()->asset()->file()
-									)
-								);
+							VerificationNote(
+								VerificationNote::VERIFY_ERROR, VerificationNote::SOUND_HASH_INCORRECT, *reel->main_sound()->asset()->file()
+								)
+							);
 						break;
 					case RESULT_CPL_PKL_DIFFER:
-						notes.push_back (VerificationNote (VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE));
+						notes.push_back (
+							VerificationNote(
+								VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE, *reel->main_sound()->asset()->file()
+								)
+							);
 						break;
 					default:
 						break;
@@ -427,10 +440,15 @@ dcp::verify (
 
 			list<XMLValidationError> errors = validate_xml (pkl->file().get(), xsd_dtd_directory);
 			BOOST_FOREACH (XMLValidationError i, errors) {
-				notes.push_back (VerificationNote(
-							 VerificationNote::VERIFY_ERROR, VerificationNote::Code::XML_VALIDATION_ERROR,
-							 String::compose("%1 (file %2, line %3)", i.message(), pkl->file()->string(), i.line())
-							 ));
+				notes.push_back (
+					VerificationNote(
+						VerificationNote::VERIFY_ERROR,
+						VerificationNote::Code::XML_VALIDATION_ERROR,
+						i.message(),
+						pkl->file().get(),
+						i.line()
+						)
+					);
 			}
 		}
 	}
@@ -451,19 +469,19 @@ dcp::note_to_string (dcp::VerificationNote note)
 	case dcp::VerificationNote::PICTURE_HASH_INCORRECT:
 		return dcp::String::compose("The hash of the picture asset %1 does not agree with the PKL file", note.file()->filename());
 	case dcp::VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE:
-		return "The PKL and CPL hashes disagree for a picture asset.";
+		return dcp::String::compose("The PKL and CPL hashes disagree for the picture asset %1", note.file()->filename());
 	case dcp::VerificationNote::SOUND_HASH_INCORRECT:
 		return dcp::String::compose("The hash of the sound asset %1 does not agree with the PKL file", note.file()->filename());
 	case dcp::VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE:
-		return "The PKL and CPL hashes disagree for a sound asset.";
+		return dcp::String::compose("The PKL and CPL hashes disagree for the sound asset %1", note.file()->filename());
 	case dcp::VerificationNote::EMPTY_ASSET_PATH:
 		return "The asset map contains an empty asset path.";
 	case dcp::VerificationNote::MISSING_ASSET:
-		return "The file for an asset in the asset map cannot be found.";
+		return String::compose("The file for an asset in the asset map cannot be found; missing file is %1.", note.file()->filename());
 	case dcp::VerificationNote::MISMATCHED_STANDARD:
 		return "The DCP contains both SMPTE and Interop parts.";
 	case dcp::VerificationNote::XML_VALIDATION_ERROR:
-		return "An XML file is badly formed.";
+		return String::compose("An XML file is badly formed: %1 (%2:%3)", note.note().get(), note.file()->filename(), note.line().get());
 	}
 
 	return "";

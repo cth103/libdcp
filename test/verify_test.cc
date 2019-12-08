@@ -108,7 +108,7 @@ void
 dump_notes (list<dcp::VerificationNote> const & notes)
 {
 	BOOST_FOREACH (dcp::VerificationNote i, notes) {
-		std::cout << dcp::note_to_string(i) << " " << i.note().get_value_or("") << "\n";
+		std::cout << dcp::note_to_string(i) << "\n";
 	}
 }
 

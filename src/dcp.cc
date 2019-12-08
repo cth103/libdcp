@@ -200,7 +200,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 
 		if (!boost::filesystem::exists(path)) {
 			if (notes) {
-				notes->push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISSING_ASSET));
+				notes->push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISSING_ASSET, path));
 			}
 			continue;
 		}
