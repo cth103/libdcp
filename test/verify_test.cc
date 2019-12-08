@@ -120,6 +120,7 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 
 	boost::filesystem::path const cpl_file = "build/test/verify_test1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
 	boost::filesystem::path const pkl_file = "build/test/verify_test1/pkl_ae8a9818-872a-4f86-8493-11dfdea03e09.xml";
+	boost::filesystem::path const assetmap_file = "build/test/verify_test1/ASSETMAP.xml";
 
 	list<pair<string, optional<boost::filesystem::path> > >::const_iterator st = stages.begin();
 	BOOST_CHECK_EQUAL (st->first, "Checking DCP");
@@ -144,6 +145,10 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	BOOST_CHECK_EQUAL (st->first, "Checking PKL");
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(pkl_file));
+	++st;
+	BOOST_CHECK_EQUAL (st->first, "Checking ASSETMAP");
+	BOOST_REQUIRE (st->second);
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(assetmap_file));
 	++st;
 	BOOST_REQUIRE (st == stages.end());
 
@@ -237,6 +242,20 @@ boost::filesystem::path
 cpl (int n)
 {
 	return dcp::String::compose("build/test/verify_test%1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml", n);
+}
+
+static
+boost::filesystem::path
+pkl (int n)
+{
+	return dcp::String::compose("build/test/verify_test%1/pkl_ae8a9818-872a-4f86-8493-11dfdea03e09.xml", n);
+}
+
+static
+boost::filesystem::path
+asset_map (int n)
+{
+	return dcp::String::compose("build/test/verify_test%1/ASSETMAP.xml", n);
 }
 
 static
@@ -379,4 +398,24 @@ BOOST_AUTO_TEST_CASE (verify_test10)
 			dcp::VerificationNote::Code::XML_VALIDATION_ERROR,
 			dcp::VerificationNote::Code::CPL_HASH_INCORRECT
 			);
+}
+
+/* Badly-formatted <Id> in PKL */
+BOOST_AUTO_TEST_CASE (verify_test11)
+{
+	check_after_replace (
+		11, &pkl,
+		"<Id>urn:uuid:ae8", "<Id>urn:uuid:xe8",
+		dcp::VerificationNote::Code::XML_VALIDATION_ERROR
+		);
+}
+
+/* Badly-formatted <Id> in ASSETMAP */
+BOOST_AUTO_TEST_CASE (verify_test12)
+{
+	check_after_replace (
+		12, &asset_map,
+		"<Id>urn:uuid:74e", "<Id>urn:uuid:x4e",
+		dcp::VerificationNote::Code::XML_VALIDATION_ERROR
+		);
 }

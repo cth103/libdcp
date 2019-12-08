@@ -229,8 +229,8 @@ private:
 };
 
 static
-list<XMLValidationError>
-validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_directory)
+void
+validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_directory, list<VerificationNote>& notes)
 {
 	try {
 		XMLPlatformUtils::Initialize ();
@@ -252,6 +252,7 @@ validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_
 		schema["http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"] = "xmldsig-core-schema.xsd";
 		schema["http://www.smpte-ra.org/schemas/429-7/2006/CPL"] = "SMPTE-429-7-2006-CPL.xsd";
 		schema["http://www.smpte-ra.org/schemas/429-8/2006/PKL"] = "SMPTE-429-8-2006-PKL.xsd";
+		schema["http://www.smpte-ra.org/schemas/429-9/2007/AM"] = "SMPTE-429-9-2007-AM.xsd";
 		schema["http://www.w3.org/2001/03/xml.xsd"] = "xml.xsd";
 
 		string locations;
@@ -283,7 +284,17 @@ validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_
 
 	XMLPlatformUtils::Terminate ();
 
-	return error_handler.errors ();
+	BOOST_FOREACH (XMLValidationError i, error_handler.errors()) {
+		notes.push_back (
+			VerificationNote(
+				VerificationNote::VERIFY_ERROR,
+				VerificationNote::Code::XML_VALIDATION_ERROR,
+				i.message(),
+				xml_file,
+				i.line()
+				)
+			);
+	}
 }
 
 static Result
@@ -349,19 +360,7 @@ dcp::verify (
 
 		BOOST_FOREACH (shared_ptr<CPL> cpl, dcp->cpls()) {
 			stage ("Checking CPL", cpl->file());
-
-			list<XMLValidationError> errors = validate_xml (cpl->file().get(), xsd_dtd_directory);
-			BOOST_FOREACH (XMLValidationError i, errors) {
-				notes.push_back (
-					VerificationNote(
-						VerificationNote::VERIFY_ERROR,
-						VerificationNote::Code::XML_VALIDATION_ERROR,
-						i.message(),
-						cpl->file().get(),
-						i.line()
-						)
-					);
-			}
+			validate_xml (cpl->file().get(), xsd_dtd_directory, notes);
 
 			/* Check that the CPL's hash corresponds to the PKL */
 			BOOST_FOREACH (shared_ptr<PKL> i, dcp->pkls()) {
@@ -437,20 +436,12 @@ dcp::verify (
 
 		BOOST_FOREACH (shared_ptr<PKL> pkl, dcp->pkls()) {
 			stage ("Checking PKL", pkl->file());
-
-			list<XMLValidationError> errors = validate_xml (pkl->file().get(), xsd_dtd_directory);
-			BOOST_FOREACH (XMLValidationError i, errors) {
-				notes.push_back (
-					VerificationNote(
-						VerificationNote::VERIFY_ERROR,
-						VerificationNote::Code::XML_VALIDATION_ERROR,
-						i.message(),
-						pkl->file().get(),
-						i.line()
-						)
-					);
-			}
+			validate_xml (pkl->file().get(), xsd_dtd_directory, notes);
 		}
+
+		stage ("Checking ASSETMAP", dcp->asset_map_path().get());
+		validate_xml (dcp->asset_map_path().get(), xsd_dtd_directory, notes);
+
 	}
 
 	return notes;

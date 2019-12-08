@@ -134,6 +134,10 @@ public:
 		return _pkls;
 	}
 
+	boost::optional<boost::filesystem::path> asset_map_path () {
+		return _asset_map;
+	}
+
 	static std::vector<boost::filesystem::path> directories_from_files (std::vector<boost::filesystem::path> files);
 
 private:
@@ -146,11 +150,14 @@ private:
 	 */
 	void write_assetmap (Standard standard, std::string pkl_uuid, boost::filesystem::path pkl_path, XMLMetadata metadata) const;
 
-	/** the directory that we are writing to */
+	/** The directory that we are writing to */
 	boost::filesystem::path _directory;
-	/** the CPLs that make up this DCP */
+	/** The CPLs that make up this DCP */
 	std::list<boost::shared_ptr<CPL> > _cpls;
+	/** The PKLs that make up this DCP */
 	std::list<boost::shared_ptr<PKL> > _pkls;
+	/** File that the ASSETMAP was read from or last written to */
+	mutable boost::optional<boost::filesystem::path> _asset_map;
 
 	/** Standard of DCP that was read in */
 	boost::optional<Standard> _standard;

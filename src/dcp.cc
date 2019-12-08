@@ -112,18 +112,17 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 {
 	/* Read the ASSETMAP and PKL */
 
-	boost::filesystem::path asset_map_file;
 	if (boost::filesystem::exists (_directory / "ASSETMAP")) {
-		asset_map_file = _directory / "ASSETMAP";
+		_asset_map = _directory / "ASSETMAP";
 	} else if (boost::filesystem::exists (_directory / "ASSETMAP.xml")) {
-		asset_map_file = _directory / "ASSETMAP.xml";
+		_asset_map = _directory / "ASSETMAP.xml";
 	} else {
 		boost::throw_exception (DCPReadError (String::compose ("could not find ASSETMAP nor ASSETMAP.xml in `%1'", _directory.string())));
 	}
 
 	cxml::Document asset_map ("AssetMap");
 
-	asset_map.read_file (asset_map_file);
+	asset_map.read_file (_asset_map.get());
 	if (asset_map.namespace_uri() == assetmap_interop_ns) {
 		_standard = INTEROP;
 	} else if (asset_map.namespace_uri() == assetmap_smpte_ns) {
@@ -436,6 +435,7 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, boost::filesystem::path
 	}
 
 	doc.write_to_file_formatted (p.string (), "UTF-8");
+	_asset_map = p;
 }
 
 /** Write all the XML files for this DCP.
