@@ -49,6 +49,7 @@ static string const pkl_interop_ns = "http://www.digicine.com/PROTO-ASDCP-PKL-20
 static string const pkl_smpte_ns   = "http://www.smpte-ra.org/schemas/429-8/2007/PKL";
 
 PKL::PKL (boost::filesystem::path file)
+	: _file (file)
 {
 	cxml::Document pkl ("PackingList");
 	pkl.read_file (file);
@@ -116,6 +117,7 @@ PKL::write (boost::filesystem::path file, shared_ptr<const CertificateChain> sig
 	}
 
 	doc.write_to_file_formatted (file.string(), "UTF-8");
+	_file = file;
 }
 
 optional<string>
