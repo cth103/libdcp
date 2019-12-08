@@ -197,7 +197,7 @@ def build(bld):
     obj.name = 'libdcp%s' % bld.env.API_VERSION
     obj.target = 'dcp%s' % bld.env.API_VERSION
     obj.export_includes = ['.']
-    obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1 ASDCPLIB_CTH'
+    obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1 ASDCPLIB_CTH XERCES'
     obj.source = source
 
     # Library for gcov
@@ -209,7 +209,7 @@ def build(bld):
         obj.name = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.target = 'dcp%s_gcov' % bld.env.API_VERSION
         obj.export_includes = ['.']
-        obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1 ASDCPLIB_CTH'
+        obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1 ASDCPLIB_CTH XERCES'
         obj.use = 'libkumu-libdcp%s libasdcp-libdcp%s' % (bld.env.API_VERSION, bld.env.API_VERSION)
         obj.source = source
         obj.cppflags = ['-fprofile-arcs', '-ftest-coverage', '-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']

@@ -75,10 +75,8 @@ public:
 		MISSING_ASSET,
 		/** The DCP contains both SMPTE and Interop-standard components */
 		MISMATCHED_STANDARD,
-		/** A urn:uuid ID is badly formed */
-		BAD_URN_UUID,
-		/** A date is badly formed */
-		BAD_DATE,
+		/** Some XML fails to validate against the XSD/DTD */
+		XML_VALIDATION_ERROR,
 	};
 
 	VerificationNote (Type type, Code code)
@@ -124,7 +122,8 @@ private:
 std::list<VerificationNote> verify (
 	std::vector<boost::filesystem::path> directories,
 	boost::function<void (std::string, boost::optional<boost::filesystem::path>)> stage,
-	boost::function<void (float)> progress
+	boost::function<void (float)> progress,
+	boost::filesystem::path xsd_dtd_directory
 	);
 
 std::string note_to_string (dcp::VerificationNote note);

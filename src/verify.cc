@@ -40,9 +40,28 @@
 #include "exceptions.h"
 #include "compose.hpp"
 #include "raw_convert.h"
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/parsers/AbstractDOMParser.hpp>
+#include <xercesc/sax/HandlerBase.hpp>
+#include <xercesc/dom/DOMImplementation.hpp>
+#include <xercesc/dom/DOMImplementationLS.hpp>
+#include <xercesc/dom/DOMImplementationRegistry.hpp>
+#include <xercesc/dom/DOMLSParser.hpp>
+#include <xercesc/dom/DOMException.hpp>
+#include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMNodeList.hpp>
+#include <xercesc/dom/DOMError.hpp>
+#include <xercesc/dom/DOMLocator.hpp>
+#include <xercesc/dom/DOMNamedNodeMap.hpp>
+#include <xercesc/dom/DOMAttr.hpp>
+#include <xercesc/dom/DOMErrorHandler.hpp>
+#include <xercesc/framework/LocalFileInputSource.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/regex.hpp>
+#include <map>
 #include <list>
 #include <vector>
 #include <iostream>
@@ -51,17 +70,216 @@ using std::list;
 using std::vector;
 using std::string;
 using std::cout;
+using std::map;
 using boost::shared_ptr;
 using boost::optional;
 using boost::function;
 
 using namespace dcp;
+using namespace xercesc;
 
 enum Result {
 	RESULT_GOOD,
 	RESULT_CPL_PKL_DIFFER,
 	RESULT_BAD
 };
+
+static
+string
+xml_ch_to_string (XMLCh const * a)
+{
+	char* x = XMLString::transcode(a);
+	string const o(x);
+	XMLString::release(&x);
+	return o;
+}
+
+class XMLValidationError
+{
+public:
+	XMLValidationError (SAXParseException const & e)
+		: _message (xml_ch_to_string(e.getMessage()))
+		, _line (e.getLineNumber())
+		, _column (e.getColumnNumber())
+	{
+
+	}
+
+	string message () const {
+		return _message;
+	}
+
+	uint64_t line () const {
+		return _line;
+	}
+
+	uint64_t column () const {
+		return _column;
+	}
+
+private:
+	string _message;
+	uint64_t _line;
+	uint64_t _column;
+};
+
+
+class DCPErrorHandler : public ErrorHandler
+{
+public:
+	void warning(const SAXParseException& e)
+	{
+		maybe_add (XMLValidationError(e));
+	}
+
+	void error(const SAXParseException& e)
+	{
+		maybe_add (XMLValidationError(e));
+	}
+
+	void fatalError(const SAXParseException& e)
+	{
+		maybe_add (XMLValidationError(e));
+	}
+
+	void resetErrors() {}
+
+	list<XMLValidationError> errors () const {
+		return _errors;
+	}
+
+private:
+	void maybe_add (XMLValidationError e)
+	{
+		/* XXX: nasty hack */
+		if (
+			e.message() ==
+			"schema document '/home/carl/src/libdcp/xsd/xml.xsd' has different target namespace "
+			"from the one specified in instance document 'http://www.w3.org/2001/03/xml.xsd'" ||
+			e.message() ==
+			"schema document '/home/carl/src/libdcp/xsd/xmldsig-core-schema.xsd' has different target namespace "
+			"from the one specified in instance document 'http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd'"
+			) {
+			return;
+		}
+
+		_errors.push_back (e);
+	}
+
+	list<XMLValidationError> _errors;
+};
+
+class StringToXMLCh : public boost::noncopyable
+{
+public:
+	StringToXMLCh (string a)
+	{
+		_buffer = XMLString::transcode(a.c_str());
+	}
+
+	~StringToXMLCh ()
+	{
+		XMLString::release (&_buffer);
+	}
+
+	XMLCh const * get () const {
+		return _buffer;
+	}
+
+private:
+	XMLCh* _buffer;
+};
+
+class LocalFileResolver : public EntityResolver
+{
+public:
+	LocalFileResolver (boost::filesystem::path xsd_dtd_directory)
+		: _xsd_dtd_directory (xsd_dtd_directory)
+	{
+		add("http://www.w3.org/2001/XMLSchema.dtd", "XMLSchema.dtd");
+		add("http://www.w3.org/2001/03/xml.xsd", "xml.xsd");
+		add("http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd", "xmldsig-core-schema.xsd");
+	}
+
+	InputSource* resolveEntity(XMLCh const *, XMLCh const * system_id)
+	{
+		string system_id_str = xml_ch_to_string (system_id);
+		if (_files.find(system_id_str) == _files.end()) {
+			return 0;
+		}
+
+		boost::filesystem::path p = _xsd_dtd_directory / _files[system_id_str];
+		StringToXMLCh ch (p.string());
+		return new LocalFileInputSource(ch.get());
+	}
+
+private:
+	void add (string uri, string file)
+	{
+		_files[uri] = file;
+	}
+
+	std::map<string, string> _files;
+	boost::filesystem::path _xsd_dtd_directory;
+};
+
+static
+list<XMLValidationError>
+validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_directory)
+{
+	try {
+		XMLPlatformUtils::Initialize ();
+	} catch (XMLException& e) {
+		throw MiscError ("Failed to initialise xerces library");
+	}
+
+	DCPErrorHandler error_handler;
+
+	/* All the xerces objects in this scope must be destroyed before XMLPlatformUtils::Terminate() is called */
+	{
+		XercesDOMParser parser;
+		parser.setValidationScheme(XercesDOMParser::Val_Always);
+		parser.setDoNamespaces(true);
+		parser.setDoSchema(true);
+
+		map<string, string> schema;
+		schema["http://www.w3.org/2000/09/xmldsig#"] = "xmldsig-core-schema.xsd";
+		schema["http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"] = "xmldsig-core-schema.xsd";
+		schema["http://www.smpte-ra.org/schemas/429-7/2006/CPL"] = "SMPTE-429-7-2006-CPL.xsd";
+		schema["http://www.w3.org/2001/03/xml.xsd"] = "xml.xsd";
+
+		string locations;
+		for (map<string, string>::const_iterator i = schema.begin(); i != schema.end(); ++i) {
+			locations += i->first;
+			locations += " ";
+			boost::filesystem::path p = xsd_dtd_directory / i->second;
+			locations += p.string() + " ";
+		}
+
+		parser.setExternalSchemaLocation(locations.c_str());
+		parser.setValidationSchemaFullChecking(true);
+		parser.setErrorHandler(&error_handler);
+
+		LocalFileResolver resolver (xsd_dtd_directory);
+		parser.setEntityResolver(&resolver);
+
+		try {
+			parser.resetDocumentPool();
+			parser.parse(xml_file.string().c_str());
+		} catch (XMLException& e) {
+			throw MiscError(xml_ch_to_string(e.getMessage()));
+		} catch (DOMException& e) {
+			throw MiscError(xml_ch_to_string(e.getMessage()));
+		} catch (...) {
+			throw MiscError("Unknown exception from xerces");
+		}
+
+	}
+
+	XMLPlatformUtils::Terminate ();
+
+	return error_handler.errors ();
+}
 
 static Result
 verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelMXF> reel_mxf, function<void (float)> progress)
@@ -96,52 +314,17 @@ verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelMXF> reel_mxf, function<void (
 	return RESULT_GOOD;
 }
 
-static
-bool
-good_urn_uuid (string id)
-{
-	boost::regex ex("urn:uuid:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
-	return boost::regex_match (id, ex);
-}
-
-static
-bool
-good_date (string date)
-{
-	boost::regex ex("\\d{4}-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2})[+-](\\d{2}):(\\d{2})");
-	boost::match_results<string::const_iterator> res;
-	if (!regex_match (date, res, ex, boost::match_default)) {
-		return false;
-	}
-	int const month = dcp::raw_convert<int>(res[1].str());
-	if (month < 1 || month > 12) {
-		return false;
-	}
-	int const day = dcp::raw_convert<int>(res[2].str());
-	if (day < 1 || day > 31) {
-		return false;
-	}
-	if (dcp::raw_convert<int>(res[3].str()) > 23) {
-		return false;
-	}
-	if (dcp::raw_convert<int>(res[4].str()) > 59) {
-		return false;
-	}
-	if (dcp::raw_convert<int>(res[5].str()) > 59) {
-		return false;
-	}
-	if (dcp::raw_convert<int>(res[6].str()) > 23) {
-		return false;
-	}
-	if (dcp::raw_convert<int>(res[7].str()) > 59) {
-		return false;
-	}
-	return true;
-}
 
 list<VerificationNote>
-dcp::verify (vector<boost::filesystem::path> directories, function<void (string, optional<boost::filesystem::path>)> stage, function<void (float)> progress)
+dcp::verify (
+	vector<boost::filesystem::path> directories,
+	function<void (string, optional<boost::filesystem::path>)> stage,
+	function<void (float)> progress,
+	boost::filesystem::path xsd_dtd_directory
+	)
 {
+	xsd_dtd_directory = boost::filesystem::canonical (xsd_dtd_directory);
+
 	list<VerificationNote> notes;
 
 	list<shared_ptr<DCP> > dcps;
@@ -162,23 +345,12 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 		BOOST_FOREACH (shared_ptr<CPL> cpl, dcp->cpls()) {
 			stage ("Checking CPL", cpl->file());
 
-			cxml::Document cpl_doc ("CompositionPlaylist");
-			cpl_doc.read_file (cpl->file().get());
-			if (!good_urn_uuid(cpl_doc.string_child("Id"))) {
-				notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::BAD_URN_UUID, string("CPL <Id> is malformed")));
-			}
-			if (!good_date(cpl_doc.string_child("IssueDate"))) {
-				notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::BAD_DATE, string("CPL <IssueDate> is malformed")));
-			}
-			/* ContentVersion/Id */
-			if (cpl->standard() && cpl->standard().get() == SMPTE && !good_urn_uuid(cpl_doc.node_child("ContentVersion")->string_child("Id"))) {
-				notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::BAD_URN_UUID, string("<ContentVersion> <Id> is malformed.")));
-			}
-			/* Reel/Id */
-			BOOST_FOREACH (cxml::ConstNodePtr i, cpl_doc.node_child("ReelList")->node_children("Reel")) {
-				if (!good_urn_uuid(i->string_child("Id"))) {
-					notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::BAD_URN_UUID, string("Reel <Id> is malformed")));
-				}
+			list<XMLValidationError> errors = validate_xml (cpl->file().get(), xsd_dtd_directory);
+			BOOST_FOREACH (XMLValidationError i, errors) {
+				notes.push_back (VerificationNote(
+							 VerificationNote::VERIFY_ERROR, VerificationNote::Code::XML_VALIDATION_ERROR,
+							 String::compose("%1 (on line %2)", i.message(), i.line())
+							 ));
 			}
 
 			/* Check that the CPL's hash corresponds to the PKL */
@@ -273,12 +445,9 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "The file for an asset in the asset map cannot be found.";
 	case dcp::VerificationNote::MISMATCHED_STANDARD:
 		return "The DCP contains both SMPTE and Interop parts.";
-	case dcp::VerificationNote::BAD_URN_UUID:
-		return "There is a badly-formed urn:uuid.";
-	case dcp::VerificationNote::BAD_DATE:
-		return "There is a badly-formed date.";
+	case dcp::VerificationNote::XML_VALIDATION_ERROR:
+		return "An XML file is badly formed.";
 	}
 
 	return "";
 }
-

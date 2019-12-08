@@ -34,19 +34,19 @@
 def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.use = ['libdcp%s' % bld.env.API_VERSION]
-    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM BOOST_REGEX LIBXML++ XMLSEC1 OPENSSL'
+    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM BOOST_REGEX LIBXML++ XMLSEC1 OPENSSL XERCES'
     obj.source = 'dcpdiff.cc common.cc'
     obj.target = 'dcpdiff'
 
     obj = bld(features='cxx cxxprogram')
     obj.use = ['libdcp%s' % bld.env.API_VERSION]
-    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM BOOST_REGEX LIBXML++ XMLSEC1 OPENSSL'
+    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM BOOST_REGEX LIBXML++ XMLSEC1 OPENSSL XERCES'
     obj.source = 'dcpinfo.cc common.cc'
     obj.target = 'dcpinfo'
 
     for f in ['dumpsub', 'decryptmxf', 'kdm', 'thumb', 'recover', 'verify']:
         obj = bld(features='cxx cxxprogram')
         obj.use = ['libdcp%s' % bld.env.API_VERSION]
-        obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM BOOST_REGEX LIBXML++ XMLSEC1 OPENSSL'
+        obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM BOOST_REGEX LIBXML++ XMLSEC1 OPENSSL XERCES '
         obj.source = 'dcp%s.cc' % f
         obj.target = 'dcp%s' % f

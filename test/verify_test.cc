@@ -116,7 +116,7 @@ dump_notes (list<dcp::VerificationNote> const & notes)
 BOOST_AUTO_TEST_CASE (verify_test1)
 {
 	vector<boost::filesystem::path> directories = setup (1);
-	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
 
 	boost::filesystem::path const cpl_file = "build/test/verify_test1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
 
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE (verify_test2)
 	BOOST_REQUIRE (fwrite (&x, sizeof(x), 1, mod) == 1);
 	fclose (mod);
 
-	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 2);
 	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 		e.replace ("<Hash>", "<Hash>x");
 	}
 
-	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 3);
 	list<dcp::VerificationNote>::const_iterator i = notes.begin();
@@ -209,7 +209,7 @@ BOOST_AUTO_TEST_CASE (verify_test4)
 		e.replace ("<ContentKind>", "<ContentKind>x");
 	}
 
-	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
 	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::GENERAL_READ);
@@ -233,7 +233,9 @@ void check_after_replace (int n, boost::function<boost::filesystem::path (int)> 
 		e.replace (from, to);
 	}
 
-	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
+
+	dump_notes (notes);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
 	BOOST_CHECK_EQUAL (notes.front().code(), code1);
@@ -249,11 +251,43 @@ void check_after_replace (int n, boost::function<boost::filesystem::path (int)> 
 		e.replace (from, to);
 	}
 
-	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
+
+	dump_notes (notes);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 2);
 	BOOST_CHECK_EQUAL (notes.front().code(), code1);
 	BOOST_CHECK_EQUAL (notes.back().code(), code2);
+}
+
+static
+void check_after_replace (
+	int n, boost::function<boost::filesystem::path (int)> file,
+	string from,
+	string to,
+	dcp::VerificationNote::Code code1,
+	dcp::VerificationNote::Code code2,
+	dcp::VerificationNote::Code code3
+	)
+{
+	vector<boost::filesystem::path> directories = setup (n);
+
+	{
+		Editor e (file(n));
+		e.replace (from, to);
+	}
+
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
+
+	dump_notes (notes);
+
+	BOOST_REQUIRE_EQUAL (notes.size(), 3);
+	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
+	BOOST_CHECK_EQUAL (i->code(), code1);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), code2);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), code3);
 }
 
 /* FrameRate */
@@ -273,7 +307,7 @@ BOOST_AUTO_TEST_CASE (verify_test6)
 	vector<boost::filesystem::path> directories = setup (6);
 
 	boost::filesystem::remove ("build/test/verify_test6/video.mxf");
-	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress);
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
 	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
@@ -304,6 +338,7 @@ BOOST_AUTO_TEST_CASE (verify_test8)
 			8, &cpl,
 			"http://www.smpte-ra.org/schemas/429-7/2006/CPL", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#",
 			dcp::VerificationNote::Code::MISMATCHED_STANDARD,
+			dcp::VerificationNote::Code::XML_VALIDATION_ERROR,
 			dcp::VerificationNote::Code::CPL_HASH_INCORRECT
 			);
 }
@@ -315,7 +350,7 @@ BOOST_AUTO_TEST_CASE (verify_test9)
 	check_after_replace (
 			9, &cpl,
 			"<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b", "<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375",
-			dcp::VerificationNote::Code::BAD_URN_UUID
+			dcp::VerificationNote::Code::XML_VALIDATION_ERROR
 			);
 }
 
@@ -325,19 +360,7 @@ BOOST_AUTO_TEST_CASE (verify_test10)
 	check_after_replace (
 			10, &cpl,
 			"<IssueDate>", "<IssueDate>x",
-			dcp::VerificationNote::Code::BAD_DATE,
+			dcp::VerificationNote::Code::XML_VALIDATION_ERROR,
 			dcp::VerificationNote::Code::CPL_HASH_INCORRECT
 			);
 }
-
-/* Badly formatted ContentVersion/Id */
-BOOST_AUTO_TEST_CASE (verify_test11)
-{
-	check_after_replace (
-			11, &cpl,
-			"<Id>urn:uuid:75ac29aa", "<Id>urn:uri:7fac29aa",
-			dcp::VerificationNote::Code::BAD_URN_UUID,
-			dcp::VerificationNote::Code::CPL_HASH_INCORRECT
-			);
-}
-

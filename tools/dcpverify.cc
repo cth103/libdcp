@@ -112,7 +112,8 @@ main (int argc, char* argv[])
 
 	vector<boost::filesystem::path> directories;
 	directories.push_back (argv[optind]);
-	list<dcp::VerificationNote> notes = dcp::verify (directories, bind(&stage, _1, _2), bind(&progress));
+	/* XXX */
+	list<dcp::VerificationNote> notes = dcp::verify (directories, bind(&stage, _1, _2), bind(&progress), "xsd");
 
 	bool failed = false;
 	BOOST_FOREACH (dcp::VerificationNote i, notes) {
