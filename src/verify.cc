@@ -142,7 +142,9 @@ public:
 		maybe_add (XMLValidationError(e));
 	}
 
-	void resetErrors() {}
+	void resetErrors() {
+		_errors.clear ();
+	}
 
 	list<XMLValidationError> errors () const {
 		return _errors;
@@ -158,7 +160,10 @@ private:
 			"from the one specified in instance document 'http://www.w3.org/2001/03/xml.xsd'" ||
 			e.message() ==
 			"schema document '/home/carl/src/libdcp/xsd/xmldsig-core-schema.xsd' has different target namespace "
-			"from the one specified in instance document 'http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd'"
+			"from the one specified in instance document 'http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd'" ||
+			e.message() ==
+			"schema document '/home/carl/src/libdcp/xsd/SMPTE-429-8-2006-PKL.xsd' has different target namespace "
+			"from the one specified in instance document 'http://www.smpte-ra.org/schemas/429-8/2006/PKL'"
 			) {
 			return;
 		}
@@ -246,6 +251,7 @@ validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_
 		schema["http://www.w3.org/2000/09/xmldsig#"] = "xmldsig-core-schema.xsd";
 		schema["http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"] = "xmldsig-core-schema.xsd";
 		schema["http://www.smpte-ra.org/schemas/429-7/2006/CPL"] = "SMPTE-429-7-2006-CPL.xsd";
+		schema["http://www.smpte-ra.org/schemas/429-8/2006/PKL"] = "SMPTE-429-8-2006-PKL.xsd";
 		schema["http://www.w3.org/2001/03/xml.xsd"] = "xml.xsd";
 
 		string locations;
@@ -273,7 +279,6 @@ validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_
 		} catch (...) {
 			throw MiscError("Unknown exception from xerces");
 		}
-
 	}
 
 	XMLPlatformUtils::Terminate ();
@@ -349,7 +354,7 @@ dcp::verify (
 			BOOST_FOREACH (XMLValidationError i, errors) {
 				notes.push_back (VerificationNote(
 							 VerificationNote::VERIFY_ERROR, VerificationNote::Code::XML_VALIDATION_ERROR,
-							 String::compose("%1 (on line %2)", i.message(), i.line())
+							 String::compose("%1 (file %2, line %3)", i.message(), cpl->file()->string(), i.line())
 							 ));
 			}
 
@@ -414,6 +419,18 @@ dcp::verify (
 						break;
 					}
 				}
+			}
+		}
+
+		BOOST_FOREACH (shared_ptr<PKL> pkl, dcp->pkls()) {
+			stage ("Checking PKL", pkl->file());
+
+			list<XMLValidationError> errors = validate_xml (pkl->file().get(), xsd_dtd_directory);
+			BOOST_FOREACH (XMLValidationError i, errors) {
+				notes.push_back (VerificationNote(
+							 VerificationNote::VERIFY_ERROR, VerificationNote::Code::XML_VALIDATION_ERROR,
+							 String::compose("%1 (file %2, line %3)", i.message(), pkl->file()->string(), i.line())
+							 ));
 			}
 		}
 	}

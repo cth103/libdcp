@@ -108,7 +108,7 @@ void
 dump_notes (list<dcp::VerificationNote> const & notes)
 {
 	BOOST_FOREACH (dcp::VerificationNote i, notes) {
-		std::cout << dcp::note_to_string(i) << "\n";
+		std::cout << dcp::note_to_string(i) << " " << i.note().get_value_or("") << "\n";
 	}
 }
 
@@ -119,6 +119,7 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
 
 	boost::filesystem::path const cpl_file = "build/test/verify_test1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
+	boost::filesystem::path const pkl_file = "build/test/verify_test1/pkl_ae8a9818-872a-4f86-8493-11dfdea03e09.xml";
 
 	list<pair<string, optional<boost::filesystem::path> > >::const_iterator st = stages.begin();
 	BOOST_CHECK_EQUAL (st->first, "Checking DCP");
@@ -139,6 +140,10 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	BOOST_CHECK_EQUAL (st->first, "Checking sound asset hash");
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical("build/test/verify_test1/audio.mxf"));
+	++st;
+	BOOST_CHECK_EQUAL (st->first, "Checking PKL");
+	BOOST_REQUIRE (st->second);
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(pkl_file));
 	++st;
 	BOOST_REQUIRE (st == stages.end());
 
@@ -186,7 +191,9 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
 
-	BOOST_REQUIRE_EQUAL (notes.size(), 3);
+	dump_notes (notes);
+
+	BOOST_REQUIRE_EQUAL (notes.size(), 6);
 	list<dcp::VerificationNote>::const_iterator i = notes.begin();
 	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_ERROR);
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::CPL_HASH_INCORRECT);
@@ -196,6 +203,15 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 	++i;
 	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_ERROR);
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE);
+	++i;
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_ERROR);
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
+	++i;
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_ERROR);
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
+	++i;
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_ERROR);
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
 	++i;
 }
 
