@@ -60,7 +60,6 @@
 #include <boost/noncopyable.hpp>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/regex.hpp>
 #include <map>
 #include <list>
 #include <vector>

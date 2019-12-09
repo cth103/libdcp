@@ -197,15 +197,6 @@ def configure(conf):
                    lib=['boost_date_time%s' % boost_lib_suffix, 'boost_system%s' % boost_lib_suffix],
                    uselib_store='BOOST_DATETIME')
 
-    conf.check_cxx(fragment="""
-    			    #include <boost/regex.hpp>\n
-    			    int main() { boost::regex ex("a"); }\n
-			    """,
-                   msg='Checking for boost regex library',
-                   libpath='/usr/local/lib',
-                   lib=['boost_regex%s' % boost_lib_suffix, 'boost_system%s' % boost_lib_suffix],
-                   uselib_store='BOOST_REGEX')
-
     if not conf.env.DISABLE_TESTS:
         conf.recurse('test')
         if not conf.options.disable_gcov:
