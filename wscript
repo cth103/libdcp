@@ -125,7 +125,7 @@ def configure(conf):
             Logs.error('Neither ImageMagick++ nor GraphicsMagick++ found: one or the other is required')
 
     conf.check_cfg(package='sndfile', args='--cflags --libs', uselib_store='SNDFILE', mandatory=False)
-    conf.check_cfg(package='xerces-c', args='--cflags --libs', uselib_store='XERCES', mandatory=False)
+    conf.check_cfg(package='xerces-c', args='--cflags --libs', uselib_store='XERCES', mandatory=True)
 
     if conf.options.static:
         if conf.options.jpeg == 'oj2':
