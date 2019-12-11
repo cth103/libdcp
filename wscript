@@ -224,6 +224,9 @@ def build(bld):
     if not bld.env.DISABLE_EXAMPLES:
         bld.recurse('examples')
 
+    for i in ['SMPTE-429-7-2006-CPL.xsd', 'SMPTE-429-8-2006-PKL.xsd', 'SMPTE-429-9-2007-AM.xsd', 'xmldsig-core-schema.xsd', 'XMLSchema.dtd', 'XMLSchema.xsd', 'xml.xsd' ]:
+        bld.install_files('${PREFIX}/share/libdcp/xsd', os.path.join('xsd', i))
+
     bld.add_post_fun(post)
 
 def dist(ctx):
