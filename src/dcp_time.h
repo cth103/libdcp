@@ -46,6 +46,19 @@
 
 namespace dcp {
 
+class Time;
+
+extern bool operator== (Time const & a, Time const & b);
+extern bool operator!= (Time const & a, Time const & b);
+extern bool operator<= (Time const & a, Time const & b);
+extern bool operator< (Time const & a, Time const & b);
+extern bool operator> (Time const & a, Time const & b);
+extern bool operator>= (Time const & a, Time const & b);
+extern std::ostream & operator<< (std::ostream & s, Time const & t);
+extern Time operator+ (Time a, Time b);
+extern Time operator- (Time a, Time b);
+extern float operator/ (Time a, Time const & b);
+
 /** @class Time
  *  @brief A representation of time within a DCP.
  */
@@ -92,20 +105,14 @@ public:
 	int64_t as_editable_units (int tcr_) const;
 	Time rebase (int tcr_) const;
 
+	Time& operator+= (Time const & o) {
+		*this = *this + o;
+		return *this;
+	}
+
 private:
 	void set (double seconds, int tcr);
 };
-
-extern bool operator== (Time const & a, Time const & b);
-extern bool operator!= (Time const & a, Time const & b);
-extern bool operator<= (Time const & a, Time const & b);
-extern bool operator< (Time const & a, Time const & b);
-extern bool operator> (Time const & a, Time const & b);
-extern bool operator>= (Time const & a, Time const & b);
-extern std::ostream & operator<< (std::ostream & s, Time const & t);
-extern Time operator+ (Time a, Time b);
-extern Time operator- (Time a, Time b);
-extern float operator/ (Time a, Time const & b);
 
 }
 
