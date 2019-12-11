@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -87,34 +87,36 @@ mbits_per_second (int size, Fraction frame_rate)
 	return size * 8 * frame_rate.as_float() / 1e6;
 }
 
-static void
+static
+dcp::Time
 main_picture (shared_ptr<Reel> reel, bool analyse, bool decompress)
 {
-	if (!reel->main_picture()) {
-		return;
+	shared_ptr<dcp::ReelPictureAsset> mp = reel->main_picture ();
+	if (!mp) {
+		return dcp::Time();
 	}
 
-	cout << "      Picture ID:  " << reel->main_picture()->id();
-	if (reel->main_picture()->entry_point()) {
-		cout << " entry " << *reel->main_picture()->entry_point();
+	cout << "      Picture ID:  " << mp->id();
+	if (mp->entry_point()) {
+		cout << " entry " << *mp->entry_point();
 	}
-	if (reel->main_picture()->duration()) {
-		cout << " duration " << *reel->main_picture()->duration()
-		     << " (" << dcp::Time(*reel->main_picture()->duration(), reel->main_picture()->frame_rate().as_float(), reel->main_picture()->frame_rate().as_float()).as_string(dcp::SMPTE) << ")"
-		     << " intrinsic " << reel->main_picture()->intrinsic_duration();
+	if (mp->duration()) {
+		cout << " duration " << *mp->duration()
+		     << " (" << dcp::Time(*mp->duration(), mp->frame_rate().as_float(), mp->frame_rate().as_float()).as_string(dcp::SMPTE) << ")"
+		     << " intrinsic " << mp->intrinsic_duration();
 	} else {
-		cout << " intrinsic duration " << reel->main_picture()->intrinsic_duration();
+		cout << " intrinsic duration " << mp->intrinsic_duration();
 	}
 
-	if (reel->main_picture()->asset_ref().resolved()) {
-		if (reel->main_picture()->asset()) {
+	if (mp->asset_ref().resolved()) {
+		if (mp->asset()) {
 			cout << "\n      Picture:     "
-			     << reel->main_picture()->asset()->size().width
+			     << mp->asset()->size().width
 			     << "x"
-			     << reel->main_picture()->asset()->size().height << "\n";
+			     << mp->asset()->size().height << "\n";
 		}
 
-		shared_ptr<MonoPictureAsset> ma = dynamic_pointer_cast<MonoPictureAsset>(reel->main_picture()->asset());
+		shared_ptr<MonoPictureAsset> ma = dynamic_pointer_cast<MonoPictureAsset>(mp->asset());
 		if (analyse && ma) {
 			shared_ptr<MonoPictureAssetReader> reader = ma->start_read ();
 			pair<int, int> j2k_size_range (INT_MAX, 0);
@@ -145,53 +147,65 @@ main_picture (shared_ptr<Reel> reel, bool analyse, bool decompress)
 	} else {
 		cout << " - not present in this DCP.\n";
 	}
+
+	return dcp::Time (
+			mp->duration().get_value_or(mp->intrinsic_duration()),
+			mp->frame_rate().as_float(),
+			mp->frame_rate().as_float()
+			);
 }
 
-static void
+static
+void
 main_sound (shared_ptr<Reel> reel)
 {
-	if (reel->main_sound()) {
-		cout << "      Sound ID:    " << reel->main_sound()->id();
-		if (reel->main_sound()->entry_point()) {
-		     cout << " entry " << *reel->main_sound()->entry_point();
-		}
-		if (reel->main_sound()->duration()) {
-			cout << " duration " << *reel->main_sound()->duration()
-			     << " intrinsic " << reel->main_sound()->intrinsic_duration();
-		} else {
-			cout << " intrinsic duration " << reel->main_sound()->intrinsic_duration();
-		}
-
-		if (reel->main_sound()->asset_ref().resolved()) {
-			if (reel->main_sound()->asset()) {
-				cout << "\n      Sound:       "
-				     << reel->main_sound()->asset()->channels()
-				     << " channels at "
-				     << reel->main_sound()->asset()->sampling_rate() << "Hz\n";
-			}
-		} else {
-			cout << " - not present in this DCP.\n";
-		}
-	}
-}
-
-static void
-main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
-{
-	if (!reel->main_subtitle()) {
+	shared_ptr<dcp::ReelSoundAsset> ms = reel->main_sound ();
+	if (!ms) {
 		return;
 	}
 
-	cout << "      Subtitle ID: " << reel->main_subtitle()->id();
+	cout << "      Sound ID:    " << ms->id();
+	if (ms->entry_point()) {
+		cout << " entry " << *ms->entry_point();
+	}
+	if (ms->duration()) {
+		cout << " duration " << *ms->duration()
+			<< " intrinsic " << ms->intrinsic_duration();
+	} else {
+		cout << " intrinsic duration " << ms->intrinsic_duration();
+	}
 
-	if (reel->main_subtitle()->asset_ref().resolved()) {
-		list<shared_ptr<Subtitle> > subs = reel->main_subtitle()->asset()->subtitles ();
+	if (ms->asset_ref().resolved()) {
+		if (ms->asset()) {
+			cout << "\n      Sound:       "
+				<< ms->asset()->channels()
+				<< " channels at "
+				<< ms->asset()->sampling_rate() << "Hz\n";
+		}
+	} else {
+		cout << " - not present in this DCP.\n";
+	}
+}
+
+static
+void
+main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
+{
+	shared_ptr<dcp::ReelSubtitleAsset> ms = reel->main_subtitle ();
+	if (!ms) {
+		return;
+	}
+
+	cout << "      Subtitle ID: " << ms->id();
+
+	if (ms->asset_ref().resolved()) {
+		list<shared_ptr<Subtitle> > subs = ms->asset()->subtitles ();
 		cout << "\n      Subtitle:    " << subs.size() << " subtitles";
-		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (reel->main_subtitle()->asset());
+		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (ms->asset());
 		if (iop) {
 			cout << " in " << iop->language() << "\n";
 		}
-		shared_ptr<SMPTESubtitleAsset> smpte = dynamic_pointer_cast<SMPTESubtitleAsset> (reel->main_subtitle()->asset());
+		shared_ptr<SMPTESubtitleAsset> smpte = dynamic_pointer_cast<SMPTESubtitleAsset> (ms->asset());
 		if (smpte && smpte->language ()) {
 			cout << " in " << smpte->language().get() << "\n";
 		}
@@ -314,6 +328,8 @@ main (int argc, char* argv[])
 		ignore_missing_assets = true;
 	}
 
+	dcp::Time total_time;
+
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls) {
 		cout << "  CPL: " << i->annotation_text() << "\n";
 
@@ -322,7 +338,7 @@ main (int argc, char* argv[])
 			cout << "    Reel " << R << "\n";
 
 			try {
-				main_picture (j, picture, decompress);
+				total_time += main_picture(j, picture, decompress);
 			} catch (UnresolvedRefError& e) {
 				if (!ignore_missing_assets) {
 					cerr << e.what() << " (for main picture)\n";
@@ -330,7 +346,7 @@ main (int argc, char* argv[])
 			}
 
 			try {
-				main_sound (j);
+				main_sound(j);
 			} catch (UnresolvedRefError& e) {
 				if (!ignore_missing_assets) {
 					cerr << e.what() << " (for main sound)\n";
@@ -348,6 +364,8 @@ main (int argc, char* argv[])
 			++R;
 		}
 	}
+
+	cout << "Total: " << total_time.as_string(dcp::SMPTE) << "\n";
 
 	return 0;
 }
