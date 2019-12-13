@@ -20,7 +20,7 @@ def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'make_dcp'
     obj.use    = 'libdcp%s' % bld.env.API_VERSION
-    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM'
+    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM OPENSSL XMLSEC1'
     obj.source = 'make_dcp.cc'
     obj.target = 'make_dcp'
     obj.install_path = ''
@@ -28,7 +28,7 @@ def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'read_dcp'
     obj.use    = 'libdcp%s' % bld.env.API_VERSION
-    obj.uselib = 'OPENJPEG CXML MAGICK OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM'
+    obj.uselib = 'OPENJPEG CXML MAGICK OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM OPENSSL XMLSEC1'
     obj.source = 'read_dcp.cc'
     obj.target = 'read_dcp'
     obj.install_path = ''

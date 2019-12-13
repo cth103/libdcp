@@ -51,7 +51,7 @@ def configure(conf):
 def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'tests'
-    obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM BOOST_DATETIME OPENJPEG CXML XMLSEC1 SNDFILE OPENMP ASDCPLIB_CTH LIBXML++ OPENSSL'
+    obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM BOOST_DATETIME OPENJPEG CXML XMLSEC1 SNDFILE OPENMP ASDCPLIB_CTH LIBXML++ OPENSSL XERCES'
     obj.cppflags = ['-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION

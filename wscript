@@ -125,7 +125,11 @@ def configure(conf):
             Logs.error('Neither ImageMagick++ nor GraphicsMagick++ found: one or the other is required')
 
     conf.check_cfg(package='sndfile', args='--cflags --libs', uselib_store='SNDFILE', mandatory=False)
-    conf.check_cfg(package='xerces-c', args='--cflags --libs', uselib_store='XERCES', mandatory=True)
+
+    if conf.options.target_windows:
+        # XXX: it feels like there should be a more elegant way to get these included
+        conf.env.LIB_XERCES.append('curl')
+        conf.env.LIB_XERCES.append('ws2_32')
 
     if conf.options.static:
         if conf.options.jpeg == 'oj2':
@@ -140,6 +144,9 @@ def configure(conf):
         conf.env.HAVE_CXML = 1
         conf.env.LIB_CXML = ['xml++-2.6', 'glibmm-2.4']
         conf.env.STLIB_CXML = ['cxml']
+        conf.check_cfg(package='xerces-c', args='--cflags', uselib_store='XERCES', mandatory=True)
+        conf.env.STLIB_XERCES = ['xerces-c']
+        conf.env.LIB_XERCES = ['icuuc', 'curl']
     else:
         if conf.options.jpeg == 'oj2':
             conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
@@ -147,6 +154,7 @@ def configure(conf):
             conf.check_cfg(package='libopenjpeg1', args='--cflags --libs', atleast_version='1.5.0', uselib_store='OPENJPEG', mandatory=True)
         conf.check_cfg(package='libasdcp-carl', atleast_version='0.1.3', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.check_cfg(package='libcxml', atleast_version='0.16.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
+        conf.check_cfg(package='xerces-c', args='--cflags --libs', uselib_store='XERCES', mandatory=True)
 
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'
