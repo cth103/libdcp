@@ -154,15 +154,8 @@ private:
 	{
 		/* XXX: nasty hack */
 		if (
-			e.message() ==
-			"schema document '/home/carl/src/libdcp/xsd/xml.xsd' has different target namespace "
-			"from the one specified in instance document 'http://www.w3.org/2001/03/xml.xsd'" ||
-			e.message() ==
-			"schema document '/home/carl/src/libdcp/xsd/xmldsig-core-schema.xsd' has different target namespace "
-			"from the one specified in instance document 'http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd'" ||
-			e.message() ==
-			"schema document '/home/carl/src/libdcp/xsd/SMPTE-429-8-2006-PKL.xsd' has different target namespace "
-			"from the one specified in instance document 'http://www.smpte-ra.org/schemas/429-8/2006/PKL'"
+			e.message().find("schema document") != string::npos &&
+			e.message().find("has different target namespace from the one specified in instance document") != string::npos
 			) {
 			return;
 		}
