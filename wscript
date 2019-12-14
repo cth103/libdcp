@@ -126,11 +126,6 @@ def configure(conf):
 
     conf.check_cfg(package='sndfile', args='--cflags --libs', uselib_store='SNDFILE', mandatory=False)
 
-    if conf.options.target_windows:
-        # XXX: it feels like there should be a more elegant way to get these included
-        conf.env.LIB_XERCES.append('curl')
-        conf.env.LIB_XERCES.append('ws2_32')
-
     if conf.options.static:
         if conf.options.jpeg == 'oj2':
             conf.check_cfg(package='libopenjp2', args='--cflags', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
@@ -155,6 +150,11 @@ def configure(conf):
         conf.check_cfg(package='libasdcp-carl', atleast_version='0.1.3', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.check_cfg(package='libcxml', atleast_version='0.16.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
         conf.check_cfg(package='xerces-c', args='--cflags --libs', uselib_store='XERCES', mandatory=True)
+
+    if conf.options.target_windows:
+        # XXX: it feels like there should be a more elegant way to get these included
+        conf.env.LIB_XERCES.append('curl')
+        conf.env.LIB_XERCES.append('ws2_32')
 
     if conf.options.target_windows:
         boost_lib_suffix = '-mt'
