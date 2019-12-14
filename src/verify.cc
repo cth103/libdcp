@@ -280,7 +280,7 @@ validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_
 		notes.push_back (
 			VerificationNote(
 				VerificationNote::VERIFY_ERROR,
-				VerificationNote::Code::XML_VALIDATION_ERROR,
+				VerificationNote::XML_VALIDATION_ERROR,
 				i.message(),
 				xml_file,
 				i.line()
@@ -345,9 +345,9 @@ dcp::verify (
 		try {
 			dcp->read (&notes);
 		} catch (DCPReadError& e) {
-			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::GENERAL_READ, string(e.what())));
+			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
 		} catch (XMLError& e) {
-			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::Code::GENERAL_READ, string(e.what())));
+			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
 		}
 
 		BOOST_FOREACH (shared_ptr<CPL> cpl, dcp->cpls()) {

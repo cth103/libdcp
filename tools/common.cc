@@ -46,7 +46,7 @@ dcp::filter_notes (list<dcp::VerificationNote>& notes, bool ignore_missing_asset
 		list<dcp::VerificationNote>::iterator tmp = i;
 		++tmp;
 
-		if (ignore_missing_assets && i->code() == dcp::VerificationNote::Code::MISSING_ASSET) {
+		if (ignore_missing_assets && i->code() == dcp::VerificationNote::MISSING_ASSET) {
 			notes.erase (i);
 		}
 

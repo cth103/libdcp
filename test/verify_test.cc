@@ -346,7 +346,7 @@ BOOST_AUTO_TEST_CASE (verify_test6)
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
 	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::Code::MISSING_ASSET);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::MISSING_ASSET);
 }
 
 static
@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE (verify_test7)
 	check_after_replace (
 			7, &assetmap,
 			"<Path>video.mxf</Path>", "<Path></Path>",
-			dcp::VerificationNote::Code::EMPTY_ASSET_PATH
+			dcp::VerificationNote::EMPTY_ASSET_PATH
 			);
 }
 
@@ -372,9 +372,9 @@ BOOST_AUTO_TEST_CASE (verify_test8)
 	check_after_replace (
 			8, &cpl,
 			"http://www.smpte-ra.org/schemas/429-7/2006/CPL", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#",
-			dcp::VerificationNote::Code::MISMATCHED_STANDARD,
-			dcp::VerificationNote::Code::XML_VALIDATION_ERROR,
-			dcp::VerificationNote::Code::CPL_HASH_INCORRECT
+			dcp::VerificationNote::MISMATCHED_STANDARD,
+			dcp::VerificationNote::XML_VALIDATION_ERROR,
+			dcp::VerificationNote::CPL_HASH_INCORRECT
 			);
 }
 
@@ -385,7 +385,7 @@ BOOST_AUTO_TEST_CASE (verify_test9)
 	check_after_replace (
 			9, &cpl,
 			"<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b", "<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375",
-			dcp::VerificationNote::Code::XML_VALIDATION_ERROR
+			dcp::VerificationNote::XML_VALIDATION_ERROR
 			);
 }
 
@@ -395,8 +395,8 @@ BOOST_AUTO_TEST_CASE (verify_test10)
 	check_after_replace (
 			10, &cpl,
 			"<IssueDate>", "<IssueDate>x",
-			dcp::VerificationNote::Code::XML_VALIDATION_ERROR,
-			dcp::VerificationNote::Code::CPL_HASH_INCORRECT
+			dcp::VerificationNote::XML_VALIDATION_ERROR,
+			dcp::VerificationNote::CPL_HASH_INCORRECT
 			);
 }
 
@@ -406,7 +406,7 @@ BOOST_AUTO_TEST_CASE (verify_test11)
 	check_after_replace (
 		11, &pkl,
 		"<Id>urn:uuid:ae8", "<Id>urn:uuid:xe8",
-		dcp::VerificationNote::Code::XML_VALIDATION_ERROR
+		dcp::VerificationNote::XML_VALIDATION_ERROR
 		);
 }
 
@@ -416,6 +416,6 @@ BOOST_AUTO_TEST_CASE (verify_test12)
 	check_after_replace (
 		12, &asset_map,
 		"<Id>urn:uuid:74e", "<Id>urn:uuid:x4e",
-		dcp::VerificationNote::Code::XML_VALIDATION_ERROR
+		dcp::VerificationNote::XML_VALIDATION_ERROR
 		);
 }
