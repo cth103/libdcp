@@ -38,6 +38,7 @@
 
 using std::ifstream;
 using std::string;
+using std::list;
 
 /** Test dcp::base64_decode */
 BOOST_AUTO_TEST_CASE (base64_decode_test)
@@ -339,5 +340,16 @@ BOOST_AUTO_TEST_CASE (day_greater_than_or_equal_test)
 
 		dcp::LocalTime b ("1981-02-04T00:00:00");
 		BOOST_CHECK (day_greater_than_or_equal(a, b));
+	}
+}
+
+BOOST_AUTO_TEST_CASE (unique_string_test)
+{
+	list<string> existing;
+	for (int i = 0; i < 16; i++) {
+		string s;
+		BOOST_CHECK_NO_THROW (s = dcp::unique_string(existing, "foo"));
+		BOOST_CHECK (find(existing.begin(), existing.end(), s) == existing.end());
+		existing.push_back (s);
 	}
 }
