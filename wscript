@@ -140,8 +140,7 @@ def configure(conf):
         conf.env.LIB_CXML = ['xml++-2.6', 'glibmm-2.4']
         conf.env.STLIB_CXML = ['cxml']
         conf.check_cfg(package='xerces-c', args='--cflags', uselib_store='XERCES', mandatory=True)
-        conf.env.STLIB_XERCES = ['xerces-c']
-        conf.env.LIB_XERCES = ['icuuc', 'curl']
+        conf.env.LIB_XERCES = ['xerces-c', 'icuuc', 'curl']
     else:
         if conf.options.jpeg == 'oj2':
             conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
