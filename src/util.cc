@@ -376,3 +376,20 @@ dcp::indent (xmlpp::Element* element, int initial)
 		element->add_child_text (last, "\n" + spaces(initial));
 	}
 }
+
+/** Try quite hard to find a string which starts with \ref base and is
+ *  not in \ref existing.
+ */
+string
+dcp::unique_string (list<string> existing, string base)
+{
+	int const max_tries = existing.size() + 1;
+	for (int i = 0; i < max_tries; ++i) {
+		string trial = String::compose("%1%2", base, i);
+		if (find(existing.begin(), existing.end(), trial) == existing.end()) {
+			return trial;
+		}
+	}
+
+	DCP_ASSERT (false);
+}

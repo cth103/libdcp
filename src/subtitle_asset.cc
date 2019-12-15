@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -40,6 +40,7 @@
 #include "subtitle_string.h"
 #include "subtitle_image.h"
 #include "dcp_assert.h"
+#include "load_font_node.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_util.h>
 #include <libxml++/nodes/element.h>
@@ -654,4 +655,41 @@ SubtitleAsset::fonts_with_load_ids () const
 		out[i.load_id] = i.data;
 	}
 	return out;
+}
+
+/** Replace empty IDs in any <LoadFontId> and <Font> tags with
+ *  a dummy string.  Some systems give errors with empty font IDs
+ *  (see DCP-o-matic bug #1689).
+ */
+void
+SubtitleAsset::fix_empty_font_ids ()
+{
+	bool have_empty = false;
+	list<string> ids;
+	BOOST_FOREACH (shared_ptr<LoadFontNode> i, load_font_nodes()) {
+		if (i->id == "") {
+			have_empty = true;
+		} else {
+			ids.push_back (i->id);
+		}
+	}
+
+	if (!have_empty) {
+		return;
+	}
+
+	string const empty_id = unique_string (ids, "font");
+
+	BOOST_FOREACH (shared_ptr<LoadFontNode> i, load_font_nodes()) {
+		if (i->id == "") {
+			i->id = empty_id;
+		}
+	}
+
+	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
+		shared_ptr<SubtitleString> j = dynamic_pointer_cast<SubtitleString> (i);
+		if (j && j->font() && j->font().get() == "") {
+			j->set_font (empty_id);
+		}
+	}
 }

@@ -101,6 +101,8 @@ public:
 
 	Time latest_subtitle_out () const;
 
+	void fix_empty_font_ids ();
+
 	virtual std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const = 0;
 
 protected:

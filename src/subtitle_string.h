@@ -125,6 +125,10 @@ public:
 		return _aspect_adjust;
 	}
 
+	void set_font (std::string id) {
+		_font = id;
+	}
+
 	void set_size (int s) {
 		_size = s;
 	}
