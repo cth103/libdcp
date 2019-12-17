@@ -36,7 +36,7 @@ import shutil
 
 def dependencies(target, options):
     if (target.platform == 'windows' and target.version == 'xp') or (options is not None and 'jpeg' in options and options['jpeg'] == 'oj1'):
-        return (('libcxml', '0d18df4'), ('openjpeg', '9e80dae'), ('asdcplib', 'carl'))
+        return (('libcxml', '0d18df4'), ('openjpeg', 'f166257'), ('asdcplib', 'carl'))
     else:
         return (('libcxml', '0d18df4'), ('openjpeg', '956af06'), ('asdcplib', 'carl'))
 
