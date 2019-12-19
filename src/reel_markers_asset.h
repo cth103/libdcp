@@ -49,6 +49,9 @@ public:
 	void set (Marker, Time);
 	void unset (Marker);
 	boost::optional<Time> get (Marker m) const;
+	std::map<Marker, Time> get () const {
+		return _markers;
+	}
 
 protected:
 	std::string cpl_node_name (Standard) const;

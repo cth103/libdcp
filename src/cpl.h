@@ -149,6 +149,10 @@ public:
 		_ratings = r;
 	}
 
+	std::string content_version_label_text () const {
+		return _content_version_label_text;
+	}
+
 	static std::string static_pkl_type (Standard standard);
 
 protected:
