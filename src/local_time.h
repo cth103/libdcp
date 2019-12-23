@@ -58,6 +58,7 @@ class LocalTime
 {
 public:
 	LocalTime ();
+	explicit LocalTime (struct tm tm);
 	explicit LocalTime (boost::posix_time::ptime);
 	LocalTime (boost::posix_time::ptime, int tz_hour, int tz_minute);
 	explicit LocalTime (std::string);
@@ -82,6 +83,8 @@ public:
 		_year = y;
 	}
 
+	void add_months (int a);
+
 	bool operator== (LocalTime const & other) const;
 	bool operator!= (LocalTime const & other) const;
 	bool operator< (LocalTime const & other) const;
@@ -89,6 +92,7 @@ public:
 private:
 	friend class ::local_time_test;
 
+	void set (struct tm const * tm);
 	void set_local_time_zone ();
 
 	/* Local time */

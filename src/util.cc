@@ -381,34 +381,34 @@ dcp::indent (xmlpp::Element* element, int initial)
  *  equal to the one represented by \ref b, ignoring the time parts.
  */
 bool
-dcp::day_less_than_or_equal (struct tm a, LocalTime b)
+dcp::day_less_than_or_equal (LocalTime a, LocalTime b)
 {
-	if ((a.tm_year + 1900) != b.year()) {
-		return (a.tm_year + 1900) < b.year();
+	if (a.year() != b.year()) {
+		return a.year() < b.year();
 	}
 
-	if ((a.tm_mon + 1) != b.month()) {
-		return (a.tm_mon + 1) < b.month();
+	if (a.month() != b.month()) {
+		return a.month() < b.month();
 	}
 
-	return a.tm_mday <= b.day();
+	return a.day() <= b.day();
 }
 
 /** @return true if the day represented by \ref a is greater than or
  *  equal to the one represented by \ref b, ignoring the time parts.
  */
 bool
-dcp::day_greater_than_or_equal (struct tm a, LocalTime b)
+dcp::day_greater_than_or_equal (LocalTime a, LocalTime b)
 {
-	if ((a.tm_year + 1900) != b.year()) {
-		return (a.tm_year + 1900) > b.year();
+	if (a.year() != b.year()) {
+		return a.year() > b.year();
 	}
 
-	if ((a.tm_mon + 1) != b.month()) {
-		return (a.tm_mon + 1) > b.month();
+	if (a.month() != b.month()) {
+		return a.month() > b.month();
 	}
 
-	return a.tm_mday >= b.day();
+	return a.day() >= b.day();
 }
 
 /** Try quite hard to find a string which starts with \ref base and is

@@ -143,99 +143,56 @@ BOOST_AUTO_TEST_CASE (day_less_than_or_equal_test)
 {
 	{
 		/* equal */
-		struct tm a;
-		a.tm_mday = 5;
-		a.tm_mon = 3;
-		a.tm_year = 78;
-
+		dcp::LocalTime a ("1978-04-05T00:00:00");
 		dcp::LocalTime b ("1978-04-05T00:00:00");
 		BOOST_CHECK (day_less_than_or_equal(a, b));
 	}
 
 	{
 		/* every part of a less than b */
-		struct tm a;
-		a.tm_mday = 4;
-		a.tm_mon = 2;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-02-04T00:00:00");
 		dcp::LocalTime b ("1985-05-23T00:00:00");
 		BOOST_CHECK (day_less_than_or_equal(a, b));
 	}
 
 	{
 		/* years equal, other parts less */
-		struct tm a;
-		a.tm_mday = 4;
-		a.tm_mon = 2;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-03-02T00:00:00");
 		dcp::LocalTime b ("1981-05-10T00:00:00");
 		BOOST_CHECK (day_less_than_or_equal(a, b));
 	}
 
 	{
 		/* year and month equal, day less */
-		struct tm a;
-		a.tm_mday = 4;
-		a.tm_mon = 2;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-03-09T00:00:00");
 		dcp::LocalTime b ("1981-03-12T00:00:00");
 		BOOST_CHECK (day_less_than_or_equal(a, b));
 	}
 
 	{
-		/* year and month equal, day less */
-		struct tm a;
-		a.tm_mday = 1;
-		a.tm_mon = 2;
-		a.tm_year = 81;
-
-		dcp::LocalTime b ("1981-03-04T00:00:00");
-		BOOST_CHECK (day_less_than_or_equal(a, b));
-	}
-
-	{
 		/* a one day later than b */
-		struct tm a;
-		a.tm_mday = 5;
-		a.tm_mon = 2;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-03-05T00:00:00");
 		dcp::LocalTime b ("1981-03-04T00:00:00");
 		BOOST_CHECK (!day_less_than_or_equal(a, b));
 	}
 
 	{
 		/* year and month same, day much later */
-		struct tm a;
-		a.tm_mday = 22;
-		a.tm_mon = 2;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-03-22T00:00:00");
 		dcp::LocalTime b ("1981-03-04T00:00:00");
 		BOOST_CHECK (!day_less_than_or_equal(a, b));
 	}
 
 	{
 		/* year same, month and day later */
-		struct tm a;
-		a.tm_mday = 22;
-		a.tm_mon = 5;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-06-22T00:00:00");
 		dcp::LocalTime b ("1981-02-04T00:00:00");
 		BOOST_CHECK (!day_less_than_or_equal(a, b));
 	}
 
 	{
 		/* all later */
-		struct tm a;
-		a.tm_mday = 22;
-		a.tm_mon = 5;
-		a.tm_year = 99;
-
+		dcp::LocalTime a ("1999-06-22T00:00:00");
 		dcp::LocalTime b ("1981-02-04T00:00:00");
 		BOOST_CHECK (!day_less_than_or_equal(a, b));
 	}
@@ -245,99 +202,63 @@ BOOST_AUTO_TEST_CASE (day_greater_than_or_equal_test)
 {
 	{
 		/* equal */
-		struct tm a;
-		a.tm_mday = 5;
-		a.tm_mon = 3;
-		a.tm_year = 78;
-
+		dcp::LocalTime a ("1978-04-05T00:00:00");
 		dcp::LocalTime b ("1978-04-05T00:00:00");
 		BOOST_CHECK (day_greater_than_or_equal(a, b));
 	}
 
 	{
 		/* every part of a less than b */
-		struct tm a;
-		a.tm_mday = 4;
-		a.tm_mon = 2;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-03-04T00:00:00");
 		dcp::LocalTime b ("1985-05-23T00:00:00");
 		BOOST_CHECK (!day_greater_than_or_equal(a, b));
 	}
 
 	{
 		/* years equal, other parts less */
-		struct tm a;
-		a.tm_mday = 4;
-		a.tm_mon = 2;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-02-05T00:00:00");
 		dcp::LocalTime b ("1981-05-10T00:00:00");
 		BOOST_CHECK (!day_greater_than_or_equal(a, b));
 	}
 
 	{
 		/* year and month equal, day less */
-		struct tm a;
-		a.tm_mday = 4;
-		a.tm_mon = 2;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-03-04T00:00:00");
 		dcp::LocalTime b ("1981-03-12T00:00:00");
 		BOOST_CHECK (!day_greater_than_or_equal(a, b));
 	}
 
 	{
 		/* year and month equal, day less */
-		struct tm a;
-		a.tm_mday = 1;
-		a.tm_mon = 2;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-03-01T00:00:00");
 		dcp::LocalTime b ("1981-03-04T00:00:00");
 		BOOST_CHECK (!day_greater_than_or_equal(a, b));
 	}
 
 	{
 		/* a one day later than b */
-		struct tm a;
-		a.tm_mday = 5;
-		a.tm_mon = 2;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-03-05T00:00:00");
 		dcp::LocalTime b ("1981-03-04T00:00:00");
 		BOOST_CHECK (day_greater_than_or_equal(a, b));
 	}
 
 	{
 		/* year and month same, day much later */
-		struct tm a;
-		a.tm_mday = 22;
-		a.tm_mon = 2;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-03-22T00:00:00");
 		dcp::LocalTime b ("1981-03-04T00:00:00");
 		BOOST_CHECK (day_greater_than_or_equal(a, b));
 	}
 
 	{
 		/* year same, month and day later */
-		struct tm a;
-		a.tm_mday = 22;
-		a.tm_mon = 5;
-		a.tm_year = 81;
-
+		dcp::LocalTime a ("1981-05-22T00:00:00");
 		dcp::LocalTime b ("1981-02-04T00:00:00");
 		BOOST_CHECK (day_greater_than_or_equal(a, b));
 	}
 
 	{
 		/* all later */
-		struct tm a;
-		a.tm_mday = 22;
-		a.tm_mon = 5;
-		a.tm_year = 99;
-
+		dcp::LocalTime a ("1999-06-22T00:00:00");
 		dcp::LocalTime b ("1981-02-04T00:00:00");
 		BOOST_CHECK (day_greater_than_or_equal(a, b));
 	}
@@ -352,4 +273,23 @@ BOOST_AUTO_TEST_CASE (unique_string_test)
 		BOOST_CHECK (find(existing.begin(), existing.end(), s) == existing.end());
 		existing.push_back (s);
 	}
+}
+
+BOOST_AUTO_TEST_CASE (local_time_add_months_test)
+{
+	dcp::LocalTime t("2013-06-23T18:06:59.123");
+	t.add_months(-1);
+	BOOST_CHECK_EQUAL (t, dcp::LocalTime("2013-05-23T18:06:59.123"));
+	t.add_months(1);
+	BOOST_CHECK_EQUAL (t, dcp::LocalTime("2013-06-23T18:06:59.123"));
+	t.add_months(1);
+	BOOST_CHECK_EQUAL (t, dcp::LocalTime("2013-07-23T18:06:59.123"));
+	t.add_months(4);
+	BOOST_CHECK_EQUAL (t, dcp::LocalTime("2013-11-23T18:06:59.123"));
+	t.add_months(2);
+	BOOST_CHECK_EQUAL (t, dcp::LocalTime("2014-01-23T18:06:59.123"));
+	t.add_months(-14);
+	BOOST_CHECK_EQUAL (t, dcp::LocalTime("2012-11-23T18:06:59.123"));
+	t.add_months(14);
+	BOOST_CHECK_EQUAL (t, dcp::LocalTime("2014-01-23T18:06:59.123"));
 }

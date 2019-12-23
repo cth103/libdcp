@@ -52,7 +52,17 @@ LocalTime::LocalTime ()
 {
 	time_t now = time (0);
 	struct tm* tm = localtime (&now);
+	set (tm);
+}
 
+LocalTime::LocalTime (struct tm t)
+{
+	set (&t);
+}
+
+void
+LocalTime::set (struct tm const * tm)
+{
 	_year = tm->tm_year + 1900;
 	_month = tm->tm_mon + 1;
 	_day = tm->tm_mday;
@@ -206,6 +216,22 @@ LocalTime::time_of_day (bool with_second, bool with_millisecond) const
 		snprintf (buffer, sizeof (buffer), "%02d:%02d", _hour, _minute);
 	}
 	return buffer;
+}
+
+void
+LocalTime::add_months (int m)
+{
+	_month += m;
+
+	while (_month < 0) {
+		_month += 12;
+		_year--;
+	}
+
+	while (_month > 11) {
+		_month -= 12;
+		_year++;
+	}
 }
 
 bool
