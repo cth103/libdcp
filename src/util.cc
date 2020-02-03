@@ -176,7 +176,7 @@ dcp::init ()
 
 #ifdef XMLSEC_CRYPTO_DYNAMIC_LOADING
 	if (xmlSecCryptoDLLoadLibrary(BAD_CAST "openssl") < 0) {
-		throw MiscError (String::compose("unable to load openssl xmlsec-crypto library"));
+		throw MiscError ("unable to load openssl xmlsec-crypto library");
 	}
 #endif
 
