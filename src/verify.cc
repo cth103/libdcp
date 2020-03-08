@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -371,6 +371,16 @@ dcp::verify (
 
 			BOOST_FOREACH (shared_ptr<Reel> reel, cpl->reels()) {
 				stage ("Checking reel", optional<boost::filesystem::path>());
+
+				BOOST_FOREACH (shared_ptr<ReelAsset> i, reel->assets()) {
+					if (i->duration() && (i->duration().get() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
+						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::DURATION_TOO_SMALL, i->id()));
+					}
+					if ((i->intrinsic_duration() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
+						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::INTRINSIC_DURATION_TOO_SMALL, i->id()));
+					}
+				}
+
 				if (reel->main_picture()) {
 					/* Check reel stuff */
 					Fraction const frame_rate = reel->main_picture()->frame_rate();
@@ -472,6 +482,10 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "The DCP contains both SMPTE and Interop parts.";
 	case dcp::VerificationNote::XML_VALIDATION_ERROR:
 		return String::compose("An XML file is badly formed: %1 (%2:%3)", note.note().get(), note.file()->filename(), note.line().get());
+	case dcp::VerificationNote::INTRINSIC_DURATION_TOO_SMALL:
+		return String::compose("The intrinsic duration of an asset is less than 1 second long: %1", note.note().get());
+	case dcp::VerificationNote::DURATION_TOO_SMALL:
+		return String::compose("The duration of an asset is less than 1 second long: %1", note.note().get());
 	}
 
 	return "";

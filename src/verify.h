@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -77,6 +77,10 @@ public:
 		MISMATCHED_STANDARD,
 		/** Some XML fails to validate against the XSD/DTD */
 		XML_VALIDATION_ERROR,
+		/** An asset's IntrinsicDuration is less than 1 second */
+		INTRINSIC_DURATION_TOO_SMALL,
+		/** An asset's Duration is less than 1 second */
+		DURATION_TOO_SMALL
 	};
 
 	VerificationNote (Type type, Code code)

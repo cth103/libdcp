@@ -471,3 +471,25 @@ BOOST_AUTO_TEST_CASE (verify_test13)
 
 	next_verify_test_number++;
 }
+
+/* DCP with a short asset */
+BOOST_AUTO_TEST_CASE (verify_test14)
+{
+	vector<boost::filesystem::path> directories = setup (8, next_verify_test_number);
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
+
+	dump_notes (notes);
+
+	BOOST_REQUIRE_EQUAL (notes.size(), 4);
+	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::DURATION_TOO_SMALL);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::INTRINSIC_DURATION_TOO_SMALL);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::DURATION_TOO_SMALL);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::INTRINSIC_DURATION_TOO_SMALL);
+	++i;
+	next_verify_test_number++;
+}
+
