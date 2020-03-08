@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PackingList xmlns="http://www.digicine.com/PROTO-ASDCP-PKL-20040311#">
+  <Id>urn:uuid:0382c908-7389-45d6-b671-d5100868cbbe</Id>
+  <AnnotationText>Short_FTR-1_F_MOS_2K_20200308_IOP_OV</AnnotationText>
+  <IssueDate>2020-03-08T22:39:14+01:00</IssueDate>
+  <Issuer>DCP-o-matic 2.15.47devel caf67bef26</Issuer>
+  <Creator>DCP-o-matic 2.15.47devel caf67bef26</Creator>
+  <AssetList>
+    <Asset>
+      <Id>urn:uuid:d74fda30-d5f4-4c5f-870f-ebc089d97eb7</Id>
+      <AnnotationText>d74fda30-d5f4-4c5f-870f-ebc089d97eb7</AnnotationText>
+      <Hash>1KKdwXhS0LDUe16ziYYIomKR3oQ=</Hash>
+      <Size>9079</Size>
+      <Type>text/xml;asdcpKind=CPL</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:d7576dcb-a361-4139-96b8-267f5f8d7f91</Id>
+      <AnnotationText>d7576dcb-a361-4139-96b8-267f5f8d7f91</AnnotationText>
+      <Hash>jOZgIxogFSZZm2Bo2l+SIa9JhEE=</Hash>
+      <Size>47739</Size>
+      <Type>application/x-smpte-mxf;asdcpKind=Picture</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:a2a87f5d-b749-4a7e-8d0c-9d48a4abf626</Id>
+      <AnnotationText>a2a87f5d-b749-4a7e-8d0c-9d48a4abf626</AnnotationText>
+      <Hash>+/1qe/yPbyof3CrPUgncvm3pfoE=</Hash>
+      <Size>845154</Size>
+      <Type>application/x-smpte-mxf;asdcpKind=Sound</Type>
+    </Asset>
+  </AssetList>
+  <Signer xmlns:dsig="http://www.w3.org/2000/09/xmldsig#">
+    <dsig:X509Data>
+      <dsig:X509IssuerSerial>
+        <dsig:X509IssuerName>dnQualifier=lZk4e0WYYlT85Lcd6WEFqLA\+RBM=,CN=.dcpomatic.smpte-430-2.INTERMEDIATE,OU=dcpomatic.com,O=dcpomatic.com</dsig:X509IssuerName>
+        <dsig:X509SerialNumber>7</dsig:X509SerialNumber>
+      </dsig:X509IssuerSerial>
+      <dsig:X509SubjectName>dnQualifier=gpFOP6eBu1fU6/yfdn\+UlWuFtqA=,CN=CS.dcpomatic.smpte-430-2.LEAF,OU=dcpomatic.com,O=dcpomatic.com</dsig:X509SubjectName>
+    </dsig:X509Data>
+  </Signer>
+  <dsig:Signature xmlns:dsig="http://www.w3.org/2000/09/xmldsig#">
+    <dsig:SignedInfo>
+      <dsig:CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/>
+      <dsig:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+      <dsig:Reference URI="">
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+        <dsig:DigestValue>URs0kuatFBRNdUNxm0dUttWcA4Y=</dsig:DigestValue>
+      </dsig:Reference>
+    </dsig:SignedInfo>
+    <dsig:SignatureValue>BgRZ6abOezgtVvfJt+3OPhXaTryGo1B2zmK0lLXExDIQgz5a3XLVphy7XAnK/Qch
+eGMUzT9b6yujyR/PVmT47v2REk2i3B7SbIjIKB44RiZxRarI2uD1pNv9d9+pnXf1
++h+pM1Yt8ZsIAUAvd74Gg2Y84qz7PIekS3n3utNSZhQySc8xa2UEnLkjQfMrn+Pd
+0VHp2RjfKZmS4Er19BT5ZoQ2x0MWPFQeKHuuYUvaWyBW4Yywn06eHxpE0394pj0X
+P/QQmmcwUwZ5k8q8IxyrWdB0vpbkSEX9A99Ix+yreu1E61XaWFzHM7fuDb1MZj4f
+79BqWjklBx9aFkuMGUZcdQ==</dsig:SignatureValue>
+    <dsig:KeyInfo>
+      <dsig:X509Data>
+        <dsig:X509IssuerSerial>
+          <dsig:X509IssuerName>dnQualifier=lZk4e0WYYlT85Lcd6WEFqLA\+RBM=,CN=.dcpomatic.smpte-430-2.INTERMEDIATE,OU=dcpomatic.com,O=dcpomatic.com</dsig:X509IssuerName>
+          <dsig:X509SerialNumber>7</dsig:X509SerialNumber>
+        </dsig:X509IssuerSerial>
+        <dsig:X509Certificate>MIIEazCCA1OgAwIBAgIBBzANBgkqhkiG9w0BAQsFADCBhTEWMBQGA1UEChMNZGNw
+b21hdGljLmNvbTEWMBQGA1UECxMNZGNwb21hdGljLmNvbTEsMCoGA1UEAxMjLmRj
+cG9tYXRpYy5zbXB0ZS00MzAtMi5JTlRFUk1FRElBVEUxJTAjBgNVBC4THGxaazRl
+MFdZWWxUODVMY2Q2V0VGcUxBK1JCTT0wIBcNMTkxMTI3MTIxMTA3WhgPMjA1OTEx
+MjIxMjExMDdaMH8xFjAUBgNVBAoTDWRjcG9tYXRpYy5jb20xFjAUBgNVBAsTDWRj
+cG9tYXRpYy5jb20xJjAkBgNVBAMTHUNTLmRjcG9tYXRpYy5zbXB0ZS00MzAtMi5M
+RUFGMSUwIwYDVQQuExxncEZPUDZlQnUxZlU2L3lmZG4rVWxXdUZ0cUE9MIIBIjAN
+BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAulASlcMmyMzVE0LG5JPzOCDAYmQk
+kTKir43UhXqHXnRrtjLvwGcPFGOdokRP51shYn62r6HEMgYgqRQ+9DQyrasW7AUy
+s2LTSNt9W+vY3LbxtksJN4Qy+2dio2jNbCPa7BgOSH1Wi8ewYdb2ykMRQv666nYH
+bPHkr7qZOkTM5IPgciBpxztPBN2cLXxCJWQxffMXHLD7K33TLVqxXTuquD+n2/ii
+qpsmNY5Cngi3z3HVw5wql3zvdW4TlHb1gHrHwqqpKIKIFFn9JZsDUZG3KYkvG4cZ
+oSRhIvXMmLn1KOSJ2ANQG1UDX8yLo0BtAMxAZ0IFL/9d0FIcgLL6nLB2uQIDAQAB
+o4HoMIHlMAwGA1UdEwEB/wQCMAAwCwYDVR0PBAQDAgWgMB0GA1UdDgQWBBSCkU4/
+p4G7V9Tr/J92f5SVa4W2oDCBqAYDVR0jBIGgMIGdgBSVmTh7RZhiVPzktx3pYQWo
+sD5EE6GBgaR/MH0xFjAUBgNVBAoTDWRjcG9tYXRpYy5jb20xFjAUBgNVBAsTDWRj
+cG9tYXRpYy5jb20xJDAiBgNVBAMTGy5kY3BvbWF0aWMuc21wdGUtNDMwLTIuUk9P
+VDElMCMGA1UELhMcRUpjZFVFQko1Zm1BTWN6YkJvNGI3RTdpVHVzPYIBBjANBgkq
+hkiG9w0BAQsFAAOCAQEAP8EhBofCpK9Hj8swyvHQFNUVToKohk225vsSoa+p/kOF
+VJE2odGgUgPB5GNdGZTd8kJHy9B1wzIEzAqXg78aifJXqjX5Np/Vhe6dIeR13+xL
+2ghuH6tHfQ2PmomSG5kaBUI5qXmKsFxgR7jRscXCu5GqWunPYsNFU6L9Y0LxSfVn
+wjdXM5MyHHAV6vTxNLHXIBkafswkwsUc2UPNTLZtT8nIhFP7jrGVYnEhHKQgoMuT
++E/cUKzaZkmphMjWrsucp95GjjXSL82JboGI6IeHuIjsMyNPKznE9JEEFbPRqkkx
+UNYkHpITCNDKXG/rApn/2iBADQQUWUphp4h07BwXbg==</dsig:X509Certificate>
+      </dsig:X509Data>
+      <dsig:X509Data>
+        <dsig:X509IssuerSerial>
+          <dsig:X509IssuerName>dnQualifier=EJcdUEBJ5fmAMczbBo4b7E7iTus=,CN=.dcpomatic.smpte-430-2.ROOT,OU=dcpomatic.com,O=dcpomatic.com</dsig:X509IssuerName>
+          <dsig:X509SerialNumber>6</dsig:X509SerialNumber>
+        </dsig:X509IssuerSerial>
+        <dsig:X509Certificate>MIIEbzCCA1egAwIBAgIBBjANBgkqhkiG9w0BAQsFADB9MRYwFAYDVQQKEw1kY3Bv
+bWF0aWMuY29tMRYwFAYDVQQLEw1kY3BvbWF0aWMuY29tMSQwIgYDVQQDExsuZGNw
+b21hdGljLnNtcHRlLTQzMC0yLlJPT1QxJTAjBgNVBC4THEVKY2RVRUJKNWZtQU1j
+emJCbzRiN0U3aVR1cz0wIBcNMTkxMTI3MTIxMTA3WhgPMjA1OTExMjMxMjExMDda
+MIGFMRYwFAYDVQQKEw1kY3BvbWF0aWMuY29tMRYwFAYDVQQLEw1kY3BvbWF0aWMu
+Y29tMSwwKgYDVQQDEyMuZGNwb21hdGljLnNtcHRlLTQzMC0yLklOVEVSTUVESUFU
+RTElMCMGA1UELhMcbFprNGUwV1lZbFQ4NUxjZDZXRUZxTEErUkJNPTCCASIwDQYJ
+KoZIhvcNAQEBBQADggEPADCCAQoCggEBALclhoMI5k8AxUV+svXWkXcpZ4zF2/av
+C9Eg1I6v/hJWVuythbR/j2flYmLAHTMO/Lzsf9wSIBrJY/0ooGZvzLEXVTqOBn3i
++p4Rmzrc+KzaxYSrBlutMjvupGN2uikUequcqRMPLxQFed+RGJ2LOMf6VYjshCEj
+LZGLqmcArb/UPO39KDyOq852gGyc4N2uvilPdM8BsgykHEhZ+9MrsOjCqateM/h0
+OA0SEL8LtZo7Rf3yfONeczaSwdU6R38FH7oettAD1z4vu2BMVXNvF7cP/KBYCVFw
+8dux3vGch1/eLicjskJmYDlgEJ3SFGstCaeQFenNczIlPvDte5EmD1cCAwEAAaOB
+7jCB6zASBgNVHRMBAf8ECDAGAQH/AgECMAsGA1UdDwQEAwIBBjAdBgNVHQ4EFgQU
+lZk4e0WYYlT85Lcd6WEFqLA+RBMwgagGA1UdIwSBoDCBnYAUEJcdUEBJ5fmAMczb
+Bo4b7E7iTuuhgYGkfzB9MRYwFAYDVQQKEw1kY3BvbWF0aWMuY29tMRYwFAYDVQQL
+Ew1kY3BvbWF0aWMuY29tMSQwIgYDVQQDExsuZGNwb21hdGljLnNtcHRlLTQzMC0y
+LlJPT1QxJTAjBgNVBC4THEVKY2RVRUJKNWZtQU1jemJCbzRiN0U3aVR1cz2CAQUw
+DQYJKoZIhvcNAQELBQADggEBAIB+KmpPLpH3G+SW3ZWCLdT3gqvG0XdcOUAUAjN3
+rFO9tdSbhczCYeMoENl6AlVM78blTQKwz9PVwxUpSp3pOIV8Pi52WevPM73an8U8
+kL0Zwo0nzlFaOMsllzb/4npu2QzSC0KjYPRvpDjdWuOPDOQyfzfCSkzqmKIEvIzG
+2oPuM1MgdgKIHSD09yX4FMb+kcwFWbmIpC80S0iBfqBgIgGS1or2V1odAbLesZZf
+jVIQDrooEhmEbpryAMXNIgjq3Ylvwy41vOQ5I8LZYS5GpBZIpjqWq3IlqwA3W6BB
+d8u37dNu8FmHemnj/ZVz/31Qf5nSo8YLYHYXrDuh38XOx4A=</dsig:X509Certificate>
+      </dsig:X509Data>
+      <dsig:X509Data>
+        <dsig:X509IssuerSerial>
+          <dsig:X509IssuerName>dnQualifier=EJcdUEBJ5fmAMczbBo4b7E7iTus=,CN=.dcpomatic.smpte-430-2.ROOT,OU=dcpomatic.com,O=dcpomatic.com</dsig:X509IssuerName>
+          <dsig:X509SerialNumber>5</dsig:X509SerialNumber>
+        </dsig:X509IssuerSerial>
+        <dsig:X509Certificate>MIIEZjCCA06gAwIBAgIBBTANBgkqhkiG9w0BAQsFADB9MRYwFAYDVQQKEw1kY3Bv
+bWF0aWMuY29tMRYwFAYDVQQLEw1kY3BvbWF0aWMuY29tMSQwIgYDVQQDExsuZGNw
+b21hdGljLnNtcHRlLTQzMC0yLlJPT1QxJTAjBgNVBC4THEVKY2RVRUJKNWZtQU1j
+emJCbzRiN0U3aVR1cz0wIBcNMTkxMTI3MTIxMTA3WhgPMjA1OTExMjQxMjExMDda
+MH0xFjAUBgNVBAoTDWRjcG9tYXRpYy5jb20xFjAUBgNVBAsTDWRjcG9tYXRpYy5j
+b20xJDAiBgNVBAMTGy5kY3BvbWF0aWMuc21wdGUtNDMwLTIuUk9PVDElMCMGA1UE
+LhMcRUpjZFVFQko1Zm1BTWN6YkJvNGI3RTdpVHVzPTCCASIwDQYJKoZIhvcNAQEB
+BQADggEPADCCAQoCggEBAO2D9nYWk04QCADn7cbgZ2Oy36TMpZfm9nLs0cqyAry4
+1G1mZRUqkONsSS4uZCcnwCVH1tYqJG9XMNxEwHp3dELhKo4BgxgB8oNJYrmGcewo
+h8kd/x4YqOuyIExyhUtKo2KSVZlpw1flrv+88ly1ljCEZnRjN/wu/C3EXkq8MciR
+CMtLXpIPyYVaL09cOnHeslQ9nRXkGojz+kiuhYdJrKMItATzjdI50sIMFZnXBUci
+Bj2cvPxpPzG+Kr1qfBNYXw5ibHbsh/TGTyvkz+Z5hPDJZYe3fDW0yM/rHyXZzQuP
+5gUkoC9hisznuPQaePsTLhEqkIjgOyrzdpLduBE7sPkCAwEAAaOB7jCB6zASBgNV
+HRMBAf8ECDAGAQH/AgEDMAsGA1UdDwQEAwIBBjAdBgNVHQ4EFgQUEJcdUEBJ5fmA
+MczbBo4b7E7iTuswgagGA1UdIwSBoDCBnYAUEJcdUEBJ5fmAMczbBo4b7E7iTuuh
+gYGkfzB9MRYwFAYDVQQKEw1kY3BvbWF0aWMuY29tMRYwFAYDVQQLEw1kY3BvbWF0
+aWMuY29tMSQwIgYDVQQDExsuZGNwb21hdGljLnNtcHRlLTQzMC0yLlJPT1QxJTAj
+BgNVBC4THEVKY2RVRUJKNWZtQU1jemJCbzRiN0U3aVR1cz2CAQUwDQYJKoZIhvcN
+AQELBQADggEBACI94oNUUisYl0PKHln+MjgHg4yBAHhn4GFlUbZtelpArDuJg5D1
+/Ba6e/JECTS0CwovyLtD6Z2agU5jvXQ0sI8svo4OkOcZSyBvgif49YeRU8HLWH+R
+pJZBmzXQrHPCXgjvY9qWN2btTcHago9TXTbB17adlpUbSnUG0pnDjkt1EdZ3T+D8
+vZVpBVciWsLh5CeuxAxfpFUw3gtbYdGa/yIgnb12l7zpCfb2VGqQEPr06U0yjl0s
+Im55V7KBJhKV3CtUdoOAc7x1y9BsVZI7dWQBHlTzTa4/Mj4KWlQ36eKpawNc+Add
+oP8O9wPyd2sOpjMqbhIjrbYS+CfKKl/P4H4=</dsig:X509Certificate>
+      </dsig:X509Data>
+    </dsig:KeyInfo>
+  </dsig:Signature>
+</PackingList>
