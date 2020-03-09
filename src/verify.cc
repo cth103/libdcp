@@ -431,9 +431,12 @@ dcp::verify (
 			validate_xml (pkl->file().get(), xsd_dtd_directory, notes);
 		}
 
-		stage ("Checking ASSETMAP", dcp->asset_map_path().get());
-		validate_xml (dcp->asset_map_path().get(), xsd_dtd_directory, notes);
-
+		if (dcp->asset_map_path()) {
+			stage ("Checking ASSETMAP", dcp->asset_map_path().get());
+			validate_xml (dcp->asset_map_path().get(), xsd_dtd_directory, notes);
+		} else {
+			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISSING_ASSETMAP));
+		}
 	}
 
 	return notes;
@@ -465,6 +468,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "The DCP contains both SMPTE and Interop parts.";
 	case dcp::VerificationNote::XML_VALIDATION_ERROR:
 		return String::compose("An XML file is badly formed: %1 (%2:%3)", note.note().get(), note.file()->filename(), note.line().get());
+	case dcp::VerificationNote::MISSING_ASSETMAP:
+		return "No ASSETMAP or ASSETMAP.xml was found";
 	}
 
 	return "";

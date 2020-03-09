@@ -77,6 +77,8 @@ public:
 		MISMATCHED_STANDARD,
 		/** Some XML fails to validate against the XSD/DTD */
 		XML_VALIDATION_ERROR,
+		/** No ASSETMAP{.xml} was found */
+		MISSING_ASSETMAP
 	};
 
 	VerificationNote (Type type, Code code)
