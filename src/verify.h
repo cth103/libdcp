@@ -78,7 +78,7 @@ public:
 		/** Some XML fails to validate against the XSD/DTD */
 		XML_VALIDATION_ERROR,
 		/** No ASSETMAP{.xml} was found */
-		MISSING_ASSETMAP
+		MISSING_ASSETMAP,
 		/** An asset's IntrinsicDuration is less than 1 second */
 		INTRINSIC_DURATION_TOO_SMALL,
 		/** An asset's Duration is less than 1 second */
