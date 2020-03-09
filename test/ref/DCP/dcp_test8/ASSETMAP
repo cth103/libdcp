@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssetMap xmlns="http://www.digicine.com/PROTO-ASDCP-AM-20040311#">
+  <Id>urn:uuid:5a89bd07-3af3-4f48-bdb4-b8fe6d22d8f8</Id>
+  <AnnotationText>Short_FTR-1_F_MOS_2K_20200308_IOP_OV</AnnotationText>
+  <VolumeCount>1</VolumeCount>
+  <IssueDate>2020-03-08T22:39:14+01:00</IssueDate>
+  <Issuer>DCP-o-matic 2.15.47devel caf67bef26</Issuer>
+  <Creator>DCP-o-matic 2.15.47devel caf67bef26</Creator>
+  <AssetList>
+    <Asset>
+      <Id>urn:uuid:0382c908-7389-45d6-b671-d5100868cbbe</Id>
+      <PackingList>true</PackingList>
+      <ChunkList>
+        <Chunk>
+          <Path>pkl_0382c908-7389-45d6-b671-d5100868cbbe.xml</Path>
+          <VolumeIndex>1</VolumeIndex>
+          <Offset>0</Offset>
+          <Length>8738</Length>
+        </Chunk>
+      </ChunkList>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:d74fda30-d5f4-4c5f-870f-ebc089d97eb7</Id>
+      <ChunkList>
+        <Chunk>
+          <Path>cpl_d74fda30-d5f4-4c5f-870f-ebc089d97eb7.xml</Path>
+          <VolumeIndex>1</VolumeIndex>
+          <Offset>0</Offset>
+          <Length>9079</Length>
+        </Chunk>
+      </ChunkList>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:d7576dcb-a361-4139-96b8-267f5f8d7f91</Id>
+      <ChunkList>
+        <Chunk>
+          <Path>j2c_d7576dcb-a361-4139-96b8-267f5f8d7f91.mxf</Path>
+          <VolumeIndex>1</VolumeIndex>
+          <Offset>0</Offset>
+          <Length>47739</Length>
+        </Chunk>
+      </ChunkList>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:a2a87f5d-b749-4a7e-8d0c-9d48a4abf626</Id>
+      <ChunkList>
+        <Chunk>
+          <Path>pcm_a2a87f5d-b749-4a7e-8d0c-9d48a4abf626.mxf</Path>
+          <VolumeIndex>1</VolumeIndex>
+          <Offset>0</Offset>
+          <Length>845154</Length>
+        </Chunk>
+      </ChunkList>
+    </Asset>
+  </AssetList>
+</AssetMap>

@@ -111,6 +111,8 @@ public:
 
 	void add (boost::shared_ptr<ReelAsset> asset);
 
+	std::list<boost::shared_ptr<ReelAsset> > assets () const;
+
 	void write_to_cpl (xmlpp::Element* node, Standard standard) const;
 
 	bool encrypted () const;

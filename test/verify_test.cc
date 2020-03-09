@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -48,6 +48,7 @@ using std::make_pair;
 using boost::optional;
 
 static list<pair<string, optional<boost::filesystem::path> > > stages;
+static int next_verify_test_number = 1;
 
 static void
 stage (string s, optional<boost::filesystem::path> p)
@@ -62,16 +63,16 @@ progress (float)
 }
 
 static vector<boost::filesystem::path>
-setup (int n)
+setup (int reference_number, int verify_test_number)
 {
-	boost::filesystem::remove_all (dcp::String::compose("build/test/verify_test%1", n));
-	boost::filesystem::create_directory (dcp::String::compose("build/test/verify_test%1", n));
-	for (boost::filesystem::directory_iterator i("test/ref/DCP/dcp_test1"); i != boost::filesystem::directory_iterator(); ++i) {
-		boost::filesystem::copy_file (i->path(), dcp::String::compose("build/test/verify_test%1", n) / i->path().filename());
+	boost::filesystem::remove_all (dcp::String::compose("build/test/verify_test%1", verify_test_number));
+	boost::filesystem::create_directory (dcp::String::compose("build/test/verify_test%1", verify_test_number));
+	for (boost::filesystem::directory_iterator i(dcp::String::compose("test/ref/DCP/dcp_test%1", reference_number)); i != boost::filesystem::directory_iterator(); ++i) {
+		boost::filesystem::copy_file (i->path(), dcp::String::compose("build/test/verify_test%1", verify_test_number) / i->path().filename());
 	}
 
 	vector<boost::filesystem::path> directories;
-	directories.push_back (dcp::String::compose("build/test/verify_test%1", n));
+	directories.push_back (dcp::String::compose("build/test/verify_test%1", verify_test_number));
 	return directories;
 
 }
@@ -115,17 +116,18 @@ dump_notes (list<dcp::VerificationNote> const & notes)
 /* Check DCP as-is (should be OK) */
 BOOST_AUTO_TEST_CASE (verify_test1)
 {
-	vector<boost::filesystem::path> directories = setup (1);
+	stages.clear ();
+	vector<boost::filesystem::path> directories = setup (1, next_verify_test_number);
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
 
-	boost::filesystem::path const cpl_file = "build/test/verify_test1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
-	boost::filesystem::path const pkl_file = "build/test/verify_test1/pkl_ae8a9818-872a-4f86-8493-11dfdea03e09.xml";
-	boost::filesystem::path const assetmap_file = "build/test/verify_test1/ASSETMAP.xml";
+	boost::filesystem::path const cpl_file = dcp::String::compose("build/test/verify_test%1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml", next_verify_test_number);
+	boost::filesystem::path const pkl_file = dcp::String::compose("build/test/verify_test1/pkl_ae8a9818-872a-4f86-8493-11dfdea03e09.xml", next_verify_test_number);
+	boost::filesystem::path const assetmap_file = dcp::String::compose("build/test/verify_test1/ASSETMAP.xml", next_verify_test_number);
 
 	list<pair<string, optional<boost::filesystem::path> > >::const_iterator st = stages.begin();
 	BOOST_CHECK_EQUAL (st->first, "Checking DCP");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical("build/test/verify_test1"));
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(dcp::String::compose("build/test/verify_test%1", next_verify_test_number)));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking CPL");
 	BOOST_REQUIRE (st->second);
@@ -136,11 +138,11 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking picture asset hash");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical("build/test/verify_test1/video.mxf"));
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(dcp::String::compose("build/test/verify_test%1/video.mxf", next_verify_test_number)));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking sound asset hash");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical("build/test/verify_test1/audio.mxf"));
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(dcp::String::compose("build/test/verify_test%1/audio.mxf", next_verify_test_number)));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking PKL");
 	BOOST_REQUIRE (st->second);
@@ -155,12 +157,14 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	dump_notes (notes);
 
 	BOOST_CHECK_EQUAL (notes.size(), 0);
+
+	next_verify_test_number++;
 }
 
 /* Corrupt the MXFs and check that this is spotted */
 BOOST_AUTO_TEST_CASE (verify_test2)
 {
-	vector<boost::filesystem::path> directories = setup (2);
+	vector<boost::filesystem::path> directories = setup (1, next_verify_test_number++);
 
 	FILE* mod = fopen("build/test/verify_test2/video.mxf", "r+b");
 	BOOST_REQUIRE (mod);
@@ -187,7 +191,7 @@ BOOST_AUTO_TEST_CASE (verify_test2)
 /* Corrupt the hashes in the PKL and check that the disagreement between CPL and PKL is spotted */
 BOOST_AUTO_TEST_CASE (verify_test3)
 {
-	vector<boost::filesystem::path> directories = setup (3);
+	vector<boost::filesystem::path> directories = setup (1, next_verify_test_number++);
 
 	{
 		Editor e ("build/test/verify_test3/pkl_ae8a9818-872a-4f86-8493-11dfdea03e09.xml");
@@ -223,7 +227,7 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 /* Corrupt the ContentKind in the CPL */
 BOOST_AUTO_TEST_CASE (verify_test4)
 {
-	vector<boost::filesystem::path> directories = setup (4);
+	vector<boost::filesystem::path> directories = setup (1, next_verify_test_number++);
 
 	{
 		Editor e ("build/test/verify_test4/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml");
@@ -261,7 +265,7 @@ asset_map (int n)
 static
 void check_after_replace (int n, boost::function<boost::filesystem::path (int)> file, string from, string to, dcp::VerificationNote::Code code1)
 {
-	vector<boost::filesystem::path> directories = setup (n);
+	vector<boost::filesystem::path> directories = setup (1, n);
 
 	{
 		Editor e (file(n));
@@ -279,7 +283,7 @@ void check_after_replace (int n, boost::function<boost::filesystem::path (int)> 
 static
 void check_after_replace (int n, boost::function<boost::filesystem::path (int)> file, string from, string to, dcp::VerificationNote::Code code1, dcp::VerificationNote::Code code2)
 {
-	vector<boost::filesystem::path> directories = setup (n);
+	vector<boost::filesystem::path> directories = setup (1, n);
 
 	{
 		Editor e (file(n));
@@ -305,7 +309,7 @@ void check_after_replace (
 	dcp::VerificationNote::Code code3
 	)
 {
-	vector<boost::filesystem::path> directories = setup (n);
+	vector<boost::filesystem::path> directories = setup (1, n);
 
 	{
 		Editor e (file(n));
@@ -329,7 +333,7 @@ void check_after_replace (
 BOOST_AUTO_TEST_CASE (verify_test5)
 {
 	check_after_replace (
-			5, &cpl,
+			next_verify_test_number++, &cpl,
 			"<FrameRate>24 1", "<FrameRate>99 1",
 			dcp::VerificationNote::CPL_HASH_INCORRECT,
 			dcp::VerificationNote::INVALID_PICTURE_FRAME_RATE
@@ -339,7 +343,7 @@ BOOST_AUTO_TEST_CASE (verify_test5)
 /* Missing asset */
 BOOST_AUTO_TEST_CASE (verify_test6)
 {
-	vector<boost::filesystem::path> directories = setup (6);
+	vector<boost::filesystem::path> directories = setup (1, next_verify_test_number++);
 
 	boost::filesystem::remove ("build/test/verify_test6/video.mxf");
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
@@ -360,7 +364,7 @@ assetmap (int n)
 BOOST_AUTO_TEST_CASE (verify_test7)
 {
 	check_after_replace (
-			7, &assetmap,
+			next_verify_test_number++, &assetmap,
 			"<Path>video.mxf</Path>", "<Path></Path>",
 			dcp::VerificationNote::EMPTY_ASSET_PATH
 			);
@@ -370,7 +374,7 @@ BOOST_AUTO_TEST_CASE (verify_test7)
 BOOST_AUTO_TEST_CASE (verify_test8)
 {
 	check_after_replace (
-			8, &cpl,
+			next_verify_test_number++, &cpl,
 			"http://www.smpte-ra.org/schemas/429-7/2006/CPL", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#",
 			dcp::VerificationNote::MISMATCHED_STANDARD,
 			dcp::VerificationNote::XML_VALIDATION_ERROR,
@@ -383,7 +387,7 @@ BOOST_AUTO_TEST_CASE (verify_test9)
 {
 	/* There's no CPL_HASH_INCORRECT error here because it can't find the correct hash by ID (since the ID is wrong) */
 	check_after_replace (
-			9, &cpl,
+			next_verify_test_number++, &cpl,
 			"<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b", "<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375",
 			dcp::VerificationNote::XML_VALIDATION_ERROR
 			);
@@ -393,7 +397,7 @@ BOOST_AUTO_TEST_CASE (verify_test9)
 BOOST_AUTO_TEST_CASE (verify_test10)
 {
 	check_after_replace (
-			10, &cpl,
+			next_verify_test_number++, &cpl,
 			"<IssueDate>", "<IssueDate>x",
 			dcp::VerificationNote::XML_VALIDATION_ERROR,
 			dcp::VerificationNote::CPL_HASH_INCORRECT
@@ -404,7 +408,7 @@ BOOST_AUTO_TEST_CASE (verify_test10)
 BOOST_AUTO_TEST_CASE (verify_test11)
 {
 	check_after_replace (
-		11, &pkl,
+		next_verify_test_number++, &pkl,
 		"<Id>urn:uuid:ae8", "<Id>urn:uuid:xe8",
 		dcp::VerificationNote::XML_VALIDATION_ERROR
 		);
@@ -414,8 +418,78 @@ BOOST_AUTO_TEST_CASE (verify_test11)
 BOOST_AUTO_TEST_CASE (verify_test12)
 {
 	check_after_replace (
-		12, &asset_map,
+		next_verify_test_number++, &asset_map,
 		"<Id>urn:uuid:74e", "<Id>urn:uuid:x4e",
 		dcp::VerificationNote::XML_VALIDATION_ERROR
 		);
 }
+
+/* Basic test of an Interop DCP */
+BOOST_AUTO_TEST_CASE (verify_test13)
+{
+	stages.clear ();
+	vector<boost::filesystem::path> directories = setup (3, next_verify_test_number);
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
+
+	boost::filesystem::path const cpl_file = dcp::String::compose("build/test/verify_test%1/cpl_cbfd2bc0-21cf-4a8f-95d8-9cddcbe51296.xml", next_verify_test_number);
+	boost::filesystem::path const pkl_file = dcp::String::compose("build/test/verify_test%1/pkl_d87a950c-bd6f-41f6-90cc-56ccd673e131.xml", next_verify_test_number);
+	boost::filesystem::path const assetmap_file = dcp::String::compose("build/test/verify_test%1/ASSETMAP", next_verify_test_number);
+
+	list<pair<string, optional<boost::filesystem::path> > >::const_iterator st = stages.begin();
+	BOOST_CHECK_EQUAL (st->first, "Checking DCP");
+	BOOST_REQUIRE (st->second);
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(dcp::String::compose("build/test/verify_test%1", next_verify_test_number)));
+	++st;
+	BOOST_CHECK_EQUAL (st->first, "Checking CPL");
+	BOOST_REQUIRE (st->second);
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(cpl_file));
+	++st;
+	BOOST_CHECK_EQUAL (st->first, "Checking reel");
+	BOOST_REQUIRE (!st->second);
+	++st;
+	BOOST_CHECK_EQUAL (st->first, "Checking picture asset hash");
+	BOOST_REQUIRE (st->second);
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(dcp::String::compose("build/test/verify_test%1/j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf", next_verify_test_number)));
+	++st;
+	BOOST_CHECK_EQUAL (st->first, "Checking sound asset hash");
+	BOOST_REQUIRE (st->second);
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(dcp::String::compose("build/test/verify_test%1/pcm_69cf9eaf-9a99-4776-b022-6902208626c3.mxf", next_verify_test_number)));
+	++st;
+	BOOST_CHECK_EQUAL (st->first, "Checking PKL");
+	BOOST_REQUIRE (st->second);
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(pkl_file));
+	++st;
+	BOOST_CHECK_EQUAL (st->first, "Checking ASSETMAP");
+	BOOST_REQUIRE (st->second);
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(assetmap_file));
+	++st;
+	BOOST_REQUIRE (st == stages.end());
+
+	dump_notes (notes);
+
+	BOOST_CHECK_EQUAL (notes.size(), 0);
+
+	next_verify_test_number++;
+}
+
+/* DCP with a short asset */
+BOOST_AUTO_TEST_CASE (verify_test14)
+{
+	vector<boost::filesystem::path> directories = setup (8, next_verify_test_number);
+	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, "xsd");
+
+	dump_notes (notes);
+
+	BOOST_REQUIRE_EQUAL (notes.size(), 4);
+	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::DURATION_TOO_SMALL);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::INTRINSIC_DURATION_TOO_SMALL);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::DURATION_TOO_SMALL);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::INTRINSIC_DURATION_TOO_SMALL);
+	++i;
+	next_verify_test_number++;
+}
+

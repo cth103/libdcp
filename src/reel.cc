@@ -282,6 +282,26 @@ Reel::add (shared_ptr<ReelAsset> asset)
 	}
 }
 
+list<shared_ptr<ReelAsset> >
+Reel::assets () const
+{
+	list<shared_ptr<ReelAsset> > a;
+	if (_main_picture) {
+		a.push_back (_main_picture);
+	}
+	if (_main_sound) {
+		a.push_back (_main_sound);
+	}
+	if (_main_subtitle) {
+		a.push_back (_main_subtitle);
+	}
+	std::copy (_closed_captions.begin(), _closed_captions.end(), back_inserter(a));
+	if (_atmos) {
+		a.push_back (_atmos);
+	}
+	return a;
+}
+
 void
 Reel::resolve_refs (list<shared_ptr<Asset> > assets)
 {
