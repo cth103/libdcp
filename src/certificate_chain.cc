@@ -500,6 +500,10 @@ CertificateChain::private_key_valid () const
 	}
 
 	RSA* private_key = PEM_read_bio_RSAPrivateKey (bio, 0, 0, 0);
+	if (!private_key) {
+		return false;
+	}
+
 	RSA* public_key = leaf().public_key ();
 
 #if OPENSSL_VERSION_NUMBER > 0x10100000L
@@ -507,6 +511,9 @@ CertificateChain::private_key_valid () const
 	RSA_get0_key(private_key, &private_key_n, 0, 0);
 	BIGNUM const * public_key_n;
 	RSA_get0_key(public_key, &public_key_n, 0, 0);
+	if (!private_key_n || !public_key_n) {
+		return false;
+	}
 	bool const valid = !BN_cmp (private_key_n, public_key_n);
 #else
 	bool const valid = !BN_cmp (private_key->n, public_key->n);
