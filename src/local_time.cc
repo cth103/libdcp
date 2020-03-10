@@ -39,7 +39,9 @@
 #include "exceptions.h"
 #include "dcp_assert.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/c_local_time_adjustor.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <cstdio>
 
 using std::string;
@@ -78,6 +80,12 @@ LocalTime::set (struct tm const * tm)
  *  time zone.
  */
 LocalTime::LocalTime (boost::posix_time::ptime t)
+{
+	set (t);
+}
+
+void
+LocalTime::set (boost::posix_time::ptime t)
 {
 	_year = t.date().year ();
 	_month = t.date().month ();
@@ -232,6 +240,16 @@ LocalTime::add_months (int m)
 		_month -= 12;
 		_year++;
 	}
+}
+
+void
+LocalTime::add_minutes (int m)
+{
+	using namespace boost;
+
+	posix_time::ptime t(gregorian::date(_year, _month, _day), posix_time::time_duration(_hour, _minute, _second));
+	t += posix_time::time_duration(0, m, 0);
+	set (t);
 }
 
 bool

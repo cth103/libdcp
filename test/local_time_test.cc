@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -36,7 +36,7 @@
 #include "exceptions.h"
 
 /** Check that dcp::LocalTime works */
-BOOST_AUTO_TEST_CASE (local_time_test)
+BOOST_AUTO_TEST_CASE (local_time_basic_test)
 {
 	/* Badly-formatted times */
 	BOOST_CHECK_THROW (dcp::LocalTime (""), dcp::TimeFormatError);
@@ -137,6 +137,44 @@ BOOST_AUTO_TEST_CASE (local_time_test)
 		BOOST_CHECK_EQUAL (t._tz_minute, -30);
 		BOOST_CHECK_EQUAL (t.as_string(), "2013-01-05T18:06:59-04:30");
 	}
-
-
 }
+
+BOOST_AUTO_TEST_CASE (local_time_addition_test)
+{
+	{
+		dcp::LocalTime t("2018-01-01T10:00:00+01:00");
+		t.add_minutes (3);
+		BOOST_CHECK_EQUAL (t.as_string(), "2018-01-01T10:03:00+01:00");
+	}
+
+	{
+		dcp::LocalTime t("2018-01-01T10:00:15+01:00");
+		t.add_minutes (3);
+		BOOST_CHECK_EQUAL (t.as_string(), "2018-01-01T10:03:15+01:00");
+	}
+
+	{
+		dcp::LocalTime t("2018-01-01T10:40:20+01:00");
+		t.add_minutes (23);
+		BOOST_CHECK_EQUAL (t.as_string(), "2018-01-01T11:03:20+01:00");
+	}
+
+	{
+		dcp::LocalTime t("2018-01-01T10:40:20+01:00");
+		t.add_minutes (123);
+		BOOST_CHECK_EQUAL (t.as_string(), "2018-01-01T12:43:20+01:00");
+	}
+
+	{
+		dcp::LocalTime t("2018-01-01T23:55:00+01:00");
+		t.add_minutes (7);
+		BOOST_CHECK_EQUAL (t.as_string(), "2018-01-02T00:02:00+01:00");
+	}
+
+	{
+		dcp::LocalTime t("2018-01-31T23:55:00+01:00");
+		t.add_minutes (7);
+		BOOST_CHECK_EQUAL (t.as_string(), "2018-02-01T00:02:00+01:00");
+	}
+}
+

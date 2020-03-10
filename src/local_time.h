@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -41,7 +41,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <string>
 
-class local_time_test;
+class local_time_basic_test;
 
 namespace dcp {
 
@@ -84,15 +84,17 @@ public:
 	}
 
 	void add_months (int a);
+	void add_minutes (int a);
 
 	bool operator== (LocalTime const & other) const;
 	bool operator!= (LocalTime const & other) const;
 	bool operator< (LocalTime const & other) const;
 
 private:
-	friend class ::local_time_test;
+	friend class ::local_time_basic_test;
 
 	void set (struct tm const * tm);
+	void set (boost::posix_time::ptime);
 	void set_local_time_zone ();
 
 	/* Local time */
