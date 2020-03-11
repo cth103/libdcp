@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -55,11 +55,13 @@ LocalTime::LocalTime ()
 	time_t now = time (0);
 	struct tm* tm = localtime (&now);
 	set (tm);
+	set_local_time_zone ();
 }
 
 LocalTime::LocalTime (struct tm t)
 {
 	set (&t);
+	set_local_time_zone ();
 }
 
 void
@@ -72,8 +74,6 @@ LocalTime::set (struct tm const * tm)
 	_minute = tm->tm_min;
 	_second = tm->tm_sec;
 	_millisecond = 0;
-
-	set_local_time_zone ();
 }
 
 /** Construct a LocalTime from a boost::posix_time::ptime using the local
@@ -82,6 +82,7 @@ LocalTime::set (struct tm const * tm)
 LocalTime::LocalTime (boost::posix_time::ptime t)
 {
 	set (t);
+	set_local_time_zone ();
 }
 
 void
@@ -95,8 +96,6 @@ LocalTime::set (boost::posix_time::ptime t)
 	_second = t.time_of_day().seconds ();
 	_millisecond = t.time_of_day().fractional_seconds () / 1000;
 	DCP_ASSERT (_millisecond < 1000);
-
-	set_local_time_zone ();
 }
 
 /** Construct a LocalTime from a boost::posix_time::ptime and a time zone offset.
@@ -105,15 +104,7 @@ LocalTime::set (boost::posix_time::ptime t)
  */
 LocalTime::LocalTime (boost::posix_time::ptime t, int tz_hour, int tz_minute)
 {
-	_year = t.date().year ();
-	_month = t.date().month ();
-	_day = t.date().day ();
-	_hour = t.time_of_day().hours ();
-	_minute = t.time_of_day().minutes ();
-	_second = t.time_of_day().seconds ();
-	_millisecond = t.time_of_day().fractional_seconds () / 1000;
-	DCP_ASSERT (_millisecond < 1000);
-
+	set (t);
 	_tz_hour = tz_hour;
 	_tz_minute = tz_minute;
 }
