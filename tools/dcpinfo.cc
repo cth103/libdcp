@@ -306,7 +306,7 @@ main (int argc, char* argv[])
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "vhspdoAB:C:", long_options, &option_index);
+		int c = getopt_long (argc, argv, "vhspdo:AB:C:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
