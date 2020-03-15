@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -49,11 +49,14 @@
 #include "decrypted_kdm.h"
 #include "cpl.h"
 #include "common.h"
+#include "compose.hpp"
 #include <getopt.h>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
+#include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <cstdlib>
+#include <sstream>
 #include <inttypes.h>
 
 using std::string;
@@ -64,6 +67,8 @@ using std::pair;
 using std::min;
 using std::max;
 using std::exception;
+using std::vector;
+using std::stringstream;
 using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using boost::optional;
@@ -76,9 +81,18 @@ help (string n)
 	     << "  -s, --subtitles              list all subtitles\n"
 	     << "  -p, --picture                analyse picture\n"
 	     << "  -d, --decompress             decompress picture when analysing (this is slow)\n"
+	     << "  -o, --only                   only output certain pieces of information; see below.\n"
 	     << "      --kdm                    KDM to decrypt DCP\n"
 	     << "      --private-key            private key for the certificate that the KDM is targeted at\n"
 	     << "      --ignore-missing-assets  ignore missing asset files\n";
+
+	cerr << "--only takes a comma-separated list of strings, one or more of:\n"
+		"    dcp-path     DCP path\n"
+		"    cpl-name     CPL name\n"
+		"    picture      picture information\n"
+		"    sound        sound information\n"
+		"    subtitle     picture information\n"
+		"    total-time   total DCP time\n";
 }
 
 static double
@@ -87,33 +101,58 @@ mbits_per_second (int size, Fraction frame_rate)
 	return size * 8 * frame_rate.as_float() / 1e6;
 }
 
+#define OUTPUT_DCP_PATH(...)   maybe_output(only, "dcp-path", String::compose(__VA_ARGS__));
+#define OUTPUT_CPL_NAME(...)   maybe_output(only, "cpl-name", String::compose(__VA_ARGS__));
+#define OUTPUT_PICTURE(...)    maybe_output(only, "picture", String::compose(__VA_ARGS__));
+#define OUTPUT_PICTURE_NC(x)   maybe_output(only, "picture", (x));
+#define SHOULD_PICTURE         should_output(only, "picture")
+#define OUTPUT_SOUND(...)      maybe_output(only, "sound", String::compose(__VA_ARGS__));
+#define OUTPUT_SOUND_NC(x)     maybe_output(only, "sound", (x));
+#define OUTPUT_SUBTITLE(...)   maybe_output(only, "subtitle", String::compose(__VA_ARGS__));
+#define OUTPUT_SUBTITLE_NC(x)  maybe_output(only, "subtitle", (x));
+#define OUTPUT_TOTAL_TIME(...) maybe_output(only, "total-time", String::compose(__VA_ARGS__));
+
+static bool
+should_output(vector<string> const& only, string t)
+{
+	return only.empty() || find(only.begin(), only.end(), t) != only.end();
+}
+
+static void
+maybe_output(vector<string> const& only, string t, string s)
+{
+	if (should_output(only, t)) {
+		cout << s;
+	}
+}
+
 static
 dcp::Time
-main_picture (shared_ptr<Reel> reel, bool analyse, bool decompress)
+main_picture (vector<string> const& only, shared_ptr<Reel> reel, bool analyse, bool decompress)
 {
 	shared_ptr<dcp::ReelPictureAsset> mp = reel->main_picture ();
 	if (!mp) {
 		return dcp::Time();
 	}
 
-	cout << "      Picture ID:  " << mp->id();
+	OUTPUT_PICTURE("      Picture ID:  %1", mp->id());
 	if (mp->entry_point()) {
-		cout << " entry " << *mp->entry_point();
+		OUTPUT_PICTURE(" entry %1", *mp->entry_point());
 	}
 	if (mp->duration()) {
-		cout << " duration " << *mp->duration()
-		     << " (" << dcp::Time(*mp->duration(), mp->frame_rate().as_float(), mp->frame_rate().as_float()).as_string(dcp::SMPTE) << ")"
-		     << " intrinsic " << mp->intrinsic_duration();
+		OUTPUT_PICTURE(
+			" duration %1 (%2) intrinsic %3",
+			*mp->duration(),
+			dcp::Time(*mp->duration(), mp->frame_rate().as_float(), mp->frame_rate().as_float()).as_string(dcp::SMPTE),
+		     	mp->intrinsic_duration()
+			);
 	} else {
-		cout << " intrinsic duration " << mp->intrinsic_duration();
+		OUTPUT_PICTURE(" intrinsic duration %1", mp->intrinsic_duration());
 	}
 
 	if (mp->asset_ref().resolved()) {
 		if (mp->asset()) {
-			cout << "\n      Picture:     "
-			     << mp->asset()->size().width
-			     << "x"
-			     << mp->asset()->size().height << "\n";
+			OUTPUT_PICTURE("\n      Picture:     %1x%2\n", mp->asset()->size().width, mp->asset()->size().height);
 		}
 
 		shared_ptr<MonoPictureAsset> ma = dynamic_pointer_cast<MonoPictureAsset>(mp->asset());
@@ -122,30 +161,40 @@ main_picture (shared_ptr<Reel> reel, bool analyse, bool decompress)
 			pair<int, int> j2k_size_range (INT_MAX, 0);
 			for (int64_t i = 0; i < ma->intrinsic_duration(); ++i) {
 				shared_ptr<const MonoPictureFrame> frame = reader->get_frame (i);
-				printf("Frame %" PRId64 " J2K size %7d", i, frame->j2k_size());
+				if (SHOULD_PICTURE) {
+					printf("Frame %" PRId64 " J2K size %7d", i, frame->j2k_size());
+				}
 				j2k_size_range.first = min(j2k_size_range.first, frame->j2k_size());
 				j2k_size_range.second = max(j2k_size_range.second, frame->j2k_size());
 
 				if (decompress) {
 					try {
 						frame->xyz_image();
-						printf(" decrypted OK");
+						if (SHOULD_PICTURE) {
+							printf(" decrypted OK");
+						}
 					} catch (exception& e) {
-						printf(" decryption FAILED");
+						if (SHOULD_PICTURE) {
+							printf(" decryption FAILED");
+						}
 					}
 				}
 
-				printf("\n");
+				if (SHOULD_PICTURE) {
+					printf("\n");
+				}
 
 			}
-			printf(
-				"J2K size ranges from %d (%.1f Mbit/s) to %d (%.1f Mbit/s)\n",
-				j2k_size_range.first, mbits_per_second(j2k_size_range.first, ma->frame_rate()),
-				j2k_size_range.second, mbits_per_second(j2k_size_range.second, ma->frame_rate())
-				);
+			if (SHOULD_PICTURE) {
+				printf(
+						"J2K size ranges from %d (%.1f Mbit/s) to %d (%.1f Mbit/s)\n",
+						j2k_size_range.first, mbits_per_second(j2k_size_range.first, ma->frame_rate()),
+						j2k_size_range.second, mbits_per_second(j2k_size_range.second, ma->frame_rate())
+				      );
+			}
 		}
 	} else {
-		cout << " - not present in this DCP.\n";
+		OUTPUT_PICTURE_NC(" - not present in this DCP.\n");
 	}
 
 	return dcp::Time (
@@ -157,74 +206,79 @@ main_picture (shared_ptr<Reel> reel, bool analyse, bool decompress)
 
 static
 void
-main_sound (shared_ptr<Reel> reel)
+main_sound (vector<string> const& only, shared_ptr<Reel> reel)
 {
 	shared_ptr<dcp::ReelSoundAsset> ms = reel->main_sound ();
 	if (!ms) {
 		return;
 	}
 
-	cout << "      Sound ID:    " << ms->id();
+	OUTPUT_SOUND("      Sound ID:    %1", ms->id());
 	if (ms->entry_point()) {
-		cout << " entry " << *ms->entry_point();
+		OUTPUT_SOUND(" entry %1", *ms->entry_point());
 	}
 	if (ms->duration()) {
-		cout << " duration " << *ms->duration()
-			<< " intrinsic " << ms->intrinsic_duration();
+		OUTPUT_SOUND("duration %1 intrinsic %2", *ms->duration(), ms->intrinsic_duration());
 	} else {
-		cout << " intrinsic duration " << ms->intrinsic_duration();
+		OUTPUT_SOUND(" intrinsic duration %1", ms->intrinsic_duration());
 	}
 
 	if (ms->asset_ref().resolved()) {
 		if (ms->asset()) {
-			cout << "\n      Sound:       "
-				<< ms->asset()->channels()
-				<< " channels at "
-				<< ms->asset()->sampling_rate() << "Hz\n";
+			OUTPUT_SOUND(
+				"\n      Sound:       %1 channels at %2Hz\n",
+				ms->asset()->channels(),
+				ms->asset()->sampling_rate()
+				);
 		}
 	} else {
-		cout << " - not present in this DCP.\n";
+		OUTPUT_SOUND_NC(" - not present in this DCP.\n");
 	}
 }
 
 static
 void
-main_subtitle (shared_ptr<Reel> reel, bool list_subtitles)
+main_subtitle (vector<string> const& only, shared_ptr<Reel> reel, bool list_subtitles)
 {
 	shared_ptr<dcp::ReelSubtitleAsset> ms = reel->main_subtitle ();
 	if (!ms) {
 		return;
 	}
 
-	cout << "      Subtitle ID: " << ms->id();
+	OUTPUT_SUBTITLE("      Subtitle ID: %1", ms->id());
 
 	if (ms->asset_ref().resolved()) {
 		list<shared_ptr<Subtitle> > subs = ms->asset()->subtitles ();
-		cout << "\n      Subtitle:    " << subs.size() << " subtitles";
+		OUTPUT_SUBTITLE("\n      Subtitle:    %1 subtitles;", subs.size());
 		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (ms->asset());
 		if (iop) {
-			cout << " in " << iop->language() << "\n";
+			OUTPUT_SUBTITLE(" in %1\n", iop->language());
 		}
 		shared_ptr<SMPTESubtitleAsset> smpte = dynamic_pointer_cast<SMPTESubtitleAsset> (ms->asset());
 		if (smpte && smpte->language ()) {
-			cout << " in " << smpte->language().get() << "\n";
+			OUTPUT_SUBTITLE(" in %1\n", smpte->language().get());
 		}
 		if (list_subtitles) {
 			BOOST_FOREACH (shared_ptr<Subtitle> k, subs) {
 				shared_ptr<SubtitleString> ks = dynamic_pointer_cast<SubtitleString> (k);
 				if (ks) {
-					cout << *ks << "\n";
+					stringstream s;
+					s << *ks;
+					OUTPUT_SUBTITLE("%1\n", s.str());
 				}
 				shared_ptr<SubtitleImage> is = dynamic_pointer_cast<SubtitleImage> (k);
 				if (is) {
-					cout << *is << "\n";
+					stringstream s;
+					s << *is;
+					OUTPUT_SUBTITLE("%1\n", s.str());
 				}
 			}
 		}
 	} else {
-		cout << " - not present in this DCP.\n";
+		OUTPUT_SUBTITLE_NC(" - not present in this DCP.\n");
 	}
 }
+
 
 int
 main (int argc, char* argv[])
@@ -235,6 +289,7 @@ main (int argc, char* argv[])
 	bool ignore_missing_assets = false;
 	optional<boost::filesystem::path> kdm;
 	optional<boost::filesystem::path> private_key;
+	optional<string> only_string;
 
 	int option_index = 0;
 	while (true) {
@@ -244,13 +299,14 @@ main (int argc, char* argv[])
 			{ "subtitles", no_argument, 0, 's' },
 			{ "picture", no_argument, 0, 'p' },
 			{ "decompress", no_argument, 0, 'd' },
+			{ "only", required_argument, 0, 'o' },
 			{ "ignore-missing-assets", no_argument, 0, 'A' },
 			{ "kdm", required_argument, 0, 'B' },
 			{ "private-key", required_argument, 0, 'C' },
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "vhspdAB:C:", long_options, &option_index);
+		int c = getopt_long (argc, argv, "vhspdoAB:C:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -271,6 +327,9 @@ main (int argc, char* argv[])
 			break;
 		case 'd':
 			decompress = true;
+			break;
+		case 'o':
+			only_string = optarg;
 			break;
 		case 'A':
 			ignore_missing_assets = true;
@@ -294,6 +353,11 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
+	vector<string> only;
+	if (only_string) {
+		only = boost::split(only, *only_string, boost::is_any_of(","));
+	}
+
 	list<shared_ptr<CPL> > cpls;
 	if (boost::filesystem::is_directory(argv[optind])) {
 		DCP* dcp = 0;
@@ -315,7 +379,7 @@ main (int argc, char* argv[])
 			exit (EXIT_FAILURE);
 		}
 
-		cout << "DCP: " << boost::filesystem::path(argv[optind]).string() << "\n";
+		OUTPUT_DCP_PATH("DCP: %1\n", boost::filesystem::path(argv[optind]).string());
 
 		dcp::filter_notes (notes, ignore_missing_assets);
 		BOOST_FOREACH (dcp::VerificationNote i, notes) {
@@ -331,14 +395,16 @@ main (int argc, char* argv[])
 	dcp::Time total_time;
 
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls) {
-		cout << "  CPL: " << i->annotation_text() << "\n";
+		OUTPUT_CPL_NAME("  CPL: %1\n", i->annotation_text());
 
 		int R = 1;
 		BOOST_FOREACH (shared_ptr<Reel> j, i->reels()) {
-			cout << "    Reel " << R << "\n";
+			if (should_output(only, "picture") || should_output(only, "sound") || should_output(only, "subtitle")) {
+				cout << "    Reel " << R << "\n";
+			}
 
 			try {
-				total_time += main_picture(j, picture, decompress);
+				total_time += main_picture(only, j, picture, decompress);
 			} catch (UnresolvedRefError& e) {
 				if (!ignore_missing_assets) {
 					cerr << e.what() << " (for main picture)\n";
@@ -346,7 +412,7 @@ main (int argc, char* argv[])
 			}
 
 			try {
-				main_sound(j);
+				main_sound(only, j);
 			} catch (UnresolvedRefError& e) {
 				if (!ignore_missing_assets) {
 					cerr << e.what() << " (for main sound)\n";
@@ -354,7 +420,7 @@ main (int argc, char* argv[])
 			}
 
 			try {
-				main_subtitle (j, subtitles);
+				main_subtitle (only, j, subtitles);
 			} catch (UnresolvedRefError& e) {
 				if (!ignore_missing_assets) {
 					cerr << e.what() << " (for main subtitle)\n";
@@ -365,7 +431,7 @@ main (int argc, char* argv[])
 		}
 	}
 
-	cout << "Total: " << total_time.as_string(dcp::SMPTE) << "\n";
+	OUTPUT_TOTAL_TIME("Total: %1\n", total_time.as_string(dcp::SMPTE));
 
 	return 0;
 }
