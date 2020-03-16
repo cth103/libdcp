@@ -218,7 +218,7 @@ main_sound (vector<string> const& only, shared_ptr<Reel> reel)
 		OUTPUT_SOUND(" entry %1", *ms->entry_point());
 	}
 	if (ms->duration()) {
-		OUTPUT_SOUND("duration %1 intrinsic %2", *ms->duration(), ms->intrinsic_duration());
+		OUTPUT_SOUND(" duration %1 intrinsic %2", *ms->duration(), ms->intrinsic_duration());
 	} else {
 		OUTPUT_SOUND(" intrinsic duration %1", ms->intrinsic_duration());
 	}
@@ -249,7 +249,7 @@ main_subtitle (vector<string> const& only, shared_ptr<Reel> reel, bool list_subt
 
 	if (ms->asset_ref().resolved()) {
 		list<shared_ptr<Subtitle> > subs = ms->asset()->subtitles ();
-		OUTPUT_SUBTITLE("\n      Subtitle:    %1 subtitles;", subs.size());
+		OUTPUT_SUBTITLE("\n      Subtitle:    %1 subtitles", subs.size());
 		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (ms->asset());
 		if (iop) {
 			OUTPUT_SUBTITLE(" in %1\n", iop->language());
