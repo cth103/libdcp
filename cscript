@@ -51,15 +51,6 @@ def build(target, options):
         if not (target.distro == 'ubuntu' and target.version == '18.04'):
             # We only build tests on Ubuntu 18.04
             cmd += ' --disable-tests'
-        if target.distro == 'centos' and target.version == '7':
-            # Centos 7 ships with glibmm 2.50.0 which requires C++11
-            # but its compiler (gcc 4.8.5) defaults to C++97.  Go figure.
-            # I worry that this will cause ABI problems but I don't have
-            # a better solution.
-            cmd += ' --force-cpp11'
-        if target.distro == 'mageia' and target.version == '6':
-            # Mageia 6 pulls the same stunt except it's libxml++ that requires C++11
-            cmd += ' --force-cpp11'
     elif target.platform == 'windows':
         cmd += ' --target-windows --disable-gcov --disable-tests'
         if target.version == 'xp':
@@ -71,7 +62,18 @@ def build(target, options):
     if target.debug:
         cmd += ' --enable-debug'
 
-    if options['force-cpp11']:
+    # Centos 7 ships with glibmm 2.50.0 which requires C++11
+    # but its compiler (gcc 4.8.5) defaults to C++97.  Go figure.
+    # I worry that this will cause ABI problems but I don't have
+    # a better solution.  Mageia 6 pulls the same stunt except it's
+    # libxml++ that requires C++11
+    force_cpp11 = False
+    if target.platform == 'linux':
+        if target.distro == 'centos' and target.version == '7':
+            force_cpp11 = True
+        if target.distro == 'mageia' and target.version == '6':
+            force_cpp11 = True
+    if force_cpp11 or options['force-cpp11']:
         cmd += ' --force-cpp11'
 
     target.command(cmd)
