@@ -37,10 +37,11 @@ import shutil
 option_defaults = { 'force-cpp11': False, 'jpeg': 'oj2' }
 
 def dependencies(target, options):
+    libcxml = ('libcxml', '0d18df4', {'force-cpp11': options['force-cpp11']})
     if (target.platform == 'windows' and target.version == 'xp') or options['jpeg'] == 'oj1':
-        return (('libcxml', '0d18df4'), ('openjpeg', 'f166257'), ('asdcplib', 'carl'))
+        return (libcxml, ('openjpeg', 'f166257'), ('asdcplib', 'carl'))
     else:
-        return (('libcxml', '0d18df4'), ('openjpeg', '956af06'), ('asdcplib', 'carl'))
+        return (libcxml, ('openjpeg', '956af06'), ('asdcplib', 'carl'))
 
 def build(target, options):
     cmd = './waf configure --disable-examples --prefix=%s' % target.directory
