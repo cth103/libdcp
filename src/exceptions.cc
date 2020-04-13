@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -40,6 +40,7 @@
 
 using std::string;
 using std::runtime_error;
+using boost::optional;
 using namespace dcp;
 
 FileError::FileError (string message, boost::filesystem::path filename, int number)
@@ -123,3 +124,10 @@ BadKDMDateError::BadKDMDateError (bool starts_too_early)
 {
 
 }
+
+
+StartCompressionError::StartCompressionError (optional<int> code)
+	: runtime_error (String::compose("Could not start JPEG2000 encoding%1", code ? String::compose(" (%1", *code) : ""))
+	, _code (code)
+{}
+

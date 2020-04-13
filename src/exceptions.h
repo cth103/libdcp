@@ -211,6 +211,20 @@ private:
 	bool _starts_too_early;
 };
 
+
+class StartCompressionError : public std::runtime_error
+{
+public:
+	explicit StartCompressionError (boost::optional<int> code = boost::optional<int>());
+
+	boost::optional<int> code () const {
+		return _code;
+	}
+
+private:
+	boost::optional<int> _code;
+};
+
 }
 
 #endif

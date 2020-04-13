@@ -310,9 +310,9 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 	if (!opj_start_compress (encoder, xyz->opj_image(), stream)) {
 		if ((errno & 0x61500) == 0x61500) {
 			/* We've had one of the magic error codes from our patched openjpeg */
-			throw MiscError (String::compose ("could not start JPEG2000 encoding (%1)", errno & 0xff));
+			boost::throw_exception (StartCompressionError (errno & 0xff));
 		} else {
-			throw MiscError ("could not start JPEG2000 encoding");
+			boost::throw_exception (StartCompressionError ());
 		}
 	}
 
