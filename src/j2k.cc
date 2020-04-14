@@ -90,8 +90,16 @@ read_free_function (void* data)
 	delete reinterpret_cast<ReadBuffer*>(data);
 }
 
+
 static void
-error_callback (char const * msg, void *)
+decompress_error_callback (char const * msg, void *)
+{
+	throw J2KDecompressionError (msg);
+}
+
+
+static void
+compress_error_callback (char const * msg, void *)
 {
 	throw MiscError (msg);
 }
@@ -140,7 +148,7 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 		throw MiscError ("could not create JPEG2000 stream");
 	}
 
-	opj_set_error_handler(decoder, error_callback, 00);
+	opj_set_error_handler(decoder, decompress_error_callback, 00);
 
 	opj_stream_set_read_function (stream, read_function);
 	ReadBuffer* buffer = new ReadBuffer (data, size);
@@ -273,7 +281,7 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 		throw MiscError ("could not create JPEG2000 encoder");
 	}
 
-	opj_set_error_handler (encoder, error_callback, 0);
+	opj_set_error_handler (encoder, compress_error_callback, 0);
 
 	/* Set encoding parameters to default values */
 	opj_cparameters_t parameters;

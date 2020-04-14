@@ -121,6 +121,18 @@ private:
 };
 
 
+/** @class J2KDecompressionError
+ *  @brief An error that occurs during decompression of JPEG2000 data.
+ */
+class J2KDecompressionError : public ReadError
+{
+public:
+	explicit J2KDecompressionError (std::string message)
+		: ReadError (message)
+	{}
+};
+
+
 class BadContentKindError : public ReadError
 {
 public:
