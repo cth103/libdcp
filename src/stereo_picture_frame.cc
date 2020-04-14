@@ -56,7 +56,7 @@ StereoPictureFrame::StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, 
 	_buffer = new ASDCP::JP2K::SFrameBuffer (4 * Kumu::Megabyte);
 
 	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->context(), c->hmac()))) {
-		boost::throw_exception (DCPReadError (String::compose ("could not read video frame %1 of %2", n)));
+		boost::throw_exception (ReadError (String::compose ("could not read video frame %1 of %2", n)));
 	}
 }
 

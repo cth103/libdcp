@@ -103,7 +103,7 @@ main (int argc, char* argv[])
 	list<dcp::VerificationNote> notes;
 	try {
 		dcp.read (&notes, true);
-	} catch (dcp::DCPReadError& e) {
+	} catch (dcp::ReadError& e) {
 		cout << "Error:" <<  e.what() << "\n";
 	}
 
@@ -118,7 +118,7 @@ main (int argc, char* argv[])
 		if (i->path().extension() == ".xml") {
 			try {
 				cpl.reset(new dcp::CPL(i->path()));
-			} catch (dcp::DCPReadError& e) {
+			} catch (dcp::ReadError& e) {
 				cout << "Error: " << e.what() << "\n";
 			} catch (xmlpp::parse_error& e) {
 				cout << "Error: " << e.what() << "\n";
@@ -145,7 +145,7 @@ main (int argc, char* argv[])
 					asset->hash (&progress);
 					cout << "100%                     \n";
 					assets.push_back (asset);
-				} catch (dcp::DCPReadError& e) {
+				} catch (dcp::ReadError& e) {
 					cout << "Error: " << e.what() << "\n";
 				}
 			}

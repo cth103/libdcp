@@ -85,5 +85,5 @@ BOOST_AUTO_TEST_CASE (sound_frame_test2)
 		"TONEPLATES-SMPTE-PLAINTEXT_TST_F_XX-XX_ITL-TD_51-XX_2K_WOE_20111001_WOE_OV/pcm_95734608-5d47-4d3f-bf5f-9e9186b66afa_.mxf"
 		);
 
-	BOOST_CHECK_THROW (asset.start_read()->get_frame (99999999), dcp::DCPReadError);
+	BOOST_CHECK_THROW (asset.start_read()->get_frame (99999999), dcp::ReadError);
 }

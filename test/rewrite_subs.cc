@@ -77,7 +77,7 @@ main (int argc, char* argv[])
 		cerr << e.what() << " (" << e.filename() << ") when reading " << argv[1] << "\n";
 		exit (EXIT_FAILURE);
 	}
-	catch (DCPReadError& e)
+	catch (ReadError& e)
 	{
 		cerr << e.what() << " when reading " << argv[1] << "\n";
 		exit (EXIT_FAILURE);

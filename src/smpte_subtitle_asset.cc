@@ -109,7 +109,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 			_id = _xml_id = remove_urn_uuid (xml->string_child ("Id"));
 		} catch (cxml::Error& e) {
 			boost::throw_exception (
-				DCPReadError (
+				ReadError (
 					String::compose (
 						"Failed to read subtitle file %1; MXF failed with %2, XML failed with %3",
 						file, static_cast<int> (r), e.what ()
@@ -272,7 +272,7 @@ SMPTESubtitleAsset::set_key (Key key)
 	Kumu::Result_t r = reader->OpenRead (_file->string().c_str ());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (
-			DCPReadError (
+			ReadError (
 				String::compose ("Could not read encrypted subtitle MXF (%1)", static_cast<int> (r))
 				)
 			);

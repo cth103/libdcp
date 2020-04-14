@@ -53,12 +53,12 @@ dcp::asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_
 
 	ASDCP::EssenceType_t type;
 	if (ASDCP::EssenceType (path.string().c_str(), type) != ASDCP::RESULT_OK) {
-		throw DCPReadError ("Could not find essence type");
+		throw ReadError ("Could not find essence type");
 	}
 	switch (type) {
 	case ASDCP::ESS_UNKNOWN:
 	case ASDCP::ESS_MPEG2_VES:
-		throw DCPReadError ("MPEG2 video essences are not supported");
+		throw ReadError ("MPEG2 video essences are not supported");
 	case ASDCP::ESS_JPEG_2000:
 		try {
 			return shared_ptr<MonoPictureAsset> (new MonoPictureAsset (path));
@@ -80,7 +80,7 @@ dcp::asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_
 	case ASDCP::ESS_DCDATA_DOLBY_ATMOS:
 		return shared_ptr<AtmosAsset> (new AtmosAsset (path));
 	default:
-		throw DCPReadError (String::compose ("Unknown MXF essence type %1 in %2", int(type), path.string()));
+		throw ReadError (String::compose ("Unknown MXF essence type %1 in %2", int(type), path.string()));
 	}
 
 	return shared_ptr<Asset>();

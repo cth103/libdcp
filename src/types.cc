@@ -208,7 +208,7 @@ dcp::string_to_effect (string s)
 		return SHADOW;
 	}
 
-	boost::throw_exception (DCPReadError ("unknown subtitle effect type"));
+	boost::throw_exception (ReadError ("unknown subtitle effect type"));
 }
 
 string
@@ -237,7 +237,7 @@ dcp::string_to_halign (string s)
 		return HALIGN_RIGHT;
 	}
 
-	boost::throw_exception (DCPReadError ("unknown subtitle halign type"));
+	boost::throw_exception (ReadError ("unknown subtitle halign type"));
 }
 
 string
@@ -266,7 +266,7 @@ dcp::string_to_valign (string s)
 		return VALIGN_BOTTOM;
 	}
 
-	boost::throw_exception (DCPReadError ("unknown subtitle valign type"));
+	boost::throw_exception (ReadError ("unknown subtitle valign type"));
 }
 
 string
@@ -299,7 +299,7 @@ dcp::string_to_direction (string s)
 		return DIRECTION_BTT;
 	}
 
-	boost::throw_exception (DCPReadError ("unknown subtitle direction type"));
+	boost::throw_exception (ReadError ("unknown subtitle direction type"));
 }
 
 /** Convert a content kind to a string which can be used in a

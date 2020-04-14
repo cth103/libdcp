@@ -117,7 +117,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 	} else if (boost::filesystem::exists (_directory / "ASSETMAP.xml")) {
 		_asset_map = _directory / "ASSETMAP.xml";
 	} else {
-		boost::throw_exception (DCPReadError (String::compose ("could not find ASSETMAP nor ASSETMAP.xml in `%1'", _directory.string())));
+		boost::throw_exception (ReadError (String::compose ("could not find ASSETMAP nor ASSETMAP.xml in `%1'", _directory.string())));
 	}
 
 	cxml::Document asset_map ("AssetMap");
@@ -221,7 +221,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 				p->parse_file (path.string());
 			} catch (std::exception& e) {
 				delete p;
-				throw DCPReadError(String::compose("XML error in %1", path.string()), e.what());
+				throw ReadError(String::compose("XML error in %1", path.string()), e.what());
 			}
 
 			string const root = p->get_document()->get_root_node()->get_name ();
@@ -252,7 +252,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 		} else if (*pkl_type == "image/png") {
 			/* It's an Interop PNG subtitle; let it go */
 		} else {
-			throw DCPReadError (String::compose("Unknown asset type %1 in PKL", *pkl_type));
+			throw ReadError (String::compose("Unknown asset type %1 in PKL", *pkl_type));
 		}
 	}
 

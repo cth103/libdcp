@@ -66,7 +66,7 @@ AtmosAsset::AtmosAsset (boost::filesystem::path file)
 
 	ASDCP::ATMOS::AtmosDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillAtmosDescriptor (desc))) {
-		boost::throw_exception (DCPReadError ("could not read Atmos MXF information"));
+		boost::throw_exception (ReadError ("could not read Atmos MXF information"));
 	}
 
 	_edit_rate = Fraction (desc.EditRate.Numerator, desc.EditRate.Denominator);

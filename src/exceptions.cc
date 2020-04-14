@@ -64,7 +64,7 @@ TimeFormatError::TimeFormatError (string bad_time)
 }
 
 BadContentKindError::BadContentKindError (string content_kind)
-	: DCPReadError (String::compose("Bad content kind '%1'", content_kind))
+	: ReadError (String::compose("Bad content kind '%1'", content_kind))
 {
 
 }
@@ -100,7 +100,7 @@ CertificateChainError::CertificateChainError (string message)
 
 }
 
-DCPReadError::DCPReadError (string message, string detail)
+ReadError::ReadError (string message, string detail)
 	: runtime_error(String::compose("%1 (%2)", message, detail))
 	, _message(message)
 	, _detail(detail)

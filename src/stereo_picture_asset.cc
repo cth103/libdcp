@@ -57,14 +57,14 @@ StereoPictureAsset::StereoPictureAsset (boost::filesystem::path file)
 
 	ASDCP::JP2K::PictureDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillPictureDescriptor (desc))) {
-		boost::throw_exception (DCPReadError ("could not read video MXF information"));
+		boost::throw_exception (ReadError ("could not read video MXF information"));
 	}
 
 	read_picture_descriptor (desc);
 
 	ASDCP::WriterInfo info;
 	if (ASDCP_FAILURE (reader.FillWriterInfo (info))) {
-		boost::throw_exception (DCPReadError ("could not read video MXF information"));
+		boost::throw_exception (ReadError ("could not read video MXF information"));
 	}
 
 	_id = read_writer_info (info);
@@ -107,11 +107,11 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 
 	ASDCP::JP2K::PictureDescriptor desc_A;
 	if (ASDCP_FAILURE (reader_A.FillPictureDescriptor (desc_A))) {
-		boost::throw_exception (DCPReadError ("could not read video MXF information"));
+		boost::throw_exception (ReadError ("could not read video MXF information"));
 	}
 	ASDCP::JP2K::PictureDescriptor desc_B;
 	if (ASDCP_FAILURE (reader_B.FillPictureDescriptor (desc_B))) {
-		boost::throw_exception (DCPReadError ("could not read video MXF information"));
+		boost::throw_exception (ReadError ("could not read video MXF information"));
 	}
 
 	if (!descriptor_equals (desc_A, desc_B, note)) {
@@ -132,7 +132,7 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 		try {
 			frame_A = reader->get_frame (i);
 			frame_B = other_reader->get_frame (i);
-		} catch (DCPReadError& e) {
+		} catch (ReadError& e) {
 			/* If there was a problem reading the frame data we'll just assume
 			   the two frames are not equal.
 			*/

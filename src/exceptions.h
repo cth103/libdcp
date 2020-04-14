@@ -91,20 +91,21 @@ public:
 	{}
 };
 
-/** @class DCPReadError
- *  @brief A DCP read exception
+
+/** @class ReadError
+ *  @brief Any error that occurs when reading data from a DCP.
  */
-class DCPReadError : public std::runtime_error
+class ReadError : public std::runtime_error
 {
 public:
-	explicit DCPReadError (std::string message)
+	explicit ReadError (std::string message)
 		: std::runtime_error(message)
 		, _message(message)
 	{}
 
-	DCPReadError (std::string message, std::string detail);
+	ReadError (std::string message, std::string detail);
 
-	~DCPReadError() throw () {}
+	~ReadError() throw () {}
 
 	std::string message () const {
 		return _message;
@@ -119,7 +120,8 @@ private:
 	boost::optional<std::string> _detail;
 };
 
-class BadContentKindError : public DCPReadError
+
+class BadContentKindError : public ReadError
 {
 public:
 	BadContentKindError (std::string content_kind);

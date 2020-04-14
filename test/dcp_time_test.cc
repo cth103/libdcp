@@ -133,24 +133,24 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_EQUAL (a, dcp::Time (1, 23, 45, 12, 250));
 
 	/* Check some disallowed constructions from string */
-	BOOST_CHECK_THROW (dcp::Time ("01:23:45:1234", optional<int>()), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01:23:45:1234:66", optional<int>()), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01:23:45:", optional<int>()), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01:23::123", optional<int>()), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01::45:123", optional<int>()), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time (":23:45:123", optional<int>()), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01:23:45.1234", optional<int>()), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01:23:45.1234.66", optional<int>()), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01:23:45.", optional<int>()), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01:23:.123", optional<int>()), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01::45.123", optional<int>()), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time (":23:45.123", optional<int>()), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01:23:45:123", 250), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01:23:45:123:66", 250), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01:23:45:", 250), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01:23::123", 250), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01::45:123", 250), dcp::DCPReadError);
-	BOOST_CHECK_THROW (dcp::Time (":23:45:123", 250), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45:1234", optional<int>()), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45:1234:66", optional<int>()), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45:", optional<int>()), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23::123", optional<int>()), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01::45:123", optional<int>()), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time (":23:45:123", optional<int>()), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45.1234", optional<int>()), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45.1234.66", optional<int>()), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45.", optional<int>()), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:.123", optional<int>()), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01::45.123", optional<int>()), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time (":23:45.123", optional<int>()), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45:123", 250), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45:123:66", 250), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23:45:", 250), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01:23::123", 250), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time ("01::45:123", 250), dcp::ReadError);
+	BOOST_CHECK_THROW (dcp::Time (":23:45:123", 250), dcp::ReadError);
 
 	/* Check operator< and operator> */
 	BOOST_CHECK (dcp::Time (3, 2, 3, 4, 24) < dcp::Time (3, 2, 3, 5, 24));

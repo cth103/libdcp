@@ -66,7 +66,7 @@ class XMLMetadata;
 class CertificateChain;
 class DecryptedKDM;
 class Asset;
-class DCPReadError;
+class ReadError;
 
 /** @class DCP
  *  @brief A class to create or read a DCP.

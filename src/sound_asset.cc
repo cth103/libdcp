@@ -67,7 +67,7 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 
 	ASDCP::PCM::AudioDescriptor desc;
 	if (ASDCP_FAILURE (reader.FillAudioDescriptor (desc))) {
-		boost::throw_exception (DCPReadError ("could not read audio MXF information"));
+		boost::throw_exception (ReadError ("could not read audio MXF information"));
 	}
 
 	_sampling_rate = desc.AudioSamplingRate.Numerator / desc.AudioSamplingRate.Denominator;
@@ -78,7 +78,7 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 
 	ASDCP::WriterInfo info;
 	if (ASDCP_FAILURE (reader.FillWriterInfo (info))) {
-		boost::throw_exception (DCPReadError ("could not read audio MXF information"));
+		boost::throw_exception (ReadError ("could not read audio MXF information"));
 	}
 
 	_id = read_writer_info (info);
@@ -112,11 +112,11 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 
 	ASDCP::PCM::AudioDescriptor desc_A;
 	if (ASDCP_FAILURE (reader_A.FillAudioDescriptor (desc_A))) {
-		boost::throw_exception (DCPReadError ("could not read audio MXF information"));
+		boost::throw_exception (ReadError ("could not read audio MXF information"));
 	}
 	ASDCP::PCM::AudioDescriptor desc_B;
 	if (ASDCP_FAILURE (reader_B.FillAudioDescriptor (desc_B))) {
-		boost::throw_exception (DCPReadError ("could not read audio MXF information"));
+		boost::throw_exception (ReadError ("could not read audio MXF information"));
 	}
 
 	if (desc_A.EditRate != desc_B.EditRate) {

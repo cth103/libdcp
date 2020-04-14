@@ -371,7 +371,7 @@ main (int argc, char* argv[])
 		} catch (FileError& e) {
 			cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << "\n";
 			exit (EXIT_FAILURE);
-		} catch (DCPReadError& e) {
+		} catch (ReadError& e) {
 			cerr << "Could not read DCP " << argv[optind] << "; " << e.what() << "\n";
 			exit (EXIT_FAILURE);
 		} catch (KDMDecryptionError& e) {

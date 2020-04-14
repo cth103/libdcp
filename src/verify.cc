@@ -351,7 +351,7 @@ dcp::verify (
 		stage ("Checking DCP", dcp->directory());
 		try {
 			dcp->read (&notes);
-		} catch (DCPReadError& e) {
+		} catch (ReadError& e) {
 			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
 		} catch (XMLError& e) {
 			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));

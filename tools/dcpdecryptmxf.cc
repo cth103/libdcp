@@ -149,7 +149,7 @@ main (int argc, char* argv[])
 			shared_ptr<const dcp::AtmosFrame> f = reader->get_frame (i);
 			writer->write (f->data(), f->size());
 		}
-	} catch (dcp::DCPReadError& e) {
+	} catch (dcp::ReadError& e) {
 		cerr << "Unknown MXF format.\n";
 		return EXIT_FAILURE;
 	}

@@ -47,5 +47,5 @@ BOOST_AUTO_TEST_CASE (effect_test)
 	BOOST_CHECK_EQUAL (dcp::string_to_effect ("none"), dcp::NONE);
 	BOOST_CHECK_EQUAL (dcp::string_to_effect ("border"), dcp::BORDER);
 	BOOST_CHECK_EQUAL (dcp::string_to_effect ("shadow"), dcp::SHADOW);
-	BOOST_CHECK_THROW (dcp::string_to_effect ("fish"), dcp::DCPReadError);
+	BOOST_CHECK_THROW (dcp::string_to_effect ("fish"), dcp::ReadError);
 }

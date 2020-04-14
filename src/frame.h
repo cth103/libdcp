@@ -52,7 +52,7 @@ public:
 		_buffer = new B (Kumu::Megabyte);
 
 		if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->context(), c->hmac()))) {
-			boost::throw_exception (DCPReadError ("could not read frame"));
+			boost::throw_exception (ReadError ("could not read frame"));
 		}
 	}
 
