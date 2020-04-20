@@ -230,6 +230,7 @@ class StartCompressionError : public std::runtime_error
 {
 public:
 	explicit StartCompressionError (boost::optional<int> code = boost::optional<int>());
+	~StartCompressionError () throw () {}
 
 	boost::optional<int> code () const {
 		return _code;
