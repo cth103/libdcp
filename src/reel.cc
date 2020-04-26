@@ -53,6 +53,11 @@
 #include <boost/foreach.hpp>
 #include <stdint.h>
 
+/* Centos 6 does not have this */
+#ifndef INT64_MAX
+#define INT64_MAX 0x7fffffffffffffff
+#endif
+
 using std::string;
 using std::list;
 using std::cout;
