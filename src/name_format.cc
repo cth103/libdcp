@@ -64,15 +64,24 @@ filter (string c)
 	return o;
 }
 
+
+/** @param values Values to replace our specifications with; e.g.
+ *  if the specification contains %c it will be be replaced with the
+ *  value corresponding to the key 'c'.
+ *  @param suffix Suffix to add on after processing the specification.
+ *  @param ignore Any specification characters in this string will not
+ *  be replaced, but left as-is.
+ */
 string
-NameFormat::get (Map values, string suffix) const
+NameFormat::get (Map values, string suffix, string ignore) const
 {
 	string result;
 	for (size_t i = 0; i < _specification.length(); ++i) {
 		bool done = false;
 		if (_specification[i] == '%' && (i < _specification.length() - 1)) {
-			Map::const_iterator j = values.find(_specification[i + 1]);
-			if (j != values.end()) {
+			char const key = _specification[i + 1];
+			Map::const_iterator j = values.find(key);
+			if (j != values.end() && ignore.find(key) == string::npos) {
 				result += filter (j->second);
 				++i;
 				done = true;
