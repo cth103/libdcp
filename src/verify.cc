@@ -37,6 +37,10 @@
 #include "reel.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
+#include "mono_picture_asset.h"
+#include "mono_picture_frame.h"
+#include "stereo_picture_asset.h"
+#include "stereo_picture_frame.h"
 #include "exceptions.h"
 #include "compose.hpp"
 #include "raw_convert.h"
@@ -70,9 +74,11 @@ using std::vector;
 using std::string;
 using std::cout;
 using std::map;
+using std::max;
 using boost::shared_ptr;
 using boost::optional;
 using boost::function;
+using boost::dynamic_pointer_cast;
 
 using namespace dcp;
 using namespace xercesc;
@@ -332,6 +338,70 @@ verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelMXF> reel_mxf, function<void (
 }
 
 
+enum VerifyPictureAssetResult
+{
+	VERIFY_PICTURE_ASSET_RESULT_GOOD,
+	VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_BIG,
+	VERIFY_PICTURE_ASSET_RESULT_BAD,
+};
+
+
+int
+biggest_frame_size (shared_ptr<const MonoPictureFrame> frame)
+{
+	return frame->j2k_size ();
+}
+
+int
+biggest_frame_size (shared_ptr<const StereoPictureFrame> frame)
+{
+	return max(frame->left_j2k_size(), frame->right_j2k_size());
+}
+
+
+template <class A, class R, class F>
+optional<VerifyPictureAssetResult>
+verify_picture_asset_type (shared_ptr<ReelMXF> reel_mxf, function<void (float)> progress)
+{
+	shared_ptr<A> asset = dynamic_pointer_cast<A>(reel_mxf->asset_ref().asset());
+	if (!asset) {
+		return optional<VerifyPictureAssetResult>();
+	}
+
+	int biggest_frame = 0;
+	shared_ptr<R> reader = asset->start_read ();
+	int64_t const duration = asset->intrinsic_duration ();
+	for (int64_t i = 0; i < duration; ++i) {
+		shared_ptr<const F> frame = reader->get_frame (i);
+		biggest_frame = max(biggest_frame, biggest_frame_size(frame));
+		progress (float(i) / duration);
+	}
+
+	static const int max_frame =   rint(250 * 1000000 / (8 * asset->edit_rate().as_float()));
+	static const int risky_frame = rint(230 * 1000000 / (8 * asset->edit_rate().as_float()));
+	if (biggest_frame > max_frame) {
+		return VERIFY_PICTURE_ASSET_RESULT_BAD;
+	} else if (biggest_frame > risky_frame) {
+		return VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_BIG;
+	}
+
+	return VERIFY_PICTURE_ASSET_RESULT_GOOD;
+}
+
+
+static VerifyPictureAssetResult
+verify_picture_asset (shared_ptr<ReelMXF> reel_mxf, function<void (float)> progress)
+{
+	optional<VerifyPictureAssetResult> r = verify_picture_asset_type<MonoPictureAsset, MonoPictureAssetReader, MonoPictureFrame>(reel_mxf, progress);
+	if (!r) {
+		r = verify_picture_asset_type<StereoPictureAsset, StereoPictureAssetReader, StereoPictureFrame>(reel_mxf, progress);
+	}
+
+	DCP_ASSERT (r);
+	return *r;
+}
+
+
 list<VerificationNote>
 dcp::verify (
 	vector<boost::filesystem::path> directories,
@@ -398,20 +468,41 @@ dcp::verify (
 					}
 					/* Check asset */
 					if (reel->main_picture()->asset_ref().resolved()) {
-						stage ("Checking picture asset hash", reel->main_picture()->asset()->file());
+						boost::filesystem::path const file = *reel->main_picture()->asset()->file();
+						stage ("Checking picture asset hash", file);
 						VerifyAssetResult const r = verify_asset (dcp, reel->main_picture(), progress);
 						switch (r) {
 						case VERIFY_ASSET_RESULT_BAD:
 							notes.push_back (
 								VerificationNote(
-									VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_HASH_INCORRECT, *reel->main_picture()->asset()->file()
+									VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_HASH_INCORRECT, file
 									)
 								);
 							break;
 						case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
 							notes.push_back (
 								VerificationNote(
-									VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE, *reel->main_picture()->asset()->file()
+									VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE, file
+									)
+								);
+							break;
+						default:
+							break;
+						}
+						stage ("Checking picture frame sizes", reel->main_picture()->asset()->file());
+						VerifyPictureAssetResult const pr = verify_picture_asset (reel->main_picture(), progress);
+						switch (pr) {
+						case VERIFY_PICTURE_ASSET_RESULT_BAD:
+							notes.push_back (
+								VerificationNote(
+									VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_FRAME_TOO_LARGE, file
+									)
+								);
+							break;
+						case VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_BIG:
+							notes.push_back (
+								VerificationNote(
+									VerificationNote::VERIFY_WARNING, VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE, file
 									)
 								);
 							break;
@@ -493,6 +584,10 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The intrinsic duration of an asset is less than 1 second long: %1", note.note().get());
 	case dcp::VerificationNote::DURATION_TOO_SMALL:
 		return String::compose("The duration of an asset is less than 1 second long: %1", note.note().get());
+	case dcp::VerificationNote::PICTURE_FRAME_TOO_LARGE:
+		return String::compose("The instantaneous bit rate of the picture asset %1 is larger than the limit of 250Mbit/s in at least one place", note.file()->filename());
+	case dcp::VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE:
+		return String::compose("The instantaneous bit rate of the picture asset %1 is close to the limit of 250Mbit/s in at least one place", note.file()->filename());
 	}
 
 	return "";

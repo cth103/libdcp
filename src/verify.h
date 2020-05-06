@@ -82,7 +82,11 @@ public:
 		/** An asset's IntrinsicDuration is less than 1 second */
 		INTRINSIC_DURATION_TOO_SMALL,
 		/** An asset's Duration is less than 1 second */
-		DURATION_TOO_SMALL
+		DURATION_TOO_SMALL,
+		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 250Mbit/s */
+		PICTURE_FRAME_TOO_LARGE,
+		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 230Mbit/s */
+		PICTURE_FRAME_NEARLY_TOO_LARGE,
 	};
 
 	VerificationNote (Type type, Code code)

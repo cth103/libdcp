@@ -33,6 +33,14 @@
 
 #include "verify.h"
 #include "util.h"
+#include "j2k.h"
+#include "reel.h"
+#include "reel_mono_picture_asset.h"
+#include "cpl.h"
+#include "dcp.h"
+#include "openjpeg_image.h"
+#include "mono_picture_asset.h"
+#include "mono_picture_asset_writer.h"
 #include "compose.hpp"
 #include <boost/test/unit_test.hpp>
 #include <boost/foreach.hpp>
@@ -46,6 +54,8 @@ using std::string;
 using std::vector;
 using std::make_pair;
 using boost::optional;
+using boost::shared_ptr;
+
 
 static list<pair<string, optional<boost::filesystem::path> > > stages;
 static int next_verify_test_number = 1;
@@ -77,6 +87,10 @@ setup (int reference_number, int verify_test_number)
 
 }
 
+
+/** Class that can alter a file by searching and replacing strings within it.
+ *  On destruction modifies the file whose name was given to the constructor.
+ */
 class Editor
 {
 public:
@@ -137,6 +151,10 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	BOOST_REQUIRE (!st->second);
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking picture asset hash");
+	BOOST_REQUIRE (st->second);
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(dcp::String::compose("build/test/verify_test%1/video.mxf", next_verify_test_number)));
+	++st;
+	BOOST_CHECK_EQUAL (st->first, "Checking picture frame sizes");
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(dcp::String::compose("build/test/verify_test%1/video.mxf", next_verify_test_number)));
 	++st;
@@ -451,6 +469,10 @@ BOOST_AUTO_TEST_CASE (verify_test13)
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(dcp::String::compose("build/test/verify_test%1/j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf", next_verify_test_number)));
 	++st;
+	BOOST_CHECK_EQUAL (st->first, "Checking picture frame sizes");
+	BOOST_REQUIRE (st->second);
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(dcp::String::compose("build/test/verify_test%1/j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf", next_verify_test_number)));
+	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking sound asset hash");
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical(dcp::String::compose("build/test/verify_test%1/pcm_69cf9eaf-9a99-4776-b022-6902208626c3.mxf", next_verify_test_number)));
@@ -491,5 +513,97 @@ BOOST_AUTO_TEST_CASE (verify_test14)
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::INTRINSIC_DURATION_TOO_SMALL);
 	++i;
 	next_verify_test_number++;
+}
+
+
+static
+shared_ptr<dcp::OpenJPEGImage>
+random_image ()
+{
+	shared_ptr<dcp::OpenJPEGImage> image(new dcp::OpenJPEGImage(dcp::Size(1998, 1080)));
+	int const pixels = 1998 * 1080;
+	for (int i = 0; i < 3; ++i) {
+		int* p = image->data(i);
+		for (int j = 0; j < pixels; ++j) {
+			*p++ = rand();
+		}
+	}
+	return image;
+}
+
+
+static
+void
+dcp_from_frame (dcp::Data const& frame, boost::filesystem::path dir)
+{
+	shared_ptr<dcp::MonoPictureAsset> asset(new dcp::MonoPictureAsset(dcp::Fraction(24, 1), dcp::SMPTE));
+	boost::filesystem::create_directories (dir);
+	shared_ptr<dcp::PictureAssetWriter> writer = asset->start_write (dir / "pic.mxf", true);
+	for (int i = 0; i < 24; ++i) {
+		writer->write (frame.data().get(), frame.size());
+	}
+	writer->finalize ();
+
+	shared_ptr<dcp::ReelAsset> reel_asset(new dcp::ReelMonoPictureAsset(asset, 0));
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_asset);
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	shared_ptr<dcp::DCP> dcp(new dcp::DCP(dir));
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+}
+
+
+/* DCP with an over-sized JPEG2000 frame */
+BOOST_AUTO_TEST_CASE (verify_test15)
+{
+	/* Compress a random image with a bandwidth of 500Mbit/s */
+	shared_ptr<dcp::OpenJPEGImage> image = random_image ();
+	dcp::Data frame = dcp::compress_j2k (image, 500000000, 24, false, false);
+
+	boost::filesystem::path const dir("build/test/verify_test15");
+	dcp_from_frame (frame, dir);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, "xsd");
+	BOOST_REQUIRE_EQUAL (notes.size(), 1);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::PICTURE_FRAME_TOO_LARGE);
+}
+
+
+/* DCP with a nearly over-sized JPEG2000 frame */
+BOOST_AUTO_TEST_CASE (verify_test16)
+{
+	/* Compress a random image with a bandwidth of 500Mbit/s */
+	shared_ptr<dcp::OpenJPEGImage> image = random_image ();
+	dcp::Data frame = dcp::compress_j2k (image, 240000000, 24, false, false);
+
+	boost::filesystem::path const dir("build/test/verify_test16");
+	dcp_from_frame (frame, dir);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, "xsd");
+	BOOST_REQUIRE_EQUAL (notes.size(), 1);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE);
+}
+
+
+/* DCP with a within-range JPEG2000 frame */
+BOOST_AUTO_TEST_CASE (verify_test17)
+{
+	/* Compress a random image with a bandwidth of 500Mbit/s */
+	shared_ptr<dcp::OpenJPEGImage> image = random_image ();
+	dcp::Data frame = dcp::compress_j2k (image, 100000000, 24, false, false);
+
+	boost::filesystem::path const dir("build/test/verify_test17");
+	dcp_from_frame (frame, dir);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, "xsd");
+	BOOST_REQUIRE_EQUAL (notes.size(), 0);
 }
 
