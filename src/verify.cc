@@ -77,12 +77,6 @@ using boost::function;
 using namespace dcp;
 using namespace xercesc;
 
-enum Result {
-	RESULT_GOOD,
-	RESULT_CPL_PKL_DIFFER,
-	RESULT_BAD
-};
-
 static
 string
 xml_ch_to_string (XMLCh const * a)
@@ -296,7 +290,15 @@ validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_
 	}
 }
 
-static Result
+
+enum VerifyAssetResult {
+	VERIFY_ASSET_RESULT_GOOD,
+	VERIFY_ASSET_RESULT_CPL_PKL_DIFFER,
+	VERIFY_ASSET_RESULT_BAD
+};
+
+
+static VerifyAssetResult
 verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelMXF> reel_mxf, function<void (float)> progress)
 {
 	string const actual_hash = reel_mxf->asset_ref()->hash(progress);
@@ -319,14 +321,14 @@ verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelMXF> reel_mxf, function<void (
 
 	optional<string> cpl_hash = reel_mxf->hash();
 	if (cpl_hash && *cpl_hash != *pkl_hash) {
-		return RESULT_CPL_PKL_DIFFER;
+		return VERIFY_ASSET_RESULT_CPL_PKL_DIFFER;
 	}
 
 	if (actual_hash != *pkl_hash) {
-		return RESULT_BAD;
+		return VERIFY_ASSET_RESULT_BAD;
 	}
 
-	return RESULT_GOOD;
+	return VERIFY_ASSET_RESULT_GOOD;
 }
 
 
@@ -397,16 +399,16 @@ dcp::verify (
 					/* Check asset */
 					if (reel->main_picture()->asset_ref().resolved()) {
 						stage ("Checking picture asset hash", reel->main_picture()->asset()->file());
-						Result const r = verify_asset (dcp, reel->main_picture(), progress);
+						VerifyAssetResult const r = verify_asset (dcp, reel->main_picture(), progress);
 						switch (r) {
-						case RESULT_BAD:
+						case VERIFY_ASSET_RESULT_BAD:
 							notes.push_back (
 								VerificationNote(
 									VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_HASH_INCORRECT, *reel->main_picture()->asset()->file()
 									)
 								);
 							break;
-						case RESULT_CPL_PKL_DIFFER:
+						case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
 							notes.push_back (
 								VerificationNote(
 									VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE, *reel->main_picture()->asset()->file()
@@ -420,16 +422,16 @@ dcp::verify (
 				}
 				if (reel->main_sound() && reel->main_sound()->asset_ref().resolved()) {
 					stage ("Checking sound asset hash", reel->main_sound()->asset()->file());
-					Result const r = verify_asset (dcp, reel->main_sound(), progress);
+					VerifyAssetResult const r = verify_asset (dcp, reel->main_sound(), progress);
 					switch (r) {
-					case RESULT_BAD:
+					case VERIFY_ASSET_RESULT_BAD:
 						notes.push_back (
 							VerificationNote(
 								VerificationNote::VERIFY_ERROR, VerificationNote::SOUND_HASH_INCORRECT, *reel->main_sound()->asset()->file()
 								)
 							);
 						break;
-					case RESULT_CPL_PKL_DIFFER:
+					case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
 						notes.push_back (
 							VerificationNote(
 								VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE, *reel->main_sound()->asset()->file()
