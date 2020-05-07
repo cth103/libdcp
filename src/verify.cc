@@ -305,7 +305,7 @@ enum VerifyAssetResult {
 
 
 static VerifyAssetResult
-verify_asset (shared_ptr<DCP> dcp, shared_ptr<ReelMXF> reel_mxf, function<void (float)> progress)
+verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelMXF> reel_mxf, function<void (float)> progress)
 {
 	string const actual_hash = reel_mxf->asset_ref()->hash(progress);
 
@@ -402,6 +402,91 @@ verify_picture_asset (shared_ptr<ReelMXF> reel_mxf, function<void (float)> progr
 }
 
 
+static void
+verify_main_picture_asset (
+	shared_ptr<const DCP> dcp,
+	shared_ptr<const Reel> reel,
+	function<void (string, optional<boost::filesystem::path>)> stage,
+	function<void (float)> progress,
+	list<VerificationNote>& notes
+	)
+{
+	boost::filesystem::path const file = *reel->main_picture()->asset()->file();
+	stage ("Checking picture asset hash", file);
+	VerifyAssetResult const r = verify_asset (dcp, reel->main_picture(), progress);
+	switch (r) {
+		case VERIFY_ASSET_RESULT_BAD:
+			notes.push_back (
+				VerificationNote(
+					VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_HASH_INCORRECT, file
+					)
+				);
+			break;
+		case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
+			notes.push_back (
+				VerificationNote(
+					VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE, file
+					)
+				);
+			break;
+		default:
+			break;
+	}
+	stage ("Checking picture frame sizes", reel->main_picture()->asset()->file());
+	VerifyPictureAssetResult const pr = verify_picture_asset (reel->main_picture(), progress);
+	switch (pr) {
+		case VERIFY_PICTURE_ASSET_RESULT_BAD:
+			notes.push_back (
+				VerificationNote(
+					VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_FRAME_TOO_LARGE, file
+					)
+				);
+			break;
+		case VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_BIG:
+			notes.push_back (
+				VerificationNote(
+					VerificationNote::VERIFY_WARNING, VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE, file
+					)
+				);
+			break;
+		default:
+			break;
+	}
+}
+
+
+static void
+verify_main_sound_asset (
+	shared_ptr<const DCP> dcp,
+	shared_ptr<const Reel> reel,
+	function<void (string, optional<boost::filesystem::path>)> stage,
+	function<void (float)> progress,
+	list<VerificationNote>& notes
+	)
+{
+	stage ("Checking sound asset hash", reel->main_sound()->asset()->file());
+	VerifyAssetResult const r = verify_asset (dcp, reel->main_sound(), progress);
+	switch (r) {
+		case VERIFY_ASSET_RESULT_BAD:
+			notes.push_back (
+				VerificationNote(
+					VerificationNote::VERIFY_ERROR, VerificationNote::SOUND_HASH_INCORRECT, *reel->main_sound()->asset()->file()
+					)
+				);
+			break;
+		case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
+			notes.push_back (
+				VerificationNote(
+					VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE, *reel->main_sound()->asset()->file()
+					)
+				);
+			break;
+		default:
+			break;
+	}
+}
+
+
 list<VerificationNote>
 dcp::verify (
 	vector<boost::filesystem::path> directories,
@@ -468,70 +553,11 @@ dcp::verify (
 					}
 					/* Check asset */
 					if (reel->main_picture()->asset_ref().resolved()) {
-						boost::filesystem::path const file = *reel->main_picture()->asset()->file();
-						stage ("Checking picture asset hash", file);
-						VerifyAssetResult const r = verify_asset (dcp, reel->main_picture(), progress);
-						switch (r) {
-						case VERIFY_ASSET_RESULT_BAD:
-							notes.push_back (
-								VerificationNote(
-									VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_HASH_INCORRECT, file
-									)
-								);
-							break;
-						case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
-							notes.push_back (
-								VerificationNote(
-									VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE, file
-									)
-								);
-							break;
-						default:
-							break;
-						}
-						stage ("Checking picture frame sizes", reel->main_picture()->asset()->file());
-						VerifyPictureAssetResult const pr = verify_picture_asset (reel->main_picture(), progress);
-						switch (pr) {
-						case VERIFY_PICTURE_ASSET_RESULT_BAD:
-							notes.push_back (
-								VerificationNote(
-									VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_FRAME_TOO_LARGE, file
-									)
-								);
-							break;
-						case VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_BIG:
-							notes.push_back (
-								VerificationNote(
-									VerificationNote::VERIFY_WARNING, VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE, file
-									)
-								);
-							break;
-						default:
-							break;
-						}
+						verify_main_picture_asset (dcp, reel, stage, progress, notes);
 					}
 				}
 				if (reel->main_sound() && reel->main_sound()->asset_ref().resolved()) {
-					stage ("Checking sound asset hash", reel->main_sound()->asset()->file());
-					VerifyAssetResult const r = verify_asset (dcp, reel->main_sound(), progress);
-					switch (r) {
-					case VERIFY_ASSET_RESULT_BAD:
-						notes.push_back (
-							VerificationNote(
-								VerificationNote::VERIFY_ERROR, VerificationNote::SOUND_HASH_INCORRECT, *reel->main_sound()->asset()->file()
-								)
-							);
-						break;
-					case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
-						notes.push_back (
-							VerificationNote(
-								VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE, *reel->main_sound()->asset()->file()
-								)
-							);
-						break;
-					default:
-						break;
-					}
+					verify_main_sound_asset (dcp, reel, stage, progress, notes);
 				}
 			}
 		}
