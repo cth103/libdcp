@@ -518,15 +518,12 @@ BOOST_AUTO_TEST_CASE (verify_test14)
 
 static
 shared_ptr<dcp::OpenJPEGImage>
-random_image ()
+black_image ()
 {
 	shared_ptr<dcp::OpenJPEGImage> image(new dcp::OpenJPEGImage(dcp::Size(1998, 1080)));
 	int const pixels = 1998 * 1080;
 	for (int i = 0; i < 3; ++i) {
-		int* p = image->data(i);
-		for (int j = 0; j < pixels; ++j) {
-			*p++ = rand();
-		}
+		memset (image->data(i), 0, pixels * sizeof(int));
 	}
 	return image;
 }
@@ -558,12 +555,21 @@ dcp_from_frame (dcp::Data const& frame, boost::filesystem::path dir)
 /* DCP with an over-sized JPEG2000 frame */
 BOOST_AUTO_TEST_CASE (verify_test15)
 {
-	/* Compress a random image with a bandwidth of 500Mbit/s */
-	shared_ptr<dcp::OpenJPEGImage> image = random_image ();
-	dcp::Data frame = dcp::compress_j2k (image, 500000000, 24, false, false);
+	int const too_big = 1302083 * 2;
+
+	/* Compress a black image */
+	shared_ptr<dcp::OpenJPEGImage> image = black_image ();
+	dcp::Data frame = dcp::compress_j2k (image, 100000000, 24, false, false);
+	BOOST_REQUIRE (frame.size() < too_big);
+
+	/* Place it in a bigger block with some zero padding at the end */
+	dcp::Data oversized_frame(too_big);
+	memcpy (oversized_frame.data().get(), frame.data().get(), frame.size());
+	memset (oversized_frame.data().get() + frame.size(), 0, too_big - frame.size());
 
 	boost::filesystem::path const dir("build/test/verify_test15");
-	dcp_from_frame (frame, dir);
+	boost::filesystem::remove_all (dir);
+	dcp_from_frame (oversized_frame, dir);
 
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
@@ -576,12 +582,21 @@ BOOST_AUTO_TEST_CASE (verify_test15)
 /* DCP with a nearly over-sized JPEG2000 frame */
 BOOST_AUTO_TEST_CASE (verify_test16)
 {
-	/* Compress a random image with a bandwidth of 500Mbit/s */
-	shared_ptr<dcp::OpenJPEGImage> image = random_image ();
-	dcp::Data frame = dcp::compress_j2k (image, 240000000, 24, false, false);
+	int const nearly_too_big = 1302083 * 0.98;
+
+	/* Compress a black image */
+	shared_ptr<dcp::OpenJPEGImage> image = black_image ();
+	dcp::Data frame = dcp::compress_j2k (image, 100000000, 24, false, false);
+	BOOST_REQUIRE (frame.size() < nearly_too_big);
+
+	/* Place it in a bigger block with some zero padding at the end */
+	dcp::Data oversized_frame(nearly_too_big);
+	memcpy (oversized_frame.data().get(), frame.data().get(), frame.size());
+	memset (oversized_frame.data().get() + frame.size(), 0, nearly_too_big - frame.size());
 
 	boost::filesystem::path const dir("build/test/verify_test16");
-	dcp_from_frame (frame, dir);
+	boost::filesystem::remove_all (dir);
+	dcp_from_frame (oversized_frame, dir);
 
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
@@ -594,11 +609,13 @@ BOOST_AUTO_TEST_CASE (verify_test16)
 /* DCP with a within-range JPEG2000 frame */
 BOOST_AUTO_TEST_CASE (verify_test17)
 {
-	/* Compress a random image with a bandwidth of 500Mbit/s */
-	shared_ptr<dcp::OpenJPEGImage> image = random_image ();
+	/* Compress a black image */
+	shared_ptr<dcp::OpenJPEGImage> image = black_image ();
 	dcp::Data frame = dcp::compress_j2k (image, 100000000, 24, false, false);
+	BOOST_REQUIRE (frame.size() < 230000000 / (24 * 8));
 
 	boost::filesystem::path const dir("build/test/verify_test17");
+	boost::filesystem::remove_all (dir);
 	dcp_from_frame (frame, dir);
 
 	vector<boost::filesystem::path> dirs;
