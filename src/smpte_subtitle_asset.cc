@@ -94,15 +94,15 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 		_id = read_writer_info (info);
 		if (!_key_id) {
 			/* Not encrypted; read it in now */
-			string s;
-			reader->ReadTimedTextResource (s);
-			xml->read_string (s);
+			reader->ReadTimedTextResource (_raw_xml);
+			xml->read_string (_raw_xml);
 			parse_xml (xml);
 			read_mxf_descriptor (reader, shared_ptr<DecryptionContext> (new DecryptionContext (optional<Key>(), SMPTE)));
 		}
 	} else {
 		/* Plain XML */
 		try {
+			_raw_xml = dcp::file_to_string (file);
 			xml.reset (new cxml::Document ("SubtitleReel"));
 			xml->read_file (file);
 			parse_xml (xml);
@@ -278,11 +278,10 @@ SMPTESubtitleAsset::set_key (Key key)
 			);
 	}
 
-	string s;
 	shared_ptr<DecryptionContext> dec (new DecryptionContext (key, SMPTE));
-	reader->ReadTimedTextResource (s, dec->context(), dec->hmac());
+	reader->ReadTimedTextResource (_raw_xml, dec->context(), dec->hmac());
 	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
-	xml->read_string (s);
+	xml->read_string (_raw_xml);
 	parse_xml (xml);
 	read_mxf_descriptor (reader, dec);
 }

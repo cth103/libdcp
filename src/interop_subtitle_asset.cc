@@ -61,6 +61,8 @@ using namespace dcp;
 InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 	: SubtitleAsset (file)
 {
+	_raw_xml = dcp::file_to_string (file);
+
 	shared_ptr<cxml::Document> xml (new cxml::Document ("DCSubtitle"));
 	xml->read_file (file);
 	_id = xml->string_child ("SubtitleID");

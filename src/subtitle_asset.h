@@ -105,6 +105,10 @@ public:
 
 	virtual std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const = 0;
 
+	std::string raw_xml () const {
+		return _raw_xml;
+	}
+
 protected:
 	friend struct ::interop_dcp_font_test;
 	friend struct ::smpte_dcp_font_test;
@@ -173,6 +177,9 @@ protected:
 
 	/** TTF font data that we need */
 	std::list<Font> _fonts;
+
+	/** The raw XML data that we read from our asset; useful for validation */
+	std::string _raw_xml;
 
 private:
 	friend struct ::pull_fonts_test1;
