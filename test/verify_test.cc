@@ -41,6 +41,9 @@
 #include "openjpeg_image.h"
 #include "mono_picture_asset.h"
 #include "mono_picture_asset_writer.h"
+#include "interop_subtitle_asset.h"
+#include "smpte_subtitle_asset.h"
+#include "reel_subtitle_asset.h"
 #include "compose.hpp"
 #include <boost/test/unit_test.hpp>
 #include <boost/foreach.hpp>
@@ -622,5 +625,113 @@ BOOST_AUTO_TEST_CASE (verify_test17)
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, "xsd");
 	BOOST_REQUIRE_EQUAL (notes.size(), 0);
+}
+
+
+/* DCP with valid Interop subtitles */
+BOOST_AUTO_TEST_CASE (verify_test18)
+{
+	boost::filesystem::path const dir("build/test/verify_test18");
+	boost::filesystem::remove_all (dir);
+	boost::filesystem::create_directories (dir);
+	boost::filesystem::copy_file ("test/data/subs1.xml", dir / "subs.xml");
+	shared_ptr<dcp::InteropSubtitleAsset> asset(new dcp::InteropSubtitleAsset(dir / "subs.xml"));
+	shared_ptr<dcp::ReelAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_asset);
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	shared_ptr<dcp::DCP> dcp(new dcp::DCP(dir));
+	dcp->add (cpl);
+	dcp->write_xml (dcp::INTEROP);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, "xsd");
+	BOOST_REQUIRE_EQUAL (notes.size(), 0);
+}
+
+
+/* DCP with broken Interop subtitles */
+BOOST_AUTO_TEST_CASE (verify_test19)
+{
+	boost::filesystem::path const dir("build/test/verify_test19");
+	boost::filesystem::remove_all (dir);
+	boost::filesystem::create_directories (dir);
+	boost::filesystem::copy_file ("test/data/subs1.xml", dir / "subs.xml");
+	shared_ptr<dcp::InteropSubtitleAsset> asset(new dcp::InteropSubtitleAsset(dir / "subs.xml"));
+	shared_ptr<dcp::ReelAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_asset);
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	shared_ptr<dcp::DCP> dcp(new dcp::DCP(dir));
+	dcp->add (cpl);
+	dcp->write_xml (dcp::INTEROP);
+
+	{
+		Editor e (dir / "subs.xml");
+		e.replace ("</ReelNumber>", "</ReelNumber><Foo></Foo>");
+	}
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, "xsd");
+	dump_notes(notes);
+	BOOST_REQUIRE_EQUAL (notes.size(), 2);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
+	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
+}
+
+
+/* DCP with valid SMPTE subtitles */
+BOOST_AUTO_TEST_CASE (verify_test20)
+{
+	boost::filesystem::path const dir("build/test/verify_test20");
+	boost::filesystem::remove_all (dir);
+	boost::filesystem::create_directories (dir);
+	boost::filesystem::copy_file ("test/data/subs.mxf", dir / "subs.mxf");
+	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset(dir / "subs.mxf"));
+	shared_ptr<dcp::ReelAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_asset);
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	shared_ptr<dcp::DCP> dcp(new dcp::DCP(dir));
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, "xsd");
+	dump_notes (notes);
+	BOOST_REQUIRE_EQUAL (notes.size(), 0);
+}
+
+
+/* DCP with broken SMPTE subtitles */
+BOOST_AUTO_TEST_CASE (verify_test21)
+{
+	boost::filesystem::path const dir("build/test/verify_test21");
+	boost::filesystem::remove_all (dir);
+	boost::filesystem::create_directories (dir);
+	boost::filesystem::copy_file ("test/data/broken_smpte.mxf", dir / "subs.mxf");
+	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset(dir / "subs.mxf"));
+	shared_ptr<dcp::ReelAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_asset);
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	shared_ptr<dcp::DCP> dcp(new dcp::DCP(dir));
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, "xsd");
+	dump_notes (notes);
+	BOOST_REQUIRE_EQUAL (notes.size(), 2);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
+	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
 }
 

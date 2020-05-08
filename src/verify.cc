@@ -37,6 +37,8 @@
 #include "reel.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
+#include "reel_subtitle_asset.h"
+#include "interop_subtitle_asset.h"
 #include "mono_picture_asset.h"
 #include "mono_picture_frame.h"
 #include "stereo_picture_asset.h"
@@ -61,6 +63,7 @@
 #include <xercesc/dom/DOMAttr.hpp>
 #include <xercesc/dom/DOMErrorHandler.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
+#include <xercesc/framework/MemBufInputSource.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
@@ -200,6 +203,8 @@ public:
 		add("http://www.digicine.com/PROTO-ASDCP-CPL-20040511.xsd", "PROTO-ASDCP-CPL-20040511.xsd");
 		add("http://www.digicine.com/PROTO-ASDCP-PKL-20040311.xsd", "PROTO-ASDCP-PKL-20040311.xsd");
 		add("http://www.digicine.com/PROTO-ASDCP-AM-20040311.xsd", "PROTO-ASDCP-AM-20040311.xsd");
+		add("interop-subs", "DCSubtitle.v1.mattsson.xsd");
+		add("http://www.smpte-ra.org/schemas/428-7/2010/DCST.xsd", "SMPTE-428-7-2010-DCST.xsd");
 	}
 
 	InputSource* resolveEntity(XMLCh const *, XMLCh const * system_id)
@@ -224,9 +229,25 @@ private:
 	boost::filesystem::path _xsd_dtd_directory;
 };
 
-static
+
+static void
+parse (XercesDOMParser& parser, boost::filesystem::path xml)
+{
+	parser.parse(xml.string().c_str());
+}
+
+
+static void
+parse (XercesDOMParser& parser, std::string xml)
+{
+	xercesc::MemBufInputSource buf(reinterpret_cast<unsigned char const*>(xml.c_str()), xml.size(), "");
+	parser.parse(buf);
+}
+
+
+template <class T>
 void
-validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_directory, list<VerificationNote>& notes)
+validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, list<VerificationNote>& notes)
 {
 	try {
 		XMLPlatformUtils::Initialize ();
@@ -253,6 +274,8 @@ validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_
 		schema["http://www.digicine.com/PROTO-ASDCP-CPL-20040511#"] = "PROTO-ASDCP-CPL-20040511.xsd";
 		schema["http://www.digicine.com/PROTO-ASDCP-PKL-20040311#"] = "PROTO-ASDCP-PKL-20040311.xsd";
 		schema["http://www.digicine.com/PROTO-ASDCP-AM-20040311#"] = "PROTO-ASDCP-AM-20040311.xsd";
+		schema["interop-subs"] = "DCSubtitle.v1.mattsson.xsd";
+		schema["http://www.smpte-ra.org/schemas/428-7/2010/DCST.xsd"] = "DCDMSubtitle-2010.xsd";
 
 		string locations;
 		for (map<string, string>::const_iterator i = schema.begin(); i != schema.end(); ++i) {
@@ -271,7 +294,7 @@ validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_
 
 		try {
 			parser.resetDocumentPool();
-			parser.parse(xml_file.string().c_str());
+			parse(parser, xml);
 		} catch (XMLException& e) {
 			throw MiscError(xml_ch_to_string(e.getMessage()));
 		} catch (DOMException& e) {
@@ -289,7 +312,7 @@ validate_xml (boost::filesystem::path xml_file, boost::filesystem::path xsd_dtd_
 				VerificationNote::VERIFY_ERROR,
 				VerificationNote::XML_VALIDATION_ERROR,
 				i.message(),
-				xml_file,
+				xml,
 				i.line()
 				)
 			);
@@ -487,6 +510,23 @@ verify_main_sound_asset (
 }
 
 
+static void
+verify_main_subtitle_asset (
+	shared_ptr<const Reel> reel,
+	function<void (string, optional<boost::filesystem::path>)> stage,
+	boost::filesystem::path xsd_dtd_directory,
+	list<VerificationNote>& notes
+	)
+{
+	shared_ptr<ReelSubtitleAsset> reel_asset = reel->main_subtitle ();
+	stage ("Checking subtitle XML", reel->main_subtitle()->asset()->file());
+	/* Note: we must not use SubtitleAsset::xml_as_string() here as that will mean the data on disk
+	 * gets passed through libdcp which may clean up and therefore hide errors.
+	 */
+	validate_xml (reel->main_subtitle()->asset()->raw_xml(), xsd_dtd_directory, notes);
+}
+
+
 list<VerificationNote>
 dcp::verify (
 	vector<boost::filesystem::path> directories,
@@ -556,8 +596,13 @@ dcp::verify (
 						verify_main_picture_asset (dcp, reel, stage, progress, notes);
 					}
 				}
+
 				if (reel->main_sound() && reel->main_sound()->asset_ref().resolved()) {
 					verify_main_sound_asset (dcp, reel, stage, progress, notes);
+				}
+
+				if (reel->main_subtitle() && reel->main_subtitle()->asset_ref().resolved()) {
+					verify_main_subtitle_asset (reel, stage, xsd_dtd_directory, notes);
 				}
 			}
 		}
