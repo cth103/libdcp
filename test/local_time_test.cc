@@ -176,6 +176,12 @@ BOOST_AUTO_TEST_CASE (local_time_add_minutes_test)
 		t.add_minutes (7);
 		BOOST_CHECK_EQUAL (t.as_string(), "2018-02-01T00:02:00+01:00");
 	}
+
+	{
+		dcp::LocalTime t("2018-01-31T23:55:00.123");
+		t.add_minutes (7);
+		BOOST_CHECK_EQUAL (t, dcp::LocalTime("2018-02-01T00:02:00.123"));
+	}
 }
 
 

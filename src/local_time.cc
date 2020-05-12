@@ -237,7 +237,7 @@ LocalTime::add_minutes (int m)
 {
 	using namespace boost;
 
-	posix_time::ptime t(gregorian::date(_year, _month, _day), posix_time::time_duration(_hour, _minute, _second));
+	posix_time::ptime t(gregorian::date(_year, _month, _day), posix_time::time_duration(_hour, _minute, _second, _millisecond * 1000));
 	t += posix_time::time_duration(0, m, 0);
 	set (t);
 }
