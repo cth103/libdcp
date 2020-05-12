@@ -87,6 +87,8 @@ public:
 		PICTURE_FRAME_TOO_LARGE,
 		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 230Mbit/s */
 		PICTURE_FRAME_NEARLY_TOO_LARGE,
+		/** An asset that the CPL requires is not in this DCP; the DCP may be a VF */
+		EXTERNAL_ASSET,
 	};
 
 	VerificationNote (Type type, Code code)

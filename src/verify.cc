@@ -659,6 +659,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The instantaneous bit rate of the picture asset %1 is larger than the limit of 250Mbit/s in at least one place", note.file()->filename());
 	case dcp::VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE:
 		return String::compose("The instantaneous bit rate of the picture asset %1 is close to the limit of 250Mbit/s in at least one place", note.file()->filename());
+	case dcp::VerificationNote::EXTERNAL_ASSET:
+		return "An asset that this DCP refers to is not included in the DCP.  It may be a VF.";
 	}
 
 	return "";

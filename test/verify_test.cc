@@ -735,3 +735,40 @@ BOOST_AUTO_TEST_CASE (verify_test21)
 	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
 }
 
+
+/* VF */
+BOOST_AUTO_TEST_CASE (verify_test22)
+{
+	boost::filesystem::path const ov_dir("build/test/verify_test22_ov");
+	boost::filesystem::remove_all (ov_dir);
+	boost::filesystem::create_directories (ov_dir);
+
+	shared_ptr<dcp::OpenJPEGImage> image = black_image ();
+	dcp::Data frame = dcp::compress_j2k (image, 100000000, 24, false, false);
+	BOOST_REQUIRE (frame.size() < 230000000 / (24 * 8));
+	dcp_from_frame (frame, ov_dir);
+
+	dcp::DCP ov (ov_dir);
+	ov.read ();
+
+	boost::filesystem::path const vf_dir("build/test/verify_test22_vf");
+	boost::filesystem::remove_all (vf_dir);
+	boost::filesystem::create_directories (vf_dir);
+
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (ov.cpls().front()->reels().front()->main_picture());
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	dcp::DCP vf (vf_dir);
+	vf.add (cpl);
+	vf.write_xml (dcp::SMPTE);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (vf_dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, "xsd");
+	dump_notes (notes);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::EXTERNAL_ASSET);
+}
+
+
