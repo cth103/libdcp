@@ -220,17 +220,16 @@ LocalTime::time_of_day (bool with_second, bool with_millisecond) const
 void
 LocalTime::add_months (int m)
 {
-	_month += m;
+	using namespace boost;
 
-	while (_month < 0) {
-		_month += 12;
-		_year--;
+	gregorian::date d (_year, _month, _day);
+	if (m > 0) {
+		d += gregorian::months (m);
+	} else {
+		d -= gregorian::months (-m);
 	}
 
-	while (_month > 11) {
-		_month -= 12;
-		_year++;
-	}
+	set (posix_time::ptime(d, posix_time::time_duration(_hour, _minute, _second, _millisecond * 1000)));
 }
 
 void
