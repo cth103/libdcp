@@ -71,7 +71,7 @@ public:
 		PKL_CPL_SOUND_HASHES_DISAGREE,
 		/** An assetmap's <Path> entry is empty */
 		EMPTY_ASSET_PATH,
-		/** An file mentioned in an asset map cannot be found */
+		/** A file mentioned in an asset map cannot be found */
 		MISSING_ASSET,
 		/** The DCP contains both SMPTE and Interop-standard components */
 		MISMATCHED_STANDARD,
