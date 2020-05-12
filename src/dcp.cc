@@ -172,7 +172,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 	}
 
 	/* Now we have:
-	     paths - files in the DCP that are not PKLs.
+	     paths - map of files in the DCP that are not PKLs; key is ID, value is path.
 	     _pkls - PKL objects for each PKL.
 
 	   Read all the assets from the asset map.
