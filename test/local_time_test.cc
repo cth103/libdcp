@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE (local_time_basic_test)
 	}
 }
 
-BOOST_AUTO_TEST_CASE (local_time_addition_test)
+BOOST_AUTO_TEST_CASE (local_time_add_minutes_test)
 {
 	{
 		dcp::LocalTime t("2018-01-01T10:00:00+01:00");
@@ -178,3 +178,30 @@ BOOST_AUTO_TEST_CASE (local_time_addition_test)
 	}
 }
 
+
+BOOST_AUTO_TEST_CASE (local_time_add_months_test)
+{
+	{
+		dcp::LocalTime t("2013-06-23T18:06:59.123");
+		t.add_months(-1);
+		BOOST_CHECK_EQUAL (t, dcp::LocalTime("2013-05-23T18:06:59.123"));
+		t.add_months(1);
+		BOOST_CHECK_EQUAL (t, dcp::LocalTime("2013-06-23T18:06:59.123"));
+		t.add_months(1);
+		BOOST_CHECK_EQUAL (t, dcp::LocalTime("2013-07-23T18:06:59.123"));
+		t.add_months(4);
+		BOOST_CHECK_EQUAL (t, dcp::LocalTime("2013-11-23T18:06:59.123"));
+		t.add_months(2);
+		BOOST_CHECK_EQUAL (t, dcp::LocalTime("2014-01-23T18:06:59.123"));
+		t.add_months(-14);
+		BOOST_CHECK_EQUAL (t, dcp::LocalTime("2012-11-23T18:06:59.123"));
+		t.add_months(14);
+		BOOST_CHECK_EQUAL (t, dcp::LocalTime("2014-01-23T18:06:59.123"));
+	}
+
+	{
+		dcp::LocalTime t("2018-01-30T11:00:00+01:00");
+		t.add_months (1);
+		BOOST_CHECK_EQUAL (t.as_string(), "2018-02-28T11:00:00+01:00");
+	}
+}
