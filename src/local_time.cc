@@ -217,6 +217,23 @@ LocalTime::time_of_day (bool with_second, bool with_millisecond) const
 	return buffer;
 }
 
+
+void
+LocalTime::add_days (int days)
+{
+	using namespace boost;
+
+	gregorian::date d (_year, _month, _day);
+	if (days > 0) {
+		d += gregorian::days (days);
+	} else {
+		d -= gregorian::days (-days);
+	}
+
+	set (posix_time::ptime(d, posix_time::time_duration(_hour, _minute, _second, _millisecond * 1000)));
+}
+
+
 void
 LocalTime::add_months (int m)
 {

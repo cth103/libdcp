@@ -83,6 +83,7 @@ public:
 		_year = y;
 	}
 
+	void add_days (int d);
 	void add_months (int a);
 	void add_minutes (int a);
 
