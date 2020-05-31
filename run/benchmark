@@ -1,0 +1,16 @@
+#!/bin/bash
+
+bm=$1
+if [ "$bm" == "" ]; then
+  echo "Syntax: $0 [--perf] <benchmark>"
+  exit 1
+fi 
+
+export LD_LIBRARY_PATH=build/src
+if [ "$1" == "--perf" ]; then
+  shift
+  perf stat build/benchmark/$1
+else
+  build/benchmark/$1
+fi
+
