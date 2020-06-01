@@ -44,7 +44,7 @@ def dependencies(target, options):
         return (libcxml, ('openjpeg', '956af06'), ('asdcplib', 'carl'))
 
 def build(target, options):
-    cmd = './waf configure --disable-examples --prefix=%s' % target.directory
+    cmd = './waf configure --disable-examples --disable-benchmarks --prefix=%s' % target.directory
     cmd += ' --jpeg=%s' % options['jpeg']
     if target.platform == 'linux':
         cmd += ' --static'

@@ -56,6 +56,7 @@ def options(opt):
     opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
     opt.add_option('--static', action='store_true', default=False, help='build libdcp statically, and link statically to openjpeg, cxml, asdcplib-carl')
     opt.add_option('--disable-tests', action='store_true', default=False, help='disable building of tests')
+    opt.add_option('--disable-benchmarks', action='store_true', default=False, help='disable building of benchmarks')
     opt.add_option('--disable-gcov', action='store_true', default=False, help='don''t use gcov in tests')
     opt.add_option('--disable-examples', action='store_true', default=False, help='disable building of examples')
     opt.add_option('--enable-openmp', action='store_true', default=False, help='enable use of OpenMP')
@@ -78,6 +79,7 @@ def configure(conf):
     conf.env.TARGET_OSX = sys.platform == 'darwin'
     conf.env.ENABLE_DEBUG = conf.options.enable_debug
     conf.env.DISABLE_TESTS = conf.options.disable_tests
+    conf.env.DISABLE_BENCHMARKS = conf.options.disable_benchmarks
     conf.env.DISABLE_EXAMPLES = conf.options.disable_examples
     conf.env.STATIC = conf.options.static
     conf.env.API_VERSION = API_VERSION
@@ -230,7 +232,8 @@ def build(bld):
         bld.recurse('test')
     if not bld.env.DISABLE_EXAMPLES:
         bld.recurse('examples')
-    bld.recurse('benchmark')
+    if not bld.env.DISABLE_BENCHMARKS:
+        bld.recurse('benchmark')
 
     for i in ['SMPTE-429-7-2006-CPL.xsd', 'SMPTE-429-8-2006-PKL.xsd', 'SMPTE-429-9-2007-AM.xsd', 'xmldsig-core-schema.xsd', 'XMLSchema.dtd', 'XMLSchema.xsd', 'xml.xsd', 'PROTO-ASDCP-CPL-20040511.xsd', 'PROTO-ASDCP-PKL-20040311.xsd', 'PROTO-ASDCP-AM-20040311.xsd', 'Main-Stereo-Picture-CPL.xsd' ]:
         bld.install_files('${PREFIX}/share/libdcp/xsd', os.path.join('xsd', i))
