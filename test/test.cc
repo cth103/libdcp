@@ -45,6 +45,7 @@ using std::min;
 using std::list;
 
 boost::filesystem::path private_test;
+boost::filesystem::path xsd_test = "build/test/xsd with spaces";
 
 struct TestConfig
 {
@@ -53,6 +54,14 @@ struct TestConfig
 		dcp::init ();
 		if (boost::unit_test::framework::master_test_suite().argc >= 2) {
 			private_test = boost::unit_test::framework::master_test_suite().argv[1];
+		}
+
+		using namespace boost::filesystem;
+		boost::system::error_code ec;
+		remove_all (xsd_test, ec);
+		boost::filesystem::create_directory (xsd_test);
+		for (directory_iterator i = directory_iterator("xsd"); i != directory_iterator(); ++i) {
+			copy_file (*i, xsd_test / i->path().filename());
 		}
 	}
 };
