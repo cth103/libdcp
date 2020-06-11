@@ -210,11 +210,12 @@ public:
 	InputSource* resolveEntity(XMLCh const *, XMLCh const * system_id)
 	{
 		string system_id_str = xml_ch_to_string (system_id);
+		boost::filesystem::path p = _xsd_dtd_directory;
 		if (_files.find(system_id_str) == _files.end()) {
-			return 0;
+			p /= system_id_str;
+		} else {
+			p /= _files[system_id_str];
 		}
-
-		boost::filesystem::path p = _xsd_dtd_directory / _files[system_id_str];
 		StringToXMLCh ch (p.string());
 		return new LocalFileInputSource(ch.get());
 	}
@@ -264,25 +265,22 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, list<Verificatio
 		parser.setDoNamespaces(true);
 		parser.setDoSchema(true);
 
-		map<string, string> schema;
-		schema["http://www.w3.org/2000/09/xmldsig#"] = "xmldsig-core-schema.xsd";
-		schema["http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"] = "xmldsig-core-schema.xsd";
-		schema["http://www.smpte-ra.org/schemas/429-7/2006/CPL"] = "SMPTE-429-7-2006-CPL.xsd";
-		schema["http://www.smpte-ra.org/schemas/429-8/2006/PKL"] = "SMPTE-429-8-2006-PKL.xsd";
-		schema["http://www.smpte-ra.org/schemas/429-9/2007/AM"] = "SMPTE-429-9-2007-AM.xsd";
-		schema["http://www.digicine.com/schemas/437-Y/2007/Main-Stereo-Picture-CPL.xsd"] = "Main-Stereo-Picture-CPL.xsd";
-		schema["http://www.digicine.com/PROTO-ASDCP-CPL-20040511#"] = "PROTO-ASDCP-CPL-20040511.xsd";
-		schema["http://www.digicine.com/PROTO-ASDCP-PKL-20040311#"] = "PROTO-ASDCP-PKL-20040311.xsd";
-		schema["http://www.digicine.com/PROTO-ASDCP-AM-20040311#"] = "PROTO-ASDCP-AM-20040311.xsd";
-		schema["interop-subs"] = "DCSubtitle.v1.mattsson.xsd";
-		schema["http://www.smpte-ra.org/schemas/428-7/2010/DCST.xsd"] = "DCDMSubtitle-2010.xsd";
+		vector<string> schema;
+		schema.push_back("xmldsig-core-schema.xsd");
+		schema.push_back("SMPTE-429-7-2006-CPL.xsd");
+		schema.push_back("SMPTE-429-8-2006-PKL.xsd");
+		schema.push_back("SMPTE-429-9-2007-AM.xsd");
+		schema.push_back("Main-Stereo-Picture-CPL.xsd");
+		schema.push_back("PROTO-ASDCP-CPL-20040511.xsd");
+		schema.push_back("PROTO-ASDCP-PKL-20040311.xsd");
+		schema.push_back("PROTO-ASDCP-AM-20040311.xsd");
+		schema.push_back("DCSubtitle.v1.mattsson.xsd");
+		schema.push_back("DCDMSubtitle-2010.xsd");
 
+		/* XXX: I'm not especially clear what this is for, but it seems to be necessary */
 		string locations;
-		for (map<string, string>::const_iterator i = schema.begin(); i != schema.end(); ++i) {
-			locations += i->first;
-			locations += " ";
-			boost::filesystem::path p = xsd_dtd_directory / i->second;
-			locations += p.string() + " ";
+		BOOST_FOREACH (string i, schema) {
+			locations += String::compose("%1 %1 ", i, i);
 		}
 
 		parser.setExternalSchemaLocation(locations.c_str());
