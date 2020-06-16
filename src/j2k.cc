@@ -307,6 +307,8 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 
 	opj_stream_t* stream = opj_stream_default_create (OPJ_FALSE);
 	if (!stream) {
+		opj_destroy_codec (encoder);
+		free (parameters.cp_comment);
 		throw MiscError ("could not create JPEG2000 stream");
 	}
 
@@ -316,6 +318,9 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 	opj_stream_set_user_data (stream, buffer, write_free_function);
 
 	if (!opj_start_compress (encoder, xyz->opj_image(), stream)) {
+		opj_stream_destroy (stream);
+		opj_destroy_codec (encoder);
+		free (parameters.cp_comment);
 		if ((errno & 0x61500) == 0x61500) {
 			/* We've had one of the magic error codes from our patched openjpeg */
 			boost::throw_exception (StartCompressionError (errno & 0xff));
@@ -325,22 +330,24 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 	}
 
 	if (!opj_encode (encoder, stream)) {
-		opj_destroy_codec (encoder);
 		opj_stream_destroy (stream);
+		opj_destroy_codec (encoder);
+		free (parameters.cp_comment);
 		throw MiscError ("JPEG2000 encoding failed");
 	}
 
 	if (!opj_end_compress (encoder, stream)) {
-		opj_destroy_codec (encoder);
 		opj_stream_destroy (stream);
+		opj_destroy_codec (encoder);
+		free (parameters.cp_comment);
 		throw MiscError ("could not end JPEG2000 encoding");
 	}
 
 	Data enc (buffer->data ());
 
-	free (parameters.cp_comment);
-	opj_destroy_codec (encoder);
 	opj_stream_destroy (stream);
+	opj_destroy_codec (encoder);
+	free (parameters.cp_comment);
 
 	return enc;
 }
