@@ -77,7 +77,7 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id) const
 {
 	writer_info->ProductVersion = _metadata.product_version;
 	writer_info->CompanyName = _metadata.company_name;
-	writer_info->ProductName = _metadata.product_name.c_str();
+	writer_info->ProductName = _metadata.product_name;
 
 	DCP_ASSERT (_standard);
 	if (_standard == INTEROP) {
