@@ -41,6 +41,6 @@ class OpenJPEGImage;
 
 extern boost::shared_ptr<OpenJPEGImage> decompress_j2k (uint8_t* data, int64_t size, int reduce);
 extern boost::shared_ptr<OpenJPEGImage> decompress_j2k (Data data, int reduce);
-extern Data compress_j2k (boost::shared_ptr<const OpenJPEGImage>, int bandwith, int frames_per_second, bool threed, bool fourk);
+extern Data compress_j2k (boost::shared_ptr<const OpenJPEGImage>, int bandwith, int frames_per_second, bool threed, bool fourk, std::string comment = "libdcp");
 
 }

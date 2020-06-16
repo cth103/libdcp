@@ -43,6 +43,7 @@
 
 using std::min;
 using std::pow;
+using std::string;
 using boost::shared_ptr;
 using boost::shared_array;
 using namespace dcp;
@@ -273,7 +274,7 @@ seek_function (OPJ_OFF_T nb_bytes, void* data)
  *  after this call; see opj_j2k_encode where if l_reuse_data is false it will set l_tilec->data = l_img_comp->data.
  */
 Data
-dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frames_per_second, bool threed, bool fourk)
+dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frames_per_second, bool threed, bool fourk, string comment)
 {
 	/* get a J2K compressor handle */
 	opj_codec_t* encoder = opj_create_compress (OPJ_CODEC_J2K);
@@ -290,7 +291,7 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 		parameters.numresolution = 7;
 	}
 	parameters.rsiz = fourk ? OPJ_PROFILE_CINEMA_4K : OPJ_PROFILE_CINEMA_2K;
-	parameters.cp_comment = strdup ("libdcp");
+	parameters.cp_comment = strdup (comment.c_str());
 
 	/* set max image */
 	parameters.max_cs_size = (bandwidth / 8) / frames_per_second;
