@@ -82,7 +82,7 @@ ReelAtmosAsset::key_type () const
 xmlpp::Node *
 ReelAtmosAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	xmlpp::Node* asset = write_to_cpl_base (node, standard, hash());
+	xmlpp::Node* asset = write_to_cpl_asset (node, standard, hash());
 	asset->add_child("axd:DataType")->add_child_text("urn:smpte:ul:060e2b34.04010105.0e090604.00000000");
 	return asset;
 }

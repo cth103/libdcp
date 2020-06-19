@@ -119,7 +119,7 @@ protected:
 	/** @return Any namespace that should be used on the asset's node in the CPL */
 	virtual std::pair<std::string, std::string> cpl_node_namespace (Standard) const;
 
-	xmlpp::Node* write_to_cpl_base (xmlpp::Node* node, Standard standard, boost::optional<std::string> hash) const;
+	xmlpp::Node* write_to_cpl_asset (xmlpp::Node* node, Standard standard, boost::optional<std::string> hash) const;
 
 	int64_t _intrinsic_duration;           ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset
 	boost::optional<int64_t> _duration;    ///< The &lt;Duration&gt; from the reel's entry for this asset, if present

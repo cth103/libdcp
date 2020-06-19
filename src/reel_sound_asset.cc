@@ -74,7 +74,6 @@ ReelSoundAsset::key_type () const
 xmlpp::Node *
 ReelSoundAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	xmlpp::Node* asset = write_to_cpl_base (node, standard, hash());
 
         if (key_id ()) {
 		/* Find <Hash> */
@@ -82,6 +81,7 @@ ReelSoundAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 		asset->add_child_before(hash, "KeyId")->add_child_text("urn:uuid:" + key_id().get());
         }
 
+	xmlpp::Node* asset = write_to_cpl_asset (node, standard, hash());
 	return asset;
 }
 

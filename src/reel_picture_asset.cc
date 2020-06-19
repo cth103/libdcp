@@ -82,7 +82,7 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
 xmlpp::Node*
 ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	xmlpp::Node* asset = write_to_cpl_base (node, standard, hash());
+	xmlpp::Node* asset = write_to_cpl_asset (node, standard, hash());
 
 	asset->add_child("FrameRate")->add_child_text(String::compose("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
 	if (standard == INTEROP) {
