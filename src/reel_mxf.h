@@ -107,6 +107,8 @@ protected:
 		return boost::dynamic_pointer_cast<T> (_asset_ref.asset ());
 	}
 
+	void write_to_cpl_mxf (xmlpp::Node* node) const;
+
 	/** Reference to the asset (MXF or XML file) that this reel entry
 	 *  applies to.
 	 */

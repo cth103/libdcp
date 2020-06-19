@@ -79,3 +79,13 @@ ReelMXF::mxf_equals (shared_ptr<const ReelMXF> other, EqualityOptions opt, NoteH
 
 	return true;
 }
+
+
+void
+ReelMXF::write_to_cpl_mxf (xmlpp::Node* node) const
+{
+        if (key_id ()) {
+		xmlpp::Node* hash = find_child (node, "Hash");
+		node->add_child_before(hash, "KeyId")->add_child_text("urn:uuid:" + key_id().get());
+        }
+}

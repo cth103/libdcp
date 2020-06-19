@@ -76,14 +76,8 @@ ReelSubtitleAsset::key_type () const
 xmlpp::Node *
 ReelSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-
-	if (key_id ()) {
-		/* Find <Hash> */
-		xmlpp::Node* hash = find_child (asset, "Hash");
-		asset->add_child_before(hash, "KeyId")->add_child_text("urn:uuid:" + key_id().get());
-	}
-
 	xmlpp::Node* asset = write_to_cpl_asset (node, standard, hash());
+	write_to_cpl_mxf (asset);
 	return asset;
 }
 

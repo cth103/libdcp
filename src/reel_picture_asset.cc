@@ -112,11 +112,7 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 			);
 	}
 
-        if (key_id ()) {
-		/* Find <Hash> */
-		xmlpp::Node* hash = find_child (asset, "Hash");
-		asset->add_child_before(hash, "KeyId")->add_child_text("urn:uuid:" + key_id().get());
-        }
+	write_to_cpl_mxf (asset);
 
 	return asset;
 }
