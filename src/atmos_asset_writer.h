@@ -31,6 +31,9 @@
     files in the program, then also delete it here.
 */
 
+#ifndef LIBDCP_ATMOS_ASSET_WRITER_H
+#define LIBDCP_ATMOS_ASSET_WRITER_H
+
 /** @file  src/atmos_asset_writer.h
  *  @brief AtmosAssetWriter class.
  */
@@ -72,3 +75,5 @@ private:
 };
 
 }
+
+#endif
