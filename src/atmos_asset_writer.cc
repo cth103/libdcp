@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -41,6 +41,7 @@
 
 using std::min;
 using std::max;
+using boost::shared_ptr;
 using namespace dcp;
 
 struct AtmosAssetWriter::ASDCPState
@@ -65,7 +66,7 @@ AtmosAssetWriter::AtmosAssetWriter (AtmosAsset* asset, boost::filesystem::path f
 	Kumu::hex2bin (_asset->atmos_id().c_str(), _state->desc.AtmosID, ASDCP::UUIDlen, &c);
 	DCP_ASSERT (c == ASDCP::UUIDlen);
 
-	_state->desc.AtmosVersion = 0;
+	_state->desc.AtmosVersion = _asset->atmos_version ();
 
 	_asset->fill_writer_info (&_state->writer_info, _asset->id());
 }
