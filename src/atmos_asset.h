@@ -45,7 +45,7 @@ class AtmosAssetWriter;
 class AtmosAsset : public Asset, public MXF
 {
 public:
-	AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_count, int max_object_count, std::string atmos_id, int atmos_version);
+	AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_count, int max_object_count, int atmos_version);
 	explicit AtmosAsset (boost::filesystem::path file);
 
 	boost::shared_ptr<AtmosAssetWriter> start_write (boost::filesystem::path file);

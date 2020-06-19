@@ -141,7 +141,6 @@ main (int argc, char* argv[])
 			in.first_frame(),
 			in.max_channel_count(),
 			in.max_object_count(),
-			in.atmos_id(),
 			in.atmos_version()
 			);
 		shared_ptr<dcp::AtmosAssetWriter> writer = out.start_write (output_file.get());

@@ -41,14 +41,14 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
-AtmosAsset::AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_count, int max_object_count, string atmos_id, int atmos_version)
+AtmosAsset::AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_count, int max_object_count, int atmos_version)
 	: MXF (SMPTE)
 	, _edit_rate (edit_rate)
 	, _intrinsic_duration (0)
 	, _first_frame (first_frame)
 	, _max_channel_count (max_channel_count)
 	, _max_object_count (max_object_count)
-	, _atmos_id (atmos_id)
+	, _atmos_id (make_uuid())
 	, _atmos_version (atmos_version)
 {
 
