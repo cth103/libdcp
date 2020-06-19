@@ -99,7 +99,7 @@ main (int argc, char* argv[])
 	dcp::EncryptedKDM enc_kdm (dcp::file_to_string (kdm_file));
 
 	if (enc_kdm.annotation_text()) {
-		cout << "Annotation:        " << enc_kdm.annotation_text().get() << "\n";
+		cout << "Annotation:       " << enc_kdm.annotation_text().get() << "\n";
 	}
 	cout << "Content title:    " << enc_kdm.content_title_text() << "\n";
 	cout << "CPL id:           " << enc_kdm.cpl_id() << "\n";
