@@ -88,7 +88,7 @@ help (string n)
 
 	cerr << "--only takes a comma-separated list of strings, one or more of:\n"
 		"    dcp-path     DCP path\n"
-		"    cpl-name     CPL name\n"
+		"    cpl-name-id  CPL name and ID\n"
 		"    picture      picture information\n"
 		"    sound        sound information\n"
 		"    subtitle     picture information\n"
@@ -101,16 +101,16 @@ mbits_per_second (int size, Fraction frame_rate)
 	return size * 8 * frame_rate.as_float() / 1e6;
 }
 
-#define OUTPUT_DCP_PATH(...)   maybe_output(only, "dcp-path", String::compose(__VA_ARGS__));
-#define OUTPUT_CPL_NAME(...)   maybe_output(only, "cpl-name", String::compose(__VA_ARGS__));
-#define OUTPUT_PICTURE(...)    maybe_output(only, "picture", String::compose(__VA_ARGS__));
-#define OUTPUT_PICTURE_NC(x)   maybe_output(only, "picture", (x));
-#define SHOULD_PICTURE         should_output(only, "picture")
-#define OUTPUT_SOUND(...)      maybe_output(only, "sound", String::compose(__VA_ARGS__));
-#define OUTPUT_SOUND_NC(x)     maybe_output(only, "sound", (x));
-#define OUTPUT_SUBTITLE(...)   maybe_output(only, "subtitle", String::compose(__VA_ARGS__));
-#define OUTPUT_SUBTITLE_NC(x)  maybe_output(only, "subtitle", (x));
-#define OUTPUT_TOTAL_TIME(...) maybe_output(only, "total-time", String::compose(__VA_ARGS__));
+#define OUTPUT_DCP_PATH(...)    maybe_output(only, "dcp-path", String::compose(__VA_ARGS__));
+#define OUTPUT_CPL_NAME_ID(...) maybe_output(only, "cpl-name-id", String::compose(__VA_ARGS__));
+#define OUTPUT_PICTURE(...)     maybe_output(only, "picture", String::compose(__VA_ARGS__));
+#define OUTPUT_PICTURE_NC(x)    maybe_output(only, "picture", (x));
+#define SHOULD_PICTURE          should_output(only, "picture")
+#define OUTPUT_SOUND(...)       maybe_output(only, "sound", String::compose(__VA_ARGS__));
+#define OUTPUT_SOUND_NC(x)      maybe_output(only, "sound", (x));
+#define OUTPUT_SUBTITLE(...)    maybe_output(only, "subtitle", String::compose(__VA_ARGS__));
+#define OUTPUT_SUBTITLE_NC(x)   maybe_output(only, "subtitle", (x));
+#define OUTPUT_TOTAL_TIME(...)  maybe_output(only, "total-time", String::compose(__VA_ARGS__));
 
 static bool
 should_output(vector<string> const& only, string t)
@@ -395,7 +395,7 @@ main (int argc, char* argv[])
 	dcp::Time total_time;
 
 	BOOST_FOREACH (shared_ptr<CPL> i, cpls) {
-		OUTPUT_CPL_NAME("  CPL: %1\n", i->annotation_text());
+		OUTPUT_CPL_NAME_ID("  CPL: %1 %2\n", i->annotation_text(), i->id());
 
 		int R = 1;
 		BOOST_FOREACH (shared_ptr<Reel> j, i->reels()) {
