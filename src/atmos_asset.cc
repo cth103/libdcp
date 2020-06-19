@@ -80,6 +80,13 @@ AtmosAsset::AtmosAsset (boost::filesystem::path file)
 	_atmos_id = id;
 
 	_atmos_version = desc.AtmosVersion;
+
+	ASDCP::WriterInfo info;
+	if (ASDCP_FAILURE (reader.FillWriterInfo (info))) {
+		boost::throw_exception (ReadError ("could not read audio MXF information"));
+	}
+
+	_id = read_writer_info (info);
 }
 
 string
