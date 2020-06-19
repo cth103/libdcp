@@ -70,6 +70,14 @@ AtmosAssetWriter::AtmosAssetWriter (AtmosAsset* asset, boost::filesystem::path f
 	_asset->fill_writer_info (&_state->writer_info, _asset->id());
 }
 
+
+void
+AtmosAssetWriter::write (shared_ptr<const AtmosFrame> frame)
+{
+	write (frame->data(), frame->size());
+}
+
+
 void
 AtmosAssetWriter::write (uint8_t const * data, int size)
 {

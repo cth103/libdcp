@@ -53,6 +53,7 @@ class AtmosAsset;
 class AtmosAssetWriter : public AssetWriter
 {
 public:
+	void write (boost::shared_ptr<const AtmosFrame> frame);
 	void write (uint8_t const * data, int size);
 	bool finalize ();
 
