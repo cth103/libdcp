@@ -12,7 +12,7 @@ dcpinfo=build/tools/dcpinfo
 export LD_LIBRARY_PATH=build/src:/home/c.hetherington/lib:$LD_LIBRARY_PATH
 
 # Make sure we have the required tools
-for c in xmlsec1 xmldiff; do
+for c in xmlsec1 xmldiff xmllint; do
   hash $c 2>/dev/null || { echo >&2 "$c required but not found; aborting"; exit 1; }
 done
 
