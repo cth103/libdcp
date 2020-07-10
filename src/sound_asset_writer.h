@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -36,10 +36,16 @@
  */
 
 #include "asset_writer.h"
+#include "fsk.h"
 #include "types.h"
 #include "sound_frame.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/shared_array.hpp>
+
+
+struct sync_test1;
+
 
 namespace dcp {
 
@@ -62,10 +68,12 @@ public:
 
 private:
 	friend class SoundAsset;
+	friend struct ::sync_test1;
 
-	SoundAssetWriter (SoundAsset *, boost::filesystem::path);
+	SoundAssetWriter (SoundAsset *, boost::filesystem::path, bool sync);
 
 	void write_current_frame ();
+	std::vector<bool> create_sync_packets ();
 
 	/* do this with an opaque pointer so we don't have to include
 	   ASDCP headers
@@ -76,6 +84,12 @@ private:
 
 	SoundAsset* _asset;
 	int _frame_buffer_offset;
+
+	/** true to ignore any signal passed to write() on channel 14 and instead write a sync track */
+	bool _sync;
+	/** index of the sync packet (0-3) which starts the next edit unit */
+	int _sync_packet;
+	FSK _fsk;
 };
 
 }

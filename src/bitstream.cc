@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,54 +31,59 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/object.h
- *  @brief Object class.
- */
 
-#ifndef LIBDCP_OBJECT_H
-#define LIBDCP_OBJECT_H
+#include "bitstream.h"
+#include "dcp_assert.h"
+#include <iostream>
+#include <stdint.h>
+#include <string.h>
 
-#include <boost/noncopyable.hpp>
-#include <string>
 
-struct write_interop_subtitle_test;
-struct write_interop_subtitle_test2;
-struct write_interop_subtitle_test3;
-struct write_smpte_subtitle_test;
-struct write_smpte_subtitle_test2;
-struct write_smpte_subtitle_test3;
-struct sync_test2;
+using namespace dcp;
 
-namespace dcp {
 
-/** @class Object
- *  @brief Some part of a DCP that has a UUID.
- */
-class Object : public boost::noncopyable
+void
+Bitstream::write_bit (bool bit)
 {
-public:
-	Object ();
-	explicit Object (std::string id);
-	virtual ~Object () {}
-
-	/** @return ID */
-	std::string id () const {
-		return _id;
+	if (_crc) {
+		_crc->process_bit (bit);
 	}
-
-protected:
-	friend struct ::write_interop_subtitle_test;
-	friend struct ::write_interop_subtitle_test2;
-	friend struct ::write_interop_subtitle_test3;
-	friend struct ::write_smpte_subtitle_test;
-	friend struct ::write_smpte_subtitle_test2;
-	friend struct ::write_smpte_subtitle_test3;
-	friend struct ::sync_test2;
-
-	/** ID */
-	std::string _id;
-};
-
+	_data.push_back (bit);
 }
 
-#endif
+
+void
+Bitstream::write_from_byte (uint8_t byte, int bits)
+{
+	for (int i = bits - 1; i >= 0; --i) {
+		write_bit ((byte >> i) & 1);
+	}
+}
+
+
+void
+Bitstream::write_from_word (uint32_t word, int bits)
+{
+	for (int i = bits - 1; i >= 0; --i) {
+		write_bit ((word >> i) & 1);
+	}
+}
+
+
+void
+Bitstream::start_crc (uint16_t poly)
+{
+	DCP_ASSERT (!static_cast<bool>(_crc));
+	_crc = boost::crc_basic<16> (poly);
+}
+
+
+void
+Bitstream::write_crc ()
+{
+	DCP_ASSERT (static_cast<bool>(_crc));
+	uint16_t crc = _crc->checksum();
+	write_from_word (crc, 16);
+	_crc = boost::none;
+}
+

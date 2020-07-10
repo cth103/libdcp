@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,54 +31,44 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/object.h
- *  @brief Object class.
- */
 
-#ifndef LIBDCP_OBJECT_H
-#define LIBDCP_OBJECT_H
+#include <stdint.h>
+#include <vector>
 
-#include <boost/noncopyable.hpp>
-#include <string>
-
-struct write_interop_subtitle_test;
-struct write_interop_subtitle_test2;
-struct write_interop_subtitle_test3;
-struct write_smpte_subtitle_test;
-struct write_smpte_subtitle_test2;
-struct write_smpte_subtitle_test3;
-struct sync_test2;
 
 namespace dcp {
 
-/** @class Object
- *  @brief Some part of a DCP that has a UUID.
+
+/** @class FSK
+ *  @brief Create frequency-shift-keyed samples for encoding synchronization signals.
+ *
+ *  An array of data is given to a FSK object using set_data(), and on calling get()
+ *  this data will be returned in a the D-Cinema FSK "format", sample by sample, starting
+ *  with the MSB of the first byte in the data array.
+ *
  */
-class Object : public boost::noncopyable
+class FSK
 {
 public:
-	Object ();
-	explicit Object (std::string id);
-	virtual ~Object () {}
+	FSK ();
 
-	/** @return ID */
-	std::string id () const {
-		return _id;
-	}
+	void set_data (std::vector<bool> data);
 
-protected:
-	friend struct ::write_interop_subtitle_test;
-	friend struct ::write_interop_subtitle_test2;
-	friend struct ::write_interop_subtitle_test3;
-	friend struct ::write_smpte_subtitle_test;
-	friend struct ::write_smpte_subtitle_test2;
-	friend struct ::write_smpte_subtitle_test3;
-	friend struct ::sync_test2;
+	/** @return the next sample as a 24-bit signed integer */
+	int32_t get ();
 
-	/** ID */
-	std::string _id;
+private:
+	std::vector<bool> _data;
+	/** current offset into _data */
+	int _data_position;
+	/** current sample number of the current bit (0-3) */
+	int _sample_position;
+	/** polarity of the last bit to be written (false for -ve, true for +ve) */
+	bool _last_polarity;
+	/** value of the last bit to be written */
+	bool _last_bit;
 };
 
 }
 
-#endif
+

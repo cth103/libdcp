@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,54 +31,31 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/object.h
- *  @brief Object class.
- */
 
-#ifndef LIBDCP_OBJECT_H
-#define LIBDCP_OBJECT_H
+#include <boost/crc.hpp>
+#include <boost/optional.hpp>
+#include <stdint.h>
+#include <vector>
 
-#include <boost/noncopyable.hpp>
-#include <string>
-
-struct write_interop_subtitle_test;
-struct write_interop_subtitle_test2;
-struct write_interop_subtitle_test3;
-struct write_smpte_subtitle_test;
-struct write_smpte_subtitle_test2;
-struct write_smpte_subtitle_test3;
-struct sync_test2;
 
 namespace dcp {
 
-/** @class Object
- *  @brief Some part of a DCP that has a UUID.
- */
-class Object : public boost::noncopyable
+class Bitstream
 {
 public:
-	Object ();
-	explicit Object (std::string id);
-	virtual ~Object () {}
+	void start_crc (uint16_t poly);
+	void write_bit (bool bit);
+	void write_from_byte (uint8_t byte, int bits = 8);
+	void write_from_word (uint32_t word, int bits = 32);
+	void write_crc ();
 
-	/** @return ID */
-	std::string id () const {
-		return _id;
+	std::vector<bool> get() const {
+		return _data;
 	}
 
-protected:
-	friend struct ::write_interop_subtitle_test;
-	friend struct ::write_interop_subtitle_test2;
-	friend struct ::write_interop_subtitle_test3;
-	friend struct ::write_smpte_subtitle_test;
-	friend struct ::write_smpte_subtitle_test2;
-	friend struct ::write_smpte_subtitle_test3;
-	friend struct ::sync_test2;
-
-	/** ID */
-	std::string _id;
+private:
+	std::vector<bool> _data;
+	boost::optional<boost::crc_basic<16> > _crc;
 };
 
 }
-
-#endif

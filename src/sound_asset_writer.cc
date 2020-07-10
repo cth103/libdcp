@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,7 @@
     files in the program, then also delete it here.
 */
 
+#include "bitstream.h"
 #include "sound_asset_writer.h"
 #include "sound_asset.h"
 #include "exceptions.h"
@@ -43,6 +44,8 @@
 using std::min;
 using std::max;
 using std::cout;
+using std::string;
+using std::vector;
 using namespace dcp;
 
 struct SoundAssetWriter::ASDCPState
@@ -53,12 +56,17 @@ struct SoundAssetWriter::ASDCPState
 	ASDCP::PCM::AudioDescriptor desc;
 };
 
-SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file)
+SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, bool sync)
 	: AssetWriter (asset, file)
 	, _state (new SoundAssetWriter::ASDCPState)
 	, _asset (asset)
 	, _frame_buffer_offset (0)
+	, _sync (sync)
+	, _sync_packet (0)
 {
+	DCP_ASSERT (!_sync || _asset->channels() >= 14);
+	DCP_ASSERT (!_sync || _asset->standard() == SMPTE);
+
 	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
 	_state->desc.EditRate = ASDCP::Rational (_asset->edit_rate().numerator, _asset->edit_rate().denominator);
 	_state->desc.AudioSamplingRate = ASDCP::Rational (_asset->sampling_rate(), 1);
@@ -87,6 +95,10 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 	memset (_state->frame_buffer.Data(), 0, _state->frame_buffer.Capacity());
 
 	_asset->fill_writer_info (&_state->writer_info, _asset->id());
+
+	if (_sync) {
+		_fsk.set_data (create_sync_packets());
+	}
 }
 
 void
@@ -115,14 +127,19 @@ SoundAssetWriter::write (float const * const * data, int frames)
 
 		/* Write one sample per channel */
 		for (int j = 0; j < ch; ++j) {
-			/* Convert sample to 24-bit int, clipping if necessary. */
-			float x = data[j][i];
-			if (x > clip) {
-				x = clip;
-			} else if (x < -clip) {
-				x = -clip;
+			int32_t s = 0;
+			if (j == 13 && _sync) {
+				s = _fsk.get();
+			} else {
+				/* Convert sample to 24-bit int, clipping if necessary. */
+				float x = data[j][i];
+				if (x > clip) {
+					x = clip;
+				} else if (x < -clip) {
+					x = -clip;
+				}
+				s = x * (1 << 23);
 			}
-			int32_t const s = x * (1 << 23);
 			*out++ = (s & 0xff);
 			*out++ = (s & 0xff00) >> 8;
 			*out++ = (s & 0xff0000) >> 16;
@@ -149,6 +166,11 @@ SoundAssetWriter::write_current_frame ()
 	}
 
 	++_frames_written;
+
+	if (_sync) {
+		/* We need a new set of sync packets for this frame */
+		_fsk.set_data (create_sync_packets());
+	}
 }
 
 bool
@@ -168,3 +190,87 @@ SoundAssetWriter::finalize ()
 	_asset->_intrinsic_duration = _frames_written;
 	return AssetWriter::finalize ();
 }
+
+
+/** Calculate and return the sync packets required for this edit unit (aka "frame") */
+vector<bool>
+SoundAssetWriter::create_sync_packets ()
+{
+	/* Parts of this code assumes 48kHz */
+	DCP_ASSERT (_asset->sampling_rate() == 48000);
+
+	/* Encoding of edit rate */
+	int edit_rate_code = 0;
+	/* How many 0 bits are used to pad the end of the packet */
+	int remaining_bits = 0;
+	/* How many packets in this edit unit (i.e. "frame") */
+	int packets = 0;
+	Fraction const edit_rate = _asset->edit_rate ();
+	if (edit_rate == Fraction(24, 1)) {
+		edit_rate_code = 0;
+		remaining_bits = 25;
+		packets = 4;
+	} else if (edit_rate == Fraction(25, 1)) {
+		edit_rate_code = 1;
+		remaining_bits = 20;
+		packets = 4;
+	} else if (edit_rate == Fraction(30, 1)) {
+		edit_rate_code = 2;
+		remaining_bits = 0;
+		packets = 4;
+	} else if (edit_rate == Fraction(48, 1)) {
+		edit_rate_code = 3;
+		remaining_bits = 25;
+		packets = 2;
+	} else if (edit_rate == Fraction(50, 1)) {
+		edit_rate_code = 4;
+		remaining_bits = 20;
+		packets = 2;
+	} else if (edit_rate == Fraction(60, 1)) {
+		edit_rate_code = 5;
+		remaining_bits = 0;
+		packets = 2;
+	} else if (edit_rate == Fraction(96, 1)) {
+		edit_rate_code = 6;
+		remaining_bits = 25;
+		packets = 1;
+	} else if (edit_rate == Fraction(100, 1)) {
+		edit_rate_code = 7;
+		remaining_bits = 20;
+		packets = 1;
+	} else if (edit_rate == Fraction(120, 1)) {
+		edit_rate_code = 8;
+		remaining_bits = 0;
+		packets = 1;
+	}
+
+	Bitstream bs;
+
+	Kumu::UUID id;
+	DCP_ASSERT (id.DecodeHex(_asset->id().c_str()));
+
+	for (int i = 0; i < packets; ++i) {
+		bs.write_from_byte (0x4d);
+		bs.write_from_byte (0x56);
+		bs.start_crc (0x1021);
+		bs.write_from_byte (edit_rate_code, 4);
+		bs.write_from_byte (0, 2);
+		bs.write_from_byte (_sync_packet, 2);
+		bs.write_from_byte (id.Value()[i * 4 + 0]);
+		bs.write_from_byte (id.Value()[i * 4 + 1]);
+		bs.write_from_byte (id.Value()[i * 4 + 2]);
+		bs.write_from_byte (id.Value()[i * 4 + 3]);
+		bs.write_from_word (_frames_written, 24);
+		bs.write_crc ();
+		bs.write_from_byte (0, 4);
+		bs.write_from_word (0, remaining_bits);
+
+		++_sync_packet;
+		if (_sync_packet == 4) {
+			_sync_packet = 0;
+		}
+	}
+
+	return bs.get();
+}
+

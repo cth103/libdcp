@@ -95,6 +95,7 @@ def build(bld):
                  smpte_load_font_test.cc
                  smpte_subtitle_test.cc
                  sound_frame_test.cc
+                 sync_test.cc
                  test.cc
                  util_test.cc
                  utf8_test.cc

@@ -58,7 +58,7 @@ public:
 	explicit SoundAsset (boost::filesystem::path file);
 	SoundAsset (Fraction edit_rate, int sampling_rate, int channels, Standard standard);
 
-	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file);
+	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file, bool atmos_sync = false);
 	boost::shared_ptr<SoundAssetReader> start_read () const;
 
 	bool equals (

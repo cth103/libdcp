@@ -39,6 +39,7 @@ def build(bld):
              asset_writer.cc
              atmos_asset.cc
              atmos_asset_writer.cc
+             bitstream.cc
              certificate_chain.cc
              certificate.cc
              chromaticity.cc
@@ -53,6 +54,7 @@ def build(bld):
              exceptions.cc
              file.cc
              font_asset.cc
+             fsk.cc
              gamma_transfer_function.cc
              identity_transfer_function.cc
              interop_load_font_node.cc
@@ -132,6 +134,7 @@ def build(bld):
               exceptions.h
               font_asset.h
               frame.h
+              fsk.h
               gamma_transfer_function.h
               identity_transfer_function.h
               interop_load_font_node.h
