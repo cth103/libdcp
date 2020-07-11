@@ -29,3 +29,14 @@ extern boost::filesystem::path xsd_test;
 extern void check_xml (xmlpp::Element* ref, xmlpp::Element* test, std::list<std::string> ignore);
 extern void check_xml (std::string ref, std::string test, std::list<std::string> ignore);
 extern void check_file (boost::filesystem::path ref, boost::filesystem::path check);
+
+/** Creating an object of this class will make asdcplib's random number generation
+ *  (more) predictable.
+ */
+class RNGFixer
+{
+public:
+	RNGFixer ();
+	~RNGFixer ();
+};
+

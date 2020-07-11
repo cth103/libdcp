@@ -330,6 +330,8 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 /* Write some subtitle content as Interop XML using bitmaps and check that it is right */
 BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 {
+	RNGFixer fix;
+
 	shared_ptr<dcp::InteropSubtitleAsset> c (new dcp::InteropSubtitleAsset());
 	c->set_reel_number ("1");
 	c->set_language ("EN");

@@ -35,6 +35,8 @@
 #define BOOST_TEST_MODULE libdcp_test
 #include "util.h"
 #include "test.h"
+#include <asdcp/KM_util.h>
+#include <asdcp/KM_prng.h>
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
 #include <cstdio>
@@ -173,5 +175,19 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 	fclose (ref_file);
 	fclose (check_file);
 }
+
+
+RNGFixer::RNGFixer ()
+{
+	Kumu::cth_test = true;
+	Kumu::FortunaRNG().Reset();
+}
+
+
+RNGFixer::~RNGFixer ()
+{
+	Kumu::cth_test = false;
+}
+
 
 BOOST_GLOBAL_FIXTURE (TestConfig);

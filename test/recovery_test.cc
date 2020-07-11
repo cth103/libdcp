@@ -33,6 +33,7 @@
 
 #include "mono_picture_asset_writer.h"
 #include "mono_picture_asset.h"
+#include "test.h"
 #include <asdcp/KM_util.h>
 #include <boost/test/unit_test.hpp>
 #include <boost/filesystem.hpp>
@@ -43,7 +44,7 @@ using boost::shared_ptr;
 /** Check that recovery from a partially-written MXF works */
 BOOST_AUTO_TEST_CASE (recovery)
 {
-	Kumu::cth_test = true;
+	RNGFixer fix;
 
 	string const picture = "test/data/32x32_red_square.j2c";
 	int const size = boost::filesystem::file_size (picture);
@@ -54,11 +55,6 @@ BOOST_AUTO_TEST_CASE (recovery)
 		fread (data, 1, size, f);
 		fclose (f);
 	}
-
-#ifdef LIBDCP_POSIX
-	/* XXX: fix this posix-only stuff */
-	Kumu::ResetTestRNG ();
-#endif
 
 	boost::filesystem::remove_all ("build/test/baz");
 	boost::filesystem::create_directories ("build/test/baz");

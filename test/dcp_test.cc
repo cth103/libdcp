@@ -57,8 +57,6 @@ using boost::shared_ptr;
 static shared_ptr<dcp::DCP>
 make_simple (boost::filesystem::path path)
 {
-	Kumu::cth_test = true;
-
 	/* Some known metadata */
 	dcp::XMLMetadata xml_meta;
 	xml_meta.annotation_text = "A Test DCP";
@@ -123,6 +121,8 @@ make_simple (boost::filesystem::path path)
 /** Test creation of a 2D SMPTE DCP from very simple inputs */
 BOOST_AUTO_TEST_CASE (dcp_test1)
 {
+	RNGFixer fixer;
+
 	dcp::XMLMetadata xml_meta;
 	xml_meta.annotation_text = "Created by libdcp";
 	xml_meta.issuer = "OpenDCP 0.0.25";
@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 /** Test creation of a 3D DCP from very simple inputs */
 BOOST_AUTO_TEST_CASE (dcp_test2)
 {
-	Kumu::cth_test = true;
+	RNGFixer fix;
 
 	/* Some known metadata */
 	dcp::XMLMetadata xml_meta;
@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE (dcp_test4)
 /** Test creation of a 2D DCP with an Atmos track */
 BOOST_AUTO_TEST_CASE (dcp_test5)
 {
-	Kumu::cth_test = true;
+	RNGFixer fix;
 
 	/* Some known metadata */
 	dcp::XMLMetadata xml_meta;
@@ -325,6 +325,8 @@ BOOST_AUTO_TEST_CASE (dcp_test6)
 /** Test creation of a 2D Interop DCP from very simple inputs */
 BOOST_AUTO_TEST_CASE (dcp_test7)
 {
+	RNGFixer fix;
+
 	dcp::XMLMetadata xml_meta;
 	xml_meta.annotation_text = "Created by libdcp";
 	xml_meta.issuer = "OpenDCP 0.0.25";
