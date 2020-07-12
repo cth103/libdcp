@@ -81,7 +81,7 @@ read_sync_sample (uint8_t const* data, int sample_index, int channels)
 
 BOOST_AUTO_TEST_CASE (sync_test1)
 {
-	dcp::SoundAsset asset (private_test / "atmos_pcm.mxf");
+	dcp::SoundAsset asset (private_test / "data" / "atmos_pcm.mxf");
 	shared_ptr<dcp::SoundAssetReader> reader = asset.start_read ();
 	shared_ptr<const dcp::SoundFrame> frame = reader->get_frame (0);
 
@@ -143,7 +143,7 @@ BOOST_AUTO_TEST_CASE (sync_test2)
 	writer->finalize ();
 
 	/* Check that channel 14 on the first frame matches channel 14 on the reference */
-	dcp::SoundAsset ref (private_test / "atmos_pcm.mxf");
+	dcp::SoundAsset ref (private_test / "data" / "atmos_pcm.mxf");
 	dcp::SoundAsset check ("build/test/foo.mxf");
 
 	shared_ptr<dcp::SoundAssetReader> ref_read = ref.start_read ();
