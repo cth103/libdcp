@@ -354,6 +354,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 		);
 
 	c->_id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
+	boost::filesystem::remove_all ("build/test/write_interop_subtitle_test3");
 	boost::filesystem::create_directories ("build/test/write_interop_subtitle_test3");
 	c->write ("build/test/write_interop_subtitle_test3/subs.xml");
 
@@ -380,7 +381,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 		dcp::file_to_string("build/test/write_interop_subtitle_test3/subs.xml"),
 		list<string>()
 		);
-	check_file ("build/test/write_interop_subtitle_test3/ef5c6baa-be2d-4f86-9f15-b1acc792ee8b.png", "test/data/sub.png");
+	check_file ("build/test/write_interop_subtitle_test3/d36f4bb3-c4fa-4a95-9915-6fec3110cd71.png", "test/data/sub.png");
 
 	check_xml (
 		dcp::file_to_string("test/ref/write_interop_subtitle_test3/ASSETMAP"),
@@ -390,7 +391,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 
 	check_xml (
 		dcp::file_to_string("test/ref/write_interop_subtitle_test3/pkl.xml"),
-		dcp::file_to_string("build/test/write_interop_subtitle_test3/pkl_f5aab304-8145-44e3-a265-aa8d8812d8a2.xml"),
+		dcp::file_to_string("build/test/write_interop_subtitle_test3/pkl_e94b8a0d-27f7-408a-af16-78d3df419a91.xml"),
 		list<string>()
 		);
 }
