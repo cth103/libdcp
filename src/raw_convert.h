@@ -34,6 +34,7 @@
 #ifndef LIBDCP_RAW_CONVERT_H
 #define LIBDCP_RAW_CONVERT_H
 
+#include "util.h"
 #include <boost/static_assert.hpp>
 #include <iomanip>
 
@@ -44,12 +45,14 @@ namespace dcp {
  */
 template <typename P, typename Q>
 P
-raw_convert (Q v, int precision = 16, bool fixed = false)
+raw_convert (Q, int precision = 16, bool fixed = false)
 {
 	/* We can't write a generic version of raw_convert; all required
 	   versions must be specialised.
 	*/
 	BOOST_STATIC_ASSERT (sizeof (Q) == 0);
+	LIBDCP_UNUSED(precision);
+	LIBDCP_UNUSED(fixed);
 }
 
 template <>

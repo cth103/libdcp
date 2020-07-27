@@ -34,6 +34,7 @@
 #ifndef LIBDCP_LOCALE_CONVERT_H
 #define LIBDCP_LOCALE_CONVERT_H
 
+#include "util.h"
 #include <boost/filesystem.hpp>
 #include <boost/static_assert.hpp>
 #include <string>
@@ -43,12 +44,14 @@ namespace dcp {
 
 template <typename P, typename Q>
 P
-locale_convert (Q x, int precision = 16, bool fixed = false)
+locale_convert (Q, int precision = 16, bool fixed = false)
 {
 	/* We can't write a generic version of locale_convert; all required
 	   versions must be specialised.
 	*/
 	BOOST_STATIC_ASSERT (sizeof (Q) == 0);
+	LIBDCP_UNUSED(precision);
+	LIBDCP_UNUSED(fixed);
 }
 
 template <>

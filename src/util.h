@@ -48,6 +48,8 @@
 #include <string>
 #include <stdint.h>
 
+#define LIBDCP_UNUSED(x) (void)(x)
+
 namespace xmlpp {
 	class Element;
 	class Node;
