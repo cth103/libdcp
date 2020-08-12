@@ -56,7 +56,7 @@ static string
 tm_to_string (struct tm t)
 {
 	char buffer[64];
-	snprintf (buffer, 64, "%02d/%02d/%02d %02d:%02d:%02d", t.tm_mday, t.tm_mon, (t.tm_year + 1900), t.tm_hour, t.tm_min, t.tm_sec);
+	snprintf (buffer, 64, "%02d/%02d/%02d %02d:%02d:%02d", t.tm_mday, t.tm_mon + 1, t.tm_year + 1900, t.tm_hour, t.tm_min, t.tm_sec);
 	return buffer;
 }
 
