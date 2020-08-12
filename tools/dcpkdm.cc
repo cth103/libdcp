@@ -62,6 +62,7 @@ tm_to_string (struct tm t)
 
 int
 main (int argc, char* argv[])
+try
 {
 	optional<boost::filesystem::path> private_key_file;
 
@@ -143,4 +144,9 @@ main (int argc, char* argv[])
 	}
 
 	return 0;
+}
+catch (std::exception& e)
+{
+	cerr << "Error: " << e.what() << "\n";
+	exit (EXIT_FAILURE);
 }
