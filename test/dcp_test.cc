@@ -65,7 +65,7 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 	xml_meta.issuer = "OpenDCP 0.0.25";
 	xml_meta.creator = "OpenDCP 0.0.25";
 	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
-	make_simple("build/test/DCP/dcp_test1")->write_xml (dcp::SMPTE, xml_meta);
+	make_simple("build/test/DCP/dcp_test1")->write_xml (dcp::SMPTE, xml_meta.issuer, xml_meta.creator, xml_meta.issue_date, xml_meta.annotation_text);
 	/* build/test/DCP/dcp_test1 is checked against test/ref/DCP/dcp_test1 by run/tests */
 }
 
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	d.add (cpl);
 
 	xml_meta.annotation_text = "Created by libdcp";
-	d.write_xml (dcp::SMPTE, xml_meta);
+	d.write_xml (dcp::SMPTE, xml_meta.issuer, xml_meta.creator, xml_meta.issue_date, xml_meta.annotation_text);
 
 	/* build/test/DCP/dcp_test2 is checked against test/ref/DCP/dcp_test2 by run/tests */
 }
@@ -246,7 +246,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	d.add (cpl);
 
 	xml_meta.annotation_text = "Created by libdcp";
-	d.write_xml (dcp::SMPTE, xml_meta);
+	d.write_xml (dcp::SMPTE, xml_meta.issuer, xml_meta.creator, xml_meta.issue_date, xml_meta.annotation_text);
 
 	/* build/test/DCP/dcp_test5 is checked against test/ref/DCP/dcp_test5 by run/tests */
 }
@@ -275,7 +275,7 @@ BOOST_AUTO_TEST_CASE (dcp_test7)
 	xml_meta.issuer = "OpenDCP 0.0.25";
 	xml_meta.creator = "OpenDCP 0.0.25";
 	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
-	make_simple("build/test/DCP/dcp_test7")->write_xml (dcp::INTEROP, xml_meta);
+	make_simple("build/test/DCP/dcp_test7")->write_xml(dcp::INTEROP, xml_meta.issuer, xml_meta.creator, xml_meta.issue_date, xml_meta.annotation_text);
 	/* build/test/DCP/dcp_test7 is checked against test/ref/DCP/dcp_test7 by run/tests */
 }
 

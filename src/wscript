@@ -124,6 +124,7 @@ def build(bld):
               chromaticity.h
               colour_conversion.h
               combine.h
+              compose.hpp
               cpl.h
               crypto_context.h
               dcp.h

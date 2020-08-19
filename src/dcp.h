@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -38,12 +38,14 @@
 #ifndef LIBDCP_DCP_H
 #define LIBDCP_DCP_H
 
+#include "compose.hpp"
 #include "types.h"
 #include "util.h"
 #include "certificate.h"
 #include "metadata.h"
 #include "name_format.h"
 #include "verify.h"
+#include "version.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/signals2.hpp>
 #include <string>
@@ -62,7 +64,6 @@ class PKL;
 class Content;
 class Reel;
 class CPL;
-class XMLMetadata;
 class CertificateChain;
 class DecryptedKDM;
 class Asset;
@@ -111,7 +112,10 @@ public:
 
 	void write_xml (
 		Standard standard,
-		XMLMetadata metadata = XMLMetadata (),
+		std::string issuer = String::compose("libdcp %1", dcp::version),
+		std::string creator = String::compose("libdcp %1", dcp::version),
+		std::string issue_date = LocalTime().as_string(),
+		std::string annotation_text = String::compose("Created by libdcp %1", dcp::version),
 		boost::shared_ptr<const CertificateChain> signer = boost::shared_ptr<const CertificateChain> (),
 		NameFormat name_format = NameFormat("%t")
 	);
@@ -148,7 +152,10 @@ private:
 	 *  @param pkl_uuid UUID of our PKL.
 	 *  @param pkl_path Pathname of our PKL file.
 	 */
-	void write_assetmap (Standard standard, std::string pkl_uuid, boost::filesystem::path pkl_path, XMLMetadata metadata) const;
+	void write_assetmap (
+		Standard standard, std::string pkl_uuid, boost::filesystem::path pkl_path,
+		std::string issuer, std::string creator, std::string issue_date, std::string annotation_text
+		) const;
 
 	/** The directory that we are writing to */
 	boost::filesystem::path _directory;

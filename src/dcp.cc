@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -378,7 +378,10 @@ DCP::write_volindex (Standard standard) const
 }
 
 void
-DCP::write_assetmap (Standard standard, string pkl_uuid, boost::filesystem::path pkl_path, XMLMetadata metadata) const
+DCP::write_assetmap (
+	Standard standard, string pkl_uuid, boost::filesystem::path pkl_path,
+	string issuer, string creator, string issue_date, string annotation_text
+	) const
 {
 	boost::filesystem::path p = _directory;
 
@@ -408,20 +411,20 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, boost::filesystem::path
 	}
 
 	root->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
-	root->add_child("AnnotationText")->add_child_text (metadata.annotation_text);
+	root->add_child("AnnotationText")->add_child_text (annotation_text);
 
 	switch (standard) {
 	case INTEROP:
 		root->add_child("VolumeCount")->add_child_text ("1");
-		root->add_child("IssueDate")->add_child_text (metadata.issue_date);
-		root->add_child("Issuer")->add_child_text (metadata.issuer);
-		root->add_child("Creator")->add_child_text (metadata.creator);
+		root->add_child("IssueDate")->add_child_text (issue_date);
+		root->add_child("Issuer")->add_child_text (issuer);
+		root->add_child("Creator")->add_child_text (creator);
 		break;
 	case SMPTE:
-		root->add_child("Creator")->add_child_text (metadata.creator);
+		root->add_child("Creator")->add_child_text (creator);
 		root->add_child("VolumeCount")->add_child_text ("1");
-		root->add_child("IssueDate")->add_child_text (metadata.issue_date);
-		root->add_child("Issuer")->add_child_text (metadata.issuer);
+		root->add_child("IssueDate")->add_child_text (issue_date);
+		root->add_child("Issuer")->add_child_text (issuer);
 		break;
 	default:
 		DCP_ASSERT (false);
@@ -455,7 +458,10 @@ DCP::write_assetmap (Standard standard, string pkl_uuid, boost::filesystem::path
 void
 DCP::write_xml (
 	Standard standard,
-	XMLMetadata metadata,
+	string issuer,
+	string creator,
+	string issue_date,
+	string annotation_text,
 	shared_ptr<const CertificateChain> signer,
 	NameFormat name_format
 	)
@@ -469,7 +475,7 @@ DCP::write_xml (
 	shared_ptr<PKL> pkl;
 
 	if (_pkls.empty()) {
-		pkl.reset (new PKL (standard, metadata.annotation_text, metadata.issue_date, metadata.issuer, metadata.creator));
+		pkl.reset (new PKL(standard, annotation_text, issue_date, issuer, creator));
 		_pkls.push_back (pkl);
 		BOOST_FOREACH (shared_ptr<Asset> i, assets ()) {
 			i->add_to_pkl (pkl, _directory);
@@ -484,7 +490,7 @@ DCP::write_xml (
 	pkl->write (pkl_path, signer);
 
 	write_volindex (standard);
-	write_assetmap (standard, pkl->id(), pkl_path, metadata);
+	write_assetmap (standard, pkl->id(), pkl_path, issuer, creator, issue_date, annotation_text);
 }
 
 list<shared_ptr<CPL> >

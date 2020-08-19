@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	d.add (cpl);
 
 	xml_metadata.annotation_text = "Created by libdcp";
-	d.write_xml (dcp::SMPTE, xml_metadata, signer);
+	d.write_xml (dcp::SMPTE, xml_metadata.issuer, xml_metadata.creator, xml_metadata.issue_date, xml_metadata.annotation_text, signer);
 
 	dcp::DecryptedKDM kdm (
 		cpl,
