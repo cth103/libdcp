@@ -42,7 +42,6 @@
 #include "certificate.h"
 #include "key.h"
 #include "asset.h"
-#include "metadata.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/optional.hpp>
@@ -53,7 +52,6 @@ namespace dcp {
 
 class ReelMXF;
 class Reel;
-class XMLMetadata;
 class MXFMetadata;
 class CertificateChain;
 class DecryptedKDM;
@@ -78,11 +76,23 @@ public:
 
 	/** @return contents of the &lt;AnnotationText&gt; node */
 	std::string annotation_text () const {
-		return _metadata.annotation_text;
+		return _annotation_text;
+	}
+
+	void set_issuer (std::string issuer) {
+		_issuer = issuer;
+	}
+
+	void set_creator (std::string creator) {
+		_creator = creator;
+	}
+
+	void set_issue_date (std::string issue_date) {
+		_issue_date = issue_date;
 	}
 
 	void set_annotation_text (std::string at) {
-		_metadata.annotation_text = at;
+		_annotation_text = at;
 	}
 
 	/** @return contents of the &lt;ContentTitleText&gt; node */
@@ -123,10 +133,6 @@ public:
 
 	bool encrypted () const;
 
-	void set_metadata (XMLMetadata m) {
-		_metadata = m;
-	}
-
 	void write_xml (
 		boost::filesystem::path file,
 		Standard standard,
@@ -160,10 +166,10 @@ protected:
 	std::string pkl_type (Standard standard) const;
 
 private:
-	/** &lt;Issuer&gt;, &lt;Creator&gt;, &lt;IssueDate&gt; and &lt;AnnotationText&gt.
-	 *  These are grouped because they occur together in a few places.
-	 */
-	XMLMetadata _metadata;
+	std::string _issuer;
+	std::string _creator;
+	std::string _issue_date;
+	std::string _annotation_text;
 	std::string _content_title_text;            ///< &lt;ContentTitleText&gt;
 	ContentKind _content_kind;                  ///< &lt;ContentKind&gt;
 	std::string _content_version_id;            ///< &lt;Id&gt; in &lt;ContentVersion&gt;

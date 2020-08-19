@@ -92,7 +92,10 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
 	cpl->set_content_version_id ("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
 	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
-	cpl->set_metadata (xml_meta);
+	cpl->set_issuer (xml_meta.issuer);
+	cpl->set_creator (xml_meta.creator);
+	cpl->set_issue_date (xml_meta.issue_date);
+	cpl->set_annotation_text (xml_meta.annotation_text);
 
 	shared_ptr<dcp::StereoPictureAsset> mp (new dcp::StereoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
 	mp->set_metadata (mxf_meta);
@@ -193,7 +196,10 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
 	cpl->set_content_version_id ("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
 	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
-	cpl->set_metadata (xml_meta);
+	cpl->set_issuer (xml_meta.issuer);
+	cpl->set_creator (xml_meta.creator);
+	cpl->set_issue_date (xml_meta.issue_date);
+	cpl->set_annotation_text (xml_meta.annotation_text);
 
 	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
 	mp->set_metadata (mxf_meta);

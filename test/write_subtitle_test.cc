@@ -369,7 +369,10 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("My film", dcp::FEATURE));
 	cpl->add (reel);
-	cpl->set_metadata (xml_meta);
+	cpl->set_issuer (xml_meta.issuer);
+	cpl->set_creator (xml_meta.creator);
+	cpl->set_issue_date (xml_meta.issue_date);
+	cpl->set_annotation_text (xml_meta.annotation_text);
 	cpl->set_content_version_label_text ("foo");
 
 	dcp::DCP dcp ("build/test/write_interop_subtitle_test3");
