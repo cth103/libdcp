@@ -36,6 +36,11 @@ else
     fi
 fi
 
+if [ "$*" != "" ]; then
+    echo "Skipping post-test checks as not all unit tests were run."
+    exit 0
+fi
+
 # Check a MXF written by the unit tests
 diff $work/baz/video1.mxf $work/baz/video2.mxf
 if [ "$?" != "0" ]; then
