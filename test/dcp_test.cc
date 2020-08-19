@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -60,12 +60,10 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 {
 	RNGFixer fixer;
 
-	dcp::XMLMetadata xml_meta;
-	xml_meta.annotation_text = "Created by libdcp";
-	xml_meta.issuer = "OpenDCP 0.0.25";
-	xml_meta.creator = "OpenDCP 0.0.25";
-	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
-	make_simple("build/test/DCP/dcp_test1")->write_xml (dcp::SMPTE, xml_meta.issuer, xml_meta.creator, xml_meta.issue_date, xml_meta.annotation_text);
+	make_simple("build/test/DCP/dcp_test1")->write_xml(
+		dcp::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp"
+		);
+
 	/* build/test/DCP/dcp_test1 is checked against test/ref/DCP/dcp_test1 by run/tests */
 }
 
@@ -75,11 +73,6 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	RNGFixer fix;
 
 	/* Some known metadata */
-	dcp::XMLMetadata xml_meta;
-	xml_meta.annotation_text = "A Test DCP";
-	xml_meta.issuer = "OpenDCP 0.0.25";
-	xml_meta.creator = "OpenDCP 0.0.25";
-	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
 	dcp::MXFMetadata mxf_meta;
 	mxf_meta.company_name = "OpenDCP";
 	mxf_meta.product_name = "OpenDCP";
@@ -92,10 +85,10 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
 	cpl->set_content_version_id ("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
 	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
-	cpl->set_issuer (xml_meta.issuer);
-	cpl->set_creator (xml_meta.creator);
-	cpl->set_issue_date (xml_meta.issue_date);
-	cpl->set_annotation_text (xml_meta.annotation_text);
+	cpl->set_issuer ("OpenDCP 0.0.25");
+	cpl->set_creator ("OpenDCP 0.0.25");
+	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
+	cpl->set_annotation_text ("A Test DCP");
 
 	shared_ptr<dcp::StereoPictureAsset> mp (new dcp::StereoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
 	mp->set_metadata (mxf_meta);
@@ -139,8 +132,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 
 	d.add (cpl);
 
-	xml_meta.annotation_text = "Created by libdcp";
-	d.write_xml (dcp::SMPTE, xml_meta.issuer, xml_meta.creator, xml_meta.issue_date, xml_meta.annotation_text);
+	d.write_xml (dcp::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp");
 
 	/* build/test/DCP/dcp_test2 is checked against test/ref/DCP/dcp_test2 by run/tests */
 }
@@ -179,11 +171,6 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	RNGFixer fix;
 
 	/* Some known metadata */
-	dcp::XMLMetadata xml_meta;
-	xml_meta.annotation_text = "A Test DCP";
-	xml_meta.issuer = "OpenDCP 0.0.25";
-	xml_meta.creator = "OpenDCP 0.0.25";
-	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
 	dcp::MXFMetadata mxf_meta;
 	mxf_meta.company_name = "OpenDCP";
 	mxf_meta.product_name = "OpenDCP";
@@ -196,10 +183,10 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
 	cpl->set_content_version_id ("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
 	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
-	cpl->set_issuer (xml_meta.issuer);
-	cpl->set_creator (xml_meta.creator);
-	cpl->set_issue_date (xml_meta.issue_date);
-	cpl->set_annotation_text (xml_meta.annotation_text);
+	cpl->set_issuer ("OpenDCP 0.0.25");
+	cpl->set_creator ("OpenDCP 0.0.25");
+	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
+	cpl->set_annotation_text ("A Test DCP");
 
 	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
 	mp->set_metadata (mxf_meta);
@@ -245,8 +232,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 
 	d.add (cpl);
 
-	xml_meta.annotation_text = "Created by libdcp";
-	d.write_xml (dcp::SMPTE, xml_meta.issuer, xml_meta.creator, xml_meta.issue_date, xml_meta.annotation_text);
+	d.write_xml (dcp::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp");
 
 	/* build/test/DCP/dcp_test5 is checked against test/ref/DCP/dcp_test5 by run/tests */
 }
@@ -270,12 +256,10 @@ BOOST_AUTO_TEST_CASE (dcp_test7)
 {
 	RNGFixer fix;
 
-	dcp::XMLMetadata xml_meta;
-	xml_meta.annotation_text = "Created by libdcp";
-	xml_meta.issuer = "OpenDCP 0.0.25";
-	xml_meta.creator = "OpenDCP 0.0.25";
-	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
-	make_simple("build/test/DCP/dcp_test7")->write_xml(dcp::INTEROP, xml_meta.issuer, xml_meta.creator, xml_meta.issue_date, xml_meta.annotation_text);
+	make_simple("build/test/DCP/dcp_test7")->write_xml(
+		dcp::INTEROP,  "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp"
+		);
+
 	/* build/test/DCP/dcp_test7 is checked against test/ref/DCP/dcp_test7 by run/tests */
 }
 

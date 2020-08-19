@@ -72,12 +72,6 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	mxf_metadata.product_name = "OpenDCP";
 	mxf_metadata.product_version = "0.0.25";
 
-	dcp::XMLMetadata xml_metadata;
-	xml_metadata.annotation_text = "A Test DCP";
-	xml_metadata.issuer = "OpenDCP 0.0.25";
-	xml_metadata.creator = "OpenDCP 0.0.25";
-	xml_metadata.issue_date = "2012-07-17T04:45:18+00:00";
-
 	boost::filesystem::remove_all ("build/test/DCP/encryption_test");
 	boost::filesystem::create_directories ("build/test/DCP/encryption_test");
 	dcp::DCP d ("build/test/DCP/encryption_test");
@@ -133,15 +127,14 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 						 )));
 	cpl->set_content_version_id ("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
 	cpl->set_content_version_label_text ("81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00");
-	cpl->set_issuer (xml_metadata.issuer);
-	cpl->set_creator (xml_metadata.creator);
-	cpl->set_issue_date (xml_metadata.issue_date);
-	cpl->set_annotation_text (xml_metadata.annotation_text);
+	cpl->set_annotation_text ("A Test DCP");
+	cpl->set_issuer ("OpenDCP 0.0.25");
+	cpl->set_creator ("OpenDCP 0.0.25");
+	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
 
 	d.add (cpl);
 
-	xml_metadata.annotation_text = "Created by libdcp";
-	d.write_xml (dcp::SMPTE, xml_metadata.issuer, xml_metadata.creator, xml_metadata.issue_date, xml_metadata.annotation_text, signer);
+	d.write_xml (dcp::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp", signer);
 
 	dcp::DecryptedKDM kdm (
 		cpl,

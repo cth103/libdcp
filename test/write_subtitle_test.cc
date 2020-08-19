@@ -361,23 +361,22 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 	shared_ptr<dcp::Reel> reel (new dcp::Reel());
 	reel->add(shared_ptr<dcp::ReelSubtitleAsset>(new dcp::ReelSubtitleAsset(c, dcp::Fraction(24, 1), 6046, 0)));
 
-	dcp::XMLMetadata xml_meta;
-	xml_meta.issue_date = "2018-09-02T04:45:18+00:00";
-	xml_meta.issuer = "libdcp";
-	xml_meta.creator = "libdcp";
-	xml_meta.annotation_text = "Created by libdcp";
+	string const issue_date = "2018-09-02T04:45:18+00:00";
+	string const issuer = "libdcp";
+	string const creator = "libdcp";
+	string const annotation_text = "Created by libdcp";
 
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("My film", dcp::FEATURE));
 	cpl->add (reel);
-	cpl->set_issuer (xml_meta.issuer);
-	cpl->set_creator (xml_meta.creator);
-	cpl->set_issue_date (xml_meta.issue_date);
-	cpl->set_annotation_text (xml_meta.annotation_text);
+	cpl->set_issuer (issuer);
+	cpl->set_creator (creator);
+	cpl->set_issue_date (issue_date);
+	cpl->set_annotation_text (annotation_text);
 	cpl->set_content_version_label_text ("foo");
 
 	dcp::DCP dcp ("build/test/write_interop_subtitle_test3");
 	dcp.add (cpl);
-	dcp.write_xml (dcp::INTEROP, xml_meta.issuer, xml_meta.creator, xml_meta.issue_date, xml_meta.annotation_text);
+	dcp.write_xml (dcp::INTEROP, issuer, creator, issue_date, annotation_text);
 
 	check_xml (
 		dcp::file_to_string("test/ref/write_interop_subtitle_test3/subs.xml"),
