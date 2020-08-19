@@ -35,7 +35,7 @@
 #define LIBDCP_METADATA_H
 
 /** @file  src/metadata.h
- *  @brief XMLMetadata and MXFMetadata classes.
+ *  @brief MXFMetadata class.
  */
 
 #include <string>
@@ -62,22 +62,6 @@ public:
 	std::string company_name;
 	std::string product_name;
 	std::string product_version;
-};
-
-/** @class XMLMetadata
- *  @brief Common metadata that is written to a few different XML files
- */
-class XMLMetadata
-{
-public:
-	XMLMetadata ();
-
-	void set_issue_date_now ();
-
-	std::string issuer;
-	std::string creator;
-	std::string issue_date;
-	std::string annotation_text;
 };
 
 }

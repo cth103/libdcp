@@ -32,7 +32,7 @@
 */
 
 /** @file  src/metadata.cc
- *  @brief XMLMetadata and MXFMetadata classes.
+ *  @brief MXFMetadata class.
  */
 
 #include "metadata.h"
@@ -61,17 +61,3 @@ MXFMetadata::read (ASDCP::WriterInfo const & info)
 	product_version = info.ProductVersion;
 }
 
-XMLMetadata::XMLMetadata ()
-	: issuer ("libdcp" LIBDCP_VERSION)
-	, creator ("libdcp" LIBDCP_VERSION)
-	, annotation_text ("Created by libdcp" LIBDCP_VERSION)
-{
-	set_issue_date_now ();
-}
-
-/** Set the issue date to the current local time */
-void
-XMLMetadata::set_issue_date_now ()
-{
-	issue_date = LocalTime().as_string ();
-}
