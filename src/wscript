@@ -62,6 +62,7 @@ def build(bld):
              interop_subtitle_asset.cc
              j2k.cc
              key.cc
+             language_tag.cc
              local_time.cc
              locale_convert.cc
              metadata.cc
@@ -144,6 +145,7 @@ def build(bld):
               interop_subtitle_asset.h
               j2k.h
               key.h
+              language_tag.h
               load_font_node.h
               local_time.h
               locale_convert.h

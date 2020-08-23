@@ -1,0 +1,38 @@
+#!/usr/bin/python3
+
+import urllib.request
+
+block = {}
+lists = {}
+
+with urllib.request.urlopen('https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry') as f:
+#with open('language-subtag-registry', 'r') as f:
+    for l in f.readlines():
+        if l.strip().decode('utf-8') == "%%":
+            if 'Type' in block:
+                if block['Type'] in ['language', 'variant', 'region', 'script', 'extlang']:
+                    if not block['Type'] in lists:
+                        lists[block['Type']] = []
+                    lists[block['Type']].append((block['Subtag'], block['Description']))
+                elif block['Type'] == 'redundant' or block['Type'] == 'grandfathered':
+                    # We'll ignore these (for now)
+                    pass
+                else:
+                    print("Unknown type `%s'" % block['Type'])
+            block = {}
+        else:
+            p = l.strip().decode('utf-8').split(':')
+            if len(p) > 1:
+                block[p[0]] = p[1][1:]
+
+def escape(s):
+    return s.replace('"', '\\"')
+
+with open('src/language_tag_lists.cc', 'w') as f:
+    for k, v in lists.items():
+        print("static LanguageTag::SubtagData %s_list[] = {" % k, file=f)
+        for e in v:
+            print('\t{ "%s", "%s" },' % (escape(e[0]), escape(e[1])), file=f)
+        print("};", file=f)
+        print("", file=f)
+
