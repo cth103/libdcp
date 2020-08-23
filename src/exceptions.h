@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -245,6 +245,13 @@ class CombineError : public std::runtime_error
 {
 public:
 	explicit CombineError (std::string message);
+};
+
+
+class LanguageTagError : public std::runtime_error
+{
+public:
+	LanguageTagError (std::string message);
 };
 
 }

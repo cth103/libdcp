@@ -137,3 +137,6 @@ CombineError::CombineError (string message)
 	: runtime_error (message)
 {}
 
+LanguageTagError::LanguageTagError (std::string message)
+	: runtime_error (message)
+{}
