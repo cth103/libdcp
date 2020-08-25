@@ -129,6 +129,10 @@ public:
 		_font = id;
 	}
 
+	void unset_font () {
+		_font = boost::optional<std::string>();
+	}
+
 	void set_size (int s) {
 		_size = s;
 	}
