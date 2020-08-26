@@ -75,8 +75,8 @@ CPL::CPL (string annotation_text, ContentKind content_kind)
 	   a random ID and the current time.
 	*/
 	string const uuid = make_uuid();
-	_content_version_id = "urn:uuid:" + uuid;
-	_content_version_label_text = uuid + LocalTime().as_string ();
+	_content_version.id = "urn:uuid:" + uuid;
+	_content_version.label_text = uuid + LocalTime().as_string ();
 }
 
 /** Construct a CPL object from a XML file */
@@ -104,8 +104,8 @@ CPL::CPL (boost::filesystem::path file)
 	_content_kind = content_kind_from_string (f.string_child ("ContentKind"));
 	shared_ptr<cxml::Node> content_version = f.optional_node_child ("ContentVersion");
 	if (content_version) {
-		_content_version_id = content_version->optional_string_child ("Id").get_value_or ("");
-		_content_version_label_text = content_version->string_child ("LabelText");
+		_content_version.id = content_version->optional_string_child("Id").get_value_or("");
+		_content_version.label_text = content_version->string_child("LabelText");
 		content_version->done ();
 	} else if (_standard == SMPTE) {
 		/* ContentVersion is required in SMPTE */
@@ -158,11 +158,8 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	root->add_child("Creator")->add_child_text (_creator);
 	root->add_child("ContentTitleText")->add_child_text (_content_title_text);
 	root->add_child("ContentKind")->add_child_text (content_kind_to_string (_content_kind));
-	{
-		xmlpp::Node* cv = root->add_child ("ContentVersion");
-		cv->add_child ("Id")->add_child_text (_content_version_id);
-		cv->add_child ("LabelText")->add_child_text (_content_version_label_text);
-	}
+	_content_version.as_xml (root);
+
 	xmlpp::Element* rating_list = root->add_child("RatingList");
 	BOOST_FOREACH (Rating i, _ratings) {
 		i.as_xml (rating_list->add_child("Rating"));

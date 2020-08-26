@@ -322,6 +322,23 @@ public:
 extern bool operator== (Rating const & a, Rating const & b);
 extern std::ostream& operator<< (std::ostream& s, Rating const & r);
 
+
+class ContentVersion
+{
+public:
+	ContentVersion () {}
+
+	ContentVersion (std::string id_, std::string label_text_)
+		: id (id_)
+		, label_text (label_text_)
+	{}
+
+	void as_xml (xmlpp::Element* parent) const;
+
+	std::string id;
+	std::string label_text;
+};
+
 }
 
 #endif

@@ -462,3 +462,13 @@ dcp::operator<< (ostream& s, Rating const & r)
 	s << r.agency << " " << r.label;
 	return s;
 }
+
+
+void
+ContentVersion::as_xml (xmlpp::Element* parent) const
+{
+	xmlpp::Node* cv = parent->add_child("ContentVersion");
+	cv->add_child("Id")->add_child_text(id);
+	cv->add_child("LabelText")->add_child_text(label_text);
+}
+

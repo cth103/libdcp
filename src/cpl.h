@@ -104,14 +104,9 @@ public:
 		_content_title_text = ct;
 	}
 
-	/** @return contents of the &lt;Id&gt; node within &lt;ContentVersion&gt; */
-	void set_content_version_id (std::string id) {
-		_content_version_id = id;
-	}
-
-	/** @return contents of the &lt;LabelText&gt; node within &lt;ContentVersion&gt; */
-	void set_content_version_label_text (std::string text) {
-		_content_version_label_text = text;
+	/** Set the contents of the ContentVersion tag */
+	void set_content_version (ContentVersion v) {
+		_content_version = v;
 	}
 
 	/** @return the type of the content, used by media servers
@@ -155,8 +150,8 @@ public:
 		_ratings = r;
 	}
 
-	std::string content_version_label_text () const {
-		return _content_version_label_text;
+	ContentVersion content_version () const {
+		return _content_version;
 	}
 
 	static std::string static_pkl_type (Standard standard);
@@ -172,8 +167,7 @@ private:
 	std::string _annotation_text;
 	std::string _content_title_text;            ///< &lt;ContentTitleText&gt;
 	ContentKind _content_kind;                  ///< &lt;ContentKind&gt;
-	std::string _content_version_id;            ///< &lt;Id&gt; in &lt;ContentVersion&gt;
-	std::string _content_version_label_text;    ///< &lt;LabelText&gt; in &lt;ContentVersion&gt;
+	ContentVersion _content_version;            ///< &lt;ContentVersion&gt;
 	std::list<boost::shared_ptr<Reel> > _reels;
 	std::list<Rating> _ratings;
 
