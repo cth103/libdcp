@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,30 +31,36 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/cpl.h
  *  @brief CPL class.
  */
 
+
 #ifndef LIBDCP_CPL_H
 #define LIBDCP_CPL_H
 
-#include "types.h"
+
+#include "asset.h"
 #include "certificate.h"
 #include "key.h"
-#include "asset.h"
-#include <boost/shared_ptr.hpp>
+#include "types.h"
+#include <boost/filesystem.hpp>
 #include <boost/function.hpp>
 #include <boost/optional.hpp>
-#include <boost/filesystem.hpp>
+#include <boost/shared_ptr.hpp>
 #include <list>
 
+
 namespace dcp {
+
 
 class ReelMXF;
 class Reel;
 class MXFMetadata;
 class CertificateChain;
 class DecryptedKDM;
+
 
 /** @class CPL
  *  @brief A Composition Playlist.
@@ -74,55 +80,12 @@ public:
 	void add (boost::shared_ptr<Reel> reel);
 	void add (DecryptedKDM const &);
 
-	/** @return contents of the &lt;AnnotationText&gt; node */
-	std::string annotation_text () const {
-		return _annotation_text;
-	}
-
-	void set_issuer (std::string issuer) {
-		_issuer = issuer;
-	}
-
-	void set_creator (std::string creator) {
-		_creator = creator;
-	}
-
-	void set_issue_date (std::string issue_date) {
-		_issue_date = issue_date;
-	}
-
-	void set_annotation_text (std::string at) {
-		_annotation_text = at;
-	}
-
-	/** @return contents of the &lt;ContentTitleText&gt; node */
-	std::string content_title_text () const {
-		return _content_title_text;
-	}
-
-	void set_content_title_text (std::string ct) {
-		_content_title_text = ct;
-	}
-
-	/** Set the contents of the ContentVersion tag */
-	void set_content_version (ContentVersion v) {
-		_content_version = v;
-	}
-
-	/** @return the type of the content, used by media servers
-	 *  to categorise things (e.g. feature, trailer, etc.)
-	 */
-	ContentKind content_kind () const {
-		return _content_kind;
-	}
-
 	/** @return the reels in this CPL */
 	std::list<boost::shared_ptr<Reel> > reels () const {
 		return _reels;
 	}
 
-	/** @return the ReelMXFs in this CPL in all reels.
-	 */
+	/** @return the ReelMXFs in this CPL in all reels */
 	std::list<boost::shared_ptr<const ReelMXF> > reel_mxfs () const;
 	std::list<boost::shared_ptr<ReelMXF> > reel_mxfs ();
 
@@ -138,8 +101,50 @@ public:
 
 	int64_t duration () const;
 
-	boost::optional<Standard> standard () const {
-		return _standard;
+	void set_issuer (std::string issuer) {
+		_issuer = issuer;
+	}
+
+	void set_creator (std::string creator) {
+		_creator = creator;
+	}
+
+	void set_issue_date (std::string issue_date) {
+		_issue_date = issue_date;
+	}
+
+	/** @return contents of the &lt;AnnotationText&gt; node */
+	std::string annotation_text () const {
+		return _annotation_text;
+	}
+
+	void set_annotation_text (std::string at) {
+		_annotation_text = at;
+	}
+
+	/** @return contents of the &lt;ContentTitleText&gt; node */
+	std::string content_title_text () const {
+		return _content_title_text;
+	}
+
+	void set_content_title_text (std::string ct) {
+		_content_title_text = ct;
+	}
+
+	/** @return the type of the content, used by media servers
+	 *  to categorise things (e.g. feature, trailer, etc.)
+	 */
+	ContentKind content_kind () const {
+		return _content_kind;
+	}
+
+	ContentVersion content_version () const {
+		return _content_version;
+	}
+
+	/** Set the contents of the ContentVersion tag */
+	void set_content_version (ContentVersion v) {
+		_content_version = v;
 	}
 
 	std::list<Rating> ratings () const {
@@ -150,8 +155,8 @@ public:
 		_ratings = r;
 	}
 
-	ContentVersion content_version () const {
-		return _content_version;
+	boost::optional<Standard> standard () const {
+		return _standard;
 	}
 
 	static std::string static_pkl_type (Standard standard);
@@ -168,13 +173,16 @@ private:
 	std::string _content_title_text;            ///< &lt;ContentTitleText&gt;
 	ContentKind _content_kind;                  ///< &lt;ContentKind&gt;
 	ContentVersion _content_version;            ///< &lt;ContentVersion&gt;
-	std::list<boost::shared_ptr<Reel> > _reels;
 	std::list<Rating> _ratings;
+
+	std::list<boost::shared_ptr<Reel> > _reels;
 
 	/** Standard of CPL that was read in */
 	boost::optional<Standard> _standard;
 };
 
+
 }
+
 
 #endif
