@@ -90,7 +90,12 @@ enum Channel {
 	LC = 8,
 	RC = 9,
 	BSL = 10,
-	BSR = 11
+	BSR = 11,
+	MOTION_DATA = 12,
+	SYNC_SIGNAL = 13,
+	SIGN_LANGUAGE = 14,
+	UNUSED = 15,
+	CHANNEL_COUNT = 16
 };
 
 enum ContentKind
