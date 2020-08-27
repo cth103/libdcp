@@ -50,6 +50,7 @@
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <list>
+#include <vector>
 
 
 namespace dcp {
@@ -138,14 +139,18 @@ public:
 		return _content_kind;
 	}
 
-	ContentVersion content_version () const {
-		return _content_version;
+	ContentVersion content_version () const;
+
+	std::vector<ContentVersion> content_versions () const {
+		return _content_versions;
 	}
 
-	/** Set the contents of the ContentVersion tag */
 	void set_content_version (ContentVersion v) {
-		_content_version = v;
+		_content_versions.clear ();
+		_content_versions.push_back (v);
 	}
+
+	void set_content_versions (std::vector<ContentVersion> v);
 
 	std::list<Rating> ratings () const {
 		return _ratings;
@@ -172,8 +177,8 @@ private:
 	std::string _annotation_text;
 	std::string _content_title_text;            ///< &lt;ContentTitleText&gt;
 	ContentKind _content_kind;                  ///< &lt;ContentKind&gt;
-	ContentVersion _content_version;            ///< &lt;ContentVersion&gt;
 	std::list<Rating> _ratings;
+	std::vector<ContentVersion> _content_versions;
 
 	std::list<boost::shared_ptr<Reel> > _reels;
 

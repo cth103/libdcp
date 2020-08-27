@@ -372,7 +372,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 	cpl->set_creator (creator);
 	cpl->set_issue_date (issue_date);
 	cpl->set_annotation_text (annotation_text);
-	dcp::ContentVersion cv = cpl->content_version ();
+	dcp::ContentVersion cv = cpl->content_version();
 	cv.label_text = "foo";
 	cpl->set_content_version (cv);
 

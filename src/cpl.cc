@@ -54,6 +54,7 @@ using std::list;
 using std::pair;
 using std::make_pair;
 using std::cout;
+using std::vector;
 using boost::shared_ptr;
 using boost::optional;
 using boost::dynamic_pointer_cast;
@@ -71,12 +72,9 @@ CPL::CPL (string annotation_text, ContentKind content_kind)
 	, _content_title_text (annotation_text)
 	, _content_kind (content_kind)
 {
-	/* default _content_version_id to a random ID and _content_version_label to
-	   a random ID and the current time.
-	*/
-	string const uuid = make_uuid();
-	_content_version.id = "urn:uuid:" + uuid;
-	_content_version.label_text = uuid + LocalTime().as_string ();
+	ContentVersion cv;
+	cv.label_text = cv.id + LocalTime().as_string();
+	_content_versions.push_back (cv);
 }
 
 /** Construct a CPL object from a XML file */
@@ -104,8 +102,13 @@ CPL::CPL (boost::filesystem::path file)
 	_content_kind = content_kind_from_string (f.string_child ("ContentKind"));
 	shared_ptr<cxml::Node> content_version = f.optional_node_child ("ContentVersion");
 	if (content_version) {
-		_content_version.id = content_version->optional_string_child("Id").get_value_or("");
-		_content_version.label_text = content_version->string_child("LabelText");
+		/* XXX: SMPTE should insist that Id is present */
+		_content_versions.push_back (
+			ContentVersion (
+				content_version->optional_string_child("Id").get_value_or(""),
+				content_version->string_child("LabelText")
+				)
+			);
 		content_version->done ();
 	} else if (_standard == SMPTE) {
 		/* ContentVersion is required in SMPTE */
@@ -158,7 +161,8 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	root->add_child("Creator")->add_child_text (_creator);
 	root->add_child("ContentTitleText")->add_child_text (_content_title_text);
 	root->add_child("ContentKind")->add_child_text (content_kind_to_string (_content_kind));
-	_content_version.as_xml (root);
+	DCP_ASSERT (!_content_versions.empty());
+	_content_versions[0].as_xml (root);
 
 	xmlpp::Element* rating_list = root->add_child("RatingList");
 	BOOST_FOREACH (Rating i, _ratings) {
@@ -332,4 +336,24 @@ CPL::duration () const
 		d += i->duration ();
 	}
 	return d;
+}
+void
+CPL::set_content_versions (vector<ContentVersion> v)
+{
+	set<string> ids;
+	BOOST_FOREACH (ContentVersion i, v) {
+		if (!ids.insert(i.id).second) {
+			throw DuplicateIdError ("Duplicate ID in ContentVersion list");
+		}
+	}
+
+	_content_versions = v;
+}
+
+
+ContentVersion
+CPL::content_version () const
+{
+	DCP_ASSERT (!_content_versions.empty());
+	return _content_versions[0];
 }
