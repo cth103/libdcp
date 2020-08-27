@@ -37,12 +37,13 @@
 
 using std::list;
 using std::string;
+using std::vector;
 
 BOOST_AUTO_TEST_CASE (cpl_ratings)
 {
 	dcp::CPL cpl ("annotation", dcp::FEATURE);
 
-	list<dcp::Rating> ratings;
+	vector<dcp::Rating> ratings;
 	ratings.push_back (dcp::Rating("http://www.mpaa.org/2003-ratings", "PG-13"));
 	ratings.push_back (dcp::Rating("http://www.movielabs.com/md/ratings/GB/BBFC/1/12A%3C/Agency", "12A"));
 	cpl.set_ratings (ratings);
@@ -86,6 +87,6 @@ BOOST_AUTO_TEST_CASE (cpl_ratings)
 		);
 
 	dcp::CPL cpl2 ("build/test/cpl_ratings.xml");
-	list<dcp::Rating> ratings2 = cpl2.ratings ();
+	vector<dcp::Rating> ratings2 = cpl2.ratings ();
 	BOOST_TEST(ratings == ratings2);
 }

@@ -152,11 +152,11 @@ public:
 
 	void set_content_versions (std::vector<ContentVersion> v);
 
-	std::list<Rating> ratings () const {
+	std::vector<Rating> ratings () const {
 		return _ratings;
 	}
 
-	void set_ratings (std::list<Rating> r) {
+	void set_ratings (std::vector<Rating> r) {
 		_ratings = r;
 	}
 
@@ -177,8 +177,8 @@ private:
 	std::string _annotation_text;
 	std::string _content_title_text;            ///< &lt;ContentTitleText&gt;
 	ContentKind _content_kind;                  ///< &lt;ContentKind&gt;
-	std::list<Rating> _ratings;
 	std::vector<ContentVersion> _content_versions;
+	std::vector<Rating> _ratings;
 
 	std::list<boost::shared_ptr<Reel> > _reels;
 
