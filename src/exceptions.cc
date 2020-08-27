@@ -137,6 +137,30 @@ CombineError::CombineError (string message)
 	: runtime_error (message)
 {}
 
+
 LanguageTagError::LanguageTagError (std::string message)
 	: runtime_error (message)
 {}
+
+
+BadSettingError::BadSettingError (std::string message)
+	: runtime_error (message)
+{
+
+}
+
+
+DuplicateIdError::DuplicateIdError (std::string message)
+	: runtime_error (message)
+{
+
+}
+
+
+MainSoundConfigurationError::MainSoundConfigurationError (std::string s)
+	: runtime_error (String::compose("Could not parse MainSoundConfiguration %1", s))
+{
+
+}
+
+>>>>>>> Support CPL metadata.

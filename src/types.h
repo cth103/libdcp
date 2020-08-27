@@ -328,10 +328,26 @@ extern bool operator== (Rating const & a, Rating const & b);
 extern std::ostream& operator<< (std::ostream& s, Rating const & r);
 
 
+enum Status
+{
+	FINAL, ///< final version
+	TEMP,  ///< temporary version (picture/sound unfinished)
+	PRE    ///< pre-release (picture/sound finished)
+};
+
+
+extern std::string status_to_string (Status s);
+extern Status string_to_status (std::string s);
+
+
 class ContentVersion
 {
 public:
-	ContentVersion () {}
+	ContentVersion ();
+
+	explicit ContentVersion (cxml::ConstNodePtr node);
+
+	explicit ContentVersion (std::string label_text_);
 
 	ContentVersion (std::string id_, std::string label_text_)
 		: id (id_)
@@ -343,6 +359,75 @@ public:
 	std::string id;
 	std::string label_text;
 };
+
+
+class Luminance
+{
+public:
+	enum Unit {
+		CANDELA_PER_SQUARE_METRE,
+		FOOT_LAMBERT
+	};
+
+	Luminance (cxml::ConstNodePtr node);
+
+	Luminance (float value, Unit unit);
+
+	void set_value (float v);
+	void set_unit (Unit u) {
+		_unit = u;
+	}
+
+	float value () const {
+		return _value;
+	}
+
+	Unit unit () const {
+		return _unit;
+	}
+
+	void as_xml (xmlpp::Element* parent, std::string ns) const;
+
+	static std::string unit_to_string (Unit u);
+	static Unit string_to_unit (std::string u);
+
+private:
+	float _value;
+	Unit _unit;
+};
+
+bool operator== (Luminance const& a, Luminance const& b);
+
+
+class MainSoundConfiguration
+{
+public:
+	enum Field {
+		FIVE_POINT_ONE,
+		SEVEN_POINT_ONE,
+	};
+
+	MainSoundConfiguration (std::string);
+	MainSoundConfiguration (Field field_, int channels);
+
+	Field field () const {
+		return _field;
+	}
+
+	int channels () const {
+		return _channels.size();
+	}
+
+	boost::optional<Channel> mapping (int index) const;
+	void set_mapping (int index, Channel channel);
+
+	std::string to_string () const;
+
+private:
+	Field _field;
+	std::vector<boost::optional<Channel> > _channels;
+};
+
 
 }
 

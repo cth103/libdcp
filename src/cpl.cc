@@ -45,8 +45,10 @@
 #include "local_time.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
+#include "raw_convert.h"
 #include <libxml/parser.h>
 #include <libxml++/libxml++.h>
+#include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 
 using std::string;
@@ -54,14 +56,18 @@ using std::list;
 using std::pair;
 using std::make_pair;
 using std::cout;
+using std::set;
 using std::vector;
 using boost::shared_ptr;
 using boost::optional;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
+
 static string const cpl_interop_ns = "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#";
 static string const cpl_smpte_ns   = "http://www.smpte-ra.org/schemas/429-7/2006/CPL";
+static string const cpl_metadata_ns = "http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata";
+
 
 CPL::CPL (string annotation_text, ContentKind content_kind)
 	/* default _content_title_text to annotation_text */
@@ -122,6 +128,19 @@ CPL::CPL (boost::filesystem::path file)
 	}
 	_reels = type_grand_children<Reel> (f, "ReelList", "Reel");
 
+	cxml::ConstNodePtr reel_list = f.node_child ("ReelList");
+	if (reel_list) {
+		list<cxml::NodePtr> reels = reel_list->node_children("Reel");
+		if (!reels.empty()) {
+			cxml::ConstNodePtr asset_list = reels.front()->node_child("AssetList");
+			cxml::ConstNodePtr metadata = asset_list->optional_node_child("CompositionMetadataAsset");
+			if (metadata) {
+				read_composition_metadata_asset (metadata);
+			}
+		}
+	}
+
+
 	f.ignore_child ("Issuer");
 	f.ignore_child ("Signer");
 	f.ignore_child ("Signature");
@@ -139,6 +158,7 @@ CPL::add (boost::shared_ptr<Reel> reel)
 }
 
 /** Write an CompositonPlaylist XML file.
+ *
  *  @param file Filename to write.
  *  @param standard INTEROP or SMPTE.
  *  @param signer Signer to sign the CPL, or 0 to add no signature.
@@ -171,8 +191,13 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 
 	xmlpp::Element* reel_list = root->add_child ("ReelList");
 
+	bool first = true;
 	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
-		i->write_to_cpl (reel_list, standard);
+		xmlpp::Element* asset_list = i->write_to_cpl (reel_list, standard);
+		if (first && standard == dcp::SMPTE) {
+			maybe_write_composition_metadata_asset (asset_list);
+			first = false;
+		}
 	}
 
 	indent (root, 0);
@@ -185,6 +210,191 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 
 	set_file (file);
 }
+
+
+void
+CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
+{
+	cxml::ConstNodePtr fctt = node->node_child("FullContentTitleText");
+	_full_content_title_text = fctt->content();
+	_full_content_title_text_language = fctt->optional_string_attribute("language");
+
+	_release_territory = node->optional_string_child("ReleaseTerritory");
+
+	cxml::ConstNodePtr vn = node->optional_node_child("VersionNumber");
+	if (vn) {
+		_version_number = raw_convert<int>(vn->content());
+		/* I decided to check for this number being non-negative on being set, and in the verifier, but not here */
+		optional<string> vn_status = vn->optional_string_attribute("status");
+		if (vn_status) {
+			_status = string_to_status (*vn_status);
+		}
+	}
+
+	_chain = node->optional_string_child("Chain");
+	_distributor = node->optional_string_child("Distributor");
+	_facility = node->optional_string_child("Facility");
+
+	cxml::ConstNodePtr acv = node->optional_node_child("AlternateContentVersionList");
+	if (acv) {
+		BOOST_FOREACH (cxml::ConstNodePtr i, acv->node_children("ContentVersion")) {
+			_content_versions.push_back (ContentVersion(i));
+		}
+	}
+
+	cxml::ConstNodePtr lum = node->optional_node_child("Luminance");
+	if (lum) {
+		_luminance = Luminance (lum);
+	}
+
+	_main_sound_configuration = node->string_child("MainSoundConfiguration");
+
+	string sr = node->string_child("MainSoundSampleRate");
+	vector<string> sr_bits;
+	boost::split (sr_bits, sr, boost::is_any_of(" "));
+	DCP_ASSERT (sr_bits.size() == 2);
+	_main_sound_sample_rate = raw_convert<int>(sr_bits[0]);
+
+	_main_picture_stored_area = dcp::Size (
+		node->node_child("MainPictureStoredArea")->number_child<int>("Width"),
+		node->node_child("MainPictureStoredArea")->number_child<int>("Height")
+		);
+
+	_main_picture_active_area = dcp::Size (
+		node->node_child("MainPictureActiveArea")->number_child<int>("Width"),
+		node->node_child("MainPictureActiveArea")->number_child<int>("Height")
+		);
+
+	optional<string> sll = node->optional_string_child("MainSubtitleLanguageList");
+	if (sll) {
+		vector<string> sll_split;
+		boost::split (sll_split, *sll, boost::is_any_of(" "));
+		DCP_ASSERT (!sll_split.empty());
+
+		/* If the first language on SubtitleLanguageList is the same as the language of the first subtitle we'll ignore it */
+		size_t first = 0;
+		if (!_reels.empty()) {
+			shared_ptr<dcp::ReelSubtitleAsset> sub = _reels.front()->main_subtitle();
+			if (sub) {
+				optional<dcp::LanguageTag> lang = sub->language();
+				if (lang && lang->to_string() == sll_split[0]) {
+					first = 1;
+				}
+			}
+		}
+
+		for (size_t i = first; i < sll_split.size(); ++i) {
+			_additional_subtitle_languages.push_back (sll_split[i]);
+		}
+	}
+}
+
+
+/** Write a CompositionMetadataAsset node as a child of @param node provided
+ *  the required metadata is stored in the object.  If any required metadata
+ *  is missing this method will do nothing.
+ */
+void
+CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
+{
+	if (
+		!_main_sound_configuration ||
+		!_main_sound_sample_rate ||
+		!_main_picture_stored_area ||
+		!_main_picture_active_area ||
+		_reels.empty() ||
+		!_reels.front()->main_picture()) {
+		return;
+	}
+
+	xmlpp::Element* meta = node->add_child("meta:CompositionMetadataAsset");
+	meta->set_namespace_declaration (cpl_metadata_ns, "meta");
+
+	meta->add_child("Id")->add_child_text("urn:uuid:" + make_uuid());
+
+	shared_ptr<dcp::ReelPictureAsset> mp = _reels.front()->main_picture();
+	meta->add_child("EditRate")->add_child_text(mp->edit_rate().as_string());
+	meta->add_child("IntrinsicDuration")->add_child_text(raw_convert<string>(mp->intrinsic_duration()));
+
+	xmlpp::Element* fctt = meta->add_child("FullContentTitleText", "meta");
+	if (_full_content_title_text) {
+		fctt->add_child_text (*_full_content_title_text);
+	}
+	if (_full_content_title_text_language) {
+		fctt->set_attribute("language", *_full_content_title_text_language);
+	}
+
+	if (_release_territory) {
+		meta->add_child("ReleaseTerritory", "meta")->add_child_text(*_release_territory);
+	}
+
+	if (_version_number) {
+		xmlpp::Element* vn = meta->add_child("VersionNumber", "meta");
+		vn->add_child_text(raw_convert<string>(*_version_number));
+		if (_status) {
+			vn->set_attribute("status", status_to_string(*_status));
+		}
+	}
+
+	if (_chain) {
+		meta->add_child("Chain", "meta")->add_child_text(*_chain);
+	}
+
+	if (_distributor) {
+		meta->add_child("Distributor", "meta")->add_child_text(*_distributor);
+	}
+
+	if (_facility) {
+		meta->add_child("Facility", "meta")->add_child_text(*_facility);
+	}
+
+	if (_content_versions.size() > 1) {
+		xmlpp::Element* vc = meta->add_child("AlternateContentVersionList", "meta");
+		for (size_t i = 1; i < _content_versions.size(); ++i) {
+			_content_versions[i].as_xml (vc);
+		}
+	}
+
+	if (_luminance) {
+		_luminance->as_xml (meta, "meta");
+	}
+
+	meta->add_child("MainSoundConfiguration", "meta")->add_child_text(*_main_sound_configuration);
+	meta->add_child("MainSoundSampleRate", "meta")->add_child_text(raw_convert<string>(*_main_sound_sample_rate) + " 1");
+
+	xmlpp::Element* stored = meta->add_child("MainPictureStoredArea", "meta");
+	stored->add_child("Width", "meta")->add_child_text(raw_convert<string>(_main_picture_stored_area->width));
+	stored->add_child("Height", "meta")->add_child_text(raw_convert<string>(_main_picture_stored_area->height));
+
+	xmlpp::Element* active = meta->add_child("MainPictureActiveArea", "meta");
+	active->add_child("Width", "meta")->add_child_text(raw_convert<string>(_main_picture_active_area->width));
+	active->add_child("Height", "meta")->add_child_text(raw_convert<string>(_main_picture_active_area->height));
+
+	optional<dcp::LanguageTag> first_subtitle_language;
+	BOOST_FOREACH (shared_ptr<const Reel> i, _reels) {
+		if (i->main_subtitle()) {
+			first_subtitle_language = i->main_subtitle()->language();
+			if (first_subtitle_language) {
+				break;
+			}
+		}
+	}
+
+	if (first_subtitle_language || !_additional_subtitle_languages.empty()) {
+		string lang;
+		if (first_subtitle_language) {
+			lang = first_subtitle_language->to_string();
+		}
+		BOOST_FOREACH (dcp::LanguageTag const& i, _additional_subtitle_languages) {
+			if (!lang.empty()) {
+				lang += " ";
+			}
+			lang += i.to_string();
+		}
+		meta->add_child("MainSubtitleLanguageList")->add_child_text(lang);
+	}
+}
+
 
 list<shared_ptr<ReelMXF> >
 CPL::reel_mxfs ()
@@ -337,6 +547,19 @@ CPL::duration () const
 	}
 	return d;
 }
+
+
+void
+CPL::set_version_number (int v)
+{
+	if (v < 0) {
+		throw BadSettingError ("CPL version number cannot be negative");
+	}
+
+	_version_number = v;
+}
+
+
 void
 CPL::set_content_versions (vector<ContentVersion> v)
 {
@@ -356,4 +579,14 @@ CPL::content_version () const
 {
 	DCP_ASSERT (!_content_versions.empty());
 	return _content_versions[0];
+}
+
+
+void
+CPL::set_additional_subtitle_languages (vector<dcp::LanguageTag> const& langs)
+{
+	_additional_subtitle_languages.clear ();
+	BOOST_FOREACH (dcp::LanguageTag const& i, langs) {
+		_additional_subtitle_languages.push_back (i.to_string());
+	}
 }

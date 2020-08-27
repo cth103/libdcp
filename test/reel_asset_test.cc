@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,10 +32,16 @@
 */
 
 #include "reel_mono_picture_asset.h"
+#include "reel_subtitle_asset.h"
 #include <libcxml/cxml.h>
 #include <boost/test/unit_test.hpp>
+#include "test.h"
 
+
+using std::string;
+using boost::optional;
 using boost::shared_ptr;
+
 
 /** Test the XML constructor of ReelPictureAsset */
 BOOST_AUTO_TEST_CASE (reel_picture_asset_test)
@@ -45,11 +51,11 @@ BOOST_AUTO_TEST_CASE (reel_picture_asset_test)
 	doc->read_string (
 		"<MainPicture>"
 		"<Id>urn:uuid:06ac1ca7-9c46-4107-8864-a6448e24b04b</Id>"
-		"<AnnotationText></AnnotationText>"
+		"<AnnotationText>Hello world!</AnnotationText>"
 		"<EditRate>24 1</EditRate>"
 		"<IntrinsicDuration>187048</IntrinsicDuration>"
-		"<EntryPoint>0</EntryPoint>"
-		"<Duration>187048</Duration>"
+		"<EntryPoint>42</EntryPoint>"
+		"<Duration>9444</Duration>"
 		"<Hash>6EQX4NjG8vxIWhLUtHhrGSyLgOY=</Hash>"
 		"<FrameRate>24 1</FrameRate>"
 		"<ScreenAspectRatio>2048 858</ScreenAspectRatio>"
@@ -57,5 +63,45 @@ BOOST_AUTO_TEST_CASE (reel_picture_asset_test)
 		);
 
 	dcp::ReelMonoPictureAsset pa (doc);
-	BOOST_CHECK_EQUAL (pa.screen_aspect_ratio(), dcp::Fraction (2048, 858));
+	BOOST_CHECK_EQUAL (pa.id(), "06ac1ca7-9c46-4107-8864-a6448e24b04b");
+	BOOST_CHECK_EQUAL (pa.annotation_text(), "Hello world!");
+	BOOST_CHECK_EQUAL (pa.edit_rate(), dcp::Fraction(24, 1));
+	BOOST_CHECK_EQUAL (pa.intrinsic_duration(), 187048);
+	BOOST_CHECK_EQUAL (pa.entry_point().get(), 42L);
+	BOOST_CHECK_EQUAL (pa.duration().get(), 9444L);
+	BOOST_CHECK_EQUAL (pa.hash().get(), string("6EQX4NjG8vxIWhLUtHhrGSyLgOY="));
+	BOOST_CHECK_EQUAL (pa.frame_rate(), dcp::Fraction(24, 1));
+	BOOST_CHECK_EQUAL (pa.screen_aspect_ratio(), dcp::Fraction(2048, 858));
+}
+
+
+/** Test the XML constructor of ReelSubtitleAsset */
+BOOST_AUTO_TEST_CASE (reel_subtitle_asset_test)
+{
+	shared_ptr<cxml::Document> doc (new cxml::Document("MainSubtitle"));
+
+	doc->read_string (
+		"<MainSubtitle>"
+		"<Id>urn:uuid:8bca1489-aab1-9259-a4fd-8150abc1de12</Id>"
+		"<AnnotationText>Goodbye world!</AnnotationText>"
+		"<EditRate>25 1</EditRate>"
+		"<IntrinsicDuration>1870</IntrinsicDuration>"
+		"<EntryPoint>0</EntryPoint>"
+		"<Duration>525</Duration>"
+		"<KeyId>urn:uuid:540cbf10-ab14-0233-ab1f-fb31501cabfa</KeyId>"
+		"<Hash>3EABjX9BB1CAWhLUtHhrGSyLgOY=</Hash>"
+		"<Language>de-DE</Language>"
+		"</MainSubtitle>"
+		);
+
+	dcp::ReelSubtitleAsset ps (doc);
+	BOOST_CHECK_EQUAL (ps.id(), "8bca1489-aab1-9259-a4fd-8150abc1de12");
+	BOOST_CHECK_EQUAL (ps.annotation_text(), "Goodbye world!");
+	BOOST_CHECK_EQUAL (ps.edit_rate(), dcp::Fraction(25, 1));
+	BOOST_CHECK_EQUAL (ps.intrinsic_duration(), 1870);
+	BOOST_CHECK_EQUAL (ps.entry_point().get(), 0L);
+	BOOST_CHECK_EQUAL (ps.duration().get(), 525L);
+	BOOST_CHECK_EQUAL (ps.hash().get(), string("3EABjX9BB1CAWhLUtHhrGSyLgOY="));
+	BOOST_REQUIRE (ps.language());
+	BOOST_CHECK_EQUAL (ps.language()->to_string(), "de-DE");
 }

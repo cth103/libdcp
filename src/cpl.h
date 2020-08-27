@@ -44,6 +44,7 @@
 #include "asset.h"
 #include "certificate.h"
 #include "key.h"
+#include "language_tag.h"
 #include "types.h"
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
@@ -160,6 +161,114 @@ public:
 		_ratings = r;
 	}
 
+	boost::optional<std::string> full_content_title_text () const {
+		return _full_content_title_text;
+	}
+
+	void set_full_content_title_text (std::string t) {
+		_full_content_title_text = t;
+	}
+
+	boost::optional<std::string> full_content_title_text_language () const {
+		return _full_content_title_text_language;
+	}
+
+	void set_full_content_title_text_language (dcp::LanguageTag l) {
+		_full_content_title_text_language = l.to_string();
+	}
+
+	boost::optional<std::string> release_territory () const {
+		return _release_territory;
+	}
+
+	void set_release_territory (dcp::LanguageTag::RegionSubtag t) {
+		_release_territory = t.subtag();
+	}
+
+	boost::optional<int> version_number () const {
+		return _version_number;
+	}
+
+	void set_version_number (int v);
+
+	boost::optional<Status> status () const {
+		return _status;
+	}
+
+	void set_status (Status s) {
+		_status = s;
+	}
+
+	boost::optional<std::string> chain () const {
+		return _chain;
+	}
+
+	void set_chain (std::string c) {
+		_chain = c;
+	}
+
+	boost::optional<std::string> distributor () const {
+		return _distributor;
+	}
+
+	void set_distributor (std::string d) {
+		_distributor = d;
+	}
+
+	boost::optional<std::string> facility () const {
+		return _facility;
+	}
+
+	void set_facility (std::string f) {
+		_facility = f;
+	}
+
+	boost::optional<Luminance> luminance () const {
+		return _luminance;
+	}
+
+	void set_luminance (Luminance l) {
+		_luminance = l;
+	}
+
+	boost::optional<std::string> main_sound_configuration () const {
+		return _main_sound_configuration;
+	}
+
+	void set_main_sound_configuration (std::string c) {
+		_main_sound_configuration = c;
+	}
+
+	boost::optional<int> main_sound_sample_rate () const {
+		return _main_sound_sample_rate;
+	}
+
+	void set_main_sound_sample_rate (int r) {
+		_main_sound_sample_rate = r;
+	}
+
+	boost::optional<dcp::Size> main_picture_stored_area () const {
+		return _main_picture_stored_area;
+	}
+
+	void set_main_picture_stored_area (dcp::Size s) {
+		_main_picture_stored_area = s;
+	}
+
+	boost::optional<dcp::Size> main_picture_active_area () const {
+		return _main_picture_active_area;
+	}
+
+	void set_main_picture_active_area (dcp::Size s) {
+		_main_picture_active_area = s;
+	}
+
+	std::vector<std::string> additional_subtitle_languages () const {
+		return _additional_subtitle_languages;
+	}
+
+	void set_additional_subtitle_languages (std::vector<dcp::LanguageTag> const& lang);
+
 	boost::optional<Standard> standard () const {
 		return _standard;
 	}
@@ -171,6 +280,9 @@ protected:
 	std::string pkl_type (Standard standard) const;
 
 private:
+	void maybe_write_composition_metadata_asset (xmlpp::Element* node) const;
+	void read_composition_metadata_asset (cxml::ConstNodePtr node);
+
 	std::string _issuer;
 	std::string _creator;
 	std::string _issue_date;
@@ -179,6 +291,25 @@ private:
 	ContentKind _content_kind;                  ///< &lt;ContentKind&gt;
 	std::vector<ContentVersion> _content_versions;
 	std::vector<Rating> _ratings;
+	/** Human-readable name of the composition, without any metadata (i.e. no -FTR-EN-XX- etc.) */
+	boost::optional<std::string> _full_content_title_text;
+	boost::optional<std::string> _full_content_title_text_language;
+	/** This is stored and returned as a string so that we can tolerate non-RFC-5646 strings,
+	 *  but must be set as a dcp::LanguageTag to try to ensure that we create compliant output.
+	 */
+	boost::optional<std::string> _release_territory;
+	boost::optional<int> _version_number;
+	boost::optional<Status> _status;
+	boost::optional<std::string> _chain;
+	boost::optional<std::string> _distributor;
+	boost::optional<std::string> _facility;
+	boost::optional<Luminance> _luminance;
+	boost::optional<std::string> _main_sound_configuration;
+	boost::optional<int> _main_sound_sample_rate;
+	boost::optional<dcp::Size> _main_picture_stored_area;
+	boost::optional<dcp::Size> _main_picture_active_area;
+	/* See note for _release_territory above */
+	std::vector<std::string> _additional_subtitle_languages;
 
 	std::list<boost::shared_ptr<Reel> > _reels;
 

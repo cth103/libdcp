@@ -254,6 +254,28 @@ public:
 	LanguageTagError (std::string message);
 };
 
+
+class BadSettingError : public std::runtime_error
+{
+public:
+	BadSettingError (std::string message);
+};
+
+
+class DuplicateIdError : public std::runtime_error
+{
+public:
+	DuplicateIdError (std::string message);
+};
+
+
+class MainSoundConfigurationError : public std::runtime_error
+{
+public:
+	MainSoundConfigurationError (std::string s);
+};
+
+
 }
 
 #endif

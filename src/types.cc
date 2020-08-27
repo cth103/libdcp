@@ -38,11 +38,16 @@
 #include "dcp_assert.h"
 #include <libxml++/libxml++.h>
 #include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
+#include <string>
 #include <vector>
+#include <cmath>
 #include <cstdio>
 #include <iomanip>
 
-using namespace std;
+using std::string;
+using std::ostream;
+using std::vector;
 using namespace dcp;
 using namespace boost;
 
@@ -464,11 +469,291 @@ dcp::operator<< (ostream& s, Rating const & r)
 }
 
 
+ContentVersion::ContentVersion ()
+	: id ("urn:uuid:" + make_uuid())
+{
+
+}
+
+
+ContentVersion::ContentVersion (cxml::ConstNodePtr node)
+{
+	id = node->string_child("Id");
+	label_text = node->string_child("LabelText");
+}
+
+
+ContentVersion::ContentVersion (string label_text_)
+	: id ("urn:uuid:" + make_uuid())
+	, label_text (label_text_)
+{
+
+}
+
+
 void
 ContentVersion::as_xml (xmlpp::Element* parent) const
 {
 	xmlpp::Node* cv = parent->add_child("ContentVersion");
 	cv->add_child("Id")->add_child_text(id);
 	cv->add_child("LabelText")->add_child_text(label_text);
+}
+
+
+Luminance::Luminance (cxml::ConstNodePtr node)
+{
+	_unit = string_to_unit (node->string_attribute("units"));
+	_value = raw_convert<float> (node->content());
+}
+
+
+Luminance::Luminance (float value, Unit unit)
+	: _unit (unit)
+{
+	set_value (value);
+}
+
+
+void
+Luminance::set_value (float v)
+{
+	if (v < 0) {
+		throw dcp::MiscError (String::compose("Invalid luminance value %1", v));
+	}
+
+	_value = v;
+}
+
+
+void
+Luminance::as_xml (xmlpp::Element* parent, string ns) const
+{
+	xmlpp::Element* lum = parent->add_child("Luminance", ns);
+	lum->set_attribute("units", unit_to_string(_unit));
+	lum->add_child_text(raw_convert<string>(_value, 3));
+}
+
+
+string
+Luminance::unit_to_string (Unit u)
+{
+	switch (u) {
+	case CANDELA_PER_SQUARE_METRE:
+		return "candela-per-square-metre";
+	case FOOT_LAMBERT:
+		return "foot-lambert";
+	default:
+		DCP_ASSERT (false);
+	}
+
+	return "";
+}
+
+
+Luminance::Unit
+Luminance::string_to_unit (string u)
+{
+	if (u == "candela-per-square-metre") {
+		return Unit::CANDELA_PER_SQUARE_METRE;
+	} else if (u == "foot-lambert") {
+		return Unit::FOOT_LAMBERT;
+	}
+
+	throw XMLError (String::compose("Invalid luminance unit %1", u));
+}
+
+
+bool
+dcp::operator== (Luminance const& a, Luminance const& b)
+{
+	return fabs(a.value() - b.value()) < 0.001 && a.unit() == b.unit();
+}
+
+
+MainSoundConfiguration::MainSoundConfiguration (string s)
+{
+	vector<string> parts;
+	boost::split (parts, s, boost::is_any_of("/"));
+	if (parts.size() != 2) {
+		throw MainSoundConfigurationError (s);
+	}
+
+	if (parts[0] == "51") {
+		_field = FIVE_POINT_ONE;
+	} else if (parts[0] == "71") {
+		_field = SEVEN_POINT_ONE;
+	} else {
+		throw MainSoundConfigurationError (s);
+	}
+
+	vector<string> channels;
+	boost::split (channels, parts[1], boost::is_any_of(","));
+
+	if (channels.size() > 16) {
+		throw MainSoundConfigurationError (s);
+	}
+
+	BOOST_FOREACH (string i, channels) {
+		if (i == "-") {
+			_channels.push_back(optional<Channel>());
+		} else if (i == "L") {
+			_channels.push_back(LEFT);
+		} else if (i == "R") {
+			_channels.push_back(RIGHT);
+		} else if (i == "C") {
+			_channels.push_back(CENTRE);
+		} else if (i == "LFE") {
+			_channels.push_back(LFE);
+		} else if (i == "Ls" || i == "Lss") {
+			_channels.push_back(LS);
+		} else if (i == "Rs" || i == "Rss") {
+			_channels.push_back(RS);
+		} else if (i == "HI") {
+			_channels.push_back(HI);
+		} else if (i == "VIN") {
+			_channels.push_back(VI);
+		} else if (i == "Lrs") {
+			_channels.push_back(BSL);
+		} else if (i == "Rrs") {
+			_channels.push_back(BSR);
+		} else if (i == "DBOX") {
+			_channels.push_back(MOTION_DATA);
+		} else if (i == "Sync") {
+			_channels.push_back(SYNC_SIGNAL);
+		} else if (i == "Sign") {
+			_channels.push_back(SIGN_LANGUAGE);
+		} else {
+			throw MainSoundConfigurationError (s);
+		}
+	}
+}
+
+
+MainSoundConfiguration::MainSoundConfiguration (Field field, int channels)
+	: _field (field)
+{
+	_channels.resize (channels);
+}
+
+
+string
+MainSoundConfiguration::to_string () const
+{
+	string c;
+	if (_field == FIVE_POINT_ONE) {
+		c = "51/";
+	} else {
+		c = "71/";
+	}
+
+	BOOST_FOREACH (optional<Channel> i, _channels) {
+		if (!i) {
+			c += "-,";
+		} else {
+			switch (*i) {
+			case LEFT:
+				c += "L,";
+				break;
+			case RIGHT:
+				c += "R,";
+				break;
+			case CENTRE:
+				c += "C,";
+				break;
+			case LFE:
+				c += "LFE,";
+				break;
+			case LS:
+				c += (_field == FIVE_POINT_ONE ? "Ls," : "Lss,");
+				break;
+			case RS:
+				c += (_field == FIVE_POINT_ONE ? "Rs," : "Rss,");
+				break;
+			case HI:
+				c += "HI,";
+				break;
+			case VI:
+				c += "VIN,";
+				break;
+			case LC:
+			case RC:
+				c += "-,";
+				break;
+			case BSL:
+				c += "Lrs,";
+				break;
+			case BSR:
+				c += "Rrs,";
+				break;
+			case MOTION_DATA:
+				c += "DBOX,";
+				break;
+			case SYNC_SIGNAL:
+				c += "Sync,";
+				break;
+			case SIGN_LANGUAGE:
+				/* XXX: not sure what this should be */
+				c += "Sign,";
+				break;
+			default:
+				c += "-,";
+				break;
+			}
+		}
+	}
+
+	if (c.length() > 0) {
+		c = c.substr(0, c.length() - 1);
+	}
+
+	return c;
+}
+
+
+optional<Channel>
+MainSoundConfiguration::mapping (int index) const
+{
+	DCP_ASSERT (static_cast<size_t>(index) < _channels.size());
+	return _channels[index];
+}
+
+
+void
+MainSoundConfiguration::set_mapping (int index, Channel c)
+{
+	DCP_ASSERT (static_cast<size_t>(index) < _channels.size());
+	_channels[index] = c;
+}
+
+
+string
+dcp::status_to_string (Status s)
+{
+	switch (s) {
+	case FINAL:
+		return "final";
+	case TEMP:
+		return "temp";
+	case PRE:
+		return "pre";
+	default:
+		DCP_ASSERT (false);
+	}
+
+}
+
+
+Status
+dcp::string_to_status (string s)
+{
+	if (s == "final") {
+		return FINAL;
+	} else if (s == "temp") {
+		return TEMP;
+	} else if (s == "pre") {
+		return PRE;
+	}
+
+	DCP_ASSERT (false);
 }
 

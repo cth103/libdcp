@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -113,7 +113,7 @@ public:
 
 	std::list<boost::shared_ptr<ReelAsset> > assets () const;
 
-	void write_to_cpl (xmlpp::Element* node, Standard standard) const;
+	xmlpp::Element* write_to_cpl (xmlpp::Element* node, Standard standard) const;
 
 	bool encrypted () const;
 

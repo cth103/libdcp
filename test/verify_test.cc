@@ -515,19 +515,6 @@ BOOST_AUTO_TEST_CASE (verify_test14)
 
 
 static
-shared_ptr<dcp::OpenJPEGImage>
-black_image ()
-{
-	shared_ptr<dcp::OpenJPEGImage> image(new dcp::OpenJPEGImage(dcp::Size(1998, 1080)));
-	int const pixels = 1998 * 1080;
-	for (int i = 0; i < 3; ++i) {
-		memset (image->data(i), 0, pixels * sizeof(int));
-	}
-	return image;
-}
-
-
-static
 void
 dcp_from_frame (dcp::Data const& frame, boost::filesystem::path dir)
 {

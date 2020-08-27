@@ -48,6 +48,12 @@
 #include "sound_asset.h"
 #include "sound_asset_writer.h"
 #include "smpte_subtitle_asset.h"
+#include "mono_picture_asset.h"
+#include "openjpeg_image.h"
+#include "j2k.h"
+#include "picture_asset_writer.h"
+#include "reel_mono_picture_asset.h"
+#include "reel_asset.h"
 #include "test.h"
 #include "util.h"
 #include <asdcp/KM_util.h>
@@ -64,8 +70,10 @@ using std::list;
 using boost::shared_ptr;
 using boost::optional;
 
+
 boost::filesystem::path private_test;
 boost::filesystem::path xsd_test = "build/test/xsd with spaces";
+
 
 struct TestConfig
 {
@@ -387,6 +395,37 @@ make_simple_with_smpte_ccaps (boost::filesystem::path path)
 	dcp->cpls().front()->reels().front()->add (reel_caps);
 
 	return dcp;
+}
+
+
+shared_ptr<dcp::OpenJPEGImage>
+black_image ()
+{
+	shared_ptr<dcp::OpenJPEGImage> image(new dcp::OpenJPEGImage(dcp::Size(1998, 1080)));
+	int const pixels = 1998 * 1080;
+	for (int i = 0; i < 3; ++i) {
+		memset (image->data(i), 0, pixels * sizeof(int));
+	}
+	return image;
+}
+
+
+shared_ptr<dcp::ReelAsset>
+black_picture_asset (boost::filesystem::path dir, int frames)
+{
+	shared_ptr<dcp::OpenJPEGImage> image = black_image ();
+	dcp::Data frame = dcp::compress_j2k (image, 100000000, 24, false, false);
+	BOOST_REQUIRE (frame.size() < 230000000 / (24 * 8));
+
+	shared_ptr<dcp::MonoPictureAsset> asset(new dcp::MonoPictureAsset(dcp::Fraction(24, 1), dcp::SMPTE));
+	boost::filesystem::create_directories (dir);
+	shared_ptr<dcp::PictureAssetWriter> writer = asset->start_write (dir / "pic.mxf", true);
+	for (int i = 0; i < frames; ++i) {
+		writer->write (frame.data().get(), frame.size());
+	}
+	writer->finalize ();
+
+	return shared_ptr<dcp::ReelAsset>(new dcp::ReelMonoPictureAsset(asset, 0));
 }
 
 

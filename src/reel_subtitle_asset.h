@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2017 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -38,6 +38,7 @@
 #ifndef LIBDCP_REEL_SUBTITLE_ASSET_H
 #define LIBDCP_REEL_SUBTITLE_ASSET_H
 
+#include "language_tag.h"
 #include "reel_asset.h"
 #include "reel_mxf.h"
 #include "subtitle_asset.h"
@@ -62,9 +63,17 @@ public:
 		return asset_of_type<SubtitleAsset> ();
 	}
 
+	void set_language (dcp::LanguageTag language);
+
+	boost::optional<dcp::LanguageTag> language () const {
+		return _language;
+	}
+
 private:
 	std::string key_type () const;
 	std::string cpl_node_name (Standard standard) const;
+
+	boost::optional<dcp::LanguageTag> _language;
 };
 
 }

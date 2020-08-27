@@ -24,7 +24,9 @@
 #include "reel.h"
 #include "reel_subtitle_asset.h"
 #include "subtitle.h"
+#include "reel_asset.h"
 #include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
 
 namespace xmlpp {
 	class Element;
@@ -47,6 +49,8 @@ extern boost::shared_ptr<dcp::DCP> make_simple_with_interop_subs (boost::filesys
 extern boost::shared_ptr<dcp::DCP> make_simple_with_smpte_subs (boost::filesystem::path path);
 extern boost::shared_ptr<dcp::DCP> make_simple_with_interop_ccaps (boost::filesystem::path path);
 extern boost::shared_ptr<dcp::DCP> make_simple_with_smpte_ccaps (boost::filesystem::path path);
+extern boost::shared_ptr<dcp::OpenJPEGImage> black_image ();
+extern boost::shared_ptr<dcp::ReelAsset> black_picture_asset (boost::filesystem::path dir, int frames = 24);
 
 /** Creating an object of this class will make asdcplib's random number generation
  *  (more) predictable.
@@ -57,4 +61,3 @@ public:
 	RNGFixer ();
 	~RNGFixer ();
 };
-

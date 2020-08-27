@@ -41,6 +41,9 @@
 #include <string>
 
 
+using std::make_pair;
+using std::ostream;
+using std::pair;
 using std::string;
 using std::vector;
 using boost::optional;
@@ -64,31 +67,10 @@ find_in_list (LanguageTag::SubtagData* list, int length, string subtag)
 }
 
 
-static
-optional<LanguageTag::SubtagData>
-find_in_list (LanguageTag::SubtagType type, string subtag)
-{
-	switch (type) {
-	case dcp::LanguageTag::LANGUAGE:
-		return find_in_list(language_list, sizeof(language_list) / sizeof(LanguageTag::SubtagData), subtag);
-	case dcp::LanguageTag::SCRIPT:
-		return find_in_list(script_list, sizeof(script_list) / sizeof(LanguageTag::SubtagData), subtag);
-	case dcp::LanguageTag::REGION:
-		return find_in_list(region_list, sizeof(region_list) / sizeof(LanguageTag::SubtagData), subtag);
-	case dcp::LanguageTag::VARIANT:
-		return find_in_list(variant_list, sizeof(variant_list) / sizeof(LanguageTag::SubtagData), subtag);
-	case dcp::LanguageTag::EXTLANG:
-		return find_in_list(extlang_list, sizeof(extlang_list) / sizeof(LanguageTag::SubtagData), subtag);
-	}
-
-	return optional<LanguageTag::SubtagData>();
-}
-
-
 LanguageTag::Subtag::Subtag (string subtag, SubtagType type)
 	: _subtag (subtag)
 {
-	if (!find_in_list(type, subtag)) {
+	if (!get_subtag_data(type, subtag)) {
 		throw LanguageTagError(String::compose("Unknown %1 string %2", subtag_type_name(type), subtag));
 	}
 }
@@ -268,29 +250,29 @@ LanguageTag::description () const
 	string d;
 
 	BOOST_FOREACH (VariantSubtag const& i, _variants) {
-		optional<SubtagData> variant = find_in_list (VARIANT, i.subtag());
+		optional<SubtagData> variant = get_subtag_data (VARIANT, i.subtag());
 		DCP_ASSERT (variant);
 		d += variant->description + " dialect of ";
 	}
 
-	optional<SubtagData> language = find_in_list (LANGUAGE, _language->subtag());
+	optional<SubtagData> language = get_subtag_data (LANGUAGE, _language->subtag());
 	DCP_ASSERT (language);
 	d += language->description;
 
 	if (_script) {
-		optional<SubtagData> script = find_in_list (SCRIPT, _script->subtag());
+		optional<SubtagData> script = get_subtag_data (SCRIPT, _script->subtag());
 		DCP_ASSERT (script);
 		d += " written using the " + script->description + " script";
 	}
 
 	if (_region) {
-		optional<SubtagData> region = find_in_list (REGION, _region->subtag());
+		optional<SubtagData> region = get_subtag_data (REGION, _region->subtag());
 		DCP_ASSERT (region);
 		d += " for " + region->description;
 	}
 
 	BOOST_FOREACH (ExtlangSubtag const& i, _extlangs) {
-		optional<SubtagData> extlang = find_in_list (EXTLANG, i.subtag());
+		optional<SubtagData> extlang = get_subtag_data (EXTLANG, i.subtag());
 		DCP_ASSERT (extlang);
 		d += ", " + extlang->description;
 	}
@@ -381,3 +363,80 @@ dcp::LanguageTag::ExtlangSubtag::operator< (ExtlangSubtag const & other) const
 {
 	return subtag() < other.subtag();
 }
+
+
+bool
+dcp::operator== (dcp::LanguageTag const& a, dcp::LanguageTag const& b)
+{
+	return a.to_string() == b.to_string();
+}
+
+
+ostream&
+dcp::operator<< (ostream& os, dcp::LanguageTag const& tag)
+{
+	os << tag.to_string();
+	return os;
+}
+
+
+vector<pair<LanguageTag::SubtagType, LanguageTag::SubtagData> >
+LanguageTag::subtags () const
+{
+	vector<pair<SubtagType, SubtagData> > s;
+
+	if (_language) {
+		s.push_back (make_pair(LANGUAGE, *get_subtag_data(LANGUAGE, _language->subtag())));
+	}
+
+	if (_script) {
+		s.push_back (make_pair(SCRIPT, *get_subtag_data(SCRIPT, _script->subtag())));
+	}
+
+	if (_region) {
+		s.push_back (make_pair(REGION, *get_subtag_data(REGION, _region->subtag())));
+	}
+
+	BOOST_FOREACH (VariantSubtag const& i, _variants) {
+		s.push_back (make_pair(VARIANT, *get_subtag_data(VARIANT, i.subtag())));
+	}
+
+	BOOST_FOREACH (ExtlangSubtag const& i, _extlangs) {
+		s.push_back (make_pair(EXTLANG, *get_subtag_data(EXTLANG, i.subtag())));
+	}
+
+	return s;
+}
+
+
+optional<LanguageTag::SubtagData>
+LanguageTag::get_subtag_data (LanguageTag::SubtagType type, string subtag)
+{
+	switch (type) {
+	case dcp::LanguageTag::LANGUAGE:
+		return find_in_list(language_list, sizeof(language_list) / sizeof(LanguageTag::SubtagData), subtag);
+	case dcp::LanguageTag::SCRIPT:
+		return find_in_list(script_list, sizeof(script_list) / sizeof(LanguageTag::SubtagData), subtag);
+	case dcp::LanguageTag::REGION:
+		return find_in_list(region_list, sizeof(region_list) / sizeof(LanguageTag::SubtagData), subtag);
+	case dcp::LanguageTag::VARIANT:
+		return find_in_list(variant_list, sizeof(variant_list) / sizeof(LanguageTag::SubtagData), subtag);
+	case dcp::LanguageTag::EXTLANG:
+		return find_in_list(extlang_list, sizeof(extlang_list) / sizeof(LanguageTag::SubtagData), subtag);
+	}
+
+	return optional<LanguageTag::SubtagData>();
+}
+
+
+optional<string>
+LanguageTag::get_subtag_description (LanguageTag::SubtagType type, string subtag)
+{
+	optional<SubtagData> data = get_subtag_data (type, subtag);
+	if (!data) {
+		return optional<string>();
+	}
+
+	return data->description;
+}
+

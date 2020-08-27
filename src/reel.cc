@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2017 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -115,7 +115,7 @@ Reel::Reel (boost::shared_ptr<const cxml::Node> node)
 	node->done ();
 }
 
-void
+xmlpp::Element *
 Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 {
 	xmlpp::Element* reel = node->add_child ("Reel");
@@ -151,6 +151,8 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 	if (_atmos) {
 		_atmos->write_to_cpl (asset_list, standard);
 	}
+
+	return asset_list;
 }
 
 bool

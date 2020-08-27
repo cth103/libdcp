@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2017 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -35,6 +35,7 @@
  *  @brief ReelSubtitleAsset class.
  */
 
+#include "language_tag.h"
 #include "subtitle_asset.h"
 #include "reel_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
@@ -57,7 +58,10 @@ ReelSubtitleAsset::ReelSubtitleAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
 	, ReelMXF (node)
 {
-	node->ignore_child ("Language");
+	optional<string> const language = node->optional_string_child("Language");
+	if (language) {
+		_language = dcp::LanguageTag(*language);
+	}
 	node->done ();
 }
 
@@ -78,6 +82,9 @@ ReelSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
 	xmlpp::Node* asset = write_to_cpl_asset (node, standard, hash());
 	write_to_cpl_mxf (asset);
+	if (_language) {
+		asset->add_child("Language")->add_child_text(_language->to_string());
+	}
 	return asset;
 }
 

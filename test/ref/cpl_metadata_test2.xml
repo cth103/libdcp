@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompositionPlaylist xmlns="http://www.smpte-ra.org/schemas/429-7/2006/CPL">
+  <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
+  <AnnotationText></AnnotationText>
+  <IssueDate>2020-08-28T13:35:06+02:00</IssueDate>
+  <Issuer>libdcp1.6.4devel</Issuer>
+  <Creator>libdcp1.6.4devel</Creator>
+  <ContentTitleText></ContentTitleText>
+  <ContentKind>feature</ContentKind>
+  <ContentVersion>
+    <Id>id</Id>
+    <LabelText>version</LabelText>
+  </ContentVersion>
+  <RatingList/>
+  <ReelList>
+    <Reel>
+      <Id>urn:uuid:8b92bcee-62fc-4a33-a51a-816e9611ce85</Id>
+      <AssetList>
+        <MainPicture>
+          <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
+          <AnnotationText></AnnotationText>
+          <EditRate>24 1</EditRate>
+          <IntrinsicDuration>24</IntrinsicDuration>
+          <EntryPoint>0</EntryPoint>
+          <Duration>24</Duration>
+          <Hash>BM4qh04HOSGF5vop4mhJBE7C4M0=</Hash>
+          <FrameRate>24 1</FrameRate>
+          <ScreenAspectRatio>1998 1080</ScreenAspectRatio>
+        </MainPicture>
+        <meta:CompositionMetadataAsset xmlns:meta="http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata">
+          <Id>urn:uuid:77e1fb48-ce0c-4d29-bf88-8c3bfec8013a</Id>
+          <EditRate>24 1</EditRate>
+          <IntrinsicDuration>24</IntrinsicDuration>
+          <meta:FullContentTitleText/>
+          <meta:MainSoundConfiguration>71/L,R,C,LFE,-,-,-,-,-,-,-,-,-,Sync,-,-</meta:MainSoundConfiguration>
+          <meta:MainSoundSampleRate>48000 1</meta:MainSoundSampleRate>
+          <meta:MainPictureStoredArea>
+            <meta:Width>1998</meta:Width>
+            <meta:Height>1080</meta:Height>
+          </meta:MainPictureStoredArea>
+          <meta:MainPictureActiveArea>
+            <meta:Width>1440</meta:Width>
+            <meta:Height>1080</meta:Height>
+          </meta:MainPictureActiveArea>
+        </meta:CompositionMetadataAsset>
+      </AssetList>
+    </Reel>
+  </ReelList>
+</CompositionPlaylist>

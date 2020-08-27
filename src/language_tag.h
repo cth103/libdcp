@@ -82,6 +82,12 @@ public:
 			return _subtag;
 		}
 
+		virtual SubtagType type () const = 0;
+
+		bool operator== (Subtag const& other) {
+			return _subtag == other._subtag;
+		}
+
 	protected:
 		Subtag (std::string subtag, SubtagType type);
 
@@ -96,6 +102,10 @@ public:
 			: Subtag(subtag, LANGUAGE) {}
 		LanguageSubtag (char const* subtag)
 			: Subtag(subtag, LANGUAGE) {}
+
+		SubtagType type () const {
+			return LANGUAGE;
+		}
 	};
 
 	class ScriptSubtag : public Subtag
@@ -105,6 +115,10 @@ public:
 			: Subtag(subtag, SCRIPT) {}
 		ScriptSubtag (char const* subtag)
 			: Subtag(subtag, SCRIPT) {}
+
+		SubtagType type () const {
+			return SCRIPT;
+		}
 	};
 
 	class RegionSubtag : public Subtag
@@ -114,6 +128,10 @@ public:
 			: Subtag(subtag, REGION) {}
 		RegionSubtag (char const* subtag)
 			: Subtag(subtag, REGION) {}
+
+		SubtagType type () const {
+			return REGION;
+		}
 	};
 
 	class VariantSubtag : public Subtag
@@ -123,6 +141,10 @@ public:
 			: Subtag(subtag, VARIANT) {}
 		VariantSubtag (char const* subtag)
 			: Subtag(subtag, VARIANT) {}
+
+		SubtagType type () const {
+			return VARIANT;
+		}
 
 		bool operator== (VariantSubtag const& other) const;
 		bool operator< (VariantSubtag const& other) const;
@@ -137,6 +159,10 @@ public:
 		ExtlangSubtag (char const* subtag)
 			: Subtag(subtag, EXTLANG) {}
 
+		SubtagType type () const {
+			return EXTLANG;
+		}
+
 		bool operator== (ExtlangSubtag const& other) const;
 		bool operator< (ExtlangSubtag const& other) const;
 	};
@@ -144,18 +170,58 @@ public:
 	LanguageTag () {}
 	LanguageTag (std::string tag);
 
+	boost::optional<LanguageSubtag> language() {
+		return _language;
+	}
+
 	void set_language (LanguageSubtag language);
+
+	boost::optional<ScriptSubtag> script() const {
+		return _script;
+	}
+
 	void set_script (ScriptSubtag script);
+
+	boost::optional<RegionSubtag> region() const {
+		return _region;
+	}
+
 	void set_region (RegionSubtag region);
+
+	std::vector<VariantSubtag> variants() const {
+		return _variants;
+	}
+
 	void set_variants (std::vector<VariantSubtag> variants);
 	void add_variant (VariantSubtag variant);
+
+	std::vector<ExtlangSubtag> extlangs() const {
+		return _extlangs;
+	}
+
 	void set_extlangs (std::vector<ExtlangSubtag> extlangs);
 	void add_extlang (ExtlangSubtag extlang);
+
+	std::vector<std::pair<SubtagType, SubtagData> > subtags () const;
 
 	static std::vector<SubtagData> get_all (SubtagType type);
 	static std::string subtag_type_name (SubtagType type);
 
+	static boost::optional<std::string> get_subtag_description (SubtagType, std::string subtag);
+	static boost::optional<SubtagData > get_subtag_data (SubtagType, std::string subtag);
+
+	template <class T>
+	static boost::optional<std::string> get_subtag_description (T s) {
+		return get_subtag_description (s.type(), s.subtag());
+	}
+
+	template <class T>
+	static boost::optional<SubtagData> get_subtag_data (T s) {
+		return get_subtag_data (s.type(), s.subtag());
+	}
+
 private:
+
 	boost::optional<LanguageSubtag> _language;
 	boost::optional<ScriptSubtag> _script;
 	boost::optional<RegionSubtag> _region;
@@ -163,6 +229,8 @@ private:
 	std::vector<ExtlangSubtag> _extlangs;
 };
 
+extern bool operator==(dcp::LanguageTag const& a, dcp::LanguageTag const& b);
+extern std::ostream& operator<<(std::ostream& os, dcp::LanguageTag const& tag);
 
 }
 
