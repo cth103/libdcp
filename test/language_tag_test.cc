@@ -41,7 +41,7 @@ using std::vector;
 using std::string;
 
 
-BOOST_AUTO_TEST_CASE (language_tag_test)
+BOOST_AUTO_TEST_CASE (language_tag_create_test)
 {
 	/* Bad subtags raise errors */
 
@@ -177,3 +177,22 @@ BOOST_AUTO_TEST_CASE (language_tag_test)
 	}
 
 }
+
+
+BOOST_AUTO_TEST_CASE (language_tag_parse_test)
+{
+	BOOST_CHECK_THROW (dcp::LanguageTag(""), dcp::LanguageTagError);
+	BOOST_CHECK_THROW (dcp::LanguageTag("...Aw498012351!"), dcp::LanguageTagError);
+	BOOST_CHECK_THROW (dcp::LanguageTag("fish"), dcp::LanguageTagError);
+	BOOST_CHECK_THROW (dcp::LanguageTag("de-Dogr-fish"), dcp::LanguageTagError);
+	BOOST_CHECK_THROW (dcp::LanguageTag("de-Dogr-DE-aranes-fish"), dcp::LanguageTagError);
+
+	BOOST_CHECK_EQUAL (dcp::LanguageTag("de").to_string(), "de");
+	BOOST_CHECK_EQUAL (dcp::LanguageTag("de-Dogr").to_string(), "de-Dogr");
+	BOOST_CHECK_EQUAL (dcp::LanguageTag("de-Dogr-DE").to_string(), "de-Dogr-DE");
+	BOOST_CHECK_EQUAL (dcp::LanguageTag("de-Dogr-DE-aranes").to_string(), "de-Dogr-DE-aranes");
+	BOOST_CHECK_EQUAL (dcp::LanguageTag("de-Dogr-DE-aranes-lemosin").to_string(), "de-Dogr-DE-aranes-lemosin");
+	BOOST_CHECK_EQUAL (dcp::LanguageTag("de-Dogr-DE-aranes-lemosin-abv").to_string(), "de-Dogr-DE-aranes-lemosin-abv");
+	BOOST_CHECK_EQUAL (dcp::LanguageTag("de-Dogr-DE-aranes-lemosin-abv-zsm").to_string(), "de-Dogr-DE-aranes-lemosin-abv-zsm");
+}
+

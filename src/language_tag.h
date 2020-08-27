@@ -141,6 +141,9 @@ public:
 		bool operator< (ExtlangSubtag const& other) const;
 	};
 
+	LanguageTag () {}
+	LanguageTag (std::string tag);
+
 	void set_language (LanguageSubtag language);
 	void set_script (ScriptSubtag script);
 	void set_region (RegionSubtag region);

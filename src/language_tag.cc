@@ -36,6 +36,7 @@
 #include "dcp_assert.h"
 #include "exceptions.h"
 #include "language_tag.h"
+#include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 #include <string>
 
@@ -89,6 +90,66 @@ LanguageTag::Subtag::Subtag (string subtag, SubtagType type)
 {
 	if (!find_in_list(type, subtag)) {
 		throw LanguageTagError(String::compose("Unknown %1 string %2", subtag_type_name(type), subtag));
+	}
+}
+
+
+LanguageTag::LanguageTag (string tag)
+{
+	vector<string> parts;
+	boost::split (parts, tag, boost::is_any_of("-"));
+	if (parts.empty()) {
+		throw LanguageTagError (String::compose("Could not parse language tag %1", tag));
+	}
+
+	vector<string>::size_type p = 0;
+	_language = LanguageSubtag (parts[p]);
+	++p;
+
+	if (p == parts.size()) {
+		return;
+	}
+
+	try {
+		_script = ScriptSubtag (parts[p]);
+		++p;
+	} catch (...) {}
+
+	if (p == parts.size()) {
+		return;
+	}
+
+	try {
+		_region = RegionSubtag (parts[p]);
+		++p;
+	} catch (...) {}
+
+	if (p == parts.size()) {
+		return;
+	}
+
+	try {
+		while (true) {
+			_variants.push_back (VariantSubtag(parts[p]));
+			++p;
+			if (p == parts.size()) {
+				return;
+			}
+		}
+	} catch (...) {}
+
+	try {
+		while (true) {
+			_extlangs.push_back (ExtlangSubtag(parts[p]));
+			++p;
+			if (p == parts.size()) {
+				return;
+			}
+		}
+	} catch (...) {}
+
+	if (p < parts.size()) {
+		throw LanguageTagError (String::compose("Unrecognised subtag %1", parts[p]));
 	}
 }
 
