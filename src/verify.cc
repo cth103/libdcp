@@ -552,6 +552,8 @@ dcp::verify (
 			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
 		} catch (XMLError& e) {
 			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
+		} catch (cxml::Error& e) {
+			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
 		}
 
 		BOOST_FOREACH (shared_ptr<CPL> cpl, dcp->cpls()) {
