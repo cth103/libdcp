@@ -16,6 +16,8 @@ for c in xmlsec1 xmldiff xmllint; do
   hash $c 2>/dev/null || { echo >&2 "$c required but not found; aborting"; exit 1; }
 done
 
+echo "--- Unit tests"
+
 # Run the unit tests in test/
 if [ "$1" == "--debug" ]; then
     shift
@@ -27,9 +29,7 @@ elif [ "$1" == "--callgrind" ]; then
     shift
     valgrind --tool="callgrind" $work/tests $private $*
 else
-    # This gives a warning from newer boost versions but doing it
-    # as $work/tests $* -- $private fails on older boost versions.
-    $work/tests $private $*
+    $work/tests $* -- $private
     if [ "$?" != "0" ]; then
 	echo "FAIL: unit tests"
         exit 1
@@ -40,6 +40,8 @@ if [ "$*" != "" ]; then
     echo "Skipping post-test checks as not all unit tests were run."
     exit 0
 fi
+
+echo "--- Other tests"
 
 # Check a MXF written by the unit tests
 diff $work/baz/video1.mxf $work/baz/video2.mxf
