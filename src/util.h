@@ -41,6 +41,7 @@
 #include "types.h"
 #include "data.h"
 #include "local_time.h"
+#include <asdcp/KM_log.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <boost/filesystem.hpp>
@@ -81,6 +82,20 @@ extern void indent (xmlpp::Element* element, int initial);
 extern bool day_less_than_or_equal (LocalTime a, LocalTime b);
 extern bool day_greater_than_or_equal (LocalTime a, LocalTime b);
 extern std::string unique_string (std::list<std::string> existing, std::string base);
+
+
+class ASDCPErrorSuspender
+{
+public:
+	ASDCPErrorSuspender();
+	~ASDCPErrorSuspender();
+
+private:
+	Kumu::LogEntryList _log;
+	Kumu::ILogSink& _old;
+	Kumu::EntryListLogSink* _sink;
+};
+
 
 }
 

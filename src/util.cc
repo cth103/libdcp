@@ -427,3 +427,20 @@ dcp::unique_string (list<string> existing, string base)
 
 	DCP_ASSERT (false);
 }
+
+
+ASDCPErrorSuspender::ASDCPErrorSuspender ()
+	: _old (Kumu::DefaultLogSink())
+{
+	_sink = new Kumu::EntryListLogSink(_log);
+	Kumu::SetDefaultLogSink (_sink);
+}
+
+
+ASDCPErrorSuspender::~ASDCPErrorSuspender ()
+{
+	Kumu::SetDefaultLogSink (&_old);
+	delete _sink;
+}
+
+
