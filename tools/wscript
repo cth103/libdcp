@@ -1,5 +1,5 @@
 #
-#    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
+#    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 #
 #    This file is part of libdcp.
 #
@@ -44,7 +44,13 @@ def build(bld):
     obj.source = 'dcpinfo.cc common.cc'
     obj.target = 'dcpinfo'
 
-    for f in ['dumpsub', 'decryptmxf', 'kdm', 'thumb', 'recover', 'verify']:
+    obj = bld(features='cxx cxxprogram')
+    obj.use = ['libdcp%s' % bld.env.API_VERSION]
+    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL XERCES'
+    obj.source = 'dcpverify.cc common.cc'
+    obj.target = 'dcpverify'
+
+    for f in ['dumpsub', 'decryptmxf', 'kdm', 'thumb', 'recover']:
         obj = bld(features='cxx cxxprogram')
         obj.use = ['libdcp%s' % bld.env.API_VERSION]
         obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL XERCES '

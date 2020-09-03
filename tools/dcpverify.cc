@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -33,6 +33,7 @@
 
 #include "verify.h"
 #include "compose.hpp"
+#include "common.h"
 #include <boost/bind.hpp>
 #include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
@@ -53,13 +54,19 @@ static void
 help (string n)
 {
 	cerr << "Syntax: " << n << " [OPTION] <DCP>\n"
-	     << "  -V, --version   show libdcp version\n"
-	     << "  -h, --help      show this help\n";
+	     << "  -V, --version           show libdcp version\n"
+	     << "  -h, --help              show this help\n"
+	     << "  --ignore-missing-assets don't give errors about missing assets\n"
+	     << "  -q, --quiet             don't report progress\n";
 }
 
 void
-stage (string s, optional<boost::filesystem::path> path)
+stage (bool quiet, string s, optional<boost::filesystem::path> path)
 {
+	if (quiet) {
+		return;
+	}
+
 	if (path) {
 		cout << s << ": " << path->string() << "\n";
 	} else {
@@ -76,15 +83,20 @@ progress ()
 int
 main (int argc, char* argv[])
 {
+	bool ignore_missing_assets = false;
+	bool quiet = false;
+
 	int option_index = 0;
 	while (true) {
 		static struct option long_options[] = {
-			{ "version", no_argument, 0, 'V'},
-			{ "help", no_argument, 0, 'h'},
+			{ "version", no_argument, 0, 'V' },
+			{ "help", no_argument, 0, 'h' },
+			{ "ignore-missing-assets", no_argument, 0, 'A' },
+			{ "quiet", no_argument, 0, 'q' },
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vh", long_options, &option_index);
+		int c = getopt_long (argc, argv, "VhAq", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -97,6 +109,12 @@ main (int argc, char* argv[])
 		case 'h':
 			help (argv[0]);
 			exit (EXIT_SUCCESS);
+		case 'A':
+			ignore_missing_assets = true;
+			break;
+		case 'q':
+			quiet = true;
+			break;
 		}
 	}
 
@@ -112,8 +130,8 @@ main (int argc, char* argv[])
 
 	vector<boost::filesystem::path> directories;
 	directories.push_back (argv[optind]);
-	/* XXX */
-	list<dcp::VerificationNote> notes = dcp::verify (directories, bind(&stage, _1, _2), bind(&progress), "xsd");
+	list<dcp::VerificationNote> notes = dcp::verify (directories, bind(&stage, quiet, _1, _2), bind(&progress), "xsd");
+	dcp::filter_notes (notes, ignore_missing_assets);
 
 	bool failed = false;
 	BOOST_FOREACH (dcp::VerificationNote i, notes) {
@@ -128,7 +146,7 @@ main (int argc, char* argv[])
 		}
 	}
 
-	if (!failed) {
+	if (!failed && !quiet) {
 		cout << "DCP verified OK.\n";
 	}
 
