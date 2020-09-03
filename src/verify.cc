@@ -206,10 +206,15 @@ public:
 		add("http://www.digicine.com/PROTO-ASDCP-CC-CPL-20070926#", "PROTO-ASDCP-CC-CPL-20070926.xsd");
 		add("interop-subs", "DCSubtitle.v1.mattsson.xsd");
 		add("http://www.smpte-ra.org/schemas/428-7/2010/DCST.xsd", "SMPTE-428-7-2010-DCST.xsd");
+		add("http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata", "SMPTE-429-16.xsd");
+		add("http://www.dolby.com/schemas/2012/AD", "Dolby-2012-AD.xsd");
 	}
 
 	InputSource* resolveEntity(XMLCh const *, XMLCh const * system_id)
 	{
+		if (!system_id) {
+			return 0;
+		}
 		string system_id_str = xml_ch_to_string (system_id);
 		boost::filesystem::path p = _xsd_dtd_directory;
 		if (_files.find(system_id_str) == _files.end()) {
@@ -278,6 +283,8 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, list<Verificatio
 		schema.push_back("DCSubtitle.v1.mattsson.xsd");
 		schema.push_back("DCDMSubtitle-2010.xsd");
 		schema.push_back("PROTO-ASDCP-CC-CPL-20070926.xsd");
+		schema.push_back("SMPTE-429-16.xsd");
+		schema.push_back("Dolby-2012-AD.xsd");
 
 		/* XXX: I'm not especially clear what this is for, but it seems to be necessary */
 		string locations;

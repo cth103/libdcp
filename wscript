@@ -248,7 +248,9 @@ def build(bld):
               'PROTO-ASDCP-CC-CPL-20070926.xsd',
               'Main-Stereo-Picture-CPL.xsd',
               'DCSubtitle.v1.mattsson.xsd',
-              'DCDMSubtitle-2010.xsd' ]:
+              'DCDMSubtitle-2010.xsd',
+              'Dolby-2012-AD.xsd',
+              'SMPTE-429-16.xsd' ]:
         bld.install_files('${PREFIX}/share/libdcp/xsd', os.path.join('xsd', i))
 
     bld.add_post_fun(post)

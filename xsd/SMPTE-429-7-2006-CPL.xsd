@@ -96,7 +96,7 @@
             <xs:element name="MainPicture" type="cpl:PictureTrackFileAssetType" minOccurs="0"/>
             <xs:element name="MainSound" type="cpl:SoundTrackFileAssetType" minOccurs="0"/>
             <xs:element name="MainSubtitle" type="cpl:SubtitleTrackFileAssetType" minOccurs="0"/>
-            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax" />
+            <xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="strict" />
           </xs:sequence>
         </xs:complexType>
       </xs:element>
