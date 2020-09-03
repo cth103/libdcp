@@ -90,7 +90,7 @@ ReelAsset::write_to_cpl_asset (xmlpp::Node* node, Standard standard, optional<st
 	}
 	a->add_child("Id")->add_child_text ("urn:uuid:" + _id);
 	a->add_child("AnnotationText")->add_child_text (_annotation_text);
-	a->add_child("EditRate")->add_child_text (String::compose ("%1 %2", _edit_rate.numerator, _edit_rate.denominator));
+	a->add_child("EditRate")->add_child_text (_edit_rate.as_string());
 	a->add_child("IntrinsicDuration")->add_child_text (raw_convert<string> (_intrinsic_duration));
 	if (_entry_point) {
 		a->add_child("EntryPoint")->add_child_text(raw_convert<string>(*_entry_point));
