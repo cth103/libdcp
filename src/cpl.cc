@@ -247,13 +247,15 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 		_luminance = Luminance (lum);
 	}
 
-	_main_sound_configuration = node->string_child("MainSoundConfiguration");
+	_main_sound_configuration = node->optional_string_child("MainSoundConfiguration");
 
-	string sr = node->string_child("MainSoundSampleRate");
-	vector<string> sr_bits;
-	boost::split (sr_bits, sr, boost::is_any_of(" "));
-	DCP_ASSERT (sr_bits.size() == 2);
-	_main_sound_sample_rate = raw_convert<int>(sr_bits[0]);
+	optional<string> sr = node->optional_string_child("MainSoundSampleRate");
+	if (sr) {
+		vector<string> sr_bits;
+		boost::split (sr_bits, *sr, boost::is_any_of(" "));
+		DCP_ASSERT (sr_bits.size() == 2);
+		_main_sound_sample_rate = raw_convert<int>(sr_bits[0]);
+	}
 
 	_main_picture_stored_area = dcp::Size (
 		node->node_child("MainPictureStoredArea")->number_child<int>("Width"),
