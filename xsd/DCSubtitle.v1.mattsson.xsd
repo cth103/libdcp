@@ -117,6 +117,7 @@
       <xs:attribute name="HPosition" type="positionType"/>
       <xs:attribute name="VAlign" type="vAlignType" />
       <xs:attribute name="VPosition" type="positionType"/>
+      <xs:attribute name="ZPosition" type="positionType"/>
     </xs:complexType>
   </xs:element>
   <xs:element name="Ruby">
