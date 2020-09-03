@@ -743,3 +743,122 @@ BOOST_AUTO_TEST_CASE (verify_test22)
 }
 
 
+/* DCP with valid CompositionMetadataAsset */
+BOOST_AUTO_TEST_CASE (verify_test23)
+{
+	boost::filesystem::path const dir("build/test/verify_test23");
+	boost::filesystem::remove_all (dir);
+	boost::filesystem::create_directories (dir);
+
+	boost::filesystem::copy_file ("test/data/subs.mxf", dir / "subs.mxf");
+	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset(dir / "subs.mxf"));
+	shared_ptr<dcp::ReelAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
+
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_asset);
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
+	cpl->set_main_sound_sample_rate (48000);
+	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
+	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
+
+	dcp::DCP dcp (dir);
+	dcp.add (cpl);
+	dcp.write_xml (dcp::SMPTE);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+}
+
+
+boost::filesystem::path find_cpl (boost::filesystem::path dir)
+{
+	for (boost::filesystem::directory_iterator i = boost::filesystem::directory_iterator(dir); i != boost::filesystem::directory_iterator(); i++) {
+		if (boost::starts_with(i->path().filename().string(), "cpl_")) {
+			return i->path();
+		}
+	}
+
+	BOOST_REQUIRE (false);
+	return boost::filesystem::path();
+}
+
+
+/* DCP with invalid CompositionMetadataAsset */
+BOOST_AUTO_TEST_CASE (verify_test24)
+{
+	boost::filesystem::path const dir("build/test/verify_test24");
+	boost::filesystem::remove_all (dir);
+	boost::filesystem::create_directories (dir);
+
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (black_picture_asset(dir));
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
+	cpl->set_main_sound_sample_rate (48000);
+	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
+	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
+
+	dcp::DCP dcp (dir);
+	dcp.add (cpl);
+	dcp.write_xml (dcp::SMPTE);
+
+	{
+		Editor e (find_cpl("build/test/verify_test24"));
+		e.replace ("MainSound", "MainSoundX");
+	}
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	BOOST_REQUIRE_EQUAL (notes.size(), 4);
+
+	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::CPL_HASH_INCORRECT);
+	++i;
+}
+
+
+/* DCP with invalid CompositionMetadataAsset */
+BOOST_AUTO_TEST_CASE (verify_test25)
+{
+	boost::filesystem::path const dir("build/test/verify_test25");
+	boost::filesystem::remove_all (dir);
+	boost::filesystem::create_directories (dir);
+
+	boost::filesystem::copy_file ("test/data/subs.mxf", dir / "subs.mxf");
+	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset(dir / "subs.mxf"));
+	shared_ptr<dcp::ReelAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
+
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_asset);
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
+	cpl->set_main_sound_sample_rate (48000);
+	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
+	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
+
+	dcp::DCP dcp (dir);
+	dcp.add (cpl);
+	dcp.write_xml (dcp::SMPTE);
+
+	{
+		Editor e (find_cpl("build/test/verify_test25"));
+		e.replace ("</MainPictureActiveArea>", "</MainPictureActiveArea><BadTag></BadTag>");
+	}
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+}
+
