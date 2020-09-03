@@ -86,7 +86,11 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
 
 	shared_ptr<ASDCP::TimedText::MXFReader> reader (new ASDCP::TimedText::MXFReader ());
-	Kumu::Result_t r = reader->OpenRead (_file->string().c_str ());
+	Kumu::Result_t r = Kumu::RESULT_OK;
+	{
+		ASDCPErrorSuspender sus;
+		r = reader->OpenRead (_file->string().c_str ());
+	}
 	if (!ASDCP_FAILURE (r)) {
 		/* MXF-wrapped */
 		ASDCP::WriterInfo info;
