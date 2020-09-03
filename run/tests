@@ -6,8 +6,9 @@
 private=../libdcp-test-private
 # Work directory
 work=build/test
-# Path to dcpinfo tool
+# Path to tools
 dcpinfo=build/tools/dcpinfo
+dcpverify=build/tools/dcpverify
 
 export LD_LIBRARY_PATH=build/src:/home/c.hetherington/lib:$LD_LIBRARY_PATH
 
@@ -101,6 +102,17 @@ for d in `find $private/metadata -mindepth 1 -maxdepth 1 -type d | sort -f -d`; 
         $dcpinfo --ignore-missing-assets -s $d >> $work/info.log
         if [ "$?" != "0" ]; then
             echo "FAIL: dcpinfo failed for $d"
+            exit 1
+        fi
+    fi
+done
+
+# Run dcpverify on all the DCPs in private/metadata
+for d in `find $private/metadata -mindepth 1 -maxdepth 1 -type d | sort -f -d`; do
+    if [ `basename $d` != ".git" ]; then
+        $dcpverify --ignore-missing-assets -q $d
+        if [ "$?" != "0" ]; then
+            echo "FAIL: dcpverify failed for $d"
             exit 1
         fi
     fi
