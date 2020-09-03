@@ -121,6 +121,8 @@ private:
 	std::string _content;
 };
 
+
+#if 0
 static
 void
 dump_notes (list<dcp::VerificationNote> const & notes)
@@ -129,6 +131,7 @@ dump_notes (list<dcp::VerificationNote> const & notes)
 		std::cout << dcp::note_to_string(i) << "\n";
 	}
 }
+#endif
 
 /* Check DCP as-is (should be OK) */
 BOOST_AUTO_TEST_CASE (verify_test1)
@@ -175,8 +178,6 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	++st;
 	BOOST_REQUIRE (st == stages.end());
 
-	dump_notes (notes);
-
 	BOOST_CHECK_EQUAL (notes.size(), 0);
 }
 
@@ -198,7 +199,11 @@ BOOST_AUTO_TEST_CASE (verify_test2)
 	BOOST_REQUIRE (fwrite (&x, sizeof(x), 1, mod) == 1);
 	fclose (mod);
 
-	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, xsd_test);
+	list<dcp::VerificationNote> notes;
+	{
+		dcp::ASDCPErrorSuspender sus;
+		notes = dcp::verify (directories, &stage, &progress, xsd_test);
+	}
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 2);
 	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_ERROR);
@@ -218,8 +223,6 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 	}
 
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, xsd_test);
-
-	dump_notes (notes);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 6);
 	list<dcp::VerificationNote>::const_iterator i = notes.begin();
@@ -293,8 +296,6 @@ void check_after_replace (int n, boost::function<boost::filesystem::path (int)> 
 
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, xsd_test);
 
-	dump_notes (notes);
-
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
 	BOOST_CHECK_EQUAL (notes.front().code(), code1);
 }
@@ -310,8 +311,6 @@ void check_after_replace (int n, boost::function<boost::filesystem::path (int)> 
 	}
 
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, xsd_test);
-
-	dump_notes (notes);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 2);
 	BOOST_CHECK_EQUAL (notes.front().code(), code1);
@@ -336,8 +335,6 @@ void check_after_replace (
 	}
 
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, xsd_test);
-
-	dump_notes (notes);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 3);
 	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
@@ -488,8 +485,6 @@ BOOST_AUTO_TEST_CASE (verify_test13)
 	++st;
 	BOOST_REQUIRE (st == stages.end());
 
-	dump_notes (notes);
-
 	BOOST_CHECK_EQUAL (notes.size(), 0);
 }
 
@@ -498,8 +493,6 @@ BOOST_AUTO_TEST_CASE (verify_test14)
 {
 	vector<boost::filesystem::path> directories = setup (8, 14);
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, xsd_test);
-
-	dump_notes (notes);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 4);
 	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
@@ -659,7 +652,6 @@ BOOST_AUTO_TEST_CASE (verify_test19)
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	dump_notes(notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), 2);
 	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
 	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
@@ -686,7 +678,6 @@ BOOST_AUTO_TEST_CASE (verify_test20)
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	dump_notes (notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), 0);
 }
 
@@ -711,7 +702,6 @@ BOOST_AUTO_TEST_CASE (verify_test21)
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	dump_notes (notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), 2);
 	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
 	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
@@ -748,7 +738,6 @@ BOOST_AUTO_TEST_CASE (verify_test22)
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (vf_dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	dump_notes (notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
 	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::EXTERNAL_ASSET);
 }
