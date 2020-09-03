@@ -208,6 +208,7 @@ public:
 		add("http://www.smpte-ra.org/schemas/428-7/2010/DCST.xsd", "SMPTE-428-7-2010-DCST.xsd");
 		add("http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata", "SMPTE-429-16.xsd");
 		add("http://www.dolby.com/schemas/2012/AD", "Dolby-2012-AD.xsd");
+		add("http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL", "SMPTE-429-10-2008.xsd");
 	}
 
 	InputSource* resolveEntity(XMLCh const *, XMLCh const * system_id)
@@ -285,6 +286,7 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, list<Verificatio
 		schema.push_back("PROTO-ASDCP-CC-CPL-20070926.xsd");
 		schema.push_back("SMPTE-429-16.xsd");
 		schema.push_back("Dolby-2012-AD.xsd");
+		schema.push_back("SMPTE-429-10-2008.xsd");
 
 		/* XXX: I'm not especially clear what this is for, but it seems to be necessary */
 		string locations;
