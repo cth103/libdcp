@@ -32,7 +32,7 @@
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <meta:FullContentTitleText/>
-          <meta:MainSoundConfiguration>71/L,R,C,LFE,-,-,-,-,-,-,-,-,-,Sync,-,-</meta:MainSoundConfiguration>
+          <meta:MainSoundConfiguration>71/L,R,C,LFE,-,-,-,-,-,-,-,-,-,FSKSync,-,-</meta:MainSoundConfiguration>
           <meta:MainSoundSampleRate>48000 1</meta:MainSoundSampleRate>
           <meta:MainPictureStoredArea>
             <meta:Width>1998</meta:Width>

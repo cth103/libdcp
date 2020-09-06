@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -40,6 +40,7 @@
 
 #include "mxf.h"
 #include "types.h"
+#include "language_tag.h"
 #include "metadata.h"
 #include "sound_frame.h"
 #include "sound_asset_reader.h"
@@ -56,9 +57,9 @@ class SoundAsset : public Asset, public MXF
 {
 public:
 	explicit SoundAsset (boost::filesystem::path file);
-	SoundAsset (Fraction edit_rate, int sampling_rate, int channels, Standard standard);
+	SoundAsset (Fraction edit_rate, int sampling_rate, int channels, LanguageTag language, Standard standard);
 
-	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file, bool atmos_sync = false);
+	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file, std::vector<Channel> active_channels, bool atmos_sync = false);
 	boost::shared_ptr<SoundAssetReader> start_read () const;
 
 	bool equals (
@@ -85,6 +86,10 @@ public:
 		return _intrinsic_duration;
 	}
 
+	LanguageTag language () const {
+		return _language;
+	}
+
 	static bool valid_mxf (boost::filesystem::path);
 	static std::string static_pkl_type (Standard standard);
 
@@ -102,6 +107,7 @@ private:
 	int64_t _intrinsic_duration;
 	int _channels;      ///< number of channels
 	int _sampling_rate; ///< sampling rate in Hz
+	LanguageTag _language;
 };
 
 }

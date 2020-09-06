@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -43,8 +43,9 @@
 #include "sound_asset_reader.h"
 #include "compose.hpp"
 #include "dcp_assert.h"
-#include <asdcp/KM_fileio.h>
 #include <asdcp/AS_DCP.h>
+#include <asdcp/KM_fileio.h>
+#include <asdcp/Metadata.h>
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
 #include <stdexcept>
@@ -58,6 +59,11 @@ using namespace dcp;
 
 SoundAsset::SoundAsset (boost::filesystem::path file)
 	: Asset (file)
+	/* XXX: this is a fallback language, which will be used if we can't find the RFC5646SpokenLanguage
+	 * in the MXF header.  Perhaps RFC5646SpokenLanguage is optional and we should just not write it
+	 * if we don't know it.
+	 */
+	, _language ("en-US")
 {
 	ASDCP::PCM::MXFReader reader;
 	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
@@ -81,15 +87,30 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 		boost::throw_exception (ReadError ("could not read audio MXF information"));
 	}
 
+	ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield;
+	ASDCP::Result_t rr = reader.OP1aHeader().GetMDObjectByType(
+		ASDCP::DefaultSMPTEDict().ul(ASDCP::MDD_SoundfieldGroupLabelSubDescriptor),
+		reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&soundfield)
+		);
+
+	if (KM_SUCCESS(rr)) {
+		if (!soundfield->RFC5646SpokenLanguage.empty()) {
+			char buffer[64];
+			soundfield->RFC5646SpokenLanguage.get().EncodeString(buffer, sizeof(buffer));
+			_language = dcp::LanguageTag (buffer);
+		}
+	}
+
 	_id = read_writer_info (info);
 }
 
-SoundAsset::SoundAsset (Fraction edit_rate, int sampling_rate, int channels, Standard standard)
+SoundAsset::SoundAsset (Fraction edit_rate, int sampling_rate, int channels, LanguageTag language, Standard standard)
 	: MXF (standard)
 	, _edit_rate (edit_rate)
 	, _intrinsic_duration (0)
 	, _channels (channels)
 	, _sampling_rate (sampling_rate)
+	, _language (language)
 {
 
 }
@@ -193,13 +214,13 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 }
 
 shared_ptr<SoundAssetWriter>
-SoundAsset::start_write (boost::filesystem::path file, bool atmos_sync)
+SoundAsset::start_write (boost::filesystem::path file, vector<Channel> active_channels, bool atmos_sync)
 {
 	if (atmos_sync && _channels < 14) {
 		throw MiscError ("Insufficient channels to write ATMOS sync (there must be at least 14)");
 	}
 
-	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter(this, file, atmos_sync));
+	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter(this, file, active_channels, atmos_sync));
 }
 
 shared_ptr<SoundAssetReader>

@@ -276,6 +276,13 @@ public:
 };
 
 
+class UnknownChannelIdError : public std::runtime_error
+{
+public:
+	UnknownChannelIdError (std::string s);
+};
+
+
 }
 
 #endif

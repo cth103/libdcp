@@ -84,6 +84,7 @@ def build(bld):
                  local_time_test.cc
                  make_digest_test.cc
                  markers_test.cc
+                 mca_test.cc
                  kdm_test.cc
                  key_test.cc
                  language_tag_test.cc

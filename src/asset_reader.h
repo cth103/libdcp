@@ -69,6 +69,10 @@ public:
 		return boost::shared_ptr<const F> (new F (_reader, n, _crypto_context));
 	}
 
+	R* reader () const {
+		return _reader;
+	}
+
 protected:
 	R* _reader;
 	boost::shared_ptr<DecryptionContext> _crypto_context;

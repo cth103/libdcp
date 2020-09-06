@@ -55,7 +55,7 @@
             </ContentVersion>
           </meta:AlternateContentVersionList>
           <meta:Luminance units="foot-lambert">4.5</meta:Luminance>
-          <meta:MainSoundConfiguration>71/L,R,C,LFE,-,-,-,-,-,-,-,-,-,Sync,-,-</meta:MainSoundConfiguration>
+          <meta:MainSoundConfiguration>71/L,R,C,LFE,-,-,-,-,-,-,-,-,-,FSKSync,-,-</meta:MainSoundConfiguration>
           <meta:MainSoundSampleRate>48000 1</meta:MainSoundSampleRate>
           <meta:MainPictureStoredArea>
             <meta:Width>1998</meta:Width>

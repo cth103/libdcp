@@ -39,6 +39,8 @@
 #include "compose.hpp"
 #include "crypto_context.h"
 #include <asdcp/AS_DCP.h>
+#include <asdcp/Metadata.h>
+#include <boost/foreach.hpp>
 #include <iostream>
 
 using std::min;
@@ -48,6 +50,13 @@ using std::string;
 using std::vector;
 using namespace dcp;
 
+
+/* Some ASDCP objects store this as a *&, for reasons which are not
+ * at all clear, so we have to keep this around forever.
+ */
+static ASDCP::Dictionary const* smpte_dict = &ASDCP::DefaultSMPTEDict();
+
+
 struct SoundAssetWriter::ASDCPState
 {
 	ASDCP::PCM::MXFWriter mxf_writer;
@@ -56,13 +65,14 @@ struct SoundAssetWriter::ASDCPState
 	ASDCP::PCM::AudioDescriptor desc;
 };
 
-SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, bool sync)
+SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, vector<Channel> active_channels, bool sync)
 	: AssetWriter (asset, file)
 	, _state (new SoundAssetWriter::ASDCPState)
 	, _asset (asset)
 	, _frame_buffer_offset (0)
 	, _sync (sync)
 	, _sync_packet (0)
+	, _active_channels (active_channels)
 {
 	DCP_ASSERT (!_sync || _asset->channels() >= 14);
 	DCP_ASSERT (!_sync || _asset->standard() == SMPTE);
@@ -101,6 +111,62 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 	}
 }
 
+
+void
+SoundAssetWriter::start ()
+{
+	Kumu::Result_t r = _state->mxf_writer.OpenWrite (_file.string().c_str(), _state->writer_info, _state->desc);
+	if (ASDCP_FAILURE (r)) {
+		boost::throw_exception (FileError ("could not open audio MXF for writing", _file.string(), r));
+	}
+
+	if (_asset->standard() == dcp::SMPTE && !_active_channels.empty()) {
+
+		ASDCP::MXF::WaveAudioDescriptor* essence_descriptor = 0;
+		_state->mxf_writer.OP1aHeader().GetMDObjectByType(
+			smpte_dict->ul(ASDCP::MDD_WaveAudioDescriptor), reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&essence_descriptor)
+			);
+		DCP_ASSERT (essence_descriptor);
+		essence_descriptor->ChannelAssignment = smpte_dict->ul(ASDCP::MDD_DCAudioChannelCfg_MCA);
+
+		ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield = new ASDCP::MXF::SoundfieldGroupLabelSubDescriptor(smpte_dict);
+		GenRandomValue (soundfield->MCALinkID);
+		soundfield->RFC5646SpokenLanguage = _asset->language().to_string();
+
+		const MCASoundField field = _asset->channels() > 10 ? SEVEN_POINT_ONE : FIVE_POINT_ONE;
+
+		if (field == SEVEN_POINT_ONE) {
+			soundfield->MCATagSymbol = "sg71";
+			soundfield->MCATagName = "7.1DS";
+			soundfield->MCALabelDictionaryID = smpte_dict->ul(ASDCP::MDD_DCAudioSoundfield_71);
+		} else {
+			soundfield->MCATagSymbol = "sg51";
+			soundfield->MCATagName = "5.1";
+			soundfield->MCALabelDictionaryID = smpte_dict->ul(ASDCP::MDD_DCAudioSoundfield_51);
+		}
+
+		_state->mxf_writer.OP1aHeader().AddChildObject(soundfield);
+		essence_descriptor->SubDescriptors.push_back(soundfield->InstanceUID);
+
+		BOOST_FOREACH (Channel i, _active_channels) {
+			ASDCP::MXF::AudioChannelLabelSubDescriptor* channel = new ASDCP::MXF::AudioChannelLabelSubDescriptor(smpte_dict);
+			GenRandomValue (channel->MCALinkID);
+			channel->SoundfieldGroupLinkID = soundfield->MCALinkID;
+			channel->MCAChannelID = static_cast<int>(i) + 1;
+			channel->MCATagSymbol = "ch" + channel_to_mca_id(i, field);
+			channel->MCATagName = channel_to_mca_name(i, field);
+			channel->RFC5646SpokenLanguage = _asset->language().to_string();
+			channel->MCALabelDictionaryID = channel_to_mca_universal_label(i, field, smpte_dict);
+			_state->mxf_writer.OP1aHeader().AddChildObject(channel);
+			essence_descriptor->SubDescriptors.push_back(channel->InstanceUID);
+		}
+	}
+
+	_asset->set_file (_file);
+	_started = true;
+}
+
+
 void
 SoundAssetWriter::write (float const * const * data, int frames)
 {
@@ -110,13 +176,7 @@ SoundAssetWriter::write (float const * const * data, int frames)
 	static float const clip = 1.0f - (1.0f / pow (2, 23));
 
 	if (!_started) {
-		Kumu::Result_t r = _state->mxf_writer.OpenWrite (_file.string().c_str(), _state->writer_info, _state->desc);
-		if (ASDCP_FAILURE (r)) {
-			boost::throw_exception (FileError ("could not open audio MXF for writing", _file.string(), r));
-		}
-
-		_asset->set_file (_file);
-		_started = true;
+		start ();
 	}
 
 	int const ch = _asset->channels ();

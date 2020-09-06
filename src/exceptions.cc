@@ -163,4 +163,9 @@ MainSoundConfigurationError::MainSoundConfigurationError (std::string s)
 
 }
 
->>>>>>> Support CPL metadata.
+
+UnknownChannelIdError::UnknownChannelIdError (std::string id)
+	: runtime_error (String::compose("Unrecognised channel id '%1'", id))
+{
+
+}

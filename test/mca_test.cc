@@ -1,0 +1,86 @@
+/*
+    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
+
+    This file is part of libdcp.
+
+    libdcp is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    libdcp is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with libdcp.  If not, see <http://www.gnu.org/licenses/>.
+
+    In addition, as a special exception, the copyright holders give
+    permission to link the code of portions of this program with the
+    OpenSSL library under certain conditions as described in each
+    individual source file, and distribute linked combinations
+    including the two.
+
+    You must obey the GNU General Public License in all respects
+    for all of the code used other than OpenSSL.  If you modify
+    file(s) with this exception, you may extend this exception to your
+    version of the file(s), but you are not obligated to do so.  If you
+    do not wish to do so, delete this exception statement from your
+    version.  If you delete this exception statement from all source
+    files in the program, then also delete it here.
+*/
+
+
+#include "compose.hpp"
+#include "cpl.h"
+#include "reel.h"
+#include "reel_sound_asset.h"
+#include "sound_asset.h"
+#include "test.h"
+#include <libcxml/cxml.h>
+#include <libxml++/libxml++.h>
+#include <boost/test/unit_test.hpp>
+
+
+using std::list;
+using std::string;
+using boost::shared_ptr;
+
+
+/** Check that when we read a MXF and write its MCA metadata to a CPL we get the same answer
+ *  as the original MXF for that CPL (for a couple of different MXFs).
+ */
+BOOST_AUTO_TEST_CASE (parse_mca_descriptors_from_mxf_test)
+{
+	for (int i = 1; i < 3; ++i) {
+		shared_ptr<dcp::SoundAsset> sound_asset(new dcp::SoundAsset(private_test / "data" / dcp::String::compose("51_sound_with_mca_%1.mxf", i)));
+		shared_ptr<dcp::ReelSoundAsset> reel_sound_asset(new dcp::ReelSoundAsset(sound_asset, 0));
+		shared_ptr<dcp::Reel> reel(new dcp::Reel());
+		reel->add (black_picture_asset(dcp::String::compose("build/test/parse_mca_descriptors_from_mxf_test%1", i), 24));
+		reel->add (reel_sound_asset);
+
+		dcp::CPL cpl("", dcp::FEATURE);
+		cpl.add (reel);
+		cpl.set_main_sound_configuration("51/L,R,C,LFE,Ls,Rs");
+		cpl.set_main_sound_sample_rate(48000);
+		cpl.set_main_picture_stored_area(dcp::Size(1998, 1080));
+		cpl.set_main_picture_active_area(dcp::Size(1998, 1080));
+		cpl.write_xml (dcp::String::compose("build/test/parse_mca_descriptors_from_mxf_test%1/cpl.xml", i), dcp::SMPTE, shared_ptr<dcp::CertificateChain>());
+
+		cxml::Document ref("CompositionPlaylist", private_test / dcp::String::compose("51_sound_with_mca_%1.cpl", i));
+		cxml::Document check("CompositionPlaylist", dcp::String::compose("build/test/parse_mca_descriptors_from_mxf_test%1/cpl.xml", i));
+
+		list<string> ignore;
+		check_xml (
+			dynamic_cast<xmlpp::Element*>(
+				ref.node_child("ReelList")->node_children("Reel").front()->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
+				),
+			dynamic_cast<xmlpp::Element*>(
+				check.node_child("ReelList")->node_children("Reel").front()->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
+				),
+			ignore,
+			true
+			);
+	}
+}

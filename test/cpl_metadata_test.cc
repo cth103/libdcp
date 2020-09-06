@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test1)
 	dcp::MainSoundConfiguration msc("51/L,R,C,LFE,-,-");
 	BOOST_CHECK_EQUAL (msc.to_string(), "51/L,R,C,LFE,-,-");
 	BOOST_CHECK_EQUAL (msc.channels(), 6);
-	BOOST_CHECK_EQUAL (msc.field(), dcp::MainSoundConfiguration::FIVE_POINT_ONE);
+	BOOST_CHECK_EQUAL (msc.field(), dcp::FIVE_POINT_ONE);
 	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::LEFT);
 	BOOST_CHECK_EQUAL (msc.mapping(1).get(), dcp::RIGHT);
 	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::CENTRE);
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test2)
 	dcp::MainSoundConfiguration msc("71/L,R,C,LFE,-,-");
 	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,R,C,LFE,-,-");
 	BOOST_CHECK_EQUAL (msc.channels(), 6);
-	BOOST_CHECK_EQUAL (msc.field(), dcp::MainSoundConfiguration::SEVEN_POINT_ONE);
+	BOOST_CHECK_EQUAL (msc.field(), dcp::SEVEN_POINT_ONE);
 	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::LEFT);
 	BOOST_CHECK_EQUAL (msc.mapping(1).get(), dcp::RIGHT);
 	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::CENTRE);
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test3)
 	dcp::MainSoundConfiguration msc("71/L,-,C,LFE,Lss,Rss");
 	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,-,C,LFE,Lss,Rss");
 	BOOST_CHECK_EQUAL (msc.channels(), 6);
-	BOOST_CHECK_EQUAL (msc.field(), dcp::MainSoundConfiguration::SEVEN_POINT_ONE);
+	BOOST_CHECK_EQUAL (msc.field(), dcp::SEVEN_POINT_ONE);
 	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::LEFT);
 	BOOST_CHECK (!msc.mapping(1));
 	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::CENTRE);
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test4)
 	dcp::MainSoundConfiguration msc("71/L,-,C,LFE,Lss,Rss,-,-,-,-,-,-,-,-,-");
 	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,-,C,LFE,Lss,Rss,-,-,-,-,-,-,-,-,-");
 	BOOST_CHECK_EQUAL (msc.channels(), 15);
-	BOOST_CHECK_EQUAL (msc.field(), dcp::MainSoundConfiguration::SEVEN_POINT_ONE);
+	BOOST_CHECK_EQUAL (msc.field(), dcp::SEVEN_POINT_ONE);
 	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::LEFT);
 	BOOST_CHECK (!msc.mapping(1));
 	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::CENTRE);
@@ -126,10 +126,10 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test4)
 
 BOOST_AUTO_TEST_CASE (main_sound_configuration_test5)
 {
-	dcp::MainSoundConfiguration msc("71/L,-,C,LFE,Lss,Rss,HI,VIN,-,-,Lrs,Rrs,DBOX,Sync,Sign");
-	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,-,C,LFE,Lss,Rss,HI,VIN,-,-,Lrs,Rrs,DBOX,Sync,Sign");
+	dcp::MainSoundConfiguration msc("71/L,-,C,LFE,Lss,Rss,HI,VIN,-,-,Lrs,Rrs,DBOX,FSKSync,SLVS");
+	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,-,C,LFE,Lss,Rss,HI,VIN,-,-,Lrs,Rrs,DBOX,FSKSync,SLVS");
 	BOOST_CHECK_EQUAL (msc.channels(), 15);
-	BOOST_CHECK_EQUAL (msc.field(), dcp::MainSoundConfiguration::SEVEN_POINT_ONE);
+	BOOST_CHECK_EQUAL (msc.field(), dcp::SEVEN_POINT_ONE);
 	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::LEFT);
 	BOOST_CHECK (!msc.mapping(1));
 	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::CENTRE);
@@ -267,7 +267,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 	cpl.set_facility ("the-facility");
 	cpl.set_luminance (dcp::Luminance(4.5, dcp::Luminance::FOOT_LAMBERT));
 
-	dcp::MainSoundConfiguration msc(dcp::MainSoundConfiguration::SEVEN_POINT_ONE, 16);
+	dcp::MainSoundConfiguration msc(dcp::SEVEN_POINT_ONE, 16);
 	msc.set_mapping (0, dcp::LEFT);
 	msc.set_mapping (1, dcp::RIGHT);
 	msc.set_mapping (2, dcp::CENTRE);
@@ -338,7 +338,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test2)
 	cpl.set_issue_date ("2020-08-28T13:35:06+02:00");
 	cpl.set_content_version (dcp::ContentVersion("id", "version"));
 
-	dcp::MainSoundConfiguration msc(dcp::MainSoundConfiguration::SEVEN_POINT_ONE, 16);
+	dcp::MainSoundConfiguration msc(dcp::SEVEN_POINT_ONE, 16);
 	msc.set_mapping (0, dcp::LEFT);
 	msc.set_mapping (1, dcp::RIGHT);
 	msc.set_mapping (2, dcp::CENTRE);

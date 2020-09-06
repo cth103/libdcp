@@ -95,12 +95,12 @@ struct TestConfig
 };
 
 void
-check_xml (xmlpp::Element* ref, xmlpp::Element* test, list<string> ignore)
+check_xml (xmlpp::Element* ref, xmlpp::Element* test, list<string> ignore_tags, bool ignore_whitespace)
 {
 	BOOST_CHECK_EQUAL (ref->get_name (), test->get_name ());
 	BOOST_CHECK_EQUAL (ref->get_namespace_prefix (), test->get_namespace_prefix ());
 
-	if (find (ignore.begin(), ignore.end(), ref->get_name()) != ignore.end ()) {
+	if (find(ignore_tags.begin(), ignore_tags.end(), ref->get_name()) != ignore_tags.end()) {
 		return;
 	}
 
@@ -121,14 +121,20 @@ check_xml (xmlpp::Element* ref, xmlpp::Element* test, list<string> ignore)
 		xmlpp::Element* test_el = dynamic_cast<xmlpp::Element*> (*l);
 		BOOST_CHECK ((ref_el && test_el) || (!ref_el && !test_el));
 		if (ref_el && test_el) {
-			check_xml (ref_el, test_el, ignore);
+			check_xml (ref_el, test_el, ignore_tags, ignore_whitespace);
 		}
 
 		xmlpp::ContentNode* ref_cn = dynamic_cast<xmlpp::ContentNode*> (*k);
 		xmlpp::ContentNode* test_cn = dynamic_cast<xmlpp::ContentNode*> (*l);
 		BOOST_CHECK ((ref_cn && test_cn) || (!ref_cn && !test_cn));
 		if (ref_cn && test_cn) {
-			BOOST_CHECK_EQUAL (ref_cn->get_content(), test_cn->get_content ());
+			if (
+				!ignore_whitespace ||
+				ref_cn->get_content().find_first_not_of(" \t\r\n") != string::npos ||
+				test_cn->get_content().find_first_not_of(" \t\r\n") != string::npos) {
+
+				BOOST_CHECK_EQUAL (ref_cn->get_content(), test_cn->get_content ());
+			}
 		}
 
 		++k;

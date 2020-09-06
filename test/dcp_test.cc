@@ -52,6 +52,7 @@
 #include <boost/test/unit_test.hpp>
 
 using std::string;
+using std::vector;
 using boost::shared_ptr;
 
 
@@ -103,9 +104,9 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	}
 	picture_writer->finalize ();
 
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1, dcp::SMPTE));
+	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::SMPTE));
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf");
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf", vector<dcp::Channel>());
 
 	SF_INFO info;
 	info.format = 0;
@@ -199,9 +200,9 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	}
 	picture_writer->finalize ();
 
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1, dcp::SMPTE));
+	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::SMPTE));
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test5/audio.mxf");
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test5/audio.mxf", vector<dcp::Channel>());
 
 	SF_INFO info;
 	info.format = 0;

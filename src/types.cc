@@ -596,40 +596,14 @@ MainSoundConfiguration::MainSoundConfiguration (string s)
 	BOOST_FOREACH (string i, channels) {
 		if (i == "-") {
 			_channels.push_back(optional<Channel>());
-		} else if (i == "L") {
-			_channels.push_back(LEFT);
-		} else if (i == "R") {
-			_channels.push_back(RIGHT);
-		} else if (i == "C") {
-			_channels.push_back(CENTRE);
-		} else if (i == "LFE") {
-			_channels.push_back(LFE);
-		} else if (i == "Ls" || i == "Lss") {
-			_channels.push_back(LS);
-		} else if (i == "Rs" || i == "Rss") {
-			_channels.push_back(RS);
-		} else if (i == "HI") {
-			_channels.push_back(HI);
-		} else if (i == "VIN") {
-			_channels.push_back(VI);
-		} else if (i == "Lrs") {
-			_channels.push_back(BSL);
-		} else if (i == "Rrs") {
-			_channels.push_back(BSR);
-		} else if (i == "DBOX") {
-			_channels.push_back(MOTION_DATA);
-		} else if (i == "Sync") {
-			_channels.push_back(SYNC_SIGNAL);
-		} else if (i == "Sign") {
-			_channels.push_back(SIGN_LANGUAGE);
 		} else {
-			throw MainSoundConfigurationError (s);
+			_channels.push_back(mca_id_to_channel(i));
 		}
 	}
 }
 
 
-MainSoundConfiguration::MainSoundConfiguration (Field field, int channels)
+MainSoundConfiguration::MainSoundConfiguration (MCASoundField field, int channels)
 	: _field (field)
 {
 	_channels.resize (channels);
@@ -650,55 +624,7 @@ MainSoundConfiguration::to_string () const
 		if (!i) {
 			c += "-,";
 		} else {
-			switch (*i) {
-			case LEFT:
-				c += "L,";
-				break;
-			case RIGHT:
-				c += "R,";
-				break;
-			case CENTRE:
-				c += "C,";
-				break;
-			case LFE:
-				c += "LFE,";
-				break;
-			case LS:
-				c += (_field == FIVE_POINT_ONE ? "Ls," : "Lss,");
-				break;
-			case RS:
-				c += (_field == FIVE_POINT_ONE ? "Rs," : "Rss,");
-				break;
-			case HI:
-				c += "HI,";
-				break;
-			case VI:
-				c += "VIN,";
-				break;
-			case LC:
-			case RC:
-				c += "-,";
-				break;
-			case BSL:
-				c += "Lrs,";
-				break;
-			case BSR:
-				c += "Rrs,";
-				break;
-			case MOTION_DATA:
-				c += "DBOX,";
-				break;
-			case SYNC_SIGNAL:
-				c += "Sync,";
-				break;
-			case SIGN_LANGUAGE:
-				/* XXX: not sure what this should be */
-				c += "Sign,";
-				break;
-			default:
-				c += "-,";
-				break;
-			}
+			c += channel_to_mca_id(*i, _field) + ",";
 		}
 	}
 
@@ -756,4 +682,162 @@ dcp::string_to_status (string s)
 
 	DCP_ASSERT (false);
 }
+
+
+Channel
+dcp::mca_id_to_channel (string id)
+{
+	if (id == "L") {
+		return LEFT;
+	} else if (id == "R") {
+		return RIGHT;
+	} else if (id == "C") {
+		return CENTRE;
+	} else if (id == "LFE") {
+		return LFE;
+	} else if (id == "Ls" || id == "Lss") {
+		return LS;
+	} else if (id == "Rs" || id == "Rss") {
+		return RS;
+	} else if (id == "HI") {
+		return HI;
+	} else if (id == "VIN") {
+		return VI;
+	} else if (id == "Lrs") {
+		return BSL;
+	} else if (id == "Rrs") {
+		return BSR;
+	} else if (id == "DBOX") {
+		return MOTION_DATA;
+	} else if (id == "FSKSync") {
+		return SYNC_SIGNAL;
+	} else if (id == "SLVS") {
+		return SIGN_LANGUAGE;
+	}
+
+	throw UnknownChannelIdError (id);
+}
+
+
+string
+dcp::channel_to_mca_id (Channel c, MCASoundField field)
+{
+	switch (c) {
+	case LEFT:
+		return "L";
+	case RIGHT:
+		return "R";
+	case CENTRE:
+		return "C";
+	case LFE:
+		return "LFE";
+	case LS:
+		return field == FIVE_POINT_ONE ? "Ls" : "Lss";
+	case RS:
+		return field == FIVE_POINT_ONE ? "Rs" : "Rss";
+	case HI:
+		return "HI";
+	case VI:
+		return "VIN";
+	case BSL:
+		return "Lrs";
+	case BSR:
+		return "Rrs";
+	case MOTION_DATA:
+		return "DBOX";
+	case SYNC_SIGNAL:
+		return "FSKSync";
+	case SIGN_LANGUAGE:
+		return "SLVS";
+	default:
+		break;
+	}
+
+	DCP_ASSERT (false);
+}
+
+
+string
+dcp::channel_to_mca_name (Channel c, MCASoundField field)
+{
+	switch (c) {
+	case LEFT:
+		return "Left";
+	case RIGHT:
+		return "Right";
+	case CENTRE:
+		return "Center";
+	case LFE:
+		return "LFE";
+	case LS:
+		return field == FIVE_POINT_ONE ? "Left Surround" : "Left Side Surround";
+	case RS:
+		return field == FIVE_POINT_ONE ? "Right Surround" : "Right Side Surround";
+	case HI:
+		return "Hearing Impaired";
+	case VI:
+		return "Visually Impaired-Narrative";
+	case BSL:
+		return "Left Rear Surround";
+	case BSR:
+		return "Right Rear Surround";
+	case MOTION_DATA:
+		return "D-BOX Motion Code Primary Stream";
+	case SYNC_SIGNAL:
+		return "FSK Sync";
+	case SIGN_LANGUAGE:
+		return "Sign Language Video Stream";
+	default:
+		break;
+	}
+
+	DCP_ASSERT (false);
+}
+
+
+ASDCP::UL
+dcp::channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dictionary const* dict)
+{
+	static byte_t sync_signal[] = {
+		0x06, 0x0e, 0x2b, 0x34, 0x04, 0x01, 0x01, 0x0d, 0x03, 0x02, 0x01, 0x10, 0x00, 0x00, 0x00, 0x00
+	};
+
+	static byte_t sign_language[] = {
+		0x06, 0x0e, 0x2b, 0x34, 0x04, 0x01, 0x01, 0x0d, 0x0d, 0x0f, 0x03, 0x02, 0x01, 0x01, 0x00, 0x00
+	};
+
+	switch (c) {
+	case LEFT:
+		return dict->ul(ASDCP::MDD_DCAudioChannel_L);
+	case RIGHT:
+		return dict->ul(ASDCP::MDD_DCAudioChannel_R);
+	case CENTRE:
+		return dict->ul(ASDCP::MDD_DCAudioChannel_C);
+	case LFE:
+		return dict->ul(ASDCP::MDD_DCAudioChannel_LFE);
+	case LS:
+		return dict->ul(field == FIVE_POINT_ONE ? ASDCP::MDD_DCAudioChannel_Ls : ASDCP::MDD_DCAudioChannel_Lss);
+	case RS:
+		return dict->ul(field == FIVE_POINT_ONE ? ASDCP::MDD_DCAudioChannel_Rs : ASDCP::MDD_DCAudioChannel_Rss);
+	case HI:
+		return dict->ul(ASDCP::MDD_DCAudioChannel_HI);
+	case VI:
+		return dict->ul(ASDCP::MDD_DCAudioChannel_VIN);
+	case BSL:
+		return dict->ul(ASDCP::MDD_DCAudioChannel_Lrs);
+	case BSR:
+		return dict->ul(ASDCP::MDD_DCAudioChannel_Rrs);
+	case MOTION_DATA:
+		return dict->ul(ASDCP::MDD_DBOXMotionCodePrimaryStream);
+	case SYNC_SIGNAL:
+		return ASDCP::UL(sync_signal);
+	case SIGN_LANGUAGE:
+		return ASDCP::UL(sign_language);
+	default:
+		break;
+	}
+
+	DCP_ASSERT (false);
+}
+
 

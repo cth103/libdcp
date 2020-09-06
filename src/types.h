@@ -39,6 +39,7 @@
 #define LIBDCP_TYPES_H
 
 #include <libcxml/cxml.h>
+#include <asdcp/KLV.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
 #include <string>
@@ -97,6 +98,20 @@ enum Channel {
 	UNUSED = 15,
 	CHANNEL_COUNT = 16
 };
+
+
+enum MCASoundField
+{
+	FIVE_POINT_ONE,
+	SEVEN_POINT_ONE
+};
+
+
+extern std::string channel_to_mca_id (Channel c, MCASoundField field);
+extern Channel mca_id_to_channel (std::string);
+extern std::string channel_to_mca_name (Channel c, MCASoundField field);
+extern ASDCP::UL channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dictionary const* dict);
+
 
 enum ContentKind
 {
@@ -402,15 +417,10 @@ bool operator== (Luminance const& a, Luminance const& b);
 class MainSoundConfiguration
 {
 public:
-	enum Field {
-		FIVE_POINT_ONE,
-		SEVEN_POINT_ONE,
-	};
-
 	MainSoundConfiguration (std::string);
-	MainSoundConfiguration (Field field_, int channels);
+	MainSoundConfiguration (MCASoundField field_, int channels);
 
-	Field field () const {
+	MCASoundField field () const {
 		return _field;
 	}
 
@@ -424,7 +434,7 @@ public:
 	std::string to_string () const;
 
 private:
-	Field _field;
+	MCASoundField _field;
 	std::vector<boost::optional<Channel> > _channels;
 };
 

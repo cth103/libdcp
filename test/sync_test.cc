@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE (sync_test1)
 		}
 	}
 
-	shared_ptr<dcp::SoundAssetWriter> writer = asset.start_write ("build/test/foo.mxf", true);
+	shared_ptr<dcp::SoundAssetWriter> writer = asset.start_write ("build/test/foo.mxf", vector<dcp::Channel>(), true);
 
 	/* Compare the sync bits made by SoundAssetWriter to the "proper" ones in the MXF */
 	BOOST_CHECK (ref == writer->create_sync_packets());
@@ -120,11 +120,11 @@ BOOST_AUTO_TEST_CASE (sync_test2)
 {
 	/* Make a MXF with the same ID as atmos_pcm.mxf and write a frame of random stuff */
 	int const channels = 14;
-	dcp::SoundAsset asset (dcp::Fraction(24, 1), 48000, channels, dcp::SMPTE);
+	dcp::SoundAsset asset (dcp::Fraction(24, 1), 48000, channels, dcp::LanguageTag("en-GB"), dcp::SMPTE);
 	asset._id = "e004046e09234f90a4ae4355e7e83506";
 	boost::system::error_code ec;
 	boost::filesystem::remove ("build/test/foo.mxf", ec);
-	shared_ptr<dcp::SoundAssetWriter> writer = asset.start_write ("build/test/foo.mxf", true);
+	shared_ptr<dcp::SoundAssetWriter> writer = asset.start_write ("build/test/foo.mxf", vector<dcp::Channel>(), true);
 
 	int const frames = 2000;
 	float** junk = new float*[channels];
