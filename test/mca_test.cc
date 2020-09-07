@@ -37,6 +37,7 @@
 #include "reel.h"
 #include "reel_sound_asset.h"
 #include "sound_asset.h"
+#include "sound_asset_writer.h"
 #include "test.h"
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
@@ -45,6 +46,7 @@
 
 using std::list;
 using std::string;
+using std::vector;
 using boost::shared_ptr;
 
 
@@ -84,3 +86,67 @@ BOOST_AUTO_TEST_CASE (parse_mca_descriptors_from_mxf_test)
 			);
 	}
 }
+
+
+/** Reproduce the MCA tags from one of the example files using libdcp */
+BOOST_AUTO_TEST_CASE (write_mca_descriptors_to_mxf_test)
+{
+	shared_ptr<dcp::SoundAsset> sound_asset(new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 6, dcp::LanguageTag("en-US"), dcp::SMPTE));
+	vector<dcp::Channel> channels;
+	channels.push_back (dcp::LEFT);
+	channels.push_back (dcp::RIGHT);
+	channels.push_back (dcp::CENTRE);
+	channels.push_back (dcp::LFE);
+	channels.push_back (dcp::LS);
+	channels.push_back (dcp::RS);
+	shared_ptr<dcp::SoundAssetWriter> writer = sound_asset->start_write("build/test/write_mca_descriptors_to_mxf_test.mxf", channels);
+
+	float* samples[6];
+	for (int i = 0; i < 6; ++i) {
+		samples[i] = new float[2000];
+		memset (samples[i], 0, 2000 * sizeof(float));
+	}
+	for (int i = 0; i < 24; ++i) {
+		writer->write(samples, 2000);
+	}
+	for (int i = 0; i < 6; ++i) {
+		delete[] samples[i];
+	}
+
+	writer->finalize();
+
+	/* Make a CPL as a roundabout way to read the metadata we just wrote to the MXF */
+
+	shared_ptr<dcp::ReelSoundAsset> reel_sound_asset(new dcp::ReelSoundAsset(sound_asset, 0));
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (black_picture_asset("build/test/write_mca_descriptors_to_mxf_test", 24));
+	reel->add (reel_sound_asset);
+
+	dcp::CPL cpl("", dcp::FEATURE);
+	cpl.add (reel);
+	cpl.set_main_sound_configuration("51/L,R,C,LFE,Ls,Rs");
+	cpl.set_main_sound_sample_rate(48000);
+	cpl.set_main_picture_stored_area(dcp::Size(1998, 1080));
+	cpl.set_main_picture_active_area(dcp::Size(1998, 1080));
+	cpl.write_xml ("build/test/write_mca_descriptors_to_mxf_test/cpl.xml", dcp::SMPTE, shared_ptr<dcp::CertificateChain>());
+
+	cxml::Document ref("CompositionPlaylist", private_test / "51_sound_with_mca_1.cpl");
+	cxml::Document check("CompositionPlaylist", "build/test/write_mca_descriptors_to_mxf_test/cpl.xml");
+
+	list<string> ignore;
+	ignore.push_back ("InstanceID");
+	ignore.push_back ("MCALinkID");
+	ignore.push_back ("SoundfieldGroupLinkID");
+
+	check_xml (
+		dynamic_cast<xmlpp::Element*>(
+			ref.node_child("ReelList")->node_children("Reel").front()->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
+			),
+		dynamic_cast<xmlpp::Element*>(
+			check.node_child("ReelList")->node_children("Reel").front()->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
+			),
+		ignore,
+		true
+		);
+}
+
