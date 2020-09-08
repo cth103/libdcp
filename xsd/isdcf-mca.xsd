@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" targetNamespace="http://isdcf.com/ns/cplmd/mca" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:r0="http://www.smpte-ra.org/reg/395/2014/13/1/aaf" xmlns:r1="http://www.smpte-ra.org/reg/335/2012">
+
+<xs:import namespace="http://www.smpte-ra.org/reg/395/2014/13/1/aaf"/>
+<xs:import namespace="http://www.smpte-ra.org/reg/335/2012"/>
+
+  <xs:element name="MCASubDescriptors">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="r0:SoundfieldGroupLabelSubDescriptor"/>
+        <xs:element ref="r0:AudioChannelLabelSubDescriptor"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://www.smpte-ra.org/schemas/429-12/2008/TT"
+xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:cpl="http://www.smpte-ra.org/schemas/429-7/2006/CPL"
+xmlns:tt="http://www.smpte-ra.org/schemas/429-12/2008/TT"
+elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:import namespace="http://www.smpte-ra.org/schemas/429-7/2006/CPL"/>
+<!-- MainCaption -->
+<xs:element name="MainCaption" type="tt:CaptionTrackFileAssetType"/>
+<!-- ClosedCaption -->
+<xs:element name="ClosedCaption" type="tt:CaptionTrackFileAssetType"/>
+<!-- CaptionTrackFileAssetType -->
+<xs:complexType name="CaptionTrackFileAssetType">
+<xs:complexContent>
+<xs:extension base="cpl:TrackFileAssetType">
+<xs:sequence>
+<xs:element name="Language" type="xs:language" minOccurs="0"/>
+</xs:sequence>
+</xs:extension>
+</xs:complexContent>
+</xs:complexType>
+<!-- ClosedSubtitle -->
+<xs:element name="ClosedSubtitle" type="cpl:SubtitleTrackFileAssetType"/>
+</xs:schema>

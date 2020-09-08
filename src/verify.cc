@@ -196,6 +196,9 @@ public:
 	LocalFileResolver (boost::filesystem::path xsd_dtd_directory)
 		: _xsd_dtd_directory (xsd_dtd_directory)
 	{
+		/* XXX: I'm not clear on what things need to be in this list; some XSDs are apparently, magically
+		 * found without being here.
+		 */
 		add("http://www.w3.org/2001/XMLSchema.dtd", "XMLSchema.dtd");
 		add("http://www.w3.org/2001/03/xml.xsd", "xml.xsd");
 		add("http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd", "xmldsig-core-schema.xsd");
@@ -273,6 +276,7 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, list<Verificatio
 		parser.setDoSchema(true);
 
 		vector<string> schema;
+		schema.push_back("xml.xsd");
 		schema.push_back("xmldsig-core-schema.xsd");
 		schema.push_back("SMPTE-429-7-2006-CPL.xsd");
 		schema.push_back("SMPTE-429-8-2006-PKL.xsd");
@@ -287,8 +291,16 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, list<Verificatio
 		schema.push_back("SMPTE-429-16.xsd");
 		schema.push_back("Dolby-2012-AD.xsd");
 		schema.push_back("SMPTE-429-10-2008.xsd");
+		schema.push_back("xlink.xsd");
+		schema.push_back("SMPTE-335-2012.xsd");
+		schema.push_back("SMPTE-395-2014-13-1-aaf.xsd");
+		schema.push_back("isdcf-mca.xsd");
+		schema.push_back("SMPTE-429-12-2008.xsd");
 
-		/* XXX: I'm not especially clear what this is for, but it seems to be necessary */
+		/* XXX: I'm not especially clear what this is for, but it seems to be necessary.
+		 * Schemas that are not mentioned in this list are not read, and the things
+		 * they describe are not checked.
+		 */
 		string locations;
 		BOOST_FOREACH (string i, schema) {
 			locations += String::compose("%1 %1 ", i, i);
@@ -560,6 +572,8 @@ dcp::verify (
 		} catch (ReadError& e) {
 			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
 		} catch (XMLError& e) {
+			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
+		} catch (MXFFileError& e) {
 			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
 		} catch (cxml::Error& e) {
 			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));

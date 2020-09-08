@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?><!--Created: Mon Sep 07 16:19:25 UTC 2020--><!--By: regxmllib build ff4e9909fc235f2cb20118cc967786fb46ca7e60--><xs:schema xmlns:r0="http://www.smpte-ra.org/reg/335/2012" xmlns:r1="http://www.smpte-ra.org/reg/335/2012/13/1/aaf" xmlns:r2="http://www.smpte-ra.org/reg/335/2012/13/1/amwa/rules" xmlns:r3="http://www.smpte-ra.org/reg/335/2012/13/4/archive" xmlns:r4="http://www.loc.gov/avconservation" xmlns:xlink="http://www.w3.org/1999/xlink" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.smpte-ra.org/reg/395/2014/13/1/aaf" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:import namespace="http://www.smpte-ra.org/reg/335/2012"/>
+
+<xs:element name="AudioChannelLabelSubDescriptor">
+<xs:complexType>
+<xs:all>
+<xs:element minOccurs="0" ref="r0:SoundfieldGroupLinkID"/>
+<xs:element ref="r0:MCALinkID"/>
+<xs:element minOccurs="0" ref="r0:MCATagName"/>
+<xs:element minOccurs="0" ref="r0:MCATitle"/>
+<xs:element minOccurs="0" ref="r0:MCATitleSubVersion"/>
+<xs:element ref="r0:MCALabelDictionaryID"/>
+<xs:element ref="r0:MCATagSymbol"/>
+<xs:element minOccurs="0" ref="r0:RFC5646SpokenLanguage"/>
+<xs:element minOccurs="0" ref="r0:MCAPartitionNumber"/>
+<xs:element minOccurs="0" ref="r0:MCAPartitionKind"/>
+<xs:element minOccurs="0" ref="r0:MCATitleVersion"/>
+<xs:element minOccurs="0" ref="r0:MCAAudioElementKind"/>
+<xs:element minOccurs="0" ref="r0:MCAAudioContentKind"/>
+<xs:element minOccurs="0" ref="r0:MCAEpisode"/>
+<xs:element minOccurs="0" ref="r0:MCAChannelID"/>
+<xs:element minOccurs="0" ref="r0:InstanceID"/>
+</xs:all>
+</xs:complexType>
+</xs:element>
+
+<xs:element name="SoundfieldGroupLabelSubDescriptor">
+<xs:complexType>
+<xs:all>
+<xs:element minOccurs="0" ref="r0:GroupOfSoundfieldGroupsLinkID"/>
+<xs:element ref="r0:MCALinkID"/>
+<xs:element minOccurs="0" ref="r0:MCATagName"/>
+<xs:element minOccurs="0" ref="r0:MCATitle"/>
+<xs:element minOccurs="0" ref="r0:MCATitleSubVersion"/>
+<xs:element ref="r0:MCALabelDictionaryID"/>
+<xs:element ref="r0:MCATagSymbol"/>
+<xs:element minOccurs="0" ref="r0:RFC5646SpokenLanguage"/>
+<xs:element minOccurs="0" ref="r0:MCAPartitionNumber"/>
+<xs:element minOccurs="0" ref="r0:MCAPartitionKind"/>
+<xs:element minOccurs="0" ref="r0:MCATitleVersion"/>
+<xs:element minOccurs="0" ref="r0:MCAAudioElementKind"/>
+<xs:element minOccurs="0" ref="r0:MCAAudioContentKind"/>
+<xs:element minOccurs="0" ref="r0:MCAEpisode"/>
+<xs:element minOccurs="0" ref="r0:MCAChannelID"/>
+<xs:element minOccurs="0" ref="r0:InstanceID"/>
+</xs:all>
+</xs:complexType>
+</xs:element>
+
+</xs:schema>
