@@ -263,7 +263,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 		BOOST_FOREACH (shared_ptr<CPL> i, cpls()) {
 			BOOST_FOREACH (shared_ptr<const ReelMXF> j, i->reel_mxfs()) {
 				if (!j->asset_ref().resolved() && paths.find(j->asset_ref().id()) == paths.end()) {
-					notes->push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::EXTERNAL_ASSET));
+					notes->push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::EXTERNAL_ASSET, j->asset_ref().id()));
 				}
 			}
 		}
