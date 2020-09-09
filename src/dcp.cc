@@ -117,7 +117,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 	} else if (boost::filesystem::exists (_directory / "ASSETMAP.xml")) {
 		_asset_map = _directory / "ASSETMAP.xml";
 	} else {
-		boost::throw_exception (ReadError (String::compose ("could not find ASSETMAP nor ASSETMAP.xml in `%1'", _directory.string())));
+		boost::throw_exception (ReadError(String::compose("Could not find ASSETMAP nor ASSETMAP.xml in '%1'", _directory.string())));
 	}
 
 	cxml::Document asset_map ("AssetMap");

@@ -131,3 +131,9 @@ StartCompressionError::StartCompressionError (optional<int> code)
 	, _code (code)
 {}
 
+
+
+CombineError::CombineError (string message)
+	: runtime_error (message)
+{}
+

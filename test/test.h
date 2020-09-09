@@ -17,6 +17,13 @@
     along with libdcp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+#include "cpl.h"
+#include "data.h"
+#include "dcp.h"
+#include "reel.h"
+#include "reel_subtitle_asset.h"
+#include "subtitle.h"
 #include <boost/filesystem.hpp>
 
 namespace xmlpp {
@@ -25,6 +32,7 @@ namespace xmlpp {
 
 namespace dcp {
 	class DCP;
+	class MonoPictureAsset;
 }
 
 extern boost::filesystem::path private_test;
@@ -33,7 +41,12 @@ extern boost::filesystem::path xsd_test;
 extern void check_xml (xmlpp::Element* ref, xmlpp::Element* test, std::list<std::string> ignore);
 extern void check_xml (std::string ref, std::string test, std::list<std::string> ignore);
 extern void check_file (boost::filesystem::path ref, boost::filesystem::path check);
-extern boost::shared_ptr<dcp::DCP> make_simple (boost::filesystem::path path);
+extern boost::shared_ptr<dcp::MonoPictureAsset> simple_picture (boost::filesystem::path path, std::string suffix);
+extern boost::shared_ptr<dcp::DCP> make_simple (boost::filesystem::path path, int reels = 1);
+extern boost::shared_ptr<dcp::DCP> make_simple_with_interop_subs (boost::filesystem::path path);
+extern boost::shared_ptr<dcp::DCP> make_simple_with_smpte_subs (boost::filesystem::path path);
+extern boost::shared_ptr<dcp::DCP> make_simple_with_interop_ccaps (boost::filesystem::path path);
+extern boost::shared_ptr<dcp::DCP> make_simple_with_smpte_ccaps (boost::filesystem::path path);
 
 /** Creating an object of this class will make asdcplib's random number generation
  *  (more) predictable.

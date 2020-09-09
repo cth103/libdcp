@@ -33,16 +33,21 @@
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test
+#include "compose.hpp"
 #include "cpl.h"
 #include "dcp.h"
 #include "file.h"
+#include "interop_subtitle_asset.h"
 #include "mono_picture_asset.h"
 #include "picture_asset_writer.h"
 #include "reel.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
+#include "reel_closed_caption_asset.h"
+#include "reel_subtitle_asset.h"
 #include "sound_asset.h"
 #include "sound_asset_writer.h"
+#include "smpte_subtitle_asset.h"
 #include "test.h"
 #include "util.h"
 #include <asdcp/KM_util.h>
@@ -57,6 +62,7 @@ using std::string;
 using std::min;
 using std::list;
 using boost::shared_ptr;
+using boost::optional;
 
 boost::filesystem::path private_test;
 boost::filesystem::path xsd_test = "build/test/xsd with spaces";
@@ -202,8 +208,29 @@ RNGFixer::~RNGFixer ()
 }
 
 
+shared_ptr<dcp::MonoPictureAsset>
+simple_picture (boost::filesystem::path path, string suffix)
+{
+	dcp::MXFMetadata mxf_meta;
+	mxf_meta.company_name = "OpenDCP";
+	mxf_meta.product_name = "OpenDCP";
+	mxf_meta.product_version = "0.0.25";
+
+	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
+	mp->set_metadata (mxf_meta);
+	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write (path / dcp::String::compose("video%1.mxf", suffix), false);
+	dcp::File j2c ("test/data/32x32_red_square.j2c");
+	for (int i = 0; i < 24; ++i) {
+		picture_writer->write (j2c.data (), j2c.size ());
+	}
+	picture_writer->finalize ();
+
+	return mp;
+}
+
+
 shared_ptr<dcp::DCP>
-make_simple (boost::filesystem::path path)
+make_simple (boost::filesystem::path path, int reels)
 {
 	/* Some known metadata */
 	dcp::XMLMetadata xml_meta;
@@ -216,7 +243,6 @@ make_simple (boost::filesystem::path path)
 	mxf_meta.product_name = "OpenDCP";
 	mxf_meta.product_version = "0.0.25";
 
-	/* We're making build/test/DCP/dcp_test1 */
 	boost::filesystem::remove_all (path);
 	boost::filesystem::create_directories (path);
 	shared_ptr<dcp::DCP> d (new dcp::DCP (path));
@@ -225,45 +251,142 @@ make_simple (boost::filesystem::path path)
 	cpl->set_content_version_label_text ("content-version-label-text");
 	cpl->set_metadata (xml_meta);
 
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
-	mp->set_metadata (mxf_meta);
-	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write (path / "video.mxf", false);
-	dcp::File j2c ("test/data/32x32_red_square.j2c");
-	for (int i = 0; i < 24; ++i) {
-		picture_writer->write (j2c.data (), j2c.size ());
-	}
-	picture_writer->finalize ();
+	for (int i = 0; i < reels; ++i) {
+		string suffix = reels == 1 ? "" : dcp::String::compose("%1", i);
 
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1, dcp::SMPTE));
-	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / "audio.mxf");
+		shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (path, suffix);
 
-	SF_INFO info;
-	info.format = 0;
-	SNDFILE* sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
-	BOOST_CHECK (sndfile);
-	float buffer[4096*6];
-	float* channels[1];
-	channels[0] = buffer;
-	while (true) {
-		sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
-		sound_writer->write (channels, N);
-		if (N < 4096) {
-			break;
+		shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1, dcp::SMPTE));
+		ms->set_metadata (mxf_meta);
+		shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / dcp::String::compose("audio%1.mxf", suffix));
+
+		SF_INFO info;
+		info.format = 0;
+		SNDFILE* sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
+		BOOST_CHECK (sndfile);
+		float buffer[4096*6];
+		float* channels[1];
+		channels[0] = buffer;
+		while (true) {
+			sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
+			sound_writer->write (channels, N);
+			if (N < 4096) {
+				break;
+			}
 		}
+
+		sound_writer->finalize ();
+
+		cpl->add (shared_ptr<dcp::Reel> (
+				  new dcp::Reel (
+					  shared_ptr<dcp::ReelMonoPictureAsset>(new dcp::ReelMonoPictureAsset(mp, 0)),
+					  shared_ptr<dcp::ReelSoundAsset>(new dcp::ReelSoundAsset(ms, 0))
+					  )
+				  ));
 	}
-
-	sound_writer->finalize ();
-
-	cpl->add (shared_ptr<dcp::Reel> (
-			  new dcp::Reel (
-				  shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (mp, 0)),
-				  shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (ms, 0))
-				  )
-			  ));
 
 	d->add (cpl);
 	return d;
+}
+
+
+shared_ptr<dcp::Subtitle>
+simple_subtitle ()
+{
+	return shared_ptr<dcp::Subtitle>(
+		new dcp::SubtitleString(
+			optional<string>(),
+			false,
+			false,
+			false,
+			dcp::Colour(255, 255, 255),
+			42,
+			1,
+			dcp::Time(0, 0, 4, 0, 24),
+			dcp::Time(0, 0, 8, 0, 24),
+			0.5,
+			dcp::HALIGN_CENTER,
+			0.8,
+			dcp::VALIGN_TOP,
+			dcp::DIRECTION_LTR,
+			"Hello world",
+			dcp::NONE,
+			dcp::Colour(255, 255, 255),
+			dcp::Time(),
+			dcp::Time()
+			)
+		);
+}
+
+
+shared_ptr<dcp::DCP>
+make_simple_with_interop_subs (boost::filesystem::path path)
+{
+	shared_ptr<dcp::DCP> dcp = make_simple (path);
+
+	shared_ptr<dcp::InteropSubtitleAsset> subs(new dcp::InteropSubtitleAsset());
+	subs->add (simple_subtitle());
+
+	boost::filesystem::create_directory (path / "subs");
+	dcp::Data data(4096);
+	data.write (path / "subs" / "font.ttf");
+	subs->add_font ("afont", path / "subs" / "font.ttf");
+	subs->write (path / "subs" / "subs.xml");
+
+	shared_ptr<dcp::ReelSubtitleAsset> reel_subs(new dcp::ReelSubtitleAsset(subs, dcp::Fraction(24, 1), 240, 0));
+	dcp->cpls().front()->reels().front()->add (reel_subs);
+
+	return dcp;
+}
+
+
+shared_ptr<dcp::DCP>
+make_simple_with_smpte_subs (boost::filesystem::path path)
+{
+	shared_ptr<dcp::DCP> dcp = make_simple (path);
+
+	shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
+	subs->add (simple_subtitle());
+
+	dcp::Data data(4096);
+	subs->write (path / "subs.mxf");
+
+	shared_ptr<dcp::ReelSubtitleAsset> reel_subs(new dcp::ReelSubtitleAsset(subs, dcp::Fraction(24, 1), 240, 0));
+	dcp->cpls().front()->reels().front()->add (reel_subs);
+
+	return dcp;
+}
+
+
+shared_ptr<dcp::DCP>
+make_simple_with_interop_ccaps (boost::filesystem::path path)
+{
+	shared_ptr<dcp::DCP> dcp = make_simple (path);
+
+	shared_ptr<dcp::InteropSubtitleAsset> subs(new dcp::InteropSubtitleAsset());
+	subs->add (simple_subtitle());
+	subs->write (path / "ccap.xml");
+
+	shared_ptr<dcp::ReelClosedCaptionAsset> reel_caps(new dcp::ReelClosedCaptionAsset(subs, dcp::Fraction(24, 1), 240, 0));
+	dcp->cpls().front()->reels().front()->add (reel_caps);
+
+	return dcp;
+}
+
+
+shared_ptr<dcp::DCP>
+make_simple_with_smpte_ccaps (boost::filesystem::path path)
+{
+	shared_ptr<dcp::DCP> dcp = make_simple (path);
+
+	shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
+	subs->add (simple_subtitle());
+	subs->write (path / "ccap.mxf");
+
+	shared_ptr<dcp::ReelClosedCaptionAsset> reel_caps(new dcp::ReelClosedCaptionAsset(subs, dcp::Fraction(24, 1), 240, 0));
+	dcp->cpls().front()->reels().front()->add (reel_caps);
+
+	return dcp;
 }
 
 

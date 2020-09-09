@@ -44,6 +44,7 @@ def build(bld):
              certificate.cc
              chromaticity.cc
              colour_conversion.cc
+             combine.cc
              cpl.cc
              data.cc
              dcp.cc
@@ -122,6 +123,7 @@ def build(bld):
               certificate.h
               chromaticity.h
               colour_conversion.h
+              combine.h
               cpl.h
               crypto_context.h
               dcp.h

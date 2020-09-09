@@ -66,6 +66,7 @@ def build(bld):
                  certificates_test.cc
                  colour_test.cc
                  colour_conversion_test.cc
+                 combine_test.cc
                  cpl_sar_test.cc
                  cpl_ratings_test.cc
                  dcp_font_test.cc

@@ -240,6 +240,13 @@ private:
 	boost::optional<int> _code;
 };
 
+
+class CombineError : public std::runtime_error
+{
+public:
+	explicit CombineError (std::string message);
+};
+
 }
 
 #endif
