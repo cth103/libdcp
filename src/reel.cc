@@ -119,7 +119,7 @@ void
 Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 {
 	xmlpp::Element* reel = node->add_child ("Reel");
-	reel->add_child("Id")->add_child_text ("urn:uuid:" + make_uuid());
+	reel->add_child("Id")->add_child_text("urn:uuid:" + _id);
 	xmlpp::Element* asset_list = reel->add_child ("AssetList");
 
 	if (_main_markers) {

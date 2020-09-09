@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PackingList xmlns="http://www.smpte-ra.org/schemas/429-8/2007/PKL">
-  <Id>urn:uuid:6af1e0c1-c441-47f8-a502-3efd46b1fa4f</Id>
+  <Id>urn:uuid:93182bd2-b1e8-41a3-b5c8-6e6564273bff</Id>
   <AnnotationText>Created by libdcp</AnnotationText>
   <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
   <Issuer>OpenDCP 0.0.25</Issuer>
@@ -9,7 +9,7 @@
     <Asset>
       <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
       <AnnotationText>81fb54df-e1bf-4647-8788-ea7ba154375b</AnnotationText>
-      <Hash>dhoWJ3yykLSeAOQVOUNvMxsiljk=</Hash>
+      <Hash>9sunXON1YDsep+RAReRz3aLnadY=</Hash>
       <Size>9310</Size>
       <Type>text/xml</Type>
     </Asset>
@@ -46,15 +46,15 @@
           <dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-        <dsig:DigestValue>92Er8kJ8u9u76Fb1EUNVyeblJd0=</dsig:DigestValue>
+        <dsig:DigestValue>YZJkjLwee6xcN8jEcZcyrZ/ZSGo=</dsig:DigestValue>
       </dsig:Reference>
     </dsig:SignedInfo>
-    <dsig:SignatureValue>SdxywkzTQtRWscRC9dmEoepc2dJ9cIi/GShodKNcRAYJBpm+zqpMCJ3wDT3q+pvT
-igG/hnkMRKQlAjK1I/VBEUGfEisl8QAerme8ff+GzY9vYlPoTyGQnqrNY+JBeir7
-r46JELWAxiRa+bMM/Dw3PLrRtQ/0EtZIcPNrJ6K+VeYHjV9KaaFXB740bJ1emVtY
-BqaAyXG2gk/4v1TFf19IBNH0cwu/nwJ7Cg6Xp2dKkRqtmOITYdxV9Ro/FxPs0M4Q
-vuwoOUJQxtgs4WgvGwHAvzTkyr6E5tX7z0uh5YEbH5/IX8l1fOvMi3LHK0E77d5k
-8IdST9nHTtvpHrJgsDUI4A==</dsig:SignatureValue>
+    <dsig:SignatureValue>NQ0UGAcWKlLWt1I0Baxt1lKxc0AmfLWsJ4Hnfn2FgZ0x07gR/GwP552ZfgQDG7Cx
+/wRey1Cg7AAd6I6keV9kKyB1sPrDND6DQaXfS3ymmcaOtCcGa2Wt3hybwVWN67Uw
+EQFHAOwC5iwgTLLpW43OtBUY65qcXyVMuOgmENjiaocu+D9lTV5nraxNbFvFlBel
+0AazpjWkevFK2v32SxzINBy2yOpqEpz1vax2hYSPMGWj5anf2Bckd3HDzl9KAHYl
+WZKO56Ad49/8QMFGcbOlpAA74EgOW9jidd0HIgkyDl7tE8bFfzOfNeo9n6AcO5wF
+79YV+reJM/J0381W8OaN+Q==</dsig:SignatureValue>
     <dsig:KeyInfo>
       <dsig:X509Data>
         <dsig:X509IssuerSerial>

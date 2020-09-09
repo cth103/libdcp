@@ -14,7 +14,7 @@
   <RatingList/>
   <ReelList>
     <Reel>
-      <Id>urn:uuid:93182bd2-b1e8-41a3-b5c8-6e6564273bff</Id>
+      <Id>urn:uuid:793170e7-e913-404b-8942-1c7f2e5cf012</Id>
       <AssetList>
         <MainPicture>
           <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
@@ -59,15 +59,15 @@
           <dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-        <dsig:DigestValue>IANIEQpHSdKYpetv7vU8c9NL55g=</dsig:DigestValue>
+        <dsig:DigestValue>vUKHL/1VIgu6pX+GLoHag/nZXqQ=</dsig:DigestValue>
       </dsig:Reference>
     </dsig:SignedInfo>
-    <dsig:SignatureValue>elcV7C8ITQPME2EnZCld1/NPFi5KXzSEWGDEchEfHryc6kLx2ZY1yl/uylaHgY0R
-Z37ida9b0wPySJzr5vbTRerIHF/S2asXtGC1kgo5MWtXgATUtUe031HJ+TJPi9bj
-SD0u1V+PciElYwPRHID27kpLVgdSoq6cNoYG2w4yNvtnyF5r+n+0IiCYNMlkVqGW
-gX2Lfa/Oy8bJbioOo5yHt+6sFSPAp7GJdTEtzOEiKAkaLpymAB7N3L3gW2qS6OnL
-2KspdXdR3WKqPEprf3A0OtWTjbfsuvsyleCl/gw4O2dMRFbc1R0OutsWVw1h8PXl
-UtAYFxwdlY7ile2ZCelQMA==</dsig:SignatureValue>
+    <dsig:SignatureValue>DWmEtKozmtao3qdXOU7kQze+SIRh8gml2OrliFT+8U9xjBbUdLXWBPgTQuuVPI8u
+iHxVoc7cLKxOGuB7EXMl1EWwsm62y+I6/NEWfjV8EKkgHuhGE0TV/++5E0i/Dg/q
+Eq1whVbQ/EorYUea0/mW2UAgovKiz0MwQgyQb6Jgpy0O3PuNDrSlWeo3DUTFQiF8
+saaliNHSNXC8DEoNDnfSzAesL9jt6W4IEDPQp0rean7u4/0EhISlFMvea2YFiuCo
++/IZtb2tWtHMLx4mU7g1eLeGcNc2fWSygAs+pdPemoFX82r7Y9YTepZAbwhrvhFk
+kkgV/08P+RZE3ftF1pQ00g==</dsig:SignatureValue>
     <dsig:KeyInfo>
       <dsig:X509Data>
         <dsig:X509IssuerSerial>

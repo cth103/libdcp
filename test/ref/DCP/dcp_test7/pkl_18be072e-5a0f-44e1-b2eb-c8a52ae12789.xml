@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<PackingList xmlns="http://www.smpte-ra.org/schemas/429-8/2007/PKL">
-  <Id>urn:uuid:48db27c3-4964-46a2-8b02-3e5570efb42d</Id>
+<PackingList xmlns="http://www.digicine.com/PROTO-ASDCP-PKL-20040311#">
+  <Id>urn:uuid:18be072e-5a0f-44e1-b2eb-c8a52ae12789</Id>
   <AnnotationText>Created by libdcp</AnnotationText>
   <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
   <Issuer>OpenDCP 0.0.25</Issuer>
@@ -9,23 +9,23 @@
     <Asset>
       <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
       <AnnotationText>81fb54df-e1bf-4647-8788-ea7ba154375b</AnnotationText>
-      <Hash>yymWSY7jL4TWqI1Sy/Q2oUK1GX8=</Hash>
-      <Size>2152</Size>
-      <Type>text/xml</Type>
+      <Hash>6pwcsW6Ysnzp0U5khSsM4vYe5bM=</Hash>
+      <Size>1587</Size>
+      <Type>text/xml;asdcpKind=CPL</Type>
     </Asset>
     <Asset>
       <Id>urn:uuid:1fab8bb0-cfaf-4225-ad6d-01768bc10470</Id>
       <AnnotationText>1fab8bb0-cfaf-4225-ad6d-01768bc10470</AnnotationText>
       <Hash>1uPB643nrQfpY+Y0AypGko+PiPE=</Hash>
       <Size>26080</Size>
-      <Type>application/mxf</Type>
+      <Type>application/x-smpte-mxf;asdcpKind=Picture</Type>
     </Asset>
     <Asset>
       <Id>urn:uuid:9482e87d-292d-4e0e-a98d-c61822b60fe9</Id>
       <AnnotationText>9482e87d-292d-4e0e-a98d-c61822b60fe9</AnnotationText>
       <Hash>ifmC1P7fjigb1oVxx6xs3Paz/GY=</Hash>
       <Size>161326</Size>
-      <Type>application/mxf</Type>
+      <Type>application/x-smpte-mxf;asdcpKind=Sound</Type>
     </Asset>
   </AssetList>
 </PackingList>

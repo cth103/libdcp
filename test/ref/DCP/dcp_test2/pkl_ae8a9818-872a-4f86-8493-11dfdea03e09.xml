@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PackingList xmlns="http://www.smpte-ra.org/schemas/429-8/2007/PKL">
-  <Id>urn:uuid:74e205d0-d145-42d2-8c49-7b55d058ca55</Id>
+  <Id>urn:uuid:ae8a9818-872a-4f86-8493-11dfdea03e09</Id>
   <AnnotationText>Created by libdcp</AnnotationText>
   <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
   <Issuer>OpenDCP 0.0.25</Issuer>
@@ -9,7 +9,7 @@
     <Asset>
       <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
       <AnnotationText>81fb54df-e1bf-4647-8788-ea7ba154375b</AnnotationText>
-      <Hash>pqdZpLFIn6kcClkACI9VLGCzNgk=</Hash>
+      <Hash>hBXFu2pGlUzKmLLNe6LLkqIOnoA=</Hash>
       <Size>1770</Size>
       <Type>text/xml</Type>
     </Asset>
