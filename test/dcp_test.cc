@@ -336,7 +336,7 @@ BOOST_AUTO_TEST_CASE (dcp_test7)
 	/* build/test/DCP/dcp_test7 is checked against test/ref/DCP/dcp_test7 by run/tests */
 }
 
-/** Test reading of a DCP with multiple PKLs */
+/** Test reading of a DCP with multiple CPLs */
 BOOST_AUTO_TEST_CASE (dcp_test8)
 {
 	dcp::DCP dcp (private_test / "data/SMPTE_TST-B1PB2P_S_EN-EN-CCAP_5171-HI-VI_2K_ISDCF_20151123_DPPT_SMPTE_combo/");
