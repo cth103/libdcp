@@ -33,4 +33,4 @@
 
 #include "exceptions.h"
 
-#define DCP_ASSERT(x) if (!(x)) throw ProgrammingError (__FILE__, __LINE__);
+#define DCP_ASSERT(x) if (!(x)) throw dcp::ProgrammingError (__FILE__, __LINE__);
