@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -33,10 +33,21 @@
 
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE libdcp_test
-#include "util.h"
+#include "cpl.h"
+#include "dcp.h"
+#include "file.h"
+#include "mono_picture_asset.h"
+#include "picture_asset_writer.h"
+#include "reel.h"
+#include "reel_mono_picture_asset.h"
+#include "reel_sound_asset.h"
+#include "sound_asset.h"
+#include "sound_asset_writer.h"
 #include "test.h"
+#include "util.h"
 #include <asdcp/KM_util.h>
 #include <asdcp/KM_prng.h>
+#include <sndfile.h>
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
 #include <cstdio>
@@ -45,6 +56,7 @@
 using std::string;
 using std::min;
 using std::list;
+using boost::shared_ptr;
 
 boost::filesystem::path private_test;
 boost::filesystem::path xsd_test = "build/test/xsd with spaces";
@@ -187,6 +199,71 @@ RNGFixer::RNGFixer ()
 RNGFixer::~RNGFixer ()
 {
 	Kumu::cth_test = false;
+}
+
+
+shared_ptr<dcp::DCP>
+make_simple (boost::filesystem::path path)
+{
+	/* Some known metadata */
+	dcp::XMLMetadata xml_meta;
+	xml_meta.annotation_text = "A Test DCP";
+	xml_meta.issuer = "OpenDCP 0.0.25";
+	xml_meta.creator = "OpenDCP 0.0.25";
+	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
+	dcp::MXFMetadata mxf_meta;
+	mxf_meta.company_name = "OpenDCP";
+	mxf_meta.product_name = "OpenDCP";
+	mxf_meta.product_version = "0.0.25";
+
+	/* We're making build/test/DCP/dcp_test1 */
+	boost::filesystem::remove_all (path);
+	boost::filesystem::create_directories (path);
+	shared_ptr<dcp::DCP> d (new dcp::DCP (path));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
+	cpl->set_content_version_id ("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11");
+	cpl->set_content_version_label_text ("content-version-label-text");
+	cpl->set_metadata (xml_meta);
+
+	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
+	mp->set_metadata (mxf_meta);
+	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write (path / "video.mxf", false);
+	dcp::File j2c ("test/data/32x32_red_square.j2c");
+	for (int i = 0; i < 24; ++i) {
+		picture_writer->write (j2c.data (), j2c.size ());
+	}
+	picture_writer->finalize ();
+
+	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1, dcp::SMPTE));
+	ms->set_metadata (mxf_meta);
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / "audio.mxf");
+
+	SF_INFO info;
+	info.format = 0;
+	SNDFILE* sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
+	BOOST_CHECK (sndfile);
+	float buffer[4096*6];
+	float* channels[1];
+	channels[0] = buffer;
+	while (true) {
+		sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
+		sound_writer->write (channels, N);
+		if (N < 4096) {
+			break;
+		}
+	}
+
+	sound_writer->finalize ();
+
+	cpl->add (shared_ptr<dcp::Reel> (
+			  new dcp::Reel (
+				  shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (mp, 0)),
+				  shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (ms, 0))
+				  )
+			  ));
+
+	d->add (cpl);
+	return d;
 }
 
 
