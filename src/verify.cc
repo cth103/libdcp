@@ -628,17 +628,17 @@ dcp::note_to_string (dcp::VerificationNote note)
 	case dcp::VerificationNote::GENERAL_READ:
 		return *note.note();
 	case dcp::VerificationNote::CPL_HASH_INCORRECT:
-		return "The hash of the CPL in the PKL does not agree with the CPL file";
+		return "The hash of the CPL in the PKL does not agree with the CPL file.";
 	case dcp::VerificationNote::INVALID_PICTURE_FRAME_RATE:
-		return "The picture in a reel has an invalid frame rate";
+		return "The picture in a reel has an invalid frame rate.";
 	case dcp::VerificationNote::PICTURE_HASH_INCORRECT:
-		return dcp::String::compose("The hash of the picture asset %1 does not agree with the PKL file", note.file()->filename());
+		return dcp::String::compose("The hash of the picture asset %1 does not agree with the PKL file.", note.file()->filename());
 	case dcp::VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE:
-		return dcp::String::compose("The PKL and CPL hashes disagree for the picture asset %1", note.file()->filename());
+		return dcp::String::compose("The PKL and CPL hashes disagree for the picture asset %1.", note.file()->filename());
 	case dcp::VerificationNote::SOUND_HASH_INCORRECT:
-		return dcp::String::compose("The hash of the sound asset %1 does not agree with the PKL file", note.file()->filename());
+		return dcp::String::compose("The hash of the sound asset %1 does not agree with the PKL file.", note.file()->filename());
 	case dcp::VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE:
-		return dcp::String::compose("The PKL and CPL hashes disagree for the sound asset %1", note.file()->filename());
+		return dcp::String::compose("The PKL and CPL hashes disagree for the sound asset %1.", note.file()->filename());
 	case dcp::VerificationNote::EMPTY_ASSET_PATH:
 		return "The asset map contains an empty asset path.";
 	case dcp::VerificationNote::MISSING_ASSET:
@@ -648,17 +648,17 @@ dcp::note_to_string (dcp::VerificationNote note)
 	case dcp::VerificationNote::XML_VALIDATION_ERROR:
 		return String::compose("An XML file is badly formed: %1 (%2:%3)", note.note().get(), note.file()->filename(), note.line().get());
 	case dcp::VerificationNote::MISSING_ASSETMAP:
-		return "No ASSETMAP or ASSETMAP.xml was found";
+		return "No ASSETMAP or ASSETMAP.xml was found.";
 	case dcp::VerificationNote::INTRINSIC_DURATION_TOO_SMALL:
 		return String::compose("The intrinsic duration of an asset is less than 1 second long: %1", note.note().get());
 	case dcp::VerificationNote::DURATION_TOO_SMALL:
 		return String::compose("The duration of an asset is less than 1 second long: %1", note.note().get());
 	case dcp::VerificationNote::PICTURE_FRAME_TOO_LARGE:
-		return String::compose("The instantaneous bit rate of the picture asset %1 is larger than the limit of 250Mbit/s in at least one place", note.file()->filename());
+		return String::compose("The instantaneous bit rate of the picture asset %1 is larger than the limit of 250Mbit/s in at least one place.", note.file()->filename());
 	case dcp::VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE:
-		return String::compose("The instantaneous bit rate of the picture asset %1 is close to the limit of 250Mbit/s in at least one place", note.file()->filename());
+		return String::compose("The instantaneous bit rate of the picture asset %1 is close to the limit of 250Mbit/s in at least one place.", note.file()->filename());
 	case dcp::VerificationNote::EXTERNAL_ASSET:
-		return "An asset that this DCP refers to is not included in the DCP.  It may be a VF.";
+		return String::compose("An asset that this DCP refers to is not included in the DCP.  It may be a VF.  Missing asset is %1.", note.note().get());
 	}
 
 	return "";
