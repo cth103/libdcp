@@ -95,6 +95,7 @@ public:
 	virtual void add (boost::shared_ptr<Subtitle>);
 	virtual void add_font (std::string id, boost::filesystem::path file) = 0;
 	std::map<std::string, Data> font_data () const;
+	std::map<std::string, boost::filesystem::path> font_filenames () const;
 
 	virtual void write (boost::filesystem::path) const = 0;
 	virtual std::string xml_as_string () const = 0;

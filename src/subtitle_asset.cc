@@ -657,6 +657,20 @@ SubtitleAsset::font_data () const
 	return out;
 }
 
+
+map<string, boost::filesystem::path>
+SubtitleAsset::font_filenames () const
+{
+	map<string, boost::filesystem::path> out;
+	BOOST_FOREACH (Font const& i, _fonts) {
+		if (i.file) {
+			out[i.load_id] = *i.file;
+		}
+	}
+	return out;
+}
+
+
 /** Replace empty IDs in any <LoadFontId> and <Font> tags with
  *  a dummy string.  Some systems give errors with empty font IDs
  *  (see DCP-o-matic bug #1689).
