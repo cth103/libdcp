@@ -276,3 +276,21 @@ InteropSubtitleAsset::add_to_pkl (shared_ptr<PKL> pkl, boost::filesystem::path r
 		}
 	}
 }
+
+
+void
+InteropSubtitleAsset::set_font_file (string load_id, boost::filesystem::path file)
+{
+	BOOST_FOREACH (Font& i, _fonts) {
+		if (i.load_id == load_id) {
+			i.file = file;
+		}
+	}
+
+	BOOST_FOREACH (shared_ptr<InteropLoadFontNode> i, _load_font_nodes) {
+		if (i->id == load_id) {
+			i->uri = file.filename().string();
+		}
+	}
+}
+

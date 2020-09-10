@@ -70,6 +70,7 @@ public:
 	void write (boost::filesystem::path path) const;
 	void resolve_fonts (std::list<boost::shared_ptr<Asset> > assets);
 	void add_font_assets (std::list<boost::shared_ptr<Asset> >& assets);
+	void set_font_file (std::string load_id, boost::filesystem::path file);
 
 	/** Set the reel number or sub-element identifier
 	 *  of these subtitles.
