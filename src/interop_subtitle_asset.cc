@@ -198,19 +198,14 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 	/* Fonts */
 	BOOST_FOREACH (shared_ptr<InteropLoadFontNode> i, _load_font_nodes) {
 		boost::filesystem::path file = p.parent_path() / i->uri;
-		FILE* f = fopen_boost (file, "wb");
-		if (!f) {
-			throw FileError ("could not open font file for writing", file, errno);
-		}
 		list<Font>::const_iterator j = _fonts.begin ();
 		while (j != _fonts.end() && j->load_id != i->id) {
 			++j;
 		}
 		if (j != _fonts.end ()) {
-			fwrite (j->data.data().get(), 1, j->data.size(), f);
+			j->data.write (file);
 			j->file = file;
 		}
-		fclose (f);
 	}
 }
 
