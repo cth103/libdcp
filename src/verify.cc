@@ -203,6 +203,7 @@ public:
 		add("http://www.digicine.com/PROTO-ASDCP-CPL-20040511.xsd", "PROTO-ASDCP-CPL-20040511.xsd");
 		add("http://www.digicine.com/PROTO-ASDCP-PKL-20040311.xsd", "PROTO-ASDCP-PKL-20040311.xsd");
 		add("http://www.digicine.com/PROTO-ASDCP-AM-20040311.xsd", "PROTO-ASDCP-AM-20040311.xsd");
+		add("http://www.digicine.com/PROTO-ASDCP-CC-CPL-20070926#", "PROTO-ASDCP-CC-CPL-20070926.xsd");
 		add("interop-subs", "DCSubtitle.v1.mattsson.xsd");
 		add("http://www.smpte-ra.org/schemas/428-7/2010/DCST.xsd", "SMPTE-428-7-2010-DCST.xsd");
 	}
@@ -276,6 +277,7 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, list<Verificatio
 		schema.push_back("PROTO-ASDCP-AM-20040311.xsd");
 		schema.push_back("DCSubtitle.v1.mattsson.xsd");
 		schema.push_back("DCDMSubtitle-2010.xsd");
+		schema.push_back("PROTO-ASDCP-CC-CPL-20070926.xsd");
 
 		/* XXX: I'm not especially clear what this is for, but it seems to be necessary */
 		string locations;

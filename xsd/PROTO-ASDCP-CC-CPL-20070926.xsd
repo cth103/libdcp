@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.digicine.com/PROTO-ASDCP-CC-CPL-20070926#" xmlns:cpl="http://www.digicine.com/PROTO-ASDCP-CPL-20040511#" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://www.digicine.com/PROTO-ASDCP-CPL-20040511#" schemaLocation="http://www.digicine.com/PROTO-ASDCP-CPL-20040511.xsd"/>
+  <!--MainClosedCaption-->
+  <xs:element name="MainClosedCaption" type="cpl:SubtitleTrackFileAssetType"/>
+</xs:schema>

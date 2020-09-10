@@ -245,6 +245,7 @@ def build(bld):
               'PROTO-ASDCP-CPL-20040511.xsd',
               'PROTO-ASDCP-PKL-20040311.xsd',
               'PROTO-ASDCP-AM-20040311.xsd',
+              'PROTO-ASDCP-CC-CPL-20070926.xsd',
               'Main-Stereo-Picture-CPL.xsd',
               'DCSubtitle.v1.mattsson.xsd',
               'DCDMSubtitle-2010.xsd' ]:
