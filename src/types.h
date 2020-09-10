@@ -206,6 +206,7 @@ struct EqualityOptions
 		, reel_annotation_texts_can_differ (false)
 		, reel_hashes_can_differ (false)
 		, issue_dates_can_differ (false)
+		, load_font_nodes_can_differ (false)
 		, keep_going (false)
 	{}
 
@@ -223,6 +224,7 @@ struct EqualityOptions
 	bool reel_hashes_can_differ;
 	/** true if IssueDate nodes can differ */
 	bool issue_dates_can_differ;
+	bool load_font_nodes_can_differ;
 	bool keep_going;
 };
 

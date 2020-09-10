@@ -137,22 +137,24 @@ InteropSubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptio
 		return false;
 	}
 
-	list<shared_ptr<InteropLoadFontNode> >::const_iterator i = _load_font_nodes.begin ();
-	list<shared_ptr<InteropLoadFontNode> >::const_iterator j = other->_load_font_nodes.begin ();
+	if (!options.load_font_nodes_can_differ) {
+		list<shared_ptr<InteropLoadFontNode> >::const_iterator i = _load_font_nodes.begin ();
+		list<shared_ptr<InteropLoadFontNode> >::const_iterator j = other->_load_font_nodes.begin ();
 
-	while (i != _load_font_nodes.end ()) {
-		if (j == other->_load_font_nodes.end ()) {
-			note (DCP_ERROR, "<LoadFont> nodes differ");
-			return false;
+		while (i != _load_font_nodes.end ()) {
+			if (j == other->_load_font_nodes.end ()) {
+				note (DCP_ERROR, "<LoadFont> nodes differ");
+				return false;
+			}
+
+			if (**i != **j) {
+				note (DCP_ERROR, "<LoadFont> nodes differ");
+				return false;
+			}
+
+			++i;
+			++j;
 		}
-
-		if (**i != **j) {
-			note (DCP_ERROR, "<LoadFont> nodes differ");
-			return false;
-		}
-
-		++i;
-		++j;
 	}
 
 	if (_movie_title != other->_movie_title) {
