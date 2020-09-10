@@ -234,7 +234,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 				}
 				_cpls.push_back (cpl);
 			} else if (root == "DCSubtitle") {
-				if (_standard && _standard.get() == SMPTE) {
+				if (_standard && _standard.get() == SMPTE && notes) {
 					notes->push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_STANDARD));
 				}
 				other_assets.push_back (shared_ptr<InteropSubtitleAsset> (new InteropSubtitleAsset (path)));
