@@ -648,7 +648,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 }
 
 map<string, Data>
-SubtitleAsset::fonts_with_load_ids () const
+SubtitleAsset::font_data () const
 {
 	map<string, Data> out;
 	BOOST_FOREACH (Font const & i, _fonts) {
