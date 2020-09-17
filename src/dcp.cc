@@ -507,12 +507,23 @@ DCP::assets (bool ignore_unresolved) const
 			if (ignore_unresolved && !j->asset_ref().resolved()) {
 				continue;
 			}
-			shared_ptr<Asset> o = j->asset_ref().asset ();
-			assets.push_back (o);
-			/* More Interop special-casing */
-			shared_ptr<InteropSubtitleAsset> sub = dynamic_pointer_cast<InteropSubtitleAsset> (o);
-			if (sub) {
-				sub->add_font_assets (assets);
+
+			string const id = j->asset_ref().id();
+			bool already_got = false;
+			BOOST_FOREACH (shared_ptr<Asset> k, assets) {
+				if (k->id() == id) {
+					already_got = true;
+				}
+			}
+
+			if (!already_got) {
+				shared_ptr<Asset> o = j->asset_ref().asset();
+				assets.push_back (o);
+				/* More Interop special-casing */
+				shared_ptr<InteropSubtitleAsset> sub = dynamic_pointer_cast<InteropSubtitleAsset> (o);
+				if (sub) {
+					sub->add_font_assets (assets);
+				}
 			}
 		}
 	}
