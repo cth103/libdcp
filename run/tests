@@ -106,13 +106,13 @@ if [ "$?" != "0" ]; then
     exit 1
 fi
 
-# Copy $private into build/ then re-write the subtitles of every DCP using
-# $work/rewrite_subs.  This tests round-trip of subtitle reading/writing.
-# Note that all the subs in $private/metadata are Interop.
+# Copy $private/metadata into build/metadata then re-write the subtitles
+# of every DCP using $work/rewrite_subs.  This tests round-trip of
+# subtitle reading/writing.
 rm -f $work/info2.log
 rm -rf $work/private
 mkdir $work/private
-cp -r $private/* $work/private
+cp -r $private/metadata $work/private/
 for d in `find $work/private/metadata -mindepth 1 -maxdepth 1 -type d | sort -f -d`; do
     if [ `basename $d` != ".git" ]; then
         $work/rewrite_subs $d
