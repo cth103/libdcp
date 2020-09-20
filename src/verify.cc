@@ -103,6 +103,8 @@ public:
 		: _message (xml_ch_to_string(e.getMessage()))
 		, _line (e.getLineNumber())
 		, _column (e.getColumnNumber())
+		, _public_id (e.getPublicId() ? xml_ch_to_string(e.getPublicId()) : "")
+		, _system_id (e.getSystemId() ? xml_ch_to_string(e.getSystemId()) : "")
 	{
 
 	}
@@ -119,10 +121,20 @@ public:
 		return _column;
 	}
 
+	string public_id () const {
+		return _public_id;
+	}
+
+	string system_id () const {
+		return _system_id;
+	}
+
 private:
 	string _message;
 	uint64_t _line;
 	uint64_t _column;
+	string _public_id;
+	string _system_id;
 };
 
 
@@ -333,7 +345,7 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, list<Verificatio
 				VerificationNote::VERIFY_ERROR,
 				VerificationNote::XML_VALIDATION_ERROR,
 				i.message(),
-				xml,
+				boost::trim_copy(i.public_id() + " " + i.system_id()),
 				i.line()
 				)
 			);
