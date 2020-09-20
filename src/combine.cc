@@ -94,7 +94,15 @@ create_hard_link_or_copy (boost::filesystem::path from, boost::filesystem::path 
 
 
 void
-dcp::combine (vector<boost::filesystem::path> inputs, boost::filesystem::path output, shared_ptr<const CertificateChain> signer)
+dcp::combine (
+	vector<boost::filesystem::path> inputs,
+	boost::filesystem::path output,
+	string issuer,
+	string creator,
+	string issue_date,
+	string annotation_text,
+	shared_ptr<const CertificateChain> signer
+	)
 {
 	using namespace boost::filesystem;
 
@@ -161,5 +169,5 @@ dcp::combine (vector<boost::filesystem::path> inputs, boost::filesystem::path ou
 	}
 
 	output_dcp.resolve_refs (assets);
-	output_dcp.write_xml (*standard, dcp::XMLMetadata(), signer);
+	output_dcp.write_xml (*standard, issuer, creator, issue_date, annotation_text, signer);
 }

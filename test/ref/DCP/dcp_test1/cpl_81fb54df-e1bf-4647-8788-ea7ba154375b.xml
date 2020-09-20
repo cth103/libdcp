@@ -14,7 +14,7 @@
   <RatingList/>
   <ReelList>
     <Reel>
-      <Id>urn:uuid:8e293965-f8ad-48c6-971d-261b01f65cdb</Id>
+      <Id>urn:uuid:48db27c3-4964-46a2-8b02-3e5570efb42d</Id>
       <AssetList>
         <MainPicture>
           <Id>urn:uuid:1fab8bb0-cfaf-4225-ad6d-01768bc10470</Id>
@@ -34,7 +34,7 @@
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
           <Duration>24</Duration>
-          <Hash>ifmC1P7fjigb1oVxx6xs3Paz/GY=</Hash>
+          <Hash>cb1OLhgHG9svy7G8hoTSPpltzhw=</Hash>
         </MainSound>
       </AssetList>
     </Reel>

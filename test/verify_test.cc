@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, xsd_test);
 
 	boost::filesystem::path const cpl_file = "build/test/verify_test1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
-	boost::filesystem::path const pkl_file = "build/test/verify_test1/pkl_18be072e-5a0f-44e1-b2eb-c8a52ae12789.xml";
+	boost::filesystem::path const pkl_file = "build/test/verify_test1/pkl_cd49971e-bf4c-4594-8474-54ebef09a40c.xml";
 	boost::filesystem::path const assetmap_file = "build/test/verify_test1/ASSETMAP.xml";
 
 	list<pair<string, optional<boost::filesystem::path> > >::const_iterator st = stages.begin();
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE (verify_test2)
 
 	mod = fopen("build/test/verify_test2/audio.mxf", "r+b");
 	BOOST_REQUIRE (mod);
-	fseek (mod, 4096, SEEK_SET);
+	BOOST_REQUIRE_EQUAL (fseek(mod, -64, SEEK_END), 0);
 	BOOST_REQUIRE (fwrite (&x, sizeof(x), 1, mod) == 1);
 	fclose (mod);
 
@@ -218,7 +218,7 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 	vector<boost::filesystem::path> directories = setup (1, 3);
 
 	{
-		Editor e ("build/test/verify_test3/pkl_18be072e-5a0f-44e1-b2eb-c8a52ae12789.xml");
+		Editor e ("build/test/verify_test3/pkl_cd49971e-bf4c-4594-8474-54ebef09a40c.xml");
 		e.replace ("<Hash>", "<Hash>x");
 	}
 
@@ -274,7 +274,7 @@ static
 boost::filesystem::path
 pkl (int n)
 {
-	return dcp::String::compose("build/test/verify_test%1/pkl_18be072e-5a0f-44e1-b2eb-c8a52ae12789.xml", n);
+	return dcp::String::compose("build/test/verify_test%1/pkl_cd49971e-bf4c-4594-8474-54ebef09a40c.xml", n);
 }
 
 static
@@ -425,7 +425,7 @@ BOOST_AUTO_TEST_CASE (verify_test11)
 {
 	check_after_replace (
 		11, &pkl,
-		"<Id>urn:uuid:18b", "<Id>urn:uuid:x8b",
+		"<Id>urn:uuid:cd4", "<Id>urn:uuid:xd4",
 		dcp::VerificationNote::XML_VALIDATION_ERROR
 		);
 }
@@ -435,7 +435,7 @@ BOOST_AUTO_TEST_CASE (verify_test12)
 {
 	check_after_replace (
 		12, &asset_map,
-		"<Id>urn:uuid:ae8", "<Id>urn:uuid:xe8",
+		"<Id>urn:uuid:63c", "<Id>urn:uuid:x3c",
 		dcp::VerificationNote::XML_VALIDATION_ERROR
 		);
 }

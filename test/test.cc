@@ -67,6 +67,7 @@
 using std::string;
 using std::min;
 using std::list;
+using std::vector;
 using boost::shared_ptr;
 using boost::optional;
 
@@ -247,11 +248,6 @@ shared_ptr<dcp::DCP>
 make_simple (boost::filesystem::path path, int reels)
 {
 	/* Some known metadata */
-	dcp::XMLMetadata xml_meta;
-	xml_meta.annotation_text = "A Test DCP";
-	xml_meta.issuer = "OpenDCP 0.0.25";
-	xml_meta.creator = "OpenDCP 0.0.25";
-	xml_meta.issue_date = "2012-07-17T04:45:18+00:00";
 	dcp::MXFMetadata mxf_meta;
 	mxf_meta.company_name = "OpenDCP";
 	mxf_meta.product_name = "OpenDCP";
@@ -261,18 +257,24 @@ make_simple (boost::filesystem::path path, int reels)
 	boost::filesystem::create_directories (path);
 	shared_ptr<dcp::DCP> d (new dcp::DCP (path));
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
-	cpl->set_content_version_id ("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11");
-	cpl->set_content_version_label_text ("content-version-label-text");
-	cpl->set_metadata (xml_meta);
+	cpl->set_annotation_text ("A Test DCP");
+	cpl->set_issuer ("OpenDCP 0.0.25");
+	cpl->set_creator ("OpenDCP 0.0.25");
+	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
+	cpl->set_content_version (
+		dcp::ContentVersion("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11", "content-version-label-text")
+		);
 
 	for (int i = 0; i < reels; ++i) {
 		string suffix = reels == 1 ? "" : dcp::String::compose("%1", i);
 
 		shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (path, suffix);
 
-		shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1, dcp::SMPTE));
+		shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-US"), dcp::SMPTE));
 		ms->set_metadata (mxf_meta);
-		shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / dcp::String::compose("audio%1.mxf", suffix));
+		vector<dcp::Channel> active_channels;
+		active_channels.push_back (dcp::LEFT);
+		shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / dcp::String::compose("audio%1.mxf", suffix), active_channels);
 
 		SF_INFO info;
 		info.format = 0;

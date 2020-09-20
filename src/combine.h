@@ -32,6 +32,8 @@
 */
 
 
+#include "compose.hpp"
+#include "version.h"
 #include <boost/filesystem.hpp>
 
 
@@ -39,7 +41,15 @@ namespace dcp {
 
 class CertificateChain;
 
-void combine (std::vector<boost::filesystem::path> inputs, boost::filesystem::path output, boost::shared_ptr<const CertificateChain> signer = boost::shared_ptr<CertificateChain>());
+void combine (
+	std::vector<boost::filesystem::path> inputs,
+	boost::filesystem::path output,
+	std::string issuer = String::compose("libdcp %1", dcp::version),
+	std::string creator = String::compose("libdcp %1", dcp::version),
+	std::string issue_date = LocalTime().as_string(),
+	std::string annotation_text = String::compose("Created by libdcp %1", dcp::version),
+	boost::shared_ptr<const CertificateChain> signer = boost::shared_ptr<CertificateChain>()
+	);
 
 }
 
