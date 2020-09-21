@@ -61,6 +61,8 @@ help (string n)
 int
 main (int argc, char* argv[])
 {
+	dcp::init ();
+
 	bool extract_fonts = true;
 	optional<boost::filesystem::path> kdm_file;
 	optional<boost::filesystem::path> private_key_file;

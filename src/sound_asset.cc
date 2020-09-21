@@ -57,6 +57,7 @@ using boost::shared_ptr;
 using boost::dynamic_pointer_cast;
 using namespace dcp;
 
+
 SoundAsset::SoundAsset (boost::filesystem::path file)
 	: Asset (file)
 	/* XXX: this is a fallback language, which will be used if we can't find the RFC5646SpokenLanguage
@@ -89,7 +90,7 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 
 	ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield;
 	ASDCP::Result_t rr = reader.OP1aHeader().GetMDObjectByType(
-		ASDCP::DefaultSMPTEDict().ul(ASDCP::MDD_SoundfieldGroupLabelSubDescriptor),
+		asdcp_smpte_dict->ul(ASDCP::MDD_SoundfieldGroupLabelSubDescriptor),
 		reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&soundfield)
 		);
 

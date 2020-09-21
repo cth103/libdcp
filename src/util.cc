@@ -76,6 +76,13 @@ using boost::function;
 using boost::algorithm::trim;
 using namespace dcp;
 
+
+/* Some ASDCP objects store this as a *&, for reasons which are not
+ * at all clear, so we have to keep this around forever.
+ */
+ASDCP::Dictionary const* dcp::asdcp_smpte_dict = 0;
+
+
 /** Create a UUID.
  *  @return UUID.
  */
@@ -164,7 +171,7 @@ dcp::empty_or_white_space (string s)
 	return true;
 }
 
-/** Set up various bits that the library needs.  Should be called one
+/** Set up various bits that the library needs.  Should be called once
  *  by client applications.
  */
 void
@@ -189,6 +196,8 @@ dcp::init ()
 	}
 
 	OpenSSL_add_all_algorithms();
+
+	asdcp_smpte_dict = &ASDCP::DefaultSMPTEDict();
 }
 
 /** Decode a base64 string.  The base64 decode routine in KM_util.cpp

@@ -65,6 +65,8 @@ void progress (float f)
 int
 main (int argc, char* argv[])
 {
+	dcp::init ();
+
 	int option_index = 0;
 	optional<boost::filesystem::path> output;
 	while (true) {

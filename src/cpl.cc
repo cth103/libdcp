@@ -72,6 +72,7 @@ static string const mca_sub_descriptors_ns = "http://isdcf.com/ns/cplmd/mca";
 static string const smpte_395_ns = "http://www.smpte-ra.org/reg/395/2014/13/1/aaf";
 static string const smpte_335_ns = "http://www.smpte-ra.org/reg/335/2012";
 
+
 CPL::CPL (string annotation_text, ContentKind content_kind)
 	/* default _content_title_text to annotation_text */
 	: _issuer ("libdcp" LIBDCP_VERSION)
@@ -405,7 +406,7 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 			shared_ptr<SoundAssetReader> reader = asset->start_read ();
 			ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield;
 			ASDCP::Result_t r = reader->reader()->OP1aHeader().GetMDObjectByType(
-				ASDCP::DefaultSMPTEDict().ul(ASDCP::MDD_SoundfieldGroupLabelSubDescriptor),
+				asdcp_smpte_dict->ul(ASDCP::MDD_SoundfieldGroupLabelSubDescriptor),
 				reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&soundfield)
 				);
 			if (KM_SUCCESS(r)) {
@@ -434,7 +435,7 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 
 				list<ASDCP::MXF::InterchangeObject*> channels;
 				ASDCP::Result_t r = reader->reader()->OP1aHeader().GetMDObjectsByType(
-					ASDCP::DefaultSMPTEDict().ul(ASDCP::MDD_AudioChannelLabelSubDescriptor),
+					asdcp_smpte_dict->ul(ASDCP::MDD_AudioChannelLabelSubDescriptor),
 					channels
 					);
 

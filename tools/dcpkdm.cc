@@ -64,6 +64,8 @@ int
 main (int argc, char* argv[])
 try
 {
+	dcp::init ();
+
 	optional<boost::filesystem::path> private_key_file;
 
 	int option_index = 0;

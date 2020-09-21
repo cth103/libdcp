@@ -283,6 +283,8 @@ main_subtitle (vector<string> const& only, shared_ptr<Reel> reel, bool list_subt
 int
 main (int argc, char* argv[])
 {
+	dcp::init ();
+
 	bool subtitles = false;
 	bool picture = false;
 	bool decompress = false;

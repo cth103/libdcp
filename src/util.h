@@ -82,6 +82,7 @@ extern void indent (xmlpp::Element* element, int initial);
 extern bool day_less_than_or_equal (LocalTime a, LocalTime b);
 extern bool day_greater_than_or_equal (LocalTime a, LocalTime b);
 extern std::string unique_string (std::list<std::string> existing, std::string base);
+extern ASDCP::Dictionary const* asdcp_smpte_dict;
 
 
 class ASDCPErrorSuspender

@@ -51,12 +51,6 @@ using std::vector;
 using namespace dcp;
 
 
-/* Some ASDCP objects store this as a *&, for reasons which are not
- * at all clear, so we have to keep this around forever.
- */
-static ASDCP::Dictionary const* smpte_dict = &ASDCP::DefaultSMPTEDict();
-
-
 struct SoundAssetWriter::ASDCPState
 {
 	ASDCP::PCM::MXFWriter mxf_writer;
@@ -124,12 +118,12 @@ SoundAssetWriter::start ()
 
 		ASDCP::MXF::WaveAudioDescriptor* essence_descriptor = 0;
 		_state->mxf_writer.OP1aHeader().GetMDObjectByType(
-			smpte_dict->ul(ASDCP::MDD_WaveAudioDescriptor), reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&essence_descriptor)
+			asdcp_smpte_dict->ul(ASDCP::MDD_WaveAudioDescriptor), reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&essence_descriptor)
 			);
 		DCP_ASSERT (essence_descriptor);
-		essence_descriptor->ChannelAssignment = smpte_dict->ul(ASDCP::MDD_DCAudioChannelCfg_MCA);
+		essence_descriptor->ChannelAssignment = asdcp_smpte_dict->ul(ASDCP::MDD_DCAudioChannelCfg_MCA);
 
-		ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield = new ASDCP::MXF::SoundfieldGroupLabelSubDescriptor(smpte_dict);
+		ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield = new ASDCP::MXF::SoundfieldGroupLabelSubDescriptor(asdcp_smpte_dict);
 		GenRandomValue (soundfield->MCALinkID);
 		soundfield->RFC5646SpokenLanguage = _asset->language().to_string();
 
@@ -138,25 +132,25 @@ SoundAssetWriter::start ()
 		if (field == SEVEN_POINT_ONE) {
 			soundfield->MCATagSymbol = "sg71";
 			soundfield->MCATagName = "7.1DS";
-			soundfield->MCALabelDictionaryID = smpte_dict->ul(ASDCP::MDD_DCAudioSoundfield_71);
+			soundfield->MCALabelDictionaryID = asdcp_smpte_dict->ul(ASDCP::MDD_DCAudioSoundfield_71);
 		} else {
 			soundfield->MCATagSymbol = "sg51";
 			soundfield->MCATagName = "5.1";
-			soundfield->MCALabelDictionaryID = smpte_dict->ul(ASDCP::MDD_DCAudioSoundfield_51);
+			soundfield->MCALabelDictionaryID = asdcp_smpte_dict->ul(ASDCP::MDD_DCAudioSoundfield_51);
 		}
 
 		_state->mxf_writer.OP1aHeader().AddChildObject(soundfield);
 		essence_descriptor->SubDescriptors.push_back(soundfield->InstanceUID);
 
 		BOOST_FOREACH (Channel i, _active_channels) {
-			ASDCP::MXF::AudioChannelLabelSubDescriptor* channel = new ASDCP::MXF::AudioChannelLabelSubDescriptor(smpte_dict);
+			ASDCP::MXF::AudioChannelLabelSubDescriptor* channel = new ASDCP::MXF::AudioChannelLabelSubDescriptor(asdcp_smpte_dict);
 			GenRandomValue (channel->MCALinkID);
 			channel->SoundfieldGroupLinkID = soundfield->MCALinkID;
 			channel->MCAChannelID = static_cast<int>(i) + 1;
 			channel->MCATagSymbol = "ch" + channel_to_mca_id(i, field);
 			channel->MCATagName = channel_to_mca_name(i, field);
 			channel->RFC5646SpokenLanguage = _asset->language().to_string();
-			channel->MCALabelDictionaryID = channel_to_mca_universal_label(i, field, smpte_dict);
+			channel->MCALabelDictionaryID = channel_to_mca_universal_label(i, field, asdcp_smpte_dict);
 			_state->mxf_writer.OP1aHeader().AddChildObject(channel);
 			essence_descriptor->SubDescriptors.push_back(channel->InstanceUID);
 		}

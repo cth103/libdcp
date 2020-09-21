@@ -119,6 +119,8 @@ load_dcp (boost::filesystem::path path, bool ignore_missing_assets, optional<str
 int
 main (int argc, char* argv[])
 {
+	dcp::init ();
+
 	EqualityOptions options;
 	options.max_mean_pixel_error = 5;
 	options.max_std_dev_pixel_error = 5;

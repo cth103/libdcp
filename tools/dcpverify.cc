@@ -83,6 +83,8 @@ progress ()
 int
 main (int argc, char* argv[])
 {
+	dcp::init ();
+
 	bool ignore_missing_assets = false;
 	bool quiet = false;
 
