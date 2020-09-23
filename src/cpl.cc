@@ -185,8 +185,12 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	root->add_child("Creator")->add_child_text (_creator);
 	root->add_child("ContentTitleText")->add_child_text (_content_title_text);
 	root->add_child("ContentKind")->add_child_text (content_kind_to_string (_content_kind));
-	DCP_ASSERT (!_content_versions.empty());
-	_content_versions[0].as_xml (root);
+	if (_content_versions.empty()) {
+		ContentVersion cv;
+		cv.as_xml (root);
+	} else {
+		_content_versions[0].as_xml (root);
+	}
 
 	xmlpp::Element* rating_list = root->add_child("RatingList");
 	BOOST_FOREACH (Rating i, _ratings) {
