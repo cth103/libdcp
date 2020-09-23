@@ -88,16 +88,17 @@ enum Channel {
 	RS = 5,        ///< right surround
 	HI = 6,
 	VI = 7,
-	LC = 8,
-	RC = 9,
+	/* 8 and 9 are not used */
 	BSL = 10,
 	BSR = 11,
 	MOTION_DATA = 12,
 	SYNC_SIGNAL = 13,
 	SIGN_LANGUAGE = 14,
-	UNUSED = 15,
+	/* 15 is not used */
 	CHANNEL_COUNT = 16
 };
+
+std::vector<dcp::Channel> used_audio_channels ();
 
 
 enum MCASoundField

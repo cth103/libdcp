@@ -841,3 +841,24 @@ dcp::channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dict
 }
 
 
+vector<dcp::Channel>
+dcp::used_audio_channels ()
+{
+	vector<dcp::Channel> c;
+	c.push_back (LEFT);
+	c.push_back (RIGHT);
+	c.push_back (CENTRE);
+	c.push_back (LFE);
+	c.push_back (LS);
+	c.push_back (RS);
+	c.push_back (HI);
+	c.push_back (VI);
+	c.push_back (BSL);
+	c.push_back (BSR);
+	c.push_back (MOTION_DATA);
+	c.push_back (SYNC_SIGNAL);
+	c.push_back (SIGN_LANGUAGE);
+	c.push_back (dcp::LEFT);
+	return c;
+}
+
