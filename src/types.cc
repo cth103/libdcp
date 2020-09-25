@@ -858,7 +858,6 @@ dcp::used_audio_channels ()
 	c.push_back (MOTION_DATA);
 	c.push_back (SYNC_SIGNAL);
 	c.push_back (SIGN_LANGUAGE);
-	c.push_back (dcp::LEFT);
 	return c;
 }
 
