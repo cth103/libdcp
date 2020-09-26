@@ -30,7 +30,7 @@ def escape(s):
 
 with open('src/language_tag_lists.cc', 'w') as f:
     for k, v in lists.items():
-        print("static LanguageTag::SubtagData %s_list[] = {" % k, file=f)
+        print("static LanguageTag::SubtagData const %s_list[] = {" % k, file=f)
         for e in v:
             print('\t{ "%s", "%s" },' % (escape(e[0]), escape(e[1])), file=f)
         print("};", file=f)

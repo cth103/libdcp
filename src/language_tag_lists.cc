@@ -1,4 +1,4 @@
-static LanguageTag::SubtagData language_list[] = {
+static LanguageTag::SubtagData const language_list[] = {
 	{ "aa", "Afar" },
 	{ "ab", "Abkhazian" },
 	{ "ae", "Avestan" },
@@ -8179,7 +8179,7 @@ static LanguageTag::SubtagData language_list[] = {
 	{ "zzj", "Zuojiang Zhuang" },
 };
 
-static LanguageTag::SubtagData extlang_list[] = {
+static LanguageTag::SubtagData const extlang_list[] = {
 	{ "aao", "Algerian Saharan Arabic" },
 	{ "abh", "Tajiki Arabic" },
 	{ "abv", "Baharna Arabic" },
@@ -8421,7 +8421,7 @@ static LanguageTag::SubtagData extlang_list[] = {
 	{ "zsm", "Standard Malay" },
 };
 
-static LanguageTag::SubtagData script_list[] = {
+static LanguageTag::SubtagData const script_list[] = {
 	{ "Adlm", "Adlam" },
 	{ "Afak", "Afaka" },
 	{ "Aghb", "Caucasian Albanian" },
@@ -8626,7 +8626,7 @@ static LanguageTag::SubtagData script_list[] = {
 	{ "Zzzz", "Code for uncoded script" },
 };
 
-static LanguageTag::SubtagData region_list[] = {
+static LanguageTag::SubtagData const region_list[] = {
 	{ "AA", "Private use" },
 	{ "AC", "Ascension Island" },
 	{ "AD", "Andorra" },
@@ -8933,7 +8933,7 @@ static LanguageTag::SubtagData region_list[] = {
 	{ "419", "Latin America and the Caribbean" },
 };
 
-static LanguageTag::SubtagData variant_list[] = {
+static LanguageTag::SubtagData const variant_list[] = {
 	{ "1606nict", "Late Middle French (to 1606)" },
 	{ "1694acad", "Early Modern French" },
 	{ "1901", "Traditional German orthography" },

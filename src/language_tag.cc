@@ -55,7 +55,7 @@ using namespace dcp;
 
 static
 optional<LanguageTag::SubtagData>
-find_in_list (LanguageTag::SubtagData* list, int length, string subtag)
+find_in_list (LanguageTag::SubtagData const * list, int length, string subtag)
 {
 	for (int i = 0; i < length; ++i) {
 		if (list[i].subtag == subtag) {
