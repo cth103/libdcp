@@ -78,6 +78,8 @@ public:
 	class Subtag
 	{
 	public:
+		virtual ~Subtag () {}
+
 		std::string subtag () const {
 			return _subtag;
 		}
