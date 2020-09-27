@@ -46,6 +46,7 @@
 
 using std::list;
 using std::string;
+using boost::optional;
 using boost::shared_ptr;
 
 /** Test dcp::order::Font::take_intersection */
@@ -372,9 +373,10 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 	cpl->set_creator (creator);
 	cpl->set_issue_date (issue_date);
 	cpl->set_annotation_text (annotation_text);
-	dcp::ContentVersion cv = cpl->content_version();
-	cv.label_text = "foo";
-	cpl->set_content_version (cv);
+	optional<dcp::ContentVersion> cv = cpl->content_version();
+	BOOST_REQUIRE (cv);
+	cv->label_text = "foo";
+	cpl->set_content_version (*cv);
 
 	dcp::DCP dcp ("build/test/write_interop_subtitle_test3");
 	dcp.add (cpl);

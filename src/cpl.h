@@ -140,7 +140,7 @@ public:
 		return _content_kind;
 	}
 
-	ContentVersion content_version () const;
+	boost::optional<ContentVersion> content_version () const;
 
 	std::vector<ContentVersion> content_versions () const {
 		return _content_versions;

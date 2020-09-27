@@ -654,10 +654,13 @@ CPL::set_content_versions (vector<ContentVersion> v)
 }
 
 
-ContentVersion
+optional<ContentVersion>
 CPL::content_version () const
 {
-	DCP_ASSERT (!_content_versions.empty());
+	if (_content_versions.empty()) {
+		return optional<ContentVersion>();
+	}
+
 	return _content_versions[0];
 }
 
