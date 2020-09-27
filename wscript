@@ -236,22 +236,7 @@ def build(bld):
     if not bld.env.DISABLE_BENCHMARKS:
         bld.recurse('benchmark')
 
-    for i in ['SMPTE-429-7-2006-CPL.xsd',
-              'SMPTE-429-8-2006-PKL.xsd',
-              'SMPTE-429-9-2007-AM.xsd',
-              'xmldsig-core-schema.xsd',
-              'XMLSchema.dtd',
-              'XMLSchema.xsd',
-              'xml.xsd',
-              'PROTO-ASDCP-CPL-20040511.xsd',
-              'PROTO-ASDCP-PKL-20040311.xsd',
-              'PROTO-ASDCP-AM-20040311.xsd',
-              'PROTO-ASDCP-CC-CPL-20070926.xsd',
-              'Main-Stereo-Picture-CPL.xsd',
-              'DCSubtitle.v1.mattsson.xsd',
-              'DCDMSubtitle-2010.xsd',
-              'Dolby-2012-AD.xsd',
-              'SMPTE-429-16.xsd' ]:
+    for i in os.listdir('xsd'):
         bld.install_files('${PREFIX}/share/libdcp/xsd', os.path.join('xsd', i))
 
     for i in ['language', 'region', 'script', 'variant', 'extlang']:
