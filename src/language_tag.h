@@ -35,6 +35,7 @@
 #define LIBDCP_LANGUAGE_TAG_H
 
 
+#include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <string>
 #include <vector>
@@ -206,7 +207,7 @@ public:
 
 	std::vector<std::pair<SubtagType, SubtagData> > subtags () const;
 
-	static std::vector<SubtagData> get_all (SubtagType type);
+	static std::vector<SubtagData> const& get_all (SubtagType type);
 	static std::string subtag_type_name (SubtagType type);
 
 	static boost::optional<std::string> get_subtag_description (SubtagType, std::string subtag);
@@ -233,6 +234,9 @@ private:
 
 extern bool operator==(dcp::LanguageTag const& a, dcp::LanguageTag const& b);
 extern std::ostream& operator<<(std::ostream& os, dcp::LanguageTag const& tag);
+
+
+extern void load_language_tag_lists (boost::filesystem::path tags_directory);
 
 }
 

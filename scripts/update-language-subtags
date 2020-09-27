@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import os
 import urllib.request
 
 block = {}
@@ -25,14 +26,10 @@ with urllib.request.urlopen('https://www.iana.org/assignments/language-subtag-re
             if len(p) > 1:
                 block[p[0]] = p[1][1:]
 
-def escape(s):
-    return s.replace('"', '\\"')
-
-with open('src/language_tag_lists.cc', 'w') as f:
-    for k, v in lists.items():
-        print("static LanguageTag::SubtagData const %s_list[] = {" % k, file=f)
+for k, v in lists.items():
+    with open(os.path.join('tags', k), 'w') as f:
+        print(len(v), file=f)
         for e in v:
-            print('\t{ "%s", "%s" },' % (escape(e[0]), escape(e[1])), file=f)
-        print("};", file=f)
-        print("", file=f)
+            print(e[0], file=f)
+            print(e[1], file=f)
 

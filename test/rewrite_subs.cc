@@ -50,6 +50,8 @@ using namespace dcp;
 int
 main (int argc, char* argv[])
 {
+	dcp::init ();
+
 	try {
 		if (argc < 2) {
 			cerr << "Syntax: " << argv[0] << " <dcp>\n";

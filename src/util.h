@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -68,7 +68,7 @@ extern std::string make_digest (Data data);
 extern bool empty_or_white_space (std::string s);
 extern bool ids_equal (std::string a, std::string b);
 extern std::string remove_urn_uuid (std::string raw);
-extern void init ();
+extern void init (boost::optional<boost::filesystem::path> tags_directory = boost::optional<boost::filesystem::path>());
 
 extern int base64_decode (std::string const & in, unsigned char* out, int out_length);
 extern boost::optional<boost::filesystem::path> relative_to_root (boost::filesystem::path root, boost::filesystem::path file);

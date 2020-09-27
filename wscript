@@ -74,6 +74,7 @@ def configure(conf):
     if int(gcc[0]) >= 4 and int(gcc[1]) > 1:
         conf.env.append_value('CXXFLAGS', ['-Wno-maybe-uninitialized'])
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
+    conf.env.append_value('CXXFLAGS', ['-DLIBDCP_SHARE_PREFIX="%s/share/libdcp"' % conf.env['PREFIX']])
 
     conf.env.TARGET_WINDOWS = conf.options.target_windows
     conf.env.TARGET_OSX = sys.platform == 'darwin'
@@ -252,6 +253,9 @@ def build(bld):
               'Dolby-2012-AD.xsd',
               'SMPTE-429-16.xsd' ]:
         bld.install_files('${PREFIX}/share/libdcp/xsd', os.path.join('xsd', i))
+
+    for i in ['language', 'region', 'script', 'variant', 'extlang']:
+        bld.install_files('${PREFIX}/share/libdcp/tags', os.path.join('tags', i))
 
     bld.add_post_fun(post)
 

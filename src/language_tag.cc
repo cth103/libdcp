@@ -47,19 +47,27 @@ using std::pair;
 using std::string;
 using std::vector;
 using boost::optional;
+using boost::algorithm::trim;
 using namespace dcp;
 
 
-#include "language_tag_lists.cc"
+
+
+static vector<LanguageTag::SubtagData> language_list;
+static vector<LanguageTag::SubtagData> variant_list;
+static vector<LanguageTag::SubtagData> region_list;
+static vector<LanguageTag::SubtagData> script_list;
+static vector<LanguageTag::SubtagData> extlang_list;
+
 
 
 static
 optional<LanguageTag::SubtagData>
-find_in_list (LanguageTag::SubtagData const * list, int length, string subtag)
+find_in_list (vector<LanguageTag::SubtagData> const& list, string subtag)
 {
-	for (int i = 0; i < length; ++i) {
-		if (list[i].subtag == subtag) {
-			return list[i];
+	BOOST_FOREACH (LanguageTag::SubtagData const& i, list) {
+		if (i.subtag == subtag) {
+			return i;
 		}
 	}
 
@@ -281,40 +289,23 @@ LanguageTag::description () const
 }
 
 
-vector<LanguageTag::SubtagData>
+vector<LanguageTag::SubtagData> const &
 LanguageTag::get_all (SubtagType type)
 {
-	vector<LanguageTag::SubtagData> all;
-
 	switch (type) {
 	case LANGUAGE:
-		for (size_t i = 0; i < sizeof(language_list) / sizeof(LanguageTag::SubtagData); ++i) {
-			all.push_back (language_list[i]);
-		}
-		break;
+		return language_list;
 	case SCRIPT:
-		for (size_t i = 0; i < sizeof(script_list) / sizeof(LanguageTag::SubtagData); ++i) {
-			all.push_back (script_list[i]);
-		}
-		break;
+		return script_list;
 	case REGION:
-		for (size_t i = 0; i < sizeof(region_list) / sizeof(LanguageTag::SubtagData); ++i) {
-			all.push_back (region_list[i]);
-		}
-		break;
+		return region_list;
 	case VARIANT:
-		for (size_t i = 0; i < sizeof(variant_list) / sizeof(LanguageTag::SubtagData); ++i) {
-			all.push_back (variant_list[i]);
-		}
-		break;
+		return variant_list;
 	case EXTLANG:
-		for (size_t i = 0; i < sizeof(extlang_list) / sizeof(LanguageTag::SubtagData); ++i) {
-			all.push_back (extlang_list[i]);
-		}
-		break;
+		return extlang_list;
 	}
 
-	return all;
+	return language_list;
 }
 
 
@@ -414,15 +405,15 @@ LanguageTag::get_subtag_data (LanguageTag::SubtagType type, string subtag)
 {
 	switch (type) {
 	case dcp::LanguageTag::LANGUAGE:
-		return find_in_list(language_list, sizeof(language_list) / sizeof(LanguageTag::SubtagData), subtag);
+		return find_in_list(language_list, subtag);
 	case dcp::LanguageTag::SCRIPT:
-		return find_in_list(script_list, sizeof(script_list) / sizeof(LanguageTag::SubtagData), subtag);
+		return find_in_list(script_list, subtag);
 	case dcp::LanguageTag::REGION:
-		return find_in_list(region_list, sizeof(region_list) / sizeof(LanguageTag::SubtagData), subtag);
+		return find_in_list(region_list, subtag);
 	case dcp::LanguageTag::VARIANT:
-		return find_in_list(variant_list, sizeof(variant_list) / sizeof(LanguageTag::SubtagData), subtag);
+		return find_in_list(variant_list, subtag);
 	case dcp::LanguageTag::EXTLANG:
-		return find_in_list(extlang_list, sizeof(extlang_list) / sizeof(LanguageTag::SubtagData), subtag);
+		return find_in_list(extlang_list, subtag);
 	}
 
 	return optional<LanguageTag::SubtagData>();
@@ -439,4 +430,48 @@ LanguageTag::get_subtag_description (LanguageTag::SubtagType type, string subtag
 
 	return data->description;
 }
+
+
+void
+load_language_tag_list (boost::filesystem::path tags_directory, string name, vector<LanguageTag::SubtagData>& list)
+{
+	FILE* f = fopen_boost (tags_directory / name, "r");
+	if (!f) {
+		throw FileError ("Could not open tags file", tags_directory / name, errno);
+	}
+	char buffer[512];
+
+	int i = 0;
+	while (!feof(f)) {
+		char* r = fgets (buffer, sizeof(buffer), f);
+		if (r == 0) {
+			break;
+		}
+		string a = buffer;
+		trim (a);
+		fgets (buffer, sizeof(buffer), f);
+		if (r == 0) {
+			fclose (f);
+			throw FileError ("Bad tags file", tags_directory / name, -1);
+		}
+		string b = buffer;
+		trim (b);
+		list.push_back (LanguageTag::SubtagData(a, b));
+		++i;
+	}
+
+	fclose (f);
+}
+
+
+void
+dcp::load_language_tag_lists (boost::filesystem::path tags_directory)
+{
+	load_language_tag_list (tags_directory, "language", language_list);
+	load_language_tag_list (tags_directory, "variant", variant_list);
+	load_language_tag_list (tags_directory, "region", region_list);
+	load_language_tag_list (tags_directory, "script", script_list);
+	load_language_tag_list (tags_directory, "extlang", extlang_list);
+}
+
 

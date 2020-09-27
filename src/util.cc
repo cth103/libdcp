@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -36,6 +36,7 @@
  */
 
 #include "util.h"
+#include "language_tag.h"
 #include "exceptions.h"
 #include "types.h"
 #include "certificate.h"
@@ -173,9 +174,13 @@ dcp::empty_or_white_space (string s)
 
 /** Set up various bits that the library needs.  Should be called once
  *  by client applications.
+ *
+ *  @param tags_directory Path to a copy of the tags directory from the source code;
+ *  if none is specified libdcp will look for a tags directory inside the environment
+ *  variable LIBDCP_SHARE_PREFIX or the LIBDCP_SHARE_PREFIX #defined during the build.
  */
 void
-dcp::init ()
+dcp::init (optional<boost::filesystem::path> tags_directory)
 {
 	if (xmlSecInit() < 0) {
 		throw MiscError ("could not initialise xmlsec");
@@ -198,6 +203,17 @@ dcp::init ()
 	OpenSSL_add_all_algorithms();
 
 	asdcp_smpte_dict = &ASDCP::DefaultSMPTEDict();
+
+	if (!tags_directory) {
+		char* prefix = getenv("LIBDCP_SHARE_PREFIX");
+		if (prefix) {
+			tags_directory = boost::filesystem::path(prefix) / "tags";
+		} else {
+			tags_directory = LIBDCP_SHARE_PREFIX "/tags";
+		}
+	}
+
+	load_language_tag_lists (*tags_directory);
 }
 
 /** Decode a base64 string.  The base64 decode routine in KM_util.cpp
@@ -451,5 +467,4 @@ ASDCPErrorSuspender::~ASDCPErrorSuspender ()
 	Kumu::SetDefaultLogSink (&_old);
 	delete _sink;
 }
-
 
