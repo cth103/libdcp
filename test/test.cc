@@ -176,9 +176,9 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 	uintmax_t N = boost::filesystem::file_size (ref);
 	BOOST_CHECK_EQUAL (N, boost::filesystem::file_size (check));
 	FILE* ref_file = dcp::fopen_boost (ref, "rb");
-	BOOST_CHECK (ref_file);
+	BOOST_REQUIRE (ref_file);
 	FILE* check_file = dcp::fopen_boost (check, "rb");
-	BOOST_CHECK (check_file);
+	BOOST_REQUIRE (check_file);
 
 	int const buffer_size = 65536;
 	uint8_t* ref_buffer = new uint8_t[buffer_size];
