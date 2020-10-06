@@ -707,9 +707,15 @@ void
 EncryptedKDM::as_xml (boost::filesystem::path path) const
 {
 	FILE* f = fopen_boost (path, "w");
+	if (!f) {
+		throw FileError ("Could not open KDM file for writing", path, errno);
+	}
 	string const x = as_xml ();
-	fwrite (x.c_str(), 1, x.length(), f);
+	size_t const written = fwrite (x.c_str(), 1, x.length(), f);
 	fclose (f);
+	if (written != x.length()) {
+		throw FileError ("Could not write to KDM file", path, errno);
+	}
 }
 
 string
