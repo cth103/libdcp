@@ -213,7 +213,12 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 			}
 		}
 
-		DCP_ASSERT (pkl_type);
+		if (!pkl_type) {
+			/* This asset is in the ASSETMAP but not mentioned in any PKL so we don't
+			 * need to worry about it.
+			 */
+			continue;
+		}
 
 		if (*pkl_type == CPL::static_pkl_type(*_standard) || *pkl_type == InteropSubtitleAsset::static_pkl_type(*_standard)) {
 			xmlpp::DomParser* p = new xmlpp::DomParser;

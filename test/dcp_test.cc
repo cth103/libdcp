@@ -274,3 +274,11 @@ BOOST_AUTO_TEST_CASE (dcp_test8)
 
 	BOOST_REQUIRE_EQUAL (dcp.cpls().size(), 2);
 }
+
+
+/** Test reading a DCP whose ASSETMAP contains assets not used by any PKL */
+BOOST_AUTO_TEST_CASE (dcp_things_in_assetmap_not_in_pkl)
+{
+	dcp::DCP dcp ("test/data/extra_assetmap");
+	BOOST_CHECK_NO_THROW (dcp.read());
+}
