@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <AssetMap xmlns="http://www.smpte-ra.org/schemas/429-9/2007/AM">
-  <Id>urn:uuid:b97ed576-395c-4ae6-91e4-99116765dabd</Id>
+  <Id>urn:uuid:8b545c3f-8b94-426b-bee5-098abaaeebaa</Id>
   <AnnotationText>Created by libdcp</AnnotationText>
   <Creator>OpenDCP 0.0.25</Creator>
   <VolumeCount>1</VolumeCount>
@@ -8,11 +8,11 @@
   <Issuer>OpenDCP 0.0.25</Issuer>
   <AssetList>
     <Asset>
-      <Id>urn:uuid:59730183-23bc-491e-906b-1dd453ff9d11</Id>
+      <Id>urn:uuid:5323b592-774b-4482-9197-ff5bc5201755</Id>
       <PackingList>true</PackingList>
       <ChunkList>
         <Chunk>
-          <Path>pkl_59730183-23bc-491e-906b-1dd453ff9d11.xml</Path>
+          <Path>pkl_5323b592-774b-4482-9197-ff5bc5201755.xml</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
           <Length>8708</Length>
@@ -20,10 +20,10 @@
       </ChunkList>
     </Asset>
     <Asset>
-      <Id>urn:uuid:b3eba4a0-f542-4937-b972-1cc4667ed01a</Id>
+      <Id>urn:uuid:14d78808-fa5f-4eb6-94de-0289bdf1081e</Id>
       <ChunkList>
         <Chunk>
-          <Path>cpl_b3eba4a0-f542-4937-b972-1cc4667ed01a.xml</Path>
+          <Path>cpl_14d78808-fa5f-4eb6-94de-0289bdf1081e.xml</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
           <Length>9328</Length>
@@ -31,7 +31,7 @@
       </ChunkList>
     </Asset>
     <Asset>
-      <Id>urn:uuid:2d4e8308-7197-41b8-8a0a-07a939d74971</Id>
+      <Id>urn:uuid:62fdd860-9b61-44be-b306-50c31e34e050</Id>
       <ChunkList>
         <Chunk>
           <Path>video.mxf</Path>
@@ -42,7 +42,7 @@
       </ChunkList>
     </Asset>
     <Asset>
-      <Id>urn:uuid:99c2c0d0-7491-4ad0-86d5-4f0af19d71f6</Id>
+      <Id>urn:uuid:c77d47cd-47d8-4f6b-89be-29a9de57c94a</Id>
       <ChunkList>
         <Chunk>
           <Path>audio.mxf</Path>
