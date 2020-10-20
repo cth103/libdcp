@@ -43,7 +43,6 @@
 #include "pkl.h"
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
-#include <boost/bind.hpp>
 #include <boost/optional.hpp>
 
 namespace xmlpp {

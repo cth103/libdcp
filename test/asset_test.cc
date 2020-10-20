@@ -31,8 +31,10 @@
     files in the program, then also delete it here.
 */
 
-#include <boost/test/unit_test.hpp>
+
 #include "asset.h"
+#include <boost/bind.hpp>
+#include <boost/test/unit_test.hpp>
 
 using std::string;
 using boost::shared_ptr;
