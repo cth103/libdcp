@@ -50,6 +50,9 @@ using std::string;
 using boost::shared_ptr;
 using boost::optional;
 using boost::dynamic_pointer_cast;
+#if BOOST_VERSION >= 106100
+using namespace boost::placeholders;
+#endif
 using namespace dcp;
 
 static bool verbose = false;
