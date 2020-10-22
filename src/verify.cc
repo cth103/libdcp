@@ -397,7 +397,7 @@ verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelMXF> reel_mxf, fun
 enum VerifyPictureAssetResult
 {
 	VERIFY_PICTURE_ASSET_RESULT_GOOD,
-	VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_BIG,
+	VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_LARGE,
 	VERIFY_PICTURE_ASSET_RESULT_BAD,
 };
 
@@ -438,7 +438,7 @@ verify_picture_asset_type (shared_ptr<ReelMXF> reel_mxf, function<void (float)> 
 	if (biggest_frame > max_frame) {
 		return VERIFY_PICTURE_ASSET_RESULT_BAD;
 	} else if (biggest_frame > risky_frame) {
-		return VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_BIG;
+		return VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_LARGE;
 	}
 
 	return VERIFY_PICTURE_ASSET_RESULT_GOOD;
@@ -498,7 +498,7 @@ verify_main_picture_asset (
 					)
 				);
 			break;
-		case VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_BIG:
+		case VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_LARGE:
 			notes.push_back (
 				VerificationNote(
 					VerificationNote::VERIFY_WARNING, VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE, file
