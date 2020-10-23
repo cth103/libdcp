@@ -54,6 +54,9 @@
 using std::string;
 using std::vector;
 using boost::shared_ptr;
+#if BOOST_VERSION >= 106100
+using namespace boost::placeholders;
+#endif
 
 
 /** Test creation of a 2D SMPTE DCP from very simple inputs */
