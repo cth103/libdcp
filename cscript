@@ -56,8 +56,6 @@ def build(target, options):
         if target.version == 'xp':
             # OpenJPEG 1.x is inexplicably faster on Windows XP; see DCP-o-matic bug #771
             cmd += ' --jpeg=oj1'
-    elif target.platform == 'osx':
-        cmd += ' --disable-tests'
 
     if target.debug:
         cmd += ' --enable-debug'
