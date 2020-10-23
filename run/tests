@@ -10,7 +10,7 @@ work=build/test
 dcpinfo=build/tools/dcpinfo
 dcpverify=build/tools/dcpverify
 
-export LD_LIBRARY_PATH=build/src:/home/c.hetherington/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=build/src:$LD_LIBRARY_PATH
 export LIBDCP_SHARE_PREFIX=.
 
 # Make sure we have the required tools
