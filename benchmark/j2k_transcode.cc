@@ -32,7 +32,6 @@
 */
 
 #include "data.h"
-#include "test.h"
 #include "util.h"
 #include "version.h"
 #include "j2k.h"
