@@ -34,10 +34,11 @@
 #ifndef LIBDCP_SUBTITLE_ASSET_H
 #define LIBDCP_SUBTITLE_ASSET_H
 
+
+#include "array_data.h"
 #include "asset.h"
 #include "dcp_time.h"
 #include "subtitle_string.h"
-#include "data.h"
 #include <libcxml/cxml.h>
 #include <boost/shared_array.hpp>
 #include <map>
@@ -94,7 +95,7 @@ public:
 
 	virtual void add (boost::shared_ptr<Subtitle>);
 	virtual void add_font (std::string id, boost::filesystem::path file) = 0;
-	std::map<std::string, Data> font_data () const;
+	std::map<std::string, ArrayData> font_data () const;
 	std::map<std::string, boost::filesystem::path> font_filenames () const;
 
 	virtual void write (boost::filesystem::path) const = 0;
@@ -163,7 +164,7 @@ protected:
 			, file (file_)
 		{}
 
-		Font (std::string load_id_, std::string uuid_, Data data_)
+		Font (std::string load_id_, std::string uuid_, ArrayData data_)
 			: load_id (load_id_)
 			, uuid (uuid_)
 			, data (data_)
@@ -171,7 +172,7 @@ protected:
 
 		std::string load_id;
 		std::string uuid;
-		Data data;
+		ArrayData data;
 		/** .ttf file that this data was last written to, if applicable */
 		mutable boost::optional<boost::filesystem::path> file;
 	};

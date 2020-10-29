@@ -227,7 +227,7 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 			}
 
 			if (j != _load_font_nodes.end ()) {
-				_fonts.push_back (Font ((*j)->id, (*j)->urn, Data (data, buffer.Size ())));
+				_fonts.push_back (Font ((*j)->id, (*j)->urn, ArrayData (data, buffer.Size ())));
 			}
 			break;
 		}
@@ -239,7 +239,7 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 			}
 
 			if (j != _subtitles.end()) {
-				dynamic_pointer_cast<SubtitleImage>(*j)->set_png_image (Data(data, buffer.Size()));
+				dynamic_pointer_cast<SubtitleImage>(*j)->set_png_image (ArrayData(data, buffer.Size()));
 			}
 			break;
 		}

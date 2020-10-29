@@ -341,7 +341,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 	c->add (
 		shared_ptr<dcp::Subtitle> (
 			new dcp::SubtitleImage (
-				dcp::Data ("test/data/sub.png"),
+				dcp::ArrayData ("test/data/sub.png"),
 				dcp::Time (0, 4,  9, 22, 24),
 				dcp::Time (0, 4, 11, 22, 24),
 				0,
@@ -705,7 +705,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 	c.add (
 		shared_ptr<dcp::Subtitle> (
 			new dcp::SubtitleImage (
-				dcp::Data ("test/data/sub.png"),
+				dcp::ArrayData ("test/data/sub.png"),
 				dcp::Time (0, 4,  9, 22, 24),
 				dcp::Time (0, 4, 11, 22, 24),
 				0,

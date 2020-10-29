@@ -390,7 +390,7 @@ SubtitleAsset::maybe_add_subtitle (string text, list<ParseState> const & parse_s
 		_subtitles.push_back (
 			shared_ptr<Subtitle> (
 				new SubtitleImage (
-					Data (),
+					ArrayData (),
 					standard == INTEROP ? text.substr(0, text.size() - 4) : text,
 					ps.in.get(),
 					ps.out.get(),
@@ -647,10 +647,10 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 	root->write_xml (xml_root, context);
 }
 
-map<string, Data>
+map<string, ArrayData>
 SubtitleAsset::font_data () const
 {
-	map<string, Data> out;
+	map<string, ArrayData> out;
 	BOOST_FOREACH (Font const & i, _fonts) {
 		out[i.load_id] = i.data;
 	}

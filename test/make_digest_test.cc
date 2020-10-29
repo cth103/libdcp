@@ -31,7 +31,8 @@
     files in the program, then also delete it here.
 */
 
-#include "data.h"
+
+#include "array_data.h"
 #include "util.h"
 #include <boost/bind.hpp>
 #include <boost/test/unit_test.hpp>
@@ -48,7 +49,7 @@ BOOST_AUTO_TEST_CASE (make_digest_test)
 	/* Make a big file with some random data */
 	srand (1);
 	int const N = 256 * 1024 * 1024;
-	dcp::Data data (N);
+	dcp::ArrayData data (N);
 	uint8_t* p = data.data().get();
 	for (int i = 0; i < N; ++i) {
 		*p++ = rand() & 0xff;

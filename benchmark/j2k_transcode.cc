@@ -31,7 +31,8 @@
     files in the program, then also delete it here.
 */
 
-#include "data.h"
+
+#include "array_data.h"
 #include "util.h"
 #include "version.h"
 #include "j2k.h"
@@ -87,12 +88,12 @@ main (int argc, char* argv[])
 	int const count = 100;
 	int const j2k_bandwidth = 100000000;
 
-	dcp::Data j2k (boost::filesystem::path (argv[1]) / "thx.j2c");
+	dcp::ArrayData j2k (boost::filesystem::path (argv[1]) / "thx.j2c");
 
 	Timer decompress;
 	Timer compress;
 
-	dcp::Data recomp;
+	dcp::ArrayData recomp;
 	for (int i = 0; i < count; ++i) {
 		decompress.start ();
 		shared_ptr<dcp::OpenJPEGImage> xyz = dcp::decompress_j2k (j2k, 0);

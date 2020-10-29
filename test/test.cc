@@ -344,7 +344,7 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 	subs->add (simple_subtitle());
 
 	boost::filesystem::create_directory (path / "subs");
-	dcp::Data data(4096);
+	dcp::ArrayData data(4096);
 	data.write (path / "subs" / "font.ttf");
 	subs->add_font ("afont", path / "subs" / "font.ttf");
 	subs->write (path / "subs" / "subs.xml");
@@ -364,7 +364,7 @@ make_simple_with_smpte_subs (boost::filesystem::path path)
 	shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
 	subs->add (simple_subtitle());
 
-	dcp::Data data(4096);
+	dcp::ArrayData data(4096);
 	subs->write (path / "subs.mxf");
 
 	shared_ptr<dcp::ReelSubtitleAsset> reel_subs(new dcp::ReelSubtitleAsset(subs, dcp::Fraction(24, 1), 240, 0));
@@ -422,7 +422,7 @@ shared_ptr<dcp::ReelAsset>
 black_picture_asset (boost::filesystem::path dir, int frames)
 {
 	shared_ptr<dcp::OpenJPEGImage> image = black_image ();
-	dcp::Data frame = dcp::compress_j2k (image, 100000000, 24, false, false);
+	dcp::ArrayData frame = dcp::compress_j2k (image, 100000000, 24, false, false);
 	BOOST_REQUIRE (frame.size() < 230000000 / (24 * 8));
 
 	shared_ptr<dcp::MonoPictureAsset> asset(new dcp::MonoPictureAsset(dcp::Fraction(24, 1), dcp::SMPTE));

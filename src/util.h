@@ -38,8 +38,9 @@
  *  @brief Utility methods.
  */
 
+
+#include "array_data.h"
 #include "types.h"
-#include "data.h"
 #include "local_time.h"
 #include <asdcp/KM_log.h>
 #include <boost/shared_ptr.hpp>
@@ -64,7 +65,7 @@ class OpenJPEGImage;
 
 extern std::string make_uuid ();
 extern std::string make_digest (boost::filesystem::path filename, boost::function<void (float)>);
-extern std::string make_digest (Data data);
+extern std::string make_digest (ArrayData data);
 extern bool empty_or_white_space (std::string s);
 extern bool ids_equal (std::string a, std::string b);
 extern std::string remove_urn_uuid (std::string raw);

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,8 +31,8 @@
     files in the program, then also delete it here.
 */
 
-#ifndef LIBDCP_DATA_H
-#define LIBDCP_DATA_H
+#ifndef LIBDCP_ARRAY_DATA_H
+#define LIBDCP_ARRAY_DATA_H
 
 #include <boost/shared_array.hpp>
 #include <boost/filesystem.hpp>
@@ -40,16 +40,16 @@
 
 namespace dcp {
 
-class Data
+class ArrayData
 {
 public:
-	Data ();
-	explicit Data (int size);
-	Data (uint8_t const * data, int size);
-	Data (boost::shared_array<uint8_t> data, int size);
-	explicit Data (boost::filesystem::path file);
+	ArrayData ();
+	explicit ArrayData (int size);
+	ArrayData (uint8_t const * data, int size);
+	ArrayData (boost::shared_array<uint8_t> data, int size);
+	explicit ArrayData (boost::filesystem::path file);
 
-	virtual ~Data () {}
+	virtual ~ArrayData () {}
 
 	void write (boost::filesystem::path file) const;
 	void write_via_temp (boost::filesystem::path temp, boost::filesystem::path final) const;
@@ -72,7 +72,7 @@ private:
 	int _size;
 };
 
-bool operator==(Data const & a, Data const & b);
+bool operator==(ArrayData const & a, ArrayData const & b);
 
 }
 

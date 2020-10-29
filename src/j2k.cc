@@ -31,10 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
+#include "array_data.h"
 #include "j2k.h"
 #include "exceptions.h"
 #include "openjpeg_image.h"
-#include "data.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
 #include <openjpeg.h>
@@ -49,7 +50,7 @@ using boost::shared_array;
 using namespace dcp;
 
 shared_ptr<dcp::OpenJPEGImage>
-dcp::decompress_j2k (Data data, int reduce)
+dcp::decompress_j2k (ArrayData data, int reduce)
 {
 	return dcp::decompress_j2k (data.data().get(), data.size(), reduce);
 }
@@ -242,13 +243,13 @@ public:
 		return OPJ_TRUE;
 	}
 
-	Data data () const
+	ArrayData data () const
 	{
 		return _data;
 	}
 
 private:
-	Data _data;
+	ArrayData _data;
 	OPJ_SIZE_T _offset;
 };
 
@@ -273,7 +274,7 @@ seek_function (OPJ_OFF_T nb_bytes, void* data)
 /** @xyz Picture to compress.  Parts of xyz's data WILL BE OVERWRITTEN by libopenjpeg so xyz cannot be re-used
  *  after this call; see opj_j2k_encode where if l_reuse_data is false it will set l_tilec->data = l_img_comp->data.
  */
-Data
+ArrayData
 dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frames_per_second, bool threed, bool fourk, string comment)
 {
 	/* get a J2K compressor handle */
@@ -344,7 +345,7 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 		throw MiscError ("could not end JPEG2000 encoding");
 	}
 
-	Data enc (buffer->data ());
+	ArrayData enc (buffer->data ());
 
 	opj_stream_destroy (stream);
 	opj_destroy_codec (encoder);
@@ -355,7 +356,7 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 #endif
 
 #ifdef LIBDCP_OPENJPEG1
-Data
+ArrayData
 dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frames_per_second, bool threed, bool fourk)
 {
 	/* Set the max image and component sizes based on frame_rate */
@@ -462,7 +463,7 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 		throw MiscError ("JPEG2000 encoding failed");
 	}
 
-	Data enc (cio->buffer, cio_tell (cio));
+	ArrayData enc (cio->buffer, cio_tell (cio));
 
 	opj_cio_close (cio);
 	free (parameters.cp_comment);

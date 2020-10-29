@@ -98,7 +98,7 @@ dcp::make_uuid ()
 }
 
 string
-dcp::make_digest (Data data)
+dcp::make_digest (ArrayData data)
 {
 	SHA_CTX sha;
 	SHA1_Init (&sha);

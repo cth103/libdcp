@@ -509,7 +509,7 @@ BOOST_AUTO_TEST_CASE (verify_test14)
 
 static
 void
-dcp_from_frame (dcp::Data const& frame, boost::filesystem::path dir)
+dcp_from_frame (dcp::ArrayData const& frame, boost::filesystem::path dir)
 {
 	shared_ptr<dcp::MonoPictureAsset> asset(new dcp::MonoPictureAsset(dcp::Fraction(24, 1), dcp::SMPTE));
 	boost::filesystem::create_directories (dir);
@@ -537,11 +537,11 @@ BOOST_AUTO_TEST_CASE (verify_test15)
 
 	/* Compress a black image */
 	shared_ptr<dcp::OpenJPEGImage> image = black_image ();
-	dcp::Data frame = dcp::compress_j2k (image, 100000000, 24, false, false);
+	dcp::ArrayData frame = dcp::compress_j2k (image, 100000000, 24, false, false);
 	BOOST_REQUIRE (frame.size() < too_big);
 
 	/* Place it in a bigger block with some zero padding at the end */
-	dcp::Data oversized_frame(too_big);
+	dcp::ArrayData oversized_frame(too_big);
 	memcpy (oversized_frame.data().get(), frame.data().get(), frame.size());
 	memset (oversized_frame.data().get() + frame.size(), 0, too_big - frame.size());
 
@@ -564,11 +564,11 @@ BOOST_AUTO_TEST_CASE (verify_test16)
 
 	/* Compress a black image */
 	shared_ptr<dcp::OpenJPEGImage> image = black_image ();
-	dcp::Data frame = dcp::compress_j2k (image, 100000000, 24, false, false);
+	dcp::ArrayData frame = dcp::compress_j2k (image, 100000000, 24, false, false);
 	BOOST_REQUIRE (frame.size() < nearly_too_big);
 
 	/* Place it in a bigger block with some zero padding at the end */
-	dcp::Data oversized_frame(nearly_too_big);
+	dcp::ArrayData oversized_frame(nearly_too_big);
 	memcpy (oversized_frame.data().get(), frame.data().get(), frame.size());
 	memset (oversized_frame.data().get() + frame.size(), 0, nearly_too_big - frame.size());
 
@@ -589,7 +589,7 @@ BOOST_AUTO_TEST_CASE (verify_test17)
 {
 	/* Compress a black image */
 	shared_ptr<dcp::OpenJPEGImage> image = black_image ();
-	dcp::Data frame = dcp::compress_j2k (image, 100000000, 24, false, false);
+	dcp::ArrayData frame = dcp::compress_j2k (image, 100000000, 24, false, false);
 	BOOST_REQUIRE (frame.size() < 230000000 / (24 * 8));
 
 	boost::filesystem::path const dir("build/test/verify_test17");
@@ -716,7 +716,7 @@ BOOST_AUTO_TEST_CASE (verify_test22)
 	boost::filesystem::create_directories (ov_dir);
 
 	shared_ptr<dcp::OpenJPEGImage> image = black_image ();
-	dcp::Data frame = dcp::compress_j2k (image, 100000000, 24, false, false);
+	dcp::ArrayData frame = dcp::compress_j2k (image, 100000000, 24, false, false);
 	BOOST_REQUIRE (frame.size() < 230000000 / (24 * 8));
 	dcp_from_frame (frame, ov_dir);
 

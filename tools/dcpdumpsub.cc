@@ -130,8 +130,8 @@ main (int argc, char* argv[])
 	cout << sub.xml_as_string() << "\n";
 
 	if (extract_fonts) {
-		map<string, dcp::Data> fonts = sub.font_data ();
-		for (map<string, dcp::Data>::const_iterator i = fonts.begin(); i != fonts.end(); ++i) {
+		map<string, dcp::ArrayData> fonts = sub.font_data ();
+		for (map<string, dcp::ArrayData>::const_iterator i = fonts.begin(); i != fonts.end(); ++i) {
 			FILE* f = dcp::fopen_boost (i->first + ".ttf", "wb");
 			if (!f) {
 				cerr << "Could not open font file " << i->first << ".ttf for writing";

@@ -39,7 +39,7 @@ using std::string;
 using namespace dcp;
 
 SubtitleImage::SubtitleImage (
-	Data png_image,
+	ArrayData png_image,
 	Time in,
 	Time out,
 	float h_position,
@@ -57,7 +57,7 @@ SubtitleImage::SubtitleImage (
 }
 
 SubtitleImage::SubtitleImage (
-	Data png_image,
+	ArrayData png_image,
 	string id,
 	Time in,
 	Time out,
@@ -79,7 +79,7 @@ void
 SubtitleImage::read_png_file (boost::filesystem::path file)
 {
 	_file = file;
-	_png_image = Data (file);
+	_png_image = ArrayData (file);
 }
 
 void

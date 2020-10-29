@@ -38,9 +38,10 @@
 #ifndef LIBDCP_SUBTITLE_IMAGE_H
 #define LIBDCP_SUBTITLE_IMAGE_H
 
+
+#include "array_data.h"
 #include "types.h"
 #include "subtitle.h"
-#include "data.h"
 #include "dcp_time.h"
 #include <boost/optional.hpp>
 #include <string>
@@ -54,7 +55,7 @@ class SubtitleImage : public Subtitle
 {
 public:
 	SubtitleImage (
-		Data png_image,
+		ArrayData png_image,
 		Time in,
 		Time out,
 		float h_position,
@@ -66,7 +67,7 @@ public:
 		);
 
 	SubtitleImage (
-		Data png_image,
+		ArrayData png_image,
 		std::string id,
 		Time in,
 		Time out,
@@ -78,11 +79,11 @@ public:
 		Time fade_down_time
 		);
 
-	Data png_image () const {
+	ArrayData png_image () const {
 		return _png_image;
 	}
 
-	void set_png_image (Data png) {
+	void set_png_image (ArrayData png) {
 		_png_image = png;
 	}
 
@@ -99,7 +100,7 @@ public:
 	}
 
 private:
-	Data _png_image;
+	ArrayData _png_image;
 	std::string _id;
 	mutable boost::optional<boost::filesystem::path> _file;
 };

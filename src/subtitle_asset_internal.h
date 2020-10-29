@@ -34,10 +34,11 @@
 #ifndef LIBDCP_SUBTITLE_ASSET_INTERNAL_H
 #define LIBDCP_SUBTITLE_ASSET_INTERNAL_H
 
+
+#include "array_data.h"
 #include "raw_convert.h"
 #include "types.h"
 #include "dcp_time.h"
-#include "data.h"
 #include <libxml++/libxml++.h>
 #include <boost/foreach.hpp>
 
@@ -167,7 +168,7 @@ private:
 class Image : public Part
 {
 public:
-	Image (boost::shared_ptr<Part> parent, std::string id, Data png_data, HAlign h_align, float h_position, VAlign v_align, float v_position)
+	Image (boost::shared_ptr<Part> parent, std::string id, ArrayData png_data, HAlign h_align, float h_position, VAlign v_align, float v_position)
 		: Part (parent)
 		, _png_data (png_data)
 		, _id (id)
@@ -180,7 +181,7 @@ public:
 	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const;
 
 private:
-	Data _png_data;
+	ArrayData _png_data;
 	std::string _id; ///< the ID of this image
 	HAlign _h_align;
 	float _h_position;

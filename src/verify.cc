@@ -598,7 +598,7 @@ dcp::verify (
 			/* Check that the CPL's hash corresponds to the PKL */
 			BOOST_FOREACH (shared_ptr<PKL> i, dcp->pkls()) {
 				optional<string> h = i->hash(cpl->id());
-				if (h && make_digest(Data(*cpl->file())) != *h) {
+				if (h && make_digest(ArrayData(*cpl->file())) != *h) {
 					notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::CPL_HASH_INCORRECT));
 				}
 			}

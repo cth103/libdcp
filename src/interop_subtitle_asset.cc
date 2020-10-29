@@ -271,7 +271,7 @@ InteropSubtitleAsset::add_to_pkl (shared_ptr<PKL> pkl, boost::filesystem::path r
 	BOOST_FOREACH (shared_ptr<dcp::Subtitle> i, _subtitles) {
 		shared_ptr<dcp::SubtitleImage> im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
 		if (im) {
-			Data png_image = im->png_image ();
+			ArrayData png_image = im->png_image ();
 			pkl->add_asset (im->id(), optional<string>(), make_digest(png_image), png_image.size(), "image/png");
 		}
 	}
