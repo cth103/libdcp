@@ -57,7 +57,7 @@ using namespace dcp;
 MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path)
 {
 	boost::uintmax_t const size = boost::filesystem::file_size (path);
-	_buffer = new ASDCP::JP2K::FrameBuffer (size);
+	_buffer.reset(new ASDCP::JP2K::FrameBuffer(size));
 	FILE* f = fopen_boost (path, "rb");
 	if (!f) {
 		boost::throw_exception (FileError ("could not open JPEG2000 file", path, errno));
@@ -81,7 +81,7 @@ MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path)
 MonoPictureFrame::MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, shared_ptr<DecryptionContext> c)
 {
 	/* XXX: unfortunate guesswork on this buffer size */
-	_buffer = new ASDCP::JP2K::FrameBuffer (4 * Kumu::Megabyte);
+	_buffer.reset(new ASDCP::JP2K::FrameBuffer(4 * Kumu::Megabyte));
 
 	ASDCP::Result_t const r = reader->ReadFrame (n, *_buffer, c->context(), c->hmac());
 
@@ -92,16 +92,11 @@ MonoPictureFrame::MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, share
 
 MonoPictureFrame::MonoPictureFrame (uint8_t const * data, int size)
 {
-	_buffer = new ASDCP::JP2K::FrameBuffer (size);
+	_buffer.reset(new ASDCP::JP2K::FrameBuffer(size));
 	_buffer->Size (size);
 	memcpy (_buffer->Data(), data, size);
 }
 
-/** MonoPictureFrame destructor */
-MonoPictureFrame::~MonoPictureFrame ()
-{
-	delete _buffer;
-}
 
 /** @return Pointer to JPEG2000 data */
 uint8_t const *

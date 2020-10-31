@@ -53,7 +53,7 @@ using namespace dcp;
 StereoPictureFrame::StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, shared_ptr<DecryptionContext> c)
 {
 	/* XXX: unfortunate guesswork on this buffer size */
-	_buffer = new ASDCP::JP2K::SFrameBuffer (4 * Kumu::Megabyte);
+	_buffer.reset(new ASDCP::JP2K::SFrameBuffer(4 * Kumu::Megabyte));
 
 	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->context(), c->hmac()))) {
 		boost::throw_exception (ReadError (String::compose ("could not read video frame %1 of %2", n)));
@@ -62,13 +62,9 @@ StereoPictureFrame::StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, 
 
 StereoPictureFrame::StereoPictureFrame ()
 {
-	_buffer = new ASDCP::JP2K::SFrameBuffer (4 * Kumu::Megabyte);
+	_buffer.reset(new ASDCP::JP2K::SFrameBuffer(4 * Kumu::Megabyte));
 }
 
-StereoPictureFrame::~StereoPictureFrame ()
-{
-	delete _buffer;
-}
 
 /** @param eye Eye to return (EYE_LEFT or EYE_RIGHT).
  *  @param reduce a factor by which to reduce the resolution

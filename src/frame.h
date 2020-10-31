@@ -49,16 +49,11 @@ public:
 	Frame (R* reader, int n, boost::shared_ptr<const DecryptionContext> c)
 	{
 		/* XXX: unfortunate guesswork on this buffer size */
-		_buffer = new B (Kumu::Megabyte);
+		_buffer.reset(new B(Kumu::Megabyte));
 
 		if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->context(), c->hmac()))) {
 			boost::throw_exception (ReadError ("could not read frame"));
 		}
-	}
-
-	~Frame ()
-	{
-		delete _buffer;
 	}
 
 	uint8_t const * data () const
@@ -72,7 +67,7 @@ public:
 	}
 
 private:
-	B* _buffer;
+	boost::shared_ptr<B> _buffer;
 };
 
 }

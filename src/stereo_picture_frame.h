@@ -59,7 +59,6 @@ class StereoPictureFrame : public boost::noncopyable
 {
 public:
 	StereoPictureFrame ();
-	~StereoPictureFrame ();
 
 	boost::shared_ptr<OpenJPEGImage> xyz_image (Eye eye, int reduce = 0) const;
 
@@ -79,7 +78,7 @@ private:
 
 	StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, boost::shared_ptr<DecryptionContext>);
 
-	ASDCP::JP2K::SFrameBuffer* _buffer;
+	boost::shared_ptr<ASDCP::JP2K::SFrameBuffer> _buffer;
 };
 
 }

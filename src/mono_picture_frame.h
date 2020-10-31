@@ -67,7 +67,6 @@ class MonoPictureFrame : public boost::noncopyable
 public:
 	explicit MonoPictureFrame (boost::filesystem::path path);
 	MonoPictureFrame (uint8_t const * data, int size);
-	~MonoPictureFrame ();
 
 	boost::shared_ptr<OpenJPEGImage> xyz_image (int reduce = 0) const;
 
@@ -83,7 +82,7 @@ private:
 
 	MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, boost::shared_ptr<DecryptionContext>);
 
-	ASDCP::JP2K::FrameBuffer* _buffer;
+	boost::shared_ptr<ASDCP::JP2K::FrameBuffer> _buffer;
 };
 
 }
