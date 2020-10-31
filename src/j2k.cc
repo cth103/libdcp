@@ -52,7 +52,7 @@ using namespace dcp;
 shared_ptr<dcp::OpenJPEGImage>
 dcp::decompress_j2k (ArrayData data, int reduce)
 {
-	return dcp::decompress_j2k (data.data().get(), data.size(), reduce);
+	return dcp::decompress_j2k (data.data(), data.size(), reduce);
 }
 
 #ifdef LIBDCP_OPENJPEG2
@@ -229,7 +229,7 @@ public:
 	OPJ_SIZE_T write (void* buffer, OPJ_SIZE_T nb_bytes)
 	{
 		DCP_ASSERT ((_offset + nb_bytes) < MAX_J2K_SIZE);
-		memcpy (_data.data().get() + _offset, buffer, nb_bytes);
+		memcpy (_data.data() + _offset, buffer, nb_bytes);
 		_offset += nb_bytes;
 		if (_offset > OPJ_SIZE_T (_data.size())) {
 			_data.set_size (_offset);

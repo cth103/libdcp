@@ -418,7 +418,8 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 		}
 		if (j != _fonts.end ()) {
 			ASDCP::TimedText::FrameBuffer buffer;
-			buffer.SetData (j->data.data().get(), j->data.size());
+			ArrayData data_copy(j->data);
+			buffer.SetData (data_copy.data(), data_copy.size());
 			buffer.Size (j->data.size());
 			r = writer.WriteAncillaryResource (buffer, enc.context(), enc.hmac());
 			if (ASDCP_FAILURE (r)) {
@@ -433,7 +434,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 		shared_ptr<SubtitleImage> si = dynamic_pointer_cast<SubtitleImage>(i);
 		if (si) {
 			ASDCP::TimedText::FrameBuffer buffer;
-			buffer.SetData (si->png_image().data().get(), si->png_image().size());
+			buffer.SetData (si->png_image().data(), si->png_image().size());
 			buffer.Size (si->png_image().size());
 			r = writer.WriteAncillaryResource (buffer, enc.context(), enc.hmac());
 			if (ASDCP_FAILURE(r)) {

@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE (make_digest_test)
 	srand (1);
 	int const N = 256 * 1024 * 1024;
 	dcp::ArrayData data (N);
-	uint8_t* p = data.data().get();
+	uint8_t* p = data.data();
 	for (int i = 0; i < N; ++i) {
 		*p++ = rand() & 0xff;
 	}

@@ -31,51 +31,44 @@
     files in the program, then also delete it here.
 */
 
-#ifndef LIBDCP_ARRAY_DATA_H
-#define LIBDCP_ARRAY_DATA_H
-
 
 #include "data.h"
-#include <boost/shared_array.hpp>
-#include <boost/filesystem.hpp>
-#include <stdint.h>
+#include "util.h"
+#include "exceptions.h"
+#include <cstdio>
+#include <cerrno>
 
-namespace dcp {
+
+using namespace dcp;
 
 
-class ArrayData : public Data
+void
+Data::write (boost::filesystem::path file) const
 {
-public:
-	ArrayData ();
-	explicit ArrayData (int size);
-	ArrayData (uint8_t const * data, int size);
-	ArrayData (boost::shared_array<uint8_t> data, int size);
-	explicit ArrayData (boost::filesystem::path file);
-
-	virtual ~ArrayData () {}
-
-	uint8_t const * data () const {
-		return _data.get();
+	FILE* f = fopen_boost (file, "wb");
+	if (!f) {
+		throw FileError ("could not write to file", file, errno);
 	}
-
-	uint8_t * data () {
-		return _data.get();
+	size_t const r = fwrite (data(), 1, size(), f);
+	if (r != size_t(size())) {
+		fclose (f);
+		throw FileError ("could not write to file", file, errno);
 	}
-
-	int size () const {
-		return _size;
-	}
-
-	void set_size (int s) {
-		_size = s;
-	}
-
-private:
-	boost::shared_array<uint8_t> _data;
-	/** amount of `valid' data in _data; the array may be larger */
-	int _size;
-};
-
+	fclose (f);
 }
 
-#endif
+
+void
+Data::write_via_temp (boost::filesystem::path temp, boost::filesystem::path final) const
+{
+	write (temp);
+	boost::filesystem::rename (temp, final);
+}
+
+
+bool
+dcp::operator== (Data const & a, Data const & b)
+{
+	return (a.size() == b.size() && memcmp(a.data(), b.data(), a.size()) == 0);
+}
+

@@ -47,6 +47,7 @@ def build(bld):
              colour_conversion.cc
              combine.cc
              cpl.cc
+             data.cc
              dcp.cc
              dcp_time.cc
              decrypted_kdm.cc
@@ -129,6 +130,7 @@ def build(bld):
               compose.hpp
               cpl.h
               crypto_context.h
+              data.h
               dcp.h
               dcp_assert.h
               dcp_time.h

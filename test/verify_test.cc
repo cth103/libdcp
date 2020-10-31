@@ -515,7 +515,7 @@ dcp_from_frame (dcp::ArrayData const& frame, boost::filesystem::path dir)
 	boost::filesystem::create_directories (dir);
 	shared_ptr<dcp::PictureAssetWriter> writer = asset->start_write (dir / "pic.mxf", true);
 	for (int i = 0; i < 24; ++i) {
-		writer->write (frame.data().get(), frame.size());
+		writer->write (frame.data(), frame.size());
 	}
 	writer->finalize ();
 
@@ -542,8 +542,8 @@ BOOST_AUTO_TEST_CASE (verify_test15)
 
 	/* Place it in a bigger block with some zero padding at the end */
 	dcp::ArrayData oversized_frame(too_big);
-	memcpy (oversized_frame.data().get(), frame.data().get(), frame.size());
-	memset (oversized_frame.data().get() + frame.size(), 0, too_big - frame.size());
+	memcpy (oversized_frame.data(), frame.data(), frame.size());
+	memset (oversized_frame.data() + frame.size(), 0, too_big - frame.size());
 
 	boost::filesystem::path const dir("build/test/verify_test15");
 	boost::filesystem::remove_all (dir);
@@ -569,8 +569,8 @@ BOOST_AUTO_TEST_CASE (verify_test16)
 
 	/* Place it in a bigger block with some zero padding at the end */
 	dcp::ArrayData oversized_frame(nearly_too_big);
-	memcpy (oversized_frame.data().get(), frame.data().get(), frame.size());
-	memset (oversized_frame.data().get() + frame.size(), 0, nearly_too_big - frame.size());
+	memcpy (oversized_frame.data(), frame.data(), frame.size());
+	memset (oversized_frame.data() + frame.size(), 0, nearly_too_big - frame.size());
 
 	boost::filesystem::path const dir("build/test/verify_test16");
 	boost::filesystem::remove_all (dir);

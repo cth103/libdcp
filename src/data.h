@@ -31,50 +31,34 @@
     files in the program, then also delete it here.
 */
 
-#ifndef LIBDCP_ARRAY_DATA_H
-#define LIBDCP_ARRAY_DATA_H
+
+#ifndef LIBDCP_DATA_H
+#define LIBDCP_DATA_H
 
 
-#include "data.h"
-#include <boost/shared_array.hpp>
 #include <boost/filesystem.hpp>
 #include <stdint.h>
+
 
 namespace dcp {
 
 
-class ArrayData : public Data
+class Data
 {
 public:
-	ArrayData ();
-	explicit ArrayData (int size);
-	ArrayData (uint8_t const * data, int size);
-	ArrayData (boost::shared_array<uint8_t> data, int size);
-	explicit ArrayData (boost::filesystem::path file);
+	virtual ~Data () {}
 
-	virtual ~ArrayData () {}
+	void write (boost::filesystem::path file) const;
+	void write_via_temp (boost::filesystem::path temp, boost::filesystem::path final) const;
 
-	uint8_t const * data () const {
-		return _data.get();
-	}
-
-	uint8_t * data () {
-		return _data.get();
-	}
-
-	int size () const {
-		return _size;
-	}
-
-	void set_size (int s) {
-		_size = s;
-	}
-
-private:
-	boost::shared_array<uint8_t> _data;
-	/** amount of `valid' data in _data; the array may be larger */
-	int _size;
+	virtual uint8_t const * data () const = 0;
+	virtual uint8_t * data () = 0;
+	virtual int size () const = 0;
 };
+
+
+bool operator==(Data const & a, Data const & b);
+
 
 }
 

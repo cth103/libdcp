@@ -429,7 +429,7 @@ black_picture_asset (boost::filesystem::path dir, int frames)
 	boost::filesystem::create_directories (dir);
 	shared_ptr<dcp::PictureAssetWriter> writer = asset->start_write (dir / "pic.mxf", true);
 	for (int i = 0; i < frames; ++i) {
-		writer->write (frame.data().get(), frame.size());
+		writer->write (frame.data(), frame.size());
 	}
 	writer->finalize ();
 

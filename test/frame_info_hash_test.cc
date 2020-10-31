@@ -52,7 +52,7 @@ check (unsigned int* seed, shared_ptr<dcp::PictureAssetWriter> writer, string ha
 
 	dcp::ArrayData data = dcp::compress_j2k (xyz, 100000000, 24, false, false);
 
-	dcp::FrameInfo info = writer->write (data.data().get(), data.size());
+	dcp::FrameInfo info = writer->write (data.data(), data.size());
 	BOOST_CHECK_EQUAL (info.hash, hash);
 }
 

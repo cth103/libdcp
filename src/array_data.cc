@@ -85,31 +85,3 @@ ArrayData::ArrayData (boost::filesystem::path file)
 
 	fclose (f);
 }
-
-void
-ArrayData::write (boost::filesystem::path file) const
-{
-	FILE* f = fopen_boost (file, "wb");
-	if (!f) {
-		throw FileError ("could not write to file", file, errno);
-	}
-	size_t const r = fwrite (_data.get(), 1, _size, f);
-	if (r != size_t (_size)) {
-		fclose (f);
-		throw FileError ("could not write to file", file, errno);
-	}
-	fclose (f);
-}
-
-void
-ArrayData::write_via_temp (boost::filesystem::path temp, boost::filesystem::path final) const
-{
-	write (temp);
-	boost::filesystem::rename (temp, final);
-}
-
-bool
-dcp::operator== (ArrayData const & a, ArrayData const & b)
-{
-	return (a.size() == b.size() && memcmp (a.data().get(), b.data().get(), a.size()) == 0);
-}

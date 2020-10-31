@@ -110,6 +110,6 @@ main (int argc, char* argv[])
 	cout << "Compress:   " << count / compress.get() << " fps.\n";
 
 	FILE* f = fopen ("check.j2c", "wb");
-	fwrite (recomp.data().get(), 1, recomp.size(), f);
+	fwrite (recomp.data(), 1, recomp.size(), f);
 	fclose (f);
 }

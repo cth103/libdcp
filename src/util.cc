@@ -102,7 +102,7 @@ dcp::make_digest (ArrayData data)
 {
 	SHA_CTX sha;
 	SHA1_Init (&sha);
-	SHA1_Update (&sha, data.data().get(), data.size());
+	SHA1_Update (&sha, data.data(), data.size());
 	byte_t byte_buffer[SHA_DIGEST_LENGTH];
 	SHA1_Final (byte_buffer, &sha);
 	char digest[64];

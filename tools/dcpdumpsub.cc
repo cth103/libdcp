@@ -137,7 +137,7 @@ main (int argc, char* argv[])
 				cerr << "Could not open font file " << i->first << ".ttf for writing";
 				exit (EXIT_FAILURE);
 			}
-			fwrite (i->second.data().get(), 1, i->second.size(), f);
+			fwrite (i->second.data(), 1, i->second.size(), f);
 			fclose (f);
 		}
 	}
