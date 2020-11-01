@@ -52,7 +52,10 @@ namespace ASDCP {
 
 namespace dcp {
 
+
 class OpenJPEGImage;
+class StereoPictureFrame;
+
 
 /** A single frame of a 3D (stereoscopic) picture asset */
 class StereoPictureFrame : public boost::noncopyable
@@ -62,13 +65,25 @@ public:
 
 	boost::shared_ptr<OpenJPEGImage> xyz_image (Eye eye, int reduce = 0) const;
 
-	uint8_t const * left_j2k_data () const;
-	uint8_t* left_j2k_data ();
-	int left_j2k_size () const;
+	class Part : public Data
+	{
+	public:
+		uint8_t const * data () const;
+		uint8_t * data ();
+		int size () const;
 
-	uint8_t const * right_j2k_data () const;
-	uint8_t* right_j2k_data ();
-	int right_j2k_size () const;
+	private:
+		friend class StereoPictureFrame;
+
+		Part (boost::shared_ptr<ASDCP::JP2K::SFrameBuffer> buffer, Eye eye);
+		ASDCP::JP2K::FrameBuffer& mono () const;
+
+		boost::shared_ptr<ASDCP::JP2K::SFrameBuffer> _buffer;
+		Eye _eye;
+	};
+
+	boost::shared_ptr<Part> left () const;
+	boost::shared_ptr<Part> right () const;
 
 private:
 	/* XXX: this is a bit of a shame, but I tried friend StereoPictureAssetReader and it's

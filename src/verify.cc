@@ -411,7 +411,7 @@ biggest_frame_size (shared_ptr<const MonoPictureFrame> frame)
 int
 biggest_frame_size (shared_ptr<const StereoPictureFrame> frame)
 {
-	return max(frame->left_j2k_size(), frame->right_j2k_size());
+	return max(frame->left()->size(), frame->right()->size());
 }
 
 

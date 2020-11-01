@@ -46,6 +46,43 @@ using std::string;
 using boost::shared_ptr;
 using namespace dcp;
 
+
+StereoPictureFrame::Part::Part (shared_ptr<ASDCP::JP2K::SFrameBuffer> buffer, Eye eye)
+	: _buffer (buffer)
+	, _eye (eye)
+{
+
+}
+
+
+ASDCP::JP2K::FrameBuffer &
+StereoPictureFrame::Part::mono () const
+{
+	return _eye == EYE_LEFT ? _buffer->Left : _buffer->Right;
+}
+
+
+uint8_t const *
+StereoPictureFrame::Part::data () const
+{
+	return mono().RoData();
+}
+
+
+uint8_t *
+StereoPictureFrame::Part::data ()
+{
+	return mono().Data();
+}
+
+
+int
+StereoPictureFrame::Part::size () const
+{
+	return mono().Size();
+}
+
+
 /** Make a picture frame from a 3D (stereoscopic) asset.
  *  @param reader Reader for the MXF file.
  *  @param n Frame within the asset, not taking EntryPoint into account.
@@ -84,38 +121,18 @@ StereoPictureFrame::xyz_image (Eye eye, int reduce) const
 	return shared_ptr<OpenJPEGImage> ();
 }
 
-uint8_t const *
-StereoPictureFrame::left_j2k_data () const
+
+shared_ptr<StereoPictureFrame::Part>
+StereoPictureFrame::right () const
 {
-	return _buffer->Left.RoData ();
+	return shared_ptr<Part>(new Part(_buffer, EYE_RIGHT));
 }
 
-uint8_t*
-StereoPictureFrame::left_j2k_data ()
+
+shared_ptr<StereoPictureFrame::Part>
+StereoPictureFrame::left () const
 {
-	return _buffer->Left.Data ();
+	return shared_ptr<Part>(new Part(_buffer, EYE_LEFT));
 }
 
-int
-StereoPictureFrame::left_j2k_size () const
-{
-	return _buffer->Left.Size ();
-}
 
-uint8_t const *
-StereoPictureFrame::right_j2k_data () const
-{
-	return _buffer->Right.RoData ();
-}
-
-uint8_t*
-StereoPictureFrame::right_j2k_data ()
-{
-	return _buffer->Right.Data ();
-}
-
-int
-StereoPictureFrame::right_j2k_size () const
-{
-	return _buffer->Right.Size ();
-}

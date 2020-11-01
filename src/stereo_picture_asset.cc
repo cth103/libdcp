@@ -142,8 +142,8 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 
 		if (!frame_buffer_equals (
 			    i, opt, note,
-			    frame_A->left_j2k_data(), frame_A->left_j2k_size(),
-			    frame_B->left_j2k_data(), frame_B->left_j2k_size()
+			    frame_A->left()->data(), frame_A->left()->size(),
+			    frame_B->left()->data(), frame_B->left()->size()
 			    )) {
 			result = false;
 			if (!opt.keep_going) {
@@ -153,8 +153,8 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 
 		if (!frame_buffer_equals (
 			    i, opt, note,
-			    frame_A->right_j2k_data(), frame_A->right_j2k_size(),
-			    frame_B->right_j2k_data(), frame_B->right_j2k_size()
+			    frame_A->right()->data(), frame_A->right()->size(),
+			    frame_B->right()->data(), frame_B->right()->size()
 			    )) {
 			result = false;
 			if (!opt.keep_going) {
