@@ -449,7 +449,7 @@ load_language_tag_list (boost::filesystem::path tags_directory, string name, vec
 		}
 		string a = buffer;
 		trim (a);
-		fgets (buffer, sizeof(buffer), f);
+		r = fgets (buffer, sizeof(buffer), f);
 		if (r == 0) {
 			fclose (f);
 			throw FileError ("Bad tags file", tags_directory / name, -1);
