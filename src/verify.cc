@@ -405,7 +405,7 @@ enum VerifyPictureAssetResult
 int
 biggest_frame_size (shared_ptr<const MonoPictureFrame> frame)
 {
-	return frame->j2k_size ();
+	return frame->size ();
 }
 
 int

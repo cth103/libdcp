@@ -62,7 +62,7 @@ class OpenJPEGImage;
 /** @class MonoPictureFrame
  *  @brief A single frame of a 2D (monoscopic) picture asset.
  */
-class MonoPictureFrame : public boost::noncopyable
+class MonoPictureFrame : public Data, public boost::noncopyable
 {
 public:
 	explicit MonoPictureFrame (boost::filesystem::path path);
@@ -70,9 +70,9 @@ public:
 
 	boost::shared_ptr<OpenJPEGImage> xyz_image (int reduce = 0) const;
 
-	uint8_t const * j2k_data () const;
-	uint8_t* j2k_data ();
-	int j2k_size () const;
+	uint8_t const * data () const;
+	uint8_t* data ();
+	int size () const;
 
 private:
 	/* XXX: this is a bit of a shame, but I tried friend MonoPictureAssetReader and it's

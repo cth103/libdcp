@@ -63,7 +63,7 @@ MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path)
 		boost::throw_exception (FileError ("could not open JPEG2000 file", path, errno));
 	}
 
-	size_t n = fread (j2k_data(), 1, size, f);
+	size_t n = fread (data(), 1, size, f);
 	if (n != size) {
 		boost::throw_exception (FileError ("could not read from JPEG2000 file", path, errno));
 	}
@@ -100,21 +100,21 @@ MonoPictureFrame::MonoPictureFrame (uint8_t const * data, int size)
 
 /** @return Pointer to JPEG2000 data */
 uint8_t const *
-MonoPictureFrame::j2k_data () const
+MonoPictureFrame::data () const
 {
 	return _buffer->RoData ();
 }
 
 /** @return Pointer to JPEG2000 data */
 uint8_t *
-MonoPictureFrame::j2k_data ()
+MonoPictureFrame::data ()
 {
 	return _buffer->Data ();
 }
 
 /** @return Size of JPEG2000 data in bytes */
 int
-MonoPictureFrame::j2k_size () const
+MonoPictureFrame::size () const
 {
 	return _buffer->Size ();
 }

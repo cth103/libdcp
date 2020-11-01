@@ -148,8 +148,8 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 
 			if (!frame_buffer_equals (
 				    i, opt, bind (&storing_note_handler, boost::ref(notes), _1, _2),
-				    frame_A->j2k_data(), frame_A->j2k_size(),
-				    frame_B->j2k_data(), frame_B->j2k_size()
+				    frame_A->data(), frame_A->size(),
+				    frame_B->data(), frame_B->size()
 				    )) {
 				result = false;
 			}

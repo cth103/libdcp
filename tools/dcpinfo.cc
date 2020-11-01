@@ -162,10 +162,10 @@ main_picture (vector<string> const& only, shared_ptr<Reel> reel, bool analyse, b
 			for (int64_t i = 0; i < ma->intrinsic_duration(); ++i) {
 				shared_ptr<const MonoPictureFrame> frame = reader->get_frame (i);
 				if (SHOULD_PICTURE) {
-					printf("Frame %" PRId64 " J2K size %7d", i, frame->j2k_size());
+					printf("Frame %" PRId64 " J2K size %7d", i, frame->size());
 				}
-				j2k_size_range.first = min(j2k_size_range.first, frame->j2k_size());
-				j2k_size_range.second = max(j2k_size_range.second, frame->j2k_size());
+				j2k_size_range.first = min(j2k_size_range.first, frame->size());
+				j2k_size_range.second = max(j2k_size_range.second, frame->size());
 
 				if (decompress) {
 					try {
