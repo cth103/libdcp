@@ -128,7 +128,7 @@ try
 	if (private_key_file) {
 		try {
 			dcp::DecryptedKDM dec_kdm (enc_kdm, dcp::file_to_string (private_key_file.get()));
-			cout << "\nKeys";
+			cout << "\nKeys:";
 			BOOST_FOREACH (dcp::DecryptedKDMKey i, dec_kdm.keys ()) {
 				cout << "\n";
 				cout << "\tID:       " << i.id() << "\n";
