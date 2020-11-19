@@ -103,5 +103,5 @@ BOOST_AUTO_TEST_CASE (reel_subtitle_asset_test)
 	BOOST_CHECK_EQUAL (ps.duration().get(), 525L);
 	BOOST_CHECK_EQUAL (ps.hash().get(), string("3EABjX9BB1CAWhLUtHhrGSyLgOY="));
 	BOOST_REQUIRE (ps.language());
-	BOOST_CHECK_EQUAL (ps.language()->to_string(), "de-DE");
+	BOOST_CHECK_EQUAL (ps.language().get(), "de-DE");
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -36,6 +36,7 @@
  */
 
 #include "subtitle_asset.h"
+#include "language_tag.h"
 #include "local_time.h"
 #include "mxf.h"
 #include "crypto_context.h"
@@ -81,8 +82,8 @@ public:
 		_content_title_text = t;
 	}
 
-	void set_language (std::string l) {
-		_language = l;
+	void set_language (dcp::LanguageTag l) {
+		_language = l.to_string();
 	}
 
 	void set_issue_date (LocalTime t) {
@@ -116,7 +117,9 @@ public:
 		return _content_title_text;
 	}
 
-	/** @return language as a xs:language, if one was specified */
+	/** @return Language, if one was set.  This should be a xs:language, but
+	 *  it might not be if a non-compliant DCP was read in.
+	 */
 	boost::optional<std::string> language () const {
 		return _language;
 	}
@@ -180,6 +183,9 @@ private:
 	int64_t _intrinsic_duration;
 	/** <ContentTitleText> from the asset */
 	std::string _content_title_text;
+	/** This is stored and returned as a string so that we can tolerate non-RFC-5646 strings,
+	 *  but must be set as a dcp::LanguageTag to try to ensure that we create compliant output.
+	 */
 	boost::optional<std::string> _language;
 	boost::optional<std::string> _annotation_text;
 	LocalTime _issue_date;

@@ -407,7 +407,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 {
 	dcp::SMPTESubtitleAsset c;
 	c.set_reel_number (1);
-	c.set_language ("EN");
+	c.set_language (dcp::LanguageTag("en"));
 	c.set_content_title_text ("Test");
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
@@ -472,7 +472,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 		  "<dcst:ContentTitleText>Test</dcst:ContentTitleText>"
 		  "<dcst:IssueDate>2016-04-01T03:52:00.000+00:00</dcst:IssueDate>"
 		  "<dcst:ReelNumber>1</dcst:ReelNumber>"
-		  "<dcst:Language>EN</dcst:Language>"
+		  "<dcst:Language>en</dcst:Language>"
 		  "<dcst:EditRate>24 1</dcst:EditRate>"
 		  "<dcst:TimeCodeRate>24</dcst:TimeCodeRate>"
 		  "<dcst:SubtitleList>"
@@ -500,7 +500,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 {
 	dcp::SMPTESubtitleAsset c;
 	c.set_reel_number (1);
-	c.set_language ("EN");
+	c.set_language (dcp::LanguageTag("en"));
 	c.set_content_title_text ("Test");
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
@@ -670,7 +670,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 		  "<dcst:ContentTitleText>Test</dcst:ContentTitleText>"
 		  "<dcst:IssueDate>2016-04-01T03:52:00.000+00:00</dcst:IssueDate>"
 		  "<dcst:ReelNumber>1</dcst:ReelNumber>"
-		  "<dcst:Language>EN</dcst:Language>"
+		  "<dcst:Language>en</dcst:Language>"
 		  "<dcst:EditRate>24 1</dcst:EditRate>"
 		  "<dcst:TimeCodeRate>24</dcst:TimeCodeRate>"
 		  "<dcst:SubtitleList>"
@@ -699,7 +699,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 {
 	dcp::SMPTESubtitleAsset c;
 	c.set_reel_number (1);
-	c.set_language ("EN");
+	c.set_language (dcp::LanguageTag("en"));
 	c.set_content_title_text ("Test");
 
 	c.add (

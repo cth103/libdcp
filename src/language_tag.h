@@ -171,7 +171,7 @@ public:
 	};
 
 	LanguageTag () {}
-	LanguageTag (std::string tag);
+	explicit LanguageTag (std::string tag);
 
 	boost::optional<LanguageSubtag> language() const {
 		return _language;

@@ -65,7 +65,7 @@ public:
 
 	void set_language (dcp::LanguageTag language);
 
-	boost::optional<dcp::LanguageTag> language () const {
+	boost::optional<std::string> language () const {
 		return _language;
 	}
 
@@ -73,7 +73,11 @@ private:
 	std::string key_type () const;
 	std::string cpl_node_name (Standard standard) const;
 
-	boost::optional<dcp::LanguageTag> _language;
+	/** As in other places, this is stored and returned as a string so that
+	 *  we can tolerate non-RFC-5646 strings, but must be set as a dcp::LanguageTag
+	 *  to try to ensure that we create compliant output.
+	 */
+	boost::optional<std::string> _language;
 };
 
 }

@@ -286,8 +286,8 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 		if (!_reels.empty()) {
 			shared_ptr<dcp::ReelSubtitleAsset> sub = _reels.front()->main_subtitle();
 			if (sub) {
-				optional<dcp::LanguageTag> lang = sub->language();
-				if (lang && lang->to_string() == sll_split[0]) {
+				optional<string> lang = sub->language();
+				if (lang && lang == sll_split[0]) {
 					first = 1;
 				}
 			}
@@ -380,7 +380,7 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 	active->add_child("Width", "meta")->add_child_text(raw_convert<string>(_main_picture_active_area->width));
 	active->add_child("Height", "meta")->add_child_text(raw_convert<string>(_main_picture_active_area->height));
 
-	optional<dcp::LanguageTag> first_subtitle_language;
+	optional<string> first_subtitle_language;
 	BOOST_FOREACH (shared_ptr<const Reel> i, _reels) {
 		if (i->main_subtitle()) {
 			first_subtitle_language = i->main_subtitle()->language();
@@ -393,13 +393,13 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 	if (first_subtitle_language || !_additional_subtitle_languages.empty()) {
 		string lang;
 		if (first_subtitle_language) {
-			lang = first_subtitle_language->to_string();
+			lang = *first_subtitle_language;
 		}
-		BOOST_FOREACH (dcp::LanguageTag const& i, _additional_subtitle_languages) {
+		BOOST_FOREACH (string const& i, _additional_subtitle_languages) {
 			if (!lang.empty()) {
 				lang += " ";
 			}
-			lang += i.to_string();
+			lang += i;
 		}
 		meta->add_child("MainSubtitleLanguageList")->add_child_text(lang);
 	}

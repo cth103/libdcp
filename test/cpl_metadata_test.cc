@@ -233,7 +233,8 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test1)
 
 	list<shared_ptr<dcp::Reel> > reels = cpl.reels ();
 	BOOST_REQUIRE_EQUAL (reels.size(), 1);
-	BOOST_CHECK_EQUAL (reels.front()->main_subtitle()->language().get(), dcp::LanguageTag("de-DE"));
+	BOOST_REQUIRE (reels.front()->main_subtitle()->language());
+	BOOST_CHECK_EQUAL (reels.front()->main_subtitle()->language().get(), "de-DE");
 
 	vector<string> asl = cpl.additional_subtitle_languages();
 	BOOST_REQUIRE_EQUAL (asl.size(), 2);

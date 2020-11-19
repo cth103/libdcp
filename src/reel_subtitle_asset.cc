@@ -58,10 +58,7 @@ ReelSubtitleAsset::ReelSubtitleAsset (boost::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
 	, ReelMXF (node)
 {
-	optional<string> const language = node->optional_string_child("Language");
-	if (language) {
-		_language = dcp::LanguageTag(*language);
-	}
+	_language = node->optional_string_child("Language");
 	node->done ();
 }
 
@@ -83,7 +80,7 @@ ReelSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 	xmlpp::Node* asset = write_to_cpl_asset (node, standard, hash());
 	write_to_cpl_mxf (asset);
 	if (_language) {
-		asset->add_child("Language")->add_child_text(_language->to_string());
+		asset->add_child("Language")->add_child_text(*_language);
 	}
 	return asset;
 }
@@ -100,3 +97,11 @@ ReelSubtitleAsset::equals (shared_ptr<const ReelSubtitleAsset> other, EqualityOp
 
 	return true;
 }
+
+
+void
+ReelSubtitleAsset::set_language (dcp::LanguageTag language)
+{
+	_language = language.to_string();
+}
+
