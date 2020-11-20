@@ -38,9 +38,10 @@
 #ifndef LIBDCP_REEL_CLOSED_CAPTION_ASSET_H
 #define LIBDCP_REEL_CLOSED_CAPTION_ASSET_H
 
+#include "language_tag.h"
+#include "subtitle_asset.h"
 #include "reel_asset.h"
 #include "reel_mxf.h"
-#include "subtitle_asset.h"
 
 namespace dcp {
 
@@ -62,8 +63,8 @@ public:
 		return asset_of_type<SubtitleAsset> ();
 	}
 
-	void set_language (std::string l) {
-		_language = l;
+	void set_language (dcp::LanguageTag l) {
+		_language = l.to_string();
 	}
 
 	void unset_language () {
