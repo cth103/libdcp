@@ -485,7 +485,7 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 	}
 
 	if (_language != other->_language) {
-		note (DCP_ERROR, "Subtitle languages differ");
+		note (DCP_ERROR, String::compose("Subtitle languages differ (`%1' vs `%2')", _language.get_value_or("[none]"), other->_language.get_value_or("[none]")));
 		return false;
 	}
 
