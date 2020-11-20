@@ -185,7 +185,7 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 		return false;
 	}
 
-	if (_main_markers && !_main_markers->equals (other->_main_markers, opt, note)) {
+	if (_main_markers && (!other->_main_markers || !_main_markers->equals (other->_main_markers, opt, note))) {
 		return false;
 	}
 
