@@ -185,7 +185,13 @@ Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHand
 		return false;
 	}
 
-	if (_main_markers && (!other->_main_markers || !_main_markers->equals (other->_main_markers, opt, note))) {
+	if ((_main_markers && !other->_main_markers) || (!_main_markers && other->_main_markers)) {
+		note (DCP_ERROR, "Reel: one has markers and the other does not");
+		return false;
+	}
+
+	if (_main_markers && !_main_markers->equals(other->_main_markers, opt, note)) {
+		note (DCP_ERROR, "Reel: marker assets differ");
 		return false;
 	}
 
