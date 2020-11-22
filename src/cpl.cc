@@ -401,7 +401,7 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 			}
 			lang += i;
 		}
-		meta->add_child("MainSubtitleLanguageList")->add_child_text(lang);
+		meta->add_child("MainSubtitleLanguageList", "meta")->add_child_text(lang);
 	}
 
 	/* SMPTE Bv2.1 8.6.3 */

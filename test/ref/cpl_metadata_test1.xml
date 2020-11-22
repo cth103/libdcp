@@ -65,7 +65,7 @@
             <meta:Width>1440</meta:Width>
             <meta:Height>1080</meta:Height>
           </meta:MainPictureActiveArea>
-          <MainSubtitleLanguageList>de-DE en-US fr-ZA</MainSubtitleLanguageList>
+          <meta:MainSubtitleLanguageList>de-DE en-US fr-ZA</meta:MainSubtitleLanguageList>
           <meta:ExtensionMetadataList>
             <meta:ExtensionMetadata scope="http://isdcf.com/ns/cplmd/app">
               <meta:Name>Application</meta:Name>
