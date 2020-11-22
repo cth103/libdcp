@@ -42,6 +42,17 @@
             <meta:Width>1440</meta:Width>
             <meta:Height>1080</meta:Height>
           </meta:MainPictureActiveArea>
+          <meta:ExtensionMetadataList>
+            <meta:ExtensionMetadata scope="http://isdcf.com/ns/cplmd/app">
+              <meta:Name>Application</meta:Name>
+              <meta:PropertyList>
+                <meta:Property>
+                  <meta:Name>DCP Constraints Profile</meta:Name>
+                  <meta:Value>SMPTE-RDD-52:2020-Bv2.1</meta:Value>
+                </meta:Property>
+              </meta:PropertyList>
+            </meta:ExtensionMetadata>
+          </meta:ExtensionMetadataList>
         </meta:CompositionMetadataAsset>
       </AssetList>
     </Reel>

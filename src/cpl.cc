@@ -404,6 +404,14 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 		meta->add_child("MainSubtitleLanguageList")->add_child_text(lang);
 	}
 
+	/* SMPTE Bv2.1 8.6.3 */
+	xmlpp::Element* extension = meta->add_child("ExtensionMetadataList", "meta")->add_child("ExtensionMetadata", "meta");
+	extension->set_attribute("scope", "http://isdcf.com/ns/cplmd/app");
+	extension->add_child("Name", "meta")->add_child_text("Application");
+	xmlpp::Element* property = extension->add_child("PropertyList", "meta")->add_child("Property", "meta");
+	property->add_child("Name", "meta")->add_child_text("DCP Constraints Profile");
+	property->add_child("Value", "meta")->add_child_text("SMPTE-RDD-52:2020-Bv2.1");
+
 	if (_reels.front()->main_sound()) {
 		shared_ptr<const SoundAsset> asset = _reels.front()->main_sound()->asset();
 		if (asset) {
