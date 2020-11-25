@@ -79,6 +79,10 @@ public:
 		return _hash;
 	}
 
+	void set_hash (std::string h) {
+		_hash = h;
+	}
+
 	/** @return true if a KeyId is specified for this asset, implying
 	 *  that its content is encrypted.
 	 */
