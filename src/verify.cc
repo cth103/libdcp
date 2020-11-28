@@ -140,24 +140,26 @@ dcp::verify (vector<boost::filesystem::path> directories, function<void (string,
 						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_PICTURE_FRAME_RATE));
 					}
 					/* Check asset */
-					stage ("Checking picture asset hash", reel->main_picture()->asset()->file());
-					Result const r = verify_asset (dcp, reel->main_picture(), progress);
-					switch (r) {
-					case RESULT_BAD:
-						notes.push_back (
-							VerificationNote(
-								VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_HASH_INCORRECT, *reel->main_picture()->asset()->file()
-								)
-							);
-						break;
-					case RESULT_CPL_PKL_DIFFER:
-						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE));
-						break;
-					default:
-						break;
+					if (reel->main_picture()->asset_ref().resolved()) {
+						stage ("Checking picture asset hash", reel->main_picture()->asset()->file());
+						Result const r = verify_asset (dcp, reel->main_picture(), progress);
+						switch (r) {
+						case RESULT_BAD:
+							notes.push_back (
+								VerificationNote(
+									VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_HASH_INCORRECT, *reel->main_picture()->asset()->file()
+									)
+								);
+							break;
+						case RESULT_CPL_PKL_DIFFER:
+							notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE));
+							break;
+						default:
+							break;
+						}
 					}
 				}
-				if (reel->main_sound()) {
+				if (reel->main_sound() && reel->main_sound()->asset_ref().resolved()) {
 					stage ("Checking sound asset hash", reel->main_sound()->asset()->file());
 					Result const r = verify_asset (dcp, reel->main_sound(), progress);
 					switch (r) {
