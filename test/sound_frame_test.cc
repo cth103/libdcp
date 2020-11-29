@@ -64,6 +64,7 @@ BOOST_AUTO_TEST_CASE (sound_frame_test)
 	int const read = sf_readf_int (sndfile, ref_data, frame_length);
 	BOOST_REQUIRE_EQUAL (read, frame_length);
 
+	/* Check raw data is as we expect */
 	uint8_t const * p = frame->data ();
 	for (int i = 0; i < (frame_length * channels); ++i) {
 		int x = ref_data[i] >> 8;
@@ -73,6 +74,14 @@ BOOST_AUTO_TEST_CASE (sound_frame_test)
 		int const y = p[0] | (p[1] << 8) | (p[2] << 16);
 		BOOST_REQUIRE_EQUAL (x, y);
 		p += 3;
+	}
+
+	/* Check SoundFrame::get() */
+	int* ref = ref_data;
+	for (int sample = 0; sample < frame_length; ++sample) {
+		for (int channel = 0; channel < channels; ++channel) {
+			BOOST_REQUIRE_EQUAL ((*ref++) >> 8, frame->get(channel, sample));
+		}
 	}
 }
 

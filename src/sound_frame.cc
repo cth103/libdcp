@@ -50,7 +50,8 @@ int32_t
 SoundFrame::get (int channel, int frame) const
 {
 	uint8_t const * d = data() + (frame * _channels * 3) + (channel * 3);
-	return d[0] | (d[1] << 8) | (d[2] << 16);
+	/* This is slightly dubious I think */
+	return (d[0] << 8 | (d[1] << 16) | (d[2] << 24)) >> 8;
 }
 
 int
