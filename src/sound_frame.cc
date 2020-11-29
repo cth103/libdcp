@@ -54,6 +54,12 @@ SoundFrame::get (int channel, int frame) const
 }
 
 int
+SoundFrame::channels () const
+{
+	return _channels;
+}
+
+int
 SoundFrame::samples () const
 {
 	return size() / (_channels * 3);
