@@ -201,11 +201,13 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 		}
 
 		if (memcmp (frame_A->data(), frame_B->data(), frame_A->size()) != 0) {
-			for (int i = 0; i < frame_A->size(); ++i) {
-				int const d = abs (frame_A->data()[i] - frame_B->data()[i]);
-				if (d > opt.max_audio_sample_error) {
-					note (DCP_ERROR, String::compose ("PCM data difference of %1", d));
-					return false;
+			for (int sample= 0; sample < frame_A->samples(); ++sample) {
+				for (int channel = 0; channel < frame_A->channels(); ++channel) {
+					int32_t const d = abs(frame_A->get(channel, sample) - frame_B->get(channel, sample));
+					if (d > opt.max_audio_sample_error) {
+						note (DCP_ERROR, String::compose ("PCM data difference of %1", d));
+						return false;
+					}
 				}
 			}
 		}

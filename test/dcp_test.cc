@@ -37,6 +37,7 @@
 #include "mono_picture_asset.h"
 #include "stereo_picture_asset.h"
 #include "picture_asset_writer.h"
+#include "reel_picture_asset.h"
 #include "sound_asset_writer.h"
 #include "sound_asset.h"
 #include "atmos_asset.h"
@@ -53,6 +54,7 @@
 
 using std::string;
 using std::vector;
+using boost::dynamic_pointer_cast;
 using boost::shared_ptr;
 #if BOOST_VERSION >= 106100
 using namespace boost::placeholders;
@@ -168,6 +170,89 @@ BOOST_AUTO_TEST_CASE (dcp_test4)
 	B.read ();
 
 	BOOST_CHECK (!A.equals (B, dcp::EqualityOptions(), boost::bind (&note, _1, _2)));
+}
+
+static
+void
+test_rewriting_sound(string name, bool modify)
+{
+	dcp::DCP A ("test/ref/DCP/dcp_test1");
+	A.read ();
+
+	BOOST_REQUIRE (!A.cpls().empty());
+	BOOST_REQUIRE (!A.cpls().front()->reels().empty());
+	shared_ptr<dcp::ReelMonoPictureAsset> A_picture = dynamic_pointer_cast<dcp::ReelMonoPictureAsset>(A.cpls().front()->reels().front()->main_picture());
+	BOOST_REQUIRE (A_picture);
+	shared_ptr<dcp::ReelSoundAsset> A_sound = dynamic_pointer_cast<dcp::ReelSoundAsset>(A.cpls().front()->reels().front()->main_sound());
+
+	boost::filesystem::remove_all ("build/test/" + name);
+	dcp::DCP B ("build/test/" + name);
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+
+	BOOST_REQUIRE (A_picture->mono_asset());
+	BOOST_REQUIRE (A_picture->mono_asset()->file());
+	boost::filesystem::copy_file (A_picture->mono_asset()->file().get(), "build/test/" +name + "/picture.mxf");
+	reel->add(
+		shared_ptr<dcp::ReelMonoPictureAsset>(
+			new dcp::ReelMonoPictureAsset(shared_ptr<dcp::MonoPictureAsset>(new dcp::MonoPictureAsset("build/test/" + name + "/picture.mxf")), 0)
+			)
+		);
+
+	shared_ptr<dcp::SoundAssetReader> reader = A_sound->asset()->start_read();
+	shared_ptr<dcp::SoundAsset> sound(new dcp::SoundAsset(A_sound->asset()->edit_rate(), A_sound->asset()->sampling_rate(), A_sound->asset()->channels(), dcp::LanguageTag("en-US"), dcp::SMPTE));
+	shared_ptr<dcp::SoundAssetWriter> writer = sound->start_write("build/test/" + name + "/sound.mxf", vector<dcp::Channel>());
+
+	bool need_to_modify = modify;
+	for (int i = 0; i < A_sound->asset()->intrinsic_duration(); ++i) {
+		shared_ptr<const dcp::SoundFrame> sf = reader->get_frame (i);
+		float* out[sf->channels()];
+		for (int j = 0; j < sf->channels(); ++j) {
+			out[j] = new float[sf->samples()];
+		}
+		for (int j = 0; j < sf->samples(); ++j) {
+			for (int k = 0; k < sf->channels(); ++k) {
+				out[k][j] = static_cast<float>(sf->get(k, j)) / (1 << 23);
+				if (need_to_modify) {
+					out[k][j] += 1.0 / (1 << 23);
+					need_to_modify = false;
+				}
+			}
+		}
+		writer->write (out, sf->samples());
+		for (int j = 0; j < sf->channels(); ++j) {
+			delete[] out[j];
+		}
+	}
+	writer->finalize();
+
+	reel->add(shared_ptr<dcp::ReelSoundAsset>(new dcp::ReelSoundAsset(sound, 0)));
+
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("A Test DCP", dcp::FEATURE));
+	cpl->add (reel);
+
+	B.add (cpl);
+	B.write_xml (dcp::SMPTE);
+
+	dcp::EqualityOptions eq;
+	eq.reel_hashes_can_differ = true;
+	eq.max_audio_sample_error = 0;
+	if (modify) {
+		BOOST_CHECK (!A.equals(B, eq, boost::bind(&note, _1, _2)));
+	} else {
+		BOOST_CHECK (A.equals(B, eq, boost::bind(&note, _1, _2)));
+	}
+}
+
+/** Test comparison of a DCP with another that has the same picture and the same (but re-written) sound */
+BOOST_AUTO_TEST_CASE (dcp_test9)
+{
+	test_rewriting_sound ("dcp_test9", false);
+}
+
+/** Test comparison of a DCP with another that has the same picture and very slightly modified sound */
+BOOST_AUTO_TEST_CASE (dcp_test10)
+{
+	test_rewriting_sound ("dcp_test10", true);
 }
 
 /** Test creation of a 2D DCP with an Atmos track */
