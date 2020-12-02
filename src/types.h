@@ -215,6 +215,8 @@ extern std::ostream& operator<< (std::ostream& s, Fraction const & f);
  *
  *  When comparing things, we want to be able to ignore some differences;
  *  this class expresses those differences.
+ *
+ *  It also contains some settings for how the comparison should be done.
  */
 struct EqualityOptions
 {
@@ -229,6 +231,7 @@ struct EqualityOptions
 		, issue_dates_can_differ (false)
 		, load_font_nodes_can_differ (false)
 		, keep_going (false)
+		, export_differing_subtitles (false)
 	{}
 
 	/** The maximum allowable mean difference in pixel value between two images */
@@ -247,6 +250,8 @@ struct EqualityOptions
 	bool issue_dates_can_differ;
 	bool load_font_nodes_can_differ;
 	bool keep_going;
+	/** true to save the first pair of differeng image subtitles to the current working directory */
+	bool export_differing_subtitles;
 };
 
 /* I've been unable to make mingw happy with ERROR as a symbol, so

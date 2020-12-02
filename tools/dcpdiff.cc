@@ -61,17 +61,18 @@ static void
 help (string n)
 {
 	cerr << "Syntax: " << n << " [OPTION] <DCP> <DCP>\n"
-	     << "  -V, --version                show libdcp version\n"
-	     << "  -h, --help                   show this help\n"
-	     << "  -v, --verbose                be verbose\n"
-	     << "      --cpl-annotation-texts   allow differing CPL annotation texts\n"
-	     << "      --reel-annotation-texts  allow differing reel annotation texts\n"
-	     << "  -a, --annotation-texts       allow different CPL and reel annotation texts\n"
-	     << "  -d, --issue-dates            allow different issue dates\n"
-	     << "  -m, --mean-pixel             maximum allowed mean pixel error (default 5)\n"
-	     << "  -s, --std-dev-pixel          maximum allowed standard deviation of pixel error (default 5)\n"
-	     << "      --key                    hexadecimal key to use to decrypt MXFs\n"
-	     << "      --ignore-missing-assets  ignore missing asset files\n"
+	     << "  -V, --version                     show libdcp version\n"
+	     << "  -h, --help                        show this help\n"
+	     << "  -v, --verbose                     be verbose\n"
+	     << "      --cpl-annotation-texts        allow differing CPL annotation texts\n"
+	     << "      --reel-annotation-texts       allow differing reel annotation texts\n"
+	     << "  -a, --annotation-texts            allow different CPL and reel annotation texts\n"
+	     << "  -d, --issue-dates                 allow different issue dates\n"
+	     << "  -m, --mean-pixel                  maximum allowed mean pixel error (default 5)\n"
+	     << "  -s, --std-dev-pixel               maximum allowed standard deviation of pixel error (default 5)\n"
+	     << "      --key                         hexadecimal key to use to decrypt MXFs\n"
+	     << "      --ignore-missing-assets       ignore missing asset files\n"
+	     << "      --export-differing-subtitles  export the first pair of differing image subtitles to the current working directory\n"
 	     << "\n"
 	     << "The <DCP>s are the DCP directories to compare.\n"
 	     << "Comparison is of metadata and content, ignoring timestamps\n"
@@ -147,10 +148,11 @@ main (int argc, char* argv[])
 			{ "cpl-annotation-texts", no_argument, 0, 'C'},
 			{ "key", required_argument, 0, 'D'},
 			{ "reel-annotation-texts", no_argument, 0, 'E'},
+			{ "export-differing-subtitles", no_argument, 0, 'F' },
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Vhvm:s:adACD:E", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Vhvm:s:adACD:EF", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -190,6 +192,9 @@ main (int argc, char* argv[])
 			break;
 		case 'E':
 			options.reel_annotation_texts_can_differ = true;
+			break;
+		case 'F':
+			options.export_differing_subtitles = true;
 			break;
 		}
 	}

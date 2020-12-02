@@ -99,6 +99,8 @@ public:
 		return _file;
 	}
 
+	bool equals (boost::shared_ptr<dcp::SubtitleImage> other, EqualityOptions options, NoteHandler note);
+
 private:
 	ArrayData _png_image;
 	std::string _id;

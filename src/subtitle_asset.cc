@@ -452,7 +452,7 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 	}
 
 	if (_subtitles.size() != other->_subtitles.size()) {
-		note (DCP_ERROR, "subtitles differ");
+		note (DCP_ERROR, String::compose("different number of subtitles: %1 vs %2", _subtitles.size(), other->_subtitles.size()));
 		return false;
 	}
 
@@ -466,17 +466,16 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 		shared_ptr<SubtitleImage> image_j = dynamic_pointer_cast<SubtitleImage> (*j);
 
 		if ((string_i && !string_j) || (image_i && !image_j)) {
-			note (DCP_ERROR, "subtitles differ");
+			note (DCP_ERROR, "subtitles differ: string vs. image");
 			return false;
 		}
 
 		if (string_i && *string_i != *string_j) {
-			note (DCP_ERROR, "subtitles differ");
+			note (DCP_ERROR, String::compose("subtitles differ in text or metadata: %1 vs %2", string_i->text(), string_j->text()));
 			return false;
 		}
 
-		if (image_i && *image_i != *image_j) {
-			note (DCP_ERROR, "subtitles differ");
+		if (image_i && !image_i->equals(image_j, options, note)) {
 			return false;
 		}
 

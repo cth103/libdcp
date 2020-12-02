@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2020 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -36,6 +36,7 @@
 
 using std::ostream;
 using std::string;
+using boost::shared_ptr;
 using namespace dcp;
 
 SubtitleImage::SubtitleImage (
@@ -112,6 +113,71 @@ dcp::operator!= (SubtitleImage const & a, SubtitleImage const & b)
 	return !(a == b);
 }
 
+bool
+SubtitleImage::equals (shared_ptr<SubtitleImage> other, EqualityOptions options, NoteHandler note)
+{
+	if (png_image() != other->png_image()) {
+		note (DCP_ERROR, "subtitle image PNG data differs");
+		if (options.export_differing_subtitles) {
+			string const base = "dcpdiff_subtitle_";
+			if (boost::filesystem::exists(base + "A.png")) {
+				note (DCP_ERROR, "could not export subtitle as " + base + "A.png already exists");
+			} else {
+				png_image().write(base + "A.png");
+			}
+			if (boost::filesystem::exists(base + "B.png")) {
+				note (DCP_ERROR, "could not export subtitle as " + base + "B.png already exists");
+			} else {
+				other->png_image().write(base + "B.png");
+			}
+			options.export_differing_subtitles = false;
+		}
+		return false;
+	}
+
+	if (in() != other->in()) {
+		note (DCP_ERROR, "subtitle in times differ");
+		return false;
+	}
+
+	if (out() != other->out()) {
+		note (DCP_ERROR, "subtitle out times differ");
+		return false;
+	}
+
+	if (h_position() != other->h_position()) {
+		note (DCP_ERROR, "subtitle horizontal positions differ");
+		return false;
+	}
+
+	if (h_align() != other->h_align()) {
+		note (DCP_ERROR, "subtitle horizontal alignments differ");
+		return false;
+	}
+
+	if (v_position() != other->v_position()) {
+		note (DCP_ERROR, "subtitle vertical positions differ");
+		return false;
+	}
+
+	if (v_align() != other->v_align()) {
+		note (DCP_ERROR, "subtitle vertical alignments differ");
+		return false;
+	}
+
+	if (fade_up_time() != other->fade_up_time()) {
+		note (DCP_ERROR, "subtitle fade-up times differ");
+		return false;
+	}
+
+	if (fade_down_time() != other->fade_down_time()) {
+		note (DCP_ERROR, "subtitle fade-down times differ");
+		return false;
+	}
+
+	return true;
+}
+
 ostream&
 dcp::operator<< (ostream& s, SubtitleImage const & sub)
 {
@@ -122,3 +188,4 @@ dcp::operator<< (ostream& s, SubtitleImage const & sub)
 
 	return s;
 }
+
