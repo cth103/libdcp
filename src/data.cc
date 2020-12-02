@@ -72,3 +72,10 @@ dcp::operator== (Data const & a, Data const & b)
 	return (a.size() == b.size() && memcmp(a.data(), b.data(), a.size()) == 0);
 }
 
+
+bool
+dcp::operator!= (Data const & a, Data const & b)
+{
+	return (a.size() != b.size() || memcmp(a.data(), b.data(), a.size()) != 0);
+}
+

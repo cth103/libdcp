@@ -58,6 +58,7 @@ public:
 
 
 bool operator==(Data const & a, Data const & b);
+bool operator!=(Data const & a, Data const & b);
 
 
 }
