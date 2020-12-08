@@ -57,6 +57,7 @@ help (string n)
 	     << "  -V, --version           show libdcp version\n"
 	     << "  -h, --help              show this help\n"
 	     << "  --ignore-missing-assets don't give errors about missing assets\n"
+	     << "  --ignore-bv21-smpte     don't give the SMPTE Bv2.1 error about a DCP not being SMPTE\n"
 	     << "  -q, --quiet             don't report progress\n";
 }
 
@@ -86,6 +87,7 @@ main (int argc, char* argv[])
 	dcp::init ();
 
 	bool ignore_missing_assets = false;
+	bool ignore_bv21_smpte = false;
 	bool quiet = false;
 
 	int option_index = 0;
@@ -94,11 +96,12 @@ main (int argc, char* argv[])
 			{ "version", no_argument, 0, 'V' },
 			{ "help", no_argument, 0, 'h' },
 			{ "ignore-missing-assets", no_argument, 0, 'A' },
+			{ "ignore-bv21-smpte", no_argument, 0, 'B' },
 			{ "quiet", no_argument, 0, 'q' },
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "VhAq", long_options, &option_index);
+		int c = getopt_long (argc, argv, "VhABq", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -113,6 +116,9 @@ main (int argc, char* argv[])
 			exit (EXIT_SUCCESS);
 		case 'A':
 			ignore_missing_assets = true;
+			break;
+		case 'B':
+			ignore_bv21_smpte = true;
 			break;
 		case 'q':
 			quiet = true;
@@ -137,6 +143,9 @@ main (int argc, char* argv[])
 
 	bool failed = false;
 	BOOST_FOREACH (dcp::VerificationNote i, notes) {
+		if (ignore_bv21_smpte && i.code() == dcp::VerificationNote::NOT_SMPTE) {
+			continue;
+		}
 		switch (i.type()) {
 		case dcp::VerificationNote::VERIFY_ERROR:
 			cout << "Error: " << note_to_string(i) << "\n";

@@ -90,6 +90,8 @@ public:
 		PICTURE_FRAME_NEARLY_TOO_LARGE,
 		/** An asset that the CPL requires is not in this DCP; the DCP may be a VF */
 		EXTERNAL_ASSET,
+		/** DCP is Interop, not SMPTE [Bv2.1_6.1] */
+		NOT_SMPTE,
 	};
 
 	VerificationNote (Type type, Code code)

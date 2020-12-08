@@ -85,6 +85,14 @@ check_no_errors (boost::filesystem::path path)
 	vector<boost::filesystem::path> directories;
 	directories.push_back (path);
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, xsd_test);
+	for (list<dcp::VerificationNote>::iterator i = notes.begin(); i != notes.end(); ) {
+		list<dcp::VerificationNote>::iterator tmp = i;
+		++tmp;
+		if (i->code() == dcp::VerificationNote::NOT_SMPTE) {
+			notes.erase (i);
+		}
+		i = tmp;
+	}
 	dump_notes (notes);
 	BOOST_CHECK (notes.empty());
 }

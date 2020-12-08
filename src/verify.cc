@@ -591,6 +591,10 @@ dcp::verify (
 			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::GENERAL_READ, string(e.what())));
 		}
 
+		if (dcp->standard() != dcp::SMPTE) {
+			notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::NOT_SMPTE));
+		}
+
 		BOOST_FOREACH (shared_ptr<CPL> cpl, dcp->cpls()) {
 			stage ("Checking CPL", cpl->file());
 			validate_xml (cpl->file().get(), xsd_dtd_directory, notes);
@@ -698,6 +702,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The instantaneous bit rate of the picture asset %1 is close to the limit of 250Mbit/s in at least one place.", note.file()->filename());
 	case dcp::VerificationNote::EXTERNAL_ASSET:
 		return String::compose("An asset that this DCP refers to is not included in the DCP.  It may be a VF.  Missing asset is %1.", note.note().get());
+	case dcp::VerificationNote::NOT_SMPTE:
+		return "This DCP does not use the SMPTE standard, which is required for Bv2.1 compliance.";
 	}
 
 	return "";

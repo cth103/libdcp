@@ -113,7 +113,7 @@ done
 # Run dcpverify on all the DCPs in private/metadata
 for d in `find $private/metadata -mindepth 1 -maxdepth 1 -type d | sort -f -d`; do
     if [ `basename $d` != ".git" ]; then
-        $dcpverify --ignore-missing-assets -q $d
+        $dcpverify --ignore-missing-assets --ignore-bv21-smpte -q $d
         if [ "$?" != "0" ]; then
             echo "FAIL: dcpverify failed for $d"
             exit 1

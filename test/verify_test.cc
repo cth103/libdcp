@@ -485,7 +485,10 @@ BOOST_AUTO_TEST_CASE (verify_test13)
 	++st;
 	BOOST_REQUIRE (st == stages.end());
 
-	BOOST_CHECK_EQUAL (notes.size(), 0);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::NOT_SMPTE);
 }
 
 /* DCP with a short asset */
@@ -494,8 +497,10 @@ BOOST_AUTO_TEST_CASE (verify_test14)
 	vector<boost::filesystem::path> directories = setup (8, 14);
 	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, xsd_test);
 
-	BOOST_REQUIRE_EQUAL (notes.size(), 4);
+	BOOST_REQUIRE_EQUAL (notes.size(), 5);
 	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::NOT_SMPTE);
+	++i;
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::DURATION_TOO_SMALL);
 	++i;
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::INTRINSIC_DURATION_TOO_SMALL);
@@ -623,7 +628,9 @@ BOOST_AUTO_TEST_CASE (verify_test18)
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 0);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::NOT_SMPTE);
 }
 
 
@@ -652,9 +659,14 @@ BOOST_AUTO_TEST_CASE (verify_test19)
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 2);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
-	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
+	BOOST_REQUIRE_EQUAL (notes.size(), 3);
+	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::NOT_SMPTE);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::XML_VALIDATION_ERROR);
+	++i;
 }
 
 
