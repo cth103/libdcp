@@ -51,6 +51,7 @@ public:
 	*/
 	enum Type {
 		VERIFY_ERROR,
+		VERIFY_BV21_ERROR, ///< may not always be considered an error, but violates a "shall" requirement of Bv2.1
 		VERIFY_WARNING
 	};
 

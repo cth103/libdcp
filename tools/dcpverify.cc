@@ -142,6 +142,9 @@ main (int argc, char* argv[])
 			cout << "Error: " << note_to_string(i) << "\n";
 			failed = true;
 			break;
+		case dcp::VerificationNote::VERIFY_BV21_ERROR:
+			cout << "Bv2.1 error: " << note_to_string(i) << "\n";
+			break;
 		case dcp::VerificationNote::VERIFY_WARNING:
 			cout << "Warning: " << note_to_string(i) << "\n";
 			break;
