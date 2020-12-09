@@ -874,3 +874,31 @@ BOOST_AUTO_TEST_CASE (verify_test25)
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
 }
 
+
+/* SMPTE DCP with invalid <Language> in the MainSubtitle */
+BOOST_AUTO_TEST_CASE (verify_test26)
+{
+	boost::filesystem::path const dir("build/test/verify_test26");
+	boost::filesystem::remove_all (dir);
+	boost::filesystem::create_directories (dir);
+	boost::filesystem::copy_file ("test/data/subs.mxf", dir / "subs.mxf");
+	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset(dir / "subs.mxf"));
+	shared_ptr<dcp::ReelSubtitleAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
+	reel_asset->_language = "badlang";
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_asset);
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	shared_ptr<dcp::DCP> dcp(new dcp::DCP(dir));
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
+
+}
+

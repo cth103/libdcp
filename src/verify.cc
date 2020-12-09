@@ -394,6 +394,17 @@ verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelMXF> reel_mxf, fun
 }
 
 
+void
+verify_language_tag (string tag, list<VerificationNote>& notes)
+{
+	try {
+		dcp::LanguageTag test (tag);
+	} catch (dcp::LanguageTagError &) {
+		notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::BAD_LANGUAGE, tag));
+	}
+}
+
+
 enum VerifyPictureAssetResult
 {
 	VERIFY_PICTURE_ASSET_RESULT_GOOD,
@@ -544,6 +555,16 @@ verify_main_sound_asset (
 
 
 static void
+verify_main_subtitle_reel (shared_ptr<const ReelSubtitleAsset> reel_asset, list<VerificationNote>& notes)
+{
+	/* XXX: is Language compulsory? */
+	if (reel_asset->language()) {
+		verify_language_tag (*reel_asset->language(), notes);
+	}
+}
+
+
+static void
 verify_main_subtitle_asset (
 	shared_ptr<const Reel> reel,
 	function<void (string, optional<boost::filesystem::path>)> stage,
@@ -642,8 +663,11 @@ dcp::verify (
 					verify_main_sound_asset (dcp, reel, stage, progress, notes);
 				}
 
-				if (reel->main_subtitle() && reel->main_subtitle()->asset_ref().resolved()) {
-					verify_main_subtitle_asset (reel, stage, xsd_dtd_directory, notes);
+				if (reel->main_subtitle()) {
+					verify_main_subtitle_reel (reel->main_subtitle(), notes);
+					if (reel->main_subtitle()->asset_ref().resolved()) {
+						verify_main_subtitle_asset (reel, stage, xsd_dtd_directory, notes);
+					}
 				}
 			}
 		}
@@ -704,6 +728,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("An asset that this DCP refers to is not included in the DCP.  It may be a VF.  Missing asset is %1.", note.note().get());
 	case dcp::VerificationNote::NOT_SMPTE:
 		return "This DCP does not use the SMPTE standard, which is required for Bv2.1 compliance.";
+	case dcp::VerificationNote::BAD_LANGUAGE:
+		return String::compose("The DCP specifies a language '%1' which does not conform to the RFC 5646 standard.", note.note().get());
 	}
 
 	return "";

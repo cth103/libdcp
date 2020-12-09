@@ -8,7 +8,7 @@ Mark things with [Bv2.1_paragraph]
 6.1 must be smpte [/]
     immersive audio DCPs must comply with 429-18, 429-19 [*] don't have these standards
 6.2 Language and Territory must comply with RFC 5646
-    - subtitle reel <Language>
+    - subtitle reel <Language> /
     - subtitle XML <Language>
     - sound reel <Language>
     - ccap reel <Language>

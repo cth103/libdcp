@@ -92,6 +92,8 @@ public:
 		EXTERNAL_ASSET,
 		/** DCP is Interop, not SMPTE [Bv2.1_6.1] */
 		NOT_SMPTE,
+		/** A language or territory does not conform to RFC 5646 [Bv2.1_6.2.1] */
+		BAD_LANGUAGE,
 	};
 
 	VerificationNote (Type type, Code code)

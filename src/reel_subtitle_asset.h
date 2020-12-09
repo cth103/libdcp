@@ -43,6 +43,8 @@
 #include "reel_mxf.h"
 #include "subtitle_asset.h"
 
+struct verify_test26;
+
 namespace dcp {
 
 class SubtitleAsset;
@@ -70,6 +72,8 @@ public:
 	}
 
 private:
+	friend struct ::verify_test26;
+
 	std::string key_type () const;
 	std::string cpl_node_name (Standard standard) const;
 
