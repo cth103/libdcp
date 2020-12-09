@@ -36,6 +36,7 @@
 #include "j2k.h"
 #include "reel.h"
 #include "reel_mono_picture_asset.h"
+#include "reel_sound_asset.h"
 #include "cpl.h"
 #include "dcp.h"
 #include "openjpeg_image.h"
@@ -171,6 +172,10 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical("build/test/verify_test1/video.mxf"));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking sound asset hash");
+	BOOST_REQUIRE (st->second);
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical("build/test/verify_test1/audio.mxf"));
+	++st;
+	BOOST_CHECK_EQUAL (st->first, "Checking sound asset metadata");
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical("build/test/verify_test1/audio.mxf"));
 	++st;
@@ -478,6 +483,10 @@ BOOST_AUTO_TEST_CASE (verify_test13)
 	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical("build/test/verify_test13/j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf"));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking sound asset hash");
+	BOOST_REQUIRE (st->second);
+	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical("build/test/verify_test13/pcm_69cf9eaf-9a99-4776-b022-6902208626c3.mxf"));
+	++st;
+	BOOST_CHECK_EQUAL (st->first, "Checking sound asset metadata");
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), boost::filesystem::canonical("build/test/verify_test13/pcm_69cf9eaf-9a99-4776-b022-6902208626c3.mxf"));
 	++st;
@@ -904,5 +913,32 @@ BOOST_AUTO_TEST_CASE (verify_test26)
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
 	BOOST_REQUIRE (i->note());
 	BOOST_CHECK_EQUAL (*i->note(), "wrong-andbad");
+}
+
+
+/* SMPTE DCP with invalid <Language> in the MainSound reel */
+BOOST_AUTO_TEST_CASE (verify_invalid_sound_reel_language)
+{
+	boost::filesystem::path const dir("build/test/verify_invalid_sound_reel_language");
+	prepare_directory (dir);
+
+	shared_ptr<dcp::SoundAsset> sound = simple_sound (dir, "foo", dcp::MXFMetadata(), "frobozz");
+	shared_ptr<dcp::ReelSoundAsset> reel_sound(new dcp::ReelSoundAsset(sound, 0));
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_sound);
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	shared_ptr<dcp::DCP> dcp(new dcp::DCP(dir));
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
+	BOOST_REQUIRE (i->note());
+	BOOST_CHECK_EQUAL (*i->note(), "frobozz");
 }
 

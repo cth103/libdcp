@@ -271,9 +271,11 @@ simple_picture (boost::filesystem::path path, string suffix)
 
 
 shared_ptr<dcp::SoundAsset>
-simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_meta)
+simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_meta, string language)
 {
+	/* Set a valid language, then overwrite it, so that the language parameter can be badly formed */
 	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-US"), dcp::SMPTE));
+	ms->_language = language;
 	ms->set_metadata (mxf_meta);
 	vector<dcp::Channel> active_channels;
 	active_channels.push_back (dcp::LEFT);
@@ -325,7 +327,7 @@ make_simple (boost::filesystem::path path, int reels)
 		string suffix = reels == 1 ? "" : dcp::String::compose("%1", i);
 
 		shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (path, suffix);
-		shared_ptr<dcp::SoundAsset> ms = simple_sound (path, suffix, mxf_meta);
+		shared_ptr<dcp::SoundAsset> ms = simple_sound (path, suffix, mxf_meta, "en-US");
 
 		cpl->add (shared_ptr<dcp::Reel> (
 				  new dcp::Reel (

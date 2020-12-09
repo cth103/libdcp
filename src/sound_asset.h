@@ -45,6 +45,16 @@
 #include "sound_frame.h"
 #include "sound_asset_reader.h"
 
+
+namespace dcp {
+	class SoundAsset;
+}
+
+extern std::shared_ptr<dcp::SoundAsset> simple_sound (
+	boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language
+	);
+
+
 namespace dcp
 {
 
@@ -95,6 +105,9 @@ public:
 
 private:
 	friend class SoundAssetWriter;
+	friend std::shared_ptr<dcp::SoundAsset> (::simple_sound) (
+		boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language
+		);
 
 	std::string pkl_type (Standard standard) const {
 		return static_pkl_type (standard);

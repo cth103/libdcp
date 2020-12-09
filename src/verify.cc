@@ -532,26 +532,31 @@ verify_main_sound_asset (
 	list<VerificationNote>& notes
 	)
 {
-	stage ("Checking sound asset hash", reel->main_sound()->asset()->file());
+	shared_ptr<dcp::SoundAsset> asset = reel->main_sound()->asset();
+	stage ("Checking sound asset hash", asset->file());
 	VerifyAssetResult const r = verify_asset (dcp, reel->main_sound(), progress);
 	switch (r) {
 		case VERIFY_ASSET_RESULT_BAD:
 			notes.push_back (
 				VerificationNote(
-					VerificationNote::VERIFY_ERROR, VerificationNote::SOUND_HASH_INCORRECT, *reel->main_sound()->asset()->file()
+					VerificationNote::VERIFY_ERROR, VerificationNote::SOUND_HASH_INCORRECT, *asset->file()
 					)
 				);
 			break;
 		case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
 			notes.push_back (
 				VerificationNote(
-					VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE, *reel->main_sound()->asset()->file()
+					VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE, *asset->file()
 					)
 				);
 			break;
 		default:
 			break;
 	}
+
+	stage ("Checking sound asset metadata", asset->file());
+
+	verify_language_tag (asset->language(), notes);
 }
 
 
