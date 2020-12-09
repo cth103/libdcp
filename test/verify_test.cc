@@ -130,7 +130,6 @@ private:
 };
 
 
-#if 0
 static
 void
 dump_notes (list<dcp::VerificationNote> const & notes)
@@ -139,7 +138,6 @@ dump_notes (list<dcp::VerificationNote> const & notes)
 		std::cout << dcp::note_to_string(i) << "\n";
 	}
 }
-#endif
 
 /* Check DCP as-is (should be OK) */
 BOOST_AUTO_TEST_CASE (verify_test1)
@@ -695,6 +693,7 @@ BOOST_AUTO_TEST_CASE (verify_test20)
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	dump_notes (notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), 0);
 }
 
