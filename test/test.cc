@@ -270,6 +270,36 @@ simple_picture (boost::filesystem::path path, string suffix)
 }
 
 
+shared_ptr<dcp::SoundAsset>
+simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_meta)
+{
+	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-US"), dcp::SMPTE));
+	ms->set_metadata (mxf_meta);
+	vector<dcp::Channel> active_channels;
+	active_channels.push_back (dcp::LEFT);
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / dcp::String::compose("audio%1.mxf", suffix), active_channels);
+
+	SF_INFO info;
+	info.format = 0;
+	SNDFILE* sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
+	BOOST_CHECK (sndfile);
+	float buffer[4096*6];
+	float* channels[1];
+	channels[0] = buffer;
+	while (true) {
+		sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
+		sound_writer->write (channels, N);
+		if (N < 4096) {
+			break;
+		}
+	}
+
+	sound_writer->finalize ();
+
+	return ms;
+}
+
+
 shared_ptr<dcp::DCP>
 make_simple (boost::filesystem::path path, int reels)
 {
@@ -295,29 +325,7 @@ make_simple (boost::filesystem::path path, int reels)
 		string suffix = reels == 1 ? "" : dcp::String::compose("%1", i);
 
 		shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (path, suffix);
-
-		shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-US"), dcp::SMPTE));
-		ms->set_metadata (mxf_meta);
-		vector<dcp::Channel> active_channels;
-		active_channels.push_back (dcp::LEFT);
-		shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / dcp::String::compose("audio%1.mxf", suffix), active_channels);
-
-		SF_INFO info;
-		info.format = 0;
-		SNDFILE* sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
-		BOOST_CHECK (sndfile);
-		float buffer[4096*6];
-		float* channels[1];
-		channels[0] = buffer;
-		while (true) {
-			sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
-			sound_writer->write (channels, N);
-			if (N < 4096) {
-				break;
-			}
-		}
-
-		sound_writer->finalize ();
+		shared_ptr<dcp::SoundAsset> ms = simple_sound (path, suffix, mxf_meta);
 
 		cpl->add (shared_ptr<dcp::Reel> (
 				  new dcp::Reel (
