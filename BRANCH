@@ -11,7 +11,7 @@ Mark things with [Bv2.1_paragraph]
     - subtitle reel <Language> /
     - subtitle XML <Language> /
     - sound MXF Language /
-    - ccap reel <Language>
+    - ccap reel <Language> /
     - MainSubtitleLanguageList
     - RFC5646SpokenLanguage
     - CPL metadata ReleaseTerritory

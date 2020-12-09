@@ -48,6 +48,7 @@ namespace ASDCP {
 	}
 }
 
+struct verify_invalid_closed_caption_languages;
 struct verify_test26;
 
 namespace dcp {
@@ -174,6 +175,7 @@ protected:
 private:
 	friend struct ::write_smpte_subtitle_test;
 	friend struct ::write_smpte_subtitle_test2;
+	friend struct ::verify_invalid_closed_caption_languages;
 	friend struct ::verify_test26;
 
 	void read_fonts (std::shared_ptr<ASDCP::TimedText::MXFReader>);

@@ -35,6 +35,7 @@
 #include "dcp.h"
 #include "cpl.h"
 #include "reel.h"
+#include "reel_closed_caption_asset.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
@@ -571,21 +572,30 @@ verify_main_subtitle_reel (shared_ptr<const ReelSubtitleAsset> reel_asset, list<
 
 
 static void
-verify_main_subtitle_asset (
-	shared_ptr<const ReelSubtitleAsset> reel_asset,
+verify_closed_caption_reel (shared_ptr<const ReelClosedCaptionAsset> reel_asset, list<VerificationNote>& notes)
+{
+	/* XXX: is Language compulsory? */
+	if (reel_asset->language()) {
+		verify_language_tag (*reel_asset->language(), notes);
+	}
+}
+
+
+static void
+verify_subtitle_asset (
+	shared_ptr<const SubtitleAsset> asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
 	list<VerificationNote>& notes
 	)
 {
-	shared_ptr<SubtitleAsset> asset = reel_asset->asset();
 	stage ("Checking subtitle XML", asset->file());
 	/* Note: we must not use SubtitleAsset::xml_as_string() here as that will mean the data on disk
 	 * gets passed through libdcp which may clean up and therefore hide errors.
 	 */
 	validate_xml (asset->raw_xml(), xsd_dtd_directory, notes);
 
-	shared_ptr<SMPTESubtitleAsset> smpte = dynamic_pointer_cast<SMPTESubtitleAsset>(asset);
+	shared_ptr<const SMPTESubtitleAsset> smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
 	if (smpte) {
 		if (smpte->language()) {
 			verify_language_tag (*smpte->language(), notes);
@@ -679,7 +689,14 @@ dcp::verify (
 				if (reel->main_subtitle()) {
 					verify_main_subtitle_reel (reel->main_subtitle(), notes);
 					if (reel->main_subtitle()->asset_ref().resolved()) {
-						verify_main_subtitle_asset (reel->main_subtitle(), stage, xsd_dtd_directory, notes);
+						verify_subtitle_asset (reel->main_subtitle()->asset(), stage, xsd_dtd_directory, notes);
+					}
+				}
+
+				BOOST_FOREACH (shared_ptr<dcp::ReelClosedCaptionAsset> i, reel->closed_captions()) {
+					verify_closed_caption_reel (i, notes);
+					if (i->asset_ref().resolved()) {
+						verify_subtitle_asset (i->asset(), stage, xsd_dtd_directory, notes);
 					}
 				}
 			}

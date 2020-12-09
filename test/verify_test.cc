@@ -44,6 +44,7 @@
 #include "mono_picture_asset_writer.h"
 #include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
+#include "reel_closed_caption_asset.h"
 #include "reel_subtitle_asset.h"
 #include "compose.hpp"
 #include "test.h"
@@ -892,6 +893,40 @@ BOOST_AUTO_TEST_CASE (verify_test26)
 	asset->_language = "wrong-andbad";
 	asset->write (dir / "subs.mxf");
 	shared_ptr<dcp::ReelSubtitleAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
+	reel_asset->_language = "badlang";
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_asset);
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	shared_ptr<dcp::DCP> dcp(new dcp::DCP(dir));
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	BOOST_REQUIRE_EQUAL (notes.size(), 2U);
+	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
+	BOOST_REQUIRE (i->note());
+	BOOST_CHECK_EQUAL (*i->note(), "badlang");
+	i++;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
+	BOOST_REQUIRE (i->note());
+	BOOST_CHECK_EQUAL (*i->note(), "wrong-andbad");
+}
+
+
+/* SMPTE DCP with invalid <Language> in the MainClosedCaption reel and also in the XML within the MXF */
+BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_languages)
+{
+	boost::filesystem::path const dir("build/test/verify_invalid_closed_caption_languages");
+	prepare_directory (dir);
+	boost::filesystem::copy_file ("test/data/subs.mxf", dir / "subs.mxf");
+	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset(dir / "subs.mxf"));
+	asset->_language = "wrong-andbad";
+	asset->write (dir / "subs.mxf");
+	shared_ptr<dcp::ReelClosedCaptionAsset> reel_asset(new dcp::ReelClosedCaptionAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
 	reel_asset->_language = "badlang";
 	shared_ptr<dcp::Reel> reel(new dcp::Reel());
 	reel->add (reel_asset);

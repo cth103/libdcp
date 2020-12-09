@@ -43,6 +43,10 @@
 #include "reel_asset.h"
 #include "reel_mxf.h"
 
+
+struct verify_invalid_closed_caption_languages;
+
+
 namespace dcp {
 
 class SubtitleAsset;
@@ -76,6 +80,8 @@ public:
 	}
 
 private:
+	friend struct ::verify_invalid_closed_caption_languages;
+
 	std::string key_type () const;
 	std::string cpl_node_name (Standard standard) const;
 	std::pair<std::string, std::string> cpl_node_namespace (Standard standard) const;
