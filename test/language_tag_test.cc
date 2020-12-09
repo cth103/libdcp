@@ -78,6 +78,14 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		BOOST_CHECK_EQUAL (t.description(), "German");
 	}
 
+	/* Case is ignored */
+
+	{
+		dcp::LanguageTag t;
+		BOOST_CHECK_NO_THROW (t.set_language("dE"));
+		BOOST_CHECK_EQUAL (t.to_string(), "dE");
+	}
+
 	/* Language + script */
 
 	{

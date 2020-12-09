@@ -66,7 +66,7 @@ optional<LanguageTag::SubtagData>
 find_in_list (vector<LanguageTag::SubtagData> const& list, string subtag)
 {
 	BOOST_FOREACH (LanguageTag::SubtagData const& i, list) {
-		if (i.subtag == subtag) {
+		if (boost::iequals(i.subtag, subtag)) {
 			return i;
 		}
 	}
