@@ -48,6 +48,8 @@ namespace ASDCP {
 	}
 }
 
+struct verify_test26;
+
 namespace dcp {
 
 class SMPTELoadFontNode;
@@ -172,6 +174,7 @@ protected:
 private:
 	friend struct ::write_smpte_subtitle_test;
 	friend struct ::write_smpte_subtitle_test2;
+	friend struct ::verify_test26;
 
 	void read_fonts (std::shared_ptr<ASDCP::TimedText::MXFReader>);
 	void parse_xml (std::shared_ptr<cxml::Document> xml);

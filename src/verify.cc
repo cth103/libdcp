@@ -46,6 +46,7 @@
 #include "exceptions.h"
 #include "compose.hpp"
 #include "raw_convert.h"
+#include "smpte_subtitle_asset.h"
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/parsers/AbstractDOMParser.hpp>
@@ -572,12 +573,19 @@ verify_main_subtitle_asset (
 	list<VerificationNote>& notes
 	)
 {
-	shared_ptr<ReelSubtitleAsset> reel_asset = reel->main_subtitle ();
-	stage ("Checking subtitle XML", reel->main_subtitle()->asset()->file());
+	shared_ptr<SubtitleAsset> asset = reel->main_subtitle()->asset();
+	stage ("Checking subtitle XML", asset->file());
 	/* Note: we must not use SubtitleAsset::xml_as_string() here as that will mean the data on disk
 	 * gets passed through libdcp which may clean up and therefore hide errors.
 	 */
-	validate_xml (reel->main_subtitle()->asset()->raw_xml(), xsd_dtd_directory, notes);
+	validate_xml (asset->raw_xml(), xsd_dtd_directory, notes);
+
+	shared_ptr<SMPTESubtitleAsset> smpte = dynamic_pointer_cast<SMPTESubtitleAsset>(asset);
+	if (smpte) {
+		if (smpte->language()) {
+			verify_language_tag (*smpte->language(), notes);
+		}
+	}
 }
 
 

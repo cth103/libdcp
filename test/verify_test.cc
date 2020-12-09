@@ -874,13 +874,15 @@ BOOST_AUTO_TEST_CASE (verify_test25)
 }
 
 
-/* SMPTE DCP with invalid <Language> in the MainSubtitle */
+/* SMPTE DCP with invalid <Language> in the MainSubtitle reel and also in the XML within the MXF */
 BOOST_AUTO_TEST_CASE (verify_test26)
 {
 	boost::filesystem::path const dir("build/test/verify_test26");
 	prepare_directory (dir);
 	boost::filesystem::copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset(dir / "subs.mxf"));
+	asset->_language = "wrong-andbad";
+	asset->write (dir / "subs.mxf");
 	shared_ptr<dcp::ReelSubtitleAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
 	reel_asset->_language = "badlang";
 	shared_ptr<dcp::Reel> reel(new dcp::Reel());
@@ -894,9 +896,14 @@ BOOST_AUTO_TEST_CASE (verify_test26)
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	BOOST_REQUIRE_EQUAL (notes.size(), 2U);
 	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
-
+	BOOST_REQUIRE (i->note());
+	BOOST_CHECK_EQUAL (*i->note(), "badlang");
+	i++;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
+	BOOST_REQUIRE (i->note());
+	BOOST_CHECK_EQUAL (*i->note(), "wrong-andbad");
 }
 
