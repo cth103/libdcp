@@ -98,7 +98,7 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 		if (!soundfield->RFC5646SpokenLanguage.empty()) {
 			char buffer[64];
 			soundfield->RFC5646SpokenLanguage.get().EncodeString(buffer, sizeof(buffer));
-			_language = dcp::LanguageTag (buffer);
+			_language = buffer;
 		}
 	}
 
@@ -111,7 +111,7 @@ SoundAsset::SoundAsset (Fraction edit_rate, int sampling_rate, int channels, Lan
 	, _intrinsic_duration (0)
 	, _channels (channels)
 	, _sampling_rate (sampling_rate)
-	, _language (language)
+	, _language (language.to_string())
 {
 
 }

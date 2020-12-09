@@ -125,7 +125,7 @@ SoundAssetWriter::start ()
 
 		ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield = new ASDCP::MXF::SoundfieldGroupLabelSubDescriptor(asdcp_smpte_dict);
 		GenRandomValue (soundfield->MCALinkID);
-		soundfield->RFC5646SpokenLanguage = _asset->language().to_string();
+		soundfield->RFC5646SpokenLanguage = _asset->language();
 
 		const MCASoundField field = _asset->channels() > 10 ? SEVEN_POINT_ONE : FIVE_POINT_ONE;
 
@@ -149,7 +149,7 @@ SoundAssetWriter::start ()
 			channel->MCAChannelID = static_cast<int>(i) + 1;
 			channel->MCATagSymbol = "ch" + channel_to_mca_id(i, field);
 			channel->MCATagName = channel_to_mca_name(i, field);
-			channel->RFC5646SpokenLanguage = _asset->language().to_string();
+			channel->RFC5646SpokenLanguage = _asset->language();
 			channel->MCALabelDictionaryID = channel_to_mca_universal_label(i, field, asdcp_smpte_dict);
 			_state->mxf_writer.OP1aHeader().AddChildObject(channel);
 			essence_descriptor->SubDescriptors.push_back(channel->InstanceUID);

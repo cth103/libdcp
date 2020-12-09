@@ -86,7 +86,7 @@ public:
 		return _intrinsic_duration;
 	}
 
-	LanguageTag language () const {
+	std::string language () const {
 		return _language;
 	}
 
@@ -107,7 +107,7 @@ private:
 	int64_t _intrinsic_duration;
 	int _channels;      ///< number of channels
 	int _sampling_rate; ///< sampling rate in Hz
-	LanguageTag _language;
+	std::string _language;
 };
 
 }
