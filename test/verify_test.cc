@@ -75,11 +75,19 @@ progress (float)
 
 }
 
+static void
+prepare_directory (boost::filesystem::path path)
+{
+	using namespace boost::filesystem;
+	remove_all (path);
+	create_directories (path);
+}
+
+
 static vector<boost::filesystem::path>
 setup (int reference_number, int verify_test_number)
 {
-	boost::filesystem::remove_all (dcp::String::compose("build/test/verify_test%1", verify_test_number));
-	boost::filesystem::create_directory (dcp::String::compose("build/test/verify_test%1", verify_test_number));
+	prepare_directory (dcp::String::compose("build/test/verify_test%1", verify_test_number));
 	for (boost::filesystem::directory_iterator i(dcp::String::compose("test/ref/DCP/dcp_test%1", reference_number)); i != boost::filesystem::directory_iterator(); ++i) {
 		boost::filesystem::copy_file (i->path(), dcp::String::compose("build/test/verify_test%1", verify_test_number) / i->path().filename());
 	}
@@ -612,8 +620,7 @@ BOOST_AUTO_TEST_CASE (verify_test17)
 BOOST_AUTO_TEST_CASE (verify_test18)
 {
 	boost::filesystem::path const dir("build/test/verify_test18");
-	boost::filesystem::remove_all (dir);
-	boost::filesystem::create_directories (dir);
+	prepare_directory (dir);
 	boost::filesystem::copy_file ("test/data/subs1.xml", dir / "subs.xml");
 	shared_ptr<dcp::InteropSubtitleAsset> asset(new dcp::InteropSubtitleAsset(dir / "subs.xml"));
 	shared_ptr<dcp::ReelAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
@@ -638,8 +645,7 @@ BOOST_AUTO_TEST_CASE (verify_test18)
 BOOST_AUTO_TEST_CASE (verify_test19)
 {
 	boost::filesystem::path const dir("build/test/verify_test19");
-	boost::filesystem::remove_all (dir);
-	boost::filesystem::create_directories (dir);
+	prepare_directory (dir);
 	boost::filesystem::copy_file ("test/data/subs1.xml", dir / "subs.xml");
 	shared_ptr<dcp::InteropSubtitleAsset> asset(new dcp::InteropSubtitleAsset(dir / "subs.xml"));
 	shared_ptr<dcp::ReelAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
@@ -674,8 +680,7 @@ BOOST_AUTO_TEST_CASE (verify_test19)
 BOOST_AUTO_TEST_CASE (verify_test20)
 {
 	boost::filesystem::path const dir("build/test/verify_test20");
-	boost::filesystem::remove_all (dir);
-	boost::filesystem::create_directories (dir);
+	prepare_directory (dir);
 	boost::filesystem::copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset(dir / "subs.mxf"));
 	shared_ptr<dcp::ReelAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
@@ -698,8 +703,7 @@ BOOST_AUTO_TEST_CASE (verify_test20)
 BOOST_AUTO_TEST_CASE (verify_test21)
 {
 	boost::filesystem::path const dir("build/test/verify_test21");
-	boost::filesystem::remove_all (dir);
-	boost::filesystem::create_directories (dir);
+	prepare_directory (dir);
 	boost::filesystem::copy_file ("test/data/broken_smpte.mxf", dir / "subs.mxf");
 	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset(dir / "subs.mxf"));
 	shared_ptr<dcp::ReelAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
@@ -724,8 +728,7 @@ BOOST_AUTO_TEST_CASE (verify_test21)
 BOOST_AUTO_TEST_CASE (verify_test22)
 {
 	boost::filesystem::path const ov_dir("build/test/verify_test22_ov");
-	boost::filesystem::remove_all (ov_dir);
-	boost::filesystem::create_directories (ov_dir);
+	prepare_directory (ov_dir);
 
 	shared_ptr<dcp::OpenJPEGImage> image = black_image ();
 	dcp::ArrayData frame = dcp::compress_j2k (image, 100000000, 24, false, false);
@@ -736,8 +739,7 @@ BOOST_AUTO_TEST_CASE (verify_test22)
 	ov.read ();
 
 	boost::filesystem::path const vf_dir("build/test/verify_test22_vf");
-	boost::filesystem::remove_all (vf_dir);
-	boost::filesystem::create_directories (vf_dir);
+	prepare_directory (vf_dir);
 
 	shared_ptr<dcp::Reel> reel(new dcp::Reel());
 	reel->add (ov.cpls().front()->reels().front()->main_picture());
@@ -759,8 +761,7 @@ BOOST_AUTO_TEST_CASE (verify_test22)
 BOOST_AUTO_TEST_CASE (verify_test23)
 {
 	boost::filesystem::path const dir("build/test/verify_test23");
-	boost::filesystem::remove_all (dir);
-	boost::filesystem::create_directories (dir);
+	prepare_directory (dir);
 
 	boost::filesystem::copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset(dir / "subs.mxf"));
@@ -802,8 +803,7 @@ boost::filesystem::path find_cpl (boost::filesystem::path dir)
 BOOST_AUTO_TEST_CASE (verify_test24)
 {
 	boost::filesystem::path const dir("build/test/verify_test24");
-	boost::filesystem::remove_all (dir);
-	boost::filesystem::create_directories (dir);
+	prepare_directory (dir);
 
 	shared_ptr<dcp::Reel> reel(new dcp::Reel());
 	reel->add (black_picture_asset(dir));
@@ -844,8 +844,7 @@ BOOST_AUTO_TEST_CASE (verify_test24)
 BOOST_AUTO_TEST_CASE (verify_test25)
 {
 	boost::filesystem::path const dir("build/test/verify_test25");
-	boost::filesystem::remove_all (dir);
-	boost::filesystem::create_directories (dir);
+	prepare_directory (dir);
 
 	boost::filesystem::copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset(dir / "subs.mxf"));
@@ -879,8 +878,7 @@ BOOST_AUTO_TEST_CASE (verify_test25)
 BOOST_AUTO_TEST_CASE (verify_test26)
 {
 	boost::filesystem::path const dir("build/test/verify_test26");
-	boost::filesystem::remove_all (dir);
-	boost::filesystem::create_directories (dir);
+	prepare_directory (dir);
 	boost::filesystem::copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset(dir / "subs.mxf"));
 	shared_ptr<dcp::ReelSubtitleAsset> reel_asset(new dcp::ReelSubtitleAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
