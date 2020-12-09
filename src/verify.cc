@@ -429,7 +429,7 @@ biggest_frame_size (shared_ptr<const StereoPictureFrame> frame)
 
 template <class A, class R, class F>
 optional<VerifyPictureAssetResult>
-verify_picture_asset_type (shared_ptr<ReelMXF> reel_mxf, function<void (float)> progress)
+verify_picture_asset_type (shared_ptr<const ReelMXF> reel_mxf, function<void (float)> progress)
 {
 	shared_ptr<A> asset = dynamic_pointer_cast<A>(reel_mxf->asset_ref().asset());
 	if (!asset) {
@@ -458,7 +458,7 @@ verify_picture_asset_type (shared_ptr<ReelMXF> reel_mxf, function<void (float)> 
 
 
 static VerifyPictureAssetResult
-verify_picture_asset (shared_ptr<ReelMXF> reel_mxf, function<void (float)> progress)
+verify_picture_asset (shared_ptr<const ReelMXF> reel_mxf, function<void (float)> progress)
 {
 	optional<VerifyPictureAssetResult> r = verify_picture_asset_type<MonoPictureAsset, MonoPictureAssetReader, MonoPictureFrame>(reel_mxf, progress);
 	if (!r) {
@@ -473,15 +473,15 @@ verify_picture_asset (shared_ptr<ReelMXF> reel_mxf, function<void (float)> progr
 static void
 verify_main_picture_asset (
 	shared_ptr<const DCP> dcp,
-	shared_ptr<const Reel> reel,
+	shared_ptr<const ReelPictureAsset> reel_asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	function<void (float)> progress,
 	list<VerificationNote>& notes
 	)
 {
-	boost::filesystem::path const file = *reel->main_picture()->asset()->file();
+	boost::filesystem::path const file = *reel_asset->asset()->file();
 	stage ("Checking picture asset hash", file);
-	VerifyAssetResult const r = verify_asset (dcp, reel->main_picture(), progress);
+	VerifyAssetResult const r = verify_asset (dcp, reel_asset, progress);
 	switch (r) {
 		case VERIFY_ASSET_RESULT_BAD:
 			notes.push_back (
@@ -500,8 +500,8 @@ verify_main_picture_asset (
 		default:
 			break;
 	}
-	stage ("Checking picture frame sizes", reel->main_picture()->asset()->file());
-	VerifyPictureAssetResult const pr = verify_picture_asset (reel->main_picture(), progress);
+	stage ("Checking picture frame sizes", reel_asset->asset()->file());
+	VerifyPictureAssetResult const pr = verify_picture_asset (reel_asset, progress);
 	switch (pr) {
 		case VERIFY_PICTURE_ASSET_RESULT_BAD:
 			notes.push_back (
@@ -526,15 +526,15 @@ verify_main_picture_asset (
 static void
 verify_main_sound_asset (
 	shared_ptr<const DCP> dcp,
-	shared_ptr<const Reel> reel,
+	shared_ptr<const ReelSoundAsset> reel_asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	function<void (float)> progress,
 	list<VerificationNote>& notes
 	)
 {
-	shared_ptr<dcp::SoundAsset> asset = reel->main_sound()->asset();
+	shared_ptr<const dcp::SoundAsset> asset = reel_asset->asset();
 	stage ("Checking sound asset hash", asset->file());
-	VerifyAssetResult const r = verify_asset (dcp, reel->main_sound(), progress);
+	VerifyAssetResult const r = verify_asset (dcp, reel_asset, progress);
 	switch (r) {
 		case VERIFY_ASSET_RESULT_BAD:
 			notes.push_back (
@@ -572,13 +572,13 @@ verify_main_subtitle_reel (shared_ptr<const ReelSubtitleAsset> reel_asset, list<
 
 static void
 verify_main_subtitle_asset (
-	shared_ptr<const Reel> reel,
+	shared_ptr<const ReelSubtitleAsset> reel_asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
 	list<VerificationNote>& notes
 	)
 {
-	shared_ptr<SubtitleAsset> asset = reel->main_subtitle()->asset();
+	shared_ptr<SubtitleAsset> asset = reel_asset->asset();
 	stage ("Checking subtitle XML", asset->file());
 	/* Note: we must not use SubtitleAsset::xml_as_string() here as that will mean the data on disk
 	 * gets passed through libdcp which may clean up and therefore hide errors.
@@ -668,18 +668,18 @@ dcp::verify (
 					}
 					/* Check asset */
 					if (reel->main_picture()->asset_ref().resolved()) {
-						verify_main_picture_asset (dcp, reel, stage, progress, notes);
+						verify_main_picture_asset (dcp, reel->main_picture(), stage, progress, notes);
 					}
 				}
 
 				if (reel->main_sound() && reel->main_sound()->asset_ref().resolved()) {
-					verify_main_sound_asset (dcp, reel, stage, progress, notes);
+					verify_main_sound_asset (dcp, reel->main_sound(), stage, progress, notes);
 				}
 
 				if (reel->main_subtitle()) {
 					verify_main_subtitle_reel (reel->main_subtitle(), notes);
 					if (reel->main_subtitle()->asset_ref().resolved()) {
-						verify_main_subtitle_asset (reel, stage, xsd_dtd_directory, notes);
+						verify_main_subtitle_asset (reel->main_subtitle(), stage, xsd_dtd_directory, notes);
 					}
 				}
 			}
