@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	mp->set_key (key);
 
 	shared_ptr<dcp::PictureAssetWriter> writer = mp->start_write ("build/test/DCP/encryption_test/video.mxf", false);
-	dcp::File j2c ("test/data/32x32_red_square.j2c");
+	dcp::File j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data (), j2c.size ());
 	}

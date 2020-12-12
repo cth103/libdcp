@@ -46,15 +46,8 @@ BOOST_AUTO_TEST_CASE (recovery)
 {
 	RNGFixer fix;
 
-	string const picture = "test/data/32x32_red_square.j2c";
-	int const size = boost::filesystem::file_size (picture);
-	uint8_t* data = new uint8_t[size];
-	{
-		FILE* f = fopen (picture.c_str(), "rb");
-		BOOST_CHECK (f);
-		fread (data, 1, size, f);
-		fclose (f);
-	}
+	string const picture = "test/data/flat_red.j2c";
+	dcp::ArrayData data(picture);
 
 	boost::filesystem::remove_all ("build/test/baz");
 	boost::filesystem::create_directories ("build/test/baz");
@@ -63,8 +56,8 @@ BOOST_AUTO_TEST_CASE (recovery)
 
 	int written_size = 0;
 	for (int i = 0; i < 24; ++i) {
-		dcp::FrameInfo info = writer->write (data, size);
-		BOOST_CHECK_EQUAL (info.hash, "cb90485a97ea5f7555cedc8a7afd473b");
+		dcp::FrameInfo info = writer->write (data.data(), data.size());
+		BOOST_CHECK_EQUAL (info.hash, "c3c9a3adec09baf2b0bcb65806fbeac8");
 		written_size = info.size;
 	}
 
@@ -72,7 +65,7 @@ BOOST_AUTO_TEST_CASE (recovery)
 	writer.reset ();
 
 	boost::filesystem::copy_file ("build/test/baz/video1.mxf", "build/test/baz/video2.mxf");
-	boost::filesystem::resize_file ("build/test/baz/video2.mxf", 16384 + 353 * 11);
+	boost::filesystem::resize_file ("build/test/baz/video2.mxf", 16384 + data.size() * 11);
 
 	{
 		FILE* f = fopen ("build/test/baz/video2.mxf", "rb+");
@@ -90,15 +83,17 @@ BOOST_AUTO_TEST_CASE (recovery)
 	mp.reset (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
 	writer = mp->start_write ("build/test/baz/video2.mxf", true);
 
-	writer->write (data, size);
+	writer->write (data.data(), data.size());
 
 	for (int i = 1; i < 4; ++i) {
 		writer->fake_write (written_size);
 	}
 
 	for (int i = 4; i < 24; ++i) {
-		writer->write (data, size);
+		writer->write (data.data(), data.size());
 	}
 
 	writer->finalize ();
+
+	check_file ("build/test/baz/video1.mxf", "build/test/baz/video2.mxf");
 }

@@ -199,8 +199,8 @@ check_xml (string ref, string test, list<string> ignore, bool ignore_whitespace)
 void
 check_file (boost::filesystem::path ref, boost::filesystem::path check)
 {
-	uintmax_t N = boost::filesystem::file_size (ref);
-	BOOST_CHECK_EQUAL (N, boost::filesystem::file_size (check));
+	uintmax_t size = boost::filesystem::file_size (ref);
+	BOOST_CHECK_EQUAL (size, boost::filesystem::file_size(check));
 	FILE* ref_file = dcp::fopen_boost (ref, "rb");
 	BOOST_REQUIRE (ref_file);
 	FILE* check_file = dcp::fopen_boost (check, "rb");
@@ -210,22 +210,29 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 	uint8_t* ref_buffer = new uint8_t[buffer_size];
 	uint8_t* check_buffer = new uint8_t[buffer_size];
 
-	string error;
-	error = "File " + check.string() + " differs from reference " + ref.string();
+	uintmax_t pos = 0;
 
-	while (N) {
-		uintmax_t this_time = min (uintmax_t (buffer_size), N);
+	while (pos < size) {
+		uintmax_t this_time = min (uintmax_t(buffer_size), size - pos);
 		size_t r = fread (ref_buffer, 1, this_time, ref_file);
 		BOOST_CHECK_EQUAL (r, this_time);
 		r = fread (check_buffer, 1, this_time, check_file);
 		BOOST_CHECK_EQUAL (r, this_time);
 
-		BOOST_CHECK_MESSAGE (memcmp (ref_buffer, check_buffer, this_time) == 0, error);
-		if (memcmp (ref_buffer, check_buffer, this_time)) {
+		if (memcmp(ref_buffer, check_buffer, this_time) != 0) {
+			for (int i = 0; i < buffer_size; ++i) {
+				if (ref_buffer[i] != check_buffer[i]) {
+					BOOST_CHECK_MESSAGE (
+						false,
+						dcp::String::compose("File %1 differs from reference %2 at offset %3", check, ref, pos + i)
+						);
+					break;
+				}
+			}
 			break;
 		}
 
-		N -= this_time;
+		pos += this_time;
 	}
 
 	delete[] ref_buffer;

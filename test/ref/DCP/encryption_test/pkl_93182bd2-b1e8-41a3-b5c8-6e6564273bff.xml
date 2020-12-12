@@ -9,15 +9,15 @@
     <Asset>
       <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
       <AnnotationText>81fb54df-e1bf-4647-8788-ea7ba154375b</AnnotationText>
-      <Hash>9sunXON1YDsep+RAReRz3aLnadY=</Hash>
-      <Size>9310</Size>
+      <Hash>dinpjeGyswCuE6wwc4qNO6QgZ4M=</Hash>
+      <Size>9314</Size>
       <Type>text/xml</Type>
     </Asset>
     <Asset>
       <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
       <AnnotationText>46c3eb45-15e5-47d6-8684-d8641e4dc516</AnnotationText>
-      <Hash>EdbLFybsoLbZ3KB2jFtWZxMEMHI=</Hash>
-      <Size>29896</Size>
+      <Hash>8QplPzmat0gpqa6CJEFPxUoyHTw=</Hash>
+      <Size>44032</Size>
       <Type>application/mxf</Type>
     </Asset>
     <Asset>
@@ -46,15 +46,15 @@
           <dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-        <dsig:DigestValue>YZJkjLwee6xcN8jEcZcyrZ/ZSGo=</dsig:DigestValue>
+        <dsig:DigestValue>Dd1k2K/go3w7qxoIEyRjKQnt3sQ=</dsig:DigestValue>
       </dsig:Reference>
     </dsig:SignedInfo>
-    <dsig:SignatureValue>NQ0UGAcWKlLWt1I0Baxt1lKxc0AmfLWsJ4Hnfn2FgZ0x07gR/GwP552ZfgQDG7Cx
-/wRey1Cg7AAd6I6keV9kKyB1sPrDND6DQaXfS3ymmcaOtCcGa2Wt3hybwVWN67Uw
-EQFHAOwC5iwgTLLpW43OtBUY65qcXyVMuOgmENjiaocu+D9lTV5nraxNbFvFlBel
-0AazpjWkevFK2v32SxzINBy2yOpqEpz1vax2hYSPMGWj5anf2Bckd3HDzl9KAHYl
-WZKO56Ad49/8QMFGcbOlpAA74EgOW9jidd0HIgkyDl7tE8bFfzOfNeo9n6AcO5wF
-79YV+reJM/J0381W8OaN+Q==</dsig:SignatureValue>
+    <dsig:SignatureValue>KXJAOlFxsZ+qWTwKllF9G8cREFb3LIGSLmCAUz5deK/vnTTex2hVR0fqCNS+q+Ck
+FutGIJqrJed061yRKl72Gae9/ocE84AAqN/Vfc9LnalD4P342nLfZGBBDvZcgk6c
+A7QV7L9y9cxeyNrXA/LPsg8IzhcSJjhi10eDAs6ESBL9iSzDT+wlEGBrwqQjjwhm
+fJjYUwP92pPwAGH/9SKs4o+JIU8urnRrSFj06JuXJi4vVdEIasKo20nsmpLklHQP
+iHPQriuhZlIvX7SOrVi4BctoOm68MbqcWurHzDcFKWQIVwpBq0Wezr1AZXGActfB
+AW9mhWPZes+FJR2Qe/OjCg==</dsig:SignatureValue>
     <dsig:KeyInfo>
       <dsig:X509Data>
         <dsig:X509IssuerSerial>

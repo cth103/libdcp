@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	shared_ptr<dcp::StereoPictureAsset> mp (new dcp::StereoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
 	mp->set_metadata (mxf_meta);
 	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test2/video.mxf", false);
-	dcp::File j2c ("test/data/32x32_red_square.j2c");
+	dcp::File j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		/* Left */
 		picture_writer->write (j2c.data (), j2c.size ());
@@ -282,7 +282,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
 	mp->set_metadata (mxf_meta);
 	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test5/video.mxf", false);
-	dcp::File j2c ("test/data/32x32_red_square.j2c");
+	dcp::File j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		picture_writer->write (j2c.data (), j2c.size ());
 	}

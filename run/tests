@@ -47,13 +47,6 @@ fi
 
 echo "--- Other tests"
 
-# Check a MXF written by the unit tests
-diff $work/baz/video1.mxf $work/baz/video2.mxf
-if [ "$?" != "0" ]; then
-    echo "FAIL: MXFs from recovery incorrect"
-    exit 1
-fi
-
 # Check the DCP written by dcp_test1
 diff -ur test/ref/DCP/dcp_test1 $work/DCP/dcp_test1
 if [ "$?" != "0" ]; then
