@@ -37,7 +37,7 @@
           <Path>video.mxf</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
-          <Length>26080</Length>
+          <Length>40144</Length>
         </Chunk>
       </ChunkList>
     </Asset>

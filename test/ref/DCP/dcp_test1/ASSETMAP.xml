@@ -26,7 +26,7 @@
           <Path>cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
-          <Length>1585</Length>
+          <Length>1589</Length>
         </Chunk>
       </ChunkList>
     </Asset>
@@ -37,7 +37,7 @@
           <Path>video.mxf</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
-          <Length>26080</Length>
+          <Length>40144</Length>
         </Chunk>
       </ChunkList>
     </Asset>
