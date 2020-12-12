@@ -647,6 +647,10 @@ dcp::verify (
 				verify_language_tag (i, notes);
 			}
 
+			if (cpl->release_territory()) {
+				verify_language_tag (cpl->release_territory().get(), notes);
+			}
+
 			/* Check that the CPL's hash corresponds to the PKL */
 			BOOST_FOREACH (shared_ptr<PKL> i, dcp->pkls()) {
 				optional<string> h = i->hash(cpl->id());
