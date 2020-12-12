@@ -85,9 +85,9 @@ public:
 		/** An asset's Duration is less than 1 second */
 		DURATION_TOO_SMALL,
 		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 250Mbit/s */
-		PICTURE_FRAME_TOO_LARGE,
+		PICTURE_FRAME_TOO_LARGE_IN_BYTES,
 		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 230Mbit/s */
-		PICTURE_FRAME_NEARLY_TOO_LARGE,
+		PICTURE_FRAME_NEARLY_TOO_LARGE_IN_BYTES,
 		/** An asset that the CPL requires is not in this DCP; the DCP may be a VF */
 		EXTERNAL_ASSET,
 		/** DCP is Interop, not SMPTE [Bv2.1_6.1] */

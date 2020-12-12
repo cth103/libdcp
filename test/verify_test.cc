@@ -574,7 +574,7 @@ BOOST_AUTO_TEST_CASE (verify_test15)
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::PICTURE_FRAME_TOO_LARGE);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::PICTURE_FRAME_TOO_LARGE_IN_BYTES);
 }
 
 
@@ -601,7 +601,7 @@ BOOST_AUTO_TEST_CASE (verify_test16)
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE_IN_BYTES);
 }
 
 

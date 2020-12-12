@@ -507,14 +507,14 @@ verify_main_picture_asset (
 		case VERIFY_PICTURE_ASSET_RESULT_BAD:
 			notes.push_back (
 				VerificationNote(
-					VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_FRAME_TOO_LARGE, file
+					VerificationNote::VERIFY_ERROR, VerificationNote::PICTURE_FRAME_TOO_LARGE_IN_BYTES, file
 					)
 				);
 			break;
 		case VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_LARGE:
 			notes.push_back (
 				VerificationNote(
-					VerificationNote::VERIFY_WARNING, VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE, file
+					VerificationNote::VERIFY_WARNING, VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE_IN_BYTES, file
 					)
 				);
 			break;
@@ -758,9 +758,9 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The intrinsic duration of an asset is less than 1 second long: %1", note.note().get());
 	case dcp::VerificationNote::DURATION_TOO_SMALL:
 		return String::compose("The duration of an asset is less than 1 second long: %1", note.note().get());
-	case dcp::VerificationNote::PICTURE_FRAME_TOO_LARGE:
+	case dcp::VerificationNote::PICTURE_FRAME_TOO_LARGE_IN_BYTES:
 		return String::compose("The instantaneous bit rate of the picture asset %1 is larger than the limit of 250Mbit/s in at least one place.", note.file()->filename());
-	case dcp::VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE:
+	case dcp::VerificationNote::PICTURE_FRAME_NEARLY_TOO_LARGE_IN_BYTES:
 		return String::compose("The instantaneous bit rate of the picture asset %1 is close to the limit of 250Mbit/s in at least one place.", note.file()->filename());
 	case dcp::VerificationNote::EXTERNAL_ASSET:
 		return String::compose("An asset that this DCP refers to is not included in the DCP.  It may be a VF.  Missing asset is %1.", note.note().get());
