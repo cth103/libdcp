@@ -54,6 +54,9 @@
 #include <vector>
 
 
+struct verify_invalid_sound_reel_and_additional_language;
+
+
 namespace dcp {
 
 
@@ -280,6 +283,8 @@ protected:
 	std::string pkl_type (Standard standard) const;
 
 private:
+	friend struct ::verify_invalid_sound_reel_and_additional_language;
+
 	void maybe_write_composition_metadata_asset (xmlpp::Element* node) const;
 	void read_composition_metadata_asset (cxml::ConstNodePtr node);
 

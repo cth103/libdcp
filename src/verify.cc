@@ -643,6 +643,10 @@ dcp::verify (
 			stage ("Checking CPL", cpl->file());
 			validate_xml (cpl->file().get(), xsd_dtd_directory, notes);
 
+			BOOST_FOREACH (string const& i, cpl->additional_subtitle_languages()) {
+				verify_language_tag (i, notes);
+			}
+
 			/* Check that the CPL's hash corresponds to the PKL */
 			BOOST_FOREACH (shared_ptr<PKL> i, dcp->pkls()) {
 				optional<string> h = i->hash(cpl->id());

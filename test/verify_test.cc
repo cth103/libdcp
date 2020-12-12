@@ -951,18 +951,27 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_languages)
 }
 
 
-/* SMPTE DCP with invalid <Language> in the MainSound reel */
-BOOST_AUTO_TEST_CASE (verify_invalid_sound_reel_language)
+/* SMPTE DCP with invalid <Language> in the MainSound reel and in the CPL additional subtitles languages */
+BOOST_AUTO_TEST_CASE (verify_invalid_sound_reel_and_additional_language)
 {
-	boost::filesystem::path const dir("build/test/verify_invalid_sound_reel_language");
+	boost::filesystem::path const dir("build/test/verify_invalid_sound_reel_and_additional_language");
 	prepare_directory (dir);
 
+	shared_ptr<dcp::MonoPictureAsset> picture = simple_picture (dir, "foo");
+	shared_ptr<dcp::ReelPictureAsset> reel_picture(new dcp::ReelMonoPictureAsset(picture, 0));
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_picture);
 	shared_ptr<dcp::SoundAsset> sound = simple_sound (dir, "foo", dcp::MXFMetadata(), "frobozz");
 	shared_ptr<dcp::ReelSoundAsset> reel_sound(new dcp::ReelSoundAsset(sound, 0));
-	shared_ptr<dcp::Reel> reel(new dcp::Reel());
 	reel->add (reel_sound);
 	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
 	cpl->add (reel);
+	cpl->_additional_subtitle_languages.push_back("this-is-wrong");
+	cpl->_additional_subtitle_languages.push_back("andso-is-this");
+	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
+	cpl->set_main_sound_sample_rate (48000);
+	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
+	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
 	shared_ptr<dcp::DCP> dcp(new dcp::DCP(dir));
 	dcp->add (cpl);
 	dcp->write_xml (dcp::SMPTE);
@@ -970,10 +979,19 @@ BOOST_AUTO_TEST_CASE (verify_invalid_sound_reel_language)
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	BOOST_REQUIRE_EQUAL (notes.size(), 3U);
 	list<dcp::VerificationNote>::const_iterator i = notes.begin ();
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
 	BOOST_REQUIRE (i->note());
+	BOOST_CHECK_EQUAL (*i->note(), "this-is-wrong");
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
+	BOOST_REQUIRE (i->note());
+	BOOST_CHECK_EQUAL (*i->note(), "andso-is-this");
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
+	BOOST_REQUIRE (i->note());
 	BOOST_CHECK_EQUAL (*i->note(), "frobozz");
+	++i;
 }
 
