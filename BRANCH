@@ -2,7 +2,7 @@ Mark things with [Bv2.1_paragraph]
 [/] done
 [*] not done
 
---- got to top of page 9
+--- got to top of page 10
 
 6 [/]
 6.1 must be smpte [/]
@@ -20,5 +20,8 @@ Mark things with [Bv2.1_paragraph]
 7.1 picture essence encoding; frame size, rate and 2D/3D will be one of the four allowed combinations [/]
 7.1.1 active image area (should; not checked) [/]
 7.2 [/]
-7.2.1 Timed text XML files for closed captions must be < 256kB [/]
-
+7.2.1
+    - Timed text XML files for closed captions must be <= 256kB [/]
+    - Timed text total track asset must be <= 115MB
+    - Font resource <= 10MB
+	
