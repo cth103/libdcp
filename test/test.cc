@@ -448,10 +448,10 @@ make_simple_with_smpte_ccaps (boost::filesystem::path path)
 
 
 shared_ptr<dcp::OpenJPEGImage>
-black_image ()
+black_image (dcp::Size size)
 {
-	shared_ptr<dcp::OpenJPEGImage> image(new dcp::OpenJPEGImage(dcp::Size(1998, 1080)));
-	int const pixels = 1998 * 1080;
+	shared_ptr<dcp::OpenJPEGImage> image(new dcp::OpenJPEGImage(size));
+	int const pixels = size.width * size.height;
 	for (int i = 0; i < 3; ++i) {
 		memset (image->data(i), 0, pixels * sizeof(int));
 	}
