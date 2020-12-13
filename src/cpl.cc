@@ -198,6 +198,10 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 
 	auto reel_list = root->add_child ("ReelList");
 
+	if (_reels.empty()) {
+		throw NoReelsError ();
+	}
+
 	bool first = true;
 	for (auto i: _reels) {
 		auto asset_list = i->write_to_cpl (reel_list, standard);

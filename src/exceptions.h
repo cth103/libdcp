@@ -283,6 +283,12 @@ public:
 };
 
 
+class NoReelsError : public std::runtime_error
+{
+public:
+	NoReelsError ();
+};
+
 }
 
 #endif

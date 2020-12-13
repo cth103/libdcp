@@ -38,6 +38,7 @@
 using std::list;
 using std::string;
 using std::vector;
+using std::shared_ptr;
 
 BOOST_AUTO_TEST_CASE (cpl_ratings)
 {
@@ -47,6 +48,9 @@ BOOST_AUTO_TEST_CASE (cpl_ratings)
 	ratings.push_back (dcp::Rating("http://www.mpaa.org/2003-ratings", "PG-13"));
 	ratings.push_back (dcp::Rating("http://www.movielabs.com/md/ratings/GB/BBFC/1/12A%3C/Agency", "12A"));
 	cpl.set_ratings (ratings);
+
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	cpl.add (reel);
 
 	cpl.write_xml ("build/test/cpl_ratings.xml", dcp::SMPTE, std::shared_ptr<dcp::CertificateChain>());
 
@@ -81,7 +85,12 @@ BOOST_AUTO_TEST_CASE (cpl_ratings)
 		"      <Label>12A</Label>\n"
 		"    </Rating>\n"
 		"  </RatingList>\n"
-		"  <ReelList/>\n"
+		"  <ReelList>\n"
+		"    <Reel>\n"
+		"      <Id>urn:uuid:56a781ed-ace3-4cdf-8391-93b1bcea54eb</Id>\n"
+		"      <AssetList/>\n"
+		"    </Reel>\n"
+		"  </ReelList>\n"
 		"</CompositionPlaylist>\n",
 		ignore
 		);
