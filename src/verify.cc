@@ -480,7 +480,8 @@ verify_main_picture_asset (
 	list<VerificationNote>& notes
 	)
 {
-	boost::filesystem::path const file = *reel_asset->asset()->file();
+	shared_ptr<const PictureAsset> asset = reel_asset->asset();
+	boost::filesystem::path const file = *asset->file();
 	stage ("Checking picture asset hash", file);
 	VerifyAssetResult const r = verify_asset (dcp, reel_asset, progress);
 	switch (r) {
@@ -501,7 +502,7 @@ verify_main_picture_asset (
 		default:
 			break;
 	}
-	stage ("Checking picture frame sizes", reel_asset->asset()->file());
+	stage ("Checking picture frame sizes", asset->file());
 	VerifyPictureAssetResult const pr = verify_picture_asset (reel_asset, progress);
 	switch (pr) {
 		case VERIFY_PICTURE_ASSET_RESULT_BAD:
@@ -521,6 +522,64 @@ verify_main_picture_asset (
 		default:
 			break;
 	}
+
+	/* Only flat/scope allowed by Bv2.1 */
+	if (
+		asset->size() != dcp::Size(2048, 858) &&
+		asset->size() != dcp::Size(1998, 1080) &&
+		asset->size() != dcp::Size(4096, 1716) &&
+		asset->size() != dcp::Size(3996, 2160)) {
+		notes.push_back(
+			VerificationNote(
+				VerificationNote::VERIFY_BV21_ERROR,
+				VerificationNote::PICTURE_ASSET_INVALID_SIZE_IN_PIXELS,
+				String::compose("%1x%2", asset->size().width, asset->size().height),
+				file
+				)
+			);
+	}
+
+	/* Only 24, 25, 48fps allowed for 2K */
+	if (
+		(asset->size() == dcp::Size(2048, 858) || asset->size() == dcp::Size(1998, 1080)) &&
+		(asset->edit_rate() != dcp::Fraction(24, 1) && asset->edit_rate() != dcp::Fraction(25, 1) && asset->edit_rate() != dcp::Fraction(48, 1))
+	   ) {
+		notes.push_back(
+			VerificationNote(
+				VerificationNote::VERIFY_BV21_ERROR,
+				VerificationNote::PICTURE_ASSET_INVALID_FRAME_RATE_FOR_2K,
+				String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
+				file
+				)
+			);
+	}
+
+	if (asset->size() == dcp::Size(4096, 1716) || asset->size() == dcp::Size(3996, 2160)) {
+		/* Only 24fps allowed for 4K */
+		if (asset->edit_rate() != dcp::Fraction(24, 1)) {
+			notes.push_back(
+				VerificationNote(
+					VerificationNote::VERIFY_BV21_ERROR,
+					VerificationNote::PICTURE_ASSET_INVALID_FRAME_RATE_FOR_4K,
+					String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
+					file
+					)
+				);
+		}
+
+		/* Only 2D allowed for 4K */
+		if (dynamic_pointer_cast<const StereoPictureAsset>(asset)) {
+			notes.push_back(
+				VerificationNote(
+					VerificationNote::VERIFY_BV21_ERROR,
+					VerificationNote::PICTURE_ASSET_4K_3D,
+					file
+					)
+				);
+
+		}
+	}
+
 }
 
 
@@ -768,6 +827,15 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "This DCP does not use the SMPTE standard, which is required for Bv2.1 compliance.";
 	case dcp::VerificationNote::BAD_LANGUAGE:
 		return String::compose("The DCP specifies a language '%1' which does not conform to the RFC 5646 standard.", note.note().get());
+	case dcp::VerificationNote::PICTURE_ASSET_INVALID_SIZE_IN_PIXELS:
+		return String::compose("A picture asset's size (%1) is not one of those allowed by Bv2.1 (2048x858, 1998x1080, 4096x1716 or 3996x2160)", note.note().get());
+	case dcp::VerificationNote::PICTURE_ASSET_INVALID_FRAME_RATE_FOR_2K:
+		return String::compose("A picture asset's frame rate (%1) is not one of those allowed for 2K DCPs by Bv2.1 (24, 25 or 48fps)", note.note().get());
+	case dcp::VerificationNote::PICTURE_ASSET_INVALID_FRAME_RATE_FOR_4K:
+		return String::compose("A picture asset's frame rate (%1) is not 24fps as required for 4K DCPs by Bv2.1", note.note().get());
+	case dcp::VerificationNote::PICTURE_ASSET_4K_3D:
+		return "3D 4K DCPs are not allowed by Bv2.1";
+
 	}
 
 	return "";

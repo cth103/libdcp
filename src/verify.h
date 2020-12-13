@@ -94,6 +94,14 @@ public:
 		NOT_SMPTE,
 		/** A language or territory does not conform to RFC 5646 [Bv2.1_6.2.1] */
 		BAD_LANGUAGE,
+		/** A picture asset does not have one of the required Bv2.1 sizes (in pixels) [Bv2.1_7.1] */
+		PICTURE_ASSET_INVALID_SIZE_IN_PIXELS,
+		/** A picture asset is 2K but is not at 24, 25 or 48 fps as required by Bv2.1 [Bv2.1_7.1] */
+		PICTURE_ASSET_INVALID_FRAME_RATE_FOR_2K,
+		/** A picture asset is 4K but is not at 24fps as required by Bv2.1 [Bv2.1_7.1] */
+		PICTURE_ASSET_INVALID_FRAME_RATE_FOR_4K,
+		/** A picture asset is 4K but is 3D which is not allowed by Bv2.1 [Bv2.1_7.1] */
+		PICTURE_ASSET_4K_3D,
 	};
 
 	VerificationNote (Type type, Code code)

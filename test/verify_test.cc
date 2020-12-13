@@ -41,10 +41,12 @@
 #include "dcp.h"
 #include "openjpeg_image.h"
 #include "mono_picture_asset.h"
+#include "stereo_picture_asset.h"
 #include "mono_picture_asset_writer.h"
 #include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "reel_closed_caption_asset.h"
+#include "reel_stereo_picture_asset.h"
 #include "reel_subtitle_asset.h"
 #include "compose.hpp"
 #include "test.h"
@@ -1002,3 +1004,156 @@ BOOST_AUTO_TEST_CASE (verify_various_invalid_languages)
 	++i;
 }
 
+
+static
+list<dcp::VerificationNote>
+check_picture_size (int width, int height, int frame_rate, bool three_d)
+{
+	using namespace boost::filesystem;
+
+	path dcp_path = "build/test/verify_picture_test";
+	remove_all (dcp_path);
+	create_directories (dcp_path);
+
+	shared_ptr<dcp::PictureAsset> mp;
+	if (three_d) {
+		mp.reset (new dcp::StereoPictureAsset(dcp::Fraction(frame_rate, 1), dcp::SMPTE));
+	} else {
+		mp.reset (new dcp::MonoPictureAsset(dcp::Fraction(frame_rate, 1), dcp::SMPTE));
+	}
+	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write (dcp_path / "video.mxf", false);
+
+	shared_ptr<dcp::OpenJPEGImage> image = black_image (dcp::Size(width, height));
+	dcp::ArrayData j2c = dcp::compress_j2k (image, 100000000, frame_rate, three_d, width > 2048);
+	int const length = three_d ? frame_rate * 2 : frame_rate;
+	for (int i = 0; i < length; ++i) {
+		picture_writer->write (j2c.data(), j2c.size());
+	}
+	picture_writer->finalize ();
+
+	shared_ptr<dcp::DCP> d (new dcp::DCP(dcp_path));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL("A Test DCP", dcp::FEATURE));
+	cpl->set_annotation_text ("A Test DCP");
+	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
+
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+
+	if (three_d) {
+		reel->add (
+			shared_ptr<dcp::ReelPictureAsset>(
+				new dcp::ReelStereoPictureAsset(
+					std::dynamic_pointer_cast<dcp::StereoPictureAsset>(mp),
+					0)
+				)
+			);
+	} else {
+		reel->add (
+			shared_ptr<dcp::ReelPictureAsset>(
+				new dcp::ReelMonoPictureAsset(
+					std::dynamic_pointer_cast<dcp::MonoPictureAsset>(mp),
+					0)
+				)
+			);
+	}
+
+	cpl->add (reel);
+
+	d->add (cpl);
+	d->write_xml (dcp::SMPTE);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dcp_path);
+	return dcp::verify (dirs, &stage, &progress, xsd_test);
+}
+
+
+static
+void
+check_picture_size_ok (int width, int height, int frame_rate, bool three_d)
+{
+	list<dcp::VerificationNote> notes = check_picture_size(width, height, frame_rate, three_d);
+	dump_notes (notes);
+	BOOST_CHECK_EQUAL (notes.size(), 0U);
+}
+
+
+static
+void
+check_picture_size_bad_frame_size (int width, int height, int frame_rate, bool three_d)
+{
+	list<dcp::VerificationNote> notes = check_picture_size(width, height, frame_rate, three_d);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::PICTURE_ASSET_INVALID_SIZE_IN_PIXELS);
+}
+
+
+static
+void
+check_picture_size_bad_2k_frame_rate (int width, int height, int frame_rate, bool three_d)
+{
+	list<dcp::VerificationNote> notes = check_picture_size(width, height, frame_rate, three_d);
+	BOOST_REQUIRE_EQUAL (notes.size(), 2U);
+	BOOST_CHECK_EQUAL (notes.back().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (notes.back().code(), dcp::VerificationNote::PICTURE_ASSET_INVALID_FRAME_RATE_FOR_2K);
+}
+
+
+static
+void
+check_picture_size_bad_4k_frame_rate (int width, int height, int frame_rate, bool three_d)
+{
+	list<dcp::VerificationNote> notes = check_picture_size(width, height, frame_rate, three_d);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::PICTURE_ASSET_INVALID_FRAME_RATE_FOR_4K);
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_picture_size)
+{
+	using namespace boost::filesystem;
+
+	/* 2K scope */
+	check_picture_size_ok (2048, 858, 24, false);
+	check_picture_size_ok (2048, 858, 25, false);
+	check_picture_size_ok (2048, 858, 48, false);
+	check_picture_size_ok (2048, 858, 24, true);
+	check_picture_size_ok (2048, 858, 25, true);
+	check_picture_size_ok (2048, 858, 48, true);
+
+	/* 2K flat */
+	check_picture_size_ok (1998, 1080, 24, false);
+	check_picture_size_ok (1998, 1080, 25, false);
+	check_picture_size_ok (1998, 1080, 48, false);
+	check_picture_size_ok (1998, 1080, 24, true);
+	check_picture_size_ok (1998, 1080, 25, true);
+	check_picture_size_ok (1998, 1080, 48, true);
+
+	/* 4K scope */
+	check_picture_size_ok (4096, 1716, 24, false);
+
+	/* 4K flat */
+	check_picture_size_ok (3996, 2160, 24, false);
+
+	/* Bad frame size */
+	check_picture_size_bad_frame_size (2050, 858, 24, false);
+	check_picture_size_bad_frame_size (2048, 658, 25, false);
+	check_picture_size_bad_frame_size (1920, 1080, 48, true);
+	check_picture_size_bad_frame_size (4000, 3000, 24, true);
+
+	/* Bad 2K frame rate */
+	check_picture_size_bad_2k_frame_rate (2048, 858, 26, false);
+	check_picture_size_bad_2k_frame_rate (2048, 858, 31, false);
+	check_picture_size_bad_2k_frame_rate (1998, 1080, 50, true);
+
+	/* Bad 4K frame rate */
+	check_picture_size_bad_4k_frame_rate (3996, 2160, 25, false);
+	check_picture_size_bad_4k_frame_rate (3996, 2160, 48, false);
+
+	/* No 4K 3D */
+	list<dcp::VerificationNote> notes = check_picture_size(3996, 2160, 24, true);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::PICTURE_ASSET_4K_3D);
+}
