@@ -45,17 +45,6 @@ namespace dcp {
 class Subtitle
 {
 public:
-	Subtitle (
-		Time in,
-		Time out,
-		float h_position,
-		HAlign h_align,
-		float v_position,
-		VAlign v_align,
-		Time fade_up_time,
-		Time fade_down_time
-		);
-
 	virtual ~Subtitle () {}
 
 	/** @return subtitle start time (relative to the start of the reel) */
@@ -125,6 +114,18 @@ public:
 
 
 protected:
+
+	Subtitle (
+		Time in,
+		Time out,
+		float h_position,
+		HAlign h_align,
+		float v_position,
+		VAlign v_align,
+		Time fade_up_time,
+		Time fade_down_time
+		);
+
 	Time _in;
 	Time _out;
 	/** Horizontal position as a proportion of the screen width from the _h_align
