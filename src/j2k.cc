@@ -283,6 +283,11 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 		throw MiscError ("could not create JPEG2000 encoder");
 	}
 
+	if (comment.empty()) {
+		/* asdcplib complains with "Illegal data size" when reading frames encoded with an empty comment */
+		throw MiscError("compress_j2k comment can not be an empty string");
+	}
+
 	opj_set_error_handler (encoder, compress_error_callback, 0);
 
 	/* Set encoding parameters to default values */
