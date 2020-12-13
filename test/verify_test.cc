@@ -1210,3 +1210,77 @@ BOOST_AUTO_TEST_CASE (verify_closed_caption_xml_too_large)
 	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::CLOSED_CAPTION_XML_TOO_LARGE_IN_BYTES);
 }
 
+
+static
+shared_ptr<dcp::SMPTESubtitleAsset>
+make_large_subtitle_asset (boost::filesystem::path font_file)
+{
+	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset());
+	dcp::ArrayData big_fake_font(1024 * 1024);
+	big_fake_font.write (font_file);
+	for (int i = 0; i < 116; ++i) {
+		asset->add_font (dcp::String::compose("big%1", i), big_fake_font);
+	}
+	return asset;
+}
+
+
+template <class T>
+void
+verify_timed_text_asset_too_large (string name)
+{
+	boost::filesystem::path const dir = boost::filesystem::path("build/test") / name;
+	prepare_directory (dir);
+	shared_ptr<dcp::SMPTESubtitleAsset> asset = make_large_subtitle_asset (dir / "font.ttf");
+	asset->add (
+		shared_ptr<dcp::Subtitle>(
+			new dcp::SubtitleString(
+				optional<string>(),
+				false,
+				false,
+				false,
+				dcp::Colour(),
+				42,
+				1,
+				dcp::Time(0, 24, 24),
+				dcp::Time(20, 24, 24),
+				0,
+				dcp::HALIGN_CENTER,
+				0,
+				dcp::VALIGN_CENTER,
+				dcp::DIRECTION_LTR,
+				"Hello",
+				dcp::NONE,
+				dcp::Colour(),
+				dcp::Time(),
+				dcp::Time()
+				)
+			)
+		);
+	asset->write (dir / "subs.mxf");
+
+	shared_ptr<T> reel_asset(new T(asset, dcp::Fraction(24, 1), 16 * 24, 0));
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_asset);
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	shared_ptr<dcp::DCP> dcp(new dcp::DCP(dir));
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES);
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_subtitle_asset_too_large)
+{
+	verify_timed_text_asset_too_large<dcp::ReelSubtitleAsset>("verify_subtitle_asset_too_large");
+	verify_timed_text_asset_too_large<dcp::ReelClosedCaptionAsset>("verify_closed_caption_asset_too_large");
+}
+
+

@@ -659,6 +659,13 @@ verify_subtitle_asset (
 		if (smpte->language()) {
 			verify_language_tag (*smpte->language(), notes);
 		}
+		if (boost::filesystem::file_size(*asset->file()) > 115 * 1024 * 1024) {
+			notes.push_back (
+				VerificationNote(
+					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES, *asset->file()
+					)
+				);
+		}
 	}
 }
 
@@ -857,6 +864,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "3D 4K DCPs are not allowed by Bv2.1";
 	case dcp::VerificationNote::CLOSED_CAPTION_XML_TOO_LARGE_IN_BYTES:
 		return String::compose("The XML for the closed caption asset %1 is longer than the 256KB maximum required by Bv2.1", note.file()->filename());
+	case dcp::VerificationNote::TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES:
+		return String::compose("The total size of the timed text asset %1 is larger than the 115MB maximum required by Bv2.1", note.file()->filename());
 	}
 
 	return "";

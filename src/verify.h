@@ -104,6 +104,8 @@ public:
 		PICTURE_ASSET_4K_3D,
 		/** A closed caption's XML file is larger than 256KB [Bv2.1_7.2.1] */
 		CLOSED_CAPTION_XML_TOO_LARGE_IN_BYTES,
+		/** Any timed text asset's total files is larger than 115MB [Bv2.1_7.2.1] */
+		TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES,
 	};
 
 	VerificationNote (Type type, Code code)
