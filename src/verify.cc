@@ -666,6 +666,21 @@ verify_subtitle_asset (
 					)
 				);
 		}
+		/* XXX: I'm not sure what Bv2.1_7.2.1 means when it says "the font resource shall not be larger than 10MB"
+		 * but I'm hoping that checking for the total size of all fonts being <= 10MB will do.
+		 */
+		map<string, ArrayData> fonts = asset->font_data ();
+		int total_size = 0;
+		for (map<string, ArrayData>::const_iterator i = fonts.begin(); i != fonts.end(); ++i) {
+			total_size += i->second.size();
+		}
+		if (total_size > 10 * 1024 * 1024) {
+			notes.push_back (
+				VerificationNote(
+					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::TIMED_TEXT_FONTS_TOO_LARGE_IN_BYTES, *asset->file()
+					)
+				);
+		}
 	}
 }
 
@@ -866,6 +881,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The XML for the closed caption asset %1 is longer than the 256KB maximum required by Bv2.1", note.file()->filename());
 	case dcp::VerificationNote::TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES:
 		return String::compose("The total size of the timed text asset %1 is larger than the 115MB maximum required by Bv2.1", note.file()->filename());
+	case dcp::VerificationNote::TIMED_TEXT_FONTS_TOO_LARGE_IN_BYTES:
+		return String::compose("The total size of the fonts in timed text asset %1 is larger than the 10MB maximum required by Bv2.1", note.file()->filename());
 	}
 
 	return "";

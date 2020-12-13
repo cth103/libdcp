@@ -106,6 +106,8 @@ public:
 		CLOSED_CAPTION_XML_TOO_LARGE_IN_BYTES,
 		/** Any timed text asset's total files is larger than 115MB [Bv2.1_7.2.1] */
 		TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES,
+		/** The total size of all a timed text asset's fonts is larger than 10MB [Bv2.1_7.2.1] */
+		TIMED_TEXT_FONTS_TOO_LARGE_IN_BYTES,
 	};
 
 	VerificationNote (Type type, Code code)

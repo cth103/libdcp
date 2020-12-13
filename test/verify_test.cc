@@ -1271,9 +1271,13 @@ verify_timed_text_asset_too_large (string name)
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
-	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES);
+	BOOST_REQUIRE_EQUAL (notes.size(), 2U);
+	list<dcp::VerificationNote>::const_iterator i = notes.begin();
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES);
+	++i;
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::TIMED_TEXT_FONTS_TOO_LARGE_IN_BYTES);
 }
 
 
