@@ -42,7 +42,6 @@
 #include "sound_asset.h"
 #include "reel.h"
 #include "test.h"
-#include "file.h"
 #include "subtitle_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
@@ -92,7 +91,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	mp->set_key (key);
 
 	shared_ptr<dcp::PictureAssetWriter> writer = mp->start_write ("build/test/DCP/encryption_test/video.mxf", false);
-	dcp::File j2c ("test/data/flat_red.j2c");
+	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data (), j2c.size ());
 	}

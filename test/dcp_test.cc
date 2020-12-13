@@ -43,7 +43,6 @@
 #include "atmos_asset.h"
 #include "reel.h"
 #include "test.h"
-#include "file.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_stereo_picture_asset.h"
 #include "reel_sound_asset.h"
@@ -100,7 +99,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	shared_ptr<dcp::StereoPictureAsset> mp (new dcp::StereoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
 	mp->set_metadata (mxf_meta);
 	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test2/video.mxf", false);
-	dcp::File j2c ("test/data/flat_red.j2c");
+	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		/* Left */
 		picture_writer->write (j2c.data (), j2c.size ());
@@ -282,7 +281,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
 	mp->set_metadata (mxf_meta);
 	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test5/video.mxf", false);
-	dcp::File j2c ("test/data/flat_red.j2c");
+	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		picture_writer->write (j2c.data (), j2c.size ());
 	}

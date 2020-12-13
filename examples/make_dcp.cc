@@ -38,7 +38,6 @@
 #include "sound_asset.h"
 #include "sound_asset_writer.h"
 #include "reel.h"
-#include "file.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
 #include <cmath>
@@ -60,7 +59,7 @@ main ()
 	std::shared_ptr<dcp::PictureAssetWriter> picture_writer = picture_asset->start_write ("DCP/picture.mxf", false);
 
 	/* Write 24 frames of the same JPEG2000 file */
-	dcp::File picture ("examples/help.j2c");
+	dcp::ArrayData picture ("examples/help.j2c");
 	for (int i = 0; i < 24; ++i) {
 		picture_writer->write (picture.data(), picture.size());
 	}

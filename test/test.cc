@@ -36,7 +36,6 @@
 #include "compose.hpp"
 #include "cpl.h"
 #include "dcp.h"
-#include "file.h"
 #include "interop_subtitle_asset.h"
 #include "mono_picture_asset.h"
 #include "picture_asset_writer.h"
@@ -267,7 +266,7 @@ simple_picture (boost::filesystem::path path, string suffix)
 	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
 	mp->set_metadata (mxf_meta);
 	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write (path / dcp::String::compose("video%1.mxf", suffix), false);
-	dcp::File j2c ("test/data/flat_red.j2c");
+	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		picture_writer->write (j2c.data (), j2c.size ());
 	}

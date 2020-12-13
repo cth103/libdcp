@@ -40,7 +40,6 @@
 #include "mono_picture_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel.h"
-#include "file.h"
 #include "types.h"
 #include "picture_asset_writer.h"
 #include <libcxml/cxml.h>
@@ -241,7 +240,7 @@ BOOST_AUTO_TEST_CASE (validity_period_test1)
 	auto asset = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::SMPTE);
 	asset->set_key (dcp::Key());
 	auto writer = asset->start_write ("build/test/validity_period_test1.mxf", false);
-	dcp::File frame ("test/data/flat_red.j2c");
+	dcp::ArrayData frame ("test/data/flat_red.j2c");
 	writer->write (frame.data(), frame.size());
 	auto reel = make_shared<dcp::Reel>();
 	reel->add(make_shared<dcp::ReelMonoPictureAsset>(asset, 0));
