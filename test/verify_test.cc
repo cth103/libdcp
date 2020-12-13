@@ -1157,3 +1157,56 @@ BOOST_AUTO_TEST_CASE (verify_picture_size)
 	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
 	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::PICTURE_ASSET_4K_3D);
 }
+
+
+BOOST_AUTO_TEST_CASE (verify_closed_caption_xml_too_large)
+{
+	boost::filesystem::path const dir("build/test/verify_closed_caption_xml_too_large");
+	prepare_directory (dir);
+
+	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset());
+	for (int i = 0; i < 2048; ++i) {
+		asset->add (
+			shared_ptr<dcp::Subtitle>(
+				new dcp::SubtitleString(
+					optional<string>(),
+					false,
+					false,
+					false,
+					dcp::Colour(),
+					42,
+					1,
+					dcp::Time(i * 24, 24, 24),
+					dcp::Time(i * 24 + 20, 24, 24),
+					0,
+					dcp::HALIGN_CENTER,
+					0,
+					dcp::VALIGN_CENTER,
+					dcp::DIRECTION_LTR,
+					"Hello",
+					dcp::NONE,
+					dcp::Colour(),
+					dcp::Time(),
+					dcp::Time()
+					)
+				)
+			);
+	}
+	asset->write (dir / "subs.mxf");
+	shared_ptr<dcp::ReelClosedCaptionAsset> reel_asset(new dcp::ReelClosedCaptionAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
+	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	reel->add (reel_asset);
+	shared_ptr<dcp::CPL> cpl(new dcp::CPL("hello", dcp::FEATURE));
+	cpl->add (reel);
+	shared_ptr<dcp::DCP> dcp(new dcp::DCP(dir));
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::CLOSED_CAPTION_XML_TOO_LARGE_IN_BYTES);
+}
+

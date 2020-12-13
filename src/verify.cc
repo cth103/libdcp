@@ -663,6 +663,26 @@ verify_subtitle_asset (
 }
 
 
+static void
+verify_closed_caption_asset (
+	shared_ptr<const SubtitleAsset> asset,
+	function<void (string, optional<boost::filesystem::path>)> stage,
+	boost::filesystem::path xsd_dtd_directory,
+	list<VerificationNote>& notes
+	)
+{
+	verify_subtitle_asset (asset, stage, xsd_dtd_directory, notes);
+
+	if (asset->raw_xml().size() > 256 * 1024) {
+		notes.push_back (
+			VerificationNote(
+				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::CLOSED_CAPTION_XML_TOO_LARGE_IN_BYTES, *asset->file()
+				)
+			);
+	}
+}
+
+
 list<VerificationNote>
 dcp::verify (
 	vector<boost::filesystem::path> directories,
@@ -763,7 +783,7 @@ dcp::verify (
 				BOOST_FOREACH (shared_ptr<dcp::ReelClosedCaptionAsset> i, reel->closed_captions()) {
 					verify_closed_caption_reel (i, notes);
 					if (i->asset_ref().resolved()) {
-						verify_subtitle_asset (i->asset(), stage, xsd_dtd_directory, notes);
+						verify_closed_caption_asset (i->asset(), stage, xsd_dtd_directory, notes);
 					}
 				}
 			}
@@ -835,7 +855,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("A picture asset's frame rate (%1) is not 24fps as required for 4K DCPs by Bv2.1", note.note().get());
 	case dcp::VerificationNote::PICTURE_ASSET_4K_3D:
 		return "3D 4K DCPs are not allowed by Bv2.1";
-
+	case dcp::VerificationNote::CLOSED_CAPTION_XML_TOO_LARGE_IN_BYTES:
+		return String::compose("The XML for the closed caption asset %1 is longer than the 256KB maximum required by Bv2.1", note.file()->filename());
 	}
 
 	return "";

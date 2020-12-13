@@ -102,6 +102,8 @@ public:
 		PICTURE_ASSET_INVALID_FRAME_RATE_FOR_4K,
 		/** A picture asset is 4K but is 3D which is not allowed by Bv2.1 [Bv2.1_7.1] */
 		PICTURE_ASSET_4K_3D,
+		/** A closed caption's XML file is larger than 256KB [Bv2.1_7.2.1] */
+		CLOSED_CAPTION_XML_TOO_LARGE_IN_BYTES,
 	};
 
 	VerificationNote (Type type, Code code)

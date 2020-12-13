@@ -2,7 +2,7 @@ Mark things with [Bv2.1_paragraph]
 [/] done
 [*] not done
 
---- got to top of page 8
+--- got to top of page 9
 
 6 [/]
 6.1 must be smpte [/]
@@ -18,4 +18,7 @@ Mark things with [Bv2.1_paragraph]
 
 7 [/]
 7.1 picture essence encoding; frame size, rate and 2D/3D will be one of the four allowed combinations [/]
+7.1.1 active image area (should; not checked) [/]
+7.2 [/]
+7.2.1 Timed text XML files for closed captions must be < 256kB [/]
 
