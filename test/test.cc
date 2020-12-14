@@ -406,7 +406,6 @@ make_simple_with_smpte_subs (boost::filesystem::path path)
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->add (simple_subtitle());
 
-	dcp::ArrayData data(4096);
 	subs->write (path / "subs.mxf");
 
 	shared_ptr<dcp::ReelSubtitleAsset> reel_subs(new dcp::ReelSubtitleAsset(subs, dcp::Fraction(24, 1), 240, 0));
