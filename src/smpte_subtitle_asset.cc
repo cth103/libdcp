@@ -140,6 +140,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 				}
 			}
 		}
+		_standard = dcp::SMPTE;
 	}
 
 	/* Check that all required image data have been found */
