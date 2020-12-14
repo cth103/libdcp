@@ -1192,6 +1192,7 @@ BOOST_AUTO_TEST_CASE (verify_closed_caption_xml_too_large)
 				)
 			);
 	}
+	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
 	shared_ptr<dcp::ReelClosedCaptionAsset> reel_asset(new dcp::ReelClosedCaptionAsset(asset, dcp::Fraction(24, 1), 16 * 24, 0));
 	shared_ptr<dcp::Reel> reel(new dcp::Reel());
@@ -1257,6 +1258,7 @@ verify_timed_text_asset_too_large (string name)
 				)
 			)
 		);
+	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
 
 	shared_ptr<T> reel_asset(new T(asset, dcp::Fraction(24, 1), 16 * 24, 0));
@@ -1288,3 +1290,48 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_asset_too_large)
 }
 
 
+BOOST_AUTO_TEST_CASE (verify_missing_language_tag_in_subtitle_xml)
+{
+	boost::filesystem::path dir = "build/test/verify_missing_language_tag_in_subtitle_xml";
+	prepare_directory (dir);
+	shared_ptr<dcp::DCP> dcp = make_simple (dir, 1);
+
+	string const xml =
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\" xmlns:xs=\"http://www.w3.org/2001/schema\">"
+		"<Id>urn:uuid:e6a8ae03-ebbf-41ed-9def-913a87d1493a</Id>"
+		"<ContentTitleText>Content</ContentTitleText>"
+		"<AnnotationText>Annotation</AnnotationText>"
+		"<IssueDate>2018-10-02T12:25:14+02:00</IssueDate>"
+		"<ReelNumber>1</ReelNumber>"
+		"<EditRate>25 1</EditRate>"
+		"<TimeCodeRate>25</TimeCodeRate>"
+		"<StartTime>00:00:00:00</StartTime>"
+		"<LoadFont ID=\"arial\">urn:uuid:e4f0ff0a-9eba-49e0-92ee-d89a88a575f6</LoadFont>"
+		"<SubtitleList>"
+		"<Font ID=\"arial\" Color=\"FFFEFEFE\" Weight=\"normal\" Size=\"42\" Effect=\"border\" EffectColor=\"FF181818\" AspectAdjust=\"1.00\">"
+		"<Subtitle SpotNumber=\"1\" TimeIn=\"00:00:03:00\" TimeOut=\"00:00:04:10\" FadeUpTime=\"00:00:00:00\" FadeDownTime=\"00:00:00:00\">"
+		"<Text Hposition=\"0.0\" Halign=\"center\" Valign=\"bottom\" Vposition=\"13.5\" Direction=\"ltr\">Hello world</Text>"
+		"</Subtitle>"
+		"</Font>"
+		"</SubtitleList>"
+		"</SubtitleReel>";
+
+	FILE* xml_file = dcp::fopen_boost (dir / "subs.xml", "w");
+	BOOST_REQUIRE (xml_file);
+	fwrite (xml.c_str(), xml.size(), 1, xml_file);
+	fclose (xml_file);
+	shared_ptr<dcp::SMPTESubtitleAsset> subs (new dcp::SMPTESubtitleAsset(dir / "subs.xml"));
+	subs->write (dir / "subs.mxf");
+
+	shared_ptr<dcp::ReelSubtitleAsset> reel_subs (new dcp::ReelSubtitleAsset(subs, dcp::Fraction(24, 1), 100, 0));
+	dcp->cpls().front()->reels().front()->add (reel_subs);
+	dcp->write_xml (dcp::SMPTE);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (dir);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::MISSING_SUBTITLE_LANGUAGE);
+}

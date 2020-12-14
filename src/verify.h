@@ -108,6 +108,8 @@ public:
 		TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES,
 		/** The total size of all a timed text asset's fonts is larger than 10MB [Bv2.1_7.2.1] */
 		TIMED_TEXT_FONTS_TOO_LARGE_IN_BYTES,
+		/** Some SMPTE subtitle XML has no <Language> tag [Bv2.1_7.2.2] */
+		MISSING_SUBTITLE_LANGUAGE,
 	};
 
 	VerificationNote (Type type, Code code)

@@ -658,6 +658,12 @@ verify_subtitle_asset (
 	if (smpte) {
 		if (smpte->language()) {
 			verify_language_tag (*smpte->language(), notes);
+		} else {
+			notes.push_back (
+				VerificationNote(
+					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_LANGUAGE, *asset->file()
+					)
+				);
 		}
 		if (boost::filesystem::file_size(*asset->file()) > 115 * 1024 * 1024) {
 			notes.push_back (
@@ -883,6 +889,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The total size of the timed text asset %1 is larger than the 115MB maximum required by Bv2.1", note.file()->filename());
 	case dcp::VerificationNote::TIMED_TEXT_FONTS_TOO_LARGE_IN_BYTES:
 		return String::compose("The total size of the fonts in timed text asset %1 is larger than the 10MB maximum required by Bv2.1", note.file()->filename());
+	case dcp::VerificationNote::MISSING_SUBTITLE_LANGUAGE:
+		return String::compose("The XML for a SMPTE subtitle asset has no <Language> tag, which is required by Bv2.1", note.file()->filename());
 	}
 
 	return "";
