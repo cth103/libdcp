@@ -495,7 +495,7 @@ verify_main_picture_asset (
 		case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
 			notes.push_back (
 				VerificationNote(
-					VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE, file
+					VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_PICTURE_HASHES_DIFFER, file
 					)
 				);
 			break;
@@ -606,7 +606,7 @@ verify_main_sound_asset (
 		case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
 			notes.push_back (
 				VerificationNote(
-					VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE, *asset->file()
+					VerificationNote::VERIFY_ERROR, VerificationNote::PKL_CPL_SOUND_HASHES_DIFFER, *asset->file()
 					)
 				);
 			break;
@@ -845,12 +845,12 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "The picture in a reel has an invalid frame rate.";
 	case dcp::VerificationNote::PICTURE_HASH_INCORRECT:
 		return dcp::String::compose("The hash of the picture asset %1 does not agree with the PKL file.", note.file()->filename());
-	case dcp::VerificationNote::PKL_CPL_PICTURE_HASHES_DISAGREE:
-		return dcp::String::compose("The PKL and CPL hashes disagree for the picture asset %1.", note.file()->filename());
+	case dcp::VerificationNote::PKL_CPL_PICTURE_HASHES_DIFFER:
+		return dcp::String::compose("The PKL and CPL hashes differ for the picture asset %1.", note.file()->filename());
 	case dcp::VerificationNote::SOUND_HASH_INCORRECT:
 		return dcp::String::compose("The hash of the sound asset %1 does not agree with the PKL file.", note.file()->filename());
-	case dcp::VerificationNote::PKL_CPL_SOUND_HASHES_DISAGREE:
-		return dcp::String::compose("The PKL and CPL hashes disagree for the sound asset %1.", note.file()->filename());
+	case dcp::VerificationNote::PKL_CPL_SOUND_HASHES_DIFFER:
+		return dcp::String::compose("The PKL and CPL hashes differ for the sound asset %1.", note.file()->filename());
 	case dcp::VerificationNote::EMPTY_ASSET_PATH:
 		return "The asset map contains an empty asset path.";
 	case dcp::VerificationNote::MISSING_ASSET:

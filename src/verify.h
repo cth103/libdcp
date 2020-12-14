@@ -65,11 +65,11 @@ public:
 		/** The hash of a main picture asset does not agree with the PKL file.  file contains the picture asset filename. */
 		PICTURE_HASH_INCORRECT,
 		/** The hash of a main picture is different in the CPL and PKL */
-		PKL_CPL_PICTURE_HASHES_DISAGREE,
+		PKL_CPL_PICTURE_HASHES_DIFFER,
 		/** The hash of a main sound asset does not agree with the PKL file.  file contains the sound asset filename. */
 		SOUND_HASH_INCORRECT,
 		/** The hash of a main sound is different in the CPL and PKL */
-		PKL_CPL_SOUND_HASHES_DISAGREE,
+		PKL_CPL_SOUND_HASHES_DIFFER,
 		/** An assetmap's <Path> entry is empty */
 		EMPTY_ASSET_PATH,
 		/** A file mentioned in an asset map cannot be found */
