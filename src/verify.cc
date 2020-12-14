@@ -640,12 +640,19 @@ verify_closed_caption_reel (shared_ptr<const ReelClosedCaptionAsset> reel_asset,
 }
 
 
+struct State
+{
+	boost::optional<string> subtitle_language;
+};
+
+
 static void
 verify_subtitle_asset (
 	shared_ptr<const SubtitleAsset> asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
-	list<VerificationNote>& notes
+	list<VerificationNote>& notes,
+	State& state
 	)
 {
 	stage ("Checking subtitle XML", asset->file());
@@ -657,7 +664,17 @@ verify_subtitle_asset (
 	shared_ptr<const SMPTESubtitleAsset> smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
 	if (smpte) {
 		if (smpte->language()) {
-			verify_language_tag (*smpte->language(), notes);
+			string const language = *smpte->language();
+			verify_language_tag (language, notes);
+			if (!state.subtitle_language) {
+				state.subtitle_language = language;
+			} else if (state.subtitle_language != language) {
+				notes.push_back (
+					VerificationNote(
+						VerificationNote::VERIFY_BV21_ERROR, VerificationNote::SUBTITLE_LANGUAGES_DIFFER, *asset->file()
+						)
+					);
+			}
 		} else {
 			notes.push_back (
 				VerificationNote(
@@ -696,10 +713,11 @@ verify_closed_caption_asset (
 	shared_ptr<const SubtitleAsset> asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
-	list<VerificationNote>& notes
+	list<VerificationNote>& notes,
+	State& state
 	)
 {
-	verify_subtitle_asset (asset, stage, xsd_dtd_directory, notes);
+	verify_subtitle_asset (asset, stage, xsd_dtd_directory, notes, state);
 
 	if (asset->raw_xml().size() > 256 * 1024) {
 		notes.push_back (
@@ -722,6 +740,7 @@ dcp::verify (
 	xsd_dtd_directory = boost::filesystem::canonical (xsd_dtd_directory);
 
 	list<VerificationNote> notes;
+	State state;
 
 	list<shared_ptr<DCP> > dcps;
 	BOOST_FOREACH (boost::filesystem::path i, directories) {
@@ -804,14 +823,14 @@ dcp::verify (
 				if (reel->main_subtitle()) {
 					verify_main_subtitle_reel (reel->main_subtitle(), notes);
 					if (reel->main_subtitle()->asset_ref().resolved()) {
-						verify_subtitle_asset (reel->main_subtitle()->asset(), stage, xsd_dtd_directory, notes);
+						verify_subtitle_asset (reel->main_subtitle()->asset(), stage, xsd_dtd_directory, notes, state);
 					}
 				}
 
 				BOOST_FOREACH (shared_ptr<dcp::ReelClosedCaptionAsset> i, reel->closed_captions()) {
 					verify_closed_caption_reel (i, notes);
 					if (i->asset_ref().resolved()) {
-						verify_closed_caption_asset (i->asset(), stage, xsd_dtd_directory, notes);
+						verify_closed_caption_asset (i->asset(), stage, xsd_dtd_directory, notes, state);
 					}
 				}
 			}
@@ -891,6 +910,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The total size of the fonts in timed text asset %1 is larger than the 10MB maximum required by Bv2.1", note.file()->filename());
 	case dcp::VerificationNote::MISSING_SUBTITLE_LANGUAGE:
 		return String::compose("The XML for a SMPTE subtitle asset has no <Language> tag, which is required by Bv2.1", note.file()->filename());
+	case dcp::VerificationNote::SUBTITLE_LANGUAGES_DIFFER:
+		return String::compose("Some subtitle assets have different <Language> tags than others", note.file()->filename());
 	}
 
 	return "";

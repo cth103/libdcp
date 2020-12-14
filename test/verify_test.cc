@@ -1335,3 +1335,39 @@ BOOST_AUTO_TEST_CASE (verify_missing_language_tag_in_subtitle_xml)
 	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
 	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::MISSING_SUBTITLE_LANGUAGE);
 }
+
+
+BOOST_AUTO_TEST_CASE (verify_inconsistent_subtitle_languages)
+{
+	boost::filesystem::path path ("build/test/verify_inconsistent_subtitle_languages");
+	shared_ptr<dcp::DCP> dcp = make_simple (path, 2);
+	shared_ptr<dcp::CPL> cpl = dcp->cpls().front();
+
+	{
+		shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
+		subs->set_language (dcp::LanguageTag("de-DE"));
+		subs->add (simple_subtitle());
+		subs->write (path / "subs1.mxf");
+		shared_ptr<dcp::ReelSubtitleAsset> reel_subs(new dcp::ReelSubtitleAsset(subs, dcp::Fraction(24, 1), 240, 0));
+		cpl->reels().front()->add (reel_subs);
+	}
+
+	{
+		shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
+		subs->set_language (dcp::LanguageTag("en-US"));
+		subs->add (simple_subtitle());
+		subs->write (path / "subs2.mxf");
+		shared_ptr<dcp::ReelSubtitleAsset> reel_subs(new dcp::ReelSubtitleAsset(subs, dcp::Fraction(24, 1), 240, 0));
+		cpl->reels().back()->add (reel_subs);
+	}
+
+	dcp->write_xml (dcp::SMPTE);
+
+	vector<boost::filesystem::path> dirs;
+	dirs.push_back (path);
+	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::SUBTITLE_LANGUAGES_DIFFER);
+}
+

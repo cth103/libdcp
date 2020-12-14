@@ -24,6 +24,6 @@ Mark things with [Bv2.1_paragraph]
     - Timed text XML files for closed captions must be <= 256kB [/]
     - Timed text total track asset must be <= 115MB [/]
     - Font resource <= 10MB [/]
-7.2.2 Language Element shall be present [/] and contiguous across all MainSubtitles.
+7.2.2 Language Element shall be present [/] and contiguous across all MainSubtitles [/]
 
 	

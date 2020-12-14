@@ -110,6 +110,8 @@ public:
 		TIMED_TEXT_FONTS_TOO_LARGE_IN_BYTES,
 		/** Some SMPTE subtitle XML has no <Language> tag [Bv2.1_7.2.2] */
 		MISSING_SUBTITLE_LANGUAGE,
+		/** Not all subtitle assets specify the same <Language> tag [Bv2.1_7.2.2] */
+		SUBTITLE_LANGUAGES_DIFFER,
 	};
 
 	VerificationNote (Type type, Code code)
