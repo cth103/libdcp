@@ -527,10 +527,10 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 }
 
 void
-SMPTESubtitleAsset::add_font (string load_id, boost::filesystem::path file)
+SMPTESubtitleAsset::add_font (string load_id, dcp::ArrayData data)
 {
 	string const uuid = make_uuid ();
-	_fonts.push_back (Font (load_id, uuid, file));
+	_fonts.push_back (Font(load_id, uuid, data));
 	_load_font_nodes.push_back (shared_ptr<SMPTELoadFontNode> (new SMPTELoadFontNode (load_id, uuid)));
 }
 

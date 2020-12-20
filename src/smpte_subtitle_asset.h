@@ -75,7 +75,7 @@ public:
 	std::string xml_as_string () const;
 	void write (boost::filesystem::path path) const;
 	void add (boost::shared_ptr<Subtitle>);
-	void add_font (std::string id, boost::filesystem::path file);
+	void add_font (std::string id, dcp::ArrayData data);
 	void set_key (Key key);
 
 	void set_content_title_text (std::string t) {

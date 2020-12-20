@@ -119,10 +119,11 @@ InteropSubtitleAsset::xml_as_string () const
 }
 
 void
-InteropSubtitleAsset::add_font (string load_id, boost::filesystem::path file)
+InteropSubtitleAsset::add_font (string load_id, dcp::ArrayData data)
 {
-	_fonts.push_back (Font (load_id, make_uuid(), file));
-	_load_font_nodes.push_back (shared_ptr<InteropLoadFontNode> (new InteropLoadFontNode (load_id, file.leaf().string ())));
+	_fonts.push_back (Font(load_id, make_uuid(), data));
+	string const uri = String::compose("font_%1.ttf", _load_font_nodes.size());
+	_load_font_nodes.push_back (shared_ptr<InteropLoadFontNode>(new InteropLoadFontNode(load_id, uri)));
 }
 
 bool

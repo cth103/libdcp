@@ -345,8 +345,7 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 
 	boost::filesystem::create_directory (path / "subs");
 	dcp::ArrayData data(4096);
-	data.write (path / "subs" / "font.ttf");
-	subs->add_font ("afont", path / "subs" / "font.ttf");
+	subs->add_font ("afont", data);
 	subs->write (path / "subs" / "subs.xml");
 
 	shared_ptr<dcp::ReelSubtitleAsset> reel_subs(new dcp::ReelSubtitleAsset(subs, dcp::Fraction(24, 1), 240, 0));
