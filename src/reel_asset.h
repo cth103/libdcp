@@ -41,7 +41,7 @@
 #include "object.h"
 #include "util.h"
 #include "ref.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace cxml {
 	class Node;
@@ -66,7 +66,7 @@ class ReelAsset : public Object
 {
 public:
 	ReelAsset (std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
-	explicit ReelAsset (boost::shared_ptr<const cxml::Node>);
+	explicit ReelAsset (std::shared_ptr<const cxml::Node>);
 
 	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const = 0;
 
@@ -104,7 +104,7 @@ public:
 		_annotation_text = at;
 	}
 
-	bool asset_equals (boost::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
+	bool asset_equals (std::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
 
 protected:
 

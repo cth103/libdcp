@@ -65,16 +65,16 @@ public:
 	explicit SMPTESubtitleAsset (boost::filesystem::path file);
 
 	bool equals (
-		boost::shared_ptr<const Asset>,
+		std::shared_ptr<const Asset>,
 		EqualityOptions,
 		NoteHandler note
 		) const;
 
-	std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const;
+	std::list<std::shared_ptr<LoadFontNode> > load_font_nodes () const;
 
 	std::string xml_as_string () const;
 	void write (boost::filesystem::path path) const;
-	void add (boost::shared_ptr<Subtitle>);
+	void add (std::shared_ptr<Subtitle>);
 	void add_font (std::string id, dcp::ArrayData data);
 	void set_key (Key key);
 
@@ -173,9 +173,9 @@ private:
 	friend struct ::write_smpte_subtitle_test;
 	friend struct ::write_smpte_subtitle_test2;
 
-	void read_fonts (boost::shared_ptr<ASDCP::TimedText::MXFReader>);
-	void parse_xml (boost::shared_ptr<cxml::Document> xml);
-	void read_mxf_descriptor (boost::shared_ptr<ASDCP::TimedText::MXFReader> reader, boost::shared_ptr<DecryptionContext> dec);
+	void read_fonts (std::shared_ptr<ASDCP::TimedText::MXFReader>);
+	void parse_xml (std::shared_ptr<cxml::Document> xml);
+	void read_mxf_descriptor (std::shared_ptr<ASDCP::TimedText::MXFReader> reader, std::shared_ptr<DecryptionContext> dec);
 
 	/** The total length of this content in video frames.  The amount of
 	 *  content presented may be less than this.
@@ -194,7 +194,7 @@ private:
 	int _time_code_rate;
 	boost::optional<Time> _start_time;
 
-	std::list<boost::shared_ptr<SMPTELoadFontNode> > _load_font_nodes;
+	std::list<std::shared_ptr<SMPTELoadFontNode> > _load_font_nodes;
 	/** UUID for the XML inside the MXF, which should be different to the ID of the MXF according to
 	 *  Doremi's 2.8.18 release notes.
 	 */

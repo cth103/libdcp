@@ -46,7 +46,7 @@ template <class R, class B>
 class Frame : public boost::noncopyable
 {
 public:
-	Frame (R* reader, int n, boost::shared_ptr<const DecryptionContext> c)
+	Frame (R* reader, int n, std::shared_ptr<const DecryptionContext> c)
 	{
 		/* XXX: unfortunate guesswork on this buffer size */
 		_buffer.reset(new B(Kumu::Megabyte));
@@ -67,7 +67,7 @@ public:
 	}
 
 private:
-	boost::shared_ptr<B> _buffer;
+	std::shared_ptr<B> _buffer;
 };
 
 }

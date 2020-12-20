@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE (cpl_ratings)
 	ratings.push_back (dcp::Rating("http://www.movielabs.com/md/ratings/GB/BBFC/1/12A%3C/Agency", "12A"));
 	cpl.set_ratings (ratings);
 
-	cpl.write_xml ("build/test/cpl_ratings.xml", dcp::SMPTE, boost::shared_ptr<dcp::CertificateChain>());
+	cpl.write_xml ("build/test/cpl_ratings.xml", dcp::SMPTE, std::shared_ptr<dcp::CertificateChain>());
 
 	list<string> ignore;
 	ignore.push_back ("Id");

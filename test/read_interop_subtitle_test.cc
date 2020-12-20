@@ -40,8 +40,8 @@
 
 using std::list;
 using std::string;
-using boost::shared_ptr;
-using boost::dynamic_pointer_cast;
+using std::shared_ptr;
+using std::dynamic_pointer_cast;
 
 /** Load some subtitle content from Interop XML and check that it is read correctly */
 BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)

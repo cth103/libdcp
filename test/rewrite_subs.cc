@@ -43,7 +43,7 @@ using std::cout;
 using std::cerr;
 using std::list;
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 /** Load a DCP then re-write its subtitle XML or MXF in-place */
@@ -62,7 +62,7 @@ main (int argc, char* argv[])
 		dcp->read ();
 
 		list<shared_ptr<CPL> > cpls = dcp->cpls ();
-		for (list<boost::shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
+		for (list<std::shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
 
 			list<shared_ptr<Reel> > reels = (*i)->reels ();
 			for (list<shared_ptr<Reel> >::iterator j = reels.begin(); j != reels.end(); ++j) {

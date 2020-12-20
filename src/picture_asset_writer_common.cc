@@ -31,7 +31,7 @@
     files in the program, then also delete it here.
 */
 
-using boost::shared_ptr;
+using std::shared_ptr;
 
 namespace dcp {
 

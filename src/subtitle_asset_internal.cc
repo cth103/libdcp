@@ -38,7 +38,7 @@
 
 using std::string;
 using std::map;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 string
@@ -141,7 +141,7 @@ order::Part::write_xml (xmlpp::Element* parent, order::Context& context) const
 
 	parent = as_xml (parent, context);
 
-	BOOST_FOREACH (boost::shared_ptr<order::Part> i, children) {
+	BOOST_FOREACH (std::shared_ptr<order::Part> i, children) {
 		i->write_xml (parent, context);
 	}
 }

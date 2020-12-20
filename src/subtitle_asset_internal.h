@@ -68,7 +68,7 @@ class Font
 public:
 	Font () {}
 
-	Font (boost::shared_ptr<SubtitleString> s, Standard standard);
+	Font (std::shared_ptr<SubtitleString> s, Standard standard);
 
 	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const;
 
@@ -91,11 +91,11 @@ private:
 class Part
 {
 public:
-	Part (boost::shared_ptr<Part> parent_)
+	Part (std::shared_ptr<Part> parent_)
 		: parent (parent_)
 	{}
 
-	Part (boost::shared_ptr<Part> parent_, Font font_)
+	Part (std::shared_ptr<Part> parent_, Font font_)
 		: parent (parent_)
 		, font (font_)
 	{}
@@ -105,15 +105,15 @@ public:
 	virtual xmlpp::Element* as_xml (xmlpp::Element* parent, Context &) const;
 	void write_xml (xmlpp::Element* parent, order::Context& context) const;
 
-	boost::shared_ptr<Part> parent;
+	std::shared_ptr<Part> parent;
 	Font font;
-	std::list<boost::shared_ptr<Part> > children;
+	std::list<std::shared_ptr<Part> > children;
 };
 
 class String : public Part
 {
 public:
-	String (boost::shared_ptr<Part> parent, Font font, std::string text_)
+	String (std::shared_ptr<Part> parent, Font font, std::string text_)
 		: Part (parent, font)
 		, text (text_)
 	{}
@@ -126,7 +126,7 @@ public:
 class Text : public Part
 {
 public:
-	Text (boost::shared_ptr<Part> parent, HAlign h_align, float h_position, VAlign v_align, float v_position, Direction direction)
+	Text (std::shared_ptr<Part> parent, HAlign h_align, float h_position, VAlign v_align, float v_position, Direction direction)
 		: Part (parent)
 		, _h_align (h_align)
 		, _h_position (h_position)
@@ -148,7 +148,7 @@ private:
 class Subtitle : public Part
 {
 public:
-	Subtitle (boost::shared_ptr<Part> parent, Time in, Time out, Time fade_up, Time fade_down)
+	Subtitle (std::shared_ptr<Part> parent, Time in, Time out, Time fade_up, Time fade_down)
 		: Part (parent)
 		, _in (in)
 		, _out (out)
@@ -168,7 +168,7 @@ private:
 class Image : public Part
 {
 public:
-	Image (boost::shared_ptr<Part> parent, std::string id, ArrayData png_data, HAlign h_align, float h_position, VAlign v_align, float v_position)
+	Image (std::shared_ptr<Part> parent, std::string id, ArrayData png_data, HAlign h_align, float h_position, VAlign v_align, float v_position)
 		: Part (parent)
 		, _png_data (png_data)
 		, _id (id)

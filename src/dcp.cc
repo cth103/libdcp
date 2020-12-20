@@ -75,8 +75,8 @@ using std::make_pair;
 using std::map;
 using std::cerr;
 using std::exception;
-using boost::shared_ptr;
-using boost::dynamic_pointer_cast;
+using std::shared_ptr;
+using std::dynamic_pointer_cast;
 using boost::optional;
 using boost::algorithm::starts_with;
 using namespace dcp;
@@ -311,7 +311,7 @@ DCP::equals (DCP const & other, EqualityOptions opt, NoteHandler note) const
 }
 
 void
-DCP::add (boost::shared_ptr<CPL> cpl)
+DCP::add (std::shared_ptr<CPL> cpl)
 {
 	_cpls.push_back (cpl);
 }

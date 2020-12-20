@@ -39,9 +39,9 @@
 #include "atmos_asset.h"
 #include "compose.hpp"
 #include "asset_factory.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 shared_ptr<Asset>

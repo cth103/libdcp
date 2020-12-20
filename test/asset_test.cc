@@ -37,7 +37,7 @@
 #include <boost/test/unit_test.hpp>
 
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 class DummyAsset : public dcp::Asset
 {

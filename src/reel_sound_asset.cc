@@ -41,7 +41,7 @@
 #include <libxml++/libxml++.h>
 
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundAsset> asset, int64_t entry_point)

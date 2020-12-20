@@ -39,7 +39,7 @@
 #include "crypto_context.h"
 #include <asdcp/AS_DCP.h>
 #include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace dcp {
 
@@ -64,9 +64,9 @@ public:
 		delete _reader;
 	}
 
-	boost::shared_ptr<const F> get_frame (int n) const
+	std::shared_ptr<const F> get_frame (int n) const
 	{
-		return boost::shared_ptr<const F> (new F (_reader, n, _crypto_context));
+		return std::shared_ptr<const F> (new F (_reader, n, _crypto_context));
 	}
 
 	R* reader () const {
@@ -75,7 +75,7 @@ public:
 
 protected:
 	R* _reader;
-	boost::shared_ptr<DecryptionContext> _crypto_context;
+	std::shared_ptr<DecryptionContext> _crypto_context;
 };
 
 }

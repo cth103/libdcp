@@ -92,7 +92,7 @@ public:
 	 */
 	DecryptedKDM (
 		std::string cpl_id,
-		std::map<boost::shared_ptr<const ReelMXF>, Key> keys,
+		std::map<std::shared_ptr<const ReelMXF>, Key> keys,
 		LocalTime not_valid_before,
 		LocalTime not_valid_after,
 		std::string annotation_text,
@@ -109,7 +109,7 @@ public:
 	 *  @param not_valid_after End time for the KDM.
 	 */
 	DecryptedKDM (
-		boost::shared_ptr<const CPL> cpl,
+		std::shared_ptr<const CPL> cpl,
 		Key key,
 		LocalTime not_valid_before,
 		LocalTime not_valid_after,
@@ -130,7 +130,7 @@ public:
 	 *  @return Encrypted KDM.
 	 */
 	EncryptedKDM encrypt (
-		boost::shared_ptr<const CertificateChain> signer,
+		std::shared_ptr<const CertificateChain> signer,
 		Certificate recipient,
 		std::vector<std::string> trusted_devices,
 		Formulation formulation,

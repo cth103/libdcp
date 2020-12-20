@@ -57,7 +57,7 @@ using std::setfill;
 using std::hex;
 using std::pair;
 using std::map;
-using boost::shared_ptr;
+using std::shared_ptr;
 using boost::optional;
 using namespace dcp;
 

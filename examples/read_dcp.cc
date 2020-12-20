@@ -58,39 +58,39 @@ main ()
 	}
 
 	std::cout << "DCP has " << dcp.cpls().size() << " CPLs.\n";
-	std::list<boost::shared_ptr<dcp::Asset> > assets = dcp.assets ();
+	std::list<std::shared_ptr<dcp::Asset> > assets = dcp.assets ();
 	std::cout << "DCP has " << assets.size() << " assets.\n";
-	for (std::list<boost::shared_ptr<dcp::Asset> >::const_iterator i = assets.begin(); i != assets.end(); ++i) {
-		if (boost::dynamic_pointer_cast<dcp::MonoPictureAsset> (*i)) {
+	for (std::list<std::shared_ptr<dcp::Asset> >::const_iterator i = assets.begin(); i != assets.end(); ++i) {
+		if (std::dynamic_pointer_cast<dcp::MonoPictureAsset> (*i)) {
 			std::cout << "2D picture\n";
-		} else if (boost::dynamic_pointer_cast<dcp::StereoPictureAsset> (*i)) {
+		} else if (std::dynamic_pointer_cast<dcp::StereoPictureAsset> (*i)) {
 			std::cout << "3D picture\n";
-		} else if (boost::dynamic_pointer_cast<dcp::SoundAsset> (*i)) {
+		} else if (std::dynamic_pointer_cast<dcp::SoundAsset> (*i)) {
 			std::cout << "Sound\n";
-		} else if (boost::dynamic_pointer_cast<dcp::SubtitleAsset> (*i)) {
+		} else if (std::dynamic_pointer_cast<dcp::SubtitleAsset> (*i)) {
 			std::cout << "Subtitle\n";
-		} else if (boost::dynamic_pointer_cast<dcp::CPL> (*i)) {
+		} else if (std::dynamic_pointer_cast<dcp::CPL> (*i)) {
 			std::cout << "CPL\n";
 		}
 		std::cout << "\t" << (*i)->file()->leaf().string() << "\n";
 	}
 
 	/* Take the first CPL */
-	boost::shared_ptr<dcp::CPL> cpl = dcp.cpls().front ();
+	std::shared_ptr<dcp::CPL> cpl = dcp.cpls().front ();
 
 	/* Get the picture asset in the first reel */
-	boost::shared_ptr<dcp::MonoPictureAsset> picture_asset = boost::dynamic_pointer_cast<dcp::MonoPictureAsset> (
+	std::shared_ptr<dcp::MonoPictureAsset> picture_asset = std::dynamic_pointer_cast<dcp::MonoPictureAsset> (
 		cpl->reels().front()->main_picture()->asset()
 		);
 
 	/* Get a reader for it */
-	boost::shared_ptr<dcp::MonoPictureAssetReader> picture_asset_reader = picture_asset->start_read();
+	std::shared_ptr<dcp::MonoPictureAssetReader> picture_asset_reader = picture_asset->start_read();
 
 	/* Get the 1000th frame of it */
-	boost::shared_ptr<const dcp::MonoPictureFrame> picture_frame_j2k = picture_asset_reader->get_frame(999);
+	std::shared_ptr<const dcp::MonoPictureFrame> picture_frame_j2k = picture_asset_reader->get_frame(999);
 
 	/* Get the frame as an XYZ image */
-	boost::shared_ptr<const dcp::OpenJPEGImage> picture_image_xyz = picture_frame_j2k->xyz_image ();
+	std::shared_ptr<const dcp::OpenJPEGImage> picture_image_xyz = picture_frame_j2k->xyz_image ();
 
 	/* Convert to ARGB */
 	boost::scoped_array<uint8_t> rgba (new uint8_t[picture_image_xyz->size().width * picture_image_xyz->size().height * 4]);

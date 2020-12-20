@@ -33,6 +33,6 @@
 
 namespace dcp {
 
-boost::shared_ptr<Asset> asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_mxf_type);
+std::shared_ptr<Asset> asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_mxf_type);
 
 }

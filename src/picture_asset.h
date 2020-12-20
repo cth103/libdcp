@@ -64,7 +64,7 @@ public:
 	explicit PictureAsset (boost::filesystem::path file);
 	explicit PictureAsset (Fraction edit_rate, Standard standard);
 
-	virtual boost::shared_ptr<PictureAssetWriter> start_write (
+	virtual std::shared_ptr<PictureAssetWriter> start_write (
 		boost::filesystem::path file,
 		bool overwrite
 		) = 0;

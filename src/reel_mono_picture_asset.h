@@ -51,16 +51,16 @@ class MonoPictureAsset;
 class ReelMonoPictureAsset : public ReelPictureAsset
 {
 public:
-	ReelMonoPictureAsset (boost::shared_ptr<MonoPictureAsset> asset, int64_t entry_point);
-	explicit ReelMonoPictureAsset (boost::shared_ptr<const cxml::Node>);
+	ReelMonoPictureAsset (std::shared_ptr<MonoPictureAsset> asset, int64_t entry_point);
+	explicit ReelMonoPictureAsset (std::shared_ptr<const cxml::Node>);
 
 	/** @return the MonoPictureAsset that this object refers to */
-	boost::shared_ptr<const MonoPictureAsset> mono_asset () const {
+	std::shared_ptr<const MonoPictureAsset> mono_asset () const {
 		return asset_of_type<const MonoPictureAsset> ();
 	}
 
 	/** @return the MonoPictureAsset that this object refers to */
-	boost::shared_ptr<MonoPictureAsset> mono_asset () {
+	std::shared_ptr<MonoPictureAsset> mono_asset () {
 		return asset_of_type<MonoPictureAsset> ();
 	}
 

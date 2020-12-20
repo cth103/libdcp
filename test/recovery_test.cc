@@ -39,7 +39,7 @@
 #include <boost/filesystem.hpp>
 
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 /** Check that recovery from a partially-written MXF works */
 BOOST_AUTO_TEST_CASE (recovery)

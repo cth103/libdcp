@@ -40,7 +40,7 @@
 
 #include "types.h"
 #include "asset_reader.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/noncopyable.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
@@ -68,7 +68,7 @@ public:
 	explicit MonoPictureFrame (boost::filesystem::path path);
 	MonoPictureFrame (uint8_t const * data, int size);
 
-	boost::shared_ptr<OpenJPEGImage> xyz_image (int reduce = 0) const;
+	std::shared_ptr<OpenJPEGImage> xyz_image (int reduce = 0) const;
 
 	uint8_t const * data () const;
 	uint8_t* data ();
@@ -80,9 +80,9 @@ private:
 	*/
 	friend class AssetReader<ASDCP::JP2K::MXFReader, MonoPictureFrame>;
 
-	MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, boost::shared_ptr<DecryptionContext>);
+	MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, std::shared_ptr<DecryptionContext>);
 
-	boost::shared_ptr<ASDCP::JP2K::FrameBuffer> _buffer;
+	std::shared_ptr<ASDCP::JP2K::FrameBuffer> _buffer;
 };
 
 }

@@ -47,7 +47,7 @@
 
 using std::string;
 using boost::function;
-using boost::shared_ptr;
+using std::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
@@ -143,7 +143,7 @@ Asset::hash (function<void (float)> progress) const
 }
 
 bool
-Asset::equals (boost::shared_ptr<const Asset> other, EqualityOptions, NoteHandler note) const
+Asset::equals (std::shared_ptr<const Asset> other, EqualityOptions, NoteHandler note) const
 {
 	if (_hash != other->_hash) {
 		note (DCP_ERROR, "Asset: hashes differ");

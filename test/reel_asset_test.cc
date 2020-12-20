@@ -40,7 +40,7 @@
 
 using std::string;
 using boost::optional;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 
 /** Test the XML constructor of ReelPictureAsset */

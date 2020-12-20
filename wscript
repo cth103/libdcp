@@ -62,14 +62,11 @@ def options(opt):
     opt.add_option('--enable-openmp', action='store_true', default=False, help='enable use of OpenMP')
     opt.add_option('--openmp', default='gomp', help='specify OpenMP Library to use: omp, gomp (default), iomp')
     opt.add_option('--jpeg', default='oj2', help='specify JPEG library to build with: oj1 or oj2 for OpenJPEG 1.5.x or OpenJPEG 2.1.x respectively')
-    opt.add_option('--force-cpp11', action='store_true', default=False, help='force use of C++11')
 
 def configure(conf):
     conf.load('compiler_cxx')
     conf.load('clang_compilation_database', tooldir=['waf-tools'])
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-D_FILE_OFFSET_BITS=64', '-D__STDC_FORMAT_MACROS'])
-    if conf.options.force_cpp11:
-        conf.env.append_value('CXXFLAGS', ['-std=c++11', '-DBOOST_NO_CXX11_SCOPED_ENUMS'])
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-D_FILE_OFFSET_BITS=64', '-D__STDC_FORMAT_MACROS', '-std=c++11', '-DBOOST_NO_CXX11_SCOPED_ENUMS'])
     gcc = conf.env['CC_VERSION']
     if int(gcc[0]) >= 4 and int(gcc[1]) > 1:
         conf.env.append_value('CXXFLAGS', ['-Wno-maybe-uninitialized'])

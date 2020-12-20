@@ -43,7 +43,7 @@
 
 using std::cout;
 using std::cerr;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 class Timer
 {

@@ -120,7 +120,7 @@ public:
 
 protected:
 	template <class P, class Q>
-	friend void start (PictureAssetWriter* writer, boost::shared_ptr<P> state, Q* mxf, uint8_t const * data, int size);
+	friend void start (PictureAssetWriter* writer, std::shared_ptr<P> state, Q* mxf, uint8_t const * data, int size);
 
 	MXF ();
 

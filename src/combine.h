@@ -48,7 +48,7 @@ void combine (
 	std::string creator = String::compose("libdcp %1", dcp::version),
 	std::string issue_date = LocalTime().as_string(),
 	std::string annotation_text = String::compose("Created by libdcp %1", dcp::version),
-	boost::shared_ptr<const CertificateChain> signer = boost::shared_ptr<CertificateChain>()
+	std::shared_ptr<const CertificateChain> signer = std::shared_ptr<CertificateChain>()
 	);
 
 }

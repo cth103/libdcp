@@ -51,7 +51,7 @@ public:
 		return _gamma;
 	}
 
-	bool about_equal (boost::shared_ptr<const TransferFunction> other, double epsilon) const;
+	bool about_equal (std::shared_ptr<const TransferFunction> other, double epsilon) const;
 
 protected:
 	double * make_lut (int bit_depth, bool inverse) const;

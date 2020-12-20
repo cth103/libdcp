@@ -59,9 +59,9 @@ using std::make_pair;
 using std::cout;
 using std::set;
 using std::vector;
-using boost::shared_ptr;
+using std::shared_ptr;
 using boost::optional;
-using boost::dynamic_pointer_cast;
+using std::dynamic_pointer_cast;
 using namespace dcp;
 
 
@@ -156,7 +156,7 @@ CPL::CPL (boost::filesystem::path file)
  *  @param reel Reel to add.
  */
 void
-CPL::add (boost::shared_ptr<Reel> reel)
+CPL::add (std::shared_ptr<Reel> reel)
 {
 	_reels.push_back (reel);
 }

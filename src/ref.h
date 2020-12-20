@@ -41,7 +41,7 @@
 #include "exceptions.h"
 #include "asset.h"
 #include "util.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 
 namespace dcp {
@@ -66,7 +66,7 @@ public:
 	{}
 
 	/** Initialise a Ref with a shared_ptr to an asset */
-	explicit Ref (boost::shared_ptr<Asset> asset)
+	explicit Ref (std::shared_ptr<Asset> asset)
 		: _id (asset->id ())
 		, _asset (asset)
 	{}
@@ -77,7 +77,7 @@ public:
 		_id = id;
 	}
 
-	void resolve (std::list<boost::shared_ptr<Asset> > assets);
+	void resolve (std::list<std::shared_ptr<Asset> > assets);
 
 	/** @return the ID of the thing that we are pointing to */
 	std::string id () const {
@@ -87,7 +87,7 @@ public:
 	/** @return a shared_ptr to the thing; an UnresolvedRefError is thrown
 	 *  if the shared_ptr is not known.
 	 */
-	boost::shared_ptr<Asset> asset () const {
+	std::shared_ptr<Asset> asset () const {
 		if (!_asset) {
 			throw UnresolvedRefError (_id);
 		}
@@ -113,7 +113,7 @@ public:
 
 private:
 	std::string _id;             ///< ID; will always be known
-	boost::shared_ptr<Asset> _asset; ///< shared_ptr to the thing, may be null.
+	std::shared_ptr<Asset> _asset; ///< shared_ptr to the thing, may be null.
 };
 
 }

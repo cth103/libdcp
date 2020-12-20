@@ -38,7 +38,7 @@ using std::pow;
 using std::map;
 using std::pair;
 using std::make_pair;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 TransferFunction::~TransferFunction ()

@@ -37,7 +37,7 @@
 #include "cpl.h"
 
 using std::list;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 /** Read a SMPTE DCP that is in git and make sure that basic stuff is read in correctly */
 BOOST_AUTO_TEST_CASE (read_dcp_test1)

@@ -53,8 +53,8 @@ using std::string;
 using std::cout;
 using std::list;
 using std::pair;
-using boost::shared_ptr;
-using boost::dynamic_pointer_cast;
+using std::shared_ptr;
+using std::dynamic_pointer_cast;
 using namespace dcp;
 
 MXF::MXF ()

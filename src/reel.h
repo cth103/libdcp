@@ -37,7 +37,7 @@
 #include "key.h"
 #include "types.h"
 #include "ref.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/function.hpp>
 #include <list>
 
@@ -68,11 +68,11 @@ public:
 	Reel () {}
 
 	Reel (
-		boost::shared_ptr<ReelPictureAsset> picture,
-		boost::shared_ptr<ReelSoundAsset> sound = boost::shared_ptr<ReelSoundAsset> (),
-		boost::shared_ptr<ReelSubtitleAsset> subtitle = boost::shared_ptr<ReelSubtitleAsset> (),
-		boost::shared_ptr<ReelMarkersAsset> markers = boost::shared_ptr<ReelMarkersAsset> (),
-		boost::shared_ptr<ReelAtmosAsset> atmos = boost::shared_ptr<ReelAtmosAsset> ()
+		std::shared_ptr<ReelPictureAsset> picture,
+		std::shared_ptr<ReelSoundAsset> sound = std::shared_ptr<ReelSoundAsset> (),
+		std::shared_ptr<ReelSubtitleAsset> subtitle = std::shared_ptr<ReelSubtitleAsset> (),
+		std::shared_ptr<ReelMarkersAsset> markers = std::shared_ptr<ReelMarkersAsset> (),
+		std::shared_ptr<ReelAtmosAsset> atmos = std::shared_ptr<ReelAtmosAsset> ()
 		)
 		: _main_picture (picture)
 		, _main_sound (sound)
@@ -81,55 +81,55 @@ public:
 		, _atmos (atmos)
 	{}
 
-	explicit Reel (boost::shared_ptr<const cxml::Node>);
+	explicit Reel (std::shared_ptr<const cxml::Node>);
 
-	boost::shared_ptr<ReelPictureAsset> main_picture () const {
+	std::shared_ptr<ReelPictureAsset> main_picture () const {
 		return _main_picture;
 	}
 
-	boost::shared_ptr<ReelSoundAsset> main_sound () const {
+	std::shared_ptr<ReelSoundAsset> main_sound () const {
 		return _main_sound;
 	}
 
-	boost::shared_ptr<ReelSubtitleAsset> main_subtitle () const {
+	std::shared_ptr<ReelSubtitleAsset> main_subtitle () const {
 		return _main_subtitle;
 	}
 
-	boost::shared_ptr<ReelMarkersAsset> main_markers () const {
+	std::shared_ptr<ReelMarkersAsset> main_markers () const {
 		return _main_markers;
 	}
 
-	std::list<boost::shared_ptr<ReelClosedCaptionAsset> > closed_captions () const {
+	std::list<std::shared_ptr<ReelClosedCaptionAsset> > closed_captions () const {
 		return _closed_captions;
 	}
 
-	boost::shared_ptr<ReelAtmosAsset> atmos () const {
+	std::shared_ptr<ReelAtmosAsset> atmos () const {
 		return _atmos;
 	}
 
 	int64_t duration () const;
 
-	void add (boost::shared_ptr<ReelAsset> asset);
+	void add (std::shared_ptr<ReelAsset> asset);
 
-	std::list<boost::shared_ptr<ReelAsset> > assets () const;
+	std::list<std::shared_ptr<ReelAsset> > assets () const;
 
 	xmlpp::Element* write_to_cpl (xmlpp::Element* node, Standard standard) const;
 
 	bool encrypted () const;
 
-	bool equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandler notes) const;
+	bool equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandler notes) const;
 
 	void add (DecryptedKDM const &);
 
-	void resolve_refs (std::list<boost::shared_ptr<Asset> >);
+	void resolve_refs (std::list<std::shared_ptr<Asset> >);
 
 private:
-	boost::shared_ptr<ReelPictureAsset> _main_picture;
-	boost::shared_ptr<ReelSoundAsset> _main_sound;
-	boost::shared_ptr<ReelSubtitleAsset> _main_subtitle;
-	boost::shared_ptr<ReelMarkersAsset> _main_markers;
-	std::list<boost::shared_ptr<ReelClosedCaptionAsset> > _closed_captions;
-	boost::shared_ptr<ReelAtmosAsset> _atmos;
+	std::shared_ptr<ReelPictureAsset> _main_picture;
+	std::shared_ptr<ReelSoundAsset> _main_sound;
+	std::shared_ptr<ReelSubtitleAsset> _main_subtitle;
+	std::shared_ptr<ReelMarkersAsset> _main_markers;
+	std::list<std::shared_ptr<ReelClosedCaptionAsset> > _closed_captions;
+	std::shared_ptr<ReelAtmosAsset> _atmos;
 };
 
 }

@@ -39,7 +39,7 @@
 #define LIBDCP_TRANSFER_FUNCTION_H
 
 #include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/thread/mutex.hpp>
 #include <map>
 
@@ -56,7 +56,7 @@ public:
 	/** @return A look-up table (of size 2^bit_depth) whose values range from 0 to 1 */
 	double const * lut (int bit_depth, bool inverse) const;
 
-	virtual bool about_equal (boost::shared_ptr<const TransferFunction> other, double epsilon) const = 0;
+	virtual bool about_equal (std::shared_ptr<const TransferFunction> other, double epsilon) const = 0;
 
 protected:
 	/** Make a LUT and return an array allocated by new */

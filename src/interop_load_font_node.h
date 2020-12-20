@@ -33,7 +33,7 @@
 
 #include "load_font_node.h"
 #include <libcxml/cxml.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/optional.hpp>
 
 namespace dcp {

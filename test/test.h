@@ -42,14 +42,14 @@ extern boost::filesystem::path xsd_test;
 extern void check_xml (xmlpp::Element* ref, xmlpp::Element* test, std::list<std::string> ignore_tags, bool ignore_whitespace = false);
 extern void check_xml (std::string ref, std::string test, std::list<std::string> ignore);
 extern void check_file (boost::filesystem::path ref, boost::filesystem::path check);
-extern boost::shared_ptr<dcp::MonoPictureAsset> simple_picture (boost::filesystem::path path, std::string suffix);
-extern boost::shared_ptr<dcp::DCP> make_simple (boost::filesystem::path path, int reels = 1);
-extern boost::shared_ptr<dcp::DCP> make_simple_with_interop_subs (boost::filesystem::path path);
-extern boost::shared_ptr<dcp::DCP> make_simple_with_smpte_subs (boost::filesystem::path path);
-extern boost::shared_ptr<dcp::DCP> make_simple_with_interop_ccaps (boost::filesystem::path path);
-extern boost::shared_ptr<dcp::DCP> make_simple_with_smpte_ccaps (boost::filesystem::path path);
-extern boost::shared_ptr<dcp::OpenJPEGImage> black_image ();
-extern boost::shared_ptr<dcp::ReelAsset> black_picture_asset (boost::filesystem::path dir, int frames = 24);
+extern std::shared_ptr<dcp::MonoPictureAsset> simple_picture (boost::filesystem::path path, std::string suffix);
+extern std::shared_ptr<dcp::DCP> make_simple (boost::filesystem::path path, int reels = 1);
+extern std::shared_ptr<dcp::DCP> make_simple_with_interop_subs (boost::filesystem::path path);
+extern std::shared_ptr<dcp::DCP> make_simple_with_smpte_subs (boost::filesystem::path path);
+extern std::shared_ptr<dcp::DCP> make_simple_with_interop_ccaps (boost::filesystem::path path);
+extern std::shared_ptr<dcp::DCP> make_simple_with_smpte_ccaps (boost::filesystem::path path);
+extern std::shared_ptr<dcp::OpenJPEGImage> black_image ();
+extern std::shared_ptr<dcp::ReelAsset> black_picture_asset (boost::filesystem::path dir, int frames = 24);
 
 /** Creating an object of this class will make asdcplib's random number generation
  *  (more) predictable.

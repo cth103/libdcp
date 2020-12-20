@@ -33,7 +33,7 @@
 
 #include "picture_asset_writer.h"
 #include "types.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/utility.hpp>
 #include <stdint.h>
 #include <string>
@@ -73,7 +73,7 @@ private:
 	*/
 
 	struct ASDCPState;
-	boost::shared_ptr<ASDCPState> _state;
+	std::shared_ptr<ASDCPState> _state;
 
 	dcp::Eye _next_eye;
 };

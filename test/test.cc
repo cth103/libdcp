@@ -68,7 +68,7 @@ using std::string;
 using std::min;
 using std::list;
 using std::vector;
-using boost::shared_ptr;
+using std::shared_ptr;
 using boost::optional;
 
 

@@ -50,19 +50,19 @@ namespace dcp {
 class ReelPictureAsset : public ReelAsset, public ReelMXF
 {
 public:
-	ReelPictureAsset (boost::shared_ptr<PictureAsset> asset, int64_t entry_point);
-	explicit ReelPictureAsset (boost::shared_ptr<const cxml::Node>);
+	ReelPictureAsset (std::shared_ptr<PictureAsset> asset, int64_t entry_point);
+	explicit ReelPictureAsset (std::shared_ptr<const cxml::Node>);
 
 	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	bool equals (boost::shared_ptr<const ReelPictureAsset>, EqualityOptions, NoteHandler) const;
+	bool equals (std::shared_ptr<const ReelPictureAsset>, EqualityOptions, NoteHandler) const;
 
 	/** @return the PictureAsset that this object refers to */
-	boost::shared_ptr<const PictureAsset> asset () const {
+	std::shared_ptr<const PictureAsset> asset () const {
 		return asset_of_type<const PictureAsset> ();
 	}
 
 	/** @return the PictureAsset that this object refers to */
-	boost::shared_ptr<PictureAsset> asset () {
+	std::shared_ptr<PictureAsset> asset () {
 		return asset_of_type<PictureAsset> ();
 	}
 

@@ -62,11 +62,11 @@ using std::string;
 using std::list;
 using std::cout;
 using std::min;
-using boost::shared_ptr;
-using boost::dynamic_pointer_cast;
+using std::shared_ptr;
+using std::dynamic_pointer_cast;
 using namespace dcp;
 
-Reel::Reel (boost::shared_ptr<const cxml::Node> node)
+Reel::Reel (std::shared_ptr<const cxml::Node> node)
 	: Object (remove_urn_uuid (node->string_child ("Id")))
 {
 	shared_ptr<cxml::Node> asset_list = node->node_child ("AssetList");
@@ -156,7 +156,7 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 }
 
 bool
-Reel::equals (boost::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandler note) const
+Reel::equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandler note) const
 {
 	if ((_main_picture && !other->_main_picture) || (!_main_picture && other->_main_picture)) {
 		note (DCP_ERROR, "Reel: picture assets differ");

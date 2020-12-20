@@ -51,11 +51,11 @@
 #include <asdcp/KM_util.h>
 #include <sndfile.h>
 #include <boost/test/unit_test.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 using std::vector;
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 /** Load a certificate chain from build/test/data/ *.pem and then build
  *  an encrypted DCP and a KDM using it.

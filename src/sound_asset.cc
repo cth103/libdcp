@@ -53,8 +53,8 @@
 using std::string;
 using std::vector;
 using std::list;
-using boost::shared_ptr;
-using boost::dynamic_pointer_cast;
+using std::shared_ptr;
+using std::dynamic_pointer_cast;
 using namespace dcp;
 
 

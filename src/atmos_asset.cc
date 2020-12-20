@@ -38,7 +38,7 @@
 #include <asdcp/AS_DCP.h>
 
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 AtmosAsset::AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_count, int max_object_count, int atmos_version)

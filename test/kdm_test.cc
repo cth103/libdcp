@@ -51,7 +51,7 @@
 using std::list;
 using std::string;
 using std::vector;
-using boost::shared_ptr;
+using std::shared_ptr;
 using boost::optional;
 
 /** Check reading and decryption of a KDM */

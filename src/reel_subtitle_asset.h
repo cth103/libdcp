@@ -53,13 +53,13 @@ class SubtitleAsset;
 class ReelSubtitleAsset : public ReelAsset, public ReelMXF
 {
 public:
-	ReelSubtitleAsset (boost::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
-	explicit ReelSubtitleAsset (boost::shared_ptr<const cxml::Node>);
+	ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	explicit ReelSubtitleAsset (std::shared_ptr<const cxml::Node>);
 
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	bool equals (boost::shared_ptr<const ReelSubtitleAsset>, EqualityOptions, NoteHandler) const;
+	bool equals (std::shared_ptr<const ReelSubtitleAsset>, EqualityOptions, NoteHandler) const;
 
-	boost::shared_ptr<SubtitleAsset> asset () const {
+	std::shared_ptr<SubtitleAsset> asset () const {
 		return asset_of_type<SubtitleAsset> ();
 	}
 

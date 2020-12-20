@@ -41,10 +41,10 @@ class ReelMarkersAsset : public ReelAsset
 {
 public:
 	ReelMarkersAsset (Fraction edit_rate, int64_t entry_point);
-	explicit ReelMarkersAsset (boost::shared_ptr<const cxml::Node>);
+	explicit ReelMarkersAsset (std::shared_ptr<const cxml::Node>);
 
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	bool equals (boost::shared_ptr<const ReelMarkersAsset>, EqualityOptions, NoteHandler) const;
+	bool equals (std::shared_ptr<const ReelMarkersAsset>, EqualityOptions, NoteHandler) const;
 
 	void set (Marker, Time);
 	void unset (Marker);

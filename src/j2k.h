@@ -33,15 +33,15 @@
 
 
 #include "array_data.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <stdint.h>
 
 namespace dcp {
 
 class OpenJPEGImage;
 
-extern boost::shared_ptr<OpenJPEGImage> decompress_j2k (uint8_t* data, int64_t size, int reduce);
-extern boost::shared_ptr<OpenJPEGImage> decompress_j2k (ArrayData data, int reduce);
-extern ArrayData compress_j2k (boost::shared_ptr<const OpenJPEGImage>, int bandwith, int frames_per_second, bool threed, bool fourk, std::string comment = "libdcp");
+extern std::shared_ptr<OpenJPEGImage> decompress_j2k (uint8_t* data, int64_t size, int reduce);
+extern std::shared_ptr<OpenJPEGImage> decompress_j2k (ArrayData data, int reduce);
+extern ArrayData compress_j2k (std::shared_ptr<const OpenJPEGImage>, int bandwith, int frames_per_second, bool threed, bool fourk, std::string comment = "libdcp");
 
 }

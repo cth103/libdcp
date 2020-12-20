@@ -78,7 +78,7 @@ protected:
 	bool _finalized;
 	/** true if something has been written to this asset */
 	bool _started;
-	boost::shared_ptr<EncryptionContext> _crypto_context;
+	std::shared_ptr<EncryptionContext> _crypto_context;
 };
 
 }

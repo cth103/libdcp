@@ -35,8 +35,8 @@
 #include "dcp.h"
 
 using std::list;
-using boost::shared_ptr;
-using boost::dynamic_pointer_cast;
+using std::shared_ptr;
+using std::dynamic_pointer_cast;
 
 void
 dcp::filter_notes (list<dcp::VerificationNote>& notes, bool ignore_missing_assets)

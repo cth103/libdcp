@@ -64,7 +64,7 @@ public:
 	boost::optional<std::string> type (std::string id) const;
 
 	void add_asset (std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type);
-	void write (boost::filesystem::path file, boost::shared_ptr<const CertificateChain> signer) const;
+	void write (boost::filesystem::path file, std::shared_ptr<const CertificateChain> signer) const;
 
 	/** @return the most recent disk file used to read or write this PKL, if there is one */
 	boost::optional<boost::filesystem::path> file () const {
@@ -103,7 +103,7 @@ private:
 	std::string _issue_date;
 	std::string _issuer;
 	std::string _creator;
-	std::list<boost::shared_ptr<Asset> > _asset_list;
+	std::list<std::shared_ptr<Asset> > _asset_list;
 	/** The most recent disk file used to read or write this PKL */
 	mutable boost::optional<boost::filesystem::path> _file;
 };

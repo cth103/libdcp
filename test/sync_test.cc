@@ -37,14 +37,14 @@
 #include "sound_asset_writer.h"
 #include "test.h"
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/test/unit_test.hpp>
 #include <vector>
 
 
 using std::vector;
 using boost::shared_array;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 
 static const int sample_A = 0.038 * 8388608;

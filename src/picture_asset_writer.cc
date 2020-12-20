@@ -40,7 +40,7 @@
 #include <stdint.h>
 
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, boost::filesystem::path file, bool overwrite)

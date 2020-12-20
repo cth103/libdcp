@@ -52,10 +52,10 @@ using std::string;
 using std::cout;
 using std::cerr;
 using std::map;
-using boost::shared_ptr;
+using std::shared_ptr;
 using boost::shared_array;
 using boost::optional;
-using boost::dynamic_pointer_cast;
+using std::dynamic_pointer_cast;
 using namespace dcp;
 
 InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)

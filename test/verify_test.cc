@@ -58,7 +58,7 @@ using std::string;
 using std::vector;
 using std::make_pair;
 using boost::optional;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 
 static list<pair<string, optional<boost::filesystem::path> > > stages;

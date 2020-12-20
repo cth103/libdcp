@@ -46,7 +46,7 @@
 #include "picture_asset_writer_common.cc"
 
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 struct MonoPictureAssetWriter::ASDCPState : public ASDCPStateBase

@@ -38,7 +38,7 @@
 #include "reel_mxf.h"
 #include "reel_asset.h"
 #include "sound_asset.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 
 namespace dcp {
@@ -49,19 +49,19 @@ namespace dcp {
 class ReelSoundAsset : public ReelAsset, public ReelMXF
 {
 public:
-	ReelSoundAsset (boost::shared_ptr<dcp::SoundAsset> content, int64_t entry_point);
-	explicit ReelSoundAsset (boost::shared_ptr<const cxml::Node>);
+	ReelSoundAsset (std::shared_ptr<dcp::SoundAsset> content, int64_t entry_point);
+	explicit ReelSoundAsset (std::shared_ptr<const cxml::Node>);
 
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	bool equals (boost::shared_ptr<const ReelSoundAsset>, EqualityOptions, NoteHandler) const;
+	bool equals (std::shared_ptr<const ReelSoundAsset>, EqualityOptions, NoteHandler) const;
 
 	/** @return the SoundAsset that this object refers to */
-	boost::shared_ptr<SoundAsset> asset () {
+	std::shared_ptr<SoundAsset> asset () {
 		return asset_of_type<SoundAsset> ();
 	}
 
 	/** @return the SoundAsset that this object refers to */
-	boost::shared_ptr<const SoundAsset> asset () const {
+	std::shared_ptr<const SoundAsset> asset () const {
 		return asset_of_type<const SoundAsset> ();
 	}
 

@@ -49,7 +49,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
 #include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <list>
 #include <vector>
 
@@ -74,32 +74,32 @@ public:
 	explicit CPL (boost::filesystem::path file);
 
 	bool equals (
-		boost::shared_ptr<const Asset> other,
+		std::shared_ptr<const Asset> other,
 		EqualityOptions options,
 		NoteHandler note
 		) const;
 
-	void add (boost::shared_ptr<Reel> reel);
+	void add (std::shared_ptr<Reel> reel);
 	void add (DecryptedKDM const &);
 
 	/** @return the reels in this CPL */
-	std::list<boost::shared_ptr<Reel> > reels () const {
+	std::list<std::shared_ptr<Reel> > reels () const {
 		return _reels;
 	}
 
 	/** @return the ReelMXFs in this CPL in all reels */
-	std::list<boost::shared_ptr<const ReelMXF> > reel_mxfs () const;
-	std::list<boost::shared_ptr<ReelMXF> > reel_mxfs ();
+	std::list<std::shared_ptr<const ReelMXF> > reel_mxfs () const;
+	std::list<std::shared_ptr<ReelMXF> > reel_mxfs ();
 
 	bool encrypted () const;
 
 	void write_xml (
 		boost::filesystem::path file,
 		Standard standard,
-		boost::shared_ptr<const CertificateChain>
+		std::shared_ptr<const CertificateChain>
 		) const;
 
-	void resolve_refs (std::list<boost::shared_ptr<Asset> >);
+	void resolve_refs (std::list<std::shared_ptr<Asset> >);
 
 	int64_t duration () const;
 
@@ -311,7 +311,7 @@ private:
 	/* See note for _release_territory above */
 	std::vector<std::string> _additional_subtitle_languages;
 
-	std::list<boost::shared_ptr<Reel> > _reels;
+	std::list<std::shared_ptr<Reel> > _reels;
 
 	/** Standard of CPL that was read in */
 	boost::optional<Standard> _standard;

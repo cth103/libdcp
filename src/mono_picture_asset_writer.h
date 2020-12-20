@@ -39,7 +39,7 @@
 #define LIBDCP_MONO_PICTURE_ASSET_WRITER_H
 
 #include "picture_asset_writer.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/utility.hpp>
 #include <stdint.h>
 #include <string>
@@ -74,7 +74,7 @@ private:
 	*/
 
 	struct ASDCPState;
-	boost::shared_ptr<ASDCPState> _state;
+	std::shared_ptr<ASDCPState> _state;
 };
 
 }

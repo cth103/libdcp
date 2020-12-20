@@ -53,7 +53,7 @@ using std::list;
 using std::string;
 using std::vector;
 using boost::optional;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 
 static void

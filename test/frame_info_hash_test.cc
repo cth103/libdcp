@@ -38,7 +38,7 @@
 #include <boost/test/unit_test.hpp>
 
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 static void
 check (unsigned int* seed, shared_ptr<dcp::PictureAssetWriter> writer, string hash)

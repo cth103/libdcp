@@ -38,7 +38,7 @@
 #include <stdint.h>
 
 using boost::scoped_array;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 int const trials = 256;
 

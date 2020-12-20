@@ -41,7 +41,7 @@
 
 using std::min;
 using std::max;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 struct AtmosAssetWriter::ASDCPState

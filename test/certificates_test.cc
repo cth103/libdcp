@@ -41,7 +41,7 @@
 
 using std::list;
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 /** Check that loading certificates from files via strings works */
 BOOST_AUTO_TEST_CASE (certificates1)

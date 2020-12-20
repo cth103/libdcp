@@ -39,14 +39,14 @@
 #include "reel.h"
 #include "reel_subtitle_asset.h"
 #include "test.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/test/unit_test.hpp>
 
 
 using std::list;
 using std::string;
 using std::vector;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 
 BOOST_AUTO_TEST_CASE (cpl_metadata_bad_values_test)

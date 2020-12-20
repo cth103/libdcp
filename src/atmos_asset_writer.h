@@ -41,7 +41,7 @@
 #include "asset_writer.h"
 #include "types.h"
 #include "atmos_frame.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/filesystem.hpp>
 
 namespace dcp {
@@ -56,7 +56,7 @@ class AtmosAsset;
 class AtmosAssetWriter : public AssetWriter
 {
 public:
-	void write (boost::shared_ptr<const AtmosFrame> frame);
+	void write (std::shared_ptr<const AtmosFrame> frame);
 	void write (uint8_t const * data, int size);
 	bool finalize ();
 
@@ -69,7 +69,7 @@ private:
 	   ASDCP headers
 	*/
 	struct ASDCPState;
-	boost::shared_ptr<ASDCPState> _state;
+	std::shared_ptr<ASDCPState> _state;
 
 	AtmosAsset* _asset;
 };

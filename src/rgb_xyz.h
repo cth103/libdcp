@@ -32,7 +32,7 @@
 */
 
 #include "types.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/optional.hpp>
 #include <stdint.h>
 
@@ -43,21 +43,21 @@ class Image;
 class ColourConversion;
 
 extern void xyz_to_rgba (
-	boost::shared_ptr<const OpenJPEGImage>,
+	std::shared_ptr<const OpenJPEGImage>,
 	ColourConversion const & conversion,
 	uint8_t* rgba,
 	int stride
 	);
 
 extern void xyz_to_rgb (
-	boost::shared_ptr<const OpenJPEGImage>,
+	std::shared_ptr<const OpenJPEGImage>,
 	ColourConversion const & conversion,
 	uint8_t* rgb,
 	int stride,
 	boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()
 	);
 
-extern boost::shared_ptr<OpenJPEGImage> rgb_to_xyz (
+extern std::shared_ptr<OpenJPEGImage> rgb_to_xyz (
 	uint8_t const * rgb,
 	dcp::Size size,
 	int stride,

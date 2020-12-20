@@ -53,9 +53,9 @@ using std::map;
 using std::set;
 using std::string;
 using std::vector;
-using boost::dynamic_pointer_cast;
+using std::dynamic_pointer_cast;
 using boost::optional;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 
 boost::filesystem::path

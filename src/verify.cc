@@ -78,10 +78,10 @@ using std::string;
 using std::cout;
 using std::map;
 using std::max;
-using boost::shared_ptr;
+using std::shared_ptr;
 using boost::optional;
 using boost::function;
-using boost::dynamic_pointer_cast;
+using std::dynamic_pointer_cast;
 
 using namespace dcp;
 using namespace xercesc;

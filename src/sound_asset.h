@@ -59,11 +59,11 @@ public:
 	explicit SoundAsset (boost::filesystem::path file);
 	SoundAsset (Fraction edit_rate, int sampling_rate, int channels, LanguageTag language, Standard standard);
 
-	boost::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file, std::vector<Channel> active_channels, bool atmos_sync = false);
-	boost::shared_ptr<SoundAssetReader> start_read () const;
+	std::shared_ptr<SoundAssetWriter> start_write (boost::filesystem::path file, std::vector<Channel> active_channels, bool atmos_sync = false);
+	std::shared_ptr<SoundAssetReader> start_read () const;
 
 	bool equals (
-		boost::shared_ptr<const Asset> other,
+		std::shared_ptr<const Asset> other,
 		EqualityOptions opt,
 		NoteHandler note
 		) const;

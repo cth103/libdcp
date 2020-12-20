@@ -57,7 +57,7 @@
 using std::list;
 using std::vector;
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 using boost::scoped_array;
 
 /** Build an encrypted picture asset and a KDM for it and check that the KDM can be decrypted */

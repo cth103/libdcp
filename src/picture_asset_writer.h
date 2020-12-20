@@ -41,7 +41,7 @@
 #include "metadata.h"
 #include "types.h"
 #include "asset_writer.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/utility.hpp>
 #include <stdint.h>
 #include <string>
@@ -82,7 +82,7 @@ public:
 
 protected:
 	template <class P, class Q>
-	friend void start (PictureAssetWriter *, boost::shared_ptr<P>, Q *, uint8_t const *, int);
+	friend void start (PictureAssetWriter *, std::shared_ptr<P>, Q *, uint8_t const *, int);
 
 	PictureAssetWriter (PictureAsset *, boost::filesystem::path, bool);
 

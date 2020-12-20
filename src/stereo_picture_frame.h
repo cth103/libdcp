@@ -36,7 +36,7 @@
 
 #include "types.h"
 #include "asset_reader.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/noncopyable.hpp>
 #include <boost/filesystem.hpp>
 #include <stdint.h>
@@ -63,7 +63,7 @@ class StereoPictureFrame : public boost::noncopyable
 public:
 	StereoPictureFrame ();
 
-	boost::shared_ptr<OpenJPEGImage> xyz_image (Eye eye, int reduce = 0) const;
+	std::shared_ptr<OpenJPEGImage> xyz_image (Eye eye, int reduce = 0) const;
 
 	class Part : public Data
 	{
@@ -75,15 +75,15 @@ public:
 	private:
 		friend class StereoPictureFrame;
 
-		Part (boost::shared_ptr<ASDCP::JP2K::SFrameBuffer> buffer, Eye eye);
+		Part (std::shared_ptr<ASDCP::JP2K::SFrameBuffer> buffer, Eye eye);
 		ASDCP::JP2K::FrameBuffer& mono () const;
 
-		boost::shared_ptr<ASDCP::JP2K::SFrameBuffer> _buffer;
+		std::shared_ptr<ASDCP::JP2K::SFrameBuffer> _buffer;
 		Eye _eye;
 	};
 
-	boost::shared_ptr<Part> left () const;
-	boost::shared_ptr<Part> right () const;
+	std::shared_ptr<Part> left () const;
+	std::shared_ptr<Part> right () const;
 
 private:
 	/* XXX: this is a bit of a shame, but I tried friend StereoPictureAssetReader and it's
@@ -91,9 +91,9 @@ private:
 	*/
 	friend class AssetReader<ASDCP::JP2K::MXFSReader, StereoPictureFrame>;
 
-	StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, boost::shared_ptr<DecryptionContext>);
+	StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, std::shared_ptr<DecryptionContext>);
 
-	boost::shared_ptr<ASDCP::JP2K::SFrameBuffer> _buffer;
+	std::shared_ptr<ASDCP::JP2K::SFrameBuffer> _buffer;
 };
 
 }

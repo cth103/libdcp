@@ -59,11 +59,11 @@ public:
 	explicit MonoPictureAsset (Fraction edit_rate, Standard standard);
 
 	/** Start a progressive write to a MonoPictureAsset */
-	boost::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path, bool);
-	boost::shared_ptr<MonoPictureAssetReader> start_read () const;
+	std::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path, bool);
+	std::shared_ptr<MonoPictureAssetReader> start_read () const;
 
 	bool equals (
-		boost::shared_ptr<const Asset> other,
+		std::shared_ptr<const Asset> other,
 		EqualityOptions opt,
 		NoteHandler note
 		) const;

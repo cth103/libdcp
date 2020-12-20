@@ -52,7 +52,7 @@ using std::vector;
 using std::max;
 using std::pair;
 using std::make_pair;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 /** Load a PictureAsset from a file */

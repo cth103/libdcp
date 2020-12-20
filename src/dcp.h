@@ -46,7 +46,7 @@
 #include "name_format.h"
 #include "verify.h"
 #include "version.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/signals2.hpp>
 #include <string>
 #include <vector>
@@ -101,10 +101,10 @@ public:
 	 */
 	bool equals (DCP const & other, EqualityOptions options, NoteHandler note) const;
 
-	void add (boost::shared_ptr<CPL> cpl);
+	void add (std::shared_ptr<CPL> cpl);
 
-	std::list<boost::shared_ptr<CPL> > cpls () const;
-	std::list<boost::shared_ptr<Asset> > assets (bool ignore_unresolved = false) const;
+	std::list<std::shared_ptr<CPL> > cpls () const;
+	std::list<std::shared_ptr<Asset> > assets (bool ignore_unresolved = false) const;
 
 	bool encrypted () const;
 
@@ -116,11 +116,11 @@ public:
 		std::string creator = String::compose("libdcp %1", dcp::version),
 		std::string issue_date = LocalTime().as_string(),
 		std::string annotation_text = String::compose("Created by libdcp %1", dcp::version),
-		boost::shared_ptr<const CertificateChain> signer = boost::shared_ptr<const CertificateChain> (),
+		std::shared_ptr<const CertificateChain> signer = std::shared_ptr<const CertificateChain> (),
 		NameFormat name_format = NameFormat("%t")
 	);
 
-	void resolve_refs (std::list<boost::shared_ptr<Asset> > assets);
+	void resolve_refs (std::list<std::shared_ptr<Asset> > assets);
 
 	/** @return Standard of a DCP that was read in */
 	boost::optional<Standard> standard () const {
@@ -134,7 +134,7 @@ public:
 	/** @return PKLs if this DCP was read from an existing one, or if write_xml() has been called on it.
 	 *  If neither is true, this method returns an empty list.
 	 */
-	std::list<boost::shared_ptr<PKL> > pkls () const {
+	std::list<std::shared_ptr<PKL> > pkls () const {
 		return _pkls;
 	}
 
@@ -160,9 +160,9 @@ private:
 	/** The directory that we are writing to */
 	boost::filesystem::path _directory;
 	/** The CPLs that make up this DCP */
-	std::list<boost::shared_ptr<CPL> > _cpls;
+	std::list<std::shared_ptr<CPL> > _cpls;
 	/** The PKLs that make up this DCP */
-	std::list<boost::shared_ptr<PKL> > _pkls;
+	std::list<std::shared_ptr<PKL> > _pkls;
 	/** File that the ASSETMAP was read from or last written to */
 	mutable boost::optional<boost::filesystem::path> _asset_map;
 

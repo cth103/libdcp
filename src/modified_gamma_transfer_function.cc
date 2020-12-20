@@ -35,8 +35,8 @@
 #include <cmath>
 
 using std::pow;
-using boost::shared_ptr;
-using boost::dynamic_pointer_cast;
+using std::shared_ptr;
+using std::dynamic_pointer_cast;
 using namespace dcp;
 
 ModifiedGammaTransferFunction::ModifiedGammaTransferFunction (double power, double threshold, double A, double B)

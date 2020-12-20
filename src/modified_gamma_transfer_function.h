@@ -70,7 +70,7 @@ public:
 		return _B;
 	}
 
-	bool about_equal (boost::shared_ptr<const TransferFunction>, double epsilon) const;
+	bool about_equal (std::shared_ptr<const TransferFunction>, double epsilon) const;
 
 protected:
 	double * make_lut (int bit_depth, bool inverse) const;

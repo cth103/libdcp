@@ -67,7 +67,7 @@ public:
 	Asset (std::string id, boost::filesystem::path file);
 
 	virtual bool equals (
-		boost::shared_ptr<const Asset> other,
+		std::shared_ptr<const Asset> other,
 		EqualityOptions opt,
 		NoteHandler note
 		) const;
@@ -77,7 +77,7 @@ public:
 	 */
 	virtual void write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const;
 
-	virtual void add_to_pkl (boost::shared_ptr<PKL> pkl, boost::filesystem::path root) const;
+	virtual void add_to_pkl (std::shared_ptr<PKL> pkl, boost::filesystem::path root) const;
 
 	/** @return the most recent disk file used to read or write this asset, if there is one */
 	boost::optional<boost::filesystem::path> file () const {

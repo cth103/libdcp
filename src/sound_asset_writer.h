@@ -39,7 +39,7 @@
 #include "fsk.h"
 #include "types.h"
 #include "sound_frame.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/filesystem.hpp>
 #include <boost/shared_array.hpp>
 
@@ -81,7 +81,7 @@ private:
 	*/
 
 	struct ASDCPState;
-	boost::shared_ptr<ASDCPState> _state;
+	std::shared_ptr<ASDCPState> _state;
 
 	SoundAsset* _asset;
 	int _frame_buffer_offset;

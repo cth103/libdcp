@@ -49,8 +49,8 @@
 
 using std::pair;
 using std::make_pair;
-using boost::dynamic_pointer_cast;
-using boost::shared_ptr;
+using std::dynamic_pointer_cast;
+using std::shared_ptr;
 using boost::scoped_array;
 
 pair<uint8_t*, dcp::Size>

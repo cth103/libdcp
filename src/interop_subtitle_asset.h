@@ -54,22 +54,22 @@ public:
 	explicit InteropSubtitleAsset (boost::filesystem::path file);
 
 	bool equals (
-		boost::shared_ptr<const Asset>,
+		std::shared_ptr<const Asset>,
 		EqualityOptions,
 		NoteHandler note
 		) const;
 
 	void write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const;
-	void add_to_pkl (boost::shared_ptr<PKL> pkl, boost::filesystem::path root) const;
+	void add_to_pkl (std::shared_ptr<PKL> pkl, boost::filesystem::path root) const;
 
-	std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const;
+	std::list<std::shared_ptr<LoadFontNode> > load_font_nodes () const;
 
 	void add_font (std::string load_id, dcp::ArrayData data);
 
 	std::string xml_as_string () const;
 	void write (boost::filesystem::path path) const;
-	void resolve_fonts (std::list<boost::shared_ptr<Asset> > assets);
-	void add_font_assets (std::list<boost::shared_ptr<Asset> >& assets);
+	void resolve_fonts (std::list<std::shared_ptr<Asset> > assets);
+	void add_font_assets (std::list<std::shared_ptr<Asset> >& assets);
 	void set_font_file (std::string load_id, boost::filesystem::path file);
 
 	/** Set the reel number or sub-element identifier
@@ -123,7 +123,7 @@ private:
 	std::string _reel_number;
 	std::string _language;
 	std::string _movie_title;
-	std::list<boost::shared_ptr<InteropLoadFontNode> > _load_font_nodes;
+	std::list<std::shared_ptr<InteropLoadFontNode> > _load_font_nodes;
 };
 
 }

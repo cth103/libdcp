@@ -43,7 +43,7 @@
 #include <asdcp/KM_fileio.h>
 
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 

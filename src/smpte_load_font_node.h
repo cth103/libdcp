@@ -36,7 +36,7 @@
  */
 
 #include "load_font_node.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/optional.hpp>
 
 namespace cxml {
@@ -53,7 +53,7 @@ class SMPTELoadFontNode : public LoadFontNode
 public:
 	SMPTELoadFontNode () {}
 	SMPTELoadFontNode (std::string id, std::string urn);
-	explicit SMPTELoadFontNode (boost::shared_ptr<const cxml::Node> node);
+	explicit SMPTELoadFontNode (std::shared_ptr<const cxml::Node> node);
 
 	std::string urn;
 };

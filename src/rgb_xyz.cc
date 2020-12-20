@@ -42,7 +42,7 @@
 using std::min;
 using std::max;
 using std::cout;
-using boost::shared_ptr;
+using std::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
@@ -65,7 +65,7 @@ using namespace dcp;
  */
 void
 dcp::xyz_to_rgba (
-	boost::shared_ptr<const OpenJPEGImage> xyz_image,
+	std::shared_ptr<const OpenJPEGImage> xyz_image,
 	ColourConversion const & conversion,
 	uint8_t* argb,
 	int stride

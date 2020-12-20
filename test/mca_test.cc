@@ -47,7 +47,7 @@
 using std::list;
 using std::string;
 using std::vector;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 
 /** Check that when we read a MXF and write its MCA metadata to a CPL we get the same answer

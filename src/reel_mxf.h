@@ -40,7 +40,7 @@
 
 #include "ref.h"
 #include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 
 namespace cxml {
@@ -55,8 +55,8 @@ namespace dcp {
 class ReelMXF
 {
 public:
-	explicit ReelMXF (boost::shared_ptr<Asset> asset, boost::optional<std::string> key_id);
-	explicit ReelMXF (boost::shared_ptr<const cxml::Node>);
+	explicit ReelMXF (std::shared_ptr<Asset> asset, boost::optional<std::string> key_id);
+	explicit ReelMXF (std::shared_ptr<const cxml::Node>);
 	virtual ~ReelMXF () {}
 
 	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */
@@ -97,18 +97,18 @@ public:
 		return _key_id;
 	}
 
-	bool mxf_equals (boost::shared_ptr<const ReelMXF> other, EqualityOptions opt, NoteHandler note) const;
+	bool mxf_equals (std::shared_ptr<const ReelMXF> other, EqualityOptions opt, NoteHandler note) const;
 
 protected:
 
 	template <class T>
-	boost::shared_ptr<T> asset_of_type () const {
-		return boost::dynamic_pointer_cast<T> (_asset_ref.asset ());
+	std::shared_ptr<T> asset_of_type () const {
+		return std::dynamic_pointer_cast<T> (_asset_ref.asset ());
 	}
 
 	template <class T>
-	boost::shared_ptr<T> asset_of_type () {
-		return boost::dynamic_pointer_cast<T> (_asset_ref.asset ());
+	std::shared_ptr<T> asset_of_type () {
+		return std::dynamic_pointer_cast<T> (_asset_ref.asset ());
 	}
 
 	void write_to_cpl_mxf (xmlpp::Node* node) const;

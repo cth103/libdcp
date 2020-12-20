@@ -38,7 +38,7 @@
 #include <cmath>
 
 using std::pow;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 static void

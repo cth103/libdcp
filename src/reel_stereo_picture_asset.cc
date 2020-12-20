@@ -42,16 +42,16 @@
 using std::string;
 using std::pair;
 using std::make_pair;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
-ReelStereoPictureAsset::ReelStereoPictureAsset (boost::shared_ptr<StereoPictureAsset> mxf, int64_t entry_point)
+ReelStereoPictureAsset::ReelStereoPictureAsset (std::shared_ptr<StereoPictureAsset> mxf, int64_t entry_point)
 	: ReelPictureAsset (mxf, entry_point)
 {
 
 }
 
-ReelStereoPictureAsset::ReelStereoPictureAsset (boost::shared_ptr<const cxml::Node> node)
+ReelStereoPictureAsset::ReelStereoPictureAsset (std::shared_ptr<const cxml::Node> node)
 	: ReelPictureAsset (node)
 {
 	node->done ();

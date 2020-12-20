@@ -43,17 +43,17 @@
 using std::string;
 using std::pair;
 using std::make_pair;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
-ReelAtmosAsset::ReelAtmosAsset (boost::shared_ptr<AtmosAsset> asset, int64_t entry_point)
+ReelAtmosAsset::ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point)
 	: ReelAsset (asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 	, ReelMXF (asset, asset->key_id())
 {
 
 }
 
-ReelAtmosAsset::ReelAtmosAsset (boost::shared_ptr<const cxml::Node> node)
+ReelAtmosAsset::ReelAtmosAsset (std::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
 	, ReelMXF (node)
 {

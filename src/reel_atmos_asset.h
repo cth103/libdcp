@@ -52,15 +52,15 @@ class AtmosAsset;
 class ReelAtmosAsset : public ReelAsset, public ReelMXF
 {
 public:
-	ReelAtmosAsset (boost::shared_ptr<AtmosAsset> asset, int64_t entry_point);
-	explicit ReelAtmosAsset (boost::shared_ptr<const cxml::Node>);
+	ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point);
+	explicit ReelAtmosAsset (std::shared_ptr<const cxml::Node>);
 
-	boost::shared_ptr<AtmosAsset> asset () const {
+	std::shared_ptr<AtmosAsset> asset () const {
 		return asset_of_type<AtmosAsset> ();
 	}
 
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	bool equals (boost::shared_ptr<const ReelAtmosAsset>, EqualityOptions, NoteHandler) const;
+	bool equals (std::shared_ptr<const ReelAtmosAsset>, EqualityOptions, NoteHandler) const;
 
 private:
 	std::string key_type () const;

@@ -83,17 +83,17 @@ public:
 	explicit SubtitleAsset (boost::filesystem::path file);
 
 	bool equals (
-		boost::shared_ptr<const Asset>,
+		std::shared_ptr<const Asset>,
 		EqualityOptions,
 		NoteHandler note
 		) const;
 
-	std::list<boost::shared_ptr<Subtitle> > subtitles_during (Time from, Time to, bool starting) const;
-	std::list<boost::shared_ptr<Subtitle> > const & subtitles () const {
+	std::list<std::shared_ptr<Subtitle> > subtitles_during (Time from, Time to, bool starting) const;
+	std::list<std::shared_ptr<Subtitle> > const & subtitles () const {
 		return _subtitles;
 	}
 
-	virtual void add (boost::shared_ptr<Subtitle>);
+	virtual void add (std::shared_ptr<Subtitle>);
 	virtual void add_font (std::string id, dcp::ArrayData data) = 0;
 	std::map<std::string, ArrayData> font_data () const;
 	std::map<std::string, boost::filesystem::path> font_filenames () const;
@@ -105,7 +105,7 @@ public:
 
 	void fix_empty_font_ids ();
 
-	virtual std::list<boost::shared_ptr<LoadFontNode> > load_font_nodes () const = 0;
+	virtual std::list<std::shared_ptr<LoadFontNode> > load_font_nodes () const = 0;
 
 	std::string raw_xml () const {
 		return _raw_xml;
@@ -152,7 +152,7 @@ protected:
 	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Standard standard) const;
 
 	/** All our subtitles, in no particular order */
-	std::list<boost::shared_ptr<Subtitle> > _subtitles;
+	std::list<std::shared_ptr<Subtitle> > _subtitles;
 
 	class Font
 	{
@@ -190,7 +190,7 @@ private:
 
 	void maybe_add_subtitle (std::string text, std::list<ParseState> const & parse_state, Standard standard);
 
-	static void pull_fonts (boost::shared_ptr<order::Part> part);
+	static void pull_fonts (std::shared_ptr<order::Part> part);
 };
 
 }

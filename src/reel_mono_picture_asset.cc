@@ -40,16 +40,16 @@
 #include <libcxml/cxml.h>
 
 using std::string;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (boost::shared_ptr<MonoPictureAsset> asset, int64_t entry_point)
+ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<MonoPictureAsset> asset, int64_t entry_point)
 	: ReelPictureAsset (asset, entry_point)
 {
 
 }
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (boost::shared_ptr<const cxml::Node> node)
+ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<const cxml::Node> node)
 	: ReelPictureAsset (node)
 {
 	node->done ();

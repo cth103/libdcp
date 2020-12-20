@@ -41,7 +41,7 @@ using std::string;
 using std::map;
 using std::max;
 using boost::optional;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 ReelMarkersAsset::ReelMarkersAsset (Fraction edit_rate, int64_t entry_point)

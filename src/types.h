@@ -40,7 +40,7 @@
 
 #include <libcxml/cxml.h>
 #include <asdcp/KLV.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/function.hpp>
 #include <string>
 

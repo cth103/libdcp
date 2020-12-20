@@ -50,7 +50,7 @@ using std::string;
 using std::cerr;
 using std::cout;
 using boost::optional;
-using boost::shared_ptr;
+using std::shared_ptr;
 
 static void
 help (string n)

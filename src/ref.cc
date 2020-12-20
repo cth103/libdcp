@@ -34,7 +34,7 @@
 #include "ref.h"
 
 using std::list;
-using boost::shared_ptr;
+using std::shared_ptr;
 using namespace dcp;
 
 /** Look through a list of assets and copy a shared_ptr to any asset

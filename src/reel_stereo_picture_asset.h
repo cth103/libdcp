@@ -51,16 +51,16 @@ class StereoPictureAsset;
 class ReelStereoPictureAsset : public ReelPictureAsset
 {
 public:
-	ReelStereoPictureAsset (boost::shared_ptr<StereoPictureAsset> content, int64_t entry_point);
-	explicit ReelStereoPictureAsset (boost::shared_ptr<const cxml::Node>);
+	ReelStereoPictureAsset (std::shared_ptr<StereoPictureAsset> content, int64_t entry_point);
+	explicit ReelStereoPictureAsset (std::shared_ptr<const cxml::Node>);
 
 	/** @return the StereoPictureAsset that this object refers to */
-	boost::shared_ptr<const StereoPictureAsset> stereo_asset () const {
+	std::shared_ptr<const StereoPictureAsset> stereo_asset () const {
 		return asset_of_type<const StereoPictureAsset> ();
 	}
 
 	/** @return the StereoPictureAsset that this object refers to */
-	boost::shared_ptr<StereoPictureAsset> stereo_asset () {
+	std::shared_ptr<StereoPictureAsset> stereo_asset () {
 		return asset_of_type<StereoPictureAsset> ();
 	}
 

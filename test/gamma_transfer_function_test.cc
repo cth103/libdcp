@@ -35,7 +35,7 @@
 #include "modified_gamma_transfer_function.h"
 #include <boost/test/unit_test.hpp>
 
-using boost::shared_ptr;
+using std::shared_ptr;
 
 /** Check GammaTransferFunction::about_equal */
 BOOST_AUTO_TEST_CASE (gamma_transfer_function_test)

@@ -50,7 +50,7 @@ using std::vector;
 using std::string;
 using std::map;
 using std::pair;
-using boost::shared_ptr;
+using std::shared_ptr;
 using boost::optional;
 using boost::starts_with;
 using namespace dcp;
@@ -87,7 +87,7 @@ class X509Data
 public:
 	X509Data () {}
 
-	explicit X509Data (boost::shared_ptr<const cxml::Node> node)
+	explicit X509Data (std::shared_ptr<const cxml::Node> node)
 		: x509_issuer_serial (Signer (node->node_child ("X509IssuerSerial")))
 		, x509_certificate (node->string_child ("X509Certificate"))
 	{

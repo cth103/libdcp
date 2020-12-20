@@ -43,7 +43,7 @@
 #include "types.h"
 #include "local_time.h"
 #include <asdcp/KM_log.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/function.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
