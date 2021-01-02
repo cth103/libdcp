@@ -1,1 +1,30 @@
-pkl_6a9e31a6-50a4-4ecb-8683-fa667848470a.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<PackingList xmlns="http://www.digicine.com/PROTO-ASDCP-PKL-20040311#">
+  <Id>urn:uuid:6a9e31a6-50a4-4ecb-8683-fa667848470a</Id>
+  <AnnotationText>Created by libdcp</AnnotationText>
+  <IssueDate>2018-09-02T04:45:18+00:00</IssueDate>
+  <Issuer>libdcp</Issuer>
+  <Creator>libdcp</Creator>
+  <AssetList>
+    <Asset>
+      <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
+      <AnnotationText>46c3eb45-15e5-47d6-8684-d8641e4dc516</AnnotationText>
+      <Hash>hu0RaV4ZgrcqQQtgOW4r/YznVo0=</Hash>
+      <Size>1105</Size>
+      <Type>text/xml;asdcpKind=CPL</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</Id>
+      <AnnotationText>a6c58cff-3e1e-4b38-acec-a42224475ef6</AnnotationText>
+      <Hash>cVnFjMLTQnSIAlIzJpNB/p7B230=</Hash>
+      <Size>414</Size>
+      <Type>text/xml;asdcpKind=Subtitle</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:d36f4bb3-c4fa-4a95-9915-6fec3110cd71</Id>
+      <Hash>2vTylSKQ5MCQHbKPT4X+rlwfHk4=</Hash>
+      <Size>44861</Size>
+      <Type>image/png</Type>
+    </Asset>
+  </AssetList>
+</PackingList>

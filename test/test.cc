@@ -404,6 +404,7 @@ make_simple_with_smpte_subs (boost::filesystem::path path)
 
 	shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
 	subs->set_language (dcp::LanguageTag("de-DE"));
+	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());
 
 	subs->write (path / "subs.mxf");
@@ -438,6 +439,7 @@ make_simple_with_smpte_ccaps (boost::filesystem::path path)
 
 	shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
 	subs->set_language (dcp::LanguageTag("de-DE"));
+	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());
 	subs->write (path / "ccap.mxf");
 

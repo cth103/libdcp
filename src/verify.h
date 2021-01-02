@@ -112,6 +112,10 @@ public:
 		MISSING_SUBTITLE_LANGUAGE,
 		/** Not all subtitle assets specify the same <Language> tag [Bv2.1_7.2.2] */
 		SUBTITLE_LANGUAGES_DIFFER,
+		/** Some SMPTE subtitle XML has no <StartTime> tag [Bv2.1_7.2.3] */
+		MISSING_SUBTITLE_START_TIME,
+		/** Some SMPTE subtitle XML has a non-zero <StartTime> tag [Bv2.1_7.2.3] */
+		SUBTITLE_START_TIME_NON_ZERO,
 	};
 
 	VerificationNote (Type type, Code code)

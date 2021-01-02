@@ -704,6 +704,18 @@ verify_subtitle_asset (
 					)
 				);
 		}
+
+		if (!smpte->start_time()) {
+			notes.push_back (
+				VerificationNote(
+					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_START_TIME, *asset->file())
+				);
+		} else if (smpte->start_time() != dcp::Time()) {
+			notes.push_back (
+				VerificationNote(
+					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::SUBTITLE_START_TIME_NON_ZERO, *asset->file())
+				);
+		}
 	}
 }
 
@@ -912,6 +924,10 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The XML for a SMPTE subtitle asset has no <Language> tag, which is required by Bv2.1", note.file()->filename());
 	case dcp::VerificationNote::SUBTITLE_LANGUAGES_DIFFER:
 		return String::compose("Some subtitle assets have different <Language> tags than others", note.file()->filename());
+	case dcp::VerificationNote::MISSING_SUBTITLE_START_TIME:
+		return String::compose("The XML for a SMPTE subtitle asset has no <StartTime> tag, which is required by Bv2.1", note.file()->filename());
+	case dcp::VerificationNote::SUBTITLE_START_TIME_NON_ZERO:
+		return String::compose("The XML for a SMPTE subtitle asset has a non-zero <StartTime> tag, which is disallowed by Bv2.1", note.file()->filename());
 	}
 
 	return "";
