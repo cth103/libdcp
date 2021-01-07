@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 	shared_ptr<dcp::InteropSubtitleAsset> subs (new dcp::InteropSubtitleAsset ());
 	subs->add_font ("theFontId", dcp::ArrayData("test/data/dummy.ttf"));
 	subs->write (directory / "frobozz.xml");
-	check_file ("test/data/dummy.ttf", "build/test/interop_dcp_font_test/dummy.ttf");
+	check_file ("test/data/dummy.ttf", "build/test/interop_dcp_font_test/font_0.ttf");
 
 	shared_ptr<dcp::Reel> reel (new dcp::Reel ());
 	reel->add (shared_ptr<dcp::ReelAsset> (new dcp::ReelSubtitleAsset (subs, dcp::Fraction (24, 1), 24, 0)));
