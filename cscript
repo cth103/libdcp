@@ -37,7 +37,7 @@ import shutil
 option_defaults = { 'jpeg': 'oj2' }
 
 def dependencies(target, options):
-    libcxml = ('libcxml', 'c336f86')
+    libcxml = ('libcxml', 'v0.17.0')
     if (target.platform == 'windows' and target.version == 'xp') or options['jpeg'] == 'oj1':
         return (libcxml, ('openjpeg', 'f166257'), ('asdcplib', 'carl'))
     else:
