@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -44,19 +44,19 @@ template <class T>
 std::shared_ptr<T>
 optional_type_child (cxml::Node const & node, std::string name)
 {
-	std::list<std::shared_ptr<cxml::Node> > n = node.node_children (name);
+	auto n = node.node_children (name);
 	if (n.size() > 1) {
 		throw XMLError ("duplicate XML tag");
 	} else if (n.empty ()) {
-		return std::shared_ptr<T> ();
+		return {};
 	}
 
-	return std::shared_ptr<T> (new T (n.front ()));
+	return std::make_shared<T>(n.front());
 }
 
 template <class T>
 std::shared_ptr<T> type_child (std::shared_ptr<const cxml::Node> node, std::string name) {
-	return std::shared_ptr<T> (new T (node->node_child (name)));
+	return std::make_shared<T>(node->node_child(name));
 }
 
 template <class T>
@@ -67,34 +67,32 @@ optional_type_child (std::shared_ptr<const cxml::Node> node, std::string name)
 }
 
 template <class T>
-std::list<std::shared_ptr<T> >
+std::list<std::shared_ptr<T>>
 type_children (cxml::Node const & node, std::string name)
 {
-	std::list<std::shared_ptr<cxml::Node> > n = node.node_children (name);
         std::list<std::shared_ptr<T> > r;
-        for (typename std::list<std::shared_ptr<cxml::Node> >::iterator i = n.begin(); i != n.end(); ++i) {
-		r.push_back (std::shared_ptr<T> (new T (*i)));
+	for (auto i: node.node_children(name)) {
+		r.push_back (std::make_shared<T>(i));
 	}
 	return r;
 }
 
 template <class T>
-std::list<std::shared_ptr<T> >
+std::list<std::shared_ptr<T>>
 type_children (std::shared_ptr<const cxml::Node> node, std::string name)
 {
 	return type_children<T> (*node.get(), name);
 }
 
 template <class T>
-std::list<std::shared_ptr<T> >
+std::list<std::shared_ptr<T>>
 type_grand_children (cxml::Node const & node, std::string name, std::string sub)
 {
-	std::shared_ptr<const cxml::Node> p = node.node_child (name);
-	return type_children<T> (p, sub);
+	return type_children<T> (node.node_child(name), sub);
 }
 
 template <class T>
-std::list<std::shared_ptr<T> >
+std::list<std::shared_ptr<T>>
 type_grand_children (std::shared_ptr<const cxml::Node> node, std::string name, std::string sub)
 {
 	return type_grand_children<T> (*node.get(), name, sub);
