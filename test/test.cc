@@ -105,49 +105,75 @@ check_xml (xmlpp::Element* ref, xmlpp::Element* test, list<string> ignore_tags, 
 		return;
 	}
 
-	xmlpp::Element::NodeList ref_children = ref->get_children ();
-	xmlpp::Element::NodeList test_children = test->get_children ();
-	BOOST_REQUIRE_MESSAGE (
-		ref_children.size () == test_children.size (),
-		"child counts of " << ref->get_name() << " differ; ref has " << ref_children.size() << ", test has " << test_children.size()
-		);
+	auto whitespace_content = [](xmlpp::Node* node) {
+		auto content = dynamic_cast<xmlpp::ContentNode*>(node);
+		return content && content->get_content().find_first_not_of(" \t\r\n") == string::npos;
+	};
 
-	xmlpp::Element::NodeList::iterator k = ref_children.begin ();
-	xmlpp::Element::NodeList::iterator l = test_children.begin ();
-	while (k != ref_children.end ()) {
+	auto ref_children = ref->get_children ();
+	auto test_children = test->get_children ();
+
+	auto k = ref_children.begin ();
+	auto l = test_children.begin ();
+	while (k != ref_children.end() && l != test_children.end()) {
+
+		if (dynamic_cast<xmlpp::CommentNode*>(*k)) {
+			++k;
+			continue;
+		}
+
+		if (dynamic_cast<xmlpp::CommentNode*>(*l)) {
+			++l;
+			continue;
+		}
+
+		if (whitespace_content(*k) && ignore_whitespace) {
+			++k;
+			continue;
+		}
+
+		if (whitespace_content(*l) && ignore_whitespace) {
+			++l;
+			continue;
+		}
 
 		/* XXX: should be doing xmlpp::EntityReference, xmlpp::XIncludeEnd, xmlpp::XIncludeStart */
 
-		xmlpp::Element* ref_el = dynamic_cast<xmlpp::Element*> (*k);
-		xmlpp::Element* test_el = dynamic_cast<xmlpp::Element*> (*l);
+		auto ref_el = dynamic_cast<xmlpp::Element*> (*k);
+		auto test_el = dynamic_cast<xmlpp::Element*> (*l);
 		BOOST_CHECK ((ref_el && test_el) || (!ref_el && !test_el));
 		if (ref_el && test_el) {
 			check_xml (ref_el, test_el, ignore_tags, ignore_whitespace);
 		}
 
-		xmlpp::ContentNode* ref_cn = dynamic_cast<xmlpp::ContentNode*> (*k);
-		xmlpp::ContentNode* test_cn = dynamic_cast<xmlpp::ContentNode*> (*l);
+		auto ref_cn = dynamic_cast<xmlpp::ContentNode*> (*k);
+		auto test_cn = dynamic_cast<xmlpp::ContentNode*> (*l);
 		BOOST_CHECK ((ref_cn && test_cn) || (!ref_cn && !test_cn));
 		if (ref_cn && test_cn) {
-			if (
-				!ignore_whitespace ||
-				ref_cn->get_content().find_first_not_of(" \t\r\n") != string::npos ||
-				test_cn->get_content().find_first_not_of(" \t\r\n") != string::npos) {
-
-				BOOST_CHECK_EQUAL (ref_cn->get_content(), test_cn->get_content ());
-			}
+			BOOST_CHECK_EQUAL (ref_cn->get_content(), test_cn->get_content());
 		}
 
 		++k;
 		++l;
 	}
 
-	xmlpp::Element::AttributeList ref_attributes = ref->get_attributes ();
-	xmlpp::Element::AttributeList test_attributes = test->get_attributes ();
+	while (k != ref_children.end() && ignore_whitespace && whitespace_content(*k)) {
+		++k;
+	}
+
+	while (l != test_children.end() && ignore_whitespace && whitespace_content(*l)) {
+		++l;
+	}
+
+	BOOST_REQUIRE (k == ref_children.end());
+	BOOST_REQUIRE (l == test_children.end());
+
+	auto ref_attributes = ref->get_attributes ();
+	auto test_attributes = test->get_attributes ();
 	BOOST_CHECK_EQUAL (ref_attributes.size(), test_attributes.size ());
 
-	xmlpp::Element::AttributeList::const_iterator m = ref_attributes.begin();
-	xmlpp::Element::AttributeList::const_iterator n = test_attributes.begin();
+	auto m = ref_attributes.begin();
+	auto n = test_attributes.begin();
 	while (m != ref_attributes.end ()) {
 		BOOST_CHECK_EQUAL ((*m)->get_name(), (*n)->get_name());
 		BOOST_CHECK_EQUAL ((*m)->get_value(), (*n)->get_value());
@@ -158,7 +184,7 @@ check_xml (xmlpp::Element* ref, xmlpp::Element* test, list<string> ignore_tags, 
 }
 
 void
-check_xml (string ref, string test, list<string> ignore)
+check_xml (string ref, string test, list<string> ignore, bool ignore_whitespace)
 {
 	xmlpp::DomParser* ref_parser = new xmlpp::DomParser ();
 	ref_parser->parse_memory (ref);
@@ -167,7 +193,7 @@ check_xml (string ref, string test, list<string> ignore)
 	test_parser->parse_memory (test);
 	xmlpp::Element* test_root = test_parser->get_document()->get_root_node ();
 
-	check_xml (ref_root, test_root, ignore);
+	check_xml (ref_root, test_root, ignore, ignore_whitespace);
 }
 
 void

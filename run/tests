@@ -16,7 +16,7 @@ export DYLD_LIBRARY_PATH=/Users/ci/osx-environment/64/lib
 export LIBDCP_SHARE_PREFIX=.
 
 # Make sure we have the required tools
-for c in xmlsec1 xmldiff xmllint; do
+for c in xmlsec1 xmllint; do
   hash $c 2>/dev/null || { echo >&2 "$c required but not found; aborting"; exit 1; }
 done
 
