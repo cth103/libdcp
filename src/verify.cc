@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -67,7 +67,6 @@
 #include <xercesc/framework/LocalFileInputSource.hpp>
 #include <xercesc/framework/MemBufInputSource.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
 #include <list>
@@ -233,8 +232,8 @@ public:
 		if (!system_id) {
 			return 0;
 		}
-		string system_id_str = xml_ch_to_string (system_id);
-		boost::filesystem::path p = _xsd_dtd_directory;
+		auto system_id_str = xml_ch_to_string (system_id);
+		auto p = _xsd_dtd_directory;
 		if (_files.find(system_id_str) == _files.end()) {
 			p /= system_id_str;
 		} else {
@@ -316,7 +315,7 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, list<Verificatio
 		 * they describe are not checked.
 		 */
 		string locations;
-		BOOST_FOREACH (string i, schema) {
+		for (auto i: schema) {
 			locations += String::compose("%1 %1 ", i, i);
 		}
 
@@ -341,7 +340,7 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, list<Verificatio
 
 	XMLPlatformUtils::Terminate ();
 
-	BOOST_FOREACH (XMLValidationError i, error_handler.errors()) {
+	for (auto i: error_handler.errors()) {
 		notes.push_back (
 			VerificationNote(
 				VerificationNote::VERIFY_ERROR,
@@ -365,16 +364,16 @@ enum VerifyAssetResult {
 static VerifyAssetResult
 verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelMXF> reel_mxf, function<void (float)> progress)
 {
-	string const actual_hash = reel_mxf->asset_ref()->hash(progress);
+	auto const actual_hash = reel_mxf->asset_ref()->hash(progress);
 
-	list<shared_ptr<PKL> > pkls = dcp->pkls();
+	auto pkls = dcp->pkls();
 	/* We've read this DCP in so it must have at least one PKL */
 	DCP_ASSERT (!pkls.empty());
 
-	shared_ptr<Asset> asset = reel_mxf->asset_ref().asset();
+	auto asset = reel_mxf->asset_ref().asset();
 
 	optional<string> pkl_hash;
-	BOOST_FOREACH (shared_ptr<PKL> i, pkls) {
+	for (auto i: pkls) {
 		pkl_hash = i->hash (reel_mxf->asset_ref()->id());
 		if (pkl_hash) {
 			break;
@@ -383,7 +382,7 @@ verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelMXF> reel_mxf, fun
 
 	DCP_ASSERT (pkl_hash);
 
-	optional<string> cpl_hash = reel_mxf->hash();
+	auto cpl_hash = reel_mxf->hash();
 	if (cpl_hash && *cpl_hash != *pkl_hash) {
 		return VERIFY_ASSET_RESULT_CPL_PKL_DIFFER;
 	}
@@ -432,14 +431,14 @@ template <class A, class R, class F>
 optional<VerifyPictureAssetResult>
 verify_picture_asset_type (shared_ptr<const ReelMXF> reel_mxf, function<void (float)> progress)
 {
-	shared_ptr<A> asset = dynamic_pointer_cast<A>(reel_mxf->asset_ref().asset());
+	auto asset = dynamic_pointer_cast<A>(reel_mxf->asset_ref().asset());
 	if (!asset) {
 		return optional<VerifyPictureAssetResult>();
 	}
 
 	int biggest_frame = 0;
-	shared_ptr<R> reader = asset->start_read ();
-	int64_t const duration = asset->intrinsic_duration ();
+	auto reader = asset->start_read ();
+	auto const duration = asset->intrinsic_duration ();
 	for (int64_t i = 0; i < duration; ++i) {
 		shared_ptr<const F> frame = reader->get_frame (i);
 		biggest_frame = max(biggest_frame, biggest_frame_size(frame));
@@ -461,7 +460,7 @@ verify_picture_asset_type (shared_ptr<const ReelMXF> reel_mxf, function<void (fl
 static VerifyPictureAssetResult
 verify_picture_asset (shared_ptr<const ReelMXF> reel_mxf, function<void (float)> progress)
 {
-	optional<VerifyPictureAssetResult> r = verify_picture_asset_type<MonoPictureAsset, MonoPictureAssetReader, MonoPictureFrame>(reel_mxf, progress);
+	auto r = verify_picture_asset_type<MonoPictureAsset, MonoPictureAssetReader, MonoPictureFrame>(reel_mxf, progress);
 	if (!r) {
 		r = verify_picture_asset_type<StereoPictureAsset, StereoPictureAssetReader, StereoPictureFrame>(reel_mxf, progress);
 	}
@@ -480,10 +479,10 @@ verify_main_picture_asset (
 	list<VerificationNote>& notes
 	)
 {
-	shared_ptr<const PictureAsset> asset = reel_asset->asset();
-	boost::filesystem::path const file = *asset->file();
+	auto asset = reel_asset->asset();
+	auto const file = *asset->file();
 	stage ("Checking picture asset hash", file);
-	VerifyAssetResult const r = verify_asset (dcp, reel_asset, progress);
+	auto const r = verify_asset (dcp, reel_asset, progress);
 	switch (r) {
 		case VERIFY_ASSET_RESULT_BAD:
 			notes.push_back (
@@ -503,7 +502,7 @@ verify_main_picture_asset (
 			break;
 	}
 	stage ("Checking picture frame sizes", asset->file());
-	VerifyPictureAssetResult const pr = verify_picture_asset (reel_asset, progress);
+	auto const pr = verify_picture_asset (reel_asset, progress);
 	switch (pr) {
 		case VERIFY_PICTURE_ASSET_RESULT_BAD:
 			notes.push_back (
@@ -592,9 +591,9 @@ verify_main_sound_asset (
 	list<VerificationNote>& notes
 	)
 {
-	shared_ptr<const dcp::SoundAsset> asset = reel_asset->asset();
+	auto asset = reel_asset->asset();
 	stage ("Checking sound asset hash", asset->file());
-	VerifyAssetResult const r = verify_asset (dcp, reel_asset, progress);
+	auto const r = verify_asset (dcp, reel_asset, progress);
 	switch (r) {
 		case VERIFY_ASSET_RESULT_BAD:
 			notes.push_back (
@@ -661,10 +660,10 @@ verify_subtitle_asset (
 	 */
 	validate_xml (asset->raw_xml(), xsd_dtd_directory, notes);
 
-	shared_ptr<const SMPTESubtitleAsset> smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
+	auto smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
 	if (smpte) {
 		if (smpte->language()) {
-			string const language = *smpte->language();
+			auto const language = *smpte->language();
 			verify_language_tag (language, notes);
 			if (!state.subtitle_language) {
 				state.subtitle_language = language;
@@ -692,10 +691,10 @@ verify_subtitle_asset (
 		/* XXX: I'm not sure what Bv2.1_7.2.1 means when it says "the font resource shall not be larger than 10MB"
 		 * but I'm hoping that checking for the total size of all fonts being <= 10MB will do.
 		 */
-		map<string, ArrayData> fonts = asset->font_data ();
+		auto fonts = asset->font_data ();
 		int total_size = 0;
-		for (map<string, ArrayData>::const_iterator i = fonts.begin(); i != fonts.end(); ++i) {
-			total_size += i->second.size();
+		for (auto i: fonts) {
+			total_size += i.second.size();
 		}
 		if (total_size > 10 * 1024 * 1024) {
 			notes.push_back (
@@ -754,12 +753,12 @@ dcp::verify (
 	list<VerificationNote> notes;
 	State state;
 
-	list<shared_ptr<DCP> > dcps;
-	BOOST_FOREACH (boost::filesystem::path i, directories) {
+	list<shared_ptr<DCP>> dcps;
+	for (auto i: directories) {
 		dcps.push_back (shared_ptr<DCP> (new DCP (i)));
 	}
 
-	BOOST_FOREACH (shared_ptr<DCP> dcp, dcps) {
+	for (auto dcp: dcps) {
 		stage ("Checking DCP", dcp->directory());
 		try {
 			dcp->read (&notes);
@@ -777,11 +776,11 @@ dcp::verify (
 			notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::NOT_SMPTE));
 		}
 
-		BOOST_FOREACH (shared_ptr<CPL> cpl, dcp->cpls()) {
+		for (auto cpl: dcp->cpls()) {
 			stage ("Checking CPL", cpl->file());
 			validate_xml (cpl->file().get(), xsd_dtd_directory, notes);
 
-			BOOST_FOREACH (string const& i, cpl->additional_subtitle_languages()) {
+			for (auto const& i: cpl->additional_subtitle_languages()) {
 				verify_language_tag (i, notes);
 			}
 
@@ -790,17 +789,17 @@ dcp::verify (
 			}
 
 			/* Check that the CPL's hash corresponds to the PKL */
-			BOOST_FOREACH (shared_ptr<PKL> i, dcp->pkls()) {
+			for (auto i: dcp->pkls()) {
 				optional<string> h = i->hash(cpl->id());
 				if (h && make_digest(ArrayData(*cpl->file())) != *h) {
 					notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::CPL_HASH_INCORRECT));
 				}
 			}
 
-			BOOST_FOREACH (shared_ptr<Reel> reel, cpl->reels()) {
+			for (auto reel: cpl->reels()) {
 				stage ("Checking reel", optional<boost::filesystem::path>());
 
-				BOOST_FOREACH (shared_ptr<ReelAsset> i, reel->assets()) {
+				for (auto i: reel->assets()) {
 					if (i->duration() && (i->duration().get() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
 						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::DURATION_TOO_SMALL, i->id()));
 					}
@@ -811,7 +810,7 @@ dcp::verify (
 
 				if (reel->main_picture()) {
 					/* Check reel stuff */
-					Fraction const frame_rate = reel->main_picture()->frame_rate();
+					auto const frame_rate = reel->main_picture()->frame_rate();
 					if (frame_rate.denominator != 1 ||
 					    (frame_rate.numerator != 24 &&
 					     frame_rate.numerator != 25 &&
@@ -839,7 +838,7 @@ dcp::verify (
 					}
 				}
 
-				BOOST_FOREACH (shared_ptr<dcp::ReelClosedCaptionAsset> i, reel->closed_captions()) {
+				for (auto i: reel->closed_captions()) {
 					verify_closed_caption_reel (i, notes);
 					if (i->asset_ref().resolved()) {
 						verify_closed_caption_asset (i->asset(), stage, xsd_dtd_directory, notes, state);
@@ -848,7 +847,7 @@ dcp::verify (
 			}
 		}
 
-		BOOST_FOREACH (shared_ptr<PKL> pkl, dcp->pkls()) {
+		for (auto pkl: dcp->pkls()) {
 			stage ("Checking PKL", pkl->file());
 			validate_xml (pkl->file().get(), xsd_dtd_directory, notes);
 		}
