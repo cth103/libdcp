@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -50,7 +50,6 @@
 #include <libxml/parser.h>
 #include <libxml++/libxml++.h>
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
 
 using std::string;
 using std::list;
@@ -124,20 +123,20 @@ CPL::CPL (boost::filesystem::path file)
 		/* ContentVersion is required in SMPTE */
 		throw XMLError ("Missing ContentVersion tag in CPL");
 	}
-	cxml::ConstNodePtr rating_list = f.node_child ("RatingList");
+	auto rating_list = f.node_child ("RatingList");
 	if (rating_list) {
-		BOOST_FOREACH (cxml::ConstNodePtr i, rating_list->node_children("Rating")) {
+		for (auto i: rating_list->node_children("Rating")) {
 			_ratings.push_back (Rating(i));
 		}
 	}
 	_reels = type_grand_children<Reel> (f, "ReelList", "Reel");
 
-	cxml::ConstNodePtr reel_list = f.node_child ("ReelList");
+	auto reel_list = f.node_child ("ReelList");
 	if (reel_list) {
-		list<cxml::NodePtr> reels = reel_list->node_children("Reel");
+		auto reels = reel_list->node_children("Reel");
 		if (!reels.empty()) {
-			cxml::ConstNodePtr asset_list = reels.front()->node_child("AssetList");
-			cxml::ConstNodePtr metadata = asset_list->optional_node_child("CompositionMetadataAsset");
+			auto asset_list = reels.front()->node_child("AssetList");
+			auto metadata = asset_list->optional_node_child("CompositionMetadataAsset");
 			if (metadata) {
 				read_composition_metadata_asset (metadata);
 			}
@@ -192,16 +191,16 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 		_content_versions[0].as_xml (root);
 	}
 
-	xmlpp::Element* rating_list = root->add_child("RatingList");
-	BOOST_FOREACH (Rating i, _ratings) {
+	auto rating_list = root->add_child("RatingList");
+	for (auto i: _ratings) {
 		i.as_xml (rating_list->add_child("Rating"));
 	}
 
-	xmlpp::Element* reel_list = root->add_child ("ReelList");
+	auto reel_list = root->add_child ("ReelList");
 
 	bool first = true;
-	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
-		xmlpp::Element* asset_list = i->write_to_cpl (reel_list, standard);
+	for (auto i: _reels) {
+		auto asset_list = i->write_to_cpl (reel_list, standard);
 		if (first && standard == dcp::SMPTE) {
 			maybe_write_composition_metadata_asset (asset_list);
 			first = false;
@@ -223,17 +222,17 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 void
 CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 {
-	cxml::ConstNodePtr fctt = node->node_child("FullContentTitleText");
+	auto fctt = node->node_child("FullContentTitleText");
 	_full_content_title_text = fctt->content();
 	_full_content_title_text_language = fctt->optional_string_attribute("language");
 
 	_release_territory = node->optional_string_child("ReleaseTerritory");
 
-	cxml::ConstNodePtr vn = node->optional_node_child("VersionNumber");
+	auto vn = node->optional_node_child("VersionNumber");
 	if (vn) {
 		_version_number = raw_convert<int>(vn->content());
 		/* I decided to check for this number being non-negative on being set, and in the verifier, but not here */
-		optional<string> vn_status = vn->optional_string_attribute("status");
+		auto vn_status = vn->optional_string_attribute("status");
 		if (vn_status) {
 			_status = string_to_status (*vn_status);
 		}
@@ -243,21 +242,21 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 	_distributor = node->optional_string_child("Distributor");
 	_facility = node->optional_string_child("Facility");
 
-	cxml::ConstNodePtr acv = node->optional_node_child("AlternateContentVersionList");
+	auto acv = node->optional_node_child("AlternateContentVersionList");
 	if (acv) {
-		BOOST_FOREACH (cxml::ConstNodePtr i, acv->node_children("ContentVersion")) {
+		for (auto i: acv->node_children("ContentVersion")) {
 			_content_versions.push_back (ContentVersion(i));
 		}
 	}
 
-	cxml::ConstNodePtr lum = node->optional_node_child("Luminance");
+	auto lum = node->optional_node_child("Luminance");
 	if (lum) {
 		_luminance = Luminance (lum);
 	}
 
 	_main_sound_configuration = node->optional_string_child("MainSoundConfiguration");
 
-	optional<string> sr = node->optional_string_child("MainSoundSampleRate");
+	auto sr = node->optional_string_child("MainSoundSampleRate");
 	if (sr) {
 		vector<string> sr_bits;
 		boost::split (sr_bits, *sr, boost::is_any_of(" "));
@@ -275,7 +274,7 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 		node->node_child("MainPictureActiveArea")->number_child<int>("Height")
 		);
 
-	optional<string> sll = node->optional_string_child("MainSubtitleLanguageList");
+	auto sll = node->optional_string_child("MainSubtitleLanguageList");
 	if (sll) {
 		vector<string> sll_split;
 		boost::split (sll_split, *sll, boost::is_any_of(" "));
@@ -293,7 +292,7 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 			}
 		}
 
-		for (size_t i = first; i < sll_split.size(); ++i) {
+		for (auto i = first; i < sll_split.size(); ++i) {
 			_additional_subtitle_languages.push_back (sll_split[i]);
 		}
 	}
@@ -317,16 +316,16 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 		return;
 	}
 
-	xmlpp::Element* meta = node->add_child("meta:CompositionMetadataAsset");
+	auto meta = node->add_child("meta:CompositionMetadataAsset");
 	meta->set_namespace_declaration (cpl_metadata_ns, "meta");
 
 	meta->add_child("Id")->add_child_text("urn:uuid:" + make_uuid());
 
-	shared_ptr<dcp::ReelPictureAsset> mp = _reels.front()->main_picture();
+	auto mp = _reels.front()->main_picture();
 	meta->add_child("EditRate")->add_child_text(mp->edit_rate().as_string());
 	meta->add_child("IntrinsicDuration")->add_child_text(raw_convert<string>(mp->intrinsic_duration()));
 
-	xmlpp::Element* fctt = meta->add_child("FullContentTitleText", "meta");
+	auto fctt = meta->add_child("FullContentTitleText", "meta");
 	if (_full_content_title_text) {
 		fctt->add_child_text (*_full_content_title_text);
 	}
@@ -372,16 +371,16 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 	meta->add_child("MainSoundConfiguration", "meta")->add_child_text(*_main_sound_configuration);
 	meta->add_child("MainSoundSampleRate", "meta")->add_child_text(raw_convert<string>(*_main_sound_sample_rate) + " 1");
 
-	xmlpp::Element* stored = meta->add_child("MainPictureStoredArea", "meta");
+	auto stored = meta->add_child("MainPictureStoredArea", "meta");
 	stored->add_child("Width", "meta")->add_child_text(raw_convert<string>(_main_picture_stored_area->width));
 	stored->add_child("Height", "meta")->add_child_text(raw_convert<string>(_main_picture_stored_area->height));
 
-	xmlpp::Element* active = meta->add_child("MainPictureActiveArea", "meta");
+	auto active = meta->add_child("MainPictureActiveArea", "meta");
 	active->add_child("Width", "meta")->add_child_text(raw_convert<string>(_main_picture_active_area->width));
 	active->add_child("Height", "meta")->add_child_text(raw_convert<string>(_main_picture_active_area->height));
 
 	optional<string> first_subtitle_language;
-	BOOST_FOREACH (shared_ptr<const Reel> i, _reels) {
+	for (auto i: _reels) {
 		if (i->main_subtitle()) {
 			first_subtitle_language = i->main_subtitle()->language();
 			if (first_subtitle_language) {
@@ -395,7 +394,7 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 		if (first_subtitle_language) {
 			lang = *first_subtitle_language;
 		}
-		BOOST_FOREACH (string const& i, _additional_subtitle_languages) {
+		for (auto const& i: _additional_subtitle_languages) {
 			if (!lang.empty()) {
 				lang += " ";
 			}
@@ -405,28 +404,28 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 	}
 
 	/* SMPTE Bv2.1 8.6.3 */
-	xmlpp::Element* extension = meta->add_child("ExtensionMetadataList", "meta")->add_child("ExtensionMetadata", "meta");
+	auto extension = meta->add_child("ExtensionMetadataList", "meta")->add_child("ExtensionMetadata", "meta");
 	extension->set_attribute("scope", "http://isdcf.com/ns/cplmd/app");
 	extension->add_child("Name", "meta")->add_child_text("Application");
-	xmlpp::Element* property = extension->add_child("PropertyList", "meta")->add_child("Property", "meta");
+	auto property = extension->add_child("PropertyList", "meta")->add_child("Property", "meta");
 	property->add_child("Name", "meta")->add_child_text("DCP Constraints Profile");
 	property->add_child("Value", "meta")->add_child_text("SMPTE-RDD-52:2020-Bv2.1");
 
 	if (_reels.front()->main_sound()) {
-		shared_ptr<const SoundAsset> asset = _reels.front()->main_sound()->asset();
+		auto asset = _reels.front()->main_sound()->asset();
 		if (asset) {
-			shared_ptr<SoundAssetReader> reader = asset->start_read ();
+			auto reader = asset->start_read ();
 			ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield;
 			ASDCP::Result_t r = reader->reader()->OP1aHeader().GetMDObjectByType(
 				asdcp_smpte_dict->ul(ASDCP::MDD_SoundfieldGroupLabelSubDescriptor),
 				reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&soundfield)
 				);
 			if (KM_SUCCESS(r)) {
-				xmlpp::Element* mca_subs = meta->add_child("mca:MCASubDescriptors");
+				auto mca_subs = meta->add_child("mca:MCASubDescriptors");
 				mca_subs->set_namespace_declaration (mca_sub_descriptors_ns, "mca");
 				mca_subs->set_namespace_declaration (smpte_395_ns, "r0");
 				mca_subs->set_namespace_declaration (smpte_335_ns, "r1");
-				xmlpp::Element* sf = mca_subs->add_child("SoundfieldGroupLabelSubDescriptor", "r0");
+				auto sf = mca_subs->add_child("SoundfieldGroupLabelSubDescriptor", "r0");
 				char buffer[64];
 				soundfield->InstanceUID.EncodeString(buffer, sizeof(buffer));
 				sf->add_child("InstanceID", "r1")->add_child_text("urn:uuid:" + string(buffer));
@@ -446,14 +445,14 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 				}
 
 				list<ASDCP::MXF::InterchangeObject*> channels;
-				ASDCP::Result_t r = reader->reader()->OP1aHeader().GetMDObjectsByType(
+				auto r = reader->reader()->OP1aHeader().GetMDObjectsByType(
 					asdcp_smpte_dict->ul(ASDCP::MDD_AudioChannelLabelSubDescriptor),
 					channels
 					);
 
-				BOOST_FOREACH (ASDCP::MXF::InterchangeObject* i, channels) {
-					ASDCP::MXF::AudioChannelLabelSubDescriptor* channel = reinterpret_cast<ASDCP::MXF::AudioChannelLabelSubDescriptor*>(i);
-					xmlpp::Element* ch = mca_subs->add_child("AudioChannelLabelSubDescriptor", "r0");
+				for (auto i: channels) {
+					auto channel = reinterpret_cast<ASDCP::MXF::AudioChannelLabelSubDescriptor*>(i);
+					auto ch = mca_subs->add_child("AudioChannelLabelSubDescriptor", "r0");
 					channel->InstanceUID.EncodeString(buffer, sizeof(buffer));
 					ch->add_child("InstanceID", "r1")->add_child_text("urn:uuid:" + string(buffer));
 					channel->MCALabelDictionaryID.EncodeString(buffer, sizeof(buffer));
@@ -484,12 +483,12 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 }
 
 
-list<shared_ptr<ReelMXF> >
+list<shared_ptr<ReelMXF>>
 CPL::reel_mxfs ()
 {
-	list<shared_ptr<ReelMXF> > c;
+	list<shared_ptr<ReelMXF>> c;
 
-	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+	for (auto i: _reels) {
 		if (i->main_picture ()) {
 			c.push_back (i->main_picture());
 		}
@@ -499,7 +498,7 @@ CPL::reel_mxfs ()
 		if (i->main_subtitle ()) {
 			c.push_back (i->main_subtitle());
 		}
-		BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> j, i->closed_captions()) {
+		for (auto j: i->closed_captions()) {
 			c.push_back (j);
 		}
 		if (i->atmos ()) {
@@ -510,12 +509,12 @@ CPL::reel_mxfs ()
 	return c;
 }
 
-list<shared_ptr<const ReelMXF> >
+list<shared_ptr<const ReelMXF>>
 CPL::reel_mxfs () const
 {
-	list<shared_ptr<const ReelMXF> > c;
+	list<shared_ptr<const ReelMXF>> c;
 
-	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+	for (auto i: _reels) {
 		if (i->main_picture ()) {
 			c.push_back (i->main_picture());
 		}
@@ -525,7 +524,7 @@ CPL::reel_mxfs () const
 		if (i->main_subtitle ()) {
 			c.push_back (i->main_subtitle());
 		}
-		BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> j, i->closed_captions()) {
+		for (auto j: i->closed_captions()) {
 			c.push_back (j);
 		}
 		if (i->atmos ()) {
@@ -539,7 +538,7 @@ CPL::reel_mxfs () const
 bool
 CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
-	shared_ptr<const CPL> other_cpl = dynamic_pointer_cast<const CPL> (other);
+	auto other_cpl = dynamic_pointer_cast<const CPL>(other);
 	if (!other_cpl) {
 		return false;
 	}
@@ -560,8 +559,8 @@ CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 		return false;
 	}
 
-	list<shared_ptr<Reel> >::const_iterator a = _reels.begin ();
-	list<shared_ptr<Reel> >::const_iterator b = other_cpl->_reels.begin ();
+	auto a = _reels.begin();
+	auto b = other_cpl->_reels.begin();
 
 	while (a != _reels.end ()) {
 		if (!(*a)->equals (*b, opt, note)) {
@@ -578,7 +577,7 @@ CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 bool
 CPL::encrypted () const
 {
-	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+	for (auto i: _reels) {
 		if (i->encrypted ()) {
 			return true;
 		}
@@ -594,15 +593,15 @@ CPL::encrypted () const
 void
 CPL::add (DecryptedKDM const & kdm)
 {
-	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+	for (auto i: _reels) {
 		i->add (kdm);
 	}
 }
 
 void
-CPL::resolve_refs (list<shared_ptr<Asset> > assets)
+CPL::resolve_refs (list<shared_ptr<Asset>> assets)
 {
-	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+	for (auto i: _reels) {
 		i->resolve_refs (assets);
 	}
 }
@@ -630,7 +629,7 @@ int64_t
 CPL::duration () const
 {
 	int64_t d = 0;
-	BOOST_FOREACH (shared_ptr<Reel> i, _reels) {
+	for (auto i: _reels) {
 		d += i->duration ();
 	}
 	return d;
@@ -652,7 +651,7 @@ void
 CPL::set_content_versions (vector<ContentVersion> v)
 {
 	set<string> ids;
-	BOOST_FOREACH (ContentVersion i, v) {
+	for (auto i: v) {
 		if (!ids.insert(i.id).second) {
 			throw DuplicateIdError ("Duplicate ID in ContentVersion list");
 		}
@@ -677,7 +676,7 @@ void
 CPL::set_additional_subtitle_languages (vector<dcp::LanguageTag> const& langs)
 {
 	_additional_subtitle_languages.clear ();
-	BOOST_FOREACH (dcp::LanguageTag const& i, langs) {
+	for (auto const& i: langs) {
 		_additional_subtitle_languages.push_back (i.to_string());
 	}
 }

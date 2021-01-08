@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -46,11 +46,11 @@
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 #include <boost/test/unit_test.hpp>
-#include <boost/foreach.hpp>
 
 using std::list;
 using std::string;
 using std::vector;
+using std::make_shared;
 using std::shared_ptr;
 using boost::optional;
 
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE (kdm_test)
 		dcp::file_to_string ("test/data/private.key")
 		);
 
-	list<dcp::DecryptedKDMKey> keys = kdm.keys ();
+	auto keys = kdm.keys ();
 
 	BOOST_CHECK_EQUAL (keys.size(), 2);
 
@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE (kdm_passthrough_test)
 		dcp::file_to_string ("test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml")
 		);
 
-	shared_ptr<xmlpp::DomParser> parser (new xmlpp::DomParser ());
+	auto parser = make_shared<xmlpp::DomParser>();
 	parser->parse_memory (kdm.as_xml ());
 	parser->get_document()->write_to_file_formatted ("build/kdm.xml", "UTF-8");
 	check_xml (
@@ -98,8 +98,8 @@ BOOST_AUTO_TEST_CASE (kdm_passthrough_test)
 /** Test some of the utility methods of DecryptedKDM */
 BOOST_AUTO_TEST_CASE (decrypted_kdm_test)
 {
-	uint8_t* data = new uint8_t[16];
-	uint8_t* p = data;
+	auto data = new uint8_t[16];
+	auto p = data;
 	dcp::DecryptedKDM::put_uuid (&p, "8971c838-d0c3-405d-bc57-43afa9d91242");
 
 	BOOST_CHECK_EQUAL (data[0], 0x89);
@@ -137,14 +137,14 @@ BOOST_AUTO_TEST_CASE (kdm_key_type_scope)
 	cxml::Document doc;
 	doc.read_string (kdm.as_xml ());
 
-	list<cxml::NodePtr> typed_key_ids = doc.node_child("AuthenticatedPublic")->
+	auto typed_key_ids = doc.node_child("AuthenticatedPublic")->
 		node_child("RequiredExtensions")->
 		node_child("KDMRequiredExtensions")->
 		node_child("KeyIdList")->
 		node_children("TypedKeyId");
 
-	BOOST_FOREACH (cxml::NodePtr i, typed_key_ids) {
-		BOOST_FOREACH (cxml::NodePtr j, i->node_children("KeyType")) {
+	for (auto i: typed_key_ids) {
+		for (auto j: i->node_children("KeyType")) {
 			BOOST_CHECK (j->string_attribute("scope") == "http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
 		}
 	}
@@ -160,7 +160,7 @@ kdm_forensic_test (cxml::Document& doc, bool picture, optional<int> audio)
 		dcp::file_to_string ("test/data/private.key")
 		);
 
-	shared_ptr<dcp::CertificateChain> signer(new dcp::CertificateChain(dcp::file_to_string("test/data/certificate_chain")));
+	auto signer = make_shared<dcp::CertificateChain>(dcp::file_to_string("test/data/certificate_chain"));
 	signer->set_key(dcp::file_to_string("test/data/private.key"));
 
 	dcp::EncryptedKDM kdm = decrypted.encrypt (
@@ -182,9 +182,9 @@ kdm_forensic_test (cxml::Document& doc, bool picture, optional<int> audio)
 BOOST_AUTO_TEST_CASE (kdm_forensic_test1)
 {
 	cxml::Document doc;
-	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, true, 0);
+	auto forensic = kdm_forensic_test(doc, true, 0);
 	BOOST_REQUIRE (forensic);
-	list<cxml::NodePtr> flags = forensic->node_children("ForensicMarkFlag");
+	auto flags = forensic->node_children("ForensicMarkFlag");
 	BOOST_REQUIRE_EQUAL (flags.size(), 2);
 	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
 	BOOST_CHECK_EQUAL (flags.back()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable");
@@ -194,9 +194,9 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test1)
 BOOST_AUTO_TEST_CASE (kdm_forensic_test2)
 {
 	cxml::Document doc;
-	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, true, optional<int>());
+	auto forensic = kdm_forensic_test(doc, true, optional<int>());
 	BOOST_REQUIRE (forensic);
-	list<cxml::NodePtr> flags = forensic->node_children("ForensicMarkFlag");
+	auto flags = forensic->node_children("ForensicMarkFlag");
 	BOOST_REQUIRE_EQUAL (flags.size(), 1);
 	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
 }
@@ -205,9 +205,9 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test2)
 BOOST_AUTO_TEST_CASE (kdm_forensic_test3)
 {
 	cxml::Document doc;
-	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, false, 0);
+	auto forensic = kdm_forensic_test(doc, false, 0);
 	BOOST_REQUIRE (forensic);
-	list<cxml::NodePtr> flags = forensic->node_children("ForensicMarkFlag");
+	auto flags = forensic->node_children("ForensicMarkFlag");
 	BOOST_REQUIRE_EQUAL (flags.size(), 1);
 	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable");
 }
@@ -216,9 +216,9 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test3)
 BOOST_AUTO_TEST_CASE (kdm_forensic_test4)
 {
 	cxml::Document doc;
-	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, true, 3);
+	auto forensic = kdm_forensic_test(doc, true, 3);
 	BOOST_REQUIRE (forensic);
-	list<cxml::NodePtr> flags = forensic->node_children("ForensicMarkFlag");
+	auto flags = forensic->node_children("ForensicMarkFlag");
 	BOOST_REQUIRE_EQUAL (flags.size(), 2);
 	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
 	BOOST_CHECK_EQUAL (flags.back()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable-above-channel-3");
@@ -228,24 +228,24 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test4)
 BOOST_AUTO_TEST_CASE (kdm_forensic_test5)
 {
 	cxml::Document doc;
-	cxml::ConstNodePtr forensic = kdm_forensic_test(doc, false, optional<int>());
+	auto forensic = kdm_forensic_test(doc, false, optional<int>());
 	BOOST_CHECK (!forensic);
 }
 
 /** Check that KDM validity periods are checked for being within the certificate validity */
 BOOST_AUTO_TEST_CASE (validity_period_test1)
 {
-	shared_ptr<dcp::CertificateChain> signer(new dcp::CertificateChain(dcp::file_to_string("test/data/certificate_chain")));
+	auto signer = make_shared<dcp::CertificateChain>(dcp::file_to_string("test/data/certificate_chain"));
 	signer->set_key(dcp::file_to_string("test/data/private.key"));
 
-	shared_ptr<dcp::MonoPictureAsset> asset (new dcp::MonoPictureAsset(dcp::Fraction(24, 1), dcp::SMPTE));
+	auto asset = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::SMPTE);
 	asset->set_key (dcp::Key());
-	shared_ptr<dcp::PictureAssetWriter> writer = asset->start_write ("build/test/validity_period_test1.mxf", false);
+	auto writer = asset->start_write ("build/test/validity_period_test1.mxf", false);
 	dcp::File frame ("test/data/32x32_red_square.j2c");
 	writer->write (frame.data(), frame.size());
-	shared_ptr<dcp::Reel> reel(new dcp::Reel());
-	reel->add(shared_ptr<dcp::ReelPictureAsset>(new dcp::ReelMonoPictureAsset(asset, 0)));
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL("test", dcp::FEATURE));
+	auto reel = make_shared<dcp::Reel>();
+	reel->add(make_shared<dcp::ReelMonoPictureAsset>(asset, 0));
+	auto cpl = make_shared<dcp::CPL>("test", dcp::FEATURE);
 	cpl->add(reel);
 
 	/* This certificate_chain is valid from 26/12/2012 to 24/12/2022 */

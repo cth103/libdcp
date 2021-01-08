@@ -62,6 +62,7 @@ using std::string;
 using std::list;
 using std::cout;
 using std::min;
+using std::make_shared;
 using std::shared_ptr;
 using std::dynamic_pointer_cast;
 using namespace dcp;
@@ -69,46 +70,46 @@ using namespace dcp;
 Reel::Reel (std::shared_ptr<const cxml::Node> node)
 	: Object (remove_urn_uuid (node->string_child ("Id")))
 {
-	shared_ptr<cxml::Node> asset_list = node->node_child ("AssetList");
+	auto asset_list = node->node_child ("AssetList");
 
-	shared_ptr<cxml::Node> main_picture = asset_list->optional_node_child ("MainPicture");
+	auto main_picture = asset_list->optional_node_child ("MainPicture");
 	if (main_picture) {
 		_main_picture.reset (new ReelMonoPictureAsset (main_picture));
 	}
 
-	shared_ptr<cxml::Node> main_stereoscopic_picture = asset_list->optional_node_child ("MainStereoscopicPicture");
+	auto main_stereoscopic_picture = asset_list->optional_node_child ("MainStereoscopicPicture");
 	if (main_stereoscopic_picture) {
 		_main_picture.reset (new ReelStereoPictureAsset (main_stereoscopic_picture));
 	}
 
-	shared_ptr<cxml::Node> main_sound = asset_list->optional_node_child ("MainSound");
+	auto main_sound = asset_list->optional_node_child ("MainSound");
 	if (main_sound) {
 		_main_sound.reset (new ReelSoundAsset (main_sound));
 	}
 
-	shared_ptr<cxml::Node> main_subtitle = asset_list->optional_node_child ("MainSubtitle");
+	auto main_subtitle = asset_list->optional_node_child ("MainSubtitle");
 	if (main_subtitle) {
 		_main_subtitle.reset (new ReelSubtitleAsset (main_subtitle));
 	}
 
-	shared_ptr<cxml::Node> main_markers = asset_list->optional_node_child ("MainMarkers");
+	auto main_markers = asset_list->optional_node_child ("MainMarkers");
 	if (main_markers) {
 		_main_markers.reset (new ReelMarkersAsset (main_markers));
 	}
 
 	/* XXX: it's not ideal that we silently tolerate Interop or SMPTE nodes here */
 	/* XXX: not sure if Interop supports multiple closed captions */
-	list<shared_ptr<cxml::Node> > closed_captions = asset_list->node_children ("MainClosedCaption");
+	auto closed_captions = asset_list->node_children ("MainClosedCaption");
 	if (closed_captions.empty()) {
 		closed_captions = asset_list->node_children ("ClosedCaption");
 	}
-	BOOST_FOREACH (shared_ptr<cxml::Node> i, closed_captions) {
-		_closed_captions.push_back (shared_ptr<ReelClosedCaptionAsset>(new ReelClosedCaptionAsset(i)));
+	for (auto i: closed_captions) {
+		_closed_captions.push_back (make_shared<ReelClosedCaptionAsset>(i));
 	}
 
-	shared_ptr<cxml::Node> atmos = asset_list->optional_node_child ("AuxData");
+	auto atmos = asset_list->optional_node_child ("AuxData");
 	if (atmos) {
-		_atmos.reset (new ReelAtmosAsset (atmos));
+		_atmos = make_shared<ReelAtmosAsset>(atmos);
 	}
 
 	node->ignore_child ("AnnotationText");
@@ -118,7 +119,7 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node)
 xmlpp::Element *
 Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 {
-	xmlpp::Element* reel = node->add_child ("Reel");
+	auto reel = node->add_child ("Reel");
 	reel->add_child("Id")->add_child_text("urn:uuid:" + _id);
 	xmlpp::Element* asset_list = reel->add_child ("AssetList");
 
@@ -139,7 +140,7 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 		_main_subtitle->write_to_cpl (asset_list, standard);
 	}
 
-	BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> i, _closed_captions) {
+	for (auto i: _closed_captions) {
 		i->write_to_cpl (asset_list, standard);
 	}
 
@@ -199,8 +200,8 @@ Reel::equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandle
 		return false;
 	}
 
-	list<shared_ptr<ReelClosedCaptionAsset> >::const_iterator i = _closed_captions.begin();
-	list<shared_ptr<ReelClosedCaptionAsset> >::const_iterator j = other->_closed_captions.begin();
+	auto i = _closed_captions.begin();
+	auto j = other->_closed_captions.begin();
 	while (i != _closed_captions.end()) {
 		if (!(*i)->equals(*j, opt, note)) {
 			return false;
@@ -224,8 +225,8 @@ Reel::equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandle
 bool
 Reel::encrypted () const
 {
-	bool ecc = false;
-	BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> i, _closed_captions) {
+	auto ecc = false;
+	for (auto i: _closed_captions) {
 		if (i->encrypted()) {
 			ecc = true;
 		}
@@ -243,31 +244,31 @@ Reel::encrypted () const
 void
 Reel::add (DecryptedKDM const & kdm)
 {
-	list<DecryptedKDMKey> keys = kdm.keys ();
+	auto keys = kdm.keys ();
 
-	for (list<DecryptedKDMKey>::iterator i = keys.begin(); i != keys.end(); ++i) {
-		if (_main_picture && i->id() == _main_picture->key_id()) {
-			_main_picture->asset()->set_key (i->key ());
+	for (auto const& i: keys) {
+		if (_main_picture && i.id() == _main_picture->key_id()) {
+			_main_picture->asset()->set_key (i.key());
 		}
-		if (_main_sound && i->id() == _main_sound->key_id()) {
-			_main_sound->asset()->set_key (i->key ());
+		if (_main_sound && i.id() == _main_sound->key_id()) {
+			_main_sound->asset()->set_key (i.key());
 		}
-		if (_main_subtitle && i->id() == _main_subtitle->key_id()) {
+		if (_main_subtitle && i.id() == _main_subtitle->key_id()) {
 			shared_ptr<SMPTESubtitleAsset> s = dynamic_pointer_cast<SMPTESubtitleAsset> (_main_subtitle->asset());
 			if (s) {
-				s->set_key (i->key ());
+				s->set_key (i.key());
 			}
 		}
-		BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> j, _closed_captions) {
-			if (i->id() == j->key_id()) {
-				shared_ptr<SMPTESubtitleAsset> s = dynamic_pointer_cast<SMPTESubtitleAsset> (j->asset());
+		for (auto j: _closed_captions) {
+			if (i.id() == j->key_id()) {
+				auto s = dynamic_pointer_cast<SMPTESubtitleAsset> (j->asset());
 				if (s) {
-					s->set_key (i->key ());
+					s->set_key (i.key());
 				}
 			}
 		}
-		if (_atmos && i->id() == _atmos->key_id()) {
-			_atmos->asset()->set_key (i->key ());
+		if (_atmos && i.id() == _atmos->key_id()) {
+			_atmos->asset()->set_key (i.key());
 		}
 	}
 }
@@ -275,12 +276,12 @@ Reel::add (DecryptedKDM const & kdm)
 void
 Reel::add (shared_ptr<ReelAsset> asset)
 {
-	shared_ptr<ReelPictureAsset> p = dynamic_pointer_cast<ReelPictureAsset> (asset);
-	shared_ptr<ReelSoundAsset> so = dynamic_pointer_cast<ReelSoundAsset> (asset);
-	shared_ptr<ReelSubtitleAsset> su = dynamic_pointer_cast<ReelSubtitleAsset> (asset);
-	shared_ptr<ReelMarkersAsset> m = dynamic_pointer_cast<ReelMarkersAsset> (asset);
-	shared_ptr<ReelClosedCaptionAsset> c = dynamic_pointer_cast<ReelClosedCaptionAsset> (asset);
-	shared_ptr<ReelAtmosAsset> a = dynamic_pointer_cast<ReelAtmosAsset> (asset);
+	auto p = dynamic_pointer_cast<ReelPictureAsset> (asset);
+	auto so = dynamic_pointer_cast<ReelSoundAsset> (asset);
+	auto su = dynamic_pointer_cast<ReelSubtitleAsset> (asset);
+	auto m = dynamic_pointer_cast<ReelMarkersAsset> (asset);
+	auto c = dynamic_pointer_cast<ReelClosedCaptionAsset> (asset);
+	auto a = dynamic_pointer_cast<ReelAtmosAsset> (asset);
 	if (p) {
 		_main_picture = p;
 	} else if (so) {
@@ -296,10 +297,10 @@ Reel::add (shared_ptr<ReelAsset> asset)
 	}
 }
 
-list<shared_ptr<ReelAsset> >
+list<shared_ptr<ReelAsset>>
 Reel::assets () const
 {
-	list<shared_ptr<ReelAsset> > a;
+	list<shared_ptr<ReelAsset>> a;
 	if (_main_picture) {
 		a.push_back (_main_picture);
 	}
@@ -317,7 +318,7 @@ Reel::assets () const
 }
 
 void
-Reel::resolve_refs (list<shared_ptr<Asset> > assets)
+Reel::resolve_refs (list<shared_ptr<Asset>> assets)
 {
 	if (_main_picture) {
 		_main_picture->asset_ref().resolve (assets);
@@ -332,19 +333,19 @@ Reel::resolve_refs (list<shared_ptr<Asset> > assets)
 
 		/* Interop subtitle handling is all special cases */
 		if (_main_subtitle->asset_ref().resolved()) {
-			shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (_main_subtitle->asset_ref().asset());
+			auto iop = dynamic_pointer_cast<InteropSubtitleAsset> (_main_subtitle->asset_ref().asset());
 			if (iop) {
 				iop->resolve_fonts (assets);
 			}
 		}
 	}
 
-	BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> i, _closed_captions) {
+	for (auto i: _closed_captions) {
 		i->asset_ref().resolve(assets);
 
 		/* Interop subtitle handling is all special cases */
 		if (i->asset_ref().resolved()) {
-			shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (i->asset_ref().asset());
+			auto iop = dynamic_pointer_cast<InteropSubtitleAsset> (i->asset_ref().asset());
 			if (iop) {
 				iop->resolve_fonts (assets);
 			}
@@ -374,7 +375,7 @@ Reel::duration () const
 	if (_main_markers) {
 		d = min (d, _main_markers->actual_duration());
 	}
-	BOOST_FOREACH (shared_ptr<ReelClosedCaptionAsset> i, _closed_captions) {
+	for (auto i: _closed_captions) {
 		d = min (d, i->actual_duration());
 	}
 	if (_atmos) {

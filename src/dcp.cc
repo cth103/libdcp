@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -65,7 +65,6 @@
 #include <libxml++/libxml++.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
 
 using std::string;
 using std::list;
@@ -74,6 +73,7 @@ using std::cout;
 using std::make_pair;
 using std::map;
 using std::cerr;
+using std::make_shared;
 using std::exception;
 using std::shared_ptr;
 using std::dynamic_pointer_cast;
@@ -131,14 +131,14 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 		boost::throw_exception (XMLError ("Unrecognised Assetmap namespace " + asset_map.namespace_uri()));
 	}
 
-	list<shared_ptr<cxml::Node> > asset_nodes = asset_map.node_child("AssetList")->node_children ("Asset");
+	auto asset_nodes = asset_map.node_child("AssetList")->node_children ("Asset");
 	map<string, boost::filesystem::path> paths;
 	list<boost::filesystem::path> pkl_paths;
-	BOOST_FOREACH (shared_ptr<cxml::Node> i, asset_nodes) {
+	for (auto i: asset_nodes) {
 		if (i->node_child("ChunkList")->node_children("Chunk").size() != 1) {
 			boost::throw_exception (XMLError ("unsupported asset chunk count"));
 		}
-		string p = i->node_child("ChunkList")->node_child("Chunk")->string_child ("Path");
+		auto p = i->node_child("ChunkList")->node_child("Chunk")->string_child ("Path");
 		if (starts_with (p, "file://")) {
 			p = p.substr (7);
 		}
@@ -152,7 +152,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 			break;
 		case SMPTE:
 		{
-			optional<string> pkl_bool = i->optional_string_child("PackingList");
+			auto pkl_bool = i->optional_string_child("PackingList");
 			if (pkl_bool && *pkl_bool == "true") {
 				pkl_paths.push_back (p);
 			} else {
@@ -167,8 +167,8 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 		boost::throw_exception (XMLError ("No packing lists found in asset map"));
 	}
 
-	BOOST_FOREACH (boost::filesystem::path i, pkl_paths) {
-		_pkls.push_back (shared_ptr<PKL>(new PKL(_directory / i)));
+	for (auto i: pkl_paths) {
+		_pkls.push_back (make_shared<PKL>(_directory / i));
 	}
 
 	/* Now we have:
@@ -181,12 +181,12 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 	/* Make a list of non-CPL/PKL assets so that we can resolve the references
 	   from the CPLs.
 	*/
-	list<shared_ptr<Asset> > other_assets;
+	list<shared_ptr<Asset>> other_assets;
 
-	for (map<string, boost::filesystem::path>::const_iterator i = paths.begin(); i != paths.end(); ++i) {
-		boost::filesystem::path path = _directory / i->second;
+	for (auto i: paths) {
+		auto path = _directory / i.second;
 
-		if (i->second.empty()) {
+		if (i.second.empty()) {
 			/* I can't see how this is valid, but it's
 			   been seen in the wild with a DCP that
 			   claims to come from ClipsterDCI 5.10.0.5.
@@ -206,8 +206,8 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 
 		/* Find the <Type> for this asset from the PKL that contains the asset */
 		optional<string> pkl_type;
-		BOOST_FOREACH (shared_ptr<PKL> j, _pkls) {
-			pkl_type = j->type(i->first);
+		for (auto j: _pkls) {
+			pkl_type = j->type(i.first);
 			if (pkl_type) {
 				break;
 			}
@@ -221,7 +221,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 		}
 
 		if (*pkl_type == CPL::static_pkl_type(*_standard) || *pkl_type == InteropSubtitleAsset::static_pkl_type(*_standard)) {
-			xmlpp::DomParser* p = new xmlpp::DomParser;
+			auto p = new xmlpp::DomParser;
 			try {
 				p->parse_file (path.string());
 			} catch (std::exception& e) {
@@ -229,11 +229,11 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 				throw ReadError(String::compose("XML error in %1", path.string()), e.what());
 			}
 
-			string const root = p->get_document()->get_root_node()->get_name ();
+			auto const root = p->get_document()->get_root_node()->get_name ();
 			delete p;
 
 			if (root == "CompositionPlaylist") {
-				shared_ptr<CPL> cpl (new CPL (path));
+				auto cpl = make_shared<CPL>(path);
 				if (_standard && cpl->standard() && cpl->standard().get() != _standard.get() && notes) {
 					notes->push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_STANDARD));
 				}
@@ -242,7 +242,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 				if (_standard && _standard.get() == SMPTE && notes) {
 					notes->push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_STANDARD));
 				}
-				other_assets.push_back (shared_ptr<InteropSubtitleAsset> (new InteropSubtitleAsset (path)));
+				other_assets.push_back (make_shared<InteropSubtitleAsset>(path));
 			}
 		} else if (
 			*pkl_type == PictureAsset::static_pkl_type(*_standard) ||
@@ -253,7 +253,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 
 			other_assets.push_back (asset_factory(path, ignore_incorrect_picture_mxf_type));
 		} else if (*pkl_type == FontAsset::static_pkl_type(*_standard)) {
-			other_assets.push_back (shared_ptr<FontAsset> (new FontAsset (i->first, path)));
+			other_assets.push_back (make_shared<FontAsset>(i.first, path));
 		} else if (*pkl_type == "image/png") {
 			/* It's an Interop PNG subtitle; let it go */
 		} else {
@@ -265,8 +265,8 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 
 	/* While we've got the ASSETMAP lets look and see if this DCP refers to things that are not in its ASSETMAP */
 	if (notes) {
-		BOOST_FOREACH (shared_ptr<CPL> i, cpls()) {
-			BOOST_FOREACH (shared_ptr<const ReelMXF> j, i->reel_mxfs()) {
+		for (auto i: cpls()) {
+			for (auto j: i->reel_mxfs()) {
 				if (!j->asset_ref().resolved() && paths.find(j->asset_ref().id()) == paths.end()) {
 					notes->push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::EXTERNAL_ASSET, j->asset_ref().id()));
 				}
@@ -276,9 +276,9 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 }
 
 void
-DCP::resolve_refs (list<shared_ptr<Asset> > assets)
+DCP::resolve_refs (list<shared_ptr<Asset>> assets)
 {
-	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
+	for (auto i: cpls()) {
 		i->resolve_refs (assets);
 	}
 }
@@ -286,8 +286,8 @@ DCP::resolve_refs (list<shared_ptr<Asset> > assets)
 bool
 DCP::equals (DCP const & other, EqualityOptions opt, NoteHandler note) const
 {
-	list<shared_ptr<CPL> > a = cpls ();
-	list<shared_ptr<CPL> > b = other.cpls ();
+	auto a = cpls ();
+	auto b = other.cpls ();
 
 	if (a.size() != b.size()) {
 		note (DCP_ERROR, String::compose ("CPL counts differ: %1 vs %2", a.size(), b.size()));
@@ -296,8 +296,8 @@ DCP::equals (DCP const & other, EqualityOptions opt, NoteHandler note) const
 
 	bool r = true;
 
-	BOOST_FOREACH (shared_ptr<CPL> i, a) {
-		list<shared_ptr<CPL> >::const_iterator j = b.begin ();
+	for (auto i: a) {
+		auto j = b.begin();
 		while (j != b.end() && !(*j)->equals (i, opt, note)) {
 			++j;
 		}
@@ -319,8 +319,8 @@ DCP::add (std::shared_ptr<CPL> cpl)
 bool
 DCP::encrypted () const
 {
-	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
-		if (i->encrypted ()) {
+	for (auto i: cpls()) {
+		if (i->encrypted()) {
 			return true;
 		}
 	}
@@ -335,10 +335,10 @@ DCP::encrypted () const
 void
 DCP::add (DecryptedKDM const & kdm)
 {
-	list<DecryptedKDMKey> keys = kdm.keys ();
+	auto keys = kdm.keys ();
 
-	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
-		BOOST_FOREACH (DecryptedKDMKey const & j, kdm.keys ()) {
+	for (auto i: cpls()) {
+		for (auto const& j: kdm.keys()) {
 			if (j.cpl_id() == i->id()) {
 				i->add (kdm);
 			}
@@ -388,7 +388,7 @@ DCP::write_assetmap (
 	string issuer, string creator, string issue_date, string annotation_text
 	) const
 {
-	boost::filesystem::path p = _directory;
+	auto p = _directory;
 
 	switch (standard) {
 	case INTEROP:
@@ -435,19 +435,19 @@ DCP::write_assetmap (
 		DCP_ASSERT (false);
 	}
 
-	xmlpp::Node* asset_list = root->add_child ("AssetList");
+	auto asset_list = root->add_child ("AssetList");
 
-	xmlpp::Node* asset = asset_list->add_child ("Asset");
+	auto asset = asset_list->add_child ("Asset");
 	asset->add_child("Id")->add_child_text ("urn:uuid:" + pkl_uuid);
 	asset->add_child("PackingList")->add_child_text ("true");
-	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
-	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
+	auto chunk_list = asset->add_child ("ChunkList");
+	auto chunk = chunk_list->add_child ("Chunk");
 	chunk->add_child("Path")->add_child_text (pkl_path.filename().string());
 	chunk->add_child("VolumeIndex")->add_child_text ("1");
 	chunk->add_child("Offset")->add_child_text ("0");
 	chunk->add_child("Length")->add_child_text (raw_convert<string> (boost::filesystem::file_size (pkl_path)));
 
-	BOOST_FOREACH (shared_ptr<Asset> i, assets ()) {
+	for (auto i: assets()) {
 		i->write_to_assetmap (asset_list, _directory);
 	}
 
@@ -471,7 +471,7 @@ DCP::write_xml (
 	NameFormat name_format
 	)
 {
-	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
+	for (auto i: cpls()) {
 		NameFormat::Map values;
 		values['t'] = "cpl";
 		i->write_xml (_directory / (name_format.get(values, "_" + i->id() + ".xml")), standard, signer);
@@ -480,9 +480,9 @@ DCP::write_xml (
 	shared_ptr<PKL> pkl;
 
 	if (_pkls.empty()) {
-		pkl.reset (new PKL(standard, annotation_text, issue_date, issuer, creator));
+		pkl = make_shared<PKL>(standard, annotation_text, issue_date, issuer, creator);
 		_pkls.push_back (pkl);
-		BOOST_FOREACH (shared_ptr<Asset> i, assets ()) {
+		for (auto i: assets()) {
 			i->add_to_pkl (pkl, _directory);
 		}
         } else {
@@ -491,14 +491,14 @@ DCP::write_xml (
 
 	NameFormat::Map values;
 	values['t'] = "pkl";
-	boost::filesystem::path pkl_path = _directory / name_format.get(values, "_" + pkl->id() + ".xml");
+	auto pkl_path = _directory / name_format.get(values, "_" + pkl->id() + ".xml");
 	pkl->write (pkl_path, signer);
 
 	write_volindex (standard);
 	write_assetmap (standard, pkl->id(), pkl_path, issuer, creator, issue_date, annotation_text);
 }
 
-list<shared_ptr<CPL> >
+list<shared_ptr<CPL>>
 DCP::cpls () const
 {
 	return _cpls;
@@ -508,30 +508,30 @@ DCP::cpls () const
  *  an exception is thrown if they are found.
  *  @return All assets (including CPLs).
  */
-list<shared_ptr<Asset> >
+list<shared_ptr<Asset>>
 DCP::assets (bool ignore_unresolved) const
 {
-	list<shared_ptr<Asset> > assets;
-	BOOST_FOREACH (shared_ptr<CPL> i, cpls ()) {
+	list<shared_ptr<Asset>> assets;
+	for (auto i: cpls()) {
 		assets.push_back (i);
-		BOOST_FOREACH (shared_ptr<const ReelMXF> j, i->reel_mxfs()) {
+		for (auto j: i->reel_mxfs()) {
 			if (ignore_unresolved && !j->asset_ref().resolved()) {
 				continue;
 			}
 
-			string const id = j->asset_ref().id();
-			bool already_got = false;
-			BOOST_FOREACH (shared_ptr<Asset> k, assets) {
+			auto const id = j->asset_ref().id();
+			auto already_got = false;
+			for (auto k: assets) {
 				if (k->id() == id) {
 					already_got = true;
 				}
 			}
 
 			if (!already_got) {
-				shared_ptr<Asset> o = j->asset_ref().asset();
+				auto o = j->asset_ref().asset();
 				assets.push_back (o);
 				/* More Interop special-casing */
-				shared_ptr<InteropSubtitleAsset> sub = dynamic_pointer_cast<InteropSubtitleAsset> (o);
+				auto sub = dynamic_pointer_cast<InteropSubtitleAsset>(o);
 				if (sub) {
 					sub->add_font_assets (assets);
 				}
@@ -547,7 +547,7 @@ vector<boost::filesystem::path>
 DCP::directories_from_files (vector<boost::filesystem::path> files)
 {
 	vector<boost::filesystem::path> d;
-	BOOST_FOREACH (boost::filesystem::path i, files) {
+	for (auto i: files) {
 		if (i.filename() == "ASSETMAP" || i.filename() == "ASSETMAP.xml") {
 			d.push_back (i.parent_path ());
 		}
