@@ -651,7 +651,8 @@ verify_subtitle_asset (
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
 	list<VerificationNote>& notes,
-	State& state
+	State& state,
+	bool first_reel
 	)
 {
 	stage ("Checking subtitle XML", asset->file());
@@ -715,6 +716,20 @@ verify_subtitle_asset (
 					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::SUBTITLE_START_TIME_NON_ZERO, *asset->file())
 				);
 		}
+
+		if (first_reel) {
+			auto subs = smpte->subtitles();
+			subs.sort ([](shared_ptr<Subtitle> a, shared_ptr<Subtitle> b) {
+				return a->in() < b->in();
+			});
+			if (!subs.empty() && subs.front()->in() < dcp::Time(0, 0, 4, 0, 24)) {
+				notes.push_back(
+					VerificationNote(
+						VerificationNote::VERIFY_WARNING, VerificationNote::FIRST_TEXT_TOO_EARLY
+						)
+					);
+			}
+		}
 	}
 }
 
@@ -725,10 +740,11 @@ verify_closed_caption_asset (
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
 	list<VerificationNote>& notes,
-	State& state
+	State& state,
+	bool first_reel
 	)
 {
-	verify_subtitle_asset (asset, stage, xsd_dtd_directory, notes, state);
+	verify_subtitle_asset (asset, stage, xsd_dtd_directory, notes, state, first_reel);
 
 	if (asset->raw_xml().size() > 256 * 1024) {
 		notes.push_back (
@@ -796,6 +812,7 @@ dcp::verify (
 				}
 			}
 
+			bool first_reel = true;
 			for (auto reel: cpl->reels()) {
 				stage ("Checking reel", optional<boost::filesystem::path>());
 
@@ -834,16 +851,18 @@ dcp::verify (
 				if (reel->main_subtitle()) {
 					verify_main_subtitle_reel (reel->main_subtitle(), notes);
 					if (reel->main_subtitle()->asset_ref().resolved()) {
-						verify_subtitle_asset (reel->main_subtitle()->asset(), stage, xsd_dtd_directory, notes, state);
+						verify_subtitle_asset (reel->main_subtitle()->asset(), stage, xsd_dtd_directory, notes, state, first_reel);
 					}
 				}
 
 				for (auto i: reel->closed_captions()) {
 					verify_closed_caption_reel (i, notes);
 					if (i->asset_ref().resolved()) {
-						verify_closed_caption_asset (i->asset(), stage, xsd_dtd_directory, notes, state);
+						verify_closed_caption_asset (i->asset(), stage, xsd_dtd_directory, notes, state, first_reel);
 					}
 				}
+
+				first_reel = false;
 			}
 		}
 
@@ -927,6 +946,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The XML for a SMPTE subtitle asset has no <StartTime> tag, which is required by Bv2.1", note.file()->filename());
 	case dcp::VerificationNote::SUBTITLE_START_TIME_NON_ZERO:
 		return String::compose("The XML for a SMPTE subtitle asset has a non-zero <StartTime> tag, which is disallowed by Bv2.1", note.file()->filename());
+	case dcp::VerificationNote::FIRST_TEXT_TOO_EARLY:
+		return "The first subtitle or closed caption is less than 4 seconds from the start of the DCP.";
 	}
 
 	return "";

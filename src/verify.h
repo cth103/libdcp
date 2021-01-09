@@ -116,6 +116,8 @@ public:
 		MISSING_SUBTITLE_START_TIME,
 		/** Some SMPTE subtitle XML has a non-zero <StartTime> tag [Bv2.1_7.2.3] */
 		SUBTITLE_START_TIME_NON_ZERO,
+		/** The first subtitle or closed caption happens before 4s into the first reel [Bv2.1_7.2.4] */
+		FIRST_TEXT_TOO_EARLY,
 	};
 
 	VerificationNote (Type type, Code code)

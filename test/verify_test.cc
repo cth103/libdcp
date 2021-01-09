@@ -61,6 +61,7 @@ using std::pair;
 using std::string;
 using std::vector;
 using std::make_pair;
+using std::make_shared;
 using boost::optional;
 using std::shared_ptr;
 
@@ -1163,6 +1164,36 @@ BOOST_AUTO_TEST_CASE (verify_picture_size)
 }
 
 
+static
+void
+add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int end_frame)
+{
+	asset->add (
+		make_shared<dcp::SubtitleString>(
+			optional<string>(),
+			false,
+			false,
+			false,
+			dcp::Colour(),
+			42,
+			1,
+			dcp::Time(start_frame, 24, 24),
+			dcp::Time(end_frame, 24, 24),
+			0,
+			dcp::HALIGN_CENTER,
+			0,
+			dcp::VALIGN_CENTER,
+			dcp::DIRECTION_LTR,
+			"Hello",
+			dcp::NONE,
+			dcp::Colour(),
+			dcp::Time(),
+			dcp::Time()
+		)
+	);
+}
+
+
 BOOST_AUTO_TEST_CASE (verify_closed_caption_xml_too_large)
 {
 	boost::filesystem::path const dir("build/test/verify_closed_caption_xml_too_large");
@@ -1170,31 +1201,7 @@ BOOST_AUTO_TEST_CASE (verify_closed_caption_xml_too_large)
 
 	shared_ptr<dcp::SMPTESubtitleAsset> asset(new dcp::SMPTESubtitleAsset());
 	for (int i = 0; i < 2048; ++i) {
-		asset->add (
-			shared_ptr<dcp::Subtitle>(
-				new dcp::SubtitleString(
-					optional<string>(),
-					false,
-					false,
-					false,
-					dcp::Colour(),
-					42,
-					1,
-					dcp::Time(i * 24, 24, 24),
-					dcp::Time(i * 24 + 20, 24, 24),
-					0,
-					dcp::HALIGN_CENTER,
-					0,
-					dcp::VALIGN_CENTER,
-					dcp::DIRECTION_LTR,
-					"Hello",
-					dcp::NONE,
-					dcp::Colour(),
-					dcp::Time(),
-					dcp::Time()
-					)
-				)
-			);
+		add_test_subtitle (asset, i * 24, i * 24 + 20);
 	}
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
@@ -1210,9 +1217,11 @@ BOOST_AUTO_TEST_CASE (verify_closed_caption_xml_too_large)
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 2U);
+	BOOST_REQUIRE_EQUAL (notes.size(), 3U);
 	list<dcp::VerificationNote>::const_iterator i = notes.begin();
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::MISSING_SUBTITLE_START_TIME);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::FIRST_TEXT_TOO_EARLY);
 	++i;
 	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::CLOSED_CAPTION_XML_TOO_LARGE_IN_BYTES);
@@ -1240,31 +1249,7 @@ verify_timed_text_asset_too_large (string name)
 	boost::filesystem::path const dir = boost::filesystem::path("build/test") / name;
 	prepare_directory (dir);
 	shared_ptr<dcp::SMPTESubtitleAsset> asset = make_large_subtitle_asset (dir / "font.ttf");
-	asset->add (
-		shared_ptr<dcp::Subtitle>(
-			new dcp::SubtitleString(
-				optional<string>(),
-				false,
-				false,
-				false,
-				dcp::Colour(),
-				42,
-				1,
-				dcp::Time(0, 24, 24),
-				dcp::Time(20, 24, 24),
-				0,
-				dcp::HALIGN_CENTER,
-				0,
-				dcp::VALIGN_CENTER,
-				dcp::DIRECTION_LTR,
-				"Hello",
-				dcp::NONE,
-				dcp::Colour(),
-				dcp::Time(),
-				dcp::Time()
-				)
-			)
-		);
+	add_test_subtitle (asset, 0, 20);
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
 
@@ -1280,7 +1265,8 @@ verify_timed_text_asset_too_large (string name)
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
 	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 3U);
+	BOOST_REQUIRE_EQUAL (notes.size(), 4U);
+	dump_notes (notes);
 	list<dcp::VerificationNote>::const_iterator i = notes.begin();
 	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES);
@@ -1289,6 +1275,8 @@ verify_timed_text_asset_too_large (string name)
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::TIMED_TEXT_FONTS_TOO_LARGE_IN_BYTES);
 	++i;
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::MISSING_SUBTITLE_START_TIME);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::FIRST_TEXT_TOO_EARLY);
 }
 
 
@@ -1339,10 +1327,13 @@ BOOST_AUTO_TEST_CASE (verify_missing_language_tag_in_subtitle_xml)
 
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
-	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
-	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::MISSING_SUBTITLE_LANGUAGE);
+	auto notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	BOOST_REQUIRE_EQUAL (notes.size(), 2U);
+	auto i = notes.begin();
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::MISSING_SUBTITLE_LANGUAGE);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::FIRST_TEXT_TOO_EARLY);
 }
 
 
@@ -1425,10 +1416,13 @@ BOOST_AUTO_TEST_CASE (verify_missing_start_time_tag_in_subtitle_xml)
 
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
-	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
-	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::MISSING_SUBTITLE_START_TIME);
+	auto notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	BOOST_REQUIRE_EQUAL (notes.size(), 2U);
+	auto i = notes.begin();
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::MISSING_SUBTITLE_START_TIME);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::FIRST_TEXT_TOO_EARLY);
 }
 
 
@@ -1473,8 +1467,102 @@ BOOST_AUTO_TEST_CASE (verify_non_zero_start_time_tag_in_subtitle_xml)
 
 	vector<boost::filesystem::path> dirs;
 	dirs.push_back (dir);
-	list<dcp::VerificationNote> notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	auto notes = dcp::verify (dirs, &stage, &progress, xsd_test);
+	BOOST_REQUIRE_EQUAL (notes.size(), 2U);
+	auto i = notes.begin();
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::SUBTITLE_START_TIME_NON_ZERO);
+	++i;
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::FIRST_TEXT_TOO_EARLY);
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_text_too_early)
+{
+	auto const dir = boost::filesystem::path("build/test/verify_text_too_early");
+	prepare_directory (dir);
+	auto asset = make_shared<dcp::SMPTESubtitleAsset>();
+	asset->set_start_time (dcp::Time());
+	/* Just too early */
+	add_test_subtitle (asset, 4 * 24 - 1, 5 * 24);
+	asset->set_language (dcp::LanguageTag("de-DE"));
+	asset->write (dir / "subs.mxf");
+
+	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel = make_shared<dcp::Reel>();
+	reel->add (reel_asset);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::FEATURE);
+	cpl->add (reel);
+	auto dcp = make_shared<dcp::DCP>(dir);
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
 	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
-	BOOST_CHECK_EQUAL (notes.front().type(), dcp::VerificationNote::VERIFY_BV21_ERROR);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::SUBTITLE_START_TIME_NON_ZERO);
+	auto i = notes.begin();
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::FIRST_TEXT_TOO_EARLY);
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_text_not_too_early)
+{
+	auto const dir = boost::filesystem::path("build/test/verify_text_not_too_early");
+	prepare_directory (dir);
+	auto asset = make_shared<dcp::SMPTESubtitleAsset>();
+	asset->set_start_time (dcp::Time());
+	/* Just late enough */
+	add_test_subtitle (asset, 4 * 24, 5 * 24);
+	asset->set_language (dcp::LanguageTag("de-DE"));
+	asset->write (dir / "subs.mxf");
+
+	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel = make_shared<dcp::Reel>();
+	reel->add (reel_asset);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::FEATURE);
+	cpl->add (reel);
+	auto dcp = make_shared<dcp::DCP>(dir);
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+	dump_notes (notes);
+	BOOST_REQUIRE (notes.empty());
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_text_early_on_second_reel)
+{
+	auto const dir = boost::filesystem::path("build/test/verify_text_early_on_second_reel");
+	prepare_directory (dir);
+
+	auto asset1 = make_shared<dcp::SMPTESubtitleAsset>();
+	asset1->set_start_time (dcp::Time());
+	/* Just late enough */
+	add_test_subtitle (asset1, 4 * 24, 5 * 24);
+	asset1->set_language (dcp::LanguageTag("de-DE"));
+	asset1->write (dir / "subs.mxf");
+	auto reel_asset1 = make_shared<dcp::ReelSubtitleAsset>(asset1, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel1 = make_shared<dcp::Reel>();
+	reel1->add (reel_asset1);
+
+	auto asset2 = make_shared<dcp::SMPTESubtitleAsset>();
+	asset2->set_start_time (dcp::Time());
+	/* This would be too early on first reel but should be OK on the second */
+	add_test_subtitle (asset2, 0, 4 * 24);
+	asset2->set_language (dcp::LanguageTag("de-DE"));
+	asset2->write (dir / "subs.mxf");
+	auto reel_asset2 = make_shared<dcp::ReelSubtitleAsset>(asset2, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel2 = make_shared<dcp::Reel>();
+	reel2->add (reel_asset2);
+
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::FEATURE);
+	cpl->add (reel1);
+	cpl->add (reel2);
+	auto dcp = make_shared<dcp::DCP>(dir);
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+	dump_notes (notes);
+	BOOST_REQUIRE (notes.empty());
 }
