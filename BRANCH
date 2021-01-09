@@ -26,4 +26,5 @@ Mark things with [Bv2.1_paragraph]
     - Font resource <= 10MB [/]
 7.2.2 Language Element shall be present [/] and contiguous across all MainSubtitles [/]
 7.2.3 StartTime element shall be present and equal to 00:00:00:00 [/]
-7.2.4 Fist sub on first reel should be at >= 00:00:04:00
+7.2.4 First sub on first reel should be at >= 00:00:04:00
+7.2.5 Subtitles are 15 frames or longer, 2 frames or more apart.
