@@ -470,6 +470,7 @@ black_picture_asset (boost::filesystem::path dir, int frames)
 	BOOST_REQUIRE (frame.size() < 230000000 / (24 * 8));
 
 	shared_ptr<dcp::MonoPictureAsset> asset(new dcp::MonoPictureAsset(dcp::Fraction(24, 1), dcp::SMPTE));
+	asset->set_metadata (dcp::MXFMetadata("libdcp", "libdcp", "1.6.4devel"));
 	boost::filesystem::create_directories (dir);
 	shared_ptr<dcp::PictureAssetWriter> writer = asset->start_write (dir / "pic.mxf", true);
 	for (int i = 0; i < frames; ++i) {

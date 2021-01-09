@@ -267,6 +267,8 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 	cpl.set_distributor ("the-distributor");
 	cpl.set_facility ("the-facility");
 	cpl.set_luminance (dcp::Luminance(4.5, dcp::Luminance::FOOT_LAMBERT));
+	cpl.set_issuer ("libdcp1.6.4devel");
+	cpl.set_creator ("libdcp1.6.4devel");
 
 	dcp::MainSoundConfiguration msc(dcp::SEVEN_POINT_ONE, 16);
 	msc.set_mapping (0, dcp::LEFT);
@@ -338,6 +340,8 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test2)
 	dcp::CPL cpl("", dcp::FEATURE);
 	cpl.set_issue_date ("2020-08-28T13:35:06+02:00");
 	cpl.set_content_version (dcp::ContentVersion("id", "version"));
+	cpl.set_issuer ("libdcp1.6.4devel");
+	cpl.set_creator ("libdcp1.6.4devel");
 
 	dcp::MainSoundConfiguration msc(dcp::SEVEN_POINT_ONE, 16);
 	msc.set_mapping (0, dcp::LEFT);

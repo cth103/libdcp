@@ -56,6 +56,11 @@ class MXFMetadata
 {
 public:
 	MXFMetadata ();
+	MXFMetadata (std::string company_name_, std::string product_name_, std::string product_version_)
+		: company_name(company_name_)
+		, product_name(product_name_)
+		, product_version(product_version_)
+	{}
 
 	void read (ASDCP::WriterInfo const & info);
 
