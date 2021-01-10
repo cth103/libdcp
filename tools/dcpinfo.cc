@@ -248,7 +248,7 @@ main_subtitle (vector<string> const& only, shared_ptr<Reel> reel, bool list_subt
 	OUTPUT_SUBTITLE("      Subtitle ID: %1", ms->id());
 
 	if (ms->asset_ref().resolved()) {
-		list<shared_ptr<Subtitle> > subs = ms->asset()->subtitles ();
+		auto subs = ms->asset()->subtitles ();
 		OUTPUT_SUBTITLE("\n      Subtitle:    %1 subtitles", subs.size());
 		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (ms->asset());
 		if (iop) {
@@ -360,10 +360,10 @@ main (int argc, char* argv[])
 		only = boost::split(only, *only_string, boost::is_any_of(","));
 	}
 
-	list<shared_ptr<CPL> > cpls;
+	vector<shared_ptr<CPL> > cpls;
 	if (boost::filesystem::is_directory(argv[optind])) {
 		DCP* dcp = 0;
-		list<dcp::VerificationNote> notes;
+		vector<dcp::VerificationNote> notes;
 		try {
 			dcp = new DCP (argv[optind]);
 			dcp->read (&notes);

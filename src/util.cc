@@ -66,11 +66,11 @@ using std::wstring;
 using std::cout;
 using std::min;
 using std::max;
-using std::list;
 using std::setw;
 using std::setfill;
 using std::ostream;
 using std::shared_ptr;
+using std::vector;
 using boost::shared_array;
 using boost::optional;
 using boost::function;
@@ -440,7 +440,7 @@ dcp::day_greater_than_or_equal (LocalTime a, LocalTime b)
  *  not in \ref existing.
  */
 string
-dcp::unique_string (list<string> existing, string base)
+dcp::unique_string (vector<string> existing, string base)
 {
 	int const max_tries = existing.size() + 1;
 	for (int i = 0; i < max_tries; ++i) {

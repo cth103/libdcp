@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE (cpl_ratings)
 
 	cpl.write_xml ("build/test/cpl_ratings.xml", dcp::SMPTE, std::shared_ptr<dcp::CertificateChain>());
 
-	list<string> ignore;
+	vector<string> ignore;
 	ignore.push_back ("Id");
 	ignore.push_back ("Issuer");
 	ignore.push_back ("Creator");

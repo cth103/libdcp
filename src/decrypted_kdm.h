@@ -142,7 +142,7 @@ public:
 	void add_key (DecryptedKDMKey key);
 
 	/** @return This KDM's (decrypted) keys, which could be used to decrypt assets. */
-	std::list<DecryptedKDMKey> keys () const {
+	std::vector<DecryptedKDMKey> keys () const {
 		return _keys;
 	}
 
@@ -170,7 +170,7 @@ private:
 	boost::optional<std::string> _annotation_text;
 	std::string _content_title_text;
 	std::string _issue_date;
-	std::list<DecryptedKDMKey> _keys;
+	std::vector<DecryptedKDMKey> _keys;
 };
 
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -33,17 +33,17 @@
 
 #include "ref.h"
 
-using std::list;
 using std::shared_ptr;
+using std::vector;
 using namespace dcp;
 
 /** Look through a list of assets and copy a shared_ptr to any asset
  *  which matches the ID of this one.
  */
 void
-Ref::resolve (list<shared_ptr<Asset> > assets)
+Ref::resolve (vector<shared_ptr<Asset>> assets)
 {
-	list<shared_ptr<Asset> >::iterator i = assets.begin();
+	auto i = assets.begin();
 	while (i != assets.end() && !ids_equal ((*i)->id(), _id)) {
 		++i;
 	}

@@ -149,7 +149,7 @@ private:
 
 static
 void
-dump_notes (list<dcp::VerificationNote> const & notes)
+dump_notes (vector<dcp::VerificationNote> const & notes)
 {
 	for (auto i: notes) {
 		std::cout << dcp::note_to_string(i) << "\n";
@@ -900,7 +900,7 @@ BOOST_AUTO_TEST_CASE (verify_various_invalid_languages)
 
 
 static
-list<dcp::VerificationNote>
+vector<dcp::VerificationNote>
 check_picture_size (int width, int height, int frame_rate, bool three_d)
 {
 	using namespace boost::filesystem;

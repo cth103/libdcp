@@ -92,7 +92,7 @@ public:
 	Certificate root () const;
 	Certificate leaf () const;
 
-	typedef std::list<Certificate> List;
+	typedef std::vector<Certificate> List;
 
 	List leaf_to_root () const;
 	List root_to_leaf () const;

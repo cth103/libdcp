@@ -183,7 +183,7 @@ SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 
 	/* Now we need to drop down to xmlpp */
 
-	list<ParseState> ps;
+	vector<ParseState> ps;
 	xmlpp::Node::NodeList c = xml->node()->get_children ();
 	for (xmlpp::Node::NodeList::const_iterator i = c.begin(); i != c.end(); ++i) {
 		xmlpp::Element const * e = dynamic_cast<xmlpp::Element const *> (*i);
@@ -222,7 +222,7 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 		switch (i->Type) {
 		case ASDCP::TimedText::MT_OPENTYPE:
 		{
-			list<shared_ptr<SMPTELoadFontNode> >::const_iterator j = _load_font_nodes.begin ();
+			auto j = _load_font_nodes.begin();
 			while (j != _load_font_nodes.end() && (*j)->urn != id) {
 				++j;
 			}
@@ -234,7 +234,7 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 		}
 		case ASDCP::TimedText::MT_PNG:
 		{
-			list<shared_ptr<Subtitle> >::const_iterator j = _subtitles.begin ();
+			auto j = _subtitles.begin();
 			while (j != _subtitles.end() && ((!dynamic_pointer_cast<SubtitleImage>(*j)) || dynamic_pointer_cast<SubtitleImage>(*j)->id() != id)) {
 				++j;
 			}
@@ -291,10 +291,10 @@ SMPTESubtitleAsset::set_key (Key key)
 	read_mxf_descriptor (reader, dec);
 }
 
-list<shared_ptr<LoadFontNode> >
+vector<shared_ptr<LoadFontNode>>
 SMPTESubtitleAsset::load_font_nodes () const
 {
-	list<shared_ptr<LoadFontNode> > lf;
+	vector<shared_ptr<LoadFontNode>> lf;
 	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter (lf));
 	return lf;
 }
@@ -362,7 +362,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	/* Font references */
 
 	BOOST_FOREACH (shared_ptr<dcp::SMPTELoadFontNode> i, _load_font_nodes) {
-		list<Font>::const_iterator j = _fonts.begin ();
+		auto j = _fonts.begin();
 		while (j != _fonts.end() && j->load_id != i->id) {
 			++j;
 		}
@@ -413,7 +413,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	/* Font payload */
 
 	BOOST_FOREACH (shared_ptr<dcp::SMPTELoadFontNode> i, _load_font_nodes) {
-		list<Font>::const_iterator j = _fonts.begin ();
+		auto j = _fonts.begin();
 		while (j != _fonts.end() && j->load_id != i->id) {
 			++j;
 		}
@@ -462,8 +462,8 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 		return false;
 	}
 
-	list<shared_ptr<SMPTELoadFontNode> >::const_iterator i = _load_font_nodes.begin ();
-	list<shared_ptr<SMPTELoadFontNode> >::const_iterator j = other->_load_font_nodes.begin ();
+	auto i = _load_font_nodes.begin();
+	auto j = other->_load_font_nodes.begin();
 
 	while (i != _load_font_nodes.end ()) {
 		if (j == other->_load_font_nodes.end ()) {

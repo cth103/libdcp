@@ -53,14 +53,14 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 	BOOST_CHECK_EQUAL (subs.reel_number(), "1");
 	BOOST_CHECK_EQUAL (subs.language(), "French");
 
-	list<shared_ptr<dcp::LoadFontNode> > lfn = subs.load_font_nodes ();
+	auto lfn = subs.load_font_nodes ();
 	BOOST_REQUIRE_EQUAL (lfn.size(), 1);
 	shared_ptr<dcp::InteropLoadFontNode> interop_lfn = dynamic_pointer_cast<dcp::InteropLoadFontNode> (lfn.front ());
 	BOOST_REQUIRE (interop_lfn);
 	BOOST_CHECK_EQUAL (interop_lfn->id, "theFontId");
 	BOOST_CHECK_EQUAL (interop_lfn->uri, "arial.ttf");
 
-	list<shared_ptr<dcp::Subtitle> > s = subs.subtitles_during (dcp::Time (0, 0, 6, 1, 250), dcp::Time (0, 0, 6, 2, 250), false);
+	auto s = subs.subtitles_during (dcp::Time (0, 0, 6, 1, 250), dcp::Time (0, 0, 6, 2, 250), false);
 	BOOST_REQUIRE_EQUAL (s.size(), 1);
 	BOOST_REQUIRE (dynamic_pointer_cast<dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<dcp::SubtitleString>(s.front()), dcp::SubtitleString (
@@ -188,7 +188,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 {
 	dcp::InteropSubtitleAsset subs ("test/data/subs2.xml");
 
-	list<shared_ptr<dcp::Subtitle> > s = subs.subtitles_during (dcp::Time (0, 0, 42, 100, 250), dcp::Time (0, 0, 42, 101, 250), false);
+	auto s = subs.subtitles_during (dcp::Time (0, 0, 42, 100, 250), dcp::Time (0, 0, 42, 101, 250), false);
 	BOOST_REQUIRE_EQUAL (s.size(), 2);
 	BOOST_REQUIRE (dynamic_pointer_cast<dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<dcp::SubtitleString>(s.front()), dcp::SubtitleString (

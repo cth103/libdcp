@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE (parse_mca_descriptors_from_mxf_test)
 		cxml::Document ref("CompositionPlaylist", private_test / dcp::String::compose("51_sound_with_mca_%1.cpl", i));
 		cxml::Document check("CompositionPlaylist", dcp::String::compose("build/test/parse_mca_descriptors_from_mxf_test%1/cpl.xml", i));
 
-		list<string> ignore;
+		vector<string> ignore;
 		check_xml (
 			dynamic_cast<xmlpp::Element*>(
 				ref.node_child("ReelList")->node_children("Reel").front()->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE (write_mca_descriptors_to_mxf_test)
 	cxml::Document ref("CompositionPlaylist", private_test / "51_sound_with_mca_1.cpl");
 	cxml::Document check("CompositionPlaylist", "build/test/write_mca_descriptors_to_mxf_test/cpl.xml");
 
-	list<string> ignore;
+	vector<string> ignore;
 	ignore.push_back ("InstanceID");
 	ignore.push_back ("MCALinkID");
 	ignore.push_back ("SoundfieldGroupLinkID");

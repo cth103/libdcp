@@ -40,8 +40,8 @@ namespace dcp {
 extern boost::filesystem::path private_test;
 extern boost::filesystem::path xsd_test;
 
-extern void check_xml (xmlpp::Element* ref, xmlpp::Element* test, std::list<std::string> ignore_tags, bool ignore_whitespace = false);
-extern void check_xml (std::string ref, std::string test, std::list<std::string> ignore, bool ignore_whitespace = false);
+extern void check_xml (xmlpp::Element* ref, xmlpp::Element* test, std::vector<std::string> ignore_tags, bool ignore_whitespace = false);
+extern void check_xml (std::string ref, std::string test, std::vector<std::string> ignore, bool ignore_whitespace = false);
 extern void check_file (boost::filesystem::path ref, boost::filesystem::path check);
 extern std::shared_ptr<dcp::MonoPictureAsset> simple_picture (boost::filesystem::path path, std::string suffix);
 extern std::shared_ptr<dcp::SoundAsset> simple_sound (boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language);

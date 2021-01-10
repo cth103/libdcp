@@ -88,8 +88,8 @@ public:
 		NoteHandler note
 		) const;
 
-	std::list<std::shared_ptr<Subtitle> > subtitles_during (Time from, Time to, bool starting) const;
-	std::list<std::shared_ptr<Subtitle> > const & subtitles () const {
+	std::vector<std::shared_ptr<Subtitle>> subtitles_during (Time from, Time to, bool starting) const;
+	std::vector<std::shared_ptr<Subtitle>> const & subtitles () const {
 		return _subtitles;
 	}
 
@@ -105,7 +105,7 @@ public:
 
 	void fix_empty_font_ids ();
 
-	virtual std::list<std::shared_ptr<LoadFontNode> > load_font_nodes () const = 0;
+	virtual std::vector<std::shared_ptr<LoadFontNode>> load_font_nodes () const = 0;
 
 	std::string raw_xml () const {
 		return _raw_xml;
@@ -141,7 +141,7 @@ protected:
 		boost::optional<Type> type;
 	};
 
-	void parse_subtitles (xmlpp::Element const * node, std::list<ParseState>& state, boost::optional<int> tcr, Standard standard);
+	void parse_subtitles (xmlpp::Element const * node, std::vector<ParseState>& state, boost::optional<int> tcr, Standard standard);
 	ParseState font_node_state (xmlpp::Element const * node, Standard standard) const;
 	ParseState text_node_state (xmlpp::Element const * node) const;
 	ParseState image_node_state (xmlpp::Element const * node) const;
@@ -152,7 +152,7 @@ protected:
 	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Standard standard) const;
 
 	/** All our subtitles, in no particular order */
-	std::list<std::shared_ptr<Subtitle> > _subtitles;
+	std::vector<std::shared_ptr<Subtitle>> _subtitles;
 
 	class Font
 	{
@@ -178,7 +178,7 @@ protected:
 	};
 
 	/** TTF font data that we need */
-	std::list<Font> _fonts;
+	std::vector<Font> _fonts;
 
 	/** The raw XML data that we read from our asset; useful for validation */
 	std::string _raw_xml;
@@ -188,7 +188,7 @@ private:
 	friend struct ::pull_fonts_test2;
 	friend struct ::pull_fonts_test3;
 
-	void maybe_add_subtitle (std::string text, std::list<ParseState> const & parse_state, Standard standard);
+	void maybe_add_subtitle (std::string text, std::vector<ParseState> const & parse_state, Standard standard);
 
 	static void pull_fonts (std::shared_ptr<order::Part> part);
 };

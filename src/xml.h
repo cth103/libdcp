@@ -67,10 +67,10 @@ optional_type_child (std::shared_ptr<const cxml::Node> node, std::string name)
 }
 
 template <class T>
-std::list<std::shared_ptr<T>>
+std::vector<std::shared_ptr<T>>
 type_children (cxml::Node const & node, std::string name)
 {
-        std::list<std::shared_ptr<T> > r;
+        std::vector<std::shared_ptr<T>> r;
 	for (auto i: node.node_children(name)) {
 		r.push_back (std::make_shared<T>(i));
 	}
@@ -78,21 +78,21 @@ type_children (cxml::Node const & node, std::string name)
 }
 
 template <class T>
-std::list<std::shared_ptr<T>>
+std::vector<std::shared_ptr<T>>
 type_children (std::shared_ptr<const cxml::Node> node, std::string name)
 {
 	return type_children<T> (*node.get(), name);
 }
 
 template <class T>
-std::list<std::shared_ptr<T>>
+std::vector<std::shared_ptr<T>>
 type_grand_children (cxml::Node const & node, std::string name, std::string sub)
 {
 	return type_children<T> (node.node_child(name), sub);
 }
 
 template <class T>
-std::list<std::shared_ptr<T>>
+std::vector<std::shared_ptr<T>>
 type_grand_children (std::shared_ptr<const cxml::Node> node, std::string name, std::string sub)
 {
 	return type_grand_children<T> (*node.get(), name, sub);

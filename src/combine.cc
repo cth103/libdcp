@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2020-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -48,7 +48,6 @@
 #include <vector>
 
 
-using std::list;
 using std::map;
 using std::set;
 using std::string;
@@ -121,8 +120,8 @@ dcp::combine (
 		}
 	}
 
-	list<path> paths;
-	list<shared_ptr<dcp::Asset> > assets;
+	vector<path> paths;
+	vector<shared_ptr<dcp::Asset>> assets;
 
 	BOOST_FOREACH (path i, inputs) {
 		DCP dcp (i);

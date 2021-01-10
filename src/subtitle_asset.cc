@@ -49,15 +49,15 @@
 #include <boost/shared_array.hpp>
 #include <boost/foreach.hpp>
 
+using std::dynamic_pointer_cast;
 using std::string;
-using std::list;
 using std::cout;
 using std::cerr;
 using std::map;
 using std::shared_ptr;
+using std::vector;
 using boost::shared_array;
 using boost::optional;
-using std::dynamic_pointer_cast;
 using boost::lexical_cast;
 using namespace dcp;
 
@@ -251,7 +251,7 @@ SubtitleAsset::fade_time (xmlpp::Element const * node, string name, optional<int
 }
 
 void
-SubtitleAsset::parse_subtitles (xmlpp::Element const * node, list<ParseState>& state, optional<int> tcr, Standard standard)
+SubtitleAsset::parse_subtitles (xmlpp::Element const * node, vector<ParseState>& state, optional<int> tcr, Standard standard)
 {
 	if (node->get_name() == "Font") {
 		state.push_back (font_node_state (node, standard));
@@ -283,7 +283,7 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, list<ParseState>& s
 }
 
 void
-SubtitleAsset::maybe_add_subtitle (string text, list<ParseState> const & parse_state, Standard standard)
+SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse_state, Standard standard)
 {
 	if (empty_or_white_space (text)) {
 		return;
@@ -407,10 +407,10 @@ SubtitleAsset::maybe_add_subtitle (string text, list<ParseState> const & parse_s
 	}
 }
 
-list<shared_ptr<Subtitle> >
+vector<shared_ptr<Subtitle>>
 SubtitleAsset::subtitles_during (Time from, Time to, bool starting) const
 {
-	list<shared_ptr<Subtitle> > s;
+	vector<shared_ptr<Subtitle> > s;
 	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
 		if ((starting && from <= i->in() && i->in() < to) || (!starting && i->out() >= from && i->in() <= to)) {
 			s.push_back (i);
@@ -456,8 +456,8 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 		return false;
 	}
 
-	list<shared_ptr<Subtitle> >::const_iterator i = _subtitles.begin ();
-	list<shared_ptr<Subtitle> >::const_iterator j = other->_subtitles.begin ();
+	auto i = _subtitles.begin();
+	auto j = other->_subtitles.begin();
 
 	while (i != _subtitles.end()) {
 		shared_ptr<SubtitleString> string_i = dynamic_pointer_cast<SubtitleString> (*i);
@@ -524,8 +524,8 @@ SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
 	}
 
 	/* Merge adjacent children with the same font */
-	list<shared_ptr<order::Part> >::const_iterator i = part->children.begin();
-	list<shared_ptr<order::Part> > merged;
+	auto i = part->children.begin();
+	vector<shared_ptr<order::Part>> merged;
 
 	while (i != part->children.end()) {
 
@@ -533,7 +533,7 @@ SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
 			merged.push_back (*i);
 			++i;
 		} else {
-			list<shared_ptr<order::Part> >::const_iterator j = i;
+			auto j = i;
 			++j;
 			while (j != part->children.end() && (*i)->font == (*j)->font) {
 				++j;
@@ -543,7 +543,7 @@ SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
 				++i;
 			} else {
 				shared_ptr<order::Part> group (new order::Part (part, (*i)->font));
-				for (list<shared_ptr<order::Part> >::const_iterator k = i; k != j; ++k) {
+				for (auto k = i; k != j; ++k) {
 					(*k)->font.clear ();
 					group->children.push_back (*k);
 				}
@@ -562,8 +562,8 @@ SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
 void
 SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, Standard standard) const
 {
-	list<shared_ptr<Subtitle> > sorted = _subtitles;
-	sorted.sort (SubtitleSorter ());
+	vector<shared_ptr<Subtitle> > sorted = _subtitles;
+	std::stable_sort(sorted.begin(), sorted.end(), SubtitleSorter());
 
 	/* Gather our subtitles into a hierarchy of Subtitle/Text/String objects, writing
 	   font information into the bottom level (String) objects.
@@ -678,7 +678,7 @@ void
 SubtitleAsset::fix_empty_font_ids ()
 {
 	bool have_empty = false;
-	list<string> ids;
+	vector<string> ids;
 	BOOST_FOREACH (shared_ptr<LoadFontNode> i, load_font_nodes()) {
 		if (i->id == "") {
 			have_empty = true;

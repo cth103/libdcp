@@ -107,7 +107,7 @@ public:
 
 	std::shared_ptr<Part> parent;
 	Font font;
-	std::list<std::shared_ptr<Part> > children;
+	std::vector<std::shared_ptr<Part>> children;
 };
 
 class String : public Part

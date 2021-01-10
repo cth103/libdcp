@@ -70,7 +70,7 @@ progress (float)
 
 static
 void
-dump_notes (list<dcp::VerificationNote> const & notes)
+dump_notes (vector<dcp::VerificationNote> const & notes)
 {
 	BOOST_FOREACH (dcp::VerificationNote i, notes) {
 		std::cout << dcp::note_to_string(i) << "\n";
@@ -84,23 +84,19 @@ check_no_errors (boost::filesystem::path path)
 {
 	vector<boost::filesystem::path> directories;
 	directories.push_back (path);
-	list<dcp::VerificationNote> notes = dcp::verify (directories, &stage, &progress, xsd_test);
-	for (list<dcp::VerificationNote>::iterator i = notes.begin(); i != notes.end(); ) {
-		list<dcp::VerificationNote>::iterator tmp = i;
-		++tmp;
-		if (i->code() == dcp::VerificationNote::NOT_SMPTE) {
-			notes.erase (i);
-		}
-		i = tmp;
-	}
-	dump_notes (notes);
-	BOOST_CHECK (notes.empty());
+	auto notes = dcp::verify (directories, &stage, &progress, xsd_test);
+	vector<dcp::VerificationNote> filtered_notes;
+	std::copy_if (notes.begin(), notes.end(), std::back_inserter(filtered_notes), [](dcp::VerificationNote const& i) {
+		return i.code() != dcp::VerificationNote::NOT_SMPTE;
+	});
+	dump_notes (filtered_notes);
+	BOOST_CHECK (filtered_notes.empty());
 }
 
 
 template <class T>
 shared_ptr<T>
-pointer_to_id_in_list (shared_ptr<T> needle, list<shared_ptr<T> > haystack)
+pointer_to_id_in_vector (shared_ptr<T> needle, vector<shared_ptr<T> > haystack)
 {
 	BOOST_FOREACH (shared_ptr<T> i, haystack) {
 		if (i->id() == needle->id()) {
@@ -138,11 +134,11 @@ check_combined (vector<boost::filesystem::path> inputs, boost::filesystem::path 
 		BOOST_REQUIRE (input_dcp.cpls().size() == 1);
 		shared_ptr<dcp::CPL> input_cpl = input_dcp.cpls().front();
 
-		shared_ptr<dcp::CPL> output_cpl = pointer_to_id_in_list (input_cpl, output_dcp.cpls());
+		shared_ptr<dcp::CPL> output_cpl = pointer_to_id_in_vector (input_cpl, output_dcp.cpls());
 		BOOST_REQUIRE (output_cpl);
 
 		BOOST_FOREACH (shared_ptr<dcp::Asset> i, input_dcp.assets(true)) {
-			shared_ptr<dcp::Asset> o = pointer_to_id_in_list(i, output_dcp.assets());
+			shared_ptr<dcp::Asset> o = pointer_to_id_in_vector(i, output_dcp.assets());
 			BOOST_REQUIRE_MESSAGE (o, "Could not find " << i->id() << " in combined DCP.");
 			BOOST_CHECK (i->equals(o, options, note_handler));
 		}

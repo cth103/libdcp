@@ -105,10 +105,10 @@ DCP::DCP (boost::filesystem::path directory)
  *
  *  Errors that are not fatal will be added to notes, if it's non-0.  For example,
  *  if the DCP contains a mixture of Interop and SMPTE elements this will result
- *  in a note being added to the list.
+ *  in a note being added to the vector.
  */
 void
-DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf_type)
+DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf_type)
 {
 	/* Read the ASSETMAP and PKL */
 
@@ -133,7 +133,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 
 	auto asset_nodes = asset_map.node_child("AssetList")->node_children ("Asset");
 	map<string, boost::filesystem::path> paths;
-	list<boost::filesystem::path> pkl_paths;
+	vector<boost::filesystem::path> pkl_paths;
 	for (auto i: asset_nodes) {
 		if (i->node_child("ChunkList")->node_children("Chunk").size() != 1) {
 			boost::throw_exception (XMLError ("unsupported asset chunk count"));
@@ -181,7 +181,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 	/* Make a list of non-CPL/PKL assets so that we can resolve the references
 	   from the CPLs.
 	*/
-	list<shared_ptr<Asset>> other_assets;
+	vector<shared_ptr<Asset>> other_assets;
 
 	for (auto i: paths) {
 		auto path = _directory / i.second;
@@ -276,7 +276,7 @@ DCP::read (list<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf
 }
 
 void
-DCP::resolve_refs (list<shared_ptr<Asset>> assets)
+DCP::resolve_refs (vector<shared_ptr<Asset>> assets)
 {
 	for (auto i: cpls()) {
 		i->resolve_refs (assets);
@@ -498,7 +498,7 @@ DCP::write_xml (
 	write_assetmap (standard, pkl->id(), pkl_path, issuer, creator, issue_date, annotation_text);
 }
 
-list<shared_ptr<CPL>>
+vector<shared_ptr<CPL>>
 DCP::cpls () const
 {
 	return _cpls;
@@ -508,10 +508,10 @@ DCP::cpls () const
  *  an exception is thrown if they are found.
  *  @return All assets (including CPLs).
  */
-list<shared_ptr<Asset>>
+vector<shared_ptr<Asset>>
 DCP::assets (bool ignore_unresolved) const
 {
-	list<shared_ptr<Asset>> assets;
+	vector<shared_ptr<Asset>> assets;
 	for (auto i: cpls()) {
 		assets.push_back (i);
 		for (auto j: i->reel_mxfs()) {

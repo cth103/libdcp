@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test1)
 	BOOST_CHECK (cpl.main_picture_stored_area().get() == dcp::Size(1998, 1080));
 	BOOST_CHECK (cpl.main_picture_active_area().get() == dcp::Size(1440, 1080));
 
-	list<shared_ptr<dcp::Reel> > reels = cpl.reels ();
+	auto reels = cpl.reels ();
 	BOOST_REQUIRE_EQUAL (reels.size(), 1);
 	BOOST_REQUIRE (reels.front()->main_subtitle()->language());
 	BOOST_CHECK_EQUAL (reels.front()->main_subtitle()->language().get(), "de-DE");
@@ -312,7 +312,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test1.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_write_test1.xml"),
-		list<string>()
+		vector<string>()
 		);
 }
 
@@ -322,7 +322,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_roundtrip_test_1)
 {
 	dcp::CPL cpl ("test/ref/cpl_metadata_test1.xml");
 	cpl.write_xml ("build/test/cpl_metadata_roundtrip_test1.xml", dcp::SMPTE, shared_ptr<dcp::CertificateChain>());
-	list<string> ignore;
+	vector<string> ignore;
 	ignore.push_back ("Id");
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test1.xml"),
@@ -363,7 +363,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test2)
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test2.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_write_test2.xml"),
-		list<string>()
+		vector<string>()
 		);
 }
 
@@ -403,7 +403,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test2)
 	BOOST_CHECK (cpl.main_picture_stored_area().get() == dcp::Size(1998, 1080));
 	BOOST_CHECK (cpl.main_picture_active_area().get() == dcp::Size(1440, 1080));
 
-	list<shared_ptr<dcp::Reel> > reels = cpl.reels ();
+	auto reels = cpl.reels ();
 	BOOST_REQUIRE_EQUAL (reels.size(), 1);
 }
 
@@ -413,7 +413,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_roundtrip_test_2)
 {
 	dcp::CPL cpl ("test/ref/cpl_metadata_test2.xml");
 	cpl.write_xml ("build/test/cpl_metadata_roundtrip_test2.xml", dcp::SMPTE, shared_ptr<dcp::CertificateChain>());
-	list<string> ignore;
+	vector<string> ignore;
 	ignore.push_back ("Id");
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test2.xml"),

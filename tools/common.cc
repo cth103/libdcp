@@ -34,22 +34,21 @@
 #include "common.h"
 #include "dcp.h"
 
-using std::list;
-using std::shared_ptr;
 using std::dynamic_pointer_cast;
+using std::shared_ptr;
+using std::vector;
 
 void
-dcp::filter_notes (list<dcp::VerificationNote>& notes, bool ignore_missing_assets)
+dcp::filter_notes (vector<dcp::VerificationNote>& notes, bool ignore_missing_assets)
 {
-	for (list<dcp::VerificationNote>::iterator i = notes.begin(); i != notes.end(); ) {
-
-		list<dcp::VerificationNote>::iterator tmp = i;
-		++tmp;
-
-		if (ignore_missing_assets && (i->code() == dcp::VerificationNote::MISSING_ASSET || i->code() == dcp::VerificationNote::EXTERNAL_ASSET)) {
-			notes.erase (i);
-		}
-
-		i = tmp;
+	if (!ignore_missing_assets) {
+		return;
 	}
+
+	vector<dcp::VerificationNote> filtered;
+	std::copy_if (notes.begin(), notes.end(), std::back_inserter(filtered), [](dcp::VerificationNote const& i) {
+		return i.code() != dcp::VerificationNote::MISSING_ASSET && i.code() != dcp::VerificationNote::EXTERNAL_ASSET;
+	});
+
+	notes = filtered;
 }

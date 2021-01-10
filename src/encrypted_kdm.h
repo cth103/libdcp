@@ -84,7 +84,7 @@ public:
 	 *  Note that the returned `keys' contain more than just the asset decryption
 	 *  keys (also key id, CPL id etc.)
 	 */
-	std::list<std::string> keys () const;
+	std::vector<std::string> keys () const;
 
 	std::string id () const;
 	boost::optional<std::string> annotation_text () const;
@@ -113,8 +113,8 @@ private:
 		Formulation formulation,
 		bool disable_forensic_marking_picture,
 		boost::optional<int> disable_forensic_marking_audio,
-		std::list<std::pair<std::string, std::string> > key_ids,
-		std::list<std::string> keys
+		std::vector<std::pair<std::string, std::string>> key_ids,
+		std::vector<std::string> keys
 		);
 
 	data::EncryptedKDMData* _data;

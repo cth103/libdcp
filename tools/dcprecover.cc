@@ -45,8 +45,8 @@
 using std::cerr;
 using std::cout;
 using std::string;
-using std::list;
 using std::shared_ptr;
+using std::vector;
 using boost::optional;
 
 static void
@@ -102,7 +102,7 @@ main (int argc, char* argv[])
 	/* Try to read it and report errors */
 
 	dcp::DCP dcp (dcp_dir);
-	list<dcp::VerificationNote> notes;
+	vector<dcp::VerificationNote> notes;
 	try {
 		dcp.read (&notes, true);
 	} catch (dcp::ReadError& e) {
@@ -137,7 +137,7 @@ main (int argc, char* argv[])
 		}
 
 		/* Read all MXF assets */
-		list<shared_ptr<dcp::Asset> > assets;
+		vector<shared_ptr<dcp::Asset>> assets;
 		for (boost::filesystem::directory_iterator i(dcp_dir); i != boost::filesystem::directory_iterator(); ++i) {
 			if (i->path().extension() == ".mxf") {
 				try {

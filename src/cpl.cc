@@ -487,10 +487,10 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 }
 
 
-list<shared_ptr<ReelMXF>>
+vector<shared_ptr<ReelMXF>>
 CPL::reel_mxfs ()
 {
-	list<shared_ptr<ReelMXF>> c;
+	vector<shared_ptr<ReelMXF>> c;
 
 	for (auto i: _reels) {
 		if (i->main_picture ()) {
@@ -513,10 +513,10 @@ CPL::reel_mxfs ()
 	return c;
 }
 
-list<shared_ptr<const ReelMXF>>
+vector<shared_ptr<const ReelMXF>>
 CPL::reel_mxfs () const
 {
-	list<shared_ptr<const ReelMXF>> c;
+	vector<shared_ptr<const ReelMXF>> c;
 
 	for (auto i: _reels) {
 		if (i->main_picture ()) {
@@ -603,7 +603,7 @@ CPL::add (DecryptedKDM const & kdm)
 }
 
 void
-CPL::resolve_refs (list<shared_ptr<Asset>> assets)
+CPL::resolve_refs (vector<shared_ptr<Asset>> assets)
 {
 	for (auto i: _reels) {
 		i->resolve_refs (assets);

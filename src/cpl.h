@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -50,7 +50,6 @@
 #include <boost/function.hpp>
 #include <boost/optional.hpp>
 #include <memory>
-#include <list>
 #include <vector>
 
 
@@ -86,13 +85,13 @@ public:
 	void add (DecryptedKDM const &);
 
 	/** @return the reels in this CPL */
-	std::list<std::shared_ptr<Reel> > reels () const {
+	std::vector<std::shared_ptr<Reel>> reels () const {
 		return _reels;
 	}
 
 	/** @return the ReelMXFs in this CPL in all reels */
-	std::list<std::shared_ptr<const ReelMXF> > reel_mxfs () const;
-	std::list<std::shared_ptr<ReelMXF> > reel_mxfs ();
+	std::vector<std::shared_ptr<const ReelMXF>> reel_mxfs () const;
+	std::vector<std::shared_ptr<ReelMXF>> reel_mxfs ();
 
 	bool encrypted () const;
 
@@ -102,7 +101,7 @@ public:
 		std::shared_ptr<const CertificateChain>
 		) const;
 
-	void resolve_refs (std::list<std::shared_ptr<Asset> >);
+	void resolve_refs (std::vector<std::shared_ptr<Asset>>);
 
 	int64_t duration () const;
 
@@ -316,7 +315,7 @@ private:
 	/* See note for _release_territory above */
 	std::vector<std::string> _additional_subtitle_languages;
 
-	std::list<std::shared_ptr<Reel> > _reels;
+	std::vector<std::shared_ptr<Reel>> _reels;
 
 	/** Standard of CPL that was read in */
 	boost::optional<Standard> _standard;

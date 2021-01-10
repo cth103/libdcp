@@ -109,10 +109,10 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	/* Check that the decrypted KDMKeys are the same as the ones we started with */
 	BOOST_CHECK_EQUAL (kdm_A.keys().size(), kdm_B.keys().size());
-	list<dcp::DecryptedKDMKey> keys_A = kdm_A.keys ();
-	list<dcp::DecryptedKDMKey> keys_B = kdm_B.keys ();
-	list<dcp::DecryptedKDMKey>::const_iterator i = keys_A.begin();
-	list<dcp::DecryptedKDMKey>::const_iterator j = keys_B.begin();
+	auto keys_A = kdm_A.keys ();
+	auto keys_B = kdm_B.keys ();
+	auto i = keys_A.begin();
+	auto j = keys_B.begin();
 	while (i != keys_A.end ()) {
 		BOOST_CHECK (*i == *j);
 		++i;

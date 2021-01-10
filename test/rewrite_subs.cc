@@ -61,14 +61,10 @@ main (int argc, char* argv[])
 		DCP* dcp = new DCP (argv[1]);
 		dcp->read ();
 
-		list<shared_ptr<CPL> > cpls = dcp->cpls ();
-		for (list<std::shared_ptr<CPL> >::iterator i = cpls.begin(); i != cpls.end(); ++i) {
-
-			list<shared_ptr<Reel> > reels = (*i)->reels ();
-			for (list<shared_ptr<Reel> >::iterator j = reels.begin(); j != reels.end(); ++j) {
-
-				if ((*j)->main_subtitle()) {
-					(*j)->main_subtitle()->asset()->write ((*j)->main_subtitle()->asset()->file().get());
+		for (auto i: dcp->cpls()) {
+			for (auto j: i->reels()) {
+				if (j->main_subtitle()) {
+					j->main_subtitle()->asset()->write(j->main_subtitle()->asset()->file().get());
 				}
 			}
 		}

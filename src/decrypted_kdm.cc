@@ -320,8 +320,8 @@ DecryptedKDM::encrypt (
 		}
 	}
 
-	list<pair<string, string> > key_ids;
-	list<string> keys;
+	vector<pair<string, string>> key_ids;
+	vector<string> keys;
 	BOOST_FOREACH (DecryptedKDMKey const & i, _keys) {
 		/* We're making SMPTE keys so we must have a type for each one */
 		DCP_ASSERT (i.type());

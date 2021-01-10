@@ -91,7 +91,7 @@ public:
 	 *  as stereoscopic if the monoscopic load fails; fixes problems some 3D DCPs that (I think)
 	 *  have an incorrect descriptor in their MXF.
 	 */
-	void read (std::list<VerificationNote>* notes = 0, bool ignore_incorrect_picture_mxf_type = false);
+	void read (std::vector<VerificationNote>* notes = 0, bool ignore_incorrect_picture_mxf_type = false);
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
@@ -103,8 +103,8 @@ public:
 
 	void add (std::shared_ptr<CPL> cpl);
 
-	std::list<std::shared_ptr<CPL> > cpls () const;
-	std::list<std::shared_ptr<Asset> > assets (bool ignore_unresolved = false) const;
+	std::vector<std::shared_ptr<CPL>> cpls () const;
+	std::vector<std::shared_ptr<Asset>> assets (bool ignore_unresolved = false) const;
 
 	bool encrypted () const;
 
@@ -120,7 +120,7 @@ public:
 		NameFormat name_format = NameFormat("%t")
 	);
 
-	void resolve_refs (std::list<std::shared_ptr<Asset> > assets);
+	void resolve_refs (std::vector<std::shared_ptr<Asset>> assets);
 
 	/** @return Standard of a DCP that was read in */
 	boost::optional<Standard> standard () const {
@@ -132,9 +132,9 @@ public:
 	}
 
 	/** @return PKLs if this DCP was read from an existing one, or if write_xml() has been called on it.
-	 *  If neither is true, this method returns an empty list.
+	 *  If neither is true, this method returns an empty vector.
 	 */
-	std::list<std::shared_ptr<PKL> > pkls () const {
+	std::vector<std::shared_ptr<PKL>> pkls () const {
 		return _pkls;
 	}
 
@@ -160,9 +160,9 @@ private:
 	/** The directory that we are writing to */
 	boost::filesystem::path _directory;
 	/** The CPLs that make up this DCP */
-	std::list<std::shared_ptr<CPL> > _cpls;
+	std::vector<std::shared_ptr<CPL>> _cpls;
 	/** The PKLs that make up this DCP */
-	std::list<std::shared_ptr<PKL> > _pkls;
+	std::vector<std::shared_ptr<PKL>> _pkls;
 	/** File that the ASSETMAP was read from or last written to */
 	mutable boost::optional<boost::filesystem::path> _asset_map;
 

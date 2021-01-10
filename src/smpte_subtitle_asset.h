@@ -73,7 +73,7 @@ public:
 		NoteHandler note
 		) const;
 
-	std::list<std::shared_ptr<LoadFontNode> > load_font_nodes () const;
+	std::vector<std::shared_ptr<LoadFontNode>> load_font_nodes () const;
 
 	std::string xml_as_string () const;
 	void write (boost::filesystem::path path) const;
@@ -199,7 +199,7 @@ private:
 	int _time_code_rate;
 	boost::optional<Time> _start_time;
 
-	std::list<std::shared_ptr<SMPTELoadFontNode> > _load_font_nodes;
+	std::vector<std::shared_ptr<SMPTELoadFontNode>> _load_font_nodes;
 	/** UUID for the XML inside the MXF, which should be different to the ID of the MXF according to
 	 *  Doremi's 2.8.18 release notes.
 	 */

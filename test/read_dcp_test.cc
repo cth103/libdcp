@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE (read_dcp_test1)
 	dcp::DCP d ("test/ref/DCP/dcp_test1");
 	d.read ();
 
-	list<shared_ptr<dcp::CPL> > cpls = d.cpls ();
+	auto cpls = d.cpls ();
 	BOOST_CHECK_EQUAL (cpls.size(), 1);
 
 	BOOST_CHECK_EQUAL (cpls.front()->annotation_text(), "A Test DCP");
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE (read_dcp_test2)
 	dcp::DCP d ("test/ref/DCP/dcp_test3");
 	d.read ();
 
-	list<shared_ptr<dcp::CPL> > cpls = d.cpls ();
+	auto cpls = d.cpls ();
 	BOOST_CHECK_EQUAL (cpls.size(), 1);
 
 	BOOST_CHECK_EQUAL (cpls.front()->annotation_text(), "Test_FTR-1_F-119_10_2K_20160524_IOP_OV");

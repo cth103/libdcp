@@ -21,6 +21,6 @@
 
 namespace dcp {
 
-extern void filter_notes (std::list<dcp::VerificationNote>& notes, bool ignore_missing_assets);
+extern void filter_notes (std::vector<dcp::VerificationNote>& notes, bool ignore_missing_assets);
 
 }

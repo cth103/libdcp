@@ -69,7 +69,6 @@
 #include <boost/noncopyable.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
-#include <list>
 #include <vector>
 #include <iostream>
 
@@ -271,7 +270,7 @@ parse (XercesDOMParser& parser, std::string xml)
 
 template <class T>
 void
-validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, list<VerificationNote>& notes)
+validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, vector<VerificationNote>& notes)
 {
 	try {
 		XMLPlatformUtils::Initialize ();
@@ -396,7 +395,7 @@ verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelMXF> reel_mxf, fun
 
 
 void
-verify_language_tag (string tag, list<VerificationNote>& notes)
+verify_language_tag (string tag, vector<VerificationNote>& notes)
 {
 	try {
 		dcp::LanguageTag test (tag);
@@ -476,7 +475,7 @@ verify_main_picture_asset (
 	shared_ptr<const ReelPictureAsset> reel_asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	function<void (float)> progress,
-	list<VerificationNote>& notes
+	vector<VerificationNote>& notes
 	)
 {
 	auto asset = reel_asset->asset();
@@ -588,7 +587,7 @@ verify_main_sound_asset (
 	shared_ptr<const ReelSoundAsset> reel_asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	function<void (float)> progress,
-	list<VerificationNote>& notes
+	vector<VerificationNote>& notes
 	)
 {
 	auto asset = reel_asset->asset();
@@ -620,7 +619,7 @@ verify_main_sound_asset (
 
 
 static void
-verify_main_subtitle_reel (shared_ptr<const ReelSubtitleAsset> reel_asset, list<VerificationNote>& notes)
+verify_main_subtitle_reel (shared_ptr<const ReelSubtitleAsset> reel_asset, vector<VerificationNote>& notes)
 {
 	/* XXX: is Language compulsory? */
 	if (reel_asset->language()) {
@@ -630,7 +629,7 @@ verify_main_subtitle_reel (shared_ptr<const ReelSubtitleAsset> reel_asset, list<
 
 
 static void
-verify_closed_caption_reel (shared_ptr<const ReelClosedCaptionAsset> reel_asset, list<VerificationNote>& notes)
+verify_closed_caption_reel (shared_ptr<const ReelClosedCaptionAsset> reel_asset, vector<VerificationNote>& notes)
 {
 	/* XXX: is Language compulsory? */
 	if (reel_asset->language()) {
@@ -650,7 +649,7 @@ verify_subtitle_asset (
 	shared_ptr<const SubtitleAsset> asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
-	list<VerificationNote>& notes,
+	vector<VerificationNote>& notes,
 	State& state,
 	bool first_reel
 	)
@@ -719,7 +718,7 @@ verify_subtitle_asset (
 
 		if (first_reel) {
 			auto subs = smpte->subtitles();
-			subs.sort ([](shared_ptr<Subtitle> a, shared_ptr<Subtitle> b) {
+			sort (subs.begin(), subs.end(), [](shared_ptr<Subtitle> a, shared_ptr<Subtitle> b) {
 				return a->in() < b->in();
 			});
 			if (!subs.empty() && subs.front()->in() < dcp::Time(0, 0, 4, 0, 24)) {
@@ -739,7 +738,7 @@ verify_closed_caption_asset (
 	shared_ptr<const SubtitleAsset> asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
-	list<VerificationNote>& notes,
+	vector<VerificationNote>& notes,
 	State& state,
 	bool first_reel
 	)
@@ -756,7 +755,7 @@ verify_closed_caption_asset (
 }
 
 
-list<VerificationNote>
+vector<VerificationNote>
 dcp::verify (
 	vector<boost::filesystem::path> directories,
 	function<void (string, optional<boost::filesystem::path>)> stage,
@@ -766,10 +765,10 @@ dcp::verify (
 {
 	xsd_dtd_directory = boost::filesystem::canonical (xsd_dtd_directory);
 
-	list<VerificationNote> notes;
+	vector<VerificationNote> notes;
 	State state;
 
-	list<shared_ptr<DCP>> dcps;
+	vector<shared_ptr<DCP>> dcps;
 	for (auto i: directories) {
 		dcps.push_back (shared_ptr<DCP> (new DCP (i)));
 	}

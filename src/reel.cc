@@ -59,12 +59,12 @@
 #endif
 
 using std::string;
-using std::list;
 using std::cout;
 using std::min;
 using std::make_shared;
 using std::shared_ptr;
 using std::dynamic_pointer_cast;
+using std::vector;
 using namespace dcp;
 
 Reel::Reel (std::shared_ptr<const cxml::Node> node)
@@ -297,10 +297,10 @@ Reel::add (shared_ptr<ReelAsset> asset)
 	}
 }
 
-list<shared_ptr<ReelAsset>>
+vector<shared_ptr<ReelAsset>>
 Reel::assets () const
 {
-	list<shared_ptr<ReelAsset>> a;
+	vector<shared_ptr<ReelAsset>> a;
 	if (_main_picture) {
 		a.push_back (_main_picture);
 	}
@@ -318,7 +318,7 @@ Reel::assets () const
 }
 
 void
-Reel::resolve_refs (list<shared_ptr<Asset>> assets)
+Reel::resolve_refs (vector<shared_ptr<Asset>> assets)
 {
 	if (_main_picture) {
 		_main_picture->asset_ref().resolve (assets);

@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test)
 	BOOST_CHECK_EQUAL (sc.edit_rate(), dcp::Fraction (25, 1));
 	BOOST_CHECK_EQUAL (sc.time_code_rate(), 25);
 	BOOST_CHECK_EQUAL (sc.start_time(), dcp::Time (0, 0, 0, 0, 25));
-	list<shared_ptr<dcp::LoadFontNode> > lfn = sc.load_font_nodes ();
+	auto lfn = sc.load_font_nodes ();
 	BOOST_REQUIRE_EQUAL (lfn.size(), 1);
 	shared_ptr<dcp::SMPTELoadFontNode> smpte_lfn = dynamic_pointer_cast<dcp::SMPTELoadFontNode> (lfn.front ());
 	BOOST_REQUIRE (smpte_lfn);
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test2)
 	dcp::SMPTESubtitleAsset sc (private_test / "olsson.xml");
 
 	BOOST_REQUIRE_EQUAL (sc.subtitles().size(), 6);
-	list<shared_ptr<dcp::Subtitle> >::const_iterator i = sc.subtitles().begin();
+	auto i = sc.subtitles().begin();
 	shared_ptr<dcp::SubtitleString> is = dynamic_pointer_cast<dcp::SubtitleString>(*i);
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), "Testing is ");

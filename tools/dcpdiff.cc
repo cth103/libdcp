@@ -48,6 +48,7 @@ using std::cerr;
 using std::cout;
 using std::string;
 using std::shared_ptr;
+using std::vector;
 using boost::optional;
 using std::dynamic_pointer_cast;
 #if BOOST_VERSION >= 106100
@@ -95,7 +96,7 @@ load_dcp (boost::filesystem::path path, bool ignore_missing_assets, optional<str
 	DCP* dcp = 0;
 	try {
 		dcp = new DCP (path);
-		list<dcp::VerificationNote> notes;
+		vector<dcp::VerificationNote> notes;
 		dcp->read (&notes);
 		filter_notes (notes, ignore_missing_assets);
 		BOOST_FOREACH (dcp::VerificationNote i, notes) {
@@ -103,9 +104,9 @@ load_dcp (boost::filesystem::path path, bool ignore_missing_assets, optional<str
 		}
 
 		if (key) {
-			list<shared_ptr<Asset> > assets = dcp->assets ();
-			for (list<shared_ptr<Asset> >::const_iterator i = assets.begin(); i != assets.end(); ++i) {
-				shared_ptr<MXF> mxf = dynamic_pointer_cast<MXF> (*i);
+			auto assets = dcp->assets ();
+			for (auto i: assets) {
+				shared_ptr<MXF> mxf = dynamic_pointer_cast<MXF>(i);
 				if (mxf) {
 					mxf->set_key (Key (key.get ()));
 				}

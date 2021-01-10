@@ -38,7 +38,7 @@
 
 using std::ifstream;
 using std::string;
-using std::list;
+using std::vector;
 
 /** Test dcp::base64_decode */
 BOOST_AUTO_TEST_CASE (base64_decode_test)
@@ -266,7 +266,7 @@ BOOST_AUTO_TEST_CASE (day_greater_than_or_equal_test)
 
 BOOST_AUTO_TEST_CASE (unique_string_test)
 {
-	list<string> existing;
+	vector<string> existing;
 	for (int i = 0; i < 16; i++) {
 		string s;
 		BOOST_CHECK_NO_THROW (s = dcp::unique_string(existing, "foo"));

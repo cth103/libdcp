@@ -103,7 +103,7 @@ private:
 	std::string _issue_date;
 	std::string _issuer;
 	std::string _creator;
-	std::list<std::shared_ptr<Asset> > _asset_list;
+	std::vector<std::shared_ptr<Asset>> _asset_list;
 	/** The most recent disk file used to read or write this PKL */
 	mutable boost::optional<boost::filesystem::path> _file;
 };

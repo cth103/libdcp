@@ -54,8 +54,8 @@ namespace dcp {
  *  which represents the thing.
  *
  *  If the Ref does not have a shared_ptr it may be given one by
- *  calling resolve() with a list of assets.  The shared_ptr will be
- *  set up using any object on the list which has a matching ID.
+ *  calling resolve() with a vector of assets.  The shared_ptr will be
+ *  set up using any object on the vector which has a matching ID.
  */
 class Ref
 {
@@ -77,7 +77,7 @@ public:
 		_id = id;
 	}
 
-	void resolve (std::list<std::shared_ptr<Asset> > assets);
+	void resolve (std::vector<std::shared_ptr<Asset>> assets);
 
 	/** @return the ID of the thing that we are pointing to */
 	std::string id () const {

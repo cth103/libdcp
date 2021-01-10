@@ -58,21 +58,21 @@ main ()
 	}
 
 	std::cout << "DCP has " << dcp.cpls().size() << " CPLs.\n";
-	std::list<std::shared_ptr<dcp::Asset> > assets = dcp.assets ();
+	auto assets = dcp.assets ();
 	std::cout << "DCP has " << assets.size() << " assets.\n";
-	for (std::list<std::shared_ptr<dcp::Asset> >::const_iterator i = assets.begin(); i != assets.end(); ++i) {
-		if (std::dynamic_pointer_cast<dcp::MonoPictureAsset> (*i)) {
+	for (auto i: assets) {
+		if (std::dynamic_pointer_cast<dcp::MonoPictureAsset>(i)) {
 			std::cout << "2D picture\n";
-		} else if (std::dynamic_pointer_cast<dcp::StereoPictureAsset> (*i)) {
+		} else if (std::dynamic_pointer_cast<dcp::StereoPictureAsset>(i)) {
 			std::cout << "3D picture\n";
-		} else if (std::dynamic_pointer_cast<dcp::SoundAsset> (*i)) {
+		} else if (std::dynamic_pointer_cast<dcp::SoundAsset>(i)) {
 			std::cout << "Sound\n";
-		} else if (std::dynamic_pointer_cast<dcp::SubtitleAsset> (*i)) {
+		} else if (std::dynamic_pointer_cast<dcp::SubtitleAsset>(i)) {
 			std::cout << "Subtitle\n";
-		} else if (std::dynamic_pointer_cast<dcp::CPL> (*i)) {
+		} else if (std::dynamic_pointer_cast<dcp::CPL>(i)) {
 			std::cout << "CPL\n";
 		}
-		std::cout << "\t" << (*i)->file()->leaf().string() << "\n";
+		std::cout << "\t" << i->file()->leaf().string() << "\n";
 	}
 
 	/* Take the first CPL */

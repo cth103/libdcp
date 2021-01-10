@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -39,7 +39,6 @@
 #include "ref.h"
 #include <memory>
 #include <boost/function.hpp>
-#include <list>
 
 namespace cxml {
 	class Node;
@@ -99,7 +98,7 @@ public:
 		return _main_markers;
 	}
 
-	std::list<std::shared_ptr<ReelClosedCaptionAsset> > closed_captions () const {
+	std::vector<std::shared_ptr<ReelClosedCaptionAsset>> closed_captions () const {
 		return _closed_captions;
 	}
 
@@ -111,7 +110,7 @@ public:
 
 	void add (std::shared_ptr<ReelAsset> asset);
 
-	std::list<std::shared_ptr<ReelAsset> > assets () const;
+	std::vector<std::shared_ptr<ReelAsset>> assets () const;
 
 	xmlpp::Element* write_to_cpl (xmlpp::Element* node, Standard standard) const;
 
@@ -121,14 +120,14 @@ public:
 
 	void add (DecryptedKDM const &);
 
-	void resolve_refs (std::list<std::shared_ptr<Asset> >);
+	void resolve_refs (std::vector<std::shared_ptr<Asset>>);
 
 private:
 	std::shared_ptr<ReelPictureAsset> _main_picture;
 	std::shared_ptr<ReelSoundAsset> _main_sound;
 	std::shared_ptr<ReelSubtitleAsset> _main_subtitle;
 	std::shared_ptr<ReelMarkersAsset> _main_markers;
-	std::list<std::shared_ptr<ReelClosedCaptionAsset> > _closed_captions;
+	std::vector<std::shared_ptr<ReelClosedCaptionAsset>> _closed_captions;
 	std::shared_ptr<ReelAtmosAsset> _atmos;
 };
 

@@ -65,7 +65,6 @@
 
 using std::string;
 using std::min;
-using std::list;
 using std::vector;
 using std::shared_ptr;
 using boost::optional;
@@ -95,7 +94,7 @@ struct TestConfig
 };
 
 void
-check_xml (xmlpp::Element* ref, xmlpp::Element* test, list<string> ignore_tags, bool ignore_whitespace)
+check_xml (xmlpp::Element* ref, xmlpp::Element* test, vector<string> ignore_tags, bool ignore_whitespace)
 {
 	BOOST_CHECK_EQUAL (ref->get_name (), test->get_name ());
 	BOOST_CHECK_EQUAL (ref->get_namespace_prefix (), test->get_namespace_prefix ());
@@ -183,7 +182,7 @@ check_xml (xmlpp::Element* ref, xmlpp::Element* test, list<string> ignore_tags, 
 }
 
 void
-check_xml (string ref, string test, list<string> ignore, bool ignore_whitespace)
+check_xml (string ref, string test, vector<string> ignore, bool ignore_whitespace)
 {
 	xmlpp::DomParser* ref_parser = new xmlpp::DomParser ();
 	ref_parser->parse_memory (ref);

@@ -198,7 +198,7 @@ public:
 
 	SignedInfo signed_info;
 	string signature_value;
-	list<X509Data> x509_data;
+	vector<X509Data> x509_data;
 };
 
 class AuthenticatedPrivate
@@ -232,7 +232,7 @@ public:
 		}
 	}
 
-	list<string> encrypted_key;
+	vector<string> encrypted_key;
 };
 
 class TypedKeyId
@@ -288,7 +288,7 @@ public:
 		}
 	}
 
-	list<TypedKeyId> typed_key_id;
+	vector<TypedKeyId> typed_key_id;
 };
 
 class AuthorizedDeviceInfo
@@ -320,7 +320,7 @@ public:
 	/** DeviceListIdentifier without the urn:uuid: prefix */
 	string device_list_identifier;
 	boost::optional<string> device_list_description;
-	std::list<string> certificate_thumbprints;
+	std::vector<string> certificate_thumbprints;
 };
 
 class X509IssuerSerial
@@ -586,8 +586,8 @@ EncryptedKDM::EncryptedKDM (
 	Formulation formulation,
 	bool disable_forensic_marking_picture,
 	optional<int> disable_forensic_marking_audio,
-	list<pair<string, string> > key_ids,
-	list<string> keys
+	vector<pair<string, string>> key_ids,
+	vector<string> keys
 	)
 	: _data (new data::EncryptedKDMData)
 {
@@ -719,7 +719,7 @@ EncryptedKDM::as_xml () const
 	return _data->as_xml()->write_to_string ("UTF-8");
 }
 
-list<string>
+vector<string>
 EncryptedKDM::keys () const
 {
 	return _data->authenticated_private.encrypted_key;

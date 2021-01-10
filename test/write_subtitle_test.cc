@@ -44,10 +44,10 @@
 #include "util.h"
 #include <boost/test/unit_test.hpp>
 
-using std::list;
 using std::string;
-using boost::optional;
 using std::shared_ptr;
+using std::vector;
+using boost::optional;
 
 /** Test dcp::order::Font::take_intersection */
 BOOST_AUTO_TEST_CASE (take_intersection_test)
@@ -238,7 +238,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 		  "</Font>"
 		"</DCSubtitle>",
 		c.xml_as_string (),
-		list<string> ()
+		vector<string>()
 		);
 }
 
@@ -324,7 +324,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 		  "</Font>"
 		"</DCSubtitle>",
 		c.xml_as_string (),
-		list<string> ()
+		vector<string>()
 		);
 }
 
@@ -385,20 +385,20 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 	check_xml (
 		dcp::file_to_string("test/ref/write_interop_subtitle_test3/subs.xml"),
 		dcp::file_to_string("build/test/write_interop_subtitle_test3/subs.xml"),
-		list<string>()
+		vector<string>()
 		);
 	check_file ("build/test/write_interop_subtitle_test3/d36f4bb3-c4fa-4a95-9915-6fec3110cd71.png", "test/data/sub.png");
 
 	check_xml (
 		dcp::file_to_string("test/ref/write_interop_subtitle_test3/ASSETMAP"),
 		dcp::file_to_string("build/test/write_interop_subtitle_test3/ASSETMAP"),
-		list<string>()
+		vector<string>()
 		);
 
 	check_xml (
 		dcp::file_to_string("test/ref/write_interop_subtitle_test3/pkl.xml"),
 		dcp::file_to_string("build/test/write_interop_subtitle_test3/pkl_6a9e31a6-50a4-4ecb-8683-fa667848470a.xml"),
-		list<string>()
+		vector<string>()
 		);
 }
 
@@ -489,7 +489,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 		  "</dcst:SubtitleList>"
 		"</dcst:SubtitleReel>",
 		c.xml_as_string (),
-		list<string> ()
+		vector<string>()
 		);
 }
 
@@ -690,7 +690,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 		    "</dcst:Font>"
 		  "</dcst:SubtitleList>"
 		"</dcst:SubtitleReel>",
-		list<string> ()
+		vector<string>()
 		);
 }
 

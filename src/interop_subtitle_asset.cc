@@ -53,9 +53,10 @@ using std::cout;
 using std::cerr;
 using std::map;
 using std::shared_ptr;
+using std::dynamic_pointer_cast;
+using std::vector;
 using boost::shared_array;
 using boost::optional;
-using std::dynamic_pointer_cast;
 using namespace dcp;
 
 InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
@@ -73,7 +74,7 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 
 	/* Now we need to drop down to xmlpp */
 
-	list<ParseState> ps;
+	vector<ParseState> ps;
 	xmlpp::Node::NodeList c = xml->node()->get_children ();
 	for (xmlpp::Node::NodeList::const_iterator i = c.begin(); i != c.end(); ++i) {
 		xmlpp::Element const * e = dynamic_cast<xmlpp::Element const *> (*i);
@@ -107,10 +108,10 @@ InteropSubtitleAsset::xml_as_string () const
 	root->add_child("ReelNumber")->add_child_text (raw_convert<string> (_reel_number));
 	root->add_child("Language")->add_child_text (_language);
 
-	for (list<shared_ptr<InteropLoadFontNode> >::const_iterator i = _load_font_nodes.begin(); i != _load_font_nodes.end(); ++i) {
+	for (auto i: _load_font_nodes) {
 		xmlpp::Element* load_font = root->add_child("LoadFont");
-		load_font->set_attribute ("Id", (*i)->id);
-		load_font->set_attribute ("URI", (*i)->uri);
+		load_font->set_attribute ("Id", i->id);
+		load_font->set_attribute ("URI", i->uri);
 	}
 
 	subtitles_as_xml (root, 250, INTEROP);
@@ -139,8 +140,8 @@ InteropSubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptio
 	}
 
 	if (!options.load_font_nodes_can_differ) {
-		list<shared_ptr<InteropLoadFontNode> >::const_iterator i = _load_font_nodes.begin ();
-		list<shared_ptr<InteropLoadFontNode> >::const_iterator j = other->_load_font_nodes.begin ();
+		auto i = _load_font_nodes.begin();
+		auto j = other->_load_font_nodes.begin();
 
 		while (i != _load_font_nodes.end ()) {
 			if (j == other->_load_font_nodes.end ()) {
@@ -166,10 +167,10 @@ InteropSubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptio
 	return true;
 }
 
-list<shared_ptr<LoadFontNode> >
+vector<shared_ptr<LoadFontNode>>
 InteropSubtitleAsset::load_font_nodes () const
 {
-	list<shared_ptr<LoadFontNode> > lf;
+	vector<shared_ptr<LoadFontNode>> lf;
 	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter (lf));
 	return lf;
 }
@@ -201,7 +202,7 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 	/* Fonts */
 	BOOST_FOREACH (shared_ptr<InteropLoadFontNode> i, _load_font_nodes) {
 		boost::filesystem::path file = p.parent_path() / i->uri;
-		list<Font>::const_iterator j = _fonts.begin ();
+		auto j = _fonts.begin();
 		while (j != _fonts.end() && j->load_id != i->id) {
 			++j;
 		}
@@ -217,7 +218,7 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
  *  a list of font ID, load ID and data.
  */
 void
-InteropSubtitleAsset::resolve_fonts (list<shared_ptr<Asset> > assets)
+InteropSubtitleAsset::resolve_fonts (vector<shared_ptr<Asset>> assets)
 {
 	BOOST_FOREACH (shared_ptr<Asset> i, assets) {
 		shared_ptr<FontAsset> font = dynamic_pointer_cast<FontAsset> (i);
@@ -242,7 +243,7 @@ InteropSubtitleAsset::resolve_fonts (list<shared_ptr<Asset> > assets)
 }
 
 void
-InteropSubtitleAsset::add_font_assets (list<shared_ptr<Asset> >& assets)
+InteropSubtitleAsset::add_font_assets (vector<shared_ptr<Asset>>& assets)
 {
 	BOOST_FOREACH (Font const & i, _fonts) {
 		DCP_ASSERT (i.file);

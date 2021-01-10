@@ -362,7 +362,7 @@ CertificateChain::List
 CertificateChain::leaf_to_root () const
 {
 	List l = root_to_leaf ();
-	l.reverse ();
+	std::reverse (l.begin(), l.end());
 	return l;
 }
 
@@ -387,7 +387,10 @@ CertificateChain::add (Certificate c)
 void
 CertificateChain::remove (Certificate c)
 {
-	_certificates.remove (c);
+	auto i = std::find(_certificates.begin(), _certificates.end(), c);
+	if (i != _certificates.end()) {
+		_certificates.erase (i);
+	}
 }
 
 /** Remove the i'th certificate in the list, as listed
@@ -557,7 +560,7 @@ CertificateChain::List
 CertificateChain::root_to_leaf () const
 {
 	List rtl = _certificates;
-	rtl.sort ();
+	std::sort (rtl.begin(), rtl.end());
 	do {
 		if (chain_valid (rtl)) {
 			return rtl;
