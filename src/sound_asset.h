@@ -51,7 +51,7 @@ namespace dcp {
 }
 
 extern std::shared_ptr<dcp::SoundAsset> simple_sound (
-	boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language
+	boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language, int frames
 	);
 
 
@@ -106,7 +106,7 @@ public:
 private:
 	friend class SoundAssetWriter;
 	friend std::shared_ptr<dcp::SoundAsset> (::simple_sound) (
-		boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language
+		boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language, int frames
 		);
 
 	std::string pkl_type (Standard standard) const {

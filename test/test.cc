@@ -255,7 +255,7 @@ RNGFixer::~RNGFixer ()
 
 
 shared_ptr<dcp::MonoPictureAsset>
-simple_picture (boost::filesystem::path path, string suffix)
+simple_picture (boost::filesystem::path path, string suffix, int frames)
 {
 	dcp::MXFMetadata mxf_meta;
 	mxf_meta.company_name = "OpenDCP";
@@ -266,7 +266,7 @@ simple_picture (boost::filesystem::path path, string suffix)
 	mp->set_metadata (mxf_meta);
 	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write (path / dcp::String::compose("video%1.mxf", suffix), false);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
-	for (int i = 0; i < 24; ++i) {
+	for (int i = 0; i < frames; ++i) {
 		picture_writer->write (j2c.data (), j2c.size ());
 	}
 	picture_writer->finalize ();
@@ -276,39 +276,43 @@ simple_picture (boost::filesystem::path path, string suffix)
 
 
 shared_ptr<dcp::SoundAsset>
-simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_meta, string language)
+simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_meta, string language, int frames)
 {
+	int const sample_rate = 48000;
+	int const channels = 1;
+
 	/* Set a valid language, then overwrite it, so that the language parameter can be badly formed */
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-US"), dcp::SMPTE));
+	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), sample_rate, channels, dcp::LanguageTag("en-US"), dcp::SMPTE));
 	ms->_language = language;
 	ms->set_metadata (mxf_meta);
 	vector<dcp::Channel> active_channels;
 	active_channels.push_back (dcp::LEFT);
 	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / dcp::String::compose("audio%1.mxf", suffix), active_channels);
 
-	SF_INFO info;
-	info.format = 0;
-	SNDFILE* sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
-	BOOST_CHECK (sndfile);
-	float buffer[4096*6];
-	float* channels[1];
-	channels[0] = buffer;
-	while (true) {
-		sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
-		sound_writer->write (channels, N);
-		if (N < 4096) {
-			break;
-		}
+	int const samples_per_frame = 48000 / 24;
+
+	float* silence[channels];
+	for (auto i = 0; i < channels; ++i) {
+		silence[i] = new float[samples_per_frame];
+		memset (silence[i], 0, samples_per_frame * sizeof(float));
+	}
+
+	for (auto i = 0; i < frames; ++i) {
+		sound_writer->write (silence, samples_per_frame);
 	}
 
 	sound_writer->finalize ();
+
+	for (auto i = 0; i < channels; ++i) {
+		delete[] silence[i];
+	}
 
 	return ms;
 }
 
 
 shared_ptr<dcp::DCP>
-make_simple (boost::filesystem::path path, int reels)
+make_simple (boost::filesystem::path path, int reels, int frames)
 {
 	/* Some known metadata */
 	dcp::MXFMetadata mxf_meta;
@@ -331,8 +335,8 @@ make_simple (boost::filesystem::path path, int reels)
 	for (int i = 0; i < reels; ++i) {
 		string suffix = reels == 1 ? "" : dcp::String::compose("%1", i);
 
-		shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (path, suffix);
-		shared_ptr<dcp::SoundAsset> ms = simple_sound (path, suffix, mxf_meta, "en-US");
+		shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (path, suffix, frames);
+		shared_ptr<dcp::SoundAsset> ms = simple_sound (path, suffix, mxf_meta, "en-US", frames);
 
 		cpl->add (shared_ptr<dcp::Reel> (
 				  new dcp::Reel (
