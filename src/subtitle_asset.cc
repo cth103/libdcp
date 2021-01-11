@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -41,6 +41,7 @@
 #include "subtitle_image.h"
 #include "dcp_assert.h"
 #include "load_font_node.h"
+#include "reel_asset.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_util.h>
 #include <libxml++/nodes/element.h>
@@ -56,6 +57,7 @@ using std::cerr;
 using std::map;
 using std::shared_ptr;
 using std::vector;
+using std::make_shared;
 using boost::shared_array;
 using boost::optional;
 using boost::lexical_cast;
@@ -407,11 +409,23 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 	}
 }
 
-vector<shared_ptr<Subtitle>>
+
+vector<shared_ptr<const Subtitle>>
+SubtitleAsset::subtitles () const
+{
+	vector<shared_ptr<const Subtitle>> s;
+	for (auto i: _subtitles) {
+		s.push_back (i);
+	}
+	return s;
+}
+
+
+vector<shared_ptr<const Subtitle>>
 SubtitleAsset::subtitles_during (Time from, Time to, bool starting) const
 {
-	vector<shared_ptr<Subtitle> > s;
-	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
+	vector<shared_ptr<const Subtitle>> s;
+	for (auto i: _subtitles) {
 		if ((starting && from <= i->in() && i->in() < to) || (!starting && i->out() >= from && i->in() <= to)) {
 			s.push_back (i);
 		}
@@ -419,6 +433,27 @@ SubtitleAsset::subtitles_during (Time from, Time to, bool starting) const
 
 	return s;
 }
+
+
+/* XXX: this needs a test */
+vector<shared_ptr<const Subtitle>>
+SubtitleAsset::subtitles_in_reel (shared_ptr<const dcp::ReelAsset> asset) const
+{
+	auto frame_rate = asset->edit_rate().as_float();
+	auto start = dcp::Time(asset->entry_point().get_value_or(0), frame_rate, time_code_rate());
+	auto during = subtitles_during (start, start + dcp::Time(asset->intrinsic_duration(), frame_rate, time_code_rate()), false);
+
+	vector<shared_ptr<const dcp::Subtitle>> corrected;
+	for (auto i: during) {
+		auto c = make_shared<dcp::Subtitle>(*i);
+		c->set_in (c->in() - start);
+		c->set_out (c->out() - start);
+		corrected.push_back (c);
+	}
+
+	return corrected;
+}
+
 
 void
 SubtitleAsset::add (shared_ptr<Subtitle> s)

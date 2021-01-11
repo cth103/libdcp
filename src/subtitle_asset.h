@@ -62,6 +62,7 @@ class FontNode;
 class TextNode;
 class SubtitleNode;
 class LoadFontNode;
+class ReelAsset;
 
 namespace order {
 	class Part;
@@ -88,10 +89,9 @@ public:
 		NoteHandler note
 		) const;
 
-	std::vector<std::shared_ptr<Subtitle>> subtitles_during (Time from, Time to, bool starting) const;
-	std::vector<std::shared_ptr<Subtitle>> const & subtitles () const {
-		return _subtitles;
-	}
+	std::vector<std::shared_ptr<const Subtitle>> subtitles_during (Time from, Time to, bool starting) const;
+	std::vector<std::shared_ptr<const Subtitle>> subtitles_in_reel(std::shared_ptr<const dcp::ReelAsset> asset) const;
+	std::vector<std::shared_ptr<const Subtitle>> subtitles () const;
 
 	virtual void add (std::shared_ptr<Subtitle>);
 	virtual void add_font (std::string id, dcp::ArrayData data) = 0;
@@ -106,6 +106,8 @@ public:
 	void fix_empty_font_ids ();
 
 	virtual std::vector<std::shared_ptr<LoadFontNode>> load_font_nodes () const = 0;
+
+	virtual int time_code_rate () const = 0;
 
 	std::string raw_xml () const {
 		return _raw_xml;

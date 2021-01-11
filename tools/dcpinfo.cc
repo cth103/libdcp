@@ -259,14 +259,14 @@ main_subtitle (vector<string> const& only, shared_ptr<Reel> reel, bool list_subt
 			OUTPUT_SUBTITLE(" in %1\n", smpte->language().get());
 		}
 		if (list_subtitles) {
-			BOOST_FOREACH (shared_ptr<Subtitle> k, subs) {
-				shared_ptr<SubtitleString> ks = dynamic_pointer_cast<SubtitleString> (k);
+			for (auto k: subs) {
+				auto ks = dynamic_pointer_cast<const SubtitleString>(k);
 				if (ks) {
 					stringstream s;
 					s << *ks;
 					OUTPUT_SUBTITLE("%1\n", s.str());
 				}
-				shared_ptr<SubtitleImage> is = dynamic_pointer_cast<SubtitleImage> (k);
+				auto is = dynamic_pointer_cast<const SubtitleImage>(k);
 				if (is) {
 					stringstream s;
 					s << *is;
