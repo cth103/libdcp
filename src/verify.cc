@@ -835,6 +835,105 @@ check_text_timing (
 }
 
 
+struct LinesCharactersResult
+{
+	bool warning_length_exceeded = false;
+	bool error_length_exceeded = false;
+	bool line_count_exceeded = false;
+};
+
+
+static
+void
+check_text_lines_and_characters (
+	shared_ptr<SubtitleAsset> asset,
+	int warning_length,
+	int error_length,
+	LinesCharactersResult* result
+	)
+{
+	class Event
+	{
+	public:
+		Event (dcp::Time time_, float position_, int characters_)
+			: time (time_)
+			, position (position_)
+			, characters (characters_)
+		{}
+
+		Event (dcp::Time time_, shared_ptr<Event> start_)
+			: time (time_)
+			, start (start_)
+		{}
+
+		dcp::Time time;
+		int position; //< position from 0 at top of screen to 100 at bottom
+		int characters;
+		shared_ptr<Event> start;
+	};
+
+	vector<shared_ptr<Event>> events;
+
+	auto position = [](shared_ptr<const SubtitleString> sub) {
+		switch (sub->v_align()) {
+		case VALIGN_TOP:
+			return lrintf(sub->v_position() * 100);
+		case VALIGN_CENTER:
+			return lrintf((0.5f + sub->v_position()) * 100);
+		case VALIGN_BOTTOM:
+			return lrintf((1.0f - sub->v_position()) * 100);
+		}
+
+		return 0L;
+	};
+
+	for (auto j: asset->subtitles()) {
+		auto text = dynamic_pointer_cast<const SubtitleString>(j);
+		if (text) {
+			auto in = make_shared<Event>(text->in(), position(text), text->text().length());
+			events.push_back(in);
+			events.push_back(make_shared<Event>(text->out(), in));
+		}
+	}
+
+	std::sort(events.begin(), events.end(), [](shared_ptr<Event> const& a, shared_ptr<Event>const& b) {
+		return a->time < b->time;
+	});
+
+	map<int, int> current;
+	for (auto i: events) {
+		if (current.size() > 3) {
+			result->line_count_exceeded = true;
+		}
+		for (auto j: current) {
+			if (j.second >= warning_length) {
+				result->warning_length_exceeded = true;
+			}
+			if (j.second >= error_length) {
+				result->error_length_exceeded = true;
+			}
+		}
+
+		if (i->start) {
+			/* end of a subtitle */
+			DCP_ASSERT (current.find(i->start->position) != current.end());
+			if (current[i->start->position] == i->start->characters) {
+				current.erase(i->start->position);
+			} else {
+				current[i->start->position] -= i->start->characters;
+			}
+		} else {
+			/* start of a subtitle */
+			if (current.find(i->position) == current.end()) {
+				current[i->position] = i->characters;
+			} else {
+				current[i->position] += i->characters;
+			}
+		}
+	}
+}
+
+
 static
 void
 check_text_timing (vector<shared_ptr<dcp::Reel>> reels, vector<VerificationNote>& notes)
@@ -980,6 +1079,38 @@ dcp::verify (
 
 			if (dcp->standard() == dcp::SMPTE) {
 				check_text_timing (cpl->reels(), notes);
+
+				LinesCharactersResult result;
+				for (auto reel: cpl->reels()) {
+					if (reel->main_subtitle() && reel->main_subtitle()->asset()) {
+						check_text_lines_and_characters (reel->main_subtitle()->asset(), 52, 79, &result);
+					}
+				}
+
+				if (result.line_count_exceeded) {
+					notes.push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::TOO_MANY_SUBTITLE_LINES));
+				}
+				if (result.error_length_exceeded) {
+					notes.push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::SUBTITLE_LINE_TOO_LONG));
+				} else if (result.warning_length_exceeded) {
+					notes.push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::SUBTITLE_LINE_LONGER_THAN_RECOMMENDED));
+				}
+
+				result = LinesCharactersResult();
+				for (auto reel: cpl->reels()) {
+					for (auto i: reel->closed_captions()) {
+						if (i->asset()) {
+							check_text_lines_and_characters (i->asset(), 32, 32, &result);
+						}
+					}
+				}
+
+				if (result.line_count_exceeded) {
+					notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::TOO_MANY_CLOSED_CAPTION_LINES));
+				}
+				if (result.error_length_exceeded) {
+					notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::CLOSED_CAPTION_LINE_TOO_LONG));
+				}
 			}
 		}
 
@@ -1069,6 +1200,16 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "At least one subtitle is less than the minimum of 15 frames suggested by Bv2.1";
 	case dcp::VerificationNote::SUBTITLE_TOO_CLOSE:
 		return "At least one pair of subtitles are separated by less than the the minimum of 2 frames suggested by Bv2.1";
+	case dcp::VerificationNote::TOO_MANY_SUBTITLE_LINES:
+		return "There are more than 3 subtitle lines in at least one place in the DCP, which Bv2.1 advises against.";
+	case dcp::VerificationNote::SUBTITLE_LINE_LONGER_THAN_RECOMMENDED:
+		return "There are more than 52 characters in at least one subtitle line, which Bv2.1 advises against.";
+	case dcp::VerificationNote::SUBTITLE_LINE_TOO_LONG:
+		return "There are more than 79 characters in at least one subtitle line, which Bv2.1 strongly advises against.";
+	case dcp::VerificationNote::TOO_MANY_CLOSED_CAPTION_LINES:
+		return "There are more than 3 closed caption lines in at least one place, which is disallowed by Bv2.1";
+	case dcp::VerificationNote::CLOSED_CAPTION_LINE_TOO_LONG:
+		return "There are more than 32 characters in at least one closed caption line, which is disallowed by Bv2.1";
 	}
 
 	return "";

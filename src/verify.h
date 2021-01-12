@@ -121,6 +121,16 @@ public:
 		SUBTITLE_TOO_SHORT,
 		/** At least one pair of subtitles are separated by less than the the minimum of 2 frames suggested by [Bv2.1_7.2.5] */
 		SUBTITLE_TOO_CLOSE,
+		/** There are more than 3 subtitle lines in at least one place [Bv2.1_7.2.7] */
+		TOO_MANY_SUBTITLE_LINES,
+		/** There are more than 52 characters in at least one subtitle line [Bv2.1_7.2.7] */
+		SUBTITLE_LINE_LONGER_THAN_RECOMMENDED,
+		/** There are more than 79 characters in at least one subtitle line [Bv2.1_7.2.7] */
+		SUBTITLE_LINE_TOO_LONG,
+		/** There are more than 3 closed caption lines in at least one place [Bv2.1_7.2.6] */
+		TOO_MANY_CLOSED_CAPTION_LINES,
+		/** There are more than 32 characters in at least one closed caption line [Bv2.1_7.2.6] */
+		CLOSED_CAPTION_LINE_TOO_LONG,
 	};
 
 	VerificationNote (Type type, Code code)

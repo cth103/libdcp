@@ -1037,7 +1037,7 @@ BOOST_AUTO_TEST_CASE (verify_picture_size)
 
 static
 void
-add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int end_frame)
+add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int end_frame, float v_position = 0, string text = "Hello")
 {
 	asset->add (
 		make_shared<dcp::SubtitleString>(
@@ -1052,10 +1052,10 @@ add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int en
 			dcp::Time(end_frame, 24, 24),
 			0,
 			dcp::HALIGN_CENTER,
-			0,
+			v_position,
 			dcp::VALIGN_CENTER,
 			dcp::DIRECTION_LTR,
-			"Hello",
+			text,
 			dcp::NONE,
 			dcp::Colour(),
 			dcp::Time(),
@@ -1313,20 +1313,37 @@ BOOST_AUTO_TEST_CASE (verify_non_zero_start_time_tag_in_subtitle_xml)
 }
 
 
-static
+class TestText
+{
+public:
+	TestText (int in_, int out_, float v_position_ = 0, string text_ = "Hello")
+		: in(in_)
+		, out(out_)
+		, v_position(v_position_)
+		, text(text_)
+	{}
+
+	int in;
+	int out;
+	float v_position;
+	string text;
+};
+
+
+template <class T>
 void
-dcp_with_subtitles (boost::filesystem::path dir, vector<int> timings)
+dcp_with_text (boost::filesystem::path dir, vector<TestText> subs)
 {
 	prepare_directory (dir);
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>();
 	asset->set_start_time (dcp::Time());
-	for (auto i = 0U; i < timings.size(); i += 2) {
-		add_test_subtitle (asset, timings[i], timings[i + 1]);
+	for (auto i: subs) {
+		add_test_subtitle (asset, i.in, i.out, i.v_position, i.text);
 	}
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
 
-	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<T>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	write_dcp_with_single_asset (dir, reel_asset);
 }
 
@@ -1335,7 +1352,7 @@ BOOST_AUTO_TEST_CASE (verify_text_too_early)
 {
 	auto const dir = boost::filesystem::path("build/test/verify_text_too_early");
 	/* Just too early */
-	dcp_with_subtitles (dir, { 4 * 24 - 1, 5 * 24 });
+	dcp_with_text<dcp::ReelSubtitleAsset> (dir, {{ 4 * 24 - 1, 5 * 24 }});
 	check_verify_result (
 		{ dir },
 		{{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::FIRST_TEXT_TOO_EARLY }});
@@ -1346,7 +1363,7 @@ BOOST_AUTO_TEST_CASE (verify_text_not_too_early)
 {
 	auto const dir = boost::filesystem::path("build/test/verify_text_not_too_early");
 	/* Just late enough */
-	dcp_with_subtitles (dir, { 4 * 24, 5 * 24 });
+	dcp_with_text<dcp::ReelSubtitleAsset> (dir, {{ 4 * 24, 5 * 24 }});
 	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
 	BOOST_REQUIRE (notes.empty());
 }
@@ -1392,11 +1409,11 @@ BOOST_AUTO_TEST_CASE (verify_text_early_on_second_reel)
 BOOST_AUTO_TEST_CASE (verify_text_too_close)
 {
 	auto const dir = boost::filesystem::path("build/test/verify_text_too_close");
-	dcp_with_subtitles (
+	dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
-		  4 * 24,     5 * 24,
-		  5 * 24 + 1, 6 * 24,
+			{ 4 * 24,     5 * 24 },
+			{ 5 * 24 + 1, 6 * 24 },
 		});
 	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::SUBTITLE_TOO_CLOSE }});
 }
@@ -1405,11 +1422,11 @@ BOOST_AUTO_TEST_CASE (verify_text_too_close)
 BOOST_AUTO_TEST_CASE (verify_text_not_too_close)
 {
 	auto const dir = boost::filesystem::path("build/test/verify_text_not_too_close");
-	dcp_with_subtitles (
+	dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
-		  4 * 24,     5 * 24,
-		  5 * 24 + 16, 8 * 24,
+			{ 4 * 24,      5 * 24 },
+			{ 5 * 24 + 16, 8 * 24 },
 		});
 	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
 	BOOST_REQUIRE (notes.empty());
@@ -1419,11 +1436,7 @@ BOOST_AUTO_TEST_CASE (verify_text_not_too_close)
 BOOST_AUTO_TEST_CASE (verify_text_too_short)
 {
 	auto const dir = boost::filesystem::path("build/test/verify_text_too_short");
-	dcp_with_subtitles (
-		dir,
-		{
-		  4 * 24,     4 * 24 + 1,
-		});
+	dcp_with_text<dcp::ReelSubtitleAsset> (dir, {{ 4 * 24, 4 * 24 + 1 }});
 	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::SUBTITLE_TOO_SHORT }});
 }
 
@@ -1431,12 +1444,166 @@ BOOST_AUTO_TEST_CASE (verify_text_too_short)
 BOOST_AUTO_TEST_CASE (verify_text_not_too_short)
 {
 	auto const dir = boost::filesystem::path("build/test/verify_text_not_too_short");
-	dcp_with_subtitles (
+	dcp_with_text<dcp::ReelSubtitleAsset> (dir, {{ 4 * 24, 4 * 24 + 17 }});
+	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+	BOOST_REQUIRE (notes.empty());
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_too_many_subtitle_lines1)
+{
+	auto const dir = boost::filesystem::path ("verify_too_many_subtitle_lines1");
+	dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
-		  4 * 24,     4 * 24 + 17,
+			{ 96, 200, 0.0, "We" },
+			{ 96, 200, 0.1, "have" },
+			{ 96, 200, 0.2, "four" },
+			{ 96, 200, 0.3, "lines" }
+		});
+	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::TOO_MANY_SUBTITLE_LINES}});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_not_too_many_subtitle_lines1)
+{
+	auto const dir = boost::filesystem::path ("verify_not_too_many_subtitle_lines1");
+	dcp_with_text<dcp::ReelSubtitleAsset> (
+		dir,
+		{
+			{ 96, 200, 0.0, "We" },
+			{ 96, 200, 0.1, "have" },
+			{ 96, 200, 0.2, "four" },
 		});
 	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
 	BOOST_REQUIRE (notes.empty());
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_too_many_subtitle_lines2)
+{
+	auto const dir = boost::filesystem::path ("verify_too_many_subtitle_lines2");
+	dcp_with_text<dcp::ReelSubtitleAsset> (
+		dir,
+		{
+			{ 96, 300, 0.0, "We" },
+			{ 96, 300, 0.1, "have" },
+			{ 150, 180, 0.2, "four" },
+			{ 150, 180, 0.3, "lines" }
+		});
+	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::TOO_MANY_SUBTITLE_LINES}});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_not_too_many_subtitle_lines2)
+{
+	auto const dir = boost::filesystem::path ("verify_not_too_many_subtitle_lines2");
+	dcp_with_text<dcp::ReelSubtitleAsset> (
+		dir,
+		{
+			{ 96, 300, 0.0, "We" },
+			{ 96, 300, 0.1, "have" },
+			{ 150, 180, 0.2, "four" },
+			{ 190, 250, 0.3, "lines" }
+		});
+	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+	BOOST_REQUIRE (notes.empty());
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_subtitle_lines_too_long1)
+{
+	auto const dir = boost::filesystem::path ("verify_subtitle_lines_too_long1");
+	dcp_with_text<dcp::ReelSubtitleAsset> (
+		dir,
+		{
+			{ 96, 300, 0.0, "012345678901234567890123456789012345678901234567890123" }
+		});
+	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::SUBTITLE_LINE_LONGER_THAN_RECOMMENDED }});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_subtitle_lines_too_long2)
+{
+	auto const dir = boost::filesystem::path ("verify_subtitle_lines_too_long2");
+	dcp_with_text<dcp::ReelSubtitleAsset> (
+		dir,
+		{
+			{ 96, 300, 0.0, "012345678901234567890123456789012345678901234567890123456789012345678901234567890" }
+		});
+	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::SUBTITLE_LINE_TOO_LONG }});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_too_many_closed_caption_lines1)
+{
+	auto const dir = boost::filesystem::path ("verify_too_many_closed_caption_lines1");
+	dcp_with_text<dcp::ReelClosedCaptionAsset> (
+		dir,
+		{
+			{ 96, 200, 0.0, "We" },
+			{ 96, 200, 0.1, "have" },
+			{ 96, 200, 0.2, "four" },
+			{ 96, 200, 0.3, "lines" }
+		});
+	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::TOO_MANY_CLOSED_CAPTION_LINES}});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_not_too_many_closed_caption_lines1)
+{
+	auto const dir = boost::filesystem::path ("verify_not_too_many_closed_caption_lines1");
+	dcp_with_text<dcp::ReelClosedCaptionAsset> (
+		dir,
+		{
+			{ 96, 200, 0.0, "We" },
+			{ 96, 200, 0.1, "have" },
+			{ 96, 200, 0.2, "four" },
+		});
+	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+	BOOST_REQUIRE (notes.empty());
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_too_many_closed_caption_lines2)
+{
+	auto const dir = boost::filesystem::path ("verify_too_many_closed_caption_lines2");
+	dcp_with_text<dcp::ReelClosedCaptionAsset> (
+		dir,
+		{
+			{ 96, 300, 0.0, "We" },
+			{ 96, 300, 0.1, "have" },
+			{ 150, 180, 0.2, "four" },
+			{ 150, 180, 0.3, "lines" }
+		});
+	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::TOO_MANY_CLOSED_CAPTION_LINES}});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_not_too_many_closed_caption_lines2)
+{
+	auto const dir = boost::filesystem::path ("verify_not_too_many_closed_caption_lines2");
+	dcp_with_text<dcp::ReelClosedCaptionAsset> (
+		dir,
+		{
+			{ 96, 300, 0.0, "We" },
+			{ 96, 300, 0.1, "have" },
+			{ 150, 180, 0.2, "four" },
+			{ 190, 250, 0.3, "lines" }
+		});
+	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+	BOOST_REQUIRE (notes.empty());
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_closed_caption_lines_too_long1)
+{
+	auto const dir = boost::filesystem::path ("verify_closed_caption_lines_too_long1");
+	dcp_with_text<dcp::ReelClosedCaptionAsset> (
+		dir,
+		{
+			{ 96, 300, 0.0, "0123456789012345678901234567890123" }
+		});
+	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::CLOSED_CAPTION_LINE_TOO_LONG }});
 }
 
