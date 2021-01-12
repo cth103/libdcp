@@ -109,6 +109,11 @@ public:
 		return _movie_title;
 	}
 
+	int time_code_rate () const {
+		/* Interop can use either; just pick one */
+		return 1000;
+	}
+
 	static std::string static_pkl_type (Standard) {
 		return "text/xml;asdcpKind=Subtitle";
 	}

@@ -79,6 +79,7 @@ using std::cout;
 using std::map;
 using std::max;
 using std::shared_ptr;
+using std::make_shared;
 using boost::optional;
 using boost::function;
 using std::dynamic_pointer_cast;
@@ -644,14 +645,77 @@ struct State
 };
 
 
+
+void
+verify_smpte_subtitle_asset (
+	shared_ptr<const dcp::SMPTESubtitleAsset> asset,
+	vector<VerificationNote>& notes,
+	State& state
+	)
+{
+	if (asset->language()) {
+		auto const language = *asset->language();
+		verify_language_tag (language, notes);
+		if (!state.subtitle_language) {
+			state.subtitle_language = language;
+		} else if (state.subtitle_language != language) {
+			notes.push_back (
+				VerificationNote(
+					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::SUBTITLE_LANGUAGES_DIFFER, *asset->file()
+					)
+				);
+		}
+	} else {
+		notes.push_back (
+			VerificationNote(
+				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_LANGUAGE, *asset->file()
+				)
+			);
+	}
+	if (boost::filesystem::file_size(*asset->file()) > 115 * 1024 * 1024) {
+		notes.push_back (
+			VerificationNote(
+				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES, *asset->file()
+				)
+			);
+	}
+	/* XXX: I'm not sure what Bv2.1_7.2.1 means when it says "the font resource shall not be larger than 10MB"
+	 * but I'm hoping that checking for the total size of all fonts being <= 10MB will do.
+	 */
+	auto fonts = asset->font_data ();
+	int total_size = 0;
+	for (auto i: fonts) {
+		total_size += i.second.size();
+	}
+	if (total_size > 10 * 1024 * 1024) {
+		notes.push_back (
+			VerificationNote(
+				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::TIMED_TEXT_FONTS_TOO_LARGE_IN_BYTES, *asset->file()
+				)
+			);
+	}
+
+	if (!asset->start_time()) {
+		notes.push_back (
+			VerificationNote(
+				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_START_TIME, *asset->file())
+			);
+	} else if (asset->start_time() != dcp::Time()) {
+		notes.push_back (
+			VerificationNote(
+				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::SUBTITLE_START_TIME_NON_ZERO, *asset->file())
+			);
+	}
+}
+
+
 static void
 verify_subtitle_asset (
 	shared_ptr<const SubtitleAsset> asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
 	vector<VerificationNote>& notes,
-	State& state,
-	bool first_reel
+	State& state
 	)
 {
 	stage ("Checking subtitle XML", asset->file());
@@ -662,73 +726,7 @@ verify_subtitle_asset (
 
 	auto smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
 	if (smpte) {
-		if (smpte->language()) {
-			auto const language = *smpte->language();
-			verify_language_tag (language, notes);
-			if (!state.subtitle_language) {
-				state.subtitle_language = language;
-			} else if (state.subtitle_language != language) {
-				notes.push_back (
-					VerificationNote(
-						VerificationNote::VERIFY_BV21_ERROR, VerificationNote::SUBTITLE_LANGUAGES_DIFFER, *asset->file()
-						)
-					);
-			}
-		} else {
-			notes.push_back (
-				VerificationNote(
-					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_LANGUAGE, *asset->file()
-					)
-				);
-		}
-		if (boost::filesystem::file_size(*asset->file()) > 115 * 1024 * 1024) {
-			notes.push_back (
-				VerificationNote(
-					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES, *asset->file()
-					)
-				);
-		}
-		/* XXX: I'm not sure what Bv2.1_7.2.1 means when it says "the font resource shall not be larger than 10MB"
-		 * but I'm hoping that checking for the total size of all fonts being <= 10MB will do.
-		 */
-		auto fonts = asset->font_data ();
-		int total_size = 0;
-		for (auto i: fonts) {
-			total_size += i.second.size();
-		}
-		if (total_size > 10 * 1024 * 1024) {
-			notes.push_back (
-				VerificationNote(
-					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::TIMED_TEXT_FONTS_TOO_LARGE_IN_BYTES, *asset->file()
-					)
-				);
-		}
-
-		if (!smpte->start_time()) {
-			notes.push_back (
-				VerificationNote(
-					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_START_TIME, *asset->file())
-				);
-		} else if (smpte->start_time() != dcp::Time()) {
-			notes.push_back (
-				VerificationNote(
-					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::SUBTITLE_START_TIME_NON_ZERO, *asset->file())
-				);
-		}
-
-		if (first_reel) {
-			auto subs = smpte->subtitles();
-			sort (subs.begin(), subs.end(), [](shared_ptr<Subtitle> a, shared_ptr<Subtitle> b) {
-				return a->in() < b->in();
-			});
-			if (!subs.empty() && subs.front()->in() < dcp::Time(0, 0, 4, 0, 24)) {
-				notes.push_back(
-					VerificationNote(
-						VerificationNote::VERIFY_WARNING, VerificationNote::FIRST_TEXT_TOO_EARLY
-						)
-					);
-			}
-		}
+		verify_smpte_subtitle_asset (smpte, notes, state);
 	}
 }
 
@@ -739,11 +737,10 @@ verify_closed_caption_asset (
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
 	vector<VerificationNote>& notes,
-	State& state,
-	bool first_reel
+	State& state
 	)
 {
-	verify_subtitle_asset (asset, stage, xsd_dtd_directory, notes, state, first_reel);
+	verify_subtitle_asset (asset, stage, xsd_dtd_directory, notes, state);
 
 	if (asset->raw_xml().size() > 256 * 1024) {
 		notes.push_back (
@@ -751,6 +748,126 @@ verify_closed_caption_asset (
 				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::CLOSED_CAPTION_XML_TOO_LARGE_IN_BYTES, *asset->file()
 				)
 			);
+	}
+}
+
+
+static
+void
+check_text_timing (
+	vector<shared_ptr<dcp::Reel>> reels,
+	optional<int> picture_frame_rate,
+	vector<VerificationNote>& notes,
+	std::function<std::string (shared_ptr<dcp::Reel>)> xml,
+	std::function<int64_t (shared_ptr<dcp::Reel>)> duration
+	)
+{
+	/* end of last subtitle (in editable units) */
+	optional<int64_t> last_out;
+	auto too_short = false;
+	auto too_close = false;
+	auto too_early = false;
+	/* current reel start time (in editable units) */
+	int64_t reel_offset = 0;
+
+	std::function<void (cxml::ConstNodePtr, int, int, bool)> parse;
+	parse = [&parse, &last_out, &too_short, &too_close, &too_early, &reel_offset](cxml::ConstNodePtr node, int tcr, int pfr, bool first_reel) {
+		if (node->name() == "Subtitle") {
+			dcp::Time in (node->string_attribute("TimeIn"), tcr);
+			dcp::Time out (node->string_attribute("TimeOut"), tcr);
+			if (first_reel && in < dcp::Time(0, 0, 4, 0, tcr)) {
+				too_early = true;
+			}
+			auto length = out - in;
+			if (length.as_editable_units(pfr) < 15) {
+				too_short = true;
+			}
+			if (last_out) {
+				/* XXX: this feels dubious - is it really what Bv2.1 means? */
+				auto distance = reel_offset + in.as_editable_units(pfr) - *last_out;
+				if (distance >= 0 && distance < 2) {
+					too_close = true;
+				}
+			}
+			last_out = reel_offset + out.as_editable_units(pfr);
+		} else {
+			for (auto i: node->node_children()) {
+				parse(i, tcr, pfr, first_reel);
+			}
+		}
+	};
+
+	for (auto i = 0U; i < reels.size(); ++i) {
+		/* We need to look at <Subtitle> instances in the XML being checked, so we can't use the subtitles
+		 * read in by libdcp's parser.
+		 */
+
+		auto doc = make_shared<cxml::Document>("SubtitleReel");
+		doc->read_string (xml(reels[i]));
+		auto const tcr = doc->number_child<int>("TimeCodeRate");
+		parse (doc, tcr, picture_frame_rate.get_value_or(24), i == 0);
+		reel_offset += duration(reels[i]);
+	}
+
+	if (too_early) {
+		notes.push_back(
+			VerificationNote(
+				VerificationNote::VERIFY_WARNING, VerificationNote::FIRST_TEXT_TOO_EARLY
+				)
+			);
+	}
+
+	if (too_short) {
+		notes.push_back (
+			VerificationNote(
+				VerificationNote::VERIFY_WARNING, VerificationNote::SUBTITLE_TOO_SHORT
+				)
+			);
+	}
+
+	if (too_close) {
+		notes.push_back (
+			VerificationNote(
+				VerificationNote::VERIFY_WARNING, VerificationNote::SUBTITLE_TOO_CLOSE
+				)
+			);
+	}
+}
+
+
+static
+void
+check_text_timing (vector<shared_ptr<dcp::Reel>> reels, vector<VerificationNote>& notes)
+{
+	if (reels.empty()) {
+		return;
+	}
+
+	optional<int> picture_frame_rate;
+	if (reels[0]->main_picture()) {
+		picture_frame_rate = reels[0]->main_picture()->frame_rate().numerator;
+	}
+
+	if (reels[0]->main_subtitle()) {
+		check_text_timing (reels, picture_frame_rate, notes,
+			[](shared_ptr<dcp::Reel> reel) {
+				return reel->main_subtitle()->asset()->raw_xml();
+			},
+			[](shared_ptr<dcp::Reel> reel) {
+				return reel->main_subtitle()->actual_duration();
+			}
+		);
+	}
+
+	for (auto i = 0U; i < reels[0]->closed_captions().size(); ++i) {
+		check_text_timing (reels, picture_frame_rate, notes,
+			[i](shared_ptr<dcp::Reel> reel) {
+				return reel->closed_captions()[i]->asset()->raw_xml();
+			},
+			[i](shared_ptr<dcp::Reel> reel) {
+				return reel->closed_captions()[i]->actual_duration();
+			}
+		);
 	}
 }
 
@@ -811,7 +928,6 @@ dcp::verify (
 				}
 			}
 
-			bool first_reel = true;
 			for (auto reel: cpl->reels()) {
 				stage ("Checking reel", optional<boost::filesystem::path>());
 
@@ -850,18 +966,20 @@ dcp::verify (
 				if (reel->main_subtitle()) {
 					verify_main_subtitle_reel (reel->main_subtitle(), notes);
 					if (reel->main_subtitle()->asset_ref().resolved()) {
-						verify_subtitle_asset (reel->main_subtitle()->asset(), stage, xsd_dtd_directory, notes, state, first_reel);
+						verify_subtitle_asset (reel->main_subtitle()->asset(), stage, xsd_dtd_directory, notes, state);
 					}
 				}
 
 				for (auto i: reel->closed_captions()) {
 					verify_closed_caption_reel (i, notes);
 					if (i->asset_ref().resolved()) {
-						verify_closed_caption_asset (i->asset(), stage, xsd_dtd_directory, notes, state, first_reel);
+						verify_closed_caption_asset (i->asset(), stage, xsd_dtd_directory, notes, state);
 					}
 				}
+			}
 
-				first_reel = false;
+			if (dcp->standard() == dcp::SMPTE) {
+				check_text_timing (cpl->reels(), notes);
 			}
 		}
 
@@ -947,6 +1065,10 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The XML for a SMPTE subtitle asset has a non-zero <StartTime> tag, which is disallowed by Bv2.1", note.file()->filename());
 	case dcp::VerificationNote::FIRST_TEXT_TOO_EARLY:
 		return "The first subtitle or closed caption is less than 4 seconds from the start of the DCP.";
+	case dcp::VerificationNote::SUBTITLE_TOO_SHORT:
+		return "At least one subtitle is less than the minimum of 15 frames suggested by Bv2.1";
+	case dcp::VerificationNote::SUBTITLE_TOO_CLOSE:
+		return "At least one pair of subtitles are separated by less than the the minimum of 2 frames suggested by Bv2.1";
 	}
 
 	return "";

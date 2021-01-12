@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -117,6 +117,10 @@ public:
 		SUBTITLE_START_TIME_NON_ZERO,
 		/** The first subtitle or closed caption happens before 4s into the first reel [Bv2.1_7.2.4] */
 		FIRST_TEXT_TOO_EARLY,
+		/** At least one subtitle is less than the minimum of 15 frames suggested by [Bv2.1_7.2.5] */
+		SUBTITLE_TOO_SHORT,
+		/** At least one pair of subtitles are separated by less than the the minimum of 2 frames suggested by [Bv2.1_7.2.5] */
+		SUBTITLE_TOO_CLOSE,
 	};
 
 	VerificationNote (Type type, Code code)

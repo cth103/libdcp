@@ -87,7 +87,7 @@ check_no_errors (boost::filesystem::path path)
 	auto notes = dcp::verify (directories, &stage, &progress, xsd_test);
 	vector<dcp::VerificationNote> filtered_notes;
 	std::copy_if (notes.begin(), notes.end(), std::back_inserter(filtered_notes), [](dcp::VerificationNote const& i) {
-		return i.code() != dcp::VerificationNote::NOT_SMPTE;
+		return i.code() != dcp::VerificationNote::NOT_SMPTE && i.code() != dcp::VerificationNote::SUBTITLE_TOO_SHORT;
 	});
 	dump_notes (filtered_notes);
 	BOOST_CHECK (filtered_notes.empty());
