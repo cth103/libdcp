@@ -262,7 +262,7 @@ parse (XercesDOMParser& parser, boost::filesystem::path xml)
 
 
 static void
-parse (XercesDOMParser& parser, std::string xml)
+parse (XercesDOMParser& parser, string xml)
 {
 	xercesc::MemBufInputSource buf(reinterpret_cast<unsigned char const*>(xml.c_str()), xml.size(), "");
 	parser.parse(buf);
@@ -758,7 +758,7 @@ check_text_timing (
 	vector<shared_ptr<dcp::Reel>> reels,
 	optional<int> picture_frame_rate,
 	vector<VerificationNote>& notes,
-	std::function<std::string (shared_ptr<dcp::Reel>)> xml,
+	std::function<string (shared_ptr<dcp::Reel>)> xml,
 	std::function<int64_t (shared_ptr<dcp::Reel>)> duration
 	)
 {
