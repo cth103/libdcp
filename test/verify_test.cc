@@ -1452,7 +1452,7 @@ BOOST_AUTO_TEST_CASE (verify_text_not_too_short)
 
 BOOST_AUTO_TEST_CASE (verify_too_many_subtitle_lines1)
 {
-	auto const dir = boost::filesystem::path ("verify_too_many_subtitle_lines1");
+	auto const dir = boost::filesystem::path ("build/test/verify_too_many_subtitle_lines1");
 	dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1467,7 +1467,7 @@ BOOST_AUTO_TEST_CASE (verify_too_many_subtitle_lines1)
 
 BOOST_AUTO_TEST_CASE (verify_not_too_many_subtitle_lines1)
 {
-	auto const dir = boost::filesystem::path ("verify_not_too_many_subtitle_lines1");
+	auto const dir = boost::filesystem::path ("build/test/verify_not_too_many_subtitle_lines1");
 	dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1482,7 +1482,7 @@ BOOST_AUTO_TEST_CASE (verify_not_too_many_subtitle_lines1)
 
 BOOST_AUTO_TEST_CASE (verify_too_many_subtitle_lines2)
 {
-	auto const dir = boost::filesystem::path ("verify_too_many_subtitle_lines2");
+	auto const dir = boost::filesystem::path ("build/test/verify_too_many_subtitle_lines2");
 	dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1497,7 +1497,7 @@ BOOST_AUTO_TEST_CASE (verify_too_many_subtitle_lines2)
 
 BOOST_AUTO_TEST_CASE (verify_not_too_many_subtitle_lines2)
 {
-	auto const dir = boost::filesystem::path ("verify_not_too_many_subtitle_lines2");
+	auto const dir = boost::filesystem::path ("build/test/verify_not_too_many_subtitle_lines2");
 	dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1513,7 +1513,7 @@ BOOST_AUTO_TEST_CASE (verify_not_too_many_subtitle_lines2)
 
 BOOST_AUTO_TEST_CASE (verify_subtitle_lines_too_long1)
 {
-	auto const dir = boost::filesystem::path ("verify_subtitle_lines_too_long1");
+	auto const dir = boost::filesystem::path ("build/test/verify_subtitle_lines_too_long1");
 	dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1525,7 +1525,7 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_lines_too_long1)
 
 BOOST_AUTO_TEST_CASE (verify_subtitle_lines_too_long2)
 {
-	auto const dir = boost::filesystem::path ("verify_subtitle_lines_too_long2");
+	auto const dir = boost::filesystem::path ("build/test/verify_subtitle_lines_too_long2");
 	dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1537,7 +1537,7 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_lines_too_long2)
 
 BOOST_AUTO_TEST_CASE (verify_too_many_closed_caption_lines1)
 {
-	auto const dir = boost::filesystem::path ("verify_too_many_closed_caption_lines1");
+	auto const dir = boost::filesystem::path ("build/test/verify_too_many_closed_caption_lines1");
 	dcp_with_text<dcp::ReelClosedCaptionAsset> (
 		dir,
 		{
@@ -1552,7 +1552,7 @@ BOOST_AUTO_TEST_CASE (verify_too_many_closed_caption_lines1)
 
 BOOST_AUTO_TEST_CASE (verify_not_too_many_closed_caption_lines1)
 {
-	auto const dir = boost::filesystem::path ("verify_not_too_many_closed_caption_lines1");
+	auto const dir = boost::filesystem::path ("build/test/verify_not_too_many_closed_caption_lines1");
 	dcp_with_text<dcp::ReelClosedCaptionAsset> (
 		dir,
 		{
@@ -1567,7 +1567,7 @@ BOOST_AUTO_TEST_CASE (verify_not_too_many_closed_caption_lines1)
 
 BOOST_AUTO_TEST_CASE (verify_too_many_closed_caption_lines2)
 {
-	auto const dir = boost::filesystem::path ("verify_too_many_closed_caption_lines2");
+	auto const dir = boost::filesystem::path ("build/test/verify_too_many_closed_caption_lines2");
 	dcp_with_text<dcp::ReelClosedCaptionAsset> (
 		dir,
 		{
@@ -1582,7 +1582,7 @@ BOOST_AUTO_TEST_CASE (verify_too_many_closed_caption_lines2)
 
 BOOST_AUTO_TEST_CASE (verify_not_too_many_closed_caption_lines2)
 {
-	auto const dir = boost::filesystem::path ("verify_not_too_many_closed_caption_lines2");
+	auto const dir = boost::filesystem::path ("build/test/verify_not_too_many_closed_caption_lines2");
 	dcp_with_text<dcp::ReelClosedCaptionAsset> (
 		dir,
 		{
@@ -1598,7 +1598,7 @@ BOOST_AUTO_TEST_CASE (verify_not_too_many_closed_caption_lines2)
 
 BOOST_AUTO_TEST_CASE (verify_closed_caption_lines_too_long1)
 {
-	auto const dir = boost::filesystem::path ("verify_closed_caption_lines_too_long1");
+	auto const dir = boost::filesystem::path ("build/test/verify_closed_caption_lines_too_long1");
 	dcp_with_text<dcp::ReelClosedCaptionAsset> (
 		dir,
 		{
@@ -1610,7 +1610,7 @@ BOOST_AUTO_TEST_CASE (verify_closed_caption_lines_too_long1)
 
 BOOST_AUTO_TEST_CASE (verify_sound_sampling_rate_must_be_48k)
 {
-	boost::filesystem::path const dir("verify_sound_sampling_rate_must_be_48k");
+	boost::filesystem::path const dir("build/test/verify_sound_sampling_rate_must_be_48k");
 	prepare_directory (dir);
 
 	auto picture = simple_picture (dir, "foo");
