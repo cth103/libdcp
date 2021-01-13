@@ -616,6 +616,13 @@ verify_main_sound_asset (
 	stage ("Checking sound asset metadata", asset->file());
 
 	verify_language_tag (asset->language(), notes);
+	if (asset->sampling_rate() != 48000) {
+		notes.push_back (
+			VerificationNote(
+				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_SOUND_FRAME_RATE, *asset->file()
+				)
+			);
+	}
 }
 
 
@@ -1210,6 +1217,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "There are more than 3 closed caption lines in at least one place, which is disallowed by Bv2.1";
 	case dcp::VerificationNote::CLOSED_CAPTION_LINE_TOO_LONG:
 		return "There are more than 32 characters in at least one closed caption line, which is disallowed by Bv2.1";
+	case dcp::VerificationNote::INVALID_SOUND_FRAME_RATE:
+		return "A sound asset has a sampling rate other than 48kHz, which is disallowed by Bv2.1";
 	}
 
 	return "";

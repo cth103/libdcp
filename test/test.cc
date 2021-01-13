@@ -276,9 +276,8 @@ simple_picture (boost::filesystem::path path, string suffix, int frames)
 
 
 shared_ptr<dcp::SoundAsset>
-simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_meta, string language, int frames)
+simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_meta, string language, int frames, int sample_rate)
 {
-	int const sample_rate = 48000;
 	int const channels = 1;
 
 	/* Set a valid language, then overwrite it, so that the language parameter can be badly formed */
@@ -289,7 +288,7 @@ simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_
 	active_channels.push_back (dcp::LEFT);
 	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / dcp::String::compose("audio%1.mxf", suffix), active_channels);
 
-	int const samples_per_frame = 48000 / 24;
+	int const samples_per_frame = sample_rate / 24;
 
 	float* silence[channels];
 	for (auto i = 0; i < channels; ++i) {

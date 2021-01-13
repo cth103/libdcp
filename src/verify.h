@@ -131,6 +131,8 @@ public:
 		TOO_MANY_CLOSED_CAPTION_LINES,
 		/** There are more than 32 characters in at least one closed caption line [Bv2.1_7.2.6] */
 		CLOSED_CAPTION_LINE_TOO_LONG,
+		/** The audio sampling rate must be 48kHz [Bv2.1_7.3] */
+		INVALID_SOUND_FRAME_RATE,
 	};
 
 	VerificationNote (Type type, Code code)

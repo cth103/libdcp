@@ -1607,3 +1607,24 @@ BOOST_AUTO_TEST_CASE (verify_closed_caption_lines_too_long1)
 	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::CLOSED_CAPTION_LINE_TOO_LONG }});
 }
 
+
+BOOST_AUTO_TEST_CASE (verify_sound_sampling_rate_must_be_48k)
+{
+	boost::filesystem::path const dir("verify_sound_sampling_rate_must_be_48k");
+	prepare_directory (dir);
+
+	auto picture = simple_picture (dir, "foo");
+	auto reel_picture = make_shared<dcp::ReelMonoPictureAsset>(picture, 0);
+	auto reel = make_shared<dcp::Reel>();
+	reel->add (reel_picture);
+	auto sound = simple_sound (dir, "foo", dcp::MXFMetadata(), "de-DE", 24, 96000);
+	auto reel_sound = make_shared<dcp::ReelSoundAsset>(sound, 0);
+	reel->add (reel_sound);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::FEATURE);
+	cpl->add (reel);
+	auto dcp = make_shared<dcp::DCP>(dir);
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::INVALID_SOUND_FRAME_RATE }});
+}
