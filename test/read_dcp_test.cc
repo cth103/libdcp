@@ -48,8 +48,9 @@ BOOST_AUTO_TEST_CASE (read_dcp_test1)
 	auto cpls = d.cpls ();
 	BOOST_CHECK_EQUAL (cpls.size(), 1);
 
-	BOOST_CHECK_EQUAL (cpls.front()->annotation_text(), "A Test DCP");
-	BOOST_CHECK_EQUAL (cpls.front()->content_kind(), dcp::FEATURE);
+	BOOST_REQUIRE (cpls[0]->annotation_text());
+	BOOST_CHECK_EQUAL (cpls[0]->annotation_text().get(), "A Test DCP");
+	BOOST_CHECK_EQUAL (cpls[0]->content_kind(), dcp::FEATURE);
 	BOOST_REQUIRE (d.standard());
 	BOOST_CHECK_EQUAL (d.standard(), dcp::SMPTE);
 }
@@ -63,8 +64,9 @@ BOOST_AUTO_TEST_CASE (read_dcp_test2)
 	auto cpls = d.cpls ();
 	BOOST_CHECK_EQUAL (cpls.size(), 1);
 
-	BOOST_CHECK_EQUAL (cpls.front()->annotation_text(), "Test_FTR-1_F-119_10_2K_20160524_IOP_OV");
-	BOOST_CHECK_EQUAL (cpls.front()->content_kind(), dcp::FEATURE);
+	BOOST_REQUIRE (cpls[0]->annotation_text());
+	BOOST_CHECK_EQUAL (cpls[0]->annotation_text().get(), "Test_FTR-1_F-119_10_2K_20160524_IOP_OV");
+	BOOST_CHECK_EQUAL (cpls[0]->content_kind(), dcp::FEATURE);
 	BOOST_REQUIRE (d.standard());
 	BOOST_CHECK_EQUAL (d.standard(), dcp::INTEROP);
 }

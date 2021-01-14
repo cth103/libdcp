@@ -103,7 +103,7 @@ CPL::CPL (boost::filesystem::path file)
 	}
 
 	_id = remove_urn_uuid (f.string_child ("Id"));
-	_annotation_text = f.optional_string_child("AnnotationText").get_value_or("");
+	_annotation_text = f.optional_string_child("AnnotationText");
 	_issuer = f.optional_string_child("Issuer").get_value_or("");
 	_creator = f.optional_string_child("Creator").get_value_or("");
 	_issue_date = f.string_child ("IssueDate");
@@ -178,7 +178,9 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	}
 
 	root->add_child("Id")->add_child_text ("urn:uuid:" + _id);
-	root->add_child("AnnotationText")->add_child_text (_annotation_text);
+	if (_annotation_text) {
+		root->add_child("AnnotationText")->add_child_text (*_annotation_text);
+	}
 	root->add_child("IssueDate")->add_child_text (_issue_date);
 	root->add_child("Issuer")->add_child_text (_issuer);
 	root->add_child("Creator")->add_child_text (_creator);
@@ -548,7 +550,7 @@ CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 	}
 
 	if (_annotation_text != other_cpl->_annotation_text && !opt.cpl_annotation_texts_can_differ) {
-		string const s = "CPL: annotation texts differ: " + _annotation_text + " vs " + other_cpl->_annotation_text + "\n";
+		string const s = "CPL: annotation texts differ: " + _annotation_text.get_value_or("") + " vs " + other_cpl->_annotation_text.get_value_or("") + "\n";
 		note (DCP_ERROR, s);
 		return false;
 	}

@@ -117,8 +117,8 @@ public:
 		_issue_date = issue_date;
 	}
 
-	/** @return contents of the &lt;AnnotationText&gt; node */
-	std::string annotation_text () const {
+	/** @return contents of the &lt;AnnotationText&gt; node, if present */
+	boost::optional<std::string> annotation_text () const {
 		return _annotation_text;
 	}
 
@@ -290,7 +290,7 @@ private:
 	std::string _issuer;
 	std::string _creator;
 	std::string _issue_date;
-	std::string _annotation_text;
+	boost::optional<std::string> _annotation_text;
 	std::string _content_title_text;            ///< &lt;ContentTitleText&gt;
 	ContentKind _content_kind;                  ///< &lt;ContentKind&gt;
 	std::vector<ContentVersion> _content_versions;
