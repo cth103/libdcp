@@ -1053,6 +1053,15 @@ dcp::verify (
 				}
 			}
 
+			/* set to true if any reel has a MainSubtitle */
+			auto have_main_subtitle = false;
+			/* set to true if any reel has no MainSubtitle */
+			auto have_no_main_subtitle = false;
+			/* fewest number of closed caption assets seen in a reel */
+			size_t fewest_closed_captions = SIZE_MAX;
+			/* most number of closed caption assets seen in a reel */
+			size_t most_closed_captions = 0;
+
 			for (auto reel: cpl->reels()) {
 				stage ("Checking reel", optional<boost::filesystem::path>());
 
@@ -1105,6 +1114,9 @@ dcp::verify (
 					if (reel->main_subtitle()->asset_ref().resolved()) {
 						verify_subtitle_asset (reel->main_subtitle()->asset(), stage, xsd_dtd_directory, notes, state);
 					}
+					have_main_subtitle = true;
+				} else {
+					have_no_main_subtitle = true;
 				}
 
 				for (auto i: reel->closed_captions()) {
@@ -1113,9 +1125,21 @@ dcp::verify (
 						verify_closed_caption_asset (i->asset(), stage, xsd_dtd_directory, notes, state);
 					}
 				}
+
+				fewest_closed_captions = std::min (fewest_closed_captions, reel->closed_captions().size());
+				most_closed_captions = std::max (most_closed_captions, reel->closed_captions().size());
 			}
 
 			if (dcp->standard() == dcp::SMPTE) {
+
+				if (have_main_subtitle && have_no_main_subtitle) {
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MAIN_SUBTITLE_NOT_IN_ALL_REELS});
+				}
+
+				if (fewest_closed_captions != most_closed_captions) {
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::CLOSED_CAPTION_ASSET_COUNTS_DIFFER});
+				}
+
 				check_text_timing (cpl->reels(), notes);
 
 				LinesCharactersResult result;
@@ -1256,6 +1280,10 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "The CPL's <AnnotationText> differs from its <ContentTitleText>, which Bv2.1 advises against.";
 	case dcp::VerificationNote::MISMATCHED_ASSET_DURATION:
 		return "All assets in a reel do not have the same duration, which is required by Bv2.1";
+	case dcp::VerificationNote::MAIN_SUBTITLE_NOT_IN_ALL_REELS:
+		return "At least one reel contains a subtitle asset, but some reel(s) do not";
+	case dcp::VerificationNote::CLOSED_CAPTION_ASSET_COUNTS_DIFFER:
+		return "At least one reel has closed captions, but reels have different numbers of closed caption assets.";
 	}
 
 	return "";

@@ -139,6 +139,10 @@ public:
 		CPL_ANNOTATION_TEXT_DIFFERS_FROM_CONTENT_TITLE_TEXT,
 		/** At least one asset in a reel does not have the same duration as the others */
 		MISMATCHED_ASSET_DURATION,
+		/** If one reel has a MainSubtitle, all must have them */
+		MAIN_SUBTITLE_NOT_IN_ALL_REELS,
+		/** If one reel has at least one ClosedCaption, all reels must have the same number of ClosedCaptions */
+		CLOSED_CAPTION_ASSET_COUNTS_DIFFER,
 	};
 
 	VerificationNote (Type type, Code code)

@@ -1698,3 +1698,139 @@ BOOST_AUTO_TEST_CASE (verify_reel_assets_durations_must_match)
 	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISMATCHED_ASSET_DURATION }});
 }
 
+
+
+static
+void
+verify_subtitles_must_be_in_all_reels_check (boost::filesystem::path dir, bool add_to_reel1, bool add_to_reel2)
+{
+	boost::filesystem::remove_all (dir);
+	boost::filesystem::create_directories (dir);
+	auto dcp = make_shared<dcp::DCP>(dir);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::FEATURE);
+
+	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
+	subs->set_language (dcp::LanguageTag("de-DE"));
+	subs->set_start_time (dcp::Time());
+	subs->add (simple_subtitle());
+	subs->write (dir / "subs.mxf");
+	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
+
+	auto reel1 = make_shared<dcp::Reel>(
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 240), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", 240), 0)
+		);
+
+	if (add_to_reel1) {
+		reel1->add (make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0));
+	}
+
+	cpl->add (reel1);
+
+
+	auto reel2 = make_shared<dcp::Reel>(
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 240), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", 240), 0)
+		);
+
+	if (add_to_reel2) {
+		reel2->add (make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0));
+	}
+
+	cpl->add (reel2);
+
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_subtitles_must_be_in_all_reels)
+{
+	{
+		boost::filesystem::path dir ("build/test/verify_subtitles_must_be_in_all_reels1");
+		verify_subtitles_must_be_in_all_reels_check (dir, true, false);
+		check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MAIN_SUBTITLE_NOT_IN_ALL_REELS}});
+	}
+
+	{
+		boost::filesystem::path dir ("build/test/verify_subtitles_must_be_in_all_reels2");
+		verify_subtitles_must_be_in_all_reels_check (dir, true, true);
+		auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+		BOOST_REQUIRE (notes.empty());
+	}
+
+	{
+		boost::filesystem::path dir ("build/test/verify_subtitles_must_be_in_all_reels1");
+		verify_subtitles_must_be_in_all_reels_check (dir, false, false);
+		auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+		BOOST_REQUIRE (notes.empty());
+	}
+}
+
+
+static
+void
+verify_closed_captions_must_be_in_all_reels_check (boost::filesystem::path dir, int caps_in_reel1, int caps_in_reel2)
+{
+	boost::filesystem::remove_all (dir);
+	boost::filesystem::create_directories (dir);
+	auto dcp = make_shared<dcp::DCP>(dir);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::FEATURE);
+
+	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
+	subs->set_language (dcp::LanguageTag("de-DE"));
+	subs->set_start_time (dcp::Time());
+	subs->add (simple_subtitle());
+	subs->write (dir / "subs.mxf");
+
+	auto reel1 = make_shared<dcp::Reel>(
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 240), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", 240), 0)
+		);
+
+	for (int i = 0; i < caps_in_reel1; ++i) {
+		reel1->add (make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 240, 0));
+	}
+
+	cpl->add (reel1);
+
+	auto reel2 = make_shared<dcp::Reel>(
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 240), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", 240), 0)
+		);
+
+	for (int i = 0; i < caps_in_reel2; ++i) {
+		reel2->add (make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 240, 0));
+	}
+
+	cpl->add (reel2);
+
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_closed_captions_must_be_in_all_reels)
+{
+	{
+		boost::filesystem::path dir ("build/test/verify_closed_captions_must_be_in_all_reels1");
+		verify_closed_captions_must_be_in_all_reels_check (dir, 3, 4);
+		check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::CLOSED_CAPTION_ASSET_COUNTS_DIFFER }});
+	}
+
+	{
+		boost::filesystem::path dir ("build/test/verify_closed_captions_must_be_in_all_reels2");
+		verify_closed_captions_must_be_in_all_reels_check (dir, 4, 4);
+		auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+		BOOST_REQUIRE (notes.empty());
+	}
+
+	{
+		boost::filesystem::path dir ("build/test/verify_closed_captions_must_be_in_all_reels3");
+		verify_closed_captions_must_be_in_all_reels_check (dir, 0, 0);
+		auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+		BOOST_REQUIRE (notes.empty());
+	}
+}
+
