@@ -765,6 +765,7 @@ check_text_timing (
 	vector<shared_ptr<dcp::Reel>> reels,
 	optional<int> picture_frame_rate,
 	vector<VerificationNote>& notes,
+	std::function<bool (shared_ptr<dcp::Reel>)> check,
 	std::function<string (shared_ptr<dcp::Reel>)> xml,
 	std::function<int64_t (shared_ptr<dcp::Reel>)> duration
 	)
@@ -805,6 +806,10 @@ check_text_timing (
 	};
 
 	for (auto i = 0U; i < reels.size(); ++i) {
+		if (!check(reels[i])) {
+			continue;
+		}
+
 		/* We need to look at <Subtitle> instances in the XML being checked, so we can't use the subtitles
 		 * read in by libdcp's parser.
 		 */
@@ -957,6 +962,9 @@ check_text_timing (vector<shared_ptr<dcp::Reel>> reels, vector<VerificationNote>
 	if (reels[0]->main_subtitle()) {
 		check_text_timing (reels, picture_frame_rate, notes,
 			[](shared_ptr<dcp::Reel> reel) {
+				return static_cast<bool>(reel->main_subtitle());
+			},
+			[](shared_ptr<dcp::Reel> reel) {
 				return reel->main_subtitle()->asset()->raw_xml();
 			},
 			[](shared_ptr<dcp::Reel> reel) {
@@ -967,6 +975,9 @@ check_text_timing (vector<shared_ptr<dcp::Reel>> reels, vector<VerificationNote>
 
 	for (auto i = 0U; i < reels[0]->closed_captions().size(); ++i) {
 		check_text_timing (reels, picture_frame_rate, notes,
+			[i](shared_ptr<dcp::Reel> reel) {
+				return i < reel->closed_captions().size();
+			},
 			[i](shared_ptr<dcp::Reel> reel) {
 				return reel->closed_captions()[i]->asset()->raw_xml();
 			},
