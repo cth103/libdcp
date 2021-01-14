@@ -1139,7 +1139,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_language_tag_in_subtitle_xml)
 {
 	boost::filesystem::path dir = "build/test/verify_missing_language_tag_in_subtitle_xml";
 	prepare_directory (dir);
-	auto dcp = make_simple (dir, 1);
+	auto dcp = make_simple (dir, 1, 240);
 
 	string const xml =
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -1169,7 +1169,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_language_tag_in_subtitle_xml)
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write (dir / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 100, 0);
+	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls().front()->reels().front()->add(reel_subs);
 	dcp->write_xml (dcp::SMPTE);
 
@@ -1222,7 +1222,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_start_time_tag_in_subtitle_xml)
 {
 	boost::filesystem::path dir = "build/test/verify_missing_start_time_tag_in_subtitle_xml";
 	prepare_directory (dir);
-	auto dcp = make_simple (dir, 1);
+	auto dcp = make_simple (dir, 1, 240);
 
 	string const xml =
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -1252,7 +1252,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_start_time_tag_in_subtitle_xml)
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write (dir / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 100, 0);
+	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls().front()->reels().front()->add(reel_subs);
 	dcp->write_xml (dcp::SMPTE);
 
@@ -1269,7 +1269,7 @@ BOOST_AUTO_TEST_CASE (verify_non_zero_start_time_tag_in_subtitle_xml)
 {
 	boost::filesystem::path dir = "build/test/verify_non_zero_start_time_tag_in_subtitle_xml";
 	prepare_directory (dir);
-	auto dcp = make_simple (dir, 1);
+	auto dcp = make_simple (dir, 1, 240);
 
 	string const xml =
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -1300,7 +1300,7 @@ BOOST_AUTO_TEST_CASE (verify_non_zero_start_time_tag_in_subtitle_xml)
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write (dir / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 100, 0);
+	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls().front()->reels().front()->add(reel_subs);
 	dcp->write_xml (dcp::SMPTE);
 
@@ -1671,5 +1671,30 @@ BOOST_AUTO_TEST_CASE (verify_cpl_annotation_text_should_be_same_as_content_title
 			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::CPL_ANNOTATION_TEXT_DIFFERS_FROM_CONTENT_TITLE_TEXT },
 			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT }
 		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_reel_assets_durations_must_match)
+{
+	boost::filesystem::path const dir("build/test/verify_reel_assets_durations_must_match");
+	boost::filesystem::remove_all (dir);
+	boost::filesystem::create_directories (dir);
+	shared_ptr<dcp::DCP> dcp (new dcp::DCP(dir));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL("A Test DCP", dcp::FEATURE));
+
+	shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (dir, "", 24);
+	shared_ptr<dcp::SoundAsset> ms = simple_sound (dir, "", dcp::MXFMetadata(), "en-US", 25);
+
+	cpl->add (
+		make_shared<dcp::Reel>(
+			make_shared<dcp::ReelMonoPictureAsset>(mp, 0),
+			make_shared<dcp::ReelSoundAsset>(ms, 0)
+			)
+		 );
+
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISMATCHED_ASSET_DURATION }});
 }
 

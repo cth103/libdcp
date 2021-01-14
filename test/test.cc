@@ -402,7 +402,7 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 shared_ptr<dcp::DCP>
 make_simple_with_smpte_subs (boost::filesystem::path path)
 {
-	shared_ptr<dcp::DCP> dcp = make_simple (path);
+	shared_ptr<dcp::DCP> dcp = make_simple (path, 1, 240);
 
 	shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
 	subs->set_language (dcp::LanguageTag("de-DE"));
@@ -437,7 +437,7 @@ make_simple_with_interop_ccaps (boost::filesystem::path path)
 shared_ptr<dcp::DCP>
 make_simple_with_smpte_ccaps (boost::filesystem::path path)
 {
-	shared_ptr<dcp::DCP> dcp = make_simple (path);
+	shared_ptr<dcp::DCP> dcp = make_simple (path, 1, 240);
 
 	shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
 	subs->set_language (dcp::LanguageTag("de-DE"));

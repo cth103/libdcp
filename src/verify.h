@@ -137,6 +137,8 @@ public:
 		MISSING_ANNOTATION_TEXT_IN_CPL,
 		/** The <AnnotationText> is not the same as the <ContentTitleText> [Bv2.1_8.1] */
 		CPL_ANNOTATION_TEXT_DIFFERS_FROM_CONTENT_TITLE_TEXT,
+		/** At least one asset in a reel does not have the same duration as the others */
+		MISMATCHED_ASSET_DURATION,
 	};
 
 	VerificationNote (Type type, Code code)

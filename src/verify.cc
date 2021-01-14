@@ -1065,6 +1065,18 @@ dcp::verify (
 					}
 				}
 
+				if (dcp->standard() == dcp::SMPTE) {
+					boost::optional<int64_t> duration;
+					for (auto i: reel->assets()) {
+						if (!duration) {
+							duration = i->actual_duration();
+						} else if (*duration != i->actual_duration()) {
+							notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_ASSET_DURATION, i->id()));
+							break;
+						}
+					}
+				}
+
 				if (reel->main_picture()) {
 					/* Check reel stuff */
 					auto const frame_rate = reel->main_picture()->frame_rate();
@@ -1242,6 +1254,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "The CPL has no <AnnotationText> tag, which is required by Bv2.1";
 	case dcp::VerificationNote::CPL_ANNOTATION_TEXT_DIFFERS_FROM_CONTENT_TITLE_TEXT:
 		return "The CPL's <AnnotationText> differs from its <ContentTitleText>, which Bv2.1 advises against.";
+	case dcp::VerificationNote::MISMATCHED_ASSET_DURATION:
+		return "All assets in a reel do not have the same duration, which is required by Bv2.1";
 	}
 
 	return "";
