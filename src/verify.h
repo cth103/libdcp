@@ -133,6 +133,8 @@ public:
 		CLOSED_CAPTION_LINE_TOO_LONG,
 		/** The audio sampling rate must be 48kHz [Bv2.1_7.3] */
 		INVALID_SOUND_FRAME_RATE,
+		/** The CPL has no <AnnotationText> tag [Bv2.1_8.1] */
+		MISSING_ANNOTATION_TEXT_IN_CPL,
 	};
 
 	VerificationNote (Type type, Code code)

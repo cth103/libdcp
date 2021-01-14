@@ -1026,6 +1026,10 @@ dcp::verify (
 				verify_language_tag (cpl->release_territory().get(), notes);
 			}
 
+			if (dcp->standard() == dcp::SMPTE && !cpl->annotation_text()) {
+				notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_ANNOTATION_TEXT_IN_CPL));
+			}
+
 			/* Check that the CPL's hash corresponds to the PKL */
 			for (auto i: dcp->pkls()) {
 				optional<string> h = i->hash(cpl->id());
@@ -1219,6 +1223,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "There are more than 32 characters in at least one closed caption line, which is disallowed by Bv2.1";
 	case dcp::VerificationNote::INVALID_SOUND_FRAME_RATE:
 		return "A sound asset has a sampling rate other than 48kHz, which is disallowed by Bv2.1";
+	case dcp::VerificationNote::MISSING_ANNOTATION_TEXT_IN_CPL:
+		return "The CPL has no <AnnotationText> tag, which is required by Bv2.1";
 	}
 
 	return "";

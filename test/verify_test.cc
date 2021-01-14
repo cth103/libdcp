@@ -1628,3 +1628,26 @@ BOOST_AUTO_TEST_CASE (verify_sound_sampling_rate_must_be_48k)
 
 	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::INVALID_SOUND_FRAME_RATE }});
 }
+
+
+BOOST_AUTO_TEST_CASE (verify_cpl_must_have_annotation_text)
+{
+	boost::filesystem::path const dir("build/test/verify_cpl_must_have_annotation_text");
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::SMPTE);
+	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
+
+	{
+		BOOST_REQUIRE (dcp->cpls()[0]->file());
+		Editor e(dcp->cpls()[0]->file().get());
+		e.replace("<AnnotationText>A Test DCP</AnnotationText>", "");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_ANNOTATION_TEXT_IN_CPL },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT }
+		});
+}
+
