@@ -1026,8 +1026,12 @@ dcp::verify (
 				verify_language_tag (cpl->release_territory().get(), notes);
 			}
 
-			if (dcp->standard() == dcp::SMPTE && !cpl->annotation_text()) {
-				notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_ANNOTATION_TEXT_IN_CPL));
+			if (dcp->standard() == dcp::SMPTE) {
+				if (!cpl->annotation_text()) {
+					notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_ANNOTATION_TEXT_IN_CPL));
+				} else if (cpl->annotation_text().get() != cpl->content_title_text()) {
+					notes.push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::CPL_ANNOTATION_TEXT_DIFFERS_FROM_CONTENT_TITLE_TEXT));
+				}
 			}
 
 			/* Check that the CPL's hash corresponds to the PKL */
@@ -1225,6 +1229,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "A sound asset has a sampling rate other than 48kHz, which is disallowed by Bv2.1";
 	case dcp::VerificationNote::MISSING_ANNOTATION_TEXT_IN_CPL:
 		return "The CPL has no <AnnotationText> tag, which is required by Bv2.1";
+	case dcp::VerificationNote::CPL_ANNOTATION_TEXT_DIFFERS_FROM_CONTENT_TITLE_TEXT:
+		return "The CPL's <AnnotationText> differs from its <ContentTitleText>, which Bv2.1 advises against.";
 	}
 
 	return "";

@@ -135,6 +135,8 @@ public:
 		INVALID_SOUND_FRAME_RATE,
 		/** The CPL has no <AnnotationText> tag [Bv2.1_8.1] */
 		MISSING_ANNOTATION_TEXT_IN_CPL,
+		/** The <AnnotationText> is not the same as the <ContentTitleText> [Bv2.1_8.1] */
+		CPL_ANNOTATION_TEXT_DIFFERS_FROM_CONTENT_TITLE_TEXT,
 	};
 
 	VerificationNote (Type type, Code code)

@@ -1651,3 +1651,25 @@ BOOST_AUTO_TEST_CASE (verify_cpl_must_have_annotation_text)
 		});
 }
 
+
+BOOST_AUTO_TEST_CASE (verify_cpl_annotation_text_should_be_same_as_content_title_text)
+{
+	boost::filesystem::path const dir("build/test/verify_cpl_annotation_text_should_be_same_as_content_title_text");
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::SMPTE);
+	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
+
+	{
+		BOOST_REQUIRE (dcp->cpls()[0]->file());
+		Editor e(dcp->cpls()[0]->file().get());
+		e.replace("<AnnotationText>A Test DCP</AnnotationText>", "<AnnotationText>A Test DCP 1</AnnotationText>");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::CPL_ANNOTATION_TEXT_DIFFERS_FROM_CONTENT_TITLE_TEXT },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT }
+		});
+}
+
