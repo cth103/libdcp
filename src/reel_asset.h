@@ -82,6 +82,10 @@ public:
 		_entry_point = e;
 	}
 
+	void unset_entry_point () {
+		_entry_point = boost::none;
+	}
+
 	boost::optional<int64_t> entry_point () const {
 		return _entry_point;
 	}
