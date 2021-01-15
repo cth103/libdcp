@@ -47,16 +47,16 @@ BOOST_AUTO_TEST_CASE (markers_write_test)
 	dcp::CPL cpl("Markers test", dcp::TEST);
 
 	shared_ptr<dcp::ReelMarkersAsset> asset (new dcp::ReelMarkersAsset(dcp::Fraction(24, 1), 0));
-	asset->set (dcp::FFOC, dcp::Time(1, 1, 9, 16, 24));
-	asset->set (dcp::LFOC, dcp::Time(2, 5, 3, 0, 24));
-	asset->set (dcp::FFTC, dcp::Time(0, 6, 4, 2, 24));
-	asset->set (dcp::LFTC, dcp::Time(0, 6, 4, 18, 24));
-	asset->set (dcp::FFOI, dcp::Time(3, 6, 4, 18, 24));
-	asset->set (dcp::LFOI, dcp::Time(3, 2, 4, 18, 24));
-	asset->set (dcp::FFEC, dcp::Time(3, 2, 7, 18, 24));
-	asset->set (dcp::LFEC, dcp::Time(3, 2, 8, 18, 24));
-	asset->set (dcp::FFMC, dcp::Time(4, 2, 8, 18, 24));
-	asset->set (dcp::LFMC, dcp::Time(4, 3, 8, 18, 24));
+	asset->set (dcp::Marker::FFOC, dcp::Time(1, 1, 9, 16, 24));
+	asset->set (dcp::Marker::LFOC, dcp::Time(2, 5, 3, 0, 24));
+	asset->set (dcp::Marker::FFTC, dcp::Time(0, 6, 4, 2, 24));
+	asset->set (dcp::Marker::LFTC, dcp::Time(0, 6, 4, 18, 24));
+	asset->set (dcp::Marker::FFOI, dcp::Time(3, 6, 4, 18, 24));
+	asset->set (dcp::Marker::LFOI, dcp::Time(3, 2, 4, 18, 24));
+	asset->set (dcp::Marker::FFEC, dcp::Time(3, 2, 7, 18, 24));
+	asset->set (dcp::Marker::LFEC, dcp::Time(3, 2, 8, 18, 24));
+	asset->set (dcp::Marker::FFMC, dcp::Time(4, 2, 8, 18, 24));
+	asset->set (dcp::Marker::LFMC, dcp::Time(4, 3, 8, 18, 24));
 
 	shared_ptr<dcp::Reel> reel (new dcp::Reel());
 	reel->add (asset);
@@ -80,26 +80,26 @@ BOOST_AUTO_TEST_CASE (markers_read_test, * boost::unit_test::depends_on("markers
 	shared_ptr<dcp::ReelMarkersAsset> markers = reel->main_markers ();
 	BOOST_REQUIRE (markers);
 
-	BOOST_REQUIRE (markers->get(dcp::FFOC));
-	BOOST_CHECK (markers->get(dcp::FFOC) == dcp::Time(1, 1, 9, 16, 24));
-	BOOST_REQUIRE (markers->get(dcp::LFOC));
-	BOOST_CHECK (markers->get(dcp::LFOC) == dcp::Time(2, 5, 3, 0, 24));
-	BOOST_REQUIRE (markers->get(dcp::FFTC));
-	BOOST_CHECK (markers->get (dcp::FFTC) == dcp::Time(0, 6, 4, 2, 24));
-	BOOST_REQUIRE (markers->get(dcp::LFTC));
-	BOOST_CHECK (markers->get (dcp::LFTC) == dcp::Time(0, 6, 4, 18, 24));
-	BOOST_REQUIRE (markers->get(dcp::FFOI));
-	BOOST_CHECK (markers->get (dcp::FFOI) == dcp::Time(3, 6, 4, 18, 24));
-	BOOST_REQUIRE (markers->get(dcp::LFOI));
-	BOOST_CHECK (markers->get (dcp::LFOI) == dcp::Time(3, 2, 4, 18, 24));
-	BOOST_REQUIRE (markers->get(dcp::FFEC));
-	BOOST_CHECK (markers->get (dcp::FFEC) == dcp::Time(3, 2, 7, 18, 24));
-	BOOST_REQUIRE (markers->get(dcp::LFEC));
-	BOOST_CHECK (markers->get (dcp::LFEC) == dcp::Time(3, 2, 8, 18, 24));
-	BOOST_REQUIRE (markers->get(dcp::FFMC));
-	BOOST_CHECK (markers->get (dcp::FFMC) == dcp::Time(4, 2, 8, 18, 24));
-	BOOST_REQUIRE (markers->get(dcp::LFMC));
-	BOOST_CHECK (markers->get (dcp::LFMC) == dcp::Time(4, 3, 8, 18, 24));
+	BOOST_REQUIRE (markers->get(dcp::Marker::FFOC));
+	BOOST_CHECK (markers->get(dcp::Marker::FFOC) == dcp::Time(1, 1, 9, 16, 24));
+	BOOST_REQUIRE (markers->get(dcp::Marker::LFOC));
+	BOOST_CHECK (markers->get(dcp::Marker::LFOC) == dcp::Time(2, 5, 3, 0, 24));
+	BOOST_REQUIRE (markers->get(dcp::Marker::FFTC));
+	BOOST_CHECK (markers->get (dcp::Marker::FFTC) == dcp::Time(0, 6, 4, 2, 24));
+	BOOST_REQUIRE (markers->get(dcp::Marker::LFTC));
+	BOOST_CHECK (markers->get (dcp::Marker::LFTC) == dcp::Time(0, 6, 4, 18, 24));
+	BOOST_REQUIRE (markers->get(dcp::Marker::FFOI));
+	BOOST_CHECK (markers->get (dcp::Marker::FFOI) == dcp::Time(3, 6, 4, 18, 24));
+	BOOST_REQUIRE (markers->get(dcp::Marker::LFOI));
+	BOOST_CHECK (markers->get (dcp::Marker::LFOI) == dcp::Time(3, 2, 4, 18, 24));
+	BOOST_REQUIRE (markers->get(dcp::Marker::FFEC));
+	BOOST_CHECK (markers->get (dcp::Marker::FFEC) == dcp::Time(3, 2, 7, 18, 24));
+	BOOST_REQUIRE (markers->get(dcp::Marker::LFEC));
+	BOOST_CHECK (markers->get (dcp::Marker::LFEC) == dcp::Time(3, 2, 8, 18, 24));
+	BOOST_REQUIRE (markers->get(dcp::Marker::FFMC));
+	BOOST_CHECK (markers->get (dcp::Marker::FFMC) == dcp::Time(4, 2, 8, 18, 24));
+	BOOST_REQUIRE (markers->get(dcp::Marker::LFMC));
+	BOOST_CHECK (markers->get (dcp::Marker::LFMC) == dcp::Time(4, 3, 8, 18, 24));
 
 	BOOST_CHECK (markers->equals(markers, dcp::EqualityOptions(), boost::bind(&note_handler, _1, _2)));
 

@@ -311,7 +311,7 @@ const float ASPECT_ADJUST_EPSILON = 1e-3;
  */
 const float ALIGN_EPSILON = 1e-3;
 
-enum Marker {
+enum class Marker {
 	FFOC, ///< first frame of composition
 	LFOC, ///< last frame of composition
 	FFTC, ///< first frame of title credits

@@ -388,25 +388,25 @@ string
 dcp::marker_to_string (dcp::Marker m)
 {
 	switch (m) {
-	case FFOC:
+	case Marker::FFOC:
 		return "FFOC";
-	case LFOC:
+	case Marker::LFOC:
 		return "LFOC";
-	case FFTC:
+	case Marker::FFTC:
 		return "FFTC";
-	case LFTC:
+	case Marker::LFTC:
 		return "LFTC";
-	case FFOI:
+	case Marker::FFOI:
 		return "FFOI";
-	case LFOI:
+	case Marker::LFOI:
 		return "LFOI";
-	case FFEC:
+	case Marker::FFEC:
 		return "FFEC";
-	case LFEC:
+	case Marker::LFEC:
 		return "LFEC";
-	case FFMC:
+	case Marker::FFMC:
 		return "FFMC";
-	case LFMC:
+	case Marker::LFMC:
 		return "LFMC";
 	}
 
@@ -417,25 +417,25 @@ dcp::Marker
 dcp::marker_from_string (string s)
 {
 	if (s == "FFOC") {
-		return FFOC;
+		return Marker::FFOC;
 	} else if (s == "LFOC") {
-		return LFOC;
+		return Marker::LFOC;
 	} else if (s == "FFTC") {
-		return FFTC;
+		return Marker::FFTC;
 	} else if (s == "LFTC") {
-		return LFTC;
+		return Marker::LFTC;
 	} else if (s == "FFOI") {
-		return FFOI;
+		return Marker::FFOI;
 	} else if (s == "LFOI") {
-		return LFOI;
+		return Marker::LFOI;
 	} else if (s == "FFEC") {
-		return FFEC;
+		return Marker::FFEC;
 	} else if (s == "LFEC") {
-		return LFEC;
+		return Marker::LFEC;
 	} else if (s == "FFMC") {
-		return FFMC;
+		return Marker::FFMC;
 	} else if (s == "LFMC") {
-		return LFMC;
+		return Marker::LFMC;
 	}
 
 	DCP_ASSERT (false);

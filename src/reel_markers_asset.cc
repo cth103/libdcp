@@ -123,16 +123,16 @@ ReelMarkersAsset::equals (shared_ptr<const ReelMarkersAsset> other, EqualityOpti
 		return false;
 	}
 
-	if (get(FFOC) != other->get(FFOC) ||
-	    get(LFOC) != other->get(LFOC) ||
-	    get(FFTC) != other->get(FFTC) ||
-	    get(LFTC) != other->get(LFTC) ||
-	    get(FFOI) != other->get(FFOI) ||
-	    get(LFOI) != other->get(LFOI) ||
-	    get(FFEC) != other->get(FFEC) ||
-	    get(LFEC) != other->get(LFEC) ||
-	    get(FFMC) != other->get(FFMC) ||
-	    get(LFMC) != other->get(LFMC)) {
+	if (get(Marker::FFOC) != other->get(Marker::FFOC) ||
+	    get(Marker::LFOC) != other->get(Marker::LFOC) ||
+	    get(Marker::FFTC) != other->get(Marker::FFTC) ||
+	    get(Marker::LFTC) != other->get(Marker::LFTC) ||
+	    get(Marker::FFOI) != other->get(Marker::FFOI) ||
+	    get(Marker::LFOI) != other->get(Marker::LFOI) ||
+	    get(Marker::FFEC) != other->get(Marker::FFEC) ||
+	    get(Marker::LFEC) != other->get(Marker::LFEC) ||
+	    get(Marker::FFMC) != other->get(Marker::FFMC) ||
+	    get(Marker::LFMC) != other->get(Marker::LFMC)) {
 		return false;
 	}
 
