@@ -1902,3 +1902,28 @@ BOOST_AUTO_TEST_CASE (verify_text_entry_point)
 			}
 		);
 }
+
+
+BOOST_AUTO_TEST_CASE (verify_assets_must_have_hashes)
+{
+	RNGFixer fix;
+
+	boost::filesystem::path const dir("build/test/verify_assets_must_have_hashes");
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::SMPTE);
+	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
+
+	{
+		BOOST_REQUIRE (dcp->cpls()[0]->file());
+		Editor e(dcp->cpls()[0]->file().get());
+		e.replace("<Hash>cb1OLhgHG9svy7G8hoTSPpltzhw=</Hash>", "");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_HASH }
+		});
+}
+

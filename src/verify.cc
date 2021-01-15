@@ -1084,6 +1084,10 @@ dcp::verify (
 					if ((i->intrinsic_duration() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
 						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::INTRINSIC_DURATION_TOO_SMALL, i->id()));
 					}
+					auto mxf = dynamic_pointer_cast<ReelMXF>(i);
+					if (mxf && !mxf->hash()) {
+						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_HASH, i->id()});
+					}
 				}
 
 				if (dcp->standard() == dcp::SMPTE) {
@@ -1304,6 +1308,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "Closed caption assets must have an <EntryPoint> tag.";
 	case dcp::VerificationNote::CLOSED_CAPTION_ENTRY_POINT_NON_ZERO:
 		return "Closed caption assets must have an <EntryPoint> of 0.";
+	case dcp::VerificationNote::MISSING_HASH:
+		return String::compose("An asset is missing a <Hash> tag: %1", note.note().get());
 	}
 
 	return "";

@@ -151,6 +151,8 @@ public:
 		MISSING_CLOSED_CAPTION_ENTRY_POINT,
 		/** Closed caption MainSubtitle <EntryPoint> must be zero Bv2.1_8.3.2 */
 		CLOSED_CAPTION_ENTRY_POINT_NON_ZERO,
+		/** <Hash> must be present for assets in CPLs */
+		MISSING_HASH,
 	};
 
 	VerificationNote (Type type, Code code)
