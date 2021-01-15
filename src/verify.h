@@ -143,6 +143,14 @@ public:
 		MAIN_SUBTITLE_NOT_IN_ALL_REELS,
 		/** If one reel has at least one ClosedCaption, all reels must have the same number of ClosedCaptions */
 		CLOSED_CAPTION_ASSET_COUNTS_DIFFER,
+		/** MainSubtitle in reels must have <EntryPoint> Bv2.1_8.3.2 */
+		MISSING_SUBTITLE_ENTRY_POINT,
+		/** MainSubtitle <EntryPoint> must be zero Bv2.1_8.3.2 */
+		SUBTITLE_ENTRY_POINT_NON_ZERO,
+		/** Closed caption in reels must have <EntryPoint> Bv2.1_8.3.2 */
+		MISSING_CLOSED_CAPTION_ENTRY_POINT,
+		/** Closed caption MainSubtitle <EntryPoint> must be zero Bv2.1_8.3.2 */
+		CLOSED_CAPTION_ENTRY_POINT_NON_ZERO,
 	};
 
 	VerificationNote (Type type, Code code)

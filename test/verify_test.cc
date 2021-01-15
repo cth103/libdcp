@@ -1834,3 +1834,71 @@ BOOST_AUTO_TEST_CASE (verify_closed_captions_must_be_in_all_reels)
 	}
 }
 
+
+template <class T>
+void
+verify_text_entry_point_check (boost::filesystem::path dir, dcp::VerificationNote::Code code, boost::function<void (shared_ptr<T>)> adjust)
+{
+	boost::filesystem::remove_all (dir);
+	boost::filesystem::create_directories (dir);
+	auto dcp = make_shared<dcp::DCP>(dir);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::FEATURE);
+
+	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
+	subs->set_language (dcp::LanguageTag("de-DE"));
+	subs->set_start_time (dcp::Time());
+	subs->add (simple_subtitle());
+	subs->write (dir / "subs.mxf");
+	auto reel_text = make_shared<T>(subs, dcp::Fraction(24, 1), 240, 0);
+	adjust (reel_text);
+
+	auto reel = make_shared<dcp::Reel>(
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 240), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", 240), 0)
+		);
+
+	reel->add (reel_text);
+
+	cpl->add (reel);
+
+	dcp->add (cpl);
+	dcp->write_xml (dcp::SMPTE);
+
+	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, code }});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_text_entry_point)
+{
+	verify_text_entry_point_check<dcp::ReelSubtitleAsset> (
+		"build/test/verify_subtitle_entry_point_must_be_present",
+		dcp::VerificationNote::MISSING_SUBTITLE_ENTRY_POINT,
+		[](shared_ptr<dcp::ReelSubtitleAsset> asset) {
+			asset->unset_entry_point ();
+			}
+		);
+
+	verify_text_entry_point_check<dcp::ReelSubtitleAsset> (
+		"build/test/verify_subtitle_entry_point_must_be_zero",
+		dcp::VerificationNote::SUBTITLE_ENTRY_POINT_NON_ZERO,
+		[](shared_ptr<dcp::ReelSubtitleAsset> asset) {
+			asset->set_entry_point (4);
+			}
+		);
+
+	verify_text_entry_point_check<dcp::ReelClosedCaptionAsset> (
+		"build/test/verify_closed_caption_entry_point_must_be_present",
+		dcp::VerificationNote::MISSING_CLOSED_CAPTION_ENTRY_POINT,
+		[](shared_ptr<dcp::ReelClosedCaptionAsset> asset) {
+			asset->unset_entry_point ();
+			}
+		);
+
+	verify_text_entry_point_check<dcp::ReelClosedCaptionAsset> (
+		"build/test/verify_closed_caption_entry_point_must_be_zero",
+		dcp::VerificationNote::CLOSED_CAPTION_ENTRY_POINT_NON_ZERO,
+		[](shared_ptr<dcp::ReelClosedCaptionAsset> asset) {
+			asset->set_entry_point (9);
+			}
+		);
+}

@@ -633,6 +633,12 @@ verify_main_subtitle_reel (shared_ptr<const ReelSubtitleAsset> reel_asset, vecto
 	if (reel_asset->language()) {
 		verify_language_tag (*reel_asset->language(), notes);
 	}
+
+	if (!reel_asset->entry_point()) {
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_ENTRY_POINT });
+	} else if (reel_asset->entry_point().get()) {
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::SUBTITLE_ENTRY_POINT_NON_ZERO });
+	}
 }
 
 
@@ -642,6 +648,12 @@ verify_closed_caption_reel (shared_ptr<const ReelClosedCaptionAsset> reel_asset,
 	/* XXX: is Language compulsory? */
 	if (reel_asset->language()) {
 		verify_language_tag (*reel_asset->language(), notes);
+	}
+
+	if (!reel_asset->entry_point()) {
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CLOSED_CAPTION_ENTRY_POINT });
+	} else if (reel_asset->entry_point().get()) {
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::CLOSED_CAPTION_ENTRY_POINT_NON_ZERO });
 	}
 }
 
@@ -1284,6 +1296,14 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "At least one reel contains a subtitle asset, but some reel(s) do not";
 	case dcp::VerificationNote::CLOSED_CAPTION_ASSET_COUNTS_DIFFER:
 		return "At least one reel has closed captions, but reels have different numbers of closed caption assets.";
+	case dcp::VerificationNote::MISSING_SUBTITLE_ENTRY_POINT:
+		return "Subtitle assets must have an <EntryPoint> tag.";
+	case dcp::VerificationNote::SUBTITLE_ENTRY_POINT_NON_ZERO:
+		return "Subtitle assets must have an <EntryPoint> of 0.";
+	case dcp::VerificationNote::MISSING_CLOSED_CAPTION_ENTRY_POINT:
+		return "Closed caption assets must have an <EntryPoint> tag.";
+	case dcp::VerificationNote::CLOSED_CAPTION_ENTRY_POINT_NON_ZERO:
+		return "Closed caption assets must have an <EntryPoint> of 0.";
 	}
 
 	return "";
