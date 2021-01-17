@@ -187,6 +187,10 @@ public:
 		_release_territory = t.subtag();
 	}
 
+	boost::optional<std::string> release_territory_scope () const {
+		return _release_territory_scope;
+	}
+
 	boost::optional<int> version_number () const {
 		return _version_number;
 	}
@@ -302,6 +306,7 @@ private:
 	 *  but must be set as a dcp::LanguageTag to try to ensure that we create compliant output.
 	 */
 	boost::optional<std::string> _release_territory;
+	boost::optional<std::string> _release_territory_scope;
 	boost::optional<int> _version_number;
 	boost::optional<Status> _status;
 	boost::optional<std::string> _chain;

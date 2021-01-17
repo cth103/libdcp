@@ -233,6 +233,9 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 	_full_content_title_text_language = fctt->optional_string_attribute("language");
 
 	_release_territory = node->optional_string_child("ReleaseTerritory");
+	if (_release_territory) {
+		_release_territory_scope = node->node_child("ReleaseTerritory")->optional_string_attribute("scope");
+	}
 
 	auto vn = node->optional_node_child("VersionNumber");
 	if (vn) {
