@@ -109,6 +109,8 @@ write_dcp_with_single_asset (boost::filesystem::path dir, shared_ptr<dcp::ReelAs
 {
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (reel_asset);
+	reel->add (simple_markers());
+
 	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel);
 	auto dcp = make_shared<dcp::DCP>(dir);
@@ -210,7 +212,7 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	auto notes = dcp::verify (directories, &stage, &progress, xsd_test);
 
 	boost::filesystem::path const cpl_file = "build/test/verify_test1/cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml";
-	boost::filesystem::path const pkl_file = "build/test/verify_test1/pkl_cd49971e-bf4c-4594-8474-54ebef09a40c.xml";
+	boost::filesystem::path const pkl_file = "build/test/verify_test1/pkl_63c3aece-c581-4603-b612-75e43f0c0430.xml";
 	boost::filesystem::path const assetmap_file = "build/test/verify_test1/ASSETMAP.xml";
 
 	auto st = stages.begin();
@@ -287,7 +289,7 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 	auto directories = setup (1, 3);
 
 	{
-		Editor e ("build/test/verify_test3/pkl_cd49971e-bf4c-4594-8474-54ebef09a40c.xml");
+		Editor e ("build/test/verify_test3/pkl_63c3aece-c581-4603-b612-75e43f0c0430.xml");
 		e.replace ("<Hash>", "<Hash>x");
 	}
 
@@ -331,7 +333,7 @@ static
 boost::filesystem::path
 pkl (int n)
 {
-	return dcp::String::compose("build/test/verify_test%1/pkl_cd49971e-bf4c-4594-8474-54ebef09a40c.xml", n);
+	return dcp::String::compose("build/test/verify_test%1/pkl_63c3aece-c581-4603-b612-75e43f0c0430.xml", n);
 }
 
 static
@@ -418,7 +420,7 @@ BOOST_AUTO_TEST_CASE (verify_test11)
 {
 	check_verify_result_after_replace (
 		11, &pkl,
-		"<Id>urn:uuid:cd4", "<Id>urn:uuid:xd4",
+		"<Id>urn:uuid:63c", "<Id>urn:uuid:x3c",
 		{ dcp::VerificationNote::XML_VALIDATION_ERROR }
 		);
 }
@@ -639,8 +641,7 @@ BOOST_AUTO_TEST_CASE (verify_test20)
 	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	write_dcp_with_single_asset (dir, reel_asset);
 
-	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 0);
+	check_verify_result ({dir}, {});
 }
 
 
@@ -701,6 +702,9 @@ BOOST_AUTO_TEST_CASE (verify_test23)
 
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (reel_asset);
+
+	reel->add (simple_markers(16 * 24 - 1));
+
 	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel);
 	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
@@ -712,8 +716,7 @@ BOOST_AUTO_TEST_CASE (verify_test23)
 	dcp.add (cpl);
 	dcp.write_xml (dcp::SMPTE);
 
-	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
-	BOOST_CHECK (notes.empty());
+	check_verify_result ({dir}, {});
 }
 
 
@@ -744,6 +747,8 @@ BOOST_AUTO_TEST_CASE (verify_test24)
 	cpl->set_main_sound_sample_rate (48000);
 	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
 	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
+
+	reel->add (simple_markers());
 
 	dcp::DCP dcp (dir);
 	dcp.add (cpl);
@@ -863,6 +868,8 @@ BOOST_AUTO_TEST_CASE (verify_various_invalid_languages)
 	auto sound = simple_sound (dir, "foo", dcp::MXFMetadata(), "frobozz");
 	auto reel_sound = make_shared<dcp::ReelSoundAsset>(sound, 0);
 	reel->add (reel_sound);
+	reel->add (simple_markers());
+
 	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel);
 	cpl->_additional_subtitle_languages.push_back("this-is-wrong");
@@ -936,6 +943,8 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 	} else {
 		reel->add (make_shared<dcp::ReelMonoPictureAsset>(std::dynamic_pointer_cast<dcp::MonoPictureAsset>(mp), 0));
 	}
+
+	reel->add (simple_markers(frame_rate));
 
 	cpl->add (reel);
 
@@ -1386,6 +1395,9 @@ BOOST_AUTO_TEST_CASE (verify_text_early_on_second_reel)
 	auto reel_asset1 = make_shared<dcp::ReelSubtitleAsset>(asset1, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto reel1 = make_shared<dcp::Reel>();
 	reel1->add (reel_asset1);
+	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 16 * 24, 0);
+	markers1->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
+	reel1->add (markers1);
 
 	auto asset2 = make_shared<dcp::SMPTESubtitleAsset>();
 	asset2->set_start_time (dcp::Time());
@@ -1396,6 +1408,9 @@ BOOST_AUTO_TEST_CASE (verify_text_early_on_second_reel)
 	auto reel_asset2 = make_shared<dcp::ReelSubtitleAsset>(asset2, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto reel2 = make_shared<dcp::Reel>();
 	reel2->add (reel_asset2);
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 16 * 24, 0);
+	markers2->set (dcp::Marker::LFOC, dcp::Time(16 * 24 - 1, 24, 24));
+	reel2->add (markers2);
 
 	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel1);
@@ -1623,6 +1638,7 @@ BOOST_AUTO_TEST_CASE (verify_sound_sampling_rate_must_be_48k)
 	auto sound = simple_sound (dir, "foo", dcp::MXFMetadata(), "de-DE", 24, 96000);
 	auto reel_sound = make_shared<dcp::ReelSoundAsset>(sound, 0);
 	reel->add (reel_sound);
+	reel->add (simple_markers());
 	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel);
 	auto dcp = make_shared<dcp::DCP>(dir);
@@ -1688,12 +1704,13 @@ BOOST_AUTO_TEST_CASE (verify_reel_assets_durations_must_match)
 	shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (dir, "", 24);
 	shared_ptr<dcp::SoundAsset> ms = simple_sound (dir, "", dcp::MXFMetadata(), "en-US", 25);
 
-	cpl->add (
-		make_shared<dcp::Reel>(
-			make_shared<dcp::ReelMonoPictureAsset>(mp, 0),
-			make_shared<dcp::ReelSoundAsset>(ms, 0)
-			)
-		 );
+	auto reel = make_shared<dcp::Reel>(
+		make_shared<dcp::ReelMonoPictureAsset>(mp, 0),
+		make_shared<dcp::ReelSoundAsset>(ms, 0)
+		);
+
+	reel->add (simple_markers());
+	cpl->add (reel);
 
 	dcp->add (cpl);
 	dcp->write_xml (dcp::SMPTE);
@@ -1728,8 +1745,11 @@ verify_subtitles_must_be_in_all_reels_check (boost::filesystem::path dir, bool a
 		reel1->add (make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0));
 	}
 
-	cpl->add (reel1);
+	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 240, 0);
+	markers1->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
+	reel1->add (markers1);
 
+	cpl->add (reel1);
 
 	auto reel2 = make_shared<dcp::Reel>(
 		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 240), 0),
@@ -1739,6 +1759,10 @@ verify_subtitles_must_be_in_all_reels_check (boost::filesystem::path dir, bool a
 	if (add_to_reel2) {
 		reel2->add (make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0));
 	}
+
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 240, 0);
+	markers2->set (dcp::Marker::LFOC, dcp::Time(239, 24, 24));
+	reel2->add (markers2);
 
 	cpl->add (reel2);
 
@@ -1795,6 +1819,10 @@ verify_closed_captions_must_be_in_all_reels_check (boost::filesystem::path dir, 
 		reel1->add (make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 240, 0));
 	}
 
+	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 240, 0);
+	markers1->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
+	reel1->add (markers1);
+
 	cpl->add (reel1);
 
 	auto reel2 = make_shared<dcp::Reel>(
@@ -1805,6 +1833,10 @@ verify_closed_captions_must_be_in_all_reels_check (boost::filesystem::path dir, 
 	for (int i = 0; i < caps_in_reel2; ++i) {
 		reel2->add (make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 240, 0));
 	}
+
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 240, 0);
+	markers2->set (dcp::Marker::LFOC, dcp::Time(239, 24, 24));
+	reel2->add (markers2);
 
 	cpl->add (reel2);
 
@@ -1861,6 +1893,8 @@ verify_text_entry_point_check (boost::filesystem::path dir, dcp::VerificationNot
 		);
 
 	reel->add (reel_text);
+
+	reel->add (simple_markers(240));
 
 	cpl->add (reel);
 
@@ -1931,60 +1965,105 @@ BOOST_AUTO_TEST_CASE (verify_assets_must_have_hashes)
 }
 
 
-
-BOOST_AUTO_TEST_CASE (verify_features_must_have_ffec_ffmc1)
+static
+void
+verify_markers_test (
+	boost::filesystem::path dir,
+	vector<pair<dcp::Marker, dcp::Time>> markers,
+	vector<std::pair<dcp::VerificationNote::Type, dcp::VerificationNote::Code>> types_and_codes
+	)
 {
-	boost::filesystem::path const dir("build/test/verify_features_must_have_ffec_ffmc1");
 	auto dcp = make_simple (dir);
 	dcp->cpls()[0]->set_content_kind (dcp::FEATURE);
-	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 0);
-	markers->set (dcp::Marker::FFEC, dcp::Time(0, 0, 4, 0, 24));
-	markers->set (dcp::Marker::FFMC, dcp::Time(0, 0, 5, 0, 24));
-	dcp->cpls()[0]->reels()[0]->add(markers);
+	auto markers_asset = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 24, 0);
+	for (auto const& i: markers) {
+		markers_asset->set (i.first, i.second);
+	}
+	dcp->cpls()[0]->reels()[0]->add(markers_asset);
 	dcp->write_xml (dcp::SMPTE);
-	check_verify_result ({dir}, {});
+	check_verify_result ({dir}, types_and_codes);
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_features_must_have_ffec_ffmc2)
+BOOST_AUTO_TEST_CASE (verify_markers)
 {
-	boost::filesystem::path const dir("build/test/verify_features_must_have_ffec_ffmc2");
-	auto dcp = make_simple (dir);
-	dcp->cpls()[0]->set_content_kind (dcp::FEATURE);
-	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 0);
-	markers->set (dcp::Marker::FFEC, dcp::Time(0, 0, 4, 0, 24));
-	dcp->cpls()[0]->reels()[0]->add(markers);
-	dcp->write_xml (dcp::SMPTE);
-	check_verify_result ({dir}, {{dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_FFMC_IN_FEATURE}});
-}
-
-
-BOOST_AUTO_TEST_CASE (verify_features_must_have_ffec_ffmc3)
-{
-	boost::filesystem::path const dir("build/test/verify_features_must_have_ffec_ffmc3");
-	auto dcp = make_simple (dir);
-	dcp->cpls()[0]->set_content_kind (dcp::FEATURE);
-	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 0);
-	markers->set (dcp::Marker::FFMC, dcp::Time(0, 0, 4, 0, 24));
-	dcp->cpls()[0]->reels()[0]->add(markers);
-	dcp->write_xml (dcp::SMPTE);
-	check_verify_result ({dir}, {{dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_FFEC_IN_FEATURE}});
-}
-
-
-BOOST_AUTO_TEST_CASE (verify_features_must_have_ffec_ffmc4)
-{
-	boost::filesystem::path const dir("build/test/verify_features_must_have_ffec_ffmc4");
-	auto dcp = make_simple (dir);
-	dcp->cpls()[0]->set_content_kind (dcp::FEATURE);
-	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 0);
-	dcp->cpls()[0]->reels()[0]->add(markers);
-	dcp->write_xml (dcp::SMPTE);
-	check_verify_result (
-		{dir},
+	verify_markers_test (
+		"build/test/verify_markers_all_correct",
 		{
-			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_FFEC_IN_FEATURE },
+			{ dcp::Marker::FFEC, dcp::Time(12, 24, 24) },
+			{ dcp::Marker::FFMC, dcp::Time(13, 24, 24) },
+			{ dcp::Marker::FFOC, dcp::Time(1, 24, 24) },
+			{ dcp::Marker::LFOC, dcp::Time(23, 24, 24) }
+		},
+		{}
+		);
+
+	verify_markers_test (
+		"build/test/verify_markers_missing_ffec",
+		{
+			{ dcp::Marker::FFMC, dcp::Time(13, 24, 24) },
+			{ dcp::Marker::FFOC, dcp::Time(1, 24, 24) },
+			{ dcp::Marker::LFOC, dcp::Time(23, 24, 24) }
+		},
+		{
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_FFEC_IN_FEATURE }
+		});
+
+	verify_markers_test (
+		"build/test/verify_markers_missing_ffmc",
+		{
+			{ dcp::Marker::FFEC, dcp::Time(12, 24, 24) },
+			{ dcp::Marker::FFOC, dcp::Time(1, 24, 24) },
+			{ dcp::Marker::LFOC, dcp::Time(23, 24, 24) }
+		},
+		{
 			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_FFMC_IN_FEATURE }
+		});
+
+	verify_markers_test (
+		"build/test/verify_markers_missing_ffoc",
+		{
+			{ dcp::Marker::FFEC, dcp::Time(12, 24, 24) },
+			{ dcp::Marker::FFMC, dcp::Time(13, 24, 24) },
+			{ dcp::Marker::LFOC, dcp::Time(23, 24, 24) }
+		},
+		{
+			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::MISSING_FFOC}
+		});
+
+	verify_markers_test (
+		"build/test/verify_markers_missing_lfoc",
+		{
+			{ dcp::Marker::FFEC, dcp::Time(12, 24, 24) },
+			{ dcp::Marker::FFMC, dcp::Time(13, 24, 24) },
+			{ dcp::Marker::FFOC, dcp::Time(1, 24, 24) }
+		},
+		{
+			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::MISSING_LFOC }
+		});
+
+	verify_markers_test (
+		"build/test/verify_markers_incorrect_ffoc",
+		{
+			{ dcp::Marker::FFEC, dcp::Time(12, 24, 24) },
+			{ dcp::Marker::FFMC, dcp::Time(13, 24, 24) },
+			{ dcp::Marker::FFOC, dcp::Time(3, 24, 24) },
+			{ dcp::Marker::LFOC, dcp::Time(23, 24, 24) }
+		},
+		{
+			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::INCORRECT_FFOC }
+		});
+
+	verify_markers_test (
+		"build/test/verify_markers_incorrect_lfoc",
+		{
+			{ dcp::Marker::FFEC, dcp::Time(12, 24, 24) },
+			{ dcp::Marker::FFMC, dcp::Time(13, 24, 24) },
+			{ dcp::Marker::FFOC, dcp::Time(1, 24, 24) },
+			{ dcp::Marker::LFOC, dcp::Time(18, 24, 24) }
+		},
+		{
+			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::INCORRECT_LFOC }
 		});
 }
 

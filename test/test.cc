@@ -55,6 +55,7 @@
 #include "reel_asset.h"
 #include "test.h"
 #include "util.h"
+#include "reel_markers_asset.h"
 #include <asdcp/KM_util.h>
 #include <asdcp/KM_prng.h>
 #include <sndfile.h>
@@ -67,6 +68,7 @@ using std::string;
 using std::min;
 using std::vector;
 using std::shared_ptr;
+using std::make_shared;
 using boost::optional;
 
 
@@ -337,12 +339,21 @@ make_simple (boost::filesystem::path path, int reels, int frames)
 		shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (path, suffix, frames);
 		shared_ptr<dcp::SoundAsset> ms = simple_sound (path, suffix, mxf_meta, "en-US", frames);
 
-		cpl->add (shared_ptr<dcp::Reel> (
-				  new dcp::Reel (
-					  shared_ptr<dcp::ReelMonoPictureAsset>(new dcp::ReelMonoPictureAsset(mp, 0)),
-					  shared_ptr<dcp::ReelSoundAsset>(new dcp::ReelSoundAsset(ms, 0))
-					  )
-				  ));
+		auto reel = make_shared<dcp::Reel>(
+			shared_ptr<dcp::ReelMonoPictureAsset>(new dcp::ReelMonoPictureAsset(mp, 0)),
+			shared_ptr<dcp::ReelSoundAsset>(new dcp::ReelSoundAsset(ms, 0))
+			);
+
+		auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), frames, 0);
+		if (i == 0) {
+			markers->set (dcp::Marker::FFOC, dcp::Time(0, 0, 0, 1, 24));
+		}
+		if (i == reels - 1) {
+			markers->set (dcp::Marker::LFOC, dcp::Time(0, 0, 0, frames - 1, 24));
+		}
+		reel->add (markers);
+
+		cpl->add (reel);
 	}
 
 	d->add (cpl);
@@ -376,6 +387,16 @@ simple_subtitle ()
 			dcp::Time()
 			)
 		);
+}
+
+
+shared_ptr<dcp::ReelMarkersAsset>
+simple_markers (int frames)
+{
+	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), frames, 0);
+	markers->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
+	markers->set (dcp::Marker::LFOC, dcp::Time(frames - 1, 24, 24));
+	return markers;
 }
 
 

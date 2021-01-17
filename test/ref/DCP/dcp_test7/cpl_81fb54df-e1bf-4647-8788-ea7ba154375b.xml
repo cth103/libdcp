@@ -16,6 +16,24 @@
     <Reel>
       <Id>urn:uuid:48db27c3-4964-46a2-8b02-3e5570efb42d</Id>
       <AssetList>
+        <MainMarkers>
+          <Id>urn:uuid:cd49971e-bf4c-4594-8474-54ebef09a40c</Id>
+          <AnnotationText></AnnotationText>
+          <EditRate>24 1</EditRate>
+          <IntrinsicDuration>24</IntrinsicDuration>
+          <EntryPoint>0</EntryPoint>
+          <Duration>24</Duration>
+          <MarkerList>
+            <Marker>
+              <Label>FFOC</Label>
+              <Offset>1</Offset>
+            </Marker>
+            <Marker>
+              <Label>LFOC</Label>
+              <Offset>23</Offset>
+            </Marker>
+          </MarkerList>
+        </MainMarkers>
         <MainPicture>
           <Id>urn:uuid:1fab8bb0-cfaf-4225-ad6d-01768bc10470</Id>
           <AnnotationText></AnnotationText>

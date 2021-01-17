@@ -227,6 +227,7 @@ test_rewriting_sound(string name, bool modify)
 	writer->finalize();
 
 	reel->add(make_shared<dcp::ReelSoundAsset>(sound, 0));
+	reel->add(simple_markers());
 
 	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
 	cpl->add (reel);

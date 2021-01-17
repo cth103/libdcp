@@ -42,6 +42,7 @@
 #include "test.h"
 #include "types.h"
 #include "verify.h"
+#include "reel_markers_asset.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
@@ -51,9 +52,10 @@
 
 using std::list;
 using std::string;
+using std::make_shared;
 using std::vector;
-using boost::optional;
 using std::shared_ptr;
+using boost::optional;
 
 
 static void
@@ -319,7 +321,9 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_shared_asset)
 
 	shared_ptr<dcp::ReelMonoPictureAsset> pic(new dcp::ReelMonoPictureAsset(simple_picture("build/test/combine_input2", ""), 0));
 	shared_ptr<dcp::ReelSoundAsset> sound(new dcp::ReelSoundAsset(first->cpls().front()->reels().front()->main_sound()->asset(), 0));
-	cpl->add (shared_ptr<dcp::Reel>(new dcp::Reel(pic, sound)));
+	auto reel = make_shared<dcp::Reel>(pic, sound);
+	reel->add (simple_markers());
+	cpl->add (reel);
 	second->add (cpl);
 	second->write_xml (dcp::SMPTE);
 

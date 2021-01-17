@@ -79,6 +79,7 @@ using std::string;
 using std::cout;
 using std::map;
 using std::max;
+using std::set;
 using std::shared_ptr;
 using std::make_shared;
 using boost::optional;
@@ -1084,10 +1085,7 @@ dcp::verify (
 			size_t fewest_closed_captions = SIZE_MAX;
 			/* most number of closed caption assets seen in a reel */
 			size_t most_closed_captions = 0;
-			/* true if we've seen a FFEC marker */
-			auto have_ffec = false;
-			/* true if we've seen a FFMC marker */
-			auto have_ffmc = false;
+			map<Marker, Time> markers_seen;
 
 			for (auto reel: cpl->reels()) {
 				stage ("Checking reel", optional<boost::filesystem::path>());
@@ -1158,11 +1156,8 @@ dcp::verify (
 				}
 
 				if (reel->main_markers()) {
-					if (reel->main_markers()->get(Marker::FFEC)) {
-						have_ffec = true;
-					}
-					if (reel->main_markers()->get(Marker::FFMC)) {
-						have_ffmc = true;
+					for (auto const& i: reel->main_markers()->get()) {
+						markers_seen.insert (i);
 					}
 				}
 
@@ -1181,12 +1176,26 @@ dcp::verify (
 				}
 
 				if (cpl->content_kind() == FEATURE) {
-					if (!have_ffec) {
+					if (markers_seen.find(dcp::Marker::FFEC) == markers_seen.end()) {
 						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_FFEC_IN_FEATURE});
 					}
-					if (!have_ffmc) {
+					if (markers_seen.find(dcp::Marker::FFMC) == markers_seen.end()) {
 						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_FFMC_IN_FEATURE});
 					}
+				}
+
+				auto ffoc = markers_seen.find(dcp::Marker::FFOC);
+				if (ffoc == markers_seen.end()) {
+					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::MISSING_FFOC});
+				} else if (ffoc->second.e != 1) {
+					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INCORRECT_FFOC});
+				}
+
+				auto lfoc = markers_seen.find(dcp::Marker::LFOC);
+				if (lfoc == markers_seen.end()) {
+					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::MISSING_LFOC});
+				} else if (lfoc->second.as_editable_units(lfoc->second.tcr) != (cpl->reels().back()->duration() - 1)) {
+					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INCORRECT_LFOC});
 				}
 
 				check_text_timing (cpl->reels(), notes);
@@ -1347,6 +1356,14 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "The DCP is marked as a Feature but there is no FFEC (first frame of end credits) marker";
 	case dcp::VerificationNote::MISSING_FFMC_IN_FEATURE:
 		return "The DCP is marked as a Feature but there is no FFMC (first frame of moving credits) marker";
+	case dcp::VerificationNote::MISSING_FFOC:
+		return "There should be a FFOC (first frame of content) marker";
+	case dcp::VerificationNote::MISSING_LFOC:
+		return "There should be a LFOC (last frame of content) marker";
+	case dcp::VerificationNote::INCORRECT_FFOC:
+		return "The FFOC marker should bet set to 1";
+	case dcp::VerificationNote::INCORRECT_LFOC:
+		return "The LFOC marker should be set to 1 less than the duration of the last reel";
 	}
 
 	return "";

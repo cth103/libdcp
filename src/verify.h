@@ -157,6 +157,14 @@ public:
 		MISSING_FFEC_IN_FEATURE,
 		/** If ContentKind is Feature there must be a FFMC marker */
 		MISSING_FFMC_IN_FEATURE,
+		/** There should be a FFOC */
+		MISSING_FFOC,
+		/** There should be a LFOC */
+		MISSING_LFOC,
+		/** The FFOC should be 1 */
+		INCORRECT_FFOC,
+		/** The LFOC should be the last frame in the reel */
+		INCORRECT_LFOC,
 	};
 
 	VerificationNote (Type type, Code code)

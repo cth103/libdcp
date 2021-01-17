@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2019-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -41,12 +41,13 @@
 
 using std::string;
 using std::shared_ptr;
+using std::make_shared;
 
 BOOST_AUTO_TEST_CASE (markers_write_test)
 {
 	dcp::CPL cpl("Markers test", dcp::TEST);
 
-	shared_ptr<dcp::ReelMarkersAsset> asset (new dcp::ReelMarkersAsset(dcp::Fraction(24, 1), 0));
+	auto asset = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 432000, 0);
 	asset->set (dcp::Marker::FFOC, dcp::Time(1, 1, 9, 16, 24));
 	asset->set (dcp::Marker::LFOC, dcp::Time(2, 5, 3, 0, 24));
 	asset->set (dcp::Marker::FFTC, dcp::Time(0, 6, 4, 2, 24));
@@ -103,6 +104,6 @@ BOOST_AUTO_TEST_CASE (markers_read_test, * boost::unit_test::depends_on("markers
 
 	BOOST_CHECK (markers->equals(markers, dcp::EqualityOptions(), boost::bind(&note_handler, _1, _2)));
 
-	shared_ptr<dcp::ReelMarkersAsset> markers2 (new dcp::ReelMarkersAsset(dcp::Fraction(24, 1), 0));
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 432000, 0);
 	BOOST_CHECK (!markers->equals(markers2, dcp::EqualityOptions(), boost::bind(&note_handler, _1, _2)));
 }
