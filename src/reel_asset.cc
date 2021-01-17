@@ -39,6 +39,7 @@
 #include "reel_asset.h"
 #include "asset.h"
 #include "compose.hpp"
+#include "dcp_assert.h"
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 
@@ -62,7 +63,7 @@ ReelAsset::ReelAsset (string id, Fraction edit_rate, int64_t intrinsic_duration,
 	, _edit_rate (edit_rate)
 	, _entry_point (entry_point)
 {
-
+	DCP_ASSERT (_entry_point <= _intrinsic_duration);
 }
 
 ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
