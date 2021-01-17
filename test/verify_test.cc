@@ -108,7 +108,7 @@ write_dcp_with_single_asset (boost::filesystem::path dir, shared_ptr<dcp::ReelAs
 {
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (reel_asset);
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel);
 	auto dcp = make_shared<dcp::DCP>(dir);
 	dcp->add (cpl);
@@ -316,7 +316,7 @@ BOOST_AUTO_TEST_CASE (verify_test4)
 
 	BOOST_REQUIRE_EQUAL (notes.size(), 1);
 	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::GENERAL_READ);
-	BOOST_CHECK_EQUAL (*notes.front().note(), "Bad content kind 'xfeature'");
+	BOOST_CHECK_EQUAL (*notes.front().note(), "Bad content kind 'xtrailer'");
 }
 
 static
@@ -700,7 +700,7 @@ BOOST_AUTO_TEST_CASE (verify_test23)
 
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (reel_asset);
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel);
 	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
 	cpl->set_main_sound_sample_rate (48000);
@@ -737,7 +737,7 @@ BOOST_AUTO_TEST_CASE (verify_test24)
 
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (black_picture_asset(dir));
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel);
 	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
 	cpl->set_main_sound_sample_rate (48000);
@@ -772,7 +772,7 @@ BOOST_AUTO_TEST_CASE (verify_test25)
 
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (black_picture_asset(dir));
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel);
 	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
 	cpl->set_main_sound_sample_rate (48000);
@@ -862,7 +862,7 @@ BOOST_AUTO_TEST_CASE (verify_various_invalid_languages)
 	auto sound = simple_sound (dir, "foo", dcp::MXFMetadata(), "frobozz");
 	auto reel_sound = make_shared<dcp::ReelSoundAsset>(sound, 0);
 	reel->add (reel_sound);
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel);
 	cpl->_additional_subtitle_languages.push_back("this-is-wrong");
 	cpl->_additional_subtitle_languages.push_back("andso-is-this");
@@ -924,7 +924,7 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 	picture_writer->finalize ();
 
 	auto d = make_shared<dcp::DCP>(dcp_path);
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
 	cpl->set_annotation_text ("A Test DCP");
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
 
@@ -1396,7 +1396,7 @@ BOOST_AUTO_TEST_CASE (verify_text_early_on_second_reel)
 	auto reel2 = make_shared<dcp::Reel>();
 	reel2->add (reel_asset2);
 
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel1);
 	cpl->add (reel2);
 	auto dcp = make_shared<dcp::DCP>(dir);
@@ -1622,7 +1622,7 @@ BOOST_AUTO_TEST_CASE (verify_sound_sampling_rate_must_be_48k)
 	auto sound = simple_sound (dir, "foo", dcp::MXFMetadata(), "de-DE", 24, 96000);
 	auto reel_sound = make_shared<dcp::ReelSoundAsset>(sound, 0);
 	reel->add (reel_sound);
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel);
 	auto dcp = make_shared<dcp::DCP>(dir);
 	dcp->add (cpl);
@@ -1682,7 +1682,7 @@ BOOST_AUTO_TEST_CASE (verify_reel_assets_durations_must_match)
 	boost::filesystem::remove_all (dir);
 	boost::filesystem::create_directories (dir);
 	shared_ptr<dcp::DCP> dcp (new dcp::DCP(dir));
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL("A Test DCP", dcp::FEATURE));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL("A Test DCP", dcp::TRAILER));
 
 	shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (dir, "", 24);
 	shared_ptr<dcp::SoundAsset> ms = simple_sound (dir, "", dcp::MXFMetadata(), "en-US", 25);
@@ -1709,7 +1709,7 @@ verify_subtitles_must_be_in_all_reels_check (boost::filesystem::path dir, bool a
 	boost::filesystem::remove_all (dir);
 	boost::filesystem::create_directories (dir);
 	auto dcp = make_shared<dcp::DCP>(dir);
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
 
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
@@ -1777,7 +1777,7 @@ verify_closed_captions_must_be_in_all_reels_check (boost::filesystem::path dir, 
 	boost::filesystem::remove_all (dir);
 	boost::filesystem::create_directories (dir);
 	auto dcp = make_shared<dcp::DCP>(dir);
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
 
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
@@ -1844,7 +1844,7 @@ verify_text_entry_point_check (boost::filesystem::path dir, dcp::VerificationNot
 	boost::filesystem::remove_all (dir);
 	boost::filesystem::create_directories (dir);
 	auto dcp = make_shared<dcp::DCP>(dir);
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
 
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));

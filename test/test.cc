@@ -322,7 +322,7 @@ make_simple (boost::filesystem::path path, int reels, int frames)
 	boost::filesystem::remove_all (path);
 	boost::filesystem::create_directories (path);
 	shared_ptr<dcp::DCP> d (new dcp::DCP (path));
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::TRAILER));
 	cpl->set_annotation_text ("A Test DCP");
 	cpl->set_issuer ("OpenDCP 0.0.25");
 	cpl->set_creator ("OpenDCP 0.0.25");

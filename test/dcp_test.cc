@@ -47,6 +47,7 @@
 #include "reel_stereo_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_atmos_asset.h"
+#include "reel_markers_asset.h"
 #include <asdcp/KM_util.h>
 #include <sndfile.h>
 #include <boost/test/unit_test.hpp>
@@ -55,6 +56,7 @@ using std::string;
 using std::vector;
 using std::dynamic_pointer_cast;
 using std::shared_ptr;
+using std::make_shared;
 #if BOOST_VERSION >= 106100
 using namespace boost::placeholders;
 #endif
@@ -175,35 +177,35 @@ static
 void
 test_rewriting_sound(string name, bool modify)
 {
+	using namespace boost::filesystem;
+
 	dcp::DCP A ("test/ref/DCP/dcp_test1");
 	A.read ();
 
 	BOOST_REQUIRE (!A.cpls().empty());
 	BOOST_REQUIRE (!A.cpls().front()->reels().empty());
-	shared_ptr<dcp::ReelMonoPictureAsset> A_picture = dynamic_pointer_cast<dcp::ReelMonoPictureAsset>(A.cpls().front()->reels().front()->main_picture());
+	auto A_picture = dynamic_pointer_cast<dcp::ReelMonoPictureAsset>(A.cpls().front()->reels().front()->main_picture());
 	BOOST_REQUIRE (A_picture);
-	shared_ptr<dcp::ReelSoundAsset> A_sound = dynamic_pointer_cast<dcp::ReelSoundAsset>(A.cpls().front()->reels().front()->main_sound());
+	auto A_sound = dynamic_pointer_cast<dcp::ReelSoundAsset>(A.cpls().front()->reels().front()->main_sound());
 
-	boost::filesystem::remove_all ("build/test/" + name);
+	string const picture = "j2c_5279f9aa-94d7-42a6-b0e0-e4eaec4e2a15.mxf";
+
+	remove_all ("build/test/" + name);
 	dcp::DCP B ("build/test/" + name);
-	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	auto reel = make_shared<dcp::Reel>();
 
 	BOOST_REQUIRE (A_picture->mono_asset());
 	BOOST_REQUIRE (A_picture->mono_asset()->file());
-	boost::filesystem::copy_file (A_picture->mono_asset()->file().get(), "build/test/" +name + "/picture.mxf");
-	reel->add(
-		shared_ptr<dcp::ReelMonoPictureAsset>(
-			new dcp::ReelMonoPictureAsset(shared_ptr<dcp::MonoPictureAsset>(new dcp::MonoPictureAsset("build/test/" + name + "/picture.mxf")), 0)
-			)
-		);
+	copy_file (A_picture->mono_asset()->file().get(), path("build") / "test" / name / picture);
+	reel->add(make_shared<dcp::ReelMonoPictureAsset>(make_shared<dcp::MonoPictureAsset>(path("build") / "test" / name / picture), 0));
 
-	shared_ptr<dcp::SoundAssetReader> reader = A_sound->asset()->start_read();
-	shared_ptr<dcp::SoundAsset> sound(new dcp::SoundAsset(A_sound->asset()->edit_rate(), A_sound->asset()->sampling_rate(), A_sound->asset()->channels(), dcp::LanguageTag("en-US"), dcp::SMPTE));
-	shared_ptr<dcp::SoundAssetWriter> writer = sound->start_write("build/test/" + name + "/sound.mxf", vector<dcp::Channel>());
+	auto reader = A_sound->asset()->start_read();
+	auto sound = make_shared<dcp::SoundAsset>(A_sound->asset()->edit_rate(), A_sound->asset()->sampling_rate(), A_sound->asset()->channels(), dcp::LanguageTag("en-US"), dcp::SMPTE);
+	auto writer = sound->start_write(path("build") / "test" / name / "pcm_8246f87f-e1df-4c42-a290-f3b3069ff021.mxf", {});
 
 	bool need_to_modify = modify;
 	for (int i = 0; i < A_sound->asset()->intrinsic_duration(); ++i) {
-		shared_ptr<const dcp::SoundFrame> sf = reader->get_frame (i);
+		auto sf = reader->get_frame (i);
 		float* out[sf->channels()];
 		for (int j = 0; j < sf->channels(); ++j) {
 			out[j] = new float[sf->samples()];
@@ -224,9 +226,9 @@ test_rewriting_sound(string name, bool modify)
 	}
 	writer->finalize();
 
-	reel->add(shared_ptr<dcp::ReelSoundAsset>(new dcp::ReelSoundAsset(sound, 0)));
+	reel->add(make_shared<dcp::ReelSoundAsset>(sound, 0));
 
-	shared_ptr<dcp::CPL> cpl(new dcp::CPL("A Test DCP", dcp::FEATURE));
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
 	cpl->add (reel);
 
 	B.add (cpl);

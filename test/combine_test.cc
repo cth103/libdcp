@@ -312,7 +312,7 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_shared_asset)
 	mxf_meta.company_name = "OpenDCP";
 	mxf_meta.product_version = "0.0.25";
 
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL("A Test DCP", dcp::FEATURE));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL("A Test DCP", dcp::TRAILER));
 	cpl->set_content_version (
 		dcp::ContentVersion("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11","content-version-label-text")
 		);

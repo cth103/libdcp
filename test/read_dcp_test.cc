@@ -50,7 +50,7 @@ BOOST_AUTO_TEST_CASE (read_dcp_test1)
 
 	BOOST_REQUIRE (cpls[0]->annotation_text());
 	BOOST_CHECK_EQUAL (cpls[0]->annotation_text().get(), "A Test DCP");
-	BOOST_CHECK_EQUAL (cpls[0]->content_kind(), dcp::FEATURE);
+	BOOST_CHECK_EQUAL (cpls[0]->content_kind(), dcp::TRAILER);
 	BOOST_REQUIRE (d.standard());
 	BOOST_CHECK_EQUAL (d.standard(), dcp::SMPTE);
 }
