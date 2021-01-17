@@ -138,7 +138,9 @@ public:
 
 	void replace (string a, string b)
 	{
+		auto old_content = _content;
 		boost::algorithm::replace_all (_content, a, b);
+		BOOST_REQUIRE (_content != old_content);
 	}
 
 private:
