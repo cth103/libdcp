@@ -48,6 +48,7 @@
 #include "reel_closed_caption_asset.h"
 #include "reel_stereo_picture_asset.h"
 #include "reel_subtitle_asset.h"
+#include "reel_markers_asset.h"
 #include "compose.hpp"
 #include "test.h"
 #include <boost/test/unit_test.hpp>
@@ -1926,6 +1927,64 @@ BOOST_AUTO_TEST_CASE (verify_assets_must_have_hashes)
 		{
 			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT },
 			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_HASH }
+		});
+}
+
+
+
+BOOST_AUTO_TEST_CASE (verify_features_must_have_ffec_ffmc1)
+{
+	boost::filesystem::path const dir("build/test/verify_features_must_have_ffec_ffmc1");
+	auto dcp = make_simple (dir);
+	dcp->cpls()[0]->set_content_kind (dcp::FEATURE);
+	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 0);
+	markers->set (dcp::Marker::FFEC, dcp::Time(0, 0, 4, 0, 24));
+	markers->set (dcp::Marker::FFMC, dcp::Time(0, 0, 5, 0, 24));
+	dcp->cpls()[0]->reels()[0]->add(markers);
+	dcp->write_xml (dcp::SMPTE);
+	check_verify_result ({dir}, {});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_features_must_have_ffec_ffmc2)
+{
+	boost::filesystem::path const dir("build/test/verify_features_must_have_ffec_ffmc2");
+	auto dcp = make_simple (dir);
+	dcp->cpls()[0]->set_content_kind (dcp::FEATURE);
+	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 0);
+	markers->set (dcp::Marker::FFEC, dcp::Time(0, 0, 4, 0, 24));
+	dcp->cpls()[0]->reels()[0]->add(markers);
+	dcp->write_xml (dcp::SMPTE);
+	check_verify_result ({dir}, {{dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_FFMC_IN_FEATURE}});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_features_must_have_ffec_ffmc3)
+{
+	boost::filesystem::path const dir("build/test/verify_features_must_have_ffec_ffmc3");
+	auto dcp = make_simple (dir);
+	dcp->cpls()[0]->set_content_kind (dcp::FEATURE);
+	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 0);
+	markers->set (dcp::Marker::FFMC, dcp::Time(0, 0, 4, 0, 24));
+	dcp->cpls()[0]->reels()[0]->add(markers);
+	dcp->write_xml (dcp::SMPTE);
+	check_verify_result ({dir}, {{dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_FFEC_IN_FEATURE}});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_features_must_have_ffec_ffmc4)
+{
+	boost::filesystem::path const dir("build/test/verify_features_must_have_ffec_ffmc4");
+	auto dcp = make_simple (dir);
+	dcp->cpls()[0]->set_content_kind (dcp::FEATURE);
+	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 0);
+	dcp->cpls()[0]->reels()[0]->add(markers);
+	dcp->write_xml (dcp::SMPTE);
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_FFEC_IN_FEATURE },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_FFMC_IN_FEATURE }
 		});
 }
 

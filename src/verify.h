@@ -153,6 +153,10 @@ public:
 		CLOSED_CAPTION_ENTRY_POINT_NON_ZERO,
 		/** <Hash> must be present for assets in CPLs */
 		MISSING_HASH,
+		/** If ContentKind is Feature there must be a FFEC marker */
+		MISSING_FFEC_IN_FEATURE,
+		/** If ContentKind is Feature there must be a FFMC marker */
+		MISSING_FFMC_IN_FEATURE,
 	};
 
 	VerificationNote (Type type, Code code)

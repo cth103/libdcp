@@ -47,6 +47,7 @@
 #include "exceptions.h"
 #include "compose.hpp"
 #include "raw_convert.h"
+#include "reel_markers_asset.h"
 #include "smpte_subtitle_asset.h"
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
@@ -1046,7 +1047,17 @@ dcp::verify (
 			}
 
 			if (cpl->release_territory()) {
-				verify_language_tag (cpl->release_territory().get(), notes);
+				if (!cpl->release_territory_scope() || cpl->release_territory_scope().get() != "http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata#scope/release-territory/UNM49") {
+					auto terr = cpl->release_territory().get();
+					/* Must be a valid region tag, or "001" */
+					try {
+						LanguageTag::RegionSubtag test (terr);
+					} catch (...) {
+						if (terr != "001") {
+							notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::BAD_LANGUAGE, terr});
+						}
+					}
+				}
 			}
 
 			if (dcp->standard() == dcp::SMPTE) {
@@ -1073,6 +1084,10 @@ dcp::verify (
 			size_t fewest_closed_captions = SIZE_MAX;
 			/* most number of closed caption assets seen in a reel */
 			size_t most_closed_captions = 0;
+			/* true if we've seen a FFEC marker */
+			auto have_ffec = false;
+			/* true if we've seen a FFMC marker */
+			auto have_ffmc = false;
 
 			for (auto reel: cpl->reels()) {
 				stage ("Checking reel", optional<boost::filesystem::path>());
@@ -1142,6 +1157,15 @@ dcp::verify (
 					}
 				}
 
+				if (reel->main_markers()) {
+					if (reel->main_markers()->get(Marker::FFEC)) {
+						have_ffec = true;
+					}
+					if (reel->main_markers()->get(Marker::FFMC)) {
+						have_ffmc = true;
+					}
+				}
+
 				fewest_closed_captions = std::min (fewest_closed_captions, reel->closed_captions().size());
 				most_closed_captions = std::max (most_closed_captions, reel->closed_captions().size());
 			}
@@ -1154,6 +1178,15 @@ dcp::verify (
 
 				if (fewest_closed_captions != most_closed_captions) {
 					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::CLOSED_CAPTION_ASSET_COUNTS_DIFFER});
+				}
+
+				if (cpl->content_kind() == FEATURE) {
+					if (!have_ffec) {
+						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_FFEC_IN_FEATURE});
+					}
+					if (!have_ffmc) {
+						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_FFMC_IN_FEATURE});
+					}
 				}
 
 				check_text_timing (cpl->reels(), notes);
@@ -1310,6 +1343,10 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "Closed caption assets must have an <EntryPoint> of 0.";
 	case dcp::VerificationNote::MISSING_HASH:
 		return String::compose("An asset is missing a <Hash> tag: %1", note.note().get());
+	case dcp::VerificationNote::MISSING_FFEC_IN_FEATURE:
+		return "The DCP is marked as a Feature but there is no FFEC (first frame of end credits) marker";
+	case dcp::VerificationNote::MISSING_FFMC_IN_FEATURE:
+		return "The DCP is marked as a Feature but there is no FFMC (first frame of moving credits) marker";
 	}
 
 	return "";
