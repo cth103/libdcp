@@ -135,6 +135,10 @@ public:
 		_content_title_text = ct;
 	}
 
+	void set_content_kind (dcp::ContentKind k) {
+		_content_kind = k;
+	}
+
 	/** @return the type of the content, used by media servers
 	 *  to categorise things (e.g. feature, trailer, etc.)
 	 */
