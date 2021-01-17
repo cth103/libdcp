@@ -44,8 +44,8 @@ using boost::optional;
 using std::shared_ptr;
 using namespace dcp;
 
-ReelMarkersAsset::ReelMarkersAsset (Fraction edit_rate, int64_t entry_point)
-	: ReelAsset (make_uuid(), edit_rate, 0, entry_point)
+ReelMarkersAsset::ReelMarkersAsset (Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: ReelAsset (make_uuid(), edit_rate, intrinsic_duration, entry_point)
 {
 
 }
@@ -70,14 +70,12 @@ void
 ReelMarkersAsset::set (Marker m, Time t)
 {
 	_markers[m] = t;
-	update_duration ();
 }
 
 void
 ReelMarkersAsset::unset (Marker m)
 {
 	_markers.erase (m);
-	update_duration ();
 }
 
 optional<Time>
@@ -88,17 +86,6 @@ ReelMarkersAsset::get (Marker m) const
 		return optional<Time>();
 	}
 	return i->second;
-}
-
-void
-ReelMarkersAsset::update_duration ()
-{
-	int const tcr = edit_rate().numerator / edit_rate().denominator;
-	_intrinsic_duration = 0;
-	for (map<Marker, Time>::const_iterator i = _markers.begin(); i != _markers.end(); ++i) {
-		_intrinsic_duration = max(_intrinsic_duration, i->second.as_editable_units(tcr));
-	}
-	_duration = _intrinsic_duration;
 }
 
 xmlpp::Node*
