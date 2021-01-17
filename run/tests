@@ -12,7 +12,7 @@ dcpverify=build/tools/dcpverify
 
 export LD_LIBRARY_PATH=build/src:$LD_LIBRARY_PATH
 # SIP stops this being passed in from the caller's environment
-export DYLD_LIBRARY_PATH=/Users/ci/osx-environment/64/lib
+export DYLD_LIBRARY_PATH=/Users/ci/osx-environment/x86_64/lib
 export LIBDCP_SHARE_PREFIX=.
 
 # Make sure we have the required tools
