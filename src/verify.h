@@ -169,6 +169,10 @@ public:
 		MISSING_CPL_METADATA,
 		/** CPL metadata should contain <VersionNumber> of 1, at least */
 		MISSING_CPL_METADATA_VERSION_NUMBER,
+		/** There must be an <ExtensionMetadata> in <CompositionMetadataAsset> Bv2.1_8.6.3 */
+		MISSING_EXTENSION_METADATA,
+		/** <ExtensionMetadata> must have a particular form Bv2.1_8.6.3 */
+		INVALID_EXTENSION_METADATA,
 	};
 
 	VerificationNote (Type type, Code code)

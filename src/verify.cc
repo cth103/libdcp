@@ -1003,6 +1003,64 @@ check_text_timing (vector<shared_ptr<dcp::Reel>> reels, vector<VerificationNote>
 }
 
 
+void
+check_extension_metadata (shared_ptr<dcp::CPL> cpl, vector<VerificationNote>& notes)
+{
+	DCP_ASSERT (cpl->file());
+	cxml::Document doc ("CompositionPlaylist");
+	doc.read_file (cpl->file().get());
+
+	auto missing = false;
+	string malformed;
+
+	if (auto reel_list = doc.node_child("ReelList")) {
+		auto reels = reel_list->node_children("Reel");
+		if (!reels.empty()) {
+			if (auto asset_list = reels[0]->optional_node_child("AssetList")) {
+				if (auto metadata = asset_list->optional_node_child("CompositionMetadataAsset")) {
+					if (auto extension_list = metadata->optional_node_child("ExtensionMetadataList")) {
+						missing = true;
+						for (auto extension: extension_list->node_children("ExtensionMetadata")) {
+							if (extension->optional_string_attribute("scope").get_value_or("") != "http://isdcf.com/ns/cplmd/app") {
+								continue;
+							}
+							missing = false;
+							if (auto name = extension->optional_node_child("Name")) {
+								if (name->content() != "Application") {
+									malformed = "<Name> should be 'Application'";
+								}
+							}
+							if (auto property_list = extension->optional_node_child("PropertyList")) {
+								if (auto property = property_list->optional_node_child("Property")) {
+									if (auto name = property->optional_node_child("Name")) {
+										if (name->content() != "DCP Constraints Profile") {
+											malformed = "<Name> property should be 'DCP Constraints Profile'";
+										}
+									}
+									if (auto value = property->optional_node_child("Value")) {
+										if (value->content() != "SMPTE-RDD-52:2020-Bv2.1") {
+											malformed = "<Value> property should be 'SMPTE-RDD-52:2020-Bv2.1'";
+										}
+									}
+								}
+							}
+						}
+					} else {
+						missing = true;
+					}
+				}
+			}
+		}
+	}
+
+	if (missing) {
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_EXTENSION_METADATA});
+	} else if (!malformed.empty()) {
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_EXTENSION_METADATA, malformed});
+	}
+}
+
+
 vector<VerificationNote>
 dcp::verify (
 	vector<boost::filesystem::path> directories,
@@ -1240,6 +1298,8 @@ dcp::verify (
 				} else if (!cpl->version_number()) {
 					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_METADATA_VERSION_NUMBER});
 				}
+
+				check_extension_metadata (cpl, notes);
 			}
 		}
 
@@ -1377,6 +1437,10 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "There should be a <CompositionMetadataAsset> tag";
 	case dcp::VerificationNote::MISSING_CPL_METADATA_VERSION_NUMBER:
 		return "The CPL metadata must contain a <VersionNumber>";
+	case dcp::VerificationNote::MISSING_EXTENSION_METADATA:
+		return "The CPL metadata must contain <ExtensionMetadata>";
+	case dcp::VerificationNote::INVALID_EXTENSION_METADATA:
+		return String::compose("The <ExtensionMetadata> is malformed in some way: %1", note.note().get());
 	}
 
 	return "";

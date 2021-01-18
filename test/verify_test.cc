@@ -148,6 +148,27 @@ public:
 		BOOST_REQUIRE (_content != old_content);
 	}
 
+	void delete_lines (string from, string to)
+	{
+		vector<string> lines;
+		boost::algorithm::split (lines, _content, boost::is_any_of("\r\n"), boost::token_compress_on);
+		bool deleting = false;
+		auto old_content = _content;
+		_content = "";
+		for (auto i: lines) {
+			if (i.find(from) != string::npos) {
+				deleting = true;
+			}
+			if (!deleting) {
+				_content += i + "\n";
+			}
+			if (deleting && i.find(to) != string::npos) {
+				deleting = false;
+			}
+		}
+		BOOST_REQUIRE (_content != old_content);
+	}
+
 private:
 	boost::filesystem::path _path;
 	std::string _content;
@@ -166,18 +187,10 @@ dump_notes (vector<dcp::VerificationNote> const & notes)
 
 static
 void
-check_verify_result (vector<boost::filesystem::path> dir, vector<std::pair<dcp::VerificationNote::Type, dcp::VerificationNote::Code>> types_and_codes)
+check_verify_result (vector<boost::filesystem::path> dir, vector<dcp::VerificationNote> test_notes)
 {
 	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), types_and_codes.size());
-	auto i = notes.begin();
-	auto j = types_and_codes.begin();
-	while (i != notes.end()) {
-		BOOST_CHECK_EQUAL (i->type(), j->first);
-		BOOST_CHECK_EQUAL (i->code(), j->second);
-		++i;
-		++j;
-	}
+	BOOST_REQUIRE_EQUAL (notes.size(), test_notes.size());
 }
 
 
@@ -2057,7 +2070,7 @@ void
 verify_markers_test (
 	boost::filesystem::path dir,
 	vector<pair<dcp::Marker, dcp::Time>> markers,
-	vector<std::pair<dcp::VerificationNote::Type, dcp::VerificationNote::Code>> types_and_codes
+	vector<dcp::VerificationNote> test_notes
 	)
 {
 	auto dcp = make_simple (dir);
@@ -2068,7 +2081,7 @@ verify_markers_test (
 	}
 	dcp->cpls()[0]->reels()[0]->add(markers_asset);
 	dcp->write_xml (dcp::SMPTE);
-	check_verify_result ({dir}, types_and_codes);
+	check_verify_result ({dir}, test_notes);
 }
 
 
@@ -2164,4 +2177,184 @@ BOOST_AUTO_TEST_CASE (verify_cpl_metadata_version)
 	dcp->write_xml (dcp::SMPTE);
 	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_CPL_METADATA_VERSION_NUMBER }});
 }
+
+
+BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata1)
+{
+	boost::filesystem::path dir = "build/test/verify_cpl_extension_metadata1";
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::SMPTE);
+	{
+		Editor e (dcp->cpls()[0]->file().get());
+		e.delete_lines ("<meta:ExtensionMetadataList>", "</meta:ExtensionMetadataList>");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_EXTENSION_METADATA }
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata2)
+{
+	boost::filesystem::path dir = "build/test/verify_cpl_extension_metadata2";
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::SMPTE);
+	{
+		Editor e (dcp->cpls()[0]->file().get());
+		e.delete_lines ("<meta:ExtensionMetadata scope=\"http://isdcf.com/ns/cplmd/app\">", "</meta:ExtensionMetadata>");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_EXTENSION_METADATA }
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata3)
+{
+	boost::filesystem::path dir = "build/test/verify_cpl_extension_metadata3";
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::SMPTE);
+	{
+		Editor e (dcp->cpls()[0]->file().get());
+		e.replace ("<meta:Name>A", "<meta:NameX>A");
+		e.replace ("n</meta:Name>", "n</meta:NameX>");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::XML_VALIDATION_ERROR },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::XML_VALIDATION_ERROR },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT },
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata4)
+{
+	boost::filesystem::path dir = "build/test/verify_cpl_extension_metadata4";
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::SMPTE);
+	{
+		Editor e (dcp->cpls()[0]->file().get());
+		e.replace ("Application", "Fred");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::INVALID_EXTENSION_METADATA, string("<Name> property should be 'Application'") },
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata5)
+{
+	boost::filesystem::path dir = "build/test/verify_cpl_extension_metadata5";
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::SMPTE);
+	{
+		Editor e (dcp->cpls()[0]->file().get());
+		e.replace ("DCP Constraints Profile", "Fred");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::INVALID_EXTENSION_METADATA, string("<Name> property should be 'DCP Constraints Profile'") },
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata6)
+{
+	boost::filesystem::path dir = "build/test/verify_cpl_extension_metadata6";
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::SMPTE);
+	{
+		Editor e (dcp->cpls()[0]->file().get());
+		e.replace ("<meta:Value>", "<meta:ValueX>");
+		e.replace ("</meta:Value>", "</meta:ValueX>");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::XML_VALIDATION_ERROR },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::XML_VALIDATION_ERROR },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT },
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata7)
+{
+	boost::filesystem::path dir = "build/test/verify_cpl_extension_metadata7";
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::SMPTE);
+	{
+		Editor e (dcp->cpls()[0]->file().get());
+		e.replace ("SMPTE-RDD-52:2020-Bv2.1", "Fred");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::INVALID_EXTENSION_METADATA, string("<Value> property should be 'SMPTE-RDD-52:2020-Bv2.1'") },
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata8)
+{
+	boost::filesystem::path dir = "build/test/verify_cpl_extension_metadata8";
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::SMPTE);
+	{
+		Editor e (dcp->cpls()[0]->file().get());
+		e.replace ("<meta:Property>", "<meta:PropertyX>");
+		e.replace ("</meta:Property>", "</meta:PropertyX>");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::XML_VALIDATION_ERROR },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::XML_VALIDATION_ERROR },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT },
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata9)
+{
+	boost::filesystem::path dir = "build/test/verify_cpl_extension_metadata9";
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::SMPTE);
+	{
+		Editor e (dcp->cpls()[0]->file().get());
+		e.replace ("<meta:PropertyList>", "<meta:PropertyListX>");
+		e.replace ("</meta:PropertyList>", "</meta:PropertyListX>");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::XML_VALIDATION_ERROR },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::XML_VALIDATION_ERROR },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT },
+		});
+}
+
 
