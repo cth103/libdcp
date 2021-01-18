@@ -60,6 +60,10 @@ public:
 		return _standard;
 	}
 
+	boost::optional<std::string> annotation_text () const {
+		return _annotation_text;
+	}
+
 	boost::optional<std::string> hash (std::string id) const;
 	boost::optional<std::string> type (std::string id) const;
 
@@ -71,32 +75,53 @@ public:
 		return _file;
 	}
 
-private:
-
 	class Asset : public Object
 	{
 	public:
 		Asset (cxml::ConstNodePtr node)
 			: Object (remove_urn_uuid(node->string_child("Id")))
-			, annotation_text (node->optional_string_child("AnnotationText"))
-			, hash (node->string_child("Hash"))
-			, size (node->number_child<int64_t>("Size"))
-			, type (node->string_child("Type"))
+			, _annotation_text (node->optional_string_child("AnnotationText"))
+			, _hash (node->string_child("Hash"))
+			, _size (node->number_child<int64_t>("Size"))
+			, _type (node->string_child("Type"))
 		{}
 
-		Asset (std::string id_, boost::optional<std::string> annotation_text_, std::string hash_, int64_t size_, std::string type_)
-			: Object (id_)
-			, annotation_text (annotation_text_)
-			, hash (hash_)
-			, size (size_)
-			, type (type_)
+		Asset (std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type)
+			: Object (id)
+			, _annotation_text (annotation_text)
+			, _hash (hash)
+			, _size (size)
+			, _type (type)
 		{}
 
-		boost::optional<std::string> annotation_text;
-		std::string hash;
-		int64_t size;
-		std::string type;
+		boost::optional<std::string> annotation_text () const {
+			return _annotation_text;
+		}
+
+		std::string hash () const {
+			return _hash;
+		}
+
+		int64_t size () const {
+			return _size;
+		}
+
+		std::string type () const {
+			return _type;
+		}
+
+	private:
+		boost::optional<std::string> _annotation_text;
+		std::string _hash;
+		int64_t _size;
+		std::string _type;
 	};
+
+	std::vector<std::shared_ptr<Asset>> asset_list () const {
+		return _asset_list;
+	}
+
+private:
 
 	Standard _standard;
 	boost::optional<std::string> _annotation_text;
