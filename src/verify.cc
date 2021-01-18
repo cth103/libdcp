@@ -1127,11 +1127,32 @@ dcp::verify (
 				}
 			}
 
-			/* Check that the CPL's hash corresponds to the PKL */
 			for (auto i: dcp->pkls()) {
+				/* Check that the CPL's hash corresponds to the PKL */
 				optional<string> h = i->hash(cpl->id());
 				if (h && make_digest(ArrayData(*cpl->file())) != *h) {
 					notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::CPL_HASH_INCORRECT));
+				}
+
+				/* Check that any PKL with a single CPL has its AnnotationText the same as the CPL's ContentTitleText */
+				optional<string> required_annotation_text;
+				for (auto j: i->asset_list()) {
+					/* See if this is a CPL */
+					for (auto k: dcp->cpls()) {
+						if (j->id() == k->id()) {
+							if (!required_annotation_text) {
+								/* First CPL we have found; this is the required AnnotationText unless we find another */
+								required_annotation_text = cpl->content_title_text();
+							} else {
+								/* There's more than one CPL so we don't care what the PKL's AnnotationText is */
+								required_annotation_text = boost::none;
+							}
+						}
+					}
+				}
+
+				if (required_annotation_text && i->annotation_text() != required_annotation_text) {
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::PKL_ANNOTATION_TEXT_DOES_NOT_MATCH_CPL_CONTENT_TITLE_TEXT, i->file().get()});
 				}
 			}
 
@@ -1452,6 +1473,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The <ExtensionMetadata> is malformed in some way: %1", note.note().get());
 	case dcp::VerificationNote::CPL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED:
 		return String::compose("The CPL %1, which has encrypted content, is not signed", note.file()->filename());
+	case dcp::VerificationNote::PKL_ANNOTATION_TEXT_DOES_NOT_MATCH_CPL_CONTENT_TITLE_TEXT:
+		return String::compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>", note.file()->filename());
 	}
 
 	return "";

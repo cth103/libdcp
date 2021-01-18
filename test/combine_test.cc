@@ -157,7 +157,14 @@ BOOST_AUTO_TEST_CASE (combine_single_dcp_test)
 	remove_all (out);
 	vector<path> inputs;
 	inputs.push_back ("test/ref/DCP/dcp_test1");
-	dcp::combine (inputs, out);
+	dcp::combine (
+		inputs,
+		out,
+		dcp::String::compose("libdcp %1", dcp::version),
+		dcp::String::compose("libdcp %1", dcp::version),
+		dcp::LocalTime().as_string(),
+		"A Test DCP"
+		);
 
 	check_no_errors (out);
 	check_combined (inputs, out);

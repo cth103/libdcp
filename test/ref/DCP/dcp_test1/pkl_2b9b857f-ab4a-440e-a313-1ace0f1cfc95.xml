@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PackingList xmlns="http://www.smpte-ra.org/schemas/429-8/2007/PKL">
   <Id>urn:uuid:2b9b857f-ab4a-440e-a313-1ace0f1cfc95</Id>
-  <AnnotationText>Created by libdcp</AnnotationText>
+  <AnnotationText>A Test DCP</AnnotationText>
   <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
   <Issuer>OpenDCP 0.0.25</Issuer>
   <Creator>OpenDCP 0.0.25</Creator>

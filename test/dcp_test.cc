@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 	RNGFixer fixer;
 
 	make_simple("build/test/DCP/dcp_test1")->write_xml(
-		dcp::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp"
+		dcp::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "A Test DCP"
 		);
 
 	/* build/test/DCP/dcp_test1 is checked against test/ref/DCP/dcp_test1 by run/tests */
