@@ -1061,6 +1061,36 @@ check_extension_metadata (shared_ptr<dcp::CPL> cpl, vector<VerificationNote>& no
 }
 
 
+bool
+pkl_has_encrypted_assets (shared_ptr<DCP> dcp, shared_ptr<PKL> pkl)
+{
+	vector<string> encrypted;
+	for (auto i: dcp->cpls()) {
+		for (auto j: i->reel_mxfs()) {
+			if (j->asset_ref().resolved()) {
+				/* It's a bit surprising / broken but Interop subtitle assets are represented
+				 * in reels by ReelSubtitleAsset which inherits ReelMXF, so it's possible for
+				 * ReelMXFs to have assets which are not MXFs.
+				 */
+				if (auto asset = dynamic_pointer_cast<MXF>(j->asset_ref().asset())) {
+					if (asset->encrypted()) {
+						encrypted.push_back(j->asset_ref().id());
+					}
+				}
+			}
+		}
+	}
+
+	for (auto i: pkl->asset_list()) {
+		if (find(encrypted.begin(), encrypted.end(), i->id()) != encrypted.end()) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
 vector<VerificationNote>
 dcp::verify (
 	vector<boost::filesystem::path> directories,
@@ -1336,6 +1366,13 @@ dcp::verify (
 		for (auto pkl: dcp->pkls()) {
 			stage ("Checking PKL", pkl->file());
 			validate_xml (pkl->file().get(), xsd_dtd_directory, notes);
+			if (pkl_has_encrypted_assets(dcp, pkl)) {
+				cxml::Document doc ("PackingList");
+				doc.read_file (pkl->file().get());
+				if (!doc.optional_node_child("Signature")) {
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::PKL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED, pkl->file().get()});
+				}
+			}
 		}
 
 		if (dcp->asset_map_path()) {
@@ -1473,6 +1510,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The <ExtensionMetadata> is malformed in some way: %1", note.note().get());
 	case dcp::VerificationNote::CPL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED:
 		return String::compose("The CPL %1, which has encrypted content, is not signed", note.file()->filename());
+	case dcp::VerificationNote::PKL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED:
+		return String::compose("The PKL %1, which has encrypted content, is not signed", note.file()->filename());
 	case dcp::VerificationNote::PKL_ANNOTATION_TEXT_DOES_NOT_MATCH_CPL_CONTENT_TITLE_TEXT:
 		return String::compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>", note.file()->filename());
 	}

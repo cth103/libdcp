@@ -196,6 +196,7 @@ void
 check_verify_result (vector<boost::filesystem::path> dir, vector<dcp::VerificationNote> test_notes)
 {
 	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+	dump_notes (notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), test_notes.size());
 }
 
@@ -2575,5 +2576,49 @@ BOOST_AUTO_TEST_CASE (verify_encrypted_cpl_is_signed)
 			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::MISSING_CPL_METADATA },
 			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::CPL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED }
 		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_encrypted_pkl_is_signed)
+{
+	boost::filesystem::path dir = "build/test/verify_encrypted_pkl_is_signed";
+	prepare_directory (dir);
+	for (auto i: boost::filesystem::directory_iterator("test/ref/DCP/encryption_test")) {
+		boost::filesystem::copy_file (i.path(), dir / i.path().filename());
+	}
+
+	{
+		Editor e (dir / "pkl_93182bd2-b1e8-41a3-b5c8-6e6564273bff.xml");
+		e.delete_lines ("<dsig:Signature", "</dsig:Signature>");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::PKL_ANNOTATION_TEXT_DOES_NOT_MATCH_CPL_CONTENT_TITLE_TEXT },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::MISSING_FFEC_IN_FEATURE },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::MISSING_FFMC_IN_FEATURE },
+			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::MISSING_FFOC },
+			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::MISSING_LFOC },
+			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::MISSING_CPL_METADATA },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::PKL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED }
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_unencrypted_pkl_can_be_unsigned)
+{
+	boost::filesystem::path dir = "build/test/verify_unencrypted_pkl_can_be_unsigned";
+	prepare_directory (dir);
+	for (auto i: boost::filesystem::directory_iterator("test/ref/DCP/dcp_test1")) {
+		boost::filesystem::copy_file (i.path(), dir / i.path().filename());
+	}
+
+	{
+		Editor e (dir / "pkl_2b9b857f-ab4a-440e-a313-1ace0f1cfc95.xml");
+		e.delete_lines ("<dsig:Signature", "</dsig:Signature>");
+	}
+
+	check_verify_result ({dir}, {});
 }
 
