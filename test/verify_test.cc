@@ -563,7 +563,7 @@ BOOST_AUTO_TEST_CASE (verify_test15)
 	memset (oversized_frame.data() + frame.size(), 0, too_big - frame.size());
 
 	boost::filesystem::path const dir("build/test/verify_test15");
-	boost::filesystem::remove_all (dir);
+	prepare_directory (dir);
 	dcp_from_frame (oversized_frame, dir);
 
 	check_verify_result (
@@ -591,7 +591,7 @@ BOOST_AUTO_TEST_CASE (verify_test16)
 	memset (oversized_frame.data() + frame.size(), 0, nearly_too_big - frame.size());
 
 	boost::filesystem::path const dir("build/test/verify_test16");
-	boost::filesystem::remove_all (dir);
+	prepare_directory (dir);
 	dcp_from_frame (oversized_frame, dir);
 
 	check_verify_result (
@@ -612,7 +612,7 @@ BOOST_AUTO_TEST_CASE (verify_test17)
 	BOOST_REQUIRE (frame.size() < 230000000 / (24 * 8));
 
 	boost::filesystem::path const dir("build/test/verify_test17");
-	boost::filesystem::remove_all (dir);
+	prepare_directory (dir);
 	dcp_from_frame (frame, dir);
 
 	check_verify_result ({ dir }, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_CPL_METADATA }});
@@ -952,8 +952,7 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 	using namespace boost::filesystem;
 
 	path dcp_path = "build/test/verify_picture_test";
-	remove_all (dcp_path);
-	create_directories (dcp_path);
+	prepare_directory (dcp_path);
 
 	shared_ptr<dcp::PictureAsset> mp;
 	if (three_d) {
@@ -1846,8 +1845,7 @@ BOOST_AUTO_TEST_CASE (verify_cpl_annotation_text_should_be_same_as_content_title
 BOOST_AUTO_TEST_CASE (verify_reel_assets_durations_must_match)
 {
 	boost::filesystem::path const dir("build/test/verify_reel_assets_durations_must_match");
-	boost::filesystem::remove_all (dir);
-	boost::filesystem::create_directories (dir);
+	prepare_directory (dir);
 	shared_ptr<dcp::DCP> dcp (new dcp::DCP(dir));
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL("A Test DCP", dcp::TRAILER));
 
@@ -1885,8 +1883,7 @@ static
 void
 verify_subtitles_must_be_in_all_reels_check (boost::filesystem::path dir, bool add_to_reel1, bool add_to_reel2)
 {
-	boost::filesystem::remove_all (dir);
-	boost::filesystem::create_directories (dir);
+	prepare_directory (dir);
 	auto dcp = make_shared<dcp::DCP>(dir);
 	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
 
@@ -1970,8 +1967,7 @@ static
 void
 verify_closed_captions_must_be_in_all_reels_check (boost::filesystem::path dir, int caps_in_reel1, int caps_in_reel2)
 {
-	boost::filesystem::remove_all (dir);
-	boost::filesystem::create_directories (dir);
+	prepare_directory (dir);
 	auto dcp = make_shared<dcp::DCP>(dir);
 	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
 
@@ -2053,8 +2049,7 @@ template <class T>
 void
 verify_text_entry_point_check (boost::filesystem::path dir, dcp::VerificationNote::Code code, boost::function<void (shared_ptr<T>)> adjust)
 {
-	boost::filesystem::remove_all (dir);
-	boost::filesystem::create_directories (dir);
+	prepare_directory (dir);
 	auto dcp = make_shared<dcp::DCP>(dir);
 	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
 
