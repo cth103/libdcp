@@ -52,8 +52,56 @@
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
           <Duration>24</Duration>
-          <Hash>cb1OLhgHG9svy7G8hoTSPpltzhw=</Hash>
+          <Hash>qtXbkcwhUj/yqquVLmV+wbzbxQ8=</Hash>
         </MainSound>
+        <meta:CompositionMetadataAsset xmlns:meta="http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata">
+          <Id>urn:uuid:63c3aece-c581-4603-b612-75e43f0c0430</Id>
+          <EditRate>24 1</EditRate>
+          <IntrinsicDuration>24</IntrinsicDuration>
+          <meta:FullContentTitleText/>
+          <meta:VersionNumber>1</meta:VersionNumber>
+          <meta:MainSoundConfiguration>51/L,R,C,LFE,Ls,Rs</meta:MainSoundConfiguration>
+          <meta:MainSoundSampleRate>48000 1</meta:MainSoundSampleRate>
+          <meta:MainPictureStoredArea>
+            <meta:Width>1998</meta:Width>
+            <meta:Height>1080</meta:Height>
+          </meta:MainPictureStoredArea>
+          <meta:MainPictureActiveArea>
+            <meta:Width>1998</meta:Width>
+            <meta:Height>1080</meta:Height>
+          </meta:MainPictureActiveArea>
+          <meta:ExtensionMetadataList>
+            <meta:ExtensionMetadata scope="http://isdcf.com/ns/cplmd/app">
+              <meta:Name>Application</meta:Name>
+              <meta:PropertyList>
+                <meta:Property>
+                  <meta:Name>DCP Constraints Profile</meta:Name>
+                  <meta:Value>SMPTE-RDD-52:2020-Bv2.1</meta:Value>
+                </meta:Property>
+              </meta:PropertyList>
+            </meta:ExtensionMetadata>
+          </meta:ExtensionMetadataList>
+          <mca:MCASubDescriptors xmlns:mca="http://isdcf.com/ns/cplmd/mca" xmlns:r0="http://www.smpte-ra.org/reg/395/2014/13/1/aaf" xmlns:r1="http://www.smpte-ra.org/reg/335/2012">
+            <r0:SoundfieldGroupLabelSubDescriptor>
+              <r1:InstanceID>urn:uuid:18be072e-5a0f-44e1-b2eb-c8a52ae12789</r1:InstanceID>
+              <r1:MCALabelDictionaryID>urn:smpte:ul:060e2b34.0401010d.03020201.00000000</r1:MCALabelDictionaryID>
+              <r1:MCALinkID>urn:uuid:8e293965-f8ad-48c6-971d-261b01f65cdb</r1:MCALinkID>
+              <r1:MCATagSymbol>sg51</r1:MCATagSymbol>
+              <r1:MCATagName>5.1</r1:MCATagName>
+              <r1:RFC5646SpokenLanguage>en-US</r1:RFC5646SpokenLanguage>
+            </r0:SoundfieldGroupLabelSubDescriptor>
+            <r0:AudioChannelLabelSubDescriptor>
+              <r1:InstanceID>urn:uuid:74e205d0-d145-42d2-8c49-7b55d058ca55</r1:InstanceID>
+              <r1:MCALabelDictionaryID>urn:smpte:ul:060e2b34.0401010d.03020101.00000000</r1:MCALabelDictionaryID>
+              <r1:MCALinkID>urn:uuid:ae8a9818-872a-4f86-8493-11dfdea03e09</r1:MCALinkID>
+              <r1:MCATagSymbol>chL</r1:MCATagSymbol>
+              <r1:MCATagName>Left</r1:MCATagName>
+              <r1:MCAChannelID>1</r1:MCAChannelID>
+              <r1:RFC5646SpokenLanguage>en-US</r1:RFC5646SpokenLanguage>
+              <r1:SoundfieldGroupLinkID>urn:uuid:8e293965-f8ad-48c6-971d-261b01f65cdb</r1:SoundfieldGroupLinkID>
+            </r0:AudioChannelLabelSubDescriptor>
+          </mca:MCASubDescriptors>
+        </meta:CompositionMetadataAsset>
       </AssetList>
     </Reel>
   </ReelList>

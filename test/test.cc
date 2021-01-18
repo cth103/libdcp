@@ -280,7 +280,7 @@ simple_picture (boost::filesystem::path path, string suffix, int frames)
 shared_ptr<dcp::SoundAsset>
 simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_meta, string language, int frames, int sample_rate)
 {
-	int const channels = 1;
+	int const channels = 6;
 
 	/* Set a valid language, then overwrite it, so that the language parameter can be badly formed */
 	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), sample_rate, channels, dcp::LanguageTag("en-US"), dcp::SMPTE));
@@ -332,6 +332,11 @@ make_simple (boost::filesystem::path path, int reels, int frames)
 	cpl->set_content_version (
 		dcp::ContentVersion("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11", "content-version-label-text")
 		);
+	cpl->set_main_sound_configuration("51/L,R,C,LFE,Ls,Rs");
+	cpl->set_main_sound_sample_rate(48000);
+	cpl->set_main_picture_stored_area(dcp::Size(1998, 1080));
+	cpl->set_main_picture_active_area(dcp::Size(1998, 1080));
+	cpl->set_version_number(1);
 
 	for (int i = 0; i < reels; ++i) {
 		string suffix = reels == 1 ? "" : dcp::String::compose("%1", i);

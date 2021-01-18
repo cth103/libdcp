@@ -48,7 +48,7 @@
           <Path>audio.mxf</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
-          <Length>161326</Length>
+          <Length>881326</Length>
         </Chunk>
       </ChunkList>
     </Asset>

@@ -1231,6 +1231,15 @@ dcp::verify (
 				if (result.error_length_exceeded) {
 					notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::CLOSED_CAPTION_LINE_TOO_LONG));
 				}
+
+				if (!cpl->full_content_title_text()) {
+					/* Since FullContentTitleText is assumed always to exist if there's a CompositionMetadataAsset we
+					 * can use it as a proxy for CompositionMetadataAsset's existence.
+					 */
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_METADATA});
+				} else if (!cpl->version_number()) {
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_METADATA_VERSION_NUMBER});
+				}
 			}
 		}
 
@@ -1364,6 +1373,10 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "The FFOC marker should bet set to 1";
 	case dcp::VerificationNote::INCORRECT_LFOC:
 		return "The LFOC marker should be set to 1 less than the duration of the last reel";
+	case dcp::VerificationNote::MISSING_CPL_METADATA:
+		return "There should be a <CompositionMetadataAsset> tag";
+	case dcp::VerificationNote::MISSING_CPL_METADATA_VERSION_NUMBER:
+		return "The CPL metadata must contain a <VersionNumber>";
 	}
 
 	return "";

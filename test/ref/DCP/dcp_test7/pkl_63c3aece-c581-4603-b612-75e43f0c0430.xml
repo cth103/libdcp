@@ -9,7 +9,7 @@
     <Asset>
       <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
       <AnnotationText>81fb54df-e1bf-4647-8788-ea7ba154375b</AnnotationText>
-      <Hash>tc+MzIDj0cjUXzAGaE5mmse4DVM=</Hash>
+      <Hash>JxqfjtwuLuimdPydOWGY/Vgrzek=</Hash>
       <Size>2168</Size>
       <Type>text/xml;asdcpKind=CPL</Type>
     </Asset>
@@ -23,8 +23,8 @@
     <Asset>
       <Id>urn:uuid:9482e87d-292d-4e0e-a98d-c61822b60fe9</Id>
       <AnnotationText>9482e87d-292d-4e0e-a98d-c61822b60fe9</AnnotationText>
-      <Hash>cb1OLhgHG9svy7G8hoTSPpltzhw=</Hash>
-      <Size>161326</Size>
+      <Hash>qtXbkcwhUj/yqquVLmV+wbzbxQ8=</Hash>
+      <Size>881326</Size>
       <Type>application/x-smpte-mxf;asdcpKind=Sound</Type>
     </Asset>
   </AssetList>

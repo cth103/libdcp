@@ -165,6 +165,10 @@ public:
 		INCORRECT_FFOC,
 		/** The LFOC should be the last frame in the reel */
 		INCORRECT_LFOC,
+		/** There must be a <CompositionMetadataAsset> */
+		MISSING_CPL_METADATA,
+		/** CPL metadata should contain <VersionNumber> of 1, at least */
+		MISSING_CPL_METADATA_VERSION_NUMBER,
 	};
 
 	VerificationNote (Type type, Code code)
