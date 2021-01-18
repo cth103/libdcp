@@ -173,6 +173,8 @@ public:
 		MISSING_EXTENSION_METADATA,
 		/** <ExtensionMetadata> must have a particular form Bv2.1_8.6.3 */
 		INVALID_EXTENSION_METADATA,
+		/** CPLs containing encrypted content must be signed Bv2.1_8.7 */
+		CPL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED
 	};
 
 	VerificationNote (Type type, Code code)

@@ -2358,3 +2358,30 @@ BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata9)
 }
 
 
+
+BOOST_AUTO_TEST_CASE (verify_encrypted_cpl_is_signed)
+{
+	boost::filesystem::path dir = "build/test/verify_encrypted_cpl_is_signed";
+	prepare_directory (dir);
+	for (auto i: boost::filesystem::directory_iterator("test/ref/DCP/encryption_test")) {
+		boost::filesystem::copy_file (i.path(), dir / i.path().filename());
+	}
+
+	{
+		Editor e (dir / "cpl_81fb54df-e1bf-4647-8788-ea7ba154375b.xml");
+		e.delete_lines ("<dsig:Signature", "</dsig:Signature>");
+	}
+
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::CPL_HASH_INCORRECT },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::MISSING_FFEC_IN_FEATURE },
+			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::MISSING_FFMC_IN_FEATURE },
+			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::MISSING_FFOC },
+			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::MISSING_LFOC },
+			{ dcp::VerificationNote::VERIFY_WARNING, dcp::VerificationNote::MISSING_CPL_METADATA },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::CPL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED }
+		});
+}
+

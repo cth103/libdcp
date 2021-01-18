@@ -1300,6 +1300,15 @@ dcp::verify (
 				}
 
 				check_extension_metadata (cpl, notes);
+
+				if (cpl->encrypted()) {
+					cxml::Document doc ("CompositionPlaylist");
+					DCP_ASSERT (cpl->file());
+					doc.read_file (cpl->file().get());
+					if (!doc.optional_node_child("Signature")) {
+						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::CPL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED, cpl->file().get()});
+					}
+				}
 			}
 		}
 
@@ -1441,6 +1450,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return "The CPL metadata must contain <ExtensionMetadata>";
 	case dcp::VerificationNote::INVALID_EXTENSION_METADATA:
 		return String::compose("The <ExtensionMetadata> is malformed in some way: %1", note.note().get());
+	case dcp::VerificationNote::CPL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED:
+		return String::compose("The CPL %1, which has encrypted content, is not signed", note.file()->filename());
 	}
 
 	return "";
