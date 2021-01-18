@@ -316,17 +316,32 @@ DCP::add (std::shared_ptr<CPL> cpl)
 	_cpls.push_back (cpl);
 }
 
+
 bool
-DCP::encrypted () const
+DCP::any_encrypted () const
 {
 	for (auto i: cpls()) {
-		if (i->encrypted()) {
+		if (i->any_encrypted()) {
 			return true;
 		}
 	}
 
 	return false;
 }
+
+
+bool
+DCP::all_encrypted () const
+{
+	for (auto i: cpls()) {
+		if (!i->all_encrypted()) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 
 /** Add a KDM to decrypt this DCP.  This method must be called after DCP::read()
  *  or the KDM you specify will be ignored.

@@ -51,8 +51,10 @@ main ()
 	/* Read the DCP to find out about it */
 	dcp.read ();
 
-	if (dcp.encrypted ()) {
+	if (dcp.all_encrypted()) {
 		std::cout << "DCP is encrypted.\n";
+	} else if (dcp.any_encrypted()) {
+		std::cout << "DCP is partially encrypted.\n";
 	} else {
 		std::cout << "DCP is not encrypted.\n";
 	}

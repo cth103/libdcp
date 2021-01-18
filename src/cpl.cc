@@ -584,16 +584,31 @@ CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 
 /** @return true if we have any encrypted content */
 bool
-CPL::encrypted () const
+CPL::any_encrypted () const
 {
 	for (auto i: _reels) {
-		if (i->encrypted ()) {
+		if (i->any_encrypted()) {
 			return true;
 		}
 	}
 
 	return false;
 }
+
+
+/** @return true if we have all our encryptable content is encrypted */
+bool
+CPL::all_encrypted () const
+{
+	for (auto i: _reels) {
+		if (!i->all_encrypted()) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
 
 /** Add a KDM to this CPL.  If the KDM is for any of this CPLs assets it will be used
  *  to decrypt those assets.

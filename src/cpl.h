@@ -93,7 +93,8 @@ public:
 	std::vector<std::shared_ptr<const ReelMXF>> reel_mxfs () const;
 	std::vector<std::shared_ptr<ReelMXF>> reel_mxfs ();
 
-	bool encrypted () const;
+	bool any_encrypted () const;
+	bool all_encrypted () const;
 
 	void write_xml (
 		boost::filesystem::path file,

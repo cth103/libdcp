@@ -106,7 +106,8 @@ public:
 	std::vector<std::shared_ptr<CPL>> cpls () const;
 	std::vector<std::shared_ptr<Asset>> assets (bool ignore_unresolved = false) const;
 
-	bool encrypted () const;
+	bool any_encrypted () const;
+	bool all_encrypted () const;
 
 	void add (DecryptedKDM const &);
 

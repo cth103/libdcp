@@ -223,7 +223,7 @@ Reel::equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandle
 }
 
 bool
-Reel::encrypted () const
+Reel::any_encrypted () const
 {
 	auto ecc = false;
 	for (auto i: _closed_captions) {
@@ -233,12 +233,32 @@ Reel::encrypted () const
 	}
 
 	return (
-		(_main_picture && _main_picture->encrypted ()) ||
-		(_main_sound && _main_sound->encrypted ()) ||
-		(_main_subtitle && _main_subtitle->encrypted ()) ||
+		(_main_picture && _main_picture->encrypted()) ||
+		(_main_sound && _main_sound->encrypted()) ||
+		(_main_subtitle && _main_subtitle->encrypted()) ||
 		ecc ||
-		(_atmos && _atmos->encrypted ())
+		(_atmos && _atmos->encrypted())
 		);
+}
+
+
+bool
+Reel::all_encrypted () const
+{
+	auto ecc = true;
+	for (auto i: _closed_captions) {
+		if (!i->encrypted()) {
+			ecc = false;
+		}
+	}
+
+	return (
+		(!_main_picture || _main_picture->encrypted()) &&
+		(!_main_sound || _main_sound->encrypted()) &&
+		(!_main_subtitle || _main_subtitle->encrypted()) &&
+		ecc &&
+		(!_atmos || _atmos->encrypted())
+	       );
 }
 
 void

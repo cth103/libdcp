@@ -77,13 +77,13 @@ BOOST_AUTO_TEST_CASE (decryption_test)
 	plaintext_path /= "TONEPLATES-SMPTE-PLAINTEXT_TST_F_XX-XX_ITL-TD_51-XX_2K_WOE_20111001_WOE_OV";
 	dcp::DCP plaintext (plaintext_path.string ());
 	plaintext.read ();
-	BOOST_CHECK_EQUAL (plaintext.encrypted (), false);
+	BOOST_CHECK_EQUAL (plaintext.any_encrypted(), false);
 
 	boost::filesystem::path encrypted_path = private_test;
 	encrypted_path /= "TONEPLATES-SMPTE-ENCRYPTED_TST_F_XX-XX_ITL-TD_51-XX_2K_WOE_20111001_WOE_OV";
 	dcp::DCP encrypted (encrypted_path.string ());
 	encrypted.read ();
-	BOOST_CHECK_EQUAL (encrypted.encrypted (), true);
+	BOOST_CHECK_EQUAL (encrypted.any_encrypted(), true);
 
 	dcp::DecryptedKDM kdm (
 		dcp::EncryptedKDM (

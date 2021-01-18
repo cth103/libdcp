@@ -114,7 +114,8 @@ public:
 
 	xmlpp::Element* write_to_cpl (xmlpp::Element* node, Standard standard) const;
 
-	bool encrypted () const;
+	bool any_encrypted () const;
+	bool all_encrypted () const;
 
 	bool equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandler notes) const;
 

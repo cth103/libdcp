@@ -1352,7 +1352,7 @@ dcp::verify (
 
 				check_extension_metadata (cpl, notes);
 
-				if (cpl->encrypted()) {
+				if (cpl->any_encrypted()) {
 					cxml::Document doc ("CompositionPlaylist");
 					DCP_ASSERT (cpl->file());
 					doc.read_file (cpl->file().get());
