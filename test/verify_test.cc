@@ -336,11 +336,10 @@ BOOST_AUTO_TEST_CASE (verify_test4)
 		e.replace ("<ContentKind>", "<ContentKind>x");
 	}
 
-	auto notes = dcp::verify (directories, &stage, &progress, xsd_test);
-
-	BOOST_REQUIRE_EQUAL (notes.size(), 1);
-	BOOST_CHECK_EQUAL (notes.front().code(), dcp::VerificationNote::GENERAL_READ);
-	BOOST_CHECK_EQUAL (*notes.front().note(), "Bad content kind 'xtrailer'");
+	check_verify_result (
+		directories,
+		{{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::GENERAL_READ, string("Bad content kind 'xtrailer'")}}
+		);
 }
 
 static
@@ -865,18 +864,13 @@ BOOST_AUTO_TEST_CASE (verify_test26)
 	reel_asset->_language = "badlang";
 	write_dcp_with_single_asset (dir, reel_asset);
 
-	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 3U);
-	auto i = notes.begin();
-	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
-	BOOST_REQUIRE (i->note());
-	BOOST_CHECK_EQUAL (*i->note(), "badlang");
-	i++;
-	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
-	BOOST_REQUIRE (i->note());
-	BOOST_CHECK_EQUAL (*i->note(), "wrong-andbad");
-	i++;
-	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::MISSING_CPL_METADATA);
+	check_verify_result (
+		{ dir },
+		{
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::BAD_LANGUAGE, string("badlang") },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::BAD_LANGUAGE, string("wrong-andbad") },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_CPL_METADATA },
+		});
 }
 
 
@@ -893,18 +887,13 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_languages)
 	reel_asset->_language = "badlang";
 	write_dcp_with_single_asset (dir, reel_asset);
 
-	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 3U);
-	auto i = notes.begin ();
-	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
-	BOOST_REQUIRE (i->note());
-	BOOST_CHECK_EQUAL (*i->note(), "badlang");
-	i++;
-	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
-	BOOST_REQUIRE (i->note());
-	BOOST_CHECK_EQUAL (*i->note(), "wrong-andbad");
-	i++;
-	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::MISSING_CPL_METADATA);
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::BAD_LANGUAGE, string("badlang") },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::BAD_LANGUAGE, string("wrong-andbad") },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_CPL_METADATA }
+		});
 }
 
 
@@ -945,24 +934,14 @@ BOOST_AUTO_TEST_CASE (verify_various_invalid_languages)
 		"hello"
 		);
 
-	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), 4U);
-	auto i = notes.begin ();
-	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
-	BOOST_REQUIRE (i->note());
-	BOOST_CHECK_EQUAL (*i->note(), "this-is-wrong");
-	++i;
-	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
-	BOOST_REQUIRE (i->note());
-	BOOST_CHECK_EQUAL (*i->note(), "andso-is-this");
-	++i;
-	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
-	BOOST_REQUIRE (i->note());
-	BOOST_CHECK_EQUAL (*i->note(), "fred-jim");
-	++i;
-	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::BAD_LANGUAGE);
-	BOOST_REQUIRE (i->note());
-	BOOST_CHECK_EQUAL (*i->note(), "frobozz");
+	check_verify_result (
+		{ dir },
+		{
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::BAD_LANGUAGE, string("this-is-wrong") },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::BAD_LANGUAGE, string("andso-is-this") },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::BAD_LANGUAGE, string("fred-jim") },
+			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::BAD_LANGUAGE, string("frobozz") },
+		});
 }
 
 
@@ -1891,7 +1870,6 @@ BOOST_AUTO_TEST_CASE (verify_reel_assets_durations_must_match)
 		dcp::LocalTime().as_string(),
 		"A Test DCP"
 		);
-
 
 	check_verify_result (
 		{dir},
