@@ -2622,3 +2622,62 @@ BOOST_AUTO_TEST_CASE (verify_unencrypted_pkl_can_be_unsigned)
 	check_verify_result ({dir}, {});
 }
 
+
+BOOST_AUTO_TEST_CASE (verify_must_not_be_partially_encrypted)
+{
+	boost::filesystem::path dir ("build/test/verify_must_not_be_partially_encrypted");
+	prepare_directory (dir);
+
+	dcp::DCP d (dir);
+
+	auto signer = make_shared<dcp::CertificateChain>();
+	signer->add (dcp::Certificate(dcp::file_to_string("test/ref/crypt/ca.self-signed.pem")));
+	signer->add (dcp::Certificate(dcp::file_to_string("test/ref/crypt/intermediate.signed.pem")));
+	signer->add (dcp::Certificate(dcp::file_to_string("test/ref/crypt/leaf.signed.pem")));
+	signer->set_key (dcp::file_to_string("test/ref/crypt/leaf.key"));
+
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
+
+	dcp::Key key;
+
+	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::SMPTE);
+	mp->set_key (key);
+
+	auto writer = mp->start_write (dir / "video.mxf", false);
+	dcp::ArrayData j2c ("test/data/flat_red.j2c");
+	for (int i = 0; i < 24; ++i) {
+		writer->write (j2c.data(), j2c.size());
+	}
+	writer->finalize ();
+
+	auto ms = simple_sound (dir, "", dcp::MXFMetadata(), "de-DE");
+
+	auto reel = make_shared<dcp::Reel>(
+		make_shared<dcp::ReelMonoPictureAsset>(mp, 0),
+		make_shared<dcp::ReelSoundAsset>(ms, 0)
+		);
+
+	reel->add (simple_markers());
+
+	cpl->add (reel);
+
+	cpl->set_content_version (
+		{"urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00", "81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00"}
+		);
+	cpl->set_annotation_text ("A Test DCP");
+	cpl->set_issuer ("OpenDCP 0.0.25");
+	cpl->set_creator ("OpenDCP 0.0.25");
+	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
+	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
+	cpl->set_main_sound_sample_rate (48000);
+	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
+	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
+	cpl->set_version_number (1);
+
+	d.add (cpl);
+
+	d.write_xml (dcp::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "A Test DCP", signer);
+
+	check_verify_result ({dir}, {{dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::PARTIALLY_ENCRYPTED}});
+}
+

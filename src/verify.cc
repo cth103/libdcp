@@ -1131,6 +1131,10 @@ dcp::verify (
 			stage ("Checking CPL", cpl->file());
 			validate_xml (cpl->file().get(), xsd_dtd_directory, notes);
 
+			if (cpl->any_encrypted() && !cpl->all_encrypted()) {
+				notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::PARTIALLY_ENCRYPTED});
+			}
+
 			for (auto const& i: cpl->additional_subtitle_languages()) {
 				verify_language_tag (i, notes);
 			}
@@ -1514,6 +1518,8 @@ dcp::note_to_string (dcp::VerificationNote note)
 		return String::compose("The PKL %1, which has encrypted content, is not signed", note.file()->filename());
 	case dcp::VerificationNote::PKL_ANNOTATION_TEXT_DOES_NOT_MATCH_CPL_CONTENT_TITLE_TEXT:
 		return String::compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>", note.file()->filename());
+	case dcp::VerificationNote::PARTIALLY_ENCRYPTED:
+		return "Some assets are encrypted but some are not";
 	}
 
 	return "";

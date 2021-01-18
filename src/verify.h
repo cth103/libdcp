@@ -178,7 +178,9 @@ public:
 		/** PKLs containing encrypted content must be signed Bv2.1_8.7 */
 		PKL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED,
 		/** If a PKL has one CPL its <ContentTitleText> must be the same as the PKL's <AnnotationText> */
-		PKL_ANNOTATION_TEXT_DOES_NOT_MATCH_CPL_CONTENT_TITLE_TEXT
+		PKL_ANNOTATION_TEXT_DOES_NOT_MATCH_CPL_CONTENT_TITLE_TEXT,
+		/** If any content is encrypted, everything must be encrypted */
+		PARTIALLY_ENCRYPTED,
 	};
 
 	VerificationNote (Type type, Code code)
