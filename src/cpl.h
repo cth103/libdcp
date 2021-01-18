@@ -201,6 +201,8 @@ public:
 
 	void set_version_number (int v);
 
+	void unset_version_number ();
+
 	boost::optional<Status> status () const {
 		return _status;
 	}

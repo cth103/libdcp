@@ -657,6 +657,13 @@ CPL::set_version_number (int v)
 
 
 void
+CPL::unset_version_number ()
+{
+	_version_number = boost::none;
+}
+
+
+void
 CPL::set_content_versions (vector<ContentVersion> v)
 {
 	set<string> ids;
