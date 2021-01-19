@@ -680,25 +680,13 @@ verify_smpte_subtitle_asset (
 		if (!state.subtitle_language) {
 			state.subtitle_language = language;
 		} else if (state.subtitle_language != language) {
-			notes.push_back (
-				VerificationNote(
-					VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_SUBTITLE_LANGUAGES, *asset->file()
-					)
-				);
+			notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_SUBTITLE_LANGUAGES });
 		}
 	} else {
-		notes.push_back (
-			VerificationNote(
-				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_LANGUAGE, *asset->file()
-				)
-			);
+		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_LANGUAGE, *asset->file() });
 	}
-	if (boost::filesystem::file_size(*asset->file()) > 115 * 1024 * 1024) {
-		notes.push_back (
-			VerificationNote(
-				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_TIMED_TEXT_SIZE_IN_BYTES, *asset->file()
-				)
-			);
+	if (boost::filesystem::file_size(asset->file().get()) > 115 * 1024 * 1024) {
+		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_TIMED_TEXT_SIZE_IN_BYTES, *asset->file() });
 	}
 	/* XXX: I'm not sure what Bv2.1_7.2.1 means when it says "the font resource shall not be larger than 10MB"
 	 * but I'm hoping that checking for the total size of all fonts being <= 10MB will do.
@@ -709,23 +697,13 @@ verify_smpte_subtitle_asset (
 		total_size += i.second.size();
 	}
 	if (total_size > 10 * 1024 * 1024) {
-		notes.push_back (
-			VerificationNote(
-				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, *asset->file()
-				)
-			);
+		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, asset->file().get() });
 	}
 
 	if (!asset->start_time()) {
-		notes.push_back (
-			VerificationNote(
-				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_START_TIME, *asset->file())
-			);
+		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_START_TIME, asset->file().get() });
 	} else if (asset->start_time() != Time()) {
-		notes.push_back (
-			VerificationNote(
-				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_SUBTITLE_START_TIME, *asset->file())
-			);
+		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_SUBTITLE_START_TIME, asset->file().get() });
 	}
 }
 
@@ -1186,7 +1164,7 @@ dcp::verify (
 				}
 
 				if (required_annotation_text && i->annotation_text() != required_annotation_text) {
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, i->file().get()});
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, i->file().get()});
 				}
 			}
 
@@ -1222,7 +1200,7 @@ dcp::verify (
 						if (!duration) {
 							duration = i->actual_duration();
 						} else if (*duration != i->actual_duration()) {
-							notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_ASSET_DURATION, i->id()));
+							notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_ASSET_DURATION));
 							break;
 						}
 					}
@@ -1449,7 +1427,7 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::MISSING_SUBTITLE_LANGUAGE:
 		return String::compose("The XML for a SMPTE subtitle asset has no <Language> tag, which is required by Bv2.1", note.file()->filename());
 	case VerificationNote::MISMATCHED_SUBTITLE_LANGUAGES:
-		return String::compose("Some subtitle assets have different <Language> tags than others", note.file()->filename());
+		return "Some subtitle assets have different <Language> tags than others";
 	case VerificationNote::MISSING_SUBTITLE_START_TIME:
 		return String::compose("The XML for a SMPTE subtitle asset has no <StartTime> tag, which is required by Bv2.1", note.file()->filename());
 	case VerificationNote::INVALID_SUBTITLE_START_TIME:
@@ -1524,3 +1502,27 @@ dcp::note_to_string (VerificationNote note)
 
 	return "";
 }
+
+
+bool
+dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
+{
+	return a.type() == b.type() && a.code() == b.code() && a.note() == b.note() && a.file() == b.file() && a.line() == b.line();
+}
+
+std::ostream&
+dcp::operator<< (std::ostream& s, dcp::VerificationNote const& note)
+{
+	s << note_to_string (note);
+	if (note.note()) {
+		s << " [" << note.note().get() << "]";
+	}
+	if (note.file()) {
+		s << " [" << note.file().get() << "]";
+	}
+	if (note.line()) {
+		s << " [" << note.line().get() << "]";
+	}
+	return s;
+}
+

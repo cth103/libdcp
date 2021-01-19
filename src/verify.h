@@ -276,6 +276,10 @@ std::vector<VerificationNote> verify (
 
 std::string note_to_string (dcp::VerificationNote note);
 
+bool operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b);
+
+std::ostream& operator<<(std::ostream& s, dcp::VerificationNote const& note);
+
 }
 
 #endif
