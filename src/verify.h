@@ -264,7 +264,7 @@ private:
 	/** Path of file containing the error, if applicable */
 	boost::optional<boost::filesystem::path> _file;
 	/** Error line number within _file, if applicable */
-	uint64_t _line;
+	boost::optional<uint64_t> _line;
 };
 
 std::vector<VerificationNote> verify (
