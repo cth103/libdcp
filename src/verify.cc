@@ -343,15 +343,13 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, vector<Verificat
 	XMLPlatformUtils::Terminate ();
 
 	for (auto i: error_handler.errors()) {
-		notes.push_back (
-			VerificationNote(
-				VerificationNote::VERIFY_ERROR,
-				VerificationNote::INVALID_XML,
-				i.message(),
-				boost::trim_copy(i.public_id() + " " + i.system_id()),
-				i.line()
-				)
-			);
+		notes.push_back ({
+			VerificationNote::VERIFY_ERROR,
+			VerificationNote::INVALID_XML,
+			i.message(),
+			boost::trim_copy(i.public_id() + " " + i.system_id()),
+			i.line()
+		});
 	}
 }
 
@@ -507,18 +505,14 @@ verify_main_picture_asset (
 	auto const pr = verify_picture_asset (reel_asset, progress);
 	switch (pr) {
 		case VERIFY_PICTURE_ASSET_RESULT_BAD:
-			notes.push_back (
-				VerificationNote(
-					VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
-					)
-				);
+			notes.push_back ({
+				VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
+			});
 			break;
 		case VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_LARGE:
-			notes.push_back (
-				VerificationNote(
-					VerificationNote::VERIFY_WARNING, VerificationNote::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
-					)
-				);
+			notes.push_back ({
+				VerificationNote::VERIFY_WARNING, VerificationNote::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
+			});
 			break;
 		default:
 			break;
@@ -574,6 +568,7 @@ verify_main_picture_asset (
 				VerificationNote(
 					VerificationNote::VERIFY_BV21_ERROR,
 					VerificationNote::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
+					String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
 					file
 					)
 				);
@@ -621,7 +616,7 @@ verify_main_sound_asset (
 	if (asset->sampling_rate() != 48000) {
 		notes.push_back (
 			VerificationNote(
-				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_SOUND_FRAME_RATE, *asset->file()
+				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_SOUND_FRAME_RATE, raw_convert<string>(asset->sampling_rate()), *asset->file()
 				)
 			);
 	}
@@ -637,9 +632,9 @@ verify_main_subtitle_reel (shared_ptr<const ReelSubtitleAsset> reel_asset, vecto
 	}
 
 	if (!reel_asset->entry_point()) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_ENTRY_POINT });
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_ENTRY_POINT, reel_asset->id() });
 	} else if (reel_asset->entry_point().get()) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INCORRECT_SUBTITLE_ENTRY_POINT });
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INCORRECT_SUBTITLE_ENTRY_POINT, reel_asset->id() });
 	}
 }
 
@@ -653,9 +648,9 @@ verify_closed_caption_reel (shared_ptr<const ReelClosedCaptionAsset> reel_asset,
 	}
 
 	if (!reel_asset->entry_point()) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CLOSED_CAPTION_ENTRY_POINT });
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id() });
 	} else if (reel_asset->entry_point().get()) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INCORRECT_CLOSED_CAPTION_ENTRY_POINT });
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INCORRECT_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id() });
 	}
 }
 
@@ -685,8 +680,11 @@ verify_smpte_subtitle_asset (
 	} else {
 		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_LANGUAGE, *asset->file() });
 	}
-	if (boost::filesystem::file_size(asset->file().get()) > 115 * 1024 * 1024) {
-		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_TIMED_TEXT_SIZE_IN_BYTES, *asset->file() });
+	auto const size = boost::filesystem::file_size(asset->file().get());
+	if (size > 115 * 1024 * 1024) {
+		notes.push_back (
+			{ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_TIMED_TEXT_SIZE_IN_BYTES, raw_convert<string>(size), *asset->file() }
+			);
 	}
 	/* XXX: I'm not sure what Bv2.1_7.2.1 means when it says "the font resource shall not be larger than 10MB"
 	 * but I'm hoping that checking for the total size of all fonts being <= 10MB will do.
@@ -697,7 +695,7 @@ verify_smpte_subtitle_asset (
 		total_size += i.second.size();
 	}
 	if (total_size > 10 * 1024 * 1024) {
-		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, asset->file().get() });
+		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, raw_convert<string>(total_size), asset->file().get() });
 	}
 
 	if (!asset->start_time()) {
@@ -744,7 +742,7 @@ verify_closed_caption_asset (
 	if (asset->raw_xml().size() > 256 * 1024) {
 		notes.push_back (
 			VerificationNote(
-				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, *asset->file()
+				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, raw_convert<string>(asset->raw_xml().size()), *asset->file()
 				)
 			);
 	}
@@ -814,27 +812,21 @@ check_text_timing (
 	}
 
 	if (too_early) {
-		notes.push_back(
-			VerificationNote(
-				VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_FIRST_TEXT_TIME
-				)
-			);
+		notes.push_back({
+			VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_FIRST_TEXT_TIME
+		});
 	}
 
 	if (too_short) {
-		notes.push_back (
-			VerificationNote(
-				VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_DURATION
-				)
-			);
+		notes.push_back ({
+			VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_DURATION
+		});
 	}
 
 	if (too_close) {
-		notes.push_back (
-			VerificationNote(
-				VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_SPACING
-				)
-			);
+		notes.push_back ({
+			VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_SPACING
+		});
 	}
 }
 
@@ -1032,9 +1024,9 @@ check_extension_metadata (shared_ptr<CPL> cpl, vector<VerificationNote>& notes)
 	}
 
 	if (missing) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_EXTENSION_METADATA});
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_EXTENSION_METADATA, cpl->id(), cpl->file().get()});
 	} else if (!malformed.empty()) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_EXTENSION_METADATA, malformed});
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_EXTENSION_METADATA, malformed, cpl->file().get()});
 	}
 }
 
@@ -1133,9 +1125,9 @@ dcp::verify (
 
 			if (dcp->standard() == SMPTE) {
 				if (!cpl->annotation_text()) {
-					notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_ANNOTATION_TEXT));
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get()});
 				} else if (cpl->annotation_text().get() != cpl->content_title_text()) {
-					notes.push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::MISMATCHED_CPL_ANNOTATION_TEXT));
+					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::MISMATCHED_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get()});
 				}
 			}
 
@@ -1143,7 +1135,7 @@ dcp::verify (
 				/* Check that the CPL's hash corresponds to the PKL */
 				optional<string> h = i->hash(cpl->id());
 				if (h && make_digest(ArrayData(*cpl->file())) != *h) {
-					notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_CPL_HASHES));
+					notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()));
 				}
 
 				/* Check that any PKL with a single CPL has its AnnotationText the same as the CPL's ContentTitleText */
@@ -1164,7 +1156,7 @@ dcp::verify (
 				}
 
 				if (required_annotation_text && i->annotation_text() != required_annotation_text) {
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, i->file().get()});
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, i->id(), i->file().get()});
 				}
 			}
 
@@ -1200,7 +1192,7 @@ dcp::verify (
 						if (!duration) {
 							duration = i->actual_duration();
 						} else if (*duration != i->actual_duration()) {
-							notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_ASSET_DURATION));
+							notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_ASSET_DURATION});
 							break;
 						}
 					}
@@ -1217,7 +1209,11 @@ dcp::verify (
 					     frame_rate.numerator != 50 &&
 					     frame_rate.numerator != 60 &&
 					     frame_rate.numerator != 96)) {
-						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_PICTURE_FRAME_RATE));
+						notes.push_back ({
+							VerificationNote::VERIFY_ERROR,
+							VerificationNote::INVALID_PICTURE_FRAME_RATE,
+							String::compose("%1/%2", frame_rate.numerator, frame_rate.denominator)
+						});
 					}
 					/* Check asset */
 					if (reel->main_picture()->asset_ref().resolved()) {
@@ -1279,14 +1275,17 @@ dcp::verify (
 				if (ffoc == markers_seen.end()) {
 					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::MISSING_FFOC});
 				} else if (ffoc->second.e != 1) {
-					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INCORRECT_FFOC});
+					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INCORRECT_FFOC, raw_convert<string>(ffoc->second.e)});
 				}
 
 				auto lfoc = markers_seen.find(Marker::LFOC);
 				if (lfoc == markers_seen.end()) {
 					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::MISSING_LFOC});
-				} else if (lfoc->second.as_editable_units(lfoc->second.tcr) != (cpl->reels().back()->duration() - 1)) {
-					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INCORRECT_LFOC});
+				} else {
+					auto lfoc_time = lfoc->second.as_editable_units(lfoc->second.tcr);
+					if (lfoc_time != (cpl->reels().back()->duration() - 1)) {
+						notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INCORRECT_LFOC, raw_convert<string>(lfoc_time)});
+					}
 				}
 
 				check_text_timing (cpl->reels(), notes);
@@ -1299,7 +1298,7 @@ dcp::verify (
 				}
 
 				if (result.line_count_exceeded) {
-					notes.push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_LINE_COUNT));
+					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_LINE_COUNT});
 				}
 				if (result.error_length_exceeded) {
 					notes.push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_LINE_LENGTH));
@@ -1317,19 +1316,19 @@ dcp::verify (
 				}
 
 				if (result.line_count_exceeded) {
-					notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_CLOSED_CAPTION_LINE_COUNT));
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_CLOSED_CAPTION_LINE_COUNT});
 				}
 				if (result.error_length_exceeded) {
-					notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_CLOSED_CAPTION_LINE_LENGTH));
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_CLOSED_CAPTION_LINE_LENGTH});
 				}
 
 				if (!cpl->full_content_title_text()) {
 					/* Since FullContentTitleText is assumed always to exist if there's a CompositionMetadataAsset we
 					 * can use it as a proxy for CompositionMetadataAsset's existence.
 					 */
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_METADATA});
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_METADATA, cpl->id(), cpl->file().get()});
 				} else if (!cpl->version_number()) {
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_METADATA_VERSION_NUMBER});
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->id(), cpl->file().get()});
 				}
 
 				check_extension_metadata (cpl, notes);
@@ -1339,7 +1338,7 @@ dcp::verify (
 					DCP_ASSERT (cpl->file());
 					doc.read_file (cpl->file().get());
 					if (!doc.optional_node_child("Signature")) {
-						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl->file().get()});
+						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl->id(), cpl->file().get()});
 					}
 				}
 			}
@@ -1352,7 +1351,7 @@ dcp::verify (
 				cxml::Document doc ("PackingList");
 				doc.read_file (pkl->file().get());
 				if (!doc.optional_node_child("Signature")) {
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl->file().get()});
+					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl->id(), pkl->file().get()});
 				}
 			}
 		}

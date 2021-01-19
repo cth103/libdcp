@@ -192,14 +192,14 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			   claims to come from ClipsterDCI 5.10.0.5.
 			*/
 			if (notes) {
-				notes->push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::EMPTY_ASSET_PATH));
+				notes->push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::EMPTY_ASSET_PATH});
 			}
 			continue;
 		}
 
 		if (!boost::filesystem::exists(path)) {
 			if (notes) {
-				notes->push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISSING_ASSET, path));
+				notes->push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::MISSING_ASSET, path});
 			}
 			continue;
 		}
@@ -235,7 +235,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			if (root == "CompositionPlaylist") {
 				auto cpl = make_shared<CPL>(path);
 				if (_standard && cpl->standard() && cpl->standard().get() != _standard.get() && notes) {
-					notes->push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_STANDARD));
+					notes->push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_STANDARD});
 				}
 				_cpls.push_back (cpl);
 			} else if (root == "DCSubtitle") {

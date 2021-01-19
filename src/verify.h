@@ -73,68 +73,127 @@ public:
 	 *
 	 *  Comments should clarify meaning and also say which of the optional fields (e.g. file)
 	 *  are filled in when this code is used.
-	 *  XXX: this needs checking.
 	 */
 	enum Code {
-		/** An error when reading the DCP.  note contains (probably technical) details. */
+		/** An error when reading the DCP.
+		 *  note contains (probably technical) details.
+		 */
 		FAILED_READ,
-		/** The hash of the CPL in the PKL does not agree with the CPL file */
+		/** The hash of the CPL in the PKL does not agree with the CPL file.
+		 *  note contains CPL ID.
+		 *  file contains CPL filename.
+		 */
 		MISMATCHED_CPL_HASHES,
-		/** Frame rate given in a reel for the main picture is not 24, 25, 30, 48, 50 or 60 */
+		/** Frame rate given in a reel for the main picture is not 24, 25, 30, 48, 50 or 60.
+		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
+		 */
 		INVALID_PICTURE_FRAME_RATE,
-		/** The hash of a main picture asset does not agree with the PKL file.  file contains the picture asset filename. */
+		/** The hash of a main picture asset does not agree with the PKL file.
+		 *  file contains the picture asset filename.
+		 */
 		INCORRECT_PICTURE_HASH,
-		/** The hash of a main picture is different in the CPL and PKL */
+		/** The hash of a main picture is different in the CPL and PKL.
+		 *  file contains the picture asset filename.
+		 */
 		MISMATCHED_PICTURE_HASHES,
-		/** The hash of a main sound asset does not agree with the PKL file.  file contains the sound asset filename. */
+		/** The hash of a main sound asset does not agree with the PKL file.
+		 *  file contains the sound asset filename.
+		 */
 		INCORRECT_SOUND_HASH,
-		/** The hash of a main sound is different in the CPL and PKL */
+		/** The hash of a main sound is different in the CPL and PKL.
+		 *  file contains the sound asset filename.
+		 */
 		MISMATCHED_SOUND_HASHES,
-		/** An assetmap's <Path> entry is empty */
+		/** An assetmap's <Path> entry is empty. */
 		EMPTY_ASSET_PATH,
-		/** A file mentioned in an asset map cannot be found */
+		/** A file mentioned in an asset map cannot be found.
+		 *  file contains the filename that is missing.
+		 */
 		MISSING_ASSET,
 		/** The DCP contains both SMPTE and Interop-standard components */
 		MISMATCHED_STANDARD,
-		/** Some XML fails to validate against the XSD/DTD */
+		/** Some XML fails to validate against the XSD/DTD.
+		 *  note contains the (probably technical) details.
+		 *  file contains the invalid filename.
+		 *  line contains the line number.
+		 */
 		INVALID_XML,
 		/** No ASSETMAP{.xml} was found */
 		MISSING_ASSETMAP,
-		/** An asset's IntrinsicDuration is less than 1 second */
+		/** An asset's IntrinsicDuration is less than 1 second.
+		 *  note contains asset ID.
+		 */
 		INVALID_INTRINSIC_DURATION,
-		/** An asset's Duration is less than 1 second */
+		/** An asset's Duration is less than 1 second.
+		 *  note contains asset ID.
+		 */
 		INVALID_DURATION,
-		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 250Mbit/s */
+		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 250Mbit/s.
+		 *  file contains the picture asset filename.
+		 */
 		INVALID_PICTURE_FRAME_SIZE_IN_BYTES,
-		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 230Mbit/s */
+		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 230Mbit/s.
+		 *  file contains the picture asset filename.
+		 */
 		NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES,
-		/** An asset that the CPL requires is not in this DCP; the DCP may be a VF */
+		/** An asset that the CPL requires is not in this DCP; the DCP may be a VF.
+		 *  note contains the asset ID.
+		 */
 		EXTERNAL_ASSET,
 		/** DCP is Interop, not SMPTE [Bv2.1_6.1] */
 		INVALID_STANDARD,
-		/** A language or territory does not conform to RFC 5646 [Bv2.1_6.2.1] */
+		/** A language or territory does not conform to RFC 5646 [Bv2.1_6.2.1].
+		 *  note contains the invalid language.
+		 */
 		INVALID_LANGUAGE,
-		/** A picture asset does not have one of the required Bv2.1 sizes (in pixels) [Bv2.1_7.1] */
+		/** A picture asset does not have one of the required Bv2.1 sizes (in pixels) [Bv2.1_7.1].
+		 *  note contains the incorrect size as "<width>x<height>"
+		 *  file contains the asset filename.
+		 */
 		INVALID_PICTURE_SIZE_IN_PIXELS,
-		/** A picture asset is 2K but is not at 24, 25 or 48 fps as required by Bv2.1 [Bv2.1_7.1] */
+		/** A picture asset is 2K but is not at 24, 25 or 48 fps as required by Bv2.1 [Bv2.1_7.1].
+		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
+		 *  file contains the asset filename.
+		 */
 		INVALID_PICTURE_FRAME_RATE_FOR_2K,
-		/** A picture asset is 4K but is not at 24fps as required by Bv2.1 [Bv2.1_7.1] */
+		/** A picture asset is 4K but is not at 24fps as required by Bv2.1 [Bv2.1_7.1]
+		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
+		 *  file contains the asset filename.
+		 */
 		INVALID_PICTURE_FRAME_RATE_FOR_4K,
-		/** A picture asset is 4K but is 3D which is not allowed by Bv2.1 [Bv2.1_7.1] */
+		/** A picture asset is 4K but is 3D which is not allowed by Bv2.1 [Bv2.1_7.1]
+		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
+		 *  file contains the asset filename.
+		 */
 		INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
-		/** A closed caption's XML file is larger than 256KB [Bv2.1_7.2.1] */
+		/** A closed caption's XML file is larger than 256KB [Bv2.1_7.2.1].
+		 *  note contains the invalid size in bytes.
+		 *  file contains the asset filename.
+		 */
 		INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES,
-		/** Any timed text asset's total files is larger than 115MB [Bv2.1_7.2.1] */
+		/** Any timed text asset's total files is larger than 115MB [Bv2.1_7.2.1]
+		 *  note contains the invalid size in bytes.
+		 *  file contains the asset filename.
+		 */
 		INVALID_TIMED_TEXT_SIZE_IN_BYTES,
-		/** The total size of all a timed text asset's fonts is larger than 10MB [Bv2.1_7.2.1] */
+		/** The total size of all a timed text asset's fonts is larger than 10MB [Bv2.1_7.2.1]
+		 *  note contains the invalid size in bytes.
+		 *  file contains the asset filename.
+		 */
 		INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES,
-		/** Some SMPTE subtitle XML has no <Language> tag [Bv2.1_7.2.2] */
+		/** Some SMPTE subtitle XML has no <Language> tag [Bv2.1_7.2.2]
+		 *  file contains the asset filename.
+		 */
 		MISSING_SUBTITLE_LANGUAGE,
 		/** Not all subtitle assets specify the same <Language> tag [Bv2.1_7.2.2] */
 		MISMATCHED_SUBTITLE_LANGUAGES,
-		/** Some SMPTE subtitle XML has no <StartTime> tag [Bv2.1_7.2.3] */
+		/** Some SMPTE subtitle XML has no <StartTime> tag [Bv2.1_7.2.3]
+		 *  file contains the asset filename.
+		 */
 		MISSING_SUBTITLE_START_TIME,
-		/** Some SMPTE subtitle XML has a non-zero <StartTime> tag [Bv2.1_7.2.3] */
+		/** Some SMPTE subtitle XML has a non-zero <StartTime> tag [Bv2.1_7.2.3]
+		 *  file contains the asset filename.
+		 */
 		INVALID_SUBTITLE_START_TIME,
 		/** The first subtitle or closed caption happens before 4s into the first reel [Bv2.1_7.2.4] */
 		INVALID_SUBTITLE_FIRST_TEXT_TIME,
@@ -152,11 +211,20 @@ public:
 		INVALID_CLOSED_CAPTION_LINE_COUNT,
 		/** There are more than 32 characters in at least one closed caption line [Bv2.1_7.2.6] */
 		INVALID_CLOSED_CAPTION_LINE_LENGTH,
-		/** The audio sampling rate must be 48kHz [Bv2.1_7.3] */
+		/** The audio sampling rate must be 48kHz [Bv2.1_7.3].
+		 *  note contains the invalid frame rate.
+		 *  file contains the asset filename.
+		 */
 		INVALID_SOUND_FRAME_RATE,
-		/** The CPL has no <AnnotationText> tag [Bv2.1_8.1] */
+		/** The CPL has no <AnnotationText> tag [Bv2.1_8.1]
+		 *  note contains the CPL ID.
+		 *  file contains the CPL filename.
+		 */
 		MISSING_CPL_ANNOTATION_TEXT,
-		/** The <AnnotationText> is not the same as the <ContentTitleText> [Bv2.1_8.1] */
+		/** The <AnnotationText> is not the same as the <ContentTitleText> [Bv2.1_8.1]
+		 *  note contains the CPL ID.
+		 *  file contains the CPL filename.
+		 */
 		MISMATCHED_CPL_ANNOTATION_TEXT,
 		/** At least one asset in a reel does not have the same duration as the others */
 		MISMATCHED_ASSET_DURATION,
@@ -164,15 +232,25 @@ public:
 		MISSING_MAIN_SUBTITLE_FROM_SOME_REELS,
 		/** If one reel has at least one ClosedCaption, all reels must have the same number of ClosedCaptions */
 		MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS,
-		/** MainSubtitle in reels must have <EntryPoint> Bv2.1_8.3.2 */
+		/** MainSubtitle in reels must have <EntryPoint> Bv2.1_8.3.2
+		 *  note contains the asset ID
+		 */
 		MISSING_SUBTITLE_ENTRY_POINT,
-		/** MainSubtitle <EntryPoint> must be zero Bv2.1_8.3.2 */
+		/** MainSubtitle <EntryPoint> must be zero Bv2.1_8.3.2
+		 *  note contains the asset ID
+		 */
 		INCORRECT_SUBTITLE_ENTRY_POINT,
-		/** Closed caption in reels must have <EntryPoint> Bv2.1_8.3.2 */
+		/** Closed caption in reels must have <EntryPoint> Bv2.1_8.3.2
+		 *  note contains the asset ID
+		 */
 		MISSING_CLOSED_CAPTION_ENTRY_POINT,
-		/** Closed caption MainSubtitle <EntryPoint> must be zero Bv2.1_8.3.2 */
+		/** Closed caption MainSubtitle <EntryPoint> must be zero Bv2.1_8.3.2
+		 *  note contains the asset ID
+		 */
 		INCORRECT_CLOSED_CAPTION_ENTRY_POINT,
-		/** <Hash> must be present for assets in CPLs */
+		/** <Hash> must be present for assets in CPLs.
+		 * note contains the asset ID
+		 */
 		MISSING_HASH,
 		/** If ContentKind is Feature there must be a FFEC marker */
 		MISSING_FFEC_IN_FEATURE,
@@ -182,23 +260,48 @@ public:
 		MISSING_FFOC,
 		/** There should be a LFOC */
 		MISSING_LFOC,
-		/** The FFOC should be 1 */
+		/** The FFOC should be 1.
+		 *  note contains the incorrect value.
+		 */
 		INCORRECT_FFOC,
-		/** The LFOC should be the last frame in the reel */
+		/** The LFOC should be the last frame in the reel
+		 *  note contains the incorrect value.
+		 */
 		INCORRECT_LFOC,
-		/** There must be a <CompositionMetadataAsset> */
+		/** There must be a <CompositionMetadataAsset>
+		 *  note contains the CPL ID.
+		 *  file contains the CPL filename.
+		 */
 		MISSING_CPL_METADATA,
-		/** CPL metadata should contain <VersionNumber> of 1, at least */
+		/** CPL metadata should contain <VersionNumber> of 1, at least
+		 *  note contains the CPL ID.
+		 *  file contains the CPL filename.
+		 */
 		MISSING_CPL_METADATA_VERSION_NUMBER,
-		/** There must be an <ExtensionMetadata> in <CompositionMetadataAsset> Bv2.1_8.6.3 */
+		/** There must be an <ExtensionMetadata> in <CompositionMetadataAsset> Bv2.1_8.6.3
+		 *  note contains the CPL ID.
+		 *  file contains the CPL filename.
+		 */
 		MISSING_EXTENSION_METADATA,
-		/** <ExtensionMetadata> must have a particular form Bv2.1_8.6.3 */
+		/** <ExtensionMetadata> must have a particular form Bv2.1_8.6.3
+		 *  note contains details of what's wrong
+		 *  file contains the CPL filename.
+		 */
 		INVALID_EXTENSION_METADATA,
-		/** CPLs containing encrypted content must be signed Bv2.1_8.7 */
+		/** CPLs containing encrypted content must be signed Bv2.1_8.7
+		 *  note contains the CPL ID.
+		 *  file contains the CPL filename.
+		 */
 		UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT,
-		/** PKLs containing encrypted content must be signed Bv2.1_8.7 */
+		/** PKLs containing encrypted content must be signed Bv2.1_8.7
+		 *  note contains the PKL ID.
+		 *  file contains the PKL filename.
+		 */
 		UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT,
-		/** If a PKL has one CPL its <ContentTitleText> must be the same as the PKL's <AnnotationText> */
+		/** If a PKL has one CPL its <ContentTitleText> must be the same as the PKL's <AnnotationText>.
+		 *  note contains the PKL ID.
+		 *  file contains the PKL filename.
+		 */
 		MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL,
 		/** If any content is encrypted, everything must be encrypted */
 		PARTIALLY_ENCRYPTED,
