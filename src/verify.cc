@@ -723,7 +723,7 @@ verify_closed_caption_asset (
 
 static
 void
-check_text_timing (
+verify_text_timing (
 	vector<shared_ptr<Reel>> reels,
 	optional<int> picture_frame_rate,
 	vector<VerificationNote>& notes,
@@ -813,7 +813,7 @@ struct LinesCharactersResult
 
 static
 void
-check_text_lines_and_characters (
+verify_text_lines_and_characters (
 	shared_ptr<SubtitleAsset> asset,
 	int warning_length,
 	int error_length,
@@ -904,7 +904,7 @@ check_text_lines_and_characters (
 
 static
 void
-check_text_timing (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& notes)
+verify_text_timing (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& notes)
 {
 	if (reels.empty()) {
 		return;
@@ -916,7 +916,7 @@ check_text_timing (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& not
 	}
 
 	if (reels[0]->main_subtitle()) {
-		check_text_timing (reels, picture_frame_rate, notes,
+		verify_text_timing (reels, picture_frame_rate, notes,
 			[](shared_ptr<Reel> reel) {
 				return static_cast<bool>(reel->main_subtitle());
 			},
@@ -930,7 +930,7 @@ check_text_timing (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& not
 	}
 
 	for (auto i = 0U; i < reels[0]->closed_captions().size(); ++i) {
-		check_text_timing (reels, picture_frame_rate, notes,
+		verify_text_timing (reels, picture_frame_rate, notes,
 			[i](shared_ptr<Reel> reel) {
 				return i < reel->closed_captions().size();
 			},
@@ -946,7 +946,7 @@ check_text_timing (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& not
 
 
 void
-check_extension_metadata (shared_ptr<CPL> cpl, vector<VerificationNote>& notes)
+verify_extension_metadata (shared_ptr<CPL> cpl, vector<VerificationNote>& notes)
 {
 	DCP_ASSERT (cpl->file());
 	cxml::Document doc ("CompositionPlaylist");
@@ -1260,12 +1260,12 @@ dcp::verify (
 					}
 				}
 
-				check_text_timing (cpl->reels(), notes);
+				verify_text_timing (cpl->reels(), notes);
 
 				LinesCharactersResult result;
 				for (auto reel: cpl->reels()) {
 					if (reel->main_subtitle() && reel->main_subtitle()->asset()) {
-						check_text_lines_and_characters (reel->main_subtitle()->asset(), 52, 79, &result);
+						verify_text_lines_and_characters (reel->main_subtitle()->asset(), 52, 79, &result);
 					}
 				}
 
@@ -1282,7 +1282,7 @@ dcp::verify (
 				for (auto reel: cpl->reels()) {
 					for (auto i: reel->closed_captions()) {
 						if (i->asset()) {
-							check_text_lines_and_characters (i->asset(), 32, 32, &result);
+							verify_text_lines_and_characters (i->asset(), 32, 32, &result);
 						}
 					}
 				}
@@ -1303,7 +1303,7 @@ dcp::verify (
 					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->id(), cpl->file().get()});
 				}
 
-				check_extension_metadata (cpl, notes);
+				verify_extension_metadata (cpl, notes);
 
 				if (cpl->any_encrypted()) {
 					cxml::Document doc ("CompositionPlaylist");
