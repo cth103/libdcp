@@ -143,7 +143,7 @@ main (int argc, char* argv[])
 
 	bool failed = false;
 	BOOST_FOREACH (dcp::VerificationNote i, notes) {
-		if (ignore_bv21_smpte && i.code() == dcp::VerificationNote::NOT_SMPTE) {
+		if (ignore_bv21_smpte && i.code() == dcp::VerificationNote::INVALID_STANDARD) {
 			continue;
 		}
 		switch (i.type()) {

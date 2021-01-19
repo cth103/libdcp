@@ -54,21 +54,42 @@ public:
 		VERIFY_WARNING
 	};
 
+	/** Codes for errors or warnings from verifying DCPs.
+	 *
+	 *  The names should (in general) answer the question "what is wrong?" with an answer that begins "There is a ..."
+	 *  e.g. "There is a INCORRECT_CPL_HASH"
+	 *       "There is a MISSING_ASSET"
+	 *
+	 *  In general the pattern should be <negative-adjective> <noun>.
+	 *  Some <negative-adjective>s are:
+	 *
+	 *  - INCORRECT: something, which could have any value, is wrong.
+	 *  - INVALID: something, which should only be one of a set of values, is not in the set, or some preformatted
+	 *             quantity (e.g. XML) is in the wrong format.
+	 *  - MISMATCHED: two things, which should be the same, are not.
+	 *  - EMPTY: something, which should have a value, has no value.
+	 *  - MISSING: something, which should be present, is not.
+	 *  - FAILED: some part of the verification failed in some serious way.
+	 *
+	 *  Comments should clarify meaning and also say which of the optional fields (e.g. file)
+	 *  are filled in when this code is used.
+	 *  XXX: this needs checking.
+	 */
 	enum Code {
 		/** An error when reading the DCP.  note contains (probably technical) details. */
-		GENERAL_READ,
+		FAILED_READ,
 		/** The hash of the CPL in the PKL does not agree with the CPL file */
-		CPL_HASH_INCORRECT,
+		MISMATCHED_CPL_HASHES,
 		/** Frame rate given in a reel for the main picture is not 24, 25, 30, 48, 50 or 60 */
 		INVALID_PICTURE_FRAME_RATE,
 		/** The hash of a main picture asset does not agree with the PKL file.  file contains the picture asset filename. */
-		PICTURE_HASH_INCORRECT,
+		INCORRECT_PICTURE_HASH,
 		/** The hash of a main picture is different in the CPL and PKL */
-		PKL_CPL_PICTURE_HASHES_DIFFER,
+		MISMATCHED_PICTURE_HASHES,
 		/** The hash of a main sound asset does not agree with the PKL file.  file contains the sound asset filename. */
-		SOUND_HASH_INCORRECT,
+		INCORRECT_SOUND_HASH,
 		/** The hash of a main sound is different in the CPL and PKL */
-		PKL_CPL_SOUND_HASHES_DIFFER,
+		MISMATCHED_SOUND_HASHES,
 		/** An assetmap's <Path> entry is empty */
 		EMPTY_ASSET_PATH,
 		/** A file mentioned in an asset map cannot be found */
@@ -76,81 +97,81 @@ public:
 		/** The DCP contains both SMPTE and Interop-standard components */
 		MISMATCHED_STANDARD,
 		/** Some XML fails to validate against the XSD/DTD */
-		XML_VALIDATION_ERROR,
+		INVALID_XML,
 		/** No ASSETMAP{.xml} was found */
 		MISSING_ASSETMAP,
 		/** An asset's IntrinsicDuration is less than 1 second */
-		INTRINSIC_DURATION_TOO_SMALL,
+		INVALID_INTRINSIC_DURATION,
 		/** An asset's Duration is less than 1 second */
-		DURATION_TOO_SMALL,
+		INVALID_DURATION,
 		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 250Mbit/s */
-		PICTURE_FRAME_TOO_LARGE_IN_BYTES,
+		INVALID_PICTURE_FRAME_SIZE_IN_BYTES,
 		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 230Mbit/s */
-		PICTURE_FRAME_NEARLY_TOO_LARGE_IN_BYTES,
+		NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES,
 		/** An asset that the CPL requires is not in this DCP; the DCP may be a VF */
 		EXTERNAL_ASSET,
 		/** DCP is Interop, not SMPTE [Bv2.1_6.1] */
-		NOT_SMPTE,
+		INVALID_STANDARD,
 		/** A language or territory does not conform to RFC 5646 [Bv2.1_6.2.1] */
-		BAD_LANGUAGE,
+		INVALID_LANGUAGE,
 		/** A picture asset does not have one of the required Bv2.1 sizes (in pixels) [Bv2.1_7.1] */
-		PICTURE_ASSET_INVALID_SIZE_IN_PIXELS,
+		INVALID_PICTURE_SIZE_IN_PIXELS,
 		/** A picture asset is 2K but is not at 24, 25 or 48 fps as required by Bv2.1 [Bv2.1_7.1] */
-		PICTURE_ASSET_INVALID_FRAME_RATE_FOR_2K,
+		INVALID_PICTURE_FRAME_RATE_FOR_2K,
 		/** A picture asset is 4K but is not at 24fps as required by Bv2.1 [Bv2.1_7.1] */
-		PICTURE_ASSET_INVALID_FRAME_RATE_FOR_4K,
+		INVALID_PICTURE_FRAME_RATE_FOR_4K,
 		/** A picture asset is 4K but is 3D which is not allowed by Bv2.1 [Bv2.1_7.1] */
-		PICTURE_ASSET_4K_3D,
+		INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
 		/** A closed caption's XML file is larger than 256KB [Bv2.1_7.2.1] */
-		CLOSED_CAPTION_XML_TOO_LARGE_IN_BYTES,
+		INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES,
 		/** Any timed text asset's total files is larger than 115MB [Bv2.1_7.2.1] */
-		TIMED_TEXT_ASSET_TOO_LARGE_IN_BYTES,
+		INVALID_TIMED_TEXT_SIZE_IN_BYTES,
 		/** The total size of all a timed text asset's fonts is larger than 10MB [Bv2.1_7.2.1] */
-		TIMED_TEXT_FONTS_TOO_LARGE_IN_BYTES,
+		INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES,
 		/** Some SMPTE subtitle XML has no <Language> tag [Bv2.1_7.2.2] */
 		MISSING_SUBTITLE_LANGUAGE,
 		/** Not all subtitle assets specify the same <Language> tag [Bv2.1_7.2.2] */
-		SUBTITLE_LANGUAGES_DIFFER,
+		MISMATCHED_SUBTITLE_LANGUAGES,
 		/** Some SMPTE subtitle XML has no <StartTime> tag [Bv2.1_7.2.3] */
 		MISSING_SUBTITLE_START_TIME,
 		/** Some SMPTE subtitle XML has a non-zero <StartTime> tag [Bv2.1_7.2.3] */
-		SUBTITLE_START_TIME_NON_ZERO,
+		INVALID_SUBTITLE_START_TIME,
 		/** The first subtitle or closed caption happens before 4s into the first reel [Bv2.1_7.2.4] */
-		FIRST_TEXT_TOO_EARLY,
+		INVALID_SUBTITLE_FIRST_TEXT_TIME,
 		/** At least one subtitle is less than the minimum of 15 frames suggested by [Bv2.1_7.2.5] */
-		SUBTITLE_TOO_SHORT,
+		INVALID_SUBTITLE_DURATION,
 		/** At least one pair of subtitles are separated by less than the the minimum of 2 frames suggested by [Bv2.1_7.2.5] */
-		SUBTITLE_TOO_CLOSE,
+		INVALID_SUBTITLE_SPACING,
 		/** There are more than 3 subtitle lines in at least one place [Bv2.1_7.2.7] */
-		TOO_MANY_SUBTITLE_LINES,
+		INVALID_SUBTITLE_LINE_COUNT,
 		/** There are more than 52 characters in at least one subtitle line [Bv2.1_7.2.7] */
-		SUBTITLE_LINE_LONGER_THAN_RECOMMENDED,
+		NEARLY_INVALID_SUBTITLE_LINE_LENGTH,
 		/** There are more than 79 characters in at least one subtitle line [Bv2.1_7.2.7] */
-		SUBTITLE_LINE_TOO_LONG,
+		INVALID_SUBTITLE_LINE_LENGTH,
 		/** There are more than 3 closed caption lines in at least one place [Bv2.1_7.2.6] */
-		TOO_MANY_CLOSED_CAPTION_LINES,
+		INVALID_CLOSED_CAPTION_LINE_COUNT,
 		/** There are more than 32 characters in at least one closed caption line [Bv2.1_7.2.6] */
-		CLOSED_CAPTION_LINE_TOO_LONG,
+		INVALID_CLOSED_CAPTION_LINE_LENGTH,
 		/** The audio sampling rate must be 48kHz [Bv2.1_7.3] */
 		INVALID_SOUND_FRAME_RATE,
 		/** The CPL has no <AnnotationText> tag [Bv2.1_8.1] */
-		MISSING_ANNOTATION_TEXT_IN_CPL,
+		MISSING_CPL_ANNOTATION_TEXT,
 		/** The <AnnotationText> is not the same as the <ContentTitleText> [Bv2.1_8.1] */
-		CPL_ANNOTATION_TEXT_DIFFERS_FROM_CONTENT_TITLE_TEXT,
+		MISMATCHED_CPL_ANNOTATION_TEXT,
 		/** At least one asset in a reel does not have the same duration as the others */
 		MISMATCHED_ASSET_DURATION,
 		/** If one reel has a MainSubtitle, all must have them */
-		MAIN_SUBTITLE_NOT_IN_ALL_REELS,
+		MISSING_MAIN_SUBTITLE_FROM_SOME_REELS,
 		/** If one reel has at least one ClosedCaption, all reels must have the same number of ClosedCaptions */
-		CLOSED_CAPTION_ASSET_COUNTS_DIFFER,
+		MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS,
 		/** MainSubtitle in reels must have <EntryPoint> Bv2.1_8.3.2 */
 		MISSING_SUBTITLE_ENTRY_POINT,
 		/** MainSubtitle <EntryPoint> must be zero Bv2.1_8.3.2 */
-		SUBTITLE_ENTRY_POINT_NON_ZERO,
+		INCORRECT_SUBTITLE_ENTRY_POINT,
 		/** Closed caption in reels must have <EntryPoint> Bv2.1_8.3.2 */
 		MISSING_CLOSED_CAPTION_ENTRY_POINT,
 		/** Closed caption MainSubtitle <EntryPoint> must be zero Bv2.1_8.3.2 */
-		CLOSED_CAPTION_ENTRY_POINT_NON_ZERO,
+		INCORRECT_CLOSED_CAPTION_ENTRY_POINT,
 		/** <Hash> must be present for assets in CPLs */
 		MISSING_HASH,
 		/** If ContentKind is Feature there must be a FFEC marker */
@@ -174,11 +195,11 @@ public:
 		/** <ExtensionMetadata> must have a particular form Bv2.1_8.6.3 */
 		INVALID_EXTENSION_METADATA,
 		/** CPLs containing encrypted content must be signed Bv2.1_8.7 */
-		CPL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED,
+		UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT,
 		/** PKLs containing encrypted content must be signed Bv2.1_8.7 */
-		PKL_WITH_ENCRYPTED_CONTENT_NOT_SIGNED,
+		UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT,
 		/** If a PKL has one CPL its <ContentTitleText> must be the same as the PKL's <AnnotationText> */
-		PKL_ANNOTATION_TEXT_DOES_NOT_MATCH_CPL_CONTENT_TITLE_TEXT,
+		MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL,
 		/** If any content is encrypted, everything must be encrypted */
 		PARTIALLY_ENCRYPTED,
 	};
