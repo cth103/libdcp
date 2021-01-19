@@ -401,7 +401,7 @@ verify_language_tag (string tag, vector<VerificationNote>& notes)
 	try {
 		LanguageTag test (tag);
 	} catch (LanguageTagError &) {
-		notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_LANGUAGE, tag));
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_LANGUAGE, tag});
 	}
 }
 
@@ -485,18 +485,14 @@ verify_main_picture_asset (
 	auto const r = verify_asset (dcp, reel_asset, progress);
 	switch (r) {
 		case VERIFY_ASSET_RESULT_BAD:
-			notes.push_back (
-				VerificationNote(
-					VerificationNote::VERIFY_ERROR, VerificationNote::INCORRECT_PICTURE_HASH, file
-					)
-				);
+			notes.push_back ({
+				VerificationNote::VERIFY_ERROR, VerificationNote::INCORRECT_PICTURE_HASH, file
+			});
 			break;
 		case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
-			notes.push_back (
-				VerificationNote(
-					VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_PICTURE_HASHES, file
-					)
-				);
+			notes.push_back ({
+				VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_PICTURE_HASHES, file
+			});
 			break;
 		default:
 			break;
@@ -524,14 +520,12 @@ verify_main_picture_asset (
 		asset->size() != Size(1998, 1080) &&
 		asset->size() != Size(4096, 1716) &&
 		asset->size() != Size(3996, 2160)) {
-		notes.push_back(
-			VerificationNote(
-				VerificationNote::VERIFY_BV21_ERROR,
-				VerificationNote::INVALID_PICTURE_SIZE_IN_PIXELS,
-				String::compose("%1x%2", asset->size().width, asset->size().height),
-				file
-				)
-			);
+		notes.push_back({
+			VerificationNote::VERIFY_BV21_ERROR,
+			VerificationNote::INVALID_PICTURE_SIZE_IN_PIXELS,
+			String::compose("%1x%2", asset->size().width, asset->size().height),
+			file
+		});
 	}
 
 	/* Only 24, 25, 48fps allowed for 2K */
@@ -539,39 +533,33 @@ verify_main_picture_asset (
 		(asset->size() == Size(2048, 858) || asset->size() == Size(1998, 1080)) &&
 		(asset->edit_rate() != Fraction(24, 1) && asset->edit_rate() != Fraction(25, 1) && asset->edit_rate() != Fraction(48, 1))
 	   ) {
-		notes.push_back(
-			VerificationNote(
-				VerificationNote::VERIFY_BV21_ERROR,
-				VerificationNote::INVALID_PICTURE_FRAME_RATE_FOR_2K,
-				String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
-				file
-				)
-			);
+		notes.push_back({
+			VerificationNote::VERIFY_BV21_ERROR,
+			VerificationNote::INVALID_PICTURE_FRAME_RATE_FOR_2K,
+			String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
+			file
+		});
 	}
 
 	if (asset->size() == Size(4096, 1716) || asset->size() == Size(3996, 2160)) {
 		/* Only 24fps allowed for 4K */
 		if (asset->edit_rate() != Fraction(24, 1)) {
-			notes.push_back(
-				VerificationNote(
-					VerificationNote::VERIFY_BV21_ERROR,
-					VerificationNote::INVALID_PICTURE_FRAME_RATE_FOR_4K,
-					String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
-					file
-					)
-				);
+			notes.push_back({
+				VerificationNote::VERIFY_BV21_ERROR,
+				VerificationNote::INVALID_PICTURE_FRAME_RATE_FOR_4K,
+				String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
+				file
+			});
 		}
 
 		/* Only 2D allowed for 4K */
 		if (dynamic_pointer_cast<const StereoPictureAsset>(asset)) {
-			notes.push_back(
-				VerificationNote(
-					VerificationNote::VERIFY_BV21_ERROR,
-					VerificationNote::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
-					String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
-					file
-					)
-				);
+			notes.push_back({
+				VerificationNote::VERIFY_BV21_ERROR,
+				VerificationNote::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
+				String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
+				file
+			});
 
 		}
 	}
@@ -593,18 +581,10 @@ verify_main_sound_asset (
 	auto const r = verify_asset (dcp, reel_asset, progress);
 	switch (r) {
 		case VERIFY_ASSET_RESULT_BAD:
-			notes.push_back (
-				VerificationNote(
-					VerificationNote::VERIFY_ERROR, VerificationNote::INCORRECT_SOUND_HASH, *asset->file()
-					)
-				);
+			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::INCORRECT_SOUND_HASH, *asset->file()});
 			break;
 		case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
-			notes.push_back (
-				VerificationNote(
-					VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_SOUND_HASHES, *asset->file()
-					)
-				);
+			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_SOUND_HASHES, *asset->file()});
 			break;
 		default:
 			break;
@@ -614,11 +594,7 @@ verify_main_sound_asset (
 
 	verify_language_tag (asset->language(), notes);
 	if (asset->sampling_rate() != 48000) {
-		notes.push_back (
-			VerificationNote(
-				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_SOUND_FRAME_RATE, raw_convert<string>(asset->sampling_rate()), *asset->file()
-				)
-			);
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_SOUND_FRAME_RATE, raw_convert<string>(asset->sampling_rate()), *asset->file()});
 	}
 }
 
@@ -740,11 +716,7 @@ verify_closed_caption_asset (
 	verify_subtitle_asset (asset, stage, xsd_dtd_directory, notes, state);
 
 	if (asset->raw_xml().size() > 256 * 1024) {
-		notes.push_back (
-			VerificationNote(
-				VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, raw_convert<string>(asset->raw_xml().size()), *asset->file()
-				)
-			);
+		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, raw_convert<string>(asset->raw_xml().size()), *asset->file()});
 	}
 }
 
@@ -1084,17 +1056,17 @@ dcp::verify (
 		try {
 			dcp->read (&notes);
 		} catch (ReadError& e) {
-			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())));
+			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())});
 		} catch (XMLError& e) {
-			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())));
+			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())});
 		} catch (MXFFileError& e) {
-			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())));
+			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())});
 		} catch (cxml::Error& e) {
-			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())));
+			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())});
 		}
 
 		if (dcp->standard() != SMPTE) {
-			notes.push_back (VerificationNote(VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_STANDARD));
+			notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_STANDARD});
 		}
 
 		for (auto cpl: dcp->cpls()) {
@@ -1135,7 +1107,7 @@ dcp::verify (
 				/* Check that the CPL's hash corresponds to the PKL */
 				optional<string> h = i->hash(cpl->id());
 				if (h && make_digest(ArrayData(*cpl->file())) != *h) {
-					notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()));
+					notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()});
 				}
 
 				/* Check that any PKL with a single CPL has its AnnotationText the same as the CPL's ContentTitleText */
@@ -1175,10 +1147,10 @@ dcp::verify (
 
 				for (auto i: reel->assets()) {
 					if (i->duration() && (i->duration().get() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
-						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_DURATION, i->id()));
+						notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_DURATION, i->id()});
 					}
 					if ((i->intrinsic_duration() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
-						notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_INTRINSIC_DURATION, i->id()));
+						notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_INTRINSIC_DURATION, i->id()});
 					}
 					auto mxf = dynamic_pointer_cast<ReelMXF>(i);
 					if (mxf && !mxf->hash()) {
@@ -1301,9 +1273,9 @@ dcp::verify (
 					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_LINE_COUNT});
 				}
 				if (result.error_length_exceeded) {
-					notes.push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_LINE_LENGTH));
+					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_LINE_LENGTH});
 				} else if (result.warning_length_exceeded) {
-					notes.push_back (VerificationNote(VerificationNote::VERIFY_WARNING, VerificationNote::NEARLY_INVALID_SUBTITLE_LINE_LENGTH));
+					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::NEARLY_INVALID_SUBTITLE_LINE_LENGTH});
 				}
 
 				result = LinesCharactersResult();
@@ -1360,7 +1332,7 @@ dcp::verify (
 			stage ("Checking ASSETMAP", dcp->asset_map_path().get());
 			validate_xml (dcp->asset_map_path().get(), xsd_dtd_directory, notes);
 		} else {
-			notes.push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISSING_ASSETMAP));
+			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::MISSING_ASSETMAP});
 		}
 	}
 
