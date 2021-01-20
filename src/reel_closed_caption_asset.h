@@ -44,7 +44,7 @@
 #include "reel_mxf.h"
 
 
-struct verify_invalid_closed_caption_languages;
+struct verify_invalid_language2;
 
 
 namespace dcp {
@@ -80,7 +80,7 @@ public:
 	}
 
 private:
-	friend struct ::verify_invalid_closed_caption_languages;
+	friend struct ::verify_invalid_language2;
 
 	std::string key_type () const;
 	std::string cpl_node_name (Standard standard) const;

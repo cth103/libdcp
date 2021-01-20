@@ -53,7 +53,7 @@
 #include <vector>
 
 
-struct verify_various_invalid_languages;
+struct verify_invalid_language3;
 
 
 namespace dcp {
@@ -293,7 +293,7 @@ protected:
 	std::string pkl_type (Standard standard) const;
 
 private:
-	friend struct ::verify_various_invalid_languages;
+	friend struct ::verify_invalid_language3;
 
 	void maybe_write_composition_metadata_asset (xmlpp::Element* node) const;
 	void read_composition_metadata_asset (cxml::ConstNodePtr node);

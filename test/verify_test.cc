@@ -881,9 +881,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_missing_tag)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_invalid_language)
+BOOST_AUTO_TEST_CASE (verify_invalid_language1)
 {
-	path const dir("build/test/verify_invalid_language");
+	path const dir("build/test/verify_invalid_language1");
 	prepare_directory (dir);
 	copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
@@ -904,9 +904,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language)
 
 
 /* SMPTE DCP with invalid <Language> in the MainClosedCaption reel and also in the XML within the MXF */
-BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_languages)
+BOOST_AUTO_TEST_CASE (verify_invalid_language2)
 {
-	path const dir("build/test/verify_invalid_closed_caption_languages");
+	path const dir("build/test/verify_invalid_language2");
 	prepare_directory (dir);
 	copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
@@ -929,9 +929,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_languages)
 /* SMPTE DCP with invalid <Language> in the MainSound reel, the CPL additional subtitles languages and
  * the release territory.
  */
-BOOST_AUTO_TEST_CASE (verify_various_invalid_languages)
+BOOST_AUTO_TEST_CASE (verify_invalid_language3)
 {
-	path const dir("build/test/verify_various_invalid_languages");
+	path const dir("build/test/verify_invalid_language3");
 	prepare_directory (dir);
 
 	auto picture = simple_picture (dir, "foo");
@@ -1156,9 +1156,9 @@ add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int en
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_closed_caption_xml_too_large)
+BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_xml_size_in_bytes)
 {
-	path const dir("build/test/verify_closed_caption_xml_too_large");
+	path const dir("build/test/verify_invalid_closed_caption_xml_size_in_bytes");
 	prepare_directory (dir);
 
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>();
@@ -1233,9 +1233,9 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_asset_too_large)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_missing_language_tag_in_subtitle_xml)
+BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 {
-	path dir = "build/test/verify_missing_language_tag_in_subtitle_xml";
+	path dir = "build/test/verify_missing_subtitle_language";
 	prepare_directory (dir);
 	auto dcp = make_simple (dir, 1, 240);
 
@@ -1286,9 +1286,9 @@ BOOST_AUTO_TEST_CASE (verify_missing_language_tag_in_subtitle_xml)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_inconsistent_subtitle_languages)
+BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 {
-	path path ("build/test/verify_inconsistent_subtitle_languages");
+	path path ("build/test/verify_mismatched_subtitle_languages");
 	auto dcp = make_simple (path, 2, 240);
 	auto cpl = dcp->cpls()[0];
 
@@ -1328,9 +1328,9 @@ BOOST_AUTO_TEST_CASE (verify_inconsistent_subtitle_languages)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_missing_start_time_tag_in_subtitle_xml)
+BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 {
-	path dir = "build/test/verify_missing_start_time_tag_in_subtitle_xml";
+	path dir = "build/test/verify_missing_subtitle_start_time";
 	prepare_directory (dir);
 	auto dcp = make_simple (dir, 1, 240);
 
@@ -1381,9 +1381,9 @@ BOOST_AUTO_TEST_CASE (verify_missing_start_time_tag_in_subtitle_xml)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_non_zero_start_time_tag_in_subtitle_xml)
+BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 {
-	path dir = "build/test/verify_non_zero_start_time_tag_in_subtitle_xml";
+	path dir = "build/test/verify_invalid_subtitle_start_time";
 	prepare_directory (dir);
 	auto dcp = make_simple (dir, 1, 240);
 
@@ -1470,9 +1470,9 @@ dcp_with_text (path dir, vector<TestText> subs)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_text_too_early)
+BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_first_text_time)
 {
-	auto const dir = path("build/test/verify_text_too_early");
+	auto const dir = path("build/test/verify_invalid_subtitle_first_text_time");
 	/* Just too early */
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (dir, {{ 4 * 24 - 1, 5 * 24 }});
 	check_verify_result (
@@ -1485,18 +1485,18 @@ BOOST_AUTO_TEST_CASE (verify_text_too_early)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_text_not_too_early)
+BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time)
 {
-	auto const dir = path("build/test/verify_text_not_too_early");
+	auto const dir = path("build/test/verify_valid_subtitle_first_text_time");
 	/* Just late enough */
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (dir, {{ 4 * 24, 5 * 24 }});
 	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_text_early_on_second_reel)
+BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 {
-	auto const dir = path("build/test/verify_text_early_on_second_reel");
+	auto const dir = path("build/test/verify_valid_subtitle_first_text_time_on_second_reel");
 	prepare_directory (dir);
 
 	auto asset1 = make_shared<dcp::SMPTESubtitleAsset>();
@@ -1543,9 +1543,9 @@ BOOST_AUTO_TEST_CASE (verify_text_early_on_second_reel)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_text_too_close)
+BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_spacing)
 {
-	auto const dir = path("build/test/verify_text_too_close");
+	auto const dir = path("build/test/verify_invalid_subtitle_spacing");
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1561,9 +1561,9 @@ BOOST_AUTO_TEST_CASE (verify_text_too_close)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_text_not_too_close)
+BOOST_AUTO_TEST_CASE (verify_valid_subtitle_spacing)
 {
-	auto const dir = path("build/test/verify_text_not_too_close");
+	auto const dir = path("build/test/verify_valid_subtitle_spacing");
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1574,9 +1574,9 @@ BOOST_AUTO_TEST_CASE (verify_text_not_too_close)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_text_too_short)
+BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_duration)
 {
-	auto const dir = path("build/test/verify_text_too_short");
+	auto const dir = path("build/test/verify_invalid_subtitle_duration");
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (dir, {{ 4 * 24, 4 * 24 + 1 }});
 	check_verify_result (
 		{dir},
@@ -1587,17 +1587,17 @@ BOOST_AUTO_TEST_CASE (verify_text_too_short)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_text_not_too_short)
+BOOST_AUTO_TEST_CASE (verify_valid_subtitle_duration)
 {
-	auto const dir = path("build/test/verify_text_not_too_short");
+	auto const dir = path("build/test/verify_valid_subtitle_duration");
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (dir, {{ 4 * 24, 4 * 24 + 17 }});
 	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_too_many_subtitle_lines1)
+BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_count1)
 {
-	auto const dir = path ("build/test/verify_too_many_subtitle_lines1");
+	auto const dir = path ("build/test/invalid_subtitle_line_count1");
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1615,9 +1615,9 @@ BOOST_AUTO_TEST_CASE (verify_too_many_subtitle_lines1)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_not_too_many_subtitle_lines1)
+BOOST_AUTO_TEST_CASE (verify_valid_subtitle_line_count1)
 {
-	auto const dir = path ("build/test/verify_not_too_many_subtitle_lines1");
+	auto const dir = path ("build/test/verify_valid_subtitle_line_count1");
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1629,9 +1629,9 @@ BOOST_AUTO_TEST_CASE (verify_not_too_many_subtitle_lines1)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_too_many_subtitle_lines2)
+BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_count2)
 {
-	auto const dir = path ("build/test/verify_too_many_subtitle_lines2");
+	auto const dir = path ("build/test/verify_invalid_subtitle_line_count2");
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1649,9 +1649,9 @@ BOOST_AUTO_TEST_CASE (verify_too_many_subtitle_lines2)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_not_too_many_subtitle_lines2)
+BOOST_AUTO_TEST_CASE (verify_valid_subtitle_line_count2)
 {
-	auto const dir = path ("build/test/verify_not_too_many_subtitle_lines2");
+	auto const dir = path ("build/test/verify_valid_subtitle_line_count2");
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1664,9 +1664,9 @@ BOOST_AUTO_TEST_CASE (verify_not_too_many_subtitle_lines2)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_subtitle_lines_too_long1)
+BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_length1)
 {
-	auto const dir = path ("build/test/verify_subtitle_lines_too_long1");
+	auto const dir = path ("build/test/verify_invalid_subtitle_line_length1");
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1681,9 +1681,9 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_lines_too_long1)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_subtitle_lines_too_long2)
+BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_length2)
 {
-	auto const dir = path ("build/test/verify_subtitle_lines_too_long2");
+	auto const dir = path ("build/test/verify_invalid_subtitle_line_length2");
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (
 		dir,
 		{
@@ -1698,9 +1698,9 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_lines_too_long2)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_too_many_closed_caption_lines1)
+BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count1)
 {
-	auto const dir = path ("build/test/verify_too_many_closed_caption_lines1");
+	auto const dir = path ("build/test/verify_valid_closed_caption_line_count1");
 	auto cpl = dcp_with_text<dcp::ReelClosedCaptionAsset> (
 		dir,
 		{
@@ -1718,9 +1718,9 @@ BOOST_AUTO_TEST_CASE (verify_too_many_closed_caption_lines1)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_not_too_many_closed_caption_lines1)
+BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count2)
 {
-	auto const dir = path ("build/test/verify_not_too_many_closed_caption_lines1");
+	auto const dir = path ("build/test/verify_valid_closed_caption_line_count2");
 	auto cpl = dcp_with_text<dcp::ReelClosedCaptionAsset> (
 		dir,
 		{
@@ -1732,9 +1732,9 @@ BOOST_AUTO_TEST_CASE (verify_not_too_many_closed_caption_lines1)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_too_many_closed_caption_lines2)
+BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_count3)
 {
-	auto const dir = path ("build/test/verify_too_many_closed_caption_lines2");
+	auto const dir = path ("build/test/verify_invalid_closed_caption_line_count3");
 	auto cpl = dcp_with_text<dcp::ReelClosedCaptionAsset> (
 		dir,
 		{
@@ -1752,9 +1752,9 @@ BOOST_AUTO_TEST_CASE (verify_too_many_closed_caption_lines2)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_not_too_many_closed_caption_lines2)
+BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count4)
 {
-	auto const dir = path ("build/test/verify_not_too_many_closed_caption_lines2");
+	auto const dir = path ("build/test/verify_valid_closed_caption_line_count4");
 	auto cpl = dcp_with_text<dcp::ReelClosedCaptionAsset> (
 		dir,
 		{
@@ -1767,9 +1767,9 @@ BOOST_AUTO_TEST_CASE (verify_not_too_many_closed_caption_lines2)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_closed_caption_lines_too_long1)
+BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_length)
 {
-	auto const dir = path ("build/test/verify_closed_caption_lines_too_long1");
+	auto const dir = path ("build/test/verify_invalid_closed_caption_line_length");
 	auto cpl = dcp_with_text<dcp::ReelClosedCaptionAsset> (
 		dir,
 		{
@@ -1784,9 +1784,9 @@ BOOST_AUTO_TEST_CASE (verify_closed_caption_lines_too_long1)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_sound_sampling_rate_must_be_48k)
+BOOST_AUTO_TEST_CASE (verify_invalid_sound_frame_rate)
 {
-	path const dir("build/test/verify_sound_sampling_rate_must_be_48k");
+	path const dir("build/test/verify_invalid_sound_frame_rate");
 	prepare_directory (dir);
 
 	auto picture = simple_picture (dir, "foo");
@@ -1818,9 +1818,9 @@ BOOST_AUTO_TEST_CASE (verify_sound_sampling_rate_must_be_48k)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_cpl_must_have_annotation_text)
+BOOST_AUTO_TEST_CASE (verify_missing_cpl_annotation_text)
 {
-	path const dir("build/test/verify_cpl_must_have_annotation_text");
+	path const dir("build/test/verify_missing_cpl_annotation_text");
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
 		dcp::SMPTE,
@@ -1849,9 +1849,9 @@ BOOST_AUTO_TEST_CASE (verify_cpl_must_have_annotation_text)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_cpl_annotation_text_should_be_same_as_content_title_text)
+BOOST_AUTO_TEST_CASE (verify_mismatched_cpl_annotation_text)
 {
-	path const dir("build/test/verify_cpl_annotation_text_should_be_same_as_content_title_text");
+	path const dir("build/test/verify_mismatched_cpl_annotation_text");
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
 		dcp::SMPTE,
@@ -1879,9 +1879,9 @@ BOOST_AUTO_TEST_CASE (verify_cpl_annotation_text_should_be_same_as_content_title
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_reel_assets_durations_must_match)
+BOOST_AUTO_TEST_CASE (verify_mismatched_asset_duration)
 {
-	path const dir("build/test/verify_reel_assets_durations_must_match");
+	path const dir("build/test/verify_mismatched_asset_duration");
 	prepare_directory (dir);
 	shared_ptr<dcp::DCP> dcp (new dcp::DCP(dir));
 	shared_ptr<dcp::CPL> cpl (new dcp::CPL("A Test DCP", dcp::TRAILER));
@@ -1974,10 +1974,10 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_subtitles_must_be_in_all_reels)
+BOOST_AUTO_TEST_CASE (verify_missing_main_subtitle_from_some_reels)
 {
 	{
-		path dir ("build/test/verify_subtitles_must_be_in_all_reels1");
+		path dir ("build/test/missing_main_subtitle_from_some_reels");
 		auto cpl = verify_subtitles_must_be_in_all_reels_check (dir, true, false);
 		check_verify_result (
 			{ dir },
@@ -2059,10 +2059,10 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_closed_captions_must_be_in_all_reels)
+BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_asset_counts)
 {
 	{
-		path dir ("build/test/verify_closed_captions_must_be_in_all_reels1");
+		path dir ("build/test/mismatched_closed_caption_asset_counts");
 		auto cpl = verify_closed_captions_must_be_in_all_reels_check (dir, 3, 4);
 		check_verify_result (
 			{dir},
@@ -2167,11 +2167,11 @@ BOOST_AUTO_TEST_CASE (verify_text_entry_point)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_assets_must_have_hashes)
+BOOST_AUTO_TEST_CASE (verify_missing_hash)
 {
 	RNGFixer fix;
 
-	path const dir("build/test/verify_assets_must_have_hashes");
+	path const dir("build/test/verify_missing_hash");
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
 		dcp::SMPTE,
@@ -2309,9 +2309,9 @@ BOOST_AUTO_TEST_CASE (verify_markers)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_cpl_metadata_version)
+BOOST_AUTO_TEST_CASE (verify_missing_cpl_metadata_version_number)
 {
-	path dir = "build/test/verify_cpl_metadata_version";
+	path dir = "build/test/verify_missing_cpl_metadata_version_number";
 	prepare_directory (dir);
 	auto dcp = make_simple (dir);
 	auto cpl = dcp->cpls()[0];
@@ -2328,9 +2328,9 @@ BOOST_AUTO_TEST_CASE (verify_cpl_metadata_version)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata1)
+BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata1)
 {
-	path dir = "build/test/verify_cpl_extension_metadata1";
+	path dir = "build/test/verify_missing_extension_metadata1";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
 		dcp::SMPTE,
@@ -2356,9 +2356,9 @@ BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata1)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata2)
+BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata2)
 {
-	path dir = "build/test/verify_cpl_extension_metadata2";
+	path dir = "build/test/verify_missing_extension_metadata2";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
 		dcp::SMPTE,
@@ -2384,9 +2384,9 @@ BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata2)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata3)
+BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 {
-	path dir = "build/test/verify_cpl_extension_metadata3";
+	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata3";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
 		dcp::SMPTE,
@@ -2414,9 +2414,9 @@ BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata3)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata4)
+BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata1)
 {
-	path dir = "build/test/verify_cpl_extension_metadata4";
+	path dir = "build/test/verify_invalid_extension_metadata1";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
 		dcp::SMPTE,
@@ -2442,9 +2442,9 @@ BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata4)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata5)
+BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 {
-	path dir = "build/test/verify_cpl_extension_metadata5";
+	path dir = "build/test/verify_invalid_extension_metadata2";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
 		dcp::SMPTE,
@@ -2470,9 +2470,9 @@ BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata5)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata6)
+BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 {
-	path dir = "build/test/verify_cpl_extension_metadata6";
+	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata6";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
 		dcp::SMPTE,
@@ -2500,9 +2500,9 @@ BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata6)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata7)
+BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 {
-	path dir = "build/test/verify_cpl_extension_metadata7";
+	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata7";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
 		dcp::SMPTE,
@@ -2528,9 +2528,9 @@ BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata7)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata8)
+BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 {
-	path dir = "build/test/verify_cpl_extension_metadata8";
+	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata8";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
 		dcp::SMPTE,
@@ -2558,9 +2558,9 @@ BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata8)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata9)
+BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 {
-	path dir = "build/test/verify_cpl_extension_metadata9";
+	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata9";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
 		dcp::SMPTE,
@@ -2589,9 +2589,9 @@ BOOST_AUTO_TEST_CASE (verify_cpl_extension_metadata9)
 
 
 
-BOOST_AUTO_TEST_CASE (verify_encrypted_cpl_is_signed)
+BOOST_AUTO_TEST_CASE (verify_unsigned_cpl_with_encrypted_content)
 {
-	path dir = "build/test/verify_encrypted_cpl_is_signed";
+	path dir = "build/test/verify_unsigned_cpl_with_encrypted_content";
 	prepare_directory (dir);
 	for (auto i: directory_iterator("test/ref/DCP/encryption_test")) {
 		copy_file (i.path(), dir / i.path().filename());
@@ -2622,9 +2622,9 @@ BOOST_AUTO_TEST_CASE (verify_encrypted_cpl_is_signed)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_encrypted_pkl_is_signed)
+BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_encrypted_content)
 {
-	path dir = "build/test/verify_encrypted_pkl_is_signed";
+	path dir = "build/test/unsigned_pkl_with_encrypted_content";
 	prepare_directory (dir);
 	for (auto i: directory_iterator("test/ref/DCP/encryption_test")) {
 		copy_file (i.path(), dir / i.path().filename());
@@ -2653,9 +2653,9 @@ BOOST_AUTO_TEST_CASE (verify_encrypted_pkl_is_signed)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_unencrypted_pkl_can_be_unsigned)
+BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_unencrypted_content)
 {
-	path dir = "build/test/verify_unencrypted_pkl_can_be_unsigned";
+	path dir = "build/test/verify_unsigned_pkl_with_unencrypted_content";
 	prepare_directory (dir);
 	for (auto i: directory_iterator("test/ref/DCP/dcp_test1")) {
 		copy_file (i.path(), dir / i.path().filename());
@@ -2670,7 +2670,7 @@ BOOST_AUTO_TEST_CASE (verify_unencrypted_pkl_can_be_unsigned)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_must_not_be_partially_encrypted)
+BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 {
 	path dir ("build/test/verify_must_not_be_partially_encrypted");
 	prepare_directory (dir);
