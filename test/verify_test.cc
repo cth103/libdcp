@@ -95,16 +95,16 @@ prepare_directory (path path)
 }
 
 
-static vector<path>
-setup (int reference_number, int verify_test_number)
+static path
+setup (int reference_number, string verify_test_suffix)
 {
-	prepare_directory (dcp::String::compose("build/test/verify_test%1", verify_test_number));
+	auto const dir = dcp::String::compose("build/test/verify_test%1", verify_test_suffix);
+	prepare_directory (dir);
 	for (auto i: directory_iterator(dcp::String::compose("test/ref/DCP/dcp_test%1", reference_number))) {
-		copy_file (i.path(), dcp::String::compose("build/test/verify_test%1", verify_test_number) / i.path().filename());
+		copy_file (i.path(), dir / i.path().filename());
 	}
 
-	return { dcp::String::compose("build/test/verify_test%1", verify_test_number) };
-
+	return dir;
 }
 
 
@@ -210,16 +210,16 @@ check_verify_result (vector<path> dir, vector<dcp::VerificationNote> test_notes)
 
 static
 void
-check_verify_result_after_replace (int n, boost::function<path (int)> file, string from, string to, vector<dcp::VerificationNote::Code> codes)
+check_verify_result_after_replace (string suffix, boost::function<path (string)> file, string from, string to, vector<dcp::VerificationNote::Code> codes)
 {
-	auto directories = setup (1, n);
+	auto dir = setup (1, suffix);
 
 	{
-		Editor e (file(n));
+		Editor e (file(suffix));
 		e.replace (from, to);
 	}
 
-	auto notes = dcp::verify (directories, &stage, &progress, xsd_test);
+	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), codes.size());
 	auto i = notes.begin();
@@ -232,21 +232,20 @@ check_verify_result_after_replace (int n, boost::function<path (int)> file, stri
 }
 
 
-/* Check DCP as-is (should be OK) */
-BOOST_AUTO_TEST_CASE (verify_test1)
+BOOST_AUTO_TEST_CASE (verify_no_error)
 {
 	stages.clear ();
-	auto directories = setup (1, 1);
-	auto notes = dcp::verify (directories, &stage, &progress, xsd_test);
+	auto dir = setup (1, "no_error");
+	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
 
-	path const cpl_file = path("build") / "test" / "verify_test1" / dcp_test1_cpl;
-	path const pkl_file = path("build") / "test" / "verify_test1" / dcp_test1_pkl;
-	path const assetmap_file = "build/test/verify_test1/ASSETMAP.xml";
+	path const cpl_file = dir / dcp_test1_cpl;
+	path const pkl_file = dir / dcp_test1_pkl;
+	path const assetmap_file = dir / "ASSETMAP.xml";
 
 	auto st = stages.begin();
 	BOOST_CHECK_EQUAL (st->first, "Checking DCP");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), canonical("build/test/verify_test1"));
+	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking CPL");
 	BOOST_REQUIRE (st->second);
@@ -257,19 +256,19 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking picture asset hash");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), canonical("build/test/verify_test1/video.mxf"));
+	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir / "video.mxf"));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking picture frame sizes");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), canonical("build/test/verify_test1/video.mxf"));
+	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir / "video.mxf"));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking sound asset hash");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), canonical("build/test/verify_test1/audio.mxf"));
+	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir / "audio.mxf"));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking sound asset metadata");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), canonical("build/test/verify_test1/audio.mxf"));
+	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir / "audio.mxf"));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking PKL");
 	BOOST_REQUIRE (st->second);
@@ -284,14 +283,14 @@ BOOST_AUTO_TEST_CASE (verify_test1)
 	BOOST_CHECK_EQUAL (notes.size(), 0);
 }
 
-/* Corrupt the MXFs and check that this is spotted */
-BOOST_AUTO_TEST_CASE (verify_test2)
+
+BOOST_AUTO_TEST_CASE (verify_incorrect_picture_sound_hash)
 {
 	using namespace boost::filesystem;
 
-	auto directories = setup (1, 2);
+	auto dir = setup (1, "incorrect_picture_sound_hash");
 
-	auto video_path = path("build/test/verify_test2/video.mxf");
+	auto video_path = path(dir / "video.mxf");
 	auto mod = fopen(video_path.string().c_str(), "r+b");
 	BOOST_REQUIRE (mod);
 	fseek (mod, 4096, SEEK_SET);
@@ -299,7 +298,7 @@ BOOST_AUTO_TEST_CASE (verify_test2)
 	fwrite (&x, sizeof(x), 1, mod);
 	fclose (mod);
 
-	auto audio_path = path("build/test/verify_test2/audio.mxf");
+	auto audio_path = path(dir / "audio.mxf");
 	mod = fopen(audio_path.string().c_str(), "r+b");
 	BOOST_REQUIRE (mod);
 	BOOST_REQUIRE_EQUAL (fseek(mod, -64, SEEK_END), 0);
@@ -308,21 +307,19 @@ BOOST_AUTO_TEST_CASE (verify_test2)
 
 	dcp::ASDCPErrorSuspender sus;
 	check_verify_result (
-		directories,
+		{ dir },
 		{
 			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::INCORRECT_PICTURE_HASH, canonical(video_path) },
 			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::INCORRECT_SOUND_HASH, canonical(audio_path) },
 		});
 }
 
-/* Corrupt the hashes in the PKL and check that the disagreement between CPL and PKL is spotted */
-BOOST_AUTO_TEST_CASE (verify_test3)
+
+BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 {
 	using namespace boost::filesystem;
 
-	auto directories = setup (1, 3);
-
-	path const dir = path("build") / "test" / "verify_test3";
+	auto dir = setup (1, "mismatched_picture_sound_hashes");
 
 	{
 		Editor e (dir / dcp_test1_pkl);
@@ -330,7 +327,7 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 	}
 
 	check_verify_result (
-		directories,
+		{ dir },
 		{
 			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id, canonical(dir / dcp_test1_cpl) },
 			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf") },
@@ -341,91 +338,83 @@ BOOST_AUTO_TEST_CASE (verify_test3)
 		});
 }
 
-/* Corrupt the ContentKind in the CPL */
-BOOST_AUTO_TEST_CASE (verify_test4)
+
+BOOST_AUTO_TEST_CASE (verify_failed_read_content_kind)
 {
-	auto directories = setup (1, 4);
+	auto dir = setup (1, "failed_read_content_kind");
 
 	{
-		Editor e (path("build") / "test" / "verify_test4" / dcp_test1_cpl);
+		Editor e (dir / dcp_test1_cpl);
 		e.replace ("<ContentKind>", "<ContentKind>x");
 	}
 
 	check_verify_result (
-		directories,
+		{ dir },
 		{{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::FAILED_READ, string("Bad content kind 'xtrailer'")}}
 		);
 }
 
-static
-path
-cpl (int n)
-{
-	return dcp::String::compose("build/test/verify_test%1/%2", n, dcp_test1_cpl);
-}
 
 static
 path
-pkl (int n)
+cpl (string suffix)
 {
-	return dcp::String::compose("build/test/verify_test%1/%2", n, dcp_test1_pkl);
+	return dcp::String::compose("build/test/verify_test%1/%2", suffix, dcp_test1_cpl);
 }
+
 
 static
 path
-asset_map (int n)
+pkl (string suffix)
 {
-	return dcp::String::compose("build/test/verify_test%1/ASSETMAP.xml", n);
+	return dcp::String::compose("build/test/verify_test%1/%2", suffix, dcp_test1_pkl);
 }
 
 
-/* FrameRate */
-BOOST_AUTO_TEST_CASE (verify_test5)
+static
+path
+asset_map (string suffix)
+{
+	return dcp::String::compose("build/test/verify_test%1/ASSETMAP.xml", suffix);
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_rate)
 {
 	check_verify_result_after_replace (
-			5, &cpl,
+			"invalid_picture_frame_rate", &cpl,
 			"<FrameRate>24 1", "<FrameRate>99 1",
 			{ dcp::VerificationNote::MISMATCHED_CPL_HASHES,
 			  dcp::VerificationNote::INVALID_PICTURE_FRAME_RATE }
 			);
 }
 
-/* Missing asset */
-BOOST_AUTO_TEST_CASE (verify_test6)
+BOOST_AUTO_TEST_CASE (verify_missing_asset)
 {
-	auto directories = setup (1, 6);
-
-	path dir = "build/test/verify_test6";
+	auto dir = setup (1, "missing_asset");
 	remove (dir / "video.mxf");
 	check_verify_result (
-		directories,
+		{ dir },
 		{
 			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::MISSING_ASSET, canonical(dir) / "video.mxf" }
 		});
 }
 
-static
-path
-assetmap (int n)
-{
-	return dcp::String::compose("build/test/verify_test%1/ASSETMAP.xml", n);
-}
 
-/* Empty asset filename in ASSETMAP */
-BOOST_AUTO_TEST_CASE (verify_test7)
+BOOST_AUTO_TEST_CASE (verify_empty_asset_path)
 {
 	check_verify_result_after_replace (
-			7, &assetmap,
+			"empty_asset_path", &asset_map,
 			"<Path>video.mxf</Path>", "<Path></Path>",
 			{ dcp::VerificationNote::EMPTY_ASSET_PATH }
 			);
 }
 
-/* Mismatched standard */
-BOOST_AUTO_TEST_CASE (verify_test8)
+
+BOOST_AUTO_TEST_CASE (verify_mismatched_standard)
 {
 	check_verify_result_after_replace (
-			8, &cpl,
+			"mismatched_standard", &cpl,
 			"http://www.smpte-ra.org/schemas/429-7/2006/CPL", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#",
 			{ dcp::VerificationNote::MISMATCHED_STANDARD,
 			  dcp::VerificationNote::INVALID_XML,
@@ -437,63 +426,63 @@ BOOST_AUTO_TEST_CASE (verify_test8)
 			);
 }
 
-/* Badly formatted <Id> in CPL */
-BOOST_AUTO_TEST_CASE (verify_test9)
+
+BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_id)
 {
 	/* There's no MISMATCHED_CPL_HASHES error here because it can't find the correct hash by ID (since the ID is wrong) */
 	check_verify_result_after_replace (
-			9, &cpl,
+			"invalid_xml_cpl_id", &cpl,
 			"<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b", "<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375",
 			{ dcp::VerificationNote::INVALID_XML }
 			);
 }
 
-/* Badly formatted <IssueDate> in CPL */
-BOOST_AUTO_TEST_CASE (verify_test10)
+
+BOOST_AUTO_TEST_CASE (verify_invalid_xml_issue_date)
 {
 	check_verify_result_after_replace (
-			10, &cpl,
+			"invalid_xml_issue_date", &cpl,
 			"<IssueDate>", "<IssueDate>x",
 			{ dcp::VerificationNote::INVALID_XML,
 			  dcp::VerificationNote::MISMATCHED_CPL_HASHES }
 			);
 }
 
-/* Badly-formatted <Id> in PKL */
-BOOST_AUTO_TEST_CASE (verify_test11)
+
+BOOST_AUTO_TEST_CASE (verify_invalid_xml_pkl_id)
 {
 	check_verify_result_after_replace (
-		11, &pkl,
+		"invalid_xml_pkl_id", &pkl,
 		"<Id>urn:uuid:2b9", "<Id>urn:uuid:xb9",
 		{ dcp::VerificationNote::INVALID_XML }
 		);
 }
 
-/* Badly-formatted <Id> in ASSETMAP */
-BOOST_AUTO_TEST_CASE (verify_test12)
+
+BOOST_AUTO_TEST_CASE (verify_invalid_xml_asset_map_id)
 {
 	check_verify_result_after_replace (
-		12, &asset_map,
+		"invalix_xml_asset_map_id", &asset_map,
 		"<Id>urn:uuid:07e", "<Id>urn:uuid:x7e",
 		{ dcp::VerificationNote::INVALID_XML }
 		);
 }
 
-/* Basic test of an Interop DCP */
-BOOST_AUTO_TEST_CASE (verify_test13)
+
+BOOST_AUTO_TEST_CASE (verify_invalid_standard)
 {
 	stages.clear ();
-	auto directories = setup (3, 13);
-	auto notes = dcp::verify (directories, &stage, &progress, xsd_test);
+	auto dir = setup (3, "verify_invalid_standard");
+	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
 
-	path const cpl_file = path("build") / "test" / "verify_test13" / "cpl_cbfd2bc0-21cf-4a8f-95d8-9cddcbe51296.xml";
-	path const pkl_file = path("build") / "test" / "verify_test13" / "pkl_d87a950c-bd6f-41f6-90cc-56ccd673e131.xml";
-	path const assetmap_file = "build/test/verify_test13/ASSETMAP";
+	path const cpl_file = dir / "cpl_cbfd2bc0-21cf-4a8f-95d8-9cddcbe51296.xml";
+	path const pkl_file = dir / "pkl_d87a950c-bd6f-41f6-90cc-56ccd673e131.xml";
+	path const assetmap_file = dir / "ASSETMAP";
 
 	auto st = stages.begin();
 	BOOST_CHECK_EQUAL (st->first, "Checking DCP");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), canonical("build/test/verify_test13"));
+	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking CPL");
 	BOOST_REQUIRE (st->second);
@@ -504,19 +493,19 @@ BOOST_AUTO_TEST_CASE (verify_test13)
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking picture asset hash");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), canonical("build/test/verify_test13/j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf"));
+	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir / "j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf"));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking picture frame sizes");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), canonical("build/test/verify_test13/j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf"));
+	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir / "j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf"));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking sound asset hash");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), canonical("build/test/verify_test13/pcm_69cf9eaf-9a99-4776-b022-6902208626c3.mxf"));
+	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir / "pcm_69cf9eaf-9a99-4776-b022-6902208626c3.mxf"));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking sound asset metadata");
 	BOOST_REQUIRE (st->second);
-	BOOST_CHECK_EQUAL (st->second.get(), canonical("build/test/verify_test13/pcm_69cf9eaf-9a99-4776-b022-6902208626c3.mxf"));
+	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir / "pcm_69cf9eaf-9a99-4776-b022-6902208626c3.mxf"));
 	++st;
 	BOOST_CHECK_EQUAL (st->first, "Checking PKL");
 	BOOST_REQUIRE (st->second);
@@ -535,11 +524,11 @@ BOOST_AUTO_TEST_CASE (verify_test13)
 }
 
 /* DCP with a short asset */
-BOOST_AUTO_TEST_CASE (verify_test14)
+BOOST_AUTO_TEST_CASE (verify_invalid_duration)
 {
-	auto directories = setup (8, 14);
+	auto dir = setup (8, "invalid_duration");
 	check_verify_result (
-		directories,
+		{ dir },
 		{
 			{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::INVALID_STANDARD },
 			{ dcp::VerificationNote::VERIFY_ERROR, dcp::VerificationNote::INVALID_DURATION, string("d7576dcb-a361-4139-96b8-267f5f8d7f91") },
@@ -567,8 +556,7 @@ dcp_from_frame (dcp::ArrayData const& frame, path dir)
 }
 
 
-/* DCP with an over-sized JPEG2000 frame */
-BOOST_AUTO_TEST_CASE (verify_test15)
+BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_size_in_bytes)
 {
 	int const too_big = 1302083 * 2;
 
@@ -582,7 +570,7 @@ BOOST_AUTO_TEST_CASE (verify_test15)
 	memcpy (oversized_frame.data(), frame.data(), frame.size());
 	memset (oversized_frame.data() + frame.size(), 0, too_big - frame.size());
 
-	path const dir("build/test/verify_test15");
+	path const dir("build/test/verify_invalid_picture_frame_size_in_bytes");
 	prepare_directory (dir);
 	auto cpl = dcp_from_frame (oversized_frame, dir);
 
@@ -595,8 +583,7 @@ BOOST_AUTO_TEST_CASE (verify_test15)
 }
 
 
-/* DCP with a nearly over-sized JPEG2000 frame */
-BOOST_AUTO_TEST_CASE (verify_test16)
+BOOST_AUTO_TEST_CASE (verify_nearly_invalid_picture_frame_size_in_bytes)
 {
 	int const nearly_too_big = 1302083 * 0.98;
 
@@ -610,7 +597,7 @@ BOOST_AUTO_TEST_CASE (verify_test16)
 	memcpy (oversized_frame.data(), frame.data(), frame.size());
 	memset (oversized_frame.data() + frame.size(), 0, nearly_too_big - frame.size());
 
-	path const dir("build/test/verify_test16");
+	path const dir("build/test/verify_nearly_invalid_picture_frame_size_in_bytes");
 	prepare_directory (dir);
 	auto cpl = dcp_from_frame (oversized_frame, dir);
 
@@ -623,15 +610,14 @@ BOOST_AUTO_TEST_CASE (verify_test16)
 }
 
 
-/* DCP with a within-range JPEG2000 frame */
-BOOST_AUTO_TEST_CASE (verify_test17)
+BOOST_AUTO_TEST_CASE (verify_valid_picture_frame_size_in_bytes)
 {
 	/* Compress a black image */
 	auto image = black_image ();
 	auto frame = dcp::compress_j2k (image, 100000000, 24, false, false);
 	BOOST_REQUIRE (frame.size() < 230000000 / (24 * 8));
 
-	path const dir("build/test/verify_test17");
+	path const dir("build/test/verify_valid_picture_frame_size_in_bytes");
 	prepare_directory (dir);
 	auto cpl = dcp_from_frame (frame, dir);
 
@@ -639,10 +625,9 @@ BOOST_AUTO_TEST_CASE (verify_test17)
 }
 
 
-/* DCP with valid Interop subtitles */
-BOOST_AUTO_TEST_CASE (verify_test18)
+BOOST_AUTO_TEST_CASE (verify_valid_interop_subtitles)
 {
-	path const dir("build/test/verify_test18");
+	path const dir("build/test/verify_valid_interop_subtitles");
 	prepare_directory (dir);
 	copy_file ("test/data/subs1.xml", dir / "subs.xml");
 	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
@@ -653,12 +638,11 @@ BOOST_AUTO_TEST_CASE (verify_test18)
 }
 
 
-/* DCP with broken Interop subtitles */
-BOOST_AUTO_TEST_CASE (verify_test19)
+BOOST_AUTO_TEST_CASE (verify_invalid_interop_subtitles)
 {
 	using namespace boost::filesystem;
 
-	path const dir("build/test/verify_test19");
+	path const dir("build/test/verify_invalid_interop_subtitles");
 	prepare_directory (dir);
 	copy_file ("test/data/subs1.xml", dir / "subs.xml");
 	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
@@ -686,10 +670,9 @@ BOOST_AUTO_TEST_CASE (verify_test19)
 }
 
 
-/* DCP with valid SMPTE subtitles */
-BOOST_AUTO_TEST_CASE (verify_test20)
+BOOST_AUTO_TEST_CASE (verify_valid_smpte_subtitles)
 {
-	path const dir("build/test/verify_test20");
+	path const dir("build/test/verify_valid_smpte_subtitles");
 	prepare_directory (dir);
 	copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
@@ -700,12 +683,11 @@ BOOST_AUTO_TEST_CASE (verify_test20)
 }
 
 
-/* DCP with broken SMPTE subtitles */
-BOOST_AUTO_TEST_CASE (verify_test21)
+BOOST_AUTO_TEST_CASE (verify_invalid_smpte_subtitles)
 {
 	using namespace boost::filesystem;
 
-	path const dir("build/test/verify_test21");
+	path const dir("build/test/verify_invalid_smpte_subtitles");
 	prepare_directory (dir);
 	copy_file ("test/data/broken_smpte.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
@@ -729,10 +711,9 @@ BOOST_AUTO_TEST_CASE (verify_test21)
 }
 
 
-/* VF */
-BOOST_AUTO_TEST_CASE (verify_test22)
+BOOST_AUTO_TEST_CASE (verify_external_asset)
 {
-	path const ov_dir("build/test/verify_test22_ov");
+	path const ov_dir("build/test/verify_external_asset");
 	prepare_directory (ov_dir);
 
 	auto image = black_image ();
@@ -743,7 +724,7 @@ BOOST_AUTO_TEST_CASE (verify_test22)
 	dcp::DCP ov (ov_dir);
 	ov.read ();
 
-	path const vf_dir("build/test/verify_test22_vf");
+	path const vf_dir("build/test/verify_external_asset_vf");
 	prepare_directory (vf_dir);
 
 	auto picture = ov.cpls()[0]->reels()[0]->main_picture();
@@ -758,10 +739,9 @@ BOOST_AUTO_TEST_CASE (verify_test22)
 }
 
 
-/* DCP with valid CompositionMetadataAsset */
-BOOST_AUTO_TEST_CASE (verify_test23)
+BOOST_AUTO_TEST_CASE (verify_valid_cpl_metadata)
 {
-	path const dir("build/test/verify_test23");
+	path const dir("build/test/verify_valid_cpl_metadata");
 	prepare_directory (dir);
 
 	copy_file ("test/data/subs.mxf", dir / "subs.mxf");
@@ -771,7 +751,8 @@ BOOST_AUTO_TEST_CASE (verify_test23)
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (reel_asset);
 
-	reel->add (simple_markers(16 * 24 - 1));
+	reel->add (make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 16 * 24), 0));
+	reel->add (simple_markers(16 * 24));
 
 	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
 	cpl->add (reel);
@@ -779,6 +760,7 @@ BOOST_AUTO_TEST_CASE (verify_test23)
 	cpl->set_main_sound_sample_rate (48000);
 	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
 	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
+	cpl->set_version_number (1);
 
 	dcp::DCP dcp (dir);
 	dcp.add (cpl);
@@ -789,8 +771,6 @@ BOOST_AUTO_TEST_CASE (verify_test23)
 		dcp::LocalTime().as_string(),
 		"hello"
 		);
-
-	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
 
 
@@ -808,11 +788,11 @@ path find_cpl (path dir)
 
 
 /* DCP with invalid CompositionMetadataAsset */
-BOOST_AUTO_TEST_CASE (verify_test24)
+BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 {
 	using namespace boost::filesystem;
 
-	path const dir("build/test/verify_test24");
+	path const dir("build/test/verify_invalid_cpl_metadata_bad_tag");
 	prepare_directory (dir);
 
 	auto reel = make_shared<dcp::Reel>();
@@ -838,7 +818,7 @@ BOOST_AUTO_TEST_CASE (verify_test24)
 		);
 
 	{
-		Editor e (find_cpl("build/test/verify_test24"));
+		Editor e (find_cpl(dir));
 		e.replace ("MainSound", "MainSoundX");
 	}
 
@@ -865,9 +845,9 @@ BOOST_AUTO_TEST_CASE (verify_test24)
 
 
 /* DCP with invalid CompositionMetadataAsset */
-BOOST_AUTO_TEST_CASE (verify_test25)
+BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_missing_tag)
 {
-	path const dir("build/test/verify_test25");
+	path const dir("build/test/verify_invalid_cpl_metadata_missing_tag");
 	prepare_directory (dir);
 
 	auto reel = make_shared<dcp::Reel>();
@@ -890,7 +870,7 @@ BOOST_AUTO_TEST_CASE (verify_test25)
 		);
 
 	{
-		Editor e (find_cpl("build/test/verify_test25"));
+		Editor e (find_cpl(dir));
 		e.replace ("meta:Width", "meta:WidthX");
 	}
 
@@ -901,10 +881,9 @@ BOOST_AUTO_TEST_CASE (verify_test25)
 }
 
 
-/* SMPTE DCP with invalid <Language> in the MainSubtitle reel and also in the XML within the MXF */
-BOOST_AUTO_TEST_CASE (verify_test26)
+BOOST_AUTO_TEST_CASE (verify_invalid_language)
 {
-	path const dir("build/test/verify_test26");
+	path const dir("build/test/verify_invalid_language");
 	prepare_directory (dir);
 	copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");

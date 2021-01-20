@@ -43,7 +43,7 @@
 #include "reel_mxf.h"
 #include "subtitle_asset.h"
 
-struct verify_test26;
+struct verify_invalid_language;
 
 namespace dcp {
 
@@ -72,7 +72,7 @@ public:
 	}
 
 private:
-	friend struct ::verify_test26;
+	friend struct ::verify_invalid_language;
 
 	std::string key_type () const;
 	std::string cpl_node_name (Standard standard) const;
