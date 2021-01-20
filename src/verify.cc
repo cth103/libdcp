@@ -1044,7 +1044,7 @@ dcp::verify (
 	xsd_dtd_directory = boost::filesystem::canonical (xsd_dtd_directory);
 
 	vector<VerificationNote> notes;
-	State state;
+	State state{};
 
 	vector<shared_ptr<DCP>> dcps;
 	for (auto i: directories) {
