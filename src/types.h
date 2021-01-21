@@ -44,6 +44,11 @@
 #include <boost/function.hpp>
 #include <string>
 
+
+/* MinGW seems to define this, but we want to use it */
+#undef ERROR
+
+
 namespace xmlpp {
 	class Element;
 }
@@ -252,9 +257,7 @@ struct EqualityOptions
 	bool export_differing_subtitles;
 };
 
-/* I've been unable to make mingw happy with ERROR as a symbol, so
-   I'm using a DCP_ prefix here.
-*/
+
 enum class NoteType {
 	PROGRESS,
 	ERROR,
