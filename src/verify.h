@@ -48,10 +48,10 @@ public:
 	/* I've been unable to make mingw happy with ERROR as a symbol, so
 	   I'm using a VERIFY_ prefix here.
 	*/
-	enum Type {
-		VERIFY_ERROR,
-		VERIFY_BV21_ERROR, ///< may not always be considered an error, but violates a "shall" requirement of Bv2.1
-		VERIFY_WARNING
+	enum class Type {
+		ERROR,
+		BV21_ERROR, ///< may not always be considered an error, but violates a "shall" requirement of Bv2.1
+		WARNING
 	};
 
 	/** Codes for errors or warnings from verifying DCPs.
@@ -74,7 +74,7 @@ public:
 	 *  Comments should clarify meaning and also say which of the optional fields (e.g. file)
 	 *  are filled in when this code is used.
 	 */
-	enum Code {
+	enum class Code {
 		/** An error when reading the DCP.
 		 *  note contains (probably technical) details.
 		 */

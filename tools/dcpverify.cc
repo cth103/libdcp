@@ -143,18 +143,18 @@ main (int argc, char* argv[])
 
 	bool failed = false;
 	BOOST_FOREACH (dcp::VerificationNote i, notes) {
-		if (ignore_bv21_smpte && i.code() == dcp::VerificationNote::INVALID_STANDARD) {
+		if (ignore_bv21_smpte && i.code() == dcp::VerificationNote::Code::INVALID_STANDARD) {
 			continue;
 		}
 		switch (i.type()) {
-		case dcp::VerificationNote::VERIFY_ERROR:
+		case dcp::VerificationNote::Type::ERROR:
 			cout << "Error: " << note_to_string(i) << "\n";
 			failed = true;
 			break;
-		case dcp::VerificationNote::VERIFY_BV21_ERROR:
+		case dcp::VerificationNote::Type::BV21_ERROR:
 			cout << "Bv2.1 error: " << note_to_string(i) << "\n";
 			break;
-		case dcp::VerificationNote::VERIFY_WARNING:
+		case dcp::VerificationNote::Type::WARNING:
 			cout << "Warning: " << note_to_string(i) << "\n";
 			break;
 		}

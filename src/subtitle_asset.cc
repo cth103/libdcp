@@ -203,7 +203,7 @@ SubtitleAsset::text_node_state (xmlpp::Element const * node) const
 		ps.direction = string_to_direction (d.get ());
 	}
 
-	ps.type = ParseState::TEXT;
+	ps.type = ParseState::Type::TEXT;
 
 	return ps;
 }
@@ -215,7 +215,7 @@ SubtitleAsset::image_node_state (xmlpp::Element const * node) const
 
 	position_align (ps, node);
 
-	ps.type = ParseState::IMAGE;
+	ps.type = ParseState::Type::IMAGE;
 
 	return ps;
 }
@@ -360,7 +360,7 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 	DCP_ASSERT (ps.type);
 
 	switch (ps.type.get()) {
-	case ParseState::TEXT:
+	case ParseState::Type::TEXT:
 		_subtitles.push_back (
 			shared_ptr<Subtitle> (
 				new SubtitleString (
@@ -387,7 +387,7 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 				)
 			);
 		break;
-	case ParseState::IMAGE:
+	case ParseState::Type::IMAGE:
 		/* Add a subtitle with no image data and we'll fill that in later */
 		_subtitles.push_back (
 			shared_ptr<Subtitle> (
@@ -465,7 +465,7 @@ Time
 SubtitleAsset::latest_subtitle_out () const
 {
 	Time t;
-	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
+	for (auto i: _subtitles) {
 		if (i->out() > t) {
 			t = i->out ();
 		}
@@ -481,7 +481,7 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 		return false;
 	}
 
-	shared_ptr<const SubtitleAsset> other = dynamic_pointer_cast<const SubtitleAsset> (other_asset);
+	auto other = dynamic_pointer_cast<const SubtitleAsset> (other_asset);
 	if (!other) {
 		return false;
 	}
@@ -539,7 +539,7 @@ SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
 	}
 
 	/* Pull up from children */
-	BOOST_FOREACH (shared_ptr<order::Part> i, part->children) {
+	for (auto i: part->children) {
 		pull_fonts (i);
 	}
 
@@ -597,14 +597,14 @@ SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
 void
 SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, Standard standard) const
 {
-	vector<shared_ptr<Subtitle> > sorted = _subtitles;
+	auto sorted = _subtitles;
 	std::stable_sort(sorted.begin(), sorted.end(), SubtitleSorter());
 
 	/* Gather our subtitles into a hierarchy of Subtitle/Text/String objects, writing
 	   font information into the bottom level (String) objects.
 	*/
 
-	shared_ptr<order::Part> root (new order::Part (shared_ptr<order::Part> ()));
+	auto root = make_shared<order::Part>(shared_ptr<order::Part>());
 	shared_ptr<order::Subtitle> subtitle;
 	shared_ptr<order::Text> text;
 
@@ -618,7 +618,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 	float last_v_position;
 	Direction last_direction;
 
-	BOOST_FOREACH (shared_ptr<Subtitle> i, sorted) {
+	for (auto i: sorted) {
 		if (!subtitle ||
 		    (last_in != i->in() ||
 		     last_out != i->out() ||
@@ -626,7 +626,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 		     last_fade_down_time != i->fade_down_time())
 			) {
 
-			subtitle.reset (new order::Subtitle (root, i->in(), i->out(), i->fade_up_time(), i->fade_down_time()));
+			subtitle = make_shared<order::Subtitle>(root, i->in(), i->out(), i->fade_up_time(), i->fade_down_time());
 			root->children.push_back (subtitle);
 
 			last_in = i->in ();
@@ -636,7 +636,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 			text.reset ();
 		}
 
-		shared_ptr<SubtitleString> is = dynamic_pointer_cast<SubtitleString>(i);
+		auto is = dynamic_pointer_cast<SubtitleString>(i);
 		if (is) {
 			if (!text ||
 			    last_h_align != is->h_align() ||

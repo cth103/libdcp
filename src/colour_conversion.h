@@ -50,10 +50,10 @@ namespace dcp {
 
 class TransferFunction;
 
-enum YUVToRGB {
-	YUV_TO_RGB_REC601,
-	YUV_TO_RGB_REC709,
-	YUV_TO_RGB_COUNT
+enum class YUVToRGB {
+	REC601,
+	REC709,
+	COUNT
 };
 
 /** @class ColourConversion
@@ -64,7 +64,7 @@ class ColourConversion
 {
 public:
 	ColourConversion ()
-		: _yuv_to_rgb (YUV_TO_RGB_REC601)
+		: _yuv_to_rgb (YUVToRGB::REC601)
 	{}
 
 	ColourConversion (

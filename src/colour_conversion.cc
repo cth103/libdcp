@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -42,6 +42,7 @@
 #include <boost/numeric/ublas/io.hpp>
 
 using std::shared_ptr;
+using std::make_shared;
 using boost::optional;
 using namespace dcp;
 
@@ -49,14 +50,14 @@ ColourConversion const &
 ColourConversion::srgb_to_xyz ()
 {
 	static ColourConversion* c = new ColourConversion (
-		shared_ptr<const TransferFunction> (new ModifiedGammaTransferFunction (2.4, 0.04045, 0.055, 12.92)),
-		YUV_TO_RGB_REC601,
+		make_shared<ModifiedGammaTransferFunction>(2.4, 0.04045, 0.055, 12.92),
+		YUVToRGB::REC601,
 		Chromaticity (0.64, 0.33),
 		Chromaticity (0.3, 0.6),
 		Chromaticity (0.15, 0.06),
 		Chromaticity::D65 (),
 		optional<Chromaticity> (),
-		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
+		make_shared<GammaTransferFunction>(2.6)
 		);
 	return *c;
 }
@@ -65,14 +66,14 @@ ColourConversion const &
 ColourConversion::rec601_to_xyz ()
 {
 	static ColourConversion* c = new ColourConversion (
-		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.2)),
-		YUV_TO_RGB_REC601,
+		make_shared<GammaTransferFunction>(2.2),
+		YUVToRGB::REC601,
 		Chromaticity (0.64, 0.33),
 		Chromaticity (0.3, 0.6),
 		Chromaticity (0.15, 0.06),
 		Chromaticity::D65 (),
 		optional<Chromaticity> (),
-		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
+		make_shared<GammaTransferFunction>(2.6)
 		);
 	return *c;
 }
@@ -81,14 +82,14 @@ ColourConversion const &
 ColourConversion::rec709_to_xyz ()
 {
 	static ColourConversion* c = new ColourConversion (
-		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.2)),
-		YUV_TO_RGB_REC709,
+		make_shared<GammaTransferFunction>(2.2),
+		YUVToRGB::REC709,
 		Chromaticity (0.64, 0.33),
 		Chromaticity (0.3, 0.6),
 		Chromaticity (0.15, 0.06),
 		Chromaticity::D65 (),
 		optional<Chromaticity> (),
-		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
+		make_shared<GammaTransferFunction>(2.6)
 		);
 	return *c;
 }
@@ -97,14 +98,14 @@ ColourConversion const &
 ColourConversion::p3_to_xyz ()
 {
 	static ColourConversion* c = new ColourConversion (
-		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6)),
-		YUV_TO_RGB_REC709,
+		make_shared<GammaTransferFunction>(2.6),
+		YUVToRGB::REC709,
 		Chromaticity (0.68, 0.32),
 		Chromaticity (0.265, 0.69),
 		Chromaticity (0.15, 0.06),
 		Chromaticity (0.314, 0.351),
 		optional<Chromaticity> (),
-		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
+		make_shared<GammaTransferFunction>(2.6)
 		);
 	return *c;
 }
@@ -116,14 +117,14 @@ ColourConversion::rec1886_to_xyz ()
 	   2.4 gamma, so here goes ...
 	*/
 	static ColourConversion* c = new ColourConversion (
-		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.4)),
-		YUV_TO_RGB_REC709,
+		make_shared<GammaTransferFunction>(2.4),
+		YUVToRGB::REC709,
 		Chromaticity (0.64, 0.33),
 		Chromaticity (0.3, 0.6),
 		Chromaticity (0.15, 0.06),
 		Chromaticity::D65 (),
 		optional<Chromaticity> (),
-		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
+		make_shared<GammaTransferFunction>(2.6)
 		);
 	return *c;
 }
@@ -132,14 +133,14 @@ ColourConversion const &
 ColourConversion::rec2020_to_xyz ()
 {
 	static ColourConversion* c = new ColourConversion (
-		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.4)),
-		YUV_TO_RGB_REC709,
+		make_shared<GammaTransferFunction>(2.4),
+		YUVToRGB::REC709,
 		Chromaticity (0.708, 0.292),
 		Chromaticity (0.170, 0.797),
 		Chromaticity (0.131, 0.046),
 		Chromaticity::D65 (),
 		optional<Chromaticity> (),
-		shared_ptr<const TransferFunction> (new GammaTransferFunction (2.6))
+		make_shared<GammaTransferFunction>(2.6)
 		);
 	return *c;
 }
@@ -149,14 +150,14 @@ ColourConversion const &
 ColourConversion::s_gamut3_to_xyz ()
 {
 	static ColourConversion* c = new ColourConversion (
-		shared_ptr<const TransferFunction> (new SGamut3TransferFunction ()),
-		YUV_TO_RGB_REC709,
+		make_shared<SGamut3TransferFunction>(),
+		YUVToRGB::REC709,
 		Chromaticity (0.73, 0.280),
 		Chromaticity (0.140, 0.855),
 		Chromaticity (0.100, -0.050),
 		Chromaticity::D65 (),
 		optional<Chromaticity> (),
-		shared_ptr<const TransferFunction> (new IdentityTransferFunction ())
+		make_shared<IdentityTransferFunction>()
 		);
 	return *c;
 }

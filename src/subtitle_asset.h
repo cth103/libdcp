@@ -136,7 +136,7 @@ protected:
 		boost::optional<Time> out;
 		boost::optional<Time> fade_up_time;
 		boost::optional<Time> fade_down_time;
-		enum Type {
+		enum class Type {
 			TEXT,
 			IMAGE
 		};

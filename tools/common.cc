@@ -47,7 +47,7 @@ dcp::filter_notes (vector<dcp::VerificationNote>& notes, bool ignore_missing_ass
 
 	vector<dcp::VerificationNote> filtered;
 	std::copy_if (notes.begin(), notes.end(), std::back_inserter(filtered), [](dcp::VerificationNote const& i) {
-		return i.code() != dcp::VerificationNote::MISSING_ASSET && i.code() != dcp::VerificationNote::EXTERNAL_ASSET;
+		return i.code() != dcp::VerificationNote::Code::MISSING_ASSET && i.code() != dcp::VerificationNote::Code::EXTERNAL_ASSET;
 	});
 
 	notes = filtered;

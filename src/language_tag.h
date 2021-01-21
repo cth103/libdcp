@@ -67,7 +67,7 @@ public:
 		}
 	};
 
-	enum SubtagType
+	enum class SubtagType
 	{
 		LANGUAGE,
 		SCRIPT,
@@ -102,12 +102,12 @@ public:
 	{
 	public:
 		LanguageSubtag (std::string subtag)
-			: Subtag(subtag, LANGUAGE) {}
+			: Subtag(subtag, SubtagType::LANGUAGE) {}
 		LanguageSubtag (char const* subtag)
-			: Subtag(subtag, LANGUAGE) {}
+			: Subtag(subtag, SubtagType::LANGUAGE) {}
 
 		SubtagType type () const {
-			return LANGUAGE;
+			return SubtagType::LANGUAGE;
 		}
 	};
 
@@ -115,12 +115,12 @@ public:
 	{
 	public:
 		ScriptSubtag (std::string subtag)
-			: Subtag(subtag, SCRIPT) {}
+			: Subtag(subtag, SubtagType::SCRIPT) {}
 		ScriptSubtag (char const* subtag)
-			: Subtag(subtag, SCRIPT) {}
+			: Subtag(subtag, SubtagType::SCRIPT) {}
 
 		SubtagType type () const {
-			return SCRIPT;
+			return SubtagType::SCRIPT;
 		}
 	};
 
@@ -128,12 +128,12 @@ public:
 	{
 	public:
 		RegionSubtag (std::string subtag)
-			: Subtag(subtag, REGION) {}
+			: Subtag(subtag, SubtagType::REGION) {}
 		RegionSubtag (char const* subtag)
-			: Subtag(subtag, REGION) {}
+			: Subtag(subtag, SubtagType::REGION) {}
 
 		SubtagType type () const {
-			return REGION;
+			return SubtagType::REGION;
 		}
 	};
 
@@ -141,12 +141,12 @@ public:
 	{
 	public:
 		VariantSubtag (std::string subtag)
-			: Subtag(subtag, VARIANT) {}
+			: Subtag(subtag, SubtagType::VARIANT) {}
 		VariantSubtag (char const* subtag)
-			: Subtag(subtag, VARIANT) {}
+			: Subtag(subtag, SubtagType::VARIANT) {}
 
 		SubtagType type () const {
-			return VARIANT;
+			return SubtagType::VARIANT;
 		}
 
 		bool operator== (VariantSubtag const& other) const;
@@ -158,12 +158,12 @@ public:
 	{
 	public:
 		ExtlangSubtag (std::string subtag)
-			: Subtag(subtag, EXTLANG) {}
+			: Subtag(subtag, SubtagType::EXTLANG) {}
 		ExtlangSubtag (char const* subtag)
-			: Subtag(subtag, EXTLANG) {}
+			: Subtag(subtag, SubtagType::EXTLANG) {}
 
 		SubtagType type () const {
-			return EXTLANG;
+			return SubtagType::EXTLANG;
 		}
 
 		bool operator== (ExtlangSubtag const& other) const;
@@ -205,13 +205,13 @@ public:
 	void set_extlangs (std::vector<ExtlangSubtag> extlangs);
 	void add_extlang (ExtlangSubtag extlang);
 
-	std::vector<std::pair<SubtagType, SubtagData> > subtags () const;
+	std::vector<std::pair<SubtagType, SubtagData>> subtags () const;
 
 	static std::vector<SubtagData> const& get_all (SubtagType type);
 	static std::string subtag_type_name (SubtagType type);
 
 	static boost::optional<std::string> get_subtag_description (SubtagType, std::string subtag);
-	static boost::optional<SubtagData > get_subtag_data (SubtagType, std::string subtag);
+	static boost::optional<SubtagData> get_subtag_data (SubtagType, std::string subtag);
 
 	template <class T>
 	static boost::optional<std::string> get_subtag_description (T s) {

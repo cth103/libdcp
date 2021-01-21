@@ -89,7 +89,7 @@ check_no_errors (boost::filesystem::path path)
 	auto notes = dcp::verify (directories, &stage, &progress, xsd_test);
 	vector<dcp::VerificationNote> filtered_notes;
 	std::copy_if (notes.begin(), notes.end(), std::back_inserter(filtered_notes), [](dcp::VerificationNote const& i) {
-		return i.code() != dcp::VerificationNote::INVALID_STANDARD && i.code() != dcp::VerificationNote::INVALID_SUBTITLE_DURATION;
+		return i.code() != dcp::VerificationNote::Code::INVALID_STANDARD && i.code() != dcp::VerificationNote::Code::INVALID_SUBTITLE_DURATION;
 	});
 	dump_notes (filtered_notes);
 	BOOST_CHECK (filtered_notes.empty());
@@ -128,19 +128,18 @@ check_combined (vector<boost::filesystem::path> inputs, boost::filesystem::path 
 	dcp::EqualityOptions options;
 	options.load_font_nodes_can_differ = true;
 
-	BOOST_FOREACH (boost::filesystem::path i, inputs)
-	{
+	for (auto i: inputs) {
 		dcp::DCP input_dcp (i);
 		input_dcp.read ();
 
 		BOOST_REQUIRE (input_dcp.cpls().size() == 1);
-		shared_ptr<dcp::CPL> input_cpl = input_dcp.cpls().front();
+		auto input_cpl = input_dcp.cpls().front();
 
-		shared_ptr<dcp::CPL> output_cpl = pointer_to_id_in_vector (input_cpl, output_dcp.cpls());
+		auto output_cpl = pointer_to_id_in_vector (input_cpl, output_dcp.cpls());
 		BOOST_REQUIRE (output_cpl);
 
-		BOOST_FOREACH (shared_ptr<dcp::Asset> i, input_dcp.assets(true)) {
-			shared_ptr<dcp::Asset> o = pointer_to_id_in_vector(i, output_dcp.assets());
+		for (auto i: input_dcp.assets(true)) {
+			auto o = pointer_to_id_in_vector(i, output_dcp.assets());
 			BOOST_REQUIRE_MESSAGE (o, "Could not find " << i->id() << " in combined DCP.");
 			BOOST_CHECK (i->equals(o, options, note_handler));
 		}

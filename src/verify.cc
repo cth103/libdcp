@@ -344,8 +344,8 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, vector<Verificat
 
 	for (auto i: error_handler.errors()) {
 		notes.push_back ({
-			VerificationNote::VERIFY_ERROR,
-			VerificationNote::INVALID_XML,
+			VerificationNote::Type::ERROR,
+			VerificationNote::Code::INVALID_XML,
 			i.message(),
 			boost::trim_copy(i.public_id() + " " + i.system_id()),
 			i.line()
@@ -354,10 +354,10 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, vector<Verificat
 }
 
 
-enum VerifyAssetResult {
-	VERIFY_ASSET_RESULT_GOOD,
-	VERIFY_ASSET_RESULT_CPL_PKL_DIFFER,
-	VERIFY_ASSET_RESULT_BAD
+enum class VerifyAssetResult {
+	GOOD,
+	CPL_PKL_DIFFER,
+	BAD
 };
 
 
@@ -384,14 +384,14 @@ verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelMXF> reel_mxf, fun
 
 	auto cpl_hash = reel_mxf->hash();
 	if (cpl_hash && *cpl_hash != *pkl_hash) {
-		return VERIFY_ASSET_RESULT_CPL_PKL_DIFFER;
+		return VerifyAssetResult::CPL_PKL_DIFFER;
 	}
 
 	if (actual_hash != *pkl_hash) {
-		return VERIFY_ASSET_RESULT_BAD;
+		return VerifyAssetResult::BAD;
 	}
 
-	return VERIFY_ASSET_RESULT_GOOD;
+	return VerifyAssetResult::GOOD;
 }
 
 
@@ -401,16 +401,16 @@ verify_language_tag (string tag, vector<VerificationNote>& notes)
 	try {
 		LanguageTag test (tag);
 	} catch (LanguageTagError &) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_LANGUAGE, tag});
+		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_LANGUAGE, tag});
 	}
 }
 
 
-enum VerifyPictureAssetResult
+enum class VerifyPictureAssetResult
 {
-	VERIFY_PICTURE_ASSET_RESULT_GOOD,
-	VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_LARGE,
-	VERIFY_PICTURE_ASSET_RESULT_BAD,
+	GOOD,
+	FRAME_NEARLY_TOO_LARGE,
+	BAD,
 };
 
 
@@ -448,12 +448,12 @@ verify_picture_asset_type (shared_ptr<const ReelMXF> reel_mxf, function<void (fl
 	static const int max_frame =   rint(250 * 1000000 / (8 * asset->edit_rate().as_float()));
 	static const int risky_frame = rint(230 * 1000000 / (8 * asset->edit_rate().as_float()));
 	if (biggest_frame > max_frame) {
-		return VERIFY_PICTURE_ASSET_RESULT_BAD;
+		return VerifyPictureAssetResult::BAD;
 	} else if (biggest_frame > risky_frame) {
-		return VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_LARGE;
+		return VerifyPictureAssetResult::FRAME_NEARLY_TOO_LARGE;
 	}
 
-	return VERIFY_PICTURE_ASSET_RESULT_GOOD;
+	return VerifyPictureAssetResult::GOOD;
 }
 
 
@@ -484,14 +484,14 @@ verify_main_picture_asset (
 	stage ("Checking picture asset hash", file);
 	auto const r = verify_asset (dcp, reel_asset, progress);
 	switch (r) {
-		case VERIFY_ASSET_RESULT_BAD:
+		case VerifyAssetResult::BAD:
 			notes.push_back ({
-				VerificationNote::VERIFY_ERROR, VerificationNote::INCORRECT_PICTURE_HASH, file
+				VerificationNote::Type::ERROR, VerificationNote::Code::INCORRECT_PICTURE_HASH, file
 			});
 			break;
-		case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
+		case VerifyAssetResult::CPL_PKL_DIFFER:
 			notes.push_back ({
-				VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_PICTURE_HASHES, file
+				VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_PICTURE_HASHES, file
 			});
 			break;
 		default:
@@ -500,14 +500,14 @@ verify_main_picture_asset (
 	stage ("Checking picture frame sizes", asset->file());
 	auto const pr = verify_picture_asset (reel_asset, progress);
 	switch (pr) {
-		case VERIFY_PICTURE_ASSET_RESULT_BAD:
+		case VerifyPictureAssetResult::BAD:
 			notes.push_back ({
-				VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
+				VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
 			});
 			break;
-		case VERIFY_PICTURE_ASSET_RESULT_FRAME_NEARLY_TOO_LARGE:
+		case VerifyPictureAssetResult::FRAME_NEARLY_TOO_LARGE:
 			notes.push_back ({
-				VerificationNote::VERIFY_WARNING, VerificationNote::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
+				VerificationNote::Type::WARNING, VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
 			});
 			break;
 		default:
@@ -521,8 +521,8 @@ verify_main_picture_asset (
 		asset->size() != Size(4096, 1716) &&
 		asset->size() != Size(3996, 2160)) {
 		notes.push_back({
-			VerificationNote::VERIFY_BV21_ERROR,
-			VerificationNote::INVALID_PICTURE_SIZE_IN_PIXELS,
+			VerificationNote::Type::BV21_ERROR,
+			VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS,
 			String::compose("%1x%2", asset->size().width, asset->size().height),
 			file
 		});
@@ -534,8 +534,8 @@ verify_main_picture_asset (
 		(asset->edit_rate() != Fraction(24, 1) && asset->edit_rate() != Fraction(25, 1) && asset->edit_rate() != Fraction(48, 1))
 	   ) {
 		notes.push_back({
-			VerificationNote::VERIFY_BV21_ERROR,
-			VerificationNote::INVALID_PICTURE_FRAME_RATE_FOR_2K,
+			VerificationNote::Type::BV21_ERROR,
+			VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_2K,
 			String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
 			file
 		});
@@ -545,8 +545,8 @@ verify_main_picture_asset (
 		/* Only 24fps allowed for 4K */
 		if (asset->edit_rate() != Fraction(24, 1)) {
 			notes.push_back({
-				VerificationNote::VERIFY_BV21_ERROR,
-				VerificationNote::INVALID_PICTURE_FRAME_RATE_FOR_4K,
+				VerificationNote::Type::BV21_ERROR,
+				VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_4K,
 				String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
 				file
 			});
@@ -555,8 +555,8 @@ verify_main_picture_asset (
 		/* Only 2D allowed for 4K */
 		if (dynamic_pointer_cast<const StereoPictureAsset>(asset)) {
 			notes.push_back({
-				VerificationNote::VERIFY_BV21_ERROR,
-				VerificationNote::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
+				VerificationNote::Type::BV21_ERROR,
+				VerificationNote::Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
 				String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
 				file
 			});
@@ -580,11 +580,11 @@ verify_main_sound_asset (
 	stage ("Checking sound asset hash", asset->file());
 	auto const r = verify_asset (dcp, reel_asset, progress);
 	switch (r) {
-		case VERIFY_ASSET_RESULT_BAD:
-			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::INCORRECT_SOUND_HASH, *asset->file()});
+		case VerifyAssetResult::BAD:
+			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::INCORRECT_SOUND_HASH, *asset->file()});
 			break;
-		case VERIFY_ASSET_RESULT_CPL_PKL_DIFFER:
-			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_SOUND_HASHES, *asset->file()});
+		case VerifyAssetResult::CPL_PKL_DIFFER:
+			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_SOUND_HASHES, *asset->file()});
 			break;
 		default:
 			break;
@@ -594,7 +594,7 @@ verify_main_sound_asset (
 
 	verify_language_tag (asset->language(), notes);
 	if (asset->sampling_rate() != 48000) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_SOUND_FRAME_RATE, raw_convert<string>(asset->sampling_rate()), *asset->file()});
+		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_SOUND_FRAME_RATE, raw_convert<string>(asset->sampling_rate()), *asset->file()});
 	}
 }
 
@@ -608,9 +608,9 @@ verify_main_subtitle_reel (shared_ptr<const ReelSubtitleAsset> reel_asset, vecto
 	}
 
 	if (!reel_asset->entry_point()) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_ENTRY_POINT, reel_asset->id() });
+		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_SUBTITLE_ENTRY_POINT, reel_asset->id() });
 	} else if (reel_asset->entry_point().get()) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INCORRECT_SUBTITLE_ENTRY_POINT, reel_asset->id() });
+		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INCORRECT_SUBTITLE_ENTRY_POINT, reel_asset->id() });
 	}
 }
 
@@ -624,9 +624,9 @@ verify_closed_caption_reel (shared_ptr<const ReelClosedCaptionAsset> reel_asset,
 	}
 
 	if (!reel_asset->entry_point()) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id() });
+		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id() });
 	} else if (reel_asset->entry_point().get()) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INCORRECT_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id() });
+		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id() });
 	}
 }
 
@@ -651,15 +651,15 @@ verify_smpte_subtitle_asset (
 		if (!state.subtitle_language) {
 			state.subtitle_language = language;
 		} else if (state.subtitle_language != language) {
-			notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_SUBTITLE_LANGUAGES });
+			notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_SUBTITLE_LANGUAGES });
 		}
 	} else {
-		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_LANGUAGE, *asset->file() });
+		notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, *asset->file() });
 	}
 	auto const size = boost::filesystem::file_size(asset->file().get());
 	if (size > 115 * 1024 * 1024) {
 		notes.push_back (
-			{ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_TIMED_TEXT_SIZE_IN_BYTES, raw_convert<string>(size), *asset->file() }
+			{ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, raw_convert<string>(size), *asset->file() }
 			);
 	}
 	/* XXX: I'm not sure what Bv2.1_7.2.1 means when it says "the font resource shall not be larger than 10MB"
@@ -671,13 +671,13 @@ verify_smpte_subtitle_asset (
 		total_size += i.second.size();
 	}
 	if (total_size > 10 * 1024 * 1024) {
-		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, raw_convert<string>(total_size), asset->file().get() });
+		notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, raw_convert<string>(total_size), asset->file().get() });
 	}
 
 	if (!asset->start_time()) {
-		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_SUBTITLE_START_TIME, asset->file().get() });
+		notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_SUBTITLE_START_TIME, asset->file().get() });
 	} else if (asset->start_time() != Time()) {
-		notes.push_back ({ VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_SUBTITLE_START_TIME, asset->file().get() });
+		notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_SUBTITLE_START_TIME, asset->file().get() });
 	}
 }
 
@@ -716,7 +716,7 @@ verify_closed_caption_asset (
 	verify_subtitle_asset (asset, stage, xsd_dtd_directory, notes, state);
 
 	if (asset->raw_xml().size() > 256 * 1024) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, raw_convert<string>(asset->raw_xml().size()), *asset->file()});
+		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, raw_convert<string>(asset->raw_xml().size()), *asset->file()});
 	}
 }
 
@@ -785,19 +785,19 @@ verify_text_timing (
 
 	if (too_early) {
 		notes.push_back({
-			VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_FIRST_TEXT_TIME
+			VerificationNote::Type::WARNING, VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME
 		});
 	}
 
 	if (too_short) {
 		notes.push_back ({
-			VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_DURATION
+			VerificationNote::Type::WARNING, VerificationNote::Code::INVALID_SUBTITLE_DURATION
 		});
 	}
 
 	if (too_close) {
 		notes.push_back ({
-			VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_SPACING
+			VerificationNote::Type::WARNING, VerificationNote::Code::INVALID_SUBTITLE_SPACING
 		});
 	}
 }
@@ -996,9 +996,9 @@ verify_extension_metadata (shared_ptr<CPL> cpl, vector<VerificationNote>& notes)
 	}
 
 	if (missing) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_EXTENSION_METADATA, cpl->id(), cpl->file().get()});
+		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_EXTENSION_METADATA, cpl->id(), cpl->file().get()});
 	} else if (!malformed.empty()) {
-		notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_EXTENSION_METADATA, malformed, cpl->file().get()});
+		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_EXTENSION_METADATA, malformed, cpl->file().get()});
 	}
 }
 
@@ -1056,17 +1056,17 @@ dcp::verify (
 		try {
 			dcp->read (&notes);
 		} catch (ReadError& e) {
-			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())});
+			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
 		} catch (XMLError& e) {
-			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())});
+			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
 		} catch (MXFFileError& e) {
-			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())});
+			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
 		} catch (cxml::Error& e) {
-			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())});
+			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
 		}
 
 		if (dcp->standard() != Standard::SMPTE) {
-			notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_STANDARD});
+			notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_STANDARD});
 		}
 
 		for (auto cpl: dcp->cpls()) {
@@ -1074,7 +1074,7 @@ dcp::verify (
 			validate_xml (cpl->file().get(), xsd_dtd_directory, notes);
 
 			if (cpl->any_encrypted() && !cpl->all_encrypted()) {
-				notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::PARTIALLY_ENCRYPTED});
+				notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::PARTIALLY_ENCRYPTED});
 			}
 
 			for (auto const& i: cpl->additional_subtitle_languages()) {
@@ -1089,7 +1089,7 @@ dcp::verify (
 						LanguageTag::RegionSubtag test (terr);
 					} catch (...) {
 						if (terr != "001") {
-							notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_LANGUAGE, terr});
+							notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_LANGUAGE, terr});
 						}
 					}
 				}
@@ -1097,9 +1097,9 @@ dcp::verify (
 
 			if (dcp->standard() == Standard::SMPTE) {
 				if (!cpl->annotation_text()) {
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get()});
+					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get()});
 				} else if (cpl->annotation_text().get() != cpl->content_title_text()) {
-					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::MISMATCHED_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get()});
+					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get()});
 				}
 			}
 
@@ -1107,7 +1107,7 @@ dcp::verify (
 				/* Check that the CPL's hash corresponds to the PKL */
 				optional<string> h = i->hash(cpl->id());
 				if (h && make_digest(ArrayData(*cpl->file())) != *h) {
-					notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()});
+					notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()});
 				}
 
 				/* Check that any PKL with a single CPL has its AnnotationText the same as the CPL's ContentTitleText */
@@ -1128,7 +1128,7 @@ dcp::verify (
 				}
 
 				if (required_annotation_text && i->annotation_text() != required_annotation_text) {
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, i->id(), i->file().get()});
+					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, i->id(), i->file().get()});
 				}
 			}
 
@@ -1147,14 +1147,14 @@ dcp::verify (
 
 				for (auto i: reel->assets()) {
 					if (i->duration() && (i->duration().get() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
-						notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_DURATION, i->id()});
+						notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_DURATION, i->id()});
 					}
 					if ((i->intrinsic_duration() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
-						notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::INVALID_INTRINSIC_DURATION, i->id()});
+						notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_INTRINSIC_DURATION, i->id()});
 					}
 					auto mxf = dynamic_pointer_cast<ReelMXF>(i);
 					if (mxf && !mxf->hash()) {
-						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_HASH, i->id()});
+						notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_HASH, i->id()});
 					}
 				}
 
@@ -1164,7 +1164,7 @@ dcp::verify (
 						if (!duration) {
 							duration = i->actual_duration();
 						} else if (*duration != i->actual_duration()) {
-							notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_ASSET_DURATION});
+							notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_ASSET_DURATION});
 							break;
 						}
 					}
@@ -1182,8 +1182,8 @@ dcp::verify (
 					     frame_rate.numerator != 60 &&
 					     frame_rate.numerator != 96)) {
 						notes.push_back ({
-							VerificationNote::VERIFY_ERROR,
-							VerificationNote::INVALID_PICTURE_FRAME_RATE,
+							VerificationNote::Type::ERROR,
+							VerificationNote::Code::INVALID_PICTURE_FRAME_RATE,
 							String::compose("%1/%2", frame_rate.numerator, frame_rate.denominator)
 						});
 					}
@@ -1227,36 +1227,36 @@ dcp::verify (
 			if (dcp->standard() == Standard::SMPTE) {
 
 				if (have_main_subtitle && have_no_main_subtitle) {
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS});
+					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS});
 				}
 
 				if (fewest_closed_captions != most_closed_captions) {
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS});
+					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS});
 				}
 
 				if (cpl->content_kind() == ContentKind::FEATURE) {
 					if (markers_seen.find(Marker::FFEC) == markers_seen.end()) {
-						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_FFEC_IN_FEATURE});
+						notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_FFEC_IN_FEATURE});
 					}
 					if (markers_seen.find(Marker::FFMC) == markers_seen.end()) {
-						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_FFMC_IN_FEATURE});
+						notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_FFMC_IN_FEATURE});
 					}
 				}
 
 				auto ffoc = markers_seen.find(Marker::FFOC);
 				if (ffoc == markers_seen.end()) {
-					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::MISSING_FFOC});
+					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISSING_FFOC});
 				} else if (ffoc->second.e != 1) {
-					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INCORRECT_FFOC, raw_convert<string>(ffoc->second.e)});
+					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::INCORRECT_FFOC, raw_convert<string>(ffoc->second.e)});
 				}
 
 				auto lfoc = markers_seen.find(Marker::LFOC);
 				if (lfoc == markers_seen.end()) {
-					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::MISSING_LFOC});
+					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISSING_LFOC});
 				} else {
 					auto lfoc_time = lfoc->second.as_editable_units(lfoc->second.tcr);
 					if (lfoc_time != (cpl->reels().back()->duration() - 1)) {
-						notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INCORRECT_LFOC, raw_convert<string>(lfoc_time)});
+						notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::INCORRECT_LFOC, raw_convert<string>(lfoc_time)});
 					}
 				}
 
@@ -1270,12 +1270,12 @@ dcp::verify (
 				}
 
 				if (result.line_count_exceeded) {
-					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_LINE_COUNT});
+					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::INVALID_SUBTITLE_LINE_COUNT});
 				}
 				if (result.error_length_exceeded) {
-					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::INVALID_SUBTITLE_LINE_LENGTH});
+					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::INVALID_SUBTITLE_LINE_LENGTH});
 				} else if (result.warning_length_exceeded) {
-					notes.push_back ({VerificationNote::VERIFY_WARNING, VerificationNote::NEARLY_INVALID_SUBTITLE_LINE_LENGTH});
+					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::NEARLY_INVALID_SUBTITLE_LINE_LENGTH});
 				}
 
 				result = LinesCharactersResult();
@@ -1288,19 +1288,19 @@ dcp::verify (
 				}
 
 				if (result.line_count_exceeded) {
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_CLOSED_CAPTION_LINE_COUNT});
+					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_COUNT});
 				}
 				if (result.error_length_exceeded) {
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_CLOSED_CAPTION_LINE_LENGTH});
+					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH});
 				}
 
 				if (!cpl->full_content_title_text()) {
 					/* Since FullContentTitleText is assumed always to exist if there's a CompositionMetadataAsset we
 					 * can use it as a proxy for CompositionMetadataAsset's existence.
 					 */
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_METADATA, cpl->id(), cpl->file().get()});
+					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get()});
 				} else if (!cpl->version_number()) {
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->id(), cpl->file().get()});
+					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->id(), cpl->file().get()});
 				}
 
 				verify_extension_metadata (cpl, notes);
@@ -1310,7 +1310,7 @@ dcp::verify (
 					DCP_ASSERT (cpl->file());
 					doc.read_file (cpl->file().get());
 					if (!doc.optional_node_child("Signature")) {
-						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl->id(), cpl->file().get()});
+						notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl->id(), cpl->file().get()});
 					}
 				}
 			}
@@ -1323,7 +1323,7 @@ dcp::verify (
 				cxml::Document doc ("PackingList");
 				doc.read_file (pkl->file().get());
 				if (!doc.optional_node_child("Signature")) {
-					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl->id(), pkl->file().get()});
+					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl->id(), pkl->file().get()});
 				}
 			}
 		}
@@ -1332,7 +1332,7 @@ dcp::verify (
 			stage ("Checking ASSETMAP", dcp->asset_map_path().get());
 			validate_xml (dcp->asset_map_path().get(), xsd_dtd_directory, notes);
 		} else {
-			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::MISSING_ASSETMAP});
+			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_ASSETMAP});
 		}
 	}
 
@@ -1353,131 +1353,131 @@ dcp::note_to_string (VerificationNote note)
 	 *  Messages should not mention whether or not their errors are a part of Bv2.1.
 	 */
 	switch (note.code()) {
-	case VerificationNote::FAILED_READ:
+	case VerificationNote::Code::FAILED_READ:
 		return *note.note();
-	case VerificationNote::MISMATCHED_CPL_HASHES:
+	case VerificationNote::Code::MISMATCHED_CPL_HASHES:
 		return String::compose("The hash of the CPL %1 in the PKL does not agree with the CPL file.", note.note().get());
-	case VerificationNote::INVALID_PICTURE_FRAME_RATE:
+	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE:
 		return String::compose("The picture in a reel has an invalid frame rate %1.", note.note().get());
-	case VerificationNote::INCORRECT_PICTURE_HASH:
+	case VerificationNote::Code::INCORRECT_PICTURE_HASH:
 		return String::compose("The hash of the picture asset %1 does not agree with the PKL file.", note.file()->filename());
-	case VerificationNote::MISMATCHED_PICTURE_HASHES:
+	case VerificationNote::Code::MISMATCHED_PICTURE_HASHES:
 		return String::compose("The PKL and CPL hashes differ for the picture asset %1.", note.file()->filename());
-	case VerificationNote::INCORRECT_SOUND_HASH:
+	case VerificationNote::Code::INCORRECT_SOUND_HASH:
 		return String::compose("The hash of the sound asset %1 does not agree with the PKL file.", note.file()->filename());
-	case VerificationNote::MISMATCHED_SOUND_HASHES:
+	case VerificationNote::Code::MISMATCHED_SOUND_HASHES:
 		return String::compose("The PKL and CPL hashes differ for the sound asset %1.", note.file()->filename());
-	case VerificationNote::EMPTY_ASSET_PATH:
+	case VerificationNote::Code::EMPTY_ASSET_PATH:
 		return "The asset map contains an empty asset path.";
-	case VerificationNote::MISSING_ASSET:
+	case VerificationNote::Code::MISSING_ASSET:
 		return String::compose("The file %1 for an asset in the asset map cannot be found.", note.file()->filename());
-	case VerificationNote::MISMATCHED_STANDARD:
+	case VerificationNote::Code::MISMATCHED_STANDARD:
 		return "The DCP contains both SMPTE and Interop parts.";
-	case VerificationNote::INVALID_XML:
+	case VerificationNote::Code::INVALID_XML:
 		return String::compose("An XML file is badly formed: %1 (%2:%3)", note.note().get(), note.file()->filename(), note.line().get());
-	case VerificationNote::MISSING_ASSETMAP:
+	case VerificationNote::Code::MISSING_ASSETMAP:
 		return "No ASSETMAP or ASSETMAP.xml was found.";
-	case VerificationNote::INVALID_INTRINSIC_DURATION:
+	case VerificationNote::Code::INVALID_INTRINSIC_DURATION:
 		return String::compose("The intrinsic duration of the asset %1 is less than 1 second long.", note.note().get());
-	case VerificationNote::INVALID_DURATION:
+	case VerificationNote::Code::INVALID_DURATION:
 		return String::compose("The duration of the asset %1 is less than 1 second long.", note.note().get());
-	case VerificationNote::INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
+	case VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
 		return String::compose("The instantaneous bit rate of the picture asset %1 is larger than the limit of 250Mbit/s in at least one place.", note.file()->filename());
-	case VerificationNote::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
+	case VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
 		return String::compose("The instantaneous bit rate of the picture asset %1 is close to the limit of 250Mbit/s in at least one place.", note.file()->filename());
-	case VerificationNote::EXTERNAL_ASSET:
+	case VerificationNote::Code::EXTERNAL_ASSET:
 		return String::compose("The asset %1 that this DCP refers to is not included in the DCP.  It may be a VF.", note.note().get());
-	case VerificationNote::INVALID_STANDARD:
+	case VerificationNote::Code::INVALID_STANDARD:
 		return "This DCP does not use the SMPTE standard.";
-	case VerificationNote::INVALID_LANGUAGE:
+	case VerificationNote::Code::INVALID_LANGUAGE:
 		return String::compose("The DCP specifies a language '%1' which does not conform to the RFC 5646 standard.", note.note().get());
-	case VerificationNote::INVALID_PICTURE_SIZE_IN_PIXELS:
+	case VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS:
 		return String::compose("The size %1 of picture asset %2 is not allowed.", note.note().get(), note.file()->filename());
-	case VerificationNote::INVALID_PICTURE_FRAME_RATE_FOR_2K:
+	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_2K:
 		return String::compose("The frame rate %1 of picture asset %2 is not allowed for 2K DCPs.", note.note().get(), note.file()->filename());
-	case VerificationNote::INVALID_PICTURE_FRAME_RATE_FOR_4K:
+	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_4K:
 		return String::compose("The frame rate %1 of picture asset %2 is not allowed for 4K DCPs.", note.note().get(), note.file()->filename());
-	case VerificationNote::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D:
+	case VerificationNote::Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D:
 		return "3D 4K DCPs are not allowed.";
-	case VerificationNote::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES:
+	case VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES:
 		return String::compose("The size %1 of the closed caption asset %2 is larger than the 256KB maximum.", note.note().get(), note.file()->filename());
-	case VerificationNote::INVALID_TIMED_TEXT_SIZE_IN_BYTES:
+	case VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES:
 		return String::compose("The size %1 of the timed text asset %2 is larger than the 115MB maximum.", note.note().get(), note.file()->filename());
-	case VerificationNote::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES:
+	case VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES:
 		return String::compose("The size %1 of the fonts in timed text asset %2 is larger than the 10MB maximum.", note.note().get(), note.file()->filename());
-	case VerificationNote::MISSING_SUBTITLE_LANGUAGE:
+	case VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE:
 		return String::compose("The XML for the SMPTE subtitle asset %1 has no <Language> tag.", note.file()->filename());
-	case VerificationNote::MISMATCHED_SUBTITLE_LANGUAGES:
+	case VerificationNote::Code::MISMATCHED_SUBTITLE_LANGUAGES:
 		return "Some subtitle assets have different <Language> tags than others";
-	case VerificationNote::MISSING_SUBTITLE_START_TIME:
+	case VerificationNote::Code::MISSING_SUBTITLE_START_TIME:
 		return String::compose("The XML for the SMPTE subtitle asset %1 has no <StartTime> tag.", note.file()->filename());
-	case VerificationNote::INVALID_SUBTITLE_START_TIME:
+	case VerificationNote::Code::INVALID_SUBTITLE_START_TIME:
 		return String::compose("The XML for a SMPTE subtitle asset %1 has a non-zero <StartTime> tag.", note.file()->filename());
-	case VerificationNote::INVALID_SUBTITLE_FIRST_TEXT_TIME:
+	case VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME:
 		return "The first subtitle or closed caption is less than 4 seconds from the start of the DCP.";
-	case VerificationNote::INVALID_SUBTITLE_DURATION:
+	case VerificationNote::Code::INVALID_SUBTITLE_DURATION:
 		return "At least one subtitle lasts less than 15 frames.";
-	case VerificationNote::INVALID_SUBTITLE_SPACING:
+	case VerificationNote::Code::INVALID_SUBTITLE_SPACING:
 		return "At least one pair of subtitles is separated by less than 2 frames.";
-	case VerificationNote::INVALID_SUBTITLE_LINE_COUNT:
+	case VerificationNote::Code::INVALID_SUBTITLE_LINE_COUNT:
 		return "There are more than 3 subtitle lines in at least one place in the DCP.";
-	case VerificationNote::NEARLY_INVALID_SUBTITLE_LINE_LENGTH:
+	case VerificationNote::Code::NEARLY_INVALID_SUBTITLE_LINE_LENGTH:
 		return "There are more than 52 characters in at least one subtitle line.";
-	case VerificationNote::INVALID_SUBTITLE_LINE_LENGTH:
+	case VerificationNote::Code::INVALID_SUBTITLE_LINE_LENGTH:
 		return "There are more than 79 characters in at least one subtitle line.";
-	case VerificationNote::INVALID_CLOSED_CAPTION_LINE_COUNT:
+	case VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_COUNT:
 		return "There are more than 3 closed caption lines in at least one place.";
-	case VerificationNote::INVALID_CLOSED_CAPTION_LINE_LENGTH:
+	case VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH:
 		return "There are more than 32 characters in at least one closed caption line.";
-	case VerificationNote::INVALID_SOUND_FRAME_RATE:
+	case VerificationNote::Code::INVALID_SOUND_FRAME_RATE:
 		return String::compose("The sound asset %1 has a sampling rate of %2", note.file()->filename(), note.note().get());
-	case VerificationNote::MISSING_CPL_ANNOTATION_TEXT:
+	case VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT:
 		return String::compose("The CPL %1 has no <AnnotationText> tag.", note.note().get());
-	case VerificationNote::MISMATCHED_CPL_ANNOTATION_TEXT:
+	case VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT:
 		return String::compose("The CPL %1 has an <AnnotationText> which differs from its <ContentTitleText>", note.note().get());
-	case VerificationNote::MISMATCHED_ASSET_DURATION:
+	case VerificationNote::Code::MISMATCHED_ASSET_DURATION:
 		return "All assets in a reel do not have the same duration.";
-	case VerificationNote::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS:
+	case VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS:
 		return "At least one reel contains a subtitle asset, but some reel(s) do not";
-	case VerificationNote::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS:
+	case VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS:
 		return "At least one reel has closed captions, but reels have different numbers of closed caption assets.";
-	case VerificationNote::MISSING_SUBTITLE_ENTRY_POINT:
+	case VerificationNote::Code::MISSING_SUBTITLE_ENTRY_POINT:
 		return String::compose("The subtitle asset %1 has no <EntryPoint> tag.", note.note().get());
-	case VerificationNote::INCORRECT_SUBTITLE_ENTRY_POINT:
+	case VerificationNote::Code::INCORRECT_SUBTITLE_ENTRY_POINT:
 		return String::compose("The subtitle asset %1 has an <EntryPoint> other than 0.", note.note().get());
-	case VerificationNote::MISSING_CLOSED_CAPTION_ENTRY_POINT:
+	case VerificationNote::Code::MISSING_CLOSED_CAPTION_ENTRY_POINT:
 		return String::compose("The closed caption asset %1 has no <EntryPoint> tag.", note.note().get());
-	case VerificationNote::INCORRECT_CLOSED_CAPTION_ENTRY_POINT:
+	case VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT:
 		return String::compose("The closed caption asset %1 has an <EntryPoint> other than 0.", note.note().get());
-	case VerificationNote::MISSING_HASH:
+	case VerificationNote::Code::MISSING_HASH:
 		return String::compose("The asset %1 has no <Hash> tag in the CPL.", note.note().get());
-	case VerificationNote::MISSING_FFEC_IN_FEATURE:
+	case VerificationNote::Code::MISSING_FFEC_IN_FEATURE:
 		return "The DCP is marked as a Feature but there is no FFEC (first frame of end credits) marker";
-	case VerificationNote::MISSING_FFMC_IN_FEATURE:
+	case VerificationNote::Code::MISSING_FFMC_IN_FEATURE:
 		return "The DCP is marked as a Feature but there is no FFMC (first frame of moving credits) marker";
-	case VerificationNote::MISSING_FFOC:
+	case VerificationNote::Code::MISSING_FFOC:
 		return "There should be a FFOC (first frame of content) marker";
-	case VerificationNote::MISSING_LFOC:
+	case VerificationNote::Code::MISSING_LFOC:
 		return "There should be a LFOC (last frame of content) marker";
-	case VerificationNote::INCORRECT_FFOC:
+	case VerificationNote::Code::INCORRECT_FFOC:
 		return String::compose("The FFOC marker is %1 instead of 1", note.note().get());
-	case VerificationNote::INCORRECT_LFOC:
+	case VerificationNote::Code::INCORRECT_LFOC:
 		return String::compose("The LFOC marker is %1 instead of 1 less than the duration of the last reel.", note.note().get());
-	case VerificationNote::MISSING_CPL_METADATA:
+	case VerificationNote::Code::MISSING_CPL_METADATA:
 		return String::compose("The CPL %1 has no <CompositionMetadataAsset> tag.", note.note().get());
-	case VerificationNote::MISSING_CPL_METADATA_VERSION_NUMBER:
+	case VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER:
 		return String::compose("The CPL %1 has no <VersionNumber> in its <CompositionMetadataAsset>.", note.note().get());
-	case VerificationNote::MISSING_EXTENSION_METADATA:
+	case VerificationNote::Code::MISSING_EXTENSION_METADATA:
 		return String::compose("The CPL %1 has no <ExtensionMetadata> in its <CompositionMetadataAsset>.", note.note().get());
-	case VerificationNote::INVALID_EXTENSION_METADATA:
+	case VerificationNote::Code::INVALID_EXTENSION_METADATA:
 		return String::compose("The CPL %1 has a malformed <ExtensionMetadata> (%2).", note.file()->filename(), note.note().get());
-	case VerificationNote::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT:
+	case VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT:
 		return String::compose("The CPL %1, which has encrypted content, is not signed.", note.note().get());
-	case VerificationNote::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT:
+	case VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT:
 		return String::compose("The PKL %1, which has encrypted content, is not signed.", note.note().get());
-	case VerificationNote::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL:
+	case VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL:
 		return String::compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>", note.note().get());
-	case VerificationNote::PARTIALLY_ENCRYPTED:
+	case VerificationNote::Code::PARTIALLY_ENCRYPTED:
 		return "Some assets are encrypted but some are not";
 	}
 
