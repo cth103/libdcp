@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -36,6 +36,7 @@
 #include "local_time.h"
 #include "smpte_load_font_node.h"
 #include "subtitle_image.h"
+#include "stream_operators.h"
 #include <boost/test/unit_test.hpp>
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>

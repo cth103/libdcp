@@ -61,11 +61,6 @@ bool dcp::operator!= (dcp::Size const & a, dcp::Size const & b)
 	return !(a == b);
 }
 
-ostream& dcp::operator<< (ostream& s, dcp::Size const & a)
-{
-	s << a.width << "x" << a.height;
-	return s;
-}
 
 /** Construct a Fraction from a string of the form <numerator> <denominator>
  *  e.g. "1 3".
@@ -99,12 +94,6 @@ dcp::operator!= (Fraction const & a, Fraction const & b)
 	return (a.numerator != b.numerator || a.denominator != b.denominator);
 }
 
-ostream&
-dcp::operator<< (ostream& s, Fraction const & f)
-{
-	s << f.numerator << "/" << f.denominator;
-	return s;
-}
 
 /** Construct a Colour, initialising it to black. */
 Colour::Colour ()
@@ -180,12 +169,6 @@ dcp::operator!= (Colour const & a, Colour const & b)
 	return !(a == b);
 }
 
-ostream &
-dcp::operator<< (ostream& s, Colour const & c)
-{
-	s << "(" << c.r << ", " << c.g << ", " << c.b << ")";
-	return s;
-}
 
 string
 dcp::effect_to_string (Effect e)
@@ -214,14 +197,6 @@ dcp::string_to_effect (string s)
 	}
 
 	boost::throw_exception (ReadError ("unknown subtitle effect type"));
-}
-
-
-std::ostream&
-dcp::operator<< (std::ostream& s, Effect e)
-{
-	s << effect_to_string(e);
-	return s;
 }
 
 
@@ -394,14 +369,6 @@ dcp::content_kind_from_string (string kind)
 }
 
 
-ostream&
-dcp::operator<< (ostream& s, ContentKind c)
-{
-	s << content_kind_to_string(c);
-	return s;
-}
-
-
 string
 dcp::marker_to_string (dcp::Marker m)
 {
@@ -478,14 +445,6 @@ dcp::operator== (Rating const & a, Rating const & b)
 {
 	return a.agency == b.agency && a.label == b.label;
 }
-
-ostream &
-dcp::operator<< (ostream& s, Rating const & r)
-{
-	s << r.agency << " " << r.label;
-	return s;
-}
-
 
 ContentVersion::ContentVersion ()
 	: id ("urn:uuid:" + make_uuid())
@@ -702,65 +661,6 @@ dcp::string_to_status (string s)
 }
 
 
-ostream&
-dcp::operator<<(ostream& s, Status t)
-{
-	s << status_to_string(t);
-	return s;
-}
-
-
-ostream&
-dcp::operator<<(ostream& s, dcp::Channel c)
-{
-	switch (c) {
-	case Channel::LEFT:
-		s << "left(0)";
-		break;
-	case Channel::RIGHT:
-		s << "right(1)";
-		break;
-	case Channel::CENTRE:
-		s << "centre(2)";
-		break;
-	case Channel::LFE:
-		s << "lfe(3)";
-		break;
-	case Channel::LS:
-		s << "ls(4)";
-		break;
-	case Channel::RS:
-		s << "rs(5)";
-		break;
-	case Channel::HI:
-		s << "hi(6)";
-		break;
-	case Channel::VI:
-		s << "vi(7)";
-		break;
-	case Channel::BSL:
-		s << "bsl(10)";
-		break;
-	case Channel::BSR:
-		s << "bsr(11)";
-		break;
-	case Channel::MOTION_DATA:
-		s << "motion_data(12)";
-		break;
-	case Channel::SYNC_SIGNAL:
-		s << "sync_signal(13)";
-		break;
-	case Channel::SIGN_LANGUAGE:
-		s << "sign_language(14)";
-		break;
-	case Channel::CHANNEL_COUNT:
-		s << "(16)";
-		break;
-	}
-	return s;
-}
-
-
 Channel
 dcp::mca_id_to_channel (string id)
 {
@@ -938,50 +838,3 @@ dcp::used_audio_channels ()
 	return c;
 }
 
-
-ostream&
-dcp::operator<< (ostream& s, NoteType t)
-{
-	switch (t) {
-	case NoteType::PROGRESS:
-		s << "progress";
-		break;
-	case NoteType::ERROR:
-		s << "error";
-		break;
-	case NoteType::NOTE:
-		s << "note";
-		break;
-	}
-	return s;
-}
-
-
-ostream&
-dcp::operator<< (ostream& s, MCASoundField f)
-{
-	switch (f) {
-	case MCASoundField::FIVE_POINT_ONE:
-		s << "5.1";
-		break;
-	case MCASoundField::SEVEN_POINT_ONE:
-		s << "7.1";
-		break;
-	}
-	return s;
-}
-
-
-ostream&
-dcp::operator<< (ostream& s, Standard t)
-{
-	switch (t) {
-	case Standard::INTEROP:
-		s << "interop";
-		break;
-	case Standard::SMPTE:
-		s << "smpte";
-		break;
-	}
-	return s;
-}

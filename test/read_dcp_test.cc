@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -35,6 +35,7 @@
 #include <boost/optional/optional_io.hpp>
 #include "dcp.h"
 #include "cpl.h"
+#include "stream_operators.h"
 
 using std::list;
 using std::shared_ptr;

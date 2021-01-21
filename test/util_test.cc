@@ -33,6 +33,7 @@
 
 #include "util.h"
 #include "local_time.h"
+#include "stream_operators.h"
 #include <boost/test/unit_test.hpp>
 #include <fstream>
 

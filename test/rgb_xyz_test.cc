@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -34,6 +34,7 @@
 #include "rgb_xyz.h"
 #include "openjpeg_image.h"
 #include "colour_conversion.h"
+#include "stream_operators.h"
 #include <boost/test/unit_test.hpp>
 #include <boost/bind.hpp>
 #include <boost/scoped_array.hpp>

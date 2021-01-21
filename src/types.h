@@ -76,7 +76,6 @@ struct Size
 
 extern bool operator== (Size const & a, Size const & b);
 extern bool operator!= (Size const & a, Size const & b);
-extern std::ostream& operator<< (std::ostream& s, Size const & a);
 
 /** Identifier for a sound channel */
 enum class Channel {
@@ -99,7 +98,6 @@ enum class Channel {
 };
 
 std::vector<dcp::Channel> used_audio_channels ();
-std::ostream& operator<< (std::ostream& s, Channel c);
 
 
 enum class MCASoundField
@@ -113,7 +111,6 @@ extern std::string channel_to_mca_id (Channel c, MCASoundField field);
 extern Channel mca_id_to_channel (std::string);
 extern std::string channel_to_mca_name (Channel c, MCASoundField field);
 extern ASDCP::UL channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dictionary const* dict);
-std::ostream& operator<< (std::ostream& s, MCASoundField f);
 
 
 enum class ContentKind
@@ -134,7 +131,6 @@ enum class ContentKind
 
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
-std::ostream& operator<<(std::ostream& s, ContentKind c);
 
 enum class Effect
 {
@@ -145,7 +141,6 @@ enum class Effect
 
 extern std::string effect_to_string (Effect e);
 extern Effect string_to_effect (std::string s);
-std::ostream& operator<< (std::ostream& s, Effect e);
 
 enum class HAlign
 {
@@ -212,7 +207,6 @@ public:
 
 extern bool operator== (Fraction const & a, Fraction const & b);
 extern bool operator!= (Fraction const & a, Fraction const & b);
-extern std::ostream& operator<< (std::ostream& s, Fraction const & f);
 
 /** @struct EqualityOptions
  *  @brief  A class to describe what "equality" means for a particular test.
@@ -267,14 +261,12 @@ enum class NoteType {
 	NOTE
 };
 
-std::ostream& operator<< (std::ostream& s, NoteType t);
 
 enum class Standard {
 	INTEROP,
 	SMPTE
 };
 
-std::ostream& operator<< (std::ostream& s, Standard t);
 
 enum class Formulation {
 	MODIFIED_TRANSITIONAL_1,
@@ -305,7 +297,6 @@ public:
 
 extern bool operator== (Colour const & a, Colour const & b);
 extern bool operator!= (Colour const & a, Colour const & b);
-extern std::ostream & operator<< (std::ostream & s, Colour const & c);
 
 typedef boost::function<void (NoteType, std::string)> NoteHandler;
 
@@ -354,7 +345,6 @@ public:
 };
 
 extern bool operator== (Rating const & a, Rating const & b);
-extern std::ostream& operator<< (std::ostream& s, Rating const & r);
 
 
 enum class Status
@@ -367,7 +357,6 @@ enum class Status
 
 extern std::string status_to_string (Status s);
 extern Status string_to_status (std::string s);
-std::ostream& operator<< (std::ostream& s, Status t);
 
 
 class ContentVersion

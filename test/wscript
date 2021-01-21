@@ -1,5 +1,5 @@
 #
-#    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
+#    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 #
 #    This file is part of libdcp.
 #
@@ -99,6 +99,7 @@ def build(bld):
                  smpte_load_font_test.cc
                  smpte_subtitle_test.cc
                  sound_frame_test.cc
+                 stream_operators.cc
                  sync_test.cc
                  test.cc
                  util_test.cc

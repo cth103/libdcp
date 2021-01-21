@@ -44,6 +44,7 @@
 #include "openjpeg_image.h"
 #include "rgb_xyz.h"
 #include "colour_conversion.h"
+#include "stream_operators.h"
 #include <boost/test/unit_test.hpp>
 #include <boost/scoped_array.hpp>
 

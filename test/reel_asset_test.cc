@@ -35,6 +35,7 @@
 #include "reel_subtitle_asset.h"
 #include <libcxml/cxml.h>
 #include <boost/test/unit_test.hpp>
+#include "stream_operators.h"
 #include "test.h"
 
 

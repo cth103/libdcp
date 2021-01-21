@@ -38,6 +38,7 @@
 #include "language_tag.h"
 #include "reel.h"
 #include "reel_subtitle_asset.h"
+#include "stream_operators.h"
 #include "test.h"
 #include <memory>
 #include <boost/test/unit_test.hpp>

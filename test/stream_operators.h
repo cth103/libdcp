@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,22 +31,25 @@
     files in the program, then also delete it here.
 */
 
+
 #include "types.h"
-#include "stream_operators.h"
-#include "exceptions.h"
-#include <boost/test/unit_test.hpp>
+#include "verify.h"
 
-/** Very simple tests of Effect-related stuff */
-BOOST_AUTO_TEST_CASE (effect_test)
-{
-	BOOST_CHECK_EQUAL (dcp::effect_to_string(dcp::Effect::NONE), "none");
-	BOOST_CHECK_EQUAL (dcp::effect_to_string(dcp::Effect::BORDER), "border");
-	BOOST_CHECK_EQUAL (dcp::effect_to_string(dcp::Effect::SHADOW), "shadow");
 
-	BOOST_CHECK_THROW (dcp::effect_to_string((dcp::Effect) 42), dcp::MiscError);
+namespace dcp {
 
-	BOOST_CHECK_EQUAL (dcp::string_to_effect("none"), dcp::Effect::NONE);
-	BOOST_CHECK_EQUAL (dcp::string_to_effect("border"), dcp::Effect::BORDER);
-	BOOST_CHECK_EQUAL (dcp::string_to_effect("shadow"), dcp::Effect::SHADOW);
-	BOOST_CHECK_THROW (dcp::string_to_effect("fish"), dcp::ReadError);
+std::ostream& operator<< (std::ostream& s, Size const& a);
+std::ostream& operator<< (std::ostream& s, Channel c);
+std::ostream& operator<< (std::ostream& s, MCASoundField f);
+std::ostream& operator<< (std::ostream& s, ContentKind c);
+std::ostream& operator<< (std::ostream& s, Effect e);
+std::ostream& operator<< (std::ostream& s, Fraction const& f);
+std::ostream& operator<< (std::ostream& s, NoteType t);
+std::ostream& operator<< (std::ostream& s, Standard t);
+std::ostream& operator<< (std::ostream& s, Colour const& c);
+std::ostream& operator<< (std::ostream& s, Rating const& r);
+std::ostream& operator<< (std::ostream& s, Status t);
+std::ostream& operator<< (std::ostream& s, VerificationNote::Code c);
+std::ostream& operator<< (std::ostream& s, VerificationNote::Type t);
 }
+

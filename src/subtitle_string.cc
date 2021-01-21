@@ -144,11 +144,13 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 		s << "underlined, ";
 	}
 
-	s << "size " << sub.size() << ", aspect " << sub.aspect_adjust() << ", colour " << sub.colour()
+	s << "size " << sub.size() << ", aspect " << sub.aspect_adjust()
+	  << ", colour (" << sub.colour().r << ", " << sub.colour().g << ", " << sub.colour().b << ")"
 	  << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align())
 	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align())
 	  << ", direction " << ((int) sub.direction())
-	  << ", effect " << ((int) sub.effect()) << ", effect colour " << sub.effect_colour();
+	  << ", effect " << ((int) sub.effect())
+	  << ", effect colour (" << sub.effect_colour().r << ", " << sub.effect_colour().g << ", " << sub.effect_colour().b << ")";
 
 	return s;
 }
