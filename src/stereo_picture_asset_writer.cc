@@ -53,7 +53,7 @@ struct StereoPictureAssetWriter::ASDCPState : public ASDCPStateBase
 StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* mxf, boost::filesystem::path file, bool overwrite)
 	: PictureAssetWriter (mxf, file, overwrite)
 	, _state (new StereoPictureAssetWriter::ASDCPState)
-	, _next_eye (EYE_LEFT)
+	, _next_eye (Eye::LEFT)
 {
 
 }
@@ -87,7 +87,7 @@ StereoPictureAssetWriter::write (uint8_t const * data, int size)
 	string hash;
 	Kumu::Result_t r = _state->mxf_writer.WriteFrame (
 		_state->frame_buffer,
-		_next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
+		_next_eye == Eye::LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
 		_crypto_context->context(),
 		_crypto_context->hmac(),
 		&hash
@@ -97,9 +97,9 @@ StereoPictureAssetWriter::write (uint8_t const * data, int size)
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
 	}
 
-	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
+	_next_eye = _next_eye == Eye::LEFT ? Eye::RIGHT : Eye::LEFT;
 
-	if (_next_eye == EYE_LEFT) {
+	if (_next_eye == Eye::LEFT) {
 		++_frames_written;
 	}
 
@@ -112,13 +112,13 @@ StereoPictureAssetWriter::fake_write (int size)
 	DCP_ASSERT (_started);
 	DCP_ASSERT (!_finalized);
 
-	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size, _next_eye == EYE_LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT);
+	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size, _next_eye == Eye::LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
 	}
 
-	_next_eye = _next_eye == EYE_LEFT ? EYE_RIGHT : EYE_LEFT;
-	if (_next_eye == EYE_LEFT) {
+	_next_eye = _next_eye == Eye::LEFT ? Eye::RIGHT : Eye::LEFT;
+	if (_next_eye == Eye::LEFT) {
 		++_frames_written;
 	}
 }

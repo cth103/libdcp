@@ -80,7 +80,7 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id) const
 	writer_info->ProductName = _metadata.product_name;
 
 	DCP_ASSERT (_standard);
-	if (_standard == INTEROP) {
+	if (_standard == Standard::INTEROP) {
 		writer_info->LabelSetType = ASDCP::LS_MXF_INTEROP;
 	} else {
 		writer_info->LabelSetType = ASDCP::LS_MXF_SMPTE;
@@ -129,10 +129,10 @@ MXF::read_writer_info (ASDCP::WriterInfo const & info)
 
 	switch (info.LabelSetType) {
 	case ASDCP::LS_MXF_INTEROP:
-		_standard = INTEROP;
+		_standard = Standard::INTEROP;
 		break;
 	case ASDCP::LS_MXF_SMPTE:
-		_standard = SMPTE;
+		_standard = Standard::SMPTE;
 		break;
 	default:
 		throw ReadError ("Unrecognised label set type in MXF");

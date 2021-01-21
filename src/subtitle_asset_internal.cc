@@ -44,13 +44,13 @@ using namespace dcp;
 string
 order::Context::xmlns () const
 {
-	return standard == SMPTE ? "dcst" : "";
+	return standard == Standard::SMPTE ? "dcst" : "";
 }
 
 order::Font::Font (shared_ptr<SubtitleString> s, Standard standard)
 {
 	if (s->font()) {
-		if (standard == SMPTE) {
+		if (standard == Standard::SMPTE) {
 			_values["ID"] = s->font().get ();
 		} else {
 			_values["Id"] = s->font().get ();
@@ -63,7 +63,7 @@ order::Font::Font (shared_ptr<SubtitleString> s, Standard standard)
 	_values["Effect"] = effect_to_string (s->effect());
 	_values["EffectColor"] = s->effect_colour().to_argb_string();
 	_values["Script"] = "normal";
-	if (standard == SMPTE) {
+	if (standard == Standard::SMPTE) {
 		_values["Underline"] = s->underline() ? "yes" : "no";
 	} else {
 		_values["Underlined"] = s->underline() ? "yes" : "no";
@@ -149,8 +149,8 @@ order::Part::write_xml (xmlpp::Element* parent, order::Context& context) const
 static void
 position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, float h_position, VAlign v_align, float v_position)
 {
-	if (h_align != HALIGN_CENTER) {
-		if (context.standard == SMPTE) {
+	if (h_align != HAlign::CENTER) {
+		if (context.standard == Standard::SMPTE) {
 			e->set_attribute ("Halign", halign_to_string (h_align));
 		} else {
 			e->set_attribute ("HAlign", halign_to_string (h_align));
@@ -158,27 +158,27 @@ position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, floa
 	}
 
 	if (fabs(h_position) > ALIGN_EPSILON) {
-		if (context.standard == SMPTE) {
+		if (context.standard == Standard::SMPTE) {
 			e->set_attribute ("Hposition", raw_convert<string> (h_position * 100, 6));
 		} else {
 			e->set_attribute ("HPosition", raw_convert<string> (h_position * 100, 6));
 		}
 	}
 
-	if (context.standard == SMPTE) {
+	if (context.standard == Standard::SMPTE) {
 		e->set_attribute ("Valign", valign_to_string (v_align));
 	} else {
 		e->set_attribute ("VAlign", valign_to_string (v_align));
 	}
 
 	if (fabs(v_position) > ALIGN_EPSILON) {
-		if (context.standard == SMPTE) {
+		if (context.standard == Standard::SMPTE) {
 			e->set_attribute ("Vposition", raw_convert<string> (v_position * 100, 6));
 		} else {
 			e->set_attribute ("VPosition", raw_convert<string> (v_position * 100, 6));
 		}
 	} else {
-		if (context.standard == SMPTE) {
+		if (context.standard == Standard::SMPTE) {
 			e->set_attribute ("Vposition", "0");
 		} else {
 			e->set_attribute ("VPosition", "0");
@@ -196,7 +196,7 @@ order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 	/* Interop only supports "horizontal" or "vertical" for direction, so only write this
 	   for SMPTE.
 	*/
-	if (_direction != DIRECTION_LTR && context.standard == SMPTE) {
+	if (_direction != Direction::LTR && context.standard == Standard::SMPTE) {
 		e->set_attribute ("Direction", direction_to_string (_direction));
 	}
 
@@ -210,7 +210,7 @@ order::Subtitle::as_xml (xmlpp::Element* parent, Context& context) const
 	e->set_attribute ("SpotNumber", raw_convert<string> (context.spot_number++));
 	e->set_attribute ("TimeIn", _in.rebase(context.time_code_rate).as_string(context.standard));
 	e->set_attribute ("TimeOut", _out.rebase(context.time_code_rate).as_string(context.standard));
-	if (context.standard == SMPTE) {
+	if (context.standard == Standard::SMPTE) {
 		e->set_attribute ("FadeUpTime", _fade_up.rebase(context.time_code_rate).as_string(context.standard));
 		e->set_attribute ("FadeDownTime", _fade_down.rebase(context.time_code_rate).as_string(context.standard));
 	} else {
@@ -238,7 +238,7 @@ order::Image::as_xml (xmlpp::Element* parent, Context& context) const
 	xmlpp::Element* e = parent->add_child ("Image", context.xmlns());
 
 	position_align (e, context, _h_align, _h_position, _v_align, _v_position);
-	if (context.standard == SMPTE) {
+	if (context.standard == Standard::SMPTE) {
 		e->add_child_text (_id);
 	} else {
 		e->add_child_text (_id + ".png");

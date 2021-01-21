@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	boost::filesystem::path work_dir = "build/test/round_trip_test";
 	boost::filesystem::create_directory (work_dir);
 
-	shared_ptr<dcp::MonoPictureAsset> asset_A (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
+	shared_ptr<dcp::MonoPictureAsset> asset_A (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::Standard::SMPTE));
 	shared_ptr<dcp::PictureAssetWriter> writer = asset_A->start_write (work_dir / "video.mxf", false);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	asset_A->set_key (key);
 
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::ContentKind::FEATURE));
 	shared_ptr<dcp::Reel> reel (new dcp::Reel ());
 	reel->add (shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (asset_A, 0)));
 	cpl->add (reel);
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	boost::filesystem::path const kdm_file = work_dir / "kdm.xml";
 
-	kdm_A.encrypt(signer, signer->leaf(), vector<string>(), dcp::MODIFIED_TRANSITIONAL_1, true, 0).as_xml (kdm_file);
+	kdm_A.encrypt(signer, signer->leaf(), vector<string>(), dcp::Formulation::MODIFIED_TRANSITIONAL_1, true, 0).as_xml (kdm_file);
 
 	/* Reload the KDM, using our private key to decrypt it */
 	dcp::DecryptedKDM kdm_B (dcp::EncryptedKDM (dcp::file_to_string (kdm_file)), signer->key().get ());

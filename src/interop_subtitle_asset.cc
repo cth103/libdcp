@@ -79,7 +79,7 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 	for (xmlpp::Node::NodeList::const_iterator i = c.begin(); i != c.end(); ++i) {
 		xmlpp::Element const * e = dynamic_cast<xmlpp::Element const *> (*i);
 		if (e && (e->get_name() == "Font" || e->get_name() == "Subtitle")) {
-			parse_subtitles (e, ps, optional<int>(), INTEROP);
+			parse_subtitles (e, ps, optional<int>(), Standard::INTEROP);
 		}
 	}
 
@@ -114,7 +114,7 @@ InteropSubtitleAsset::xml_as_string () const
 		load_font->set_attribute ("URI", i->uri);
 	}
 
-	subtitles_as_xml (root, 250, INTEROP);
+	subtitles_as_xml (root, 250, Standard::INTEROP);
 
 	return doc.write_to_string ("UTF-8");
 }
@@ -145,12 +145,12 @@ InteropSubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptio
 
 		while (i != _load_font_nodes.end ()) {
 			if (j == other->_load_font_nodes.end ()) {
-				note (DCP_ERROR, "<LoadFont> nodes differ");
+				note (NoteType::ERROR, "<LoadFont> nodes differ");
 				return false;
 			}
 
 			if (**i != **j) {
-				note (DCP_ERROR, "<LoadFont> nodes differ");
+				note (NoteType::ERROR, "<LoadFont> nodes differ");
 				return false;
 			}
 
@@ -160,7 +160,7 @@ InteropSubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptio
 	}
 
 	if (_movie_title != other->_movie_title) {
-		note (DCP_ERROR, "Subtitle movie titles differ");
+		note (NoteType::ERROR, "Subtitle movie titles differ");
 		return false;
 	}
 

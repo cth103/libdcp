@@ -46,6 +46,7 @@ using std::list;
 using std::string;
 using std::shared_ptr;
 using std::dynamic_pointer_cast;
+using std::make_shared;
 using boost::shared_array;
 
 /** Create a DCP with interop subtitles and check that the font is written and read back correctly */
@@ -59,25 +60,25 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 	subs->write (directory / "frobozz.xml");
 	check_file ("test/data/dummy.ttf", "build/test/interop_dcp_font_test/font_0.ttf");
 
-	shared_ptr<dcp::Reel> reel (new dcp::Reel ());
-	reel->add (shared_ptr<dcp::ReelAsset> (new dcp::ReelSubtitleAsset (subs, dcp::Fraction (24, 1), 24, 0)));
+	auto reel = make_shared<dcp::Reel>();
+	reel->add (make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction (24, 1), 24, 0));
 
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("", dcp::TRAILER));
+	auto cpl = make_shared<dcp::CPL>("", dcp::ContentKind::TRAILER);
 	cpl->add (reel);
 
 	dcp.add (cpl);
-	dcp.write_xml (dcp::INTEROP);
+	dcp.write_xml (dcp::Standard::INTEROP);
 
 	dcp::DCP dcp2 (directory);
 	dcp2.read ();
-	shared_ptr<dcp::SubtitleAsset> subs2 = dynamic_pointer_cast<dcp::SubtitleAsset> (
-		dcp2.cpls().front()->reels().front()->main_subtitle()->asset_ref().asset()
+	auto subs2 = dynamic_pointer_cast<dcp::SubtitleAsset> (
+		dcp2.cpls()[0]->reels()[0]->main_subtitle()->asset_ref().asset()
 		);
 	BOOST_REQUIRE (subs2);
 	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1);
 
-	boost::uintmax_t const size = boost::filesystem::file_size ("test/data/dummy.ttf");
-	FILE* f = dcp::fopen_boost ("test/data/dummy.ttf", "rb");
+	auto const size = boost::filesystem::file_size ("test/data/dummy.ttf");
+	auto f = dcp::fopen_boost ("test/data/dummy.ttf", "rb");
 	BOOST_REQUIRE (f);
 	shared_array<uint8_t> ref (new uint8_t[size]);
 	fread (ref.get(), 1, size, f);
@@ -92,29 +93,29 @@ BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
 	boost::filesystem::path directory = "build/test/smpte_dcp_font_test";
 	dcp::DCP dcp (directory);
 
-	shared_ptr<dcp::SMPTESubtitleAsset> subs (new dcp::SMPTESubtitleAsset ());
+	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 	subs->add_font ("theFontId", dcp::ArrayData("test/data/dummy.ttf"));
 	subs->write (directory / "frobozz.mxf");
 
-	shared_ptr<dcp::Reel> reel (new dcp::Reel ());
-	reel->add (shared_ptr<dcp::ReelAsset> (new dcp::ReelSubtitleAsset (subs, dcp::Fraction (24, 1), 24, 0)));
+	auto reel = make_shared<dcp::Reel>();
+	reel->add (make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction (24, 1), 24, 0));
 
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("", dcp::TRAILER));
+	auto cpl = make_shared<dcp::CPL>("", dcp::ContentKind::TRAILER);
 	cpl->add (reel);
 
 	dcp.add (cpl);
-	dcp.write_xml (dcp::SMPTE);
+	dcp.write_xml (dcp::Standard::SMPTE);
 
 	dcp::DCP dcp2 (directory);
 	dcp2.read ();
-	shared_ptr<dcp::SubtitleAsset> subs2 = dynamic_pointer_cast<dcp::SubtitleAsset> (
+	auto subs2 = dynamic_pointer_cast<dcp::SubtitleAsset> (
 		dcp2.cpls().front()->reels().front()->main_subtitle()->asset_ref().asset()
 		);
 	BOOST_REQUIRE (subs2);
 	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1);
 
-	boost::uintmax_t const size = boost::filesystem::file_size ("test/data/dummy.ttf");
-	FILE* f = dcp::fopen_boost ("test/data/dummy.ttf", "rb");
+	auto const size = boost::filesystem::file_size ("test/data/dummy.ttf");
+	auto f = dcp::fopen_boost ("test/data/dummy.ttf", "rb");
 	BOOST_REQUIRE (f);
 	shared_array<uint8_t> ref (new uint8_t[size]);
 	fread (ref.get(), 1, size, f);

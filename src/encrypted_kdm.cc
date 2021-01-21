@@ -612,7 +612,7 @@ EncryptedKDM::EncryptedKDM (
 	kre.recipient.x509_issuer_serial.x509_serial_number = recipient.serial ();
 	kre.recipient.x509_subject_name = recipient.subject ();
 	kre.composition_playlist_id = cpl_id;
-	if (formulation == DCI_ANY || formulation == DCI_SPECIFIC) {
+	if (formulation == Formulation::DCI_ANY || formulation == Formulation::DCI_SPECIFIC) {
 		kre.content_authenticator = signer->leaf().thumbprint ();
 	}
 	kre.content_title_text = content_title_text;
@@ -621,7 +621,7 @@ EncryptedKDM::EncryptedKDM (
 	kre.disable_forensic_marking_picture = disable_forensic_marking_picture;
 	kre.disable_forensic_marking_audio = disable_forensic_marking_audio;
 
-	if (formulation != MODIFIED_TRANSITIONAL_TEST) {
+	if (formulation != Formulation::MODIFIED_TRANSITIONAL_TEST) {
 		kre.authorized_device_info = data::AuthorizedDeviceInfo ();
 		kre.authorized_device_info->device_list_identifier = make_uuid ();
 		auto n = recipient.subject_common_name ();
@@ -630,10 +630,10 @@ EncryptedKDM::EncryptedKDM (
 		}
 		kre.authorized_device_info->device_list_description = n;
 
-		if (formulation == MODIFIED_TRANSITIONAL_1 || formulation == DCI_ANY) {
+		if (formulation == Formulation::MODIFIED_TRANSITIONAL_1 || formulation == Formulation::DCI_ANY) {
 			/* Use the "assume trust" thumbprint */
 			kre.authorized_device_info->certificate_thumbprints.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
-		} else if (formulation == MULTIPLE_MODIFIED_TRANSITIONAL_1 || formulation == DCI_SPECIFIC) {
+		} else if (formulation == Formulation::MULTIPLE_MODIFIED_TRANSITIONAL_1 || formulation == Formulation::DCI_SPECIFIC) {
 			if (trusted_devices.empty ()) {
 				/* Fall back on the "assume trust" thumbprint so we
 				   can generate "modified-transitional-1" KDMs

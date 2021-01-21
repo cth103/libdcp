@@ -178,7 +178,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 			/* 93 is not-valid-after (a string) [25 bytes] */
 			p += 25;
 			/* 118 is the key [ASDCP::KeyLen bytes] */
-			add_key (optional<string>(), key_id, Key (p), cpl_id, INTEROP);
+			add_key (optional<string>(), key_id, Key(p), cpl_id, Standard::INTEROP);
 			break;
 		}
 		case 138:
@@ -200,7 +200,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 			/* 97 is not-valid-after (a string) [25 bytes] */
 			p += 25;
 			/* 112 is the key [ASDCP::KeyLen bytes] */
-			add_key (key_type, key_id, Key (p), cpl_id, SMPTE);
+			add_key (key_type, key_id, Key(p), cpl_id, Standard::SMPTE);
 			break;
 		}
 		default:
@@ -250,7 +250,7 @@ DecryptedKDM::DecryptedKDM (
 	, _issue_date (issue_date)
 {
 	for (map<shared_ptr<const ReelMXF>, Key>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
-		add_key (i->first->key_type(), i->first->key_id().get(), i->second, cpl_id, SMPTE);
+		add_key (i->first->key_type(), i->first->key_id().get(), i->second, cpl_id, Standard::SMPTE);
 	}
 }
 
@@ -271,9 +271,9 @@ DecryptedKDM::DecryptedKDM (
 {
 	/* Create DecryptedKDMKey objects for each encryptable asset */
 	bool did_one = false;
-	BOOST_FOREACH(shared_ptr<const ReelMXF> i, cpl->reel_mxfs()) {
+	for (auto i: cpl->reel_mxfs()) {
 		if (i->key_id()) {
-			add_key (i->key_type(), i->key_id().get(), key, cpl->id(), SMPTE);
+			add_key (i->key_type(), i->key_id().get(), key, cpl->id(), Standard::SMPTE);
 			did_one = true;
 		}
 	}

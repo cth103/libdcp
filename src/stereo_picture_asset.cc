@@ -136,7 +136,7 @@ StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, 
 			/* If there was a problem reading the frame data we'll just assume
 			   the two frames are not equal.
 			*/
-			note (DCP_ERROR, e.what ());
+			note (NoteType::ERROR, e.what ());
 			return false;
 		}
 

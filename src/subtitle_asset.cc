@@ -124,7 +124,7 @@ SubtitleAsset::font_node_state (xmlpp::Element const * node, Standard standard) 
 {
 	ParseState ps;
 
-	if (standard == INTEROP) {
+	if (standard == Standard::INTEROP) {
 		ps.font_id = optional_string_attribute (node, "Id");
 	} else {
 		ps.font_id = optional_string_attribute (node, "ID");
@@ -133,7 +133,7 @@ SubtitleAsset::font_node_state (xmlpp::Element const * node, Standard standard) 
 	ps.aspect_adjust = optional_number_attribute<float> (node, "AspectAdjust");
 	ps.italic = optional_bool_attribute (node, "Italic");
 	ps.bold = optional_string_attribute(node, "Weight").get_value_or("normal") == "bold";
-	if (standard == INTEROP) {
+	if (standard == Standard::INTEROP) {
 		ps.underline = optional_bool_attribute (node, "Underlined");
 	} else {
 		ps.underline = optional_bool_attribute (node, "Underline");
@@ -374,12 +374,12 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 					ps.in.get(),
 					ps.out.get(),
 					ps.h_position.get_value_or(0),
-					ps.h_align.get_value_or(HALIGN_CENTER),
+					ps.h_align.get_value_or(HAlign::CENTER),
 					ps.v_position.get_value_or(0),
-					ps.v_align.get_value_or(VALIGN_CENTER),
-					ps.direction.get_value_or (DIRECTION_LTR),
+					ps.v_align.get_value_or(VAlign::CENTER),
+					ps.direction.get_value_or (Direction::LTR),
 					text,
-					ps.effect.get_value_or (NONE),
+					ps.effect.get_value_or (Effect::NONE),
 					ps.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
 					ps.fade_up_time.get_value_or(Time()),
 					ps.fade_down_time.get_value_or(Time())
@@ -393,13 +393,13 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 			shared_ptr<Subtitle> (
 				new SubtitleImage (
 					ArrayData (),
-					standard == INTEROP ? text.substr(0, text.size() - 4) : text,
+					standard == Standard::INTEROP ? text.substr(0, text.size() - 4) : text,
 					ps.in.get(),
 					ps.out.get(),
 					ps.h_position.get_value_or(0),
-					ps.h_align.get_value_or(HALIGN_CENTER),
+					ps.h_align.get_value_or(HAlign::CENTER),
 					ps.v_position.get_value_or(0),
-					ps.v_align.get_value_or(VALIGN_CENTER),
+					ps.v_align.get_value_or(VAlign::CENTER),
 					ps.fade_up_time.get_value_or(Time()),
 					ps.fade_down_time.get_value_or(Time())
 					)
@@ -487,7 +487,7 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 	}
 
 	if (_subtitles.size() != other->_subtitles.size()) {
-		note (DCP_ERROR, String::compose("different number of subtitles: %1 vs %2", _subtitles.size(), other->_subtitles.size()));
+		note (NoteType::ERROR, String::compose("different number of subtitles: %1 vs %2", _subtitles.size(), other->_subtitles.size()));
 		return false;
 	}
 
@@ -501,12 +501,12 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 		shared_ptr<SubtitleImage> image_j = dynamic_pointer_cast<SubtitleImage> (*j);
 
 		if ((string_i && !string_j) || (image_i && !image_j)) {
-			note (DCP_ERROR, "subtitles differ: string vs. image");
+			note (NoteType::ERROR, "subtitles differ: string vs. image");
 			return false;
 		}
 
 		if (string_i && *string_i != *string_j) {
-			note (DCP_ERROR, String::compose("subtitles differ in text or metadata: %1 vs %2", string_i->text(), string_j->text()));
+			note (NoteType::ERROR, String::compose("subtitles differ in text or metadata: %1 vs %2", string_i->text(), string_j->text()));
 			return false;
 		}
 

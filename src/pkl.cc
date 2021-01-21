@@ -56,9 +56,9 @@ PKL::PKL (boost::filesystem::path file)
 	pkl.read_file (file);
 
 	if (pkl.namespace_uri() == pkl_interop_ns) {
-		_standard = INTEROP;
+		_standard = Standard::INTEROP;
 	} else if (pkl.namespace_uri() == pkl_smpte_ns) {
-		_standard = SMPTE;
+		_standard = Standard::SMPTE;
 	} else {
 		boost::throw_exception (XMLError ("Unrecognised packing list namesapce " + pkl.namespace_uri()));
 	}
@@ -85,7 +85,7 @@ PKL::write (boost::filesystem::path file, shared_ptr<const CertificateChain> sig
 {
 	xmlpp::Document doc;
 	xmlpp::Element* pkl;
-	if (_standard == INTEROP) {
+	if (_standard == Standard::INTEROP) {
 		pkl = doc.create_root_node("PackingList", pkl_interop_ns);
 	} else {
 		pkl = doc.create_root_node("PackingList", pkl_smpte_ns);

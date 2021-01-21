@@ -83,7 +83,7 @@ help (string n)
 void
 note (NoteType t, string n)
 {
-	if (t == DCP_ERROR || verbose) {
+	if (t == NoteType::ERROR || verbose) {
 		cout << " " << n << "\n";
 		cout.flush ();
 	}

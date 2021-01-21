@@ -39,6 +39,7 @@
 
 using std::string;
 using std::shared_ptr;
+using std::make_shared;
 
 static void
 check (unsigned int* seed, shared_ptr<dcp::PictureAssetWriter> writer, string hash)
@@ -59,8 +60,8 @@ check (unsigned int* seed, shared_ptr<dcp::PictureAssetWriter> writer, string ha
 /** Test the hashing of data written to JPEG2000 MXFs with some random inputs */
 BOOST_AUTO_TEST_CASE (frame_info_hash_test)
 {
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
-	shared_ptr<dcp::PictureAssetWriter> writer = mp->start_write ("build/test/frame_info_hash_test.mxf", false);
+	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
+	auto writer = mp->start_write ("build/test/frame_info_hash_test.mxf", false);
 
 	unsigned int seed = 42;
 

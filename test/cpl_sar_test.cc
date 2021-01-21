@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -40,6 +40,7 @@
 
 using std::string;
 using std::shared_ptr;
+using std::make_shared;
 
 static void
 check (shared_ptr<dcp::ReelMonoPictureAsset> pa, dcp::Fraction far, string sar)
@@ -47,7 +48,7 @@ check (shared_ptr<dcp::ReelMonoPictureAsset> pa, dcp::Fraction far, string sar)
 	pa->set_screen_aspect_ratio (far);
 	xmlpp::Document doc;
 	xmlpp::Element* el = doc.create_root_node ("Test");
-	pa->write_to_cpl (el, dcp::INTEROP);
+	pa->write_to_cpl (el, dcp::Standard::INTEROP);
 
 	cxml::Node node (el);
 	BOOST_CHECK_EQUAL (node.node_child("MainPicture")->string_child ("ScreenAspectRatio"), sar);
@@ -60,11 +61,8 @@ check (shared_ptr<dcp::ReelMonoPictureAsset> pa, dcp::Fraction far, string sar)
  */
 BOOST_AUTO_TEST_CASE (cpl_sar)
 {
-	shared_ptr<dcp::ReelMonoPictureAsset> pa (
-		new dcp::ReelMonoPictureAsset (
-			shared_ptr<dcp::MonoPictureAsset> (new dcp::MonoPictureAsset ("test/ref/DCP/dcp_test1/video.mxf")),
-			0
-			)
+	auto pa = make_shared<dcp::ReelMonoPictureAsset>(
+		make_shared<dcp::MonoPictureAsset>("test/ref/DCP/dcp_test1/video.mxf"), 0
 		);
 
 	/* Easy ones */

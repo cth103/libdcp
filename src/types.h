@@ -79,7 +79,7 @@ extern bool operator!= (Size const & a, Size const & b);
 extern std::ostream& operator<< (std::ostream& s, Size const & a);
 
 /** Identifier for a sound channel */
-enum Channel {
+enum class Channel {
 	LEFT = 0,      ///< left
 	RIGHT = 1,     ///< right
 	CENTRE = 2,    ///< centre
@@ -99,9 +99,10 @@ enum Channel {
 };
 
 std::vector<dcp::Channel> used_audio_channels ();
+std::ostream& operator<< (std::ostream& s, Channel c);
 
 
-enum MCASoundField
+enum class MCASoundField
 {
 	FIVE_POINT_ONE,
 	SEVEN_POINT_ONE
@@ -112,9 +113,10 @@ extern std::string channel_to_mca_id (Channel c, MCASoundField field);
 extern Channel mca_id_to_channel (std::string);
 extern std::string channel_to_mca_name (Channel c, MCASoundField field);
 extern ASDCP::UL channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dictionary const* dict);
+std::ostream& operator<< (std::ostream& s, MCASoundField f);
 
 
-enum ContentKind
+enum class ContentKind
 {
 	FEATURE,
 	SHORT,
@@ -132,8 +134,9 @@ enum ContentKind
 
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
+std::ostream& operator<<(std::ostream& s, ContentKind c);
 
-enum Effect
+enum class Effect
 {
 	NONE,
 	BORDER,
@@ -142,43 +145,44 @@ enum Effect
 
 extern std::string effect_to_string (Effect e);
 extern Effect string_to_effect (std::string s);
+std::ostream& operator<< (std::ostream& s, Effect e);
 
-enum HAlign
+enum class HAlign
 {
-	HALIGN_LEFT,   ///< horizontal position is distance from left of screen to left of subtitle
-	HALIGN_CENTER, ///< horizontal position is distance from centre of screen to centre of subtitle
-	HALIGN_RIGHT,  ///< horizontal position is distance from right of screen to right of subtitle
+	LEFT,   ///< horizontal position is distance from left of screen to left of subtitle
+	CENTER, ///< horizontal position is distance from centre of screen to centre of subtitle
+	RIGHT,  ///< horizontal position is distance from right of screen to right of subtitle
 };
 
 extern std::string halign_to_string (HAlign a);
 extern HAlign string_to_halign (std::string s);
 
-enum VAlign
+enum class VAlign
 {
-	VALIGN_TOP,    ///< vertical position is distance from top of screen to top of subtitle
-	VALIGN_CENTER, ///< vertical position is distance from centre of screen to centre of subtitle
-	VALIGN_BOTTOM  ///< vertical position is distance from bottom of screen to bottom of subtitle
+	TOP,    ///< vertical position is distance from top of screen to top of subtitle
+	CENTER, ///< vertical position is distance from centre of screen to centre of subtitle
+	BOTTOM  ///< vertical position is distance from bottom of screen to bottom of subtitle
 };
 
 extern std::string valign_to_string (VAlign a);
 extern VAlign string_to_valign (std::string s);
 
 /** Direction for subtitle test */
-enum Direction
+enum class Direction
 {
-	DIRECTION_LTR, ///< left-to-right
-	DIRECTION_RTL, ///< right-to-left
-	DIRECTION_TTB, ///< top-to-bottom
-	DIRECTION_BTT  ///< bottom-to-top
+	LTR, ///< left-to-right
+	RTL, ///< right-to-left
+	TTB, ///< top-to-bottom
+	BTT  ///< bottom-to-top
 };
 
 extern std::string direction_to_string (Direction a);
 extern Direction string_to_direction (std::string s);
 
-enum Eye
+enum class Eye
 {
-	EYE_LEFT,
-	EYE_RIGHT
+	LEFT,
+	RIGHT
 };
 
 /** @class Fraction
@@ -257,18 +261,22 @@ struct EqualityOptions
 /* I've been unable to make mingw happy with ERROR as a symbol, so
    I'm using a DCP_ prefix here.
 */
-enum NoteType {
-	DCP_PROGRESS,
-	DCP_ERROR,
-	DCP_NOTE
+enum class NoteType {
+	PROGRESS,
+	ERROR,
+	NOTE
 };
 
-enum Standard {
+std::ostream& operator<< (std::ostream& s, NoteType t);
+
+enum class Standard {
 	INTEROP,
 	SMPTE
 };
 
-enum Formulation {
+std::ostream& operator<< (std::ostream& s, Standard t);
+
+enum class Formulation {
 	MODIFIED_TRANSITIONAL_1,
 	MULTIPLE_MODIFIED_TRANSITIONAL_1,
 	DCI_ANY,
@@ -349,7 +357,7 @@ extern bool operator== (Rating const & a, Rating const & b);
 extern std::ostream& operator<< (std::ostream& s, Rating const & r);
 
 
-enum Status
+enum class Status
 {
 	FINAL, ///< final version
 	TEMP,  ///< temporary version (picture/sound unfinished)
@@ -359,6 +367,7 @@ enum Status
 
 extern std::string status_to_string (Status s);
 extern Status string_to_status (std::string s);
+std::ostream& operator<< (std::ostream& s, Status t);
 
 
 class ContentVersion
@@ -385,7 +394,7 @@ public:
 class Luminance
 {
 public:
-	enum Unit {
+	enum class Unit {
 		CANDELA_PER_SQUARE_METRE,
 		FOOT_LAMBERT
 	};

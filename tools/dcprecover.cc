@@ -156,7 +156,7 @@ main (int argc, char* argv[])
 		dcp::DCP fixed (*output);
 		fixed.add (cpl);
 		fixed.resolve_refs (assets);
-		fixed.write_xml (dcp::INTEROP);
+		fixed.write_xml (dcp::Standard::INTEROP);
 		cout << "Fixed XML files written to " << output->string() << "\n";
 	}
 

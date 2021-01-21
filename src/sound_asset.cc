@@ -143,7 +143,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 
 	if (desc_A.EditRate != desc_B.EditRate) {
 		note (
-			DCP_ERROR,
+			NoteType::ERROR,
 			String::compose (
 				"audio edit rates differ: %1/%2 cf %3/%4",
 				desc_A.EditRate.Numerator, desc_A.EditRate.Denominator, desc_B.EditRate.Numerator, desc_B.EditRate.Denominator
@@ -152,7 +152,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 		return false;
 	} else if (desc_A.AudioSamplingRate != desc_B.AudioSamplingRate) {
 		note (
-			DCP_ERROR,
+			NoteType::ERROR,
 			String::compose (
 				"audio sampling rates differ: %1 cf %2",
 				desc_A.AudioSamplingRate.Numerator, desc_A.AudioSamplingRate.Denominator,
@@ -161,25 +161,25 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 			);
 		return false;
 	} else if (desc_A.Locked != desc_B.Locked) {
-		note (DCP_ERROR, String::compose ("audio locked flags differ: %1 cf %2", desc_A.Locked, desc_B.Locked));
+		note (NoteType::ERROR, String::compose ("audio locked flags differ: %1 cf %2", desc_A.Locked, desc_B.Locked));
 		return false;
 	} else if (desc_A.ChannelCount != desc_B.ChannelCount) {
-		note (DCP_ERROR, String::compose ("audio channel counts differ: %1 cf %2", desc_A.ChannelCount, desc_B.ChannelCount));
+		note (NoteType::ERROR, String::compose ("audio channel counts differ: %1 cf %2", desc_A.ChannelCount, desc_B.ChannelCount));
 		return false;
 	} else if (desc_A.QuantizationBits != desc_B.QuantizationBits) {
-		note (DCP_ERROR, String::compose ("audio bits per sample differ: %1 cf %2", desc_A.QuantizationBits, desc_B.QuantizationBits));
+		note (NoteType::ERROR, String::compose ("audio bits per sample differ: %1 cf %2", desc_A.QuantizationBits, desc_B.QuantizationBits));
 		return false;
 	} else if (desc_A.BlockAlign != desc_B.BlockAlign) {
-		note (DCP_ERROR, String::compose ("audio bytes per sample differ: %1 cf %2", desc_A.BlockAlign, desc_B.BlockAlign));
+		note (NoteType::ERROR, String::compose ("audio bytes per sample differ: %1 cf %2", desc_A.BlockAlign, desc_B.BlockAlign));
 		return false;
 	} else if (desc_A.AvgBps != desc_B.AvgBps) {
-		note (DCP_ERROR, String::compose ("audio average bps differ: %1 cf %2", desc_A.AvgBps, desc_B.AvgBps));
+		note (NoteType::ERROR, String::compose ("audio average bps differ: %1 cf %2", desc_A.AvgBps, desc_B.AvgBps));
 		return false;
 	} else if (desc_A.LinkedTrackID != desc_B.LinkedTrackID) {
-		note (DCP_ERROR, String::compose ("audio linked track IDs differ: %1 cf %2", desc_A.LinkedTrackID, desc_B.LinkedTrackID));
+		note (NoteType::ERROR, String::compose ("audio linked track IDs differ: %1 cf %2", desc_A.LinkedTrackID, desc_B.LinkedTrackID));
 		return false;
 	} else if (desc_A.ContainerDuration != desc_B.ContainerDuration) {
-		note (DCP_ERROR, String::compose ("audio container durations differ: %1 cf %2", desc_A.ContainerDuration, desc_B.ContainerDuration));
+		note (NoteType::ERROR, String::compose ("audio container durations differ: %1 cf %2", desc_A.ContainerDuration, desc_B.ContainerDuration));
 		return false;
 	} else if (desc_A.ChannelFormat != desc_B.ChannelFormat) {
 		/* XXX */
@@ -196,7 +196,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 		shared_ptr<const SoundFrame> frame_B = other_reader->get_frame (i);
 
 		if (frame_A->size() != frame_B->size()) {
-			note (DCP_ERROR, String::compose ("sizes of audio data for frame %1 differ", i));
+			note (NoteType::ERROR, String::compose ("sizes of audio data for frame %1 differ", i));
 			return false;
 		}
 
@@ -205,7 +205,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 				for (int channel = 0; channel < frame_A->channels(); ++channel) {
 					int32_t const d = abs(frame_A->get(channel, sample) - frame_B->get(channel, sample));
 					if (d > opt.max_audio_sample_error) {
-						note (DCP_ERROR, String::compose ("PCM data difference of %1", d));
+						note (NoteType::ERROR, String::compose ("PCM data difference of %1", d));
 						return false;
 					}
 				}
@@ -236,9 +236,9 @@ string
 SoundAsset::static_pkl_type (Standard standard)
 {
 	switch (standard) {
-	case INTEROP:
+	case Standard::INTEROP:
 		return "application/x-smpte-mxf;asdcpKind=Sound";
-	case SMPTE:
+	case Standard::SMPTE:
 		return "application/mxf";
 	default:
 		DCP_ASSERT (false);

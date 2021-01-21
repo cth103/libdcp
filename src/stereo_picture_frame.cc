@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -44,6 +44,7 @@
 
 using std::string;
 using std::shared_ptr;
+using std::make_shared;
 using namespace dcp;
 
 
@@ -58,7 +59,7 @@ StereoPictureFrame::Part::Part (shared_ptr<ASDCP::JP2K::SFrameBuffer> buffer, Ey
 ASDCP::JP2K::FrameBuffer &
 StereoPictureFrame::Part::mono () const
 {
-	return _eye == EYE_LEFT ? _buffer->Left : _buffer->Right;
+	return _eye == Eye::LEFT ? _buffer->Left : _buffer->Right;
 }
 
 
@@ -112,9 +113,9 @@ shared_ptr<OpenJPEGImage>
 StereoPictureFrame::xyz_image (Eye eye, int reduce) const
 {
 	switch (eye) {
-	case EYE_LEFT:
+	case Eye::LEFT:
 		return decompress_j2k (const_cast<uint8_t*> (_buffer->Left.RoData()), _buffer->Left.Size(), reduce);
-	case EYE_RIGHT:
+	case Eye::RIGHT:
 		return decompress_j2k (const_cast<uint8_t*> (_buffer->Right.RoData()), _buffer->Right.Size(), reduce);
 	}
 
@@ -125,14 +126,14 @@ StereoPictureFrame::xyz_image (Eye eye, int reduce) const
 shared_ptr<StereoPictureFrame::Part>
 StereoPictureFrame::right () const
 {
-	return shared_ptr<Part>(new Part(_buffer, EYE_RIGHT));
+	return make_shared<Part>(_buffer, Eye::RIGHT);
 }
 
 
 shared_ptr<StereoPictureFrame::Part>
 StereoPictureFrame::left () const
 {
-	return shared_ptr<Part>(new Part(_buffer, EYE_LEFT));
+	return make_shared<Part>(_buffer, Eye::LEFT);
 }
 
 

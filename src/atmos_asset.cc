@@ -39,10 +39,11 @@
 
 using std::string;
 using std::shared_ptr;
+using std::make_shared;
 using namespace dcp;
 
 AtmosAsset::AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_count, int max_object_count, int atmos_version)
-	: MXF (SMPTE)
+	: MXF (Standard::SMPTE)
 	, _edit_rate (edit_rate)
 	, _intrinsic_duration (0)
 	, _first_frame (first_frame)
@@ -56,7 +57,7 @@ AtmosAsset::AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_cou
 
 AtmosAsset::AtmosAsset (boost::filesystem::path file)
 	: Asset (file)
-	, MXF (SMPTE)
+	, MXF (Standard::SMPTE)
 {
 	ASDCP::ATMOS::MXFReader reader;
 	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
@@ -98,7 +99,7 @@ AtmosAsset::static_pkl_type (Standard)
 shared_ptr<AtmosAssetReader>
 AtmosAsset::start_read () const
 {
-	return shared_ptr<AtmosAssetReader> (new AtmosAssetReader (this, key(), SMPTE));
+	return make_shared<AtmosAssetReader>(this, key(), Standard::SMPTE);
 }
 
 shared_ptr<AtmosAssetWriter>

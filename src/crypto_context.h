@@ -70,7 +70,7 @@ public:
 		_hmac = new ASDCP::HMACContext;
 
 		ASDCP::LabelSet_t type;
-		if (standard == INTEROP) {
+		if (standard == Standard::INTEROP) {
 			type = ASDCP::LS_MXF_INTEROP;
 		} else {
 			type = ASDCP::LS_MXF_SMPTE;

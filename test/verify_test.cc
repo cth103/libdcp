@@ -110,13 +110,13 @@ setup (int reference_number, string verify_test_suffix)
 
 static
 shared_ptr<dcp::CPL>
-write_dcp_with_single_asset (path dir, shared_ptr<dcp::ReelAsset> reel_asset, dcp::Standard standard = dcp::SMPTE)
+write_dcp_with_single_asset (path dir, shared_ptr<dcp::ReelAsset> reel_asset, dcp::Standard standard = dcp::Standard::SMPTE)
 {
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (reel_asset);
 	reel->add (simple_markers());
 
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER);
 	cpl->add (reel);
 	auto dcp = make_shared<dcp::DCP>(dir);
 	dcp->add (cpl);
@@ -543,7 +543,7 @@ static
 shared_ptr<dcp::CPL>
 dcp_from_frame (dcp::ArrayData const& frame, path dir)
 {
-	auto asset = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::SMPTE);
+	auto asset = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 	create_directories (dir);
 	auto writer = asset->start_write (dir / "pic.mxf", true);
 	for (int i = 0; i < 24; ++i) {
@@ -632,7 +632,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_interop_subtitles)
 	copy_file ("test/data/subs1.xml", dir / "subs.xml");
 	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
 	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
-	write_dcp_with_single_asset (dir, reel_asset, dcp::INTEROP);
+	write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
 
 	check_verify_result ({dir}, {{ dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::INVALID_STANDARD }});
 }
@@ -647,7 +647,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_interop_subtitles)
 	copy_file ("test/data/subs1.xml", dir / "subs.xml");
 	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
 	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
-	write_dcp_with_single_asset (dir, reel_asset, dcp::INTEROP);
+	write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
 
 	{
 		Editor e (dir / "subs.xml");
@@ -754,7 +754,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_cpl_metadata)
 	reel->add (make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 16 * 24), 0));
 	reel->add (simple_markers(16 * 24));
 
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER);
 	cpl->add (reel);
 	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
 	cpl->set_main_sound_sample_rate (48000);
@@ -765,7 +765,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_cpl_metadata)
 	dcp::DCP dcp (dir);
 	dcp.add (cpl);
 	dcp.write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -797,7 +797,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (black_picture_asset(dir));
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER);
 	cpl->add (reel);
 	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
 	cpl->set_main_sound_sample_rate (48000);
@@ -810,7 +810,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 	dcp::DCP dcp (dir);
 	dcp.add (cpl);
 	dcp.write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -852,7 +852,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_missing_tag)
 
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (black_picture_asset(dir));
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER);
 	cpl->add (reel);
 	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
 	cpl->set_main_sound_sample_rate (48000);
@@ -862,7 +862,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_missing_tag)
 	dcp::DCP dcp (dir);
 	dcp.add (cpl);
 	dcp.write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -943,7 +943,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language3)
 	reel->add (reel_sound);
 	reel->add (simple_markers());
 
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER);
 	cpl->add (reel);
 	cpl->_additional_subtitle_languages.push_back("this-is-wrong");
 	cpl->_additional_subtitle_languages.push_back("andso-is-this");
@@ -956,7 +956,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language3)
 	auto dcp = make_shared<dcp::DCP>(dir);
 	dcp->add (cpl);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -985,9 +985,9 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 
 	shared_ptr<dcp::PictureAsset> mp;
 	if (three_d) {
-		mp = make_shared<dcp::StereoPictureAsset>(dcp::Fraction(frame_rate, 1), dcp::SMPTE);
+		mp = make_shared<dcp::StereoPictureAsset>(dcp::Fraction(frame_rate, 1), dcp::Standard::SMPTE);
 	} else {
-		mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(frame_rate, 1), dcp::SMPTE);
+		mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(frame_rate, 1), dcp::Standard::SMPTE);
 	}
 	auto picture_writer = mp->start_write (dcp_path / "video.mxf", false);
 
@@ -1000,7 +1000,7 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 	picture_writer->finalize ();
 
 	auto d = make_shared<dcp::DCP>(dcp_path);
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
 	cpl->set_annotation_text ("A Test DCP");
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
 	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
@@ -1023,7 +1023,7 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 
 	d->add (cpl);
 	d->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -1142,12 +1142,12 @@ add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int en
 			dcp::Time(start_frame, 24, 24),
 			dcp::Time(end_frame, 24, 24),
 			0,
-			dcp::HALIGN_CENTER,
+			dcp::HAlign::CENTER,
 			v_position,
-			dcp::VALIGN_CENTER,
-			dcp::DIRECTION_LTR,
+			dcp::VAlign::CENTER,
+			dcp::Direction::LTR,
 			text,
-			dcp::NONE,
+			dcp::Effect::NONE,
 			dcp::Colour(),
 			dcp::Time(),
 			dcp::Time()
@@ -1270,7 +1270,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls().front()->reels().front()->add(reel_subs);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -1311,7 +1311,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 	}
 
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -1365,7 +1365,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls().front()->reels().front()->add(reel_subs);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -1419,7 +1419,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls().front()->reels().front()->add(reel_subs);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -1525,13 +1525,13 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 	markers2->set (dcp::Marker::LFOC, dcp::Time(16 * 24 - 1, 24, 24));
 	reel2->add (markers2);
 
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER);
 	cpl->add (reel1);
 	cpl->add (reel2);
 	auto dcp = make_shared<dcp::DCP>(dir);
 	dcp->add (cpl);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -1797,12 +1797,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_sound_frame_rate)
 	auto reel_sound = make_shared<dcp::ReelSoundAsset>(sound, 0);
 	reel->add (reel_sound);
 	reel->add (simple_markers());
-	auto cpl = make_shared<dcp::CPL>("hello", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER);
 	cpl->add (reel);
 	auto dcp = make_shared<dcp::DCP>(dir);
 	dcp->add (cpl);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -1823,7 +1823,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_annotation_text)
 	path const dir("build/test/verify_missing_cpl_annotation_text");
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -1854,7 +1854,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_cpl_annotation_text)
 	path const dir("build/test/verify_mismatched_cpl_annotation_text");
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -1884,7 +1884,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_asset_duration)
 	path const dir("build/test/verify_mismatched_asset_duration");
 	prepare_directory (dir);
 	shared_ptr<dcp::DCP> dcp (new dcp::DCP(dir));
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL("A Test DCP", dcp::TRAILER));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL("A Test DCP", dcp::ContentKind::TRAILER));
 
 	shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (dir, "", 24);
 	shared_ptr<dcp::SoundAsset> ms = simple_sound (dir, "", dcp::MXFMetadata(), "en-US", 25);
@@ -1899,7 +1899,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_asset_duration)
 
 	dcp->add (cpl);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -1922,7 +1922,7 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 {
 	prepare_directory (dir);
 	auto dcp = make_shared<dcp::DCP>(dir);
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
 
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
@@ -1963,7 +1963,7 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 
 	dcp->add (cpl);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2008,7 +2008,7 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 {
 	prepare_directory (dir);
 	auto dcp = make_shared<dcp::DCP>(dir);
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
 
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
@@ -2048,7 +2048,7 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 
 	dcp->add (cpl);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2092,7 +2092,7 @@ verify_text_entry_point_check (path dir, dcp::VerificationNote::Code code, boost
 {
 	prepare_directory (dir);
 	auto dcp = make_shared<dcp::DCP>(dir);
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
 
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
@@ -2115,7 +2115,7 @@ verify_text_entry_point_check (path dir, dcp::VerificationNote::Code code, boost
 
 	dcp->add (cpl);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2174,7 +2174,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_hash)
 	path const dir("build/test/verify_missing_hash");
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2208,14 +2208,14 @@ verify_markers_test (
 	)
 {
 	auto dcp = make_simple (dir);
-	dcp->cpls()[0]->set_content_kind (dcp::FEATURE);
+	dcp->cpls()[0]->set_content_kind (dcp::ContentKind::FEATURE);
 	auto markers_asset = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 24, 0);
 	for (auto const& i: markers) {
 		markers_asset->set (i.first, i.second);
 	}
 	dcp->cpls()[0]->reels()[0]->add(markers_asset);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2317,7 +2317,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_metadata_version_number)
 	auto cpl = dcp->cpls()[0];
 	cpl->unset_version_number();
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2333,7 +2333,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata1)
 	path dir = "build/test/verify_missing_extension_metadata1";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2361,7 +2361,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata2)
 	path dir = "build/test/verify_missing_extension_metadata2";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2389,7 +2389,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata3";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2419,7 +2419,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata1)
 	path dir = "build/test/verify_invalid_extension_metadata1";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2447,7 +2447,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 	path dir = "build/test/verify_invalid_extension_metadata2";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2475,7 +2475,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata6";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2505,7 +2505,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata7";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2533,7 +2533,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata8";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2563,7 +2563,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata9";
 	auto dcp = make_simple (dir);
 	dcp->write_xml (
-		dcp::SMPTE,
+		dcp::Standard::SMPTE,
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::LocalTime().as_string(),
@@ -2683,11 +2683,11 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 	signer->add (dcp::Certificate(dcp::file_to_string("test/ref/crypt/leaf.signed.pem")));
 	signer->set_key (dcp::file_to_string("test/ref/crypt/leaf.key"));
 
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
 
 	dcp::Key key;
 
-	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::SMPTE);
+	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	mp->set_key (key);
 
 	auto writer = mp->start_write (dir / "video.mxf", false);
@@ -2723,7 +2723,7 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 
 	d.add (cpl);
 
-	d.write_xml (dcp::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "A Test DCP", signer);
+	d.write_xml (dcp::Standard::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "A Test DCP", signer);
 
 	check_verify_result ({dir}, {{dcp::VerificationNote::VERIFY_BV21_ERROR, dcp::VerificationNote::PARTIALLY_ENCRYPTED}});
 }

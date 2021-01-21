@@ -163,7 +163,7 @@ kdm_forensic_test (cxml::Document& doc, bool picture, optional<int> audio)
 	signer->set_key(dcp::file_to_string("test/data/private.key"));
 
 	dcp::EncryptedKDM kdm = decrypted.encrypt (
-		signer, signer->leaf(), vector<string>(), dcp::MODIFIED_TRANSITIONAL_1, picture, audio
+		signer, signer->leaf(), vector<string>(), dcp::Formulation::MODIFIED_TRANSITIONAL_1, picture, audio
 		);
 
 	/* Check that we can pass this through correctly */
@@ -237,14 +237,14 @@ BOOST_AUTO_TEST_CASE (validity_period_test1)
 	auto signer = make_shared<dcp::CertificateChain>(dcp::file_to_string("test/data/certificate_chain"));
 	signer->set_key(dcp::file_to_string("test/data/private.key"));
 
-	auto asset = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::SMPTE);
+	auto asset = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 	asset->set_key (dcp::Key());
 	auto writer = asset->start_write ("build/test/validity_period_test1.mxf", false);
 	dcp::ArrayData frame ("test/data/flat_red.j2c");
 	writer->write (frame.data(), frame.size());
 	auto reel = make_shared<dcp::Reel>();
 	reel->add(make_shared<dcp::ReelMonoPictureAsset>(asset, 0));
-	auto cpl = make_shared<dcp::CPL>("test", dcp::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("test", dcp::ContentKind::FEATURE);
 	cpl->add(reel);
 
 	/* This certificate_chain is valid from 26/12/2012 to 24/12/2022 */
@@ -253,14 +253,14 @@ BOOST_AUTO_TEST_CASE (validity_period_test1)
 	BOOST_CHECK_NO_THROW(
 		dcp::DecryptedKDM(
 			cpl, dcp::Key(dcp::file_to_string("test/data/private.key")), dcp::LocalTime("2015-01-01T00:00:00"), dcp::LocalTime("2017-07-31T00:00:00"), "", "", ""
-			).encrypt(signer, signer->leaf(), vector<string>(), dcp::MODIFIED_TRANSITIONAL_1, true, optional<int>())
+			).encrypt(signer, signer->leaf(), vector<string>(), dcp::Formulation::MODIFIED_TRANSITIONAL_1, true, optional<int>())
 		);
 
 	/* Starts too early */
 	BOOST_CHECK_THROW(
 		dcp::DecryptedKDM(
 			cpl, dcp::Key(dcp::file_to_string("test/data/private.key")), dcp::LocalTime("1981-01-01T00:00:00"), dcp::LocalTime("2017-07-31T00:00:00"), "", "", ""
-			).encrypt(signer, signer->leaf(), vector<string>(), dcp::MODIFIED_TRANSITIONAL_1, true, optional<int>()),
+			).encrypt(signer, signer->leaf(), vector<string>(), dcp::Formulation::MODIFIED_TRANSITIONAL_1, true, optional<int>()),
 		dcp::BadKDMDateError
 		);
 
@@ -268,7 +268,7 @@ BOOST_AUTO_TEST_CASE (validity_period_test1)
 	BOOST_CHECK_THROW(
 		dcp::DecryptedKDM(
 			cpl, dcp::Key(dcp::file_to_string("test/data/private.key")), dcp::LocalTime("2015-01-01T00:00:00"), dcp::LocalTime("2035-07-31T00:00:00"), "", "", ""
-			).encrypt(signer, signer->leaf(), vector<string>(), dcp::MODIFIED_TRANSITIONAL_1, true, optional<int>()),
+			).encrypt(signer, signer->leaf(), vector<string>(), dcp::Formulation::MODIFIED_TRANSITIONAL_1, true, optional<int>()),
 		dcp::BadKDMDateError
 		);
 
@@ -276,7 +276,7 @@ BOOST_AUTO_TEST_CASE (validity_period_test1)
 	BOOST_CHECK_THROW(
 		dcp::DecryptedKDM(
 			cpl, dcp::Key(dcp::file_to_string("test/data/private.key")), dcp::LocalTime("1981-01-01T00:00:00"), dcp::LocalTime("2035-07-31T00:00:00"), "", "", ""
-			).encrypt(signer, signer->leaf(), vector<string>(), dcp::MODIFIED_TRANSITIONAL_1, true, optional<int>()),
+			).encrypt(signer, signer->leaf(), vector<string>(), dcp::Formulation::MODIFIED_TRANSITIONAL_1, true, optional<int>()),
 		dcp::BadKDMDateError
 		);
 }

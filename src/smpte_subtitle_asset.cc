@@ -57,10 +57,11 @@ using std::list;
 using std::vector;
 using std::map;
 using std::shared_ptr;
+using std::dynamic_pointer_cast;
+using std::make_shared;
 using boost::split;
 using boost::is_any_of;
 using boost::shared_array;
-using std::dynamic_pointer_cast;
 using boost::optional;
 using boost::starts_with;
 using namespace dcp;
@@ -68,7 +69,7 @@ using namespace dcp;
 static string const subtitle_smpte_ns = "http://www.smpte-ra.org/schemas/428-7/2010/DCST";
 
 SMPTESubtitleAsset::SMPTESubtitleAsset ()
-	: MXF (SMPTE)
+	: MXF (Standard::SMPTE)
 	, _intrinsic_duration (0)
 	, _edit_rate (24, 1)
 	, _time_code_rate (24)
@@ -101,7 +102,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 			reader->ReadTimedTextResource (_raw_xml);
 			xml->read_string (_raw_xml);
 			parse_xml (xml);
-			read_mxf_descriptor (reader, shared_ptr<DecryptionContext> (new DecryptionContext (optional<Key>(), SMPTE)));
+			read_mxf_descriptor (reader, shared_ptr<DecryptionContext> (new DecryptionContext (optional<Key>(), Standard::SMPTE)));
 		}
 	} else {
 		/* Plain XML */
@@ -140,7 +141,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 				}
 			}
 		}
-		_standard = dcp::SMPTE;
+		_standard = Standard::SMPTE;
 	}
 
 	/* Check that all required image data have been found */
@@ -188,7 +189,7 @@ SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 	for (xmlpp::Node::NodeList::const_iterator i = c.begin(); i != c.end(); ++i) {
 		xmlpp::Element const * e = dynamic_cast<xmlpp::Element const *> (*i);
 		if (e && e->get_name() == "SubtitleList") {
-			parse_subtitles (e, ps, _time_code_rate, SMPTE);
+			parse_subtitles (e, ps, _time_code_rate, Standard::SMPTE);
 		}
 	}
 
@@ -283,7 +284,7 @@ SMPTESubtitleAsset::set_key (Key key)
 			);
 	}
 
-	shared_ptr<DecryptionContext> dec (new DecryptionContext (key, SMPTE));
+	auto dec = make_shared<DecryptionContext>(key, Standard::SMPTE);
 	reader->ReadTimedTextResource (_raw_xml, dec->context(), dec->hmac());
 	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
 	xml->read_string (_raw_xml);
@@ -332,7 +333,7 @@ SMPTESubtitleAsset::xml_as_string () const
 	root->add_child("EditRate", "dcst")->add_child_text (_edit_rate.as_string ());
 	root->add_child("TimeCodeRate", "dcst")->add_child_text (raw_convert<string> (_time_code_rate));
 	if (_start_time) {
-		root->add_child("StartTime", "dcst")->add_child_text (_start_time.get().as_string (SMPTE));
+		root->add_child("StartTime", "dcst")->add_child_text(_start_time.get().as_string(Standard::SMPTE));
 	}
 
 	BOOST_FOREACH (shared_ptr<SMPTELoadFontNode> i, _load_font_nodes) {
@@ -341,7 +342,7 @@ SMPTESubtitleAsset::xml_as_string () const
 		load_font->set_attribute ("ID", i->id);
 	}
 
-	subtitles_as_xml (root->add_child ("SubtitleList", "dcst"), _time_code_rate, SMPTE);
+	subtitles_as_xml (root->add_child("SubtitleList", "dcst"), _time_code_rate, Standard::SMPTE);
 
 	return doc.write_to_string ("UTF-8");
 }
@@ -350,7 +351,7 @@ SMPTESubtitleAsset::xml_as_string () const
 void
 SMPTESubtitleAsset::write (boost::filesystem::path p) const
 {
-	EncryptionContext enc (key(), SMPTE);
+	EncryptionContext enc (key(), Standard::SMPTE);
 
 	ASDCP::WriterInfo writer_info;
 	fill_writer_info (&writer_info, _id);
@@ -458,7 +459,7 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 
 	shared_ptr<const SMPTESubtitleAsset> other = dynamic_pointer_cast<const SMPTESubtitleAsset> (other_asset);
 	if (!other) {
-		note (DCP_ERROR, "Subtitles are in different standards");
+		note (NoteType::ERROR, "Subtitles are in different standards");
 		return false;
 	}
 
@@ -467,12 +468,12 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 
 	while (i != _load_font_nodes.end ()) {
 		if (j == other->_load_font_nodes.end ()) {
-			note (DCP_ERROR, "<LoadFont> nodes differ");
+			note (NoteType::ERROR, "<LoadFont> nodes differ");
 			return false;
 		}
 
 		if ((*i)->id != (*j)->id) {
-			note (DCP_ERROR, "<LoadFont> nodes differ");
+			note (NoteType::ERROR, "<LoadFont> nodes differ");
 			return false;
 		}
 
@@ -481,46 +482,46 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 	}
 
 	if (_content_title_text != other->_content_title_text) {
-		note (DCP_ERROR, "Subtitle content title texts differ");
+		note (NoteType::ERROR, "Subtitle content title texts differ");
 		return false;
 	}
 
 	if (_language != other->_language) {
-		note (DCP_ERROR, String::compose("Subtitle languages differ (`%1' vs `%2')", _language.get_value_or("[none]"), other->_language.get_value_or("[none]")));
+		note (NoteType::ERROR, String::compose("Subtitle languages differ (`%1' vs `%2')", _language.get_value_or("[none]"), other->_language.get_value_or("[none]")));
 		return false;
 	}
 
 	if (_annotation_text != other->_annotation_text) {
-		note (DCP_ERROR, "Subtitle annotation texts differ");
+		note (NoteType::ERROR, "Subtitle annotation texts differ");
 		return false;
 	}
 
 	if (_issue_date != other->_issue_date) {
 		if (options.issue_dates_can_differ) {
-			note (DCP_NOTE, "Subtitle issue dates differ");
+			note (NoteType::NOTE, "Subtitle issue dates differ");
 		} else {
-			note (DCP_ERROR, "Subtitle issue dates differ");
+			note (NoteType::ERROR, "Subtitle issue dates differ");
 			return false;
 		}
 	}
 
 	if (_reel_number != other->_reel_number) {
-		note (DCP_ERROR, "Subtitle reel numbers differ");
+		note (NoteType::ERROR, "Subtitle reel numbers differ");
 		return false;
 	}
 
 	if (_edit_rate != other->_edit_rate) {
-		note (DCP_ERROR, "Subtitle edit rates differ");
+		note (NoteType::ERROR, "Subtitle edit rates differ");
 		return false;
 	}
 
 	if (_time_code_rate != other->_time_code_rate) {
-		note (DCP_ERROR, "Subtitle time code rates differ");
+		note (NoteType::ERROR, "Subtitle time code rates differ");
 		return false;
 	}
 
 	if (_start_time != other->_start_time) {
-		note (DCP_ERROR, "Subtitle start times differ");
+		note (NoteType::ERROR, "Subtitle start times differ");
 		return false;
 	}
 

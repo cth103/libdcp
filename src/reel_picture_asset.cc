@@ -85,7 +85,7 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 	xmlpp::Node* asset = write_to_cpl_asset (node, standard, hash());
 
 	asset->add_child("FrameRate")->add_child_text(String::compose("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
-	if (standard == INTEROP) {
+	if (standard == Standard::INTEROP) {
 
 		/* Allowed values for this tag from the standard */
 		float allowed[] = { 1.33, 1.66, 1.77, 1.85, 2.00, 2.39 };
@@ -139,12 +139,12 @@ ReelPictureAsset::equals (shared_ptr<const ReelPictureAsset> other, EqualityOpti
 	}
 
 	if (_frame_rate != rpa->_frame_rate) {
-		note (DCP_ERROR, "frame rates differ in reel");
+		note (NoteType::ERROR, "frame rates differ in reel");
 		return false;
 	}
 
 	if (_screen_aspect_ratio != rpa->_screen_aspect_ratio) {
-		note (DCP_ERROR, "screen aspect ratios differ in reel");
+		note (NoteType::ERROR, "screen aspect ratios differ in reel");
 		return false;
 	}
 

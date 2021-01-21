@@ -193,21 +193,21 @@ dcp::xyz_to_rgb (
 
 			if (cx < 0 || cx > 4095) {
 				if (note) {
-					note.get() (DCP_NOTE, String::compose ("XYZ value %1 out of range", cx));
+					note.get()(NoteType::NOTE, String::compose("XYZ value %1 out of range", cx));
 				}
 				cx = max (min (cx, 4095), 0);
 			}
 
 			if (cy < 0 || cy > 4095) {
 				if (note) {
-					note.get() (DCP_NOTE, String::compose ("XYZ value %1 out of range", cy));
+					note.get()(NoteType::NOTE, String::compose("XYZ value %1 out of range", cy));
 				}
 				cy = max (min (cy, 4095), 0);
 			}
 
 			if (cz < 0 || cz > 4095) {
 				if (note) {
-					note.get() (DCP_NOTE, String::compose ("XYZ value %1 out of range", cz));
+					note.get()(NoteType::NOTE, String::compose("XYZ value %1 out of range", cz));
 				}
 				cz = max (min (cz, 4095), 0);
 			}
@@ -343,7 +343,7 @@ dcp::rgb_to_xyz (
 	}
 
 	if (clamped && note) {
-		note.get() (DCP_NOTE, String::compose ("%1 XYZ value(s) clamped", clamped));
+		note.get()(NoteType::NOTE, String::compose("%1 XYZ value(s) clamped", clamped));
 	}
 
 	return xyz;

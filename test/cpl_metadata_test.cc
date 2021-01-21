@@ -51,7 +51,7 @@ using std::shared_ptr;
 
 BOOST_AUTO_TEST_CASE (cpl_metadata_bad_values_test)
 {
-	dcp::CPL cpl("", dcp::FEATURE);
+	dcp::CPL cpl("", dcp::ContentKind::FEATURE);
 	BOOST_CHECK_THROW (cpl.set_version_number(-1), dcp::BadSettingError);
 
 	vector<dcp::ContentVersion> cv;
@@ -66,11 +66,11 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test1)
 	dcp::MainSoundConfiguration msc("51/L,R,C,LFE,-,-");
 	BOOST_CHECK_EQUAL (msc.to_string(), "51/L,R,C,LFE,-,-");
 	BOOST_CHECK_EQUAL (msc.channels(), 6);
-	BOOST_CHECK_EQUAL (msc.field(), dcp::FIVE_POINT_ONE);
-	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::LEFT);
-	BOOST_CHECK_EQUAL (msc.mapping(1).get(), dcp::RIGHT);
-	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::CENTRE);
-	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::LFE);
+	BOOST_CHECK_EQUAL (msc.field(), dcp::MCASoundField::FIVE_POINT_ONE);
+	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::Channel::LEFT);
+	BOOST_CHECK_EQUAL (msc.mapping(1).get(), dcp::Channel::RIGHT);
+	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::Channel::CENTRE);
+	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::Channel::LFE);
 	BOOST_CHECK (!msc.mapping(4));
 	BOOST_CHECK (!msc.mapping(5));
 }
@@ -81,11 +81,11 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test2)
 	dcp::MainSoundConfiguration msc("71/L,R,C,LFE,-,-");
 	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,R,C,LFE,-,-");
 	BOOST_CHECK_EQUAL (msc.channels(), 6);
-	BOOST_CHECK_EQUAL (msc.field(), dcp::SEVEN_POINT_ONE);
-	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::LEFT);
-	BOOST_CHECK_EQUAL (msc.mapping(1).get(), dcp::RIGHT);
-	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::CENTRE);
-	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::LFE);
+	BOOST_CHECK_EQUAL (msc.field(), dcp::MCASoundField::SEVEN_POINT_ONE);
+	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::Channel::LEFT);
+	BOOST_CHECK_EQUAL (msc.mapping(1).get(), dcp::Channel::RIGHT);
+	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::Channel::CENTRE);
+	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::Channel::LFE);
 	BOOST_CHECK (!msc.mapping(4));
 	BOOST_CHECK (!msc.mapping(5));
 }
@@ -96,13 +96,13 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test3)
 	dcp::MainSoundConfiguration msc("71/L,-,C,LFE,Lss,Rss");
 	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,-,C,LFE,Lss,Rss");
 	BOOST_CHECK_EQUAL (msc.channels(), 6);
-	BOOST_CHECK_EQUAL (msc.field(), dcp::SEVEN_POINT_ONE);
-	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::LEFT);
+	BOOST_CHECK_EQUAL (msc.field(), dcp::MCASoundField::SEVEN_POINT_ONE);
+	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::Channel::LEFT);
 	BOOST_CHECK (!msc.mapping(1));
-	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::CENTRE);
-	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::LFE);
-	BOOST_CHECK_EQUAL (msc.mapping(4).get(), dcp::LS);
-	BOOST_CHECK_EQUAL (msc.mapping(5).get(), dcp::RS);
+	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::Channel::CENTRE);
+	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::Channel::LFE);
+	BOOST_CHECK_EQUAL (msc.mapping(4).get(), dcp::Channel::LS);
+	BOOST_CHECK_EQUAL (msc.mapping(5).get(), dcp::Channel::RS);
 }
 
 
@@ -111,13 +111,13 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test4)
 	dcp::MainSoundConfiguration msc("71/L,-,C,LFE,Lss,Rss,-,-,-,-,-,-,-,-,-");
 	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,-,C,LFE,Lss,Rss,-,-,-,-,-,-,-,-,-");
 	BOOST_CHECK_EQUAL (msc.channels(), 15);
-	BOOST_CHECK_EQUAL (msc.field(), dcp::SEVEN_POINT_ONE);
-	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::LEFT);
+	BOOST_CHECK_EQUAL (msc.field(), dcp::MCASoundField::SEVEN_POINT_ONE);
+	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::Channel::LEFT);
 	BOOST_CHECK (!msc.mapping(1));
-	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::CENTRE);
-	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::LFE);
-	BOOST_CHECK_EQUAL (msc.mapping(4).get(), dcp::LS);
-	BOOST_CHECK_EQUAL (msc.mapping(5).get(), dcp::RS);
+	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::Channel::CENTRE);
+	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::Channel::LFE);
+	BOOST_CHECK_EQUAL (msc.mapping(4).get(), dcp::Channel::LS);
+	BOOST_CHECK_EQUAL (msc.mapping(5).get(), dcp::Channel::RS);
 	for (int i = 6; i < 15; ++i) {
 		BOOST_CHECK (!msc.mapping(i));
 	}
@@ -129,29 +129,29 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test5)
 	dcp::MainSoundConfiguration msc("71/L,-,C,LFE,Lss,Rss,HI,VIN,-,-,Lrs,Rrs,DBOX,FSKSync,SLVS");
 	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,-,C,LFE,Lss,Rss,HI,VIN,-,-,Lrs,Rrs,DBOX,FSKSync,SLVS");
 	BOOST_CHECK_EQUAL (msc.channels(), 15);
-	BOOST_CHECK_EQUAL (msc.field(), dcp::SEVEN_POINT_ONE);
-	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::LEFT);
+	BOOST_CHECK_EQUAL (msc.field(), dcp::MCASoundField::SEVEN_POINT_ONE);
+	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::Channel::LEFT);
 	BOOST_CHECK (!msc.mapping(1));
-	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::CENTRE);
-	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::LFE);
-	BOOST_CHECK_EQUAL (msc.mapping(4).get(), dcp::LS);
-	BOOST_CHECK_EQUAL (msc.mapping(5).get(), dcp::RS);
-	BOOST_CHECK_EQUAL (msc.mapping(6).get(), dcp::HI);
-	BOOST_CHECK_EQUAL (msc.mapping(7).get(), dcp::VI);
+	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::Channel::CENTRE);
+	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::Channel::LFE);
+	BOOST_CHECK_EQUAL (msc.mapping(4).get(), dcp::Channel::LS);
+	BOOST_CHECK_EQUAL (msc.mapping(5).get(), dcp::Channel::RS);
+	BOOST_CHECK_EQUAL (msc.mapping(6).get(), dcp::Channel::HI);
+	BOOST_CHECK_EQUAL (msc.mapping(7).get(), dcp::Channel::VI);
 	BOOST_CHECK (!msc.mapping(8));
 	BOOST_CHECK (!msc.mapping(9));
-	BOOST_CHECK_EQUAL (msc.mapping(10).get(), dcp::BSL);
-	BOOST_CHECK_EQUAL (msc.mapping(11).get(), dcp::BSR);
-	BOOST_CHECK_EQUAL (msc.mapping(12).get(), dcp::MOTION_DATA);
-	BOOST_CHECK_EQUAL (msc.mapping(13).get(), dcp::SYNC_SIGNAL);
-	BOOST_CHECK_EQUAL (msc.mapping(14).get(), dcp::SIGN_LANGUAGE);
+	BOOST_CHECK_EQUAL (msc.mapping(10).get(), dcp::Channel::BSL);
+	BOOST_CHECK_EQUAL (msc.mapping(11).get(), dcp::Channel::BSR);
+	BOOST_CHECK_EQUAL (msc.mapping(12).get(), dcp::Channel::MOTION_DATA);
+	BOOST_CHECK_EQUAL (msc.mapping(13).get(), dcp::Channel::SYNC_SIGNAL);
+	BOOST_CHECK_EQUAL (msc.mapping(14).get(), dcp::Channel::SIGN_LANGUAGE);
 }
 
 
 BOOST_AUTO_TEST_CASE (luminance_test1)
 {
-	BOOST_CHECK_NO_THROW (dcp::Luminance(4, dcp::Luminance::CANDELA_PER_SQUARE_METRE));
-	BOOST_CHECK_THROW (dcp::Luminance(-4, dcp::Luminance::CANDELA_PER_SQUARE_METRE), dcp::MiscError);
+	BOOST_CHECK_NO_THROW (dcp::Luminance(4, dcp::Luminance::Unit::CANDELA_PER_SQUARE_METRE));
+	BOOST_CHECK_THROW (dcp::Luminance(-4, dcp::Luminance::Unit::CANDELA_PER_SQUARE_METRE), dcp::MiscError);
 }
 
 
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE (luminance_test2)
 		);
 
 	dcp::Luminance lum (doc);
-	BOOST_CHECK (lum.unit() == dcp::Luminance::CANDELA_PER_SQUARE_METRE);
+	BOOST_CHECK (lum.unit() == dcp::Luminance::Unit::CANDELA_PER_SQUARE_METRE);
 	BOOST_CHECK_CLOSE (lum.value(), 4.5, 0.1);
 }
 
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE (luminance_test4)
 
 	/* We tolerate out-of-range values when reading from XML */
 	dcp::Luminance lum (doc);
-	BOOST_CHECK (lum.unit() == dcp::Luminance::CANDELA_PER_SQUARE_METRE);
+	BOOST_CHECK (lum.unit() == dcp::Luminance::Unit::CANDELA_PER_SQUARE_METRE);
 	BOOST_CHECK_CLOSE (lum.value(), -4.5, 0.1);
 }
 
@@ -205,17 +205,17 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test1)
 	BOOST_CHECK (cpl.full_content_title_text_language().get() == "de");
 	BOOST_CHECK (cpl.release_territory().get() == "ES");
 	BOOST_CHECK_EQUAL (cpl.version_number().get(), 2);
-	BOOST_CHECK_EQUAL (cpl.status().get(), dcp::FINAL);
+	BOOST_CHECK_EQUAL (cpl.status().get(), dcp::Status::FINAL);
 	BOOST_CHECK_EQUAL (cpl.chain().get(), "the-chain");
 	BOOST_CHECK_EQUAL (cpl.distributor().get(), "the-distributor");
 	BOOST_CHECK_EQUAL (cpl.facility().get(), "the-facility");
-	BOOST_CHECK (cpl.luminance() == dcp::Luminance(4.5, dcp::Luminance::FOOT_LAMBERT));
+	BOOST_CHECK (cpl.luminance() == dcp::Luminance(4.5, dcp::Luminance::Unit::FOOT_LAMBERT));
 
 	dcp::MainSoundConfiguration msc(cpl.main_sound_configuration().get());
-	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::LEFT);
-	BOOST_CHECK_EQUAL (msc.mapping(1).get(), dcp::RIGHT);
-	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::CENTRE);
-	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::LFE);
+	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::Channel::LEFT);
+	BOOST_CHECK_EQUAL (msc.mapping(1).get(), dcp::Channel::RIGHT);
+	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::Channel::CENTRE);
+	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::Channel::LFE);
 	BOOST_CHECK (!msc.mapping(4));
 	BOOST_CHECK (!msc.mapping(5));
 	BOOST_CHECK (!msc.mapping(6));
@@ -225,7 +225,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test1)
 	BOOST_CHECK (!msc.mapping(10));
 	BOOST_CHECK (!msc.mapping(11));
 	BOOST_CHECK (!msc.mapping(12));
-	BOOST_CHECK_EQUAL (msc.mapping(13).get(), dcp::SYNC_SIGNAL);
+	BOOST_CHECK_EQUAL (msc.mapping(13).get(), dcp::Channel::SYNC_SIGNAL);
 
 	BOOST_CHECK_EQUAL (cpl.main_sound_sample_rate().get(), 48000);
 	BOOST_CHECK (cpl.main_picture_stored_area().get() == dcp::Size(1998, 1080));
@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 {
 	RNGFixer fix;
 
-	dcp::CPL cpl("", dcp::FEATURE);
+	dcp::CPL cpl("", dcp::ContentKind::FEATURE);
 	cpl.set_issue_date ("2020-08-28T13:35:06+02:00");
 
 	vector<dcp::ContentVersion> cv;
@@ -262,20 +262,20 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 	cpl.set_full_content_title_text_language (dcp::LanguageTag("de"));
 	cpl.set_release_territory (dcp::LanguageTag::RegionSubtag("ES"));
 	cpl.set_version_number (2);
-	cpl.set_status (dcp::FINAL);
+	cpl.set_status (dcp::Status::FINAL);
 	cpl.set_chain ("the-chain");
 	cpl.set_distributor ("the-distributor");
 	cpl.set_facility ("the-facility");
-	cpl.set_luminance (dcp::Luminance(4.5, dcp::Luminance::FOOT_LAMBERT));
+	cpl.set_luminance (dcp::Luminance(4.5, dcp::Luminance::Unit::FOOT_LAMBERT));
 	cpl.set_issuer ("libdcp1.6.4devel");
 	cpl.set_creator ("libdcp1.6.4devel");
 
-	dcp::MainSoundConfiguration msc(dcp::SEVEN_POINT_ONE, 16);
-	msc.set_mapping (0, dcp::LEFT);
-	msc.set_mapping (1, dcp::RIGHT);
-	msc.set_mapping (2, dcp::CENTRE);
-	msc.set_mapping (3, dcp::LFE);
-	msc.set_mapping (13, dcp::SYNC_SIGNAL);
+	dcp::MainSoundConfiguration msc(dcp::MCASoundField::SEVEN_POINT_ONE, 16);
+	msc.set_mapping (0, dcp::Channel::LEFT);
+	msc.set_mapping (1, dcp::Channel::RIGHT);
+	msc.set_mapping (2, dcp::Channel::CENTRE);
+	msc.set_mapping (3, dcp::Channel::LFE);
+	msc.set_mapping (13, dcp::Channel::SYNC_SIGNAL);
 	cpl.set_main_sound_configuration (msc.to_string());
 
 	cpl.set_main_sound_sample_rate (48000);
@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 	lt.push_back(dcp::LanguageTag("fr-ZA"));
 	cpl.set_additional_subtitle_languages (lt);
 
-	cpl.write_xml ("build/test/cpl_metadata_write_test1.xml", dcp::SMPTE, shared_ptr<dcp::CertificateChain>());
+	cpl.write_xml ("build/test/cpl_metadata_write_test1.xml", dcp::Standard::SMPTE, shared_ptr<dcp::CertificateChain>());
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test1.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_write_test1.xml"),
@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 BOOST_AUTO_TEST_CASE (cpl_metadata_roundtrip_test_1)
 {
 	dcp::CPL cpl ("test/ref/cpl_metadata_test1.xml");
-	cpl.write_xml ("build/test/cpl_metadata_roundtrip_test1.xml", dcp::SMPTE, shared_ptr<dcp::CertificateChain>());
+	cpl.write_xml ("build/test/cpl_metadata_roundtrip_test1.xml", dcp::Standard::SMPTE, shared_ptr<dcp::CertificateChain>());
 	vector<string> ignore;
 	ignore.push_back ("Id");
 	check_xml (
@@ -337,18 +337,18 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test2)
 {
 	RNGFixer fix;
 
-	dcp::CPL cpl("", dcp::FEATURE);
+	dcp::CPL cpl("", dcp::ContentKind::FEATURE);
 	cpl.set_issue_date ("2020-08-28T13:35:06+02:00");
 	cpl.set_content_version (dcp::ContentVersion("id", "version"));
 	cpl.set_issuer ("libdcp1.6.4devel");
 	cpl.set_creator ("libdcp1.6.4devel");
 
-	dcp::MainSoundConfiguration msc(dcp::SEVEN_POINT_ONE, 16);
-	msc.set_mapping (0, dcp::LEFT);
-	msc.set_mapping (1, dcp::RIGHT);
-	msc.set_mapping (2, dcp::CENTRE);
-	msc.set_mapping (3, dcp::LFE);
-	msc.set_mapping (13, dcp::SYNC_SIGNAL);
+	dcp::MainSoundConfiguration msc(dcp::MCASoundField::SEVEN_POINT_ONE, 16);
+	msc.set_mapping (0, dcp::Channel::LEFT);
+	msc.set_mapping (1, dcp::Channel::RIGHT);
+	msc.set_mapping (2, dcp::Channel::CENTRE);
+	msc.set_mapping (3, dcp::Channel::LFE);
+	msc.set_mapping (13, dcp::Channel::SYNC_SIGNAL);
 	cpl.set_main_sound_configuration (msc.to_string());
 
 	cpl.set_main_sound_sample_rate (48000);
@@ -359,7 +359,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test2)
 	reel->add (black_picture_asset("build/test/cpl_metadata_write_test1"));
 	cpl.add (reel);
 
-	cpl.write_xml ("build/test/cpl_metadata_write_test2.xml", dcp::SMPTE, shared_ptr<dcp::CertificateChain>());
+	cpl.write_xml ("build/test/cpl_metadata_write_test2.xml", dcp::Standard::SMPTE, shared_ptr<dcp::CertificateChain>());
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test2.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_write_test2.xml"),
@@ -384,10 +384,10 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test2)
 	BOOST_CHECK (!cpl.luminance());
 
 	dcp::MainSoundConfiguration msc(cpl.main_sound_configuration().get());
-	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::LEFT);
-	BOOST_CHECK_EQUAL (msc.mapping(1).get(), dcp::RIGHT);
-	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::CENTRE);
-	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::LFE);
+	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::Channel::LEFT);
+	BOOST_CHECK_EQUAL (msc.mapping(1).get(), dcp::Channel::RIGHT);
+	BOOST_CHECK_EQUAL (msc.mapping(2).get(), dcp::Channel::CENTRE);
+	BOOST_CHECK_EQUAL (msc.mapping(3).get(), dcp::Channel::LFE);
 	BOOST_CHECK (!msc.mapping(4));
 	BOOST_CHECK (!msc.mapping(5));
 	BOOST_CHECK (!msc.mapping(6));
@@ -397,7 +397,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test2)
 	BOOST_CHECK (!msc.mapping(10));
 	BOOST_CHECK (!msc.mapping(11));
 	BOOST_CHECK (!msc.mapping(12));
-	BOOST_CHECK_EQUAL (msc.mapping(13).get(), dcp::SYNC_SIGNAL);
+	BOOST_CHECK_EQUAL (msc.mapping(13).get(), dcp::Channel::SYNC_SIGNAL);
 
 	BOOST_CHECK_EQUAL (cpl.main_sound_sample_rate().get(), 48000);
 	BOOST_CHECK (cpl.main_picture_stored_area().get() == dcp::Size(1998, 1080));
@@ -412,7 +412,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test2)
 BOOST_AUTO_TEST_CASE (cpl_metadata_roundtrip_test_2)
 {
 	dcp::CPL cpl ("test/ref/cpl_metadata_test2.xml");
-	cpl.write_xml ("build/test/cpl_metadata_roundtrip_test2.xml", dcp::SMPTE, shared_ptr<dcp::CertificateChain>());
+	cpl.write_xml ("build/test/cpl_metadata_roundtrip_test2.xml", dcp::Standard::SMPTE, shared_ptr<dcp::CertificateChain>());
 	vector<string> ignore;
 	ignore.push_back ("Id");
 	check_xml (

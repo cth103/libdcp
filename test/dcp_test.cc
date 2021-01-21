@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 	RNGFixer fixer;
 
 	make_simple("build/test/DCP/dcp_test1")->write_xml(
-		dcp::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "A Test DCP"
+		dcp::Standard::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "A Test DCP"
 		);
 
 	/* build/test/DCP/dcp_test1 is checked against test/ref/DCP/dcp_test1 by run/tests */
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	boost::filesystem::remove_all ("build/test/DCP/dcp_test2");
 	boost::filesystem::create_directories ("build/test/DCP/dcp_test2");
 	dcp::DCP d ("build/test/DCP/dcp_test2");
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::FEATURE);
 	cpl->set_content_version (
 		dcp::ContentVersion("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00", "81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00")
 		);
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
 	cpl->set_annotation_text ("A Test DCP");
 
-	shared_ptr<dcp::StereoPictureAsset> mp (new dcp::StereoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
+	shared_ptr<dcp::StereoPictureAsset> mp (new dcp::StereoPictureAsset (dcp::Fraction (24, 1), dcp::Standard::SMPTE));
 	mp->set_metadata (mxf_meta);
 	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test2/video.mxf", false);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
@@ -110,7 +110,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	}
 	picture_writer->finalize ();
 
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::SMPTE));
+	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE));
 	ms->set_metadata (mxf_meta);
 	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf", vector<dcp::Channel>());
 
@@ -131,16 +131,14 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 
 	sound_writer->finalize ();
 
-	cpl->add (shared_ptr<dcp::Reel> (
-			  new dcp::Reel (
-				  shared_ptr<dcp::ReelStereoPictureAsset> (new dcp::ReelStereoPictureAsset (mp, 0)),
-				  shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (ms, 0))
-				  )
+	cpl->add (make_shared<dcp::Reel>(
+			  make_shared<dcp::ReelStereoPictureAsset>(mp, 0),
+			  make_shared<dcp::ReelSoundAsset>(ms, 0)
 			  ));
 
 	d.add (cpl);
 
-	d.write_xml (dcp::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp");
+	d.write_xml (dcp::Standard::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp");
 
 	/* build/test/DCP/dcp_test2 is checked against test/ref/DCP/dcp_test2 by run/tests */
 }
@@ -200,7 +198,7 @@ test_rewriting_sound(string name, bool modify)
 	reel->add(make_shared<dcp::ReelMonoPictureAsset>(make_shared<dcp::MonoPictureAsset>(path("build") / "test" / name / picture), 0));
 
 	auto reader = A_sound->asset()->start_read();
-	auto sound = make_shared<dcp::SoundAsset>(A_sound->asset()->edit_rate(), A_sound->asset()->sampling_rate(), A_sound->asset()->channels(), dcp::LanguageTag("en-US"), dcp::SMPTE);
+	auto sound = make_shared<dcp::SoundAsset>(A_sound->asset()->edit_rate(), A_sound->asset()->sampling_rate(), A_sound->asset()->channels(), dcp::LanguageTag("en-US"), dcp::Standard::SMPTE);
 	auto writer = sound->start_write(path("build") / "test" / name / "pcm_8246f87f-e1df-4c42-a290-f3b3069ff021.mxf", {});
 
 	bool need_to_modify = modify;
@@ -229,11 +227,11 @@ test_rewriting_sound(string name, bool modify)
 	reel->add(make_shared<dcp::ReelSoundAsset>(sound, 0));
 	reel->add(simple_markers());
 
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
 	cpl->add (reel);
 
 	B.add (cpl);
-	B.write_xml (dcp::SMPTE);
+	B.write_xml (dcp::Standard::SMPTE);
 
 	dcp::EqualityOptions eq;
 	eq.reel_hashes_can_differ = true;
@@ -272,7 +270,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	boost::filesystem::remove_all ("build/test/DCP/dcp_test5");
 	boost::filesystem::create_directories ("build/test/DCP/dcp_test5");
 	dcp::DCP d ("build/test/DCP/dcp_test5");
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::FEATURE);
 	cpl->set_content_version (
 		dcp::ContentVersion("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00", "81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00")
 		);
@@ -281,7 +279,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
 	cpl->set_annotation_text ("A Test DCP");
 
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
+	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	mp->set_metadata (mxf_meta);
 	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test5/video.mxf", false);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
@@ -290,7 +288,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	}
 	picture_writer->finalize ();
 
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::SMPTE));
+	auto ms = make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
 	ms->set_metadata (mxf_meta);
 	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test5/audio.mxf", vector<dcp::Channel>());
 
@@ -325,7 +323,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 
 	d.add (cpl);
 
-	d.write_xml (dcp::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp");
+	d.write_xml (dcp::Standard::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp");
 
 	/* build/test/DCP/dcp_test5 is checked against test/ref/DCP/dcp_test5 by run/tests */
 }
@@ -350,7 +348,7 @@ BOOST_AUTO_TEST_CASE (dcp_test7)
 	RNGFixer fix;
 
 	make_simple("build/test/DCP/dcp_test7")->write_xml(
-		dcp::INTEROP,  "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp"
+		dcp::Standard::INTEROP, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp"
 		);
 
 	/* build/test/DCP/dcp_test7 is checked against test/ref/DCP/dcp_test7 by run/tests */

@@ -601,7 +601,7 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
 	xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
 	signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
 
-	if (standard == INTEROP) {
+	if (standard == Standard::INTEROP) {
 		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
 	} else {
 		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");

@@ -158,7 +158,7 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 #pragma omp critical
 #endif
 			{
-				note (DCP_PROGRESS, String::compose ("Compared video frame %1 of %2", i, _intrinsic_duration));
+				note (NoteType::PROGRESS, String::compose("Compared video frame %1 of %2", i, _intrinsic_duration));
 				for (list<pair<NoteType, string> >::const_iterator i = notes.begin(); i != notes.end(); ++i) {
 					note (i->first, i->second);
 				}

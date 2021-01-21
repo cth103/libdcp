@@ -68,9 +68,9 @@ string
 ReelClosedCaptionAsset::cpl_node_name (Standard standard) const
 {
 	switch (standard) {
-	case INTEROP:
+	case Standard::INTEROP:
 		return "cc-cpl:MainClosedCaption";
-	case SMPTE:
+	case Standard::SMPTE:
 		return "tt:ClosedCaption";
 	}
 
@@ -81,9 +81,9 @@ pair<string, string>
 ReelClosedCaptionAsset::cpl_node_namespace (Standard standard) const
 {
 	switch (standard) {
-	case INTEROP:
+	case Standard::INTEROP:
 		return make_pair ("http://www.digicine.com/PROTO-ASDCP-CC-CPL-20070926#", "cc-cpl");
-	case SMPTE:
+	case Standard::SMPTE:
 		return make_pair ("http://www.smpte-ra.org/schemas/429-12/2008/TT", "tt");
 	}
 

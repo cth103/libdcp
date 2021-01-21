@@ -143,7 +143,7 @@ main_picture (vector<string> const& only, shared_ptr<Reel> reel, bool analyse, b
 		OUTPUT_PICTURE(
 			" duration %1 (%2) intrinsic %3",
 			*mp->duration(),
-			dcp::Time(*mp->duration(), mp->frame_rate().as_float(), mp->frame_rate().as_float()).as_string(dcp::SMPTE),
+			dcp::Time(*mp->duration(), mp->frame_rate().as_float(), mp->frame_rate().as_float()).as_string(dcp::Standard::SMPTE),
 		     	mp->intrinsic_duration()
 			);
 	} else {
@@ -433,7 +433,7 @@ main (int argc, char* argv[])
 		}
 	}
 
-	OUTPUT_TOTAL_TIME("Total: %1\n", total_time.as_string(dcp::SMPTE));
+	OUTPUT_TOTAL_TIME("Total: %1\n", total_time.as_string(dcp::Standard::SMPTE));
 
 	return 0;
 }

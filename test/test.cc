@@ -264,7 +264,7 @@ simple_picture (boost::filesystem::path path, string suffix, int frames)
 	mxf_meta.product_name = "OpenDCP";
 	mxf_meta.product_version = "0.0.25";
 
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
+	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::Standard::SMPTE));
 	mp->set_metadata (mxf_meta);
 	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write (path / dcp::String::compose("video%1.mxf", suffix), false);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
@@ -283,11 +283,11 @@ simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_
 	int const channels = 6;
 
 	/* Set a valid language, then overwrite it, so that the language parameter can be badly formed */
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), sample_rate, channels, dcp::LanguageTag("en-US"), dcp::SMPTE));
+	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), sample_rate, channels, dcp::LanguageTag("en-US"), dcp::Standard::SMPTE));
 	ms->_language = language;
 	ms->set_metadata (mxf_meta);
 	vector<dcp::Channel> active_channels;
-	active_channels.push_back (dcp::LEFT);
+	active_channels.push_back (dcp::Channel::LEFT);
 	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / dcp::String::compose("audio%1.mxf", suffix), active_channels);
 
 	int const samples_per_frame = sample_rate / 24;
@@ -323,8 +323,8 @@ make_simple (boost::filesystem::path path, int reels, int frames)
 
 	boost::filesystem::remove_all (path);
 	boost::filesystem::create_directories (path);
-	shared_ptr<dcp::DCP> d (new dcp::DCP (path));
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::TRAILER));
+	auto d = make_shared<dcp::DCP>(path);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
 	cpl->set_annotation_text ("A Test DCP");
 	cpl->set_issuer ("OpenDCP 0.0.25");
 	cpl->set_creator ("OpenDCP 0.0.25");
@@ -369,28 +369,26 @@ make_simple (boost::filesystem::path path, int reels, int frames)
 shared_ptr<dcp::Subtitle>
 simple_subtitle ()
 {
-	return shared_ptr<dcp::Subtitle>(
-		new dcp::SubtitleString(
-			optional<string>(),
-			false,
-			false,
-			false,
-			dcp::Colour(255, 255, 255),
-			42,
-			1,
-			dcp::Time(0, 0, 4, 0, 24),
-			dcp::Time(0, 0, 8, 0, 24),
-			0.5,
-			dcp::HALIGN_CENTER,
-			0.8,
-			dcp::VALIGN_TOP,
-			dcp::DIRECTION_LTR,
-			"Hello world",
-			dcp::NONE,
-			dcp::Colour(255, 255, 255),
-			dcp::Time(),
-			dcp::Time()
-			)
+	return make_shared<dcp::SubtitleString>(
+		optional<string>(),
+		false,
+		false,
+		false,
+		dcp::Colour(255, 255, 255),
+		42,
+		1,
+		dcp::Time(0, 0, 4, 0, 24),
+		dcp::Time(0, 0, 8, 0, 24),
+		0.5,
+		dcp::HAlign::CENTER,
+		0.8,
+		dcp::VAlign::TOP,
+		dcp::Direction::LTR,
+		"Hello world",
+		dcp::Effect::NONE,
+		dcp::Colour(255, 255, 255),
+		dcp::Time(),
+		dcp::Time()
 		);
 }
 
@@ -497,7 +495,7 @@ black_picture_asset (boost::filesystem::path dir, int frames)
 	dcp::ArrayData frame = dcp::compress_j2k (image, 100000000, 24, false, false);
 	BOOST_REQUIRE (frame.size() < 230000000 / (24 * 8));
 
-	shared_ptr<dcp::MonoPictureAsset> asset(new dcp::MonoPictureAsset(dcp::Fraction(24, 1), dcp::SMPTE));
+	auto asset = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 	asset->set_metadata (dcp::MXFMetadata("libdcp", "libdcp", "1.6.4devel"));
 	boost::filesystem::create_directories (dir);
 	shared_ptr<dcp::PictureAssetWriter> writer = asset->start_write (dir / "pic.mxf", true);

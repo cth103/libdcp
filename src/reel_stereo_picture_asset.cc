@@ -67,9 +67,9 @@ pair<string, string>
 ReelStereoPictureAsset::cpl_node_attribute (Standard standard) const
 {
 	switch (standard) {
-	case INTEROP:
+	case Standard::INTEROP:
 		return make_pair ("xmlns:msp-cpl", "http://www.digicine.com/schemas/437-Y/2007/Main-Stereo-Picture-CPL");
-	case SMPTE:
+	case Standard::SMPTE:
 		return make_pair ("xmlns:msp-cpl", "http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL");
 	}
 

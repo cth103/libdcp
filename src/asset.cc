@@ -146,7 +146,7 @@ bool
 Asset::equals (std::shared_ptr<const Asset> other, EqualityOptions, NoteHandler note) const
 {
 	if (_hash != other->_hash) {
-		note (DCP_ERROR, "Asset: hashes differ");
+		note (NoteType::ERROR, "Asset: hashes differ");
 		return false;
 	}
 

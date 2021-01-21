@@ -68,6 +68,8 @@ public:
 	class Part : public Data
 	{
 	public:
+		Part (std::shared_ptr<ASDCP::JP2K::SFrameBuffer> buffer, Eye eye);
+
 		uint8_t const * data () const;
 		uint8_t * data ();
 		int size () const;
@@ -75,7 +77,6 @@ public:
 	private:
 		friend class StereoPictureFrame;
 
-		Part (std::shared_ptr<ASDCP::JP2K::SFrameBuffer> buffer, Eye eye);
 		ASDCP::JP2K::FrameBuffer& mono () const;
 
 		std::shared_ptr<ASDCP::JP2K::SFrameBuffer> _buffer;

@@ -160,7 +160,7 @@ bool
 Reel::equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandler note) const
 {
 	if ((_main_picture && !other->_main_picture) || (!_main_picture && other->_main_picture)) {
-		note (DCP_ERROR, "Reel: picture assets differ");
+		note (NoteType::ERROR, "Reel: picture assets differ");
 		return false;
 	}
 
@@ -169,7 +169,7 @@ Reel::equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandle
 	}
 
 	if ((_main_sound && !other->_main_sound) || (!_main_sound && other->_main_sound)) {
-		note (DCP_ERROR, "Reel: sound assets differ");
+		note (NoteType::ERROR, "Reel: sound assets differ");
 		return false;
 	}
 
@@ -178,7 +178,7 @@ Reel::equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandle
 	}
 
 	if ((_main_subtitle && !other->_main_subtitle) || (!_main_subtitle && other->_main_subtitle)) {
-		note (DCP_ERROR, "Reel: subtitle assets differ");
+		note (NoteType::ERROR, "Reel: subtitle assets differ");
 		return false;
 	}
 
@@ -187,12 +187,12 @@ Reel::equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandle
 	}
 
 	if ((_main_markers && !other->_main_markers) || (!_main_markers && other->_main_markers)) {
-		note (DCP_ERROR, "Reel: one has markers and the other does not");
+		note (NoteType::ERROR, "Reel: one has markers and the other does not");
 		return false;
 	}
 
 	if (_main_markers && !_main_markers->equals(other->_main_markers, opt, note)) {
-		note (DCP_ERROR, "Reel: marker assets differ");
+		note (NoteType::ERROR, "Reel: marker assets differ");
 		return false;
 	}
 
@@ -211,7 +211,7 @@ Reel::equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandle
 	}
 
 	if ((_atmos && !other->_atmos) || (!_atmos && other->_atmos)) {
-		note (DCP_ERROR, "Reel: atmos assets differ");
+		note (NoteType::ERROR, "Reel: atmos assets differ");
 		return false;
 	}
 

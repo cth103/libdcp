@@ -124,9 +124,9 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 
 	asset_map.read_file (_asset_map.get());
 	if (asset_map.namespace_uri() == assetmap_interop_ns) {
-		_standard = INTEROP;
+		_standard = Standard::INTEROP;
 	} else if (asset_map.namespace_uri() == assetmap_smpte_ns) {
-		_standard = SMPTE;
+		_standard = Standard::SMPTE;
 	} else {
 		boost::throw_exception (XMLError ("Unrecognised Assetmap namespace " + asset_map.namespace_uri()));
 	}
@@ -143,14 +143,14 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			p = p.substr (7);
 		}
 		switch (*_standard) {
-		case INTEROP:
+		case Standard::INTEROP:
 			if (i->optional_node_child("PackingList")) {
 				pkl_paths.push_back (p);
 			} else {
 				paths.insert (make_pair (remove_urn_uuid (i->string_child ("Id")), p));
 			}
 			break;
-		case SMPTE:
+		case Standard::SMPTE:
 		{
 			auto pkl_bool = i->optional_string_child("PackingList");
 			if (pkl_bool && *pkl_bool == "true") {
@@ -239,7 +239,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 				}
 				_cpls.push_back (cpl);
 			} else if (root == "DCSubtitle") {
-				if (_standard && _standard.get() == SMPTE && notes) {
+				if (_standard && _standard.get() == Standard::SMPTE && notes) {
 					notes->push_back (VerificationNote(VerificationNote::VERIFY_ERROR, VerificationNote::MISMATCHED_STANDARD));
 				}
 				other_assets.push_back (make_shared<InteropSubtitleAsset>(path));
@@ -290,7 +290,7 @@ DCP::equals (DCP const & other, EqualityOptions opt, NoteHandler note) const
 	auto b = other.cpls ();
 
 	if (a.size() != b.size()) {
-		note (DCP_ERROR, String::compose ("CPL counts differ: %1 vs %2", a.size(), b.size()));
+		note (NoteType::ERROR, String::compose ("CPL counts differ: %1 vs %2", a.size(), b.size()));
 		return false;
 	}
 
@@ -367,12 +367,12 @@ DCP::add (DecryptedKDM const & kdm)
 void
 DCP::write_volindex (Standard standard) const
 {
-	boost::filesystem::path p = _directory;
+	auto p = _directory;
 	switch (standard) {
-	case INTEROP:
+	case Standard::INTEROP:
 		p /= "VOLINDEX";
 		break;
-	case SMPTE:
+	case Standard::SMPTE:
 		p /= "VOLINDEX.xml";
 		break;
 	default:
@@ -383,10 +383,10 @@ DCP::write_volindex (Standard standard) const
 	xmlpp::Element* root;
 
 	switch (standard) {
-	case INTEROP:
+	case Standard::INTEROP:
 		root = doc.create_root_node ("VolumeIndex", volindex_interop_ns);
 		break;
-	case SMPTE:
+	case Standard::SMPTE:
 		root = doc.create_root_node ("VolumeIndex", volindex_smpte_ns);
 		break;
 	default:
@@ -406,10 +406,10 @@ DCP::write_assetmap (
 	auto p = _directory;
 
 	switch (standard) {
-	case INTEROP:
+	case Standard::INTEROP:
 		p /= "ASSETMAP";
 		break;
-	case SMPTE:
+	case Standard::SMPTE:
 		p /= "ASSETMAP.xml";
 		break;
 	default:
@@ -420,10 +420,10 @@ DCP::write_assetmap (
 	xmlpp::Element* root;
 
 	switch (standard) {
-	case INTEROP:
+	case Standard::INTEROP:
 		root = doc.create_root_node ("AssetMap", assetmap_interop_ns);
 		break;
-	case SMPTE:
+	case Standard::SMPTE:
 		root = doc.create_root_node ("AssetMap", assetmap_smpte_ns);
 		break;
 	default:
@@ -434,13 +434,13 @@ DCP::write_assetmap (
 	root->add_child("AnnotationText")->add_child_text (annotation_text);
 
 	switch (standard) {
-	case INTEROP:
+	case Standard::INTEROP:
 		root->add_child("VolumeCount")->add_child_text ("1");
 		root->add_child("IssueDate")->add_child_text (issue_date);
 		root->add_child("Issuer")->add_child_text (issuer);
 		root->add_child("Creator")->add_child_text (creator);
 		break;
-	case SMPTE:
+	case Standard::SMPTE:
 		root->add_child("Creator")->add_child_text (creator);
 		root->add_child("VolumeCount")->add_child_text ("1");
 		root->add_child("IssueDate")->add_child_text (issue_date);

@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_same_asset_filenames_test)
 	boost::filesystem::path const out = "build/test/combine_two_dcps_with_same_asset_filenames_test";
 
 	shared_ptr<dcp::DCP> second = make_simple ("build/test/combine_input2");
-	second->write_xml (dcp::SMPTE);
+	second->write_xml (dcp::Standard::SMPTE);
 
 	remove_all (out);
 	vector<path> inputs;
@@ -198,10 +198,10 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_interop_subs_test)
 	boost::filesystem::path const out = "build/test/combine_two_dcps_with_interop_subs_test";
 
 	shared_ptr<dcp::DCP> first = make_simple_with_interop_subs ("build/test/combine_input1");
-	first->write_xml (dcp::INTEROP);
+	first->write_xml (dcp::Standard::INTEROP);
 
 	shared_ptr<dcp::DCP> second = make_simple_with_interop_subs ("build/test/combine_input2");
-	second->write_xml (dcp::INTEROP);
+	second->write_xml (dcp::Standard::INTEROP);
 
 	remove_all (out);
 	vector<path> inputs;
@@ -221,10 +221,10 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_smpte_subs_test)
 	boost::filesystem::path const out = "build/test/combine_two_dcps_with_smpte_subs_test";
 
 	shared_ptr<dcp::DCP> first = make_simple_with_smpte_subs ("build/test/combine_input1");
-	first->write_xml (dcp::SMPTE);
+	first->write_xml (dcp::Standard::SMPTE);
 
 	shared_ptr<dcp::DCP> second = make_simple_with_smpte_subs ("build/test/combine_input2");
-	second->write_xml (dcp::SMPTE);
+	second->write_xml (dcp::Standard::SMPTE);
 
 	remove_all (out);
 	vector<path> inputs;
@@ -244,10 +244,10 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_interop_ccaps_test)
 	boost::filesystem::path const out = "build/test/combine_two_dcps_with_interop_ccaps_test";
 
 	shared_ptr<dcp::DCP> first = make_simple_with_interop_ccaps ("build/test/combine_input1");
-	first->write_xml (dcp::INTEROP);
+	first->write_xml (dcp::Standard::INTEROP);
 
 	shared_ptr<dcp::DCP> second = make_simple_with_interop_ccaps ("build/test/combine_input2");
-	second->write_xml (dcp::INTEROP);
+	second->write_xml (dcp::Standard::INTEROP);
 
 	remove_all (out);
 	vector<path> inputs;
@@ -267,10 +267,10 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_smpte_ccaps_test)
 	boost::filesystem::path const out = "build/test/combine_two_dcps_with_interop_ccaps_test";
 
 	shared_ptr<dcp::DCP> first = make_simple_with_smpte_ccaps ("build/test/combine_input1");
-	first->write_xml (dcp::SMPTE);
+	first->write_xml (dcp::Standard::SMPTE);
 
 	shared_ptr<dcp::DCP> second = make_simple_with_smpte_ccaps ("build/test/combine_input2");
-	second->write_xml (dcp::SMPTE);
+	second->write_xml (dcp::Standard::SMPTE);
 
 	remove_all (out);
 	vector<path> inputs;
@@ -290,10 +290,10 @@ BOOST_AUTO_TEST_CASE (combine_two_multi_reel_dcps)
 	boost::filesystem::path const out = "build/test/combine_two_multi_reel_dcps";
 
 	shared_ptr<dcp::DCP> first = make_simple ("build/test/combine_input1", 4);
-	first->write_xml (dcp::SMPTE);
+	first->write_xml (dcp::Standard::SMPTE);
 
 	shared_ptr<dcp::DCP> second = make_simple ("build/test/combine_input2", 4);
-	second->write_xml (dcp::SMPTE);
+	second->write_xml (dcp::Standard::SMPTE);
 
 	remove_all (out);
 	vector<path> inputs;
@@ -312,7 +312,7 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_shared_asset)
 	boost::filesystem::path const out = "build/test/combine_two_dcps_with_shared_asset";
 
 	shared_ptr<dcp::DCP> first = make_simple ("build/test/combine_input1", 1);
-	first->write_xml (dcp::SMPTE);
+	first->write_xml (dcp::Standard::SMPTE);
 
 	remove_all ("build/test/combine_input2");
 	shared_ptr<dcp::DCP> second(new dcp::DCP("build/test/combine_input2"));
@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_shared_asset)
 	mxf_meta.company_name = "OpenDCP";
 	mxf_meta.product_version = "0.0.25";
 
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL("A Test DCP", dcp::TRAILER));
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
 	cpl->set_content_version (
 		dcp::ContentVersion("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11","content-version-label-text")
 		);
@@ -331,13 +331,13 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_shared_asset)
 	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
 	cpl->set_version_number(1);
 
-	shared_ptr<dcp::ReelMonoPictureAsset> pic(new dcp::ReelMonoPictureAsset(simple_picture("build/test/combine_input2", ""), 0));
-	shared_ptr<dcp::ReelSoundAsset> sound(new dcp::ReelSoundAsset(first->cpls().front()->reels().front()->main_sound()->asset(), 0));
+	auto pic = make_shared<dcp::ReelMonoPictureAsset>(simple_picture("build/test/combine_input2", ""), 0);
+	auto sound = make_shared<dcp::ReelSoundAsset>(first->cpls().front()->reels().front()->main_sound()->asset(), 0);
 	auto reel = make_shared<dcp::Reel>(pic, sound);
 	reel->add (simple_markers());
 	cpl->add (reel);
 	second->add (cpl);
-	second->write_xml (dcp::SMPTE);
+	second->write_xml (dcp::Standard::SMPTE);
 
 	remove_all (out);
 	vector<path> inputs;

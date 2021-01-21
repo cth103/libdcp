@@ -89,15 +89,15 @@ CPL::CPL (string annotation_text, ContentKind content_kind)
 /** Construct a CPL object from a XML file */
 CPL::CPL (boost::filesystem::path file)
 	: Asset (file)
-	, _content_kind (FEATURE)
+	, _content_kind (ContentKind::FEATURE)
 {
 	cxml::Document f ("CompositionPlaylist");
 	f.read_file (file);
 
 	if (f.namespace_uri() == cpl_interop_ns) {
-		_standard = INTEROP;
+		_standard = Standard::INTEROP;
 	} else if (f.namespace_uri() == cpl_smpte_ns) {
-		_standard = SMPTE;
+		_standard = Standard::SMPTE;
 	} else {
 		boost::throw_exception (XMLError ("Unrecognised CPL namespace " + f.namespace_uri()));
 	}
@@ -119,7 +119,7 @@ CPL::CPL (boost::filesystem::path file)
 				)
 			);
 		content_version->done ();
-	} else if (_standard == SMPTE) {
+	} else if (_standard == Standard::SMPTE) {
 		/* ContentVersion is required in SMPTE */
 		throw XMLError ("Missing ContentVersion tag in CPL");
 	}
@@ -171,7 +171,7 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 {
 	xmlpp::Document doc;
 	xmlpp::Element* root;
-	if (standard == INTEROP) {
+	if (standard == Standard::INTEROP) {
 		root = doc.create_root_node ("CompositionPlaylist", cpl_interop_ns);
 	} else {
 		root = doc.create_root_node ("CompositionPlaylist", cpl_smpte_ns);
@@ -207,7 +207,7 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	bool first = true;
 	for (auto i: _reels) {
 		auto asset_list = i->write_to_cpl (reel_list, standard);
-		if (first && standard == dcp::SMPTE) {
+		if (first && standard == Standard::SMPTE) {
 			maybe_write_composition_metadata_asset (asset_list);
 			first = false;
 		}
@@ -554,17 +554,17 @@ CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 
 	if (_annotation_text != other_cpl->_annotation_text && !opt.cpl_annotation_texts_can_differ) {
 		string const s = "CPL: annotation texts differ: " + _annotation_text.get_value_or("") + " vs " + other_cpl->_annotation_text.get_value_or("") + "\n";
-		note (DCP_ERROR, s);
+		note (NoteType::ERROR, s);
 		return false;
 	}
 
 	if (_content_kind != other_cpl->_content_kind) {
-		note (DCP_ERROR, "CPL: content kinds differ");
+		note (NoteType::ERROR, "CPL: content kinds differ");
 		return false;
 	}
 
 	if (_reels.size() != other_cpl->_reels.size()) {
-		note (DCP_ERROR, String::compose ("CPL: reel counts differ (%1 vs %2)", _reels.size(), other_cpl->_reels.size()));
+		note (NoteType::ERROR, String::compose ("CPL: reel counts differ (%1 vs %2)", _reels.size(), other_cpl->_reels.size()));
 		return false;
 	}
 
@@ -640,9 +640,9 @@ string
 CPL::static_pkl_type (Standard standard)
 {
 	switch (standard) {
-	case INTEROP:
+	case Standard::INTEROP:
 		return "text/xml;asdcpKind=CPL";
-	case SMPTE:
+	case Standard::SMPTE:
 		return "text/xml";
 	default:
 		DCP_ASSERT (false);

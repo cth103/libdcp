@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -47,6 +47,7 @@
 using std::string;
 using std::shared_ptr;
 using std::vector;
+using std::make_shared;
 using boost::optional;
 
 /** Test dcp::order::Font::take_intersection */
@@ -96,10 +97,10 @@ BOOST_AUTO_TEST_CASE (take_difference_test)
 /** Test dcp::order::Subtitle::pull_fonts */
 BOOST_AUTO_TEST_CASE (pull_fonts_test1)
 {
-	shared_ptr<dcp::order::Part> root (new dcp::order::Part (shared_ptr<dcp::order::Part> ()));
-	shared_ptr<dcp::order::Subtitle> sub1 (new dcp::order::Subtitle (root, dcp::Time(), dcp::Time(), dcp::Time(), dcp::Time()));
+	auto root = make_shared<dcp::order::Part>(shared_ptr<dcp::order::Part>());
+	auto sub1 = make_shared<dcp::order::Subtitle>(root, dcp::Time(), dcp::Time(), dcp::Time(), dcp::Time());
 	root->children.push_back (sub1);
-	shared_ptr<dcp::order::Text> text1 (new dcp::order::Text (sub1, dcp::HALIGN_CENTER, 0, dcp::VALIGN_TOP, 0, dcp::DIRECTION_LTR));
+	auto text1 = make_shared<dcp::order::Text>(sub1, dcp::HAlign::CENTER, 0, dcp::VAlign::TOP, 0, dcp::Direction::LTR);
 	sub1->children.push_back (text1);
 	text1->font._values["font"] = "Inconsolata";
 	text1->font._values["size"] = "42";
@@ -118,11 +119,11 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test2)
 	shared_ptr<dcp::order::Part> root (new dcp::order::Part (shared_ptr<dcp::order::Part> ()));
 	shared_ptr<dcp::order::Subtitle> sub1 (new dcp::order::Subtitle (root, dcp::Time(), dcp::Time(), dcp::Time(), dcp::Time()));
 	root->children.push_back (sub1);
-	shared_ptr<dcp::order::Text> text1 (new dcp::order::Text (sub1, dcp::HALIGN_CENTER, 0, dcp::VALIGN_TOP, 0, dcp::DIRECTION_LTR));
+	shared_ptr<dcp::order::Text> text1 (new dcp::order::Text (sub1, dcp::HAlign::CENTER, 0, dcp::VAlign::TOP, 0, dcp::Direction::LTR));
 	sub1->children.push_back (text1);
 	text1->font._values["font"] = "Inconsolata";
 	text1->font._values["size"] = "42";
-	shared_ptr<dcp::order::Text> text2 (new dcp::order::Text (sub1, dcp::HALIGN_CENTER, 0, dcp::VALIGN_TOP, 0, dcp::DIRECTION_LTR));
+	shared_ptr<dcp::order::Text> text2 (new dcp::order::Text (sub1, dcp::HAlign::CENTER, 0, dcp::VAlign::TOP, 0, dcp::Direction::LTR));
 	sub1->children.push_back (text2);
 	text2->font._values["font"] = "Inconsolata";
 	text2->font._values["size"] = "48";
@@ -143,7 +144,7 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test3)
 	shared_ptr<dcp::order::Part> root (new dcp::order::Part (shared_ptr<dcp::order::Part> ()));
 	shared_ptr<dcp::order::Subtitle> sub1 (new dcp::order::Subtitle (root, dcp::Time(), dcp::Time(), dcp::Time(), dcp::Time()));
 	root->children.push_back (sub1);
-	shared_ptr<dcp::order::Text> text1 (new dcp::order::Text (sub1, dcp::HALIGN_CENTER, 0, dcp::VALIGN_TOP, 0, dcp::DIRECTION_LTR));
+	shared_ptr<dcp::order::Text> text1 (new dcp::order::Text (sub1, dcp::HAlign::CENTER, 0, dcp::VAlign::TOP, 0, dcp::Direction::LTR));
 	sub1->children.push_back (text1);
 	dcp::order::Font font;
 	font._values["font"] = "Inconsolata";
@@ -179,12 +180,12 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 				dcp::Time (0, 4,  9, 22, 24),
 				dcp::Time (0, 4, 11, 22, 24),
 				0,
-				dcp::HALIGN_CENTER,
+				dcp::HAlign::CENTER,
 				0.8,
-				dcp::VALIGN_TOP,
-				dcp::DIRECTION_LTR,
+				dcp::VAlign::TOP,
+				dcp::Direction::LTR,
 				"Hello world",
-				dcp::NONE,
+				dcp::Effect::NONE,
 				dcp::Colour (0, 0, 0),
 				dcp::Time (0, 0, 0, 0, 24),
 				dcp::Time (0, 0, 0, 0, 24)
@@ -205,12 +206,12 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 				dcp::Time (5, 41,  0, 21, 24),
 				dcp::Time (6, 12, 15, 21, 24),
 				0,
-				dcp::HALIGN_CENTER,
+				dcp::HAlign::CENTER,
 				0.4,
-				dcp::VALIGN_BOTTOM,
-				dcp::DIRECTION_LTR,
+				dcp::VAlign::BOTTOM,
+				dcp::Direction::LTR,
 				"What's going on",
-				dcp::BORDER,
+				dcp::Effect::BORDER,
 				dcp::Colour (1, 2, 3),
 				dcp::Time (1, 2, 3, 4, 24),
 				dcp::Time (5, 6, 7, 8, 24)
@@ -265,12 +266,12 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 				dcp::Time (0, 4,  9, 22, 24),
 				dcp::Time (0, 4, 11, 22, 24),
 				-0.2,
-				dcp::HALIGN_CENTER,
+				dcp::HAlign::CENTER,
 				0.8,
-				dcp::VALIGN_TOP,
-				dcp::DIRECTION_LTR,
+				dcp::VAlign::TOP,
+				dcp::Direction::LTR,
 				"Hello world",
-				dcp::NONE,
+				dcp::Effect::NONE,
 				dcp::Colour (0, 0, 0),
 				dcp::Time (0, 0, 0, 0, 24),
 				dcp::Time (0, 0, 0, 0, 24)
@@ -291,12 +292,12 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 				dcp::Time (5, 41,  0, 21, 24),
 				dcp::Time (6, 12, 15, 21, 24),
 				-0.2,
-				dcp::HALIGN_CENTER,
+				dcp::HAlign::CENTER,
 				0.4,
-				dcp::VALIGN_BOTTOM,
-				dcp::DIRECTION_LTR,
+				dcp::VAlign::BOTTOM,
+				dcp::Direction::LTR,
 				"What's going on",
-				dcp::BORDER,
+				dcp::Effect::BORDER,
 				dcp::Colour (1, 2, 3),
 				dcp::Time (1, 2, 3, 4, 24),
 				dcp::Time (5, 6, 7, 8, 24)
@@ -345,9 +346,9 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 				dcp::Time (0, 4,  9, 22, 24),
 				dcp::Time (0, 4, 11, 22, 24),
 				0,
-				dcp::HALIGN_CENTER,
+				dcp::HAlign::CENTER,
 				0.8,
-				dcp::VALIGN_TOP,
+				dcp::VAlign::TOP,
 				dcp::Time (0, 0, 0, 0, 24),
 				dcp::Time (0, 0, 0, 0, 24)
 				)
@@ -367,20 +368,20 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 	string const creator = "libdcp";
 	string const annotation_text = "Created by libdcp";
 
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("My film", dcp::FEATURE));
+	auto cpl = make_shared<dcp::CPL>("My film", dcp::ContentKind::FEATURE);
 	cpl->add (reel);
 	cpl->set_issuer (issuer);
 	cpl->set_creator (creator);
 	cpl->set_issue_date (issue_date);
 	cpl->set_annotation_text (annotation_text);
-	optional<dcp::ContentVersion> cv = cpl->content_version();
+	auto cv = cpl->content_version();
 	BOOST_REQUIRE (cv);
 	cv->label_text = "foo";
 	cpl->set_content_version (*cv);
 
 	dcp::DCP dcp ("build/test/write_interop_subtitle_test3");
 	dcp.add (cpl);
-	dcp.write_xml (dcp::INTEROP, issuer, creator, issue_date, annotation_text);
+	dcp.write_xml (dcp::Standard::INTEROP, issuer, creator, issue_date, annotation_text);
 
 	check_xml (
 		dcp::file_to_string("test/ref/write_interop_subtitle_test3/subs.xml"),
@@ -412,54 +413,50 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
 	c.add (
-		shared_ptr<dcp::Subtitle> (
-			new dcp::SubtitleString (
-				string ("Frutiger"),
-				false,
-				false,
-				false,
-				dcp::Colour (255, 255, 255),
-				48,
-				1.0,
-				dcp::Time (0, 4,  9, 22, 24),
-				dcp::Time (0, 4, 11, 22, 24),
-				0,
-				dcp::HALIGN_CENTER,
-				0.8,
-				dcp::VALIGN_TOP,
-				dcp::DIRECTION_LTR,
-				"Hello world",
-				dcp::NONE,
-				dcp::Colour (0, 0, 0),
-				dcp::Time (0, 0, 0, 0, 24),
-				dcp::Time (0, 0, 0, 0, 24)
-				)
+		make_shared<dcp::SubtitleString> (
+			string ("Frutiger"),
+			false,
+			false,
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			1.0,
+			dcp::Time (0, 4,  9, 22, 24),
+			dcp::Time (0, 4, 11, 22, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.8,
+			dcp::VAlign::TOP,
+			dcp::Direction::LTR,
+			"Hello world",
+			dcp::Effect::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24)
 			)
 		);
 
 	c.add (
-		shared_ptr<dcp::Subtitle> (
-			new dcp::SubtitleString (
-				boost::optional<string> (),
-				true,
-				true,
-				true,
-				dcp::Colour (128, 0, 64),
-				91,
-				1.0,
-				dcp::Time (5, 41,  0, 21, 24),
-				dcp::Time (6, 12, 15, 21, 24),
-				0,
-				dcp::HALIGN_CENTER,
-				0.4,
-				dcp::VALIGN_BOTTOM,
-				dcp::DIRECTION_RTL,
-				"What's going on",
-				dcp::BORDER,
-				dcp::Colour (1, 2, 3),
-				dcp::Time (1, 2, 3, 4, 24),
-				dcp::Time (5, 6, 7, 8, 24)
-				)
+		make_shared<dcp::SubtitleString>(
+			boost::optional<string> (),
+			true,
+			true,
+			true,
+			dcp::Colour (128, 0, 64),
+			91,
+			1.0,
+			dcp::Time (5, 41,  0, 21, 24),
+			dcp::Time (6, 12, 15, 21, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.4,
+			dcp::VAlign::BOTTOM,
+			dcp::Direction::RTL,
+			"What's going on",
+			dcp::Effect::BORDER,
+			dcp::Colour (1, 2, 3),
+			dcp::Time (1, 2, 3, 4, 24),
+			dcp::Time (5, 6, 7, 8, 24)
 			)
 		);
 
@@ -505,165 +502,153 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
 	c.add (
-		shared_ptr<dcp::Subtitle> (
-			new dcp::SubtitleString (
-				string ("Arial"),
-				false,
-				false,
-				false,
-				dcp::Colour (255, 255, 255),
-				48,
-				1.0,
-				dcp::Time (0, 0, 1, 0, 24),
-				dcp::Time (0, 0, 9, 0, 24),
-				0,
-				dcp::HALIGN_CENTER,
-				0.8,
-				dcp::VALIGN_TOP,
-				dcp::DIRECTION_LTR,
-				"Testing is ",
-				dcp::NONE,
-				dcp::Colour (0, 0, 0),
-				dcp::Time (0, 0, 0, 0, 24),
-				dcp::Time (0, 0, 0, 0, 24)
-				)
+		make_shared<dcp::SubtitleString>(
+			string ("Arial"),
+			false,
+			false,
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			1.0,
+			dcp::Time (0, 0, 1, 0, 24),
+			dcp::Time (0, 0, 9, 0, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.8,
+			dcp::VAlign::TOP,
+			dcp::Direction::LTR,
+			"Testing is ",
+			dcp::Effect::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24)
 			)
 		);
 
 	c.add (
-		shared_ptr<dcp::Subtitle> (
-			new dcp::SubtitleString (
-				string ("Arial"),
-				true,
-				false,
-				false,
-				dcp::Colour (255, 255, 255),
-				48,
-				1.0,
-				dcp::Time (0, 0, 1, 0, 24),
-				dcp::Time (0, 0, 9, 0, 24),
-				0,
-				dcp::HALIGN_CENTER,
-				0.8,
-				dcp::VALIGN_TOP,
-				dcp::DIRECTION_LTR,
-				"really",
-				dcp::NONE,
-				dcp::Colour (0, 0, 0),
-				dcp::Time (0, 0, 0, 0, 24),
-				dcp::Time (0, 0, 0, 0, 24)
-				)
+		make_shared<dcp::SubtitleString>(
+			string ("Arial"),
+			true,
+			false,
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			1.0,
+			dcp::Time (0, 0, 1, 0, 24),
+			dcp::Time (0, 0, 9, 0, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.8,
+			dcp::VAlign::TOP,
+			dcp::Direction::LTR,
+			"really",
+			dcp::Effect::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24)
 			)
 		);
 
 	c.add (
-		shared_ptr<dcp::Subtitle> (
-			new dcp::SubtitleString (
-				string ("Arial"),
-				false,
-				false,
-				false,
-				dcp::Colour (255, 255, 255),
-				48,
-				1.0,
-				dcp::Time (0, 0, 1, 0, 24),
-				dcp::Time (0, 0, 9, 0, 24),
-				0,
-				dcp::HALIGN_CENTER,
-				0.8,
-				dcp::VALIGN_TOP,
-				dcp::DIRECTION_LTR,
-				" fun",
-				dcp::NONE,
-				dcp::Colour (0, 0, 0),
-				dcp::Time (0, 0, 0, 0, 24),
-				dcp::Time (0, 0, 0, 0, 24)
-				)
+		make_shared<dcp::SubtitleString>(
+			string ("Arial"),
+			false,
+			false,
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			1.0,
+			dcp::Time (0, 0, 1, 0, 24),
+			dcp::Time (0, 0, 9, 0, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.8,
+			dcp::VAlign::TOP,
+			dcp::Direction::LTR,
+			" fun",
+			dcp::Effect::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24)
 			)
 		);
 
 	c.add (
-		shared_ptr<dcp::Subtitle> (
-			new dcp::SubtitleString (
-				string ("Arial"),
-				false,
-				false,
-				false,
-				dcp::Colour (255, 255, 255),
-				48,
-				1.0,
-				dcp::Time (0, 0, 1, 0, 24),
-				dcp::Time (0, 0, 9, 0, 24),
-				0,
-				dcp::HALIGN_CENTER,
-				0.9,
-				dcp::VALIGN_TOP,
-				dcp::DIRECTION_LTR,
-				"This is the ",
-				dcp::NONE,
-				dcp::Colour (0, 0, 0),
-				dcp::Time (0, 0, 0, 0, 24),
-				dcp::Time (0, 0, 0, 0, 24)
-				)
+		make_shared<dcp::SubtitleString>(
+			string ("Arial"),
+			false,
+			false,
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			1.0,
+			dcp::Time (0, 0, 1, 0, 24),
+			dcp::Time (0, 0, 9, 0, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.9,
+			dcp::VAlign::TOP,
+			dcp::Direction::LTR,
+			"This is the ",
+			dcp::Effect::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24)
 			)
 		);
 
 	c.add (
-		shared_ptr<dcp::Subtitle> (
-			new dcp::SubtitleString (
-				string ("Arial"),
-				true,
-				false,
-				false,
-				dcp::Colour (255, 255, 255),
-				48,
-				1.0,
-				dcp::Time (0, 0, 1, 0, 24),
-				dcp::Time (0, 0, 9, 0, 24),
-				0,
-				dcp::HALIGN_CENTER,
-				0.9,
-				dcp::VALIGN_TOP,
-				dcp::DIRECTION_LTR,
-				"second",
-				dcp::NONE,
-				dcp::Colour (0, 0, 0),
-				dcp::Time (0, 0, 0, 0, 24),
-				dcp::Time (0, 0, 0, 0, 24)
-				)
+		make_shared<dcp::SubtitleString>(
+			string ("Arial"),
+			true,
+			false,
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			1.0,
+			dcp::Time (0, 0, 1, 0, 24),
+			dcp::Time (0, 0, 9, 0, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.9,
+			dcp::VAlign::TOP,
+			dcp::Direction::LTR,
+			"second",
+			dcp::Effect::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24)
 			)
 		);
 
 	c.add (
-		shared_ptr<dcp::Subtitle> (
-			new dcp::SubtitleString (
-				string ("Arial"),
-				false,
-				false,
-				false,
-				dcp::Colour (255, 255, 255),
-				48,
-				1.0,
-				dcp::Time (0, 0, 1, 0, 24),
-				dcp::Time (0, 0, 9, 0, 24),
-				0,
-				dcp::HALIGN_CENTER,
-				0.9,
-				dcp::VALIGN_TOP,
-				dcp::DIRECTION_LTR,
-				" line",
-				dcp::NONE,
-				dcp::Colour (0, 0, 0),
-				dcp::Time (0, 0, 0, 0, 24),
-				dcp::Time (0, 0, 0, 0, 24)
-				)
+		make_shared<dcp::SubtitleString>(
+			string ("Arial"),
+			false,
+			false,
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			1.0,
+			dcp::Time (0, 0, 1, 0, 24),
+			dcp::Time (0, 0, 9, 0, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.9,
+			dcp::VAlign::TOP,
+			dcp::Direction::LTR,
+			" line",
+			dcp::Effect::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24)
 			)
 		);
 
 	c._xml_id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
 
 	check_xml (
-		c.xml_as_string (),
+		c.xml_as_string(),
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 		"<dcst:SubtitleReel xmlns:dcst=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
 		  "<dcst:Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</dcst:Id>"
@@ -703,20 +688,18 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 	c.set_content_title_text ("Test");
 
 	c.add (
-		shared_ptr<dcp::Subtitle> (
-			new dcp::SubtitleImage (
-				dcp::ArrayData ("test/data/sub.png"),
-				dcp::Time (0, 4,  9, 22, 24),
-				dcp::Time (0, 4, 11, 22, 24),
-				0,
-				dcp::HALIGN_CENTER,
-				0.8,
-				dcp::VALIGN_TOP,
-				dcp::Time (0, 0, 0, 0, 24),
-				dcp::Time (0, 0, 0, 0, 24)
-				)
+		make_shared<dcp::SubtitleImage>(
+			dcp::ArrayData ("test/data/sub.png"),
+			dcp::Time (0, 4,  9, 22, 24),
+			dcp::Time (0, 4, 11, 22, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.8,
+			dcp::VAlign::TOP,
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24)
 			)
-		);
+	      );
 
 	c._id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
 

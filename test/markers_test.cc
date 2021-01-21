@@ -45,7 +45,7 @@ using std::make_shared;
 
 BOOST_AUTO_TEST_CASE (markers_write_test)
 {
-	dcp::CPL cpl("Markers test", dcp::TEST);
+	dcp::CPL cpl("Markers test", dcp::ContentKind::TEST);
 
 	auto asset = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 432000, 0);
 	asset->set (dcp::Marker::FFOC, dcp::Time(1, 1, 9, 16, 24));
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE (markers_write_test)
 
 	cpl.add (reel);
 
-	cpl.write_xml ("build/test/markers_test.xml", dcp::SMPTE, shared_ptr<dcp::CertificateChain>());
+	cpl.write_xml ("build/test/markers_test.xml", dcp::Standard::SMPTE, {});
 }
 
 static void

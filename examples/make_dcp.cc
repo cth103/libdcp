@@ -53,29 +53,29 @@ main ()
 	   per second.
 	*/
 
-	std::shared_ptr<dcp::MonoPictureAsset> picture_asset (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
+	auto picture_asset = std::make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 
 	/* Start off a write to it */
-	std::shared_ptr<dcp::PictureAssetWriter> picture_writer = picture_asset->start_write ("DCP/picture.mxf", false);
+	auto picture_writer = picture_asset->start_write("DCP/picture.mxf", false);
 
 	/* Write 24 frames of the same JPEG2000 file */
-	dcp::ArrayData picture ("examples/help.j2c");
+	dcp::ArrayData picture("examples/help.j2c");
 	for (int i = 0; i < 24; ++i) {
 		picture_writer->write (picture.data(), picture.size());
 	}
 
 	/* And finish off */
-	picture_writer->finalize ();
+	picture_writer->finalize();
 
 	/* Now create a sound MXF.  As before, create an object and a writer.
 	   When creating the object we specify the sampling rate (48kHz) and the number of channels (2).
 	*/
-	std::shared_ptr<dcp::SoundAsset> sound_asset (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 2, dcp::LanguageTag("en-GB"), dcp::SMPTE));
+	auto sound_asset = std::make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 2, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
 	/* Here we must also say which of our channels will have "real" sound data in them */
 	std::vector<dcp::Channel> active_channels;
-	active_channels.push_back (dcp::LEFT);
-	active_channels.push_back (dcp::RIGHT);
-	std::shared_ptr<dcp::SoundAssetWriter> sound_writer = sound_asset->start_write ("DCP/sound.mxf", active_channels);
+	active_channels.push_back(dcp::Channel::LEFT);
+	active_channels.push_back(dcp::Channel::RIGHT);
+	auto sound_writer = sound_asset->start_write("DCP/sound.mxf", active_channels);
 
 	/* Write some sine waves */
 	float* audio[2];
@@ -98,17 +98,17 @@ main ()
 	/* Add picture and sound to it.  The zeros are the `entry points', i.e. the first
 	   (video) frame from the assets that the reel should play.
 	*/
-	reel->add (std::shared_ptr<dcp::ReelPictureAsset> (new dcp::ReelMonoPictureAsset (picture_asset, 0)));
-	reel->add (std::shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (sound_asset, 0)));
+	reel->add (std::make_shared<dcp::ReelMonoPictureAsset>(picture_asset, 0));
+	reel->add (std::make_shared<dcp::ReelSoundAsset>(sound_asset, 0));
 
 	/* Make a CPL with this reel */
-	std::shared_ptr<dcp::CPL> cpl (new dcp::CPL ("My film", dcp::FEATURE));
+	auto cpl = std::make_shared<dcp::CPL>("My film", dcp::ContentKind::FEATURE);
 	cpl->add (reel);
 
 	/* Write the DCP */
 	dcp::DCP dcp ("DCP");
 	dcp.add (cpl);
-	dcp.write_xml (dcp::SMPTE);
+	dcp.write_xml (dcp::Standard::SMPTE);
 
 	return 0;
 }

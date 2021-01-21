@@ -325,7 +325,7 @@ Time::as_string (Standard standard) const
 {
 	char buffer[64];
 
-	if (standard == SMPTE) {
+	if (standard == Standard::SMPTE) {
 		snprintf (buffer, sizeof(buffer), "%02d:%02d:%02d:%02d", h, m, s, e);
 	} else {
 		snprintf (buffer, sizeof(buffer), "%02d:%02d:%02d:%03d", h, m, s, e);

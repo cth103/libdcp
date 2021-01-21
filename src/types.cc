@@ -191,11 +191,11 @@ string
 dcp::effect_to_string (Effect e)
 {
 	switch (e) {
-	case NONE:
+	case Effect::NONE:
 		return "none";
-	case BORDER:
+	case Effect::BORDER:
 		return "border";
-	case SHADOW:
+	case Effect::SHADOW:
 		return "shadow";
 	}
 
@@ -206,25 +206,34 @@ Effect
 dcp::string_to_effect (string s)
 {
 	if (s == "none") {
-		return NONE;
+		return Effect::NONE;
 	} else if (s == "border") {
-		return BORDER;
+		return Effect::BORDER;
 	} else if (s == "shadow") {
-		return SHADOW;
+		return Effect::SHADOW;
 	}
 
 	boost::throw_exception (ReadError ("unknown subtitle effect type"));
 }
 
+
+std::ostream&
+dcp::operator<< (std::ostream& s, Effect e)
+{
+	s << effect_to_string(e);
+	return s;
+}
+
+
 string
 dcp::halign_to_string (HAlign h)
 {
 	switch (h) {
-	case HALIGN_LEFT:
+	case HAlign::LEFT:
 		return "left";
-	case HALIGN_CENTER:
+	case HAlign::CENTER:
 		return "center";
-	case HALIGN_RIGHT:
+	case HAlign::RIGHT:
 		return "right";
 	}
 
@@ -235,11 +244,11 @@ HAlign
 dcp::string_to_halign (string s)
 {
 	if (s == "left") {
-		return HALIGN_LEFT;
+		return HAlign::LEFT;
 	} else if (s == "center") {
-		return HALIGN_CENTER;
+		return HAlign::CENTER;
 	} else if (s == "right") {
-		return HALIGN_RIGHT;
+		return HAlign::RIGHT;
 	}
 
 	boost::throw_exception (ReadError ("unknown subtitle halign type"));
@@ -249,11 +258,11 @@ string
 dcp::valign_to_string (VAlign v)
 {
 	switch (v) {
-	case VALIGN_TOP:
+	case VAlign::TOP:
 		return "top";
-	case VALIGN_CENTER:
+	case VAlign::CENTER:
 		return "center";
-	case VALIGN_BOTTOM:
+	case VAlign::BOTTOM:
 		return "bottom";
 	}
 
@@ -264,11 +273,11 @@ VAlign
 dcp::string_to_valign (string s)
 {
 	if (s == "top") {
-		return VALIGN_TOP;
+		return VAlign::TOP;
 	} else if (s == "center") {
-		return VALIGN_CENTER;
+		return VAlign::CENTER;
 	} else if (s == "bottom") {
-		return VALIGN_BOTTOM;
+		return VAlign::BOTTOM;
 	}
 
 	boost::throw_exception (ReadError ("unknown subtitle valign type"));
@@ -278,13 +287,13 @@ string
 dcp::direction_to_string (Direction v)
 {
 	switch (v) {
-	case DIRECTION_LTR:
+	case Direction::LTR:
 		return "ltr";
-	case DIRECTION_RTL:
+	case Direction::RTL:
 		return "rtl";
-	case DIRECTION_TTB:
+	case Direction::TTB:
 		return "ttb";
-	case DIRECTION_BTT:
+	case Direction::BTT:
 		return "btt";
 	}
 
@@ -295,13 +304,13 @@ Direction
 dcp::string_to_direction (string s)
 {
 	if (s == "ltr" || s == "horizontal") {
-		return DIRECTION_LTR;
+		return Direction::LTR;
 	} else if (s == "rtl") {
-		return DIRECTION_RTL;
+		return Direction::RTL;
 	} else if (s == "ttb" || s == "vertical") {
-		return DIRECTION_TTB;
+		return Direction::TTB;
 	} else if (s == "btt") {
-		return DIRECTION_BTT;
+		return Direction::BTT;
 	}
 
 	boost::throw_exception (ReadError ("unknown subtitle direction type"));
@@ -316,29 +325,29 @@ string
 dcp::content_kind_to_string (ContentKind kind)
 {
 	switch (kind) {
-	case FEATURE:
+	case ContentKind::FEATURE:
 		return "feature";
-	case SHORT:
+	case ContentKind::SHORT:
 		return "short";
-	case TRAILER:
+	case ContentKind::TRAILER:
 		return "trailer";
-	case TEST:
+	case ContentKind::TEST:
 		return "test";
-	case TRANSITIONAL:
+	case ContentKind::TRANSITIONAL:
 		return "transitional";
-	case RATING:
+	case ContentKind::RATING:
 		return "rating";
-	case TEASER:
+	case ContentKind::TEASER:
 		return "teaser";
-	case POLICY:
+	case ContentKind::POLICY:
 		return "policy";
-	case PUBLIC_SERVICE_ANNOUNCEMENT:
+	case ContentKind::PUBLIC_SERVICE_ANNOUNCEMENT:
 		return "psa";
-	case ADVERTISEMENT:
+	case ContentKind::ADVERTISEMENT:
 		return "advertisement";
-	case EPISODE:
+	case ContentKind::EPISODE:
 		return "episode";
-	case PROMO:
+	case ContentKind::PROMO:
 		return "promo";
 	}
 
@@ -356,33 +365,42 @@ dcp::content_kind_from_string (string kind)
 	transform (kind.begin(), kind.end(), kind.begin(), ::tolower);
 
 	if (kind == "feature") {
-		return FEATURE;
+		return ContentKind::FEATURE;
 	} else if (kind == "short") {
-		return SHORT;
+		return ContentKind::SHORT;
 	} else if (kind == "trailer") {
-		return TRAILER;
+		return ContentKind::TRAILER;
 	} else if (kind == "test") {
-		return TEST;
+		return ContentKind::TEST;
 	} else if (kind == "transitional") {
-		return TRANSITIONAL;
+		return ContentKind::TRANSITIONAL;
 	} else if (kind == "rating") {
-		return RATING;
+		return ContentKind::RATING;
 	} else if (kind == "teaser") {
-		return TEASER;
+		return ContentKind::TEASER;
 	} else if (kind == "policy") {
-		return POLICY;
+		return ContentKind::POLICY;
 	} else if (kind == "psa") {
-		return PUBLIC_SERVICE_ANNOUNCEMENT;
+		return ContentKind::PUBLIC_SERVICE_ANNOUNCEMENT;
 	} else if (kind == "advertisement") {
-		return ADVERTISEMENT;
+		return ContentKind::ADVERTISEMENT;
 	} else if (kind == "episode") {
-		return EPISODE;
+		return ContentKind::EPISODE;
 	} else if (kind == "promo") {
-		return PROMO;
+		return ContentKind::PROMO;
 	}
 
 	throw BadContentKindError (kind);
 }
+
+
+ostream&
+dcp::operator<< (ostream& s, ContentKind c)
+{
+	s << content_kind_to_string(c);
+	return s;
+}
+
 
 string
 dcp::marker_to_string (dcp::Marker m)
@@ -538,9 +556,9 @@ string
 Luminance::unit_to_string (Unit u)
 {
 	switch (u) {
-	case CANDELA_PER_SQUARE_METRE:
+	case Unit::CANDELA_PER_SQUARE_METRE:
 		return "candela-per-square-metre";
-	case FOOT_LAMBERT:
+	case Unit::FOOT_LAMBERT:
 		return "foot-lambert";
 	default:
 		DCP_ASSERT (false);
@@ -579,9 +597,9 @@ MainSoundConfiguration::MainSoundConfiguration (string s)
 	}
 
 	if (parts[0] == "51") {
-		_field = FIVE_POINT_ONE;
+		_field = MCASoundField::FIVE_POINT_ONE;
 	} else if (parts[0] == "71") {
-		_field = SEVEN_POINT_ONE;
+		_field = MCASoundField::SEVEN_POINT_ONE;
 	} else {
 		throw MainSoundConfigurationError (s);
 	}
@@ -614,13 +632,13 @@ string
 MainSoundConfiguration::to_string () const
 {
 	string c;
-	if (_field == FIVE_POINT_ONE) {
+	if (_field == MCASoundField::FIVE_POINT_ONE) {
 		c = "51/";
 	} else {
 		c = "71/";
 	}
 
-	BOOST_FOREACH (optional<Channel> i, _channels) {
+	for (auto i: _channels) {
 		if (!i) {
 			c += "-,";
 		} else {
@@ -656,11 +674,11 @@ string
 dcp::status_to_string (Status s)
 {
 	switch (s) {
-	case FINAL:
+	case Status::FINAL:
 		return "final";
-	case TEMP:
+	case Status::TEMP:
 		return "temp";
-	case PRE:
+	case Status::PRE:
 		return "pre";
 	default:
 		DCP_ASSERT (false);
@@ -673,14 +691,73 @@ Status
 dcp::string_to_status (string s)
 {
 	if (s == "final") {
-		return FINAL;
+		return Status::FINAL;
 	} else if (s == "temp") {
-		return TEMP;
+		return Status::TEMP;
 	} else if (s == "pre") {
-		return PRE;
+		return Status::PRE;
 	}
 
 	DCP_ASSERT (false);
+}
+
+
+ostream&
+dcp::operator<<(ostream& s, Status t)
+{
+	s << status_to_string(t);
+	return s;
+}
+
+
+ostream&
+dcp::operator<<(ostream& s, dcp::Channel c)
+{
+	switch (c) {
+	case Channel::LEFT:
+		s << "left(0)";
+		break;
+	case Channel::RIGHT:
+		s << "right(1)";
+		break;
+	case Channel::CENTRE:
+		s << "centre(2)";
+		break;
+	case Channel::LFE:
+		s << "lfe(3)";
+		break;
+	case Channel::LS:
+		s << "ls(4)";
+		break;
+	case Channel::RS:
+		s << "rs(5)";
+		break;
+	case Channel::HI:
+		s << "hi(6)";
+		break;
+	case Channel::VI:
+		s << "vi(7)";
+		break;
+	case Channel::BSL:
+		s << "bsl(10)";
+		break;
+	case Channel::BSR:
+		s << "bsr(11)";
+		break;
+	case Channel::MOTION_DATA:
+		s << "motion_data(12)";
+		break;
+	case Channel::SYNC_SIGNAL:
+		s << "sync_signal(13)";
+		break;
+	case Channel::SIGN_LANGUAGE:
+		s << "sign_language(14)";
+		break;
+	case Channel::CHANNEL_COUNT:
+		s << "(16)";
+		break;
+	}
+	return s;
 }
 
 
@@ -688,31 +765,31 @@ Channel
 dcp::mca_id_to_channel (string id)
 {
 	if (id == "L") {
-		return LEFT;
+		return Channel::LEFT;
 	} else if (id == "R") {
-		return RIGHT;
+		return Channel::RIGHT;
 	} else if (id == "C") {
-		return CENTRE;
+		return Channel::CENTRE;
 	} else if (id == "LFE") {
-		return LFE;
+		return Channel::LFE;
 	} else if (id == "Ls" || id == "Lss") {
-		return LS;
+		return Channel::LS;
 	} else if (id == "Rs" || id == "Rss") {
-		return RS;
+		return Channel::RS;
 	} else if (id == "HI") {
-		return HI;
+		return Channel::HI;
 	} else if (id == "VIN") {
-		return VI;
+		return Channel::VI;
 	} else if (id == "Lrs") {
-		return BSL;
+		return Channel::BSL;
 	} else if (id == "Rrs") {
-		return BSR;
+		return Channel::BSR;
 	} else if (id == "DBOX") {
-		return MOTION_DATA;
+		return Channel::MOTION_DATA;
 	} else if (id == "FSKSync") {
-		return SYNC_SIGNAL;
+		return Channel::SYNC_SIGNAL;
 	} else if (id == "SLVS") {
-		return SIGN_LANGUAGE;
+		return Channel::SIGN_LANGUAGE;
 	}
 
 	throw UnknownChannelIdError (id);
@@ -723,31 +800,31 @@ string
 dcp::channel_to_mca_id (Channel c, MCASoundField field)
 {
 	switch (c) {
-	case LEFT:
+	case Channel::LEFT:
 		return "L";
-	case RIGHT:
+	case Channel::RIGHT:
 		return "R";
-	case CENTRE:
+	case Channel::CENTRE:
 		return "C";
-	case LFE:
+	case Channel::LFE:
 		return "LFE";
-	case LS:
-		return field == FIVE_POINT_ONE ? "Ls" : "Lss";
-	case RS:
-		return field == FIVE_POINT_ONE ? "Rs" : "Rss";
-	case HI:
+	case Channel::LS:
+		return field == MCASoundField::FIVE_POINT_ONE ? "Ls" : "Lss";
+	case Channel::RS:
+		return field == MCASoundField::FIVE_POINT_ONE ? "Rs" : "Rss";
+	case Channel::HI:
 		return "HI";
-	case VI:
+	case Channel::VI:
 		return "VIN";
-	case BSL:
+	case Channel::BSL:
 		return "Lrs";
-	case BSR:
+	case Channel::BSR:
 		return "Rrs";
-	case MOTION_DATA:
+	case Channel::MOTION_DATA:
 		return "DBOX";
-	case SYNC_SIGNAL:
+	case Channel::SYNC_SIGNAL:
 		return "FSKSync";
-	case SIGN_LANGUAGE:
+	case Channel::SIGN_LANGUAGE:
 		return "SLVS";
 	default:
 		break;
@@ -761,31 +838,31 @@ string
 dcp::channel_to_mca_name (Channel c, MCASoundField field)
 {
 	switch (c) {
-	case LEFT:
+	case Channel::LEFT:
 		return "Left";
-	case RIGHT:
+	case Channel::RIGHT:
 		return "Right";
-	case CENTRE:
+	case Channel::CENTRE:
 		return "Center";
-	case LFE:
+	case Channel::LFE:
 		return "LFE";
-	case LS:
-		return field == FIVE_POINT_ONE ? "Left Surround" : "Left Side Surround";
-	case RS:
-		return field == FIVE_POINT_ONE ? "Right Surround" : "Right Side Surround";
-	case HI:
+	case Channel::LS:
+		return field == MCASoundField::FIVE_POINT_ONE ? "Left Surround" : "Left Side Surround";
+	case Channel::RS:
+		return field == MCASoundField::FIVE_POINT_ONE ? "Right Surround" : "Right Side Surround";
+	case Channel::HI:
 		return "Hearing Impaired";
-	case VI:
+	case Channel::VI:
 		return "Visually Impaired-Narrative";
-	case BSL:
+	case Channel::BSL:
 		return "Left Rear Surround";
-	case BSR:
+	case Channel::BSR:
 		return "Right Rear Surround";
-	case MOTION_DATA:
+	case Channel::MOTION_DATA:
 		return "D-BOX Motion Code Primary Stream";
-	case SYNC_SIGNAL:
+	case Channel::SYNC_SIGNAL:
 		return "FSK Sync";
-	case SIGN_LANGUAGE:
+	case Channel::SIGN_LANGUAGE:
 		return "Sign Language Video Stream";
 	default:
 		break;
@@ -807,31 +884,31 @@ dcp::channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dict
 	};
 
 	switch (c) {
-	case LEFT:
+	case Channel::LEFT:
 		return dict->ul(ASDCP::MDD_DCAudioChannel_L);
-	case RIGHT:
+	case Channel::RIGHT:
 		return dict->ul(ASDCP::MDD_DCAudioChannel_R);
-	case CENTRE:
+	case Channel::CENTRE:
 		return dict->ul(ASDCP::MDD_DCAudioChannel_C);
-	case LFE:
+	case Channel::LFE:
 		return dict->ul(ASDCP::MDD_DCAudioChannel_LFE);
-	case LS:
-		return dict->ul(field == FIVE_POINT_ONE ? ASDCP::MDD_DCAudioChannel_Ls : ASDCP::MDD_DCAudioChannel_Lss);
-	case RS:
-		return dict->ul(field == FIVE_POINT_ONE ? ASDCP::MDD_DCAudioChannel_Rs : ASDCP::MDD_DCAudioChannel_Rss);
-	case HI:
+	case Channel::LS:
+		return dict->ul(field == MCASoundField::FIVE_POINT_ONE ? ASDCP::MDD_DCAudioChannel_Ls : ASDCP::MDD_DCAudioChannel_Lss);
+	case Channel::RS:
+		return dict->ul(field == MCASoundField::FIVE_POINT_ONE ? ASDCP::MDD_DCAudioChannel_Rs : ASDCP::MDD_DCAudioChannel_Rss);
+	case Channel::HI:
 		return dict->ul(ASDCP::MDD_DCAudioChannel_HI);
-	case VI:
+	case Channel::VI:
 		return dict->ul(ASDCP::MDD_DCAudioChannel_VIN);
-	case BSL:
+	case Channel::BSL:
 		return dict->ul(ASDCP::MDD_DCAudioChannel_Lrs);
-	case BSR:
+	case Channel::BSR:
 		return dict->ul(ASDCP::MDD_DCAudioChannel_Rrs);
-	case MOTION_DATA:
+	case Channel::MOTION_DATA:
 		return dict->ul(ASDCP::MDD_DBOXMotionCodePrimaryStream);
-	case SYNC_SIGNAL:
+	case Channel::SYNC_SIGNAL:
 		return ASDCP::UL(sync_signal);
-	case SIGN_LANGUAGE:
+	case Channel::SIGN_LANGUAGE:
 		return ASDCP::UL(sign_language);
 	default:
 		break;
@@ -844,20 +921,67 @@ dcp::channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dict
 vector<dcp::Channel>
 dcp::used_audio_channels ()
 {
-	vector<dcp::Channel> c;
-	c.push_back (LEFT);
-	c.push_back (RIGHT);
-	c.push_back (CENTRE);
-	c.push_back (LFE);
-	c.push_back (LS);
-	c.push_back (RS);
-	c.push_back (HI);
-	c.push_back (VI);
-	c.push_back (BSL);
-	c.push_back (BSR);
-	c.push_back (MOTION_DATA);
-	c.push_back (SYNC_SIGNAL);
-	c.push_back (SIGN_LANGUAGE);
+	vector<Channel> c;
+	c.push_back (Channel::LEFT);
+	c.push_back (Channel::RIGHT);
+	c.push_back (Channel::CENTRE);
+	c.push_back (Channel::LFE);
+	c.push_back (Channel::LS);
+	c.push_back (Channel::RS);
+	c.push_back (Channel::HI);
+	c.push_back (Channel::VI);
+	c.push_back (Channel::BSL);
+	c.push_back (Channel::BSR);
+	c.push_back (Channel::MOTION_DATA);
+	c.push_back (Channel::SYNC_SIGNAL);
+	c.push_back (Channel::SIGN_LANGUAGE);
 	return c;
 }
 
+
+ostream&
+dcp::operator<< (ostream& s, NoteType t)
+{
+	switch (t) {
+	case NoteType::PROGRESS:
+		s << "progress";
+		break;
+	case NoteType::ERROR:
+		s << "error";
+		break;
+	case NoteType::NOTE:
+		s << "note";
+		break;
+	}
+	return s;
+}
+
+
+ostream&
+dcp::operator<< (ostream& s, MCASoundField f)
+{
+	switch (f) {
+	case MCASoundField::FIVE_POINT_ONE:
+		s << "5.1";
+		break;
+	case MCASoundField::SEVEN_POINT_ONE:
+		s << "7.1";
+		break;
+	}
+	return s;
+}
+
+
+ostream&
+dcp::operator<< (ostream& s, Standard t)
+{
+	switch (t) {
+	case Standard::INTEROP:
+		s << "interop";
+		break;
+	case Standard::SMPTE:
+		s << "smpte";
+		break;
+	}
+	return s;
+}

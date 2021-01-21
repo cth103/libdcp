@@ -123,30 +123,30 @@ ReelAsset::asset_equals (shared_ptr<const ReelAsset> other, EqualityOptions opt,
 	if (_annotation_text != other->_annotation_text) {
 		string const s = "Reel: annotation texts differ (" + _annotation_text + " vs " + other->_annotation_text + ")\n";
 		if (!opt.reel_annotation_texts_can_differ) {
-			note (DCP_ERROR, s);
+			note (NoteType::ERROR, s);
 			return false;
 		} else {
-			note (DCP_NOTE, s);
+			note (NoteType::NOTE, s);
 		}
 	}
 
 	if (_edit_rate != other->_edit_rate) {
-		note (DCP_ERROR, "Reel: edit rates differ");
+		note (NoteType::ERROR, "Reel: edit rates differ");
 		return false;
 	}
 
 	if (_intrinsic_duration != other->_intrinsic_duration) {
-		note (DCP_ERROR, String::compose ("Reel: intrinsic durations differ (%1 vs %2)", _intrinsic_duration, other->_intrinsic_duration));
+		note (NoteType::ERROR, String::compose ("Reel: intrinsic durations differ (%1 vs %2)", _intrinsic_duration, other->_intrinsic_duration));
 		return false;
 	}
 
 	if (_entry_point != other->_entry_point) {
-		note (DCP_ERROR, "Reel: entry points differ");
+		note (NoteType::ERROR, "Reel: entry points differ");
 		return false;
 	}
 
 	if (_duration != other->_duration) {
-		note (DCP_ERROR, "Reel: durations differ");
+		note (NoteType::ERROR, "Reel: durations differ");
 		return false;
 	}
 

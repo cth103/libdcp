@@ -844,11 +844,11 @@ verify_text_lines_and_characters (
 
 	auto position = [](shared_ptr<const SubtitleString> sub) {
 		switch (sub->v_align()) {
-		case VALIGN_TOP:
+		case VAlign::TOP:
 			return lrintf(sub->v_position() * 100);
-		case VALIGN_CENTER:
+		case VAlign::CENTER:
 			return lrintf((0.5f + sub->v_position()) * 100);
-		case VALIGN_BOTTOM:
+		case VAlign::BOTTOM:
 			return lrintf((1.0f - sub->v_position()) * 100);
 		}
 
@@ -1065,7 +1065,7 @@ dcp::verify (
 			notes.push_back ({VerificationNote::VERIFY_ERROR, VerificationNote::FAILED_READ, string(e.what())});
 		}
 
-		if (dcp->standard() != SMPTE) {
+		if (dcp->standard() != Standard::SMPTE) {
 			notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::INVALID_STANDARD});
 		}
 
@@ -1095,7 +1095,7 @@ dcp::verify (
 				}
 			}
 
-			if (dcp->standard() == SMPTE) {
+			if (dcp->standard() == Standard::SMPTE) {
 				if (!cpl->annotation_text()) {
 					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get()});
 				} else if (cpl->annotation_text().get() != cpl->content_title_text()) {
@@ -1158,7 +1158,7 @@ dcp::verify (
 					}
 				}
 
-				if (dcp->standard() == SMPTE) {
+				if (dcp->standard() == Standard::SMPTE) {
 					boost::optional<int64_t> duration;
 					for (auto i: reel->assets()) {
 						if (!duration) {
@@ -1224,7 +1224,7 @@ dcp::verify (
 				most_closed_captions = std::max (most_closed_captions, reel->closed_captions().size());
 			}
 
-			if (dcp->standard() == SMPTE) {
+			if (dcp->standard() == Standard::SMPTE) {
 
 				if (have_main_subtitle && have_no_main_subtitle) {
 					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS});
@@ -1234,7 +1234,7 @@ dcp::verify (
 					notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS});
 				}
 
-				if (cpl->content_kind() == FEATURE) {
+				if (cpl->content_kind() == ContentKind::FEATURE) {
 					if (markers_seen.find(Marker::FFEC) == markers_seen.end()) {
 						notes.push_back ({VerificationNote::VERIFY_BV21_ERROR, VerificationNote::MISSING_FFEC_IN_FEATURE});
 					}

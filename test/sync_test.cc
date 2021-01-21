@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE (sync_test2)
 {
 	/* Make a MXF with the same ID as atmos_pcm.mxf and write a frame of random stuff */
 	int const channels = 14;
-	dcp::SoundAsset asset (dcp::Fraction(24, 1), 48000, channels, dcp::LanguageTag("en-GB"), dcp::SMPTE);
+	dcp::SoundAsset asset (dcp::Fraction(24, 1), 48000, channels, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
 	asset._id = "e004046e09234f90a4ae4355e7e83506";
 	boost::system::error_code ec;
 	boost::filesystem::remove ("build/test/foo.mxf", ec);

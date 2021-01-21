@@ -132,7 +132,7 @@ try
 			BOOST_FOREACH (dcp::DecryptedKDMKey i, dec_kdm.keys ()) {
 				cout << "\n";
 				cout << "\tID:       " << i.id() << "\n";
-				cout << "\tStandard: " << (i.standard() == dcp::SMPTE ? "SMPTE" : "Interop") << "\n";
+				cout << "\tStandard: " << (i.standard() == dcp::Standard::SMPTE ? "SMPTE" : "Interop") << "\n";
 				cout << "\tCPL ID:   " << i.cpl_id() << "\n";
 				if (i.type()) {
 					cout << "\tType:     " << i.type().get() << "\n";

@@ -40,6 +40,7 @@
 
 using std::string;
 using std::shared_ptr;
+using std::make_shared;
 
 /** Check that recovery from a partially-written MXF works */
 BOOST_AUTO_TEST_CASE (recovery)
@@ -51,7 +52,7 @@ BOOST_AUTO_TEST_CASE (recovery)
 
 	boost::filesystem::remove_all ("build/test/baz");
 	boost::filesystem::create_directories ("build/test/baz");
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
+	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::Standard::SMPTE));
 	shared_ptr<dcp::PictureAssetWriter> writer = mp->start_write ("build/test/baz/video1.mxf", false);
 
 	int written_size = 0;
@@ -80,7 +81,7 @@ BOOST_AUTO_TEST_CASE (recovery)
 	Kumu::ResetTestRNG ();
 #endif
 
-	mp.reset (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
+	mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	writer = mp->start_write ("build/test/baz/video2.mxf", true);
 
 	writer->write (data.data(), data.size());

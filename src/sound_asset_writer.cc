@@ -69,7 +69,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 	, _active_channels (active_channels)
 {
 	DCP_ASSERT (!_sync || _asset->channels() >= 14);
-	DCP_ASSERT (!_sync || _asset->standard() == SMPTE);
+	DCP_ASSERT (!_sync || _asset->standard() == Standard::SMPTE);
 
 	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
 	_state->desc.EditRate = ASDCP::Rational (_asset->edit_rate().numerator, _asset->edit_rate().denominator);
@@ -80,7 +80,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 	_state->desc.BlockAlign = 3 * _asset->channels();
 	_state->desc.AvgBps = _asset->sampling_rate() * _state->desc.BlockAlign;
 	_state->desc.LinkedTrackID = 0;
-	if (asset->standard() == INTEROP) {
+	if (asset->standard() == Standard::INTEROP) {
 		_state->desc.ChannelFormat = ASDCP::PCM::CF_NONE;
 	} else {
 		/* Just use WTF ("wild track format") for SMPTE for now; searches suggest that this
@@ -114,7 +114,7 @@ SoundAssetWriter::start ()
 		boost::throw_exception (FileError ("could not open audio MXF for writing", _file.string(), r));
 	}
 
-	if (_asset->standard() == dcp::SMPTE && !_active_channels.empty()) {
+	if (_asset->standard() == Standard::SMPTE && !_active_channels.empty()) {
 
 		ASDCP::MXF::WaveAudioDescriptor* essence_descriptor = 0;
 		_state->mxf_writer.OP1aHeader().GetMDObjectByType(
@@ -127,9 +127,9 @@ SoundAssetWriter::start ()
 		GenRandomValue (soundfield->MCALinkID);
 		soundfield->RFC5646SpokenLanguage = _asset->language();
 
-		const MCASoundField field = _asset->channels() > 10 ? SEVEN_POINT_ONE : FIVE_POINT_ONE;
+		const MCASoundField field = _asset->channels() > 10 ? MCASoundField::SEVEN_POINT_ONE : MCASoundField::FIVE_POINT_ONE;
 
-		if (field == SEVEN_POINT_ONE) {
+		if (field == MCASoundField::SEVEN_POINT_ONE) {
 			soundfield->MCATagSymbol = "sg71";
 			soundfield->MCATagName = "7.1DS";
 			soundfield->MCALabelDictionaryID = asdcp_smpte_dict->ul(ASDCP::MDD_DCAudioSoundfield_71);

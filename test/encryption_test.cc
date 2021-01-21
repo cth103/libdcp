@@ -82,11 +82,11 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	signer->add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
 	signer->set_key (dcp::file_to_string ("test/ref/crypt/leaf.key"));
 
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::FEATURE));
+	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::ContentKind::FEATURE));
 
 	dcp::Key key;
 
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::SMPTE));
+	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::Standard::SMPTE));
 	mp->set_metadata (mxf_metadata);
 	mp->set_key (key);
 
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	}
 	writer->finalize ();
 
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::SMPTE));
+	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE));
 	ms->set_metadata (mxf_metadata);
 	ms->set_key (key);
 	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/encryption_test/audio.mxf", vector<dcp::Channel>());
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 
 	d.add (cpl);
 
-	d.write_xml (dcp::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp", signer);
+	d.write_xml (dcp::Standard::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp", signer);
 
 	dcp::DecryptedKDM kdm (
 		cpl,
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 		"2012-07-17T04:45:18+00:00"
 		);
 
-	kdm.encrypt (signer, signer->leaf(), vector<string>(), dcp::MODIFIED_TRANSITIONAL_1, true, 0).as_xml ("build/test/encryption_test.kdm.xml");
+	kdm.encrypt (signer, signer->leaf(), vector<string>(), dcp::Formulation::MODIFIED_TRANSITIONAL_1, true, 0).as_xml("build/test/encryption_test.kdm.xml");
 
 	int r = system (
 		"xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/encryption_test.kdm.xml "

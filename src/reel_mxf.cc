@@ -66,10 +66,10 @@ ReelMXF::mxf_equals (shared_ptr<const ReelMXF> other, EqualityOptions opt, NoteH
 {
 	if (_hash != other->_hash) {
 		if (!opt.reel_hashes_can_differ) {
-			note (DCP_ERROR, "Reel: hashes differ");
+			note (NoteType::ERROR, "Reel: hashes differ");
 			return false;
 		} else {
-			note (DCP_NOTE, "Reel: hashes differ");
+			note (NoteType::NOTE, "Reel: hashes differ");
 		}
 	}
 
