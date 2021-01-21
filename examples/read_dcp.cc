@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -78,21 +78,21 @@ main ()
 	}
 
 	/* Take the first CPL */
-	std::shared_ptr<dcp::CPL> cpl = dcp.cpls().front ();
+	auto cpl = dcp.cpls().front();
 
 	/* Get the picture asset in the first reel */
-	std::shared_ptr<dcp::MonoPictureAsset> picture_asset = std::dynamic_pointer_cast<dcp::MonoPictureAsset> (
-		cpl->reels().front()->main_picture()->asset()
+	auto picture_asset = std::dynamic_pointer_cast<dcp::MonoPictureAsset>(
+		cpl->reels()[0]->main_picture()->asset()
 		);
 
 	/* Get a reader for it */
-	std::shared_ptr<dcp::MonoPictureAssetReader> picture_asset_reader = picture_asset->start_read();
+	auto picture_asset_reader = picture_asset->start_read();
 
 	/* Get the 1000th frame of it */
-	std::shared_ptr<const dcp::MonoPictureFrame> picture_frame_j2k = picture_asset_reader->get_frame(999);
+	auto picture_frame_j2k = picture_asset_reader->get_frame(999);
 
 	/* Get the frame as an XYZ image */
-	std::shared_ptr<const dcp::OpenJPEGImage> picture_image_xyz = picture_frame_j2k->xyz_image ();
+	auto picture_image_xyz = picture_frame_j2k->xyz_image ();
 
 	/* Convert to ARGB */
 	boost::scoped_array<uint8_t> rgba (new uint8_t[picture_image_xyz->size().width * picture_image_xyz->size().height * 4]);

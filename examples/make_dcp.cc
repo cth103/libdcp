@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -93,7 +93,7 @@ main ()
 	sound_writer->finalize ();
 
 	/* Now create a reel */
-	std::shared_ptr<dcp::Reel> reel (new dcp::Reel ());
+	auto reel = std::make_shared<dcp::Reel>();
 
 	/* Add picture and sound to it.  The zeros are the `entry points', i.e. the first
 	   (video) frame from the assets that the reel should play.
