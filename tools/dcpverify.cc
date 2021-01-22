@@ -37,7 +37,6 @@
 #include <boost/bind.hpp>
 #include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
 #include <getopt.h>
 #include <iostream>
 #include <cstdlib>

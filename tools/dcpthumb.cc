@@ -35,7 +35,6 @@
 #include "decrypted_kdm.h"
 #include "util.h"
 #include "exceptions.h"
-#include <boost/foreach.hpp>
 #include <getopt.h>
 
 using std::string;

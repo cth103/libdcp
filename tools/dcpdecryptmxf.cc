@@ -42,7 +42,6 @@
 #include "atmos_asset_writer.h"
 #include "exceptions.h"
 #include <asdcp/AS_DCP.h>
-#include <boost/foreach.hpp>
 #include <getopt.h>
 #include <string>
 

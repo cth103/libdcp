@@ -39,7 +39,6 @@
 #include <boost/optional.hpp>
 #include <memory>
 #include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
 #include <iostream>
 #include <list>
 

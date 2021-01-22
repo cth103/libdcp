@@ -36,7 +36,6 @@
 #include "util.h"
 #include "exceptions.h"
 #include "certificate_chain.h"
-#include <boost/foreach.hpp>
 #include <getopt.h>
 
 using std::string;

@@ -36,7 +36,6 @@
 #include "decrypted_kdm_key.h"
 #include "encrypted_kdm.h"
 #include "util.h"
-#include <boost/foreach.hpp>
 #include <getopt.h>
 #include <cstdlib>
 #include <string>
