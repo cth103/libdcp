@@ -42,7 +42,6 @@
 #include "interop_subtitle_asset.h"
 #include "raw_convert.h"
 #include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
 #include <set>
 #include <string>
 #include <vector>
@@ -110,7 +109,7 @@ dcp::combine (
 	DCP output_dcp (output);
 	optional<dcp::Standard> standard;
 
-	BOOST_FOREACH (path i, inputs) {
+	for (auto i: inputs) {
 		DCP dcp (i);
 		dcp.read ();
 		if (!standard) {
@@ -123,15 +122,15 @@ dcp::combine (
 	vector<path> paths;
 	vector<shared_ptr<dcp::Asset>> assets;
 
-	BOOST_FOREACH (path i, inputs) {
+	for (auto i: inputs) {
 		DCP dcp (i);
 		dcp.read ();
 
-		BOOST_FOREACH (shared_ptr<dcp::CPL> j, dcp.cpls()) {
+		for (auto j: dcp.cpls()) {
 			output_dcp.add (j);
 		}
 
-		BOOST_FOREACH (shared_ptr<dcp::Asset> j, dcp.assets(true)) {
+		for (auto j: dcp.assets(true)) {
 			if (dynamic_pointer_cast<dcp::CPL>(j)) {
 				continue;
 			}

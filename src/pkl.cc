@@ -37,7 +37,6 @@
 #include "raw_convert.h"
 #include "dcp_assert.h"
 #include <libxml++/libxml++.h>
-#include <boost/foreach.hpp>
 #include <iostream>
 
 using std::string;

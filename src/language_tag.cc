@@ -37,7 +37,6 @@
 #include "exceptions.h"
 #include "language_tag.h"
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
 #include <string>
 
 
@@ -62,7 +61,7 @@ static
 optional<LanguageTag::SubtagData>
 find_in_list (vector<LanguageTag::SubtagData> const& list, string subtag)
 {
-	BOOST_FOREACH (LanguageTag::SubtagData const& i, list) {
+	for (auto const& i: list) {
 		if (boost::iequals(i.subtag, subtag)) {
 			return i;
 		}
@@ -158,11 +157,11 @@ LanguageTag::to_string () const
 		s += "-" + _region->subtag();
 	}
 
-	BOOST_FOREACH (VariantSubtag i, _variants) {
+	for (auto i: _variants) {
 		s += "-" + i.subtag();
 	}
 
-	BOOST_FOREACH (ExtlangSubtag i, _extlangs) {
+	for (auto i: _extlangs) {
 		s += "-" + i.subtag();
 	}
 
@@ -254,13 +253,13 @@ LanguageTag::description () const
 
 	string d;
 
-	BOOST_FOREACH (VariantSubtag const& i, _variants) {
+	for (auto const& i: _variants) {
 		optional<SubtagData> variant = get_subtag_data (SubtagType::VARIANT, i.subtag());
 		DCP_ASSERT (variant);
 		d += variant->description + " dialect of ";
 	}
 
-	optional<SubtagData> language = get_subtag_data (SubtagType::LANGUAGE, _language->subtag());
+	auto language = get_subtag_data (SubtagType::LANGUAGE, _language->subtag());
 	DCP_ASSERT (language);
 	d += language->description;
 
@@ -276,7 +275,7 @@ LanguageTag::description () const
 		d += " for " + region->description;
 	}
 
-	BOOST_FOREACH (ExtlangSubtag const& i, _extlangs) {
+	for (auto const& i: _extlangs) {
 		optional<SubtagData> extlang = get_subtag_data (SubtagType::EXTLANG, i.subtag());
 		DCP_ASSERT (extlang);
 		d += ", " + extlang->description;
@@ -371,7 +370,7 @@ dcp::operator<< (ostream& os, dcp::LanguageTag const& tag)
 vector<pair<LanguageTag::SubtagType, LanguageTag::SubtagData> >
 LanguageTag::subtags () const
 {
-	vector<pair<SubtagType, SubtagData> > s;
+	vector<pair<SubtagType, SubtagData>> s;
 
 	if (_language) {
 		s.push_back (make_pair(SubtagType::LANGUAGE, *get_subtag_data(SubtagType::LANGUAGE, _language->subtag())));
@@ -385,11 +384,11 @@ LanguageTag::subtags () const
 		s.push_back (make_pair(SubtagType::REGION, *get_subtag_data(SubtagType::REGION, _region->subtag())));
 	}
 
-	BOOST_FOREACH (VariantSubtag const& i, _variants) {
+	for (auto const& i: _variants) {
 		s.push_back (make_pair(SubtagType::VARIANT, *get_subtag_data(SubtagType::VARIANT, i.subtag())));
 	}
 
-	BOOST_FOREACH (ExtlangSubtag const& i, _extlangs) {
+	for (auto const& i: _extlangs) {
 		s.push_back (make_pair(SubtagType::EXTLANG, *get_subtag_data(SubtagType::EXTLANG, i.subtag())));
 	}
 

@@ -54,7 +54,6 @@
 #include "raw_convert.h"
 #include "stream_operators.h"
 #include <boost/test/unit_test.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <cstdio>
 #include <iostream>

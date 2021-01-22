@@ -115,7 +115,7 @@ main (int argc, char* argv[])
 		dcp::EncryptedKDM encrypted_kdm (dcp::file_to_string (kdm_file.get ()));
 		dcp::DecryptedKDM decrypted_kdm (encrypted_kdm, dcp::file_to_string (private_key_file.get()));
 		bool done = false;
-		BOOST_FOREACH (dcp::DecryptedKDMKey const & i, decrypted_kdm.keys()) {
+		for (auto const& i: decrypted_kdm.keys()) {
 			if (i.id() == *sub.key_id()) {
 				sub.set_key (i.key ());
 				done = true;

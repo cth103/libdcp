@@ -54,7 +54,6 @@
 #include <openssl/rsa.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
 #include <fstream>
 #include <iostream>
 
@@ -634,14 +633,14 @@ void
 CertificateChain::add_signature_value (xmlpp::Element* parent, string ns, bool add_indentation) const
 {
 	cxml::Node cp (parent);
-	xmlpp::Node* key_info = cp.node_child("KeyInfo")->node ();
+	auto key_info = cp.node_child("KeyInfo")->node();
 
 	/* Add the certificate chain to the KeyInfo child node of parent */
-	BOOST_FOREACH (Certificate const & i, leaf_to_root ()) {
-		xmlpp::Element* data = key_info->add_child("X509Data", ns);
+	for (auto const& i: leaf_to_root()) {
+		auto data = key_info->add_child("X509Data", ns);
 
 		{
-			xmlpp::Element* serial = data->add_child("X509IssuerSerial", ns);
+			auto serial = data->add_child("X509IssuerSerial", ns);
 			serial->add_child("X509IssuerName", ns)->add_child_text (i.issuer ());
 			serial->add_child("X509SerialNumber", ns)->add_child_text (i.serial ());
 		}
@@ -649,7 +648,7 @@ CertificateChain::add_signature_value (xmlpp::Element* parent, string ns, bool a
 		data->add_child("X509Certificate", ns)->add_child_text (i.certificate());
 	}
 
-	xmlSecDSigCtxPtr signature_context = xmlSecDSigCtxCreate (0);
+	auto signature_context = xmlSecDSigCtxCreate (0);
 	if (signature_context == 0) {
 		throw MiscError ("could not create signature context");
 	}
@@ -677,7 +676,7 @@ string
 CertificateChain::chain () const
 {
 	string o;
-	BOOST_FOREACH (Certificate const &i, root_to_leaf ()) {
+	for (auto const& i: root_to_leaf()) {
 		o += i.certificate(true);
 	}
 

@@ -56,7 +56,6 @@
 #include <openssl/sha.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
 #include <stdexcept>
 #include <iostream>
 #include <iomanip>
@@ -389,8 +388,8 @@ void
 dcp::indent (xmlpp::Element* element, int initial)
 {
 	xmlpp::Node* last = 0;
-	BOOST_FOREACH (xmlpp::Node * n, element->get_children()) {
-		xmlpp::Element* e = dynamic_cast<xmlpp::Element*>(n);
+	for (auto n: element->get_children()) {
+		auto e = dynamic_cast<xmlpp::Element*>(n);
 		if (e) {
 			element->add_child_text_before (e, "\n" + spaces(initial + 2));
 			indent (e, initial + 2);

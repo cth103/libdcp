@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -52,7 +52,6 @@
 #include "compose.hpp"
 #include <getopt.h>
 #include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <cstdlib>
@@ -384,7 +383,7 @@ main (int argc, char* argv[])
 		OUTPUT_DCP_PATH("DCP: %1\n", boost::filesystem::path(argv[optind]).string());
 
 		dcp::filter_notes (notes, ignore_missing_assets);
-		BOOST_FOREACH (dcp::VerificationNote i, notes) {
+		for (auto i: notes) {
 			cerr << "Error: " << note_to_string(i) << "\n";
 		}
 
@@ -396,11 +395,11 @@ main (int argc, char* argv[])
 
 	dcp::Time total_time;
 
-	BOOST_FOREACH (shared_ptr<CPL> i, cpls) {
+	for (auto i: cpls) {
 		OUTPUT_CPL_NAME_ID("  CPL: %1 %2\n", i->annotation_text().get_value_or(""), i->id());
 
 		int R = 1;
-		BOOST_FOREACH (shared_ptr<Reel> j, i->reels()) {
+		for (auto j: i->reels()) {
 			if (should_output(only, "picture") || should_output(only, "sound") || should_output(only, "subtitle")) {
 				cout << "    Reel " << R << "\n";
 			}

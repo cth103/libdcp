@@ -99,14 +99,14 @@ load_dcp (boost::filesystem::path path, bool ignore_missing_assets, optional<str
 		vector<dcp::VerificationNote> notes;
 		dcp->read (&notes);
 		filter_notes (notes, ignore_missing_assets);
-		BOOST_FOREACH (dcp::VerificationNote i, notes) {
+		for (auto i: notes) {
 			cerr << dcp::note_to_string(i) << "\n";
 		}
 
 		if (key) {
 			auto assets = dcp->assets ();
 			for (auto i: assets) {
-				shared_ptr<MXF> mxf = dynamic_pointer_cast<MXF>(i);
+				auto mxf = dynamic_pointer_cast<MXF>(i);
 				if (mxf) {
 					mxf->set_key (Key (key.get ()));
 				}

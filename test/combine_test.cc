@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2020-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -44,7 +44,6 @@
 #include "verify.h"
 #include "reel_markers_asset.h"
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 #include <boost/test/unit_test.hpp>
 #include <iostream>
@@ -74,7 +73,7 @@ static
 void
 dump_notes (vector<dcp::VerificationNote> const & notes)
 {
-	BOOST_FOREACH (dcp::VerificationNote i, notes) {
+	for (auto i: notes) {
 		std::cout << dcp::note_to_string(i) << "\n";
 	}
 }
@@ -100,7 +99,7 @@ template <class T>
 shared_ptr<T>
 pointer_to_id_in_vector (shared_ptr<T> needle, vector<shared_ptr<T> > haystack)
 {
-	BOOST_FOREACH (shared_ptr<T> i, haystack) {
+	for (auto i: haystack) {
 		if (i->id() == needle->id()) {
  			return i;
 		}

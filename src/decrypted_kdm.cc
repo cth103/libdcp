@@ -47,7 +47,6 @@
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
 #include <openssl/err.h>
-#include <boost/foreach.hpp>
 
 using std::list;
 using std::vector;
@@ -143,7 +142,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 
 	/* Use the private key to decrypt the keys */
 
-	BOOST_FOREACH (string const & i, kdm.keys ()) {
+	for (auto const& i: kdm.keys()) {
 		/* Decode the base-64-encoded cipher value from the KDM */
 		unsigned char cipher_value[256];
 		int const cipher_value_len = base64_decode (i, cipher_value, sizeof (cipher_value));
@@ -312,7 +311,7 @@ DecryptedKDM::encrypt (
 {
 	DCP_ASSERT (!_keys.empty ());
 
-	BOOST_FOREACH (dcp::Certificate i, signer->leaf_to_root()) {
+	for (auto i: signer->leaf_to_root()) {
 		if (day_greater_than_or_equal(dcp::LocalTime(i.not_before()), _not_valid_before)) {
 			throw BadKDMDateError (true);
 		} else if (day_less_than_or_equal(dcp::LocalTime(i.not_after()), _not_valid_after)) {
@@ -322,7 +321,7 @@ DecryptedKDM::encrypt (
 
 	vector<pair<string, string>> key_ids;
 	vector<string> keys;
-	BOOST_FOREACH (DecryptedKDMKey const & i, _keys) {
+	for (auto const& i: _keys) {
 		/* We're making SMPTE keys so we must have a type for each one */
 		DCP_ASSERT (i.type());
 		key_ids.push_back (make_pair (i.type().get(), i.id ()));

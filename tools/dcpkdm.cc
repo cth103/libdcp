@@ -112,7 +112,7 @@ try
 
 	cout << "Signer chain:\n";
 	dcp::CertificateChain signer = enc_kdm.signer_certificate_chain ();
-	BOOST_FOREACH (dcp::Certificate const & i, signer.root_to_leaf()) {
+	for (auto const& i: signer.root_to_leaf()) {
 		cout << "\tCertificate:\n";
 		cout << "\t\tSubject: " << i.subject() << "\n";
 		cout << "\t\tSubject common name: " << i.subject_common_name() << "\n";
@@ -129,7 +129,7 @@ try
 		try {
 			dcp::DecryptedKDM dec_kdm (enc_kdm, dcp::file_to_string (private_key_file.get()));
 			cout << "\nKeys:";
-			BOOST_FOREACH (dcp::DecryptedKDMKey i, dec_kdm.keys ()) {
+			for (auto i: dec_kdm.keys()) {
 				cout << "\n";
 				cout << "\tID:       " << i.id() << "\n";
 				cout << "\tStandard: " << (i.standard() == dcp::Standard::SMPTE ? "SMPTE" : "Interop") << "\n";

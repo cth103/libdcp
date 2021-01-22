@@ -40,7 +40,6 @@
 #include "types.h"
 #include "dcp_time.h"
 #include <libxml++/libxml++.h>
-#include <boost/foreach.hpp>
 
 struct take_intersection_test;
 struct take_difference_test;

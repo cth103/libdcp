@@ -141,7 +141,7 @@ order::Part::write_xml (xmlpp::Element* parent, order::Context& context) const
 
 	parent = as_xml (parent, context);
 
-	BOOST_FOREACH (std::shared_ptr<order::Part> i, children) {
+	for (auto i: children) {
 		i->write_xml (parent, context);
 	}
 }

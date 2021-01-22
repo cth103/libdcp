@@ -33,7 +33,6 @@
 
 #include "name_format.h"
 #include <boost/optional.hpp>
-#include <boost/foreach.hpp>
 
 using std::string;
 using std::map;

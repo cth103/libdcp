@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -40,7 +40,6 @@
 #include "crypto_context.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/Metadata.h>
-#include <boost/foreach.hpp>
 #include <iostream>
 
 using std::min;
@@ -142,7 +141,7 @@ SoundAssetWriter::start ()
 		_state->mxf_writer.OP1aHeader().AddChildObject(soundfield);
 		essence_descriptor->SubDescriptors.push_back(soundfield->InstanceUID);
 
-		BOOST_FOREACH (Channel i, _active_channels) {
+		for (auto i: _active_channels) {
 			ASDCP::MXF::AudioChannelLabelSubDescriptor* channel = new ASDCP::MXF::AudioChannelLabelSubDescriptor(asdcp_smpte_dict);
 			GenRandomValue (channel->MCALinkID);
 			channel->SoundfieldGroupLinkID = soundfield->MCALinkID;

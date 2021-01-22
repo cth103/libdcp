@@ -49,7 +49,6 @@
 #include <asdcp/KM_util.h>
 #include <asdcp/KM_log.h>
 #include <libxml++/libxml++.h>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 
 using std::string;
@@ -126,11 +125,11 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 		/* Try to read PNG files from the same folder that the XML is in; the wisdom of this is
 		   debatable, at best...
 		*/
-		BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
-			shared_ptr<SubtitleImage> im = dynamic_pointer_cast<SubtitleImage>(i);
+		for (auto i: _subtitles) {
+			auto im = dynamic_pointer_cast<SubtitleImage>(i);
 			if (im && im->png_image().size() == 0) {
 				/* Even more dubious; allow <id>.png or urn:uuid:<id>.png */
-				boost::filesystem::path p = file.parent_path() / String::compose("%1.png", im->id());
+				auto p = file.parent_path() / String::compose("%1.png", im->id());
 				if (boost::filesystem::is_regular_file(p)) {
 					im->read_png_file (p);
 				} else if (starts_with (im->id(), "urn:uuid:")) {
@@ -145,8 +144,8 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	}
 
 	/* Check that all required image data have been found */
-	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
-		shared_ptr<SubtitleImage> im = dynamic_pointer_cast<SubtitleImage>(i);
+	for (auto i: _subtitles) {
+		auto im = dynamic_pointer_cast<SubtitleImage>(i);
 		if (im && im->png_image().size() == 0) {
 			throw MissingSubtitleImageError (im->id());
 		}
@@ -166,7 +165,7 @@ SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 	_language = xml->optional_string_child ("Language");
 
 	/* This is supposed to be two numbers, but a single number has been seen in the wild */
-	string const er = xml->string_child ("EditRate");
+	auto const er = xml->string_child ("EditRate");
 	vector<string> er_parts;
 	split (er_parts, er, is_any_of (" "));
 	if (er_parts.size() == 1) {
@@ -185,9 +184,8 @@ SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 	/* Now we need to drop down to xmlpp */
 
 	vector<ParseState> ps;
-	xmlpp::Node::NodeList c = xml->node()->get_children ();
-	for (xmlpp::Node::NodeList::const_iterator i = c.begin(); i != c.end(); ++i) {
-		xmlpp::Element const * e = dynamic_cast<xmlpp::Element const *> (*i);
+	for (auto i: xml->node()->get_children()) {
+		auto const e = dynamic_cast<xmlpp::Element const *>(i);
 		if (e && e->get_name() == "SubtitleList") {
 			parse_subtitles (e, ps, _time_code_rate, Standard::SMPTE);
 		}
@@ -206,7 +204,7 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 	/* Load fonts and images */
 
 	for (
-		ASDCP::TimedText::ResourceList_t::const_iterator i = descriptor.ResourceList.begin();
+		auto i = descriptor.ResourceList.begin();
 		i != descriptor.ResourceList.end();
 		++i) {
 
@@ -274,8 +272,8 @@ SMPTESubtitleAsset::set_key (Key key)
 
 	/* Our data was encrypted; now we can decrypt it */
 
-	shared_ptr<ASDCP::TimedText::MXFReader> reader (new ASDCP::TimedText::MXFReader ());
-	Kumu::Result_t r = reader->OpenRead (_file->string().c_str ());
+	auto reader = make_shared<ASDCP::TimedText::MXFReader>();
+	auto r = reader->OpenRead (_file->string().c_str ());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (
 			ReadError (
@@ -336,8 +334,8 @@ SMPTESubtitleAsset::xml_as_string () const
 		root->add_child("StartTime", "dcst")->add_child_text(_start_time.get().as_string(Standard::SMPTE));
 	}
 
-	BOOST_FOREACH (shared_ptr<SMPTELoadFontNode> i, _load_font_nodes) {
-		xmlpp::Element* load_font = root->add_child("LoadFont", "dcst");
+	for (auto i: _load_font_nodes) {
+		auto load_font = root->add_child("LoadFont", "dcst");
 		load_font->add_child_text ("urn:uuid:" + i->urn);
 		load_font->set_attribute ("ID", i->id);
 	}
@@ -362,7 +360,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 
 	/* Font references */
 
-	BOOST_FOREACH (shared_ptr<dcp::SMPTELoadFontNode> i, _load_font_nodes) {
+	for (auto i: _load_font_nodes) {
 		auto j = _fonts.begin();
 		while (j != _fonts.end() && j->load_id != i->id) {
 			++j;
@@ -379,8 +377,8 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 
 	/* Image subtitle references */
 
-	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
-		shared_ptr<SubtitleImage> si = dynamic_pointer_cast<SubtitleImage>(i);
+	for (auto i: _subtitles) {
+		auto si = dynamic_pointer_cast<SubtitleImage>(i);
 		if (si) {
 			ASDCP::TimedText::TimedTextResourceDescriptor res;
 			unsigned int c;
@@ -413,7 +411,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 
 	/* Font payload */
 
-	BOOST_FOREACH (shared_ptr<dcp::SMPTELoadFontNode> i, _load_font_nodes) {
+	for (auto i: _load_font_nodes) {
 		auto j = _fonts.begin();
 		while (j != _fonts.end() && j->load_id != i->id) {
 			++j;
@@ -432,8 +430,8 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 
 	/* Image subtitle payload */
 
-	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
-		shared_ptr<SubtitleImage> si = dynamic_pointer_cast<SubtitleImage>(i);
+	for (auto i: _subtitles) {
+		auto si = dynamic_pointer_cast<SubtitleImage>(i);
 		if (si) {
 			ASDCP::TimedText::FrameBuffer buffer;
 			buffer.SetData (si->png_image().data(), si->png_image().size());

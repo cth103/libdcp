@@ -50,7 +50,6 @@
 #include "reel_atmos_asset.h"
 #include "reel_closed_caption_asset.h"
 #include <libxml++/nodes/element.h>
-#include <boost/foreach.hpp>
 #include <stdint.h>
 
 /* Centos 6 does not have this */

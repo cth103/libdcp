@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -42,7 +42,6 @@
 #include "compose.hpp"
 #include "subtitle_image.h"
 #include <libxml++/libxml++.h>
-#include <boost/foreach.hpp>
 #include <boost/weak_ptr.hpp>
 #include <cmath>
 #include <cstdio>
@@ -55,6 +54,7 @@ using std::map;
 using std::shared_ptr;
 using std::dynamic_pointer_cast;
 using std::vector;
+using std::make_shared;
 using boost::shared_array;
 using boost::optional;
 using namespace dcp;
@@ -83,8 +83,8 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 		}
 	}
 
-	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
-		shared_ptr<SubtitleImage> si = dynamic_pointer_cast<SubtitleImage>(i);
+	for (auto i: _subtitles) {
+		auto si = dynamic_pointer_cast<SubtitleImage>(i);
 		if (si) {
 			si->read_png_file (file.parent_path() / String::compose("%1.png", si->id()));
 		}
@@ -192,16 +192,16 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 	_file = p;
 
 	/* Image subtitles */
-	BOOST_FOREACH (shared_ptr<dcp::Subtitle> i, _subtitles) {
-		shared_ptr<dcp::SubtitleImage> im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
+	for (auto i: _subtitles) {
+		auto im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
 		if (im) {
 			im->write_png_file(p.parent_path() / String::compose("%1.png", im->id()));
 		}
 	}
 
 	/* Fonts */
-	BOOST_FOREACH (shared_ptr<InteropLoadFontNode> i, _load_font_nodes) {
-		boost::filesystem::path file = p.parent_path() / i->uri;
+	for (auto i: _load_font_nodes) {
+		auto file = p.parent_path() / i->uri;
 		auto j = _fonts.begin();
 		while (j != _fonts.end() && j->load_id != i->id) {
 			++j;
@@ -220,15 +220,15 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 void
 InteropSubtitleAsset::resolve_fonts (vector<shared_ptr<Asset>> assets)
 {
-	BOOST_FOREACH (shared_ptr<Asset> i, assets) {
-		shared_ptr<FontAsset> font = dynamic_pointer_cast<FontAsset> (i);
+	for (auto i: assets) {
+		auto font = dynamic_pointer_cast<FontAsset> (i);
 		if (!font) {
 			continue;
 		}
 
-		BOOST_FOREACH (shared_ptr<InteropLoadFontNode> j, _load_font_nodes) {
+		for (auto j: _load_font_nodes) {
 			bool got = false;
-			BOOST_FOREACH (Font const & k, _fonts) {
+			for (auto const& k: _fonts) {
 				if (k.load_id == j->id) {
 					got = true;
 					break;
@@ -245,9 +245,9 @@ InteropSubtitleAsset::resolve_fonts (vector<shared_ptr<Asset>> assets)
 void
 InteropSubtitleAsset::add_font_assets (vector<shared_ptr<Asset>>& assets)
 {
-	BOOST_FOREACH (Font const & i, _fonts) {
+	for (auto const& i: _fonts) {
 		DCP_ASSERT (i.file);
-		assets.push_back (shared_ptr<FontAsset> (new FontAsset (i.uuid, i.file.get ())));
+		assets.push_back (make_shared<FontAsset>(i.uuid, i.file.get()));
 	}
 }
 
@@ -256,8 +256,8 @@ InteropSubtitleAsset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::p
 {
 	Asset::write_to_assetmap (node, root);
 
-	BOOST_FOREACH (shared_ptr<dcp::Subtitle> i, _subtitles) {
-		shared_ptr<dcp::SubtitleImage> im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
+	for (auto i: _subtitles) {
+		auto im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
 		if (im) {
 			DCP_ASSERT (im->file());
 			write_file_to_assetmap (node, root, im->file().get(), im->id());
@@ -270,10 +270,10 @@ InteropSubtitleAsset::add_to_pkl (shared_ptr<PKL> pkl, boost::filesystem::path r
 {
 	Asset::add_to_pkl (pkl, root);
 
-	BOOST_FOREACH (shared_ptr<dcp::Subtitle> i, _subtitles) {
-		shared_ptr<dcp::SubtitleImage> im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
+	for (auto i: _subtitles) {
+		auto im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
 		if (im) {
-			ArrayData png_image = im->png_image ();
+			auto png_image = im->png_image ();
 			pkl->add_asset (im->id(), optional<string>(), make_digest(png_image), png_image.size(), "image/png");
 		}
 	}
@@ -283,13 +283,13 @@ InteropSubtitleAsset::add_to_pkl (shared_ptr<PKL> pkl, boost::filesystem::path r
 void
 InteropSubtitleAsset::set_font_file (string load_id, boost::filesystem::path file)
 {
-	BOOST_FOREACH (Font& i, _fonts) {
+	for (auto& i: _fonts) {
 		if (i.load_id == load_id) {
 			i.file = file;
 		}
 	}
 
-	BOOST_FOREACH (shared_ptr<InteropLoadFontNode> i, _load_font_nodes) {
+	for (auto i: _load_font_nodes) {
 		if (i->id == load_id) {
 			i->uri = file.filename().string();
 		}

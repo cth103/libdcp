@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -39,7 +39,6 @@
 #include <getopt.h>
 #include <libxml++/libxml++.h>
 #include <boost/filesystem.hpp>
-#include <boost/foreach.hpp>
 #include <iostream>
 
 using std::cerr;
@@ -109,7 +108,7 @@ main (int argc, char* argv[])
 		cout << "Error:" <<  e.what() << "\n";
 	}
 
-	BOOST_FOREACH (dcp::VerificationNote i, notes) {
+	for (auto i: notes) {
 		cout << "Error: " << dcp::note_to_string(i) << "\n";
 	}
 

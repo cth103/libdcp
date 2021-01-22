@@ -142,7 +142,7 @@ main (int argc, char* argv[])
 	dcp::filter_notes (notes, ignore_missing_assets);
 
 	bool failed = false;
-	BOOST_FOREACH (dcp::VerificationNote i, notes) {
+	for (auto i: notes) {
 		if (ignore_bv21_smpte && i.code() == dcp::VerificationNote::Code::INVALID_STANDARD) {
 			continue;
 		}

@@ -38,7 +38,6 @@
 #include "dcp_assert.h"
 #include <libxml++/libxml++.h>
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
 #include <string>
 #include <vector>
 #include <cmath>
@@ -570,7 +569,7 @@ MainSoundConfiguration::MainSoundConfiguration (string s)
 		throw MainSoundConfigurationError (s);
 	}
 
-	BOOST_FOREACH (string i, channels) {
+	for (auto i: channels) {
 		if (i == "-") {
 			_channels.push_back(optional<Channel>());
 		} else {

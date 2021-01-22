@@ -48,7 +48,6 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_array.hpp>
-#include <boost/foreach.hpp>
 
 using std::dynamic_pointer_cast;
 using std::string;
@@ -292,7 +291,7 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 	}
 
 	ParseState ps;
-	BOOST_FOREACH (ParseState const & i, parse_state) {
+	for (auto const& i: parse_state) {
 		if (i.font_id) {
 			ps.font_id = i.font_id.get();
 		}
@@ -548,12 +547,12 @@ SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
 		   these features go into part's font.
 		*/
 		part->font = part->children.front()->font;
-		BOOST_FOREACH (shared_ptr<order::Part> i, part->children) {
+		for (auto i: part->children) {
 			part->font.take_intersection (i->font);
 		}
 
 		/* Remove common values from part's children's fonts */
-		BOOST_FOREACH (shared_ptr<order::Part> i, part->children) {
+		for (auto i: part->children) {
 			i->font.take_difference (part->font);
 		}
 	}
@@ -685,7 +684,7 @@ map<string, ArrayData>
 SubtitleAsset::font_data () const
 {
 	map<string, ArrayData> out;
-	BOOST_FOREACH (Font const & i, _fonts) {
+	for (auto const& i: _fonts) {
 		out[i.load_id] = i.data;
 	}
 	return out;
@@ -696,7 +695,7 @@ map<string, boost::filesystem::path>
 SubtitleAsset::font_filenames () const
 {
 	map<string, boost::filesystem::path> out;
-	BOOST_FOREACH (Font const& i, _fonts) {
+	for (auto const& i: _fonts) {
 		if (i.file) {
 			out[i.load_id] = *i.file;
 		}
@@ -714,7 +713,7 @@ SubtitleAsset::fix_empty_font_ids ()
 {
 	bool have_empty = false;
 	vector<string> ids;
-	BOOST_FOREACH (shared_ptr<LoadFontNode> i, load_font_nodes()) {
+	for (auto i: load_font_nodes()) {
 		if (i->id == "") {
 			have_empty = true;
 		} else {
@@ -728,14 +727,14 @@ SubtitleAsset::fix_empty_font_ids ()
 
 	string const empty_id = unique_string (ids, "font");
 
-	BOOST_FOREACH (shared_ptr<LoadFontNode> i, load_font_nodes()) {
+	for (auto i: load_font_nodes()) {
 		if (i->id == "") {
 			i->id = empty_id;
 		}
 	}
 
-	BOOST_FOREACH (shared_ptr<Subtitle> i, _subtitles) {
-		shared_ptr<SubtitleString> j = dynamic_pointer_cast<SubtitleString> (i);
+	for (auto i: _subtitles) {
+		auto j = dynamic_pointer_cast<SubtitleString> (i);
 		if (j && j->font() && j->font().get() == "") {
 			j->set_font (empty_id);
 		}

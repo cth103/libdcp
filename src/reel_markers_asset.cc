@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2019-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -35,7 +35,6 @@
 #include "raw_convert.h"
 #include "dcp_assert.h"
 #include <libxml++/libxml++.h>
-#include <boost/foreach.hpp>
 
 using std::string;
 using std::map;
@@ -53,9 +52,9 @@ ReelMarkersAsset::ReelMarkersAsset (Fraction edit_rate, int64_t intrinsic_durati
 ReelMarkersAsset::ReelMarkersAsset (cxml::ConstNodePtr node)
 	: ReelAsset (node)
 {
-	cxml::ConstNodePtr list = node->node_child ("MarkerList");
+	auto list = node->node_child ("MarkerList");
 	DCP_ASSERT (list);
-	BOOST_FOREACH (cxml::ConstNodePtr i, list->node_children("Marker")) {
+	for (auto i: list->node_children("Marker")) {
 		set (marker_from_string(i->string_child("Label")), dcp::Time(i->number_child<int64_t>("Offset"), edit_rate().as_float(), edit_rate().numerator));
 	}
 }
