@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/asset.h
- *  @brief Asset class.
+ *  @brief Asset class
  */
+
 
 #ifndef LIBDCP_ASSET_H
 #define LIBDCP_ASSET_H
+
 
 #include "object.h"
 #include "types.h"
@@ -45,16 +48,20 @@
 #include <boost/function.hpp>
 #include <boost/optional.hpp>
 
+
 namespace xmlpp {
 	class Node;
 }
 
+
 struct asset_test;
+
 
 namespace dcp {
 
+
 /** @class Asset
- *  @brief Parent class for DCP assets, i.e. picture, sound, subtitles, CPLs, fonts.
+ *  @brief Parent class for DCP assets, i.e. picture, sound, subtitles, closed captions, CPLs, fonts
  *
  *  Note that this class is not used for ReelAssets; those are just for the metadata
  *  that gets put into &lt;Reel&gt;s.
@@ -62,8 +69,18 @@ namespace dcp {
 class Asset : public Object
 {
 public:
+	/** Create an Asset with a randomly-generated ID */
 	Asset ();
+
+	/** Create an Asset from a given file with a randomly-generated ID
+	 *  @param file File name
+	 */
 	explicit Asset (boost::filesystem::path file);
+
+	/** Create an Asset from a given file with a given ID
+	 *  @param id ID
+	 *  @param file File name
+	 */
 	Asset (std::string id, boost::filesystem::path file);
 
 	virtual bool equals (
@@ -72,9 +89,6 @@ public:
 		NoteHandler note
 		) const;
 
-	/** Write details of the asset to a ASSETMAP.
-	 *  @param node Parent node.
-	 */
 	virtual void write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const;
 
 	virtual void add_to_pkl (std::shared_ptr<PKL> pkl, boost::filesystem::path root) const;
@@ -84,10 +98,21 @@ public:
 		return _file;
 	}
 
+	/** Set the file that holds this asset on disk.  Calling this function
+	*  clears this object's store of its hash, so you should call ::hash
+	*  after this.
+	*
+	*  @param file New file's path.
+	*/
 	void set_file (boost::filesystem::path file) const;
 
-	/** @return the hash of this asset's file */
-	std::string hash (boost::function<void (float)> progress = 0) const;
+	/** Calculate the hash of this asset's file, if it has not already been calculated,
+	 *  then return it
+	 *  @param progress Function that will be called with a parameter between 0 and 1 to indicate
+	 *  progress in the calculation
+	 *  @return the hash
+	 */
+	std::string hash (boost::function<void (float)> progress = {}) const;
 
 	void set_hash (std::string hash);
 
@@ -108,6 +133,8 @@ private:
 	mutable boost::optional<std::string> _hash;
 };
 
+
 }
+
 
 #endif

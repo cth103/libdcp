@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/asset.cc
  *  @brief Asset class.
  */
+
 
 #include "raw_convert.h"
 #include "asset.h"
@@ -45,46 +47,44 @@
 #include <libxml++/libxml++.h>
 #include <boost/algorithm/string.hpp>
 
+
 using std::string;
 using boost::function;
 using std::shared_ptr;
 using boost::optional;
+using namespace boost::filesystem;
 using namespace dcp;
 
-/** Create an Asset with a randomly-generated ID */
+
 Asset::Asset ()
 {
 
 }
 
-/** Create an Asset from a given file.
- *  @param file File name.
- */
-Asset::Asset (boost::filesystem::path file)
+
+Asset::Asset (path file)
 	: _file (file)
 {
 
 }
 
-/** Create an Asset from a given file with a known ID.
- *  @param file File name.
- *  @param id ID.
- */
-Asset::Asset (string id, boost::filesystem::path file)
+
+Asset::Asset (string id, path file)
 	: Object (id)
 	, _file (file)
 {
 
 }
 
+
 void
-Asset::add_to_pkl (shared_ptr<PKL> pkl, boost::filesystem::path root) const
+Asset::add_to_pkl (shared_ptr<PKL> pkl, path root) const
 {
 	DCP_ASSERT (_file);
 
-	optional<boost::filesystem::path> path = relative_to_root (
-		boost::filesystem::canonical (root),
-		boost::filesystem::canonical (_file.get())
+	auto path = relative_to_root (
+		canonical(root),
+		canonical(_file.get())
 		);
 
 	if (!path) {
@@ -94,22 +94,24 @@ Asset::add_to_pkl (shared_ptr<PKL> pkl, boost::filesystem::path root) const
 		return;
 	}
 
-	pkl->add_asset (_id, _id, hash(), boost::filesystem::file_size (_file.get()), pkl_type (pkl->standard()));
+	pkl->add_asset (_id, _id, hash(), file_size(_file.get()), pkl_type(pkl->standard()));
 }
 
+
 void
-Asset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
+Asset::write_to_assetmap (xmlpp::Node* node, path root) const
 {
 	DCP_ASSERT (_file);
 	write_file_to_assetmap (node, root, _file.get(), _id);
 }
 
+
 void
-Asset::write_file_to_assetmap (xmlpp::Node* node, boost::filesystem::path root, boost::filesystem::path file, string id)
+Asset::write_file_to_assetmap (xmlpp::Node* node, path root, path file, string id)
 {
-	optional<boost::filesystem::path> path = relative_to_root (
-		boost::filesystem::canonical (root),
-		boost::filesystem::canonical (file)
+	auto path = relative_to_root (
+		canonical(root),
+		canonical(file)
 		);
 
 	if (!path) {
@@ -119,16 +121,17 @@ Asset::write_file_to_assetmap (xmlpp::Node* node, boost::filesystem::path root, 
 		return;
 	}
 
-	xmlpp::Node* asset = node->add_child ("Asset");
-	asset->add_child("Id")->add_child_text ("urn:uuid:" + id);
-	xmlpp::Node* chunk_list = asset->add_child ("ChunkList");
-	xmlpp::Node* chunk = chunk_list->add_child ("Chunk");
+	auto asset = node->add_child ("Asset");
+	asset->add_child("Id")->add_child_text("urn:uuid:" + id);
+	auto chunk_list = asset->add_child ("ChunkList");
+	auto chunk = chunk_list->add_child ("Chunk");
 
-	chunk->add_child("Path")->add_child_text (path.get().generic_string());
-	chunk->add_child("VolumeIndex")->add_child_text ("1");
-	chunk->add_child("Offset")->add_child_text ("0");
-	chunk->add_child("Length")->add_child_text (raw_convert<string> (boost::filesystem::file_size (file)));
+	chunk->add_child("Path")->add_child_text(path.get().generic_string());
+	chunk->add_child("VolumeIndex")->add_child_text("1");
+	chunk->add_child("Offset")->add_child_text("0");
+	chunk->add_child("Length")->add_child_text(raw_convert<string>(file_size(file)));
 }
+
 
 string
 Asset::hash (function<void (float)> progress) const
@@ -142,6 +145,7 @@ Asset::hash (function<void (float)> progress) const
 	return _hash.get();
 }
 
+
 bool
 Asset::equals (std::shared_ptr<const Asset> other, EqualityOptions, NoteHandler note) const
 {
@@ -153,18 +157,14 @@ Asset::equals (std::shared_ptr<const Asset> other, EqualityOptions, NoteHandler 
 	return true;
 }
 
-/** Set the file that holds this asset on disk.  Calling this function
- *  clears this object's store of its hash, so you should call ::hash
- *  after this.
- *
- *  @param file New file's path.
- */
+
 void
-Asset::set_file (boost::filesystem::path file) const
+Asset::set_file (path file) const
 {
-	_file = boost::filesystem::absolute (file);
-	_hash = optional<string> ();
+	_file = absolute (file);
+	_hash = {};
 }
+
 
 void
 Asset::set_hash (string hash)

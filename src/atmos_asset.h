@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,17 +31,30 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/atmos_asset.h
+ *  @brief AtmosAsset class
+ */
+
+
 #ifndef LIBDCP_ATMOS_ASSET_H
 #define LIBDCP_ATMOS_ASSET_H
+
 
 #include "asset.h"
 #include "mxf.h"
 #include "atmos_asset_reader.h"
 
+
 namespace dcp {
+
 
 class AtmosAssetWriter;
 
+
+/** @class AtmosAsset
+ *  @brief An asset of Dolby ATMOS sound data
+ */
 class AtmosAsset : public Asset, public MXF
 {
 public:
@@ -99,6 +112,8 @@ private:
 	int _atmos_version;
 };
 
+
 }
+
 
 #endif

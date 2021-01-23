@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/atmos_asset_writer.h
+ *  @brief AtmosAssetWriter class
+ */
+
+
 #ifndef LIBDCP_ATMOS_ASSET_WRITER_H
 #define LIBDCP_ATMOS_ASSET_WRITER_H
 
-/** @file  src/atmos_asset_writer.h
- *  @brief AtmosAssetWriter class.
- */
 
 #include "asset_writer.h"
 #include "types.h"
@@ -44,9 +47,12 @@
 #include <memory>
 #include <boost/filesystem.hpp>
 
+
 namespace dcp {
 
+
 class AtmosAsset;
+
 
 /** @class AtmosAssetWriter
  *  @brief A helper class for writing to AtmosAssets.
@@ -74,6 +80,8 @@ private:
 	AtmosAsset* _asset;
 };
 
+
 }
+
 
 #endif

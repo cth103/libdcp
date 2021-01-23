@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/array_data.h
+ *  @brief ArrayData class.
+ */
+
+
 #ifndef LIBDCP_ARRAY_DATA_H
 #define LIBDCP_ARRAY_DATA_H
 
@@ -40,16 +46,27 @@
 #include <boost/filesystem.hpp>
 #include <stdint.h>
 
+
 namespace dcp {
 
 
+/** @brief Class to hold an arbitrary block of data */
 class ArrayData : public Data
 {
 public:
 	ArrayData ();
 	explicit ArrayData (int size);
 	ArrayData (uint8_t const * data, int size);
+
+	/** Create an ArrayData by copying a shared_array<>
+	 *  @param data shared_array<> to copy (the shared_array<> is copied, not the data)
+	 *  @param size Size of data in bytes
+	 */
 	ArrayData (boost::shared_array<uint8_t> data, int size);
+
+	/** Create an ArrayData by reading the contents of a file
+	 *  @param file Filename to read
+	 */
 	explicit ArrayData (boost::filesystem::path file);
 
 	virtual ~ArrayData () {}
@@ -62,10 +79,14 @@ public:
 		return _data.get();
 	}
 
+	/** @return size of the data in _data, or whatever was last
+	 *  passed to a set_size() call
+	 */
 	int size () const {
 		return _size;
 	}
 
+	/** Set the size that will be returned from size() */
 	void set_size (int s) {
 		_size = s;
 	}
@@ -76,6 +97,8 @@ private:
 	int _size;
 };
 
+
 }
+
 
 #endif
