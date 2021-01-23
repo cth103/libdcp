@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,7 @@
     files in the program, then also delete it here.
 */
 
+
 #include "pkl.h"
 #include "exceptions.h"
 #include "util.h"
@@ -39,14 +40,17 @@
 #include <libxml++/libxml++.h>
 #include <iostream>
 
+
 using std::string;
 using std::shared_ptr;
 using std::make_shared;
 using boost::optional;
 using namespace dcp;
 
+
 static string const pkl_interop_ns = "http://www.digicine.com/PROTO-ASDCP-PKL-20040311#";
 static string const pkl_smpte_ns   = "http://www.smpte-ra.org/schemas/429-8/2007/PKL";
+
 
 PKL::PKL (boost::filesystem::path file)
 	: _file (file)
@@ -73,11 +77,13 @@ PKL::PKL (boost::filesystem::path file)
 	}
 }
 
+
 void
 PKL::add_asset (std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type)
 {
 	_asset_list.push_back (make_shared<Asset>(id, annotation_text, hash, size, type));
 }
+
 
 void
 PKL::write (boost::filesystem::path file, shared_ptr<const CertificateChain> signer) const
@@ -120,6 +126,7 @@ PKL::write (boost::filesystem::path file, shared_ptr<const CertificateChain> sig
 	_file = file;
 }
 
+
 optional<string>
 PKL::hash (string id) const
 {
@@ -131,6 +138,7 @@ PKL::hash (string id) const
 
 	return {};
 }
+
 
 optional<string>
 PKL::type (string id) const

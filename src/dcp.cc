@@ -66,6 +66,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 
+
 using std::string;
 using std::list;
 using std::vector;
@@ -81,10 +82,12 @@ using boost::optional;
 using boost::algorithm::starts_with;
 using namespace dcp;
 
+
 static string const assetmap_interop_ns = "http://www.digicine.com/PROTO-ASDCP-AM-20040311#";
 static string const assetmap_smpte_ns   = "http://www.smpte-ra.org/schemas/429-9/2007/AM";
 static string const volindex_interop_ns = "http://www.digicine.com/PROTO-ASDCP-VL-20040311#";
 static string const volindex_smpte_ns   = "http://www.smpte-ra.org/schemas/429-9/2007/AM";
+
 
 DCP::DCP (boost::filesystem::path directory)
 	: _directory (directory)
@@ -96,17 +99,7 @@ DCP::DCP (boost::filesystem::path directory)
 	_directory = boost::filesystem::canonical (_directory);
 }
 
-/** Read a DCP.  This method does not do any deep checking of the DCP's validity, but
- *  if it comes across any bad things it will do one of two things.
- *
- *  Errors that are so serious that they prevent the method from working will result
- *  in an exception being thrown.  For example, a missing ASSETMAP means that the DCP
- *  can't be read without a lot of guesswork, so this will throw.
- *
- *  Errors that are not fatal will be added to notes, if it's non-0.  For example,
- *  if the DCP contains a mixture of Interop and SMPTE elements this will result
- *  in a note being added to the vector.
- */
+
 void
 DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf_type)
 {
@@ -147,7 +140,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			if (i->optional_node_child("PackingList")) {
 				pkl_paths.push_back (p);
 			} else {
-				paths.insert (make_pair (remove_urn_uuid (i->string_child ("Id")), p));
+				paths.insert (make_pair(remove_urn_uuid(i->string_child("Id")), p));
 			}
 			break;
 		case Standard::SMPTE:
@@ -156,7 +149,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			if (pkl_bool && *pkl_bool == "true") {
 				pkl_paths.push_back (p);
 			} else {
-				paths.insert (make_pair (remove_urn_uuid (i->string_child ("Id")), p));
+				paths.insert (make_pair(remove_urn_uuid(i->string_child("Id")), p));
 			}
 			break;
 		}
@@ -229,7 +222,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 				throw ReadError(String::compose("XML error in %1", path.string()), e.what());
 			}
 
-			auto const root = p->get_document()->get_root_node()->get_name ();
+			auto const root = p->get_document()->get_root_node()->get_name();
 			delete p;
 
 			if (root == "CompositionPlaylist") {
@@ -275,6 +268,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 	}
 }
 
+
 void
 DCP::resolve_refs (vector<shared_ptr<Asset>> assets)
 {
@@ -282,6 +276,7 @@ DCP::resolve_refs (vector<shared_ptr<Asset>> assets)
 		i->resolve_refs (assets);
 	}
 }
+
 
 bool
 DCP::equals (DCP const & other, EqualityOptions opt, NoteHandler note) const
@@ -309,6 +304,7 @@ DCP::equals (DCP const & other, EqualityOptions opt, NoteHandler note) const
 
 	return r;
 }
+
 
 void
 DCP::add (std::shared_ptr<CPL> cpl)
@@ -343,10 +339,6 @@ DCP::all_encrypted () const
 }
 
 
-/** Add a KDM to decrypt this DCP.  This method must be called after DCP::read()
- *  or the KDM you specify will be ignored.
- *  @param kdm KDM to use.
- */
 void
 DCP::add (DecryptedKDM const & kdm)
 {
@@ -360,6 +352,7 @@ DCP::add (DecryptedKDM const & kdm)
 		}
 	}
 }
+
 
 /** Write the VOLINDEX file.
  *  @param standard DCP standard to use (INTEROP or SMPTE)
@@ -396,6 +389,7 @@ DCP::write_volindex (Standard standard) const
 	root->add_child("Index")->add_child_text ("1");
 	doc.write_to_file_formatted (p.string (), "UTF-8");
 }
+
 
 void
 DCP::write_assetmap (
@@ -470,11 +464,7 @@ DCP::write_assetmap (
 	_asset_map = p;
 }
 
-/** Write all the XML files for this DCP.
- *  @param standand INTEROP or SMPTE.
- *  @param metadata Metadata to use for PKL and asset map files.
- *  @param signer Signer to use, or 0.
- */
+
 void
 DCP::write_xml (
 	Standard standard,
@@ -513,16 +503,14 @@ DCP::write_xml (
 	write_assetmap (standard, pkl->id(), pkl_path, issuer, creator, issue_date, annotation_text);
 }
 
+
 vector<shared_ptr<CPL>>
 DCP::cpls () const
 {
 	return _cpls;
 }
 
-/** @param ignore_unresolved true to silently ignore unresolved assets, otherwise
- *  an exception is thrown if they are found.
- *  @return All assets (including CPLs).
- */
+
 vector<shared_ptr<Asset>>
 DCP::assets (bool ignore_unresolved) const
 {
@@ -556,6 +544,7 @@ DCP::assets (bool ignore_unresolved) const
 
 	return assets;
 }
+
 
 /** Given a list of files that make up 1 or more DCPs, return the DCP directories */
 vector<boost::filesystem::path>

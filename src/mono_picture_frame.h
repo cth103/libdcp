@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,21 +31,24 @@
     files in the program, then also delete it here.
 */
 
+
 #ifndef LIBDCP_MONO_PICTURE_FRAME_H
 #define LIBDCP_MONO_PICTURE_FRAME_H
 
+
 /** @file  src/mono_picture_frame.h
- *  @brief MonoPictureFrame class.
+ *  @brief MonoPictureFrame class
  */
+
 
 #include "types.h"
 #include "asset_reader.h"
 #include <memory>
-#include <boost/noncopyable.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <string>
 #include <stdint.h>
+
 
 namespace ASDCP {
 	namespace JP2K {
@@ -55,18 +58,24 @@ namespace ASDCP {
 	class AESDecContext;
 }
 
+
 namespace dcp {
 
+
 class OpenJPEGImage;
+
 
 /** @class MonoPictureFrame
  *  @brief A single frame of a 2D (monoscopic) picture asset.
  */
-class MonoPictureFrame : public Data, public boost::noncopyable
+class MonoPictureFrame : public Data
 {
 public:
 	explicit MonoPictureFrame (boost::filesystem::path path);
 	MonoPictureFrame (uint8_t const * data, int size);
+
+	MonoPictureFrame (MonoPictureFrame const&) = delete;
+	MonoPictureFrame& operator= (MonoPictureFrame const&) = delete;
 
 	std::shared_ptr<OpenJPEGImage> xyz_image (int reduce = 0) const;
 

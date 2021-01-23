@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,33 +31,39 @@
     files in the program, then also delete it here.
 */
 
+
 #ifndef LIBDCP_ASSET_READER_H
 #define LIBDCP_ASSET_READER_H
 
-#include "dcp_assert.h"
+
 #include "asset.h"
 #include "crypto_context.h"
+#include "dcp_assert.h"
 #include <asdcp/AS_DCP.h>
-#include <boost/noncopyable.hpp>
 #include <memory>
+
 
 namespace dcp {
 
+
 template <class R, class F>
-class AssetReader : public boost::noncopyable
+class AssetReader
 {
 public:
 	explicit AssetReader (Asset const * asset, boost::optional<Key> key, Standard standard)
-		: _crypto_context (new DecryptionContext (key, standard))
+		: _crypto_context (new DecryptionContext(key, standard))
 	{
 		_reader = new R ();
-		DCP_ASSERT (asset->file ());
-		Kumu::Result_t const r = _reader->OpenRead (asset->file()->string().c_str());
-		if (ASDCP_FAILURE (r)) {
+		DCP_ASSERT (asset->file());
+		auto const r = _reader->OpenRead (asset->file()->string().c_str());
+		if (ASDCP_FAILURE(r)) {
 			delete _reader;
-			boost::throw_exception (FileError ("could not open MXF file for reading", asset->file().get(), r));
+			boost::throw_exception (FileError("could not open MXF file for reading", asset->file().get(), r));
 		}
 	}
+
+	AssetReader (AssetReader const&) = delete;
+	AssetReader& operator== (AssetReader const&) = delete;
 
 	~AssetReader ()
 	{
@@ -66,7 +72,7 @@ public:
 
 	std::shared_ptr<const F> get_frame (int n) const
 	{
-		return std::shared_ptr<const F> (new F (_reader, n, _crypto_context));
+		return std::shared_ptr<const F> (new F(_reader, n, _crypto_context));
 	}
 
 	R* reader () const {
@@ -74,10 +80,12 @@ public:
 	}
 
 protected:
-	R* _reader;
+	R* _reader = nullptr;
 	std::shared_ptr<DecryptionContext> _crypto_context;
 };
 
+
 }
+
 
 #endif

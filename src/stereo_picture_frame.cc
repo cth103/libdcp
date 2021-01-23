@@ -31,6 +31,7 @@
     files in the program, then also delete it here.
 */
 
+
 #include "stereo_picture_frame.h"
 #include "exceptions.h"
 #include "util.h"
@@ -41,6 +42,7 @@
 #include "crypto_context.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
+
 
 using std::string;
 using std::shared_ptr;
@@ -91,16 +93,17 @@ StereoPictureFrame::Part::size () const
 StereoPictureFrame::StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, shared_ptr<DecryptionContext> c)
 {
 	/* XXX: unfortunate guesswork on this buffer size */
-	_buffer.reset(new ASDCP::JP2K::SFrameBuffer(4 * Kumu::Megabyte));
+	_buffer = make_shared<ASDCP::JP2K::SFrameBuffer>(4 * Kumu::Megabyte);
 
 	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->context(), c->hmac()))) {
 		boost::throw_exception (ReadError (String::compose ("could not read video frame %1 of %2", n)));
 	}
 }
 
+
 StereoPictureFrame::StereoPictureFrame ()
 {
-	_buffer.reset(new ASDCP::JP2K::SFrameBuffer(4 * Kumu::Megabyte));
+	_buffer = make_shared<ASDCP::JP2K::SFrameBuffer>(4 * Kumu::Megabyte);
 }
 
 
@@ -114,12 +117,12 @@ StereoPictureFrame::xyz_image (Eye eye, int reduce) const
 {
 	switch (eye) {
 	case Eye::LEFT:
-		return decompress_j2k (const_cast<uint8_t*> (_buffer->Left.RoData()), _buffer->Left.Size(), reduce);
+		return decompress_j2k (const_cast<uint8_t*>(_buffer->Left.RoData()), _buffer->Left.Size(), reduce);
 	case Eye::RIGHT:
-		return decompress_j2k (const_cast<uint8_t*> (_buffer->Right.RoData()), _buffer->Right.Size(), reduce);
+		return decompress_j2k (const_cast<uint8_t*>(_buffer->Right.RoData()), _buffer->Right.Size(), reduce);
 	}
 
-	return shared_ptr<OpenJPEGImage> ();
+	return {};
 }
 
 

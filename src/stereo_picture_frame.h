@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,16 +31,23 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/stereo_picture_frame.h
+ *  @brief StereoPictureFrame class
+ */
+
+
 #ifndef LIBDCP_STEREO_PICTURE_FRAME_H
 #define LIBDCP_STEREO_PICTURE_FRAME_H
+
 
 #include "types.h"
 #include "asset_reader.h"
 #include <memory>
-#include <boost/noncopyable.hpp>
 #include <boost/filesystem.hpp>
 #include <stdint.h>
 #include <string>
+
 
 namespace ASDCP {
 	namespace JP2K {
@@ -50,6 +57,7 @@ namespace ASDCP {
 	class AESDecContext;
 }
 
+
 namespace dcp {
 
 
@@ -57,11 +65,16 @@ class OpenJPEGImage;
 class StereoPictureFrame;
 
 
-/** A single frame of a 3D (stereoscopic) picture asset */
-class StereoPictureFrame : public boost::noncopyable
+/** @class StereoPictureFrame
+ *  @brief A single frame of a 3D (stereoscopic) picture asset
+ */
+class StereoPictureFrame
 {
 public:
 	StereoPictureFrame ();
+
+	StereoPictureFrame (StereoPictureFrame const &) = delete;
+	StereoPictureFrame& operator= (StereoPictureFrame const &) = delete;
 
 	std::shared_ptr<OpenJPEGImage> xyz_image (Eye eye, int reduce = 0) const;
 
@@ -97,6 +110,8 @@ private:
 	std::shared_ptr<ASDCP::JP2K::SFrameBuffer> _buffer;
 };
 
+
 }
+
 
 #endif

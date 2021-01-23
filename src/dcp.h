@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/dcp.h
  *  @brief DCP class.
  */
 
+
 #ifndef LIBDCP_DCP_H
 #define LIBDCP_DCP_H
+
 
 #include "compose.hpp"
 #include "types.h"
@@ -46,19 +49,22 @@
 #include "name_format.h"
 #include "verify.h"
 #include "version.h"
-#include <memory>
 #include <boost/signals2.hpp>
+#include <memory>
 #include <string>
 #include <vector>
+
 
 namespace xmlpp {
 	class Document;
 	class Element;
 }
 
+
 /** @brief Namespace for everything in libdcp */
 namespace dcp
 {
+
 
 class PKL;
 class Content;
@@ -69,11 +75,11 @@ class DecryptedKDM;
 class Asset;
 class ReadError;
 
-/** @class DCP
- *  @brief A class to create or read a DCP.
- */
 
-class DCP : public boost::noncopyable
+/** @class DCP
+ *  @brief A class to create or read a DCP
+ */
+class DCP
 {
 public:
 	/** Construct a DCP.  You can pass an existing DCP's directory
@@ -85,13 +91,28 @@ public:
 	 */
 	explicit DCP (boost::filesystem::path directory);
 
-	/** Read the DCP's structure into this object.
+	DCP (DCP const&) = delete;
+	DCP& operator= (DCP const&) = delete;
+
+	/** Read a DCP.  This method does not do any deep checking of the DCP's validity, but
+	 *  if it comes across any bad things it will do one of two things.
+	 *
+	 *  Errors that are so serious that they prevent the method from working will result
+	 *  in an exception being thrown.  For example, a missing ASSETMAP means that the DCP
+	 *  can't be read without a lot of guesswork, so this will throw.
+	 *
+	 *  Errors that are not fatal will be added to notes, if it's non-null.  For example,
+	 *  if the DCP contains a mixture of Interop and SMPTE elements this will result
+	 *  in a note being added to the vector.
+	 *
+	 *  For more thorough checking of a DCP's contents, see dcp::verify().
+	 *
 	 *  @param notes List of notes that will be added to if non-0.
 	 *  @param ignore_incorrect_picture_mxf_type true to try loading MXF files marked as monoscopic
 	 *  as stereoscopic if the monoscopic load fails; fixes problems some 3D DCPs that (I think)
 	 *  have an incorrect descriptor in their MXF.
 	 */
-	void read (std::vector<VerificationNote>* notes = 0, bool ignore_incorrect_picture_mxf_type = false);
+	void read (std::vector<VerificationNote>* notes = nullptr, bool ignore_incorrect_picture_mxf_type = false);
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.
@@ -104,20 +125,38 @@ public:
 	void add (std::shared_ptr<CPL> cpl);
 
 	std::vector<std::shared_ptr<CPL>> cpls () const;
+
+	/** @param ignore_unresolved true to silently ignore unresolved assets, otherwise
+	 *  an exception is thrown if they are found.
+	 *  @return All assets (including CPLs).
+	 */
 	std::vector<std::shared_ptr<Asset>> assets (bool ignore_unresolved = false) const;
 
 	bool any_encrypted () const;
 	bool all_encrypted () const;
 
+	/** Add a KDM to decrypt this DCP.  This method must be called after DCP::read()
+	 *  or the KDM you specify will be ignored.
+	 *  @param kdm KDM to use.
+	 */
 	void add (DecryptedKDM const &);
 
+	/** Write all the XML files for this DCP
+	 *  @param standand INTEROP or SMPTE
+	 *  @param issuer Value for the PKL and AssetMap <Issuer> tags
+	 *  @param creator Value for the PKL and AssetMap <Creator> tags
+	 *  @param issue_date Value for the CPL <IssueDate> tags
+	 *  @param annotation_text Value for the CPL <AnnotationText> tags
+	 *  @param signer Signer to use
+	 *  @param name_format Name format to use for the CPL and PKL filenames
+	 */
 	void write_xml (
 		Standard standard,
 		std::string issuer = String::compose("libdcp %1", dcp::version),
 		std::string creator = String::compose("libdcp %1", dcp::version),
 		std::string issue_date = LocalTime().as_string(),
 		std::string annotation_text = String::compose("Created by libdcp %1", dcp::version),
-		std::shared_ptr<const CertificateChain> signer = std::shared_ptr<const CertificateChain> (),
+		std::shared_ptr<const CertificateChain> signer = std::shared_ptr<const CertificateChain>(),
 		NameFormat name_format = NameFormat("%t")
 	);
 
@@ -171,6 +210,8 @@ private:
 	boost::optional<Standard> _standard;
 };
 
+
 }
+
 
 #endif

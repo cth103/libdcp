@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,21 +31,26 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/signer_chain.h
- *  @brief Functions to make signer chains.
+
+/** @file  src/certificate_chain.h
+ *  @brief CertificateChain class
  */
+
 
 #ifndef LIBDCP_CERTIFICATE_CHAIN_H
 #define LIBDCP_CERTIFICATE_CHAIN_H
+
 
 #include "certificate.h"
 #include "types.h"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 
+
 namespace xmlpp {
 	class Node;
 }
+
 
 struct certificates_validation1;
 struct certificates_validation2;
@@ -56,7 +61,9 @@ struct certificates_validation6;
 struct certificates_validation7;
 struct certificates_validation8;
 
+
 namespace dcp {
+
 
 /** @class CertificateChain
  *  @brief A chain of any number of certificates, from root to leaf.
@@ -85,24 +92,60 @@ public:
 
 	explicit CertificateChain (std::string);
 
+	/** Add a certificate to the chain.
+	 *  @param c Certificate to add.
+	 */
 	void add (Certificate c);
-	void remove (Certificate c);
-	void remove (int);
 
+	/** Remove a certificate from the chain.
+	 *  @param c Certificate to remove.
+	 */
+	void remove (Certificate c);
+
+	/** Remove the i'th certificate in the chain, as listed
+	 *  from root to leaf.
+	 */
+	void remove (int i);
+
+	/** @return Root certificate */
 	Certificate root () const;
+
+	/** @return Leaf certificate */
 	Certificate leaf () const;
 
 	typedef std::vector<Certificate> List;
 
+	/** @return Certificates in order from leaf to root */
 	List leaf_to_root () const;
+	/** @return Certificates in order from root to leaf */
 	List root_to_leaf () const;
 	List unordered () const;
 
-	bool valid (std::string* reason = 0) const;
+	bool valid (std::string* reason = nullptr) const;
+
+	/** Check to see if the chain is valid (i.e. root signs the intermediate, intermediate
+	 *  signs the leaf and so on) and that the private key (if there is one) matches the
+	 *  leaf certificate.
+	 *  @return true if it's ok, false if not.
+	 */
 	bool chain_valid () const;
+
+	/** Check that there is a valid private key for the leaf certificate.
+	 *  Will return true if there are no certificates.
+	 */
 	bool private_key_valid () const;
 
+	/** Add a &lt;Signer&gt; and &lt;ds:Signature&gt; nodes to an XML node.
+	 *  @param parent XML node to add to.
+	 *  @param standard INTEROP or SMPTE.
+	 */
 	void sign (xmlpp::Element* parent, Standard standard) const;
+
+	/** Sign an XML node.
+	 *
+	 *  @param parent Node to sign.
+	 *  @param ns Namespace to use for the signature XML nodes.
+	 */
 	void add_signature_value (xmlpp::Element* parent, std::string ns, bool add_indentation) const;
 
 	boost::optional<std::string> key () const {
@@ -133,6 +176,8 @@ private:
 	boost::optional<std::string> _key;
 };
 
+
 }
+
 
 #endif

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,8 +31,10 @@
     files in the program, then also delete it here.
 */
 
+
 #ifndef LIBDCP_PKL_H
 #define LIBDCP_PKL_H
+
 
 #include "object.h"
 #include "types.h"
@@ -41,7 +43,9 @@
 #include <libcxml/cxml.h>
 #include <boost/filesystem.hpp>
 
+
 namespace dcp {
+
 
 class PKL : public Object
 {
@@ -113,7 +117,7 @@ public:
 	private:
 		boost::optional<std::string> _annotation_text;
 		std::string _hash;
-		int64_t _size;
+		int64_t _size = 0;
 		std::string _type;
 	};
 
@@ -123,7 +127,7 @@ public:
 
 private:
 
-	Standard _standard;
+	Standard _standard = dcp::Standard::SMPTE;
 	boost::optional<std::string> _annotation_text;
 	std::string _issue_date;
 	std::string _issuer;

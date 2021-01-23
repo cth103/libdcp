@@ -31,14 +31,23 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/xml.h
+ *  @brief Helpers for XML reading with libcxml
+ */
+
+
 #ifndef LIBDCP_XML_H
 #define LIBDCP_XML_H
+
 
 #include "exceptions.h"
 #include <libcxml/cxml.h>
 
+
 namespace dcp
 {
+
 
 template <class T>
 std::shared_ptr<T>
@@ -54,10 +63,12 @@ optional_type_child (cxml::Node const & node, std::string name)
 	return std::make_shared<T>(n.front());
 }
 
+
 template <class T>
 std::shared_ptr<T> type_child (std::shared_ptr<const cxml::Node> node, std::string name) {
 	return std::make_shared<T>(node->node_child(name));
 }
+
 
 template <class T>
 std::shared_ptr<T>
@@ -65,6 +76,7 @@ optional_type_child (std::shared_ptr<const cxml::Node> node, std::string name)
 {
 	return optional_type_child<T> (*node.get(), name);
 }
+
 
 template <class T>
 std::vector<std::shared_ptr<T>>
@@ -77,6 +89,7 @@ type_children (cxml::Node const & node, std::string name)
 	return r;
 }
 
+
 template <class T>
 std::vector<std::shared_ptr<T>>
 type_children (std::shared_ptr<const cxml::Node> node, std::string name)
@@ -84,12 +97,14 @@ type_children (std::shared_ptr<const cxml::Node> node, std::string name)
 	return type_children<T> (*node.get(), name);
 }
 
+
 template <class T>
 std::vector<std::shared_ptr<T>>
 type_grand_children (cxml::Node const & node, std::string name, std::string sub)
 {
 	return type_children<T> (node.node_child(name), sub);
 }
+
 
 template <class T>
 std::vector<std::shared_ptr<T>>
@@ -99,5 +114,6 @@ type_grand_children (std::shared_ptr<const cxml::Node> node, std::string name, s
 }
 
 }
+
 
 #endif

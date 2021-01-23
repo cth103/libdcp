@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/certificate.h
  *  @brief Certificate class.
  */
 
+
 #ifndef LIBDCP_CERTIFICATE_H
 #define LIBDCP_CERTIFICATE_H
+
 
 #undef X509_NAME
 #include <openssl/x509.h>
@@ -44,16 +47,19 @@
 #include <string>
 #include <list>
 
+
 namespace xmlpp {
 	class Element;
 }
 
+
 namespace dcp {
 
+
 /** @class Certificate
- *  @brief A wrapper for an X509 certificate.
+ *  @brief A wrapper for an X509 certificate
  *
- *  This class can take a Certificate from a string or an OpenSSL X509 object.
+ *  This class can take a Certificate from a string or an OpenSSL X509 object
  */
 class Certificate
 {
@@ -63,18 +69,37 @@ public:
 		, _public_key (0)
 	{}
 
+	/** Load an X509 certificate from a string
+	 *  @param cert String to read from
+	 */
 	explicit Certificate (std::string);
+
+	/** @param c X509 certificate, which this object will take ownership of */
 	explicit Certificate (X509 *);
+
 	Certificate (Certificate const &);
 	~Certificate ();
 
 	Certificate& operator= (Certificate const &);
 
+	/** Read a certificate from a string.
+	 *  @param cert String to read.
+	 *  @return remaining part of the input string after the certificate which was read.
+	 */
 	std::string read_string (std::string);
 
+	/** Return the certificate as a string
+	 *  @param with_begin_end true to include the -----BEGIN CERTIFICATE--- / -----END CERTIFICATE----- markers
+	 *  @return Certificate string
+	 */
 	std::string certificate (bool with_begin_end = false) const;
+
 	std::string serial () const;
 
+	/** @return Certificate's issuer, in the form
+	 *  dnqualifier=&lt;dnQualififer&gt;,CN=&lt;commonName&gt;,OU=&lt;organizationalUnitName&gt,O=&lt;organizationName&gt;
+	 *  and with + signs escaped to \+
+	 */
 	std::string issuer () const;
 
 	std::string subject () const;
@@ -88,8 +113,10 @@ public:
 		return _certificate;
 	}
 
+	/** @return RSA public key from this Certificate.  Caller must not free the returned value. */
 	RSA* public_key () const;
 
+	/** @return thumbprint of the to-be-signed portion of this certificate */
 	std::string thumbprint () const;
 
 	bool has_utf8_strings () const;
@@ -100,13 +127,15 @@ private:
 	static std::string asn_to_utf8 (ASN1_STRING *);
 	static std::string get_name_part (X509_NAME *, int);
 
-	X509* _certificate;
-	mutable RSA* _public_key;
+	X509* _certificate = nullptr;
+	mutable RSA* _public_key = nullptr;
 };
+
 
 bool operator== (Certificate const & a, Certificate const & b);
 bool operator< (Certificate const & a, Certificate const & b);
 std::ostream& operator<< (std::ostream&s, Certificate const & c);
+
 
 }
 

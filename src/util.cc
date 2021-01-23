@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/util.cc
- *  @brief Utility methods.
+ *  @brief Utility methods and classes
  */
+
 
 #include "util.h"
 #include "language_tag.h"
@@ -60,6 +62,7 @@
 #include <iostream>
 #include <iomanip>
 
+
 using std::string;
 using std::wstring;
 using std::cout;
@@ -80,12 +83,9 @@ using namespace dcp;
 /* Some ASDCP objects store this as a *&, for reasons which are not
  * at all clear, so we have to keep this around forever.
  */
-ASDCP::Dictionary const* dcp::asdcp_smpte_dict = 0;
+ASDCP::Dictionary const* dcp::asdcp_smpte_dict = nullptr;
 
 
-/** Create a UUID.
- *  @return UUID.
- */
 string
 dcp::make_uuid ()
 {
@@ -95,6 +95,7 @@ dcp::make_uuid ()
 	id.EncodeHex (buffer, 64);
 	return string (buffer);
 }
+
 
 string
 dcp::make_digest (ArrayData data)
@@ -108,19 +109,14 @@ dcp::make_digest (ArrayData data)
 	return Kumu::base64encode (byte_buffer, SHA_DIGEST_LENGTH, digest, 64);
 }
 
-/** Create a digest for a file.
- *  @param filename File name.
- *  @param progress Optional progress reporting function.  The function will be called
- *  with a progress value between 0 and 1.
- *  @return Digest.
- */
+
 string
 dcp::make_digest (boost::filesystem::path filename, function<void (float)> progress)
 {
 	Kumu::FileReader reader;
-	Kumu::Result_t r = reader.OpenRead (filename.string().c_str ());
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (FileError ("could not open file to compute digest", filename, r));
+	auto r = reader.OpenRead (filename.string().c_str ());
+	if (ASDCP_FAILURE(r)) {
+		boost::throw_exception (FileError("could not open file to compute digest", filename, r));
 	}
 
 	SHA_CTX sha;
@@ -131,14 +127,14 @@ dcp::make_digest (boost::filesystem::path filename, function<void (float)> progr
 
 	Kumu::fsize_t done = 0;
 	Kumu::fsize_t const size = reader.Size ();
-	while (1) {
+	while (true) {
 		ui32_t read = 0;
-		Kumu::Result_t r = reader.Read (read_buffer.Data(), read_buffer.Capacity(), &read);
+		auto r = reader.Read (read_buffer.Data(), read_buffer.Capacity(), &read);
 
 		if (r == Kumu::RESULT_ENDOFFILE) {
 			break;
 		} else if (ASDCP_FAILURE (r)) {
-			boost::throw_exception (FileError ("could not read file to compute digest", filename, r));
+			boost::throw_exception (FileError("could not read file to compute digest", filename, r));
 		}
 
 		SHA1_Update (&sha, read_buffer.Data(), read);
@@ -156,9 +152,7 @@ dcp::make_digest (boost::filesystem::path filename, function<void (float)> progr
 	return Kumu::base64encode (byte_buffer, SHA_DIGEST_LENGTH, digest, 64);
 }
 
-/** @param s A string.
- *  @return true if the string contains only space, newline or tab characters, or is empty.
- */
+
 bool
 dcp::empty_or_white_space (string s)
 {
@@ -171,13 +165,7 @@ dcp::empty_or_white_space (string s)
 	return true;
 }
 
-/** Set up various bits that the library needs.  Should be called once
- *  by client applications.
- *
- *  @param tags_directory Path to a copy of the tags directory from the source code;
- *  if none is specified libdcp will look for a tags directory inside the environment
- *  variable LIBDCP_SHARE_PREFIX or the LIBDCP_SHARE_PREFIX #defined during the build.
- */
+
 void
 dcp::init (optional<boost::filesystem::path> tags_directory)
 {
@@ -215,19 +203,11 @@ dcp::init (optional<boost::filesystem::path> tags_directory)
 	load_language_tag_lists (*tags_directory);
 }
 
-/** Decode a base64 string.  The base64 decode routine in KM_util.cpp
- *  gives different values to both this and the command-line base64
- *  for some inputs.  Not sure why.
- *
- *  @param in base64-encoded string.
- *  @param out Output buffer.
- *  @param out_length Length of output buffer.
- *  @return Number of characters written to the output buffer.
- */
+
 int
 dcp::base64_decode (string const & in, unsigned char* out, int out_length)
 {
-	BIO* b64 = BIO_new (BIO_f_base64 ());
+	auto b64 = BIO_new (BIO_f_base64());
 
 	/* This means the input should have no newlines */
 	BIO_set_flags (b64, BIO_FLAGS_BASE64_NO_NL);
@@ -241,7 +221,7 @@ dcp::base64_decode (string const & in, unsigned char* out, int out_length)
 		}
 	}
 
-	BIO* bmem = BIO_new_mem_buf (in_buffer, p - in_buffer);
+	auto bmem = BIO_new_mem_buf (in_buffer, p - in_buffer);
 	bmem = BIO_push (b64, bmem);
 	int const N = BIO_read (bmem, out, out_length);
 	BIO_free_all (bmem);
@@ -249,14 +229,7 @@ dcp::base64_decode (string const & in, unsigned char* out, int out_length)
 	return N;
 }
 
-/** @param p Path to open.
- *  @param t mode flags, as for fopen(3).
- *  @return FILE pointer or 0 on error.
- *
- *  Apparently there is no way to create an ofstream using a UTF-8
- *  filename under Windows.  We are hence reduced to using fopen
- *  with this wrapper.
- */
+
 FILE *
 dcp::fopen_boost (boost::filesystem::path p, string t)
 {
@@ -269,28 +242,30 @@ dcp::fopen_boost (boost::filesystem::path p, string t)
 #endif
 }
 
+
 optional<boost::filesystem::path>
 dcp::relative_to_root (boost::filesystem::path root, boost::filesystem::path file)
 {
-	boost::filesystem::path::const_iterator i = root.begin ();
-	boost::filesystem::path::const_iterator j = file.begin ();
+	auto i = root.begin ();
+	auto j = file.begin ();
 
 	while (i != root.end() && j != file.end() && *i == *j) {
 		++i;
 		++j;
 	}
 
-	if (i != root.end ()) {
-		return optional<boost::filesystem::path> ();
+	if (i != root.end()) {
+		return {};
 	}
 
 	boost::filesystem::path rel;
-	while (j != file.end ()) {
+	while (j != file.end()) {
 		rel /= *j++;
 	}
 
 	return rel;
 }
+
 
 bool
 dcp::ids_equal (string a, string b)
@@ -302,15 +277,16 @@ dcp::ids_equal (string a, string b)
 	return a == b;
 }
 
+
 string
 dcp::file_to_string (boost::filesystem::path p, uintmax_t max_length)
 {
-	uintmax_t len = boost::filesystem::file_size (p);
+	auto len = boost::filesystem::file_size (p);
 	if (len > max_length) {
-		throw MiscError (String::compose ("Unexpectedly long file (%1)", p.string()));
+		throw MiscError (String::compose("Unexpectedly long file (%1)", p.string()));
 	}
 
-	FILE* f = fopen_boost (p, "r");
+	auto f = fopen_boost (p, "r");
 	if (!f) {
 		throw FileError ("could not open file", p, errno);
 	}
@@ -326,9 +302,7 @@ dcp::file_to_string (boost::filesystem::path p, uintmax_t max_length)
 	return s;
 }
 
-/** @param key RSA private key in PEM format (optionally with -----BEGIN... / -----END...)
- *  @return SHA1 fingerprint of key
- */
+
 string
 dcp::private_key_fingerprint (string key)
 {
@@ -348,11 +322,12 @@ dcp::private_key_fingerprint (string key)
 	return Kumu::base64encode (digest, 20, digest_base64, 64);
 }
 
+
 xmlpp::Node *
 dcp::find_child (xmlpp::Node const * node, string name)
 {
-	xmlpp::Node::NodeList c = node->get_children ();
-	xmlpp::Node::NodeList::iterator i = c.begin();
+	auto c = node->get_children ();
+	auto i = c.begin();
 	while (i != c.end() && (*i)->get_name() != name) {
 		++i;
 	}
@@ -361,6 +336,7 @@ dcp::find_child (xmlpp::Node const * node, string name)
 	return *i;
 }
 
+
 string
 dcp::remove_urn_uuid (string raw)
 {
@@ -368,11 +344,13 @@ dcp::remove_urn_uuid (string raw)
 	return raw.substr (9);
 }
 
+
 string
 dcp::openjpeg_version ()
 {
 	return opj_version ();
 }
+
 
 string
 dcp::spaces (int n)
@@ -384,10 +362,11 @@ dcp::spaces (int n)
 	return s;
 }
 
+
 void
 dcp::indent (xmlpp::Element* element, int initial)
 {
-	xmlpp::Node* last = 0;
+	xmlpp::Node* last = nullptr;
 	for (auto n: element->get_children()) {
 		auto e = dynamic_cast<xmlpp::Element*>(n);
 		if (e) {
@@ -401,9 +380,7 @@ dcp::indent (xmlpp::Element* element, int initial)
 	}
 }
 
-/** @return true if the day represented by \ref a is less than or
- *  equal to the one represented by \ref b, ignoring the time parts.
- */
+
 bool
 dcp::day_less_than_or_equal (LocalTime a, LocalTime b)
 {
@@ -418,9 +395,7 @@ dcp::day_less_than_or_equal (LocalTime a, LocalTime b)
 	return a.day() <= b.day();
 }
 
-/** @return true if the day represented by \ref a is greater than or
- *  equal to the one represented by \ref b, ignoring the time parts.
- */
+
 bool
 dcp::day_greater_than_or_equal (LocalTime a, LocalTime b)
 {
@@ -435,9 +410,7 @@ dcp::day_greater_than_or_equal (LocalTime a, LocalTime b)
 	return a.day() >= b.day();
 }
 
-/** Try quite hard to find a string which starts with \ref base and is
- *  not in \ref existing.
- */
+
 string
 dcp::unique_string (vector<string> existing, string base)
 {

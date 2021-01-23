@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,18 +31,22 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/asset_writer.h
  *  @brief AssetWriter class.
  */
 
+
 #include "asset_writer.h"
-#include "mxf.h"
-#include "dcp_assert.h"
 #include "crypto_context.h"
+#include "dcp_assert.h"
+#include "mxf.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_prng.h>
 
+
 using namespace dcp;
+
 
 /** Create an AssetWriter.
  *  @param mxf MXF that we are writing.
@@ -51,13 +55,11 @@ using namespace dcp;
 AssetWriter::AssetWriter (MXF* mxf, boost::filesystem::path file)
 	: _mxf (mxf)
 	, _file (file)
-	, _frames_written (0)
-	, _finalized (false)
-	, _started (false)
-	, _crypto_context (new EncryptionContext (mxf->key(), mxf->standard()))
+	, _crypto_context(new EncryptionContext (mxf->key(), mxf->standard()))
 {
 
 }
+
 
 /** @return true if anything was written by this writer */
 bool

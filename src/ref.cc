@@ -31,15 +31,20 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/ref.cc
+ *  @brief Ref class
+ */
+
+
 #include "ref.h"
+
 
 using std::shared_ptr;
 using std::vector;
 using namespace dcp;
 
-/** Look through a list of assets and copy a shared_ptr to any asset
- *  which matches the ID of this one.
- */
+
 void
 Ref::resolve (vector<shared_ptr<Asset>> assets)
 {

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,10 +31,18 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/version.h
+ *  @brief Versioning variables that are written by the build system
+ */
+
+
 namespace dcp {
+
 
 extern char const * version;
 extern char const * git_commit;
 extern bool const built_with_debug;
+
 
 }

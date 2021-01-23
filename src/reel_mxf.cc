@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/reel_mxf.cc
+ *  @brief ReelMXF class
+ */
+
+
 #include "reel_mxf.h"
 #include "util.h"
 #include "mxf.h"
@@ -38,10 +44,12 @@
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 
+
 using std::string;
 using std::shared_ptr;
 using boost::optional;
 using namespace dcp;
+
 
 ReelMXF::ReelMXF (shared_ptr<Asset> asset, optional<string> key_id)
 	: _asset_ref (asset)
@@ -50,6 +58,7 @@ ReelMXF::ReelMXF (shared_ptr<Asset> asset, optional<string> key_id)
 {
 
 }
+
 
 ReelMXF::ReelMXF (shared_ptr<const cxml::Node> node)
 	: _asset_ref (remove_urn_uuid(node->string_child("Id")))
@@ -60,6 +69,7 @@ ReelMXF::ReelMXF (shared_ptr<const cxml::Node> node)
 		_key_id = remove_urn_uuid (*_key_id);
 	}
 }
+
 
 bool
 ReelMXF::mxf_equals (shared_ptr<const ReelMXF> other, EqualityOptions opt, NoteHandler note) const
@@ -85,7 +95,7 @@ void
 ReelMXF::write_to_cpl_mxf (xmlpp::Node* node) const
 {
         if (key_id ()) {
-		xmlpp::Node* hash = find_child (node, "Hash");
+		auto hash = find_child (node, "Hash");
 		node->add_child_before(hash, "KeyId")->add_child_text("urn:uuid:" + key_id().get());
         }
 }

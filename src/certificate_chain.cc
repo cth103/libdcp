@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/signer_chain.cc
- *  @brief Functions to make signer chains.
+
+/** @file  src/certificate_chain.cc
+ *  @brief CertificateChain class
  */
+
 
 #include "certificate_chain.h"
 #include "exceptions.h"
@@ -57,11 +59,13 @@
 #include <fstream>
 #include <iostream>
 
+
 using std::string;
 using std::ofstream;
 using std::ifstream;
 using std::runtime_error;
 using namespace dcp;
+
 
 /** Run a shell command.
  *  @param cmd Command to run (UTF8-encoded).
@@ -74,7 +78,7 @@ command (string cmd)
 	   is handled correctly.
 	*/
 	int const wn = MultiByteToWideChar (CP_UTF8, 0, cmd.c_str(), -1, 0, 0);
-	wchar_t* buffer = new wchar_t[wn];
+	char buffer = new wchar_t[wn];
 	if (MultiByteToWideChar (CP_UTF8, 0, cmd.c_str(), -1, buffer, wn) == 0) {
 		delete[] buffer;
 		return;
@@ -111,6 +115,7 @@ command (string cmd)
 	}
 }
 
+
 /** Extract a public key from a private key and create a SHA1 digest of it.
  *  @param private_key Private key
  *  @param openssl openssl binary name (or full path if openssl is not on the system path).
@@ -122,12 +127,12 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	boost::filesystem::path public_name = private_key.string() + ".public";
 
 	/* Create the public key from the private key */
-	command (String::compose("\"%1\" rsa -outform PEM -pubout -in %2 -out %3", openssl.string(), private_key.string(), public_name.string ()));
+	command (String::compose("\"%1\" rsa -outform PEM -pubout -in %2 -out %3", openssl.string(), private_key.string(), public_name.string()));
 
 	/* Read in the public key from the file */
 
 	string pub;
-	ifstream f (public_name.string().c_str ());
+	ifstream f (public_name.string().c_str());
 	if (!f.good ()) {
 		throw dcp::MiscError ("public key not found");
 	}
@@ -176,6 +181,7 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 	return dig;
 }
 
+
 CertificateChain::CertificateChain (
 	boost::filesystem::path openssl,
 	string organisation,
@@ -188,10 +194,10 @@ CertificateChain::CertificateChain (
 	/* Valid for 40 years */
 	int const days = 365 * 40;
 
-	boost::filesystem::path directory = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path ();
+	auto directory = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path ();
 	boost::filesystem::create_directories (directory);
 
-	boost::filesystem::path const cwd = boost::filesystem::current_path ();
+	auto const cwd = boost::filesystem::current_path ();
 	boost::filesystem::current_path (directory);
 
 	string quoted_openssl = "\"" + openssl.string() + "\"";
@@ -314,14 +320,15 @@ CertificateChain::CertificateChain (
 
 	boost::filesystem::current_path (cwd);
 
-	_certificates.push_back (dcp::Certificate (dcp::file_to_string (directory / "ca.self-signed.pem")));
-	_certificates.push_back (dcp::Certificate (dcp::file_to_string (directory / "intermediate.signed.pem")));
-	_certificates.push_back (dcp::Certificate (dcp::file_to_string (directory / "leaf.signed.pem")));
+	_certificates.push_back (dcp::Certificate(dcp::file_to_string(directory / "ca.self-signed.pem")));
+	_certificates.push_back (dcp::Certificate(dcp::file_to_string(directory / "intermediate.signed.pem")));
+	_certificates.push_back (dcp::Certificate(dcp::file_to_string(directory / "leaf.signed.pem")));
 
 	_key = dcp::file_to_string (directory / "leaf.key");
 
 	boost::filesystem::remove_all (directory);
 }
+
 
 CertificateChain::CertificateChain (string s)
 {
@@ -340,30 +347,31 @@ CertificateChain::CertificateChain (string s)
 	leaf_to_root ();
 }
 
-/** @return Root certificate */
+
 Certificate
 CertificateChain::root () const
 {
 	DCP_ASSERT (!_certificates.empty());
-	return root_to_leaf().front ();
+	return root_to_leaf().front();
 }
 
-/** @return Leaf certificate */
+
 Certificate
 CertificateChain::leaf () const
 {
 	DCP_ASSERT (!_certificates.empty());
-	return root_to_leaf().back ();
+	return root_to_leaf().back();
 }
 
-/** @return Certificates in order from leaf to root */
+
 CertificateChain::List
 CertificateChain::leaf_to_root () const
 {
-	List l = root_to_leaf ();
+	auto l = root_to_leaf ();
 	std::reverse (l.begin(), l.end());
 	return l;
 }
+
 
 CertificateChain::List
 CertificateChain::unordered () const
@@ -371,18 +379,14 @@ CertificateChain::unordered () const
 	return _certificates;
 }
 
-/** Add a certificate to the chain.
- *  @param c Certificate to add.
- */
+
 void
 CertificateChain::add (Certificate c)
 {
 	_certificates.push_back (c);
 }
 
-/** Remove a certificate from the chain.
- *  @param c Certificate to remove.
- */
+
 void
 CertificateChain::remove (Certificate c)
 {
@@ -392,13 +396,11 @@ CertificateChain::remove (Certificate c)
 	}
 }
 
-/** Remove the i'th certificate in the list, as listed
- *  from root to leaf.
- */
+
 void
 CertificateChain::remove (int i)
 {
-	List::iterator j = _certificates.begin ();
+	auto j = _certificates.begin ();
         while (j != _certificates.end () && i > 0) {
 		--i;
 		++j;
@@ -409,17 +411,14 @@ CertificateChain::remove (int i)
 	}
 }
 
+
 bool
 CertificateChain::chain_valid () const
 {
 	return chain_valid (_certificates);
 }
 
-/** Check to see if a chain is valid (i.e. root signs the intermediate, intermediate
- *  signs the leaf and so on) and that the private key (if there is one) matches the
- *  leaf certificate.
- *  @return true if it's ok, false if not.
- */
+
 bool
 CertificateChain::chain_valid (List const & chain) const
 {
@@ -430,29 +429,29 @@ CertificateChain::chain_valid (List const & chain) const
 	   any time soon.
 	*/
 
-	X509_STORE* store = X509_STORE_new ();
+	auto store = X509_STORE_new ();
 	if (!store) {
 		throw MiscError ("could not create X509 store");
 	}
 
 	/* Put all the certificates into the store */
-	for (List::const_iterator i = chain.begin(); i != chain.end(); ++i) {
-		if (!X509_STORE_add_cert (store, i->x509 ())) {
-			X509_STORE_free (store);
+	for (auto const& i: chain) {
+		if (!X509_STORE_add_cert(store, i.x509())) {
+			X509_STORE_free(store);
 			return false;
 		}
 	}
 
 	/* Verify each one */
-	for (List::const_iterator i = chain.begin(); i != chain.end(); ++i) {
+	for (auto i = chain.begin(); i != chain.end(); ++i) {
 
-		List::const_iterator j = i;
+		auto j = i;
 		++j;
 		if (j == chain.end ()) {
 			break;
 		}
 
-		X509_STORE_CTX* ctx = X509_STORE_CTX_new ();
+		auto ctx = X509_STORE_CTX_new ();
 		if (!ctx) {
 			X509_STORE_free (store);
 			throw MiscError ("could not create X509 store context");
@@ -489,9 +488,7 @@ CertificateChain::chain_valid (List const & chain) const
 	return true;
 }
 
-/** Check that there is a valid private key for the leaf certificate.
- *  Will return true if there are no certificates.
- */
+
 bool
 CertificateChain::private_key_valid () const
 {
@@ -503,17 +500,17 @@ CertificateChain::private_key_valid () const
 		return false;
 	}
 
-	BIO* bio = BIO_new_mem_buf (const_cast<char *> (_key->c_str ()), -1);
+	auto bio = BIO_new_mem_buf (const_cast<char *> (_key->c_str ()), -1);
 	if (!bio) {
 		throw MiscError ("could not create memory BIO");
 	}
 
-	RSA* private_key = PEM_read_bio_RSAPrivateKey (bio, 0, 0, 0);
+	auto private_key = PEM_read_bio_RSAPrivateKey (bio, 0, 0, 0);
 	if (!private_key) {
 		return false;
 	}
 
-	RSA* public_key = leaf().public_key ();
+	auto public_key = leaf().public_key ();
 
 #if OPENSSL_VERSION_NUMBER > 0x10100000L
 	BIGNUM const * private_key_n;
@@ -531,6 +528,7 @@ CertificateChain::private_key_valid () const
 
 	return valid;
 }
+
 
 bool
 CertificateChain::valid (string* reason) const
@@ -554,11 +552,11 @@ CertificateChain::valid (string* reason) const
 	return true;
 }
 
-/** @return Certificates in order from root to leaf */
+
 CertificateChain::List
 CertificateChain::root_to_leaf () const
 {
-	List rtl = _certificates;
+	auto rtl = _certificates;
 	std::sort (rtl.begin(), rtl.end());
 	do {
 		if (chain_valid (rtl)) {
@@ -569,20 +567,17 @@ CertificateChain::root_to_leaf () const
 	throw CertificateChainError ("certificate chain is not consistent");
 }
 
-/** Add a &lt;Signer&gt; and &lt;ds:Signature&gt; nodes to an XML node.
- *  @param parent XML node to add to.
- *  @param standard INTEROP or SMPTE.
- */
+
 void
 CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
 {
 	/* <Signer> */
 
 	parent->add_child_text("  ");
-	xmlpp::Element* signer = parent->add_child("Signer");
+	auto signer = parent->add_child("Signer");
 	signer->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
-	xmlpp::Element* data = signer->add_child("X509Data", "dsig");
-	xmlpp::Element* serial_element = data->add_child("X509IssuerSerial", "dsig");
+	auto data = signer->add_child("X509Data", "dsig");
+	auto serial_element = data->add_child("X509IssuerSerial", "dsig");
 	serial_element->add_child("X509IssuerName", "dsig")->add_child_text (leaf().issuer());
 	serial_element->add_child("X509SerialNumber", "dsig")->add_child_text (leaf().serial());
 	data->add_child("X509SubjectName", "dsig")->add_child_text (leaf().subject());
@@ -592,12 +587,12 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
 	/* <Signature> */
 
 	parent->add_child_text("\n  ");
-	xmlpp::Element* signature = parent->add_child("Signature");
+	auto signature = parent->add_child("Signature");
 	signature->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	signature->set_namespace ("dsig");
 	parent->add_child_text("\n");
 
-	xmlpp::Element* signed_info = signature->add_child ("SignedInfo", "dsig");
+	auto signed_info = signature->add_child ("SignedInfo", "dsig");
 	signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
 
 	if (standard == Standard::INTEROP) {
@@ -606,10 +601,10 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
 		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
 	}
 
-	xmlpp::Element* reference = signed_info->add_child("Reference", "dsig");
+	auto reference = signed_info->add_child("Reference", "dsig");
 	reference->set_attribute ("URI", "");
 
-	xmlpp::Element* transforms = reference->add_child("Transforms", "dsig");
+	auto transforms = reference->add_child("Transforms", "dsig");
 	transforms->add_child("Transform", "dsig")->set_attribute (
 		"Algorithm", "http://www.w3.org/2000/09/xmldsig#enveloped-signature"
 		);
@@ -624,11 +619,6 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
 }
 
 
-/** Sign an XML node.
- *
- *  @param parent Node to sign.
- *  @param ns Namespace to use for the signature XML nodes.
- */
 void
 CertificateChain::add_signature_value (xmlpp::Element* parent, string ns, bool add_indentation) const
 {
@@ -671,6 +661,7 @@ CertificateChain::add_signature_value (xmlpp::Element* parent, string ns, bool a
 
 	xmlSecDSigCtxDestroy (signature_context);
 }
+
 
 string
 CertificateChain::chain () const

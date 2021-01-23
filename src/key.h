@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,21 +31,26 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/key.h
- *  @brief Key class.
+ *  @brief Key class
  */
+
 
 #ifndef LIBDCP_KEY_H
 #define LIBDCP_KEY_H
+
 
 #include <asdcp/AS_DCP.h>
 #include <stdint.h>
 #include <string>
 
+
 namespace dcp {
 
+
 /** @class Key
- *  @brief A key for decrypting/encrypting assets.
+ *  @brief A key for decrypting/encrypting assets
  */
 class Key
 {
@@ -78,12 +83,14 @@ public:
 
 private:
 	/** Raw key value */
-	uint8_t* _value;
-	int _length;
+	uint8_t* _value = nullptr;
+	int _length = 0;
 };
+
 
 extern bool operator== (Key const & a, Key const & b);
 extern bool operator!= (Key const & a, Key const & b);
+
 
 }
 

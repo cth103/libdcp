@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,27 +31,28 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/object.cc
- *  @brief Object class.
+ *  @brief Object class
  */
+
 
 #include "object.h"
 #include "dcp_assert.h"
 #include "util.h"
 
+
 using std::string;
 using namespace dcp;
 
-/** Create an Object with a random ID. */
+
 Object::Object ()
-	: _id (make_uuid ())
+	: _id (make_uuid())
 {
 
 }
 
-/** Create an Object with a given ID.
- *  @param id ID to use.
- */
+
 Object::Object (string id)
 	: _id (id)
 {

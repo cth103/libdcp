@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,26 +31,32 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_mxf.h
- *  @brief ReelMXF
+ *  @brief ReelMXF class
  */
+
 
 #ifndef LIBDCP_REEL_MXF_H
 #define LIBDCP_REEL_MXF_H
+
 
 #include "ref.h"
 #include <boost/optional.hpp>
 #include <memory>
 #include <string>
 
+
 namespace cxml {
 	class Node;
 }
 
+
 namespace dcp {
 
+
 /** @class ReelMXF
- *  @brief Part of a Reel's description which refers to an asset which can be encrypted.
+ *  @brief Part of a Reel's description which refers to an asset which can be encrypted
  */
 class ReelMXF
 {
@@ -124,6 +130,8 @@ private:
 	boost::optional<std::string> _hash;
 };
 
+
 }
+
 
 #endif

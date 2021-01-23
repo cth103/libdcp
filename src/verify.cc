@@ -67,7 +67,6 @@
 #include <xercesc/dom/DOMErrorHandler.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
 #include <xercesc/framework/MemBufInputSource.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
 #include <vector>
@@ -184,13 +183,16 @@ private:
 	list<XMLValidationError> _errors;
 };
 
-class StringToXMLCh : public boost::noncopyable
+class StringToXMLCh
 {
 public:
 	StringToXMLCh (string a)
 	{
 		_buffer = XMLString::transcode(a.c_str());
 	}
+
+	StringToXMLCh (StringToXMLCh const&) = delete;
+	StringToXMLCh& operator= (StringToXMLCh const&) = delete;
 
 	~StringToXMLCh ()
 	{

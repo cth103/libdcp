@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/key.cc
  *  @brief Key class.
  */
+
 
 #include "key.h"
 #include "dcp_assert.h"
@@ -43,10 +45,12 @@
 #include <string>
 #include <iomanip>
 
+
 using std::string;
 using std::setw;
 using std::setfill;
 using namespace dcp;
+
 
 Key::Key (int length)
 	: _value (new uint8_t[length])
@@ -56,12 +60,14 @@ Key::Key (int length)
 	rng.FillRandom (_value, _length);
 }
 
+
 Key::Key (uint8_t const * value, int length)
 	: _value (new uint8_t[length])
 	, _length (length)
 {
 	memcpy (_value, value, _length);
 }
+
 
 Key::Key (string value)
 	: _value (new uint8_t[value.length() / 2])
@@ -71,6 +77,7 @@ Key::Key (string value)
 	Kumu::hex2bin (value.c_str(), _value, _length, &length_done);
 }
 
+
 Key::Key (Key const & other)
 	: _value (new uint8_t[other._length])
 	, _length (other._length)
@@ -78,10 +85,12 @@ Key::Key (Key const & other)
 	memcpy (_value, other._value, _length);
 }
 
+
 Key::~Key ()
 {
 	delete[] _value;
 }
+
 
 Key &
 Key::operator= (Key const & other)
@@ -94,6 +103,7 @@ Key::operator= (Key const & other)
 	memcpy (_value, other._value, _length);
 	return *this;
 }
+
 
 string
 Key::hex () const
@@ -113,11 +123,13 @@ Key::hex () const
 	return buffer;
 }
 
+
 bool
 dcp::operator== (Key const & a, Key const & b)
 {
 	return a.length() == b.length() && memcmp(a.value(), b.value(), a.length()) == 0;
 }
+
 
 bool
 dcp::operator!= (Key const & a, Key const & b)

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/certificate.cc
  *  @brief Certificate class.
  */
+
 
 #include "certificate.h"
 #include "compose.hpp"
@@ -51,52 +53,42 @@
 #include <iostream>
 #include <algorithm>
 
+
 using std::list;
 using std::string;
 using std::ostream;
 using std::min;
 using namespace dcp;
 
+
 static string const begin_certificate = "-----BEGIN CERTIFICATE-----";
 static string const end_certificate = "-----END CERTIFICATE-----";
 
-/** @param c X509 certificate, which this object will take ownership of */
+
 Certificate::Certificate (X509* c)
 	: _certificate (c)
-	, _public_key (0)
 {
 
 }
 
-/** Load an X509 certificate from a string.
- *  @param cert String to read from.
- */
+
 Certificate::Certificate (string cert)
-	: _certificate (0)
-	, _public_key (0)
 {
-	string const s = read_string (cert);
-	if (!s.empty ()) {
+	auto const s = read_string (cert);
+	if (!s.empty()) {
 		throw MiscError ("unexpected data after certificate");
 	}
 }
 
-/** Copy constructor.
- *  @param other Certificate to copy.
- */
+
 Certificate::Certificate (Certificate const & other)
-	: _certificate (0)
-	, _public_key (0)
 {
 	if (other._certificate) {
 		read_string (other.certificate (true));
 	}
 }
 
-/** Read a certificate from a string.
- *  @param cert String to read.
- *  @return remaining part of the input string after the certificate which was read.
- */
+
 string
 Certificate::read_string (string cert)
 {
@@ -121,7 +113,7 @@ Certificate::read_string (string cert)
 		lines.push_back (line);
 	}
 
-	list<string>::iterator i = lines.begin ();
+	auto i = lines.begin ();
 
 	/* BEGIN */
 	while (i != lines.end() && *i != begin_certificate) {
@@ -165,7 +157,7 @@ Certificate::read_string (string cert)
 
 	fixed += end_certificate;
 
-	BIO* bio = BIO_new_mem_buf (const_cast<char *> (fixed.c_str ()), -1);
+	auto bio = BIO_new_mem_buf (const_cast<char *> (fixed.c_str ()), -1);
 	if (!bio) {
 		throw MiscError ("could not create memory BIO");
 	}
@@ -189,16 +181,14 @@ Certificate::read_string (string cert)
 	return extra;
 }
 
-/** Destructor */
+
 Certificate::~Certificate ()
 {
 	X509_free (_certificate);
 	RSA_free (_public_key);
 }
 
-/** operator= for Certificate.
- *  @param other Certificate to read from.
- */
+
 Certificate &
 Certificate::operator= (Certificate const & other)
 {
@@ -211,21 +201,18 @@ Certificate::operator= (Certificate const & other)
 	RSA_free (_public_key);
 	_public_key = 0;
 
-	read_string (other.certificate (true));
+	read_string (other.certificate(true));
 
 	return *this;
 }
 
-/** Return the certificate as a string.
- *  @param with_begin_end true to include the -----BEGIN CERTIFICATE--- / -----END CERTIFICATE----- markers.
- *  @return Certificate string.
- */
+
 string
 Certificate::certificate (bool with_begin_end) const
 {
 	DCP_ASSERT (_certificate);
 
-	BIO* bio = BIO_new (BIO_s_mem ());
+	auto bio = BIO_new (BIO_s_mem());
 	if (!bio) {
 		throw MiscError ("could not create memory BIO");
 	}
@@ -249,16 +236,14 @@ Certificate::certificate (bool with_begin_end) const
 	return s;
 }
 
-/** @return Certificate's issuer, in the form
- *  dnqualifier=&lt;dnQualififer&gt;,CN=&lt;commonName&gt;,OU=&lt;organizationalUnitName&gt,O=&lt;organizationName&gt;
- *  and with + signs escaped to \+
- */
+
 string
 Certificate::issuer () const
 {
 	DCP_ASSERT (_certificate);
-	return name_for_xml (X509_get_issuer_name (_certificate));
+	return name_for_xml (X509_get_issuer_name(_certificate));
 }
+
 
 string
 Certificate::asn_to_utf8 (ASN1_STRING* s)
@@ -270,6 +255,7 @@ Certificate::asn_to_utf8 (ASN1_STRING* s)
 	return u;
 }
 
+
 string
 Certificate::get_name_part (X509_NAME* n, int nid)
 {
@@ -278,15 +264,16 @@ Certificate::get_name_part (X509_NAME* n, int nid)
 	if (p == -1) {
 		return "";
 	}
-	return asn_to_utf8 (X509_NAME_ENTRY_get_data (X509_NAME_get_entry (n, p)));
+	return asn_to_utf8 (X509_NAME_ENTRY_get_data(X509_NAME_get_entry(n, p)));
 }
+
 
 string
 Certificate::name_for_xml (X509_NAME* name)
 {
 	assert (name);
 
-	BIO* bio = BIO_new (BIO_s_mem ());
+	auto bio = BIO_new (BIO_s_mem ());
 	if (!bio) {
 		throw MiscError ("could not create memory BIO");
 	}
@@ -310,32 +297,36 @@ Certificate::subject () const
 {
 	DCP_ASSERT (_certificate);
 
-	return name_for_xml (X509_get_subject_name (_certificate));
+	return name_for_xml (X509_get_subject_name(_certificate));
 }
+
 
 string
 Certificate::subject_common_name () const
 {
 	DCP_ASSERT (_certificate);
 
-	return get_name_part (X509_get_subject_name (_certificate), NID_commonName);
+	return get_name_part (X509_get_subject_name(_certificate), NID_commonName);
 }
+
 
 string
 Certificate::subject_organization_name () const
 {
 	DCP_ASSERT (_certificate);
 
-	return get_name_part (X509_get_subject_name (_certificate), NID_organizationName);
+	return get_name_part (X509_get_subject_name(_certificate), NID_organizationName);
 }
+
 
 string
 Certificate::subject_organizational_unit_name () const
 {
 	DCP_ASSERT (_certificate);
 
-	return get_name_part (X509_get_subject_name (_certificate), NID_organizationalUnitName);
+	return get_name_part (X509_get_subject_name(_certificate), NID_organizationalUnitName);
 }
+
 
 static
 struct tm
@@ -359,6 +350,7 @@ convert_time (ASN1_TIME const * time)
 	return t;
 }
 
+
 struct tm
 Certificate::not_before () const
 {
@@ -369,6 +361,7 @@ Certificate::not_before () const
 	return convert_time(X509_get_notBefore(_certificate));
 #endif
 }
+
 
 struct tm
 Certificate::not_after () const
@@ -381,15 +374,16 @@ Certificate::not_after () const
 #endif
 }
 
+
 string
 Certificate::serial () const
 {
 	DCP_ASSERT (_certificate);
 
-	ASN1_INTEGER* s = X509_get_serialNumber (_certificate);
+	auto s = X509_get_serialNumber (_certificate);
 	DCP_ASSERT (s);
 
-	BIGNUM* b = ASN1_INTEGER_to_BN (s, 0);
+	auto b = ASN1_INTEGER_to_BN (s, 0);
 	char* c = BN_bn2dec (b);
 	BN_free (b);
 
@@ -399,7 +393,7 @@ Certificate::serial () const
 	return st;
 }
 
-/** @return thumbprint of the to-be-signed portion of this certificate */
+
 string
 Certificate::thumbprint () const
 {
@@ -428,7 +422,7 @@ Certificate::thumbprint () const
 	return Kumu::base64encode (digest, 20, digest_base64, 64);
 }
 
-/** @return RSA public key from this Certificate.  Caller must not free the returned value. */
+
 RSA *
 Certificate::public_key () const
 {
@@ -438,7 +432,7 @@ Certificate::public_key () const
 		return _public_key;
 	}
 
-	EVP_PKEY* key = X509_get_pubkey (_certificate);
+	auto key = X509_get_pubkey (_certificate);
 	if (!key) {
 		throw MiscError ("could not get public key from certificate");
 	}
@@ -451,6 +445,7 @@ Certificate::public_key () const
 	return _public_key;
 }
 
+
 static bool string_is_utf8 (X509_NAME* n, int nid)
 {
 	int p = -1;
@@ -458,14 +453,16 @@ static bool string_is_utf8 (X509_NAME* n, int nid)
 	return p != -1 && X509_NAME_ENTRY_get_data(X509_NAME_get_entry(n, p))->type == V_ASN1_UTF8STRING;
 }
 
+
 bool
 Certificate::has_utf8_strings () const
 {
-	X509_NAME* n = X509_get_subject_name (_certificate);
+	auto n = X509_get_subject_name (_certificate);
 	return string_is_utf8(n, NID_commonName) ||
 		string_is_utf8(n, NID_organizationName) ||
 		string_is_utf8(n, NID_organizationalUnitName);
 }
+
 
 bool
 dcp::operator== (Certificate const & a, Certificate const & b)
@@ -473,11 +470,13 @@ dcp::operator== (Certificate const & a, Certificate const & b)
 	return a.certificate() == b.certificate();
 }
 
+
 bool
 dcp::operator< (Certificate const & a, Certificate const & b)
 {
 	return a.certificate() < b.certificate();
 }
+
 
 ostream&
 dcp::operator<< (ostream& s, Certificate const & c)

@@ -31,8 +31,10 @@
     files in the program, then also delete it here.
 */
 
+
 #ifndef LIBDCP_REEL_H
 #define LIBDCP_REEL_H
+
 
 #include "key.h"
 #include "types.h"
@@ -40,15 +42,19 @@
 #include <memory>
 #include <boost/function.hpp>
 
+
 namespace cxml {
 	class Node;
 }
+
 
 namespace xmlpp {
 	class Element;
 }
 
+
 namespace dcp {
+
 
 class DecryptedKDM;
 class ReelAsset;
@@ -59,6 +65,7 @@ class ReelMarkersAsset;
 class ReelClosedCaptionAsset;
 class ReelAtmosAsset;
 class Content;
+
 
 /** @brief A reel within a DCP; the part which actually refers to picture, sound, subtitle, marker and Atmos data */
 class Reel : public Object

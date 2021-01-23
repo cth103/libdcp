@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,21 +31,26 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/asset_writer.h
  *  @brief AssetWriter class.
  */
 
+
 #ifndef LIBDCP_ASSET_WRITER_H
 #define LIBDCP_ASSET_WRITER_H
+
 
 #include "types.h"
 #include "crypto_context.h"
 #include <boost/filesystem.hpp>
-#include <boost/noncopyable.hpp>
+
 
 namespace dcp {
 
+
 class MXF;
+
 
 /** @class AssetWriter
  *  @brief Parent class for classes which can write MXF-based assets.
@@ -53,9 +58,12 @@ class MXF;
  *  The AssetWriter lasts for the duration of the write and is then discarded.
  *  They can only be created by calling start_write() on an appropriate Asset object.
  */
-class AssetWriter : public boost::noncopyable
+class AssetWriter
 {
 public:
+	AssetWriter (AssetWriter const&) = delete;
+	AssetWriter& operator= (AssetWriter const&) = delete;
+
 	virtual ~AssetWriter () {}
 	virtual bool finalize ();
 
@@ -67,17 +75,17 @@ protected:
 	AssetWriter (MXF* mxf, boost::filesystem::path file);
 
 	/** MXF that we are writing */
-	MXF* _mxf;
+	MXF* _mxf = nullptr;
 	/** File that we are writing to */
 	boost::filesystem::path _file;
 	/** Number of `frames' written so far; the definition of a frame
 	 *  varies depending on the subclass.
 	 */
-	int64_t _frames_written;
+	int64_t _frames_written = 0;
 	/** true if finalize() has been called on this object */
-	bool _finalized;
+	bool _finalized = false;
 	/** true if something has been written to this asset */
-	bool _started;
+	bool _started = false;
 	std::shared_ptr<EncryptionContext> _crypto_context;
 };
 

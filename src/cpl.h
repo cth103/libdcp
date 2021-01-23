@@ -33,7 +33,7 @@
 
 
 /** @file  src/cpl.h
- *  @brief CPL class.
+ *  @brief CPL class
  */
 
 

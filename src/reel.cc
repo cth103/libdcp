@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,7 @@
     files in the program, then also delete it here.
 */
 
+
 #include "reel.h"
 #include "util.h"
 #include "picture_asset.h"
@@ -52,10 +53,6 @@
 #include <libxml++/nodes/element.h>
 #include <stdint.h>
 
-/* Centos 6 does not have this */
-#ifndef INT64_MAX
-#define INT64_MAX 0x7fffffffffffffff
-#endif
 
 using std::string;
 using std::cout;
@@ -66,6 +63,7 @@ using std::dynamic_pointer_cast;
 using std::vector;
 using namespace dcp;
 
+
 Reel::Reel (std::shared_ptr<const cxml::Node> node)
 	: Object (remove_urn_uuid (node->string_child ("Id")))
 {
@@ -73,27 +71,27 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node)
 
 	auto main_picture = asset_list->optional_node_child ("MainPicture");
 	if (main_picture) {
-		_main_picture.reset (new ReelMonoPictureAsset (main_picture));
+		_main_picture = make_shared<ReelMonoPictureAsset>(main_picture);
 	}
 
 	auto main_stereoscopic_picture = asset_list->optional_node_child ("MainStereoscopicPicture");
 	if (main_stereoscopic_picture) {
-		_main_picture.reset (new ReelStereoPictureAsset (main_stereoscopic_picture));
+		_main_picture = make_shared<ReelStereoPictureAsset>(main_stereoscopic_picture);
 	}
 
 	auto main_sound = asset_list->optional_node_child ("MainSound");
 	if (main_sound) {
-		_main_sound.reset (new ReelSoundAsset (main_sound));
+		_main_sound = make_shared<ReelSoundAsset>(main_sound);
 	}
 
 	auto main_subtitle = asset_list->optional_node_child ("MainSubtitle");
 	if (main_subtitle) {
-		_main_subtitle.reset (new ReelSubtitleAsset (main_subtitle));
+		_main_subtitle = make_shared<ReelSubtitleAsset>(main_subtitle);
 	}
 
 	auto main_markers = asset_list->optional_node_child ("MainMarkers");
 	if (main_markers) {
-		_main_markers.reset (new ReelMarkersAsset (main_markers));
+		_main_markers = make_shared<ReelMarkersAsset>(main_markers);
 	}
 
 	/* XXX: it's not ideal that we silently tolerate Interop or SMPTE nodes here */
@@ -114,6 +112,7 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node)
 	node->ignore_child ("AnnotationText");
 	node->done ();
 }
+
 
 xmlpp::Element *
 Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
@@ -154,6 +153,7 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 
 	return asset_list;
 }
+
 
 bool
 Reel::equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandler note) const
@@ -221,6 +221,7 @@ Reel::equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandle
 	return true;
 }
 
+
 bool
 Reel::any_encrypted () const
 {
@@ -260,6 +261,7 @@ Reel::all_encrypted () const
 	       );
 }
 
+
 void
 Reel::add (DecryptedKDM const & kdm)
 {
@@ -292,6 +294,7 @@ Reel::add (DecryptedKDM const & kdm)
 	}
 }
 
+
 void
 Reel::add (shared_ptr<ReelAsset> asset)
 {
@@ -316,6 +319,7 @@ Reel::add (shared_ptr<ReelAsset> asset)
 	}
 }
 
+
 vector<shared_ptr<ReelAsset>>
 Reel::assets () const
 {
@@ -336,19 +340,20 @@ Reel::assets () const
 	return a;
 }
 
+
 void
 Reel::resolve_refs (vector<shared_ptr<Asset>> assets)
 {
 	if (_main_picture) {
-		_main_picture->asset_ref().resolve (assets);
+		_main_picture->asset_ref().resolve(assets);
 	}
 
 	if (_main_sound) {
-		_main_sound->asset_ref().resolve (assets);
+		_main_sound->asset_ref().resolve(assets);
 	}
 
 	if (_main_subtitle) {
-		_main_subtitle->asset_ref().resolve (assets);
+		_main_subtitle->asset_ref().resolve(assets);
 
 		/* Interop subtitle handling is all special cases */
 		if (_main_subtitle->asset_ref().resolved()) {
@@ -375,6 +380,7 @@ Reel::resolve_refs (vector<shared_ptr<Asset>> assets)
 		_atmos->asset_ref().resolve (assets);
 	}
 }
+
 
 int64_t
 Reel::duration () const

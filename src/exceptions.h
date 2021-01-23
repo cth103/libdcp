@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,18 +31,23 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/exceptions.h
+ *  @brief Exceptions thrown by libdcp
+ */
+
+
 #ifndef LIBDCP_EXCEPTIONS_H
 #define LIBDCP_EXCEPTIONS_H
+
 
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 
-/** @file  src/exceptions.h
- *  @brief Exceptions thrown by libdcp.
- */
 
 namespace dcp
 {
+
 
 /** @class FileError
  *  @brief An exception related to a file
@@ -69,6 +74,7 @@ private:
 	int _number;
 };
 
+
 /** @class MXFFileError
  *  @brief An exception related to an MXF file
  */
@@ -79,6 +85,7 @@ public:
 		: FileError (message, filename, number)
 	{}
 };
+
 
 /** @class MiscError
  *  @brief A miscellaneous exception
@@ -93,7 +100,7 @@ public:
 
 
 /** @class ReadError
- *  @brief Any error that occurs when reading data from a DCP.
+ *  @brief Any error that occurs when reading data from a DCP
  */
 class ReadError : public std::runtime_error
 {
@@ -122,7 +129,7 @@ private:
 
 
 /** @class J2KDecompressionError
- *  @brief An error that occurs during decompression of JPEG2000 data.
+ *  @brief An error that occurs during decompression of JPEG2000 data
  */
 class J2KDecompressionError : public ReadError
 {
@@ -139,6 +146,7 @@ public:
 	BadContentKindError (std::string content_kind);
 };
 
+
 /** @class XMLError
  *  @brief An XML error
  */
@@ -150,6 +158,7 @@ public:
 	{}
 };
 
+
 /** @class UnresolvedRefError
  *  @brief An exception caused by a reference (by UUID) to something which is not known
  */
@@ -159,8 +168,9 @@ public:
 	explicit UnresolvedRefError (std::string id);
 };
 
+
 /** @class TimeFormatError
- *  @brief A an error with a string passed to LocalTime.
+ *  @brief A an error with a string passed to LocalTime
  */
 class TimeFormatError : public std::runtime_error
 {
@@ -168,9 +178,10 @@ public:
 	explicit TimeFormatError (std::string bad_time);
 };
 
+
 /** @class NotEncryptedError
  *  @brief An error raised when creating a DecryptedKDM object for assets that are not
- *  encrypted.
+ *  encrypted
  */
 class NotEncryptedError : public std::runtime_error
 {
@@ -179,8 +190,9 @@ public:
 	~NotEncryptedError () throw () {}
 };
 
+
 /** @class ProgrammingError
- *  @brief An exception thrown when a DCP_ASSERT fails; something that should not happen.
+ *  @brief An exception thrown when a DCP_ASSERT fails; something that should not happen
  */
 class ProgrammingError : public std::runtime_error
 {
@@ -188,11 +200,13 @@ public:
 	ProgrammingError (std::string file, int line);
 };
 
+
 class KDMDecryptionError : public std::runtime_error
 {
 public:
 	KDMDecryptionError (std::string message, int cipher_length, int modulus_dmax);
 };
+
 
 class KDMFormatError : public std::runtime_error
 {
@@ -200,17 +214,20 @@ public:
 	KDMFormatError (std::string message);
 };
 
+
 class CertificateChainError : public std::runtime_error
 {
 public:
 	CertificateChainError (std::string message);
 };
 
+
 class MissingSubtitleImageError : public std::runtime_error
 {
 public:
 	MissingSubtitleImageError (std::string id);
 };
+
 
 class BadKDMDateError : public std::runtime_error
 {
@@ -289,6 +306,8 @@ public:
 	NoReelsError ();
 };
 
+
 }
+
 
 #endif

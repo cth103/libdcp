@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/ref.h
- *  @brief Ref class.
+ *  @brief Ref class
  */
+
 
 #ifndef LIBDCP_REF_H
 #define LIBDCP_REF_H
+
 
 #include "exceptions.h"
 #include "asset.h"
@@ -44,10 +47,12 @@
 #include <memory>
 #include <string>
 
+
 namespace dcp {
 
+
 /** @class Ref
- *  @brief A reference to an asset which is identified by a universally-unique identifier (UUID).
+ *  @brief A reference to an asset which is identified by a universally-unique identifier (UUID)
  *
  *  This class is a `pointer' to a thing.  It will always know the
  *  UUID of the thing, and it may have a shared_ptr to the C++ object
@@ -77,6 +82,9 @@ public:
 		_id = id;
 	}
 
+	/** Look through a list of assets and copy a shared_ptr to any asset
+	 *  which matches the ID of this one
+	 */
 	void resolve (std::vector<std::shared_ptr<Asset>> assets);
 
 	/** @return the ID of the thing that we are pointing to */
@@ -85,7 +93,7 @@ public:
 	}
 
 	/** @return a shared_ptr to the thing; an UnresolvedRefError is thrown
-	 *  if the shared_ptr is not known.
+	 *  if the shared_ptr is not known
 	 */
 	std::shared_ptr<Asset> asset () const {
 		if (!_asset) {
@@ -96,7 +104,7 @@ public:
 	}
 
 	/** operator-> to access the shared_ptr; an UnresolvedRefError is thrown
-	 *  if the shared_ptr is not known.
+	 *  if the shared_ptr is not known
 	 */
 	Asset * operator->() const {
 		if (!_asset) {
@@ -116,6 +124,8 @@ private:
 	std::shared_ptr<Asset> _asset; ///< shared_ptr to the thing, may be null.
 };
 
+
 }
+
 
 #endif
