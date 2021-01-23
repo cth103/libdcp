@@ -40,6 +40,9 @@
 #include <string>
 #include <vector>
 
+/* Something in windows.h defines this */
+#undef ERROR
+
 namespace dcp {
 
 class VerificationNote
