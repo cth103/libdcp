@@ -7,8 +7,7 @@ video, audio and subtitle data, and also to read and process existing
 DCPs.
 
 Most of the hard work is done by a (slightly patched) version of
-asdcplib (http://www.cinecert.com/asdcplib/) which is included in the
-source distribution for libdcp.
+asdcplib (http://www.cinecert.com/asdcplib/).
 
 libdcp is distributed under the GNU GPL.
 

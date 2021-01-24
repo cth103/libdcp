@@ -52,7 +52,7 @@ namespace dcp {
 class AtmosAsset;
 
 
-/** @class ReelAtmosAsse
+/** @class ReelAtmosAsset
  *  @brief Part of a Reel's description which refers to a Atmos MXF
  */
 class ReelAtmosAsset : public ReelAsset, public ReelMXF
