@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/asset_reader.h
+ *  @brief AssetReader class
+ */
+
+
 #ifndef LIBDCP_ASSET_READER_H
 #define LIBDCP_ASSET_READER_H
 
@@ -46,10 +51,44 @@
 namespace dcp {
 
 
+class AtmosAsset;
+class MonoPictureAsset;
+class SoundAsset;
+class StereoPictureAsset;
+
+
 template <class R, class F>
 class AssetReader
 {
 public:
+	AssetReader (AssetReader const&) = delete;
+	AssetReader& operator== (AssetReader const&) = delete;
+
+	~AssetReader ()
+	{
+		delete _reader;
+	}
+
+	std::shared_ptr<const F> get_frame (int n) const
+	{
+		/* Can't use make_shared here as the constructor is private */
+		return std::shared_ptr<const F> (new F(_reader, n, _crypto_context));
+	}
+
+	R* reader () const {
+		return _reader;
+	}
+
+protected:
+	R* _reader = nullptr;
+	std::shared_ptr<DecryptionContext> _crypto_context;
+
+private:
+	friend class AtmosAsset;
+	friend class MonoPictureAsset;
+	friend class SoundAsset;
+	friend class StereoPictureAsset;
+
 	explicit AssetReader (Asset const * asset, boost::optional<Key> key, Standard standard)
 		: _crypto_context (new DecryptionContext(key, standard))
 	{
@@ -61,27 +100,6 @@ public:
 			boost::throw_exception (FileError("could not open MXF file for reading", asset->file().get(), r));
 		}
 	}
-
-	AssetReader (AssetReader const&) = delete;
-	AssetReader& operator== (AssetReader const&) = delete;
-
-	~AssetReader ()
-	{
-		delete _reader;
-	}
-
-	std::shared_ptr<const F> get_frame (int n) const
-	{
-		return std::shared_ptr<const F> (new F(_reader, n, _crypto_context));
-	}
-
-	R* reader () const {
-		return _reader;
-	}
-
-protected:
-	R* _reader = nullptr;
-	std::shared_ptr<DecryptionContext> _crypto_context;
 };
 
 

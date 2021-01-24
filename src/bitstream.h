@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2020-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/bitstream.h
+ *  @brief Bitstream class
+ */
+
+
 #include <boost/crc.hpp>
 #include <boost/optional.hpp>
 #include <stdint.h>
@@ -39,6 +44,7 @@
 
 
 namespace dcp {
+
 
 class Bitstream
 {
@@ -57,5 +63,6 @@ private:
 	std::vector<bool> _data;
 	boost::optional<boost::crc_basic<16> > _crc;
 };
+
 
 }

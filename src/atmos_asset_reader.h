@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,11 +31,20 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/atmos_asset_reader.h
+ *  @brief AtmosAssetReader typedef
+ */
+
+
 #include "asset_reader.h"
 #include "atmos_frame.h"
 
+
 namespace dcp {
 
+
 typedef AssetReader<ASDCP::ATMOS::MXFReader, AtmosFrame> AtmosAssetReader;
+
 
 }

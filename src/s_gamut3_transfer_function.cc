@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,17 +31,21 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/s_gamut3_transfer_function.cc
- *  @brief SGamut3TransferFunction class.
+ *  @brief SGamut3TransferFunction class
  */
+
 
 #include "s_gamut3_transfer_function.h"
 #include <cmath>
+
 
 using std::pow;
 using std::shared_ptr;
 using std::dynamic_pointer_cast;
 using namespace dcp;
+
 
 double *
 SGamut3TransferFunction::make_lut (int bit_depth, bool inverse) const
@@ -50,7 +54,7 @@ SGamut3TransferFunction::make_lut (int bit_depth, bool inverse) const
 	double* lut = new double[bit_length];
 	if (inverse) {
 		for (int i = 0; i < bit_length; ++i) {
-			double const p = static_cast<double> (i) / (bit_length - 1);
+			auto const p = static_cast<double>(i) / (bit_length - 1);
 			if (p >= (0.01125 / 1023)) {
 				lut[i] = (420 + log10((p + 0.01) / (0.18 + 0.01)) * 261.5) / 1023;
 			} else {
@@ -59,7 +63,7 @@ SGamut3TransferFunction::make_lut (int bit_depth, bool inverse) const
 		}
 	} else {
 		for (int i = 0; i < bit_length; ++i) {
-			double const p = static_cast<double> (i) / (bit_length - 1);
+			auto const p = static_cast<double>(i) / (bit_length - 1);
 			if (p >= (171.2102946929 / 1023)) {
 				lut[i] = pow(10, ((p * 1023 - 420) / 261.5)) * (0.18 + 0.01) - 0.01;
 			} else {
@@ -70,9 +74,10 @@ SGamut3TransferFunction::make_lut (int bit_depth, bool inverse) const
 	return lut;
 }
 
+
 bool
 SGamut3TransferFunction::about_equal (shared_ptr<const TransferFunction> other, double) const
 {
-	shared_ptr<const SGamut3TransferFunction> o = dynamic_pointer_cast<const SGamut3TransferFunction> (other);
+	auto o = dynamic_pointer_cast<const SGamut3TransferFunction> (other);
 	return static_cast<bool> (o);
 }

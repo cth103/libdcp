@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,13 +31,21 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/name_format.cc
+ *  @brief NameFormat class
+ */
+
+
 #include "name_format.h"
 #include <boost/optional.hpp>
+
 
 using std::string;
 using std::map;
 using boost::optional;
 using namespace dcp;
+
 
 static char
 filter (char c)
@@ -50,6 +58,7 @@ filter (char c)
 
 	return c;
 }
+
 
 static string
 filter (string c)
@@ -64,13 +73,6 @@ filter (string c)
 }
 
 
-/** @param values Values to replace our specifications with; e.g.
- *  if the specification contains %c it will be be replaced with the
- *  value corresponding to the key 'c'.
- *  @param suffix Suffix to add on after processing the specification.
- *  @param ignore Any specification characters in this string will not
- *  be replaced, but left as-is.
- */
 string
 NameFormat::get (Map values, string suffix, string ignore) const
 {
@@ -79,7 +81,7 @@ NameFormat::get (Map values, string suffix, string ignore) const
 		bool done = false;
 		if (_specification[i] == '%' && (i < _specification.length() - 1)) {
 			char const key = _specification[i + 1];
-			Map::const_iterator j = values.find(key);
+			auto j = values.find(key);
 			if (j != values.end() && ignore.find(key) == string::npos) {
 				result += filter (j->second);
 				++i;
@@ -94,6 +96,7 @@ NameFormat::get (Map values, string suffix, string ignore) const
 
 	return result + suffix;
 }
+
 
 bool
 dcp::operator== (NameFormat const & a, NameFormat const & b)

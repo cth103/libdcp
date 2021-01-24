@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,14 +31,23 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/raw_convert.h
+ *  @brief Methods for conversion to/from string
+ */
+
+
 #ifndef LIBDCP_RAW_CONVERT_H
 #define LIBDCP_RAW_CONVERT_H
+
 
 #include "util.h"
 #include <boost/static_assert.hpp>
 #include <iomanip>
 
+
 namespace dcp {
+
 
 /** A sort-of version of boost::lexical_cast that does uses the "C"
  *  locale (i.e. no thousands separators and a . for the decimal separator).
@@ -163,6 +172,8 @@ template <>
 double
 raw_convert (char const * v, int, bool);
 
+
 }
+
 
 #endif

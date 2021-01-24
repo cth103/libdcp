@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,17 +31,36 @@
     files in the program, then also delete it here.
 */
 
+
 #include "types.h"
 #include <memory>
 #include <boost/optional.hpp>
 #include <stdint.h>
 
+
 namespace dcp {
+
 
 class OpenJPEGImage;
 class Image;
 class ColourConversion;
 
+
+/** Convert an XYZ image to RGBA.
+ *  @param xyz_image Image in XYZ.
+ *  @param conversion Colour conversion to use.
+ *  @param argb Buffer to fill with RGBA data.  The format of the data is:
+ *
+ *  <pre>
+ *  Byte   /- 0 -------|- 1 --------|- 2 --------|- 3 --------|- 4 --------|- 5 --------| ...
+ *         |(0, 0) Blue|(0, 0)Green |(0, 0) Red  |(0, 0) Alpha|(0, 1) Blue |(0, 1) Green| ...
+ *  </pre>
+ *
+ *  So that the first byte is the blue component of the pixel at x=0, y=0, the second
+ *  is the green component, and so on.
+ *
+ *  Lines are packed so that the second row directly follows the first.
+ */
 extern void xyz_to_rgba (
 	std::shared_ptr<const OpenJPEGImage>,
 	ColourConversion const & conversion,
@@ -49,6 +68,16 @@ extern void xyz_to_rgba (
 	int stride
 	);
 
+
+/** Convert an XYZ image to 48bpp RGB.
+ *  @param xyz_image Frame in XYZ.
+ *  @param conversion Colour conversion to use.
+ *  @param rgb Buffer to fill with RGB data.  Format is packed RGB
+ *  16:16:16, 48bpp, 16R, 16G, 16B, with the 2-byte value for each
+ *  R/G/B component stored as little-endian; i.e. AV_PIX_FMT_RGB48LE.
+ *  @param stride Stride for RGB data in bytes.
+ *  @param note Optional handler for any notes that may be made during the conversion (e.g. when clamping occurs).
+ */
 extern void xyz_to_rgb (
 	std::shared_ptr<const OpenJPEGImage>,
 	ColourConversion const & conversion,
@@ -57,6 +86,13 @@ extern void xyz_to_rgb (
 	boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()
 	);
 
+
+/** @param rgb RGB data; packed RGB 16:16:16, 48bpp, 16R, 16G, 16B,
+ *  with the 2-byte value for each R/G/B component stored as
+ *  little-endian; i.e. AV_PIX_FMT_RGB48LE.
+ *  @param size size of RGB image in pixels.
+ *  @param size stride of RGB data in pixels.
+ */
 extern std::shared_ptr<OpenJPEGImage> rgb_to_xyz (
 	uint8_t const * rgb,
 	dcp::Size size,
@@ -65,6 +101,10 @@ extern std::shared_ptr<OpenJPEGImage> rgb_to_xyz (
 	boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()
 	);
 
+
+/** @param conversion Colour conversion.
+ *  @param matrix Filled in with the product of the RGB to XYZ matrix, the Bradford transform and the DCI companding.
+ */
 extern void combined_rgb_to_xyz (ColourConversion const & conversion, double* matrix);
 
 }

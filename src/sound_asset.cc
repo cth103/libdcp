@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/sound_mxf.cc
- *  @brief SoundAsset class.
+
+/** @file  src/sound_asset.cc
+ *  @brief SoundAsset class
  */
+
 
 #include "sound_asset.h"
 #include "util.h"
@@ -49,6 +51,7 @@
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
 #include <stdexcept>
+
 
 using std::string;
 using std::vector;
@@ -67,14 +70,14 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 	, _language ("en-US")
 {
 	ASDCP::PCM::MXFReader reader;
-	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file.string(), r));
+	auto r = reader.OpenRead (file.string().c_str());
+	if (ASDCP_FAILURE(r)) {
+		boost::throw_exception (MXFFileError("could not open MXF file for reading", file.string(), r));
 	}
 
 	ASDCP::PCM::AudioDescriptor desc;
-	if (ASDCP_FAILURE (reader.FillAudioDescriptor (desc))) {
-		boost::throw_exception (ReadError ("could not read audio MXF information"));
+	if (ASDCP_FAILURE (reader.FillAudioDescriptor(desc))) {
+		boost::throw_exception (ReadError("could not read audio MXF information"));
 	}
 
 	_sampling_rate = desc.AudioSamplingRate.Numerator / desc.AudioSamplingRate.Denominator;
@@ -84,12 +87,12 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 	_intrinsic_duration = desc.ContainerDuration;
 
 	ASDCP::WriterInfo info;
-	if (ASDCP_FAILURE (reader.FillWriterInfo (info))) {
-		boost::throw_exception (ReadError ("could not read audio MXF information"));
+	if (ASDCP_FAILURE (reader.FillWriterInfo(info))) {
+		boost::throw_exception (ReadError("could not read audio MXF information"));
 	}
 
 	ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield;
-	ASDCP::Result_t rr = reader.OP1aHeader().GetMDObjectByType(
+	auto rr = reader.OP1aHeader().GetMDObjectByType(
 		asdcp_smpte_dict->ul(ASDCP::MDD_SoundfieldGroupLabelSubDescriptor),
 		reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&soundfield)
 		);
@@ -105,10 +108,10 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 	_id = read_writer_info (info);
 }
 
+
 SoundAsset::SoundAsset (Fraction edit_rate, int sampling_rate, int channels, LanguageTag language, Standard standard)
 	: MXF (standard)
 	, _edit_rate (edit_rate)
-	, _intrinsic_duration (0)
 	, _channels (channels)
 	, _sampling_rate (sampling_rate)
 	, _language (language.to_string())
@@ -116,28 +119,29 @@ SoundAsset::SoundAsset (Fraction edit_rate, int sampling_rate, int channels, Lan
 
 }
 
+
 bool
 SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
 	ASDCP::PCM::MXFReader reader_A;
-	DCP_ASSERT (file ());
-	Kumu::Result_t r = reader_A.OpenRead (file()->string().c_str());
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file()->string(), r));
+	DCP_ASSERT (file());
+	auto r = reader_A.OpenRead (file()->string().c_str());
+	if (ASDCP_FAILURE(r)) {
+		boost::throw_exception (MXFFileError("could not open MXF file for reading", file()->string(), r));
 	}
 
 	ASDCP::PCM::MXFReader reader_B;
 	r = reader_B.OpenRead (other->file()->string().c_str());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for reading", other->file()->string(), r));
+		boost::throw_exception (MXFFileError("could not open MXF file for reading", other->file()->string(), r));
 	}
 
 	ASDCP::PCM::AudioDescriptor desc_A;
-	if (ASDCP_FAILURE (reader_A.FillAudioDescriptor (desc_A))) {
+	if (ASDCP_FAILURE (reader_A.FillAudioDescriptor(desc_A))) {
 		boost::throw_exception (ReadError ("could not read audio MXF information"));
 	}
 	ASDCP::PCM::AudioDescriptor desc_B;
-	if (ASDCP_FAILURE (reader_B.FillAudioDescriptor (desc_B))) {
+	if (ASDCP_FAILURE (reader_B.FillAudioDescriptor(desc_B))) {
 		boost::throw_exception (ReadError ("could not read audio MXF information"));
 	}
 
@@ -185,15 +189,15 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 		/* XXX */
 	}
 
-	shared_ptr<const SoundAsset> other_sound = dynamic_pointer_cast<const SoundAsset> (other);
+	auto other_sound = dynamic_pointer_cast<const SoundAsset> (other);
 
-	shared_ptr<const SoundAssetReader> reader = start_read ();
-	shared_ptr<const SoundAssetReader> other_reader = other_sound->start_read ();
+	auto reader = start_read ();
+	auto other_reader = other_sound->start_read ();
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
 
-		shared_ptr<const SoundFrame> frame_A = reader->get_frame (i);
-		shared_ptr<const SoundFrame> frame_B = other_reader->get_frame (i);
+		auto frame_A = reader->get_frame (i);
+		auto frame_B = other_reader->get_frame (i);
 
 		if (frame_A->size() != frame_B->size()) {
 			note (NoteType::ERROR, String::compose ("sizes of audio data for frame %1 differ", i));
@@ -201,7 +205,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 		}
 
 		if (memcmp (frame_A->data(), frame_B->data(), frame_A->size()) != 0) {
-			for (int sample= 0; sample < frame_A->samples(); ++sample) {
+			for (int sample = 0; sample < frame_A->samples(); ++sample) {
 				for (int channel = 0; channel < frame_A->channels(); ++channel) {
 					int32_t const d = abs(frame_A->get(channel, sample) - frame_B->get(channel, sample));
 					if (d > opt.max_audio_sample_error) {
@@ -216,6 +220,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 	return true;
 }
 
+
 shared_ptr<SoundAssetWriter>
 SoundAsset::start_write (boost::filesystem::path file, vector<Channel> active_channels, bool atmos_sync)
 {
@@ -226,11 +231,13 @@ SoundAsset::start_write (boost::filesystem::path file, vector<Channel> active_ch
 	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter(this, file, active_channels, atmos_sync));
 }
 
+
 shared_ptr<SoundAssetReader>
 SoundAsset::start_read () const
 {
-	return shared_ptr<SoundAssetReader> (new SoundAssetReader (this, key(), standard()));
+	return shared_ptr<SoundAssetReader> (new SoundAssetReader(this, key(), standard()));
 }
+
 
 string
 SoundAsset::static_pkl_type (Standard standard)
@@ -245,10 +252,11 @@ SoundAsset::static_pkl_type (Standard standard)
 	}
 }
 
+
 bool
 SoundAsset::valid_mxf (boost::filesystem::path file)
 {
 	ASDCP::PCM::MXFReader reader;
-	Kumu::Result_t r = reader.OpenRead (file.string().c_str ());
+	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
 	return !ASDCP_FAILURE (r);
 }

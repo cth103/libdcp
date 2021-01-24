@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/frame.h
+ *  @brief Frame class
+ */
+
+
 #ifndef LIBDCP_FRAME_H
 #define LIBDCP_FRAME_H
 
@@ -52,7 +57,7 @@ public:
 	Frame (R* reader, int n, std::shared_ptr<const DecryptionContext> c)
 	{
 		/* XXX: unfortunate guesswork on this buffer size */
-		_buffer.reset(new B(Kumu::Megabyte));
+		_buffer = std::make_shared<B>(Kumu::Megabyte);
 
 		if (ASDCP_FAILURE(reader->ReadFrame(n, *_buffer, c->context(), c->hmac()))) {
 			boost::throw_exception (ReadError ("could not read frame"));

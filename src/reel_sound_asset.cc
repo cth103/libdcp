@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,18 +31,22 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_sound_asset.cc
- *  @brief ReelSoundAsset class.
+ *  @brief ReelSoundAsset class
  */
+
 
 #include "reel_sound_asset.h"
 #include "dcp_assert.h"
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 
+
 using std::string;
 using std::shared_ptr;
 using namespace dcp;
+
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundAsset> asset, int64_t entry_point)
 	: ReelAsset (asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
@@ -50,6 +54,7 @@ ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundAsset> asset, int64_t entry_poin
 {
 
 }
+
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
@@ -59,11 +64,13 @@ ReelSoundAsset::ReelSoundAsset (shared_ptr<const cxml::Node> node)
 	node->done ();
 }
 
+
 string
 ReelSoundAsset::cpl_node_name (Standard) const
 {
 	return "MainSound";
 }
+
 
 string
 ReelSoundAsset::key_type () const
@@ -71,13 +78,15 @@ ReelSoundAsset::key_type () const
 	return "MDAK";
 }
 
+
 xmlpp::Node *
 ReelSoundAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	xmlpp::Node* asset = write_to_cpl_asset (node, standard, hash());
+	auto asset = write_to_cpl_asset (node, standard, hash());
 	write_to_cpl_mxf (asset);
 	return asset;
 }
+
 
 bool
 ReelSoundAsset::equals (shared_ptr<const ReelSoundAsset> other, EqualityOptions opt, NoteHandler note) const

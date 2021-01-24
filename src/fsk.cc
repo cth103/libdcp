@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2020-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/fsk.cc
+ *  @brief FSK class
+ */
+
+
 #include "fsk.h"
 #include <iostream>
 
@@ -42,10 +47,6 @@ using namespace dcp;
 
 
 FSK::FSK ()
-	: _data_position (0)
-	, _sample_position (0)
-	, _last_polarity (false)
-	, _last_bit (false)
 {
 
 }

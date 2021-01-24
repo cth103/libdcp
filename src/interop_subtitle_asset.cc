@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/interop_subtitle_asset.cc
+ *  @brief InteropSubtitleAsset class
+ */
+
+
 #include "interop_subtitle_asset.h"
 #include "interop_load_font_node.h"
 #include "subtitle_asset_internal.h"
@@ -46,6 +52,7 @@
 #include <cmath>
 #include <cstdio>
 
+
 using std::list;
 using std::string;
 using std::cout;
@@ -59,12 +66,13 @@ using boost::shared_array;
 using boost::optional;
 using namespace dcp;
 
+
 InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 	: SubtitleAsset (file)
 {
 	_raw_xml = dcp::file_to_string (file);
 
-	shared_ptr<cxml::Document> xml (new cxml::Document ("DCSubtitle"));
+	auto xml = make_shared<cxml::Document>("DCSubtitle");
 	xml->read_file (file);
 	_id = xml->string_child ("SubtitleID");
 	_reel_number = xml->string_child ("ReelNumber");
@@ -75,9 +83,8 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 	/* Now we need to drop down to xmlpp */
 
 	vector<ParseState> ps;
-	xmlpp::Node::NodeList c = xml->node()->get_children ();
-	for (xmlpp::Node::NodeList::const_iterator i = c.begin(); i != c.end(); ++i) {
-		xmlpp::Element const * e = dynamic_cast<xmlpp::Element const *> (*i);
+	for (auto i: xml->node()->get_children()) {
+		auto e = dynamic_cast<xmlpp::Element const *>(i);
 		if (e && (e->get_name() == "Font" || e->get_name() == "Subtitle")) {
 			parse_subtitles (e, ps, optional<int>(), Standard::INTEROP);
 		}
@@ -91,16 +98,18 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 	}
 }
 
+
 InteropSubtitleAsset::InteropSubtitleAsset ()
 {
 
 }
 
+
 string
 InteropSubtitleAsset::xml_as_string () const
 {
 	xmlpp::Document doc;
-	xmlpp::Element* root = doc.create_root_node ("DCSubtitle");
+	auto root = doc.create_root_node ("DCSubtitle");
 	root->set_attribute ("Version", "1.0");
 
 	root->add_child("SubtitleID")->add_child_text (_id);
@@ -119,13 +128,15 @@ InteropSubtitleAsset::xml_as_string () const
 	return doc.write_to_string ("UTF-8");
 }
 
+
 void
 InteropSubtitleAsset::add_font (string load_id, dcp::ArrayData data)
 {
 	_fonts.push_back (Font(load_id, make_uuid(), data));
-	string const uri = String::compose("font_%1.ttf", _load_font_nodes.size());
+	auto const uri = String::compose("font_%1.ttf", _load_font_nodes.size());
 	_load_font_nodes.push_back (shared_ptr<InteropLoadFontNode>(new InteropLoadFontNode(load_id, uri)));
 }
+
 
 bool
 InteropSubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, NoteHandler note) const
@@ -134,7 +145,7 @@ InteropSubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptio
 		return false;
 	}
 
-	shared_ptr<const InteropSubtitleAsset> other = dynamic_pointer_cast<const InteropSubtitleAsset> (other_asset);
+	auto other = dynamic_pointer_cast<const InteropSubtitleAsset> (other_asset);
 	if (!other) {
 		return false;
 	}
@@ -167,6 +178,7 @@ InteropSubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptio
 	return true;
 }
 
+
 vector<shared_ptr<LoadFontNode>>
 InteropSubtitleAsset::load_font_nodes () const
 {
@@ -175,16 +187,16 @@ InteropSubtitleAsset::load_font_nodes () const
 	return lf;
 }
 
-/** Write this content to an XML file with its fonts alongside */
+
 void
 InteropSubtitleAsset::write (boost::filesystem::path p) const
 {
-	FILE* f = fopen_boost (p, "w");
+	auto f = fopen_boost (p, "w");
 	if (!f) {
 		throw FileError ("Could not open file for writing", p, -1);
 	}
 
-	string const s = xml_as_string ();
+	auto const s = xml_as_string ();
 	/* length() here gives bytes not characters */
 	fwrite (s.c_str(), 1, s.length(), f);
 	fclose (f);
@@ -212,6 +224,7 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 		}
 	}
 }
+
 
 /** Look at a supplied list of assets and find the fonts.  Then match these
  *  fonts up with anything requested by a <LoadFont> so that _fonts contains
@@ -242,6 +255,7 @@ InteropSubtitleAsset::resolve_fonts (vector<shared_ptr<Asset>> assets)
 	}
 }
 
+
 void
 InteropSubtitleAsset::add_font_assets (vector<shared_ptr<Asset>>& assets)
 {
@@ -250,6 +264,7 @@ InteropSubtitleAsset::add_font_assets (vector<shared_ptr<Asset>>& assets)
 		assets.push_back (make_shared<FontAsset>(i.uuid, i.file.get()));
 	}
 }
+
 
 void
 InteropSubtitleAsset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
@@ -264,6 +279,7 @@ InteropSubtitleAsset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::p
 		}
 	}
 }
+
 
 void
 InteropSubtitleAsset::add_to_pkl (shared_ptr<PKL> pkl, boost::filesystem::path root) const

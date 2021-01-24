@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/dcp_time.cc
- *  @brief Time class.
+ *  @brief Time class
  */
+
 
 #include "raw_convert.h"
 #include "dcp_time.h"
@@ -46,24 +48,23 @@
 #include <vector>
 #include <cmath>
 
+
 using namespace std;
 using namespace boost;
 using namespace dcp;
+
 
 Time::Time (int frame, double frames_per_second, int tcr_)
 {
 	set (double (frame) / frames_per_second, tcr_);
 }
 
-/** Construct a Time from a number of seconds and a timecode rate.
- *
- *  @param seconds A number of seconds.
- *  @param tcr_ Timecode rate.
- */
+
 Time::Time (double seconds, int tcr_)
 {
 	set (seconds, tcr_);
 }
+
 
 /** Construct a Time with specified timecode rate and using the supplied
  *  number of seconds.
@@ -94,14 +95,7 @@ Time::set (double seconds, int tcr_)
 	}
 }
 
-/** @param time String of the form
- *     HH:MM:SS:EE                          for SMPTE
- *     HH:MM:SS:E[E[E]] or HH:MM:SS.s[s[s]] for Interop
- *  where HH are hours, MM minutes, SS seconds, EE editable units and
- *  sss millseconds.
- *
- *  @param tcr_ Timecode rate if this is a SMPTE time, otherwise empty for an Interop time.
- */
+
 Time::Time (string time, optional<int> tcr_)
 {
 	vector<string> b;
@@ -170,11 +164,13 @@ Time::Time (string time, optional<int> tcr_)
 	}
 }
 
+
 bool
 dcp::operator== (Time const & a, Time const & b)
 {
 	return (a.h == b.h && a.m == b.m && a.s == b.s && (a.e * b.tcr) == (b.e * a.tcr));
 }
+
 
 bool
 dcp::operator!= (Time const & a, Time const & b)
@@ -182,17 +178,20 @@ dcp::operator!= (Time const & a, Time const & b)
 	return !(a == b);
 }
 
+
 bool
 dcp::operator<= (Time const & a, Time const & b)
 {
 	return a < b || a == b;
 }
 
+
 bool
 dcp::operator>= (Time const & a, Time const & b)
 {
 	return a > b || a == b;
 }
+
 
 bool
 dcp::operator< (Time const & a, Time const & b)
@@ -212,6 +211,7 @@ dcp::operator< (Time const & a, Time const & b)
 	return (a.e * b.tcr) < (b.e * a.tcr);
 }
 
+
 bool
 dcp::operator> (Time const & a, Time const & b)
 {
@@ -230,12 +230,14 @@ dcp::operator> (Time const & a, Time const & b)
 	return (a.e * b.tcr) > (b.e * a.tcr);
 }
 
+
 ostream &
 dcp::operator<< (ostream& s, Time const & t)
 {
 	s << t.h << ":" << t.m << ":" << t.s << "." << t.e;
 	return s;
 }
+
 
 dcp::Time
 dcp::operator+ (Time a, Time b)
@@ -274,6 +276,7 @@ dcp::operator+ (Time a, Time b)
 	return r;
 }
 
+
 dcp::Time
 dcp::operator- (Time a, Time b)
 {
@@ -311,6 +314,7 @@ dcp::operator- (Time a, Time b)
 	return r;
 }
 
+
 float
 dcp::operator/ (Time a, Time const & b)
 {
@@ -319,7 +323,7 @@ dcp::operator/ (Time a, Time const & b)
 	return float (at) / bt;
 }
 
-/** @return A string of the form h:m:s:e padded as in 00:00:00:000 (for Interop) or 00:00:00:00 (for SMPTE) */
+
 string
 Time::as_string (Standard standard) const
 {
@@ -334,26 +338,21 @@ Time::as_string (Standard standard) const
 	return buffer;
 }
 
-/** @param tcr_ Timecode rate with which the return value should be counted.
- *  @return the total number of editable units that this time consists of at the specified timecode rate, rounded up
- *  to the nearest editable unit. For example, as_editable_units (24) returns the total time in frames at 24fps.
- */
+
 int64_t
 Time::as_editable_units (int tcr_) const
 {
-	return ceil (int64_t(e) * double (tcr_) / tcr) + int64_t(s) * tcr_ + int64_t(m) * 60 * tcr_ + int64_t(h) * 60 * 60 * tcr_;
+	return ceil(int64_t(e) * double(tcr_) / tcr) + int64_t(s) * tcr_ + int64_t(m) * 60 * tcr_ + int64_t(h) * 60 * 60 * tcr_;
 }
 
-/** @return the total number of seconds that this time consists of */
+
 double
 Time::as_seconds () const
 {
 	return h * 3600 + m * 60 + s + double(e) / tcr;
 }
 
-/** @param tcr_ New timecode rate.
- *  @return A new Time which is this time at the spcified new timecode rate.
- */
+
 Time
 Time::rebase (int tcr_) const
 {

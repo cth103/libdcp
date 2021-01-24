@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/smpte_subtitle_asset.h
- *  @brief SMPTESubtitleAsset class.
+ *  @brief SMPTESubtitleAsset class
  */
+
 
 #include "subtitle_asset.h"
 #include "language_tag.h"
@@ -42,28 +44,34 @@
 #include "crypto_context.h"
 #include <boost/filesystem.hpp>
 
+
 namespace ASDCP {
 	namespace TimedText {
 		class MXFReader;
 	}
 }
 
+
 struct verify_invalid_language1;
 struct verify_invalid_language2;
 
+
 namespace dcp {
+
 
 class SMPTELoadFontNode;
 
+
 /** @class SMPTESubtitleAsset
- *  @brief A set of subtitles to be read and/or written in the SMPTE format.
+ *  @brief A set of subtitles to be read and/or written in the SMPTE format
  */
 class SMPTESubtitleAsset : public SubtitleAsset, public MXF
 {
 public:
 	SMPTESubtitleAsset ();
 
-	/** @param file File name
+	/** Construct a SMPTESubtitleAsset by reading an MXF or XML file
+	 *  @param file Filename
 	 */
 	explicit SMPTESubtitleAsset (boost::filesystem::path file);
 
@@ -76,7 +84,10 @@ public:
 	std::vector<std::shared_ptr<LoadFontNode>> load_font_nodes () const;
 
 	std::string xml_as_string () const;
+
+	/** Write this content to a MXF file */
 	void write (boost::filesystem::path path) const;
+
 	void add (std::shared_ptr<Subtitle>);
 	void add_font (std::string id, dcp::ArrayData data);
 	void set_key (Key key);
@@ -114,7 +125,7 @@ public:
 	}
 
 	/** @return title of the film that these subtitles are for,
-	 *  to be presented to the user.
+	 *  to be presented to the user
 	 */
 	std::string content_title_text () const {
 		return _content_title_text;
@@ -132,7 +143,7 @@ public:
 		return _annotation_text;
 	}
 
-	/** @return file creation time and date */
+	/** @return file issue time and date */
 	LocalTime issue_date () const {
 		return _issue_date;
 	}
@@ -185,7 +196,7 @@ private:
 	/** The total length of this content in video frames.  The amount of
 	 *  content presented may be less than this.
 	 */
-	int64_t _intrinsic_duration;
+	int64_t _intrinsic_duration = 0;
 	/** <ContentTitleText> from the asset */
 	std::string _content_title_text;
 	/** This is stored and returned as a string so that we can tolerate non-RFC-5646 strings,
@@ -196,7 +207,7 @@ private:
 	LocalTime _issue_date;
 	boost::optional<int> _reel_number;
 	Fraction _edit_rate;
-	int _time_code_rate;
+	int _time_code_rate = 0;
 	boost::optional<Time> _start_time;
 
 	std::vector<std::shared_ptr<SMPTELoadFontNode>> _load_font_nodes;
@@ -205,5 +216,6 @@ private:
 	 */
 	std::string _xml_id;
 };
+
 
 }

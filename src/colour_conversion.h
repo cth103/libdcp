@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/colour_conversion.h
  *  @brief ColourConversion class.
  */
 
+
 #ifndef DCP_COLOUR_CONVERSION_H
 #define DCP_COLOUR_CONVERSION_H
+
 
 #include "chromaticity.h"
 #include <memory>
@@ -46,9 +49,12 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/optional.hpp>
 
+
 namespace dcp {
 
+
 class TransferFunction;
+
 
 enum class YUVToRGB {
 	REC601,
@@ -56,9 +62,10 @@ enum class YUVToRGB {
 	COUNT
 };
 
+
 /** @class ColourConversion
  *  @brief A representation of all the parameters involved the colourspace conversion
- *  of a YUV image to XYZ (via RGB).
+ *  of a YUV image to XYZ (via RGB)
  */
 class ColourConversion
 {
@@ -175,6 +182,8 @@ protected:
 	std::shared_ptr<const TransferFunction> _out;
 };
 
+
 }
+
 
 #endif

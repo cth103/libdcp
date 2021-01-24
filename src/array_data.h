@@ -94,7 +94,7 @@ public:
 private:
 	boost::shared_array<uint8_t> _data;
 	/** amount of `valid' data in _data; the array may be larger */
-	int _size;
+	int _size = 0;
 };
 
 

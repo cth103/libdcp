@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
 #include "raw_convert.h"
 #include "locale_convert.h"
 #include <boost/algorithm/string.hpp>
 
+
 using std::string;
 using std::wstring;
+
 
 /** @param v Numeric value as an ASCII string */
 static
@@ -50,6 +53,7 @@ make_raw (string v)
 	return v;
 }
 
+
 static
 string
 make_local (string v)
@@ -60,12 +64,14 @@ make_local (string v)
 	return v;
 }
 
+
 template <>
 string
 dcp::raw_convert (unsigned char v, int precision, bool fixed)
 {
 	return make_raw (locale_convert<string> (v, precision, fixed));
 }
+
 
 template <>
 string
@@ -74,12 +80,14 @@ dcp::raw_convert (unsigned short int v, int precision, bool fixed)
 	return make_raw (locale_convert<string> (v, precision, fixed));
 }
 
+
 template <>
 string
 dcp::raw_convert (int v, int precision, bool fixed)
 {
 	return make_raw (locale_convert<string> (v, precision, fixed));
 }
+
 
 template <>
 string
@@ -88,12 +96,14 @@ dcp::raw_convert (unsigned int v, int precision, bool fixed)
 	return make_raw (locale_convert<string> (v, precision, fixed));
 }
 
+
 template <>
 string
 dcp::raw_convert (long v, int precision, bool fixed)
 {
 	return make_raw (locale_convert<string> (v, precision, fixed));
 }
+
 
 template <>
 string
@@ -102,12 +112,14 @@ dcp::raw_convert (unsigned long v, int precision, bool fixed)
 	return make_raw (locale_convert<string> (v, precision, fixed));
 }
 
+
 template <>
 string
 dcp::raw_convert (long long v, int precision, bool fixed)
 {
 	return make_raw (locale_convert<string> (v, precision, fixed));
 }
+
 
 template <>
 string
@@ -116,12 +128,14 @@ dcp::raw_convert (unsigned long long v, int precision, bool fixed)
 	return make_raw (locale_convert<string> (v, precision, fixed));
 }
 
+
 template <>
 string
 dcp::raw_convert (float v, int precision, bool fixed)
 {
 	return make_raw (locale_convert<string> (v, precision, fixed));
 }
+
 
 template <>
 string
@@ -130,12 +144,14 @@ dcp::raw_convert (double v, int precision, bool fixed)
 	return make_raw (locale_convert<string> (v, precision, fixed));
 }
 
+
 template <>
 string
 dcp::raw_convert (char const * v, int, bool)
 {
 	return v;
 }
+
 
 template <>
 string
@@ -144,12 +160,14 @@ dcp::raw_convert (char* v, int, bool)
 	return v;
 }
 
+
 template <>
 string
 dcp::raw_convert (string v, int, bool)
 {
 	return v;
 }
+
 
 template <>
 string
@@ -160,6 +178,7 @@ dcp::raw_convert (char v, int, bool)
 	return s;
 }
 
+
 template <>
 string
 dcp::raw_convert (wchar_t const * v, int, bool)
@@ -168,12 +187,14 @@ dcp::raw_convert (wchar_t const * v, int, bool)
 	return string (w.begin(), w.end());
 }
 
+
 template <>
 unsigned char
 dcp::raw_convert (std::string v, int precision, bool fixed)
 {
 	return locale_convert<unsigned char> (make_local (v), precision, fixed);
 }
+
 
 template <>
 unsigned short int
@@ -182,12 +203,14 @@ dcp::raw_convert (std::string v, int precision, bool fixed)
 	return locale_convert<unsigned short int> (make_local (v), precision, fixed);
 }
 
+
 template <>
 int
 dcp::raw_convert (string v, int precision, bool fixed)
 {
 	return locale_convert<int> (make_local (v), precision, fixed);
 }
+
 
 template <>
 long
@@ -196,12 +219,14 @@ dcp::raw_convert (string v, int precision, bool fixed)
 	return locale_convert<long> (make_local (v), precision, fixed);
 }
 
+
 template <>
 unsigned long
 dcp::raw_convert (string v, int precision, bool fixed)
 {
 	return locale_convert<unsigned long> (make_local (v), precision, fixed);
 }
+
 
 template <>
 long long
@@ -210,12 +235,14 @@ dcp::raw_convert (string v, int precision, bool fixed)
 	return locale_convert<long long> (make_local (v), precision, fixed);
 }
 
+
 template <>
 unsigned long long
 dcp::raw_convert (string v, int precision, bool fixed)
 {
 	return locale_convert<unsigned long long> (make_local (v), precision, fixed);
 }
+
 
 template <>
 int
@@ -224,12 +251,14 @@ dcp::raw_convert (char const * v, int precision, bool fixed)
 	return locale_convert<int> (make_local (v), precision, fixed);
 }
 
+
 template <>
 float
 dcp::raw_convert (string v, int precision, bool fixed)
 {
 	return locale_convert<float> (make_local (v), precision, fixed);
 }
+
 
 template <>
 float
@@ -238,12 +267,14 @@ dcp::raw_convert (char const * v, int precision, bool fixed)
 	return locale_convert<float> (make_local (v), precision, fixed);
 }
 
+
 template <>
 double
 dcp::raw_convert (string v, int precision, bool fixed)
 {
 	return locale_convert<double> (make_local (v), precision, fixed);
 }
+
 
 template <>
 double

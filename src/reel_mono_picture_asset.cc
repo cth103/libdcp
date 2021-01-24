@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2017 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,17 +31,21 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_mono_picture_asset.cc
- *  @brief ReelMonoPictureAsset class.
+ *  @brief ReelMonoPictureAsset class
  */
+
 
 #include "reel_mono_picture_asset.h"
 #include "mono_picture_asset.h"
 #include <libcxml/cxml.h>
 
+
 using std::string;
 using std::shared_ptr;
 using namespace dcp;
+
 
 ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<MonoPictureAsset> asset, int64_t entry_point)
 	: ReelPictureAsset (asset, entry_point)
@@ -49,11 +53,13 @@ ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<MonoPictureAsset> as
 
 }
 
+
 ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<const cxml::Node> node)
 	: ReelPictureAsset (node)
 {
 	node->done ();
 }
+
 
 string
 ReelMonoPictureAsset::cpl_node_name (Standard) const

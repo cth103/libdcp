@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/stereo_picture_asset_writer.cc
+ *  @brief StereoPictureAssetWriter class
+ */
+
+
 #include "stereo_picture_asset_writer.h"
 #include "exceptions.h"
 #include "dcp_assert.h"
@@ -39,24 +45,28 @@
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
 
+
 #include "picture_asset_writer_common.cc"
+
 
 using std::string;
 using std::shared_ptr;
 using namespace dcp;
+
 
 struct StereoPictureAssetWriter::ASDCPState : public ASDCPStateBase
 {
 	ASDCP::JP2K::MXFSWriter mxf_writer;
 };
 
+
 StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* mxf, boost::filesystem::path file, bool overwrite)
 	: PictureAssetWriter (mxf, file, overwrite)
 	, _state (new StereoPictureAssetWriter::ASDCPState)
-	, _next_eye (Eye::LEFT)
 {
 
 }
+
 
 void
 StereoPictureAssetWriter::start (uint8_t const * data, int size)
@@ -65,10 +75,7 @@ StereoPictureAssetWriter::start (uint8_t const * data, int size)
 	_picture_asset->set_frame_rate (Fraction (_picture_asset->edit_rate().numerator * 2, _picture_asset->edit_rate().denominator));
 }
 
-/** Write a frame for one eye.  Frames must be written left, then right, then left etc.
- *  @param data JPEG2000 data.
- *  @param size Size of data.
- */
+
 FrameInfo
 StereoPictureAssetWriter::write (uint8_t const * data, int size)
 {
@@ -85,7 +92,7 @@ StereoPictureAssetWriter::write (uint8_t const * data, int size)
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
-	Kumu::Result_t r = _state->mxf_writer.WriteFrame (
+	auto r = _state->mxf_writer.WriteFrame (
 		_state->frame_buffer,
 		_next_eye == Eye::LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT,
 		_crypto_context->context(),
@@ -106,15 +113,16 @@ StereoPictureAssetWriter::write (uint8_t const * data, int size)
 	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 
+
 void
 StereoPictureAssetWriter::fake_write (int size)
 {
 	DCP_ASSERT (_started);
 	DCP_ASSERT (!_finalized);
 
-	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size, _next_eye == Eye::LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT);
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
+	auto r = _state->mxf_writer.FakeWriteFrame (size, _next_eye == Eye::LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT);
+	if (ASDCP_FAILURE(r)) {
+		boost::throw_exception (MXFFileError("error in writing video MXF", _file.string(), r));
 	}
 
 	_next_eye = _next_eye == Eye::LEFT ? Eye::RIGHT : Eye::LEFT;
@@ -123,13 +131,14 @@ StereoPictureAssetWriter::fake_write (int size)
 	}
 }
 
+
 bool
 StereoPictureAssetWriter::finalize ()
 {
 	if (_started) {
-		Kumu::Result_t r = _state->mxf_writer.Finalize();
-		if (ASDCP_FAILURE (r)) {
-			boost::throw_exception (MXFFileError ("error in finalizing video MXF", _file.string(), r));
+		auto r = _state->mxf_writer.Finalize();
+		if (ASDCP_FAILURE(r)) {
+			boost::throw_exception (MXFFileError("error in finalizing video MXF", _file.string(), r));
 		}
 	}
 

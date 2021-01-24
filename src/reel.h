@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/reel.cc
+ *  @brief Reel class
+ */
+
+
 #ifndef LIBDCP_REEL_H
 #define LIBDCP_REEL_H
 

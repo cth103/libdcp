@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/reel_picture_asset.h
- *  @brief ReelPictureAsset class.
+
+/** @file  src/reel_picture_asset.cc
+ *  @brief ReelPictureAsset class
  */
+
 
 #include "reel_picture_asset.h"
 #include "picture_asset.h"
@@ -45,12 +47,14 @@
 #include <iomanip>
 #include <cmath>
 
+
 using std::bad_cast;
 using std::string;
 using std::shared_ptr;
 using std::dynamic_pointer_cast;
 using boost::optional;
 using namespace dcp;
+
 
 ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entry_point)
 	: ReelAsset (asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
@@ -60,6 +64,7 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entr
 {
 
 }
+
 
 ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
@@ -79,10 +84,11 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
 	}
 }
 
+
 xmlpp::Node*
 ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	xmlpp::Node* asset = write_to_cpl_asset (node, standard, hash());
+	auto asset = write_to_cpl_asset (node, standard, hash());
 
 	asset->add_child("FrameRate")->add_child_text(String::compose("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
 	if (standard == Standard::INTEROP) {
@@ -117,11 +123,13 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 	return asset;
 }
 
+
 string
 ReelPictureAsset::key_type () const
 {
 	return "MDIK";
 }
+
 
 bool
 ReelPictureAsset::equals (shared_ptr<const ReelPictureAsset> other, EqualityOptions opt, NoteHandler note) const
@@ -133,7 +141,7 @@ ReelPictureAsset::equals (shared_ptr<const ReelPictureAsset> other, EqualityOpti
 		return false;
 	}
 
-	shared_ptr<const ReelPictureAsset> rpa = dynamic_pointer_cast<const ReelPictureAsset> (other);
+	auto rpa = dynamic_pointer_cast<const ReelPictureAsset>(other);
 	if (!rpa) {
 		return false;
 	}

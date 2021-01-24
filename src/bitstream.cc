@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2020-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -30,6 +30,11 @@
     version.  If you delete this exception statement from all source
     files in the program, then also delete it here.
 */
+
+
+/** @file  src/bitstream.cc
+ *  @brief Bitstream class
+ */
 
 
 #include "bitstream.h"

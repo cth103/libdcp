@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/reel.cc
+ *  @brief Reel class
+ */
+
+
 #include "reel.h"
 #include "util.h"
 #include "picture_asset.h"

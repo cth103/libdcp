@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,22 +31,28 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_stereo_picture_asset.h
- *  @brief ReelStereoPictureAsset class.
+ *  @brief ReelStereoPictureAsset class
  */
+
 
 #ifndef LIBDCP_REEL_STEREO_PICTURE_ASSET_H
 #define LIBDCP_REEL_STEREO_PICTURE_ASSET_H
 
+
 #include "reel_picture_asset.h"
 #include "stereo_picture_asset.h"
 
+
 namespace dcp {
+
 
 class StereoPictureAsset;
 
+
 /** @class ReelStereoPictureAsset
- *  @brief Part of a Reel's description which refers to a stereoscopic picture asset.
+ *  @brief Part of a Reel's description which refers to a stereoscopic picture asset
  */
 class ReelStereoPictureAsset : public ReelPictureAsset
 {
@@ -69,6 +75,8 @@ private:
 	std::pair<std::string, std::string> cpl_node_attribute (Standard standard) const;
 };
 
+
 }
+
 
 #endif

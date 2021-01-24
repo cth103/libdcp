@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,16 +31,27 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/stereo_picture_asset_reader.h
+ *  @brief StereoPictureAssetReader typedef
+ */
+
+
 #ifndef LIBDCP_STEREO_PICTURE_ASSET_READER_H
 #define LIBDCP_STEREO_PICTURE_ASSET_READER_H
+
 
 #include "asset_reader.h"
 #include "stereo_picture_frame.h"
 
+
 namespace dcp {
+
 
 typedef AssetReader<ASDCP::JP2K::MXFSReader, StereoPictureFrame> StereoPictureAssetReader;
 
+
 }
+
 
 #endif

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/decrypted_kdm.h
+ *  @brief DecryptedKDM class
+ */
+
+
 #ifndef LIBDCP_DECRYPTED_KDM_H
 #define LIBDCP_DECRYPTED_KDM_H
 
-/** @file  src/decrypted_kdm.h
- *  @brief DecryptedKDM class.
- */
 
 #include "key.h"
 #include "local_time.h"
@@ -46,9 +49,12 @@
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 
+
 class decrypted_kdm_test;
 
+
 namespace dcp {
+
 
 class DecryptedKDMKey;
 class EncryptedKDM;
@@ -56,8 +62,9 @@ class CertificateChain;
 class CPL;
 class ReelMXF;
 
+
 /** @class DecryptedKDM
- *  @brief A decrypted KDM.
+ *  @brief A decrypted KDM
  *
  *  This is a KDM that has either been decrypted by a target private key, or one which
  *  has been created (by some other means) ready for encryption later.
@@ -138,7 +145,13 @@ public:
 		boost::optional<int> disable_forensic_marking_audio
 		) const;
 
+	/** @param type (MDIK, MDAK etc.)
+	 *  @param key_id Key ID
+	 *  @param key The actual symmetric key
+	 *  @param cpl_id ID of CPL that the key is for
+	 */
 	void add_key (boost::optional<std::string> type, std::string key_id, Key key, std::string cpl_id, Standard standard);
+
 	void add_key (DecryptedKDMKey key);
 
 	/** @return This KDM's (decrypted) keys, which could be used to decrypt assets. */
@@ -173,6 +186,8 @@ private:
 	std::vector<DecryptedKDMKey> _keys;
 };
 
+
 }
+
 
 #endif

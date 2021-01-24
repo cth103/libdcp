@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/dcp_time.h
- *  @brief Time class.
+ *  @brief Time class
  */
+
 
 #ifndef LIBDCP_TIME_H
 #define LIBDCP_TIME_H
+
 
 #include "types.h"
 #include <boost/optional.hpp>
@@ -44,9 +47,12 @@
 #include <string>
 #include <iostream>
 
+
 namespace dcp {
 
+
 class Time;
+
 
 extern bool operator== (Time const & a, Time const & b);
 extern bool operator!= (Time const & a, Time const & b);
@@ -59,6 +65,7 @@ extern Time operator+ (Time a, Time b);
 extern Time operator- (Time a, Time b);
 extern float operator/ (Time a, Time const & b);
 
+
 /** @class Time
  *  @brief A representation of time within a DCP.
  */
@@ -66,7 +73,7 @@ class Time
 {
 public:
 	/** Construct a zero Time */
-	Time () : h (0), m (0), s (0), e (0), tcr (1) {}
+	Time () {}
 
 	/** Construct a Time.
 	 *  @param frame Frame index (starting from 0).
@@ -90,19 +97,44 @@ public:
 		, tcr (tcr_)
 	{}
 
+	/** Construct a Time from a number of seconds and a timecode rate
+	 *
+	 *  @param seconds A number of seconds
+	 *  @param tcr_ Timecode rate
+	 */
 	Time (double seconds, int tcr);
 
+	/** @param time String of the form
+	 *     HH:MM:SS:EE                          for SMPTE
+	 *     HH:MM:SS:E[E[E]] or HH:MM:SS.s[s[s]] for Interop
+	 *  where HH are hours, MM minutes, SS seconds, EE editable units and
+	 *  sss millseconds.
+	 *
+	 *  @param tcr_ Timecode rate if this is a SMPTE time, otherwise empty for an Interop time
+	 */
 	Time (std::string time, boost::optional<int> tcr);
 
-	int h; ///<   hours
-	int m; ///<   minutes
-	int s; ///<   seconds
-	int e; ///<   editable units (where 1 editable unit is 1 / tcr_ seconds)
-	int tcr; ///< timecode rate: the number of editable units per second.
+	int h = 0; ///<   hours
+	int m = 0; ///<   minutes
+	int s = 0; ///<   seconds
+	int e = 0; ///<   editable units (where 1 editable unit is 1 / tcr_ seconds)
+	int tcr = 1; ///< timecode rate: the number of editable units per second.
 
+	/** @return A string of the form h:m:s:e padded as in 00:00:00:000 (for Interop) or 00:00:00:00 (for SMPTE) */
 	std::string as_string (Standard standard) const;
+
+	/** @return the total number of seconds that this time consists of */
 	double as_seconds () const;
+
+	/** @param tcr_ Timecode rate with which the return value should be counted
+	 *  @return the total number of editable units that this time consists of at the specified timecode rate, rounded up
+	 *  to the nearest editable unit. For example, as_editable_units (24) returns the total time in frames at 24fps.
+	 */
 	int64_t as_editable_units (int tcr_) const;
+
+	/** @param tcr_ New timecode rate
+	 *  @return A new Time which is this time at the spcified new timecode rate
+	 */
 	Time rebase (int tcr_) const;
 
 	Time& operator+= (Time const & o) {
@@ -114,6 +146,8 @@ private:
 	void set (double seconds, int tcr);
 };
 
+
 }
+
 
 #endif

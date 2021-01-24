@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,20 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/interop_load_font_node.h
+ *  @brief InteropLoadFontNode class
+ */
+
+
 #include "load_font_node.h"
 #include <libcxml/cxml.h>
-#include <memory>
 #include <boost/optional.hpp>
+#include <memory>
+
 
 namespace dcp {
+
 
 class InteropLoadFontNode : public LoadFontNode
 {
@@ -48,7 +56,9 @@ public:
 	std::string uri;
 };
 
+
 bool operator== (InteropLoadFontNode const & a, InteropLoadFontNode const & b);
 bool operator!= (InteropLoadFontNode const & a, InteropLoadFontNode const & b);
+
 
 }

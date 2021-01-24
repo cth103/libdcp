@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,17 +31,21 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/exceptions.cc
- *  @brief Exceptions thrown by libdcp.
+ *  @brief Exceptions thrown by libdcp
  */
+
 
 #include "exceptions.h"
 #include "compose.hpp"
+
 
 using std::string;
 using std::runtime_error;
 using boost::optional;
 using namespace dcp;
+
 
 FileError::FileError (string message, boost::filesystem::path filename, int number)
 	: runtime_error (String::compose ("%1 (%2) (error %3)", message, filename.string(), number))
@@ -51,11 +55,13 @@ FileError::FileError (string message, boost::filesystem::path filename, int numb
 
 }
 
+
 UnresolvedRefError::UnresolvedRefError (string id)
 	: runtime_error (String::compose ("Unresolved reference to asset id %1", id))
 {
 
 }
+
 
 TimeFormatError::TimeFormatError (string bad_time)
 	: runtime_error (String::compose ("Bad time string %1", bad_time))
@@ -63,11 +69,13 @@ TimeFormatError::TimeFormatError (string bad_time)
 
 }
 
+
 BadContentKindError::BadContentKindError (string content_kind)
 	: ReadError (String::compose("Bad content kind '%1'", content_kind))
 {
 
 }
+
 
 NotEncryptedError::NotEncryptedError (string const & what)
 	: runtime_error (String::compose ("%1 is not encrypted", what))
@@ -82,11 +90,13 @@ ProgrammingError::ProgrammingError (string file, int line)
 
 }
 
+
 KDMDecryptionError::KDMDecryptionError (std::string message, int cipher_length, int modulus_dmax)
 	: runtime_error (String::compose ("Could not decrypt KDM (%1) (%2/%3)", message, cipher_length, modulus_dmax))
 {
 
 }
+
 
 KDMFormatError::KDMFormatError (std::string message)
 	: runtime_error (String::compose ("Could not parse KDM (%1)", message))
@@ -94,11 +104,13 @@ KDMFormatError::KDMFormatError (std::string message)
 
 }
 
+
 CertificateChainError::CertificateChainError (string message)
 	: runtime_error (message)
 {
 
 }
+
 
 ReadError::ReadError (string message, string detail)
 	: runtime_error(String::compose("%1 (%2)", message, detail))
@@ -108,11 +120,13 @@ ReadError::ReadError (string message, string detail)
 
 }
 
+
 MissingSubtitleImageError::MissingSubtitleImageError (string id)
 	: runtime_error (String::compose("Could not load image for subtitle %1", id))
 {
 
 }
+
 
 BadKDMDateError::BadKDMDateError (bool starts_too_early)
 	: runtime_error (

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,23 +31,27 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/identity_transfer_function.cc
- *  @brief IdentityTransferFunction class.
+ *  @brief IdentityTransferFunction class
  */
+
 
 #include "identity_transfer_function.h"
 #include <cmath>
+
 
 using std::pow;
 using std::shared_ptr;
 using std::dynamic_pointer_cast;
 using namespace dcp;
 
+
 double *
 IdentityTransferFunction::make_lut (int bit_depth, bool) const
 {
 	int const bit_length = int(std::pow(2.0f, bit_depth));
-	double* lut = new double[bit_length];
+	auto lut = new double[bit_length];
 	for (int i = 0; i < bit_length; ++i) {
 		lut[i] = double(i) / (bit_length - 1);
 	}
@@ -55,9 +59,10 @@ IdentityTransferFunction::make_lut (int bit_depth, bool) const
 	return lut;
 }
 
+
 bool
 IdentityTransferFunction::about_equal (shared_ptr<const TransferFunction> other, double) const
 {
-	shared_ptr<const IdentityTransferFunction> o = dynamic_pointer_cast<const IdentityTransferFunction> (other);
+	auto o = dynamic_pointer_cast<const IdentityTransferFunction>(other);
 	return static_cast<bool>(o);
 }

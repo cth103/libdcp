@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016-2017 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,23 +31,29 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_atmos_asset.h
- *  @brief ReelAtmosAsset class.
+ *  @brief ReelAtmosAsset class
  */
+
 
 #ifndef LIBDCP_REEL_ATMOS_ASSET_H
 #define LIBDCP_REEL_ATMOS_ASSET_H
+
 
 #include "reel_asset.h"
 #include "atmos_asset.h"
 #include "reel_mxf.h"
 
+
 namespace dcp {
+
 
 class AtmosAsset;
 
-/** @class ReelAtmosAsset
- *  @brief Part of a Reel's description which refers to a Atmos MXF.
+
+/** @class ReelAtmosAsse
+ *  @brief Part of a Reel's description which refers to a Atmos MXF
  */
 class ReelAtmosAsset : public ReelAsset, public ReelMXF
 {
@@ -68,6 +74,8 @@ private:
 	std::pair<std::string, std::string> cpl_node_namespace (Standard) const;
 };
 
+
 }
+
 
 #endif

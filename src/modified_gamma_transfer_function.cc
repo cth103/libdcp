@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,13 +31,21 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/modified_gamma_transfer_function.cc
+ *  @brief ModifiedGammaTransferFunction class
+ */
+
+
 #include "modified_gamma_transfer_function.h"
 #include <cmath>
+
 
 using std::pow;
 using std::shared_ptr;
 using std::dynamic_pointer_cast;
 using namespace dcp;
+
 
 ModifiedGammaTransferFunction::ModifiedGammaTransferFunction (double power, double threshold, double A, double B)
 	: _power (power)
@@ -48,6 +56,7 @@ ModifiedGammaTransferFunction::ModifiedGammaTransferFunction (double power, doub
 
 }
 
+
 double *
 ModifiedGammaTransferFunction::make_lut (int bit_depth, bool inverse) const
 {
@@ -56,7 +65,7 @@ ModifiedGammaTransferFunction::make_lut (int bit_depth, bool inverse) const
 	if (inverse) {
 		double const threshold = _threshold / _B;
 		for (int i = 0; i < bit_length; ++i) {
-			double const p = static_cast<double> (i) / (bit_length - 1);
+			double const p = static_cast<double>(i) / (bit_length - 1);
 			if (p > threshold) {
 				lut[i] = (1 + _A) * pow (p, 1 / _power) - _A;
 			} else {
@@ -65,7 +74,7 @@ ModifiedGammaTransferFunction::make_lut (int bit_depth, bool inverse) const
 		}
 	} else {
 		for (int i = 0; i < bit_length; ++i) {
-			double const p = static_cast<double> (i) / (bit_length - 1);
+			double const p = static_cast<double>(i) / (bit_length - 1);
 			if (p > _threshold) {
 				lut[i] = pow ((p + _A) / (1 + _A), _power);
 			} else {
@@ -77,18 +86,19 @@ ModifiedGammaTransferFunction::make_lut (int bit_depth, bool inverse) const
 	return lut;
 }
 
+
 bool
 ModifiedGammaTransferFunction::about_equal (shared_ptr<const TransferFunction> other, double epsilon) const
 {
-	shared_ptr<const ModifiedGammaTransferFunction> o = dynamic_pointer_cast<const ModifiedGammaTransferFunction> (other);
+	auto o = dynamic_pointer_cast<const ModifiedGammaTransferFunction>(other);
 	if (!o) {
 		return false;
 	}
 
 	return (
-		fabs (_power - o->_power) < epsilon &&
-	        fabs (_threshold - o->_threshold) < epsilon &&
-		fabs (_A - o->_A) < epsilon &&
-		fabs (_B - o->_B) < epsilon
+		fabs(_power - o->_power) < epsilon &&
+	        fabs(_threshold - o->_threshold) < epsilon &&
+		fabs(_A - o->_A) < epsilon &&
+		fabs(_B - o->_B) < epsilon
 		);
 }

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_asset.cc
- *  @brief ReelAsset class.
+ *  @brief ReelAsset class
  */
+
 
 #include "raw_convert.h"
 #include "reel_asset.h"
@@ -43,6 +45,7 @@
 #include <libcxml/cxml.h>
 #include <libxml++/libxml++.h>
 
+
 using std::pair;
 using std::string;
 using std::make_pair;
@@ -50,12 +53,7 @@ using std::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
-/** Construct a ReelAsset.
- *  @param id ID of this ReelAsset (which is that of the MXF, if there is one)
- *  @param edit_rate Edit rate for the asset.
- *  @param intrinsic_duration Intrinsic duration of this asset.
- *  @param entry_point Entry point to use in that asset.
- */
+
 ReelAsset::ReelAsset (string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: Object (id)
 	, _intrinsic_duration (intrinsic_duration)
@@ -65,6 +63,7 @@ ReelAsset::ReelAsset (string id, Fraction edit_rate, int64_t intrinsic_duration,
 {
 	DCP_ASSERT (_entry_point <= _intrinsic_duration);
 }
+
 
 ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 	: Object (remove_urn_uuid (node->string_child ("Id")))
@@ -77,15 +76,16 @@ ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 
 }
 
+
 xmlpp::Node*
 ReelAsset::write_to_cpl_asset (xmlpp::Node* node, Standard standard, optional<string> hash) const
 {
-	xmlpp::Element* a = node->add_child (cpl_node_name (standard));
-	pair<string, string> const attr = cpl_node_attribute (standard);
+	auto a = node->add_child (cpl_node_name (standard));
+	auto const attr = cpl_node_attribute (standard);
 	if (!attr.first.empty ()) {
 		a->set_attribute (attr.first, attr.second);
 	}
-	pair<string, string> const ns = cpl_node_namespace (standard);
+	auto const ns = cpl_node_namespace (standard);
 	if (!ns.first.empty ()) {
 		a->set_namespace_declaration (ns.first, ns.second);
 	}
@@ -105,17 +105,20 @@ ReelAsset::write_to_cpl_asset (xmlpp::Node* node, Standard standard, optional<st
 	return a;
 }
 
+
 pair<string, string>
 ReelAsset::cpl_node_attribute (Standard) const
 {
 	return make_pair ("", "");
 }
 
+
 pair<string, string>
 ReelAsset::cpl_node_namespace (Standard) const
 {
 	return make_pair ("", "");
 }
+
 
 bool
 ReelAsset::asset_equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, NoteHandler note) const
@@ -153,7 +156,7 @@ ReelAsset::asset_equals (shared_ptr<const ReelAsset> other, EqualityOptions opt,
 	return true;
 }
 
-/** @return <Duration>, or <IntrinsicDuration> - <EntryPoint> if <Duration> is not present */
+
 int64_t
 ReelAsset::actual_duration () const
 {

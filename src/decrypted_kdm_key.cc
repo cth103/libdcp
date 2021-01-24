@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,17 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/decrypted_kdm_key.cc
+ *  @brief DecryptedKDMKey class
+ */
+
+
 #include "decrypted_kdm_key.h"
 
+
 using namespace dcp;
+
 
 bool
 dcp::operator== (dcp::DecryptedKDMKey const & a, dcp::DecryptedKDMKey const & b)

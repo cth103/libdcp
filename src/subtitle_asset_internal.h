@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/subtitle_asset_internal.h
+ *  @brief Internal SubtitleAsset helpers
+ */
+
+
 #ifndef LIBDCP_SUBTITLE_ASSET_INTERNAL_H
 #define LIBDCP_SUBTITLE_ASSET_INTERNAL_H
 
@@ -41,17 +47,22 @@
 #include "dcp_time.h"
 #include <libxml++/libxml++.h>
 
+
 struct take_intersection_test;
 struct take_difference_test;
 struct pull_fonts_test1;
 struct pull_fonts_test2;
 struct pull_fonts_test3;
 
+
 namespace dcp {
+
 
 class SubtitleString;
 
+
 namespace order {
+
 
 struct Context
 {
@@ -61,6 +72,7 @@ struct Context
 	Standard standard;
 	int spot_number;
 };
+
 
 class Font
 {
@@ -87,6 +99,7 @@ private:
 	std::map<std::string, std::string> _values;
 };
 
+
 class Part
 {
 public:
@@ -109,6 +122,7 @@ public:
 	std::vector<std::shared_ptr<Part>> children;
 };
 
+
 class String : public Part
 {
 public:
@@ -121,6 +135,7 @@ public:
 
 	std::string text;
 };
+
 
 class Text : public Part
 {
@@ -144,6 +159,7 @@ private:
 	Direction _direction;
 };
 
+
 class Subtitle : public Part
 {
 public:
@@ -163,6 +179,7 @@ private:
 	Time _fade_up;
 	Time _fade_down;
 };
+
 
 class Image : public Part
 {
@@ -188,8 +205,9 @@ private:
 	float _v_position;
 };
 
-}
 
 }
+}
+
 
 #endif

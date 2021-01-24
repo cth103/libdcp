@@ -31,18 +31,28 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/mono_picture_asset.cc
+ *  @brief MonoPictureAsset class
+ */
+
+
 #ifndef LIBDCP_MONO_PICTURE_ASSET_H
 #define LIBDCP_MONO_PICTURE_ASSET_H
+
 
 #include "picture_asset.h"
 #include "mono_picture_asset_reader.h"
 
+
 namespace dcp {
+
 
 class MonoPictureAssetWriter;
 
+
 /** @class MonoPictureAsset
- *  @brief A 2D (monoscopic) picture asset.
+ *  @brief A 2D (monoscopic) picture asset
  */
 class MonoPictureAsset : public PictureAsset
 {

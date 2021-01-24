@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_subtitle_asset.cc
- *  @brief ReelSubtitleAsset class.
+ *  @brief ReelSubtitleAsset class
  */
+
 
 #include "language_tag.h"
 #include "subtitle_asset.h"
@@ -41,11 +43,13 @@
 #include "smpte_subtitle_asset.h"
 #include <libxml++/libxml++.h>
 
+
 using std::string;
 using std::shared_ptr;
 using std::dynamic_pointer_cast;
 using boost::optional;
 using namespace dcp;
+
 
 ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelAsset (asset->id(), edit_rate, intrinsic_duration, entry_point)
@@ -53,6 +57,7 @@ ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Frac
 {
 
 }
+
 
 ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
@@ -62,11 +67,13 @@ ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<const cxml::Node> node)
 	node->done ();
 }
 
+
 string
 ReelSubtitleAsset::cpl_node_name (Standard) const
 {
 	return "MainSubtitle";
 }
+
 
 string
 ReelSubtitleAsset::key_type () const
@@ -74,16 +81,18 @@ ReelSubtitleAsset::key_type () const
 	return "MDSK";
 }
 
+
 xmlpp::Node *
 ReelSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	xmlpp::Node* asset = write_to_cpl_asset (node, standard, hash());
+	auto asset = write_to_cpl_asset (node, standard, hash());
 	write_to_cpl_mxf (asset);
 	if (_language) {
 		asset->add_child("Language")->add_child_text(*_language);
 	}
 	return asset;
 }
+
 
 bool
 ReelSubtitleAsset::equals (shared_ptr<const ReelSubtitleAsset> other, EqualityOptions opt, NoteHandler note) const

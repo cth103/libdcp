@@ -33,7 +33,7 @@
 
 
 /** @file  src/certificate.h
- *  @brief Certificate class.
+ *  @brief Certificate class
  */
 
 
@@ -138,5 +138,6 @@ std::ostream& operator<< (std::ostream&s, Certificate const & c);
 
 
 }
+
 
 #endif

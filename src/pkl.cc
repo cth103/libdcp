@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/pkl.cc
+ *  @brief PKL class
+ */
+
+
 #include "pkl.h"
 #include "exceptions.h"
 #include "util.h"

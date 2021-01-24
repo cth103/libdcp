@@ -31,29 +31,37 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_asset.h
- *  @brief ReelAsset class.
+ *  @brief ReelAsset class
  */
+
 
 #ifndef LIBDCP_REEL_ASSET_H
 #define LIBDCP_REEL_ASSET_H
+
 
 #include "object.h"
 #include "util.h"
 #include "ref.h"
 #include <memory>
 
+
 namespace cxml {
 	class Node;
 }
+
 
 namespace xmlpp {
 	class Node;
 }
 
+
 namespace dcp {
 
+
 class Asset;
+
 
 /** @class ReelAsset
  *  @brief An entry in a &lt;Reel&gt; which refers to a use of a piece of content.
@@ -65,7 +73,14 @@ class Asset;
 class ReelAsset : public Object
 {
 public:
+	/** Construct a ReelAsset
+	 *  @param id ID of this ReelAsset (which is that of the MXF, if there is one)
+	 *  @param edit_rate Edit rate for the asset
+	 *  @param intrinsic_duration Intrinsic duration of this asset
+	 *  @param entry_point Entry point to use in that asset
+	 */
 	ReelAsset (std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+
 	explicit ReelAsset (std::shared_ptr<const cxml::Node>);
 
 	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const = 0;
@@ -98,6 +113,7 @@ public:
 		return _duration;
 	}
 
+	/** @return <Duration>, or <IntrinsicDuration> - <EntryPoint> if <Duration> is not present */
 	int64_t actual_duration () const;
 
 	std::string annotation_text () const {
@@ -125,7 +141,7 @@ protected:
 
 	xmlpp::Node* write_to_cpl_asset (xmlpp::Node* node, Standard standard, boost::optional<std::string> hash) const;
 
-	int64_t _intrinsic_duration;           ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset
+	int64_t _intrinsic_duration = 0;       ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset
 	boost::optional<int64_t> _duration;    ///< The &lt;Duration&gt; from the reel's entry for this asset, if present
 
 private:

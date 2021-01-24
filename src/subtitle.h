@@ -31,16 +31,21 @@
     files in the program, then also delete it here.
 */
 
+
 #ifndef LIBDCP_SUBTITLE_H
 #define LIBDCP_SUBTITLE_H
 
+
 /** @file  src/subtitle.h
- *  @brief Subtitle class.
+ *  @brief Subtitle class
  */
+
 
 #include "dcp_time.h"
 
+
 namespace dcp {
+
 
 class Subtitle
 {
@@ -131,17 +136,19 @@ protected:
 	/** Horizontal position as a proportion of the screen width from the _h_align
 	 *  (between 0 and 1)
 	 */
-	float _h_position;
-	HAlign _h_align;
+	float _h_position = 0;
+	HAlign _h_align = HAlign::CENTER;
 	/** Vertical position as a proportion of the screen height from the _v_align
 	 *  (between 0 and 1)
 	 */
-	float _v_position;
-	VAlign _v_align;
+	float _v_position = 0;
+	VAlign _v_align = VAlign::CENTER;
 	Time _fade_up_time;
 	Time _fade_down_time;
 };
 
+
 }
+
 
 #endif

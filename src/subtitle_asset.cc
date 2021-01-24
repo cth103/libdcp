@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/subtitle_asset.cc
+ *  @brief SubtitleAsset class
+ */
+
+
 #include "raw_convert.h"
 #include "compose.hpp"
 #include "subtitle_asset.h"
@@ -49,6 +55,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_array.hpp>
 
+
 using std::dynamic_pointer_cast;
 using std::string;
 using std::cout;
@@ -62,10 +69,12 @@ using boost::optional;
 using boost::lexical_cast;
 using namespace dcp;
 
+
 SubtitleAsset::SubtitleAsset ()
 {
 
 }
+
 
 SubtitleAsset::SubtitleAsset (boost::filesystem::path file)
 	: Asset (file)
@@ -73,42 +82,46 @@ SubtitleAsset::SubtitleAsset (boost::filesystem::path file)
 
 }
 
+
 string
 string_attribute (xmlpp::Element const * node, string name)
 {
-	xmlpp::Attribute* a = node->get_attribute (name);
+	auto a = node->get_attribute (name);
 	if (!a) {
 		throw XMLError (String::compose ("missing attribute %1", name));
 	}
 	return string (a->get_value ());
 }
 
+
 optional<string>
 optional_string_attribute (xmlpp::Element const * node, string name)
 {
-	xmlpp::Attribute* a = node->get_attribute (name);
+	auto a = node->get_attribute (name);
 	if (!a) {
-		return optional<string>();
+		return {};
 	}
 	return string (a->get_value ());
 }
 
+
 optional<bool>
 optional_bool_attribute (xmlpp::Element const * node, string name)
 {
-	optional<string> s = optional_string_attribute (node, name);
+	auto s = optional_string_attribute (node, name);
 	if (!s) {
-		return optional<bool> ();
+		return {};
 	}
 
 	return (s.get() == "1" || s.get() == "yes");
 }
 
+
 template <class T>
 optional<T>
 optional_number_attribute (xmlpp::Element const * node, string name)
 {
-	boost::optional<std::string> s = optional_string_attribute (node, name);
+	auto s = optional_string_attribute (node, name);
 	if (!s) {
 		return boost::optional<T> ();
 	}
@@ -117,6 +130,7 @@ optional_number_attribute (xmlpp::Element const * node, string name)
 	boost::erase_all (t, " ");
 	return raw_convert<T> (t);
 }
+
 
 SubtitleAsset::ParseState
 SubtitleAsset::font_node_state (xmlpp::Element const * node, Standard standard) const
@@ -137,11 +151,11 @@ SubtitleAsset::font_node_state (xmlpp::Element const * node, Standard standard) 
 	} else {
 		ps.underline = optional_bool_attribute (node, "Underline");
 	}
-	optional<string> c = optional_string_attribute (node, "Color");
+	auto c = optional_string_attribute (node, "Color");
 	if (c) {
 		ps.colour = Colour (c.get ());
 	}
-	optional<string> const e = optional_string_attribute (node, "Effect");
+	auto const e = optional_string_attribute (node, "Effect");
 	if (e) {
 		ps.effect = string_to_effect (e.get ());
 	}
@@ -156,7 +170,7 @@ SubtitleAsset::font_node_state (xmlpp::Element const * node, Standard standard) 
 void
 SubtitleAsset::position_align (SubtitleAsset::ParseState& ps, xmlpp::Element const * node) const
 {
-	optional<float> hp = optional_number_attribute<float> (node, "HPosition");
+	auto hp = optional_number_attribute<float> (node, "HPosition");
 	if (!hp) {
 		hp = optional_number_attribute<float> (node, "Hposition");
 	}
@@ -164,7 +178,7 @@ SubtitleAsset::position_align (SubtitleAsset::ParseState& ps, xmlpp::Element con
 		ps.h_position = hp.get () / 100;
 	}
 
-	optional<string> ha = optional_string_attribute (node, "HAlign");
+	auto ha = optional_string_attribute (node, "HAlign");
 	if (!ha) {
 		ha = optional_string_attribute (node, "Halign");
 	}
@@ -172,7 +186,7 @@ SubtitleAsset::position_align (SubtitleAsset::ParseState& ps, xmlpp::Element con
 		ps.h_align = string_to_halign (ha.get ());
 	}
 
-	optional<float> vp = optional_number_attribute<float> (node, "VPosition");
+	auto vp = optional_number_attribute<float> (node, "VPosition");
 	if (!vp) {
 		vp = optional_number_attribute<float> (node, "Vposition");
 	}
@@ -180,7 +194,7 @@ SubtitleAsset::position_align (SubtitleAsset::ParseState& ps, xmlpp::Element con
 		ps.v_position = vp.get () / 100;
 	}
 
-	optional<string> va = optional_string_attribute (node, "VAlign");
+	auto va = optional_string_attribute (node, "VAlign");
 	if (!va) {
 		va = optional_string_attribute (node, "Valign");
 	}
@@ -190,6 +204,7 @@ SubtitleAsset::position_align (SubtitleAsset::ParseState& ps, xmlpp::Element con
 
 }
 
+
 SubtitleAsset::ParseState
 SubtitleAsset::text_node_state (xmlpp::Element const * node) const
 {
@@ -197,7 +212,7 @@ SubtitleAsset::text_node_state (xmlpp::Element const * node) const
 
 	position_align (ps, node);
 
-	optional<string> d = optional_string_attribute (node, "Direction");
+	auto d = optional_string_attribute (node, "Direction");
 	if (d) {
 		ps.direction = string_to_direction (d.get ());
 	}
@@ -206,6 +221,7 @@ SubtitleAsset::text_node_state (xmlpp::Element const * node) const
 
 	return ps;
 }
+
 
 SubtitleAsset::ParseState
 SubtitleAsset::image_node_state (xmlpp::Element const * node) const
@@ -219,6 +235,7 @@ SubtitleAsset::image_node_state (xmlpp::Element const * node) const
 	return ps;
 }
 
+
 SubtitleAsset::ParseState
 SubtitleAsset::subtitle_node_state (xmlpp::Element const * node, optional<int> tcr) const
 {
@@ -230,10 +247,11 @@ SubtitleAsset::subtitle_node_state (xmlpp::Element const * node, optional<int> t
 	return ps;
 }
 
+
 Time
 SubtitleAsset::fade_time (xmlpp::Element const * node, string name, optional<int> tcr) const
 {
-	string const u = optional_string_attribute(node, name).get_value_or ("");
+	auto const u = optional_string_attribute(node, name).get_value_or ("");
 	Time t;
 
 	if (u.empty ()) {
@@ -250,6 +268,7 @@ SubtitleAsset::fade_time (xmlpp::Element const * node, string name, optional<int
 
 	return t;
 }
+
 
 void
 SubtitleAsset::parse_subtitles (xmlpp::Element const * node, vector<ParseState>& state, optional<int> tcr, Standard standard)
@@ -268,13 +287,12 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, vector<ParseState>&
 		throw XMLError ("unexpected node " + node->get_name());
 	}
 
-	xmlpp::Node::NodeList c = node->get_children ();
-	for (xmlpp::Node::NodeList::const_iterator i = c.begin(); i != c.end(); ++i) {
-		xmlpp::ContentNode const * v = dynamic_cast<xmlpp::ContentNode const *> (*i);
+	for (auto i: node->get_children()) {
+		auto const v = dynamic_cast<xmlpp::ContentNode const *>(i);
 		if (v) {
 			maybe_add_subtitle (v->get_content(), state, standard);
 		}
-		xmlpp::Element const * e = dynamic_cast<xmlpp::Element const *> (*i);
+		auto const e = dynamic_cast<xmlpp::Element const *>(i);
 		if (e) {
 			parse_subtitles (e, state, tcr, standard);
 		}
@@ -282,6 +300,7 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, vector<ParseState>&
 
 	state.pop_back ();
 }
+
 
 void
 SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse_state, Standard standard)
@@ -361,47 +380,43 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 	switch (ps.type.get()) {
 	case ParseState::Type::TEXT:
 		_subtitles.push_back (
-			shared_ptr<Subtitle> (
-				new SubtitleString (
-					ps.font_id,
-					ps.italic.get_value_or (false),
-					ps.bold.get_value_or (false),
-					ps.underline.get_value_or (false),
-					ps.colour.get_value_or (dcp::Colour (255, 255, 255)),
-					ps.size.get_value_or (42),
-					ps.aspect_adjust.get_value_or (1.0),
-					ps.in.get(),
-					ps.out.get(),
-					ps.h_position.get_value_or(0),
-					ps.h_align.get_value_or(HAlign::CENTER),
-					ps.v_position.get_value_or(0),
-					ps.v_align.get_value_or(VAlign::CENTER),
-					ps.direction.get_value_or (Direction::LTR),
-					text,
-					ps.effect.get_value_or (Effect::NONE),
-					ps.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
-					ps.fade_up_time.get_value_or(Time()),
-					ps.fade_down_time.get_value_or(Time())
-					)
+			make_shared<SubtitleString>(
+				ps.font_id,
+				ps.italic.get_value_or (false),
+				ps.bold.get_value_or (false),
+				ps.underline.get_value_or (false),
+				ps.colour.get_value_or (dcp::Colour (255, 255, 255)),
+				ps.size.get_value_or (42),
+				ps.aspect_adjust.get_value_or (1.0),
+				ps.in.get(),
+				ps.out.get(),
+				ps.h_position.get_value_or(0),
+				ps.h_align.get_value_or(HAlign::CENTER),
+				ps.v_position.get_value_or(0),
+				ps.v_align.get_value_or(VAlign::CENTER),
+				ps.direction.get_value_or (Direction::LTR),
+				text,
+				ps.effect.get_value_or (Effect::NONE),
+				ps.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
+				ps.fade_up_time.get_value_or(Time()),
+				ps.fade_down_time.get_value_or(Time())
 				)
 			);
 		break;
 	case ParseState::Type::IMAGE:
 		/* Add a subtitle with no image data and we'll fill that in later */
 		_subtitles.push_back (
-			shared_ptr<Subtitle> (
-				new SubtitleImage (
-					ArrayData (),
-					standard == Standard::INTEROP ? text.substr(0, text.size() - 4) : text,
-					ps.in.get(),
-					ps.out.get(),
-					ps.h_position.get_value_or(0),
-					ps.h_align.get_value_or(HAlign::CENTER),
-					ps.v_position.get_value_or(0),
-					ps.v_align.get_value_or(VAlign::CENTER),
-					ps.fade_up_time.get_value_or(Time()),
-					ps.fade_down_time.get_value_or(Time())
-					)
+			make_shared<SubtitleImage>(
+				ArrayData(),
+				standard == Standard::INTEROP ? text.substr(0, text.size() - 4) : text,
+				ps.in.get(),
+				ps.out.get(),
+				ps.h_position.get_value_or(0),
+				ps.h_align.get_value_or(HAlign::CENTER),
+				ps.v_position.get_value_or(0),
+				ps.v_align.get_value_or(VAlign::CENTER),
+				ps.fade_up_time.get_value_or(Time()),
+				ps.fade_down_time.get_value_or(Time())
 				)
 			);
 		break;
@@ -460,6 +475,7 @@ SubtitleAsset::add (shared_ptr<Subtitle> s)
 	_subtitles.push_back (s);
 }
 
+
 Time
 SubtitleAsset::latest_subtitle_out () const
 {
@@ -472,6 +488,7 @@ SubtitleAsset::latest_subtitle_out () const
 
 	return t;
 }
+
 
 bool
 SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, NoteHandler note) const
@@ -494,10 +511,10 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 	auto j = other->_subtitles.begin();
 
 	while (i != _subtitles.end()) {
-		shared_ptr<SubtitleString> string_i = dynamic_pointer_cast<SubtitleString> (*i);
-		shared_ptr<SubtitleString> string_j = dynamic_pointer_cast<SubtitleString> (*j);
-		shared_ptr<SubtitleImage> image_i = dynamic_pointer_cast<SubtitleImage> (*i);
-		shared_ptr<SubtitleImage> image_j = dynamic_pointer_cast<SubtitleImage> (*j);
+		auto string_i = dynamic_pointer_cast<SubtitleString> (*i);
+		auto string_j = dynamic_pointer_cast<SubtitleString> (*j);
+		auto image_i = dynamic_pointer_cast<SubtitleImage> (*i);
+		auto image_j = dynamic_pointer_cast<SubtitleImage> (*j);
 
 		if ((string_i && !string_j) || (image_i && !image_j)) {
 			note (NoteType::ERROR, "subtitles differ: string vs. image");
@@ -520,6 +537,7 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 	return true;
 }
 
+
 struct SubtitleSorter
 {
 	bool operator() (shared_ptr<Subtitle> a, shared_ptr<Subtitle> b) {
@@ -529,6 +547,7 @@ struct SubtitleSorter
 		return a->v_position() < b->v_position();
 	}
 };
+
 
 void
 SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
@@ -589,6 +608,7 @@ SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
 
 	part->children = merged;
 }
+
 
 /** @param standard Standard (INTEROP or SMPTE); this is used rather than putting things in the child
  *  class because the differences between the two are fairly subtle.
@@ -657,7 +677,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 			text->children.push_back (shared_ptr<order::String> (new order::String (text, order::Font (is, standard), is->text())));
 		}
 
-		shared_ptr<SubtitleImage> ii = dynamic_pointer_cast<SubtitleImage>(i);
+		auto ii = dynamic_pointer_cast<SubtitleImage>(i);
 		if (ii) {
 			text.reset ();
 			subtitle->children.push_back (
@@ -679,6 +699,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 
 	root->write_xml (xml_root, context);
 }
+
 
 map<string, ArrayData>
 SubtitleAsset::font_data () const

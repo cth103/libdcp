@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
-/** @file  src/asset.cc
- *  @brief Parent class for assets of DCPs made up of MXF files.
+
+/** @file  src/mxf.cc
+ *  @brief MXF class
  */
+
 
 #include "raw_convert.h"
 #include "mxf.h"
@@ -49,6 +51,7 @@
 #include <boost/filesystem.hpp>
 #include <iostream>
 
+
 using std::string;
 using std::cout;
 using std::list;
@@ -56,6 +59,7 @@ using std::pair;
 using std::shared_ptr;
 using std::dynamic_pointer_cast;
 using namespace dcp;
+
 
 MXF::MXF ()
 	: _context_id (make_uuid ())
@@ -65,12 +69,14 @@ MXF::MXF ()
 	*/
 }
 
+
 MXF::MXF (Standard standard)
 	: _context_id (make_uuid ())
 	, _standard (standard)
 {
 
 }
+
 
 void
 MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id) const
@@ -101,11 +107,7 @@ MXF::fill_writer_info (ASDCP::WriterInfo* writer_info, string id) const
 	}
 }
 
-/** Set the (private) key that will be used to encrypt or decrypt this MXF's content.
- *  This is the top-secret key that is distributed (itself encrypted) to cinemas
- *  via Key Delivery Messages (KDMs).
- *  @param key Key to use.
- */
+
 void
 MXF::set_key (Key key)
 {
@@ -116,6 +118,7 @@ MXF::set_key (Key key)
 		_key_id = make_uuid ();
 	}
 }
+
 
 string
 MXF::read_writer_info (ASDCP::WriterInfo const & info)

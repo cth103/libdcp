@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,9 +32,14 @@
 */
 
 
+/** @file  src/data.cc
+ *  @brief Data class
+ */
+
+
 #include "data.h"
-#include "util.h"
 #include "exceptions.h"
+#include "util.h"
 #include <cstdio>
 #include <cerrno>
 
@@ -45,16 +50,15 @@ using namespace dcp;
 void
 Data::write (boost::filesystem::path file) const
 {
-	FILE* f = fopen_boost (file, "wb");
+	auto f = fopen_boost (file, "wb");
 	if (!f) {
 		throw FileError ("could not write to file", file, errno);
 	}
 	size_t const r = fwrite (data(), 1, size(), f);
+	fclose (f);
 	if (r != size_t(size())) {
-		fclose (f);
 		throw FileError ("could not write to file", file, errno);
 	}
-	fclose (f);
 }
 
 

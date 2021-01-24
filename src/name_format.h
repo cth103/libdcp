@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,15 +31,24 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/name_format.h
+ *  @brief NameFormat class
+ */
+
+
 #ifndef LIBDCP_NAME_FORMAT
 #define LIBDCP_NAME_FORMAT
+
 
 #include <string>
 #include <boost/optional.hpp>
 #include <map>
 #include <list>
 
+
 namespace dcp {
+
 
 class NameFormat
 {
@@ -60,14 +69,24 @@ public:
 
 	typedef std::map<char, std::string> Map;
 
+	/** @param values Values to replace our specifications with; e.g.
+	 *  if the specification contains %c it will be be replaced with the
+	 *  value corresponding to the key 'c'.
+	 *  @param suffix Suffix to add on after processing the specification.
+	 *  @param ignore Any specification characters in this string will not
+	 *  be replaced, but left as-is.
+	 */
 	std::string get (Map, std::string suffix, std::string ignore = "") const;
 
 private:
 	std::string _specification;
 };
 
+
 extern bool operator== (NameFormat const & a, NameFormat const & b);
 
+
 }
+
 
 #endif

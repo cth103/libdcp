@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/atmos_asset_writer.cc
+ *  @brief AtmosAssetWriter class
+ */
+
+
 #include "atmos_asset_writer.h"
 #include "atmos_asset.h"
 #include "exceptions.h"
@@ -109,6 +114,7 @@ AtmosAssetWriter::write (uint8_t const * data, int size)
 
 	++_frames_written;
 }
+
 
 bool
 AtmosAssetWriter::finalize ()

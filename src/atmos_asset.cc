@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/atmos_asset.cc
+ *  @brief AtmosAsset class
+ */
+
+
 #include "atmos_asset.h"
 #include "atmos_asset_reader.h"
 #include "atmos_asset_writer.h"
@@ -48,7 +53,6 @@ using namespace dcp;
 AtmosAsset::AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_count, int max_object_count, int atmos_version)
 	: MXF (Standard::SMPTE)
 	, _edit_rate (edit_rate)
-	, _intrinsic_duration (0)
 	, _first_frame (first_frame)
 	, _max_channel_count (max_channel_count)
 	, _max_object_count (max_object_count)
@@ -105,7 +109,8 @@ AtmosAsset::static_pkl_type (Standard)
 shared_ptr<AtmosAssetReader>
 AtmosAsset::start_read () const
 {
-	return make_shared<AtmosAssetReader>(this, key(), Standard::SMPTE);
+	/* Can't use make_shared here since the constructor is protected */
+	return shared_ptr<AtmosAssetReader>(new AtmosAssetReader(this, key(), Standard::SMPTE));
 }
 
 

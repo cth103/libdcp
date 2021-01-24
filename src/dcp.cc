@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/dcp.cc
- *  @brief DCP class.
+ *  @brief DCP class
  */
+
 
 #include "raw_convert.h"
 #include "dcp.h"
@@ -307,7 +309,7 @@ DCP::equals (DCP const & other, EqualityOptions opt, NoteHandler note) const
 
 
 void
-DCP::add (std::shared_ptr<CPL> cpl)
+DCP::add (shared_ptr<CPL> cpl)
 {
 	_cpls.push_back (cpl);
 }

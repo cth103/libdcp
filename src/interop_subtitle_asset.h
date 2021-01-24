@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,19 +31,24 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/interop_subtitle_asset.h
- *  @brief InteropSubtitleAsset class.
+ *  @brief InteropSubtitleAsset class
  */
+
 
 #include "subtitle_asset.h"
 #include <boost/filesystem.hpp>
 
+
 namespace dcp {
+
 
 class InteropLoadFontNode;
 
+
 /** @class InteropSubtitleAsset
- *  @brief A set of subtitles to be read and/or written in the Inter-Op format.
+ *  @brief A set of subtitles to be read and/or written in the Inter-Op format
  *
  *  Inter-Op subtitles are sometimes known as CineCanvas.
  */
@@ -67,7 +72,10 @@ public:
 	void add_font (std::string load_id, dcp::ArrayData data);
 
 	std::string xml_as_string () const;
+
+	/** Write this content to an XML file with its fonts alongside */
 	void write (boost::filesystem::path path) const;
+
 	void resolve_fonts (std::vector<std::shared_ptr<Asset>> assets);
 	void add_font_assets (std::vector<std::shared_ptr<Asset>>& assets);
 	void set_font_file (std::string load_id, boost::filesystem::path file);

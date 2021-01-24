@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/fsk.h
+ *  @brief FSK class
+ */
+
+
 #include <stdint.h>
 #include <vector>
 
@@ -60,14 +65,15 @@ public:
 private:
 	std::vector<bool> _data;
 	/** current offset into _data */
-	int _data_position;
+	int _data_position = 0;
 	/** current sample number of the current bit (0-3) */
-	int _sample_position;
+	int _sample_position = 0;
 	/** polarity of the last bit to be written (false for -ve, true for +ve) */
-	bool _last_polarity;
+	bool _last_polarity = false;
 	/** value of the last bit to be written */
-	bool _last_bit;
+	bool _last_bit = false;
 };
+
 
 }
 

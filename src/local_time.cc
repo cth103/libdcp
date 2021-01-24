@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/local_time.cc
- *  @brief LocalTime class.
+ *  @brief LocalTime class
  */
+
 
 #include "local_time.h"
 #include "exceptions.h"
@@ -44,25 +46,28 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <cstdio>
 
+
 using std::string;
 using std::ostream;
 using boost::lexical_cast;
 using namespace dcp;
 
-/** Construct a LocalTime from the current time */
+
 LocalTime::LocalTime ()
 {
-	time_t now = time (0);
-	struct tm* tm = localtime (&now);
+	auto now = time (0);
+	auto tm = localtime (&now);
 	set (tm);
 	set_local_time_zone ();
 }
+
 
 LocalTime::LocalTime (struct tm t)
 {
 	set (&t);
 	set_local_time_zone ();
 }
+
 
 void
 LocalTime::set (struct tm const * tm)
@@ -76,14 +81,13 @@ LocalTime::set (struct tm const * tm)
 	_millisecond = 0;
 }
 
-/** Construct a LocalTime from a boost::posix_time::ptime using the local
- *  time zone.
- */
+
 LocalTime::LocalTime (boost::posix_time::ptime t)
 {
 	set (t);
 	set_local_time_zone ();
 }
+
 
 void
 LocalTime::set (boost::posix_time::ptime t)
@@ -98,10 +102,7 @@ LocalTime::set (boost::posix_time::ptime t)
 	DCP_ASSERT (_millisecond < 1000);
 }
 
-/** Construct a LocalTime from a boost::posix_time::ptime and a time zone offset.
- *  @param tz_minute Offset from UTC in minutes; if the timezone is behind UTC this may be negative,
- *  e.g. -04:30 would have tz_hour=-1 and tz_minute=-30.
- */
+
 LocalTime::LocalTime (boost::posix_time::ptime t, int tz_hour, int tz_minute)
 {
 	set (t);
@@ -109,19 +110,20 @@ LocalTime::LocalTime (boost::posix_time::ptime t, int tz_hour, int tz_minute)
 	_tz_minute = tz_minute;
 }
 
+
 /** Set our UTC offset to be according to the local time zone */
 void
 LocalTime::set_local_time_zone ()
 {
-	boost::posix_time::ptime const utc_now = boost::posix_time::second_clock::universal_time ();
-	boost::posix_time::ptime const now = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local (utc_now);
-	boost::posix_time::time_duration offset = now - utc_now;
+	auto const utc_now = boost::posix_time::second_clock::universal_time ();
+	auto const now = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local (utc_now);
+	auto offset = now - utc_now;
 
 	_tz_hour = offset.hours ();
 	_tz_minute = offset.minutes ();
 }
 
-/** @param s A string of the form 2013-01-05T18:06:59[.123][+04:00] */
+
 LocalTime::LocalTime (string s)
 {
 	/* 2013-01-05T18:06:59 or 2013-01-05T18:06:59.123 or 2013-01-05T18:06:59+04:00 or 2013-01-05T18:06:59.123+04:00 */
@@ -163,15 +165,15 @@ LocalTime::LocalTime (string s)
 		throw TimeFormatError (s);
 	}
 
-	_year = lexical_cast<int> (s.substr (0, 4));
-	_month = lexical_cast<int> (s.substr (5, 2));
-	_day = lexical_cast<int> (s.substr (8, 2));
-	_hour = lexical_cast<int> (s.substr (11, 2));
-	_minute = lexical_cast<int> (s.substr (14, 2));
-	_second = lexical_cast<int> (s.substr (17, 2));
-	_millisecond = with_millisecond ? lexical_cast<int> (s.substr (20, 3)) : 0;
-	_tz_hour = with_tz ? lexical_cast<int> (s.substr (tz_pos + 1, 2)) : 0;
-	_tz_minute = with_tz ? lexical_cast<int> (s.substr (tz_pos + 4, 2)) : 0;
+	_year = lexical_cast<int>(s.substr(0, 4));
+	_month = lexical_cast<int>(s.substr(5, 2));
+	_day = lexical_cast<int>(s.substr(8, 2));
+	_hour = lexical_cast<int>(s.substr(11, 2));
+	_minute = lexical_cast<int>(s.substr(14, 2));
+	_second = lexical_cast<int>(s.substr(17, 2));
+	_millisecond = with_millisecond ? lexical_cast<int>(s.substr(20, 3)) : 0;
+	_tz_hour = with_tz ? lexical_cast<int>(s.substr(tz_pos + 1, 2)) : 0;
+	_tz_minute = with_tz ? lexical_cast<int>(s.substr(tz_pos + 4, 2)) : 0;
 
 	if (with_tz && s[tz_pos] == '-') {
 		_tz_hour = -_tz_hour;
@@ -179,7 +181,7 @@ LocalTime::LocalTime (string s)
 	}
 }
 
-/** @return A string of the form 2013-01-05T18:06:59+04:00 or 2013-01-05T18:06:59.123+04:00 */
+
 string
 LocalTime::as_string (bool with_millisecond) const
 {
@@ -192,7 +194,7 @@ LocalTime::as_string (bool with_millisecond) const
 	return buffer;
 }
 
-/** @return The date in the form YYYY-MM-DD */
+
 string
 LocalTime::date () const
 {
@@ -201,7 +203,7 @@ LocalTime::date () const
 	return buffer;
 }
 
-/** @return The time in the form HH:MM:SS or HH:MM:SS.mmm */
+
 string
 LocalTime::time_of_day (bool with_second, bool with_millisecond) const
 {
@@ -249,6 +251,7 @@ LocalTime::add_months (int m)
 	set (posix_time::ptime(d, posix_time::time_duration(_hour, _minute, _second, _millisecond * 1000)));
 }
 
+
 void
 LocalTime::add_minutes (int m)
 {
@@ -259,6 +262,7 @@ LocalTime::add_minutes (int m)
 	set (t);
 }
 
+
 bool
 LocalTime::operator== (LocalTime const & other) const
 {
@@ -266,6 +270,7 @@ LocalTime::operator== (LocalTime const & other) const
 		_hour == other._hour && _second == other._second && _millisecond == other._millisecond &&
 		_tz_hour == other._tz_hour && _tz_minute == other._tz_minute;
 }
+
 
 bool
 LocalTime::operator< (LocalTime const & other) const
@@ -288,11 +293,13 @@ LocalTime::operator< (LocalTime const & other) const
 	return _millisecond < other._millisecond;
 }
 
+
 bool
 LocalTime::operator!= (LocalTime const & other) const
 {
 	return !(*this == other);
 }
+
 
 ostream&
 dcp::operator<< (ostream& s, LocalTime const & t)

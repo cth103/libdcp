@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/picture_asset_writer.cc
+ *  @brief PictureAssetWriter and FrameInfo classes
+ */
+
+
 #include "picture_asset_writer.h"
 #include "exceptions.h"
 #include "picture_asset.h"
@@ -39,9 +45,11 @@
 #include <inttypes.h>
 #include <stdint.h>
 
+
 using std::string;
 using std::shared_ptr;
 using namespace dcp;
+
 
 PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, boost::filesystem::path file, bool overwrite)
 	: AssetWriter (asset, file)

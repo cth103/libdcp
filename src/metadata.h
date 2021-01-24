@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,23 +31,30 @@
     files in the program, then also delete it here.
 */
 
-#ifndef LIBDCP_METADATA_H
-#define LIBDCP_METADATA_H
 
 /** @file  src/metadata.h
  *  @brief MXFMetadata class.
  */
 
+
+#ifndef LIBDCP_METADATA_H
+#define LIBDCP_METADATA_H
+
+
 #include <string>
 
+
 class utc_offset_to_string_test;
+
 
 namespace ASDCP {
 	struct WriterInfo;
 }
 
+
 namespace dcp
 {
+
 
 /** @class MXFMetadata
  *  @brief Metadata that is written to a MXF file's header
@@ -69,6 +76,8 @@ public:
 	std::string product_version;
 };
 
+
 }
+
 
 #endif

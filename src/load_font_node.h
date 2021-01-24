@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,16 +31,20 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/load_font_node.h
- *  @brief LoadFontNode class.
+ *  @brief LoadFontNode class
  */
+
 
 #include <string>
 
+
 namespace dcp {
 
+
 /** @class LoadFontNode
- *  @brief Parser for LoadFont nodes from subtitle XML.
+ *  @brief Parser for LoadFont nodes from subtitle XML
  */
 class LoadFontNode
 {

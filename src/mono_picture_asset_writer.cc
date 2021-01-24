@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/mono_picture_asset_writer.cc
  *  @brief MonoPictureAssetWriter class
  */
+
 
 #include "mono_picture_asset_writer.h"
 #include "exceptions.h"
@@ -43,16 +45,20 @@
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
 
+
 #include "picture_asset_writer_common.cc"
+
 
 using std::string;
 using std::shared_ptr;
 using namespace dcp;
 
+
 struct MonoPictureAssetWriter::ASDCPState : public ASDCPStateBase
 {
 	ASDCP::JP2K::MXFWriter mxf_writer;
 };
+
 
 /** @param a Asset to write to.  `a' must not be deleted while
  *  this writer class still exists, or bad things will happen.
@@ -64,12 +70,14 @@ MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, boost::file
 
 }
 
+
 void
 MonoPictureAssetWriter::start (uint8_t const * data, int size)
 {
 	dcp::start (this, _state, _picture_asset, data, size);
 	_picture_asset->set_frame_rate (_picture_asset->edit_rate());
 }
+
 
 FrameInfo
 MonoPictureAssetWriter::write (uint8_t const * data, int size)
@@ -80,15 +88,15 @@ MonoPictureAssetWriter::write (uint8_t const * data, int size)
 		start (data, size);
 	}
 
- 	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame (data, size, _state->frame_buffer))) {
+ 	if (ASDCP_FAILURE (_state->j2k_parser.OpenReadFrame(data, size, _state->frame_buffer))) {
  		boost::throw_exception (MiscError ("could not parse J2K frame"));
  	}
 
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
-	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _crypto_context->context(), _crypto_context->hmac(), &hash);
-	if (ASDCP_FAILURE (r)) {
+	auto const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _crypto_context->context(), _crypto_context->hmac(), &hash);
+	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
 	}
 
@@ -96,27 +104,29 @@ MonoPictureAssetWriter::write (uint8_t const * data, int size)
 	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 
+
 void
 MonoPictureAssetWriter::fake_write (int size)
 {
 	DCP_ASSERT (_started);
 	DCP_ASSERT (!_finalized);
 
-	Kumu::Result_t r = _state->mxf_writer.FakeWriteFrame (size);
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
+	auto r = _state->mxf_writer.FakeWriteFrame (size);
+	if (ASDCP_FAILURE(r)) {
+		boost::throw_exception (MXFFileError("error in writing video MXF", _file.string(), r));
 	}
 
 	++_frames_written;
 }
 
+
 bool
 MonoPictureAssetWriter::finalize ()
 {
 	if (_started) {
-		Kumu::Result_t r = _state->mxf_writer.Finalize();
-		if (ASDCP_FAILURE (r)) {
-			boost::throw_exception (MXFFileError ("error in finalizing video MXF", _file.string(), r));
+		auto r = _state->mxf_writer.Finalize();
+		if (ASDCP_FAILURE(r)) {
+			boost::throw_exception (MXFFileError("error in finalizing video MXF", _file.string(), r));
 		}
 	}
 

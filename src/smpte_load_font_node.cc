@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,13 +31,21 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/smpte_load_font_node.cc
+ *  @brief SMPTELoadFontNode class
+ */
+
+
 #include "smpte_load_font_node.h"
 #include "util.h"
 #include <libcxml/cxml.h>
 
+
 using std::string;
 using std::shared_ptr;
 using namespace dcp;
+
 
 SMPTELoadFontNode::SMPTELoadFontNode (string id, string urn_)
 	: LoadFontNode (id)
@@ -46,6 +54,7 @@ SMPTELoadFontNode::SMPTELoadFontNode (string id, string urn_)
 
 }
 
+
 SMPTELoadFontNode::SMPTELoadFontNode (shared_ptr<const cxml::Node> node)
 	: LoadFontNode (node->string_attribute ("ID"))
 	, urn (remove_urn_uuid (node->content()))
@@ -53,11 +62,13 @@ SMPTELoadFontNode::SMPTELoadFontNode (shared_ptr<const cxml::Node> node)
 
 }
 
+
 bool
 dcp::operator== (SMPTELoadFontNode const & a, SMPTELoadFontNode const & b)
 {
 	return a.id == b.id && a.urn == b.urn;
 }
+
 
 bool
 dcp::operator!= (SMPTELoadFontNode const & a, SMPTELoadFontNode const & b)

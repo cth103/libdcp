@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/mono_picture_asset_writer.h
  *  @brief MonoPictureAssetWriter class
  */
 
+
 #ifndef LIBDCP_MONO_PICTURE_ASSET_WRITER_H
 #define LIBDCP_MONO_PICTURE_ASSET_WRITER_H
+
 
 #include "picture_asset_writer.h"
 #include <memory>
@@ -44,7 +47,9 @@
 #include <stdint.h>
 #include <string>
 
+
 namespace dcp {
+
 
 /** @class MonoPictureAssetWriter
  *  @brief A helper class for writing to MonoPictureAssets
@@ -59,14 +64,14 @@ namespace dcp {
 class MonoPictureAssetWriter : public PictureAssetWriter
 {
 public:
-	MonoPictureAssetWriter (PictureAsset *, boost::filesystem::path file, bool);
-
 	FrameInfo write (uint8_t const *, int);
 	void fake_write (int size);
 	bool finalize ();
 
 private:
 	friend class MonoPictureAsset;
+
+	MonoPictureAssetWriter (PictureAsset* a, boost::filesystem::path file, bool);
 
 	void start (uint8_t const *, int);
 
@@ -77,6 +82,8 @@ private:
 	std::shared_ptr<ASDCPState> _state;
 };
 
+
 }
+
 
 #endif

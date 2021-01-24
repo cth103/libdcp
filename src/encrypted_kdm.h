@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/encrypted_kdm.h
- *  @brief EncryptedKDM class.
+ *  @brief EncryptedKDM class
  */
+
 
 #ifndef LIBDCP_ENCRYPTED_KDM_H
 #define LIBDCP_ENCRYPTED_KDM_H
+
 
 #include "local_time.h"
 #include "types.h"
@@ -44,21 +47,26 @@
 #include <boost/optional.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
 
+
 namespace cxml {
 	class Node;
 }
 
+
 namespace dcp {
+
 
 namespace data {
 	class EncryptedKDMData;
 }
 
+
 class CertificateChain;
 class Certificate;
 
+
 /** @class EncryptedKDM
- *  @brief An encrypted KDM.
+ *  @brief An encrypted KDM
  *
  *  This is a KDM whose keys are encrypted using the target projector's private key.
  *  An EncryptedKDM object can be initialised from a KDM XML file, or created from
@@ -117,11 +125,13 @@ private:
 		std::vector<std::string> keys
 		);
 
-	data::EncryptedKDMData* _data;
+	data::EncryptedKDMData* _data = nullptr;
 };
+
 
 extern bool operator== (EncryptedKDM const & a, EncryptedKDM const & b);
 
 }
+
 
 #endif

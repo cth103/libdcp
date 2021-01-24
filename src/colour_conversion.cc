@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/colour_conversion.cc
+ *  @brief ColourConversion class
+ */
+
+
 #include "colour_conversion.h"
 #include "gamma_transfer_function.h"
 #include "modified_gamma_transfer_function.h"
@@ -41,15 +47,17 @@
 #include <boost/numeric/ublas/lu.hpp>
 #include <boost/numeric/ublas/io.hpp>
 
+
 using std::shared_ptr;
 using std::make_shared;
 using boost::optional;
 using namespace dcp;
 
+
 ColourConversion const &
 ColourConversion::srgb_to_xyz ()
 {
-	static ColourConversion* c = new ColourConversion (
+	static auto c = new ColourConversion (
 		make_shared<ModifiedGammaTransferFunction>(2.4, 0.04045, 0.055, 12.92),
 		YUVToRGB::REC601,
 		Chromaticity (0.64, 0.33),
@@ -65,7 +73,7 @@ ColourConversion::srgb_to_xyz ()
 ColourConversion const &
 ColourConversion::rec601_to_xyz ()
 {
-	static ColourConversion* c = new ColourConversion (
+	static auto c = new ColourConversion (
 		make_shared<GammaTransferFunction>(2.2),
 		YUVToRGB::REC601,
 		Chromaticity (0.64, 0.33),
@@ -81,7 +89,7 @@ ColourConversion::rec601_to_xyz ()
 ColourConversion const &
 ColourConversion::rec709_to_xyz ()
 {
-	static ColourConversion* c = new ColourConversion (
+	static auto c = new ColourConversion (
 		make_shared<GammaTransferFunction>(2.2),
 		YUVToRGB::REC709,
 		Chromaticity (0.64, 0.33),
@@ -97,7 +105,7 @@ ColourConversion::rec709_to_xyz ()
 ColourConversion const &
 ColourConversion::p3_to_xyz ()
 {
-	static ColourConversion* c = new ColourConversion (
+	static auto c = new ColourConversion (
 		make_shared<GammaTransferFunction>(2.6),
 		YUVToRGB::REC709,
 		Chromaticity (0.68, 0.32),
@@ -116,7 +124,7 @@ ColourConversion::rec1886_to_xyz ()
 	/* According to Olivier on DCP-o-matic bug #832, Rec. 1886 is Rec. 709 with
 	   2.4 gamma, so here goes ...
 	*/
-	static ColourConversion* c = new ColourConversion (
+	static auto c = new ColourConversion (
 		make_shared<GammaTransferFunction>(2.4),
 		YUVToRGB::REC709,
 		Chromaticity (0.64, 0.33),
@@ -132,7 +140,7 @@ ColourConversion::rec1886_to_xyz ()
 ColourConversion const &
 ColourConversion::rec2020_to_xyz ()
 {
-	static ColourConversion* c = new ColourConversion (
+	static auto c = new ColourConversion (
 		make_shared<GammaTransferFunction>(2.4),
 		YUVToRGB::REC709,
 		Chromaticity (0.708, 0.292),
@@ -149,7 +157,7 @@ ColourConversion::rec2020_to_xyz ()
 ColourConversion const &
 ColourConversion::s_gamut3_to_xyz ()
 {
-	static ColourConversion* c = new ColourConversion (
+	static auto c = new ColourConversion (
 		make_shared<SGamut3TransferFunction>(),
 		YUVToRGB::REC709,
 		Chromaticity (0.73, 0.280),
@@ -186,6 +194,7 @@ ColourConversion::ColourConversion (
 
 }
 
+
 bool
 ColourConversion::about_equal (ColourConversion const & other, float epsilon) const
 {
@@ -217,6 +226,7 @@ ColourConversion::about_equal (ColourConversion const & other, float epsilon) co
 	return false;
 }
 
+
 boost::numeric::ublas::matrix<double>
 ColourConversion::rgb_to_xyz () const
 {
@@ -240,13 +250,14 @@ ColourConversion::rgb_to_xyz () const
 	return C;
 }
 
+
 boost::numeric::ublas::matrix<double>
 ColourConversion::xyz_to_rgb () const
 {
-	boost::numeric::ublas::matrix<double> A (rgb_to_xyz ());
+	boost::numeric::ublas::matrix<double> A (rgb_to_xyz());
 
 	/* permutation matrix for the LU-factorization */
-	boost::numeric::ublas::permutation_matrix<std::size_t> pm (A.size1 ());
+	boost::numeric::ublas::permutation_matrix<std::size_t> pm (A.size1());
 
 	/* perform LU-factorization */
 	int const r = lu_factorize (A, pm);
@@ -254,13 +265,14 @@ ColourConversion::xyz_to_rgb () const
 
 	/* create identity matrix of inverse */
 	boost::numeric::ublas::matrix<double> xyz_to_rgb (3, 3);
-	xyz_to_rgb.assign (boost::numeric::ublas::identity_matrix<double> (A.size1 ()));
+	xyz_to_rgb.assign (boost::numeric::ublas::identity_matrix<double> (A.size1()));
 
 	/* backsubstitute to get the inverse */
 	lu_substitute (A, pm, xyz_to_rgb);
 
 	return xyz_to_rgb;
 }
+
 
 boost::numeric::ublas::matrix<double>
 ColourConversion::bradford () const

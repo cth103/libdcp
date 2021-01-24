@@ -67,12 +67,14 @@ class DecryptedKDM;
 
 
 /** @class CPL
- *  @brief A Composition Playlist.
+ *  @brief A Composition Playlist
  */
 class CPL : public Asset
 {
 public:
 	CPL (std::string annotation_text, ContentKind content_kind);
+
+	/** Construct a CPL object from a XML file */
 	explicit CPL (boost::filesystem::path file);
 
 	bool equals (
@@ -81,7 +83,15 @@ public:
 		NoteHandler note
 		) const;
 
+	/** Add a reel to this CPL
+	 *  @param reel Reel to add
+	 */
 	void add (std::shared_ptr<Reel> reel);
+
+	/** Add a KDM to this CPL.  If the KDM is for any of this CPLs assets it will be used
+	 *  to decrypt those assets.
+	 *  @param kdm KDM.
+	 */
 	void add (DecryptedKDM const &);
 
 	/** @return the reels in this CPL */
@@ -93,9 +103,18 @@ public:
 	std::vector<std::shared_ptr<const ReelMXF>> reel_mxfs () const;
 	std::vector<std::shared_ptr<ReelMXF>> reel_mxfs ();
 
+	/** @return true if we have any encrypted content */
 	bool any_encrypted () const;
+
+	/** @return true if we have all our encryptable content is encrypted */
 	bool all_encrypted () const;
 
+	/** Write an CompositonPlaylist XML file
+	 *
+	 *  @param file Filename to write
+	 *  @param standard INTEROP or SMPTE
+	 *  @param signer Signer to sign the CPL, or 0 to add no signature
+	 */
 	void write_xml (
 		boost::filesystem::path file,
 		Standard standard,

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2017 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/decrypted_kdm.cc
+ *  @brief DecryptedKDM class
+ */
+
+
 #include "decrypted_kdm.h"
 #include "decrypted_kdm_key.h"
 #include "encrypted_kdm.h"
@@ -48,6 +54,7 @@
 #include <openssl/pem.h>
 #include <openssl/err.h>
 
+
 using std::list;
 using std::vector;
 using std::string;
@@ -60,8 +67,10 @@ using std::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
+
 /* Magic value specified by SMPTE S430-1-2006 */
 static uint8_t smpte_structure_id[] = { 0xf1, 0xdc, 0x12, 0x44, 0x60, 0x16, 0x9a, 0x0e, 0x85, 0xbc, 0x30, 0x06, 0x42, 0xf8, 0x66, 0xab };
+
 
 static void
 put (uint8_t ** d, string s)
@@ -70,12 +79,14 @@ put (uint8_t ** d, string s)
         (*d) += s.length();
 }
 
+
 static void
 put (uint8_t ** d, uint8_t const * s, int N)
 {
         memcpy (*d, s, N);
         (*d) += N;
 }
+
 
 void
 DecryptedKDM::put_uuid (uint8_t ** d, string id)
@@ -96,6 +107,7 @@ DecryptedKDM::put_uuid (uint8_t ** d, string id)
 	*d += 16;
 }
 
+
 string
 DecryptedKDM::get_uuid (unsigned char ** p)
 {
@@ -114,6 +126,7 @@ DecryptedKDM::get_uuid (unsigned char ** p)
 	return buffer;
 }
 
+
 static string
 get (uint8_t ** p, int N)
 {
@@ -126,16 +139,17 @@ get (uint8_t ** p, int N)
 	return g;
 }
 
+
 DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 {
 	/* Read the private key */
 
-	BIO* bio = BIO_new_mem_buf (const_cast<char *> (private_key.c_str ()), -1);
+	auto bio = BIO_new_mem_buf (const_cast<char *>(private_key.c_str()), -1);
 	if (!bio) {
 		throw MiscError ("could not create memory BIO");
 	}
 
-	RSA* rsa = PEM_read_bio_RSAPrivateKey (bio, 0, 0, 0);
+	auto rsa = PEM_read_bio_RSAPrivateKey (bio, 0, 0, 0);
 	if (!rsa) {
 		throw FileError ("could not read RSA private key file", private_key, errno);
 	}
@@ -148,7 +162,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 		int const cipher_value_len = base64_decode (i, cipher_value, sizeof (cipher_value));
 
 		/* Decrypt it */
-		unsigned char * decrypted = new unsigned char[RSA_size(rsa)];
+		auto decrypted = new unsigned char[RSA_size(rsa)];
 		int const decrypted_len = RSA_private_decrypt (cipher_value_len, cipher_value, decrypted, rsa, RSA_PKCS1_OAEP_PADDING);
 		if (decrypted_len == -1) {
 			delete[] decrypted;
@@ -217,6 +231,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 	_issue_date = kdm.issue_date ();
 }
 
+
 DecryptedKDM::DecryptedKDM (
 	LocalTime not_valid_before,
 	LocalTime not_valid_after,
@@ -232,6 +247,7 @@ DecryptedKDM::DecryptedKDM (
 {
 
 }
+
 
 DecryptedKDM::DecryptedKDM (
 	string cpl_id,
@@ -252,6 +268,7 @@ DecryptedKDM::DecryptedKDM (
 		add_key (i->first->key_type(), i->first->key_id().get(), i->second, cpl_id, Standard::SMPTE);
 	}
 }
+
 
 DecryptedKDM::DecryptedKDM (
 	shared_ptr<const CPL> cpl,
@@ -282,22 +299,20 @@ DecryptedKDM::DecryptedKDM (
 	}
 }
 
-/** @param type (MDIK, MDAK etc.)
- *  @param key_id Key ID.
- *  @param key The actual symmetric key.
- *  @param cpl_id ID of CPL that the key is for.
- */
+
 void
 DecryptedKDM::add_key (optional<string> type, string key_id, Key key, string cpl_id, Standard standard)
 {
 	_keys.push_back (DecryptedKDMKey (type, key_id, key, cpl_id, standard));
 }
 
+
 void
 DecryptedKDM::add_key (DecryptedKDMKey key)
 {
 	_keys.push_back (key);
 }
+
 
 EncryptedKDM
 DecryptedKDM::encrypt (

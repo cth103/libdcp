@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,33 +31,44 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/mxf.h
+ *  @brief MXF class
+ */
+
+
 #ifndef LIBDCP_MXF_H
 #define LIBDCP_MXF_H
+
 
 #include "asset.h"
 #include "key.h"
 #include "metadata.h"
 #include "dcp_assert.h"
-
 #include <boost/signals2.hpp>
+
 
 namespace ASDCP {
 	class AESDecContext;
 	struct WriterInfo;
 }
 
+
 /* Undefine some stuff that the OS X 10.5 SDK defines */
 #undef Key
 #undef set_key
 
+
 namespace dcp
 {
+
 
 class MXFMetadata;
 class PictureAssetWriter;
 
+
 /** @class MXF
- *  @brief Parent for classes which represent MXF files.
+ *  @brief Parent for classes which represent MXF files
  */
 class MXF
 {
@@ -82,6 +93,11 @@ public:
 		return _key_id;
 	}
 
+	/** Set the (private) key that will be used to encrypt or decrypt this MXF's content
+	 *  This is the top-secret key that is distributed (itself encrypted) to cinemas
+	 *  via Key Delivery Messages (KDMs)
+	 *  @param key Key to use
+	 */
 	virtual void set_key (Key);
 
 	/** @return encryption/decryption key, if one has been set */
@@ -139,6 +155,8 @@ protected:
 	boost::optional<Standard> _standard;
 };
 
+
 }
+
 
 #endif

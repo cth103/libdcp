@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,15 +31,21 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/stereo_picture_asset_writer.h
+ *  @brief StereoPictureAssetWriter class
+ */
+
+
 #include "picture_asset_writer.h"
 #include "types.h"
 #include <memory>
-#include <boost/utility.hpp>
 #include <stdint.h>
 #include <string>
-#include <fstream>
+
 
 namespace dcp {
+
 
 /** @class StereoPictureAssetWriter
  *  @brief A helper class for writing to StereoPictureAssets.
@@ -75,7 +81,8 @@ private:
 	struct ASDCPState;
 	std::shared_ptr<ASDCPState> _state;
 
-	dcp::Eye _next_eye;
+	dcp::Eye _next_eye = Eye::LEFT;
 };
+
 
 }

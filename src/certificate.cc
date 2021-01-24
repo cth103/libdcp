@@ -33,7 +33,7 @@
 
 
 /** @file  src/certificate.cc
- *  @brief Certificate class.
+ *  @brief Certificate class
  */
 
 

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,10 +31,18 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/subtitle.cc
+ *  @brief Subtitle class
+ */
+
+
 #include "subtitle.h"
 #include "dcp_time.h"
 
+
 using namespace dcp;
+
 
 /** @param v_position Vertical position as a fraction of the screen height (between 0 and 1) from v_align */
 Subtitle::Subtitle (

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/j2k.cc
+ *  @brief Methods to encode and decode JPEG2000
+ */
+
+
 #include "array_data.h"
 #include "j2k.h"
 #include "exceptions.h"
@@ -42,6 +47,7 @@
 #include <cmath>
 #include <iostream>
 
+
 using std::min;
 using std::pow;
 using std::string;
@@ -49,11 +55,13 @@ using std::shared_ptr;
 using boost::shared_array;
 using namespace dcp;
 
+
 shared_ptr<dcp::OpenJPEGImage>
 dcp::decompress_j2k (ArrayData data, int reduce)
 {
 	return dcp::decompress_j2k (data.data(), data.size(), reduce);
 }
+
 
 #ifdef LIBDCP_OPENJPEG2
 
@@ -80,11 +88,13 @@ private:
 	OPJ_SIZE_T _offset;
 };
 
+
 static OPJ_SIZE_T
 read_function (void* buffer, OPJ_SIZE_T nb_bytes, void* data)
 {
 	return reinterpret_cast<ReadBuffer*>(data)->read (buffer, nb_bytes);
 }
+
 
 static void
 read_free_function (void* data)
@@ -106,15 +116,7 @@ compress_error_callback (char const * msg, void *)
 	throw MiscError (msg);
 }
 
-/** Decompress a JPEG2000 image to a bitmap.
- *  @param data JPEG2000 data.
- *  @param size Size of data in bytes.
- *  @param reduce A power of 2 by which to reduce the size of the decoded image;
- *  e.g. 0 reduces by (2^0 == 1), ie keeping the same size.
- *       1 reduces by (2^1 == 2), ie halving the size of the image.
- *  This is useful for scaling 4K DCP images down to 2K.
- *  @return OpenJPEGImage.
- */
+
 shared_ptr<dcp::OpenJPEGImage>
 dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 {
@@ -131,12 +133,12 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 		0x20
 	};
 
-	OPJ_CODEC_FORMAT format = OPJ_CODEC_J2K;
+	auto format = OPJ_CODEC_J2K;
 	if (size >= int (sizeof (jp2_magic)) && memcmp (data, jp2_magic, sizeof (jp2_magic)) == 0) {
 		format = OPJ_CODEC_JP2;
 	}
 
-	opj_codec_t* decoder = opj_create_decompress (format);
+	auto decoder = opj_create_decompress (format);
 	if (!decoder) {
 		boost::throw_exception (ReadError ("could not create JPEG2000 decompresser"));
 	}
@@ -145,7 +147,7 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 	parameters.cp_reduce = reduce;
 	opj_setup_decoder (decoder, &parameters);
 
-	opj_stream_t* stream = opj_stream_default_create (OPJ_TRUE);
+	auto stream = opj_stream_default_create (OPJ_TRUE);
 	if (!stream) {
 		throw MiscError ("could not create JPEG2000 stream");
 	}
@@ -153,7 +155,7 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 	opj_set_error_handler(decoder, decompress_error_callback, 00);
 
 	opj_stream_set_read_function (stream, read_function);
-	ReadBuffer* buffer = new ReadBuffer (data, size);
+	auto buffer = new ReadBuffer (data, size);
 	opj_stream_set_user_data (stream, buffer, read_free_function);
 	opj_stream_set_user_data_length (stream, size);
 
@@ -176,28 +178,22 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 	image->y1 = rint (float(image->y1) / pow (2.0f, reduce));
 	return shared_ptr<OpenJPEGImage> (new OpenJPEGImage (image));
 }
+
 #endif
 
+
 #ifdef LIBDCP_OPENJPEG1
-/** Decompress a JPEG2000 image to a bitmap.
- *  @param data JPEG2000 data.
- *  @param size Size of data in bytes.
- *  @param reduce A power of 2 by which to reduce the size of the decoded image;
- *  e.g. 0 reduces by (2^0 == 1), ie keeping the same size.
- *       1 reduces by (2^1 == 2), ie halving the size of the image.
- *  This is useful for scaling 4K DCP images down to 2K.
- *  @return XYZ image.
- */
+
 shared_ptr<dcp::OpenJPEGImage>
 dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 {
-	opj_dinfo_t* decoder = opj_create_decompress (CODEC_J2K);
+	auto decoder = opj_create_decompress (CODEC_J2K);
 	opj_dparameters_t parameters;
 	opj_set_default_decoder_parameters (&parameters);
 	parameters.cp_reduce = reduce;
 	opj_setup_decoder (decoder, &parameters);
-	opj_cio_t* cio = opj_cio_open ((opj_common_ptr) decoder, data, size);
-	opj_image_t* image = opj_decode (decoder, cio);
+	auto cio = opj_cio_open ((opj_common_ptr) decoder, data, size);
+	auto image = opj_decode (decoder, cio);
 	if (!image) {
 		opj_destroy_decompress (decoder);
 		opj_cio_close (cio);
@@ -213,14 +209,16 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 }
 #endif
 
+
 #ifdef LIBDCP_OPENJPEG2
+
 class WriteBuffer
 {
 public:
 /* XXX: is there a better strategy for this? */
 #define MAX_J2K_SIZE (1024 * 1024 * 2)
 	WriteBuffer ()
-		: _data (shared_array<uint8_t> (new uint8_t[MAX_J2K_SIZE]), MAX_J2K_SIZE)
+		: _data (shared_array<uint8_t>(new uint8_t[MAX_J2K_SIZE]), MAX_J2K_SIZE)
 		, _offset (0)
 	{
 		_data.set_size (0);
@@ -231,7 +229,7 @@ public:
 		DCP_ASSERT ((_offset + nb_bytes) < MAX_J2K_SIZE);
 		memcpy (_data.data() + _offset, buffer, nb_bytes);
 		_offset += nb_bytes;
-		if (_offset > OPJ_SIZE_T (_data.size())) {
+		if (_offset > OPJ_SIZE_T(_data.size())) {
 			_data.set_size (_offset);
 		}
 		return nb_bytes;
@@ -253,11 +251,13 @@ private:
 	OPJ_SIZE_T _offset;
 };
 
+
 static OPJ_SIZE_T
 write_function (void* buffer, OPJ_SIZE_T nb_bytes, void* data)
 {
-	return reinterpret_cast<WriteBuffer*>(data)->write (buffer, nb_bytes);
+	return reinterpret_cast<WriteBuffer*>(data)->write(buffer, nb_bytes);
 }
+
 
 static void
 write_free_function (void* data)
@@ -265,21 +265,21 @@ write_free_function (void* data)
 	delete reinterpret_cast<WriteBuffer*>(data);
 }
 
+
 static OPJ_BOOL
 seek_function (OPJ_OFF_T nb_bytes, void* data)
 {
-	return reinterpret_cast<WriteBuffer*>(data)->seek (nb_bytes);
+	return reinterpret_cast<WriteBuffer*>(data)->seek(nb_bytes);
+
 }
 
-/** @xyz Picture to compress.  Parts of xyz's data WILL BE OVERWRITTEN by libopenjpeg so xyz cannot be re-used
- *  after this call; see opj_j2k_encode where if l_reuse_data is false it will set l_tilec->data = l_img_comp->data.
- */
+
 ArrayData
 dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frames_per_second, bool threed, bool fourk, string comment)
 {
 	/* get a J2K compressor handle */
-	opj_codec_t* encoder = opj_create_compress (OPJ_CODEC_J2K);
-	if (encoder == 0) {
+	auto encoder = opj_create_compress (OPJ_CODEC_J2K);
+	if (encoder == nullptr) {
 		throw MiscError ("could not create JPEG2000 encoder");
 	}
 
@@ -312,7 +312,7 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 	/* Setup the encoder parameters using the current image and user parameters */
 	opj_setup_encoder (encoder, &parameters, xyz->opj_image());
 
-	opj_stream_t* stream = opj_stream_default_create (OPJ_FALSE);
+	auto stream = opj_stream_default_create (OPJ_FALSE);
 	if (!stream) {
 		opj_destroy_codec (encoder);
 		free (parameters.cp_comment);
@@ -358,9 +358,12 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 
 	return enc;
 }
+
 #endif
 
+
 #ifdef LIBDCP_OPENJPEG1
+
 ArrayData
 dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frames_per_second, bool threed, bool fourk)
 {
@@ -373,8 +376,8 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 	int const max_comp_size = max_cs_len / 1.25;
 
 	/* get a J2K compressor handle */
-	opj_cinfo_t* cinfo = opj_create_compress (CODEC_J2K);
-	if (cinfo == 0) {
+	auto cinfo = opj_create_compress (CODEC_J2K);
+	if (cinfo == nullptr) {
 		throw MiscError ("could not create JPEG2000 encoder");
 	}
 
@@ -453,10 +456,10 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 	cinfo->event_mgr = 0;
 
 	/* Setup the encoder parameters using the current image and user parameters */
-	opj_setup_encoder (cinfo, &parameters, xyz->opj_image ());
+	opj_setup_encoder (cinfo, &parameters, xyz->opj_image());
 
-	opj_cio_t* cio = opj_cio_open ((opj_common_ptr) cinfo, 0, 0);
-	if (cio == 0) {
+	auto cio = opj_cio_open ((opj_common_ptr) cinfo, 0, 0);
+	if (cio == nullptr) {
 		opj_destroy_compress (cinfo);
 		throw MiscError ("could not open JPEG2000 stream");
 	}

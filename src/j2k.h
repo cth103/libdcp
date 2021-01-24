@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,16 +32,39 @@
 */
 
 
+/** @file  src/j2k.h
+ *  @brief Methods to encode and decode JPEG2000
+ */
+
+
 #include "array_data.h"
 #include <memory>
 #include <stdint.h>
 
+
 namespace dcp {
+
 
 class OpenJPEGImage;
 
+
 extern std::shared_ptr<OpenJPEGImage> decompress_j2k (uint8_t* data, int64_t size, int reduce);
+
+/** Decompress a JPEG2000 image to a bitmap
+ *  @param data JPEG2000 data
+ *  @param size Size of data in bytes
+ *  @param reduce A power of 2 by which to reduce the size of the decoded image;
+ *  e.g. 0 reduces by (2^0 == 1), ie keeping the same size.
+ *       1 reduces by (2^1 == 2), ie halving the size of the image.
+ *  This is useful for scaling 4K DCP images down to 2K.
+ *  @return OpenJPEGImage
+ */
 extern std::shared_ptr<OpenJPEGImage> decompress_j2k (ArrayData data, int reduce);
+
+/** @xyz Picture to compress.  Parts of xyz's data WILL BE OVERWRITTEN by libopenjpeg so xyz cannot be re-used
+ *  after this call; see opj_j2k_encode where if l_reuse_data is false it will set l_tilec->data = l_img_comp->data.
+ */
 extern ArrayData compress_j2k (std::shared_ptr<const OpenJPEGImage>, int bandwith, int frames_per_second, bool threed, bool fourk, std::string comment = "libdcp");
+
 
 }

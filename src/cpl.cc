@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/cpl.cc
+ *  @brief CPL class
+ */
+
+
 #include "cpl.h"
 #include "util.h"
 #include "reel.h"
@@ -50,6 +56,7 @@
 #include <libxml/parser.h>
 #include <libxml++/libxml++.h>
 #include <boost/algorithm/string.hpp>
+
 
 using std::string;
 using std::list;
@@ -86,7 +93,7 @@ CPL::CPL (string annotation_text, ContentKind content_kind)
 	_content_versions.push_back (cv);
 }
 
-/** Construct a CPL object from a XML file */
+
 CPL::CPL (boost::filesystem::path file)
 	: Asset (file)
 	, _content_kind (ContentKind::FEATURE)
@@ -143,7 +150,6 @@ CPL::CPL (boost::filesystem::path file)
 		}
 	}
 
-
 	f.ignore_child ("Issuer");
 	f.ignore_child ("Signer");
 	f.ignore_child ("Signature");
@@ -151,21 +157,14 @@ CPL::CPL (boost::filesystem::path file)
 	f.done ();
 }
 
-/** Add a reel to this CPL.
- *  @param reel Reel to add.
- */
+
 void
 CPL::add (std::shared_ptr<Reel> reel)
 {
 	_reels.push_back (reel);
 }
 
-/** Write an CompositonPlaylist XML file.
- *
- *  @param file Filename to write.
- *  @param standard INTEROP or SMPTE.
- *  @param signer Signer to sign the CPL, or 0 to add no signature.
- */
+
 void
 CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<const CertificateChain> signer) const
 {
@@ -544,6 +543,7 @@ CPL::reel_mxfs () const
 	return c;
 }
 
+
 bool
 CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {
@@ -582,7 +582,7 @@ CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler not
 	return true;
 }
 
-/** @return true if we have any encrypted content */
+
 bool
 CPL::any_encrypted () const
 {
@@ -596,7 +596,6 @@ CPL::any_encrypted () const
 }
 
 
-/** @return true if we have all our encryptable content is encrypted */
 bool
 CPL::all_encrypted () const
 {
@@ -610,10 +609,6 @@ CPL::all_encrypted () const
 }
 
 
-/** Add a KDM to this CPL.  If the KDM is for any of this CPLs assets it will be used
- *  to decrypt those assets.
- *  @param kdm KDM.
- */
 void
 CPL::add (DecryptedKDM const & kdm)
 {

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,19 +31,25 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/local_time.h
- *  @brief LocalTime class.
+ *  @brief LocalTime class
  */
+
 
 #ifndef LIBDCP_LOCAL_TIME_H
 #define LIBDCP_LOCAL_TIME_H
 
+
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <string>
 
+
 class local_time_basic_test;
 
+
 namespace dcp {
+
 
 /** @class LocalTime
  *  @brief A representation of a local time (down to the second), including its offset
@@ -57,14 +63,32 @@ namespace dcp {
 class LocalTime
 {
 public:
+	/** Construct a LocalTime from the current time */
 	LocalTime ();
-	explicit LocalTime (struct tm tm);
-	explicit LocalTime (boost::posix_time::ptime);
-	LocalTime (boost::posix_time::ptime, int tz_hour, int tz_minute);
-	explicit LocalTime (std::string);
 
+	explicit LocalTime (struct tm tm);
+
+	/** Construct a LocalTime from a boost::posix_time::ptime using the local
+	 *  time zone
+	 */
+	explicit LocalTime (boost::posix_time::ptime);
+
+	/** Construct a LocalTime from a boost::posix_time::ptime and a time zone offset
+	 *  @param tz_minute Offset from UTC in minutes; if the timezone is behind UTC this may be negative,
+	 *  e.g. -04:30 would have tz_hour=-1 and tz_minute=-30.
+	 */
+	LocalTime (boost::posix_time::ptime, int tz_hour, int tz_minute);
+
+	/** @param s A string of the form 2013-01-05T18:06:59[.123][+04:00] */
+	explicit LocalTime (std::string s);
+
+	/** @return A string of the form 2013-01-05T18:06:59+04:00 or 2013-01-05T18:06:59.123+04:00 */
 	std::string as_string (bool with_millisecond = false) const;
+
+	/** @return The date in the form YYYY-MM-DD */
 	std::string date () const;
+
+	/** @return The time in the form HH:MM:SS or HH:MM:SS.mmm */
 	std::string time_of_day (bool with_second, bool with_millisecond) const;
 
 	int day () const {
@@ -99,24 +123,27 @@ private:
 	void set_local_time_zone ();
 
 	/* Local time */
-	int _year;   ///< year
-	int _month;  ///< month number of the year (1-12)
-	int _day;    ///< day number of the month (1-31)
-	int _hour;   ///< hour number of the day (0-23)
-	int _minute; ///< minute number of the hour (0-59)
-	int _second; ///< second number of the minute (0-59)
-	int _millisecond; ///< millisecond number of the second (0-999)
+	int _year = 0;        ///< year
+	int _month = 0;       ///< month number of the year (1-12)
+	int _day = 0;         ///< day number of the month (1-31)
+	int _hour = 0;        ///< hour number of the day (0-23)
+	int _minute = 0;      ///< minute number of the hour (0-59)
+	int _second = 0;      ///< second number of the minute (0-59)
+	int _millisecond = 0; ///< millisecond number of the second (0-999)
 
-	int _tz_hour; ///< hours by which this time is offset from UTC; can be negative
+	int _tz_hour = 0;     ///< hours by which this time is offset from UTC; can be negative
 	/** Minutes by which this time is offset from UTC; if _tz_hour is negative
 	 *  this will be either 0 or negative.
 	 */
-	int _tz_minute;
+	int _tz_minute = 0;
 };
+
 
 std::ostream&
 operator<< (std::ostream& s, LocalTime const & t);
 
+
 }
+
 
 #endif

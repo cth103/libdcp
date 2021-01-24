@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/metadata.cc
- *  @brief MXFMetadata class.
+ *  @brief MXFMetadata class
  */
+
 
 #include "metadata.h"
 #include "util.h"
@@ -42,8 +44,9 @@
 #include <iomanip>
 #include <time.h>
 
-using namespace std;
+
 using namespace dcp;
+
 
 MXFMetadata::MXFMetadata ()
 	: company_name ("libdcp")
@@ -52,6 +55,7 @@ MXFMetadata::MXFMetadata ()
 {
 
 }
+
 
 void
 MXFMetadata::read (ASDCP::WriterInfo const & info)

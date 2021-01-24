@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/subtitle_asset.h
+ *  @brief SubtitleAsset class
+ */
+
+
 #ifndef LIBDCP_SUBTITLE_ASSET_H
 #define LIBDCP_SUBTITLE_ASSET_H
 
@@ -43,9 +49,11 @@
 #include <boost/shared_array.hpp>
 #include <map>
 
+
 namespace xmlpp {
 	class Element;
 }
+
 
 struct interop_dcp_font_test;
 struct smpte_dcp_font_test;
@@ -53,8 +61,9 @@ struct pull_fonts_test1;
 struct pull_fonts_test2;
 struct pull_fonts_test3;
 
-namespace dcp
-{
+
+namespace dcp {
+
 
 class SubtitleString;
 class SubtitleImage;
@@ -64,13 +73,15 @@ class SubtitleNode;
 class LoadFontNode;
 class ReelAsset;
 
+
 namespace order {
 	class Part;
 	struct Context;
 }
 
+
 /** @class SubtitleAsset
- *  @brief A parent for classes representing a file containing subtitles.
+ *  @brief A parent for classes representing a file containing subtitles
  *
  *  This class holds a list of Subtitle objects which it can extract
  *  from the appropriate part of either an Interop or SMPTE XML file.
@@ -195,6 +206,8 @@ private:
 	static void pull_fonts (std::shared_ptr<order::Part> part);
 };
 
+
 }
+
 
 #endif

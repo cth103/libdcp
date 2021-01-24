@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,21 +31,25 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/font_asset.cc
- *  @brief FontAsset class.
+ *  @brief FontAsset class
  */
+
 
 #include "font_asset.h"
 
-using std::string;
 
+using std::string;
 using namespace dcp;
+
 
 FontAsset::FontAsset (string id, boost::filesystem::path file)
 	: Asset (id, file)
 {
 
 }
+
 
 string
 FontAsset::static_pkl_type (Standard)

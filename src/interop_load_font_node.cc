@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,13 +31,21 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/interop_load_font_node.cc
+ *  @brief InteropLoadFontNode class
+ */
+
+
 #include "interop_load_font_node.h"
 #include <libcxml/cxml.h>
+
 
 using std::string;
 using std::shared_ptr;
 using boost::optional;
 using namespace dcp;
+
 
 InteropLoadFontNode::InteropLoadFontNode (string id_, string uri_)
 	: LoadFontNode (id_)
@@ -46,22 +54,25 @@ InteropLoadFontNode::InteropLoadFontNode (string id_, string uri_)
 
 }
 
+
 InteropLoadFontNode::InteropLoadFontNode (cxml::ConstNodePtr node)
 {
-	optional<string> x = node->optional_string_attribute ("Id");
+	auto x = node->optional_string_attribute("Id");
 	if (!x) {
-		x = node->optional_string_attribute ("ID");
+		x = node->optional_string_attribute("ID");
 	}
 	id = x.get_value_or ("");
 
 	uri = node->string_attribute ("URI");
 }
 
+
 bool
 dcp::operator== (InteropLoadFontNode const & a, InteropLoadFontNode const & b)
 {
 	return a.id == b.id && a.uri == b.uri;
 }
+
 
 bool
 dcp::operator!= (InteropLoadFontNode const & a, InteropLoadFontNode const & b)

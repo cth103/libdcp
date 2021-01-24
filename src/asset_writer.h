@@ -33,7 +33,7 @@
 
 
 /** @file  src/asset_writer.h
- *  @brief AssetWriter class.
+ *  @brief AssetWriter class
  */
 
 
@@ -65,6 +65,8 @@ public:
 	AssetWriter& operator= (AssetWriter const&) = delete;
 
 	virtual ~AssetWriter () {}
+
+	/** @return true if anything was written by this writer */
 	virtual bool finalize ();
 
 	int64_t frames_written () const {

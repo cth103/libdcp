@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,36 +31,42 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/openjpeg_image.cc
  *  @brief OpenJPEGImage class.
  */
+
 
 #include "openjpeg_image.h"
 #include "dcp_assert.h"
 #include <openjpeg.h>
 #include <stdexcept>
 
+
 using namespace dcp;
+
 
 #ifdef LIBDCP_OPENJPEG1
 #define OPJ_CLRSPC_SRGB CLRSPC_SRGB
 #endif
 
-/** Construct an OpenJPEGImage, taking ownership of the opj_image_t */
+
 OpenJPEGImage::OpenJPEGImage (opj_image_t* image)
 	: _opj_image (image)
 {
 	DCP_ASSERT (_opj_image->numcomps == 3);
 }
 
+
 #ifdef LIBDCP_OPENJPEG1
 typedef int32_t OPJ_INT32;
 typedef uint8_t OPJ_BYTE;
 #endif
 
+
 OpenJPEGImage::OpenJPEGImage (OpenJPEGImage const & other)
 {
-	_opj_image = reinterpret_cast<opj_image_t*> (malloc (sizeof (opj_image_t)));
+	_opj_image = reinterpret_cast<opj_image_t*>(malloc(sizeof(opj_image_t)));
 	DCP_ASSERT (_opj_image);
 	memcpy (_opj_image, other._opj_image, sizeof (opj_image_t));
 
@@ -80,17 +86,13 @@ OpenJPEGImage::OpenJPEGImage (OpenJPEGImage const & other)
 	memcpy (_opj_image->icc_profile_buf, other._opj_image->icc_profile_buf, _opj_image->icc_profile_len);
 }
 
-/** Construct a new OpenJPEGImage with undefined contents.
- *  @param size Size for the frame in pixels.
- */
+
 OpenJPEGImage::OpenJPEGImage (Size size)
 {
 	create (size);
 }
 
-/** @param data_16 XYZ/RGB image data in packed 16:16:16, 48bpp with
- *  the 2-byte value for each component stored as little-endian.
- */
+
 OpenJPEGImage::OpenJPEGImage (uint8_t const * data_16, dcp::Size size, int stride)
 {
 	create (size);
@@ -107,6 +109,7 @@ OpenJPEGImage::OpenJPEGImage (uint8_t const * data_16, dcp::Size size, int strid
 		}
 	}
 }
+
 
 void
 OpenJPEGImage::create (Size size)
@@ -137,15 +140,13 @@ OpenJPEGImage::create (Size size)
 	_opj_image->y1 = size.height;
 }
 
-/** OpenJPEGImage destructor */
+
 OpenJPEGImage::~OpenJPEGImage ()
 {
 	opj_image_destroy (_opj_image);
 }
 
-/** @param c Component index (0, 1 or 2)
- *  @return Pointer to the data for component c.
- */
+
 int *
 OpenJPEGImage::data (int c) const
 {
@@ -153,7 +154,7 @@ OpenJPEGImage::data (int c) const
 	return _opj_image->comps[c].data;
 }
 
-/** @return Size of the image in pixels */
+
 dcp::Size
 OpenJPEGImage::size () const
 {
@@ -161,17 +162,20 @@ OpenJPEGImage::size () const
 	return dcp::Size (_opj_image->x1, _opj_image->y1);
 }
 
+
 int
 OpenJPEGImage::precision (int component) const
 {
 	return _opj_image->comps[component].prec;
 }
 
+
 int
 OpenJPEGImage::factor (int component) const
 {
 	return _opj_image->comps[component].factor;
 }
+
 
 bool
 OpenJPEGImage::srgb () const

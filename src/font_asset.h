@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,13 +31,17 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/font_asset.h
- *  @brief FontAsset class.
+ *  @brief FontAsset class
  */
+
 
 #include "asset.h"
 
+
 namespace dcp {
+
 
 /** @class FontAsset
  *  @brief A (truetype) font asset for subtitles in an Interop DCP.
@@ -54,5 +58,6 @@ private:
 		return static_pkl_type (standard);
 	}
 };
+
 
 }

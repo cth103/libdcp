@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/encrypted_kdm.cc
+ *  @brief EncryptedKDM class
+ */
+
+
 #include "encrypted_kdm.h"
 #include "util.h"
 #include "certificate_chain.h"
@@ -44,6 +50,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/format.hpp>
 
+
 using std::list;
 using std::vector;
 using std::string;
@@ -55,10 +62,13 @@ using boost::optional;
 using boost::starts_with;
 using namespace dcp;
 
+
 namespace dcp {
+
 
 /** Namespace for classes used to hold our data; they are internal to this .cc file */
 namespace data {
+
 
 class Signer
 {
@@ -82,6 +92,7 @@ public:
 	string x509_serial_number;
 };
 
+
 class X509Data
 {
 public:
@@ -103,6 +114,7 @@ public:
 	Signer x509_issuer_serial;
 	std::string x509_certificate;
 };
+
 
 class Reference
 {
@@ -130,6 +142,7 @@ public:
 	string uri;
 	string digest_value;
 };
+
 
 class SignedInfo
 {
@@ -171,6 +184,7 @@ private:
 	Reference authenticated_private;
 };
 
+
 class Signature
 {
 public:
@@ -200,6 +214,7 @@ public:
 	string signature_value;
 	vector<X509Data> x509_data;
 };
+
 
 class AuthenticatedPrivate
 {
@@ -235,6 +250,7 @@ public:
 	vector<string> encrypted_key;
 };
 
+
 class TypedKeyId
 {
 public:
@@ -254,7 +270,7 @@ public:
 
 	void as_xml (xmlpp::Element* node) const
 	{
-		xmlpp::Element* type = node->add_child("KeyType");
+		auto type = node->add_child("KeyType");
 		type->add_child_text (key_type);
 		node->add_child("KeyId")->add_child_text ("urn:uuid:" + key_id);
 		/* XXX: this feels like a bit of a hack */
@@ -268,6 +284,7 @@ public:
 	string key_type;
 	string key_id;
 };
+
 
 class KeyIdList
 {
@@ -290,6 +307,7 @@ public:
 
 	vector<TypedKeyId> typed_key_id;
 };
+
 
 class AuthorizedDeviceInfo
 {
@@ -323,6 +341,7 @@ public:
 	std::vector<string> certificate_thumbprints;
 };
 
+
 class X509IssuerSerial
 {
 public:
@@ -345,6 +364,7 @@ public:
 	string x509_serial_number;
 };
 
+
 class Recipient
 {
 public:
@@ -366,6 +386,7 @@ public:
 	X509IssuerSerial x509_issuer_serial;
 	string x509_subject_name;
 };
+
 
 class KDMRequiredExtensions
 {
@@ -450,8 +471,10 @@ private:
 	static const string audio_disable;
 };
 
+
 const string KDMRequiredExtensions::picture_disable = "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable";
 const string KDMRequiredExtensions::audio_disable = "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable";
+
 
 class RequiredExtensions
 {
@@ -471,6 +494,7 @@ public:
 
 	KDMRequiredExtensions kdm_required_extensions;
 };
+
 
 class AuthenticatedPublic
 {
@@ -516,6 +540,7 @@ public:
 	RequiredExtensions required_extensions;
 };
 
+
 /** Class to describe our data.  We use a class hierarchy as it's a bit nicer
  *  for XML data than a flat description.
  */
@@ -559,8 +584,10 @@ public:
 	Signature signature;
 };
 
+
 }
 }
+
 
 EncryptedKDM::EncryptedKDM (string s)
 {
@@ -573,7 +600,7 @@ EncryptedKDM::EncryptedKDM (string s)
 	}
 }
 
-/** @param trusted_devices Trusted device thumbprints */
+
 EncryptedKDM::EncryptedKDM (
 	shared_ptr<const CertificateChain> signer,
 	Certificate recipient,
@@ -602,7 +629,7 @@ EncryptedKDM::EncryptedKDM (
 	 * DCI_SPECIFIC                       as specified          Yes
 	 */
 
-	data::AuthenticatedPublic& aup = _data->authenticated_public;
+	auto& aup = _data->authenticated_public;
 	aup.signer.x509_issuer_name = signer->leaf().issuer ();
 	aup.signer.x509_serial_number = signer->leaf().serial ();
 	aup.annotation_text = annotation_text;
@@ -675,11 +702,13 @@ EncryptedKDM::EncryptedKDM (
 	_data->signature = data::Signature (signed_doc->node_child ("Signature"));
 }
 
+
 EncryptedKDM::EncryptedKDM (EncryptedKDM const & other)
 	: _data (new data::EncryptedKDMData (*other._data))
 {
 
 }
+
 
 EncryptedKDM &
 EncryptedKDM::operator= (EncryptedKDM const & other)
@@ -693,10 +722,12 @@ EncryptedKDM::operator= (EncryptedKDM const & other)
 	return *this;
 }
 
+
 EncryptedKDM::~EncryptedKDM ()
 {
 	delete _data;
 }
+
 
 void
 EncryptedKDM::as_xml (boost::filesystem::path path) const
@@ -713,11 +744,13 @@ EncryptedKDM::as_xml (boost::filesystem::path path) const
 	}
 }
 
+
 string
 EncryptedKDM::as_xml () const
 {
 	return _data->as_xml()->write_to_string ("UTF-8");
 }
+
 
 vector<string>
 EncryptedKDM::keys () const
@@ -725,11 +758,13 @@ EncryptedKDM::keys () const
 	return _data->authenticated_private.encrypted_key;
 }
 
+
 string
 EncryptedKDM::id () const
 {
 	return _data->authenticated_public.message_id;
 }
+
 
 optional<string>
 EncryptedKDM::annotation_text () const
@@ -737,11 +772,13 @@ EncryptedKDM::annotation_text () const
 	return _data->authenticated_public.annotation_text;
 }
 
+
 string
 EncryptedKDM::content_title_text () const
 {
 	return _data->authenticated_public.required_extensions.kdm_required_extensions.content_title_text;
 }
+
 
 string
 EncryptedKDM::cpl_id () const
@@ -749,11 +786,13 @@ EncryptedKDM::cpl_id () const
 	return _data->authenticated_public.required_extensions.kdm_required_extensions.composition_playlist_id;
 }
 
+
 string
 EncryptedKDM::issue_date () const
 {
 	return _data->authenticated_public.issue_date;
 }
+
 
 LocalTime
 EncryptedKDM::not_valid_before () const
@@ -761,17 +800,20 @@ EncryptedKDM::not_valid_before () const
 	return _data->authenticated_public.required_extensions.kdm_required_extensions.not_valid_before;
 }
 
+
 LocalTime
 EncryptedKDM::not_valid_after () const
 {
 	return _data->authenticated_public.required_extensions.kdm_required_extensions.not_valid_after;
 }
 
+
 string
 EncryptedKDM::recipient_x509_subject_name () const
 {
 	return _data->authenticated_public.required_extensions.kdm_required_extensions.recipient.x509_subject_name;
 }
+
 
 CertificateChain
 EncryptedKDM::signer_certificate_chain () const
@@ -783,6 +825,7 @@ EncryptedKDM::signer_certificate_chain () const
 	}
 	return chain;
 }
+
 
 bool
 dcp::operator== (EncryptedKDM const & a, EncryptedKDM const & b)

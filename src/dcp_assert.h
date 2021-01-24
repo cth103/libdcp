@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,13 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/dcp_assert.h
+ *  @brief DCP_ASSERT macro
+ */
+
+
 #include "exceptions.h"
+
 
 #define DCP_ASSERT(x) if (!(x)) throw dcp::ProgrammingError (__FILE__, __LINE__);

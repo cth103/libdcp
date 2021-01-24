@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/sound_asset_writer.cc
+ *  @brief SoundAssetWriter class
+ */
+
+
 #include "bitstream.h"
 #include "sound_asset_writer.h"
 #include "sound_asset.h"
@@ -41,6 +47,7 @@
 #include <asdcp/AS_DCP.h>
 #include <asdcp/Metadata.h>
 #include <iostream>
+
 
 using std::min;
 using std::max;
@@ -58,13 +65,12 @@ struct SoundAssetWriter::ASDCPState
 	ASDCP::PCM::AudioDescriptor desc;
 };
 
+
 SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, vector<Channel> active_channels, bool sync)
 	: AssetWriter (asset, file)
 	, _state (new SoundAssetWriter::ASDCPState)
 	, _asset (asset)
-	, _frame_buffer_offset (0)
 	, _sync (sync)
-	, _sync_packet (0)
 	, _active_channels (active_channels)
 {
 	DCP_ASSERT (!_sync || _asset->channels() >= 14);
@@ -74,7 +80,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 	_state->desc.EditRate = ASDCP::Rational (_asset->edit_rate().numerator, _asset->edit_rate().denominator);
 	_state->desc.AudioSamplingRate = ASDCP::Rational (_asset->sampling_rate(), 1);
 	_state->desc.Locked = 0;
-	_state->desc.ChannelCount = _asset->channels ();
+	_state->desc.ChannelCount = _asset->channels();
 	_state->desc.QuantizationBits = 24;
 	_state->desc.BlockAlign = 3 * _asset->channels();
 	_state->desc.AvgBps = _asset->sampling_rate() * _state->desc.BlockAlign;
@@ -108,21 +114,21 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 void
 SoundAssetWriter::start ()
 {
-	Kumu::Result_t r = _state->mxf_writer.OpenWrite (_file.string().c_str(), _state->writer_info, _state->desc);
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (FileError ("could not open audio MXF for writing", _file.string(), r));
+	auto r = _state->mxf_writer.OpenWrite (_file.string().c_str(), _state->writer_info, _state->desc);
+	if (ASDCP_FAILURE(r)) {
+		boost::throw_exception (FileError("could not open audio MXF for writing", _file.string(), r));
 	}
 
 	if (_asset->standard() == Standard::SMPTE && !_active_channels.empty()) {
 
-		ASDCP::MXF::WaveAudioDescriptor* essence_descriptor = 0;
+		ASDCP::MXF::WaveAudioDescriptor* essence_descriptor = nullptr;
 		_state->mxf_writer.OP1aHeader().GetMDObjectByType(
 			asdcp_smpte_dict->ul(ASDCP::MDD_WaveAudioDescriptor), reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&essence_descriptor)
 			);
 		DCP_ASSERT (essence_descriptor);
 		essence_descriptor->ChannelAssignment = asdcp_smpte_dict->ul(ASDCP::MDD_DCAudioChannelCfg_MCA);
 
-		ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield = new ASDCP::MXF::SoundfieldGroupLabelSubDescriptor(asdcp_smpte_dict);
+		auto soundfield = new ASDCP::MXF::SoundfieldGroupLabelSubDescriptor(asdcp_smpte_dict);
 		GenRandomValue (soundfield->MCALinkID);
 		soundfield->RFC5646SpokenLanguage = _asset->language();
 
@@ -142,7 +148,7 @@ SoundAssetWriter::start ()
 		essence_descriptor->SubDescriptors.push_back(soundfield->InstanceUID);
 
 		for (auto i: _active_channels) {
-			ASDCP::MXF::AudioChannelLabelSubDescriptor* channel = new ASDCP::MXF::AudioChannelLabelSubDescriptor(asdcp_smpte_dict);
+			auto channel = new ASDCP::MXF::AudioChannelLabelSubDescriptor(asdcp_smpte_dict);
 			GenRandomValue (channel->MCALinkID);
 			channel->SoundfieldGroupLinkID = soundfield->MCALinkID;
 			channel->MCAChannelID = static_cast<int>(i) + 1;
@@ -160,9 +166,6 @@ SoundAssetWriter::start ()
 }
 
 
-/** @param data Pointer an array of float pointers, one for each channel.
- *  @param frames Number of frames i.e. number of floats that are given for each channel.
- */
 void
 SoundAssetWriter::write (float const * const * data, int frames)
 {
@@ -202,7 +205,7 @@ SoundAssetWriter::write (float const * const * data, int frames)
 		}
 		_frame_buffer_offset += 3 * ch;
 
-		DCP_ASSERT (_frame_buffer_offset <= int (_state->frame_buffer.Capacity()));
+		DCP_ASSERT (_frame_buffer_offset <= int(_state->frame_buffer.Capacity()));
 
 		/* Finish the MXF frame if required */
 		if (_frame_buffer_offset == int (_state->frame_buffer.Capacity())) {
@@ -216,9 +219,9 @@ SoundAssetWriter::write (float const * const * data, int frames)
 void
 SoundAssetWriter::write_current_frame ()
 {
-	ASDCP::Result_t const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _crypto_context->context(), _crypto_context->hmac());
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MiscError (String::compose ("could not write audio MXF frame (%1)", int (r))));
+	auto const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _crypto_context->context(), _crypto_context->hmac());
+	if (ASDCP_FAILURE(r)) {
+		boost::throw_exception (MiscError(String::compose("could not write audio MXF frame (%1)", static_cast<int>(r))));
 	}
 
 	++_frames_written;
@@ -237,9 +240,9 @@ SoundAssetWriter::finalize ()
 	}
 
 	if (_started) {
-		ASDCP::Result_t const r = _state->mxf_writer.Finalize();
+		auto const r = _state->mxf_writer.Finalize();
 		if (ASDCP_FAILURE(r)) {
-			boost::throw_exception (MiscError (String::compose ("could not finalise audio MXF (%1)", int(r))));
+			boost::throw_exception (MiscError(String::compose ("could not finalise audio MXF (%1)", static_cast<int>(r))));
 		}
 	}
 
@@ -261,7 +264,7 @@ SoundAssetWriter::create_sync_packets ()
 	int remaining_bits = 0;
 	/* How many packets in this edit unit (i.e. "frame") */
 	int packets = 0;
-	Fraction const edit_rate = _asset->edit_rate ();
+	auto const edit_rate = _asset->edit_rate ();
 	if (edit_rate == Fraction(24, 1)) {
 		edit_rate_code = 0;
 		remaining_bits = 25;

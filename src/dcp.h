@@ -33,7 +33,7 @@
 
 
 /** @file  src/dcp.h
- *  @brief DCP class.
+ *  @brief DCP class
  */
 
 

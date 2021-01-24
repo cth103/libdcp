@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,15 +31,26 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/stereo_picture_asset.h
+ *  @brief StereoPictureAsset class
+ */
+
+
 #ifndef LIBDCP_STEREO_PICTURE_ASSET_H
 #define LIBDCP_STEREO_PICTURE_ASSET_H
+
 
 #include "picture_asset.h"
 #include "stereo_picture_asset_reader.h"
 
+
 namespace dcp {
 
-/** A 3D (stereoscopic) picture asset */
+
+/** @class StereoPictureAsset
+ *  @brief A 3D (stereoscopic) picture asset
+ */
 class StereoPictureAsset : public PictureAsset
 {
 public:
@@ -57,6 +68,8 @@ public:
 		) const;
 };
 
+
 }
+
 
 #endif

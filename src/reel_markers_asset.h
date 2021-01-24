@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2019-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,11 +31,14 @@
     files in the program, then also delete it here.
 */
 
+
 #include "reel_asset.h"
 #include "dcp_time.h"
 #include <map>
 
+
 namespace dcp {
+
 
 class ReelMarkersAsset : public ReelAsset
 {
@@ -59,5 +62,6 @@ protected:
 private:
 	std::map<Marker, Time> _markers;
 };
+
 
 }

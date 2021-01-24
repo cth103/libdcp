@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/smpte_subtitle_asset.cc
- *  @brief SMPTESubtitleAsset class.
+ *  @brief SMPTESubtitleAsset class
  */
+
 
 #include "smpte_subtitle_asset.h"
 #include "smpte_load_font_node.h"
@@ -51,6 +53,7 @@
 #include <libxml++/libxml++.h>
 #include <boost/algorithm/string.hpp>
 
+
 using std::string;
 using std::list;
 using std::vector;
@@ -65,33 +68,32 @@ using boost::optional;
 using boost::starts_with;
 using namespace dcp;
 
+
 static string const subtitle_smpte_ns = "http://www.smpte-ra.org/schemas/428-7/2010/DCST";
+
 
 SMPTESubtitleAsset::SMPTESubtitleAsset ()
 	: MXF (Standard::SMPTE)
-	, _intrinsic_duration (0)
 	, _edit_rate (24, 1)
 	, _time_code_rate (24)
-	, _xml_id (make_uuid ())
+	, _xml_id (make_uuid())
 {
 
 }
 
-/** Construct a SMPTESubtitleAsset by reading an MXF or XML file.
- *  @param file Filename.
- */
+
 SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	: SubtitleAsset (file)
 {
-	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
+	auto xml = make_shared<cxml::Document>("SubtitleReel");
 
-	shared_ptr<ASDCP::TimedText::MXFReader> reader (new ASDCP::TimedText::MXFReader ());
-	Kumu::Result_t r = Kumu::RESULT_OK;
+	auto reader = make_shared<ASDCP::TimedText::MXFReader>();
+	auto r = Kumu::RESULT_OK;
 	{
 		ASDCPErrorSuspender sus;
 		r = reader->OpenRead (_file->string().c_str ());
 	}
-	if (!ASDCP_FAILURE (r)) {
+	if (!ASDCP_FAILURE(r)) {
 		/* MXF-wrapped */
 		ASDCP::WriterInfo info;
 		reader->FillWriterInfo (info);
@@ -101,13 +103,13 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 			reader->ReadTimedTextResource (_raw_xml);
 			xml->read_string (_raw_xml);
 			parse_xml (xml);
-			read_mxf_descriptor (reader, shared_ptr<DecryptionContext> (new DecryptionContext (optional<Key>(), Standard::SMPTE)));
+			read_mxf_descriptor (reader, make_shared<DecryptionContext>(optional<Key>(), Standard::SMPTE));
 		}
 	} else {
 		/* Plain XML */
 		try {
 			_raw_xml = dcp::file_to_string (file);
-			xml.reset (new cxml::Document ("SubtitleReel"));
+			xml = make_shared<cxml::Document>("SubtitleReel");
 			xml->read_file (file);
 			parse_xml (xml);
 			_id = _xml_id = remove_urn_uuid (xml->string_child ("Id"));
@@ -116,7 +118,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 				ReadError (
 					String::compose (
 						"Failed to read subtitle file %1; MXF failed with %2, XML failed with %3",
-						file, static_cast<int> (r), e.what ()
+						file, static_cast<int>(r), e.what()
 						)
 					)
 				);
@@ -152,6 +154,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	}
 }
 
+
 void
 SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 {
@@ -178,7 +181,7 @@ SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 
 	_time_code_rate = xml->number_child<int> ("TimeCodeRate");
 	if (xml->optional_string_child ("StartTime")) {
-		_start_time = Time (xml->string_child ("StartTime"), _time_code_rate);
+		_start_time = Time (xml->string_child("StartTime"), _time_code_rate);
 	}
 
 	/* Now we need to drop down to xmlpp */
@@ -194,6 +197,7 @@ SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 	/* Guess intrinsic duration */
 	_intrinsic_duration = latest_subtitle_out().as_editable_units (_edit_rate.numerator / _edit_rate.denominator);
 }
+
 
 void
 SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader> reader, shared_ptr<DecryptionContext> dec)
@@ -213,7 +217,7 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 		reader->ReadAncillaryResource (i->ResourceID, buffer, dec->context(), dec->hmac());
 
 		char id[64];
-		Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof (id));
+		Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof(id));
 
 		shared_array<uint8_t> data (new uint8_t[buffer.Size()]);
 		memcpy (data.get(), buffer.RoData(), buffer.Size());
@@ -248,9 +252,9 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 		}
 	}
 
-	/* Get intrinsic duration */
 	_intrinsic_duration = descriptor.ContainerDuration;
 }
+
 
 void
 SMPTESubtitleAsset::set_key (Key key)
@@ -258,7 +262,7 @@ SMPTESubtitleAsset::set_key (Key key)
 	/* See if we already have a key; if we do, and we have a file, we'll already
 	   have read that file.
 	*/
-	bool const had_key = static_cast<bool> (_key);
+	auto const had_key = static_cast<bool>(_key);
 
 	MXF::set_key (key);
 
@@ -284,35 +288,38 @@ SMPTESubtitleAsset::set_key (Key key)
 
 	auto dec = make_shared<DecryptionContext>(key, Standard::SMPTE);
 	reader->ReadTimedTextResource (_raw_xml, dec->context(), dec->hmac());
-	shared_ptr<cxml::Document> xml (new cxml::Document ("SubtitleReel"));
+	auto xml = make_shared<cxml::Document>("SubtitleReel");
 	xml->read_string (_raw_xml);
 	parse_xml (xml);
 	read_mxf_descriptor (reader, dec);
 }
 
+
 vector<shared_ptr<LoadFontNode>>
 SMPTESubtitleAsset::load_font_nodes () const
 {
 	vector<shared_ptr<LoadFontNode>> lf;
-	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter (lf));
+	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter(lf));
 	return lf;
 }
+
 
 bool
 SMPTESubtitleAsset::valid_mxf (boost::filesystem::path file)
 {
 	ASDCP::TimedText::MXFReader reader;
 	Kumu::DefaultLogSink().UnsetFilterFlag(Kumu::LOG_ALLOW_ALL);
-	Kumu::Result_t r = reader.OpenRead (file.string().c_str ());
+	auto r = reader.OpenRead (file.string().c_str ());
 	Kumu::DefaultLogSink().SetFilterFlag(Kumu::LOG_ALLOW_ALL);
 	return !ASDCP_FAILURE (r);
 }
+
 
 string
 SMPTESubtitleAsset::xml_as_string () const
 {
 	xmlpp::Document doc;
-	xmlpp::Element* root = doc.create_root_node ("dcst:SubtitleReel");
+	auto root = doc.create_root_node ("dcst:SubtitleReel");
 	root->set_namespace_declaration (subtitle_smpte_ns, "dcst");
 	root->set_namespace_declaration ("http://www.w3.org/2001/XMLSchema", "xs");
 
@@ -345,7 +352,7 @@ SMPTESubtitleAsset::xml_as_string () const
 	return doc.write_to_string ("UTF-8");
 }
 
-/** Write this content to a MXF file */
+
 void
 SMPTESubtitleAsset::write (boost::filesystem::path p) const
 {
@@ -422,7 +429,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 			buffer.SetData (data_copy.data(), data_copy.size());
 			buffer.Size (j->data.size());
 			r = writer.WriteAncillaryResource (buffer, enc.context(), enc.hmac());
-			if (ASDCP_FAILURE (r)) {
+			if (ASDCP_FAILURE(r)) {
 				boost::throw_exception (MXFFileError ("could not write font to timed text resource", p.string(), r));
 			}
 		}
@@ -455,7 +462,7 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 		return false;
 	}
 
-	shared_ptr<const SMPTESubtitleAsset> other = dynamic_pointer_cast<const SMPTESubtitleAsset> (other_asset);
+	auto other = dynamic_pointer_cast<const SMPTESubtitleAsset>(other_asset);
 	if (!other) {
 		note (NoteType::ERROR, "Subtitles are in different standards");
 		return false;
@@ -526,13 +533,15 @@ SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions
 	return true;
 }
 
+
 void
 SMPTESubtitleAsset::add_font (string load_id, dcp::ArrayData data)
 {
 	string const uuid = make_uuid ();
 	_fonts.push_back (Font(load_id, uuid, data));
-	_load_font_nodes.push_back (shared_ptr<SMPTELoadFontNode> (new SMPTELoadFontNode (load_id, uuid)));
+	_load_font_nodes.push_back (make_shared<SMPTELoadFontNode>(load_id, uuid));
 }
+
 
 void
 SMPTESubtitleAsset::add (shared_ptr<Subtitle> s)

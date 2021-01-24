@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,22 +31,28 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_mono_picture_asset.h
- *  @brief ReelMonoPictureAsset class.
+ *  @brief ReelMonoPictureAsset class
  */
+
 
 #ifndef LIBDCP_REEL_MONO_PICTURE_ASSET_H
 #define LIBDCP_REEL_MONO_PICTURE_ASSET_H
 
+
 #include "reel_picture_asset.h"
 #include "mono_picture_asset.h"
 
+
 namespace dcp {
+
 
 class MonoPictureAsset;
 
+
 /** @class ReelMonoPictureAsset
- *  @brief Part of a Reel's description which refers to a monoscopic picture asset.
+ *  @brief Part of a Reel's description which refers to a monoscopic picture asset
  */
 class ReelMonoPictureAsset : public ReelPictureAsset
 {
@@ -68,6 +74,8 @@ private:
 	std::string cpl_node_name (Standard standard) const;
 };
 
+
 }
+
 
 #endif

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,26 +31,33 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_subtitle_asset.h
  *  @brief ReelSubtitleAsset class.
  */
 
+
 #ifndef LIBDCP_REEL_SUBTITLE_ASSET_H
 #define LIBDCP_REEL_SUBTITLE_ASSET_H
+
 
 #include "language_tag.h"
 #include "reel_asset.h"
 #include "reel_mxf.h"
 #include "subtitle_asset.h"
 
+
 struct verify_invalid_language1;
+
 
 namespace dcp {
 
+
 class SubtitleAsset;
 
+
 /** @class ReelSubtitleAsset
- *  @brief Part of a Reel's description which refers to a subtitle XML/MXF file.
+ *  @brief Part of a Reel's description which refers to a subtitle XML/MXF file
  */
 class ReelSubtitleAsset : public ReelAsset, public ReelMXF
 {
@@ -84,6 +91,8 @@ private:
 	boost::optional<std::string> _language;
 };
 
+
 }
+
 
 #endif

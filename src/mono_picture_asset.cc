@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/mono_picture_asset.cc
+ *  @brief MonoPictureAsset class
+ */
+
+
 #include "mono_picture_asset.h"
 #include "mono_picture_asset_writer.h"
 #include "mono_picture_asset_reader.h"
@@ -40,6 +46,7 @@
 #include "compose.hpp"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
+
 
 using std::string;
 using std::vector;
@@ -52,6 +59,7 @@ using std::make_shared;
 using namespace boost::placeholders;
 #endif
 using namespace dcp;
+
 
 MonoPictureAsset::MonoPictureAsset (boost::filesystem::path file)
 	: PictureAsset (file)
@@ -77,17 +85,20 @@ MonoPictureAsset::MonoPictureAsset (boost::filesystem::path file)
 	_id = read_writer_info (info);
 }
 
+
 MonoPictureAsset::MonoPictureAsset (Fraction edit_rate, Standard standard)
 	: PictureAsset (edit_rate, standard)
 {
 
 }
 
+
 static void
 storing_note_handler (list<pair<NoteType, string> >& notes, NoteType t, string s)
 {
 	notes.push_back (make_pair (t, s));
 }
+
 
 bool
 MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
@@ -170,16 +181,20 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 	return result;
 }
 
+
 shared_ptr<PictureAssetWriter>
 MonoPictureAsset::start_write (boost::filesystem::path file, bool overwrite)
 {
-	return make_shared<MonoPictureAssetWriter>(this, file, overwrite);
+	/* Can't use make_shared here as the MonoPictureAssetWriter constructor is private */
+	return shared_ptr<MonoPictureAssetWriter>(new MonoPictureAssetWriter(this, file, overwrite));
 }
 
 shared_ptr<MonoPictureAssetReader>
 MonoPictureAsset::start_read () const
 {
-	return make_shared<MonoPictureAssetReader>(this, key(), standard());
+	/* Can't use make_shared here as the MonoPictureAssetReader constructor is private */
+	return shared_ptr<MonoPictureAssetReader>(new MonoPictureAssetReader(this, key(), standard()));
+
 }
 
 string

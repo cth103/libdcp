@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/picture_asset.cc
+ *  @brief PictureAsset class
+ */
+
+
 #include "picture_asset.h"
 #include "util.h"
 #include "exceptions.h"
@@ -46,6 +52,7 @@
 #include <list>
 #include <stdexcept>
 
+
 using std::string;
 using std::list;
 using std::vector;
@@ -55,7 +62,7 @@ using std::make_pair;
 using std::shared_ptr;
 using namespace dcp;
 
-/** Load a PictureAsset from a file */
+
 PictureAsset::PictureAsset (boost::filesystem::path file)
 	: Asset (file)
 	, _intrinsic_duration (0)
@@ -63,7 +70,7 @@ PictureAsset::PictureAsset (boost::filesystem::path file)
 
 }
 
-/** Create a new PictureAsset with a given edit rate and standard */
+
 PictureAsset::PictureAsset (Fraction edit_rate, Standard standard)
 	: MXF (standard)
 	, _edit_rate (edit_rate)
@@ -71,6 +78,7 @@ PictureAsset::PictureAsset (Fraction edit_rate, Standard standard)
 {
 
 }
+
 
 void
 PictureAsset::read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const & desc)
@@ -82,6 +90,7 @@ PictureAsset::read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const & de
 	_frame_rate = Fraction (desc.SampleRate.Numerator, desc.SampleRate.Denominator);
 	_screen_aspect_ratio = Fraction (desc.AspectRatio.Numerator, desc.AspectRatio.Denominator);
 }
+
 
 bool
 PictureAsset::descriptor_equals (
@@ -125,6 +134,7 @@ PictureAsset::descriptor_equals (
 	return true;
 }
 
+
 bool
 PictureAsset::frame_buffer_equals (
 	int frame, EqualityOptions opt, NoteHandler note,
@@ -138,8 +148,8 @@ PictureAsset::frame_buffer_equals (
 	}
 
 	/* Decompress the images to bitmaps */
-	shared_ptr<OpenJPEGImage> image_A = decompress_j2k (const_cast<uint8_t*> (data_A), size_A, 0);
-	shared_ptr<OpenJPEGImage> image_B = decompress_j2k (const_cast<uint8_t*> (data_B), size_B, 0);
+	auto image_A = decompress_j2k (const_cast<uint8_t*>(data_A), size_A, 0);
+	auto image_B = decompress_j2k (const_cast<uint8_t*>(data_B), size_B, 0);
 
 	/* Compare them */
 
@@ -170,11 +180,11 @@ PictureAsset::frame_buffer_equals (
 	double const mean = double (total) / abs_diffs.size ();
 
 	uint64_t total_squared_deviation = 0;
-	for (vector<int>::iterator j = abs_diffs.begin(); j != abs_diffs.end(); ++j) {
-		total_squared_deviation += pow (*j - mean, 2);
+	for (auto j: abs_diffs) {
+		total_squared_deviation += pow (j - mean, 2);
 	}
 
-	double const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
+	auto const std_dev = sqrt (double (total_squared_deviation) / abs_diffs.size());
 
 	note (NoteType::NOTE, String::compose("mean difference %1 deviation %2", mean, std_dev));
 
@@ -199,6 +209,7 @@ PictureAsset::frame_buffer_equals (
 	return true;
 }
 
+
 string
 PictureAsset::static_pkl_type (Standard standard)
 {
@@ -211,6 +222,7 @@ PictureAsset::static_pkl_type (Standard standard)
 		DCP_ASSERT (false);
 	}
 }
+
 
 string
 PictureAsset::pkl_type (Standard standard) const

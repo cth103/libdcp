@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/combine.h
+ *  @brief Method to combine DCPs
+ */
+
+
 #include "compose.hpp"
 #include "version.h"
 #include <boost/filesystem.hpp>
@@ -39,7 +44,9 @@
 
 namespace dcp {
 
+
 class CertificateChain;
+
 
 void combine (
 	std::vector<boost::filesystem::path> inputs,
@@ -50,6 +57,7 @@ void combine (
 	std::string annotation_text = String::compose("Created by libdcp %1", dcp::version),
 	std::shared_ptr<const CertificateChain> signer = std::shared_ptr<CertificateChain>()
 	);
+
 
 }
 

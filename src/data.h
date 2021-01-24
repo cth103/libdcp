@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/data.h
+ *  @brief Data class
+ */
+
+
 #ifndef LIBDCP_DATA_H
 #define LIBDCP_DATA_H
 
@@ -62,5 +67,6 @@ bool operator!=(Data const & a, Data const & b);
 
 
 }
+
 
 #endif

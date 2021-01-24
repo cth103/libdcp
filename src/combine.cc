@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/combine.cc
+ *  @brief Method to combine DCPs
+ */
+
+
 #include "asset.h"
 #include "combine.h"
 #include "cpl.h"
@@ -135,27 +140,27 @@ dcp::combine (
 				continue;
 			}
 
-			optional<path> file = j->file();
+			auto file = j->file();
 			DCP_ASSERT (file);
 			path new_path = make_unique(output / file->filename());
 
-			shared_ptr<dcp::InteropSubtitleAsset> sub = dynamic_pointer_cast<dcp::InteropSubtitleAsset>(j);
+			auto sub = dynamic_pointer_cast<dcp::InteropSubtitleAsset>(j);
 			if (sub) {
 				/* Interop fonts are really fiddly.  The font files are assets (in the ASSETMAP)
 				 * and also linked from the font XML by filename.  We have to fix both these things,
 				 * and re-write the font XML file since the font URI might have changed if it's a duplicate
 				 * with another DCP.
 				 */
-				map<string, path> fonts = sub->font_filenames ();
-				for (map<string, path>::const_iterator k = fonts.begin(); k != fonts.end(); ++k) {
-					sub->set_font_file (k->first, make_unique(output / k->second.filename()));
+				auto fonts = sub->font_filenames ();
+				for (auto const& k: fonts) {
+					sub->set_font_file (k.first, make_unique(output / k.second.filename()));
 				}
 				sub->write (new_path);
 			} else if (!dynamic_pointer_cast<dcp::FontAsset>(j)) {
 				/* Take care of everything else that's not a Interop subtitle asset, Interop font file
 				 * or CPL.
 				 */
-				optional<path> file = j->file();
+				auto file = j->file();
 				DCP_ASSERT (file);
 				path new_path = make_unique(output / file->filename());
 				create_hard_link_or_copy (*file, new_path);

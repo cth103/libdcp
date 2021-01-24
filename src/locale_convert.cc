@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,20 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/locale_convert.cc
+ *  @brief Methods to convert to/from string using the current locale
+ */
+
+
 #include "locale_convert.h"
 #include <string>
 #include <inttypes.h>
 
+
 using std::string;
 using std::wstring;
+
 
 template<>
 string
@@ -47,6 +55,7 @@ dcp::locale_convert (unsigned char x, int, bool)
 	return buffer;
 }
 
+
 template<>
 string
 dcp::locale_convert (unsigned short int x, int, bool)
@@ -55,6 +64,7 @@ dcp::locale_convert (unsigned short int x, int, bool)
 	snprintf (buffer, sizeof(buffer), "%hd", x);
 	return buffer;
 }
+
 
 template<>
 string
@@ -65,6 +75,7 @@ dcp::locale_convert (int x, int, bool)
 	return buffer;
 }
 
+
 template<>
 string
 dcp::locale_convert (unsigned int x, int, bool)
@@ -73,6 +84,7 @@ dcp::locale_convert (unsigned int x, int, bool)
 	snprintf (buffer, sizeof(buffer), "%u", x);
 	return buffer;
 }
+
 
 template<>
 string
@@ -87,6 +99,7 @@ dcp::locale_convert (long int x, int, bool)
 	return buffer;
 }
 
+
 template<>
 string
 dcp::locale_convert (unsigned long int x, int, bool)
@@ -95,6 +108,7 @@ dcp::locale_convert (unsigned long int x, int, bool)
 	snprintf (buffer, sizeof(buffer), "%lu", x);
 	return buffer;
 }
+
 
 template<>
 string
@@ -109,6 +123,7 @@ dcp::locale_convert (long long int x, int, bool)
 	return buffer;
 }
 
+
 template<>
 string
 dcp::locale_convert (unsigned long long int x, int, bool)
@@ -121,6 +136,7 @@ dcp::locale_convert (unsigned long long int x, int, bool)
 #endif
 	return buffer;
 }
+
 
 template<>
 string
@@ -137,6 +153,7 @@ dcp::locale_convert (float x, int precision, bool fixed)
 	return buffer;
 }
 
+
 template<>
 string
 dcp::locale_convert (double x, int precision, bool fixed)
@@ -152,12 +169,14 @@ dcp::locale_convert (double x, int precision, bool fixed)
 	return buffer;
 }
 
+
 template<>
 string
 dcp::locale_convert (string x, int, bool)
 {
 	return x;
 }
+
 
 template<>
 string
@@ -166,12 +185,14 @@ dcp::locale_convert (char* x, int, bool)
 	return x;
 }
 
+
 template<>
 string
 dcp::locale_convert (char const * x, int, bool)
 {
 	return x;
 }
+
 
 template<>
 string
@@ -180,6 +201,7 @@ dcp::locale_convert (wchar_t const * x, int, bool)
 	wstring s (x);
 	return string (s.begin(), s.end());
 }
+
 
 template<>
 string
@@ -190,12 +212,14 @@ dcp::locale_convert (char x, int, bool)
 	return s;
 }
 
+
 template<>
 string
 dcp::locale_convert (boost::filesystem::path x, int, bool)
 {
 	return x.string();
 }
+
 
 template<>
 unsigned char
@@ -206,6 +230,7 @@ dcp::locale_convert (string x, int, bool)
 	return y;
 }
 
+
 template<>
 unsigned short int
 dcp::locale_convert (string x, int, bool)
@@ -214,6 +239,7 @@ dcp::locale_convert (string x, int, bool)
 	sscanf (x.c_str(), "%hu", &y);
 	return y;
 }
+
 
 template<>
 unsigned int
@@ -224,6 +250,7 @@ dcp::locale_convert (string x, int, bool)
 	return y;
 }
 
+
 template<>
 int
 dcp::locale_convert (string x, int, bool)
@@ -233,6 +260,7 @@ dcp::locale_convert (string x, int, bool)
 	return y;
 }
 
+
 template<>
 long
 dcp::locale_convert (string x, int, bool)
@@ -241,6 +269,7 @@ dcp::locale_convert (string x, int, bool)
 	sscanf (x.c_str(), "%ld", &y);
 	return y;
 }
+
 
 template<>
 unsigned long
@@ -255,6 +284,7 @@ dcp::locale_convert (string x, int, bool)
 	return y;
 }
 
+
 template<>
 long long
 dcp::locale_convert (string x, int, bool)
@@ -267,6 +297,7 @@ dcp::locale_convert (string x, int, bool)
 #endif
 	return y;
 }
+
 
 template<>
 unsigned long long
@@ -281,6 +312,7 @@ dcp::locale_convert (string x, int, bool)
 	return y;
 }
 
+
 template<>
 float
 dcp::locale_convert (string x, int, bool)
@@ -289,6 +321,7 @@ dcp::locale_convert (string x, int, bool)
 	sscanf (x.c_str(), "%f", &y);
 	return y;
 }
+
 
 template<>
 double

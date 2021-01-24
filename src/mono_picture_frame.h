@@ -32,22 +32,22 @@
 */
 
 
-#ifndef LIBDCP_MONO_PICTURE_FRAME_H
-#define LIBDCP_MONO_PICTURE_FRAME_H
-
-
 /** @file  src/mono_picture_frame.h
  *  @brief MonoPictureFrame class
  */
 
 
-#include "types.h"
+#ifndef LIBDCP_MONO_PICTURE_FRAME_H
+#define LIBDCP_MONO_PICTURE_FRAME_H
+
+
 #include "asset_reader.h"
-#include <memory>
+#include "types.h"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
-#include <string>
+#include <memory>
 #include <stdint.h>
+#include <string>
 
 
 namespace ASDCP {
@@ -66,21 +66,33 @@ class OpenJPEGImage;
 
 
 /** @class MonoPictureFrame
- *  @brief A single frame of a 2D (monoscopic) picture asset.
+ *  @brief A single frame of a 2D (monoscopic) picture asset
  */
 class MonoPictureFrame : public Data
 {
 public:
+	/** Make a picture frame from a JPEG2000 file.
+	 *  @param path Path to JPEG2000 file.
+	 */
 	explicit MonoPictureFrame (boost::filesystem::path path);
 	MonoPictureFrame (uint8_t const * data, int size);
 
 	MonoPictureFrame (MonoPictureFrame const&) = delete;
 	MonoPictureFrame& operator= (MonoPictureFrame const&) = delete;
 
+	/** @param reduce a factor by which to reduce the resolution
+	 *  of the image, expressed as a power of two (pass 0 for no
+	 *  reduction).
+	 */
 	std::shared_ptr<OpenJPEGImage> xyz_image (int reduce = 0) const;
 
+	/** @return Pointer to JPEG2000 data */
 	uint8_t const * data () const;
+
+	/** @return Pointer to JPEG2000 data */
 	uint8_t* data ();
+
+	/** @return Size of JPEG2000 data in bytes */
 	int size () const;
 
 private:

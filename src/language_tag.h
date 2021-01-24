@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/language_tag.cc
+ *  @brief LanguageTag class
+ */
+
+
 #ifndef LIBDCP_LANGUAGE_TAG_H
 #define LIBDCP_LANGUAGE_TAG_H
 
@@ -232,11 +238,13 @@ private:
 	std::vector<ExtlangSubtag> _extlangs;
 };
 
+
 extern bool operator==(dcp::LanguageTag const& a, dcp::LanguageTag const& b);
 extern std::ostream& operator<<(std::ostream& os, dcp::LanguageTag const& tag);
 
 
 extern void load_language_tag_lists (boost::filesystem::path tags_directory);
+
 
 }
 

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,17 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/picture_asset_writer_common.cc
+ *  @brief Common parts of PictureAssetWriter
+ */
+
+
 using std::shared_ptr;
 
+
 namespace dcp {
+
 
 struct ASDCPStateBase
 {
@@ -47,14 +55,16 @@ struct ASDCPStateBase
 	ASDCP::JP2K::PictureDescriptor picture_descriptor;
 };
 
+
 }
+
 
 template <class P, class Q>
 void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint8_t const * data, int size)
 {
 	asset->set_file (writer->_file);
 
-	if (ASDCP_FAILURE (state->j2k_parser.OpenReadFrame (data, size, state->frame_buffer))) {
+	if (ASDCP_FAILURE (state->j2k_parser.OpenReadFrame(data, size, state->frame_buffer))) {
 		boost::throw_exception (MiscError ("could not parse J2K frame"));
 	}
 
@@ -66,7 +76,7 @@ void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint
 
 	asset->fill_writer_info (&state->writer_info, asset->id());
 
-	Kumu::Result_t r = state->mxf_writer.OpenWrite (
+	auto r = state->mxf_writer.OpenWrite (
 		asset->file()->string().c_str(),
 		state->writer_info,
 		state->picture_descriptor,
@@ -74,8 +84,8 @@ void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint
 		writer->_overwrite
 		);
 
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not open MXF file for writing", asset->file()->string(), r));
+	if (ASDCP_FAILURE(r)) {
+		boost::throw_exception (MXFFileError("could not open MXF file for writing", asset->file()->string(), r));
 	}
 
 	writer->_started = true;

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,38 +31,28 @@
     files in the program, then also delete it here.
 */
 
-#include "rgb_xyz.h"
-#include "openjpeg_image.h"
+
 #include "colour_conversion.h"
-#include "transfer_function.h"
-#include "dcp_assert.h"
 #include "compose.hpp"
+#include "dcp_assert.h"
+#include "openjpeg_image.h"
+#include "rgb_xyz.h"
+#include "transfer_function.h"
 #include <cmath>
 
-using std::min;
-using std::max;
+
 using std::cout;
+using std::make_shared;
+using std::max;
+using std::min;
 using std::shared_ptr;
 using boost::optional;
 using namespace dcp;
 
-#define DCI_COEFFICIENT (48.0 / 52.37)
 
-/** Convert an XYZ image to RGBA.
- *  @param xyz_image Image in XYZ.
- *  @param conversion Colour conversion to use.
- *  @param argb Buffer to fill with RGBA data.  The format of the data is:
- *
- *  <pre>
- *  Byte   /- 0 -------|- 1 --------|- 2 --------|- 3 --------|- 4 --------|- 5 --------| ...
- *         |(0, 0) Blue|(0, 0)Green |(0, 0) Red  |(0, 0) Alpha|(0, 1) Blue |(0, 1) Green| ...
- *  </pre>
- *
- *  So that the first byte is the blue component of the pixel at x=0, y=0, the second
- *  is the green component, and so on.
- *
- *  Lines are packed so that the second row directly follows the first.
- */
+static auto constexpr DCI_COEFFICIENT = 48.0 / 52.37;
+
+
 void
 dcp::xyz_to_rgba (
 	std::shared_ptr<const OpenJPEGImage> xyz_image,
@@ -139,15 +129,7 @@ dcp::xyz_to_rgba (
 	}
 }
 
-/** Convert an XYZ image to 48bpp RGB.
- *  @param xyz_image Frame in XYZ.
- *  @param conversion Colour conversion to use.
- *  @param rgb Buffer to fill with RGB data.  Format is packed RGB
- *  16:16:16, 48bpp, 16R, 16G, 16B, with the 2-byte value for each
- *  R/G/B component stored as little-endian; i.e. AV_PIX_FMT_RGB48LE.
- *  @param stride Stride for RGB data in bytes.
- *  @param note Optional handler for any notes that may be made during the conversion (e.g. when clamping occurs).
- */
+
 void
 dcp::xyz_to_rgb (
 	shared_ptr<const OpenJPEGImage> xyz_image,
@@ -243,9 +225,6 @@ dcp::xyz_to_rgb (
 	}
 }
 
-/** @param conversion Colour conversion.
- *  @param matrix Filled in with the product of the RGB to XYZ matrix, the Bradford transform and the DCI companding.
- */
 void
 dcp::combined_rgb_to_xyz (ColourConversion const & conversion, double* matrix)
 {
@@ -272,12 +251,7 @@ dcp::combined_rgb_to_xyz (ColourConversion const & conversion, double* matrix)
 		* DCI_COEFFICIENT * 65535;
 }
 
-/** @param rgb RGB data; packed RGB 16:16:16, 48bpp, 16R, 16G, 16B,
- *  with the 2-byte value for each R/G/B component stored as
- *  little-endian; i.e. AV_PIX_FMT_RGB48LE.
- *  @param size size of RGB image in pixels.
- *  @param size stride of RGB data in pixels.
- */
+
 shared_ptr<dcp::OpenJPEGImage>
 dcp::rgb_to_xyz (
 	uint8_t const * rgb,
@@ -287,7 +261,7 @@ dcp::rgb_to_xyz (
 	optional<NoteHandler> note
 	)
 {
-	shared_ptr<OpenJPEGImage> xyz (new OpenJPEGImage (size));
+	auto xyz = make_shared<OpenJPEGImage>(size);
 
 	struct {
 		double r, g, b;
@@ -297,8 +271,8 @@ dcp::rgb_to_xyz (
 		double x, y, z;
 	} d;
 
-	double const * lut_in = conversion.in()->lut (12, false);
-	double const * lut_out = conversion.out()->lut (16, true);
+	auto const * lut_in = conversion.in()->lut (12, false);
+	auto const * lut_out = conversion.out()->lut (16, true);
 
 	/* This is is the product of the RGB to XYZ matrix, the Bradford transform and the DCI companding */
 	double fast_matrix[9];
@@ -309,7 +283,7 @@ dcp::rgb_to_xyz (
 	int* xyz_y = xyz->data (1);
 	int* xyz_z = xyz->data (2);
 	for (int y = 0; y < size.height; ++y) {
-		uint16_t const * p = reinterpret_cast<uint16_t const *> (rgb + y * stride);
+		auto p = reinterpret_cast<uint16_t const *> (rgb + y * stride);
 		for (int x = 0; x < size.width; ++x) {
 
 			/* In gamma LUT (converting 16-bit to 12-bit) */

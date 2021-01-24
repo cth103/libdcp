@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2017 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,15 +31,18 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_closed_caption_asset.cc
- *  @brief ReelClosedCaptionAsset class.
+ *  @brief ReelClosedCaptionAsset class
  */
+
 
 #include "subtitle_asset.h"
 #include "reel_closed_caption_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "dcp_assert.h"
 #include <libxml++/libxml++.h>
+
 
 using std::string;
 using std::pair;
@@ -49,12 +52,14 @@ using std::dynamic_pointer_cast;
 using boost::optional;
 using namespace dcp;
 
+
 ReelClosedCaptionAsset::ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelAsset (asset->id(), edit_rate, intrinsic_duration, entry_point)
 	, ReelMXF (asset, dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : optional<string>())
 {
 
 }
+
 
 ReelClosedCaptionAsset::ReelClosedCaptionAsset (std::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
@@ -63,6 +68,7 @@ ReelClosedCaptionAsset::ReelClosedCaptionAsset (std::shared_ptr<const cxml::Node
 	_language = node->optional_string_child ("Language");
 	node->done ();
 }
+
 
 string
 ReelClosedCaptionAsset::cpl_node_name (Standard standard) const
@@ -77,6 +83,7 @@ ReelClosedCaptionAsset::cpl_node_name (Standard standard) const
 	DCP_ASSERT (false);
 }
 
+
 pair<string, string>
 ReelClosedCaptionAsset::cpl_node_namespace (Standard standard) const
 {
@@ -90,16 +97,18 @@ ReelClosedCaptionAsset::cpl_node_namespace (Standard standard) const
 	DCP_ASSERT (false);
 }
 
+
 string
 ReelClosedCaptionAsset::key_type () const
 {
 	return "MDSK";
 }
 
+
 xmlpp::Node *
 ReelClosedCaptionAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	xmlpp::Node* asset = write_to_cpl_asset (node, standard, hash());
+	auto asset = write_to_cpl_asset (node, standard, hash());
 	write_to_cpl_mxf (asset);
 
 	if (_language) {
@@ -108,6 +117,7 @@ ReelClosedCaptionAsset::write_to_cpl (xmlpp::Node* node, Standard standard) cons
 
 	return asset;
 }
+
 
 bool
 ReelClosedCaptionAsset::equals (shared_ptr<const ReelClosedCaptionAsset> other, EqualityOptions opt, NoteHandler note) const

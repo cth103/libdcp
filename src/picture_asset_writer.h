@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/picture_asset_writer.h
  *  @brief PictureAssetWriter and FrameInfo classes.
  */
 
+
 #ifndef LIBDCP_PICTURE_ASSET_WRITER_H
 #define LIBDCP_PICTURE_ASSET_WRITER_H
+
 
 #include "metadata.h"
 #include "types.h"
@@ -46,19 +49,19 @@
 #include <stdint.h>
 #include <string>
 
+
 namespace dcp {
 
+
 class PictureAsset;
+
 
 /** @class FrameInfo
  *  @brief Information about a single frame (either a monoscopic frame or a left *or* right eye stereoscopic frame)
  */
 struct FrameInfo
 {
-	FrameInfo ()
-		: offset (0)
-		, size (0)
-	{}
+	FrameInfo () {}
 
 	FrameInfo (uint64_t o, uint64_t s, std::string h)
 		: offset (o)
@@ -66,10 +69,11 @@ struct FrameInfo
 		, hash (h)
 	{}
 
-	uint64_t offset;
-	uint64_t size;
+	uint64_t offset = 0;
+	uint64_t size = 0;
 	std::string hash;
 };
+
 
 /** @class PictureAssetWriter
  *  @brief Parent class for classes which write picture assets.
@@ -87,9 +91,11 @@ protected:
 	PictureAssetWriter (PictureAsset *, boost::filesystem::path, bool);
 
 	PictureAsset* _picture_asset;
-	bool _overwrite;
+	bool _overwrite = false;
 };
 
+
 }
+
 
 #endif

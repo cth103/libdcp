@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/sound_asset.h
  *  @brief SoundAsset class
  */
 
+
 #ifndef LIBDCP_SOUND_ASSET_H
 #define LIBDCP_SOUND_ASSET_H
+
 
 #include "mxf.h"
 #include "types.h"
@@ -50,6 +53,7 @@ namespace dcp {
 	class SoundAsset;
 }
 
+
 extern std::shared_ptr<dcp::SoundAsset> simple_sound (
 	boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language, int frames, int sample_rate
 	);
@@ -58,7 +62,9 @@ extern std::shared_ptr<dcp::SoundAsset> simple_sound (
 namespace dcp
 {
 
+
 class SoundAssetWriter;
+
 
 /** @class SoundAsset
  *  @brief Representation of a sound asset
@@ -117,12 +123,14 @@ private:
 	/** The total length of this content in video frames.  The amount of
 	 *  content presented may be less than this.
 	 */
-	int64_t _intrinsic_duration;
-	int _channels;      ///< number of channels
-	int _sampling_rate; ///< sampling rate in Hz
+	int64_t _intrinsic_duration = 0;
+	int _channels = 0;      ///< number of channels
+	int _sampling_rate = 0; ///< sampling rate in Hz
 	std::string _language;
 };
 
+
 }
+
 
 #endif

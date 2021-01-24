@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/language_tag.cc
+ *  @brief LanguageTag class
+ */
+
+
 #include "compose.hpp"
 #include "dcp_assert.h"
 #include "exceptions.h"
@@ -67,7 +72,7 @@ find_in_list (vector<LanguageTag::SubtagData> const& list, string subtag)
 		}
 	}
 
-	return optional<LanguageTag::SubtagData>();
+	return {};
 }
 
 
@@ -147,7 +152,7 @@ LanguageTag::to_string () const
 		throw LanguageTagError("No language set up");
 	}
 
-	string s = _language->subtag();
+	auto s = _language->subtag();
 
 	if (_script) {
 		s += "-" + _script->subtag();
@@ -264,19 +269,19 @@ LanguageTag::description () const
 	d += language->description;
 
 	if (_script) {
-		optional<SubtagData> script = get_subtag_data (SubtagType::SCRIPT, _script->subtag());
+		auto script = get_subtag_data (SubtagType::SCRIPT, _script->subtag());
 		DCP_ASSERT (script);
 		d += " written using the " + script->description + " script";
 	}
 
 	if (_region) {
-		optional<SubtagData> region = get_subtag_data (SubtagType::REGION, _region->subtag());
+		auto region = get_subtag_data (SubtagType::REGION, _region->subtag());
 		DCP_ASSERT (region);
 		d += " for " + region->description;
 	}
 
 	for (auto const& i: _extlangs) {
-		optional<SubtagData> extlang = get_subtag_data (SubtagType::EXTLANG, i.subtag());
+		auto extlang = get_subtag_data (SubtagType::EXTLANG, i.subtag());
 		DCP_ASSERT (extlang);
 		d += ", " + extlang->description;
 	}
@@ -321,7 +326,7 @@ LanguageTag::subtag_type_name (SubtagType type)
 			return "Extended";
 	}
 
-	return "";
+	return {};
 }
 
 bool
@@ -412,16 +417,16 @@ LanguageTag::get_subtag_data (LanguageTag::SubtagType type, string subtag)
 		return find_in_list(extlang_list, subtag);
 	}
 
-	return optional<LanguageTag::SubtagData>();
+	return {};
 }
 
 
 optional<string>
 LanguageTag::get_subtag_description (LanguageTag::SubtagType type, string subtag)
 {
-	optional<SubtagData> data = get_subtag_data (type, subtag);
+	auto data = get_subtag_data (type, subtag);
 	if (!data) {
-		return optional<string>();
+		return {};
 	}
 
 	return data->description;
@@ -431,7 +436,7 @@ LanguageTag::get_subtag_description (LanguageTag::SubtagType type, string subtag
 void
 load_language_tag_list (boost::filesystem::path tags_directory, string name, vector<LanguageTag::SubtagData>& list)
 {
-	FILE* f = fopen_boost (tags_directory / name, "r");
+	auto f = fopen_boost (tags_directory / name, "r");
 	if (!f) {
 		throw FileError ("Could not open tags file", tags_directory / name, errno);
 	}

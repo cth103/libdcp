@@ -33,7 +33,7 @@
 
 
 /** @file  src/asset_writer.h
- *  @brief AssetWriter class.
+ *  @brief AssetWriter class
  */
 
 
@@ -61,7 +61,6 @@ AssetWriter::AssetWriter (MXF* mxf, boost::filesystem::path file)
 }
 
 
-/** @return true if anything was written by this writer */
 bool
 AssetWriter::finalize ()
 {

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,8 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/crypto_context.h
+ *  @class CryptoContext class
+ */
+
+
 #ifndef LIBDCP_CRYPTO_CONTEXT_H
 #define LIBDCP_CRYPTO_CONTEXT_H
+
 
 #include "key.h"
 #include "types.h"
@@ -41,22 +48,24 @@
 #include <asdcp/KM_prng.h>
 #include <boost/optional.hpp>
 
+
 namespace dcp {
+
 
 template <class T>
 class CryptoContext
 {
 public:
 	CryptoContext (boost::optional<Key> key, Standard standard)
-		: _context (0)
-		, _hmac (0)
+		: _context (nullptr)
+		, _hmac (nullptr)
 	{
 		if (!key) {
 			return;
 		}
 
-		_context = new T;
-		if (ASDCP_FAILURE (_context->InitKey (key->value ()))) {
+		_context = new T ();
+		if (ASDCP_FAILURE (_context->InitKey(key->value()))) {
 			throw MiscError ("could not set up crypto context");
 		}
 
@@ -76,7 +85,7 @@ public:
 			type = ASDCP::LS_MXF_SMPTE;
 		}
 
-		if (ASDCP_FAILURE (_hmac->InitKey (key->value(), type))) {
+		if (ASDCP_FAILURE (_hmac->InitKey(key->value(), type))) {
 			throw MiscError ("could not set up HMAC context");
 		}
 	}
@@ -100,9 +109,12 @@ private:
 	ASDCP::HMACContext* _hmac;
 };
 
+
 typedef CryptoContext<ASDCP::AESEncContext> EncryptionContext;
 typedef CryptoContext<ASDCP::AESDecContext> DecryptionContext;
 
+
 }
+
 
 #endif

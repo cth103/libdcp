@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/array_data.cc
+ *  @brief ArrayData class
+ */
+
+
 #include "array_data.h"
 #include "util.h"
 #include "exceptions.h"
@@ -44,7 +49,6 @@ using namespace dcp;
 
 
 ArrayData::ArrayData ()
-	: _size (0)
 {
 
 }

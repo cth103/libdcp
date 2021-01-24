@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2013-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,21 +31,26 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/decrypted_kdm_key.h
  *  @brief DecryptedKDMKey class
  */
 
+
 #ifndef LIBDCP_DECRYPTED_KDM_KEY_H
 #define LIBDCP_DECRYPTED_KDM_KEY_H
+
 
 #include "key.h"
 #include "types.h"
 #include <boost/optional.hpp>
 
+
 namespace dcp {
 
+
 /** @class DecryptedKDMKey
- *  @brief An un- or de-crypted key from a KDM.
+ *  @brief An un- or de-crypted key from a KDM
  */
 class DecryptedKDMKey
 {
@@ -86,8 +91,11 @@ private:
 	Standard _standard;
 };
 
+
 bool operator== (DecryptedKDMKey const &, DecryptedKDMKey const &);
 
+
 }
+
 
 #endif

@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/pkl.cc
+ *  @brief PKL class
+ */
+
+
 #ifndef LIBDCP_PKL_H
 #define LIBDCP_PKL_H
 
@@ -137,6 +142,8 @@ private:
 	mutable boost::optional<boost::filesystem::path> _file;
 };
 
+
 }
+
 
 #endif

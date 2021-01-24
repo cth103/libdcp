@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_sound_asset.h
- *  @brief ReelSoundAsset class.
+ *  @brief ReelSoundAsset class
  */
+
 
 #include "reel_mxf.h"
 #include "reel_asset.h"
@@ -41,10 +43,12 @@
 #include <memory>
 #include <string>
 
+
 namespace dcp {
 
+
 /** @class ReelSoundAsset
- *  @brief Part of a Reel's description which refers to a sound asset.
+ *  @brief Part of a Reel's description which refers to a sound asset
  */
 class ReelSoundAsset : public ReelAsset, public ReelMXF
 {
@@ -69,5 +73,6 @@ private:
 	std::string key_type () const;
 	std::string cpl_node_name (Standard standard) const;
 };
+
 
 }

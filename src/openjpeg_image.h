@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,31 +31,53 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/openjpeg_image.h
- *  @brief OpenJPEGImage class.
+ *  @brief OpenJPEGImage class
  */
 
+
 #include "util.h"
+
 
 struct opj_image;
 typedef struct opj_image opj_image_t;
 
+
 namespace dcp {
 
+
 /** @class OpenJPEGImage
- *  @brief A wrapper of libopenjpeg's opj_image_t.
+ *  @brief A wrapper of libopenjpeg's opj_image_t
  */
 class OpenJPEGImage
 {
 public:
+	/** Construct an OpenJPEGImage, taking ownership of the opj_image_t */
 	explicit OpenJPEGImage (opj_image_t *);
+
 	explicit OpenJPEGImage (OpenJPEGImage const & other);
+
+	/** Construct a new OpenJPEGImage with undefined contents
+	 *  @param size Size for the frame in pixels
+	 */
 	explicit OpenJPEGImage (Size);
+
+	/** @param data_16 XYZ/RGB image data in packed 16:16:16, 48bpp with
+	 *  the 2-byte value for each component stored as little-endian
+	 */
 	OpenJPEGImage (uint8_t const * in_16, dcp::Size size, int stride);
+
 	~OpenJPEGImage ();
 
+	/** @param c Component index (0, 1 or 2)
+	 *  @return Pointer to the data for component c.
+	 */
 	int* data (int) const;
+
+	/** @return Size of the image in pixels */
 	Size size () const;
+
 	int precision (int component) const;
 	bool srgb () const;
 	int factor (int component) const;
@@ -70,7 +92,8 @@ public:
 private:
 	void create (Size size);
 
-	opj_image_t* _opj_image; ///< opj_image_t that we are managing
+	opj_image_t* _opj_image = nullptr; ///< opj_image_t that we are managing
 };
+
 
 }

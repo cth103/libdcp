@@ -31,10 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
 #include "reel_markers_asset.h"
 #include "raw_convert.h"
 #include "dcp_assert.h"
 #include <libxml++/libxml++.h>
+
 
 using std::string;
 using std::map;
@@ -43,11 +45,13 @@ using boost::optional;
 using std::shared_ptr;
 using namespace dcp;
 
+
 ReelMarkersAsset::ReelMarkersAsset (Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelAsset (make_uuid(), edit_rate, intrinsic_duration, entry_point)
 {
 
 }
+
 
 ReelMarkersAsset::ReelMarkersAsset (cxml::ConstNodePtr node)
 	: ReelAsset (node)
@@ -59,11 +63,13 @@ ReelMarkersAsset::ReelMarkersAsset (cxml::ConstNodePtr node)
 	}
 }
 
+
 string
 ReelMarkersAsset::cpl_node_name (Standard) const
 {
 	return "MainMarkers";
 }
+
 
 void
 ReelMarkersAsset::set (Marker m, Time t)
@@ -71,11 +77,13 @@ ReelMarkersAsset::set (Marker m, Time t)
 	_markers[m] = t;
 }
 
+
 void
 ReelMarkersAsset::unset (Marker m)
 {
 	_markers.erase (m);
 }
+
 
 optional<Time>
 ReelMarkersAsset::get (Marker m) const
@@ -87,16 +95,17 @@ ReelMarkersAsset::get (Marker m) const
 	return i->second;
 }
 
+
 xmlpp::Node*
 ReelMarkersAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
 	int const tcr = edit_rate().numerator / edit_rate().denominator;
-	xmlpp::Node* asset = write_to_cpl_asset (node, standard, optional<string>());
-	xmlpp::Node* ml = asset->add_child("MarkerList");
-	for (map<Marker, Time>::const_iterator i = _markers.begin(); i != _markers.end(); ++i) {
-		xmlpp::Node* m = ml->add_child("Marker");
-		m->add_child("Label")->add_child_text (marker_to_string(i->first));
-		m->add_child("Offset")->add_child_text (raw_convert<string>(i->second.as_editable_units(tcr)));
+	auto asset = write_to_cpl_asset (node, standard, optional<string>());
+	auto ml = asset->add_child("MarkerList");
+	for (auto const& i: _markers) {
+		auto m = ml->add_child("Marker");
+		m->add_child("Label")->add_child_text(marker_to_string(i.first));
+		m->add_child("Offset")->add_child_text(raw_convert<string>(i.second.as_editable_units(tcr)));
 	}
 
 	return asset;

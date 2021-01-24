@@ -31,21 +31,26 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/reel_picture_asset.h
- *  @brief ReelPictureAsset class.
+ *  @brief ReelPictureAsset class
  */
+
 
 #ifndef LIBDCP_REEL_PICTURE_ASSET_H
 #define LIBDCP_REEL_PICTURE_ASSET_H
+
 
 #include "reel_mxf.h"
 #include "reel_asset.h"
 #include "picture_asset.h"
 
+
 namespace dcp {
 
+
 /** @class ReelPictureAsset
- *  @brief Part of a Reel's description which refers to a picture asset.
+ *  @brief Part of a Reel's description which refers to a picture asset
  */
 class ReelPictureAsset : public ReelAsset, public ReelMXF
 {
@@ -89,6 +94,8 @@ private:
 	Fraction _screen_aspect_ratio;
 };
 
+
 }
+
 
 #endif

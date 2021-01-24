@@ -104,12 +104,12 @@ private:
 	friend class AtmosAssetWriter;
 
 	Fraction _edit_rate;
-	int64_t _intrinsic_duration;
-	int _first_frame;
-	int _max_channel_count;
-	int _max_object_count;
+	int64_t _intrinsic_duration = 0;
+	int _first_frame = 0;
+	int _max_channel_count = 0;
+	int _max_object_count = 0;
 	std::string _atmos_id;
-	int _atmos_version;
+	int _atmos_version = 0;
 };
 
 
