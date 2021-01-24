@@ -84,7 +84,7 @@ SubtitleString::SubtitleString (
 	, _effect (effect)
 	, _effect_colour (effect_colour)
 {
-	_aspect_adjust = max(min(_aspect_adjust, 4.0), 0.25);
+	_aspect_adjust = max(min(_aspect_adjust, 4.0f), 0.25f);
 }
 
 

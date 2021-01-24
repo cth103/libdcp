@@ -484,8 +484,8 @@ ContentVersion::as_xml (xmlpp::Element* parent) const
 
 
 Luminance::Luminance (cxml::ConstNodePtr node)
-	: _unit(string_to_unit(node->string_attribute("units")))
-	, _value(raw_convert<float>(node->content()))
+	: _value(raw_convert<float>(node->content()))
+	, _unit(string_to_unit(node->string_attribute("units")))
 {
 
 }
