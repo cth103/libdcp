@@ -31,8 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/verify.h
+ *  @brief dcp::verify() method and associated code
+ */
+
+
 #ifndef LIBDCP_VERIFY_H
 #define LIBDCP_VERIFY_H
+
 
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
@@ -40,10 +47,13 @@
 #include <string>
 #include <vector>
 
+
 /* Something in windows.h defines this */
 #undef ERROR
 
+
 namespace dcp {
+
 
 class VerificationNote
 {
@@ -373,6 +383,7 @@ private:
 	boost::optional<uint64_t> _line;
 };
 
+
 std::vector<VerificationNote> verify (
 	std::vector<boost::filesystem::path> directories,
 	boost::function<void (std::string, boost::optional<boost::filesystem::path>)> stage,
@@ -386,6 +397,8 @@ bool operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 
 std::ostream& operator<<(std::ostream& s, dcp::VerificationNote const& note);
 
+
 }
+
 
 #endif

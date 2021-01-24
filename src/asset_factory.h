@@ -31,8 +31,16 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/asset_factory.h
+ *  @brief asset_factory() method
+ */
+
+
 namespace dcp {
 
+
 std::shared_ptr<Asset> asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_mxf_type);
+
 
 }

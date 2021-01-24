@@ -32,13 +32,13 @@
 */
 
 
-#ifndef LIBDCP_SUBTITLE_H
-#define LIBDCP_SUBTITLE_H
-
-
 /** @file  src/subtitle.h
  *  @brief Subtitle class
  */
+
+
+#ifndef LIBDCP_SUBTITLE_H
+#define LIBDCP_SUBTITLE_H
 
 
 #include "dcp_time.h"

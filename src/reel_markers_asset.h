@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/reel_markers_asset.cc
+ *  @brief ReelMarkersAsset class
+ */
+
+
 #include "reel_asset.h"
 #include "dcp_time.h"
 #include <map>

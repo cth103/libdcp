@@ -33,7 +33,7 @@
 
 
 /** @file  src/transfer_function.h
- *  @brief TransferFunction class.
+ *  @brief TransferFunction class
  */
 
 

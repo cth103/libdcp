@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/reel_markers_asset.cc
+ *  @brief ReelMarkersAsset class
+ */
+
+
 #include "reel_markers_asset.h"
 #include "raw_convert.h"
 #include "dcp_assert.h"
@@ -88,9 +93,9 @@ ReelMarkersAsset::unset (Marker m)
 optional<Time>
 ReelMarkersAsset::get (Marker m) const
 {
-	map<Marker, Time>::const_iterator i = _markers.find (m);
+	auto i = _markers.find (m);
 	if (i == _markers.end ()) {
-		return optional<Time>();
+		return {};
 	}
 	return i->second;
 }

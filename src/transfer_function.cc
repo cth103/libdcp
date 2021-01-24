@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,8 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
+/* @file  src/transfer_function.cc
+ * @brief TransferFunction
+ */
+
+
 #include "transfer_function.h"
 #include <cmath>
+
 
 using std::pow;
 using std::map;
@@ -41,23 +48,25 @@ using std::make_pair;
 using std::shared_ptr;
 using namespace dcp;
 
+
 TransferFunction::~TransferFunction ()
 {
 	boost::mutex::scoped_lock lm (_mutex);
 
-	for (map<pair<int, bool>, double*>::const_iterator i = _luts.begin(); i != _luts.end(); ++i) {
-		delete[] i->second;
+	for (auto const& i: _luts) {
+		delete[] i.second;
 	}
 
 	_luts.clear ();
 }
+
 
 double const *
 TransferFunction::lut (int bit_depth, bool inverse) const
 {
 	boost::mutex::scoped_lock lm (_mutex);
 
-	map<pair<int, bool>, double*>::const_iterator i = _luts.find (make_pair (bit_depth, inverse));
+	auto i = _luts.find (make_pair (bit_depth, inverse));
 	if (i != _luts.end ()) {
 		return i->second;
 	}

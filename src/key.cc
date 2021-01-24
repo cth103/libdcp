@@ -33,7 +33,7 @@
 
 
 /** @file  src/key.cc
- *  @brief Key class.
+ *  @brief Key class
  */
 
 

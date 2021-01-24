@@ -33,7 +33,7 @@
 
 
 /** @file  src/asset.cc
- *  @brief Asset class.
+ *  @brief Asset class
  */
 
 

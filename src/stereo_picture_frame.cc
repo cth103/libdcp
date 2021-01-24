@@ -32,6 +32,11 @@
 */
 
 
+/** @file  src/stereo_picture_frame.cc
+ *  @brief StereoPictureFrame class
+ */
+
+
 #include "stereo_picture_frame.h"
 #include "exceptions.h"
 #include "util.h"

@@ -33,7 +33,7 @@
 
 
 /** @file  src/smpte_load_font_node.h
- *  @brief SMPTELoadFontNode class.
+ *  @brief SMPTELoadFontNode class
  */
 
 

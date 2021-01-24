@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/asset_factory.cc
+ *  @brief asset_factory() method
+ */
+
+
 #include "mono_picture_asset.h"
 #include "stereo_picture_asset.h"
 #include "sound_asset.h"
@@ -41,9 +47,11 @@
 #include "asset_factory.h"
 #include <memory>
 
+
 using std::shared_ptr;
 using std::make_shared;
 using namespace dcp;
+
 
 shared_ptr<Asset>
 dcp::asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_mxf_type)

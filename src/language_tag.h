@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2020-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -247,5 +247,6 @@ extern void load_language_tag_lists (boost::filesystem::path tags_directory);
 
 
 }
+
 
 #endif

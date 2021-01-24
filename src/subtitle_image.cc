@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,13 +31,21 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/subtitle_image.cc
+ *  @brief SubtitleImage class
+ */
+
+
 #include "subtitle_image.h"
 #include "util.h"
+
 
 using std::ostream;
 using std::string;
 using std::shared_ptr;
 using namespace dcp;
+
 
 SubtitleImage::SubtitleImage (
 	ArrayData png_image,
@@ -56,6 +64,7 @@ SubtitleImage::SubtitleImage (
 {
 
 }
+
 
 SubtitleImage::SubtitleImage (
 	ArrayData png_image,
@@ -76,6 +85,7 @@ SubtitleImage::SubtitleImage (
 
 }
 
+
 void
 SubtitleImage::read_png_file (boost::filesystem::path file)
 {
@@ -83,12 +93,14 @@ SubtitleImage::read_png_file (boost::filesystem::path file)
 	_png_image = ArrayData (file);
 }
 
+
 void
 SubtitleImage::write_png_file (boost::filesystem::path file) const
 {
 	_file = file;
 	png_image().write (file);
 }
+
 
 bool
 dcp::operator== (SubtitleImage const & a, SubtitleImage const & b)
@@ -107,11 +119,13 @@ dcp::operator== (SubtitleImage const & a, SubtitleImage const & b)
 		);
 }
 
+
 bool
 dcp::operator!= (SubtitleImage const & a, SubtitleImage const & b)
 {
 	return !(a == b);
 }
+
 
 bool
 SubtitleImage::equals (shared_ptr<SubtitleImage> other, EqualityOptions options, NoteHandler note)
@@ -177,6 +191,7 @@ SubtitleImage::equals (shared_ptr<SubtitleImage> other, EqualityOptions options,
 
 	return true;
 }
+
 
 ostream&
 dcp::operator<< (ostream& s, SubtitleImage const & sub)

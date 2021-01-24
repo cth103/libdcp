@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -150,6 +150,8 @@ private:
 	boost::optional<int64_t> _entry_point; ///< The &lt;EntryPoint&gt; from the reel's entry for this asset
 };
 
+
 }
+
 
 #endif

@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/verify.cc
+ *  @brief dcp::verify() method and associated code
+ */
+
+
 #include "verify.h"
 #include "dcp.h"
 #include "cpl.h"
@@ -72,6 +78,7 @@
 #include <vector>
 #include <iostream>
 
+
 using std::list;
 using std::vector;
 using std::string;
@@ -85,8 +92,10 @@ using boost::optional;
 using boost::function;
 using std::dynamic_pointer_cast;
 
+
 using namespace dcp;
 using namespace xercesc;
+
 
 static
 string
@@ -97,6 +106,7 @@ xml_ch_to_string (XMLCh const * a)
 	XMLString::release(&x);
 	return o;
 }
+
 
 class XMLValidationError
 {
@@ -183,6 +193,7 @@ private:
 	list<XMLValidationError> _errors;
 };
 
+
 class StringToXMLCh
 {
 public:
@@ -206,6 +217,7 @@ public:
 private:
 	XMLCh* _buffer;
 };
+
 
 class LocalFileResolver : public EntityResolver
 {
@@ -1341,6 +1353,7 @@ dcp::verify (
 	return notes;
 }
 
+
 string
 dcp::note_to_string (VerificationNote note)
 {
@@ -1492,6 +1505,7 @@ dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 {
 	return a.type() == b.type() && a.code() == b.code() && a.note() == b.note() && a.file() == b.file() && a.line() == b.line();
 }
+
 
 std::ostream&
 dcp::operator<< (std::ostream& s, dcp::VerificationNote const& note)

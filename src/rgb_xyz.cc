@@ -32,6 +32,11 @@
 */
 
 
+/** @file  rgb_xyz.cc
+ *  @brief Conversion between RGB and XYZ
+ */
+
+
 #include "colour_conversion.h"
 #include "compose.hpp"
 #include "dcp_assert.h"
@@ -154,7 +159,7 @@ dcp::xyz_to_rgb (
 
 	double const * lut_in = conversion.out()->lut (12, false);
 	double const * lut_out = conversion.in()->lut (16, true);
-	boost::numeric::ublas::matrix<double> const matrix = conversion.xyz_to_rgb ();
+	auto const matrix = conversion.xyz_to_rgb ();
 
 	double fast_matrix[9] = {
 		matrix (0, 0), matrix (0, 1), matrix (0, 2),
@@ -166,7 +171,7 @@ dcp::xyz_to_rgb (
 	int const width = xyz_image->size().width;
 
 	for (int y = 0; y < height; ++y) {
-		uint16_t* rgb_line = reinterpret_cast<uint16_t*> (rgb + y * stride);
+		auto rgb_line = reinterpret_cast<uint16_t*> (rgb + y * stride);
 		for (int x = 0; x < width; ++x) {
 
 			int cx = *xyz_x++;
@@ -228,8 +233,8 @@ dcp::xyz_to_rgb (
 void
 dcp::combined_rgb_to_xyz (ColourConversion const & conversion, double* matrix)
 {
-	boost::numeric::ublas::matrix<double> const rgb_to_xyz = conversion.rgb_to_xyz ();
-	boost::numeric::ublas::matrix<double> const bradford = conversion.bradford ();
+	auto const rgb_to_xyz = conversion.rgb_to_xyz ();
+	auto const bradford = conversion.bradford ();
 
 	matrix[0] = (bradford (0, 0) * rgb_to_xyz (0, 0) + bradford (0, 1) * rgb_to_xyz (1, 0) + bradford (0, 2) * rgb_to_xyz (2, 0))
 		* DCI_COEFFICIENT * 65535;

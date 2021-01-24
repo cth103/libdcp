@@ -32,6 +32,11 @@
 */
 
 
+/** @file  rgb_xyz.h
+ *  @brief Conversion between RGB and XYZ
+ */
+
+
 #include "types.h"
 #include <memory>
 #include <boost/optional.hpp>

@@ -33,7 +33,7 @@
 
 
 /** @file  src/locale_convert.cc
- *  @brief Methods to convert to/from string using the current locale.
+ *  @brief Methods to convert to/from string using the current locale
  */
 
 

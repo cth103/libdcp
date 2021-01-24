@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,16 +31,25 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/subtitle_string.cc
+ *  @brief SubtitleString class
+ */
+
+
 #include "subtitle_string.h"
 #include "xml.h"
 #include <cmath>
 
-using std::string;
+
+using std::max;
+using std::min;
 using std::ostream;
+using std::string;
 using boost::optional;
 using namespace dcp;
 
-/** @param v_position Vertical position as a fraction of the screen height (between 0 and 1) from v_align */
+
 SubtitleString::SubtitleString (
 	optional<string> font,
 	bool italic,
@@ -75,8 +84,9 @@ SubtitleString::SubtitleString (
 	, _effect (effect)
 	, _effect_colour (effect_colour)
 {
-
+	_aspect_adjust = max(min(_aspect_adjust, 4.0), 0.25);
 }
+
 
 int
 SubtitleString::size_in_pixels (int screen_height) const
@@ -88,6 +98,7 @@ SubtitleString::size_in_pixels (int screen_height) const
 
 	return _size * screen_height / (11 * 72);
 }
+
 
 bool
 dcp::operator== (SubtitleString const & a, SubtitleString const & b)
@@ -115,11 +126,13 @@ dcp::operator== (SubtitleString const & a, SubtitleString const & b)
 		);
 }
 
+
 bool
 dcp::operator!= (SubtitleString const & a, SubtitleString const & b)
 {
 	return !(a == b);
 }
+
 
 ostream&
 dcp::operator<< (ostream& s, SubtitleString const & sub)

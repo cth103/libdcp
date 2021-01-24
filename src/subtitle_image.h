@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2018 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2018-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/subtitle_image.h
- *  @brief SubtitleImage class.
+ *  @brief SubtitleImage class
  */
+
 
 #ifndef LIBDCP_SUBTITLE_IMAGE_H
 #define LIBDCP_SUBTITLE_IMAGE_H
@@ -46,10 +48,12 @@
 #include <boost/optional.hpp>
 #include <string>
 
+
 namespace dcp {
 
+
 /** @class SubtitleImage
- *  @brief A bitmap subtitle with all the associated attributes.
+ *  @brief A bitmap subtitle with all the associated attributes
  */
 class SubtitleImage : public Subtitle
 {
@@ -107,10 +111,13 @@ private:
 	mutable boost::optional<boost::filesystem::path> _file;
 };
 
+
 bool operator== (SubtitleImage const & a, SubtitleImage const & b);
 bool operator!= (SubtitleImage const & a, SubtitleImage const & b);
 std::ostream& operator<< (std::ostream& s, SubtitleImage const & sub);
 
+
 }
+
 
 #endif

@@ -33,7 +33,7 @@
 
 
 /** @file  src/openjpeg_image.cc
- *  @brief OpenJPEGImage class.
+ *  @brief OpenJPEGImage class
  */
 
 

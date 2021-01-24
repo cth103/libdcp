@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2015 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -82,6 +82,8 @@ private:
 	std::string cpl_node_name () const;
 };
 
+
 }
+
 
 #endif

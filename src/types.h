@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,15 @@
     files in the program, then also delete it here.
 */
 
+
 /** @file  src/types.h
- *  @brief Miscellaneous types.
+ *  @brief Miscellaneous types
  */
+
 
 #ifndef LIBDCP_TYPES_H
 #define LIBDCP_TYPES_H
+
 
 #include <libcxml/cxml.h>
 #include <asdcp/KLV.h>
@@ -53,8 +56,10 @@ namespace xmlpp {
 	class Element;
 }
 
+
 namespace dcp
 {
+
 
 /** @struct Size
  *  @brief The integer, two-dimensional size of something.
@@ -79,8 +84,10 @@ struct Size
 	int height;
 };
 
+
 extern bool operator== (Size const & a, Size const & b);
 extern bool operator!= (Size const & a, Size const & b);
+
 
 /** Identifier for a sound channel */
 enum class Channel {
@@ -101,6 +108,7 @@ enum class Channel {
 	/* 15 is not used */
 	CHANNEL_COUNT = 16
 };
+
 
 std::vector<dcp::Channel> used_audio_channels ();
 
@@ -134,8 +142,10 @@ enum class ContentKind
 	PROMO
 };
 
+
 extern std::string content_kind_to_string (ContentKind kind);
 extern ContentKind content_kind_from_string (std::string kind);
+
 
 enum class Effect
 {
@@ -144,8 +154,10 @@ enum class Effect
 	SHADOW
 };
 
+
 extern std::string effect_to_string (Effect e);
 extern Effect string_to_effect (std::string s);
+
 
 enum class HAlign
 {
@@ -154,8 +166,10 @@ enum class HAlign
 	RIGHT,  ///< horizontal position is distance from right of screen to right of subtitle
 };
 
+
 extern std::string halign_to_string (HAlign a);
 extern HAlign string_to_halign (std::string s);
+
 
 enum class VAlign
 {
@@ -164,8 +178,10 @@ enum class VAlign
 	BOTTOM  ///< vertical position is distance from bottom of screen to bottom of subtitle
 };
 
+
 extern std::string valign_to_string (VAlign a);
 extern VAlign string_to_valign (std::string s);
+
 
 /** Direction for subtitle test */
 enum class Direction
@@ -176,14 +192,17 @@ enum class Direction
 	BTT  ///< bottom-to-top
 };
 
+
 extern std::string direction_to_string (Direction a);
 extern Direction string_to_direction (std::string s);
+
 
 enum class Eye
 {
 	LEFT,
 	RIGHT
 };
+
 
 /** @class Fraction
  *  @brief A fraction (i.e. a thing with an integer numerator and an integer denominator).
@@ -192,7 +211,7 @@ class Fraction
 {
 public:
 	/** Construct a fraction of 0/0 */
-	Fraction () : numerator (0), denominator (0) {}
+	Fraction () {}
 	explicit Fraction (std::string s);
 	/** Construct a fraction with a specified numerator and denominator.
 	 *  @param n Numerator.
@@ -206,12 +225,14 @@ public:
 
 	std::string as_string () const;
 
-	int numerator;
-	int denominator;
+	int numerator = 0;
+	int denominator = 0;
 };
+
 
 extern bool operator== (Fraction const & a, Fraction const & b);
 extern bool operator!= (Fraction const & a, Fraction const & b);
+
 
 /** @struct EqualityOptions
  *  @brief  A class to describe what "equality" means for a particular test.
@@ -224,37 +245,26 @@ extern bool operator!= (Fraction const & a, Fraction const & b);
 struct EqualityOptions
 {
 	/** Construct an EqualityOptions where nothing at all can differ */
-	EqualityOptions ()
-		: max_mean_pixel_error (0)
-		, max_std_dev_pixel_error (0)
-		, max_audio_sample_error (0)
-		, cpl_annotation_texts_can_differ (false)
-		, reel_annotation_texts_can_differ (false)
-		, reel_hashes_can_differ (false)
-		, issue_dates_can_differ (false)
-		, load_font_nodes_can_differ (false)
-		, keep_going (false)
-		, export_differing_subtitles (false)
-	{}
+	EqualityOptions () {}
 
 	/** The maximum allowable mean difference in pixel value between two images */
-	double max_mean_pixel_error;
+	double max_mean_pixel_error = 0;
 	/** The maximum standard deviation of the differences in pixel value between two images */
-	double max_std_dev_pixel_error;
+	double max_std_dev_pixel_error = 0;
 	/** The maximum difference in audio sample value between two soundtracks */
-	int max_audio_sample_error;
+	int max_audio_sample_error = 0;
 	/** true if the &lt;AnnotationText&gt; nodes of CPLs are allowed to differ */
-	bool cpl_annotation_texts_can_differ;
+	bool cpl_annotation_texts_can_differ = false;
 	/** true if the &lt;AnnotationText&gt; nodes of Reels are allowed to differ */
-	bool reel_annotation_texts_can_differ;
+	bool reel_annotation_texts_can_differ = false;
 	/** true if <Hash>es in Reels can differ */
-	bool reel_hashes_can_differ;
+	bool reel_hashes_can_differ = false;
 	/** true if IssueDate nodes can differ */
-	bool issue_dates_can_differ;
-	bool load_font_nodes_can_differ;
-	bool keep_going;
+	bool issue_dates_can_differ = false;
+	bool load_font_nodes_can_differ = false;
+	bool keep_going = false;
 	/** true to save the first pair of differeng image subtitles to the current working directory */
-	bool export_differing_subtitles;
+	bool export_differing_subtitles = false;
 };
 
 
@@ -280,38 +290,61 @@ enum class Formulation {
 	MODIFIED_TRANSITIONAL_TEST
 };
 
+
 /** @class Colour
- *  @brief An RGB colour.
+ *  @brief An RGB colour
  */
 class Colour
 {
 public:
+	/** Construct a Colour, initialising it to black */
 	Colour ();
+
+	/** Construct a Colour from R, G and B.  The values run between
+	 *  0 and 255.
+	 */
 	Colour (int r_, int g_, int b_);
+
+	/** Construct a Colour from an ARGB hex string; the alpha value is ignored.
+	 *  @param argb_hex A string of the form AARRGGBB, where e.g. RR is a two-character
+	 *  hex value.
+	 */
 	explicit Colour (std::string argb_hex);
 
-	int r; ///< red component, from 0 to 255
-	int g; ///< green component, from 0 to 255
-	int b; ///< blue component, from 0 to 255
+	int r = 0; ///< red component, from 0 to 255
+	int g = 0; ///< green component, from 0 to 255
+	int b = 0; ///< blue component, from 0 to 255
 
+	/** @return An RGB string of the form RRGGBB, where e.g. RR is a two-character
+	 *  hex value.
+	 */
 	std::string to_rgb_string () const;
+
+	/** @return An ARGB string of the form AARRGGBB, where e.g. RR is a two-character
+	 *  hex value.  The alpha value will always be FF (ie 255; maximum alpha).
+	 */
 	std::string to_argb_string () const;
 };
+
 
 extern bool operator== (Colour const & a, Colour const & b);
 extern bool operator!= (Colour const & a, Colour const & b);
 
+
 typedef boost::function<void (NoteType, std::string)> NoteHandler;
 
+
 /** Maximum absolute difference between dcp::SubtitleString::aspect_adjust values that
- *  are considered equal.
+ *  are considered equal
  */
-const float ASPECT_ADJUST_EPSILON = 1e-3;
+constexpr float ASPECT_ADJUST_EPSILON = 1e-3;
+
 
 /** Maximum absolute difference between dcp::SubtitleString alignment values that
  *  are considered equal.
  */
-const float ALIGN_EPSILON = 1e-3;
+constexpr float ALIGN_EPSILON = 1e-3;
+
 
 enum class Marker {
 	FFOC, ///< first frame of composition
@@ -326,8 +359,10 @@ enum class Marker {
 	LFMC  ///< last frame of moving credits
 };
 
+
 std::string marker_to_string (Marker);
 Marker marker_from_string (std::string);
+
 
 class Rating
 {
@@ -346,6 +381,7 @@ public:
 	/** Rating (e.g. PG, PG-13, 12A etc) */
 	std::string label;
 };
+
 
 extern bool operator== (Rating const & a, Rating const & b);
 
@@ -418,6 +454,7 @@ private:
 	Unit _unit;
 };
 
+
 bool operator== (Luminance const& a, Luminance const& b);
 
 
@@ -447,5 +484,6 @@ private:
 
 
 }
+
 
 #endif

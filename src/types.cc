@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  src/types.cc
+ *  @brief Miscellaneous types
+ */
+
+
 #include "raw_convert.h"
 #include "types.h"
 #include "exceptions.h"
@@ -44,16 +50,19 @@
 #include <cstdio>
 #include <iomanip>
 
+
 using std::string;
 using std::ostream;
 using std::vector;
 using namespace dcp;
 using namespace boost;
 
+
 bool dcp::operator== (dcp::Size const & a, dcp::Size const & b)
 {
 	return (a.width == b.width && a.height == b.height);
 }
+
 
 bool dcp::operator!= (dcp::Size const & a, dcp::Size const & b)
 {
@@ -69,11 +78,12 @@ Fraction::Fraction (string s)
 	vector<string> b;
 	split (b, s, is_any_of (" "));
 	if (b.size() != 2) {
-		boost::throw_exception (XMLError ("malformed fraction " + s + " in XML node"));
+		boost::throw_exception (XMLError("malformed fraction " + s + " in XML node"));
 	}
 	numerator = raw_convert<int> (b[0]);
 	denominator = raw_convert<int> (b[1]);
 }
+
 
 string
 Fraction::as_string () const
@@ -81,11 +91,13 @@ Fraction::as_string () const
 	return String::compose ("%1 %2", numerator, denominator);
 }
 
+
 bool
 dcp::operator== (Fraction const & a, Fraction const & b)
 {
 	return (a.numerator == b.numerator && a.denominator == b.denominator);
 }
+
 
 bool
 dcp::operator!= (Fraction const & a, Fraction const & b)
@@ -94,18 +106,12 @@ dcp::operator!= (Fraction const & a, Fraction const & b)
 }
 
 
-/** Construct a Colour, initialising it to black. */
 Colour::Colour ()
-	: r (0)
-	, g (0)
-	, b (0)
 {
 
 }
 
-/** Construct a Colour from R, G and B.  The values run between
- *  0 and 255.
- */
+
 Colour::Colour (int r_, int g_, int b_)
 	: r (r_)
 	, g (g_)
@@ -114,10 +120,7 @@ Colour::Colour (int r_, int g_, int b_)
 
 }
 
-/** Construct a Colour from an ARGB hex string; the alpha value is ignored.
- *  @param argb_hex A string of the form AARRGGBB, where e.g. RR is a two-character
- *  hex value.
- */
+
 Colour::Colour (string argb_hex)
 {
 	int alpha;
@@ -126,9 +129,7 @@ Colour::Colour (string argb_hex)
 	}
 }
 
-/** @return An ARGB string of the form AARRGGBB, where e.g. RR is a two-character
- *  hex value.  The alpha value will always be FF (ie 255; maximum alpha).
- */
+
 string
 Colour::to_argb_string () const
 {
@@ -137,9 +138,7 @@ Colour::to_argb_string () const
 	return buffer;
 }
 
-/** @return An RGB string of the form RRGGBB, where e.g. RR is a two-character
- *  hex value.
- */
+
 string
 Colour::to_rgb_string () const
 {
@@ -148,20 +147,14 @@ Colour::to_rgb_string () const
 	return buffer;
 }
 
-/** operator== for Colours.
- *  @param a First colour to compare.
- *  @param b Second colour to compare.
- */
+
 bool
 dcp::operator== (Colour const & a, Colour const & b)
 {
 	return (a.r == b.r && a.g == b.g && a.b == b.b);
 }
 
-/** operator!= for Colours.
- *  @param a First colour to compare.
- *  @param b Second colour to compare.
- */
+
 bool
 dcp::operator!= (Colour const & a, Colour const & b)
 {
@@ -181,8 +174,9 @@ dcp::effect_to_string (Effect e)
 		return "shadow";
 	}
 
-	boost::throw_exception (MiscError ("unknown effect type"));
+	boost::throw_exception (MiscError("unknown effect type"));
 }
+
 
 Effect
 dcp::string_to_effect (string s)
@@ -195,7 +189,7 @@ dcp::string_to_effect (string s)
 		return Effect::SHADOW;
 	}
 
-	boost::throw_exception (ReadError ("unknown subtitle effect type"));
+	boost::throw_exception (ReadError("unknown subtitle effect type"));
 }
 
 
@@ -211,8 +205,9 @@ dcp::halign_to_string (HAlign h)
 		return "right";
 	}
 
-	boost::throw_exception (MiscError ("unknown subtitle halign type"));
+	boost::throw_exception (MiscError("unknown subtitle halign type"));
 }
+
 
 HAlign
 dcp::string_to_halign (string s)
@@ -225,8 +220,9 @@ dcp::string_to_halign (string s)
 		return HAlign::RIGHT;
 	}
 
-	boost::throw_exception (ReadError ("unknown subtitle halign type"));
+	boost::throw_exception (ReadError("unknown subtitle halign type"));
 }
+
 
 string
 dcp::valign_to_string (VAlign v)
@@ -240,8 +236,9 @@ dcp::valign_to_string (VAlign v)
 		return "bottom";
 	}
 
-	boost::throw_exception (MiscError ("unknown subtitle valign type"));
+	boost::throw_exception (MiscError("unknown subtitle valign type"));
 }
+
 
 VAlign
 dcp::string_to_valign (string s)
@@ -254,8 +251,9 @@ dcp::string_to_valign (string s)
 		return VAlign::BOTTOM;
 	}
 
-	boost::throw_exception (ReadError ("unknown subtitle valign type"));
+	boost::throw_exception (ReadError("unknown subtitle valign type"));
 }
+
 
 string
 dcp::direction_to_string (Direction v)
@@ -271,8 +269,9 @@ dcp::direction_to_string (Direction v)
 		return "btt";
 	}
 
-	boost::throw_exception (MiscError ("unknown subtitle direction type"));
+	boost::throw_exception (MiscError("unknown subtitle direction type"));
 }
+
 
 Direction
 dcp::string_to_direction (string s)
@@ -287,13 +286,14 @@ dcp::string_to_direction (string s)
 		return Direction::BTT;
 	}
 
-	boost::throw_exception (ReadError ("unknown subtitle direction type"));
+	boost::throw_exception (ReadError("unknown subtitle direction type"));
 }
 
+
 /** Convert a content kind to a string which can be used in a
- *  &lt;ContentKind&gt; node.
- *  @param kind ContentKind.
- *  @return string.
+ *  &lt;ContentKind&gt; node
+ *  @param kind ContentKind
+ *  @return string
  */
 string
 dcp::content_kind_to_string (ContentKind kind)
@@ -328,10 +328,11 @@ dcp::content_kind_to_string (ContentKind kind)
 	DCP_ASSERT (false);
 }
 
+
 /** Convert a string from a &lt;ContentKind&gt; node to a libdcp ContentKind.
- *  Reasonably tolerant about varying case.
- *  @param kind Content kind string.
- *  @return libdcp ContentKind.
+ *  Reasonably tolerant about varying case
+ *  @param kind Content kind string
+ *  @return libdcp ContentKind
  */
 dcp::ContentKind
 dcp::content_kind_from_string (string kind)
@@ -397,6 +398,7 @@ dcp::marker_to_string (dcp::Marker m)
 	DCP_ASSERT (false);
 }
 
+
 dcp::Marker
 dcp::marker_from_string (string s)
 {
@@ -425,12 +427,14 @@ dcp::marker_from_string (string s)
 	DCP_ASSERT (false);
 }
 
+
 Rating::Rating (cxml::ConstNodePtr node)
+	: agency(node->string_child("Agency"))
+	, label(node->string_child("Label"))
 {
-	agency = node->string_child("Agency");
-	label = node->string_child("Label");
 	node->done ();
 }
+
 
 void
 Rating::as_xml (xmlpp::Element* parent) const
@@ -439,11 +443,13 @@ Rating::as_xml (xmlpp::Element* parent) const
 	parent->add_child("Label")->add_child_text(label);
 }
 
+
 bool
 dcp::operator== (Rating const & a, Rating const & b)
 {
 	return a.agency == b.agency && a.label == b.label;
 }
+
 
 ContentVersion::ContentVersion ()
 	: id ("urn:uuid:" + make_uuid())
@@ -453,9 +459,10 @@ ContentVersion::ContentVersion ()
 
 
 ContentVersion::ContentVersion (cxml::ConstNodePtr node)
+	: id(node->string_child("Id"))
+	, label_text(node->string_child("LabelText"))
 {
-	id = node->string_child("Id");
-	label_text = node->string_child("LabelText");
+
 }
 
 
@@ -470,16 +477,17 @@ ContentVersion::ContentVersion (string label_text_)
 void
 ContentVersion::as_xml (xmlpp::Element* parent) const
 {
-	xmlpp::Node* cv = parent->add_child("ContentVersion");
+	auto cv = parent->add_child("ContentVersion");
 	cv->add_child("Id")->add_child_text(id);
 	cv->add_child("LabelText")->add_child_text(label_text);
 }
 
 
 Luminance::Luminance (cxml::ConstNodePtr node)
+	: _unit(string_to_unit(node->string_attribute("units")))
+	, _value(raw_convert<float>(node->content()))
 {
-	_unit = string_to_unit (node->string_attribute("units"));
-	_value = raw_convert<float> (node->content());
+
 }
 
 
@@ -504,7 +512,7 @@ Luminance::set_value (float v)
 void
 Luminance::as_xml (xmlpp::Element* parent, string ns) const
 {
-	xmlpp::Element* lum = parent->add_child("Luminance", ns);
+	auto lum = parent->add_child("Luminance", ns);
 	lum->set_attribute("units", unit_to_string(_unit));
 	lum->add_child_text(raw_convert<string>(_value, 3));
 }
@@ -522,7 +530,7 @@ Luminance::unit_to_string (Unit u)
 		DCP_ASSERT (false);
 	}
 
-	return "";
+	return {};
 }
 
 
@@ -641,7 +649,6 @@ dcp::status_to_string (Status s)
 	default:
 		DCP_ASSERT (false);
 	}
-
 }
 
 
