@@ -130,7 +130,7 @@ OpenJPEGImage::create (Size size)
 
 	/* XXX: is this _SRGB right? */
 	_opj_image = opj_image_create (3, &cmptparm[0], OPJ_CLRSPC_SRGB);
-	if (_opj_image == 0) {
+	if (_opj_image == nullptr) {
 		throw std::runtime_error ("could not create libopenjpeg image");
 	}
 
