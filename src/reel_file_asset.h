@@ -32,8 +32,8 @@
 */
 
 
-/** @file  src/reel_mxf.h
- *  @brief ReelMXF class
+/** @file  src/reel_file_asset.h
+ *  @brief ReelFileAsset class
  */
 
 
@@ -55,15 +55,15 @@ namespace cxml {
 namespace dcp {
 
 
-/** @class ReelMXF
+/** @class ReelFileAsset
  *  @brief Part of a Reel's description which refers to an asset which can be encrypted
  */
-class ReelMXF
+class ReelFileAsset
 {
 public:
-	explicit ReelMXF (std::shared_ptr<Asset> asset, boost::optional<std::string> key_id);
-	explicit ReelMXF (std::shared_ptr<const cxml::Node>);
-	virtual ~ReelMXF () {}
+	explicit ReelFileAsset (std::shared_ptr<Asset> asset, boost::optional<std::string> key_id);
+	explicit ReelFileAsset (std::shared_ptr<const cxml::Node>);
+	virtual ~ReelFileAsset () {}
 
 	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */
 	virtual std::string key_type () const = 0;
@@ -78,7 +78,7 @@ public:
 		return _asset_ref;
 	}
 
-	/** @return the asset's hash, if this ReelMXF has been created from one,
+	/** @return the asset's hash, if this ReelFileAsset has been created from one,
 	 *  otherwise the hash written to the CPL for this asset (if present).
 	 */
 	boost::optional<std::string> hash () const {
@@ -103,7 +103,7 @@ public:
 		return _key_id;
 	}
 
-	bool mxf_equals (std::shared_ptr<const ReelMXF> other, EqualityOptions opt, NoteHandler note) const;
+	bool mxf_equals (std::shared_ptr<const ReelFileAsset> other, EqualityOptions opt, NoteHandler note) const;
 
 protected:
 

@@ -491,55 +491,43 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 }
 
 
-vector<shared_ptr<ReelMXF>>
-CPL::reel_mxfs ()
+template <class T>
+void
+add_file_assets (vector<shared_ptr<T>>& assets, vector<shared_ptr<Reel>> reels)
 {
-	vector<shared_ptr<ReelMXF>> c;
-
-	for (auto i: _reels) {
+	for (auto i: reels) {
 		if (i->main_picture ()) {
-			c.push_back (i->main_picture());
+			assets.push_back (i->main_picture());
 		}
 		if (i->main_sound ()) {
-			c.push_back (i->main_sound());
+			assets.push_back (i->main_sound());
 		}
 		if (i->main_subtitle ()) {
-			c.push_back (i->main_subtitle());
+			assets.push_back (i->main_subtitle());
 		}
 		for (auto j: i->closed_captions()) {
-			c.push_back (j);
+			assets.push_back (j);
 		}
 		if (i->atmos ()) {
-			c.push_back (i->atmos());
+			assets.push_back (i->atmos());
 		}
 	}
+}
 
+
+vector<shared_ptr<ReelFileAsset>>
+CPL::reel_file_assets ()
+{
+	vector<shared_ptr<ReelFileAsset>> c;
+	add_file_assets (c, _reels);
 	return c;
 }
 
-vector<shared_ptr<const ReelMXF>>
-CPL::reel_mxfs () const
+vector<shared_ptr<const ReelFileAsset>>
+CPL::reel_file_assets () const
 {
-	vector<shared_ptr<const ReelMXF>> c;
-
-	for (auto i: _reels) {
-		if (i->main_picture ()) {
-			c.push_back (i->main_picture());
-		}
-		if (i->main_sound ()) {
-			c.push_back (i->main_sound());
-		}
-		if (i->main_subtitle ()) {
-			c.push_back (i->main_subtitle());
-		}
-		for (auto j: i->closed_captions()) {
-			c.push_back (j);
-		}
-		if (i->atmos ()) {
-			c.push_back (i->atmos());
-		}
-	}
-
+	vector<shared_ptr<const ReelFileAsset>> c;
+	add_file_assets (c, _reels);
 	return c;
 }
 

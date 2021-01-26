@@ -43,7 +43,7 @@
 
 #include "reel_asset.h"
 #include "atmos_asset.h"
-#include "reel_mxf.h"
+#include "reel_file_asset.h"
 
 
 namespace dcp {
@@ -55,7 +55,7 @@ class AtmosAsset;
 /** @class ReelAtmosAsset
  *  @brief Part of a Reel's description which refers to a Atmos MXF
  */
-class ReelAtmosAsset : public ReelAsset, public ReelMXF
+class ReelAtmosAsset : public ReelAsset, public ReelFileAsset
 {
 public:
 	ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point);

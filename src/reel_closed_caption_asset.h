@@ -44,7 +44,7 @@
 #include "language_tag.h"
 #include "subtitle_asset.h"
 #include "reel_asset.h"
-#include "reel_mxf.h"
+#include "reel_file_asset.h"
 
 
 struct verify_invalid_language2;
@@ -59,7 +59,7 @@ class SubtitleAsset;
 /** @class ReelClosedCaptionAsset
  *  @brief Part of a Reel's description which refers to a closed caption XML/MXF file
  */
-class ReelClosedCaptionAsset : public ReelAsset, public ReelMXF
+class ReelClosedCaptionAsset : public ReelAsset, public ReelFileAsset
 {
 public:
 	ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);

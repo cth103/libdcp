@@ -376,19 +376,19 @@ enum class VerifyAssetResult {
 
 
 static VerifyAssetResult
-verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelMXF> reel_mxf, function<void (float)> progress)
+verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelFileAsset> reel_file_asset, function<void (float)> progress)
 {
-	auto const actual_hash = reel_mxf->asset_ref()->hash(progress);
+	auto const actual_hash = reel_file_asset->asset_ref()->hash(progress);
 
 	auto pkls = dcp->pkls();
 	/* We've read this DCP in so it must have at least one PKL */
 	DCP_ASSERT (!pkls.empty());
 
-	auto asset = reel_mxf->asset_ref().asset();
+	auto asset = reel_file_asset->asset_ref().asset();
 
 	optional<string> pkl_hash;
 	for (auto i: pkls) {
-		pkl_hash = i->hash (reel_mxf->asset_ref()->id());
+		pkl_hash = i->hash (reel_file_asset->asset_ref()->id());
 		if (pkl_hash) {
 			break;
 		}
@@ -396,7 +396,7 @@ verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelMXF> reel_mxf, fun
 
 	DCP_ASSERT (pkl_hash);
 
-	auto cpl_hash = reel_mxf->hash();
+	auto cpl_hash = reel_file_asset->hash();
 	if (cpl_hash && *cpl_hash != *pkl_hash) {
 		return VerifyAssetResult::CPL_PKL_DIFFER;
 	}
@@ -443,9 +443,9 @@ biggest_frame_size (shared_ptr<const StereoPictureFrame> frame)
 
 template <class A, class R, class F>
 optional<VerifyPictureAssetResult>
-verify_picture_asset_type (shared_ptr<const ReelMXF> reel_mxf, function<void (float)> progress)
+verify_picture_asset_type (shared_ptr<const ReelFileAsset> reel_file_asset, function<void (float)> progress)
 {
-	auto asset = dynamic_pointer_cast<A>(reel_mxf->asset_ref().asset());
+	auto asset = dynamic_pointer_cast<A>(reel_file_asset->asset_ref().asset());
 	if (!asset) {
 		return optional<VerifyPictureAssetResult>();
 	}
@@ -472,11 +472,11 @@ verify_picture_asset_type (shared_ptr<const ReelMXF> reel_mxf, function<void (fl
 
 
 static VerifyPictureAssetResult
-verify_picture_asset (shared_ptr<const ReelMXF> reel_mxf, function<void (float)> progress)
+verify_picture_asset (shared_ptr<const ReelFileAsset> reel_file_asset, function<void (float)> progress)
 {
-	auto r = verify_picture_asset_type<MonoPictureAsset, MonoPictureAssetReader, MonoPictureFrame>(reel_mxf, progress);
+	auto r = verify_picture_asset_type<MonoPictureAsset, MonoPictureAssetReader, MonoPictureFrame>(reel_file_asset, progress);
 	if (!r) {
-		r = verify_picture_asset_type<StereoPictureAsset, StereoPictureAssetReader, StereoPictureFrame>(reel_mxf, progress);
+		r = verify_picture_asset_type<StereoPictureAsset, StereoPictureAssetReader, StereoPictureFrame>(reel_file_asset, progress);
 	}
 
 	DCP_ASSERT (r);
@@ -1022,11 +1022,11 @@ pkl_has_encrypted_assets (shared_ptr<DCP> dcp, shared_ptr<PKL> pkl)
 {
 	vector<string> encrypted;
 	for (auto i: dcp->cpls()) {
-		for (auto j: i->reel_mxfs()) {
+		for (auto j: i->reel_file_assets()) {
 			if (j->asset_ref().resolved()) {
 				/* It's a bit surprising / broken but Interop subtitle assets are represented
-				 * in reels by ReelSubtitleAsset which inherits ReelMXF, so it's possible for
-				 * ReelMXFs to have assets which are not MXFs.
+				 * in reels by ReelSubtitleAsset which inherits ReelFileAsset, so it's possible for
+				 * ReelFileAssets to have assets which are not MXFs.
 				 */
 				if (auto asset = dynamic_pointer_cast<MXF>(j->asset_ref().asset())) {
 					if (asset->encrypted()) {
@@ -1166,8 +1166,8 @@ dcp::verify (
 					if ((i->intrinsic_duration() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
 						notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_INTRINSIC_DURATION, i->id()});
 					}
-					auto mxf = dynamic_pointer_cast<ReelMXF>(i);
-					if (mxf && !mxf->hash()) {
+					auto file_asset = dynamic_pointer_cast<ReelFileAsset>(i);
+					if (file_asset && !file_asset->hash()) {
 						notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_HASH, i->id()});
 					}
 				}

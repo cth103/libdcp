@@ -82,8 +82,8 @@ def build(bld):
              reel_asset.cc
              reel_atmos_asset.cc
              reel_closed_caption_asset.cc
+             reel_file_asset.cc
              reel_mono_picture_asset.cc
-             reel_mxf.cc
              reel_picture_asset.cc
              reel_markers_asset.cc
              reel_sound_asset.cc

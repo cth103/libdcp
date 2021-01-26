@@ -59,7 +59,7 @@ struct verify_invalid_language3;
 namespace dcp {
 
 
-class ReelMXF;
+class ReelFileAsset;
 class Reel;
 class MXFMetadata;
 class CertificateChain;
@@ -99,9 +99,9 @@ public:
 		return _reels;
 	}
 
-	/** @return the ReelMXFs in this CPL in all reels */
-	std::vector<std::shared_ptr<const ReelMXF>> reel_mxfs () const;
-	std::vector<std::shared_ptr<ReelMXF>> reel_mxfs ();
+	/** @return the ReelFileAssets in this CPL in all reels */
+	std::vector<std::shared_ptr<const ReelFileAsset>> reel_file_assets () const;
+	std::vector<std::shared_ptr<ReelFileAsset>> reel_file_assets ();
 
 	/** @return true if we have any encrypted content */
 	bool any_encrypted () const;

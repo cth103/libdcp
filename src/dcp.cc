@@ -261,7 +261,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 	/* While we've got the ASSETMAP lets look and see if this DCP refers to things that are not in its ASSETMAP */
 	if (notes) {
 		for (auto i: cpls()) {
-			for (auto j: i->reel_mxfs()) {
+			for (auto j: i->reel_file_assets()) {
 				if (!j->asset_ref().resolved() && paths.find(j->asset_ref().id()) == paths.end()) {
 					notes->push_back (VerificationNote(VerificationNote::Type::WARNING, VerificationNote::Code::EXTERNAL_ASSET, j->asset_ref().id()));
 				}
@@ -519,7 +519,7 @@ DCP::assets (bool ignore_unresolved) const
 	vector<shared_ptr<Asset>> assets;
 	for (auto i: cpls()) {
 		assets.push_back (i);
-		for (auto j: i->reel_mxfs()) {
+		for (auto j: i->reel_file_assets()) {
 			if (ignore_unresolved && !j->asset_ref().resolved()) {
 				continue;
 			}
