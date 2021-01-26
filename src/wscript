@@ -168,9 +168,9 @@ def build(bld):
               reel_asset.h
               reel_atmos_asset.h
               reel_closed_caption_asset.h
+              reel_file_asset.h
               reel_markers_asset.h
               reel_mono_picture_asset.h
-              reel_mxf.h
               reel_picture_asset.h
               reel_sound_asset.h
               reel_stereo_picture_asset.h
