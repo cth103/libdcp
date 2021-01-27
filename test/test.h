@@ -54,6 +54,7 @@ extern std::shared_ptr<dcp::DCP> make_simple_with_interop_ccaps (boost::filesyst
 extern std::shared_ptr<dcp::DCP> make_simple_with_smpte_ccaps (boost::filesystem::path path);
 extern std::shared_ptr<dcp::OpenJPEGImage> black_image (dcp::Size size = dcp::Size(1998, 1080));
 extern std::shared_ptr<dcp::ReelAsset> black_picture_asset (boost::filesystem::path dir, int frames = 24);
+extern boost::filesystem::path find_file (boost::filesystem::path dir, std::string filename_part);
 
 /** Creating an object of this class will make asdcplib's random number generation
  *  (more) predictable.

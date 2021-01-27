@@ -53,6 +53,7 @@
 #include "test.h"
 #include "util.h"
 #include "verify.h"
+#include "verify_j2k.h"
 #include <boost/test/unit_test.hpp>
 #include <boost/algorithm/string.hpp>
 #include <cstdio>
@@ -2726,5 +2727,42 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 	d.write_xml (dcp::Standard::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "A Test DCP", signer);
 
 	check_verify_result ({dir}, {{dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::PARTIALLY_ENCRYPTED}});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_2k)
+{
+	vector<dcp::VerificationNote> notes;
+	dcp::MonoPictureAsset picture (find_file(private_test / "data" / "JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV", "j2c.mxf"));
+	auto reader = picture.start_read ();
+	auto frame = reader->get_frame (0);
+	verify_j2k (frame, notes);
+	dump_notes (notes);
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_4k)
+{
+	vector<dcp::VerificationNote> notes;
+	dcp::MonoPictureAsset picture (find_file(private_test / "data" / "sul", "TLR"));
+	auto reader = picture.start_read ();
+	auto frame = reader->get_frame (0);
+	verify_j2k (frame, notes);
+	dump_notes (notes);
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_libdcp)
+{
+	boost::filesystem::path dir = "build/test/verify_jpeg2000_codestream_libdcp";
+	prepare_directory (dir);
+	auto dcp = make_simple (dir);
+	dcp->write_xml (dcp::Standard::SMPTE);
+	vector<dcp::VerificationNote> notes;
+	dcp::MonoPictureAsset picture (find_file(dir, "video"));
+	auto reader = picture.start_read ();
+	auto frame = reader->get_frame (0);
+	verify_j2k (frame, notes);
+	dump_notes (notes);
 }
 

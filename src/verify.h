@@ -318,6 +318,32 @@ public:
 		MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL,
 		/** If any content is encrypted, everything must be encrypted */
 		PARTIALLY_ENCRYPTED,
+		/** General error from our JPEG2000 codestream verification */
+		INVALID_JPEG2000_CODESTREAM,
+		/** Invalid number of guard bits in a 2K JPEG2000 stream (should be 1) Bv2.1_10.2.1 */
+		INVALID_JPEG2000_GUARD_BITS_FOR_2K,
+		/** Invalid number of guard bits in a 4K JPEG2000 stream (should be 2) Bv2.1_10.2.1 */
+		INVALID_JPEG2000_GUARD_BITS_FOR_4K,
+		/** JPEG2000 tile size is not the same as the image size Bv2.1_10.2.1 */
+		INVALID_JPEG2000_TILE_SIZE,
+		/** JPEG2000 code block width is not 32 Bv2.1_10.2.1 */
+		INVALID_JPEG2000_CODE_BLOCK_WIDTH,
+		/** JPEG2000 code block height is not 32 Bv2.1_10.2.1 */
+		INVALID_JPEG2000_CODE_BLOCK_HEIGHT,
+		/** There must be no POC markers in a 2K codestream Bv2.1_10.2.1 */
+		INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K,
+		/** There must be exactly one POC marker in a 4K codestream Bv2.1_10.2.1 */
+		INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K,
+		/** A 4K POC marker has incorrect content Bv2.1_10.2.1 */
+		INCORRECT_JPEG2000_POC_MARKER,
+		/** A POC marker was found outside the main head Bv2.1_10.2.1 */
+		INVALID_JPEG2000_POC_MARKER_LOCATION,
+		/** Invalid number of tile parts for 2K JPEG2000 stream (should be 3) Bv2.1_10.2.1 */
+		INVALID_JPEG2000_TILE_PARTS_FOR_2K,
+		/** Invalid number of tile parts for 4K JPEG2000 stream (should be 6) Bv2.1_10.2.1 */
+		INVALID_JPEG2000_TILE_PARTS_FOR_4K,
+		/** No TLM marker was found Bv2.1_10.2.1 */
+		MISSING_JPEG200_TLM_MARKER,
 	};
 
 	VerificationNote (Type type, Code code)

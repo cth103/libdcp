@@ -1491,9 +1491,35 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT:
 		return String::compose("The PKL %1, which has encrypted content, is not signed.", note.note().get());
 	case VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL:
-		return String::compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>", note.note().get());
+		return String::compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>.", note.note().get());
 	case VerificationNote::Code::PARTIALLY_ENCRYPTED:
-		return "Some assets are encrypted but some are not";
+		return "Some assets are encrypted but some are not.";
+	case VerificationNote::Code::INVALID_JPEG2000_CODESTREAM:
+		return String::compose("The JPEG2000 codestream for at least one frame is invalid (%1)", note.note().get());
+	case VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K:
+		return String::compose("The JPEG2000 codestream uses %1 guard bits in a 2K image instead of 1.", note.note().get());
+	case VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_4K:
+		return String::compose("The JPEG2000 codestream uses %1 guard bits in a 4K image instead of 2.", note.note().get());
+	case VerificationNote::Code::INVALID_JPEG2000_TILE_SIZE:
+		return "The JPEG2000 tile size is not the same as the image size.";
+	case VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_WIDTH:
+		return String::compose("The JPEG2000 codestream uses a code block width of %1 instead of 32.", note.note().get());
+	case VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_HEIGHT:
+		return String::compose("The JPEG2000 codestream uses a code block height of %1 instead of 32.", note.note().get());
+	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K:
+		return String::compose("%1 POC markers found in 2K JPEG2000 codestream instead of 0.", note.note().get());
+	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K:
+		return String::compose("%1 POC markers found in 4K JPEG2000 codestream instead of 1.", note.note().get());
+	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER:
+		return String::compose("Incorrect POC marker content found (%1)", note.note().get());
+	case VerificationNote::Code::INVALID_JPEG2000_POC_MARKER_LOCATION:
+		return "POC marker found outside main header";
+	case VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K:
+		return String::compose("The JPEG2000 codestream has %1 tile parts in a 2K image instead of 3.", note.note().get());
+	case VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K:
+		return String::compose("The JPEG2000 codestream has %1 tile parts in a 4K image instead of 6.", note.note().get());
+	case VerificationNote::Code::MISSING_JPEG200_TLM_MARKER:
+		return "No TLM marker was found in a JPEG2000 codestream.";
 	}
 
 	return "";

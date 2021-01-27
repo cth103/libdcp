@@ -109,6 +109,7 @@ def build(bld):
              types.cc
              util.cc
              verify.cc
+             verify_j2k.cc
              version.cc
              """
 
@@ -195,6 +196,7 @@ def build(bld):
               types.h
               util.h
               verify.h
+              verify_j2k.h
               version.h
               """
 
