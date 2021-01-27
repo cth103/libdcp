@@ -60,7 +60,7 @@ def build(bld):
              identity_transfer_function.cc
              interop_load_font_node.cc
              interop_subtitle_asset.cc
-             j2k.cc
+             j2k_transcode.cc
              key.cc
              language_tag.cc
              local_time.cc
@@ -144,7 +144,7 @@ def build(bld):
               identity_transfer_function.h
               interop_load_font_node.h
               interop_subtitle_asset.h
-              j2k.h
+              j2k_transcode.h
               key.h
               language_tag.h
               load_font_node.h

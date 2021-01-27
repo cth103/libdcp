@@ -32,7 +32,7 @@
 */
 
 
-/** @file  src/j2k.h
+/** @file  src/j2k_transcode.h
  *  @brief Methods to encode and decode JPEG2000
  */
 

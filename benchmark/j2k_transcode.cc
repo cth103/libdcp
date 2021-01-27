@@ -35,7 +35,7 @@
 #include "array_data.h"
 #include "util.h"
 #include "version.h"
-#include "j2k.h"
+#include "j2k_transcode.h"
 #include "openjpeg_image.h"
 #include <sys/time.h>
 #include <iostream>

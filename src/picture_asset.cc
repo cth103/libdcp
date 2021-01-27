@@ -44,7 +44,7 @@
 #include "picture_asset_writer.h"
 #include "dcp_assert.h"
 #include "compose.hpp"
-#include "j2k.h"
+#include "j2k_transcode.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
 #include <libxml++/nodes/element.h>

@@ -49,7 +49,7 @@
 #include "smpte_subtitle_asset.h"
 #include "mono_picture_asset.h"
 #include "openjpeg_image.h"
-#include "j2k.h"
+#include "j2k_transcode.h"
 #include "picture_asset_writer.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_asset.h"

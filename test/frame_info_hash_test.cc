@@ -33,7 +33,7 @@
 
 #include "mono_picture_asset.h"
 #include "mono_picture_asset_writer.h"
-#include "j2k.h"
+#include "j2k_transcode.h"
 #include "openjpeg_image.h"
 #include <boost/test/unit_test.hpp>
 

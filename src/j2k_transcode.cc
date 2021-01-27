@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/j2k.cc
+/** @file  src/j2k_transcode.cc
  *  @brief Methods to encode and decode JPEG2000
  */
 
 
 #include "array_data.h"
-#include "j2k.h"
+#include "j2k_transcode.h"
 #include "exceptions.h"
 #include "openjpeg_image.h"
 #include "dcp_assert.h"
