@@ -267,9 +267,16 @@ simple_picture (boost::filesystem::path path, string suffix, int frames)
 	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::Standard::SMPTE));
 	mp->set_metadata (mxf_meta);
 	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write (path / dcp::String::compose("video%1.mxf", suffix), false);
-	dcp::ArrayData j2c ("test/data/flat_red.j2c");
+
+	dcp::Size const size (1998, 1080);
+	auto image = make_shared<dcp::OpenJPEGImage>(size);
+	for (int i = 0; i < 3; ++i) {
+		memset (image->data(i), 0, 2 * size.width * size.height);
+	}
+	auto j2c = dcp::compress_j2k (image, 100000000, 24, false, false);
+
 	for (int i = 0; i < frames; ++i) {
-		picture_writer->write (j2c.data (), j2c.size ());
+		picture_writer->write (j2c.data(), j2c.size());
 	}
 	picture_writer->finalize ();
 

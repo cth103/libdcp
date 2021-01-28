@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE (frame_info_hash_test)
 	unsigned int seed = 42;
 
 	/* Check a few random frames */
-	check (&seed, writer, "c039c5a0e5d20bc646f7e9c10e2d5874");
-	check (&seed, writer, "d9e694cfe84544c54a869c128ba39343");
-	check (&seed, writer, "fafb05a0039cb9fc604279c90a13cb87");
+	check (&seed, writer, "9da3d1d93a80683e65d996edae4101ed");
+	check (&seed, writer, "ecd77b3fbf459591f24119d4118783fb");
+	check (&seed, writer, "9f10303495b58ccb715c893d40127e22");
 }
