@@ -78,7 +78,7 @@ command (string cmd)
 	   is handled correctly.
 	*/
 	int const wn = MultiByteToWideChar (CP_UTF8, 0, cmd.c_str(), -1, 0, 0);
-	char buffer = new wchar_t[wn];
+	auto buffer = new wchar_t[wn];
 	if (MultiByteToWideChar (CP_UTF8, 0, cmd.c_str(), -1, buffer, wn) == 0) {
 		delete[] buffer;
 		return;
