@@ -68,8 +68,12 @@ public:
 	 */
 	explicit MonoPictureAsset (Fraction edit_rate, Standard standard);
 
-	/** Start a progressive write to a MonoPictureAsset */
-	std::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path, bool);
+	/** Start a progressive write to a MonoPictureAsset.
+	 *  @path file File to write to.
+	 *  @path overwrite true to overwrite an existing file; for use when continuing a write which
+	 *  previously failed.  If in doubt, use false here.
+	 */
+	std::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path file, bool overwrite);
 	std::shared_ptr<MonoPictureAssetReader> start_read () const;
 
 	bool equals (
