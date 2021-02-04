@@ -112,7 +112,14 @@ ReelClosedCaptionAsset::write_to_cpl (xmlpp::Node* node, Standard standard) cons
 	write_to_cpl_mxf (asset);
 
 	if (_language) {
-		asset->add_child("Language", "tt")->add_child_text(*_language);
+		switch (standard) {
+		case Standard::INTEROP:
+			asset->add_child("Language")->add_child_text(*_language);
+			break;
+		case Standard::SMPTE:
+			asset->add_child("Language", "tt")->add_child_text(*_language);
+			break;
+		}
 	}
 
 	return asset;
