@@ -88,9 +88,7 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 	if (asset->standard() == Standard::INTEROP) {
 		_state->desc.ChannelFormat = ASDCP::PCM::CF_NONE;
 	} else {
-		/* Just use WTF ("wild track format") for SMPTE for now; searches suggest that this
-		   uses the same assignment as Interop.
-		*/
+		/* As required by Bv2.1 */
 		_state->desc.ChannelFormat = ASDCP::PCM::CF_CFG_4;
 	}
 
