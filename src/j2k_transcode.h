@@ -48,8 +48,6 @@ namespace dcp {
 class OpenJPEGImage;
 
 
-extern std::shared_ptr<OpenJPEGImage> decompress_j2k (uint8_t* data, int64_t size, int reduce);
-
 /** Decompress a JPEG2000 image to a bitmap
  *  @param data JPEG2000 data
  *  @param size Size of data in bytes
@@ -59,7 +57,10 @@ extern std::shared_ptr<OpenJPEGImage> decompress_j2k (uint8_t* data, int64_t siz
  *  This is useful for scaling 4K DCP images down to 2K.
  *  @return OpenJPEGImage
  */
-extern std::shared_ptr<OpenJPEGImage> decompress_j2k (ArrayData data, int reduce);
+extern std::shared_ptr<OpenJPEGImage> decompress_j2k (uint8_t const * data, int64_t size, int reduce);
+
+extern std::shared_ptr<OpenJPEGImage> decompress_j2k (Data const& data, int reduce);
+extern std::shared_ptr<OpenJPEGImage> decompress_j2k (std::shared_ptr<const Data> data, int reduce);
 
 /** @xyz Picture to compress.  Parts of xyz's data WILL BE OVERWRITTEN by libopenjpeg so xyz cannot be re-used
  *  after this call; see opj_j2k_encode where if l_reuse_data is false it will set l_tilec->data = l_img_comp->data.

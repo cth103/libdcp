@@ -57,9 +57,16 @@ using namespace dcp;
 
 
 shared_ptr<dcp::OpenJPEGImage>
-dcp::decompress_j2k (ArrayData data, int reduce)
+dcp::decompress_j2k (Data const& data, int reduce)
 {
 	return dcp::decompress_j2k (data.data(), data.size(), reduce);
+}
+
+
+shared_ptr<dcp::OpenJPEGImage>
+dcp::decompress_j2k (shared_ptr<const Data> data, int reduce)
+{
+	return dcp::decompress_j2k (data->data(), data->size(), reduce);
 }
 
 
@@ -68,7 +75,7 @@ dcp::decompress_j2k (ArrayData data, int reduce)
 class ReadBuffer
 {
 public:
-	ReadBuffer (uint8_t* data, int64_t size)
+	ReadBuffer (uint8_t const * data, int64_t size)
 		: _data (data)
 		, _size (size)
 		, _offset (0)
@@ -83,7 +90,7 @@ public:
 	}
 
 private:
-	uint8_t* _data;
+	uint8_t const * _data;
 	OPJ_SIZE_T _size;
 	OPJ_SIZE_T _offset;
 };
@@ -118,7 +125,7 @@ compress_error_callback (char const * msg, void *)
 
 
 shared_ptr<dcp::OpenJPEGImage>
-dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
+dcp::decompress_j2k (uint8_t const * data, int64_t size, int reduce)
 {
 	DCP_ASSERT (reduce >= 0);
 
