@@ -1323,7 +1323,48 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 		{ path },
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs1.mxf") },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_SUBTITLE_LANGUAGES },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs2.mxf") },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_SUBTITLE_LANGUAGES }
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
+{
+	path path ("build/test/verify_multiple_closed_caption_languages_allowed");
+	auto dcp = make_simple (path, 2, 240);
+	auto cpl = dcp->cpls()[0];
+
+	{
+		auto ccaps = make_shared<dcp::SMPTESubtitleAsset>();
+		ccaps->set_language (dcp::LanguageTag("de-DE"));
+		ccaps->add (simple_subtitle());
+		ccaps->write (path / "subs1.mxf");
+		auto reel_ccaps = make_shared<dcp::ReelClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), 240, 0);
+		cpl->reels()[0]->add(reel_ccaps);
+	}
+
+	{
+		auto ccaps = make_shared<dcp::SMPTESubtitleAsset>();
+		ccaps->set_language (dcp::LanguageTag("en-US"));
+		ccaps->add (simple_subtitle());
+		ccaps->write (path / "subs2.mxf");
+		auto reel_ccaps = make_shared<dcp::ReelClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), 240, 0);
+		cpl->reels()[1]->add(reel_ccaps);
+	}
+
+	dcp->write_xml (
+		dcp::Standard::SMPTE,
+		dcp::String::compose("libdcp %1", dcp::version),
+		dcp::String::compose("libdcp %1", dcp::version),
+		dcp::LocalTime().as_string(),
+		"A Test DCP"
+		);
+
+	check_verify_result (
+		{ path },
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs1.mxf") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs2.mxf") }
 		});
 }

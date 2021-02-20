@@ -651,31 +651,26 @@ struct State
 };
 
 
-
+/** Verify stuff that is common to both subtitles and closed captions */
 void
-verify_smpte_subtitle_asset (
+verify_smpte_timed_text_asset (
 	shared_ptr<const SMPTESubtitleAsset> asset,
-	vector<VerificationNote>& notes,
-	State& state
+	vector<VerificationNote>& notes
 	)
 {
 	if (asset->language()) {
-		auto const language = *asset->language();
-		verify_language_tag (language, notes);
-		if (!state.subtitle_language) {
-			state.subtitle_language = language;
-		} else if (state.subtitle_language != language) {
-			notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_SUBTITLE_LANGUAGES });
-		}
+		verify_language_tag (*asset->language(), notes);
 	} else {
 		notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, *asset->file() });
 	}
+
 	auto const size = boost::filesystem::file_size(asset->file().get());
 	if (size > 115 * 1024 * 1024) {
 		notes.push_back (
 			{ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, raw_convert<string>(size), *asset->file() }
 			);
 	}
+
 	/* XXX: I'm not sure what Bv2.1_7.2.1 means when it says "the font resource shall not be larger than 10MB"
 	 * but I'm hoping that checking for the total size of all fonts being <= 10MB will do.
 	 */
@@ -696,6 +691,25 @@ verify_smpte_subtitle_asset (
 }
 
 
+/** Verify SMPTE subtitle-only stuff */
+void
+verify_smpte_subtitle_asset (
+	shared_ptr<const SMPTESubtitleAsset> asset,
+	vector<VerificationNote>& notes,
+	State& state
+	)
+{
+	if (asset->language()) {
+		if (!state.subtitle_language) {
+			state.subtitle_language = *asset->language();
+		} else if (state.subtitle_language != *asset->language()) {
+			notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_SUBTITLE_LANGUAGES });
+		}
+	}
+}
+
+
+/** Verify all subtitle stuff */
 static void
 verify_subtitle_asset (
 	shared_ptr<const SubtitleAsset> asset,
@@ -713,21 +727,31 @@ verify_subtitle_asset (
 
 	auto smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
 	if (smpte) {
+		verify_smpte_timed_text_asset (smpte, notes);
 		verify_smpte_subtitle_asset (smpte, notes, state);
 	}
 }
 
 
+/** Verify all closed caption stuff */
 static void
 verify_closed_caption_asset (
 	shared_ptr<const SubtitleAsset> asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
-	vector<VerificationNote>& notes,
-	State& state
+	vector<VerificationNote>& notes
 	)
 {
-	verify_subtitle_asset (asset, stage, xsd_dtd_directory, notes, state);
+	stage ("Checking closed caption XML", asset->file());
+	/* Note: we must not use SubtitleAsset::xml_as_string() here as that will mean the data on disk
+	 * gets passed through libdcp which may clean up and therefore hide errors.
+	 */
+	validate_xml (asset->raw_xml(), xsd_dtd_directory, notes);
+
+	auto smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
+	if (smpte) {
+		verify_smpte_timed_text_asset (smpte, notes);
+	}
 
 	if (asset->raw_xml().size() > 256 * 1024) {
 		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, raw_convert<string>(asset->raw_xml().size()), *asset->file()});
@@ -1224,7 +1248,7 @@ dcp::verify (
 				for (auto i: reel->closed_captions()) {
 					verify_closed_caption_reel (i, notes);
 					if (i->asset_ref().resolved()) {
-						verify_closed_caption_asset (i->asset(), stage, xsd_dtd_directory, notes, state);
+						verify_closed_caption_asset (i->asset(), stage, xsd_dtd_directory, notes);
 					}
 				}
 
