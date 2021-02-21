@@ -1417,9 +1417,9 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::MISSING_ASSETMAP:
 		return "No ASSETMAP or ASSETMAP.xml was found.";
 	case VerificationNote::Code::INVALID_INTRINSIC_DURATION:
-		return String::compose("The intrinsic duration of the asset %1 is less than 1 second long.", note.note().get());
+		return String::compose("The intrinsic duration of the asset %1 is less than 1 second.", note.note().get());
 	case VerificationNote::Code::INVALID_DURATION:
-		return String::compose("The duration of the asset %1 is less than 1 second long.", note.note().get());
+		return String::compose("The duration of the asset %1 is less than 1 second.", note.note().get());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
 		return String::compose("The instantaneous bit rate of the picture asset %1 is larger than the limit of 250Mbit/s in at least one place.", note.file()->filename());
 	case VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
