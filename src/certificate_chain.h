@@ -67,6 +67,9 @@ namespace dcp {
 
 /** @class CertificateChain
  *  @brief A chain of any number of certificates, from root to leaf.
+ *
+ *  A CertificateChain object can also (optionally) hold the private key corresponding
+ *  to the leaf certificate.
  */
 class CertificateChain
 {
@@ -90,7 +93,10 @@ public:
 		std::string leaf_common_name = "CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION"
 		);
 
-	explicit CertificateChain (std::string);
+	/** Read a CertificateChain from a string.
+	 *  @param s A string containing one or more PEM-encoded certificates.
+	 */
+	explicit CertificateChain (std::string s);
 
 	/** Add a certificate to the chain.
 	 *  @param c Certificate to add.
@@ -172,7 +178,7 @@ private:
 
 	/** Our certificates, not in any particular order */
 	List _certificates;
-	/** Leaf certificate's private key, if known */
+	/** Leaf certificate's private key, if known, in PEM format */
 	boost::optional<std::string> _key;
 };
 
