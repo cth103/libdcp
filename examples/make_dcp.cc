@@ -81,18 +81,18 @@ main ()
 	auto sound_writer = sound_asset->start_write("DCP/sound.mxf", active_channels);
 
 	/* Write some sine waves */
-	float* audio[2];
-	audio[0] = new float[48000];
-	audio[1] = new float[48000];
+	std::array<float, 48000> left;
+	std::array<float, 48000> right;
 	for (int i = 0; i < 48000; ++i) {
-		audio[0][i] = sin (2 * M_PI * i * 440 / 48000) * 0.25;
-		audio[1][i] = sin (2 * M_PI * i * 880 / 48000) * 0.25;
+		left[i] = sin (2 * M_PI * i * 440 / 48000) * 0.25;
+		right[i] = sin (2 * M_PI * i * 880 / 48000) * 0.25;
 	}
-	sound_writer->write (audio, 48000);
+	std::array<float*, 2> audio;
+	audio[0] = left.data();
+	audio[1] = right.data();
+	sound_writer->write (audio.data(), 48000);
 
-	/* And tidy up */
-	delete[] audio[0];
-	delete[] audio[1];
+	/* And finish off */
 	sound_writer->finalize ();
 
 	/* Now create a reel */
