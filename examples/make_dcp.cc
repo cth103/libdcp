@@ -64,7 +64,7 @@ main ()
 	/* Write 24 frames of the same JPEG2000 file */
 	dcp::ArrayData picture("examples/help.j2c");
 	for (int i = 0; i < 24; ++i) {
-		picture_writer->write (picture.data(), picture.size());
+		picture_writer->write (picture);
 	}
 
 	/* And finish off */
