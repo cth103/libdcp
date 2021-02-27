@@ -49,14 +49,14 @@ main ()
 	dcp::init();
 
 	/* Create a directory to put the DCP in */
-	boost::filesystem::create_directory ("DCP");
+	boost::filesystem::create_directory("DCP");
 
 	/* Make a picture asset.  This is a file which combines JPEG2000 files together to make
 	   up the video of the DCP.  First, create the object, specifying a frame rate of 24 frames
 	   per second.
 	*/
 
-	auto picture_asset = std::make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
+	auto picture_asset = std::make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 
 	/* Start off a write to it */
 	auto picture_writer = picture_asset->start_write("DCP/picture.mxf", false);
@@ -101,12 +101,12 @@ main ()
 	/* Add picture and sound to it.  The zeros are the `entry points', i.e. the first
 	   (video) frame from the assets that the reel should play.
 	*/
-	reel->add (std::make_shared<dcp::ReelMonoPictureAsset>(picture_asset, 0));
-	reel->add (std::make_shared<dcp::ReelSoundAsset>(sound_asset, 0));
+	reel->add(std::make_shared<dcp::ReelMonoPictureAsset>(picture_asset, 0));
+	reel->add(std::make_shared<dcp::ReelSoundAsset>(sound_asset, 0));
 
 	/* Make a CPL with this reel */
 	auto cpl = std::make_shared<dcp::CPL>("My film", dcp::ContentKind::FEATURE);
-	cpl->add (reel);
+	cpl->add(reel);
 
 	/* Write the DCP */
 	dcp::DCP dcp ("DCP");
