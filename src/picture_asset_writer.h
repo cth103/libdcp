@@ -41,11 +41,11 @@
 #define LIBDCP_PICTURE_ASSET_WRITER_H
 
 
+#include "asset_writer.h"
 #include "metadata.h"
 #include "types.h"
-#include "asset_writer.h"
-#include <memory>
 #include <boost/utility.hpp>
+#include <memory>
 #include <stdint.h>
 #include <string>
 
@@ -53,6 +53,7 @@
 namespace dcp {
 
 
+class Data;
 class PictureAsset;
 
 
@@ -84,13 +85,15 @@ public:
 	virtual FrameInfo write (uint8_t const *, int) = 0;
 	virtual void fake_write (int) = 0;
 
+	FrameInfo write (Data const& data);
+
 protected:
 	template <class P, class Q>
 	friend void start (PictureAssetWriter *, std::shared_ptr<P>, Q *, uint8_t const *, int);
 
 	PictureAssetWriter (PictureAsset *, boost::filesystem::path, bool);
 
-	PictureAsset* _picture_asset;
+	PictureAsset* _picture_asset = nullptr;
 	bool _overwrite = false;
 };
 

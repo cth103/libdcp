@@ -58,3 +58,10 @@ PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, boost::filesystem::
 {
 	asset->set_file (file);
 }
+
+
+FrameInfo
+PictureAssetWriter::write (Data const& data)
+{
+	return write (data.data(), data.size());
+}
