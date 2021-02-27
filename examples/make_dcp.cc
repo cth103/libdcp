@@ -45,6 +45,9 @@
 int
 main ()
 {
+	/* Set up libdcp */
+	dcp::init();
+
 	/* Create a directory to put the DCP in */
 	boost::filesystem::create_directory ("DCP");
 
