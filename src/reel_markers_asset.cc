@@ -110,7 +110,7 @@ ReelMarkersAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 	for (auto const& i: _markers) {
 		auto m = ml->add_child("Marker");
 		m->add_child("Label")->add_child_text(marker_to_string(i.first));
-		m->add_child("Offset")->add_child_text(raw_convert<string>(i.second.as_editable_units(tcr)));
+		m->add_child("Offset")->add_child_text(raw_convert<string>(i.second.as_editable_units_ceil(tcr)));
 	}
 
 	return asset;

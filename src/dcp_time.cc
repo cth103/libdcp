@@ -340,7 +340,14 @@ Time::as_string (Standard standard) const
 
 
 int64_t
-Time::as_editable_units (int tcr_) const
+Time::as_editable_units_floor (int tcr_) const
+{
+	return floor(int64_t(e) * double(tcr_) / tcr) + int64_t(s) * tcr_ + int64_t(m) * 60 * tcr_ + int64_t(h) * 60 * 60 * tcr_;
+}
+
+
+int64_t
+Time::as_editable_units_ceil (int tcr_) const
 {
 	return ceil(int64_t(e) * double(tcr_) / tcr) + int64_t(s) * tcr_ + int64_t(m) * 60 * tcr_ + int64_t(h) * 60 * 60 * tcr_;
 }

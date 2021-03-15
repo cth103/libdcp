@@ -763,7 +763,7 @@ static
 void
 verify_text_timing (
 	vector<shared_ptr<Reel>> reels,
-	optional<int> picture_frame_rate,
+	int edit_rate,
 	vector<VerificationNote>& notes,
 	std::function<bool (shared_ptr<Reel>)> check,
 	std::function<string (shared_ptr<Reel>)> xml,
@@ -775,32 +775,39 @@ verify_text_timing (
 	auto too_short = false;
 	auto too_close = false;
 	auto too_early = false;
+	auto reel_overlap = false;
 	/* current reel start time (in editable units) */
 	int64_t reel_offset = 0;
 
-	std::function<void (cxml::ConstNodePtr, int, int, bool)> parse;
-	parse = [&parse, &last_out, &too_short, &too_close, &too_early, &reel_offset](cxml::ConstNodePtr node, int tcr, int pfr, bool first_reel) {
+	std::function<void (cxml::ConstNodePtr, optional<int>, optional<Time>, int, bool)> parse;
+	parse = [&parse, &last_out, &too_short, &too_close, &too_early, &reel_offset](cxml::ConstNodePtr node, optional<int> tcr, optional<Time> start_time, int er, bool first_reel) {
 		if (node->name() == "Subtitle") {
 			Time in (node->string_attribute("TimeIn"), tcr);
+			if (start_time) {
+				in -= *start_time;
+			}
 			Time out (node->string_attribute("TimeOut"), tcr);
-			if (first_reel && in < Time(0, 0, 4, 0, tcr)) {
+			if (start_time) {
+				out -= *start_time;
+			}
+			if (first_reel && tcr && in < Time(0, 0, 4, 0, *tcr)) {
 				too_early = true;
 			}
 			auto length = out - in;
-			if (length.as_editable_units(pfr) < 15) {
+			if (length.as_editable_units_ceil(er) < 15) {
 				too_short = true;
 			}
 			if (last_out) {
 				/* XXX: this feels dubious - is it really what Bv2.1 means? */
-				auto distance = reel_offset + in.as_editable_units(pfr) - *last_out;
+				auto distance = reel_offset + in.as_editable_units_ceil(er) - *last_out;
 				if (distance >= 0 && distance < 2) {
 					too_close = true;
 				}
 			}
-			last_out = reel_offset + out.as_editable_units(pfr);
+			last_out = reel_offset + out.as_editable_units_floor(er);
 		} else {
 			for (auto i: node->node_children()) {
-				parse(i, tcr, pfr, first_reel);
+				parse(i, tcr, start_time, er, first_reel);
 			}
 		}
 	};
@@ -814,11 +821,31 @@ verify_text_timing (
 		 * read in by libdcp's parser.
 		 */
 
-		auto doc = make_shared<cxml::Document>("SubtitleReel");
-		doc->read_string (xml(reels[i]));
-		auto const tcr = doc->number_child<int>("TimeCodeRate");
-		parse (doc, tcr, picture_frame_rate.get_value_or(24), i == 0);
-		reel_offset += duration(reels[i]);
+		shared_ptr<cxml::Document> doc;
+		optional<int> tcr;
+		optional<Time> start_time;
+		try {
+			doc = make_shared<cxml::Document>("SubtitleReel");
+			doc->read_string (xml(reels[i]));
+			tcr = doc->number_child<int>("TimeCodeRate");
+			auto start_time_string = doc->optional_string_child("StartTime");
+			if (start_time_string) {
+				start_time = Time(*start_time_string, tcr);
+			}
+		} catch (...) {
+			doc = make_shared<cxml::Document>("DCSubtitle");
+			doc->read_string (xml(reels[i]));
+		}
+		parse (doc, tcr, start_time, edit_rate, i == 0);
+		auto end = reel_offset + duration(reels[i]);
+		if (last_out && *last_out > end) {
+			reel_overlap = true;
+		}
+		reel_offset = end;
+	}
+
+	if (last_out && *last_out > reel_offset) {
+		reel_overlap = true;
 	}
 
 	if (too_early) {
@@ -836,6 +863,12 @@ verify_text_timing (
 	if (too_close) {
 		notes.push_back ({
 			VerificationNote::Type::WARNING, VerificationNote::Code::INVALID_SUBTITLE_SPACING
+		});
+	}
+
+	if (reel_overlap) {
+		notes.push_back ({
+			VerificationNote::Type::ERROR, VerificationNote::Code::SUBTITLE_OVERLAPS_REEL_BOUNDARY
 		});
 	}
 }
@@ -948,13 +981,8 @@ verify_text_timing (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& no
 		return;
 	}
 
-	optional<int> picture_frame_rate;
-	if (reels[0]->main_picture()) {
-		picture_frame_rate = reels[0]->main_picture()->frame_rate().numerator;
-	}
-
 	if (reels[0]->main_subtitle()) {
-		verify_text_timing (reels, picture_frame_rate, notes,
+		verify_text_timing (reels, reels[0]->main_subtitle()->edit_rate().numerator, notes,
 			[](shared_ptr<Reel> reel) {
 				return static_cast<bool>(reel->main_subtitle());
 			},
@@ -968,7 +996,7 @@ verify_text_timing (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& no
 	}
 
 	for (auto i = 0U; i < reels[0]->closed_captions().size(); ++i) {
-		verify_text_timing (reels, picture_frame_rate, notes,
+		verify_text_timing (reels, reels[0]->closed_captions()[i]->edit_rate().numerator, notes,
 			[i](shared_ptr<Reel> reel) {
 				return i < reel->closed_captions().size();
 			},
@@ -1262,6 +1290,8 @@ dcp::verify (
 				most_closed_captions = std::max (most_closed_captions, reel->closed_captions().size());
 			}
 
+			verify_text_timing (cpl->reels(), notes);
+
 			if (dcp->standard() == Standard::SMPTE) {
 
 				if (have_main_subtitle && have_no_main_subtitle) {
@@ -1292,13 +1322,11 @@ dcp::verify (
 				if (lfoc == markers_seen.end()) {
 					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISSING_LFOC});
 				} else {
-					auto lfoc_time = lfoc->second.as_editable_units(lfoc->second.tcr);
+					auto lfoc_time = lfoc->second.as_editable_units_ceil(lfoc->second.tcr);
 					if (lfoc_time != (cpl->reels().back()->duration() - 1)) {
 						notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::INCORRECT_LFOC, raw_convert<string>(lfoc_time)});
 					}
 				}
-
-				verify_text_timing (cpl->reels(), notes);
 
 				LinesCharactersResult result;
 				for (auto reel: cpl->reels()) {
@@ -1458,6 +1486,8 @@ dcp::note_to_string (VerificationNote note)
 		return "At least one subtitle lasts less than 15 frames.";
 	case VerificationNote::Code::INVALID_SUBTITLE_SPACING:
 		return "At least one pair of subtitles is separated by less than 2 frames.";
+	case VerificationNote::Code::SUBTITLE_OVERLAPS_REEL_BOUNDARY:
+		return "At least one subtitle extends outside of its reel.";
 	case VerificationNote::Code::INVALID_SUBTITLE_LINE_COUNT:
 		return "There are more than 3 subtitle lines in at least one place in the DCP.";
 	case VerificationNote::Code::NEARLY_INVALID_SUBTITLE_LINE_LENGTH:

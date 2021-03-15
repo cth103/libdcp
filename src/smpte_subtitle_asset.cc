@@ -195,7 +195,7 @@ SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 	}
 
 	/* Guess intrinsic duration */
-	_intrinsic_duration = latest_subtitle_out().as_editable_units (_edit_rate.numerator / _edit_rate.denominator);
+	_intrinsic_duration = latest_subtitle_out().as_editable_units_ceil(_edit_rate.numerator / _edit_rate.denominator);
 }
 
 
@@ -547,5 +547,5 @@ void
 SMPTESubtitleAsset::add (shared_ptr<Subtitle> s)
 {
 	SubtitleAsset::add (s);
-	_intrinsic_duration = latest_subtitle_out().as_editable_units (_edit_rate.numerator / _edit_rate.denominator);
+	_intrinsic_duration = latest_subtitle_out().as_editable_units_ceil(_edit_rate.numerator / _edit_rate.denominator);
 }

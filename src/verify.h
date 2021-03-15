@@ -214,6 +214,8 @@ public:
 		INVALID_SUBTITLE_DURATION,
 		/** At least one pair of subtitles are separated by less than the the minimum of 2 frames suggested by [Bv2.1_7.2.5] */
 		INVALID_SUBTITLE_SPACING,
+		/** A subtitle lasts for longer than the reel which contains it */
+		SUBTITLE_OVERLAPS_REEL_BOUNDARY,
 		/** There are more than 3 subtitle lines in at least one place [Bv2.1_7.2.7] */
 		INVALID_SUBTITLE_LINE_COUNT,
 		/** There are more than 52 characters in at least one subtitle line [Bv2.1_7.2.7] */

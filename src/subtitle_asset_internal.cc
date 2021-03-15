@@ -233,8 +233,8 @@ order::Subtitle::as_xml (xmlpp::Element* parent, Context& context) const
 		e->set_attribute ("FadeUpTime", _fade_up.rebase(context.time_code_rate).as_string(context.standard));
 		e->set_attribute ("FadeDownTime", _fade_down.rebase(context.time_code_rate).as_string(context.standard));
 	} else {
-		e->set_attribute ("FadeUpTime", raw_convert<string> (_fade_up.as_editable_units(context.time_code_rate)));
-		e->set_attribute ("FadeDownTime", raw_convert<string> (_fade_down.as_editable_units(context.time_code_rate)));
+		e->set_attribute ("FadeUpTime", raw_convert<string> (_fade_up.as_editable_units_ceil(context.time_code_rate)));
+		e->set_attribute ("FadeDownTime", raw_convert<string> (_fade_down.as_editable_units_ceil(context.time_code_rate)));
 	}
 	return e;
 }

@@ -202,6 +202,7 @@ void
 check_verify_result (vector<path> dir, vector<dcp::VerificationNote> test_notes)
 {
 	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+	dump_notes (notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), test_notes.size());
 	for (auto i = 0U; i < notes.size(); ++i) {
 		BOOST_REQUIRE_EQUAL (notes[i], test_notes[i]);
@@ -677,7 +678,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_smpte_subtitles)
 	prepare_directory (dir);
 	copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(25, 1), 300 * 24, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
@@ -692,7 +693,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_smpte_subtitles)
 	prepare_directory (dir);
 	copy_file ("test/data/broken_smpte.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 300 * 24, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result (
@@ -890,7 +891,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language1)
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
 	asset->_language = "wrong-andbad";
 	asset->write (dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 300 * 24, 0);
 	reel_asset->_language = "badlang";
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
@@ -913,7 +914,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language2)
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
 	asset->_language = "wrong-andbad";
 	asset->write (dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 300 * 24, 0);
 	reel_asset->_language = "badlang";
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
@@ -1168,7 +1169,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_xml_size_in_bytes)
 	}
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 2049 * 24, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result (
@@ -1634,6 +1635,29 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_duration)
 	auto const dir = path("build/test/verify_valid_subtitle_duration");
 	auto cpl = dcp_with_text<dcp::ReelSubtitleAsset> (dir, {{ 4 * 24, 4 * 24 + 17 }});
 	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_subtitle_overlapping_reel_boundary)
+{
+	auto const dir = path("build/test/verify_subtitle_overlapping_reel_boundary");
+	prepare_directory (dir);
+	auto asset = make_shared<dcp::SMPTESubtitleAsset>();
+	asset->set_start_time (dcp::Time());
+	add_test_subtitle (asset, 0, 4 * 24);
+	asset->set_language (dcp::LanguageTag("de-DE"));
+	asset->write (dir / "subs.mxf");
+
+	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 3 * 24, 0);
+	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::SUBTITLE_OVERLAPS_REEL_BOUNDARY },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
+		});
+
 }
 
 
