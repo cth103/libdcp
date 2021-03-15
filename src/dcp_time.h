@@ -142,6 +142,11 @@ public:
 		return *this;
 	}
 
+	Time& operator-= (Time const & o) {
+		*this = *this - o;
+		return *this;
+	}
+
 private:
 	void set (double seconds, int tcr);
 };
