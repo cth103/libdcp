@@ -56,8 +56,11 @@
 #include <libxml++/nodes/element.h>
 #include <libxml++/document.h>
 #include <openssl/sha.h>
-#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#if BOOST_VERSION >= 106100
+#include <boost/dll/runtime_symbol_info.hpp>
+#endif
+#include <boost/filesystem.hpp>
 #include <stdexcept>
 #include <iostream>
 #include <iomanip>
@@ -192,12 +195,7 @@ dcp::init (optional<boost::filesystem::path> tags_directory)
 	asdcp_smpte_dict = &ASDCP::DefaultSMPTEDict();
 
 	if (!tags_directory) {
-		char* prefix = getenv("LIBDCP_SHARE_PREFIX");
-		if (prefix) {
-			tags_directory = boost::filesystem::path(prefix) / "tags";
-		} else {
-			tags_directory = LIBDCP_SHARE_PREFIX "/tags";
-		}
+		tags_directory = resources_directory() / "tags";
 	}
 
 	load_language_tag_lists (*tags_directory);
@@ -439,4 +437,34 @@ ASDCPErrorSuspender::~ASDCPErrorSuspender ()
 	Kumu::SetDefaultLogSink (&_old);
 	delete _sink;
 }
+
+
+boost::filesystem::path dcp::directory_containing_executable ()
+{
+#if BOOST_VERSION >= 106100
+	return boost::filesystem::canonical(boost::dll::program_location().parent_path());
+#else
+	char buffer[PATH_MAX];
+	ssize_t N = readlink ("/proc/self/exe", buffer, PATH_MAX);
+	return boost::filesystem::path(string(buffer, N)).parent_path();
+#endif
+}
+
+
+boost::filesystem::path dcp::resources_directory ()
+{
+#if defined(LIBDCP_OSX)
+	return directory_containing_executable().parent_path() / "Resources";
+#elif defined(LIBDCP_WINDOWS)
+	return directory_containing_executable().parent_path();
+#else
+	/* We need a way to specify the tags directory for running un-installed binaries */
+	char* prefix = getenv("LIBDCP_RESOURCES");
+	if (prefix) {
+		return prefix;
+	}
+	return directory_containing_executable().parent_path() / "share" / "libdcp";
+#endif
+}
+
 

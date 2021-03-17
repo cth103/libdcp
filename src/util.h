@@ -94,8 +94,8 @@ extern std::string remove_urn_uuid (std::string raw);
  *  by client applications.
  *
  *  @param tags_directory Path to a copy of the tags directory from the source code;
- *  if none is specified libdcp will look for a tags directory inside the environment
- *  variable LIBDCP_SHARE_PREFIX or the LIBDCP_SHARE_PREFIX #defined during the build.
+ *  if none is specified libdcp will look for a tags directory in the environment
+ *  variable LIBDCP_RESOURCES or based on where the current executable is.
  */
 extern void init (boost::optional<boost::filesystem::path> tags_directory = boost::optional<boost::filesystem::path>());
 
@@ -149,6 +149,9 @@ extern bool day_greater_than_or_equal (LocalTime a, LocalTime b);
 extern std::string unique_string (std::vector<std::string> existing, std::string base);
 
 extern ASDCP::Dictionary const* asdcp_smpte_dict;
+
+extern boost::filesystem::path directory_containing_executable ();
+extern boost::filesystem::path resources_directory ();
 
 
 class ASDCPErrorSuspender

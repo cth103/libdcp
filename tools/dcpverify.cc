@@ -137,7 +137,7 @@ main (int argc, char* argv[])
 
 	vector<boost::filesystem::path> directories;
 	directories.push_back (argv[optind]);
-	auto notes = dcp::verify (directories, bind(&stage, quiet, _1, _2), bind(&progress), "xsd");
+	auto notes = dcp::verify (directories, bind(&stage, quiet, _1, _2), bind(&progress));
 	dcp::filter_notes (notes, ignore_missing_assets);
 
 	bool failed = false;

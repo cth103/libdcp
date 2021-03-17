@@ -52,12 +52,12 @@ BOOST_AUTO_TEST_CASE (recovery)
 
 	boost::filesystem::remove_all ("build/test/baz");
 	boost::filesystem::create_directories ("build/test/baz");
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::Standard::SMPTE));
-	shared_ptr<dcp::PictureAssetWriter> writer = mp->start_write ("build/test/baz/video1.mxf", false);
+	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
+	auto writer = mp->start_write ("build/test/baz/video1.mxf", false);
 
 	int written_size = 0;
 	for (int i = 0; i < 24; ++i) {
-		dcp::FrameInfo info = writer->write (data.data(), data.size());
+		auto info = writer->write (data.data(), data.size());
 		BOOST_CHECK_EQUAL (info.hash, "c3c9a3adec09baf2b0bcb65806fbeac8");
 		written_size = info.size;
 	}
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE (recovery)
 	boost::filesystem::resize_file ("build/test/baz/video2.mxf", 16384 + data.size() * 11);
 
 	{
-		FILE* f = fopen ("build/test/baz/video2.mxf", "rb+");
+		auto f = fopen ("build/test/baz/video2.mxf", "rb+");
 		rewind (f);
 		char zeros[256];
 		memset (zeros, 0, 256);
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE (recovery)
 		fclose (f);
 	}
 
-#ifdef LIBDCP_POSIX
+#ifndef LIBDCP_WINDOWS
 	Kumu::ResetTestRNG ();
 #endif
 

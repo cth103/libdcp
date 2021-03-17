@@ -13,7 +13,7 @@ dcpverify=build/tools/dcpverify
 export LD_LIBRARY_PATH=build/src:$LD_LIBRARY_PATH
 # SIP stops this being passed in from the caller's environment
 export DYLD_LIBRARY_PATH=/Users/ci/osx-environment/x86_64/lib
-export LIBDCP_SHARE_PREFIX=.
+export LIBDCP_RESOURCES=.
 
 # Make sure we have the required tools
 for c in xmlsec1 xmllint; do

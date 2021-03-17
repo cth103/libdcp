@@ -71,10 +71,10 @@ def configure(conf):
     if int(gcc[0]) >= 4 and int(gcc[1]) > 1:
         conf.env.append_value('CXXFLAGS', ['-Wno-maybe-uninitialized'])
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
-    conf.env.append_value('CXXFLAGS', ['-DLIBDCP_SHARE_PREFIX="%s/share/libdcp"' % conf.env['PREFIX']])
 
     conf.env.TARGET_WINDOWS = conf.options.target_windows
     conf.env.TARGET_OSX = sys.platform == 'darwin'
+    conf.env.TARGET_LINUX = not conf.env.TARGET_WINDOWS and not conf.env.TARGET_OSX
     conf.env.ENABLE_DEBUG = conf.options.enable_debug
     conf.env.DISABLE_TESTS = conf.options.disable_tests
     conf.env.DISABLE_BENCHMARKS = conf.options.disable_benchmarks
@@ -82,10 +82,12 @@ def configure(conf):
     conf.env.STATIC = conf.options.static
     conf.env.API_VERSION = API_VERSION
 
-    if conf.options.target_windows:
+    if conf.env.TARGET_WINDOWS:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_WINDOWS')
-    else:
-        conf.env.append_value('CXXFLAGS', '-DLIBDCP_POSIX')
+    if conf.env.TARGET_OSX:
+        conf.env.append_value('CXXFLAGS', '-DLIBDCP_OSX')
+    if conf.env.TARGET_LINUX:
+        conf.env.append_value('CXXFLAGS', '-DLIBDCP_LINUX')
 
     if conf.env.TARGET_OSX:
         conf.env.append_value('CXXFLAGS', ['-Wno-unused-result', '-Wno-unused-parameter', '-Wno-unused-local-typedef'])
@@ -101,6 +103,9 @@ def configure(conf):
 
     if not conf.env.TARGET_WINDOWS:
         conf.env.append_value('LINKFLAGS', '-pthread')
+
+    if conf.env.TARGET_LINUX:
+        conf.check(lib='dl', uselib_store='DL', msg='Checking for library dl')
 
     if conf.options.jpeg == 'oj1':
         conf.env.append_value('CXXFLAGS', ['-DLIBDCP_OPENJPEG1'])
@@ -167,17 +172,21 @@ def configure(conf):
         # Windows builds are any more reliable
         conf.env.append_value('CXXFLAGS', '-O2')
 
+    # We support older boosts on Linux so we can use the distribution-provided package
+    # on Centos 7, but it's good if we can use 1.61 for boost::dll::program_location()
+    boost_version = ('1.45', '104500') if conf.env.TARGET_LINUX else ('1.61', '106800')
+
     conf.check_cxx(fragment="""
                             #include <boost/version.hpp>\n
-                            #if BOOST_VERSION < 104500\n
+                            #if BOOST_VERSION < %s\n
                             #error boost too old\n
                             #endif\n
                             int main(void) { return 0; }\n
-                            """,
+                            """ % boost_version[1],
                    mandatory=True,
-                   msg='Checking for boost library >= 1.45',
+                   msg='Checking for boost library >= %s' % boost_version[0],
                    okmsg='yes',
-                   errmsg='too old\nPlease install boost version 1.45 or higher.')
+                   errmsg='too old\nPlease install boost version %s or higher.' % boost_version[0])
 
     conf.check_cxx(fragment="""
     			    #include <boost/filesystem.hpp>\n
@@ -218,10 +227,14 @@ def build(bld):
     else:
         boost_lib_suffix = ''
 
+    libs="-L${libdir} -ldcp%s -lcxml -lboost_system%s" % (bld.env.API_VERSION, boost_lib_suffix)
+    if bld.env.TARGET_LINUX:
+        libs += " -ldl"
+
     bld(source='libdcp%s.pc.in' % bld.env.API_VERSION,
         version=VERSION,
         includedir='%s/include/libdcp%s' % (bld.env.PREFIX, bld.env.API_VERSION),
-        libs="-L${libdir} -ldcp%s -lcxml -lboost_system%s" % (bld.env.API_VERSION, boost_lib_suffix),
+        libs=libs,
         install_path='${LIBDIR}/pkgconfig')
 
     bld.recurse('src')

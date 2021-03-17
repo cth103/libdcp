@@ -1104,17 +1104,20 @@ dcp::verify (
 	vector<boost::filesystem::path> directories,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	function<void (float)> progress,
-	boost::filesystem::path xsd_dtd_directory
+	optional<boost::filesystem::path> xsd_dtd_directory
 	)
 {
-	xsd_dtd_directory = boost::filesystem::canonical (xsd_dtd_directory);
+	if (!xsd_dtd_directory) {
+		xsd_dtd_directory = resources_directory() / "xsd";
+	}
+	*xsd_dtd_directory = boost::filesystem::canonical (*xsd_dtd_directory);
 
 	vector<VerificationNote> notes;
 	State state{};
 
 	vector<shared_ptr<DCP>> dcps;
 	for (auto i: directories) {
-		dcps.push_back (shared_ptr<DCP> (new DCP (i)));
+		dcps.push_back (make_shared<DCP>(i));
 	}
 
 	for (auto dcp: dcps) {
@@ -1137,7 +1140,7 @@ dcp::verify (
 
 		for (auto cpl: dcp->cpls()) {
 			stage ("Checking CPL", cpl->file());
-			validate_xml (cpl->file().get(), xsd_dtd_directory, notes);
+			validate_xml (cpl->file().get(), *xsd_dtd_directory, notes);
 
 			if (cpl->any_encrypted() && !cpl->all_encrypted()) {
 				notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::PARTIALLY_ENCRYPTED});
@@ -1266,7 +1269,7 @@ dcp::verify (
 				if (reel->main_subtitle()) {
 					verify_main_subtitle_reel (reel->main_subtitle(), notes);
 					if (reel->main_subtitle()->asset_ref().resolved()) {
-						verify_subtitle_asset (reel->main_subtitle()->asset(), stage, xsd_dtd_directory, notes, state);
+						verify_subtitle_asset (reel->main_subtitle()->asset(), stage, *xsd_dtd_directory, notes, state);
 					}
 					have_main_subtitle = true;
 				} else {
@@ -1276,7 +1279,7 @@ dcp::verify (
 				for (auto i: reel->closed_captions()) {
 					verify_closed_caption_reel (i, notes);
 					if (i->asset_ref().resolved()) {
-						verify_closed_caption_asset (i->asset(), stage, xsd_dtd_directory, notes);
+						verify_closed_caption_asset (i->asset(), stage, *xsd_dtd_directory, notes);
 					}
 				}
 
@@ -1384,7 +1387,7 @@ dcp::verify (
 
 		for (auto pkl: dcp->pkls()) {
 			stage ("Checking PKL", pkl->file());
-			validate_xml (pkl->file().get(), xsd_dtd_directory, notes);
+			validate_xml (pkl->file().get(), *xsd_dtd_directory, notes);
 			if (pkl_has_encrypted_assets(dcp, pkl)) {
 				cxml::Document doc ("PackingList");
 				doc.read_file (pkl->file().get());
@@ -1396,7 +1399,7 @@ dcp::verify (
 
 		if (dcp->asset_map_path()) {
 			stage ("Checking ASSETMAP", dcp->asset_map_path().get());
-			validate_xml (dcp->asset_map_path().get(), xsd_dtd_directory, notes);
+			validate_xml (dcp->asset_map_path().get(), *xsd_dtd_directory, notes);
 		} else {
 			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_ASSETMAP});
 		}

@@ -436,7 +436,7 @@ std::vector<VerificationNote> verify (
 	std::vector<boost::filesystem::path> directories,
 	boost::function<void (std::string, boost::optional<boost::filesystem::path>)> stage,
 	boost::function<void (float)> progress,
-	boost::filesystem::path xsd_dtd_directory
+	boost::optional<boost::filesystem::path> xsd_dtd_directory = boost::optional<boost::filesystem::path>()
 	);
 
 std::string note_to_string (dcp::VerificationNote note);

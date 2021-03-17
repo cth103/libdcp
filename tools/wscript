@@ -32,27 +32,29 @@
 #
 
 def build(bld):
+    uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL XERCES DL'
+
     obj = bld(features='cxx cxxprogram')
     obj.use = ['libdcp%s' % bld.env.API_VERSION]
-    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL XERCES'
+    obj.uselib = uselib
     obj.source = 'dcpdiff.cc common.cc'
     obj.target = 'dcpdiff'
 
     obj = bld(features='cxx cxxprogram')
     obj.use = ['libdcp%s' % bld.env.API_VERSION]
-    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL XERCES'
+    obj.uselib = uselib
     obj.source = 'dcpinfo.cc common.cc'
     obj.target = 'dcpinfo'
 
     obj = bld(features='cxx cxxprogram')
     obj.use = ['libdcp%s' % bld.env.API_VERSION]
-    obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL XERCES'
+    obj.uselib = uselib
     obj.source = 'dcpverify.cc common.cc'
     obj.target = 'dcpverify'
 
     for f in ['dumpsub', 'decryptmxf', 'kdm', 'thumb', 'recover']:
         obj = bld(features='cxx cxxprogram')
         obj.use = ['libdcp%s' % bld.env.API_VERSION]
-        obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL XERCES '
+        obj.uselib = uselib
         obj.source = 'dcp%s.cc' % f
         obj.target = 'dcp%s' % f

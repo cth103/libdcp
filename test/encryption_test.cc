@@ -153,10 +153,10 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 		"> build/test/xmllint.log 2>&1 < /dev/null"
 		);
 
-#ifdef LIBDCP_POSIX
-	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
-#else
+#ifdef LIBDCP_WINDOWS
 	BOOST_CHECK_EQUAL (r, 0);
+#else
+	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
 #endif
 
 	r = system ("xmlsec1 verify "
@@ -167,9 +167,9 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 		"--id-attr:Id http://www.smpte-ra.org/schemas/430-3/2006/ETM:AuthenticatedPrivate "
 		    "build/test/encryption_test.kdm.xml > build/test/xmlsec1.log 2>&1 < /dev/null");
 
-#ifdef LIBDCP_POSIX
-	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
-#else
+#ifdef LIBDCP_WINDOWS
 	BOOST_CHECK_EQUAL (r, 0);
+#else
+	BOOST_CHECK_EQUAL (WEXITSTATUS (r), 0);
 #endif
 }
