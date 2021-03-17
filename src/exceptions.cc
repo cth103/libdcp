@@ -191,3 +191,10 @@ NoReelsError::NoReelsError ()
 
 }
 
+
+MissingAssetmapError::MissingAssetmapError (boost::filesystem::path dir)
+	: ReadError (String::compose("Could not find ASSETMAP nor ASSETMAP.xml in '%1'", dir.string()))
+{
+
+}
+

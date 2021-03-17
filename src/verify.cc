@@ -1122,8 +1122,12 @@ dcp::verify (
 
 	for (auto dcp: dcps) {
 		stage ("Checking DCP", dcp->directory());
+		bool carry_on = true;
 		try {
 			dcp->read (&notes);
+		} catch (MissingAssetmapError& e) {
+			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
+			carry_on = false;
 		} catch (ReadError& e) {
 			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
 		} catch (XMLError& e) {
@@ -1132,6 +1136,10 @@ dcp::verify (
 			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
 		} catch (cxml::Error& e) {
 			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
+		}
+
+		if (!carry_on) {
+			continue;
 		}
 
 		if (dcp->standard() != Standard::SMPTE) {

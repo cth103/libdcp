@@ -147,6 +147,16 @@ public:
 };
 
 
+/** @class MissingAssetmapError
+ *  @brief Thrown when no ASSETMAP was found when trying to read a DCP
+ */
+class MissingAssetmapError : public ReadError
+{
+public:
+	explicit MissingAssetmapError (boost::filesystem::path dir);
+};
+
+
 /** @class XMLError
  *  @brief An XML error
  */
