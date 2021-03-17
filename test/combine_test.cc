@@ -348,5 +348,56 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_shared_asset)
 }
 
 
+/** Two DCPs each with a copy of the exact same asset */
+BOOST_AUTO_TEST_CASE (combine_two_dcps_with_duplicated_asset)
+{
+	using namespace boost::filesystem;
+	boost::filesystem::path const out = "build/test/combine_two_dcps_with_duplicated_asset";
+
+	auto first = make_simple ("build/test/combine_input1", 1);
+	first->write_xml (dcp::Standard::SMPTE);
+
+	remove_all ("build/test/combine_input2");
+	auto second = make_shared<dcp::DCP>("build/test/combine_input2");
+
+	dcp::MXFMetadata mxf_meta;
+	mxf_meta.company_name = "OpenDCP";
+	mxf_meta.product_version = "0.0.25";
+
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
+	cpl->set_content_version (
+		dcp::ContentVersion("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11","content-version-label-text")
+		);
+	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
+	cpl->set_main_sound_sample_rate (48000);
+	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
+	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
+	cpl->set_version_number(1);
+
+	auto pic = make_shared<dcp::ReelMonoPictureAsset>(simple_picture("build/test/combine_input2", ""), 0);
+	auto first_sound_asset = first->cpls()[0]->reels()[0]->main_sound()->asset()->file();
+	BOOST_REQUIRE (first_sound_asset);
+	boost::filesystem::path second_sound_asset = "build/test/combine_input2/my_great_audio.mxf";
+	boost::filesystem::copy_file (*first_sound_asset, second_sound_asset);
+	auto sound = make_shared<dcp::ReelSoundAsset>(make_shared<dcp::SoundAsset>(second_sound_asset), 0);
+	auto reel = make_shared<dcp::Reel>(pic, sound);
+	reel->add (simple_markers());
+	cpl->add (reel);
+	second->add (cpl);
+	second->write_xml (dcp::Standard::SMPTE);
+
+	remove_all (out);
+	vector<path> inputs;
+	inputs.push_back ("build/test/combine_input1");
+	inputs.push_back ("build/test/combine_input2");
+	dcp::combine (inputs, out);
+
+	check_no_errors (out);
+	check_combined (inputs, out);
+
+	BOOST_REQUIRE (!boost::filesystem::exists(out / "my_great_audio.mxf"));
+}
+
+
 /* XXX: same CPL names */
 /* XXX: Interop PNG subs */

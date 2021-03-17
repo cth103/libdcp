@@ -140,10 +140,6 @@ dcp::combine (
 				continue;
 			}
 
-			auto file = j->file();
-			DCP_ASSERT (file);
-			path new_path = make_unique(output / file->filename());
-
 			auto sub = dynamic_pointer_cast<dcp::InteropSubtitleAsset>(j);
 			if (sub) {
 				/* Interop fonts are really fiddly.  The font files are assets (in the ASSETMAP)
@@ -155,16 +151,10 @@ dcp::combine (
 				for (auto const& k: fonts) {
 					sub->set_font_file (k.first, make_unique(output / k.second.filename()));
 				}
-				sub->write (new_path);
-			} else if (!dynamic_pointer_cast<dcp::FontAsset>(j)) {
-				/* Take care of everything else that's not a Interop subtitle asset, Interop font file
-				 * or CPL.
-				 */
-				auto file = j->file();
+				auto file = sub->file();
 				DCP_ASSERT (file);
 				path new_path = make_unique(output / file->filename());
-				create_hard_link_or_copy (*file, new_path);
-				j->set_file (new_path);
+				sub->write (new_path);
 			}
 
 			assets.push_back (j);
@@ -172,5 +162,16 @@ dcp::combine (
 	}
 
 	output_dcp.resolve_refs (assets);
+
+	for (auto i: output_dcp.assets()) {
+		if (!dynamic_pointer_cast<dcp::FontAsset>(i) && !dynamic_pointer_cast<dcp::CPL>(i)) {
+			auto file = i->file();
+			DCP_ASSERT (file);
+			path new_path = make_unique(output / file->filename());
+			create_hard_link_or_copy (*file, new_path);
+			i->set_file (new_path);
+		}
+	}
+
 	output_dcp.write_xml (*standard, issuer, creator, issue_date, annotation_text, signer);
 }
