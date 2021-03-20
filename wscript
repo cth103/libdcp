@@ -249,7 +249,7 @@ def build(bld):
     for i in os.listdir('xsd'):
         bld.install_files('${PREFIX}/share/libdcp/xsd', os.path.join('xsd', i))
 
-    for i in ['language', 'region', 'script', 'variant', 'extlang']:
+    for i in ['language', 'region', 'script', 'variant', 'extlang', 'dcnc']:
         bld.install_files('${PREFIX}/share/libdcp/tags', os.path.join('tags', i))
 
     bld.add_post_fun(post)

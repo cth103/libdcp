@@ -61,6 +61,8 @@ static vector<LanguageTag::SubtagData> region_list;
 static vector<LanguageTag::SubtagData> script_list;
 static vector<LanguageTag::SubtagData> extlang_list;
 
+static vector<pair<string, string>> dcnc_list;
+
 
 static
 optional<LanguageTag::SubtagData>
@@ -434,7 +436,7 @@ LanguageTag::get_subtag_description (LanguageTag::SubtagType type, string subtag
 
 
 void
-load_language_tag_list (boost::filesystem::path tags_directory, string name, vector<LanguageTag::SubtagData>& list)
+load_language_tag_list (boost::filesystem::path tags_directory, string name, std::function<void (std::string, std::string)> add)
 {
 	auto f = fopen_boost (tags_directory / name, "r");
 	if (!f) {
@@ -457,7 +459,7 @@ load_language_tag_list (boost::filesystem::path tags_directory, string name, vec
 		}
 		string b = buffer;
 		trim (b);
-		list.push_back (LanguageTag::SubtagData(a, b));
+		add (a, b);
 		++i;
 	}
 
@@ -468,11 +470,23 @@ load_language_tag_list (boost::filesystem::path tags_directory, string name, vec
 void
 dcp::load_language_tag_lists (boost::filesystem::path tags_directory)
 {
-	load_language_tag_list (tags_directory, "language", language_list);
-	load_language_tag_list (tags_directory, "variant", variant_list);
-	load_language_tag_list (tags_directory, "region", region_list);
-	load_language_tag_list (tags_directory, "script", script_list);
-	load_language_tag_list (tags_directory, "extlang", extlang_list);
+	auto add_subtag = [](vector<LanguageTag::SubtagData>& list, string a, string b) {
+		list.push_back (LanguageTag::SubtagData(a, b));
+	};
+
+	load_language_tag_list (tags_directory, "language", [&add_subtag](string a, string b) { add_subtag(language_list, a, b); });
+	load_language_tag_list (tags_directory, "variant",  [&add_subtag](string a, string b) { add_subtag(variant_list, a, b); });
+	load_language_tag_list (tags_directory, "region",   [&add_subtag](string a, string b) { add_subtag(region_list, a, b); });
+	load_language_tag_list (tags_directory, "script",   [&add_subtag](string a, string b) { add_subtag(script_list, a, b); });
+	load_language_tag_list (tags_directory, "extlang",  [&add_subtag](string a, string b) { add_subtag(extlang_list, a, b); });
+
+	load_language_tag_list (tags_directory, "dcnc", [](string a, string b) { dcnc_list.push_back(make_pair(a, b)); });
+}
+
+
+vector<pair<string, string>> dcp::dcnc_tags ()
+{
+	return dcnc_list;
 }
 
 

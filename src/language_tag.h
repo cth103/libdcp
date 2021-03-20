@@ -246,6 +246,9 @@ extern std::ostream& operator<<(std::ostream& os, dcp::LanguageTag const& tag);
 extern void load_language_tag_lists (boost::filesystem::path tags_directory);
 
 
+extern std::vector<std::pair<std::string, std::string>> dcnc_tags ();
+
+
 }
 
 
