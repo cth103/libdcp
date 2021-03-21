@@ -91,6 +91,7 @@ def configure(conf):
 
     if conf.env.TARGET_OSX:
         conf.env.append_value('CXXFLAGS', ['-Wno-unused-result', '-Wno-unused-parameter', '-Wno-unused-local-typedef'])
+        conf.env.append_value('LINKFLAGS', '-headerpad_max_install_names')
 
     # Disable libxml++ deprecation warnings for now
     conf.env.append_value('CXXFLAGS', ['-Wno-deprecated-declarations'])
