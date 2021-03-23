@@ -366,6 +366,20 @@ dcp::operator== (dcp::LanguageTag const& a, dcp::LanguageTag const& b)
 }
 
 
+bool
+dcp::operator!= (dcp::LanguageTag const& a, dcp::LanguageTag const& b)
+{
+	return a.to_string() != b.to_string();
+}
+
+
+bool
+dcp::operator< (dcp::LanguageTag const& a, dcp::LanguageTag const& b)
+{
+	return a.to_string() < b.to_string();
+}
+
+
 ostream&
 dcp::operator<< (ostream& os, dcp::LanguageTag const& tag)
 {

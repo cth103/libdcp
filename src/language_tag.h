@@ -240,6 +240,8 @@ private:
 
 
 extern bool operator==(dcp::LanguageTag const& a, dcp::LanguageTag const& b);
+extern bool operator!=(dcp::LanguageTag const& a, dcp::LanguageTag const& b);
+extern bool operator<(dcp::LanguageTag const& a, dcp::LanguageTag const& b);
 extern std::ostream& operator<<(std::ostream& os, dcp::LanguageTag const& tag);
 
 
