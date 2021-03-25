@@ -293,9 +293,7 @@ simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_
 	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), sample_rate, channels, dcp::LanguageTag("en-US"), dcp::Standard::SMPTE));
 	ms->_language = language;
 	ms->set_metadata (mxf_meta);
-	vector<dcp::Channel> active_channels;
-	active_channels.push_back (dcp::Channel::LEFT);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / dcp::String::compose("audio%1.mxf", suffix), active_channels);
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / dcp::String::compose("audio%1.mxf", suffix));
 
 	int const samples_per_frame = sample_rate / 24;
 

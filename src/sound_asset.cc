@@ -222,13 +222,13 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 
 
 shared_ptr<SoundAssetWriter>
-SoundAsset::start_write (boost::filesystem::path file, vector<Channel> active_channels, bool atmos_sync)
+SoundAsset::start_write (boost::filesystem::path file, bool atmos_sync)
 {
 	if (atmos_sync && _channels < 14) {
 		throw MiscError ("Insufficient channels to write ATMOS sync (there must be at least 14)");
 	}
 
-	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter(this, file, active_channels, atmos_sync));
+	return shared_ptr<SoundAssetWriter> (new SoundAssetWriter(this, file, atmos_sync));
 }
 
 

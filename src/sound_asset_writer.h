@@ -78,7 +78,7 @@ private:
 	friend class SoundAsset;
 	friend struct ::sync_test1;
 
-	SoundAssetWriter (SoundAsset *, boost::filesystem::path, std::vector<Channel> active_channels, bool sync);
+	SoundAssetWriter (SoundAsset *, boost::filesystem::path, bool sync);
 
 	void start ();
 	void write_current_frame ();
@@ -99,8 +99,6 @@ private:
 	/** index of the sync packet (0-3) which starts the next edit unit */
 	int _sync_packet = 0;
 	FSK _fsk;
-
-	std::vector<Channel> _active_channels;
 };
 
 }

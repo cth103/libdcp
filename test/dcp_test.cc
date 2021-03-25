@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 
 	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE));
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf", vector<dcp::Channel>());
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf");
 
 	SF_INFO info;
 	info.format = 0;
@@ -290,7 +290,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 
 	auto ms = make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test5/audio.mxf", vector<dcp::Channel>());
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test5/audio.mxf");
 
 	SF_INFO info;
 	info.format = 0;

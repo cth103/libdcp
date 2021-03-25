@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE));
 	ms->set_metadata (mxf_metadata);
 	ms->set_key (key);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/encryption_test/audio.mxf", vector<dcp::Channel>());
+	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/encryption_test/audio.mxf");
 
 	SF_INFO info;
 	info.format = 0;

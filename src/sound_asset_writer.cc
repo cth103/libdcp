@@ -66,12 +66,11 @@ struct SoundAssetWriter::ASDCPState
 };
 
 
-SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, vector<Channel> active_channels, bool sync)
+SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, bool sync)
 	: AssetWriter (asset, file)
 	, _state (new SoundAssetWriter::ASDCPState)
 	, _asset (asset)
 	, _sync (sync)
-	, _active_channels (active_channels)
 {
 	DCP_ASSERT (!_sync || _asset->channels() >= 14);
 	DCP_ASSERT (!_sync || _asset->standard() == Standard::SMPTE);
@@ -117,7 +116,7 @@ SoundAssetWriter::start ()
 		boost::throw_exception (FileError("could not open audio MXF for writing", _file.string(), r));
 	}
 
-	if (_asset->standard() == Standard::SMPTE && !_active_channels.empty()) {
+	if (_asset->standard() == Standard::SMPTE) {
 
 		ASDCP::MXF::WaveAudioDescriptor* essence_descriptor = nullptr;
 		_state->mxf_writer.OP1aHeader().GetMDObjectByType(
@@ -145,15 +144,26 @@ SoundAssetWriter::start ()
 		_state->mxf_writer.OP1aHeader().AddChildObject(soundfield);
 		essence_descriptor->SubDescriptors.push_back(soundfield->InstanceUID);
 
-		for (auto i: _active_channels) {
+		/* We must describe at least the number of channels in `field', even if they aren't
+		 * in the asset (I think)
+		 */
+		int descriptors = max(_asset->channels(), field == MCASoundField::FIVE_POINT_ONE ? 6 : 8);
+
+		auto const used = used_audio_channels();
+
+		for (auto i = 0; i < descriptors; ++i) {
+			auto dcp_channel = static_cast<dcp::Channel>(i);
+			if (find(used.begin(), used.end(), dcp_channel) == used.end()) {
+				continue;
+			}
 			auto channel = new ASDCP::MXF::AudioChannelLabelSubDescriptor(asdcp_smpte_dict);
 			GenRandomValue (channel->MCALinkID);
 			channel->SoundfieldGroupLinkID = soundfield->MCALinkID;
-			channel->MCAChannelID = static_cast<int>(i) + 1;
-			channel->MCATagSymbol = "ch" + channel_to_mca_id(i, field);
-			channel->MCATagName = channel_to_mca_name(i, field);
+			channel->MCAChannelID = i + 1;
+			channel->MCATagSymbol = "ch" + channel_to_mca_id(dcp_channel, field);
+			channel->MCATagName = channel_to_mca_name(dcp_channel, field);
 			channel->RFC5646SpokenLanguage = _asset->language();
-			channel->MCALabelDictionaryID = channel_to_mca_universal_label(i, field, asdcp_smpte_dict);
+			channel->MCALabelDictionaryID = channel_to_mca_universal_label(dcp_channel, field, asdcp_smpte_dict);
 			_state->mxf_writer.OP1aHeader().AddChildObject(channel);
 			essence_descriptor->SubDescriptors.push_back(channel->InstanceUID);
 		}

@@ -71,9 +71,13 @@ using std::shared_ptr;
 
 
 static list<pair<string, optional<path>>> stages;
-static string const dcp_test1_pkl = "pkl_2b9b857f-ab4a-440e-a313-1ace0f1cfc95.xml";
+static string const dcp_test1_pkl_id = "6af1e0c1-c441-47f8-a502-3efd46b1fa4f";
+static string const dcp_test1_pkl = "pkl_" + dcp_test1_pkl_id + ".xml";
 static string const dcp_test1_cpl_id = "81fb54df-e1bf-4647-8788-ea7ba154375b";
 static string const dcp_test1_cpl = "cpl_" + dcp_test1_cpl_id + ".xml";
+static string const dcp_test1_asset_map_id = "5d51e8a1-b2a5-4da6-9b66-4615c3609440";
+static string const encryption_test_cpl_id = "81fb54df-e1bf-4647-8788-ea7ba154375b";
+static string const encryption_test_pkl_id = "627ad740-ae36-4c49-92bb-553a9f09c4f8";
 
 static void
 stage (string s, optional<path> p)
@@ -334,9 +338,9 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id, canonical(dir / dcp_test1_cpl) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_HASHES, canonical(dir / "audio.mxf") },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xX3bMCBdXEOYEpYmsConNWrWUAGs=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 12 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xSEEi70vx1WQs67bmu2zKvzIkXvY=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 12 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xaddO7je2lZSNQp55qjCWo5DLKFQ=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 19 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xqtXbkcwhUj/yqquVLmV+wbzbxQ8=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 26 }
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xWU0/u1wM17y7Kriq06+65/ViX1o=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 26 }
 		});
 }
 
@@ -455,7 +459,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_pkl_id)
 {
 	check_verify_result_after_replace (
 		"invalid_xml_pkl_id", &pkl,
-		"<Id>urn:uuid:2b9", "<Id>urn:uuid:xb9",
+		"<Id>urn:uuid:" + dcp_test1_pkl_id.substr(0, 3),
+		"<Id>urn:uuid:x" + dcp_test1_pkl_id.substr(1, 2),
 		{ dcp::VerificationNote::Code::INVALID_XML }
 		);
 }
@@ -465,7 +470,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_asset_map_id)
 {
 	check_verify_result_after_replace (
 		"invalix_xml_asset_map_id", &asset_map,
-		"<Id>urn:uuid:07e", "<Id>urn:uuid:x7e",
+		"<Id>urn:uuid:" + dcp_test1_asset_map_id.substr(0, 3),
+		"<Id>urn:uuid:x" + dcp_test1_asset_map_id.substr(1, 2),
 		{ dcp::VerificationNote::Code::INVALID_XML }
 		);
 }
@@ -2663,10 +2669,8 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_cpl_with_encrypted_content)
 		copy_file (i.path(), dir / i.path().filename());
 	}
 
-	string const pkl_id = "93182bd2-b1e8-41a3-b5c8-6e6564273bff";
-	path const pkl = dir / ( "pkl_" + pkl_id + ".xml" );
-	string const cpl_id = "81fb54df-e1bf-4647-8788-ea7ba154375b";
-	path const cpl = dir / ( "cpl_" + cpl_id + ".xml");
+	path const pkl = dir / ( "pkl_" + encryption_test_pkl_id + ".xml" );
+	path const cpl = dir / ( "cpl_" + encryption_test_cpl_id + ".xml");
 
 	{
 		Editor e (cpl);
@@ -2676,14 +2680,14 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_cpl_with_encrypted_content)
 	check_verify_result (
 		{dir},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl_id, canonical(cpl) },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, pkl_id, canonical(pkl), },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, encryption_test_cpl_id, canonical(cpl) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id, canonical(pkl), },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl_id, canonical(cpl) },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl_id, canonical(cpl) }
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, encryption_test_cpl_id, canonical(cpl) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, encryption_test_cpl_id, canonical(cpl) }
 		});
 }
 
@@ -2696,10 +2700,8 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_encrypted_content)
 		copy_file (i.path(), dir / i.path().filename());
 	}
 
-	string const cpl_id = "81fb54df-e1bf-4647-8788-ea7ba154375b";
-	path const cpl = dir / ("cpl_" + cpl_id + ".xml");
-	string const pkl_id = "93182bd2-b1e8-41a3-b5c8-6e6564273bff";
-	path const pkl = dir / ("pkl_" + pkl_id + ".xml");
+	path const cpl = dir / ("cpl_" + encryption_test_cpl_id + ".xml");
+	path const pkl = dir / ("pkl_" + encryption_test_pkl_id + ".xml");
 	{
 		Editor e (pkl);
 		e.delete_lines ("<dsig:Signature", "</dsig:Signature>");
@@ -2708,13 +2710,13 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_encrypted_content)
 	check_verify_result (
 		{dir},
 		{
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, pkl_id, canonical(pkl) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id, canonical(pkl) },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl_id, canonical(cpl) },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl_id, canonical(pkl) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, encryption_test_cpl_id, canonical(cpl) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, encryption_test_pkl_id, canonical(pkl) },
 		});
 }
 
@@ -2728,7 +2730,7 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_unencrypted_content)
 	}
 
 	{
-		Editor e (dir / "pkl_2b9b857f-ab4a-440e-a313-1ace0f1cfc95.xml");
+		Editor e (dir / dcp_test1_pkl);
 		e.delete_lines ("<dsig:Signature", "</dsig:Signature>");
 	}
 

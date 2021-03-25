@@ -92,14 +92,7 @@ BOOST_AUTO_TEST_CASE (parse_mca_descriptors_from_mxf_test)
 BOOST_AUTO_TEST_CASE (write_mca_descriptors_to_mxf_test)
 {
 	shared_ptr<dcp::SoundAsset> sound_asset(new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 6, dcp::LanguageTag("en-US"), dcp::Standard::SMPTE));
-	vector<dcp::Channel> channels;
-	channels.push_back (dcp::Channel::LEFT);
-	channels.push_back (dcp::Channel::RIGHT);
-	channels.push_back (dcp::Channel::CENTRE);
-	channels.push_back (dcp::Channel::LFE);
-	channels.push_back (dcp::Channel::LS);
-	channels.push_back (dcp::Channel::RS);
-	shared_ptr<dcp::SoundAssetWriter> writer = sound_asset->start_write("build/test/write_mca_descriptors_to_mxf_test.mxf", channels);
+	shared_ptr<dcp::SoundAssetWriter> writer = sound_asset->start_write("build/test/write_mca_descriptors_to_mxf_test.mxf");
 
 	float* samples[6];
 	for (int i = 0; i < 6; ++i) {

@@ -74,11 +74,7 @@ main ()
 	   When creating the object we specify the sampling rate (48kHz) and the number of channels (2).
 	*/
 	auto sound_asset = std::make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 2, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
-	/* Here we must also say which of our channels will have "real" sound data in them */
-	std::vector<dcp::Channel> active_channels;
-	active_channels.push_back(dcp::Channel::LEFT);
-	active_channels.push_back(dcp::Channel::RIGHT);
-	auto sound_writer = sound_asset->start_write("DCP/sound.mxf", active_channels);
+	auto sound_writer = sound_asset->start_write("DCP/sound.mxf");
 
 	/* Write some sine waves */
 	std::array<float, 48000> left;

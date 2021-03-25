@@ -827,20 +827,20 @@ dcp::channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dict
 vector<dcp::Channel>
 dcp::used_audio_channels ()
 {
-	vector<Channel> c;
-	c.push_back (Channel::LEFT);
-	c.push_back (Channel::RIGHT);
-	c.push_back (Channel::CENTRE);
-	c.push_back (Channel::LFE);
-	c.push_back (Channel::LS);
-	c.push_back (Channel::RS);
-	c.push_back (Channel::HI);
-	c.push_back (Channel::VI);
-	c.push_back (Channel::BSL);
-	c.push_back (Channel::BSR);
-	c.push_back (Channel::MOTION_DATA);
-	c.push_back (Channel::SYNC_SIGNAL);
-	c.push_back (Channel::SIGN_LANGUAGE);
-	return c;
+	return {
+		Channel::LEFT,
+		Channel::RIGHT,
+		Channel::CENTRE,
+		Channel::LFE,
+		Channel::LS,
+		Channel::RS,
+		Channel::HI,
+		Channel::VI,
+		Channel::BSL,
+		Channel::BSR,
+		Channel::MOTION_DATA,
+		Channel::SYNC_SIGNAL,
+		Channel::SIGN_LANGUAGE
+	};
 }
 
