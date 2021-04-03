@@ -547,6 +547,20 @@ Luminance::string_to_unit (string u)
 }
 
 
+float
+Luminance::value_in_foot_lamberts () const
+{
+	switch (_unit) {
+	case Unit::CANDELA_PER_SQUARE_METRE:
+		return _value / 3.426;
+	case Unit::FOOT_LAMBERT:
+		return _value;
+	default:
+		DCP_ASSERT (false);
+	}
+}
+
+
 bool
 dcp::operator== (Luminance const& a, Luminance const& b)
 {

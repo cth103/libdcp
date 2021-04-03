@@ -444,6 +444,8 @@ public:
 		return _unit;
 	}
 
+	float value_in_foot_lamberts () const;
+
 	void as_xml (xmlpp::Element* parent, std::string ns) const;
 
 	static std::string unit_to_string (Unit u);
