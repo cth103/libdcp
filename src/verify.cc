@@ -37,46 +37,47 @@
  */
 
 
-#include "verify.h"
-#include "dcp.h"
+#include "compose.hpp"
 #include "cpl.h"
-#include "reel.h"
-#include "reel_closed_caption_asset.h"
-#include "reel_picture_asset.h"
-#include "reel_sound_asset.h"
-#include "reel_subtitle_asset.h"
+#include "dcp.h"
+#include "exceptions.h"
 #include "interop_subtitle_asset.h"
 #include "mono_picture_asset.h"
 #include "mono_picture_frame.h"
+#include "raw_convert.h"
+#include "reel.h"
+#include "reel_closed_caption_asset.h"
+#include "reel_markers_asset.h"
+#include "reel_picture_asset.h"
+#include "reel_sound_asset.h"
+#include "reel_subtitle_asset.h"
+#include "smpte_subtitle_asset.h"
 #include "stereo_picture_asset.h"
 #include "stereo_picture_frame.h"
-#include "exceptions.h"
-#include "compose.hpp"
-#include "raw_convert.h"
-#include "reel_markers_asset.h"
-#include "smpte_subtitle_asset.h"
-#include <xercesc/util/PlatformUtils.hpp>
-#include <xercesc/parsers/XercesDOMParser.hpp>
-#include <xercesc/parsers/AbstractDOMParser.hpp>
-#include <xercesc/sax/HandlerBase.hpp>
+#include "verify.h"
+#include "verify_j2k.h"
+#include <xercesc/dom/DOMAttr.hpp>
+#include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMError.hpp>
+#include <xercesc/dom/DOMErrorHandler.hpp>
+#include <xercesc/dom/DOMException.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMImplementationLS.hpp>
 #include <xercesc/dom/DOMImplementationRegistry.hpp>
 #include <xercesc/dom/DOMLSParser.hpp>
-#include <xercesc/dom/DOMException.hpp>
-#include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMNodeList.hpp>
-#include <xercesc/dom/DOMError.hpp>
 #include <xercesc/dom/DOMLocator.hpp>
 #include <xercesc/dom/DOMNamedNodeMap.hpp>
-#include <xercesc/dom/DOMAttr.hpp>
-#include <xercesc/dom/DOMErrorHandler.hpp>
+#include <xercesc/dom/DOMNodeList.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
 #include <xercesc/framework/MemBufInputSource.hpp>
+#include <xercesc/parsers/AbstractDOMParser.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+#include <xercesc/sax/HandlerBase.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
 #include <boost/algorithm/string.hpp>
+#include <iostream>
 #include <map>
 #include <vector>
-#include <iostream>
 
 
 using std::list;
@@ -420,67 +421,56 @@ verify_language_tag (string tag, vector<VerificationNote>& notes)
 }
 
 
-enum class VerifyPictureAssetResult
+static void
+verify_picture_asset (shared_ptr<const ReelFileAsset> reel_file_asset, boost::filesystem::path file, vector<VerificationNote>& notes, function<void (float)> progress)
 {
-	GOOD,
-	FRAME_NEARLY_TOO_LARGE,
-	BAD,
-};
-
-
-int
-biggest_frame_size (shared_ptr<const MonoPictureFrame> frame)
-{
-	return frame->size ();
-}
-
-int
-biggest_frame_size (shared_ptr<const StereoPictureFrame> frame)
-{
-	return max(frame->left()->size(), frame->right()->size());
-}
-
-
-template <class A, class R, class F>
-optional<VerifyPictureAssetResult>
-verify_picture_asset_type (shared_ptr<const ReelFileAsset> reel_file_asset, function<void (float)> progress)
-{
-	auto asset = dynamic_pointer_cast<A>(reel_file_asset->asset_ref().asset());
-	if (!asset) {
-		return optional<VerifyPictureAssetResult>();
-	}
-
 	int biggest_frame = 0;
-	auto reader = asset->start_read ();
+	auto asset = dynamic_pointer_cast<PictureAsset>(reel_file_asset->asset_ref().asset());
 	auto const duration = asset->intrinsic_duration ();
-	for (int64_t i = 0; i < duration; ++i) {
-		shared_ptr<const F> frame = reader->get_frame (i);
-		biggest_frame = max(biggest_frame, biggest_frame_size(frame));
-		progress (float(i) / duration);
+
+	auto check_and_add = [&notes](vector<VerificationNote> const& j2k_notes) {
+		for (auto i: j2k_notes) {
+			if (find(notes.begin(), notes.end(), i) == notes.end()) {
+				notes.push_back (i);
+			}
+		}
+	};
+
+	if (auto mono_asset = dynamic_pointer_cast<MonoPictureAsset>(reel_file_asset->asset_ref().asset())) {
+		auto reader = mono_asset->start_read ();
+		for (int64_t i = 0; i < duration; ++i) {
+			auto frame = reader->get_frame (i);
+			biggest_frame = max(biggest_frame, frame->size());
+			vector<VerificationNote> j2k_notes;
+			verify_j2k (frame, j2k_notes);
+			check_and_add (j2k_notes);
+			progress (float(i) / duration);
+		}
+	} else if (auto stereo_asset = dynamic_pointer_cast<StereoPictureAsset>(asset)) {
+		auto reader = stereo_asset->start_read ();
+		for (int64_t i = 0; i < duration; ++i) {
+			auto frame = reader->get_frame (i);
+			biggest_frame = max(biggest_frame, max(frame->left()->size(), frame->right()->size()));
+			vector<VerificationNote> j2k_notes;
+			verify_j2k (frame->left(), j2k_notes);
+			verify_j2k (frame->right(), j2k_notes);
+			check_and_add (j2k_notes);
+			progress (float(i) / duration);
+		}
+
 	}
 
 	static const int max_frame =   rint(250 * 1000000 / (8 * asset->edit_rate().as_float()));
 	static const int risky_frame = rint(230 * 1000000 / (8 * asset->edit_rate().as_float()));
 	if (biggest_frame > max_frame) {
-		return VerifyPictureAssetResult::BAD;
+		notes.push_back ({
+			VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
+		});
 	} else if (biggest_frame > risky_frame) {
-		return VerifyPictureAssetResult::FRAME_NEARLY_TOO_LARGE;
+		notes.push_back ({
+			VerificationNote::Type::WARNING, VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
+		});
 	}
-
-	return VerifyPictureAssetResult::GOOD;
-}
-
-
-static VerifyPictureAssetResult
-verify_picture_asset (shared_ptr<const ReelFileAsset> reel_file_asset, function<void (float)> progress)
-{
-	auto r = verify_picture_asset_type<MonoPictureAsset, MonoPictureAssetReader, MonoPictureFrame>(reel_file_asset, progress);
-	if (!r) {
-		r = verify_picture_asset_type<StereoPictureAsset, StereoPictureAssetReader, StereoPictureFrame>(reel_file_asset, progress);
-	}
-
-	DCP_ASSERT (r);
-	return *r;
 }
 
 
@@ -512,21 +502,7 @@ verify_main_picture_asset (
 			break;
 	}
 	stage ("Checking picture frame sizes", asset->file());
-	auto const pr = verify_picture_asset (reel_asset, progress);
-	switch (pr) {
-		case VerifyPictureAssetResult::BAD:
-			notes.push_back ({
-				VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
-			});
-			break;
-		case VerifyPictureAssetResult::FRAME_NEARLY_TOO_LARGE:
-			notes.push_back ({
-				VerificationNote::Type::WARNING, VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
-			});
-			break;
-		default:
-			break;
-	}
+	verify_picture_asset (reel_asset, file, notes, progress);
 
 	/* Only flat/scope allowed by Bv2.1 */
 	if (

@@ -206,7 +206,6 @@ void
 check_verify_result (vector<path> dir, vector<dcp::VerificationNote> test_notes)
 {
 	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
-	dump_notes (notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), test_notes.size());
 	for (auto i = 0U; i < notes.size(); ++i) {
 		BOOST_REQUIRE_EQUAL (notes[i], test_notes[i]);
@@ -525,10 +524,13 @@ BOOST_AUTO_TEST_CASE (verify_invalid_standard)
 	++st;
 	BOOST_REQUIRE (st == stages.end());
 
-	BOOST_REQUIRE_EQUAL (notes.size(), 1U);
+	BOOST_REQUIRE_EQUAL (notes.size(), 2U);
 	auto i = notes.begin ();
 	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::Type::BV21_ERROR);
 	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::Code::INVALID_STANDARD);
+	++i;
+	BOOST_CHECK_EQUAL (i->type(), dcp::VerificationNote::Type::BV21_ERROR);
+	BOOST_CHECK_EQUAL (i->code(), dcp::VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K);
 }
 
 /* DCP with a short asset */
@@ -542,7 +544,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_duration)
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_DURATION, string("d7576dcb-a361-4139-96b8-267f5f8d7f91") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_INTRINSIC_DURATION, string("d7576dcb-a361-4139-96b8-267f5f8d7f91") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_DURATION, string("a2a87f5d-b749-4a7e-8d0c-9d48a4abf626") },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_INTRINSIC_DURATION, string("a2a87f5d-b749-4a7e-8d0c-9d48a4abf626") }
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_INTRINSIC_DURATION, string("a2a87f5d-b749-4a7e-8d0c-9d48a4abf626") },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2") }
 		});
 }
 
@@ -585,6 +588,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_size_in_bytes)
 	check_verify_result (
 		{ dir },
 		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
 		});
@@ -612,6 +616,7 @@ BOOST_AUTO_TEST_CASE (verify_nearly_invalid_picture_frame_size_in_bytes)
 	check_verify_result (
 		{ dir },
 		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte") },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
 		});
@@ -1047,7 +1052,6 @@ void
 check_picture_size_ok (int width, int height, int frame_rate, bool three_d)
 {
 	auto notes = check_picture_size(width, height, frame_rate, three_d);
-	dump_notes (notes);
 	BOOST_CHECK_EQUAL (notes.size(), 0U);
 }
 
@@ -1115,7 +1119,7 @@ BOOST_AUTO_TEST_CASE (verify_picture_size)
 	check_picture_size_bad_frame_size (2050, 858, 24, false);
 	check_picture_size_bad_frame_size (2048, 658, 25, false);
 	check_picture_size_bad_frame_size (1920, 1080, 48, true);
-	check_picture_size_bad_frame_size (4000, 3000, 24, true);
+	check_picture_size_bad_frame_size (4000, 2000, 24, true);
 
 	/* Bad 2K frame rate */
 	check_picture_size_bad_2k_frame_rate (2048, 858, 26, false);
@@ -2682,6 +2686,8 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_cpl_with_encrypted_content)
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, encryption_test_cpl_id, canonical(cpl) },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id, canonical(pkl), },
+			/* It's encrypted so the J2K validity checks will fail */
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC },
@@ -2711,6 +2717,8 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_encrypted_content)
 		{dir},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id, canonical(pkl) },
+			/* It's encrypted so the J2K validity checks will fail */
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC },
@@ -2793,7 +2801,13 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 
 	d.write_xml (dcp::Standard::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "A Test DCP", signer);
 
-	check_verify_result ({dir}, {{dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::PARTIALLY_ENCRYPTED}});
+	check_verify_result (
+		{dir},
+		{
+			{dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::PARTIALLY_ENCRYPTED},
+			/* It's encrypted so the J2K validity checks will fail */
+			{dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte")}
+		});
 }
 
 
@@ -2804,7 +2818,7 @@ BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_2k)
 	auto reader = picture.start_read ();
 	auto frame = reader->get_frame (0);
 	verify_j2k (frame, notes);
-	dump_notes (notes);
+	BOOST_REQUIRE_EQUAL (notes.size(), 0U);
 }
 
 
@@ -2815,7 +2829,7 @@ BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_4k)
 	auto reader = picture.start_read ();
 	auto frame = reader->get_frame (0);
 	verify_j2k (frame, notes);
-	dump_notes (notes);
+	BOOST_REQUIRE_EQUAL (notes.size(), 0U);
 }
 
 
@@ -2830,6 +2844,6 @@ BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_libdcp)
 	auto reader = picture.start_read ();
 	auto frame = reader->get_frame (0);
 	verify_j2k (frame, notes);
-	dump_notes (notes);
+	BOOST_REQUIRE_EQUAL (notes.size(), 0U);
 }
 
