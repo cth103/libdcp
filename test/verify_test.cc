@@ -191,6 +191,7 @@ private:
 };
 
 
+#if 0
 static
 void
 dump_notes (vector<dcp::VerificationNote> const & notes)
@@ -199,6 +200,7 @@ dump_notes (vector<dcp::VerificationNote> const & notes)
 		std::cout << dcp::note_to_string(i) << "\n";
 	}
 }
+#endif
 
 
 static
