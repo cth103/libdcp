@@ -441,9 +441,11 @@ verify_picture_asset (shared_ptr<const ReelFileAsset> reel_file_asset, boost::fi
 		for (int64_t i = 0; i < duration; ++i) {
 			auto frame = reader->get_frame (i);
 			biggest_frame = max(biggest_frame, frame->size());
-			vector<VerificationNote> j2k_notes;
-			verify_j2k (frame, j2k_notes);
-			check_and_add (j2k_notes);
+			if (!mono_asset->encrypted() || mono_asset->key()) {
+				vector<VerificationNote> j2k_notes;
+				verify_j2k (frame, j2k_notes);
+				check_and_add (j2k_notes);
+			}
 			progress (float(i) / duration);
 		}
 	} else if (auto stereo_asset = dynamic_pointer_cast<StereoPictureAsset>(asset)) {
@@ -451,10 +453,12 @@ verify_picture_asset (shared_ptr<const ReelFileAsset> reel_file_asset, boost::fi
 		for (int64_t i = 0; i < duration; ++i) {
 			auto frame = reader->get_frame (i);
 			biggest_frame = max(biggest_frame, max(frame->left()->size(), frame->right()->size()));
-			vector<VerificationNote> j2k_notes;
-			verify_j2k (frame->left(), j2k_notes);
-			verify_j2k (frame->right(), j2k_notes);
-			check_and_add (j2k_notes);
+			if (!stereo_asset->encrypted() || mono_asset->key()) {
+				vector<VerificationNote> j2k_notes;
+				verify_j2k (frame->left(), j2k_notes);
+				verify_j2k (frame->right(), j2k_notes);
+				check_and_add (j2k_notes);
+			}
 			progress (float(i) / duration);
 		}
 
