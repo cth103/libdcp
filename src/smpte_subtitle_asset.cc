@@ -112,7 +112,6 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 			xml = make_shared<cxml::Document>("SubtitleReel");
 			xml->read_file (file);
 			parse_xml (xml);
-			_id = _xml_id = remove_urn_uuid (xml->string_child ("Id"));
 		} catch (cxml::Error& e) {
 			boost::throw_exception (
 				ReadError (
