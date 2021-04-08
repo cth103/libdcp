@@ -140,9 +140,14 @@ protected:
 
 	MXF ();
 
+	/** Read an ASDCP::WriterInfo struct, extracting things for our
+	 *  member variables.
+	 *  @return AssetUUID of the MXF
+	 */
 	std::string read_writer_info (ASDCP::WriterInfo const &);
-	/** Fill in a ADSCP::WriteInfo struct.
-	 *  @param w struct to fill in.
+
+	/** Fill in a ASDCP::WriteInfo struct.
+	 *  @param w struct to fill in
 	 */
 	void fill_writer_info (ASDCP::WriterInfo* w, std::string id) const;
 

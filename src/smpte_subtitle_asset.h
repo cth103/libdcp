@@ -211,10 +211,13 @@ private:
 	boost::optional<Time> _start_time;
 
 	std::vector<std::shared_ptr<SMPTELoadFontNode>> _load_font_nodes;
-	/** UUID for the XML inside the MXF, which should be different to the ID of the MXF according to
-	 *  Doremi's 2.8.18 release notes.
+	/** UUID for the XML inside the MXF, which should be the same as the ResourceID in the MXF (our _resource_id)
+	 *  but different to the AssetUUID in the MXF (our _id) according to SMPTE Bv2.1 and Doremi's 2.8.18 release notes.
 	 */
 	std::string _xml_id;
+
+	/** ResourceID read from the MXF, if there was one */
+	boost::optional<std::string> _resource_id;
 };
 
 
