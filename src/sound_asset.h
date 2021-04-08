@@ -102,7 +102,7 @@ public:
 		return _intrinsic_duration;
 	}
 
-	std::string language () const {
+	boost::optional<std::string> language () const {
 		return _language;
 	}
 
@@ -126,7 +126,7 @@ private:
 	int64_t _intrinsic_duration = 0;
 	int _channels = 0;      ///< number of channels
 	int _sampling_rate = 0; ///< sampling rate in Hz
-	std::string _language;
+	boost::optional<std::string> _language;
 };
 
 

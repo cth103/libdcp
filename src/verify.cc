@@ -586,7 +586,9 @@ verify_main_sound_asset (
 
 	stage ("Checking sound asset metadata", asset->file());
 
-	verify_language_tag (asset->language(), notes);
+	if (auto lang = asset->language()) {
+		verify_language_tag (*lang, notes);
+	}
 	if (asset->sampling_rate() != 48000) {
 		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_SOUND_FRAME_RATE, raw_convert<string>(asset->sampling_rate()), *asset->file()});
 	}

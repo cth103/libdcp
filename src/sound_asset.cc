@@ -63,11 +63,6 @@ using namespace dcp;
 
 SoundAsset::SoundAsset (boost::filesystem::path file)
 	: Asset (file)
-	/* XXX: this is a fallback language, which will be used if we can't find the RFC5646SpokenLanguage
-	 * in the MXF header.  Perhaps RFC5646SpokenLanguage is optional and we should just not write it
-	 * if we don't know it.
-	 */
-	, _language ("en-US")
 {
 	ASDCP::PCM::MXFReader reader;
 	auto r = reader.OpenRead (file.string().c_str());
