@@ -172,6 +172,11 @@ public:
 		return _xml_id;
 	}
 
+	/** @return ResourceID read from the MXF, if there was one */
+	boost::optional<std::string> resource_id () const {
+		return _resource_id;
+	}
+
 	static bool valid_mxf (boost::filesystem::path);
 	static std::string static_pkl_type (Standard) {
 		return "application/mxf";

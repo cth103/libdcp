@@ -253,6 +253,13 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 	}
 
 	_intrinsic_duration = descriptor.ContainerDuration;
+	/* The thing which is called AssetID in the descriptor is also known as the
+	 * ResourceID of the MXF.  We store that, at present just for verification
+	 * purposes.
+	 */
+	char id[64];
+	Kumu::bin2UUIDhex (descriptor.AssetID, ASDCP::UUIDlen, id, sizeof(id));
+	_resource_id = id;
 }
 
 
