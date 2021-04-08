@@ -366,6 +366,10 @@ public:
 		INVALID_JPEG2000_TILE_PARTS_FOR_4K,
 		/** No TLM marker was found [Bv2.1_10.2.1] */
 		MISSING_JPEG200_TLM_MARKER,
+		/** The MXF ResourceID of a timed text resource was not the same as that of the contained XML essence [Bv2.1_10.4.3] */
+		MISMATCHED_TIMED_TEXT_RESOURCE_ID,
+		/** The AssetID of a timed text MXF is the same as its ResourceID or that of the contained XML essence [Bv2.1_10.4.2] */
+		INCORRECT_TIMED_TEXT_ASSET_ID,
 	};
 
 	VerificationNote (Type type, Code code)

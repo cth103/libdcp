@@ -686,6 +686,15 @@ verify_smpte_subtitle_asset (
 			notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_SUBTITLE_LANGUAGES });
 		}
 	}
+
+	DCP_ASSERT (asset->resource_id());
+	if (asset->resource_id().get() != asset->xml_id()) {
+		notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID });
+	}
+
+	if (asset->id() == asset->resource_id().get() || asset->id() == asset->xml_id()) {
+		notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID });
+	}
 }
 
 
@@ -1565,6 +1574,10 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The JPEG2000 codestream has %1 tile parts in a 4K image instead of 6.", note.note().get());
 	case VerificationNote::Code::MISSING_JPEG200_TLM_MARKER:
 		return "No TLM marker was found in a JPEG2000 codestream.";
+	case VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID:
+		return "The Resource ID in a timed text MXF did not match the ID of the contained XML.";
+	case VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID:
+		return "The Asset ID in a timed text MXF is the same as the Resource ID or that of the contained XML.";
 	}
 
 	return "";

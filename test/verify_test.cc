@@ -2843,3 +2843,128 @@ BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_libdcp)
 	BOOST_REQUIRE_EQUAL (notes.size(), 0U);
 }
 
+
+/** Check that ResourceID and the XML ID being different is spotted */
+BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_resource_id)
+{
+	boost::filesystem::path const dir = "build/test/verify_mismatched_subtitle_resource_id";
+	prepare_directory (dir);
+
+	ASDCP::WriterInfo writer_info;
+	writer_info.LabelSetType = ASDCP::LS_MXF_SMPTE;
+
+	unsigned int c;
+	auto mxf_id = dcp::make_uuid ();
+	Kumu::hex2bin (mxf_id.c_str(), writer_info.AssetUUID, Kumu::UUID_Length, &c);
+	BOOST_REQUIRE (c == Kumu::UUID_Length);
+
+	auto resource_id = dcp::make_uuid ();
+	ASDCP::TimedText::TimedTextDescriptor descriptor;
+	Kumu::hex2bin (resource_id.c_str(), descriptor.AssetID, Kumu::UUID_Length, &c);
+	DCP_ASSERT (c == Kumu::UUID_Length);
+
+	auto xml_id = dcp::make_uuid ();
+	ASDCP::TimedText::MXFWriter writer;
+	auto subs_mxf = dir / "subs.mxf";
+	auto r = writer.OpenWrite(subs_mxf.c_str(), writer_info, descriptor, 4096);
+	BOOST_REQUIRE (ASDCP_SUCCESS(r));
+	writer.WriteTimedTextResource (dcp::String::compose(
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\" xmlns:xs=\"http://www.w3.org/2001/schema\">"
+		"<Id>urn:uuid:%1</Id>"
+		"<ContentTitleText>Content</ContentTitleText>"
+		"<AnnotationText>Annotation</AnnotationText>"
+		"<IssueDate>2018-10-02T12:25:14+02:00</IssueDate>"
+		"<ReelNumber>1</ReelNumber>"
+		"<Language>en-US</Language>"
+		"<EditRate>25 1</EditRate>"
+		"<TimeCodeRate>25</TimeCodeRate>"
+		"<StartTime>00:00:00:00</StartTime>"
+		"<SubtitleList>"
+		"<Font ID=\"arial\" Color=\"FFFEFEFE\" Weight=\"normal\" Size=\"42\" Effect=\"border\" EffectColor=\"FF181818\" AspectAdjust=\"1.00\">"
+		"<Subtitle SpotNumber=\"1\" TimeIn=\"00:00:03:00\" TimeOut=\"00:00:04:10\" FadeUpTime=\"00:00:00:00\" FadeDownTime=\"00:00:00:00\">"
+		"<Text Hposition=\"0.0\" Halign=\"center\" Valign=\"bottom\" Vposition=\"13.5\" Direction=\"ltr\">Hello world</Text>"
+		"</Subtitle>"
+		"</Font>"
+		"</SubtitleList>"
+		"</SubtitleReel>",
+		xml_id).c_str());
+
+	writer.Finalize();
+
+	auto subs_asset = make_shared<dcp::SMPTESubtitleAsset>(subs_mxf);
+	auto subs_reel = make_shared<dcp::ReelSubtitleAsset>(subs_asset, dcp::Fraction(24, 1), 240, 0);
+
+	auto cpl = write_dcp_with_single_asset (dir, subs_reel);
+
+	check_verify_result (
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID },
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
+		});
+}
+
+
+/** Check that ResourceID and the MXF ID being the same is spotted */
+BOOST_AUTO_TEST_CASE (verify_incorrect_timed_text_id)
+{
+	boost::filesystem::path const dir = "build/test/verify_incorrect_timed_text_id";
+	prepare_directory (dir);
+
+	ASDCP::WriterInfo writer_info;
+	writer_info.LabelSetType = ASDCP::LS_MXF_SMPTE;
+
+	unsigned int c;
+	auto mxf_id = dcp::make_uuid ();
+	Kumu::hex2bin (mxf_id.c_str(), writer_info.AssetUUID, Kumu::UUID_Length, &c);
+	BOOST_REQUIRE (c == Kumu::UUID_Length);
+
+	auto resource_id = mxf_id;
+	ASDCP::TimedText::TimedTextDescriptor descriptor;
+	Kumu::hex2bin (resource_id.c_str(), descriptor.AssetID, Kumu::UUID_Length, &c);
+	DCP_ASSERT (c == Kumu::UUID_Length);
+
+	auto xml_id = resource_id;
+	ASDCP::TimedText::MXFWriter writer;
+	auto subs_mxf = dir / "subs.mxf";
+	auto r = writer.OpenWrite(subs_mxf.c_str(), writer_info, descriptor, 4096);
+	BOOST_REQUIRE (ASDCP_SUCCESS(r));
+	writer.WriteTimedTextResource (dcp::String::compose(
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\" xmlns:xs=\"http://www.w3.org/2001/schema\">"
+		"<Id>urn:uuid:%1</Id>"
+		"<ContentTitleText>Content</ContentTitleText>"
+		"<AnnotationText>Annotation</AnnotationText>"
+		"<IssueDate>2018-10-02T12:25:14+02:00</IssueDate>"
+		"<ReelNumber>1</ReelNumber>"
+		"<Language>en-US</Language>"
+		"<EditRate>25 1</EditRate>"
+		"<TimeCodeRate>25</TimeCodeRate>"
+		"<StartTime>00:00:00:00</StartTime>"
+		"<SubtitleList>"
+		"<Font ID=\"arial\" Color=\"FFFEFEFE\" Weight=\"normal\" Size=\"42\" Effect=\"border\" EffectColor=\"FF181818\" AspectAdjust=\"1.00\">"
+		"<Subtitle SpotNumber=\"1\" TimeIn=\"00:00:03:00\" TimeOut=\"00:00:04:10\" FadeUpTime=\"00:00:00:00\" FadeDownTime=\"00:00:00:00\">"
+		"<Text Hposition=\"0.0\" Halign=\"center\" Valign=\"bottom\" Vposition=\"13.5\" Direction=\"ltr\">Hello world</Text>"
+		"</Subtitle>"
+		"</Font>"
+		"</SubtitleList>"
+		"</SubtitleReel>",
+		xml_id).c_str());
+
+	writer.Finalize();
+
+	auto subs_asset = make_shared<dcp::SMPTESubtitleAsset>(subs_mxf);
+	auto subs_reel = make_shared<dcp::ReelSubtitleAsset>(subs_asset, dcp::Fraction(24, 1), 240, 0);
+
+	auto cpl = write_dcp_with_single_asset (dir, subs_reel);
+
+	check_verify_result (
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID },
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
+		});
+}
