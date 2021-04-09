@@ -691,7 +691,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_smpte_subtitles)
 	prepare_directory (dir);
 	copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(25, 1), 300 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 6046, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
@@ -706,7 +706,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_smpte_subtitles)
 	prepare_directory (dir);
 	copy_file ("test/data/broken_smpte.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 300 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 6046, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result (
@@ -904,7 +904,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language1)
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
 	asset->_language = "wrong-andbad";
 	asset->write (dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 300 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelSubtitleAsset>(asset, dcp::Fraction(24, 1), 6046, 0);
 	reel_asset->_language = "badlang";
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
@@ -927,7 +927,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language2)
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
 	asset->_language = "wrong-andbad";
 	asset->write (dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 300 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 6046, 0);
 	reel_asset->_language = "badlang";
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
@@ -1181,7 +1181,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_xml_size_in_bytes)
 	}
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 2049 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 49148, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result (
@@ -1221,11 +1221,11 @@ verify_timed_text_asset_too_large (string name)
 	auto const dir = path("build/test") / name;
 	prepare_directory (dir);
 	auto asset = make_large_subtitle_asset (dir / "font.ttf");
-	add_test_subtitle (asset, 0, 20);
+	add_test_subtitle (asset, 0, 240);
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
 
-	auto reel_asset = make_shared<T>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<T>(asset, dcp::Fraction(24, 1), 240, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result (
@@ -1251,7 +1251,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 {
 	path dir = "build/test/verify_missing_subtitle_language";
 	prepare_directory (dir);
-	auto dcp = make_simple (dir, 1, 240);
+	auto dcp = make_simple (dir, 1, 106);
 
 	string const xml =
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -1261,8 +1261,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 		"<AnnotationText>Annotation</AnnotationText>"
 		"<IssueDate>2018-10-02T12:25:14+02:00</IssueDate>"
 		"<ReelNumber>1</ReelNumber>"
-		"<EditRate>25 1</EditRate>"
-		"<TimeCodeRate>25</TimeCodeRate>"
+		"<EditRate>24 1</EditRate>"
+		"<TimeCodeRate>24</TimeCodeRate>"
 		"<StartTime>00:00:00:00</StartTime>"
 		"<LoadFont ID=\"arial\">urn:uuid:e4f0ff0a-9eba-49e0-92ee-d89a88a575f6</LoadFont>"
 		"<SubtitleList>"
@@ -1281,7 +1281,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write (dir / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
+	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 106, 0);
 	dcp->cpls().front()->reels().front()->add(reel_subs);
 	dcp->write_xml (
 		dcp::Standard::SMPTE,
@@ -1303,7 +1303,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 {
 	path path ("build/test/verify_mismatched_subtitle_languages");
-	auto dcp = make_simple (path, 2, 240);
+	auto constexpr reel_length = 192;
+	auto dcp = make_simple (path, 2, reel_length);
 	auto cpl = dcp->cpls()[0];
 
 	{
@@ -1311,7 +1312,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 		subs->set_language (dcp::LanguageTag("de-DE"));
 		subs->add (simple_subtitle());
 		subs->write (path / "subs1.mxf");
-		auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
+		auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[0]->add(reel_subs);
 	}
 
@@ -1320,7 +1321,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 		subs->set_language (dcp::LanguageTag("en-US"));
 		subs->add (simple_subtitle());
 		subs->write (path / "subs2.mxf");
-		auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
+		auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[1]->add(reel_subs);
 	}
 
@@ -1345,7 +1346,8 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 {
 	path path ("build/test/verify_multiple_closed_caption_languages_allowed");
-	auto dcp = make_simple (path, 2, 240);
+	auto constexpr reel_length = 192;
+	auto dcp = make_simple (path, 2, reel_length);
 	auto cpl = dcp->cpls()[0];
 
 	{
@@ -1353,7 +1355,7 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 		ccaps->set_language (dcp::LanguageTag("de-DE"));
 		ccaps->add (simple_subtitle());
 		ccaps->write (path / "subs1.mxf");
-		auto reel_ccaps = make_shared<dcp::ReelClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), 240, 0);
+		auto reel_ccaps = make_shared<dcp::ReelClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[0]->add(reel_ccaps);
 	}
 
@@ -1362,7 +1364,7 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 		ccaps->set_language (dcp::LanguageTag("en-US"));
 		ccaps->add (simple_subtitle());
 		ccaps->write (path / "subs2.mxf");
-		auto reel_ccaps = make_shared<dcp::ReelClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), 240, 0);
+		auto reel_ccaps = make_shared<dcp::ReelClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[1]->add(reel_ccaps);
 	}
 
@@ -1387,7 +1389,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 {
 	path dir = "build/test/verify_missing_subtitle_start_time";
 	prepare_directory (dir);
-	auto dcp = make_simple (dir, 1, 240);
+	auto dcp = make_simple (dir, 1, 106);
 
 	string const xml =
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -1398,8 +1400,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 		"<IssueDate>2018-10-02T12:25:14+02:00</IssueDate>"
 		"<ReelNumber>1</ReelNumber>"
 		"<Language>de-DE</Language>"
-		"<EditRate>25 1</EditRate>"
-		"<TimeCodeRate>25</TimeCodeRate>"
+		"<EditRate>24 1</EditRate>"
+		"<TimeCodeRate>24</TimeCodeRate>"
 		"<LoadFont ID=\"arial\">urn:uuid:e4f0ff0a-9eba-49e0-92ee-d89a88a575f6</LoadFont>"
 		"<SubtitleList>"
 		"<Font ID=\"arial\" Color=\"FFFEFEFE\" Weight=\"normal\" Size=\"42\" Effect=\"border\" EffectColor=\"FF181818\" AspectAdjust=\"1.00\">"
@@ -1417,7 +1419,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write (dir / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
+	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 106, 0);
 	dcp->cpls().front()->reels().front()->add(reel_subs);
 	dcp->write_xml (
 		dcp::Standard::SMPTE,
@@ -1440,7 +1442,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 {
 	path dir = "build/test/verify_invalid_subtitle_start_time";
 	prepare_directory (dir);
-	auto dcp = make_simple (dir, 1, 240);
+	auto dcp = make_simple (dir, 1, 106);
 
 	string const xml =
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -1451,8 +1453,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 		"<IssueDate>2018-10-02T12:25:14+02:00</IssueDate>"
 		"<ReelNumber>1</ReelNumber>"
 		"<Language>de-DE</Language>"
-		"<EditRate>25 1</EditRate>"
-		"<TimeCodeRate>25</TimeCodeRate>"
+		"<EditRate>24 1</EditRate>"
+		"<TimeCodeRate>24</TimeCodeRate>"
 		"<StartTime>00:00:02:00</StartTime>"
 		"<LoadFont ID=\"arial\">urn:uuid:e4f0ff0a-9eba-49e0-92ee-d89a88a575f6</LoadFont>"
 		"<SubtitleList>"
@@ -1471,7 +1473,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write (dir / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
+	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 106, 0);
 	dcp->cpls().front()->reels().front()->add(reel_subs);
 	dcp->write_xml (
 		dcp::Standard::SMPTE,
@@ -1520,7 +1522,7 @@ dcp_with_text (path dir, vector<TestText> subs)
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
 
-	auto reel_asset = make_shared<T>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<T>(asset, dcp::Fraction(24, 1), asset->intrinsic_duration(), 0);
 	return write_dcp_with_single_asset (dir, reel_asset);
 }
 
@@ -1560,24 +1562,24 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 	add_test_subtitle (asset1, 4 * 24, 5 * 24);
 	asset1->set_language (dcp::LanguageTag("de-DE"));
 	asset1->write (dir / "subs1.mxf");
-	auto reel_asset1 = make_shared<dcp::ReelSubtitleAsset>(asset1, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset1 = make_shared<dcp::ReelSubtitleAsset>(asset1, dcp::Fraction(24, 1), 5 * 24, 0);
 	auto reel1 = make_shared<dcp::Reel>();
 	reel1->add (reel_asset1);
-	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 16 * 24, 0);
+	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 5 * 24, 0);
 	markers1->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
 	reel1->add (markers1);
 
 	auto asset2 = make_shared<dcp::SMPTESubtitleAsset>();
 	asset2->set_start_time (dcp::Time());
 	/* This would be too early on first reel but should be OK on the second */
-	add_test_subtitle (asset2, 0, 4 * 24);
+	add_test_subtitle (asset2, 3, 4 * 24);
 	asset2->set_language (dcp::LanguageTag("de-DE"));
 	asset2->write (dir / "subs2.mxf");
-	auto reel_asset2 = make_shared<dcp::ReelSubtitleAsset>(asset2, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset2 = make_shared<dcp::ReelSubtitleAsset>(asset2, dcp::Fraction(24, 1), 4 * 24, 0);
 	auto reel2 = make_shared<dcp::Reel>();
 	reel2->add (reel_asset2);
-	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 16 * 24, 0);
-	markers2->set (dcp::Marker::LFOC, dcp::Time(16 * 24 - 1, 24, 24));
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 4 * 24, 0);
+	markers2->set (dcp::Marker::LFOC, dcp::Time(4 * 24 - 1, 24, 24));
 	reel2->add (markers2);
 
 	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER);
@@ -1665,6 +1667,7 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_overlapping_reel_boundary)
 	check_verify_result (
 		{dir},
 		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION , "72 96", boost::filesystem::canonical(asset->file().get()) },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::SUBTITLE_OVERLAPS_REEL_BOUNDARY },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -2002,39 +2005,41 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 	auto dcp = make_shared<dcp::DCP>(dir);
 	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
 
+	auto constexpr reel_length = 192;
+
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());
 	subs->write (dir / "subs.mxf");
-	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
+	auto reel_subs = make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), reel_length, 0);
 
 	auto reel1 = make_shared<dcp::Reel>(
-		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 240), 0),
-		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", 240), 0)
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", reel_length), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", reel_length), 0)
 		);
 
 	if (add_to_reel1) {
-		reel1->add (make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0));
+		reel1->add (make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
-	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 240, 0);
+	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length, 0);
 	markers1->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
 	reel1->add (markers1);
 
 	cpl->add (reel1);
 
 	auto reel2 = make_shared<dcp::Reel>(
-		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 240), 0),
-		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", 240), 0)
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", reel_length), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", reel_length), 0)
 		);
 
 	if (add_to_reel2) {
-		reel2->add (make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0));
+		reel2->add (make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
-	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 240, 0);
-	markers2->set (dcp::Marker::LFOC, dcp::Time(239, 24, 24));
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length, 0);
+	markers2->set (dcp::Marker::LFOC, dcp::Time(reel_length - 1, 24, 24));
 	reel2->add (markers2);
 
 	cpl->add (reel2);
@@ -2088,6 +2093,8 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 	auto dcp = make_shared<dcp::DCP>(dir);
 	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
 
+	auto constexpr reel_length = 192;
+
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
@@ -2095,31 +2102,31 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 	subs->write (dir / "subs.mxf");
 
 	auto reel1 = make_shared<dcp::Reel>(
-		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 240), 0),
-		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", 240), 0)
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", reel_length), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", reel_length), 0)
 		);
 
 	for (int i = 0; i < caps_in_reel1; ++i) {
-		reel1->add (make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 240, 0));
+		reel1->add (make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
-	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 240, 0);
+	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length, 0);
 	markers1->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
 	reel1->add (markers1);
 
 	cpl->add (reel1);
 
 	auto reel2 = make_shared<dcp::Reel>(
-		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 240), 0),
-		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", 240), 0)
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", reel_length), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", reel_length), 0)
 		);
 
 	for (int i = 0; i < caps_in_reel2; ++i) {
-		reel2->add (make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 240, 0));
+		reel2->add (make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
-	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 240, 0);
-	markers2->set (dcp::Marker::LFOC, dcp::Time(239, 24, 24));
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length, 0);
+	markers2->set (dcp::Marker::LFOC, dcp::Time(reel_length - 1, 24, 24));
 	reel2->add (markers2);
 
 	cpl->add (reel2);
@@ -2172,22 +2179,24 @@ verify_text_entry_point_check (path dir, dcp::VerificationNote::Code code, boost
 	auto dcp = make_shared<dcp::DCP>(dir);
 	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
 
+	auto constexpr reel_length = 192;
+
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());
 	subs->write (dir / "subs.mxf");
-	auto reel_text = make_shared<T>(subs, dcp::Fraction(24, 1), 240, 0);
+	auto reel_text = make_shared<T>(subs, dcp::Fraction(24, 1), reel_length, 0);
 	adjust (reel_text);
 
 	auto reel = make_shared<dcp::Reel>(
-		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", 240), 0),
-		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", 240), 0)
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", reel_length), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", reel_length), 0)
 		);
 
 	reel->add (reel_text);
 
-	reel->add (simple_markers(240));
+	reel->add (simple_markers(reel_length));
 
 	cpl->add (reel);
 
@@ -2900,6 +2909,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_resource_id)
 	check_verify_result (
 		{ dir },
 		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION , "240 0", boost::filesystem::canonical(subs_mxf) },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -2963,6 +2973,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_timed_text_id)
 	check_verify_result (
 		{ dir },
 		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION , "240 0", boost::filesystem::canonical(subs_mxf) },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }

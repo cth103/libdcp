@@ -637,6 +637,7 @@ struct State
 void
 verify_smpte_timed_text_asset (
 	shared_ptr<const SMPTESubtitleAsset> asset,
+	optional<int64_t> reel_asset_duration,
 	vector<VerificationNote>& notes
 	)
 {
@@ -669,6 +670,16 @@ verify_smpte_timed_text_asset (
 		notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_SUBTITLE_START_TIME, asset->file().get() });
 	} else if (asset->start_time() != Time()) {
 		notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_SUBTITLE_START_TIME, asset->file().get() });
+	}
+
+	if (reel_asset_duration && *reel_asset_duration != asset->intrinsic_duration()) {
+		notes.push_back (
+			{
+				VerificationNote::Type::BV21_ERROR,
+				VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION,
+				String::compose("%1 %2", *reel_asset_duration, asset->intrinsic_duration()),
+				asset->file().get()
+			});
 	}
 }
 
@@ -704,6 +715,7 @@ verify_smpte_subtitle_asset (
 static void
 verify_subtitle_asset (
 	shared_ptr<const SubtitleAsset> asset,
+	optional<int64_t> reel_asset_duration,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
 	vector<VerificationNote>& notes,
@@ -718,7 +730,7 @@ verify_subtitle_asset (
 
 	auto smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
 	if (smpte) {
-		verify_smpte_timed_text_asset (smpte, notes);
+		verify_smpte_timed_text_asset (smpte, reel_asset_duration, notes);
 		verify_smpte_subtitle_asset (smpte, notes, state);
 	}
 }
@@ -728,6 +740,7 @@ verify_subtitle_asset (
 static void
 verify_closed_caption_asset (
 	shared_ptr<const SubtitleAsset> asset,
+	optional<int64_t> reel_asset_duration,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
 	vector<VerificationNote>& notes
@@ -741,7 +754,7 @@ verify_closed_caption_asset (
 
 	auto smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
 	if (smpte) {
-		verify_smpte_timed_text_asset (smpte, notes);
+		verify_smpte_timed_text_asset (smpte, reel_asset_duration, notes);
 	}
 
 	if (asset->raw_xml().size() > 256 * 1024) {
@@ -1268,7 +1281,7 @@ dcp::verify (
 				if (reel->main_subtitle()) {
 					verify_main_subtitle_reel (reel->main_subtitle(), notes);
 					if (reel->main_subtitle()->asset_ref().resolved()) {
-						verify_subtitle_asset (reel->main_subtitle()->asset(), stage, *xsd_dtd_directory, notes, state);
+						verify_subtitle_asset (reel->main_subtitle()->asset(), reel->main_subtitle()->duration(), stage, *xsd_dtd_directory, notes, state);
 					}
 					have_main_subtitle = true;
 				} else {
@@ -1278,7 +1291,7 @@ dcp::verify (
 				for (auto i: reel->closed_captions()) {
 					verify_closed_caption_reel (i, notes);
 					if (i->asset_ref().resolved()) {
-						verify_closed_caption_asset (i->asset(), stage, *xsd_dtd_directory, notes);
+						verify_closed_caption_asset (i->asset(), i->duration(), stage, *xsd_dtd_directory, notes);
 					}
 				}
 
@@ -1580,6 +1593,13 @@ dcp::note_to_string (VerificationNote note)
 		return "The Resource ID in a timed text MXF did not match the ID of the contained XML.";
 	case VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID:
 		return "The Asset ID in a timed text MXF is the same as the Resource ID or that of the contained XML.";
+	case VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION:
+	{
+		vector<string> parts;
+		boost::split (parts, note.note().get(), boost::is_any_of(" "));
+		DCP_ASSERT (parts.size() == 2);
+		return String::compose("The reel duration of some timed text (%1) is not the same as the ContainerDuration of its MXF (%2).", parts[0], parts[1]);
+	}
 	}
 
 	return "";

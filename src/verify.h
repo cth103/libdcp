@@ -370,6 +370,11 @@ public:
 		MISMATCHED_TIMED_TEXT_RESOURCE_ID,
 		/** The AssetID of a timed text MXF is the same as its ResourceID or that of the contained XML essence [Bv2.1_10.4.2] */
 		INCORRECT_TIMED_TEXT_ASSET_ID,
+		/** The ContainerDuration of a timed text MXF is not the same as the Duration in its reel [Bv2.1_10_4_3]
+		 *  note contains the reel duration, followed by a space, followed by the MXF duration
+		 *  file contains the asset filename
+		 */
+		MISMATCHED_TIMED_TEXT_DURATION,
 	};
 
 	VerificationNote (Type type, Code code)

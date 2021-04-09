@@ -431,7 +431,7 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 shared_ptr<dcp::DCP>
 make_simple_with_smpte_subs (boost::filesystem::path path)
 {
-	shared_ptr<dcp::DCP> dcp = make_simple (path, 1, 240);
+	shared_ptr<dcp::DCP> dcp = make_simple (path, 1, 192);
 
 	shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
 	subs->set_language (dcp::LanguageTag("de-DE"));
@@ -440,7 +440,7 @@ make_simple_with_smpte_subs (boost::filesystem::path path)
 
 	subs->write (path / "subs.mxf");
 
-	shared_ptr<dcp::ReelSubtitleAsset> reel_subs(new dcp::ReelSubtitleAsset(subs, dcp::Fraction(24, 1), 240, 0));
+	shared_ptr<dcp::ReelSubtitleAsset> reel_subs(new dcp::ReelSubtitleAsset(subs, dcp::Fraction(24, 1), 192, 0));
 	dcp->cpls().front()->reels().front()->add (reel_subs);
 
 	return dcp;
@@ -466,7 +466,7 @@ make_simple_with_interop_ccaps (boost::filesystem::path path)
 shared_ptr<dcp::DCP>
 make_simple_with_smpte_ccaps (boost::filesystem::path path)
 {
-	shared_ptr<dcp::DCP> dcp = make_simple (path, 1, 240);
+	shared_ptr<dcp::DCP> dcp = make_simple (path, 1, 192);
 
 	shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
 	subs->set_language (dcp::LanguageTag("de-DE"));
@@ -474,7 +474,7 @@ make_simple_with_smpte_ccaps (boost::filesystem::path path)
 	subs->add (simple_subtitle());
 	subs->write (path / "ccap.mxf");
 
-	shared_ptr<dcp::ReelClosedCaptionAsset> reel_caps(new dcp::ReelClosedCaptionAsset(subs, dcp::Fraction(24, 1), 240, 0));
+	shared_ptr<dcp::ReelClosedCaptionAsset> reel_caps(new dcp::ReelClosedCaptionAsset(subs, dcp::Fraction(24, 1), 192, 0));
 	dcp->cpls().front()->reels().front()->add (reel_caps);
 
 	return dcp;
