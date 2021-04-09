@@ -124,6 +124,10 @@ public:
 		_intrinsic_duration = d;
 	}
 
+	int64_t intrinsic_duration () const {
+		return _intrinsic_duration;
+	}
+
 	/** @return title of the film that these subtitles are for,
 	 *  to be presented to the user
 	 */
