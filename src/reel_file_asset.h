@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,46 +32,72 @@
 */
 
 
-/** @file  src/reel_atmos_asset.h
- *  @brief ReelAtmosAsset class
+/** @file  src/reel_file_asset.h
+ *  @brief ReelFileAsset class
  */
 
 
-#ifndef LIBDCP_REEL_ATMOS_ASSET_H
-#define LIBDCP_REEL_ATMOS_ASSET_H
+#ifndef LIBDCP_REEL_FILE_ASSET_H
+#define LIBDCP_REEL_FILE_ASSET_H
 
 
-#include "reel_asset.h"
-#include "atmos_asset.h"
-#include "reel_encryptable_asset.h"
+#include "ref.h"
+#include <boost/optional.hpp>
+#include <string>
 
 
 namespace dcp {
 
 
-class AtmosAsset;
-
-
-/** @class ReelAtmosAsset
- *  @brief Part of a Reel's description which refers to a Atmos MXF
- */
-class ReelAtmosAsset : public ReelAsset, public ReelFileAsset, public ReelEncryptableAsset
+class ReelFileAsset
 {
 public:
-	ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point);
-	explicit ReelAtmosAsset (std::shared_ptr<const cxml::Node>);
+	explicit ReelFileAsset (std::shared_ptr<Asset> asset);
+	explicit ReelFileAsset (std::shared_ptr<const cxml::Node> node);
 
-	std::shared_ptr<AtmosAsset> asset () const {
-		return asset_of_type<AtmosAsset> ();
+	/** @return a Ref to our actual asset */
+	Ref const & asset_ref () const {
+		return _asset_ref;
 	}
 
-	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	bool equals (std::shared_ptr<const ReelAtmosAsset>, EqualityOptions, NoteHandler) const;
+	/** @return a Ref to our actual asset */
+	Ref & asset_ref () {
+		return _asset_ref;
+	}
+
+	/** @return the asset's hash, if this ReelFileAsset has been created from one,
+	 *  otherwise the hash written to the CPL for this asset (if present).
+	 */
+	boost::optional<std::string> hash () const {
+		return _hash;
+	}
+
+	void set_hash (std::string h) {
+		_hash = h;
+	}
+
+	bool file_asset_equals (std::shared_ptr<const ReelFileAsset> other, EqualityOptions opt, NoteHandler note) const;
+
+protected:
+
+	template <class T>
+	std::shared_ptr<T> asset_of_type () const {
+		return std::dynamic_pointer_cast<T> (_asset_ref.asset ());
+	}
+
+	template <class T>
+	std::shared_ptr<T> asset_of_type () {
+		return std::dynamic_pointer_cast<T> (_asset_ref.asset ());
+	}
+
+	/** Reference to the asset (MXF or XML file) that this reel entry
+	 *  applies to.
+	 */
+	Ref _asset_ref;
 
 private:
-	std::string key_type () const;
-	std::string cpl_node_name (Standard standard) const;
-	std::pair<std::string, std::string> cpl_node_namespace (Standard) const;
+	/** Either our asset's computed hash or the hash read in from the CPL, if it's present */
+	boost::optional<std::string> _hash;
 };
 
 

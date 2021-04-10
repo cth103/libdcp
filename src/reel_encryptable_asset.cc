@@ -51,19 +51,15 @@ using boost::optional;
 using namespace dcp;
 
 
-ReelEncryptableAsset::ReelEncryptableAsset (shared_ptr<Asset> asset, optional<string> key_id)
-	: _asset_ref (asset)
-	, _key_id (key_id)
-	, _hash (asset->hash())
+ReelEncryptableAsset::ReelEncryptableAsset (optional<string> key_id)
+	: _key_id (key_id)
 {
 
 }
 
 
 ReelEncryptableAsset::ReelEncryptableAsset (shared_ptr<const cxml::Node> node)
-	: _asset_ref (remove_urn_uuid(node->string_child("Id")))
-	, _key_id (node->optional_string_child ("KeyId"))
-	, _hash (node->optional_string_child ("Hash"))
+	: _key_id (node->optional_string_child ("KeyId"))
 {
 	if (_key_id) {
 		_key_id = remove_urn_uuid (*_key_id);
@@ -71,30 +67,10 @@ ReelEncryptableAsset::ReelEncryptableAsset (shared_ptr<const cxml::Node> node)
 }
 
 
-bool
-ReelEncryptableAsset::mxf_equals (shared_ptr<const ReelEncryptableAsset> other, EqualityOptions opt, NoteHandler note) const
-{
-	if (_hash != other->_hash) {
-		if (!opt.reel_hashes_can_differ) {
-			note (NoteType::ERROR, "Reel: hashes differ");
-			return false;
-		} else {
-			note (NoteType::NOTE, "Reel: hashes differ");
-		}
-	}
-
-	if (_asset_ref.resolved() && other->_asset_ref.resolved()) {
-		return _asset_ref->equals (other->_asset_ref.asset(), opt, note);
-	}
-
-	return true;
-}
-
-
 void
 ReelEncryptableAsset::write_to_cpl_mxf (xmlpp::Node* node) const
 {
-        if (key_id ()) {
+        if (key_id()) {
 		auto hash = find_child (node, "Hash");
 		node->add_child_before(hash, "KeyId")->add_child_text("urn:uuid:" + key_id().get());
         }

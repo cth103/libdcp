@@ -515,19 +515,62 @@ add_file_assets (vector<shared_ptr<T>>& assets, vector<shared_ptr<Reel>> reels)
 }
 
 
-vector<shared_ptr<ReelEncryptableAsset>>
+vector<shared_ptr<ReelFileAsset>>
 CPL::reel_file_assets ()
 {
-	vector<shared_ptr<ReelEncryptableAsset>> c;
+	vector<shared_ptr<ReelFileAsset>> c;
 	add_file_assets (c, _reels);
 	return c;
 }
 
-vector<shared_ptr<const ReelEncryptableAsset>>
+
+vector<shared_ptr<const ReelFileAsset>>
 CPL::reel_file_assets () const
 {
-	vector<shared_ptr<const ReelEncryptableAsset>> c;
+	vector<shared_ptr<const ReelFileAsset>> c;
 	add_file_assets (c, _reels);
+	return c;
+}
+
+
+template <class T>
+void
+add_encryptable_assets (vector<shared_ptr<T>>& assets, vector<shared_ptr<Reel>> reels)
+{
+	for (auto i: reels) {
+		if (i->main_picture ()) {
+			assets.push_back (i->main_picture());
+		}
+		if (i->main_sound ()) {
+			assets.push_back (i->main_sound());
+		}
+		if (i->main_subtitle ()) {
+			assets.push_back (i->main_subtitle());
+		}
+		for (auto j: i->closed_captions()) {
+			assets.push_back (j);
+		}
+		if (i->atmos ()) {
+			assets.push_back (i->atmos());
+		}
+	}
+}
+
+
+vector<shared_ptr<ReelEncryptableAsset>>
+CPL::reel_encryptable_assets ()
+{
+	vector<shared_ptr<ReelEncryptableAsset>> c;
+	add_encryptable_assets (c, _reels);
+	return c;
+}
+
+
+vector<shared_ptr<const ReelEncryptableAsset>>
+CPL::reel_encryptable_assets () const
+{
+	vector<shared_ptr<const ReelEncryptableAsset>> c;
+	add_encryptable_assets (c, _reels);
 	return c;
 }
 

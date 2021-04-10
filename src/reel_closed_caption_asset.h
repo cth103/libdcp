@@ -59,7 +59,7 @@ class SubtitleAsset;
 /** @class ReelClosedCaptionAsset
  *  @brief Part of a Reel's description which refers to a closed caption XML/MXF file
  */
-class ReelClosedCaptionAsset : public ReelAsset, public ReelEncryptableAsset
+class ReelClosedCaptionAsset : public ReelAsset, public ReelFileAsset, public ReelEncryptableAsset
 {
 public:
 	ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);

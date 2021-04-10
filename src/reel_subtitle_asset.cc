@@ -53,7 +53,8 @@ using namespace dcp;
 
 ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelAsset (asset->id(), edit_rate, intrinsic_duration, entry_point)
-	, ReelEncryptableAsset (asset, dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : optional<string>())
+	, ReelFileAsset (asset)
+	, ReelEncryptableAsset (dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : optional<string>())
 {
 
 }
@@ -61,6 +62,7 @@ ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Frac
 
 ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
+	, ReelFileAsset (node)
 	, ReelEncryptableAsset (node)
 {
 	_language = node->optional_string_child("Language");
@@ -100,7 +102,7 @@ ReelSubtitleAsset::equals (shared_ptr<const ReelSubtitleAsset> other, EqualityOp
 	if (!asset_equals (other, opt, note)) {
 		return false;
 	}
-	if (!mxf_equals (other, opt, note)) {
+	if (!file_asset_equals (other, opt, note)) {
 		return false;
 	}
 

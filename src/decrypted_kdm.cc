@@ -287,7 +287,7 @@ DecryptedKDM::DecryptedKDM (
 {
 	/* Create DecryptedKDMKey objects for each encryptable asset */
 	bool did_one = false;
-	for (auto i: cpl->reel_file_assets()) {
+	for (auto i: cpl->reel_encryptable_assets()) {
 		if (i->key_id()) {
 			add_key (i->key_type(), i->key_id().get(), key, cpl->id(), Standard::SMPTE);
 			did_one = true;

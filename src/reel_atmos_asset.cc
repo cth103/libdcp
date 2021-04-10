@@ -52,7 +52,8 @@ using namespace dcp;
 
 ReelAtmosAsset::ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point)
 	: ReelAsset (asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
-	, ReelEncryptableAsset (asset, asset->key_id())
+	, ReelFileAsset (asset)
+	, ReelEncryptableAsset (asset->key_id())
 {
 
 }
@@ -60,6 +61,7 @@ ReelAtmosAsset::ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry
 
 ReelAtmosAsset::ReelAtmosAsset (std::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
+	, ReelFileAsset (node)
 	, ReelEncryptableAsset (node)
 {
 	node->ignore_child ("DataType");
@@ -105,7 +107,7 @@ ReelAtmosAsset::equals (shared_ptr<const ReelAtmosAsset> other, EqualityOptions 
 		return false;
 	}
 
-	if (!mxf_equals (other, opt, note)) {
+	if (!file_asset_equals (other, opt, note)) {
 		return false;
 	}
 

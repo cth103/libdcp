@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,50 +32,51 @@
 */
 
 
-/** @file  src/reel_atmos_asset.h
- *  @brief ReelAtmosAsset class
+/** @file  src/reel_file_asset.cc
+ *  @brief ReelFileAsset class
  */
 
 
-#ifndef LIBDCP_REEL_ATMOS_ASSET_H
-#define LIBDCP_REEL_ATMOS_ASSET_H
+#include "asset.h"
+#include "reel_file_asset.h"
 
 
-#include "reel_asset.h"
-#include "atmos_asset.h"
-#include "reel_encryptable_asset.h"
+using std::shared_ptr;
+using namespace dcp;
 
 
-namespace dcp {
-
-
-class AtmosAsset;
-
-
-/** @class ReelAtmosAsset
- *  @brief Part of a Reel's description which refers to a Atmos MXF
- */
-class ReelAtmosAsset : public ReelAsset, public ReelFileAsset, public ReelEncryptableAsset
+ReelFileAsset::ReelFileAsset (shared_ptr<Asset> asset)
+	: _asset_ref (asset)
+	, _hash (asset->hash())
 {
-public:
-	ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point);
-	explicit ReelAtmosAsset (std::shared_ptr<const cxml::Node>);
-
-	std::shared_ptr<AtmosAsset> asset () const {
-		return asset_of_type<AtmosAsset> ();
-	}
-
-	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	bool equals (std::shared_ptr<const ReelAtmosAsset>, EqualityOptions, NoteHandler) const;
-
-private:
-	std::string key_type () const;
-	std::string cpl_node_name (Standard standard) const;
-	std::pair<std::string, std::string> cpl_node_namespace (Standard) const;
-};
-
 
 }
 
 
-#endif
+ReelFileAsset::ReelFileAsset (shared_ptr<const cxml::Node> node)
+	: _asset_ref (remove_urn_uuid(node->string_child("Id")))
+	, _hash (node->optional_string_child ("Hash"))
+{
+
+}
+
+
+bool
+ReelFileAsset::file_asset_equals (shared_ptr<const ReelFileAsset> other, EqualityOptions opt, NoteHandler note) const
+{
+	if (_hash != other->_hash) {
+		if (!opt.reel_hashes_can_differ) {
+			note (NoteType::ERROR, "Reel: hashes differ");
+			return false;
+		} else {
+			note (NoteType::NOTE, "Reel: hashes differ");
+		}
+	}
+
+	if (_asset_ref.resolved() && other->_asset_ref.resolved()) {
+		return _asset_ref->equals (other->_asset_ref.asset(), opt, note);
+	}
+
+	return true;
+}
+

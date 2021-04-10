@@ -83,6 +83,7 @@ def build(bld):
              reel_atmos_asset.cc
              reel_closed_caption_asset.cc
              reel_encryptable_asset.cc
+             reel_file_asset.cc
              reel_mono_picture_asset.cc
              reel_picture_asset.cc
              reel_markers_asset.cc
@@ -170,6 +171,7 @@ def build(bld):
               reel_atmos_asset.h
               reel_closed_caption_asset.h
               reel_encryptable_asset.h
+              reel_file_asset.h
               reel_markers_asset.h
               reel_mono_picture_asset.h
               reel_picture_asset.h

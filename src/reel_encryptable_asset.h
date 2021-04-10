@@ -41,6 +41,7 @@
 #define LIBDCP_REEL_ENCRYPTABLE_ASSET_H
 
 
+#include "reel_file_asset.h"
 #include "ref.h"
 #include <boost/optional.hpp>
 #include <memory>
@@ -61,33 +62,12 @@ namespace dcp {
 class ReelEncryptableAsset
 {
 public:
-	explicit ReelEncryptableAsset (std::shared_ptr<Asset> asset, boost::optional<std::string> key_id);
+	explicit ReelEncryptableAsset (boost::optional<std::string> key_id);
 	explicit ReelEncryptableAsset (std::shared_ptr<const cxml::Node>);
 	virtual ~ReelEncryptableAsset () {}
 
 	/** @return the 4-character key type for this MXF (MDIK, MDAK, etc.) */
 	virtual std::string key_type () const = 0;
-
-	/** @return a Ref to our actual asset */
-	Ref const & asset_ref () const {
-		return _asset_ref;
-	}
-
-	/** @return a Ref to our actual asset */
-	Ref & asset_ref () {
-		return _asset_ref;
-	}
-
-	/** @return the asset's hash, if this ReelEncryptableAsset has been created from one,
-	 *  otherwise the hash written to the CPL for this asset (if present).
-	 */
-	boost::optional<std::string> hash () const {
-		return _hash;
-	}
-
-	void set_hash (std::string h) {
-		_hash = h;
-	}
 
 	/** @return true if a KeyId is specified for this asset, implying
 	 *  that its content is encrypted.
@@ -103,31 +83,11 @@ public:
 		return _key_id;
 	}
 
-	bool mxf_equals (std::shared_ptr<const ReelEncryptableAsset> other, EqualityOptions opt, NoteHandler note) const;
-
 protected:
-
-	template <class T>
-	std::shared_ptr<T> asset_of_type () const {
-		return std::dynamic_pointer_cast<T> (_asset_ref.asset ());
-	}
-
-	template <class T>
-	std::shared_ptr<T> asset_of_type () {
-		return std::dynamic_pointer_cast<T> (_asset_ref.asset ());
-	}
-
 	void write_to_cpl_mxf (xmlpp::Node* node) const;
-
-	/** Reference to the asset (MXF or XML file) that this reel entry
-	 *  applies to.
-	 */
-	Ref _asset_ref;
 
 private:
 	boost::optional<std::string> _key_id; ///< The &lt;KeyId&gt; from the reel's entry for this asset, if there is one
-	/** Either our asset's computed hash or the hash read in from the CPL, if it's present */
-	boost::optional<std::string> _hash;
 };
 
 

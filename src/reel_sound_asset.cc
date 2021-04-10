@@ -50,7 +50,8 @@ using namespace dcp;
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundAsset> asset, int64_t entry_point)
 	: ReelAsset (asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
-	, ReelEncryptableAsset (asset, asset->key_id())
+	, ReelFileAsset (asset)
+	, ReelEncryptableAsset (asset->key_id())
 {
 
 }
@@ -58,6 +59,7 @@ ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundAsset> asset, int64_t entry_poin
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
+	, ReelFileAsset (node)
 	, ReelEncryptableAsset (node)
 {
 	node->ignore_child ("Language");
@@ -94,7 +96,7 @@ ReelSoundAsset::equals (shared_ptr<const ReelSoundAsset> other, EqualityOptions 
 	if (!asset_equals (other, opt, note)) {
 		return false;
 	}
-	if (!mxf_equals (other, opt, note)) {
+	if (!file_asset_equals (other, opt, note)) {
 		return false;
 	}
 

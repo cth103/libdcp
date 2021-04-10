@@ -58,7 +58,8 @@ using namespace dcp;
 
 ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entry_point)
 	: ReelAsset (asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
-	, ReelEncryptableAsset (asset, asset->key_id())
+	, ReelFileAsset (asset)
+	, ReelEncryptableAsset (asset->key_id())
 	, _frame_rate (asset->frame_rate ())
 	, _screen_aspect_ratio (asset->screen_aspect_ratio ())
 {
@@ -68,6 +69,7 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entr
 
 ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
+	, ReelFileAsset (node)
 	, ReelEncryptableAsset (node)
 {
 	_frame_rate = Fraction (node->string_child ("FrameRate"));
@@ -137,7 +139,7 @@ ReelPictureAsset::equals (shared_ptr<const ReelPictureAsset> other, EqualityOpti
 	if (!asset_equals (other, opt, note)) {
 		return false;
 	}
-	if (!mxf_equals (other, opt, note)) {
+	if (!file_asset_equals (other, opt, note)) {
 		return false;
 	}
 
