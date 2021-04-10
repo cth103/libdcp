@@ -377,7 +377,7 @@ enum class VerifyAssetResult {
 
 
 static VerifyAssetResult
-verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelFileAsset> reel_file_asset, function<void (float)> progress)
+verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelEncryptableAsset> reel_file_asset, function<void (float)> progress)
 {
 	auto const actual_hash = reel_file_asset->asset_ref()->hash(progress);
 
@@ -422,7 +422,7 @@ verify_language_tag (string tag, vector<VerificationNote>& notes)
 
 
 static void
-verify_picture_asset (shared_ptr<const ReelFileAsset> reel_file_asset, boost::filesystem::path file, vector<VerificationNote>& notes, function<void (float)> progress)
+verify_picture_asset (shared_ptr<const ReelEncryptableAsset> reel_file_asset, boost::filesystem::path file, vector<VerificationNote>& notes, function<void (float)> progress)
 {
 	int biggest_frame = 0;
 	auto asset = dynamic_pointer_cast<PictureAsset>(reel_file_asset->asset_ref().asset());
@@ -1081,8 +1081,8 @@ pkl_has_encrypted_assets (shared_ptr<DCP> dcp, shared_ptr<PKL> pkl)
 		for (auto j: i->reel_file_assets()) {
 			if (j->asset_ref().resolved()) {
 				/* It's a bit surprising / broken but Interop subtitle assets are represented
-				 * in reels by ReelSubtitleAsset which inherits ReelFileAsset, so it's possible for
-				 * ReelFileAssets to have assets which are not MXFs.
+				 * in reels by ReelSubtitleAsset which inherits ReelEncryptableAsset, so it's possible for
+				 * ReelEncryptableAssets to have assets which are not MXFs.
 				 */
 				if (auto asset = dynamic_pointer_cast<MXF>(j->asset_ref().asset())) {
 					if (asset->encrypted()) {
@@ -1233,7 +1233,7 @@ dcp::verify (
 					if ((i->intrinsic_duration() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
 						notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_INTRINSIC_DURATION, i->id()});
 					}
-					auto file_asset = dynamic_pointer_cast<ReelFileAsset>(i);
+					auto file_asset = dynamic_pointer_cast<ReelEncryptableAsset>(i);
 					if (file_asset && !file_asset->hash()) {
 						notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_HASH, i->id()});
 					}

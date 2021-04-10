@@ -40,7 +40,7 @@
 #include "decrypted_kdm.h"
 #include "decrypted_kdm_key.h"
 #include "encrypted_kdm.h"
-#include "reel_file_asset.h"
+#include "reel_encryptable_asset.h"
 #include "reel_asset.h"
 #include "util.h"
 #include "exceptions.h"
@@ -251,7 +251,7 @@ DecryptedKDM::DecryptedKDM (
 
 DecryptedKDM::DecryptedKDM (
 	string cpl_id,
-	map<shared_ptr<const ReelFileAsset>, Key> keys,
+	map<shared_ptr<const ReelEncryptableAsset>, Key> keys,
 	LocalTime not_valid_before,
 	LocalTime not_valid_after,
 	string annotation_text,
@@ -264,7 +264,7 @@ DecryptedKDM::DecryptedKDM (
 	, _content_title_text (content_title_text)
 	, _issue_date (issue_date)
 {
-	for (map<shared_ptr<const ReelFileAsset>, Key>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
+	for (map<shared_ptr<const ReelEncryptableAsset>, Key>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
 		add_key (i->first->key_type(), i->first->key_id().get(), i->second, cpl_id, Standard::SMPTE);
 	}
 }

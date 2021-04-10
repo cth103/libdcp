@@ -37,7 +37,7 @@
  */
 
 
-#include "reel_file_asset.h"
+#include "reel_encryptable_asset.h"
 #include "reel_asset.h"
 #include "sound_asset.h"
 #include <memory>
@@ -50,7 +50,7 @@ namespace dcp {
 /** @class ReelSoundAsset
  *  @brief Part of a Reel's description which refers to a sound asset
  */
-class ReelSoundAsset : public ReelAsset, public ReelFileAsset
+class ReelSoundAsset : public ReelAsset, public ReelEncryptableAsset
 {
 public:
 	ReelSoundAsset (std::shared_ptr<dcp::SoundAsset> content, int64_t entry_point);

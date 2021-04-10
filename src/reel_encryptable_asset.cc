@@ -32,12 +32,12 @@
 */
 
 
-/** @file  src/reel_mxf.cc
- *  @brief ReelFileAsset class
+/** @file  src/reel_encryptable_asset.cc
+ *  @brief ReelEncryptableAsset class
  */
 
 
-#include "reel_file_asset.h"
+#include "reel_encryptable_asset.h"
 #include "util.h"
 #include "mxf.h"
 #include "dcp_assert.h"
@@ -51,7 +51,7 @@ using boost::optional;
 using namespace dcp;
 
 
-ReelFileAsset::ReelFileAsset (shared_ptr<Asset> asset, optional<string> key_id)
+ReelEncryptableAsset::ReelEncryptableAsset (shared_ptr<Asset> asset, optional<string> key_id)
 	: _asset_ref (asset)
 	, _key_id (key_id)
 	, _hash (asset->hash())
@@ -60,7 +60,7 @@ ReelFileAsset::ReelFileAsset (shared_ptr<Asset> asset, optional<string> key_id)
 }
 
 
-ReelFileAsset::ReelFileAsset (shared_ptr<const cxml::Node> node)
+ReelEncryptableAsset::ReelEncryptableAsset (shared_ptr<const cxml::Node> node)
 	: _asset_ref (remove_urn_uuid(node->string_child("Id")))
 	, _key_id (node->optional_string_child ("KeyId"))
 	, _hash (node->optional_string_child ("Hash"))
@@ -72,7 +72,7 @@ ReelFileAsset::ReelFileAsset (shared_ptr<const cxml::Node> node)
 
 
 bool
-ReelFileAsset::mxf_equals (shared_ptr<const ReelFileAsset> other, EqualityOptions opt, NoteHandler note) const
+ReelEncryptableAsset::mxf_equals (shared_ptr<const ReelEncryptableAsset> other, EqualityOptions opt, NoteHandler note) const
 {
 	if (_hash != other->_hash) {
 		if (!opt.reel_hashes_can_differ) {
@@ -92,7 +92,7 @@ ReelFileAsset::mxf_equals (shared_ptr<const ReelFileAsset> other, EqualityOption
 
 
 void
-ReelFileAsset::write_to_cpl_mxf (xmlpp::Node* node) const
+ReelEncryptableAsset::write_to_cpl_mxf (xmlpp::Node* node) const
 {
         if (key_id ()) {
 		auto hash = find_child (node, "Hash");

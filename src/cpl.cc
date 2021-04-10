@@ -515,18 +515,18 @@ add_file_assets (vector<shared_ptr<T>>& assets, vector<shared_ptr<Reel>> reels)
 }
 
 
-vector<shared_ptr<ReelFileAsset>>
+vector<shared_ptr<ReelEncryptableAsset>>
 CPL::reel_file_assets ()
 {
-	vector<shared_ptr<ReelFileAsset>> c;
+	vector<shared_ptr<ReelEncryptableAsset>> c;
 	add_file_assets (c, _reels);
 	return c;
 }
 
-vector<shared_ptr<const ReelFileAsset>>
+vector<shared_ptr<const ReelEncryptableAsset>>
 CPL::reel_file_assets () const
 {
-	vector<shared_ptr<const ReelFileAsset>> c;
+	vector<shared_ptr<const ReelEncryptableAsset>> c;
 	add_file_assets (c, _reels);
 	return c;
 }

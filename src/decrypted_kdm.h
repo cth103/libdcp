@@ -60,7 +60,7 @@ class DecryptedKDMKey;
 class EncryptedKDM;
 class CertificateChain;
 class CPL;
-class ReelFileAsset;
+class ReelEncryptableAsset;
 
 
 /** @class DecryptedKDM
@@ -99,7 +99,7 @@ public:
 	 */
 	DecryptedKDM (
 		std::string cpl_id,
-		std::map<std::shared_ptr<const ReelFileAsset>, Key> keys,
+		std::map<std::shared_ptr<const ReelEncryptableAsset>, Key> keys,
 		LocalTime not_valid_before,
 		LocalTime not_valid_after,
 		std::string annotation_text,

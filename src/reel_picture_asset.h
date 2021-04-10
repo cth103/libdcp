@@ -41,7 +41,7 @@
 #define LIBDCP_REEL_PICTURE_ASSET_H
 
 
-#include "reel_file_asset.h"
+#include "reel_encryptable_asset.h"
 #include "reel_asset.h"
 #include "picture_asset.h"
 
@@ -52,7 +52,7 @@ namespace dcp {
 /** @class ReelPictureAsset
  *  @brief Part of a Reel's description which refers to a picture asset
  */
-class ReelPictureAsset : public ReelAsset, public ReelFileAsset
+class ReelPictureAsset : public ReelAsset, public ReelEncryptableAsset
 {
 public:
 	ReelPictureAsset (std::shared_ptr<PictureAsset> asset, int64_t entry_point);
