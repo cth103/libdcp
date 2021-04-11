@@ -98,9 +98,9 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
 	cpl->set_annotation_text ("A Test DCP");
 
-	shared_ptr<dcp::StereoPictureAsset> mp (new dcp::StereoPictureAsset (dcp::Fraction (24, 1), dcp::Standard::SMPTE));
+	auto mp = make_shared<dcp::StereoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	mp->set_metadata (mxf_meta);
-	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write ("build/test/DCP/dcp_test2/video.mxf", false);
+	auto picture_writer = mp->start_write ("build/test/DCP/dcp_test2/video.mxf", false);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		/* Left */
@@ -110,19 +110,19 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	}
 	picture_writer->finalize ();
 
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE));
+	auto ms = make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf");
+	auto sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf");
 
 	SF_INFO info;
 	info.format = 0;
-	SNDFILE* sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
+	auto sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
 	BOOST_CHECK (sndfile);
 	float buffer[4096*6];
 	float* channels[1];
 	channels[0] = buffer;
-	while (1) {
-		sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
+	while (true) {
+		auto N = sf_readf_float (sndfile, buffer, 4096);
 		sound_writer->write (channels, N);
 		if (N < 4096) {
 			break;
@@ -290,7 +290,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 
 	auto ms = make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/dcp_test5/audio.mxf");
+	auto sound_writer = ms->start_write ("build/test/DCP/dcp_test5/audio.mxf");
 
 	SF_INFO info;
 	info.format = 0;

@@ -39,9 +39,11 @@
 #include "reel.h"
 #include "reel_markers_asset.h"
 
+
 using std::string;
 using std::shared_ptr;
 using std::make_shared;
+
 
 BOOST_AUTO_TEST_CASE (markers_write_test)
 {
@@ -59,7 +61,7 @@ BOOST_AUTO_TEST_CASE (markers_write_test)
 	asset->set (dcp::Marker::FFMC, dcp::Time(4, 2, 8, 18, 24));
 	asset->set (dcp::Marker::LFMC, dcp::Time(4, 3, 8, 18, 24));
 
-	shared_ptr<dcp::Reel> reel (new dcp::Reel());
+	auto reel = make_shared<dcp::Reel>();
 	reel->add (asset);
 
 	cpl.add (reel);
@@ -67,18 +69,13 @@ BOOST_AUTO_TEST_CASE (markers_write_test)
 	cpl.write_xml ("build/test/markers_test.xml", {});
 }
 
-static void
-note_handler (dcp::NoteType, string)
-{
-
-}
 
 BOOST_AUTO_TEST_CASE (markers_read_test, * boost::unit_test::depends_on("markers_write_test"))
 {
 	dcp::CPL cpl ("build/test/markers_test.xml");
 	BOOST_CHECK_EQUAL (cpl.reels().size(), 1);
-	shared_ptr<dcp::Reel> reel = cpl.reels().front();
-	shared_ptr<dcp::ReelMarkersAsset> markers = reel->main_markers ();
+	auto reel = cpl.reels().front();
+	auto markers = reel->main_markers ();
 	BOOST_REQUIRE (markers);
 
 	BOOST_REQUIRE (markers->get(dcp::Marker::FFOC));
@@ -102,8 +99,8 @@ BOOST_AUTO_TEST_CASE (markers_read_test, * boost::unit_test::depends_on("markers
 	BOOST_REQUIRE (markers->get(dcp::Marker::LFMC));
 	BOOST_CHECK (markers->get (dcp::Marker::LFMC) == dcp::Time(4, 3, 8, 18, 24));
 
-	BOOST_CHECK (markers->equals(markers, dcp::EqualityOptions(), boost::bind(&note_handler, _1, _2)));
+	BOOST_CHECK (markers->equals(markers, dcp::EqualityOptions(), [](dcp::NoteType, string) {}));
 
 	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 432000, 0);
-	BOOST_CHECK (!markers->equals(markers2, dcp::EqualityOptions(), boost::bind(&note_handler, _1, _2)));
+	BOOST_CHECK (!markers->equals(markers2, dcp::EqualityOptions(), [](dcp::NoteType, string) {}));
 }

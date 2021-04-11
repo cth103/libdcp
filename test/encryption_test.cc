@@ -52,9 +52,12 @@
 #include <boost/test/unit_test.hpp>
 #include <memory>
 
+
 using std::vector;
 using std::string;
 using std::shared_ptr;
+using std::make_shared;
+
 
 /** Load a certificate chain from build/test/data/ *.pem and then build
  *  an encrypted DCP and a KDM using it.
@@ -76,41 +79,41 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	dcp::DCP d ("build/test/DCP/encryption_test");
 
 	/* Use test/ref/crypt so this test is repeatable */
-	shared_ptr<dcp::CertificateChain> signer (new dcp::CertificateChain ());
-	signer->add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/ca.self-signed.pem")));
-	signer->add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/intermediate.signed.pem")));
-	signer->add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
-	signer->set_key (dcp::file_to_string ("test/ref/crypt/leaf.key"));
+	auto signer = make_shared<dcp::CertificateChain>();
+	signer->add (dcp::Certificate(dcp::file_to_string("test/ref/crypt/ca.self-signed.pem")));
+	signer->add (dcp::Certificate(dcp::file_to_string("test/ref/crypt/intermediate.signed.pem")));
+	signer->add (dcp::Certificate(dcp::file_to_string("test/ref/crypt/leaf.signed.pem")));
+	signer->set_key (dcp::file_to_string("test/ref/crypt/leaf.key"));
 
 	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 
 	dcp::Key key;
 
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::Standard::SMPTE));
+	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	mp->set_metadata (mxf_metadata);
 	mp->set_key (key);
 
-	shared_ptr<dcp::PictureAssetWriter> writer = mp->start_write ("build/test/DCP/encryption_test/video.mxf", false);
+	auto writer = mp->start_write ("build/test/DCP/encryption_test/video.mxf", false);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data (), j2c.size ());
 	}
 	writer->finalize ();
 
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset (dcp::Fraction (24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE));
+	auto ms = make_shared<dcp::SoundAsset>(dcp::Fraction (24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
 	ms->set_metadata (mxf_metadata);
 	ms->set_key (key);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write ("build/test/DCP/encryption_test/audio.mxf");
+	auto sound_writer = ms->start_write ("build/test/DCP/encryption_test/audio.mxf");
 
 	SF_INFO info;
 	info.format = 0;
-	SNDFILE* sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
+	auto sndfile = sf_open ("test/data/1s_24-bit_48k_silence.wav", SFM_READ, &info);
 	BOOST_CHECK (sndfile);
 	float buffer[4096*6];
 	float* channels[1];
 	channels[0] = buffer;
-	while (1) {
-		sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
+	while (true) {
+		auto N = sf_readf_float (sndfile, buffer, 4096);
 		sound_writer->write (channels, N);
 		if (N < 4096) {
 			break;
@@ -119,11 +122,11 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 
 	sound_writer->finalize ();
 
-	cpl->add (shared_ptr<dcp::Reel> (new dcp::Reel (
-						 shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (mp, 0)),
-						 shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (ms, 0)),
-						 shared_ptr<dcp::ReelSubtitleAsset> ()
-						 )));
+	cpl->add (make_shared<dcp::Reel>(
+			make_shared<dcp::ReelMonoPictureAsset>(mp, 0),
+			make_shared<dcp::ReelSoundAsset>(ms, 0),
+			shared_ptr<dcp::ReelSubtitleAsset>()
+			));
 	cpl->set_content_version (
 		dcp::ContentVersion("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00", "81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00")
 		);

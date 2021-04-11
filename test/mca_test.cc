@@ -45,9 +45,10 @@
 
 
 using std::list;
+using std::make_shared;
+using std::shared_ptr;
 using std::string;
 using std::vector;
-using std::shared_ptr;
 
 
 /** Check that when we read a MXF and write its MCA metadata to a CPL we get the same answer
@@ -56,9 +57,9 @@ using std::shared_ptr;
 BOOST_AUTO_TEST_CASE (parse_mca_descriptors_from_mxf_test)
 {
 	for (int i = 1; i < 3; ++i) {
-		shared_ptr<dcp::SoundAsset> sound_asset(new dcp::SoundAsset(private_test / "data" / dcp::String::compose("51_sound_with_mca_%1.mxf", i)));
-		shared_ptr<dcp::ReelSoundAsset> reel_sound_asset(new dcp::ReelSoundAsset(sound_asset, 0));
-		shared_ptr<dcp::Reel> reel(new dcp::Reel());
+		auto sound_asset = make_shared<dcp::SoundAsset>(private_test / "data" / dcp::String::compose("51_sound_with_mca_%1.mxf", i));
+		auto reel_sound_asset = make_shared<dcp::ReelSoundAsset>(sound_asset, 0);
+		auto reel = make_shared<dcp::Reel>();
 		reel->add (black_picture_asset(dcp::String::compose("build/test/parse_mca_descriptors_from_mxf_test%1", i), 24));
 		reel->add (reel_sound_asset);
 
@@ -91,8 +92,8 @@ BOOST_AUTO_TEST_CASE (parse_mca_descriptors_from_mxf_test)
 /** Reproduce the MCA tags from one of the example files using libdcp */
 BOOST_AUTO_TEST_CASE (write_mca_descriptors_to_mxf_test)
 {
-	shared_ptr<dcp::SoundAsset> sound_asset(new dcp::SoundAsset(dcp::Fraction(24, 1), 48000, 6, dcp::LanguageTag("en-US"), dcp::Standard::SMPTE));
-	shared_ptr<dcp::SoundAssetWriter> writer = sound_asset->start_write("build/test/write_mca_descriptors_to_mxf_test.mxf");
+	auto sound_asset = make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 6, dcp::LanguageTag("en-US"), dcp::Standard::SMPTE);
+	auto writer = sound_asset->start_write("build/test/write_mca_descriptors_to_mxf_test.mxf");
 
 	float* samples[6];
 	for (int i = 0; i < 6; ++i) {
@@ -126,19 +127,14 @@ BOOST_AUTO_TEST_CASE (write_mca_descriptors_to_mxf_test)
 	cxml::Document ref("CompositionPlaylist", private_test / "51_sound_with_mca_1.cpl");
 	cxml::Document check("CompositionPlaylist", "build/test/write_mca_descriptors_to_mxf_test/cpl.xml");
 
-	vector<string> ignore;
-	ignore.push_back ("InstanceID");
-	ignore.push_back ("MCALinkID");
-	ignore.push_back ("SoundfieldGroupLinkID");
-
 	check_xml (
 		dynamic_cast<xmlpp::Element*>(
-			ref.node_child("ReelList")->node_children("Reel").front()->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
+			ref.node_child("ReelList")->node_children("Reel")[0]->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
 			),
 		dynamic_cast<xmlpp::Element*>(
-			check.node_child("ReelList")->node_children("Reel").front()->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
+			check.node_child("ReelList")->node_children("Reel")[0]->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
 			),
-		ignore,
+		{ "InstanceID", "MCALinkID", "SoundfieldGroupLinkID" },
 		true
 		);
 }

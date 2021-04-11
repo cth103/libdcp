@@ -334,24 +334,22 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 {
 	RNGFixer fix;
 
-	shared_ptr<dcp::InteropSubtitleAsset> c (new dcp::InteropSubtitleAsset());
+	auto c = make_shared<dcp::InteropSubtitleAsset>();
 	c->set_reel_number ("1");
 	c->set_language ("EN");
 	c->set_movie_title ("Test");
 
 	c->add (
-		shared_ptr<dcp::Subtitle> (
-			new dcp::SubtitleImage (
-				dcp::ArrayData ("test/data/sub.png"),
-				dcp::Time (0, 4,  9, 22, 24),
-				dcp::Time (0, 4, 11, 22, 24),
-				0,
-				dcp::HAlign::CENTER,
-				0.8,
-				dcp::VAlign::TOP,
-				dcp::Time (0, 0, 0, 0, 24),
-				dcp::Time (0, 0, 0, 0, 24)
-				)
+		make_shared<dcp::SubtitleImage>(
+			dcp::ArrayData ("test/data/sub.png"),
+			dcp::Time (0, 4,  9, 22, 24),
+			dcp::Time (0, 4, 11, 22, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.8,
+			dcp::VAlign::TOP,
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24)
 			)
 		);
 

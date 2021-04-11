@@ -53,22 +53,25 @@
 #include <boost/scoped_array.hpp>
 #include <iostream>
 
+
 using std::list;
-using std::vector;
-using std::string;
+using std::make_shared;
 using std::shared_ptr;
+using std::string;
+using std::vector;
 using boost::scoped_array;
+
 
 /** Build an encrypted picture asset and a KDM for it and check that the KDM can be decrypted */
 BOOST_AUTO_TEST_CASE (round_trip_test)
 {
-	shared_ptr<dcp::CertificateChain> signer (new dcp::CertificateChain (boost::filesystem::path ("openssl")));
+	auto signer = make_shared<dcp::CertificateChain>(boost::filesystem::path ("openssl"));
 
 	boost::filesystem::path work_dir = "build/test/round_trip_test";
 	boost::filesystem::create_directory (work_dir);
 
-	shared_ptr<dcp::MonoPictureAsset> asset_A (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::Standard::SMPTE));
-	shared_ptr<dcp::PictureAssetWriter> writer = asset_A->start_write (work_dir / "video.mxf", false);
+	auto asset_A = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
+	auto writer = asset_A->start_write (work_dir / "video.mxf", false);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data (), j2c.size ());
@@ -79,9 +82,9 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	asset_A->set_key (key);
 
-	shared_ptr<dcp::Reel> reel (new dcp::Reel ());
-	reel->add (shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (asset_A, 0)));
 	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
+	auto reel = make_shared<dcp::Reel>();
+	reel->add (make_shared<dcp::ReelMonoPictureAsset>(asset_A, 0));
 	cpl->add (reel);
 
 	dcp::LocalTime start;
@@ -120,15 +123,13 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	}
 
 	/* Reload the picture asset */
-	shared_ptr<dcp::MonoPictureAsset> asset_B (
-		new dcp::MonoPictureAsset (work_dir / "video.mxf")
-		);
+	auto asset_B = make_shared<dcp::MonoPictureAsset>(work_dir / "video.mxf");
 
 	BOOST_CHECK (!kdm_B.keys().empty ());
 	asset_B->set_key (kdm_B.keys().front().key());
 
-	shared_ptr<dcp::OpenJPEGImage> xyz_A = asset_A->start_read()->get_frame(0)->xyz_image ();
-	shared_ptr<dcp::OpenJPEGImage> xyz_B = asset_B->start_read()->get_frame(0)->xyz_image ();
+	auto xyz_A = asset_A->start_read()->get_frame(0)->xyz_image ();
+	auto xyz_B = asset_B->start_read()->get_frame(0)->xyz_image ();
 
 	scoped_array<uint8_t> frame_A (new uint8_t[xyz_A->size().width * xyz_A->size().height * 4]);
 	dcp::xyz_to_rgba (xyz_A, dcp::ColourConversion::srgb_to_xyz(), frame_A.get(), xyz_A->size().width * 4);

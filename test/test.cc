@@ -416,7 +416,7 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 {
 	auto dcp = make_simple (path, 1, 24, dcp::Standard::INTEROP);
 
-	shared_ptr<dcp::InteropSubtitleAsset> subs(new dcp::InteropSubtitleAsset());
+	auto subs = make_shared<dcp::InteropSubtitleAsset>();
 	subs->add (simple_subtitle());
 
 	boost::filesystem::create_directory (path / "subs");
@@ -434,9 +434,9 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 shared_ptr<dcp::DCP>
 make_simple_with_smpte_subs (boost::filesystem::path path)
 {
-	shared_ptr<dcp::DCP> dcp = make_simple (path, 1, 192);
+	auto dcp = make_simple (path, 1, 192);
 
-	shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
+	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());
@@ -455,11 +455,11 @@ make_simple_with_interop_ccaps (boost::filesystem::path path)
 {
 	auto dcp = make_simple (path, 1, 24, dcp::Standard::INTEROP);
 
-	shared_ptr<dcp::InteropSubtitleAsset> subs(new dcp::InteropSubtitleAsset());
+	auto subs = make_shared<dcp::InteropSubtitleAsset>();
 	subs->add (simple_subtitle());
 	subs->write (path / "ccap.xml");
 
-	shared_ptr<dcp::ReelClosedCaptionAsset> reel_caps(new dcp::ReelClosedCaptionAsset(subs, dcp::Fraction(24, 1), 240, 0));
+	auto reel_caps = make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls().front()->reels().front()->add (reel_caps);
 
 	return dcp;
@@ -469,16 +469,16 @@ make_simple_with_interop_ccaps (boost::filesystem::path path)
 shared_ptr<dcp::DCP>
 make_simple_with_smpte_ccaps (boost::filesystem::path path)
 {
-	shared_ptr<dcp::DCP> dcp = make_simple (path, 1, 192);
+	auto dcp = make_simple (path, 1, 192);
 
-	shared_ptr<dcp::SMPTESubtitleAsset> subs(new dcp::SMPTESubtitleAsset());
+	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());
 	subs->write (path / "ccap.mxf");
 
-	shared_ptr<dcp::ReelClosedCaptionAsset> reel_caps(new dcp::ReelClosedCaptionAsset(subs, dcp::Fraction(24, 1), 192, 0));
-	dcp->cpls().front()->reels().front()->add (reel_caps);
+	auto reel_caps = make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 192, 0);
+	dcp->cpls()[0]->reels()[0]->add(reel_caps);
 
 	return dcp;
 }
@@ -487,7 +487,7 @@ make_simple_with_smpte_ccaps (boost::filesystem::path path)
 shared_ptr<dcp::OpenJPEGImage>
 black_image (dcp::Size size)
 {
-	shared_ptr<dcp::OpenJPEGImage> image(new dcp::OpenJPEGImage(size));
+	auto image = make_shared<dcp::OpenJPEGImage>(size);
 	int const pixels = size.width * size.height;
 	for (int i = 0; i < 3; ++i) {
 		memset (image->data(i), 0, pixels * sizeof(int));
@@ -499,20 +499,20 @@ black_image (dcp::Size size)
 shared_ptr<dcp::ReelAsset>
 black_picture_asset (boost::filesystem::path dir, int frames)
 {
-	shared_ptr<dcp::OpenJPEGImage> image = black_image ();
-	dcp::ArrayData frame = dcp::compress_j2k (image, 100000000, 24, false, false);
+	auto image = black_image ();
+	auto frame = dcp::compress_j2k (image, 100000000, 24, false, false);
 	BOOST_REQUIRE (frame.size() < 230000000 / (24 * 8));
 
 	auto asset = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 	asset->set_metadata (dcp::MXFMetadata("libdcp", "libdcp", "1.6.4devel"));
 	boost::filesystem::create_directories (dir);
-	shared_ptr<dcp::PictureAssetWriter> writer = asset->start_write (dir / "pic.mxf", true);
+	auto writer = asset->start_write (dir / "pic.mxf", true);
 	for (int i = 0; i < frames; ++i) {
 		writer->write (frame.data(), frame.size());
 	}
 	writer->finalize ();
 
-	return shared_ptr<dcp::ReelAsset>(new dcp::ReelMonoPictureAsset(asset, 0));
+	return make_shared<dcp::ReelMonoPictureAsset>(asset, 0);
 }
 
 

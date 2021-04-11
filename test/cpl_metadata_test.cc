@@ -56,9 +56,10 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_bad_values_test)
 	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	BOOST_CHECK_THROW (cpl.set_version_number(-1), dcp::BadSettingError);
 
-	vector<dcp::ContentVersion> cv;
-	cv.push_back (dcp::ContentVersion("same-id", "version 1"));
-	cv.push_back (dcp::ContentVersion("same-id", "version 2"));
+	vector<dcp::ContentVersion> cv = {
+		dcp::ContentVersion("same-id", "version 1"),
+		dcp::ContentVersion("same-id", "version 2")
+	};
 	BOOST_CHECK_THROW (cpl.set_content_versions(cv), dcp::DuplicateIdError);
 }
 
@@ -159,7 +160,7 @@ BOOST_AUTO_TEST_CASE (luminance_test1)
 
 BOOST_AUTO_TEST_CASE (luminance_test2)
 {
-	shared_ptr<cxml::Document> doc (new cxml::Document("Luminance"));
+	auto doc = make_shared<cxml::Document>("Luminance");
 
 	doc->read_string (
 		"<Luminance units=\"candela-per-square-metre\">4.5</Luminance>"
@@ -173,7 +174,7 @@ BOOST_AUTO_TEST_CASE (luminance_test2)
 
 BOOST_AUTO_TEST_CASE (luminance_test3)
 {
-	shared_ptr<cxml::Document> doc (new cxml::Document("Luminance"));
+	auto doc = make_shared<cxml::Document>("Luminance");
 
 	doc->read_string (
 		"<Luminance units=\"candela-per-square-motre\">4.5</Luminance>"
@@ -185,7 +186,7 @@ BOOST_AUTO_TEST_CASE (luminance_test3)
 
 BOOST_AUTO_TEST_CASE (luminance_test4)
 {
-	shared_ptr<cxml::Document> doc (new cxml::Document("Luminance"));
+	auto doc = make_shared<cxml::Document>("Luminance");
 
 	doc->read_string (
 		"<Luminance units=\"candela-per-square-metre\">-4.5</Luminance>"
@@ -238,7 +239,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test1)
 	BOOST_REQUIRE (reels.front()->main_subtitle()->language());
 	BOOST_CHECK_EQUAL (reels.front()->main_subtitle()->language().get(), "de-DE");
 
-	vector<string> asl = cpl.additional_subtitle_languages();
+	auto asl = cpl.additional_subtitle_languages();
 	BOOST_REQUIRE_EQUAL (asl.size(), 2);
 	BOOST_CHECK_EQUAL (asl[0], "en-US");
 	BOOST_CHECK_EQUAL (asl[1], "fr-ZA");
@@ -255,9 +256,10 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	cpl.set_issue_date ("2020-08-28T13:35:06+02:00");
 
-	vector<dcp::ContentVersion> cv;
-	cv.push_back (dcp::ContentVersion("some-id", "version 1"));
-	cv.push_back (dcp::ContentVersion("another-id", "version 2"));
+	vector<dcp::ContentVersion> cv = {
+		dcp::ContentVersion("some-id", "version 1"),
+		dcp::ContentVersion("another-id", "version 2")
+	};;
 	cpl.set_content_versions (cv);
 
 	cpl.set_full_content_title_text ("full-content-title");
@@ -284,7 +286,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 	cpl.set_main_picture_stored_area (dcp::Size(1998, 1080));
 	cpl.set_main_picture_active_area (dcp::Size(1440, 1080));
 
-	shared_ptr<cxml::Document> doc (new cxml::Document("MainSubtitle"));
+	auto doc = make_shared<cxml::Document>("MainSubtitle");
 
 	doc->read_string (
 		"<MainSubtitle>"
@@ -300,7 +302,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 		"</MainSubtitle>"
 		);
 
-	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	auto reel = make_shared<dcp::Reel>();
 	reel->add (black_picture_asset("build/test/cpl_metadata_write_test1"));
 	reel->add (make_shared<dcp::ReelSMPTESubtitleAsset>(doc));
 	cpl.add (reel);
@@ -414,13 +416,11 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test2)
 BOOST_AUTO_TEST_CASE (cpl_metadata_roundtrip_test_2)
 {
 	dcp::CPL cpl ("test/ref/cpl_metadata_test2.xml");
-	vector<string> ignore;
-	ignore.push_back ("Id");
 	cpl.write_xml ("build/test/cpl_metadata_roundtrip_test2.xml", shared_ptr<dcp::CertificateChain>());
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test2.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_roundtrip_test2.xml"),
-		ignore
+		{"Id"}
 		);
 }
 

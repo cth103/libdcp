@@ -60,6 +60,7 @@
 #include <cstdio>
 #include <iostream>
 
+
 using std::list;
 using std::pair;
 using std::string;
@@ -1277,7 +1278,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 	subs->write (dir / "subs.mxf");
 
 	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 106, 0);
-	dcp->cpls().front()->reels().front()->add(reel_subs);
+	dcp->cpls()[0]->reels()[0]->add(reel_subs);
 	dcp->write_xml (
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
@@ -1412,7 +1413,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 	subs->write (dir / "subs.mxf");
 
 	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 106, 0);
-	dcp->cpls().front()->reels().front()->add(reel_subs);
+	dcp->cpls()[0]->reels()[0]->add(reel_subs);
 	dcp->write_xml (
 		dcp::String::compose("libdcp %1", dcp::version),
 		dcp::String::compose("libdcp %1", dcp::version),
