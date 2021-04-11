@@ -94,7 +94,7 @@ xmlpp::Node *
 ReelAtmosAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
 	auto asset = write_to_cpl_asset (node, standard, hash());
-	write_to_cpl_mxf (asset);
+	write_to_cpl_encryptable (asset);
 	asset->add_child("axd:DataType")->add_child_text("urn:smpte:ul:060e2b34.04010105.0e090604.00000000");
 	return asset;
 }

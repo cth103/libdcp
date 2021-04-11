@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,66 +32,46 @@
 */
 
 
-/** @file  src/reel_subtitle_asset.cc
- *  @brief ReelSubtitleAsset class
+/** @file  src/reel_interop_subtitle_asset.cc
+ *  @brief ReelInteropSubtitleAsset class
  */
 
 
-#include "language_tag.h"
-#include "subtitle_asset.h"
-#include "reel_subtitle_asset.h"
+#include "reel_smpte_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
 #include <libxml++/libxml++.h>
 
 
-using std::string;
 using std::shared_ptr;
-using std::dynamic_pointer_cast;
+using std::string;
 using boost::optional;
 using namespace dcp;
 
 
-ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelAsset (asset->id(), edit_rate, intrinsic_duration, entry_point)
-	, ReelFileAsset (asset)
+ReelSMPTESubtitleAsset::ReelSMPTESubtitleAsset (shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: ReelSubtitleAsset (asset, edit_rate, intrinsic_duration, entry_point)
+	, ReelEncryptableAsset (asset->key_id())
 {
 
 }
 
 
-ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelAsset (node)
-	, ReelFileAsset (node)
+ReelSMPTESubtitleAsset::ReelSMPTESubtitleAsset (shared_ptr<const cxml::Node> node)
+	: ReelSubtitleAsset (node)
+	, ReelEncryptableAsset (node)
 {
-	_language = node->optional_string_child("Language");
+	node->done ();
 }
 
 
-string
-ReelSubtitleAsset::cpl_node_name (Standard) const
+xmlpp::Node *
+ReelSMPTESubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	return "MainSubtitle";
-}
-
-
-void
-ReelSubtitleAsset::set_language (dcp::LanguageTag language)
-{
-	_language = language.to_string();
-}
-
-
-bool
-ReelSubtitleAsset::equals (shared_ptr<const ReelSubtitleAsset> other, EqualityOptions opt, NoteHandler note) const
-{
-	if (!asset_equals (other, opt, note)) {
-		return false;
+	auto asset = write_to_cpl_asset (node, standard, _hash);
+	write_to_cpl_encryptable (asset);
+	if (_language) {
+		asset->add_child("Language")->add_child_text(*_language);
 	}
-
-	if (_asset_ref.resolved() && other->_asset_ref.resolved()) {
-		return _asset_ref->equals (other->_asset_ref.asset(), opt, note);
-	}
-
-	return true;
+	return asset;
 }
 

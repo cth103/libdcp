@@ -78,10 +78,10 @@ BOOST_AUTO_TEST_CASE (reel_picture_asset_test)
 }
 
 
-/** Test the XML constructor of ReelSubtitleAsset */
-BOOST_AUTO_TEST_CASE (reel_subtitle_asset_test)
+/** Test the XML constructor of ReelSMPTESubtitleAsset */
+BOOST_AUTO_TEST_CASE (reel_smpte_subtitle_asset_test)
 {
-	shared_ptr<cxml::Document> doc (new cxml::Document("MainSubtitle"));
+	auto doc = make_shared<cxml::Document>("MainSubtitle");
 
 	doc->read_string (
 		"<MainSubtitle>"
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE (reel_subtitle_asset_test)
 		"</MainSubtitle>"
 		);
 
-	dcp::ReelSubtitleAsset ps (doc);
+	dcp::ReelSMPTESubtitleAsset ps (doc);
 	BOOST_CHECK_EQUAL (ps.id(), "8bca1489-aab1-9259-a4fd-8150abc1de12");
 	BOOST_CHECK_EQUAL (ps.annotation_text(), "Goodbye world!");
 	BOOST_CHECK_EQUAL (ps.edit_rate(), dcp::Fraction(25, 1));

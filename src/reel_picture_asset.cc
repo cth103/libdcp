@@ -120,7 +120,7 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 			);
 	}
 
-	write_to_cpl_mxf (asset);
+	write_to_cpl_encryptable (asset);
 
 	return asset;
 }

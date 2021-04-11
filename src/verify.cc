@@ -47,9 +47,11 @@
 #include "raw_convert.h"
 #include "reel.h"
 #include "reel_closed_caption_asset.h"
+#include "reel_interop_subtitle_asset.h"
 #include "reel_markers_asset.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
+#include "reel_smpte_subtitle_asset.h"
 #include "reel_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "stereo_picture_asset.h"
@@ -991,7 +993,13 @@ verify_text_timing (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& no
 				return static_cast<bool>(reel->main_subtitle());
 			},
 			[](shared_ptr<Reel> reel) {
-				return reel->main_subtitle()->asset()->raw_xml();
+				auto interop = dynamic_pointer_cast<ReelInteropSubtitleAsset>(reel->main_subtitle());
+				if (interop) {
+					return interop->asset()->raw_xml();
+				}
+				auto smpte = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(reel->main_subtitle());
+				DCP_ASSERT (smpte);
+				return smpte->asset()->raw_xml();
 			},
 			[](shared_ptr<Reel> reel) {
 				return reel->main_subtitle()->actual_duration();
@@ -1234,7 +1242,7 @@ dcp::verify (
 						notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_INTRINSIC_DURATION, i->id()});
 					}
 					auto file_asset = dynamic_pointer_cast<ReelFileAsset>(i);
-					if (file_asset && !file_asset->hash()) {
+					if (dynamic_pointer_cast<ReelEncryptableAsset>(i) && !file_asset->hash()) {
 						notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_HASH, i->id()});
 					}
 				}

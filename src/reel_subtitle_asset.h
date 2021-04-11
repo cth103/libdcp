@@ -43,7 +43,6 @@
 
 #include "language_tag.h"
 #include "reel_asset.h"
-#include "reel_encryptable_asset.h"
 #include "reel_file_asset.h"
 #include "subtitle_asset.h"
 
@@ -60,17 +59,16 @@ class SubtitleAsset;
 /** @class ReelSubtitleAsset
  *  @brief Part of a Reel's description which refers to a subtitle XML/MXF file
  */
-class ReelSubtitleAsset : public ReelAsset, public ReelFileAsset, public ReelEncryptableAsset
+class ReelSubtitleAsset : public ReelAsset, public ReelFileAsset
 {
 public:
 	ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelSubtitleAsset (std::shared_ptr<const cxml::Node>);
 
-	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
 	bool equals (std::shared_ptr<const ReelSubtitleAsset>, EqualityOptions, NoteHandler) const;
 
 	std::shared_ptr<SubtitleAsset> asset () const {
-		return asset_of_type<SubtitleAsset> ();
+		return std::dynamic_pointer_cast<SubtitleAsset>(_asset_ref.asset());
 	}
 
 	void set_language (dcp::LanguageTag language);
@@ -79,17 +77,17 @@ public:
 		return _language;
 	}
 
-private:
-	friend struct ::verify_invalid_language1;
-
-	std::string key_type () const;
-	std::string cpl_node_name (Standard standard) const;
-
+protected:
 	/** As in other places, this is stored and returned as a string so that
 	 *  we can tolerate non-RFC-5646 strings, but must be set as a dcp::LanguageTag
 	 *  to try to ensure that we create compliant output.
 	 */
 	boost::optional<std::string> _language;
+
+private:
+	friend struct ::verify_invalid_language1;
+
+	std::string cpl_node_name (Standard standard) const;
 };
 
 

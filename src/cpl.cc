@@ -137,7 +137,10 @@ CPL::CPL (boost::filesystem::path file)
 			_ratings.push_back (Rating(i));
 		}
 	}
-	_reels = type_grand_children<Reel> (f, "ReelList", "Reel");
+
+	for (auto i: f.node_child("ReelList")->node_children("Reel")) {
+		_reels.push_back (make_shared<Reel>(i, *_standard));
+	}
 
 	auto reel_list = f.node_child ("ReelList");
 	if (reel_list) {
@@ -546,7 +549,9 @@ add_encryptable_assets (vector<shared_ptr<T>>& assets, vector<shared_ptr<Reel>> 
 			assets.push_back (i->main_sound());
 		}
 		if (i->main_subtitle ()) {
-			assets.push_back (i->main_subtitle());
+			if (auto enc = dynamic_pointer_cast<ReelEncryptableAsset>(i->main_subtitle())) {
+				assets.push_back (enc);
+			}
 		}
 		for (auto j: i->closed_captions()) {
 			assets.push_back (j);

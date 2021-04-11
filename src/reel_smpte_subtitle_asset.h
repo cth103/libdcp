@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,66 +32,44 @@
 */
 
 
-/** @file  src/reel_subtitle_asset.cc
- *  @brief ReelSubtitleAsset class
+/** @file  src/reel_interop_subtitle_asset.h
+ *  @brief ReelInteropSubtitleAsset class
  */
 
 
-#include "language_tag.h"
-#include "subtitle_asset.h"
+#include "reel_encryptable_asset.h"
 #include "reel_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
-#include <libxml++/libxml++.h>
 
 
-using std::string;
-using std::shared_ptr;
-using std::dynamic_pointer_cast;
-using boost::optional;
-using namespace dcp;
+namespace dcp {
 
 
-ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelAsset (asset->id(), edit_rate, intrinsic_duration, entry_point)
-	, ReelFileAsset (asset)
+class SMPTESubtitleAsset;
+
+
+/** @class ReelSMPTESubtitleAsset
+ *  @brief Part of a Reel's description which refers to an SMPTE subtitle MXF file
+ */
+class ReelSMPTESubtitleAsset : public ReelSubtitleAsset, public ReelEncryptableAsset
 {
+public:
+	ReelSMPTESubtitleAsset (std::shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	explicit ReelSMPTESubtitleAsset (std::shared_ptr<const cxml::Node>);
 
-}
+	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
 
-
-ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelAsset (node)
-	, ReelFileAsset (node)
-{
-	_language = node->optional_string_child("Language");
-}
-
-
-string
-ReelSubtitleAsset::cpl_node_name (Standard) const
-{
-	return "MainSubtitle";
-}
-
-
-void
-ReelSubtitleAsset::set_language (dcp::LanguageTag language)
-{
-	_language = language.to_string();
-}
-
-
-bool
-ReelSubtitleAsset::equals (shared_ptr<const ReelSubtitleAsset> other, EqualityOptions opt, NoteHandler note) const
-{
-	if (!asset_equals (other, opt, note)) {
-		return false;
+	std::shared_ptr<SMPTESubtitleAsset> smpte_asset () const {
+		return std::dynamic_pointer_cast<SMPTESubtitleAsset>(asset());
 	}
 
-	if (_asset_ref.resolved() && other->_asset_ref.resolved()) {
-		return _asset_ref->equals (other->_asset_ref.asset(), opt, note);
+private:
+	std::string key_type () const {
+		return "MDSK";
 	}
+};
 
-	return true;
+
 }
+
 

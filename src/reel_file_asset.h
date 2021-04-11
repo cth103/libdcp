@@ -95,7 +95,6 @@ protected:
 	 */
 	Ref _asset_ref;
 
-private:
 	/** Either our asset's computed hash or the hash read in from the CPL, if it's present */
 	boost::optional<std::string> _hash;
 };

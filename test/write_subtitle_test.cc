@@ -36,7 +36,7 @@
 #include "subtitle_string.h"
 #include "subtitle_image.h"
 #include "subtitle_asset_internal.h"
-#include "reel_subtitle_asset.h"
+#include "reel_interop_subtitle_asset.h"
 #include "reel.h"
 #include "cpl.h"
 #include "dcp.h"
@@ -360,8 +360,8 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 	boost::filesystem::create_directories ("build/test/write_interop_subtitle_test3");
 	c->write ("build/test/write_interop_subtitle_test3/subs.xml");
 
-	shared_ptr<dcp::Reel> reel (new dcp::Reel());
-	reel->add(shared_ptr<dcp::ReelSubtitleAsset>(new dcp::ReelSubtitleAsset(c, dcp::Fraction(24, 1), 6046, 0)));
+	auto reel = make_shared<dcp::Reel>();
+	reel->add(make_shared<dcp::ReelInteropSubtitleAsset>(c, dcp::Fraction(24, 1), 6046, 0));
 
 	string const issue_date = "2018-09-02T04:45:18+00:00";
 	string const issuer = "libdcp";

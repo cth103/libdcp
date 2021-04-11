@@ -85,7 +85,7 @@ xmlpp::Node *
 ReelSoundAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
 	auto asset = write_to_cpl_asset (node, standard, hash());
-	write_to_cpl_mxf (asset);
+	write_to_cpl_encryptable (asset);
 	return asset;
 }
 

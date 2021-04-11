@@ -84,7 +84,7 @@ public:
 	}
 
 protected:
-	void write_to_cpl_mxf (xmlpp::Node* node) const;
+	void write_to_cpl_encryptable (xmlpp::Node* node) const;
 
 private:
 	boost::optional<std::string> _key_id; ///< The &lt;KeyId&gt; from the reel's entry for this asset, if there is one

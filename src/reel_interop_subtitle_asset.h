@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,66 +32,35 @@
 */
 
 
-/** @file  src/reel_subtitle_asset.cc
- *  @brief ReelSubtitleAsset class
+/** @file  src/reel_interop_subtitle_asset.h
+ *  @brief ReelInteropSubtitleAsset class
  */
 
 
-#include "language_tag.h"
-#include "subtitle_asset.h"
+#include "interop_subtitle_asset.h"
+#include "reel_file_asset.h"
 #include "reel_subtitle_asset.h"
-#include "smpte_subtitle_asset.h"
-#include <libxml++/libxml++.h>
 
 
-using std::string;
-using std::shared_ptr;
-using std::dynamic_pointer_cast;
-using boost::optional;
-using namespace dcp;
+namespace dcp {
 
 
-ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelAsset (asset->id(), edit_rate, intrinsic_duration, entry_point)
-	, ReelFileAsset (asset)
+/** @class ReelInteropSubtitleAsset
+ *  @brief Part of a Reel's description which refers to an Interop subtitle XML file
+ */
+class ReelInteropSubtitleAsset : public ReelSubtitleAsset
 {
+public:
+	ReelInteropSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	explicit ReelInteropSubtitleAsset (std::shared_ptr<const cxml::Node>);
 
-}
-
-
-ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelAsset (node)
-	, ReelFileAsset (node)
-{
-	_language = node->optional_string_child("Language");
-}
-
-
-string
-ReelSubtitleAsset::cpl_node_name (Standard) const
-{
-	return "MainSubtitle";
-}
-
-
-void
-ReelSubtitleAsset::set_language (dcp::LanguageTag language)
-{
-	_language = language.to_string();
-}
-
-
-bool
-ReelSubtitleAsset::equals (shared_ptr<const ReelSubtitleAsset> other, EqualityOptions opt, NoteHandler note) const
-{
-	if (!asset_equals (other, opt, note)) {
-		return false;
+	std::shared_ptr<InteropSubtitleAsset> interop_asset () const {
+		return std::dynamic_pointer_cast<InteropSubtitleAsset>(asset());
 	}
 
-	if (_asset_ref.resolved() && other->_asset_ref.resolved()) {
-		return _asset_ref->equals (other->_asset_ref.asset(), opt, note);
-	}
+	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
+};
 
-	return true;
+
 }
 

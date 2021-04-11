@@ -68,7 +68,7 @@ ReelEncryptableAsset::ReelEncryptableAsset (shared_ptr<const cxml::Node> node)
 
 
 void
-ReelEncryptableAsset::write_to_cpl_mxf (xmlpp::Node* node) const
+ReelEncryptableAsset::write_to_cpl_encryptable (xmlpp::Node* node) const
 {
         if (key_id()) {
 		auto hash = find_child (node, "Hash");

@@ -47,6 +47,8 @@
 #include "reel_mono_picture_asset.h"
 #include "reel_stereo_picture_asset.h"
 #include "reel_sound_asset.h"
+#include "reel_interop_subtitle_asset.h"
+#include "reel_smpte_subtitle_asset.h"
 #include "reel_subtitle_asset.h"
 #include "reel_markers_asset.h"
 #include "decrypted_kdm_key.h"
@@ -69,7 +71,7 @@ using std::vector;
 using namespace dcp;
 
 
-Reel::Reel (std::shared_ptr<const cxml::Node> node)
+Reel::Reel (std::shared_ptr<const cxml::Node> node, dcp::Standard standard)
 	: Object (remove_urn_uuid (node->string_child ("Id")))
 {
 	auto asset_list = node->node_child ("AssetList");
@@ -91,7 +93,14 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node)
 
 	auto main_subtitle = asset_list->optional_node_child ("MainSubtitle");
 	if (main_subtitle) {
-		_main_subtitle = make_shared<ReelSubtitleAsset>(main_subtitle);
+		switch (standard) {
+			case Standard::INTEROP:
+				_main_subtitle = make_shared<ReelInteropSubtitleAsset>(main_subtitle);
+				break;
+			case Standard::SMPTE:
+				_main_subtitle = make_shared<ReelSMPTESubtitleAsset>(main_subtitle);
+				break;
+		}
 	}
 
 	auto main_markers = asset_list->optional_node_child ("MainMarkers");
@@ -186,7 +195,31 @@ Reel::equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandle
 		return false;
 	}
 
-	if (_main_subtitle && !_main_subtitle->equals (other->_main_subtitle, opt, note)) {
+	bool same_type = false;
+
+	{
+		auto interop = dynamic_pointer_cast<ReelInteropSubtitleAsset>(_main_subtitle);
+		auto interop_other = dynamic_pointer_cast<ReelInteropSubtitleAsset>(other->_main_subtitle);
+		if (interop && interop_other) {
+			same_type = true;
+			if (!interop->equals(interop_other, opt, note)) {
+				return false;
+			}
+		}
+	}
+
+	{
+		auto smpte = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(_main_subtitle);
+		auto smpte_other = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(other->_main_subtitle);
+		if (smpte && smpte_other) {
+			same_type = true;
+			if (!smpte->equals(smpte_other, opt, note)) {
+				return false;
+			}
+		}
+	}
+
+	if ((_main_subtitle || other->_main_subtitle) && !same_type) {
 		return false;
 	}
 
@@ -237,10 +270,17 @@ Reel::any_encrypted () const
 		}
 	}
 
+	bool esub = false;
+	if (_main_subtitle) {
+		if (auto enc = dynamic_pointer_cast<ReelEncryptableAsset>(_main_picture)) {
+			esub = enc->encrypted();
+		}
+	}
+
 	return (
 		(_main_picture && _main_picture->encrypted()) ||
 		(_main_sound && _main_sound->encrypted()) ||
-		(_main_subtitle && _main_subtitle->encrypted()) ||
+		esub ||
 		ecc ||
 		(_atmos && _atmos->encrypted())
 		);
@@ -257,10 +297,18 @@ Reel::all_encrypted () const
 		}
 	}
 
+	/* It's ok if there's no subtitle, or it's not encryptable */
+	bool esub = true;
+	if (_main_subtitle) {
+		if (auto enc = dynamic_pointer_cast<ReelEncryptableAsset>(_main_picture)) {
+			esub = enc->encrypted();
+		}
+	}
+
 	return (
 		(!_main_picture || _main_picture->encrypted()) &&
 		(!_main_sound || _main_sound->encrypted()) &&
-		(!_main_subtitle || _main_subtitle->encrypted()) &&
+		esub &&
 		ecc &&
 		(!_atmos || _atmos->encrypted())
 	       );
@@ -279,10 +327,10 @@ Reel::add (DecryptedKDM const & kdm)
 		if (_main_sound && i.id() == _main_sound->key_id()) {
 			_main_sound->asset()->set_key (i.key());
 		}
-		if (_main_subtitle && i.id() == _main_subtitle->key_id()) {
-			shared_ptr<SMPTESubtitleAsset> s = dynamic_pointer_cast<SMPTESubtitleAsset> (_main_subtitle->asset());
-			if (s) {
-				s->set_key (i.key());
+		if (_main_subtitle) {
+			auto smpte = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(_main_picture);
+			if (smpte && i.id() == smpte->key_id()) {
+				smpte->smpte_asset()->set_key(i.key());
 			}
 		}
 		for (auto j: _closed_captions) {

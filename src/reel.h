@@ -92,7 +92,7 @@ public:
 		, _atmos (atmos)
 	{}
 
-	explicit Reel (std::shared_ptr<const cxml::Node>);
+	explicit Reel (std::shared_ptr<const cxml::Node>, dcp::Standard standard);
 
 	std::shared_ptr<ReelPictureAsset> main_picture () const {
 		return _main_picture;
