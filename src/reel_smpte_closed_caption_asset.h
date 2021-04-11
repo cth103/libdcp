@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,62 +32,48 @@
 */
 
 
-/** @file  src/reel_closed_caption_asset.h
- *  @brief ReelClosedCaptionAsset class
+/** @file  src/reel_smpte_closed_caption_asset.h
+ *  @brief ReelSMPTEClosedCaptionAsset class
  */
 
 
-#ifndef LIBDCP_REEL_CLOSED_CAPTION_ASSET_H
-#define LIBDCP_REEL_CLOSED_CAPTION_ASSET_H
+#ifndef LIBDCP_REEL_SMPTE_CLOSED_CAPTION_ASSET_H
+#define LIBDCP_REEL_SMPTE_CLOSED_CAPTION_ASSET_H
 
 
-#include "language_tag.h"
-#include "reel_asset.h"
+#include "reel_encryptable_asset.h"
 #include "reel_file_asset.h"
-#include "subtitle_asset.h"
-
-
-struct verify_invalid_language2;
+#include "reel_closed_caption_asset.h"
+#include "smpte_subtitle_asset.h"
 
 
 namespace dcp {
 
 
-/** @class ReelClosedCaptionAsset
- *  @brief Part of a Reel's description which refers to a closed caption XML/MXF file
- */
-class ReelClosedCaptionAsset : public ReelAsset, public ReelFileAsset
+class ReelSMPTEClosedCaptionAsset : public ReelClosedCaptionAsset, public ReelEncryptableAsset
 {
 public:
-	ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
-	explicit ReelClosedCaptionAsset (std::shared_ptr<const cxml::Node>);
+	ReelSMPTEClosedCaptionAsset (std::shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
+	explicit ReelSMPTEClosedCaptionAsset (std::shared_ptr<const cxml::Node>);
 
-	bool equals (std::shared_ptr<const ReelClosedCaptionAsset>, EqualityOptions, NoteHandler) const;
+	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
 
-	std::shared_ptr<SubtitleAsset> asset () const {
-		return std::dynamic_pointer_cast<SubtitleAsset>(_asset_ref.asset());
+	std::shared_ptr<SMPTESubtitleAsset> smpte_asset () const {
+		return std::dynamic_pointer_cast<SMPTESubtitleAsset>(asset());
 	}
 
-	void set_language (dcp::LanguageTag l) {
-		_language = l.to_string();
+private:
+	std::string key_type () const override {
+		return "MDSK";
 	}
 
-	void unset_language () {
-		_language = boost::optional<std::string> ();
-	}
-
-	boost::optional<std::string> language () const {
-		return _language;
-	}
-
-protected:
-	friend struct ::verify_invalid_language2;
-
-	boost::optional<std::string> _language;
+	std::string cpl_node_name (Standard) const override;
+	std::pair<std::string, std::string> cpl_node_namespace () const override;
 };
 
 
-}
+};
 
 
 #endif
+

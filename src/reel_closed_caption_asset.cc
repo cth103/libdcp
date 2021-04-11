@@ -56,7 +56,6 @@ using namespace dcp;
 ReelClosedCaptionAsset::ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelAsset (asset->id(), edit_rate, intrinsic_duration, entry_point)
 	, ReelFileAsset (asset)
-	, ReelEncryptableAsset (dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : optional<string>())
 {
 
 }
@@ -65,66 +64,8 @@ ReelClosedCaptionAsset::ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> a
 ReelClosedCaptionAsset::ReelClosedCaptionAsset (std::shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
 	, ReelFileAsset (node)
-	, ReelEncryptableAsset (node)
 {
 	_language = node->optional_string_child ("Language");
-	node->done ();
-}
-
-
-string
-ReelClosedCaptionAsset::cpl_node_name (Standard standard) const
-{
-	switch (standard) {
-	case Standard::INTEROP:
-		return "cc-cpl:MainClosedCaption";
-	case Standard::SMPTE:
-		return "tt:ClosedCaption";
-	}
-
-	DCP_ASSERT (false);
-}
-
-
-pair<string, string>
-ReelClosedCaptionAsset::cpl_node_namespace (Standard standard) const
-{
-	switch (standard) {
-	case Standard::INTEROP:
-		return make_pair ("http://www.digicine.com/PROTO-ASDCP-CC-CPL-20070926#", "cc-cpl");
-	case Standard::SMPTE:
-		return make_pair ("http://www.smpte-ra.org/schemas/429-12/2008/TT", "tt");
-	}
-
-	DCP_ASSERT (false);
-}
-
-
-string
-ReelClosedCaptionAsset::key_type () const
-{
-	return "MDSK";
-}
-
-
-xmlpp::Node *
-ReelClosedCaptionAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
-{
-	auto asset = write_to_cpl_asset (node, standard, hash());
-	write_to_cpl_encryptable (asset);
-
-	if (_language) {
-		switch (standard) {
-		case Standard::INTEROP:
-			asset->add_child("Language")->add_child_text(*_language);
-			break;
-		case Standard::SMPTE:
-			asset->add_child("Language", "tt")->add_child_text(*_language);
-			break;
-		}
-	}
-
-	return asset;
 }
 
 

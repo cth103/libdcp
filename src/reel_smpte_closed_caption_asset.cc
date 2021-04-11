@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,84 +32,62 @@
 */
 
 
-/** @file  src/reel_atmos_asset.cc
- *  @brief ReelAtmosAsset class
+/** @file  src/reel_smpte_closed_caption_asset.cc
+ *  @brief ReelSMPTEClosedCaptionAsset class
  */
 
 
-#include "atmos_asset.h"
-#include "reel_atmos_asset.h"
-#include <libcxml/cxml.h>
+#include "reel_smpte_closed_caption_asset.h"
 #include <libxml++/libxml++.h>
 
 
-using std::string;
-using std::pair;
 using std::make_pair;
+using std::pair;
 using std::shared_ptr;
+using std::string;
 using namespace dcp;
 
 
-ReelAtmosAsset::ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point)
-	: ReelAsset (asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
-	, ReelFileAsset (asset)
+ReelSMPTEClosedCaptionAsset::ReelSMPTEClosedCaptionAsset (shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: ReelClosedCaptionAsset (asset, edit_rate, intrinsic_duration, entry_point)
 	, ReelEncryptableAsset (asset->key_id())
 {
 
 }
 
 
-ReelAtmosAsset::ReelAtmosAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelAsset (node)
-	, ReelFileAsset (node)
+ReelSMPTEClosedCaptionAsset::ReelSMPTEClosedCaptionAsset (shared_ptr<const cxml::Node> node)
+	: ReelClosedCaptionAsset (node)
 	, ReelEncryptableAsset (node)
 {
-	node->ignore_child ("DataType");
 	node->done ();
 }
 
 
-string
-ReelAtmosAsset::cpl_node_name (Standard) const
-{
-	return "axd:AuxData";
-}
-
-
-pair<string, string>
-ReelAtmosAsset::cpl_node_namespace () const
-{
-	return { "http://www.dolby.com/schemas/2012/AD", "axd" };
-}
-
-
-string
-ReelAtmosAsset::key_type () const
-{
-	return "MDEK";
-}
-
-
 xmlpp::Node *
-ReelAtmosAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+ReelSMPTEClosedCaptionAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
 	auto asset = write_to_cpl_asset (node, standard, hash());
 	write_to_cpl_encryptable (asset);
-	asset->add_child("axd:DataType")->add_child_text("urn:smpte:ul:060e2b34.04010105.0e090604.00000000");
+
+	if (_language) {
+		asset->add_child("Language", "tt")->add_child_text(*_language);
+	}
+
 	return asset;
 }
 
 
-bool
-ReelAtmosAsset::equals (shared_ptr<const ReelAtmosAsset> other, EqualityOptions opt, NoteHandler note) const
+string
+ReelSMPTEClosedCaptionAsset::cpl_node_name (Standard) const
 {
-	if (!asset_equals (other, opt, note)) {
-		return false;
-	}
-
-	if (!file_asset_equals (other, opt, note)) {
-		return false;
-	}
-
-	return true;
+	return "tt:ClosedCaption";
 }
+
+
+pair<string, string>
+ReelSMPTEClosedCaptionAsset::cpl_node_namespace () const
+{
+	return make_pair("http://www.smpte-ra.org/schemas/429-12/2008/TT", "tt");
+}
+

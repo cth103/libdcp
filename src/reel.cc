@@ -47,7 +47,9 @@
 #include "reel_mono_picture_asset.h"
 #include "reel_stereo_picture_asset.h"
 #include "reel_sound_asset.h"
+#include "reel_interop_closed_caption_asset.h"
 #include "reel_interop_subtitle_asset.h"
+#include "reel_smpte_closed_caption_asset.h"
 #include "reel_smpte_subtitle_asset.h"
 #include "reel_subtitle_asset.h"
 #include "reel_markers_asset.h"
@@ -115,7 +117,14 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node, dcp::Standard standard)
 		closed_captions = asset_list->node_children ("ClosedCaption");
 	}
 	for (auto i: closed_captions) {
-		_closed_captions.push_back (make_shared<ReelClosedCaptionAsset>(i));
+		switch (standard) {
+			case Standard::INTEROP:
+				_closed_captions.push_back (make_shared<ReelInteropClosedCaptionAsset>(i));
+				break;
+			case Standard::SMPTE:
+				_closed_captions.push_back (make_shared<ReelSMPTEClosedCaptionAsset>(i));
+				break;
+		}
 	}
 
 	auto atmos = asset_list->optional_node_child ("AuxData");
@@ -265,8 +274,10 @@ Reel::any_encrypted () const
 {
 	auto ecc = false;
 	for (auto i: _closed_captions) {
-		if (i->encrypted()) {
-			ecc = true;
+		if (auto enc = dynamic_pointer_cast<ReelEncryptableAsset>(i)) {
+			if (enc->encrypted()) {
+				ecc = true;
+			}
 		}
 	}
 
@@ -292,8 +303,10 @@ Reel::all_encrypted () const
 {
 	auto ecc = true;
 	for (auto i: _closed_captions) {
-		if (!i->encrypted()) {
-			ecc = false;
+		if (auto enc = dynamic_pointer_cast<ReelEncryptableAsset>(i)) {
+			if (!enc->encrypted()) {
+				ecc = false;
+			}
 		}
 	}
 
@@ -334,11 +347,9 @@ Reel::add (DecryptedKDM const & kdm)
 			}
 		}
 		for (auto j: _closed_captions) {
-			if (i.id() == j->key_id()) {
-				auto s = dynamic_pointer_cast<SMPTESubtitleAsset> (j->asset());
-				if (s) {
-					s->set_key (i.key());
-				}
+			auto smpte = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(j);
+			if (smpte && i.id() == smpte->key_id()) {
+				smpte->smpte_asset()->set_key(i.key());
 			}
 		}
 		if (_atmos && i.id() == _atmos->key_id()) {

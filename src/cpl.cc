@@ -555,7 +555,9 @@ add_encryptable_assets (vector<shared_ptr<T>>& assets, vector<shared_ptr<Reel>> 
 			}
 		}
 		for (auto j: i->closed_captions()) {
-			assets.push_back (j);
+			if (auto enc = dynamic_pointer_cast<ReelEncryptableAsset>(j)) {
+				assets.push_back (enc);
+			}
 		}
 		if (i->atmos ()) {
 			assets.push_back (i->atmos());

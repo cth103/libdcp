@@ -41,12 +41,13 @@
 #include "openjpeg_image.h"
 #include "raw_convert.h"
 #include "reel.h"
-#include "reel_closed_caption_asset.h"
+#include "reel_interop_closed_caption_asset.h"
 #include "reel_interop_subtitle_asset.h"
 #include "reel_markers_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_stereo_picture_asset.h"
+#include "reel_smpte_closed_caption_asset.h"
 #include "reel_smpte_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "stereo_picture_asset.h"
@@ -925,7 +926,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language2)
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
 	asset->_language = "wrong-andbad";
 	asset->write (dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 6046, 0);
+	auto reel_asset = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 6046, 0);
 	reel_asset->_language = "badlang";
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
@@ -1177,7 +1178,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_xml_size_in_bytes)
 	}
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 49148, 0);
+	auto reel_asset = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 49148, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result (
@@ -1239,7 +1240,7 @@ verify_timed_text_asset_too_large (string name)
 BOOST_AUTO_TEST_CASE (verify_subtitle_asset_too_large)
 {
 	verify_timed_text_asset_too_large<dcp::ReelSMPTESubtitleAsset>("verify_subtitle_asset_too_large");
-	verify_timed_text_asset_too_large<dcp::ReelClosedCaptionAsset>("verify_closed_caption_asset_too_large");
+	verify_timed_text_asset_too_large<dcp::ReelSMPTEClosedCaptionAsset>("verify_closed_caption_asset_too_large");
 }
 
 
@@ -1349,7 +1350,7 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 		ccaps->set_language (dcp::LanguageTag("de-DE"));
 		ccaps->add (simple_subtitle());
 		ccaps->write (path / "subs1.mxf");
-		auto reel_ccaps = make_shared<dcp::ReelClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), reel_length, 0);
+		auto reel_ccaps = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[0]->add(reel_ccaps);
 	}
 
@@ -1358,7 +1359,7 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 		ccaps->set_language (dcp::LanguageTag("en-US"));
 		ccaps->add (simple_subtitle());
 		ccaps->write (path / "subs2.mxf");
-		auto reel_ccaps = make_shared<dcp::ReelClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), reel_length, 0);
+		auto reel_ccaps = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[1]->add(reel_ccaps);
 	}
 
@@ -1772,7 +1773,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_length2)
 BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count1)
 {
 	auto const dir = path ("build/test/verify_valid_closed_caption_line_count1");
-	auto cpl = dcp_with_text<dcp::ReelClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
 		dir,
 		{
 			{ 96, 200, 0.0, "We" },
@@ -1792,7 +1793,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count1)
 BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count2)
 {
 	auto const dir = path ("build/test/verify_valid_closed_caption_line_count2");
-	auto cpl = dcp_with_text<dcp::ReelClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
 		dir,
 		{
 			{ 96, 200, 0.0, "We" },
@@ -1806,7 +1807,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count2)
 BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_count3)
 {
 	auto const dir = path ("build/test/verify_invalid_closed_caption_line_count3");
-	auto cpl = dcp_with_text<dcp::ReelClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
 		dir,
 		{
 			{ 96, 300, 0.0, "We" },
@@ -1826,7 +1827,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_count3)
 BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count4)
 {
 	auto const dir = path ("build/test/verify_valid_closed_caption_line_count4");
-	auto cpl = dcp_with_text<dcp::ReelClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
 		dir,
 		{
 			{ 96, 300, 0.0, "We" },
@@ -1841,7 +1842,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count4)
 BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_length)
 {
 	auto const dir = path ("build/test/verify_invalid_closed_caption_line_length");
-	auto cpl = dcp_with_text<dcp::ReelClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
 		dir,
 		{
 			{ 96, 300, 0.0, "0123456789012345678901234567890123" }
@@ -2092,7 +2093,7 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 		);
 
 	for (int i = 0; i < caps_in_reel1; ++i) {
-		reel1->add (make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
+		reel1->add (make_shared<dcp::ReelSMPTEClosedCaptionAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
 	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length, 0);
@@ -2107,7 +2108,7 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 		);
 
 	for (int i = 0; i < caps_in_reel2; ++i) {
-		reel2->add (make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
+		reel2->add (make_shared<dcp::ReelSMPTEClosedCaptionAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
 	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length, 0);
@@ -2219,18 +2220,18 @@ BOOST_AUTO_TEST_CASE (verify_text_entry_point)
 			}
 		);
 
-	verify_text_entry_point_check<dcp::ReelClosedCaptionAsset> (
+	verify_text_entry_point_check<dcp::ReelSMPTEClosedCaptionAsset> (
 		"build/test/verify_closed_caption_entry_point_must_be_present",
 		dcp::VerificationNote::Code::MISSING_CLOSED_CAPTION_ENTRY_POINT,
-		[](shared_ptr<dcp::ReelClosedCaptionAsset> asset) {
+		[](shared_ptr<dcp::ReelSMPTEClosedCaptionAsset> asset) {
 			asset->unset_entry_point ();
 			}
 		);
 
-	verify_text_entry_point_check<dcp::ReelClosedCaptionAsset> (
+	verify_text_entry_point_check<dcp::ReelSMPTEClosedCaptionAsset> (
 		"build/test/verify_closed_caption_entry_point_must_be_zero",
 		dcp::VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT,
-		[](shared_ptr<dcp::ReelClosedCaptionAsset> asset) {
+		[](shared_ptr<dcp::ReelSMPTEClosedCaptionAsset> asset) {
 			asset->set_entry_point (9);
 			}
 		);

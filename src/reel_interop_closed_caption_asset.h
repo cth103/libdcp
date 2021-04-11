@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,62 +32,42 @@
 */
 
 
-/** @file  src/reel_closed_caption_asset.h
- *  @brief ReelClosedCaptionAsset class
+/** @file  src/reel_interop_closed_caption_asset.h
+ *  @brief ReelInteropClosedCaptionAsset class
  */
 
 
-#ifndef LIBDCP_REEL_CLOSED_CAPTION_ASSET_H
-#define LIBDCP_REEL_CLOSED_CAPTION_ASSET_H
+#ifndef LIBDCP_REEL_INTEROP_CLOSED_CAPTION_ASSET_H
+#define LIBDCP_REEL_INTEROP_CLOSED_CAPTION_ASSET_H
 
 
-#include "language_tag.h"
-#include "reel_asset.h"
-#include "reel_file_asset.h"
-#include "subtitle_asset.h"
-
-
-struct verify_invalid_language2;
+#include "interop_subtitle_asset.h"
+#include "reel_closed_caption_asset.h"
 
 
 namespace dcp {
 
 
-/** @class ReelClosedCaptionAsset
- *  @brief Part of a Reel's description which refers to a closed caption XML/MXF file
- */
-class ReelClosedCaptionAsset : public ReelAsset, public ReelFileAsset
+class ReelInteropClosedCaptionAsset : public ReelClosedCaptionAsset
 {
 public:
-	ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
-	explicit ReelClosedCaptionAsset (std::shared_ptr<const cxml::Node>);
+	ReelInteropClosedCaptionAsset (std::shared_ptr<InteropSubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
+	explicit ReelInteropClosedCaptionAsset (std::shared_ptr<const cxml::Node>);
 
-	bool equals (std::shared_ptr<const ReelClosedCaptionAsset>, EqualityOptions, NoteHandler) const;
-
-	std::shared_ptr<SubtitleAsset> asset () const {
-		return std::dynamic_pointer_cast<SubtitleAsset>(_asset_ref.asset());
+	std::shared_ptr<InteropSubtitleAsset> interop_asset () const {
+		return std::dynamic_pointer_cast<InteropSubtitleAsset>(asset());
 	}
 
-	void set_language (dcp::LanguageTag l) {
-		_language = l.to_string();
-	}
+	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
 
-	void unset_language () {
-		_language = boost::optional<std::string> ();
-	}
-
-	boost::optional<std::string> language () const {
-		return _language;
-	}
-
-protected:
-	friend struct ::verify_invalid_language2;
-
-	boost::optional<std::string> _language;
+private:
+	std::string cpl_node_name (Standard) const;
+	std::pair<std::string, std::string> cpl_node_namespace () const override;
 };
 
 
-}
+};
 
 
 #endif
+

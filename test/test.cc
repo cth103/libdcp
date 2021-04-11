@@ -45,11 +45,12 @@
 #include "picture_asset_writer.h"
 #include "reel.h"
 #include "reel_asset.h"
-#include "reel_closed_caption_asset.h"
+#include "reel_interop_closed_caption_asset.h"
 #include "reel_interop_subtitle_asset.h"
 #include "reel_markers_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_mono_picture_asset.h"
+#include "reel_smpte_closed_caption_asset.h"
 #include "reel_smpte_subtitle_asset.h"
 #include "reel_sound_asset.h"
 #include "smpte_subtitle_asset.h"
@@ -459,8 +460,8 @@ make_simple_with_interop_ccaps (boost::filesystem::path path)
 	subs->add (simple_subtitle());
 	subs->write (path / "ccap.xml");
 
-	auto reel_caps = make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 240, 0);
-	dcp->cpls().front()->reels().front()->add (reel_caps);
+	auto reel_caps = make_shared<dcp::ReelInteropClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 240, 0);
+	dcp->cpls()[0]->reels()[0]->add (reel_caps);
 
 	return dcp;
 }
@@ -477,7 +478,7 @@ make_simple_with_smpte_ccaps (boost::filesystem::path path)
 	subs->add (simple_subtitle());
 	subs->write (path / "ccap.mxf");
 
-	auto reel_caps = make_shared<dcp::ReelClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 192, 0);
+	auto reel_caps = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 192, 0);
 	dcp->cpls()[0]->reels()[0]->add(reel_caps);
 
 	return dcp;

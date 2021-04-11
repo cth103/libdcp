@@ -85,8 +85,8 @@ ReelAsset::write_to_cpl_asset (xmlpp::Node* node, Standard standard, optional<st
 	if (!attr.first.empty ()) {
 		a->set_attribute (attr.first, attr.second);
 	}
-	auto const ns = cpl_node_namespace (standard);
-	if (!ns.first.empty ()) {
+	auto const ns = cpl_node_namespace ();
+	if (!ns.first.empty()) {
 		a->set_namespace_declaration (ns.first, ns.second);
 	}
 	a->add_child("Id")->add_child_text ("urn:uuid:" + _id);
@@ -114,7 +114,7 @@ ReelAsset::cpl_node_attribute (Standard) const
 
 
 pair<string, string>
-ReelAsset::cpl_node_namespace (Standard) const
+ReelAsset::cpl_node_namespace () const
 {
 	return make_pair ("", "");
 }

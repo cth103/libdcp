@@ -65,13 +65,13 @@ public:
 		return asset_of_type<AtmosAsset> ();
 	}
 
-	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
 	bool equals (std::shared_ptr<const ReelAtmosAsset>, EqualityOptions, NoteHandler) const;
 
 private:
-	std::string key_type () const;
-	std::string cpl_node_name (Standard standard) const;
-	std::pair<std::string, std::string> cpl_node_namespace (Standard) const;
+	std::string key_type () const override;
+	std::string cpl_node_name (Standard standard) const override;
+	std::pair<std::string, std::string> cpl_node_namespace () const override;
 };
 
 

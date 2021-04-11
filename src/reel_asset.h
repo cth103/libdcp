@@ -137,7 +137,7 @@ protected:
 	virtual std::pair<std::string, std::string> cpl_node_attribute (Standard) const;
 
 	/** @return Any namespace that should be used on the asset's node in the CPL */
-	virtual std::pair<std::string, std::string> cpl_node_namespace (Standard) const;
+	virtual std::pair<std::string, std::string> cpl_node_namespace () const;
 
 	xmlpp::Node* write_to_cpl_asset (xmlpp::Node* node, Standard standard, boost::optional<std::string> hash) const;
 
