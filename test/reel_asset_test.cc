@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2015-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,23 +31,25 @@
     files in the program, then also delete it here.
 */
 
+
 #include "reel_mono_picture_asset.h"
-#include "reel_subtitle_asset.h"
+#include "reel_smpte_subtitle_asset.h"
 #include <libcxml/cxml.h>
 #include <boost/test/unit_test.hpp>
 #include "stream_operators.h"
 #include "test.h"
 
 
+using std::make_shared;
 using std::string;
-using boost::optional;
 using std::shared_ptr;
+using boost::optional;
 
 
 /** Test the XML constructor of ReelPictureAsset */
 BOOST_AUTO_TEST_CASE (reel_picture_asset_test)
 {
-	shared_ptr<cxml::Document> doc (new cxml::Document ("MainPicture"));
+	auto doc = make_shared<cxml::Document>("MainPicture");
 
 	doc->read_string (
 		"<MainPicture>"

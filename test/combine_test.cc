@@ -195,10 +195,10 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_interop_subs_test)
 	using namespace boost::filesystem;
 	boost::filesystem::path const out = "build/test/combine_two_dcps_with_interop_subs_test";
 
-	shared_ptr<dcp::DCP> first = make_simple_with_interop_subs ("build/test/combine_input1");
+	auto first = make_simple_with_interop_subs ("build/test/combine_input1");
 	first->write_xml (dcp::Standard::INTEROP);
 
-	shared_ptr<dcp::DCP> second = make_simple_with_interop_subs ("build/test/combine_input2");
+	auto second = make_simple_with_interop_subs ("build/test/combine_input2");
 	second->write_xml (dcp::Standard::INTEROP);
 
 	remove_all (out);

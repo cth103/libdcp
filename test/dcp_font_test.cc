@@ -31,6 +31,7 @@
     files in the program, then also delete it here.
 */
 
+
 #include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "dcp.h"
@@ -38,9 +39,11 @@
 #include "test.h"
 #include "reel.h"
 #include "util.h"
-#include "reel_subtitle_asset.h"
+#include "reel_interop_subtitle_asset.h"
+#include "reel_smpte_subtitle_asset.h"
 #include <boost/test/unit_test.hpp>
 #include <cstdio>
+
 
 using std::list;
 using std::string;
@@ -55,13 +58,13 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 	boost::filesystem::path directory = "build/test/interop_dcp_font_test";
 	dcp::DCP dcp (directory);
 
-	shared_ptr<dcp::InteropSubtitleAsset> subs (new dcp::InteropSubtitleAsset ());
+	auto subs = make_shared<dcp::InteropSubtitleAsset>();
 	subs->add_font ("theFontId", dcp::ArrayData("test/data/dummy.ttf"));
 	subs->write (directory / "frobozz.xml");
 	check_file ("test/data/dummy.ttf", "build/test/interop_dcp_font_test/font_0.ttf");
 
 	auto reel = make_shared<dcp::Reel>();
-	reel->add (make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction (24, 1), 24, 0));
+	reel->add (make_shared<dcp::ReelInteropSubtitleAsset>(subs, dcp::Fraction (24, 1), 24, 0));
 
 	auto cpl = make_shared<dcp::CPL>("", dcp::ContentKind::TRAILER);
 	cpl->add (reel);
@@ -98,7 +101,7 @@ BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
 	subs->write (directory / "frobozz.mxf");
 
 	auto reel = make_shared<dcp::Reel>();
-	reel->add (make_shared<dcp::ReelSubtitleAsset>(subs, dcp::Fraction (24, 1), 24, 0));
+	reel->add (make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction (24, 1), 24, 0));
 
 	auto cpl = make_shared<dcp::CPL>("", dcp::ContentKind::TRAILER);
 	cpl->add (reel);

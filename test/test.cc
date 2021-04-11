@@ -37,25 +37,26 @@
 #include "cpl.h"
 #include "dcp.h"
 #include "interop_subtitle_asset.h"
+#include "j2k_transcode.h"
 #include "mono_picture_asset.h"
-#include "picture_asset_writer.h"
-#include "reel.h"
-#include "reel_mono_picture_asset.h"
-#include "reel_sound_asset.h"
-#include "reel_closed_caption_asset.h"
-#include "reel_subtitle_asset.h"
-#include "sound_asset.h"
-#include "sound_asset_writer.h"
-#include "smpte_subtitle_asset.h"
 #include "mono_picture_asset.h"
 #include "openjpeg_image.h"
-#include "j2k_transcode.h"
 #include "picture_asset_writer.h"
-#include "reel_mono_picture_asset.h"
+#include "picture_asset_writer.h"
+#include "reel.h"
 #include "reel_asset.h"
+#include "reel_closed_caption_asset.h"
+#include "reel_interop_subtitle_asset.h"
+#include "reel_markers_asset.h"
+#include "reel_mono_picture_asset.h"
+#include "reel_mono_picture_asset.h"
+#include "reel_smpte_subtitle_asset.h"
+#include "reel_sound_asset.h"
+#include "smpte_subtitle_asset.h"
+#include "sound_asset.h"
+#include "sound_asset_writer.h"
 #include "test.h"
 #include "util.h"
-#include "reel_markers_asset.h"
 #include <asdcp/KM_util.h>
 #include <asdcp/KM_prng.h>
 #include <sndfile.h>
@@ -63,6 +64,7 @@
 #include <boost/test/unit_test.hpp>
 #include <cstdio>
 #include <iostream>
+
 
 using std::string;
 using std::min;
@@ -94,6 +96,7 @@ struct TestConfig
 		}
 	}
 };
+
 
 void
 check_xml (xmlpp::Element* ref, xmlpp::Element* test, vector<string> ignore_tags, bool ignore_whitespace)
@@ -186,12 +189,12 @@ check_xml (xmlpp::Element* ref, xmlpp::Element* test, vector<string> ignore_tags
 void
 check_xml (string ref, string test, vector<string> ignore, bool ignore_whitespace)
 {
-	xmlpp::DomParser* ref_parser = new xmlpp::DomParser ();
+	auto ref_parser = new xmlpp::DomParser ();
 	ref_parser->parse_memory (ref);
-	xmlpp::Element* ref_root = ref_parser->get_document()->get_root_node ();
-	xmlpp::DomParser* test_parser = new xmlpp::DomParser ();
+	auto ref_root = ref_parser->get_document()->get_root_node ();
+	auto test_parser = new xmlpp::DomParser ();
 	test_parser->parse_memory (test);
-	xmlpp::Element* test_root = test_parser->get_document()->get_root_node ();
+	auto test_root = test_parser->get_document()->get_root_node ();
 
 	check_xml (ref_root, test_root, ignore, ignore_whitespace);
 }
@@ -201,14 +204,14 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 {
 	uintmax_t size = boost::filesystem::file_size (ref);
 	BOOST_CHECK_EQUAL (size, boost::filesystem::file_size(check));
-	FILE* ref_file = dcp::fopen_boost (ref, "rb");
+	auto ref_file = dcp::fopen_boost (ref, "rb");
 	BOOST_REQUIRE (ref_file);
-	FILE* check_file = dcp::fopen_boost (check, "rb");
+	auto check_file = dcp::fopen_boost (check, "rb");
 	BOOST_REQUIRE (check_file);
 
 	int const buffer_size = 65536;
-	uint8_t* ref_buffer = new uint8_t[buffer_size];
-	uint8_t* check_buffer = new uint8_t[buffer_size];
+	auto ref_buffer = new uint8_t[buffer_size];
+	auto check_buffer = new uint8_t[buffer_size];
 
 	uintmax_t pos = 0;
 
@@ -421,7 +424,7 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 	subs->add_font ("afont", data);
 	subs->write (path / "subs" / "subs.xml");
 
-	shared_ptr<dcp::ReelSubtitleAsset> reel_subs(new dcp::ReelSubtitleAsset(subs, dcp::Fraction(24, 1), 240, 0));
+	auto reel_subs = make_shared<dcp::ReelInteropSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls().front()->reels().front()->add (reel_subs);
 
 	return dcp;
@@ -440,7 +443,7 @@ make_simple_with_smpte_subs (boost::filesystem::path path)
 
 	subs->write (path / "subs.mxf");
 
-	shared_ptr<dcp::ReelSubtitleAsset> reel_subs(new dcp::ReelSubtitleAsset(subs, dcp::Fraction(24, 1), 192, 0));
+	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 192, 0);
 	dcp->cpls().front()->reels().front()->add (reel_subs);
 
 	return dcp;

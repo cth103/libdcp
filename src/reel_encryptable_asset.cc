@@ -59,7 +59,7 @@ ReelEncryptableAsset::ReelEncryptableAsset (optional<string> key_id)
 
 
 ReelEncryptableAsset::ReelEncryptableAsset (shared_ptr<const cxml::Node> node)
-	: _key_id (node->optional_string_child ("KeyId"))
+	: _key_id (node->optional_string_child("KeyId"))
 {
 	if (_key_id) {
 		_key_id = remove_urn_uuid (*_key_id);

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2020-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -37,7 +37,7 @@
 #include "exceptions.h"
 #include "language_tag.h"
 #include "reel.h"
-#include "reel_subtitle_asset.h"
+#include "reel_smpte_subtitle_asset.h"
 #include "stream_operators.h"
 #include "test.h"
 #include <memory>
@@ -45,9 +45,10 @@
 
 
 using std::list;
+using std::make_shared;
+using std::shared_ptr;
 using std::string;
 using std::vector;
-using std::shared_ptr;
 
 
 BOOST_AUTO_TEST_CASE (cpl_metadata_bad_values_test)
@@ -301,7 +302,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 
 	shared_ptr<dcp::Reel> reel(new dcp::Reel());
 	reel->add (black_picture_asset("build/test/cpl_metadata_write_test1"));
-	reel->add (shared_ptr<dcp::ReelSubtitleAsset>(new dcp::ReelSubtitleAsset(doc)));
+	reel->add (make_shared<dcp::ReelSMPTESubtitleAsset>(doc));
 	cpl.add (reel);
 
 	vector<dcp::LanguageTag> lt;

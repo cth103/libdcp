@@ -58,16 +58,17 @@
 #include <boost/algorithm/string.hpp>
 
 
-using std::string;
-using std::list;
-using std::pair;
-using std::make_pair;
 using std::cout;
-using std::set;
-using std::vector;
-using std::shared_ptr;
-using boost::optional;
 using std::dynamic_pointer_cast;
+using std::list;
+using std::make_pair;
+using std::make_shared;
+using std::pair;
+using std::set;
+using std::shared_ptr;
+using std::string;
+using std::vector;
+using boost::optional;
 using namespace dcp;
 
 
@@ -291,9 +292,9 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 		/* If the first language on SubtitleLanguageList is the same as the language of the first subtitle we'll ignore it */
 		size_t first = 0;
 		if (!_reels.empty()) {
-			shared_ptr<dcp::ReelSubtitleAsset> sub = _reels.front()->main_subtitle();
+			auto sub = _reels.front()->main_subtitle();
 			if (sub) {
-				optional<string> lang = sub->language();
+				auto lang = sub->language();
 				if (lang && lang == sll_split[0]) {
 					first = 1;
 				}
