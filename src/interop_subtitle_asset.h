@@ -37,6 +37,10 @@
  */
 
 
+#ifndef DCP_INTEROP_SUBTITLE_ASSET_H
+#define DCP_INTEROP_SUBTITLE_ASSET_H
+
+
 #include "subtitle_asset.h"
 #include <boost/filesystem.hpp>
 
@@ -139,4 +143,9 @@ private:
 	std::vector<std::shared_ptr<InteropLoadFontNode>> _load_font_nodes;
 };
 
+
 }
+
+
+#endif
+

@@ -32,6 +32,10 @@
 */
 
 
+#ifndef LIBDCP_SMPTE_SUBTITLE_ASSET_H
+#define LIBDCP_SMPTE_SUBTITLE_ASSET_H
+
+
 /** @file  src/smpte_subtitle_asset.h
  *  @brief SMPTESubtitleAsset class
  */
@@ -231,3 +235,6 @@ private:
 
 
 }
+
+
+#endif
