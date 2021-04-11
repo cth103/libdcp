@@ -321,7 +321,7 @@ simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_
 
 
 shared_ptr<dcp::DCP>
-make_simple (boost::filesystem::path path, int reels, int frames)
+make_simple (boost::filesystem::path path, int reels, int frames, dcp::Standard standard)
 {
 	/* Some known metadata */
 	dcp::MXFMetadata mxf_meta;
@@ -332,7 +332,7 @@ make_simple (boost::filesystem::path path, int reels, int frames)
 	boost::filesystem::remove_all (path);
 	boost::filesystem::create_directories (path);
 	auto d = make_shared<dcp::DCP>(path);
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER, standard);
 	cpl->set_annotation_text ("A Test DCP");
 	cpl->set_issuer ("OpenDCP 0.0.25");
 	cpl->set_creator ("OpenDCP 0.0.25");
@@ -414,7 +414,7 @@ simple_markers (int frames)
 shared_ptr<dcp::DCP>
 make_simple_with_interop_subs (boost::filesystem::path path)
 {
-	shared_ptr<dcp::DCP> dcp = make_simple (path);
+	auto dcp = make_simple (path, 1, 24, dcp::Standard::INTEROP);
 
 	shared_ptr<dcp::InteropSubtitleAsset> subs(new dcp::InteropSubtitleAsset());
 	subs->add (simple_subtitle());
@@ -453,7 +453,7 @@ make_simple_with_smpte_subs (boost::filesystem::path path)
 shared_ptr<dcp::DCP>
 make_simple_with_interop_ccaps (boost::filesystem::path path)
 {
-	shared_ptr<dcp::DCP> dcp = make_simple (path);
+	auto dcp = make_simple (path, 1, 24, dcp::Standard::INTEROP);
 
 	shared_ptr<dcp::InteropSubtitleAsset> subs(new dcp::InteropSubtitleAsset());
 	subs->add (simple_subtitle());

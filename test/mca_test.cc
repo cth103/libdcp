@@ -62,13 +62,13 @@ BOOST_AUTO_TEST_CASE (parse_mca_descriptors_from_mxf_test)
 		reel->add (black_picture_asset(dcp::String::compose("build/test/parse_mca_descriptors_from_mxf_test%1", i), 24));
 		reel->add (reel_sound_asset);
 
-		dcp::CPL cpl("", dcp::ContentKind::FEATURE);
+		dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 		cpl.add (reel);
 		cpl.set_main_sound_configuration("51/L,R,C,LFE,Ls,Rs");
 		cpl.set_main_sound_sample_rate(48000);
 		cpl.set_main_picture_stored_area(dcp::Size(1998, 1080));
 		cpl.set_main_picture_active_area(dcp::Size(1998, 1080));
-		cpl.write_xml (dcp::String::compose("build/test/parse_mca_descriptors_from_mxf_test%1/cpl.xml", i), dcp::Standard::SMPTE, shared_ptr<dcp::CertificateChain>());
+		cpl.write_xml (dcp::String::compose("build/test/parse_mca_descriptors_from_mxf_test%1/cpl.xml", i), shared_ptr<dcp::CertificateChain>());
 
 		cxml::Document ref("CompositionPlaylist", private_test / dcp::String::compose("51_sound_with_mca_%1.cpl", i));
 		cxml::Document check("CompositionPlaylist", dcp::String::compose("build/test/parse_mca_descriptors_from_mxf_test%1/cpl.xml", i));
@@ -115,13 +115,13 @@ BOOST_AUTO_TEST_CASE (write_mca_descriptors_to_mxf_test)
 	reel->add (black_picture_asset("build/test/write_mca_descriptors_to_mxf_test", 24));
 	reel->add (reel_sound_asset);
 
-	dcp::CPL cpl("", dcp::ContentKind::FEATURE);
+	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	cpl.add (reel);
 	cpl.set_main_sound_configuration("51/L,R,C,LFE,Ls,Rs");
 	cpl.set_main_sound_sample_rate(48000);
 	cpl.set_main_picture_stored_area(dcp::Size(1998, 1080));
 	cpl.set_main_picture_active_area(dcp::Size(1998, 1080));
-	cpl.write_xml ("build/test/write_mca_descriptors_to_mxf_test/cpl.xml", dcp::Standard::SMPTE, shared_ptr<dcp::CertificateChain>());
+	cpl.write_xml ("build/test/write_mca_descriptors_to_mxf_test/cpl.xml", shared_ptr<dcp::CertificateChain>());
 
 	cxml::Document ref("CompositionPlaylist", private_test / "51_sound_with_mca_1.cpl");
 	cxml::Document check("CompositionPlaylist", "build/test/write_mca_descriptors_to_mxf_test/cpl.xml");

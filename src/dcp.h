@@ -151,7 +151,6 @@ public:
 	 *  @param name_format Name format to use for the CPL and PKL filenames
 	 */
 	void write_xml (
-		Standard standard,
 		std::string issuer = String::compose("libdcp %1", dcp::version),
 		std::string creator = String::compose("libdcp %1", dcp::version),
 		std::string issue_date = LocalTime().as_string(),

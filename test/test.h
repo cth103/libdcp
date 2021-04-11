@@ -47,7 +47,7 @@ extern std::shared_ptr<dcp::MonoPictureAsset> simple_picture (boost::filesystem:
 extern std::shared_ptr<dcp::SoundAsset> simple_sound (boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language, int frames = 24, int sample_rate = 48000);
 extern std::shared_ptr<dcp::Subtitle> simple_subtitle ();
 extern std::shared_ptr<dcp::ReelMarkersAsset> simple_markers (int frames = 24);
-extern std::shared_ptr<dcp::DCP> make_simple (boost::filesystem::path path, int reels = 1, int frames = 24);
+extern std::shared_ptr<dcp::DCP> make_simple (boost::filesystem::path path, int reels = 1, int frames = 24, dcp::Standard = dcp::Standard::SMPTE);
 extern std::shared_ptr<dcp::DCP> make_simple_with_interop_subs (boost::filesystem::path path);
 extern std::shared_ptr<dcp::DCP> make_simple_with_smpte_subs (boost::filesystem::path path);
 extern std::shared_ptr<dcp::DCP> make_simple_with_interop_ccaps (boost::filesystem::path path);

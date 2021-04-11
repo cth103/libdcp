@@ -101,13 +101,13 @@ main ()
 	reel->add(std::make_shared<dcp::ReelSoundAsset>(sound_asset, 0));
 
 	/* Make a CPL with this reel */
-	auto cpl = std::make_shared<dcp::CPL>("My film", dcp::ContentKind::FEATURE);
+	auto cpl = std::make_shared<dcp::CPL>("My film", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	cpl->add(reel);
 
 	/* Write the DCP */
 	dcp::DCP dcp ("DCP");
 	dcp.add (cpl);
-	dcp.write_xml (dcp::Standard::SMPTE);
+	dcp.write_xml ();
 
 	return 0;
 }

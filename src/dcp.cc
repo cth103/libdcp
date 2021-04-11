@@ -67,6 +67,7 @@
 #include <libxml++/libxml++.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <numeric>
 
 
 using std::string;
@@ -229,7 +230,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 
 			if (root == "CompositionPlaylist") {
 				auto cpl = make_shared<CPL>(path);
-				if (_standard && cpl->standard() && cpl->standard().get() != _standard.get() && notes) {
+				if (_standard && cpl->standard() != _standard.get() && notes) {
 					notes->push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_STANDARD});
 				}
 				_cpls.push_back (cpl);
@@ -469,7 +470,6 @@ DCP::write_assetmap (
 
 void
 DCP::write_xml (
-	Standard standard,
 	string issuer,
 	string creator,
 	string issue_date,
@@ -478,10 +478,24 @@ DCP::write_xml (
 	NameFormat name_format
 	)
 {
+	if (_cpls.empty()) {
+		throw MiscError ("Cannot write DCP with no CPLs.");
+	}
+
+	auto standard = std::accumulate (
+		std::next(_cpls.begin()), _cpls.end(), _cpls[0]->standard(),
+		[](Standard s, shared_ptr<CPL> c) {
+			if (s != c->standard()) {
+				throw MiscError ("Cannot make DCP with mixed Interop and SMPTE CPLs.");
+			}
+			return s;
+		}
+		);
+
 	for (auto i: cpls()) {
 		NameFormat::Map values;
 		values['t'] = "cpl";
-		i->write_xml (_directory / (name_format.get(values, "_" + i->id() + ".xml")), standard, signer);
+		i->write_xml (_directory / (name_format.get(values, "_" + i->id() + ".xml")), signer);
 	}
 
 	shared_ptr<PKL> pkl;

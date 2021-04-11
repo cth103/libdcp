@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE (validity_period_test1)
 	writer->write (frame.data(), frame.size());
 	auto reel = make_shared<dcp::Reel>();
 	reel->add(make_shared<dcp::ReelMonoPictureAsset>(asset, 0));
-	auto cpl = make_shared<dcp::CPL>("test", dcp::ContentKind::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("test", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	cpl->add(reel);
 
 	/* This certificate_chain is valid from 26/12/2012 to 24/12/2022 */

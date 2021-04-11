@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	signer->add (dcp::Certificate (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem")));
 	signer->set_key (dcp::file_to_string ("test/ref/crypt/leaf.key"));
 
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::ContentKind::FEATURE));
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 
 	dcp::Key key;
 
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 
 	d.add (cpl);
 
-	d.write_xml (dcp::Standard::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp", signer);
+	d.write_xml ("OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp", signer);
 
 	dcp::DecryptedKDM kdm (
 		cpl,

@@ -173,5 +173,5 @@ dcp::combine (
 		}
 	}
 
-	output_dcp.write_xml (*standard, issuer, creator, issue_date, annotation_text, signer);
+	output_dcp.write_xml (issuer, creator, issue_date, annotation_text, signer);
 }

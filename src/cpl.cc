@@ -80,7 +80,7 @@ static string const smpte_395_ns = "http://www.smpte-ra.org/reg/395/2014/13/1/aa
 static string const smpte_335_ns = "http://www.smpte-ra.org/reg/335/2012";
 
 
-CPL::CPL (string annotation_text, ContentKind content_kind)
+CPL::CPL (string annotation_text, ContentKind content_kind, Standard standard)
 	/* default _content_title_text to annotation_text */
 	: _issuer ("libdcp" LIBDCP_VERSION)
 	, _creator ("libdcp" LIBDCP_VERSION)
@@ -88,6 +88,7 @@ CPL::CPL (string annotation_text, ContentKind content_kind)
 	, _annotation_text (annotation_text)
 	, _content_title_text (annotation_text)
 	, _content_kind (content_kind)
+	, _standard (standard)
 {
 	ContentVersion cv;
 	cv.label_text = cv.id + LocalTime().as_string();
@@ -139,7 +140,7 @@ CPL::CPL (boost::filesystem::path file)
 	}
 
 	for (auto i: f.node_child("ReelList")->node_children("Reel")) {
-		_reels.push_back (make_shared<Reel>(i, *_standard));
+		_reels.push_back (make_shared<Reel>(i, _standard));
 	}
 
 	auto reel_list = f.node_child ("ReelList");
@@ -170,11 +171,11 @@ CPL::add (std::shared_ptr<Reel> reel)
 
 
 void
-CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<const CertificateChain> signer) const
+CPL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain> signer) const
 {
 	xmlpp::Document doc;
 	xmlpp::Element* root;
-	if (standard == Standard::INTEROP) {
+	if (_standard == Standard::INTEROP) {
 		root = doc.create_root_node ("CompositionPlaylist", cpl_interop_ns);
 	} else {
 		root = doc.create_root_node ("CompositionPlaylist", cpl_smpte_ns);
@@ -209,8 +210,8 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 
 	bool first = true;
 	for (auto i: _reels) {
-		auto asset_list = i->write_to_cpl (reel_list, standard);
-		if (first && standard == Standard::SMPTE) {
+		auto asset_list = i->write_to_cpl (reel_list, _standard);
+		if (first && _standard == Standard::SMPTE) {
 			maybe_write_composition_metadata_asset (asset_list);
 			first = false;
 		}
@@ -219,7 +220,7 @@ CPL::write_xml (boost::filesystem::path file, Standard standard, shared_ptr<cons
 	indent (root, 0);
 
 	if (signer) {
-		signer->sign (root, standard);
+		signer->sign (root, _standard);
 	}
 
 	doc.write_to_file_formatted (file.string(), "UTF-8");

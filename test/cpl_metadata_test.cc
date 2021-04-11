@@ -53,7 +53,7 @@ using std::vector;
 
 BOOST_AUTO_TEST_CASE (cpl_metadata_bad_values_test)
 {
-	dcp::CPL cpl("", dcp::ContentKind::FEATURE);
+	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	BOOST_CHECK_THROW (cpl.set_version_number(-1), dcp::BadSettingError);
 
 	vector<dcp::ContentVersion> cv;
@@ -252,7 +252,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 {
 	RNGFixer fix;
 
-	dcp::CPL cpl("", dcp::ContentKind::FEATURE);
+	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	cpl.set_issue_date ("2020-08-28T13:35:06+02:00");
 
 	vector<dcp::ContentVersion> cv;
@@ -310,7 +310,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 	lt.push_back(dcp::LanguageTag("fr-ZA"));
 	cpl.set_additional_subtitle_languages (lt);
 
-	cpl.write_xml ("build/test/cpl_metadata_write_test1.xml", dcp::Standard::SMPTE, shared_ptr<dcp::CertificateChain>());
+	cpl.write_xml ("build/test/cpl_metadata_write_test1.xml", shared_ptr<dcp::CertificateChain>());
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test1.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_write_test1.xml"),
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 BOOST_AUTO_TEST_CASE (cpl_metadata_roundtrip_test_1)
 {
 	dcp::CPL cpl ("test/ref/cpl_metadata_test1.xml");
-	cpl.write_xml ("build/test/cpl_metadata_roundtrip_test1.xml", dcp::Standard::SMPTE, shared_ptr<dcp::CertificateChain>());
+	cpl.write_xml ("build/test/cpl_metadata_roundtrip_test1.xml", shared_ptr<dcp::CertificateChain>());
 	vector<string> ignore;
 	ignore.push_back ("Id");
 	check_xml (
@@ -339,7 +339,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test2)
 {
 	RNGFixer fix;
 
-	dcp::CPL cpl("", dcp::ContentKind::FEATURE);
+	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	cpl.set_issue_date ("2020-08-28T13:35:06+02:00");
 	cpl.set_content_version (dcp::ContentVersion("id", "version"));
 	cpl.set_issuer ("libdcp1.6.4devel");
@@ -361,7 +361,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test2)
 	reel->add (black_picture_asset("build/test/cpl_metadata_write_test1"));
 	cpl.add (reel);
 
-	cpl.write_xml ("build/test/cpl_metadata_write_test2.xml", dcp::Standard::SMPTE, shared_ptr<dcp::CertificateChain>());
+	cpl.write_xml ("build/test/cpl_metadata_write_test2.xml", shared_ptr<dcp::CertificateChain>());
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test2.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_write_test2.xml"),
@@ -414,9 +414,9 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test2)
 BOOST_AUTO_TEST_CASE (cpl_metadata_roundtrip_test_2)
 {
 	dcp::CPL cpl ("test/ref/cpl_metadata_test2.xml");
-	cpl.write_xml ("build/test/cpl_metadata_roundtrip_test2.xml", dcp::Standard::SMPTE, shared_ptr<dcp::CertificateChain>());
 	vector<string> ignore;
 	ignore.push_back ("Id");
+	cpl.write_xml ("build/test/cpl_metadata_roundtrip_test2.xml", shared_ptr<dcp::CertificateChain>());
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test2.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_roundtrip_test2.xml"),

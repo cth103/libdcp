@@ -66,11 +66,11 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (make_shared<dcp::ReelInteropSubtitleAsset>(subs, dcp::Fraction (24, 1), 24, 0));
 
-	auto cpl = make_shared<dcp::CPL>("", dcp::ContentKind::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("", dcp::ContentKind::TRAILER, dcp::Standard::INTEROP);
 	cpl->add (reel);
 
 	dcp.add (cpl);
-	dcp.write_xml (dcp::Standard::INTEROP);
+	dcp.write_xml ();
 
 	dcp::DCP dcp2 (directory);
 	dcp2.read ();
@@ -103,11 +103,11 @@ BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction (24, 1), 24, 0));
 
-	auto cpl = make_shared<dcp::CPL>("", dcp::ContentKind::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
 	cpl->add (reel);
 
 	dcp.add (cpl);
-	dcp.write_xml (dcp::Standard::SMPTE);
+	dcp.write_xml ();
 
 	dcp::DCP dcp2 (directory);
 	dcp2.read ();

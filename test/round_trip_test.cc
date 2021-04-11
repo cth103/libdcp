@@ -79,9 +79,9 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 
 	asset_A->set_key (key);
 
-	shared_ptr<dcp::CPL> cpl (new dcp::CPL ("A Test DCP", dcp::ContentKind::FEATURE));
 	shared_ptr<dcp::Reel> reel (new dcp::Reel ());
 	reel->add (shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (asset_A, 0)));
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	cpl->add (reel);
 
 	dcp::LocalTime start;

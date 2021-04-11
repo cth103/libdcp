@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 	RNGFixer fixer;
 
 	make_simple("build/test/DCP/dcp_test1")->write_xml(
-		dcp::Standard::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "A Test DCP"
+		"OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "A Test DCP"
 		);
 
 	/* build/test/DCP/dcp_test1 is checked against test/ref/DCP/dcp_test1 by run/tests */
@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	boost::filesystem::remove_all ("build/test/DCP/dcp_test2");
 	boost::filesystem::create_directories ("build/test/DCP/dcp_test2");
 	dcp::DCP d ("build/test/DCP/dcp_test2");
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	cpl->set_content_version (
 		dcp::ContentVersion("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00", "81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00")
 		);
@@ -138,7 +138,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 
 	d.add (cpl);
 
-	d.write_xml (dcp::Standard::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp");
+	d.write_xml ("OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp");
 
 	/* build/test/DCP/dcp_test2 is checked against test/ref/DCP/dcp_test2 by run/tests */
 }
@@ -227,11 +227,11 @@ test_rewriting_sound(string name, bool modify)
 	reel->add(make_shared<dcp::ReelSoundAsset>(sound, 0));
 	reel->add(simple_markers());
 
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
 	cpl->add (reel);
 
 	B.add (cpl);
-	B.write_xml (dcp::Standard::SMPTE);
+	B.write_xml ();
 
 	dcp::EqualityOptions eq;
 	eq.reel_hashes_can_differ = true;
@@ -270,7 +270,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	boost::filesystem::remove_all ("build/test/DCP/dcp_test5");
 	boost::filesystem::create_directories ("build/test/DCP/dcp_test5");
 	dcp::DCP d ("build/test/DCP/dcp_test5");
-	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	cpl->set_content_version (
 		dcp::ContentVersion("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00", "81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00")
 		);
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 
 	d.add (cpl);
 
-	d.write_xml (dcp::Standard::SMPTE, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp");
+	d.write_xml ("OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp");
 
 	/* build/test/DCP/dcp_test5 is checked against test/ref/DCP/dcp_test5 by run/tests */
 }
@@ -347,8 +347,8 @@ BOOST_AUTO_TEST_CASE (dcp_test7)
 {
 	RNGFixer fix;
 
-	make_simple("build/test/DCP/dcp_test7")->write_xml(
-		dcp::Standard::INTEROP, "OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp"
+	make_simple("build/test/DCP/dcp_test7", 1, 24, dcp::Standard::INTEROP)->write_xml(
+		"OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp"
 		);
 
 	/* build/test/DCP/dcp_test7 is checked against test/ref/DCP/dcp_test7 by run/tests */
@@ -369,4 +369,59 @@ BOOST_AUTO_TEST_CASE (dcp_things_in_assetmap_not_in_pkl)
 {
 	dcp::DCP dcp ("test/data/extra_assetmap");
 	BOOST_CHECK_NO_THROW (dcp.read());
+}
+
+
+/** Test that writing the XML for a DCP with no CPLs throws */
+BOOST_AUTO_TEST_CASE (dcp_with_no_cpls)
+{
+	dcp::DCP dcp ("build/test/dcp_with_no_cpls");
+	BOOST_REQUIRE_THROW (dcp.write_xml(), dcp::MiscError);
+}
+
+
+/** Test that writing the XML for a DCP with Interop CPLs makes a SMPTE assetmap */
+BOOST_AUTO_TEST_CASE (dcp_with_interop_cpls)
+{
+	boost::filesystem::path path = "build/test/dcp_with_interop_cpls";
+	boost::filesystem::remove_all (path);
+	dcp::DCP dcp (path);
+	auto cpl1 = make_shared<dcp::CPL>("", dcp::ContentKind::FEATURE, dcp::Standard::INTEROP);
+	cpl1->add(make_shared<dcp::Reel>());
+	dcp.add(cpl1);
+	auto cpl2 = make_shared<dcp::CPL>("", dcp::ContentKind::FEATURE, dcp::Standard::INTEROP);
+	cpl2->add(make_shared<dcp::Reel>());
+	dcp.add(cpl2);
+	dcp.write_xml ();
+	BOOST_REQUIRE (boost::filesystem::exists(path / "ASSETMAP"));
+	BOOST_REQUIRE (!boost::filesystem::exists(path / "ASSETMAP.xml"));
+}
+
+
+/** Test that writing the XML for a DCP with SMPTE CPLs makes a SMPTE assetmap */
+BOOST_AUTO_TEST_CASE (dcp_with_smpte_cpls)
+{
+	boost::filesystem::path path = "build/test/dcp_with_smpte_cpls";
+	boost::filesystem::remove_all (path);
+	dcp::DCP dcp (path);
+	auto cpl1 = make_shared<dcp::CPL>("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
+	cpl1->add(make_shared<dcp::Reel>());
+	dcp.add(cpl1);
+	auto cpl2 = make_shared<dcp::CPL>("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
+	cpl2->add(make_shared<dcp::Reel>());
+	dcp.add(cpl2);
+	dcp.write_xml ();
+	BOOST_REQUIRE (!boost::filesystem::exists(path / "ASSETMAP"));
+	BOOST_REQUIRE (boost::filesystem::exists(path / "ASSETMAP.xml"));
+}
+
+
+/** Test that writing the XML for a DCP with mixed-standard CPLs throws */
+BOOST_AUTO_TEST_CASE (dcp_with_mixed_cpls)
+{
+	dcp::DCP dcp ("build/test/dcp_with_mixed_cpls");
+	dcp.add(make_shared<dcp::CPL>("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE));
+	dcp.add(make_shared<dcp::CPL>("", dcp::ContentKind::FEATURE, dcp::Standard::INTEROP));
+	dcp.add(make_shared<dcp::CPL>("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE));
+	BOOST_REQUIRE_THROW (dcp.write_xml(), dcp::MiscError);
 }

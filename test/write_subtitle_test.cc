@@ -368,7 +368,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 	string const creator = "libdcp";
 	string const annotation_text = "Created by libdcp";
 
-	auto cpl = make_shared<dcp::CPL>("My film", dcp::ContentKind::FEATURE);
+	auto cpl = make_shared<dcp::CPL>("My film", dcp::ContentKind::FEATURE, dcp::Standard::INTEROP);
 	cpl->add (reel);
 	cpl->set_issuer (issuer);
 	cpl->set_creator (creator);
@@ -381,7 +381,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 
 	dcp::DCP dcp ("build/test/write_interop_subtitle_test3");
 	dcp.add (cpl);
-	dcp.write_xml (dcp::Standard::INTEROP, issuer, creator, issue_date, annotation_text);
+	dcp.write_xml (issuer, creator, issue_date, annotation_text);
 
 	check_xml (
 		dcp::file_to_string("test/ref/write_interop_subtitle_test3/subs.xml"),

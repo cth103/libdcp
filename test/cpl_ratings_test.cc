@@ -42,7 +42,7 @@ using std::shared_ptr;
 
 BOOST_AUTO_TEST_CASE (cpl_ratings)
 {
-	dcp::CPL cpl ("annotation", dcp::ContentKind::FEATURE);
+	dcp::CPL cpl ("annotation", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 
 	vector<dcp::Rating> ratings;
 	ratings.push_back (dcp::Rating("http://www.mpaa.org/2003-ratings", "PG-13"));
@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE (cpl_ratings)
 	shared_ptr<dcp::Reel> reel(new dcp::Reel());
 	cpl.add (reel);
 
-	cpl.write_xml ("build/test/cpl_ratings.xml", dcp::Standard::SMPTE, {});
+	cpl.write_xml ("build/test/cpl_ratings.xml", {});
 
 	vector<string> ignore;
 	ignore.push_back ("Id");

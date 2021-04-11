@@ -73,7 +73,7 @@ class DecryptedKDM;
 class CPL : public Asset
 {
 public:
-	CPL (std::string annotation_text, ContentKind content_kind);
+	CPL (std::string annotation_text, ContentKind content_kind, Standard standard);
 
 	/** Construct a CPL object from a XML file */
 	explicit CPL (boost::filesystem::path file);
@@ -117,12 +117,10 @@ public:
 	/** Write an CompositonPlaylist XML file
 	 *
 	 *  @param file Filename to write
-	 *  @param standard INTEROP or SMPTE
 	 *  @param signer Signer to sign the CPL, or 0 to add no signature
 	 */
 	void write_xml (
 		boost::filesystem::path file,
-		Standard standard,
 		std::shared_ptr<const CertificateChain>
 		) const;
 
@@ -306,7 +304,7 @@ public:
 
 	void set_additional_subtitle_languages (std::vector<dcp::LanguageTag> const& lang);
 
-	boost::optional<Standard> standard () const {
+	Standard standard () const {
 		return _standard;
 	}
 
@@ -354,7 +352,7 @@ private:
 	std::vector<std::shared_ptr<Reel>> _reels;
 
 	/** Standard of CPL that was read in */
-	boost::optional<Standard> _standard;
+	Standard _standard;
 };
 
 
