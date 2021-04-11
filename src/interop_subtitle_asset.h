@@ -66,19 +66,19 @@ public:
 		std::shared_ptr<const Asset>,
 		EqualityOptions,
 		NoteHandler note
-		) const;
+		) const override;
 
-	void write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const;
-	void add_to_pkl (std::shared_ptr<PKL> pkl, boost::filesystem::path root) const;
+	void write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const override;
+	void add_to_pkl (std::shared_ptr<PKL> pkl, boost::filesystem::path root) const override;
 
-	std::vector<std::shared_ptr<LoadFontNode>> load_font_nodes () const;
+	std::vector<std::shared_ptr<LoadFontNode>> load_font_nodes () const override;
 
-	void add_font (std::string load_id, dcp::ArrayData data);
+	void add_font (std::string load_id, dcp::ArrayData data) override;
 
-	std::string xml_as_string () const;
+	std::string xml_as_string () const override;
 
 	/** Write this content to an XML file with its fonts alongside */
-	void write (boost::filesystem::path path) const;
+	void write (boost::filesystem::path path) const override;
 
 	void resolve_fonts (std::vector<std::shared_ptr<Asset>> assets);
 	void add_font_assets (std::vector<std::shared_ptr<Asset>>& assets);
@@ -121,7 +121,7 @@ public:
 		return _movie_title;
 	}
 
-	int time_code_rate () const {
+	int time_code_rate () const override {
 		/* Interop can use either; just pick one */
 		return 1000;
 	}
@@ -132,7 +132,7 @@ public:
 
 protected:
 
-	std::string pkl_type (Standard s) const {
+	std::string pkl_type (Standard s) const override {
 		return static_pkl_type (s);
 	}
 

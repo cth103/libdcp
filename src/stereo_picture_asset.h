@@ -58,14 +58,14 @@ public:
 	explicit StereoPictureAsset (Fraction edit_rate, Standard standard);
 
 	/** Start a progressive write to a StereoPictureAsset */
-	std::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path file, bool);
+	std::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path file, bool) override;
 	std::shared_ptr<StereoPictureAssetReader> start_read () const;
 
 	bool equals (
 		std::shared_ptr<const Asset> other,
 		EqualityOptions opt,
 		NoteHandler note
-		) const;
+		) const override;
 };
 
 

@@ -73,14 +73,14 @@ public:
 	 *  @path overwrite true to overwrite an existing file; for use when continuing a write which
 	 *  previously failed.  If in doubt, use false here.
 	 */
-	std::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path file, bool overwrite);
+	std::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path file, bool overwrite) override;
 	std::shared_ptr<MonoPictureAssetReader> start_read () const;
 
 	bool equals (
 		std::shared_ptr<const Asset> other,
 		EqualityOptions opt,
 		NoteHandler note
-		) const;
+		) const override;
 
 private:
 	std::string cpl_node_name () const;
