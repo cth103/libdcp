@@ -45,8 +45,9 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-ReelFileAsset::ReelFileAsset (shared_ptr<Asset> asset)
-	: _asset_ref (asset)
+ReelFileAsset::ReelFileAsset (shared_ptr<Asset> asset, std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: ReelAsset (id, edit_rate, intrinsic_duration, entry_point)
+	, _asset_ref (asset)
 	, _hash (asset->hash())
 {
 
@@ -54,7 +55,8 @@ ReelFileAsset::ReelFileAsset (shared_ptr<Asset> asset)
 
 
 ReelFileAsset::ReelFileAsset (shared_ptr<const cxml::Node> node)
-	: _asset_ref (remove_urn_uuid(node->string_child("Id")))
+	: ReelAsset (node)
+	, _asset_ref (remove_urn_uuid(node->string_child("Id")))
 	, _hash (node->optional_string_child ("Hash"))
 {
 

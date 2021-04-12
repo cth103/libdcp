@@ -55,7 +55,7 @@ class AtmosAsset;
 /** @class ReelAtmosAsset
  *  @brief Part of a Reel's description which refers to a Atmos MXF
  */
-class ReelAtmosAsset : public ReelAsset, public ReelFileAsset, public ReelEncryptableAsset
+class ReelAtmosAsset : public ReelFileAsset, public ReelEncryptableAsset
 {
 public:
 	ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point);

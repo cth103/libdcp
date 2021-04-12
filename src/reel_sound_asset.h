@@ -50,7 +50,7 @@ namespace dcp {
 /** @class ReelSoundAsset
  *  @brief Part of a Reel's description which refers to a sound asset
  */
-class ReelSoundAsset : public ReelAsset, public ReelFileAsset, public ReelEncryptableAsset
+class ReelSoundAsset : public ReelFileAsset, public ReelEncryptableAsset
 {
 public:
 	ReelSoundAsset (std::shared_ptr<dcp::SoundAsset> content, int64_t entry_point);

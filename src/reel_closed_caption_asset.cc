@@ -54,16 +54,14 @@ using namespace dcp;
 
 
 ReelClosedCaptionAsset::ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelAsset (asset->id(), edit_rate, intrinsic_duration, entry_point)
-	, ReelFileAsset (asset)
+	: ReelFileAsset (asset, asset->id(), edit_rate, intrinsic_duration, entry_point)
 {
 
 }
 
 
 ReelClosedCaptionAsset::ReelClosedCaptionAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelAsset (node)
-	, ReelFileAsset (node)
+	: ReelFileAsset (node)
 {
 	_language = node->optional_string_child ("Language");
 }

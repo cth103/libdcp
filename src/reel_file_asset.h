@@ -41,6 +41,7 @@
 #define LIBDCP_REEL_FILE_ASSET_H
 
 
+#include "reel_asset.h"
 #include "ref.h"
 #include <boost/optional.hpp>
 #include <string>
@@ -49,10 +50,10 @@
 namespace dcp {
 
 
-class ReelFileAsset
+class ReelFileAsset : public ReelAsset
 {
 public:
-	explicit ReelFileAsset (std::shared_ptr<Asset> asset);
+	ReelFileAsset (std::shared_ptr<Asset> asset, std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelFileAsset (std::shared_ptr<const cxml::Node> node);
 
 	/** @return a Ref to our actual asset */
@@ -82,12 +83,12 @@ protected:
 
 	template <class T>
 	std::shared_ptr<T> asset_of_type () const {
-		return std::dynamic_pointer_cast<T> (_asset_ref.asset ());
+		return std::dynamic_pointer_cast<T>(_asset_ref.asset());
 	}
 
 	template <class T>
 	std::shared_ptr<T> asset_of_type () {
-		return std::dynamic_pointer_cast<T> (_asset_ref.asset ());
+		return std::dynamic_pointer_cast<T>(_asset_ref.asset());
 	}
 
 	/** Reference to the asset (MXF or XML file) that this reel entry

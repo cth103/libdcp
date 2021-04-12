@@ -52,7 +52,7 @@ namespace dcp {
 /** @class ReelPictureAsset
  *  @brief Part of a Reel's description which refers to a picture asset
  */
-class ReelPictureAsset : public ReelAsset, public ReelFileAsset, public ReelEncryptableAsset
+class ReelPictureAsset : public ReelFileAsset, public ReelEncryptableAsset
 {
 public:
 	ReelPictureAsset (std::shared_ptr<PictureAsset> asset, int64_t entry_point);
