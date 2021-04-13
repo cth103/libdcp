@@ -54,7 +54,7 @@ public:
 	static std::string static_pkl_type (Standard standard);
 
 private:
-	std::string pkl_type (Standard standard) const {
+	std::string pkl_type (Standard standard) const override {
 		return static_pkl_type (standard);
 	}
 };

@@ -37,17 +37,20 @@
  */
 
 
-#include "sound_asset.h"
-#include "util.h"
-#include "exceptions.h"
-#include "sound_frame.h"
-#include "sound_asset_writer.h"
-#include "sound_asset_reader.h"
 #include "compose.hpp"
 #include "dcp_assert.h"
+#include "exceptions.h"
+#include "sound_asset.h"
+#include "sound_asset_reader.h"
+#include "sound_asset_writer.h"
+#include "sound_frame.h"
+#include "util.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
 #include <asdcp/Metadata.h>
+LIBDCP_ENABLE_WARNINGS
 #include <libxml++/nodes/element.h>
 #include <boost/filesystem.hpp>
 #include <stdexcept>

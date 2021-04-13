@@ -39,7 +39,10 @@
 
 #include "reel_smpte_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 
 
 using std::shared_ptr;

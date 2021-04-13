@@ -39,8 +39,11 @@
 #include "sound_asset.h"
 #include "sound_asset_writer.h"
 #include "test.h"
+#include "warnings.h"
 #include <libcxml/cxml.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/test/unit_test.hpp>
 
 

@@ -65,7 +65,7 @@ public:
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
 
 private:
-	std::string cpl_node_name (Standard) const;
+	std::string cpl_node_name (Standard) const override;
 	std::pair<std::string, std::string> cpl_node_namespace () const override;
 };
 

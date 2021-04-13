@@ -31,10 +31,18 @@
     files in the program, then also delete it here.
 */
 
+
 #include "interop_load_font_node.h"
+#include "warnings.h"
 #include <libcxml/cxml.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/test/unit_test.hpp>
+
+
+using std::make_shared;
+
 
 /** Test dcp::InteropLoadFont's simple constructor */
 BOOST_AUTO_TEST_CASE (interop_load_font_test1)
@@ -52,7 +60,7 @@ BOOST_AUTO_TEST_CASE (interop_load_font_test2)
 
 	text->set_attribute("Id", "my-great-id");
 	text->set_attribute("URI", "my-great-uri");
-	dcp::InteropLoadFontNode lf (cxml::ConstNodePtr (new cxml::Node (text)));
+	dcp::InteropLoadFontNode lf (make_shared<cxml::Node>(text));
 
 	BOOST_CHECK_EQUAL (lf.id, "my-great-id");
 }
@@ -65,7 +73,7 @@ BOOST_AUTO_TEST_CASE (interop_load_font_test3)
 
 	text->set_attribute("ID", "my-great-id");
 	text->set_attribute("URI", "my-great-uri");
-	dcp::InteropLoadFontNode lf (cxml::ConstNodePtr (new cxml::Node (text)));
+	dcp::InteropLoadFontNode lf (make_shared<cxml::Node>(text));
 
 	BOOST_CHECK_EQUAL (lf.id, "my-great-id");
 }

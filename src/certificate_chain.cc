@@ -38,13 +38,16 @@
 
 
 #include "certificate_chain.h"
+#include "compose.hpp"
+#include "dcp_assert.h"
 #include "exceptions.h"
 #include "util.h"
-#include "dcp_assert.h"
-#include "compose.hpp"
+#include "warnings.h"
 #include <asdcp/KM_util.h>
 #include <libcxml/cxml.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/dl.h>
 #include <xmlsec/app.h>

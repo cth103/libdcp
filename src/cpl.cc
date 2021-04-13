@@ -37,24 +37,29 @@
  */
 
 
-#include "cpl.h"
-#include "util.h"
-#include "reel.h"
-#include "metadata.h"
 #include "certificate_chain.h"
-#include "xml.h"
+#include "compose.hpp"
+#include "cpl.h"
+#include "dcp_assert.h"
+#include "local_time.h"
+#include "metadata.h"
+#include "raw_convert.h"
+#include "reel.h"
+#include "reel_atmos_asset.h"
+#include "reel_closed_caption_asset.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
-#include "reel_closed_caption_asset.h"
-#include "reel_atmos_asset.h"
-#include "local_time.h"
-#include "dcp_assert.h"
-#include "compose.hpp"
-#include "raw_convert.h"
+#include "util.h"
+#include "warnings.h"
+#include "xml.h"
+LIBDCP_DISABLE_WARNINGS
 #include <asdcp/Metadata.h>
+LIBDCP_ENABLE_WARNINGS
 #include <libxml/parser.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/algorithm/string.hpp>
 
 

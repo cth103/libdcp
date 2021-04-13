@@ -71,8 +71,8 @@ public:
 	}
 
 private:
-	std::string cpl_node_name (Standard standard) const;
-	std::pair<std::string, std::string> cpl_node_attribute (Standard standard) const;
+	std::string cpl_node_name (Standard standard) const override;
+	std::pair<std::string, std::string> cpl_node_attribute (Standard standard) const override;
 };
 
 

@@ -58,10 +58,15 @@
 #include "sound_asset_writer.h"
 #include "test.h"
 #include "util.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <asdcp/KM_util.h>
 #include <asdcp/KM_prng.h>
+LIBDCP_ENABLE_WARNINGS
 #include <sndfile.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/test/unit_test.hpp>
 #include <cstdio>
 #include <iostream>

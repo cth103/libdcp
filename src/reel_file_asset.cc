@@ -39,7 +39,10 @@
 
 #include "asset.h"
 #include "reel_file_asset.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 
 
 using std::shared_ptr;

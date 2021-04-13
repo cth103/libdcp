@@ -82,7 +82,7 @@ public:
 		std::shared_ptr<const Asset> other,
 		EqualityOptions opt,
 		NoteHandler note
-		) const;
+		) const override;
 
 	/** @return number of channels */
 	int channels () const {
@@ -115,7 +115,7 @@ private:
 		boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language, int frames, int sample_rate
 		);
 
-	std::string pkl_type (Standard standard) const {
+	std::string pkl_type (Standard standard) const override {
 		return static_pkl_type (standard);
 	}
 

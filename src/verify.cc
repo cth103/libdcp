@@ -156,22 +156,22 @@ private:
 class DCPErrorHandler : public ErrorHandler
 {
 public:
-	void warning(const SAXParseException& e)
+	void warning(const SAXParseException& e) override
 	{
 		maybe_add (XMLValidationError(e));
 	}
 
-	void error(const SAXParseException& e)
+	void error(const SAXParseException& e) override
 	{
 		maybe_add (XMLValidationError(e));
 	}
 
-	void fatalError(const SAXParseException& e)
+	void fatalError(const SAXParseException& e) override
 	{
 		maybe_add (XMLValidationError(e));
 	}
 
-	void resetErrors() {
+	void resetErrors() override {
 		_errors.clear ();
 	}
 
@@ -246,7 +246,7 @@ public:
 		add("http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL", "SMPTE-429-10-2008.xsd");
 	}
 
-	InputSource* resolveEntity(XMLCh const *, XMLCh const * system_id)
+	InputSource* resolveEntity(XMLCh const *, XMLCh const * system_id) override
 	{
 		if (!system_id) {
 			return 0;

@@ -37,13 +37,16 @@
  */
 
 
-#include "mono_picture_asset_writer.h"
-#include "exceptions.h"
-#include "picture_asset.h"
-#include "dcp_assert.h"
 #include "crypto_context.h"
+#include "dcp_assert.h"
+#include "exceptions.h"
+#include "mono_picture_asset_writer.h"
+#include "picture_asset.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
+LIBDCP_ENABLE_WARNINGS
 
 
 #include "picture_asset_writer_common.cc"

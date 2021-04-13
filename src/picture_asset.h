@@ -140,7 +140,7 @@ protected:
 	Fraction _screen_aspect_ratio;
 
 private:
-	std::string pkl_type (Standard standard) const;
+	std::string pkl_type (Standard standard) const override;
 };
 
 

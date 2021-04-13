@@ -64,7 +64,7 @@ class AtmosAssetWriter : public AssetWriter
 public:
 	void write (std::shared_ptr<const AtmosFrame> frame);
 	void write (uint8_t const * data, int size);
-	bool finalize ();
+	bool finalize () override;
 
 private:
 	friend class AtmosAsset;

@@ -64,9 +64,9 @@ public:
 	 *  @param data JPEG2000 data.
 	 *  @param size Size of data.
 	 */
-	FrameInfo write (uint8_t const * data, int size);
-	void fake_write (int size);
-	bool finalize ();
+	FrameInfo write (uint8_t const * data, int size) override;
+	void fake_write (int size) override;
+	bool finalize () override;
 
 private:
 	friend class StereoPictureAsset;

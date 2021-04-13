@@ -37,12 +37,15 @@
  */
 
 
-#include "pkl.h"
-#include "exceptions.h"
-#include "util.h"
-#include "raw_convert.h"
 #include "dcp_assert.h"
+#include "exceptions.h"
+#include "pkl.h"
+#include "raw_convert.h"
+#include "util.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <iostream>
 
 

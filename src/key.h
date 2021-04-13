@@ -41,7 +41,10 @@
 #define LIBDCP_KEY_H
 
 
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <asdcp/AS_DCP.h>
+LIBDCP_ENABLE_WARNINGS
 #include <stdint.h>
 #include <string>
 

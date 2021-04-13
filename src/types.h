@@ -41,8 +41,11 @@
 #define LIBDCP_TYPES_H
 
 
+#include "warnings.h"
 #include <libcxml/cxml.h>
+LIBDCP_DISABLE_WARNINGS
 #include <asdcp/KLV.h>
+LIBDCP_ENABLE_WARNINGS
 #include <memory>
 #include <boost/function.hpp>
 #include <string>

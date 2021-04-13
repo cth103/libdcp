@@ -36,7 +36,12 @@
 #include "openjpeg_image.h"
 #include "colour_conversion.h"
 #include "rgb_xyz.h"
+/* This DISABLE/ENABLE pair is just to ignore some warnings from Magick++.h; they
+ * can be removed.
+ */
+LIBDCP_DISABLE_WARNINGS
 #include <Magick++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/scoped_array.hpp>
 
 /** @file examples/read_dcp.cc

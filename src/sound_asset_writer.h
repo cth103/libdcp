@@ -72,7 +72,7 @@ public:
 	 */
 	void write (float const * const *, int);
 
-	bool finalize ();
+	bool finalize () override;
 
 private:
 	friend class SoundAsset;

@@ -37,20 +37,23 @@
  */
 
 
-#include "smpte_subtitle_asset.h"
-#include "smpte_load_font_node.h"
-#include "exceptions.h"
-#include "xml.h"
-#include "raw_convert.h"
-#include "dcp_assert.h"
-#include "util.h"
 #include "compose.hpp"
 #include "crypto_context.h"
+#include "dcp_assert.h"
+#include "exceptions.h"
+#include "raw_convert.h"
+#include "smpte_load_font_node.h"
+#include "smpte_subtitle_asset.h"
 #include "subtitle_image.h"
+#include "util.h"
+#include "warnings.h"
+#include "xml.h"
+LIBDCP_DISABLE_WARNINGS
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_util.h>
 #include <asdcp/KM_log.h>
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/algorithm/string.hpp>
 
 

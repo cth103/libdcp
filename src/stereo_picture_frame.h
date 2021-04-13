@@ -83,9 +83,9 @@ public:
 	public:
 		Part (std::shared_ptr<ASDCP::JP2K::SFrameBuffer> buffer, Eye eye);
 
-		uint8_t const * data () const;
-		uint8_t * data ();
-		int size () const;
+		uint8_t const * data () const override;
+		uint8_t * data () override;
+		int size () const override;
 
 	private:
 		friend class StereoPictureFrame;

@@ -37,34 +37,39 @@
  */
 
 
-#include "raw_convert.h"
-#include "dcp.h"
-#include "sound_asset.h"
+#include "asset_factory.h"
 #include "atmos_asset.h"
-#include "picture_asset.h"
-#include "interop_subtitle_asset.h"
-#include "smpte_subtitle_asset.h"
-#include "mono_picture_asset.h"
-#include "stereo_picture_asset.h"
-#include "reel_subtitle_asset.h"
-#include "util.h"
-#include "metadata.h"
-#include "exceptions.h"
-#include "cpl.h"
 #include "certificate_chain.h"
 #include "compose.hpp"
+#include "cpl.h"
+#include "dcp.h"
+#include "dcp_assert.h"
 #include "decrypted_kdm.h"
 #include "decrypted_kdm_key.h"
-#include "dcp_assert.h"
-#include "reel_asset.h"
+#include "exceptions.h"
 #include "font_asset.h"
+#include "interop_subtitle_asset.h"
+#include "metadata.h"
+#include "mono_picture_asset.h"
+#include "picture_asset.h"
 #include "pkl.h"
-#include "asset_factory.h"
+#include "raw_convert.h"
+#include "reel_asset.h"
+#include "reel_subtitle_asset.h"
+#include "smpte_subtitle_asset.h"
+#include "sound_asset.h"
+#include "stereo_picture_asset.h"
+#include "util.h"
 #include "verify.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <asdcp/AS_DCP.h>
+LIBDCP_ENABLE_WARNINGS
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/app.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <numeric>

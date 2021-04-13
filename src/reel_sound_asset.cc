@@ -37,10 +37,13 @@
  */
 
 
-#include "reel_sound_asset.h"
 #include "dcp_assert.h"
+#include "reel_sound_asset.h"
+#include "warnings.h"
 #include <libcxml/cxml.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 
 
 using std::string;

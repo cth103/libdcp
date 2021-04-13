@@ -37,13 +37,16 @@
  */
 
 
-#include "reel_picture_asset.h"
-#include "picture_asset.h"
-#include "dcp_assert.h"
-#include "raw_convert.h"
 #include "compose.hpp"
+#include "dcp_assert.h"
+#include "picture_asset.h"
+#include "raw_convert.h"
+#include "reel_picture_asset.h"
+#include "warnings.h"
 #include <libcxml/cxml.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <iomanip>
 #include <cmath>
 

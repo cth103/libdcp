@@ -37,13 +37,16 @@
  */
 
 
-#include "raw_convert.h"
-#include "reel_asset.h"
 #include "asset.h"
 #include "compose.hpp"
 #include "dcp_assert.h"
+#include "raw_convert.h"
+#include "reel_asset.h"
+#include "warnings.h"
 #include <libcxml/cxml.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 
 
 using std::pair;

@@ -31,22 +31,29 @@
     files in the program, then also delete it here.
 */
 
-#include "dcp.h"
-#include "cpl.h"
-#include "exceptions.h"
+
 #include "asset_factory.h"
+#include "cpl.h"
+#include "dcp.h"
+#include "exceptions.h"
 #include "reel_asset.h"
+#include "warnings.h"
 #include <getopt.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/filesystem.hpp>
 #include <iostream>
 
+
 using std::cerr;
 using std::cout;
-using std::string;
+using std::make_shared;
 using std::shared_ptr;
+using std::string;
 using std::vector;
 using boost::optional;
+
 
 static void
 help (string n)
@@ -56,10 +63,12 @@ help (string n)
 	     << "  -o, --output       output DCP directory\n";
 }
 
+
 void progress (float f)
 {
 	cout << (f * 100) << "%               \r";
 }
+
 
 int
 main (int argc, char* argv[])
@@ -115,10 +124,10 @@ main (int argc, char* argv[])
 	/* Look for a CPL */
 
 	shared_ptr<dcp::CPL> cpl;
-	for (boost::filesystem::directory_iterator i(dcp_dir); i != boost::filesystem::directory_iterator(); ++i) {
-		if (i->path().extension() == ".xml") {
+	for (auto i: boost::filesystem::directory_iterator(dcp_dir)) {
+		if (i.path().extension() == ".xml") {
 			try {
-				cpl.reset(new dcp::CPL(i->path()));
+				cpl = make_shared<dcp::CPL>(i.path());
 			} catch (dcp::ReadError& e) {
 				cout << "Error: " << e.what() << "\n";
 			} catch (xmlpp::parse_error& e) {
@@ -137,12 +146,12 @@ main (int argc, char* argv[])
 
 		/* Read all MXF assets */
 		vector<shared_ptr<dcp::Asset>> assets;
-		for (boost::filesystem::directory_iterator i(dcp_dir); i != boost::filesystem::directory_iterator(); ++i) {
-			if (i->path().extension() == ".mxf") {
+		for (auto i: boost::filesystem::directory_iterator(dcp_dir)) {
+			if (i.path().extension() == ".mxf") {
 				try {
-					shared_ptr<dcp::Asset> asset = dcp::asset_factory(i->path(), true);
-					asset->set_file (*output / i->path().filename());
-					cout << "Hashing " << i->path().filename() << "\n";
+					auto asset = dcp::asset_factory(i.path(), true);
+					asset->set_file (*output / i.path().filename());
+					cout << "Hashing " << i.path().filename() << "\n";
 					asset->hash (&progress);
 					cout << "100%                     \n";
 					assets.push_back (asset);

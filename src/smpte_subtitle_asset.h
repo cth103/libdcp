@@ -83,18 +83,18 @@ public:
 		std::shared_ptr<const Asset>,
 		EqualityOptions,
 		NoteHandler note
-		) const;
+		) const override;
 
-	std::vector<std::shared_ptr<LoadFontNode>> load_font_nodes () const;
+	std::vector<std::shared_ptr<LoadFontNode>> load_font_nodes () const override;
 
-	std::string xml_as_string () const;
+	std::string xml_as_string () const override;
 
 	/** Write this content to a MXF file */
-	void write (boost::filesystem::path path) const;
+	void write (boost::filesystem::path path) const override;
 
-	void add (std::shared_ptr<Subtitle>);
-	void add_font (std::string id, dcp::ArrayData data);
-	void set_key (Key key);
+	void add (std::shared_ptr<Subtitle>) override;
+	void add_font (std::string id, dcp::ArrayData data) override;
+	void set_key (Key key) override;
 
 	void set_content_title_text (std::string t) {
 		_content_title_text = t;
@@ -168,7 +168,7 @@ public:
 	 *  e.g. a time_code_rate of 250 means that a subtitle time of 0:0:0:001
 	 *  represents 4ms.
 	 */
-	int time_code_rate () const {
+	int time_code_rate () const override {
 		return _time_code_rate;
 	}
 
@@ -192,7 +192,7 @@ public:
 
 protected:
 
-	std::string pkl_type (Standard s) const {
+	std::string pkl_type (Standard s) const override {
 		return static_pkl_type (s);
 	}
 

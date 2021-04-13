@@ -37,10 +37,13 @@
  */
 
 
-#include "reel_markers_asset.h"
-#include "raw_convert.h"
 #include "dcp_assert.h"
+#include "raw_convert.h"
+#include "reel_markers_asset.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 
 
 using std::string;

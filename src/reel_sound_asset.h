@@ -68,8 +68,8 @@ public:
 	bool equals (std::shared_ptr<const ReelSoundAsset>, EqualityOptions, NoteHandler) const;
 
 private:
-	boost::optional<std::string> key_type () const;
-	std::string cpl_node_name (Standard standard) const;
+	boost::optional<std::string> key_type () const override;
+	std::string cpl_node_name (Standard standard) const override;
 };
 
 

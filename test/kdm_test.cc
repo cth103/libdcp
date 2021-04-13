@@ -31,20 +31,25 @@
     files in the program, then also delete it here.
 */
 
-#include "encrypted_kdm.h"
-#include "decrypted_kdm.h"
+
 #include "certificate_chain.h"
-#include "util.h"
-#include "test.h"
 #include "cpl.h"
+#include "decrypted_kdm.h"
+#include "encrypted_kdm.h"
 #include "mono_picture_asset.h"
-#include "reel_mono_picture_asset.h"
-#include "reel.h"
-#include "types.h"
 #include "picture_asset_writer.h"
+#include "reel.h"
+#include "reel_mono_picture_asset.h"
+#include "test.h"
+#include "types.h"
+#include "util.h"
+#include "warnings.h"
 #include <libcxml/cxml.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/test/unit_test.hpp>
+
 
 using std::list;
 using std::string;
@@ -52,6 +57,7 @@ using std::vector;
 using std::make_shared;
 using std::shared_ptr;
 using boost::optional;
+
 
 /** Check reading and decryption of a KDM */
 BOOST_AUTO_TEST_CASE (kdm_test)
@@ -76,6 +82,7 @@ BOOST_AUTO_TEST_CASE (kdm_test)
 	BOOST_CHECK_EQUAL (keys.back().key().hex(), "5327fb7ec2e807bd57059615bf8a169d");
 }
 
+
 /** Check that we can read in a KDM and then write it back out again the same */
 BOOST_AUTO_TEST_CASE (kdm_passthrough_test)
 {
@@ -93,6 +100,7 @@ BOOST_AUTO_TEST_CASE (kdm_passthrough_test)
 		true
 		);
 }
+
 
 /** Test some of the utility methods of DecryptedKDM */
 BOOST_AUTO_TEST_CASE (decrypted_kdm_test)
@@ -124,6 +132,7 @@ BOOST_AUTO_TEST_CASE (decrypted_kdm_test)
 	delete[] data;
 }
 
+
 /** Check that <KeyType> tags have the scope attribute.
  *  Wolfgang Woehl believes this is compulsory and I am more-or-less inclined to agree.
  */
@@ -148,6 +157,7 @@ BOOST_AUTO_TEST_CASE (kdm_key_type_scope)
 		}
 	}
 }
+
 
 static cxml::ConstNodePtr
 kdm_forensic_test (cxml::Document& doc, bool picture, optional<int> audio)
@@ -177,6 +187,7 @@ kdm_forensic_test (cxml::Document& doc, bool picture, optional<int> audio)
 		optional_node_child("ForensicMarkFlagList");
 }
 
+
 /** Check ForensicMarkFlagList handling: disable picture and all audio */
 BOOST_AUTO_TEST_CASE (kdm_forensic_test1)
 {
@@ -189,6 +200,7 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test1)
 	BOOST_CHECK_EQUAL (flags.back()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable");
 }
 
+
 /** Check ForensicMarkFlagList handling: disable picture but not audio */
 BOOST_AUTO_TEST_CASE (kdm_forensic_test2)
 {
@@ -200,6 +212,7 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test2)
 	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
 }
 
+
 /** Check ForensicMarkFlagList handling: disable audio but not picture */
 BOOST_AUTO_TEST_CASE (kdm_forensic_test3)
 {
@@ -210,6 +223,7 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test3)
 	BOOST_REQUIRE_EQUAL (flags.size(), 1);
 	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable");
 }
+
 
 /** Check ForensicMarkFlagList handling: disable picture and audio above channel 3 */
 BOOST_AUTO_TEST_CASE (kdm_forensic_test4)
@@ -223,6 +237,7 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test4)
 	BOOST_CHECK_EQUAL (flags.back()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable-above-channel-3");
 }
 
+
 /** Check ForensicMarkFlagList handling: disable neither */
 BOOST_AUTO_TEST_CASE (kdm_forensic_test5)
 {
@@ -230,6 +245,7 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test5)
 	auto forensic = kdm_forensic_test(doc, false, optional<int>());
 	BOOST_CHECK (!forensic);
 }
+
 
 /** Check that KDM validity periods are checked for being within the certificate validity */
 BOOST_AUTO_TEST_CASE (validity_period_test1)

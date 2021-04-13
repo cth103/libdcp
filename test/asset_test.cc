@@ -36,36 +36,36 @@
 #include <boost/bind.hpp>
 #include <boost/test/unit_test.hpp>
 
+
 using std::string;
 using std::shared_ptr;
+using std::make_shared;
+
 
 class DummyAsset : public dcp::Asset
 {
 protected:
-	std::string pkl_type (dcp::Standard) const {
+	std::string pkl_type (dcp::Standard) const override {
 		return "none";
 	}
 };
 
-static void
-note_handler (dcp::NoteType, string)
-{
-
-}
 
 /** Test a few dusty corners of Asset */
 BOOST_AUTO_TEST_CASE (asset_test)
 {
-	shared_ptr<DummyAsset> a (new DummyAsset);
+	auto a = make_shared<DummyAsset>();
 	a->_hash = "abc";
-	shared_ptr<DummyAsset> b (new DummyAsset);
+	auto b = make_shared<DummyAsset>();
 	b->_hash = "def";
 
-	BOOST_CHECK (!a->equals (b, dcp::EqualityOptions (), boost::bind (&note_handler, _1, _2)));
+	auto ignore = [](dcp::NoteType, string) {};
+
+	BOOST_CHECK (!a->equals(b, dcp::EqualityOptions(), ignore));
 
 	b->_hash = "abc";
-	BOOST_CHECK (a->equals (b, dcp::EqualityOptions (), boost::bind (&note_handler, _1, _2)));
+	BOOST_CHECK (a->equals(b, dcp::EqualityOptions(), ignore));
 
 	b->_file = "foo/bar/baz";
-	BOOST_CHECK (a->equals (b, dcp::EqualityOptions (), boost::bind (&note_handler, _1, _2)));
+	BOOST_CHECK (a->equals(b, dcp::EqualityOptions(), ignore));
 }

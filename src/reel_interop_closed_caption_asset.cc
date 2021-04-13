@@ -33,7 +33,10 @@
 
 
 #include "reel_interop_closed_caption_asset.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 
 
 using std::make_pair;

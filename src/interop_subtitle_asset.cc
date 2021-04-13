@@ -37,17 +37,20 @@
  */
 
 
-#include "interop_subtitle_asset.h"
-#include "interop_load_font_node.h"
-#include "subtitle_asset_internal.h"
-#include "xml.h"
-#include "raw_convert.h"
-#include "util.h"
-#include "font_asset.h"
-#include "dcp_assert.h"
 #include "compose.hpp"
+#include "dcp_assert.h"
+#include "font_asset.h"
+#include "interop_load_font_node.h"
+#include "interop_subtitle_asset.h"
+#include "raw_convert.h"
+#include "subtitle_asset_internal.h"
 #include "subtitle_image.h"
+#include "util.h"
+#include "warnings.h"
+#include "xml.h"
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/weak_ptr.hpp>
 #include <cmath>
 #include <cstdio>

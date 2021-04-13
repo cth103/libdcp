@@ -71,18 +71,18 @@ public:
 
 	virtual ~ArrayData () {}
 
-	uint8_t const * data () const {
+	uint8_t const * data () const override {
 		return _data.get();
 	}
 
-	uint8_t * data () {
+	uint8_t * data () override {
 		return _data.get();
 	}
 
 	/** @return size of the data in _data, or whatever was last
 	 *  passed to a set_size() call
 	 */
-	int size () const {
+	int size () const override {
 		return _size;
 	}
 

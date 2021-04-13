@@ -112,7 +112,7 @@ public:
 		LanguageSubtag (char const* subtag)
 			: Subtag(subtag, SubtagType::LANGUAGE) {}
 
-		SubtagType type () const {
+		SubtagType type () const override {
 			return SubtagType::LANGUAGE;
 		}
 	};
@@ -125,7 +125,7 @@ public:
 		ScriptSubtag (char const* subtag)
 			: Subtag(subtag, SubtagType::SCRIPT) {}
 
-		SubtagType type () const {
+		SubtagType type () const override {
 			return SubtagType::SCRIPT;
 		}
 	};
@@ -138,7 +138,7 @@ public:
 		RegionSubtag (char const* subtag)
 			: Subtag(subtag, SubtagType::REGION) {}
 
-		SubtagType type () const {
+		SubtagType type () const override {
 			return SubtagType::REGION;
 		}
 	};
@@ -151,7 +151,7 @@ public:
 		VariantSubtag (char const* subtag)
 			: Subtag(subtag, SubtagType::VARIANT) {}
 
-		SubtagType type () const {
+		SubtagType type () const override {
 			return SubtagType::VARIANT;
 		}
 
@@ -168,7 +168,7 @@ public:
 		ExtlangSubtag (char const* subtag)
 			: Subtag(subtag, SubtagType::EXTLANG) {}
 
-		SubtagType type () const {
+		SubtagType type () const override {
 			return SubtagType::EXTLANG;
 		}
 

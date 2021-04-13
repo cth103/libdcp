@@ -38,14 +38,17 @@
 
 
 #include "bitstream.h"
-#include "sound_asset_writer.h"
-#include "sound_asset.h"
-#include "exceptions.h"
-#include "dcp_assert.h"
 #include "compose.hpp"
 #include "crypto_context.h"
+#include "dcp_assert.h"
+#include "exceptions.h"
+#include "sound_asset.h"
+#include "sound_asset_writer.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <asdcp/AS_DCP.h>
 #include <asdcp/Metadata.h>
+LIBDCP_ENABLE_WARNINGS
 #include <iostream>
 
 
@@ -136,11 +139,15 @@ SoundAssetWriter::start ()
 		if (field == MCASoundField::SEVEN_POINT_ONE) {
 			soundfield->MCATagSymbol = "sg71";
 			soundfield->MCATagName = "7.1DS";
+LIBDCP_DISABLE_WARNINGS
 			soundfield->MCALabelDictionaryID = asdcp_smpte_dict->ul(ASDCP::MDD_DCAudioSoundfield_71);
+LIBDCP_ENABLE_WARNINGS
 		} else {
 			soundfield->MCATagSymbol = "sg51";
 			soundfield->MCATagName = "5.1";
+LIBDCP_DISABLE_WARNINGS
 			soundfield->MCALabelDictionaryID = asdcp_smpte_dict->ul(ASDCP::MDD_DCAudioSoundfield_51);
+LIBDCP_ENABLE_WARNINGS
 		}
 
 		_state->mxf_writer.OP1aHeader().AddChildObject(soundfield);
@@ -167,7 +174,9 @@ SoundAssetWriter::start ()
 			if (auto lang = _asset->language()) {
 				channel->RFC5646SpokenLanguage = *lang;
 			}
+LIBDCP_DISABLE_WARNINGS
 			channel->MCALabelDictionaryID = channel_to_mca_universal_label(dcp_channel, field, asdcp_smpte_dict);
+LIBDCP_ENABLE_WARNINGS
 			_state->mxf_writer.OP1aHeader().AddChildObject(channel);
 			essence_descriptor->SubDescriptors.push_back(channel->InstanceUID);
 		}

@@ -74,10 +74,10 @@ public:
 		return _B;
 	}
 
-	bool about_equal (std::shared_ptr<const TransferFunction>, double epsilon) const;
+	bool about_equal (std::shared_ptr<const TransferFunction>, double epsilon) const override;
 
 protected:
-	double * make_lut (int bit_depth, bool inverse) const;
+	double * make_lut (int bit_depth, bool inverse) const override;
 
 private:
 	double _power;

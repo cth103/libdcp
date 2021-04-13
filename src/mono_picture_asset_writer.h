@@ -64,9 +64,9 @@ namespace dcp {
 class MonoPictureAssetWriter : public PictureAssetWriter
 {
 public:
-	FrameInfo write (uint8_t const *, int);
-	void fake_write (int size);
-	bool finalize ();
+	FrameInfo write (uint8_t const *, int) override;
+	void fake_write (int size) override;
+	bool finalize () override;
 
 private:
 	friend class MonoPictureAsset;

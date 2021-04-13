@@ -42,10 +42,13 @@
 
 
 #include "array_data.h"
+#include "dcp_time.h"
 #include "raw_convert.h"
 #include "types.h"
-#include "dcp_time.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 
 
 struct take_intersection_test;
@@ -131,7 +134,7 @@ public:
 		, text (text_)
 	{}
 
-	virtual xmlpp::Element* as_xml (xmlpp::Element* parent, Context &) const;
+	virtual xmlpp::Element* as_xml (xmlpp::Element* parent, Context &) const override;
 
 	std::string text;
 };
@@ -149,7 +152,7 @@ public:
 		, _direction (direction)
 	{}
 
-	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const;
+	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const override;
 
 private:
 	HAlign _h_align;
@@ -171,7 +174,7 @@ public:
 		, _fade_down (fade_down)
 	{}
 
-	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const;
+	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const override;
 
 private:
 	Time _in;
@@ -194,7 +197,7 @@ public:
 		, _v_position (v_position)
 	{}
 
-	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const;
+	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const override;
 
 private:
 	ArrayData _png_data;

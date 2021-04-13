@@ -51,7 +51,7 @@ public:
 	ReelMarkersAsset (Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelMarkersAsset (std::shared_ptr<const cxml::Node>);
 
-	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
 	bool equals (std::shared_ptr<const ReelMarkersAsset>, EqualityOptions, NoteHandler) const;
 
 	void set (Marker, Time);
@@ -62,7 +62,7 @@ public:
 	}
 
 protected:
-	std::string cpl_node_name (Standard) const;
+	std::string cpl_node_name (Standard) const override;
 
 private:
 	std::map<Marker, Time> _markers;

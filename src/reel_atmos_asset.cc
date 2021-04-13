@@ -39,8 +39,11 @@
 
 #include "atmos_asset.h"
 #include "reel_atmos_asset.h"
+#include "warnings.h"
 #include <libcxml/cxml.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 
 
 using std::string;

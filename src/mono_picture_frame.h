@@ -87,13 +87,13 @@ public:
 	std::shared_ptr<OpenJPEGImage> xyz_image (int reduce = 0) const;
 
 	/** @return Pointer to JPEG2000 data */
-	uint8_t const * data () const;
+	uint8_t const * data () const override;
 
 	/** @return Pointer to JPEG2000 data */
-	uint8_t* data ();
+	uint8_t* data () override;
 
 	/** @return Size of JPEG2000 data in bytes */
-	int size () const;
+	int size () const override;
 
 private:
 	/* XXX: this is a bit of a shame, but I tried friend MonoPictureAssetReader and it's

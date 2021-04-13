@@ -81,7 +81,7 @@ public:
 		std::shared_ptr<const Asset> other,
 		EqualityOptions options,
 		NoteHandler note
-		) const;
+		) const override;
 
 	/** Add a reel to this CPL
 	 *  @param reel Reel to add
@@ -307,7 +307,7 @@ public:
 
 protected:
 	/** @return type string for PKLs for this asset */
-	std::string pkl_type (Standard standard) const;
+	std::string pkl_type (Standard standard) const override;
 
 private:
 	friend struct ::verify_invalid_language3;

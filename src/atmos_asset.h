@@ -65,7 +65,7 @@ public:
 	std::shared_ptr<AtmosAssetReader> start_read () const;
 
 	static std::string static_pkl_type (Standard);
-	std::string pkl_type (Standard s) const {
+	std::string pkl_type (Standard s) const override {
 		return static_pkl_type (s);
 	}
 

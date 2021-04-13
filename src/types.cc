@@ -37,12 +37,15 @@
  */
 
 
-#include "raw_convert.h"
-#include "types.h"
-#include "exceptions.h"
 #include "compose.hpp"
 #include "dcp_assert.h"
+#include "exceptions.h"
+#include "raw_convert.h"
+#include "types.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/algorithm/string.hpp>
 #include <string>
 #include <vector>

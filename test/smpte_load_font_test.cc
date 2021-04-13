@@ -31,20 +31,28 @@
     files in the program, then also delete it here.
 */
 
+
 #include "smpte_load_font_node.h"
+#include "warnings.h"
 #include <libcxml/cxml.h>
+LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/test/unit_test.hpp>
+
+
+using std::make_shared;
+
 
 /** Test dcp::SMPTELoadFontNode */
 BOOST_AUTO_TEST_CASE (smpte_load_font_test1)
 {
 	xmlpp::Document doc;
-	xmlpp::Element* text = doc.create_root_node("Font");
+	auto text = doc.create_root_node("Font");
 
 	text->set_attribute ("ID", "my-great-id");
 	text->add_child_text ("urn:uuid:my-great-urn");
-	dcp::SMPTELoadFontNode lf (cxml::ConstNodePtr (new cxml::Node (text)));
+	dcp::SMPTELoadFontNode lf (make_shared<cxml::Node>(text));
 
 	BOOST_CHECK_EQUAL (lf.id, "my-great-id");
 	BOOST_CHECK_EQUAL (lf.urn, "my-great-urn");

@@ -37,7 +37,14 @@
  */
 
 
+#include <boost/filesystem.hpp>
+#include <memory>
+
+
 namespace dcp {
+
+
+class Asset;
 
 
 std::shared_ptr<Asset> asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_mxf_type);

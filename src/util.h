@@ -42,13 +42,15 @@
 
 
 #include "array_data.h"
-#include "types.h"
 #include "local_time.h"
+#include "types.h"
+LIBDCP_DISABLE_WARNINGS
 #include <asdcp/KM_log.h>
-#include <memory>
-#include <boost/function.hpp>
+LIBDCP_ENABLE_WARNINGS
 #include <boost/filesystem.hpp>
+#include <boost/function.hpp>
 #include <boost/optional.hpp>
+#include <memory>
 #include <string>
 #include <stdint.h>
 
