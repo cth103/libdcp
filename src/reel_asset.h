@@ -83,7 +83,11 @@ public:
 
 	explicit ReelAsset (std::shared_ptr<const cxml::Node>);
 
-	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const = 0;
+	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
+
+	virtual bool encryptable () const {
+		return false;
+	}
 
 	Fraction edit_rate () const {
 		return _edit_rate;
@@ -138,8 +142,6 @@ protected:
 
 	/** @return Any namespace that should be used on the asset's node in the CPL */
 	virtual std::pair<std::string, std::string> cpl_node_namespace () const;
-
-	xmlpp::Node* write_to_cpl_asset (xmlpp::Node* node, Standard standard, boost::optional<std::string> hash) const;
 
 	int64_t _intrinsic_duration = 0;       ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset
 	boost::optional<int64_t> _duration;    ///< The &lt;Duration&gt; from the reel's entry for this asset, if present

@@ -57,8 +57,7 @@ using namespace dcp;
 
 
 ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelFileAsset (asset, asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
-	, ReelEncryptableAsset (asset->key_id())
+	: ReelFileAsset (asset, asset->key_id(), asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 	, _frame_rate (asset->frame_rate ())
 	, _screen_aspect_ratio (asset->screen_aspect_ratio ())
 {
@@ -68,7 +67,6 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<PictureAsset> asset, int64_t entr
 
 ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
 	: ReelFileAsset (node)
-	, ReelEncryptableAsset (node)
 {
 	_frame_rate = Fraction (node->string_child ("FrameRate"));
 	try {
@@ -88,9 +86,10 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
 xmlpp::Node*
 ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	auto asset = write_to_cpl_asset (node, standard, hash());
+	auto asset = ReelFileAsset::write_to_cpl (node, standard);
 
 	asset->add_child("FrameRate")->add_child_text(String::compose("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
+
 	if (standard == Standard::INTEROP) {
 
 		/* Allowed values for this tag from the standard */
@@ -111,23 +110,14 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 			}
 		}
 
-		asset->add_child ("ScreenAspectRatio")->add_child_text (raw_convert<string> (closest.get(), 2, true));
+		asset->add_child("ScreenAspectRatio")->add_child_text(raw_convert<string>(closest.get(), 2, true));
 	} else {
-		asset->add_child ("ScreenAspectRatio")->add_child_text (
+		asset->add_child("ScreenAspectRatio")->add_child_text(
 			String::compose ("%1 %2", _screen_aspect_ratio.numerator, _screen_aspect_ratio.denominator)
 			);
 	}
 
-	write_to_cpl_encryptable (asset);
-
 	return asset;
-}
-
-
-string
-ReelPictureAsset::key_type () const
-{
-	return "MDIK";
 }
 
 

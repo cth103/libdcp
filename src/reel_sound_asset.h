@@ -37,8 +37,7 @@
  */
 
 
-#include "reel_encryptable_asset.h"
-#include "reel_asset.h"
+#include "reel_file_asset.h"
 #include "sound_asset.h"
 #include <memory>
 #include <string>
@@ -50,27 +49,26 @@ namespace dcp {
 /** @class ReelSoundAsset
  *  @brief Part of a Reel's description which refers to a sound asset
  */
-class ReelSoundAsset : public ReelFileAsset, public ReelEncryptableAsset
+class ReelSoundAsset : public ReelFileAsset
 {
 public:
 	ReelSoundAsset (std::shared_ptr<dcp::SoundAsset> content, int64_t entry_point);
 	explicit ReelSoundAsset (std::shared_ptr<const cxml::Node>);
 
-	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
 	bool equals (std::shared_ptr<const ReelSoundAsset>, EqualityOptions, NoteHandler) const;
 
 	/** @return the SoundAsset that this object refers to */
 	std::shared_ptr<SoundAsset> asset () {
-		return asset_of_type<SoundAsset> ();
+		return asset_of_type<SoundAsset>();
 	}
 
 	/** @return the SoundAsset that this object refers to */
 	std::shared_ptr<const SoundAsset> asset () const {
-		return asset_of_type<const SoundAsset> ();
+		return asset_of_type<const SoundAsset>();
 	}
 
 private:
-	std::string key_type () const;
+	boost::optional<std::string> key_type () const;
 	std::string cpl_node_name (Standard standard) const;
 };
 

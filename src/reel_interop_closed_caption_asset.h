@@ -54,11 +54,11 @@ public:
 	ReelInteropClosedCaptionAsset (std::shared_ptr<InteropSubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
 	explicit ReelInteropClosedCaptionAsset (std::shared_ptr<const cxml::Node>);
 
+	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
+
 	std::shared_ptr<InteropSubtitleAsset> interop_asset () const {
 		return std::dynamic_pointer_cast<InteropSubtitleAsset>(asset());
 	}
-
-	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
 
 private:
 	std::string cpl_node_name (Standard) const;

@@ -274,24 +274,15 @@ Reel::any_encrypted () const
 {
 	auto ecc = false;
 	for (auto i: _closed_captions) {
-		if (auto enc = dynamic_pointer_cast<ReelEncryptableAsset>(i)) {
-			if (enc->encrypted()) {
-				ecc = true;
-			}
-		}
-	}
-
-	bool esub = false;
-	if (_main_subtitle) {
-		if (auto enc = dynamic_pointer_cast<ReelEncryptableAsset>(_main_picture)) {
-			esub = enc->encrypted();
+		if (i->encrypted()) {
+			ecc = true;
 		}
 	}
 
 	return (
 		(_main_picture && _main_picture->encrypted()) ||
 		(_main_sound && _main_sound->encrypted()) ||
-		esub ||
+		(_main_subtitle && _main_subtitle->encrypted()) ||
 		ecc ||
 		(_atmos && _atmos->encrypted())
 		);
@@ -303,25 +294,15 @@ Reel::all_encrypted () const
 {
 	auto ecc = true;
 	for (auto i: _closed_captions) {
-		if (auto enc = dynamic_pointer_cast<ReelEncryptableAsset>(i)) {
-			if (!enc->encrypted()) {
-				ecc = false;
-			}
-		}
-	}
-
-	/* It's ok if there's no subtitle, or it's not encryptable */
-	bool esub = true;
-	if (_main_subtitle) {
-		if (auto enc = dynamic_pointer_cast<ReelEncryptableAsset>(_main_picture)) {
-			esub = enc->encrypted();
+		if (!i->encrypted()) {
+			ecc = false;
 		}
 	}
 
 	return (
 		(!_main_picture || _main_picture->encrypted()) &&
 		(!_main_sound || _main_sound->encrypted()) &&
-		esub &&
+		(!_main_subtitle || _main_subtitle->encrypted()) &&
 		ecc &&
 		(!_atmos || _atmos->encrypted())
 	       );

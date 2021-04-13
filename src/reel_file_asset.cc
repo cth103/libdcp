@@ -39,16 +39,20 @@
 
 #include "asset.h"
 #include "reel_file_asset.h"
+#include <libxml++/libxml++.h>
 
 
 using std::shared_ptr;
+using std::string;
+using boost::optional;
 using namespace dcp;
 
 
-ReelFileAsset::ReelFileAsset (shared_ptr<Asset> asset, std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+ReelFileAsset::ReelFileAsset (shared_ptr<Asset> asset, optional<string> key_id, std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelAsset (id, edit_rate, intrinsic_duration, entry_point)
 	, _asset_ref (asset)
 	, _hash (asset->hash())
+	, _key_id (key_id)
 {
 
 }
@@ -57,9 +61,12 @@ ReelFileAsset::ReelFileAsset (shared_ptr<Asset> asset, std::string id, Fraction 
 ReelFileAsset::ReelFileAsset (shared_ptr<const cxml::Node> node)
 	: ReelAsset (node)
 	, _asset_ref (remove_urn_uuid(node->string_child("Id")))
-	, _hash (node->optional_string_child ("Hash"))
+	, _hash (node->optional_string_child("Hash"))
+	, _key_id (node->optional_string_child("KeyId"))
 {
-
+	if (_key_id) {
+		_key_id = remove_urn_uuid (*_key_id);
+	}
 }
 
 
@@ -80,5 +87,19 @@ ReelFileAsset::file_asset_equals (shared_ptr<const ReelFileAsset> other, Equalit
 	}
 
 	return true;
+}
+
+
+xmlpp::Node *
+ReelFileAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+{
+	auto asset = ReelAsset::write_to_cpl (node, standard);
+        if (_key_id) {
+		asset->add_child("KeyId")->add_child_text("urn:uuid:" + *_key_id);
+        }
+	if (_hash) {
+		asset->add_child("Hash")->add_child_text(*_hash);
+	}
+	return asset;
 }
 

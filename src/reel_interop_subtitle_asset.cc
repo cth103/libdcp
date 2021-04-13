@@ -60,15 +60,3 @@ ReelInteropSubtitleAsset::ReelInteropSubtitleAsset (std::shared_ptr<const cxml::
 	node->done ();
 }
 
-
-xmlpp::Node *
-ReelInteropSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
-{
-	auto asset = write_to_cpl_asset (node, standard, _hash);
-	if (_language) {
-		asset->add_child("Language")->add_child_text(*_language);
-	}
-	return asset;
-}
-
-

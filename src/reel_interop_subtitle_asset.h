@@ -57,8 +57,6 @@ public:
 	std::shared_ptr<InteropSubtitleAsset> interop_asset () const {
 		return std::dynamic_pointer_cast<InteropSubtitleAsset>(asset());
 	}
-
-	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
 };
 
 

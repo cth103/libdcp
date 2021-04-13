@@ -538,52 +538,6 @@ CPL::reel_file_assets () const
 }
 
 
-template <class T>
-void
-add_encryptable_assets (vector<shared_ptr<T>>& assets, vector<shared_ptr<Reel>> reels)
-{
-	for (auto i: reels) {
-		if (i->main_picture ()) {
-			assets.push_back (i->main_picture());
-		}
-		if (i->main_sound ()) {
-			assets.push_back (i->main_sound());
-		}
-		if (i->main_subtitle ()) {
-			if (auto enc = dynamic_pointer_cast<ReelEncryptableAsset>(i->main_subtitle())) {
-				assets.push_back (enc);
-			}
-		}
-		for (auto j: i->closed_captions()) {
-			if (auto enc = dynamic_pointer_cast<ReelEncryptableAsset>(j)) {
-				assets.push_back (enc);
-			}
-		}
-		if (i->atmos ()) {
-			assets.push_back (i->atmos());
-		}
-	}
-}
-
-
-vector<shared_ptr<ReelEncryptableAsset>>
-CPL::reel_encryptable_assets ()
-{
-	vector<shared_ptr<ReelEncryptableAsset>> c;
-	add_encryptable_assets (c, _reels);
-	return c;
-}
-
-
-vector<shared_ptr<const ReelEncryptableAsset>>
-CPL::reel_encryptable_assets () const
-{
-	vector<shared_ptr<const ReelEncryptableAsset>> c;
-	add_encryptable_assets (c, _reels);
-	return c;
-}
-
-
 bool
 CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
 {

@@ -51,8 +51,7 @@ using namespace dcp;
 
 
 ReelAtmosAsset::ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point)
-	: ReelFileAsset (asset, asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
-	, ReelEncryptableAsset (asset->key_id())
+	: ReelFileAsset (asset, asset->key_id(), asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 {
 
 }
@@ -60,7 +59,6 @@ ReelAtmosAsset::ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry
 
 ReelAtmosAsset::ReelAtmosAsset (std::shared_ptr<const cxml::Node> node)
 	: ReelFileAsset (node)
-	, ReelEncryptableAsset (node)
 {
 	node->ignore_child ("DataType");
 	node->done ();
@@ -81,18 +79,10 @@ ReelAtmosAsset::cpl_node_namespace () const
 }
 
 
-string
-ReelAtmosAsset::key_type () const
-{
-	return "MDEK";
-}
-
-
 xmlpp::Node *
 ReelAtmosAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
-	auto asset = write_to_cpl_asset (node, standard, hash());
-	write_to_cpl_encryptable (asset);
+	auto asset = ReelFileAsset::write_to_cpl (node, standard);
 	asset->add_child("axd:DataType")->add_child_text("urn:smpte:ul:060e2b34.04010105.0e090604.00000000");
 	return asset;
 }

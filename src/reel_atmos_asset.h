@@ -41,9 +41,8 @@
 #define LIBDCP_REEL_ATMOS_ASSET_H
 
 
-#include "reel_asset.h"
+#include "reel_file_asset.h"
 #include "atmos_asset.h"
-#include "reel_encryptable_asset.h"
 
 
 namespace dcp {
@@ -55,7 +54,7 @@ class AtmosAsset;
 /** @class ReelAtmosAsset
  *  @brief Part of a Reel's description which refers to a Atmos MXF
  */
-class ReelAtmosAsset : public ReelFileAsset, public ReelEncryptableAsset
+class ReelAtmosAsset : public ReelFileAsset
 {
 public:
 	ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point);
@@ -69,7 +68,9 @@ public:
 	bool equals (std::shared_ptr<const ReelAtmosAsset>, EqualityOptions, NoteHandler) const;
 
 private:
-	std::string key_type () const override;
+	boost::optional<std::string> key_type () const override {
+		return std::string("MDEK");
+	}
 	std::string cpl_node_name (Standard standard) const override;
 	std::pair<std::string, std::string> cpl_node_namespace () const override;
 };

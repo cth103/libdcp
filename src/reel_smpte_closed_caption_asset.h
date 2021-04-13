@@ -41,7 +41,6 @@
 #define LIBDCP_REEL_SMPTE_CLOSED_CAPTION_ASSET_H
 
 
-#include "reel_encryptable_asset.h"
 #include "reel_file_asset.h"
 #include "reel_closed_caption_asset.h"
 #include "smpte_subtitle_asset.h"
@@ -50,7 +49,7 @@
 namespace dcp {
 
 
-class ReelSMPTEClosedCaptionAsset : public ReelClosedCaptionAsset, public ReelEncryptableAsset
+class ReelSMPTEClosedCaptionAsset : public ReelClosedCaptionAsset
 {
 public:
 	ReelSMPTEClosedCaptionAsset (std::shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
@@ -63,8 +62,8 @@ public:
 	}
 
 private:
-	std::string key_type () const override {
-		return "MDSK";
+	boost::optional<std::string> key_type () const override {
+		return std::string("MDSK");
 	}
 
 	std::string cpl_node_name (Standard) const override;

@@ -58,18 +58,6 @@ ReelInteropClosedCaptionAsset::ReelInteropClosedCaptionAsset (shared_ptr<const c
 }
 
 
-xmlpp::Node *
-ReelInteropClosedCaptionAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
-{
-	auto asset = write_to_cpl_asset (node, standard, hash());
-	if (_language) {
-		asset->add_child("Language")->add_child_text(*_language);
-	}
-
-	return asset;
-}
-
-
 string
 ReelInteropClosedCaptionAsset::cpl_node_name (Standard) const
 {
@@ -83,3 +71,13 @@ ReelInteropClosedCaptionAsset::cpl_node_namespace () const
 	return make_pair("http://www.digicine.com/PROTO-ASDCP-CC-CPL-20070926#", "cc-cpl");
 }
 
+
+xmlpp::Node *
+ReelInteropClosedCaptionAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+{
+	auto asset = ReelClosedCaptionAsset::write_to_cpl (node, standard);
+	if (_language) {
+		asset->add_child("Language")->add_child_text(*_language);
+	}
+	return asset;
+}

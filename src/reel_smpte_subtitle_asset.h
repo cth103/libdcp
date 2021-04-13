@@ -37,7 +37,6 @@
  */
 
 
-#include "reel_encryptable_asset.h"
 #include "reel_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
 
@@ -51,21 +50,19 @@ class SMPTESubtitleAsset;
 /** @class ReelSMPTESubtitleAsset
  *  @brief Part of a Reel's description which refers to an SMPTE subtitle MXF file
  */
-class ReelSMPTESubtitleAsset : public ReelSubtitleAsset, public ReelEncryptableAsset
+class ReelSMPTESubtitleAsset : public ReelSubtitleAsset
 {
 public:
 	ReelSMPTESubtitleAsset (std::shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelSMPTESubtitleAsset (std::shared_ptr<const cxml::Node>);
-
-	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
 
 	std::shared_ptr<SMPTESubtitleAsset> smpte_asset () const {
 		return std::dynamic_pointer_cast<SMPTESubtitleAsset>(asset());
 	}
 
 private:
-	std::string key_type () const {
-		return "MDSK";
+	boost::optional<std::string> key_type () const override {
+		return std::string("MDSK");
 	}
 };
 

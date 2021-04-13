@@ -50,7 +50,6 @@ using namespace dcp;
 
 ReelSMPTESubtitleAsset::ReelSMPTESubtitleAsset (shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelSubtitleAsset (asset, edit_rate, intrinsic_duration, entry_point)
-	, ReelEncryptableAsset (asset->key_id())
 {
 
 }
@@ -58,20 +57,7 @@ ReelSMPTESubtitleAsset::ReelSMPTESubtitleAsset (shared_ptr<SMPTESubtitleAsset> a
 
 ReelSMPTESubtitleAsset::ReelSMPTESubtitleAsset (shared_ptr<const cxml::Node> node)
 	: ReelSubtitleAsset (node)
-	, ReelEncryptableAsset (node)
 {
 	node->done ();
-}
-
-
-xmlpp::Node *
-ReelSMPTESubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
-{
-	auto asset = write_to_cpl_asset (node, standard, _hash);
-	write_to_cpl_encryptable (asset);
-	if (_language) {
-		asset->add_child("Language")->add_child_text(*_language);
-	}
-	return asset;
 }
 

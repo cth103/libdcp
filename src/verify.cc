@@ -1088,14 +1088,9 @@ pkl_has_encrypted_assets (shared_ptr<DCP> dcp, shared_ptr<PKL> pkl)
 	for (auto i: dcp->cpls()) {
 		for (auto j: i->reel_file_assets()) {
 			if (j->asset_ref().resolved()) {
-				/* It's a bit surprising / broken but Interop subtitle assets are represented
-				 * in reels by ReelSubtitleAsset which inherits ReelEncryptableAsset, so it's possible for
-				 * ReelEncryptableAssets to have assets which are not MXFs.
-				 */
-				if (auto asset = dynamic_pointer_cast<MXF>(j->asset_ref().asset())) {
-					if (asset->encrypted()) {
-						encrypted.push_back(j->asset_ref().id());
-					}
+				auto mxf = dynamic_pointer_cast<MXF>(j->asset_ref().asset());
+				if (mxf && mxf->encrypted()) {
+					encrypted.push_back(j->asset_ref().id());
 				}
 			}
 		}
@@ -1242,7 +1237,7 @@ dcp::verify (
 						notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_INTRINSIC_DURATION, i->id()});
 					}
 					auto file_asset = dynamic_pointer_cast<ReelFileAsset>(i);
-					if (dynamic_pointer_cast<ReelEncryptableAsset>(i) && !file_asset->hash()) {
+					if (i->encryptable() && !file_asset->hash()) {
 						notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_HASH, i->id()});
 					}
 				}

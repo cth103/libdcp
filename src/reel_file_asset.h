@@ -53,8 +53,10 @@ namespace dcp {
 class ReelFileAsset : public ReelAsset
 {
 public:
-	ReelFileAsset (std::shared_ptr<Asset> asset, std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	ReelFileAsset (std::shared_ptr<Asset> asset, boost::optional<std::string> key_id, std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelFileAsset (std::shared_ptr<const cxml::Node> node);
+
+	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
 
 	/** @return a Ref to our actual asset */
 	Ref const & asset_ref () const {
@@ -79,6 +81,22 @@ public:
 
 	bool file_asset_equals (std::shared_ptr<const ReelFileAsset> other, EqualityOptions opt, NoteHandler note) const;
 
+	virtual boost::optional<std::string> key_type () const {
+		return boost::none;
+	}
+
+	bool encryptable () const override {
+		return static_cast<bool>(key_type());
+	}
+
+	boost::optional<std::string> key_id () const {
+		return _key_id;
+	}
+
+	bool encrypted () const {
+		return static_cast<bool>(key_id());
+	}
+
 protected:
 
 	template <class T>
@@ -98,6 +116,7 @@ protected:
 
 	/** Either our asset's computed hash or the hash read in from the CPL, if it's present */
 	boost::optional<std::string> _hash;
+	boost::optional<std::string> _key_id; ///< The &lt;KeyId&gt; from the reel's entry for this asset, if there is one
 };
 
 

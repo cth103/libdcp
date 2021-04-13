@@ -78,7 +78,7 @@ ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 
 
 xmlpp::Node*
-ReelAsset::write_to_cpl_asset (xmlpp::Node* node, Standard standard, optional<string> hash) const
+ReelAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
 	auto a = node->add_child (cpl_node_name (standard));
 	auto const attr = cpl_node_attribute (standard);
@@ -98,9 +98,6 @@ ReelAsset::write_to_cpl_asset (xmlpp::Node* node, Standard standard, optional<st
 	}
 	if (_duration) {
 		a->add_child("Duration")->add_child_text(raw_convert<string>(*_duration));
-	}
-	if (hash) {
-		a->add_child("Hash")->add_child_text (hash.get());
 	}
 	return a;
 }

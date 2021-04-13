@@ -54,7 +54,14 @@ using namespace dcp;
 
 
 ReelClosedCaptionAsset::ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelFileAsset (asset, asset->id(), edit_rate, intrinsic_duration, entry_point)
+	: ReelFileAsset (
+		asset,
+		dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : boost::none,
+		asset->id(),
+		edit_rate,
+		intrinsic_duration,
+		entry_point
+		)
 {
 
 }
@@ -79,3 +86,5 @@ ReelClosedCaptionAsset::equals (shared_ptr<const ReelClosedCaptionAsset> other, 
 
 	return true;
 }
+
+

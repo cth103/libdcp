@@ -105,7 +105,7 @@ xmlpp::Node*
 ReelMarkersAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 {
 	int const tcr = edit_rate().numerator / edit_rate().denominator;
-	auto asset = write_to_cpl_asset (node, standard, optional<string>());
+	auto asset = ReelAsset::write_to_cpl (node, standard);
 	auto ml = asset->add_child("MarkerList");
 	for (auto const& i: _markers) {
 		auto m = ml->add_child("Marker");

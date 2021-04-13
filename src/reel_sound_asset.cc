@@ -45,12 +45,12 @@
 
 using std::string;
 using std::shared_ptr;
+using boost::optional;
 using namespace dcp;
 
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundAsset> asset, int64_t entry_point)
-	: ReelFileAsset (asset, asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
-	, ReelEncryptableAsset (asset->key_id())
+	: ReelFileAsset (asset, asset->key_id(), asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 {
 
 }
@@ -58,7 +58,6 @@ ReelSoundAsset::ReelSoundAsset (shared_ptr<SoundAsset> asset, int64_t entry_poin
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<const cxml::Node> node)
 	: ReelFileAsset (node)
-	, ReelEncryptableAsset (node)
 {
 	node->ignore_child ("Language");
 	node->done ();
@@ -72,19 +71,10 @@ ReelSoundAsset::cpl_node_name (Standard) const
 }
 
 
-string
+optional<string>
 ReelSoundAsset::key_type () const
 {
-	return "MDAK";
-}
-
-
-xmlpp::Node *
-ReelSoundAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
-{
-	auto asset = write_to_cpl_asset (node, standard, hash());
-	write_to_cpl_encryptable (asset);
-	return asset;
+	return string("MDAK");
 }
 
 

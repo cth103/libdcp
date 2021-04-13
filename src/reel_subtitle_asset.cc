@@ -52,7 +52,14 @@ using namespace dcp;
 
 
 ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelFileAsset (asset, asset->id(), edit_rate, intrinsic_duration, entry_point)
+	: ReelFileAsset (
+		asset,
+		dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : boost::none,
+		asset->id(),
+		edit_rate,
+		intrinsic_duration,
+		entry_point
+		)
 {
 
 }
@@ -85,11 +92,22 @@ ReelSubtitleAsset::equals (shared_ptr<const ReelSubtitleAsset> other, EqualityOp
 	if (!asset_equals (other, opt, note)) {
 		return false;
 	}
-
-	if (_asset_ref.resolved() && other->_asset_ref.resolved()) {
-		return _asset_ref->equals (other->_asset_ref.asset(), opt, note);
+	if (!file_asset_equals (other, opt, note)) {
+		return false;
 	}
 
 	return true;
 }
+
+
+xmlpp::Node *
+ReelSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+{
+	auto asset = ReelFileAsset::write_to_cpl (node, standard);
+	if (_language) {
+		asset->add_child("Language")->add_child_text(*_language);
+	}
+	return asset;
+}
+
 
