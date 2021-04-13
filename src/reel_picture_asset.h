@@ -57,18 +57,18 @@ public:
 	ReelPictureAsset (std::shared_ptr<PictureAsset> asset, int64_t entry_point);
 	explicit ReelPictureAsset (std::shared_ptr<const cxml::Node>);
 
-	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
-	bool equals (std::shared_ptr<const ReelPictureAsset>, EqualityOptions, NoteHandler) const;
-
 	/** @return the PictureAsset that this object refers to */
 	std::shared_ptr<const PictureAsset> asset () const {
-		return asset_of_type<const PictureAsset> ();
+		return asset_of_type<const PictureAsset>();
 	}
 
 	/** @return the PictureAsset that this object refers to */
 	std::shared_ptr<PictureAsset> asset () {
-		return asset_of_type<PictureAsset> ();
+		return asset_of_type<PictureAsset>();
 	}
+
+	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
+	bool equals (std::shared_ptr<const ReelPictureAsset>, EqualityOptions, NoteHandler) const;
 
 	/** @return picture frame rate */
 	Fraction frame_rate () const {

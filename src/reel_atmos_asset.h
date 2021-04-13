@@ -60,8 +60,12 @@ public:
 	ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point);
 	explicit ReelAtmosAsset (std::shared_ptr<const cxml::Node>);
 
-	std::shared_ptr<AtmosAsset> asset () const {
-		return asset_of_type<AtmosAsset> ();
+	std::shared_ptr<const AtmosAsset> asset () const {
+		return asset_of_type<const AtmosAsset>();
+	}
+
+	std::shared_ptr<AtmosAsset> asset () {
+		return asset_of_type<AtmosAsset>();
 	}
 
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
@@ -71,6 +75,7 @@ private:
 	boost::optional<std::string> key_type () const override {
 		return std::string("MDEK");
 	}
+
 	std::string cpl_node_name (Standard standard) const override;
 	std::pair<std::string, std::string> cpl_node_namespace () const override;
 };

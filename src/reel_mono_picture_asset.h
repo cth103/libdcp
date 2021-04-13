@@ -62,12 +62,12 @@ public:
 
 	/** @return the MonoPictureAsset that this object refers to */
 	std::shared_ptr<const MonoPictureAsset> mono_asset () const {
-		return asset_of_type<const MonoPictureAsset> ();
+		return asset_of_type<const MonoPictureAsset>();
 	}
 
 	/** @return the MonoPictureAsset that this object refers to */
 	std::shared_ptr<MonoPictureAsset> mono_asset () {
-		return asset_of_type<MonoPictureAsset> ();
+		return asset_of_type<MonoPictureAsset>();
 	}
 
 private:

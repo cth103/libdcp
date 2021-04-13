@@ -65,13 +65,17 @@ public:
 	ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelSubtitleAsset (std::shared_ptr<const cxml::Node>);
 
-	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	std::shared_ptr<const SubtitleAsset> asset () const {
+		return asset_of_type<const SubtitleAsset>();
+	}
+
+	std::shared_ptr<SubtitleAsset> asset () {
+		return asset_of_type<SubtitleAsset>();
+	}
+
+	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
 
 	bool equals (std::shared_ptr<const ReelSubtitleAsset>, EqualityOptions, NoteHandler) const;
-
-	std::shared_ptr<SubtitleAsset> asset () const {
-		return std::dynamic_pointer_cast<SubtitleAsset>(_asset_ref.asset());
-	}
 
 	void set_language (dcp::LanguageTag language);
 
@@ -89,7 +93,7 @@ protected:
 private:
 	friend struct ::verify_invalid_language1;
 
-	std::string cpl_node_name (Standard standard) const;
+	std::string cpl_node_name (Standard standard) const override;
 };
 
 

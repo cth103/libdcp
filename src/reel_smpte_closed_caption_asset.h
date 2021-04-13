@@ -55,11 +55,16 @@ public:
 	ReelSMPTEClosedCaptionAsset (std::shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
 	explicit ReelSMPTEClosedCaptionAsset (std::shared_ptr<const cxml::Node>);
 
+	std::shared_ptr<SMPTESubtitleAsset> smpte_asset () {
+		return asset_of_type<SMPTESubtitleAsset>();
+	}
+
+	std::shared_ptr<const SMPTESubtitleAsset> smpte_asset () const {
+		return asset_of_type<const SMPTESubtitleAsset>();
+	}
+
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
 
-	std::shared_ptr<SMPTESubtitleAsset> smpte_asset () const {
-		return std::dynamic_pointer_cast<SMPTESubtitleAsset>(asset());
-	}
 
 private:
 	boost::optional<std::string> key_type () const override {

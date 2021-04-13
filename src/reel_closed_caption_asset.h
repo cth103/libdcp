@@ -62,11 +62,15 @@ public:
 	ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
 	explicit ReelClosedCaptionAsset (std::shared_ptr<const cxml::Node>);
 
-	bool equals (std::shared_ptr<const ReelClosedCaptionAsset>, EqualityOptions, NoteHandler) const;
-
-	std::shared_ptr<SubtitleAsset> asset () const {
-		return std::dynamic_pointer_cast<SubtitleAsset>(_asset_ref.asset());
+	std::shared_ptr<const SubtitleAsset> asset () const {
+		return asset_of_type<const SubtitleAsset>();
 	}
+
+	std::shared_ptr<SubtitleAsset> asset () {
+		return asset_of_type<SubtitleAsset>();
+	}
+
+	bool equals (std::shared_ptr<const ReelClosedCaptionAsset>, EqualityOptions, NoteHandler) const;
 
 	void set_language (dcp::LanguageTag l) {
 		_language = l.to_string();

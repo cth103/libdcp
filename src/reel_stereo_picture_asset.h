@@ -62,12 +62,12 @@ public:
 
 	/** @return the StereoPictureAsset that this object refers to */
 	std::shared_ptr<const StereoPictureAsset> stereo_asset () const {
-		return asset_of_type<const StereoPictureAsset> ();
+		return asset_of_type<const StereoPictureAsset>();
 	}
 
 	/** @return the StereoPictureAsset that this object refers to */
 	std::shared_ptr<StereoPictureAsset> stereo_asset () {
-		return asset_of_type<StereoPictureAsset> ();
+		return asset_of_type<StereoPictureAsset>();
 	}
 
 private:
