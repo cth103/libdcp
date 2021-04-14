@@ -81,6 +81,7 @@ def build(bld):
                  frame_info_hash_test.cc
                  gamma_transfer_function_test.cc
                  interop_load_font_test.cc
+                 interop_subtitle_test.cc
                  local_time_test.cc
                  make_digest_test.cc
                  markers_test.cc
@@ -90,7 +91,6 @@ def build(bld):
                  language_tag_test.cc
                  raw_convert_test.cc
                  read_dcp_test.cc
-                 read_interop_subtitle_test.cc
                  reel_asset_test.cc
                  recovery_test.cc
                  rgb_xyz_test.cc
