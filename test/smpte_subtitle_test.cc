@@ -31,12 +31,21 @@
     files in the program, then also delete it here.
 */
 
-#include <boost/test/unit_test.hpp>
+
+#include "smpte_load_font_node.h"
 #include "smpte_subtitle_asset.h"
+#include "subtitle_image.h"
+#include "test.h"
+#include "types.h"
+#include <boost/optional/optional_io.hpp>
+#include <boost/test/unit_test.hpp>
+
 
 using std::string;
+using boost::dynamic_pointer_cast;
 using boost::optional;
 using boost::shared_ptr;
+
 
 BOOST_AUTO_TEST_CASE (smpte_subtitle_id_test)
 {
@@ -68,4 +77,96 @@ BOOST_AUTO_TEST_CASE (smpte_subtitle_id_test)
 
 	dcp::SMPTESubtitleAsset check("build/test/smpte_subtitle_id_test.mxf");
 	BOOST_CHECK(check.id() != check.xml_id());
+}
+
+
+/** Check reading of a SMPTE subtitle file */
+BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test)
+{
+	dcp::SMPTESubtitleAsset sc (
+		private_test /
+		"data" /
+		"JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV" /
+		"8b48f6ae-c74b-4b80-b994-a8236bbbad74_sub.mxf"
+		);
+
+	BOOST_CHECK_EQUAL (sc.id(), "8b48f6ae-c74b-4b80-b994-a8236bbbad74");
+	BOOST_CHECK_EQUAL (sc.content_title_text(), "Journey to Jah");
+	BOOST_REQUIRE (sc.annotation_text());
+	BOOST_CHECK_EQUAL (sc.annotation_text().get(), "Journey to Jah");
+	BOOST_CHECK_EQUAL (sc.issue_date(), dcp::LocalTime ("2014-02-25T11:22:48.000-00:00"));
+	BOOST_REQUIRE (sc.reel_number());
+	BOOST_CHECK_EQUAL (sc.reel_number().get(), 1);
+	BOOST_REQUIRE (sc.language ());
+	BOOST_CHECK_EQUAL (sc.language().get (), "de");
+	BOOST_CHECK_EQUAL (sc.edit_rate(), dcp::Fraction (25, 1));
+	BOOST_CHECK_EQUAL (sc.time_code_rate(), 25);
+	BOOST_CHECK_EQUAL (sc.start_time(), dcp::Time (0, 0, 0, 0, 25));
+	auto lfn = sc.load_font_nodes ();
+	BOOST_REQUIRE_EQUAL (lfn.size(), 1);
+	shared_ptr<dcp::SMPTELoadFontNode> smpte_lfn = dynamic_pointer_cast<dcp::SMPTELoadFontNode> (lfn.front ());
+	BOOST_REQUIRE (smpte_lfn);
+	BOOST_CHECK_EQUAL (smpte_lfn->id, "theFontId");
+	BOOST_CHECK_EQUAL (smpte_lfn->urn, "9118bbce-4105-4a05-b37c-a5a6f75e1fea");
+	BOOST_REQUIRE_EQUAL (sc.subtitles().size(), 63);
+	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().front()));
+	BOOST_CHECK_EQUAL (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().front())->text(), "Noch mal.");
+	BOOST_CHECK_EQUAL (sc.subtitles().front()->in(), dcp::Time (0, 0, 25, 12, 25));
+	BOOST_CHECK_EQUAL (sc.subtitles().front()->out(), dcp::Time (0, 0, 26, 4, 25));
+	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().back()));
+	BOOST_CHECK_EQUAL (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().back())->text(), "Prochainement");
+	BOOST_CHECK_EQUAL (sc.subtitles().back()->in(), dcp::Time (0, 1, 57, 17, 25));
+	BOOST_CHECK_EQUAL (sc.subtitles().back()->out(), dcp::Time (0, 1, 58, 12, 25));
+}
+
+
+/** And another one featuring <Font> within <Text> */
+BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test2)
+{
+	dcp::SMPTESubtitleAsset sc (private_test / "olsson.xml");
+
+	auto subs = sc.subtitles();
+	BOOST_REQUIRE_EQUAL (subs.size(), 6);
+	auto i = subs.begin();
+	auto is = dynamic_pointer_cast<const dcp::SubtitleString>(*i);
+	BOOST_REQUIRE (is);
+	BOOST_CHECK_EQUAL (is->text(), "Testing is ");
+	BOOST_CHECK (!is->italic());
+	++i;
+	is = dynamic_pointer_cast<const dcp::SubtitleString>(*i);
+	BOOST_REQUIRE (is);
+	BOOST_CHECK_EQUAL (is->text(), "really");
+	BOOST_CHECK (is->italic());
+	++i;
+	is = dynamic_pointer_cast<const dcp::SubtitleString>(*i);
+	BOOST_REQUIRE (is);
+	BOOST_CHECK_EQUAL (is->text(), " fun!");
+	BOOST_CHECK (!is->italic());
+	++i;
+	is = dynamic_pointer_cast<const dcp::SubtitleString>(*i);
+	BOOST_REQUIRE (is);
+	BOOST_CHECK_EQUAL (is->text(), "This is the ");
+	BOOST_CHECK (!is->italic());
+	++i;
+	is = dynamic_pointer_cast<const dcp::SubtitleString>(*i);
+	BOOST_REQUIRE (is);
+	BOOST_CHECK_EQUAL (is->text(), "second");
+	BOOST_CHECK (is->italic());
+	++i;
+	is = dynamic_pointer_cast<const dcp::SubtitleString>(*i);
+	BOOST_REQUIRE (is);
+	BOOST_CHECK_EQUAL (is->text(), " line!");
+	BOOST_CHECK (!is->italic());
+}
+
+
+/** And another one featuring image subtitles */
+BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test3)
+{
+	dcp::SMPTESubtitleAsset subs ("test/data/subs.mxf");
+
+	BOOST_REQUIRE_EQUAL (subs.subtitles().size(), 1);
+	auto si = dynamic_pointer_cast<const dcp::SubtitleImage>(subs.subtitles().front());
+	BOOST_REQUIRE (si);
+	BOOST_CHECK (si->png_image() == dcp::Data("test/data/sub.png"));
 }

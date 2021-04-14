@@ -84,7 +84,6 @@ def build(bld):
                  raw_convert_test.cc
                  read_dcp_test.cc
                  read_interop_subtitle_test.cc
-                 read_smpte_subtitle_test.cc
                  reel_asset_test.cc
                  recovery_test.cc
                  rgb_xyz_test.cc
