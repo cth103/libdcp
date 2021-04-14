@@ -239,7 +239,7 @@ order::Image::as_xml (xmlpp::Element* parent, Context& context) const
 
 	position_align (e, context, _h_align, _h_position, _v_align, _v_position);
 	if (context.standard == SMPTE) {
-		e->add_child_text (_id);
+		e->add_child_text ("urn:uuid:" + _id);
 	} else {
 		e->add_child_text (_id + ".png");
 	}

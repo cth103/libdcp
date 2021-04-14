@@ -162,18 +162,6 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test2)
 }
 
 
-/** And another one featuring image subtitles */
-BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test3)
-{
-	dcp::SMPTESubtitleAsset subs ("test/data/subs.mxf");
-
-	BOOST_REQUIRE_EQUAL (subs.subtitles().size(), 1);
-	auto si = dynamic_pointer_cast<const dcp::SubtitleImage>(subs.subtitles().front());
-	BOOST_REQUIRE (si);
-	BOOST_CHECK (si->png_image() == dcp::Data("test/data/sub.png"));
-}
-
-
 /* Write some subtitle content as SMPTE XML and check that it is right */
 BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 {
@@ -473,11 +461,14 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 	c.set_reel_number (1);
 	c.set_language ("en");
 	c.set_content_title_text ("Test");
+	c.set_start_time (dcp::Time());
+
+	boost::filesystem::path const sub_image = "test/data/sub.png";
 
 	c.add (
 		shared_ptr<dcp::SubtitleImage>(
 			new dcp::SubtitleImage(
-				dcp::Data ("test/data/sub.png"),
+				dcp::Data (sub_image),
 				dcp::Time (0, 4,  9, 22, 24),
 				dcp::Time (0, 4, 11, 22, 24),
 				0,
@@ -492,9 +483,24 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 
 	c._id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
 
-	boost::filesystem::create_directories ("build/test/write_smpte_subtitle_test3");
-	c.write ("build/test/write_smpte_subtitle_test3/subs.mxf");
+	boost::filesystem::path path = "build/test/write_smpte_subtitle_test3";
+	boost::filesystem::create_directories (path);
+	c.write (path / "subs.mxf");
 
-	/* XXX: check this result when we can read them back in again */
+	dcp::SMPTESubtitleAsset read_back (path / "subs.mxf");
+	auto subs = read_back.subtitles ();
+	BOOST_REQUIRE_EQUAL (subs.size(), 1U);
+	auto image = dynamic_pointer_cast<const dcp::SubtitleImage>(subs.front());
+	BOOST_REQUIRE (image);
+
+	BOOST_CHECK (image->png_image() == dcp::Data(sub_image));
+	BOOST_CHECK (image->in() == dcp::Time(0, 4, 9, 22, 24));
+	BOOST_CHECK (image->out() == dcp::Time(0, 4, 11, 22, 24));
+	BOOST_CHECK_CLOSE (image->h_position(), 0.0, 1);
+	BOOST_CHECK (image->h_align() == dcp::HALIGN_CENTER);
+	BOOST_CHECK_CLOSE (image->v_position(), 0.8, 1);
+	BOOST_CHECK (image->v_align() == dcp::VALIGN_TOP);
+	BOOST_CHECK (image->fade_up_time() == dcp::Time(0, 0, 0, 0, 24));
+	BOOST_CHECK (image->fade_down_time() == dcp::Time(0, 0, 0, 0, 24));
 }
 
