@@ -95,6 +95,7 @@ def build(bld):
                  recovery_test.cc
                  rgb_xyz_test.cc
                  round_trip_test.cc
+                 shared_subtitle_test.cc
                  smpte_load_font_test.cc
                  smpte_subtitle_test.cc
                  sound_frame_test.cc
@@ -103,7 +104,6 @@ def build(bld):
                  test.cc
                  util_test.cc
                  utf8_test.cc
-                 write_subtitle_test.cc
                  verify_test.cc
                  """
     obj.target = 'tests'

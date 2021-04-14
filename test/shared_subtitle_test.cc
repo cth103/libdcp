@@ -31,6 +31,12 @@
     files in the program, then also delete it here.
 */
 
+
+/** @file  test/shared_subtitle_test.cc
+ *  @brief Tests of the code that is shared between Interop and SMPTE subtitles.
+ */
+
+
 #include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "subtitle_string.h"
@@ -44,11 +50,13 @@
 #include "util.h"
 #include <boost/test/unit_test.hpp>
 
+
 using std::string;
 using std::shared_ptr;
 using std::vector;
 using std::make_shared;
 using boost::optional;
+
 
 /** Test dcp::order::Font::take_intersection */
 BOOST_AUTO_TEST_CASE (take_intersection_test)
