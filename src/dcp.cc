@@ -108,6 +108,15 @@ survivable_error (bool keep_going, dcp::DCP::ReadErrors* errors, T const & e)
 	}
 }
 
+
+static
+string
+remove_parameters (string const& n)
+{
+	return n.substr(0, n.find(";"));
+}
+
+
 void
 DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mxf_type)
 {
@@ -218,7 +227,12 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 			continue;
 		}
 
-		if (*pkl_type == CPL::static_pkl_type(*_standard) || *pkl_type == InteropSubtitleAsset::static_pkl_type(*_standard)) {
+		/* Remove any optional parameters (after ;) */
+		pkl_type = pkl_type->substr(0, pkl_type->find(";"));
+
+		if (
+			pkl_type == remove_parameters(CPL::static_pkl_type(*_standard)) ||
+			pkl_type == remove_parameters(InteropSubtitleAsset::static_pkl_type(*_standard))) {
 			xmlpp::DomParser* p = new xmlpp::DomParser;
 			try {
 				p->parse_file (path.string());
@@ -243,14 +257,14 @@ DCP::read (bool keep_going, ReadErrors* errors, bool ignore_incorrect_picture_mx
 				other_assets.push_back (shared_ptr<InteropSubtitleAsset> (new InteropSubtitleAsset (path)));
 			}
 		} else if (
-			*pkl_type == PictureAsset::static_pkl_type(*_standard) ||
-			*pkl_type == SoundAsset::static_pkl_type(*_standard) ||
-			*pkl_type == AtmosAsset::static_pkl_type(*_standard) ||
-			*pkl_type == SMPTESubtitleAsset::static_pkl_type(*_standard)
+			*pkl_type == remove_parameters(PictureAsset::static_pkl_type(*_standard)) ||
+			*pkl_type == remove_parameters(SoundAsset::static_pkl_type(*_standard)) ||
+			*pkl_type == remove_parameters(AtmosAsset::static_pkl_type(*_standard)) ||
+			*pkl_type == remove_parameters(SMPTESubtitleAsset::static_pkl_type(*_standard))
 			) {
 
 			other_assets.push_back (asset_factory(path, ignore_incorrect_picture_mxf_type));
-		} else if (*pkl_type == FontAsset::static_pkl_type(*_standard)) {
+		} else if (*pkl_type == remove_parameters(FontAsset::static_pkl_type(*_standard))) {
 			other_assets.push_back (shared_ptr<FontAsset> (new FontAsset (i->first, path)));
 		} else if (*pkl_type == "image/png") {
 			/* It's an Interop PNG subtitle; let it go */
