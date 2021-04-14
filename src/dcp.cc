@@ -221,7 +221,16 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			continue;
 		}
 
-		if (*pkl_type == CPL::static_pkl_type(*_standard) || *pkl_type == InteropSubtitleAsset::static_pkl_type(*_standard)) {
+		auto remove_parameters = [](string const& n) {
+			return n.substr(0, n.find(";"));
+		};
+
+		/* Remove any optional parameters (after ;) */
+		pkl_type = pkl_type->substr(0, pkl_type->find(";"));
+
+		if (
+			pkl_type == remove_parameters(CPL::static_pkl_type(*_standard)) ||
+			pkl_type == remove_parameters(InteropSubtitleAsset::static_pkl_type(*_standard))) {
 			auto p = new xmlpp::DomParser;
 			try {
 				p->parse_file (path.string());
@@ -246,14 +255,14 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 				other_assets.push_back (make_shared<InteropSubtitleAsset>(path));
 			}
 		} else if (
-			*pkl_type == PictureAsset::static_pkl_type(*_standard) ||
-			*pkl_type == SoundAsset::static_pkl_type(*_standard) ||
-			*pkl_type == AtmosAsset::static_pkl_type(*_standard) ||
-			*pkl_type == SMPTESubtitleAsset::static_pkl_type(*_standard)
+			*pkl_type == remove_parameters(PictureAsset::static_pkl_type(*_standard)) ||
+			*pkl_type == remove_parameters(SoundAsset::static_pkl_type(*_standard)) ||
+			*pkl_type == remove_parameters(AtmosAsset::static_pkl_type(*_standard)) ||
+			*pkl_type == remove_parameters(SMPTESubtitleAsset::static_pkl_type(*_standard))
 			) {
 
 			other_assets.push_back (asset_factory(path, ignore_incorrect_picture_mxf_type));
-		} else if (*pkl_type == FontAsset::static_pkl_type(*_standard)) {
+		} else if (*pkl_type == remove_parameters(FontAsset::static_pkl_type(*_standard))) {
 			other_assets.push_back (make_shared<FontAsset>(i.first, path));
 		} else if (*pkl_type == "image/png") {
 			/* It's an Interop PNG subtitle; let it go */
