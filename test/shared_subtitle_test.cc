@@ -17,6 +17,12 @@
     along with libdcp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+/** @file  test/shared_subtitle_test.cc
+ *  @brief Tests of the code that is shared between Interop and SMPTE subtitles.
+ */
+
+
 #include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "subtitle_string.h"
@@ -33,6 +39,7 @@
 using std::list;
 using std::string;
 using boost::shared_ptr;
+
 
 /** Test dcp::order::Font::take_intersection */
 BOOST_AUTO_TEST_CASE (take_intersection_test)
