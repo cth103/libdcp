@@ -42,6 +42,7 @@
   _Pragma("GCC diagnostic ignored \"-Wparentheses\"") \
   _Pragma("GCC diagnostic ignored \"-Wdeprecated-copy\"") \
   _Pragma("GCC diagnostic ignored \"-Wsuggest-override\"")
+  _Pragma("GCC diagnostic ignored \"-Wunused-function\"")
 #else
 #define LIBDCP_DISABLE_WARNINGS \
   _Pragma("GCC diagnostic push") \

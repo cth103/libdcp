@@ -404,11 +404,31 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 			);
 		break;
 	case ParseState::Type::IMAGE:
+	{
+		switch (standard) {
+		case Standard::INTEROP:
+			if (text.size() >= 4) {
+				/* Remove file extension */
+				text = text.substr(0, text.size() - 4);
+			}
+			break;
+		case Standard::SMPTE:
+			/* It looks like this urn:uuid: is required, but DoM wasn't expecting it (and not writing it)
+			 * until around 2.15.140 so I guess either:
+			 *   a) it is not (always) used in the field, or
+			 *   b) nobody noticed / complained.
+			 */
+			if (text.substr(0, 9) == "urn:uuid:") {
+				text = text.substr(9);
+			}
+			break;
+		}
+
 		/* Add a subtitle with no image data and we'll fill that in later */
 		_subtitles.push_back (
 			make_shared<SubtitleImage>(
 				ArrayData(),
-				standard == Standard::INTEROP ? text.substr(0, text.size() - 4) : text,
+				text,
 				ps.in.get(),
 				ps.out.get(),
 				ps.h_position.get_value_or(0),
@@ -420,6 +440,7 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 				)
 			);
 		break;
+	}
 	}
 }
 

@@ -193,7 +193,7 @@ private:
 };
 
 
-#if 0
+LIBDCP_DISABLE_WARNINGS
 static
 void
 dump_notes (vector<dcp::VerificationNote> const & notes)
@@ -202,7 +202,7 @@ dump_notes (vector<dcp::VerificationNote> const & notes)
 		std::cout << dcp::note_to_string(i) << "\n";
 	}
 }
-#endif
+LIBDCP_ENABLE_WARNINGS
 
 
 static
@@ -706,6 +706,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_smpte_subtitles)
 
 	path const dir("build/test/verify_invalid_smpte_subtitles");
 	prepare_directory (dir);
+	/* This broken_smpte.mxf does not use urn:uuid: for its subtitle ID, which we tolerate (rightly or wrongly) */
 	copy_file ("test/data/broken_smpte.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
 	auto reel_asset = make_shared<dcp::ReelSMPTESubtitleAsset>(asset, dcp::Fraction(24, 1), 6046, 0);
