@@ -206,6 +206,7 @@ def build(bld):
               verify.h
               verify_j2k.h
               version.h
+              warnings.h
               """
 
     # Main library
