@@ -674,14 +674,14 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 				last_direction = is->direction ();
 			}
 
-			text->children.push_back (shared_ptr<order::String> (new order::String (text, order::Font (is, standard), is->text())));
+			text->children.push_back (make_shared<order::String>(text, order::Font (is, standard), is->text()));
 		}
 
 		auto ii = dynamic_pointer_cast<SubtitleImage>(i);
 		if (ii) {
 			text.reset ();
 			subtitle->children.push_back (
-				shared_ptr<order::Image> (new order::Image (subtitle, ii->id(), ii->png_image(), ii->h_align(), ii->h_position(), ii->v_align(), ii->v_position()))
+				make_shared<order::Image>(subtitle, ii->id(), ii->png_image(), ii->h_align(), ii->h_position(), ii->v_align(), ii->v_position())
 				);
 		}
 	}
