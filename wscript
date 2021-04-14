@@ -66,7 +66,7 @@ def options(opt):
 def configure(conf):
     conf.load('compiler_cxx')
     conf.load('clang_compilation_database', tooldir=['waf-tools'])
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-Wsuggest-override', '-D_FILE_OFFSET_BITS=64', '-D__STDC_FORMAT_MACROS', '-std=c++11'])
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-D_FILE_OFFSET_BITS=64', '-D__STDC_FORMAT_MACROS', '-std=c++11'])
     gcc = conf.env['CC_VERSION']
     if int(gcc[0]) >= 4 and int(gcc[1]) > 1:
         conf.env.append_value('CXXFLAGS', ['-Wno-maybe-uninitialized'])
@@ -92,6 +92,8 @@ def configure(conf):
     if conf.env.TARGET_OSX:
         conf.env.append_value('CXXFLAGS', ['-Wno-unused-result', '-Wno-unused-parameter', '-Wno-unused-local-typedef'])
         conf.env.append_value('LINKFLAGS', '-headerpad_max_install_names')
+    else:
+        conf.env.append_value('CXXFLAGS', ['-Wsuggest-override'])
 
     # Disable libxml++ deprecation warnings for now
     conf.env.append_value('CXXFLAGS', ['-Wno-deprecated-declarations'])
