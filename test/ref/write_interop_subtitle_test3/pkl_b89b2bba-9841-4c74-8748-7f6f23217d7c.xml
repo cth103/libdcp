@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PackingList xmlns="http://www.digicine.com/PROTO-ASDCP-PKL-20040311#">
-  <Id>urn:uuid:f5aab304-8145-44e3-a265-aa8d8812d8a2</Id>
+  <Id>urn:uuid:b89b2bba-9841-4c74-8748-7f6f23217d7c</Id>
   <AnnotationText>Created by libdcp</AnnotationText>
   <IssueDate>2018-09-02T04:45:18+00:00</IssueDate>
   <Issuer>libdcp</Issuer>
   <Creator>libdcp</Creator>
   <AssetList>
     <Asset>
-      <Id>urn:uuid:f28b567b-3b9a-417a-aee4-6fc1a2c6a3af</Id>
-      <AnnotationText>f28b567b-3b9a-417a-aee4-6fc1a2c6a3af</AnnotationText>
-      <Hash>Dt8xUBnEmiwA5+0BIIC7VfuEGJA=</Hash>
+      <Id>urn:uuid:0cb211d9-201c-4981-b5aa-7e944e5f76df</Id>
+      <AnnotationText>0cb211d9-201c-4981-b5aa-7e944e5f76df</AnnotationText>
+      <Hash>/8+AvHaFMiapPQrpvHOqdsqUbVo=</Hash>
       <Size>1113</Size>
       <Type>text/xml;asdcpKind=CPL</Type>
     </Asset>
     <Asset>
       <Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</Id>
       <AnnotationText>a6c58cff-3e1e-4b38-acec-a42224475ef6</AnnotationText>
-      <Hash>rl+eBdjvZ0xaaaABGCpf6cm9G/Q=</Hash>
+      <Hash>kspVwckBwwSE9nU/Uo4t/HVGwx0=</Hash>
       <Size>414</Size>
       <Type>text/xml;asdcpKind=Subtitle</Type>
     </Asset>
     <Asset>
-      <Id>urn:uuid:ef5c6baa-be2d-4f86-9f15-b1acc792ee8b</Id>
+      <Id>urn:uuid:eff79796-4889-4c55-b422-6049d069f6ce</Id>
       <Hash>w0Xc4TUYpao08I0yPSDfFkaEwdg=</Hash>
       <Size>44935</Size>
       <Type>image/png</Type>

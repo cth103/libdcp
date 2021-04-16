@@ -840,7 +840,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 		dcp::file_to_string("build/test/write_interop_subtitle_test3/subs.xml"),
 		list<string>()
 		);
-	check_file ("build/test/write_interop_subtitle_test3/d36f4bb3-c4fa-4a95-9915-6fec3110cd71.png", "test/data/sub.png");
+	check_file ("build/test/write_interop_subtitle_test3/eff79796-4889-4c55-b422-6049d069f6ce.png", "test/data/sub.png");
 
 	check_xml (
 		dcp::file_to_string("test/ref/write_interop_subtitle_test3/ASSETMAP"),
@@ -850,7 +850,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 
 	check_xml (
 		dcp::file_to_string("test/ref/write_interop_subtitle_test3/pkl.xml"),
-		dcp::file_to_string("build/test/write_interop_subtitle_test3/pkl_6a9e31a6-50a4-4ecb-8683-fa667848470a.xml"),
+		dcp::file_to_string("build/test/write_interop_subtitle_test3/pkl_b89b2bba-9841-4c74-8748-7f6f23217d7c.xml"),
 		list<string>()
 		);
 }

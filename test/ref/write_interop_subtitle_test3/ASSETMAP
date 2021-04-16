@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <AssetMap xmlns="http://www.digicine.com/PROTO-ASDCP-AM-20040311#">
-  <Id>urn:uuid:20a39790-cad4-4342-98d9-0b0cf1cb6027</Id>
+  <Id>urn:uuid:d93c7b4d-0e3d-4c75-b0eb-65480e06986d</Id>
   <AnnotationText>Created by libdcp</AnnotationText>
   <VolumeCount>1</VolumeCount>
   <IssueDate>2018-09-02T04:45:18+00:00</IssueDate>
@@ -8,11 +8,11 @@
   <Creator>libdcp</Creator>
   <AssetList>
     <Asset>
-      <Id>urn:uuid:f5aab304-8145-44e3-a265-aa8d8812d8a2</Id>
+      <Id>urn:uuid:b89b2bba-9841-4c74-8748-7f6f23217d7c</Id>
       <PackingList>true</PackingList>
       <ChunkList>
         <Chunk>
-          <Path>pkl_f5aab304-8145-44e3-a265-aa8d8812d8a2.xml</Path>
+          <Path>pkl_b89b2bba-9841-4c74-8748-7f6f23217d7c.xml</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
           <Length>1114</Length>
@@ -20,10 +20,10 @@
       </ChunkList>
     </Asset>
     <Asset>
-      <Id>urn:uuid:f28b567b-3b9a-417a-aee4-6fc1a2c6a3af</Id>
+      <Id>urn:uuid:0cb211d9-201c-4981-b5aa-7e944e5f76df</Id>
       <ChunkList>
         <Chunk>
-          <Path>cpl_f28b567b-3b9a-417a-aee4-6fc1a2c6a3af.xml</Path>
+          <Path>cpl_0cb211d9-201c-4981-b5aa-7e944e5f76df.xml</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
           <Length>1113</Length>
@@ -42,10 +42,10 @@
       </ChunkList>
     </Asset>
     <Asset>
-      <Id>urn:uuid:ef5c6baa-be2d-4f86-9f15-b1acc792ee8b</Id>
+      <Id>urn:uuid:eff79796-4889-4c55-b422-6049d069f6ce</Id>
       <ChunkList>
         <Chunk>
-          <Path>ef5c6baa-be2d-4f86-9f15-b1acc792ee8b.png</Path>
+          <Path>eff79796-4889-4c55-b422-6049d069f6ce.png</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
           <Length>44935</Length>
