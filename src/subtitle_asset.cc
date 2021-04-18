@@ -385,7 +385,7 @@ SubtitleAsset::maybe_add_subtitle (string text, list<ParseState> const & parse_s
 				)
 			);
 		break;
-	case ParseState::Type::IMAGE:
+	case ParseState::IMAGE:
 	{
 		switch (standard) {
 		case INTEROP:
