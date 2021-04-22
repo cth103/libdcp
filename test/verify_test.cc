@@ -2952,3 +2952,23 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_timed_text_id)
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
 		});
 }
+
+
+/** Check a DCP with a 3D asset marked as 2D */
+BOOST_AUTO_TEST_CASE (verify_threed_marked_as_twod)
+{
+	check_verify_result (
+		{ private_test / "data" / "xm" },
+		{
+			{
+				dcp::VerificationNote::Type::WARNING,
+				dcp::VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD, boost::filesystem::canonical(find_file(private_test / "data" / "xm", "j2c"))
+			},
+			{
+				dcp::VerificationNote::Type::BV21_ERROR,
+				dcp::VerificationNote::Code::INVALID_STANDARD
+			},
+		});
+
+}
+

@@ -153,6 +153,10 @@ public:
 		 *  note contains the asset ID
 		 */
 		EXTERNAL_ASSET,
+		/** A stereoscopic asset has an MXF which is marked as being monoscopic
+		 *  file contains the asset filename
+		 */
+		THREED_ASSET_MARKED_AS_TWOD,
 		/** DCP is Interop, not SMPTE [Bv2.1_6.1] */
 		INVALID_STANDARD,
 		/** A language or territory does not conform to RFC 5646 [Bv2.1_6.2.1].

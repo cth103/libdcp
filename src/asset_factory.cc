@@ -54,7 +54,7 @@ using namespace dcp;
 
 
 shared_ptr<Asset>
-dcp::asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_mxf_type)
+dcp::asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_mxf_type, bool* found_threed_marked_as_twod)
 {
 	/* XXX: asdcplib does not appear to support discovery of read MXFs standard
 	   (Interop / SMPTE)
@@ -74,7 +74,11 @@ dcp::asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_
 		} catch (dcp::MXFFileError& e) {
 			if (ignore_incorrect_picture_mxf_type && e.number() == ASDCP::RESULT_SFORMAT) {
 				/* Tried to load it as mono but the error says it's stereo; try that instead */
-				return make_shared<StereoPictureAsset>(path);
+				auto stereo = make_shared<StereoPictureAsset>(path);
+				if (stereo && found_threed_marked_as_twod) {
+					*found_threed_marked_as_twod = true;
+				}
+				return stereo;
 			} else {
 				throw;
 			}

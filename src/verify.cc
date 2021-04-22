@@ -1131,7 +1131,7 @@ dcp::verify (
 		stage ("Checking DCP", dcp->directory());
 		bool carry_on = true;
 		try {
-			dcp->read (&notes);
+			dcp->read (&notes, true);
 		} catch (MissingAssetmapError& e) {
 			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
 			carry_on = false;
@@ -1472,6 +1472,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The instantaneous bit rate of the picture asset %1 is close to the limit of 250Mbit/s in at least one place.", note.file()->filename());
 	case VerificationNote::Code::EXTERNAL_ASSET:
 		return String::compose("The asset %1 that this DCP refers to is not included in the DCP.  It may be a VF.", note.note().get());
+	case VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD:
+		return String::compose("The asset %1 is 3D but its MXF is marked as 2D.", note.file()->filename());
 	case VerificationNote::Code::INVALID_STANDARD:
 		return "This DCP does not use the SMPTE standard.";
 	case VerificationNote::Code::INVALID_LANGUAGE:

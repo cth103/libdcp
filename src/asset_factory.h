@@ -47,7 +47,13 @@ namespace dcp {
 class Asset;
 
 
-std::shared_ptr<Asset> asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_mxf_type);
+/** Create an Asset from a file.
+ *  @param ignore_incorrect_picture_mxf_type true to ignore cases where a stereo picture asset is marked
+ *  as 2D; if this is false an exception will be thrown in that case.
+ *  @param ignored_incorrect_picture_mxf_type if this is non-null it will be set to true if a 3D asset was
+ *  marked as 2D, otherwise it will be left alone.
+ */
+std::shared_ptr<Asset> asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_mxf_type, bool* found_threed_marked_as_twod = nullptr);
 
 
 }

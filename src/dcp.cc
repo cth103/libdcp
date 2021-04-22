@@ -261,7 +261,11 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			*pkl_type == remove_parameters(SMPTESubtitleAsset::static_pkl_type(*_standard))
 			) {
 
-			other_assets.push_back (asset_factory(path, ignore_incorrect_picture_mxf_type));
+			bool found_threed_marked_as_twod = false;
+			other_assets.push_back (asset_factory(path, ignore_incorrect_picture_mxf_type, &found_threed_marked_as_twod));
+			if (found_threed_marked_as_twod && notes) {
+				notes->push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD, path});
+			}
 		} else if (*pkl_type == remove_parameters(FontAsset::static_pkl_type(*_standard))) {
 			other_assets.push_back (make_shared<FontAsset>(i.first, path));
 		} else if (*pkl_type == "image/png") {
