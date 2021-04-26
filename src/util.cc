@@ -453,16 +453,17 @@ boost::filesystem::path dcp::directory_containing_executable ()
 
 boost::filesystem::path dcp::resources_directory ()
 {
-#if defined(LIBDCP_OSX)
-	return directory_containing_executable().parent_path() / "Resources";
-#elif defined(LIBDCP_WINDOWS)
-	return directory_containing_executable().parent_path();
-#else
 	/* We need a way to specify the tags directory for running un-installed binaries */
 	char* prefix = getenv("LIBDCP_RESOURCES");
 	if (prefix) {
 		return prefix;
 	}
+
+#if defined(LIBDCP_OSX)
+	return directory_containing_executable().parent_path() / "Resources";
+#elif defined(LIBDCP_WINDOWS)
+	return directory_containing_executable().parent_path();
+#else
 	return directory_containing_executable().parent_path() / "share" / "libdcp";
 #endif
 }
