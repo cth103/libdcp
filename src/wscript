@@ -158,6 +158,7 @@ def build(bld):
               metadata.h
               mono_picture_asset.h
               mono_picture_asset_reader.h
+              mono_picture_asset_writer.h
               mono_picture_frame.h
               modified_gamma_transfer_function.h
               mxf.h
