@@ -54,7 +54,7 @@ def options(opt):
     opt.load('compiler_cxx')
     opt.add_option('--target-windows', action='store_true', default=False, help='set up to do a cross-compile to Windows')
     opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
-    opt.add_option('--static', action='store_true', default=False, help='build libdcp statically, and link statically to openjpeg, cxml, asdcplib-carl')
+    opt.add_option('--static', action='store_true', default=False, help='build libdcp statically, and link statically to openjpeg, cxml, asdcplib-cth')
     opt.add_option('--disable-tests', action='store_true', default=False, help='disable building of tests')
     opt.add_option('--disable-benchmarks', action='store_true', default=False, help='disable building of benchmarks')
     opt.add_option('--disable-gcov', action='store_true', default=False, help='don''t use gcov in tests')
@@ -141,9 +141,9 @@ def configure(conf):
         elif conf.options.jpeg == 'oj1':
             conf.check_cfg(package='libopenjpeg1', args='--cflags', atleast_version='1.5.0', uselib_store='OPENJPEG', mandatory=True)
             conf.env.STLIB_OPENJPEG = ['openjpeg']
-        conf.check_cfg(package='libasdcp-carl', atleast_version='0.1.3', args='--cflags', uselib_store='ASDCPLIB_CTH', mandatory=True)
+        conf.check_cfg(package='libasdcp-cth', atleast_version='0.1.3', args='--cflags', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.env.HAVE_ASDCPLIB_CTH = 1
-        conf.env.STLIB_ASDCPLIB_CTH = ['asdcp-carl', 'kumu-carl']
+        conf.env.STLIB_ASDCPLIB_CTH = ['asdcp-cth', 'kumu-carl']
         conf.env.HAVE_CXML = 1
         conf.env.LIB_CXML = ['xml++-2.6', 'glibmm-2.4']
         conf.env.STLIB_CXML = ['cxml']
@@ -154,7 +154,7 @@ def configure(conf):
             conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
         elif conf.options.jpeg == 'oj1':
             conf.check_cfg(package='libopenjpeg1', args='--cflags --libs', atleast_version='1.5.0', uselib_store='OPENJPEG', mandatory=True)
-        conf.check_cfg(package='libasdcp-carl', atleast_version='0.1.3', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
+        conf.check_cfg(package='libasdcp-cth', atleast_version='0.1.3', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.check_cfg(package='libcxml', atleast_version='0.17.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
         conf.check_cfg(package='xerces-c', args='--cflags --libs', uselib_store='XERCES', mandatory=True)
 
