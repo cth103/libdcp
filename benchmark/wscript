@@ -35,7 +35,7 @@ def build(bld):
     for p in ['rgb_to_xyz', 'j2k_transcode']:
         obj = bld(features='cxx cxxprogram')
         obj.name = p
-        obj.uselib = 'BOOST_FILESYSTEM ASDCPLIB_CTH'
+        obj.uselib = 'BOOST_FILESYSTEM ASDCPLIB_CTH CXML'
         obj.cppflags = ['-g', '-O2']
         obj.use = 'libdcp%s' % bld.env.API_VERSION
         obj.source = "%s.cc" % p
