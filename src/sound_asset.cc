@@ -207,7 +207,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 				for (int channel = 0; channel < frame_A->channels(); ++channel) {
 					int32_t const d = abs(frame_A->get(channel, sample) - frame_B->get(channel, sample));
 					if (d > opt.max_audio_sample_error) {
-						note (NoteType::ERROR, String::compose ("PCM data difference of %1", d));
+						note (NoteType::ERROR, String::compose("PCM data difference of %1 in frame %2, channel %3, sample %4", d, i, channel, sample));
 						return false;
 					}
 				}
