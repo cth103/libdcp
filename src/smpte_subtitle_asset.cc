@@ -103,8 +103,10 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 		_id = read_writer_info (info);
 		if (!_key_id) {
 			/* Not encrypted; read it in now */
-			reader->ReadTimedTextResource (_raw_xml);
-			xml->read_string (_raw_xml);
+			string xml_string;
+			reader->ReadTimedTextResource (xml_string);
+			_raw_xml = xml_string;
+			xml->read_string (xml_string);
 			parse_xml (xml);
 			read_mxf_descriptor (reader);
 			read_mxf_resources (reader, make_shared<DecryptionContext>(optional<Key>(), Standard::SMPTE));
@@ -307,9 +309,11 @@ SMPTESubtitleAsset::set_key (Key key)
 	}
 
 	auto dec = make_shared<DecryptionContext>(key, Standard::SMPTE);
-	reader->ReadTimedTextResource (_raw_xml, dec->context(), dec->hmac());
+	string xml_string;
+	reader->ReadTimedTextResource (xml_string, dec->context(), dec->hmac());
+	_raw_xml = xml_string;
 	auto xml = make_shared<cxml::Document>("SubtitleReel");
-	xml->read_string (_raw_xml);
+	xml->read_string (xml_string);
 	parse_xml (xml);
 	read_mxf_resources (reader, dec);
 }
@@ -431,7 +435,9 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 		boost::throw_exception (FileError ("could not open subtitle MXF for writing", p.string(), r));
 	}
 
-	r = writer.WriteTimedTextResource (xml_as_string (), enc.context(), enc.hmac());
+	_raw_xml = xml_as_string ();
+
+	r = writer.WriteTimedTextResource (*_raw_xml, enc.context(), enc.hmac());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not write XML to timed text resource", p.string(), r));
 	}
@@ -569,3 +575,4 @@ SMPTESubtitleAsset::add (shared_ptr<Subtitle> s)
 	SubtitleAsset::add (s);
 	_intrinsic_duration = latest_subtitle_out().as_editable_units_ceil(_edit_rate.numerator / _edit_rate.denominator);
 }
+

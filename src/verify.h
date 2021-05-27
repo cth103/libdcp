@@ -379,6 +379,8 @@ public:
 		 *  file contains the asset filename
 		 */
 		MISMATCHED_TIMED_TEXT_DURATION,
+		/** Something could not be verified because content is encrypted and no key is available */
+		MISSED_CHECK_OF_ENCRYPTED,
 	};
 
 	VerificationNote (Type type, Code code)

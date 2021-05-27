@@ -120,7 +120,11 @@ public:
 
 	virtual int time_code_rate () const = 0;
 
-	std::string raw_xml () const {
+	/** @return Raw XML loaded from, or written to, an on-disk asset, or boost::none if
+	 *  - this object was not created from an existing on-disk asset and has not been written to one, or
+	 *  - this asset is encrypted and no key is available.
+	 */
+	virtual boost::optional<std::string> raw_xml () const {
 		return _raw_xml;
 	}
 
@@ -193,8 +197,8 @@ protected:
 	/** TTF font data that we need */
 	std::vector<Font> _fonts;
 
-	/** The raw XML data that we read from our asset; useful for validation */
-	std::string _raw_xml;
+	/** The raw XML data that we read from or wrote to our asset; useful for validation */
+	mutable boost::optional<std::string> _raw_xml;
 
 private:
 	friend struct ::pull_fonts_test1;

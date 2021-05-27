@@ -199,9 +199,9 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 		throw FileError ("Could not open file for writing", p, -1);
 	}
 
-	auto const s = xml_as_string ();
+	_raw_xml = xml_as_string ();
 	/* length() here gives bytes not characters */
-	fwrite (s.c_str(), 1, s.length(), f);
+	fwrite (_raw_xml->c_str(), 1, _raw_xml->length(), f);
 	fclose (f);
 
 	_file = p;
