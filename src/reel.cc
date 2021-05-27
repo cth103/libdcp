@@ -322,7 +322,7 @@ Reel::add (DecryptedKDM const & kdm)
 			_main_sound->asset()->set_key (i.key());
 		}
 		if (_main_subtitle) {
-			auto smpte = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(_main_picture);
+			auto smpte = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(_main_subtitle);
 			if (smpte && i.id() == smpte->key_id()) {
 				smpte->smpte_asset()->set_key(i.key());
 			}
