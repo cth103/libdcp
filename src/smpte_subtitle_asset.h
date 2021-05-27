@@ -176,7 +176,10 @@ public:
 		return _start_time;
 	}
 
-	std::string xml_id () const {
+	/** @return ID from XML's <Id> tag, or the <Id> that will be used when writing the XML,
+	 *  or boost::none if this content is encrypted and no key is available.
+	 */
+	boost::optional<std::string> xml_id () const {
 		return _xml_id;
 	}
 
@@ -227,8 +230,9 @@ private:
 	std::vector<std::shared_ptr<SMPTELoadFontNode>> _load_font_nodes;
 	/** UUID for the XML inside the MXF, which should be the same as the ResourceID in the MXF (our _resource_id)
 	 *  but different to the AssetUUID in the MXF (our _id) according to SMPTE Bv2.1 and Doremi's 2.8.18 release notes.
+	 *  May be boost::none if this object has been made from an encrypted object without a key.
 	 */
-	std::string _xml_id;
+	boost::optional<std::string> _xml_id;
 
 	/** ResourceID read from the MXF, if there was one */
 	boost::optional<std::string> _resource_id;

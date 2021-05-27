@@ -703,12 +703,17 @@ verify_smpte_subtitle_asset (
 	}
 
 	DCP_ASSERT (asset->resource_id());
-	if (asset->resource_id().get() != asset->xml_id()) {
-		notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID });
-	}
+	auto xml_id = asset->xml_id();
+	if (xml_id) {
+		if (asset->resource_id().get() != xml_id) {
+			notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID });
+		}
 
-	if (asset->id() == asset->resource_id().get() || asset->id() == asset->xml_id()) {
-		notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID });
+		if (asset->id() == asset->resource_id().get() || asset->id() == xml_id) {
+			notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID });
+		}
+	} else {
+		notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED});
 	}
 }
 

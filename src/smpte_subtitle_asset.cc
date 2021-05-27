@@ -347,7 +347,8 @@ SMPTESubtitleAsset::xml_as_string () const
 	root->set_namespace_declaration (subtitle_smpte_ns, "dcst");
 	root->set_namespace_declaration ("http://www.w3.org/2001/XMLSchema", "xs");
 
-	root->add_child("Id", "dcst")->add_child_text ("urn:uuid:" + _xml_id);
+	DCP_ASSERT (_xml_id);
+	root->add_child("Id", "dcst")->add_child_text ("urn:uuid:" + *_xml_id);
 	root->add_child("ContentTitleText", "dcst")->add_child_text (_content_title_text);
 	if (_annotation_text) {
 		root->add_child("AnnotationText", "dcst")->add_child_text (_annotation_text.get ());
@@ -422,7 +423,8 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 
 	descriptor.NamespaceName = subtitle_smpte_ns;
 	unsigned int c;
-	Kumu::hex2bin (_xml_id.c_str(), descriptor.AssetID, ASDCP::UUIDlen, &c);
+	DCP_ASSERT (_xml_id);
+	Kumu::hex2bin (_xml_id->c_str(), descriptor.AssetID, ASDCP::UUIDlen, &c);
 	DCP_ASSERT (c == Kumu::UUID_Length);
 	descriptor.ContainerDuration = _intrinsic_duration;
 
