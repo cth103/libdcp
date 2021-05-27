@@ -106,7 +106,10 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 			reader->ReadTimedTextResource (_raw_xml);
 			xml->read_string (_raw_xml);
 			parse_xml (xml);
-			read_mxf_descriptor (reader, make_shared<DecryptionContext>(optional<Key>(), Standard::SMPTE));
+			read_mxf_descriptor (reader);
+			read_mxf_resources (reader, make_shared<DecryptionContext>(optional<Key>(), Standard::SMPTE));
+		} else {
+			read_mxf_descriptor (reader);
 		}
 	} else {
 		/* Plain XML */
@@ -202,7 +205,7 @@ SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 
 
 void
-SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader> reader, shared_ptr<DecryptionContext> dec)
+SMPTESubtitleAsset::read_mxf_resources (shared_ptr<ASDCP::TimedText::MXFReader> reader, shared_ptr<DecryptionContext> dec)
 {
 	ASDCP::TimedText::TimedTextDescriptor descriptor;
 	reader->FillTimedTextDescriptor (descriptor);
@@ -253,6 +256,14 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 			break;
 		}
 	}
+}
+
+
+void
+SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader> reader)
+{
+	ASDCP::TimedText::TimedTextDescriptor descriptor;
+	reader->FillTimedTextDescriptor (descriptor);
 
 	_intrinsic_duration = descriptor.ContainerDuration;
 	/* The thing which is called AssetID in the descriptor is also known as the
@@ -300,7 +311,7 @@ SMPTESubtitleAsset::set_key (Key key)
 	auto xml = make_shared<cxml::Document>("SubtitleReel");
 	xml->read_string (_raw_xml);
 	parse_xml (xml);
-	read_mxf_descriptor (reader, dec);
+	read_mxf_resources (reader, dec);
 }
 
 

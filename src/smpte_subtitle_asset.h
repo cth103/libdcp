@@ -180,7 +180,7 @@ public:
 		return _xml_id;
 	}
 
-	/** @return ResourceID read from the MXF, if there was one */
+	/** @return ResourceID read from any MXF that was read */
 	boost::optional<std::string> resource_id () const {
 		return _resource_id;
 	}
@@ -204,7 +204,8 @@ private:
 
 	void read_fonts (std::shared_ptr<ASDCP::TimedText::MXFReader>);
 	void parse_xml (std::shared_ptr<cxml::Document> xml);
-	void read_mxf_descriptor (std::shared_ptr<ASDCP::TimedText::MXFReader> reader, std::shared_ptr<DecryptionContext> dec);
+	void read_mxf_descriptor (std::shared_ptr<ASDCP::TimedText::MXFReader> reader);
+	void read_mxf_resources (std::shared_ptr<ASDCP::TimedText::MXFReader> reader, std::shared_ptr<DecryptionContext> dec);
 
 	/** The total length of this content in video frames.  The amount of
 	 *  content presented may be less than this.
