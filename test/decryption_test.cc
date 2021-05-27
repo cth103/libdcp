@@ -31,28 +31,42 @@
     files in the program, then also delete it here.
 */
 
-#include "dcp.h"
-#include "mono_picture_frame.h"
+#include "colour_conversion.h"
 #include "cpl.h"
+#include "dcp.h"
 #include "decrypted_kdm.h"
 #include "encrypted_kdm.h"
 #include "mono_picture_asset.h"
 #include "mono_picture_asset_reader.h"
-#include "reel_picture_asset.h"
-#include "reel.h"
-#include "test.h"
+#include "mono_picture_frame.h"
 #include "openjpeg_image.h"
+#include "picture_asset_writer.h"
+#include "reel.h"
+#include "reel_file_asset.h"
+#include "reel_mono_picture_asset.h"
+#include "reel_picture_asset.h"
+#include "reel_sound_asset.h"
+#include "reel_smpte_subtitle_asset.h"
 #include "rgb_xyz.h"
-#include "colour_conversion.h"
+#include "smpte_subtitle_asset.h"
+#include "sound_asset.h"
+#include "sound_asset_writer.h"
 #include "stream_operators.h"
+#include "test.h"
 #include <boost/test/unit_test.hpp>
 #include <boost/scoped_array.hpp>
 
-using std::pair;
-using std::make_pair;
+
 using std::dynamic_pointer_cast;
+using std::make_pair;
+using std::make_shared;
+using std::map;
+using std::pair;
 using std::shared_ptr;
+using std::string;
+using boost::optional;
 using boost::scoped_array;
+
 
 pair<uint8_t*, dcp::Size>
 get_frame (dcp::DCP const & dcp)

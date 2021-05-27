@@ -264,8 +264,8 @@ DecryptedKDM::DecryptedKDM (
 	, _content_title_text (content_title_text)
 	, _issue_date (issue_date)
 {
-	for (map<shared_ptr<const ReelFileAsset>, Key>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
-		add_key (i->first->key_type(), i->first->key_id().get(), i->second, cpl_id, Standard::SMPTE);
+	for (auto const& i: keys) {
+		add_key (i.first->key_type(), i.first->key_id().get(), i.second, cpl_id, Standard::SMPTE);
 	}
 }
 
