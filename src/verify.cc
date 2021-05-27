@@ -1618,6 +1618,29 @@ dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 }
 
 
+bool
+dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
+{
+	if (a.type() != b.type()) {
+		return a.type() < b.type();
+	}
+
+	if (a.code() != b.code()) {
+		return a.code() < b.code();
+	}
+
+	if (a.note() != b.note()) {
+		return a.note().get_value_or("") < b.note().get_value_or("");
+	}
+
+	if (a.file() != b.file()) {
+		return a.file().get_value_or("") < b.file().get_value_or("");
+	}
+
+	return a.line().get_value_or(0) < b.line().get_value_or(0);
+}
+
+
 std::ostream&
 dcp::operator<< (std::ostream& s, dcp::VerificationNote const& note)
 {

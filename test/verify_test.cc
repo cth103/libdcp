@@ -211,6 +211,8 @@ check_verify_result (vector<path> dir, vector<dcp::VerificationNote> test_notes)
 {
 	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
 	BOOST_REQUIRE_EQUAL (notes.size(), test_notes.size());
+	std::sort (notes.begin(), notes.end());
+	std::sort (test_notes.begin(), test_notes.end());
 	for (auto i = 0U; i < notes.size(); ++i) {
 		BOOST_REQUIRE_EQUAL (notes[i], test_notes[i]);
 	}
