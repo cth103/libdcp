@@ -74,13 +74,25 @@ using std::shared_ptr;
 
 
 static list<pair<string, optional<path>>> stages;
-static string const dcp_test1_pkl_id = "6af1e0c1-c441-47f8-a502-3efd46b1fa4f";
-static string const dcp_test1_pkl = "pkl_" + dcp_test1_pkl_id + ".xml";
-static string const dcp_test1_cpl_id = "81fb54df-e1bf-4647-8788-ea7ba154375b";
-static string const dcp_test1_cpl = "cpl_" + dcp_test1_cpl_id + ".xml";
+
+static string filename_to_id(boost::filesystem::path path)
+{
+	return path.string().substr(4, path.string().length() - 8);
+}
+
+static boost::filesystem::path const dcp_test1_pkl = find_file("test/ref/DCP/dcp_test1", "pkl_").filename();
+static string const dcp_test1_pkl_id = filename_to_id(dcp_test1_pkl);
+
+static boost::filesystem::path const dcp_test1_cpl = find_file("test/ref/DCP/dcp_test1", "cpl_").filename();
+static string const dcp_test1_cpl_id = filename_to_id(dcp_test1_cpl);
+
 static string const dcp_test1_asset_map_id = "5d51e8a1-b2a5-4da6-9b66-4615c3609440";
-static string const encryption_test_cpl_id = "81fb54df-e1bf-4647-8788-ea7ba154375b";
-static string const encryption_test_pkl_id = "627ad740-ae36-4c49-92bb-553a9f09c4f8";
+
+static boost::filesystem::path const encryption_test_cpl = find_file("test/ref/DCP/encryption_test", "cpl_").filename();
+static string const encryption_test_cpl_id = filename_to_id(encryption_test_cpl);
+
+static boost::filesystem::path const encryption_test_pkl = find_file("test/ref/DCP/encryption_test", "pkl_").filename();
+static string const encryption_test_pkl_id = filename_to_id(encryption_test_pkl);
 
 static void
 stage (string s, optional<path> p)
@@ -163,6 +175,23 @@ public:
 	{
 		auto old_content = _content;
 		boost::algorithm::replace_all (_content, a, b);
+		BOOST_REQUIRE (_content != old_content);
+	}
+
+	void delete_first_line_containing (string s)
+	{
+		vector<string> lines;
+		boost::algorithm::split (lines, _content, boost::is_any_of("\r\n"), boost::token_compress_on);
+		auto old_content = _content;
+		_content = "";
+		bool done = false;
+		for (auto i: lines) {
+			if (i.find(s) == string::npos || done) {
+				_content += i + "\n";
+			} else {
+				done = true;
+			}
+		}
 		BOOST_REQUIRE (_content != old_content);
 	}
 
@@ -343,9 +372,9 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id, canonical(dir / dcp_test1_cpl) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_HASHES, canonical(dir / "audio.mxf") },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xSEEi70vx1WQs67bmu2zKvzIkXvY=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 12 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xaddO7je2lZSNQp55qjCWo5DLKFQ=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 19 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xWU0/u1wM17y7Kriq06+65/ViX1o=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 26 }
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xD9HpNAjKsECGtJEWtwV2/T5ndG8=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 26 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xgVKhC9IkWyzQbgzpFcJ1bpqbtwk=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 19 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xz/y4fI+ocWzVB7cr8pVt2OYpOHA=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 12 }
 		});
 }
 
@@ -2256,18 +2285,21 @@ BOOST_AUTO_TEST_CASE (verify_missing_hash)
 
 	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
 	auto const cpl = dcp->cpls()[0];
+	BOOST_REQUIRE_EQUAL (cpl->reels().size(), 1U);
+	BOOST_REQUIRE (cpl->reels()[0]->main_picture());
+	auto asset_id = cpl->reels()[0]->main_picture()->id();
 
 	{
 		BOOST_REQUIRE (cpl->file());
 		Editor e(cpl->file().get());
-		e.replace("<Hash>addO7je2lZSNQp55qjCWo5DLKFQ=</Hash>", "");
+		e.delete_first_line_containing("<Hash>");
 	}
 
 	check_verify_result (
 		{dir},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_HASH, string("1fab8bb0-cfaf-4225-ad6d-01768bc10470") }
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_HASH, asset_id }
 		});
 }
 

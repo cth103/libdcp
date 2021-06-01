@@ -859,8 +859,8 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 		);
 
 	check_xml (
-		dcp::file_to_string("test/ref/write_interop_subtitle_test3/pkl.xml"),
-		dcp::file_to_string("build/test/write_interop_subtitle_test3/pkl_6a9e31a6-50a4-4ecb-8683-fa667848470a.xml"),
+		dcp::file_to_string(find_file("test/ref/write_interop_subtitle_test3", "pkl")),
+		dcp::file_to_string(find_file("build/test/write_interop_subtitle_test3", "pkl")),
 		vector<string>()
 		);
 }
