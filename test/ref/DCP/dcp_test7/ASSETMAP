@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <AssetMap xmlns="http://www.digicine.com/PROTO-ASDCP-AM-20040311#">
-  <Id>urn:uuid:6af1e0c1-c441-47f8-a502-3efd46b1fa4f</Id>
+  <Id>urn:uuid:5d51e8a1-b2a5-4da6-9b66-4615c3609440</Id>
   <AnnotationText>Created by libdcp</AnnotationText>
   <VolumeCount>1</VolumeCount>
   <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
@@ -8,11 +8,11 @@
   <Creator>OpenDCP 0.0.25</Creator>
   <AssetList>
     <Asset>
-      <Id>urn:uuid:93182bd2-b1e8-41a3-b5c8-6e6564273bff</Id>
+      <Id>urn:uuid:6af1e0c1-c441-47f8-a502-3efd46b1fa4f</Id>
       <PackingList>true</PackingList>
       <ChunkList>
         <Chunk>
-          <Path>pkl_93182bd2-b1e8-41a3-b5c8-6e6564273bff.xml</Path>
+          <Path>pkl_6af1e0c1-c441-47f8-a502-3efd46b1fa4f.xml</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
           <Length>1253</Length>
@@ -31,7 +31,7 @@
       </ChunkList>
     </Asset>
     <Asset>
-      <Id>urn:uuid:1fab8bb0-cfaf-4225-ad6d-01768bc10470</Id>
+      <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
       <ChunkList>
         <Chunk>
           <Path>video.mxf</Path>
@@ -42,7 +42,7 @@
       </ChunkList>
     </Asset>
     <Asset>
-      <Id>urn:uuid:9482e87d-292d-4e0e-a98d-c61822b60fe9</Id>
+      <Id>urn:uuid:8b92bcee-62fc-4a33-a51a-816e9611ce85</Id>
       <ChunkList>
         <Chunk>
           <Path>audio.mxf</Path>

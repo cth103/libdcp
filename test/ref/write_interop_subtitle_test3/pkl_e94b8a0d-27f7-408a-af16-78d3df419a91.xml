@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PackingList xmlns="http://www.digicine.com/PROTO-ASDCP-PKL-20040311#">
-  <Id>urn:uuid:6a9e31a6-50a4-4ecb-8683-fa667848470a</Id>
+  <Id>urn:uuid:e94b8a0d-27f7-408a-af16-78d3df419a91</Id>
   <AnnotationText>Created by libdcp</AnnotationText>
   <IssueDate>2018-09-02T04:45:18+00:00</IssueDate>
   <Issuer>libdcp</Issuer>
@@ -9,7 +9,7 @@
     <Asset>
       <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
       <AnnotationText>46c3eb45-15e5-47d6-8684-d8641e4dc516</AnnotationText>
-      <Hash>hu0RaV4ZgrcqQQtgOW4r/YznVo0=</Hash>
+      <Hash>YkdOdaGok/Vrkq62zAkfCw1l/Y4=</Hash>
       <Size>1105</Size>
       <Type>text/xml;asdcpKind=CPL</Type>
     </Asset>

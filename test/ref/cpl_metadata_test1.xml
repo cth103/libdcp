@@ -14,16 +14,16 @@
   <RatingList/>
   <ReelList>
     <Reel>
-      <Id>urn:uuid:1fab8bb0-cfaf-4225-ad6d-01768bc10470</Id>
+      <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
       <AssetList>
         <MainPicture>
-          <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
+          <Id>urn:uuid:e98d059d-645f-4343-a30f-edc61d58b8e0</Id>
           <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
           <Duration>24</Duration>
-          <Hash>AjCzoIG/11nYHsTmKGLJf/zWANI=</Hash>
+          <Hash>JtPL3uT3jyKMLysaqgdBWQb/n2E=</Hash>
           <FrameRate>24 1</FrameRate>
           <ScreenAspectRatio>1998 1080</ScreenAspectRatio>
         </MainPicture>
@@ -39,7 +39,7 @@
           <Language>de-DE</Language>
         </MainSubtitle>
         <meta:CompositionMetadataAsset xmlns:meta="http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata">
-          <Id>urn:uuid:8b92bcee-62fc-4a33-a51a-816e9611ce85</Id>
+          <Id>urn:uuid:d36f4bb3-c4fa-4a95-9915-6fec3110cd71</Id>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <meta:FullContentTitleText language="de">full-content-title</meta:FullContentTitleText>

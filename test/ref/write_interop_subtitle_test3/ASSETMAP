@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <AssetMap xmlns="http://www.digicine.com/PROTO-ASDCP-AM-20040311#">
-  <Id>urn:uuid:e94b8a0d-27f7-408a-af16-78d3df419a91</Id>
+  <Id>urn:uuid:47a8e83e-fd5f-445d-a1bc-9f59c5289c34</Id>
   <AnnotationText>Created by libdcp</AnnotationText>
   <VolumeCount>1</VolumeCount>
   <IssueDate>2018-09-02T04:45:18+00:00</IssueDate>
@@ -8,11 +8,11 @@
   <Creator>libdcp</Creator>
   <AssetList>
     <Asset>
-      <Id>urn:uuid:6a9e31a6-50a4-4ecb-8683-fa667848470a</Id>
+      <Id>urn:uuid:e94b8a0d-27f7-408a-af16-78d3df419a91</Id>
       <PackingList>true</PackingList>
       <ChunkList>
         <Chunk>
-          <Path>pkl_6a9e31a6-50a4-4ecb-8683-fa667848470a.xml</Path>
+          <Path>pkl_e94b8a0d-27f7-408a-af16-78d3df419a91.xml</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
           <Length>1114</Length>

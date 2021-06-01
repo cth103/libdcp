@@ -31,7 +31,7 @@
       </ChunkList>
     </Asset>
     <Asset>
-      <Id>urn:uuid:1fab8bb0-cfaf-4225-ad6d-01768bc10470</Id>
+      <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
       <ChunkList>
         <Chunk>
           <Path>video.mxf</Path>
@@ -42,7 +42,7 @@
       </ChunkList>
     </Asset>
     <Asset>
-      <Id>urn:uuid:9482e87d-292d-4e0e-a98d-c61822b60fe9</Id>
+      <Id>urn:uuid:8b92bcee-62fc-4a33-a51a-816e9611ce85</Id>
       <ChunkList>
         <Chunk>
           <Path>audio.mxf</Path>
