@@ -397,5 +397,21 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_duplicated_asset)
 }
 
 
+BOOST_AUTO_TEST_CASE (check_cpls_unchanged_after_combine)
+{
+	boost::filesystem::path in = "build/test/combine_one_dcp_with_composition_metadata_in";
+	boost::filesystem::path out = "build/test/combine_one_dcp_with_composition_metadata_out";
+	auto dcp = make_simple (in);
+	dcp->write_xml ();
+
+	dcp::combine ({in}, out);
+
+	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
+	auto cpl = dcp->cpls()[0]->file();
+	BOOST_REQUIRE (cpl);
+	check_file (*cpl, out / cpl->filename());
+}
+
+
 /* XXX: same CPL names */
 /* XXX: Interop PNG subs */

@@ -237,6 +237,8 @@ CPL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain>
 void
 CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 {
+	_cpl_metadata_id = remove_urn_uuid(node->string_child("Id"));
+
 	auto fctt = node->node_child("FullContentTitleText");
 	_full_content_title_text = fctt->content();
 	_full_content_title_text_language = fctt->optional_string_attribute("language");
@@ -337,14 +339,14 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 	auto meta = node->add_child("meta:CompositionMetadataAsset");
 	meta->set_namespace_declaration (cpl_metadata_ns, "meta");
 
-	meta->add_child("Id")->add_child_text("urn:uuid:" + make_uuid());
+	meta->add_child("Id")->add_child_text("urn:uuid:" + _cpl_metadata_id);
 
 	auto mp = _reels.front()->main_picture();
 	meta->add_child("EditRate")->add_child_text(mp->edit_rate().as_string());
 	meta->add_child("IntrinsicDuration")->add_child_text(raw_convert<string>(mp->intrinsic_duration()));
 
 	auto fctt = meta->add_child("FullContentTitleText", "meta");
-	if (_full_content_title_text) {
+	if (_full_content_title_text && !_full_content_title_text->empty()) {
 		fctt->add_child_text (*_full_content_title_text);
 	}
 	if (_full_content_title_text_language) {

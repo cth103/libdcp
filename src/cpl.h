@@ -323,6 +323,10 @@ private:
 	ContentKind _content_kind;                  ///< &lt;ContentKind&gt;
 	std::vector<ContentVersion> _content_versions;
 	std::vector<Rating> _ratings;
+	/** ID for CompositionMetadataAsset tag; either a random one, ready for writing a new tag,
+	 *  or the one read in from the existing CPL.
+	 */
+	std::string _cpl_metadata_id = make_uuid();
 	/** Human-readable name of the composition, without any metadata (i.e. no -FTR-EN-XX- etc.) */
 	boost::optional<std::string> _full_content_title_text;
 	boost::optional<std::string> _full_content_title_text_language;
