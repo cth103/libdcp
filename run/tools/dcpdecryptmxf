@@ -1,12 +1,16 @@
 #!/bin/bash
 
-export LD_LIBRARY_PATH=build/src:build/asdcplib/src:$LD_LIBRARY_PATH
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+top=$DIR/../..
+
+export LD_LIBRARY_PATH=$top/build/src:$top/build/asdcplib/src:$LD_LIBRARY_PATH
+export LIBDCP_RESOURCES=$top
 if [ "$1" == "--debug" ]; then
     shift
-    gdb --args build/tools/dcpdecryptmxf "$@"
+    gdb --args $top/build/tools/dcpdecryptmxf "$@"
 elif [ "$1" == "--valgrind" ]; then
     shift
-    valgrind --tool="memcheck" --leak-check=full --show-reachable=yes build/tools/dcpdecryptmxf "$@"
+    valgrind --tool="memcheck" --leak-check=full --show-reachable=yes $top/build/tools/dcpdecryptmxf "$@"
 else
-    build/tools/dcpdecryptmxf "$@"
+    $top/build/tools/dcpdecryptmxf "$@"
 fi
