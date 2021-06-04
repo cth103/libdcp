@@ -79,6 +79,7 @@ void copy (T const& in, shared_ptr<U> writer)
 		auto frame = reader->get_frame (i);
 		writer->write (frame->data(), frame->size());
 	}
+	writer->finalize();
 };
 
 
