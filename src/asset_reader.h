@@ -72,11 +72,15 @@ public:
 	std::shared_ptr<const F> get_frame (int n) const
 	{
 		/* Can't use make_shared here as the constructor is private */
-		return std::shared_ptr<const F> (new F(_reader, n, _crypto_context));
+		return std::shared_ptr<const F> (new F(_reader, n, _crypto_context, _check_hmac));
 	}
 
 	R* reader () const {
 		return _reader;
+	}
+
+	void set_check_hmac (bool check) {
+		_check_hmac = check;
 	}
 
 protected:
@@ -100,6 +104,8 @@ private:
 			boost::throw_exception (FileError("could not open MXF file for reading", asset->file().get(), r));
 		}
 	}
+
+	bool _check_hmac = true;
 };
 
 

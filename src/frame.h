@@ -54,12 +54,12 @@ template <class R, class B>
 class Frame
 {
 public:
-	Frame (R* reader, int n, std::shared_ptr<const DecryptionContext> c)
+	Frame (R* reader, int n, std::shared_ptr<const DecryptionContext> c, bool check_hmac)
 	{
 		/* XXX: unfortunate guesswork on this buffer size */
 		_buffer = std::make_shared<B>(Kumu::Megabyte);
 
-		if (ASDCP_FAILURE(reader->ReadFrame(n, *_buffer, c->context(), c->hmac()))) {
+		if (ASDCP_FAILURE(reader->ReadFrame(n, *_buffer, c->context(), check_hmac ? c->hmac() : nullptr))) {
 			boost::throw_exception (ReadError ("could not read frame"));
 		}
 	}

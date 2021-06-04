@@ -80,13 +80,14 @@ MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path)
  *  @param reader Reader for the asset's MXF file.
  *  @param n Frame within the asset, not taking EntryPoint into account.
  *  @param c Context for decryption, or 0.
+ *  @param check_hmac true to check the HMAC and give an error if it is not as expected.
  */
-MonoPictureFrame::MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, shared_ptr<DecryptionContext> c)
+MonoPictureFrame::MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, shared_ptr<DecryptionContext> c, bool check_hmac)
 {
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = make_shared<ASDCP::JP2K::FrameBuffer>(4 * Kumu::Megabyte);
 
-	auto const r = reader->ReadFrame (n, *_buffer, c->context(), c->hmac());
+	auto const r = reader->ReadFrame (n, *_buffer, c->context(), check_hmac ? c->hmac() : nullptr);
 
 	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (ReadError(String::compose ("could not read video frame %1 (%2)", n, static_cast<int>(r))));

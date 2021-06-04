@@ -51,7 +51,7 @@ namespace dcp {
 class SoundFrame : public Frame<ASDCP::PCM::MXFReader, ASDCP::PCM::FrameBuffer>
 {
 public:
-	SoundFrame (ASDCP::PCM::MXFReader* reader, int n, std::shared_ptr<const DecryptionContext> c);
+	SoundFrame (ASDCP::PCM::MXFReader* reader, int n, std::shared_ptr<const DecryptionContext> c, bool check_hmac);
 	int channels () const;
 	int samples () const;
 	int32_t get (int channel, int sample) const;

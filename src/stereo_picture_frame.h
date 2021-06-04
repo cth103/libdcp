@@ -105,7 +105,7 @@ private:
 	*/
 	friend class AssetReader<ASDCP::JP2K::MXFSReader, StereoPictureFrame>;
 
-	StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, std::shared_ptr<DecryptionContext>);
+	StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, std::shared_ptr<DecryptionContext>, bool check_hmac);
 
 	std::shared_ptr<ASDCP::JP2K::SFrameBuffer> _buffer;
 };

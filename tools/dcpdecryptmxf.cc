@@ -68,13 +68,15 @@ help (string n)
 	     << "  -o, --output       output filename\n"
 	     << "  -k, --kdm          KDM file\n"
 	     << "  -p, --private-key  private key file\n"
-	     << "  -t, --type         MXF type: picture or atmos\n";
+	     << "  -t, --type         MXF type: picture or atmos\n"
+	     << "  -i, --ignore-hmac  don't raise an error if HMACs don't agree\n";
 }
 
 template <class T, class U>
-void copy (T const& in, shared_ptr<U> writer)
+void copy (T const& in, shared_ptr<U> writer, bool ignore_hmac)
 {
 	auto reader = in.start_read();
+	reader->set_check_hmac (!ignore_hmac);
 	for (int64_t i = 0; i < in.intrinsic_duration(); ++i) {
 		auto frame = reader->get_frame (i);
 		writer->write (frame->data(), frame->size());
@@ -92,6 +94,7 @@ main (int argc, char* argv[])
 	optional<boost::filesystem::path> output_file;
 	optional<boost::filesystem::path> kdm_file;
 	optional<boost::filesystem::path> private_key_file;
+	bool ignore_hmac = false;
 
 	enum class Type {
 		PICTURE,
@@ -110,10 +113,11 @@ main (int argc, char* argv[])
 			{ "kdm", required_argument, 0, 'k'},
 			{ "private-key", required_argument, 0, 'p'},
 			{ "type", required_argument, 0, 't' },
+			{ "ignore-hmac", no_argument, 0, 'i' },
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "Avho:k:p:t:", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Avho:k:p:t:i", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -147,6 +151,9 @@ main (int argc, char* argv[])
 				cerr << "Unknown MXF type " << optarg << "\n";
 				exit (EXIT_FAILURE);
 			}
+			break;
+		case 'i':
+			ignore_hmac = true;
 			break;
 		}
 	}
@@ -214,7 +221,7 @@ main (int argc, char* argv[])
 				in.atmos_version()
 				);
 			auto writer = out.start_write (output_file.get());
-			copy (in, writer);
+			copy (in, writer, ignore_hmac);
 			break;
 		}
 		case Type::PICTURE:
@@ -223,7 +230,7 @@ main (int argc, char* argv[])
 			add_key (in, decrypted_kdm);
 			dcp::MonoPictureAsset out (in.edit_rate(), dcp::Standard::SMPTE);
 			auto writer = out.start_write (output_file.get(), false);
-			copy (in, writer);
+			copy (in, writer, ignore_hmac);
 			break;
 		}
 		}

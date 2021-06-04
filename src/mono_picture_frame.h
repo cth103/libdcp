@@ -101,7 +101,7 @@ private:
 	*/
 	friend class AssetReader<ASDCP::JP2K::MXFReader, MonoPictureFrame>;
 
-	MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, std::shared_ptr<DecryptionContext>);
+	MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, std::shared_ptr<DecryptionContext>, bool check_hmac);
 
 	std::shared_ptr<ASDCP::JP2K::FrameBuffer> _buffer;
 };

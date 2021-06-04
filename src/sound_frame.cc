@@ -46,8 +46,8 @@ using std::cout;
 using namespace dcp;
 
 
-SoundFrame::SoundFrame (ASDCP::PCM::MXFReader* reader, int n, std::shared_ptr<const DecryptionContext> c)
-	: Frame<ASDCP::PCM::MXFReader, ASDCP::PCM::FrameBuffer> (reader, n, c)
+SoundFrame::SoundFrame (ASDCP::PCM::MXFReader* reader, int n, std::shared_ptr<const DecryptionContext> c, bool check_hmac)
+	: Frame<ASDCP::PCM::MXFReader, ASDCP::PCM::FrameBuffer> (reader, n, c, check_hmac)
 {
 	ASDCP::PCM::AudioDescriptor desc;
 	reader->FillAudioDescriptor (desc);

@@ -94,13 +94,14 @@ StereoPictureFrame::Part::size () const
 /** Make a picture frame from a 3D (stereoscopic) asset.
  *  @param reader Reader for the MXF file.
  *  @param n Frame within the asset, not taking EntryPoint into account.
+ *  @param check_hmac true to check the HMAC and give an error if it is not as expected.
  */
-StereoPictureFrame::StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, shared_ptr<DecryptionContext> c)
+StereoPictureFrame::StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, shared_ptr<DecryptionContext> c, bool check_hmac)
 {
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = make_shared<ASDCP::JP2K::SFrameBuffer>(4 * Kumu::Megabyte);
 
-	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->context(), c->hmac()))) {
+	if (ASDCP_FAILURE (reader->ReadFrame (n, *_buffer, c->context(), check_hmac ? c->hmac() : nullptr))) {
 		boost::throw_exception (ReadError (String::compose ("could not read video frame %1 of %2", n)));
 	}
 }
