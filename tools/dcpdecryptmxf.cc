@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,67 +31,100 @@
     files in the program, then also delete it here.
 */
 
-#include "encrypted_kdm.h"
-#include "decrypted_kdm.h"
-#include "crypto_context.h"
-#include "key.h"
-#include "util.h"
+
 #include "atmos_asset.h"
-#include "atmos_frame.h"
 #include "atmos_asset_reader.h"
 #include "atmos_asset_writer.h"
+#include "atmos_frame.h"
+#include "crypto_context.h"
+#include "decrypted_kdm.h"
+#include "encrypted_kdm.h"
 #include "exceptions.h"
+#include "key.h"
+#include "mono_picture_asset.h"
+#include "mono_picture_asset_writer.h"
+#include "util.h"
 #include <asdcp/AS_DCP.h>
 #include <getopt.h>
+#include <iostream>
 #include <string>
 
-using std::string;
+
 using std::cerr;
 using std::cout;
-using boost::optional;
 using std::shared_ptr;
+using std::string;
+using boost::optional;
+
 
 static void
 help (string n)
 {
-	cerr << "Syntax: " << n << " [OPTION] <MXF>]\n"
-	     << "  -v, --version      show libdcp version\n"
+	cerr << "Re-write a MXF (decrypting it if required)\n"
+	     << "Syntax: " << n << " [OPTION] <MXF>]\n"
+	     << "  --version          show libdcp version\n"
+	     << "  -v, --verbose      be verbose\n"
 	     << "  -h, --help         show this help\n"
 	     << "  -o, --output       output filename\n"
 	     << "  -k, --kdm          KDM file\n"
-	     << "  -p, --private-key  private key file\n";
+	     << "  -p, --private-key  private key file\n"
+	     << "  -t, --type         MXF type: picture or atmos\n";
 }
+
+template <class T, class U>
+void copy (T const& in, shared_ptr<U> writer)
+{
+	auto reader = in.start_read();
+	for (int64_t i = 0; i < in.intrinsic_duration(); ++i) {
+		auto frame = reader->get_frame (i);
+		writer->write (frame->data(), frame->size());
+	}
+};
+
 
 int
 main (int argc, char* argv[])
 {
 	dcp::init ();
 
+	bool verbose = false;
 	optional<boost::filesystem::path> output_file;
 	optional<boost::filesystem::path> kdm_file;
 	optional<boost::filesystem::path> private_key_file;
 
+	enum class Type {
+		PICTURE,
+		ATMOS,
+	};
+
+	optional<Type> type;
+
 	int option_index = 0;
 	while (true) {
 		struct option long_options[] = {
-			{ "version", no_argument, 0, 'v' },
+			{ "version", no_argument, 0, 'A' },
+			{ "verbose", no_argument, 0, 'v' },
 			{ "help", no_argument, 0, 'h' },
 			{ "output", required_argument, 0, 'o'},
 			{ "kdm", required_argument, 0, 'k'},
 			{ "private-key", required_argument, 0, 'p'},
+			{ "type", required_argument, 0, 't' },
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "vho:k:p:", long_options, &option_index);
+		int c = getopt_long (argc, argv, "Avho:k:p:t:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
 		}
 
 		switch (c) {
-		case 'v':
+		case 'A':
 			cout << "libdcp version " << LIBDCP_VERSION << "\n";
 			exit (EXIT_SUCCESS);
+		case 'v':
+			verbose = true;
+			break;
 		case 'h':
 			help (argv[0]);
 			exit (EXIT_SUCCESS);
@@ -103,6 +136,16 @@ main (int argc, char* argv[])
 			break;
 		case 'p':
 			private_key_file = optarg;
+			break;
+		case 't':
+			if (strcmp(optarg, "picture") == 0) {
+				type = Type::PICTURE;
+			} else if (strcmp(optarg, "atmos") == 0) {
+				type = Type::ATMOS;
+			} else {
+				cerr << "Unknown MXF type " << optarg << "\n";
+				exit (EXIT_FAILURE);
+			}
 			break;
 		}
 	}
@@ -129,28 +172,62 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
+	if (!type) {
+		cerr << "You must specify -t or --type\n";
+		exit (EXIT_FAILURE);
+	}
+
 	dcp::EncryptedKDM encrypted_kdm (dcp::file_to_string (kdm_file.get ()));
 	dcp::DecryptedKDM decrypted_kdm (encrypted_kdm, dcp::file_to_string (private_key_file.get()));
 
-	/* XXX: only works for Atmos! */
+	auto add_key = [verbose](dcp::MXF& mxf, dcp::DecryptedKDM const& kdm) {
+		auto key_id = mxf.key_id();
+		if (key_id) {
+			if (verbose) {
+				cout << "Asset is encrypted.\n";
+			}
+			auto keys = kdm.keys();
+			auto key = std::find_if (keys.begin(), keys.end(), [key_id](dcp::DecryptedKDMKey const& k) { return k.id() == *key_id; });
+			if (key == keys.end()) {
+				cout << "No key found in KDM.\n";
+				exit(EXIT_FAILURE);
+			}
+			if (verbose) {
+				cout << "Key found in KDM.\n";
+			}
+			mxf.set_key (key->key());
+		}
+	};
 
 	try {
-		dcp::AtmosAsset in (input_file);
-		shared_ptr<dcp::AtmosAssetReader> reader = in.start_read ();
-		dcp::AtmosAsset out (
-			in.edit_rate(),
-			in.first_frame(),
-			in.max_channel_count(),
-			in.max_object_count(),
-			in.atmos_version()
-			);
-		shared_ptr<dcp::AtmosAssetWriter> writer = out.start_write (output_file.get());
-		for (int64_t i = 0; i < in.intrinsic_duration(); ++i) {
-			shared_ptr<const dcp::AtmosFrame> f = reader->get_frame (i);
-			writer->write (f->data(), f->size());
+		switch (*type) {
+		case Type::ATMOS:
+		{
+			dcp::AtmosAsset in (input_file);
+			add_key (in, decrypted_kdm);
+			dcp::AtmosAsset out (
+				in.edit_rate(),
+				in.first_frame(),
+				in.max_channel_count(),
+				in.max_object_count(),
+				in.atmos_version()
+				);
+			auto writer = out.start_write (output_file.get());
+			copy (in, writer);
+			break;
+		}
+		case Type::PICTURE:
+		{
+			dcp::MonoPictureAsset in (input_file);
+			add_key (in, decrypted_kdm);
+			dcp::MonoPictureAsset out (in.edit_rate(), dcp::Standard::SMPTE);
+			auto writer = out.start_write (output_file.get(), false);
+			copy (in, writer);
+			break;
+		}
 		}
 	} catch (dcp::ReadError& e) {
-		cerr << "Unknown MXF format.\n";
+		cerr << "Read error: " << e.what() << "\n";
 		return EXIT_FAILURE;
 	}
 
