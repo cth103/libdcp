@@ -1,3 +1,4 @@
+209
 Adlm
 Adlam
 Afak
@@ -5,7 +6,7 @@ Afaka
 Aghb
 Caucasian Albanian
 Ahom
-Tai Ahom
+Ahom/Tai Ahom
 Arab
 Arabic
 Aran
@@ -25,7 +26,7 @@ Bassa Vah
 Batk
 Batak
 Beng
-Bangla
+Bengali/Bangla
 Bhks
 Bhaiksuki
 Blis
@@ -65,15 +66,15 @@ Cyrillic
 Cyrs
 Cyrillic (Old Church Slavonic variant)
 Deva
-Nagari
+Devanagari/Nagari
 Diak
 Dives Akuru
 Dogr
 Dogra
 Dsrt
-Mormon
+Deseret/Mormon
 Dupl
-Duployan stenography
+Duployan shorthand/Duployan stenography
 Egyd
 Egyptian demotic
 Egyh
@@ -85,7 +86,7 @@ Elbasan
 Elym
 Elymaic
 Ethi
-Ge'ez
+Ethiopic/Geʻez/Ge'ez
 Geok
 Khutsuri (Asomtavruli and Nuskhuri)
 Geor
@@ -109,11 +110,11 @@ Gurmukhi
 Hanb
 Han with Bopomofo (alias for Han + Bopomofo)
 Hang
-Hangeul
+Hangul/Hangŭl/Hangeul
 Hani
-Hanja
+Han/Hanzi/Kanji/Hanja
 Hano
-Hanunóo
+Hanunoo/Hanunóo
 Hans
 Han (Simplified variant)
 Hant
@@ -125,7 +126,7 @@ Hebrew
 Hira
 Hiragana
 Hluw
-Hittite Hieroglyphs
+Anatolian Hieroglyphs/Luwian Hieroglyphs/Hittite Hieroglyphs
 Hmng
 Pahawh Hmong
 Hmnp
@@ -133,9 +134,9 @@ Nyiakeng Puachue Hmong
 Hrkt
 Japanese syllabaries (alias for Hiragana + Katakana)
 Hung
-Hungarian Runic
+Old Hungarian/Hungarian Runic
 Inds
-Harappan
+Indus/Harappan
 Ital
 Old Italic (Etruscan, Oscan, etc.)
 Jamo
@@ -169,7 +170,7 @@ Kpelle
 Kthi
 Kaithi
 Lana
-Lanna
+Tai Tham/Lanna
 Laoo
 Lao
 Latf
@@ -181,7 +182,7 @@ Latin
 Leke
 Leke
 Lepc
-Róng
+Lepcha/Róng
 Limb
 Limbu
 Lina
@@ -189,7 +190,7 @@ Linear A
 Linb
 Linear B
 Lisu
-Fraser
+Lisu/Fraser
 Loma
 Loma
 Lyci
@@ -201,7 +202,7 @@ Mahajani
 Maka
 Makasar
 Mand
-Mandaean
+Mandaic/Mandaean
 Mani
 Manichaean
 Marc
@@ -209,7 +210,7 @@ Marchen
 Maya
 Mayan hieroglyphs
 Medf
-Oberi Ɔkaimɛ
+Medefaidrin/Oberi Okaime/Oberi Ɔkaimɛ
 Mend
 Mende Kikakui
 Merc
@@ -219,51 +220,57 @@ Meroitic Hieroglyphs
 Mlym
 Malayalam
 Modi
-Moḍī
+Modi/Moḍī
 Mong
 Mongolian
 Moon
-Moon type
+Moon/Moon code/Moon script/Moon type
 Mroo
-Mru
+Mro/Mru
 Mtei
-Meetei
+Meitei Mayek/Meithei/Meetei
 Mult
 Multani
 Mymr
-Burmese
+Myanmar/Burmese
 Nand
 Nandinagari
 Narb
-Ancient North Arabian
+Old North Arabian/Ancient North Arabian
 Nbat
 Nabataean
 Newa
-Nepāla lipi
+Newa/Newar/Newari/Nepāla lipi
 Nkdb
-Nakhi Tomba
+Naxi Dongba/na²¹ɕi³³ to³³ba²¹/Nakhi Tomba
 Nkgb
-Nakhi Geba
+Naxi Geba/na²¹ɕi³³ gʌ²¹ba²¹/'Na-'Khi ²Ggŏ-¹baw/Nakhi Geba
 Nkoo
-N'Ko
+N’Ko/N'Ko
 Nshu
 Nüshu
 Ogam
 Ogham
 Olck
-Santali
+Ol Chiki/Ol Cemet'/Ol/Santali
 Orkh
-Orkhon Runic
+Old Turkic/Orkhon Runic
 Orya
-Odia
+Oriya/Odia
 Osge
 Osage
 Osma
 Osmanya
+Ougr
+Old Uyghur
 Palm
 Palmyrene
 Pauc
 Pau Cin Hau
+Pcun
+Proto-Cuneiform
+Pelm
+Proto-Elamite
 Perm
 Old Permic
 Phag
@@ -279,13 +286,17 @@ Phoenician
 Piqd
 Klingon (KLI pIqaD)
 Plrd
-Pollard
+Miao/Pollard
 Prti
 Inscriptional Parthian
+Psin
+Proto-Sinaitic
 Qaaa..Qabx
 Private use
+Ranj
+Ranjana
 Rjng
-Kaganga
+Rejang/Redjang/Kaganga
 Rohg
 Hanifi Rohingya
 Roro
@@ -303,15 +314,15 @@ Saurashtra
 Sgnw
 SignWriting
 Shaw
-Shaw
+Shavian/Shaw
 Shrd
-Śāradā
+Sharada/Śāradā
 Shui
 Shuishu
 Sidd
-Siddhamātṛkā
+Siddham/Siddhaṃ/Siddhamātṛkā
 Sind
-Sindhi
+Khudawadi/Sindhi
 Sinh
 Sinhala
 Sogd
@@ -337,7 +348,7 @@ Syriac (Eastern variant)
 Tagb
 Tagbanwa
 Takr
-Ṭāṅkrī
+Takri/Ṭākrī/Ṭāṅkrī
 Tale
 Tai Le
 Talu
@@ -353,9 +364,9 @@ Telugu
 Teng
 Tengwar
 Tfng
-Berber
+Tifinagh/Berber
 Tglg
-Alibata
+Tagalog/Baybayin/Alibata
 Thaa
 Thaana
 Thai
@@ -364,6 +375,8 @@ Tibt
 Tibetan
 Tirh
 Tirhuta
+Tnsa
+Tangsa
 Toto
 Toto
 Ugar
@@ -372,8 +385,10 @@ Vaii
 Vai
 Visp
 Visible Speech
+Vith
+Vithkuqi
 Wara
-Varang Kshiti
+Warang Citi/Varang Kshiti
 Wcho
 Wancho
 Wole
@@ -387,7 +402,7 @@ Yezidi
 Yiii
 Yi
 Zanb
-Horizontal Square Script
+Zanabazar Square/Zanabazarin Dörböljin Useg/Xewtee Dörböljin Bicig/Horizontal Square Script
 Zinh
 Code for inherited script
 Zmth
