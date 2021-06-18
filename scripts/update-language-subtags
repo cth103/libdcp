@@ -34,7 +34,6 @@ with urllib.request.urlopen('https://www.iana.org/assignments/language-subtag-re
 
 for k, v in lists.items():
     with open(os.path.join('tags', k), 'w') as f:
-        print(len(v), file=f)
         for e in v:
             print(e[0], file=f)
             print(e[1], file=f)
