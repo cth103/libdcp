@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		BOOST_CHECK_NO_THROW (t.set_language("sl"));
 		BOOST_CHECK_NO_THROW (t.add_variant("rozaj"));
 		BOOST_CHECK_EQUAL (t.to_string(), "sl-rozaj");
-		BOOST_CHECK_EQUAL (t.description(), "Rezijan dialect of Slovenian");
+		BOOST_CHECK_EQUAL (t.description(), "Resian/Resianic/Rezijan dialect of Slovenian");
 	}
 
 	/* Language + 2 variants */
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		BOOST_CHECK_NO_THROW (t.add_variant("biske"));
 		BOOST_CHECK_NO_THROW (t.add_variant("rozaj"));
 		BOOST_CHECK_EQUAL (t.to_string(), "sl-biske-rozaj");
-		BOOST_CHECK_EQUAL (t.description(), "The Bila dialect of Resian dialect of Rezijan dialect of Slovenian");
+		BOOST_CHECK_EQUAL (t.description(), "The San Giorgio dialect of Resian/The Bila dialect of Resian dialect of Resian/Resianic/Rezijan dialect of Slovenian");
 	}
 
 	/* Language + extlang */
