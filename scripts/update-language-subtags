@@ -10,7 +10,7 @@ lists = {}
 with urllib.request.urlopen('https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry') as f:
 #with open('language-subtag-registry', 'r') as f:
     for l in f.readlines():
-        if l.strip().decode('utf-8') == "%%":
+        if l.strip() == "%%":
             if 'Type' in block:
                 if block['Type'] in ['language', 'variant', 'region', 'script', 'extlang']:
                     if not block['Type'] in lists:
@@ -23,7 +23,7 @@ with urllib.request.urlopen('https://www.iana.org/assignments/language-subtag-re
                     print("Unknown type `%s'" % block['Type'])
             block = {}
         else:
-            p = l.strip().decode('utf-8').split(':')
+            p = l.strip().split(':')
             if len(p) > 1:
                 key = p[0]
                 value = p[1][1:]
