@@ -186,6 +186,9 @@ CertificateChain::CertificateChain (
 	string leaf_common_name
 	)
 {
+	/* Valid for 40 years */
+	int const days = 365 * 40;
+
 	boost::filesystem::path directory = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path ();
 	boost::filesystem::create_directories (directory);
 
@@ -221,9 +224,9 @@ CertificateChain::CertificateChain (
 	{
 		command (
 			String::compose (
-				"%1 req -new -x509 -sha256 -config ca.cnf -days 3650 -set_serial 5"
-				" -subj \"%2\" -key ca.key -outform PEM -out ca.self-signed.pem",
-				quoted_openssl, ca_subject
+				"%1 req -new -x509 -sha256 -config ca.cnf -days %2 -set_serial 5"
+				" -subj \"%3\" -key ca.key -outform PEM -out ca.self-signed.pem",
+				quoted_openssl, days, ca_subject
 				)
 			);
 	}
@@ -255,16 +258,18 @@ CertificateChain::CertificateChain (
 	{
 		command (
 			String::compose (
-				"%1 req -new -config intermediate.cnf -days 3649 -subj \"%2\" -key intermediate.key -out intermediate.csr",
-				quoted_openssl, inter_subject
+				"%1 req -new -config intermediate.cnf -days %2 -subj \"%3\" -key intermediate.key -out intermediate.csr",
+				quoted_openssl, days - 1, inter_subject
 				)
 			);
 	}
 
 	command (
-		quoted_openssl +
-		" x509 -req -sha256 -days 3649 -CA ca.self-signed.pem -CAkey ca.key -set_serial 6"
-		" -in intermediate.csr -extfile intermediate.cnf -extensions v3_ca -out intermediate.signed.pem"
+		String::compose(
+			"%1 x509 -req -sha256 -days %2 -CA ca.self-signed.pem -CAkey ca.key -set_serial 6"
+			" -in intermediate.csr -extfile intermediate.cnf -extensions v3_ca -out intermediate.signed.pem",
+			quoted_openssl, days - 1
+			)
 		);
 
 	command (quoted_openssl + " genrsa -out leaf.key 2048");
@@ -294,16 +299,18 @@ CertificateChain::CertificateChain (
 	{
 		command (
 			String::compose (
-				"%1 req -new -config leaf.cnf -days 3648 -subj \"%2\" -key leaf.key -outform PEM -out leaf.csr",
-				quoted_openssl, leaf_subject
+				"%1 req -new -config leaf.cnf -days %2 -subj \"%3\" -key leaf.key -outform PEM -out leaf.csr",
+				quoted_openssl, days - 2, leaf_subject
 				)
 			);
 	}
 
 	command (
-		quoted_openssl +
-		" x509 -req -sha256 -days 3648 -CA intermediate.signed.pem -CAkey intermediate.key"
-		" -set_serial 7 -in leaf.csr -extfile leaf.cnf -extensions v3_ca -out leaf.signed.pem"
+		String::compose(
+			"%1 x509 -req -sha256 -days %2 -CA intermediate.signed.pem -CAkey intermediate.key"
+			" -set_serial 7 -in leaf.csr -extfile leaf.cnf -extensions v3_ca -out leaf.signed.pem",
+			quoted_openssl, days - 2
+			)
 		);
 
 	boost::filesystem::current_path (cwd);
