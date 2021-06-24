@@ -123,8 +123,16 @@ public:
 
 	int64_t duration () const;
 
+	std::string issuer () const {
+		return _issuer;
+	}
+
 	void set_issuer (std::string issuer) {
 		_issuer = issuer;
+	}
+
+	std::string creator () const {
+		return _creator;
 	}
 
 	void set_creator (std::string creator) {
