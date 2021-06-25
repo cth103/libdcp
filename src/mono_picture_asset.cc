@@ -94,7 +94,7 @@ MonoPictureAsset::MonoPictureAsset (Fraction edit_rate, Standard standard)
 
 
 static void
-storing_note_handler (list<pair<NoteType, string> >& notes, NoteType t, string s)
+storing_note_handler (list<pair<NoteType, string>>& notes, NoteType t, string s)
 {
 	notes.push_back (make_pair (t, s));
 }
@@ -156,7 +156,7 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 			auto frame_A = reader->get_frame (i);
 			auto frame_B = other_reader->get_frame (i);
 
-			list<pair<NoteType, string> > notes;
+			list<pair<NoteType, string>> notes;
 
 			if (!frame_buffer_equals (
 				    i, opt, bind (&storing_note_handler, boost::ref(notes), _1, _2),

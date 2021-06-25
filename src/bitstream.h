@@ -61,7 +61,7 @@ public:
 
 private:
 	std::vector<bool> _data;
-	boost::optional<boost::crc_basic<16> > _crc;
+	boost::optional<boost::crc_basic<16>> _crc;
 };
 
 

@@ -388,7 +388,7 @@ dcp::operator<< (ostream& os, dcp::LanguageTag const& tag)
 }
 
 
-vector<pair<LanguageTag::SubtagType, LanguageTag::SubtagData> >
+vector<pair<LanguageTag::SubtagType, LanguageTag::SubtagData>>
 LanguageTag::subtags () const
 {
 	vector<pair<SubtagType, SubtagData>> s;

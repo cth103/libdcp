@@ -97,7 +97,7 @@ check_no_errors (boost::filesystem::path path)
 
 template <class T>
 shared_ptr<T>
-pointer_to_id_in_vector (shared_ptr<T> needle, vector<shared_ptr<T> > haystack)
+pointer_to_id_in_vector (shared_ptr<T> needle, vector<shared_ptr<T>> haystack)
 {
 	for (auto i: haystack) {
 		if (i->id() == needle->id()) {

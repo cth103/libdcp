@@ -359,7 +359,7 @@ main (int argc, char* argv[])
 		only = boost::split(only, *only_string, boost::is_any_of(","));
 	}
 
-	vector<shared_ptr<CPL> > cpls;
+	vector<shared_ptr<CPL>> cpls;
 	if (boost::filesystem::is_directory(argv[optind])) {
 		DCP* dcp = 0;
 		vector<dcp::VerificationNote> notes;

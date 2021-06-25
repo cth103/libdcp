@@ -484,7 +484,7 @@ public:
 
 private:
 	MCASoundField _field;
-	std::vector<boost::optional<Channel> > _channels;
+	std::vector<boost::optional<Channel>> _channels;
 };
 
 
