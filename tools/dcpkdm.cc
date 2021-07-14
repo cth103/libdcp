@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2017-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2017-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,17 +31,20 @@
     files in the program, then also delete it here.
 */
 
-#include "encrypted_kdm.h"
-#include "decrypted_kdm.h"
-#include "util.h"
-#include "exceptions.h"
+
 #include "certificate_chain.h"
+#include "decrypted_kdm.h"
+#include "encrypted_kdm.h"
+#include "exceptions.h"
+#include "util.h"
 #include <getopt.h>
 
-using std::string;
-using std::cout;
+
 using std::cerr;
+using std::cout;
+using std::string;
 using boost::optional;
+
 
 static void
 help (string n)
@@ -51,6 +54,7 @@ help (string n)
 	     << "  -p, --private-key  private key file\n";
 }
 
+
 static string
 tm_to_string (struct tm t)
 {
@@ -58,6 +62,7 @@ tm_to_string (struct tm t)
 	snprintf (buffer, 64, "%02d/%02d/%02d %02d:%02d:%02d", t.tm_mday, t.tm_mon + 1, t.tm_year + 1900, t.tm_hour, t.tm_min, t.tm_sec);
 	return buffer;
 }
+
 
 int
 main (int argc, char* argv[])

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2020-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -114,8 +114,8 @@ BOOST_AUTO_TEST_CASE (write_mca_descriptors_to_mxf_test)
 
 	/* Make a CPL as a roundabout way to read the metadata we just wrote to the MXF */
 
-	shared_ptr<dcp::ReelSoundAsset> reel_sound_asset(new dcp::ReelSoundAsset(sound_asset, 0));
-	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	auto reel_sound_asset = make_shared<dcp::ReelSoundAsset>(sound_asset, 0);
+	auto reel = make_shared<dcp::Reel>();
 	reel->add (black_picture_asset("build/test/write_mca_descriptors_to_mxf_test", 24));
 	reel->add (reel_sound_asset);
 

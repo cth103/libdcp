@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,12 +31,14 @@
     files in the program, then also delete it here.
 */
 
+
 #include "common.h"
 #include "dcp.h"
 
-using std::dynamic_pointer_cast;
+
 using std::shared_ptr;
 using std::vector;
+
 
 void
 dcp::filter_notes (vector<dcp::VerificationNote>& notes, bool ignore_missing_assets)
@@ -52,3 +54,4 @@ dcp::filter_notes (vector<dcp::VerificationNote>& notes, bool ignore_missing_ass
 
 	notes = filtered;
 }
+

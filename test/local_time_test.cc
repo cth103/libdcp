@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2020 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
-#include <boost/test/unit_test.hpp>
-#include "local_time.h"
+
 #include "exceptions.h"
+#include "local_time.h"
+#include <boost/test/unit_test.hpp>
+
 
 /** Check that dcp::LocalTime works */
 BOOST_AUTO_TEST_CASE (local_time_basic_test)
@@ -138,6 +140,7 @@ BOOST_AUTO_TEST_CASE (local_time_basic_test)
 		BOOST_CHECK_EQUAL (t.as_string(), "2013-01-05T18:06:59-04:30");
 	}
 }
+
 
 BOOST_AUTO_TEST_CASE (local_time_add_minutes_test)
 {

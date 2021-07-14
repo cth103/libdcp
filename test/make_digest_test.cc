@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2016-2019 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2016-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -38,10 +38,12 @@
 #include <boost/test/unit_test.hpp>
 #include <sys/time.h>
 
+
 void progress (float)
 {
 
 }
+
 
 /** Check SHA1 digests */
 BOOST_AUTO_TEST_CASE (make_digest_test)
@@ -50,12 +52,12 @@ BOOST_AUTO_TEST_CASE (make_digest_test)
 	srand (1);
 	int const N = 256 * 1024 * 1024;
 	dcp::ArrayData data (N);
-	uint8_t* p = data.data();
+	auto p = data.data();
 	for (int i = 0; i < N; ++i) {
 		*p++ = rand() & 0xff;
 	}
 	data.write ("build/test/random");
 
 	/* Hash it */
-	BOOST_CHECK_EQUAL (dcp::make_digest ("build/test/random", boost::bind (&progress, _1)), "GKbk/V3fcRtP5MaPdSmAGNbKkaU=");
+	BOOST_CHECK_EQUAL (dcp::make_digest("build/test/random", boost::bind(&progress, _1)), "GKbk/V3fcRtP5MaPdSmAGNbKkaU=");
 }
