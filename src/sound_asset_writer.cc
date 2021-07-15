@@ -126,7 +126,7 @@ SoundAssetWriter::start ()
 			asdcp_smpte_dict->ul(ASDCP::MDD_WaveAudioDescriptor), reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&essence_descriptor)
 			);
 		DCP_ASSERT (essence_descriptor);
-		essence_descriptor->ChannelAssignment = asdcp_smpte_dict->ul(ASDCP::MDD_DCAudioChannelCfg_MCA);
+		essence_descriptor->ChannelAssignment = asdcp_smpte_dict->ul(ASDCP::MDD_DCAudioChannelCfg_4_WTF);
 
 		auto soundfield = new ASDCP::MXF::SoundfieldGroupLabelSubDescriptor(asdcp_smpte_dict);
 		GenRandomValue (soundfield->MCALinkID);
