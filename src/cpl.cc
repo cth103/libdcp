@@ -423,13 +423,19 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 		meta->add_child("MainSubtitleLanguageList", "meta")->add_child_text(lang);
 	}
 
+	auto metadata_list = meta->add_child("ExtensionMetadataList", "meta");
+
+	auto add_extension_metadata = [metadata_list](string scope, string name, string property_name, string property_value) {
+		auto extension = metadata_list->add_child("ExtensionMetadata", "meta");
+		extension->set_attribute("scope", scope);
+		extension->add_child("Name", "meta")->add_child_text(name);
+		auto property = extension->add_child("PropertyList", "meta")->add_child("Property", "meta");
+		property->add_child("Name", "meta")->add_child_text(property_name);
+		property->add_child("Value", "meta")->add_child_text(property_value);
+	};
+
 	/* SMPTE Bv2.1 8.6.3 */
-	auto extension = meta->add_child("ExtensionMetadataList", "meta")->add_child("ExtensionMetadata", "meta");
-	extension->set_attribute("scope", "http://isdcf.com/ns/cplmd/app");
-	extension->add_child("Name", "meta")->add_child_text("Application");
-	auto property = extension->add_child("PropertyList", "meta")->add_child("Property", "meta");
-	property->add_child("Name", "meta")->add_child_text("DCP Constraints Profile");
-	property->add_child("Value", "meta")->add_child_text("SMPTE-RDD-52:2020-Bv2.1");
+	add_extension_metadata ("http://isdcf.com/ns/cplmd/app", "Application", "DCP Constraints Profile", "SMPTE-RDD-52:2020-Bv2.1");
 
 	if (_reels.front()->main_sound()) {
 		auto asset = _reels.front()->main_sound()->asset();
