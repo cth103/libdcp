@@ -36,7 +36,7 @@
           <EntryPoint>0</EntryPoint>
           <Duration>24</Duration>
           <KeyId>urn:uuid:a4f49b5e-622f-45f3-8ba7-63ce1fd40e78</KeyId>
-          <Hash>3j42sogTj7BBc/q3fTPI+vZQLYk=</Hash>
+          <Hash>MSuGS6IIIQKGHR626+XAUbJj1zY=</Hash>
         </MainSound>
       </AssetList>
     </Reel>
@@ -59,15 +59,15 @@
           <dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-        <dsig:DigestValue>6erKjijSOorr+dnUY94RE8Xnhhs=</dsig:DigestValue>
+        <dsig:DigestValue>G/4l/FrHjANRjHMvx1wwtojaqXY=</dsig:DigestValue>
       </dsig:Reference>
     </dsig:SignedInfo>
-    <dsig:SignatureValue>WKJIsIJlvmgVujCBRgP9gflsreKBV+3MH2jdevS/fG4QGM4YQj3XbI9uNCJm1P/Y
-aU43fi/ZCJuazhFeF6l+JerE+mQvl+HEeaBskgwDJTP7+/OsWPy/X+jIZt+D/vzO
-xNtN1qnr/y86qNoQQAYcQSdosdGNk74BZj80aGgt4uXJoN6o47A9Cw09lTjasrJw
-NBE12eKlZhwiY5QyJ4aFu4p0FjUEP9X/6RapW8SCY7m7MKjvO9h+W6hhKWKuoRmn
-+qL1YFAW9eehvxGCNyaTGetiKkZtYG5nWNYEXPSQZ5si9hQmMxoxoR4QEsIBEWwl
-d+esn4JlxufMc3yXDgVtXw==</dsig:SignatureValue>
+    <dsig:SignatureValue>tLWdo5wkG1aseboTfSONMMYLEnd89Wqcjw0Gwhw71wX/lEKEGYiCluUchInurc6J
++Lq7rgNz+SPg7XIgh1N58EHqEarwH6oFTf2ZFMtoEzmX1nXcjKR7MRYomMtCBb/V
+g+LOpPuOY+36bQ/8XBYiH8t1w6ayNSLI0LGTuAfJDz+/L6wAGRSLosQgVThjz3bE
+nnl9V96ufU3vMPcrq2YpT99Rb61gX3ItBKW60FiTX+NB5vBwQ1lq4vJ6qno4aviE
+HEebN6byReZtqm+X6/olVvVHJBAyOG1ZKOb9Oj6I2Iw4hx0OYB70Tg7Qkx+f8zsl
+HHXyc9gA+KzKStrrm390oA==</dsig:SignatureValue>
     <dsig:KeyInfo>
       <dsig:X509Data>
         <dsig:X509IssuerSerial>

@@ -372,9 +372,9 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id, canonical(dir / dcp_test1_cpl) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_HASHES, canonical(dir / "audio.mxf") },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xD9HpNAjKsECGtJEWtwV2/T5ndG8=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 26 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xLq7ot/GobgrqUYdlbR8FCD5APqs=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 26 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xgVKhC9IkWyzQbgzpFcJ1bpqbtwk=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 19 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xz/y4fI+ocWzVB7cr8pVt2OYpOHA=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 12 }
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xc1DRq6GaSzV2brF0YnSNed46nqk=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 12 }
 		});
 }
 
