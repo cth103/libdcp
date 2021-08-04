@@ -76,6 +76,15 @@
                 </meta:Property>
               </meta:PropertyList>
             </meta:ExtensionMetadata>
+            <meta:ExtensionMetadata scope="http://isdcf.com/2017/10/SignLanguageVideo">
+              <meta:Name>Sign Language Video</meta:Name>
+              <meta:PropertyList>
+                <meta:Property>
+                  <meta:Name>Language Tag</meta:Name>
+                  <meta:Value>bzs</meta:Value>
+                </meta:Property>
+              </meta:PropertyList>
+            </meta:ExtensionMetadata>
           </meta:ExtensionMetadataList>
         </meta:CompositionMetadataAsset>
       </AssetList>

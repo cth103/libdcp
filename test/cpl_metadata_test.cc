@@ -310,6 +310,8 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 	auto lt = { dcp::LanguageTag("en-US"), dcp::LanguageTag("fr-ZA") };
 	cpl.set_additional_subtitle_languages (lt);
 
+	cpl.set_sign_language_video_language (dcp::LanguageTag("bzs"));
+
 	cpl.write_xml ("build/test/cpl_metadata_write_test1.xml", {});
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test1.xml"),

@@ -307,6 +307,14 @@ public:
 
 	void set_additional_subtitle_languages (std::vector<dcp::LanguageTag> const& lang);
 
+	void set_sign_language_video_language (dcp::LanguageTag lang) {
+		_sign_language_video_language = lang.to_string();
+	}
+
+	boost::optional<std::string> sign_language_video_language () const {
+		return _sign_language_video_language;
+	}
+
 	Standard standard () const {
 		return _standard;
 	}
@@ -355,6 +363,7 @@ private:
 	boost::optional<dcp::Size> _main_picture_active_area;
 	/* See note for _release_territory above */
 	std::vector<std::string> _additional_subtitle_languages;
+	boost::optional<std::string> _sign_language_video_language;
 
 	std::vector<std::shared_ptr<Reel>> _reels;
 
