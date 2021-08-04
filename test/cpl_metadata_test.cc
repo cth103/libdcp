@@ -307,12 +307,10 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 	reel->add (make_shared<dcp::ReelSMPTESubtitleAsset>(doc));
 	cpl.add (reel);
 
-	vector<dcp::LanguageTag> lt;
-	lt.push_back(dcp::LanguageTag("en-US"));
-	lt.push_back(dcp::LanguageTag("fr-ZA"));
+	auto lt = { dcp::LanguageTag("en-US"), dcp::LanguageTag("fr-ZA") };
 	cpl.set_additional_subtitle_languages (lt);
 
-	cpl.write_xml ("build/test/cpl_metadata_write_test1.xml", shared_ptr<dcp::CertificateChain>());
+	cpl.write_xml ("build/test/cpl_metadata_write_test1.xml", {});
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test1.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_write_test1.xml"),
@@ -359,11 +357,11 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test2)
 	cpl.set_main_picture_stored_area (dcp::Size(1998, 1080));
 	cpl.set_main_picture_active_area (dcp::Size(1440, 1080));
 
-	shared_ptr<dcp::Reel> reel(new dcp::Reel());
+	auto reel = make_shared<dcp::Reel>();
 	reel->add (black_picture_asset("build/test/cpl_metadata_write_test1"));
 	cpl.add (reel);
 
-	cpl.write_xml ("build/test/cpl_metadata_write_test2.xml", shared_ptr<dcp::CertificateChain>());
+	cpl.write_xml ("build/test/cpl_metadata_write_test2.xml", {});
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test2.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_write_test2.xml"),
