@@ -138,10 +138,8 @@ CPL::CPL (boost::filesystem::path file)
 		throw XMLError ("Missing ContentVersion tag in CPL");
 	}
 	auto rating_list = f.node_child ("RatingList");
-	if (rating_list) {
-		for (auto i: rating_list->node_children("Rating")) {
-			_ratings.push_back (Rating(i));
-		}
+	for (auto i: rating_list->node_children("Rating")) {
+		_ratings.push_back (Rating(i));
 	}
 
 	for (auto i: f.node_child("ReelList")->node_children("Reel")) {
@@ -149,14 +147,12 @@ CPL::CPL (boost::filesystem::path file)
 	}
 
 	auto reel_list = f.node_child ("ReelList");
-	if (reel_list) {
-		auto reels = reel_list->node_children("Reel");
-		if (!reels.empty()) {
-			auto asset_list = reels.front()->node_child("AssetList");
-			auto metadata = asset_list->optional_node_child("CompositionMetadataAsset");
-			if (metadata) {
-				read_composition_metadata_asset (metadata);
-			}
+	auto reels = reel_list->node_children("Reel");
+	if (!reels.empty()) {
+		auto asset_list = reels.front()->node_child("AssetList");
+		auto metadata = asset_list->optional_node_child("CompositionMetadataAsset");
+		if (metadata) {
+			read_composition_metadata_asset (metadata);
 		}
 	}
 
