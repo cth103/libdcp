@@ -2442,6 +2442,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata1)
 		"A Test DCP"
 		);
 
+	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
 	auto cpl = dcp->cpls()[0];
 
 	{
