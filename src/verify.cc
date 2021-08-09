@@ -780,7 +780,7 @@ verify_closed_caption_asset (
 
 static
 void
-verify_text_timing (
+verify_text_details (
 	vector<shared_ptr<Reel>> reels,
 	int edit_rate,
 	vector<VerificationNote>& notes,
@@ -1000,14 +1000,14 @@ verify_text_lines_and_characters (
 
 static
 void
-verify_text_timing (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& notes)
+verify_text_details (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& notes)
 {
 	if (reels.empty()) {
 		return;
 	}
 
 	if (reels[0]->main_subtitle()) {
-		verify_text_timing (reels, reels[0]->main_subtitle()->edit_rate().numerator, notes,
+		verify_text_details (reels, reels[0]->main_subtitle()->edit_rate().numerator, notes,
 			[](shared_ptr<Reel> reel) {
 				return static_cast<bool>(reel->main_subtitle());
 			},
@@ -1027,7 +1027,7 @@ verify_text_timing (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& no
 	}
 
 	for (auto i = 0U; i < reels[0]->closed_captions().size(); ++i) {
-		verify_text_timing (reels, reels[0]->closed_captions()[i]->edit_rate().numerator, notes,
+		verify_text_details (reels, reels[0]->closed_captions()[i]->edit_rate().numerator, notes,
 			[i](shared_ptr<Reel> reel) {
 				return i < reel->closed_captions().size();
 			},
@@ -1327,7 +1327,7 @@ dcp::verify (
 				most_closed_captions = std::max (most_closed_captions, reel->closed_captions().size());
 			}
 
-			verify_text_timing (cpl->reels(), notes);
+			verify_text_details (cpl->reels(), notes);
 
 			if (dcp->standard() == Standard::SMPTE) {
 
