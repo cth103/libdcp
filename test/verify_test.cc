@@ -760,6 +760,63 @@ BOOST_AUTO_TEST_CASE (verify_invalid_smpte_subtitles)
 }
 
 
+BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles)
+{
+	path const dir("build/test/verify_empty_text_node_in_subtitles");
+	prepare_directory (dir);
+	copy_file ("test/data/empty_text.mxf", dir / "subs.mxf");
+	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
+	auto reel_asset = make_shared<dcp::ReelSMPTESubtitleAsset>(asset, dcp::Fraction(24, 1), 192, 0);
+	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
+
+	check_verify_result (
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_TEXT },
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, canonical(dir / "subs.mxf") },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() },
+		});
+}
+
+
+/** A <Text> node with no content except some <Font> nodes, which themselves do have content */
+BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_child_nodes)
+{
+	path const dir("build/test/verify_empty_text_node_in_subtitles_with_child_nodes");
+	prepare_directory (dir);
+	copy_file ("test/data/empty_but_with_children.xml", dir / "subs.xml");
+	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
+	auto reel_asset = make_shared<dcp::ReelInteropSubtitleAsset>(asset, dcp::Fraction(24, 1), 192, 0);
+	auto cpl = write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
+
+	check_verify_result (
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
+		});
+}
+
+
+/** A <Text> node with no content except some <Font> nodes, which themselves also have no content */
+BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_empty_child_nodes)
+{
+	path const dir("build/test/verify_empty_text_node_in_subtitles_with_empty_child_nodes");
+	prepare_directory (dir);
+	copy_file ("test/data/empty_with_empty_children.xml", dir / "subs.xml");
+	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
+	auto reel_asset = make_shared<dcp::ReelInteropSubtitleAsset>(asset, dcp::Fraction(24, 1), 192, 0);
+	auto cpl = write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
+
+	check_verify_result (
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_TEXT },
+		});
+}
+
+
 BOOST_AUTO_TEST_CASE (verify_external_asset)
 {
 	path const ov_dir("build/test/verify_external_asset");

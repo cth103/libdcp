@@ -778,6 +778,7 @@ verify_closed_caption_asset (
 }
 
 
+/** Check the timing of the individual subtitles and make sure there are no empty <Text> nodes */
 static
 void
 verify_text_details (
@@ -795,11 +796,12 @@ verify_text_details (
 	auto too_close = false;
 	auto too_early = false;
 	auto reel_overlap = false;
+	auto empty_text = false;
 	/* current reel start time (in editable units) */
 	int64_t reel_offset = 0;
 
 	std::function<void (cxml::ConstNodePtr, optional<int>, optional<Time>, int, bool)> parse;
-	parse = [&parse, &last_out, &too_short, &too_close, &too_early, &reel_offset](cxml::ConstNodePtr node, optional<int> tcr, optional<Time> start_time, int er, bool first_reel) {
+	parse = [&parse, &last_out, &too_short, &too_close, &too_early, &empty_text, &reel_offset](cxml::ConstNodePtr node, optional<int> tcr, optional<Time> start_time, int er, bool first_reel) {
 		if (node->name() == "Subtitle") {
 			Time in (node->string_attribute("TimeIn"), tcr);
 			if (start_time) {
@@ -824,10 +826,25 @@ verify_text_details (
 				}
 			}
 			last_out = reel_offset + out.as_editable_units_floor(er);
-		} else {
-			for (auto i: node->node_children()) {
-				parse(i, tcr, start_time, er, first_reel);
+		} else if (node->name() == "Text") {
+			std::function<bool (cxml::ConstNodePtr)> node_has_content = [&](cxml::ConstNodePtr node) {
+				if (!node->content().empty()) {
+					return true;
+				}
+				for (auto i: node->node_children()) {
+					if (node_has_content(i)) {
+						return true;
+					}
+				}
+				return false;
+			};
+			if (!node_has_content(node)) {
+				empty_text = true;
 			}
+		}
+
+		for (auto i: node->node_children()) {
+			parse(i, tcr, start_time, er, first_reel);
 		}
 	};
 
@@ -894,6 +911,12 @@ verify_text_details (
 	if (reel_overlap) {
 		notes.push_back ({
 			VerificationNote::Type::ERROR, VerificationNote::Code::SUBTITLE_OVERLAPS_REEL_BOUNDARY
+		});
+	}
+
+	if (empty_text) {
+		notes.push_back ({
+			VerificationNote::Type::WARNING, VerificationNote::Code::EMPTY_TEXT
 		});
 	}
 }
@@ -1626,6 +1649,8 @@ dcp::note_to_string (VerificationNote note)
 	}
 	case VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED:
 		return "Some aspect of this DCP could not be checked because it is encrypted.";
+	case VerificationNote::Code::EMPTY_TEXT:
+		return "There is an empty <Text> node in a subtitle or closed caption.";
 	}
 
 	return "";
