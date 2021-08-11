@@ -239,12 +239,19 @@ void
 check_verify_result (vector<path> dir, vector<dcp::VerificationNote> test_notes)
 {
 	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
-	BOOST_REQUIRE_EQUAL (notes.size(), test_notes.size());
 	std::sort (notes.begin(), notes.end());
 	std::sort (test_notes.begin(), test_notes.end());
-	for (auto i = 0U; i < notes.size(); ++i) {
-		BOOST_REQUIRE_MESSAGE (notes[i] == test_notes[i], "Note from verify:\n" << notes[i] << "\ndoes not match the expected:\n" << test_notes[i]);
+
+	string message = "\nVerification notes from test:\n";
+	for (auto i: notes) {
+		message += "  " + note_to_string(i) + "\n";
 	}
+	message += "Expected:\n";
+	for (auto i: test_notes) {
+		message += "  " + note_to_string(i) + "\n";
+	}
+
+	BOOST_REQUIRE_MESSAGE (notes == test_notes, message);
 }
 
 
