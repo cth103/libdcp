@@ -16,5 +16,6 @@ GTAGS
 TAGS
 .ccls-cache
 compile_commands.json
+.cache
 
 run/tools/dcpdummy
