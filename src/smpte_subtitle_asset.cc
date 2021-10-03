@@ -343,36 +343,36 @@ string
 SMPTESubtitleAsset::xml_as_string () const
 {
 	xmlpp::Document doc;
-	auto root = doc.create_root_node ("dcst:SubtitleReel");
-	root->set_namespace_declaration (subtitle_smpte_ns, "dcst");
+	auto root = doc.create_root_node ("SubtitleReel");
+	root->set_namespace_declaration (subtitle_smpte_ns);
 	root->set_namespace_declaration ("http://www.w3.org/2001/XMLSchema", "xs");
 
 	DCP_ASSERT (_xml_id);
-	root->add_child("Id", "dcst")->add_child_text ("urn:uuid:" + *_xml_id);
-	root->add_child("ContentTitleText", "dcst")->add_child_text (_content_title_text);
+	root->add_child("Id")->add_child_text("urn:uuid:" + *_xml_id);
+	root->add_child("ContentTitleText")->add_child_text(_content_title_text);
 	if (_annotation_text) {
-		root->add_child("AnnotationText", "dcst")->add_child_text (_annotation_text.get ());
+		root->add_child("AnnotationText")->add_child_text(_annotation_text.get());
 	}
-	root->add_child("IssueDate", "dcst")->add_child_text (_issue_date.as_string (true));
+	root->add_child("IssueDate")->add_child_text(_issue_date.as_string(true));
 	if (_reel_number) {
-		root->add_child("ReelNumber", "dcst")->add_child_text (raw_convert<string> (_reel_number.get ()));
+		root->add_child("ReelNumber")->add_child_text(raw_convert<string>(_reel_number.get()));
 	}
 	if (_language) {
-		root->add_child("Language", "dcst")->add_child_text (_language.get ());
+		root->add_child("Language")->add_child_text(_language.get());
 	}
-	root->add_child("EditRate", "dcst")->add_child_text (_edit_rate.as_string ());
-	root->add_child("TimeCodeRate", "dcst")->add_child_text (raw_convert<string> (_time_code_rate));
+	root->add_child("EditRate")->add_child_text(_edit_rate.as_string());
+	root->add_child("TimeCodeRate")->add_child_text(raw_convert<string>(_time_code_rate));
 	if (_start_time) {
-		root->add_child("StartTime", "dcst")->add_child_text(_start_time.get().as_string(Standard::SMPTE));
+		root->add_child("StartTime")->add_child_text(_start_time.get().as_string(Standard::SMPTE));
 	}
 
 	for (auto i: _load_font_nodes) {
-		auto load_font = root->add_child("LoadFont", "dcst");
+		auto load_font = root->add_child("LoadFont");
 		load_font->add_child_text ("urn:uuid:" + i->urn);
 		load_font->set_attribute ("ID", i->id);
 	}
 
-	subtitles_as_xml (root->add_child("SubtitleList", "dcst"), _time_code_rate, Standard::SMPTE);
+	subtitles_as_xml (root->add_child("SubtitleList"), _time_code_rate, Standard::SMPTE);
 
 	return doc.write_to_string ("UTF-8");
 }

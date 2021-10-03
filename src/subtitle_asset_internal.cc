@@ -49,13 +49,6 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-string
-order::Context::xmlns () const
-{
-	return standard == Standard::SMPTE ? "dcst" : "";
-}
-
-
 order::Font::Font (shared_ptr<SubtitleString> s, Standard standard)
 {
 	if (s->font()) {
@@ -82,11 +75,11 @@ order::Font::Font (shared_ptr<SubtitleString> s, Standard standard)
 
 
 xmlpp::Element*
-order::Font::as_xml (xmlpp::Element* parent, Context& context) const
+order::Font::as_xml (xmlpp::Element* parent, Context&) const
 {
-	xmlpp::Element* e = parent->add_child ("Font", context.xmlns());
-	for (map<string, string>::const_iterator i = _values.begin(); i != _values.end(); ++i) {
-		e->set_attribute (i->first, i->second);
+	auto e = parent->add_child("Font");
+	for (const auto& i: _values) {
+		e->set_attribute (i.first, i.second);
 	}
 	return e;
 }
@@ -207,7 +200,7 @@ position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, floa
 xmlpp::Element*
 order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 {
-	auto e = parent->add_child ("Text", context.xmlns());
+	auto e = parent->add_child ("Text");
 
 	position_align (e, context, _h_align, _h_position, _v_align, _v_position);
 
@@ -225,7 +218,7 @@ order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 xmlpp::Element*
 order::Subtitle::as_xml (xmlpp::Element* parent, Context& context) const
 {
-	auto e = parent->add_child ("Subtitle", context.xmlns());
+	auto e = parent->add_child ("Subtitle");
 	e->set_attribute ("SpotNumber", raw_convert<string> (context.spot_number++));
 	e->set_attribute ("TimeIn", _in.rebase(context.time_code_rate).as_string(context.standard));
 	e->set_attribute ("TimeOut", _out.rebase(context.time_code_rate).as_string(context.standard));
@@ -257,7 +250,7 @@ order::Font::clear ()
 xmlpp::Element *
 order::Image::as_xml (xmlpp::Element* parent, Context& context) const
 {
-	auto e = parent->add_child ("Image", context.xmlns());
+	auto e = parent->add_child ("Image");
 
 	position_align (e, context, _h_align, _h_position, _v_align, _v_position);
 	if (context.standard == Standard::SMPTE) {

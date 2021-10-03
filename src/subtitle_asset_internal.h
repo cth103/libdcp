@@ -69,8 +69,6 @@ namespace order {
 
 struct Context
 {
-	std::string xmlns () const;
-
 	int time_code_rate;
 	Standard standard;
 	int spot_number;
