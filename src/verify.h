@@ -87,8 +87,13 @@ public:
 	 *  Comments should clarify meaning and also say which of the optional fields (e.g. file)
 	 *  are filled in when this code is used.
 	 */
+
+	// If you change the next line, also look in doc/manual/verifier.py in DCP-o-matic
+	// as it looks for it when compiling the manual.  Also, in this enum:
+	//   [...]  will be taken as a reference to a section of Bv2.1
+	//   _foo_  means foo should be written as a piece of code
 	enum class Code {
-		/** An error when reading the DCP
+		/** A general error when reading the DCP
 		 *  note contains (probably technical) details
 		 */
 		FAILED_READ,
@@ -97,7 +102,7 @@ public:
 		 *  file contains CPL filename
 		 */
 		MISMATCHED_CPL_HASHES,
-		/** Frame rate given in a reel for the main picture is not 24, 25, 30, 48, 50 or 60
+		/** The frame rate given in a reel for the main picture is not 24, 25, 30, 48, 50 or 60
 		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
 		 */
 		INVALID_PICTURE_FRAME_RATE,
@@ -117,7 +122,7 @@ public:
 		 *  file contains the sound asset filename
 		 */
 		MISMATCHED_SOUND_HASHES,
-		/** An assetmap's <Path> entry is empty. */
+		/** An assetmap's _<Path>_ entry is empty */
 		EMPTY_ASSET_PATH,
 		/** A file mentioned in an asset map cannot be found
 		 *  file contains the filename that is missing
@@ -125,19 +130,19 @@ public:
 		MISSING_ASSET,
 		/** The DCP contains both SMPTE and Interop-standard components */
 		MISMATCHED_STANDARD,
-		/** Some XML fails to validate against the XSD/DTD
+		/** Some XML fails to validate against its XSD/DTD
 		 *  note contains the (probably technical) details
 		 *  file contains the invalid filename
 		 *  line contains the line number
 		 */
 		INVALID_XML,
-		/** No ASSETMAP{.xml} was found */
+		/** No _ASSETMAP_ or _ASSETMAP.xml_ was found */
 		MISSING_ASSETMAP,
-		/** An asset's IntrinsicDuration is less than 1 second
+		/** An asset's _IntrinsicDuration_ is less than 1 second
 		 *  note contains asset ID
 		 */
 		INVALID_INTRINSIC_DURATION,
-		/** An asset's Duration is less than 1 second
+		/** An asset's _Duration_ is less than 1 second
 		 *  note contains asset ID
 		 */
 		INVALID_DURATION,
@@ -159,16 +164,16 @@ public:
 		THREED_ASSET_MARKED_AS_TWOD,
 		/** DCP is Interop, not SMPTE [Bv2.1_6.1] */
 		INVALID_STANDARD,
-		/** A language or territory does not conform to RFC 5646 [Bv2.1_6.2.1].
+		/** A language or territory does not conform to RFC 5646 [Bv2.1_6.2.1]
 		 *  note contains the invalid language
 		 */
 		INVALID_LANGUAGE,
-		/** A picture asset does not have one of the required Bv2.1 sizes (in pixels) [Bv2.1_7.1].
+		/** A picture asset does not have one of the required Bv2.1 sizes (in pixels) [Bv2.1_7.1]
 		 *  note contains the incorrect size as "<width>x<height>"
 		 *  file contains the asset filename
 		 */
 		INVALID_PICTURE_SIZE_IN_PIXELS,
-		/** A picture asset is 2K but is not at 24, 25 or 48 fps as required by Bv2.1 [Bv2.1_7.1].
+		/** A picture asset is 2K but is not at 24, 25 or 48 fps as required by Bv2.1 [Bv2.1_7.1]
 		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
 		 *  file contains the asset filename
 		 */
@@ -183,7 +188,7 @@ public:
 		 *  file contains the asset filename
 		 */
 		INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
-		/** A closed caption's XML file is larger than 256KB [Bv2.1_7.2.1].
+		/** A closed caption's XML file is larger than 256KB [Bv2.1_7.2.1]
 		 *  note contains the invalid size in bytes
 		 *  file contains the asset filename
 		 */
@@ -198,17 +203,17 @@ public:
 		 *  file contains the asset filename
 		 */
 		INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES,
-		/** Some SMPTE subtitle XML has no <Language> tag [Bv2.1_7.2.2]
+		/** Some SMPTE subtitle XML has no _<Language>_ tag [Bv2.1_7.2.2]
 		 *  file contains the asset filename
 		 */
 		MISSING_SUBTITLE_LANGUAGE,
-		/** Not all subtitle assets specify the same <Language> tag [Bv2.1_7.2.2] */
+		/** Not all subtitle assets specify the same _<Language>_ tag [Bv2.1_7.2.2] */
 		MISMATCHED_SUBTITLE_LANGUAGES,
-		/** Some SMPTE subtitle XML has no <StartTime> tag [Bv2.1_7.2.3]
+		/** Some SMPTE subtitle XML has no _<StartTime>_ tag [Bv2.1_7.2.3]
 		 *  file contains the asset filename
 		 */
 		MISSING_SUBTITLE_START_TIME,
-		/** Some SMPTE subtitle XML has a non-zero <StartTime> tag [Bv2.1_7.2.3]
+		/** Some SMPTE subtitle XML has a non-zero _<StartTime>_ tag [Bv2.1_7.2.3]
 		 *  file contains the asset filename
 		 */
 		INVALID_SUBTITLE_START_TIME,
@@ -230,101 +235,101 @@ public:
 		INVALID_CLOSED_CAPTION_LINE_COUNT,
 		/** There are more than 32 characters in at least one closed caption line [Bv2.1_7.2.6] */
 		INVALID_CLOSED_CAPTION_LINE_LENGTH,
-		/** The audio sampling rate must be 48kHz [Bv2.1_7.3].
+		/** The audio sampling rate must be 48kHz [Bv2.1_7.3]
 		 *  note contains the invalid frame rate
 		 *  file contains the asset filename
 		 */
 		INVALID_SOUND_FRAME_RATE,
-		/** The CPL has no <AnnotationText> tag [Bv2.1_8.1]
+		/** The CPL has no _<AnnotationText>_ tag [Bv2.1_8.1]
 		 *  note contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISSING_CPL_ANNOTATION_TEXT,
-		/** The <AnnotationText> is not the same as the <ContentTitleText> [Bv2.1_8.1]
+		/** The _<AnnotationText>_ is not the same as the _<ContentTitleText>_ [Bv2.1_8.1]
 		 *  note contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISMATCHED_CPL_ANNOTATION_TEXT,
 		/** At least one asset in a reel does not have the same duration as the others */
 		MISMATCHED_ASSET_DURATION,
-		/** If one reel has a MainSubtitle, all must have them */
+		/** If one reel has a _MainSubtitle_, all must have them */
 		MISSING_MAIN_SUBTITLE_FROM_SOME_REELS,
-		/** If one reel has at least one ClosedCaption, all reels must have the same number of ClosedCaptions */
+		/** If one reel has at least one _ClosedCaption_, all reels must have the same number of _ClosedCaptions_ */
 		MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS,
-		/** MainSubtitle in reels must have <EntryPoint> [Bv2.1_8.3.2]
+		/** MainSubtitle in reels must have _<EntryPoint>_ [Bv2.1_8.3.2]
 		 *  note contains the asset ID
 		 */
 		MISSING_SUBTITLE_ENTRY_POINT,
-		/** MainSubtitle <EntryPoint> must be zero [Bv2.1_8.3.2]
+		/** MainSubtitle _<EntryPoint>_ must be zero [Bv2.1_8.3.2]
 		 *  note contains the asset ID
 		 */
 		INCORRECT_SUBTITLE_ENTRY_POINT,
-		/** Closed caption in reels must have <EntryPoint> [Bv2.1_8.3.2]
+		/** Closed caption in reels must have _<EntryPoint>_ [Bv2.1_8.3.2]
 		 *  note contains the asset ID
 		 */
 		MISSING_CLOSED_CAPTION_ENTRY_POINT,
-		/** Closed caption MainSubtitle <EntryPoint> must be zero [Bv2.1_8.3.2]
+		/** Closed caption _MainSubtitle_ _<EntryPoint>_ must be zero [Bv2.1_8.3.2]
 		 *  note contains the asset ID
 		 */
 		INCORRECT_CLOSED_CAPTION_ENTRY_POINT,
-		/** <Hash> must be present for assets in CPLs
+		/** _<Hash>_ must be present for assets in CPLs
 		 * note contains the asset ID
 		 */
 		MISSING_HASH,
-		/** If ContentKind is Feature there must be a FFEC marker */
+		/** If _ContentKind_ is Feature there must be a FFEC marker */
 		MISSING_FFEC_IN_FEATURE,
-		/** If ContentKind is Feature there must be a FFMC marker */
+		/** If _ContentKind_ is Feature there must be a FFMC marker */
 		MISSING_FFMC_IN_FEATURE,
-		/** There should be a FFOC */
+		/** There should be a FFOC marker */
 		MISSING_FFOC,
-		/** There should be a LFOC */
+		/** There should be a LFOC marker */
 		MISSING_LFOC,
-		/** The FFOC should be 1
+		/** The FFOC marker should be 1
 		 *  note contains the incorrect value.
 		 */
 		INCORRECT_FFOC,
-		/** The LFOC should be the last frame in the reel
+		/** The LFOC marker should be the last frame in the reel
 		 *  note contains the incorrect value
 		 */
 		INCORRECT_LFOC,
-		/** There must be a <CompositionMetadataAsset>
+		/** There must be a _<CompositionMetadataAsset>_
 		 *  note contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISSING_CPL_METADATA,
-		/** CPL metadata should contain <VersionNumber> of 1, at least
+		/** CPL metadata should contain _<VersionNumber>_ of 1, at least
 		 *  note contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISSING_CPL_METADATA_VERSION_NUMBER,
-		/** There must be an <ExtensionMetadata> in <CompositionMetadataAsset> [Bv2.1_8.6.3]
+		/** There must be an _<ExtensionMetadata>_ in _<CompositionMetadataAsset>_ [Bv2.1_8.6.3]
 		 *  note contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISSING_EXTENSION_METADATA,
-		/** <ExtensionMetadata> must have a particular form [Bv2.1_8.6.3]
+		/** _<ExtensionMetadata>_ does not have the correct form [Bv2.1_8.6.3]
 		 *  note contains details of what's wrong
 		 *  file contains the CPL filename
 		 */
 		INVALID_EXTENSION_METADATA,
-		/** CPLs containing encrypted content must be signed [Bv2.1_8.7]
+		/** A CPL containing encrypted content is not signed [Bv2.1_8.7]
 		 *  note contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT,
-		/** PKLs containing encrypted content must be signed [Bv2.1_8.7]
+		/** A PKL containing encrypted content is not signed [Bv2.1_8.7]
 		 *  note contains the PKL ID
 		 *  file contains the PKL filename
 		 */
 		UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT,
-		/** If a PKL has one CPL its <ContentTitleText> must be the same as the PKL's <AnnotationText>.
+		/** If a PKL has one CPL its _<ContentTitleText>_ must be the same as the PKL's _<AnnotationText>_
 		 *  note contains the PKL ID
 		 *  file contains the PKL filename
 		 */
 		MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL,
-		/** If any content is encrypted, everything must be encrypted */
+		/** Some, but not all content, is encrypted */
 		PARTIALLY_ENCRYPTED,
-		/** General error from our JPEG2000 codestream verification
+		/** General error during JPEG2000 codestream verification
 		 *  note contains details
 		 */
 		INVALID_JPEG2000_CODESTREAM,
@@ -370,18 +375,18 @@ public:
 		INVALID_JPEG2000_TILE_PARTS_FOR_4K,
 		/** No TLM marker was found [Bv2.1_10.2.1] */
 		MISSING_JPEG200_TLM_MARKER,
-		/** The MXF ResourceID of a timed text resource was not the same as that of the contained XML essence [Bv2.1_10.4.3] */
+		/** The MXF _ResourceID_ of a timed text resource was not the same as that of the contained XML essence [Bv2.1_10.4.3] */
 		MISMATCHED_TIMED_TEXT_RESOURCE_ID,
-		/** The AssetID of a timed text MXF is the same as its ResourceID or that of the contained XML essence [Bv2.1_10.4.2] */
+		/** The AssetID of a timed text MXF is the same as its _ResourceID_ or that of the contained XML essence [Bv2.1_10.4.2] */
 		INCORRECT_TIMED_TEXT_ASSET_ID,
-		/** The ContainerDuration of a timed text MXF is not the same as the Duration in its reel [Bv2.1_10_4_3]
+		/** The ContainerDuration of a timed text MXF is not the same as the _Duration_ in its reel [Bv2.1_10.4.3]
 		 *  note contains the reel duration, followed by a space, followed by the MXF duration
 		 *  file contains the asset filename
 		 */
 		MISMATCHED_TIMED_TEXT_DURATION,
 		/** Something could not be verified because content is encrypted and no key is available */
 		MISSED_CHECK_OF_ENCRYPTED,
-		/** Some timed-text XML has an empty <Text> node */
+		/** Some timed-text XML has an empty <_Text_> node */
 		EMPTY_TEXT
 	};
 
