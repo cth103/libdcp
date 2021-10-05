@@ -209,7 +209,7 @@ dcp::verify_j2k (shared_ptr<const Data> j2k, vector<VerificationNote>& notes)
 					notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K, raw_convert<string>(tile_parts) });
 				}
 				if (fourk && tile_parts != 6) {
-					notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K, raw_convert<string>(tile_parts) });
+					notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K, raw_convert<string>(tile_parts) });
 				}
 				main_header_finished = true;
 			} else if (*marker_name == "SOD") {
