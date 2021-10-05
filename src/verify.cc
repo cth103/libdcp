@@ -88,7 +88,6 @@ using std::string;
 using std::cout;
 using std::map;
 using std::max;
-using std::set;
 using std::shared_ptr;
 using std::make_shared;
 using boost::optional;
