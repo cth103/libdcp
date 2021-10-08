@@ -266,16 +266,19 @@ RNGFixer::~RNGFixer ()
 
 
 shared_ptr<dcp::MonoPictureAsset>
-simple_picture (boost::filesystem::path path, string suffix, int frames)
+simple_picture (boost::filesystem::path path, string suffix, int frames, optional<dcp::Key> key)
 {
 	dcp::MXFMetadata mxf_meta;
 	mxf_meta.company_name = "OpenDCP";
 	mxf_meta.product_name = "OpenDCP";
 	mxf_meta.product_version = "0.0.25";
 
-	shared_ptr<dcp::MonoPictureAsset> mp (new dcp::MonoPictureAsset (dcp::Fraction (24, 1), dcp::Standard::SMPTE));
+	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	mp->set_metadata (mxf_meta);
-	shared_ptr<dcp::PictureAssetWriter> picture_writer = mp->start_write (path / dcp::String::compose("video%1.mxf", suffix), false);
+	if (key) {
+		mp->set_key (*key);
+	}
+	auto picture_writer = mp->start_write (path / dcp::String::compose("video%1.mxf", suffix), false);
 
 	dcp::Size const size (1998, 1080);
 	auto image = make_shared<dcp::OpenJPEGImage>(size);
@@ -294,12 +297,15 @@ simple_picture (boost::filesystem::path path, string suffix, int frames)
 
 
 shared_ptr<dcp::SoundAsset>
-simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_meta, string language, int frames, int sample_rate)
+simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_meta, string language, int frames, int sample_rate, optional<dcp::Key> key)
 {
 	int const channels = 6;
 
 	/* Set a valid language, then overwrite it, so that the language parameter can be badly formed */
-	shared_ptr<dcp::SoundAsset> ms (new dcp::SoundAsset(dcp::Fraction(24, 1), sample_rate, channels, dcp::LanguageTag("en-US"), dcp::Standard::SMPTE));
+	auto ms = make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), sample_rate, channels, dcp::LanguageTag("en-US"), dcp::Standard::SMPTE);
+	if (key) {
+		ms->set_key (*key);
+	}
 	ms->_language = language;
 	ms->set_metadata (mxf_meta);
 	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / dcp::String::compose("audio%1.mxf", suffix));
@@ -327,13 +333,15 @@ simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_
 
 
 shared_ptr<dcp::DCP>
-make_simple (boost::filesystem::path path, int reels, int frames, dcp::Standard standard)
+make_simple (boost::filesystem::path path, int reels, int frames, dcp::Standard standard, optional<dcp::Key> key)
 {
 	/* Some known metadata */
 	dcp::MXFMetadata mxf_meta;
 	mxf_meta.company_name = "OpenDCP";
 	mxf_meta.product_name = "OpenDCP";
 	mxf_meta.product_version = "0.0.25";
+
+	auto constexpr sample_rate = 48000;
 
 	boost::filesystem::remove_all (path);
 	boost::filesystem::create_directories (path);
@@ -347,7 +355,7 @@ make_simple (boost::filesystem::path path, int reels, int frames, dcp::Standard 
 		dcp::ContentVersion("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11", "content-version-label-text")
 		);
 	cpl->set_main_sound_configuration("51/L,R,C,LFE,Ls,Rs");
-	cpl->set_main_sound_sample_rate(48000);
+	cpl->set_main_sound_sample_rate(sample_rate);
 	cpl->set_main_picture_stored_area(dcp::Size(1998, 1080));
 	cpl->set_main_picture_active_area(dcp::Size(1998, 1080));
 	cpl->set_version_number(1);
@@ -355,8 +363,8 @@ make_simple (boost::filesystem::path path, int reels, int frames, dcp::Standard 
 	for (int i = 0; i < reels; ++i) {
 		string suffix = reels == 1 ? "" : dcp::String::compose("%1", i);
 
-		shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (path, suffix, frames);
-		shared_ptr<dcp::SoundAsset> ms = simple_sound (path, suffix, mxf_meta, "en-US", frames);
+		auto mp = simple_picture (path, suffix, frames, key);
+		auto ms = simple_sound (path, suffix, mxf_meta, "en-US", frames, sample_rate, key);
 
 		auto reel = make_shared<dcp::Reel>(
 			shared_ptr<dcp::ReelMonoPictureAsset>(new dcp::ReelMonoPictureAsset(mp, 0)),

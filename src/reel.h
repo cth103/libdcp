@@ -41,11 +41,12 @@
 #define LIBDCP_REEL_H
 
 
+#include "decrypted_kdm.h"
 #include "key.h"
-#include "types.h"
 #include "ref.h"
-#include <memory>
+#include "types.h"
 #include <boost/function.hpp>
+#include <memory>
 
 
 namespace cxml {
@@ -136,12 +137,16 @@ public:
 	void resolve_refs (std::vector<std::shared_ptr<Asset>>);
 
 private:
+	void give_kdm_to_assets (dcp::DecryptedKDM const& kdm);
+
 	std::shared_ptr<ReelPictureAsset> _main_picture;
 	std::shared_ptr<ReelSoundAsset> _main_sound;
 	std::shared_ptr<ReelSubtitleAsset> _main_subtitle;
 	std::shared_ptr<ReelMarkersAsset> _main_markers;
 	std::vector<std::shared_ptr<ReelClosedCaptionAsset>> _closed_captions;
 	std::shared_ptr<ReelAtmosAsset> _atmos;
+
+	std::vector<dcp::DecryptedKDM> _kdms;
 };
 
 }

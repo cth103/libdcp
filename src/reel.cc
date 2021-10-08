@@ -312,28 +312,38 @@ Reel::all_encrypted () const
 void
 Reel::add (DecryptedKDM const & kdm)
 {
-	auto keys = kdm.keys ();
+	give_kdm_to_assets (kdm);
+	/* We have to keep the KDMs that we are given, as they will not be passed to unresolved assets.
+	 * After we resolve some assets we will re-call give_kdm_to_assets() with all the KDMs that
+	 * we have been given so far.
+	 */
+	_kdms.push_back (kdm);
+}
 
-	for (auto const& i: keys) {
-		if (_main_picture && i.id() == _main_picture->key_id()) {
+
+void
+Reel::give_kdm_to_assets (DecryptedKDM const & kdm)
+{
+	for (auto const& i: kdm.keys()) {
+		if (_main_picture && i.id() == _main_picture->key_id() && _main_picture->asset_ref().resolved()) {
 			_main_picture->asset()->set_key (i.key());
 		}
-		if (_main_sound && i.id() == _main_sound->key_id()) {
+		if (_main_sound && i.id() == _main_sound->key_id() && _main_sound->asset_ref().resolved()) {
 			_main_sound->asset()->set_key (i.key());
 		}
 		if (_main_subtitle) {
 			auto smpte = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(_main_subtitle);
-			if (smpte && i.id() == smpte->key_id()) {
+			if (smpte && i.id() == smpte->key_id() && smpte->asset_ref().resolved()) {
 				smpte->smpte_asset()->set_key(i.key());
 			}
 		}
 		for (auto j: _closed_captions) {
 			auto smpte = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(j);
-			if (smpte && i.id() == smpte->key_id()) {
+			if (smpte && i.id() == smpte->key_id() && smpte->asset_ref().resolved()) {
 				smpte->smpte_asset()->set_key(i.key());
 			}
 		}
-		if (_atmos && i.id() == _atmos->key_id()) {
+		if (_atmos && i.id() == _atmos->key_id() && _atmos->asset_ref().resolved()) {
 			_atmos->asset()->set_key (i.key());
 		}
 	}
@@ -423,6 +433,10 @@ Reel::resolve_refs (vector<shared_ptr<Asset>> assets)
 
 	if (_atmos) {
 		_atmos->asset_ref().resolve (assets);
+	}
+
+	for (auto const& i: _kdms) {
+		give_kdm_to_assets (i);
 	}
 }
 

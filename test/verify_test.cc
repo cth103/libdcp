@@ -1961,7 +1961,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_sound_frame_rate)
 	auto reel_picture = make_shared<dcp::ReelMonoPictureAsset>(picture, 0);
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (reel_picture);
-	auto sound = simple_sound (dir, "foo", dcp::MXFMetadata(), "de-DE", 24, 96000);
+	auto sound = simple_sound (dir, "foo", dcp::MXFMetadata(), "de-DE", 24, 96000, boost::none);
 	auto reel_sound = make_shared<dcp::ReelSoundAsset>(sound, 0);
 	reel->add (reel_sound);
 	reel->add (simple_markers());

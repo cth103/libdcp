@@ -40,6 +40,9 @@
 #include "picture_asset_writer.h"
 #include "reel.h"
 #include "reel_mono_picture_asset.h"
+#include "reel_sound_asset.h"
+#include "reel_smpte_subtitle_asset.h"
+#include "smpte_subtitle_asset.h"
 #include "test.h"
 #include "types.h"
 #include "util.h"
@@ -51,11 +54,11 @@ LIBDCP_ENABLE_WARNINGS
 #include <boost/test/unit_test.hpp>
 
 
-using std::list;
-using std::string;
-using std::vector;
+using std::dynamic_pointer_cast;
 using std::make_shared;
 using std::shared_ptr;
+using std::string;
+using std::vector;
 using boost::optional;
 
 
@@ -295,4 +298,86 @@ BOOST_AUTO_TEST_CASE (validity_period_test1)
 			).encrypt(signer, signer->leaf(), vector<string>(), dcp::Formulation::MODIFIED_TRANSITIONAL_1, true, optional<int>()),
 		dcp::BadKDMDateError
 		);
+}
+
+
+/** Test the case where we have:
+ *  - a OV + VF
+ *  - a single KDM which has keys for both OV and VF assets
+ *  and we load VF, then KDM, then the OV.  The OV's assets should have their
+ *  KDMs properly assigned.
+ */
+BOOST_AUTO_TEST_CASE (vf_kdm_test)
+{
+	/* Make OV */
+
+	boost::filesystem::path const ov_path = "build/test/vf_kdm_test_ov";
+	boost::filesystem::path const vf_path = "build/test/vf_kdm_test_vf";
+	dcp::Key key;
+
+	auto ov = make_simple(ov_path, 1, 48, dcp::Standard::SMPTE, key);
+	ov->write_xml ();
+
+	auto ov_reel = ov->cpls()[0]->reels()[0];
+	auto ov_reel_picture = make_shared<dcp::ReelMonoPictureAsset>(dynamic_pointer_cast<dcp::ReelMonoPictureAsset>(ov_reel->main_picture())->mono_asset(), 0);
+	auto ov_reel_sound = make_shared<dcp::ReelSoundAsset>(ov_reel->main_sound()->asset(), 0);
+
+	/* Make VF */
+
+	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
+	subs->add(simple_subtitle());
+	subs->set_key(key);
+
+	boost::filesystem::remove_all (vf_path);
+	boost::filesystem::create_directory (vf_path);
+	dcp::ArrayData data(4096);
+	subs->add_font ("afont", data);
+	subs->write (vf_path / "subs.xml");
+
+	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 192, 0);
+
+	auto reel = make_shared<dcp::Reel>(ov_reel_picture, ov_reel_sound, reel_subs);
+
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
+	cpl->add (reel);
+
+	auto vf = make_shared<dcp::DCP>("build/test/vf_kdm_test_vf");
+	vf->add (cpl);
+	vf->write_xml ();
+
+	/* Make KDM for VF */
+
+	auto kdm = dcp::DecryptedKDM(
+		cpl,
+		key,
+		dcp::LocalTime ("2016-01-01T00:00:00+00:00"),
+		dcp::LocalTime ("2017-01-08T00:00:00+00:00"),
+		"libdcp",
+		"test",
+		"2012-07-17T04:45:18+00:00"
+		);
+
+	/* Decrypt VF with the KDM */
+
+	dcp::DCP reload_vf(vf_path);
+	reload_vf.read();
+	reload_vf.add (kdm);
+
+	/* Add the OV */
+
+	dcp::DCP reload_ov(ov_path);
+	reload_ov.read();
+	reload_vf.resolve_refs(reload_ov.assets());
+
+	/* Check that we can decrypt the VF */
+
+	BOOST_REQUIRE_EQUAL(reload_vf.cpls().size(), 1U);
+	BOOST_REQUIRE_EQUAL(reload_vf.cpls()[0]->reels().size(), 1U);
+	BOOST_REQUIRE(reload_vf.cpls()[0]->reels()[0]->main_picture());
+	BOOST_REQUIRE(reload_vf.cpls()[0]->reels()[0]->main_picture()->asset());
+	auto mono_asset = dynamic_pointer_cast<dcp::MonoPictureAsset>(reload_vf.cpls()[0]->reels()[0]->main_picture()->asset());
+	BOOST_REQUIRE(mono_asset);
+	auto reader = mono_asset->start_read();
+	reader->set_check_hmac(false);
+	reader->get_frame(0)->xyz_image();
 }
