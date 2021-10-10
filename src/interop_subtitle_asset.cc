@@ -56,16 +56,13 @@ LIBDCP_ENABLE_WARNINGS
 #include <cstdio>
 
 
-using std::list;
 using std::string;
 using std::cout;
 using std::cerr;
-using std::map;
 using std::shared_ptr;
 using std::dynamic_pointer_cast;
 using std::vector;
 using std::make_shared;
-using boost::shared_array;
 using boost::optional;
 using namespace dcp;
 

@@ -64,7 +64,6 @@ using std::map;
 using std::shared_ptr;
 using std::vector;
 using std::make_shared;
-using boost::shared_array;
 using boost::optional;
 using boost::lexical_cast;
 using namespace dcp;
