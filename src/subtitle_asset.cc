@@ -286,14 +286,28 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, vector<ParseState>&
 		throw XMLError ("unexpected node " + node->get_name());
 	}
 
+	float space_before = 0;
+
 	for (auto i: node->get_children()) {
 		auto const v = dynamic_cast<xmlpp::ContentNode const *>(i);
 		if (v) {
-			maybe_add_subtitle (v->get_content(), state, standard);
+			maybe_add_subtitle (v->get_content(), state, space_before, standard);
+			space_before = 0;
 		}
 		auto const e = dynamic_cast<xmlpp::Element const *>(i);
 		if (e) {
-			parse_subtitles (e, state, tcr, standard);
+			if (e->get_name() == "Space") {
+				if (node->get_name() != "Text") {
+					throw XMLError ("Space node found outside Text");
+				}
+				auto size = optional_string_attribute(e, "Size").get_value_or("0.5");
+				if (standard == dcp::Standard::INTEROP) {
+					boost::replace_all(size, "em", "");
+				}
+				space_before += raw_convert<float>(size);
+			} else {
+				parse_subtitles (e, state, tcr, standard);
+			}
 		}
 	}
 
@@ -302,7 +316,7 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, vector<ParseState>&
 
 
 void
-SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse_state, Standard standard)
+SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse_state, float space_before, Standard standard)
 {
 	if (empty_or_white_space (text)) {
 		return;
@@ -398,7 +412,8 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 				ps.effect.get_value_or (Effect::NONE),
 				ps.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
 				ps.fade_up_time.get_value_or(Time()),
-				ps.fade_down_time.get_value_or(Time())
+				ps.fade_down_time.get_value_or(Time()),
+				space_before
 				)
 			);
 		break;
@@ -684,7 +699,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 			    fabs(last_v_position - is->v_position()) > ALIGN_EPSILON ||
 			    last_direction != is->direction()
 				) {
-				text.reset (new order::Text (subtitle, is->h_align(), is->h_position(), is->v_align(), is->v_position(), is->direction()));
+				text = make_shared<order::Text>(subtitle, is->h_align(), is->h_position(), is->v_align(), is->v_position(), is->direction());
 				subtitle->children.push_back (text);
 
 				last_h_align = is->h_align ();
@@ -694,7 +709,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 				last_direction = is->direction ();
 			}
 
-			text->children.push_back (make_shared<order::String>(text, order::Font (is, standard), is->text()));
+			text->children.push_back (make_shared<order::String>(text, order::Font (is, standard), is->text(), is->space_before()));
 		}
 
 		auto ii = dynamic_pointer_cast<SubtitleImage>(i);

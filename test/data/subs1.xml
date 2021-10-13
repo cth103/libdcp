@@ -7,7 +7,7 @@
   <LoadFont Id="theFontId" URI="arial.ttf"/>
   <Font Id="theFontId" Color="FFFFFFFF" Effect="border" EffectColor="FF000000" Italic="no" Size="39" Script="normal" Underlined="no" Weight="normal">
     <Subtitle SpotNumber="1" TimeIn="00:00:05:198" TimeOut="00:00:07:115" FadeUpTime="1" FadeDownTime="1">
-      <Text VAlign="bottom" VPosition="15.0">My jacket was Idi Amin's</Text>
+      <Text VAlign="bottom" VPosition="15.0">My jacket was <Space Size="6em"/>Idi Amin's</Text>
     </Subtitle>
     <Font Italic="yes">
       <Subtitle SpotNumber="2" TimeIn="00:00:07:177" TimeOut="00:00:11:031" FadeUpTime="1" FadeDownTime="1">

@@ -410,7 +410,8 @@ simple_subtitle ()
 		dcp::Effect::NONE,
 		dcp::Colour(255, 255, 255),
 		dcp::Time(),
-		dcp::Time()
+		dcp::Time(),
+		0
 		);
 }
 

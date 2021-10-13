@@ -156,6 +156,7 @@ protected:
 			IMAGE
 		};
 		boost::optional<Type> type;
+		float space_before = 0;
 	};
 
 	void parse_subtitles (xmlpp::Element const * node, std::vector<ParseState>& state, boost::optional<int> tcr, Standard standard);
@@ -205,7 +206,7 @@ private:
 	friend struct ::pull_fonts_test2;
 	friend struct ::pull_fonts_test3;
 
-	void maybe_add_subtitle (std::string text, std::vector<ParseState> const & parse_state, Standard standard);
+	void maybe_add_subtitle (std::string text, std::vector<ParseState> const & parse_state, float space_before, Standard standard);
 
 	static void pull_fonts (std::shared_ptr<order::Part> part);
 };

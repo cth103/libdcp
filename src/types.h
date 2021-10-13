@@ -349,6 +349,12 @@ constexpr float ASPECT_ADJUST_EPSILON = 1e-3;
 constexpr float ALIGN_EPSILON = 1e-3;
 
 
+/** Maximum absolute difference between dcp::SubtitleString space_before values that
+ *  are considered equal.
+ */
+constexpr float SPACE_BEFORE_EPSILON = 1e-3;
+
+
 enum class Marker {
 	FFOC, ///< first frame of composition
 	LFOC, ///< last frame of composition

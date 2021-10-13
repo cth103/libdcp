@@ -71,7 +71,8 @@ BOOST_AUTO_TEST_CASE (smpte_subtitle_id_test)
 			dcp::Effect::NONE,
 			dcp::Colour(),
 			dcp::Time(0, 0, 0, 0, 24),
-			dcp::Time(0, 0, 0, 0, 24)
+			dcp::Time(0, 0, 0, 0, 24),
+			0
 			)
 		);
 	subs.write("build/test/smpte_subtitle_id_test.mxf");
@@ -112,16 +113,18 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test)
 	BOOST_REQUIRE_EQUAL (sc.subtitles().size(), 63);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().front()));
 	BOOST_CHECK_EQUAL (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().front())->text(), "Noch mal.");
+	BOOST_CHECK_EQUAL (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().front())->space_before(), 0.0f);
 	BOOST_CHECK_EQUAL (sc.subtitles().front()->in(), dcp::Time (0, 0, 25, 12, 25));
 	BOOST_CHECK_EQUAL (sc.subtitles().front()->out(), dcp::Time (0, 0, 26, 4, 25));
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().back()));
 	BOOST_CHECK_EQUAL (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().back())->text(), "Prochainement");
+	BOOST_CHECK_EQUAL (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().back())->space_before(), 0.0f);
 	BOOST_CHECK_EQUAL (sc.subtitles().back()->in(), dcp::Time (0, 1, 57, 17, 25));
 	BOOST_CHECK_EQUAL (sc.subtitles().back()->out(), dcp::Time (0, 1, 58, 12, 25));
 }
 
 
-/** And another one featuring <Font> within <Text> */
+/** And another one featuring <Font> within <Text> and some <Space> */
 BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test2)
 {
 	dcp::SMPTESubtitleAsset sc (private_test / "olsson.xml");
@@ -133,31 +136,37 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test2)
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), "Testing is ");
 	BOOST_CHECK (!is->italic());
+	BOOST_CHECK_CLOSE (is->space_before(), 0, 0.1);
 	++i;
 	is = dynamic_pointer_cast<const dcp::SubtitleString>(subs[i]);
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), "really");
 	BOOST_CHECK (is->italic());
+	BOOST_CHECK_CLOSE (is->space_before(), 0, 0.1);
 	++i;
 	is = dynamic_pointer_cast<const dcp::SubtitleString>(subs[i]);
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), " fun!");
 	BOOST_CHECK (!is->italic());
+	BOOST_CHECK_CLOSE (is->space_before(), 5, 0.1);
 	++i;
 	is = dynamic_pointer_cast<const dcp::SubtitleString>(subs[i]);
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), "This is the ");
 	BOOST_CHECK (!is->italic());
+	BOOST_CHECK_CLOSE (is->space_before(), 0, 0.1);
 	++i;
 	is = dynamic_pointer_cast<const dcp::SubtitleString>(subs[i]);
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), "second");
 	BOOST_CHECK (is->italic());
+	BOOST_CHECK_CLOSE (is->space_before(), 0, 0.1);
 	++i;
 	is = dynamic_pointer_cast<const dcp::SubtitleString>(subs[i]);
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), " line!");
 	BOOST_CHECK (!is->italic());
+	BOOST_CHECK_CLOSE (is->space_before(), 0, 0.1);
 }
 
 
@@ -190,7 +199,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 			dcp::Effect::NONE,
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+			dcp::Time (0, 0, 0, 0, 24),
+			0
 			)
 		);
 
@@ -210,11 +220,37 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 			0.4,
 			dcp::VAlign::BOTTOM,
 			dcp::Direction::RTL,
-			"What's going on",
+			"What's going ",
 			dcp::Effect::BORDER,
 			dcp::Colour (1, 2, 3),
 			dcp::Time (1, 2, 3, 4, 24),
-			dcp::Time (5, 6, 7, 8, 24)
+			dcp::Time (5, 6, 7, 8, 24),
+			0
+			)
+		);
+
+	c.add (
+		make_shared<dcp::SubtitleString>(
+			boost::optional<string> (),
+			true,
+			true,
+			true,
+			dcp::Colour (128, 0, 64),
+			91,
+			1.0,
+			dcp::Time (5, 41,  0, 21, 24),
+			dcp::Time (6, 12, 15, 21, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.4,
+			dcp::VAlign::BOTTOM,
+			dcp::Direction::RTL,
+			"on",
+			dcp::Effect::BORDER,
+			dcp::Colour (1, 2, 3),
+			dcp::Time (1, 2, 3, 4, 24),
+			dcp::Time (5, 6, 7, 8, 24),
+			4.2
 			)
 		);
 
@@ -238,7 +274,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 		    "</Font>"
 		    "<Font AspectAdjust=\"1.0\" Color=\"FF800040\" Effect=\"border\" EffectColor=\"FF010203\" Italic=\"yes\" Script=\"normal\" Size=\"91\" Underline=\"yes\" Weight=\"bold\">"
 		      "<Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:21\" TimeOut=\"06:12:15:21\" FadeUpTime=\"01:02:03:04\" FadeDownTime=\"05:06:07:08\">"
-		        "<Text Valign=\"bottom\" Vposition=\"40\" Direction=\"rtl\">What's going on</Text>"
+		        "<Text Valign=\"bottom\" Vposition=\"40\" Direction=\"rtl\">What's going <Space Size=\"4.2\"/>on</Text>"
 		      "</Subtitle>"
 		    "</Font>"
 		  "</SubtitleList>"
@@ -279,7 +315,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			dcp::Effect::NONE,
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+			dcp::Time (0, 0, 0, 0, 24),
+			0
 			)
 		);
 
@@ -303,7 +340,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			dcp::Effect::NONE,
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+			dcp::Time (0, 0, 0, 0, 24),
+			0
 			)
 		);
 
@@ -327,7 +365,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			dcp::Effect::NONE,
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+			dcp::Time (0, 0, 0, 0, 24),
+			0
 			)
 		);
 
@@ -351,7 +390,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			dcp::Effect::NONE,
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+			dcp::Time (0, 0, 0, 0, 24),
+			0
 			)
 		);
 
@@ -375,7 +415,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			dcp::Effect::NONE,
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+			dcp::Time (0, 0, 0, 0, 24),
+			0
 			)
 		);
 
@@ -399,7 +440,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			dcp::Effect::NONE,
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
-			dcp::Time (0, 0, 0, 0, 24)
+			dcp::Time (0, 0, 0, 0, 24),
+			0
 			)
 		);
 

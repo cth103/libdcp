@@ -193,7 +193,7 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 		"Hello world",
 		dcp::Effect::NONE,
 		dcp::Colour(0, 0, 0),
-		dcp::Time(), dcp::Time()
+		dcp::Time(), dcp::Time(), 0
 		));
 	subs_asset->write (dir / "subs.mxf");
 

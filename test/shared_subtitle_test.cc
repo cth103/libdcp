@@ -157,7 +157,7 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test3)
 	dcp::order::Font font;
 	font._values["font"] = "Inconsolata";
 	font._values["size"] = "42";
-	auto string1 = make_shared<dcp::order::String>(text1, font, "Hello world");
+	auto string1 = make_shared<dcp::order::String>(text1, font, "Hello world", 0);
 	text1->children.push_back (string1);
 
 	dcp::SubtitleAsset::pull_fonts (root);

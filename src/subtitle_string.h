@@ -76,6 +76,7 @@ public:
 	 *  @param effect_colour Colour of the effect
 	 *  @param fade_up_time Time to fade the text in
 	 *  @param fade_down_time Time to fade the text out
+	 *  @param space_before Space to add before this string, in ems (could be negative to remove space).
 	 */
 	SubtitleString (
 		boost::optional<std::string> font,
@@ -96,7 +97,8 @@ public:
 		Effect effect,
 		Colour effect_colour,
 		Time fade_up_time,
-		Time fade_down_time
+		Time fade_down_time,
+		float space_before
 		);
 
 	/** @return font ID */
@@ -141,6 +143,10 @@ public:
 	}
 
 	int size_in_pixels (int screen_height) const;
+
+	float space_before () const {
+		return _space_before;
+	}
 
 	/** @return Aspect ratio `adjustment' of the font size.
 	 *  Values greater than 1 widen each character, values less than 1 narrow each character,
@@ -202,6 +208,7 @@ private:
 	std::string _text;
 	Effect _effect;
 	Colour _effect_colour;
+	float _space_before;
 };
 
 bool operator== (SubtitleString const & a, SubtitleString const & b);

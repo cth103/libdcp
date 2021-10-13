@@ -127,14 +127,17 @@ public:
 class String : public Part
 {
 public:
-	String (std::shared_ptr<Part> parent, Font font, std::string text_)
+	String (std::shared_ptr<Part> parent, Font font, std::string text, float space_before)
 		: Part (parent, font)
-		, text (text_)
+		, _text (text)
+		, _space_before (space_before)
 	{}
 
 	virtual xmlpp::Element* as_xml (xmlpp::Element* parent, Context &) const override;
 
-	std::string text;
+private:
+	std::string _text;
+	float _space_before;
 };
 
 

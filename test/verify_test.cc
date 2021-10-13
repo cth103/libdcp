@@ -1257,7 +1257,8 @@ add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int en
 			dcp::Effect::NONE,
 			dcp::Colour(),
 			dcp::Time(),
-			dcp::Time()
+			dcp::Time(),
+			0
 		)
 	);
 }

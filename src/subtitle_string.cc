@@ -69,7 +69,8 @@ SubtitleString::SubtitleString (
 	Effect effect,
 	Colour effect_colour,
 	Time fade_up_time,
-	Time fade_down_time
+	Time fade_down_time,
+	float space_before
 	)
 	: Subtitle (in, out, h_position, h_align, v_position, v_align, fade_up_time, fade_down_time)
 	, _font (font)
@@ -83,6 +84,7 @@ SubtitleString::SubtitleString (
 	, _text (text)
 	, _effect (effect)
 	, _effect_colour (effect_colour)
+	, _space_before (space_before)
 {
 	_aspect_adjust = max(min(_aspect_adjust, 4.0f), 0.25f);
 }
@@ -122,7 +124,8 @@ dcp::operator== (SubtitleString const & a, SubtitleString const & b)
 		a.effect() == b.effect() &&
 		a.effect_colour() == b.effect_colour() &&
 		a.fade_up_time() == b.fade_up_time() &&
-		a.fade_down_time() == b.fade_down_time()
+		a.fade_down_time() == b.fade_down_time() &&
+		fabs (a.space_before() - b.space_before()) < SPACE_BEFORE_EPSILON
 		);
 }
 
@@ -163,7 +166,8 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align())
 	  << ", direction " << ((int) sub.direction())
 	  << ", effect " << ((int) sub.effect())
-	  << ", effect colour (" << sub.effect_colour().r << ", " << sub.effect_colour().g << ", " << sub.effect_colour().b << ")";
+	  << ", effect colour (" << sub.effect_colour().r << ", " << sub.effect_colour().g << ", " << sub.effect_colour().b << ")"
+	  << ", space before " << sub.space_before();
 
 	return s;
 }

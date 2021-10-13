@@ -134,9 +134,17 @@ order::Part::as_xml (xmlpp::Element* parent, Context &) const
 
 
 xmlpp::Element*
-order::String::as_xml (xmlpp::Element* parent, Context &) const
+order::String::as_xml (xmlpp::Element* parent, Context& context) const
 {
-	parent->add_child_text (text);
+	if (fabs(_space_before) > SPACE_BEFORE_EPSILON) {
+		auto space = parent->add_child("Space");
+		auto size = raw_convert<string>(_space_before, 2);
+		if (context.standard == Standard::INTEROP) {
+			size += "em";
+		}
+		space->set_attribute("Size", size);
+	}
+	parent->add_child_text (_text);
 	return 0;
 }
 
