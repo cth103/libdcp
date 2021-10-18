@@ -579,6 +579,9 @@ struct SubtitleSorter
 		if (a->in() != b->in()) {
 			return a->in() < b->in();
 		}
+		if (a->v_align() == VAlign::BOTTOM) {
+			return a->v_position() > b->v_position();
+		}
 		return a->v_position() < b->v_position();
 	}
 };

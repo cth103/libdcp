@@ -58,6 +58,8 @@ namespace ASDCP {
 
 struct verify_invalid_language1;
 struct verify_invalid_language2;
+struct write_subtitles_in_vertical_order_with_top_alignment;
+struct write_subtitles_in_vertical_order_with_bottom_alignment;
 
 
 namespace dcp {
@@ -204,6 +206,8 @@ private:
 	friend struct ::write_smpte_subtitle_test2;
 	friend struct ::verify_invalid_language1;
 	friend struct ::verify_invalid_language2;
+	friend struct ::write_subtitles_in_vertical_order_with_top_alignment;
+	friend struct ::write_subtitles_in_vertical_order_with_bottom_alignment;
 
 	void read_fonts (std::shared_ptr<ASDCP::TimedText::MXFReader>);
 	void parse_xml (std::shared_ptr<cxml::Document> xml);

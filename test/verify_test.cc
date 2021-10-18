@@ -1618,6 +1618,43 @@ dcp_with_text (path dir, vector<TestText> subs)
 }
 
 
+template <class T>
+shared_ptr<dcp::CPL>
+dcp_with_text_from_file (path dir, boost::filesystem::path subs_xml)
+{
+	prepare_directory (dir);
+	auto asset = make_shared<dcp::SMPTESubtitleAsset>(subs_xml);
+	asset->set_start_time (dcp::Time());
+	asset->set_language (dcp::LanguageTag("de-DE"));
+
+	auto subs_mxf = dir / "subs.mxf";
+	asset->write (subs_mxf);
+
+	/* The call to write() puts the asset into the DCP correctly but it will have
+	 * XML re-written by our parser.  Overwrite the MXF using the given file's verbatim
+	 * contents.
+	 */
+	ASDCP::TimedText::MXFWriter writer;
+	ASDCP::WriterInfo writer_info;
+	writer_info.LabelSetType = ASDCP::LS_MXF_SMPTE;
+	unsigned int c;
+	Kumu::hex2bin (asset->id().c_str(), writer_info.AssetUUID, Kumu::UUID_Length, &c);
+	DCP_ASSERT (c == Kumu::UUID_Length);
+	ASDCP::TimedText::TimedTextDescriptor descriptor;
+	descriptor.ContainerDuration = asset->intrinsic_duration();
+	Kumu::hex2bin (asset->xml_id()->c_str(), descriptor.AssetID, ASDCP::UUIDlen, &c);
+	DCP_ASSERT (c == Kumu::UUID_Length);
+	ASDCP::Result_t r = writer.OpenWrite (subs_mxf.string().c_str(), writer_info, descriptor, 16384);
+	BOOST_REQUIRE (!ASDCP_FAILURE(r));
+	r = writer.WriteTimedTextResource (dcp::file_to_string(subs_xml));
+	BOOST_REQUIRE (!ASDCP_FAILURE(r));
+	writer.Finalize ();
+
+	auto reel_asset = make_shared<T>(asset, dcp::Fraction(24, 1), asset->intrinsic_duration(), 0);
+	return write_dcp_with_single_asset (dir, reel_asset);
+}
+
+
 BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_first_text_time)
 {
 	auto const dir = path("build/test/verify_invalid_subtitle_first_text_time");
@@ -1953,6 +1990,105 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_length)
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
 		});
 }
+
+
+BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_valign1)
+{
+	auto const dir = path ("build/test/verify_mismatched_closed_caption_valign1");
+	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+		dir,
+		{
+			{ 96, 300, 0.0, dcp::VAlign::TOP, "This" },
+			{ 96, 300, 0.1, dcp::VAlign::TOP, "is" },
+			{ 96, 300, 0.2, dcp::VAlign::TOP, "fine" },
+		});
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_valign2)
+{
+	auto const dir = path ("build/test/verify_mismatched_closed_caption_valign2");
+	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+		dir,
+		{
+			{ 96, 300, 0.0, dcp::VAlign::TOP, "This" },
+			{ 96, 300, 0.1, dcp::VAlign::TOP, "is" },
+			{ 96, 300, 0.2, dcp::VAlign::CENTER, "not fine" },
+		});
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_VALIGN },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering1)
+{
+	auto const dir = path ("build/test/verify_invalid_incorrect_closed_caption_ordering1");
+	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+		dir,
+		{
+			{ 96, 300, 0.0, dcp::VAlign::TOP, "This" },
+			{ 96, 300, 0.1, dcp::VAlign::TOP, "is" },
+			{ 96, 300, 0.2, dcp::VAlign::TOP, "fine" },
+		});
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering2)
+{
+	auto const dir = path ("build/test/verify_invalid_incorrect_closed_caption_ordering2");
+	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+		dir,
+		{
+			{ 96, 300, 0.2, dcp::VAlign::BOTTOM, "This" },
+			{ 96, 300, 0.1, dcp::VAlign::BOTTOM, "is" },
+			{ 96, 300, 0.0, dcp::VAlign::BOTTOM, "also fine" },
+		});
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering3)
+{
+	auto const dir = path ("build/test/verify_incorrect_closed_caption_ordering3");
+	auto cpl = dcp_with_text_from_file<dcp::ReelSMPTEClosedCaptionAsset> (dir, "test/data/verify_incorrect_closed_caption_ordering3.xml");
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ORDERING },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering4)
+{
+	auto const dir = path ("build/test/verify_incorrect_closed_caption_ordering4");
+	auto cpl = dcp_with_text_from_file<dcp::ReelSMPTEClosedCaptionAsset> (dir, "test/data/verify_incorrect_closed_caption_ordering4.xml");
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
+		});
+}
+
 
 
 BOOST_AUTO_TEST_CASE (verify_invalid_sound_frame_rate)

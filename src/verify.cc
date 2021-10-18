@@ -921,6 +921,113 @@ verify_text_details (
 }
 
 
+static
+void
+verify_closed_caption_details (
+	vector<shared_ptr<Reel>> reels,
+	vector<VerificationNote>& notes
+	)
+{
+	std::function<void (cxml::ConstNodePtr node, std::vector<cxml::ConstNodePtr>& text_or_image)> find_text_or_image;
+	find_text_or_image = [&find_text_or_image](cxml::ConstNodePtr node, std::vector<cxml::ConstNodePtr>& text_or_image) {
+		for (auto i: node->node_children()) {
+			if (i->name() == "Text") {
+				text_or_image.push_back (i);
+			} else {
+				find_text_or_image (i, text_or_image);
+			}
+		}
+	};
+
+	auto mismatched_valign = false;
+	auto incorrect_order = false;
+
+	std::function<void (cxml::ConstNodePtr)> parse;
+	parse = [&parse, &find_text_or_image, &mismatched_valign, &incorrect_order](cxml::ConstNodePtr node) {
+		if (node->name() == "Subtitle") {
+			vector<cxml::ConstNodePtr> text_or_image;
+			find_text_or_image (node, text_or_image);
+			optional<string> last_valign;
+			optional<float> last_vpos;
+			for (auto i: text_or_image) {
+				auto valign = i->optional_string_attribute("VAlign");
+				if (!valign) {
+					valign = i->optional_string_attribute("Valign").get_value_or("center");
+				}
+				auto vpos = i->optional_number_attribute<float>("VPosition");
+				if (!vpos) {
+					vpos = i->optional_number_attribute<float>("Vposition").get_value_or(50);
+				}
+
+				if (last_valign) {
+					if (*last_valign != valign) {
+						mismatched_valign = true;
+					}
+				}
+				last_valign = valign;
+
+				if (!mismatched_valign) {
+					if (last_vpos) {
+						if (*last_valign == "top" || *last_valign == "center") {
+							if (*vpos < *last_vpos) {
+								incorrect_order = true;
+							}
+						} else {
+							if (*vpos > *last_vpos) {
+								incorrect_order = true;
+							}
+						}
+					}
+					last_vpos = vpos;
+				}
+			}
+		}
+
+		for (auto i: node->node_children()) {
+			parse(i);
+		}
+	};
+
+	for (auto reel: reels) {
+		for (auto ccap: reel->closed_captions()) {
+			auto reel_xml = ccap->asset()->raw_xml();
+			if (!reel_xml) {
+				notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED});
+				continue;
+			}
+
+			/* We need to look at <Subtitle> instances in the XML being checked, so we can't use the subtitles
+			 * read in by libdcp's parser.
+			 */
+
+			shared_ptr<cxml::Document> doc;
+			optional<int> tcr;
+			optional<Time> start_time;
+			try {
+				doc = make_shared<cxml::Document>("SubtitleReel");
+				doc->read_string (*reel_xml);
+			} catch (...) {
+				doc = make_shared<cxml::Document>("DCSubtitle");
+				doc->read_string (*reel_xml);
+			}
+			parse (doc);
+		}
+	}
+
+	if (mismatched_valign) {
+		notes.push_back ({
+			VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_VALIGN,
+		});
+	}
+
+	if (incorrect_order) {
+		notes.push_back ({
+			VerificationNote::Type::ERROR, VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ORDERING,
+		});
+	}
+}
+
+
 struct LinesCharactersResult
 {
 	bool warning_length_exceeded = false;
@@ -1061,6 +1168,8 @@ verify_text_details (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& n
 			}
 		);
 	}
+
+	verify_closed_caption_details (reels, notes);
 }
 
 
@@ -1650,6 +1759,10 @@ dcp::note_to_string (VerificationNote note)
 		return "Some aspect of this DCP could not be checked because it is encrypted.";
 	case VerificationNote::Code::EMPTY_TEXT:
 		return "There is an empty <Text> node in a subtitle or closed caption.";
+	case VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_VALIGN:
+		return "Some closed <Text> or <Image> nodes have different vertical alignment within a <Subtitle>.";
+	case VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ORDERING:
+		return "Some closed captions are not listed in the order of their vertical position.";
 	}
 
 	return "";

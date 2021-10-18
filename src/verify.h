@@ -387,7 +387,11 @@ public:
 		/** Something could not be verified because content is encrypted and no key is available */
 		MISSED_CHECK_OF_ENCRYPTED,
 		/** Some timed-text XML has an empty <_Text_> node */
-		EMPTY_TEXT
+		EMPTY_TEXT,
+		/** Some closed captions do not have the same vertical alignment within a <_Subtitle_> node */
+		MISMATCHED_CLOSED_CAPTION_VALIGN,
+		/** Some closed captions are not listed in the XML in the order of their vertical position */
+		INCORRECT_CLOSED_CAPTION_ORDERING,
 	};
 
 	VerificationNote (Type type, Code code)

@@ -526,3 +526,178 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 	BOOST_CHECK (image->fade_up_time() == dcp::Time(0, 0, 0, 0, 24));
 	BOOST_CHECK (image->fade_down_time() == dcp::Time(0, 0, 0, 0, 24));
 }
+
+
+/* Some closed caption systems require the <Text> elements to be written in order of their
+ * vertical position (see DoM bug #2106).
+ */
+BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_top_alignment)
+{
+	dcp::SMPTESubtitleAsset c;
+	c.set_reel_number (1);
+	c.set_language (dcp::LanguageTag("en"));
+	c.set_content_title_text ("Test");
+	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
+
+	c.add (
+		make_shared<dcp::SubtitleString>(
+			string ("Arial"),
+			false,
+			false,
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			1.0,
+			dcp::Time (0, 0, 1, 0, 24),
+			dcp::Time (0, 0, 9, 0, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.8,
+			dcp::VAlign::TOP,
+			dcp::Direction::LTR,
+			"Top line",
+			dcp::Effect::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24),
+			0
+			)
+		);
+
+	c.add (
+		make_shared<dcp::SubtitleString>(
+			string ("Arial"),
+			false,
+			false,
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			1.0,
+			dcp::Time (0, 0, 1, 0, 24),
+			dcp::Time (0, 0, 9, 0, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.9,
+			dcp::VAlign::TOP,
+			dcp::Direction::LTR,
+			"Bottom line",
+			dcp::Effect::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24),
+			0
+			)
+		);
+
+	c._xml_id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
+
+	check_xml (
+		c.xml_as_string(),
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
+		  "<Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</Id>"
+		  "<ContentTitleText>Test</ContentTitleText>"
+		  "<IssueDate>2016-04-01T03:52:00.000+00:00</IssueDate>"
+		  "<ReelNumber>1</ReelNumber>"
+		  "<Language>en</Language>"
+		  "<EditRate>24 1</EditRate>"
+		  "<TimeCodeRate>24</TimeCodeRate>"
+		  "<SubtitleList>"
+		    "<Font AspectAdjust=\"1.0\" Color=\"FFFFFFFF\" Effect=\"none\" EffectColor=\"FF000000\" ID=\"Arial\" Italic=\"no\" Script=\"normal\" Size=\"48\" Underline=\"no\" Weight=\"normal\">"
+		      "<Subtitle SpotNumber=\"1\" TimeIn=\"00:00:01:00\" TimeOut=\"00:00:09:00\" FadeUpTime=\"00:00:00:00\" FadeDownTime=\"00:00:00:00\">"
+		        "<Text Valign=\"top\" Vposition=\"80\">Top line</Text>"
+		        "<Text Valign=\"top\" Vposition=\"90\">Bottom line</Text>"
+		      "</Subtitle>"
+		    "</Font>"
+		  "</SubtitleList>"
+		"</SubtitleReel>",
+		{}
+		);
+}
+
+
+/* See the test above */
+BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_bottom_alignment)
+{
+	dcp::SMPTESubtitleAsset c;
+	c.set_reel_number (1);
+	c.set_language (dcp::LanguageTag("en"));
+	c.set_content_title_text ("Test");
+	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
+
+	c.add (
+		make_shared<dcp::SubtitleString>(
+			string ("Arial"),
+			false,
+			false,
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			1.0,
+			dcp::Time (0, 0, 1, 0, 24),
+			dcp::Time (0, 0, 9, 0, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.8,
+			dcp::VAlign::BOTTOM,
+			dcp::Direction::LTR,
+			"Top line",
+			dcp::Effect::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24),
+			0
+			)
+		);
+
+	c.add (
+		make_shared<dcp::SubtitleString>(
+			string ("Arial"),
+			false,
+			false,
+			false,
+			dcp::Colour (255, 255, 255),
+			48,
+			1.0,
+			dcp::Time (0, 0, 1, 0, 24),
+			dcp::Time (0, 0, 9, 0, 24),
+			0,
+			dcp::HAlign::CENTER,
+			0.7,
+			dcp::VAlign::BOTTOM,
+			dcp::Direction::LTR,
+			"Bottom line",
+			dcp::Effect::NONE,
+			dcp::Colour (0, 0, 0),
+			dcp::Time (0, 0, 0, 0, 24),
+			dcp::Time (0, 0, 0, 0, 24),
+			0
+			)
+		);
+
+	c._xml_id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
+
+	check_xml (
+		c.xml_as_string(),
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">"
+		  "<Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</Id>"
+		  "<ContentTitleText>Test</ContentTitleText>"
+		  "<IssueDate>2016-04-01T03:52:00.000+00:00</IssueDate>"
+		  "<ReelNumber>1</ReelNumber>"
+		  "<Language>en</Language>"
+		  "<EditRate>24 1</EditRate>"
+		  "<TimeCodeRate>24</TimeCodeRate>"
+		  "<SubtitleList>"
+		    "<Font AspectAdjust=\"1.0\" Color=\"FFFFFFFF\" Effect=\"none\" EffectColor=\"FF000000\" ID=\"Arial\" Italic=\"no\" Script=\"normal\" Size=\"48\" Underline=\"no\" Weight=\"normal\">"
+		      "<Subtitle SpotNumber=\"1\" TimeIn=\"00:00:01:00\" TimeOut=\"00:00:09:00\" FadeUpTime=\"00:00:00:00\" FadeDownTime=\"00:00:00:00\">"
+		        "<Text Valign=\"bottom\" Vposition=\"80\">Top line</Text>"
+		        "<Text Valign=\"bottom\" Vposition=\"70\">Bottom line</Text>"
+		      "</Subtitle>"
+		    "</Font>"
+		  "</SubtitleList>"
+		"</SubtitleReel>",
+		{}
+		);
+}
+

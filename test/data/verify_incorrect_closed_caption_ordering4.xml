@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SubtitleReel xmlns="http://www.smpte-ra.org/schemas/428-7/2010/DCST" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <Id>urn:uuid:fc754ec1-eb8d-4029-8023-80d7dadc6313</Id>
+  <ContentTitleText></ContentTitleText>
+  <IssueDate>2021-10-24T00:23:49.000+02:00</IssueDate>
+  <Language>de-DE</Language>
+  <EditRate>24 1</EditRate>
+  <TimeCodeRate>24</TimeCodeRate>
+  <StartTime>00:00:00:00</StartTime>
+  <SubtitleList>
+    <Font AspectAdjust="1.0" Color="FF000000" Effect="none" EffectColor="FF000000" Italic="no" Script="normal" Size="42" Underline="no" Weight="normal">
+      <Subtitle FadeDownTime="00:00:00:00" FadeUpTime="00:00:00:00" SpotNumber="1" TimeIn="00:00:04:00" TimeOut="00:00:12:12">
+        <Text Valign="bottom" Vposition="20">This</Text>
+        <Text Valign="bottom" Vposition="10">is</Text>
+        <Text Valign="bottom" Vposition="0">fine, though.</Text>
+      </Subtitle>
+    </Font>
+  </SubtitleList>
+</SubtitleReel>
+
