@@ -1235,7 +1235,7 @@ BOOST_AUTO_TEST_CASE (verify_picture_size)
 
 static
 void
-add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int end_frame, float v_position = 0, string text = "Hello")
+add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int end_frame, float v_position = 0, dcp::VAlign v_align = dcp::VAlign::CENTER, string text = "Hello")
 {
 	asset->add (
 		make_shared<dcp::SubtitleString>(
@@ -1251,7 +1251,7 @@ add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int en
 			0,
 			dcp::HAlign::CENTER,
 			v_position,
-			dcp::VAlign::CENTER,
+			v_align,
 			dcp::Direction::LTR,
 			text,
 			dcp::Effect::NONE,
@@ -1584,16 +1584,18 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 class TestText
 {
 public:
-	TestText (int in_, int out_, float v_position_ = 0, string text_ = "Hello")
+	TestText (int in_, int out_, float v_position_ = 0, dcp::VAlign v_align_ = dcp::VAlign::CENTER, string text_ = "Hello")
 		: in(in_)
 		, out(out_)
 		, v_position(v_position_)
+		, v_align(v_align_)
 		, text(text_)
 	{}
 
 	int in;
 	int out;
 	float v_position;
+	dcp::VAlign v_align;
 	string text;
 };
 
@@ -1606,7 +1608,7 @@ dcp_with_text (path dir, vector<TestText> subs)
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>();
 	asset->set_start_time (dcp::Time());
 	for (auto i: subs) {
-		add_test_subtitle (asset, i.in, i.out, i.v_position, i.text);
+		add_test_subtitle (asset, i.in, i.out, i.v_position, i.v_align, i.text);
 	}
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
@@ -1770,10 +1772,10 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_count1)
 	auto cpl = dcp_with_text<dcp::ReelSMPTESubtitleAsset> (
 		dir,
 		{
-			{ 96, 200, 0.0, "We" },
-			{ 96, 200, 0.1, "have" },
-			{ 96, 200, 0.2, "four" },
-			{ 96, 200, 0.3, "lines" }
+			{ 96, 200, 0.0, dcp::VAlign::CENTER, "We" },
+			{ 96, 200, 0.1, dcp::VAlign::CENTER, "have" },
+			{ 96, 200, 0.2, dcp::VAlign::CENTER, "four" },
+			{ 96, 200, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
 	check_verify_result (
 		{dir},
@@ -1790,9 +1792,9 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_line_count1)
 	auto cpl = dcp_with_text<dcp::ReelSMPTESubtitleAsset> (
 		dir,
 		{
-			{ 96, 200, 0.0, "We" },
-			{ 96, 200, 0.1, "have" },
-			{ 96, 200, 0.2, "four" },
+			{ 96, 200, 0.0, dcp::VAlign::CENTER, "We" },
+			{ 96, 200, 0.1, dcp::VAlign::CENTER, "have" },
+			{ 96, 200, 0.2, dcp::VAlign::CENTER, "four" },
 		});
 	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
@@ -1804,10 +1806,10 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_count2)
 	auto cpl = dcp_with_text<dcp::ReelSMPTESubtitleAsset> (
 		dir,
 		{
-			{ 96, 300, 0.0, "We" },
-			{ 96, 300, 0.1, "have" },
-			{ 150, 180, 0.2, "four" },
-			{ 150, 180, 0.3, "lines" }
+			{ 96, 300, 0.0, dcp::VAlign::CENTER, "We" },
+			{ 96, 300, 0.1, dcp::VAlign::CENTER, "have" },
+			{ 150, 180, 0.2, dcp::VAlign::CENTER, "four" },
+			{ 150, 180, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
 	check_verify_result (
 		{dir},
@@ -1824,10 +1826,10 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_line_count2)
 	auto cpl = dcp_with_text<dcp::ReelSMPTESubtitleAsset> (
 		dir,
 		{
-			{ 96, 300, 0.0, "We" },
-			{ 96, 300, 0.1, "have" },
-			{ 150, 180, 0.2, "four" },
-			{ 190, 250, 0.3, "lines" }
+			{ 96, 300, 0.0, dcp::VAlign::CENTER, "We" },
+			{ 96, 300, 0.1, dcp::VAlign::CENTER, "have" },
+			{ 150, 180, 0.2, dcp::VAlign::CENTER, "four" },
+			{ 190, 250, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
 	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
@@ -1839,7 +1841,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_length1)
 	auto cpl = dcp_with_text<dcp::ReelSMPTESubtitleAsset> (
 		dir,
 		{
-			{ 96, 300, 0.0, "012345678901234567890123456789012345678901234567890123" }
+			{ 96, 300, 0.0, dcp::VAlign::CENTER, "012345678901234567890123456789012345678901234567890123" }
 		});
 	check_verify_result (
 		{dir},
@@ -1856,7 +1858,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_length2)
 	auto cpl = dcp_with_text<dcp::ReelSMPTESubtitleAsset> (
 		dir,
 		{
-			{ 96, 300, 0.0, "012345678901234567890123456789012345678901234567890123456789012345678901234567890" }
+			{ 96, 300, 0.0, dcp::VAlign::CENTER, "012345678901234567890123456789012345678901234567890123456789012345678901234567890" }
 		});
 	check_verify_result (
 		{dir},
@@ -1873,10 +1875,10 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count1)
 	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
 		dir,
 		{
-			{ 96, 200, 0.0, "We" },
-			{ 96, 200, 0.1, "have" },
-			{ 96, 200, 0.2, "four" },
-			{ 96, 200, 0.3, "lines" }
+			{ 96, 200, 0.0, dcp::VAlign::CENTER, "We" },
+			{ 96, 200, 0.1, dcp::VAlign::CENTER, "have" },
+			{ 96, 200, 0.2, dcp::VAlign::CENTER, "four" },
+			{ 96, 200, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
 	check_verify_result (
 		{dir},
@@ -1893,9 +1895,9 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count2)
 	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
 		dir,
 		{
-			{ 96, 200, 0.0, "We" },
-			{ 96, 200, 0.1, "have" },
-			{ 96, 200, 0.2, "four" },
+			{ 96, 200, 0.0, dcp::VAlign::CENTER, "We" },
+			{ 96, 200, 0.1, dcp::VAlign::CENTER, "have" },
+			{ 96, 200, 0.2, dcp::VAlign::CENTER, "four" },
 		});
 	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
@@ -1907,10 +1909,10 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_count3)
 	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
 		dir,
 		{
-			{ 96, 300, 0.0, "We" },
-			{ 96, 300, 0.1, "have" },
-			{ 150, 180, 0.2, "four" },
-			{ 150, 180, 0.3, "lines" }
+			{ 96, 300, 0.0, dcp::VAlign::CENTER, "We" },
+			{ 96, 300, 0.1, dcp::VAlign::CENTER, "have" },
+			{ 150, 180, 0.2, dcp::VAlign::CENTER, "four" },
+			{ 150, 180, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
 	check_verify_result (
 		{dir},
@@ -1927,10 +1929,10 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count4)
 	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
 		dir,
 		{
-			{ 96, 300, 0.0, "We" },
-			{ 96, 300, 0.1, "have" },
-			{ 150, 180, 0.2, "four" },
-			{ 190, 250, 0.3, "lines" }
+			{ 96, 300, 0.0, dcp::VAlign::CENTER, "We" },
+			{ 96, 300, 0.1, dcp::VAlign::CENTER, "have" },
+			{ 150, 180, 0.2, dcp::VAlign::CENTER, "four" },
+			{ 190, 250, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
 	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
@@ -1942,7 +1944,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_length)
 	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
 		dir,
 		{
-			{ 96, 300, 0.0, "0123456789012345678901234567890123" }
+			{ 96, 300, 0.0, dcp::VAlign::CENTER, "0123456789012345678901234567890123" }
 		});
 	check_verify_result (
 		{dir},
