@@ -1760,7 +1760,7 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::EMPTY_TEXT:
 		return "There is an empty <Text> node in a subtitle or closed caption.";
 	case VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_VALIGN:
-		return "Some closed <Text> or <Image> nodes have different vertical alignment within a <Subtitle>.";
+		return "Some closed <Text> or <Image> nodes have different vertical alignments within a <Subtitle>.";
 	case VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ORDERING:
 		return "Some closed captions are not listed in the order of their vertical position.";
 	}
