@@ -1975,6 +1975,22 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count4)
 }
 
 
+BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_length)
+{
+	auto const dir = path ("build/test/verify_valid_closed_caption_line_length");
+	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+		dir,
+		{
+			{ 96, 300, 0.0, dcp::VAlign::CENTER, "01234567890123456789012345678901" }
+		});
+	check_verify_result (
+		{dir},
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
+		});
+}
+
+
 BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_length)
 {
 	auto const dir = path ("build/test/verify_invalid_closed_caption_line_length");

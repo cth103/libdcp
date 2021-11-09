@@ -1099,10 +1099,10 @@ verify_text_lines_and_characters (
 			result->line_count_exceeded = true;
 		}
 		for (auto j: current) {
-			if (j.second >= warning_length) {
+			if (j.second > warning_length) {
 				result->warning_length_exceeded = true;
 			}
-			if (j.second >= error_length) {
+			if (j.second > error_length) {
 				result->error_length_exceeded = true;
 			}
 		}
