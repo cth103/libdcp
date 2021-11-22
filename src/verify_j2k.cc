@@ -221,7 +221,8 @@ dcp::verify_j2k (shared_ptr<const Data> j2k, vector<VerificationNote>& notes)
 			} else if (*marker_name == "COD") {
 				num_COD++;
 				get_16(); // length
-				require_8(1, "invalid coding style %1");
+				/* XXX: I can't find any evidence for this: must the coding style really always be 1? */
+				require_8(1, "invalid COD coding style %1");
 				require_8(4, "invalid progression order %1"); // CPRL
 				require_16(1, "invalid quality layers count %1");
 				require_8(1, "invalid multi-component transform flag %1");
@@ -260,7 +261,8 @@ dcp::verify_j2k (shared_ptr<const Data> j2k, vector<VerificationNote>& notes)
 			} else if (*marker_name == "COC") {
 				get_16(); // length
 				require_8(0, "invalid COC component number");
-				require_8(1, "invalid coding style %1");
+				/* XXX: I can't find any evidence for this: must the coding style really always be 1? */
+				require_8(1, "invalid COC coding style %1");
 				require_8(5, "invalid number of transform levels %1");
 				require_8(3, "invalid code block width exponent %1");
 				require_8(3, "invalid code block height exponent %1");
