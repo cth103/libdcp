@@ -58,18 +58,19 @@
 #include <sstream>
 #include <inttypes.h>
 
-using std::string;
 using std::cerr;
 using std::cout;
-using std::list;
-using std::pair;
-using std::min;
-using std::max;
-using std::exception;
-using std::vector;
-using std::stringstream;
-using std::shared_ptr;
 using std::dynamic_pointer_cast;
+using std::exception;
+using std::list;
+using std::make_shared;
+using std::max;
+using std::min;
+using std::pair;
+using std::shared_ptr;
+using std::string;
+using std::stringstream;
+using std::vector;
 using boost::optional;
 using namespace dcp;
 
@@ -79,6 +80,7 @@ help (string n)
 	cerr << "Syntax: " << n << " [options] [<DCP>] [<CPL>]\n"
 	     << "  -s, --subtitles              list all subtitles\n"
 	     << "  -p, --picture                analyse picture\n"
+	     << "  -f, --frame                  show details of individual picture frames\n"
 	     << "  -d, --decompress             decompress picture when analysing (this is slow)\n"
 	     << "  -o, --only                   only output certain pieces of information; see below.\n"
 	     << "      --kdm                    KDM to decrypt DCP\n"
@@ -127,14 +129,14 @@ maybe_output(vector<string> const& only, string t, string s)
 
 static
 dcp::Time
-main_picture (vector<string> const& only, shared_ptr<Reel> reel, bool analyse, bool decompress)
+main_picture (vector<string> const& only, shared_ptr<Reel> reel, bool analyse, bool frame_detail, bool decompress)
 {
-	shared_ptr<dcp::ReelPictureAsset> mp = reel->main_picture ();
+	auto mp = reel->main_picture ();
 	if (!mp) {
-		return dcp::Time();
+		return {};
 	}
 
-	OUTPUT_PICTURE("      Picture ID:  %1", mp->id());
+	OUTPUT_PICTURE("      Picture ID:         %1", mp->id());
 	if (mp->entry_point()) {
 		OUTPUT_PICTURE(" entry %1", *mp->entry_point());
 	}
@@ -151,16 +153,16 @@ main_picture (vector<string> const& only, shared_ptr<Reel> reel, bool analyse, b
 
 	if (mp->asset_ref().resolved()) {
 		if (mp->asset()) {
-			OUTPUT_PICTURE("\n      Picture:     %1x%2\n", mp->asset()->size().width, mp->asset()->size().height);
+			OUTPUT_PICTURE("\n      Picture:            %1x%2\n", mp->asset()->size().width, mp->asset()->size().height);
 		}
 
-		shared_ptr<MonoPictureAsset> ma = dynamic_pointer_cast<MonoPictureAsset>(mp->asset());
+		auto ma = dynamic_pointer_cast<MonoPictureAsset>(mp->asset());
 		if (analyse && ma) {
-			shared_ptr<MonoPictureAssetReader> reader = ma->start_read ();
+			auto reader = ma->start_read ();
 			pair<int, int> j2k_size_range (INT_MAX, 0);
 			for (int64_t i = 0; i < ma->intrinsic_duration(); ++i) {
-				shared_ptr<const MonoPictureFrame> frame = reader->get_frame (i);
-				if (SHOULD_PICTURE) {
+				auto frame = reader->get_frame (i);
+				if (SHOULD_PICTURE && frame_detail) {
 					printf("Frame %" PRId64 " J2K size %7d", i, frame->size());
 				}
 				j2k_size_range.first = min(j2k_size_range.first, frame->size());
@@ -169,26 +171,27 @@ main_picture (vector<string> const& only, shared_ptr<Reel> reel, bool analyse, b
 				if (decompress) {
 					try {
 						frame->xyz_image();
-						if (SHOULD_PICTURE) {
+						if (SHOULD_PICTURE && frame_detail) {
 							printf(" decrypted OK");
 						}
 					} catch (exception& e) {
-						if (SHOULD_PICTURE) {
+						if (SHOULD_PICTURE && frame_detail) {
 							printf(" decryption FAILED");
 						}
 					}
 				}
 
-				if (SHOULD_PICTURE) {
+				if (SHOULD_PICTURE && frame_detail) {
 					printf("\n");
 				}
 
 			}
 			if (SHOULD_PICTURE) {
 				printf(
-						"J2K size ranges from %d (%.1f Mbit/s) to %d (%.1f Mbit/s)\n",
-						j2k_size_range.first, mbits_per_second(j2k_size_range.first, ma->frame_rate()),
-						j2k_size_range.second, mbits_per_second(j2k_size_range.second, ma->frame_rate())
+						"      Minimum frame size: %5.1f MBit/s (%6d)\n"
+						"      Maximum frame size: %5.1f MBit/s (%6d)\n",
+						mbits_per_second(j2k_size_range.first, ma->frame_rate()), j2k_size_range.first,
+						mbits_per_second(j2k_size_range.second, ma->frame_rate()), j2k_size_range.second
 				      );
 			}
 		}
@@ -207,12 +210,12 @@ static
 void
 main_sound (vector<string> const& only, shared_ptr<Reel> reel)
 {
-	shared_ptr<dcp::ReelSoundAsset> ms = reel->main_sound ();
+	auto ms = reel->main_sound ();
 	if (!ms) {
 		return;
 	}
 
-	OUTPUT_SOUND("      Sound ID:    %1", ms->id());
+	OUTPUT_SOUND("      Sound ID:           %1", ms->id());
 	if (ms->entry_point()) {
 		OUTPUT_SOUND(" entry %1", *ms->entry_point());
 	}
@@ -225,7 +228,7 @@ main_sound (vector<string> const& only, shared_ptr<Reel> reel)
 	if (ms->asset_ref().resolved()) {
 		if (ms->asset()) {
 			OUTPUT_SOUND(
-				"\n      Sound:       %1 channels at %2Hz\n",
+				"\n      Sound:              %1 channels at %2Hz\n",
 				ms->asset()->channels(),
 				ms->asset()->sampling_rate()
 				);
@@ -239,7 +242,7 @@ static
 void
 main_subtitle (vector<string> const& only, shared_ptr<Reel> reel, bool list_subtitles)
 {
-	shared_ptr<dcp::ReelSubtitleAsset> ms = reel->main_subtitle ();
+	auto ms = reel->main_subtitle ();
 	if (!ms) {
 		return;
 	}
@@ -249,11 +252,11 @@ main_subtitle (vector<string> const& only, shared_ptr<Reel> reel, bool list_subt
 	if (ms->asset_ref().resolved()) {
 		auto subs = ms->asset()->subtitles ();
 		OUTPUT_SUBTITLE("\n      Subtitle:    %1 subtitles", subs.size());
-		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (ms->asset());
+		auto iop = dynamic_pointer_cast<InteropSubtitleAsset> (ms->asset());
 		if (iop) {
 			OUTPUT_SUBTITLE(" in %1\n", iop->language());
 		}
-		shared_ptr<SMPTESubtitleAsset> smpte = dynamic_pointer_cast<SMPTESubtitleAsset> (ms->asset());
+		auto smpte = dynamic_pointer_cast<SMPTESubtitleAsset> (ms->asset());
 		if (smpte && smpte->language ()) {
 			OUTPUT_SUBTITLE(" in %1\n", smpte->language().get());
 		}
@@ -286,6 +289,7 @@ main (int argc, char* argv[])
 
 	bool subtitles = false;
 	bool picture = false;
+	bool frame = false;
 	bool decompress = false;
 	bool ignore_missing_assets = false;
 	optional<boost::filesystem::path> kdm;
@@ -299,6 +303,7 @@ main (int argc, char* argv[])
 			{ "help", no_argument, 0, 'h' },
 			{ "subtitles", no_argument, 0, 's' },
 			{ "picture", no_argument, 0, 'p' },
+			{ "frame", no_argument, 0, 'f' },
 			{ "decompress", no_argument, 0, 'd' },
 			{ "only", required_argument, 0, 'o' },
 			{ "ignore-missing-assets", no_argument, 0, 'A' },
@@ -307,7 +312,7 @@ main (int argc, char* argv[])
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "vhspdo:AB:C:", long_options, &option_index);
+		int c = getopt_long (argc, argv, "vhspfdo:AB:C:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -325,6 +330,9 @@ main (int argc, char* argv[])
 			break;
 		case 'p':
 			picture = true;
+			break;
+		case 'f':
+			frame = true;
 			break;
 		case 'd':
 			decompress = true;
@@ -389,7 +397,7 @@ main (int argc, char* argv[])
 
 		cpls = dcp->cpls ();
 	} else {
-		cpls.push_back (shared_ptr<CPL>(new CPL(boost::filesystem::path(argv[optind]))));
+		cpls.push_back (std::make_shared<CPL>(boost::filesystem::path(argv[optind])));
 		ignore_missing_assets = true;
 	}
 
@@ -405,7 +413,7 @@ main (int argc, char* argv[])
 			}
 
 			try {
-				total_time += main_picture(only, j, picture, decompress);
+				total_time += main_picture(only, j, picture, frame, decompress);
 			} catch (UnresolvedRefError& e) {
 				if (!ignore_missing_assets) {
 					cerr << e.what() << " (for main picture)\n";
