@@ -32,7 +32,6 @@
 */
 
 #include "raw_convert.h"
-#include "locale_convert.h"
 #include <boost/test/unit_test.hpp>
 #include <iostream>
 
