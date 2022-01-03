@@ -98,6 +98,7 @@ def build(bld):
              ref.cc
              rgb_xyz.cc
              s_gamut3_transfer_function.cc
+             search.cc
              smpte_load_font_node.cc
              smpte_subtitle_asset.cc
              sound_asset.cc
@@ -191,6 +192,7 @@ def build(bld):
               reel_subtitle_asset.h
               ref.h
               s_gamut3_transfer_function.h
+              search.h
               smpte_load_font_node.h
               smpte_subtitle_asset.h
               sound_frame.h
