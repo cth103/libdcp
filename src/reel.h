@@ -59,6 +59,9 @@ namespace xmlpp {
 }
 
 
+struct dcp_add_kdm_test;
+
+
 namespace dcp {
 
 
@@ -137,6 +140,8 @@ public:
 	void resolve_refs (std::vector<std::shared_ptr<Asset>>);
 
 private:
+	friend struct ::dcp_add_kdm_test;
+
 	void give_kdm_to_assets (dcp::DecryptedKDM const& kdm);
 
 	std::shared_ptr<ReelPictureAsset> _main_picture;

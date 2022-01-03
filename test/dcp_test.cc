@@ -425,3 +425,63 @@ BOOST_AUTO_TEST_CASE (dcp_with_mixed_cpls)
 	dcp.add(make_shared<dcp::CPL>("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE));
 	BOOST_REQUIRE_THROW (dcp.write_xml(), dcp::MiscError);
 }
+
+
+BOOST_AUTO_TEST_CASE (dcp_add_kdm_test)
+{
+	/* Some CPLs, each with a reel */
+
+	shared_ptr<dcp::CPL> cpls[] = {
+		make_shared<dcp::CPL>("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE),
+		make_shared<dcp::CPL>("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE),
+		make_shared<dcp::CPL>("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE)
+	};
+
+	shared_ptr<dcp::Reel> reels[] = {
+		make_shared<dcp::Reel>(),
+		make_shared<dcp::Reel>(),
+		make_shared<dcp::Reel>()
+	};
+
+	for (auto i = 0; i < 3; ++i) {
+		cpls[i]->add(reels[i]);
+	}
+
+	dcp::DCP dcp ("build/test/dcp_add_kdm_test");
+	dcp.add(cpls[0]);
+	dcp.add(cpls[1]);
+	dcp.add(cpls[2]);
+
+	/* Simple KDM with one key that should be given to cpls[0] */
+
+	auto kdm_1 = dcp::DecryptedKDM({}, {}, "", "", "");
+	auto kdm_1_uuid = dcp::make_uuid();
+	kdm_1.add_key (dcp::DecryptedKDMKey(string("MDIK"), kdm_1_uuid, dcp::Key(), cpls[0]->id(), dcp::Standard::SMPTE));
+	dcp.add (kdm_1);
+	BOOST_REQUIRE (reels[0]->_kdms.size() == 1);
+	BOOST_CHECK (reels[0]->_kdms[0].keys().size() == 1);
+	BOOST_CHECK (reels[0]->_kdms[0].keys()[0].id() == kdm_1_uuid);
+	BOOST_CHECK (reels[1]->_kdms.size() == 0);
+	BOOST_CHECK (reels[2]->_kdms.size() == 0);
+
+	/* KDM with two keys that should be given to cpls[1] and cpls[2] */
+
+	auto kdm_2 = dcp::DecryptedKDM({}, {}, "", "", "");
+	auto kdm_2_uuid_1 = dcp::make_uuid();
+	kdm_2.add_key (dcp::DecryptedKDMKey(string("MDIK"), kdm_2_uuid_1, dcp::Key(), cpls[1]->id(), dcp::Standard::SMPTE));
+	auto kdm_2_uuid_2 = dcp::make_uuid();
+	kdm_2.add_key (dcp::DecryptedKDMKey(string("MDIK"), kdm_2_uuid_2, dcp::Key(), cpls[2]->id(), dcp::Standard::SMPTE));
+	dcp.add (kdm_2);
+	/* Unchanged from previous test */
+	BOOST_CHECK (reels[0]->_kdms.size() == 1);
+	/* kdm_2 should have been added to both the other CPLs */
+	BOOST_REQUIRE (reels[1]->_kdms.size() == 1);
+	BOOST_REQUIRE (reels[1]->_kdms[0].keys().size() == 2);
+	BOOST_CHECK (reels[1]->_kdms[0].keys()[0].id() == kdm_2_uuid_1);
+	BOOST_CHECK (reels[1]->_kdms[0].keys()[1].id() == kdm_2_uuid_2);
+	BOOST_REQUIRE (reels[2]->_kdms.size() == 1);
+	BOOST_REQUIRE (reels[2]->_kdms[0].keys().size() == 2);
+	BOOST_CHECK (reels[2]->_kdms[0].keys()[0].id() == kdm_2_uuid_1);
+	BOOST_CHECK (reels[2]->_kdms[0].keys()[1].id() == kdm_2_uuid_2);
+}
+
