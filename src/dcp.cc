@@ -363,13 +363,10 @@ DCP::all_encrypted () const
 void
 DCP::add (DecryptedKDM const & kdm)
 {
-	auto keys = kdm.keys ();
-
-	for (auto i: cpls()) {
-		for (auto const& j: kdm.keys()) {
-			if (j.cpl_id() == i->id()) {
-				i->add (kdm);
-			}
+	auto keys = kdm.keys();
+	for (auto cpl: cpls()) {
+		if (std::any_of(keys.begin(), keys.end(), [cpl](DecryptedKDMKey const& key) { return key.cpl_id() == cpl->id(); })) {
+			cpl->add (kdm);
 		}
 	}
 }
