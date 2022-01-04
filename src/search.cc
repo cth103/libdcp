@@ -78,7 +78,7 @@ dcp::find_and_resolve_cpls (vector<boost::filesystem::path> const& directories, 
 	for (auto i: dcps) {
 		for (auto j: dcps) {
 			if (i != j) {
-				i->resolve_refs(j->assets());
+				i->resolve_refs(j->assets(true));
 			}
 		}
 	}
