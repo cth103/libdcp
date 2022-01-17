@@ -18,7 +18,6 @@
       <AssetList>
         <MainPicture>
           <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
-          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
@@ -29,7 +28,6 @@
         </MainPicture>
         <MainSound>
           <Id>urn:uuid:8b92bcee-62fc-4a33-a51a-816e9611ce85</Id>
-          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
@@ -38,7 +36,6 @@
         </MainSound>
         <axd:AuxData xmlns:axd="http://www.dolby.com/schemas/2012/AD">
           <Id>urn:uuid:b68febcc-5ddf-489a-84a7-924f29fa2afd</Id>
-          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>1489</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>

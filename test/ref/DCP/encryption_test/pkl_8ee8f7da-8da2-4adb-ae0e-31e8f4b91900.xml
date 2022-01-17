@@ -9,8 +9,8 @@
     <Asset>
       <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
       <AnnotationText>81fb54df-e1bf-4647-8788-ea7ba154375b</AnnotationText>
-      <Hash>iBE1dh+gKFCi7R93mx2AoJ1eaek=</Hash>
-      <Size>9314</Size>
+      <Hash>zk4L2kXj9llDdjmxCW2d2X06VQM=</Hash>
+      <Size>9226</Size>
       <Type>text/xml</Type>
     </Asset>
     <Asset>
@@ -46,15 +46,15 @@
           <dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-        <dsig:DigestValue>iFEJZ3tiVaiuJMzVY/ju8qx+KV0=</dsig:DigestValue>
+        <dsig:DigestValue>xzO3cFwUX87TL4rL9jq6CLqDN6I=</dsig:DigestValue>
       </dsig:Reference>
     </dsig:SignedInfo>
-    <dsig:SignatureValue>GKFnAkzVuhXi391uAz5kRTmKaJKMKd3iAe1XtYsUoRfhVxtQCv/hha/W8xpVsP2J
-g/duTyASL/T4vdaQsrR8K3JUwP/r/gWlN3UfcFIORHkKeJ9OOBSIdauthODZpAJw
-V+ZfgTu5S8aTh4XqkWWeVDQSsBWJhgHWFM4vrPrsWxae4l3SGj2DpcXUPhLOe55+
-Xh/sVJVH8CpEcNGKNDZnaJShUI6Ige45ElUePZNsYRNLBDWDcYw+nR0DAUovEuCh
-CFqB2H9FKwufxAIWqbEYSca4liHlgFYL7TuHgaDbzdjTlQ8oL3kCPGbtVX5oWiEu
-ZksAYCwT9sDxSxeThmFZOQ==</dsig:SignatureValue>
+    <dsig:SignatureValue>VIZyD5JmV2gnPyzMEMwDaIg+NBOZzpSvBoRtPbWrYUyjxVzQfPvFzAAE+4hz8Wc7
+TIpiTZ3sYXKRQAEmA4Iu5AOJ2uijv8tnioo2FyV6JT9aGr5cNi7eeGFmN7ILU4zc
+rgp99iWgTRms8T8C7zy/NtE8P2q8K4sxQvxnYmK/0kHkQPQnWpZafAd6G/fpoV0h
+5W8UQTtn72OEPhm21uxp4crWRk9YlF2ayGYDBGm8YFP01w663e0r61xq6ROW2O4i
+jR2dQWPM1nzrafHSJKg2TL4S/GtTsDNNuIJihzGpmEjULX2FIt83f6dogyr7K624
+XcjpahE+WHn7WR3VVZsMkw==</dsig:SignatureValue>
     <dsig:KeyInfo>
       <dsig:X509Data>
         <dsig:X509IssuerSerial>

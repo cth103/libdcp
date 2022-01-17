@@ -120,12 +120,16 @@ public:
 	/** @return <Duration>, or <IntrinsicDuration> - <EntryPoint> if <Duration> is not present */
 	int64_t actual_duration () const;
 
-	std::string annotation_text () const {
+	boost::optional<std::string> annotation_text () const {
 		return _annotation_text;
 	}
 
 	void set_annotation_text (std::string at) {
 		_annotation_text = at;
+	}
+
+	void unset_annotation_text () {
+		_annotation_text = boost::none;
 	}
 
 	bool asset_equals (std::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
@@ -147,7 +151,7 @@ protected:
 	boost::optional<int64_t> _duration;    ///< The &lt;Duration&gt; from the reel's entry for this asset, if present
 
 private:
-	std::string _annotation_text;          ///< The &lt;AnnotationText&gt; from the reel's entry for this asset
+	boost::optional<std::string> _annotation_text; ///< The &lt;AnnotationText&gt; from the reel's entry for this asset
 	Fraction _edit_rate;                   ///< The &lt;EditRate&gt; from the reel's entry for this asset
 	boost::optional<int64_t> _entry_point; ///< The &lt;EntryPoint&gt; from the reel's entry for this asset
 };
