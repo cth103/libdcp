@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE (reel_picture_asset_test)
 
 	dcp::ReelMonoPictureAsset pa (doc);
 	BOOST_CHECK_EQUAL (pa.id(), "06ac1ca7-9c46-4107-8864-a6448e24b04b");
-	BOOST_CHECK_EQUAL (pa.annotation_text(), "Hello world!");
+	BOOST_CHECK_EQUAL (pa.annotation_text().get_value_or(""), "Hello world!");
 	BOOST_CHECK_EQUAL (pa.edit_rate(), dcp::Fraction(24, 1));
 	BOOST_CHECK_EQUAL (pa.intrinsic_duration(), 187048);
 	BOOST_CHECK_EQUAL (pa.entry_point().get(), 42L);
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE (reel_smpte_subtitle_asset_test)
 
 	dcp::ReelSMPTESubtitleAsset ps (doc);
 	BOOST_CHECK_EQUAL (ps.id(), "8bca1489-aab1-9259-a4fd-8150abc1de12");
-	BOOST_CHECK_EQUAL (ps.annotation_text(), "Goodbye world!");
+	BOOST_CHECK_EQUAL (ps.annotation_text().get_value_or(""), "Goodbye world!");
 	BOOST_CHECK_EQUAL (ps.edit_rate(), dcp::Fraction(25, 1));
 	BOOST_CHECK_EQUAL (ps.intrinsic_duration(), 1870);
 	BOOST_CHECK_EQUAL (ps.entry_point().get(), 0L);

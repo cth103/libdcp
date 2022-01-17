@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2014-2022 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -72,7 +72,7 @@ ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 	: Object (remove_urn_uuid (node->string_child ("Id")))
 	, _intrinsic_duration (node->number_child<int64_t> ("IntrinsicDuration"))
 	, _duration (node->optional_number_child<int64_t>("Duration"))
-	, _annotation_text (node->optional_string_child ("AnnotationText").get_value_or (""))
+	, _annotation_text (node->optional_string_child("AnnotationText"))
 	, _edit_rate (Fraction (node->string_child ("EditRate")))
 	, _entry_point (node->optional_number_child<int64_t>("EntryPoint"))
 {
@@ -93,7 +93,10 @@ ReelAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 		a->set_namespace_declaration (ns.first, ns.second);
 	}
 	a->add_child("Id")->add_child_text ("urn:uuid:" + _id);
-	a->add_child("AnnotationText")->add_child_text (_annotation_text);
+	/* Empty <AnnotationText> tags cause refusal to play on some Sony SRX320 / LMT3000 systems (DoM bug #2124) */
+	if (_annotation_text && !_annotation_text->empty()) {
+		a->add_child("AnnotationText")->add_child_text(*_annotation_text);
+	}
 	a->add_child("EditRate")->add_child_text (_edit_rate.as_string());
 	a->add_child("IntrinsicDuration")->add_child_text (raw_convert<string> (_intrinsic_duration));
 	if (_entry_point) {
@@ -124,7 +127,7 @@ bool
 ReelAsset::asset_equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, NoteHandler note) const
 {
 	if (_annotation_text != other->_annotation_text) {
-		string const s = "Reel: annotation texts differ (" + _annotation_text + " vs " + other->_annotation_text + ")\n";
+		string const s = "Reel: annotation texts differ (" + _annotation_text.get_value_or("") + " vs " + other->_annotation_text.get_value_or("") + ")\n";
 		if (!opt.reel_annotation_texts_can_differ) {
 			note (NoteType::ERROR, s);
 			return false;

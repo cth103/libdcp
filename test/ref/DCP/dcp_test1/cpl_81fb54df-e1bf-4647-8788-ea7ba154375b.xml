@@ -18,7 +18,6 @@
       <AssetList>
         <MainMarkers>
           <Id>urn:uuid:93182bd2-b1e8-41a3-b5c8-6e6564273bff</Id>
-          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
@@ -36,7 +35,6 @@
         </MainMarkers>
         <MainPicture>
           <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
-          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
@@ -47,7 +45,6 @@
         </MainPicture>
         <MainSound>
           <Id>urn:uuid:8b92bcee-62fc-4a33-a51a-816e9611ce85</Id>
-          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
