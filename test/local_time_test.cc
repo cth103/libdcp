@@ -214,3 +214,18 @@ BOOST_AUTO_TEST_CASE (local_time_add_months_test)
 		BOOST_CHECK_EQUAL (t.as_string(), "2018-02-28T11:00:00+01:00");
 	}
 }
+
+
+BOOST_AUTO_TEST_CASE (local_time_from_asn1_utctime_test)
+{
+	BOOST_CHECK_EQUAL (dcp::LocalTime::from_asn1_utc_time("991231235952").as_string(), "1999-12-31T23:59:52+00:00");
+	BOOST_CHECK_EQUAL (dcp::LocalTime::from_asn1_utc_time("210215165952").as_string(), "2021-02-15T16:59:52+00:00");
+}
+
+
+BOOST_AUTO_TEST_CASE (local_time_from_asn1_generalized_time_test)
+{
+	BOOST_CHECK_EQUAL (dcp::LocalTime::from_asn1_generalized_time("19991231235952").as_string(), "1999-12-31T23:59:52+00:00");
+	BOOST_CHECK_EQUAL (dcp::LocalTime::from_asn1_generalized_time("20210215165952").as_string(), "2021-02-15T16:59:52+00:00");
+}
+

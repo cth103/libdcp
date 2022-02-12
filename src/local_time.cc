@@ -307,3 +307,34 @@ dcp::operator<< (ostream& s, LocalTime const & t)
 	s << t.as_string ();
 	return s;
 }
+
+
+LocalTime
+LocalTime::from_asn1_utc_time (string time)
+{
+	LocalTime t;
+	sscanf(time.c_str(), "%2d%2d%2d%2d%2d%2d", &t._year, &t._month, &t._day, &t._hour, &t._minute, &t._second);
+
+	if (t._year < 70) {
+		t._year += 100;
+	}
+	t._year += 1900;
+
+	t._tz_hour = t._tz_minute = t._millisecond = 0;
+
+	return t;
+}
+
+
+LocalTime
+LocalTime::from_asn1_generalized_time (string time)
+{
+	LocalTime t;
+	sscanf(time.c_str(), "%4d%2d%2d%2d%2d%2d", &t._year, &t._month, &t._day, &t._hour, &t._minute, &t._second);
+
+	t._tz_hour = t._tz_minute = t._millisecond = 0;
+
+	return t;
+}
+
+

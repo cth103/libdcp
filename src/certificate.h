@@ -41,6 +41,7 @@
 #define LIBDCP_CERTIFICATE_H
 
 
+#include "local_time.h"
 #undef X509_NAME
 #include <openssl/x509.h>
 #include <boost/filesystem.hpp>
@@ -106,8 +107,9 @@ public:
 	std::string subject_common_name () const;
 	std::string subject_organization_name () const;
 	std::string subject_organizational_unit_name () const;
-	struct tm not_before () const;
-	struct tm not_after () const;
+
+	LocalTime not_before () const;
+	LocalTime not_after () const;
 
 	X509* x509 () const {
 		return _certificate;
