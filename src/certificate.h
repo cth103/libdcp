@@ -81,6 +81,8 @@ public:
 	std::string subject_common_name () const;
 	std::string subject_organization_name () const;
 	std::string subject_organizational_unit_name () const;
+	struct tm not_before () const;
+	struct tm not_after () const;
 
 	X509* x509 () const {
 		return _certificate;
