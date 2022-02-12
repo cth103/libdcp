@@ -65,7 +65,7 @@ using boost::scoped_array;
 /** Build an encrypted picture asset and a KDM for it and check that the KDM can be decrypted */
 BOOST_AUTO_TEST_CASE (round_trip_test)
 {
-	auto signer = make_shared<dcp::CertificateChain>(boost::filesystem::path ("openssl"));
+	auto signer = make_shared<dcp::CertificateChain>(boost::filesystem::path("openssl"), 10 * 365);
 
 	boost::filesystem::path work_dir = "build/test/round_trip_test";
 	boost::filesystem::create_directory (work_dir);
