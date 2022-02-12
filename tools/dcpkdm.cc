@@ -55,15 +55,6 @@ help (string n)
 }
 
 
-static string
-tm_to_string (struct tm t)
-{
-	char buffer[64];
-	snprintf (buffer, 64, "%02d/%02d/%02d %02d:%02d:%02d", t.tm_mday, t.tm_mon + 1, t.tm_year + 1900, t.tm_hour, t.tm_min, t.tm_sec);
-	return buffer;
-}
-
-
 int
 main (int argc, char* argv[])
 try
@@ -122,8 +113,8 @@ try
 		cout << "\t\tSubject common name: " << i.subject_common_name() << "\n";
 		cout << "\t\tSubject organization name: " << i.subject_organization_name() << "\n";
 		cout << "\t\tSubject organizational unit name: " << i.subject_organizational_unit_name() << "\n";
-		cout << "\t\tNot before: " << tm_to_string(i.not_before()) << "\n";
-		cout << "\t\tNot after:  " << tm_to_string(i.not_after()) << "\n";
+		cout << "\t\tNot before: " << i.not_before().as_string() << "\n";
+		cout << "\t\tNot after:  " << i.not_after().as_string() << "\n";
 		if (i.has_utf8_strings()) {
 			cout << "\t\tUSES INCORRECT (UTF8) STRING ENCODING\n";
 		}

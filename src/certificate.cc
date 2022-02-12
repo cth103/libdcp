@@ -329,29 +329,24 @@ Certificate::subject_organizational_unit_name () const
 
 
 static
-struct tm
+LocalTime
 convert_time (ASN1_TIME const * time)
 {
-	struct tm t;
+	LocalTime t;
 	char const * s = (char const *) time->data;
 
 	if (time->type == V_ASN1_UTCTIME) {
-		sscanf(s, "%2d%2d%2d%2d%2d%2d", &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec);
-		if (t.tm_year < 70) {
-			t.tm_year += 100;
-		}
+		return LocalTime::from_asn1_utc_time (s);
 	} else if (time->type == V_ASN1_GENERALIZEDTIME) {
-		sscanf(s, "%4d%2d%2d%2d%2d%2d", &t.tm_year, &t.tm_mon, &t.tm_mday, &t.tm_hour, &t.tm_min, &t.tm_sec);
-		t.tm_year -= 1900;
+		return LocalTime::from_asn1_generalized_time (s);
 	}
 
-	t.tm_mon--;
-
-	return t;
+	DCP_ASSERT (false);
+	return {};
 }
 
 
-struct tm
+LocalTime
 Certificate::not_before () const
 {
 	DCP_ASSERT (_certificate);
@@ -363,7 +358,7 @@ Certificate::not_before () const
 }
 
 
-struct tm
+LocalTime
 Certificate::not_after () const
 {
 	DCP_ASSERT (_certificate);

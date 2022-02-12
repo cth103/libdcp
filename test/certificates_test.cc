@@ -263,18 +263,18 @@ BOOST_AUTO_TEST_CASE (certificate_chain_from_string)
 BOOST_AUTO_TEST_CASE (certificate_not_before_after)
 {
 	dcp::Certificate c (dcp::file_to_string("test/ref/crypt/ca.self-signed.pem"));
-	struct tm not_before = c.not_before();
-	BOOST_CHECK_EQUAL (not_before.tm_sec, 8);
-	BOOST_CHECK_EQUAL (not_before.tm_min, 20);
-	BOOST_CHECK_EQUAL (not_before.tm_hour, 13);
-	BOOST_CHECK_EQUAL (not_before.tm_mday, 5);
-	BOOST_CHECK_EQUAL (not_before.tm_mon, 5);
-	BOOST_CHECK_EQUAL (not_before.tm_year, 115);
-	struct tm not_after = c.not_after();
-	BOOST_CHECK_EQUAL (not_after.tm_sec, 8);
-	BOOST_CHECK_EQUAL (not_after.tm_min, 20);
-	BOOST_CHECK_EQUAL (not_after.tm_hour, 13);
-	BOOST_CHECK_EQUAL (not_after.tm_mday, 2);
-	BOOST_CHECK_EQUAL (not_after.tm_mon, 5);
-	BOOST_CHECK_EQUAL (not_after.tm_year, 125);
+	auto not_before = c.not_before();
+	BOOST_CHECK_EQUAL (not_before.second(), 8);
+	BOOST_CHECK_EQUAL (not_before.minute(), 20);
+	BOOST_CHECK_EQUAL (not_before.hour(), 13);
+	BOOST_CHECK_EQUAL (not_before.day(), 5);
+	BOOST_CHECK_EQUAL (not_before.month(), 6);
+	BOOST_CHECK_EQUAL (not_before.year(), 2015);
+	auto not_after = c.not_after();
+	BOOST_CHECK_EQUAL (not_after.second(), 8);
+	BOOST_CHECK_EQUAL (not_after.minute(), 20);
+	BOOST_CHECK_EQUAL (not_after.hour(), 13);
+	BOOST_CHECK_EQUAL (not_after.day(), 2);
+	BOOST_CHECK_EQUAL (not_after.month(), 6);
+	BOOST_CHECK_EQUAL (not_after.year(), 2025);
 }

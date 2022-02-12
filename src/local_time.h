@@ -103,6 +103,18 @@ public:
 		return _year;
 	}
 
+	int hour () const {
+		return _hour;
+	}
+
+	int minute () const {
+		return _minute;
+	}
+
+	int second () const {
+		return _second;
+	}
+
 	void set_year (int y) {
 		_year = y;
 	}
@@ -110,6 +122,9 @@ public:
 	void add_days (int d);
 	void add_months (int a);
 	void add_minutes (int a);
+
+	static LocalTime from_asn1_utc_time (std::string time);
+	static LocalTime from_asn1_generalized_time (std::string time);
 
 	bool operator== (LocalTime const & other) const;
 	bool operator!= (LocalTime const & other) const;
