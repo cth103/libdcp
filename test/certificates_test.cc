@@ -215,6 +215,7 @@ BOOST_AUTO_TEST_CASE (certificates_validation9)
 {
 	dcp::CertificateChain good (
 		boost::filesystem::path ("openssl"),
+		10 * 365,
 		"dcpomatic.com",
 		"dcpomatic.com",
 		".dcpomatic.smpte-430-2.ROOT",
@@ -228,7 +229,7 @@ BOOST_AUTO_TEST_CASE (certificates_validation9)
 /** Check that we can create a valid chain */
 BOOST_AUTO_TEST_CASE (certificates_validation10)
 {
-	dcp::CertificateChain good (boost::filesystem::path ("openssl"));
+	dcp::CertificateChain good (boost::filesystem::path ("openssl"), 10 * 365);
 	BOOST_CHECK_NO_THROW (good.root_to_leaf());
 }
 
@@ -244,7 +245,7 @@ BOOST_AUTO_TEST_CASE (signer_validation)
 	BOOST_CHECK (chain.valid ());
 
 	/* Put in an unrelated key and the signer should no longer be valid */
-	dcp::CertificateChain another_chain (boost::filesystem::path ("openssl"));
+	dcp::CertificateChain another_chain (boost::filesystem::path ("openssl"), 10 * 365);
 	chain.set_key (another_chain.key().get ());
 	BOOST_CHECK (!chain.valid ());
 }

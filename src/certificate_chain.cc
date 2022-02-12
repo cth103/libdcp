@@ -187,6 +187,7 @@ public_key_digest (boost::filesystem::path private_key, boost::filesystem::path 
 
 CertificateChain::CertificateChain (
 	boost::filesystem::path openssl,
+	int validity_in_days,
 	string organisation,
 	string organisational_unit,
 	string root_common_name,
@@ -194,9 +195,6 @@ CertificateChain::CertificateChain (
 	string leaf_common_name
 	)
 {
-	/* Valid for 40 years */
-	int const days = 365 * 40;
-
 	auto directory = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path ();
 	boost::filesystem::create_directories (directory);
 
@@ -234,7 +232,7 @@ CertificateChain::CertificateChain (
 			String::compose (
 				"%1 req -new -x509 -sha256 -config ca.cnf -days %2 -set_serial 5"
 				" -subj \"%3\" -key ca.key -outform PEM -out ca.self-signed.pem",
-				quoted_openssl, days, ca_subject
+				quoted_openssl, validity_in_days, ca_subject
 				)
 			);
 	}
@@ -267,7 +265,7 @@ CertificateChain::CertificateChain (
 		command (
 			String::compose (
 				"%1 req -new -config intermediate.cnf -days %2 -subj \"%3\" -key intermediate.key -out intermediate.csr",
-				quoted_openssl, days - 1, inter_subject
+				quoted_openssl, validity_in_days - 1, inter_subject
 				)
 			);
 	}
@@ -276,7 +274,7 @@ CertificateChain::CertificateChain (
 		String::compose (
 			"%1 x509 -req -sha256 -days %2 -CA ca.self-signed.pem -CAkey ca.key -set_serial 6"
 			" -in intermediate.csr -extfile intermediate.cnf -extensions v3_ca -out intermediate.signed.pem",
-			quoted_openssl, days - 1
+			quoted_openssl, validity_in_days - 1
 			)
 		);
 
@@ -308,7 +306,7 @@ CertificateChain::CertificateChain (
 		command (
 			String::compose (
 				"%1 req -new -config leaf.cnf -days %2 -subj \"%3\" -key leaf.key -outform PEM -out leaf.csr",
-				quoted_openssl, days - 2, leaf_subject
+				quoted_openssl, validity_in_days - 2, leaf_subject
 				)
 			);
 	}
@@ -317,7 +315,7 @@ CertificateChain::CertificateChain (
 		String::compose (
 			"%1 x509 -req -sha256 -days %2 -CA intermediate.signed.pem -CAkey intermediate.key"
 			" -set_serial 7 -in leaf.csr -extfile leaf.cnf -extensions v3_ca -out leaf.signed.pem",
-			quoted_openssl, days - 2
+			quoted_openssl, validity_in_days - 2
 			)
 		);
 
