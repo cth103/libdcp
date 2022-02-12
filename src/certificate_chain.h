@@ -76,6 +76,7 @@ public:
 	 */
 	CertificateChain (
 		boost::filesystem::path openssl,
+		int validity_in_days,
 		std::string organisation = "example.org",
 		std::string organisational_unit = "example.org",
 		std::string root_common_name = ".smpte-430-2.ROOT.NOT_FOR_PRODUCTION",
