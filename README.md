@@ -29,11 +29,11 @@ Bugfixes were received from Philip Tschiemer.
 - libsigc++
 - libxml++
 - xmlsec
-- ImageMagick or GraphicsMagick
 - sndfile
 - openjpeg (1.5.0 or above)
 - [libasdcp-cth](https://github.com/cth103/asdcplib-cth/tree/cth)
 - [libcxml](https://github.com/cth103/libcxml)
+- (optional) ImageMagick or GraphicsMagick (for examples)
 - (optional) OpenMP
 - (optional) gcov (for tests)
 

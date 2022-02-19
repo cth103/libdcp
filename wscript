@@ -124,13 +124,14 @@ def configure(conf):
     conf.env.DEFINES_XMLSEC1 = [f.replace('\\', '') for f in conf.env.DEFINES_XMLSEC1]
 
     # ImageMagick / GraphicsMagick
-    if distutils.spawn.find_executable('Magick++-config'):
-        conf.check_cfg(package='', path='Magick++-config', args='--cppflags --cxxflags --libs', uselib_store='MAGICK', mandatory=True, msg='Checking for ImageMagick/GraphicsMagick')
-    else:
-        image = conf.check_cfg(package='ImageMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
-        graphics = conf.check_cfg(package='GraphicsMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
-        if image is None and graphics is None:
-            Logs.error('Neither ImageMagick++ nor GraphicsMagick++ found: one or the other is required')
+    if not conf.options.disable_examples:
+        if distutils.spawn.find_executable('Magick++-config'):
+            conf.check_cfg(package='', path='Magick++-config', args='--cppflags --cxxflags --libs', uselib_store='MAGICK', mandatory=True, msg='Checking for ImageMagick/GraphicsMagick')
+        else:
+            image = conf.check_cfg(package='ImageMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
+            graphics = conf.check_cfg(package='GraphicsMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
+            if image is None and graphics is None:
+                Logs.error('Neither ImageMagick++ nor GraphicsMagick++ found: one or the other is required')
 
     conf.check_cfg(package='sndfile', args='--cflags --libs', uselib_store='SNDFILE', mandatory=False)
 
