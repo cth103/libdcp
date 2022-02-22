@@ -32,8 +32,10 @@
 #
 
 def configure(conf):
-    if conf.options.target_windows:
-        boost_lib_suffix = '-mt'
+    if conf.options.target_windows_64:
+        boost_lib_suffix = '-mt-x64'
+    elif conf.options.target_windows_32:
+        boost_lib_suffix = '-mt-x32'
     else:
         boost_lib_suffix = ''
 
