@@ -1,5 +1,5 @@
 #
-#    Copyright (C) 2012-2020 Carl Hetherington <cth@carlh.net>
+#    Copyright (C) 2012-2022 Carl Hetherington <cth@carlh.net>
 #
 #    This file is part of libdcp.
 #
@@ -52,7 +52,8 @@ API_VERSION = '-1.0'
 
 def options(opt):
     opt.load('compiler_cxx')
-    opt.add_option('--target-windows', action='store_true', default=False, help='set up to do a cross-compile to Windows')
+    opt.add_option('--target-windows-64', action='store_true', default=False, help='set up to do a cross-compile to Windows 64-bit')
+    opt.add_option('--target-windows-32', action='store_true', default=False, help='set up to do a cross-compile to Windows 32-bit')
     opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
     opt.add_option('--static', action='store_true', default=False, help='build libdcp statically, and link statically to openjpeg, cxml, asdcplib-carl')
     opt.add_option('--disable-tests', action='store_true', default=False, help='disable building of tests')
@@ -72,7 +73,8 @@ def configure(conf):
         conf.env.append_value('CXXFLAGS', ['-Wno-maybe-uninitialized'])
     conf.env.append_value('CXXFLAGS', ['-DLIBDCP_VERSION="%s"' % VERSION])
 
-    conf.env.TARGET_WINDOWS = conf.options.target_windows
+    conf.env.TARGET_WINDOWS_64 = conf.options.target_windows_64
+    conf.env.TARGET_WINDOWS_32 = conf.options.target_windows_32
     conf.env.TARGET_OSX = sys.platform == 'darwin'
     conf.env.TARGET_LINUX = not conf.env.TARGET_WINDOWS and not conf.env.TARGET_OSX
     conf.env.ENABLE_DEBUG = conf.options.enable_debug
@@ -82,7 +84,7 @@ def configure(conf):
     conf.env.STATIC = conf.options.static
     conf.env.API_VERSION = API_VERSION
 
-    if conf.env.TARGET_WINDOWS:
+    if conf.env.TARGET_WINDOWS_64 or conf.env.TARGET_WINDOWS_32:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_WINDOWS')
     if conf.env.TARGET_OSX:
         conf.env.append_value('CXXFLAGS', '-DLIBDCP_OSX')
@@ -104,7 +106,7 @@ def configure(conf):
         conf.env.append_value('LDFLAGS', ['-l%s' % conf.options.openmp])
         conf.check_cxx(cxxflags='-fopenmp', msg='Checking that compiler supports -fopenmp')
 
-    if not conf.env.TARGET_WINDOWS:
+    if not conf.env.TARGET_WINDOWS_64 and not conf.env.TARGET_WINDOWS_32:
         conf.env.append_value('LINKFLAGS', '-pthread')
 
     if conf.env.TARGET_LINUX:
@@ -159,13 +161,15 @@ def configure(conf):
         conf.check_cfg(package='libcxml', atleast_version='0.17.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
         conf.check_cfg(package='xerces-c', args='--cflags --libs', uselib_store='XERCES', mandatory=True)
 
-    if conf.options.target_windows:
+    if conf.env.TARGET_WINDOWS_64 or conf.env.TARGET_WINDOWS_32:
         # XXX: it feels like there should be a more elegant way to get these included
         conf.env.LIB_XERCES.append('curl')
         conf.env.LIB_XERCES.append('ws2_32')
 
-    if conf.options.target_windows:
-        boost_lib_suffix = '-mt'
+    if conf.options.target_windows_64:
+        boost_lib_suffix = '-mt-x64'
+    elif conf.options.target_windows_32:
+        boost_lib_suffix = '-mt-x32'
     else:
         boost_lib_suffix = ''
 
@@ -226,8 +230,10 @@ def configure(conf):
 def build(bld):
     create_version_cc(bld, VERSION)
 
-    if bld.env.TARGET_WINDOWS:
-        boost_lib_suffix = '-mt'
+    if bld.env.TARGET_WINDOWS_64:
+        boost_lib_suffix = '-mt-x64'
+    elif bld.env.TARGET_WINDOWS_32:
+        boost_lib_suffix = '-mt-x32'
     else:
         boost_lib_suffix = ''
 
