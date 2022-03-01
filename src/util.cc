@@ -170,7 +170,7 @@ dcp::empty_or_white_space (string s)
 
 
 void
-dcp::init (optional<boost::filesystem::path> tags_directory)
+dcp::init (optional<boost::filesystem::path> given_resources_directory)
 {
 	if (xmlSecInit() < 0) {
 		throw MiscError ("could not initialise xmlsec");
@@ -194,11 +194,7 @@ dcp::init (optional<boost::filesystem::path> tags_directory)
 
 	asdcp_smpte_dict = &ASDCP::DefaultSMPTEDict();
 
-	if (!tags_directory) {
-		tags_directory = resources_directory() / "tags";
-	}
-
-	load_language_tag_lists (*tags_directory);
+	load_language_tag_lists (given_resources_directory.get_value_or(resources_directory()) / "tags");
 }
 
 

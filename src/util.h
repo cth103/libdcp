@@ -95,11 +95,12 @@ extern std::string remove_urn_uuid (std::string raw);
 /** Set up various bits that the library needs.  Should be called once
  *  by client applications.
  *
- *  @param tags_directory Path to a copy of the tags directory from the source code;
- *  if none is specified libdcp will look for a tags directory in the environment
- *  variable LIBDCP_RESOURCES or based on where the current executable is.
+ *  @param resources_directory Path to a directory containing the tags and xsd
+ *  directories from the source code; if none is specified libdcp will look
+ *  in the directory given by LIBDCP_RESOURCES or based on where the current
+ *  executable is.
  */
-extern void init (boost::optional<boost::filesystem::path> tags_directory = boost::optional<boost::filesystem::path>());
+extern void init (boost::optional<boost::filesystem::path> resources_directory = boost::optional<boost::filesystem::path>());
 
 /** Decode a base64 string.  The base64 decode routine in KM_util.cpp
  *  gives different values to both this and the command-line base64
