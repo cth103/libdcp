@@ -37,14 +37,15 @@
  */
 
 
-#include "util.h"
-#include "language_tag.h"
-#include "exceptions.h"
-#include "types.h"
 #include "certificate.h"
-#include "openjpeg_image.h"
-#include "dcp_assert.h"
 #include "compose.hpp"
+#include "dcp_assert.h"
+#include "exceptions.h"
+#include "language_tag.h"
+#include "openjpeg_image.h"
+#include "rating.h"
+#include "types.h"
+#include "util.h"
 #include <openjpeg.h>
 #include <asdcp/KM_util.h>
 #include <asdcp/KM_fileio.h>
@@ -194,7 +195,10 @@ dcp::init (optional<boost::filesystem::path> given_resources_directory)
 
 	asdcp_smpte_dict = &ASDCP::DefaultSMPTEDict();
 
-	load_language_tag_lists (given_resources_directory.get_value_or(resources_directory()) / "tags");
+	auto res = given_resources_directory.get_value_or(resources_directory());
+
+	load_language_tag_lists (res / "tags");
+	load_rating_list (res / "ratings");
 }
 
 

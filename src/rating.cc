@@ -32,11 +32,21 @@
 */
 
 
+#include "exceptions.h"
 #include "rating.h"
+#include "util.h"
 #include <libcxml/cxml.h>
+#include <boost/algorithm/string.hpp>
 
 
+using std::string;
+using std::vector;
+using boost::algorithm::trim;
+using boost::optional;
 using namespace dcp;
+
+
+static vector<RatingSystem> rating_systems_list;
 
 
 Rating::Rating (cxml::ConstNodePtr node)
@@ -61,4 +71,67 @@ dcp::operator== (Rating const & a, Rating const & b)
 	return a.agency == b.agency && a.label == b.label;
 }
 
+
+vector<RatingSystem>
+dcp::rating_systems()
+{
+	return rating_systems_list;
+}
+
+
+void
+dcp::load_rating_list(boost::filesystem::path ratings_file)
+{
+	auto f = fopen_boost (ratings_file, "r");
+	if (!f) {
+		throw FileError ("Could not open ratings file", ratings_file, errno);
+	}
+
+	auto get_line_no_throw = [f, ratings_file]() -> optional<string> {
+		char buffer[512];
+		char* r = fgets(buffer, sizeof(buffer), f);
+		if (r == 0) {
+			return {};
+		}
+		string a = buffer;
+		trim(a);
+		return a;
+	};
+
+	auto get_line = [f, ratings_file, &get_line_no_throw]() {
+		auto line = get_line_no_throw();
+		if (!line) {
+			throw FileError("Bad ratings file", ratings_file, -1);
+		}
+		return *line;
+	};
+
+	optional<string> agency;
+
+	while (!feof(f)) {
+		if (!agency) {
+			agency = get_line();
+		}
+		auto name = get_line();
+		auto country_and_region_names = get_line();
+		auto country_code = get_line();
+
+		RatingSystem system(*agency, name, country_and_region_names, country_code);
+		while (!feof(f)) {
+			auto rating = get_line_no_throw();
+			if (!rating) {
+				/* End of the file */
+				break;
+			}
+			if (rating->substr(0, 4) == "http") {
+				/* End of the system */
+				agency = rating;
+				break;
+			}
+			system.ratings.push_back(dcp::Rating(*agency, *rating));
+		}
+
+		rating_systems_list.push_back(system);
+	}
+}
 
