@@ -262,6 +262,8 @@ def build(bld):
     for i in ['language', 'region', 'script', 'variant', 'extlang', 'dcnc']:
         bld.install_files('${PREFIX}/share/libdcp/tags', os.path.join('tags', i))
 
+    bld.install_files('${PREFIX}/share/libdcp', 'ratings')
+
     bld.add_post_fun(post)
 
 def dist(ctx):

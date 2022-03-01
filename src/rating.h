@@ -69,6 +69,33 @@ public:
 extern bool operator== (Rating const & a, Rating const & b);
 
 
+class RatingSystem
+{
+public:
+	RatingSystem (std::string agency_, std::string name_, std::string country_and_region_names_, std::string country_code_)
+		: agency(agency_)
+		, name(name_)
+		, country_and_region_names(country_and_region_names_)
+		, country_code(country_code_)
+	{}
+
+	/** URI of the agency issuing the rating */
+	std::string agency;
+	/** Name of the rating system */
+	std::string name;
+	/** Country name, possibly followed by a slash and a region name */
+	std::string country_and_region_names;
+	/** Country code */
+	std::string country_code;
+
+	std::vector<Rating> ratings;
+};
+
+
+std::vector<RatingSystem> rating_systems();
+
+void load_rating_list(boost::filesystem::path ratings_file);
+
 }
 
 

@@ -1,0 +1,29 @@
+#!/usr/bin/python3
+
+import sys
+import urllib.request
+
+import bs4
+
+# Output is
+# URI (for DCP metadata)
+# Name/ID of rating system
+# Country[/Region]
+# Country code
+# Rating label
+
+
+with urllib.request.urlopen('https://www.movielabs.com/md/ratings/v2.4.8/CMR_Ratings_v2.4.8.xml') as f, open('ratings', 'w') as g:
+#with open('CMR_Ratings_v2.4.8.xml') as f, open('ratings', 'w') as g:
+    soup = bs4.BeautifulSoup(f.read(), 'xml')
+    for system in soup.find_all('mdcr:RatingSystem'):
+        print(system.URI.get_text(), file=g)
+        print(system.RatingSystemID.System.get_text(), file=g)
+        if system.AdoptiveRegion.SubRegion:
+            print(system.Region.RegionName.get_text().title() + "/" + system.AdoptiveRegion.SubRegion.get_text(), file=g)
+        else:
+            print(system.Region.RegionName.get_text().title(), file=g)
+        print(system.Region.country.get_text(), file=g)
+        for rating in system("Rating"):
+            print(rating.Descriptor.Label.get_text(), file=g)
+
