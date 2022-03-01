@@ -45,6 +45,7 @@
 #include "certificate.h"
 #include "key.h"
 #include "language_tag.h"
+#include "rating.h"
 #include "types.h"
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>

@@ -431,29 +431,6 @@ dcp::marker_from_string (string s)
 }
 
 
-Rating::Rating (cxml::ConstNodePtr node)
-	: agency(node->string_child("Agency"))
-	, label(node->string_child("Label"))
-{
-	node->done ();
-}
-
-
-void
-Rating::as_xml (xmlpp::Element* parent) const
-{
-	parent->add_child("Agency")->add_child_text(agency);
-	parent->add_child("Label")->add_child_text(label);
-}
-
-
-bool
-dcp::operator== (Rating const & a, Rating const & b)
-{
-	return a.agency == b.agency && a.label == b.label;
-}
-
-
 ContentVersion::ContentVersion ()
 	: id ("urn:uuid:" + make_uuid())
 {
