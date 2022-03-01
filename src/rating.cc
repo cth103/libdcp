@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -33,24 +33,32 @@
 
 
 #include "rating.h"
-#include "types.h"
-#include "verify.h"
+#include <libcxml/cxml.h>
 
 
-namespace dcp {
+using namespace dcp;
 
-std::ostream& operator<< (std::ostream& s, Size const& a);
-std::ostream& operator<< (std::ostream& s, Channel c);
-std::ostream& operator<< (std::ostream& s, MCASoundField f);
-std::ostream& operator<< (std::ostream& s, ContentKind c);
-std::ostream& operator<< (std::ostream& s, Effect e);
-std::ostream& operator<< (std::ostream& s, Fraction const& f);
-std::ostream& operator<< (std::ostream& s, NoteType t);
-std::ostream& operator<< (std::ostream& s, Standard t);
-std::ostream& operator<< (std::ostream& s, Colour const& c);
-std::ostream& operator<< (std::ostream& s, Rating const& r);
-std::ostream& operator<< (std::ostream& s, Status t);
-std::ostream& operator<< (std::ostream& s, VerificationNote::Code c);
-std::ostream& operator<< (std::ostream& s, VerificationNote::Type t);
+
+Rating::Rating (cxml::ConstNodePtr node)
+	: agency(node->string_child("Agency"))
+	, label(node->string_child("Label"))
+{
+	node->done ();
 }
+
+
+void
+Rating::as_xml (xmlpp::Element* parent) const
+{
+	parent->add_child("Agency")->add_child_text(agency);
+	parent->add_child("Label")->add_child_text(label);
+}
+
+
+bool
+dcp::operator== (Rating const & a, Rating const & b)
+{
+	return a.agency == b.agency && a.label == b.label;
+}
+
 

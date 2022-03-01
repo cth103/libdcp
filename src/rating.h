@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2022 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,25 +32,45 @@
 */
 
 
-#include "rating.h"
-#include "types.h"
-#include "verify.h"
+#ifndef LIBDCP_RATING_H
+#define LIBDCP_RATING_H
+
+
+#include "warnings.h"
+#include <libcxml/cxml.h>
+LIBDCP_DISABLE_WARNINGS
+#include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
+#include <string>
 
 
 namespace dcp {
 
-std::ostream& operator<< (std::ostream& s, Size const& a);
-std::ostream& operator<< (std::ostream& s, Channel c);
-std::ostream& operator<< (std::ostream& s, MCASoundField f);
-std::ostream& operator<< (std::ostream& s, ContentKind c);
-std::ostream& operator<< (std::ostream& s, Effect e);
-std::ostream& operator<< (std::ostream& s, Fraction const& f);
-std::ostream& operator<< (std::ostream& s, NoteType t);
-std::ostream& operator<< (std::ostream& s, Standard t);
-std::ostream& operator<< (std::ostream& s, Colour const& c);
-std::ostream& operator<< (std::ostream& s, Rating const& r);
-std::ostream& operator<< (std::ostream& s, Status t);
-std::ostream& operator<< (std::ostream& s, VerificationNote::Code c);
-std::ostream& operator<< (std::ostream& s, VerificationNote::Type t);
+
+class Rating
+{
+public:
+	Rating (std::string agency_, std::string label_)
+		: agency (agency_)
+		, label (label_)
+	{}
+
+	explicit Rating (cxml::ConstNodePtr node);
+
+	void as_xml (xmlpp::Element* parent) const;
+
+	/** URI of the agency issuing the rating */
+	std::string agency;
+	/** Rating (e.g. PG, PG-13, 12A etc) */
+	std::string label;
+};
+
+
+extern bool operator== (Rating const & a, Rating const & b);
+
+
 }
+
+
+#endif
 
