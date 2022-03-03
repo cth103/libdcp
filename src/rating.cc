@@ -98,7 +98,7 @@ dcp::load_rating_list(boost::filesystem::path ratings_file)
 		return a;
 	};
 
-	auto get_line = [f, ratings_file, &get_line_no_throw]() {
+	auto get_line = [ratings_file, &get_line_no_throw]() {
 		auto line = get_line_no_throw();
 		if (!line) {
 			throw FileError("Bad ratings file", ratings_file, -1);
