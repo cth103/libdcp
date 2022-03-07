@@ -69,6 +69,12 @@ class DecryptedKDM;
 
 /** @class CPL
  *  @brief A Composition Playlist
+ *
+ *  A CPL contains some metadata and a list of Reel objects, each of which may contain picture, sound and other assets
+ *  such as subtitles and closed captions.
+ *
+ *  After creating a CPL you can add Reel objects with add(), and write an XML file describing the CPL with
+ *  write_xml().
  */
 class CPL : public Asset
 {

@@ -73,7 +73,7 @@ bool dcp::operator!= (dcp::Size const & a, dcp::Size const & b)
 }
 
 
-/** Construct a Fraction from a string of the form <numerator> <denominator>
+/** Construct a Fraction from a string of the form "numerator denominator"
  *  e.g. "1 3".
  */
 Fraction::Fraction (string s)
