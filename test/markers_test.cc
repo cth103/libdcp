@@ -32,17 +32,17 @@
 */
 
 
-#include <boost/bind.hpp>
-#include <memory>
-#include <boost/test/unit_test.hpp>
 #include "cpl.h"
 #include "reel.h"
 #include "reel_markers_asset.h"
+#include <boost/bind.hpp>
+#include <boost/test/unit_test.hpp>
+#include <memory>
 
 
-using std::string;
-using std::shared_ptr;
 using std::make_shared;
+using std::shared_ptr;
+using std::string;
 
 
 BOOST_AUTO_TEST_CASE (markers_write_test)
