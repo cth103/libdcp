@@ -52,7 +52,7 @@ int
 main ()
 {
 	/* Create a DCP, specifying where our existing data is */
-	dcp::DCP dcp ("/home/carl/diagonal.com/APPASSIONATA_TLR_F_UK-DEFR_CH_51_2K_LOK_20121115_DGL_OV");
+	dcp::DCP dcp ("/home/carl/Test_DCP");
 	/* Read the DCP to find out about it */
 	dcp.read ();
 
