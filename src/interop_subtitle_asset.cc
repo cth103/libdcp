@@ -56,13 +56,13 @@ LIBDCP_ENABLE_WARNINGS
 #include <cstdio>
 
 
-using std::string;
-using std::cout;
 using std::cerr;
-using std::shared_ptr;
+using std::cout;
 using std::dynamic_pointer_cast;
-using std::vector;
 using std::make_shared;
+using std::shared_ptr;
+using std::string;
+using std::vector;
 using boost::optional;
 using namespace dcp;
 
@@ -118,7 +118,7 @@ InteropSubtitleAsset::xml_as_string () const
 	root->add_child("Language")->add_child_text (_language);
 
 	for (auto i: _load_font_nodes) {
-		xmlpp::Element* load_font = root->add_child("LoadFont");
+		auto load_font = root->add_child("LoadFont");
 		load_font->set_attribute ("Id", i->id);
 		load_font->set_attribute ("URI", i->uri);
 	}
@@ -134,7 +134,7 @@ InteropSubtitleAsset::add_font (string load_id, dcp::ArrayData data)
 {
 	_fonts.push_back (Font(load_id, make_uuid(), data));
 	auto const uri = String::compose("font_%1.ttf", _load_font_nodes.size());
-	_load_font_nodes.push_back (shared_ptr<InteropLoadFontNode>(new InteropLoadFontNode(load_id, uri)));
+	_load_font_nodes.push_back (make_shared<InteropLoadFontNode>(load_id, uri));
 }
 
 
