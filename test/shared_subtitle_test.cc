@@ -167,3 +167,53 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test3)
 	BOOST_CHECK_EQUAL (sub1->font._values["size"], "42");
 }
 
+
+/* Check that subtitle XML is prettily formatted without inserting any white space into
+ * <Text> node, which I think has the potential to alter appearance.
+ */
+BOOST_AUTO_TEST_CASE (format_xml_test1)
+{
+	xmlpp::Document doc;
+	auto root = doc.create_root_node("Foo");
+	root->add_child("Empty");
+	root->add_child("Text")->add_child_text("Hello world");
+	root->add_child("Font")->add_child("Text")->add_child_text("Say what");
+	auto fred = root->add_child("Text")->add_child("Font");
+	fred->set_attribute("bob", "job");
+	fred->add_child_text("Fred");
+	fred->add_child("Text")->add_child_text("Jim");
+	fred->add_child_text("Sheila");
+	BOOST_REQUIRE_EQUAL (dcp::SubtitleAsset::format_xml(doc, { {"", "fred"}, {"jim", "sheila"} }),
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+"<Foo xmlns=\"fred\" xmlns:jim=\"sheila\">\n"
+"  <Empty/>\n"
+"  <Text>Hello world</Text>\n"
+"  <Font>\n"
+"    <Text>Say what</Text>\n"
+"  </Font>\n"
+"  <Text><Font bob=\"job\">Fred<Text>Jim</Text>Sheila</Font></Text>\n"
+"</Foo>\n");
+}
+
+
+BOOST_AUTO_TEST_CASE (format_xml_test2)
+{
+	xmlpp::DomParser parser;
+	auto path = private_test / "DKH_UT_EN20160601def.xml";
+	parser.parse_file(path.string().c_str());
+	auto document = parser.get_document();
+	check_xml (dcp::file_to_string(private_test / "DKH_UT_EN20160601def.reformatted.xml"), dcp::SubtitleAsset::format_xml(*document, {}), {});
+}
+
+
+BOOST_AUTO_TEST_CASE (format_xml_entities_test)
+{
+	xmlpp::Document doc;
+	auto root = doc.create_root_node("Foo");
+	root->add_child("Bar")->add_child_text("Don't panic &amp; xml \"is\" 'great' & < > —");
+	BOOST_REQUIRE_EQUAL(dcp::SubtitleAsset::format_xml(doc, {}),
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+"<Foo>\n"
+"  <Bar>Don't panic &amp;amp; xml \"is\" 'great' &amp; &lt; &gt; —</Bar>\n"
+"</Foo>\n");
+}

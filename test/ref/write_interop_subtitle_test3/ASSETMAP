@@ -37,7 +37,7 @@
           <Path>subs.xml</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
-          <Length>414</Length>
+          <Length>438</Length>
         </Chunk>
       </ChunkList>
     </Asset>

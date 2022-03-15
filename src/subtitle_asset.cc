@@ -54,18 +54,20 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/shared_array.hpp>
+#include <algorithm>
 
 
-using std::dynamic_pointer_cast;
-using std::string;
-using std::cout;
 using std::cerr;
-using std::map;
-using std::shared_ptr;
-using std::vector;
+using std::cout;
+using std::dynamic_pointer_cast;
 using std::make_shared;
-using boost::optional;
+using std::map;
+using std::pair;
+using std::shared_ptr;
+using std::string;
+using std::vector;
 using boost::lexical_cast;
+using boost::optional;
 using namespace dcp;
 
 
@@ -799,3 +801,115 @@ SubtitleAsset::fix_empty_font_ids ()
 		}
 	}
 }
+
+
+namespace {
+
+struct State
+{
+	int indent;
+	string xml;
+	int disable_formatting;
+};
+
+}
+
+
+static
+void
+format_xml_node (xmlpp::Node const* node, State& state)
+{
+	if (auto text_node = dynamic_cast<const xmlpp::TextNode*>(node)) {
+		string content = text_node->get_content();
+		boost::replace_all(content, "&", "&amp;");
+		boost::replace_all(content, "<", "&lt;");
+		boost::replace_all(content, ">", "&gt;");
+		state.xml += content;
+	} else if (auto element = dynamic_cast<const xmlpp::Element*>(node)) {
+		++state.indent;
+
+		auto children = element->get_children();
+		auto const should_disable_formatting =
+			std::any_of(
+				children.begin(), children.end(),
+				[](xmlpp::Node const* node) { return static_cast<bool>(dynamic_cast<const xmlpp::ContentNode*>(node)); }
+				) || element->get_name() == "Text";
+
+		if (!state.disable_formatting) {
+			state.xml += "\n" + string(state.indent * 2, ' ');
+		}
+
+		state.xml += "<" + element->get_name();
+
+		for (auto attribute: element->get_attributes()) {
+			state.xml += String::compose(" %1=\"%2\"", attribute->get_name().raw(), attribute->get_value().raw());
+		}
+
+		if (children.empty()) {
+			state.xml += "/>";
+		} else {
+			state.xml += ">";
+
+			if (should_disable_formatting) {
+				++state.disable_formatting;
+			}
+
+			for (auto child: children) {
+				format_xml_node(child, state);
+			}
+
+			if (!state.disable_formatting) {
+				state.xml += "\n" + string(state.indent * 2, ' ');
+			}
+
+			state.xml += String::compose("</%1>", element->get_name().raw());
+
+			if (should_disable_formatting) {
+				--state.disable_formatting;
+			}
+		}
+
+		--state.indent;
+	}
+}
+
+
+/** Format XML much as write_to_string_formatted() would do, except without adding any white space
+ *  to <Text> nodes.  This is an attempt to avoid changing what is actually displayed as subtitles
+ *  while also formatting the XML in such a way as to avoid DoM bug 2205.
+ *
+ *  namespace is a list of namespaces for the root node; it would be nicer to set these up with
+ *  set_namespace_declaration in the caller and then to extract them here but I couldn't find a way
+ *  to get all namespaces with the libxml++ API.
+ */
+string
+SubtitleAsset::format_xml (xmlpp::Document const& document, vector<pair<string, string>> const& namespaces)
+{
+	auto root = document.get_root_node();
+
+	State state = {};
+	state.xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<" + root->get_name();
+
+	for (auto const& ns: namespaces) {
+		if (ns.first.empty()) {
+			state.xml += String::compose(" xmlns=\"%1\"", ns.second);
+		} else {
+			state.xml += String::compose(" xmlns:%1=\"%2\"", ns.first, ns.second);
+		}
+	}
+
+	for (auto attribute: root->get_attributes()) {
+		state.xml += String::compose(" %1=\"%2\"", attribute->get_name().raw(), attribute->get_value().raw());
+	}
+
+	state.xml += ">";
+
+	for (auto child: document.get_root_node()->get_children()) {
+		format_xml_node(child, state);
+	}
+
+	state.xml += String::compose("\n</%1>\n", root->get_name().raw());
+
+	return state.xml;
+}
+
