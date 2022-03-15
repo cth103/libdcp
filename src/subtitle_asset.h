@@ -48,9 +48,13 @@
 #include <libcxml/cxml.h>
 #include <boost/shared_array.hpp>
 #include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
 
 namespace xmlpp {
+	class Document;
 	class Element;
 }
 
@@ -127,6 +131,8 @@ public:
 	virtual boost::optional<std::string> raw_xml () const {
 		return _raw_xml;
 	}
+
+	static std::string format_xml (xmlpp::Document const& document, std::vector<std::pair<std::string, std::string>> const& namespaces);
 
 protected:
 	friend struct ::interop_dcp_font_test;

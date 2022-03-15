@@ -762,21 +762,21 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 	c._id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
 
 	check_xml (
-		"<DCSubtitle Version=\"1.0\">"
-		  "<SubtitleID>a6c58cff-3e1e-4b38-acec-a42224475ef6</SubtitleID>"
-		  "<MovieTitle>Test</MovieTitle>"
-		  "<ReelNumber>1</ReelNumber>"
-		  "<Language>EN</Language>"
-		  "<Font AspectAdjust=\"1.0\" Color=\"FFFFFFFF\" Effect=\"none\" EffectColor=\"FF000000\" Id=\"Frutiger\" Italic=\"no\" Script=\"normal\" Size=\"48\" Underlined=\"no\" Weight=\"normal\">"
-		    "<Subtitle SpotNumber=\"1\" TimeIn=\"00:04:09:229\" TimeOut=\"00:04:11:229\" FadeUpTime=\"0\" FadeDownTime=\"0\">"
-		      "<Text VAlign=\"top\" VPosition=\"80\">Hello world</Text>"
-		    "</Subtitle>"
-		  "</Font>"
-		  "<Font AspectAdjust=\"1.0\" Color=\"FF800040\" Effect=\"border\" EffectColor=\"FF010203\" Italic=\"yes\" Script=\"normal\" Size=\"91\" Underlined=\"yes\" Weight=\"bold\">"
-		    "<Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:219\" TimeOut=\"06:12:15:219\" FadeUpTime=\"930792\" FadeDownTime=\"4591834\">"
-		      "<Text VAlign=\"bottom\" VPosition=\"40\">What's going <Space Size=\"9em\"/>on</Text>"
-		    "</Subtitle>"
-		  "</Font>"
+		"<DCSubtitle Version=\"1.0\">\n"
+		"  <SubtitleID>a6c58cff-3e1e-4b38-acec-a42224475ef6</SubtitleID>\n"
+		"  <MovieTitle>Test</MovieTitle>\n"
+		"  <ReelNumber>1</ReelNumber>\n"
+		"  <Language>EN</Language>\n"
+		"  <Font AspectAdjust=\"1.0\" Color=\"FFFFFFFF\" Effect=\"none\" EffectColor=\"FF000000\" Id=\"Frutiger\" Italic=\"no\" Script=\"normal\" Size=\"48\" Underlined=\"no\" Weight=\"normal\">\n"
+		"    <Subtitle SpotNumber=\"1\" TimeIn=\"00:04:09:229\" TimeOut=\"00:04:11:229\" FadeUpTime=\"0\" FadeDownTime=\"0\">\n"
+		"      <Text VAlign=\"top\" VPosition=\"80\">Hello world</Text>\n"
+		"    </Subtitle>\n"
+		"  </Font>\n"
+		"  <Font AspectAdjust=\"1.0\" Color=\"FF800040\" Effect=\"border\" EffectColor=\"FF010203\" Italic=\"yes\" Script=\"normal\" Size=\"91\" Underlined=\"yes\" Weight=\"bold\">\n"
+		"    <Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:219\" TimeOut=\"06:12:15:219\" FadeUpTime=\"930792\" FadeDownTime=\"4591834\">\n"
+		"      <Text VAlign=\"bottom\" VPosition=\"40\">What's going <Space Size=\"9em\"/>on</Text>\n"
+		"    </Subtitle>\n"
+		"  </Font>\n"
 		"</DCSubtitle>",
 		c.xml_as_string (),
 		vector<string>()
@@ -846,21 +846,21 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 	c._id = "a6c58cff-3e1e-4b38-acec-a42224475ef6";
 
 	check_xml (
-		"<DCSubtitle Version=\"1.0\">"
-		  "<SubtitleID>a6c58cff-3e1e-4b38-acec-a42224475ef6</SubtitleID>"
-		  "<MovieTitle>Test</MovieTitle>"
-		  "<ReelNumber>1</ReelNumber>"
-		  "<Language>EN</Language>"
-		  "<Font AspectAdjust=\"1.0\" Color=\"FFFFFFFF\" Effect=\"none\" EffectColor=\"FF000000\" Id=\"Frutiger\" Italic=\"no\" Script=\"normal\" Size=\"48\" Underlined=\"no\" Weight=\"normal\">"
-		    "<Subtitle SpotNumber=\"1\" TimeIn=\"00:04:09:229\" TimeOut=\"00:04:11:229\" FadeUpTime=\"0\" FadeDownTime=\"0\">"
-		      "<Text HPosition=\"-20\" VAlign=\"top\" VPosition=\"80\">Hello world</Text>"
-		    "</Subtitle>"
-		  "</Font>"
-		  "<Font AspectAdjust=\"1.0\" Color=\"FF800040\" Effect=\"border\" EffectColor=\"FF010203\" Italic=\"yes\" Script=\"normal\" Size=\"91\" Underlined=\"yes\" Weight=\"bold\">"
-		    "<Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:219\" TimeOut=\"06:12:15:219\" FadeUpTime=\"930792\" FadeDownTime=\"4591834\">"
-		      "<Text HPosition=\"-20\" VAlign=\"bottom\" VPosition=\"40\">What's going on</Text>"
-		    "</Subtitle>"
-		  "</Font>"
+		"<DCSubtitle Version=\"1.0\">\n"
+		"  <SubtitleID>a6c58cff-3e1e-4b38-acec-a42224475ef6</SubtitleID>\n"
+		"  <MovieTitle>Test</MovieTitle>\n"
+		"  <ReelNumber>1</ReelNumber>\n"
+		"  <Language>EN</Language>\n"
+		"  <Font AspectAdjust=\"1.0\" Color=\"FFFFFFFF\" Effect=\"none\" EffectColor=\"FF000000\" Id=\"Frutiger\" Italic=\"no\" Script=\"normal\" Size=\"48\" Underlined=\"no\" Weight=\"normal\">\n"
+		"    <Subtitle SpotNumber=\"1\" TimeIn=\"00:04:09:229\" TimeOut=\"00:04:11:229\" FadeUpTime=\"0\" FadeDownTime=\"0\">\n"
+		"      <Text HPosition=\"-20\" VAlign=\"top\" VPosition=\"80\">Hello world</Text>\n"
+		"    </Subtitle>\n"
+		"  </Font>\n"
+		"  <Font AspectAdjust=\"1.0\" Color=\"FF800040\" Effect=\"border\" EffectColor=\"FF010203\" Italic=\"yes\" Script=\"normal\" Size=\"91\" Underlined=\"yes\" Weight=\"bold\">\n"
+		"    <Subtitle SpotNumber=\"2\" TimeIn=\"05:41:00:219\" TimeOut=\"06:12:15:219\" FadeUpTime=\"930792\" FadeDownTime=\"4591834\">\n"
+		"      <Text HPosition=\"-20\" VAlign=\"bottom\" VPosition=\"40\">What's going on</Text>\n"
+		"    </Subtitle>\n"
+		"  </Font>\n"
 		"</DCSubtitle>",
 		c.xml_as_string (),
 		vector<string>()

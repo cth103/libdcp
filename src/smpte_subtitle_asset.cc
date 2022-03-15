@@ -344,8 +344,6 @@ SMPTESubtitleAsset::xml_as_string () const
 {
 	xmlpp::Document doc;
 	auto root = doc.create_root_node ("SubtitleReel");
-	root->set_namespace_declaration (subtitle_smpte_ns);
-	root->set_namespace_declaration ("http://www.w3.org/2001/XMLSchema", "xs");
 
 	DCP_ASSERT (_xml_id);
 	root->add_child("Id")->add_child_text("urn:uuid:" + *_xml_id);
@@ -374,7 +372,7 @@ SMPTESubtitleAsset::xml_as_string () const
 
 	subtitles_as_xml (root->add_child("SubtitleList"), _time_code_rate, Standard::SMPTE);
 
-	return doc.write_to_string ("UTF-8");
+	return format_xml(doc, { {"", subtitle_smpte_ns}, {"xs", "http://www.w3.org/2001/XMLSchema"} });
 }
 
 
