@@ -838,3 +838,38 @@ dcp::used_audio_channels ()
 	};
 }
 
+
+string
+dcp::formulation_to_string (dcp::Formulation formulation)
+{
+	switch (formulation) {
+	case Formulation::MODIFIED_TRANSITIONAL_1:
+		return "modified-transitional-1";
+	case Formulation::MULTIPLE_MODIFIED_TRANSITIONAL_1:
+		return "multiple-modified-transitional-1";
+	case Formulation::DCI_ANY:
+		return "dci-any";
+	case Formulation::DCI_SPECIFIC:
+		return "dci-specific";
+	}
+
+	DCP_ASSERT (false);
+}
+
+
+dcp::Formulation
+dcp::string_to_formulation (string formulation)
+{
+	if (formulation == "modified-transitional-1") {
+		return Formulation::MODIFIED_TRANSITIONAL_1;
+	} else if (formulation == "multiple-modified-transitional-1") {
+		return Formulation::MULTIPLE_MODIFIED_TRANSITIONAL_1;
+	} else if (formulation == "dci-any") {
+		return Formulation::DCI_ANY;
+	} else if (formulation == "dci-specific") {
+		return Formulation::DCI_SPECIFIC;
+	}
+
+	DCP_ASSERT (false);
+}
+

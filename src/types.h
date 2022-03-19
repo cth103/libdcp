@@ -292,6 +292,10 @@ enum class Formulation {
 };
 
 
+std::string formulation_to_string (dcp::Formulation formulation);
+dcp::Formulation string_to_formulation (std::string forumulation);
+
+
 /** @class Colour
  *  @brief An RGB colour
  */
