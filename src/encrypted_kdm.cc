@@ -648,37 +648,35 @@ EncryptedKDM::EncryptedKDM (
 	kre.disable_forensic_marking_picture = disable_forensic_marking_picture;
 	kre.disable_forensic_marking_audio = disable_forensic_marking_audio;
 
-	if (formulation != Formulation::MODIFIED_TRANSITIONAL_TEST) {
-		kre.authorized_device_info = data::AuthorizedDeviceInfo ();
-		kre.authorized_device_info->device_list_identifier = make_uuid ();
-		auto n = recipient.subject_common_name ();
-		if (n.find (".") != string::npos) {
-			n = n.substr (n.find (".") + 1);
-		}
-		kre.authorized_device_info->device_list_description = n;
+	kre.authorized_device_info = data::AuthorizedDeviceInfo ();
+	kre.authorized_device_info->device_list_identifier = make_uuid ();
+	auto n = recipient.subject_common_name ();
+	if (n.find (".") != string::npos) {
+		n = n.substr (n.find (".") + 1);
+	}
+	kre.authorized_device_info->device_list_description = n;
 
-		if (formulation == Formulation::MODIFIED_TRANSITIONAL_1 || formulation == Formulation::DCI_ANY) {
-			/* Use the "assume trust" thumbprint */
+	if (formulation == Formulation::MODIFIED_TRANSITIONAL_1 || formulation == Formulation::DCI_ANY) {
+		/* Use the "assume trust" thumbprint */
+		kre.authorized_device_info->certificate_thumbprints.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
+	} else if (formulation == Formulation::MULTIPLE_MODIFIED_TRANSITIONAL_1 || formulation == Formulation::DCI_SPECIFIC) {
+		if (trusted_devices.empty ()) {
+			/* Fall back on the "assume trust" thumbprint so we
+			   can generate "modified-transitional-1" KDMs
+			   together with "multiple-modified-transitional-1"
+			   KDMs in one go, and similarly for "dci-any" etc.
+			*/
 			kre.authorized_device_info->certificate_thumbprints.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
-		} else if (formulation == Formulation::MULTIPLE_MODIFIED_TRANSITIONAL_1 || formulation == Formulation::DCI_SPECIFIC) {
-			if (trusted_devices.empty ()) {
-				/* Fall back on the "assume trust" thumbprint so we
-				   can generate "modified-transitional-1" KDMs
-				   together with "multiple-modified-transitional-1"
-				   KDMs in one go, and similarly for "dci-any" etc.
-				*/
-				kre.authorized_device_info->certificate_thumbprints.push_back ("2jmj7l5rSw0yVb/vlWAYkK/YBwk=");
-			} else {
-				/* As I read the standard we should use the
-				   recipient /and/ other trusted device thumbprints
-				   here. MJD reports that this doesn't work with
-				   his setup; a working KDM does not include the
-				   recipient's thumbprint (recipient.thumbprint()).
-				   Waimea uses only the trusted devices here, too.
-				*/
-				for (auto i: trusted_devices) {
-					kre.authorized_device_info->certificate_thumbprints.push_back(i);
-				}
+		} else {
+			/* As I read the standard we should use the
+			   recipient /and/ other trusted device thumbprints
+			   here. MJD reports that this doesn't work with
+			   his setup; a working KDM does not include the
+			   recipient's thumbprint (recipient.thumbprint()).
+			   Waimea uses only the trusted devices here, too.
+			*/
+			for (auto i: trusted_devices) {
+				kre.authorized_device_info->certificate_thumbprints.push_back(i);
 			}
 		}
 	}
