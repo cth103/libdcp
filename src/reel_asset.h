@@ -79,7 +79,7 @@ public:
 	 *  @param intrinsic_duration Intrinsic duration of this asset
 	 *  @param entry_point Entry point to use in that asset
 	 */
-	ReelAsset (std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	ReelAsset (std::string id, Fraction edit_rate, int64_t intrinsic_duration, boost::optional<int64_t> entry_point);
 
 	explicit ReelAsset (std::shared_ptr<const cxml::Node>);
 

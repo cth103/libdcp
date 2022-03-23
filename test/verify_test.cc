@@ -386,9 +386,9 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id, canonical(dir / dcp_test1_cpl) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_HASHES, canonical(dir / "audio.mxf") },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'x6pkiSEIBuZW7KEY73GrNNw8UjDE=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 12 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xLq7ot/GobgrqUYdlbR8FCD5APqs=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 26 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xgVKhC9IkWyzQbgzpFcJ1bpqbtwk=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 19 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xznqYbl53W9ZQtrU2E1FQ6dwdM2M=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 12 },
 		});
 }
 
@@ -943,8 +943,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 	check_verify_result (
 		{ dir },
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:MainSoundXConfiguration'"), canonical(cpl->file().get()), 52 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:MainSoundXSampleRate'"), canonical(cpl->file().get()), 53 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:MainSoundXConfiguration'"), canonical(cpl->file().get()), 50 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:MainSoundXSampleRate'"), canonical(cpl->file().get()), 51 },
 			{
 				dcp::VerificationNote::Type::ERROR,
 				dcp::VerificationNote::Code::INVALID_XML,
@@ -955,7 +955,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 				       "MainSoundSampleRate,MainPictureStoredArea,MainPictureActiveArea,MainSubtitleLanguageList?,"
 				       "ExtensionMetadataList?,)'"),
 				canonical(cpl->file().get()),
-				73
+				71
 			},
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), canonical(cpl->file().get()) },
 		});
@@ -1700,7 +1700,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 	auto reel_asset1 = make_shared<dcp::ReelSMPTESubtitleAsset>(asset1, dcp::Fraction(24, 1), 5 * 24, 0);
 	auto reel1 = make_shared<dcp::Reel>();
 	reel1->add (reel_asset1);
-	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 5 * 24, 0);
+	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 5 * 24);
 	markers1->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
 	reel1->add (markers1);
 
@@ -1713,7 +1713,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 	auto reel_asset2 = make_shared<dcp::ReelSMPTESubtitleAsset>(asset2, dcp::Fraction(24, 1), 4 * 24, 0);
 	auto reel2 = make_shared<dcp::Reel>();
 	reel2->add (reel_asset2);
-	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 4 * 24, 0);
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 4 * 24);
 	markers2->set (dcp::Marker::LFOC, dcp::Time(4 * 24 - 1, 24, 24));
 	reel2->add (markers2);
 
@@ -2268,7 +2268,7 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 		reel1->add (make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
-	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length, 0);
+	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length);
 	markers1->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
 	reel1->add (markers1);
 
@@ -2283,7 +2283,7 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 		reel2->add (make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
-	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length, 0);
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length);
 	markers2->set (dcp::Marker::LFOC, dcp::Time(reel_length - 1, 24, 24));
 	reel2->add (markers2);
 
@@ -2354,7 +2354,7 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 		reel1->add (make_shared<dcp::ReelSMPTEClosedCaptionAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
-	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length, 0);
+	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length);
 	markers1->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
 	reel1->add (markers1);
 
@@ -2369,7 +2369,7 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 		reel2->add (make_shared<dcp::ReelSMPTEClosedCaptionAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
-	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length, 0);
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length);
 	markers2->set (dcp::Marker::LFOC, dcp::Time(reel_length - 1, 24, 24));
 	reel2->add (markers2);
 
@@ -2540,7 +2540,7 @@ verify_markers_test (
 {
 	auto dcp = make_simple (dir);
 	dcp->cpls()[0]->set_content_kind (dcp::ContentKind::FEATURE);
-	auto markers_asset = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 24, 0);
+	auto markers_asset = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 24);
 	for (auto const& i: markers) {
 		markers_asset->set (i.first, i.second);
 	}
@@ -2734,8 +2734,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 	check_verify_result (
 		{dir},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:NameX'"), cpl->file().get(), 72 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:NameX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 79 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:NameX'"), cpl->file().get(), 70 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:NameX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 77 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
 		});
 }
@@ -2817,8 +2817,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 	check_verify_result (
 		{dir},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:ValueX'"), cpl->file().get(), 76 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:ValueX' is not allowed for content model '(Name,Value)'"), cpl->file().get(), 77 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:ValueX'"), cpl->file().get(), 74 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:ValueX' is not allowed for content model '(Name,Value)'"), cpl->file().get(), 75 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
 		});
 }
@@ -2873,8 +2873,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 	check_verify_result (
 		{dir},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyX'"), cpl->file().get(), 74 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:PropertyX' is not allowed for content model '(Property+)'"), cpl->file().get(), 78 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyX'"), cpl->file().get(), 72 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:PropertyX' is not allowed for content model '(Property+)'"), cpl->file().get(), 76 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
 		});
 }
@@ -2902,8 +2902,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 	check_verify_result (
 		{dir},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyListX'"), cpl->file().get(), 73 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:PropertyListX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 79 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyListX'"), cpl->file().get(), 71 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:PropertyListX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 77 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
 		});
 }

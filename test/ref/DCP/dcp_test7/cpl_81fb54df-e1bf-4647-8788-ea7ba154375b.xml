@@ -20,8 +20,6 @@
           <Id>urn:uuid:93182bd2-b1e8-41a3-b5c8-6e6564273bff</Id>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
-          <EntryPoint>0</EntryPoint>
-          <Duration>24</Duration>
           <MarkerList>
             <Marker>
               <Label>FFOC</Label>

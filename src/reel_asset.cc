@@ -49,22 +49,25 @@ LIBDCP_DISABLE_WARNINGS
 LIBDCP_ENABLE_WARNINGS
 
 
-using std::pair;
-using std::string;
 using std::make_pair;
+using std::pair;
 using std::shared_ptr;
+using std::string;
 using boost::optional;
 using namespace dcp;
 
 
-ReelAsset::ReelAsset (string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+ReelAsset::ReelAsset (string id, Fraction edit_rate, int64_t intrinsic_duration, optional<int64_t> entry_point)
 	: Object (id)
 	, _intrinsic_duration (intrinsic_duration)
-	, _duration (intrinsic_duration - entry_point)
 	, _edit_rate (edit_rate)
 	, _entry_point (entry_point)
 {
-	DCP_ASSERT (_entry_point <= _intrinsic_duration);
+	if (_entry_point) {
+		_duration = intrinsic_duration - *_entry_point;
+	}
+
+	DCP_ASSERT (!_entry_point || *_entry_point <= _intrinsic_duration);
 }
 
 

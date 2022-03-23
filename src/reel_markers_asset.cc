@@ -54,8 +54,8 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-ReelMarkersAsset::ReelMarkersAsset (Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelAsset (make_uuid(), edit_rate, intrinsic_duration, entry_point)
+ReelMarkersAsset::ReelMarkersAsset (Fraction edit_rate, int64_t intrinsic_duration)
+	: ReelAsset (make_uuid(), edit_rate, intrinsic_duration, {})
 {
 
 }

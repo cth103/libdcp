@@ -48,7 +48,7 @@ namespace dcp {
 class ReelMarkersAsset : public ReelAsset
 {
 public:
-	ReelMarkersAsset (Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	ReelMarkersAsset (Fraction edit_rate, int64_t intrinsic_duration);
 	explicit ReelMarkersAsset (std::shared_ptr<const cxml::Node>);
 
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
