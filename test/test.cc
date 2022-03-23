@@ -371,7 +371,7 @@ make_simple (boost::filesystem::path path, int reels, int frames, dcp::Standard 
 			shared_ptr<dcp::ReelSoundAsset>(new dcp::ReelSoundAsset(ms, 0))
 			);
 
-		auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), frames, 0);
+		auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), frames);
 		if (i == 0) {
 			markers->set (dcp::Marker::FFOC, dcp::Time(0, 0, 0, 1, 24));
 		}
@@ -419,7 +419,7 @@ simple_subtitle ()
 shared_ptr<dcp::ReelMarkersAsset>
 simple_markers (int frames)
 {
-	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), frames, 0);
+	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), frames);
 	markers->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
 	markers->set (dcp::Marker::LFOC, dcp::Time(frames - 1, 24, 24));
 	return markers;

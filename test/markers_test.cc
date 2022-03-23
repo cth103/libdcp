@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE (markers_write_test)
 {
 	dcp::CPL cpl("Markers test", dcp::ContentKind::TEST, dcp::Standard::SMPTE);
 
-	auto asset = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 432000, 0);
+	auto asset = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 432000);
 	asset->set (dcp::Marker::FFOC, dcp::Time(1, 1, 9, 16, 24));
 	asset->set (dcp::Marker::LFOC, dcp::Time(2, 5, 3, 0, 24));
 	asset->set (dcp::Marker::FFTC, dcp::Time(0, 6, 4, 2, 24));
@@ -101,6 +101,6 @@ BOOST_AUTO_TEST_CASE (markers_read_test, * boost::unit_test::depends_on("markers
 
 	BOOST_CHECK (markers->equals(markers, dcp::EqualityOptions(), [](dcp::NoteType, string) {}));
 
-	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 432000, 0);
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 432000);
 	BOOST_CHECK (!markers->equals(markers2, dcp::EqualityOptions(), [](dcp::NoteType, string) {}));
 }
