@@ -1452,6 +1452,12 @@ dcp::verify (
 					for (auto const& i: reel->main_markers()->get()) {
 						markers_seen.insert (i);
 					}
+					if (reel->main_markers()->entry_point()) {
+						notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::UNEXPECTED_ENTRY_POINT});
+					}
+					if (reel->main_markers()->duration()) {
+						notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::UNEXPECTED_DURATION});
+					}
 				}
 
 				fewest_closed_captions = std::min (fewest_closed_captions, reel->closed_captions().size());
@@ -1763,6 +1769,10 @@ dcp::note_to_string (VerificationNote note)
 		return "Some closed <Text> or <Image> nodes have different vertical alignments within a <Subtitle>.";
 	case VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ORDERING:
 		return "Some closed captions are not listed in the order of their vertical position.";
+	case VerificationNote::Code::UNEXPECTED_ENTRY_POINT:
+		return "There is an <EntryPoint> node inside a <MainMarkers>.";
+	case VerificationNote::Code::UNEXPECTED_DURATION:
+		return "There is an <Duration> node inside a <MainMarkers>.";
 	}
 
 	return "";

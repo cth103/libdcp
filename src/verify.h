@@ -82,6 +82,7 @@ public:
 	 *  - MISMATCHED: two things, which should be the same, are not.
 	 *  - EMPTY: something, which should have a value, has no value.
 	 *  - MISSING: something, which should be present, is not.
+	 *  - UNEXPECTED: something, which is present, should not be.
 	 *  - FAILED: some part of the verification failed in some serious way.
 	 *
 	 *  Comments should clarify meaning and also say which of the optional fields (e.g. file)
@@ -392,6 +393,10 @@ public:
 		MISMATCHED_CLOSED_CAPTION_VALIGN,
 		/** Some closed captions are not listed in the XML in the order of their vertical position */
 		INCORRECT_CLOSED_CAPTION_ORDERING,
+		/** Some <MainMarkers> asset has an <EntryPoint> that should not be there */
+		UNEXPECTED_ENTRY_POINT,
+		/** Some <MainMarkers> asset has an <Duration> that should not be there */
+		UNEXPECTED_DURATION
 	};
 
 	VerificationNote (Type type, Code code)

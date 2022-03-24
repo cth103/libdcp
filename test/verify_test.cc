@@ -219,6 +219,23 @@ public:
 		BOOST_REQUIRE (_content != old_content);
 	}
 
+	void insert (string after, string line)
+	{
+		vector<string> lines;
+		boost::algorithm::split (lines, _content, boost::is_any_of("\r\n"), boost::token_compress_on);
+		auto old_content = _content;
+		_content = "";
+		bool replaced = false;
+		for (auto i: lines) {
+			_content += i;
+			if (!replaced && i.find(after) != string::npos) {
+				_content += line;
+				replaced = true;
+			}
+		}
+		BOOST_REQUIRE (_content != old_content);
+	}
+
 private:
 	path _path;
 	std::string _content;
@@ -3231,5 +3248,37 @@ BOOST_AUTO_TEST_CASE (verify_threed_marked_as_twod)
 			},
 		});
 
+}
+
+
+BOOST_AUTO_TEST_CASE (verify_unexpected_things_in_main_markers)
+{
+	path dir = "build/test/verify_unexpected_things_in_main_markers";
+	prepare_directory (dir);
+	auto dcp = make_simple (dir, 1, 24);
+	dcp->write_xml (
+		dcp::String::compose("libdcp %1", dcp::version),
+		dcp::String::compose("libdcp %1", dcp::version),
+		dcp::LocalTime().as_string(),
+		"A Test DCP"
+		);
+
+	{
+		Editor e (find_cpl(dir));
+		e.insert(
+			"          <IntrinsicDuration>24</IntrinsicDuration>",
+			"<EntryPoint>0</EntryPoint><Duration>24</Duration>"
+			);
+	}
+
+	dcp::CPL cpl (find_cpl(dir));
+
+	check_verify_result (
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::UNEXPECTED_ENTRY_POINT },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::UNEXPECTED_DURATION },
+		});
 }
 
