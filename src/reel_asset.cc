@@ -126,11 +126,21 @@ ReelAsset::cpl_node_namespace () const
 }
 
 
+template <class T>
+string
+optional_to_string (optional<T> o)
+{
+	return o ? raw_convert<string>(*o) : "[none]";
+}
+
+
 bool
 ReelAsset::asset_equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, NoteHandler note) const
 {
+	auto const node = cpl_node_name(Standard::SMPTE);
+
 	if (_annotation_text != other->_annotation_text) {
-		string const s = "Reel: annotation texts differ (" + _annotation_text.get_value_or("") + " vs " + other->_annotation_text.get_value_or("") + ")\n";
+		string const s = String::compose("Reel %1: annotation texts differ (%2 vs %3)", node, optional_to_string(_annotation_text), optional_to_string(other->_annotation_text));
 		if (!opt.reel_annotation_texts_can_differ) {
 			note (NoteType::ERROR, s);
 			return false;
@@ -140,22 +150,34 @@ ReelAsset::asset_equals (shared_ptr<const ReelAsset> other, EqualityOptions opt,
 	}
 
 	if (_edit_rate != other->_edit_rate) {
-		note (NoteType::ERROR, "Reel: edit rates differ");
+		note (
+			NoteType::ERROR,
+			String::compose("Reel %1: edit rates differ (%2 vs %3)", node, _edit_rate.as_string(), other->_edit_rate.as_string())
+		     );
 		return false;
 	}
 
 	if (_intrinsic_duration != other->_intrinsic_duration) {
-		note (NoteType::ERROR, String::compose ("Reel: intrinsic durations differ (%1 vs %2)", _intrinsic_duration, other->_intrinsic_duration));
+		note (
+			NoteType::ERROR,
+			String::compose("Reel %1: intrinsic durations differ (%2 vs %3)", node, _intrinsic_duration, other->_intrinsic_duration)
+		     );
 		return false;
 	}
 
 	if (_entry_point != other->_entry_point) {
-		note (NoteType::ERROR, "Reel: entry points differ");
+		note (
+			NoteType::ERROR,
+			String::compose("Reel %1: entry points differ (%2 vs %3)", node, optional_to_string(_entry_point), optional_to_string(other->_entry_point))
+		     );
 		return false;
 	}
 
 	if (_duration != other->_duration) {
-		note (NoteType::ERROR, "Reel: durations differ");
+		note (
+			NoteType::ERROR,
+			String::compose("Reel %1: durations differ (%2 vs %3)", node, optional_to_string(_duration), optional_to_string(other->_duration))
+		     );
 		return false;
 	}
 
