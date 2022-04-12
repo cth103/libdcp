@@ -37,6 +37,7 @@
 #include "cpl.h"
 #include "dcp.h"
 #include "interop_subtitle_asset.h"
+#include "file.h"
 #include "j2k_transcode.h"
 #include "mono_picture_asset.h"
 #include "mono_picture_asset.h"
@@ -210,9 +211,9 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 {
 	uintmax_t size = boost::filesystem::file_size (ref);
 	BOOST_CHECK_EQUAL (size, boost::filesystem::file_size(check));
-	auto ref_file = dcp::fopen_boost (ref, "rb");
+	dcp::File ref_file(ref, "rb");
 	BOOST_REQUIRE (ref_file);
-	auto check_file = dcp::fopen_boost (check, "rb");
+	dcp::File check_file(check, "rb");
 	BOOST_REQUIRE (check_file);
 
 	int const buffer_size = 65536;
@@ -223,9 +224,9 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 
 	while (pos < size) {
 		uintmax_t this_time = min (uintmax_t(buffer_size), size - pos);
-		size_t r = fread (ref_buffer, 1, this_time, ref_file);
+		size_t r = ref_file.read(ref_buffer, 1, this_time);
 		BOOST_CHECK_EQUAL (r, this_time);
-		r = fread (check_buffer, 1, this_time, check_file);
+		r = check_file.read(check_buffer, 1, this_time);
 		BOOST_CHECK_EQUAL (r, this_time);
 
 		if (memcmp(ref_buffer, check_buffer, this_time) != 0) {
@@ -246,9 +247,6 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 
 	delete[] ref_buffer;
 	delete[] check_buffer;
-
-	fclose (ref_file);
-	fclose (check_file);
 }
 
 

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2022 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,64 +32,75 @@
 */
 
 
-/** @file  src/array_data.cc
- *  @brief ArrayData class
- */
-
-
-#include "array_data.h"
+#include "dcp_assert.h"
 #include "file.h"
-#include "exceptions.h"
-#include "util.h"
-#include <cerrno>
-#include <cstdio>
 
 
-using boost::shared_array;
 using namespace dcp;
 
 
-ArrayData::ArrayData ()
+File::~File()
 {
-
+	close();
 }
 
 
-ArrayData::ArrayData (int size)
-	: _data (new uint8_t[size])
-	, _size (size)
+File::File(boost::filesystem::path path, std::string mode)
 {
-
+#ifdef LIBDCP_WINDOWS
+	std::wstring mode_wide(mode.begin(), mode.end());
+	/* c_str() here should give a UTF-16 string */
+        _file = _wfopen(path.c_str(), mode_wide.c_str());
+#else
+        _file = fopen(path.c_str(), mode.c_str());
+#endif
 }
 
 
-ArrayData::ArrayData (uint8_t const * data, int size)
-	: _data (new uint8_t[size])
-	, _size (size)
+void
+File::close()
 {
-	memcpy (_data.get(), data, size);
-}
-
-
-ArrayData::ArrayData (shared_array<uint8_t> data, int size)
-	: _data (data)
-	, _size (size)
-{
-
-}
-
-
-ArrayData::ArrayData (boost::filesystem::path file)
-{
-	_size = boost::filesystem::file_size (file);
-	_data.reset (new uint8_t[_size]);
-
-	File f(file, "rb");
-	if (!f) {
-		throw FileError ("could not open file for reading", file, errno);
-	}
-
-	if (f.read(_data.get(), 1, _size) != static_cast<size_t>(_size)) {
-		throw FileError ("could not read from file", file, errno);
+	if (_file) {
+		fclose(_file);
+		_file = nullptr;
 	}
 }
+
+
+size_t
+File::write(const void *ptr, size_t size, size_t nmemb)
+{
+	DCP_ASSERT(_file);
+	return fwrite(ptr, size, nmemb, _file);
+}
+
+
+size_t
+File::read(void *ptr, size_t size, size_t nmemb)
+{
+	DCP_ASSERT(_file);
+	return fread(ptr, size, nmemb, _file);
+}
+
+
+int
+File::eof()
+{
+	DCP_ASSERT(_file);
+	return feof(_file);
+}
+
+
+char *
+File::gets(char *s, int size)
+{
+	DCP_ASSERT(_file);
+	return fgets(s, size, _file);
+}
+
+
+File::operator bool() const
+{
+	return _file != nullptr;
+}
+

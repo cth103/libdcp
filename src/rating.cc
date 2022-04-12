@@ -33,6 +33,7 @@
 
 
 #include "exceptions.h"
+#include "file.h"
 #include "rating.h"
 #include "util.h"
 #include <libcxml/cxml.h>
@@ -82,14 +83,14 @@ dcp::rating_systems()
 void
 dcp::load_rating_list(boost::filesystem::path ratings_file)
 {
-	auto f = fopen_boost (ratings_file, "r");
+	File f(ratings_file, "r");
 	if (!f) {
 		throw FileError ("Could not open ratings file", ratings_file, errno);
 	}
 
-	auto get_line_no_throw = [f, ratings_file]() -> optional<string> {
+	auto get_line_no_throw = [&f, ratings_file]() -> optional<string> {
 		char buffer[512];
-		char* r = fgets(buffer, sizeof(buffer), f);
+		char* r = f.gets(buffer, sizeof(buffer));
 		if (r == 0) {
 			return {};
 		}
@@ -108,7 +109,7 @@ dcp::load_rating_list(boost::filesystem::path ratings_file)
 
 	optional<string> agency;
 
-	while (!feof(f)) {
+	while (!f.eof()) {
 		if (!agency) {
 			agency = get_line();
 		}
@@ -117,7 +118,7 @@ dcp::load_rating_list(boost::filesystem::path ratings_file)
 		auto country_code = get_line();
 
 		RatingSystem system(*agency, name, country_and_region_names, country_code);
-		while (!feof(f)) {
+		while (!f.eof()) {
 			auto rating = get_line_no_throw();
 			if (!rating) {
 				/* End of the file */
