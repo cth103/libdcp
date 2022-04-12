@@ -41,6 +41,7 @@
 #include "compose.hpp"
 #include "crypto_context.h"
 #include "exceptions.h"
+#include "file.h"
 #include "j2k_transcode.h"
 #include "mono_picture_frame.h"
 #include "rgb_xyz.h"
@@ -60,15 +61,12 @@ MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path)
 {
 	auto const size = boost::filesystem::file_size (path);
 	_buffer.reset(new ASDCP::JP2K::FrameBuffer(size));
-	auto f = fopen_boost (path, "rb");
+	File f(path, "rb");
 	if (!f) {
 		boost::throw_exception (FileError("could not open JPEG2000 file", path, errno));
 	}
 
-	size_t n = fread (data(), 1, size, f);
-	fclose (f);
-
-	if (n != size) {
+	if (f.read(data(), 1, size) != size) {
 		boost::throw_exception (FileError("could not read from JPEG2000 file", path, errno));
 	}
 

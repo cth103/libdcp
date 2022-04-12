@@ -38,8 +38,8 @@
 
 
 #include "data.h"
+#include "file.h"
 #include "exceptions.h"
-#include "util.h"
 #include <cstdio>
 #include <cerrno>
 
@@ -50,13 +50,11 @@ using namespace dcp;
 void
 Data::write (boost::filesystem::path file) const
 {
-	auto f = fopen_boost (file, "wb");
+	File f(file, "wb");
 	if (!f) {
 		throw FileError ("could not write to file", file, errno);
 	}
-	size_t const r = fwrite (data(), 1, size(), f);
-	fclose (f);
-	if (r != size_t(size())) {
+	if (f.write(data(), 1, size()) != size_t(size())) {
 		throw FileError ("could not write to file", file, errno);
 	}
 }

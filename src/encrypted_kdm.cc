@@ -37,11 +37,12 @@
  */
 
 
-#include "encrypted_kdm.h"
-#include "util.h"
 #include "certificate_chain.h"
-#include "exceptions.h"
 #include "compose.hpp"
+#include "encrypted_kdm.h"
+#include "exceptions.h"
+#include "file.h"
+#include "util.h"
 #include <libcxml/cxml.h>
 #include <libxml++/document.h>
 #include <libxml++/nodes/element.h>
@@ -730,14 +731,12 @@ EncryptedKDM::~EncryptedKDM ()
 void
 EncryptedKDM::as_xml (boost::filesystem::path path) const
 {
-	auto f = fopen_boost (path, "w");
+	File f(path, "w");
 	if (!f) {
 		throw FileError ("Could not open KDM file for writing", path, errno);
 	}
 	auto const x = as_xml ();
-	size_t const written = fwrite (x.c_str(), 1, x.length(), f);
-	fclose (f);
-	if (written != x.length()) {
+	if (f.write(x.c_str(), 1, x.length()) != x.length()) {
 		throw FileError ("Could not write to KDM file", path, errno);
 	}
 }

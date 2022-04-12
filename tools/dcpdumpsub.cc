@@ -31,21 +31,25 @@
     files in the program, then also delete it here.
 */
 
-#include "smpte_subtitle_asset.h"
+
 #include "decrypted_kdm.h"
 #include "decrypted_kdm_key.h"
 #include "encrypted_kdm.h"
+#include "file.h"
+#include "smpte_subtitle_asset.h"
 #include "util.h"
 #include <getopt.h>
 #include <cstdlib>
-#include <string>
 #include <iostream>
+#include <string>
 
-using std::string;
-using std::cout;
+
 using std::cerr;
+using std::cout;
 using std::map;
+using std::string;
 using boost::optional;
+
 
 static void
 help (string n)
@@ -129,15 +133,13 @@ main (int argc, char* argv[])
 	cout << sub.xml_as_string() << "\n";
 
 	if (extract_fonts) {
-		map<string, dcp::ArrayData> fonts = sub.font_data ();
-		for (map<string, dcp::ArrayData>::const_iterator i = fonts.begin(); i != fonts.end(); ++i) {
-			FILE* f = dcp::fopen_boost (i->first + ".ttf", "wb");
+		for (auto const& i: sub.font_data()) {
+			dcp::File f(i.first + ".ttf", "wb");
 			if (!f) {
-				cerr << "Could not open font file " << i->first << ".ttf for writing";
+				cerr << "Could not open font file " << i.first << ".ttf for writing";
 				exit (EXIT_FAILURE);
 			}
-			fwrite (i->second.data(), 1, i->second.size(), f);
-			fclose (f);
+			f.write(i.second.data(), 1, i.second.size());
 		}
 	}
 }

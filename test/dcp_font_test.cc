@@ -32,15 +32,16 @@
 */
 
 
-#include "interop_subtitle_asset.h"
-#include "smpte_subtitle_asset.h"
-#include "dcp.h"
 #include "cpl.h"
-#include "test.h"
+#include "dcp.h"
+#include "file.h"
+#include "interop_subtitle_asset.h"
 #include "reel.h"
-#include "util.h"
 #include "reel_interop_subtitle_asset.h"
 #include "reel_smpte_subtitle_asset.h"
+#include "smpte_subtitle_asset.h"
+#include "test.h"
+#include "util.h"
 #include <boost/test/unit_test.hpp>
 #include <cstdio>
 
@@ -81,11 +82,11 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1);
 
 	auto const size = boost::filesystem::file_size ("test/data/dummy.ttf");
-	auto f = dcp::fopen_boost ("test/data/dummy.ttf", "rb");
+	dcp::File f("test/data/dummy.ttf", "rb");
 	BOOST_REQUIRE (f);
 	shared_array<uint8_t> ref (new uint8_t[size]);
-	fread (ref.get(), 1, size, f);
-	fclose (f);
+	f.read(ref.get(), 1, size);
+	f.close();
 
 	BOOST_CHECK_EQUAL (memcmp (subs2->_fonts.front().data.data(), ref.get(), size), 0);
 }
@@ -118,11 +119,11 @@ BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
 	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1);
 
 	auto const size = boost::filesystem::file_size ("test/data/dummy.ttf");
-	auto f = dcp::fopen_boost ("test/data/dummy.ttf", "rb");
+	dcp::File f("test/data/dummy.ttf", "rb");
 	BOOST_REQUIRE (f);
 	shared_array<uint8_t> ref (new uint8_t[size]);
-	fread (ref.get(), 1, size, f);
-	fclose (f);
+	f.read(ref.get(), 1, size);
+	f.close();
 
 	BOOST_REQUIRE (subs2->_fonts.front().data.data());
 	BOOST_CHECK_EQUAL (memcmp (subs2->_fonts.front().data.data(), ref.get(), size), 0);

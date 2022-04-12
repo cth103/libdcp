@@ -31,9 +31,11 @@
     files in the program, then also delete it here.
 */
 
+
 #include "compose.hpp"
 #include "cpl.h"
 #include "dcp.h"
+#include "file.h"
 #include "interop_subtitle_asset.h"
 #include "j2k_transcode.h"
 #include "mono_picture_asset.h"
@@ -63,14 +65,14 @@
 
 
 using std::list;
-using std::pair;
-using std::string;
-using std::vector;
 using std::make_pair;
 using std::make_shared;
+using std::pair;
+using std::shared_ptr;
+using std::string;
+using std::vector;
 using boost::optional;
 using namespace boost::filesystem;
-using std::shared_ptr;
 
 
 static list<pair<string, optional<path>>> stages;
@@ -1392,10 +1394,10 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 		"</SubtitleList>"
 		"</SubtitleReel>";
 
-	auto xml_file = dcp::fopen_boost (dir / "subs.xml", "w");
+	dcp::File xml_file(dir / "subs.xml", "w");
 	BOOST_REQUIRE (xml_file);
-	fwrite (xml.c_str(), xml.size(), 1, xml_file);
-	fclose (xml_file);
+	xml_file.write(xml.c_str(), xml.size(), 1);
+	xml_file.close();
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write (dir / "subs.mxf");
 
@@ -1527,10 +1529,10 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 		"</SubtitleList>"
 		"</SubtitleReel>";
 
-	auto xml_file = dcp::fopen_boost (dir / "subs.xml", "w");
+	dcp::File xml_file(dir / "subs.xml", "w");
 	BOOST_REQUIRE (xml_file);
-	fwrite (xml.c_str(), xml.size(), 1, xml_file);
-	fclose (xml_file);
+	xml_file.write(xml.c_str(), xml.size(), 1);
+	xml_file.close();
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write (dir / "subs.mxf");
 
@@ -1580,10 +1582,10 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 		"</SubtitleList>"
 		"</SubtitleReel>";
 
-	auto xml_file = dcp::fopen_boost (dir / "subs.xml", "w");
+	dcp::File xml_file(dir / "subs.xml", "w");
 	BOOST_REQUIRE (xml_file);
-	fwrite (xml.c_str(), xml.size(), 1, xml_file);
-	fclose (xml_file);
+	xml_file.write(xml.c_str(), xml.size(), 1);
+	xml_file.close();
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write (dir / "subs.mxf");
 

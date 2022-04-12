@@ -41,6 +41,7 @@
 #include "compose.hpp"
 #include "dcp_assert.h"
 #include "exceptions.h"
+#include "file.h"
 #include "language_tag.h"
 #include "openjpeg_image.h"
 #include "rating.h"
@@ -228,19 +229,6 @@ dcp::base64_decode (string const & in, unsigned char* out, int out_length)
 }
 
 
-FILE *
-dcp::fopen_boost (boost::filesystem::path p, string t)
-{
-#ifdef LIBDCP_WINDOWS
-        wstring w (t.begin(), t.end());
-	/* c_str() here should give a UTF-16 string */
-        return _wfopen (p.c_str(), w.c_str ());
-#else
-        return fopen (p.c_str(), t.c_str ());
-#endif
-}
-
-
 optional<boost::filesystem::path>
 dcp::relative_to_root (boost::filesystem::path root, boost::filesystem::path file)
 {
@@ -284,15 +272,14 @@ dcp::file_to_string (boost::filesystem::path p, uintmax_t max_length)
 		throw MiscError (String::compose("Unexpectedly long file (%1)", p.string()));
 	}
 
-	auto f = fopen_boost (p, "r");
+	File f(p, "r");
 	if (!f) {
 		throw FileError ("could not open file", p, errno);
 	}
 
 	char* c = new char[len];
 	/* This may read less than `len' if we are on Windows and we have CRLF in the file */
-	int const N = fread (c, 1, len, f);
-	fclose (f);
+	int const N = f.read(c, 1, len);
 
 	string s (c, N);
 	delete[] c;

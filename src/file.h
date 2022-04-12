@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2022 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,64 +32,47 @@
 */
 
 
-/** @file  src/array_data.cc
- *  @brief ArrayData class
+#include <boost/filesystem/path.hpp>
+
+
+namespace dcp {
+
+
+/** A wrapper for stdio files that gives RAII and allows us to open files with
+ *  UTF-8 names on Windows.
  */
-
-
-#include "array_data.h"
-#include "file.h"
-#include "exceptions.h"
-#include "util.h"
-#include <cerrno>
-#include <cstdio>
-
-
-using boost::shared_array;
-using namespace dcp;
-
-
-ArrayData::ArrayData ()
+class File
 {
+public:
+	/** @param path Path to open
+	 *  @param mode mode flags, as for fopen(3)
+	 */
+	File(boost::filesystem::path, std::string mode);
+	~File();
+
+	File(File const&) = delete;
+	File& operator=(File const&) = delete;
+
+	operator bool() const;
+
+	/** fwrite() wrapper */
+	size_t write(const void *ptr, size_t size, size_t nmemb);
+	/** fread() wrapper */
+	size_t read(void *ptr, size_t size, size_t nmemb);
+	/** feof() wrapper */
+	int eof();
+	/** fgets() wrapper */
+	char *gets(char *s, int size);
+
+	/** Close the file; it is not necessary to call this as the
+	 *  destructor will do it if required.
+	 */
+	void close();
+
+private:
+	FILE* _file = nullptr;
+};
+
 
 }
 
-
-ArrayData::ArrayData (int size)
-	: _data (new uint8_t[size])
-	, _size (size)
-{
-
-}
-
-
-ArrayData::ArrayData (uint8_t const * data, int size)
-	: _data (new uint8_t[size])
-	, _size (size)
-{
-	memcpy (_data.get(), data, size);
-}
-
-
-ArrayData::ArrayData (shared_array<uint8_t> data, int size)
-	: _data (data)
-	, _size (size)
-{
-
-}
-
-
-ArrayData::ArrayData (boost::filesystem::path file)
-{
-	_size = boost::filesystem::file_size (file);
-	_data.reset (new uint8_t[_size]);
-
-	File f(file, "rb");
-	if (!f) {
-		throw FileError ("could not open file for reading", file, errno);
-	}
-
-	if (f.read(_data.get(), 1, _size) != static_cast<size_t>(_size)) {
-		throw FileError ("could not read from file", file, errno);
-	}
-}

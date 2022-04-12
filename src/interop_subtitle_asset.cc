@@ -40,6 +40,7 @@
 #include "compose.hpp"
 #include "dcp_assert.h"
 #include "font_asset.h"
+#include "file.h"
 #include "interop_load_font_node.h"
 #include "interop_subtitle_asset.h"
 #include "raw_convert.h"
@@ -191,15 +192,14 @@ InteropSubtitleAsset::load_font_nodes () const
 void
 InteropSubtitleAsset::write (boost::filesystem::path p) const
 {
-	auto f = fopen_boost (p, "w");
+	File f(p, "w");
 	if (!f) {
 		throw FileError ("Could not open file for writing", p, -1);
 	}
 
 	_raw_xml = xml_as_string ();
 	/* length() here gives bytes not characters */
-	fwrite (_raw_xml->c_str(), 1, _raw_xml->length(), f);
-	fclose (f);
+	f.write(_raw_xml->c_str(), 1, _raw_xml->length());
 
 	_file = p;
 

@@ -54,6 +54,7 @@ def build(bld):
              decrypted_kdm_key.cc
              encrypted_kdm.cc
              exceptions.cc
+             file.cc
              font_asset.cc
              fsk.cc
              gamma_transfer_function.cc
@@ -144,6 +145,7 @@ def build(bld):
               decrypted_kdm_key.h
               encrypted_kdm.h
               exceptions.h
+              file.h
               font_asset.h
               frame.h
               fsk.h

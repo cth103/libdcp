@@ -40,6 +40,7 @@
 #include "compose.hpp"
 #include "dcp_assert.h"
 #include "exceptions.h"
+#include "file.h"
 #include "language_tag.h"
 #include <boost/algorithm/string.hpp>
 #include <string>
@@ -50,8 +51,8 @@ using std::ostream;
 using std::pair;
 using std::string;
 using std::vector;
-using boost::optional;
 using boost::algorithm::trim;
+using boost::optional;
 using namespace dcp;
 
 
@@ -452,23 +453,22 @@ LanguageTag::get_subtag_description (LanguageTag::SubtagType type, string subtag
 void
 load_language_tag_list (boost::filesystem::path tags_directory, string name, std::function<void (std::string, std::string)> add)
 {
-	auto f = fopen_boost (tags_directory / name, "r");
+	File f(tags_directory / name, "r");
 	if (!f) {
 		throw FileError ("Could not open tags file", tags_directory / name, errno);
 	}
 	char buffer[512];
 
 	int i = 0;
-	while (!feof(f)) {
-		char* r = fgets (buffer, sizeof(buffer), f);
+	while (!f.eof()) {
+		char* r = f.gets(buffer, sizeof(buffer));
 		if (r == 0) {
 			break;
 		}
 		string a = buffer;
 		trim (a);
-		r = fgets (buffer, sizeof(buffer), f);
+		r = f.gets(buffer, sizeof(buffer));
 		if (r == 0) {
-			fclose (f);
 			throw FileError ("Bad tags file", tags_directory / name, -1);
 		}
 		string b = buffer;
@@ -476,8 +476,6 @@ load_language_tag_list (boost::filesystem::path tags_directory, string name, std
 		add (a, b);
 		++i;
 	}
-
-	fclose (f);
 }
 
 
