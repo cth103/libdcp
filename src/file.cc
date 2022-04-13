@@ -58,6 +58,26 @@ File::File(boost::filesystem::path path, std::string mode)
 }
 
 
+File::File(File&& other)
+	: _path(other._path)
+	, _file(other._file)
+{
+	other._file = nullptr;
+}
+
+
+File&
+File::operator=(File&& other)
+{
+	if (*this != other) {
+		close();
+		_file = other._file;
+		other._file = nullptr;
+	}
+	return *this;
+}
+
+
 void
 File::close()
 {

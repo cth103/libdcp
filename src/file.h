@@ -52,6 +52,10 @@ public:
 	 *  @param mode mode flags, as for fopen(3)
 	 */
 	File(boost::filesystem::path, std::string mode);
+
+	File(File&& other);
+	File& operator=(File&& other);
+
 	~File();
 
 	File(File const&) = delete;
