@@ -32,6 +32,10 @@
 */
 
 
+#ifndef LIBDCP_FILE_H
+#define LIBDCP_FILE_H
+
+
 #include <boost/filesystem/path.hpp>
 
 
@@ -94,3 +98,5 @@ boost::filesystem::path fix_long_path(boost::filesystem::path long_path);
 
 }
 
+
+#endif
