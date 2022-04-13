@@ -91,6 +91,10 @@ public:
 	 */
 	FILE* take();
 
+	FILE* get() {
+		return _file;
+	}
+
 private:
 	boost::filesystem::path _path;
 	FILE* _file = nullptr;
