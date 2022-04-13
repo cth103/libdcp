@@ -64,12 +64,16 @@ public:
 	/** fgets() wrapper */
 	char *gets(char *s, int size);
 
+	void checked_write(void const * ptr, size_t size);
+	void checked_read(void* ptr, size_t size);
+
 	/** Close the file; it is not necessary to call this as the
 	 *  destructor will do it if required.
 	 */
 	void close();
 
 private:
+	boost::filesystem::path _path;
 	FILE* _file = nullptr;
 };
 

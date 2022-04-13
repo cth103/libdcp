@@ -46,6 +46,7 @@ File::~File()
 
 
 File::File(boost::filesystem::path path, std::string mode)
+	: _path(path)
 {
 #ifdef LIBDCP_WINDOWS
 	std::wstring mode_wide(mode.begin(), mode.end());
@@ -102,6 +103,34 @@ File::gets(char *s, int size)
 File::operator bool() const
 {
 	return _file != nullptr;
+}
+
+
+void
+File::checked_write(void const * ptr, size_t size)
+{
+	size_t N = write(ptr, 1, size);
+	if (N != size) {
+		if (ferror(_file)) {
+			throw FileError("fwrite error", _path, errno);
+		} else {
+			throw FileError("Unexpected short write", _path, 0);
+		}
+	}
+}
+
+
+void
+File::checked_read(void* ptr, size_t size)
+{
+	size_t N = read(ptr, 1, size);
+	if (N != size) {
+		if (ferror(_file)) {
+			throw FileError("fread error %1", _path, errno);
+		} else {
+			throw FileError("Unexpected short read", _path, 0);
+		}
+	}
 }
 
 
