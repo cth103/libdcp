@@ -50,7 +50,7 @@ File::File(boost::filesystem::path path, std::string mode)
 #ifdef LIBDCP_WINDOWS
 	std::wstring mode_wide(mode.begin(), mode.end());
 	/* c_str() here should give a UTF-16 string */
-        _file = _wfopen(path.c_str(), mode_wide.c_str());
+        _file = _wfopen(fix_long_path(path).c_str(), mode_wide.c_str());
 #else
         _file = fopen(path.c_str(), mode.c_str());
 #endif
@@ -104,3 +104,44 @@ File::operator bool() const
 	return _file != nullptr;
 }
 
+
+/** Windows can't "by default" cope with paths longer than 260 characters, so if you pass such a path to
+ *  any boost::filesystem method it will fail.  There is a "fix" for this, which is to prepend
+ *  the string \\?\ to the path.  This will make it work, so long as:
+ *  - the path is absolute.
+ *  - the path only uses backslashes.
+ *  - individual path components are "short enough" (probably less than 255 characters)
+ *
+ *  See https://www.boost.org/doc/libs/1_57_0/libs/filesystem/doc/reference.html under
+ *  "Warning: Long paths on Windows" for some details.
+ *
+ *  Our fopen_boost uses this method to get this fix, but any other calls to boost::filesystem
+ *  will not unless this method is explicitly called to pre-process the pathname.
+ */
+boost::filesystem::path
+dcp::fix_long_path (boost::filesystem::path long_path)
+{
+#ifdef LIBDCP_WINDOWS
+	using namespace boost::filesystem;
+
+	if (boost::algorithm::starts_with(long_path.string(), "\\\\")) {
+		/* This could mean it starts with \\ (i.e. a SMB path) or \\?\ (a long path)
+		 * or a variety of other things... anyway, we'll leave it alone.
+		 */
+		return long_path;
+	}
+
+	/* We have to make the path canonical but we can't call canonical() on the long path
+	 * as it will fail.  So we'll sort of do it ourselves (possibly badly).
+	 */
+	path fixed = "\\\\?\\";
+	if (long_path.is_absolute()) {
+		fixed += long_path.make_preferred();
+	} else {
+		fixed += boost::filesystem::current_path() / long_path.make_preferred();
+	}
+	return fixed;
+#else
+	return long_path;
+#endif
+}

@@ -74,5 +74,8 @@ private:
 };
 
 
+boost::filesystem::path fix_long_path(boost::filesystem::path long_path);
+
+
 }
 
