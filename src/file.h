@@ -63,6 +63,8 @@ public:
 	int eof();
 	/** fgets() wrapper */
 	char *gets(char *s, int size);
+	/** fseek/fseeki64 wrapper */
+	int seek(int64_t offset, int whence);
 
 	void checked_write(void const * ptr, size_t size);
 	void checked_read(void* ptr, size_t size);
