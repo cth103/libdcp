@@ -72,6 +72,15 @@ public:
 	 */
 	void close();
 
+	boost::filesystem::path path() const {
+		return _path;
+	}
+
+	/** Take ownership of the underlying FILE*;
+	 *  the File object will not closed it after this call.
+	 */
+	FILE* take();
+
 private:
 	boost::filesystem::path _path;
 	FILE* _file = nullptr;

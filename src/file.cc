@@ -134,6 +134,15 @@ File::checked_read(void* ptr, size_t size)
 }
 
 
+FILE*
+File::take()
+{
+	auto give = _file;
+	_file = nullptr;
+	return give;
+}
+
+
 /** Windows can't "by default" cope with paths longer than 260 characters, so if you pass such a path to
  *  any boost::filesystem method it will fail.  There is a "fix" for this, which is to prepend
  *  the string \\?\ to the path.  This will make it work, so long as:
