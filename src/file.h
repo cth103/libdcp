@@ -73,6 +73,10 @@ public:
 	char *gets(char *s, int size);
 	/** fseek/fseeki64 wrapper */
 	int seek(int64_t offset, int whence);
+	/** ftell/ftelli64 wrapper */
+	int64_t tell();
+	/** ferror wrapper */
+	int error();
 
 	void checked_write(void const * ptr, size_t size);
 	void checked_read(void* ptr, size_t size);

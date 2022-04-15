@@ -175,6 +175,27 @@ File::seek(int64_t offset, int whence)
 }
 
 
+int64_t
+File::tell()
+{
+	DCP_ASSERT(_file);
+#ifdef LIBDCP_WINDOWS
+	return _ftelli64(_file);
+#else
+	return ftell(_file);
+#endif
+}
+
+
+
+int
+File::error ()
+{
+	DCP_ASSERT(_file);
+	return ferror(_file);
+}
+
+
 /** Windows can't "by default" cope with paths longer than 260 characters, so if you pass such a path to
  *  any boost::filesystem method it will fail.  There is a "fix" for this, which is to prepend
  *  the string \\?\ to the path.  This will make it work, so long as:
