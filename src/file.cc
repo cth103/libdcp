@@ -113,7 +113,7 @@ File::eof()
 
 
 char *
-File::gets(char *s, int size)
+File::gets(char* s, int size)
 {
 	DCP_ASSERT(_file);
 	return fgets(s, size, _file);
