@@ -120,6 +120,14 @@ File::gets(char *s, int size)
 }
 
 
+int
+File::puts(char const* s)
+{
+	DCP_ASSERT(_file);
+	return fputs(s, _file);
+}
+
+
 File::operator bool() const
 {
 	return _file != nullptr;

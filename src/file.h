@@ -71,6 +71,8 @@ public:
 	int eof();
 	/** fgets() wrapper */
 	char *gets(char *s, int size);
+	/** fputs() wrapper */
+	int puts(char const *s);
 	/** fseek/fseeki64 wrapper */
 	int seek(int64_t offset, int whence);
 	/** ftell/ftelli64 wrapper */
