@@ -31,29 +31,33 @@
     files in the program, then also delete it here.
 */
 
+
+#include "j2k_transcode.h"
 #include "mono_picture_asset.h"
 #include "mono_picture_asset_writer.h"
-#include "j2k_transcode.h"
 #include "openjpeg_image.h"
 #include <boost/test/unit_test.hpp>
+#include <memory>
 
-using std::string;
-using std::shared_ptr;
+
 using std::make_shared;
+using std::shared_ptr;
+using std::string;
+
 
 static void
 check (shared_ptr<dcp::PictureAssetWriter> writer, string hash)
 {
-	shared_ptr<dcp::OpenJPEGImage> xyz (new dcp::OpenJPEGImage (dcp::Size (1998, 1080)));
+	auto xyz = make_shared<dcp::OpenJPEGImage>(dcp::Size(1998, 1080));
 	for (int c = 0; c < 3; ++c) {
 		for (int p = 0; p < (1998 * 1080); ++p) {
 			xyz->data(c)[p] = rand() & 0xfff;
 		}
 	}
 
-	dcp::ArrayData data = dcp::compress_j2k (xyz, 100000000, 24, false, false);
+	auto data = dcp::compress_j2k (xyz, 100000000, 24, false, false);
 
-	dcp::FrameInfo info = writer->write (data.data(), data.size());
+	auto info = writer->write (data.data(), data.size());
 	BOOST_CHECK_EQUAL (info.hash, hash);
 }
 
