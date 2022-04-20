@@ -48,9 +48,9 @@ using std::shared_ptr;
 using std::make_shared;
 
 static void
-check (shared_ptr<dcp::ReelMonoPictureAsset> pa, dcp::Fraction far, string sar)
+check (shared_ptr<dcp::ReelMonoPictureAsset> pa, dcp::Fraction frac, string sar)
 {
-	pa->set_screen_aspect_ratio (far);
+	pa->set_screen_aspect_ratio (frac);
 	xmlpp::Document doc;
 	auto el = doc.create_root_node ("Test");
 	pa->write_to_cpl (el, dcp::Standard::INTEROP);

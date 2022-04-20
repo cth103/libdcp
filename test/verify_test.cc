@@ -3007,7 +3007,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_resource_id)
 	auto xml_id = dcp::make_uuid ();
 	ASDCP::TimedText::MXFWriter writer;
 	auto subs_mxf = dir / "subs.mxf";
-	auto r = writer.OpenWrite(subs_mxf.c_str(), writer_info, descriptor, 4096);
+	auto r = writer.OpenWrite(subs_mxf.string().c_str(), writer_info, descriptor, 4096);
 	BOOST_REQUIRE (ASDCP_SUCCESS(r));
 	writer.WriteTimedTextResource (dcp::String::compose(
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -3071,7 +3071,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_timed_text_id)
 	auto xml_id = resource_id;
 	ASDCP::TimedText::MXFWriter writer;
 	auto subs_mxf = dir / "subs.mxf";
-	auto r = writer.OpenWrite(subs_mxf.c_str(), writer_info, descriptor, 4096);
+	auto r = writer.OpenWrite(subs_mxf.string().c_str(), writer_info, descriptor, 4096);
 	BOOST_REQUIRE (ASDCP_SUCCESS(r));
 	writer.WriteTimedTextResource (dcp::String::compose(
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

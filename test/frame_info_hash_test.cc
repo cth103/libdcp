@@ -42,12 +42,12 @@ using std::shared_ptr;
 using std::make_shared;
 
 static void
-check (unsigned int* seed, shared_ptr<dcp::PictureAssetWriter> writer, string hash)
+check (shared_ptr<dcp::PictureAssetWriter> writer, string hash)
 {
 	shared_ptr<dcp::OpenJPEGImage> xyz (new dcp::OpenJPEGImage (dcp::Size (1998, 1080)));
 	for (int c = 0; c < 3; ++c) {
 		for (int p = 0; p < (1998 * 1080); ++p) {
-			xyz->data(c)[p] = rand_r (seed) & 0xfff;
+			xyz->data(c)[p] = rand() & 0xfff;
 		}
 	}
 
@@ -57,16 +57,17 @@ check (unsigned int* seed, shared_ptr<dcp::PictureAssetWriter> writer, string ha
 	BOOST_CHECK_EQUAL (info.hash, hash);
 }
 
+
 /** Test the hashing of data written to JPEG2000 MXFs with some random inputs */
 BOOST_AUTO_TEST_CASE (frame_info_hash_test)
 {
 	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	auto writer = mp->start_write ("build/test/frame_info_hash_test.mxf", false);
 
-	unsigned int seed = 42;
+	srand(42);
 
 	/* Check a few random frames */
-	check (&seed, writer, "9da3d1d93a80683e65d996edae4101ed");
-	check (&seed, writer, "ecd77b3fbf459591f24119d4118783fb");
-	check (&seed, writer, "9f10303495b58ccb715c893d40127e22");
+	check (writer, "9da3d1d93a80683e65d996edae4101ed");
+	check (writer, "ecd77b3fbf459591f24119d4118783fb");
+	check (writer, "9f10303495b58ccb715c893d40127e22");
 }

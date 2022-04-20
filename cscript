@@ -52,7 +52,7 @@ def build(target, options):
             # We only build tests on Ubuntu 18.04
             cmd += ' --disable-tests'
     elif target.platform == 'windows':
-        cmd += f' --target-windows-{target.bits} --disable-tests'
+        cmd += f' --target-windows-{target.bits}'
         if target.version == 'xp':
             # OpenJPEG 1.x is inexplicably faster on Windows XP; see DCP-o-matic bug #771
             cmd += ' --jpeg=oj1'
@@ -89,9 +89,9 @@ def make_doxygen(target):
     return os.path.abspath('build/doc/html')
 
 def test(target, test):
-    if target.platform != 'windows':
-        target.set('LC_ALL', 'C')
-        if test is None:
-            target.command('run/tests')
-        else:
-            target.command('run/tests --run_test=%s' % test)
+    target.set('LC_ALL', 'C')
+    cmd = 'run\\tests ' if target.platform == 'windows' else 'run/tests '
+    if test is not None:
+        cmd += '-t %s' % test
+    target.command(cmd)
+
