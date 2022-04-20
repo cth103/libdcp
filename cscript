@@ -88,7 +88,7 @@ def make_doxygen(target):
     target.command('doxygen')
     return os.path.abspath('build/doc/html')
 
-def test(target, test):
+def test(target, options, test):
     target.set('LC_ALL', 'C')
     cmd = 'run\\tests ' if target.platform == 'windows' else 'run/tests '
     if test is not None:
