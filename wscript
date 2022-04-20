@@ -58,7 +58,7 @@ def options(opt):
     opt.add_option('--static', action='store_true', default=False, help='build libdcp statically, and link statically to openjpeg, cxml, asdcplib-carl')
     opt.add_option('--disable-tests', action='store_true', default=False, help='disable building of tests')
     opt.add_option('--disable-benchmarks', action='store_true', default=False, help='disable building of benchmarks')
-    opt.add_option('--disable-gcov', action='store_true', default=False, help='don''t use gcov in tests')
+    opt.add_option('--enable-gcov', action='store_true', default=False, help='use gcov in tests')
     opt.add_option('--disable-examples', action='store_true', default=False, help='disable building of examples')
     opt.add_option('--enable-openmp', action='store_true', default=False, help='enable use of OpenMP')
     opt.add_option('--openmp', default='gomp', help='specify OpenMP Library to use: omp, gomp (default), iomp')
@@ -223,7 +223,7 @@ def configure(conf):
 
     if not conf.env.DISABLE_TESTS:
         conf.recurse('test')
-        if not conf.options.disable_gcov:
+        if conf.options.enable_gcov:
             conf.check(lib='gcov', define_name='HAVE_GCOV', mandatory=False)
             conf.env.append_value('LINKFLAGS', '-fprofile-arcs')
 
