@@ -353,7 +353,7 @@ BOOST_AUTO_TEST_CASE (verify_no_error)
 	++st;
 	BOOST_REQUIRE (st == stages.end());
 
-	BOOST_CHECK_EQUAL (notes.size(), 0);
+	BOOST_CHECK_EQUAL (notes.size(), 0U);
 }
 
 
