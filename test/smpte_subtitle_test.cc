@@ -105,12 +105,12 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test)
 	BOOST_CHECK_EQUAL (sc.time_code_rate(), 25);
 	BOOST_CHECK_EQUAL (sc.start_time(), dcp::Time (0, 0, 0, 0, 25));
 	auto lfn = sc.load_font_nodes ();
-	BOOST_REQUIRE_EQUAL (lfn.size(), 1);
+	BOOST_REQUIRE_EQUAL (lfn.size(), 1U);
 	shared_ptr<dcp::SMPTELoadFontNode> smpte_lfn = dynamic_pointer_cast<dcp::SMPTELoadFontNode> (lfn.front ());
 	BOOST_REQUIRE (smpte_lfn);
 	BOOST_CHECK_EQUAL (smpte_lfn->id, "theFontId");
 	BOOST_CHECK_EQUAL (smpte_lfn->urn, "9118bbce-4105-4a05-b37c-a5a6f75e1fea");
-	BOOST_REQUIRE_EQUAL (sc.subtitles().size(), 63);
+	BOOST_REQUIRE_EQUAL (sc.subtitles().size(), 63U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().front()));
 	BOOST_CHECK_EQUAL (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().front())->text(), "Noch mal.");
 	BOOST_CHECK_EQUAL (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().front())->space_before(), 0.0f);
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test2)
 	dcp::SMPTESubtitleAsset sc (private_test / "olsson.xml");
 
 	auto subs = sc.subtitles();
-	BOOST_REQUIRE_EQUAL (subs.size(), 6);
+	BOOST_REQUIRE_EQUAL (subs.size(), 6U);
 	auto i = 0;
 	auto is = dynamic_pointer_cast<const dcp::SubtitleString>(subs[i]);
 	BOOST_REQUIRE (is);

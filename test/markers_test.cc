@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE (markers_write_test)
 BOOST_AUTO_TEST_CASE (markers_read_test, * boost::unit_test::depends_on("markers_write_test"))
 {
 	dcp::CPL cpl ("build/test/markers_test.xml");
-	BOOST_CHECK_EQUAL (cpl.reels().size(), 1);
+	BOOST_CHECK_EQUAL (cpl.reels().size(), 1U);
 	auto reel = cpl.reels().front();
 	auto markers = reel->main_markers ();
 	BOOST_REQUIRE (markers);

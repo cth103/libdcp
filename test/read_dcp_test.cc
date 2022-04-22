@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE (read_dcp_test1)
 	d.read ();
 
 	auto cpls = d.cpls ();
-	BOOST_CHECK_EQUAL (cpls.size(), 1);
+	BOOST_CHECK_EQUAL (cpls.size(), 1U);
 
 	BOOST_REQUIRE (cpls[0]->annotation_text());
 	BOOST_CHECK_EQUAL (cpls[0]->annotation_text().get(), "A Test DCP");
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE (read_dcp_test2)
 	d.read ();
 
 	auto cpls = d.cpls ();
-	BOOST_CHECK_EQUAL (cpls.size(), 1);
+	BOOST_CHECK_EQUAL (cpls.size(), 1U);
 
 	BOOST_REQUIRE (cpls[0]->annotation_text());
 	BOOST_CHECK_EQUAL (cpls[0]->annotation_text().get(), "Test_FTR-1_F-119_10_2K_20160524_IOP_OV");

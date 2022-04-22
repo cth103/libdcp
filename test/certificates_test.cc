@@ -254,10 +254,10 @@ BOOST_AUTO_TEST_CASE (signer_validation)
 BOOST_AUTO_TEST_CASE (certificate_chain_from_string)
 {
 	dcp::CertificateChain a (dcp::file_to_string (private_test / "chain.pem"));
-	BOOST_CHECK_EQUAL (a.root_to_leaf().size(), 3);
+	BOOST_CHECK_EQUAL (a.root_to_leaf().size(), 3U);
 
 	dcp::CertificateChain b (dcp::file_to_string ("test/ref/crypt/leaf.signed.pem"));
-	BOOST_CHECK_EQUAL (b.root_to_leaf().size(), 1);
+	BOOST_CHECK_EQUAL (b.root_to_leaf().size(), 1U);
 }
 
 /** Check not_before and not_after */

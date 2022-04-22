@@ -60,14 +60,14 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 	BOOST_CHECK_EQUAL (subs.language(), "French");
 
 	auto lfn = subs.load_font_nodes ();
-	BOOST_REQUIRE_EQUAL (lfn.size(), 1);
+	BOOST_REQUIRE_EQUAL (lfn.size(), 1U);
 	shared_ptr<dcp::InteropLoadFontNode> interop_lfn = dynamic_pointer_cast<dcp::InteropLoadFontNode> (lfn.front ());
 	BOOST_REQUIRE (interop_lfn);
 	BOOST_CHECK_EQUAL (interop_lfn->id, "theFontId");
 	BOOST_CHECK_EQUAL (interop_lfn->uri, "arial.ttf");
 
 	auto s = subs.subtitles_during (dcp::Time (0, 0, 6, 1, 250), dcp::Time (0, 0, 6, 2, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 2);
+	BOOST_REQUIRE_EQUAL (s.size(), 2U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.front()), dcp::SubtitleString (
 				   string ("theFontId"),
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 0, 7, 190, 250), dcp::Time (0, 0, 7, 191, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 2);
+	BOOST_REQUIRE_EQUAL (s.size(), 2U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.front()), dcp::SubtitleString (
 				   string ("theFontId"),
@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 0, 11, 95, 250), dcp::Time (0, 0, 11, 96, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 1);
+	BOOST_REQUIRE_EQUAL (s.size(), 1U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
 				   string ("theFontId"),
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 0, 14, 42, 250), dcp::Time (0, 0, 14, 43, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 1);
+	BOOST_REQUIRE_EQUAL (s.size(), 1U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
 				   string ("theFontId"),
@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 	dcp::InteropSubtitleAsset subs ("test/data/subs2.xml");
 
 	auto s = subs.subtitles_during (dcp::Time (0, 0, 42, 100, 250), dcp::Time (0, 0, 42, 101, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 2);
+	BOOST_REQUIRE_EQUAL (s.size(), 2U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.front()), dcp::SubtitleString (
 				   string ("theFont"),
@@ -272,7 +272,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 0, 50, 50, 250), dcp::Time (0, 0, 50, 51, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 2);
+	BOOST_REQUIRE_EQUAL (s.size(), 2U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.front()), dcp::SubtitleString (
 				   string ("theFont"),
@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 1, 2, 300, 250), dcp::Time (0, 1, 2, 301, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 2);
+	BOOST_REQUIRE_EQUAL (s.size(), 2U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.front()), dcp::SubtitleString (
 				   string("theFont"),
@@ -370,7 +370,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 1, 15, 50, 250), dcp::Time (0, 1, 15, 51, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 2);
+	BOOST_REQUIRE_EQUAL (s.size(), 2U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.front()), dcp::SubtitleString (
 				   string ("theFont"),
@@ -419,7 +419,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 1, 27, 200, 250), dcp::Time (0, 1, 27, 201, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 2);
+	BOOST_REQUIRE_EQUAL (s.size(), 2U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.front()), dcp::SubtitleString (
 				   string ("theFont"),
@@ -468,7 +468,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 1, 42, 300, 250), dcp::Time (0, 1, 42, 301, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 2);
+	BOOST_REQUIRE_EQUAL (s.size(), 2U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.front()), dcp::SubtitleString (
 				   string ("theFont"),
@@ -517,7 +517,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 1, 45, 200, 250), dcp::Time (0, 1, 45, 201, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 2);
+	BOOST_REQUIRE_EQUAL (s.size(), 2U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.front()), dcp::SubtitleString (
 				   string("theFont"),
@@ -566,7 +566,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 1, 47, 249, 250), dcp::Time (0, 1, 47, 250, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 2);
+	BOOST_REQUIRE_EQUAL (s.size(), 2U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.front()), dcp::SubtitleString (
 				   string ("theFont"),
@@ -615,7 +615,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 2, 6, 210, 250), dcp::Time (0, 2, 6, 211, 250), false);
-	BOOST_REQUIRE_EQUAL (s.size(), 2);
+	BOOST_REQUIRE_EQUAL (s.size(), 2U);
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.front()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.front()), dcp::SubtitleString (
 				   string ("theFont"),
@@ -669,7 +669,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test3)
 {
 	dcp::InteropSubtitleAsset subs ("test/data/subs3.xml");
 
-	BOOST_REQUIRE_EQUAL (subs.subtitles().size(), 1);
+	BOOST_REQUIRE_EQUAL (subs.subtitles().size(), 1U);
 	auto si = dynamic_pointer_cast<const dcp::SubtitleImage>(subs.subtitles().front());
 	BOOST_REQUIRE (si);
 	BOOST_CHECK (si->png_image() == dcp::ArrayData("test/data/sub.png"));

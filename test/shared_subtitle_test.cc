@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE (take_intersection_test)
 	B._values["sheila"] = "baz";
 
 	A.take_intersection (B);
-	BOOST_REQUIRE_EQUAL (A._values.size(), 1);
+	BOOST_REQUIRE_EQUAL (A._values.size(), 1U);
 	BOOST_CHECK_EQUAL (A._values["foo"], "bar");
 
 	A._values.clear ();
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE (take_intersection_test)
 	B._values["sheila"] = "baz";
 
 	A.take_intersection (B);
-	BOOST_CHECK_EQUAL (A._values.size(), 0);
+	BOOST_CHECK_EQUAL (A._values.size(), 0U);
 }
 
 /** Test dcp::order::Font::take_difference */
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE (take_difference_test)
 	B._values["sheila"] = "baz";
 
 	A.take_difference (B);
-	BOOST_REQUIRE_EQUAL (A._values.size(), 1);
+	BOOST_REQUIRE_EQUAL (A._values.size(), 1U);
 	BOOST_CHECK_EQUAL (A._values["fred"], "jim");
 }
 
@@ -115,10 +115,10 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test1)
 
 	dcp::SubtitleAsset::pull_fonts (root);
 
-	BOOST_REQUIRE_EQUAL (sub1->font._values.size(), 2);
+	BOOST_REQUIRE_EQUAL (sub1->font._values.size(), 2U);
 	BOOST_CHECK_EQUAL (sub1->font._values["font"], "Inconsolata");
 	BOOST_CHECK_EQUAL (sub1->font._values["size"], "42");
-	BOOST_CHECK_EQUAL (text1->font._values.size(), 0);
+	BOOST_CHECK_EQUAL (text1->font._values.size(), 0U);
 }
 
 /** Test dcp::order::Subtitle::pull_fonts */
@@ -138,11 +138,11 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test2)
 
 	dcp::SubtitleAsset::pull_fonts (root);
 
-	BOOST_REQUIRE_EQUAL (sub1->font._values.size(), 1);
+	BOOST_REQUIRE_EQUAL (sub1->font._values.size(), 1U);
 	BOOST_CHECK_EQUAL (sub1->font._values["font"], "Inconsolata");
-	BOOST_REQUIRE_EQUAL (text1->font._values.size(), 1);
+	BOOST_REQUIRE_EQUAL (text1->font._values.size(), 1U);
 	BOOST_CHECK_EQUAL (text1->font._values["size"], "42");
-	BOOST_REQUIRE_EQUAL (text2->font._values.size(), 1);
+	BOOST_REQUIRE_EQUAL (text2->font._values.size(), 1U);
 	BOOST_CHECK_EQUAL (text2->font._values["size"], "48");
 }
 
@@ -162,7 +162,7 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test3)
 
 	dcp::SubtitleAsset::pull_fonts (root);
 
-	BOOST_REQUIRE_EQUAL (sub1->font._values.size(), 2);
+	BOOST_REQUIRE_EQUAL (sub1->font._values.size(), 2U);
 	BOOST_CHECK_EQUAL (sub1->font._values["font"], "Inconsolata");
 	BOOST_CHECK_EQUAL (sub1->font._values["size"], "42");
 }

@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 		dcp2.cpls()[0]->reels()[0]->main_subtitle()->asset_ref().asset()
 		);
 	BOOST_REQUIRE (subs2);
-	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1);
+	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1U);
 
 	auto const size = boost::filesystem::file_size ("test/data/dummy.ttf");
 	dcp::File f("test/data/dummy.ttf", "rb");
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
 		dcp2.cpls().front()->reels().front()->main_subtitle()->asset_ref().asset()
 		);
 	BOOST_REQUIRE (subs2);
-	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1);
+	BOOST_REQUIRE_EQUAL (subs2->_fonts.size(), 1U);
 
 	auto const size = boost::filesystem::file_size ("test/data/dummy.ttf");
 	dcp::File f("test/data/dummy.ttf", "rb");

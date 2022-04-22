@@ -235,12 +235,12 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test1)
 	BOOST_CHECK (cpl.main_picture_active_area().get() == dcp::Size(1440, 1080));
 
 	auto reels = cpl.reels ();
-	BOOST_REQUIRE_EQUAL (reels.size(), 1);
+	BOOST_REQUIRE_EQUAL (reels.size(), 1U);
 	BOOST_REQUIRE (reels.front()->main_subtitle()->language());
 	BOOST_CHECK_EQUAL (reels.front()->main_subtitle()->language().get(), "de-DE");
 
 	auto asl = cpl.additional_subtitle_languages();
-	BOOST_REQUIRE_EQUAL (asl.size(), 2);
+	BOOST_REQUIRE_EQUAL (asl.size(), 2U);
 	BOOST_CHECK_EQUAL (asl[0], "en-US");
 	BOOST_CHECK_EQUAL (asl[1], "fr-ZA");
 
@@ -408,7 +408,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_read_test2)
 	BOOST_CHECK (cpl.main_picture_active_area().get() == dcp::Size(1440, 1080));
 
 	auto reels = cpl.reels ();
-	BOOST_REQUIRE_EQUAL (reels.size(), 1);
+	BOOST_REQUIRE_EQUAL (reels.size(), 1U);
 }
 
 

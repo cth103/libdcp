@@ -156,7 +156,7 @@ BOOST_AUTO_TEST_CASE (xyz_rgb_range_test)
 		);
 
 	/* The 6 out-of-range samples should have been noted */
-	BOOST_REQUIRE_EQUAL (notes.size(), 6);
+	BOOST_REQUIRE_EQUAL (notes.size(), 6U);
 	auto i = notes.begin ();
 	BOOST_REQUIRE_EQUAL (*i++, "XYZ value -4 out of range");
 	BOOST_REQUIRE_EQUAL (*i++, "XYZ value -4 out of range");

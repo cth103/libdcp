@@ -334,8 +334,8 @@ BOOST_AUTO_TEST_CASE (dcp_test6)
 	dcp::DCP dcp ("test/ref/DCP/dcp_test5");
 	dcp.read ();
 
-	BOOST_REQUIRE_EQUAL (dcp.cpls().size(), 1);
-	BOOST_REQUIRE_EQUAL (dcp.cpls().front()->reels().size(), 1);
+	BOOST_REQUIRE_EQUAL (dcp.cpls().size(), 1U);
+	BOOST_REQUIRE_EQUAL (dcp.cpls()[0]->reels().size(), 1U);
 	BOOST_CHECK (dcp.cpls().front()->reels().front()->main_picture());
 	BOOST_CHECK (dcp.cpls().front()->reels().front()->main_sound());
 	BOOST_CHECK (!dcp.cpls().front()->reels().front()->main_subtitle());
@@ -360,7 +360,7 @@ BOOST_AUTO_TEST_CASE (dcp_test8)
 	dcp::DCP dcp (private_test / "data/SMPTE_TST-B1PB2P_S_EN-EN-CCAP_5171-HI-VI_2K_ISDCF_20151123_DPPT_SMPTE_combo/");
 	dcp.read ();
 
-	BOOST_REQUIRE_EQUAL (dcp.cpls().size(), 2);
+	BOOST_REQUIRE_EQUAL (dcp.cpls().size(), 2U);
 }
 
 
@@ -458,11 +458,11 @@ BOOST_AUTO_TEST_CASE (dcp_add_kdm_test)
 	auto kdm_1_uuid = dcp::make_uuid();
 	kdm_1.add_key (dcp::DecryptedKDMKey(string("MDIK"), kdm_1_uuid, dcp::Key(), cpls[0]->id(), dcp::Standard::SMPTE));
 	dcp.add (kdm_1);
-	BOOST_REQUIRE (reels[0]->_kdms.size() == 1);
-	BOOST_CHECK (reels[0]->_kdms[0].keys().size() == 1);
-	BOOST_CHECK (reels[0]->_kdms[0].keys()[0].id() == kdm_1_uuid);
-	BOOST_CHECK (reels[1]->_kdms.size() == 0);
-	BOOST_CHECK (reels[2]->_kdms.size() == 0);
+	BOOST_REQUIRE_EQUAL (reels[0]->_kdms.size(), 1U);
+	BOOST_CHECK_EQUAL (reels[0]->_kdms[0].keys().size(), 1U);
+	BOOST_CHECK_EQUAL (reels[0]->_kdms[0].keys()[0].id(), kdm_1_uuid);
+	BOOST_CHECK_EQUAL (reels[1]->_kdms.size(), 0U);
+	BOOST_CHECK_EQUAL (reels[2]->_kdms.size(), 0U);
 
 	/* KDM with two keys that should be given to cpls[1] and cpls[2] */
 
@@ -475,13 +475,13 @@ BOOST_AUTO_TEST_CASE (dcp_add_kdm_test)
 	/* Unchanged from previous test */
 	BOOST_CHECK (reels[0]->_kdms.size() == 1);
 	/* kdm_2 should have been added to both the other CPLs */
-	BOOST_REQUIRE (reels[1]->_kdms.size() == 1);
-	BOOST_REQUIRE (reels[1]->_kdms[0].keys().size() == 2);
-	BOOST_CHECK (reels[1]->_kdms[0].keys()[0].id() == kdm_2_uuid_1);
-	BOOST_CHECK (reels[1]->_kdms[0].keys()[1].id() == kdm_2_uuid_2);
-	BOOST_REQUIRE (reels[2]->_kdms.size() == 1);
-	BOOST_REQUIRE (reels[2]->_kdms[0].keys().size() == 2);
-	BOOST_CHECK (reels[2]->_kdms[0].keys()[0].id() == kdm_2_uuid_1);
-	BOOST_CHECK (reels[2]->_kdms[0].keys()[1].id() == kdm_2_uuid_2);
+	BOOST_REQUIRE_EQUAL (reels[1]->_kdms.size(), 1U);
+	BOOST_REQUIRE_EQUAL (reels[1]->_kdms[0].keys().size(), 2U);
+	BOOST_CHECK_EQUAL (reels[1]->_kdms[0].keys()[0].id(), kdm_2_uuid_1);
+	BOOST_CHECK_EQUAL (reels[1]->_kdms[0].keys()[1].id(), kdm_2_uuid_2);
+	BOOST_REQUIRE_EQUAL (reels[2]->_kdms.size(), 1U);
+	BOOST_REQUIRE_EQUAL (reels[2]->_kdms[0].keys().size(), 2U);
+	BOOST_CHECK_EQUAL (reels[2]->_kdms[0].keys()[0].id(), kdm_2_uuid_1);
+	BOOST_CHECK_EQUAL (reels[2]->_kdms[0].keys()[1].id(), kdm_2_uuid_2);
 }
 

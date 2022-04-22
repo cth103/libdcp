@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE (kdm_test)
 
 	auto keys = kdm.keys ();
 
-	BOOST_CHECK_EQUAL (keys.size(), 2);
+	BOOST_CHECK_EQUAL (keys.size(), 2U);
 
 	BOOST_CHECK_EQUAL (keys.front().cpl_id(), "eece17de-77e8-4a55-9347-b6bab5724b9f");
 	BOOST_CHECK_EQUAL (keys.front().id(), "4ac4f922-8239-4831-b23b-31426d0542c4");
@@ -198,7 +198,7 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test1)
 	auto forensic = kdm_forensic_test(doc, true, 0);
 	BOOST_REQUIRE (forensic);
 	auto flags = forensic->node_children("ForensicMarkFlag");
-	BOOST_REQUIRE_EQUAL (flags.size(), 2);
+	BOOST_REQUIRE_EQUAL (flags.size(), 2U);
 	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
 	BOOST_CHECK_EQUAL (flags.back()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable");
 }
@@ -211,7 +211,7 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test2)
 	auto forensic = kdm_forensic_test(doc, true, optional<int>());
 	BOOST_REQUIRE (forensic);
 	auto flags = forensic->node_children("ForensicMarkFlag");
-	BOOST_REQUIRE_EQUAL (flags.size(), 1);
+	BOOST_REQUIRE_EQUAL (flags.size(), 1U);
 	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
 }
 
@@ -223,7 +223,7 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test3)
 	auto forensic = kdm_forensic_test(doc, false, 0);
 	BOOST_REQUIRE (forensic);
 	auto flags = forensic->node_children("ForensicMarkFlag");
-	BOOST_REQUIRE_EQUAL (flags.size(), 1);
+	BOOST_REQUIRE_EQUAL (flags.size(), 1U);
 	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable");
 }
 
@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE (kdm_forensic_test4)
 	auto forensic = kdm_forensic_test(doc, true, 3);
 	BOOST_REQUIRE (forensic);
 	auto flags = forensic->node_children("ForensicMarkFlag");
-	BOOST_REQUIRE_EQUAL (flags.size(), 2);
+	BOOST_REQUIRE_EQUAL (flags.size(), 2U);
 	BOOST_CHECK_EQUAL (flags.front()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-picture-disable");
 	BOOST_CHECK_EQUAL (flags.back()->content(), "http://www.smpte-ra.org/430-1/2006/KDM#mrkflg-audio-disable-above-channel-3");
 }
