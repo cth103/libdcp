@@ -309,17 +309,15 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 
 	sound_writer->finalize ();
 
-	shared_ptr<dcp::AtmosAsset> am (new dcp::AtmosAsset (private_test / "20160218_NameOfFilm_FTR_OV_EN_A_dcs_r01.mxf"));
+	auto am = make_shared<dcp::AtmosAsset>(private_test / "20160218_NameOfFilm_FTR_OV_EN_A_dcs_r01.mxf");
 
-	cpl->add (shared_ptr<dcp::Reel> (
-			  new dcp::Reel (
-				  shared_ptr<dcp::ReelMonoPictureAsset> (new dcp::ReelMonoPictureAsset (mp, 0)),
-				  shared_ptr<dcp::ReelSoundAsset> (new dcp::ReelSoundAsset (ms, 0)),
-				  shared_ptr<dcp::ReelSubtitleAsset> (),
-				  shared_ptr<dcp::ReelMarkersAsset> (),
-				  shared_ptr<dcp::ReelAtmosAsset> (new dcp::ReelAtmosAsset (am, 0))
-				  )
-			  ));
+	cpl->add(make_shared<dcp::Reel>(
+			make_shared<dcp::ReelMonoPictureAsset>(mp, 0),
+			make_shared<dcp::ReelSoundAsset>(ms, 0),
+			shared_ptr<dcp::ReelSubtitleAsset>(),
+			shared_ptr<dcp::ReelMarkersAsset>(),
+			make_shared<dcp::ReelAtmosAsset>(am, 0)
+			));
 
 	d.add (cpl);
 
