@@ -50,7 +50,7 @@
 #include <boost/optional.hpp>
 
 
-class decrypted_kdm_test;
+struct decrypted_kdm_test;
 
 
 namespace dcp {
@@ -173,7 +173,7 @@ public:
 
 private:
 
-	friend class ::decrypted_kdm_test;
+	friend struct ::decrypted_kdm_test;
 
 	static void put_uuid (uint8_t ** d, std::string id);
 	static std::string get_uuid (unsigned char ** p);

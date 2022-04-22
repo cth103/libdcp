@@ -45,7 +45,7 @@
 #include <string>
 
 
-class local_time_basic_test;
+struct local_time_basic_test;
 
 
 namespace dcp {
@@ -131,7 +131,7 @@ public:
 	bool operator< (LocalTime const & other) const;
 
 private:
-	friend class ::local_time_basic_test;
+	friend struct ::local_time_basic_test;
 
 	void set (struct tm const * tm);
 	void set (boost::posix_time::ptime);
