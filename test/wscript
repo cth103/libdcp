@@ -54,7 +54,9 @@ def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'tests'
     obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM BOOST_DATETIME OPENJPEG CXML XMLSEC1 SNDFILE OPENMP ASDCPLIB_CTH LIBXML++ OPENSSL XERCES DL'
-    obj.cppflags = ['-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
+    obj.cppflags = ['-fno-inline', '-fno-elide-constructors', '-g', '-O0']
+    if bld.env['CXX_NAME'] == 'gcc':
+        obj.cppflags.append('-fno-default-inline')
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.lib = ['gcov']
@@ -114,7 +116,9 @@ def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'subs_in_out'
     obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM OPENJPEG CXML OPENMP ASDCPLIB_CTH XMLSEC1 OPENSSL DL LIBXML++'
-    obj.cppflags = ['-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
+    obj.cppflags = ['-fno-inline', '-fno-elide-constructors', '-g', '-O0']
+    if bld.env['CXX_NAME'] == 'gcc':
+        obj.cppflags.append('-fno-default-inline')
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.lib = ['gcov']
@@ -129,7 +133,9 @@ def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'rewrite_subs'
     obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM OPENJPEG CXML OPENMP ASDCPLIB_CTH XMLSEC1 OPENSSL DL LIBXML++'
-    obj.cppflags = ['-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
+    obj.cppflags = ['-fno-inline', '-fno-elide-constructors', '-g', '-O0']
+    if bld.env['CXX_NAME'] == 'gcc':
+        obj.cppflags.append('-fno-default-inline')
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.lib = ['gcov']
