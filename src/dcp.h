@@ -145,8 +145,8 @@ public:
 	 *  @param standand INTEROP or SMPTE
 	 *  @param issuer Value for the PKL and AssetMap <Issuer> tags
 	 *  @param creator Value for the PKL and AssetMap <Creator> tags
-	 *  @param issue_date Value for the CPL <IssueDate> tags
-	 *  @param annotation_text Value for the CPL <AnnotationText> tags
+	 *  @param issue_date Value for the PKL and AssetMap <IssueDate> tags
+	 *  @param annotation_text Value for the PKL and AssetMap <AnnotationText> tags
 	 *  @param signer Signer to use
 	 *  @param name_format Name format to use for the CPL and PKL filenames
 	 */
