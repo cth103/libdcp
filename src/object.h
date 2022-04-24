@@ -70,8 +70,14 @@ public:
 	 */
 	explicit Object (std::string id);
 
-	Object (Object const&) = delete;
-	Object& operator= (Object const&) = delete;
+	Object(Object const& other)
+		: _id(other._id)
+	{}
+
+	Object& operator=(Object const& other) {
+		_id = other._id;
+		return *this;
+	}
 
 	virtual ~Object () {}
 
