@@ -41,12 +41,12 @@
 #define LIBDCP_DCP_H
 
 
-#include "compose.hpp"
-#include "types.h"
-#include "util.h"
 #include "certificate.h"
+#include "compose.hpp"
 #include "metadata.h"
 #include "name_format.h"
+#include "types.h"
+#include "util.h"
 #include "verify.h"
 #include "version.h"
 #include <boost/signals2.hpp>

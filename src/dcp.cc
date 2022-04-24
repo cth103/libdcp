@@ -70,24 +70,24 @@ LIBDCP_ENABLE_WARNINGS
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
-#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
 #include <numeric>
 
 
-using std::string;
-using std::list;
-using std::vector;
-using std::cout;
-using std::make_pair;
-using std::map;
 using std::cerr;
-using std::make_shared;
-using std::exception;
-using std::shared_ptr;
+using std::cout;
 using std::dynamic_pointer_cast;
-using boost::optional;
+using std::exception;
+using std::list;
+using std::make_pair;
+using std::make_shared;
+using std::map;
+using std::shared_ptr;
+using std::string;
+using std::vector;
 using boost::algorithm::starts_with;
+using boost::optional;
 using namespace dcp;
 
 
