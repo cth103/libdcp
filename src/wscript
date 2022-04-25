@@ -36,6 +36,7 @@ def build(bld):
     source = """
              array_data.cc
              asset.cc
+             asset_map.cc
              asset_factory.cc
              asset_writer.cc
              atmos_asset.cc
@@ -123,6 +124,7 @@ def build(bld):
     headers = """
               array_data.h
               asset.h
+              asset_map.h
               asset_reader.h
               asset_writer.h
               atmos_asset.h

@@ -68,7 +68,7 @@ public:
 		NoteHandler note
 		) const override;
 
-	void write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const override;
+	void add_to_assetmap (AssetMap& asset_map, boost::filesystem::path root) const override;
 	void add_to_pkl (std::shared_ptr<PKL> pkl, boost::filesystem::path root) const override;
 
 	std::vector<std::shared_ptr<LoadFontNode>> load_font_nodes () const override;

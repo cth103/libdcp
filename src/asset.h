@@ -60,6 +60,9 @@ struct asset_test;
 namespace dcp {
 
 
+class AssetMap;
+
+
 /** @class Asset
  *  @brief Parent class for DCP assets, i.e. picture, sound, subtitles, closed captions, CPLs, fonts
  *
@@ -89,7 +92,7 @@ public:
 		NoteHandler note
 		) const;
 
-	virtual void write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const;
+	virtual void add_to_assetmap (AssetMap& asset_map, boost::filesystem::path root) const;
 
 	virtual void add_to_pkl (std::shared_ptr<PKL> pkl, boost::filesystem::path root) const;
 
@@ -121,7 +124,7 @@ protected:
 	/** The most recent disk file used to read or write this asset */
 	mutable boost::optional<boost::filesystem::path> _file;
 
-	static void write_file_to_assetmap (xmlpp::Node* node, boost::filesystem::path root, boost::filesystem::path file, std::string id);
+	static void add_file_to_assetmap (AssetMap& asset_map, boost::filesystem::path root, boost::filesystem::path file, std::string id);
 
 private:
 	friend struct ::asset_test;

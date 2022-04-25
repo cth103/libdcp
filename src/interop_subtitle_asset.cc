@@ -267,15 +267,15 @@ InteropSubtitleAsset::add_font_assets (vector<shared_ptr<Asset>>& assets)
 
 
 void
-InteropSubtitleAsset::write_to_assetmap (xmlpp::Node* node, boost::filesystem::path root) const
+InteropSubtitleAsset::add_to_assetmap (AssetMap& asset_map, boost::filesystem::path root) const
 {
-	Asset::write_to_assetmap (node, root);
+	Asset::add_to_assetmap(asset_map, root);
 
 	for (auto i: _subtitles) {
-		auto im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
+		auto im = dynamic_pointer_cast<dcp::SubtitleImage>(i);
 		if (im) {
-			DCP_ASSERT (im->file());
-			write_file_to_assetmap (node, root, im->file().get(), im->id());
+			DCP_ASSERT(im->file());
+			add_file_to_assetmap(asset_map, root, im->file().get(), im->id());
 		}
 	}
 }

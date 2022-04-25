@@ -41,6 +41,7 @@
 #define LIBDCP_DCP_H
 
 
+#include "asset_map.h"
 #include "certificate.h"
 #include "compose.hpp"
 #include "metadata.h"
@@ -163,7 +164,11 @@ public:
 
 	/** @return Standard of a DCP that was read in */
 	boost::optional<Standard> standard () const {
-		return _standard;
+		if (!_asset_map) {
+			return {};
+		}
+
+		return _asset_map->standard();
 	}
 
 	boost::filesystem::path directory () const {
@@ -177,8 +182,12 @@ public:
 		return _pkls;
 	}
 
-	boost::optional<boost::filesystem::path> asset_map_path () {
-		return _asset_map;
+	boost::optional<boost::filesystem::path> asset_map_path() {
+		if (!_asset_map) {
+			return {};
+		}
+
+		return _asset_map->path();
 	}
 
 	static std::vector<boost::filesystem::path> directories_from_files (std::vector<boost::filesystem::path> files);
@@ -187,26 +196,13 @@ private:
 
 	void write_volindex (Standard standard) const;
 
-	/** Write the ASSETMAP file.
-	 *  @param pkl_uuid UUID of our PKL.
-	 *  @param pkl_path Pathname of our PKL file.
-	 */
-	void write_assetmap (
-		Standard standard, std::string pkl_uuid, boost::filesystem::path pkl_path,
-		std::string issuer, std::string creator, std::string issue_date, std::string annotation_text
-		) const;
-
 	/** The directory that we are writing to */
 	boost::filesystem::path _directory;
 	/** The CPLs that make up this DCP */
 	std::vector<std::shared_ptr<CPL>> _cpls;
 	/** The PKLs that make up this DCP */
 	std::vector<std::shared_ptr<PKL>> _pkls;
-	/** File that the ASSETMAP was read from or last written to */
-	mutable boost::optional<boost::filesystem::path> _asset_map;
-
-	/** Standard of DCP that was read in */
-	boost::optional<Standard> _standard;
+	boost::optional<AssetMap> _asset_map;
 };
 
 

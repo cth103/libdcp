@@ -38,6 +38,7 @@
 
 
 #include "asset.h"
+#include "asset_map.h"
 #include "compose.hpp"
 #include "dcp_assert.h"
 #include "exceptions.h"
@@ -102,15 +103,15 @@ Asset::add_to_pkl (shared_ptr<PKL> pkl, path root) const
 
 
 void
-Asset::write_to_assetmap (xmlpp::Node* node, path root) const
+Asset::add_to_assetmap (AssetMap& asset_map, path root) const
 {
 	DCP_ASSERT (_file);
-	write_file_to_assetmap (node, root, _file.get(), _id);
+	add_file_to_assetmap (asset_map, root, _file.get(), _id);
 }
 
 
 void
-Asset::write_file_to_assetmap (xmlpp::Node* node, path root, path file, string id)
+Asset::add_file_to_assetmap (AssetMap& asset_map, path root, path file, string id)
 {
 	auto path = relative_to_root (
 		canonical(root),
@@ -124,15 +125,7 @@ Asset::write_file_to_assetmap (xmlpp::Node* node, path root, path file, string i
 		return;
 	}
 
-	auto asset = node->add_child ("Asset");
-	asset->add_child("Id")->add_child_text("urn:uuid:" + id);
-	auto chunk_list = asset->add_child ("ChunkList");
-	auto chunk = chunk_list->add_child ("Chunk");
-
-	chunk->add_child("Path")->add_child_text(path.get().generic_string());
-	chunk->add_child("VolumeIndex")->add_child_text("1");
-	chunk->add_child("Offset")->add_child_text("0");
-	chunk->add_child("Length")->add_child_text(raw_convert<string>(file_size(file)));
+	asset_map.add_asset(id, file, false);
 }
 
 
