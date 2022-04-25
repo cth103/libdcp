@@ -95,6 +95,9 @@ public:
 	DCP (DCP const&) = delete;
 	DCP& operator= (DCP const&) = delete;
 
+	DCP (DCP &&);
+	DCP& operator= (DCP &&);
+
 	/** Read a DCP.  This method does not do any deep checking of the DCP's validity, but
 	 *  if it comes across any bad things it will do one of two things.
 	 *

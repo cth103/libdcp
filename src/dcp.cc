@@ -106,6 +106,35 @@ DCP::DCP (boost::filesystem::path directory)
 }
 
 
+DCP::DCP(DCP&& other)
+	: _directory(std::move(other._directory))
+	, _cpls(std::move(other._cpls))
+	, _pkls(std::move(other._pkls))
+	, _asset_map(std::move(other._asset_map))
+	, _new_issuer(std::move(other._new_issuer))
+	, _new_creator(std::move(other._new_creator))
+	, _new_issue_date(std::move(other._new_issue_date))
+	, _new_annotation_text(std::move(other._new_annotation_text))
+{
+
+}
+
+
+DCP&
+DCP::operator=(DCP&& other)
+{
+	_directory = std::move(other._directory);
+	_cpls = std::move(other._cpls);
+	_pkls = std::move(other._pkls);
+	_asset_map = std::move(other._asset_map);
+	_new_issuer = std::move(other._new_issuer);
+	_new_creator = std::move(other._new_creator);
+	_new_issue_date = std::move(other._new_issue_date);
+	_new_annotation_text = std::move(other._new_annotation_text);
+	return *this;
+}
+
+
 void
 DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf_type)
 {
