@@ -186,7 +186,7 @@ UnknownChannelIdError::UnknownChannelIdError (std::string id)
 
 
 NoReelsError::NoReelsError ()
-	: runtime_error ("Cannot make a DCP when no reels have been added")
+	: runtime_error("Cannot write a CPL which has no reels")
 {
 
 }
