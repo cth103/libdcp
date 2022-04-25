@@ -61,7 +61,9 @@ BOOST_AUTO_TEST_CASE(read_change_write_test)
 	in_cpl->add(in_reel);
 	dcp::DCP in_dcp(path);
 	in_dcp.add(in_cpl);
-	in_dcp.write_xml("my great issuer", "the creator");
+	in_dcp.set_issuer("my great issuer");
+	in_dcp.set_creator("the creator");
+	in_dcp.write_xml();
 
 	dcp::DCP work_dcp(path);
 	work_dcp.read();

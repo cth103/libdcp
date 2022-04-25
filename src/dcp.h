@@ -142,20 +142,17 @@ public:
 	 */
 	void add (DecryptedKDM const &);
 
-	/** Write all the XML files for this DCP
+	void set_issuer(std::string issuer);
+	void set_creator(std::string creator);
+	void set_issue_date(std::string issue_date);
+	void set_annotation_text(std::string annotation_text);
+
+	/** Write all the XML files for this DCP.
 	 *  @param standand INTEROP or SMPTE
-	 *  @param issuer Value for the PKL and AssetMap <Issuer> tags
-	 *  @param creator Value for the PKL and AssetMap <Creator> tags
-	 *  @param issue_date Value for the PKL and AssetMap <IssueDate> tags
-	 *  @param annotation_text Value for the PKL and AssetMap <AnnotationText> tags
 	 *  @param signer Signer to use
 	 *  @param name_format Name format to use for the CPL and PKL filenames
 	 */
 	void write_xml (
-		std::string issuer = String::compose("libdcp %1", dcp::version),
-		std::string creator = String::compose("libdcp %1", dcp::version),
-		std::string issue_date = LocalTime().as_string(),
-		std::string annotation_text = String::compose("Created by libdcp %1", dcp::version),
 		std::shared_ptr<const CertificateChain> signer = std::shared_ptr<const CertificateChain>(),
 		NameFormat name_format = NameFormat("%t")
 	);
@@ -203,6 +200,12 @@ private:
 	/** The PKLs that make up this DCP */
 	std::vector<std::shared_ptr<PKL>> _pkls;
 	boost::optional<AssetMap> _asset_map;
+
+	/* Metadata to use for newly created PKLs and AssetMaps */
+	boost::optional<std::string> _new_issuer;
+	boost::optional<std::string> _new_creator;
+	boost::optional<std::string> _new_issue_date;
+	boost::optional<std::string> _new_annotation_text;
 };
 
 

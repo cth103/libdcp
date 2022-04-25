@@ -173,5 +173,10 @@ dcp::combine (
 		}
 	}
 
-	output_dcp.write_xml (issuer, creator, issue_date, annotation_text, signer);
+	output_dcp.set_issuer(issuer);
+	output_dcp.set_creator(creator);
+	output_dcp.set_issue_date(issue_date);
+	output_dcp.set_annotation_text(annotation_text);
+
+	output_dcp.write_xml(signer);
 }

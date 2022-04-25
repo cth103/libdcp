@@ -67,9 +67,12 @@ BOOST_AUTO_TEST_CASE (dcp_test1)
 {
 	RNGFixer fixer;
 
-	make_simple("build/test/DCP/dcp_test1")->write_xml(
-		"OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "A Test DCP"
-		);
+	auto dcp = make_simple("build/test/DCP/dcp_test1");
+	dcp->set_issuer("OpenDCP 0.0.25");
+	dcp->set_creator("OpenDCP 0.0.25");
+	dcp->set_issue_date("2012-07-17T04:45:18+00:00");
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	/* build/test/DCP/dcp_test1 is checked against test/ref/DCP/dcp_test1 by run/tests */
 }
@@ -138,7 +141,11 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 
 	d.add (cpl);
 
-	d.write_xml ("OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp");
+	d.set_issuer("OpenDCP 0.0.25");
+	d.set_creator("OpenDCP 0.0.25");
+	d.set_issue_date("2012-07-17T04:45:18+00:00");
+	d.set_annotation_text("Created by libdcp");
+	d.write_xml();
 
 	/* build/test/DCP/dcp_test2 is checked against test/ref/DCP/dcp_test2 by run/tests */
 }
@@ -321,7 +328,11 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 
 	d.add (cpl);
 
-	d.write_xml ("OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp");
+	d.set_issuer("OpenDCP 0.0.25");
+	d.set_creator("OpenDCP 0.0.25");
+	d.set_issue_date("2012-07-17T04:45:18+00:00");
+	d.set_annotation_text("Created by libdcp");
+	d.write_xml();
 
 	/* build/test/DCP/dcp_test5 is checked against test/ref/DCP/dcp_test5 by run/tests */
 }
@@ -345,9 +356,12 @@ BOOST_AUTO_TEST_CASE (dcp_test7)
 {
 	RNGFixer fix;
 
-	make_simple("build/test/DCP/dcp_test7", 1, 24, dcp::Standard::INTEROP)->write_xml(
-		"OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp"
-		);
+	auto dcp = make_simple("build/test/DCP/dcp_test7", 1, 24, dcp::Standard::INTEROP);
+	dcp->set_issuer("OpenDCP 0.0.25");
+	dcp->set_creator("OpenDCP 0.0.25");
+	dcp->set_issue_date("2012-07-17T04:45:18+00:00");
+	dcp->set_annotation_text("Created by libdcp");
+	dcp->write_xml();
 
 	/* build/test/DCP/dcp_test7 is checked against test/ref/DCP/dcp_test7 by run/tests */
 }

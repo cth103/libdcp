@@ -917,7 +917,11 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 
 	dcp::DCP dcp ("build/test/write_interop_subtitle_test3");
 	dcp.add (cpl);
-	dcp.write_xml (issuer, creator, issue_date, annotation_text);
+	dcp.set_issuer(issuer);
+	dcp.set_creator(creator);
+	dcp.set_issue_date(issue_date);
+	dcp.set_annotation_text(annotation_text);
+	dcp.write_xml();
 
 	check_xml (
 		dcp::file_to_string("test/ref/write_interop_subtitle_test3/subs.xml"),

@@ -145,12 +145,8 @@ write_dcp_with_single_asset (path dir, shared_ptr<dcp::ReelAsset> reel_asset, dc
 	cpl->add (reel);
 	auto dcp = make_shared<dcp::DCP>(dir);
 	dcp->add (cpl);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"hello"
-		);
+	dcp->set_annotation_text("hello");
+	dcp->write_xml ();
 
 	return cpl;
 }
@@ -903,12 +899,8 @@ BOOST_AUTO_TEST_CASE (verify_valid_cpl_metadata)
 
 	dcp::DCP dcp (dir);
 	dcp.add (cpl);
-	dcp.write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"hello"
-		);
+	dcp.set_annotation_text("hello");
+	dcp.write_xml ();
 }
 
 
@@ -947,12 +939,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 
 	dcp::DCP dcp (dir);
 	dcp.add (cpl);
-	dcp.write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"hello"
-		);
+	dcp.set_annotation_text("hello");
+	dcp.write_xml();
 
 	{
 		Editor e (find_cpl(dir));
@@ -998,12 +986,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_missing_tag)
 
 	dcp::DCP dcp (dir);
 	dcp.add (cpl);
-	dcp.write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"hello"
-		);
+	dcp.set_annotation_text("hello");
+	dcp.write_xml();
 
 	{
 		Editor e (find_cpl(dir));
@@ -1091,12 +1075,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language3)
 	cpl->_release_territory = "fred-jim";
 	auto dcp = make_shared<dcp::DCP>(dir);
 	dcp->add (cpl);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"hello"
-		);
+	dcp->set_annotation_text("hello");
+	dcp->write_xml();
 
 	check_verify_result (
 		{ dir },
@@ -1157,12 +1137,8 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 	cpl->add (reel);
 
 	d->add (cpl);
-	d->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	d->set_annotation_text("A Test DCP");
+	d->write_xml();
 
 	return dcp::verify ({dcp_path}, &stage, &progress, xsd_test);
 }
@@ -1403,12 +1379,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 
 	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 106, 0);
 	dcp->cpls()[0]->reels()[0]->add(reel_subs);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	check_verify_result (
 		{ dir },
@@ -1444,12 +1416,8 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 		cpl->reels()[1]->add(reel_subs);
 	}
 
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	check_verify_result (
 		{ path },
@@ -1486,12 +1454,8 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 		cpl->reels()[1]->add(reel_ccaps);
 	}
 
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	check_verify_result (
 		{ path },
@@ -1538,12 +1502,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 
 	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 106, 0);
 	dcp->cpls()[0]->reels()[0]->add(reel_subs);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	check_verify_result (
 		{ dir },
@@ -1591,12 +1551,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 
 	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 106, 0);
 	dcp->cpls().front()->reels().front()->add(reel_subs);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	check_verify_result (
 		{ dir },
@@ -1741,13 +1697,8 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 	cpl->add (reel2);
 	auto dcp = make_shared<dcp::DCP>(dir);
 	dcp->add (cpl);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"hello"
-		);
-
+	dcp->set_annotation_text("hello");
+	dcp->write_xml();
 
 	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
@@ -2150,12 +2101,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_sound_frame_rate)
 	cpl->add (reel);
 	auto dcp = make_shared<dcp::DCP>(dir);
 	dcp->add (cpl);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"hello"
-		);
+	dcp->set_annotation_text("hello");
+	dcp->write_xml();
 
 	check_verify_result (
 		{dir},
@@ -2170,12 +2117,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_annotation_text)
 {
 	path const dir("build/test/verify_missing_cpl_annotation_text");
 	auto dcp = make_simple (dir);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
 
@@ -2200,12 +2143,8 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_cpl_annotation_text)
 {
 	path const dir("build/test/verify_mismatched_cpl_annotation_text");
 	auto dcp = make_simple (dir);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
 	auto const cpl = dcp->cpls()[0];
@@ -2244,12 +2183,8 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_asset_duration)
 	cpl->add (reel);
 
 	dcp->add (cpl);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	check_verify_result (
 		{dir},
@@ -2309,12 +2244,8 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 	cpl->add (reel2);
 
 	dcp->add (cpl);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	return cpl;
 }
@@ -2395,12 +2326,8 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 	cpl->add (reel2);
 
 	dcp->add (cpl);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	return cpl;
 }
@@ -2463,12 +2390,8 @@ verify_text_entry_point_check (path dir, dcp::VerificationNote::Code code, boost
 	cpl->add (reel);
 
 	dcp->add (cpl);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	check_verify_result (
 		{dir},
@@ -2521,12 +2444,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_hash)
 
 	path const dir("build/test/verify_missing_hash");
 	auto dcp = make_simple (dir);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
 	auto const cpl = dcp->cpls()[0];
@@ -2564,12 +2483,8 @@ verify_markers_test (
 		markers_asset->set (i.first, i.second);
 	}
 	dcp->cpls()[0]->reels()[0]->add(markers_asset);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	check_verify_result ({dir}, test_notes);
 }
@@ -2665,12 +2580,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_metadata_version_number)
 	auto dcp = make_simple (dir);
 	auto cpl = dcp->cpls()[0];
 	cpl->unset_version_number();
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->id(), cpl->file().get() }});
 }
@@ -2680,12 +2591,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata1)
 {
 	path dir = "build/test/verify_missing_extension_metadata1";
 	auto dcp = make_simple (dir);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
 	auto cpl = dcp->cpls()[0];
@@ -2708,12 +2615,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata2)
 {
 	path dir = "build/test/verify_missing_extension_metadata2";
 	auto dcp = make_simple (dir);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	auto cpl = dcp->cpls()[0];
 
@@ -2735,12 +2638,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 {
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata3";
 	auto dcp = make_simple (dir);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	auto const cpl = dcp->cpls()[0];
 
@@ -2764,12 +2663,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata1)
 {
 	path dir = "build/test/verify_invalid_extension_metadata1";
 	auto dcp = make_simple (dir);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	auto cpl = dcp->cpls()[0];
 
@@ -2791,12 +2686,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 {
 	path dir = "build/test/verify_invalid_extension_metadata2";
 	auto dcp = make_simple (dir);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	auto cpl = dcp->cpls()[0];
 
@@ -2818,12 +2709,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 {
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata6";
 	auto dcp = make_simple (dir);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	auto const cpl = dcp->cpls()[0];
 
@@ -2847,12 +2734,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 {
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata7";
 	auto dcp = make_simple (dir);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	auto const cpl = dcp->cpls()[0];
 
@@ -2874,12 +2757,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 {
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata8";
 	auto dcp = make_simple (dir);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	auto const cpl = dcp->cpls()[0];
 
@@ -2903,12 +2782,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 {
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata9";
 	auto dcp = make_simple (dir);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	auto const cpl = dcp->cpls()[0];
 
@@ -3059,7 +2934,11 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 
 	d.add (cpl);
 
-	d.write_xml ("OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "A Test DCP", signer);
+	d.set_issuer("OpenDCP 0.0.25");
+	d.set_creator("OpenDCP 0.0.25");
+	d.set_issue_date("2012-07-17T04:45:18+00:00");
+	d.set_annotation_text("A Test DCP");
+	d.write_xml(signer);
 
 	check_verify_result (
 		{dir},
@@ -3258,12 +3137,8 @@ BOOST_AUTO_TEST_CASE (verify_unexpected_things_in_main_markers)
 	path dir = "build/test/verify_unexpected_things_in_main_markers";
 	prepare_directory (dir);
 	auto dcp = make_simple (dir, 1, 24);
-	dcp->write_xml (
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::String::compose("libdcp %1", dcp::version),
-		dcp::LocalTime().as_string(),
-		"A Test DCP"
-		);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
 
 	{
 		Editor e (find_cpl(dir));

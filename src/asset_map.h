@@ -69,6 +69,22 @@ public:
 		return _standard;
 	}
 
+	void set_annotation_text(std::string annotation_text) {
+		_annotation_text = annotation_text;
+	}
+
+	void set_issue_date(std::string issue_date) {
+		_issue_date = issue_date;
+	}
+
+	void set_issuer(std::string issuer) {
+		_issuer = issuer;
+	}
+
+	void set_creator(std::string creator) {
+		_creator = creator;
+	}
+
 	void clear_assets();
 	void add_asset(std::string id, boost::filesystem::path path, bool pkl);
 

@@ -137,7 +137,11 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 
 	d.add (cpl);
 
-	d.write_xml ("OpenDCP 0.0.25", "OpenDCP 0.0.25", "2012-07-17T04:45:18+00:00", "Created by libdcp", signer);
+	d.set_issuer("OpenDCP 0.0.25");
+	d.set_creator("OpenDCP 0.0.25");
+	d.set_issue_date("2012-07-17T04:45:18+00:00");
+	d.set_annotation_text("Created by libdcp");
+	d.write_xml(signer);
 
 	dcp::DecryptedKDM kdm (
 		cpl,

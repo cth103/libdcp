@@ -371,14 +371,7 @@ DCP::write_volindex (Standard standard) const
 
 
 void
-DCP::write_xml (
-	string issuer,
-	string creator,
-	string issue_date,
-	string annotation_text,
-	shared_ptr<const CertificateChain> signer,
-	NameFormat name_format
-	)
+DCP::write_xml (shared_ptr<const CertificateChain> signer, NameFormat name_format)
 {
 	if (_cpls.empty()) {
 		throw MiscError ("Cannot write DCP with no CPLs.");
@@ -401,7 +394,15 @@ DCP::write_xml (
 	}
 
 	if (_pkls.empty()) {
-		_pkls.push_back(make_shared<PKL>(standard, annotation_text, issue_date, issuer, creator));
+		_pkls.push_back(
+			make_shared<PKL>(
+				standard,
+				_new_annotation_text.get_value_or(String::compose("Created by libdcp %1", dcp::version)),
+				_new_issue_date.get_value_or(LocalTime().as_string()),
+				_new_issuer.get_value_or(String::compose("libdcp %1", dcp::version)),
+				_new_creator.get_value_or(String::compose("libdcp %1", dcp::version))
+				)
+			);
 	}
 
 	auto pkl = _pkls.front();
@@ -418,7 +419,13 @@ DCP::write_xml (
 	pkl->write (pkl_path, signer);
 
 	if (!_asset_map) {
-		_asset_map = AssetMap(standard, annotation_text, issue_date, issuer, creator);
+		_asset_map = AssetMap(
+			standard,
+			_new_annotation_text.get_value_or(String::compose("Created by libdcp %1", dcp::version)),
+			_new_issue_date.get_value_or(LocalTime().as_string()),
+			_new_issuer.get_value_or(String::compose("libdcp %1", dcp::version)),
+			_new_creator.get_value_or(String::compose("libdcp %1", dcp::version))
+			);
 	}
 
 	/* The assets may have changed since we read the asset map, so re-add them */
@@ -490,3 +497,56 @@ DCP::directories_from_files (vector<boost::filesystem::path> files)
 	}
 	return d;
 }
+
+
+void
+DCP::set_issuer(string issuer)
+{
+	for (auto pkl: _pkls) {
+		pkl->set_issuer(issuer);
+	}
+	if (_asset_map) {
+		_asset_map->set_issuer(issuer);
+	}
+	_new_issuer = issuer;
+}
+
+
+void
+DCP::set_creator(string creator)
+{
+	for (auto pkl: _pkls) {
+		pkl->set_creator(creator);
+	}
+	if (_asset_map) {
+		_asset_map->set_creator(creator);
+	}
+	_new_creator = creator;
+}
+
+
+void
+DCP::set_issue_date(string issue_date)
+{
+	for (auto pkl: _pkls) {
+		pkl->set_issue_date(issue_date);
+	}
+	if (_asset_map) {
+		_asset_map->set_issue_date(issue_date);
+	}
+	_new_issue_date = issue_date;
+}
+
+
+void
+DCP::set_annotation_text(string annotation_text)
+{
+	for (auto pkl: _pkls) {
+		pkl->set_annotation_text(annotation_text);
+	}
+	if (_asset_map) {
+		_asset_map->set_annotation_text(annotation_text);
+	}
+	_new_annotation_text = annotation_text;
+}
+

@@ -73,6 +73,22 @@ public:
 		return _annotation_text;
 	}
 
+	void set_annotation_text(std::string annotation_text) {
+		_annotation_text = annotation_text;
+	}
+
+	void set_issue_date(std::string issue_date) {
+		_issue_date = issue_date;
+	}
+
+	void set_issuer(std::string issuer) {
+		_issuer = issuer;
+	}
+
+	void set_creator(std::string creator) {
+		_creator = creator;
+	}
+
 	boost::optional<std::string> hash (std::string id) const;
 	boost::optional<std::string> type (std::string id) const;
 
