@@ -400,16 +400,16 @@ DCP::write_xml (
 		i->write_xml (_directory / (name_format.get(values, "_" + i->id() + ".xml")), signer);
 	}
 
-	shared_ptr<PKL> pkl;
-
 	if (_pkls.empty()) {
-		pkl = make_shared<PKL>(standard, annotation_text, issue_date, issuer, creator);
-		_pkls.push_back (pkl);
-		for (auto i: assets()) {
-			i->add_to_pkl (pkl, _directory);
-		}
-        } else {
-		pkl = _pkls.front ();
+		_pkls.push_back(make_shared<PKL>(standard, annotation_text, issue_date, issuer, creator));
+	}
+
+	auto pkl = _pkls.front();
+
+	/* The assets may have changed since we read the PKL, so re-add them */
+	pkl->clear_assets();
+	for (auto asset: assets()) {
+		asset->add_to_pkl(pkl, _directory);
 	}
 
 	NameFormat::Map values;

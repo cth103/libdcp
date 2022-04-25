@@ -159,3 +159,10 @@ PKL::type (string id) const
 
 	return {};
 }
+
+
+void
+PKL::clear_assets()
+{
+	_asset_list.clear();
+}

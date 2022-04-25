@@ -76,6 +76,7 @@ public:
 	boost::optional<std::string> hash (std::string id) const;
 	boost::optional<std::string> type (std::string id) const;
 
+	void clear_assets();
 	void add_asset (std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type);
 	void write (boost::filesystem::path file, std::shared_ptr<const CertificateChain> signer) const;
 
