@@ -124,6 +124,7 @@ def build(bld):
     headers = """
               array_data.h
               asset.h
+              asset_list.h
               asset_map.h
               asset_reader.h
               asset_writer.h

@@ -41,6 +41,7 @@
 #define LIBDCP_PKL_H
 
 
+#include "asset_list.h"
 #include "object.h"
 #include "types.h"
 #include "util.h"
@@ -52,42 +53,14 @@
 namespace dcp {
 
 
-class PKL : public Object
+class PKL : public Object, public AssetList
 {
 public:
 	PKL (Standard standard, boost::optional<std::string> annotation_text, std::string issue_date, std::string issuer, std::string creator)
-		: _standard (standard)
-		, _annotation_text (annotation_text)
-		, _issue_date (issue_date)
-		, _issuer (issuer)
-		, _creator (creator)
+		: AssetList(standard, annotation_text, issue_date, issuer, creator)
 	{}
 
 	explicit PKL (boost::filesystem::path file);
-
-	Standard standard () const {
-		return _standard;
-	}
-
-	boost::optional<std::string> annotation_text () const {
-		return _annotation_text;
-	}
-
-	void set_annotation_text(std::string annotation_text) {
-		_annotation_text = annotation_text;
-	}
-
-	void set_issue_date(std::string issue_date) {
-		_issue_date = issue_date;
-	}
-
-	void set_issuer(std::string issuer) {
-		_issuer = issuer;
-	}
-
-	void set_creator(std::string creator) {
-		_creator = creator;
-	}
 
 	boost::optional<std::string> hash (std::string id) const;
 	boost::optional<std::string> type (std::string id) const;
@@ -148,12 +121,6 @@ public:
 	}
 
 private:
-
-	Standard _standard = dcp::Standard::SMPTE;
-	boost::optional<std::string> _annotation_text;
-	std::string _issue_date;
-	std::string _issuer;
-	std::string _creator;
 	std::vector<std::shared_ptr<Asset>> _asset_list;
 	/** The most recent disk file used to read or write this PKL */
 	mutable boost::optional<boost::filesystem::path> _file;

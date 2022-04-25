@@ -32,72 +32,63 @@
 */
 
 
-#include "asset_list.h"
-#include "object.h"
+#ifndef DCP_ASSET_LIST_H
+#define DCP_ASSET_LIST_H
+
+
 #include "types.h"
-#include <libcxml/cxml.h>
-#include <boost/filesystem.hpp>
-#include <boost/optional.hpp>
-#include <string>
-#include <vector>
 
 
 namespace dcp {
 
 
-class AssetMap : public Object, public AssetList
+/** Class to extract some boilerplate from AssetMap and PKL */
+class AssetList
 {
 public:
-	AssetMap(Standard standard, boost::optional<std::string> annotation_text, std::string issue_date, std::string issuer, std::string creator)
-		: AssetList(standard, annotation_text, issue_date, issuer, creator)
+	AssetList() {}
+	AssetList(Standard standard, boost::optional<std::string> annotation_text, std::string issue_date, std::string issuer, std::string creator)
+		: _standard(standard)
+		, _annotation_text(annotation_text)
+		, _issue_date(issue_date)
+		, _issuer(issuer)
+		, _creator(creator)
 	{}
 
-	explicit AssetMap(boost::filesystem::path path);
-
-	boost::optional<boost::filesystem::path> path() const {
-		return _path;
+	dcp::Standard standard() const {
+		return _standard;
 	}
 
-	std::map<std::string, boost::filesystem::path> asset_ids_and_paths() const;
+	void set_annotation_text(std::string annotation_text) {
+		_annotation_text = annotation_text;
+	}
 
-	std::vector<boost::filesystem::path> pkl_paths() const;
+	void set_issue_date(std::string issue_date) {
+		_issue_date = issue_date;
+	}
 
-	void clear_assets();
-	void add_asset(std::string id, boost::filesystem::path path, bool pkl);
+	void set_issuer(std::string issuer) {
+		_issuer = issuer;
+	}
 
-	void write_xml(boost::filesystem::path path) const;
+	void set_creator(std::string creator) {
+		_creator = creator;
+	}
 
-	class Asset : public Object
-	{
-	public:
-		Asset(std::string id, boost::filesystem::path path, bool pkl)
-			: Object(id)
-			, _path(path)
-			, _pkl(pkl)
-		{}
+	boost::optional<std::string> annotation_text() const {
+		return _annotation_text;
+	}
 
-		Asset(cxml::ConstNodePtr node, boost::filesystem::path root, dcp::Standard standard);
-
-		boost::filesystem::path path() const {
-			return _path;
-		}
-
-		bool pkl() const {
-			return _pkl;
-		}
-
-		void write_xml(xmlpp::Element* asset_list, boost::filesystem::path dcp_root_directory) const;
-
-	private:
-		boost::filesystem::path _path;
-		bool _pkl = false;
-	};
-
-private:
-	std::vector<Asset> _assets;
-	mutable boost::optional<boost::filesystem::path> _path;
+protected:
+	dcp::Standard _standard = dcp::Standard::SMPTE;
+	boost::optional<std::string> _annotation_text;
+        std::string _issue_date;
+        std::string _issuer;
+        std::string _creator;
 };
 
 
 }
 
+
+#endif
