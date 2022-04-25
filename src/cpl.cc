@@ -172,6 +172,13 @@ CPL::add (std::shared_ptr<Reel> reel)
 
 
 void
+CPL::set (std::vector<std::shared_ptr<Reel>> reels)
+{
+	_reels = reels;
+}
+
+
+void
 CPL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain> signer) const
 {
 	xmlpp::Document doc;
@@ -700,7 +707,7 @@ CPL::unset_version_number ()
 void
 CPL::set_content_versions (vector<ContentVersion> v)
 {
-	set<string> ids;
+	std::set<string> ids;
 	for (auto i: v) {
 		if (!ids.insert(i.id).second) {
 			throw DuplicateIdError ("Duplicate ID in ContentVersion list");

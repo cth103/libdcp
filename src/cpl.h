@@ -95,6 +95,8 @@ public:
 	 */
 	void add (std::shared_ptr<Reel> reel);
 
+	void set (std::vector<std::shared_ptr<Reel>> reels);
+
 	/** Add a KDM to this CPL.  If the KDM is for any of this CPLs assets it will be used
 	 *  to decrypt those assets.
 	 *  @param kdm KDM.
