@@ -54,7 +54,7 @@
   _Pragma("GCC diagnostic ignored \"-Wsuggest-override\"") \
   _Pragma("GCC diagnostic ignored \"-Wunused-function\"") \
   _Pragma("GCC diagnostic ignored \"-Wignored-qualifiers\"")
-#else
+#elif __GNUC__ >= 5
 #define LIBDCP_DISABLE_WARNINGS \
   _Pragma("GCC diagnostic push") \
   _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"") \
@@ -63,6 +63,14 @@
   _Pragma("GCC diagnostic ignored \"-Waddress\"") \
   _Pragma("GCC diagnostic ignored \"-Wparentheses\"") \
   _Pragma("GCC diagnostic ignored \"-Wsuggest-override\"")
+#else
+#define LIBDCP_DISABLE_WARNINGS \
+  _Pragma("GCC diagnostic push") \
+  _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"") \
+  _Pragma("GCC diagnostic ignored \"-Wmissing-field-initializers\"") \
+  _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"") \
+  _Pragma("GCC diagnostic ignored \"-Waddress\"") \
+  _Pragma("GCC diagnostic ignored \"-Wparentheses\"")
 #endif
 #endif
 
