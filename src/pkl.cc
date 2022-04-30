@@ -94,7 +94,7 @@ PKL::add_asset (std::string id, boost::optional<std::string> annotation_text, st
 
 
 void
-PKL::write (boost::filesystem::path file, shared_ptr<const CertificateChain> signer) const
+PKL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain> signer) const
 {
 	xmlpp::Document doc;
 	xmlpp::Element* pkl;

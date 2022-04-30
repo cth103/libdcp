@@ -67,7 +67,7 @@ public:
 
 	void clear_assets();
 	void add_asset (std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type);
-	void write (boost::filesystem::path file, std::shared_ptr<const CertificateChain> signer) const;
+	void write_xml (boost::filesystem::path file, std::shared_ptr<const CertificateChain> signer) const;
 
 	/** @return the most recent disk file used to read or write this PKL, if there is one */
 	boost::optional<boost::filesystem::path> file () const {

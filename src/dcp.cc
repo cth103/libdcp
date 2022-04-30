@@ -445,7 +445,7 @@ DCP::write_xml (shared_ptr<const CertificateChain> signer, NameFormat name_forma
 	NameFormat::Map values;
 	values['t'] = "pkl";
 	auto pkl_path = _directory / name_format.get(values, "_" + pkl->id() + ".xml");
-	pkl->write (pkl_path, signer);
+	pkl->write_xml (pkl_path, signer);
 
 	if (!_asset_map) {
 		_asset_map = AssetMap(
