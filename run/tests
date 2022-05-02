@@ -136,7 +136,7 @@ for d in `find $work/private/metadata -mindepth 1 -maxdepth 1 -type d | sort -f 
 done
 
 # Fudge the output
-sed -i "s/DCP: build\/test/DCP: test/g" $work/info2.log
+sed -i -e "s/DCP: build\/test/DCP: test/g" $work/info2.log
 
 # And check it
 diff -q $work/info2.log $private/info2.log
