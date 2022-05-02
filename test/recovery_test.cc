@@ -77,9 +77,7 @@ BOOST_AUTO_TEST_CASE (recovery)
 		fclose (f);
 	}
 
-#ifndef LIBDCP_WINDOWS
 	Kumu::ResetTestRNG ();
-#endif
 
 	mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	writer = mp->start_write ("build/test/baz/video2.mxf", true);

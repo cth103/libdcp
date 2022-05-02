@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PackingList xmlns="http://www.smpte-ra.org/schemas/429-8/2007/PKL">
+  <Id>urn:uuid:d199d58b-5ef8-4d49-b270-07e590ccb280</Id>
+  <AnnotationText>Created by libdcp</AnnotationText>
+  <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
+  <Issuer>OpenDCP 0.0.25</Issuer>
+  <Creator>OpenDCP 0.0.25</Creator>
+  <AssetList>
+    <Asset>
+      <Id>urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358ab</Id>
+      <AnnotationText>6affb8ee-0020-4dff-a53c-17652f6358ab</AnnotationText>
+      <Hash>6F7kAEYbNdv6gz6PG5JcMjGF8kU=</Hash>
+      <Size>1686</Size>
+      <Type>text/xml</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:5407b210-4441-4e97-8b16-8bdc7c12da54</Id>
+      <AnnotationText>5407b210-4441-4e97-8b16-8bdc7c12da54</AnnotationText>
+      <Hash>BUpeFS6X9j+X0z2TZWSsLMT4pE0=</Hash>
+      <Size>63160</Size>
+      <Type>application/mxf</Type>
+    </Asset>
+    <Asset>
+      <Id>urn:uuid:fc843acc-1ad9-4808-b9ed-33f5319e047d</Id>
+      <AnnotationText>fc843acc-1ad9-4808-b9ed-33f5319e047d</AnnotationText>
+      <Hash>3PtaGoYcvBdq5WYiK0cmeDwm8d0=</Hash>
+      <Size>161326</Size>
+      <Type>application/mxf</Type>
+    </Asset>
+  </AssetList>
+</PackingList>

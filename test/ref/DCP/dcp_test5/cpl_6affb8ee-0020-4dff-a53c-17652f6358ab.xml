@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CompositionPlaylist xmlns="http://www.smpte-ra.org/schemas/429-7/2006/CPL">
-  <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
+  <Id>urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358ab</Id>
   <AnnotationText>A Test DCP</AnnotationText>
   <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
   <Issuer>OpenDCP 0.0.25</Issuer>
@@ -14,25 +14,25 @@
   <RatingList/>
   <ReelList>
     <Reel>
-      <Id>urn:uuid:6af1e0c1-c441-47f8-a502-3efd46b1fa4f</Id>
+      <Id>urn:uuid:d199d58b-5ef8-4d49-b270-07e590ccb280</Id>
       <AssetList>
         <MainPicture>
-          <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
+          <Id>urn:uuid:5407b210-4441-4e97-8b16-8bdc7c12da54</Id>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
           <Duration>24</Duration>
-          <Hash>ocljCBd/zl1KRFBVRVTtSmR3qf0=</Hash>
+          <Hash>o3VmpdFsNUgF11oadcaGJ/IfO0M=</Hash>
           <FrameRate>24 1</FrameRate>
           <ScreenAspectRatio>1998 1080</ScreenAspectRatio>
         </MainPicture>
         <MainSound>
-          <Id>urn:uuid:8b92bcee-62fc-4a33-a51a-816e9611ce85</Id>
+          <Id>urn:uuid:97f0f352-5b77-48ee-a558-9df37717f4fa</Id>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
           <Duration>24</Duration>
-          <Hash>UwaCvlFLCOKQhQB12hdVceJudgc=</Hash>
+          <Hash>wLbXcpQtWt2IFMHIcibxwND667I=</Hash>
         </MainSound>
         <axd:AuxData xmlns:axd="http://www.dolby.com/schemas/2012/AD">
           <Id>urn:uuid:b68febcc-5ddf-489a-84a7-924f29fa2afd</Id>

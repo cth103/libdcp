@@ -36,6 +36,7 @@
 #include "mono_picture_asset.h"
 #include "mono_picture_asset_writer.h"
 #include "openjpeg_image.h"
+#include <boost/random.hpp>
 #include <boost/test/unit_test.hpp>
 #include <memory>
 
@@ -46,12 +47,12 @@ using std::string;
 
 
 static void
-check (shared_ptr<dcp::PictureAssetWriter> writer, string hash)
+check (shared_ptr<dcp::PictureAssetWriter> writer, boost::random::uniform_int_distribution<>& dist, boost::random::mt19937& rng, string hash)
 {
 	auto xyz = make_shared<dcp::OpenJPEGImage>(dcp::Size(1998, 1080));
 	for (int c = 0; c < 3; ++c) {
 		for (int p = 0; p < (1998 * 1080); ++p) {
-			xyz->data(c)[p] = rand() & 0xfff;
+			xyz->data(c)[p] = dist(rng);
 		}
 	}
 
@@ -68,10 +69,11 @@ BOOST_AUTO_TEST_CASE (frame_info_hash_test)
 	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	auto writer = mp->start_write ("build/test/frame_info_hash_test.mxf", false);
 
-	srand(42);
+	boost::random::mt19937 rng(1);
+	boost::random::uniform_int_distribution<> dist(0, 4095);
 
 	/* Check a few random frames */
-	check (writer, "9da3d1d93a80683e65d996edae4101ed");
-	check (writer, "ecd77b3fbf459591f24119d4118783fb");
-	check (writer, "9f10303495b58ccb715c893d40127e22");
+	check(writer, dist, rng, "a9e772602a2fd3135d940cfd727ab8ff");
+	check(writer, dist, rng, "b075369922e42b23e1852a586ec43224");
+	check(writer, dist, rng, "402395e76152db05b03c8f24ddfd7732");
 }

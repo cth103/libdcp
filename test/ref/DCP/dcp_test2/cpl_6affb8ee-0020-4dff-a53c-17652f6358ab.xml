@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CompositionPlaylist xmlns="http://www.smpte-ra.org/schemas/429-7/2006/CPL">
-  <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
+  <Id>urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358ab</Id>
   <AnnotationText>A Test DCP</AnnotationText>
   <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
   <Issuer>OpenDCP 0.0.25</Issuer>
@@ -14,23 +14,23 @@
   <RatingList/>
   <ReelList>
     <Reel>
-      <Id>urn:uuid:93182bd2-b1e8-41a3-b5c8-6e6564273bff</Id>
+      <Id>urn:uuid:3b198cbc-c1d2-4410-805c-397b6fea0297</Id>
       <AssetList>
         <MainSound>
-          <Id>urn:uuid:77e1fb48-ce0c-4d29-bf88-8c3bfec8013a</Id>
+          <Id>urn:uuid:fc843acc-1ad9-4808-b9ed-33f5319e047d</Id>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
           <Duration>24</Duration>
-          <Hash>79TC6lDP5q0zzHZRm1wOnrObdYQ=</Hash>
+          <Hash>3PtaGoYcvBdq5WYiK0cmeDwm8d0=</Hash>
         </MainSound>
         <msp-cpl:MainStereoscopicPicture xmlns:msp-cpl="http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL">
-          <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
+          <Id>urn:uuid:5407b210-4441-4e97-8b16-8bdc7c12da54</Id>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
           <Duration>24</Duration>
-          <Hash>JFrPt5QPaWmGMFxMMdYr7MhA3Bs=</Hash>
+          <Hash>BUpeFS6X9j+X0z2TZWSsLMT4pE0=</Hash>
           <FrameRate>48 1</FrameRate>
           <ScreenAspectRatio>1998 1080</ScreenAspectRatio>
         </msp-cpl:MainStereoscopicPicture>

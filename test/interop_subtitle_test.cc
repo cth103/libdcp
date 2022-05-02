@@ -928,7 +928,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 		dcp::file_to_string("build/test/write_interop_subtitle_test3/subs.xml"),
 		vector<string>()
 		);
-	check_file ("build/test/write_interop_subtitle_test3/d36f4bb3-c4fa-4a95-9915-6fec3110cd71.png", "test/data/sub.png");
+	check_file(find_file("build/test/write_interop_subtitle_test3", ".png"), "test/data/sub.png");
 
 	check_xml (
 		dcp::file_to_string("test/ref/write_interop_subtitle_test3/ASSETMAP"),

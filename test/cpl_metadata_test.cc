@@ -316,7 +316,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test1.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_write_test1.xml"),
-		vector<string>()
+		{"Id", "Hash"}
 		);
 }
 
@@ -326,12 +326,10 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_roundtrip_test_1)
 {
 	dcp::CPL cpl ("test/ref/cpl_metadata_test1.xml");
 	cpl.write_xml ("build/test/cpl_metadata_roundtrip_test1.xml", shared_ptr<dcp::CertificateChain>());
-	vector<string> ignore;
-	ignore.push_back ("Id");
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test1.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_roundtrip_test1.xml"),
-		ignore
+		{"Id"}
 		);
 }
 
@@ -367,7 +365,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test2)
 	check_xml (
 		dcp::file_to_string("test/ref/cpl_metadata_test2.xml"),
 		dcp::file_to_string("build/test/cpl_metadata_write_test2.xml"),
-		vector<string>()
+		{"Id", "Hash"}
 		);
 }
 

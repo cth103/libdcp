@@ -88,7 +88,7 @@ static string const dcp_test1_pkl_id = filename_to_id(dcp_test1_pkl);
 static boost::filesystem::path const dcp_test1_cpl = find_file("test/ref/DCP/dcp_test1", "cpl_").filename();
 static string const dcp_test1_cpl_id = filename_to_id(dcp_test1_cpl);
 
-static string const dcp_test1_asset_map_id = "5d51e8a1-b2a5-4da6-9b66-4615c3609440";
+static string const dcp_test1_asset_map_id = "017b3de4-6dda-408d-b19b-6711354b0bc3";
 
 static boost::filesystem::path const encryption_test_cpl = find_file("test/ref/DCP/encryption_test", "cpl_").filename();
 static string const encryption_test_cpl_id = filename_to_id(encryption_test_cpl);
@@ -401,9 +401,9 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id, canonical(dir / dcp_test1_cpl) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_HASHES, canonical(dir / "audio.mxf") },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xLq7ot/GobgrqUYdlbR8FCD5APqs=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 26 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xgVKhC9IkWyzQbgzpFcJ1bpqbtwk=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 19 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xznqYbl53W9ZQtrU2E1FQ6dwdM2M=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 12 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xKcJb7S2K5cNm8RG4kfQD5FTeS0A=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 26 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xtfX1mVIKJCVr1m7Y32Nzxf0+Rpw=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 12 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xwUmt8G+cFFKMGt0ueS9+F1S4uhc=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 19 },
 		});
 }
 
@@ -501,7 +501,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_id)
 	/* There's no MISMATCHED_CPL_HASHES error here because it can't find the correct hash by ID (since the ID is wrong) */
 	check_verify_result_after_replace (
 			"invalid_xml_cpl_id", &cpl,
-			"<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b", "<Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375",
+			"<Id>urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358ab", "<Id>urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358a",
 			{ dcp::VerificationNote::Code::INVALID_XML }
 			);
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CompositionPlaylist xmlns="http://www.digicine.com/PROTO-ASDCP-CPL-20040511#">
-  <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
+  <Id>urn:uuid:5407b210-4441-4e97-8b16-8bdc7c12da54</Id>
   <AnnotationText>Created by libdcp</AnnotationText>
   <IssueDate>2018-09-02T04:45:18+00:00</IssueDate>
   <Issuer>libdcp</Issuer>
@@ -8,22 +8,21 @@
   <ContentTitleText>My film</ContentTitleText>
   <ContentKind>feature</ContentKind>
   <ContentVersion>
-    <Id>urn:uuid:6a9e31a6-50a4-4ecb-8683-fa667848470a</Id>
+    <Id>urn:uuid:b365eeb5-dcdf-4aaf-83f0-1202fa5d3ca8</Id>
     <LabelText>foo</LabelText>
   </ContentVersion>
   <RatingList/>
   <ReelList>
     <Reel>
-      <Id>urn:uuid:1fab8bb0-cfaf-4225-ad6d-01768bc10470</Id>
+      <Id>urn:uuid:73e16051-f99a-4bf4-b96a-c432d32aa19f</Id>
       <AssetList>
         <MainSubtitle>
           <Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</Id>
-          <AnnotationText></AnnotationText>
           <EditRate>24 1</EditRate>
           <IntrinsicDuration>6046</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
           <Duration>6046</Duration>
-          <Hash>cVnFjMLTQnSIAlIzJpNB/p7B230=</Hash>
+          <Hash>RmflhDu9QYUsNnBftdNlIEGdzG0=</Hash>
         </MainSubtitle>
       </AssetList>
     </Reel>
