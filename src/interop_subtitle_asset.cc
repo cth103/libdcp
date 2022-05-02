@@ -192,7 +192,7 @@ InteropSubtitleAsset::load_font_nodes () const
 void
 InteropSubtitleAsset::write (boost::filesystem::path p) const
 {
-	File f(p, "w");
+	File f(p, "wb");
 	if (!f) {
 		throw FileError ("Could not open file for writing", p, -1);
 	}
