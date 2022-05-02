@@ -217,19 +217,19 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 	BOOST_REQUIRE (check_file);
 
 	int const buffer_size = 65536;
-	auto ref_buffer = new uint8_t[buffer_size];
-	auto check_buffer = new uint8_t[buffer_size];
+	std::vector<uint8_t> ref_buffer(buffer_size);
+	std::vector<uint8_t> check_buffer(buffer_size);
 
 	uintmax_t pos = 0;
 
 	while (pos < size) {
 		uintmax_t this_time = min (uintmax_t(buffer_size), size - pos);
-		size_t r = ref_file.read(ref_buffer, 1, this_time);
+		size_t r = ref_file.read(ref_buffer.data(), 1, this_time);
 		BOOST_CHECK_EQUAL (r, this_time);
-		r = check_file.read(check_buffer, 1, this_time);
+		r = check_file.read(check_buffer.data(), 1, this_time);
 		BOOST_CHECK_EQUAL (r, this_time);
 
-		if (memcmp(ref_buffer, check_buffer, this_time) != 0) {
+		if (memcmp(ref_buffer.data(), check_buffer.data(), this_time) != 0) {
 			for (int i = 0; i < buffer_size; ++i) {
 				if (ref_buffer[i] != check_buffer[i]) {
 					BOOST_CHECK_MESSAGE (
@@ -244,9 +244,6 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 
 		pos += this_time;
 	}
-
-	delete[] ref_buffer;
-	delete[] check_buffer;
 }
 
 

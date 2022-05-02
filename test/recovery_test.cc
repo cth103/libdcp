@@ -31,16 +31,19 @@
     files in the program, then also delete it here.
 */
 
+
 #include "mono_picture_asset_writer.h"
 #include "mono_picture_asset.h"
 #include "test.h"
 #include <asdcp/KM_util.h>
-#include <boost/test/unit_test.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/test/unit_test.hpp>
 
-using std::string;
-using std::shared_ptr;
+
 using std::make_shared;
+using std::shared_ptr;
+using std::string;
+
 
 /** Check that recovery from a partially-written MXF works */
 BOOST_AUTO_TEST_CASE (recovery)

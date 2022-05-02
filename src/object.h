@@ -44,13 +44,13 @@
 #include <string>
 
 
-struct write_interop_subtitle_test;
+struct sync_test2;
 struct write_interop_subtitle_test2;
 struct write_interop_subtitle_test3;
-struct write_smpte_subtitle_test;
+struct write_interop_subtitle_test;
 struct write_smpte_subtitle_test2;
 struct write_smpte_subtitle_test3;
-struct sync_test2;
+struct write_smpte_subtitle_test;
 
 
 namespace dcp {
@@ -86,13 +86,13 @@ public:
 	}
 
 protected:
-	friend struct ::write_interop_subtitle_test;
+	friend struct ::sync_test2;
 	friend struct ::write_interop_subtitle_test2;
 	friend struct ::write_interop_subtitle_test3;
-	friend struct ::write_smpte_subtitle_test;
+	friend struct ::write_interop_subtitle_test;
 	friend struct ::write_smpte_subtitle_test2;
 	friend struct ::write_smpte_subtitle_test3;
-	friend struct ::sync_test2;
+	friend struct ::write_smpte_subtitle_test;
 
 	std::string _id;
 };
