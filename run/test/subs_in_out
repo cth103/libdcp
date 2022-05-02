@@ -1,6 +1,8 @@
 #!/bin/bash
 
 export LD_LIBRARY_PATH=build/src:build/asdcplib/src:$LD_LIBRARY_PATH
+# SIP stops this being passed in from the caller's environment
+export DYLD_LIBRARY_PATH=/Users/ci/osx-environment/x86_64/10.10/lib
 if [ "$1" == "--debug" ]; then
     shift
     gdb --args build/test/subs_in_out "$@"
