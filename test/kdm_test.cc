@@ -261,6 +261,7 @@ BOOST_AUTO_TEST_CASE (validity_period_test1)
 	auto writer = asset->start_write ("build/test/validity_period_test1.mxf", false);
 	dcp::ArrayData frame ("test/data/flat_red.j2c");
 	writer->write (frame.data(), frame.size());
+	writer->finalize ();
 	auto reel = make_shared<dcp::Reel>();
 	reel->add(make_shared<dcp::ReelMonoPictureAsset>(asset, 0));
 	auto cpl = make_shared<dcp::CPL>("test", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
