@@ -34,6 +34,8 @@
 
 #include "dcp_assert.h"
 #include "file.h"
+#include <boost/algorithm/string.hpp>
+#include <stdio.h>
 
 
 using namespace dcp;
