@@ -59,7 +59,7 @@ ModifiedGammaTransferFunction::ModifiedGammaTransferFunction (double power, doub
 
 
 vector<double>
-ModifiedGammaTransferFunction::make_lut (int bit_depth, bool inverse) const
+ModifiedGammaTransferFunction::make_lut (double from, double to, int bit_depth, bool inverse) const
 {
 	int const bit_length = int(std::pow(2.0f, bit_depth));
 	auto lut = vector<double>(bit_length);
@@ -67,19 +67,21 @@ ModifiedGammaTransferFunction::make_lut (int bit_depth, bool inverse) const
 		double const threshold = _threshold / _B;
 		for (int i = 0; i < bit_length; ++i) {
 			double const p = static_cast<double>(i) / (bit_length - 1);
-			if (p > threshold) {
-				lut[i] = (1 + _A) * pow (p, 1 / _power) - _A;
+			double const q = (p * (to - from)) + from;
+			if (q > threshold) {
+				lut[i] = (1 + _A) * pow (q, 1 / _power) - _A;
 			} else {
-				lut[i] = p * _B;
+				lut[i] = q * _B;
 			}
 		}
 	} else {
 		for (int i = 0; i < bit_length; ++i) {
 			double const p = static_cast<double>(i) / (bit_length - 1);
-			if (p > _threshold) {
-				lut[i] = pow ((p + _A) / (1 + _A), _power);
+			double const q = (p * (to - from)) + from;
+			if (q > _threshold) {
+				lut[i] = pow ((q + _A) / (1 + _A), _power);
 			} else {
-				lut[i] = p / _B;
+				lut[i] = q / _B;
 			}
 		}
 	}

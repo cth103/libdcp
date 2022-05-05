@@ -51,15 +51,35 @@ using namespace dcp;
 
 
 vector<double> const&
-TransferFunction::lut (int bit_depth, bool inverse) const
+TransferFunction::lut (double from, double to, int bit_depth, bool inverse) const
 {
 	boost::mutex::scoped_lock lm (_mutex);
 
-	auto i = _luts.find (make_pair (bit_depth, inverse));
-	if (i != _luts.end ()) {
+	auto const descriptor = LUTDescriptor{from, to, bit_depth, inverse};
+
+	auto i = _luts.find(descriptor);
+	if (i != _luts.end()) {
 		return i->second;
 	}
 
-	_luts[make_pair(bit_depth, inverse)] = make_lut (bit_depth, inverse);
-	return _luts[make_pair(bit_depth, inverse)];
+	_luts[descriptor] = make_lut(from, to, bit_depth, inverse);
+	return _luts[descriptor];
 }
+
+
+bool
+TransferFunction::LUTDescriptor::operator==(TransferFunction::LUTDescriptor const& other) const
+{
+	return from == other.from && to == other.to && bit_depth == other.bit_depth && inverse == other.inverse;
+}
+
+
+std::size_t
+TransferFunction::LUTDescriptorHasher::operator()(TransferFunction::LUTDescriptor const& desc) const
+{
+	return std::hash<double>()(desc.from) ^
+		std::hash<double>()(desc.to) ^
+		std::hash<int>()(desc.bit_depth) ^
+		std::hash<bool>()(desc.inverse);
+}
+

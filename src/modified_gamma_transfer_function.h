@@ -77,7 +77,7 @@ public:
 	bool about_equal (std::shared_ptr<const TransferFunction>, double epsilon) const override;
 
 protected:
-	std::vector<double> make_lut (int bit_depth, bool inverse) const override;
+	std::vector<double> make_lut (double from, double to, int bit_depth, bool inverse) const override;
 
 private:
 	double _power;

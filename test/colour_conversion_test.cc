@@ -44,7 +44,7 @@ using namespace dcp;
 static void
 check_gamma (shared_ptr<const TransferFunction> tf, int bit_depth, bool inverse, float gamma)
 {
-	auto lut = tf->lut (bit_depth, inverse);
+	auto lut = tf->lut(0, 1, bit_depth, inverse);
 	int const count = rint (pow (2.0, bit_depth));
 
 	for (int i = 0; i < count; ++i) {
@@ -55,7 +55,7 @@ check_gamma (shared_ptr<const TransferFunction> tf, int bit_depth, bool inverse,
 static void
 check_modified_gamma (shared_ptr<const TransferFunction> tf, int bit_depth, bool inverse, double power, double threshold, double A, double B)
 {
-	auto lut = tf->lut (bit_depth, inverse);
+	auto lut = tf->lut(0, 1, bit_depth, inverse);
 	int const count = rint (pow (2.0, bit_depth));
 
 	for (int i = 0; i < count; ++i) {

@@ -42,7 +42,7 @@
 
 
 #include <boost/thread/mutex.hpp>
-#include <map>
+#include <unordered_map>
 #include <memory>
 #include <vector>
 
@@ -60,17 +60,30 @@ public:
 
 	virtual ~TransferFunction () {}
 
-	/** @return A look-up table (of size 2^bit_depth) whose values range from 0 to 1 */
-	std::vector<double> const& lut (int bit_depth, bool inverse) const;
+	/** @return A look-up table (of size 2^bit_depth) */
+	std::vector<double> const& lut (double from, double to, int bit_depth, bool inverse) const;
 
 	virtual bool about_equal (std::shared_ptr<const TransferFunction> other, double epsilon) const = 0;
 
 protected:
 	/** Make a LUT and return an array allocated by new */
-	virtual std::vector<double> make_lut (int bit_depth, bool inverse) const = 0;
+	virtual std::vector<double> make_lut (double from, double to, int bit_depth, bool inverse) const = 0;
 
 private:
-	mutable std::map<std::pair<int, bool>, std::vector<double>> _luts;
+	struct LUTDescriptor {
+		double from;
+		double to;
+		int bit_depth;
+		bool inverse;
+
+		bool operator==(LUTDescriptor const& other) const;
+	};
+
+	struct LUTDescriptorHasher {
+		std::size_t operator()(LUTDescriptor const& desc) const;
+	};
+
+	mutable std::unordered_map<LUTDescriptor, std::vector<double>, LUTDescriptorHasher> _luts;
 	/** mutex to protect _luts */
 	mutable boost::mutex _mutex;
 };

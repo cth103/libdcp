@@ -49,26 +49,28 @@ using namespace dcp;
 
 
 vector<double>
-SGamut3TransferFunction::make_lut (int bit_depth, bool inverse) const
+SGamut3TransferFunction::make_lut (double from, double to, int bit_depth, bool inverse) const
 {
 	int const bit_length = int(std::pow(2.0f, bit_depth));
 	auto lut = vector<double>(bit_length);
 	if (inverse) {
 		for (int i = 0; i < bit_length; ++i) {
 			auto const p = static_cast<double>(i) / (bit_length - 1);
-			if (p >= (0.01125 / 1023)) {
-				lut[i] = (420 + log10((p + 0.01) / (0.18 + 0.01)) * 261.5) / 1023;
+			auto const q = (p * (to - from)) + from;
+			if (q >= (0.01125 / 1023)) {
+				lut[i] = (420 + log10((q + 0.01) / (0.18 + 0.01)) * 261.5) / 1023;
 			} else {
-				lut[i] = (p * (171.2102946929 - 95) / 0.01125000 + 95) / 1023;
+				lut[i] = (q * (171.2102946929 - 95) / 0.01125000 + 95) / 1023;
 			}
 		}
 	} else {
 		for (int i = 0; i < bit_length; ++i) {
 			auto const p = static_cast<double>(i) / (bit_length - 1);
-			if (p >= (171.2102946929 / 1023)) {
+			auto const q = (p * (to - from)) + from;
+			if (q >= (171.2102946929 / 1023)) {
 				lut[i] = pow(10, ((p * 1023 - 420) / 261.5)) * (0.18 + 0.01) - 0.01;
 			} else {
-				lut[i] = (p * 1023 - 95) * 0.01125000 / (171.2102946929 - 95);
+				lut[i] = (q * 1023 - 95) * 0.01125000 / (171.2102946929 - 95);
 			}
 		}
 	}

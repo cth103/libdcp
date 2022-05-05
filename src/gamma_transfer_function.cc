@@ -56,13 +56,14 @@ GammaTransferFunction::GammaTransferFunction (double gamma)
 
 
 vector<double>
-GammaTransferFunction::make_lut (int bit_depth, bool inverse) const
+GammaTransferFunction::make_lut (double from, double to, int bit_depth, bool inverse) const
 {
 	int const bit_length = int(std::pow(2.0f, bit_depth));
 	auto lut = vector<double>(bit_length);
 	double const gamma = inverse ? (1 / _gamma) : _gamma;
 	for (int i = 0; i < bit_length; ++i) {
-		lut[i] = pow(double(i) / (bit_length - 1), gamma);
+		double const x = double(i) / (bit_length - 1);
+		lut[i] = pow((x * (to - from)) + from, gamma);
 	}
 
 	return lut;
