@@ -51,8 +51,10 @@ using std::string;
 using boost::optional;
 using boost::scoped_array;
 
-/** Convert a test image from sRGB to XYZ and check that the transforms are right */
-BOOST_AUTO_TEST_CASE (rgb_xyz_test)
+
+static
+void
+rgb_xyz_test_case (std::function<void (uint16_t*)> write_pixel)
 {
 	srand (0);
 	dcp::Size const size (640, 480);
@@ -61,11 +63,8 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 	for (int y = 0; y < size.height; ++y) {
 		uint16_t* p = reinterpret_cast<uint16_t*> (rgb.get() + y * size.width * 6);
 		for (int x = 0; x < size.width; ++x) {
-			/* Write a 12-bit random number for each component */
-			for (int c = 0; c < 3; ++c) {
-				*p = (rand () & 0xfff) << 4;
-				++p;
-			}
+			write_pixel (p);
+			p += 3;
 		}
 	}
 
@@ -123,6 +122,32 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 		}
 	}
 }
+
+
+/** Convert a test image from sRGB to XYZ and check that the transforms are right */
+BOOST_AUTO_TEST_CASE (rgb_xyz_test)
+{
+	{
+		int counter = 0;
+		rgb_xyz_test_case ([&counter](uint16_t* p) {
+			p[0] = p[1] = p[2] = (counter << 4);
+			++counter;
+			if (counter >= 4096) {
+				counter = 0;
+			}
+		});
+	}
+
+	boost::random::mt19937 rng(1);
+	boost::random::uniform_int_distribution<> dist(0, 4095);
+
+	rgb_xyz_test_case ([&rng, &dist](uint16_t* p) {
+			   p[0] = dist(rng) << 4;
+			   p[1] = dist(rng) << 4;
+			   p[2] = dist(rng) << 4;
+			   });
+}
+
 
 static list<string> notes;
 
