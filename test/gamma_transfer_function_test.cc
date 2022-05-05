@@ -31,24 +31,27 @@
     files in the program, then also delete it here.
 */
 
+
 #include "gamma_transfer_function.h"
 #include "modified_gamma_transfer_function.h"
 #include <boost/test/unit_test.hpp>
 
+
+using std::make_shared;
 using std::shared_ptr;
+
 
 /** Check GammaTransferFunction::about_equal */
 BOOST_AUTO_TEST_CASE (gamma_transfer_function_test)
 {
-	shared_ptr<dcp::GammaTransferFunction> a (new dcp::GammaTransferFunction (1.2));
-	shared_ptr<dcp::GammaTransferFunction> b (new dcp::GammaTransferFunction (1.2));
+	auto a = make_shared<dcp::GammaTransferFunction>(1.2);
+	auto b = make_shared<dcp::GammaTransferFunction>(1.2);
 	BOOST_CHECK (a->about_equal (b, 1e-6));
 
-	a.reset (new dcp::GammaTransferFunction (1.2));
-	a.reset (new dcp::GammaTransferFunction (1.3));
+	a = make_shared<dcp::GammaTransferFunction>(1.3);
 	BOOST_CHECK (a->about_equal (b, 0.2));
 	BOOST_CHECK (!a->about_equal (b, 0.05));
 
-	shared_ptr<dcp::ModifiedGammaTransferFunction> c (new dcp::ModifiedGammaTransferFunction (2.4, 0.05, 1, 2));
+	auto c = make_shared<dcp::ModifiedGammaTransferFunction>(2.4, 0.05, 1, 2);
 	BOOST_CHECK (!a->about_equal (c, 1));
 }

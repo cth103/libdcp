@@ -31,20 +31,23 @@
     files in the program, then also delete it here.
 */
 
+
 #include "rgb_xyz.h"
 #include "openjpeg_image.h"
 #include "colour_conversion.h"
 #include "stream_operators.h"
-#include <boost/test/unit_test.hpp>
 #include <boost/bind.hpp>
+#include <boost/random.hpp>
 #include <boost/scoped_array.hpp>
+#include <boost/test/unit_test.hpp>
 
-using std::max;
-using std::list;
-using std::string;
+
 using std::cout;
-using std::shared_ptr;
+using std::list;
 using std::make_shared;
+using std::max;
+using std::shared_ptr;
+using std::string;
 using boost::optional;
 using boost::scoped_array;
 
