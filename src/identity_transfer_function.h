@@ -49,7 +49,7 @@ public:
 	bool about_equal (std::shared_ptr<const TransferFunction> other, double epsilon) const override;
 
 protected:
-	double * make_lut (int bit_depth, bool inverse) const override;
+	std::vector<double> make_lut (int bit_depth, bool inverse) const override;
 };
 
 

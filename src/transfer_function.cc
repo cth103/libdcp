@@ -41,27 +41,16 @@
 #include <cmath>
 
 
-using std::pow;
+using std::make_pair;
 using std::map;
 using std::pair;
-using std::make_pair;
+using std::pow;
 using std::shared_ptr;
+using std::vector;
 using namespace dcp;
 
 
-TransferFunction::~TransferFunction ()
-{
-	boost::mutex::scoped_lock lm (_mutex);
-
-	for (auto const& i: _luts) {
-		delete[] i.second;
-	}
-
-	_luts.clear ();
-}
-
-
-double const *
+vector<double> const&
 TransferFunction::lut (int bit_depth, bool inverse) const
 {
 	boost::mutex::scoped_lock lm (_mutex);

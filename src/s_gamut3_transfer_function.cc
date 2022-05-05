@@ -41,17 +41,18 @@
 #include <cmath>
 
 
+using std::dynamic_pointer_cast;
 using std::pow;
 using std::shared_ptr;
-using std::dynamic_pointer_cast;
+using std::vector;
 using namespace dcp;
 
 
-double *
+vector<double>
 SGamut3TransferFunction::make_lut (int bit_depth, bool inverse) const
 {
 	int const bit_length = int(std::pow(2.0f, bit_depth));
-	double* lut = new double[bit_length];
+	auto lut = vector<double>(bit_length);
 	if (inverse) {
 		for (int i = 0; i < bit_length; ++i) {
 			auto const p = static_cast<double>(i) / (bit_length - 1);

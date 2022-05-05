@@ -41,9 +41,10 @@
 #include <cmath>
 
 
+using std::dynamic_pointer_cast;
 using std::pow;
 using std::shared_ptr;
-using std::dynamic_pointer_cast;
+using std::vector;
 using namespace dcp;
 
 
@@ -54,11 +55,11 @@ GammaTransferFunction::GammaTransferFunction (double gamma)
 }
 
 
-double *
+vector<double>
 GammaTransferFunction::make_lut (int bit_depth, bool inverse) const
 {
 	int const bit_length = int(std::pow(2.0f, bit_depth));
-	auto lut = new double[bit_length];
+	auto lut = vector<double>(bit_length);
 	double const gamma = inverse ? (1 / _gamma) : _gamma;
 	for (int i = 0; i < bit_length; ++i) {
 		lut[i] = pow(double(i) / (bit_length - 1), gamma);

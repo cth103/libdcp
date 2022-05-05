@@ -44,6 +44,7 @@
 #include <boost/thread/mutex.hpp>
 #include <map>
 #include <memory>
+#include <vector>
 
 
 namespace dcp {
@@ -57,22 +58,19 @@ class TransferFunction
 public:
 	TransferFunction () {}
 
-	TransferFunction (TransferFunction const&) = delete;
-	TransferFunction& operator= (TransferFunction const&) = delete;
-
-	virtual ~TransferFunction ();
+	virtual ~TransferFunction () {}
 
 	/** @return A look-up table (of size 2^bit_depth) whose values range from 0 to 1 */
-	double const * lut (int bit_depth, bool inverse) const;
+	std::vector<double> const& lut (int bit_depth, bool inverse) const;
 
 	virtual bool about_equal (std::shared_ptr<const TransferFunction> other, double epsilon) const = 0;
 
 protected:
 	/** Make a LUT and return an array allocated by new */
-	virtual double * make_lut (int bit_depth, bool inverse) const = 0;
+	virtual std::vector<double> make_lut (int bit_depth, bool inverse) const = 0;
 
 private:
-	mutable std::map<std::pair<int, bool>, double*> _luts;
+	mutable std::map<std::pair<int, bool>, std::vector<double>> _luts;
 	/** mutex to protect _luts */
 	mutable boost::mutex _mutex;
 };
