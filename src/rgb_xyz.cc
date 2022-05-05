@@ -237,23 +237,23 @@ dcp::combined_rgb_to_xyz (ColourConversion const & conversion, double* matrix)
 	auto const bradford = conversion.bradford ();
 
 	matrix[0] = (bradford (0, 0) * rgb_to_xyz (0, 0) + bradford (0, 1) * rgb_to_xyz (1, 0) + bradford (0, 2) * rgb_to_xyz (2, 0))
-		* DCI_COEFFICIENT * 65535;
+		* DCI_COEFFICIENT;
 	matrix[1] = (bradford (0, 0) * rgb_to_xyz (0, 1) + bradford (0, 1) * rgb_to_xyz (1, 1) + bradford (0, 2) * rgb_to_xyz (2, 1))
-		* DCI_COEFFICIENT * 65535;
+		* DCI_COEFFICIENT;
 	matrix[2] = (bradford (0, 0) * rgb_to_xyz (0, 2) + bradford (0, 1) * rgb_to_xyz (1, 2) + bradford (0, 2) * rgb_to_xyz (2, 2))
-		* DCI_COEFFICIENT * 65535;
+		* DCI_COEFFICIENT;
 	matrix[3] = (bradford (1, 0) * rgb_to_xyz (0, 0) + bradford (1, 1) * rgb_to_xyz (1, 0) + bradford (1, 2) * rgb_to_xyz (2, 0))
-		* DCI_COEFFICIENT * 65535;
+		* DCI_COEFFICIENT;
 	matrix[4] = (bradford (1, 0) * rgb_to_xyz (0, 1) + bradford (1, 1) * rgb_to_xyz (1, 1) + bradford (1, 2) * rgb_to_xyz (2, 1))
-		* DCI_COEFFICIENT * 65535;
+		* DCI_COEFFICIENT;
 	matrix[5] = (bradford (1, 0) * rgb_to_xyz (0, 2) + bradford (1, 1) * rgb_to_xyz (1, 2) + bradford (1, 2) * rgb_to_xyz (2, 2))
-		* DCI_COEFFICIENT * 65535;
+		* DCI_COEFFICIENT;
 	matrix[6] = (bradford (2, 0) * rgb_to_xyz (0, 0) + bradford (2, 1) * rgb_to_xyz (1, 0) + bradford (2, 2) * rgb_to_xyz (2, 0))
-		* DCI_COEFFICIENT * 65535;
+		* DCI_COEFFICIENT;
 	matrix[7] = (bradford (2, 0) * rgb_to_xyz (0, 1) + bradford (2, 1) * rgb_to_xyz (1, 1) + bradford (2, 2) * rgb_to_xyz (2, 1))
-		* DCI_COEFFICIENT * 65535;
+		* DCI_COEFFICIENT;
 	matrix[8] = (bradford (2, 0) * rgb_to_xyz (0, 2) + bradford (2, 1) * rgb_to_xyz (1, 2) + bradford (2, 2) * rgb_to_xyz (2, 2))
-		* DCI_COEFFICIENT * 65535;
+		* DCI_COEFFICIENT;
 }
 
 
@@ -277,7 +277,13 @@ dcp::rgb_to_xyz (
 	} d;
 
 	auto lut_in = conversion.in()->lut(0, 1, 12, false);
-	auto lut_out = conversion.out()->lut(0, 1, 16, true);
+
+	/* Use 2 separate LUTs for the output gamma to keep precision high enough for small values
+	 * where the curve is steep.
+	 */
+	auto constexpr piece = 0.02;
+	auto lut_out_low = conversion.out()->lut(0, piece, 16, true);
+	auto lut_out_high = conversion.out()->lut(piece, 1, 12, true);
 
 	/* This is is the product of the RGB to XYZ matrix, the Bradford transform and the DCI companding */
 	double fast_matrix[9];
@@ -303,21 +309,21 @@ dcp::rgb_to_xyz (
 
 			/* Clamp */
 
-			if (d.x < 0 || d.y < 0 || d.z < 0 || d.x > 65535 || d.y > 65535 || d.z > 65535) {
+			if (d.x < 0 || d.y < 0 || d.z < 0 || d.x > 1 || d.y > 1 || d.z > 1) {
 				++clamped;
 			}
 
 			d.x = max (0.0, d.x);
 			d.y = max (0.0, d.y);
 			d.z = max (0.0, d.z);
-			d.x = min (65535.0, d.x);
-			d.y = min (65535.0, d.y);
-			d.z = min (65535.0, d.z);
+			d.x = min (1.0, d.x);
+			d.y = min (1.0, d.y);
+			d.z = min (1.0, d.z);
 
 			/* Out gamma LUT */
-			*xyz_x++ = lrint (lut_out[lrint(d.x)] * 4095);
-			*xyz_y++ = lrint (lut_out[lrint(d.y)] * 4095);
-			*xyz_z++ = lrint (lut_out[lrint(d.z)] * 4095);
+			*xyz_x++ = lrint((d.x < piece ? lut_out_low[lrint((d.x / piece) * 65536)] : lut_out_high[lrint(((d.x - piece) / (1 - piece)) * 4096)]) * 4095);
+			*xyz_y++ = lrint((d.y < piece ? lut_out_low[lrint((d.y / piece) * 65536)] : lut_out_high[lrint(((d.y - piece) / (1 - piece)) * 4096)]) * 4095);
+			*xyz_z++ = lrint((d.z < piece ? lut_out_low[lrint((d.z / piece) * 65536)] : lut_out_high[lrint(((d.z - piece) / (1 - piece)) * 4096)]) * 4095);
 		}
 	}
 
