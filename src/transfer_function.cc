@@ -42,7 +42,6 @@
 
 
 using std::make_pair;
-using std::map;
 using std::pair;
 using std::pow;
 using std::shared_ptr;
