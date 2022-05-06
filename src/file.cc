@@ -178,7 +178,7 @@ File::seek(int64_t offset, int whence)
 {
 	DCP_ASSERT(_file);
 #ifdef LIBDCP_WINDOWS
-	return fseeki64(_file, offset, whence);
+	return _fseeki64(_file, offset, whence);
 #else
 	return fseek(_file, offset, whence);
 #endif
