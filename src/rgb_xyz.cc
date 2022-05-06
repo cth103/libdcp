@@ -321,9 +321,9 @@ dcp::rgb_to_xyz (
 			d.z = min (1.0, d.z);
 
 			/* Out gamma LUT */
-			*xyz_x++ = lrint((d.x < piece ? lut_out_low[lrint((d.x / piece) * 65536)] : lut_out_high[lrint(((d.x - piece) / (1 - piece)) * 4096)]) * 4095);
-			*xyz_y++ = lrint((d.y < piece ? lut_out_low[lrint((d.y / piece) * 65536)] : lut_out_high[lrint(((d.y - piece) / (1 - piece)) * 4096)]) * 4095);
-			*xyz_z++ = lrint((d.z < piece ? lut_out_low[lrint((d.z / piece) * 65536)] : lut_out_high[lrint(((d.z - piece) / (1 - piece)) * 4096)]) * 4095);
+			*xyz_x++ = lrint((d.x < piece ? lut_out_low[lrint((d.x / piece) * 65535)] : lut_out_high[lrint(((d.x - piece) / (1 - piece)) * 4095)]) * 4095);
+			*xyz_y++ = lrint((d.y < piece ? lut_out_low[lrint((d.y / piece) * 65535)] : lut_out_high[lrint(((d.y - piece) / (1 - piece)) * 4095)]) * 4095);
+			*xyz_z++ = lrint((d.z < piece ? lut_out_low[lrint((d.z / piece) * 65535)] : lut_out_high[lrint(((d.z - piece) / (1 - piece)) * 4095)]) * 4095);
 		}
 	}
 
