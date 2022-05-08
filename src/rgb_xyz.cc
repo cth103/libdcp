@@ -41,6 +41,7 @@
 #include "compose.hpp"
 #include "dcp_assert.h"
 #include "openjpeg_image.h"
+#include "piecewise_lut.h"
 #include "rgb_xyz.h"
 #include "transfer_function.h"
 #include <cmath>
@@ -257,6 +258,14 @@ dcp::combined_rgb_to_xyz (ColourConversion const & conversion, double* matrix)
 }
 
 
+PiecewiseLUT2
+dcp::make_inverse_gamma_lut(shared_ptr<const TransferFunction> fn)
+{
+	/* The parameters here were chosen by trial and error to reduce errors when running rgb_xyz_lut_test */
+	return PiecewiseLUT2(fn, 0.062, 16, 12, true);
+}
+
+
 shared_ptr<dcp::OpenJPEGImage>
 dcp::rgb_to_xyz (
 	uint8_t const * rgb,
@@ -277,13 +286,7 @@ dcp::rgb_to_xyz (
 	} d;
 
 	auto lut_in = conversion.in()->lut(0, 1, 12, false);
-
-	/* Use 2 separate LUTs for the output gamma to keep precision high enough for small values
-	 * where the curve is steep.
-	 */
-	auto constexpr piece = 0.02;
-	auto lut_out_low = conversion.out()->lut(0, piece, 16, true);
-	auto lut_out_high = conversion.out()->lut(piece, 1, 12, true);
+	auto lut_out = make_inverse_gamma_lut(conversion.out());
 
 	/* This is is the product of the RGB to XYZ matrix, the Bradford transform and the DCI companding */
 	double fast_matrix[9];
@@ -321,9 +324,9 @@ dcp::rgb_to_xyz (
 			d.z = min (1.0, d.z);
 
 			/* Out gamma LUT */
-			*xyz_x++ = lrint((d.x < piece ? lut_out_low[lrint((d.x / piece) * 65535)] : lut_out_high[lrint(((d.x - piece) / (1 - piece)) * 4095)]) * 4095);
-			*xyz_y++ = lrint((d.y < piece ? lut_out_low[lrint((d.y / piece) * 65535)] : lut_out_high[lrint(((d.y - piece) / (1 - piece)) * 4095)]) * 4095);
-			*xyz_z++ = lrint((d.z < piece ? lut_out_low[lrint((d.z / piece) * 65535)] : lut_out_high[lrint(((d.z - piece) / (1 - piece)) * 4095)]) * 4095);
+			*xyz_x++ = lrint(lut_out.lookup(d.x) * 4095);
+			*xyz_y++ = lrint(lut_out.lookup(d.y) * 4095);
+			*xyz_z++ = lrint(lut_out.lookup(d.z) * 4095);
 		}
 	}
 

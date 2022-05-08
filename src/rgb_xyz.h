@@ -37,6 +37,7 @@
  */
 
 
+#include "piecewise_lut.h"
 #include "types.h"
 #include <memory>
 #include <boost/optional.hpp>
@@ -90,6 +91,9 @@ extern void xyz_to_rgb (
 	int stride,
 	boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()
 	);
+
+
+extern PiecewiseLUT2 make_inverse_gamma_lut(std::shared_ptr<const TransferFunction> fn);
 
 
 /** @param rgb RGB data; packed RGB 16:16:16, 48bpp, 16R, 16G, 16B,

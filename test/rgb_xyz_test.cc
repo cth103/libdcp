@@ -32,9 +32,10 @@
 */
 
 
-#include "rgb_xyz.h"
-#include "openjpeg_image.h"
 #include "colour_conversion.h"
+#include "openjpeg_image.h"
+#include "piecewise_lut.h"
+#include "rgb_xyz.h"
 #include "stream_operators.h"
 #include <boost/bind.hpp>
 #include <boost/random.hpp>
@@ -146,6 +147,18 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_test)
 			   p[1] = dist(rng) << 4;
 			   p[2] = dist(rng) << 4;
 			   });
+}
+
+
+/** Check the piecewise LUT that is used for inverse gamma calculation */
+BOOST_AUTO_TEST_CASE (rgb_xyz_lut_test)
+{
+	auto conversion = dcp::ColourConversion::rec709_to_xyz();
+	auto lut = dcp::make_inverse_gamma_lut(conversion.out());
+
+	for (double x = 0; x < 1; x += 0.000001) {
+		BOOST_CHECK(std::abs(lrint(lut.lookup(x) * 4095) - lrint(pow(x, 1 / 2.6) * 4095)) < 2);
+	}
 }
 
 
