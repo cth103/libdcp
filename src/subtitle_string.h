@@ -142,7 +142,7 @@ public:
 		return _size;
 	}
 
-	int size_in_pixels (int screen_height) const;
+	float size_in_pixels (int screen_height) const;
 
 	float space_before () const {
 		return _space_before;

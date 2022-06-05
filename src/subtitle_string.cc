@@ -90,7 +90,7 @@ SubtitleString::SubtitleString (
 }
 
 
-int
+float
 SubtitleString::size_in_pixels (int screen_height) const
 {
 	/* Size in the subtitle file is given in points as if the screen
@@ -98,7 +98,7 @@ SubtitleString::size_in_pixels (int screen_height) const
 	   height.
 	*/
 
-	return _size * screen_height / (11 * 72);
+	return _size * static_cast<float>(screen_height) / (11.0f * 72.0f);
 }
 
 
