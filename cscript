@@ -39,9 +39,9 @@ option_defaults = { 'jpeg': 'oj2' }
 def dependencies(target, options):
     libcxml = ('libcxml', 'v0.17.3')
     if options['jpeg'] == 'oj1':
-        return (libcxml, ('openjpeg', 'f166257'), ('asdcplib', '42342ba044b9fe8c49c30048b4b1d61278ebd06f'))
+        return (libcxml, ('openjpeg', 'f166257'), ('asdcplib', 'a276ed1c5a43a92dd2b9ca93072ce8d024329e82'))
     else:
-        return (libcxml, ('openjpeg', 'a1403c2'), ('asdcplib', '42342ba044b9fe8c49c30048b4b1d61278ebd06f'))
+        return (libcxml, ('openjpeg', 'a1403c2'), ('asdcplib', 'a276ed1c5a43a92dd2b9ca93072ce8d024329e82'))
 
 def build(target, options):
     cmd = './waf configure --disable-examples --disable-benchmarks --prefix=%s' % target.directory
