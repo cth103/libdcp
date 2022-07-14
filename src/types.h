@@ -176,9 +176,21 @@ extern HAlign string_to_halign (std::string s);
 
 enum class VAlign
 {
-	TOP,    ///< vertical position is distance from top of screen to top of subtitle
-	CENTER, ///< vertical position is distance from centre of screen to centre of subtitle
-	BOTTOM  ///< vertical position is distance from bottom of screen to bottom of subtitle
+	/** vertical position is distance:
+	 *    from top of screen to top of subtitle (for SMPTE) or
+	 *    from top of screen to subtitle baseline (for Interop)
+	 */
+	TOP,
+	/** vertical position is distance:
+	 *    from centre of screen to centre of subtitle (for SMPTE) or
+	 *    from centre of screen to subtitle baseline (for Interop)
+	 */
+	CENTER,
+	/** vertical position is distance:
+	 *    from bottom of screen to bottom of subtitle (for SMPTE) or
+	 *    from bottom of screen to subtitle baseline (for Interop)
+	 */
+	BOTTOM
 };
 
 
