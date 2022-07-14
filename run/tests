@@ -10,7 +10,7 @@ work=build/test
 dcpinfo=build/tools/dcpinfo
 dcpverify=build/tools/dcpverify
 
-export LD_LIBRARY_PATH=build/src:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=build/src:/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH
 # SIP stops this being passed in from the caller's environment
 export DYLD_LIBRARY_PATH=/Users/ci/osx-environment/x86_64/10.10/lib:/Users/ci/workspace/lib
 export LIBDCP_RESOURCES=.
