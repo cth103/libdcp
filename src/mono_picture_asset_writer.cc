@@ -74,6 +74,17 @@ MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, boost::file
 }
 
 
+MonoPictureAssetWriter::~MonoPictureAssetWriter()
+{
+	try {
+		/* Last-resort finalization to close the file, at least */
+		if (_started) {
+			_state->mxf_writer.Finalize();
+		}
+	} catch (...) {}
+}
+
+
 void
 MonoPictureAssetWriter::start (uint8_t const * data, int size)
 {
@@ -131,6 +142,7 @@ MonoPictureAssetWriter::finalize ()
 		if (ASDCP_FAILURE(r)) {
 			boost::throw_exception (MXFFileError("error in finalizing video MXF", _file.string(), r));
 		}
+		_started = false;
 	}
 
 	_picture_asset->_intrinsic_duration = _frames_written;

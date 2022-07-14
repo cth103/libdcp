@@ -111,6 +111,17 @@ SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path f
 }
 
 
+SoundAssetWriter::~SoundAssetWriter()
+{
+	try {
+		/* Last-resort finalization to close the file, at least */
+		if (_started) {
+			_state->mxf_writer.Finalize();
+		}
+	} catch (...) {}
+}
+
+
 void
 SoundAssetWriter::start ()
 {
@@ -265,6 +276,7 @@ SoundAssetWriter::finalize ()
 		if (ASDCP_FAILURE(r)) {
 			boost::throw_exception (MiscError(String::compose ("could not finalise audio MXF (%1)", static_cast<int>(r))));
 		}
+		_started = false;
 	}
 
 	_asset->_intrinsic_duration = _frames_written;

@@ -67,6 +67,8 @@ class SoundAsset;
 class SoundAssetWriter : public AssetWriter
 {
 public:
+	~SoundAssetWriter();
+
 	/** @param data Pointer an array of float pointers, one for each channel.
 	 *  @param frames Number of frames i.e. number of floats that are given for each channel.
 	 */

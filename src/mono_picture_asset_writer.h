@@ -57,13 +57,15 @@ namespace dcp {
  *  Objects of this class can only be created with MonoPictureAsset::start_write().
  *
  *  Frames can be written to the MonoPictureAsset by calling write() with a JPEG2000 image
- *  (a verbatim .j2c file).  finalize() must be called after the last frame has been written.
- *  The action of finalize() can't be done in MonoPictureAssetWriter's destructor as it may
- *  throw an exception.
+ *  (a verbatim .j2c file).  finalize() should be called after the last frame has been written,
+ *  but if it is not, it will be called by the destructor (though in that case any error
+ *  during finalization will be ignored).
  */
 class MonoPictureAssetWriter : public PictureAssetWriter
 {
 public:
+	~MonoPictureAssetWriter();
+
 	FrameInfo write (uint8_t const *, int) override;
 	void fake_write (int size) override;
 	bool finalize () override;
