@@ -431,6 +431,7 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 
 	boost::filesystem::create_directory (path / "subs");
 	dcp::ArrayData data(4096);
+	memset(data.data(), 0, data.size());
 	subs->add_font ("afont", data);
 	subs->write (path / "subs" / "subs.xml");
 
