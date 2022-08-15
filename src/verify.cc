@@ -1534,10 +1534,7 @@ dcp::verify (
 					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH});
 				}
 
-				if (!cpl->full_content_title_text()) {
-					/* Since FullContentTitleText is assumed always to exist if there's a CompositionMetadataAsset we
-					 * can use it as a proxy for CompositionMetadataAsset's existence.
-					 */
+				if (!cpl->read_composition_metadata()) {
 					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get()});
 				} else if (!cpl->version_number()) {
 					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->id(), cpl->file().get()});

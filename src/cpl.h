@@ -328,6 +328,13 @@ public:
 		return _standard;
 	}
 
+	/** @return true iff this CPL was read from a file and it contained
+	 *  a CompositionMetadataAsset node.
+	 */
+	bool read_composition_metadata() const {
+		return _read_composition_metadata;
+	}
+
 	static std::string static_pkl_type (Standard standard);
 
 protected:
@@ -373,6 +380,7 @@ private:
 	/* See note for _release_territory above */
 	std::vector<std::string> _additional_subtitle_languages;
 	boost::optional<std::string> _sign_language_video_language;
+	bool _read_composition_metadata = false;
 
 	std::vector<std::shared_ptr<Reel>> _reels;
 

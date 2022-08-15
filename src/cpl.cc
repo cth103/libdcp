@@ -153,6 +153,7 @@ CPL::CPL (boost::filesystem::path file)
 		auto metadata = asset_list->optional_node_child("CompositionMetadataAsset");
 		if (metadata) {
 			read_composition_metadata_asset (metadata);
+			_read_composition_metadata = true;
 		}
 	}
 
