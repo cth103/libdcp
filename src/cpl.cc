@@ -243,9 +243,13 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 {
 	_cpl_metadata_id = remove_urn_uuid(node->string_child("Id"));
 
-	auto fctt = node->node_child("FullContentTitleText");
-	_full_content_title_text = fctt->content();
-	_full_content_title_text_language = fctt->optional_string_attribute("language");
+	/* FullContentTitleText is compulsory but in DoM #2295 we saw a commercial tool which
+	 * apparently didn't include it, so as usual we have to be defensive.
+	 */
+	if (auto fctt = node->optional_node_child("FullContentTitleText")) {
+		_full_content_title_text = fctt->content();
+		_full_content_title_text_language = fctt->optional_string_attribute("language");
+	}
 
 	_release_territory = node->optional_string_child("ReleaseTerritory");
 	if (_release_territory) {

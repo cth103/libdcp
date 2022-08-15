@@ -422,3 +422,9 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_roundtrip_test_2)
 		);
 }
 
+
+BOOST_AUTO_TEST_CASE(check_that_missing_full_content_title_text_is_tolerated)
+{
+	dcp::CPL cpl("test/ref/cpl_metadata_test3.xml");
+}
+
