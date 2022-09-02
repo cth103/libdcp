@@ -1315,6 +1315,19 @@ dcp::verify (
 				verify_language_tag (i, notes);
 			}
 
+			if (!cpl->content_kind().scope() || *cpl->content_kind().scope() == "http://www.smpte-ra.org/schemas/429-7/2006/CPL#standard-content") {
+				/* This is a content kind from http://www.smpte-ra.org/schemas/429-7/2006/CPL#standard-content; make sure it's one
+				 * of the approved ones.
+				 */
+				auto all = ContentKind::all();
+				auto name = cpl->content_kind().name();
+				transform(name.begin(), name.end(), name.begin(), ::tolower);
+				auto iter = std::find_if(all.begin(), all.end(), [name](ContentKind const& k) { return !k.scope() && k.name() == name; });
+				if (iter == all.end()) {
+					notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_CONTENT_KIND, cpl->content_kind().name()});
+				}
+			}
+
 			if (cpl->release_territory()) {
 				if (!cpl->release_territory_scope() || cpl->release_territory_scope().get() != "http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata#scope/release-territory/UNM49") {
 					auto terr = cpl->release_territory().get();
@@ -1770,6 +1783,8 @@ dcp::note_to_string (VerificationNote note)
 		return "There is an <EntryPoint> node inside a <MainMarkers>.";
 	case VerificationNote::Code::UNEXPECTED_DURATION:
 		return "There is an <Duration> node inside a <MainMarkers>.";
+	case VerificationNote::Code::INVALID_CONTENT_KIND:
+		return String::compose("<ContentKind> has an invalid value %1.", note.note().get());
 	}
 
 	return "";

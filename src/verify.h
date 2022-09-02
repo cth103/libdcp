@@ -396,7 +396,9 @@ public:
 		/** Some <MainMarkers> asset has an <EntryPoint> that should not be there */
 		UNEXPECTED_ENTRY_POINT,
 		/** Some <MainMarkers> asset has an <Duration> that should not be there */
-		UNEXPECTED_DURATION
+		UNEXPECTED_DURATION,
+		/** A <ContentKind> has been specified with either no scope or the SMPTE 429-7 scope, but which is not one of those allowed */
+		INVALID_CONTENT_KIND
 	};
 
 	VerificationNote (Type type, Code code)

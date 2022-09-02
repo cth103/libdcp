@@ -419,8 +419,10 @@ BOOST_AUTO_TEST_CASE (verify_failed_read_content_kind)
 
 	check_verify_result (
 		{ dir },
-		{{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::FAILED_READ, string("Bad content kind 'xtrailer'")}}
-		);
+		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id, canonical(dir / dcp_test1_cpl) },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_CONTENT_KIND, string("xtrailer") }
+		});
 }
 
 
@@ -3159,3 +3161,51 @@ BOOST_AUTO_TEST_CASE (verify_unexpected_things_in_main_markers)
 		});
 }
 
+
+BOOST_AUTO_TEST_CASE(verify_invalid_content_kind)
+{
+	path dir = "build/test/verify_invalid_content_kind";
+	prepare_directory (dir);
+	auto dcp = make_simple (dir, 1, 24);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
+
+	{
+		Editor e(find_cpl(dir));
+		e.replace("trailer", "trip");
+	}
+
+	dcp::CPL cpl (find_cpl(dir));
+
+	check_verify_result (
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_CONTENT_KIND, string("trip") }
+		});
+
+}
+
+
+BOOST_AUTO_TEST_CASE(verify_valid_content_kind)
+{
+	path dir = "build/test/verify_valid_content_kind";
+	prepare_directory (dir);
+	auto dcp = make_simple (dir, 1, 24);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
+
+	{
+		Editor e(find_cpl(dir));
+		e.replace("<ContentKind>trailer</ContentKind>", "<ContentKind scope=\"http://bobs.contents/\">trip</ContentKind>");
+	}
+
+	dcp::CPL cpl (find_cpl(dir));
+
+	check_verify_result (
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
+		});
+
+}

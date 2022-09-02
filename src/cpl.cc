@@ -122,7 +122,8 @@ CPL::CPL (boost::filesystem::path file)
 	_creator = f.optional_string_child("Creator").get_value_or("");
 	_issue_date = f.string_child ("IssueDate");
 	_content_title_text = f.string_child ("ContentTitleText");
-	_content_kind = ContentKind::from_name(f.string_child("ContentKind"));
+	auto content_kind = f.node_child("ContentKind");
+	_content_kind = ContentKind(content_kind->content(), content_kind->optional_string_attribute("scope"));
 	shared_ptr<cxml::Node> content_version = f.optional_node_child ("ContentVersion");
 	if (content_version) {
 		/* XXX: SMPTE should insist that Id is present */
@@ -198,7 +199,11 @@ CPL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain>
 	root->add_child("Issuer")->add_child_text (_issuer);
 	root->add_child("Creator")->add_child_text (_creator);
 	root->add_child("ContentTitleText")->add_child_text (_content_title_text);
-	root->add_child("ContentKind")->add_child_text(_content_kind.name());
+	auto content_kind = root->add_child("ContentKind");
+	content_kind->add_child_text(_content_kind.name());
+	if (_content_kind.scope()) {
+		content_kind->set_attribute("scope", *_content_kind.scope());
+	}
 	if (_content_versions.empty()) {
 		ContentVersion cv;
 		cv.as_xml (root);

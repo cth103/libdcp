@@ -43,6 +43,10 @@ using std::vector;
 using namespace dcp;
 
 
+static std::string const smpte_429_16_scope = "http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata#scope/content-kind";
+static std::string const smpte_2067_3_scope = "http://www.smpte-ra.org/schemas/2067-3/2013#content-kind";
+
+
 ContentKind const ContentKind::FEATURE                     = ContentKind{"feature"};
 ContentKind const ContentKind::SHORT                       = ContentKind{"short"};
 ContentKind const ContentKind::TRAILER                     = ContentKind{"trailer"};
@@ -53,8 +57,12 @@ ContentKind const ContentKind::TEASER                      = ContentKind{"teaser
 ContentKind const ContentKind::POLICY                      = ContentKind{"policy"};
 ContentKind const ContentKind::PUBLIC_SERVICE_ANNOUNCEMENT = ContentKind{"psa"};
 ContentKind const ContentKind::ADVERTISEMENT               = ContentKind{"advertisement"};
-ContentKind const ContentKind::EPISODE                     = ContentKind{"episode"};
-ContentKind const ContentKind::PROMO                       = ContentKind{"promo"};
+ContentKind const ContentKind::CLIP                        = ContentKind{"clip", smpte_429_16_scope};
+ContentKind const ContentKind::PROMO                       = ContentKind{"promo", smpte_429_16_scope};
+ContentKind const ContentKind::STEREOCARD                  = ContentKind{"stereocard", smpte_429_16_scope};
+ContentKind const ContentKind::EPISODE                     = ContentKind{"episode", smpte_2067_3_scope};
+ContentKind const ContentKind::HIGHLIGHTS                  = ContentKind{"highlights", smpte_2067_3_scope};
+ContentKind const ContentKind::EVENT                       = ContentKind{"event", smpte_2067_3_scope};
 
 
 vector<ContentKind>
@@ -93,7 +101,7 @@ ContentKind::from_name(string name)
 bool
 dcp::operator==(ContentKind const& a, ContentKind const& b)
 {
-	return a.name() == b.name();
+	return a.name() == b.name() && a.scope() == b.scope();
 }
 
 

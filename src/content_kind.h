@@ -47,8 +47,17 @@ namespace dcp {
 class ContentKind
 {
 public:
+	ContentKind(std::string name, boost::optional<std::string> scope)
+		: _name(name)
+		, _scope(scope)
+	{}
+
 	std::string name() const {
 		return _name;
+	}
+
+	boost::optional<std::string> scope() const {
+		return _scope;
 	}
 
 	static const ContentKind FEATURE;
@@ -61,8 +70,12 @@ public:
 	static const ContentKind POLICY;
 	static const ContentKind PUBLIC_SERVICE_ANNOUNCEMENT;
 	static const ContentKind ADVERTISEMENT;
-	static const ContentKind EPISODE;
+	static const ContentKind CLIP;
 	static const ContentKind PROMO;
+	static const ContentKind STEREOCARD;
+	static const ContentKind EPISODE;
+	static const ContentKind HIGHLIGHTS;
+	static const ContentKind EVENT;
 
 	static ContentKind from_name(std::string name);
 	static std::vector<ContentKind> all();
@@ -73,6 +86,7 @@ private:
 	{}
 
 	std::string _name;
+	boost::optional<std::string> _scope;
 };
 
 

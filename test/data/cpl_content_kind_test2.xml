@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompositionPlaylist xmlns="http://www.smpte-ra.org/schemas/429-7/2006/CPL">
+  <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
+  <AnnotationText></AnnotationText>
+  <IssueDate>2020-08-28T13:35:06+02:00</IssueDate>
+  <Issuer>libdcp1.6.4devel</Issuer>
+  <Creator>libdcp1.6.4devel</Creator>
+  <ContentTitleText></ContentTitleText>
+  <ContentKind scope="http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata#scope/content-kind">clip</ContentKind>
+  <ContentVersion>
+    <Id>some-id</Id>
+    <LabelText>version 1</LabelText>
+  </ContentVersion>
+  <RatingList/>
+  <ReelList>
+    <Reel>
+      <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
+      <AssetList>
+        <MainPicture>
+          <Id>urn:uuid:e98d059d-645f-4343-a30f-edc61d58b8e0</Id>
+          <EditRate>24 1</EditRate>
+          <IntrinsicDuration>24</IntrinsicDuration>
+          <EntryPoint>0</EntryPoint>
+          <Duration>24</Duration>
+          <Hash>JtPL3uT3jyKMLysaqgdBWQb/n2E=</Hash>
+          <FrameRate>24 1</FrameRate>
+          <ScreenAspectRatio>1998 1080</ScreenAspectRatio>
+        </MainPicture>
+      </AssetList>
+    </Reel>
+  </ReelList>
+</CompositionPlaylist>
