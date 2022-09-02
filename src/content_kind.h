@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2022 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,26 +32,56 @@
 */
 
 
-#include "content_kind.h"
-#include "rating.h"
-#include "types.h"
-#include "verify.h"
+#ifndef LIBDCP_CONTENT_KIND_H
+#define LIBDCP_CONTENT_KIND_H
+
+
+#include <boost/optional.hpp>
+#include <string>
+#include <vector>
 
 
 namespace dcp {
 
-std::ostream& operator<< (std::ostream& s, Size const& a);
-std::ostream& operator<< (std::ostream& s, Channel c);
-std::ostream& operator<< (std::ostream& s, MCASoundField f);
-std::ostream& operator<< (std::ostream& s, ContentKind c);
-std::ostream& operator<< (std::ostream& s, Effect e);
-std::ostream& operator<< (std::ostream& s, Fraction const& f);
-std::ostream& operator<< (std::ostream& s, NoteType t);
-std::ostream& operator<< (std::ostream& s, Standard t);
-std::ostream& operator<< (std::ostream& s, Colour const& c);
-std::ostream& operator<< (std::ostream& s, Rating const& r);
-std::ostream& operator<< (std::ostream& s, Status t);
-std::ostream& operator<< (std::ostream& s, VerificationNote::Code c);
-std::ostream& operator<< (std::ostream& s, VerificationNote::Type t);
+
+class ContentKind
+{
+public:
+	std::string name() const {
+		return _name;
+	}
+
+	static const ContentKind FEATURE;
+	static const ContentKind SHORT;
+	static const ContentKind TRAILER;
+	static const ContentKind TEST;
+	static const ContentKind TRANSITIONAL;
+	static const ContentKind RATING;
+	static const ContentKind TEASER;
+	static const ContentKind POLICY;
+	static const ContentKind PUBLIC_SERVICE_ANNOUNCEMENT;
+	static const ContentKind ADVERTISEMENT;
+	static const ContentKind EPISODE;
+	static const ContentKind PROMO;
+
+	static ContentKind from_name(std::string name);
+	static std::vector<ContentKind> all();
+
+private:
+	explicit ContentKind(std::string name)
+		: _name(name)
+	{}
+
+	std::string _name;
+};
+
+
+bool operator==(ContentKind const& a, ContentKind const& b);
+bool operator!=(ContentKind const& a, ContentKind const& b);
+
+
 }
+
+
+#endif
 

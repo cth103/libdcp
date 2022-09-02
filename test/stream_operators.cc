@@ -81,7 +81,7 @@ dcp::operator<< (std::ostream& s, Effect e)
 ostream&
 dcp::operator<< (ostream& s, ContentKind c)
 {
-	s << content_kind_to_string(c);
+	s << c.name();
 	return s;
 }
 

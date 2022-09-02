@@ -73,21 +73,21 @@ BOOST_AUTO_TEST_CASE (base64_decode_test)
 	}
 }
 
-/** Test dcp::content_kind_from_string */
+/** Test ContentKind::from_name */
 BOOST_AUTO_TEST_CASE (content_kind_test)
 {
-	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("feature"), dcp::ContentKind::FEATURE);
-	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("Feature"), dcp::ContentKind::FEATURE);
-	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("FeaturE"), dcp::ContentKind::FEATURE);
-	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("Short"), dcp::ContentKind::SHORT);
-	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("trailer"), dcp::ContentKind::TRAILER);
-	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("test"), dcp::ContentKind::TEST);
-	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("transitional"), dcp::ContentKind::TRANSITIONAL);
-	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("rating"), dcp::ContentKind::RATING);
-	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("teaser"), dcp::ContentKind::TEASER);
-	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("policy"), dcp::ContentKind::POLICY);
-	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("psa"), dcp::ContentKind::PUBLIC_SERVICE_ANNOUNCEMENT);
-	BOOST_CHECK_EQUAL (dcp::content_kind_from_string ("advertisement"), dcp::ContentKind::ADVERTISEMENT);
+	BOOST_CHECK_EQUAL(dcp::ContentKind::from_name("feature"), dcp::ContentKind::FEATURE);
+	BOOST_CHECK_EQUAL(dcp::ContentKind::from_name("Feature"), dcp::ContentKind::FEATURE);
+	BOOST_CHECK_EQUAL(dcp::ContentKind::from_name("FeaturE"), dcp::ContentKind::FEATURE);
+	BOOST_CHECK_EQUAL(dcp::ContentKind::from_name("Short"), dcp::ContentKind::SHORT);
+	BOOST_CHECK_EQUAL(dcp::ContentKind::from_name("trailer"), dcp::ContentKind::TRAILER);
+	BOOST_CHECK_EQUAL(dcp::ContentKind::from_name("test"), dcp::ContentKind::TEST);
+	BOOST_CHECK_EQUAL(dcp::ContentKind::from_name("transitional"), dcp::ContentKind::TRANSITIONAL);
+	BOOST_CHECK_EQUAL(dcp::ContentKind::from_name("rating"), dcp::ContentKind::RATING);
+	BOOST_CHECK_EQUAL(dcp::ContentKind::from_name("teaser"), dcp::ContentKind::TEASER);
+	BOOST_CHECK_EQUAL(dcp::ContentKind::from_name("policy"), dcp::ContentKind::POLICY);
+	BOOST_CHECK_EQUAL(dcp::ContentKind::from_name("psa"), dcp::ContentKind::PUBLIC_SERVICE_ANNOUNCEMENT);
+	BOOST_CHECK_EQUAL(dcp::ContentKind::from_name("advertisement"), dcp::ContentKind::ADVERTISEMENT);
 }
 
 /** Test dcp::relative_to_root */

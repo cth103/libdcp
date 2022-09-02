@@ -43,6 +43,7 @@
 
 #include "asset.h"
 #include "certificate.h"
+#include "content_kind.h"
 #include "key.h"
 #include "language_tag.h"
 #include "rating.h"

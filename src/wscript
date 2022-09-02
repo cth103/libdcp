@@ -47,6 +47,7 @@ def build(bld):
              chromaticity.cc
              colour_conversion.cc
              combine.cc
+             content_kind.cc
              cpl.cc
              data.cc
              dcp.cc
@@ -138,6 +139,7 @@ def build(bld):
               colour_conversion.h
               combine.h
               compose.hpp
+              content_kind.h
               cpl.h
               crypto_context.h
               data.h

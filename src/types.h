@@ -129,27 +129,6 @@ extern std::string channel_to_mca_name (Channel c, MCASoundField field);
 extern ASDCP::UL channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dictionary const* dict);
 
 
-enum class ContentKind
-{
-	FEATURE,
-	SHORT,
-	TRAILER,
-	TEST,
-	TRANSITIONAL,
-	RATING,
-	TEASER,
-	POLICY,
-	PUBLIC_SERVICE_ANNOUNCEMENT,
-	ADVERTISEMENT,
-	EPISODE,
-	PROMO
-};
-
-
-extern std::string content_kind_to_string (ContentKind kind);
-extern ContentKind content_kind_from_string (std::string kind);
-
-
 enum class Effect
 {
 	NONE,
