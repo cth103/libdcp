@@ -1676,11 +1676,11 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT:
 		return String::compose("The CPL %1 has no <AnnotationText> tag.", note.note().get());
 	case VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT:
-		return String::compose("The CPL %1 has an <AnnotationText> which differs from its <ContentTitleText>", note.note().get());
+		return String::compose("The CPL %1 has an <AnnotationText> which differs from its <ContentTitleText>.", note.note().get());
 	case VerificationNote::Code::MISMATCHED_ASSET_DURATION:
 		return "All assets in a reel do not have the same duration.";
 	case VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS:
-		return "At least one reel contains a subtitle asset, but some reel(s) do not";
+		return "At least one reel contains a subtitle asset, but some reel(s) do not.";
 	case VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS:
 		return "At least one reel has closed captions, but reels have different numbers of closed caption assets.";
 	case VerificationNote::Code::MISSING_SUBTITLE_ENTRY_POINT:
@@ -1694,13 +1694,13 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::MISSING_HASH:
 		return String::compose("The asset %1 has no <Hash> tag in the CPL.", note.note().get());
 	case VerificationNote::Code::MISSING_FFEC_IN_FEATURE:
-		return "The DCP is marked as a Feature but there is no FFEC (first frame of end credits) marker";
+		return "The DCP is marked as a Feature but there is no FFEC (first frame of end credits) marker.";
 	case VerificationNote::Code::MISSING_FFMC_IN_FEATURE:
-		return "The DCP is marked as a Feature but there is no FFMC (first frame of moving credits) marker";
+		return "The DCP is marked as a Feature but there is no FFMC (first frame of moving credits) marker.";
 	case VerificationNote::Code::MISSING_FFOC:
-		return "There should be a FFOC (first frame of content) marker";
+		return "There should be a FFOC (first frame of content) marker.";
 	case VerificationNote::Code::MISSING_LFOC:
-		return "There should be a LFOC (last frame of content) marker";
+		return "There should be a LFOC (last frame of content) marker.";
 	case VerificationNote::Code::INCORRECT_FFOC:
 		return String::compose("The FFOC marker is %1 instead of 1", note.note().get());
 	case VerificationNote::Code::INCORRECT_LFOC:
@@ -1722,7 +1722,7 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::PARTIALLY_ENCRYPTED:
 		return "Some assets are encrypted but some are not.";
 	case VerificationNote::Code::INVALID_JPEG2000_CODESTREAM:
-		return String::compose("The JPEG2000 codestream for at least one frame is invalid (%1)", note.note().get());
+		return String::compose("The JPEG2000 codestream for at least one frame is invalid (%1).", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K:
 		return String::compose("The JPEG2000 codestream uses %1 guard bits in a 2K image instead of 1.", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_4K:
@@ -1738,9 +1738,9 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K:
 		return String::compose("%1 POC markers found in 4K JPEG2000 codestream instead of 1.", note.note().get());
 	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER:
-		return String::compose("Incorrect POC marker content found (%1)", note.note().get());
+		return String::compose("Incorrect POC marker content found (%1).", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_POC_MARKER_LOCATION:
-		return "POC marker found outside main header";
+		return "POC marker found outside main header.";
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K:
 		return String::compose("The JPEG2000 codestream has %1 tile parts in a 2K image instead of 3.", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K:
