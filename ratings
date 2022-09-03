@@ -22,70 +22,70 @@ http://www.movielabs.com/md/ratings/AR/INCAA/0
 INCAA
 Argentina
 AR
-Todo público
-mayores de 13
-mayores de 16
-mayores de 18
-condicionada
+ATP
+SAM13
+SAM16
+SAM18
+C
 http://www.movielabs.com/md/ratings/AT/BMUKK/2
 BMUKK
 Austria
 AT
-Freigaben für alle Altersstufen
-Freigaben ab 6 Jahren
-Freigaben ab 8 Jahren
-Freigaben ab 10 Jahren
-Freigaben ab 12 Jahren
-Freigaben ab 14 Jahren
-Freigaben ab 16 Jahren
+AA
+6
+8
+10
+12
+14
+16
 http://www.movielabs.com/md/ratings/AU/ACMA/1
 ACMA
 Australia
 AU
-The General (G) Classification
-The Parental Guidance Recommended (PG) Classification
-Children
-Preschool
-The Mature (M) Classification
-The Mature Audience (MA) Classification
+G
+PG
+C
+P
+M
+MA
 http://www.movielabs.com/md/ratings/AU/NCS/1
 NCS
 Australia
 AU
-General (G)
-Parental Guidance (PG)
-Mature (M)
-Mature Accompanied (MA 15+)
-Restricted (R 18+)
-Check the Classification (CTC)
-Restricted (X 18+)
-Refused Classification (RC)
+G
+PG
+M
+MA15
+R18+
+CTC
+X18+
+RC
 http://www.movielabs.com/md/ratings/BE/CICF/1
 CICF
 Belgium
 BE
-Exempt
-Kinderen Toegelaten
-Kinderen Niet Toegelaten
+E
+KT/EA
+KNT/ENA
 http://www.movielabs.com/md/ratings/BE/CSA/1
 CSA
 Belgium/Wallonie
 BE
-déconseillés aux moins de 10 ans
-déconseillés aux moins de 12 ans
-déconseillés aux moins de 16 ans
-déconseillés aux moins de 18 ans
-interdits
+10
+12
+16
+18
+interdiction
 http://www.movielabs.com/md/ratings/BE/PEGI/0
 PEGI
 Belgium
 BE
-PEGI OK
-PEGI 3
-PEGI 7
-PEGI 12
-PEGI 16
-PEGI 18
+PEGI-OK
+PEGI-3
+PEGI-7
+PEGI-12
+PEGI-16
+PEGI-18
 http://www.movielabs.com/md/ratings/BG/NFRC/3
 NFRC
 Bulgaria
@@ -116,7 +116,7 @@ http://www.movielabs.com/md/ratings/BO/Film/0
 Film
 Bolivia
 BO
-Todo público
+TP
 14
 16
 18
@@ -124,28 +124,28 @@ http://www.movielabs.com/md/ratings/BR/DJCTQ/5
 DJCTQ
 Brazil
 BR
-Especialmente recomendado para crianças e adolescentes
-Conteúdo varia de Livre a 14 anos
-Conteúdo varia de Livre a 16 anos
-Conteúdo varia de Livre a 18 anos
-Conteúdo varia de Livre a 10 anos
-Livre para todos os públicos
-Livre a 12 anos
-10 a 14 anos
-10 a 12 anos
-Não recomendado para menores de 10 anos
-10 a 18 anos
-10 a 16 anos
-12 a 18 anos
-12 a 16 anos
-12 a 14 anos
-Não recomendado para menores de 12 anos
-Não recomendado para menores de 14 anos
-14 a 18 anos
-14 a 16 anos
-Não recomendado para menores de 16 anos
-16 a 18 anos
-Não recomendado para menores de 18 anos
+ER
+L-14
+L-16
+L-18
+L-10
+L
+L-12
+10-14
+10-12
+10
+10-18
+10-16
+12-18
+12-16
+12-14
+12
+14
+14-18
+14-16
+16
+16-18
+18
 http://www.movielabs.com/md/ratings/BY/IBC/0
 MKRF
 Belarus
@@ -159,33 +159,33 @@ http://www.movielabs.com/md/ratings/CA/AFC/2
 AFC
 Canada/Alberta
 CA
-General
-Parental Guidance
-14 Accompaniment
-18 Accompaniment
-Restricted
+G
+PG
+14A
+18A
+R
 http://www.movielabs.com/md/ratings/CA/CBSC-F/1
 CBSC-F
 Canada/Quebec
 CA
-General
-Exempt
-8 years and over
-13 years and over
-16 years and over
-18 years and over
-Refusal of classification
+G
+EC
+8+
+13+
+16+
+18+
+RC
 http://www.movielabs.com/md/ratings/CA/CBSC/2
 CBSC
 Canada/Ontario
 CA
-Children
-Exempt
+C
+E
 C8
-General
-Parental Guidance
-Over 14 Years
-18 years and older.
+G
+PG
+14
+18
 http://www.movielabs.com/md/ratings/CA/CHVRS/1
 CHVRS
 Canada
@@ -202,84 +202,84 @@ Canada/British Columbia
 CA
 AP
 SP
-Restricted
-Adult
+R
+A
 http://www.movielabs.com/md/ratings/CA/CPBC/2
 CPBC
 Canada/British Columbia
 CA
-General
-Parental Guidance
-14 Accompaniment
-18 Accompaniment
-Restricted
-Adult
+G
+PG
+14A
+18A
+R
+A
 http://www.movielabs.com/md/ratings/CA/MFCB/2
 MFCB
 Canada/Prince Edward Island
 CA
-General
-Parental Guidance
-14 Accompaniment
-18 Accompaniment
-Restricted
-Adult
-Explicit Material
-Adult Accompaniment
+G
+PG
+14A
+18A
+R
+A
+XXX
+AA
 http://www.movielabs.com/md/ratings/CA/OFRB/2
 OFRB
 Canada/Ontario
 CA
-All
-Parental Guidance
-14 Accompanied
-14 Accompanied
-RESTRICTED
+G
+PG
+14A
+18A
+R
 http://www.movielabs.com/md/ratings/CA/RCQ/2
 RCQ
 Canada/Quebec
 CA
-General
-13 years and over
-16 years and over
-18 years and over
-Refusal of classification
+G
+13+
+16+
+18+
+RC
 http://www.movielabs.com/md/ratings/CH/Film/2
 Film
 Switzerland
 CH
-Freigegeben ohne Altersbeschränkung (d.h. ab 0 Jahren)
-Freigegeben ab 6 Jahren
-Accès légal dès 8 ans (cinéma)
-Freigegeben ab 10 Jahren (Kino)
-Freigegeben ab 12 Jahren
-Freigegeben ab 14 Jahren (Kino)
-Freigegeben ab 16 Jahren
-Freigegeben ab 18 Jahren
+0
+6
+8
+10
+12
+14
+16
+18
 http://www.movielabs.com/md/ratings/CL/ANATEL/0
 ANATEL
 Chile
 CL
-Familiar
-Infantil
-Infantil para mayores de 7 años
-Infantil para mayores de 10 años
-Infantil para mayores de 12 años
-Responsabilidad compartida
-Adulto
+F
+I
+I-7
+I-10
+I-12
+R
+A
 http://www.movielabs.com/md/ratings/CL/CCC/1
 CCC
 Chile
 CL
-Todo espectador
-Mayores de 6 años
-Mayores de 14 años
-Mayores de 18 años
+TE
+6
+14
+18
 http://www.movielabs.com/md/ratings/CO/MOC/1
 MOC
 Colombia
 CO
-Exempt
+E
 T
 7
 12
@@ -313,7 +313,7 @@ DE
 0
 6
 12
-
+12ab20uhr
 16
 18
 X
@@ -321,29 +321,29 @@ http://www.movielabs.com/md/ratings/DE/FSK/1
 FSK
 Germany
 DE
-FSK ab 0 freigegeben/Freigegeben ohne Altersbeschränkung
-FSK ab 6 freigegeben
-FSK ab 12 freigegeben
-FSK ab 16 freigegeben
-FSK ab 18/Keine Jugendfreigabe
-Keine Kennzeichnung
+0
+6
+12
+16
+18
+Keine
 http://www.movielabs.com/md/ratings/DK/MCCYP/1
 MCCYP
 Denmark
 DK
 A
 7
-Approval of the film for admittance of children from the age of 11
-Approval of the film for admittance of children from the age of 15
+11
+15
 http://www.movielabs.com/md/ratings/EC/CNE/0
 CNE
 Ecuador
 EC
-Todo público
-12 años
-15 años
-18 años
-21 años
+TP
+12
+15
+18
+21
 http://www.movielabs.com/md/ratings/EC/TV/0
 TV
 Ecuador
@@ -355,7 +355,7 @@ http://www.movielabs.com/md/ratings/EE/Film/1
 Film
 Estonia
 EE
-PERE
+Pere
 L
 MS-6
 K-6
@@ -371,7 +371,7 @@ EG
 GN
 12+
 18
-BANNED
+BN
 http://www.movielabs.com/md/ratings/ES/ICAA/2
 ICAA
 Spain
@@ -388,46 +388,46 @@ http://www.movielabs.com/md/ratings/FI/MEKU/2
 MEKU
 Finland
 FI
-Sallittu kaikenikäisille
-Sallittu yli 7-vuotiaille
-Sallittu yli 12-vuotiaille
-Förbjudet under 18 år
-Förbjudet under 18 år
+S
+7
+12
+16
+18
 http://www.movielabs.com/md/ratings/FR/CNC/3
 CNC
 France
 FR
-visa autorisant, pour tous publics, la représentation de l'œuvre
-visa comportant interdiction de représentation aux mineurs de douze ans
-visa comportant interdiction de représentation aux mineurs de seize ans
-visa comportant interdiction de représentation aux mineurs de dix-huit ans
-visa comportant interdiction totale de l'œuvre
+T
+12
+16
+18
+interdiction
 http://www.movielabs.com/md/ratings/FR/CSA/3
 CSA
 France
 FR
-déconseillés aux moins de 10 ans
-déconseillés aux moins de 12 ans
-déconseillés aux moins de 16 ans
-déconseillés aux moins de 18 ans
-interdits
+10
+12
+16
+18
+interdiction
 http://www.movielabs.com/md/ratings/GB/BBFC/1
 BBFC
 United Kingdom
 GB
-Universal
-Parental Guidance
-Accompanied under 12
-12 and Older
-15 and Older
-18 and Older
-RESTRICTED 18 and Older
+U
+PG
+12A
+12
+15
+18
+R18
 http://www.movielabs.com/md/ratings/GR/Film/0
 Film
 Greece
 GR
 K
-Exempt
+E
 K-12
 K-13
 K-15
@@ -437,18 +437,18 @@ http://www.movielabs.com/md/ratings/HK/FCO/1
 FCO
 Hong Kong
 HK
-Category I
-Category IIA
-Category IIB
-Category III
+I
+IIA
+IIB
+III
 http://www.movielabs.com/md/ratings/HN/Film/0
 Film
 Honduras
 HN
 G
-12 años
-15 años
-18 años
+12
+15
+18
 http://www.movielabs.com/md/ratings/HR/HAVC/0
 HAVC
 Croatia
@@ -471,17 +471,17 @@ http://www.movielabs.com/md/ratings/ID/LSF/1
 LSF
 Indonesia
 ID
-Semua Umur
-Anak-anak
-13+
-17+
-21+
+SU
+A
+13
+17
+21
 http://www.movielabs.com/md/ratings/IE/IFCOF/1
 IFCOF
 Ireland
 IE
-General Audiences
-Parental Guidance
+G
+PG
 12A
 15A
 16
@@ -490,8 +490,8 @@ http://www.movielabs.com/md/ratings/IE/IFCO/1
 IFCO
 Ireland
 IE
-General
-PARENTAL GUIDANCE
+G
+PG
 12
 15
 18
@@ -499,15 +499,15 @@ http://www.movielabs.com/md/ratings/IE/RTE/0
 RTE
 Ireland
 IE
-Children
-General Audience
-Parental supervision
-Suggested for mature audience
+Ch
+GA
+PS
+MA
 http://www.movielabs.com/md/ratings/IL/Film/0
 Film
 Israel
 IL
-לכל
+ALL
 12
 14
 16
@@ -516,13 +516,13 @@ http://www.movielabs.com/md/ratings/IN/CBFC/2
 CBFC
 India
 IN
-Unrestricted
-Unrestricted - Parental Discretion
-Adults
+U
+UA
+A
 S
-Unrestricted for 7+- Parental Discretion
-Unrestricted for 13+- Parental Discretion
-Unrestricted for 16+- Parental Discretion
+UA7+
+UA13+
+UA16+
 http://www.movielabs.com/md/ratings/IS/FRISK/0
 FRISK
 Iceland
@@ -547,10 +547,10 @@ http://www.movielabs.com/md/ratings/IT/AGCOM/1
 AGCOM
 Italy
 IT
-Pellicola per tutti
-14 anni
-18 anni
-6 and Over
+T
+VM14
+VM18
+VM6
 http://www.movielabs.com/md/ratings/IT/MBACT/2
 MBACT
 Italy
@@ -564,7 +564,7 @@ MC-JO
 Jordan
 JO
 PG
-General Audiences
+G
 PG13
 PG15
 15+
@@ -573,16 +573,16 @@ http://www.movielabs.com/md/ratings/JP/ERIN/1
 EIRIN
 Japan
 JP
-General
-Parental guidance - 12 and Above
-15 and above only
-18 and above only
+G
+PG12
+R15+
+R18+
 http://www.movielabs.com/md/ratings/KE/KFCB/1
 KFCB
 Kenya
 KE
-General Exhibition
-Parental Guidance Recommended
+G
+PG
 16+
 R
 http://www.movielabs.com/md/ratings/KH/MCFA-KH/0
@@ -606,11 +606,11 @@ http://www.movielabs.com/md/ratings/KR/KMRB/4
 KMRB
 Korea, Rep
 KR
-전체 관람가
-12세 이상 관람가
-15세 이상 관람가
-청소년 관람불가
-제한관람가
+G
+12+
+15+
+18+
+LIM
 http://www.movielabs.com/md/ratings/KW/KCB/0
 KCB
 Kuwait
@@ -626,10 +626,10 @@ KCB
 Kazakhstan
 KZ
 K
-12
-14
-16
-18
+BA
+B14
+E16
+E18
 HA
 http://www.movielabs.com/md/ratings/LB/LCB/0
 LCB
@@ -655,7 +655,7 @@ CSCF
 Luxembourg
 LU
 T
-Tous
+A
 6
 12
 16
@@ -673,7 +673,7 @@ http://www.movielabs.com/md/ratings/MT/MCCAA/1
 MCCAA
 Malta
 MT
-Universal
+U
 PG
 12A
 12
@@ -685,8 +685,8 @@ http://www.movielabs.com/md/ratings/MV/NBC/1
 NBC
 Maldives
 MV
-General
-Parental Guidance
+G
+PG
 12+
 15+
 18+
@@ -732,18 +732,18 @@ AL
 6
 9
 12
-14 jaar
+14
 16
-18 jaar
+18
 http://www.movielabs.com/md/ratings/NO/Medietilsynet/3
 Medietilsynet
 Norway
 NO
-Tillaten for alle
+A
 6
 7
 9
-11 år
+11
 12
 15
 18
@@ -751,20 +751,20 @@ http://www.movielabs.com/md/ratings/NZ/OFLC/3
 OFLC
 New Zealand
 NZ
-Suitable for general audiences
-Parental guidance recommended for younger viewers
-Restricted to persons 13 years of age and over unless accompanied by parent/guardian
-Restricted to persons 13 years of age and over
-Restricted to persons 15 years of age and over
-Suitable for (but not restricted to) mature audiences 16 years and up
-Restricted to persons 16 years of age and over unless accomp[anied by Parent/Guardian
-Restricted to persons 16 years of age and over
-Restricted to persons 18 years of age and over unless accomp[anied by Parent/Guardian
-Restricted to persons 18 years of age and over
-Restricted to a particular class of persons, or for particular purposes, or both, specified by the Office of Film and Literature Classification
-Unsuitable for Audiences under 13 years of age.
-Unsuitable for Audiences under 16 years of age.
-Unsuitable for Audiences under 18 years of age.
+G
+PG
+RP13
+R13
+R15
+M
+RP16
+R16
+RP18
+R18
+R
+13
+16
+18
 http://www.movielabs.com/md/ratings/PE/Film/0
 Film
 Peru
@@ -777,24 +777,24 @@ http://www.movielabs.com/md/ratings/PH/MTRCB/1
 MTRCB
 Philippines
 PH
-GENERAL PATRONAGE
-GENERAL AUDIENCE
-PARENTAL GUIDANCE
-PARENTAL GUIDANCE
-STRONG PARENTAL GUIDANCE
-RESTRICTED–13
-RESTRICTED–16
-RESTRICTED–18
-X: NOT FOR PUBLIC EXHIBITION
+G-TV
+G
+PG-TV
+PG
+SPG
+R13
+R16
+R18
+X
 http://www.movielabs.com/md/ratings/PL/NBC-PL/1
 NBC-PL
 Poland
 PL
-All / I
-7 / II
-12 / III
-16 / IV
-inne przekazy dozwolone od lat 18
+I
+II
+III
+IV
+18+
 http://www.movielabs.com/md/ratings/PT/CCE/0
 CCE
 Portugal
@@ -821,12 +821,12 @@ http://www.movielabs.com/md/ratings/RU/MKRF/1
 MKRF
 Russia
 RU
-0+
-6+
-12+
+0
+6
+12
 14
-16+
-18+
+16
+18
 http://www.movielabs.com/md/ratings/SA/GCAM/0
 CIC-SA
 Saudi Arabia
@@ -842,34 +842,34 @@ SM-SA
 Sweden
 SE
 Barntillåten
-7-årsgränsen
-11-årsgränsen
-15-årsgränsen
+7
+11
+15
 http://www.movielabs.com/md/ratings/SG/MDA-VG/1
 MDA-VG
 Singapore
 SG
-Advisory 16
-Mature 18
+Adv16
+M18
 http://www.movielabs.com/md/ratings/SG/MDA/2
 MDA
 Singapore
 SG
-General
-Parental Guidance
-Parental Guidance 13
-No Children Under 16
-Mature 18
-Restricted 21
+G
+PG
+PG13
+NC16
+M18
+R21
 http://www.movielabs.com/md/ratings/SK/Film/1
 Film
 Slovakia
 SK
 G
 7
-PG-12
-PG-15
-PG-18
+P2
+P5
+P8
 http://www.movielabs.com/md/ratings/SK/SK_TV/0
 TV
 Slovakia
@@ -898,33 +898,33 @@ http://www.movielabs.com/md/ratings/TH/BFVC/0
 BFVC
 Thailand
 TH
-General audience
-Educational
+G
+E
 13
 15
 18
 20
-BANNED
+B
 http://www.movielabs.com/md/ratings/TR/AI/1
 AI
 Turkey
 TR
-General Audience
-For Ages 7 and Up
-For Ages 13 and Up
-For Ages 18 and Up
+GA
+7+
+13+
+18+
 http://www.movielabs.com/md/ratings/TR/IBMCT/0
 IBMCT
 Turkey
 TR
 GA
 7A
-7+
+7
 13A
-13+
+13
 15A
-15+
-18+
+15
+18
 http://www.movielabs.com/md/ratings/TW/MOC-TW-TV/0
 MOC-TW-TV
 Taiwan
@@ -938,81 +938,81 @@ http://www.movielabs.com/md/ratings/TW/MOC-TW/2
 MOC-TW
 Taiwan
 TW
-General audiences
-Protected
-Parental guidance
-Restricted-12
-Restricted-15
-Restricted
+G
+P
+PG
+R-12
+R-15
+R
 http://www.movielabs.com/md/ratings/UA/Ukraine/2
 Ukraine
 Ukraine
 UA
-ДА
+Yes
 12
-ЗА
+For
 14
 16
 18
-Х21
-Відмовлено
+X21
+Denied
 http://www.movielabs.com/md/ratings/US/ESRB/0
 ESRB
 United States
 US
-Pending
-Early Childhood
-Everyone
-Everyone 10+
-Teen
-Mature
-Adults Only
+RP
+C
+E
+10-plus
+T
+M
+A
 http://www.movielabs.com/md/ratings/US/FAB/3
 FAB
 United States
 US
-FAMILY
-CHILDREN
-PARENTAL DESCRETION
-PARENTAL DESCRETION MATURE
-MATURE
-VERY MATURE
-EXTREMELY MATURE
-ADULTS ONLY
+F
+C
+PD
+PD-M
+M
+VM
+EM
+AO
 http://www.movielabs.com/md/ratings/US/MPAAT/1
 MPAAT
 United States
 US
-Green Band
-Red Band
+GB
+RB
 http://www.movielabs.com/md/ratings/US/MPAA/2
 MPAA
 United States
 US
-General Audiences
-Parental Guidance Suggested
-Mature Audiences
-Parental Guidance Suggested
-Parents Strongly Cautioned
-Restricted
-No One 17 and Under Admitted
-No One 17 and Under Admitted
+G
+PG
+M
+GP
+PG-13
+R
+NC-17
+X
 http://www.movielabs.com/md/ratings/US/RIAA/0
 RIAA
 United States
 US
-Parental Advisory
+PAL
 http://www.movielabs.com/md/ratings/US/TVPG/2
 TVPG
 United States
 US
-All Children
-General Audience
-Directed to Older Children
-Directed to Older Children- Fantasy Violence
-Parental Guidance Suggested
-Parents Strongly Cautioned
-Mature Audience Only
+TV-Y
+TV-G
+TV-Y7
+TV-Y7-FV
+TV-PG
+TV-14
+TV-MA
 http://www.movielabs.com/md/ratings/-t.b.d.-/-t.b.d.-/0
 INAU
 Uruguay
@@ -1027,35 +1027,35 @@ http://www.movielabs.com/md/ratings/VE/RESORTE-Health/1
 RESORTE-Health
 Venezuela
 VE
-Salud Type-A
-Salud Type-B
-Salud Type-C
-Salud Type-D
+A
+B
+C
+D
 http://www.movielabs.com/md/ratings/VE/RESORTE-Language/1
 RESORTE-Language
 Venezuela
 VE
-Language Type-A
-Language Type-B
-Lenguaje Type-C
+A
+B
+C
 http://www.movielabs.com/md/ratings/VE/RESORTE-Sexo/1
 RESORTE-Sexo
 Venezuela
 VE
->Sexo Type-A
->Sexo Type-B
->Sexo Type-C
->Sexo Type-D
->Sexo Type-E
+A
+B
+C
+D
+E
 http://www.movielabs.com/md/ratings/VE/RESORTE-Violencia/1
 RESORTE-Violencia
 Venezuela
 VE
-Violencia Type-A
-Violencia Type-B
-Violencia Type-C
-Violencia Type-D
-Violencia Type-E
+A
+B
+C
+D
+E
 http://www.movielabs.com/md/ratings/VN/MCST/2
 MCST
 Viet Nam
@@ -1086,7 +1086,7 @@ http://www.movielabs.com/md/ratings/ZZ/UNRATED/0
 UNRATED
 Global
 ZZ
-All Audiences
+ALL
 UNRATED
-Adults
+ADULT
 PROSCRIBED

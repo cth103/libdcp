@@ -25,5 +25,5 @@ with urllib.request.urlopen('https://www.movielabs.com/md/ratings/v2.4.8/CMR_Rat
             print(system.Region.RegionName.get_text().title(), file=g)
         print(system.Region.country.get_text(), file=g)
         for rating in system("Rating"):
-            print(rating.Descriptor.Label.get_text(), file=g)
+            print(rating['ratingID'], file=g)
 
