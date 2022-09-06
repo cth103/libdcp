@@ -189,6 +189,27 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_same_asset_filenames_test)
 }
 
 
+BOOST_AUTO_TEST_CASE(combine_two_dcps_one_with_interop_subs_test)
+{
+	using namespace boost::algorithm;
+	using namespace boost::filesystem;
+	boost::filesystem::path const out = "build/test/combine_two_dcps_one_with_interop_subs_test";
+
+	auto first = make_simple("build/test/combine_input1", 1, 24, dcp::Standard::INTEROP);
+	first->write_xml ();
+
+	auto second = make_simple_with_interop_subs("build/test/combine_input2");
+	second->write_xml ();
+
+	remove_all (out);
+	vector<path> inputs = {"build/test/combine_input1", "build/test/combine_input2"};
+	dcp::combine (inputs, out);
+
+	check_no_errors (out);
+	check_combined (inputs, out);
+}
+
+
 BOOST_AUTO_TEST_CASE (combine_two_dcps_with_interop_subs_test)
 {
 	using namespace boost::algorithm;
