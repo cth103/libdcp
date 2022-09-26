@@ -59,6 +59,12 @@ dcp::find_and_resolve_cpls (vector<boost::filesystem::path> const& directories, 
 
 	vector<shared_ptr<dcp::DCP>> dcps;
 	for (auto i: directories) {
+		if (!boost::filesystem::exists(i)) {
+			/* Don't make a DCP object or it will try to create the parent directories
+			 * of i if they do not exist (#2344).
+			 */
+			continue;
+		}
 		auto dcp = make_shared<dcp::DCP>(i);
 		vector<dcp::VerificationNote> notes;
 		dcp->read (&notes, true);
