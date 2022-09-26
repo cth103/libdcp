@@ -558,8 +558,7 @@ SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions opti
 			return false;
 		}
 
-		if (string_i && *string_i != *string_j) {
-			note (NoteType::ERROR, String::compose("subtitles differ in text or metadata: %1 vs %2", string_i->text(), string_j->text()));
+		if (string_i && !string_i->equals(string_j, options, note)) {
 			return false;
 		}
 

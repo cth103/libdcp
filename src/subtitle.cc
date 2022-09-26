@@ -41,6 +41,7 @@
 #include "dcp_time.h"
 
 
+using std::shared_ptr;
 using namespace dcp;
 
 
@@ -65,4 +66,53 @@ Subtitle::Subtitle (
 	, _fade_down_time (fade_down_time)
 {
 
+}
+
+
+bool
+Subtitle::equals(shared_ptr<const Subtitle> other, EqualityOptions, NoteHandler note) const
+{
+	bool same = true;
+
+	if (in() != other->in()) {
+		note(NoteType::ERROR, "subtitle in times differ");
+		same = false;
+	}
+
+	if (out() != other->out()) {
+		note(NoteType::ERROR, "subtitle out times differ");
+		same = false;
+	}
+
+	if (h_position() != other->h_position()) {
+		note(NoteType::ERROR, "subtitle horizontal positions differ");
+		same = false;
+	}
+
+	if (h_align() != other->h_align()) {
+		note(NoteType::ERROR, "subtitle horizontal alignments differ");
+		same = false;
+	}
+
+	if (v_position() != other->v_position()) {
+		note(NoteType::ERROR, "subtitle vertical positions differ");
+		same = false;
+	}
+
+	if (v_align() != other->v_align()) {
+		note(NoteType::ERROR, "subtitle vertical alignments differ");
+		same = false;
+	}
+
+	if (fade_up_time() != other->fade_up_time()) {
+		note(NoteType::ERROR, "subtitle fade-up times differ");
+		same = false;
+	}
+
+	if (fade_down_time() != other->fade_down_time()) {
+		note(NoteType::ERROR, "subtitle fade-down times differ");
+		same = false;
+	}
+
+	return same;
 }

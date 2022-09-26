@@ -41,6 +41,7 @@
 #include "util.h"
 
 
+using std::dynamic_pointer_cast;
 using std::ostream;
 using std::string;
 using std::shared_ptr;
@@ -128,8 +129,18 @@ dcp::operator!= (SubtitleImage const & a, SubtitleImage const & b)
 
 
 bool
-SubtitleImage::equals (shared_ptr<SubtitleImage> other, EqualityOptions options, NoteHandler note)
+SubtitleImage::equals(shared_ptr<const Subtitle> other_sub, EqualityOptions options, NoteHandler note) const
 {
+	if (!Subtitle::equals(other_sub, options, note)) {
+		return false;
+	}
+
+	auto other = dynamic_pointer_cast<const SubtitleImage>(other_sub);
+	if (!other) {
+		note(NoteType::ERROR, "Subtitle types differ: string vs image");
+		return false;
+	}
+
 	if (png_image() != other->png_image()) {
 		note (NoteType::ERROR, "subtitle image PNG data differs");
 		if (options.export_differing_subtitles) {
@@ -146,46 +157,6 @@ SubtitleImage::equals (shared_ptr<SubtitleImage> other, EqualityOptions options,
 			}
 			options.export_differing_subtitles = false;
 		}
-		return false;
-	}
-
-	if (in() != other->in()) {
-		note (NoteType::ERROR, "subtitle in times differ");
-		return false;
-	}
-
-	if (out() != other->out()) {
-		note (NoteType::ERROR, "subtitle out times differ");
-		return false;
-	}
-
-	if (h_position() != other->h_position()) {
-		note (NoteType::ERROR, "subtitle horizontal positions differ");
-		return false;
-	}
-
-	if (h_align() != other->h_align()) {
-		note (NoteType::ERROR, "subtitle horizontal alignments differ");
-		return false;
-	}
-
-	if (v_position() != other->v_position()) {
-		note (NoteType::ERROR, "subtitle vertical positions differ");
-		return false;
-	}
-
-	if (v_align() != other->v_align()) {
-		note (NoteType::ERROR, "subtitle vertical alignments differ");
-		return false;
-	}
-
-	if (fade_up_time() != other->fade_up_time()) {
-		note (NoteType::ERROR, "subtitle fade-up times differ");
-		return false;
-	}
-
-	if (fade_down_time() != other->fade_down_time()) {
-		note (NoteType::ERROR, "subtitle fade-down times differ");
 		return false;
 	}
 

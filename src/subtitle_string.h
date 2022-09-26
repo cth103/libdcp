@@ -188,6 +188,8 @@ public:
 		_effect_colour = c;
 	}
 
+	bool equals(std::shared_ptr<const dcp::Subtitle> other_sub, EqualityOptions options, NoteHandler node) const override;
+
 private:
 	/** font ID */
 	boost::optional<std::string> _font;

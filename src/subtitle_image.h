@@ -103,7 +103,7 @@ public:
 		return _file;
 	}
 
-	bool equals (std::shared_ptr<dcp::SubtitleImage> other, EqualityOptions options, NoteHandler note);
+	bool equals(std::shared_ptr<const dcp::Subtitle> other_sub, EqualityOptions options, NoteHandler note) const override;
 
 private:
 	ArrayData _png_image;
