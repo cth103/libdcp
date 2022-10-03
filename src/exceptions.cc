@@ -141,7 +141,7 @@ BadKDMDateError::BadKDMDateError (bool starts_too_early)
 
 
 StartCompressionError::StartCompressionError (optional<int> code)
-	: runtime_error (String::compose("Could not start JPEG2000 encoding%1", code ? String::compose(" (%1", *code) : ""))
+	: runtime_error (String::compose("Could not start JPEG2000 encoding%1", code ? String::compose(" (%1)", *code) : ""))
 	, _code (code)
 {}
 
