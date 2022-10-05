@@ -59,6 +59,7 @@ class TransferFunction;
 enum class YUVToRGB {
 	REC601,
 	REC709,
+	REC2020,
 	COUNT
 };
 

@@ -142,7 +142,7 @@ ColourConversion::rec2020_to_xyz ()
 {
 	static auto c = new ColourConversion (
 		make_shared<GammaTransferFunction>(2.4),
-		YUVToRGB::REC709,
+		YUVToRGB::REC2020,
 		Chromaticity (0.708, 0.292),
 		Chromaticity (0.170, 0.797),
 		Chromaticity (0.131, 0.046),
