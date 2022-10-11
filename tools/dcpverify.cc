@@ -60,25 +60,6 @@ help (string n)
 	     << "  -q, --quiet             don't report progress\n";
 }
 
-void
-stage (bool quiet, string s, optional<boost::filesystem::path> path)
-{
-	if (quiet) {
-		return;
-	}
-
-	if (path) {
-		cout << s << ": " << path->string() << "\n";
-	} else {
-		cout << s << "\n";
-	}
-}
-
-void
-progress ()
-{
-
-}
 
 int
 main (int argc, char* argv[])
@@ -135,9 +116,23 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
+	auto stage = [quiet](string s, optional<boost::filesystem::path> path) {
+		if (quiet) {
+			return;
+		}
+
+		if (path) {
+			cout << s << ": " << path->string() << "\n";
+		} else {
+			cout << s << "\n";
+		}
+	};
+
+	auto progress = [](float) {};
+
 	vector<boost::filesystem::path> directories;
 	directories.push_back (argv[optind]);
-	auto notes = dcp::verify (directories, bind(&stage, quiet, _1, _2), bind(&progress));
+	auto notes = dcp::verify(directories, stage, progress);
 	dcp::filter_notes (notes, ignore_missing_assets);
 
 	bool failed = false;
