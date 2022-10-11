@@ -153,7 +153,13 @@ main (int argc, char* argv[])
 	auto notes = dcp::verify(directories, stage, progress);
 	dcp::filter_notes (notes, ignore_missing_assets);
 
+	if (!quiet) {
+		cout << "\n";
+	}
+
 	bool failed = false;
+	bool bv21_failed = false;
+	bool warned = false;
 	for (auto i: notes) {
 		if (ignore_bv21_smpte && i.code() == dcp::VerificationNote::Code::INVALID_STANDARD) {
 			continue;
@@ -165,14 +171,19 @@ main (int argc, char* argv[])
 			break;
 		case dcp::VerificationNote::Type::BV21_ERROR:
 			cout << "Bv2.1 error: " << note_to_string(i) << "\n";
+			bv21_failed = true;
 			break;
 		case dcp::VerificationNote::Type::WARNING:
 			cout << "Warning: " << note_to_string(i) << "\n";
+			warned = true;
 			break;
 		}
 	}
 
 	if (!failed && !quiet) {
+		if (bv21_failed || warned) {
+			cout << "\n";
+		}
 		cout << "DCP verified OK.\n";
 	}
 
