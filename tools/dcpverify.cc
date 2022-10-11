@@ -128,7 +128,25 @@ main (int argc, char* argv[])
 		}
 	};
 
-	auto progress = [](float) {};
+	auto progress = [quiet](float amount) {
+		if (quiet) {
+			return;
+		}
+		int const width = 60;
+		int const index = std::rint(amount * width);
+		cout << "[";
+		for (int i = 0; i < width; ++i) {
+			if (i < index) {
+				std::cout << "=";
+			} else if (i == index) {
+				std::cout << ">";
+			} else {
+				std::cout << " ";
+			}
+		}
+		cout << "] " << std::rint(amount * 100) << "%\r";
+		cout.flush();
+	};
 
 	vector<boost::filesystem::path> directories;
 	directories.push_back (argv[optind]);
