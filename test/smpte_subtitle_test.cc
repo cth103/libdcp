@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 			dcp::HAlign::CENTER,
 			0.8,
 			dcp::VAlign::TOP,
-			0,
+			0.3,
 			dcp::Direction::LTR,
 			"Hello world",
 			dcp::Effect::NONE,
@@ -273,7 +273,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 		"  <SubtitleList>\n"
 		"    <Font AspectAdjust=\"1.0\" Color=\"FFFFFFFF\" Effect=\"none\" EffectColor=\"FF000000\" ID=\"Frutiger\" Italic=\"no\" Script=\"normal\" Size=\"48\" Underline=\"no\" Weight=\"normal\">\n"
 		"      <Subtitle SpotNumber=\"1\" TimeIn=\"00:04:09:22\" TimeOut=\"00:04:11:22\" FadeUpTime=\"00:00:00:00\" FadeDownTime=\"00:00:00:00\">\n"
-		"        <Text Valign=\"top\" Vposition=\"80\">Hello world</Text>\n"
+		"        <Text Valign=\"top\" Vposition=\"80\" Zposition=\"30\">Hello world</Text>\n"
 		"      </Subtitle>\n"
 		"    </Font>\n"
 		"    <Font AspectAdjust=\"1.0\" Color=\"FF800040\" Effect=\"border\" EffectColor=\"FF010203\" Italic=\"yes\" Script=\"normal\" Size=\"91\" Underline=\"yes\" Weight=\"bold\">\n"
@@ -501,7 +501,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 			dcp::HAlign::CENTER,
 			0.8,
 			dcp::VAlign::TOP,
-			0,
+			-88,
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24)
 			)
@@ -526,6 +526,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 	BOOST_CHECK (image->h_align() == dcp::HAlign::CENTER);
 	BOOST_CHECK_CLOSE (image->v_position(), 0.8, 1);
 	BOOST_CHECK (image->v_align() == dcp::VAlign::TOP);
+	BOOST_CHECK_EQUAL(image->z_position(), -88);
 	BOOST_CHECK (image->fade_up_time() == dcp::Time(0, 0, 0, 0, 24));
 	BOOST_CHECK (image->fade_down_time() == dcp::Time(0, 0, 0, 0, 24));
 }
