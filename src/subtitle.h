@@ -82,6 +82,10 @@ public:
 		return _v_align;
 	}
 
+	float z_position() const {
+		return _z_position;
+	}
+
 	Time fade_up_time () const {
 		return _fade_up_time;
 	}
@@ -109,6 +113,10 @@ public:
 		_v_position = p;
 	}
 
+	void set_z_position(float z) {
+		_z_position = z;
+	}
+
 	void set_fade_up_time (Time t) {
 		_fade_up_time = t;
 	}
@@ -128,6 +136,7 @@ protected:
 		HAlign h_align,
 		float v_position,
 		VAlign v_align,
+		float z_position,
 		Time fade_up_time,
 		Time fade_down_time
 		);
@@ -144,6 +153,7 @@ protected:
 	 */
 	float _v_position = 0;
 	VAlign _v_align = VAlign::CENTER;
+	float _z_position = 0;
 	Time _fade_up_time;
 	Time _fade_down_time;
 };

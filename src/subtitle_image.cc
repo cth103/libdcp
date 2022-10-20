@@ -43,8 +43,8 @@
 
 using std::dynamic_pointer_cast;
 using std::ostream;
-using std::string;
 using std::shared_ptr;
+using std::string;
 using namespace dcp;
 
 
@@ -56,10 +56,11 @@ SubtitleImage::SubtitleImage (
 	HAlign h_align,
 	float v_position,
 	VAlign v_align,
+	float z_position,
 	Time fade_up_time,
 	Time fade_down_time
 	)
-	: Subtitle (in, out, h_position, h_align, v_position, v_align, fade_up_time, fade_down_time)
+	: Subtitle(in, out, h_position, h_align, v_position, v_align, z_position, fade_up_time, fade_down_time)
 	, _png_image (png_image)
 	, _id (make_uuid ())
 {
@@ -76,10 +77,11 @@ SubtitleImage::SubtitleImage (
 	HAlign h_align,
 	float v_position,
 	VAlign v_align,
+	float z_position,
 	Time fade_up_time,
 	Time fade_down_time
 	)
-	: Subtitle (in, out, h_position, h_align, v_position, v_align, fade_up_time, fade_down_time)
+	: Subtitle(in, out, h_position, h_align, v_position, v_align, z_position, fade_up_time, fade_down_time)
 	, _png_image (png_image)
 	, _id (id)
 {
@@ -115,6 +117,7 @@ dcp::operator== (SubtitleImage const & a, SubtitleImage const & b)
 		a.h_align() == b.h_align() &&
 		a.v_position() == b.v_position() &&
 		a.v_align() == b.v_align() &&
+		a.z_position() == b.z_position() &&
 		a.fade_up_time() == b.fade_up_time() &&
 		a.fade_down_time() == b.fade_down_time()
 		);
@@ -170,7 +173,8 @@ dcp::operator<< (ostream& s, SubtitleImage const & sub)
 	s << "\n[IMAGE] from " << sub.in() << " to " << sub.out() << ";\n"
 	  << "fade up " << sub.fade_up_time() << ", fade down " << sub.fade_down_time() << ";\n"
 	  << "v pos " << sub.v_position() << ", valign " << ((int) sub.v_align())
-	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align()) << "\n";
+	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align())
+	  << ", zpos " << sub.z_position() << "\n";
 
 	return s;
 }

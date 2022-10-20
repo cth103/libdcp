@@ -144,12 +144,13 @@ private:
 class Text : public Part
 {
 public:
-	Text (std::shared_ptr<Part> parent, HAlign h_align, float h_position, VAlign v_align, float v_position, Direction direction)
+	Text (std::shared_ptr<Part> parent, HAlign h_align, float h_position, VAlign v_align, float v_position, float z_position, Direction direction)
 		: Part (parent)
 		, _h_align (h_align)
 		, _h_position (h_position)
 		, _v_align (v_align)
 		, _v_position (v_position)
+		, _z_position(z_position)
 		, _direction (direction)
 	{}
 
@@ -160,6 +161,7 @@ private:
 	float _h_position;
 	VAlign _v_align;
 	float _v_position;
+	float _z_position;
 	Direction _direction;
 };
 
@@ -188,7 +190,7 @@ private:
 class Image : public Part
 {
 public:
-	Image (std::shared_ptr<Part> parent, std::string id, ArrayData png_data, HAlign h_align, float h_position, VAlign v_align, float v_position)
+	Image (std::shared_ptr<Part> parent, std::string id, ArrayData png_data, HAlign h_align, float h_position, VAlign v_align, float v_position, float z_position)
 		: Part (parent)
 		, _png_data (png_data)
 		, _id (id)
@@ -196,6 +198,7 @@ public:
 		, _h_position (h_position)
 		, _v_align (v_align)
 		, _v_position (v_position)
+		, _z_position(z_position)
 	{}
 
 	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const override;
@@ -207,6 +210,7 @@ private:
 	float _h_position;
 	VAlign _v_align;
 	float _v_position;
+	float _z_position;
 };
 
 

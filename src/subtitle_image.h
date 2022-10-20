@@ -66,6 +66,7 @@ public:
 		HAlign h_align,
 		float v_position,
 		VAlign v_align,
+		float z_position,
 		Time fade_up_time,
 		Time fade_down_time
 		);
@@ -79,6 +80,7 @@ public:
 		HAlign h_align,
 		float v_position,
 		VAlign v_align,
+		float z_position,
 		Time fade_up_time,
 		Time fade_down_time
 		);

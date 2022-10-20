@@ -70,6 +70,8 @@ public:
 	 *  @param h_align Horizontal alignment point
 	 *  @param v_position Vertical position as a fraction of the screen height (between 0 and 1) from v_align
 	 *  @param v_align Vertical alignment point
+	 *  @param z_position Z position as a proportion of the primary picture width between -1 and +1;
+	 *  +ve moves the image away from the viewer, -ve moves it toward the viewer, 0 is in the plane of the screen.
 	 *  @param direction Direction of text
 	 *  @param text The text to display
 	 *  @param effect Effect to use
@@ -92,6 +94,7 @@ public:
 		HAlign h_align,
 		float v_position,
 		VAlign v_align,
+		float z_position,
 		Direction direction,
 		std::string text,
 		Effect effect,

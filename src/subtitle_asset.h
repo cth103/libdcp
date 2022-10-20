@@ -152,6 +152,7 @@ protected:
 		boost::optional<HAlign> h_align;
 		boost::optional<float> v_position;
 		boost::optional<VAlign> v_align;
+		boost::optional<float> z_position;
 		boost::optional<Direction> direction;
 		boost::optional<Time> in;
 		boost::optional<Time> out;

@@ -203,6 +203,10 @@ SubtitleAsset::position_align (SubtitleAsset::ParseState& ps, xmlpp::Element con
 		ps.v_align = string_to_valign (va.get ());
 	}
 
+	auto zp = optional_number_attribute<float>(node, "Zposition");
+	if (zp) {
+		ps.z_position = zp.get() / 100;
+	}
 }
 
 
@@ -365,6 +369,9 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 		if (i.v_align) {
 			ps.v_align = i.v_align.get();
 		}
+		if (i.z_position) {
+			ps.z_position = i.z_position.get();
+		}
 		if (i.direction) {
 			ps.direction = i.direction.get();
 		}
@@ -409,6 +416,7 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 				ps.h_align.get_value_or(HAlign::CENTER),
 				ps.v_position.get_value_or(0),
 				ps.v_align.get_value_or(VAlign::CENTER),
+				ps.z_position.get_value_or(0),
 				ps.direction.get_value_or (Direction::LTR),
 				text,
 				ps.effect.get_value_or (Effect::NONE),
@@ -451,6 +459,7 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 				ps.h_align.get_value_or(HAlign::CENTER),
 				ps.v_position.get_value_or(0),
 				ps.v_align.get_value_or(VAlign::CENTER),
+				ps.z_position.get_value_or(0),
 				ps.fade_up_time.get_value_or(Time()),
 				ps.fade_down_time.get_value_or(Time())
 				)
@@ -674,6 +683,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 	float last_h_position;
 	VAlign last_v_align;
 	float last_v_position;
+	float last_z_position;
 	Direction last_direction;
 
 	for (auto i: sorted) {
@@ -701,15 +711,17 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 			    fabs(last_h_position - is->h_position()) > ALIGN_EPSILON ||
 			    last_v_align != is->v_align() ||
 			    fabs(last_v_position - is->v_position()) > ALIGN_EPSILON ||
+			    fabs(last_z_position - is->z_position()) > ALIGN_EPSILON ||
 			    last_direction != is->direction()
 				) {
-				text = make_shared<order::Text>(subtitle, is->h_align(), is->h_position(), is->v_align(), is->v_position(), is->direction());
+				text = make_shared<order::Text>(subtitle, is->h_align(), is->h_position(), is->v_align(), is->v_position(), is->z_position(), is->direction());
 				subtitle->children.push_back (text);
 
 				last_h_align = is->h_align ();
 				last_h_position = is->h_position ();
 				last_v_align = is->v_align ();
 				last_v_position = is->v_position ();
+				last_z_position = is->z_position();
 				last_direction = is->direction ();
 			}
 
@@ -720,7 +732,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 		if (ii) {
 			text.reset ();
 			subtitle->children.push_back (
-				make_shared<order::Image>(subtitle, ii->id(), ii->png_image(), ii->h_align(), ii->h_position(), ii->v_align(), ii->v_position())
+				make_shared<order::Image>(subtitle, ii->id(), ii->png_image(), ii->h_align(), ii->h_position(), ii->v_align(), ii->v_position(), ii->z_position())
 				);
 		}
 	}

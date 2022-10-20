@@ -1256,6 +1256,7 @@ add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int en
 			dcp::HAlign::CENTER,
 			v_position,
 			v_align,
+			0,
 			dcp::Direction::LTR,
 			text,
 			dcp::Effect::NONE,

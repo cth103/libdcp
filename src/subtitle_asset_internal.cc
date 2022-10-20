@@ -165,7 +165,7 @@ order::Part::write_xml (xmlpp::Element* parent, order::Context& context) const
 
 
 static void
-position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, float h_position, VAlign v_align, float v_position)
+position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, float h_position, VAlign v_align, float v_position, float z_position)
 {
 	if (h_align != HAlign::CENTER) {
 		if (context.standard == Standard::SMPTE) {
@@ -202,6 +202,10 @@ position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, floa
 			e->set_attribute ("VPosition", "0");
 		}
 	}
+
+	if (fabs(z_position) > ALIGN_EPSILON && context.standard == Standard::SMPTE) {
+		e->set_attribute("Zposition", raw_convert<string>(z_position * 100, 6));
+	}
 }
 
 
@@ -210,7 +214,7 @@ order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 {
 	auto e = parent->add_child ("Text");
 
-	position_align (e, context, _h_align, _h_position, _v_align, _v_position);
+	position_align(e, context, _h_align, _h_position, _v_align, _v_position, _z_position);
 
 	/* Interop only supports "horizontal" or "vertical" for direction, so only write this
 	   for SMPTE.
@@ -260,7 +264,7 @@ order::Image::as_xml (xmlpp::Element* parent, Context& context) const
 {
 	auto e = parent->add_child ("Image");
 
-	position_align (e, context, _h_align, _h_position, _v_align, _v_position);
+	position_align(e, context, _h_align, _h_position, _v_align, _v_position, _z_position);
 	if (context.standard == Standard::SMPTE) {
 		e->add_child_text ("urn:uuid:" + _id);
 	} else {

@@ -53,6 +53,7 @@ Subtitle::Subtitle (
 	HAlign h_align,
 	float v_position,
 	VAlign v_align,
+	float z_position,
 	Time fade_up_time,
 	Time fade_down_time
 	)
@@ -62,6 +63,7 @@ Subtitle::Subtitle (
 	, _h_align (h_align)
 	, _v_position (v_position)
 	, _v_align (v_align)
+	, _z_position(z_position)
 	, _fade_up_time (fade_up_time)
 	, _fade_down_time (fade_down_time)
 {
@@ -101,6 +103,11 @@ Subtitle::equals(shared_ptr<const Subtitle> other, EqualityOptions, NoteHandler 
 
 	if (v_align() != other->v_align()) {
 		note(NoteType::ERROR, "subtitle vertical alignments differ");
+		same = false;
+	}
+
+	if (z_position() != other->z_position()) {
+		note(NoteType::ERROR, "subtitle Z positions differ");
 		same = false;
 	}
 

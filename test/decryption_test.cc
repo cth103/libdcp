@@ -194,6 +194,7 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 		dcp::Time(0, 0, 5, 0, 24),
 		0.5, dcp::HAlign::CENTER,
 		0.5, dcp::VAlign::CENTER,
+		0,
 		dcp::Direction::LTR,
 		"Hello world",
 		dcp::Effect::NONE,

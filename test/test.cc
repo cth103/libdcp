@@ -400,6 +400,7 @@ simple_subtitle ()
 		dcp::HAlign::CENTER,
 		0.8,
 		dcp::VAlign::TOP,
+		0,
 		dcp::Direction::LTR,
 		"Hello world",
 		dcp::Effect::NONE,
