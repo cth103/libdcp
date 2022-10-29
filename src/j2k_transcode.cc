@@ -183,7 +183,7 @@ dcp::decompress_j2k (uint8_t const * data, int64_t size, int reduce)
 
 	image->x1 = rint (float(image->x1) / pow (2.0f, reduce));
 	image->y1 = rint (float(image->y1) / pow (2.0f, reduce));
-	return shared_ptr<OpenJPEGImage> (new OpenJPEGImage (image));
+	return std::make_shared<OpenJPEGImage>(image);
 }
 
 #endif
@@ -212,7 +212,7 @@ dcp::decompress_j2k (uint8_t* data, int64_t size, int reduce)
 
 	image->x1 = rint (float(image->x1) / pow (2, reduce));
 	image->y1 = rint (float(image->y1) / pow (2, reduce));
-	return shared_ptr<OpenJPEGImage> (new OpenJPEGImage (image));
+	return std::make_shared<OpenJPEGImage>(image);
 }
 #endif
 
