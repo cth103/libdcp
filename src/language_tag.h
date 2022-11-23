@@ -68,7 +68,7 @@ public:
 		std::string subtag;
 		std::string description;
 
-		bool operator== (SubtagData const& other) {
+		bool operator== (SubtagData const& other) const {
 			return subtag == other.subtag && description == other.description;
 		}
 	};
@@ -93,7 +93,7 @@ public:
 
 		virtual SubtagType type () const = 0;
 
-		bool operator== (Subtag const& other) {
+		bool operator== (Subtag const& other) const {
 			return _subtag == other._subtag;
 		}
 
