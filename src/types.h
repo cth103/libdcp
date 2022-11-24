@@ -259,6 +259,8 @@ struct EqualityOptions
 	bool keep_going = false;
 	/** true to save the first pair of differeng image subtitles to the current working directory */
 	bool export_differing_subtitles = false;
+	/** The maximum allowable absolute difference between the vertical position of subtitles */
+	float max_subtitle_vertical_position_error = 0;
 };
 
 

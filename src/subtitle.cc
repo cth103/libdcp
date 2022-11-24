@@ -37,6 +37,7 @@
  */
 
 
+#include "compose.hpp"
 #include "subtitle.h"
 #include "dcp_time.h"
 
@@ -72,7 +73,7 @@ Subtitle::Subtitle (
 
 
 bool
-Subtitle::equals(shared_ptr<const Subtitle> other, EqualityOptions, NoteHandler note) const
+Subtitle::equals(shared_ptr<const Subtitle> other, EqualityOptions options, NoteHandler note) const
 {
 	bool same = true;
 
@@ -96,8 +97,12 @@ Subtitle::equals(shared_ptr<const Subtitle> other, EqualityOptions, NoteHandler 
 		same = false;
 	}
 
-	if (v_position() != other->v_position()) {
-		note(NoteType::ERROR, "subtitle vertical positions differ");
+	auto const vpos = std::abs(v_position() - other->v_position());
+	if (vpos > options.max_subtitle_vertical_position_error)  {
+		note(
+			NoteType::ERROR,
+			String::compose("subtitle vertical positions differ by %1 (more than the allowed difference of %2)", vpos, options.max_subtitle_vertical_position_error)
+		    );
 		same = false;
 	}
 
