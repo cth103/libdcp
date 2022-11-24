@@ -71,6 +71,10 @@ public:
 		bool operator== (SubtagData const& other) const {
 			return subtag == other.subtag && description == other.description;
 		}
+
+		bool operator!=(SubtagData const& other) const {
+			return subtag != other.subtag || description != other.description;
+		}
 	};
 
 	enum class SubtagType
@@ -95,6 +99,14 @@ public:
 
 		bool operator== (Subtag const& other) const {
 			return _subtag == other._subtag;
+		}
+
+		bool operator!=(Subtag const& other) const {
+			return _subtag != other._subtag;
+		}
+
+		bool operator<(Subtag const& other) const {
+			return _subtag < other._subtag;
 		}
 
 	protected:
@@ -154,9 +166,6 @@ public:
 		SubtagType type () const override {
 			return SubtagType::VARIANT;
 		}
-
-		bool operator== (VariantSubtag const& other) const;
-		bool operator< (VariantSubtag const& other) const;
 	};
 
 
@@ -171,9 +180,6 @@ public:
 		SubtagType type () const override {
 			return SubtagType::EXTLANG;
 		}
-
-		bool operator== (ExtlangSubtag const& other) const;
-		bool operator< (ExtlangSubtag const& other) const;
 	};
 
 	LanguageTag () {}

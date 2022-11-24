@@ -332,33 +332,6 @@ LanguageTag::subtag_type_name (SubtagType type)
 	return {};
 }
 
-bool
-dcp::LanguageTag::VariantSubtag::operator== (VariantSubtag const & other) const
-{
-	return subtag() == other.subtag();
-}
-
-
-bool
-dcp::LanguageTag::VariantSubtag::operator< (VariantSubtag const & other) const
-{
-	return subtag() < other.subtag();
-}
-
-
-bool
-dcp::LanguageTag::ExtlangSubtag::operator== (ExtlangSubtag const & other) const
-{
-	return subtag() == other.subtag();
-}
-
-
-bool
-dcp::LanguageTag::ExtlangSubtag::operator< (ExtlangSubtag const & other) const
-{
-	return subtag() < other.subtag();
-}
-
 
 bool
 dcp::operator== (dcp::LanguageTag const& a, dcp::LanguageTag const& b)
