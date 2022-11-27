@@ -17,7 +17,7 @@
 #
 
 def build(bld):
-    for example in ['make_dcp', 'read_dcp']:
+    for example in ['make_dcp', 'read_dcp', 'make_kdm']:
         obj = bld(features='cxx cxxprogram')
         obj.name   = example
         obj.use    = 'libdcp%s' % bld.env.API_VERSION

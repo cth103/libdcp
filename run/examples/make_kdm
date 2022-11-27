@@ -1,0 +1,12 @@
+#!/bin/bash
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:build/src
+if [ "$1" == "--debug" ]; then
+    shift
+    gdb --args build/examples/make_kdm "$@"
+elif [ "$1" == "--valgrind" ]; then
+    shift
+    valgrind --tool="memcheck" --leak-check=full --show-reachable=yes build/examples/make_kdm "$@"
+else
+    build/examples/make_kdm "$@"
+fi
