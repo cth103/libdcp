@@ -116,6 +116,7 @@ def build(bld):
              subtitle_string.cc
              transfer_function.cc
              types.cc
+             utc_offset.cc
              util.cc
              verify.cc
              verify_j2k.cc
@@ -215,6 +216,7 @@ def build(bld):
               subtitle_string.h
               transfer_function.h
               types.h
+              utc_offset.h
               util.h
               verify.h
               verify_j2k.h

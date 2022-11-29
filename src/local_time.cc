@@ -103,11 +103,10 @@ LocalTime::set (boost::posix_time::ptime t)
 }
 
 
-LocalTime::LocalTime (boost::posix_time::ptime t, int tz_hour, int tz_minute)
+LocalTime::LocalTime(boost::posix_time::ptime t, UTCOffset offset)
 {
 	set (t);
-	_tz_hour = tz_hour;
-	_tz_minute = tz_minute;
+	_offset = offset;
 }
 
 
@@ -119,8 +118,7 @@ LocalTime::set_local_time_zone ()
 	auto const now = boost::date_time::c_local_adjustor<boost::posix_time::ptime>::utc_to_local (utc_now);
 	auto offset = now - utc_now;
 
-	_tz_hour = offset.hours ();
-	_tz_minute = offset.minutes ();
+	_offset = { static_cast<int>(offset.hours()), static_cast<int>(offset.minutes()) };
 }
 
 
@@ -172,12 +170,13 @@ LocalTime::LocalTime (string s)
 	_minute = lexical_cast<int>(s.substr(14, 2));
 	_second = lexical_cast<int>(s.substr(17, 2));
 	_millisecond = with_millisecond ? lexical_cast<int>(s.substr(20, 3)) : 0;
-	_tz_hour = with_tz ? lexical_cast<int>(s.substr(tz_pos + 1, 2)) : 0;
-	_tz_minute = with_tz ? lexical_cast<int>(s.substr(tz_pos + 4, 2)) : 0;
+
+	_offset.set_hour(with_tz ? lexical_cast<int>(s.substr(tz_pos + 1, 2)) : 0);
+	_offset.set_minute(with_tz ? lexical_cast<int>(s.substr(tz_pos + 4, 2)) : 0);
 
 	if (with_tz && s[tz_pos] == '-') {
-		_tz_hour = -_tz_hour;
-		_tz_minute = -_tz_minute;
+		_offset.set_hour(-_offset.hour());
+		_offset.set_minute(-_offset.minute());
 	}
 }
 
@@ -189,7 +188,7 @@ LocalTime::as_string (bool with_millisecond) const
 	snprintf (
 		buffer, sizeof (buffer),
 		"%sT%s%s%02d:%02d",
-		date().c_str(), time_of_day(true, with_millisecond).c_str(), (_tz_hour >= 0 ? "+" : "-"), abs (_tz_hour), abs(_tz_minute)
+		date().c_str(), time_of_day(true, with_millisecond).c_str(), (_offset.hour() >= 0 ? "+" : "-"), abs(_offset.hour()), abs(_offset.minute())
 		);
 	return buffer;
 }
@@ -268,7 +267,7 @@ LocalTime::operator== (LocalTime const & other) const
 {
 	return _year == other._year && _month == other._month && _day == other._day &&
 		_hour == other._hour && _second == other._second && _millisecond == other._millisecond &&
-		_tz_hour == other._tz_hour && _tz_minute == other._tz_minute;
+		_offset == other._offset;
 }
 
 
@@ -320,7 +319,8 @@ LocalTime::from_asn1_utc_time (string time)
 	}
 	t._year += 1900;
 
-	t._tz_hour = t._tz_minute = t._millisecond = 0;
+	t._millisecond = 0;
+	t._offset = {};
 
 	return t;
 }
@@ -332,7 +332,8 @@ LocalTime::from_asn1_generalized_time (string time)
 	LocalTime t;
 	sscanf(time.c_str(), "%4d%2d%2d%2d%2d%2d", &t._year, &t._month, &t._day, &t._hour, &t._minute, &t._second);
 
-	t._tz_hour = t._tz_minute = t._millisecond = 0;
+	t._millisecond = 0;
+	t._offset = {};
 
 	return t;
 }

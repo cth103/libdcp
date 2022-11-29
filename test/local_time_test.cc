@@ -58,8 +58,7 @@ BOOST_AUTO_TEST_CASE (local_time_basic_test)
 		BOOST_CHECK_EQUAL (t._hour, 18);
 		BOOST_CHECK_EQUAL (t._minute, 6);
 		BOOST_CHECK_EQUAL (t._second, 59);
-		BOOST_CHECK_EQUAL (t._tz_hour, 4);
-		BOOST_CHECK_EQUAL (t._tz_minute, 0);
+		BOOST_CHECK(t._offset == dcp::UTCOffset(4, 0));
 		BOOST_CHECK_EQUAL (t.as_string(), "2013-01-05T18:06:59+04:00");
 	}
 
@@ -71,8 +70,7 @@ BOOST_AUTO_TEST_CASE (local_time_basic_test)
 		BOOST_CHECK_EQUAL (t._hour, 1);
 		BOOST_CHECK_EQUAL (t._minute, 6);
 		BOOST_CHECK_EQUAL (t._second, 59);
-		BOOST_CHECK_EQUAL (t._tz_hour, -9);
-		BOOST_CHECK_EQUAL (t._tz_minute, -30);
+		BOOST_CHECK(t._offset == dcp::UTCOffset(-9, -30));
 		BOOST_CHECK_EQUAL (t.as_string(), "2011-11-20T01:06:59-09:30");
 	}
 
@@ -85,8 +83,7 @@ BOOST_AUTO_TEST_CASE (local_time_basic_test)
 		BOOST_CHECK_EQUAL (t._minute, 6);
 		BOOST_CHECK_EQUAL (t._second, 59);
 		BOOST_CHECK_EQUAL (t._millisecond, 456);
-		BOOST_CHECK_EQUAL (t._tz_hour, -9);
-		BOOST_CHECK_EQUAL (t._tz_minute, -30);
+		BOOST_CHECK(t._offset == dcp::UTCOffset(-9, -30));
 		BOOST_CHECK_EQUAL (t.as_string(true), "2011-11-20T01:06:59.456-09:30");
 	}
 
@@ -122,8 +119,7 @@ BOOST_AUTO_TEST_CASE (local_time_basic_test)
 		BOOST_CHECK_EQUAL (b._minute, 26);
 		BOOST_CHECK_EQUAL (b._second, 45);
 		BOOST_CHECK_EQUAL (b._millisecond, 0);
-		BOOST_CHECK_EQUAL (b._tz_hour, 0);
-		BOOST_CHECK_EQUAL (b._tz_minute, 0);
+		BOOST_CHECK(b._offset == dcp::UTCOffset());
 	}
 
 	/* Check negative times with non-zero timezone offset minutes */
@@ -135,8 +131,7 @@ BOOST_AUTO_TEST_CASE (local_time_basic_test)
 		BOOST_CHECK_EQUAL (t._hour, 18);
 		BOOST_CHECK_EQUAL (t._minute, 6);
 		BOOST_CHECK_EQUAL (t._second, 59);
-		BOOST_CHECK_EQUAL (t._tz_hour, -4);
-		BOOST_CHECK_EQUAL (t._tz_minute, -30);
+		BOOST_CHECK(t._offset == dcp::UTCOffset(-4, -30));
 		BOOST_CHECK_EQUAL (t.as_string(), "2013-01-05T18:06:59-04:30");
 	}
 }

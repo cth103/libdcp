@@ -41,6 +41,7 @@
 #define LIBDCP_LOCAL_TIME_H
 
 
+#include "utc_offset.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <string>
 
@@ -73,11 +74,8 @@ public:
 	 */
 	explicit LocalTime (boost::posix_time::ptime);
 
-	/** Construct a LocalTime from a boost::posix_time::ptime and a time zone offset
-	 *  @param tz_minute Offset from UTC in minutes; if the timezone is behind UTC this may be negative,
-	 *  e.g. -04:30 would have tz_hour=-1 and tz_minute=-30.
-	 */
-	LocalTime (boost::posix_time::ptime, int tz_hour, int tz_minute);
+	/** Construct a LocalTime from a boost::posix_time::ptime and a time zone offset */
+	LocalTime(boost::posix_time::ptime, UTCOffset offset);
 
 	/** @param s A string of the form 2013-01-05T18:06:59[.123][+04:00] */
 	explicit LocalTime (std::string s);
@@ -146,11 +144,7 @@ private:
 	int _second = 0;      ///< second number of the minute (0-59)
 	int _millisecond = 0; ///< millisecond number of the second (0-999)
 
-	int _tz_hour = 0;     ///< hours by which this time is offset from UTC; can be negative
-	/** Minutes by which this time is offset from UTC; if _tz_hour is negative
-	 *  this will be either 0 or negative.
-	 */
-	int _tz_minute = 0;
+	UTCOffset _offset;
 };
 
 
