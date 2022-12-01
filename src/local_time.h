@@ -122,8 +122,20 @@ public:
 		return _second;
 	}
 
+	void set_day(int d) {
+		_day = d;
+	}
+
+	void set_month(int m) {
+		_month = m;
+	}
+
 	void set_year (int y) {
 		_year = y;
+	}
+
+	void set_offset(UTCOffset offset) {
+		_offset = offset;
 	}
 
 	void add_days (int d);
