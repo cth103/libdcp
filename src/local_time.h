@@ -121,6 +121,8 @@ public:
 	void add_months (int a);
 	void add_minutes (int a);
 
+	void add(boost::posix_time::time_duration duration);
+
 	static LocalTime from_asn1_utc_time (std::string time);
 	static LocalTime from_asn1_generalized_time (std::string time);
 

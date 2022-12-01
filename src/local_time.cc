@@ -236,6 +236,17 @@ LocalTime::add_days (int days)
 
 
 void
+LocalTime::add(boost::posix_time::time_duration duration)
+{
+	using namespace boost;
+
+	posix_time::ptime t(gregorian::date(_year, _month, _day), posix_time::time_duration(_hour, _minute, _second, _millisecond * 1000));
+	t += duration;
+	set (t);
+}
+
+
+void
 LocalTime::add_months (int m)
 {
 	using namespace boost;
@@ -254,11 +265,7 @@ LocalTime::add_months (int m)
 void
 LocalTime::add_minutes (int m)
 {
-	using namespace boost;
-
-	posix_time::ptime t(gregorian::date(_year, _month, _day), posix_time::time_duration(_hour, _minute, _second, _millisecond * 1000));
-	t += posix_time::time_duration(0, m, 0);
-	set (t);
+	add(boost::posix_time::time_duration(0, m, 0));
 }
 
 
