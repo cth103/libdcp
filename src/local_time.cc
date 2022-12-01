@@ -303,6 +303,30 @@ LocalTime::operator< (LocalTime const & other) const
 
 
 bool
+LocalTime::operator>(LocalTime const & other) const
+{
+	DCP_ASSERT(_offset == other._offset);
+
+	if (_year != other._year) {
+		return _year > other._year;
+	}
+	if (_month != other._month) {
+		return _month > other._month;
+	}
+	if (_day != other._day) {
+		return _day > other._day;
+	}
+	if (_hour != other._hour) {
+		return _hour > other._hour;
+	}
+	if (_second != other._second) {
+		return _second > other._second;
+	}
+	return _millisecond > other._millisecond;
+}
+
+
+bool
 LocalTime::operator!= (LocalTime const & other) const
 {
 	return !(*this == other);

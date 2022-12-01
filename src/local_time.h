@@ -138,6 +138,7 @@ public:
 	bool operator== (LocalTime const & other) const;
 	bool operator!= (LocalTime const & other) const;
 	bool operator< (LocalTime const & other) const;
+	bool operator>(LocalTime const & other) const;
 
 private:
 	friend struct ::local_time_basic_test;
