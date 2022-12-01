@@ -281,6 +281,8 @@ LocalTime::operator== (LocalTime const & other) const
 bool
 LocalTime::operator< (LocalTime const & other) const
 {
+	DCP_ASSERT(_offset == other._offset);
+
 	if (_year != other._year) {
 		return _year < other._year;
 	}
