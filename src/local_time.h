@@ -80,6 +80,15 @@ public:
 	/** @param s A string of the form 2013-01-05T18:06:59[.123][+04:00] */
 	explicit LocalTime (std::string s);
 
+	LocalTime(int year, int month, int day, int hour, int minute, UTCOffset offset)
+		: _year(year)
+		, _month(month)
+		, _day(day)
+		, _hour(hour)
+		, _minute(minute)
+		, _offset(offset)
+	{}
+
 	/** @return A string of the form 2013-01-05T18:06:59+04:00 or 2013-01-05T18:06:59.123+04:00 */
 	std::string as_string (bool with_millisecond = false) const;
 
