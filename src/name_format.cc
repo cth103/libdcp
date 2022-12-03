@@ -55,6 +55,11 @@ filter (char c)
 	} else if (c == ' ') {
 		c = '_';
 	}
+#ifdef LIBDCP_WINDOWS
+	else if (c == '?' || c == '.') {
+		c = '_';
+	}
+#endif
 
 	return c;
 }
