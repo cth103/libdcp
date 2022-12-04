@@ -62,7 +62,6 @@ def options(opt):
     opt.add_option('--disable-examples', action='store_true', default=False, help='disable building of examples')
     opt.add_option('--enable-openmp', action='store_true', default=False, help='enable use of OpenMP')
     opt.add_option('--openmp', default='gomp', help='specify OpenMP Library to use: omp, gomp (default), iomp')
-    opt.add_option('--jpeg', default='oj2', help='specify JPEG library to build with: oj1 or oj2 for OpenJPEG 1.5.x or OpenJPEG 2.1.x respectively')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -112,13 +111,6 @@ def configure(conf):
     if conf.env.TARGET_LINUX:
         conf.check(lib='dl', uselib_store='DL', msg='Checking for library dl')
 
-    if conf.options.jpeg == 'oj1':
-        conf.env.append_value('CXXFLAGS', ['-DLIBDCP_OPENJPEG1'])
-    elif conf.options.jpeg == 'oj2':
-        conf.env.append_value('CXXFLAGS', ['-DLIBDCP_OPENJPEG2'])
-    else:
-        Logs.error('Invalid --jpeg value %s' % conf.options.jpeg)
-
     conf.check_cfg(package='openssl', args='--cflags --libs', uselib_store='OPENSSL', mandatory=True)
     conf.check_cfg(package='libxml++-2.6', args='--cflags --libs', uselib_store='LIBXML++', mandatory=True)
     conf.check_cfg(package='xmlsec1', args='--cflags --libs', uselib_store='XMLSEC1', mandatory=True)
@@ -138,12 +130,8 @@ def configure(conf):
     conf.check_cfg(package='sndfile', args='--cflags --libs', uselib_store='SNDFILE', mandatory=False)
 
     if conf.options.static:
-        if conf.options.jpeg == 'oj2':
-            conf.check_cfg(package='libopenjp2', args='--cflags', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
-            conf.env.STLIB_OPENJPEG = ['openjp2']
-        elif conf.options.jpeg == 'oj1':
-            conf.check_cfg(package='libopenjpeg1', args='--cflags', atleast_version='1.5.0', uselib_store='OPENJPEG', mandatory=True)
-            conf.env.STLIB_OPENJPEG = ['openjpeg']
+        conf.check_cfg(package='libopenjp2', args='--cflags', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
+        conf.env.STLIB_OPENJPEG = ['openjp2']
         conf.check_cfg(package='libasdcp-carl', atleast_version='0.1.3', args='--cflags', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.env.HAVE_ASDCPLIB_CTH = 1
         conf.env.STLIB_ASDCPLIB_CTH = ['asdcp-carl', 'kumu-carl']
@@ -153,10 +141,7 @@ def configure(conf):
         conf.check_cfg(package='xerces-c', args='--cflags', uselib_store='XERCES', mandatory=True)
         conf.env.LIB_XERCES = ['xerces-c', 'icuuc', 'curl']
     else:
-        if conf.options.jpeg == 'oj2':
-            conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
-        elif conf.options.jpeg == 'oj1':
-            conf.check_cfg(package='libopenjpeg1', args='--cflags --libs', atleast_version='1.5.0', uselib_store='OPENJPEG', mandatory=True)
+        conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
         conf.check_cfg(package='libasdcp-carl', atleast_version='0.1.3', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.check_cfg(package='libcxml', atleast_version='0.17.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
         conf.check_cfg(package='xerces-c', args='--cflags --libs', uselib_store='XERCES', mandatory=True)

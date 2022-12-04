@@ -34,14 +34,8 @@
 import os
 import shutil
 
-option_defaults = { 'jpeg': 'oj2' }
-
 def dependencies(target, options):
-    libcxml = ('libcxml', 'v0.17.4')
-    if options['jpeg'] == 'oj1':
-        return (libcxml, ('openjpeg', 'f166257'), ('asdcplib', '825e47522e3ae179a7820b2665c9de299b34494b'))
-    else:
-        return (libcxml, ('openjpeg', 'a1403c2'), ('asdcplib', '825e47522e3ae179a7820b2665c9de299b34494b'))
+    return (('libcxml', 'v0.17.4'), ('openjpeg', 'a1403c2'), ('asdcplib', '825e47522e3ae179a7820b2665c9de299b34494b'))
 
 def build(target, options):
     cmd = './waf configure --disable-examples --disable-benchmarks --prefix=%s' % target.directory
@@ -53,9 +47,6 @@ def build(target, options):
             cmd += ' --disable-tests'
     elif target.platform == 'windows':
         cmd += f' --target-windows-{target.bits}'
-        if target.version == 'xp':
-            # OpenJPEG 1.x is inexplicably faster on Windows XP; see DCP-o-matic bug #771
-            cmd += ' --jpeg=oj1'
 
     if target.debug:
         cmd += ' --enable-debug'

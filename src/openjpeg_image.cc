@@ -46,22 +46,11 @@
 using namespace dcp;
 
 
-#ifdef LIBDCP_OPENJPEG1
-#define OPJ_CLRSPC_SRGB CLRSPC_SRGB
-#endif
-
-
 OpenJPEGImage::OpenJPEGImage (opj_image_t* image)
 	: _opj_image (image)
 {
 	DCP_ASSERT (_opj_image->numcomps == 3);
 }
-
-
-#ifdef LIBDCP_OPENJPEG1
-typedef int32_t OPJ_INT32;
-typedef uint8_t OPJ_BYTE;
-#endif
 
 
 OpenJPEGImage::OpenJPEGImage (OpenJPEGImage const & other)
