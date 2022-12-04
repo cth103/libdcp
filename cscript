@@ -39,7 +39,6 @@ def dependencies(target, options):
 
 def build(target, options):
     cmd = './waf configure --disable-examples --disable-benchmarks --prefix=%s' % target.directory
-    cmd += ' --jpeg=%s' % options['jpeg']
     if target.platform == 'linux':
         cmd += ' --static'
         if not (target.distro == 'ubuntu' and target.version == '18.04'):
