@@ -109,7 +109,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 			xml->read_string (xml_string);
 			parse_xml (xml);
 			read_mxf_descriptor (reader);
-			read_mxf_resources (reader, make_shared<DecryptionContext>(optional<Key>(), Standard::SMPTE));
+			read_mxf_resources(reader, std::make_shared<DecryptionContext>(optional<Key>(), Standard::SMPTE));
 		} else {
 			read_mxf_descriptor (reader);
 		}

@@ -42,10 +42,9 @@
 #include <boost/test/unit_test.hpp>
 
 
-using std::make_shared;
-using std::string;
-using std::shared_ptr;
 using std::dynamic_pointer_cast;
+using std::shared_ptr;
+using std::string;
 using std::vector;
 using boost::optional;
 
@@ -54,7 +53,7 @@ BOOST_AUTO_TEST_CASE (smpte_subtitle_id_test)
 {
 	dcp::SMPTESubtitleAsset subs;
 	subs.add(
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			optional<string>(),
 			false, false, false,
 			dcp::Colour(),
@@ -181,7 +180,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
 	c.add (
-		make_shared<dcp::SubtitleString> (
+		std::make_shared<dcp::SubtitleString> (
 			string ("Frutiger"),
 			false,
 			false,
@@ -207,7 +206,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 		);
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			boost::optional<string> (),
 			true,
 			true,
@@ -233,7 +232,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 		);
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			boost::optional<string> (),
 			true,
 			true,
@@ -300,7 +299,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			string ("Arial"),
 			false,
 			false,
@@ -326,7 +325,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 		);
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			string ("Arial"),
 			true,
 			false,
@@ -352,7 +351,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 		);
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			string ("Arial"),
 			false,
 			false,
@@ -378,7 +377,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 		);
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			string ("Arial"),
 			false,
 			false,
@@ -404,7 +403,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 		);
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			string ("Arial"),
 			true,
 			false,
@@ -430,7 +429,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 		);
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			string ("Arial"),
 			false,
 			false,
@@ -493,7 +492,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 	boost::filesystem::path const sub_image = "test/data/sub.png";
 
 	c.add (
-		make_shared<dcp::SubtitleImage>(
+		std::make_shared<dcp::SubtitleImage>(
 			dcp::ArrayData(sub_image),
 			dcp::Time (0, 4,  9, 22, 24),
 			dcp::Time (0, 4, 11, 22, 24),
@@ -544,7 +543,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_top_alignment)
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			string ("Arial"),
 			false,
 			false,
@@ -570,7 +569,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_top_alignment)
 		);
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			string ("Arial"),
 			false,
 			false,
@@ -632,7 +631,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_bottom_alignment)
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			string ("Arial"),
 			false,
 			false,
@@ -658,7 +657,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_bottom_alignment)
 		);
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			string ("Arial"),
 			false,
 			false,

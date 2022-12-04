@@ -1242,7 +1242,7 @@ void
 add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int end_frame, float v_position = 0, dcp::VAlign v_align = dcp::VAlign::CENTER, string text = "Hello")
 {
 	asset->add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			optional<string>(),
 			false,
 			false,

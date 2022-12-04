@@ -64,7 +64,6 @@
 
 using std::dynamic_pointer_cast;
 using std::make_pair;
-using std::make_shared;
 using std::map;
 using std::pair;
 using std::shared_ptr;
@@ -155,7 +154,7 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 	auto context_id = dcp::make_uuid();
 	dcp::Key key;
 
-	auto picture_asset = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
+	auto picture_asset = std::make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 	picture_asset->set_key (key);
 	picture_asset->set_context_id (context_id);
 	auto picture_writer = picture_asset->start_write(dir / "picture.mxf", false);
@@ -165,7 +164,7 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 	}
 	picture_writer->finalize();
 
-	auto sound_asset = make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 2, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
+	auto sound_asset = std::make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 2, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
 	sound_asset->set_key (key);
 	sound_asset->set_context_id (context_id);
 	auto sound_writer = sound_asset->start_write(dir / "sound.mxf");
@@ -181,10 +180,10 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 	sound_writer->write (audio.data(), 48000);
 	sound_writer->finalize ();
 
-	auto subs_asset = make_shared<dcp::SMPTESubtitleAsset>();
+	auto subs_asset = std::make_shared<dcp::SMPTESubtitleAsset>();
 	subs_asset->set_key (key);
 	subs_asset->set_context_id (context_id);
-	subs_asset->add(make_shared<dcp::SubtitleString>(
+	subs_asset->add(std::make_shared<dcp::SubtitleString>(
 		optional<string>(),
 		false, false, false,
 		dcp::Colour(255, 255, 255),
@@ -203,10 +202,10 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 		));
 	subs_asset->write (dir / "subs.mxf");
 
-	auto reel = make_shared<dcp::Reel>();
-	auto reel_picture_asset = make_shared<dcp::ReelMonoPictureAsset>(picture_asset, 0);
-	auto reel_sound_asset = make_shared<dcp::ReelSoundAsset>(sound_asset, 0);
-	auto reel_subs_asset = make_shared<dcp::ReelSMPTESubtitleAsset>(subs_asset, dcp::Fraction(24, 1), 120, 0);
+	auto reel = std::make_shared<dcp::Reel>();
+	auto reel_picture_asset = std::make_shared<dcp::ReelMonoPictureAsset>(picture_asset, 0);
+	auto reel_sound_asset = std::make_shared<dcp::ReelSoundAsset>(sound_asset, 0);
+	auto reel_subs_asset = std::make_shared<dcp::ReelSMPTESubtitleAsset>(subs_asset, dcp::Fraction(24, 1), 120, 0);
 	reel->add(reel_picture_asset);
 	reel->add(reel_sound_asset);
 	reel->add(reel_subs_asset);

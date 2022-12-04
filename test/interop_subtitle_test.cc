@@ -43,7 +43,6 @@
 
 
 using std::dynamic_pointer_cast;
-using std::make_shared;
 using std::shared_ptr;
 using std::string;
 using std::vector;
@@ -709,7 +708,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 	c.set_movie_title ("Test");
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			string ("Frutiger"),
 			false,
 			false,
@@ -735,7 +734,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 		);
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			boost::optional<string> (),
 			true,
 			true,
@@ -761,7 +760,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 		);
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			boost::optional<string> (),
 			true,
 			true,
@@ -821,7 +820,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 	c.set_movie_title ("Test");
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			string ("Frutiger"),
 			false,
 			false,
@@ -847,7 +846,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 		);
 
 	c.add (
-		make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::SubtitleString>(
 			boost::optional<string>(),
 			true,
 			true,
@@ -901,13 +900,13 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 {
 	RNGFixer fix;
 
-	auto c = make_shared<dcp::InteropSubtitleAsset>();
+	auto c = std::make_shared<dcp::InteropSubtitleAsset>();
 	c->set_reel_number ("1");
 	c->set_language ("EN");
 	c->set_movie_title ("Test");
 
 	c->add (
-		make_shared<dcp::SubtitleImage>(
+		std::make_shared<dcp::SubtitleImage>(
 			dcp::ArrayData ("test/data/sub.png"),
 			dcp::Time (0, 4,  9, 22, 24),
 			dcp::Time (0, 4, 11, 22, 24),
@@ -926,15 +925,16 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 	boost::filesystem::create_directories ("build/test/write_interop_subtitle_test3");
 	c->write ("build/test/write_interop_subtitle_test3/subs.xml");
 
-	auto reel = make_shared<dcp::Reel>();
-	reel->add(make_shared<dcp::ReelInteropSubtitleAsset>(c, dcp::Fraction(24, 1), 6046, 0));
+	auto reel = std::make_shared<dcp::Reel>();
+	reel->add(std::make_shared<dcp::ReelInteropSubtitleAsset>(c, dcp::Fraction(24, 1), 6046, 0));
 
 	string const issue_date = "2018-09-02T04:45:18+00:00";
 	string const issuer = "libdcp";
 	string const creator = "libdcp";
 	string const annotation_text = "Created by libdcp";
 
-	auto cpl = make_shared<dcp::CPL>("My film", dcp::ContentKind::FEATURE, dcp::Standard::INTEROP);
+using std::make_shared;
+	auto cpl = std::make_shared<dcp::CPL>("My film", dcp::ContentKind::FEATURE, dcp::Standard::INTEROP);
 	cpl->add (reel);
 	cpl->set_issuer (issuer);
 	cpl->set_creator (creator);

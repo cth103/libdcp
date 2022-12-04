@@ -386,7 +386,7 @@ make_simple (boost::filesystem::path path, int reels, int frames, dcp::Standard 
 shared_ptr<dcp::Subtitle>
 simple_subtitle ()
 {
-	return make_shared<dcp::SubtitleString>(
+	return std::make_shared<dcp::SubtitleString>(
 		optional<string>(),
 		false,
 		false,
