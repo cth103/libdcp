@@ -281,10 +281,18 @@ dcp::compress_j2k (shared_ptr<const OpenJPEGImage> xyz, int bandwidth, int frame
 	parameters.max_comp_size = parameters.max_cs_size / 1.25;
 	parameters.tcp_numlayers = 1;
 	parameters.tcp_mct = 1;
+#ifdef LIBDCP_HAVE_NUMGBITS
 	parameters.numgbits = fourk ? 2 : 1;
+#endif
 
 	/* Setup the encoder parameters using the current image and user parameters */
 	opj_setup_encoder (encoder, &parameters, xyz->opj_image());
+
+#ifndef LIBDCP_HAVE_NUMGBITS
+	string numgbits = String::compose("GUARD_BITS=%1", fourk ? 2 : 1);
+	char const* extra_options[] = { numgbits.c_str(), nullptr };
+	opj_encoder_set_extra_options(encoder, extra_options);
+#endif
 
 	auto stream = opj_stream_default_create (OPJ_FALSE);
 	if (!stream) {

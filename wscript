@@ -129,8 +129,26 @@ def configure(conf):
 
     conf.check_cfg(package='sndfile', args='--cflags --libs', uselib_store='SNDFILE', mandatory=False)
 
+    # Find openjpeg so that we can test to see if it's the right version
     if conf.options.static:
-        conf.check_cfg(package='libopenjp2', args='--cflags', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
+        conf.check_cfg(package='libopenjp2', args='--cflags', uselib_store='OPENJPEG', mandatory=True, msg='Checking for any version of libopenjp2')
+    else:
+        conf.check_cfg(package='libopenjp2', args='--cflags --libs', uselib_store='OPENJPEG', mandatory=True, msg='Checking for any version of libopenjp2')
+
+    patched_openjpeg = conf.check_cxx(fragment="""
+                   #include <openjpeg.h>
+                   int main() { opj_cparameters_t p; p.numgbits = 2; }\n
+                   """,
+                   msg='Checking for numgbits in opj_cparameters_t',
+                   use='OPENJPEG',
+                   mandatory=False,
+                   define_name='LIBDCP_HAVE_NUMGBITS')
+
+    if not patched_openjpeg:
+        # We don't have our patched version so we need 2.5.0 to get the GUARD_BITS option
+        conf.check_cfg(package='libopenjp2', args='libopenjp2 >= 2.5.0', uselib_store='OPENJPEG', mandatory=True, msg='Checking for libopenjp2 >= 2.5.0')
+
+    if conf.options.static:
         conf.env.STLIB_OPENJPEG = ['openjp2']
         conf.check_cfg(package='libasdcp-carl', atleast_version='0.1.3', args='--cflags', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.env.HAVE_ASDCPLIB_CTH = 1
@@ -141,7 +159,6 @@ def configure(conf):
         conf.check_cfg(package='xerces-c', args='--cflags', uselib_store='XERCES', mandatory=True)
         conf.env.LIB_XERCES = ['xerces-c', 'icuuc', 'curl']
     else:
-        conf.check_cfg(package='libopenjp2', args='--cflags --libs', atleast_version='2.1.0', uselib_store='OPENJPEG', mandatory=True)
         conf.check_cfg(package='libasdcp-carl', atleast_version='0.1.3', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.check_cfg(package='libcxml', atleast_version='0.17.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
         conf.check_cfg(package='xerces-c', args='--cflags --libs', uselib_store='XERCES', mandatory=True)
