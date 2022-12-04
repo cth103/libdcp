@@ -150,7 +150,7 @@ def configure(conf):
 
     if conf.options.static:
         conf.env.STLIB_OPENJPEG = ['openjp2']
-        conf.check_cfg(package='libasdcp-carl', atleast_version='0.1.3', args='--cflags', uselib_store='ASDCPLIB_CTH', mandatory=True)
+        conf.check_cfg(package='libasdcp-carl', args='libasdcp-carl >= 0.1.3 --cflags', uselib_store='ASDCPLIB_CTH', mandatory=True)
         conf.env.HAVE_ASDCPLIB_CTH = 1
         conf.env.STLIB_ASDCPLIB_CTH = ['asdcp-carl', 'kumu-carl']
         conf.env.HAVE_CXML = 1
@@ -159,8 +159,8 @@ def configure(conf):
         conf.check_cfg(package='xerces-c', args='--cflags', uselib_store='XERCES', mandatory=True)
         conf.env.LIB_XERCES = ['xerces-c', 'icuuc', 'curl']
     else:
-        conf.check_cfg(package='libasdcp-carl', atleast_version='0.1.3', args='--cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
-        conf.check_cfg(package='libcxml', atleast_version='0.17.0', args='--cflags --libs', uselib_store='CXML', mandatory=True)
+        conf.check_cfg(package='libasdcp-carl', args='libasdcp-carl >= 0.1.3 --cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
+        conf.check_cfg(package='libcxml', args='libcxml >= 0.17.0 --cflags --libs', uselib_store='CXML', mandatory=True)
         conf.check_cfg(package='xerces-c', args='--cflags --libs', uselib_store='XERCES', mandatory=True)
 
     if conf.env.TARGET_WINDOWS_64 or conf.env.TARGET_WINDOWS_32:
