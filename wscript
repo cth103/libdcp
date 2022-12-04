@@ -40,8 +40,8 @@ from waflib import Logs, Context
 
 APPNAME = 'libdcp'
 
-this_version = subprocess.Popen(shlex.split('git tag -l --points-at HEAD'), stdout=subprocess.PIPE).communicate()[0]
-last_version = subprocess.Popen(shlex.split('git describe --tags --abbrev=0'), stdout=subprocess.PIPE).communicate()[0]
+this_version = subprocess.Popen(shlex.split('git tag -l --points-at HEAD'), stdout=subprocess.PIPE).communicate()[0].decode('UTF-8')
+last_version = subprocess.Popen(shlex.split('git describe --tags --abbrev=0'), stdout=subprocess.PIPE).communicate()[0].decode('UTF-8')
 
 if this_version == '':
     VERSION = '%sdevel' % last_version[1:].strip()
