@@ -708,3 +708,43 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_bottom_alignment)
 		);
 }
 
+
+BOOST_AUTO_TEST_CASE(smpte_subtitle_standard_written_correctly)
+{
+	RNGFixer fixer;
+
+	boost::filesystem::path const ref = "test/data";
+	boost::filesystem::path const out = "build/test/smpte_subtitle_standard_written_correctly";
+
+	boost::filesystem::remove_all(out);
+	boost::filesystem::create_directories(out);
+
+	dcp::SMPTESubtitleAsset test_2014;
+	test_2014.set_issue_date(dcp::LocalTime("2020-01-01T14:00:00"));
+	test_2014.write(out / "2014.mxf");
+	check_file(ref / "2014.mxf", out / "2014.mxf");
+
+	dcp::SMPTESubtitleAsset test_2010(dcp::SubtitleStandard::SMPTE_2010);
+	test_2010.set_issue_date(dcp::LocalTime("2020-01-01T14:00:00"));
+	test_2010.write(out / "2010.mxf");
+	check_file(ref / "2010.mxf", out / "2010.mxf");
+
+	dcp::SMPTESubtitleAsset test_2007(dcp::SubtitleStandard::SMPTE_2007);
+	test_2007.set_issue_date(dcp::LocalTime("2020-01-01T14:00:00"));
+	test_2007.write(out / "2007.mxf");
+	check_file(ref / "2007.mxf", out / "2007.mxf");
+}
+
+
+BOOST_AUTO_TEST_CASE(smpte_subtitle_standard_read_correctly)
+{
+	dcp::SMPTESubtitleAsset test_2007("test/data/2007.mxf");
+	BOOST_CHECK(test_2007.subtitle_standard() == dcp::SubtitleStandard::SMPTE_2007);
+
+	dcp::SMPTESubtitleAsset test_2010("test/data/2010.mxf");
+	BOOST_CHECK(test_2010.subtitle_standard() == dcp::SubtitleStandard::SMPTE_2010);
+
+	dcp::SMPTESubtitleAsset test_2014("test/data/2014.mxf");
+	BOOST_CHECK(test_2014.subtitle_standard() == dcp::SubtitleStandard::SMPTE_2014);
+}
+

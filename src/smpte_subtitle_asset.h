@@ -41,11 +41,12 @@
  */
 
 
-#include "subtitle_asset.h"
+#include "crypto_context.h"
 #include "language_tag.h"
 #include "local_time.h"
 #include "mxf.h"
-#include "crypto_context.h"
+#include "subtitle_asset.h"
+#include "subtitle_standard.h"
 #include <boost/filesystem.hpp>
 
 
@@ -74,7 +75,7 @@ class SMPTELoadFontNode;
 class SMPTESubtitleAsset : public SubtitleAsset, public MXF
 {
 public:
-	SMPTESubtitleAsset ();
+	explicit SMPTESubtitleAsset(SubtitleStandard standard = SubtitleStandard::SMPTE_2014);
 
 	/** Construct a SMPTESubtitleAsset by reading an MXF or XML file
 	 *  @param file Filename
@@ -190,6 +191,10 @@ public:
 		return _resource_id;
 	}
 
+	SubtitleStandard subtitle_standard() const override {
+		return _subtitle_standard;
+	}
+
 	static bool valid_mxf (boost::filesystem::path);
 	static std::string static_pkl_type (Standard) {
 		return "application/mxf";
@@ -213,6 +218,7 @@ private:
 	void parse_xml (std::shared_ptr<cxml::Document> xml);
 	void read_mxf_descriptor (std::shared_ptr<ASDCP::TimedText::MXFReader> reader);
 	void read_mxf_resources (std::shared_ptr<ASDCP::TimedText::MXFReader> reader, std::shared_ptr<DecryptionContext> dec);
+	std::string schema_namespace() const;
 
 	/** The total length of this content in video frames.  The amount of
 	 *  content presented may be less than this.
@@ -230,6 +236,12 @@ private:
 	Fraction _edit_rate;
 	int _time_code_rate = 0;
 	boost::optional<Time> _start_time;
+	/** There are two SMPTE standards describing subtitles, 428-7:2010 and 428-7:2014, and they
+	 *  have different interpretations of what Vposition means.  Though libdcp does not need to
+	 *  know the difference, this variable stores the standard from the namespace that this asset was
+	 *  written with (or will be written with).
+	 */
+	SubtitleStandard _subtitle_standard;
 
 	std::vector<std::shared_ptr<SMPTELoadFontNode>> _load_font_nodes;
 	/** UUID for the XML inside the MXF, which should be the same as the ResourceID in the MXF (our _resource_id)

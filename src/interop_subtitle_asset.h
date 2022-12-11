@@ -42,6 +42,7 @@
 
 
 #include "subtitle_asset.h"
+#include "subtitle_standard.h"
 #include <boost/filesystem.hpp>
 
 
@@ -124,6 +125,10 @@ public:
 	int time_code_rate () const override {
 		/* Interop can use either; just pick one */
 		return 1000;
+	}
+
+	SubtitleStandard subtitle_standard() const override {
+		return SubtitleStandard::INTEROP;
 	}
 
 	static std::string static_pkl_type (Standard) {

@@ -72,13 +72,16 @@ using boost::starts_with;
 using namespace dcp;
 
 
-static string const subtitle_smpte_ns = "http://www.smpte-ra.org/schemas/428-7/2010/DCST";
+static string const subtitle_smpte_ns_2007 = "http://www.smpte-ra.org/schemas/428-7/2007/DCST";
+static string const subtitle_smpte_ns_2010 = "http://www.smpte-ra.org/schemas/428-7/2010/DCST";
+static string const subtitle_smpte_ns_2014 = "http://www.smpte-ra.org/schemas/428-7/2014/DCST";
 
 
-SMPTESubtitleAsset::SMPTESubtitleAsset ()
-	: MXF (Standard::SMPTE)
+SMPTESubtitleAsset::SMPTESubtitleAsset(SubtitleStandard standard)
+	: MXF(Standard::SMPTE)
 	, _edit_rate (24, 1)
 	, _time_code_rate (24)
+	, _subtitle_standard(standard)
 	, _xml_id (make_uuid())
 {
 
@@ -165,6 +168,15 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 void
 SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 {
+	if (xml->namespace_uri() == subtitle_smpte_ns_2007) {
+		_subtitle_standard = SubtitleStandard::SMPTE_2007;
+	} else if (xml->namespace_uri() == subtitle_smpte_ns_2010) {
+		_subtitle_standard = SubtitleStandard::SMPTE_2010;
+	} else if (xml->namespace_uri() == subtitle_smpte_ns_2014) {
+		_subtitle_standard = SubtitleStandard::SMPTE_2014;
+	} else {
+		throw XMLError("Unrecognised subtitle namespace " + xml->namespace_uri());
+	}
 	_xml_id = remove_urn_uuid(xml->string_child("Id"));
 	_load_font_nodes = type_children<dcp::SMPTELoadFontNode> (xml, "LoadFont");
 
@@ -372,7 +384,7 @@ SMPTESubtitleAsset::xml_as_string () const
 
 	subtitles_as_xml (root->add_child("SubtitleList"), _time_code_rate, Standard::SMPTE);
 
-	return format_xml(doc, { {"", subtitle_smpte_ns}, {"xs", "http://www.w3.org/2001/XMLSchema"} });
+	return format_xml(doc, { {"", schema_namespace()}, {"xs", "http://www.w3.org/2001/XMLSchema"} });
 }
 
 
@@ -419,7 +431,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 		}
 	}
 
-	descriptor.NamespaceName = subtitle_smpte_ns;
+	descriptor.NamespaceName = schema_namespace();
 	unsigned int c;
 	DCP_ASSERT (_xml_id);
 	Kumu::hex2bin (_xml_id->c_str(), descriptor.AssetID, ASDCP::UUIDlen, &c);
@@ -574,5 +586,23 @@ SMPTESubtitleAsset::add (shared_ptr<Subtitle> s)
 {
 	SubtitleAsset::add (s);
 	_intrinsic_duration = latest_subtitle_out().as_editable_units_ceil(_edit_rate.numerator / _edit_rate.denominator);
+}
+
+
+string
+SMPTESubtitleAsset::schema_namespace() const
+{
+	switch (_subtitle_standard) {
+	case SubtitleStandard::SMPTE_2007:
+		return subtitle_smpte_ns_2007;
+	case SubtitleStandard::SMPTE_2010:
+		return subtitle_smpte_ns_2010;
+	case SubtitleStandard::SMPTE_2014:
+		return subtitle_smpte_ns_2014;
+	default:
+		DCP_ASSERT(false);
+	}
+
+	DCP_ASSERT(false);
 }
 

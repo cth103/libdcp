@@ -113,6 +113,7 @@ def build(bld):
              subtitle_asset.cc
              subtitle_asset_internal.cc
              subtitle_image.cc
+             subtitle_standard.cc
              subtitle_string.cc
              transfer_function.cc
              types.cc
@@ -213,6 +214,7 @@ def build(bld):
               subtitle.h
               subtitle_asset.h
               subtitle_image.h
+              subtitle_standard.h
               subtitle_string.h
               transfer_function.h
               types.h

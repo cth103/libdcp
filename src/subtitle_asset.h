@@ -44,6 +44,7 @@
 #include "array_data.h"
 #include "asset.h"
 #include "dcp_time.h"
+#include "subtitle_standard.h"
 #include "subtitle_string.h"
 #include <libcxml/cxml.h>
 #include <boost/shared_array.hpp>
@@ -131,6 +132,8 @@ public:
 	virtual boost::optional<std::string> raw_xml () const {
 		return _raw_xml;
 	}
+
+	virtual SubtitleStandard subtitle_standard() const = 0;
 
 	static std::string format_xml (xmlpp::Document const& document, std::vector<std::pair<std::string, std::string>> const& namespaces);
 
