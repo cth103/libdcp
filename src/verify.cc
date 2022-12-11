@@ -242,7 +242,8 @@ public:
 		add("http://www.digicine.com/PROTO-ASDCP-AM-20040311.xsd", "PROTO-ASDCP-AM-20040311.xsd");
 		add("http://www.digicine.com/PROTO-ASDCP-CC-CPL-20070926#", "PROTO-ASDCP-CC-CPL-20070926.xsd");
 		add("interop-subs", "DCSubtitle.v1.mattsson.xsd");
-		add("http://www.smpte-ra.org/schemas/428-7/2010/DCST.xsd", "SMPTE-428-7-2010-DCST.xsd");
+		add("http://www.smpte-ra.org/schemas/428-7/2010/DCST.xsd", "DCDMSubtitle-2010.xsd");
+		add("http://www.smpte-ra.org/schemas/428-7/2014/DCST.xsd", "DCDMSubtitle-2014.xsd");
 		add("http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata", "SMPTE-429-16.xsd");
 		add("http://www.dolby.com/schemas/2012/AD", "Dolby-2012-AD.xsd");
 		add("http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL", "SMPTE-429-10-2008.xsd");
@@ -321,6 +322,7 @@ validate_xml (T xml, boost::filesystem::path xsd_dtd_directory, vector<Verificat
 		schema.push_back("PROTO-ASDCP-AM-20040311.xsd");
 		schema.push_back("DCSubtitle.v1.mattsson.xsd");
 		schema.push_back("DCDMSubtitle-2010.xsd");
+		schema.push_back("DCDMSubtitle-2014.xsd");
 		schema.push_back("PROTO-ASDCP-CC-CPL-20070926.xsd");
 		schema.push_back("SMPTE-429-16.xsd");
 		schema.push_back("Dolby-2012-AD.xsd");
