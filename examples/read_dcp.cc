@@ -51,6 +51,10 @@ LIBDCP_ENABLE_WARNINGS
 int
 main ()
 {
+	/* Unless libdcp has been installed, you need to pass a path containing the "tags" folder here */
+	dcp::init(boost::filesystem::path("."));
+	Magick::InitializeMagick(nullptr);
+
 	/* Create a DCP, specifying where our existing data is */
 	dcp::DCP dcp ("/home/carl/Test_DCP");
 	/* Read the DCP to find out about it */
