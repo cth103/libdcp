@@ -32,6 +32,10 @@
 */
 
 
+#ifndef LIBDCP_OPENJPEG_IMAGE_H
+#define LIBDCP_OPENJPEG_IMAGE_H
+
+
 /** @file  src/openjpeg_image.h
  *  @brief OpenJPEGImage class
  */
@@ -97,3 +101,6 @@ private:
 
 
 }
+
+
+#endif
