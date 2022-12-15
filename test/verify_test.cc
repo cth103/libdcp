@@ -245,6 +245,27 @@ public:
 		}
 	}
 
+	void delete_lines_after(string after, int lines_to_delete)
+	{
+		ChangeChecker cc(this);
+		auto lines = as_lines();
+		_content = "";
+		auto iter = std::find_if(lines.begin(), lines.end(), [after](string const& line) {
+			return line.find(after) != string::npos;
+		});
+		int to_delete = 0;
+		for (auto i = lines.begin(); i != lines.end(); ++i) {
+			if (i == iter) {
+				to_delete = lines_to_delete;
+				_content += *i + "\n";
+			} else if (to_delete == 0) {
+				_content += *i + "\n";
+			} else {
+				--to_delete;
+			}
+		}
+	}
+
 private:
 	friend class ChangeChecker;
 
