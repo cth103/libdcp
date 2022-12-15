@@ -304,10 +304,26 @@ check_verify_result (vector<path> dir, vector<dcp::VerificationNote> test_notes)
 	string message = "\nVerification notes from test:\n";
 	for (auto i: notes) {
 		message += "  " + note_to_string(i) + "\n";
+		message += dcp::String::compose(
+			"  [%1 %2 %3 %4 %5]\n",
+			static_cast<int>(i.type()),
+			static_cast<int>(i.code()),
+			i.note().get_value_or("<none>"),
+			i.file().get_value_or("<none>"),
+			i.line().get_value_or(0)
+			);
 	}
 	message += "Expected:\n";
 	for (auto i: test_notes) {
 		message += "  " + note_to_string(i) + "\n";
+		message += dcp::String::compose(
+			"  [%1 %2 %3 %4 %5]\n",
+			static_cast<int>(i.type()),
+			static_cast<int>(i.code()),
+			i.note().get_value_or("<none>"),
+			i.file().get_value_or("<none>"),
+			i.line().get_value_or(0)
+			);
 	}
 
 	BOOST_REQUIRE_MESSAGE (notes == test_notes, message);
