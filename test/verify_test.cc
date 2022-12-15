@@ -172,18 +172,34 @@ public:
 		fclose (f);
 	}
 
+	class ChangeChecker
+	{
+	public:
+		ChangeChecker(Editor* editor)
+			: _editor(editor)
+		{
+			_old_content = _editor->_content;
+		}
+
+		~ChangeChecker()
+		{
+			BOOST_REQUIRE(_old_content != _editor->_content);
+		}
+	private:
+		Editor* _editor;
+		std::string _old_content;
+	};
+
 	void replace (string a, string b)
 	{
-		auto old_content = _content;
+		ChangeChecker cc(this);
 		boost::algorithm::replace_all (_content, a, b);
-		BOOST_REQUIRE (_content != old_content);
 	}
 
 	void delete_first_line_containing (string s)
 	{
-		vector<string> lines;
-		boost::algorithm::split (lines, _content, boost::is_any_of("\r\n"), boost::token_compress_on);
-		auto old_content = _content;
+		ChangeChecker cc(this);
+		auto lines = as_lines();
 		_content = "";
 		bool done = false;
 		for (auto i: lines) {
@@ -193,15 +209,13 @@ public:
 				done = true;
 			}
 		}
-		BOOST_REQUIRE (_content != old_content);
 	}
 
 	void delete_lines (string from, string to)
 	{
-		vector<string> lines;
-		boost::algorithm::split (lines, _content, boost::is_any_of("\r\n"), boost::token_compress_on);
+		ChangeChecker cc(this);
+		auto lines = as_lines();
 		bool deleting = false;
-		auto old_content = _content;
 		_content = "";
 		for (auto i: lines) {
 			if (i.find(from) != string::npos) {
@@ -214,14 +228,12 @@ public:
 				deleting = false;
 			}
 		}
-		BOOST_REQUIRE (_content != old_content);
 	}
 
 	void insert (string after, string line)
 	{
-		vector<string> lines;
-		boost::algorithm::split (lines, _content, boost::is_any_of("\r\n"), boost::token_compress_on);
-		auto old_content = _content;
+		ChangeChecker cc(this);
+		auto lines = as_lines();
 		_content = "";
 		bool replaced = false;
 		for (auto i: lines) {
@@ -231,10 +243,18 @@ public:
 				replaced = true;
 			}
 		}
-		BOOST_REQUIRE (_content != old_content);
 	}
 
 private:
+	friend class ChangeChecker;
+
+	vector<string> as_lines() const
+	{
+		vector<string> lines;
+		boost::algorithm::split(lines, _content, boost::is_any_of("\r\n"), boost::token_compress_on);
+		return lines;
+	}
+
 	path _path;
 	std::string _content;
 };
