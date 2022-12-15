@@ -963,17 +963,30 @@ BOOST_AUTO_TEST_CASE (verify_valid_cpl_metadata)
 }
 
 
+path
+find_prefix(path dir, string prefix)
+{
+	auto iter = std::find_if(directory_iterator(dir), directory_iterator(), [prefix](path const& p) {
+		return boost::starts_with(p.filename().string(), prefix);
+	});
+
+	BOOST_REQUIRE(iter != directory_iterator());
+	return iter->path();
+}
+
+
 path find_cpl (path dir)
 {
-	for (auto i: directory_iterator(dir)) {
-		if (boost::starts_with(i.path().filename().string(), "cpl_")) {
-			return i.path();
-		}
-	}
-
-	BOOST_REQUIRE (false);
-	return {};
+	return find_prefix(dir, "cpl_");
 }
+
+
+path
+find_pkl(path dir)
+{
+	return find_prefix(dir, "pkl_");
+}
+
 
 
 /* DCP with invalid CompositionMetadataAsset */
