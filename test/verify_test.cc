@@ -237,9 +237,9 @@ public:
 		_content = "";
 		bool replaced = false;
 		for (auto i: lines) {
-			_content += i;
+			_content += i + "\n";
 			if (!replaced && i.find(after) != string::npos) {
-				_content += line;
+				_content += line + "\n";
 				replaced = true;
 			}
 		}
