@@ -747,3 +747,19 @@ CPL::set_additional_subtitle_languages (vector<dcp::LanguageTag> const& langs)
 		_additional_subtitle_languages.push_back (i.to_string());
 	}
 }
+
+
+void
+CPL::set_main_picture_active_area(dcp::Size area)
+{
+	if (area.width % 2) {
+		throw BadSettingError("Main picture active area width is not a multiple of 2");
+	}
+
+	if (area.height % 2) {
+		throw BadSettingError("Main picture active area height is not a multiple of 2");
+	}
+
+	_main_picture_active_area = area;
+}
+

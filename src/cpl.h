@@ -307,9 +307,7 @@ public:
 		return _main_picture_active_area;
 	}
 
-	void set_main_picture_active_area (dcp::Size s) {
-		_main_picture_active_area = s;
-	}
+	void set_main_picture_active_area(dcp::Size area);
 
 	std::vector<std::string> additional_subtitle_languages () const {
 		return _additional_subtitle_languages;
