@@ -1192,8 +1192,8 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
 	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
 	cpl->set_main_sound_sample_rate (48000);
-	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
-	cpl->set_main_picture_active_area (dcp::Size(1998, 1080));
+	cpl->set_main_picture_stored_area(dcp::Size(width, height));
+	cpl->set_main_picture_active_area(dcp::Size(width, height));
 	cpl->set_version_number (1);
 
 	auto reel = make_shared<dcp::Reel>();
@@ -3280,3 +3280,66 @@ BOOST_AUTO_TEST_CASE(verify_valid_content_kind)
 		});
 
 }
+
+
+BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_1)
+{
+	path dir = "build/test/verify_invalid_main_picture_active_area_1";
+	prepare_directory(dir);
+	auto dcp = make_simple(dir, 1, 24);
+	dcp->write_xml();
+
+	auto constexpr area = "<meta:MainPictureActiveArea>";
+
+	{
+		Editor e(find_cpl(dir));
+		e.delete_lines_after(area, 2);
+		e.insert(area, "<meta:Height>4080</meta:Height>");
+		e.insert(area, "<meta:Width>1997</meta:Width>");
+	}
+
+	dcp::PKL pkl(find_pkl(dir));
+	dcp::CPL cpl(find_cpl(dir));
+
+	check_verify_result(
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, pkl.id(), canonical(find_pkl(dir)), },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 1997 is not a multiple of 2", canonical(find_cpl(dir)) },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 4080 is bigger than the asset height 1080", canonical(find_cpl(dir)) },
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_2)
+{
+	path dir = "build/test/verify_invalid_main_picture_active_area_2";
+	prepare_directory(dir);
+	auto dcp = make_simple(dir, 1, 24);
+	dcp->write_xml();
+
+	auto constexpr area = "<meta:MainPictureActiveArea>";
+
+	{
+		Editor e(find_cpl(dir));
+		e.delete_lines_after(area, 2);
+		e.insert(area, "<meta:Height>5125</meta:Height>");
+		e.insert(area, "<meta:Width>9900</meta:Width>");
+	}
+
+	dcp::PKL pkl(find_pkl(dir));
+	dcp::CPL cpl(find_cpl(dir));
+
+	check_verify_result(
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, pkl.id(), canonical(find_pkl(dir)), },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is not a multiple of 2", canonical(find_cpl(dir)) },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 9900 is bigger than the asset width 1998", canonical(find_cpl(dir)) },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is bigger than the asset height 1080", canonical(find_cpl(dir)) },
+		});
+}
+
+

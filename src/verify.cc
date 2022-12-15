@@ -1389,6 +1389,24 @@ dcp::verify (
 			size_t most_closed_captions = 0;
 			map<Marker, Time> markers_seen;
 
+			auto const main_picture_active_area = cpl->main_picture_active_area();
+			if (main_picture_active_area && (main_picture_active_area->width % 2)) {
+				notes.push_back({
+						VerificationNote::Type::ERROR,
+						VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
+						String::compose("width %1 is not a multiple of 2", main_picture_active_area->width),
+						cpl->file().get()
+					});
+			}
+			if (main_picture_active_area && (main_picture_active_area->height % 2)) {
+				notes.push_back({
+						VerificationNote::Type::ERROR,
+						VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
+						String::compose("height %1 is not a multiple of 2", main_picture_active_area->height),
+						cpl->file().get()
+					});
+			}
+
 			for (auto reel: cpl->reels()) {
 				stage ("Checking reel", optional<boost::filesystem::path>());
 
@@ -1437,6 +1455,25 @@ dcp::verify (
 					/* Check asset */
 					if (reel->main_picture()->asset_ref().resolved()) {
 						verify_main_picture_asset (dcp, reel->main_picture(), stage, progress, notes);
+						auto const asset_size = reel->main_picture()->asset()->size();
+						if (main_picture_active_area) {
+							if (main_picture_active_area->width > asset_size.width) {
+								notes.push_back({
+										VerificationNote::Type::ERROR,
+										VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
+										String::compose("width %1 is bigger than the asset width %2", main_picture_active_area->width, asset_size.width),
+										cpl->file().get()
+										});
+							}
+							if (main_picture_active_area->height > asset_size.height) {
+								notes.push_back({
+										VerificationNote::Type::ERROR,
+										VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
+										String::compose("height %1 is bigger than the asset height %2", main_picture_active_area->height, asset_size.height),
+										cpl->file().get()
+										});
+							}
+						}
 					}
 				}
 
@@ -1785,6 +1822,8 @@ dcp::note_to_string (VerificationNote note)
 		return "There is an <Duration> node inside a <MainMarkers>.";
 	case VerificationNote::Code::INVALID_CONTENT_KIND:
 		return String::compose("<ContentKind> has an invalid value %1.", note.note().get());
+	case VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA:
+		return String::compose("<MainPictureActiveaArea> has an invalid value: %1", note.note().get());
 	}
 
 	return "";
