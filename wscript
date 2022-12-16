@@ -44,9 +44,9 @@ this_version = subprocess.Popen(shlex.split('git tag -l --points-at HEAD'), stdo
 last_version = subprocess.Popen(shlex.split('git describe --tags --abbrev=0'), stdout=subprocess.PIPE).communicate()[0].decode('UTF-8')
 
 if this_version == '':
-    VERSION = '%sdevel' % last_version[1:].strip()
+    VERSION = '%sdevel' % last_version[1:].strip().encode('UTF-8')
 else:
-    VERSION = this_version[1:].strip()
+    VERSION = this_version[1:].strip().encode('UTF-8')
 
 API_VERSION = '-1.0'
 
