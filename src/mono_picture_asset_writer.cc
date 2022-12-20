@@ -106,6 +106,8 @@ MonoPictureAssetWriter::write (uint8_t const * data, int size)
  		boost::throw_exception (MiscError ("could not parse J2K frame"));
  	}
 
+	_state->frame_buffer.PlaintextOffset(0);
+
 	uint64_t const before_offset = _state->mxf_writer.Tell ();
 
 	string hash;
