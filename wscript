@@ -34,7 +34,6 @@
 import subprocess
 import os
 import sys
-assert sys.version_info.major == 3
 import shlex
 import distutils.spawn
 from waflib import Logs, Context
@@ -48,6 +47,10 @@ if this_version == '':
     VERSION = '%sdevel' % last_version[1:].strip()
 else:
     VERSION = this_version[1:].strip()
+
+if sys.version_info.major == 2:
+    # Handle Python 2 (for Ubuntu 16.04)
+    VERSION = VERSION.encode('UTF-8')
 
 API_VERSION = '-1.0'
 
