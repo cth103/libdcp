@@ -259,7 +259,14 @@ dcp::verify_j2k (shared_ptr<const Data> j2k, vector<VerificationNote>& notes)
 				ptr += L_qcd - 3;
 			} else if (*marker_name == "COC") {
 				get_16(); // length
-				require_8(0, "invalid COC component number %1");
+				auto const coc_component_number = get_8();
+				/* I don't know if this is really a requirement, but it seems to make sense that there should only
+				 * be components 0, 1 and 2.  DoM bug #2395 is about a DCP with COC component number 1 which seems
+				 * like it should be OK.
+				 */
+				if (coc_component_number > 2) {
+					throw InvalidCodestream(String::compose("invalid COC component number %1", coc_component_number));
+				}
 				require_8(1, "invalid coding style %1");
 				require_8(5, "invalid number of transform levels %1");
 				require_8(3, "invalid code block width exponent %1");
