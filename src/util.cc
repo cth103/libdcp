@@ -293,6 +293,8 @@ dcp::private_key_fingerprint (string key)
 {
 	boost::replace_all (key, "-----BEGIN RSA PRIVATE KEY-----\n", "");
 	boost::replace_all (key, "\n-----END RSA PRIVATE KEY-----\n", "");
+	boost::replace_all (key, "-----BEGIN PRIVATE KEY-----\n", "");
+	boost::replace_all (key, "\n-----END PRIVATE KEY-----\n", "");
 
 	unsigned char buffer[4096];
 	int const N = base64_decode (key, buffer, sizeof (buffer));
