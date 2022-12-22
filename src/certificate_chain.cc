@@ -420,8 +420,13 @@ CertificateChain::chain_valid () const
 }
 
 
+/** @param error if non-null, filled with an error if a certificate in the list has a
+ *  a problem.
+ *  @return true if all the given certificates verify OK, and are in the correct order in the list
+ *  (root to leaf).  false if any certificate has a problem, or the order is wrong.
+ */
 bool
-CertificateChain::chain_valid (List const & chain) const
+CertificateChain::chain_valid(List const & chain, string* error) const
 {
         /* Here I am taking a chain of certificates A/B/C/D and checking validity of B wrt A,
 	   C wrt B and D wrt C.  It also appears necessary to check the issuer of B/C/D matches
@@ -470,6 +475,9 @@ CertificateChain::chain_valid (List const & chain) const
 
 		if (v != 1) {
 			X509_STORE_free (store);
+			if (error) {
+				*error = X509_verify_cert_error_string(X509_STORE_CTX_get_error(ctx));
+			}
 			return false;
 		}
 
@@ -559,13 +567,14 @@ CertificateChain::root_to_leaf () const
 {
 	auto rtl = _certificates;
 	std::sort (rtl.begin(), rtl.end());
+	string error;
 	do {
-		if (chain_valid (rtl)) {
+		if (chain_valid(rtl, &error)) {
 			return rtl;
 		}
 	} while (std::next_permutation (rtl.begin(), rtl.end()));
 
-	throw CertificateChainError ("certificate chain is not consistent");
+	throw CertificateChainError(error.empty() ? string{"certificate chain is not consistent"} : error);
 }
 
 

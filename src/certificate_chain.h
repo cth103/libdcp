@@ -175,7 +175,7 @@ private:
 	friend struct ::certificates_validation7;
 	friend struct ::certificates_validation8;
 
-	bool chain_valid (List const & chain) const;
+	bool chain_valid(List const & chain, std::string* error = nullptr) const;
 
 	/** Our certificates, not in any particular order */
 	List _certificates;
