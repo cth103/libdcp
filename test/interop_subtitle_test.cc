@@ -933,7 +933,6 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 	string const creator = "libdcp";
 	string const annotation_text = "Created by libdcp";
 
-using std::make_shared;
 	auto cpl = std::make_shared<dcp::CPL>("My film", dcp::ContentKind::FEATURE, dcp::Standard::INTEROP);
 	cpl->add (reel);
 	cpl->set_issuer (issuer);
