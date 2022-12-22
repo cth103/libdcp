@@ -198,3 +198,10 @@ MissingAssetmapError::MissingAssetmapError (boost::filesystem::path dir)
 
 }
 
+
+InconsistentValidityPeriodError::InconsistentValidityPeriodError()
+	: runtime_error("KDM contains keys with different validity periods")
+{
+
+}
+

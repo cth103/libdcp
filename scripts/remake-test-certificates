@@ -1,0 +1,23 @@
+#!/bin/bash
+
+DCT=$HOME/src/digital_cinema_tools
+PRIVATE=$HOME/src/libdcp-test-private
+
+mkdir work
+cd work
+
+$DCT/make-dc-certificate-chain.rb
+CINEMACERTSTORE=. $DCT/cinemaslides --kdm \
+	--cpl $PRIVATE/TONEPLATES-SMPTE-ENCRYPTED_TST_F_XX-XX_ITL-TD_51-XX_2K_WOE_20111001_WOE_OV/cpl_eece17de-77e8-4a55-9347-b6bab5724b9f_.xml \
+	--target leaf.signed.pem \
+	--keysdir $DCT/encryption/content_keys \
+	--formulation modified-transitional-1 \
+	--start 8
+
+mv kdm_*.xml ../../test/data/kdm_TONEPLATES-SMPTE-ENC_.smpte-430-2.ROOT.NOT_FOR_PRODUCTION_20130706_20230702_CAR_OV_t1_8971c838.xml
+mv dc-certificate-chain ../../test/data/certificate_chain
+mv leaf.key ../../test/data/private.key
+
+cd ..
+rm -rf work
+

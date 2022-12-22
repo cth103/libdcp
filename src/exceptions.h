@@ -317,6 +317,12 @@ public:
 };
 
 
+class InconsistentValidityPeriodError : public std::runtime_error
+{
+public:
+	InconsistentValidityPeriodError();
+};
+
 }
 
 

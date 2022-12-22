@@ -156,6 +156,8 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 
 	/* Use the private key to decrypt the keys */
 
+	bool first = true;
+
 	for (auto const& i: kdm.keys()) {
 		/* Decode the base-64-encoded cipher value from the KDM */
 		unsigned char cipher_value[256];
@@ -173,6 +175,9 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 #endif
 		}
 
+		dcp::LocalTime not_valid_before;
+		dcp::LocalTime not_valid_after;
+
 		unsigned char* p = decrypted;
 		switch (decrypted_len) {
 		case 134:
@@ -187,8 +192,10 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 			/* 52 is key id [16 bytes] */
 			string const key_id = get_uuid (&p);
 			/* 68 is not-valid-before (a string) [25 bytes] */
+			not_valid_before = dcp::LocalTime(std::string(reinterpret_cast<char*>(p), 25));
 			p += 25;
 			/* 93 is not-valid-after (a string) [25 bytes] */
+			not_valid_after = dcp::LocalTime(std::string(reinterpret_cast<char*>(p), 25));
 			p += 25;
 			/* 118 is the key [ASDCP::KeyLen bytes] */
 			add_key (optional<string>(), key_id, Key(p), cpl_id, Standard::INTEROP);
@@ -209,8 +216,10 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 			/* 56 is key id [16 bytes] */
 			string const key_id = get_uuid (&p);
 			/* 72 is not-valid-before (a string) [25 bytes] */
+			not_valid_before = dcp::LocalTime(std::string(reinterpret_cast<char*>(p), 25));
 			p += 25;
 			/* 97 is not-valid-after (a string) [25 bytes] */
+			not_valid_after = dcp::LocalTime(std::string(reinterpret_cast<char*>(p), 25));
 			p += 25;
 			/* 112 is the key [ASDCP::KeyLen bytes] */
 			add_key (key_type, key_id, Key(p), cpl_id, Standard::SMPTE);
@@ -221,6 +230,16 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 		}
 
 		delete[] decrypted;
+
+		if (first) {
+			_not_valid_before = not_valid_before;
+			_not_valid_after = not_valid_after;
+			first = false;
+		} else {
+			if (not_valid_before != _not_valid_before || not_valid_after != _not_valid_after) {
+				throw InconsistentValidityPeriodError();
+			}
+		}
 	}
 
 	RSA_free (rsa);
