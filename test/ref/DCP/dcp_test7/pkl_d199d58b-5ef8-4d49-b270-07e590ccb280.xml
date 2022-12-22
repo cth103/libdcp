@@ -12,6 +12,7 @@
       <Hash>Vsre14v3AhK6X2gUzeYF9G8GKo0=</Hash>
       <Size>1965</Size>
       <Type>text/xml;asdcpKind=CPL</Type>
+      <OriginalFileName>cpl_6affb8ee-0020-4dff-a53c-17652f6358ab.xml</OriginalFileName>
     </Asset>
     <Asset>
       <Id>urn:uuid:5407b210-4441-4e97-8b16-8bdc7c12da54</Id>
@@ -19,6 +20,7 @@
       <Hash>wUmt8G+cFFKMGt0ueS9+F1S4uhc=</Hash>
       <Size>49240</Size>
       <Type>application/x-smpte-mxf;asdcpKind=Picture</Type>
+      <OriginalFileName>video.mxf</OriginalFileName>
     </Asset>
     <Asset>
       <Id>urn:uuid:97f0f352-5b77-48ee-a558-9df37717f4fa</Id>
@@ -26,6 +28,7 @@
       <Hash>KcJb7S2K5cNm8RG4kfQD5FTeS0A=</Hash>
       <Size>881326</Size>
       <Type>application/x-smpte-mxf;asdcpKind=Sound</Type>
+      <OriginalFileName>audio.mxf</OriginalFileName>
     </Asset>
   </AssetList>
 </PackingList>

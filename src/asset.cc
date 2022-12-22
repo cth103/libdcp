@@ -98,7 +98,7 @@ Asset::add_to_pkl (shared_ptr<PKL> pkl, path root) const
 		return;
 	}
 
-	pkl->add_asset (_id, _id, hash(), file_size(_file.get()), pkl_type(pkl->standard()));
+	pkl->add_asset(_id, _id, hash(), file_size(_file.get()), pkl_type(pkl->standard()), _file->filename().string());
 }
 
 

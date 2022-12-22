@@ -12,6 +12,7 @@
       <Hash>kiv8PHo8XZc/lI2xk7qYghrP2SA=</Hash>
       <Size>2024</Size>
       <Type>text/xml</Type>
+      <OriginalFileName>cpl_6affb8ee-0020-4dff-a53c-17652f6358ab.xml</OriginalFileName>
     </Asset>
     <Asset>
       <Id>urn:uuid:5407b210-4441-4e97-8b16-8bdc7c12da54</Id>
@@ -19,6 +20,7 @@
       <Hash>o3VmpdFsNUgF11oadcaGJ/IfO0M=</Hash>
       <Size>40144</Size>
       <Type>application/mxf</Type>
+      <OriginalFileName>video.mxf</OriginalFileName>
     </Asset>
     <Asset>
       <Id>urn:uuid:97f0f352-5b77-48ee-a558-9df37717f4fa</Id>
@@ -26,6 +28,7 @@
       <Hash>wLbXcpQtWt2IFMHIcibxwND667I=</Hash>
       <Size>161326</Size>
       <Type>application/mxf</Type>
+      <OriginalFileName>audio.mxf</OriginalFileName>
     </Asset>
   </AssetList>
 </PackingList>

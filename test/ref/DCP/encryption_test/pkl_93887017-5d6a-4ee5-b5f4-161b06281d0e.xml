@@ -12,6 +12,7 @@
       <Hash>ocIgRDFtEn7QPxwcqXYVpSrTPpI=</Hash>
       <Size>9226</Size>
       <Type>text/xml</Type>
+      <OriginalFileName>cpl_6affb8ee-0020-4dff-a53c-17652f6358ab.xml</OriginalFileName>
     </Asset>
     <Asset>
       <Id>urn:uuid:9a7fbb03-4078-4944-90b1-0d8a21c9d793</Id>
@@ -19,6 +20,7 @@
       <Hash>AVtX8wz76uG2Uw0Qbc9+DKnHUfw=</Hash>
       <Size>44008</Size>
       <Type>application/mxf</Type>
+      <OriginalFileName>video.mxf</OriginalFileName>
     </Asset>
     <Asset>
       <Id>urn:uuid:ce300880-a425-40a6-adac-eb1e3f5643fc</Id>
@@ -26,6 +28,7 @@
       <Hash>lS+FKcwLD7cRjgZMQ+hvGg/yJIc=</Hash>
       <Size>165454</Size>
       <Type>application/mxf</Type>
+      <OriginalFileName>audio.mxf</OriginalFileName>
     </Asset>
   </AssetList>
   <Signer xmlns:dsig="http://www.w3.org/2000/09/xmldsig#">
@@ -46,15 +49,15 @@
           <dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-        <dsig:DigestValue>Gxo6VfxF8Guiq1+IFU2ePslEu00=</dsig:DigestValue>
+        <dsig:DigestValue>G6rpYhOo/0ZdBo+SI3UzyPQA/F0=</dsig:DigestValue>
       </dsig:Reference>
     </dsig:SignedInfo>
-    <dsig:SignatureValue>bzUioGIym79+2SaZ+V3zHOnZzoYR2L3NcW0yrre+FclIO2BB6XjdPnJJJPEHml9R
-ATXtAOUIjYUZT5x+2B64dpclvIdikr4P72J6PQzHB+lvnrptoisOhFMa0Pnk1vCi
-0o/WBHUCSDePU8Hl8OGK9GL+n/iXEZKfbpuAIRBIGayD1WE1CmTxGxVx28VTk+2H
-klIbYhojVoj0AaaVN9xVvaq126Tmk4y1dILyPlNyYYVxzam7T1hlEHSj3E4i3StZ
-r1vsK8I8EMWLrBio3ih44GwkJeM6N7PPI5kDeen7Mk7S4Btq+HtildekSmKRNkOc
-odAqTC/SVvYtWvri7PldJQ==</dsig:SignatureValue>
+    <dsig:SignatureValue>tdapJHKPEmEa552oOg9s3/Q4TcnzIiNfd3U+xiSG5XGl+7K0n6JKbpNVgm4KpE0l
+a7bVsu4Yp0ftCrcjxxczZ/puS7nVC/zcfk63miZcJKdXem0xt0AZJHEguwQq74Tc
+48Efe1/MtIBCOtQErh2kcDVwXOUo6Nz0yW1g5PRQ5u9KlqQ67RLqDWRdX1OkWIUZ
+Z2Iz2nSnTP4GDDHs5pX6xxZKNlgZIa5iYMBp97X1DGlGaQ2o/sbcUysE4g4oO+iU
+cfRdkI68vj53hHWApxVGoAPAl4t8B6kMbLQAp1w4R/4ruLR9FKTffqRlUjOXtyiT
+pQVNxwCU50/opyfv8v2v6w==</dsig:SignatureValue>
     <dsig:KeyInfo>
       <dsig:X509Data>
         <dsig:X509IssuerSerial>

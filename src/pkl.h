@@ -66,7 +66,7 @@ public:
 	boost::optional<std::string> type (std::string id) const;
 
 	void clear_assets();
-	void add_asset (std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type);
+	void add_asset(std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type, std::string original_filename);
 	void write_xml (boost::filesystem::path file, std::shared_ptr<const CertificateChain> signer) const;
 
 	/** @return the most recent disk file used to read or write this PKL, if there is one */
@@ -83,14 +83,16 @@ public:
 			, _hash (node->string_child("Hash"))
 			, _size (node->number_child<int64_t>("Size"))
 			, _type (node->string_child("Type"))
+			, _original_filename(node->optional_string_child("OriginalFileName"))
 		{}
 
-		Asset (std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type)
+		Asset(std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type, std::string original_filename)
 			: Object (id)
 			, _annotation_text (annotation_text)
 			, _hash (hash)
 			, _size (size)
 			, _type (type)
+			, _original_filename(original_filename)
 		{}
 
 		boost::optional<std::string> annotation_text () const {
@@ -109,11 +111,16 @@ public:
 			return _type;
 		}
 
+		boost::optional<std::string> original_filename() const {
+			return _original_filename;
+		}
+
 	private:
 		boost::optional<std::string> _annotation_text;
 		std::string _hash;
 		int64_t _size = 0;
 		std::string _type;
+		boost::optional<std::string> _original_filename;
 	};
 
 	std::vector<std::shared_ptr<Asset>> asset_list () const {

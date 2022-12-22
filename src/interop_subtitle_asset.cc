@@ -290,7 +290,7 @@ InteropSubtitleAsset::add_to_pkl (shared_ptr<PKL> pkl, boost::filesystem::path r
 		auto im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
 		if (im) {
 			auto png_image = im->png_image ();
-			pkl->add_asset (im->id(), optional<string>(), make_digest(png_image), png_image.size(), "image/png");
+			pkl->add_asset(im->id(), optional<string>(), make_digest(png_image), png_image.size(), "image/png", root.filename().string());
 		}
 	}
 }

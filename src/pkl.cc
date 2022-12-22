@@ -87,9 +87,9 @@ PKL::PKL (boost::filesystem::path file)
 
 
 void
-PKL::add_asset (std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type)
+PKL::add_asset(std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type, std::string original_filename)
 {
-	_asset_list.push_back (make_shared<Asset>(id, annotation_text, hash, size, type));
+	_asset_list.push_back(make_shared<Asset>(id, annotation_text, hash, size, type, original_filename));
 }
 
 
@@ -122,6 +122,9 @@ PKL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain>
 		asset->add_child("Hash")->add_child_text (i->hash());
 		asset->add_child("Size")->add_child_text (raw_convert<string>(i->size()));
 		asset->add_child("Type")->add_child_text (i->type());
+		if (auto filename = i->original_filename()) {
+			asset->add_child("OriginalFileName")->add_child_text(*filename);
+		}
 	}
 
 	indent (pkl, 0);

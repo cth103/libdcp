@@ -12,6 +12,7 @@
       <Hash>M9U2kzcnfcBAy7MrXZGKjA8hQRU=</Hash>
       <Size>1061</Size>
       <Type>text/xml;asdcpKind=CPL</Type>
+      <OriginalFileName>cpl_5407b210-4441-4e97-8b16-8bdc7c12da54.xml</OriginalFileName>
     </Asset>
     <Asset>
       <Id>urn:uuid:a6c58cff-3e1e-4b38-acec-a42224475ef6</Id>
@@ -19,12 +20,14 @@
       <Hash>RmflhDu9QYUsNnBftdNlIEGdzG0=</Hash>
       <Size>438</Size>
       <Type>text/xml;asdcpKind=Subtitle</Type>
+      <OriginalFileName>subs.xml</OriginalFileName>
     </Asset>
     <Asset>
       <Id>urn:uuid:dd015243-ab77-435c-a13d-690566885121</Id>
       <Hash>2vTylSKQ5MCQHbKPT4X+rlwfHk4=</Hash>
       <Size>44861</Size>
       <Type>image/png</Type>
+      <OriginalFileName>write_interop_subtitle_test3</OriginalFileName>
     </Asset>
   </AssetList>
 </PackingList>
