@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE (relative_to_root_test)
 /** Test private_key_fingerprint() */
 BOOST_AUTO_TEST_CASE (private_key_fingerprint_test)
 {
-	BOOST_CHECK_EQUAL (dcp::private_key_fingerprint (dcp::file_to_string ("test/data/private.key")), "Jdz1bFpCcKI7R16Ccx9JHYytag0=");
+	BOOST_CHECK_EQUAL(dcp::private_key_fingerprint(dcp::file_to_string("test/data/private.key")), "W71ZjOFhv65TauQvziFhwQiHx8s=");
 }
 
 BOOST_AUTO_TEST_CASE (day_less_than_or_equal_test)

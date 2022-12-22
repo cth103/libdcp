@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE (failing_kdm_test)
 {
 	dcp::DecryptedKDM kdm (
 		dcp::EncryptedKDM (dcp::file_to_string ("test/data/target.pem.crt.de5d4eba-e683-41ca-bdda-aa4ad96af3f4.kdm.xml")),
-		dcp::file_to_string ("test/data/private.key")
+		dcp::file_to_string("test/data/failing-private.key")
 		);
 }
 

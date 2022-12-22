@@ -267,12 +267,12 @@ BOOST_AUTO_TEST_CASE (validity_period_test1)
 	auto cpl = make_shared<dcp::CPL>("test", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	cpl->add(reel);
 
-	/* This certificate_chain is valid from 26/12/2012 to 24/12/2022 */
+	/* This certificate_chain is valid from 22/12/2022 to 19/12/2032 */
 
 	/* Inside */
 	BOOST_CHECK_NO_THROW(
 		dcp::DecryptedKDM(
-			cpl, dcp::Key(dcp::file_to_string("test/data/private.key")), dcp::LocalTime("2015-01-01T00:00:00"), dcp::LocalTime("2017-07-31T00:00:00"), "", "", ""
+			cpl, dcp::Key(dcp::file_to_string("test/data/private.key")), dcp::LocalTime("2025-01-01T00:00:00"), dcp::LocalTime("2027-07-31T00:00:00"), "", "", ""
 			).encrypt(signer, signer->leaf(), vector<string>(), dcp::Formulation::MODIFIED_TRANSITIONAL_1, true, optional<int>())
 		);
 
