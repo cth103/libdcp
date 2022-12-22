@@ -68,37 +68,38 @@ using std::map;
 using std::pair;
 using std::shared_ptr;
 using std::string;
+using std::vector;
 using boost::optional;
 using boost::scoped_array;
 
 
-pair<uint8_t*, dcp::Size>
+pair<vector<uint8_t>, dcp::Size>
 get_frame (dcp::DCP const & dcp)
 {
-	shared_ptr<const dcp::Reel> reel = dcp.cpls().front()->reels().front ();
-	shared_ptr<dcp::PictureAsset> picture = reel->main_picture()->asset ();
+	auto reel = dcp.cpls().front()->reels()[0];
+	auto picture = reel->main_picture()->asset();
 	BOOST_CHECK (picture);
 
-	shared_ptr<const dcp::MonoPictureAsset> mono_picture = dynamic_pointer_cast<const dcp::MonoPictureAsset> (picture);
-	shared_ptr<const dcp::MonoPictureAssetReader> reader = mono_picture->start_read ();
-	shared_ptr<const dcp::MonoPictureFrame> j2k_frame = reader->get_frame (0);
-	shared_ptr<dcp::OpenJPEGImage> xyz = j2k_frame->xyz_image();
+	auto mono_picture = dynamic_pointer_cast<const dcp::MonoPictureAsset>(picture);
+	auto reader = mono_picture->start_read();
+	auto j2k_frame = reader->get_frame(0);
+	auto xyz = j2k_frame->xyz_image();
 
-	uint8_t* argb = new uint8_t[xyz->size().width * xyz->size().height * 4];
-	dcp::xyz_to_rgba (j2k_frame->xyz_image(), dcp::ColourConversion::srgb_to_xyz(), argb, xyz->size().width * 4);
+	std::vector<uint8_t> argb(xyz->size().width * xyz->size().height * 4);
+	dcp::xyz_to_rgba(j2k_frame->xyz_image(), dcp::ColourConversion::srgb_to_xyz(), argb.data(), xyz->size().width * 4);
 	return make_pair (argb, xyz->size ());
 }
 
 /** Decrypt an encrypted test DCP and check that its first frame is the same as the unencrypted version */
 BOOST_AUTO_TEST_CASE (decryption_test1)
 {
-	boost::filesystem::path plaintext_path = private_test;
+	auto plaintext_path = private_test;
 	plaintext_path /= "TONEPLATES-SMPTE-PLAINTEXT_TST_F_XX-XX_ITL-TD_51-XX_2K_WOE_20111001_WOE_OV";
 	dcp::DCP plaintext (plaintext_path.string ());
 	plaintext.read ();
 	BOOST_CHECK_EQUAL (plaintext.any_encrypted(), false);
 
-	boost::filesystem::path encrypted_path = private_test;
+	auto encrypted_path = private_test;
 	encrypted_path /= "TONEPLATES-SMPTE-ENCRYPTED_TST_F_XX-XX_ITL-TD_51-XX_2K_WOE_20111001_WOE_OV";
 	dcp::DCP encrypted (encrypted_path.string ());
 	encrypted.read ();
@@ -113,8 +114,8 @@ BOOST_AUTO_TEST_CASE (decryption_test1)
 
 	encrypted.add (kdm);
 
-	pair<uint8_t *, dcp::Size> plaintext_frame = get_frame (plaintext);
-	pair<uint8_t *, dcp::Size> encrypted_frame = get_frame (encrypted);
+	auto plaintext_frame = get_frame(plaintext);
+	auto encrypted_frame = get_frame(encrypted);
 
 	/* Check that plaintext and encrypted are the same */
 
@@ -122,15 +123,12 @@ BOOST_AUTO_TEST_CASE (decryption_test1)
 
 	BOOST_CHECK_EQUAL (
 		memcmp (
-			plaintext_frame.first,
-			encrypted_frame.first,
+			plaintext_frame.first.data(),
+			encrypted_frame.first.data(),
 			plaintext_frame.second.width * plaintext_frame.second.height * 4
 			),
 		0
 		);
-
-	delete[] plaintext_frame.first;
-	delete[] encrypted_frame.first;
 }
 
 /** Load in a KDM that didn't work at first */
