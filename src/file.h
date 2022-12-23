@@ -101,9 +101,17 @@ public:
 		return _file;
 	}
 
+	/** @return Error returned by the fopen / _wfopen call;
+	 *  errno on POSIX, GetLastError() on Windows.
+	 */
+	int open_error() const {
+		return _open_error;
+	}
+
 private:
 	boost::filesystem::path _path;
 	FILE* _file = nullptr;
+	int _open_error = 0;
 };
 
 

@@ -51,11 +51,18 @@ File::File(boost::filesystem::path path, std::string mode)
 	: _path(path)
 {
 #ifdef LIBDCP_WINDOWS
+	SetLastError(0);
 	std::wstring mode_wide(mode.begin(), mode.end());
 	/* c_str() here should give a UTF-16 string */
 	_file = _wfopen(fix_long_path(path).c_str(), mode_wide.c_str());
+	if (!_file) {
+		_open_error = GetLastError();
+	}
 #else
         _file = fopen(path.c_str(), mode.c_str());
+	if (!_file) {
+		_open_error = errno;
+	}
 #endif
 }
 
@@ -63,6 +70,7 @@ File::File(boost::filesystem::path path, std::string mode)
 File::File(File&& other)
 	: _path(other._path)
 	, _file(other._file)
+	, _open_error(other._open_error)
 {
 	other._file = nullptr;
 }
@@ -74,6 +82,7 @@ File::operator=(File&& other)
 	if (*this != other) {
 		close();
 		_file = other._file;
+		_open_error = other._open_error;
 		other._file = nullptr;
 	}
 	return *this;
