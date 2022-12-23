@@ -35,6 +35,9 @@
 #include "dcp_assert.h"
 #include "file.h"
 #include <boost/algorithm/string.hpp>
+#ifdef LIBDCP_WINDOWS
+#include <errhandlingapi.h>
+#endif
 #include <stdio.h>
 
 
