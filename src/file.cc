@@ -53,7 +53,7 @@ File::File(boost::filesystem::path path, std::string mode)
 #ifdef LIBDCP_WINDOWS
 	std::wstring mode_wide(mode.begin(), mode.end());
 	/* c_str() here should give a UTF-16 string */
-        _file = _wfopen(fix_long_path(path).c_str(), mode_wide.c_str());
+	_file = _wfopen(fix_long_path(path).c_str(), mode_wide.c_str());
 #else
         _file = fopen(path.c_str(), mode.c_str());
 #endif
