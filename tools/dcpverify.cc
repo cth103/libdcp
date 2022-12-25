@@ -188,6 +188,8 @@ main (int argc, char* argv[])
 			continue;
 		}
 		switch (i.type()) {
+		case dcp::VerificationNote::Type::OK:
+			break;
 		case dcp::VerificationNote::Type::ERROR:
 			cout << "Error: " << note_to_string(i) << "\n";
 			failed = true;

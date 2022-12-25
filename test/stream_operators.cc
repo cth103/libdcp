@@ -208,6 +208,9 @@ ostream&
 dcp::operator<< (ostream& s, VerificationNote::Type t)
 {
 	switch (t) {
+	case VerificationNote::Type::OK:
+		s << "check";
+		break;
 	case VerificationNote::Type::ERROR:
 		s << "error";
 		break;

@@ -62,12 +62,13 @@ class VerificationNote
 {
 public:
 	enum class Type {
+		OK,
 		ERROR,
 		BV21_ERROR, ///< may not always be considered an error, but violates a "shall" requirement of Bv2.1
 		WARNING
 	};
 
-	/** Codes for errors or warnings from verifying DCPs.
+	/** Codes for successful checks, errors or warnings from verifying DCPs.
 	 *
 	 *  The names should (in general) answer the question "what is wrong?" with an answer that begins "There is a ..."
 	 *  e.g. "There is a INCORRECT_CPL_HASH"
