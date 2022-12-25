@@ -338,6 +338,10 @@ public:
 		 *  file contains the PKL filename
 		 */
 		MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL,
+		/** All content is encrypted */
+		ALL_ENCRYPTED,
+		/** No content is encrypted */
+		NONE_ENCRYPTED,
 		/** Some, but not all content, is encrypted */
 		PARTIALLY_ENCRYPTED,
 		/** General error during JPEG2000 codestream verification

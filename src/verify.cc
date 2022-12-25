@@ -1540,6 +1540,10 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 
 	if (cpl->any_encrypted() && !cpl->all_encrypted()) {
 		context.bv21_error(VerificationNote::Code::PARTIALLY_ENCRYPTED);
+	} else if (cpl->all_encrypted()) {
+		context.ok(VerificationNote::Code::ALL_ENCRYPTED);
+	} else if (!cpl->all_encrypted()) {
+		context.ok(VerificationNote::Code::NONE_ENCRYPTED);
 	}
 
 	for (auto const& i: cpl->additional_subtitle_languages()) {
@@ -2047,6 +2051,10 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The PKL %1, which has encrypted content, is not signed.", note.note().get());
 	case VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL:
 		return String::compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>.", note.note().get());
+	case VerificationNote::Code::ALL_ENCRYPTED:
+		return "All the assets are encrypted.";
+	case VerificationNote::Code::NONE_ENCRYPTED:
+		return "All the assets are unencrypted.";
 	case VerificationNote::Code::PARTIALLY_ENCRYPTED:
 		return "Some assets are encrypted but some are not.";
 	case VerificationNote::Code::INVALID_JPEG2000_CODESTREAM:

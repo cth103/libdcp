@@ -90,7 +90,9 @@ check_no_errors (boost::filesystem::path path)
 	auto notes = dcp::verify(directories, {}, &stage, &progress, {}, xsd_test).notes;
 	vector<dcp::VerificationNote> filtered_notes;
 	std::copy_if (notes.begin(), notes.end(), std::back_inserter(filtered_notes), [](dcp::VerificationNote const& i) {
-		return i.code() != dcp::VerificationNote::Code::INVALID_STANDARD && i.code() != dcp::VerificationNote::Code::INVALID_SUBTITLE_DURATION;
+		return i.type() != dcp::VerificationNote::Type::OK &&
+			i.code() != dcp::VerificationNote::Code::INVALID_STANDARD &&
+			i.code() != dcp::VerificationNote::Code::INVALID_SUBTITLE_DURATION;
 	});
 	dump_notes (filtered_notes);
 	BOOST_CHECK (filtered_notes.empty());
@@ -478,7 +480,9 @@ BOOST_AUTO_TEST_CASE(combine_multi_reel_subtitles)
 	auto notes = dcp::verify({out}, {}, &stage, &progress, {}, xsd_test).notes;
 	vector<dcp::VerificationNote> filtered_notes;
 	std::copy_if(notes.begin(), notes.end(), std::back_inserter(filtered_notes), [](dcp::VerificationNote const& i) {
-		return i.code() != dcp::VerificationNote::Code::INVALID_STANDARD && i.code() != dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL;
+		return i.type() != dcp::VerificationNote::Type::OK &&
+			i.code() != dcp::VerificationNote::Code::INVALID_STANDARD &&
+			i.code() != dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL;
 	});
 	dump_notes(filtered_notes);
 	BOOST_CHECK(filtered_notes.empty());
