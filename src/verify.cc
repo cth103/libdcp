@@ -1256,6 +1256,131 @@ pkl_has_encrypted_assets (shared_ptr<DCP> dcp, shared_ptr<PKL> pkl)
 }
 
 
+static
+void
+verify_reel(
+	shared_ptr<const DCP> dcp,
+	shared_ptr<const CPL> cpl,
+	shared_ptr<const Reel> reel,
+	optional<dcp::Size> main_picture_active_area,
+	function<void (string, optional<boost::filesystem::path>)> stage,
+	boost::filesystem::path xsd_dtd_directory,
+	function<void (float)> progress,
+	vector<VerificationNote>& notes,
+	State& state,
+	bool* have_main_subtitle,
+	bool* have_no_main_subtitle,
+	size_t* most_closed_captions,
+	size_t* fewest_closed_captions,
+	map<Marker, Time>* markers_seen
+	)
+{
+	for (auto i: reel->assets()) {
+		if (i->duration() && (i->duration().get() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
+			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_DURATION, i->id()});
+		}
+		if ((i->intrinsic_duration() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
+			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_INTRINSIC_DURATION, i->id()});
+		}
+		auto file_asset = dynamic_pointer_cast<ReelFileAsset>(i);
+		if (i->encryptable() && !file_asset->hash()) {
+			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_HASH, i->id()});
+		}
+	}
+
+	if (dcp->standard() == Standard::SMPTE) {
+		boost::optional<int64_t> duration;
+		for (auto i: reel->assets()) {
+			if (!duration) {
+				duration = i->actual_duration();
+			} else if (*duration != i->actual_duration()) {
+				notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_ASSET_DURATION});
+				break;
+			}
+		}
+	}
+
+	if (reel->main_picture()) {
+		/* Check reel stuff */
+		auto const frame_rate = reel->main_picture()->frame_rate();
+		if (frame_rate.denominator != 1 ||
+		    (frame_rate.numerator != 24 &&
+		     frame_rate.numerator != 25 &&
+		     frame_rate.numerator != 30 &&
+		     frame_rate.numerator != 48 &&
+		     frame_rate.numerator != 50 &&
+		     frame_rate.numerator != 60 &&
+		     frame_rate.numerator != 96)) {
+			notes.push_back({
+				VerificationNote::Type::ERROR,
+				VerificationNote::Code::INVALID_PICTURE_FRAME_RATE,
+				String::compose("%1/%2", frame_rate.numerator, frame_rate.denominator)
+			});
+		}
+		/* Check asset */
+		if (reel->main_picture()->asset_ref().resolved()) {
+			verify_main_picture_asset(dcp, reel->main_picture(), stage, progress, notes);
+			auto const asset_size = reel->main_picture()->asset()->size();
+			if (main_picture_active_area) {
+				if (main_picture_active_area->width > asset_size.width) {
+					notes.push_back({
+							VerificationNote::Type::ERROR,
+							VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
+							String::compose("width %1 is bigger than the asset width %2", main_picture_active_area->width, asset_size.width),
+							cpl->file().get()
+							});
+				}
+				if (main_picture_active_area->height > asset_size.height) {
+					notes.push_back({
+							VerificationNote::Type::ERROR,
+							VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
+							String::compose("height %1 is bigger than the asset height %2", main_picture_active_area->height, asset_size.height),
+							cpl->file().get()
+							});
+				}
+			}
+		}
+	}
+
+	if (reel->main_sound() && reel->main_sound()->asset_ref().resolved()) {
+		verify_main_sound_asset(dcp, reel->main_sound(), stage, progress, notes);
+	}
+
+	if (reel->main_subtitle()) {
+		verify_main_subtitle_reel(reel->main_subtitle(), notes);
+		if (reel->main_subtitle()->asset_ref().resolved()) {
+			verify_subtitle_asset(reel->main_subtitle()->asset(), reel->main_subtitle()->duration(), stage, xsd_dtd_directory, notes, state);
+		}
+		*have_main_subtitle = true;
+	} else {
+		*have_no_main_subtitle = true;
+	}
+
+	for (auto i: reel->closed_captions()) {
+		verify_closed_caption_reel(i, notes);
+		if (i->asset_ref().resolved()) {
+			verify_closed_caption_asset(i->asset(), i->duration(), stage, xsd_dtd_directory, notes);
+		}
+	}
+
+	if (reel->main_markers()) {
+		for (auto const& i: reel->main_markers()->get()) {
+			markers_seen->insert(i);
+		}
+		if (reel->main_markers()->entry_point()) {
+			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::UNEXPECTED_ENTRY_POINT});
+		}
+		if (reel->main_markers()->duration()) {
+			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::UNEXPECTED_DURATION});
+		}
+	}
+
+	*fewest_closed_captions = std::min(*fewest_closed_captions, reel->closed_captions().size());
+	*most_closed_captions = std::max(*most_closed_captions, reel->closed_captions().size());
+
+}
+
+
 vector<VerificationNote>
 dcp::verify (
 	vector<boost::filesystem::path> directories,
@@ -1409,109 +1534,22 @@ dcp::verify (
 
 			for (auto reel: cpl->reels()) {
 				stage ("Checking reel", optional<boost::filesystem::path>());
-
-				for (auto i: reel->assets()) {
-					if (i->duration() && (i->duration().get() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
-						notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_DURATION, i->id()});
-					}
-					if ((i->intrinsic_duration() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
-						notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_INTRINSIC_DURATION, i->id()});
-					}
-					auto file_asset = dynamic_pointer_cast<ReelFileAsset>(i);
-					if (i->encryptable() && !file_asset->hash()) {
-						notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_HASH, i->id()});
-					}
-				}
-
-				if (dcp->standard() == Standard::SMPTE) {
-					boost::optional<int64_t> duration;
-					for (auto i: reel->assets()) {
-						if (!duration) {
-							duration = i->actual_duration();
-						} else if (*duration != i->actual_duration()) {
-							notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_ASSET_DURATION});
-							break;
-						}
-					}
-				}
-
-				if (reel->main_picture()) {
-					/* Check reel stuff */
-					auto const frame_rate = reel->main_picture()->frame_rate();
-					if (frame_rate.denominator != 1 ||
-					    (frame_rate.numerator != 24 &&
-					     frame_rate.numerator != 25 &&
-					     frame_rate.numerator != 30 &&
-					     frame_rate.numerator != 48 &&
-					     frame_rate.numerator != 50 &&
-					     frame_rate.numerator != 60 &&
-					     frame_rate.numerator != 96)) {
-						notes.push_back ({
-							VerificationNote::Type::ERROR,
-							VerificationNote::Code::INVALID_PICTURE_FRAME_RATE,
-							String::compose("%1/%2", frame_rate.numerator, frame_rate.denominator)
-						});
-					}
-					/* Check asset */
-					if (reel->main_picture()->asset_ref().resolved()) {
-						verify_main_picture_asset (dcp, reel->main_picture(), stage, progress, notes);
-						auto const asset_size = reel->main_picture()->asset()->size();
-						if (main_picture_active_area) {
-							if (main_picture_active_area->width > asset_size.width) {
-								notes.push_back({
-										VerificationNote::Type::ERROR,
-										VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
-										String::compose("width %1 is bigger than the asset width %2", main_picture_active_area->width, asset_size.width),
-										cpl->file().get()
-										});
-							}
-							if (main_picture_active_area->height > asset_size.height) {
-								notes.push_back({
-										VerificationNote::Type::ERROR,
-										VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
-										String::compose("height %1 is bigger than the asset height %2", main_picture_active_area->height, asset_size.height),
-										cpl->file().get()
-										});
-							}
-						}
-					}
-				}
-
-				if (reel->main_sound() && reel->main_sound()->asset_ref().resolved()) {
-					verify_main_sound_asset (dcp, reel->main_sound(), stage, progress, notes);
-				}
-
-				if (reel->main_subtitle()) {
-					verify_main_subtitle_reel (reel->main_subtitle(), notes);
-					if (reel->main_subtitle()->asset_ref().resolved()) {
-						verify_subtitle_asset (reel->main_subtitle()->asset(), reel->main_subtitle()->duration(), stage, *xsd_dtd_directory, notes, state);
-					}
-					have_main_subtitle = true;
-				} else {
-					have_no_main_subtitle = true;
-				}
-
-				for (auto i: reel->closed_captions()) {
-					verify_closed_caption_reel (i, notes);
-					if (i->asset_ref().resolved()) {
-						verify_closed_caption_asset (i->asset(), i->duration(), stage, *xsd_dtd_directory, notes);
-					}
-				}
-
-				if (reel->main_markers()) {
-					for (auto const& i: reel->main_markers()->get()) {
-						markers_seen.insert (i);
-					}
-					if (reel->main_markers()->entry_point()) {
-						notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::UNEXPECTED_ENTRY_POINT});
-					}
-					if (reel->main_markers()->duration()) {
-						notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::UNEXPECTED_DURATION});
-					}
-				}
-
-				fewest_closed_captions = std::min (fewest_closed_captions, reel->closed_captions().size());
-				most_closed_captions = std::max (most_closed_captions, reel->closed_captions().size());
+				verify_reel(
+					dcp,
+					cpl,
+					reel,
+					main_picture_active_area,
+					stage,
+					*xsd_dtd_directory,
+					progress,
+					notes,
+					state,
+					&have_main_subtitle,
+					&have_no_main_subtitle,
+					&most_closed_captions,
+					&fewest_closed_captions,
+					&markers_seen
+					);
 			}
 
 			verify_text_details (cpl->reels(), notes);
