@@ -102,6 +102,7 @@ public:
 		 *  note contains (probably technical) details
 		 */
 		FAILED_READ,
+		MATCHING_CPL_HASHES,
 		/** The hash of the CPL in the PKL does not agree with the CPL file
 		 *  note contains CPL ID
 		 *  file contains CPL filename

@@ -1604,6 +1604,8 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 					cpl->file().get()
 					).set_calculated_hash(calculated_cpl_hash).set_reference_hash(*h)
 				);
+		} else {
+			context.ok(VerificationNote::Code::MATCHING_CPL_HASHES);
 		}
 
 		/* Check that any PKL with a single CPL has its AnnotationText the same as the CPL's ContentTitleText */
@@ -1915,6 +1917,8 @@ dcp::note_to_string (VerificationNote note)
 	switch (note.code()) {
 	case VerificationNote::Code::FAILED_READ:
 		return *note.note();
+	case VerificationNote::Code::MATCHING_CPL_HASHES:
+		return "The hash of the CPL in the PKL matches the CPL file.";
 	case VerificationNote::Code::MISMATCHED_CPL_HASHES:
 		return String::compose("The hash (%1) of the CPL (%2) in the PKL does not agree with the CPL file (%3).", note.reference_hash().get(), note.cpl_id().get(), note.calculated_hash().get());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE:
