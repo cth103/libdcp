@@ -362,6 +362,14 @@ ok(dcp::VerificationNote::Code code, shared_ptr<const dcp::CPL> cpl)
 }
 
 
+static
+dcp::VerificationNote
+ok(dcp::VerificationNote::Code code, boost::filesystem::path path, shared_ptr<const dcp::CPL> cpl)
+{
+	return dcp::VerificationNote(dcp::VerificationNote::Type::OK, code, path).set_cpl_id(cpl->id());
+}
+
+
 void
 add(vector<dcp::VerificationNote>& notes, vector<dcp::VerificationNote> const& add)
 {
@@ -455,6 +463,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_picture_sound_hash)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_PICTURE_HASH, canonical(video_path)
 				).set_cpl_id(dcp_test1_cpl_id()).set_reference_hash(video_calc.old_hash()).set_calculated_hash(video_calc.new_hash()),
@@ -484,6 +493,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(dir / dcp_test1_cpl())
 				).set_cpl_id(dcp_test1_cpl_id()).set_reference_hash("x" + calc.old_hash()).set_calculated_hash(calc.old_hash()),
@@ -518,6 +528,7 @@ BOOST_AUTO_TEST_CASE (verify_failed_read_content_kind)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(dir / dcp_test1_cpl())
 				).set_cpl_id(dcp_test1_cpl_id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -565,6 +576,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_rate)
 	std::vector<dcp::VerificationNote> expected =
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl_path)
 				).set_cpl_id(cpl->id()).set_calculated_hash("7n7GQ2TbxQbmHYuAR8ml7XDOep8=").set_reference_hash("skI+5b/9LA/y6h0mcyxysJYanxI="),
@@ -625,6 +637,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_standard)
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
 	std::vector<dcp::VerificationNote> expected = {
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_STANDARD },
 			dcp::VerificationNote(
@@ -668,6 +681,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_id)
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
 	std::vector<dcp::VerificationNote> expected = {
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			dcp::VerificationNote(
@@ -692,6 +706,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_issue_date)
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
 	std::vector<dcp::VerificationNote> expected = {
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl_path)
@@ -719,6 +734,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_pkl_id)
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
 	std::vector<dcp::VerificationNote> expected = {
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			dcp::VerificationNote(
@@ -745,6 +761,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_asset_map_id)
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
 	std::vector<dcp::VerificationNote> expected = {
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			dcp::VerificationNote(
@@ -812,6 +829,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_standard)
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 		{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf"), cpl)
 	};
 
 	for (int j = 0; j < 24; ++j) {
@@ -838,6 +856,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_duration)
 	vector<dcp::VerificationNote> expected = {
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "j2c_d7576dcb-a361-4139-96b8-267f5f8d7f91.mxf"), cpl),
 		{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 		dcp::VerificationNote(
 			dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_DURATION, string("d7576dcb-a361-4139-96b8-267f5f8d7f91")
@@ -1002,6 +1021,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_picture_frame_size_in_bytes)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "pic.mxf"), cpl),
 			dcp::VerificationNote(dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
@@ -1407,6 +1427,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "pic.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:MainSoundXConfiguration'"), canonical(cpl->file().get()), 50
 				).set_cpl_id(cpl->id()),
@@ -1565,6 +1586,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language3)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "videofoo.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("this-is-wrong")
 				).set_cpl_id(cpl->id()),
@@ -1649,6 +1671,7 @@ check_picture_size_ok (int width, int height, int frame_rate, bool three_d)
 	std::vector<dcp::VerificationNote> expected = {
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl)
 	};
 	check_verify_result(notes, expected);
 }
@@ -1666,6 +1689,7 @@ check_picture_size_bad_frame_size (int width, int height, int frame_rate, bool t
 	std::vector<dcp::VerificationNote> expected = {
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 		dcp::VerificationNote(
 			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, dcp::String::compose("%1x%2", width, height), canonical(dir / "video.mxf")
 			).set_cpl_id(cpl->id())
@@ -1686,6 +1710,7 @@ check_picture_size_bad_2k_frame_rate (int width, int height, int frame_rate, boo
 	std::vector<dcp::VerificationNote> expected = {
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 		dcp::VerificationNote(
 			dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_RATE, dcp::String::compose("%1/1", frame_rate * (three_d ? 2 : 1))
 			).set_cpl_id(cpl->id()),
@@ -1710,6 +1735,7 @@ check_picture_size_bad_4k_frame_rate (int width, int height, int frame_rate, boo
 	std::vector<dcp::VerificationNote> expected = {
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 		dcp::VerificationNote(
 			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_4K, dcp::String::compose("%1/1", frame_rate), canonical(dir / "video.mxf")
 			).set_cpl_id(cpl->id())
@@ -1769,6 +1795,7 @@ BOOST_AUTO_TEST_CASE (verify_picture_size)
 	std::vector<dcp::VerificationNote> expected = {
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 		{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D },
 	};
 }
@@ -1955,6 +1982,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
@@ -2000,6 +2028,8 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video0.mxf"), cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs1.mxf")
 				).set_cpl_id(cpl->id()),
@@ -2048,6 +2078,8 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video0.mxf"), cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs1.mxf")
 				).set_cpl_id(cpl->id()),
@@ -2103,6 +2135,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
@@ -2159,6 +2192,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
@@ -2925,6 +2959,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_sound_frame_rate)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "videofoo.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_SOUND_FRAME_RATE, string("96000"), canonical(dir / "audiofoo.mxf")
@@ -2959,6 +2994,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_annotation_text)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
@@ -2991,6 +3027,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_cpl_annotation_text)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
@@ -3028,6 +3065,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_asset_duration)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_ASSET_DURATION
@@ -3106,6 +3144,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_main_subtitle_from_some_reels)
 			{},
 			{
 				ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
+				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
 				ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 				dcp::VerificationNote(
 					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS
@@ -3125,6 +3165,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_main_subtitle_from_some_reels)
 			{},
 			{
 				ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
+				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
 				ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 				dcp::VerificationNote(
 					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
@@ -3140,6 +3182,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_main_subtitle_from_some_reels)
 			{},
 			{
 				ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
+				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
 				ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 				dcp::VerificationNote(
 					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
@@ -3214,6 +3258,8 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_asset_counts)
 			{},
 			{
 				ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
+				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
 				ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 				dcp::VerificationNote(
 					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS
@@ -3232,6 +3278,8 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_asset_counts)
 			{},
 			{
 				ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
+				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
 				ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 				dcp::VerificationNote(
 					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
@@ -3247,6 +3295,8 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_asset_counts)
 			{},
 			{
 				ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
+				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
 				ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 				dcp::VerificationNote(
 					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
@@ -3295,6 +3345,7 @@ verify_text_entry_point_check (path dir, dcp::VerificationNote::Code code, boost
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, code, subs->id()
@@ -3369,6 +3420,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_hash)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -3403,6 +3455,7 @@ verify_markers_test (
 
 	test_notes.push_back(ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl));
 	test_notes.push_back(ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl));
+	test_notes.push_back(ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl));
 	check_verify_result({dir}, {}, test_notes);
 }
 
@@ -3505,6 +3558,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_metadata_version_number)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->file().get()
 				).set_cpl_id(cpl->id())
@@ -3533,6 +3587,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata1)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -3563,6 +3618,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata2)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -3594,6 +3650,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:NameX'"), cpl->file().get(), 70
 				).set_cpl_id(cpl->id()),
@@ -3626,6 +3683,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata1)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -3656,6 +3714,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -3687,6 +3746,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:ValueX'"), cpl->file().get(), 74
 				).set_cpl_id(cpl->id()),
@@ -3720,6 +3780,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -3751,6 +3812,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyX'"), cpl->file().get(), 72
 				).set_cpl_id(cpl->id()),
@@ -3784,6 +3846,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyListX'"), cpl->file().get(), 71
 				).set_cpl_id(cpl->id()),
@@ -3823,6 +3886,7 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_cpl_with_encrypted_content)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::ALL_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl_path)
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -3873,6 +3937,7 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_encrypted_content)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::ALL_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id(), canonical(pkl)
@@ -3920,6 +3985,7 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_unencrypted_content)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 		});
 }
 
@@ -3988,6 +4054,7 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::PARTIALLY_ENCRYPTED
 				).set_cpl_id(cpl->id())
@@ -4200,6 +4267,7 @@ BOOST_AUTO_TEST_CASE (verify_threed_marked_as_twod)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "0d6f57e6-adac-4e1d-bfbe-d162bf13e2cd_j2c.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::WARNING,
@@ -4238,6 +4306,7 @@ BOOST_AUTO_TEST_CASE (verify_unexpected_things_in_main_markers)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -4272,6 +4341,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_content_kind)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -4304,6 +4374,7 @@ BOOST_AUTO_TEST_CASE(verify_valid_content_kind)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -4337,6 +4408,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_1)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -4376,6 +4448,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_2)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -4524,6 +4597,8 @@ BOOST_AUTO_TEST_CASE(verify_mismatched_sound_channel_counts)
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video2.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS, canonical(find_file(path, "audio2"))
 				).set_cpl_id(cpl->id())
@@ -4579,6 +4654,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_sound_configuration)
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION, std::string{"MainSoundConfiguration has 6 channels but sound assets have 2"}, canonical(find_cpl(path))
 				).set_cpl_id(cpl->id())
@@ -4689,6 +4765,7 @@ BOOST_AUTO_TEST_CASE(verify_too_many_subtitle_namespaces)
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "j2c_42b34dcd-caa5-4c7b-aa0f-66a590947ba1.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE
 				).set_cpl_id(cpl->id()),
@@ -4782,6 +4859,7 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font)
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_LOAD_FONT).set_id(reel_subs->id()).set_cpl_id(cpl->id())
 		});
 }
@@ -4833,6 +4911,7 @@ BOOST_AUTO_TEST_CASE(verify_cpl_content_version_label_text_empty)
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }

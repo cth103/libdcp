@@ -539,19 +539,23 @@ verify_picture_asset(
 	int const max_frame =   rint(250 * 1000000 / (8 * asset->edit_rate().as_float()));
 	int const risky_frame = rint(230 * 1000000 / (8 * asset->edit_rate().as_float()));
 
-	auto check_frame_size = [max_frame, risky_frame, file, start_frame](Context& context, int index, int size, int frame_rate) {
+	bool any_bad_frames_seen = false;
+
+	auto check_frame_size = [max_frame, risky_frame, file, start_frame, &any_bad_frames_seen](Context& context, int index, int size, int frame_rate) {
 		if (size > max_frame) {
 			context.add_note(
 				VerificationNote(
 					VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
 					).set_frame(start_frame + index).set_frame_rate(frame_rate)
 			);
+			any_bad_frames_seen = true;
 		} else if (size > risky_frame) {
 			context.add_note(
 				VerificationNote(
 					VerificationNote::Type::WARNING, VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
 					).set_frame(start_frame + index).set_frame_rate(frame_rate)
 			);
+			any_bad_frames_seen = true;
 		}
 	};
 
@@ -582,6 +586,10 @@ verify_picture_asset(
 			context.progress(float(i) / duration);
 		}
 
+	}
+
+	if (!any_bad_frames_seen) {
+		context.ok(VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, file);
 	}
 }
 
@@ -1945,6 +1953,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The intrinsic duration of the asset %1 is less than 1 second.", note.note().get());
 	case VerificationNote::Code::INVALID_DURATION:
 		return String::compose("The duration of the asset %1 is less than 1 second.", note.note().get());
+	case VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES:
+		return String::compose("Each frame of the picture asset %1 has a bit rate safely under the limit of 250Mbit/s.", note.file()->filename());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
 		return String::compose(
 			"Frame %1 (timecode %2) in asset %3 has an instantaneous bit rate that is larger than the limit of 250Mbit/s.",

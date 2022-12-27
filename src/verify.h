@@ -158,6 +158,7 @@ public:
 		 *  note contains asset ID
 		 */
 		INVALID_DURATION,
+		VALID_PICTURE_FRAME_SIZES_IN_BYTES,
 		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 250Mbit/s
 		 *  file contains the picture asset filename
 		 */
