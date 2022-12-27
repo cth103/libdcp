@@ -88,6 +88,7 @@
 
 using std::cout;
 using std::dynamic_pointer_cast;
+using std::function;
 using std::list;
 using std::make_shared;
 using std::map;
@@ -97,7 +98,6 @@ using std::shared_ptr;
 using std::string;
 using std::vector;
 using boost::optional;
-using boost::function;
 
 
 using namespace dcp;

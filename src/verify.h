@@ -672,8 +672,8 @@ struct VerifyResult
 VerifyResult verify(
 	std::vector<boost::filesystem::path> directories,
 	std::vector<dcp::DecryptedKDM> kdms,
-	boost::function<void (std::string, boost::optional<boost::filesystem::path>)> stage,
-	boost::function<void (float)> progress,
+	std::function<void (std::string, boost::optional<boost::filesystem::path>)> stage,
+	std::function<void (float)> progress,
 	VerificationOptions options = {},
 	boost::optional<boost::filesystem::path> xsd_dtd_directory = boost::optional<boost::filesystem::path>()
 	);
