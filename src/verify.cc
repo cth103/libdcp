@@ -619,6 +619,7 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 				context.error(VerificationNote::Code::MISMATCHED_PICTURE_HASHES, file);
 				break;
 			default:
+				context.ok(VerificationNote::Code::CORRECT_PICTURE_HASH, file);
 				break;
 		}
 	}
@@ -1933,6 +1934,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The picture in a reel has an invalid frame rate %1.", note.note().get());
 	case VerificationNote::Code::INCORRECT_PICTURE_HASH:
 		return String::compose("The hash (%1) of the picture asset %2 does not agree with the PKL file (%3).", note.calculated_hash().get(), note.file()->filename(), note.reference_hash().get());
+	case VerificationNote::Code::CORRECT_PICTURE_HASH:
+		return String::compose("The picture asset %1 has the expected hashes in the CPL and PKL.", note.file()->filename());
 	case VerificationNote::Code::MISMATCHED_PICTURE_HASHES:
 		return String::compose("The PKL and CPL hashes differ for the picture asset %1.", note.file()->filename());
 	case VerificationNote::Code::INCORRECT_SOUND_HASH:

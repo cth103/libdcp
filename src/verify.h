@@ -114,6 +114,7 @@ public:
 		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
 		 */
 		INVALID_PICTURE_FRAME_RATE,
+		CORRECT_PICTURE_HASH,
 		/** The hash of a main picture asset does not agree with the PKL file
 		 *  file contains the picture asset filename
 		 *  calculated_hash contains the current hash of the picture MXF
