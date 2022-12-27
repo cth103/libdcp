@@ -1174,7 +1174,7 @@ verify_text_details (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& n
 
 
 void
-verify_extension_metadata (shared_ptr<CPL> cpl, vector<VerificationNote>& notes)
+verify_extension_metadata(shared_ptr<const CPL> cpl, vector<VerificationNote>& notes)
 {
 	DCP_ASSERT (cpl->file());
 	cxml::Document doc ("CompositionPlaylist");
@@ -1381,6 +1381,231 @@ verify_reel(
 }
 
 
+static
+void
+verify_cpl(
+	shared_ptr<const DCP> dcp,
+	shared_ptr<const CPL> cpl,
+	function<void (string, optional<boost::filesystem::path>)> stage,
+	boost::filesystem::path xsd_dtd_directory,
+	function<void (float)> progress,
+	vector<VerificationNote>& notes,
+	State& state
+	)
+{
+	stage("Checking CPL", cpl->file());
+	validate_xml(cpl->file().get(), xsd_dtd_directory, notes);
+
+	if (cpl->any_encrypted() && !cpl->all_encrypted()) {
+		notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::PARTIALLY_ENCRYPTED});
+	}
+
+	for (auto const& i: cpl->additional_subtitle_languages()) {
+		verify_language_tag(i, notes);
+	}
+
+	if (!cpl->content_kind().scope() || *cpl->content_kind().scope() == "http://www.smpte-ra.org/schemas/429-7/2006/CPL#standard-content") {
+		/* This is a content kind from http://www.smpte-ra.org/schemas/429-7/2006/CPL#standard-content; make sure it's one
+		 * of the approved ones.
+		 */
+		auto all = ContentKind::all();
+		auto name = cpl->content_kind().name();
+		transform(name.begin(), name.end(), name.begin(), ::tolower);
+		auto iter = std::find_if(all.begin(), all.end(), [name](ContentKind const& k) { return !k.scope() && k.name() == name; });
+		if (iter == all.end()) {
+			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_CONTENT_KIND, cpl->content_kind().name()});
+		}
+	}
+
+	if (cpl->release_territory()) {
+		if (!cpl->release_territory_scope() || cpl->release_territory_scope().get() != "http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata#scope/release-territory/UNM49") {
+			auto terr = cpl->release_territory().get();
+			/* Must be a valid region tag, or "001" */
+			try {
+				LanguageTag::RegionSubtag test(terr);
+			} catch (...) {
+				if (terr != "001") {
+					notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_LANGUAGE, terr});
+				}
+			}
+		}
+	}
+
+	if (dcp->standard() == Standard::SMPTE) {
+		if (!cpl->annotation_text()) {
+			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get()});
+		} else if (cpl->annotation_text().get() != cpl->content_title_text()) {
+			notes.push_back({VerificationNote::Type::WARNING, VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get()});
+		}
+	}
+
+	for (auto i: dcp->pkls()) {
+		/* Check that the CPL's hash corresponds to the PKL */
+		optional<string> h = i->hash(cpl->id());
+		if (h && make_digest(ArrayData(*cpl->file())) != *h) {
+			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()});
+		}
+
+		/* Check that any PKL with a single CPL has its AnnotationText the same as the CPL's ContentTitleText */
+		optional<string> required_annotation_text;
+		for (auto j: i->asset_list()) {
+			/* See if this is a CPL */
+			for (auto k: dcp->cpls()) {
+				if (j->id() == k->id()) {
+					if (!required_annotation_text) {
+						/* First CPL we have found; this is the required AnnotationText unless we find another */
+						required_annotation_text = cpl->content_title_text();
+					} else {
+						/* There's more than one CPL so we don't care what the PKL's AnnotationText is */
+						required_annotation_text = boost::none;
+					}
+				}
+			}
+		}
+
+		if (required_annotation_text && i->annotation_text() != required_annotation_text) {
+			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, i->id(), i->file().get()});
+		}
+	}
+
+	/* set to true if any reel has a MainSubtitle */
+	auto have_main_subtitle = false;
+	/* set to true if any reel has no MainSubtitle */
+	auto have_no_main_subtitle = false;
+	/* fewest number of closed caption assets seen in a reel */
+	size_t fewest_closed_captions = SIZE_MAX;
+	/* most number of closed caption assets seen in a reel */
+	size_t most_closed_captions = 0;
+	map<Marker, Time> markers_seen;
+
+	auto const main_picture_active_area = cpl->main_picture_active_area();
+	if (main_picture_active_area && (main_picture_active_area->width % 2)) {
+		notes.push_back({
+				VerificationNote::Type::ERROR,
+				VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
+				String::compose("width %1 is not a multiple of 2", main_picture_active_area->width),
+				cpl->file().get()
+			});
+	}
+	if (main_picture_active_area && (main_picture_active_area->height % 2)) {
+		notes.push_back({
+				VerificationNote::Type::ERROR,
+				VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
+				String::compose("height %1 is not a multiple of 2", main_picture_active_area->height),
+				cpl->file().get()
+			});
+	}
+
+	for (auto reel: cpl->reels()) {
+		stage("Checking reel", optional<boost::filesystem::path>());
+		verify_reel(
+			dcp,
+			cpl,
+			reel,
+			main_picture_active_area,
+			stage,
+			xsd_dtd_directory,
+			progress,
+			notes,
+			state,
+			&have_main_subtitle,
+			&have_no_main_subtitle,
+			&most_closed_captions,
+			&fewest_closed_captions,
+			&markers_seen
+			);
+	}
+
+	verify_text_details(cpl->reels(), notes);
+
+	if (dcp->standard() == Standard::SMPTE) {
+
+		if (have_main_subtitle && have_no_main_subtitle) {
+			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS});
+		}
+
+		if (fewest_closed_captions != most_closed_captions) {
+			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS});
+		}
+
+		if (cpl->content_kind() == ContentKind::FEATURE) {
+			if (markers_seen.find(Marker::FFEC) == markers_seen.end()) {
+				notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_FFEC_IN_FEATURE});
+			}
+			if (markers_seen.find(Marker::FFMC) == markers_seen.end()) {
+				notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_FFMC_IN_FEATURE});
+			}
+		}
+
+		auto ffoc = markers_seen.find(Marker::FFOC);
+		if (ffoc == markers_seen.end()) {
+			notes.push_back({VerificationNote::Type::WARNING, VerificationNote::Code::MISSING_FFOC});
+		} else if (ffoc->second.e != 1) {
+			notes.push_back({VerificationNote::Type::WARNING, VerificationNote::Code::INCORRECT_FFOC, raw_convert<string>(ffoc->second.e)});
+		}
+
+		auto lfoc = markers_seen.find(Marker::LFOC);
+		if (lfoc == markers_seen.end()) {
+			notes.push_back({VerificationNote::Type::WARNING, VerificationNote::Code::MISSING_LFOC});
+		} else {
+			auto lfoc_time = lfoc->second.as_editable_units_ceil(lfoc->second.tcr);
+			if (lfoc_time != (cpl->reels().back()->duration() - 1)) {
+				notes.push_back({VerificationNote::Type::WARNING, VerificationNote::Code::INCORRECT_LFOC, raw_convert<string>(lfoc_time)});
+			}
+		}
+
+		LinesCharactersResult result;
+		for (auto reel: cpl->reels()) {
+			if (reel->main_subtitle() && reel->main_subtitle()->asset()) {
+				verify_text_lines_and_characters(reel->main_subtitle()->asset(), 52, 79, &result);
+			}
+		}
+
+		if (result.line_count_exceeded) {
+			notes.push_back({VerificationNote::Type::WARNING, VerificationNote::Code::INVALID_SUBTITLE_LINE_COUNT});
+		}
+		if (result.error_length_exceeded) {
+			notes.push_back({VerificationNote::Type::WARNING, VerificationNote::Code::INVALID_SUBTITLE_LINE_LENGTH});
+		} else if (result.warning_length_exceeded) {
+			notes.push_back({VerificationNote::Type::WARNING, VerificationNote::Code::NEARLY_INVALID_SUBTITLE_LINE_LENGTH});
+		}
+
+		result = LinesCharactersResult();
+		for (auto reel: cpl->reels()) {
+			for (auto i: reel->closed_captions()) {
+				if (i->asset()) {
+					verify_text_lines_and_characters(i->asset(), 32, 32, &result);
+				}
+			}
+		}
+
+		if (result.line_count_exceeded) {
+			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_COUNT});
+		}
+		if (result.error_length_exceeded) {
+			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH});
+		}
+
+		if (!cpl->read_composition_metadata()) {
+			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get()});
+		} else if (!cpl->version_number()) {
+			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->id(), cpl->file().get()});
+		}
+
+		verify_extension_metadata(cpl, notes);
+
+		if (cpl->any_encrypted()) {
+			cxml::Document doc("CompositionPlaylist");
+			DCP_ASSERT(cpl->file());
+			doc.read_file(cpl->file().get());
+			if (!doc.optional_node_child("Signature")) {
+				notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl->id(), cpl->file().get()});
+			}
+		}
+	}
+}
+
+
 vector<VerificationNote>
 dcp::verify (
 	vector<boost::filesystem::path> directories,
@@ -1429,216 +1654,15 @@ dcp::verify (
 		}
 
 		for (auto cpl: dcp->cpls()) {
-			stage ("Checking CPL", cpl->file());
-			validate_xml (cpl->file().get(), *xsd_dtd_directory, notes);
-
-			if (cpl->any_encrypted() && !cpl->all_encrypted()) {
-				notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::PARTIALLY_ENCRYPTED});
-			}
-
-			for (auto const& i: cpl->additional_subtitle_languages()) {
-				verify_language_tag (i, notes);
-			}
-
-			if (!cpl->content_kind().scope() || *cpl->content_kind().scope() == "http://www.smpte-ra.org/schemas/429-7/2006/CPL#standard-content") {
-				/* This is a content kind from http://www.smpte-ra.org/schemas/429-7/2006/CPL#standard-content; make sure it's one
-				 * of the approved ones.
-				 */
-				auto all = ContentKind::all();
-				auto name = cpl->content_kind().name();
-				transform(name.begin(), name.end(), name.begin(), ::tolower);
-				auto iter = std::find_if(all.begin(), all.end(), [name](ContentKind const& k) { return !k.scope() && k.name() == name; });
-				if (iter == all.end()) {
-					notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_CONTENT_KIND, cpl->content_kind().name()});
-				}
-			}
-
-			if (cpl->release_territory()) {
-				if (!cpl->release_territory_scope() || cpl->release_territory_scope().get() != "http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata#scope/release-territory/UNM49") {
-					auto terr = cpl->release_territory().get();
-					/* Must be a valid region tag, or "001" */
-					try {
-						LanguageTag::RegionSubtag test (terr);
-					} catch (...) {
-						if (terr != "001") {
-							notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_LANGUAGE, terr});
-						}
-					}
-				}
-			}
-
-			if (dcp->standard() == Standard::SMPTE) {
-				if (!cpl->annotation_text()) {
-					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get()});
-				} else if (cpl->annotation_text().get() != cpl->content_title_text()) {
-					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get()});
-				}
-			}
-
-			for (auto i: dcp->pkls()) {
-				/* Check that the CPL's hash corresponds to the PKL */
-				optional<string> h = i->hash(cpl->id());
-				if (h && make_digest(ArrayData(*cpl->file())) != *h) {
-					notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()});
-				}
-
-				/* Check that any PKL with a single CPL has its AnnotationText the same as the CPL's ContentTitleText */
-				optional<string> required_annotation_text;
-				for (auto j: i->asset_list()) {
-					/* See if this is a CPL */
-					for (auto k: dcp->cpls()) {
-						if (j->id() == k->id()) {
-							if (!required_annotation_text) {
-								/* First CPL we have found; this is the required AnnotationText unless we find another */
-								required_annotation_text = cpl->content_title_text();
-							} else {
-								/* There's more than one CPL so we don't care what the PKL's AnnotationText is */
-								required_annotation_text = boost::none;
-							}
-						}
-					}
-				}
-
-				if (required_annotation_text && i->annotation_text() != required_annotation_text) {
-					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, i->id(), i->file().get()});
-				}
-			}
-
-			/* set to true if any reel has a MainSubtitle */
-			auto have_main_subtitle = false;
-			/* set to true if any reel has no MainSubtitle */
-			auto have_no_main_subtitle = false;
-			/* fewest number of closed caption assets seen in a reel */
-			size_t fewest_closed_captions = SIZE_MAX;
-			/* most number of closed caption assets seen in a reel */
-			size_t most_closed_captions = 0;
-			map<Marker, Time> markers_seen;
-
-			auto const main_picture_active_area = cpl->main_picture_active_area();
-			if (main_picture_active_area && (main_picture_active_area->width % 2)) {
-				notes.push_back({
-						VerificationNote::Type::ERROR,
-						VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
-						String::compose("width %1 is not a multiple of 2", main_picture_active_area->width),
-						cpl->file().get()
-					});
-			}
-			if (main_picture_active_area && (main_picture_active_area->height % 2)) {
-				notes.push_back({
-						VerificationNote::Type::ERROR,
-						VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
-						String::compose("height %1 is not a multiple of 2", main_picture_active_area->height),
-						cpl->file().get()
-					});
-			}
-
-			for (auto reel: cpl->reels()) {
-				stage ("Checking reel", optional<boost::filesystem::path>());
-				verify_reel(
-					dcp,
-					cpl,
-					reel,
-					main_picture_active_area,
-					stage,
-					*xsd_dtd_directory,
-					progress,
-					notes,
-					state,
-					&have_main_subtitle,
-					&have_no_main_subtitle,
-					&most_closed_captions,
-					&fewest_closed_captions,
-					&markers_seen
-					);
-			}
-
-			verify_text_details (cpl->reels(), notes);
-
-			if (dcp->standard() == Standard::SMPTE) {
-
-				if (have_main_subtitle && have_no_main_subtitle) {
-					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS});
-				}
-
-				if (fewest_closed_captions != most_closed_captions) {
-					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS});
-				}
-
-				if (cpl->content_kind() == ContentKind::FEATURE) {
-					if (markers_seen.find(Marker::FFEC) == markers_seen.end()) {
-						notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_FFEC_IN_FEATURE});
-					}
-					if (markers_seen.find(Marker::FFMC) == markers_seen.end()) {
-						notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_FFMC_IN_FEATURE});
-					}
-				}
-
-				auto ffoc = markers_seen.find(Marker::FFOC);
-				if (ffoc == markers_seen.end()) {
-					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISSING_FFOC});
-				} else if (ffoc->second.e != 1) {
-					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::INCORRECT_FFOC, raw_convert<string>(ffoc->second.e)});
-				}
-
-				auto lfoc = markers_seen.find(Marker::LFOC);
-				if (lfoc == markers_seen.end()) {
-					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISSING_LFOC});
-				} else {
-					auto lfoc_time = lfoc->second.as_editable_units_ceil(lfoc->second.tcr);
-					if (lfoc_time != (cpl->reels().back()->duration() - 1)) {
-						notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::INCORRECT_LFOC, raw_convert<string>(lfoc_time)});
-					}
-				}
-
-				LinesCharactersResult result;
-				for (auto reel: cpl->reels()) {
-					if (reel->main_subtitle() && reel->main_subtitle()->asset()) {
-						verify_text_lines_and_characters (reel->main_subtitle()->asset(), 52, 79, &result);
-					}
-				}
-
-				if (result.line_count_exceeded) {
-					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::INVALID_SUBTITLE_LINE_COUNT});
-				}
-				if (result.error_length_exceeded) {
-					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::INVALID_SUBTITLE_LINE_LENGTH});
-				} else if (result.warning_length_exceeded) {
-					notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::NEARLY_INVALID_SUBTITLE_LINE_LENGTH});
-				}
-
-				result = LinesCharactersResult();
-				for (auto reel: cpl->reels()) {
-					for (auto i: reel->closed_captions()) {
-						if (i->asset()) {
-							verify_text_lines_and_characters (i->asset(), 32, 32, &result);
-						}
-					}
-				}
-
-				if (result.line_count_exceeded) {
-					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_COUNT});
-				}
-				if (result.error_length_exceeded) {
-					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH});
-				}
-
-				if (!cpl->read_composition_metadata()) {
-					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get()});
-				} else if (!cpl->version_number()) {
-					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->id(), cpl->file().get()});
-				}
-
-				verify_extension_metadata (cpl, notes);
-
-				if (cpl->any_encrypted()) {
-					cxml::Document doc ("CompositionPlaylist");
-					DCP_ASSERT (cpl->file());
-					doc.read_file (cpl->file().get());
-					if (!doc.optional_node_child("Signature")) {
-						notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl->id(), cpl->file().get()});
-					}
-				}
-			}
+			verify_cpl(
+				dcp,
+				cpl,
+				stage,
+				*xsd_dtd_directory,
+				progress,
+				notes,
+				state
+				);
 		}
 
 		for (auto pkl: dcp->pkls()) {
