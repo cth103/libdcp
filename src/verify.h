@@ -691,7 +691,7 @@ VerifyResult verify(
 	boost::optional<boost::filesystem::path> xsd_dtd_directory = boost::optional<boost::filesystem::path>()
 	);
 
-std::string note_to_string (dcp::VerificationNote note);
+std::string note_to_string(dcp::VerificationNote note, std::function<std::string (std::string)> process_filename = [](std::string s) { return s; });
 
 bool operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b);
 bool operator!=(dcp::VerificationNote const& a, dcp::VerificationNote const& b);
