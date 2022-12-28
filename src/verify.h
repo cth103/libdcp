@@ -58,6 +58,9 @@
 namespace dcp {
 
 
+class DCP;
+
+
 class VerificationNote
 {
 public:
@@ -659,7 +662,14 @@ struct VerificationOptions
 };
 
 
-std::vector<VerificationNote> verify (
+struct VerifyResult
+{
+	std::vector<VerificationNote> notes;
+	std::vector<std::shared_ptr<dcp::DCP>> dcps;
+};
+
+
+VerifyResult verify(
 	std::vector<boost::filesystem::path> directories,
 	std::vector<dcp::DecryptedKDM> kdms,
 	boost::function<void (std::string, boost::optional<boost::filesystem::path>)> stage,
