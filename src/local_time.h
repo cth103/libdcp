@@ -162,6 +162,7 @@ private:
 	void set (struct tm const * tm);
 	void set (boost::posix_time::ptime);
 	void set_local_time_zone ();
+	dcp::LocalTime as_utc() const;
 
 	/* Local time */
 	int _year = 0;        ///< year

@@ -281,54 +281,56 @@ LocalTime::operator== (LocalTime const & other) const
 bool
 LocalTime::operator< (LocalTime const & other) const
 {
-	DCP_ASSERT(_offset == other._offset);
+	auto a = as_utc();
+	auto b = other.as_utc();
 
-	if (_year != other._year) {
-		return _year < other._year;
+	if (a.year() != b.year()) {
+		return a.year() < b.year();
 	}
-	if (_month != other._month) {
-		return _month < other._month;
+	if (a.month() != b.month()) {
+		return a.month() < b.month();
 	}
-	if (_day != other._day) {
-		return _day < other._day;
+	if (a.day() != b.day()) {
+		return a.day() < b.day();
 	}
-	if (_hour != other._hour) {
-		return _hour < other._hour;
+	if (a.hour() != b.hour()) {
+		return a.hour() < b.hour();
 	}
-	if (_minute != other._minute) {
-		return _minute < other._minute;
+	if (a.minute() != b.minute()) {
+		return a.minute() < other.minute();
 	}
-	if (_second != other._second) {
-		return _second < other._second;
+	if (a.second() != b.second()) {
+		return a.second() < b.second();
 	}
-	return _millisecond < other._millisecond;
+	return a.millisecond() < b.millisecond();
 }
 
 
 bool
 LocalTime::operator>(LocalTime const & other) const
 {
-	DCP_ASSERT(_offset == other._offset);
+	auto a = as_utc();
+	auto b = other.as_utc();
 
-	if (_year != other._year) {
-		return _year > other._year;
+	if (a.year() != b.year()) {
+		return a.year() > b.year();
 	}
-	if (_month != other._month) {
-		return _month > other._month;
+	if (a.month() != b.month()) {
+		return a.month() > b.month();
 	}
-	if (_day != other._day) {
-		return _day > other._day;
+	if (a.day() != b.day()) {
+		return a.day() > b.day();
 	}
-	if (_hour != other._hour) {
-		return _hour > other._hour;
+	if (a.hour() != b.hour()) {
+		return a.hour() > b.hour();
 	}
-	if (_minute != other._minute) {
-		return _minute > other._minute;
+	if (a.minute() != b.minute()) {
+		return a.minute() > b.minute();
 	}
-	if (_second != other._second) {
-		return _second > other._second;
+	if (a.second() != b.second()) {
+		return a.second() > b.second();
 	}
-	return _millisecond > other._millisecond;
+	return a.millisecond() > b.millisecond();
 }
 
 
@@ -377,4 +379,12 @@ LocalTime::from_asn1_generalized_time (string time)
 	return t;
 }
 
+
+LocalTime
+LocalTime::as_utc() const
+{
+	auto t = *this;
+	t.add(boost::posix_time::time_duration(-_offset.hour(), -_offset.minute(), 0));
+	return t;
+}
 

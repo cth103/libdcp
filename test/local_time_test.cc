@@ -228,7 +228,26 @@ BOOST_AUTO_TEST_CASE (local_time_from_asn1_generalized_time_test)
 BOOST_AUTO_TEST_CASE(local_time_comparison_test)
 {
 	BOOST_CHECK(dcp::LocalTime("2014-01-01T10:00:00") < dcp::LocalTime("2014-01-01T10:05:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-01-01T10:00:00") < dcp::LocalTime("2015-01-01T10:00:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-01-01T10:00:00") < dcp::LocalTime("2014-01-01T11:00:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-10-10T10:00:00") < dcp::LocalTime("2014-10-10T10:00:01"));
+	BOOST_CHECK(!(dcp::LocalTime("2014-10-10T10:00:00") < dcp::LocalTime("2014-10-10T10:00:00")));
+	BOOST_CHECK(dcp::LocalTime("2014-10-10T10:00:00+01:00") < dcp::LocalTime("2014-10-10T10:00:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-10-10T10:00:00+01:30") < dcp::LocalTime("2014-10-10T10:00:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-10-10T10:00:00+01:00") < dcp::LocalTime("2014-10-10T10:00:01+01:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-01-01T10:00:00") < dcp::LocalTime("2014-01-01T10:05:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-10-10T10:00:00") < dcp::LocalTime("2014-10-10T10:00:00-01:30"));
+
 	BOOST_CHECK(dcp::LocalTime("2014-01-01T10:05:00") > dcp::LocalTime("2014-01-01T10:00:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-10-10T10:00:00-01:30") > dcp::LocalTime("2014-10-10T10:00:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-01-01T10:05:00") > dcp::LocalTime("2014-01-01T10:00:00"));
+	BOOST_CHECK(dcp::LocalTime("2015-01-01T10:00:00") > dcp::LocalTime("2014-01-01T10:00:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-01-01T11:00:00") > dcp::LocalTime("2014-01-01T10:00:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-10-10T10:00:01") > dcp::LocalTime("2014-10-10T10:00:00"));
+	BOOST_CHECK(!(dcp::LocalTime("2014-10-10T10:00:00") > dcp::LocalTime("2014-10-10T10:00:00")));
+	BOOST_CHECK(dcp::LocalTime("2014-10-10T10:00:00") > dcp::LocalTime("2014-10-10T10:00:00+01:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-10-10T10:00:00") > dcp::LocalTime("2014-10-10T10:00:00+01:30"));
+	BOOST_CHECK(dcp::LocalTime("2014-10-10T10:00:01+01:00") > dcp::LocalTime("2014-10-10T10:00:00+01:00"));
+
 	BOOST_CHECK(dcp::LocalTime("2014-01-01T10:00:00") != dcp::LocalTime("2014-01-01T10:05:00"));
 }
-
