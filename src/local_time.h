@@ -122,6 +122,10 @@ public:
 		return _second;
 	}
 
+	int millisecond() const {
+		return _millisecond;
+	}
+
 	void set_day(int d) {
 		_day = d;
 	}
