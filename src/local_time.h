@@ -60,6 +60,9 @@ namespace dcp {
  *  to parse strings of the required format (those that include time zones).
  *
  *  See http://www.w3.org/TR/xmlschema-2/#dateTime
+ *
+ *  Note that operator== for this class will return true for times that have different
+ *  offsets but are the same actual time.
  */
 class LocalTime
 {

@@ -272,9 +272,11 @@ LocalTime::add_minutes (int m)
 bool
 LocalTime::operator== (LocalTime const & other) const
 {
-	return _year == other._year && _month == other._month && _day == other._day &&
-		_hour == other._hour && _minute == other._minute && _second == other._second && _millisecond == other._millisecond &&
-		_offset == other._offset;
+	auto a = as_utc();
+	auto b = other.as_utc();
+
+	return a.year() == b.year() && a.month() == b.month() && a.day() == b.day() &&
+		a.hour() == b.hour() && a.minute() == b.minute() && a.second() == b.second() && a.millisecond() == b.millisecond();
 }
 
 
