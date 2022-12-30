@@ -224,3 +224,11 @@ BOOST_AUTO_TEST_CASE (local_time_from_asn1_generalized_time_test)
 	BOOST_CHECK_EQUAL (dcp::LocalTime::from_asn1_generalized_time("20210215165952").as_string(), "2021-02-15T16:59:52+00:00");
 }
 
+
+BOOST_AUTO_TEST_CASE(local_time_comparison_test)
+{
+	BOOST_CHECK(dcp::LocalTime("2014-01-01T10:00:00") < dcp::LocalTime("2014-01-01T10:05:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-01-01T10:05:00") > dcp::LocalTime("2014-01-01T10:00:00"));
+	BOOST_CHECK(dcp::LocalTime("2014-01-01T10:00:00") != dcp::LocalTime("2014-01-01T10:05:00"));
+}
+

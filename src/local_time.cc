@@ -273,7 +273,7 @@ bool
 LocalTime::operator== (LocalTime const & other) const
 {
 	return _year == other._year && _month == other._month && _day == other._day &&
-		_hour == other._hour && _second == other._second && _millisecond == other._millisecond &&
+		_hour == other._hour && _minute == other._minute && _second == other._second && _millisecond == other._millisecond &&
 		_offset == other._offset;
 }
 
@@ -294,6 +294,9 @@ LocalTime::operator< (LocalTime const & other) const
 	}
 	if (_hour != other._hour) {
 		return _hour < other._hour;
+	}
+	if (_minute != other._minute) {
+		return _minute < other._minute;
 	}
 	if (_second != other._second) {
 		return _second < other._second;
@@ -318,6 +321,9 @@ LocalTime::operator>(LocalTime const & other) const
 	}
 	if (_hour != other._hour) {
 		return _hour > other._hour;
+	}
+	if (_minute != other._minute) {
+		return _minute > other._minute;
 	}
 	if (_second != other._second) {
 		return _second > other._second;
