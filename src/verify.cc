@@ -82,17 +82,17 @@
 #include <vector>
 
 
-using std::list;
-using std::vector;
-using std::string;
 using std::cout;
+using std::dynamic_pointer_cast;
+using std::list;
+using std::make_shared;
 using std::map;
 using std::max;
 using std::shared_ptr;
-using std::make_shared;
+using std::string;
+using std::vector;
 using boost::optional;
 using boost::function;
-using std::dynamic_pointer_cast;
 
 
 using namespace dcp;
