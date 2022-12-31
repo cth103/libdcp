@@ -1232,7 +1232,7 @@ verify_extension_metadata(shared_ptr<const CPL> cpl, vector<VerificationNote>& n
 
 
 bool
-pkl_has_encrypted_assets (shared_ptr<DCP> dcp, shared_ptr<PKL> pkl)
+pkl_has_encrypted_assets(shared_ptr<const DCP> dcp, shared_ptr<const PKL> pkl)
 {
 	vector<string> encrypted;
 	for (auto i: dcp->cpls()) {
