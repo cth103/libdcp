@@ -1606,6 +1606,26 @@ verify_cpl(
 }
 
 
+static
+void
+verify_pkl(
+	shared_ptr<const DCP> dcp,
+	shared_ptr<const PKL> pkl,
+	boost::filesystem::path xsd_dtd_directory,
+	vector<VerificationNote>& notes
+	)
+{
+	validate_xml(pkl->file().get(), xsd_dtd_directory, notes);
+	if (pkl_has_encrypted_assets(dcp, pkl)) {
+		cxml::Document doc("PackingList");
+		doc.read_file(pkl->file().get());
+		if (!doc.optional_node_child("Signature")) {
+			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl->id(), pkl->file().get()});
+		}
+	}
+}
+
+
 vector<VerificationNote>
 dcp::verify (
 	vector<boost::filesystem::path> directories,
@@ -1666,15 +1686,8 @@ dcp::verify (
 		}
 
 		for (auto pkl: dcp->pkls()) {
-			stage ("Checking PKL", pkl->file());
-			validate_xml (pkl->file().get(), *xsd_dtd_directory, notes);
-			if (pkl_has_encrypted_assets(dcp, pkl)) {
-				cxml::Document doc ("PackingList");
-				doc.read_file (pkl->file().get());
-				if (!doc.optional_node_child("Signature")) {
-					notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl->id(), pkl->file().get()});
-				}
-			}
+			stage("Checking PKL", pkl->file());
+			verify_pkl(dcp, pkl, *xsd_dtd_directory, notes);
 		}
 
 		if (dcp->asset_map_path()) {
