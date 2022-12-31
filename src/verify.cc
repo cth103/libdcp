@@ -79,6 +79,7 @@
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <map>
+#include <set>
 #include <vector>
 
 
@@ -88,6 +89,7 @@ using std::list;
 using std::make_shared;
 using std::map;
 using std::max;
+using std::set;
 using std::shared_ptr;
 using std::string;
 using std::vector;
@@ -1616,11 +1618,20 @@ verify_pkl(
 	)
 {
 	validate_xml(pkl->file().get(), xsd_dtd_directory, notes);
+
 	if (pkl_has_encrypted_assets(dcp, pkl)) {
 		cxml::Document doc("PackingList");
 		doc.read_file(pkl->file().get());
 		if (!doc.optional_node_child("Signature")) {
 			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl->id(), pkl->file().get()});
+		}
+	}
+
+	set<string> uuid_set;
+	for (auto asset: pkl->asset_list()) {
+		if (!uuid_set.insert(asset->id()).second) {
+			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL, pkl->id(), pkl->file().get()});
+			break;
 		}
 	}
 }
@@ -1899,6 +1910,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("<ContentKind> has an invalid value %1.", note.note().get());
 	case VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA:
 		return String::compose("<MainPictureActiveaArea> has an invalid value: %1", note.note().get());
+	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL:
+		return String::compose("The PKL %1 has more than one asset with the same ID", note.note().get());
 	}
 
 	return "";

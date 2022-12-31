@@ -3343,3 +3343,26 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_2)
 }
 
 
+BOOST_AUTO_TEST_CASE(verify_duplicate_pkl_asset_ids)
+{
+	RNGFixer rg;
+
+	path dir = "build/test/verify_duplicate_pkl_asset_ids";
+	prepare_directory(dir);
+	auto dcp = make_simple(dir, 1, 24);
+	dcp->write_xml();
+
+	{
+		Editor e(find_pkl(dir));
+		e.replace("urn:uuid:5407b210-4441-4e97-8b16-8bdc7c12da54", "urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358ab");
+	}
+
+	dcp::PKL pkl(find_pkl(dir));
+
+	check_verify_result(
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL, pkl.id(), canonical(find_pkl(dir)) },
+		});
+}
+
