@@ -182,7 +182,7 @@ public:
 		return _pkls;
 	}
 
-	boost::optional<boost::filesystem::path> asset_map_path() {
+	boost::optional<boost::filesystem::path> asset_map_path() const {
 		if (!_asset_map) {
 			return {};
 		}
