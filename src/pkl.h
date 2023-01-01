@@ -123,12 +123,12 @@ public:
 		boost::optional<std::string> _original_filename;
 	};
 
-	std::vector<std::shared_ptr<Asset>> asset_list () const {
-		return _asset_list;
+	std::vector<std::shared_ptr<Asset>> assets() const {
+		return _assets;
 	}
 
 private:
-	std::vector<std::shared_ptr<Asset>> _asset_list;
+	std::vector<std::shared_ptr<Asset>> _assets;
 	/** The most recent disk file used to read or write this PKL */
 	mutable boost::optional<boost::filesystem::path> _file;
 };

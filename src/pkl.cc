@@ -81,7 +81,7 @@ PKL::PKL (boost::filesystem::path file)
 	_creator = pkl.string_child ("Creator");
 
 	for (auto i: pkl.node_child("AssetList")->node_children("Asset")) {
-		_asset_list.push_back (make_shared<Asset>(i));
+		_assets.push_back(make_shared<Asset>(i));
 	}
 }
 
@@ -89,7 +89,7 @@ PKL::PKL (boost::filesystem::path file)
 void
 PKL::add_asset(std::string id, boost::optional<std::string> annotation_text, std::string hash, int64_t size, std::string type, std::string original_filename)
 {
-	_asset_list.push_back(make_shared<Asset>(id, annotation_text, hash, size, type, original_filename));
+	_assets.push_back(make_shared<Asset>(id, annotation_text, hash, size, type, original_filename));
 }
 
 
@@ -113,7 +113,7 @@ PKL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain>
 	pkl->add_child("Creator")->add_child_text (_creator);
 
 	auto asset_list = pkl->add_child("AssetList");
-	for (auto i: _asset_list) {
+	for (auto i: _assets) {
 		auto asset = asset_list->add_child("Asset");
 		asset->add_child("Id")->add_child_text ("urn:uuid:" + i->id());
 		if (i->annotation_text()) {
@@ -141,7 +141,7 @@ PKL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain>
 optional<string>
 PKL::hash (string id) const
 {
-	for (auto i: _asset_list) {
+	for (auto i: _assets) {
 		if (i->id() == id) {
 			return i->hash();
 		}
@@ -154,7 +154,7 @@ PKL::hash (string id) const
 optional<string>
 PKL::type (string id) const
 {
-	for (auto i: _asset_list) {
+	for (auto i: _assets) {
 		if (i->id() == id) {
 			return i->type();
 		}
@@ -167,5 +167,5 @@ PKL::type (string id) const
 void
 PKL::clear_assets()
 {
-	_asset_list.clear();
+	_assets.clear();
 }

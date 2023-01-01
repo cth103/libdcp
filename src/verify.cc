@@ -1248,7 +1248,7 @@ pkl_has_encrypted_assets(shared_ptr<const DCP> dcp, shared_ptr<const PKL> pkl)
 		}
 	}
 
-	for (auto i: pkl->asset_list()) {
+	for (auto i: pkl->assets()) {
 		if (find(encrypted.begin(), encrypted.end(), i->id()) != encrypted.end()) {
 			return true;
 		}
@@ -1450,7 +1450,7 @@ verify_cpl(
 
 		/* Check that any PKL with a single CPL has its AnnotationText the same as the CPL's ContentTitleText */
 		optional<string> required_annotation_text;
-		for (auto j: i->asset_list()) {
+		for (auto j: i->assets()) {
 			/* See if this is a CPL */
 			for (auto k: dcp->cpls()) {
 				if (j->id() == k->id()) {
@@ -1628,7 +1628,7 @@ verify_pkl(
 	}
 
 	set<string> uuid_set;
-	for (auto asset: pkl->asset_list()) {
+	for (auto asset: pkl->assets()) {
 		if (!uuid_set.insert(asset->id()).second) {
 			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL, pkl->id(), pkl->file().get()});
 			break;
