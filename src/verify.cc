@@ -1646,7 +1646,18 @@ verify_assetmap(
 	vector<VerificationNote>& notes
 	)
 {
-	validate_xml(dcp->asset_map_path().get(), xsd_dtd_directory, notes);
+	auto asset_map = dcp->asset_map();
+	DCP_ASSERT(asset_map);
+
+	validate_xml(asset_map->path().get(), xsd_dtd_directory, notes);
+
+	set<string> uuid_set;
+	for (auto const& asset: asset_map->assets()) {
+		if (!uuid_set.insert(asset.id()).second) {
+			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map->id(), asset_map->path().get()});
+			break;
+		}
+	}
 }
 
 
@@ -1925,6 +1936,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("<MainPictureActiveaArea> has an invalid value: %1", note.note().get());
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL:
 		return String::compose("The PKL %1 has more than one asset with the same ID", note.note().get());
+	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP:
+		return String::compose("The ASSETMAP %1 has more than one asset with the same ID", note.note().get());
 	}
 
 	return "";

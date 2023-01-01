@@ -988,6 +988,12 @@ find_pkl(path dir)
 }
 
 
+path
+find_asset_map(path dir)
+{
+	return find_prefix(dir, "ASSETMAP");
+}
+
 
 /* DCP with invalid CompositionMetadataAsset */
 BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
@@ -3363,6 +3369,33 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_pkl_asset_ids)
 		{ dir },
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL, pkl.id(), canonical(find_pkl(dir)) },
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE(verify_duplicate_assetmap_asset_ids)
+{
+	RNGFixer rg;
+
+	path dir = "build/test/verify_duplicate_assetmap_asset_ids";
+	prepare_directory(dir);
+	auto dcp = make_simple(dir, 1, 24);
+	dcp->write_xml();
+
+	{
+		Editor e(find_asset_map(dir));
+		e.replace("urn:uuid:5407b210-4441-4e97-8b16-8bdc7c12da54", "urn:uuid:97f0f352-5b77-48ee-a558-9df37717f4fa");
+	}
+
+	dcp::PKL pkl(find_pkl(dir));
+	dcp::AssetMap asset_map(find_asset_map(dir));
+
+	check_verify_result(
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, pkl.id(), canonical(find_pkl(dir)), },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map.id(), canonical(find_asset_map(dir)) },
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EXTERNAL_ASSET, string("5407b210-4441-4e97-8b16-8bdc7c12da54") },
 		});
 }
 

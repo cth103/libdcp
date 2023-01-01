@@ -405,7 +405,12 @@ public:
 		 *  note contains the PKL ID
 		 *  file contains the PKL filename
 		 */
-		DUPLICATE_ASSET_ID_IN_PKL
+		DUPLICATE_ASSET_ID_IN_PKL,
+		/** An ASSETMAP has more than one asset with the same ID
+		 *  note contains the ASSETMAP ID
+		 *  file contains the ASSETMAP filename
+		 */
+		DUPLICATE_ASSET_ID_IN_ASSETMAP
 	};
 
 	VerificationNote (Type type, Code code)
