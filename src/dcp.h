@@ -190,6 +190,10 @@ public:
 		return _asset_map->path();
 	}
 
+	boost::optional<AssetMap> asset_map() const {
+		return _asset_map;
+	}
+
 	static std::vector<boost::filesystem::path> directories_from_files (std::vector<boost::filesystem::path> files);
 
 private:
