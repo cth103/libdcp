@@ -93,6 +93,10 @@ public:
 		bool _pkl = false;
 	};
 
+	std::vector<Asset> assets() const {
+		return _assets;
+	}
+
 private:
 	std::vector<Asset> _assets;
 	mutable boost::optional<boost::filesystem::path> _path;
