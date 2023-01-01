@@ -54,8 +54,8 @@ public:
 
 	explicit AssetMap(boost::filesystem::path path);
 
-	boost::optional<boost::filesystem::path> path() const {
-		return _path;
+	boost::optional<boost::filesystem::path> file() const {
+		return _file;
 	}
 
 	std::map<std::string, boost::filesystem::path> asset_ids_and_paths() const;
@@ -99,7 +99,7 @@ public:
 
 private:
 	std::vector<Asset> _assets;
-	mutable boost::optional<boost::filesystem::path> _path;
+	mutable boost::optional<boost::filesystem::path> _file;
 };
 
 

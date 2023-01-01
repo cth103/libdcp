@@ -1649,12 +1649,12 @@ verify_assetmap(
 	auto asset_map = dcp->asset_map();
 	DCP_ASSERT(asset_map);
 
-	validate_xml(asset_map->path().get(), xsd_dtd_directory, notes);
+	validate_xml(asset_map->file().get(), xsd_dtd_directory, notes);
 
 	set<string> uuid_set;
 	for (auto const& asset: asset_map->assets()) {
 		if (!uuid_set.insert(asset.id()).second) {
-			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map->id(), asset_map->path().get()});
+			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map->id(), asset_map->file().get()});
 			break;
 		}
 	}
@@ -1725,8 +1725,8 @@ dcp::verify (
 			verify_pkl(dcp, pkl, *xsd_dtd_directory, notes);
 		}
 
-		if (dcp->asset_map_path()) {
-			stage ("Checking ASSETMAP", dcp->asset_map_path().get());
+		if (dcp->asset_map_file()) {
+			stage("Checking ASSETMAP", dcp->asset_map_file().get());
 			verify_assetmap(dcp, *xsd_dtd_directory, notes);
 		} else {
 			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_ASSETMAP});

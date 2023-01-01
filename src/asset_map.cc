@@ -55,12 +55,12 @@ static string const assetmap_interop_ns = "http://www.digicine.com/PROTO-ASDCP-A
 static string const assetmap_smpte_ns   = "http://www.smpte-ra.org/schemas/429-9/2007/AM";
 
 
-AssetMap::AssetMap(boost::filesystem::path path)
-	: _path(path)
+AssetMap::AssetMap(boost::filesystem::path file)
+	: _file(file)
 {
 	cxml::Document doc("AssetMap");
 
-	doc.read_file(path);
+	doc.read_file(file);
 	if (doc.namespace_uri() == assetmap_interop_ns) {
 		_standard = Standard::INTEROP;
 	} else if (doc.namespace_uri() == assetmap_smpte_ns) {
@@ -76,7 +76,7 @@ AssetMap::AssetMap(boost::filesystem::path path)
         _creator = doc.string_child("Creator");
 
 	for (auto asset: doc.node_child("AssetList")->node_children("Asset")) {
-                _assets.push_back(Asset(asset, _path->parent_path(), _standard));
+                _assets.push_back(Asset(asset, _file->parent_path(), _standard));
         }
 }
 
@@ -148,7 +148,7 @@ AssetMap::pkl_paths() const
 
 
 void
-AssetMap::write_xml(boost::filesystem::path path) const
+AssetMap::write_xml(boost::filesystem::path file) const
 {
 	xmlpp::Document doc;
 	xmlpp::Element* root;
@@ -188,11 +188,11 @@ AssetMap::write_xml(boost::filesystem::path path) const
 
 	auto asset_list = root->add_child("AssetList");
 	for (auto const& asset: _assets) {
-		asset.write_xml(asset_list, path.parent_path());
+		asset.write_xml(asset_list, file.parent_path());
 	}
 
-	doc.write_to_file_formatted(path.string(), "UTF-8");
-	_path = path;
+	doc.write_to_file_formatted(file.string(), "UTF-8");
+	_file = file;
 }
 
 
