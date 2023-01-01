@@ -1637,6 +1637,19 @@ verify_pkl(
 }
 
 
+
+static
+void
+verify_assetmap(
+	shared_ptr<const DCP> dcp,
+	boost::filesystem::path xsd_dtd_directory,
+	vector<VerificationNote>& notes
+	)
+{
+	validate_xml(dcp->asset_map_path().get(), xsd_dtd_directory, notes);
+}
+
+
 vector<VerificationNote>
 dcp::verify (
 	vector<boost::filesystem::path> directories,
@@ -1703,7 +1716,7 @@ dcp::verify (
 
 		if (dcp->asset_map_path()) {
 			stage ("Checking ASSETMAP", dcp->asset_map_path().get());
-			validate_xml (dcp->asset_map_path().get(), *xsd_dtd_directory, notes);
+			verify_assetmap(dcp, *xsd_dtd_directory, notes);
 		} else {
 			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_ASSETMAP});
 		}
