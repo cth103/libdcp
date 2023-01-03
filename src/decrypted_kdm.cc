@@ -399,11 +399,6 @@ DecryptedKDM::encrypt (
 		keys.push_back (lines);
 	}
 
-	string device_list_description = recipient.subject_common_name ();
-	if (device_list_description.find (".") != string::npos) {
-		device_list_description = device_list_description.substr (device_list_description.find (".") + 1);
-	}
-
 	return EncryptedKDM (
 		signer,
 		recipient,
