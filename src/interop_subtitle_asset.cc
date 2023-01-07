@@ -240,15 +240,8 @@ InteropSubtitleAsset::resolve_fonts (vector<shared_ptr<Asset>> assets)
 		}
 
 		for (auto load_font_node: _load_font_nodes) {
-			bool got = false;
-			for (auto const& font: _fonts) {
-				if (font.load_id == load_font_node->id) {
-					got = true;
-					break;
-				}
-			}
-
-			if (!got && font->file() && load_font_node->uri == font->file()->leaf().string()) {
+			auto iter = std::find_if(_fonts.begin(), _fonts.end(), [load_font_node](Font const& font) { return font.load_id == load_font_node->id; });
+			if (iter == _fonts.end() && font->file() && load_font_node->uri == font->file()->leaf().string()) {
 				_fonts.push_back(Font(load_font_node->id, asset->id(), font->file().get()));
 			}
 		}
