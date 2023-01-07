@@ -42,6 +42,7 @@
 #include "test.h"
 #include "types.h"
 #include "verify.h"
+#include "reel_interop_subtitle_asset.h"
 #include "reel_markers_asset.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/optional.hpp>
@@ -431,6 +432,55 @@ BOOST_AUTO_TEST_CASE (check_cpls_unchanged_after_combine)
 	auto cpl = dcp->cpls()[0]->file();
 	BOOST_REQUIRE (cpl);
 	check_file (*cpl, out / cpl->filename());
+}
+
+
+/** The combine process would write multiple fonts with the same ID (#2402) */
+BOOST_AUTO_TEST_CASE(combine_multi_reel_subtitles)
+{
+	boost::filesystem::path in = "build/test/combine_multi_reel_subtitles_in";
+	boost::filesystem::path out = "build/test/combine_multi_reel_subtitles_out";
+	remove_all(out);
+
+	auto dcp = make_simple(in, 2, 24, dcp::Standard::INTEROP);
+
+	dcp::ArrayData data1(4096);
+	memset(data1.data(), 0, data1.size());
+
+	auto subs1 = make_shared<dcp::InteropSubtitleAsset>();
+	subs1->add(simple_subtitle());
+	boost::filesystem::create_directory(in / "subs1");
+	subs1->add_font("afont1", data1);
+	subs1->write(in / "subs1" / "subs1.xml");
+
+	dcp::ArrayData data2(4096);
+	memset(data2.data(), 1, data1.size());
+
+	auto subs2 = make_shared<dcp::InteropSubtitleAsset>();
+	subs2->add(simple_subtitle());
+	boost::filesystem::create_directory(in / "subs2");
+	subs2->add_font("afont2", data2);
+	subs2->write(in / "subs2" / "subs2.xml");
+
+	auto reel_subs1 = make_shared<dcp::ReelInteropSubtitleAsset>(subs1, dcp::Fraction(24, 1), 240, 0);
+	dcp->cpls()[0]->reels()[0]->add(reel_subs1);
+
+	auto reel_subs2 = make_shared<dcp::ReelInteropSubtitleAsset>(subs2, dcp::Fraction(24, 1), 240, 0);
+	dcp->cpls()[0]->reels()[1]->add(reel_subs2);
+
+	dcp->write_xml();
+
+	dcp::combine({in}, out);
+
+	check_combined({in}, out);
+
+	auto notes = dcp::verify({out}, &stage, &progress, xsd_test);
+	vector<dcp::VerificationNote> filtered_notes;
+	std::copy_if(notes.begin(), notes.end(), std::back_inserter(filtered_notes), [](dcp::VerificationNote const& i) {
+		return i.code() != dcp::VerificationNote::Code::INVALID_STANDARD && i.code() != dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL;
+	});
+	dump_notes(filtered_notes);
+	BOOST_CHECK(filtered_notes.empty());
 }
 
 
