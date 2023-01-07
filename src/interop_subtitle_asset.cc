@@ -233,23 +233,23 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 void
 InteropSubtitleAsset::resolve_fonts (vector<shared_ptr<Asset>> assets)
 {
-	for (auto i: assets) {
-		auto font = dynamic_pointer_cast<FontAsset> (i);
+	for (auto asset: assets) {
+		auto font = dynamic_pointer_cast<FontAsset>(asset);
 		if (!font) {
 			continue;
 		}
 
-		for (auto j: _load_font_nodes) {
+		for (auto load_font_node: _load_font_nodes) {
 			bool got = false;
-			for (auto const& k: _fonts) {
-				if (k.load_id == j->id) {
+			for (auto const& font: _fonts) {
+				if (font.load_id == load_font_node->id) {
 					got = true;
 					break;
 				}
 			}
 
-			if (!got && font->file() && j->uri == font->file()->leaf().string()) {
-				_fonts.push_back (Font (j->id, i->id(), font->file().get()));
+			if (!got && font->file() && load_font_node->uri == font->file()->leaf().string()) {
+				_fonts.push_back(Font(load_font_node->id, asset->id(), font->file().get()));
 			}
 		}
 	}
