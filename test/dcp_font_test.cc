@@ -57,6 +57,7 @@ using boost::shared_array;
 BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 {
 	boost::filesystem::path directory = "build/test/interop_dcp_font_test";
+	boost::filesystem::remove_all(directory);
 	dcp::DCP dcp (directory);
 
 	auto subs = make_shared<dcp::InteropSubtitleAsset>();
