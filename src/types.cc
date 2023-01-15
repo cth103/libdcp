@@ -477,7 +477,12 @@ MainSoundConfiguration::MainSoundConfiguration (string s)
 		throw MainSoundConfigurationError (s);
 	}
 
-	if (parts[0] == "51") {
+	if (parts[0] == "20") {
+		/* I can't find any mention in the standard of 20 being OK here, but Deluxe fail
+		 * QCs if the audio is stereo and 51 is used here.
+		 */
+		_field = MCASoundField::STEREO;
+	} else if (parts[0] == "51") {
 		_field = MCASoundField::FIVE_POINT_ONE;
 	} else if (parts[0] == "71") {
 		_field = MCASoundField::SEVEN_POINT_ONE;
@@ -513,10 +518,18 @@ string
 MainSoundConfiguration::to_string () const
 {
 	string c;
-	if (_field == MCASoundField::FIVE_POINT_ONE) {
+	switch (_field) {
+	case MCASoundField::STEREO:
+		c = "20/";
+		break;
+	case MCASoundField::FIVE_POINT_ONE:
 		c = "51/";
-	} else {
+		break;
+	case MCASoundField::SEVEN_POINT_ONE:
 		c = "71/";
+		break;
+	default:
+		DCP_ASSERT(false);
 	}
 
 	for (auto i: _channels) {

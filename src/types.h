@@ -118,6 +118,7 @@ std::vector<dcp::Channel> used_audio_channels ();
 
 enum class MCASoundField
 {
+	STEREO,
 	FIVE_POINT_ONE,
 	SEVEN_POINT_ONE
 };
