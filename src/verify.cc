@@ -687,6 +687,16 @@ verify_smpte_timed_text_asset (
 }
 
 
+/** Verify Interop subtitle-only stuff */
+void
+verify_interop_subtitle_asset(shared_ptr<const InteropSubtitleAsset> asset, vector<VerificationNote>& notes)
+{
+	if (asset->subtitles().empty()) {
+		notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_SUBTITLE, asset->id(), asset->file().get() });
+	}
+}
+
+
 /** Verify SMPTE subtitle-only stuff */
 void
 verify_smpte_subtitle_asset (
@@ -738,6 +748,11 @@ verify_subtitle_asset (
 		validate_xml (asset->raw_xml().get(), xsd_dtd_directory, notes);
 	} else {
 		notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED});
+	}
+
+	auto interop = dynamic_pointer_cast<const InteropSubtitleAsset>(asset);
+	if (interop) {
+		verify_interop_subtitle_asset(interop, notes);
 	}
 
 	auto smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
@@ -1938,6 +1953,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The PKL %1 has more than one asset with the same ID", note.note().get());
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP:
 		return String::compose("The ASSETMAP %1 has more than one asset with the same ID", note.note().get());
+	case VerificationNote::Code::MISSING_SUBTITLE:
+		return String::compose("The subtitle asset %1 has no subtitles", note.note().get());
 	}
 
 	return "";
