@@ -246,6 +246,33 @@ Certificate::issuer () const
 
 
 string
+Certificate::issuer_common_name() const
+{
+	DCP_ASSERT(_certificate);
+
+	return get_name_part(X509_get_issuer_name(_certificate), NID_commonName);
+}
+
+
+string
+Certificate::issuer_organization_name() const
+{
+	DCP_ASSERT(_certificate);
+
+	return get_name_part(X509_get_issuer_name(_certificate), NID_organizationName);
+}
+
+
+string
+Certificate::issuer_organizational_unit_name() const
+{
+	DCP_ASSERT(_certificate);
+
+	return get_name_part(X509_get_issuer_name(_certificate), NID_organizationalUnitName);
+}
+
+
+string
 Certificate::asn_to_utf8 (ASN1_STRING* s)
 {
 	unsigned char* buf = 0;

@@ -102,6 +102,9 @@ public:
 	 *  and with + signs escaped to \+
 	 */
 	std::string issuer () const;
+	std::string issuer_common_name() const;
+	std::string issuer_organization_name() const;
+	std::string issuer_organizational_unit_name() const;
 
 	std::string subject () const;
 	std::string subject_common_name () const;
