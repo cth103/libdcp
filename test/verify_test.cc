@@ -918,6 +918,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_empty_child_nodes
 	check_verify_result (
 		{ dir },
 		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE, asset->id(), boost::filesystem::canonical(asset->file().get()) },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_TEXT },
 		});
