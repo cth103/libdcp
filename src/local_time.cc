@@ -309,6 +309,14 @@ LocalTime::operator< (LocalTime const & other) const
 
 
 bool
+LocalTime::operator<=(LocalTime const& other) const
+{
+	return *this < other || *this == other;
+}
+
+
+
+bool
 LocalTime::operator>(LocalTime const & other) const
 {
 	auto a = as_utc();
@@ -333,6 +341,13 @@ LocalTime::operator>(LocalTime const & other) const
 		return a.second() > b.second();
 	}
 	return a.millisecond() > b.millisecond();
+}
+
+
+bool
+LocalTime::operator>=(LocalTime const& other) const
+{
+	return *this > other || *this == other;
 }
 
 
