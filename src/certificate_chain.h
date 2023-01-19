@@ -128,6 +128,12 @@ public:
 	List root_to_leaf () const;
 	List unordered () const;
 
+	/** Check if the certificates form a chain (i.e. root signs intermediate etc.)
+	 *  and that the private key matches the leaf certificate.
+	 *  @param if not nullptr, filled in with a reason for vailure (or untouched
+	 *  if there is no error)
+	 *  @return true if the chain is valid, false if not.
+	 */
 	bool valid (std::string* reason = nullptr) const;
 
 	/** Check to see if the chain is valid (i.e. root signs the intermediate, intermediate
