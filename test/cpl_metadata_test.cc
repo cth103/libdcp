@@ -33,11 +33,14 @@
 
 
 #include "certificate_chain.h"
+#include "compose.hpp"
 #include "cpl.h"
 #include "exceptions.h"
 #include "language_tag.h"
 #include "reel.h"
+#include "reel_mono_picture_asset.h"
 #include "reel_smpte_subtitle_asset.h"
+#include "reel_sound_asset.h"
 #include "stream_operators.h"
 #include "test.h"
 #include <memory>
@@ -428,3 +431,64 @@ BOOST_AUTO_TEST_CASE(check_that_missing_full_content_title_text_is_tolerated)
 	dcp::CPL cpl("test/ref/cpl_metadata_test3.xml");
 }
 
+
+static
+void
+check_audio_channel_label_sub_descriptors(int channels)
+{
+	boost::filesystem::path path = dcp::String::compose("build/test/check_audio_channel_label_sub_descriptors_%1", channels);
+	auto constexpr sample_rate = 48000;
+
+	boost::filesystem::remove_all(path);
+	boost::filesystem::create_directories(path);
+	auto dcp = make_shared<dcp::DCP>(path);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
+	cpl->set_main_sound_configuration("wrong");
+	cpl->set_main_sound_sample_rate(48000);
+	cpl->set_main_picture_stored_area(dcp::Size(1998, 1080));
+	cpl->set_main_picture_active_area(dcp::Size(1998, 1080));
+	cpl->set_version_number(1);
+
+	auto mp = simple_picture(path, "", 240);
+	auto ms = simple_sound(path, "", dcp::MXFMetadata(), "en-US", 240, sample_rate, boost::none, channels);
+
+	auto reel = make_shared<dcp::Reel>(
+		shared_ptr<dcp::ReelMonoPictureAsset>(new dcp::ReelMonoPictureAsset(mp, 0)),
+		shared_ptr<dcp::ReelSoundAsset>(new dcp::ReelSoundAsset(ms, 0))
+		);
+
+	cpl->add(reel);
+	dcp->add(cpl);
+
+	cpl->write_xml(path / "cpl.xml", {});
+
+	cxml::Document check("CompositionPlaylist");
+	check.read_file(path / "cpl.xml");
+
+	auto reel_list = check.node_child("ReelList");
+	BOOST_REQUIRE(reel_list);
+	auto check_reel = reel_list->node_child("Reel");
+	BOOST_REQUIRE(reel);
+	auto asset_list = check_reel->node_child("AssetList");
+	BOOST_REQUIRE(asset_list);
+	auto composition_metadata_asset = asset_list->node_child("CompositionMetadataAsset");
+	BOOST_REQUIRE(composition_metadata_asset);
+	auto mca_sub_descriptors = composition_metadata_asset->node_child("MCASubDescriptors");
+	BOOST_REQUIRE(mca_sub_descriptors);
+	auto channel_label_sub_descriptors = mca_sub_descriptors->node_children("AudioChannelLabelSubDescriptor");
+
+	BOOST_CHECK_EQUAL(channel_label_sub_descriptors.size(), channels);
+	int index = 1;
+	for (auto sub: channel_label_sub_descriptors) {
+		BOOST_CHECK_EQUAL(sub->number_child<int>("MCAChannelID"), index);
+		++index;
+	}
+}
+
+
+BOOST_AUTO_TEST_CASE(include_the_right_number_of_channel_label_sub_descriptors)
+{
+	check_audio_channel_label_sub_descriptors(2);
+	check_audio_channel_label_sub_descriptors(6);
+	check_audio_channel_label_sub_descriptors(8);
+}

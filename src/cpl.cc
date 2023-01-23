@@ -512,6 +512,9 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 
 				for (auto i: channels) {
 					auto channel = reinterpret_cast<ASDCP::MXF::AudioChannelLabelSubDescriptor*>(i);
+					if (static_cast<int>(channel->MCAChannelID) > asset->channels()) {
+						continue;
+					}
 					auto ch = mca_subs->add_child("AudioChannelLabelSubDescriptor", "r0");
 					channel->InstanceUID.EncodeString(buffer, sizeof(buffer));
 					ch->add_child("InstanceID", "r1")->add_child_text("urn:uuid:" + string(buffer));
