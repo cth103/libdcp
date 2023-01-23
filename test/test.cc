@@ -292,10 +292,8 @@ simple_picture (boost::filesystem::path path, string suffix, int frames, optiona
 
 
 shared_ptr<dcp::SoundAsset>
-simple_sound (boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_meta, string language, int frames, int sample_rate, optional<dcp::Key> key)
+simple_sound(boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_meta, string language, int frames, int sample_rate, optional<dcp::Key> key, int channels)
 {
-	int const channels = 6;
-
 	/* Set a valid language, then overwrite it, so that the language parameter can be badly formed */
 	auto ms = make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), sample_rate, channels, dcp::LanguageTag("en-US"), dcp::Standard::SMPTE);
 	if (key) {

@@ -55,7 +55,7 @@ namespace dcp {
 
 
 extern std::shared_ptr<dcp::SoundAsset> simple_sound (
-	boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language, int frames, int sample_rate, boost::optional<dcp::Key>
+	boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language, int frames, int sample_rate, boost::optional<dcp::Key>, int channels
 	);
 
 
@@ -112,7 +112,7 @@ public:
 private:
 	friend class SoundAssetWriter;
 	friend std::shared_ptr<dcp::SoundAsset> (::simple_sound) (
-		boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language, int frames, int sample_rate, boost::optional<dcp::Key>
+		boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language, int frames, int sample_rate, boost::optional<dcp::Key>, int channels
 		);
 
 	std::string pkl_type (Standard standard) const override {

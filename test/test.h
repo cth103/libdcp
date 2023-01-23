@@ -56,7 +56,8 @@ extern std::shared_ptr<dcp::SoundAsset> simple_sound (
 	std::string language,
 	int frames = 24,
 	int sample_rate = 48000,
-	boost::optional<dcp::Key> key = boost::optional<dcp::Key>()
+	boost::optional<dcp::Key> key = boost::optional<dcp::Key>(),
+	int channels = 6
 	);
 extern std::shared_ptr<dcp::Subtitle> simple_subtitle ();
 extern std::shared_ptr<dcp::ReelMarkersAsset> simple_markers (int frames = 24);
