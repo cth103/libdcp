@@ -79,6 +79,7 @@
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <map>
+#include <regex>
 #include <set>
 #include <vector>
 
@@ -725,6 +726,17 @@ verify_smpte_subtitle_asset (
 		}
 	} else {
 		notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED});
+	}
+
+	if (asset->raw_xml()) {
+		/* Deluxe require this in their QC even if it seems never to be mentioned in any standard */
+		cxml::Document doc("SubtitleReel");
+		doc.read_string(*asset->raw_xml());
+		auto issue_date = doc.string_child("IssueDate");
+		std::regex reg("^\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d$");
+		if (!std::regex_match(issue_date, reg)) {
+			notes.push_back({VerificationNote::Type::WARNING, VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, issue_date});
+		}
 	}
 }
 
@@ -1955,6 +1967,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The ASSETMAP %1 has more than one asset with the same ID", note.note().get());
 	case VerificationNote::Code::MISSING_SUBTITLE:
 		return String::compose("The subtitle asset %1 has no subtitles", note.note().get());
+	case VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE:
+		return String::compose("<IssueDate> has an invalid value: %1", note.note().get());
 	}
 
 	return "";

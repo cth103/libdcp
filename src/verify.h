@@ -415,7 +415,13 @@ public:
 		 *  note contains the asset ID
 		 *  file contains the asset filename
 		 */
-		MISSING_SUBTITLE
+		MISSING_SUBTITLE,
+		/** A SMPTE subtitle asset as an <IssueDate> which is not of the form yyyy-mm-ddThh:mm:ss
+		 *  I can find no reference in a standard to this being required, but the Deluxe delivery
+		 *  specifications require it and their QC will fail DCPs that don't have it.
+		 *  note contains the incorrect <IssueDate>
+		 */
+		INVALID_SUBTITLE_ISSUE_DATE
 	};
 
 	VerificationNote (Type type, Code code)
