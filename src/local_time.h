@@ -92,8 +92,10 @@ public:
 		, _offset(offset)
 	{}
 
-	/** @return A string of the form 2013-01-05T18:06:59+04:00 or 2013-01-05T18:06:59.123+04:00 */
-	std::string as_string (bool with_millisecond = false) const;
+	/** @return A string of the form 2013-01-05T18:06:59+04:00, 2013-01-05T18:06:59.123+04:00
+	 *  2013-01-05T18:06:59 or 2013-01-05T18:06:59.123
+	 */
+	std::string as_string(bool with_millisecond = false, bool with_timezone = true) const;
 
 	/** @return The date in the form YYYY-MM-DD */
 	std::string date () const;

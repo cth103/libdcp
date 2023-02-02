@@ -88,6 +88,32 @@ BOOST_AUTO_TEST_CASE (local_time_basic_test)
 	}
 
 	{
+		dcp::LocalTime t ("2011-11-20T01:06:59.456-09:30");
+		BOOST_CHECK_EQUAL (t._year, 2011);
+		BOOST_CHECK_EQUAL (t._month, 11);
+		BOOST_CHECK_EQUAL (t._day, 20);
+		BOOST_CHECK_EQUAL (t._hour, 1);
+		BOOST_CHECK_EQUAL (t._minute, 6);
+		BOOST_CHECK_EQUAL (t._second, 59);
+		BOOST_CHECK_EQUAL (t._millisecond, 456);
+		BOOST_CHECK(t._offset == dcp::UTCOffset(-9, -30));
+		BOOST_CHECK_EQUAL (t.as_string(true, false), "2011-11-20T01:06:59.456");
+	}
+
+	{
+		dcp::LocalTime t ("2011-11-20T01:06:59.456-09:30");
+		BOOST_CHECK_EQUAL (t._year, 2011);
+		BOOST_CHECK_EQUAL (t._month, 11);
+		BOOST_CHECK_EQUAL (t._day, 20);
+		BOOST_CHECK_EQUAL (t._hour, 1);
+		BOOST_CHECK_EQUAL (t._minute, 6);
+		BOOST_CHECK_EQUAL (t._second, 59);
+		BOOST_CHECK_EQUAL (t._millisecond, 456);
+		BOOST_CHECK(t._offset == dcp::UTCOffset(-9, -30));
+		BOOST_CHECK_EQUAL (t.as_string(false, false), "2011-11-20T01:06:59");
+	}
+
+	{
 		/* Construction from boost::posix_time::ptime */
 		dcp::LocalTime b (boost::posix_time::time_from_string ("2002-01-20 19:03:56"));
 		BOOST_CHECK_EQUAL (b._year, 2002);

@@ -182,14 +182,24 @@ LocalTime::LocalTime (string s)
 
 
 string
-LocalTime::as_string (bool with_millisecond) const
+LocalTime::as_string(bool with_millisecond, bool with_timezone) const
 {
 	char buffer[32];
-	snprintf (
+
+	auto const written = snprintf(
 		buffer, sizeof (buffer),
-		"%sT%s%s%02d:%02d",
-		date().c_str(), time_of_day(true, with_millisecond).c_str(), (_offset.hour() >= 0 ? "+" : "-"), abs(_offset.hour()), abs(_offset.minute())
+		"%sT%s",
+		date().c_str(), time_of_day(true, with_millisecond).c_str()
 		);
+
+	DCP_ASSERT(written < 32);
+
+	if (with_timezone) {
+		snprintf(
+			buffer + written, sizeof(buffer) - written,
+			"%s%02d:%02d", (_offset.hour() >= 0 ? "+" : "-"), abs(_offset.hour()), abs(_offset.minute())
+			);
+	}
 	return buffer;
 }
 
