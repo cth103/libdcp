@@ -351,7 +351,7 @@ SMPTESubtitleAsset::xml_as_string () const
 	if (_annotation_text) {
 		root->add_child("AnnotationText")->add_child_text(_annotation_text.get());
 	}
-	root->add_child("IssueDate")->add_child_text(_issue_date.as_string(true));
+	root->add_child("IssueDate")->add_child_text(_issue_date.as_string(false, false));
 	if (_reel_number) {
 		root->add_child("ReelNumber")->add_child_text(raw_convert<string>(_reel_number.get()));
 	}
