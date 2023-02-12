@@ -85,6 +85,8 @@ main (int argc, char* argv[])
 
 		if (c == -1) {
 			break;
+		} else if (c == '?' || c == ':') {
+			exit(EXIT_FAILURE);
 		}
 
 		switch (c) {
