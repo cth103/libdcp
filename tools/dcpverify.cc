@@ -34,6 +34,7 @@
 #include "verify.h"
 #include "compose.hpp"
 #include "common.h"
+#include "raw_convert.h"
 #include <boost/bind.hpp>
 #include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
@@ -53,11 +54,13 @@ static void
 help (string n)
 {
 	cerr << "Syntax: " << n << " [OPTION] <DCP>\n"
-	     << "  -V, --version           show libdcp version\n"
-	     << "  -h, --help              show this help\n"
-	     << "  --ignore-missing-assets don't give errors about missing assets\n"
-	     << "  --ignore-bv21-smpte     don't give the SMPTE Bv2.1 error about a DCP not being SMPTE\n"
-	     << "  -q, --quiet             don't report progress\n";
+	     << "  -V, --version                               	show libdcp version\n"
+	     << "  -h, --help                                  	show this help\n"
+	     << "  --ignore-missing-assets                     	don't give errors about missing assets\n"
+	     << "  --ignore-bv21-smpte                         	don't give the SMPTE Bv2.1 error about a DCP not being SMPTE\n"
+	     << "  --no-asset-hash-check                       	don't check asset hashes\n"
+	     << "  --asset-hash-check-maximum-size <size-in-MB> only check hashes for assets smaller than this size (in MB)\n"
+	     << "  -q, --quiet                                  don't report progress\n";
 }
 
 
@@ -70,6 +73,8 @@ main (int argc, char* argv[])
 	bool ignore_bv21_smpte = false;
 	bool quiet = false;
 
+	dcp::VerificationOptions verification_options;
+
 	int option_index = 0;
 	while (true) {
 		static struct option long_options[] = {
@@ -77,11 +82,13 @@ main (int argc, char* argv[])
 			{ "help", no_argument, 0, 'h' },
 			{ "ignore-missing-assets", no_argument, 0, 'A' },
 			{ "ignore-bv21-smpte", no_argument, 0, 'B' },
+			{ "no-asset-hash-check", no_argument, 0, 'C' },
+			{ "asset-hash-check-maximum-size", required_argument, 0, 'D' },
 			{ "quiet", no_argument, 0, 'q' },
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "VhABq", long_options, &option_index);
+		int c = getopt_long (argc, argv, "VhABCD:q", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -101,6 +108,12 @@ main (int argc, char* argv[])
 			break;
 		case 'B':
 			ignore_bv21_smpte = true;
+			break;
+		case 'C':
+			verification_options.check_asset_hashes = false;
+			break;
+		case 'D':
+			verification_options.maximum_asset_size_for_hash_check = dcp::raw_convert<int>(optarg) * 1000000LL;
 			break;
 		case 'q':
 			quiet = true;
@@ -152,7 +165,7 @@ main (int argc, char* argv[])
 
 	vector<boost::filesystem::path> directories;
 	directories.push_back (argv[optind]);
-	auto notes = dcp::verify(directories, stage, progress);
+	auto notes = dcp::verify(directories, stage, progress, verification_options);
 	dcp::filter_notes (notes, ignore_missing_assets);
 
 	if (!quiet) {

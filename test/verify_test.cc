@@ -297,7 +297,7 @@ static
 void
 check_verify_result (vector<path> dir, vector<dcp::VerificationNote> test_notes)
 {
-	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+	auto notes = dcp::verify({dir}, &stage, &progress, {}, xsd_test);
 	std::sort (notes.begin(), notes.end());
 	std::sort (test_notes.begin(), test_notes.end());
 
@@ -345,7 +345,7 @@ check_verify_result_after_replace (string suffix, boost::function<path (string)>
 		e.replace (from, to);
 	}
 
-	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+	auto notes = dcp::verify({dir}, &stage, &progress, {}, xsd_test);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), codes.size());
 	auto i = notes.begin();
@@ -362,7 +362,7 @@ BOOST_AUTO_TEST_CASE (verify_no_error)
 {
 	stages.clear ();
 	auto dir = setup (1, "no_error");
-	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+	auto notes = dcp::verify({dir}, &stage, &progress, {}, xsd_test);
 
 	path const cpl_file = dir / dcp_test1_cpl;
 	path const pkl_file = dir / dcp_test1_pkl;
@@ -603,7 +603,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_standard)
 {
 	stages.clear ();
 	auto dir = setup (3, "verify_invalid_standard");
-	auto notes = dcp::verify ({dir}, &stage, &progress, xsd_test);
+	auto notes = dcp::verify({dir}, &stage, &progress, {}, xsd_test);
 
 	path const cpl_file = dir / "cpl_cbfd2bc0-21cf-4a8f-95d8-9cddcbe51296.xml";
 	path const pkl_file = dir / "pkl_d87a950c-bd6f-41f6-90cc-56ccd673e131.xml";
@@ -1245,7 +1245,7 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 	d->set_annotation_text("A Test DCP");
 	d->write_xml();
 
-	return dcp::verify ({dcp_path}, &stage, &progress, xsd_test);
+	return dcp::verify({dcp_path}, &stage, &progress, {}, xsd_test);
 }
 
 

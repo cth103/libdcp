@@ -488,10 +488,21 @@ private:
 };
 
 
+struct VerificationOptions
+{
+	///< If set, any assets larger than this number of bytes will not have their hashes checked
+	boost::optional<boost::uintmax_t> maximum_asset_size_for_hash_check;
+	///< true to check asset hashes (except those which match maximum_asset_size_for_hash_check)
+	///< false to check no asset hashes.
+	bool check_asset_hashes = true;
+};
+
+
 std::vector<VerificationNote> verify (
 	std::vector<boost::filesystem::path> directories,
 	boost::function<void (std::string, boost::optional<boost::filesystem::path>)> stage,
 	boost::function<void (float)> progress,
+	VerificationOptions options = {},
 	boost::optional<boost::filesystem::path> xsd_dtd_directory = boost::optional<boost::filesystem::path>()
 	);
 

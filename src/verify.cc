@@ -488,27 +488,32 @@ verify_main_picture_asset (
 	shared_ptr<const ReelPictureAsset> reel_asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	function<void (float)> progress,
+	VerificationOptions options,
 	vector<VerificationNote>& notes
 	)
 {
 	auto asset = reel_asset->asset();
 	auto const file = *asset->file();
-	stage ("Checking picture asset hash", file);
-	auto const r = verify_asset (dcp, reel_asset, progress);
-	switch (r) {
-		case VerifyAssetResult::BAD:
-			notes.push_back ({
-				VerificationNote::Type::ERROR, VerificationNote::Code::INCORRECT_PICTURE_HASH, file
-			});
-			break;
-		case VerifyAssetResult::CPL_PKL_DIFFER:
-			notes.push_back ({
-				VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_PICTURE_HASHES, file
-			});
-			break;
-		default:
-			break;
+
+	if (options.check_asset_hashes && (!options.maximum_asset_size_for_hash_check || boost::filesystem::file_size(file) < *options.maximum_asset_size_for_hash_check)) {
+		stage ("Checking picture asset hash", file);
+		auto const r = verify_asset (dcp, reel_asset, progress);
+		switch (r) {
+			case VerifyAssetResult::BAD:
+				notes.push_back ({
+					VerificationNote::Type::ERROR, VerificationNote::Code::INCORRECT_PICTURE_HASH, file
+				});
+				break;
+			case VerifyAssetResult::CPL_PKL_DIFFER:
+				notes.push_back ({
+					VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_PICTURE_HASHES, file
+				});
+				break;
+			default:
+				break;
+		}
 	}
+
 	stage ("Checking picture frame sizes", asset->file());
 	verify_picture_asset (reel_asset, file, notes, progress);
 
@@ -571,23 +576,26 @@ verify_main_sound_asset (
 	shared_ptr<const ReelSoundAsset> reel_asset,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	function<void (float)> progress,
+	VerificationOptions options,
 	vector<VerificationNote>& notes
 	)
 {
 	auto asset = reel_asset->asset();
 	auto const file = *asset->file();
 
-	stage("Checking sound asset hash", file);
-	auto const r = verify_asset (dcp, reel_asset, progress);
-	switch (r) {
-		case VerifyAssetResult::BAD:
-			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::INCORRECT_SOUND_HASH, file});
-			break;
-		case VerifyAssetResult::CPL_PKL_DIFFER:
-			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_SOUND_HASHES, file});
-			break;
-		default:
-			break;
+	if (options.check_asset_hashes && (!options.maximum_asset_size_for_hash_check || boost::filesystem::file_size(file) < *options.maximum_asset_size_for_hash_check)) {
+		stage("Checking sound asset hash", file);
+		auto const r = verify_asset (dcp, reel_asset, progress);
+		switch (r) {
+			case VerifyAssetResult::BAD:
+				notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::INCORRECT_SOUND_HASH, file});
+				break;
+			case VerifyAssetResult::CPL_PKL_DIFFER:
+				notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_SOUND_HASHES, file});
+				break;
+			default:
+				break;
+		}
 	}
 
 	stage ("Checking sound asset metadata", file);
@@ -1297,6 +1305,7 @@ verify_reel(
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
 	function<void (float)> progress,
+	VerificationOptions options,
 	vector<VerificationNote>& notes,
 	State& state,
 	bool* have_main_subtitle,
@@ -1350,7 +1359,7 @@ verify_reel(
 		}
 		/* Check asset */
 		if (reel->main_picture()->asset_ref().resolved()) {
-			verify_main_picture_asset(dcp, reel->main_picture(), stage, progress, notes);
+			verify_main_picture_asset(dcp, reel->main_picture(), stage, progress, options, notes);
 			auto const asset_size = reel->main_picture()->asset()->size();
 			if (main_picture_active_area) {
 				if (main_picture_active_area->width > asset_size.width) {
@@ -1374,7 +1383,7 @@ verify_reel(
 	}
 
 	if (reel->main_sound() && reel->main_sound()->asset_ref().resolved()) {
-		verify_main_sound_asset(dcp, reel->main_sound(), stage, progress, notes);
+		verify_main_sound_asset(dcp, reel->main_sound(), stage, progress, options, notes);
 	}
 
 	if (reel->main_subtitle()) {
@@ -1420,6 +1429,7 @@ verify_cpl(
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
 	function<void (float)> progress,
+	VerificationOptions options,
 	vector<VerificationNote>& notes,
 	State& state
 	)
@@ -1537,6 +1547,7 @@ verify_cpl(
 			stage,
 			xsd_dtd_directory,
 			progress,
+			options,
 			notes,
 			state,
 			&have_main_subtitle,
@@ -1695,6 +1706,7 @@ dcp::verify (
 	vector<boost::filesystem::path> directories,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	function<void (float)> progress,
+	VerificationOptions options,
 	optional<boost::filesystem::path> xsd_dtd_directory
 	)
 {
@@ -1744,6 +1756,7 @@ dcp::verify (
 				stage,
 				*xsd_dtd_directory,
 				progress,
+				options,
 				notes,
 				state
 				);
