@@ -142,6 +142,11 @@ try
 
 	return 0;
 }
+catch (dcp::KDMFormatError& e)
+{
+	cerr << "Could not parse KDM file.  Is it a valid KDM?" << "\n";
+	exit(EXIT_FAILURE);
+}
 catch (std::exception& e)
 {
 	cerr << "Error: " << e.what() << "\n";
