@@ -246,6 +246,14 @@ dcp::raw_convert (string v, int precision, bool fixed)
 
 template <>
 int
+dcp::raw_convert(char* v, int precision, bool fixed)
+{
+	return locale_convert<int>(make_local (v), precision, fixed);
+}
+
+
+template <>
+int
 dcp::raw_convert (char const * v, int precision, bool fixed)
 {
 	return locale_convert<int> (make_local (v), precision, fixed);
