@@ -575,26 +575,28 @@ verify_main_sound_asset (
 	)
 {
 	auto asset = reel_asset->asset();
-	stage ("Checking sound asset hash", asset->file());
+	auto const file = *asset->file();
+
+	stage("Checking sound asset hash", file);
 	auto const r = verify_asset (dcp, reel_asset, progress);
 	switch (r) {
 		case VerifyAssetResult::BAD:
-			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::INCORRECT_SOUND_HASH, *asset->file()});
+			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::INCORRECT_SOUND_HASH, file});
 			break;
 		case VerifyAssetResult::CPL_PKL_DIFFER:
-			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_SOUND_HASHES, *asset->file()});
+			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_SOUND_HASHES, file});
 			break;
 		default:
 			break;
 	}
 
-	stage ("Checking sound asset metadata", asset->file());
+	stage ("Checking sound asset metadata", file);
 
 	if (auto lang = asset->language()) {
 		verify_language_tag (*lang, notes);
 	}
 	if (asset->sampling_rate() != 48000) {
-		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_SOUND_FRAME_RATE, raw_convert<string>(asset->sampling_rate()), *asset->file()});
+		notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_SOUND_FRAME_RATE, raw_convert<string>(asset->sampling_rate()), file});
 	}
 }
 
