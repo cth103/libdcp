@@ -598,6 +598,8 @@ EncryptedKDM::EncryptedKDM (string s)
 		_data = new data::EncryptedKDMData (doc);
 	} catch (xmlpp::parse_error& e) {
 		throw KDMFormatError (e.what ());
+	} catch (xmlpp::internal_error& e) {
+		throw KDMFormatError(e.what());
 	} catch (cxml::Error& e) {
 		throw KDMFormatError(e.what());
 	}
