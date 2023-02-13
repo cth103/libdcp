@@ -69,3 +69,10 @@ BOOST_AUTO_TEST_CASE(cpl_content_kind_test3)
 }
 
 
+BOOST_AUTO_TEST_CASE(interop_cpl_with_metadata_test)
+{
+	dcp::CPL cpl(private_test / "CPL_f383c150-5021-4110-9aae-64da6c1ffbdb.xml");
+	/* The main thing is that the CPL read doesn't throw, but let's just check one thing for luck */
+	BOOST_CHECK_EQUAL(cpl.annotation_text().get_value_or(""), "EyeLeader2sec_XSN_F-133_XX-XX_MOS_4K_20230124_EYE_IOP_OV");
+}
+

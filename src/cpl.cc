@@ -297,10 +297,12 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 		_main_sound_sample_rate = raw_convert<int>(sr_bits[0]);
 	}
 
-	_main_picture_stored_area = dcp::Size (
-		node->node_child("MainPictureStoredArea")->number_child<int>("Width"),
-		node->node_child("MainPictureStoredArea")->number_child<int>("Height")
-		);
+	if (_standard == dcp::Standard::SMPTE) {
+		_main_picture_stored_area = dcp::Size (
+			node->node_child("MainPictureStoredArea")->number_child<int>("Width"),
+			node->node_child("MainPictureStoredArea")->number_child<int>("Height")
+			);
+	}
 
 	_main_picture_active_area = dcp::Size (
 		node->node_child("MainPictureActiveArea")->number_child<int>("Width"),
