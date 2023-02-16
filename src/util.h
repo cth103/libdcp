@@ -84,11 +84,6 @@ extern std::string make_digest (boost::filesystem::path filename, boost::functio
 
 extern std::string make_digest (ArrayData data);
 
-/** @param s A string
- *  @return true if the string contains only space, newline or tab characters, or is empty
- */
-extern bool empty_or_white_space (std::string s);
-
 extern bool ids_equal (std::string a, std::string b);
 extern std::string remove_urn_uuid (std::string raw);
 

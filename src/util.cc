@@ -158,19 +158,6 @@ dcp::make_digest (boost::filesystem::path filename, function<void (float)> progr
 }
 
 
-bool
-dcp::empty_or_white_space (string s)
-{
-	for (size_t i = 0; i < s.length(); ++i) {
-		if (s[i] != ' ' && s[i] != '\n' && s[i] != '\t') {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-
 void
 dcp::init (optional<boost::filesystem::path> given_resources_directory)
 {

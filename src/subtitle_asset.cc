@@ -324,7 +324,11 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, vector<ParseState>&
 void
 SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse_state, float space_before, Standard standard)
 {
-	if (empty_or_white_space (text)) {
+	auto wanted = [](ParseState const& ps) {
+		return ps.type && (ps.type.get() == ParseState::Type::TEXT || ps.type.get() == ParseState::Type::IMAGE);
+	};
+
+	if (find_if(parse_state.begin(), parse_state.end(), wanted) == parse_state.end()) {
 		return;
 	}
 

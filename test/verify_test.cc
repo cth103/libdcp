@@ -825,6 +825,24 @@ BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_no_subtitles)
 }
 
 
+BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_single_space_subtitle)
+{
+	path const dir("build/test/verify_interop_subtitle_asset_with_single_space_subtitle");
+	prepare_directory(dir);
+	copy_file("test/data/subs5.xml", dir / "subs.xml");
+	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
+	auto reel_asset = make_shared<dcp::ReelInteropSubtitleAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
+
+	check_verify_result (
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
+		});
+
+}
+
+
 BOOST_AUTO_TEST_CASE (verify_valid_smpte_subtitles)
 {
 	path const dir("build/test/verify_valid_smpte_subtitles");
