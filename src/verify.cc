@@ -278,7 +278,7 @@ private:
 static void
 parse (XercesDOMParser& parser, boost::filesystem::path xml)
 {
-	parser.parse(xml.string().c_str());
+	parser.parse(xml.c_str());
 }
 
 
