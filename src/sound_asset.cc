@@ -78,7 +78,7 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 		boost::throw_exception (ReadError("could not read audio MXF information"));
 	}
 
-	_sampling_rate = desc.AudioSamplingRate.Numerator / desc.AudioSamplingRate.Denominator;
+	_sampling_rate = desc.AudioSamplingRate.Denominator ? (desc.AudioSamplingRate.Numerator / desc.AudioSamplingRate.Denominator) : 0;
 	_channels = desc.ChannelCount;
 	_edit_rate = Fraction (desc.EditRate.Numerator, desc.EditRate.Denominator);
 
