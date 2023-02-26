@@ -175,6 +175,9 @@ ostream&
 dcp::operator<< (ostream& s, MCASoundField f)
 {
 	switch (f) {
+	case MCASoundField::STEREO:
+		s << "2.0";
+		break;
 	case MCASoundField::FIVE_POINT_ONE:
 		s << "5.1";
 		break;
