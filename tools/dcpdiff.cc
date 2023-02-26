@@ -160,7 +160,7 @@ main (int argc, char* argv[])
 
 		switch (c) {
 		case 'V':
-			cout << "dcpdiff version " << LIBDCP_VERSION << "\n";
+			cout << "dcpdiff version " << dcp::version << "\n";
 			exit (EXIT_SUCCESS);
 		case 'h':
 			help (argv[0]);

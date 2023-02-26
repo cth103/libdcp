@@ -51,6 +51,7 @@
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
 #include "util.h"
+#include "version.h"
 #include "warnings.h"
 #include "xml.h"
 LIBDCP_DISABLE_WARNINGS
@@ -87,8 +88,8 @@ static string const smpte_335_ns = "http://www.smpte-ra.org/reg/335/2012";
 
 CPL::CPL (string annotation_text, ContentKind content_kind, Standard standard)
 	/* default _content_title_text to annotation_text */
-	: _issuer ("libdcp" LIBDCP_VERSION)
-	, _creator ("libdcp" LIBDCP_VERSION)
+	: _issuer("libdcp", dcp::version)
+	, _creator("libdcp", dcp::version)
 	, _issue_date (LocalTime().as_string())
 	, _annotation_text (annotation_text)
 	, _content_title_text (annotation_text)

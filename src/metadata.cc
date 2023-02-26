@@ -37,9 +37,10 @@
  */
 
 
+#include "local_time.h"
 #include "metadata.h"
 #include "util.h"
-#include "local_time.h"
+#include "version.h"
 #include <asdcp/AS_DCP.h>
 #include <iomanip>
 #include <time.h>
@@ -51,7 +52,7 @@ using namespace dcp;
 MXFMetadata::MXFMetadata ()
 	: company_name ("libdcp")
 	, product_name ("libdcp")
-	, product_version (LIBDCP_VERSION)
+	, product_version(dcp::version)
 {
 
 }

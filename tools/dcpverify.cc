@@ -31,10 +31,12 @@
     files in the program, then also delete it here.
 */
 
-#include "verify.h"
-#include "compose.hpp"
+
 #include "common.h"
+#include "compose.hpp"
 #include "raw_convert.h"
+#include "verify.h"
+#include "version.h"
 #include <boost/bind.hpp>
 #include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
@@ -42,13 +44,15 @@
 #include <iostream>
 #include <cstdlib>
 
-using std::cout;
+
 using std::cerr;
+using std::cout;
+using std::list;
 using std::string;
 using std::vector;
-using std::list;
 using boost::bind;
 using boost::optional;
+
 
 static void
 help (string n)
@@ -98,7 +102,7 @@ main (int argc, char* argv[])
 
 		switch (c) {
 		case 'V':
-			cout << "dcpverify version " << LIBDCP_VERSION << "\n";
+			cout << "dcpverify version " << dcp::version << "\n";
 			exit (EXIT_SUCCESS);
 		case 'h':
 			help (argv[0]);

@@ -44,6 +44,7 @@
 #include "mono_picture_asset.h"
 #include "mono_picture_asset_writer.h"
 #include "util.h"
+#include "version.h"
 #include <asdcp/AS_DCP.h>
 #include <getopt.h>
 #include <iostream>
@@ -125,7 +126,7 @@ main (int argc, char* argv[])
 
 		switch (c) {
 		case 'A':
-			cout << "libdcp version " << LIBDCP_VERSION << "\n";
+			cout << "libdcp version " << dcp::version << "\n";
 			exit (EXIT_SUCCESS);
 		case 'v':
 			verbose = true;

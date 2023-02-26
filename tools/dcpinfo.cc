@@ -315,7 +315,7 @@ main (int argc, char* argv[])
 
 		switch (c) {
 		case 'v':
-			cout << "libdcp version " << LIBDCP_VERSION << "\n";
+			cout << "libdcp version " << dcp::version << "\n";
 			exit (EXIT_SUCCESS);
 		case 'h':
 			help (argv[0]);
