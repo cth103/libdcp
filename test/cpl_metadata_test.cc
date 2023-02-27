@@ -477,7 +477,7 @@ check_audio_channel_label_sub_descriptors(int channels)
 	BOOST_REQUIRE(mca_sub_descriptors);
 	auto channel_label_sub_descriptors = mca_sub_descriptors->node_children("AudioChannelLabelSubDescriptor");
 
-	BOOST_CHECK_EQUAL(channel_label_sub_descriptors.size(), channels);
+	BOOST_CHECK_EQUAL(channel_label_sub_descriptors.size(), static_cast<size_t>(channels));
 	int index = 1;
 	for (auto sub: channel_label_sub_descriptors) {
 		BOOST_CHECK_EQUAL(sub->number_child<int>("MCAChannelID"), index);
