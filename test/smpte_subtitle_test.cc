@@ -719,27 +719,20 @@ BOOST_AUTO_TEST_CASE(smpte_subtitle_standard_written_correctly)
 	boost::filesystem::remove_all(out);
 	boost::filesystem::create_directories(out);
 
-	dcp::MXFMetadata metadata;
-	/* Pin this so tests don't fail on newer version */
-	metadata.product_version = "1.8.59";
-
 	dcp::SMPTESubtitleAsset test_2014;
-	test_2014.set_metadata(metadata);
 	test_2014.set_issue_date(dcp::LocalTime("2020-01-01T14:00:00"));
 	test_2014.write(out / "2014.mxf");
-	check_file(ref / "2014.mxf", out / "2014.mxf");
+	BOOST_CHECK(dcp::SMPTESubtitleAsset(ref / "2014.mxf").raw_xml() == dcp::SMPTESubtitleAsset(out / "2014.mxf").raw_xml());
 
 	dcp::SMPTESubtitleAsset test_2010(dcp::SubtitleStandard::SMPTE_2010);
-	test_2010.set_metadata(metadata);
 	test_2010.set_issue_date(dcp::LocalTime("2020-01-01T14:00:00"));
 	test_2010.write(out / "2010.mxf");
-	check_file(ref / "2010.mxf", out / "2010.mxf");
+	BOOST_CHECK(dcp::SMPTESubtitleAsset(ref / "2010.mxf").raw_xml() == dcp::SMPTESubtitleAsset(out / "2010.mxf").raw_xml());
 
 	dcp::SMPTESubtitleAsset test_2007(dcp::SubtitleStandard::SMPTE_2007);
-	test_2007.set_metadata(metadata);
 	test_2007.set_issue_date(dcp::LocalTime("2020-01-01T14:00:00"));
 	test_2007.write(out / "2007.mxf");
-	check_file(ref / "2007.mxf", out / "2007.mxf");
+	BOOST_CHECK(dcp::SMPTESubtitleAsset(ref / "2007.mxf").raw_xml() == dcp::SMPTESubtitleAsset(out / "2007.mxf").raw_xml());
 }
 
 
