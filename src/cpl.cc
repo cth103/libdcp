@@ -352,6 +352,79 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 }
 
 
+void
+CPL::write_mca_subdescriptors(xmlpp::Element* parent, shared_ptr<const SoundAsset> asset) const
+{
+	auto reader = asset->start_read ();
+	ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield;
+	ASDCP::Result_t r = reader->reader()->OP1aHeader().GetMDObjectByType(
+		asdcp_smpte_dict->ul(ASDCP::MDD_SoundfieldGroupLabelSubDescriptor),
+		reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&soundfield)
+		);
+	if (KM_SUCCESS(r)) {
+		auto mca_subs = parent->add_child("mca:MCASubDescriptors");
+		mca_subs->set_namespace_declaration (mca_sub_descriptors_ns, "mca");
+		mca_subs->set_namespace_declaration (smpte_395_ns, "r0");
+		mca_subs->set_namespace_declaration (smpte_335_ns, "r1");
+		auto sf = mca_subs->add_child("SoundfieldGroupLabelSubDescriptor", "r0");
+		char buffer[64];
+		soundfield->InstanceUID.EncodeString(buffer, sizeof(buffer));
+		sf->add_child("InstanceID", "r1")->add_child_text("urn:uuid:" + string(buffer));
+		soundfield->MCALabelDictionaryID.EncodeString(buffer, sizeof(buffer));
+		sf->add_child("MCALabelDictionaryID", "r1")->add_child_text("urn:smpte:ul:" + string(buffer));
+		soundfield->MCALinkID.EncodeString(buffer, sizeof(buffer));
+		sf->add_child("MCALinkID", "r1")->add_child_text("urn:uuid:" + string(buffer));
+		soundfield->MCATagSymbol.EncodeString(buffer, sizeof(buffer));
+		sf->add_child("MCATagSymbol", "r1")->add_child_text(buffer);
+		if (!soundfield->MCATagName.empty()) {
+			soundfield->MCATagName.get().EncodeString(buffer, sizeof(buffer));
+			sf->add_child("MCATagName", "r1")->add_child_text(buffer);
+		}
+		if (!soundfield->RFC5646SpokenLanguage.empty()) {
+			soundfield->RFC5646SpokenLanguage.get().EncodeString(buffer, sizeof(buffer));
+			sf->add_child("RFC5646SpokenLanguage", "r1")->add_child_text(buffer);
+		}
+
+		list<ASDCP::MXF::InterchangeObject*> channels;
+		auto r = reader->reader()->OP1aHeader().GetMDObjectsByType(
+			asdcp_smpte_dict->ul(ASDCP::MDD_AudioChannelLabelSubDescriptor),
+			channels
+			);
+
+		for (auto i: channels) {
+			auto channel = reinterpret_cast<ASDCP::MXF::AudioChannelLabelSubDescriptor*>(i);
+			if (static_cast<int>(channel->MCAChannelID) > asset->channels()) {
+				continue;
+			}
+			auto ch = mca_subs->add_child("AudioChannelLabelSubDescriptor", "r0");
+			channel->InstanceUID.EncodeString(buffer, sizeof(buffer));
+			ch->add_child("InstanceID", "r1")->add_child_text("urn:uuid:" + string(buffer));
+			channel->MCALabelDictionaryID.EncodeString(buffer, sizeof(buffer));
+			ch->add_child("MCALabelDictionaryID", "r1")->add_child_text("urn:smpte:ul:" + string(buffer));
+			channel->MCALinkID.EncodeString(buffer, sizeof(buffer));
+			ch->add_child("MCALinkID", "r1")->add_child_text("urn:uuid:" + string(buffer));
+			channel->MCATagSymbol.EncodeString(buffer, sizeof(buffer));
+			ch->add_child("MCATagSymbol", "r1")->add_child_text(buffer);
+			if (!channel->MCATagName.empty()) {
+				channel->MCATagName.get().EncodeString(buffer, sizeof(buffer));
+				ch->add_child("MCATagName", "r1")->add_child_text(buffer);
+			}
+			if (!channel->MCAChannelID.empty()) {
+				ch->add_child("MCAChannelID", "r1")->add_child_text(raw_convert<string>(channel->MCAChannelID.get()));
+			}
+			if (!channel->RFC5646SpokenLanguage.empty()) {
+				channel->RFC5646SpokenLanguage.get().EncodeString(buffer, sizeof(buffer));
+				ch->add_child("RFC5646SpokenLanguage", "r1")->add_child_text(buffer);
+			}
+			if (!channel->SoundfieldGroupLinkID.empty()) {
+				channel->SoundfieldGroupLinkID.get().EncodeString(buffer, sizeof(buffer));
+				ch->add_child("SoundfieldGroupLinkID", "r1")->add_child_text("urn:uuid:" + string(buffer));
+			}
+		}
+	}
+}
+
+
 /** Write a CompositionMetadataAsset node as a child of @param node provided
  *  the required metadata is stored in the object.  If any required metadata
  *  is missing this method will do nothing.
@@ -477,73 +550,7 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 	if (_reels.front()->main_sound()) {
 		auto asset = _reels.front()->main_sound()->asset();
 		if (asset) {
-			auto reader = asset->start_read ();
-			ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield;
-			ASDCP::Result_t r = reader->reader()->OP1aHeader().GetMDObjectByType(
-				asdcp_smpte_dict->ul(ASDCP::MDD_SoundfieldGroupLabelSubDescriptor),
-				reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&soundfield)
-				);
-			if (KM_SUCCESS(r)) {
-				auto mca_subs = meta->add_child("mca:MCASubDescriptors");
-				mca_subs->set_namespace_declaration (mca_sub_descriptors_ns, "mca");
-				mca_subs->set_namespace_declaration (smpte_395_ns, "r0");
-				mca_subs->set_namespace_declaration (smpte_335_ns, "r1");
-				auto sf = mca_subs->add_child("SoundfieldGroupLabelSubDescriptor", "r0");
-				char buffer[64];
-				soundfield->InstanceUID.EncodeString(buffer, sizeof(buffer));
-				sf->add_child("InstanceID", "r1")->add_child_text("urn:uuid:" + string(buffer));
-				soundfield->MCALabelDictionaryID.EncodeString(buffer, sizeof(buffer));
-				sf->add_child("MCALabelDictionaryID", "r1")->add_child_text("urn:smpte:ul:" + string(buffer));
-				soundfield->MCALinkID.EncodeString(buffer, sizeof(buffer));
-				sf->add_child("MCALinkID", "r1")->add_child_text("urn:uuid:" + string(buffer));
-				soundfield->MCATagSymbol.EncodeString(buffer, sizeof(buffer));
-				sf->add_child("MCATagSymbol", "r1")->add_child_text(buffer);
-				if (!soundfield->MCATagName.empty()) {
-					soundfield->MCATagName.get().EncodeString(buffer, sizeof(buffer));
-					sf->add_child("MCATagName", "r1")->add_child_text(buffer);
-				}
-				if (!soundfield->RFC5646SpokenLanguage.empty()) {
-					soundfield->RFC5646SpokenLanguage.get().EncodeString(buffer, sizeof(buffer));
-					sf->add_child("RFC5646SpokenLanguage", "r1")->add_child_text(buffer);
-				}
-
-				list<ASDCP::MXF::InterchangeObject*> channels;
-				auto r = reader->reader()->OP1aHeader().GetMDObjectsByType(
-					asdcp_smpte_dict->ul(ASDCP::MDD_AudioChannelLabelSubDescriptor),
-					channels
-					);
-
-				for (auto i: channels) {
-					auto channel = reinterpret_cast<ASDCP::MXF::AudioChannelLabelSubDescriptor*>(i);
-					if (static_cast<int>(channel->MCAChannelID) > asset->channels()) {
-						continue;
-					}
-					auto ch = mca_subs->add_child("AudioChannelLabelSubDescriptor", "r0");
-					channel->InstanceUID.EncodeString(buffer, sizeof(buffer));
-					ch->add_child("InstanceID", "r1")->add_child_text("urn:uuid:" + string(buffer));
-					channel->MCALabelDictionaryID.EncodeString(buffer, sizeof(buffer));
-					ch->add_child("MCALabelDictionaryID", "r1")->add_child_text("urn:smpte:ul:" + string(buffer));
-					channel->MCALinkID.EncodeString(buffer, sizeof(buffer));
-					ch->add_child("MCALinkID", "r1")->add_child_text("urn:uuid:" + string(buffer));
-					channel->MCATagSymbol.EncodeString(buffer, sizeof(buffer));
-					ch->add_child("MCATagSymbol", "r1")->add_child_text(buffer);
-					if (!channel->MCATagName.empty()) {
-						channel->MCATagName.get().EncodeString(buffer, sizeof(buffer));
-						ch->add_child("MCATagName", "r1")->add_child_text(buffer);
-					}
-					if (!channel->MCAChannelID.empty()) {
-						ch->add_child("MCAChannelID", "r1")->add_child_text(raw_convert<string>(channel->MCAChannelID.get()));
-					}
-					if (!channel->RFC5646SpokenLanguage.empty()) {
-						channel->RFC5646SpokenLanguage.get().EncodeString(buffer, sizeof(buffer));
-						ch->add_child("RFC5646SpokenLanguage", "r1")->add_child_text(buffer);
-					}
-					if (!channel->SoundfieldGroupLinkID.empty()) {
-						channel->SoundfieldGroupLinkID.get().EncodeString(buffer, sizeof(buffer));
-						ch->add_child("SoundfieldGroupLinkID", "r1")->add_child_text("urn:uuid:" + string(buffer));
-					}
-				}
-			}
+			write_mca_subdescriptors(meta, asset);
 		}
 	}
 }

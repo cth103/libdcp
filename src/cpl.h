@@ -61,11 +61,12 @@ struct verify_invalid_language3;
 namespace dcp {
 
 
-class ReelFileAsset;
-class Reel;
-class MXFMetadata;
 class CertificateChain;
 class DecryptedKDM;
+class MXFMetadata;
+class Reel;
+class ReelFileAsset;
+class SoundAsset;
 
 
 /** @class CPL
@@ -345,6 +346,7 @@ private:
 
 	void maybe_write_composition_metadata_asset (xmlpp::Element* node) const;
 	void read_composition_metadata_asset (cxml::ConstNodePtr node);
+	void write_mca_subdescriptors(xmlpp::Element* parent, std::shared_ptr<const SoundAsset> asset) const;
 
 	std::string _issuer;
 	std::string _creator;
