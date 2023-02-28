@@ -182,7 +182,7 @@ CPL::set (std::vector<std::shared_ptr<Reel>> reels)
 
 
 void
-CPL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain> signer) const
+CPL::write_xml(boost::filesystem::path file, shared_ptr<const CertificateChain> signer, bool include_mca_subdescriptors) const
 {
 	xmlpp::Document doc;
 	xmlpp::Element* root;
@@ -227,7 +227,7 @@ CPL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain>
 	for (auto i: _reels) {
 		auto asset_list = i->write_to_cpl (reel_list, _standard);
 		if (first && _standard == Standard::SMPTE) {
-			maybe_write_composition_metadata_asset (asset_list);
+			maybe_write_composition_metadata_asset(asset_list, include_mca_subdescriptors);
 			first = false;
 		}
 	}
@@ -430,7 +430,7 @@ CPL::write_mca_subdescriptors(xmlpp::Element* parent, shared_ptr<const SoundAsse
  *  is missing this method will do nothing.
  */
 void
-CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
+CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_mca_subdescriptors) const
 {
 	if (
 		!_main_sound_configuration ||
@@ -549,7 +549,7 @@ CPL::maybe_write_composition_metadata_asset (xmlpp::Element* node) const
 
 	if (_reels.front()->main_sound()) {
 		auto asset = _reels.front()->main_sound()->asset();
-		if (asset) {
+		if (asset && include_mca_subdescriptors) {
 			write_mca_subdescriptors(meta, asset);
 		}
 	}

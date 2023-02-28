@@ -124,10 +124,13 @@ public:
 	 *
 	 *  @param file Filename to write
 	 *  @param signer Signer to sign the CPL, or 0 to add no signature
+	 *  @param include_mca_subdescriptors true to add a MCASubDescriptors tag to metadata,
+	 *  false to omit it.
 	 */
 	void write_xml (
 		boost::filesystem::path file,
-		std::shared_ptr<const CertificateChain>
+		std::shared_ptr<const CertificateChain>,
+		bool include_mca_subdescriptors = true
 		) const;
 
 	void resolve_refs (std::vector<std::shared_ptr<Asset>>);
@@ -344,7 +347,7 @@ protected:
 private:
 	friend struct ::verify_invalid_language3;
 
-	void maybe_write_composition_metadata_asset (xmlpp::Element* node) const;
+	void maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_mca_subdescriptors) const;
 	void read_composition_metadata_asset (cxml::ConstNodePtr node);
 	void write_mca_subdescriptors(xmlpp::Element* parent, std::shared_ptr<const SoundAsset> asset) const;
 
