@@ -400,7 +400,7 @@ DCP::write_volindex (Standard standard) const
 
 
 void
-DCP::write_xml (shared_ptr<const CertificateChain> signer, NameFormat name_format)
+DCP::write_xml(shared_ptr<const CertificateChain> signer, bool include_mca_subdescriptors, NameFormat name_format)
 {
 	if (_cpls.empty()) {
 		throw MiscError ("Cannot write DCP with no CPLs.");
@@ -419,7 +419,7 @@ DCP::write_xml (shared_ptr<const CertificateChain> signer, NameFormat name_forma
 	for (auto i: cpls()) {
 		NameFormat::Map values;
 		values['t'] = "cpl";
-		i->write_xml (_directory / (name_format.get(values, "_" + i->id() + ".xml")), signer);
+		i->write_xml(_directory / (name_format.get(values, "_" + i->id() + ".xml")), signer, include_mca_subdescriptors);
 	}
 
 	if (_pkls.empty()) {
