@@ -80,7 +80,7 @@ private:
 	friend class SoundAsset;
 	friend struct ::sync_test1;
 
-	SoundAssetWriter (SoundAsset *, boost::filesystem::path, bool sync);
+	SoundAssetWriter(SoundAsset *, boost::filesystem::path, bool sync, bool include_mca_subdescriptors);
 
 	void start ();
 	void write_current_frame ();
@@ -101,6 +101,7 @@ private:
 	/** index of the sync packet (0-3) which starts the next edit unit */
 	int _sync_packet = 0;
 	FSK _fsk;
+	bool _include_mca_subdescriptors = true;
 };
 
 }

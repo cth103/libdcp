@@ -69,11 +69,12 @@ struct SoundAssetWriter::ASDCPState
 };
 
 
-SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, bool sync)
+SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, bool sync, bool include_mca_subdescriptors)
 	: AssetWriter (asset, file)
 	, _state (new SoundAssetWriter::ASDCPState)
 	, _asset (asset)
 	, _sync (sync)
+	, _include_mca_subdescriptors(include_mca_subdescriptors)
 {
 	DCP_ASSERT (!_sync || _asset->channels() >= 14);
 	DCP_ASSERT (!_sync || _asset->standard() == Standard::SMPTE);
@@ -130,7 +131,7 @@ SoundAssetWriter::start ()
 		boost::throw_exception (FileError("could not open audio MXF for writing", _file.string(), r));
 	}
 
-	if (_asset->standard() == Standard::SMPTE) {
+	if (_asset->standard() == Standard::SMPTE && _include_mca_subdescriptors) {
 
 		ASDCP::MXF::WaveAudioDescriptor* essence_descriptor = nullptr;
 		_state->mxf_writer.OP1aHeader().GetMDObjectByType(
