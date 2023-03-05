@@ -157,7 +157,7 @@ public:
 	 */
 	void write_xml(
 		std::shared_ptr<const CertificateChain> signer = std::shared_ptr<const CertificateChain>(),
-		bool include_mca_subdescriptors = false,
+		bool include_mca_subdescriptors = true,
 		NameFormat name_format = NameFormat("%t")
 	);
 
