@@ -102,11 +102,11 @@ public:
 	}
 
 	/** Set the file that holds this asset on disk.  Calling this function
-	*  clears this object's store of its hash, so you should call ::hash
-	*  after this.
-	*
-	*  @param file New file's path.
-	*/
+	 *  clears this object's store of its hash, so you should call ::hash
+	 *  after this.
+	 *
+	 *  @param file New file's path.
+	 */
 	void set_file (boost::filesystem::path file) const;
 
 	/** Calculate the hash of this asset's file, if it has not already been calculated,
