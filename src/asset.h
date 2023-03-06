@@ -109,6 +109,14 @@ public:
 	 */
 	void set_file (boost::filesystem::path file) const;
 
+	/** Set the file that holds this asset on disk.  The new file must
+	 *  be exactly the same as the old one, as this function assumes
+	 *  that the object's hash does not change.
+	 *
+	 *  @param file New file's path.
+	 */
+	void rename_file(boost::filesystem::path file);
+
 	/** Calculate the hash of this asset's file, if it has not already been calculated,
 	 *  then return it
 	 *  @param progress Function that will be called with a parameter between 0 and 1 to indicate
