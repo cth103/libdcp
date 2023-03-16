@@ -56,11 +56,12 @@ LIBDCP_ENABLE_WARNINGS
 #include <stdexcept>
 
 
-using std::string;
-using std::vector;
+using std::dynamic_pointer_cast;
 using std::list;
 using std::shared_ptr;
-using std::dynamic_pointer_cast;
+using std::string;
+using std::vector;
+using boost::optional;
 using namespace dcp;
 
 
