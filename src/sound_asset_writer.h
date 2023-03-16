@@ -38,8 +38,10 @@
 
 
 #include "asset_writer.h"
+#include "dcp_assert.h"
 #include "fsk.h"
 #include "types.h"
+#include "sound_asset.h"
 #include "sound_frame.h"
 #include <memory>
 #include <boost/filesystem.hpp>
@@ -50,6 +52,30 @@ struct sync_test1;
 
 
 namespace dcp {
+
+
+namespace sound_asset_writer {
+
+template <typename T>
+int32_t convert(T) { return {}; }
+
+template <>
+inline int32_t convert(int32_t x)
+{
+	int constexpr clip = (1 << 23);
+	return std::max(-clip, std::min(clip, x));
+}
+
+template<>
+inline int32_t convert(float x)
+{
+	float constexpr clip = 1.0f - (1.0f / (1 << 23));
+	float constexpr scale = (1 << 23);
+	auto const clipped = std::max(-clip, std::min(clip, x));
+	return std::lround(clipped * scale);
+}
+
+}
 
 
 class SoundAsset;
@@ -76,11 +102,65 @@ public:
 	 */
 	void write(float const * const * data, int channels, int frames);
 
+	/** @param data Pointer an array of int32_t pointers, one for each channel.
+	 *  The 24-bit audio sample should be in the lower 24 bits of the int32_t.
+	 *  @param channels Number of channels in data; if this is less than the channels in the asset
+	 *  the remaining asset channels will be padded with silence.
+	 *  @param frames Number of frames i.e. number of floats that are given for each channel.
+	 */
+	void write(int32_t const * const * data, int channels, int frames);
+
 	bool finalize () override;
 
 private:
 	friend class SoundAsset;
 	friend struct ::sync_test1;
+
+	byte_t* frame_buffer_data() const;
+	int frame_buffer_capacity() const;
+
+	template <class T>
+	void
+	do_write(T const * const * data, int data_channels, int frames)
+	{
+		DCP_ASSERT(!_finalized);
+		DCP_ASSERT(frames > 0);
+
+		auto const asset_channels = _asset->channels();
+		DCP_ASSERT(data_channels <= asset_channels);
+
+		if (!_started) {
+			start();
+		}
+
+		for (int i = 0; i < frames; ++i) {
+
+			auto out = frame_buffer_data() + _frame_buffer_offset;
+
+			/* Write one sample per asset channel */
+			for (int j = 0; j < asset_channels; ++j) {
+				int32_t s = 0;
+				if (j == 13 && _sync) {
+					s = _fsk.get();
+				} else if (j < data_channels) {
+					s = sound_asset_writer::convert(data[j][i]);
+				}
+				*out++ = (s & 0xff);
+				*out++ = (s & 0xff00) >> 8;
+				*out++ = (s & 0xff0000) >> 16;
+			}
+			_frame_buffer_offset += 3 * asset_channels;
+
+			DCP_ASSERT(_frame_buffer_offset <= frame_buffer_capacity());
+
+			/* Finish the MXF frame if required */
+			if (_frame_buffer_offset == frame_buffer_capacity()) {
+				write_current_frame();
+				_frame_buffer_offset = 0;
+				memset(frame_buffer_data(), 0, frame_buffer_capacity());
+			}
+		}
+	}
 
 	SoundAssetWriter(SoundAsset *, boost::filesystem::path, bool sync, bool include_mca_subdescriptors);
 

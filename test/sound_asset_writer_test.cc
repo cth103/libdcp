@@ -37,28 +37,23 @@
 #include <boost/filesystem.hpp>
 #include <boost/random.hpp>
 #include <boost/test/unit_test.hpp>
+#include <functional>
 
 
-BOOST_AUTO_TEST_CASE(sound_asset_writer_no_padding_test)
+using std::shared_ptr;
+
+
+static
+void
+no_padding_test(boost::filesystem::path path, std::function<void (shared_ptr<dcp::SoundAssetWriter>, boost::random::mt19937&, boost::random::uniform_int_distribution<>&)> write)
 {
-	auto path = boost::filesystem::path("build/test/sound_asset_writer_no_padding_test.mxf");
 	dcp::SoundAsset asset({24, 1}, 48000, 6, dcp::LanguageTag{"en-GB"}, dcp::Standard::SMPTE);
 	auto writer = asset.start_write(path);
 
 	boost::random::mt19937 rng(1);
 	boost::random::uniform_int_distribution<> dist(0, 32767);
 
-	std::vector<std::vector<float>> buffers(6);
-	float* pointers[6];
-	for (auto channel = 0; channel < 6; ++channel) {
-		buffers[channel].resize(2000);
-		for (int sample = 0; sample < 2000; ++sample) {
-			buffers[channel][sample] = static_cast<float>(dist(rng)) / (1 << 23);
-		}
-		pointers[channel] = buffers[channel].data();
-	}
-
-	writer->write(pointers, 6, 2000);
+	write(writer, rng, dist);
 	writer->finalize();
 
 	dcp::SoundAsset check(path);
@@ -75,26 +70,61 @@ BOOST_AUTO_TEST_CASE(sound_asset_writer_no_padding_test)
 }
 
 
-BOOST_AUTO_TEST_CASE(sound_asset_writer_padding_test)
+BOOST_AUTO_TEST_CASE(sound_asset_writer_float_no_padding_test)
 {
-	auto path = boost::filesystem::path("build/test/sound_asset_writer_padding_test.mxf");
+	auto path = boost::filesystem::path("build/test/sound_asset_writer_float_no_padding_test.mxf");
+
+	auto write = [](shared_ptr<dcp::SoundAssetWriter> writer, boost::random::mt19937& rng, boost::random::uniform_int_distribution<>& dist) {
+		std::vector<std::vector<float>> buffers(6);
+		float* pointers[6];
+		for (auto channel = 0; channel < 6; ++channel) {
+			buffers[channel].resize(2000);
+			for (int sample = 0; sample < 2000; ++sample) {
+				buffers[channel][sample] = static_cast<float>(dist(rng)) / (1 << 23);
+			}
+			pointers[channel] = buffers[channel].data();
+		}
+
+		writer->write(pointers, 6, 2000);
+	};
+
+	no_padding_test(path, write);
+}
+
+
+BOOST_AUTO_TEST_CASE(sound_asset_writer_int_no_padding_test)
+{
+	auto path = boost::filesystem::path("build/test/sound_asset_writer_int_no_padding_test.mxf");
+
+	auto write = [](shared_ptr<dcp::SoundAssetWriter> writer, boost::random::mt19937& rng, boost::random::uniform_int_distribution<>& dist) {
+		std::vector<std::vector<int32_t>> buffers(6);
+		int32_t* pointers[6];
+		for (auto channel = 0; channel < 6; ++channel) {
+			buffers[channel].resize(2000);
+			for (int sample = 0; sample < 2000; ++sample) {
+				buffers[channel][sample] = dist(rng);
+			}
+			pointers[channel] = buffers[channel].data();
+		}
+
+		writer->write(pointers, 6, 2000);
+	};
+
+	no_padding_test(path, write);
+}
+
+
+static
+void
+padding_test(boost::filesystem::path path, std::function<void (shared_ptr<dcp::SoundAssetWriter>, boost::random::mt19937&, boost::random::uniform_int_distribution<>&)> write)
+{
 	dcp::SoundAsset asset({24, 1}, 48000, 14, dcp::LanguageTag{"en-GB"}, dcp::Standard::SMPTE);
 	auto writer = asset.start_write(path);
 
 	boost::random::mt19937 rng(1);
 	boost::random::uniform_int_distribution<> dist(0, 32767);
 
-	std::vector<std::vector<float>> buffers(6);
-	float* pointers[6];
-	for (auto channel = 0; channel < 6; ++channel) {
-		buffers[channel].resize(2000);
-		for (int sample = 0; sample < 2000; ++sample) {
-			buffers[channel][sample] = static_cast<float>(dist(rng)) / (1 << 23);
-		}
-		pointers[channel] = buffers[channel].data();
-	}
-
-	writer->write(pointers, 6, 2000);
+	write(writer, rng, dist);
 	writer->finalize();
 
 	dcp::SoundAsset check(path);
@@ -114,4 +144,48 @@ BOOST_AUTO_TEST_CASE(sound_asset_writer_padding_test)
 			BOOST_REQUIRE_EQUAL(frame->get(channel, sample), 0);
 		}
 	}
+}
+
+
+BOOST_AUTO_TEST_CASE(sound_asset_writer_float_padding_test)
+{
+	auto path = boost::filesystem::path("build/test/sound_asset_writer_float_padding_test.mxf");
+
+	auto write = [](shared_ptr<dcp::SoundAssetWriter> writer, boost::random::mt19937& rng, boost::random::uniform_int_distribution<>& dist) {
+		std::vector<std::vector<float>> buffers(6);
+		float* pointers[6];
+		for (auto channel = 0; channel < 6; ++channel) {
+			buffers[channel].resize(2000);
+			for (int sample = 0; sample < 2000; ++sample) {
+				buffers[channel][sample] = static_cast<float>(dist(rng)) / (1 << 23);
+			}
+			pointers[channel] = buffers[channel].data();
+		}
+
+		writer->write(pointers, 6, 2000);
+	};
+
+	padding_test(path, write);
+}
+
+
+BOOST_AUTO_TEST_CASE(sound_asset_writer_int_padding_test)
+{
+	auto path = boost::filesystem::path("build/test/sound_asset_writer_int_padding_test.mxf");
+
+	auto write = [](shared_ptr<dcp::SoundAssetWriter> writer, boost::random::mt19937& rng, boost::random::uniform_int_distribution<>& dist) {
+		std::vector<std::vector<int32_t>> buffers(6);
+		int32_t* pointers[6];
+		for (auto channel = 0; channel < 6; ++channel) {
+			buffers[channel].resize(2000);
+			for (int sample = 0; sample < 2000; ++sample) {
+				buffers[channel][sample] = dist(rng);
+			}
+			pointers[channel] = buffers[channel].data();
+		}
+
+		writer->write(pointers, 6, 2000);
+	};
+
+	padding_test(path, write);
 }
