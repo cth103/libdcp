@@ -312,7 +312,7 @@ simple_sound(boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_m
 	}
 
 	for (auto i = 0; i < frames; ++i) {
-		sound_writer->write (silence, samples_per_frame);
+		sound_writer->write(silence, channels, samples_per_frame);
 	}
 
 	sound_writer->finalize ();

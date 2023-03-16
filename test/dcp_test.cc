@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	channels[0] = buffer;
 	while (true) {
 		auto N = sf_readf_float (sndfile, buffer, 4096);
-		sound_writer->write (channels, N);
+		sound_writer->write(channels, 1, N);
 		if (N < 4096) {
 			break;
 		}
@@ -224,7 +224,7 @@ test_rewriting_sound(string name, bool modify)
 				}
 			}
 		}
-		writer->write (out, sf->samples());
+		writer->write(out, sf->channels(), sf->samples());
 		for (int j = 0; j < sf->channels(); ++j) {
 			delete[] out[j];
 		}
@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	channels[0] = buffer;
 	while (true) {
 		sf_count_t N = sf_readf_float (sndfile, buffer, 4096);
-		sound_writer->write (channels, N);
+		sound_writer->write(channels, 1, N);
 		if (N < 4096) {
 			break;
 		}

@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	channels[0] = buffer;
 	while (true) {
 		auto N = sf_readf_float (sndfile, buffer, 4096);
-		sound_writer->write (channels, N);
+		sound_writer->write(channels, 1, N);
 		if (N < 4096) {
 			break;
 		}

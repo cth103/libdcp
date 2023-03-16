@@ -105,6 +105,7 @@ def build(bld):
                  shared_subtitle_test.cc
                  smpte_load_font_test.cc
                  smpte_subtitle_test.cc
+                 sound_asset_writer_test.cc
                  sound_frame_test.cc
                  stream_operators.cc
                  sync_test.cc

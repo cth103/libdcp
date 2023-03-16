@@ -86,7 +86,7 @@ main ()
 	std::array<float*, 2> audio;
 	audio[0] = left.data();
 	audio[1] = right.data();
-	sound_writer->write (audio.data(), 48000);
+	sound_writer->write(audio.data(), 2, 48000);
 
 	/* And finish off */
 	sound_writer->finalize ();

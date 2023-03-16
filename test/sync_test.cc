@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE (sync_test2)
 		}
 	}
 
-	writer->write (junk, frames);
+	writer->write(junk, channels, frames);
 	for (int i = 0; i < channels; ++i) {
 		delete[] junk[i];
 	}

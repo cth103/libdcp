@@ -200,10 +200,13 @@ LIBDCP_ENABLE_WARNINGS
 
 
 void
-SoundAssetWriter::write (float const * const * data, int frames)
+SoundAssetWriter::write(float const * const * data, int data_channels, int frames)
 {
 	DCP_ASSERT (!_finalized);
 	DCP_ASSERT (frames > 0);
+
+	auto const asset_channels = _asset->channels();
+	DCP_ASSERT (data_channels <= asset_channels);
 
 	static float const clip = 1.0f - (1.0f / pow (2, 23));
 
@@ -211,18 +214,16 @@ SoundAssetWriter::write (float const * const * data, int frames)
 		start ();
 	}
 
-	int const ch = _asset->channels ();
-
 	for (int i = 0; i < frames; ++i) {
 
 		byte_t* out = _state->frame_buffer.Data() + _frame_buffer_offset;
 
-		/* Write one sample per channel */
-		for (int j = 0; j < ch; ++j) {
+		/* Write one sample per asset channel */
+		for (int j = 0; j < asset_channels; ++j) {
 			int32_t s = 0;
 			if (j == 13 && _sync) {
 				s = _fsk.get();
-			} else {
+			} else if (j < data_channels) {
 				/* Convert sample to 24-bit int, clipping if necessary. */
 				float x = data[j][i];
 				if (x > clip) {
@@ -236,7 +237,7 @@ SoundAssetWriter::write (float const * const * data, int frames)
 			*out++ = (s & 0xff00) >> 8;
 			*out++ = (s & 0xff0000) >> 16;
 		}
-		_frame_buffer_offset += 3 * ch;
+		_frame_buffer_offset += 3 * asset_channels;
 
 		DCP_ASSERT (_frame_buffer_offset <= int(_state->frame_buffer.Capacity()));
 

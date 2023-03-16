@@ -70,9 +70,11 @@ public:
 	~SoundAssetWriter();
 
 	/** @param data Pointer an array of float pointers, one for each channel.
+	 *  @param channels Number of channels in data; if this is less than the channels in the asset
+	 *  the remaining asset channels will be padded with silence.
 	 *  @param frames Number of frames i.e. number of floats that are given for each channel.
 	 */
-	void write (float const * const *, int);
+	void write(float const * const * data, int channels, int frames);
 
 	bool finalize () override;
 

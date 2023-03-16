@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE (write_mca_descriptors_to_mxf_test)
 		memset (samples[i], 0, 2000 * sizeof(float));
 	}
 	for (int i = 0; i < 24; ++i) {
-		writer->write(samples, 2000);
+		writer->write(samples, 6, 2000);
 	}
 	for (int i = 0; i < 6; ++i) {
 		delete[] samples[i];
