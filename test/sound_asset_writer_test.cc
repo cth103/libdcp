@@ -48,7 +48,7 @@ void
 no_padding_test(boost::filesystem::path path, std::function<void (shared_ptr<dcp::SoundAssetWriter>, boost::random::mt19937&, boost::random::uniform_int_distribution<>&)> write)
 {
 	dcp::SoundAsset asset({24, 1}, 48000, 6, dcp::LanguageTag{"en-GB"}, dcp::Standard::SMPTE);
-	auto writer = asset.start_write(path);
+	auto writer = asset.start_write(path, {}, dcp::SoundAsset::AtmosSync::DISABLED, dcp::SoundAsset::MCASubDescriptors::ENABLED);
 
 	boost::random::mt19937 rng(1);
 	boost::random::uniform_int_distribution<> dist(0, 32767);
@@ -119,7 +119,7 @@ void
 padding_test(boost::filesystem::path path, std::function<void (shared_ptr<dcp::SoundAssetWriter>, boost::random::mt19937&, boost::random::uniform_int_distribution<>&)> write)
 {
 	dcp::SoundAsset asset({24, 1}, 48000, 14, dcp::LanguageTag{"en-GB"}, dcp::Standard::SMPTE);
-	auto writer = asset.start_write(path);
+	auto writer = asset.start_write(path, {}, dcp::SoundAsset::AtmosSync::DISABLED, dcp::SoundAsset::MCASubDescriptors::ENABLED);
 
 	boost::random::mt19937 rng(1);
 	boost::random::uniform_int_distribution<> dist(0, 32767);

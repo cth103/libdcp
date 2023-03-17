@@ -301,7 +301,7 @@ simple_sound(boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_m
 	}
 	ms->_language = language;
 	ms->set_metadata (mxf_meta);
-	shared_ptr<dcp::SoundAssetWriter> sound_writer = ms->start_write (path / dcp::String::compose("audio%1.mxf", suffix));
+	auto sound_writer = ms->start_write(path / dcp::String::compose("audio%1.mxf", suffix), {}, dcp::SoundAsset::AtmosSync::DISABLED, dcp::SoundAsset::MCASubDescriptors::ENABLED);
 
 	int const samples_per_frame = sample_rate / 24;
 

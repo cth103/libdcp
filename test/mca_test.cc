@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE (parse_mca_descriptors_from_mxf_test)
 BOOST_AUTO_TEST_CASE (write_mca_descriptors_to_mxf_test)
 {
 	auto sound_asset = make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 6, dcp::LanguageTag("en-US"), dcp::Standard::SMPTE);
-	auto writer = sound_asset->start_write("build/test/write_mca_descriptors_to_mxf_test.mxf");
+	auto writer = sound_asset->start_write("build/test/write_mca_descriptors_to_mxf_test.mxf", {}, dcp::SoundAsset::AtmosSync::DISABLED, dcp::SoundAsset::MCASubDescriptors::ENABLED);
 
 	float* samples[6];
 	for (int i = 0; i < 6; ++i) {

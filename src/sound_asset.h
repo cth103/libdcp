@@ -75,7 +75,22 @@ public:
 	explicit SoundAsset (boost::filesystem::path file);
 	SoundAsset (Fraction edit_rate, int sampling_rate, int channels, LanguageTag language, Standard standard);
 
-	std::shared_ptr<SoundAssetWriter> start_write(boost::filesystem::path file, bool atmos_sync = false, bool include_mca_subdescriptors = true);
+	enum class AtmosSync {
+		ENABLED,
+		DISABLED
+	};
+
+	enum class MCASubDescriptors {
+		ENABLED,
+		DISABLED
+	};
+
+	std::shared_ptr<SoundAssetWriter> start_write(
+		boost::filesystem::path file,
+		AtmosSync atmos_sync,
+		MCASubDescriptors mca_subdescriptors
+		);
+
 	std::shared_ptr<SoundAssetReader> start_read () const;
 
 	bool equals (

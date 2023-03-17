@@ -165,7 +165,7 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 	auto sound_asset = std::make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 2, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
 	sound_asset->set_key (key);
 	sound_asset->set_context_id (context_id);
-	auto sound_writer = sound_asset->start_write(dir / "sound.mxf");
+	auto sound_writer = sound_asset->start_write(dir / "sound.mxf", {}, dcp::SoundAsset::AtmosSync::DISABLED, dcp::SoundAsset::MCASubDescriptors::ENABLED);
 	std::array<float, 48000> left;
 	std::array<float, 48000> right;
 	for (int i = 0; i < 48000; ++i) {

@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 
 	auto ms = make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
 	ms->set_metadata (mxf_meta);
-	auto sound_writer = ms->start_write ("build/test/DCP/dcp_test2/audio.mxf");
+	auto sound_writer = ms->start_write("build/test/DCP/dcp_test2/audio.mxf", {}, dcp::SoundAsset::AtmosSync::DISABLED, dcp::SoundAsset::MCASubDescriptors::ENABLED);
 
 	SF_INFO info;
 	info.format = 0;
@@ -206,7 +206,7 @@ test_rewriting_sound(string name, bool modify)
 
 	auto reader = A_sound->asset()->start_read();
 	auto sound = make_shared<dcp::SoundAsset>(A_sound->asset()->edit_rate(), A_sound->asset()->sampling_rate(), A_sound->asset()->channels(), dcp::LanguageTag("en-US"), dcp::Standard::SMPTE);
-	auto writer = sound->start_write(path("build") / "test" / name / "pcm_8246f87f-e1df-4c42-a290-f3b3069ff021.mxf", {});
+	auto writer = sound->start_write(path("build") / "test" / name / "pcm_8246f87f-e1df-4c42-a290-f3b3069ff021.mxf", {}, dcp::SoundAsset::AtmosSync::DISABLED, dcp::SoundAsset::MCASubDescriptors::ENABLED);
 
 	bool need_to_modify = modify;
 	for (int i = 0; i < A_sound->asset()->intrinsic_duration(); ++i) {
@@ -297,7 +297,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 
 	auto ms = make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
 	ms->set_metadata (mxf_meta);
-	auto sound_writer = ms->start_write ("build/test/DCP/dcp_test5/audio.mxf");
+	auto sound_writer = ms->start_write("build/test/DCP/dcp_test5/audio.mxf", {}, dcp::SoundAsset::AtmosSync::DISABLED, dcp::SoundAsset::MCASubDescriptors::ENABLED);
 
 	SF_INFO info;
 	info.format = 0;

@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	auto ms = make_shared<dcp::SoundAsset>(dcp::Fraction (24, 1), 48000, 1, dcp::LanguageTag("en-GB"), dcp::Standard::SMPTE);
 	ms->set_metadata (mxf_metadata);
 	ms->set_key (key);
-	auto sound_writer = ms->start_write ("build/test/DCP/encryption_test/audio.mxf");
+	auto sound_writer = ms->start_write("build/test/DCP/encryption_test/audio.mxf", {}, dcp::SoundAsset::AtmosSync::DISABLED, dcp::SoundAsset::MCASubDescriptors::ENABLED);
 
 	SF_INFO info;
 	info.format = 0;
