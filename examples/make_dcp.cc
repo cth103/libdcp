@@ -59,7 +59,7 @@ main ()
 	auto picture_asset = std::make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 
 	/* Start off a write to it */
-	auto picture_writer = picture_asset->start_write("DCP/picture.mxf", false);
+	auto picture_writer = picture_asset->start_write("DCP/picture.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
 
 	/* Write 24 frames of the same JPEG2000 file */
 	dcp::ArrayData picture("examples/help.j2c");

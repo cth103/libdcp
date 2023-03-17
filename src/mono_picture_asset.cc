@@ -183,10 +183,10 @@ MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, No
 
 
 shared_ptr<PictureAssetWriter>
-MonoPictureAsset::start_write (boost::filesystem::path file, bool overwrite)
+MonoPictureAsset::start_write(boost::filesystem::path file, Behaviour behaviour)
 {
 	/* Can't use make_shared here as the MonoPictureAssetWriter constructor is private */
-	return shared_ptr<MonoPictureAssetWriter>(new MonoPictureAssetWriter(this, file, overwrite));
+	return shared_ptr<MonoPictureAssetWriter>(new MonoPictureAssetWriter(this, file, behaviour == Behaviour::OVERWRITE_EXISTING));
 }
 
 shared_ptr<MonoPictureAssetReader>

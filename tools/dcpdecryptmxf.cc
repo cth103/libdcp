@@ -221,7 +221,7 @@ main (int argc, char* argv[])
 				in.max_object_count(),
 				in.atmos_version()
 				);
-			auto writer = out.start_write (output_file.get());
+			auto writer = out.start_write(output_file.get());
 			copy (in, writer, ignore_hmac);
 			break;
 		}
@@ -230,7 +230,7 @@ main (int argc, char* argv[])
 			dcp::MonoPictureAsset in (input_file);
 			add_key (in, decrypted_kdm);
 			dcp::MonoPictureAsset out (in.edit_rate(), dcp::Standard::SMPTE);
-			auto writer = out.start_write (output_file.get(), false);
+			auto writer = out.start_write(output_file.get(), dcp::PictureAsset::Behaviour::MAKE_NEW);
 			copy (in, writer, ignore_hmac);
 			break;
 		}

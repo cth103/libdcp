@@ -73,9 +73,14 @@ public:
 	/** Create a new PictureAsset with a given edit rate and standard */
 	explicit PictureAsset (Fraction edit_rate, Standard standard);
 
+	enum class Behaviour {
+		OVERWRITE_EXISTING,
+		MAKE_NEW
+	};
+
 	virtual std::shared_ptr<PictureAssetWriter> start_write (
 		boost::filesystem::path file,
-		bool overwrite
+		Behaviour behaviour
 		) = 0;
 
 	Size size () const {

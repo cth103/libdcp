@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 	auto picture_asset = std::make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 	picture_asset->set_key (key);
 	picture_asset->set_context_id (context_id);
-	auto picture_writer = picture_asset->start_write(dir / "picture.mxf", false);
+	auto picture_writer = picture_asset->start_write(dir / "picture.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
 	dcp::ArrayData picture("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		picture_writer->write(picture);

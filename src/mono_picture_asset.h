@@ -70,10 +70,11 @@ public:
 
 	/** Start a progressive write to a MonoPictureAsset.
 	 *  @path file File to write to.
-	 *  @path overwrite true to overwrite an existing file; for use when continuing a write which
-	 *  previously failed.  If in doubt, use false here.
+	 *  @path behaviour OVERWRITE_EXISTING to overwrite and potentially add to an existing file
+	 *  (after a write previously failed), MAKE_NEW to create a new file.
+	 *  If in doubt, use MAKE_NEW here.
 	 */
-	std::shared_ptr<PictureAssetWriter> start_write (boost::filesystem::path file, bool overwrite) override;
+	std::shared_ptr<PictureAssetWriter> start_write(boost::filesystem::path file, Behaviour behaviour) override;
 	std::shared_ptr<MonoPictureAssetReader> start_read () const;
 
 	bool equals (

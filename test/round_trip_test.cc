@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	boost::filesystem::create_directory (work_dir);
 
 	auto asset_A = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
-	auto writer = asset_A->start_write (work_dir / "video.mxf", false);
+	auto writer = asset_A->start_write(work_dir / "video.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data (), j2c.size ());

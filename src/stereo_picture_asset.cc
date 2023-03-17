@@ -87,9 +87,9 @@ StereoPictureAsset::StereoPictureAsset (Fraction edit_rate, Standard standard)
 
 
 shared_ptr<PictureAssetWriter>
-StereoPictureAsset::start_write (boost::filesystem::path file, bool overwrite)
+StereoPictureAsset::start_write(boost::filesystem::path file, Behaviour behaviour)
 {
-	return shared_ptr<StereoPictureAssetWriter> (new StereoPictureAssetWriter(this, file, overwrite));
+	return shared_ptr<StereoPictureAssetWriter>(new StereoPictureAssetWriter(this, file, behaviour == Behaviour::OVERWRITE_EXISTING));
 }
 
 
