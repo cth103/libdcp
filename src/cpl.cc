@@ -385,6 +385,7 @@ CPL::write_mca_subdescriptors(xmlpp::Element* parent, shared_ptr<const SoundAsse
 			sf->add_child("RFC5646SpokenLanguage", "r1")->add_child_text(buffer);
 		}
 
+		/* Find the MCA subdescriptors in the MXF so that we can also write them here */
 		list<ASDCP::MXF::InterchangeObject*> channels;
 		auto r = reader->reader()->OP1aHeader().GetMDObjectsByType(
 			asdcp_smpte_dict->ul(ASDCP::MDD_AudioChannelLabelSubDescriptor),
@@ -393,9 +394,6 @@ CPL::write_mca_subdescriptors(xmlpp::Element* parent, shared_ptr<const SoundAsse
 
 		for (auto i: channels) {
 			auto channel = reinterpret_cast<ASDCP::MXF::AudioChannelLabelSubDescriptor*>(i);
-			if (static_cast<int>(channel->MCAChannelID) > asset->channels()) {
-				continue;
-			}
 			auto ch = mca_subs->add_child("AudioChannelLabelSubDescriptor", "r0");
 			channel->InstanceUID.EncodeString(buffer, sizeof(buffer));
 			ch->add_child("InstanceID", "r1")->add_child_text("urn:uuid:" + string(buffer));

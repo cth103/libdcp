@@ -69,15 +69,35 @@ struct SoundAssetWriter::ASDCPState
 };
 
 
-SoundAssetWriter::SoundAssetWriter (SoundAsset* asset, boost::filesystem::path file, bool sync, bool include_mca_subdescriptors)
+SoundAssetWriter::SoundAssetWriter(SoundAsset* asset, boost::filesystem::path file, vector<dcp::Channel> extra_active_channels, bool sync, bool include_mca_subdescriptors)
 	: AssetWriter (asset, file)
 	, _state (new SoundAssetWriter::ASDCPState)
 	, _asset (asset)
+	, _extra_active_channels(extra_active_channels)
 	, _sync (sync)
 	, _include_mca_subdescriptors(include_mca_subdescriptors)
 {
 	DCP_ASSERT (!_sync || _asset->channels() >= 14);
 	DCP_ASSERT (!_sync || _asset->standard() == Standard::SMPTE);
+
+	/* None of these are allowed in extra_active_channels; some are implicit, and (it seems) should never have a descriptor
+	 * written for them.
+	 */
+	vector<Channel> disallowed_extra = {
+		Channel::LEFT,
+		Channel::RIGHT,
+		Channel::CENTRE,
+		Channel::LFE,
+		Channel::LS,
+		Channel::RS,
+		Channel::MOTION_DATA,
+		Channel::SYNC_SIGNAL,
+		Channel::SIGN_LANGUAGE,
+		Channel::CHANNEL_COUNT
+	};
+	for (auto disallowed: disallowed_extra) {
+		DCP_ASSERT(std::find(extra_active_channels.begin(), extra_active_channels.end(), disallowed) == extra_active_channels.end());
+	}
 
 	/* Derived from ASDCP::Wav::SimpleWaveHeader::FillADesc */
 	_state->desc.EditRate = ASDCP::Rational (_asset->edit_rate().numerator, _asset->edit_rate().denominator);
@@ -146,7 +166,11 @@ SoundAssetWriter::start ()
 			soundfield->RFC5646SpokenLanguage = *lang;
 		}
 
-		const MCASoundField field = _asset->channels() > 10 ? MCASoundField::SEVEN_POINT_ONE : MCASoundField::FIVE_POINT_ONE;
+		MCASoundField const field =
+			(
+				find(_extra_active_channels.begin(), _extra_active_channels.end(), dcp::Channel::BSL) != _extra_active_channels.end() ||
+				find(_extra_active_channels.begin(), _extra_active_channels.end(), dcp::Channel::BSR) != _extra_active_channels.end()
+			) ? MCASoundField::SEVEN_POINT_ONE : MCASoundField::FIVE_POINT_ONE;
 
 		if (field == MCASoundField::SEVEN_POINT_ONE) {
 			soundfield->MCATagSymbol = "sg71";
@@ -165,22 +189,25 @@ LIBDCP_ENABLE_WARNINGS
 		_state->mxf_writer.OP1aHeader().AddChildObject(soundfield);
 		essence_descriptor->SubDescriptors.push_back(soundfield->InstanceUID);
 
-		/* We must describe at least the number of channels in `field', even if they aren't
-		 * in the asset (I think)
-		 */
-		int descriptors = max(_asset->channels(), field == MCASoundField::FIVE_POINT_ONE ? 6 : 8);
+		std::vector<dcp::Channel> dcp_channels = {
+			Channel::LEFT,
+			Channel::RIGHT,
+			Channel::CENTRE,
+			Channel::LFE,
+			Channel::LS,
+			Channel::RS
+		};
 
-		auto const used = used_audio_channels();
+		std::copy(_extra_active_channels.begin(), _extra_active_channels.end(), back_inserter(dcp_channels));
+		std::sort(dcp_channels.begin(), dcp_channels.end());
+		auto last = std::unique(dcp_channels.begin(), dcp_channels.end());
+		dcp_channels.erase(last, dcp_channels.end());
 
-		for (auto i = 0; i < descriptors; ++i) {
-			auto dcp_channel = static_cast<dcp::Channel>(i);
-			if (find(used.begin(), used.end(), dcp_channel) == used.end()) {
-				continue;
-			}
+		for (auto dcp_channel: dcp_channels) {
 			auto channel = new ASDCP::MXF::AudioChannelLabelSubDescriptor(asdcp_smpte_dict);
 			GenRandomValue (channel->MCALinkID);
 			channel->SoundfieldGroupLinkID = soundfield->MCALinkID;
-			channel->MCAChannelID = i + 1;
+			channel->MCAChannelID = static_cast<int>(dcp_channel) + 1;
 			channel->MCATagSymbol = "ch" + channel_to_mca_id(dcp_channel, field);
 			channel->MCATagName = channel_to_mca_name(dcp_channel, field);
 			if (auto lang = _asset->language()) {

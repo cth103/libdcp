@@ -85,8 +85,12 @@ public:
 		DISABLED
 	};
 
+	/** @param extra_active_channels list of channels that are active in the asset, other than the basic 5.1
+	 *  which are assumed always to be active.
+	 */
 	std::shared_ptr<SoundAssetWriter> start_write(
 		boost::filesystem::path file,
+		std::vector<dcp::Channel> extra_active_channels,
 		AtmosSync atmos_sync,
 		MCASubDescriptors mca_subdescriptors
 		);

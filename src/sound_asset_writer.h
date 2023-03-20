@@ -162,7 +162,7 @@ private:
 		}
 	}
 
-	SoundAssetWriter(SoundAsset *, boost::filesystem::path, bool sync, bool include_mca_subdescriptors);
+	SoundAssetWriter(SoundAsset *, boost::filesystem::path, std::vector<dcp::Channel> extra_active_channels, bool sync, bool include_mca_subdescriptors);
 
 	void start ();
 	void write_current_frame ();
@@ -178,6 +178,7 @@ private:
 	SoundAsset* _asset = nullptr;
 	int _frame_buffer_offset = 0;
 
+	std::vector<dcp::Channel> _extra_active_channels;
 	/** true to ignore any signal passed to write() on channel 14 and instead write a sync track */
 	bool _sync = false;
 	/** index of the sync packet (0-3) which starts the next edit unit */

@@ -42,6 +42,7 @@
 #include "warnings.h"
 #include <libcxml/cxml.h>
 LIBDCP_DISABLE_WARNINGS
+#include <asdcp/Metadata.h>
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
 #include <boost/test/unit_test.hpp>
@@ -139,6 +140,128 @@ BOOST_AUTO_TEST_CASE (write_mca_descriptors_to_mxf_test)
 			),
 		{ "InstanceID", "MCALinkID", "SoundfieldGroupLinkID" },
 		true
+		);
+}
+
+
+static
+void
+check_mca_descriptors(int suffix, vector<dcp::Channel> extra_active_channels, vector<string> expected_mca_tag_symbols)
+{
+	auto const dir = boost::filesystem::path(dcp::String::compose("build/test/check_mca_descriptors_%1", suffix));
+	boost::filesystem::remove_all(dir);
+	boost::filesystem::create_directories(dir);
+
+	auto sound_asset = make_shared<dcp::SoundAsset>(dcp::Fraction(24, 1), 48000, 16, dcp::LanguageTag("en-US"), dcp::Standard::SMPTE);
+	auto writer = sound_asset->start_write(dir / "mxf.mxf", extra_active_channels, dcp::SoundAsset::AtmosSync::DISABLED, dcp::SoundAsset::MCASubDescriptors::ENABLED);
+
+	vector<vector<float>> samples(6);
+	float* pointers[6];
+	for (int i = 0; i < 6; ++i) {
+		samples[i].resize(2000);
+		pointers[i] = samples[i].data();
+	}
+	for (int i = 0; i < 24; ++i) {
+		writer->write(pointers, 6, 2000);
+	}
+	writer->finalize();
+
+	/* Check MXF */
+
+	auto reader = new ASDCP::PCM::MXFReader();
+	reader->OpenRead(boost::filesystem::path(dir / "mxf.mxf").string());
+
+	list<ASDCP::MXF::InterchangeObject*> channels;
+	auto const r = reader->OP1aHeader().GetMDObjectsByType(
+		dcp::asdcp_smpte_dict->ul(ASDCP::MDD_AudioChannelLabelSubDescriptor),
+		channels
+		);
+	BOOST_REQUIRE(KM_SUCCESS(r));
+
+	vector<string> mxf_mca_tag_symbols;
+	for (auto channel: channels) {
+		auto audio_channel = reinterpret_cast<ASDCP::MXF::AudioChannelLabelSubDescriptor*>(channel);
+		char buffer[64];
+		audio_channel->MCATagSymbol.EncodeString(buffer, sizeof(buffer));
+		mxf_mca_tag_symbols.push_back(buffer);
+	}
+
+	BOOST_CHECK(expected_mca_tag_symbols == mxf_mca_tag_symbols);
+
+	/* Check CPL */
+
+	auto reel_sound_asset = make_shared<dcp::ReelSoundAsset>(sound_asset, 0);
+	auto reel = make_shared<dcp::Reel>();
+	reel->add(black_picture_asset(dir / "dcp", 24));
+	reel->add(reel_sound_asset);
+
+	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
+	cpl.add(reel);
+	cpl.set_main_sound_configuration("51/L,R,C,LFE,Ls,Rs");
+	cpl.set_main_sound_sample_rate(48000);
+	cpl.set_main_picture_stored_area(dcp::Size(1998, 1080));
+	cpl.set_main_picture_active_area(dcp::Size(1998, 1080));
+	cpl.write_xml(dir / "dcp" / "cpl.xml", shared_ptr<dcp::CertificateChain>());
+
+	cxml::Document check("CompositionPlaylist", dir / "dcp" / "cpl.xml");
+	vector<string> cpl_mca_tag_symbols;
+
+	for (auto node: check.node_child("ReelList")->node_child("Reel")->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node_children("AudioChannelLabelSubDescriptor")) {
+		cpl_mca_tag_symbols.push_back(node->string_child("MCATagSymbol"));
+	}
+
+	BOOST_CHECK(expected_mca_tag_symbols == cpl_mca_tag_symbols);
+}
+
+
+BOOST_AUTO_TEST_CASE(write_correct_mca_descriptors)
+{
+	int suffix = 0;
+
+	check_mca_descriptors(
+		suffix++,
+		{}, { "chL", "chR", "chC", "chLFE", "chLs", "chRs" }
+		);
+
+	check_mca_descriptors(
+		suffix++,
+		{ dcp::Channel::HI }, { "chL", "chR", "chC", "chLFE", "chLs", "chRs", "chHI" }
+		);
+
+	check_mca_descriptors(
+		suffix++,
+		{ dcp::Channel::VI }, { "chL", "chR", "chC", "chLFE", "chLs", "chRs", "chVIN" }
+		);
+
+	check_mca_descriptors(
+		suffix++,
+		{ dcp::Channel::BSL }, { "chL", "chR", "chC", "chLFE", "chLss", "chRss", "chLrs" }
+		);
+
+	check_mca_descriptors(
+		suffix++,
+		{ dcp::Channel::BSR }, { "chL", "chR", "chC", "chLFE", "chLss", "chRss", "chRrs" }
+		);
+
+	check_mca_descriptors(
+		suffix++,
+		{ dcp::Channel::HI, dcp::Channel::VI }, { "chL", "chR", "chC", "chLFE", "chLs", "chRs", "chHI", "chVIN" }
+		);
+
+	check_mca_descriptors(
+		suffix++,
+		{ dcp::Channel::HI, dcp::Channel::VI, dcp::Channel::BSL, dcp::Channel::BSR }, { "chL", "chR", "chC", "chLFE", "chLss", "chRss", "chHI", "chVIN", "chLrs", "chRrs" }
+		);
+
+	check_mca_descriptors(
+		suffix++,
+		{ dcp::Channel::BSL, dcp::Channel::BSR }, { "chL", "chR", "chC", "chLFE", "chLss", "chRss", "chLrs", "chRrs" }
+		);
+
+	/* Duplicates should be ignored */
+	check_mca_descriptors(
+		suffix++,
+		{ dcp::Channel::HI, dcp::Channel::HI }, { "chL", "chR", "chC", "chLFE", "chLs", "chRs", "chHI" }
 		);
 }
 

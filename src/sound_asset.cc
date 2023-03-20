@@ -223,6 +223,7 @@ SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHand
 shared_ptr<SoundAssetWriter>
 SoundAsset::start_write(
 	boost::filesystem::path file,
+	vector<dcp::Channel> extra_active_channels,
 	AtmosSync atmos_sync,
 	MCASubDescriptors include_mca_subdescriptors
 	)
@@ -232,7 +233,7 @@ SoundAsset::start_write(
 	}
 
 	return shared_ptr<SoundAssetWriter>(
-		new SoundAssetWriter(this, file, atmos_sync == AtmosSync::ENABLED, include_mca_subdescriptors == MCASubDescriptors::ENABLED)
+		new SoundAssetWriter(this, file, extra_active_channels, atmos_sync == AtmosSync::ENABLED, include_mca_subdescriptors == MCASubDescriptors::ENABLED)
 		);
 }
 
