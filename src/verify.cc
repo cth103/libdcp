@@ -572,6 +572,13 @@ verify_main_picture_asset (
 }
 
 
+struct State
+{
+	boost::optional<string> subtitle_language;
+	boost::optional<int> audio_channels;
+};
+
+
 static void
 verify_main_sound_asset (
 	shared_ptr<const DCP> dcp,
@@ -579,7 +586,8 @@ verify_main_sound_asset (
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	function<void (float)> progress,
 	VerificationOptions options,
-	vector<VerificationNote>& notes
+	vector<VerificationNote>& notes,
+	State& state
 	)
 {
 	auto asset = reel_asset->asset();
@@ -598,6 +606,12 @@ verify_main_sound_asset (
 			default:
 				break;
 		}
+	}
+
+	if (!state.audio_channels) {
+		state.audio_channels = asset->channels();
+	} else if (*state.audio_channels != asset->channels()) {
+		notes.push_back({ VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS, file });
 	}
 
 	stage ("Checking sound asset metadata", file);
@@ -641,12 +655,6 @@ verify_closed_caption_reel (shared_ptr<const ReelClosedCaptionAsset> reel_asset,
 		notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id() });
 	}
 }
-
-
-struct State
-{
-	boost::optional<string> subtitle_language;
-};
 
 
 /** Verify stuff that is common to both subtitles and closed captions */
@@ -1385,7 +1393,7 @@ verify_reel(
 	}
 
 	if (reel->main_sound() && reel->main_sound()->asset_ref().resolved()) {
-		verify_main_sound_asset(dcp, reel->main_sound(), stage, progress, options, notes);
+		verify_main_sound_asset(dcp, reel->main_sound(), stage, progress, options, notes, state);
 	}
 
 	if (reel->main_subtitle()) {
@@ -1986,6 +1994,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The subtitle asset %1 has no subtitles", note.note().get());
 	case VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE:
 		return String::compose("<IssueDate> has an invalid value: %1", note.note().get());
+	case VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS:
+		return String::compose("The sound assets do not all have the same channel count; the first to differ is %1", note.file()->filename());
 	}
 
 	return "";

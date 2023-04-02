@@ -421,7 +421,11 @@ public:
 		 *  specifications require it and their QC will fail DCPs that don't have it.
 		 *  note contains the incorrect <IssueDate>
 		 */
-		INVALID_SUBTITLE_ISSUE_DATE
+		INVALID_SUBTITLE_ISSUE_DATE,
+		/** The sound assets in the CPL do not have the same audio channel count.
+		 *  file contains the filename of the first asset to differ
+		 */
+		MISMATCHED_SOUND_CHANNEL_COUNTS
 	};
 
 	VerificationNote (Type type, Code code)
