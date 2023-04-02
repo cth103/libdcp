@@ -347,7 +347,7 @@ make_simple (boost::filesystem::path path, int reels, int frames, dcp::Standard 
 	cpl->set_content_version (
 		dcp::ContentVersion("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11", "content-version-label-text")
 		);
-	cpl->set_main_sound_configuration("51/L,R,C,LFE,Ls,Rs");
+	cpl->set_main_sound_configuration(dcp::MainSoundConfiguration("51/L,R,C,LFE,Ls,Rs"));
 	cpl->set_main_sound_sample_rate(sample_rate);
 	cpl->set_main_picture_stored_area(dcp::Size(1998, 1080));
 	cpl->set_main_picture_active_area(dcp::Size(1998, 1080));

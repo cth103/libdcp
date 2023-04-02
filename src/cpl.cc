@@ -288,7 +288,16 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 		_luminance = Luminance (lum);
 	}
 
-	_main_sound_configuration = node->optional_string_child("MainSoundConfiguration");
+	if (auto msc = node->optional_string_child("MainSoundConfiguration")) {
+		try {
+			_main_sound_configuration = MainSoundConfiguration(*msc);
+		} catch (MainSoundConfigurationError& e) {
+			/* With Interop DCPs this node may not make any sense, but that's OK */
+			if (_standard == dcp::Standard::SMPTE) {
+				throw e;
+			}
+		}
+	}
 
 	auto sr = node->optional_string_child("MainSoundSampleRate");
 	if (sr) {
@@ -492,7 +501,9 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 		_luminance->as_xml (meta, "meta");
 	}
 
-	meta->add_child("MainSoundConfiguration", "meta")->add_child_text(*_main_sound_configuration);
+	if (_main_sound_configuration) {
+		meta->add_child("MainSoundConfiguration", "meta")->add_child_text(_main_sound_configuration->to_string());
+	}
 	meta->add_child("MainSoundSampleRate", "meta")->add_child_text(raw_convert<string>(*_main_sound_sample_rate) + " 1");
 
 	auto stored = meta->add_child("MainPictureStoredArea", "meta");

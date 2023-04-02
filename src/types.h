@@ -119,7 +119,8 @@ std::vector<dcp::Channel> used_audio_channels ();
 enum class MCASoundField
 {
 	FIVE_POINT_ONE,
-	SEVEN_POINT_ONE
+	SEVEN_POINT_ONE,
+	OTHER
 };
 
 
@@ -445,7 +446,7 @@ bool operator== (Luminance const& a, Luminance const& b);
 class MainSoundConfiguration
 {
 public:
-	MainSoundConfiguration (std::string);
+	explicit MainSoundConfiguration(std::string);
 	MainSoundConfiguration (MCASoundField field_, int channels);
 
 	MCASoundField field () const {

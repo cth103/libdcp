@@ -995,7 +995,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_cpl_metadata)
 
 	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
 	cpl->add (reel);
-	cpl->set_main_sound_configuration("51/L,C,R,LFE,-,-");
+	cpl->set_main_sound_configuration(dcp::MainSoundConfiguration("51/L,C,R,LFE,-,-"));
 	cpl->set_main_sound_sample_rate (48000);
 	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
 	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
@@ -1052,7 +1052,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 	reel->add (black_picture_asset(dir));
 	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
 	cpl->add (reel);
-	cpl->set_main_sound_configuration("51/L,C,R,LFE,-,-");
+	cpl->set_main_sound_configuration(dcp::MainSoundConfiguration("51/L,C,R,LFE,-,-"));
 	cpl->set_main_sound_sample_rate (48000);
 	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
 	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
@@ -1102,7 +1102,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_missing_tag)
 	reel->add (black_picture_asset(dir));
 	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
 	cpl->add (reel);
-	cpl->set_main_sound_configuration("51/L,C,R,LFE,-,-");
+	cpl->set_main_sound_configuration(dcp::MainSoundConfiguration("51/L,C,R,LFE,-,-"));
 	cpl->set_main_sound_sample_rate (48000);
 	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
 	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
@@ -1190,7 +1190,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language3)
 	cpl->add (reel);
 	cpl->_additional_subtitle_languages.push_back("this-is-wrong");
 	cpl->_additional_subtitle_languages.push_back("andso-is-this");
-	cpl->set_main_sound_configuration("51/L,C,R,LFE,-,-");
+	cpl->set_main_sound_configuration(dcp::MainSoundConfiguration("51/L,C,R,LFE,-,-"));
 	cpl->set_main_sound_sample_rate (48000);
 	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
 	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
@@ -1241,7 +1241,7 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
 	cpl->set_annotation_text ("A Test DCP");
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
-	cpl->set_main_sound_configuration("51/L,C,R,LFE,-,-");
+	cpl->set_main_sound_configuration(dcp::MainSoundConfiguration("51/L,C,R,LFE,-,-"));
 	cpl->set_main_sound_sample_rate (48000);
 	cpl->set_main_picture_stored_area(dcp::Size(width, height));
 	cpl->set_main_picture_active_area(dcp::Size(width, height));
@@ -3050,7 +3050,7 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 	cpl->set_issuer ("OpenDCP 0.0.25");
 	cpl->set_creator ("OpenDCP 0.0.25");
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
-	cpl->set_main_sound_configuration("51/L,C,R,LFE,-,-");
+	cpl->set_main_sound_configuration(dcp::MainSoundConfiguration("51/L,C,R,LFE,-,-"));
 	cpl->set_main_sound_sample_rate (48000);
 	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
 	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));

@@ -473,8 +473,8 @@ MainSoundConfiguration::MainSoundConfiguration (string s)
 {
 	vector<string> parts;
 	boost::split (parts, s, boost::is_any_of("/"));
-	if (parts.size() != 2) {
-		throw MainSoundConfigurationError (s);
+	if (parts.empty()) {
+		throw MainSoundConfigurationError(s);
 	}
 
 	if (parts[0] == "51") {
@@ -482,7 +482,14 @@ MainSoundConfiguration::MainSoundConfiguration (string s)
 	} else if (parts[0] == "71") {
 		_field = MCASoundField::SEVEN_POINT_ONE;
 	} else {
-		throw MainSoundConfigurationError (s);
+		_field = MCASoundField::OTHER;
+	}
+
+	if (parts.size() < 2) {
+		/* I think it's OK to just have the sound field descriptor with no channels, though
+		 * to me it's not clear and I might be wrong.
+		 */
+		return;
 	}
 
 	vector<string> channels;
@@ -590,31 +597,33 @@ dcp::string_to_status (string s)
 Channel
 dcp::mca_id_to_channel (string id)
 {
-	if (id == "L") {
+	transform(id.begin(), id.end(), id.begin(), ::tolower);
+
+	if (id == "l") {
 		return Channel::LEFT;
-	} else if (id == "R") {
+	} else if (id == "r") {
 		return Channel::RIGHT;
-	} else if (id == "C") {
+	} else if (id == "c") {
 		return Channel::CENTRE;
-	} else if (id == "LFE") {
+	} else if (id == "lfe") {
 		return Channel::LFE;
-	} else if (id == "Ls" || id == "Lss") {
+	} else if (id == "ls" || id == "lss") {
 		return Channel::LS;
-	} else if (id == "Rs" || id == "Rss") {
+	} else if (id == "rs" || id == "rss") {
 		return Channel::RS;
-	} else if (id == "HI") {
+	} else if (id == "hi") {
 		return Channel::HI;
-	} else if (id == "VIN") {
+	} else if (id == "vin") {
 		return Channel::VI;
-	} else if (id == "Lrs") {
+	} else if (id == "lrs") {
 		return Channel::BSL;
-	} else if (id == "Rrs") {
+	} else if (id == "rrs") {
 		return Channel::BSR;
-	} else if (id == "DBOX") {
+	} else if (id == "dbox") {
 		return Channel::MOTION_DATA;
-	} else if (id == "FSKSync") {
+	} else if (id == "sync" || id == "fsksync") {
 		return Channel::SYNC_SIGNAL;
-	} else if (id == "SLVS") {
+	} else if (id == "slvs") {
 		return Channel::SIGN_LANGUAGE;
 	}
 

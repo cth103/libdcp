@@ -154,6 +154,26 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test5)
 }
 
 
+/* 482-12 says that implementations may use case-insensitive comparisons for the channel identifiers,
+ * and there is one DCP in the private test suite (made by Disney) that uses LS for left surround.
+ */
+BOOST_AUTO_TEST_CASE(main_sound_configuration_test_case_insensitive)
+{
+	dcp::MainSoundConfiguration msc("51/L,-,C,LFE,LS,RS,HI,VIN");
+	BOOST_CHECK_EQUAL(msc.to_string(), "51/L,-,C,LFE,Ls,Rs,HI,VIN");
+	BOOST_CHECK_EQUAL(msc.channels(), 8);
+	BOOST_CHECK_EQUAL(msc.field(), dcp::MCASoundField::FIVE_POINT_ONE);
+	BOOST_CHECK_EQUAL(msc.mapping(0).get(), dcp::Channel::LEFT);
+	BOOST_CHECK(!msc.mapping(1));
+	BOOST_CHECK_EQUAL(msc.mapping(2).get(), dcp::Channel::CENTRE);
+	BOOST_CHECK_EQUAL(msc.mapping(3).get(), dcp::Channel::LFE);
+	BOOST_CHECK_EQUAL(msc.mapping(4).get(), dcp::Channel::LS);
+	BOOST_CHECK_EQUAL(msc.mapping(5).get(), dcp::Channel::RS);
+	BOOST_CHECK_EQUAL(msc.mapping(6).get(), dcp::Channel::HI);
+	BOOST_CHECK_EQUAL(msc.mapping(7).get(), dcp::Channel::VI);
+}
+
+
 BOOST_AUTO_TEST_CASE (luminance_test1)
 {
 	BOOST_CHECK_NO_THROW (dcp::Luminance(4, dcp::Luminance::Unit::CANDELA_PER_SQUARE_METRE));
@@ -283,7 +303,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 	msc.set_mapping (2, dcp::Channel::CENTRE);
 	msc.set_mapping (3, dcp::Channel::LFE);
 	msc.set_mapping (13, dcp::Channel::SYNC_SIGNAL);
-	cpl.set_main_sound_configuration (msc.to_string());
+	cpl.set_main_sound_configuration(msc);
 
 	cpl.set_main_sound_sample_rate (48000);
 	cpl.set_main_picture_stored_area (dcp::Size(1998, 1080));
@@ -354,7 +374,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test2)
 	msc.set_mapping (2, dcp::Channel::CENTRE);
 	msc.set_mapping (3, dcp::Channel::LFE);
 	msc.set_mapping (13, dcp::Channel::SYNC_SIGNAL);
-	cpl.set_main_sound_configuration (msc.to_string());
+	cpl.set_main_sound_configuration(msc);
 
 	cpl.set_main_sound_sample_rate (48000);
 	cpl.set_main_picture_stored_area (dcp::Size(1998, 1080));

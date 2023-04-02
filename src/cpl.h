@@ -283,11 +283,11 @@ public:
 		_luminance = l;
 	}
 
-	boost::optional<std::string> main_sound_configuration () const {
+	boost::optional<dcp::MainSoundConfiguration> main_sound_configuration () const {
 		return _main_sound_configuration;
 	}
 
-	void set_main_sound_configuration (std::string c) {
+	void set_main_sound_configuration(dcp::MainSoundConfiguration c) {
 		_main_sound_configuration = c;
 	}
 
@@ -377,7 +377,7 @@ private:
 	boost::optional<std::string> _distributor;
 	boost::optional<std::string> _facility;
 	boost::optional<Luminance> _luminance;
-	boost::optional<std::string> _main_sound_configuration;
+	boost::optional<MainSoundConfiguration> _main_sound_configuration;
 	boost::optional<int> _main_sound_sample_rate;
 	boost::optional<dcp::Size> _main_picture_stored_area;
 	boost::optional<dcp::Size> _main_picture_active_area;

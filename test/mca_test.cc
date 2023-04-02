@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE (parse_mca_descriptors_from_mxf_test)
 
 		dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 		cpl.add (reel);
-		cpl.set_main_sound_configuration("51/L,R,C,LFE,Ls,Rs");
+		cpl.set_main_sound_configuration(dcp::MainSoundConfiguration("51/L,R,C,LFE,Ls,Rs"));
 		cpl.set_main_sound_sample_rate(48000);
 		cpl.set_main_picture_stored_area(dcp::Size(1998, 1080));
 		cpl.set_main_picture_active_area(dcp::Size(1998, 1080));
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE (write_mca_descriptors_to_mxf_test)
 
 	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	cpl.add (reel);
-	cpl.set_main_sound_configuration("51/L,R,C,LFE,Ls,Rs");
+	cpl.set_main_sound_configuration(dcp::MainSoundConfiguration("51/L,R,C,LFE,Ls,Rs"));
 	cpl.set_main_sound_sample_rate(48000);
 	cpl.set_main_picture_stored_area(dcp::Size(1998, 1080));
 	cpl.set_main_picture_active_area(dcp::Size(1998, 1080));
@@ -197,7 +197,7 @@ check_mca_descriptors(int suffix, vector<dcp::Channel> extra_active_channels, ve
 
 	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
 	cpl.add(reel);
-	cpl.set_main_sound_configuration("51/L,R,C,LFE,Ls,Rs");
+	cpl.set_main_sound_configuration(dcp::MainSoundConfiguration("51/L,R,C,LFE,Ls,Rs"));
 	cpl.set_main_sound_sample_rate(48000);
 	cpl.set_main_picture_stored_area(dcp::Size(1998, 1080));
 	cpl.set_main_picture_active_area(dcp::Size(1998, 1080));
