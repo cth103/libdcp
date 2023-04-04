@@ -1571,6 +1571,16 @@ verify_cpl(
 	verify_text_details(cpl->reels(), notes);
 
 	if (dcp->standard() == Standard::SMPTE) {
+		if (auto msc = cpl->main_sound_configuration()) {
+			if (state.audio_channels && msc->channels() != *state.audio_channels) {
+				notes.push_back({
+						VerificationNote::Type::ERROR,
+						VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION,
+						String::compose("MainSoundConfiguration has %1 channels but sound assets have %2", msc->channels(), *state.audio_channels),
+						cpl->file().get()
+					});
+			}
+		}
 
 		if (have_main_subtitle && have_no_main_subtitle) {
 			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS});
@@ -1996,6 +2006,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("<IssueDate> has an invalid value: %1", note.note().get());
 	case VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS:
 		return String::compose("The sound assets do not all have the same channel count; the first to differ is %1", note.file()->filename());
+	case VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION:
+		return String::compose("<MainSoundConfiguration> has an invalid value: %1", note.note().get());
 	}
 
 	return "";

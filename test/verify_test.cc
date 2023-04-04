@@ -3516,3 +3516,54 @@ BOOST_AUTO_TEST_CASE(verify_mismatched_sound_channel_counts)
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS, canonical(find_file(path, "audio2")) },
 		});
 }
+
+
+BOOST_AUTO_TEST_CASE(verify_invalid_main_sound_configuration)
+{
+	boost::filesystem::path const path = "build/test/verify_invalid_main_sound_configuration";
+
+	dcp::MXFMetadata mxf_meta;
+	mxf_meta.company_name = "OpenDCP";
+	mxf_meta.product_name = "OpenDCP";
+	mxf_meta.product_version = "0.0.25";
+
+	auto constexpr sample_rate = 48000;
+	auto constexpr frames = 240;
+
+	boost::filesystem::remove_all(path);
+	boost::filesystem::create_directories(path);
+	auto dcp = make_shared<dcp::DCP>(path);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
+	cpl->set_annotation_text("hello");
+	cpl->set_main_sound_configuration(dcp::MainSoundConfiguration("51/L,R,C,LFE,Ls,Rs"));
+	cpl->set_main_sound_sample_rate(sample_rate);
+	cpl->set_main_picture_stored_area(dcp::Size(1998, 1080));
+	cpl->set_main_picture_active_area(dcp::Size(1998, 1080));
+	cpl->set_version_number(1);
+
+	auto mp = simple_picture(path, "1", frames, {});
+	auto ms = simple_sound(path, "1", mxf_meta, "en-US", frames, sample_rate, {}, 2);
+
+	auto reel = make_shared<dcp::Reel>(
+		std::make_shared<dcp::ReelMonoPictureAsset>(mp, 0),
+		std::make_shared<dcp::ReelSoundAsset>(ms, 0)
+		);
+
+	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), frames);
+	markers->set(dcp::Marker::FFOC, dcp::Time(0, 0, 0, 1, 24));
+	markers->set(dcp::Marker::LFOC, dcp::Time(0, 0, 9, 23, 24));
+	reel->add(markers);
+
+	cpl->add(reel);
+
+	dcp->add(cpl);
+	dcp->set_annotation_text("hello");
+	dcp->write_xml();
+
+	check_verify_result(
+		{ path },
+		{
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION, std::string{"MainSoundConfiguration has 6 channels but sound assets have 2"}, canonical(find_cpl(path)) },
+		});
+}
+

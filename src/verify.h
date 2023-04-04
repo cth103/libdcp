@@ -425,7 +425,13 @@ public:
 		/** The sound assets in the CPL do not have the same audio channel count.
 		 *  file contains the filename of the first asset to differ
 		 */
-		MISMATCHED_SOUND_CHANNEL_COUNTS
+		MISMATCHED_SOUND_CHANNEL_COUNTS,
+		/** The CPL contains a MainSoundConfiguration tag which does not describe the number of
+		 *  channels in the audio assets.
+		 *  note contains details of what is wrong
+		 *  file contains the CPL filename
+		 */
+		INVALID_MAIN_SOUND_CONFIGURATION,
 	};
 
 	VerificationNote (Type type, Code code)
