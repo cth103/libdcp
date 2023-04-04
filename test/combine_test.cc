@@ -343,7 +343,7 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_shared_asset)
 	cpl->set_content_version (
 		dcp::ContentVersion("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11","content-version-label-text")
 		);
-	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
+	cpl->set_main_sound_configuration("51/L,C,R,LFE,-,-");
 	cpl->set_main_sound_sample_rate (48000);
 	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
 	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
@@ -388,7 +388,7 @@ BOOST_AUTO_TEST_CASE (combine_two_dcps_with_duplicated_asset)
 	cpl->set_content_version (
 		dcp::ContentVersion("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11","content-version-label-text")
 		);
-	cpl->set_main_sound_configuration ("L,C,R,Lfe,-,-");
+	cpl->set_main_sound_configuration("51/L,C,R,LFE,-,-");
 	cpl->set_main_sound_sample_rate (48000);
 	cpl->set_main_picture_stored_area (dcp::Size(1998, 1080));
 	cpl->set_main_picture_active_area (dcp::Size(1440, 1080));
