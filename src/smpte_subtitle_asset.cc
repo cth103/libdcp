@@ -381,7 +381,7 @@ SMPTESubtitleAsset::xml_as_string () const
 
 	subtitles_as_xml (root->add_child("SubtitleList"), _time_code_rate, Standard::SMPTE);
 
-	return format_xml(doc, { {"", schema_namespace()}, {"xs", "http://www.w3.org/2001/XMLSchema"} });
+	return format_xml(doc, std::make_pair(string{}, schema_namespace()));
 }
 
 

@@ -51,10 +51,10 @@
 #include <boost/test/unit_test.hpp>
 
 
-using std::string;
-using std::shared_ptr;
-using std::vector;
 using std::make_shared;
+using std::shared_ptr;
+using std::string;
+using std::vector;
 using boost::optional;
 
 
@@ -183,9 +183,9 @@ BOOST_AUTO_TEST_CASE (format_xml_test1)
 	fred->add_child_text("Fred");
 	fred->add_child("Text")->add_child_text("Jim");
 	fred->add_child_text("Sheila");
-	BOOST_REQUIRE_EQUAL (dcp::SubtitleAsset::format_xml(doc, { {"", "fred"}, {"jim", "sheila"} }),
+	BOOST_REQUIRE_EQUAL (dcp::SubtitleAsset::format_xml(doc, make_pair(string{}, string{"fred"})),
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-"<Foo xmlns=\"fred\" xmlns:jim=\"sheila\">\n"
+"<Foo xmlns=\"fred\">\n"
 "  <Empty/>\n"
 "  <Text>Hello world</Text>\n"
 "  <Font>\n"

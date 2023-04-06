@@ -135,7 +135,7 @@ public:
 
 	virtual SubtitleStandard subtitle_standard() const = 0;
 
-	static std::string format_xml (xmlpp::Document const& document, std::vector<std::pair<std::string, std::string>> const& namespaces);
+	static std::string format_xml(xmlpp::Document const& document, boost::optional<std::pair<std::string, std::string>> xml_namespace);
 
 protected:
 	friend struct ::interop_dcp_font_test;

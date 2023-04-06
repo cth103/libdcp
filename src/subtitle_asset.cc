@@ -893,23 +893,23 @@ format_xml_node (xmlpp::Node const* node, State& state)
  *  to <Text> nodes.  This is an attempt to avoid changing what is actually displayed as subtitles
  *  while also formatting the XML in such a way as to avoid DoM bug 2205.
  *
- *  namespace is a list of namespaces for the root node; it would be nicer to set these up with
- *  set_namespace_declaration in the caller and then to extract them here but I couldn't find a way
+ *  xml_namespace is an optional namespace for the root node; it would be nicer to set this up with
+ *  set_namespace_declaration in the caller and then to extract it here but I couldn't find a way
  *  to get all namespaces with the libxml++ API.
  */
 string
-SubtitleAsset::format_xml (xmlpp::Document const& document, vector<pair<string, string>> const& namespaces)
+SubtitleAsset::format_xml(xmlpp::Document const& document, optional<pair<string, string>> xml_namespace)
 {
 	auto root = document.get_root_node();
 
 	State state = {};
 	state.xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<" + root->get_name();
 
-	for (auto const& ns: namespaces) {
-		if (ns.first.empty()) {
-			state.xml += String::compose(" xmlns=\"%1\"", ns.second);
+	if (xml_namespace) {
+		if (xml_namespace->first.empty()) {
+			state.xml += String::compose(" xmlns=\"%1\"", xml_namespace->second);
 		} else {
-			state.xml += String::compose(" xmlns:%1=\"%2\"", ns.first, ns.second);
+			state.xml += String::compose(" xmlns:%1=\"%2\"", xml_namespace->first, xml_namespace->second);
 		}
 	}
 
