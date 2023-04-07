@@ -58,6 +58,7 @@
 #include "stereo_picture_frame.h"
 #include "verify.h"
 #include "verify_j2k.h"
+#include <libxml/parserInternals.h>
 #include <xercesc/dom/DOMAttr.hpp>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMError.hpp>
@@ -786,15 +787,32 @@ verify_subtitle_asset (
 		notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED});
 	}
 
+	auto namespace_count = [](shared_ptr<const SubtitleAsset> asset, string root_node) {
+		cxml::Document doc(root_node);
+		doc.read_string(asset->raw_xml().get());
+		auto root = dynamic_cast<xmlpp::Element*>(doc.node())->cobj();
+		int count = 0;
+		for (auto ns = root->nsDef; ns != nullptr; ns = ns->next) {
+			++count;
+		}
+		return count;
+	};
+
 	auto interop = dynamic_pointer_cast<const InteropSubtitleAsset>(asset);
 	if (interop) {
 		verify_interop_subtitle_asset(interop, notes);
+		if (namespace_count(asset, "DCSubtitle") > 1) {
+			notes.push_back({ VerificationNote::Type::WARNING, VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id() });
+		}
 	}
 
 	auto smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
 	if (smpte) {
 		verify_smpte_timed_text_asset (smpte, reel_asset_duration, notes);
 		verify_smpte_subtitle_asset (smpte, notes, state);
+		if (namespace_count(asset, "SubtitleReel") > 1) {
+			notes.push_back({ VerificationNote::Type::WARNING, VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()});
+		}
 	}
 }
 
@@ -2019,6 +2037,8 @@ dcp::note_to_string (VerificationNote note)
 			"Frame %1 has an image component that is too large (component %2 is %3 bytes in size).",
 			note.frame().get(), note.component().get(), note.size().get()
 			);
+	case VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT:
+		return String::compose("The XML in the subtitle asset %1 has more than one namespace declaration.", note.note().get());
 	}
 
 	return "";

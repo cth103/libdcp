@@ -444,6 +444,10 @@ public:
 		 *  size contains the invalid size in bytes.
 		 */
 		INVALID_JPEG2000_TILE_PART_SIZE,
+		/** A subtitle XML root node has more than one namespace (xmlns) declaration.
+		 *  note contains the asset ID
+		 */
+		INCORRECT_SUBTITLE_NAMESPACE_COUNT
 	};
 
 	VerificationNote (Type type, Code code)

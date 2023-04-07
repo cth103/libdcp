@@ -864,7 +864,8 @@ BOOST_AUTO_TEST_CASE (verify_valid_smpte_subtitles)
 		{dir},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() },
-			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, string{"2021-04-14T13:19:14.000+02:00"} }
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, string{"2021-04-14T13:19:14.000+02:00"} },
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id() }
 		});
 }
 
@@ -894,7 +895,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_smpte_subtitles)
 			},
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() },
-			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, string{"2020-05-09T00:29:21.000+02:00"} }
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, string{"2020-05-09T00:29:21.000+02:00"} },
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id() }
 		});
 }
 
@@ -915,7 +917,8 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles)
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, canonical(dir / "subs.mxf") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() },
-			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, string{"2021-08-09T18:34:46.000+02:00"} }
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, string{"2021-08-09T18:34:46.000+02:00"} },
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id() }
 		});
 }
 
@@ -1485,7 +1488,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 
 	string const xml =
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\" xmlns:xs=\"http://www.w3.org/2001/schema\">"
+		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\">"
 		"<Id>urn:uuid:e6a8ae03-ebbf-41ed-9def-913a87d1493a</Id>"
 		"<ContentTitleText>Content</ContentTitleText>"
 		"<AnnotationText>Annotation</AnnotationText>"
@@ -1608,7 +1611,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 
 	string const xml =
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\" xmlns:xs=\"http://www.w3.org/2001/schema\">"
+		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\">"
 		"<Id>urn:uuid:e6a8ae03-ebbf-41ed-9def-913a87d1493a</Id>"
 		"<ContentTitleText>Content</ContentTitleText>"
 		"<AnnotationText>Annotation</AnnotationText>"
@@ -1656,7 +1659,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 
 	string const xml =
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\" xmlns:xs=\"http://www.w3.org/2001/schema\">"
+		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\">"
 		"<Id>urn:uuid:e6a8ae03-ebbf-41ed-9def-913a87d1493a</Id>"
 		"<ContentTitleText>Content</ContentTitleText>"
 		"<AnnotationText>Annotation</AnnotationText>"
@@ -3145,7 +3148,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_resource_id)
 	BOOST_REQUIRE (ASDCP_SUCCESS(r));
 	writer.WriteTimedTextResource (dcp::String::compose(
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\" xmlns:xs=\"http://www.w3.org/2001/schema\">"
+		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\">"
 		"<Id>urn:uuid:%1</Id>"
 		"<ContentTitleText>Content</ContentTitleText>"
 		"<AnnotationText>Annotation</AnnotationText>"
@@ -3209,7 +3212,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_timed_text_id)
 	BOOST_REQUIRE (ASDCP_SUCCESS(r));
 	writer.WriteTimedTextResource (dcp::String::compose(
 		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\" xmlns:xs=\"http://www.w3.org/2001/schema\">"
+		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\">"
 		"<Id>urn:uuid:%1</Id>"
 		"<ContentTitleText>Content</ContentTitleText>"
 		"<AnnotationText>Annotation</AnnotationText>"
@@ -3638,3 +3641,18 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 		});
 }
 
+
+BOOST_AUTO_TEST_CASE(verify_too_many_subtitle_namespaces)
+{
+	boost::filesystem::path const dir = "test/ref/DCP/subtitle_namespace_test";
+	check_verify_result(
+		{ dir },
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE },
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, canonical(find_file(dir, "sub_")) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, "fc815694-7977-4a27-a8b3-32b9d4075e4c", canonical(find_file(dir, "cpl_")) },
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, std::string{"315de731-1173-484c-9a35-bdacf5a9d99d"} }
+		});
+}
