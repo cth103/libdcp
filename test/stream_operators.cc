@@ -181,6 +181,9 @@ dcp::operator<< (ostream& s, MCASoundField f)
 	case MCASoundField::SEVEN_POINT_ONE:
 		s << "7.1";
 		break;
+	case MCASoundField::OTHER:
+		s << "other";
+		break;
 	}
 	return s;
 }
