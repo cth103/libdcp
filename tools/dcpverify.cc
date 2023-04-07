@@ -200,10 +200,15 @@ main (int argc, char* argv[])
 	}
 
 	if (!failed && !quiet) {
-		if (bv21_failed || warned) {
-			cout << "\n";
+		if (bv21_failed && warned) {
+			cout << "\nDCP verified OK (but with Bv2.1 errors and warnings).\n";
+		} else if (bv21_failed) {
+			cout << "\nDCP verified OK (but with Bv2.1 errors).\n";
+		} else if (warned) {
+			cout << "\nDCP verified OK (but with warnings).\n";
+		} else {
+			cout << "DCP verified OK.\n";
 		}
-		cout << "DCP verified OK.\n";
 	}
 
 	exit (failed ? EXIT_FAILURE : EXIT_SUCCESS);
