@@ -145,7 +145,7 @@ dcp::decompress_j2k (uint8_t const * data, int64_t size, int reduce)
 
 	auto decoder = opj_create_decompress (format);
 	if (!decoder) {
-		boost::throw_exception (ReadError ("could not create JPEG2000 decompresser"));
+		boost::throw_exception(ReadError("could not create JPEG2000 decompressor"));
 	}
 	opj_dparameters_t parameters;
 	opj_set_default_decoder_parameters (&parameters);

@@ -71,7 +71,7 @@ PKL::PKL (boost::filesystem::path file)
 	} else if (pkl.namespace_uri() == pkl_smpte_ns) {
 		_standard = Standard::SMPTE;
 	} else {
-		boost::throw_exception (XMLError ("Unrecognised packing list namesapce " + pkl.namespace_uri()));
+		boost::throw_exception(XMLError("Unrecognised packing list namespace " + pkl.namespace_uri()));
 	}
 
 	_id = remove_urn_uuid (pkl.string_child ("Id"));
