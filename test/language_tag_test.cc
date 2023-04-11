@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		BOOST_CHECK_EQUAL (t.description(), "Eastern Armenian dialect of Armenian written using the Latin script for Italy");
 	}
 
-	/* Langauge + script + region + variant + extlang */
+	/* Language + script + region + variant + extlang */
 
 	{
 		dcp::LanguageTag t;

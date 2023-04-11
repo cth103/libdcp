@@ -108,7 +108,7 @@ public:
 	 *     HH:MM:SS:EE                          for SMPTE
 	 *     HH:MM:SS:E[E[E]] or HH:MM:SS.s[s[s]] for Interop
 	 *  where HH are hours, MM minutes, SS seconds, EE editable units and
-	 *  sss millseconds.
+	 *  sss milliseconds.
 	 *
 	 *  @param tcr_ Timecode rate if this is a SMPTE time, otherwise empty for an Interop time
 	 */
@@ -139,7 +139,7 @@ public:
 	int64_t as_editable_units_ceil (int tcr_) const;
 
 	/** @param tcr_ New timecode rate
-	 *  @return A new Time which is this time at the spcified new timecode rate
+	 *  @return A new Time which is this time at the specified new timecode rate
 	 */
 	Time rebase (int tcr_) const;
 

@@ -118,7 +118,7 @@ prepare_directory (path path)
 
 
 /** Copy dcp_test{reference_number} to build/test/verify_test{verify_test_suffix}
- *  to make a new sacrifical test DCP.
+ *  to make a new sacrificial test DCP.
  */
 static path
 setup (int reference_number, string verify_test_suffix)

@@ -120,7 +120,7 @@ public:
 	/** @return true if we have all our encryptable content is encrypted */
 	bool all_encrypted () const;
 
-	/** Write an CompositonPlaylist XML file
+	/** Write a CompositionPlaylist XML file
 	 *
 	 *  @param file Filename to write
 	 *  @param signer Signer to sign the CPL, or 0 to add no signature
