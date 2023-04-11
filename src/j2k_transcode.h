@@ -65,7 +65,7 @@ extern std::shared_ptr<OpenJPEGImage> decompress_j2k (std::shared_ptr<const Data
 /** @xyz Picture to compress.  Parts of xyz's data WILL BE OVERWRITTEN by libopenjpeg so xyz cannot be re-used
  *  after this call; see opj_j2k_encode where if l_reuse_data is false it will set l_tilec->data = l_img_comp->data.
  */
-extern ArrayData compress_j2k (std::shared_ptr<const OpenJPEGImage>, int bandwith, int frames_per_second, bool threed, bool fourk, std::string comment = "libdcp");
+extern ArrayData compress_j2k (std::shared_ptr<const OpenJPEGImage>, int bandwidth, int frames_per_second, bool threed, bool fourk, std::string comment = "libdcp");
 
 
 }

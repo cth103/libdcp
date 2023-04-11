@@ -59,7 +59,7 @@ namespace dcp {
 class ReelClosedCaptionAsset : public ReelFileAsset
 {
 public:
-	ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t instrinsic_duration, int64_t entry_point);
+	ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelClosedCaptionAsset (std::shared_ptr<const cxml::Node>);
 
 	std::shared_ptr<const SubtitleAsset> asset () const {
