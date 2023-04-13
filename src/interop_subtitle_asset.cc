@@ -233,19 +233,19 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 void
 InteropSubtitleAsset::resolve_fonts (vector<shared_ptr<Asset>> assets)
 {
+	_fonts.clear();
+
 	for (auto asset: assets) {
 		auto font = dynamic_pointer_cast<FontAsset>(asset);
 		if (!font) {
 			continue;
 		}
 
+		DCP_ASSERT(_file);
+
 		for (auto load_font_node: _load_font_nodes) {
-			auto iter = std::find_if(_fonts.begin(), _fonts.end(), [load_font_node](Font const& font) { return font.load_id == load_font_node->id; });
-
-			DCP_ASSERT(_file);
 			auto const path_in_load_font_node = _file->parent_path() / load_font_node->uri;
-
-			if (iter == _fonts.end() && font->file() && path_in_load_font_node == *font->file()) {
+			if (font->file() && path_in_load_font_node == *font->file()) {
 				_fonts.push_back(Font(load_font_node->id, asset->id(), font->file().get()));
 			}
 		}
