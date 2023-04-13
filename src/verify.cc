@@ -715,6 +715,10 @@ verify_interop_subtitle_asset(shared_ptr<const InteropSubtitleAsset> asset, vect
 	if (asset->subtitles().empty()) {
 		notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_SUBTITLE, asset->id(), asset->file().get() });
 	}
+	auto const unresolved = asset->unresolved_fonts();
+	if (!unresolved.empty()) {
+		notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_FONT, unresolved.front() });
+	}
 }
 
 
@@ -2008,6 +2012,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The sound assets do not all have the same channel count; the first to differ is %1", note.file()->filename());
 	case VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION:
 		return String::compose("<MainSoundConfiguration> has an invalid value: %1", note.note().get());
+	case VerificationNote::Code::MISSING_FONT:
+		return String::compose("The font file for font ID \"%1\" was not found, or was not referred to in the ASSETMAP.", note.note().get());
 	}
 
 	return "";

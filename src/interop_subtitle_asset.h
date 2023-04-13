@@ -85,6 +85,12 @@ public:
 	void add_font_assets (std::vector<std::shared_ptr<Asset>>& assets);
 	void set_font_file (std::string load_id, boost::filesystem::path file);
 
+	/** @return the <LoadFont> IDs of fonts for which we have not (yet) found a font asset.
+	 *  This could be because resolve_fonts() has not yet been called, or because there is
+	 *  a missing font file.
+	 */
+	std::vector<std::string> unresolved_fonts() const;
+
 	/** Set the reel number or sub-element identifier
 	 *  of these subtitles.
 	 *  @param n New reel number.

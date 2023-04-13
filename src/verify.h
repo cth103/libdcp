@@ -432,6 +432,10 @@ public:
 		 *  file contains the CPL filename
 		 */
 		INVALID_MAIN_SOUND_CONFIGURATION,
+		/** An interop subtitle file has a <LoadFont> node which refers to a font file that is not found.
+		 *  note contains the <LoadFont> ID
+		 */
+		MISSING_FONT
 	};
 
 	VerificationNote (Type type, Code code)

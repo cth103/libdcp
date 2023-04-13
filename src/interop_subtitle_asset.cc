@@ -309,3 +309,16 @@ InteropSubtitleAsset::set_font_file (string load_id, boost::filesystem::path fil
 	}
 }
 
+
+vector<string>
+InteropSubtitleAsset::unresolved_fonts() const
+{
+	vector<string> unresolved;
+	for (auto load_font_node: _load_font_nodes) {
+		if (std::find_if(_fonts.begin(), _fonts.end(), [load_font_node](Font const& font) { return font.load_id == load_font_node->id; }) == _fonts.end()) {
+			unresolved.push_back(load_font_node->id);
+		}
+	}
+	return unresolved;
+}
+

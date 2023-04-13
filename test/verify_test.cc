@@ -770,7 +770,11 @@ BOOST_AUTO_TEST_CASE (verify_valid_interop_subtitles)
 	auto reel_asset = make_shared<dcp::ReelInteropSubtitleAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
 
-	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD }});
+	check_verify_result (
+		{dir}, {
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"theFontId"} }
+		});
 }
 
 
@@ -801,7 +805,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_interop_subtitles)
 				string("element 'Foo' is not allowed for content model '(SubtitleID,MovieTitle,ReelNumber,Language,LoadFont*,Font*,Subtitle*)'"),
 				path(),
 				29
-			}
+			},
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"theFontId"} }
 		});
 }
 
@@ -820,6 +825,7 @@ BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_no_subtitles)
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE, asset->id(), boost::filesystem::canonical(asset->file().get()) },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"theFontId"} }
 		});
 
 }
@@ -838,6 +844,7 @@ BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_single_space_subtitle)
 		{ dir },
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"Arial"} }
 		});
 
 }
@@ -926,6 +933,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_child_nodes)
 		{ dir },
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"font0"} }
 		});
 }
 
@@ -946,6 +954,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_empty_child_nodes
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE, asset->id(), boost::filesystem::canonical(asset->file().get()) },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_TEXT },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"font0"} },
 		});
 }
 
