@@ -264,6 +264,16 @@ InteropSubtitleAsset::add_font_assets (vector<shared_ptr<Asset>>& assets)
 
 
 void
+InteropSubtitleAsset::add_font_assets(vector<shared_ptr<const Asset>>& assets)
+{
+	for (auto const& i: _fonts) {
+		DCP_ASSERT (i.file);
+		assets.push_back (make_shared<FontAsset>(i.uuid, i.file.get()));
+	}
+}
+
+
+void
 InteropSubtitleAsset::add_to_assetmap (AssetMap& asset_map, boost::filesystem::path root) const
 {
 	Asset::add_to_assetmap(asset_map, root);

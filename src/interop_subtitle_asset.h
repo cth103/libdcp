@@ -83,6 +83,7 @@ public:
 
 	void resolve_fonts (std::vector<std::shared_ptr<Asset>> assets);
 	void add_font_assets (std::vector<std::shared_ptr<Asset>>& assets);
+	void add_font_assets(std::vector<std::shared_ptr<const Asset>>& assets);
 	void set_font_file (std::string load_id, boost::filesystem::path file);
 
 	/** @return the <LoadFont> IDs of fonts for which we have not (yet) found a font asset.
