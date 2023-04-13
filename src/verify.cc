@@ -1997,11 +1997,11 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA:
 		return String::compose("<MainPictureActiveaArea> has an invalid value: %1", note.note().get());
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL:
-		return String::compose("The PKL %1 has more than one asset with the same ID", note.note().get());
+		return String::compose("The PKL %1 has more than one asset with the same ID.", note.note().get());
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP:
-		return String::compose("The ASSETMAP %1 has more than one asset with the same ID", note.note().get());
+		return String::compose("The ASSETMAP %1 has more than one asset with the same ID.", note.note().get());
 	case VerificationNote::Code::MISSING_SUBTITLE:
-		return String::compose("The subtitle asset %1 has no subtitles", note.note().get());
+		return String::compose("The subtitle asset %1 has no subtitles.", note.note().get());
 	case VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE:
 		return String::compose("<IssueDate> has an invalid value: %1", note.note().get());
 	case VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS:
