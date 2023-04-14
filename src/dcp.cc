@@ -491,14 +491,7 @@ DCP::assets (bool ignore_unresolved) const
 			}
 
 			auto const id = j->asset_ref().id();
-			auto already_got = false;
-			for (auto k: assets) {
-				if (k->id() == id) {
-					already_got = true;
-				}
-			}
-
-			if (!already_got) {
+			if (std::find_if(assets.begin(), assets.end(), [id](shared_ptr<Asset> asset) { return asset->id() == id; }) == assets.end()) {
 				auto o = j->asset_ref().asset();
 				assets.push_back (o);
 				/* More Interop special-casing */
