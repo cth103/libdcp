@@ -253,23 +253,27 @@ InteropSubtitleAsset::resolve_fonts (vector<shared_ptr<Asset>> assets)
 }
 
 
-void
-InteropSubtitleAsset::add_font_assets (vector<shared_ptr<Asset>>& assets)
+vector<shared_ptr<Asset>>
+InteropSubtitleAsset::font_assets()
 {
+	vector<shared_ptr<Asset>> assets;
 	for (auto const& i: _fonts) {
 		DCP_ASSERT (i.file);
-		assets.push_back (make_shared<FontAsset>(i.uuid, i.file.get()));
+		assets.push_back(make_shared<FontAsset>(i.uuid, i.file.get()));
 	}
+	return assets;
 }
 
 
-void
-InteropSubtitleAsset::add_font_assets(vector<shared_ptr<const Asset>>& assets)
+vector<shared_ptr<const Asset>>
+InteropSubtitleAsset::font_assets() const
 {
+	vector<shared_ptr<const Asset>> assets;
 	for (auto const& i: _fonts) {
 		DCP_ASSERT (i.file);
-		assets.push_back (make_shared<FontAsset>(i.uuid, i.file.get()));
+		assets.push_back(make_shared<const FontAsset>(i.uuid, i.file.get()));
 	}
+	return assets;
 }
 
 

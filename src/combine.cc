@@ -155,7 +155,7 @@ dcp::combine (
 				DCP_ASSERT (file);
 				path new_path = make_unique(output / file->filename());
 				sub->write (new_path);
-				sub->add_font_assets(assets);
+				add_to_container(assets, sub->font_assets());
 			}
 
 			assets.push_back (j);

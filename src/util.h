@@ -155,6 +155,14 @@ private:
 };
 
 
+template <class From, class To>
+void
+add_to_container(To& container, From source)
+{
+	std::copy(source.begin(), source.end(), std::back_inserter(container));
+}
+
+
 }
 
 

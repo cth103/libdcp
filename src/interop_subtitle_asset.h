@@ -82,9 +82,9 @@ public:
 	void write (boost::filesystem::path path) const override;
 
 	void resolve_fonts (std::vector<std::shared_ptr<Asset>> assets);
-	void add_font_assets (std::vector<std::shared_ptr<Asset>>& assets);
-	void add_font_assets(std::vector<std::shared_ptr<const Asset>>& assets);
 	void set_font_file (std::string load_id, boost::filesystem::path file);
+	std::vector<std::shared_ptr<Asset>> font_assets();
+	std::vector<std::shared_ptr<const Asset>> font_assets() const;
 
 	/** @return the <LoadFont> IDs of fonts for which we have not (yet) found a font asset.
 	 *  This could be because resolve_fonts() has not yet been called, or because there is
