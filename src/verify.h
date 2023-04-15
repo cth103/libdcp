@@ -41,6 +41,7 @@
 #define LIBDCP_VERIFY_H
 
 
+#include <boost/any.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
 #include <boost/optional.hpp>
@@ -446,29 +447,33 @@ public:
 	VerificationNote (Type type, Code code, std::string note)
 		: _type (type)
 		, _code (code)
-		, _note (note)
-	{}
+	{
+		_data[Data::NOTE] = note;
+	}
 
 	VerificationNote (Type type, Code code, boost::filesystem::path file)
 		: _type (type)
 		, _code (code)
-		, _file (file)
-	{}
+	{
+		_data[Data::FILE] = file;
+	}
 
 	VerificationNote (Type type, Code code, std::string note, boost::filesystem::path file)
 		: _type (type)
 		, _code (code)
-		, _note (note)
-		, _file (file)
-	{}
+	{
+		_data[Data::NOTE] = note;
+		_data[Data::FILE] = file;
+	}
 
 	VerificationNote (Type type, Code code, std::string note, boost::filesystem::path file, uint64_t line)
 		: _type (type)
 		, _code (code)
-		, _note (note)
-		, _file (file)
-		, _line (line)
-	{}
+	{
+		_data[Data::NOTE] = note;
+		_data[Data::FILE] = file;
+		_data[Data::LINE] = line;
+	}
 
 	Type type () const {
 		return _type;
@@ -478,27 +483,40 @@ public:
 		return _code;
 	}
 
+private:
+	enum class Data {
+		NOTE, ///< further information about the error
+		FILE, ///< path of file containing the error
+		LINE  ///< error line number within the FILE
+	};
+
+	template <class T>
+	boost::optional<T> data(Data key) const
+	{
+		auto iter = _data.find(key);
+		if (iter == _data.end()) {
+			return {};
+		}
+		return boost::any_cast<T>(iter->second);
+	}
+
+public:
 	boost::optional<std::string> note () const {
-		return _note;
+		return data<std::string>(Data::NOTE);
 	}
 
 	boost::optional<boost::filesystem::path> file () const {
-		return _file;
+		return data<boost::filesystem::path>(Data::FILE);
 	}
 
 	boost::optional<uint64_t> line () const {
-		return _line;
+		return data<uint64_t>(Data::LINE);
 	}
 
 private:
 	Type _type;
 	Code _code;
-	/** Further information about the error, if applicable */
-	boost::optional<std::string> _note;
-	/** Path of file containing the error, if applicable */
-	boost::optional<boost::filesystem::path> _file;
-	/** Error line number within _file, if applicable */
-	boost::optional<uint64_t> _line;
+	std::map<Data, boost::any> _data;
 };
 
 
