@@ -190,7 +190,7 @@ dcp::raw_convert (wchar_t const * v, int, bool)
 
 template <>
 unsigned char
-dcp::raw_convert (std::string v, int precision, bool fixed)
+dcp::raw_convert(string v, int precision, bool fixed)
 {
 	return locale_convert<unsigned char> (make_local (v), precision, fixed);
 }
@@ -198,7 +198,7 @@ dcp::raw_convert (std::string v, int precision, bool fixed)
 
 template <>
 unsigned short int
-dcp::raw_convert (std::string v, int precision, bool fixed)
+dcp::raw_convert(string v, int precision, bool fixed)
 {
 	return locale_convert<unsigned short int> (make_local (v), precision, fixed);
 }
