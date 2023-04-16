@@ -436,7 +436,13 @@ public:
 		/** An interop subtitle file has a <LoadFont> node which refers to a font file that is not found.
 		 *  note contains the <LoadFont> ID
 		 */
-		MISSING_FONT
+		MISSING_FONT,
+		/** A tile part in a JPEG2000 frame is too big.
+		 *  frame contains the frame index (counted from 0)
+		 *  component contains the component index (0, 1 or 2)
+		 *  size contains the invalid size in bytes.
+		 */
+		INVALID_JPEG2000_TILE_PART_SIZE,
 	};
 
 	VerificationNote (Type type, Code code)
@@ -485,9 +491,12 @@ public:
 
 private:
 	enum class Data {
-		NOTE, ///< further information about the error
-		FILE, ///< path of file containing the error
-		LINE  ///< error line number within the FILE
+		NOTE,  ///< further information about the error
+		FILE,  ///< path of file containing the error
+		LINE,  ///< error line number within the FILE
+		FRAME,
+		COMPONENT,
+		SIZE,
 	};
 
 	template <class T>
@@ -511,6 +520,33 @@ public:
 
 	boost::optional<uint64_t> line () const {
 		return data<uint64_t>(Data::LINE);
+	}
+
+	VerificationNote& set_frame(int frame) {
+		_data[Data::FRAME] = frame;
+		return *this;
+	}
+
+	boost::optional<int> frame() const {
+		return data<int>(Data::FRAME);
+	}
+
+	VerificationNote& set_component(int component) {
+		_data[Data::COMPONENT] = component;
+		return *this;
+	}
+
+	boost::optional<int> component() const {
+		return data<int>(Data::COMPONENT);
+	}
+
+	VerificationNote& set_size(int size) {
+		_data[Data::SIZE] = size;
+		return *this;
+	}
+
+	boost::optional<int> size() const {
+		return data<int>(Data::SIZE);
 	}
 
 private:

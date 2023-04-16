@@ -58,8 +58,9 @@
 #include "util.h"
 #include "verify.h"
 #include "verify_j2k.h"
-#include <boost/test/unit_test.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/random.hpp>
+#include <boost/test/unit_test.hpp>
 #include <cstdio>
 #include <iostream>
 
@@ -3087,7 +3088,7 @@ BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_2k)
 	dcp::MonoPictureAsset picture (find_file(private_test / "data" / "JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV", "j2c.mxf"));
 	auto reader = picture.start_read ();
 	auto frame = reader->get_frame (0);
-	verify_j2k (frame, notes);
+	verify_j2k(frame, 0, 24, notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), 0U);
 }
 
@@ -3098,7 +3099,7 @@ BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_4k)
 	dcp::MonoPictureAsset picture (find_file(private_test / "data" / "sul", "TLR"));
 	auto reader = picture.start_read ();
 	auto frame = reader->get_frame (0);
-	verify_j2k (frame, notes);
+	verify_j2k(frame, 0, 24, notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), 0U);
 }
 
@@ -3113,7 +3114,7 @@ BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_libdcp)
 	dcp::MonoPictureAsset picture (find_file(dir, "video"));
 	auto reader = picture.start_read ();
 	auto frame = reader->get_frame (0);
-	verify_j2k (frame, notes);
+	verify_j2k(frame, 0, 24, notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), 0U);
 }
 
@@ -3573,6 +3574,67 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_sound_configuration)
 		{ path },
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION, std::string{"MainSoundConfiguration has 6 channels but sound assets have 2"}, canonical(find_cpl(path)) },
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
+{
+	boost::filesystem::path const path = "build/test/verify_invalid_tile_part_size";
+	auto constexpr video_frames = 24;
+	auto constexpr sample_rate = 48000;
+
+	boost::filesystem::remove_all(path);
+	boost::filesystem::create_directories(path);
+
+	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
+	auto picture_writer = mp->start_write(path / "video.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
+
+	dcp::Size const size(1998, 1080);
+	auto image = make_shared<dcp::OpenJPEGImage>(size);
+	boost::random::mt19937 rng(1);
+	boost::random::uniform_int_distribution<> dist(0, 4095);
+	for (int c = 0; c < 3; ++c) {
+		for (int p = 0; p < (1998 * 1080); ++p) {
+			image->data(c)[p] = dist(rng);
+		}
+	}
+	auto j2c = dcp::compress_j2k(image, 750000000, video_frames, false, false);
+	for (int i = 0; i < 24; ++i) {
+		picture_writer->write(j2c.data(), j2c.size());
+	}
+	picture_writer->finalize();
+
+	auto dcp = make_shared<dcp::DCP>(path);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
+	cpl->set_content_version(
+		dcp::ContentVersion("urn:uuid:75ac29aa-42ac-1234-ecae-49251abefd11", "content-version-label-text")
+		);
+	cpl->set_main_sound_configuration(dcp::MainSoundConfiguration("51/L,R,C,LFE,Ls,Rs"));
+	cpl->set_main_sound_sample_rate(sample_rate);
+	cpl->set_main_picture_stored_area(dcp::Size(1998, 1080));
+	cpl->set_main_picture_active_area(dcp::Size(1998, 1080));
+	cpl->set_version_number(1);
+
+	auto ms = simple_sound(path, "", dcp::MXFMetadata(), "en-US", video_frames, sample_rate, {});
+
+	auto reel = make_shared<dcp::Reel>(
+		make_shared<dcp::ReelMonoPictureAsset>(mp, 0),
+		make_shared<dcp::ReelSoundAsset>(ms, 0)
+		);
+
+	cpl->add(reel);
+	dcp->add(cpl);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
+
+	check_verify_result(
+		{ path },
+		{
+			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE).set_frame(0).set_component(0).set_size(1321721),
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(path / "video.mxf") },
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC },
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC },
 		});
 }
 

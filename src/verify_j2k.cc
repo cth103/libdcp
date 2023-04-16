@@ -65,8 +65,11 @@ public:
 
 
 void
-dcp::verify_j2k (shared_ptr<const Data> j2k, vector<VerificationNote>& notes)
+dcp::verify_j2k(shared_ptr<const Data> j2k, int frame_index, int frame_rate, vector<VerificationNote>& notes)
 {
+	/* See ITU-T T800 (visible on https://github.com/Ymagis/ClairMeta/issues/130) */
+	unsigned int const max_tile_part_size = std::floor(200e6 / (8 * frame_rate));
+
 	try {
 		auto ptr = j2k->data();
 		auto end = ptr + j2k->size();
@@ -202,14 +205,21 @@ dcp::verify_j2k (shared_ptr<const Data> j2k, vector<VerificationNote>& notes)
 			} else if (*marker_name == "SOT") {
 				require_16(10, "invalid SOT size %1");
 				get_16(); // tile index
-				get_32(); // tile part length
-				get_8(); // tile part index
+				auto const tile_part_length = get_32();
+				auto const tile_part_index = get_8();
 				auto tile_parts = get_8();
 				if (!fourk && tile_parts != 3) {
 					notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K, raw_convert<string>(tile_parts) });
 				}
 				if (fourk && tile_parts != 6) {
 					notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K, raw_convert<string>(tile_parts) });
+				}
+				if (tile_part_length > max_tile_part_size) {
+					VerificationNote note{VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE};
+					note.set_frame(frame_index);
+					note.set_component(tile_part_index);
+					note.set_size(tile_part_length);
+					notes.push_back(note);
 				}
 				main_header_finished = true;
 			} else if (*marker_name == "SOD") {

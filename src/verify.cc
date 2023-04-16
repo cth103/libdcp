@@ -449,7 +449,7 @@ verify_picture_asset (shared_ptr<const ReelFileAsset> reel_file_asset, boost::fi
 			biggest_frame = max(biggest_frame, frame->size());
 			if (!mono_asset->encrypted() || mono_asset->key()) {
 				vector<VerificationNote> j2k_notes;
-				verify_j2k (frame, j2k_notes);
+				verify_j2k(frame, i, mono_asset->frame_rate().numerator, j2k_notes);
 				check_and_add (j2k_notes);
 			}
 			progress (float(i) / duration);
@@ -461,8 +461,8 @@ verify_picture_asset (shared_ptr<const ReelFileAsset> reel_file_asset, boost::fi
 			biggest_frame = max(biggest_frame, max(frame->left()->size(), frame->right()->size()));
 			if (!stereo_asset->encrypted() || stereo_asset->key()) {
 				vector<VerificationNote> j2k_notes;
-				verify_j2k (frame->left(), j2k_notes);
-				verify_j2k (frame->right(), j2k_notes);
+				verify_j2k(frame->left(), i, stereo_asset->frame_rate().numerator, j2k_notes);
+				verify_j2k(frame->right(), i, stereo_asset->frame_rate().numerator, j2k_notes);
 				check_and_add (j2k_notes);
 			}
 			progress (float(i) / duration);
@@ -2014,6 +2014,11 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("<MainSoundConfiguration> has an invalid value: %1", note.note().get());
 	case VerificationNote::Code::MISSING_FONT:
 		return String::compose("The font file for font ID \"%1\" was not found, or was not referred to in the ASSETMAP.", note.note().get());
+	case VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE:
+		return String::compose(
+			"Frame %1 has an image component that is too large (component %2 is %3 bytes in size).",
+			note.frame().get(), note.component().get(), note.size().get()
+			);
 	}
 
 	return "";

@@ -51,7 +51,11 @@ namespace dcp {
 class Data;
 
 
-void verify_j2k (std::shared_ptr<const Data> data, std::vector<VerificationNote>& notes);
+/** @param frame_index Video frame index, so that notes can say which frame contains the problem.
+ *  @param frame_rate Video frame rate (in frames per second) to calculate how big the tile parts
+ *  can be.
+ */
+void verify_j2k(std::shared_ptr<const Data> data, int frame_index, int frame_rate, std::vector<VerificationNote>& notes);
 
 
 }
