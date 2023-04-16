@@ -45,6 +45,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
 #include <boost/optional.hpp>
+#include <map>
 #include <string>
 #include <vector>
 
