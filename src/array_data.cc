@@ -45,35 +45,25 @@
 #include <cstdio>
 
 
-using boost::shared_array;
 using namespace dcp;
 
 
 ArrayData::ArrayData ()
+	: _data(std::make_shared<std::vector<uint8_t>>())
 {
 
 }
 
 
 ArrayData::ArrayData (int size)
-	: _data (new uint8_t[size])
-	, _size (size)
+	: _data(std::make_shared<std::vector<uint8_t>>(size))
 {
 
 }
 
 
 ArrayData::ArrayData (uint8_t const * data, int size)
-	: _data (new uint8_t[size])
-	, _size (size)
-{
-	memcpy (_data.get(), data, size);
-}
-
-
-ArrayData::ArrayData (shared_array<uint8_t> data, int size)
-	: _data (data)
-	, _size (size)
+	: _data(std::make_shared<std::vector<uint8_t>>(data, data + size))
 {
 
 }
@@ -81,15 +71,15 @@ ArrayData::ArrayData (shared_array<uint8_t> data, int size)
 
 ArrayData::ArrayData (boost::filesystem::path file)
 {
-	_size = boost::filesystem::file_size (file);
-	_data.reset (new uint8_t[_size]);
+	auto const size = boost::filesystem::file_size (file);
+	_data = std::make_shared<std::vector<uint8_t>>(size);
 
 	File f(file, "rb");
 	if (!f) {
 		throw FileError ("could not open file for reading", file, errno);
 	}
 
-	if (f.read(_data.get(), 1, _size) != static_cast<size_t>(_size)) {
+	if (f.read(_data->data(), 1, size) != static_cast<size_t>(size)) {
 		throw FileError ("could not read from file", file, errno);
 	}
 }

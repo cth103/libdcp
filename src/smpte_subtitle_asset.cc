@@ -238,9 +238,6 @@ SMPTESubtitleAsset::read_mxf_resources (shared_ptr<ASDCP::TimedText::MXFReader> 
 		char id[64];
 		Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof(id));
 
-		shared_array<uint8_t> data (new uint8_t[buffer.Size()]);
-		memcpy (data.get(), buffer.RoData(), buffer.Size());
-
 		switch (i->Type) {
 		case ASDCP::TimedText::MT_OPENTYPE:
 		{
@@ -250,7 +247,7 @@ SMPTESubtitleAsset::read_mxf_resources (shared_ptr<ASDCP::TimedText::MXFReader> 
 			}
 
 			if (j != _load_font_nodes.end ()) {
-				_fonts.push_back (Font ((*j)->id, (*j)->urn, ArrayData (data, buffer.Size ())));
+				_fonts.push_back(Font((*j)->id, (*j)->urn, ArrayData(buffer.RoData(), buffer.Size())));
 			}
 			break;
 		}
@@ -262,7 +259,7 @@ SMPTESubtitleAsset::read_mxf_resources (shared_ptr<ASDCP::TimedText::MXFReader> 
 			}
 
 			if (j != _subtitles.end()) {
-				dynamic_pointer_cast<SubtitleImage>(*j)->set_png_image (ArrayData(data, buffer.Size()));
+				dynamic_pointer_cast<SubtitleImage>(*j)->set_png_image(ArrayData(buffer.RoData(), buffer.Size()));
 			}
 			break;
 		}

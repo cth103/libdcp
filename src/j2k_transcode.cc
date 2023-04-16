@@ -188,23 +188,14 @@ dcp::decompress_j2k (uint8_t const * data, int64_t size, int reduce)
 class WriteBuffer
 {
 public:
-/* XXX: is there a better strategy for this? */
-#define MAX_J2K_SIZE (1024 * 1024 * 2)
-	WriteBuffer ()
-		: _data (shared_array<uint8_t>(new uint8_t[MAX_J2K_SIZE]), MAX_J2K_SIZE)
-		, _offset (0)
-	{
-		_data.set_size (0);
-	}
-
 	OPJ_SIZE_T write (void* buffer, OPJ_SIZE_T nb_bytes)
 	{
-		DCP_ASSERT ((_offset + nb_bytes) < MAX_J2K_SIZE);
-		memcpy (_data.data() + _offset, buffer, nb_bytes);
-		_offset += nb_bytes;
-		if (_offset > OPJ_SIZE_T(_data.size())) {
-			_data.set_size (_offset);
+		auto const new_offset = _offset + nb_bytes;
+		if (new_offset > OPJ_SIZE_T(_data.size())) {
+			_data.set_size(new_offset);
 		}
+		memcpy(_data.data() + _offset, buffer, nb_bytes);
+		_offset = new_offset;
 		return nb_bytes;
 	}
 
@@ -221,7 +212,7 @@ public:
 
 private:
 	ArrayData _data;
-	OPJ_SIZE_T _offset;
+	OPJ_SIZE_T _offset = 0;
 };
 
 

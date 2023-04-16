@@ -58,43 +58,33 @@ public:
 	explicit ArrayData (int size);
 	ArrayData (uint8_t const * data, int size);
 
-	/** Create an ArrayData by copying a shared_array<>
-	 *  @param data shared_array<> to copy (the shared_array<> is copied, not the data)
-	 *  @param size Size of data in bytes
-	 */
-	ArrayData (boost::shared_array<uint8_t> data, int size);
-
 	/** Create an ArrayData by reading the contents of a file
 	 *  @param file Filename to read
 	 */
-	explicit ArrayData (boost::filesystem::path file);
-
-	virtual ~ArrayData () {}
+	explicit ArrayData(boost::filesystem::path file);
 
 	uint8_t const * data () const override {
-		return _data.get();
+		return _data->data();
 	}
 
 	uint8_t * data () override {
-		return _data.get();
+		return _data->data();
 	}
 
 	/** @return size of the data in _data, or whatever was last
 	 *  passed to a set_size() call
 	 */
 	int size () const override {
-		return _size;
+		return _data->size();
 	}
 
 	/** Set the size that will be returned from size() */
 	void set_size (int s) {
-		_size = s;
+		_data->resize(s);
 	}
 
 private:
-	boost::shared_array<uint8_t> _data;
-	/** amount of `valid' data in _data; the array may be larger */
-	int _size = 0;
+	std::shared_ptr<std::vector<uint8_t>> _data;
 };
 
 
