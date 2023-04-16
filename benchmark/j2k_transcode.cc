@@ -33,13 +33,14 @@
 
 
 #include "array_data.h"
-#include "util.h"
-#include "version.h"
 #include "j2k_transcode.h"
 #include "openjpeg_image.h"
+#include "util.h"
+#include "version.h"
 #include <sys/time.h>
 #include <iostream>
 #include <cstdio>
+
 
 using std::cout;
 using std::cerr;
