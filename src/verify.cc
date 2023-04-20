@@ -810,7 +810,8 @@ verify_subtitle_asset (
 	if (smpte) {
 		verify_smpte_timed_text_asset (smpte, reel_asset_duration, notes);
 		verify_smpte_subtitle_asset (smpte, notes, state);
-		if (namespace_count(asset, "SubtitleReel") > 1) {
+		/* This asset may be encrypted and in that case we'll have no raw_xml() */
+		if (asset->raw_xml() && namespace_count(asset, "SubtitleReel") > 1) {
 			notes.push_back({ VerificationNote::Type::WARNING, VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()});
 		}
 	}
