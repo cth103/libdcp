@@ -1780,6 +1780,8 @@ dcp::verify (
 			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
 		} catch (MXFFileError& e) {
 			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
+		} catch (BadURNUUIDError& e) {
+			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
 		} catch (cxml::Error& e) {
 			notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
 		}
@@ -1859,7 +1861,7 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::INVALID_XML:
 		return String::compose("An XML file is badly formed: %1 (%2:%3)", note.note().get(), note.file()->filename(), note.line().get());
 	case VerificationNote::Code::MISSING_ASSETMAP:
-		return "No ASSETMAP or ASSETMAP.xml was found.";
+		return "No valid ASSETMAP or ASSETMAP.xml was found.";
 	case VerificationNote::Code::INVALID_INTRINSIC_DURATION:
 		return String::compose("The intrinsic duration of the asset %1 is less than 1 second.", note.note().get());
 	case VerificationNote::Code::INVALID_DURATION:

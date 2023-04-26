@@ -205,3 +205,10 @@ InconsistentValidityPeriodError::InconsistentValidityPeriodError()
 
 }
 
+
+BadURNUUIDError::BadURNUUIDError(string bad_id)
+	: runtime_error(String::compose("Badly-formed URN UUID %1", bad_id))
+{
+
+}
+

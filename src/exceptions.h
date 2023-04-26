@@ -323,6 +323,14 @@ public:
 	InconsistentValidityPeriodError();
 };
 
+
+class BadURNUUIDError : public std::runtime_error
+{
+public:
+	BadURNUUIDError(std::string bad_id);
+};
+
+
 }
 
 
