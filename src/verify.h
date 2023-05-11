@@ -447,7 +447,12 @@ public:
 		/** A subtitle XML root node has more than one namespace (xmlns) declaration.
 		 *  note contains the asset ID
 		 */
-		INCORRECT_SUBTITLE_NAMESPACE_COUNT
+		INCORRECT_SUBTITLE_NAMESPACE_COUNT,
+		/** A subtitle or closed caption file has a <Font> tag which refers to a font that is not
+		 *  first introduced with a <LoadFont>.
+		 *  id conatins the ID of the <Font> tag.
+		 */
+		MISSING_LOAD_FONT
 	};
 
 	VerificationNote (Type type, Code code)

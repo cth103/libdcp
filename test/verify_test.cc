@@ -3656,3 +3656,26 @@ BOOST_AUTO_TEST_CASE(verify_too_many_subtitle_namespaces)
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, std::string{"315de731-1173-484c-9a35-bdacf5a9d99d"} }
 		});
 }
+
+
+BOOST_AUTO_TEST_CASE(verify_missing_load_font)
+{
+	path const dir("build/test/verify_missing_load_font");
+	prepare_directory (dir);
+	copy_file ("test/data/subs1.xml", dir / "subs.xml");
+	{
+		Editor editor(dir / "subs.xml");
+		editor.delete_first_line_containing("LoadFont");
+	}
+	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
+	auto reel_asset = make_shared<dcp::ReelInteropSubtitleAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
+
+	check_verify_result (
+		{dir}, {
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
+			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_LOAD_FONT).set_id("theFontId")
+		});
+
+}
+

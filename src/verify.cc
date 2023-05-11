@@ -849,7 +849,7 @@ verify_closed_caption_asset (
 }
 
 
-/** Check the timing of the individual subtitles and make sure there are no empty <Text> nodes */
+/** Check the timing of the individual subtitles and make sure there are no empty <Text> nodes etc. */
 static
 void
 verify_text_details (
@@ -870,9 +870,11 @@ verify_text_details (
 	auto empty_text = false;
 	/* current reel start time (in editable units) */
 	int64_t reel_offset = 0;
+	vector<string> font_ids;
+	optional<string> missing_load_font_id;
 
 	std::function<void (cxml::ConstNodePtr, optional<int>, optional<Time>, int, bool)> parse;
-	parse = [&parse, &last_out, &too_short, &too_close, &too_early, &empty_text, &reel_offset](cxml::ConstNodePtr node, optional<int> tcr, optional<Time> start_time, int er, bool first_reel) {
+	parse = [&parse, &last_out, &too_short, &too_close, &too_early, &empty_text, &reel_offset, &font_ids, &missing_load_font_id](cxml::ConstNodePtr node, optional<int> tcr, optional<Time> start_time, int er, bool first_reel) {
 		if (node->name() == "Subtitle") {
 			Time in (node->string_attribute("TimeIn"), tcr);
 			if (start_time) {
@@ -912,8 +914,17 @@ verify_text_details (
 			if (!node_has_content(node)) {
 				empty_text = true;
 			}
+		} else if (node->name() == "LoadFont") {
+			if (auto const id = node->optional_string_attribute("Id")) {
+				font_ids.push_back(*id);
+			}
+		} else if (node->name() == "Font") {
+			if (auto const font_id = node->optional_string_attribute("Id")) {
+				if (std::find_if(font_ids.begin(), font_ids.end(), [font_id](string const& id) { return id == font_id; }) == font_ids.end()) {
+					missing_load_font_id = font_id;
+				}
+			}
 		}
-
 		for (auto i: node->node_children()) {
 			parse(i, tcr, start_time, er, first_reel);
 		}
@@ -989,6 +1000,10 @@ verify_text_details (
 		notes.push_back ({
 			VerificationNote::Type::WARNING, VerificationNote::Code::EMPTY_TEXT
 		});
+	}
+
+	if (missing_load_font_id) {
+		notes.push_back(dcp::VerificationNote(VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_LOAD_FONT).set_id(*missing_load_font_id));
 	}
 }
 
@@ -2042,6 +2057,8 @@ dcp::note_to_string (VerificationNote note)
 			);
 	case VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT:
 		return String::compose("The XML in the subtitle asset %1 has more than one namespace declaration.", note.note().get());
+	case VerificationNote::Code::MISSING_LOAD_FONT:
+		return String::compose("A subtitle or closed caption refers to a font with ID %1 that does not have a corresponding <LoadFont> node", note.id().get());
 	}
 
 	return "";
