@@ -722,17 +722,17 @@ BOOST_AUTO_TEST_CASE(smpte_subtitle_standard_written_correctly)
 	dcp::SMPTESubtitleAsset test_2014;
 	test_2014.set_issue_date(dcp::LocalTime("2020-01-01T14:00:00"));
 	test_2014.write(out / "2014.mxf");
-	BOOST_CHECK(dcp::SMPTESubtitleAsset(ref / "2014.mxf").raw_xml() == dcp::SMPTESubtitleAsset(out / "2014.mxf").raw_xml());
+	BOOST_CHECK_EQUAL(dcp::SMPTESubtitleAsset(ref / "2014.mxf").raw_xml(), dcp::SMPTESubtitleAsset(out / "2014.mxf").raw_xml());
 
 	dcp::SMPTESubtitleAsset test_2010(dcp::SubtitleStandard::SMPTE_2010);
 	test_2010.set_issue_date(dcp::LocalTime("2020-01-01T14:00:00"));
 	test_2010.write(out / "2010.mxf");
-	BOOST_CHECK(dcp::SMPTESubtitleAsset(ref / "2010.mxf").raw_xml() == dcp::SMPTESubtitleAsset(out / "2010.mxf").raw_xml());
+	BOOST_CHECK_EQUAL(dcp::SMPTESubtitleAsset(ref / "2010.mxf").raw_xml(), dcp::SMPTESubtitleAsset(out / "2010.mxf").raw_xml());
 
 	dcp::SMPTESubtitleAsset test_2007(dcp::SubtitleStandard::SMPTE_2007);
 	test_2007.set_issue_date(dcp::LocalTime("2020-01-01T14:00:00"));
 	test_2007.write(out / "2007.mxf");
-	BOOST_CHECK(dcp::SMPTESubtitleAsset(ref / "2007.mxf").raw_xml() == dcp::SMPTESubtitleAsset(out / "2007.mxf").raw_xml());
+	BOOST_CHECK_EQUAL(dcp::SMPTESubtitleAsset(ref / "2007.mxf").raw_xml(), dcp::SMPTESubtitleAsset(out / "2007.mxf").raw_xml());
 }
 
 
