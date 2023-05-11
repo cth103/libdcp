@@ -928,3 +928,12 @@ SubtitleAsset::format_xml(xmlpp::Document const& document, optional<pair<string,
 	return state.xml;
 }
 
+
+void
+SubtitleAsset::ensure_font(string load_id, dcp::ArrayData data)
+{
+	if (std::find_if(_fonts.begin(), _fonts.end(), [load_id](Font const& font) { return font.load_id == load_id; }) == _fonts.end()) {
+		add_font(load_id, data);
+	}
+}
+
