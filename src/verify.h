@@ -502,6 +502,7 @@ private:
 		FRAME,
 		COMPONENT,
 		SIZE,
+		ID,
 	};
 
 	template <class T>
@@ -552,6 +553,15 @@ public:
 
 	boost::optional<int> size() const {
 		return data<int>(Data::SIZE);
+	}
+
+	VerificationNote& set_id(std::string id) {
+		_data[Data::ID] = id;
+		return *this;
+	}
+
+	boost::optional<std::string> id() const {
+		return data<std::string>(Data::ID);
 	}
 
 private:
