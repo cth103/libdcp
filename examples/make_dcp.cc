@@ -64,7 +64,7 @@ main ()
 	/* Write 24 frames of the same JPEG2000 file */
 	dcp::ArrayData picture("examples/help.j2c");
 	for (int i = 0; i < 24; ++i) {
-		picture_writer->write (picture);
+		picture_writer->write(picture);
 	}
 
 	/* And finish off */
@@ -80,8 +80,8 @@ main ()
 	std::array<float, 48000> left;
 	std::array<float, 48000> right;
 	for (int i = 0; i < 48000; ++i) {
-		left[i] = sin (2 * M_PI * i * 440 / 48000) * 0.25;
-		right[i] = sin (2 * M_PI * i * 880 / 48000) * 0.25;
+		left[i] = sin(2 * M_PI * i * 440 / 48000) * 0.25;
+		right[i] = sin(2 * M_PI * i * 880 / 48000) * 0.25;
 	}
 	std::array<float*, 2> audio;
 	audio[0] = left.data();
@@ -89,7 +89,7 @@ main ()
 	sound_writer->write(audio.data(), 2, 48000);
 
 	/* And finish off */
-	sound_writer->finalize ();
+	sound_writer->finalize();
 
 	/* Now create a reel */
 	auto reel = std::make_shared<dcp::Reel>();
@@ -105,9 +105,9 @@ main ()
 	cpl->add(reel);
 
 	/* Write the DCP */
-	dcp::DCP dcp ("DCP");
-	dcp.add (cpl);
-	dcp.write_xml ();
+	auto dcp = dcp::DCP("DCP");
+	dcp.add(cpl);
+	dcp.write_xml();
 
 	return 0;
 }
