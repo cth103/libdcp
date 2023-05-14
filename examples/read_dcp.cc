@@ -42,7 +42,6 @@
 LIBDCP_DISABLE_WARNINGS
 #include <Magick++.h>
 LIBDCP_ENABLE_WARNINGS
-#include <boost/scoped_array.hpp>
 
 /** @file examples/read_dcp.cc
  *  @brief Shows how to read a DCP.
@@ -56,9 +55,9 @@ main ()
 	Magick::InitializeMagick(nullptr);
 
 	/* Create a DCP, specifying where our existing data is */
-	dcp::DCP dcp ("/home/carl/Test_DCP");
+	dcp::DCP dcp("/home/carl/Test_DCP");
 	/* Read the DCP to find out about it */
-	dcp.read ();
+	dcp.read();
 
 	if (dcp.all_encrypted()) {
 		std::cout << "DCP is encrypted.\n";
@@ -69,7 +68,7 @@ main ()
 	}
 
 	std::cout << "DCP has " << dcp.cpls().size() << " CPLs.\n";
-	auto assets = dcp.assets ();
+	auto assets = dcp.assets();
 	std::cout << "DCP has " << assets.size() << " assets.\n";
 	for (auto i: assets) {
 		if (std::dynamic_pointer_cast<dcp::MonoPictureAsset>(i)) {
@@ -101,14 +100,14 @@ main ()
 	auto picture_frame_j2k = picture_asset_reader->get_frame(999);
 
 	/* Get the frame as an XYZ image */
-	auto picture_image_xyz = picture_frame_j2k->xyz_image ();
+	auto picture_image_xyz = picture_frame_j2k->xyz_image();
 
 	/* Convert to ARGB */
-	boost::scoped_array<uint8_t> rgba (new uint8_t[picture_image_xyz->size().width * picture_image_xyz->size().height * 4]);
-	dcp::xyz_to_rgba (picture_image_xyz, dcp::ColourConversion::srgb_to_xyz(), rgba.get(), picture_image_xyz->size().width * 4);
+	std::vector<uint8_t> rgba(picture_image_xyz->size().width * picture_image_xyz->size().height * 4);
+	dcp::xyz_to_rgba(picture_image_xyz, dcp::ColourConversion::srgb_to_xyz(), rgba.data(), picture_image_xyz->size().width * 4);
 
-	Magick::Image image (picture_image_xyz->size().width, picture_image_xyz->size().height, "BGRA", Magick::CharPixel, rgba.get ());
-	image.write ("frame.png");
+	Magick::Image image(picture_image_xyz->size().width, picture_image_xyz->size().height, "BGRA", Magick::CharPixel, rgba.data());
+	image.write("frame.png");
 
 	return 0;
 }
