@@ -65,10 +65,7 @@ namespace dcp {
 class Certificate
 {
 public:
-	Certificate ()
-		: _certificate (0)
-		, _public_key (0)
-	{}
+	Certificate() {}
 
 	/** Load an X509 certificate from a string
 	 *  @param cert String to read from
