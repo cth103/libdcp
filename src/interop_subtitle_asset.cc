@@ -214,13 +214,10 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
 	/* Fonts */
 	for (auto i: _load_font_nodes) {
 		auto file = p.parent_path() / i->uri;
-		auto j = _fonts.begin();
-		while (j != _fonts.end() && j->load_id != i->id) {
-			++j;
-		}
-		if (j != _fonts.end ()) {
-			j->data.write (file);
-			j->file = file;
+		auto font_with_id = std::find_if(_fonts.begin(), _fonts.end(), [i](Font const& font) { return font.load_id == i->id; });
+		if (font_with_id != _fonts.end()) {
+			font_with_id->data.write(file);
+			font_with_id->file = file;
 		}
 	}
 }
