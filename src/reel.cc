@@ -353,25 +353,21 @@ Reel::give_kdm_to_assets (DecryptedKDM const & kdm)
 void
 Reel::add (shared_ptr<ReelAsset> asset)
 {
-	auto p = dynamic_pointer_cast<ReelPictureAsset> (asset);
-	auto so = dynamic_pointer_cast<ReelSoundAsset> (asset);
-	auto su = dynamic_pointer_cast<ReelSubtitleAsset> (asset);
-	auto m = dynamic_pointer_cast<ReelMarkersAsset> (asset);
-	auto c = dynamic_pointer_cast<ReelClosedCaptionAsset> (asset);
-	auto a = dynamic_pointer_cast<ReelAtmosAsset> (asset);
-	if (p) {
+	if (auto p = dynamic_pointer_cast<ReelPictureAsset>(asset)) {
 		_main_picture = p;
-	} else if (so) {
+	} else if (auto so = dynamic_pointer_cast<ReelSoundAsset>(asset)) {
 		_main_sound = so;
-	} else if (su) {
+	} else if (auto su = dynamic_pointer_cast<ReelSubtitleAsset>(asset)) {
 		_main_subtitle = su;
-	} else if (m) {
+	} else if (auto m = dynamic_pointer_cast<ReelMarkersAsset>(asset)) {
 		_main_markers = m;
-	} else if (c) {
+	} else if (auto c = dynamic_pointer_cast<ReelClosedCaptionAsset>(asset)) {
 		_closed_captions.push_back (c);
-	} else if (a) {
+	} else if (auto a = dynamic_pointer_cast<ReelAtmosAsset>(asset)) {
 		_atmos = a;
 	}
+
+	DCP_ASSERT(false);
 }
 
 
