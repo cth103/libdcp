@@ -365,9 +365,9 @@ Reel::add (shared_ptr<ReelAsset> asset)
 		_closed_captions.push_back (c);
 	} else if (auto a = dynamic_pointer_cast<ReelAtmosAsset>(asset)) {
 		_atmos = a;
+	} else {
+		DCP_ASSERT(false);
 	}
-
-	DCP_ASSERT(false);
 }
 
 
