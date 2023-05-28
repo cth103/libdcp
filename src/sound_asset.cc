@@ -104,6 +104,16 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 		}
 	}
 
+	list<ASDCP::MXF::InterchangeObject*> channel_labels;
+	rr = reader.OP1aHeader().GetMDObjectsByType(
+		asdcp_smpte_dict->ul(ASDCP::MDD_AudioChannelLabelSubDescriptor),
+		channel_labels
+		);
+
+	if (KM_SUCCESS(rr)) {
+		_active_channels = channel_labels.size();
+	}
+
 	_id = read_writer_info (info);
 }
 
@@ -266,3 +276,11 @@ SoundAsset::valid_mxf (boost::filesystem::path file)
 	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
 	return !ASDCP_FAILURE (r);
 }
+
+
+int
+SoundAsset::active_channels() const
+{
+	return _active_channels.get_value_or(_channels);
+}
+

@@ -103,10 +103,13 @@ public:
 		NoteHandler note
 		) const override;
 
-	/** @return number of channels */
+	/** @return number of channels in the MXF */
 	int channels () const {
 		return _channels;
 	}
+
+	/** @return An estimate of the number of channels that are actually in use */
+	int active_channels() const;
 
 	/** @return sampling rate in Hz */
 	int sampling_rate () const {
@@ -143,8 +146,9 @@ private:
 	 *  content presented may be less than this.
 	 */
 	int64_t _intrinsic_duration = 0;
-	int _channels = 0;      ///< number of channels
-	int _sampling_rate = 0; ///< sampling rate in Hz
+	int _channels = 0;                     ///< number of channels in the MXF
+	boost::optional<int> _active_channels; ///< estimate of the number of active channels
+	int _sampling_rate = 0;                ///< sampling rate in Hz
 	boost::optional<std::string> _language;
 };
 
