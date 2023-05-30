@@ -874,7 +874,13 @@ verify_text_details (
 	optional<string> missing_load_font_id;
 
 	std::function<void (cxml::ConstNodePtr, optional<int>, optional<Time>, int, bool)> parse;
-	parse = [&parse, &last_out, &too_short, &too_close, &too_early, &empty_text, &reel_offset, &font_ids, &missing_load_font_id](cxml::ConstNodePtr node, optional<int> tcr, optional<Time> start_time, int er, bool first_reel) {
+	parse = [&parse, &last_out, &too_short, &too_close, &too_early, &empty_text, &reel_offset, &font_ids, &missing_load_font_id](
+		cxml::ConstNodePtr node,
+		optional<int> tcr,
+		optional<Time> start_time,
+		int er,
+		bool first_reel
+		) {
 		if (node->name() == "Subtitle") {
 			Time in (node->string_attribute("TimeIn"), tcr);
 			if (start_time) {
