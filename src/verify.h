@@ -450,7 +450,7 @@ public:
 		INCORRECT_SUBTITLE_NAMESPACE_COUNT,
 		/** A subtitle or closed caption file has a <Font> tag which refers to a font that is not
 		 *  first introduced with a <LoadFont>.
-		 *  id conatins the ID of the <Font> tag.
+		 *  id contains the ID of the <Font> tag.
 		 */
 		MISSING_LOAD_FONT
 	};
