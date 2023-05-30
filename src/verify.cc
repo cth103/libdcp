@@ -1228,13 +1228,7 @@ verify_text_details (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& n
 				return static_cast<bool>(reel->main_subtitle());
 			},
 			[](shared_ptr<Reel> reel) {
-				auto interop = dynamic_pointer_cast<ReelInteropSubtitleAsset>(reel->main_subtitle());
-				if (interop) {
-					return interop->asset()->raw_xml();
-				}
-				auto smpte = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(reel->main_subtitle());
-				DCP_ASSERT (smpte);
-				return smpte->asset()->raw_xml();
+				return reel->main_subtitle()->asset()->raw_xml();
 			},
 			[](shared_ptr<Reel> reel) {
 				return reel->main_subtitle()->actual_duration();
