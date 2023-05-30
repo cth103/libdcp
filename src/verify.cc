@@ -853,6 +853,7 @@ verify_closed_caption_asset (
 static
 void
 verify_text_details (
+	dcp::Standard standard,
 	vector<shared_ptr<Reel>> reels,
 	int edit_rate,
 	vector<VerificationNote>& notes,
@@ -954,17 +955,19 @@ verify_text_details (
 		shared_ptr<cxml::Document> doc;
 		optional<int> tcr;
 		optional<Time> start_time;
-		try {
+		switch (standard) {
+		case dcp::Standard::INTEROP:
+			doc = make_shared<cxml::Document>("DCSubtitle");
+			doc->read_string (*reel_xml);
+			break;
+		case dcp::Standard::SMPTE:
 			doc = make_shared<cxml::Document>("SubtitleReel");
 			doc->read_string (*reel_xml);
 			tcr = doc->number_child<int>("TimeCodeRate");
-			auto start_time_string = doc->optional_string_child("StartTime");
-			if (start_time_string) {
+			if (auto start_time_string = doc->optional_string_child("StartTime")) {
 				start_time = Time(*start_time_string, tcr);
 			}
-		} catch (...) {
-			doc = make_shared<cxml::Document>("DCSubtitle");
-			doc->read_string (*reel_xml);
+			break;
 		}
 		parse (doc, tcr, start_time, edit_rate, i == 0);
 		auto end = reel_offset + duration(reels[i]);
@@ -1222,14 +1225,14 @@ verify_text_lines_and_characters (
 
 static
 void
-verify_text_details (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& notes)
+verify_text_details(dcp::Standard standard, vector<shared_ptr<Reel>> reels, vector<VerificationNote>& notes)
 {
 	if (reels.empty()) {
 		return;
 	}
 
 	if (reels[0]->main_subtitle()) {
-		verify_text_details (reels, reels[0]->main_subtitle()->edit_rate().numerator, notes,
+		verify_text_details(standard, reels, reels[0]->main_subtitle()->edit_rate().numerator, notes,
 			[](shared_ptr<Reel> reel) {
 				return static_cast<bool>(reel->main_subtitle());
 			},
@@ -1243,7 +1246,7 @@ verify_text_details (vector<shared_ptr<Reel>> reels, vector<VerificationNote>& n
 	}
 
 	for (auto i = 0U; i < reels[0]->closed_captions().size(); ++i) {
-		verify_text_details (reels, reels[0]->closed_captions()[i]->edit_rate().numerator, notes,
+		verify_text_details(standard, reels, reels[0]->closed_captions()[i]->edit_rate().numerator, notes,
 			[i](shared_ptr<Reel> reel) {
 				return i < reel->closed_captions().size();
 			},
@@ -1606,7 +1609,7 @@ verify_cpl(
 			);
 	}
 
-	verify_text_details(cpl->reels(), notes);
+	verify_text_details(dcp->standard().get_value_or(dcp::Standard::SMPTE), cpl->reels(), notes);
 
 	if (dcp->standard() == Standard::SMPTE) {
 		if (auto msc = cpl->main_sound_configuration()) {
