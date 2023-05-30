@@ -1003,7 +1003,7 @@ verify_text_details (
 	}
 
 	if (missing_load_font_id) {
-		notes.push_back(dcp::VerificationNote(VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_LOAD_FONT).set_id(*missing_load_font_id));
+		notes.push_back(dcp::VerificationNote(VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT).set_id(*missing_load_font_id));
 	}
 }
 
@@ -2057,7 +2057,7 @@ dcp::note_to_string (VerificationNote note)
 			);
 	case VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT:
 		return String::compose("The XML in the subtitle asset %1 has more than one namespace declaration.", note.note().get());
-	case VerificationNote::Code::MISSING_LOAD_FONT:
+	case VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT:
 		return String::compose("A subtitle or closed caption refers to a font with ID %1 that does not have a corresponding <LoadFont> node", note.id().get());
 	}
 

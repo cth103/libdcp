@@ -3658,7 +3658,7 @@ BOOST_AUTO_TEST_CASE(verify_too_many_subtitle_namespaces)
 }
 
 
-BOOST_AUTO_TEST_CASE(verify_missing_load_font)
+BOOST_AUTO_TEST_CASE(verify_missing_load_font_for_font)
 {
 	path const dir("build/test/verify_missing_load_font");
 	prepare_directory (dir);
@@ -3674,7 +3674,7 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font)
 	check_verify_result (
 		{dir}, {
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
-			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_LOAD_FONT).set_id("theFontId")
+			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT).set_id("theFontId")
 		});
 
 }

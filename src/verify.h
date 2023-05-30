@@ -452,7 +452,7 @@ public:
 		 *  first introduced with a <LoadFont>.
 		 *  id contains the ID of the <Font> tag.
 		 */
-		MISSING_LOAD_FONT
+		MISSING_LOAD_FONT_FOR_FONT,
 	};
 
 	VerificationNote (Type type, Code code)
