@@ -453,6 +453,10 @@ public:
 		 *  id contains the ID of the <Font> tag.
 		 */
 		MISSING_LOAD_FONT_FOR_FONT,
+		/** A SMPTE subtitle asset has at least one <Text> element but no <LoadFont>
+		 *  id contains the ID of the subtitle asset.
+		 */
+		MISSING_LOAD_FONT
 	};
 
 	VerificationNote (Type type, Code code)

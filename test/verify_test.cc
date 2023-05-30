@@ -359,6 +359,15 @@ check_verify_result_after_replace (string suffix, boost::function<path (string)>
 }
 
 
+static
+void
+add_font(shared_ptr<dcp::SubtitleAsset> asset)
+{
+	dcp::ArrayData fake_font(1024);
+	asset->add_font("font", fake_font);
+}
+
+
 BOOST_AUTO_TEST_CASE (verify_no_error)
 {
 	stages.clear ();
@@ -1412,6 +1421,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_xml_size_in_bytes)
 	for (int i = 0; i < 2048; ++i) {
 		add_test_subtitle (asset, i * 24, i * 24 + 20);
 	}
+	add_font(asset);
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
 	auto reel_asset = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 49148, 0);
@@ -1424,7 +1434,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_xml_size_in_bytes)
 			{
 				dcp::VerificationNote::Type::BV21_ERROR,
 				dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES,
-				string("419292"),
+				string("419371"),
 				canonical(dir / "subs.mxf")
 			},
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
@@ -1539,6 +1549,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 		auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 		subs->set_language (dcp::LanguageTag("de-DE"));
 		subs->add (simple_subtitle());
+		add_font(subs);
 		subs->write (path / "subs1.mxf");
 		auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[0]->add(reel_subs);
@@ -1548,6 +1559,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 		auto subs = make_shared<dcp::SMPTESubtitleAsset>();
 		subs->set_language (dcp::LanguageTag("en-US"));
 		subs->add (simple_subtitle());
+		add_font(subs);
 		subs->write (path / "subs2.mxf");
 		auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[1]->add(reel_subs);
@@ -1577,6 +1589,7 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 		auto ccaps = make_shared<dcp::SMPTESubtitleAsset>();
 		ccaps->set_language (dcp::LanguageTag("de-DE"));
 		ccaps->add (simple_subtitle());
+		add_font(ccaps);
 		ccaps->write (path / "subs1.mxf");
 		auto reel_ccaps = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[0]->add(reel_ccaps);
@@ -1586,6 +1599,7 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 		auto ccaps = make_shared<dcp::SMPTESubtitleAsset>();
 		ccaps->set_language (dcp::LanguageTag("en-US"));
 		ccaps->add (simple_subtitle());
+		add_font(ccaps);
 		ccaps->write (path / "subs2.mxf");
 		auto reel_ccaps = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[1]->add(reel_ccaps);
@@ -1730,6 +1744,7 @@ dcp_with_text (path dir, vector<TestText> subs)
 		add_test_subtitle (asset, i.in, i.out, i.v_position, i.v_align, i.text);
 	}
 	asset->set_language (dcp::LanguageTag("de-DE"));
+	add_font(asset);
 	asset->write (dir / "subs.mxf");
 
 	auto reel_asset = make_shared<T>(asset, dcp::Fraction(24, 1), asset->intrinsic_duration(), 0);
@@ -1808,6 +1823,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 	/* Just late enough */
 	add_test_subtitle (asset1, 4 * 24, 5 * 24);
 	asset1->set_language (dcp::LanguageTag("de-DE"));
+	add_font(asset1);
 	asset1->write (dir / "subs1.mxf");
 	auto reel_asset1 = make_shared<dcp::ReelSMPTESubtitleAsset>(asset1, dcp::Fraction(24, 1), 5 * 24, 0);
 	auto reel1 = make_shared<dcp::Reel>();
@@ -1818,6 +1834,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 
 	auto asset2 = make_shared<dcp::SMPTESubtitleAsset>();
 	asset2->set_start_time (dcp::Time());
+	add_font(asset2);
 	/* This would be too early on first reel but should be OK on the second */
 	add_test_subtitle (asset2, 3, 4 * 24);
 	asset2->set_language (dcp::LanguageTag("de-DE"));
@@ -1900,6 +1917,7 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_overlapping_reel_boundary)
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>();
 	asset->set_start_time (dcp::Time());
 	add_test_subtitle (asset, 0, 4 * 24);
+	add_font(asset);
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
 
@@ -2347,6 +2365,7 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());
+	add_font(subs);
 	subs->write (dir / "subs.mxf");
 	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), reel_length, 0);
 
@@ -2430,6 +2449,7 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());
+	add_font(subs);
 	subs->write (dir / "subs.mxf");
 
 	auto reel1 = make_shared<dcp::Reel>(
@@ -2511,6 +2531,7 @@ verify_text_entry_point_check (path dir, dcp::VerificationNote::Code code, boost
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());
+	add_font(subs);
 	subs->write (dir / "subs.mxf");
 	auto reel_text = make_shared<T>(subs, dcp::Fraction(24, 1), reel_length, 0);
 	adjust (reel_text);
@@ -3158,6 +3179,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_resource_id)
 		"<EditRate>25 1</EditRate>"
 		"<TimeCodeRate>25</TimeCodeRate>"
 		"<StartTime>00:00:00:00</StartTime>"
+		"<LoadFont ID=\"arial\">urn:uuid:e4f0ff0a-9eba-49e0-92ee-d89a88a575f6</LoadFont>"
 		"<SubtitleList>"
 		"<Font ID=\"arial\" Color=\"FFFEFEFE\" Weight=\"normal\" Size=\"42\" Effect=\"border\" EffectColor=\"FF181818\" AspectAdjust=\"1.00\">"
 		"<Subtitle SpotNumber=\"1\" TimeIn=\"00:00:03:00\" TimeOut=\"00:00:04:10\" FadeUpTime=\"00:00:00:00\" FadeDownTime=\"00:00:00:00\">"
@@ -3222,6 +3244,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_timed_text_id)
 		"<EditRate>25 1</EditRate>"
 		"<TimeCodeRate>25</TimeCodeRate>"
 		"<StartTime>00:00:00:00</StartTime>"
+		"<LoadFont ID=\"font\">urn:uuid:0ce6e0ba-58b9-4344-8929-4d9c959c2d55</LoadFont>"
 		"<SubtitleList>"
 		"<Font ID=\"arial\" Color=\"FFFEFEFE\" Weight=\"normal\" Size=\"42\" Effect=\"border\" EffectColor=\"FF181818\" AspectAdjust=\"1.00\">"
 		"<Subtitle SpotNumber=\"1\" TimeIn=\"00:00:03:00\" TimeOut=\"00:00:04:10\" FadeUpTime=\"00:00:00:00\" FadeDownTime=\"00:00:00:00\">"
@@ -3677,5 +3700,52 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font_for_font)
 			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT).set_id("theFontId")
 		});
 
+}
+
+
+BOOST_AUTO_TEST_CASE(verify_missing_load_font)
+{
+	boost::filesystem::path const dir = dcp::String::compose("build/test/%1", boost::unit_test::framework::current_test_case().full_name());
+	prepare_directory(dir);
+	auto dcp = make_simple (dir, 1, 202);
+
+	string const xml =
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		"<SubtitleReel xmlns=\"http://www.smpte-ra.org/schemas/428-7/2010/DCST\">"
+		"<Id>urn:uuid:e6a8ae03-ebbf-41ed-9def-913a87d1493a</Id>"
+		"<ContentTitleText>Content</ContentTitleText>"
+		"<AnnotationText>Annotation</AnnotationText>"
+		"<IssueDate>2018-10-02T12:25:14+02:00</IssueDate>"
+		"<ReelNumber>1</ReelNumber>"
+		"<EditRate>24 1</EditRate>"
+		"<TimeCodeRate>24</TimeCodeRate>"
+		"<StartTime>00:00:00:00</StartTime>"
+		"<Language>de-DE</Language>"
+		"<SubtitleList>"
+		"<Font ID=\"arial\" Color=\"FFFEFEFE\" Weight=\"normal\" Size=\"42\" Effect=\"border\" EffectColor=\"FF181818\" AspectAdjust=\"1.00\">"
+		"<Subtitle SpotNumber=\"1\" TimeIn=\"00:00:06:00\" TimeOut=\"00:00:08:10\" FadeUpTime=\"00:00:00:00\" FadeDownTime=\"00:00:00:00\">"
+		"<Text Hposition=\"0.0\" Halign=\"center\" Valign=\"bottom\" Vposition=\"13.5\" Direction=\"ltr\">Hello world</Text>"
+		"</Subtitle>"
+		"</Font>"
+		"</SubtitleList>"
+		"</SubtitleReel>";
+
+	dcp::File xml_file(dir / "subs.xml", "w");
+	BOOST_REQUIRE(xml_file);
+	xml_file.write(xml.c_str(), xml.size(), 1);
+	xml_file.close();
+	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
+	subs->write(dir / "subs.mxf");
+
+	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 202, 0);
+	dcp->cpls()[0]->reels()[0]->add(reel_subs);
+	dcp->set_annotation_text("A Test DCP");
+	dcp->write_xml();
+
+	check_verify_result (
+		{ dir },
+		{
+			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_LOAD_FONT).set_id(reel_subs->id())
+		});
 }
 

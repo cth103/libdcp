@@ -7,6 +7,7 @@
   <EditRate>24 1</EditRate>
   <TimeCodeRate>24</TimeCodeRate>
   <StartTime>00:00:00:00</StartTime>
+  <LoadFont ID="font">urn:uuid:e4f0ff0a-9eba-49e0-92ee-d89a88a575f6</LoadFont>
   <SubtitleList>
     <Font AspectAdjust="1.0" Color="FF000000" Effect="none" EffectColor="FF000000" Italic="no" Script="normal" Size="42" Underline="no" Weight="normal">
       <Subtitle FadeDownTime="00:00:00:00" FadeUpTime="00:00:00:00" SpotNumber="1" TimeIn="00:00:04:00" TimeOut="00:00:12:12">

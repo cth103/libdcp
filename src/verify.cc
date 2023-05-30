@@ -859,7 +859,8 @@ verify_text_details (
 	vector<VerificationNote>& notes,
 	std::function<bool (shared_ptr<Reel>)> check,
 	std::function<optional<string> (shared_ptr<Reel>)> xml,
-	std::function<int64_t (shared_ptr<Reel>)> duration
+	std::function<int64_t (shared_ptr<Reel>)> duration,
+	std::function<std::string (shared_ptr<Reel>)> id
 	)
 {
 	/* end of last subtitle (in editable units) */
@@ -871,16 +872,18 @@ verify_text_details (
 	auto empty_text = false;
 	/* current reel start time (in editable units) */
 	int64_t reel_offset = 0;
-	vector<string> font_ids;
 	optional<string> missing_load_font_id;
 
-	std::function<void (cxml::ConstNodePtr, optional<int>, optional<Time>, int, bool)> parse;
-	parse = [&parse, &last_out, &too_short, &too_close, &too_early, &empty_text, &reel_offset, &font_ids, &missing_load_font_id](
+	std::function<void (cxml::ConstNodePtr, optional<int>, optional<Time>, int, bool, bool&, vector<string>&)> parse;
+
+	parse = [&parse, &last_out, &too_short, &too_close, &too_early, &empty_text, &reel_offset, &missing_load_font_id](
 		cxml::ConstNodePtr node,
 		optional<int> tcr,
 		optional<Time> start_time,
 		int er,
-		bool first_reel
+		bool first_reel,
+		bool& has_text,
+		vector<string>& font_ids
 		) {
 		if (node->name() == "Subtitle") {
 			Time in (node->string_attribute("TimeIn"), tcr);
@@ -921,8 +924,11 @@ verify_text_details (
 			if (!node_has_content(node)) {
 				empty_text = true;
 			}
+			has_text = true;
 		} else if (node->name() == "LoadFont") {
 			if (auto const id = node->optional_string_attribute("Id")) {
+				font_ids.push_back(*id);
+			} else if (auto const id = node->optional_string_attribute("ID")) {
 				font_ids.push_back(*id);
 			}
 		} else if (node->name() == "Font") {
@@ -933,7 +939,7 @@ verify_text_details (
 			}
 		}
 		for (auto i: node->node_children()) {
-			parse(i, tcr, start_time, er, first_reel);
+			parse(i, tcr, start_time, er, first_reel, has_text, font_ids);
 		}
 	};
 
@@ -969,12 +975,18 @@ verify_text_details (
 			}
 			break;
 		}
-		parse (doc, tcr, start_time, edit_rate, i == 0);
+		bool has_text = false;
+		vector<string> font_ids;
+		parse(doc, tcr, start_time, edit_rate, i == 0, has_text, font_ids);
 		auto end = reel_offset + duration(reels[i]);
 		if (last_out && *last_out > end) {
 			reel_overlap = true;
 		}
 		reel_offset = end;
+
+		if (standard == dcp::Standard::SMPTE && has_text && font_ids.empty()) {
+			notes.push_back(dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_LOAD_FONT).set_id(id(reels[i])));
+		}
 	}
 
 	if (last_out && *last_out > reel_offset) {
@@ -1241,6 +1253,9 @@ verify_text_details(dcp::Standard standard, vector<shared_ptr<Reel>> reels, vect
 			},
 			[](shared_ptr<Reel> reel) {
 				return reel->main_subtitle()->actual_duration();
+			},
+			[](shared_ptr<Reel> reel) {
+				return reel->main_subtitle()->id();
 			}
 		);
 	}
@@ -1255,6 +1270,9 @@ verify_text_details(dcp::Standard standard, vector<shared_ptr<Reel>> reels, vect
 			},
 			[i](shared_ptr<Reel> reel) {
 				return reel->closed_captions()[i]->actual_duration();
+			},
+			[i](shared_ptr<Reel> reel) {
+				return reel->closed_captions()[i]->id();
 			}
 		);
 	}
@@ -2062,6 +2080,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The XML in the subtitle asset %1 has more than one namespace declaration.", note.note().get());
 	case VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT:
 		return String::compose("A subtitle or closed caption refers to a font with ID %1 that does not have a corresponding <LoadFont> node", note.id().get());
+	case VerificationNote::Code::MISSING_LOAD_FONT:
+		return String::compose("The SMPTE subtitle asset %1 has <Text> nodes but no <LoadFont> node", note.id().get());
 	}
 
 	return "";

@@ -450,6 +450,8 @@ make_simple_with_smpte_subs (boost::filesystem::path path)
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());
+	dcp::ArrayData fake_font(1024);
+	subs->add_font("font", fake_font);
 
 	subs->write (path / "subs.mxf");
 
@@ -485,6 +487,8 @@ make_simple_with_smpte_ccaps (boost::filesystem::path path)
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());
+	dcp::ArrayData fake_font(1024);
+	subs->add_font("font", fake_font);
 	subs->write (path / "ccap.mxf");
 
 	auto reel_caps = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 192, 0);
