@@ -109,6 +109,15 @@ public:
 	 */
 	void set_file (boost::filesystem::path file) const;
 
+	/** Set the file that holds this asset on disk.  Calling this function
+	 *  preserves the object's store of its hash, so if the object already
+	 *  has a hash it is up to the caller to ensure that the new file has
+	 *  the same hash.
+	 *
+	 *  @param file New file's path.
+	 */
+	void set_file_preserving_hash(boost::filesystem::path file) const;
+
 	/** Set the file that holds this asset on disk.  The new file must
 	 *  be exactly the same as the old one, as this function assumes
 	 *  that the object's hash does not change.

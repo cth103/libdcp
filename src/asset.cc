@@ -163,6 +163,13 @@ Asset::set_file (path file) const
 
 
 void
+Asset::set_file_preserving_hash(path file) const
+{
+	_file = absolute(file);
+}
+
+
+void
 Asset::rename_file(path file)
 {
 	_file = absolute(file);
