@@ -376,6 +376,7 @@ make_simple (boost::filesystem::path path, int reels, int frames, dcp::Standard 
 		cpl->add (reel);
 	}
 
+	d->set_annotation_text("A Test DCP");
 	d->add (cpl);
 	return d;
 }

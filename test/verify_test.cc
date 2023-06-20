@@ -1526,7 +1526,6 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 
 	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 106, 0);
 	dcp->cpls()[0]->reels()[0]->add(reel_subs);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	check_verify_result (
@@ -1565,7 +1564,6 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 		cpl->reels()[1]->add(reel_subs);
 	}
 
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	check_verify_result (
@@ -1605,7 +1603,6 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 		cpl->reels()[1]->add(reel_ccaps);
 	}
 
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	check_verify_result (
@@ -1653,7 +1650,6 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 
 	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 106, 0);
 	dcp->cpls()[0]->reels()[0]->add(reel_subs);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	check_verify_result (
@@ -1702,7 +1698,6 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 
 	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 106, 0);
 	dcp->cpls().front()->reels().front()->add(reel_subs);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	check_verify_result (
@@ -2272,7 +2267,6 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_annotation_text)
 {
 	path const dir("build/test/verify_missing_cpl_annotation_text");
 	auto dcp = make_simple (dir);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
@@ -2298,7 +2292,6 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_cpl_annotation_text)
 {
 	path const dir("build/test/verify_mismatched_cpl_annotation_text");
 	auto dcp = make_simple (dir);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
@@ -2602,7 +2595,6 @@ BOOST_AUTO_TEST_CASE (verify_missing_hash)
 
 	path const dir("build/test/verify_missing_hash");
 	auto dcp = make_simple (dir);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
@@ -2641,7 +2633,6 @@ verify_markers_test (
 		markers_asset->set (i.first, i.second);
 	}
 	dcp->cpls()[0]->reels()[0]->add(markers_asset);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	check_verify_result ({dir}, test_notes);
@@ -2738,7 +2729,6 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_metadata_version_number)
 	auto dcp = make_simple (dir);
 	auto cpl = dcp->cpls()[0];
 	cpl->unset_version_number();
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->id(), cpl->file().get() }});
@@ -2749,7 +2739,6 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata1)
 {
 	path dir = "build/test/verify_missing_extension_metadata1";
 	auto dcp = make_simple (dir);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
@@ -2773,7 +2762,6 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata2)
 {
 	path dir = "build/test/verify_missing_extension_metadata2";
 	auto dcp = make_simple (dir);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	auto cpl = dcp->cpls()[0];
@@ -2796,7 +2784,6 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 {
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata3";
 	auto dcp = make_simple (dir);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	auto const cpl = dcp->cpls()[0];
@@ -2821,7 +2808,6 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata1)
 {
 	path dir = "build/test/verify_invalid_extension_metadata1";
 	auto dcp = make_simple (dir);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	auto cpl = dcp->cpls()[0];
@@ -2844,7 +2830,6 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 {
 	path dir = "build/test/verify_invalid_extension_metadata2";
 	auto dcp = make_simple (dir);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	auto cpl = dcp->cpls()[0];
@@ -2867,7 +2852,6 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 {
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata6";
 	auto dcp = make_simple (dir);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	auto const cpl = dcp->cpls()[0];
@@ -2892,7 +2876,6 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 {
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata7";
 	auto dcp = make_simple (dir);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	auto const cpl = dcp->cpls()[0];
@@ -2915,7 +2898,6 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 {
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata8";
 	auto dcp = make_simple (dir);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	auto const cpl = dcp->cpls()[0];
@@ -2940,7 +2922,6 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 {
 	path dir = "build/test/verify_invalid_xml_cpl_extension_metadata9";
 	auto dcp = make_simple (dir);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	auto const cpl = dcp->cpls()[0];
@@ -3298,7 +3279,6 @@ BOOST_AUTO_TEST_CASE (verify_unexpected_things_in_main_markers)
 	path dir = "build/test/verify_unexpected_things_in_main_markers";
 	prepare_directory (dir);
 	auto dcp = make_simple (dir, 1, 24);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	{
@@ -3326,7 +3306,6 @@ BOOST_AUTO_TEST_CASE(verify_invalid_content_kind)
 	path dir = "build/test/verify_invalid_content_kind";
 	prepare_directory (dir);
 	auto dcp = make_simple (dir, 1, 24);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	{
@@ -3351,7 +3330,6 @@ BOOST_AUTO_TEST_CASE(verify_valid_content_kind)
 	path dir = "build/test/verify_valid_content_kind";
 	prepare_directory (dir);
 	auto dcp = make_simple (dir, 1, 24);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	{
@@ -3393,7 +3371,6 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_1)
 		{ dir },
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, pkl.id(), canonical(find_pkl(dir)), },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 1997 is not a multiple of 2", canonical(find_cpl(dir)) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 4080 is bigger than the asset height 1080", canonical(find_cpl(dir)) },
 		});
@@ -3423,7 +3400,6 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_2)
 		{ dir },
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, pkl.id(), canonical(find_pkl(dir)), },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is not a multiple of 2", canonical(find_cpl(dir)) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 9900 is bigger than the asset width 1998", canonical(find_cpl(dir)) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is bigger than the asset height 1080", canonical(find_cpl(dir)) },
@@ -3475,7 +3451,6 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_assetmap_asset_ids)
 	check_verify_result(
 		{ dir },
 		{
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, pkl.id(), canonical(find_pkl(dir)), },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map.id(), canonical(find_asset_map(dir)) },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EXTERNAL_ASSET, string("5407b210-4441-4e97-8b16-8bdc7c12da54") },
 		});
@@ -3739,7 +3714,6 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font)
 
 	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 202, 0);
 	dcp->cpls()[0]->reels()[0]->add(reel_subs);
-	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
 	check_verify_result (
