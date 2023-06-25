@@ -175,7 +175,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 
 	auto ids_and_paths = _asset_map->asset_ids_and_paths();
 	for (auto i: ids_and_paths) {
-		auto path = i.second;
+		auto const path = i.second;
 
 		if (path == _directory) {
 			/* I can't see how this is valid, but it's
