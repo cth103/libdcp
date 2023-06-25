@@ -26,6 +26,7 @@
 #include "reel_asset.h"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
+#include <boost/test/unit_test.hpp>
 
 namespace xmlpp {
 	class Element;
@@ -85,3 +86,48 @@ public:
 	RNGFixer ();
 	~RNGFixer ();
 };
+
+
+/** Class that can alter a file by searching and replacing strings within it.
+ *  On destruction modifies the file whose name was given to the constructor.
+ */
+class Editor
+{
+public:
+	Editor(boost::filesystem::path path);
+	~Editor();
+
+	class ChangeChecker
+	{
+	public:
+		ChangeChecker(Editor* editor)
+			: _editor(editor)
+		{
+			_old_content = _editor->_content;
+		}
+
+		~ChangeChecker()
+		{
+			BOOST_REQUIRE(_old_content != _editor->_content);
+		}
+	private:
+		Editor* _editor;
+		std::string _old_content;
+	};
+
+	void replace(std::string a, std::string b);
+	void delete_first_line_containing(std::string s);
+	void delete_lines(std::string from, std::string to);
+	void insert(std::string after, std::string line);
+	void delete_lines_after(std::string after, int lines_to_delete);
+
+private:
+	friend class ChangeChecker;
+
+	std::vector<std::string> as_lines() const;
+
+	boost::filesystem::path _path;
+	std::string _content;
+};
+
+

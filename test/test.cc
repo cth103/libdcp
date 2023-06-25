@@ -68,6 +68,7 @@ LIBDCP_ENABLE_WARNINGS
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
+#include <boost/algorithm/string.hpp>
 #include <boost/test/unit_test.hpp>
 #include <cstdio>
 #include <iostream>
@@ -543,6 +544,116 @@ find_file (boost::filesystem::path dir, string filename_part)
 	}
 	BOOST_REQUIRE (found);
 	return *found;
+}
+
+
+Editor::Editor(boost::filesystem::path path)
+	: _path(path)
+{
+	_content = dcp::file_to_string (_path);
+}
+
+
+Editor::~Editor()
+{
+	auto f = fopen(_path.string().c_str(), "w");
+	BOOST_REQUIRE (f);
+	fwrite (_content.c_str(), _content.length(), 1, f);
+	fclose (f);
+}
+
+
+void
+Editor::replace(string a, string b)
+{
+	ChangeChecker cc(this);
+	boost::algorithm::replace_all (_content, a, b);
+}
+
+
+void
+Editor::delete_first_line_containing(string s)
+{
+	ChangeChecker cc(this);
+	auto lines = as_lines();
+	_content = "";
+	bool done = false;
+	for (auto i: lines) {
+		if (i.find(s) == string::npos || done) {
+			_content += i + "\n";
+		} else {
+			done = true;
+		}
+	}
+}
+
+void
+Editor::delete_lines(string from, string to)
+{
+	ChangeChecker cc(this);
+	auto lines = as_lines();
+	bool deleting = false;
+	_content = "";
+	for (auto i: lines) {
+		if (i.find(from) != string::npos) {
+			deleting = true;
+		}
+		if (!deleting) {
+			_content += i + "\n";
+		}
+		if (deleting && i.find(to) != string::npos) {
+			deleting = false;
+		}
+	}
+}
+
+
+void
+Editor::insert(string after, string line)
+{
+	ChangeChecker cc(this);
+	auto lines = as_lines();
+	_content = "";
+	bool replaced = false;
+	for (auto i: lines) {
+		_content += i + "\n";
+		if (!replaced && i.find(after) != string::npos) {
+			_content += line + "\n";
+			replaced = true;
+		}
+	}
+}
+
+
+void
+Editor::delete_lines_after(string after, int lines_to_delete)
+{
+	ChangeChecker cc(this);
+	auto lines = as_lines();
+	_content = "";
+	auto iter = std::find_if(lines.begin(), lines.end(), [after](string const& line) {
+		return line.find(after) != string::npos;
+	});
+	int to_delete = 0;
+	for (auto i = lines.begin(); i != lines.end(); ++i) {
+		if (i == iter) {
+			to_delete = lines_to_delete;
+			_content += *i + "\n";
+		} else if (to_delete == 0) {
+			_content += *i + "\n";
+		} else {
+			--to_delete;
+		}
+	}
+}
+
+
+vector<string>
+Editor::as_lines() const
+{
+	vector<string> lines;
+	boost::algorithm::split(lines, _content, boost::is_any_of("\r\n"), boost::token_compress_on);
+	return lines;
 }
 
 
