@@ -174,8 +174,9 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 	vector<shared_ptr<Asset>> other_assets;
 
 	auto ids_and_paths = _asset_map->asset_ids_and_paths();
-	for (auto i: ids_and_paths) {
-		auto const path = i.second;
+	for (auto id_and_path: ids_and_paths) {
+		auto const id = id_and_path.first;
+		auto const path = id_and_path.second;
 
 		if (path == _directory) {
 			/* I can't see how this is valid, but it's
@@ -198,7 +199,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 		/* Find the <Type> for this asset from the PKL that contains the asset */
 		optional<string> pkl_type;
 		for (auto j: _pkls) {
-			pkl_type = j->type(i.first);
+			pkl_type = j->type(id);
 			if (pkl_type) {
 				break;
 			}
@@ -257,7 +258,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 				notes->push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD, path});
 			}
 		} else if (*pkl_type == remove_parameters(FontAsset::static_pkl_type(standard))) {
-			other_assets.push_back (make_shared<FontAsset>(i.first, path));
+			other_assets.push_back(make_shared<FontAsset>(id, path));
 		} else if (*pkl_type == "image/png") {
 			/* It's an Interop PNG subtitle; let it go */
 		} else {
