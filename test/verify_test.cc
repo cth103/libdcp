@@ -3723,3 +3723,27 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font)
 		});
 }
 
+
+BOOST_AUTO_TEST_CASE(verify_spots_wrong_asset)
+{
+	boost::filesystem::path const dir = "build/test/verify_spots_wrong_asset";
+	boost::filesystem::remove_all(dir);
+
+	auto dcp1 = make_simple(dir / "1");
+	dcp1->write_xml();
+
+	auto const asset_1 = dcp::MonoPictureAsset(dir / "1" / "video.mxf").id();
+
+	auto dcp2 = make_simple(dir / "2");
+	dcp2->write_xml();
+	auto const asset_2 = dcp::MonoPictureAsset(dir / "2" / "video.mxf").id();
+
+	boost::filesystem::remove(dir / "1" / "video.mxf");
+	boost::filesystem::copy_file(dir / "2" / "video.mxf", dir / "1" / "video.mxf");
+
+	check_verify_result(
+		{dir / "1"},
+		{
+			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_ASSET_MAP_ID).set_id(asset_1).set_other_id(asset_2)
+		});
+}

@@ -456,7 +456,12 @@ public:
 		/** A SMPTE subtitle asset has at least one <Text> element but no <LoadFont>
 		 *  id contains the ID of the subtitle asset.
 		 */
-		MISSING_LOAD_FONT
+		MISSING_LOAD_FONT,
+		/** An ID in an asset map does not match the ID obtained from reading the actual file.
+		 *  id contains the ID from the asset map.
+		 *  other_id contains the ID from the file.
+		 */
+		MISMATCHED_ASSET_MAP_ID,
 	};
 
 	VerificationNote (Type type, Code code)
@@ -512,6 +517,7 @@ private:
 		COMPONENT,
 		SIZE,
 		ID,
+		OTHER_ID,
 	};
 
 	template <class T>
@@ -571,6 +577,15 @@ public:
 
 	boost::optional<std::string> id() const {
 		return data<std::string>(Data::ID);
+	}
+
+	VerificationNote& set_other_id(std::string other_id) {
+		_data[Data::OTHER_ID] = other_id;
+		return *this;
+	}
+
+	boost::optional<std::string> other_id() const {
+		return data<std::string>(Data::OTHER_ID);
 	}
 
 private:

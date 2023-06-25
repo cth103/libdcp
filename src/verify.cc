@@ -1449,6 +1449,7 @@ verify_reel(
 				}
 			}
 		}
+
 	}
 
 	if (reel->main_sound() && reel->main_sound()->asset_ref().resolved()) {
@@ -2082,6 +2083,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("A subtitle or closed caption refers to a font with ID %1 that does not have a corresponding <LoadFont> node", note.id().get());
 	case VerificationNote::Code::MISSING_LOAD_FONT:
 		return String::compose("The SMPTE subtitle asset %1 has <Text> nodes but no <LoadFont> node", note.id().get());
+	case VerificationNote::Code::MISMATCHED_ASSET_MAP_ID:
+		return String::compose("The asset with ID %1 in the asset map actually has an id of %2", note.id().get(), note.other_id().get());
 	}
 
 	return "";

@@ -253,7 +253,11 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			) {
 
 			bool found_threed_marked_as_twod = false;
-			other_assets.push_back (asset_factory(path, ignore_incorrect_picture_mxf_type, &found_threed_marked_as_twod));
+			auto asset = asset_factory(path, ignore_incorrect_picture_mxf_type, &found_threed_marked_as_twod);
+			if (asset->id() != id) {
+				notes->push_back(VerificationNote(VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_ASSET_MAP_ID).set_id(id).set_other_id(asset->id()));
+			}
+			other_assets.push_back(asset);
 			if (found_threed_marked_as_twod && notes) {
 				notes->push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD, path});
 			}
