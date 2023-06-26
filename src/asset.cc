@@ -158,7 +158,7 @@ void
 Asset::set_file (path file) const
 {
 	_file = absolute (file);
-	_hash = boost::optional<string>();
+	_hash = optional<string>();
 }
 
 
