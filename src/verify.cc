@@ -386,6 +386,12 @@ enum class VerifyAssetResult {
 static VerifyAssetResult
 verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelFileAsset> reel_file_asset, function<void (float)> progress)
 {
+	/* When reading the DCP the hash will have been set to the one from the PKL/CPL.
+	 * We want to calculate the hash of the actual file contents here, so that we
+	 * can check it.  unset_hash() means that this calculation will happen on the
+	 * call to hash().
+	 */
+	reel_file_asset->asset_ref()->unset_hash();
 	auto const actual_hash = reel_file_asset->asset_ref()->hash(progress);
 
 	auto pkls = dcp->pkls();

@@ -270,6 +270,48 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 		}
 	}
 
+	/* Set hashes for assets where we have an idea of what the hash should be in either a CPL or PKL.
+	 * This means that when the hash is later read from these objects the result will be the one that
+	 * it should be, rather the one that it currently is.  This should prevent errors being concealed
+	 * when an asset is corrupted - the hash from the CPL/PKL will disagree with the actual hash of the
+	 * file, revealing the problem.
+	 */
+
+	auto hash_from_pkl = [this](string id) -> optional<string> {
+		for (auto pkl: _pkls) {
+			if (auto pkl_hash = pkl->hash(id)) {
+				return pkl_hash;
+			}
+		}
+
+		return {};
+	};
+
+	auto hash_from_cpl_or_pkl = [this, &hash_from_pkl](string id) -> optional<string> {
+		for (auto cpl: cpls()) {
+			for (auto reel_file_asset: cpl->reel_file_assets()) {
+				if (reel_file_asset->asset_ref().id() == id && reel_file_asset->hash()) {
+					return reel_file_asset->hash();
+				}
+			}
+		}
+
+		return hash_from_pkl(id);
+	};
+
+	for (auto asset: other_assets) {
+		if (auto hash = hash_from_cpl_or_pkl(asset->id())) {
+			asset->set_hash(*hash);
+		}
+	}
+
+	for (auto cpl: cpls()) {
+		if (auto hash = hash_from_pkl(cpl->id())) {
+			cpl->set_hash(*hash);
+		}
+	}
+
+	/* Resolve references */
 	resolve_refs (other_assets);
 
 	/* While we've got the ASSETMAP lets look and see if this DCP refers to things that are not in its ASSETMAP */

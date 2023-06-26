@@ -500,3 +500,46 @@ BOOST_AUTO_TEST_CASE (dcp_add_kdm_test)
 	BOOST_CHECK_EQUAL (reels[2]->_kdms[0].keys()[1].id(), kdm_2_uuid_2);
 }
 
+
+BOOST_AUTO_TEST_CASE(hashes_preserved_when_loading_corrupted_dcp)
+{
+	boost::filesystem::path const dir = "build/test/hashes_preserved_when_loading_corrupted_dcp";
+	boost::filesystem::remove_all(dir);
+
+	auto dcp = make_simple(dir / "1");
+	dcp->write_xml();
+
+	auto asset_1_id = dcp::MonoPictureAsset(dir / "1" / "video.mxf").id();
+	auto asset_1_hash = dcp::MonoPictureAsset(dir / "1" / "video.mxf").hash();
+
+	/* Replace the hash in the CPL (the one that corresponds to the actual file)
+	 * with an incorrect one new_hash.
+	 */
+	string new_hash;
+	{
+		Editor editor(find_file(dir / "1", "cpl_"));
+		auto const after = "<Duration>24</Duration>";
+		editor.delete_lines_after(after, 1);
+
+		if (asset_1_hash[0] == 'A') {
+			new_hash = 'B' + asset_1_hash.substr(1);
+		} else {
+			new_hash = 'A' + asset_1_hash.substr(1);
+		}
+
+		editor.insert(after, dcp::String::compose("      <Hash>%1</Hash>", new_hash));
+	}
+
+	dcp::DCP read_back(dir / "1");
+	read_back.read();
+
+	BOOST_REQUIRE_EQUAL(read_back.cpls().size(), 1U);
+	auto cpl = read_back.cpls()[0];
+	BOOST_REQUIRE_EQUAL(cpl->reels().size(), 1U);
+	auto reel = cpl->reels()[0];
+	BOOST_REQUIRE(reel->main_picture());
+	/* Now the asset should think it has the wrong hash written to the PKL file; it shouldn't have
+	 * checked the file again.
+	 */
+	BOOST_CHECK_EQUAL(reel->main_picture()->asset_ref()->hash(), new_hash);
+}
