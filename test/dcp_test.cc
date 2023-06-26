@@ -31,32 +31,35 @@
     files in the program, then also delete it here.
 */
 
+
+#include "atmos_asset.h"
+#include "compose.hpp"
+#include "cpl.h"
 #include "dcp.h"
 #include "metadata.h"
-#include "cpl.h"
 #include "mono_picture_asset.h"
-#include "stereo_picture_asset.h"
 #include "picture_asset_writer.h"
-#include "reel_picture_asset.h"
-#include "sound_asset_writer.h"
-#include "sound_asset.h"
-#include "atmos_asset.h"
 #include "reel.h"
-#include "test.h"
-#include "reel_mono_picture_asset.h"
-#include "reel_stereo_picture_asset.h"
-#include "reel_sound_asset.h"
 #include "reel_atmos_asset.h"
 #include "reel_markers_asset.h"
+#include "reel_mono_picture_asset.h"
+#include "reel_picture_asset.h"
+#include "reel_sound_asset.h"
+#include "reel_stereo_picture_asset.h"
+#include "sound_asset.h"
+#include "sound_asset_writer.h"
+#include "stereo_picture_asset.h"
+#include "test.h"
 #include <asdcp/KM_util.h>
 #include <sndfile.h>
 #include <boost/test/unit_test.hpp>
 
+
+using std::dynamic_pointer_cast;
+using std::make_shared;
+using std::shared_ptr;
 using std::string;
 using std::vector;
-using std::dynamic_pointer_cast;
-using std::shared_ptr;
-using std::make_shared;
 #if BOOST_VERSION >= 106100
 using namespace boost::placeholders;
 #endif
