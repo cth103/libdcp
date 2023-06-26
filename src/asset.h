@@ -135,6 +135,7 @@ public:
 	std::string hash (boost::function<void (float)> progress = {}) const;
 
 	void set_hash (std::string hash);
+	void unset_hash();
 
 protected:
 

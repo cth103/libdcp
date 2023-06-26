@@ -181,3 +181,11 @@ Asset::set_hash (string hash)
 {
 	_hash = hash;
 }
+
+
+void
+Asset::unset_hash()
+{
+	_hash = optional<string>();
+}
+
