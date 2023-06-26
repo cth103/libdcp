@@ -2234,8 +2234,8 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), reel_length, 0);
 
 	auto reel1 = make_shared<dcp::Reel>(
-		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", reel_length), 0),
-		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", reel_length), 0)
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "1", reel_length), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "1", dcp::MXFMetadata(), "en-US", reel_length), 0)
 		);
 
 	if (add_to_reel1) {
@@ -2249,8 +2249,8 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 	cpl->add (reel1);
 
 	auto reel2 = make_shared<dcp::Reel>(
-		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", reel_length), 0),
-		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", reel_length), 0)
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "2", reel_length), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "2", dcp::MXFMetadata(), "en-US", reel_length), 0)
 		);
 
 	if (add_to_reel2) {
@@ -2317,8 +2317,8 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 	subs->write (dir / "subs.mxf");
 
 	auto reel1 = make_shared<dcp::Reel>(
-		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", reel_length), 0),
-		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", reel_length), 0)
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "1", reel_length), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "1", dcp::MXFMetadata(), "en-US", reel_length), 0)
 		);
 
 	for (int i = 0; i < caps_in_reel1; ++i) {
@@ -2332,8 +2332,8 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 	cpl->add (reel1);
 
 	auto reel2 = make_shared<dcp::Reel>(
-		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "", reel_length), 0),
-		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "", dcp::MXFMetadata(), "en-US", reel_length), 0)
+		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "2", reel_length), 0),
+		make_shared<dcp::ReelSoundAsset>(simple_sound(dir, "2", dcp::MXFMetadata(), "en-US", reel_length), 0)
 		);
 
 	for (int i = 0; i < caps_in_reel2; ++i) {
