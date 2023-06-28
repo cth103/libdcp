@@ -254,6 +254,8 @@ struct EqualityOptions
 	bool reel_annotation_texts_can_differ = false;
 	/** true if <Hash>es in Reels can differ */
 	bool reel_hashes_can_differ = false;
+	/** true if asset hashes can differ */
+	bool asset_hashes_can_differ = false;
 	/** true if IssueDate nodes can differ */
 	bool issue_dates_can_differ = false;
 	bool load_font_nodes_can_differ = false;
