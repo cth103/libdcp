@@ -241,7 +241,7 @@ class EqualityOptions
 {
 public:
 	/** Construct an EqualityOptions where nothing at all can differ */
-	EqualityOptions () {}
+	EqualityOptions() = default;
 
 	/** The maximum allowable mean difference in pixel value between two images */
 	double max_mean_pixel_error = 0;
