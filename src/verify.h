@@ -50,7 +50,7 @@
 #include <vector>
 
 
-/* Something in windows.h defines this */
+/* windows.h defines this but we want to use it */
 #undef ERROR
 
 

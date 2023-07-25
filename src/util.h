@@ -55,6 +55,10 @@ LIBDCP_ENABLE_WARNINGS
 #include <stdint.h>
 
 
+/* windows.h defines this but we want to use it */
+#undef ERROR
+
+
 #define LIBDCP_UNUSED(x) (void)(x)
 
 

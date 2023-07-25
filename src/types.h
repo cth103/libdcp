@@ -51,7 +51,7 @@ LIBDCP_ENABLE_WARNINGS
 #include <string>
 
 
-/* MinGW seems to define this, but we want to use it */
+/* windows.h defines this but we want to use it */
 #undef ERROR
 
 
