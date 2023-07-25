@@ -69,7 +69,7 @@ public:
 	}
 
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
-	bool equals (std::shared_ptr<const ReelAtmosAsset>, EqualityOptions, NoteHandler) const;
+	bool equals(std::shared_ptr<const ReelAtmosAsset>, EqualityOptions const&, NoteHandler) const;
 
 private:
 	boost::optional<std::string> key_type () const override {

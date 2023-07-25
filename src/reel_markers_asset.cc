@@ -120,7 +120,7 @@ ReelMarkersAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 }
 
 bool
-ReelMarkersAsset::equals (shared_ptr<const ReelMarkersAsset> other, EqualityOptions opt, NoteHandler note) const
+ReelMarkersAsset::equals(shared_ptr<const ReelMarkersAsset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	if (!asset_equals(other, opt, note)) {
 		return false;

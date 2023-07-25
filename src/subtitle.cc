@@ -73,7 +73,7 @@ Subtitle::Subtitle (
 
 
 bool
-Subtitle::equals(shared_ptr<const Subtitle> other, EqualityOptions options, NoteHandler note) const
+Subtitle::equals(shared_ptr<const Subtitle> other, EqualityOptions const& options, NoteHandler note) const
 {
 	bool same = true;
 

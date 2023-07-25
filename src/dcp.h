@@ -124,7 +124,7 @@ public:
 	 *  @param note Functor to handle notes made by the equality operation.
 	 *  @return true if the DCPs are equal according to EqualityOptions, otherwise false.
 	 */
-	bool equals (DCP const & other, EqualityOptions options, NoteHandler note) const;
+	bool equals(DCP const & other, EqualityOptions const& options, NoteHandler note) const;
 
 	void add (std::shared_ptr<CPL> cpl);
 

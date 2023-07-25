@@ -74,7 +74,7 @@ ReelFileAsset::ReelFileAsset (shared_ptr<const cxml::Node> node)
 
 
 bool
-ReelFileAsset::file_asset_equals (shared_ptr<const ReelFileAsset> other, EqualityOptions opt, NoteHandler note) const
+ReelFileAsset::file_asset_equals(shared_ptr<const ReelFileAsset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	if (_hash != other->_hash) {
 		if (!opt.reel_hashes_can_differ) {

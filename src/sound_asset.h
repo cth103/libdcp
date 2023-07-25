@@ -99,7 +99,7 @@ public:
 
 	bool equals (
 		std::shared_ptr<const Asset> other,
-		EqualityOptions opt,
+		EqualityOptions const& opt,
 		NoteHandler note
 		) const override;
 

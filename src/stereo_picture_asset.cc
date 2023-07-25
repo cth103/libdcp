@@ -101,7 +101,7 @@ StereoPictureAsset::start_read () const
 
 
 bool
-StereoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
+StereoPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	ASDCP::JP2K::MXFSReader reader_A;
 	DCP_ASSERT (file());

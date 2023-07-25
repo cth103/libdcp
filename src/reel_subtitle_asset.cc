@@ -90,7 +90,7 @@ ReelSubtitleAsset::set_language (dcp::LanguageTag language)
 
 
 bool
-ReelSubtitleAsset::equals (shared_ptr<const ReelSubtitleAsset> other, EqualityOptions opt, NoteHandler note) const
+ReelSubtitleAsset::equals(shared_ptr<const ReelSubtitleAsset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	if (!asset_equals (other, opt, note)) {
 		return false;

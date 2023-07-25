@@ -132,7 +132,7 @@ public:
 		_annotation_text = boost::none;
 	}
 
-	bool asset_equals (std::shared_ptr<const ReelAsset>, EqualityOptions, NoteHandler) const;
+	bool asset_equals(std::shared_ptr<const ReelAsset>, EqualityOptions const&, NoteHandler) const;
 
 protected:
 

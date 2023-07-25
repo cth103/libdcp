@@ -143,7 +143,7 @@ Asset::hash (function<void (float)> progress) const
 
 
 bool
-Asset::equals(std::shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
+Asset::equals(std::shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	if (_hash != other->_hash) {
 		if (!opt.asset_hashes_can_differ) {

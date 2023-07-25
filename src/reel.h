@@ -133,7 +133,7 @@ public:
 	bool any_encrypted () const;
 	bool all_encrypted () const;
 
-	bool equals (std::shared_ptr<const Reel> other, EqualityOptions opt, NoteHandler notes) const;
+	bool equals(std::shared_ptr<const Reel> other, EqualityOptions const& opt, NoteHandler notes) const;
 
 	void add (DecryptedKDM const &);
 

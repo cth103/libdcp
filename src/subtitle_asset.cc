@@ -541,7 +541,7 @@ SubtitleAsset::latest_subtitle_out () const
 
 
 bool
-SubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, NoteHandler note) const
+SubtitleAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions const& options, NoteHandler note) const
 {
 	if (!Asset::equals (other_asset, options, note)) {
 		return false;

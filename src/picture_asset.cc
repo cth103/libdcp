@@ -137,7 +137,7 @@ PictureAsset::descriptor_equals (
 
 bool
 PictureAsset::frame_buffer_equals (
-	int frame, EqualityOptions opt, NoteHandler note,
+	int frame, EqualityOptions const& opt, NoteHandler note,
 	uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
 	) const
 {

@@ -125,7 +125,7 @@ public:
 		_fade_down_time = t;
 	}
 
-	virtual bool equals(std::shared_ptr<const dcp::Subtitle> other, EqualityOptions options, NoteHandler note) const;
+	virtual bool equals(std::shared_ptr<const dcp::Subtitle> other, EqualityOptions const& options, NoteHandler note) const;
 
 protected:
 

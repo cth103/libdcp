@@ -79,7 +79,7 @@ public:
 		_hash = h;
 	}
 
-	bool file_asset_equals (std::shared_ptr<const ReelFileAsset> other, EqualityOptions opt, NoteHandler note) const;
+	bool file_asset_equals(std::shared_ptr<const ReelFileAsset> other, EqualityOptions const& opt, NoteHandler note) const;
 
 	virtual boost::optional<std::string> key_type () const {
 		return boost::none;

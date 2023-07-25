@@ -52,7 +52,7 @@ public:
 	explicit ReelMarkersAsset (std::shared_ptr<const cxml::Node>);
 
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
-	bool equals (std::shared_ptr<const ReelMarkersAsset>, EqualityOptions, NoteHandler) const;
+	bool equals(std::shared_ptr<const ReelMarkersAsset>, EqualityOptions const&, NoteHandler) const;
 
 	void set (Marker, Time);
 	void unset (Marker);

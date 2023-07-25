@@ -70,7 +70,7 @@ public:
 		return asset_of_type<SubtitleAsset>();
 	}
 
-	bool equals (std::shared_ptr<const ReelClosedCaptionAsset>, EqualityOptions, NoteHandler) const;
+	bool equals(std::shared_ptr<const ReelClosedCaptionAsset>, EqualityOptions const&, NoteHandler) const;
 
 	void set_language (dcp::LanguageTag l) {
 		_language = l.to_string();

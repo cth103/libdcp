@@ -180,7 +180,7 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 
 
 bool
-SubtitleString::equals(shared_ptr<const Subtitle> other_sub, EqualityOptions options, NoteHandler note) const
+SubtitleString::equals(shared_ptr<const Subtitle> other_sub, EqualityOptions const& options, NoteHandler note) const
 {
 	if (!Subtitle::equals(other_sub, options, note)) {
 		return false;

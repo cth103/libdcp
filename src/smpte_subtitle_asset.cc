@@ -491,7 +491,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 }
 
 bool
-SMPTESubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, NoteHandler note) const
+SMPTESubtitleAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions const& options, NoteHandler note) const
 {
 	if (!SubtitleAsset::equals (other_asset, options, note)) {
 		return false;

@@ -68,7 +68,7 @@ public:
 	}
 
 	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
-	bool equals (std::shared_ptr<const ReelPictureAsset>, EqualityOptions, NoteHandler) const;
+	bool equals(std::shared_ptr<const ReelPictureAsset>, EqualityOptions const&, NoteHandler) const;
 
 	/** @return picture frame rate */
 	Fraction frame_rate () const {

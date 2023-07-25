@@ -82,7 +82,7 @@ ReelSoundAsset::key_type () const
 
 
 bool
-ReelSoundAsset::equals (shared_ptr<const ReelSoundAsset> other, EqualityOptions opt, NoteHandler note) const
+ReelSoundAsset::equals(shared_ptr<const ReelSoundAsset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	if (!asset_equals (other, opt, note)) {
 		return false;

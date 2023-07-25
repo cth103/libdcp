@@ -140,7 +140,7 @@ InteropSubtitleAsset::add_font (string load_id, dcp::ArrayData data)
 
 
 bool
-InteropSubtitleAsset::equals (shared_ptr<const Asset> other_asset, EqualityOptions options, NoteHandler note) const
+InteropSubtitleAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions const& options, NoteHandler note) const
 {
 	if (!SubtitleAsset::equals (other_asset, options, note)) {
 		return false;

@@ -130,7 +130,7 @@ SoundAsset::SoundAsset (Fraction edit_rate, int sampling_rate, int channels, Lan
 
 
 bool
-SoundAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
+SoundAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	ASDCP::PCM::MXFReader reader_A;
 	DCP_ASSERT (file());

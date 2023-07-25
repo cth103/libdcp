@@ -75,7 +75,7 @@ ReelClosedCaptionAsset::ReelClosedCaptionAsset (std::shared_ptr<const cxml::Node
 
 
 bool
-ReelClosedCaptionAsset::equals (shared_ptr<const ReelClosedCaptionAsset> other, EqualityOptions opt, NoteHandler note) const
+ReelClosedCaptionAsset::equals(shared_ptr<const ReelClosedCaptionAsset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	if (!asset_equals (other, opt, note)) {
 		return false;

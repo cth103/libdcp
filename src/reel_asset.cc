@@ -135,7 +135,7 @@ optional_to_string (optional<T> o)
 
 
 bool
-ReelAsset::asset_equals (shared_ptr<const ReelAsset> other, EqualityOptions opt, NoteHandler note) const
+ReelAsset::asset_equals(shared_ptr<const ReelAsset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	auto const node = cpl_node_name(Standard::SMPTE);
 

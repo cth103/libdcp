@@ -132,7 +132,7 @@ dcp::operator!= (SubtitleImage const & a, SubtitleImage const & b)
 
 
 bool
-SubtitleImage::equals(shared_ptr<const Subtitle> other_sub, EqualityOptions options, NoteHandler note) const
+SubtitleImage::equals(shared_ptr<const Subtitle> other_sub, EqualityOptions const& options, NoteHandler note) const
 {
 	if (!Subtitle::equals(other_sub, options, note)) {
 		return false;
@@ -158,7 +158,6 @@ SubtitleImage::equals(shared_ptr<const Subtitle> other_sub, EqualityOptions opti
 			} else {
 				other->png_image().write(base + "B.png");
 			}
-			options.export_differing_subtitles = false;
 		}
 		return false;
 	}

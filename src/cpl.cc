@@ -608,7 +608,7 @@ CPL::reel_file_assets () const
 
 
 bool
-CPL::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
+CPL::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	auto other_cpl = dynamic_pointer_cast<const CPL>(other);
 	if (!other_cpl) {

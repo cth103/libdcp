@@ -337,7 +337,7 @@ DCP::resolve_refs (vector<shared_ptr<Asset>> assets)
 
 
 bool
-DCP::equals (DCP const & other, EqualityOptions opt, NoteHandler note) const
+DCP::equals(DCP const & other, EqualityOptions const& opt, NoteHandler note) const
 {
 	auto a = cpls ();
 	auto b = other.cpls ();

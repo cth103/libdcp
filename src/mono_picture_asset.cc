@@ -101,7 +101,7 @@ storing_note_handler (list<pair<NoteType, string>>& notes, NoteType t, string s)
 
 
 bool
-MonoPictureAsset::equals (shared_ptr<const Asset> other, EqualityOptions opt, NoteHandler note) const
+MonoPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	if (!dynamic_pointer_cast<const MonoPictureAsset>(other)) {
 		return false;

@@ -65,7 +65,7 @@ public:
 		return asset_of_type<SoundAsset>();
 	}
 
-	bool equals (std::shared_ptr<const ReelSoundAsset>, EqualityOptions, NoteHandler) const;
+	bool equals(std::shared_ptr<const ReelSoundAsset>, EqualityOptions const&, NoteHandler) const;
 
 private:
 	boost::optional<std::string> key_type () const override;

@@ -75,7 +75,7 @@ public:
 
 	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
 
-	bool equals (std::shared_ptr<const ReelSubtitleAsset>, EqualityOptions, NoteHandler) const;
+	bool equals(std::shared_ptr<const ReelSubtitleAsset>, EqualityOptions const&, NoteHandler) const;
 
 	void set_language (dcp::LanguageTag language);
 

@@ -92,7 +92,7 @@ ReelAtmosAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 
 
 bool
-ReelAtmosAsset::equals (shared_ptr<const ReelAtmosAsset> other, EqualityOptions opt, NoteHandler note) const
+ReelAtmosAsset::equals(shared_ptr<const ReelAtmosAsset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	if (!asset_equals (other, opt, note)) {
 		return false;
