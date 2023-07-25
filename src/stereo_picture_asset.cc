@@ -37,12 +37,12 @@
  */
 
 
-#include "stereo_picture_asset.h"
-#include "stereo_picture_frame.h"
-#include "exceptions.h"
-#include "stereo_picture_asset_writer.h"
-#include "stereo_picture_asset_reader.h"
 #include "dcp_assert.h"
+#include "exceptions.h"
+#include "stereo_picture_asset.h"
+#include "stereo_picture_asset_reader.h"
+#include "stereo_picture_asset_writer.h"
+#include "stereo_picture_frame.h"
 #include <asdcp/AS_DCP.h>
 
 

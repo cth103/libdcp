@@ -37,13 +37,13 @@
  */
 
 
-#include "mono_picture_asset.h"
-#include "mono_picture_asset_writer.h"
-#include "mono_picture_asset_reader.h"
-#include "exceptions.h"
-#include "dcp_assert.h"
-#include "mono_picture_frame.h"
 #include "compose.hpp"
+#include "dcp_assert.h"
+#include "exceptions.h"
+#include "mono_picture_asset.h"
+#include "mono_picture_asset_reader.h"
+#include "mono_picture_asset_writer.h"
+#include "mono_picture_frame.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
 

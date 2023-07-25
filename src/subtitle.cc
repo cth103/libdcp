@@ -38,8 +38,8 @@
 
 
 #include "compose.hpp"
-#include "subtitle.h"
 #include "dcp_time.h"
+#include "subtitle.h"
 
 
 using std::shared_ptr;

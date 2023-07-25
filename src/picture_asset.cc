@@ -37,14 +37,14 @@
  */
 
 
-#include "picture_asset.h"
-#include "util.h"
-#include "exceptions.h"
-#include "openjpeg_image.h"
-#include "picture_asset_writer.h"
-#include "dcp_assert.h"
 #include "compose.hpp"
+#include "dcp_assert.h"
+#include "exceptions.h"
 #include "j2k_transcode.h"
+#include "openjpeg_image.h"
+#include "picture_asset.h"
+#include "picture_asset_writer.h"
+#include "util.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
 #include <libxml++/nodes/element.h>
