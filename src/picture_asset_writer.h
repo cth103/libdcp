@@ -43,7 +43,6 @@
 
 #include "asset_writer.h"
 #include "metadata.h"
-#include "types.h"
 #include <boost/utility.hpp>
 #include <memory>
 #include <stdint.h>

@@ -34,7 +34,6 @@
 
 #include "asset_list.h"
 #include "object.h"
-#include "types.h"
 #include <libcxml/cxml.h>
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>

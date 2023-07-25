@@ -41,7 +41,6 @@
 #define LIBDCP_STEREO_PICTURE_FRAME_H
 
 
-#include "types.h"
 #include "asset_reader.h"
 #include <memory>
 #include <boost/filesystem.hpp>

@@ -44,7 +44,6 @@
 #include "decrypted_kdm.h"
 #include "key.h"
 #include "ref.h"
-#include "types.h"
 #include <boost/function.hpp>
 #include <memory>
 

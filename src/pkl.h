@@ -43,7 +43,6 @@
 
 #include "asset_list.h"
 #include "object.h"
-#include "types.h"
 #include "util.h"
 #include "certificate_chain.h"
 #include <libcxml/cxml.h>

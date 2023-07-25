@@ -42,7 +42,6 @@
 
 
 #include "array_data.h"
-#include "types.h"
 #include "subtitle.h"
 #include "dcp_time.h"
 #include <boost/optional.hpp>

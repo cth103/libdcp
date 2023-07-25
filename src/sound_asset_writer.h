@@ -40,7 +40,6 @@
 #include "asset_writer.h"
 #include "dcp_assert.h"
 #include "fsk.h"
-#include "types.h"
 #include "sound_asset.h"
 #include "sound_frame.h"
 #include <memory>

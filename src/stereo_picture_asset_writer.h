@@ -38,7 +38,6 @@
 
 
 #include "picture_asset_writer.h"
-#include "types.h"
 #include <memory>
 #include <stdint.h>
 #include <string>

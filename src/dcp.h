@@ -46,7 +46,6 @@
 #include "compose.hpp"
 #include "metadata.h"
 #include "name_format.h"
-#include "types.h"
 #include "util.h"
 #include "verify.h"
 #include "version.h"

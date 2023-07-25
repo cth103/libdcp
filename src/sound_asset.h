@@ -42,7 +42,6 @@
 
 
 #include "mxf.h"
-#include "types.h"
 #include "language_tag.h"
 #include "metadata.h"
 #include "sound_frame.h"

@@ -41,7 +41,6 @@
 #define LIBDCP_ASSET_WRITER_H
 
 
-#include "types.h"
 #include "crypto_context.h"
 #include <boost/filesystem.hpp>
 

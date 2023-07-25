@@ -42,7 +42,6 @@
 
 
 #include "asset_writer.h"
-#include "types.h"
 #include "atmos_frame.h"
 #include <memory>
 #include <boost/filesystem.hpp>

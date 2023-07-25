@@ -42,7 +42,6 @@
 
 
 #include "asset_reader.h"
-#include "types.h"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <memory>

@@ -38,7 +38,6 @@
 
 
 #include "piecewise_lut.h"
-#include "types.h"
 #include <memory>
 #include <boost/optional.hpp>
 #include <stdint.h>

@@ -31,9 +31,12 @@
     files in the program, then also delete it here.
 */
 
-#include "util.h"
+
 #include "exceptions.h"
+#include "types.h"
+#include "util.h"
 #include <boost/test/unit_test.hpp>
+
 
 /** Check that dcp::Colour works */
 BOOST_AUTO_TEST_CASE (colour)

@@ -43,7 +43,7 @@
 
 #include "array_data.h"
 #include "local_time.h"
-#include "types.h"
+#include "warnings.h"
 LIBDCP_DISABLE_WARNINGS
 #include <asdcp/KM_log.h>
 LIBDCP_ENABLE_WARNINGS
@@ -56,6 +56,11 @@ LIBDCP_ENABLE_WARNINGS
 
 
 #define LIBDCP_UNUSED(x) (void)(x)
+
+
+namespace ASDCP {
+	class Dictionary;
+}
 
 
 namespace xmlpp {
