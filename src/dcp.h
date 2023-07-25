@@ -67,14 +67,14 @@ namespace dcp
 {
 
 
-class PKL;
-class Content;
-class Reel;
+class Asset;
 class CPL;
 class CertificateChain;
+class Content;
 class DecryptedKDM;
-class Asset;
+class PKL;
 class ReadError;
+class Reel;
 
 
 /** @class DCP
