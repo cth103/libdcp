@@ -229,16 +229,17 @@ extern bool operator== (Fraction const & a, Fraction const & b);
 extern bool operator!= (Fraction const & a, Fraction const & b);
 
 
-/** @struct EqualityOptions
- *  @brief  A class to describe what "equality" means for a particular test.
+/** @class EqualityOptions
+ *  @brief A class to describe what "equality" means for a particular test.
  *
  *  When comparing things, we want to be able to ignore some differences;
  *  this class expresses those differences.
  *
  *  It also contains some settings for how the comparison should be done.
  */
-struct EqualityOptions
+class EqualityOptions
 {
+public:
 	/** Construct an EqualityOptions where nothing at all can differ */
 	EqualityOptions () {}
 
