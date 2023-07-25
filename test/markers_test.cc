@@ -33,6 +33,7 @@
 
 
 #include "cpl.h"
+#include "equality_options.h"
 #include "reel.h"
 #include "reel_markers_asset.h"
 #include <boost/bind.hpp>

@@ -229,45 +229,6 @@ extern bool operator== (Fraction const & a, Fraction const & b);
 extern bool operator!= (Fraction const & a, Fraction const & b);
 
 
-/** @class EqualityOptions
- *  @brief A class to describe what "equality" means for a particular test.
- *
- *  When comparing things, we want to be able to ignore some differences;
- *  this class expresses those differences.
- *
- *  It also contains some settings for how the comparison should be done.
- */
-class EqualityOptions
-{
-public:
-	/** Construct an EqualityOptions where nothing at all can differ */
-	EqualityOptions() = default;
-
-	/** The maximum allowable mean difference in pixel value between two images */
-	double max_mean_pixel_error = 0;
-	/** The maximum standard deviation of the differences in pixel value between two images */
-	double max_std_dev_pixel_error = 0;
-	/** The maximum difference in audio sample value between two soundtracks */
-	int max_audio_sample_error = 0;
-	/** true if the &lt;AnnotationText&gt; nodes of CPLs are allowed to differ */
-	bool cpl_annotation_texts_can_differ = false;
-	/** true if the &lt;AnnotationText&gt; nodes of Reels are allowed to differ */
-	bool reel_annotation_texts_can_differ = false;
-	/** true if <Hash>es in Reels can differ */
-	bool reel_hashes_can_differ = false;
-	/** true if asset hashes can differ */
-	bool asset_hashes_can_differ = false;
-	/** true if IssueDate nodes can differ */
-	bool issue_dates_can_differ = false;
-	bool load_font_nodes_can_differ = false;
-	bool keep_going = false;
-	/** true to save the last pair of different image subtitles to the current working directory */
-	bool export_differing_subtitles = false;
-	/** The maximum allowable absolute difference between the vertical position of subtitles */
-	float max_subtitle_vertical_position_error = 0;
-};
-
-
 enum class NoteType {
 	PROGRESS,
 	ERROR,

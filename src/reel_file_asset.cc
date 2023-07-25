@@ -38,6 +38,7 @@
 
 
 #include "asset.h"
+#include "equality_options.h"
 #include "reel_file_asset.h"
 #include "warnings.h"
 LIBDCP_DISABLE_WARNINGS

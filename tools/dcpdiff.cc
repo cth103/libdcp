@@ -31,7 +31,9 @@
     files in the program, then also delete it here.
 */
 
+
 #include "dcp.h"
+#include "equality_options.h"
 #include "exceptions.h"
 #include "common.h"
 #include "mxf.h"
@@ -41,6 +43,7 @@
 #include <boost/filesystem.hpp>
 #include <iostream>
 #include <list>
+
 
 using std::list;
 using std::cerr;

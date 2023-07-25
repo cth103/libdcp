@@ -41,6 +41,7 @@
 #include "compose.hpp"
 #include "cpl.h"
 #include "dcp_assert.h"
+#include "equality_options.h"
 #include "local_time.h"
 #include "metadata.h"
 #include "raw_convert.h"

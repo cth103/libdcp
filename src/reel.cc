@@ -39,6 +39,7 @@
 
 #include "decrypted_kdm.h"
 #include "decrypted_kdm_key.h"
+#include "equality_options.h"
 #include "interop_subtitle_asset.h"
 #include "mono_picture_asset.h"
 #include "picture_asset.h"

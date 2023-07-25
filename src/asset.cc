@@ -41,6 +41,7 @@
 #include "asset_map.h"
 #include "compose.hpp"
 #include "dcp_assert.h"
+#include "equality_options.h"
 #include "exceptions.h"
 #include "pkl.h"
 #include "raw_convert.h"

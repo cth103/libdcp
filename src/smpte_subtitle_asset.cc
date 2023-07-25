@@ -40,6 +40,7 @@
 #include "compose.hpp"
 #include "crypto_context.h"
 #include "dcp_assert.h"
+#include "equality_options.h"
 #include "exceptions.h"
 #include "raw_convert.h"
 #include "smpte_load_font_node.h"

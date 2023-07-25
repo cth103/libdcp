@@ -39,6 +39,7 @@
 
 #include "compose.hpp"
 #include "dcp_assert.h"
+#include "equality_options.h"
 #include "exceptions.h"
 #include "sound_asset.h"
 #include "sound_asset_reader.h"

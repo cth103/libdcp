@@ -61,6 +61,7 @@ namespace dcp {
 
 
 class AssetMap;
+class EqualityOptions;
 
 
 /** @class Asset

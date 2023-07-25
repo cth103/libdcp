@@ -39,6 +39,7 @@
 
 #include "compose.hpp"
 #include "dcp_assert.h"
+#include "equality_options.h"
 #include "font_asset.h"
 #include "file.h"
 #include "interop_load_font_node.h"

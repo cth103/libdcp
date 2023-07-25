@@ -33,6 +33,7 @@
 
 
 #include "asset.h"
+#include "equality_options.h"
 #include <boost/bind.hpp>
 #include <boost/test/unit_test.hpp>
 

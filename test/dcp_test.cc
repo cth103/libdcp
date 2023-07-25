@@ -36,6 +36,7 @@
 #include "compose.hpp"
 #include "cpl.h"
 #include "dcp.h"
+#include "equality_options.h"
 #include "metadata.h"
 #include "mono_picture_asset.h"
 #include "picture_asset_writer.h"

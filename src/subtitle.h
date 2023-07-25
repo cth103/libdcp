@@ -47,6 +47,9 @@
 namespace dcp {
 
 
+class EqualityOptions;
+
+
 class Subtitle
 {
 public:

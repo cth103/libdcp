@@ -39,6 +39,7 @@
 
 #include "compose.hpp"
 #include "dcp_assert.h"
+#include "equality_options.h"
 #include "exceptions.h"
 #include "j2k_transcode.h"
 #include "openjpeg_image.h"

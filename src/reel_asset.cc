@@ -40,6 +40,7 @@
 #include "asset.h"
 #include "compose.hpp"
 #include "dcp_assert.h"
+#include "equality_options.h"
 #include "raw_convert.h"
 #include "reel_asset.h"
 #include "warnings.h"

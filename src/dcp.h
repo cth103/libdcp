@@ -72,6 +72,7 @@ class CPL;
 class CertificateChain;
 class Content;
 class DecryptedKDM;
+class EqualityOptions;
 class PKL;
 class ReadError;
 class Reel;

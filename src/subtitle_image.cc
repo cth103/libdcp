@@ -37,6 +37,7 @@
  */
 
 
+#include "equality_options.h"
 #include "subtitle_image.h"
 #include "util.h"
 

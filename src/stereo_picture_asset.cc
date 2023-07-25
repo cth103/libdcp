@@ -38,6 +38,7 @@
 
 
 #include "dcp_assert.h"
+#include "equality_options.h"
 #include "exceptions.h"
 #include "stereo_picture_asset.h"
 #include "stereo_picture_asset_reader.h"

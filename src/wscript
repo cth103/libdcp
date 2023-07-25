@@ -151,6 +151,7 @@ def build(bld):
               decrypted_kdm.h
               decrypted_kdm_key.h
               encrypted_kdm.h
+              equality_options.h
               exceptions.h
               file.h
               font_asset.h

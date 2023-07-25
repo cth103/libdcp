@@ -39,6 +39,7 @@
 
 #include "compose.hpp"
 #include "dcp_time.h"
+#include "equality_options.h"
 #include "subtitle.h"
 
 

@@ -35,6 +35,7 @@
 #include "combine.h"
 #include "cpl.h"
 #include "dcp.h"
+#include "equality_options.h"
 #include "interop_subtitle_asset.h"
 #include "reel_subtitle_asset.h"
 #include "reel_mono_picture_asset.h"
