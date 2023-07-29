@@ -75,6 +75,7 @@ public:
 	/** true if IssueDate nodes can differ */
 	bool issue_dates_can_differ = false;
 	bool load_font_nodes_can_differ = false;
+	bool sound_assets_can_differ = false;
 	bool keep_going = false;
 	/** true to save the last pair of different image subtitles to the current working directory */
 	bool export_differing_subtitles = false;

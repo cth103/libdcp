@@ -133,6 +133,10 @@ SoundAsset::SoundAsset (Fraction edit_rate, int sampling_rate, int channels, Lan
 bool
 SoundAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandler note) const
 {
+	if (opt.sound_assets_can_differ) {
+		return true;
+	}
+
 	ASDCP::PCM::MXFReader reader_A;
 	DCP_ASSERT (file());
 	auto r = reader_A.OpenRead (file()->string().c_str());
