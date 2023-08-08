@@ -36,7 +36,7 @@
 #include "equality_options.h"
 #include "reel.h"
 #include "reel_markers_asset.h"
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/test/unit_test.hpp>
 #include <memory>
 
@@ -44,6 +44,9 @@
 using std::make_shared;
 using std::shared_ptr;
 using std::string;
+#if BOOST_VERSION >= 106100
+using namespace boost::placeholders;
+#endif
 
 
 BOOST_AUTO_TEST_CASE (markers_write_test)

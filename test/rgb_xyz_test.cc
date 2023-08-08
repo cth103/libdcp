@@ -37,7 +37,7 @@
 #include "piecewise_lut.h"
 #include "rgb_xyz.h"
 #include "stream_operators.h"
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/random.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/test/unit_test.hpp>
@@ -51,6 +51,9 @@ using std::shared_ptr;
 using std::string;
 using boost::optional;
 using boost::scoped_array;
+#if BOOST_VERSION >= 106100
+using namespace boost::placeholders;
+#endif
 
 
 static

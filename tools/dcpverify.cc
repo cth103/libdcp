@@ -37,7 +37,7 @@
 #include "raw_convert.h"
 #include "verify.h"
 #include "version.h"
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <getopt.h>
@@ -52,6 +52,9 @@ using std::string;
 using std::vector;
 using boost::bind;
 using boost::optional;
+#if BOOST_VERSION >= 106100
+using namespace boost::placeholders;
+#endif
 
 
 static void

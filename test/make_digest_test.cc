@@ -34,10 +34,15 @@
 
 #include "array_data.h"
 #include "util.h"
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/random.hpp>
 #include <boost/test/unit_test.hpp>
 #include <sys/time.h>
+
+
+#if BOOST_VERSION >= 106100
+using namespace boost::placeholders;
+#endif
 
 
 void progress (float)

@@ -34,13 +34,17 @@
 
 #include "asset.h"
 #include "equality_options.h"
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/test/unit_test.hpp>
 
 
 using std::string;
 using std::shared_ptr;
 using std::make_shared;
+#if BOOST_VERSION >= 106100
+using namespace boost::placeholders;
+#endif
+
 
 
 class DummyAsset : public dcp::Asset
