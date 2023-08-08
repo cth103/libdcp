@@ -109,12 +109,6 @@ dcp::operator!= (Fraction const & a, Fraction const & b)
 }
 
 
-Colour::Colour ()
-{
-
-}
-
-
 Colour::Colour (int r_, int g_, int b_)
 	: r (r_)
 	, g (g_)

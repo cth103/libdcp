@@ -69,10 +69,7 @@ namespace dcp
  */
 struct Size
 {
-	Size ()
-		: width (0)
-		, height (0)
-	{}
+	Size() = default;
 
 	Size (int w, int h)
 		: width (w)
@@ -83,8 +80,8 @@ struct Size
 		return float (width) / height;
 	}
 
-	int width;
-	int height;
+	int width = 0;
+	int height = 0;
 };
 
 
@@ -206,7 +203,8 @@ class Fraction
 {
 public:
 	/** Construct a fraction of 0/0 */
-	Fraction () {}
+	Fraction() = default;
+
 	explicit Fraction (std::string s);
 	/** Construct a fraction with a specified numerator and denominator.
 	 *  @param n Numerator.
@@ -261,7 +259,7 @@ class Colour
 {
 public:
 	/** Construct a Colour, initialising it to black */
-	Colour ();
+	Colour() = default;
 
 	/** Construct a Colour from R, G and B.  The values run between
 	 *  0 and 255.
