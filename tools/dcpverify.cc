@@ -38,8 +38,8 @@
 #include "verify.h"
 #include "version.h"
 #include <boost/bind.hpp>
-#include <boost/optional.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
 #include <getopt.h>
 #include <iostream>
 #include <cstdlib>
