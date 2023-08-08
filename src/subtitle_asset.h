@@ -106,7 +106,6 @@ public:
 		) const override;
 
 	std::vector<std::shared_ptr<const Subtitle>> subtitles_during (Time from, Time to, bool starting) const;
-	std::vector<std::shared_ptr<const Subtitle>> subtitles_in_reel(std::shared_ptr<const dcp::ReelAsset> asset) const;
 	std::vector<std::shared_ptr<const Subtitle>> subtitles () const;
 
 	virtual void add (std::shared_ptr<Subtitle>);

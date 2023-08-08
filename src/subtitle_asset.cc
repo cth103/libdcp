@@ -499,26 +499,6 @@ SubtitleAsset::subtitles_during (Time from, Time to, bool starting) const
 }
 
 
-/* XXX: this needs a test */
-vector<shared_ptr<const Subtitle>>
-SubtitleAsset::subtitles_in_reel (shared_ptr<const dcp::ReelAsset> asset) const
-{
-	auto frame_rate = asset->edit_rate().as_float();
-	auto start = dcp::Time(asset->entry_point().get_value_or(0), frame_rate, time_code_rate());
-	auto during = subtitles_during (start, start + dcp::Time(asset->intrinsic_duration(), frame_rate, time_code_rate()), false);
-
-	vector<shared_ptr<const dcp::Subtitle>> corrected;
-	for (auto i: during) {
-		auto c = make_shared<dcp::Subtitle>(*i);
-		c->set_in (c->in() - start);
-		c->set_out (c->out() - start);
-		corrected.push_back (c);
-	}
-
-	return corrected;
-}
-
-
 void
 SubtitleAsset::add (shared_ptr<Subtitle> s)
 {
