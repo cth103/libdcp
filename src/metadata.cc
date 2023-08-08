@@ -41,7 +41,9 @@
 #include "metadata.h"
 #include "util.h"
 #include "version.h"
+LIBDCP_DISABLE_WARNINGS
 #include <asdcp/AS_DCP.h>
+LIBDCP_ENABLE_WARNINGS
 #include <iomanip>
 #include <time.h>
 
