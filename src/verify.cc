@@ -1548,6 +1548,15 @@ verify_cpl(
 		}
 	}
 
+	for (auto version: cpl->content_versions()) {
+		if (version.label_text.empty()) {
+			notes.push_back(
+				dcp::VerificationNote(VerificationNote::Type::WARNING, VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get()).set_id(cpl->id())
+				);
+			break;
+		}
+	}
+
 	if (dcp->standard() == Standard::SMPTE) {
 		if (!cpl->annotation_text()) {
 			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get()});
@@ -2091,6 +2100,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The SMPTE subtitle asset %1 has <Text> nodes but no <LoadFont> node", note.id().get());
 	case VerificationNote::Code::MISMATCHED_ASSET_MAP_ID:
 		return String::compose("The asset with ID %1 in the asset map actually has an id of %2", note.id().get(), note.other_id().get());
+	case VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT:
+		return String::compose("The <LabelText> in a <ContentVersion> in CPL %1 is empty", note.id().get());
 	}
 
 	return "";

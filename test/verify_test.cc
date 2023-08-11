@@ -541,6 +541,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_standard)
 BOOST_AUTO_TEST_CASE (verify_invalid_duration)
 {
 	auto dir = setup (8, "invalid_duration");
+
+	dcp::DCP dcp(dir);
+	dcp.read();
+	BOOST_REQUIRE(dcp.cpls().size() == 1);
+	auto cpl = dcp.cpls()[0];
+
 	check_verify_result (
 		{ dir },
 		{
@@ -549,7 +555,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_duration)
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_INTRINSIC_DURATION, string("d7576dcb-a361-4139-96b8-267f5f8d7f91") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_DURATION, string("a2a87f5d-b749-4a7e-8d0c-9d48a4abf626") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_INTRINSIC_DURATION, string("a2a87f5d-b749-4a7e-8d0c-9d48a4abf626") },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2") }
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2") },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::WARNING,
+				dcp::VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT,
+				cpl->file().get()
+			).set_id("d74fda30-d5f4-4c5f-870f-ebc089d97eb7")
 		});
 }
 
@@ -3616,5 +3627,24 @@ BOOST_AUTO_TEST_CASE(verify_spots_wrong_asset)
 		{dir / "1"},
 		{
 			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_ASSET_MAP_ID).set_id(asset_1).set_other_id(asset_2)
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE(verify_cpl_content_version_label_text_empty)
+{
+	boost::filesystem::path const dir = "build/test/verify_cpl_content_version_label_text_empty";
+	boost::filesystem::remove_all(dir);
+
+	auto dcp = make_simple(dir);
+	BOOST_REQUIRE(dcp->cpls().size() == 1);
+	auto cpl = dcp->cpls()[0];
+	cpl->set_content_version(dcp::ContentVersion(""));
+	dcp->write_xml();
+
+	check_verify_result(
+		{dir},
+		{
+			dcp::VerificationNote(dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get()).set_id(cpl->id())
 		});
 }

@@ -462,6 +462,11 @@ public:
 		 *  other_id contains the ID from the file.
 		 */
 		MISMATCHED_ASSET_MAP_ID,
+		/** The <LabelText> inside a <ContentVersion> is empty
+		 *  note contains the CPL ID
+		 *  file contains the CPL filename
+		 */
+		EMPTY_CONTENT_VERSION_LABEL_TEXT,
 	};
 
 	VerificationNote (Type type, Code code)
