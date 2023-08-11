@@ -413,7 +413,7 @@ public:
 		 *  file contains the ASSETMAP filename
 		 */
 		DUPLICATE_ASSET_ID_IN_ASSETMAP,
-		/** An Interop subtitle asset has no subtitles.
+		/** An Interop subtitle asset has no subtitles
 		 *  note contains the asset ID
 		 *  file contains the asset filename
 		 */
