@@ -51,6 +51,18 @@ BOOST_AUTO_TEST_CASE (local_time_basic_test)
 	/* Correctly-formatted */
 
 	{
+		dcp::LocalTime t("2013-01-05T18:06:59");
+		BOOST_CHECK_EQUAL(t._year, 2013);
+		BOOST_CHECK_EQUAL(t._month, 1);
+		BOOST_CHECK_EQUAL(t._day, 5);
+		BOOST_CHECK_EQUAL(t._hour, 18);
+		BOOST_CHECK_EQUAL(t._minute, 6);
+		BOOST_CHECK_EQUAL(t._second, 59);
+		BOOST_CHECK(t._offset == dcp::UTCOffset(0, 0));
+		BOOST_CHECK_EQUAL(t.as_string(), "2013-01-05T18:06:59+00:00");
+	}
+
+	{
 		dcp::LocalTime t ("2013-01-05T18:06:59+04:00");
 		BOOST_CHECK_EQUAL (t._year, 2013);
 		BOOST_CHECK_EQUAL (t._month, 1);
@@ -111,6 +123,20 @@ BOOST_AUTO_TEST_CASE (local_time_basic_test)
 		BOOST_CHECK_EQUAL (t._millisecond, 456);
 		BOOST_CHECK(t._offset == dcp::UTCOffset(-9, -30));
 		BOOST_CHECK_EQUAL (t.as_string(false, false), "2011-11-20T01:06:59");
+	}
+
+	{
+		dcp::LocalTime t("2011-11-20T01:06:59.45678901-09:30");
+		BOOST_CHECK_EQUAL(t._year, 2011);
+		BOOST_CHECK_EQUAL(t._month, 11);
+		BOOST_CHECK_EQUAL(t._day, 20);
+		BOOST_CHECK_EQUAL(t._hour, 1);
+		BOOST_CHECK_EQUAL(t._minute, 6);
+		BOOST_CHECK_EQUAL(t._second, 59);
+		/* The fractional seconds here is truncated rather than rounded, for better or worse */
+		BOOST_CHECK_EQUAL(t._millisecond, 456);
+		BOOST_CHECK(t._offset == dcp::UTCOffset(-9, -30));
+		BOOST_CHECK_EQUAL(t.as_string(false, false), "2011-11-20T01:06:59");
 	}
 
 	{

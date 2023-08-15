@@ -124,43 +124,19 @@ LocalTime::set_local_time_zone ()
 
 LocalTime::LocalTime (string s)
 {
-	/* 2013-01-05T18:06:59 or 2013-01-05T18:06:59.123 or 2013-01-05T18:06:59+04:00 or 2013-01-05T18:06:59.123+04:00 */
-	/* 0123456789012345678 or 01234567890123456789012 or 0123456789012345678901234 or 01234567890123456789012345678 */
+	/* 2013-01-05T18:06:59[.frac][TZ]
+	 * Where .frac is fractional seconds
+	 *       TZ is something like +04:00
+	 */
 
 	if (s.length() < 19) {
 		throw TimeFormatError (s);
 	}
 
-	bool with_millisecond = false;
-	bool with_tz = false;
+	/* Date and time with whole seconds */
 
-	switch (s.length ()) {
-	case 19:
-		break;
-	case 23:
-		with_millisecond = true;
-		break;
-	case 25:
-		with_tz = true;
-		break;
-	case 29:
-		with_millisecond = with_tz = true;
-		break;
-	default:
-		throw TimeFormatError (s);
-	}
-
-	int const tz_pos = with_millisecond ? 23 : 19;
-
-	/* Check incidental characters */
 	if (s[4] != '-' || s[7] != '-' || s[10] != 'T' || s[13] != ':' || s[16] != ':') {
-		throw TimeFormatError (s);
-	}
-	if (with_millisecond && s[19] != '.') {
-		throw TimeFormatError (s);
-	}
-	if (with_tz && s[tz_pos] != '+' && s[tz_pos] != '-') {
-		throw TimeFormatError (s);
+		throw TimeFormatError(s);
 	}
 
 	_year = lexical_cast<int>(s.substr(0, 4));
@@ -169,14 +145,44 @@ LocalTime::LocalTime (string s)
 	_hour = lexical_cast<int>(s.substr(11, 2));
 	_minute = lexical_cast<int>(s.substr(14, 2));
 	_second = lexical_cast<int>(s.substr(17, 2));
-	_millisecond = with_millisecond ? lexical_cast<int>(s.substr(20, 3)) : 0;
 
-	_offset.set_hour(with_tz ? lexical_cast<int>(s.substr(tz_pos + 1, 2)) : 0);
-	_offset.set_minute(with_tz ? lexical_cast<int>(s.substr(tz_pos + 4, 2)) : 0);
+	size_t pos = 19;
 
-	if (with_tz && s[tz_pos] == '-') {
-		_offset.set_hour(-_offset.hour());
-		_offset.set_minute(-_offset.minute());
+	/* Fractional seconds */
+	if (s.length() > pos && s[pos] == '.') {
+		auto end = s.find('+', pos);
+		if (end == std::string::npos) {
+			end = s.find('-', pos);
+		}
+		if (end == std::string::npos) {
+			end = s.length();
+		}
+		auto const length = end - pos;
+		_millisecond = lexical_cast<int>(s.substr(pos + 1, std::min(static_cast<size_t>(3), length - 1)));
+		pos = end;
+	} else {
+		_millisecond = 0;
+	}
+
+	/* Timezone */
+	if (pos != s.length()) {
+		if (s[pos] != '+' && s[pos] != '-') {
+			throw TimeFormatError(s);
+		}
+		if ((s.length() - pos) != 6) {
+			throw TimeFormatError(s);
+		}
+
+		_offset.set_hour(lexical_cast<int>(s.substr(pos + 1, 2)));
+		_offset.set_minute(lexical_cast<int>(s.substr(pos + 4, 2)));
+
+		if (s[pos] == '-') {
+			_offset.set_hour(-_offset.hour());
+			_offset.set_minute(-_offset.minute());
+		}
+	} else {
+		_offset.set_hour(0);
+		_offset.set_minute(0);
 	}
 }
 
