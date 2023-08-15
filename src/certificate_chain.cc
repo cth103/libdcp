@@ -471,15 +471,17 @@ CertificateChain::chain_valid(List const & chain, string* error) const
 		}
 
 		int const v = X509_verify_cert (ctx);
-		X509_STORE_CTX_free (ctx);
 
 		if (v != 1) {
 			X509_STORE_free (store);
 			if (error) {
 				*error = X509_verify_cert_error_string(X509_STORE_CTX_get_error(ctx));
 			}
+			X509_STORE_CTX_free(ctx);
 			return false;
 		}
+
+		X509_STORE_CTX_free(ctx);
 
 		/* I don't know why OpenSSL doesn't check this stuff
 		   in verify_cert, but without these checks the
