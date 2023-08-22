@@ -41,8 +41,8 @@
 #define LIBDCP_SUBTITLE_STRING_H
 
 
-#include "subtitle.h"
 #include "dcp_time.h"
+#include "subtitle.h"
 #include <boost/optional.hpp>
 #include <string>
 
