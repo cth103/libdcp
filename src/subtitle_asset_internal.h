@@ -43,6 +43,7 @@
 
 #include "array_data.h"
 #include "dcp_time.h"
+#include "h_align.h"
 #include "raw_convert.h"
 #include "v_align.h"
 #include "warnings.h"

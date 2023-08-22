@@ -139,18 +139,6 @@ extern std::string effect_to_string (Effect e);
 extern Effect string_to_effect (std::string s);
 
 
-enum class HAlign
-{
-	LEFT,   ///< horizontal position is distance from left of screen to left of subtitle
-	CENTER, ///< horizontal position is distance from centre of screen to centre of subtitle
-	RIGHT,  ///< horizontal position is distance from right of screen to right of subtitle
-};
-
-
-extern std::string halign_to_string (HAlign a);
-extern HAlign string_to_halign (std::string s);
-
-
 /** Direction for subtitle test */
 enum class Direction
 {

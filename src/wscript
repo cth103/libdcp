@@ -60,6 +60,7 @@ def build(bld):
              font_asset.cc
              fsk.cc
              gamma_transfer_function.cc
+             h_align.cc
              identity_transfer_function.cc
              interop_load_font_node.cc
              interop_subtitle_asset.cc
@@ -159,6 +160,7 @@ def build(bld):
               frame.h
               fsk.h
               gamma_transfer_function.h
+              h_align.h
               identity_transfer_function.h
               interop_load_font_node.h
               interop_subtitle_asset.h

@@ -191,37 +191,6 @@ dcp::string_to_effect (string s)
 
 
 string
-dcp::halign_to_string (HAlign h)
-{
-	switch (h) {
-	case HAlign::LEFT:
-		return "left";
-	case HAlign::CENTER:
-		return "center";
-	case HAlign::RIGHT:
-		return "right";
-	}
-
-	boost::throw_exception (MiscError("unknown subtitle halign type"));
-}
-
-
-HAlign
-dcp::string_to_halign (string s)
-{
-	if (s == "left") {
-		return HAlign::LEFT;
-	} else if (s == "center") {
-		return HAlign::CENTER;
-	} else if (s == "right") {
-		return HAlign::RIGHT;
-	}
-
-	boost::throw_exception (ReadError("unknown subtitle halign type"));
-}
-
-
-string
 dcp::direction_to_string (Direction v)
 {
 	switch (v) {
