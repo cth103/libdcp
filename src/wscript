@@ -119,6 +119,7 @@ def build(bld):
              types.cc
              utc_offset.cc
              util.cc
+             v_align.cc
              verify.cc
              verify_j2k.cc
              version.cc
@@ -221,6 +222,7 @@ def build(bld):
               types.h
               utc_offset.h
               util.h
+              v_align.h
               verify.h
               verify_j2k.h
               version.h

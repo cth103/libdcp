@@ -151,30 +151,6 @@ extern std::string halign_to_string (HAlign a);
 extern HAlign string_to_halign (std::string s);
 
 
-enum class VAlign
-{
-	/** vertical position is distance:
-	 *    from top of screen to top of subtitle (for SMPTE 428-7:{2007,2010} or
-	 *    from top of screen to subtitle baseline (for Interop or SMPTE 428-7:2014)
-	 */
-	TOP,
-	/** vertical position is distance:
-	 *    from centre of screen to centre of subtitle (for SMPTE 428-7:{2007,2010}) or
-	 *    from centre of screen to subtitle baseline (for Interop or SMPTE 428-7:2014)
-	 */
-	CENTER,
-	/** vertical position is distance:
-	 *    from bottom of screen to bottom of subtitle (for SMPTE 428-7:{2007,2010}) or
-	 *    from bottom of screen to subtitle baseline (for Interop or SMPTE 428-7:2014)
-	 */
-	BOTTOM
-};
-
-
-extern std::string valign_to_string (VAlign a);
-extern VAlign string_to_valign (std::string s);
-
-
 /** Direction for subtitle test */
 enum class Direction
 {

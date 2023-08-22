@@ -42,6 +42,7 @@
 
 
 #include "dcp_time.h"
+#include "v_align.h"
 
 
 namespace dcp {

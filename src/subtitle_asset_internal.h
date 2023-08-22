@@ -44,6 +44,7 @@
 #include "array_data.h"
 #include "dcp_time.h"
 #include "raw_convert.h"
+#include "v_align.h"
 #include "warnings.h"
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>

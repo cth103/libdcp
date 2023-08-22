@@ -222,37 +222,6 @@ dcp::string_to_halign (string s)
 
 
 string
-dcp::valign_to_string (VAlign v)
-{
-	switch (v) {
-	case VAlign::TOP:
-		return "top";
-	case VAlign::CENTER:
-		return "center";
-	case VAlign::BOTTOM:
-		return "bottom";
-	}
-
-	boost::throw_exception (MiscError("unknown subtitle valign type"));
-}
-
-
-VAlign
-dcp::string_to_valign (string s)
-{
-	if (s == "top") {
-		return VAlign::TOP;
-	} else if (s == "center") {
-		return VAlign::CENTER;
-	} else if (s == "bottom") {
-		return VAlign::BOTTOM;
-	}
-
-	boost::throw_exception (ReadError("unknown subtitle valign type"));
-}
-
-
-string
 dcp::direction_to_string (Direction v)
 {
 	switch (v) {
