@@ -35,6 +35,7 @@
 
 #include "exceptions.h"
 #include "h_align.h"
+#include <algorithm>
 
 
 using std::string;
@@ -60,7 +61,7 @@ dcp::halign_to_string(HAlign h)
 HAlign
 dcp::string_to_halign(string s)
 {
-	transform(s.begin(), s.end(), s.begin(), ::tolower);
+	std::transform(s.begin(), s.end(), s.begin(), ::tolower);
 
 	if (s == "left") {
 		return HAlign::LEFT;

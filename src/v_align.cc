@@ -34,6 +34,7 @@
 
 #include "exceptions.h"
 #include "v_align.h"
+#include <algorithm>
 
 
 using std::string;
@@ -60,7 +61,7 @@ dcp::valign_to_string (VAlign v)
 VAlign
 dcp::string_to_valign (string s)
 {
-	transform(s.begin(), s.end(), s.begin(), ::tolower);
+	std::transform(s.begin(), s.end(), s.begin(), ::tolower);
 
 	if (s == "top") {
 		return VAlign::TOP;
