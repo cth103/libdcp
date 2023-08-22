@@ -60,6 +60,8 @@ dcp::halign_to_string(HAlign h)
 HAlign
 dcp::string_to_halign(string s)
 {
+	transform(s.begin(), s.end(), s.begin(), ::tolower);
+
 	if (s == "left") {
 		return HAlign::LEFT;
 	} else if (s == "center") {

@@ -42,8 +42,10 @@ BOOST_AUTO_TEST_CASE(v_align_test)
 	BOOST_CHECK(dcp::string_to_valign("top") == dcp::VAlign::TOP);
 	BOOST_CHECK(dcp::string_to_valign("center") == dcp::VAlign::CENTER);
 	BOOST_CHECK(dcp::string_to_valign("bottom") == dcp::VAlign::BOTTOM);
-	BOOST_CHECK_THROW(dcp::string_to_valign("TOP"), dcp::ReadError);
-	BOOST_CHECK_THROW(dcp::string_to_valign("CENter"), dcp::ReadError);
-	BOOST_CHECK_THROW(dcp::string_to_valign("Right"), dcp::ReadError);
+	BOOST_CHECK(dcp::string_to_valign("TOP") == dcp::VAlign::TOP);
+	BOOST_CHECK(dcp::string_to_valign("CENter") == dcp::VAlign::CENTER);
+	BOOST_CHECK(dcp::string_to_valign("Bottom") == dcp::VAlign::BOTTOM);
+
+	BOOST_CHECK_THROW(dcp::string_to_valign("ostrabagalous"), dcp::ReadError);
 }
 

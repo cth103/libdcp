@@ -42,8 +42,10 @@ BOOST_AUTO_TEST_CASE(h_align_test)
 	BOOST_CHECK(dcp::string_to_halign("left") == dcp::HAlign::LEFT);
 	BOOST_CHECK(dcp::string_to_halign("center") == dcp::HAlign::CENTER);
 	BOOST_CHECK(dcp::string_to_halign("right") == dcp::HAlign::RIGHT);
-	BOOST_CHECK_THROW(dcp::string_to_halign("Left"), dcp::ReadError);
-	BOOST_CHECK_THROW(dcp::string_to_halign("CentER"), dcp::ReadError);
-	BOOST_CHECK_THROW(dcp::string_to_halign("RIGHT"), dcp::ReadError);
+	BOOST_CHECK(dcp::string_to_halign("Left") == dcp::HAlign::LEFT);
+	BOOST_CHECK(dcp::string_to_halign("CentER") == dcp::HAlign::CENTER);
+	BOOST_CHECK(dcp::string_to_halign("RIGHT") == dcp::HAlign::RIGHT);
+
+	BOOST_CHECK_THROW(dcp::string_to_halign("ostrabagalous"), dcp::ReadError);
 }
 

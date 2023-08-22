@@ -60,6 +60,8 @@ dcp::valign_to_string (VAlign v)
 VAlign
 dcp::string_to_valign (string s)
 {
+	transform(s.begin(), s.end(), s.begin(), ::tolower);
+
 	if (s == "top") {
 		return VAlign::TOP;
 	} else if (s == "center") {
