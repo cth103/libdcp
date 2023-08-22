@@ -86,6 +86,7 @@ def build(bld):
                  fraction_test.cc
                  frame_info_hash_test.cc
                  gamma_transfer_function_test.cc
+                 h_align_test.cc
                  interop_load_font_test.cc
                  interop_subtitle_test.cc
                  local_time_test.cc
@@ -112,6 +113,7 @@ def build(bld):
                  test.cc
                  util_test.cc
                  utf8_test.cc
+                 v_align_test.cc
                  verify_test.cc
                  """
     obj.target = 'tests'
