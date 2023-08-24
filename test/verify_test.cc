@@ -670,6 +670,23 @@ BOOST_AUTO_TEST_CASE (verify_valid_interop_subtitles)
 }
 
 
+BOOST_AUTO_TEST_CASE(verify_catch_missing_font_file_with_interop_ccap)
+{
+	path const dir("build/test/verify_catch_missing_font_file_with_interop_ccap");
+	prepare_directory(dir);
+	copy_file("test/data/subs1.xml", dir / "ccap.xml");
+	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "ccap.xml");
+	auto reel_asset = make_shared<dcp::ReelInteropClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
+
+	check_verify_result (
+		{dir}, {
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"theFontId"} }
+		});
+}
+
+
 BOOST_AUTO_TEST_CASE (verify_invalid_interop_subtitles)
 {
 	using namespace boost::filesystem;

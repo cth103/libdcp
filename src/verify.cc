@@ -715,9 +715,9 @@ verify_smpte_timed_text_asset (
 }
 
 
-/** Verify Interop subtitle-only stuff */
+/** Verify Interop subtitle / CCAP stuff */
 void
-verify_interop_subtitle_asset(shared_ptr<const InteropSubtitleAsset> asset, vector<VerificationNote>& notes)
+verify_interop_text_asset(shared_ptr<const InteropSubtitleAsset> asset, vector<VerificationNote>& notes)
 {
 	if (asset->subtitles().empty()) {
 		notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_SUBTITLE, asset->id(), asset->file().get() });
@@ -806,7 +806,7 @@ verify_subtitle_asset (
 
 	auto interop = dynamic_pointer_cast<const InteropSubtitleAsset>(asset);
 	if (interop) {
-		verify_interop_subtitle_asset(interop, notes);
+		verify_interop_text_asset(interop, notes);
 		if (namespace_count(asset, "DCSubtitle") > 1) {
 			notes.push_back({ VerificationNote::Type::WARNING, VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id() });
 		}
@@ -846,6 +846,11 @@ verify_closed_caption_asset (
 		}
 	} else {
 		notes.push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED});
+	}
+
+	auto interop = dynamic_pointer_cast<const InteropSubtitleAsset>(asset);
+	if (interop) {
+		verify_interop_text_asset(interop, notes);
 	}
 
 	auto smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
