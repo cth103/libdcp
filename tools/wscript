@@ -32,7 +32,7 @@
 #
 
 def build(bld):
-    uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL XERCES DL'
+    uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_CTH BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL XERCES DL MAGICK'
 
     obj = bld(features='cxx cxxprogram')
     obj.use = ['libdcp%s' % bld.env.API_VERSION]
@@ -52,7 +52,7 @@ def build(bld):
     obj.source = 'dcpverify.cc common.cc'
     obj.target = 'dcpverify'
 
-    for f in ['dumpsub', 'decryptmxf', 'kdm', 'thumb', 'recover']:
+    for f in ['dumpimage', 'dumpsub', 'decryptmxf', 'kdm', 'thumb', 'recover']:
         obj = bld(features='cxx cxxprogram')
         obj.use = ['libdcp%s' % bld.env.API_VERSION]
         obj.uselib = uselib
