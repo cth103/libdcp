@@ -64,6 +64,7 @@ def options(opt):
     opt.add_option('--disable-benchmarks', action='store_true', default=False, help='disable building of benchmarks')
     opt.add_option('--enable-gcov', action='store_true', default=False, help='use gcov in tests')
     opt.add_option('--disable-examples', action='store_true', default=False, help='disable building of examples')
+    opt.add_option('--disable-dumpimage', action='store_true', default=False, help='disable building of dcpdumpimage')
     opt.add_option('--enable-openmp', action='store_true', default=False, help='enable use of OpenMP')
     opt.add_option('--openmp', default='gomp', help='specify OpenMP Library to use: omp, gomp (default), iomp')
 
@@ -84,6 +85,7 @@ def configure(conf):
     conf.env.DISABLE_TESTS = conf.options.disable_tests
     conf.env.DISABLE_BENCHMARKS = conf.options.disable_benchmarks
     conf.env.DISABLE_EXAMPLES = conf.options.disable_examples
+    conf.env.DISABLE_DUMPIMAGE = conf.options.disable_dumpimage
     conf.env.STATIC = conf.options.static
     conf.env.API_VERSION = API_VERSION
 
@@ -122,14 +124,14 @@ def configure(conf):
     conf.env.DEFINES_XMLSEC1 = [f.replace('\\', '') for f in conf.env.DEFINES_XMLSEC1]
 
     # ImageMagick / GraphicsMagick
-    if not conf.options.disable_examples:
+    if (not conf.options.disable_examples) and (not conf.options.disable_dumpimage):
         if distutils.spawn.find_executable('Magick++-config'):
             conf.check_cfg(package='', path='Magick++-config', args='--cppflags --cxxflags --libs', uselib_store='MAGICK', mandatory=True, msg='Checking for ImageMagick/GraphicsMagick')
         else:
             image = conf.check_cfg(package='ImageMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
             graphics = conf.check_cfg(package='GraphicsMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
             if image is None and graphics is None:
-                Logs.error('Neither ImageMagick++ nor GraphicsMagick++ found: one or the other is required')
+                Logs.error('Neither ImageMagick++ nor GraphicsMagick++ found: one or the other is required unless you ./waf configure --disable-examples --disable-dcpdumpimage')
 
     conf.check_cfg(package='sndfile', args='--cflags --libs', uselib_store='SNDFILE', mandatory=False)
 
