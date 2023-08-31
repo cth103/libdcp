@@ -41,8 +41,11 @@ def build(bld):
         obj.source = 'dcp%s.cc common.cc' % f
         obj.target = 'dcp%s' % f
 
+    other = ['dumpsub', 'decryptmxf', 'kdm', 'thumb', 'recover']
+    if not bld.env.DISABLE_DUMPIMAGE:
+        other.append('dumpimage')
 
-    for f in ['dumpimage', 'dumpsub', 'decryptmxf', 'kdm', 'thumb', 'recover']:
+    for f in other:
         obj = bld(features='cxx cxxprogram')
         obj.use = ['libdcp%s' % bld.env.API_VERSION]
         obj.uselib = uselib
