@@ -266,14 +266,13 @@ dcp::make_inverse_gamma_lut(shared_ptr<const TransferFunction> fn)
 }
 
 
-
-static
+template <class T>
 void
 rgb_to_xyz_internal(
 	uint8_t const* rgb,
-	int*& xyz_x,
-	int*& xyz_y,
-	int*& xyz_z,
+	T*& xyz_x,
+	T*& xyz_y,
+	T*& xyz_z,
 	dcp::Size size,
 	int stride,
 	ColourConversion const& conversion,
@@ -357,3 +356,15 @@ dcp::rgb_to_xyz (
 }
 
 
+void
+dcp::rgb_to_xyz (
+	uint8_t const * rgb,
+	uint16_t* dst,
+	dcp::Size size,
+	int stride,
+	ColourConversion const & conversion,
+	optional<NoteHandler> note
+	)
+{
+	rgb_to_xyz_internal(rgb, dst, dst, dst, size, stride, conversion, note);
+}

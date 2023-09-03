@@ -94,6 +94,22 @@ extern void xyz_to_rgb (
 
 extern PiecewiseLUT2 make_inverse_gamma_lut(std::shared_ptr<const TransferFunction> fn);
 
+/** @param rgb RGB data; packed RGB 16:16:16, 48bpp, 16R, 16G, 16B,
+ *  with the 2-byte value for each R/G/B component stored as
+ *  little-endian; i.e. AV_PIX_FMT_RGB48LE.
+ *  @param dst Buffer to fill with packed 16-bit XYZ data, i.e. first
+ *  16-bit word is X, second is Y etc.
+ *  @param size size of RGB image in pixels.
+ *  @param size stride of RGB data in pixels.
+ */
+extern void rgb_to_xyz (
+	uint8_t const * rgb,
+	uint16_t* dst,
+	dcp::Size size,
+	int stride,
+	ColourConversion const & conversion,
+	boost::optional<NoteHandler> note = boost::optional<NoteHandler>()
+	);
 
 /** @param rgb RGB data; packed RGB 16:16:16, 48bpp, 16R, 16G, 16B,
  *  with the 2-byte value for each R/G/B component stored as
