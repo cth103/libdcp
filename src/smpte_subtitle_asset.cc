@@ -233,8 +233,8 @@ SMPTESubtitleAsset::read_mxf_resources (shared_ptr<ASDCP::TimedText::MXFReader> 
 		++i) {
 
 		ASDCP::TimedText::FrameBuffer buffer;
-		buffer.Capacity (10 * 1024 * 1024);
 		reader->ReadAncillaryResource (i->ResourceID, buffer, dec->context(), dec->hmac());
+		buffer.Capacity(32 * 1024 * 1024);
 
 		char id[64];
 		Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof(id));
