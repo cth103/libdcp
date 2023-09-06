@@ -233,8 +233,18 @@ SMPTESubtitleAsset::read_mxf_resources (shared_ptr<ASDCP::TimedText::MXFReader> 
 		++i) {
 
 		ASDCP::TimedText::FrameBuffer buffer;
-		reader->ReadAncillaryResource (i->ResourceID, buffer, dec->context(), dec->hmac());
 		buffer.Capacity(32 * 1024 * 1024);
+		auto const result = reader->ReadAncillaryResource(i->ResourceID, buffer, dec->context(), dec->hmac());
+		if (ASDCP_FAILURE(result)) {
+			switch (i->Type) {
+			case ASDCP::TimedText::MT_OPENTYPE:
+				throw ReadError(String::compose("Could not read font from MXF file (%1)", static_cast<int>(result)));
+			case ASDCP::TimedText::MT_PNG:
+				throw ReadError(String::compose("Could not read subtitle image from MXF file (%1)", static_cast<int>(result)));
+			default:
+				throw ReadError(String::compose("Could not read resource from MXF file (%1)", static_cast<int>(result)));
+			}
+		}
 
 		char id[64];
 		Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof(id));
@@ -603,4 +613,3 @@ SMPTESubtitleAsset::schema_namespace() const
 
 	DCP_ASSERT(false);
 }
-
