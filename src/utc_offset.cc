@@ -50,7 +50,7 @@ UTCOffset::set_hour(int hour)
 void
 UTCOffset::set_minute(int minute)
 {
-	DCP_ASSERT(minute >= -30 && minute <= 30);
+	DCP_ASSERT(minute >= -59 && minute <= 59);
 	_minute = minute;
 }
 

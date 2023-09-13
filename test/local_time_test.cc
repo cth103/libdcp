@@ -186,6 +186,22 @@ BOOST_AUTO_TEST_CASE (local_time_basic_test)
 		BOOST_CHECK(t._offset == dcp::UTCOffset(-4, -30));
 		BOOST_CHECK_EQUAL (t.as_string(), "2013-01-05T18:06:59-04:30");
 	}
+
+	/* KDM seen with a TZ offset of -07:59, which we used to reject because
+	 * we only accepted minutes between -30 and +30 (for some reason that I
+	 * now can't find).
+	 */
+	{
+		dcp::LocalTime t("2023-11-30T23:59:00-07:59");
+		BOOST_CHECK_EQUAL(t._year, 2023);
+		BOOST_CHECK_EQUAL(t._month, 11);
+		BOOST_CHECK_EQUAL(t._day, 30);
+		BOOST_CHECK_EQUAL(t._hour, 23);
+		BOOST_CHECK_EQUAL(t._minute, 59);
+		BOOST_CHECK_EQUAL(t._second, 00);
+		BOOST_CHECK(t._offset == dcp::UTCOffset(-7, -59));
+		BOOST_CHECK_EQUAL(t.as_string(), "2023-11-30T23:59:00-07:59");
+	}
 }
 
 
