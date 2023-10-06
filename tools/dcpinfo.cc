@@ -31,25 +31,26 @@
     files in the program, then also delete it here.
 */
 
+
+#include "common.h"
+#include "compose.hpp"
+#include "cpl.h"
 #include "dcp.h"
+#include "decrypted_kdm.h"
+#include "encrypted_kdm.h"
 #include "exceptions.h"
-#include "reel.h"
-#include "sound_asset.h"
+#include "interop_subtitle_asset.h"
+#include "mono_picture_asset.h"
 #include "picture_asset.h"
-#include "subtitle_asset.h"
+#include "reel.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_subtitle_asset.h"
-#include "subtitle_string.h"
-#include "subtitle_image.h"
-#include "interop_subtitle_asset.h"
 #include "smpte_subtitle_asset.h"
-#include "mono_picture_asset.h"
-#include "encrypted_kdm.h"
-#include "decrypted_kdm.h"
-#include "cpl.h"
-#include "common.h"
-#include "compose.hpp"
+#include "sound_asset.h"
+#include "subtitle_asset.h"
+#include "subtitle_image.h"
+#include "subtitle_string.h"
 #include <getopt.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -58,20 +59,22 @@
 #include <sstream>
 #include <inttypes.h>
 
-using std::string;
+
 using std::cerr;
 using std::cout;
-using std::list;
-using std::pair;
-using std::min;
-using std::max;
-using std::exception;
-using std::vector;
-using std::stringstream;
-using std::shared_ptr;
 using std::dynamic_pointer_cast;
+using std::exception;
+using std::list;
+using std::max;
+using std::min;
+using std::pair;
+using std::shared_ptr;
+using std::string;
+using std::stringstream;
+using std::vector;
 using boost::optional;
 using namespace dcp;
+
 
 static void
 help (string n)

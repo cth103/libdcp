@@ -37,17 +37,17 @@
  */
 
 
-#include "raw_convert.h"
 #include "compose.hpp"
-#include "subtitle_asset.h"
-#include "subtitle_asset_internal.h"
-#include "util.h"
-#include "xml.h"
-#include "subtitle_string.h"
-#include "subtitle_image.h"
 #include "dcp_assert.h"
 #include "load_font_node.h"
+#include "raw_convert.h"
 #include "reel_asset.h"
+#include "subtitle_asset.h"
+#include "subtitle_asset_internal.h"
+#include "subtitle_image.h"
+#include "subtitle_string.h"
+#include "util.h"
+#include "xml.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_util.h>
 #include <libxml++/nodes/element.h>

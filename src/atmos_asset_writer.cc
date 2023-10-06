@@ -37,12 +37,12 @@
  */
 
 
-#include "atmos_asset_writer.h"
 #include "atmos_asset.h"
-#include "exceptions.h"
-#include "dcp_assert.h"
+#include "atmos_asset_writer.h"
 #include "compose.hpp"
 #include "crypto_context.h"
+#include "dcp_assert.h"
+#include "exceptions.h"
 #include <asdcp/AS_DCP.h>
 
 
