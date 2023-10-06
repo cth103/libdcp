@@ -42,6 +42,7 @@
 #include "cpl.h"
 #include "dcp_assert.h"
 #include "equality_options.h"
+#include "filesystem.h"
 #include "local_time.h"
 #include "metadata.h"
 #include "raw_convert.h"
@@ -108,7 +109,7 @@ CPL::CPL (boost::filesystem::path file)
 	, _content_kind (ContentKind::FEATURE)
 {
 	cxml::Document f ("CompositionPlaylist");
-	f.read_file (file);
+	f.read_file(dcp::filesystem::fix_long_path(file));
 
 	if (f.namespace_uri() == cpl_interop_ns) {
 		_standard = Standard::INTEROP;
@@ -239,7 +240,7 @@ CPL::write_xml(boost::filesystem::path file, shared_ptr<const CertificateChain> 
 		signer->sign (root, _standard);
 	}
 
-	doc.write_to_file_formatted (file.string(), "UTF-8");
+	doc.write_to_file_formatted(dcp::filesystem::fix_long_path(file).string(), "UTF-8");
 
 	set_file (file);
 }

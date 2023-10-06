@@ -43,6 +43,7 @@
 #include "crypto_context.h"
 #include "dcp_assert.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include <asdcp/AS_DCP.h>
 
 
@@ -94,7 +95,7 @@ AtmosAssetWriter::write (uint8_t const * data, int size)
 	DCP_ASSERT (!_finalized);
 
 	if (!_started) {
-		auto r = _state->mxf_writer.OpenWrite (_file.string().c_str(), _state->writer_info, _state->desc);
+		auto r = _state->mxf_writer.OpenWrite(dcp::filesystem::fix_long_path(_file).string().c_str(), _state->writer_info, _state->desc);
 		if (ASDCP_FAILURE(r)) {
 			boost::throw_exception (FileError ("could not open atmos MXF for writing", _file.string(), r));
 		}

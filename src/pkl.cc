@@ -39,6 +39,7 @@
 
 #include "dcp_assert.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "pkl.h"
 #include "raw_convert.h"
 #include "util.h"
@@ -64,7 +65,7 @@ PKL::PKL (boost::filesystem::path file)
 	: _file (file)
 {
 	cxml::Document pkl ("PackingList");
-	pkl.read_file (file);
+	pkl.read_file(dcp::filesystem::fix_long_path(file));
 
 	if (pkl.namespace_uri() == pkl_interop_ns) {
 		_standard = Standard::INTEROP;
@@ -133,7 +134,7 @@ PKL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain>
 		signer->sign (pkl, _standard);
 	}
 
-	doc.write_to_file_formatted (file.string(), "UTF-8");
+	doc.write_to_file_formatted(dcp::filesystem::fix_long_path(file).string(), "UTF-8");
 	_file = file;
 }
 

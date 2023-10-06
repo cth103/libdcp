@@ -39,6 +39,7 @@
 #include "decrypted_kdm.h"
 #include "encrypted_kdm.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "interop_subtitle_asset.h"
 #include "mono_picture_asset.h"
 #include "picture_asset.h"
@@ -352,7 +353,7 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	if (!boost::filesystem::exists (argv[optind])) {
+	if (!filesystem::exists(argv[optind])) {
 		cerr << argv[0] << ": DCP or CPL " << argv[optind] << " not found.\n";
 		exit (EXIT_FAILURE);
 	}

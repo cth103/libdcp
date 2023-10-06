@@ -57,6 +57,7 @@ def build(bld):
              encrypted_kdm.cc
              exceptions.cc
              file.cc
+             filesystem.cc
              font_asset.cc
              fsk.cc
              gamma_transfer_function.cc
@@ -156,6 +157,7 @@ def build(bld):
               equality_options.h
               exceptions.h
               file.h
+              filesystem.h
               font_asset.h
               frame.h
               fsk.h

@@ -41,6 +41,7 @@
 #include "compose.hpp"
 #include "dcp_assert.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "util.h"
 #include "warnings.h"
 #include <asdcp/KM_util.h>
@@ -57,7 +58,6 @@ LIBDCP_ENABLE_WARNINGS
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
-#include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
 #include <fstream>
 #include <iostream>
@@ -114,7 +114,7 @@ command (string cmd)
 	int const code = WEXITSTATUS (r);
 #endif
 	if (code) {
-		throw dcp::MiscError (String::compose ("error %1 in %2 within %3", code, cmd, boost::filesystem::current_path().string()));
+		throw dcp::MiscError(String::compose("error %1 in %2 within %3", code, cmd, filesystem::current_path().string()));
 	}
 }
 
@@ -196,10 +196,14 @@ CertificateChain::CertificateChain (
 	)
 {
 	auto directory = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path ();
-	boost::filesystem::create_directories (directory);
+	filesystem::create_directories(directory);
 
-	auto const cwd = boost::filesystem::current_path ();
-	boost::filesystem::current_path (directory);
+	auto const cwd = boost::filesystem::current_path();
+	/* On Windows we will use cmd.exe here, and that doesn't work with UNC paths, so make sure
+	 * we don't use our own filesystem::current_path() as it will make the current working
+	 * directory a UNC path.
+	 */
+	boost::filesystem::current_path(directory);
 
 	string quoted_openssl = "\"" + openssl.string() + "\"";
 
@@ -319,7 +323,10 @@ CertificateChain::CertificateChain (
 			)
 		);
 
-	boost::filesystem::current_path (cwd);
+	/* Use boost:: rather than dcp:: here so we don't force UNC into the current path if it
+	 * wasn't there before.
+	 */
+	boost::filesystem::current_path(cwd);
 
 	_certificates.push_back (dcp::Certificate(dcp::file_to_string(directory / "ca.self-signed.pem")));
 	_certificates.push_back (dcp::Certificate(dcp::file_to_string(directory / "intermediate.signed.pem")));
@@ -327,7 +334,7 @@ CertificateChain::CertificateChain (
 
 	_key = dcp::file_to_string (directory / "leaf.key");
 
-	boost::filesystem::remove_all (directory);
+	filesystem::remove_all(directory);
 }
 
 

@@ -41,6 +41,7 @@
 #include "dcp_assert.h"
 #include "equality_options.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "sound_asset.h"
 #include "sound_asset_reader.h"
 #include "sound_asset_writer.h"
@@ -70,7 +71,7 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 	: Asset (file)
 {
 	ASDCP::PCM::MXFReader reader;
-	auto r = reader.OpenRead (file.string().c_str());
+	auto r = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
 	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (MXFFileError("could not open MXF file for reading", file.string(), r));
 	}
@@ -139,13 +140,13 @@ SoundAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, No
 
 	ASDCP::PCM::MXFReader reader_A;
 	DCP_ASSERT (file());
-	auto r = reader_A.OpenRead (file()->string().c_str());
+	auto r = reader_A.OpenRead(dcp::filesystem::fix_long_path(*file()).string().c_str());
 	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (MXFFileError("could not open MXF file for reading", file()->string(), r));
 	}
 
 	ASDCP::PCM::MXFReader reader_B;
-	r = reader_B.OpenRead (other->file()->string().c_str());
+	r = reader_B.OpenRead(dcp::filesystem::fix_long_path(*other->file()).string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError("could not open MXF file for reading", other->file()->string(), r));
 	}
@@ -278,7 +279,7 @@ bool
 SoundAsset::valid_mxf (boost::filesystem::path file)
 {
 	ASDCP::PCM::MXFReader reader;
-	Kumu::Result_t r = reader.OpenRead (file.string().c_str());
+	Kumu::Result_t r = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
 	return !ASDCP_FAILURE (r);
 }
 

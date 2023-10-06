@@ -36,6 +36,7 @@
 #include "cpl.h"
 #include "dcp.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "reel_asset.h"
 #include "warnings.h"
 #include <getopt.h>
@@ -124,7 +125,7 @@ main (int argc, char* argv[])
 	/* Look for a CPL */
 
 	shared_ptr<dcp::CPL> cpl;
-	for (auto i: boost::filesystem::directory_iterator(dcp_dir)) {
+	for (auto i: dcp::filesystem::directory_iterator(dcp_dir)) {
 		if (i.path().extension() == ".xml") {
 			try {
 				cpl = make_shared<dcp::CPL>(i.path());
@@ -146,7 +147,7 @@ main (int argc, char* argv[])
 
 		/* Read all MXF assets */
 		vector<shared_ptr<dcp::Asset>> assets;
-		for (auto i: boost::filesystem::directory_iterator(dcp_dir)) {
+		for (auto i: dcp::filesystem::directory_iterator(dcp_dir)) {
 			if (i.path().extension() == ".mxf") {
 				try {
 					auto asset = dcp::asset_factory(i.path(), true);

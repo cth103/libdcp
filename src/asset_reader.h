@@ -44,6 +44,7 @@
 #include "asset.h"
 #include "crypto_context.h"
 #include "dcp_assert.h"
+#include "filesystem.h"
 #include <asdcp/AS_DCP.h>
 #include <memory>
 
@@ -98,7 +99,7 @@ private:
 	{
 		_reader = new R ();
 		DCP_ASSERT (asset->file());
-		auto const r = _reader->OpenRead (asset->file()->string().c_str());
+		auto const r = _reader->OpenRead(dcp::filesystem::fix_long_path(*asset->file()).string().c_str());
 		if (ASDCP_FAILURE(r)) {
 			delete _reader;
 			boost::throw_exception (FileError("could not open MXF file for reading", asset->file().get(), r));

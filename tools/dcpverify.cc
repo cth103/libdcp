@@ -34,6 +34,7 @@
 
 #include "common.h"
 #include "compose.hpp"
+#include "filesystem.h"
 #include "raw_convert.h"
 #include "verify.h"
 #include "version.h"
@@ -133,7 +134,7 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	if (!boost::filesystem::exists (argv[optind])) {
+	if (!dcp::filesystem::exists(argv[optind])) {
 		cerr << argv[0] << ": DCP " << argv[optind] << " not found.\n";
 		exit (EXIT_FAILURE);
 	}

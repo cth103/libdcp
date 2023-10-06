@@ -37,6 +37,9 @@
  */
 
 
+#include "filesystem.h"
+
+
 using std::shared_ptr;
 
 
@@ -76,8 +79,8 @@ void dcp::start (PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint
 
 	asset->fill_writer_info (&state->writer_info, asset->id());
 
-	auto r = state->mxf_writer.OpenWrite (
-		asset->file()->string().c_str(),
+	auto r = state->mxf_writer.OpenWrite(
+		dcp::filesystem::fix_long_path(*asset->file()).string().c_str(),
 		state->writer_info,
 		state->picture_descriptor,
 		16384,

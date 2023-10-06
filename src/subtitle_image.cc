@@ -38,6 +38,7 @@
 
 
 #include "equality_options.h"
+#include "filesystem.h"
 #include "subtitle_image.h"
 #include "util.h"
 
@@ -149,12 +150,12 @@ SubtitleImage::equals(shared_ptr<const Subtitle> other_sub, EqualityOptions cons
 		note (NoteType::ERROR, "subtitle image PNG data differs");
 		if (options.export_differing_subtitles) {
 			string const base = "dcpdiff_subtitle_";
-			if (boost::filesystem::exists(base + "A.png")) {
+			if (filesystem::exists(base + "A.png")) {
 				note (NoteType::ERROR, "could not export subtitle as " + base + "A.png already exists");
 			} else {
 				png_image().write(base + "A.png");
 			}
-			if (boost::filesystem::exists(base + "B.png")) {
+			if (filesystem::exists(base + "B.png")) {
 				note (NoteType::ERROR, "could not export subtitle as " + base + "B.png already exists");
 			} else {
 				other->png_image().write(base + "B.png");

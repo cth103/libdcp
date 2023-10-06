@@ -82,7 +82,7 @@ def build(bld):
                  effect_test.cc
                  encryption_test.cc
                  exception_test.cc
-                 file_test.cc
+                 filesystem_test.cc
                  fraction_test.cc
                  frame_info_hash_test.cc
                  gamma_transfer_function_test.cc
@@ -90,6 +90,7 @@ def build(bld):
                  interop_load_font_test.cc
                  interop_subtitle_test.cc
                  local_time_test.cc
+                 long_filenames_test.cc
                  make_digest_test.cc
                  markers_test.cc
                  mca_test.cc

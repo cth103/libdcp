@@ -35,6 +35,7 @@
 #include "asset_map.h"
 #include "dcp_assert.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "raw_convert.h"
 #include "warnings.h"
 LIBDCP_DISABLE_WARNINGS
@@ -60,7 +61,7 @@ AssetMap::AssetMap(boost::filesystem::path file)
 {
 	cxml::Document doc("AssetMap");
 
-	doc.read_file(file);
+	doc.read_file(dcp::filesystem::fix_long_path(file));
 	if (doc.namespace_uri() == assetmap_interop_ns) {
 		_standard = Standard::INTEROP;
 	} else if (doc.namespace_uri() == assetmap_smpte_ns) {
@@ -191,7 +192,7 @@ AssetMap::write_xml(boost::filesystem::path file) const
 		asset.write_xml(asset_list, file.parent_path());
 	}
 
-	doc.write_to_file_formatted(file.string(), "UTF-8");
+	doc.write_to_file_formatted(dcp::filesystem::fix_long_path(file).string(), "UTF-8");
 	_file = file;
 }
 
@@ -207,12 +208,12 @@ AssetMap::Asset::write_xml(xmlpp::Element* asset_list, boost::filesystem::path d
 	auto chunk_list = node->add_child("ChunkList");
 	auto chunk = chunk_list->add_child("Chunk");
 
-	auto relative_path = relative_to_root(boost::filesystem::canonical(dcp_root_directory), boost::filesystem::canonical(_path));
+	auto relative_path = relative_to_root(filesystem::canonical(dcp_root_directory), filesystem::canonical(_path));
 	DCP_ASSERT(relative_path);
 
 	chunk->add_child("Path")->add_child_text(relative_path->generic_string());
 	chunk->add_child("VolumeIndex")->add_child_text("1");
 	chunk->add_child("Offset")->add_child_text("0");
-	chunk->add_child("Length")->add_child_text(raw_convert<string>(boost::filesystem::file_size(_path)));
+	chunk->add_child("Length")->add_child_text(raw_convert<string>(filesystem::file_size(_path)));
 }
 

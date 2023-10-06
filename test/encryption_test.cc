@@ -36,6 +36,7 @@
 #include "dcp.h"
 #include "certificate_chain.h"
 #include "cpl.h"
+#include "filesystem.h"
 #include "mono_picture_asset.h"
 #include "picture_asset_writer.h"
 #include "sound_asset_writer.h"
@@ -154,6 +155,11 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 		);
 
 	kdm.encrypt (signer, signer->leaf(), vector<string>(), dcp::Formulation::MODIFIED_TRANSITIONAL_1, true, 0).as_xml("build/test/encryption_test.kdm.xml");
+
+	/* Make sure we aren't in a UNC current working directory otherwise the use of cmd.exe
+	 * in system() below will fail.
+	 */
+	boost::filesystem::current_path(dcp::filesystem::unfix_long_path(boost::filesystem::current_path()));
 
 	int r = system (
 		"xmllint --path schema --nonet --noout --schema schema/SMPTE-430-1-2006-Amd-1-2009-KDM.xsd build/test/encryption_test.kdm.xml "

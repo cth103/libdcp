@@ -42,6 +42,7 @@
 #include "crypto_context.h"
 #include "exceptions.h"
 #include "file.h"
+#include "filesystem.h"
 #include "j2k_transcode.h"
 #include "mono_picture_frame.h"
 #include "rgb_xyz.h"
@@ -59,7 +60,7 @@ using namespace dcp;
 
 MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path)
 {
-	auto const size = boost::filesystem::file_size (path);
+	auto const size = filesystem::file_size(path);
 	_buffer.reset(new ASDCP::JP2K::FrameBuffer(size));
 	File f(path, "rb");
 	if (!f) {

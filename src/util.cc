@@ -42,6 +42,7 @@
 #include "dcp_assert.h"
 #include "exceptions.h"
 #include "file.h"
+#include "filesystem.h"
 #include "language_tag.h"
 #include "openjpeg_image.h"
 #include "rating.h"
@@ -119,7 +120,7 @@ string
 dcp::make_digest (boost::filesystem::path filename, function<void (float)> progress)
 {
 	Kumu::FileReader reader;
-	auto r = reader.OpenRead (filename.string().c_str ());
+	auto r = reader.OpenRead(dcp::filesystem::fix_long_path(filename).string().c_str());
 	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (FileError("could not open file to compute digest", filename, r));
 	}
@@ -254,7 +255,7 @@ dcp::ids_equal (string a, string b)
 string
 dcp::file_to_string (boost::filesystem::path p, uintmax_t max_length)
 {
-	auto len = boost::filesystem::file_size (p);
+	auto len = filesystem::file_size(p);
 	if (len > max_length) {
 		throw MiscError (String::compose("Unexpectedly long file (%1)", p.string()));
 	}
@@ -421,7 +422,7 @@ ASDCPErrorSuspender::~ASDCPErrorSuspender ()
 boost::filesystem::path dcp::directory_containing_executable ()
 {
 #if BOOST_VERSION >= 106100
-	return boost::filesystem::canonical(boost::dll::program_location().parent_path());
+	return filesystem::canonical(boost::dll::program_location().parent_path());
 #else
 	char buffer[PATH_MAX];
 	ssize_t N = readlink ("/proc/self/exe", buffer, PATH_MAX);

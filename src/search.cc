@@ -35,6 +35,7 @@
 #include "dcp.h"
 #include "decrypted_kdm.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "search.h"
 
 
@@ -59,7 +60,7 @@ dcp::find_and_resolve_cpls (vector<boost::filesystem::path> const& directories, 
 
 	vector<shared_ptr<dcp::DCP>> dcps;
 	for (auto i: directories) {
-		if (!boost::filesystem::exists(i)) {
+		if (!filesystem::exists(i)) {
 			/* Don't make a DCP object or it will try to create the parent directories
 			 * of i if they do not exist (#2344).
 			 */

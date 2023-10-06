@@ -32,10 +32,11 @@
 */
 
 
+#include "common.h"
 #include "dcp.h"
 #include "equality_options.h"
 #include "exceptions.h"
-#include "common.h"
+#include "filesystem.h"
 #include "mxf.h"
 #include <getopt.h>
 #include <boost/optional.hpp>
@@ -207,12 +208,12 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	if (!boost::filesystem::exists (argv[optind])) {
+	if (!filesystem::exists(argv[optind])) {
 		cerr << argv[0] << ": DCP " << argv[optind] << " not found.\n";
 		exit (EXIT_FAILURE);
 	}
 
-	if (!boost::filesystem::exists (argv[optind + 1])) {
+	if (!filesystem::exists(argv[optind + 1])) {
 		cerr << argv[0] << ": DCP " << argv[optind + 1] << " not found.\n";
 		exit (EXIT_FAILURE);
 	}

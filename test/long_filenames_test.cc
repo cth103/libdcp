@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2015-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2023 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,55 +32,28 @@
 */
 
 
-/** @file  src/array_data.cc
- *  @brief ArrayData class
- */
-
-
-#include "array_data.h"
-#include "file.h"
+#include "dcp.h"
 #include "filesystem.h"
-#include "exceptions.h"
-#include "util.h"
-#include <cerrno>
-#include <cstdio>
+#include <boost/filesystem.hpp>
+#include <boost/test/unit_test.hpp>
 
 
-using namespace dcp;
-
-
-ArrayData::ArrayData ()
-	: _data(std::make_shared<std::vector<uint8_t>>())
+BOOST_AUTO_TEST_CASE(load_dcp_with_long_filename)
 {
-
-}
-
-
-ArrayData::ArrayData (int size)
-	: _data(std::make_shared<std::vector<uint8_t>>(size))
-{
-
-}
-
-
-ArrayData::ArrayData (uint8_t const * data, int size)
-	: _data(std::make_shared<std::vector<uint8_t>>(data, data + size))
-{
-
-}
-
-
-ArrayData::ArrayData (boost::filesystem::path file)
-{
-	auto const size = filesystem::file_size(file);
-	_data = std::make_shared<std::vector<uint8_t>>(size);
-
-	File f(file, "rb");
-	if (!f) {
-		throw FileError ("could not open file for reading", file, errno);
+	boost::filesystem::path long_name = "build/test";
+	for (int i = 0; i < 27; ++i) {
+		long_name /= "letsmakeitlong";
 	}
 
-	if (f.read(_data->data(), 1, size) != static_cast<size_t>(size)) {
-		throw FileError ("could not read from file", file, errno);
+	dcp::filesystem::remove_all(long_name);
+	dcp::filesystem::create_directories(long_name);
+	for (auto file: dcp::filesystem::directory_iterator("test/ref/DCP/dcp_test1")) {
+		dcp::filesystem::copy(file.path(), long_name / file.path().filename());
 	}
+
+	dcp::DCP dcp(long_name);
+	BOOST_CHECK_NO_THROW(dcp.read());
 }
+
+
+

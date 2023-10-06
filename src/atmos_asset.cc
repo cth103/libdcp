@@ -68,7 +68,7 @@ AtmosAsset::AtmosAsset (boost::filesystem::path file)
 	, MXF (Standard::SMPTE)
 {
 	ASDCP::ATMOS::MXFReader reader;
-	auto r = reader.OpenRead (file.string().c_str());
+	auto r = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError("could not open MXF file for reading", file.string(), r));
 	}

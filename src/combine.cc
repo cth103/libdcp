@@ -43,6 +43,7 @@
 #include "dcp.h"
 #include "dcp_assert.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "font_asset.h"
 #include "interop_subtitle_asset.h"
 #include "raw_convert.h"
@@ -52,25 +53,25 @@
 #include <vector>
 
 
+using std::dynamic_pointer_cast;
 using std::map;
 using std::set;
+using std::shared_ptr;
 using std::string;
 using std::vector;
-using std::dynamic_pointer_cast;
 using boost::optional;
-using std::shared_ptr;
 
 
 boost::filesystem::path
 make_unique (boost::filesystem::path path)
 {
-	if (!boost::filesystem::exists(path)) {
+	if (!dcp::filesystem::exists(path)) {
 		return path;
 	}
 
 	for (int i = 0; i < 10000; ++i) {
 		boost::filesystem::path p = path.parent_path() / (path.stem().string() + dcp::raw_convert<string>(i) + path.extension().string());
-		if (!boost::filesystem::exists(p)) {
+		if (!dcp::filesystem::exists(p)) {
 			return p;
 		}
 	}
@@ -85,10 +86,10 @@ void
 create_hard_link_or_copy (boost::filesystem::path from, boost::filesystem::path to)
 {
 	try {
-		create_hard_link (from, to);
+		dcp::filesystem::create_hard_link(from, to);
 	} catch (boost::filesystem::filesystem_error& e) {
 		if (e.code() == boost::system::errc::cross_device_link) {
-			copy_file (from, to);
+			dcp::filesystem::copy_file(from, to);
 		} else {
 			throw;
 		}
@@ -107,8 +108,6 @@ dcp::combine (
 	shared_ptr<const CertificateChain> signer
 	)
 {
-	using namespace boost::filesystem;
-
 	DCP_ASSERT (!inputs.empty());
 
 	DCP output_dcp (output);
@@ -124,7 +123,7 @@ dcp::combine (
 		}
 	}
 
-	vector<path> paths;
+	vector<boost::filesystem::path> paths;
 	vector<shared_ptr<dcp::Asset>> assets;
 
 	for (auto i: inputs) {
@@ -153,7 +152,7 @@ dcp::combine (
 				}
 				auto file = sub->file();
 				DCP_ASSERT (file);
-				path new_path = make_unique(output / file->filename());
+				auto new_path = make_unique(output / file->filename());
 				sub->write (new_path);
 				add_to_container(assets, sub->font_assets());
 			}
@@ -168,7 +167,7 @@ dcp::combine (
 		if (!dynamic_pointer_cast<dcp::FontAsset>(i) && !dynamic_pointer_cast<dcp::CPL>(i)) {
 			auto file = i->file();
 			DCP_ASSERT (file);
-			path new_path = make_unique(output / file->filename());
+			auto new_path = make_unique(output / file->filename());
 			create_hard_link_or_copy (*file, new_path);
 			i->set_file (new_path);
 		}

@@ -33,6 +33,7 @@
 
 
 #include "file.h"
+#include "filesystem.h"
 #include <boost/filesystem.hpp>
 #include <boost/test/unit_test.hpp>
 
@@ -40,16 +41,23 @@
 BOOST_AUTO_TEST_CASE (fix_long_path_test)
 {
 #ifdef LIBDCP_WINDOWS
-	BOOST_CHECK_EQUAL (dcp::fix_long_path("c:\\foo"), "\\\\?\\c:\\foo");
-	BOOST_CHECK_EQUAL (dcp::fix_long_path("c:\\foo\\bar"), "\\\\?\\c:\\foo\\bar");
-	boost::filesystem::path fixed_bar = "\\\\?\\";
-	fixed_bar += boost::filesystem::current_path();
-	fixed_bar /= "bar";
-	BOOST_CHECK_EQUAL (dcp::fix_long_path("bar"), fixed_bar);
-
-	BOOST_CHECK_EQUAL (dcp::fix_long_path("\\\\?\\c:\\foo"), "\\\\?\\c:\\foo");
+	BOOST_CHECK_EQUAL(dcp::filesystem::fix_long_path("c:\\foo"), "\\\\?\\c:\\foo");
+	BOOST_CHECK_EQUAL(dcp::filesystem::fix_long_path("c:\\foo\\bar"), "\\\\?\\c:\\foo\\bar");
+	BOOST_CHECK_EQUAL(dcp::filesystem::fix_long_path("\\\\?\\c:\\foo"), "\\\\?\\c:\\foo");
 #else
-	BOOST_CHECK_EQUAL (dcp::fix_long_path("foo/bar/baz"), "foo/bar/baz");
+	BOOST_CHECK_EQUAL(dcp::filesystem::fix_long_path("foo/bar/baz"), "foo/bar/baz");
+#endif
+}
+
+
+BOOST_AUTO_TEST_CASE(unfix_long_path_test)
+{
+#ifdef LIBDCP_WINDOWS
+	BOOST_CHECK_EQUAL(dcp::filesystem::unfix_long_path("c:\\foo"), "c:\\foo");
+	BOOST_CHECK_EQUAL(dcp::filesystem::unfix_long_path("\\\\?\\c:\\foo"), "c:\\foo");
+#else
+	BOOST_CHECK_EQUAL(dcp::filesystem::unfix_long_path("c:\\foo"), "c:\\foo");
+	BOOST_CHECK_EQUAL(dcp::filesystem::unfix_long_path("\\\\?\\c:\\foo"), "\\\\?\\c:\\foo");
 #endif
 }
 
@@ -59,14 +67,15 @@ BOOST_AUTO_TEST_CASE (windows_long_filename_test)
 {
 	using namespace boost::filesystem;
 
-	path too_long = current_path() / "build\\test\\a\\really\\very\\long\\filesystem\\path\\indeed\\that\\will\\be\\so\\long\\that\\windows\\cannot\\normally\\cope\\with\\it\\unless\\we\\add\\this\\crazy\\prefix\\and\\then\\magically\\it\\can\\do\\it\\fine\\I\\dont\\really\\know\\why\\its\\like\\that\\but\\hey\\it\\is\\so\\here\\we\\are\\what\\can\\we\\do\\other\\than\\bodge\\it";
+	/* Make sure current_path() is not already fixed by using our dcp::filesystem version */
+	path too_long = dcp::filesystem::current_path() / "build\\test\\a\\really\\very\\long\\filesystem\\path\\indeed\\that\\will\\be\\so\\long\\that\\windows\\cannot\\normally\\cope\\with\\it\\unless\\we\\add\\this\\crazy\\prefix\\and\\then\\magically\\it\\can\\do\\it\\fine\\I\\dont\\really\\know\\why\\its\\like\\that\\but\\hey\\it\\is\\so\\here\\we\\are\\what\\can\\we\\do\\other\\than\\bodge\\it";
 
 	BOOST_CHECK (too_long.string().length() > 260);
 	boost::system::error_code ec;
 	create_directories (too_long, ec);
 	BOOST_CHECK (ec);
 
-	path fixed_path = dcp::fix_long_path(too_long);
+	path fixed_path = dcp::filesystem::fix_long_path(too_long);
 	create_directories (fixed_path, ec);
 	BOOST_CHECK (!ec);
 

@@ -42,6 +42,7 @@
 #include "crypto_context.h"
 #include "dcp_assert.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "sound_asset.h"
 #include "sound_asset_writer.h"
 #include "warnings.h"
@@ -146,7 +147,7 @@ SoundAssetWriter::~SoundAssetWriter()
 void
 SoundAssetWriter::start ()
 {
-	auto r = _state->mxf_writer.OpenWrite (_file.string().c_str(), _state->writer_info, _state->desc);
+	auto r = _state->mxf_writer.OpenWrite(dcp::filesystem::fix_long_path(_file).string().c_str(), _state->writer_info, _state->desc);
 	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (FileError("could not open audio MXF for writing", _file.string(), r));
 	}

@@ -40,6 +40,7 @@
 #include "compose.hpp"
 #include "dcp_assert.h"
 #include "equality_options.h"
+#include "filesystem.h"
 #include "font_asset.h"
 #include "file.h"
 #include "interop_load_font_node.h"
@@ -75,7 +76,7 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 	_raw_xml = dcp::file_to_string (file);
 
 	auto xml = make_shared<cxml::Document>("DCSubtitle");
-	xml->read_file (file);
+	xml->read_file(dcp::filesystem::fix_long_path(file));
 	_id = xml->string_child ("SubtitleID");
 	_reel_number = xml->string_child ("ReelNumber");
 	_language = xml->string_child ("Language");

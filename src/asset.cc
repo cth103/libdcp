@@ -43,6 +43,7 @@
 #include "dcp_assert.h"
 #include "equality_options.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "pkl.h"
 #include "raw_convert.h"
 #include "util.h"
@@ -57,7 +58,6 @@ using std::string;
 using boost::function;
 using std::shared_ptr;
 using boost::optional;
-using namespace boost::filesystem;
 using namespace dcp;
 
 
@@ -67,14 +67,14 @@ Asset::Asset ()
 }
 
 
-Asset::Asset (path file)
+Asset::Asset(boost::filesystem::path file)
 	: _file (file)
 {
 
 }
 
 
-Asset::Asset (string id, path file)
+Asset::Asset(string id, boost::filesystem::path file)
 	: Object (id)
 	, _file (file)
 {
@@ -83,13 +83,13 @@ Asset::Asset (string id, path file)
 
 
 void
-Asset::add_to_pkl (shared_ptr<PKL> pkl, path root) const
+Asset::add_to_pkl(shared_ptr<PKL> pkl, boost::filesystem::path root) const
 {
 	DCP_ASSERT (_file);
 
 	auto path = relative_to_root (
-		canonical(root),
-		canonical(_file.get())
+		filesystem::canonical(root),
+		filesystem::canonical(_file.get())
 		);
 
 	if (!path) {
@@ -104,7 +104,7 @@ Asset::add_to_pkl (shared_ptr<PKL> pkl, path root) const
 
 
 void
-Asset::add_to_assetmap (AssetMap& asset_map, path root) const
+Asset::add_to_assetmap(AssetMap& asset_map, boost::filesystem::path root) const
 {
 	DCP_ASSERT (_file);
 	add_file_to_assetmap (asset_map, root, _file.get(), _id);
@@ -112,11 +112,11 @@ Asset::add_to_assetmap (AssetMap& asset_map, path root) const
 
 
 void
-Asset::add_file_to_assetmap (AssetMap& asset_map, path root, path file, string id)
+Asset::add_file_to_assetmap(AssetMap& asset_map, boost::filesystem::path root, boost::filesystem::path file, string id)
 {
 	auto path = relative_to_root (
-		canonical(root),
-		canonical(file)
+		filesystem::canonical(root),
+		filesystem::canonical(file)
 		);
 
 	if (!path) {
@@ -160,24 +160,24 @@ Asset::equals(std::shared_ptr<const Asset> other, EqualityOptions const& opt, No
 
 
 void
-Asset::set_file (path file) const
+Asset::set_file(boost::filesystem::path file) const
 {
-	_file = absolute (file);
+	_file = filesystem::absolute(file);
 	_hash = optional<string>();
 }
 
 
 void
-Asset::set_file_preserving_hash(path file) const
+Asset::set_file_preserving_hash(boost::filesystem::path file) const
 {
-	_file = absolute(file);
+	_file = filesystem::absolute(file);
 }
 
 
 void
-Asset::rename_file(path file)
+Asset::rename_file(boost::filesystem::path file)
 {
-	_file = absolute(file);
+	_file = filesystem::absolute(file);
 }
 
 

@@ -42,6 +42,7 @@
 #include "dcp_assert.h"
 #include "equality_options.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "raw_convert.h"
 #include "smpte_load_font_node.h"
 #include "smpte_subtitle_asset.h"
@@ -98,7 +99,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 	auto r = Kumu::RESULT_OK;
 	{
 		ASDCPErrorSuspender sus;
-		r = reader->OpenRead (_file->string().c_str ());
+		r = reader->OpenRead(dcp::filesystem::fix_long_path(*_file).string().c_str());
 	}
 	if (!ASDCP_FAILURE(r)) {
 		/* MXF-wrapped */
@@ -122,7 +123,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 		try {
 			_raw_xml = dcp::file_to_string (file);
 			xml = make_shared<cxml::Document>("SubtitleReel");
-			xml->read_file (file);
+			xml->read_file(dcp::filesystem::fix_long_path(file));
 			parse_xml (xml);
 		} catch (cxml::Error& e) {
 			boost::throw_exception (
@@ -143,11 +144,11 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 			if (im && im->png_image().size() == 0) {
 				/* Even more dubious; allow <id>.png or urn:uuid:<id>.png */
 				auto p = file.parent_path() / String::compose("%1.png", im->id());
-				if (boost::filesystem::is_regular_file(p)) {
+				if (filesystem::is_regular_file(p)) {
 					im->read_png_file (p);
 				} else if (starts_with (im->id(), "urn:uuid:")) {
 					p = file.parent_path() / String::compose("%1.png", remove_urn_uuid(im->id()));
-					if (boost::filesystem::is_regular_file(p)) {
+					if (filesystem::is_regular_file(p)) {
 						im->read_png_file (p);
 					}
 				}
@@ -319,7 +320,7 @@ SMPTESubtitleAsset::set_key (Key key)
 	/* Our data was encrypted; now we can decrypt it */
 
 	auto reader = make_shared<ASDCP::TimedText::MXFReader>();
-	auto r = reader->OpenRead (_file->string().c_str ());
+	auto r = reader->OpenRead(dcp::filesystem::fix_long_path(*_file).string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (
 			ReadError (
@@ -353,7 +354,7 @@ SMPTESubtitleAsset::valid_mxf (boost::filesystem::path file)
 {
 	ASDCP::TimedText::MXFReader reader;
 	Kumu::DefaultLogSink().UnsetFilterFlag(Kumu::LOG_ALLOW_ALL);
-	auto r = reader.OpenRead (file.string().c_str ());
+	auto r = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
 	Kumu::DefaultLogSink().SetFilterFlag(Kumu::LOG_ALLOW_ALL);
 	return !ASDCP_FAILURE (r);
 }
@@ -450,7 +451,7 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 	/* This header size is a guess.  Empirically it seems that each subtitle reference is 90 bytes, and we need some extra.
 	   The default size is not enough for some feature-length PNG sub projects (see DCP-o-matic #1561).
 	*/
-	ASDCP::Result_t r = writer.OpenWrite (p.string().c_str(), writer_info, descriptor, _subtitles.size() * 90 + 16384);
+	ASDCP::Result_t r = writer.OpenWrite(dcp::filesystem::fix_long_path(p).string().c_str(), writer_info, descriptor, _subtitles.size() * 90 + 16384);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (FileError ("could not open subtitle MXF for writing", p.string(), r));
 	}

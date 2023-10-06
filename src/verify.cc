@@ -41,6 +41,7 @@
 #include "cpl.h"
 #include "dcp.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "interop_subtitle_asset.h"
 #include "mono_picture_asset.h"
 #include "mono_picture_frame.h"
@@ -504,7 +505,7 @@ verify_main_picture_asset (
 	auto asset = reel_asset->asset();
 	auto const file = *asset->file();
 
-	if (options.check_asset_hashes && (!options.maximum_asset_size_for_hash_check || boost::filesystem::file_size(file) < *options.maximum_asset_size_for_hash_check)) {
+	if (options.check_asset_hashes && (!options.maximum_asset_size_for_hash_check || filesystem::file_size(file) < *options.maximum_asset_size_for_hash_check)) {
 		stage ("Checking picture asset hash", file);
 		auto const r = verify_asset (dcp, reel_asset, progress);
 		switch (r) {
@@ -600,7 +601,7 @@ verify_main_sound_asset (
 	auto asset = reel_asset->asset();
 	auto const file = *asset->file();
 
-	if (options.check_asset_hashes && (!options.maximum_asset_size_for_hash_check || boost::filesystem::file_size(file) < *options.maximum_asset_size_for_hash_check)) {
+	if (options.check_asset_hashes && (!options.maximum_asset_size_for_hash_check || filesystem::file_size(file) < *options.maximum_asset_size_for_hash_check)) {
 		stage("Checking sound asset hash", file);
 		auto const r = verify_asset (dcp, reel_asset, progress);
 		switch (r) {
@@ -678,7 +679,7 @@ verify_smpte_timed_text_asset (
 		notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, *asset->file() });
 	}
 
-	auto const size = boost::filesystem::file_size(asset->file().get());
+	auto const size = filesystem::file_size(asset->file().get());
 	if (size > 115 * 1024 * 1024) {
 		notes.push_back (
 			{ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, raw_convert<string>(size), *asset->file() }
@@ -1297,7 +1298,7 @@ verify_extension_metadata(shared_ptr<const CPL> cpl, vector<VerificationNote>& n
 {
 	DCP_ASSERT (cpl->file());
 	cxml::Document doc ("CompositionPlaylist");
-	doc.read_file (cpl->file().get());
+	doc.read_file(dcp::filesystem::fix_long_path(cpl->file().get()));
 
 	auto missing = false;
 	string malformed;
@@ -1739,7 +1740,7 @@ verify_cpl(
 		if (cpl->any_encrypted()) {
 			cxml::Document doc("CompositionPlaylist");
 			DCP_ASSERT(cpl->file());
-			doc.read_file(cpl->file().get());
+			doc.read_file(dcp::filesystem::fix_long_path(cpl->file().get()));
 			if (!doc.optional_node_child("Signature")) {
 				notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl->id(), cpl->file().get()});
 			}
@@ -1761,7 +1762,7 @@ verify_pkl(
 
 	if (pkl_has_encrypted_assets(dcp, pkl)) {
 		cxml::Document doc("PackingList");
-		doc.read_file(pkl->file().get());
+		doc.read_file(dcp::filesystem::fix_long_path(pkl->file().get()));
 		if (!doc.optional_node_child("Signature")) {
 			notes.push_back({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl->id(), pkl->file().get()});
 		}
@@ -1813,7 +1814,7 @@ dcp::verify (
 	if (!xsd_dtd_directory) {
 		xsd_dtd_directory = resources_directory() / "xsd";
 	}
-	*xsd_dtd_directory = boost::filesystem::canonical (*xsd_dtd_directory);
+	*xsd_dtd_directory = filesystem::canonical(*xsd_dtd_directory);
 
 	vector<VerificationNote> notes;
 	State state{};

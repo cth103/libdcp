@@ -47,6 +47,7 @@
 #include "decrypted_kdm.h"
 #include "decrypted_kdm_key.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "font_asset.h"
 #include "interop_subtitle_asset.h"
 #include "metadata.h"
@@ -71,7 +72,6 @@ LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
 #include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
 #include <numeric>
 
 
@@ -98,11 +98,11 @@ static string const volindex_smpte_ns   = "http://www.smpte-ra.org/schemas/429-9
 DCP::DCP (boost::filesystem::path directory)
 	: _directory (directory)
 {
-	if (!boost::filesystem::exists (directory)) {
-		boost::filesystem::create_directories (directory);
+	if (!filesystem::exists(directory)) {
+		filesystem::create_directories(directory);
 	}
 
-	_directory = boost::filesystem::canonical (_directory);
+	_directory = filesystem::canonical(_directory);
 }
 
 
@@ -141,9 +141,9 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 	/* Read the ASSETMAP and PKL */
 
 	boost::filesystem::path asset_map_path;
-	if (boost::filesystem::exists(_directory / "ASSETMAP")) {
+	if (filesystem::exists(_directory / "ASSETMAP")) {
 		asset_map_path = _directory / "ASSETMAP";
-	} else if (boost::filesystem::exists(_directory / "ASSETMAP.xml")) {
+	} else if (filesystem::exists(_directory / "ASSETMAP.xml")) {
 		asset_map_path = _directory / "ASSETMAP.xml";
 	} else {
 		boost::throw_exception(MissingAssetmapError(_directory));
@@ -189,7 +189,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			continue;
 		}
 
-		if (!boost::filesystem::exists(path)) {
+		if (!filesystem::exists(path)) {
 			if (notes) {
 				notes->push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_ASSET, path});
 			}
@@ -224,7 +224,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			pkl_type == remove_parameters(InteropSubtitleAsset::static_pkl_type(standard))) {
 			auto p = new xmlpp::DomParser;
 			try {
-				p->parse_file (path.string());
+				p->parse_file(dcp::filesystem::fix_long_path(path).string());
 			} catch (std::exception& e) {
 				delete p;
 				throw ReadError(String::compose("XML error in %1", path.string()), e.what());
@@ -442,7 +442,7 @@ DCP::write_volindex (Standard standard) const
 	}
 
 	root->add_child("Index")->add_child_text ("1");
-	doc.write_to_file_formatted (p.string (), "UTF-8");
+	doc.write_to_file_formatted(dcp::filesystem::fix_long_path(p).string(), "UTF-8");
 }
 
 

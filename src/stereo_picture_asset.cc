@@ -40,6 +40,7 @@
 #include "dcp_assert.h"
 #include "equality_options.h"
 #include "exceptions.h"
+#include "filesystem.h"
 #include "stereo_picture_asset.h"
 #include "stereo_picture_asset_reader.h"
 #include "stereo_picture_asset_writer.h"
@@ -59,7 +60,7 @@ StereoPictureAsset::StereoPictureAsset (boost::filesystem::path file)
 	: PictureAsset (file)
 {
 	ASDCP::JP2K::MXFSReader reader;
-	auto r = reader.OpenRead (file.string().c_str());
+	auto r = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
 	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (MXFFileError("could not open MXF file for reading", file.string(), r));
 	}
@@ -106,14 +107,14 @@ StereoPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const&
 {
 	ASDCP::JP2K::MXFSReader reader_A;
 	DCP_ASSERT (file());
-	auto r = reader_A.OpenRead (file()->string().c_str());
+	auto r = reader_A.OpenRead(dcp::filesystem::fix_long_path(*file()).string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file()->string(), r));
 	}
 
 	ASDCP::JP2K::MXFSReader reader_B;
 	DCP_ASSERT (other->file());
-	r = reader_B.OpenRead (other->file()->string().c_str());
+	r = reader_B.OpenRead(dcp::filesystem::fix_long_path(*other->file()).string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", other->file()->string(), r));
 	}
