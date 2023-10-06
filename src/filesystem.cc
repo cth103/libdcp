@@ -44,6 +44,27 @@ dcp::filesystem::exists(boost::filesystem::path const& path)
 
 
 bool
+dcp::filesystem::exists(boost::filesystem::path const& path, boost::system::error_code& ec)
+{
+	return boost::filesystem::exists(dcp::filesystem::fix_long_path(path), ec);
+}
+
+
+bool
+dcp::filesystem::is_directory(boost::filesystem::path const& path)
+{
+	return boost::filesystem::is_directory(dcp::filesystem::fix_long_path(path));
+}
+
+
+bool
+dcp::filesystem::is_empty(boost::filesystem::path const& path)
+{
+	return boost::filesystem::is_empty(dcp::filesystem::fix_long_path(path));
+}
+
+
+bool
 dcp::filesystem::is_regular_file(boost::filesystem::path const& path)
 {
 	return boost::filesystem::is_regular_file(dcp::filesystem::fix_long_path(path));
@@ -54,6 +75,13 @@ bool
 dcp::filesystem::create_directory(boost::filesystem::path const& path)
 {
 	return boost::filesystem::create_directory(dcp::filesystem::fix_long_path(path));
+}
+
+
+bool
+dcp::filesystem::create_directory(boost::filesystem::path const& path, boost::system::error_code& ec)
+{
+	return boost::filesystem::create_directory(dcp::filesystem::fix_long_path(path), ec);
 }
 
 
@@ -71,10 +99,31 @@ dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesyste
 }
 
 
+void
+dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::system::error_code& ec)
+{
+	boost::filesystem::copy_file(dcp::filesystem::fix_long_path(from), dcp::filesystem::fix_long_path(to), ec);
+}
+
+
+void
+dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::filesystem::copy_option option)
+{
+	boost::filesystem::copy_file(dcp::filesystem::fix_long_path(from), dcp::filesystem::fix_long_path(to), option);
+}
+
+
 bool
 dcp::filesystem::create_directories(boost::filesystem::path const& path)
 {
 	return boost::filesystem::create_directories(dcp::filesystem::fix_long_path(path));
+}
+
+
+bool
+dcp::filesystem::create_directories(boost::filesystem::path const& path, boost::system::error_code& ec)
+{
+	return boost::filesystem::create_directories(dcp::filesystem::fix_long_path(path), ec);
 }
 
 
@@ -92,6 +141,27 @@ dcp::filesystem::canonical(boost::filesystem::path const& path)
 }
 
 
+boost::filesystem::path
+dcp::filesystem::weakly_canonical(boost::filesystem::path const& path)
+{
+	return dcp::filesystem::unfix_long_path(boost::filesystem::weakly_canonical(dcp::filesystem::fix_long_path(path)));
+}
+
+
+bool
+dcp::filesystem::remove(boost::filesystem::path const& path)
+{
+	return boost::filesystem::remove(dcp::filesystem::fix_long_path(path));
+}
+
+
+bool
+dcp::filesystem::remove(boost::filesystem::path const& path, boost::system::error_code& ec)
+{
+	return boost::filesystem::remove(dcp::filesystem::fix_long_path(path), ec);
+}
+
+
 uintmax_t
 dcp::filesystem::remove_all(boost::filesystem::path const& path)
 {
@@ -100,9 +170,23 @@ dcp::filesystem::remove_all(boost::filesystem::path const& path)
 
 
 uintmax_t
+dcp::filesystem::remove_all(boost::filesystem::path const& path, boost::system::error_code& ec)
+{
+	return boost::filesystem::remove_all(dcp::filesystem::fix_long_path(path), ec);
+}
+
+
+uintmax_t
 dcp::filesystem::file_size(boost::filesystem::path const& path)
 {
 	return boost::filesystem::file_size(dcp::filesystem::fix_long_path(path));
+}
+
+
+uintmax_t
+dcp::filesystem::file_size(boost::filesystem::path const& path, boost::system::error_code& ec)
+{
+	return boost::filesystem::file_size(dcp::filesystem::fix_long_path(path), ec);
 }
 
 
@@ -127,10 +211,88 @@ dcp::filesystem::create_hard_link(boost::filesystem::path const& from, boost::fi
 }
 
 
+void
+dcp::filesystem::create_hard_link(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::system::error_code& ec)
+{
+	boost::filesystem::create_hard_link(dcp::filesystem::fix_long_path(from), dcp::filesystem::fix_long_path(to), ec);
+}
+
+
+void
+dcp::filesystem::create_symlink(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::system::error_code& ec)
+{
+	boost::filesystem::create_symlink(dcp::filesystem::fix_long_path(from), dcp::filesystem::fix_long_path(to), ec);
+}
+
+
+std::string
+dcp::filesystem::extension(boost::filesystem::path const& path)
+{
+	return boost::filesystem::extension(dcp::filesystem::fix_long_path(path));
+}
+
+
+boost::filesystem::space_info
+dcp::filesystem::space(boost::filesystem::path const& path)
+{
+	return boost::filesystem::space(dcp::filesystem::fix_long_path(path));
+}
+
+
+std::time_t
+dcp::filesystem::last_write_time(boost::filesystem::path const& path)
+{
+	return boost::filesystem::last_write_time(dcp::filesystem::fix_long_path(path));
+}
+
+
+std::time_t
+dcp::filesystem::last_write_time(boost::filesystem::path const& path, boost::system::error_code& ec)
+{
+	return boost::filesystem::last_write_time(dcp::filesystem::fix_long_path(path), ec);
+}
+
+
+uintmax_t
+dcp::filesystem::hard_link_count(boost::filesystem::path const& path)
+{
+	return boost::filesystem::hard_link_count(dcp::filesystem::fix_long_path(path));
+}
+
+
+void
+dcp::filesystem::rename(boost::filesystem::path const& old_path, boost::filesystem::path const& new_path)
+{
+	boost::filesystem::rename(dcp::filesystem::fix_long_path(old_path), dcp::filesystem::fix_long_path(new_path));
+}
+
+
+void
+dcp::filesystem::rename(boost::filesystem::path const& old_path, boost::filesystem::path const& new_path, boost::system::error_code& ec)
+{
+	boost::filesystem::rename(dcp::filesystem::fix_long_path(old_path), dcp::filesystem::fix_long_path(new_path), ec);
+}
+
+
+/* We don't really need this but let's add it for completeness */
+boost::filesystem::path
+dcp::filesystem::change_extension(boost::filesystem::path const& path, std::string const& new_extension)
+{
+	return boost::filesystem::change_extension(path, new_extension);
+}
+
+
 #ifdef DCPOMATIC_WINDOWS
 
 dcp::filesystem::directory_iterator::directory_iterator(boost::filesystem::path const& path)
 	: _wrapped(dcp::filesystem::fix_long_path(path))
+{
+
+}
+
+
+dcp::filesystem::directory_iterator::directory_iterator(boost::filesystem::path const& path, boost::system::error_code& ec)
+	: _wrapped(dcp::filesystem::fix_long_path(path), ec)
 {
 
 }
@@ -159,6 +321,13 @@ dcp::filesystem::recursive_directory_iterator::recursive_directory_iterator(boos
 
 dcp::filesystem::directory_iterator::directory_iterator(boost::filesystem::path const& path)
 	: _wrapped(path)
+{
+
+}
+
+
+dcp::filesystem::directory_iterator::directory_iterator(boost::filesystem::path const& path, boost::system::error_code& ec)
+	: _wrapped(path, ec)
 {
 
 }
@@ -204,9 +373,17 @@ dcp::filesystem::directory_iterator::operator++()
 dcp::filesystem::directory_entry
 dcp::filesystem::directory_iterator::operator*() const
 {
-	return dcp::filesystem::directory_entry(*_wrapped);
+	_entry = dcp::filesystem::directory_entry(*_wrapped);
+	return _entry;
 }
 
+
+dcp::filesystem::directory_entry*
+dcp::filesystem::directory_iterator::operator->() const
+{
+	_entry = dcp::filesystem::directory_entry(_wrapped->path());
+	return &_entry;
+}
 
 bool
 dcp::filesystem::directory_iterator::operator!=(dcp::filesystem::directory_iterator const& other) const
