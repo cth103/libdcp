@@ -95,3 +95,18 @@ BOOST_AUTO_TEST_CASE (windows_long_filename_test)
 }
 #endif
 
+
+BOOST_AUTO_TEST_CASE(weakly_canonical_test)
+{
+#ifdef LIBDCP_WINDOWS
+	BOOST_CHECK(dcp::filesystem::weakly_canonical("c:\\a\\b\\c") == boost::filesystem::path("c:\\a\\b\\c"));
+	BOOST_CHECK(dcp::filesystem::weakly_canonical("c:\\a\\b\\..\\c") == boost::filesystem::path("c:\\a\\c"));
+	BOOST_CHECK(dcp::filesystem::weakly_canonical("c:\\a\\b\\..\\c\\.\\d") == boost::filesystem::path("c:\\a\\c\\d"));
+	BOOST_CHECK(dcp::filesystem::weakly_canonical("c:\\a\\..\\b\\..\\c") == boost::filesystem::path("c:\\c"));
+#else
+	BOOST_CHECK(dcp::filesystem::weakly_canonical("/a/b/c") == boost::filesystem::path("/a/b/c"));
+	BOOST_CHECK(dcp::filesystem::weakly_canonical("/a/b/../c") == boost::filesystem::path("/a/c"));
+	BOOST_CHECK(dcp::filesystem::weakly_canonical("/a/b/../c/./d") == boost::filesystem::path("/a/c/d"));
+	BOOST_CHECK(dcp::filesystem::weakly_canonical("/a/../b/../c") == boost::filesystem::path("/c"));
+#endif
+}

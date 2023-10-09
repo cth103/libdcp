@@ -144,7 +144,26 @@ dcp::filesystem::canonical(boost::filesystem::path const& path)
 boost::filesystem::path
 dcp::filesystem::weakly_canonical(boost::filesystem::path const& path)
 {
+#ifdef DCPOMATIC_HAVE_WEAKLY_CANONICAL
 	return dcp::filesystem::unfix_long_path(boost::filesystem::weakly_canonical(dcp::filesystem::fix_long_path(path)));
+#else
+	boost::filesystem::path complete(boost::filesystem::system_complete(dcp::filesystem::fix_long_path(path)));
+	boost::filesystem::path result;
+	for (auto part: complete) {
+		if (part == "..") {
+			boost::system::error_code ec;
+			if (boost::filesystem::is_symlink(result, ec) || result.filename() == "..") {
+				result /= part;
+			} else {
+				result = result.parent_path();
+			}
+		} else if (part != ".") {
+			result /= part;
+		}
+	}
+
+	return dcp::filesystem::unfix_long_path(result.make_preferred());
+#endif
 }
 
 

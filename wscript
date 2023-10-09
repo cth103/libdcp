@@ -214,6 +214,15 @@ def configure(conf):
                    uselib_store='BOOST_FILESYSTEM')
 
     conf.check_cxx(fragment="""
+                   #include <boost/filesystem.hpp>\n
+                   int main() { boost::filesystem::weakly_canonical("a/b/c"); }\n
+                   """,
+                   mandatory=False,
+                   msg='Checking for boost::filesystem::weakly_canonical',
+                   uselib='BOOST_FILESYSTEM',
+                   define_name='LIBDCP_HAVE_WEAKLY_CANONICAL')
+
+    conf.check_cxx(fragment="""
     			    #include <boost/signals2.hpp>\n
     			    int main() { boost::signals2::signal<void (int)> x; }\n
 			    """,
