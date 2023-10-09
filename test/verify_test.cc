@@ -3579,7 +3579,7 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font_for_font)
 
 BOOST_AUTO_TEST_CASE(verify_missing_load_font)
 {
-	boost::filesystem::path const dir = dcp::String::compose("build/test/%1", boost::unit_test::framework::current_test_case().full_name());
+	boost::filesystem::path const dir = "build/test/verify_missing_load_font";
 	prepare_directory(dir);
 	auto dcp = make_simple (dir, 1, 202);
 
