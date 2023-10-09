@@ -96,5 +96,5 @@ BOOST_AUTO_TEST_CASE (cpl_ratings)
 		);
 
 	dcp::CPL cpl2 ("build/test/cpl_ratings.xml");
-	BOOST_TEST(ratings == cpl2.ratings());
+	BOOST_CHECK(ratings == cpl2.ratings());
 }
