@@ -41,8 +41,8 @@ def build(target, options):
     cmd = './waf configure --disable-examples --disable-dumpimage --disable-benchmarks --prefix=%s' % target.directory
     if target.platform == 'linux':
         cmd += ' --static'
-        if not (target.distro == 'ubuntu' and target.version == '18.04'):
-            # We only build tests on Ubuntu 18.04
+        if target.distro != 'ubuntu' or not target.version in ('16.04', '22.04'):
+            # We only build tests on Ubuntu 16.04 and 22.04
             cmd += ' --disable-tests'
     elif target.platform == 'windows':
         cmd += f' --target-windows-{target.bits}'
