@@ -91,8 +91,18 @@ struct TestConfig
 	TestConfig()
 	{
 		dcp::init ();
-		if (boost::unit_test::framework::master_test_suite().argc >= 2) {
-			private_test = boost::unit_test::framework::master_test_suite().argv[1];
+		auto const argc = boost::unit_test::framework::master_test_suite().argc;
+		auto const argv = boost::unit_test::framework::master_test_suite().argv;
+		if (argc >= 3 && strcmp(argv[1], "--") == 0) {
+			/* For some reason on Ubuntu 16.04 the -- we pass in ends up in argv[1] so we
+			 * need to get the private_test from argv[2]...
+			 */
+			private_test = argv[2];
+		} else if (argc >= 2) {
+			/* ... but everywhere else it's removed, so we can just get the private_test
+			 * value from argv[1].
+			 */
+			private_test = argv[1];
 		}
 
 		using namespace boost::filesystem;
