@@ -83,19 +83,49 @@ static string filename_to_id(boost::filesystem::path path)
 	return path.string().substr(4, path.string().length() - 8);
 }
 
-static boost::filesystem::path const dcp_test1_pkl = find_file("test/ref/DCP/dcp_test1", "pkl_").filename();
-static string const dcp_test1_pkl_id = filename_to_id(dcp_test1_pkl);
+static
+boost::filesystem::path
+dcp_test1_pkl()
+{
+	return find_file("test/ref/DCP/dcp_test1", "pkl_").filename();
+}
 
-static boost::filesystem::path const dcp_test1_cpl = find_file("test/ref/DCP/dcp_test1", "cpl_").filename();
-static string const dcp_test1_cpl_id = filename_to_id(dcp_test1_cpl);
+static
+string
+dcp_test1_pkl_id()
+{
+	return filename_to_id(dcp_test1_pkl());
+}
+
+static
+boost::filesystem::path
+dcp_test1_cpl()
+{
+	return find_file("test/ref/DCP/dcp_test1", "cpl_").filename();
+}
+
+static
+string
+dcp_test1_cpl_id()
+{
+	return filename_to_id(dcp_test1_cpl());
+}
 
 static string const dcp_test1_asset_map_id = "017b3de4-6dda-408d-b19b-6711354b0bc3";
 
-static boost::filesystem::path const encryption_test_cpl = find_file("test/ref/DCP/encryption_test", "cpl_").filename();
-static string const encryption_test_cpl_id = filename_to_id(encryption_test_cpl);
+static
+string
+encryption_test_cpl_id()
+{
+	return filename_to_id(find_file("test/ref/DCP/encryption_test", "cpl_").filename());
+}
 
-static boost::filesystem::path const encryption_test_pkl = find_file("test/ref/DCP/encryption_test", "pkl_").filename();
-static string const encryption_test_pkl_id = filename_to_id(encryption_test_pkl);
+static
+string
+encryption_test_pkl_id()
+{
+	return filename_to_id(find_file("test/ref/DCP/encryption_test", "pkl_").filename());
+}
 
 static void
 stage (string s, optional<path> p)
@@ -245,8 +275,8 @@ BOOST_AUTO_TEST_CASE (verify_no_error)
 	auto dir = setup (1, "no_error");
 	auto notes = dcp::verify({dir}, &stage, &progress, {}, xsd_test);
 
-	path const cpl_file = dir / dcp_test1_cpl;
-	path const pkl_file = dir / dcp_test1_pkl;
+	path const cpl_file = dir / dcp_test1_cpl();
+	path const pkl_file = dir / dcp_test1_pkl();
 	path const assetmap_file = dir / "ASSETMAP.xml";
 
 	auto st = stages.begin();
@@ -329,19 +359,19 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 	auto dir = setup (1, "mismatched_picture_sound_hashes");
 
 	{
-		Editor e (dir / dcp_test1_pkl);
+		Editor e (dir / dcp_test1_pkl());
 		e.replace ("<Hash>", "<Hash>x");
 	}
 
 	check_verify_result (
 		{ dir },
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id, canonical(dir / dcp_test1_cpl) },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id(), canonical(dir / dcp_test1_cpl()) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_HASHES, canonical(dir / "audio.mxf") },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xKcJb7S2K5cNm8RG4kfQD5FTeS0A=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 28 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xtfX1mVIKJCVr1m7Y32Nzxf0+Rpw=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 12 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xwUmt8G+cFFKMGt0ueS9+F1S4uhc=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl), 20 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xKcJb7S2K5cNm8RG4kfQD5FTeS0A=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 28 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xtfX1mVIKJCVr1m7Y32Nzxf0+Rpw=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 12 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xwUmt8G+cFFKMGt0ueS9+F1S4uhc=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 20 },
 		});
 }
 
@@ -351,14 +381,14 @@ BOOST_AUTO_TEST_CASE (verify_failed_read_content_kind)
 	auto dir = setup (1, "failed_read_content_kind");
 
 	{
-		Editor e (dir / dcp_test1_cpl);
+		Editor e (dir / dcp_test1_cpl());
 		e.replace ("<ContentKind>", "<ContentKind>x");
 	}
 
 	check_verify_result (
 		{ dir },
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id, canonical(dir / dcp_test1_cpl) },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id(), canonical(dir / dcp_test1_cpl()) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_CONTENT_KIND, string("xtrailer") }
 		});
 }
@@ -368,7 +398,7 @@ static
 path
 cpl (string suffix)
 {
-	return dcp::String::compose("build/test/verify_test%1/%2", suffix, dcp_test1_cpl);
+	return dcp::String::compose("build/test/verify_test%1/%2", suffix, dcp_test1_cpl());
 }
 
 
@@ -376,7 +406,7 @@ static
 path
 pkl (string suffix)
 {
-	return dcp::String::compose("build/test/verify_test%1/%2", suffix, dcp_test1_pkl);
+	return dcp::String::compose("build/test/verify_test%1/%2", suffix, dcp_test1_pkl());
 }
 
 
@@ -462,8 +492,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_pkl_id)
 {
 	check_verify_result_after_replace (
 		"invalid_xml_pkl_id", &pkl,
-		"<Id>urn:uuid:" + dcp_test1_pkl_id.substr(0, 3),
-		"<Id>urn:uuid:x" + dcp_test1_pkl_id.substr(1, 2),
+		"<Id>urn:uuid:" + dcp_test1_pkl_id().substr(0, 3),
+		"<Id>urn:uuid:x" + dcp_test1_pkl_id().substr(1, 2),
 		{ dcp::VerificationNote::Code::INVALID_XML }
 		);
 }
@@ -2850,8 +2880,8 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_cpl_with_encrypted_content)
 		copy_file (i.path(), dir / i.path().filename());
 	}
 
-	path const pkl = dir / ( "pkl_" + encryption_test_pkl_id + ".xml" );
-	path const cpl = dir / ( "cpl_" + encryption_test_cpl_id + ".xml");
+	path const pkl = dir / ( "pkl_" + encryption_test_pkl_id() + ".xml" );
+	path const cpl = dir / ( "cpl_" + encryption_test_cpl_id() + ".xml");
 
 	{
 		Editor e (cpl);
@@ -2861,14 +2891,14 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_cpl_with_encrypted_content)
 	check_verify_result (
 		{dir},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, encryption_test_cpl_id, canonical(cpl) },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id, canonical(pkl), },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, encryption_test_cpl_id(), canonical(cpl) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id(), canonical(pkl), },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, encryption_test_cpl_id, canonical(cpl) },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, encryption_test_cpl_id, canonical(cpl) }
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, encryption_test_cpl_id(), canonical(cpl) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, encryption_test_cpl_id(), canonical(cpl) }
 		});
 }
 
@@ -2881,8 +2911,8 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_encrypted_content)
 		copy_file (i.path(), dir / i.path().filename());
 	}
 
-	path const cpl = dir / ("cpl_" + encryption_test_cpl_id + ".xml");
-	path const pkl = dir / ("pkl_" + encryption_test_pkl_id + ".xml");
+	path const cpl = dir / ("cpl_" + encryption_test_cpl_id() + ".xml");
+	path const pkl = dir / ("pkl_" + encryption_test_pkl_id() + ".xml");
 	{
 		Editor e (pkl);
 		e.delete_lines ("<dsig:Signature", "</dsig:Signature>");
@@ -2891,13 +2921,13 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_encrypted_content)
 	check_verify_result (
 		{dir},
 		{
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id, canonical(pkl) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id(), canonical(pkl) },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, encryption_test_cpl_id, canonical(cpl) },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, encryption_test_pkl_id, canonical(pkl) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, encryption_test_cpl_id(), canonical(cpl) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, encryption_test_pkl_id(), canonical(pkl) },
 		});
 }
 
@@ -2911,7 +2941,7 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_unencrypted_content)
 	}
 
 	{
-		Editor e (dir / dcp_test1_pkl);
+		Editor e (dir / dcp_test1_pkl());
 		e.delete_lines ("<dsig:Signature", "</dsig:Signature>");
 	}
 
