@@ -179,7 +179,7 @@ MainSoundConfigurationError::MainSoundConfigurationError (std::string s)
 
 
 UnknownChannelIdError::UnknownChannelIdError (std::string id)
-	: runtime_error (String::compose("Unrecognised channel id '%1'", id))
+	: runtime_error(String::compose("Unrecognised channel ID '%1'", id))
 {
 
 }
