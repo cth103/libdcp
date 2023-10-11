@@ -539,9 +539,9 @@ dcp::mca_id_to_channel (string id)
 		return Channel::CENTRE;
 	} else if (id == "lfe") {
 		return Channel::LFE;
-	} else if (id == "ls" || id == "lss") {
+	} else if (id == "ls" || id == "lss" || id == "lslss") {
 		return Channel::LS;
-	} else if (id == "rs" || id == "rss") {
+	} else if (id == "rs" || id == "rss" || id == "rsrss") {
 		return Channel::RS;
 	} else if (id == "hi") {
 		return Channel::HI;
