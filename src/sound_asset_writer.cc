@@ -209,8 +209,7 @@ LIBDCP_ENABLE_WARNINGS
 
 		/* Remove duplicates */
 		std::sort(dcp_channels.begin(), dcp_channels.end());
-		auto last = std::unique(dcp_channels.begin(), dcp_channels.end());
-		dcp_channels.erase(last, dcp_channels.end());
+		dcp_channels.erase(std::unique(dcp_channels.begin(), dcp_channels.end()), dcp_channels.end());
 
 		for (auto dcp_channel: dcp_channels) {
 			auto channel = new ASDCP::MXF::AudioChannelLabelSubDescriptor(asdcp_smpte_dict);
