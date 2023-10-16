@@ -211,6 +211,14 @@ LIBDCP_ENABLE_WARNINGS
 		std::sort(dcp_channels.begin(), dcp_channels.end());
 		dcp_channels.erase(std::unique(dcp_channels.begin(), dcp_channels.end()), dcp_channels.end());
 
+		/* Remove channels that aren't actually in this MXF at all */
+		dcp_channels.erase(
+			std::remove_if(dcp_channels.begin(), dcp_channels.end(), [this](dcp::Channel channel) {
+			return static_cast<int>(channel) >= _asset->channels();
+			}),
+			dcp_channels.end()
+		);
+
 		for (auto dcp_channel: dcp_channels) {
 			auto channel = new ASDCP::MXF::AudioChannelLabelSubDescriptor(asdcp_smpte_dict);
 			GenRandomValue (channel->MCALinkID);

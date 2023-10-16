@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <AssetMap xmlns="http://www.smpte-ra.org/schemas/429-9/2007/AM">
-  <Id>urn:uuid:460be38d-d560-455c-ad57-b2e80ca9b228</Id>
+  <Id>urn:uuid:d060dec0-cb61-4ca0-8d12-39346c7ec9c5</Id>
   <AnnotationText>Created by libdcp</AnnotationText>
   <Creator>OpenDCP 0.0.25</Creator>
   <VolumeCount>1</VolumeCount>
@@ -8,11 +8,11 @@
   <Issuer>OpenDCP 0.0.25</Issuer>
   <AssetList>
     <Asset>
-      <Id>urn:uuid:93887017-5d6a-4ee5-b5f4-161b06281d0e</Id>
+      <Id>urn:uuid:5203f3d4-9d62-4062-8bf1-7a114eff99df</Id>
       <PackingList>true</PackingList>
       <ChunkList>
         <Chunk>
-          <Path>pkl_93887017-5d6a-4ee5-b5f4-161b06281d0e.xml</Path>
+          <Path>pkl_5203f3d4-9d62-4062-8bf1-7a114eff99df.xml</Path>
           <VolumeIndex>1</VolumeIndex>
           <Offset>0</Offset>
           <Length>8902</Length>

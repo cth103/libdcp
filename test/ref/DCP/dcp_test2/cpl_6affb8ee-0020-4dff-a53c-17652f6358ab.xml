@@ -14,7 +14,7 @@
   <RatingList/>
   <ReelList>
     <Reel>
-      <Id>urn:uuid:3b198cbc-c1d2-4410-805c-397b6fea0297</Id>
+      <Id>urn:uuid:d98861e8-aefc-433d-9e96-1745e7ba039e</Id>
       <AssetList>
         <MainSound>
           <Id>urn:uuid:fc843acc-1ad9-4808-b9ed-33f5319e047d</Id>
@@ -22,7 +22,7 @@
           <IntrinsicDuration>24</IntrinsicDuration>
           <EntryPoint>0</EntryPoint>
           <Duration>24</Duration>
-          <Hash>3PtaGoYcvBdq5WYiK0cmeDwm8d0=</Hash>
+          <Hash>NzWhEbTccUIh1sSXIbU+8POVui0=</Hash>
         </MainSound>
         <msp-cpl:MainStereoscopicPicture xmlns:msp-cpl="http://www.smpte-ra.org/schemas/429-10/2008/Main-Stereo-Picture-CPL">
           <Id>urn:uuid:5407b210-4441-4e97-8b16-8bdc7c12da54</Id>

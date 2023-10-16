@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PackingList xmlns="http://www.smpte-ra.org/schemas/429-8/2007/PKL">
-  <Id>urn:uuid:93887017-5d6a-4ee5-b5f4-161b06281d0e</Id>
+  <Id>urn:uuid:5203f3d4-9d62-4062-8bf1-7a114eff99df</Id>
   <AnnotationText>Created by libdcp</AnnotationText>
   <IssueDate>2012-07-17T04:45:18+00:00</IssueDate>
   <Issuer>OpenDCP 0.0.25</Issuer>
@@ -9,7 +9,7 @@
     <Asset>
       <Id>urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358ab</Id>
       <AnnotationText>6affb8ee-0020-4dff-a53c-17652f6358ab</AnnotationText>
-      <Hash>ocIgRDFtEn7QPxwcqXYVpSrTPpI=</Hash>
+      <Hash>Zd9zaFAGx/4W2B3vSZkAqTzcDZ0=</Hash>
       <Size>9226</Size>
       <Type>text/xml</Type>
       <OriginalFileName>cpl_6affb8ee-0020-4dff-a53c-17652f6358ab.xml</OriginalFileName>
@@ -25,7 +25,7 @@
     <Asset>
       <Id>urn:uuid:ce300880-a425-40a6-adac-eb1e3f5643fc</Id>
       <AnnotationText>ce300880-a425-40a6-adac-eb1e3f5643fc</AnnotationText>
-      <Hash>lS+FKcwLD7cRjgZMQ+hvGg/yJIc=</Hash>
+      <Hash>3o02UpYqrl6w0NQbFvrB2tKxaIk=</Hash>
       <Size>165454</Size>
       <Type>application/mxf</Type>
       <OriginalFileName>audio.mxf</OriginalFileName>
@@ -49,15 +49,15 @@
           <dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-        <dsig:DigestValue>G6rpYhOo/0ZdBo+SI3UzyPQA/F0=</dsig:DigestValue>
+        <dsig:DigestValue>0F1ZXfoRDPIQHlRG0MC1uXkahG8=</dsig:DigestValue>
       </dsig:Reference>
     </dsig:SignedInfo>
-    <dsig:SignatureValue>tdapJHKPEmEa552oOg9s3/Q4TcnzIiNfd3U+xiSG5XGl+7K0n6JKbpNVgm4KpE0l
-a7bVsu4Yp0ftCrcjxxczZ/puS7nVC/zcfk63miZcJKdXem0xt0AZJHEguwQq74Tc
-48Efe1/MtIBCOtQErh2kcDVwXOUo6Nz0yW1g5PRQ5u9KlqQ67RLqDWRdX1OkWIUZ
-Z2Iz2nSnTP4GDDHs5pX6xxZKNlgZIa5iYMBp97X1DGlGaQ2o/sbcUysE4g4oO+iU
-cfRdkI68vj53hHWApxVGoAPAl4t8B6kMbLQAp1w4R/4ruLR9FKTffqRlUjOXtyiT
-pQVNxwCU50/opyfv8v2v6w==</dsig:SignatureValue>
+    <dsig:SignatureValue>u98MLscN/Fn3YxGFMw6kP7fIWUj05FPxQvIYvsIpP68UP3FX9rdP6nh3Olyv194d
+A1fQJu4ZamTcYN2O2E5vdGjxxHlPNXfFPckWc9Sy1i3V8u+EFdOggjMY4snvPot6
+kMyzAICuKzTJs4l+O/BzJAJSFSxrEtBCYEFxrtyKntDxSUE7ePSqPwcim6+5BzDO
+QOsIp3wjJHlp7u4QqU3knIiaM7SibIXqtIBF7TOrChWZjFImKePNib9/DXvnE2WL
+Y+5wJjGhImQR+2U2DDpSCLkl0kVgDrYfKcNg4lXUDZGEKo0Yqz0+1Rszz/DqsC+J
+6mYxqMMvRXeh9pViSpgKaA==</dsig:SignatureValue>
     <dsig:KeyInfo>
       <dsig:X509Data>
         <dsig:X509IssuerSerial>
