@@ -190,6 +190,9 @@ LIBDCP_ENABLE_WARNINGS
 		_state->mxf_writer.OP1aHeader().AddChildObject(soundfield);
 		essence_descriptor->SubDescriptors.push_back(soundfield->InstanceUID);
 
+		/* We always make a descriptor for these channels if they are present in the asset;
+		 * there's no way for the caller to tell us whether they are active or not.
+		 */
 		std::vector<dcp::Channel> dcp_channels = {
 			Channel::LEFT,
 			Channel::RIGHT,
@@ -199,7 +202,12 @@ LIBDCP_ENABLE_WARNINGS
 			Channel::RS
 		};
 
+		/* We add descriptors for some extra channels that the caller gave us (we made sure earlier
+		 * that nothing "bad" is in this list).
+		 */
 		std::copy(_extra_active_channels.begin(), _extra_active_channels.end(), back_inserter(dcp_channels));
+
+		/* Remove duplicates */
 		std::sort(dcp_channels.begin(), dcp_channels.end());
 		auto last = std::unique(dcp_channels.begin(), dcp_channels.end());
 		dcp_channels.erase(last, dcp_channels.end());
