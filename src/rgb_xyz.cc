@@ -266,17 +266,20 @@ dcp::make_inverse_gamma_lut(shared_ptr<const TransferFunction> fn)
 }
 
 
-shared_ptr<dcp::OpenJPEGImage>
-dcp::rgb_to_xyz (
-	uint8_t const * rgb,
+
+static
+void
+rgb_to_xyz_internal(
+	uint8_t const* rgb,
+	int*& xyz_x,
+	int*& xyz_y,
+	int*& xyz_z,
 	dcp::Size size,
 	int stride,
-	ColourConversion const & conversion,
+	ColourConversion const& conversion,
 	optional<NoteHandler> note
 	)
 {
-	auto xyz = make_shared<OpenJPEGImage>(size);
-
 	struct {
 		double r, g, b;
 	} s;
@@ -293,9 +296,6 @@ dcp::rgb_to_xyz (
 	combined_rgb_to_xyz (conversion, fast_matrix);
 
 	int clamped = 0;
-	int* xyz_x = xyz->data (0);
-	int* xyz_y = xyz->data (1);
-	int* xyz_z = xyz->data (2);
 	for (int y = 0; y < size.height; ++y) {
 		auto p = reinterpret_cast<uint16_t const *> (rgb + y * stride);
 		for (int x = 0; x < size.width; ++x) {
@@ -333,6 +333,27 @@ dcp::rgb_to_xyz (
 	if (clamped && note) {
 		note.get()(NoteType::NOTE, String::compose("%1 XYZ value(s) clamped", clamped));
 	}
+}
+
+
+shared_ptr<dcp::OpenJPEGImage>
+dcp::rgb_to_xyz (
+	uint8_t const * rgb,
+	dcp::Size size,
+	int stride,
+	ColourConversion const & conversion,
+	optional<NoteHandler> note
+	)
+{
+	auto xyz = make_shared<OpenJPEGImage>(size);
+
+	int* xyz_x = xyz->data (0);
+	int* xyz_y = xyz->data (1);
+	int* xyz_z = xyz->data (2);
+
+	rgb_to_xyz_internal(rgb, xyz_x, xyz_y, xyz_z, size, stride, conversion, note);
 
 	return xyz;
 }
+
+
