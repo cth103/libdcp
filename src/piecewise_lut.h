@@ -58,7 +58,7 @@ public:
 	}
 
 	inline double lookup(double x) const {
-		return x < _boundary ?  _low[lrint((x / _boundary) * _low_scale)] : _high[lrint(((x - _boundary) / (1 - _boundary)) * _high_scale)];
+		return x < _boundary ? _low[lrint((x / _boundary) * _low_scale)] : _high[lrint(((x - _boundary) / (1 - _boundary)) * _high_scale)];
 	}
 
 private:
