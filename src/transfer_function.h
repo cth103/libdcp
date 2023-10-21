@@ -62,6 +62,7 @@ public:
 
 	/** @return A look-up table (of size 2^bit_depth) */
 	std::vector<double> const& double_lut(double from, double to, int bit_depth, bool inverse) const;
+	std::vector<int> const& int_lut(double from, double to, int bit_depth, bool inverse, int scale) const;
 
 	virtual bool about_equal (std::shared_ptr<const TransferFunction> other, double epsilon) const = 0;
 
@@ -69,11 +70,15 @@ protected:
 	virtual std::vector<double> make_double_lut(double from, double to, int bit_depth, bool inverse) const = 0;
 
 private:
+	std::vector<int> make_int_lut(double from, double to, int bit_depth, bool inverse, int scale) const;
+	std::vector<double> const& double_lut_unlocked(double from, double to, int bit_depth, bool inverse) const;
+
 	struct LUTDescriptor {
 		double from;
 		double to;
 		int bit_depth;
 		bool inverse;
+		int scale;
 
 		bool operator==(LUTDescriptor const& other) const;
 	};
@@ -82,8 +87,9 @@ private:
 		std::size_t operator()(LUTDescriptor const& desc) const;
 	};
 
-	mutable std::unordered_map<LUTDescriptor, std::vector<double>, LUTDescriptorHasher> _luts;
-	/** mutex to protect _luts */
+	mutable std::unordered_map<LUTDescriptor, std::vector<double>, LUTDescriptorHasher> _double_luts;
+	mutable std::unordered_map<LUTDescriptor, std::vector<int>, LUTDescriptorHasher> _int_luts;
+	/** mutex to protect _double_luts and _int_luts */
 	mutable boost::mutex _mutex;
 };
 

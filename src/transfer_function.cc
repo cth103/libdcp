@@ -53,23 +53,61 @@ vector<double> const&
 TransferFunction::double_lut(double from, double to, int bit_depth, bool inverse) const
 {
 	boost::mutex::scoped_lock lm (_mutex);
+	return double_lut_unlocked(from, to, bit_depth, inverse);
+}
 
-	auto const descriptor = LUTDescriptor{from, to, bit_depth, inverse};
 
-	auto i = _luts.find(descriptor);
-	if (i != _luts.end()) {
+vector<double> const&
+TransferFunction::double_lut_unlocked(double from, double to, int bit_depth, bool inverse) const
+{
+	auto const descriptor = LUTDescriptor{from, to, bit_depth, inverse, 1};
+
+	auto i = _double_luts.find(descriptor);
+	if (i != _double_luts.end()) {
 		return i->second;
 	}
 
-	_luts[descriptor] = make_double_lut(from, to, bit_depth, inverse);
-	return _luts[descriptor];
+	_double_luts[descriptor] = make_double_lut(from, to, bit_depth, inverse);
+	return _double_luts[descriptor];
+}
+
+
+vector<int> const&
+TransferFunction::int_lut(double from, double to, int bit_depth, bool inverse, int scale) const
+{
+	boost::mutex::scoped_lock lm (_mutex);
+
+	auto const descriptor = LUTDescriptor{from, to, bit_depth, inverse, scale};
+
+	auto i = _int_luts.find(descriptor);
+	if (i != _int_luts.end()) {
+		return i->second;
+	}
+
+	_int_luts[descriptor] = make_int_lut(from, to, bit_depth, inverse, scale);
+	return _int_luts[descriptor];
+}
+
+
+/* Caller must hold lock on _mutex */
+vector<int>
+TransferFunction::make_int_lut(double from, double to, int bit_depth, bool inverse, int scale) const
+{
+	auto source_lut = double_lut_unlocked(from, to, bit_depth, inverse);
+	auto const size = source_lut.size();
+	vector<int> lut(size);
+	for (size_t i = 0; i < size; ++i) {
+		lut[i] = lrint(source_lut[i] * scale);
+	}
+
+	return lut;
 }
 
 
 bool
 TransferFunction::LUTDescriptor::operator==(TransferFunction::LUTDescriptor const& other) const
 {
-	return from == other.from && to == other.to && bit_depth == other.bit_depth && inverse == other.inverse;
+	return from == other.from && to == other.to && bit_depth == other.bit_depth && inverse == other.inverse && scale == other.scale;
 }
 
 
@@ -79,6 +117,7 @@ TransferFunction::LUTDescriptorHasher::operator()(TransferFunction::LUTDescripto
 	return std::hash<double>()(desc.from) ^
 		std::hash<double>()(desc.to) ^
 		std::hash<int>()(desc.bit_depth) ^
-		std::hash<bool>()(desc.inverse);
+		std::hash<bool>()(desc.inverse) ^
+		std::hash<int>()(desc.scale);
 }
 
