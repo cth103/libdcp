@@ -81,8 +81,8 @@ dcp::xyz_to_rgba (
 	int* xyz_y = xyz_image->data (1);
 	int* xyz_z = xyz_image->data (2);
 
-	auto lut_in = conversion.out()->lut(0, 1, 12, false);
-	auto lut_out = conversion.in()->lut(0, 1, 16, true);
+	auto lut_in = conversion.out()->double_lut(0, 1, 12, false);
+	auto lut_out = conversion.in()->double_lut(0, 1, 16, true);
 	boost::numeric::ublas::matrix<double> const matrix = conversion.xyz_to_rgb ();
 
 	double fast_matrix[9] = {
@@ -158,8 +158,8 @@ dcp::xyz_to_rgb (
 	int* xyz_y = xyz_image->data (1);
 	int* xyz_z = xyz_image->data (2);
 
-	auto lut_in = conversion.out()->lut(0, 1, 12, false);
-	auto lut_out = conversion.in()->lut(0, 1, 16, true);
+	auto lut_in = conversion.out()->double_lut(0, 1, 12, false);
+	auto lut_out = conversion.in()->double_lut(0, 1, 16, true);
 	auto const matrix = conversion.xyz_to_rgb ();
 
 	double fast_matrix[9] = {
@@ -287,7 +287,7 @@ rgb_to_xyz_internal(
 		double x, y, z;
 	} d;
 
-	auto lut_in = conversion.in()->lut(0, 1, 12, false);
+	auto lut_in = conversion.in()->double_lut(0, 1, 12, false);
 	auto lut_out = make_inverse_gamma_lut(conversion.out());
 
 	/* This is is the product of the RGB to XYZ matrix, the Bradford transform and the DCI companding */

@@ -49,7 +49,7 @@ using namespace dcp;
 
 
 vector<double>
-IdentityTransferFunction::make_lut (double from, double to, int bit_depth, bool) const
+IdentityTransferFunction::make_double_lut(double from, double to, int bit_depth, bool) const
 {
 	int const bit_length = int(std::pow(2.0f, bit_depth));
 	auto lut = vector<double>(bit_length);

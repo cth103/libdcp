@@ -61,12 +61,12 @@ public:
 	virtual ~TransferFunction () {}
 
 	/** @return A look-up table (of size 2^bit_depth) */
-	std::vector<double> const& lut (double from, double to, int bit_depth, bool inverse) const;
+	std::vector<double> const& double_lut(double from, double to, int bit_depth, bool inverse) const;
 
 	virtual bool about_equal (std::shared_ptr<const TransferFunction> other, double epsilon) const = 0;
 
 protected:
-	virtual std::vector<double> make_lut (double from, double to, int bit_depth, bool inverse) const = 0;
+	virtual std::vector<double> make_double_lut(double from, double to, int bit_depth, bool inverse) const = 0;
 
 private:
 	struct LUTDescriptor {

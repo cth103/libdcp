@@ -49,8 +49,8 @@ class PiecewiseLUT2
 public:
 	PiecewiseLUT2(std::shared_ptr<const TransferFunction> fn, double boundary, int low_bits, int high_bits, bool inverse)
 		: _boundary(boundary)
-		, _low(fn->lut(0, boundary, low_bits, inverse))
-		, _high(fn->lut(boundary, 1, high_bits, inverse))
+		, _low(fn->double_lut(0, boundary, low_bits, inverse))
+		, _high(fn->double_lut(boundary, 1, high_bits, inverse))
 		, _low_scale(static_cast<int>(std::pow(2.0f, low_bits)) - 1)
 		, _high_scale(static_cast<int>(std::pow(2.0f, high_bits)) - 1)
 	{

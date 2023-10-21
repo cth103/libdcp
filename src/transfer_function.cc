@@ -50,7 +50,7 @@ using namespace dcp;
 
 
 vector<double> const&
-TransferFunction::lut (double from, double to, int bit_depth, bool inverse) const
+TransferFunction::double_lut(double from, double to, int bit_depth, bool inverse) const
 {
 	boost::mutex::scoped_lock lm (_mutex);
 
@@ -61,7 +61,7 @@ TransferFunction::lut (double from, double to, int bit_depth, bool inverse) cons
 		return i->second;
 	}
 
-	_luts[descriptor] = make_lut(from, to, bit_depth, inverse);
+	_luts[descriptor] = make_double_lut(from, to, bit_depth, inverse);
 	return _luts[descriptor];
 }
 
