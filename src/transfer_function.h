@@ -66,7 +66,6 @@ public:
 	virtual bool about_equal (std::shared_ptr<const TransferFunction> other, double epsilon) const = 0;
 
 protected:
-	/** Make a LUT and return an array allocated by new */
 	virtual std::vector<double> make_lut (double from, double to, int bit_depth, bool inverse) const = 0;
 
 private:
