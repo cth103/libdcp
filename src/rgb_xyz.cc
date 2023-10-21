@@ -275,8 +275,7 @@ rgb_to_xyz_internal(
 	T*& xyz_z,
 	dcp::Size size,
 	int stride,
-	ColourConversion const& conversion,
-	optional<NoteHandler> note
+	ColourConversion const& conversion
 	)
 {
 	struct {
@@ -294,7 +293,6 @@ rgb_to_xyz_internal(
 	double fast_matrix[9];
 	combined_rgb_to_xyz (conversion, fast_matrix);
 
-	int clamped = 0;
 	for (int y = 0; y < size.height; ++y) {
 		auto p = reinterpret_cast<uint16_t const *> (rgb + y * stride);
 		for (int x = 0; x < size.width; ++x) {
@@ -310,11 +308,6 @@ rgb_to_xyz_internal(
 			d.z = s.r * fast_matrix[6] + s.g * fast_matrix[7] + s.b * fast_matrix[8];
 
 			/* Clamp */
-
-			if (d.x < 0 || d.y < 0 || d.z < 0 || d.x > 1 || d.y > 1 || d.z > 1) {
-				++clamped;
-			}
-
 			d.x = max (0.0, d.x);
 			d.y = max (0.0, d.y);
 			d.z = max (0.0, d.z);
@@ -328,10 +321,6 @@ rgb_to_xyz_internal(
 			*xyz_z++ = lut_out.lookup(d.z);
 		}
 	}
-
-	if (clamped && note) {
-		note.get()(NoteType::NOTE, String::compose("%1 XYZ value(s) clamped", clamped));
-	}
 }
 
 
@@ -340,8 +329,7 @@ dcp::rgb_to_xyz (
 	uint8_t const * rgb,
 	dcp::Size size,
 	int stride,
-	ColourConversion const & conversion,
-	optional<NoteHandler> note
+	ColourConversion const & conversion
 	)
 {
 	auto xyz = make_shared<OpenJPEGImage>(size);
@@ -350,7 +338,7 @@ dcp::rgb_to_xyz (
 	int* xyz_y = xyz->data (1);
 	int* xyz_z = xyz->data (2);
 
-	rgb_to_xyz_internal(rgb, xyz_x, xyz_y, xyz_z, size, stride, conversion, note);
+	rgb_to_xyz_internal(rgb, xyz_x, xyz_y, xyz_z, size, stride, conversion);
 
 	return xyz;
 }
@@ -362,9 +350,8 @@ dcp::rgb_to_xyz (
 	uint16_t* dst,
 	dcp::Size size,
 	int stride,
-	ColourConversion const & conversion,
-	optional<NoteHandler> note
+	ColourConversion const & conversion
 	)
 {
-	rgb_to_xyz_internal(rgb, dst, dst, dst, size, stride, conversion, note);
+	rgb_to_xyz_internal(rgb, dst, dst, dst, size, stride, conversion);
 }

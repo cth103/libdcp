@@ -107,8 +107,7 @@ extern void rgb_to_xyz (
 	uint16_t* dst,
 	dcp::Size size,
 	int stride,
-	ColourConversion const & conversion,
-	boost::optional<NoteHandler> note = boost::optional<NoteHandler>()
+	ColourConversion const& conversion
 	);
 
 /** @param rgb RGB data; packed RGB 16:16:16, 48bpp, 16R, 16G, 16B,
@@ -121,8 +120,7 @@ extern std::shared_ptr<OpenJPEGImage> rgb_to_xyz (
 	uint8_t const * rgb,
 	dcp::Size size,
 	int stride,
-	ColourConversion const & conversion,
-	boost::optional<NoteHandler> note = boost::optional<NoteHandler> ()
+	ColourConversion const& conversion
 	);
 
 
