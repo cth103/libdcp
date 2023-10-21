@@ -47,24 +47,24 @@ namespace dcp {
 class PiecewiseLUT2
 {
 public:
-	PiecewiseLUT2(std::shared_ptr<const TransferFunction> fn, double boundary, int low_bits, int high_bits, bool inverse)
+	PiecewiseLUT2(std::shared_ptr<const TransferFunction> fn, double boundary, int low_bits, int high_bits, bool inverse, int scale)
 		: _boundary(boundary)
-		, _low(fn->double_lut(0, boundary, low_bits, inverse))
-		, _high(fn->double_lut(boundary, 1, high_bits, inverse))
+		, _low(fn->int_lut(0, boundary, low_bits, inverse, scale))
+		, _high(fn->int_lut(boundary, 1, high_bits, inverse, scale))
 		, _low_scale(static_cast<int>(std::pow(2.0f, low_bits)) - 1)
 		, _high_scale(static_cast<int>(std::pow(2.0f, high_bits)) - 1)
 	{
 
 	}
 
-	inline double lookup(double x) const {
+	inline int lookup(double x) const {
 		return x < _boundary ? _low[lrint((x / _boundary) * _low_scale)] : _high[lrint(((x - _boundary) / (1 - _boundary)) * _high_scale)];
 	}
 
 private:
 	double _boundary;
-	std::vector<double> _low;
-	std::vector<double> _high;
+	std::vector<int> _low;
+	std::vector<int> _high;
 	int _low_scale;
 	int _high_scale;
 };

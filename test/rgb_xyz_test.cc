@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE (rgb_xyz_lut_test)
 	auto lut = dcp::make_inverse_gamma_lut(conversion.out());
 
 	for (double x = 0; x < 1; x += 0.000001) {
-		BOOST_CHECK(std::abs(lrint(lut.lookup(x) * 4095) - lrint(pow(x, 1 / 2.6) * 4095)) < 2);
+		BOOST_CHECK(std::abs(lut.lookup(x) - lrint(pow(x, 1 / 2.6) * 4095)) < 2);
 	}
 }
 

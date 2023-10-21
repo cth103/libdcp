@@ -262,7 +262,7 @@ PiecewiseLUT2
 dcp::make_inverse_gamma_lut(shared_ptr<const TransferFunction> fn)
 {
 	/* The parameters here were chosen by trial and error to reduce errors when running rgb_xyz_lut_test */
-	return PiecewiseLUT2(fn, 0.062, 16, 12, true);
+	return PiecewiseLUT2(fn, 0.062, 16, 12, true, 4095);
 }
 
 
@@ -323,9 +323,9 @@ rgb_to_xyz_internal(
 			d.z = min (1.0, d.z);
 
 			/* Out gamma LUT */
-			*xyz_x++ = lrint(lut_out.lookup(d.x) * 4095);
-			*xyz_y++ = lrint(lut_out.lookup(d.y) * 4095);
-			*xyz_z++ = lrint(lut_out.lookup(d.z) * 4095);
+			*xyz_x++ = lut_out.lookup(d.x);
+			*xyz_y++ = lut_out.lookup(d.y);
+			*xyz_z++ = lut_out.lookup(d.z);
 		}
 	}
 
