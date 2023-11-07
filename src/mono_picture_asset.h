@@ -66,7 +66,7 @@ public:
 	 *  @param edit_rate Edit rate (i.e. frame rate) in frames per second.
 	 *  @param standard DCP standard (INTEROP or SMPTE).
 	 */
-	explicit MonoPictureAsset (Fraction edit_rate, Standard standard);
+	MonoPictureAsset(Fraction edit_rate, Standard standard);
 
 	/** Start a progressive write to a MonoPictureAsset.
 	 *  @path file File to write to.
