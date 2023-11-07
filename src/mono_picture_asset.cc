@@ -50,13 +50,13 @@
 #include <asdcp/KM_fileio.h>
 
 
-using std::string;
-using std::vector;
+using std::dynamic_pointer_cast;
 using std::list;
+using std::make_shared;
 using std::pair;
 using std::shared_ptr;
-using std::dynamic_pointer_cast;
-using std::make_shared;
+using std::string;
+using std::vector;
 #if BOOST_VERSION >= 106100
 using namespace boost::placeholders;
 #endif
