@@ -37,14 +37,14 @@
  */
 
 
-#include "mono_picture_asset.h"
-#include "stereo_picture_asset.h"
-#include "sound_asset.h"
-#include "stereo_picture_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "asset_factory.h"
 #include "atmos_asset.h"
 #include "compose.hpp"
-#include "asset_factory.h"
+#include "mono_picture_asset.h"
+#include "smpte_subtitle_asset.h"
+#include "sound_asset.h"
+#include "stereo_picture_asset.h"
+#include "stereo_picture_asset.h"
 #include <memory>
 
 
