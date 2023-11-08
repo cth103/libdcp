@@ -33,8 +33,8 @@
 
 #include "dcp.h"
 #include "cpl.h"
-#include "mono_picture_asset.h"
-#include "mono_picture_asset_writer.h"
+#include "mono_j2k_picture_asset.h"
+#include "mono_j2k_picture_asset_writer.h"
 #include "sound_asset.h"
 #include "sound_asset_writer.h"
 #include "reel.h"

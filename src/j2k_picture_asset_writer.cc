@@ -37,9 +37,9 @@
  */
 
 
-#include "picture_asset_writer.h"
+#include "j2k_picture_asset_writer.h"
 #include "exceptions.h"
-#include "picture_asset.h"
+#include "j2k_picture_asset.h"
 #include <asdcp/KM_fileio.h>
 #include <asdcp/AS_DCP.h>
 #include <inttypes.h>

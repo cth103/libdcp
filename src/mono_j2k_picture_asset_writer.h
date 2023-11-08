@@ -41,7 +41,7 @@
 #define LIBDCP_MONO_PICTURE_ASSET_WRITER_H
 
 
-#include "picture_asset_writer.h"
+#include "j2k_picture_asset_writer.h"
 #include <memory>
 #include <boost/utility.hpp>
 #include <stdint.h>

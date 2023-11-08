@@ -43,7 +43,7 @@
 #include "exceptions.h"
 #include "j2k_transcode.h"
 #include "rgb_xyz.h"
-#include "stereo_picture_frame.h"
+#include "stereo_j2k_picture_frame.h"
 #include "util.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>

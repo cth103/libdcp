@@ -42,10 +42,10 @@
 #include "equality_options.h"
 #include "exceptions.h"
 #include "filesystem.h"
-#include "mono_picture_asset.h"
-#include "mono_picture_asset_reader.h"
-#include "mono_picture_asset_writer.h"
-#include "mono_picture_frame.h"
+#include "mono_j2k_picture_asset.h"
+#include "mono_j2k_picture_asset_reader.h"
+#include "mono_j2k_picture_asset_writer.h"
+#include "mono_j2k_picture_frame.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
 

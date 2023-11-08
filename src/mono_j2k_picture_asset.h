@@ -41,8 +41,8 @@
 #define LIBDCP_MONO_PICTURE_ASSET_H
 
 
-#include "picture_asset.h"
-#include "mono_picture_asset_reader.h"
+#include "j2k_picture_asset.h"
+#include "mono_j2k_picture_asset_reader.h"
 
 
 namespace dcp {

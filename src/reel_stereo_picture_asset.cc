@@ -38,7 +38,7 @@
 
 
 #include "reel_stereo_picture_asset.h"
-#include "stereo_picture_asset.h"
+#include "stereo_j2k_picture_asset.h"
 #include <libcxml/cxml.h>
 
 

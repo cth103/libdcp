@@ -39,7 +39,7 @@
 
 #include "compose.hpp"
 #include "dcp_assert.h"
-#include "picture_asset.h"
+#include "j2k_picture_asset.h"
 #include "raw_convert.h"
 #include "reel_picture_asset.h"
 #include "warnings.h"

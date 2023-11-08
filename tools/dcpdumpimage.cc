@@ -35,7 +35,7 @@
 #include "colour_conversion.h"
 #include "cpl.h"
 #include "dcp.h"
-#include "mono_picture_asset.h"
+#include "mono_j2k_picture_asset.h"
 #include "openjpeg_image.h"
 #include "reel_picture_asset.h"
 #include "raw_convert.h"

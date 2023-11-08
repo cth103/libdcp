@@ -37,16 +37,16 @@
  */
 
 
-#include "stereo_picture_asset_writer.h"
+#include "stereo_j2k_picture_asset_writer.h"
 #include "exceptions.h"
 #include "dcp_assert.h"
-#include "picture_asset.h"
+#include "j2k_picture_asset.h"
 #include "crypto_context.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
 
 
-#include "picture_asset_writer_common.cc"
+#include "j2k_picture_asset_writer_common.cc"
 
 
 using std::string;

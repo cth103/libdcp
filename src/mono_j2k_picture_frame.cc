@@ -44,7 +44,7 @@
 #include "file.h"
 #include "filesystem.h"
 #include "j2k_transcode.h"
-#include "mono_picture_frame.h"
+#include "mono_j2k_picture_frame.h"
 #include "rgb_xyz.h"
 #include "util.h"
 #include <asdcp/KM_fileio.h>

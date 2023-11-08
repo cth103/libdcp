@@ -38,7 +38,7 @@
 
 
 #include "reel_mono_picture_asset.h"
-#include "mono_picture_asset.h"
+#include "mono_j2k_picture_asset.h"
 #include <libcxml/cxml.h>
 
 

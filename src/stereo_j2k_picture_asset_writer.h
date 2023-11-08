@@ -37,7 +37,7 @@
  */
 
 
-#include "picture_asset_writer.h"
+#include "j2k_picture_asset_writer.h"
 #include <memory>
 #include <stdint.h>
 #include <string>

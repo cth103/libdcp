@@ -41,10 +41,10 @@
 #include "equality_options.h"
 #include "exceptions.h"
 #include "filesystem.h"
-#include "stereo_picture_asset.h"
-#include "stereo_picture_asset_reader.h"
-#include "stereo_picture_asset_writer.h"
-#include "stereo_picture_frame.h"
+#include "stereo_j2k_picture_asset.h"
+#include "stereo_j2k_picture_asset_reader.h"
+#include "stereo_j2k_picture_asset_writer.h"
+#include "stereo_j2k_picture_frame.h"
 #include <asdcp/AS_DCP.h>
 
 

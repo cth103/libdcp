@@ -42,7 +42,7 @@
 
 
 #include "reel_picture_asset.h"
-#include "mono_picture_asset.h"
+#include "mono_j2k_picture_asset.h"
 
 
 namespace dcp {

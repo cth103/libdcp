@@ -43,8 +43,8 @@
 #include "exceptions.h"
 #include "j2k_transcode.h"
 #include "openjpeg_image.h"
-#include "picture_asset.h"
-#include "picture_asset_writer.h"
+#include "j2k_picture_asset.h"
+#include "j2k_picture_asset_writer.h"
 #include "util.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>

@@ -41,8 +41,8 @@
 #define LIBDCP_STEREO_PICTURE_ASSET_H
 
 
-#include "picture_asset.h"
-#include "stereo_picture_asset_reader.h"
+#include "j2k_picture_asset.h"
+#include "stereo_j2k_picture_asset_reader.h"
 
 
 namespace dcp {

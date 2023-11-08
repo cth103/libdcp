@@ -32,8 +32,8 @@
 */
 
 
-#include "mono_picture_asset_writer.h"
-#include "mono_picture_asset.h"
+#include "mono_j2k_picture_asset_writer.h"
+#include "mono_j2k_picture_asset.h"
 #include "test.h"
 #include <asdcp/KM_util.h>
 #include <boost/filesystem.hpp>

@@ -42,7 +42,7 @@
 
 
 #include "asset_reader.h"
-#include "stereo_picture_frame.h"
+#include "stereo_j2k_picture_frame.h"
 
 
 namespace dcp {

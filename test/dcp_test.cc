@@ -38,8 +38,8 @@
 #include "dcp.h"
 #include "equality_options.h"
 #include "metadata.h"
-#include "mono_picture_asset.h"
-#include "picture_asset_writer.h"
+#include "mono_j2k_picture_asset.h"
+#include "j2k_picture_asset_writer.h"
 #include "reel.h"
 #include "reel_atmos_asset.h"
 #include "reel_markers_asset.h"
@@ -49,7 +49,7 @@
 #include "reel_stereo_picture_asset.h"
 #include "sound_asset.h"
 #include "sound_asset_writer.h"
-#include "stereo_picture_asset.h"
+#include "stereo_j2k_picture_asset.h"
 #include "test.h"
 #include <asdcp/KM_util.h>
 #include <sndfile.h>

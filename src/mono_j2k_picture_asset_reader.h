@@ -42,7 +42,7 @@
 
 
 #include "asset_reader.h"
-#include "mono_picture_frame.h"
+#include "mono_j2k_picture_frame.h"
 
 
 namespace dcp {

@@ -33,7 +33,7 @@
 
 
 #include "cpl.h"
-#include "mono_picture_asset.h"
+#include "mono_j2k_picture_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "warnings.h"
 #include <libcxml/cxml.h>
