@@ -71,7 +71,7 @@ public:
 	explicit PictureAsset (boost::filesystem::path file);
 
 	/** Create a new PictureAsset with a given edit rate and standard */
-	explicit PictureAsset (Fraction edit_rate, Standard standard);
+	PictureAsset(Fraction edit_rate, Standard standard);
 
 	enum class Behaviour {
 		OVERWRITE_EXISTING,
