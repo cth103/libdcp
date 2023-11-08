@@ -36,14 +36,14 @@ def build(bld):
     source = """
              array_data.cc
              asset.cc
-             asset_map.cc
              asset_factory.cc
+             asset_map.cc
              asset_writer.cc
              atmos_asset.cc
              atmos_asset_writer.cc
              bitstream.cc
-             certificate_chain.cc
              certificate.cc
+             certificate_chain.cc
              chromaticity.cc
              colour_conversion.cc
              combine.cc
@@ -65,6 +65,8 @@ def build(bld):
              identity_transfer_function.cc
              interop_load_font_node.cc
              interop_subtitle_asset.cc
+             j2k_picture_asset.cc
+             j2k_picture_asset_writer.cc
              j2k_transcode.cc
              key.cc
              language_tag.cc
@@ -72,15 +74,13 @@ def build(bld):
              locale_convert.cc
              metadata.cc
              modified_gamma_transfer_function.cc
-             mono_picture_asset.cc
-             mono_picture_asset_writer.cc
-             mono_picture_frame.cc
+             mono_j2k_picture_asset.cc
+             mono_j2k_picture_asset_writer.cc
+             mono_j2k_picture_frame.cc
              mxf.cc
              name_format.cc
              object.cc
              openjpeg_image.cc
-             picture_asset.cc
-             picture_asset_writer.cc
              pkl.cc
              rating.cc
              raw_convert.cc
@@ -91,9 +91,9 @@ def build(bld):
              reel_file_asset.cc
              reel_interop_closed_caption_asset.cc
              reel_interop_subtitle_asset.cc
+             reel_markers_asset.cc
              reel_mono_picture_asset.cc
              reel_picture_asset.cc
-             reel_markers_asset.cc
              reel_smpte_closed_caption_asset.cc
              reel_smpte_subtitle_asset.cc
              reel_sound_asset.cc
@@ -109,9 +109,9 @@ def build(bld):
              sound_asset.cc
              sound_asset_writer.cc
              sound_frame.cc
-             stereo_picture_asset.cc
-             stereo_picture_asset_writer.cc
-             stereo_picture_frame.cc
+             stereo_j2k_picture_asset.cc
+             stereo_j2k_picture_asset_writer.cc
+             stereo_j2k_picture_frame.cc
              subtitle.cc
              subtitle_asset.cc
              subtitle_asset_internal.cc
@@ -140,8 +140,8 @@ def build(bld):
               atmos_asset_reader.h
               atmos_asset_writer.h
               atmos_frame.h
-              certificate_chain.h
               certificate.h
+              certificate_chain.h
               chromaticity.h
               colour_conversion.h
               combine.h
@@ -168,6 +168,8 @@ def build(bld):
               identity_transfer_function.h
               interop_load_font_node.h
               interop_subtitle_asset.h
+              j2k_picture_asset.h
+              j2k_picture_asset_writer.h
               j2k_transcode.h
               key.h
               language_tag.h
@@ -175,22 +177,19 @@ def build(bld):
               local_time.h
               locale_convert.h
               metadata.h
-              mono_picture_asset.h
-              mono_picture_asset_reader.h
-              mono_picture_asset_writer.h
-              mono_picture_frame.h
               modified_gamma_transfer_function.h
+              mono_j2k_picture_asset.h
+              mono_j2k_picture_asset_reader.h
+              mono_j2k_picture_asset_writer.h
+              mono_j2k_picture_frame.h
               mxf.h
               name_format.h
               object.h
               openjpeg_image.h
-              picture_asset.h
-              picture_asset_writer.h
               piecewise_lut.h
               pkl.h
               rating.h
               raw_convert.h
-              rgb_xyz.h
               reel.h
               reel_asset.h
               reel_atmos_asset.h
@@ -201,26 +200,27 @@ def build(bld):
               reel_markers_asset.h
               reel_mono_picture_asset.h
               reel_picture_asset.h
-              reel_sound_asset.h
               reel_smpte_closed_caption_asset.h
               reel_smpte_subtitle_asset.h
+              reel_sound_asset.h
               reel_stereo_picture_asset.h
               reel_subtitle_asset.h
               ref.h
+              rgb_xyz.h
               ruby.h
               s_gamut3_transfer_function.h
               scope_guard.h
               search.h
               smpte_load_font_node.h
               smpte_subtitle_asset.h
-              sound_frame.h
               sound_asset.h
               sound_asset_reader.h
               sound_asset_writer.h
-              stereo_picture_asset.h
-              stereo_picture_asset_reader.h
-              stereo_picture_asset_writer.h
-              stereo_picture_frame.h
+              sound_frame.h
+              stereo_j2k_picture_asset.h
+              stereo_j2k_picture_asset_reader.h
+              stereo_j2k_picture_asset_writer.h
+              stereo_j2k_picture_frame.h
               subtitle.h
               subtitle_asset.h
               subtitle_image.h
