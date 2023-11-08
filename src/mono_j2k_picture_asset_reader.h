@@ -33,7 +33,7 @@
 
 
 /** @file  src/mono_picture_asset_reader.h
- *  @brief MonoPictureAssetReader typedef
+ *  @brief MonoJ2KPictureAssetReader typedef
  */
 
 
@@ -48,7 +48,7 @@
 namespace dcp {
 
 
-typedef AssetReader<ASDCP::JP2K::MXFReader, MonoPictureFrame> MonoPictureAssetReader;
+typedef AssetReader<ASDCP::JP2K::MXFReader, MonoJ2KPictureFrame> MonoJ2KPictureAssetReader;
 
 
 }

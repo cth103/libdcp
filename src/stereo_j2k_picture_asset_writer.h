@@ -33,7 +33,7 @@
 
 
 /** @file  src/stereo_picture_asset_writer.h
- *  @brief StereoPictureAssetWriter class
+ *  @brief StereoJ2KPictureAssetWriter class
  */
 
 
@@ -46,20 +46,20 @@
 namespace dcp {
 
 
-/** @class StereoPictureAssetWriter
- *  @brief A helper class for writing to StereoPictureAssets.
+/** @class StereoJ2KPictureAssetWriter
+ *  @brief A helper class for writing to StereoJ2KPictureAssets.
  *
- *  Objects of this class can only be created with StereoPictureAsset::start_write().
+ *  Objects of this class can only be created with StereoJ2KPictureAsset::start_write().
  *
- *  Frames can be written to the StereoPictureAsset by calling write() with a JPEG2000 image
+ *  Frames can be written to the StereoJ2KPictureAsset by calling write() with a JPEG2000 image
  *  (a verbatim .j2c file).  finalize() should be called after the last frame has been written,
  *  but if it is not, it will be called by the destructor (though in that case any error
  *  during finalization will be ignored).
  */
-class StereoPictureAssetWriter : public PictureAssetWriter
+class StereoJ2KPictureAssetWriter : public J2KPictureAssetWriter
 {
 public:
-	~StereoPictureAssetWriter();
+	~StereoJ2KPictureAssetWriter();
 
 	/** Write a frame for one eye.  Frames must be written left, then right, then left etc.
 	 *  @param data JPEG2000 data.
@@ -70,9 +70,9 @@ public:
 	bool finalize () override;
 
 private:
-	friend class StereoPictureAsset;
+	friend class StereoJ2KPictureAsset;
 
-	StereoPictureAssetWriter (PictureAsset *, boost::filesystem::path file, bool);
+	StereoJ2KPictureAssetWriter (J2KPictureAsset *, boost::filesystem::path file, bool);
 	void start (uint8_t const *, int);
 
 	/* do this with an opaque pointer so we don't have to include

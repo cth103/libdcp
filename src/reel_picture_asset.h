@@ -54,17 +54,17 @@ namespace dcp {
 class ReelPictureAsset : public ReelFileAsset
 {
 public:
-	ReelPictureAsset (std::shared_ptr<PictureAsset> asset, int64_t entry_point);
+	ReelPictureAsset (std::shared_ptr<J2KPictureAsset> asset, int64_t entry_point);
 	explicit ReelPictureAsset (std::shared_ptr<const cxml::Node>);
 
-	/** @return the PictureAsset that this object refers to */
-	std::shared_ptr<const PictureAsset> asset () const {
-		return asset_of_type<const PictureAsset>();
+	/** @return the J2KPictureAsset that this object refers to */
+	std::shared_ptr<const J2KPictureAsset> asset () const {
+		return asset_of_type<const J2KPictureAsset>();
 	}
 
-	/** @return the PictureAsset that this object refers to */
-	std::shared_ptr<PictureAsset> asset () {
-		return asset_of_type<PictureAsset>();
+	/** @return the J2KPictureAsset that this object refers to */
+	std::shared_ptr<J2KPictureAsset> asset () {
+		return asset_of_type<J2KPictureAsset>();
 	}
 
 	virtual xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;

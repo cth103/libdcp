@@ -80,7 +80,7 @@ get_frame (dcp::DCP const & dcp)
 	auto picture = reel->main_picture()->asset();
 	BOOST_CHECK (picture);
 
-	auto mono_picture = dynamic_pointer_cast<const dcp::MonoPictureAsset>(picture);
+	auto mono_picture = dynamic_pointer_cast<const dcp::MonoJ2KPictureAsset>(picture);
 	auto reader = mono_picture->start_read();
 	auto j2k_frame = reader->get_frame(0);
 	auto xyz = j2k_frame->xyz_image();
@@ -152,10 +152,10 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 	auto context_id = dcp::make_uuid();
 	dcp::Key key;
 
-	auto picture_asset = std::make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
+	auto picture_asset = std::make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 	picture_asset->set_key (key);
 	picture_asset->set_context_id (context_id);
-	auto picture_writer = picture_asset->start_write(dir / "picture.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
+	auto picture_writer = picture_asset->start_write(dir / "picture.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 	dcp::ArrayData picture("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		picture_writer->write(picture);

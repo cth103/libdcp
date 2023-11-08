@@ -72,11 +72,11 @@ dcp::asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_
 		throw ReadError ("MPEG2 video essences are not supported");
 	case ASDCP::ESS_JPEG_2000:
 		try {
-			return make_shared<MonoPictureAsset>(path);
+			return make_shared<MonoJ2KPictureAsset>(path);
 		} catch (dcp::MXFFileError& e) {
 			if (ignore_incorrect_picture_mxf_type && e.number() == ASDCP::RESULT_SFORMAT) {
 				/* Tried to load it as mono but the error says it's stereo; try that instead */
-				auto stereo = make_shared<StereoPictureAsset>(path);
+				auto stereo = make_shared<StereoJ2KPictureAsset>(path);
 				if (stereo && found_threed_marked_as_twod) {
 					*found_threed_marked_as_twod = true;
 				}
@@ -89,7 +89,7 @@ dcp::asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_
 	case ASDCP::ESS_PCM_24b_96k:
 		return make_shared<SoundAsset>(path);
 	case ASDCP::ESS_JPEG_2000_S:
-		return make_shared<StereoPictureAsset>(path);
+		return make_shared<StereoJ2KPictureAsset>(path);
 	case ASDCP::ESS_TIMED_TEXT:
 		return make_shared<SMPTESubtitleAsset>(path);
 	case ASDCP::ESS_DCDATA_DOLBY_ATMOS:

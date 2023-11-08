@@ -152,7 +152,7 @@ main(int argc, char* argv[])
 		if (frame_index >= duration) {
 			frame_index -= duration;
 		} else {
-			auto reader = dynamic_pointer_cast<dcp::MonoPictureAsset>(reel->main_picture()->asset())->start_read();
+			auto reader = dynamic_pointer_cast<dcp::MonoJ2KPictureAsset>(reel->main_picture()->asset())->start_read();
 			auto frame = reader->get_frame(frame_index);
 			auto xyz = frame->xyz_image();
 			std::vector<uint8_t> rgba(xyz->size().width * xyz->size().height * 4);

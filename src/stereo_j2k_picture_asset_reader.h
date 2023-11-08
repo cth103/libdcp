@@ -33,7 +33,7 @@
 
 
 /** @file  src/stereo_picture_asset_reader.h
- *  @brief StereoPictureAssetReader typedef
+ *  @brief StereoJ2KPictureAssetReader typedef
  */
 
 
@@ -48,7 +48,7 @@
 namespace dcp {
 
 
-typedef AssetReader<ASDCP::JP2K::MXFSReader, StereoPictureFrame> StereoPictureAssetReader;
+typedef AssetReader<ASDCP::JP2K::MXFSReader, StereoJ2KPictureFrame> StereoJ2KPictureAssetReader;
 
 
 }

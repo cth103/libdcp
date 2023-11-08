@@ -246,7 +246,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 				other_assets.push_back (make_shared<InteropSubtitleAsset>(path));
 			}
 		} else if (
-			*pkl_type == remove_parameters(PictureAsset::static_pkl_type(standard)) ||
+			*pkl_type == remove_parameters(J2KPictureAsset::static_pkl_type(standard)) ||
 			*pkl_type == remove_parameters(SoundAsset::static_pkl_type(standard)) ||
 			*pkl_type == remove_parameters(AtmosAsset::static_pkl_type(standard)) ||
 			*pkl_type == remove_parameters(SMPTESubtitleAsset::static_pkl_type(standard))

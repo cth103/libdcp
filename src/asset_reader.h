@@ -53,9 +53,9 @@ namespace dcp {
 
 
 class AtmosAsset;
-class MonoPictureAsset;
+class MonoJ2KPictureAsset;
 class SoundAsset;
-class StereoPictureAsset;
+class StereoJ2KPictureAsset;
 
 
 template <class R, class F>
@@ -90,9 +90,9 @@ protected:
 
 private:
 	friend class AtmosAsset;
-	friend class MonoPictureAsset;
+	friend class MonoJ2KPictureAsset;
 	friend class SoundAsset;
-	friend class StereoPictureAsset;
+	friend class StereoJ2KPictureAsset;
 
 	explicit AssetReader (Asset const * asset, boost::optional<Key> key, Standard standard)
 		: _crypto_context (new DecryptionContext(key, standard))

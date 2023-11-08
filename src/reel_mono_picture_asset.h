@@ -48,7 +48,7 @@
 namespace dcp {
 
 
-class MonoPictureAsset;
+class MonoJ2KPictureAsset;
 
 
 /** @class ReelMonoPictureAsset
@@ -57,17 +57,17 @@ class MonoPictureAsset;
 class ReelMonoPictureAsset : public ReelPictureAsset
 {
 public:
-	ReelMonoPictureAsset (std::shared_ptr<MonoPictureAsset> asset, int64_t entry_point);
+	ReelMonoPictureAsset (std::shared_ptr<MonoJ2KPictureAsset> asset, int64_t entry_point);
 	explicit ReelMonoPictureAsset (std::shared_ptr<const cxml::Node>);
 
-	/** @return the MonoPictureAsset that this object refers to */
-	std::shared_ptr<const MonoPictureAsset> mono_asset () const {
-		return asset_of_type<const MonoPictureAsset>();
+	/** @return the MonoJ2KPictureAsset that this object refers to */
+	std::shared_ptr<const MonoJ2KPictureAsset> mono_asset () const {
+		return asset_of_type<const MonoJ2KPictureAsset>();
 	}
 
-	/** @return the MonoPictureAsset that this object refers to */
-	std::shared_ptr<MonoPictureAsset> mono_asset () {
-		return asset_of_type<MonoPictureAsset>();
+	/** @return the MonoJ2KPictureAsset that this object refers to */
+	std::shared_ptr<MonoJ2KPictureAsset> mono_asset () {
+		return asset_of_type<MonoJ2KPictureAsset>();
 	}
 
 private:

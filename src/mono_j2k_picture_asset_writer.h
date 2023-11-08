@@ -33,7 +33,7 @@
 
 
 /** @file  src/mono_picture_asset_writer.h
- *  @brief MonoPictureAssetWriter class
+ *  @brief MonoJ2KPictureAssetWriter class
  */
 
 
@@ -51,29 +51,29 @@
 namespace dcp {
 
 
-/** @class MonoPictureAssetWriter
- *  @brief A helper class for writing to MonoPictureAssets
+/** @class MonoJ2KPictureAssetWriter
+ *  @brief A helper class for writing to MonoJ2KPictureAssets
  *
- *  Objects of this class can only be created with MonoPictureAsset::start_write().
+ *  Objects of this class can only be created with MonoJ2KPictureAsset::start_write().
  *
- *  Frames can be written to the MonoPictureAsset by calling write() with a JPEG2000 image
+ *  Frames can be written to the MonoJ2KPictureAsset by calling write() with a JPEG2000 image
  *  (a verbatim .j2c file).  finalize() should be called after the last frame has been written,
  *  but if it is not, it will be called by the destructor (though in that case any error
  *  during finalization will be ignored).
  */
-class MonoPictureAssetWriter : public PictureAssetWriter
+class MonoJ2KPictureAssetWriter : public J2KPictureAssetWriter
 {
 public:
-	~MonoPictureAssetWriter();
+	~MonoJ2KPictureAssetWriter();
 
 	FrameInfo write (uint8_t const *, int) override;
 	void fake_write (int size) override;
 	bool finalize () override;
 
 private:
-	friend class MonoPictureAsset;
+	friend class MonoJ2KPictureAsset;
 
-	MonoPictureAssetWriter (PictureAsset* a, boost::filesystem::path file, bool);
+	MonoJ2KPictureAssetWriter (J2KPictureAsset* a, boost::filesystem::path file, bool);
 
 	void start (uint8_t const *, int);
 

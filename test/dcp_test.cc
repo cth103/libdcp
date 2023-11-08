@@ -105,9 +105,9 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
 	cpl->set_annotation_text ("A Test DCP");
 
-	auto mp = make_shared<dcp::StereoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
+	auto mp = make_shared<dcp::StereoJ2KPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	mp->set_metadata (mxf_meta);
-	auto picture_writer = mp->start_write("build/test/DCP/dcp_test2/video.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
+	auto picture_writer = mp->start_write("build/test/DCP/dcp_test2/video.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		/* Left */
@@ -206,7 +206,7 @@ test_rewriting_sound(string name, bool modify)
 	BOOST_REQUIRE (A_picture->mono_asset());
 	BOOST_REQUIRE (A_picture->mono_asset()->file());
 	copy_file (A_picture->mono_asset()->file().get(), path("build") / "test" / name / picture);
-	reel->add(make_shared<dcp::ReelMonoPictureAsset>(make_shared<dcp::MonoPictureAsset>(path("build") / "test" / name / picture), 0));
+	reel->add(make_shared<dcp::ReelMonoPictureAsset>(make_shared<dcp::MonoJ2KPictureAsset>(path("build") / "test" / name / picture), 0));
 
 	auto reader = A_sound->asset()->start_read();
 	auto sound = make_shared<dcp::SoundAsset>(A_sound->asset()->edit_rate(), A_sound->asset()->sampling_rate(), A_sound->asset()->channels(), dcp::LanguageTag("en-US"), dcp::Standard::SMPTE);
@@ -290,9 +290,9 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
 	cpl->set_annotation_text ("A Test DCP");
 
-	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
+	auto mp = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	mp->set_metadata (mxf_meta);
-	auto picture_writer = mp->start_write("build/test/DCP/dcp_test5/video.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
+	auto picture_writer = mp->start_write("build/test/DCP/dcp_test5/video.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		picture_writer->write (j2c.data (), j2c.size ());
@@ -510,8 +510,8 @@ BOOST_AUTO_TEST_CASE(hashes_preserved_when_loading_corrupted_dcp)
 	auto dcp = make_simple(dir / "1");
 	dcp->write_xml();
 
-	auto asset_1_id = dcp::MonoPictureAsset(dir / "1" / "video.mxf").id();
-	auto asset_1_hash = dcp::MonoPictureAsset(dir / "1" / "video.mxf").hash();
+	auto asset_1_id = dcp::MonoJ2KPictureAsset(dir / "1" / "video.mxf").id();
+	auto asset_1_hash = dcp::MonoJ2KPictureAsset(dir / "1" / "video.mxf").hash();
 
 	/* Replace the hash in the CPL (the one that corresponds to the actual file)
 	 * with an incorrect one new_hash.

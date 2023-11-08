@@ -68,7 +68,7 @@ check (shared_ptr<dcp::ReelMonoPictureAsset> pa, dcp::Fraction frac, string sar)
 BOOST_AUTO_TEST_CASE (cpl_sar)
 {
 	auto pa = make_shared<dcp::ReelMonoPictureAsset>(
-		make_shared<dcp::MonoPictureAsset>("test/ref/DCP/dcp_test1/video.mxf"), 0
+		make_shared<dcp::MonoJ2KPictureAsset>("test/ref/DCP/dcp_test1/video.mxf"), 0
 		);
 
 	/* Easy ones */

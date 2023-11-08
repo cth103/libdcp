@@ -33,7 +33,7 @@
 
 
 /** @file  src/picture_asset_writer.cc
- *  @brief PictureAssetWriter and FrameInfo classes
+ *  @brief J2KPictureAssetWriter and FrameInfo classes
  */
 
 
@@ -51,7 +51,7 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, boost::filesystem::path file, bool overwrite)
+J2KPictureAssetWriter::J2KPictureAssetWriter (J2KPictureAsset* asset, boost::filesystem::path file, bool overwrite)
 	: AssetWriter (asset, file)
 	, _picture_asset (asset)
 	, _overwrite (overwrite)
@@ -61,7 +61,7 @@ PictureAssetWriter::PictureAssetWriter (PictureAsset* asset, boost::filesystem::
 
 
 FrameInfo
-PictureAssetWriter::write (Data const& data)
+J2KPictureAssetWriter::write (Data const& data)
 {
 	return write (data.data(), data.size());
 }

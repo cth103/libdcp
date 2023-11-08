@@ -47,7 +47,7 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<MonoPictureAsset> asset, int64_t entry_point)
+ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<MonoJ2KPictureAsset> asset, int64_t entry_point)
 	: ReelPictureAsset (asset, entry_point)
 {
 

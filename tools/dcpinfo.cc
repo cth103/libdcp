@@ -158,12 +158,12 @@ main_picture (vector<string> const& only, shared_ptr<Reel> reel, bool analyse, b
 			OUTPUT_PICTURE("\n      Picture:     %1x%2\n", mp->asset()->size().width, mp->asset()->size().height);
 		}
 
-		shared_ptr<MonoPictureAsset> ma = dynamic_pointer_cast<MonoPictureAsset>(mp->asset());
+		shared_ptr<MonoJ2KPictureAsset> ma = dynamic_pointer_cast<MonoJ2KPictureAsset>(mp->asset());
 		if (analyse && ma) {
-			shared_ptr<MonoPictureAssetReader> reader = ma->start_read ();
+			shared_ptr<MonoJ2KPictureAssetReader> reader = ma->start_read ();
 			pair<int, int> j2k_size_range (INT_MAX, 0);
 			for (int64_t i = 0; i < ma->intrinsic_duration(); ++i) {
-				shared_ptr<const MonoPictureFrame> frame = reader->get_frame (i);
+				shared_ptr<const MonoJ2KPictureFrame> frame = reader->get_frame (i);
 				if (SHOULD_PICTURE) {
 					printf("Frame %" PRId64 " J2K size %7d", i, frame->size());
 				}

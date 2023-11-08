@@ -33,7 +33,7 @@
 
 
 /** @file  src/mono_picture_asset.cc
- *  @brief MonoPictureAsset class
+ *  @brief MonoJ2KPictureAsset class
  */
 
 
@@ -63,8 +63,8 @@ using namespace boost::placeholders;
 using namespace dcp;
 
 
-MonoPictureAsset::MonoPictureAsset (boost::filesystem::path file)
-	: PictureAsset (file)
+MonoJ2KPictureAsset::MonoJ2KPictureAsset (boost::filesystem::path file)
+	: J2KPictureAsset (file)
 {
 	Kumu::FileReaderFactory factory;
 	ASDCP::JP2K::MXFReader reader(factory);
@@ -89,8 +89,8 @@ MonoPictureAsset::MonoPictureAsset (boost::filesystem::path file)
 }
 
 
-MonoPictureAsset::MonoPictureAsset (Fraction edit_rate, Standard standard)
-	: PictureAsset (edit_rate, standard)
+MonoJ2KPictureAsset::MonoJ2KPictureAsset (Fraction edit_rate, Standard standard)
+	: J2KPictureAsset (edit_rate, standard)
 {
 
 }
@@ -104,9 +104,9 @@ storing_note_handler (list<pair<NoteType, string>>& notes, NoteType t, string s)
 
 
 bool
-MonoPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandler note) const
+MonoJ2KPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandler note) const
 {
-	if (!dynamic_pointer_cast<const MonoPictureAsset>(other)) {
+	if (!dynamic_pointer_cast<const MonoJ2KPictureAsset>(other)) {
 		return false;
 	}
 
@@ -138,7 +138,7 @@ MonoPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& o
 		return false;
 	}
 
-	auto other_picture = dynamic_pointer_cast<const MonoPictureAsset> (other);
+	auto other_picture = dynamic_pointer_cast<const MonoJ2KPictureAsset> (other);
 	DCP_ASSERT (other_picture);
 
 	bool result = true;
@@ -186,23 +186,23 @@ MonoPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& o
 }
 
 
-shared_ptr<PictureAssetWriter>
-MonoPictureAsset::start_write(boost::filesystem::path file, Behaviour behaviour)
+shared_ptr<J2KPictureAssetWriter>
+MonoJ2KPictureAsset::start_write(boost::filesystem::path file, Behaviour behaviour)
 {
-	/* Can't use make_shared here as the MonoPictureAssetWriter constructor is private */
-	return shared_ptr<MonoPictureAssetWriter>(new MonoPictureAssetWriter(this, file, behaviour == Behaviour::OVERWRITE_EXISTING));
+	/* Can't use make_shared here as the MonoJ2KPictureAssetWriter constructor is private */
+	return shared_ptr<MonoJ2KPictureAssetWriter>(new MonoJ2KPictureAssetWriter(this, file, behaviour == Behaviour::OVERWRITE_EXISTING));
 }
 
-shared_ptr<MonoPictureAssetReader>
-MonoPictureAsset::start_read () const
+shared_ptr<MonoJ2KPictureAssetReader>
+MonoJ2KPictureAsset::start_read () const
 {
-	/* Can't use make_shared here as the MonoPictureAssetReader constructor is private */
-	return shared_ptr<MonoPictureAssetReader>(new MonoPictureAssetReader(this, key(), standard()));
+	/* Can't use make_shared here as the MonoJ2KPictureAssetReader constructor is private */
+	return shared_ptr<MonoJ2KPictureAssetReader>(new MonoJ2KPictureAssetReader(this, key(), standard()));
 
 }
 
 string
-MonoPictureAsset::cpl_node_name () const
+MonoJ2KPictureAsset::cpl_node_name () const
 {
 	return "MainPicture";
 }

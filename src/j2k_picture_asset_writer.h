@@ -33,7 +33,7 @@
 
 
 /** @file  src/picture_asset_writer.h
- *  @brief PictureAssetWriter and FrameInfo classes.
+ *  @brief J2KPictureAssetWriter and FrameInfo classes.
  */
 
 
@@ -53,7 +53,7 @@ namespace dcp {
 
 
 class Data;
-class PictureAsset;
+class J2KPictureAsset;
 
 
 /** @class FrameInfo
@@ -75,10 +75,10 @@ struct FrameInfo
 };
 
 
-/** @class PictureAssetWriter
+/** @class J2KPictureAssetWriter
  *  @brief Parent class for classes which write picture assets.
  */
-class PictureAssetWriter : public AssetWriter
+class J2KPictureAssetWriter : public AssetWriter
 {
 public:
 	virtual FrameInfo write (uint8_t const *, int) = 0;
@@ -88,11 +88,11 @@ public:
 
 protected:
 	template <class P, class Q>
-	friend void start (PictureAssetWriter *, std::shared_ptr<P>, Q *, uint8_t const *, int);
+	friend void start (J2KPictureAssetWriter *, std::shared_ptr<P>, Q *, uint8_t const *, int);
 
-	PictureAssetWriter (PictureAsset *, boost::filesystem::path, bool);
+	J2KPictureAssetWriter (J2KPictureAsset *, boost::filesystem::path, bool);
 
-	PictureAsset* _picture_asset = nullptr;
+	J2KPictureAsset* _picture_asset = nullptr;
 	bool _overwrite = false;
 };
 

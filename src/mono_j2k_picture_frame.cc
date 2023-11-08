@@ -33,7 +33,7 @@
 
 
 /** @file  src/mono_picture_frame.cc
- *  @brief MonoPictureFrame class
+ *  @brief MonoJ2KPictureFrame class
  */
 
 
@@ -58,7 +58,7 @@ using boost::optional;
 using namespace dcp;
 
 
-MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path)
+MonoJ2KPictureFrame::MonoJ2KPictureFrame (boost::filesystem::path path)
 {
 	auto const size = filesystem::file_size(path);
 	_buffer.reset(new ASDCP::JP2K::FrameBuffer(size));
@@ -81,7 +81,7 @@ MonoPictureFrame::MonoPictureFrame (boost::filesystem::path path)
  *  @param c Context for decryption, or 0.
  *  @param check_hmac true to check the HMAC and give an error if it is not as expected.
  */
-MonoPictureFrame::MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, shared_ptr<DecryptionContext> c, bool check_hmac)
+MonoJ2KPictureFrame::MonoJ2KPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, shared_ptr<DecryptionContext> c, bool check_hmac)
 {
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = make_shared<ASDCP::JP2K::FrameBuffer>(4 * Kumu::Megabyte);
@@ -94,7 +94,7 @@ MonoPictureFrame::MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, share
 }
 
 
-MonoPictureFrame::MonoPictureFrame (uint8_t const * data, int size)
+MonoJ2KPictureFrame::MonoJ2KPictureFrame (uint8_t const * data, int size)
 {
 	_buffer = make_shared<ASDCP::JP2K::FrameBuffer>(size);
 	_buffer->Size (size);
@@ -103,28 +103,28 @@ MonoPictureFrame::MonoPictureFrame (uint8_t const * data, int size)
 
 
 uint8_t const *
-MonoPictureFrame::data () const
+MonoJ2KPictureFrame::data () const
 {
 	return _buffer->RoData ();
 }
 
 
 uint8_t *
-MonoPictureFrame::data ()
+MonoJ2KPictureFrame::data ()
 {
 	return _buffer->Data ();
 }
 
 
 int
-MonoPictureFrame::size () const
+MonoJ2KPictureFrame::size () const
 {
 	return _buffer->Size ();
 }
 
 
 shared_ptr<OpenJPEGImage>
-MonoPictureFrame::xyz_image (int reduce) const
+MonoJ2KPictureFrame::xyz_image (int reduce) const
 {
 	return decompress_j2k (const_cast<uint8_t*>(_buffer->RoData()), _buffer->Size(), reduce);
 }

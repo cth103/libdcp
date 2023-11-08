@@ -33,7 +33,7 @@
 
 
 /** @file  src/picture_asset.h
- *  @brief PictureAsset class
+ *  @brief J2KPictureAsset class
  */
 
 
@@ -56,29 +56,29 @@ namespace ASDCP {
 namespace dcp {
 
 
-class MonoPictureFrame;
-class StereoPictureFrame;
-class PictureAssetWriter;
+class MonoJ2KPictureFrame;
+class StereoJ2KPictureFrame;
+class J2KPictureAssetWriter;
 
 
-/** @class PictureAsset
+/** @class J2KPictureAsset
  *  @brief An asset made up of JPEG2000 data
  */
-class PictureAsset : public Asset, public MXF
+class J2KPictureAsset : public Asset, public MXF
 {
 public:
-	/** Load a PictureAsset from a file */
-	explicit PictureAsset (boost::filesystem::path file);
+	/** Load a J2KPictureAsset from a file */
+	explicit J2KPictureAsset (boost::filesystem::path file);
 
-	/** Create a new PictureAsset with a given edit rate and standard */
-	PictureAsset(Fraction edit_rate, Standard standard);
+	/** Create a new J2KPictureAsset with a given edit rate and standard */
+	J2KPictureAsset (Fraction edit_rate, Standard standard);
 
 	enum class Behaviour {
 		OVERWRITE_EXISTING,
 		MAKE_NEW
 	};
 
-	virtual std::shared_ptr<PictureAssetWriter> start_write (
+	virtual std::shared_ptr<J2KPictureAssetWriter> start_write (
 		boost::filesystem::path file,
 		Behaviour behaviour
 		) = 0;
@@ -118,8 +118,8 @@ public:
 	static std::string static_pkl_type (Standard standard);
 
 protected:
-	friend class MonoPictureAssetWriter;
-	friend class StereoPictureAssetWriter;
+	friend class MonoJ2KPictureAssetWriter;
+	friend class StereoJ2KPictureAssetWriter;
 
 	bool frame_buffer_equals (
 		int frame, EqualityOptions const& opt, NoteHandler note,

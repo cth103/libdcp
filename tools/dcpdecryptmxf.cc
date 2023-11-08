@@ -232,10 +232,10 @@ main (int argc, char* argv[])
 		}
 		case Type::PICTURE:
 		{
-			dcp::MonoPictureAsset in (input_file);
+			dcp::MonoJ2KPictureAsset in (input_file);
 			add_key (in, decrypted_kdm);
-			dcp::MonoPictureAsset out (in.edit_rate(), dcp::Standard::SMPTE);
-			auto writer = out.start_write(output_file.get(), dcp::PictureAsset::Behaviour::MAKE_NEW);
+			dcp::MonoJ2KPictureAsset out (in.edit_rate(), dcp::Standard::SMPTE);
+			auto writer = out.start_write(output_file.get(), dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 			copy (in, writer, ignore_hmac);
 			break;
 		}

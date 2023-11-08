@@ -48,7 +48,7 @@
 namespace dcp {
 
 
-class StereoPictureAsset;
+class StereoJ2KPictureAsset;
 
 
 /** @class ReelStereoPictureAsset
@@ -57,17 +57,17 @@ class StereoPictureAsset;
 class ReelStereoPictureAsset : public ReelPictureAsset
 {
 public:
-	ReelStereoPictureAsset (std::shared_ptr<StereoPictureAsset> content, int64_t entry_point);
+	ReelStereoPictureAsset (std::shared_ptr<StereoJ2KPictureAsset> content, int64_t entry_point);
 	explicit ReelStereoPictureAsset (std::shared_ptr<const cxml::Node>);
 
-	/** @return the StereoPictureAsset that this object refers to */
-	std::shared_ptr<const StereoPictureAsset> stereo_asset () const {
-		return asset_of_type<const StereoPictureAsset>();
+	/** @return the StereoJ2KPictureAsset that this object refers to */
+	std::shared_ptr<const StereoJ2KPictureAsset> stereo_asset () const {
+		return asset_of_type<const StereoJ2KPictureAsset>();
 	}
 
-	/** @return the StereoPictureAsset that this object refers to */
-	std::shared_ptr<StereoPictureAsset> stereo_asset () {
-		return asset_of_type<StereoPictureAsset>();
+	/** @return the StereoJ2KPictureAsset that this object refers to */
+	std::shared_ptr<StereoJ2KPictureAsset> stereo_asset () {
+		return asset_of_type<StereoJ2KPictureAsset>();
 	}
 
 private:

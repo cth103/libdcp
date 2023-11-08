@@ -33,7 +33,7 @@
 
 
 /** @file  src/mono_picture_frame.h
- *  @brief MonoPictureFrame class
+ *  @brief MonoJ2KPictureFrame class
  */
 
 
@@ -64,20 +64,20 @@ namespace dcp {
 class OpenJPEGImage;
 
 
-/** @class MonoPictureFrame
+/** @class MonoJ2KPictureFrame
  *  @brief A single frame of a 2D (monoscopic) picture asset
  */
-class MonoPictureFrame : public Data
+class MonoJ2KPictureFrame : public Data
 {
 public:
 	/** Make a picture frame from a JPEG2000 file.
 	 *  @param path Path to JPEG2000 file.
 	 */
-	explicit MonoPictureFrame (boost::filesystem::path path);
-	MonoPictureFrame (uint8_t const * data, int size);
+	explicit MonoJ2KPictureFrame (boost::filesystem::path path);
+	MonoJ2KPictureFrame (uint8_t const * data, int size);
 
-	MonoPictureFrame (MonoPictureFrame const&) = delete;
-	MonoPictureFrame& operator= (MonoPictureFrame const&) = delete;
+	MonoJ2KPictureFrame (MonoJ2KPictureFrame const&) = delete;
+	MonoJ2KPictureFrame& operator= (MonoJ2KPictureFrame const&) = delete;
 
 	/** @param reduce a factor by which to reduce the resolution
 	 *  of the image, expressed as a power of two (pass 0 for no
@@ -95,12 +95,12 @@ public:
 	int size () const override;
 
 private:
-	/* XXX: this is a bit of a shame, but I tried friend MonoPictureAssetReader and it's
+	/* XXX: this is a bit of a shame, but I tried friend MonoJ2KPictureAssetReader and it's
 	   rejected by some (seemingly older) GCCs.
 	*/
-	friend class AssetReader<ASDCP::JP2K::MXFReader, MonoPictureFrame>;
+	friend class AssetReader<ASDCP::JP2K::MXFReader, MonoJ2KPictureFrame>;
 
-	MonoPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, std::shared_ptr<DecryptionContext>, bool check_hmac);
+	MonoJ2KPictureFrame (ASDCP::JP2K::MXFReader* reader, int n, std::shared_ptr<DecryptionContext>, bool check_hmac);
 
 	std::shared_ptr<ASDCP::JP2K::FrameBuffer> _buffer;
 };

@@ -33,7 +33,7 @@
 
 
 /** @file  src/mono_picture_asset.cc
- *  @brief MonoPictureAsset class
+ *  @brief MonoJ2KPictureAsset class
  */
 
 
@@ -48,34 +48,34 @@
 namespace dcp {
 
 
-class MonoPictureAssetWriter;
+class MonoJ2KPictureAssetWriter;
 
 
-/** @class MonoPictureAsset
+/** @class MonoJ2KPictureAsset
  *  @brief A 2D (monoscopic) picture asset
  */
-class MonoPictureAsset : public PictureAsset
+class MonoJ2KPictureAsset : public J2KPictureAsset
 {
 public:
-	/** Create a MonoPictureAsset by reading a file.
+	/** Create a MonoJ2KPictureAsset by reading a file.
 	 *  @param file Asset file to read.
 	 */
-	explicit MonoPictureAsset (boost::filesystem::path file);
+	explicit MonoJ2KPictureAsset (boost::filesystem::path file);
 
-	/** Create a MonoPictureAsset with a given edit rate.
+	/** Create a MonoJ2KPictureAsset with a given edit rate.
 	 *  @param edit_rate Edit rate (i.e. frame rate) in frames per second.
 	 *  @param standard DCP standard (INTEROP or SMPTE).
 	 */
-	MonoPictureAsset(Fraction edit_rate, Standard standard);
+	MonoJ2KPictureAsset(Fraction edit_rate, Standard standard);
 
-	/** Start a progressive write to a MonoPictureAsset.
+	/** Start a progressive write to a MonoJ2KPictureAsset.
 	 *  @path file File to write to.
 	 *  @path behaviour OVERWRITE_EXISTING to overwrite and potentially add to an existing file
 	 *  (after a write previously failed), MAKE_NEW to create a new file.
 	 *  If in doubt, use MAKE_NEW here.
 	 */
-	std::shared_ptr<PictureAssetWriter> start_write(boost::filesystem::path file, Behaviour behaviour) override;
-	std::shared_ptr<MonoPictureAssetReader> start_read () const;
+	std::shared_ptr<J2KPictureAssetWriter> start_write(boost::filesystem::path file, Behaviour behaviour) override;
+	std::shared_ptr<MonoJ2KPictureAssetReader> start_read () const;
 
 	bool equals (
 		std::shared_ptr<const Asset> other,

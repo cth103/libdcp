@@ -70,8 +70,8 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	boost::filesystem::path work_dir = "build/test/round_trip_test";
 	boost::filesystem::create_directory (work_dir);
 
-	auto asset_A = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
-	auto writer = asset_A->start_write(work_dir / "video.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
+	auto asset_A = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
+	auto writer = asset_A->start_write(work_dir / "video.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data (), j2c.size ());
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE (round_trip_test)
 	}
 
 	/* Reload the picture asset */
-	auto asset_B = make_shared<dcp::MonoPictureAsset>(work_dir / "video.mxf");
+	auto asset_B = make_shared<dcp::MonoJ2KPictureAsset>(work_dir / "video.mxf");
 
 	BOOST_CHECK (!kdm_B.keys().empty ());
 	asset_B->set_key (kdm_B.keys().front().key());

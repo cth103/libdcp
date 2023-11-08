@@ -33,7 +33,7 @@
 
 
 /** @file  src/stereo_picture_frame.cc
- *  @brief StereoPictureFrame class
+ *  @brief StereoJ2KPictureFrame class
  */
 
 
@@ -55,7 +55,7 @@ using std::make_shared;
 using namespace dcp;
 
 
-StereoPictureFrame::Part::Part (shared_ptr<ASDCP::JP2K::SFrameBuffer> buffer, Eye eye)
+StereoJ2KPictureFrame::Part::Part (shared_ptr<ASDCP::JP2K::SFrameBuffer> buffer, Eye eye)
 	: _buffer (buffer)
 	, _eye (eye)
 {
@@ -64,28 +64,28 @@ StereoPictureFrame::Part::Part (shared_ptr<ASDCP::JP2K::SFrameBuffer> buffer, Ey
 
 
 ASDCP::JP2K::FrameBuffer &
-StereoPictureFrame::Part::mono () const
+StereoJ2KPictureFrame::Part::mono () const
 {
 	return _eye == Eye::LEFT ? _buffer->Left : _buffer->Right;
 }
 
 
 uint8_t const *
-StereoPictureFrame::Part::data () const
+StereoJ2KPictureFrame::Part::data () const
 {
 	return mono().RoData();
 }
 
 
 uint8_t *
-StereoPictureFrame::Part::data ()
+StereoJ2KPictureFrame::Part::data ()
 {
 	return mono().Data();
 }
 
 
 int
-StereoPictureFrame::Part::size () const
+StereoJ2KPictureFrame::Part::size () const
 {
 	return mono().Size();
 }
@@ -96,7 +96,7 @@ StereoPictureFrame::Part::size () const
  *  @param n Frame within the asset, not taking EntryPoint into account.
  *  @param check_hmac true to check the HMAC and give an error if it is not as expected.
  */
-StereoPictureFrame::StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, shared_ptr<DecryptionContext> c, bool check_hmac)
+StereoJ2KPictureFrame::StereoJ2KPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, shared_ptr<DecryptionContext> c, bool check_hmac)
 {
 	/* XXX: unfortunate guesswork on this buffer size */
 	_buffer = make_shared<ASDCP::JP2K::SFrameBuffer>(4 * Kumu::Megabyte);
@@ -107,7 +107,7 @@ StereoPictureFrame::StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, 
 }
 
 
-StereoPictureFrame::StereoPictureFrame ()
+StereoJ2KPictureFrame::StereoJ2KPictureFrame ()
 {
 	_buffer = make_shared<ASDCP::JP2K::SFrameBuffer>(4 * Kumu::Megabyte);
 }
@@ -119,7 +119,7 @@ StereoPictureFrame::StereoPictureFrame ()
  *  reduction).
  */
 shared_ptr<OpenJPEGImage>
-StereoPictureFrame::xyz_image (Eye eye, int reduce) const
+StereoJ2KPictureFrame::xyz_image (Eye eye, int reduce) const
 {
 	switch (eye) {
 	case Eye::LEFT:
@@ -132,15 +132,15 @@ StereoPictureFrame::xyz_image (Eye eye, int reduce) const
 }
 
 
-shared_ptr<StereoPictureFrame::Part>
-StereoPictureFrame::right () const
+shared_ptr<StereoJ2KPictureFrame::Part>
+StereoJ2KPictureFrame::right () const
 {
 	return make_shared<Part>(_buffer, Eye::RIGHT);
 }
 
 
-shared_ptr<StereoPictureFrame::Part>
-StereoPictureFrame::left () const
+shared_ptr<StereoJ2KPictureFrame::Part>
+StereoJ2KPictureFrame::left () const
 {
 	return make_shared<Part>(_buffer, Eye::LEFT);
 }

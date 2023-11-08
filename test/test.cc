@@ -271,7 +271,7 @@ RNGFixer::~RNGFixer ()
 }
 
 
-shared_ptr<dcp::MonoPictureAsset>
+shared_ptr<dcp::MonoJ2KPictureAsset>
 simple_picture (boost::filesystem::path path, string suffix, int frames, optional<dcp::Key> key)
 {
 	dcp::MXFMetadata mxf_meta;
@@ -279,12 +279,12 @@ simple_picture (boost::filesystem::path path, string suffix, int frames, optiona
 	mxf_meta.product_name = "OpenDCP";
 	mxf_meta.product_version = "0.0.25";
 
-	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
+	auto mp = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	mp->set_metadata (mxf_meta);
 	if (key) {
 		mp->set_key (*key);
 	}
-	auto picture_writer = mp->start_write(path / dcp::String::compose("video%1.mxf", suffix), dcp::PictureAsset::Behaviour::MAKE_NEW);
+	auto picture_writer = mp->start_write(path / dcp::String::compose("video%1.mxf", suffix), dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 
 	dcp::Size const size (1998, 1080);
 	auto image = make_shared<dcp::OpenJPEGImage>(size);
@@ -530,10 +530,10 @@ black_picture_asset (boost::filesystem::path dir, int frames)
 	auto frame = dcp::compress_j2k (image, 100000000, 24, false, false);
 	BOOST_REQUIRE (frame.size() < 230000000 / (24 * 8));
 
-	auto asset = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
+	auto asset = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 	asset->set_metadata (dcp::MXFMetadata("libdcp", "libdcp", "1.6.4devel"));
 	boost::filesystem::create_directories (dir);
-	auto writer = asset->start_write(dir / "pic.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
+	auto writer = asset->start_write(dir / "pic.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 	for (int i = 0; i < frames; ++i) {
 		writer->write (frame.data(), frame.size());
 	}

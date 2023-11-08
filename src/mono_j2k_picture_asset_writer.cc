@@ -33,7 +33,7 @@
 
 
 /** @file  src/mono_picture_asset_writer.cc
- *  @brief MonoPictureAssetWriter class
+ *  @brief MonoJ2KPictureAssetWriter class
  */
 
 
@@ -57,7 +57,7 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-struct MonoPictureAssetWriter::ASDCPState : public ASDCPStateBase
+struct MonoJ2KPictureAssetWriter::ASDCPState : public ASDCPStateBase
 {
 	ASDCP::JP2K::MXFWriter mxf_writer;
 };
@@ -66,15 +66,15 @@ struct MonoPictureAssetWriter::ASDCPState : public ASDCPStateBase
 /** @param a Asset to write to.  `a' must not be deleted while
  *  this writer class still exists, or bad things will happen.
  */
-MonoPictureAssetWriter::MonoPictureAssetWriter (PictureAsset* asset, boost::filesystem::path file, bool overwrite)
-	: PictureAssetWriter (asset, file, overwrite)
-	, _state (new MonoPictureAssetWriter::ASDCPState)
+MonoJ2KPictureAssetWriter::MonoJ2KPictureAssetWriter (J2KPictureAsset* asset, boost::filesystem::path file, bool overwrite)
+	: J2KPictureAssetWriter (asset, file, overwrite)
+	, _state (new MonoJ2KPictureAssetWriter::ASDCPState)
 {
 
 }
 
 
-MonoPictureAssetWriter::~MonoPictureAssetWriter()
+MonoJ2KPictureAssetWriter::~MonoJ2KPictureAssetWriter()
 {
 	try {
 		/* Last-resort finalization to close the file, at least */
@@ -86,7 +86,7 @@ MonoPictureAssetWriter::~MonoPictureAssetWriter()
 
 
 void
-MonoPictureAssetWriter::start (uint8_t const * data, int size)
+MonoJ2KPictureAssetWriter::start (uint8_t const * data, int size)
 {
 	dcp::start (this, _state, _picture_asset, data, size);
 	_picture_asset->set_frame_rate (_picture_asset->edit_rate());
@@ -94,7 +94,7 @@ MonoPictureAssetWriter::start (uint8_t const * data, int size)
 
 
 FrameInfo
-MonoPictureAssetWriter::write (uint8_t const * data, int size)
+MonoJ2KPictureAssetWriter::write (uint8_t const * data, int size)
 {
 	DCP_ASSERT (!_finalized);
 
@@ -122,7 +122,7 @@ MonoPictureAssetWriter::write (uint8_t const * data, int size)
 
 
 void
-MonoPictureAssetWriter::fake_write (int size)
+MonoJ2KPictureAssetWriter::fake_write (int size)
 {
 	DCP_ASSERT (_started);
 	DCP_ASSERT (!_finalized);
@@ -137,7 +137,7 @@ MonoPictureAssetWriter::fake_write (int size)
 
 
 bool
-MonoPictureAssetWriter::finalize ()
+MonoJ2KPictureAssetWriter::finalize ()
 {
 	if (_started) {
 		auto r = _state->mxf_writer.Finalize();
@@ -147,5 +147,5 @@ MonoPictureAssetWriter::finalize ()
 	}
 
 	_picture_asset->_intrinsic_duration = _frames_written;
-	return PictureAssetWriter::finalize ();
+	return J2KPictureAssetWriter::finalize ();
 }

@@ -33,7 +33,7 @@
 
 
 /** @file  src/stereo_picture_asset_writer.cc
- *  @brief StereoPictureAssetWriter class
+ *  @brief StereoJ2KPictureAssetWriter class
  */
 
 
@@ -54,21 +54,21 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-struct StereoPictureAssetWriter::ASDCPState : public ASDCPStateBase
+struct StereoJ2KPictureAssetWriter::ASDCPState : public ASDCPStateBase
 {
 	ASDCP::JP2K::MXFSWriter mxf_writer;
 };
 
 
-StereoPictureAssetWriter::StereoPictureAssetWriter (PictureAsset* mxf, boost::filesystem::path file, bool overwrite)
-	: PictureAssetWriter (mxf, file, overwrite)
-	, _state (new StereoPictureAssetWriter::ASDCPState)
+StereoJ2KPictureAssetWriter::StereoJ2KPictureAssetWriter (J2KPictureAsset* mxf, boost::filesystem::path file, bool overwrite)
+	: J2KPictureAssetWriter (mxf, file, overwrite)
+	, _state (new StereoJ2KPictureAssetWriter::ASDCPState)
 {
 
 }
 
 
-StereoPictureAssetWriter::~StereoPictureAssetWriter()
+StereoJ2KPictureAssetWriter::~StereoJ2KPictureAssetWriter()
 {
 	try {
 		/* Last-resort finalization to close the file, at least */
@@ -80,7 +80,7 @@ StereoPictureAssetWriter::~StereoPictureAssetWriter()
 
 
 void
-StereoPictureAssetWriter::start (uint8_t const * data, int size)
+StereoJ2KPictureAssetWriter::start (uint8_t const * data, int size)
 {
 	dcp::start (this, _state, _picture_asset, data, size);
 	_picture_asset->set_frame_rate (Fraction (_picture_asset->edit_rate().numerator * 2, _picture_asset->edit_rate().denominator));
@@ -88,7 +88,7 @@ StereoPictureAssetWriter::start (uint8_t const * data, int size)
 
 
 FrameInfo
-StereoPictureAssetWriter::write (uint8_t const * data, int size)
+StereoJ2KPictureAssetWriter::write (uint8_t const * data, int size)
 {
 	DCP_ASSERT (!_finalized);
 
@@ -128,7 +128,7 @@ StereoPictureAssetWriter::write (uint8_t const * data, int size)
 
 
 void
-StereoPictureAssetWriter::fake_write (int size)
+StereoJ2KPictureAssetWriter::fake_write (int size)
 {
 	DCP_ASSERT (_started);
 	DCP_ASSERT (!_finalized);
@@ -146,7 +146,7 @@ StereoPictureAssetWriter::fake_write (int size)
 
 
 bool
-StereoPictureAssetWriter::finalize ()
+StereoJ2KPictureAssetWriter::finalize ()
 {
 	if (_started) {
 		auto r = _state->mxf_writer.Finalize();
@@ -156,5 +156,5 @@ StereoPictureAssetWriter::finalize ()
 	}
 
 	_picture_asset->_intrinsic_duration = _frames_written;
-	return PictureAssetWriter::finalize ();
+	return J2KPictureAssetWriter::finalize ();
 }

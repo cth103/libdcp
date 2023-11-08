@@ -256,9 +256,9 @@ BOOST_AUTO_TEST_CASE (validity_period_test1)
 	auto signer = make_shared<dcp::CertificateChain>(dcp::file_to_string("test/data/certificate_chain"));
 	signer->set_key(dcp::file_to_string("test/data/private.key"));
 
-	auto asset = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
+	auto asset = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 	asset->set_key (dcp::Key());
-	auto writer = asset->start_write("build/test/validity_period_test1.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
+	auto writer = asset->start_write("build/test/validity_period_test1.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 	dcp::ArrayData frame ("test/data/flat_red.j2c");
 	writer->write (frame.data(), frame.size());
 	writer->finalize ();
@@ -376,7 +376,7 @@ BOOST_AUTO_TEST_CASE (vf_kdm_test)
 	BOOST_REQUIRE_EQUAL(reload_vf.cpls()[0]->reels().size(), 1U);
 	BOOST_REQUIRE(reload_vf.cpls()[0]->reels()[0]->main_picture());
 	BOOST_REQUIRE(reload_vf.cpls()[0]->reels()[0]->main_picture()->asset());
-	auto mono_asset = dynamic_pointer_cast<dcp::MonoPictureAsset>(reload_vf.cpls()[0]->reels()[0]->main_picture()->asset());
+	auto mono_asset = dynamic_pointer_cast<dcp::MonoJ2KPictureAsset>(reload_vf.cpls()[0]->reels()[0]->main_picture()->asset());
 	BOOST_REQUIRE(mono_asset);
 	auto reader = mono_asset->start_read();
 	reader->set_check_hmac(false);

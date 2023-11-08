@@ -47,7 +47,7 @@ using std::string;
 
 
 static void
-check (shared_ptr<dcp::PictureAssetWriter> writer, boost::random::uniform_int_distribution<>& dist, boost::random::mt19937& rng, string hash)
+check (shared_ptr<dcp::J2KPictureAssetWriter> writer, boost::random::uniform_int_distribution<>& dist, boost::random::mt19937& rng, string hash)
 {
 	auto xyz = make_shared<dcp::OpenJPEGImage>(dcp::Size(1998, 1080));
 	for (int c = 0; c < 3; ++c) {
@@ -66,8 +66,8 @@ check (shared_ptr<dcp::PictureAssetWriter> writer, boost::random::uniform_int_di
 /** Test the hashing of data written to JPEG2000 MXFs with some random inputs */
 BOOST_AUTO_TEST_CASE (frame_info_hash_test)
 {
-	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
-	auto writer = mp->start_write("build/test/frame_info_hash_test.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
+	auto mp = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
+	auto writer = mp->start_write("build/test/frame_info_hash_test.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 
 	boost::random::mt19937 rng(1);
 	boost::random::uniform_int_distribution<> dist(0, 4095);

@@ -33,7 +33,7 @@
 
 
 /** @file  src/stereo_picture_asset.cc
- *  @brief StereoPictureAsset class
+ *  @brief StereoJ2KPictureAsset class
  */
 
 
@@ -56,8 +56,8 @@ using std::dynamic_pointer_cast;
 using namespace dcp;
 
 
-StereoPictureAsset::StereoPictureAsset (boost::filesystem::path file)
-	: PictureAsset (file)
+StereoJ2KPictureAsset::StereoJ2KPictureAsset (boost::filesystem::path file)
+	: J2KPictureAsset (file)
 {
 	Kumu::FileReaderFactory factory;
 	ASDCP::JP2K::MXFSReader reader(factory);
@@ -82,29 +82,29 @@ StereoPictureAsset::StereoPictureAsset (boost::filesystem::path file)
 }
 
 
-StereoPictureAsset::StereoPictureAsset (Fraction edit_rate, Standard standard)
-	: PictureAsset (edit_rate, standard)
+StereoJ2KPictureAsset::StereoJ2KPictureAsset (Fraction edit_rate, Standard standard)
+	: J2KPictureAsset (edit_rate, standard)
 {
 
 }
 
 
-shared_ptr<PictureAssetWriter>
-StereoPictureAsset::start_write(boost::filesystem::path file, Behaviour behaviour)
+shared_ptr<J2KPictureAssetWriter>
+StereoJ2KPictureAsset::start_write(boost::filesystem::path file, Behaviour behaviour)
 {
-	return shared_ptr<StereoPictureAssetWriter>(new StereoPictureAssetWriter(this, file, behaviour == Behaviour::OVERWRITE_EXISTING));
+	return shared_ptr<StereoJ2KPictureAssetWriter>(new StereoJ2KPictureAssetWriter(this, file, behaviour == Behaviour::OVERWRITE_EXISTING));
 }
 
 
-shared_ptr<StereoPictureAssetReader>
-StereoPictureAsset::start_read () const
+shared_ptr<StereoJ2KPictureAssetReader>
+StereoJ2KPictureAsset::start_read () const
 {
-	return shared_ptr<StereoPictureAssetReader> (new StereoPictureAssetReader(this, key(), standard()));
+	return shared_ptr<StereoJ2KPictureAssetReader> (new StereoJ2KPictureAssetReader(this, key(), standard()));
 }
 
 
 bool
-StereoPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandler note) const
+StereoJ2KPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	Kumu::FileReaderFactory factory;
 	ASDCP::JP2K::MXFSReader reader_A(factory);
@@ -134,7 +134,7 @@ StereoPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const&
 		return false;
 	}
 
-	auto other_picture = dynamic_pointer_cast<const StereoPictureAsset> (other);
+	auto other_picture = dynamic_pointer_cast<const StereoJ2KPictureAsset> (other);
 	DCP_ASSERT (other_picture);
 
 	auto reader = start_read ();
@@ -143,8 +143,8 @@ StereoPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const&
 	bool result = true;
 
 	for (int i = 0; i < _intrinsic_duration; ++i) {
-		shared_ptr<const StereoPictureFrame> frame_A;
-		shared_ptr<const StereoPictureFrame> frame_B;
+		shared_ptr<const StereoJ2KPictureFrame> frame_A;
+		shared_ptr<const StereoJ2KPictureFrame> frame_B;
 		try {
 			frame_A = reader->get_frame (i);
 			frame_B = other_reader->get_frame (i);

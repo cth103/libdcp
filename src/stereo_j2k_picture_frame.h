@@ -33,7 +33,7 @@
 
 
 /** @file  src/stereo_picture_frame.h
- *  @brief StereoPictureFrame class
+ *  @brief StereoJ2KPictureFrame class
  */
 
 
@@ -61,19 +61,19 @@ namespace dcp {
 
 
 class OpenJPEGImage;
-class StereoPictureFrame;
+class StereoJ2KPictureFrame;
 
 
-/** @class StereoPictureFrame
+/** @class StereoJ2KPictureFrame
  *  @brief A single frame of a 3D (stereoscopic) picture asset
  */
-class StereoPictureFrame
+class StereoJ2KPictureFrame
 {
 public:
-	StereoPictureFrame ();
+	StereoJ2KPictureFrame ();
 
-	StereoPictureFrame (StereoPictureFrame const &) = delete;
-	StereoPictureFrame& operator= (StereoPictureFrame const &) = delete;
+	StereoJ2KPictureFrame (StereoJ2KPictureFrame const &) = delete;
+	StereoJ2KPictureFrame& operator= (StereoJ2KPictureFrame const &) = delete;
 
 	std::shared_ptr<OpenJPEGImage> xyz_image (Eye eye, int reduce = 0) const;
 
@@ -87,7 +87,7 @@ public:
 		int size () const override;
 
 	private:
-		friend class StereoPictureFrame;
+		friend class StereoJ2KPictureFrame;
 
 		ASDCP::JP2K::FrameBuffer& mono () const;
 
@@ -99,12 +99,12 @@ public:
 	std::shared_ptr<Part> right () const;
 
 private:
-	/* XXX: this is a bit of a shame, but I tried friend StereoPictureAssetReader and it's
+	/* XXX: this is a bit of a shame, but I tried friend StereoJ2KPictureAssetReader and it's
 	   rejected by some (seemingly older) GCCs.
 	*/
-	friend class AssetReader<ASDCP::JP2K::MXFSReader, StereoPictureFrame>;
+	friend class AssetReader<ASDCP::JP2K::MXFSReader, StereoJ2KPictureFrame>;
 
-	StereoPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, std::shared_ptr<DecryptionContext>, bool check_hmac);
+	StereoJ2KPictureFrame (ASDCP::JP2K::MXFSReader* reader, int n, std::shared_ptr<DecryptionContext>, bool check_hmac);
 
 	std::shared_ptr<ASDCP::JP2K::SFrameBuffer> _buffer;
 };

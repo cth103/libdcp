@@ -34,7 +34,7 @@ namespace xmlpp {
 
 namespace dcp {
 	class DCP;
-	class MonoPictureAsset;
+	class MonoJ2KPictureAsset;
 	class SoundAsset;
 }
 
@@ -44,7 +44,7 @@ extern boost::filesystem::path xsd_test;
 extern void check_xml (xmlpp::Element* ref, xmlpp::Element* test, std::vector<std::string> ignore_tags, bool ignore_whitespace = false);
 extern void check_xml (std::string ref, std::string test, std::vector<std::string> ignore, bool ignore_whitespace = false);
 extern void check_file (boost::filesystem::path ref, boost::filesystem::path check);
-extern std::shared_ptr<dcp::MonoPictureAsset> simple_picture (
+extern std::shared_ptr<dcp::MonoJ2KPictureAsset> simple_picture (
 	boost::filesystem::path path,
 	std::string suffix,
 	int frames = 24,

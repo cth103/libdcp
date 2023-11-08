@@ -71,9 +71,9 @@ main ()
 	auto assets = dcp.assets();
 	std::cout << "DCP has " << assets.size() << " assets.\n";
 	for (auto i: assets) {
-		if (std::dynamic_pointer_cast<dcp::MonoPictureAsset>(i)) {
+		if (std::dynamic_pointer_cast<dcp::MonoJ2KPictureAsset>(i)) {
 			std::cout << "2D picture\n";
-		} else if (std::dynamic_pointer_cast<dcp::StereoPictureAsset>(i)) {
+		} else if (std::dynamic_pointer_cast<dcp::StereoJ2KPictureAsset>(i)) {
 			std::cout << "3D picture\n";
 		} else if (std::dynamic_pointer_cast<dcp::SoundAsset>(i)) {
 			std::cout << "Sound\n";
@@ -89,7 +89,7 @@ main ()
 	auto cpl = dcp.cpls().front();
 
 	/* Get the picture asset in the first reel */
-	auto picture_asset = std::dynamic_pointer_cast<dcp::MonoPictureAsset>(
+	auto picture_asset = std::dynamic_pointer_cast<dcp::MonoJ2KPictureAsset>(
 		cpl->reels()[0]->main_picture()->asset()
 		);
 

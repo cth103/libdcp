@@ -49,7 +49,7 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-ReelStereoPictureAsset::ReelStereoPictureAsset (std::shared_ptr<StereoPictureAsset> mxf, int64_t entry_point)
+ReelStereoPictureAsset::ReelStereoPictureAsset (std::shared_ptr<StereoJ2KPictureAsset> mxf, int64_t entry_point)
 	: ReelPictureAsset (mxf, entry_point)
 {
 

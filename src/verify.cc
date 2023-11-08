@@ -527,7 +527,7 @@ verify_picture_asset(
 	int64_t start_frame
 	)
 {
-	auto asset = dynamic_pointer_cast<PictureAsset>(reel_file_asset->asset_ref().asset());
+	auto asset = dynamic_pointer_cast<J2KPictureAsset>(reel_file_asset->asset_ref().asset());
 	auto const duration = asset->intrinsic_duration ();
 
 	auto check_and_add = [&context](vector<VerificationNote> const& j2k_notes) {
@@ -559,7 +559,7 @@ verify_picture_asset(
 		}
 	};
 
-	if (auto mono_asset = dynamic_pointer_cast<MonoPictureAsset>(reel_file_asset->asset_ref().asset())) {
+	if (auto mono_asset = dynamic_pointer_cast<MonoJ2KPictureAsset>(reel_file_asset->asset_ref().asset())) {
 		auto reader = mono_asset->start_read ();
 		for (int64_t i = 0; i < duration; ++i) {
 			auto frame = reader->get_frame (i);
@@ -571,7 +571,7 @@ verify_picture_asset(
 			}
 			context.progress(float(i) / duration);
 		}
-	} else if (auto stereo_asset = dynamic_pointer_cast<StereoPictureAsset>(asset)) {
+	} else if (auto stereo_asset = dynamic_pointer_cast<StereoJ2KPictureAsset>(asset)) {
 		auto reader = stereo_asset->start_read ();
 		for (int64_t i = 0; i < duration; ++i) {
 			auto frame = reader->get_frame (i);
@@ -659,7 +659,7 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 		}
 
 		/* Only 2D allowed for 4K */
-		if (dynamic_pointer_cast<const StereoPictureAsset>(asset)) {
+		if (dynamic_pointer_cast<const StereoJ2KPictureAsset>(asset)) {
 			context.bv21_error(
 				VerificationNote::Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
 				String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),

@@ -33,7 +33,7 @@
 
 
 /** @file  src/picture_asset.cc
- *  @brief PictureAsset class
+ *  @brief J2KPictureAsset class
  */
 
 
@@ -64,14 +64,14 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-PictureAsset::PictureAsset (boost::filesystem::path file)
+J2KPictureAsset::J2KPictureAsset (boost::filesystem::path file)
 	: Asset (file)
 {
 
 }
 
 
-PictureAsset::PictureAsset (Fraction edit_rate, Standard standard)
+J2KPictureAsset::J2KPictureAsset (Fraction edit_rate, Standard standard)
 	: MXF (standard)
 	, _edit_rate (edit_rate)
 {
@@ -80,7 +80,7 @@ PictureAsset::PictureAsset (Fraction edit_rate, Standard standard)
 
 
 void
-PictureAsset::read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const & desc)
+J2KPictureAsset::read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const & desc)
 {
 	_size.width = desc.StoredWidth;
 	_size.height = desc.StoredHeight;
@@ -92,7 +92,7 @@ PictureAsset::read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const & de
 
 
 bool
-PictureAsset::descriptor_equals (
+J2KPictureAsset::descriptor_equals (
 	ASDCP::JP2K::PictureDescriptor const & a, ASDCP::JP2K::PictureDescriptor const & b, NoteHandler note
 	) const
 {
@@ -135,7 +135,7 @@ PictureAsset::descriptor_equals (
 
 
 bool
-PictureAsset::frame_buffer_equals (
+J2KPictureAsset::frame_buffer_equals (
 	int frame, EqualityOptions const& opt, NoteHandler note,
 	uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
 	) const
@@ -210,7 +210,7 @@ PictureAsset::frame_buffer_equals (
 
 
 string
-PictureAsset::static_pkl_type (Standard standard)
+J2KPictureAsset::static_pkl_type (Standard standard)
 {
 	switch (standard) {
 	case Standard::INTEROP:
@@ -224,7 +224,7 @@ PictureAsset::static_pkl_type (Standard standard)
 
 
 string
-PictureAsset::pkl_type (Standard standard) const
+J2KPictureAsset::pkl_type (Standard standard) const
 {
 	return static_pkl_type (standard);
 }

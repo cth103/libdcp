@@ -33,7 +33,7 @@
 
 
 /** @file  src/stereo_picture_asset.h
- *  @brief StereoPictureAsset class
+ *  @brief StereoJ2KPictureAsset class
  */
 
 
@@ -48,18 +48,18 @@
 namespace dcp {
 
 
-/** @class StereoPictureAsset
+/** @class StereoJ2KPictureAsset
  *  @brief A 3D (stereoscopic) picture asset
  */
-class StereoPictureAsset : public PictureAsset
+class StereoJ2KPictureAsset : public J2KPictureAsset
 {
 public:
-	explicit StereoPictureAsset (boost::filesystem::path file);
-	explicit StereoPictureAsset (Fraction edit_rate, Standard standard);
+	explicit StereoJ2KPictureAsset (boost::filesystem::path file);
+	explicit StereoJ2KPictureAsset (Fraction edit_rate, Standard standard);
 
-	/** Start a progressive write to a StereoPictureAsset */
-	std::shared_ptr<PictureAssetWriter> start_write(boost::filesystem::path file, Behaviour behaviour) override;
-	std::shared_ptr<StereoPictureAssetReader> start_read () const;
+	/** Start a progressive write to a StereoJ2KPictureAsset */
+	std::shared_ptr<J2KPictureAssetWriter> start_write(boost::filesystem::path file, Behaviour behaviour) override;
+	std::shared_ptr<StereoJ2KPictureAssetReader> start_read () const;
 
 	bool equals (
 		std::shared_ptr<const Asset> other,

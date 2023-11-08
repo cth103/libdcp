@@ -1025,9 +1025,9 @@ static
 shared_ptr<dcp::CPL>
 dcp_from_frame (dcp::ArrayData const& frame, path dir)
 {
-	auto asset = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
+	auto asset = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 	create_directories (dir);
-	auto writer = asset->start_write(dir / "pic.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
+	auto writer = asset->start_write(dir / "pic.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 	for (int i = 0; i < 24; ++i) {
 		writer->write (frame.data(), frame.size());
 	}
@@ -1826,13 +1826,13 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 	path dcp_path = "build/test/verify_picture_test";
 	prepare_directory (dcp_path);
 
-	shared_ptr<dcp::PictureAsset> mp;
+	shared_ptr<dcp::J2KPictureAsset> mp;
 	if (three_d) {
-		mp = make_shared<dcp::StereoPictureAsset>(dcp::Fraction(frame_rate, 1), dcp::Standard::SMPTE);
+		mp = make_shared<dcp::StereoJ2KPictureAsset>(dcp::Fraction(frame_rate, 1), dcp::Standard::SMPTE);
 	} else {
-		mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(frame_rate, 1), dcp::Standard::SMPTE);
+		mp = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction(frame_rate, 1), dcp::Standard::SMPTE);
 	}
-	auto picture_writer = mp->start_write(dcp_path / "video.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
+	auto picture_writer = mp->start_write(dcp_path / "video.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 
 	auto image = black_image (dcp::Size(width, height));
 	auto j2c = dcp::compress_j2k (image, 100000000, frame_rate, three_d, width > 2048);
@@ -1855,9 +1855,9 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 	auto reel = make_shared<dcp::Reel>();
 
 	if (three_d) {
-		reel->add (make_shared<dcp::ReelStereoPictureAsset>(std::dynamic_pointer_cast<dcp::StereoPictureAsset>(mp), 0));
+		reel->add (make_shared<dcp::ReelStereoPictureAsset>(std::dynamic_pointer_cast<dcp::StereoJ2KPictureAsset>(mp), 0));
 	} else {
-		reel->add (make_shared<dcp::ReelMonoPictureAsset>(std::dynamic_pointer_cast<dcp::MonoPictureAsset>(mp), 0));
+		reel->add (make_shared<dcp::ReelMonoPictureAsset>(std::dynamic_pointer_cast<dcp::MonoJ2KPictureAsset>(mp), 0));
 	}
 
 	reel->add (simple_markers(frame_rate));
@@ -3508,7 +3508,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_asset_duration)
 	shared_ptr<dcp::DCP> dcp (new dcp::DCP(dir));
 	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
 
-	shared_ptr<dcp::MonoPictureAsset> mp = simple_picture (dir, "", 24);
+	shared_ptr<dcp::MonoJ2KPictureAsset> mp = simple_picture (dir, "", 24);
 	shared_ptr<dcp::SoundAsset> ms = simple_sound (dir, "", dcp::MXFMetadata(), "en-US", 25);
 
 	auto reel = make_shared<dcp::Reel>(
@@ -4670,10 +4670,10 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 
 	dcp::Key key;
 
-	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
+	auto mp = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	mp->set_key (key);
 
-	auto writer = mp->start_write(dir / "video.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
+	auto writer = mp->start_write(dir / "video.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data(), j2c.size());
@@ -4739,7 +4739,7 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_2k)
 {
 	vector<dcp::VerificationNote> notes;
-	dcp::MonoPictureAsset picture (find_file(private_test / "data" / "JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV", "j2c.mxf"));
+	dcp::MonoJ2KPictureAsset picture (find_file(private_test / "data" / "JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV", "j2c.mxf"));
 	auto reader = picture.start_read ();
 	auto frame = reader->get_frame (0);
 	verify_j2k(frame, 0, 0, 24, notes);
@@ -4750,7 +4750,7 @@ BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_2k)
 BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_4k)
 {
 	vector<dcp::VerificationNote> notes;
-	dcp::MonoPictureAsset picture (find_file(private_test / "data" / "sul", "TLR"));
+	dcp::MonoJ2KPictureAsset picture (find_file(private_test / "data" / "sul", "TLR"));
 	auto reader = picture.start_read ();
 	auto frame = reader->get_frame (0);
 	verify_j2k(frame, 0, 0, 24, notes);
@@ -4765,7 +4765,7 @@ BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_libdcp)
 	auto dcp = make_simple (dir);
 	dcp->write_xml ();
 	vector<dcp::VerificationNote> notes;
-	dcp::MonoPictureAsset picture (find_file(dir, "video"));
+	dcp::MonoJ2KPictureAsset picture (find_file(dir, "video"));
 	auto reader = picture.start_read ();
 	auto frame = reader->get_frame (0);
 	verify_j2k(frame, 0, 0, 24, notes);
@@ -5440,8 +5440,8 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 	boost::filesystem::remove_all(path);
 	boost::filesystem::create_directories(path);
 
-	auto mp = make_shared<dcp::MonoPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
-	auto picture_writer = mp->start_write(path / "video.mxf", dcp::PictureAsset::Behaviour::MAKE_NEW);
+	auto mp = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
+	auto picture_writer = mp->start_write(path / "video.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
 
 	dcp::Size const size(1998, 1080);
 	auto image = make_shared<dcp::OpenJPEGImage>(size);
@@ -5673,11 +5673,11 @@ BOOST_AUTO_TEST_CASE(verify_spots_wrong_asset)
 	dcp1->write_xml();
 	auto cpl = dcp1->cpls()[0];
 
-	auto const asset_1 = dcp::MonoPictureAsset(dir / "1" / "video.mxf").id();
+	auto const asset_1 = dcp::MonoJ2KPictureAsset(dir / "1" / "video.mxf").id();
 
 	auto dcp2 = make_simple(dir / "2");
 	dcp2->write_xml();
-	auto const asset_2 = dcp::MonoPictureAsset(dir / "2" / "video.mxf").id();
+	auto const asset_2 = dcp::MonoJ2KPictureAsset(dir / "2" / "video.mxf").id();
 
 	boost::filesystem::remove(dir / "1" / "video.mxf");
 	boost::filesystem::copy_file(dir / "2" / "video.mxf", dir / "1" / "video.mxf");
