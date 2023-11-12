@@ -85,11 +85,11 @@ extern std::string make_uuid ();
 
 /** Create a digest for a file
  *  @param filename File name
- *  @param progress Optional progress reporting function.  The function will be called
- *  with a progress value between 0 and 1
+ *  @param progress Optional progress reporting function, called with a number of bytes done
+ *  and a total number of bytes.
  *  @return Digest
  */
-extern std::string make_digest (boost::filesystem::path filename, boost::function<void (float)>);
+extern std::string make_digest(boost::filesystem::path filename, boost::function<void (int64_t, int64_t)>);
 
 extern std::string make_digest (ArrayData data);
 

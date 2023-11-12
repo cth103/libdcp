@@ -117,7 +117,7 @@ dcp::make_digest (ArrayData data)
 
 
 string
-dcp::make_digest (boost::filesystem::path filename, function<void (float)> progress)
+dcp::make_digest(boost::filesystem::path filename, function<void (int64_t, int64_t)> progress)
 {
 	Kumu::FileReader reader;
 	auto r = reader.OpenRead(dcp::filesystem::fix_long_path(filename).string().c_str());
@@ -146,7 +146,7 @@ dcp::make_digest (boost::filesystem::path filename, function<void (float)> progr
 		SHA1_Update (&sha, read_buffer.Data(), read);
 
 		if (progress) {
-			progress (float (done) / size);
+			progress(done, size);
 			done += read;
 		}
 	}

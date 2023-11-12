@@ -128,11 +128,11 @@ public:
 
 	/** Calculate the hash of this asset's file, if it has not already been calculated,
 	 *  then return it
-	 *  @param progress Function that will be called with a parameter between 0 and 1 to indicate
-	 *  progress in the calculation
+	 *  @param progress Function that will be called with the number of bytes calculated
+	 *  and the total number of bytes
 	 *  @return the hash
 	 */
-	std::string hash (boost::function<void (float)> progress = {}) const;
+	std::string hash(boost::function<void (int64_t, int64_t)> progress = {}) const;
 
 	void set_hash (std::string hash);
 	void unset_hash();

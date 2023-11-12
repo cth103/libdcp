@@ -131,7 +131,7 @@ Asset::add_file_to_assetmap(AssetMap& asset_map, boost::filesystem::path root, b
 
 
 string
-Asset::hash (function<void (float)> progress) const
+Asset::hash(function<void (int64_t, int64_t)> progress) const
 {
 	DCP_ASSERT (_file);
 

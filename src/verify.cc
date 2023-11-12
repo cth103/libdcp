@@ -393,7 +393,9 @@ verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelFileAsset> reel_fi
 	 * call to hash().
 	 */
 	reel_file_asset->asset_ref()->unset_hash();
-	auto const actual_hash = reel_file_asset->asset_ref()->hash(progress);
+	auto const actual_hash = reel_file_asset->asset_ref()->hash([progress](int64_t done, int64_t total) {
+		progress(float(done) / total);
+	});
 
 	auto pkls = dcp->pkls();
 	/* We've read this DCP in so it must have at least one PKL */

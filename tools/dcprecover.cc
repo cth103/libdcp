@@ -65,12 +65,6 @@ help (string n)
 }
 
 
-void progress (float f)
-{
-	cout << (f * 100) << "%               \r";
-}
-
-
 int
 main (int argc, char* argv[])
 {
@@ -153,7 +147,9 @@ main (int argc, char* argv[])
 					auto asset = dcp::asset_factory(i.path(), true);
 					asset->set_file (*output / i.path().filename());
 					cout << "Hashing " << i.path().filename() << "\n";
-					asset->hash (&progress);
+					asset->hash([](int64_t done, int64_t size) {
+						cout << (float(done) * 100 / size) << "%               \r";
+					});
 					cout << "100%                     \n";
 					assets.push_back (asset);
 				} catch (dcp::ReadError& e) {
