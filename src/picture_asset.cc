@@ -66,7 +66,6 @@ using namespace dcp;
 
 PictureAsset::PictureAsset (boost::filesystem::path file)
 	: Asset (file)
-	, _intrinsic_duration (0)
 {
 
 }
@@ -75,7 +74,6 @@ PictureAsset::PictureAsset (boost::filesystem::path file)
 PictureAsset::PictureAsset (Fraction edit_rate, Standard standard)
 	: MXF (standard)
 	, _edit_rate (edit_rate)
-	, _intrinsic_duration (0)
 {
 
 }
