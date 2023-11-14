@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/mono_picture_asset.cc
+/** @file  src/mono_j2k_picture_asset.h
  *  @brief MonoJ2KPictureAsset class
  */
 
 
-#ifndef LIBDCP_MONO_PICTURE_ASSET_H
-#define LIBDCP_MONO_PICTURE_ASSET_H
+#ifndef LIBDCP_J2K_MONO_PICTURE_ASSET_H
+#define LIBDCP_J2K_MONO_PICTURE_ASSET_H
 
 
 #include "j2k_picture_asset.h"
