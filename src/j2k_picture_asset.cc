@@ -64,16 +64,15 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-J2KPictureAsset::J2KPictureAsset (boost::filesystem::path file)
-	: Asset (file)
+J2KPictureAsset::J2KPictureAsset(boost::filesystem::path file)
+	: PictureAsset(file)
 {
 
 }
 
 
-J2KPictureAsset::J2KPictureAsset (Fraction edit_rate, Standard standard)
-	: MXF (standard)
-	, _edit_rate (edit_rate)
+J2KPictureAsset::J2KPictureAsset(Fraction edit_rate, Standard standard)
+	: PictureAsset(edit_rate, standard)
 {
 
 }

@@ -32,79 +32,68 @@
 */
 
 
-/** @file  src/picture_asset.h
- *  @brief J2KPictureAsset class
- */
+#ifndef LIBDCP_PICTURE_ASSET_H
+#define LIBDCP_PICTURE_ASSET_H
 
 
-#ifndef LIBDCP_J2K_PICTURE_ASSET_H
-#define LIBDCP_J2K_PICTURE_ASSET_H
-
-
+#include "asset.h"
 #include "mxf.h"
-#include "metadata.h"
-#include "picture_asset.h"
-#include "util.h"
-
-
-namespace ASDCP {
-	namespace JP2K {
-		struct PictureDescriptor;
-	}
-}
+#include "types.h"
 
 
 namespace dcp {
 
 
-class MonoJ2KPictureFrame;
-class StereoJ2KPictureFrame;
-class J2KPictureAssetWriter;
-
-
-/** @class J2KPictureAsset
- *  @brief An asset made up of JPEG2000 data
- */
-class J2KPictureAsset : public PictureAsset
+class PictureAsset : public Asset, public MXF
 {
 public:
-	/** Load a J2KPictureAsset from a file */
-	explicit J2KPictureAsset (boost::filesystem::path file);
+	explicit PictureAsset(boost::filesystem::path file);
+	PictureAsset(Fraction edit_rate, Standard standard);
 
-	/** Create a new J2KPictureAsset with a given edit rate and standard */
-	J2KPictureAsset (Fraction edit_rate, Standard standard);
+	Fraction edit_rate () const {
+		return _edit_rate;
+	}
 
-	enum class Behaviour {
-		OVERWRITE_EXISTING,
-		MAKE_NEW
-	};
+	int64_t intrinsic_duration () const {
+		return _intrinsic_duration;
+	}
 
-	virtual std::shared_ptr<J2KPictureAssetWriter> start_write (
-		boost::filesystem::path file,
-		Behaviour behaviour
-		) = 0;
 
-	static std::string static_pkl_type (Standard standard);
+	Size size () const {
+		return _size;
+	}
+
+	void set_size (Size s) {
+		_size = s;
+	}
+
+	Fraction frame_rate () const {
+		return _frame_rate;
+	}
+
+	void set_frame_rate (Fraction r) {
+		_frame_rate = r;
+	}
+
+	Fraction screen_aspect_ratio () const {
+		return _screen_aspect_ratio;
+	}
+
+	void set_screen_aspect_ratio (Fraction r) {
+		_screen_aspect_ratio = r;
+	}
 
 protected:
-	friend class MonoJ2KPictureAssetWriter;
-	friend class StereoJ2KPictureAssetWriter;
+	Fraction _edit_rate;
+	/** The total length of this content in video frames.  The amount of
+	 *  content presented may be less than this.
+	 */
+	int64_t _intrinsic_duration = 0;
+	/** picture size in pixels */
+	Size _size;
+	Fraction _frame_rate;
+	Fraction _screen_aspect_ratio;
 
-	bool frame_buffer_equals (
-		int frame, EqualityOptions const& opt, NoteHandler note,
-		uint8_t const * data_A, unsigned int size_A, uint8_t const * data_B, unsigned int size_B
-		) const;
-
-	bool descriptor_equals (
-		ASDCP::JP2K::PictureDescriptor const & a,
-		ASDCP::JP2K::PictureDescriptor const & b,
-		NoteHandler note
-		) const;
-
-	void read_picture_descriptor (ASDCP::JP2K::PictureDescriptor const &);
-
-private:
-	std::string pkl_type (Standard standard) const override;
 };
 
 
@@ -112,3 +101,4 @@ private:
 
 
 #endif
+

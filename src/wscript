@@ -81,6 +81,7 @@ def build(bld):
              name_format.cc
              object.cc
              openjpeg_image.cc
+             picture_asset.cc
              pkl.cc
              rating.cc
              raw_convert.cc
@@ -186,6 +187,7 @@ def build(bld):
               name_format.h
               object.h
               openjpeg_image.h
+              picture_asset.h
               piecewise_lut.h
               pkl.h
               rating.h
