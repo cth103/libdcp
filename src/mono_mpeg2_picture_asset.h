@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2023 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,37 +32,33 @@
 */
 
 
-/** @file  src/reel_mono_picture_asset.cc
- *  @brief ReelMonoPictureAsset class
+#ifndef LIBDCP_MONO_MPEG2_PICTURE_ASSET_H
+#define LIBDCP_MONO_MPEG2_PICTURE_ASSET_H
+
+
+/** @file  src/mono_mpeg2_picture_asset.h
+ *  @brief MonoMPEG2PictureAsset class
  */
 
 
-#include "reel_mono_picture_asset.h"
-#include "mono_j2k_picture_asset.h"
-#include <libcxml/cxml.h>
+#include "mpeg2_picture_asset.h"
+#include "mono_mpeg2_picture_asset_reader.h"
 
 
-using std::string;
-using std::shared_ptr;
-using namespace dcp;
+namespace dcp {
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset(std::shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelPictureAsset (asset, entry_point)
+class MonoMPEG2PictureAsset : public MPEG2PictureAsset
 {
+public:
+	explicit MonoMPEG2PictureAsset(boost::filesystem::path file);
+
+	std::shared_ptr<MonoMPEG2PictureAssetReader> start_read() const;
+};
+
+
 
 }
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelPictureAsset (node)
-{
-	node->done ();
-}
-
-
-string
-ReelMonoPictureAsset::cpl_node_name (Standard) const
-{
-	return "MainPicture";
-}
+#endif

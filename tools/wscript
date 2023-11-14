@@ -32,7 +32,7 @@
 #
 
 def build(bld):
-    uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_DCPOMATIC BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL XERCES DL MAGICK'
+    uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_DCPOMATIC BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL XERCES DL MAGICK AVCODEC AVUTIL'
 
     for f in ['diff', 'info', 'verify']:
         obj = bld(features='cxx cxxprogram')

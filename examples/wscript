@@ -21,7 +21,7 @@ def build(bld):
         obj = bld(features='cxx cxxprogram')
         obj.name   = example
         obj.use    = 'libdcp%s' % bld.env.API_VERSION
-        obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_DCPOMATIC BOOST_FILESYSTEM OPENSSL XMLSEC1 MAGICK'
+        obj.uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_DCPOMATIC BOOST_FILESYSTEM OPENSSL XMLSEC1 MAGICK AVCODEC AVUTIL'
         obj.source = example + '.cc'
         obj.target = example
         obj.install_path = ''

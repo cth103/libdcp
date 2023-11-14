@@ -43,6 +43,7 @@
 
 #include "reel_picture_asset.h"
 #include "mono_j2k_picture_asset.h"
+#include "mono_mpeg2_picture_asset.h"
 
 
 namespace dcp {
@@ -57,17 +58,27 @@ class MonoJ2KPictureAsset;
 class ReelMonoPictureAsset : public ReelPictureAsset
 {
 public:
-	ReelMonoPictureAsset (std::shared_ptr<MonoJ2KPictureAsset> asset, int64_t entry_point);
+	ReelMonoPictureAsset(std::shared_ptr<PictureAsset> asset, int64_t entry_point);
 	explicit ReelMonoPictureAsset (std::shared_ptr<const cxml::Node>);
 
-	/** @return the MonoJ2KPictureAsset that this object refers to */
-	std::shared_ptr<const MonoJ2KPictureAsset> mono_asset () const {
+	/** @return the MonoJ2KPictureAsset that this object refers to, if applicable */
+	std::shared_ptr<const MonoJ2KPictureAsset> mono_j2k_asset() const {
 		return asset_of_type<const MonoJ2KPictureAsset>();
 	}
 
 	/** @return the MonoJ2KPictureAsset that this object refers to */
-	std::shared_ptr<MonoJ2KPictureAsset> mono_asset () {
+	std::shared_ptr<MonoJ2KPictureAsset> mono_j2k_asset() {
 		return asset_of_type<MonoJ2KPictureAsset>();
+	}
+
+	/** @return the MonoMPEG2PictureAsset that this object refers to, if applicable */
+	std::shared_ptr<const MonoMPEG2PictureAsset> mono_mpeg2_asset() const {
+		return asset_of_type<const MonoMPEG2PictureAsset>();
+	}
+
+	/** @return the MonoMPEG2PictureAsset that this object refers to */
+	std::shared_ptr<MonoMPEG2PictureAsset> mono_mpeg2_asset() {
+		return asset_of_type<MonoMPEG2PictureAsset>();
 	}
 
 private:

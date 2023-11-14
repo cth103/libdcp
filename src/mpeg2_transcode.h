@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2023 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,37 +32,58 @@
 */
 
 
-/** @file  src/reel_mono_picture_asset.cc
- *  @brief ReelMonoPictureAsset class
- */
+#ifndef LIBDCP_MPEG2_TRANSCODE_H
+#define LIBDCP_MPEG2_TRANSCODE_H
 
 
-#include "reel_mono_picture_asset.h"
-#include "mono_j2k_picture_asset.h"
-#include <libcxml/cxml.h>
+#include "ffmpeg_image.h"
+#include <memory>
 
 
-using std::string;
-using std::shared_ptr;
-using namespace dcp;
+struct AVCodec;
+struct AVCodecContext;
+struct AVFrame;
+struct AVPacket;
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset(std::shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelPictureAsset (asset, entry_point)
+namespace dcp {
+
+
+class MonoMPEG2PictureFrame;
+
+
+class MPEG2Codec
 {
+public:
+	MPEG2Codec() = default;
+	virtual ~MPEG2Codec();
+
+	MPEG2Codec(MPEG2Codec const&) = delete;
+	MPEG2Codec& operator=(MPEG2Codec const&) = delete;
+
+protected:
+	AVCodec const* _codec;
+	AVCodecContext* _context;
+};
+
+
+class MPEG2Decompressor : public MPEG2Codec
+{
+public:
+	MPEG2Decompressor();
+	~MPEG2Decompressor();
+
+	std::vector<FFmpegImage> decompress_frame(std::shared_ptr<const MonoMPEG2PictureFrame> frame);
+	std::vector<FFmpegImage> flush();
+
+private:
+	std::vector<FFmpegImage> decompress_packet(AVPacket* packet);
+
+	AVFrame* _decompressed_frame;
+};
+
 
 }
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelPictureAsset (node)
-{
-	node->done ();
-}
-
-
-string
-ReelMonoPictureAsset::cpl_node_name (Standard) const
-{
-	return "MainPicture";
-}
+#endif

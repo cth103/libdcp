@@ -320,7 +320,7 @@ BOOST_AUTO_TEST_CASE (vf_kdm_test)
 	ov->write_xml ();
 
 	auto ov_reel = ov->cpls()[0]->reels()[0];
-	auto ov_reel_picture = make_shared<dcp::ReelMonoPictureAsset>(dynamic_pointer_cast<dcp::ReelMonoPictureAsset>(ov_reel->main_picture())->mono_asset(), 0);
+	auto ov_reel_picture = make_shared<dcp::ReelMonoPictureAsset>(dynamic_pointer_cast<dcp::ReelMonoPictureAsset>(ov_reel->main_picture())->mono_j2k_asset(), 0);
 	auto ov_reel_sound = make_shared<dcp::ReelSoundAsset>(ov_reel->main_sound()->asset(), 0);
 
 	/* Make VF */

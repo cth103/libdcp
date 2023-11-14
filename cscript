@@ -35,11 +35,22 @@ import os
 import shutil
 
 def dependencies(target, options):
-    return (
+    deps = [
         ('libcxml', 'v0.17.9', options),
         ('openjpeg', 'ad8edaacd54a862940d0a77c41ecda5858b54d6e'),
         ('asdcplib', '4b5d6e8d27dfd5fb282590538068662f4dbbf1c9')
-    )
+    ]
+
+    if target.platform == 'linux':
+        ffmpeg_options = { 'shared': False }
+    else:
+        ffmpeg_options = {}
+
+    if target.platform != 'linux' or target.distro != 'arch':
+        # Use distro-provided FFmpeg on Arch, otherwise our own
+        deps.append(('ffmpeg', '0b73d2f5e70a04a67aa902902c42e3025ef3bb77', ffmpeg_options))
+
+    return deps
 
 def build(target, options):
     cmd = './waf configure --disable-examples --disable-dumpimage --disable-benchmarks --prefix=%s' % target.directory

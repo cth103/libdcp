@@ -248,6 +248,9 @@ def configure(conf):
                    lib=['boost_date_time%s' % boost_lib_suffix, 'boost_system%s' % boost_lib_suffix],
                    uselib_store='BOOST_DATETIME')
 
+    conf.check_cfg(package='libavcodec', args='--cflags --libs', uselib_store='AVCODEC', mandatory=True)
+    conf.check_cfg(package='libavutil', args='--cflags --libs', uselib_store='AVUTIL', mandatory=True)
+
     if not conf.env.DISABLE_TESTS:
         conf.recurse('test')
         if conf.options.enable_gcov:

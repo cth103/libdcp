@@ -52,6 +52,7 @@
 #include "interop_subtitle_asset.h"
 #include "metadata.h"
 #include "mono_j2k_picture_asset.h"
+#include "mono_mpeg2_picture_asset.h"
 #include "j2k_picture_asset.h"
 #include "pkl.h"
 #include "raw_convert.h"
@@ -247,6 +248,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			}
 		} else if (
 			*pkl_type == remove_parameters(J2KPictureAsset::static_pkl_type(standard)) ||
+			*pkl_type == remove_parameters(MPEG2PictureAsset::static_pkl_type(standard)) ||
 			*pkl_type == remove_parameters(SoundAsset::static_pkl_type(standard)) ||
 			*pkl_type == remove_parameters(AtmosAsset::static_pkl_type(standard)) ||
 			*pkl_type == remove_parameters(SMPTESubtitleAsset::static_pkl_type(standard))

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2023 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,37 +32,52 @@
 */
 
 
-/** @file  src/reel_mono_picture_asset.cc
- *  @brief ReelMonoPictureAsset class
- */
+#include "compose.hpp"
+#include "mono_mpeg2_picture_frame.h"
 
 
-#include "reel_mono_picture_asset.h"
-#include "mono_j2k_picture_asset.h"
-#include <libcxml/cxml.h>
-
-
-using std::string;
+using std::make_shared;
 using std::shared_ptr;
 using namespace dcp;
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset(std::shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelPictureAsset (asset, entry_point)
-{
 
+/** Make a picture frame from a 2D (monoscopic) asset.
+ *  @param reader Reader for the asset's MXF file.
+ *  @param n Frame within the asset, not taking EntryPoint into account.
+ *  @param c Context for decryption, or 0.
+ *  @param check_hmac true to check the HMAC and give an error if it is not as expected.
+ */
+MonoMPEG2PictureFrame::MonoMPEG2PictureFrame(ASDCP::MPEG2::MXFReader* reader, int n, shared_ptr<DecryptionContext> context, bool check_hmac)
+{
+	/* XXX: unfortunate guesswork on this buffer size */
+	_buffer = make_shared<ASDCP::MPEG2::FrameBuffer>(4 * Kumu::Megabyte);
+
+	auto const r = reader->ReadFrame(n, *_buffer, context->context(), check_hmac ? context->hmac() : nullptr);
+
+	if (ASDCP_FAILURE(r)) {
+		boost::throw_exception(ReadError(String::compose("could not read video frame %1 (%2)", n, static_cast<int>(r))));
+	}
 }
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelPictureAsset (node)
+uint8_t const *
+MonoMPEG2PictureFrame::data() const
 {
-	node->done ();
+	return _buffer->RoData();
 }
 
 
-string
-ReelMonoPictureAsset::cpl_node_name (Standard) const
+uint8_t *
+MonoMPEG2PictureFrame::data()
 {
-	return "MainPicture";
+	return _buffer->Data();
 }
+
+
+int
+MonoMPEG2PictureFrame::size() const
+{
+	return _buffer->Size();
+}
+

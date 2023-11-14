@@ -77,6 +77,10 @@ def build(bld):
              mono_j2k_picture_asset.cc
              mono_j2k_picture_asset_writer.cc
              mono_j2k_picture_frame.cc
+             mono_mpeg2_picture_asset.cc
+             mono_mpeg2_picture_frame.cc
+             mpeg2_picture_asset.cc
+             mpeg2_transcode.cc
              mxf.cc
              name_format.cc
              object.cc
@@ -171,6 +175,7 @@ def build(bld):
               identity_transfer_function.h
               interop_load_font_node.h
               interop_subtitle_asset.h
+              ffmpeg_image.h
               j2k_picture_asset.h
               j2k_picture_asset_writer.h
               j2k_transcode.h
@@ -185,6 +190,11 @@ def build(bld):
               mono_j2k_picture_asset_reader.h
               mono_j2k_picture_asset_writer.h
               mono_j2k_picture_frame.h
+              mono_mpeg2_picture_asset.h
+              mono_mpeg2_picture_asset_reader.h
+              mono_mpeg2_picture_frame.h
+              mpeg2_picture_asset.h
+              mpeg2_transcode.h
               mxf.h
               name_format.h
               object.h
@@ -250,7 +260,7 @@ def build(bld):
     obj.name = 'libdcp%s' % bld.env.API_VERSION
     obj.target = 'dcp%s' % bld.env.API_VERSION
     obj.export_includes = ['.']
-    obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1 ASDCPLIB_DCPOMATIC XERCES'
+    obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1 ASDCPLIB_DCPOMATIC XERCES AVCODEC AVUTIL'
     obj.source = source
 
     # Library for gcov
@@ -262,7 +272,7 @@ def build(bld):
         obj.name = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.target = 'dcp%s_gcov' % bld.env.API_VERSION
         obj.export_includes = ['.']
-        obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1 ASDCPLIB_DCPOMATIC XERCES'
+        obj.uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1 ASDCPLIB_DCPOMATIC XERCES AVCODEC AVUTIL'
         obj.use = 'libkumu-libdcp%s libasdcp-libdcp%s' % (bld.env.API_VERSION, bld.env.API_VERSION)
         obj.source = source
         obj.cppflags = ['-fprofile-arcs', '-ftest-coverage', '-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']

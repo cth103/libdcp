@@ -41,6 +41,7 @@
 #include "atmos_asset.h"
 #include "compose.hpp"
 #include "mono_j2k_picture_asset.h"
+#include "mono_mpeg2_picture_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "sound_asset.h"
 #include "stereo_j2k_picture_asset.h"
@@ -68,8 +69,9 @@ dcp::asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_
 	}
 	switch (type) {
 	case ASDCP::ESS_UNKNOWN:
+		throw ReadError("Unknown asset type");
 	case ASDCP::ESS_MPEG2_VES:
-		throw ReadError ("MPEG2 video essences are not supported");
+		return make_shared<MonoMPEG2PictureAsset>(path);
 	case ASDCP::ESS_JPEG_2000:
 		try {
 			return make_shared<MonoJ2KPictureAsset>(path);

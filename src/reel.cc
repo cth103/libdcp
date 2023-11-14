@@ -327,7 +327,7 @@ Reel::give_kdm_to_assets (DecryptedKDM const & kdm)
 {
 	for (auto const& i: kdm.keys()) {
 		if (_main_picture && i.id() == _main_picture->key_id() && _main_picture->asset_ref().resolved()) {
-			_main_picture->asset()->set_key (i.key());
+			_main_picture->j2k_asset()->set_key(i.key());
 		}
 		if (_main_sound && i.id() == _main_sound->key_id() && _main_sound->asset_ref().resolved()) {
 			_main_sound->asset()->set_key (i.key());

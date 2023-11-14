@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2023 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,37 +32,43 @@
 */
 
 
-/** @file  src/reel_mono_picture_asset.cc
- *  @brief ReelMonoPictureAsset class
- */
-
-
-#include "reel_mono_picture_asset.h"
-#include "mono_j2k_picture_asset.h"
-#include <libcxml/cxml.h>
+#include "mpeg2_picture_asset.h"
 
 
 using std::string;
-using std::shared_ptr;
 using namespace dcp;
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset(std::shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelPictureAsset (asset, entry_point)
+MPEG2PictureAsset::MPEG2PictureAsset(boost::filesystem::path file)
+	: PictureAsset(file)
 {
 
 }
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelPictureAsset (node)
+void
+MPEG2PictureAsset::read_video_descriptor(ASDCP::MPEG2::VideoDescriptor const& descriptor)
 {
-	node->done ();
+	_size.width = descriptor.StoredWidth;
+	_size.height = descriptor.StoredHeight;
+	_edit_rate = Fraction(descriptor.EditRate.Numerator, descriptor.EditRate.Denominator);
+	_intrinsic_duration = descriptor.ContainerDuration;
+	_frame_rate = Fraction(descriptor.SampleRate.Numerator, descriptor.SampleRate.Denominator);
+	_screen_aspect_ratio = Fraction(descriptor.AspectRatio.Numerator, descriptor.AspectRatio.Denominator);
 }
 
 
 string
-ReelMonoPictureAsset::cpl_node_name (Standard) const
+MPEG2PictureAsset::pkl_type (Standard standard) const
 {
-	return "MainPicture";
+	DCP_ASSERT(standard == Standard::INTEROP);
+	return "application/x-smpte-mxf;asdcpKind=Picture";
+}
+
+
+string
+MPEG2PictureAsset::static_pkl_type(Standard standard)
+{
+	DCP_ASSERT(standard == Standard::INTEROP);
+	return "application/x-smpte-mxf;asdcpKind=Picture";
 }

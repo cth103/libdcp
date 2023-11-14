@@ -43,6 +43,7 @@
 
 #include "reel_file_asset.h"
 #include "j2k_picture_asset.h"
+#include "mpeg2_picture_asset.h"
 
 
 namespace dcp {
@@ -54,20 +55,41 @@ namespace dcp {
 class ReelPictureAsset : public ReelFileAsset
 {
 public:
-	ReelPictureAsset (std::shared_ptr<J2KPictureAsset> asset, int64_t entry_point);
+	ReelPictureAsset(std::shared_ptr<PictureAsset> asset, int64_t entry_point);
 	explicit ReelPictureAsset (std::shared_ptr<const cxml::Node>);
 
-	/** @return the J2KPictureAsset that this object refers to */
-	std::shared_ptr<const J2KPictureAsset> asset () const {
+	/** @return the PictureAsset that this object refers to, if applicable */
+	std::shared_ptr<const PictureAsset> asset() const {
+		return asset_of_type<const PictureAsset>();
+	}
+
+	/** @return the PictureAsset that this object refers to, if applicable */
+	std::shared_ptr<PictureAsset> asset() {
+		return asset_of_type<PictureAsset>();
+	}
+
+	/** @return the J2KPictureAsset that this object refers to, if applicable  */
+	std::shared_ptr<const J2KPictureAsset> j2k_asset() const {
 		return asset_of_type<const J2KPictureAsset>();
 	}
 
-	/** @return the J2KPictureAsset that this object refers to */
-	std::shared_ptr<J2KPictureAsset> asset () {
+	/** @return the J2KPictureAsset that this object refers to, if applicable */
+	std::shared_ptr<J2KPictureAsset> j2k_asset() {
 		return asset_of_type<J2KPictureAsset>();
 	}
 
+	/** @return the MPEG2PictureAsset that this object refers to, if applicable */
+	std::shared_ptr<const MPEG2PictureAsset> mpeg2_asset() const {
+		return asset_of_type<const MPEG2PictureAsset>();
+	}
+
+	/** @return the MPEG2PictureAsset that this object refers to, if applicable */
+	std::shared_ptr<MPEG2PictureAsset> mpeg2_asset() {
+		return asset_of_type<MPEG2PictureAsset>();
+	}
+
 	virtual xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
+
 	bool equals(std::shared_ptr<const ReelPictureAsset>, EqualityOptions const&, NoteHandler) const;
 
 	/** @return picture frame rate */

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2023 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,37 +32,31 @@
 */
 
 
-/** @file  src/reel_mono_picture_asset.cc
- *  @brief ReelMonoPictureAsset class
- */
+#include "mono_mpeg2_picture_asset.h"
+#include "mpeg2_transcode.h"
+#include "test.h"
+#include <boost/test/unit_test.hpp>
 
-
-#include "reel_mono_picture_asset.h"
-#include "mono_j2k_picture_asset.h"
-#include <libcxml/cxml.h>
-
-
-using std::string;
-using std::shared_ptr;
-using namespace dcp;
-
-
-ReelMonoPictureAsset::ReelMonoPictureAsset(std::shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelPictureAsset (asset, entry_point)
-{
-
+extern "C" {
+#include <libavcodec/avcodec.h>
 }
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelPictureAsset (node)
+BOOST_AUTO_TEST_CASE(mpeg_mono_picture_read_test)
 {
-	node->done ();
+	dcp::MonoMPEG2PictureAsset asset(private_test / "data" / "mas" / "r2.mxf" );
+	std::cout << "frame rate " << asset.frame_rate().numerator << "\n";
+	std::cout << "duration " << asset.intrinsic_duration() << "\n";
+
+	auto reader = asset.start_read();
+
+	dcp::MPEG2Decompressor decompressor;
+	for (auto i = 0; i < asset.intrinsic_duration(); ++i) {
+		auto images = decompressor.decompress_frame(reader->get_frame(i));
+		BOOST_CHECK_EQUAL(images.size(), i == 0 ? 0U : 1U);
+	}
+
+	auto images = decompressor.flush();
+	BOOST_CHECK_EQUAL(images.size(), 1U);
 }
 
-
-string
-ReelMonoPictureAsset::cpl_node_name (Standard) const
-{
-	return "MainPicture";
-}

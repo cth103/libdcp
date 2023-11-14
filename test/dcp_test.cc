@@ -203,9 +203,9 @@ test_rewriting_sound(string name, bool modify)
 	dcp::DCP B ("build/test/" + name);
 	auto reel = make_shared<dcp::Reel>();
 
-	BOOST_REQUIRE (A_picture->mono_asset());
-	BOOST_REQUIRE (A_picture->mono_asset()->file());
-	copy_file (A_picture->mono_asset()->file().get(), path("build") / "test" / name / picture);
+	BOOST_REQUIRE(A_picture->mono_j2k_asset());
+	BOOST_REQUIRE(A_picture->mono_j2k_asset()->file());
+	copy_file(A_picture->mono_j2k_asset()->file().get(), path("build") / "test" / name / picture);
 	reel->add(make_shared<dcp::ReelMonoPictureAsset>(make_shared<dcp::MonoJ2KPictureAsset>(path("build") / "test" / name / picture), 0));
 
 	auto reader = A_sound->asset()->start_read();

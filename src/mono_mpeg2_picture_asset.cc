@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2023 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,37 +32,46 @@
 */
 
 
-/** @file  src/reel_mono_picture_asset.cc
- *  @brief ReelMonoPictureAsset class
- */
+#include "filesystem.h"
+#include "mono_mpeg2_picture_asset.h"
+#include "mono_mpeg2_picture_asset_reader.h"
+#include <asdcp/AS_DCP.h>
 
 
-#include "reel_mono_picture_asset.h"
-#include "mono_j2k_picture_asset.h"
-#include <libcxml/cxml.h>
-
-
-using std::string;
 using std::shared_ptr;
 using namespace dcp;
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset(std::shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelPictureAsset (asset, entry_point)
+MonoMPEG2PictureAsset::MonoMPEG2PictureAsset(boost::filesystem::path file)
+	: MPEG2PictureAsset(file)
 {
+	Kumu::FileReaderFactory factory;
+	ASDCP::MPEG2::MXFReader reader(factory);
+	auto const result = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
+	if (ASDCP_FAILURE(result)) {
+		boost::throw_exception(MXFFileError("could not open MXF file for reading", file.string(), result));
+	}
 
+	ASDCP::MPEG2::VideoDescriptor desc;
+	if (ASDCP_FAILURE(reader.FillVideoDescriptor(desc))) {
+		boost::throw_exception(ReadError("could not read video MXF information"));
+	}
+
+	read_video_descriptor(desc);
+
+	ASDCP::WriterInfo info;
+	if (ASDCP_FAILURE(reader.FillWriterInfo(info))) {
+		boost::throw_exception(ReadError("could not read video MXF information"));
+	}
+
+	_id = read_writer_info(info);
 }
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelPictureAsset (node)
+shared_ptr<MonoMPEG2PictureAssetReader>
+MonoMPEG2PictureAsset::start_read () const
 {
-	node->done ();
-}
+	/* Can't use make_shared here as the MonoMPEG2PictureAssetReader constructor is private */
+	return shared_ptr<MonoMPEG2PictureAssetReader>(new MonoMPEG2PictureAssetReader(this, key(), standard()));
 
-
-string
-ReelMonoPictureAsset::cpl_node_name (Standard) const
-{
-	return "MainPicture";
 }

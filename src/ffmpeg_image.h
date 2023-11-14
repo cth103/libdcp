@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2023 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,37 +32,55 @@
 */
 
 
-/** @file  src/reel_mono_picture_asset.cc
- *  @brief ReelMonoPictureAsset class
- */
+#ifndef LIBDCP_FFMPEG_IMAGE_H
+#define LIBDCP_FFMPEG_IMAGE_H
 
 
-#include "reel_mono_picture_asset.h"
-#include "mono_j2k_picture_asset.h"
-#include <libcxml/cxml.h>
+extern "C" {
+#include <libavutil/frame.h>
+}
+#include <algorithm>
+#include <vector>
 
 
-using std::string;
-using std::shared_ptr;
-using namespace dcp;
+namespace dcp {
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset(std::shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelPictureAsset (asset, entry_point)
+class FFmpegImage
 {
+public:
+	explicit FFmpegImage(AVFrame* frame)
+		: _frame(frame)
+	{}
+
+	FFmpegImage(FFmpegImage const& other) = delete;
+	FFmpegImage& operator=(FFmpegImage const& other) = delete;
+
+	FFmpegImage(FFmpegImage&& other) {
+		std::swap(_frame, other._frame);
+	}
+
+	FFmpegImage& operator=(FFmpegImage&& other) {
+		std::swap(_frame, other._frame);
+		return *this;
+	}
+
+	~FFmpegImage()
+	{
+		av_frame_free(&_frame);
+	}
+
+	AVFrame const * frame() const {
+		return _frame;
+	}
+
+private:
+	AVFrame* _frame = nullptr;
+};
+
 
 }
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelPictureAsset (node)
-{
-	node->done ();
-}
+#endif
 
-
-string
-ReelMonoPictureAsset::cpl_node_name (Standard) const
-{
-	return "MainPicture";
-}

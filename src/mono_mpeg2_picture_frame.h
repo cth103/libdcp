@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2014-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,37 +32,45 @@
 */
 
 
-/** @file  src/reel_mono_picture_asset.cc
- *  @brief ReelMonoPictureAsset class
- */
+#ifndef LIBDCP_MONO_MPEG2_PICTURE_FRAME_H
+#define LIBDCP_MONO_MPEG2_PICTURE_FRAME_H
 
 
-#include "reel_mono_picture_asset.h"
-#include "mono_j2k_picture_asset.h"
-#include <libcxml/cxml.h>
+#include "asset_reader.h"
+#include "data.h"
 
 
-using std::string;
-using std::shared_ptr;
-using namespace dcp;
+namespace dcp {
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset(std::shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelPictureAsset (asset, entry_point)
+class MonoMPEG2PictureFrame : public Data
 {
+public:
+	MonoMPEG2PictureFrame(MonoMPEG2PictureFrame const&) = delete;
+	MonoMPEG2PictureFrame& operator=(MonoMPEG2PictureFrame const&) = delete;
+
+	/** @return Pointer to MPEG2 data */
+	uint8_t const * data() const override;
+
+	/** @return Pointer to MPEG2 data */
+	uint8_t* data () override;
+
+	/** @return Size of MPEG2 data in bytes */
+	int size() const override;
+
+private:
+	/* XXX: this is a bit of a shame, but I tried friend MonoMPEG2PictureAssetReader and it's
+	   rejected by some (seemingly older) GCCs.
+	*/
+	friend class AssetReader<ASDCP::MPEG2::MXFReader, MonoMPEG2PictureFrame>;
+
+	MonoMPEG2PictureFrame(ASDCP::MPEG2::MXFReader* reader, int n, std::shared_ptr<DecryptionContext>, bool check_hmac);
+
+	std::shared_ptr<ASDCP::MPEG2::FrameBuffer> _buffer;
+};
+
 
 }
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelPictureAsset (node)
-{
-	node->done ();
-}
-
-
-string
-ReelMonoPictureAsset::cpl_node_name (Standard) const
-{
-	return "MainPicture";
-}
+#endif

@@ -91,6 +91,7 @@ protected:
 private:
 	friend class AtmosAsset;
 	friend class MonoJ2KPictureAsset;
+	friend class MonoMPEG2PictureAsset;
 	friend class SoundAsset;
 	friend class StereoJ2KPictureAsset;
 
