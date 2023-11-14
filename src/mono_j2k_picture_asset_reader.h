@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/mono_picture_asset_reader.h
+/** @file  src/mono_j2k_picture_asset_reader.h
  *  @brief MonoJ2KPictureAssetReader typedef
  */
 
 
-#ifndef LIBDCP_MONO_PICTURE_ASSET_READER_H
-#define LIBDCP_MONO_PICTURE_ASSET_READER_H
+#ifndef LIBDCP_MONO_J2K_PICTURE_ASSET_READER_H
+#define LIBDCP_MONO_J2K_PICTURE_ASSET_READER_H
 
 
 #include "asset_reader.h"
