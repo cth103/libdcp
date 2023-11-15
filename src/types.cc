@@ -545,7 +545,7 @@ dcp::mca_id_to_channel (string id)
 		return Channel::RS;
 	} else if (id == "hi") {
 		return Channel::HI;
-	} else if (id == "vin") {
+	} else if (id == "vin" || id == "vi-n") {
 		return Channel::VI;
 	} else if (id == "lrs") {
 		return Channel::BSL;
