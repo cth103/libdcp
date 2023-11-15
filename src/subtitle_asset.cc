@@ -294,12 +294,83 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, vector<ParseState>&
 
 	float space_before = 0;
 
+	/* Collect <Ruby>s first */
+	auto get_text_content = [](xmlpp::Element const* element) {
+		string all_content;
+		for (auto child: element->get_children()) {
+			auto content = dynamic_cast<xmlpp::ContentNode const*>(child);
+			if (content) {
+				all_content += content->get_content();
+			}
+		}
+		return all_content;
+	};
+
+	vector<Ruby> rubies;
+	for (auto child: node->get_children()) {
+		auto element = dynamic_cast<xmlpp::Element const*>(child);
+		if (element && element->get_name() == "Ruby") {
+			optional<string> base;
+			optional<string> annotation;
+			optional<float> size;
+			optional<RubyPosition> position;
+			optional<float> offset;
+			optional<float> spacing;
+			optional<float> aspect_adjust;
+			for (auto ruby_child: element->get_children()) {
+				if (auto ruby_element = dynamic_cast<xmlpp::Element const*>(ruby_child)) {
+					if (ruby_element->get_name() == "Rb") {
+						base = get_text_content(ruby_element);
+					} else if (ruby_element->get_name() == "Rt") {
+						annotation = get_text_content(ruby_element);
+						size = optional_number_attribute<float>(ruby_element, "Size");
+						if (auto position_string = optional_string_attribute(ruby_element, "Position")) {
+							if (*position_string == "before") {
+								position = RubyPosition::BEFORE;
+							} else if (*position_string == "after") {
+								position = RubyPosition::AFTER;
+							} else {
+								DCP_ASSERT(false);
+							}
+						}
+						offset = optional_number_attribute<float>(ruby_element, "Offset");
+						spacing = optional_number_attribute<float>(ruby_element, "Spacing");
+						aspect_adjust = optional_number_attribute<float>(ruby_element, "AspectAdjust");
+					}
+				}
+			}
+			DCP_ASSERT(base);
+			DCP_ASSERT(annotation);
+			auto ruby = Ruby{*base, *annotation};
+			if (size) {
+				ruby.size = *size;
+			}
+			if (position) {
+				ruby.position = *position;
+			}
+			if (offset) {
+				ruby.offset = *offset;
+			}
+			if (spacing) {
+				ruby.spacing = *spacing;
+			}
+			if (aspect_adjust) {
+				ruby.aspect_adjust = *aspect_adjust;
+			}
+			rubies.push_back(ruby);
+		}
+	}
+
 	for (auto i: node->get_children()) {
+
+		/* Handle actual content e.g. text */
 		auto const v = dynamic_cast<xmlpp::ContentNode const *>(i);
 		if (v) {
-			maybe_add_subtitle (v->get_content(), state, space_before, standard);
+			maybe_add_subtitle (v->get_content(), state, space_before, standard, rubies);
 			space_before = 0;
 		}
+
+		/* Handle other nodes */
 		auto const e = dynamic_cast<xmlpp::Element const *>(i);
 		if (e) {
 			if (e->get_name() == "Space") {
@@ -311,7 +382,7 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, vector<ParseState>&
 					boost::replace_all(size, "em", "");
 				}
 				space_before += raw_convert<float>(size);
-			} else {
+			} else if (e->get_name() != "Ruby") {
 				parse_subtitles (e, state, tcr, standard);
 			}
 		}
@@ -322,7 +393,13 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, vector<ParseState>&
 
 
 void
-SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse_state, float space_before, Standard standard)
+SubtitleAsset::maybe_add_subtitle(
+	string text,
+	vector<ParseState> const & parse_state,
+	float space_before,
+	Standard standard,
+	vector<Ruby> const& rubies
+	)
 {
 	auto wanted = [](ParseState const& ps) {
 		return ps.type && (ps.type.get() == ParseState::Type::TEXT || ps.type.get() == ParseState::Type::IMAGE);
@@ -427,7 +504,8 @@ SubtitleAsset::maybe_add_subtitle (string text, vector<ParseState> const & parse
 				ps.effect_colour.get_value_or (dcp::Colour (0, 0, 0)),
 				ps.fade_up_time.get_value_or(Time()),
 				ps.fade_down_time.get_value_or(Time()),
-				space_before
+				space_before,
+				rubies
 				)
 			);
 		break;
@@ -698,7 +776,16 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 			    fabs(last_z_position - is->z_position()) > ALIGN_EPSILON ||
 			    last_direction != is->direction()
 				) {
-				text = make_shared<order::Text>(subtitle, is->h_align(), is->h_position(), is->v_align(), is->v_position(), is->z_position(), is->direction());
+				text = make_shared<order::Text>(
+					subtitle,
+					is->h_align(),
+					is->h_position(),
+					is->v_align(),
+					is->v_position(),
+					is->z_position(),
+					is->direction(),
+					is->rubies()
+					);
 				subtitle->children.push_back (text);
 
 				last_h_align = is->h_align ();

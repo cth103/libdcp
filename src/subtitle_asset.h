@@ -216,7 +216,13 @@ private:
 	friend struct ::pull_fonts_test2;
 	friend struct ::pull_fonts_test3;
 
-	void maybe_add_subtitle (std::string text, std::vector<ParseState> const & parse_state, float space_before, Standard standard);
+	void maybe_add_subtitle(
+		std::string text,
+		std::vector<ParseState> const & parse_state,
+		float space_before,
+		Standard standard,
+		std::vector<Ruby> const& rubies
+		);
 
 	static void pull_fonts (std::shared_ptr<order::Part> part);
 };

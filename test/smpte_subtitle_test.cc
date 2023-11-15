@@ -72,7 +72,8 @@ BOOST_AUTO_TEST_CASE (smpte_subtitle_id_test)
 			dcp::Colour(),
 			dcp::Time(0, 0, 0, 0, 24),
 			dcp::Time(0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 	subs.write("build/test/smpte_subtitle_id_test.mxf");
@@ -201,7 +202,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -227,7 +229,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 			dcp::Colour (1, 2, 3),
 			dcp::Time (1, 2, 3, 4, 24),
 			dcp::Time (5, 6, 7, 8, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -253,7 +256,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 			dcp::Colour (1, 2, 3),
 			dcp::Time (1, 2, 3, 4, 24),
 			dcp::Time (5, 6, 7, 8, 24),
-			4.2
+			4.2,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -320,7 +324,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -346,7 +351,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -372,7 +378,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -398,7 +405,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -424,7 +432,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -450,7 +459,8 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -564,7 +574,8 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_top_alignment)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -590,7 +601,8 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_top_alignment)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -652,7 +664,8 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_bottom_alignment)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -678,7 +691,8 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_bottom_alignment)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 

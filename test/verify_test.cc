@@ -1335,7 +1335,8 @@ add_test_subtitle (shared_ptr<dcp::SubtitleAsset> asset, int start_frame, int en
 			dcp::Colour(),
 			dcp::Time(),
 			dcp::Time(),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 		)
 	);
 }

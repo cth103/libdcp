@@ -101,6 +101,7 @@ def build(bld):
              reel_subtitle_asset.cc
              ref.cc
              rgb_xyz.cc
+             ruby.cc
              s_gamut3_transfer_function.cc
              search.cc
              smpte_load_font_node.cc
@@ -205,6 +206,7 @@ def build(bld):
               reel_stereo_picture_asset.h
               reel_subtitle_asset.h
               ref.h
+              ruby.h
               s_gamut3_transfer_function.h
               search.h
               smpte_load_font_node.h

@@ -223,6 +223,18 @@ order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 		e->set_attribute ("Direction", direction_to_string (_direction));
 	}
 
+	for (auto const& ruby: _rubies) {
+		auto xml = e->add_child("Ruby");
+		xml->add_child("Rb")->add_child_text(ruby.base);
+		auto rt = xml->add_child("Rt");
+		rt->add_child_text(ruby.annotation);
+		rt->set_attribute("Size", dcp::raw_convert<string>(ruby.size, 6));
+		rt->set_attribute("Position", ruby.position == RubyPosition::BEFORE ? "before" : "after");
+		rt->set_attribute("Offset", dcp::raw_convert<string>(ruby.offset, 6));
+		rt->set_attribute("Spacing", dcp::raw_convert<string>(ruby.spacing, 6));
+		rt->set_attribute("AspectAdjust", dcp::raw_convert<string>(ruby.aspect_adjust, 6));
+	}
+
 	return e;
 }
 

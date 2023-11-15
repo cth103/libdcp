@@ -417,7 +417,8 @@ simple_subtitle ()
 		dcp::Colour(255, 255, 255),
 		dcp::Time(),
 		dcp::Time(),
-		0
+		0,
+		std::vector<dcp::Ruby>()
 		);
 }
 

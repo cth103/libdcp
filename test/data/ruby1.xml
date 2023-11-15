@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DCSubtitle Version="1.0">
+  <SubtitleID>cab5c268-222b-41d2-88ae-6d6999441b17</SubtitleID>
+  <MovieTitle>Movie Title</MovieTitle>
+  <ReelNumber>1</ReelNumber>
+  <Language>French</Language>
+  <LoadFont Id="theFontId" URI="arial.ttf"/>
+  <Font AspectAdjust="1.0" Color="FFFFFFFF" Effect="border" EffectColor="FF000000" Id="theFontId" Italic="no" Script="normal" Size="39" Underlined="no" Weight="normal">
+    <Subtitle SpotNumber="1" TimeIn="00:00:05:198" TimeOut="00:00:07:115" FadeUpTime="1" FadeDownTime="1">
+      <Text VAlign="center" VPosition="0"><Ruby><Rb>Base</Rb><Rt Size="0.7" Position="after" Offset="0.1" Spacing="0.4" AspectAdjust="0.9">Annotate</Rt></Ruby>Hello world</Text>
+    </Subtitle>
+  </Font>
+</DCSubtitle>
+

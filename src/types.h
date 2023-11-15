@@ -277,6 +277,11 @@ constexpr float ALIGN_EPSILON = 1e-3;
 constexpr float SPACE_BEFORE_EPSILON = 1e-3;
 
 
+constexpr float SIZE_EPSILON = 1e-3;
+constexpr float OFFSET_EPSILON = 1e-3;
+constexpr float SPACING_EPSILON = 1e-3;
+
+
 enum class Marker {
 	FFOC, ///< first frame of composition
 	LFOC, ///< last frame of composition

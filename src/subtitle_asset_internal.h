@@ -62,6 +62,7 @@ struct pull_fonts_test3;
 namespace dcp {
 
 
+class Ruby;
 class SubtitleString;
 
 
@@ -145,7 +146,7 @@ private:
 class Text : public Part
 {
 public:
-	Text (std::shared_ptr<Part> parent, HAlign h_align, float h_position, VAlign v_align, float v_position, float z_position, Direction direction)
+	Text(std::shared_ptr<Part> parent, HAlign h_align, float h_position, VAlign v_align, float v_position, float z_position, Direction direction, std::vector<Ruby> rubies)
 		: Part (parent)
 		, _h_align (h_align)
 		, _h_position (h_position)
@@ -153,6 +154,7 @@ public:
 		, _v_position (v_position)
 		, _z_position(z_position)
 		, _direction (direction)
+		, _rubies(rubies)
 	{}
 
 	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const override;
@@ -164,6 +166,7 @@ private:
 	float _v_position;
 	float _z_position;
 	Direction _direction;
+	std::vector<Ruby> _rubies;
 };
 
 

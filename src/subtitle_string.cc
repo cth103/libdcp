@@ -49,6 +49,7 @@ using std::min;
 using std::ostream;
 using std::shared_ptr;
 using std::string;
+using std::vector;
 using boost::optional;
 using namespace dcp;
 
@@ -74,7 +75,8 @@ SubtitleString::SubtitleString (
 	Colour effect_colour,
 	Time fade_up_time,
 	Time fade_down_time,
-	float space_before
+	float space_before,
+	vector<Ruby> rubies
 	)
 	: Subtitle(in, out, h_position, h_align, v_position, v_align, z_position, fade_up_time, fade_down_time)
 	, _font (font)
@@ -89,6 +91,7 @@ SubtitleString::SubtitleString (
 	, _effect (effect)
 	, _effect_colour (effect_colour)
 	, _space_before (space_before)
+	, _rubies(rubies)
 {
 	_aspect_adjust = max(min(_aspect_adjust, 4.0f), 0.25f);
 }
@@ -130,7 +133,8 @@ dcp::operator== (SubtitleString const & a, SubtitleString const & b)
 		a.effect_colour() == b.effect_colour() &&
 		a.fade_up_time() == b.fade_up_time() &&
 		a.fade_down_time() == b.fade_down_time() &&
-		fabs (a.space_before() - b.space_before()) < SPACE_BEFORE_EPSILON
+		fabs (a.space_before() - b.space_before()) < SPACE_BEFORE_EPSILON &&
+		a.rubies() == b.rubies()
 		);
 }
 
@@ -174,6 +178,10 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 	  << ", effect " << ((int) sub.effect())
 	  << ", effect colour (" << sub.effect_colour().r << ", " << sub.effect_colour().g << ", " << sub.effect_colour().b << ")"
 	  << ", space before " << sub.space_before();
+
+	for (auto ruby: sub.rubies()) {
+		s << ", ruby " << ruby.base << " " << ruby.annotation;
+	}
 
 	return s;
 }
@@ -251,6 +259,11 @@ SubtitleString::equals(shared_ptr<const Subtitle> other_sub, EqualityOptions con
 
 	if (_space_before != other->_space_before) {
 		note(NoteType::ERROR, String::compose("subtitle space before differs: %1 vs %2", _space_before, other->_space_before));
+		same = false;
+	}
+
+	if (_rubies != other->_rubies) {
+		note(NoteType::ERROR, "rubies differ");
 		same = false;
 	}
 

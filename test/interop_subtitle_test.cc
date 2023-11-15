@@ -89,7 +89,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   dcp::Colour (0, 0, 0),
 				   dcp::Time (0, 0, 0, 1, 250),
 				   dcp::Time (0, 0, 0, 1, 250),
-				   0
+				   0,
+				   {}
 				   ));
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
@@ -113,7 +114,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   dcp::Colour (0, 0, 0),
 				   dcp::Time (0, 0, 0, 1, 250),
 				   dcp::Time (0, 0, 0, 1, 250),
-				   6
+				   6,
+				   {}
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 0, 7, 190, 250), dcp::Time (0, 0, 7, 191, 250), false);
@@ -140,7 +142,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   dcp::Colour (0, 0, 0),
 				   dcp::Time (0, 0, 0, 1, 250),
 				   dcp::Time (0, 0, 0, 1, 250),
-				   0
+				   0,
+				   {}
 				   ));
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
@@ -164,7 +167,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   dcp::Colour (0, 0, 0),
 				   dcp::Time (0, 0, 0, 1, 250),
 				   dcp::Time (0, 0, 0, 1, 250),
-				   0
+				   0,
+				   {}
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 0, 11, 95, 250), dcp::Time (0, 0, 11, 96, 250), false);
@@ -191,7 +195,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   dcp::Colour (0, 0, 0),
 				   dcp::Time (0, 0, 0, 1, 250),
 				   dcp::Time (0, 0, 0, 1, 250),
-				   0
+				   0,
+				   {}
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 0, 14, 42, 250), dcp::Time (0, 0, 14, 43, 250), false);
@@ -218,7 +223,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 				   dcp::Colour (0, 0, 0),
 				   dcp::Time (0, 0, 0, 1, 250),
 				   dcp::Time (0, 0, 0, 1, 250),
-				   0
+				   0,
+				   {}
 				   ));
 }
 
@@ -251,7 +257,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour (0, 0, 0),
 				   dcp::Time (0, 0, 0, 0, 250),
 				   dcp::Time (0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
@@ -275,7 +282,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour (0, 0, 0),
 				   dcp::Time (0, 0, 0, 0, 250),
 				   dcp::Time (0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 0, 50, 50, 250), dcp::Time (0, 0, 50, 51, 250), false);
@@ -302,7 +310,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour (0, 0, 0),
 				   dcp::Time (0, 0, 0, 0, 250),
 				   dcp::Time (0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
@@ -326,7 +335,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour (0, 0, 0),
 				   dcp::Time (0, 0, 0, 0, 250),
 				   dcp::Time (0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 1, 2, 300, 250), dcp::Time (0, 1, 2, 301, 250), false);
@@ -353,7 +363,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
@@ -377,7 +388,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 1, 15, 50, 250), dcp::Time (0, 1, 15, 51, 250), false);
@@ -404,7 +416,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
@@ -428,7 +441,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 1, 27, 200, 250), dcp::Time (0, 1, 27, 201, 250), false);
@@ -455,7 +469,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
@@ -479,7 +494,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 1, 42, 300, 250), dcp::Time (0, 1, 42, 301, 250), false);
@@ -506,7 +522,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
@@ -530,7 +547,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 1, 45, 200, 250), dcp::Time (0, 1, 45, 201, 250), false);
@@ -557,7 +575,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
@@ -581,7 +600,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 1, 47, 249, 250), dcp::Time (0, 1, 47, 250, 250), false);
@@ -608,7 +628,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
@@ -632,7 +653,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 
 	s = subs.subtitles_during (dcp::Time (0, 2, 6, 210, 250), dcp::Time (0, 2, 6, 211, 250), false);
@@ -659,7 +681,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(s.back()));
 	BOOST_CHECK_EQUAL (*dynamic_pointer_cast<const dcp::SubtitleString>(s.back()), dcp::SubtitleString (
@@ -683,7 +706,8 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 				   dcp::Colour(0, 0, 0),
 				   dcp::Time(0, 0, 0, 0, 250),
 				   dcp::Time(0, 0, 0, 0, 250),
-				   0
+				   0,
+				   {}
 				   ));
 }
 
@@ -729,7 +753,8 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -755,7 +780,8 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 			dcp::Colour (1, 2, 3),
 			dcp::Time (1, 2, 3, 4, 24),
 			dcp::Time (5, 6, 7, 8, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -781,7 +807,8 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 			dcp::Colour (1, 2, 3),
 			dcp::Time (1, 2, 3, 4, 24),
 			dcp::Time (5, 6, 7, 8, 24),
-			9
+			9,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -841,7 +868,8 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 			dcp::Colour (0, 0, 0),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 
@@ -867,7 +895,8 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 			dcp::Colour (1, 2, 3),
 			dcp::Time (1, 2, 3, 4, 24),
 			dcp::Time (5, 6, 7, 8, 24),
-			0
+			0,
+			std::vector<dcp::Ruby>()
 			)
 		);
 

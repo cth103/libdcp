@@ -42,6 +42,7 @@
 
 
 #include "dcp_time.h"
+#include "ruby.h"
 #include "subtitle.h"
 #include <boost/optional.hpp>
 #include <string>
@@ -100,7 +101,8 @@ public:
 		Colour effect_colour,
 		Time fade_up_time,
 		Time fade_down_time,
-		float space_before
+		float space_before,
+		std::vector<Ruby> rubies
 		);
 
 	/** @return font ID */
@@ -158,6 +160,10 @@ public:
 		return _aspect_adjust;
 	}
 
+	std::vector<Ruby> const& rubies() const {
+		return _rubies;
+	}
+
 	void set_font (std::string id) {
 		_font = id;
 	}
@@ -190,6 +196,10 @@ public:
 		_effect_colour = c;
 	}
 
+	void set_rubies(std::vector<Ruby> rubies) {
+		_rubies = std::move(rubies);
+	}
+
 	bool equals(std::shared_ptr<const dcp::Subtitle> other_sub, EqualityOptions const& options, NoteHandler node) const override;
 
 private:
@@ -213,6 +223,7 @@ private:
 	Effect _effect;
 	Colour _effect_colour;
 	float _space_before;
+	std::vector<Ruby> _rubies;
 };
 
 bool operator== (SubtitleString const & a, SubtitleString const & b);
@@ -224,3 +235,4 @@ std::ostream& operator<< (std::ostream& s, SubtitleString const & sub);
 
 
 #endif
+
