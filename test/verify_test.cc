@@ -197,9 +197,9 @@ LIBDCP_ENABLE_WARNINGS
 
 static
 void
-check_verify_result (vector<path> dir, vector<dcp::VerificationNote> test_notes)
+check_verify_result(vector<path> dir, vector<dcp::DecryptedKDM> kdm, vector<dcp::VerificationNote> test_notes)
 {
-	auto notes = dcp::verify({dir}, &stage, &progress, {}, xsd_test);
+	auto notes = dcp::verify({dir}, kdm, &stage, &progress, {}, xsd_test);
 	std::sort (notes.begin(), notes.end());
 	std::sort (test_notes.begin(), test_notes.end());
 
@@ -247,7 +247,7 @@ check_verify_result_after_replace (string suffix, boost::function<path (string)>
 		e.replace (from, to);
 	}
 
-	auto notes = dcp::verify({dir}, &stage, &progress, {}, xsd_test);
+	auto notes = dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test);
 
 	BOOST_REQUIRE_EQUAL (notes.size(), codes.size());
 	auto i = notes.begin();
@@ -273,7 +273,7 @@ BOOST_AUTO_TEST_CASE (verify_no_error)
 {
 	stages.clear ();
 	auto dir = setup (1, "no_error");
-	auto notes = dcp::verify({dir}, &stage, &progress, {}, xsd_test);
+	auto notes = dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test);
 
 	path const cpl_file = dir / dcp_test1_cpl();
 	path const pkl_file = dir / dcp_test1_pkl();
@@ -345,6 +345,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_picture_sound_hash)
 	dcp::ASDCPErrorSuspender sus;
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_PICTURE_HASH, canonical(video_path) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_SOUND_HASH, canonical(audio_path) },
@@ -365,6 +366,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id(), canonical(dir / dcp_test1_cpl()) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf") },
@@ -387,6 +389,7 @@ BOOST_AUTO_TEST_CASE (verify_failed_read_content_kind)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id(), canonical(dir / dcp_test1_cpl()) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_CONTENT_KIND, string("xtrailer") }
@@ -434,6 +437,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_asset)
 	remove (dir / "video.mxf");
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_ASSET, canonical(dir) / "video.mxf" }
 		});
@@ -514,7 +518,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_standard)
 {
 	stages.clear ();
 	auto dir = setup (3, "verify_invalid_standard");
-	auto notes = dcp::verify({dir}, &stage, &progress, {}, xsd_test);
+	auto notes = dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test);
 
 	path const cpl_file = dir / "cpl_cbfd2bc0-21cf-4a8f-95d8-9cddcbe51296.xml";
 	path const pkl_file = dir / "pkl_d87a950c-bd6f-41f6-90cc-56ccd673e131.xml";
@@ -579,6 +583,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_duration)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_DURATION, string("d7576dcb-a361-4139-96b8-267f5f8d7f91") },
@@ -632,6 +637,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_size_in_bytes)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf") },
@@ -660,6 +666,7 @@ BOOST_AUTO_TEST_CASE (verify_nearly_invalid_picture_frame_size_in_bytes)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte") },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf") },
@@ -679,7 +686,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_picture_frame_size_in_bytes)
 	prepare_directory (dir);
 	auto cpl = dcp_from_frame (frame, dir);
 
-	check_verify_result ({ dir }, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+	check_verify_result({ dir }, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
 
 
@@ -693,7 +700,9 @@ BOOST_AUTO_TEST_CASE (verify_valid_interop_subtitles)
 	write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
 
 	check_verify_result (
-		{dir}, {
+		{dir},
+		{},
+		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"theFontId"} }
 		});
@@ -710,7 +719,9 @@ BOOST_AUTO_TEST_CASE(verify_catch_missing_font_file_with_interop_ccap)
 	write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
 
 	check_verify_result (
-		{dir}, {
+		{dir},
+		{},
+		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"theFontId"} }
 		});
@@ -735,6 +746,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_interop_subtitles)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'Foo'"), path(), 5 },
@@ -761,6 +773,7 @@ BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_no_subtitles)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE, asset->id(), boost::filesystem::canonical(asset->file().get()) },
@@ -781,6 +794,7 @@ BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_single_space_subtitle)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"Arial"} }
@@ -800,6 +814,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_smpte_subtitles)
 
 	check_verify_result(
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, string{"2021-04-14T13:19:14.000+02:00"} },
@@ -822,6 +837,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_smpte_subtitles)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'Foo'"), path(), 2 },
 			{
@@ -850,6 +866,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_TEXT },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
@@ -873,6 +890,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_child_nodes)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"font0"} }
@@ -892,6 +910,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_empty_child_nodes
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE, asset->id(), boost::filesystem::canonical(asset->file().get()) },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
@@ -922,6 +941,7 @@ BOOST_AUTO_TEST_CASE (verify_external_asset)
 
 	check_verify_result (
 		{ vf_dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EXTERNAL_ASSET, picture->asset()->id() },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -1023,6 +1043,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:MainSoundXConfiguration'"), canonical(cpl->file().get()), 50 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:MainSoundXSampleRate'"), canonical(cpl->file().get()), 51 },
@@ -1070,6 +1091,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_missing_tag)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::FAILED_READ, string("missing XML tag Width in MainPictureStoredArea") }}
 		);
 }
@@ -1089,6 +1111,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language1)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("badlang") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("wrong-andbad") },
@@ -1112,6 +1135,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language2)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("badlang") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("wrong-andbad") },
@@ -1154,6 +1178,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language3)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("this-is-wrong") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("andso-is-this") },
@@ -1214,7 +1239,7 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 	d->set_annotation_text("A Test DCP");
 	d->write_xml();
 
-	return dcp::verify({dcp_path}, &stage, &progress, {}, xsd_test);
+	return dcp::verify({dcp_path}, {}, &stage, &progress, {}, xsd_test);
 }
 
 
@@ -1359,6 +1384,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_xml_size_in_bytes)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf") },
 			{
@@ -1403,6 +1429,7 @@ verify_timed_text_asset_too_large (string name)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, string("121695488"), canonical(dir / "subs.mxf") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, string("121634816"), canonical(dir / "subs.mxf") },
@@ -1460,6 +1487,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, canonical(dir / "subs.mxf") },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME }
@@ -1498,6 +1526,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 
 	check_verify_result (
 		{ path },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs1.mxf") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs2.mxf") },
@@ -1537,6 +1566,7 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 
 	check_verify_result (
 		{ path },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs1.mxf") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs2.mxf") }
@@ -1584,6 +1614,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf") },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME }
@@ -1632,6 +1663,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_SUBTITLE_START_TIME, canonical(dir / "subs.mxf") },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME }
@@ -1660,7 +1692,7 @@ public:
 
 template <class T>
 shared_ptr<dcp::CPL>
-dcp_with_text (path dir, vector<TestText> subs)
+dcp_with_text(path dir, vector<TestText> subs, optional<dcp::Key> key = boost::none, optional<string> key_id = boost::none)
 {
 	prepare_directory (dir);
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>();
@@ -1669,6 +1701,10 @@ dcp_with_text (path dir, vector<TestText> subs)
 		add_test_subtitle (asset, i.in, i.out, i.v_position, i.v_align, i.text);
 	}
 	asset->set_language (dcp::LanguageTag("de-DE"));
+	if (key && key_id) {
+		asset->set_key(*key);
+		asset->set_key_id(*key_id);
+	}
 	add_font(asset);
 	asset->write (dir / "subs.mxf");
 
@@ -1721,6 +1757,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_first_text_time)
 	auto cpl = dcp_with_text<dcp::ReelSMPTESubtitleAsset> (dir, {{ 4 * 24 - 1, 5 * 24 }});
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -1734,7 +1771,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time)
 	auto const dir = path("build/test/verify_valid_subtitle_first_text_time");
 	/* Just late enough */
 	auto cpl = dcp_with_text<dcp::ReelSMPTESubtitleAsset> (dir, {{ 4 * 24, 5 * 24 }});
-	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+	check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
 
 
@@ -1779,7 +1816,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 	dcp->set_annotation_text("hello");
 	dcp->write_xml();
 
-	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+	check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
 
 
@@ -1794,6 +1831,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_spacing)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_SPACING },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -1810,7 +1848,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_spacing)
 			{ 4 * 24,      5 * 24 },
 			{ 5 * 24 + 16, 8 * 24 },
 		});
-	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+	check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
 
 
@@ -1820,6 +1858,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_duration)
 	auto cpl = dcp_with_text<dcp::ReelSMPTESubtitleAsset> (dir, {{ 4 * 24, 4 * 24 + 1 }});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_DURATION },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -1831,7 +1870,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_duration)
 {
 	auto const dir = path("build/test/verify_valid_subtitle_duration");
 	auto cpl = dcp_with_text<dcp::ReelSMPTESubtitleAsset> (dir, {{ 4 * 24, 4 * 24 + 17 }});
-	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+	check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
 
 
@@ -1850,6 +1889,7 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_overlapping_reel_boundary)
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION , "72 96", boost::filesystem::canonical(asset->file().get()) },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },
@@ -1873,6 +1913,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_count1)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_LINE_COUNT },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -1890,7 +1931,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_line_count1)
 			{ 96, 200, 0.1, dcp::VAlign::CENTER, "have" },
 			{ 96, 200, 0.2, dcp::VAlign::CENTER, "four" },
 		});
-	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+	check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
 
 
@@ -1907,6 +1948,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_count2)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_LINE_COUNT },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -1925,7 +1967,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_line_count2)
 			{ 150, 180, 0.2, dcp::VAlign::CENTER, "four" },
 			{ 190, 250, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
-	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+	check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
 
 
@@ -1939,6 +1981,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_length1)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::NEARLY_INVALID_SUBTITLE_LINE_LENGTH },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -1956,6 +1999,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_length2)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_LINE_LENGTH },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -1976,6 +2020,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count1)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_COUNT},
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -1993,7 +2038,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count2)
 			{ 96, 200, 0.1, dcp::VAlign::CENTER, "have" },
 			{ 96, 200, 0.2, dcp::VAlign::CENTER, "four" },
 		});
-	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+	check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
 
 
@@ -2010,6 +2055,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_count3)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_COUNT},
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -2028,7 +2074,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count4)
 			{ 150, 180, 0.2, dcp::VAlign::CENTER, "four" },
 			{ 190, 250, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
-	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+	check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 }
 
 
@@ -2042,6 +2088,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_length)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
 		});
@@ -2058,6 +2105,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_length)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -2077,6 +2125,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_valign1)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
 		});
@@ -2095,6 +2144,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_valign2)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_VALIGN },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -2114,6 +2164,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering1)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
 		});
@@ -2132,6 +2183,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering2)
 		});
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
 		});
@@ -2144,6 +2196,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering3)
 	auto cpl = dcp_with_text_from_file<dcp::ReelSMPTEClosedCaptionAsset> (dir, "test/data/verify_incorrect_closed_caption_ordering3.xml");
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ORDERING },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -2157,6 +2210,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering4)
 	auto cpl = dcp_with_text_from_file<dcp::ReelSMPTEClosedCaptionAsset> (dir, "test/data/verify_incorrect_closed_caption_ordering4.xml");
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
 		});
@@ -2186,6 +2240,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_sound_frame_rate)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_SOUND_FRAME_RATE, string("96000"), canonical(dir / "audiofoo.mxf") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() },
@@ -2211,6 +2266,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_annotation_text)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, cpl->id(), canonical(cpl->file().get()) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), canonical(cpl->file().get()) }
@@ -2235,6 +2291,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_cpl_annotation_text)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, cpl->id(), canonical(cpl->file().get()) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), canonical(cpl->file().get()) }
@@ -2266,6 +2323,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_asset_duration)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_ASSET_DURATION },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), canonical(cpl->file().get()) }
@@ -2337,6 +2395,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_main_subtitle_from_some_reels)
 		auto cpl = verify_subtitles_must_be_in_all_reels_check (dir, true, false);
 		check_verify_result (
 			{ dir },
+			{},
 			{
 				{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS },
 				{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() },
@@ -2347,13 +2406,13 @@ BOOST_AUTO_TEST_CASE (verify_missing_main_subtitle_from_some_reels)
 	{
 		path dir ("build/test/verify_subtitles_must_be_in_all_reels2");
 		auto cpl = verify_subtitles_must_be_in_all_reels_check (dir, true, true);
-		check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+		check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 	}
 
 	{
 		path dir ("build/test/verify_subtitles_must_be_in_all_reels1");
 		auto cpl = verify_subtitles_must_be_in_all_reels_check (dir, false, false);
-		check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+		check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 	}
 }
 
@@ -2420,6 +2479,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_asset_counts)
 		auto cpl = verify_closed_captions_must_be_in_all_reels_check (dir, 3, 4);
 		check_verify_result (
 			{dir},
+			{},
 			{
 				{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS },
 				{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -2429,13 +2489,13 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_asset_counts)
 	{
 		path dir ("build/test/verify_closed_captions_must_be_in_all_reels2");
 		auto cpl = verify_closed_captions_must_be_in_all_reels_check (dir, 4, 4);
-		check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+		check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 	}
 
 	{
 		path dir ("build/test/verify_closed_captions_must_be_in_all_reels3");
 		auto cpl = verify_closed_captions_must_be_in_all_reels_check (dir, 0, 0);
-		check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
+		check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }});
 	}
 }
 
@@ -2476,6 +2536,7 @@ verify_text_entry_point_check (path dir, dcp::VerificationNote::Code code, boost
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, code, subs->id() },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() },
@@ -2541,6 +2602,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_hash)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_HASH, asset_id }
@@ -2565,7 +2627,7 @@ verify_markers_test (
 	dcp->cpls()[0]->reels()[0]->add(markers_asset);
 	dcp->write_xml();
 
-	check_verify_result ({dir}, test_notes);
+	check_verify_result({dir}, {}, test_notes);
 }
 
 
@@ -2661,7 +2723,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_metadata_version_number)
 	cpl->unset_version_number();
 	dcp->write_xml();
 
-	check_verify_result ({dir}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->id(), cpl->file().get() }});
+	check_verify_result({dir}, {}, {{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->id(), cpl->file().get() }});
 }
 
 
@@ -2681,6 +2743,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata1)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_EXTENSION_METADATA, cpl->id(), cpl->file().get() }
@@ -2703,6 +2766,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata2)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_EXTENSION_METADATA, cpl->id(), cpl->file().get() }
@@ -2726,6 +2790,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:NameX'"), cpl->file().get(), 70 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:NameX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 77 },
@@ -2749,6 +2814,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata1)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("<Name> should be 'Application'"), cpl->file().get() },
@@ -2771,6 +2837,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("<Name> property should be 'DCP Constraints Profile'"), cpl->file().get() },
@@ -2794,6 +2861,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:ValueX'"), cpl->file().get(), 74 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:ValueX' is not allowed for content model '(Name,Value)'"), cpl->file().get(), 75 },
@@ -2817,6 +2885,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("<Value> property should be 'SMPTE-RDD-52:2020-Bv2.1'"), cpl->file().get() },
@@ -2840,6 +2909,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyX'"), cpl->file().get(), 72 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:PropertyX' is not allowed for content model '(Property+)'"), cpl->file().get(), 76 },
@@ -2864,6 +2934,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyListX'"), cpl->file().get(), 71 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:PropertyListX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 77 },
@@ -2891,6 +2962,7 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_cpl_with_encrypted_content)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, encryption_test_cpl_id(), canonical(cpl) },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id(), canonical(pkl), },
@@ -2921,6 +2993,7 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_encrypted_content)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id(), canonical(pkl) },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE },
@@ -2946,7 +3019,7 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_unencrypted_content)
 		e.delete_lines ("<dsig:Signature", "</dsig:Signature>");
 	}
 
-	check_verify_result ({dir}, {});
+	check_verify_result({dir}, {}, {});
 }
 
 
@@ -3011,6 +3084,7 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 
 	check_verify_result (
 		{dir},
+		{},
 		{
 			{dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::PARTIALLY_ENCRYPTED},
 		});
@@ -3110,6 +3184,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_resource_id)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION , "240 0", boost::filesystem::canonical(subs_mxf) },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID },
@@ -3175,6 +3250,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_timed_text_id)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION , "240 0", boost::filesystem::canonical(subs_mxf) },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID },
@@ -3190,6 +3266,7 @@ BOOST_AUTO_TEST_CASE (verify_threed_marked_as_twod)
 {
 	check_verify_result (
 		{ private_test / "data" / "xm" },
+		{},
 		{
 			{
 				dcp::VerificationNote::Type::WARNING,
@@ -3223,6 +3300,7 @@ BOOST_AUTO_TEST_CASE (verify_unexpected_things_in_main_markers)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::UNEXPECTED_ENTRY_POINT },
@@ -3247,6 +3325,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_content_kind)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_CONTENT_KIND, string("trip") }
@@ -3271,6 +3350,7 @@ BOOST_AUTO_TEST_CASE(verify_valid_content_kind)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
 		});
@@ -3299,6 +3379,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_1)
 
 	check_verify_result(
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 1997 is not a multiple of 2", canonical(find_cpl(dir)) },
@@ -3328,6 +3409,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_2)
 
 	check_verify_result(
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is not a multiple of 2", canonical(find_cpl(dir)) },
@@ -3355,6 +3437,7 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_pkl_asset_ids)
 
 	check_verify_result(
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL, pkl.id(), canonical(find_pkl(dir)) },
 		});
@@ -3380,6 +3463,7 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_assetmap_asset_ids)
 
 	check_verify_result(
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map.id(), canonical(find_asset_map(dir)) },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EXTERNAL_ASSET, string("5407b210-4441-4e97-8b16-8bdc7c12da54") },
@@ -3453,6 +3537,7 @@ BOOST_AUTO_TEST_CASE(verify_mismatched_sound_channel_counts)
 
 	check_verify_result(
 		{ path },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS, canonical(find_file(path, "audio2")) },
 		});
@@ -3503,6 +3588,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_sound_configuration)
 
 	check_verify_result(
 		{ path },
+		{},
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION, std::string{"MainSoundConfiguration has 6 channels but sound assets have 2"}, canonical(find_cpl(path)) },
 		});
@@ -3561,6 +3647,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 
 	check_verify_result(
 		{ path },
+		{},
 		{
 			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE).set_frame(0).set_component(0).set_size(1321721),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(path / "video.mxf") },
@@ -3575,6 +3662,7 @@ BOOST_AUTO_TEST_CASE(verify_too_many_subtitle_namespaces)
 	boost::filesystem::path const dir = "test/ref/DCP/subtitle_namespace_test";
 	check_verify_result(
 		{ dir },
+		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE },
@@ -3600,7 +3688,9 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font_for_font)
 	write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
 
 	check_verify_result (
-		{dir}, {
+		{dir},
+		{},
+		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
 			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT).set_id("theFontId")
 		});
@@ -3648,6 +3738,7 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font)
 
 	check_verify_result (
 		{ dir },
+		{},
 		{
 			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_LOAD_FONT).set_id(reel_subs->id())
 		});
@@ -3673,6 +3764,7 @@ BOOST_AUTO_TEST_CASE(verify_spots_wrong_asset)
 
 	check_verify_result(
 		{dir / "1"},
+		{},
 		{
 			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_ASSET_MAP_ID).set_id(asset_1).set_other_id(asset_2)
 		});
@@ -3692,7 +3784,35 @@ BOOST_AUTO_TEST_CASE(verify_cpl_content_version_label_text_empty)
 
 	check_verify_result(
 		{dir},
+		{},
 		{
 			dcp::VerificationNote(dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get()).set_id(cpl->id())
 		});
 }
+
+
+/** Check that we don't get any strange errors when verifying encrypted DCPs (DoM #2659) */
+BOOST_AUTO_TEST_CASE(verify_encrypted_smpte_dcp)
+{
+	auto const dir = path("build/test/verify_encrypted_smpte_dcp");
+	dcp::Key key;
+	auto key_id = dcp::make_uuid();
+	auto cpl = dcp_with_text<dcp::ReelSMPTESubtitleAsset>(dir, {{ 4 * 24, 5 * 24 }}, key, key_id);
+
+	dcp::DecryptedKDM kdm(dcp::LocalTime(), dcp::LocalTime(), "", "", "");
+	kdm.add_key(dcp::DecryptedKDMKey(string{"MDIK"}, key_id, key, cpl->id(), dcp::Standard::SMPTE));
+
+	path const pkl_file = find_file(dir, "pkl_");
+	path const cpl_file = find_file(dir, "cpl_");
+
+	check_verify_result(
+		{ dir },
+		{ kdm },
+		{
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), canonical(cpl_file) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl->id(), canonical(cpl_file) },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, filename_to_id(pkl_file.filename()), canonical(pkl_file) }
+		});
+}
+
+

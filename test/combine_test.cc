@@ -87,7 +87,7 @@ check_no_errors (boost::filesystem::path path)
 {
 	vector<boost::filesystem::path> directories;
 	directories.push_back (path);
-	auto notes = dcp::verify(directories, &stage, &progress, {}, xsd_test);
+	auto notes = dcp::verify(directories, {}, &stage, &progress, {}, xsd_test);
 	vector<dcp::VerificationNote> filtered_notes;
 	std::copy_if (notes.begin(), notes.end(), std::back_inserter(filtered_notes), [](dcp::VerificationNote const& i) {
 		return i.code() != dcp::VerificationNote::Code::INVALID_STANDARD && i.code() != dcp::VerificationNote::Code::INVALID_SUBTITLE_DURATION;
@@ -475,7 +475,7 @@ BOOST_AUTO_TEST_CASE(combine_multi_reel_subtitles)
 
 	check_combined({in}, out);
 
-	auto notes = dcp::verify({out}, &stage, &progress, {}, xsd_test);
+	auto notes = dcp::verify({out}, {}, &stage, &progress, {}, xsd_test);
 	vector<dcp::VerificationNote> filtered_notes;
 	std::copy_if(notes.begin(), notes.end(), std::back_inserter(filtered_notes), [](dcp::VerificationNote const& i) {
 		return i.code() != dcp::VerificationNote::Code::INVALID_STANDARD && i.code() != dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL;

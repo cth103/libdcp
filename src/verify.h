@@ -41,6 +41,7 @@
 #define LIBDCP_VERIFY_H
 
 
+#include "decrypted_kdm.h"
 #include <boost/any.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
@@ -612,6 +613,7 @@ struct VerificationOptions
 
 std::vector<VerificationNote> verify (
 	std::vector<boost::filesystem::path> directories,
+	std::vector<dcp::DecryptedKDM> kdms,
 	boost::function<void (std::string, boost::optional<boost::filesystem::path>)> stage,
 	boost::function<void (float)> progress,
 	VerificationOptions options = {},

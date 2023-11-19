@@ -1807,6 +1807,7 @@ verify_assetmap(
 vector<VerificationNote>
 dcp::verify (
 	vector<boost::filesystem::path> directories,
+	vector<dcp::DecryptedKDM> kdms,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	function<void (float)> progress,
 	VerificationOptions options,
@@ -1852,6 +1853,10 @@ dcp::verify (
 
 		if (dcp->standard() != Standard::SMPTE) {
 			notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_STANDARD});
+		}
+
+		for (auto kdm: kdms) {
+			dcp->add(kdm);
 		}
 
 		for (auto cpl: dcp->cpls()) {
