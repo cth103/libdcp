@@ -306,10 +306,11 @@ SMPTESubtitleAsset::set_key (Key key)
 	   have read that file.
 	*/
 	auto const had_key = static_cast<bool>(_key);
+	auto const had_key_id = static_cast<bool>(_key_id);
 
 	MXF::set_key (key);
 
-	if (!_key_id || !_file || had_key) {
+	if (!had_key_id || !_file || had_key) {
 		/* Either we don't have any data to read, it wasn't
 		   encrypted, or we've already read it, so we don't
 		   need to do anything else.
