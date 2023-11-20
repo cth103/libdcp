@@ -762,3 +762,23 @@ BOOST_AUTO_TEST_CASE(smpte_subtitle_standard_read_correctly)
 	BOOST_CHECK(test_2014.subtitle_standard() == dcp::SubtitleStandard::SMPTE_2014);
 }
 
+
+BOOST_AUTO_TEST_CASE(smpte_subtitle_intrinsic_duration_read_correctly)
+{
+	dcp::SMPTESubtitleAsset ref("test/data/verify_incorrect_closed_caption_ordering3.xml");
+
+	dcp::Key key;
+	ref.set_key(key);
+
+	auto constexpr duration = 480U;
+
+	ref.set_intrinsic_duration(duration);
+
+	auto const path = boost::filesystem::path("build/test/smpte_subtitle_instrinsic_duration_read_correctly.mxf");
+	ref.write(path);
+
+	auto check = dcp::SMPTESubtitleAsset(path);
+	check.set_key(key);
+	BOOST_CHECK_EQUAL(check.intrinsic_duration(), duration);
+}
+

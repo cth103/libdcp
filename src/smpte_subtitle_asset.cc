@@ -337,6 +337,7 @@ SMPTESubtitleAsset::set_key (Key key)
 	auto xml = make_shared<cxml::Document>("SubtitleReel");
 	xml->read_string (xml_string);
 	parse_xml (xml);
+	read_mxf_descriptor(reader);
 	read_mxf_resources (reader, dec);
 }
 
