@@ -58,7 +58,6 @@ public:
 		return _intrinsic_duration;
 	}
 
-
 	Size size () const {
 		return _size;
 	}
