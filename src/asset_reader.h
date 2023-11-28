@@ -94,7 +94,7 @@ private:
 	friend class SoundAsset;
 	friend class StereoJ2KPictureAsset;
 
-	explicit AssetReader (Asset const * asset, boost::optional<Key> key, Standard standard)
+	AssetReader(Asset const * asset, boost::optional<Key> key, Standard standard)
 		: _crypto_context (new DecryptionContext(key, standard))
 	{
 		Kumu::FileReaderFactory factory;
