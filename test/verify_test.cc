@@ -3645,15 +3645,37 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
-	check_verify_result(
-		{ path },
-		{},
-		{
-			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE).set_frame(0).set_component(0).set_size(1321721),
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(path / "video.mxf") },
-			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC },
-			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC },
-		});
+	vector<dcp::VerificationNote> expected;
+
+	expected.push_back(
+		{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(path / "video.mxf") }
+	);
+
+	int component_sizes[] = {
+		1321721,
+		1294364,
+		1289952,
+	};
+
+	for (auto frame = 0; frame < 24; frame++) {
+		for (auto component = 0; component < 3; component++) {
+			expected.push_back(
+				dcp::VerificationNote(
+					dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE
+					).set_frame(frame).set_component(component).set_size(component_sizes[component])
+				);
+		}
+	}
+
+	expected.push_back(
+		{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC }
+	);
+
+	expected.push_back(
+		{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC }
+	);
+
+	check_verify_result({ path }, {}, expected);
 }
 
 

@@ -2124,7 +2124,16 @@ dcp::note_to_string (VerificationNote note)
 bool
 dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 {
-	return a.type() == b.type() && a.code() == b.code() && a.note() == b.note() && a.file() == b.file() && a.line() == b.line();
+	return a.type() == b.type() &&
+		a.code() == b.code() &&
+		a.note() == b.note() &&
+		a.file() == b.file() &&
+		a.line() == b.line() &&
+		a.frame() == b.frame() &&
+		a.component() == b.component() &&
+		a.size() == b.size() &&
+		a.id() == b.id() &&
+		a.other_id() == b.other_id();
 }
 
 
@@ -2147,7 +2156,27 @@ dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		return a.file().get_value_or("") < b.file().get_value_or("");
 	}
 
-	return a.line().get_value_or(0) < b.line().get_value_or(0);
+	if (a.line() != b.line()) {
+		return a.line().get_value_or(0) < b.line().get_value_or(0);
+	}
+
+	if (a.frame() != b.frame()) {
+		return a.frame().get_value_or(0) < b.frame().get_value_or(0);
+	}
+
+	if (a.component() != b.component()) {
+		return a.component().get_value_or(0) < b.component().get_value_or(0);
+	}
+
+	if (a.size() != b.size()) {
+		return a.size().get_value_or(0) < b.size().get_value_or(0);
+	}
+
+	if (a.id() != b.id()) {
+		return a.id().get_value_or("") < b.id().get_value_or("");
+	}
+
+	return a.other_id().get_value_or("") < b.other_id().get_value_or("");
 }
 
 
