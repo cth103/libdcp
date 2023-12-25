@@ -62,11 +62,11 @@ static void
 help (string n)
 {
 	cerr << "Syntax: " << n << " [OPTION] <DCP>\n"
-	     << "  -V, --version                               	show libdcp version\n"
-	     << "  -h, --help                                  	show this help\n"
-	     << "  --ignore-missing-assets                     	don't give errors about missing assets\n"
-	     << "  --ignore-bv21-smpte                         	don't give the SMPTE Bv2.1 error about a DCP not being SMPTE\n"
-	     << "  --no-asset-hash-check                       	don't check asset hashes\n"
+	     << "  -V, --version                                show libdcp version\n"
+	     << "  -h, --help                                   show this help\n"
+	     << "  --ignore-missing-assets                      don't give errors about missing assets\n"
+	     << "  --ignore-bv21-smpte                          don't give the SMPTE Bv2.1 error about a DCP not being SMPTE\n"
+	     << "  --no-asset-hash-check                        don't check asset hashes\n"
 	     << "  --asset-hash-check-maximum-size <size-in-MB> only check hashes for assets smaller than this size (in MB)\n"
 	     << "  -q, --quiet                                  don't report progress\n";
 }
