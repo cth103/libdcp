@@ -635,14 +635,24 @@ BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_size_in_bytes)
 	prepare_directory (dir);
 	auto cpl = dcp_from_frame (oversized_frame, dir);
 
-	check_verify_result (
-		{ dir },
-		{},
-		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte") },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf") },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
-		});
+	vector<dcp::VerificationNote> expected;
+	for (auto i = 0; i < 24; ++i) {
+		expected.push_back(
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte")
+				).set_frame(i).set_frame_rate(24)
+			);
+	}
+
+	expected.push_back(
+		{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf") }
+	);
+
+	expected.push_back(
+		{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
+	);
+
+	check_verify_result({ dir }, {}, expected);
 }
 
 
@@ -664,14 +674,25 @@ BOOST_AUTO_TEST_CASE (verify_nearly_invalid_picture_frame_size_in_bytes)
 	prepare_directory (dir);
 	auto cpl = dcp_from_frame (oversized_frame, dir);
 
-	check_verify_result (
-		{ dir },
-		{},
-		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte") },
-			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf") },
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
-		});
+	vector<dcp::VerificationNote> expected;
+
+	for (auto i = 0; i < 24; ++i) {
+		expected.push_back(
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte")
+				).set_frame(i).set_frame_rate(24)
+			);
+	}
+
+	expected.push_back(
+		{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf") }
+	);
+
+	expected.push_back(
+		{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
+	);
+
+	check_verify_result ({ dir }, {}, expected);
 }
 
 
@@ -3097,7 +3118,7 @@ BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_2k)
 	dcp::MonoPictureAsset picture (find_file(private_test / "data" / "JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV", "j2c.mxf"));
 	auto reader = picture.start_read ();
 	auto frame = reader->get_frame (0);
-	verify_j2k(frame, 0, 24, notes);
+	verify_j2k(frame, 0, 0, 24, notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), 0U);
 }
 
@@ -3108,7 +3129,7 @@ BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_4k)
 	dcp::MonoPictureAsset picture (find_file(private_test / "data" / "sul", "TLR"));
 	auto reader = picture.start_read ();
 	auto frame = reader->get_frame (0);
-	verify_j2k(frame, 0, 24, notes);
+	verify_j2k(frame, 0, 0, 24, notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), 0U);
 }
 
@@ -3123,7 +3144,7 @@ BOOST_AUTO_TEST_CASE (verify_jpeg2000_codestream_libdcp)
 	dcp::MonoPictureAsset picture (find_file(dir, "video"));
 	auto reader = picture.start_read ();
 	auto frame = reader->get_frame (0);
-	verify_j2k(frame, 0, 24, notes);
+	verify_j2k(frame, 0, 0, 24, notes);
 	BOOST_REQUIRE_EQUAL (notes.size(), 0U);
 }
 

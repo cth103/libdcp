@@ -438,7 +438,7 @@ verify_language_tag (string tag, vector<VerificationNote>& notes)
 
 
 static void
-verify_picture_asset (shared_ptr<const ReelFileAsset> reel_file_asset, boost::filesystem::path file, vector<VerificationNote>& notes, function<void (float)> progress)
+verify_picture_asset(shared_ptr<const ReelFileAsset> reel_file_asset, boost::filesystem::path file, int64_t start_frame, vector<VerificationNote>& notes, function<void (float)> progress)
 {
 	int biggest_frame = 0;
 	auto asset = dynamic_pointer_cast<PictureAsset>(reel_file_asset->asset_ref().asset());
@@ -459,7 +459,7 @@ verify_picture_asset (shared_ptr<const ReelFileAsset> reel_file_asset, boost::fi
 			biggest_frame = max(biggest_frame, frame->size());
 			if (!mono_asset->encrypted() || mono_asset->key()) {
 				vector<VerificationNote> j2k_notes;
-				verify_j2k(frame, i, mono_asset->frame_rate().numerator, j2k_notes);
+				verify_j2k(frame, start_frame, i, mono_asset->frame_rate().numerator, j2k_notes);
 				check_and_add (j2k_notes);
 			}
 			progress (float(i) / duration);
@@ -471,8 +471,8 @@ verify_picture_asset (shared_ptr<const ReelFileAsset> reel_file_asset, boost::fi
 			biggest_frame = max(biggest_frame, max(frame->left()->size(), frame->right()->size()));
 			if (!stereo_asset->encrypted() || stereo_asset->key()) {
 				vector<VerificationNote> j2k_notes;
-				verify_j2k(frame->left(), i, stereo_asset->frame_rate().numerator, j2k_notes);
-				verify_j2k(frame->right(), i, stereo_asset->frame_rate().numerator, j2k_notes);
+				verify_j2k(frame->left(), start_frame, i, stereo_asset->frame_rate().numerator, j2k_notes);
+				verify_j2k(frame->right(), start_frame, i, stereo_asset->frame_rate().numerator, j2k_notes);
 				check_and_add (j2k_notes);
 			}
 			progress (float(i) / duration);
@@ -498,6 +498,7 @@ static void
 verify_main_picture_asset (
 	shared_ptr<const DCP> dcp,
 	shared_ptr<const ReelPictureAsset> reel_asset,
+	int64_t start_frame,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	function<void (float)> progress,
 	VerificationOptions options,
@@ -527,7 +528,7 @@ verify_main_picture_asset (
 	}
 
 	stage ("Checking picture frame sizes", asset->file());
-	verify_picture_asset (reel_asset, file, notes, progress);
+	verify_picture_asset(reel_asset, file, start_frame, notes, progress);
 
 	/* Only flat/scope allowed by Bv2.1 */
 	if (
@@ -1384,6 +1385,7 @@ verify_reel(
 	shared_ptr<const DCP> dcp,
 	shared_ptr<const CPL> cpl,
 	shared_ptr<const Reel> reel,
+	int64_t start_frame,
 	optional<dcp::Size> main_picture_active_area,
 	function<void (string, optional<boost::filesystem::path>)> stage,
 	boost::filesystem::path xsd_dtd_directory,
@@ -1442,7 +1444,7 @@ verify_reel(
 		}
 		/* Check asset */
 		if (reel->main_picture()->asset_ref().resolved()) {
-			verify_main_picture_asset(dcp, reel->main_picture(), stage, progress, options, notes);
+			verify_main_picture_asset(dcp, reel->main_picture(), start_frame, stage, progress, options, notes);
 			auto const asset_size = reel->main_picture()->asset()->size();
 			if (main_picture_active_area) {
 				if (main_picture_active_area->width > asset_size.width) {
@@ -1630,12 +1632,14 @@ verify_cpl(
 			});
 	}
 
+	int64_t frame = 0;
 	for (auto reel: cpl->reels()) {
 		stage("Checking reel", optional<boost::filesystem::path>());
 		verify_reel(
 			dcp,
 			cpl,
 			reel,
+			frame,
 			main_picture_active_area,
 			stage,
 			xsd_dtd_directory,
@@ -1649,6 +1653,7 @@ verify_cpl(
 			&fewest_closed_captions,
 			&markers_seen
 			);
+		frame += reel->duration();
 	}
 
 	verify_text_details(dcp->standard().get_value_or(dcp::Standard::SMPTE), cpl->reels(), notes);
@@ -2034,7 +2039,12 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::PARTIALLY_ENCRYPTED:
 		return "Some assets are encrypted but some are not.";
 	case VerificationNote::Code::INVALID_JPEG2000_CODESTREAM:
-		return String::compose("The JPEG2000 codestream for at least one frame is invalid (%1).", note.note().get());
+		return String::compose(
+			"Frame %1 (timecode %2) has an invalid JPEG2000 codestream (%2).",
+			note.frame().get(),
+			dcp::Time(note.frame().get(), note.frame_rate().get(), note.frame_rate().get()).as_string(dcp::Standard::SMPTE),
+			note.note().get()
+			);
 	case VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K:
 		return String::compose("The JPEG2000 codestream uses %1 guard bits in a 2K image instead of 1.", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_4K:
@@ -2133,7 +2143,8 @@ dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		a.component() == b.component() &&
 		a.size() == b.size() &&
 		a.id() == b.id() &&
-		a.other_id() == b.other_id();
+		a.other_id() == b.other_id() &&
+		a.frame_rate() == b.frame_rate();
 }
 
 

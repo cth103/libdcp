@@ -331,6 +331,7 @@ public:
 		/** Some, but not all content, is encrypted */
 		PARTIALLY_ENCRYPTED,
 		/** General error during JPEG2000 codestream verification
+		 *  frame contains the frame index (counted from 0)
 		 *  note contains details
 		 */
 		INVALID_JPEG2000_CODESTREAM,
@@ -524,6 +525,7 @@ private:
 		SIZE,
 		ID,
 		OTHER_ID,
+		FRAME_RATE
 	};
 
 	template <class T>
@@ -592,6 +594,15 @@ public:
 
 	boost::optional<std::string> other_id() const {
 		return data<std::string>(Data::OTHER_ID);
+	}
+
+	VerificationNote& set_frame_rate(int frame_rate) {
+		_data[Data::FRAME_RATE] = frame_rate;
+		return *this;
+	}
+
+	boost::optional<int> frame_rate() const {
+		return data<int>(Data::FRAME_RATE);
 	}
 
 private:

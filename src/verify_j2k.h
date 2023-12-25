@@ -51,11 +51,12 @@ namespace dcp {
 class Data;
 
 
-/** @param frame_index Video frame index, so that notes can say which frame contains the problem.
+/** @param start_index Frame index within the DCP where this frame's reel starts.
+ *  @param frame_index Video frame index within the reel, so that notes can say which frame contains the problem.
  *  @param frame_rate Video frame rate (in frames per second) to calculate how big the tile parts
  *  can be.
  */
-void verify_j2k(std::shared_ptr<const Data> data, int frame_index, int frame_rate, std::vector<VerificationNote>& notes);
+void verify_j2k(std::shared_ptr<const Data> data, int start_index, int frame_index, int frame_rate, std::vector<VerificationNote>& notes);
 
 
 }

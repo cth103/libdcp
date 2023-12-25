@@ -65,7 +65,7 @@ public:
 
 
 void
-dcp::verify_j2k(shared_ptr<const Data> j2k, int frame_index, int frame_rate, vector<VerificationNote>& notes)
+dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, int frame_rate, vector<VerificationNote>& notes)
 {
 	/* See ITU-T T800 (visible on https://github.com/Ymagis/ClairMeta/issues/130) */
 	unsigned int const max_tile_part_size = std::floor(200e6 / (8 * frame_rate));
@@ -357,7 +357,10 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int frame_index, int frame_rate, vec
 	}
 	catch (InvalidCodestream const& e)
 	{
-		notes.push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string(e.what()) });
+		VerificationNote note({VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string(e.what())});
+		note.set_frame(start_index + frame_index);
+		note.set_frame_rate(frame_rate);
+		notes.push_back(note);
 	}
 }
 
