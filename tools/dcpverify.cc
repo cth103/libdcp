@@ -109,7 +109,7 @@ main (int argc, char* argv[])
 			cout << "dcpverify version " << dcp::version << "\n";
 			exit (EXIT_SUCCESS);
 		case 'h':
-			help (argv[0]);
+			help(boost::filesystem::path(argv[0]).filename().string());
 			exit (EXIT_SUCCESS);
 		case 'A':
 			ignore_missing_assets = true;
