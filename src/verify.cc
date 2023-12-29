@@ -1265,7 +1265,7 @@ verify_text_details(dcp::Standard standard, vector<shared_ptr<Reel>> reels, vect
 		return;
 	}
 
-	if (reels[0]->main_subtitle()) {
+	if (reels[0]->main_subtitle() && reels[0]->main_subtitle()->asset_ref().resolved()) {
 		verify_text_details(standard, reels, reels[0]->main_subtitle()->edit_rate().numerator, notes,
 			[](shared_ptr<Reel> reel) {
 				return static_cast<bool>(reel->main_subtitle());
@@ -1713,7 +1713,7 @@ verify_cpl(
 
 		LinesCharactersResult result;
 		for (auto reel: cpl->reels()) {
-			if (reel->main_subtitle() && reel->main_subtitle()->asset()) {
+			if (reel->main_subtitle() && reel->main_subtitle()->asset_ref().resolved()) {
 				verify_text_lines_and_characters(reel->main_subtitle()->asset(), 52, 79, &result);
 			}
 		}
