@@ -644,9 +644,13 @@ BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_size_in_bytes)
 			);
 	}
 
-	expected.push_back(
-		{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf") }
-	);
+	for (auto i = 0; i < 24; ++i) {
+		expected.push_back(
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf")
+				).set_frame(i).set_frame_rate(24)
+			);
+	}
 
 	expected.push_back(
 		{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -684,9 +688,13 @@ BOOST_AUTO_TEST_CASE (verify_nearly_invalid_picture_frame_size_in_bytes)
 			);
 	}
 
-	expected.push_back(
-		{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf") }
-	);
+	for (auto i = 0; i < 24; ++i) {
+		expected.push_back(
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf")
+				).set_frame(i).set_frame_rate(24)
+		);
+	}
 
 	expected.push_back(
 		{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get() }
@@ -3668,9 +3676,13 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 
 	vector<dcp::VerificationNote> expected;
 
-	expected.push_back(
-		{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(path / "video.mxf") }
-	);
+	for (auto frame = 0; frame < 24; frame++) {
+		expected.push_back(
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(path / "video.mxf")
+			).set_frame(frame).set_frame_rate(24)
+		);
+	}
 
 	int component_sizes[] = {
 		1321721,

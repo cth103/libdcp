@@ -440,7 +440,6 @@ verify_language_tag (string tag, vector<VerificationNote>& notes)
 static void
 verify_picture_asset(shared_ptr<const ReelFileAsset> reel_file_asset, boost::filesystem::path file, int64_t start_frame, vector<VerificationNote>& notes, function<void (float)> progress)
 {
-	int biggest_frame = 0;
 	auto asset = dynamic_pointer_cast<PictureAsset>(reel_file_asset->asset_ref().asset());
 	auto const duration = asset->intrinsic_duration ();
 
@@ -452,11 +451,30 @@ verify_picture_asset(shared_ptr<const ReelFileAsset> reel_file_asset, boost::fil
 		}
 	};
 
+	int const max_frame =   rint(250 * 1000000 / (8 * asset->edit_rate().as_float()));
+	int const risky_frame = rint(230 * 1000000 / (8 * asset->edit_rate().as_float()));
+
+	auto check_frame_size = [max_frame, risky_frame, file, start_frame](int index, int size, int frame_rate, vector<VerificationNote>& notes) {
+		if (size > max_frame) {
+			notes.push_back(
+				VerificationNote(
+					VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
+					).set_frame(start_frame + index).set_frame_rate(frame_rate)
+			);
+		} else if (size > risky_frame) {
+			notes.push_back(
+				VerificationNote(
+					VerificationNote::Type::WARNING, VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
+					).set_frame(start_frame + index).set_frame_rate(frame_rate)
+			);
+		}
+	};
+
 	if (auto mono_asset = dynamic_pointer_cast<MonoPictureAsset>(reel_file_asset->asset_ref().asset())) {
 		auto reader = mono_asset->start_read ();
 		for (int64_t i = 0; i < duration; ++i) {
 			auto frame = reader->get_frame (i);
-			biggest_frame = max(biggest_frame, frame->size());
+			check_frame_size(i, frame->size(), mono_asset->frame_rate().numerator, notes);
 			if (!mono_asset->encrypted() || mono_asset->key()) {
 				vector<VerificationNote> j2k_notes;
 				verify_j2k(frame, start_frame, i, mono_asset->frame_rate().numerator, j2k_notes);
@@ -468,7 +486,8 @@ verify_picture_asset(shared_ptr<const ReelFileAsset> reel_file_asset, boost::fil
 		auto reader = stereo_asset->start_read ();
 		for (int64_t i = 0; i < duration; ++i) {
 			auto frame = reader->get_frame (i);
-			biggest_frame = max(biggest_frame, max(frame->left()->size(), frame->right()->size()));
+			check_frame_size(i, frame->left()->size(), stereo_asset->frame_rate().numerator, notes);
+			check_frame_size(i, frame->right()->size(), stereo_asset->frame_rate().numerator, notes);
 			if (!stereo_asset->encrypted() || stereo_asset->key()) {
 				vector<VerificationNote> j2k_notes;
 				verify_j2k(frame->left(), start_frame, i, stereo_asset->frame_rate().numerator, j2k_notes);
@@ -478,18 +497,6 @@ verify_picture_asset(shared_ptr<const ReelFileAsset> reel_file_asset, boost::fil
 			progress (float(i) / duration);
 		}
 
-	}
-
-	static const int max_frame =   rint(250 * 1000000 / (8 * asset->edit_rate().as_float()));
-	static const int risky_frame = rint(230 * 1000000 / (8 * asset->edit_rate().as_float()));
-	if (biggest_frame > max_frame) {
-		notes.push_back ({
-			VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
-		});
-	} else if (biggest_frame > risky_frame) {
-		notes.push_back ({
-			VerificationNote::Type::WARNING, VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
-		});
 	}
 }
 
@@ -1937,9 +1944,19 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::INVALID_DURATION:
 		return String::compose("The duration of the asset %1 is less than 1 second.", note.note().get());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
-		return String::compose("The instantaneous bit rate of the picture asset %1 is larger than the limit of 250Mbit/s in at least one place.", note.file()->filename());
+		return String::compose(
+			"Frame %1 (timecode %2) in asset %3 has an instantaneous bit rate that is larger than the limit of 250Mbit/s.",
+			note.frame().get(),
+			dcp::Time(note.frame().get(), note.frame_rate().get(), note.frame_rate().get()).as_string(dcp::Standard::SMPTE),
+			note.file()->filename()
+			);
 	case VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
-		return String::compose("The instantaneous bit rate of the picture asset %1 is close to the limit of 250Mbit/s in at least one place.", note.file()->filename());
+		return String::compose(
+			"Frame %1 (timecode %2) in asset %3 has an instantaneous bit rate that is close to the limit of 250Mbit/s.",
+			note.frame().get(),
+			dcp::Time(note.frame().get(), note.frame_rate().get(), note.frame_rate().get()).as_string(dcp::Standard::SMPTE),
+			note.file()->filename()
+			);
 	case VerificationNote::Code::EXTERNAL_ASSET:
 		return String::compose("The asset %1 that this DCP refers to is not included in the DCP.  It may be a VF.", note.note().get());
 	case VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD:
@@ -2187,7 +2204,11 @@ dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		return a.id().get_value_or("") < b.id().get_value_or("");
 	}
 
-	return a.other_id().get_value_or("") < b.other_id().get_value_or("");
+	if (a.other_id() != b.other_id()) {
+		return a.other_id().get_value_or("") < b.other_id().get_value_or("");
+	}
+
+	return a.frame_rate().get_value_or(0) != b.frame_rate().get_value_or(0);
 }
 
 
