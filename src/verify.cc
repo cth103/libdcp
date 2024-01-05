@@ -2057,7 +2057,7 @@ dcp::note_to_string (VerificationNote note)
 		return "Some assets are encrypted but some are not.";
 	case VerificationNote::Code::INVALID_JPEG2000_CODESTREAM:
 		return String::compose(
-			"Frame %1 (timecode %2) has an invalid JPEG2000 codestream (%2).",
+			"Frame %1 (timecode %2) has an invalid JPEG2000 codestream (%3).",
 			note.frame().get(),
 			dcp::Time(note.frame().get(), note.frame_rate().get(), note.frame_rate().get()).as_string(dcp::Standard::SMPTE),
 			note.note().get()
