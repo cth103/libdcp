@@ -1934,7 +1934,7 @@ dcp::verify (
 
 
 string
-dcp::note_to_string(VerificationNote note, function<string (string)> process_filename)
+dcp::note_to_string(VerificationNote note, function<string (string)> process_string, function<string (string)> process_filename)
 {
 	/** These strings should say what is wrong, incorporating any extra details (ID, filenames etc.).
    	 *
@@ -1951,256 +1951,258 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_fil
 		return process_filename(note.file()->filename().string());
 	};
 
+#define compose(format, ...) String::compose(process_string(format), __VA_ARGS__)
+
 	switch (note.code()) {
 	case VerificationNote::Code::FAILED_READ:
-		return *note.note();
+		return process_string(*note.note());
 	case VerificationNote::Code::MATCHING_CPL_HASHES:
-		return "The hash of the CPL in the PKL matches the CPL file.";
+		return process_string("The hash of the CPL in the PKL matches the CPL file.");
 	case VerificationNote::Code::MISMATCHED_CPL_HASHES:
-		return String::compose("The hash (%1) of the CPL (%2) in the PKL does not agree with the CPL file (%3).", note.reference_hash().get(), note.cpl_id().get(), note.calculated_hash().get());
+		return compose("The hash (%1) of the CPL (%2) in the PKL does not agree with the CPL file (%3).", note.reference_hash().get(), note.cpl_id().get(), note.calculated_hash().get());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE:
-		return String::compose("The picture in a reel has an invalid frame rate %1.", note.note().get());
+		return compose("The picture in a reel has an invalid frame rate %1.", note.note().get());
 	case VerificationNote::Code::INCORRECT_PICTURE_HASH:
-		return String::compose("The hash (%1) of the picture asset %2 does not agree with the PKL file (%3).", note.calculated_hash().get(), filename(), note.reference_hash().get());
+		return compose("The hash (%1) of the picture asset %2 does not agree with the PKL file (%3).", note.calculated_hash().get(), filename(), note.reference_hash().get());
 	case VerificationNote::Code::CORRECT_PICTURE_HASH:
-		return String::compose("The picture asset %1 has the expected hashes in the CPL and PKL.", filename());
+		return compose("The picture asset %1 has the expected hashes in the CPL and PKL.", filename());
 	case VerificationNote::Code::MISMATCHED_PICTURE_HASHES:
-		return String::compose("The PKL and CPL hashes differ for the picture asset %1.", filename());
+		return compose("The PKL and CPL hashes differ for the picture asset %1.", filename());
 	case VerificationNote::Code::INCORRECT_SOUND_HASH:
-		return String::compose("The hash (%1) of the sound asset %2 does not agree with the PKL file (%3).", note.calculated_hash().get(), filename(), note.reference_hash().get());
+		return compose("The hash (%1) of the sound asset %2 does not agree with the PKL file (%3).", note.calculated_hash().get(), filename(), note.reference_hash().get());
 	case VerificationNote::Code::MISMATCHED_SOUND_HASHES:
-		return String::compose("The PKL and CPL hashes differ for the sound asset %1.", filename());
+		return compose("The PKL and CPL hashes differ for the sound asset %1.", filename());
 	case VerificationNote::Code::EMPTY_ASSET_PATH:
-		return "The asset map contains an empty asset path.";
+		return process_string("The asset map contains an empty asset path.");
 	case VerificationNote::Code::MISSING_ASSET:
-		return String::compose("The file %1 for an asset in the asset map cannot be found.", filename());
+		return compose("The file %1 for an asset in the asset map cannot be found.", filename());
 	case VerificationNote::Code::MISMATCHED_STANDARD:
-		return "The DCP contains both SMPTE and Interop parts.";
+		return process_string("The DCP contains both SMPTE and Interop parts.");
 	case VerificationNote::Code::INVALID_XML:
-		return String::compose("An XML file is badly formed: %1 (%2:%3)", note.note().get(), filename(), note.line().get());
+		return compose("An XML file is badly formed: %1 (%2:%3)", note.note().get(), filename(), note.line().get());
 	case VerificationNote::Code::MISSING_ASSETMAP:
-		return "No valid ASSETMAP or ASSETMAP.xml was found.";
+		return process_string("No valid ASSETMAP or ASSETMAP.xml was found.");
 	case VerificationNote::Code::INVALID_INTRINSIC_DURATION:
-		return String::compose("The intrinsic duration of the asset %1 is less than 1 second.", note.note().get());
+		return compose("The intrinsic duration of the asset %1 is less than 1 second.", note.note().get());
 	case VerificationNote::Code::INVALID_DURATION:
-		return String::compose("The duration of the asset %1 is less than 1 second.", note.note().get());
+		return compose("The duration of the asset %1 is less than 1 second.", note.note().get());
 	case VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES:
-		return String::compose("Each frame of the picture asset %1 has a bit rate safely under the limit of 250Mbit/s.", filename());
+		return compose("Each frame of the picture asset %1 has a bit rate safely under the limit of 250Mbit/s.", filename());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
-		return String::compose(
+		return compose(
 			"Frame %1 (timecode %2) in asset %3 has an instantaneous bit rate that is larger than the limit of 250Mbit/s.",
 			note.frame().get(),
 			dcp::Time(note.frame().get(), note.frame_rate().get(), note.frame_rate().get()).as_string(dcp::Standard::SMPTE),
 			filename()
 			);
 	case VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
-		return String::compose(
+		return compose(
 			"Frame %1 (timecode %2) in asset %3 has an instantaneous bit rate that is close to the limit of 250Mbit/s.",
 			note.frame().get(),
 			dcp::Time(note.frame().get(), note.frame_rate().get(), note.frame_rate().get()).as_string(dcp::Standard::SMPTE),
 			filename()
 			);
 	case VerificationNote::Code::EXTERNAL_ASSET:
-		return String::compose("The asset %1 that this DCP refers to is not included in the DCP.  It may be a VF.", note.note().get());
+		return compose("The asset %1 that this DCP refers to is not included in the DCP.  It may be a VF.", note.note().get());
 	case VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD:
-		return String::compose("The asset %1 is 3D but its MXF is marked as 2D.", filename());
+		return compose("The asset %1 is 3D but its MXF is marked as 2D.", filename());
 	case VerificationNote::Code::INVALID_STANDARD:
 		return "This DCP does not use the SMPTE standard.";
 	case VerificationNote::Code::INVALID_LANGUAGE:
-		return String::compose("The DCP specifies a language '%1' which does not conform to the RFC 5646 standard.", note.note().get());
+		return compose("The DCP specifies a language '%1' which does not conform to the RFC 5646 standard.", note.note().get());
 	case VerificationNote::Code::VALID_RELEASE_TERRITORY:
-		return String::compose("Valid release territory %1.", note.note().get());
+		return compose("Valid release territory %1.", note.note().get());
 	case VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS:
-		return String::compose("The size %1 of picture asset %2 is not allowed.", note.note().get(), filename());
+		return compose("The size %1 of picture asset %2 is not allowed.", note.note().get(), filename());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_2K:
-		return String::compose("The frame rate %1 of picture asset %2 is not allowed for 2K DCPs.", note.note().get(), filename());
+		return compose("The frame rate %1 of picture asset %2 is not allowed for 2K DCPs.", note.note().get(), filename());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_4K:
-		return String::compose("The frame rate %1 of picture asset %2 is not allowed for 4K DCPs.", note.note().get(), filename());
+		return compose("The frame rate %1 of picture asset %2 is not allowed for 4K DCPs.", note.note().get(), filename());
 	case VerificationNote::Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D:
-		return "3D 4K DCPs are not allowed.";
+		return process_string("3D 4K DCPs are not allowed.");
 	case VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES:
-		return String::compose("The size %1 of the closed caption asset %2 is larger than the 256KB maximum.", note.note().get(), filename());
+		return compose("The size %1 of the closed caption asset %2 is larger than the 256KB maximum.", note.note().get(), filename());
 	case VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES:
-		return String::compose("The size %1 of the timed text asset %2 is larger than the 115MB maximum.", note.note().get(), filename());
+		return compose("The size %1 of the timed text asset %2 is larger than the 115MB maximum.", note.note().get(), filename());
 	case VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES:
-		return String::compose("The size %1 of the fonts in timed text asset %2 is larger than the 10MB maximum.", note.note().get(), filename());
+		return compose("The size %1 of the fonts in timed text asset %2 is larger than the 10MB maximum.", note.note().get(), filename());
 	case VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE:
-		return String::compose("The XML for the SMPTE subtitle asset %1 has no <Language> tag.", filename());
+		return compose("The XML for the SMPTE subtitle asset %1 has no <Language> tag.", filename());
 	case VerificationNote::Code::MISMATCHED_SUBTITLE_LANGUAGES:
-		return "Some subtitle assets have different <Language> tags than others";
+		return process_string("Some subtitle assets have different <Language> tags than others");
 	case VerificationNote::Code::MISSING_SUBTITLE_START_TIME:
-		return String::compose("The XML for the SMPTE subtitle asset %1 has no <StartTime> tag.", filename());
+		return compose("The XML for the SMPTE subtitle asset %1 has no <StartTime> tag.", filename());
 	case VerificationNote::Code::INVALID_SUBTITLE_START_TIME:
-		return String::compose("The XML for a SMPTE subtitle asset %1 has a non-zero <StartTime> tag.", filename());
+		return compose("The XML for a SMPTE subtitle asset %1 has a non-zero <StartTime> tag.", filename());
 	case VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME:
-		return "The first subtitle or closed caption is less than 4 seconds from the start of the DCP.";
+		return process_string("The first subtitle or closed caption is less than 4 seconds from the start of the DCP.");
 	case VerificationNote::Code::INVALID_SUBTITLE_DURATION:
-		return "At least one subtitle lasts less than 15 frames.";
+		return process_string("At least one subtitle lasts less than 15 frames.");
 	case VerificationNote::Code::INVALID_SUBTITLE_SPACING:
-		return "At least one pair of subtitles is separated by less than 2 frames.";
+		return process_string("At least one pair of subtitles is separated by less than 2 frames.");
 	case VerificationNote::Code::SUBTITLE_OVERLAPS_REEL_BOUNDARY:
-		return "At least one subtitle extends outside of its reel.";
+		return process_string("At least one subtitle extends outside of its reel.");
 	case VerificationNote::Code::INVALID_SUBTITLE_LINE_COUNT:
-		return "There are more than 3 subtitle lines in at least one place in the DCP.";
+		return process_string("There are more than 3 subtitle lines in at least one place in the DCP.");
 	case VerificationNote::Code::NEARLY_INVALID_SUBTITLE_LINE_LENGTH:
-		return "There are more than 52 characters in at least one subtitle line.";
+		return process_string("There are more than 52 characters in at least one subtitle line.");
 	case VerificationNote::Code::INVALID_SUBTITLE_LINE_LENGTH:
-		return "There are more than 79 characters in at least one subtitle line.";
+		return process_string("There are more than 79 characters in at least one subtitle line.");
 	case VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_COUNT:
-		return "There are more than 3 closed caption lines in at least one place.";
+		return process_string("There are more than 3 closed caption lines in at least one place.");
 	case VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH:
-		return "There are more than 32 characters in at least one closed caption line.";
+		return process_string("There are more than 32 characters in at least one closed caption line.");
 	case VerificationNote::Code::INVALID_SOUND_FRAME_RATE:
-		return String::compose("The sound asset %1 has a sampling rate of %2", filename(), note.note().get());
+		return compose("The sound asset %1 has a sampling rate of %2", filename(), note.note().get());
 	case VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT:
-		return String::compose("The CPL %1 has no <AnnotationText> tag.", note.cpl_id().get());
+		return compose("The CPL %1 has no <AnnotationText> tag.", note.cpl_id().get());
 	case VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT:
-		return String::compose("The CPL %1 has an <AnnotationText> which differs from its <ContentTitleText>.", note.cpl_id().get());
+		return compose("The CPL %1 has an <AnnotationText> which differs from its <ContentTitleText>.", note.cpl_id().get());
 	case VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT:
-		return String::compose("Valid CPL annotation text %1", note.note().get());
+		return compose("Valid CPL annotation text %1", note.note().get());
 	case VerificationNote::Code::MISMATCHED_ASSET_DURATION:
-		return "All assets in a reel do not have the same duration.";
+		return process_string("All assets in a reel do not have the same duration.");
 	case VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS:
-		return "At least one reel contains a subtitle asset, but some reel(s) do not.";
+		return process_string("At least one reel contains a subtitle asset, but some reel(s) do not.");
 	case VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS:
-		return "At least one reel has closed captions, but reels have different numbers of closed caption assets.";
+		return process_string("At least one reel has closed captions, but reels have different numbers of closed caption assets.");
 	case VerificationNote::Code::MISSING_SUBTITLE_ENTRY_POINT:
-		return String::compose("The subtitle asset %1 has no <EntryPoint> tag.", note.note().get());
+		return compose("The subtitle asset %1 has no <EntryPoint> tag.", note.note().get());
 	case VerificationNote::Code::INCORRECT_SUBTITLE_ENTRY_POINT:
-		return String::compose("The subtitle asset %1 has an <EntryPoint> other than 0.", note.note().get());
+		return compose("The subtitle asset %1 has an <EntryPoint> other than 0.", note.note().get());
 	case VerificationNote::Code::MISSING_CLOSED_CAPTION_ENTRY_POINT:
-		return String::compose("The closed caption asset %1 has no <EntryPoint> tag.", note.note().get());
+		return compose("The closed caption asset %1 has no <EntryPoint> tag.", note.note().get());
 	case VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT:
-		return String::compose("The closed caption asset %1 has an <EntryPoint> other than 0.", note.note().get());
+		return compose("The closed caption asset %1 has an <EntryPoint> other than 0.", note.note().get());
 	case VerificationNote::Code::MISSING_HASH:
-		return String::compose("The asset %1 has no <Hash> tag in the CPL.", note.note().get());
+		return compose("The asset %1 has no <Hash> tag in the CPL.", note.note().get());
 	case VerificationNote::Code::MISSING_FFEC_IN_FEATURE:
-		return "The DCP is marked as a Feature but there is no FFEC (first frame of end credits) marker.";
+		return process_string("The DCP is marked as a Feature but there is no FFEC (first frame of end credits) marker.");
 	case VerificationNote::Code::MISSING_FFMC_IN_FEATURE:
-		return "The DCP is marked as a Feature but there is no FFMC (first frame of moving credits) marker.";
+		return process_string("The DCP is marked as a Feature but there is no FFMC (first frame of moving credits) marker.");
 	case VerificationNote::Code::MISSING_FFOC:
-		return "There should be a FFOC (first frame of content) marker.";
+		return process_string("There should be a FFOC (first frame of content) marker.");
 	case VerificationNote::Code::MISSING_LFOC:
-		return "There should be a LFOC (last frame of content) marker.";
+		return process_string("There should be a LFOC (last frame of content) marker.");
 	case VerificationNote::Code::INCORRECT_FFOC:
-		return String::compose("The FFOC marker is %1 instead of 1", note.note().get());
+		return compose("The FFOC marker is %1 instead of 1", note.note().get());
 	case VerificationNote::Code::INCORRECT_LFOC:
-		return String::compose("The LFOC marker is %1 instead of 1 less than the duration of the last reel.", note.note().get());
+		return compose("The LFOC marker is %1 instead of 1 less than the duration of the last reel.", note.note().get());
 	case VerificationNote::Code::MISSING_CPL_METADATA:
-		return String::compose("The CPL %1 has no <CompositionMetadataAsset> tag.", note.cpl_id().get());
+		return compose("The CPL %1 has no <CompositionMetadataAsset> tag.", note.cpl_id().get());
 	case VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER:
-		return String::compose("The CPL %1 has no <VersionNumber> in its <CompositionMetadataAsset>.", note.cpl_id().get());
+		return compose("The CPL %1 has no <VersionNumber> in its <CompositionMetadataAsset>.", note.cpl_id().get());
 	case VerificationNote::Code::MISSING_EXTENSION_METADATA:
-		return String::compose("The CPL %1 has no <ExtensionMetadata> in its <CompositionMetadataAsset>.", note.cpl_id().get());
+		return compose("The CPL %1 has no <ExtensionMetadata> in its <CompositionMetadataAsset>.", note.cpl_id().get());
 	case VerificationNote::Code::INVALID_EXTENSION_METADATA:
-		return String::compose("The CPL %1 has a malformed <ExtensionMetadata> (%2).", filename(), note.note().get());
+		return compose("The CPL %1 has a malformed <ExtensionMetadata> (%2).", filename(), note.note().get());
 	case VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT:
-		return String::compose("The CPL %1, which has encrypted content, is not signed.", note.cpl_id().get());
+		return compose("The CPL %1, which has encrypted content, is not signed.", note.cpl_id().get());
 	case VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT:
-		return String::compose("The PKL %1, which has encrypted content, is not signed.", note.note().get());
+		return compose("The PKL %1, which has encrypted content, is not signed.", note.note().get());
 	case VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL:
-		return String::compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>.", note.note().get());
+		return compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>.", note.note().get());
 	case VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL:
-		return "The PKL and CPL annotation texts match.";
+		return process_string("The PKL and CPL annotation texts match.");
 	case VerificationNote::Code::ALL_ENCRYPTED:
-		return "All the assets are encrypted.";
+		return process_string("All the assets are encrypted.");
 	case VerificationNote::Code::NONE_ENCRYPTED:
-		return "All the assets are unencrypted.";
+		return process_string("All the assets are unencrypted.");
 	case VerificationNote::Code::PARTIALLY_ENCRYPTED:
-		return "Some assets are encrypted but some are not.";
+		return process_string("Some assets are encrypted but some are not.");
 	case VerificationNote::Code::INVALID_JPEG2000_CODESTREAM:
-		return String::compose(
+		return compose(
 			"Frame %1 (timecode %2) has an invalid JPEG2000 codestream (%3).",
 			note.frame().get(),
 			dcp::Time(note.frame().get(), note.frame_rate().get(), note.frame_rate().get()).as_string(dcp::Standard::SMPTE),
 			note.note().get()
 			);
 	case VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K:
-		return String::compose("The JPEG2000 codestream uses %1 guard bits in a 2K image instead of 1.", note.note().get());
+		return compose("The JPEG2000 codestream uses %1 guard bits in a 2K image instead of 1.", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_4K:
-		return String::compose("The JPEG2000 codestream uses %1 guard bits in a 4K image instead of 2.", note.note().get());
+		return compose("The JPEG2000 codestream uses %1 guard bits in a 4K image instead of 2.", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_SIZE:
-		return "The JPEG2000 tile size is not the same as the image size.";
+		return process_string("The JPEG2000 tile size is not the same as the image size.");
 	case VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_WIDTH:
-		return String::compose("The JPEG2000 codestream uses a code block width of %1 instead of 32.", note.note().get());
+		return compose("The JPEG2000 codestream uses a code block width of %1 instead of 32.", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_HEIGHT:
-		return String::compose("The JPEG2000 codestream uses a code block height of %1 instead of 32.", note.note().get());
+		return compose("The JPEG2000 codestream uses a code block height of %1 instead of 32.", note.note().get());
 	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K:
-		return String::compose("%1 POC markers found in 2K JPEG2000 codestream instead of 0.", note.note().get());
+		return compose("%1 POC markers found in 2K JPEG2000 codestream instead of 0.", note.note().get());
 	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K:
-		return String::compose("%1 POC markers found in 4K JPEG2000 codestream instead of 1.", note.note().get());
+		return compose("%1 POC markers found in 4K JPEG2000 codestream instead of 1.", note.note().get());
 	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER:
-		return String::compose("Incorrect POC marker content found (%1).", note.note().get());
+		return compose("Incorrect POC marker content found (%1).", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_POC_MARKER_LOCATION:
-		return "POC marker found outside main header.";
+		return process_string("POC marker found outside main header.");
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K:
-		return String::compose("The JPEG2000 codestream has %1 tile parts in a 2K image instead of 3.", note.note().get());
+		return compose("The JPEG2000 codestream has %1 tile parts in a 2K image instead of 3.", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K:
-		return String::compose("The JPEG2000 codestream has %1 tile parts in a 4K image instead of 6.", note.note().get());
+		return compose("The JPEG2000 codestream has %1 tile parts in a 4K image instead of 6.", note.note().get());
 	case VerificationNote::Code::MISSING_JPEG200_TLM_MARKER:
-		return "No TLM marker was found in a JPEG2000 codestream.";
+		return process_string("No TLM marker was found in a JPEG2000 codestream.");
 	case VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID:
-		return "The Resource ID in a timed text MXF did not match the ID of the contained XML.";
+		return process_string("The Resource ID in a timed text MXF did not match the ID of the contained XML.");
 	case VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID:
-		return "The Asset ID in a timed text MXF is the same as the Resource ID or that of the contained XML.";
+		return process_string("The Asset ID in a timed text MXF is the same as the Resource ID or that of the contained XML.");
 	case VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION:
 	{
 		vector<string> parts;
 		boost::split (parts, note.note().get(), boost::is_any_of(" "));
 		DCP_ASSERT (parts.size() == 2);
-		return String::compose("The reel duration of some timed text (%1) is not the same as the ContainerDuration of its MXF (%2).", parts[0], parts[1]);
+		return compose("The reel duration of some timed text (%1) is not the same as the ContainerDuration of its MXF (%2).", parts[0], parts[1]);
 	}
 	case VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED:
-		return "Some aspect of this DCP could not be checked because it is encrypted.";
+		return process_string("Some aspect of this DCP could not be checked because it is encrypted.");
 	case VerificationNote::Code::EMPTY_TEXT:
-		return "There is an empty <Text> node in a subtitle or closed caption.";
+		return process_string("There is an empty <Text> node in a subtitle or closed caption.");
 	case VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_VALIGN:
-		return "Some closed <Text> or <Image> nodes have different vertical alignments within a <Subtitle>.";
+		return process_string("Some closed <Text> or <Image> nodes have different vertical alignments within a <Subtitle>.");
 	case VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ORDERING:
-		return "Some closed captions are not listed in the order of their vertical position.";
+		return process_string("Some closed captions are not listed in the order of their vertical position.");
 	case VerificationNote::Code::UNEXPECTED_ENTRY_POINT:
-		return "There is an <EntryPoint> node inside a <MainMarkers>.";
+		return process_string("There is an <EntryPoint> node inside a <MainMarkers>.");
 	case VerificationNote::Code::UNEXPECTED_DURATION:
-		return "There is an <Duration> node inside a <MainMarkers>.";
+		return process_string("There is an <Duration> node inside a <MainMarkers>.");
 	case VerificationNote::Code::INVALID_CONTENT_KIND:
-		return String::compose("<ContentKind> has an invalid value %1.", note.note().get());
+		return compose("<ContentKind> has an invalid value %1.", note.note().get());
 	case VerificationNote::Code::VALID_CONTENT_KIND:
-		return String::compose("Valid <ContentKind> %1.", note.note().get());
+		return compose("Valid <ContentKind> %1.", note.note().get());
 	case VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA:
-		return String::compose("<MainPictureActiveaArea> has an invalid value: %1", note.note().get());
+		return compose("<MainPictureActiveaArea> has an invalid value: %1", note.note().get());
 	case VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA:
-		return String::compose("<MainPictureActiveaArea> %1 is valid", note.note().get());
+		return compose("<MainPictureActiveaArea> %1 is valid", note.note().get());
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL:
-		return String::compose("The PKL %1 has more than one asset with the same ID.", note.note().get());
+		return compose("The PKL %1 has more than one asset with the same ID.", note.note().get());
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP:
-		return String::compose("The ASSETMAP %1 has more than one asset with the same ID.", note.note().get());
+		return compose("The ASSETMAP %1 has more than one asset with the same ID.", note.note().get());
 	case VerificationNote::Code::MISSING_SUBTITLE:
-		return String::compose("The subtitle asset %1 has no subtitles.", note.note().get());
+		return compose("The subtitle asset %1 has no subtitles.", note.note().get());
 	case VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE:
-		return String::compose("<IssueDate> has an invalid value: %1", note.note().get());
+		return compose("<IssueDate> has an invalid value: %1", note.note().get());
 	case VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS:
-		return String::compose("The sound assets do not all have the same channel count; the first to differ is %1", filename());
+		return compose("The sound assets do not all have the same channel count; the first to differ is %1", filename());
 	case VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION:
-		return String::compose("<MainSoundConfiguration> has an invalid value: %1", note.note().get());
+		return compose("<MainSoundConfiguration> has an invalid value: %1", note.note().get());
 	case VerificationNote::Code::MISSING_FONT:
-		return String::compose("The font file for font ID \"%1\" was not found, or was not referred to in the ASSETMAP.", note.note().get());
+		return compose("The font file for font ID \"%1\" was not found, or was not referred to in the ASSETMAP.", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE:
-		return String::compose(
+		return compose(
 			"Frame %1 has an image component that is too large (component %2 is %3 bytes in size).",
 			note.frame().get(), note.component().get(), note.size().get()
 			);
 	case VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT:
-		return String::compose("The XML in the subtitle asset %1 has more than one namespace declaration.", note.note().get());
+		return compose("The XML in the subtitle asset %1 has more than one namespace declaration.", note.note().get());
 	case VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT:
-		return String::compose("A subtitle or closed caption refers to a font with ID %1 that does not have a corresponding <LoadFont> node", note.id().get());
+		return compose("A subtitle or closed caption refers to a font with ID %1 that does not have a corresponding <LoadFont> node", note.id().get());
 	case VerificationNote::Code::MISSING_LOAD_FONT:
-		return String::compose("The SMPTE subtitle asset %1 has <Text> nodes but no <LoadFont> node", note.id().get());
+		return compose("The SMPTE subtitle asset %1 has <Text> nodes but no <LoadFont> node", note.id().get());
 	case VerificationNote::Code::MISMATCHED_ASSET_MAP_ID:
-		return String::compose("The asset with ID %1 in the asset map actually has an id of %2", note.id().get(), note.other_id().get());
+		return compose("The asset with ID %1 in the asset map actually has an id of %2", note.id().get(), note.other_id().get());
 	case VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT:
-		return String::compose("The <LabelText> in a <ContentVersion> in CPL %1 is empty", note.cpl_id().get());
+		return compose("The <LabelText> in a <ContentVersion> in CPL %1 is empty", note.cpl_id().get());
 	case VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT:
-		return String::compose("CPL has valid <ContentVersion> %1", note.note().get());
+		return compose("CPL has valid <ContentVersion> %1", note.note().get());
 	}
 
 	return "";
