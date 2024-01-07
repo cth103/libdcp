@@ -182,6 +182,7 @@ public:
 		 *  note contains the invalid language
 		 */
 		INVALID_LANGUAGE,
+		VALID_RELEASE_TERRITORY,
 		/** A picture asset does not have one of the required Bv2.1 sizes (in pixels) [Bv2.1_7.1]
 		 *  note contains the incorrect size as "<width>x<height>"
 		 *  file contains the asset filename

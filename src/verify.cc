@@ -1575,13 +1575,18 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 	if (cpl->release_territory()) {
 		if (!cpl->release_territory_scope() || cpl->release_territory_scope().get() != "http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata#scope/release-territory/UNM49") {
 			auto terr = cpl->release_territory().get();
+			bool valid = true;
 			/* Must be a valid region tag, or "001" */
 			try {
 				LanguageTag::RegionSubtag test(terr);
 			} catch (...) {
 				if (terr != "001") {
 					context.bv21_error(VerificationNote::Code::INVALID_LANGUAGE, terr);
+					valid = false;
 				}
+			}
+			if (valid) {
+				context.ok(VerificationNote::Code::VALID_RELEASE_TERRITORY, terr);
 			}
 		}
 	}
@@ -1980,6 +1985,8 @@ dcp::note_to_string (VerificationNote note)
 		return "This DCP does not use the SMPTE standard.";
 	case VerificationNote::Code::INVALID_LANGUAGE:
 		return String::compose("The DCP specifies a language '%1' which does not conform to the RFC 5646 standard.", note.note().get());
+	case VerificationNote::Code::VALID_RELEASE_TERRITORY:
+		return String::compose("Valid release territory %1.", note.note().get());
 	case VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS:
 		return String::compose("The size %1 of picture asset %2 is not allowed.", note.note().get(), note.file()->filename());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_2K:
