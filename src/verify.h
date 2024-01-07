@@ -423,6 +423,7 @@ public:
 		 *  file contains the CPL filename
 		 */
 		INVALID_MAIN_PICTURE_ACTIVE_AREA,
+		VALID_MAIN_PICTURE_ACTIVE_AREA,
 		/** A PKL has more than one asset with the same ID
 		 *  note contains the PKL ID
 		 *  file contains the PKL filename

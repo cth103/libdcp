@@ -463,6 +463,12 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_picture_sound_hash)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(dcp_test1_cpl_id()),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_PICTURE_HASH, canonical(video_path)
@@ -493,6 +499,12 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(dir / dcp_test1_cpl())
@@ -529,6 +541,12 @@ BOOST_AUTO_TEST_CASE (verify_failed_read_content_kind)
 		{
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(dir / dcp_test1_cpl())
@@ -578,6 +596,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_rate)
 		{
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl_path)
@@ -603,6 +627,12 @@ BOOST_AUTO_TEST_CASE (verify_missing_asset)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_ASSET, canonical(dir) / "video.mxf" }
 		});
 }
@@ -621,6 +651,12 @@ BOOST_AUTO_TEST_CASE (verify_empty_asset_path)
 	std::vector<dcp::VerificationNote> expected = {
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_ASSET_PATH }
 		};
 
@@ -642,6 +678,12 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_standard)
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_STANDARD },
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "invalid character encountered", canonical(cpl_path), 42
@@ -687,6 +729,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_id)
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
@@ -713,6 +761,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_issue_date)
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl_path)
 				).set_cpl_id(cpl->id()).set_reference_hash("skI+5b/9LA/y6h0mcyxysJYanxI=").set_calculated_hash("sz3BeIugJ567q3HMnA62JeRw4TE="),
@@ -742,6 +796,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_pkl_id)
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
@@ -770,6 +830,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_asset_map_id)
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
@@ -1440,6 +1506,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 		{
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "pic.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1440x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "pic.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:MainSoundXConfiguration'"), canonical(cpl->file().get()), 50
@@ -1600,6 +1672,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language3)
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "videofoo.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1440x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "videofoo.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("this-is-wrong")
@@ -1685,6 +1763,12 @@ check_picture_size_ok (int width, int height, int frame_rate, bool three_d)
 	std::vector<dcp::VerificationNote> expected = {
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::OK,
+			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			dcp::String::compose("%1x%2", width, height),
+			cpl->file().get()
+			).set_cpl_id(cpl->id()),
 		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl)
 	};
@@ -1704,6 +1788,12 @@ check_picture_size_bad_frame_size (int width, int height, int frame_rate, bool t
 	std::vector<dcp::VerificationNote> expected = {
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::OK,
+			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			dcp::String::compose("%1x%2", width, height),
+			cpl->file().get()
+			).set_cpl_id(cpl->id()),
 		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 		dcp::VerificationNote(
@@ -1726,6 +1816,12 @@ check_picture_size_bad_2k_frame_rate (int width, int height, int frame_rate, boo
 	std::vector<dcp::VerificationNote> expected = {
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::OK,
+			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			dcp::String::compose("%1x%2", width, height),
+			cpl->file().get()
+			).set_cpl_id(cpl->id()),
 		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 		dcp::VerificationNote(
@@ -1752,6 +1848,12 @@ check_picture_size_bad_4k_frame_rate (int width, int height, int frame_rate, boo
 	std::vector<dcp::VerificationNote> expected = {
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::OK,
+			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			dcp::String::compose("%1x%2", width, height),
+			cpl->file().get()
+			).set_cpl_id(cpl->id()),
 		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 		dcp::VerificationNote(
@@ -1813,6 +1915,12 @@ BOOST_AUTO_TEST_CASE (verify_picture_size)
 	std::vector<dcp::VerificationNote> expected = {
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::OK,
+			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			string{"3996x2160"},
+			cpl->file().get()
+			).set_cpl_id(cpl->id()),
 		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 		{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D },
@@ -2001,6 +2109,12 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
@@ -2050,6 +2164,12 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video0.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
 			dcp::VerificationNote(
@@ -2100,6 +2220,12 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video0.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video0.mxf"), cpl),
@@ -2160,6 +2286,12 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
@@ -2218,6 +2350,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
@@ -3022,6 +3160,12 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_annotation_text)
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, canonical(cpl->file().get())
@@ -3057,6 +3201,12 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_cpl_annotation_text)
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
@@ -3463,6 +3613,12 @@ BOOST_AUTO_TEST_CASE (verify_missing_hash)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
@@ -3500,6 +3656,14 @@ verify_markers_test (
 	test_notes.push_back(ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl));
 	test_notes.push_back(ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl));
 	test_notes.push_back(ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl));
+	test_notes.push_back(
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::OK,
+			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			string{"1998x1080"},
+			cpl->file().get()
+			).set_cpl_id(cpl->id())
+		);
 	test_notes.push_back(ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl));
 	check_verify_result({dir}, {}, test_notes);
 }
@@ -3604,6 +3768,12 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_metadata_version_number)
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->file().get()
@@ -3635,6 +3805,12 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata1)
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -3668,6 +3844,12 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata2)
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			dcp::VerificationNote(
@@ -3700,6 +3882,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:NameX'"), cpl->file().get(), 70
 				).set_cpl_id(cpl->id()),
@@ -3735,6 +3923,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata1)
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			dcp::VerificationNote(
@@ -3766,6 +3960,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -3799,6 +3999,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:ValueX'"), cpl->file().get(), 74
 				).set_cpl_id(cpl->id()),
@@ -3835,6 +4041,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			dcp::VerificationNote(
@@ -3867,6 +4079,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyX'"), cpl->file().get(), 72
 				).set_cpl_id(cpl->id()),
@@ -3902,6 +4120,12 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyListX'"), cpl->file().get(), 71
 				).set_cpl_id(cpl->id()),
@@ -4043,6 +4267,12 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_unencrypted_content)
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 		});
 }
@@ -4111,6 +4341,12 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 		{dir},
 		{},
 		{
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1440x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
@@ -4369,6 +4605,12 @@ BOOST_AUTO_TEST_CASE (verify_unexpected_things_in_main_markers)
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			dcp::VerificationNote(
@@ -4402,6 +4644,12 @@ BOOST_AUTO_TEST_CASE(verify_invalid_content_kind)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(
@@ -4438,6 +4686,12 @@ BOOST_AUTO_TEST_CASE(verify_valid_content_kind)
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -4552,6 +4806,12 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_pkl_asset_ids)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL, pkl.id(), canonical(find_pkl(dir)) },
 		});
@@ -4581,6 +4841,12 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_assetmap_asset_ids)
 		{},
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				canonical(cpl->file().get())
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map.id(), canonical(find_asset_map(dir))
@@ -4662,6 +4928,12 @@ BOOST_AUTO_TEST_CASE(verify_mismatched_sound_channel_counts)
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video2.mxf"), cpl),
@@ -4724,6 +4996,12 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_sound_configuration)
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
 			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION, std::string{"MainSoundConfiguration has 6 channels but sound assets have 2"}, canonical(find_cpl(path))
 				).set_cpl_id(cpl->id())
 		});
@@ -4782,6 +5060,12 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 
 	vector<dcp::VerificationNote> expected = {
 		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::OK,
+			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			string{"1998x1080"},
+			cpl->file().get()
+			).set_cpl_id(cpl->id()),
 		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video.mxf"), cpl),
 		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 		dcp::VerificationNote(
@@ -4929,6 +5213,12 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font)
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
 			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_LOAD_FONT).set_id(reel_subs->id()).set_cpl_id(cpl->id())
@@ -4960,6 +5250,12 @@ BOOST_AUTO_TEST_CASE(verify_spots_wrong_asset)
 		{
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_ASSET_MAP_ID).set_id(asset_1).set_other_id(asset_2)
 		});
 }
@@ -4980,6 +5276,12 @@ BOOST_AUTO_TEST_CASE(verify_cpl_content_version_label_text_empty)
 		{dir},
 		{},
 		{
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::OK,
+				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				string{"1998x1080"},
+				cpl->file().get()
+				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
 			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),

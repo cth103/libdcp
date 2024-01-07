@@ -1655,12 +1655,14 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 	map<Marker, Time> markers_seen;
 
 	auto const main_picture_active_area = cpl->main_picture_active_area();
+	bool active_area_ok = true;
 	if (main_picture_active_area && (main_picture_active_area->width % 2)) {
 		context.error(
 			VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
 			String::compose("width %1 is not a multiple of 2", main_picture_active_area->width),
 			cpl->file().get()
 		     );
+		active_area_ok = false;
 	}
 	if (main_picture_active_area && (main_picture_active_area->height % 2)) {
 		context.error(
@@ -1668,6 +1670,14 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 			String::compose("height %1 is not a multiple of 2", main_picture_active_area->height),
 			cpl->file().get()
 		     );
+		active_area_ok = false;
+	}
+
+	if (main_picture_active_area && active_area_ok) {
+		context.ok(
+			VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA, String::compose("%1x%2", main_picture_active_area->width, main_picture_active_area->height),
+			cpl->file().get()
+			);
 	}
 
 	int64_t frame = 0;
@@ -2139,6 +2149,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("<ContentKind> has an invalid value %1.", note.note().get());
 	case VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA:
 		return String::compose("<MainPictureActiveaArea> has an invalid value: %1", note.note().get());
+	case VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA:
+		return String::compose("<MainPictureActiveaArea> %1 is valid", note.note().get());
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL:
 		return String::compose("The PKL %1 has more than one asset with the same ID.", note.note().get());
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP:
