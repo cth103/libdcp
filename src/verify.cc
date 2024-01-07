@@ -1597,6 +1597,8 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		if (version.label_text.empty()) {
 			context.warning(VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get());
 			break;
+		} else {
+			context.ok(VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, version.label_text);
 		}
 	}
 
@@ -2192,6 +2194,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The asset with ID %1 in the asset map actually has an id of %2", note.id().get(), note.other_id().get());
 	case VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT:
 		return String::compose("The <LabelText> in a <ContentVersion> in CPL %1 is empty", note.cpl_id().get());
+	case VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT:
+		return String::compose("CPL has valid <ContentVersion> %1", note.note().get());
 	}
 
 	return "";

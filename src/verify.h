@@ -491,6 +491,7 @@ public:
 		 *  file contains the CPL filename
 		 */
 		EMPTY_CONTENT_VERSION_LABEL_TEXT,
+		VALID_CONTENT_VERSION_LABEL_TEXT,
 	};
 
 	VerificationNote (Type type, Code code)
