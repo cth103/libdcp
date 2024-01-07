@@ -343,6 +343,7 @@ public:
 		 *  file contains the PKL filename
 		 */
 		MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL,
+		MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL,
 		/** All content is encrypted */
 		ALL_ENCRYPTED,
 		/** No content is encrypted */

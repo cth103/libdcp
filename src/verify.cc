@@ -1643,6 +1643,8 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 
 		if (required_annotation_text && i->annotation_text() != required_annotation_text) {
 			context.bv21_error(VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, i->id(), i->file().get());
+		} else {
+			context.ok(VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL);
 		}
 	}
 
@@ -2089,6 +2091,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The PKL %1, which has encrypted content, is not signed.", note.note().get());
 	case VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL:
 		return String::compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>.", note.note().get());
+	case VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL:
+		return "The PKL and CPL annotation texts match.";
 	case VerificationNote::Code::ALL_ENCRYPTED:
 		return "All the assets are encrypted.";
 	case VerificationNote::Code::NONE_ENCRYPTED:
