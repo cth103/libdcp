@@ -2163,6 +2163,13 @@ dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 
 
 bool
+dcp::operator!=(dcp::VerificationNote const& a, dcp::VerificationNote const& b)
+{
+	return !(a == b);
+}
+
+
+bool
 dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 {
 	if (a.type() != b.type()) {
