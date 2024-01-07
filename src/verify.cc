@@ -1569,6 +1569,8 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		auto iter = std::find_if(all.begin(), all.end(), [name](ContentKind const& k) { return !k.scope() && k.name() == name; });
 		if (iter == all.end()) {
 			context.error(VerificationNote::Code::INVALID_CONTENT_KIND, cpl->content_kind().name());
+		} else {
+			context.ok(VerificationNote::Code::VALID_CONTENT_KIND, cpl->content_kind().name());
 		}
 	}
 
@@ -2155,6 +2157,8 @@ dcp::note_to_string (VerificationNote note)
 		return "There is an <Duration> node inside a <MainMarkers>.";
 	case VerificationNote::Code::INVALID_CONTENT_KIND:
 		return String::compose("<ContentKind> has an invalid value %1.", note.note().get());
+	case VerificationNote::Code::VALID_CONTENT_KIND:
+		return String::compose("Valid <ContentKind> %1.", note.note().get());
 	case VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA:
 		return String::compose("<MainPictureActiveaArea> has an invalid value: %1", note.note().get());
 	case VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA:

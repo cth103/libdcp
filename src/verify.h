@@ -420,6 +420,7 @@ public:
 		UNEXPECTED_DURATION,
 		/** A <ContentKind> has been specified with either no scope or the SMPTE 429-7 scope, but which is not one of those allowed */
 		INVALID_CONTENT_KIND,
+		VALID_CONTENT_KIND,
 		/** Either the width or height of a <MainPictureActiveArea> in a CPL is either not an even number, or bigger than the corresponding asset dimension.
 		 *  note contains details of what is wrong
 		 *  file contains the CPL filename
