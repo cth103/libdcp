@@ -265,6 +265,7 @@ public:
 		 *  file contains the CPL filename
 		 */
 		MISMATCHED_CPL_ANNOTATION_TEXT,
+		VALID_CPL_ANNOTATION_TEXT,
 		/** At least one asset in a reel does not have the same duration as the others */
 		MISMATCHED_ASSET_DURATION,
 		/** If one reel has a _MainSubtitle_, all must have them */

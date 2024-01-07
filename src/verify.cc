@@ -1603,6 +1603,8 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 			context.bv21_error(VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, cpl->file().get());
 		} else if (cpl->annotation_text().get() != cpl->content_title_text()) {
 			context.warning(VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, cpl->file().get());
+		} else {
+			context.ok(VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, cpl->annotation_text().get());
 		}
 	}
 
@@ -2043,6 +2045,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The CPL %1 has no <AnnotationText> tag.", note.cpl_id().get());
 	case VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT:
 		return String::compose("The CPL %1 has an <AnnotationText> which differs from its <ContentTitleText>.", note.cpl_id().get());
+	case VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT:
+		return String::compose("Valid CPL annotation text %1", note.note().get());
 	case VerificationNote::Code::MISMATCHED_ASSET_DURATION:
 		return "All assets in a reel do not have the same duration.";
 	case VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS:
