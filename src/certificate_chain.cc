@@ -124,8 +124,8 @@ command (string cmd)
  *  @param openssl openssl binary name (or full path if openssl is not on the system path).
  *  @return SHA1 digest of corresponding public key, with escaped / characters.
  */
-static string
-public_key_digest (boost::filesystem::path private_key, boost::filesystem::path openssl)
+string
+dcp::public_key_digest(boost::filesystem::path private_key, boost::filesystem::path openssl)
 {
 	boost::filesystem::path public_name = private_key.string() + ".public";
 

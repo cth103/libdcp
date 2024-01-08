@@ -190,6 +190,9 @@ private:
 };
 
 
+std::string public_key_digest(boost::filesystem::path private_key, boost::filesystem::path openssl);
+
+
 }
 
 
