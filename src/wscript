@@ -208,6 +208,7 @@ def build(bld):
               ref.h
               ruby.h
               s_gamut3_transfer_function.h
+              scope_guard.h
               search.h
               smpte_load_font_node.h
               smpte_subtitle_asset.h

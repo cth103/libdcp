@@ -104,6 +104,7 @@ def build(bld):
                  recovery_test.cc
                  rgb_xyz_test.cc
                  round_trip_test.cc
+                 scope_guard_test.cc
                  shared_subtitle_test.cc
                  smpte_load_font_test.cc
                  smpte_subtitle_test.cc
