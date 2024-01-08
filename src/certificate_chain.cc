@@ -156,11 +156,9 @@ dcp::public_key_digest(RSA* public_key)
 
 string
 dcp::escape_digest(string digest)
-#ifdef LIBDCP_WINDOWS
+{
 	boost::replace_all(digest, "/", "\\/");
-#else
-	boost::replace_all(digest, "/", "\\\\/");
-#endif
+	boost::replace_all(digest, "+", "\\+");
 	return digest;
 }
 

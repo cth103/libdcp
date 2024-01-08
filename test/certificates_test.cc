@@ -279,3 +279,26 @@ BOOST_AUTO_TEST_CASE (certificate_not_before_after)
 	BOOST_CHECK_EQUAL (not_after.month(), 6);
 	BOOST_CHECK_EQUAL (not_after.year(), 2025);
 }
+
+
+/** Check for correct escaping of public key digests */
+BOOST_AUTO_TEST_CASE(certificate_public_key_digest)
+{
+	BOOST_CHECK_EQUAL(dcp::public_key_digest("test/data/private.key"), "MekIXGBkYdh28siMnnF\\/Zs2JeK8=");
+	BOOST_CHECK_EQUAL(dcp::public_key_digest("test/data/private2.key"), "dfjStQNFTdVpfzgmxQCb3x\\+y2SY=");
+}
+
+
+/** Create some certificates and check that the dnQualifier read from the header is always what is should be;
+ *  previously it would not be if the digest contained \ or + (DoM #2716).
+ */
+BOOST_AUTO_TEST_CASE(certificate_dn_qualifiers)
+{
+	for (auto i = 0; i < 50; ++i) {
+		dcp::CertificateChain chain(boost::filesystem::path("openssl"), 10 * 365);
+		for (auto cert: chain.unordered()) {
+			BOOST_CHECK_EQUAL(dcp::escape_digest(cert.subject_dn_qualifier()), dcp::public_key_digest(cert.public_key()));
+		}
+	}
+}
+
