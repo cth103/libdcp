@@ -355,6 +355,15 @@ Certificate::subject_organizational_unit_name () const
 }
 
 
+string
+Certificate::subject_dn_qualifier() const
+{
+	DCP_ASSERT (_certificate);
+
+	return get_name_part(X509_get_subject_name(_certificate), NID_dnQualifier);
+}
+
+
 static
 LocalTime
 convert_time (ASN1_TIME const * time)

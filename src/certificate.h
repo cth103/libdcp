@@ -107,6 +107,7 @@ public:
 	std::string subject_common_name () const;
 	std::string subject_organization_name () const;
 	std::string subject_organizational_unit_name () const;
+	std::string subject_dn_qualifier() const;
 
 	LocalTime not_before () const;
 	LocalTime not_after () const;
@@ -117,6 +118,7 @@ public:
 
 	/** @return RSA public key from this Certificate.  Caller must not free the returned value. */
 	RSA* public_key () const;
+	std::string public_key_digest() const;
 
 	/** @return thumbprint of the to-be-signed portion of this certificate */
 	std::string thumbprint () const;
