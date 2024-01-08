@@ -42,6 +42,7 @@
 #include "dcp_assert.h"
 #include "exceptions.h"
 #include "filesystem.h"
+#include "scope_guard.h"
 #include "util.h"
 #include "warnings.h"
 #include <asdcp/KM_util.h>
@@ -58,6 +59,7 @@ LIBDCP_ENABLE_WARNINGS
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/rsa.h>
+#include <openssl/x509.h>
 #include <boost/algorithm/string.hpp>
 #include <fstream>
 #include <iostream>
@@ -119,44 +121,16 @@ command (string cmd)
 }
 
 
-/** Extract a public key from a private key and create a SHA1 digest of it.
- *  @param private_key Private key
- *  @param openssl openssl binary name (or full path if openssl is not on the system path).
- *  @return SHA1 digest of corresponding public key, with escaped / characters.
- */
 string
-dcp::public_key_digest(boost::filesystem::path private_key, boost::filesystem::path openssl)
+dcp::public_key_digest(RSA* public_key)
 {
-	boost::filesystem::path public_name = private_key.string() + ".public";
-
-	/* Create the public key from the private key */
-	command (String::compose("\"%1\" rsa -outform PEM -pubout -in %2 -out %3", openssl.string(), private_key.string(), public_name.string()));
-
-	/* Read in the public key from the file */
-
-	string pub;
-	ifstream f (public_name.string().c_str());
-	if (!f.good ()) {
-		throw dcp::MiscError ("public key not found");
-	}
-
-	bool read = false;
-	while (f.good ()) {
-		string line;
-		getline (f, line);
-		if (line.length() >= 10 && line.substr(0, 10) == "-----BEGIN") {
-			read = true;
-		} else if (line.length() >= 8 && line.substr(0, 8) == "-----END") {
-			break;
-		} else if (read) {
-			pub += line;
-		}
-	}
-
-	/* Decode the base64 of the public key */
-
+	/* Convert public key to DER (binary) format */
 	unsigned char buffer[512];
-	int const N = dcp::base64_decode (pub, buffer, 1024);
+	unsigned char* buffer_ptr = buffer;
+	auto length = i2d_RSA_PUBKEY(public_key, &buffer_ptr);
+	if (length < 0) {
+		throw MiscError("Could not convert public key to DER");
+	}
 
 	/* Hash it with SHA1 (without the first 24 bytes, for reasons that are not entirely clear) */
 
@@ -165,7 +139,7 @@ dcp::public_key_digest(boost::filesystem::path private_key, boost::filesystem::p
 		throw dcp::MiscError ("could not init SHA1 context");
 	}
 
-	if (!SHA1_Update (&context, buffer + 24, N - 24)) {
+	if (!SHA1_Update(&context, buffer + 24, length - 24)) {
 		throw dcp::MiscError ("could not update SHA1 digest");
 	}
 
@@ -176,12 +150,53 @@ dcp::public_key_digest(boost::filesystem::path private_key, boost::filesystem::p
 
 	char digest_base64[64];
 	string dig = Kumu::base64encode (digest, SHA_DIGEST_LENGTH, digest_base64, 64);
+	return escape_digest(dig);
+}
+
+
+string
+dcp::escape_digest(string digest)
 #ifdef LIBDCP_WINDOWS
-	boost::replace_all (dig, "/", "\\/");
+	boost::replace_all(digest, "/", "\\/");
 #else
-	boost::replace_all (dig, "/", "\\\\/");
+	boost::replace_all(digest, "/", "\\\\/");
 #endif
-	return dig;
+	return digest;
+}
+
+
+/** Extract a public key from a private key and create a SHA1 digest of it.
+ *  @param private_key_file Private key filename
+ *  @param openssl openssl binary name (or full path if openssl is not on the system path).
+ *  @return SHA1 digest of corresponding public key, with escaped / characters.
+ */
+string
+dcp::public_key_digest(boost::filesystem::path private_key_file)
+{
+	auto private_key_string = dcp::file_to_string(private_key_file);
+
+	/* Read private key into memory */
+	auto private_key_bio = BIO_new_mem_buf(const_cast<char*>(private_key_string.c_str()), -1);
+	if (!private_key_bio) {
+		throw MiscError("Could not create memory BIO");
+	}
+	dcp::ScopeGuard sg_private_key_bio([private_key_bio]() { BIO_free(private_key_bio); });
+
+	/* Extract private key */
+	auto private_key = PEM_read_bio_PrivateKey(private_key_bio, nullptr, nullptr, nullptr);
+	if (!private_key) {
+		throw MiscError("Could not read private key");
+	}
+	dcp::ScopeGuard sg_private_key([private_key]() { EVP_PKEY_free(private_key); });
+
+	/* Get public key from private key */
+	auto public_key = EVP_PKEY_get1_RSA(private_key);
+	if (!public_key) {
+		throw MiscError("Could not obtain public key");
+	}
+	dcp::ScopeGuard sg_public_key([public_key]() { RSA_free(public_key); });
+
+	return public_key_digest(public_key);
 }
 
 
@@ -229,7 +244,7 @@ CertificateChain::CertificateChain (
 	string const ca_subject = "/O=" + organisation +
 		"/OU=" + organisational_unit +
 		"/CN=" + root_common_name +
-		"/dnQualifier=" + public_key_digest ("ca.key", openssl);
+		"/dnQualifier=" + public_key_digest ("ca.key");
 
 	{
 		command (
@@ -263,7 +278,7 @@ CertificateChain::CertificateChain (
 	string const inter_subject = "/O=" + organisation +
 		"/OU=" + organisational_unit +
 		"/CN=" + intermediate_common_name +
-		"/dnQualifier="	+ public_key_digest ("intermediate.key", openssl);
+		"/dnQualifier="	+ public_key_digest ("intermediate.key");
 
 	{
 		command (
@@ -304,7 +319,7 @@ CertificateChain::CertificateChain (
 	string const leaf_subject = "/O=" + organisation +
 		"/OU=" + organisational_unit +
 		"/CN=" + leaf_common_name +
-		"/dnQualifier="	+ public_key_digest ("leaf.key", openssl);
+		"/dnQualifier="	+ public_key_digest ("leaf.key");
 
 	{
 		command (
