@@ -430,7 +430,7 @@ BOOST_AUTO_TEST_CASE (verify_failed_read_content_kind)
 		{
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id(), canonical(dir / dcp_test1_cpl())
-				).set_reference_hash(calc.old_hash()).set_calculated_hash("4v/mVjs1Rw0NELxgyHa5rSpoBPA="),
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_CONTENT_KIND, string("xtrailer") }
 		});
 }
