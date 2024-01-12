@@ -207,24 +207,28 @@ check_verify_result(vector<path> dir, vector<dcp::DecryptedKDM> kdm, vector<dcp:
 	for (auto i: notes) {
 		message += "  " + note_to_string(i) + "\n";
 		message += dcp::String::compose(
-			"  [%1 %2 %3 %4 %5]\n",
+			"  [%1 %2 %3 %4 %5 %6 %7]\n",
 			static_cast<int>(i.type()),
 			static_cast<int>(i.code()),
 			i.note().get_value_or("<none>"),
 			i.file().get_value_or("<none>"),
-			i.line().get_value_or(0)
+			i.line().get_value_or(0),
+			i.reference_hash().get_value_or("<none>"),
+			i.calculated_hash().get_value_or("<none>")
 			);
 	}
 	message += "Expected:\n";
 	for (auto i: test_notes) {
 		message += "  " + note_to_string(i) + "\n";
 		message += dcp::String::compose(
-			"  [%1 %2 %3 %4 %5]\n",
+			"  [%1 %2 %3 %4 %5 %6 %7]\n",
 			static_cast<int>(i.type()),
 			static_cast<int>(i.code()),
 			i.note().get_value_or("<none>"),
 			i.file().get_value_or("<none>"),
-			i.line().get_value_or(0)
+			i.line().get_value_or(0),
+			i.reference_hash().get_value_or("<none>"),
+			i.calculated_hash().get_value_or("<none>")
 			);
 	}
 
@@ -269,6 +273,28 @@ add_font(shared_ptr<dcp::SubtitleAsset> asset)
 }
 
 
+class HashCalculator
+{
+public:
+	HashCalculator(boost::filesystem::path path)
+		: _path(path)
+		, _old_hash(dcp::make_digest(path, [](int64_t, int64_t) {}))
+	{}
+
+	std::string old_hash() const {
+		return _old_hash;
+	}
+
+	std::string new_hash() const {
+		return dcp::make_digest(_path, [](int64_t, int64_t) {});
+	}
+
+private:
+	boost::filesystem::path _path;
+	std::string _old_hash;
+};
+
+
 BOOST_AUTO_TEST_CASE (verify_no_error)
 {
 	stages.clear ();
@@ -310,8 +336,7 @@ BOOST_AUTO_TEST_CASE (verify_no_error)
 	BOOST_CHECK_EQUAL (st->first, "Checking PKL");
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), canonical(pkl_file));
-	++st;
-	BOOST_CHECK_EQUAL (st->first, "Checking ASSETMAP");
+	++st; BOOST_CHECK_EQUAL (st->first, "Checking ASSETMAP");
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), canonical(assetmap_file));
 	++st;
@@ -328,6 +353,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_picture_sound_hash)
 	auto dir = setup (1, "incorrect_picture_sound_hash");
 
 	auto video_path = path(dir / "video.mxf");
+	HashCalculator video_calc(video_path);
 	auto mod = fopen(video_path.string().c_str(), "r+b");
 	BOOST_REQUIRE (mod);
 	fseek (mod, 4096, SEEK_SET);
@@ -336,6 +362,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_picture_sound_hash)
 	fclose (mod);
 
 	auto audio_path = path(dir / "audio.mxf");
+	HashCalculator audio_calc(audio_path);
 	mod = fopen(audio_path.string().c_str(), "r+b");
 	BOOST_REQUIRE (mod);
 	BOOST_REQUIRE_EQUAL (fseek(mod, -64, SEEK_END), 0);
@@ -347,8 +374,12 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_picture_sound_hash)
 		{ dir },
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_PICTURE_HASH, canonical(video_path) },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_SOUND_HASH, canonical(audio_path) },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_PICTURE_HASH, canonical(video_path)
+				).set_reference_hash(video_calc.old_hash()).set_calculated_hash(video_calc.new_hash()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_SOUND_HASH, canonical(audio_path)
+				).set_reference_hash(audio_calc.old_hash()).set_calculated_hash(audio_calc.new_hash()),
 		});
 }
 
@@ -359,6 +390,8 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 
 	auto dir = setup (1, "mismatched_picture_sound_hashes");
 
+	HashCalculator calc(dir / dcp_test1_cpl());
+
 	{
 		Editor e (dir / dcp_test1_pkl());
 		e.replace ("<Hash>", "<Hash>x");
@@ -368,7 +401,9 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 		{ dir },
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id(), canonical(dir / dcp_test1_cpl()) },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id(), canonical(dir / dcp_test1_cpl())
+				).set_reference_hash("x" + calc.old_hash()).set_calculated_hash(calc.old_hash()),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_HASHES, canonical(dir / "audio.mxf") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xKcJb7S2K5cNm8RG4kfQD5FTeS0A=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 28 },
@@ -382,6 +417,8 @@ BOOST_AUTO_TEST_CASE (verify_failed_read_content_kind)
 {
 	auto dir = setup (1, "failed_read_content_kind");
 
+	HashCalculator calc(dir / dcp_test1_cpl());
+
 	{
 		Editor e (dir / dcp_test1_cpl());
 		e.replace ("<ContentKind>", "<ContentKind>x");
@@ -391,7 +428,9 @@ BOOST_AUTO_TEST_CASE (verify_failed_read_content_kind)
 		{ dir },
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id(), canonical(dir / dcp_test1_cpl()) },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, dcp_test1_cpl_id(), canonical(dir / dcp_test1_cpl())
+				).set_reference_hash(calc.old_hash()).set_calculated_hash("4v/mVjs1Rw0NELxgyHa5rSpoBPA="),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_CONTENT_KIND, string("xtrailer") }
 		});
 }
@@ -1065,6 +1104,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 	dcp.set_annotation_text("hello");
 	dcp.write_xml();
 
+	HashCalculator calc(find_cpl(dir));
+
 	{
 		Editor e (find_cpl(dir));
 		e.replace ("MainSound", "MainSoundX");
@@ -1088,7 +1129,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 				canonical(cpl->file().get()),
 				71
 			},
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), canonical(cpl->file().get()) },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), canonical(cpl->file().get())
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash())
 		});
 }
 
@@ -2287,6 +2330,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_annotation_text)
 
 	auto const cpl = dcp->cpls()[0];
 
+	HashCalculator calc(cpl->file().get());
+
 	{
 		BOOST_REQUIRE (cpl->file());
 		Editor e(cpl->file().get());
@@ -2298,7 +2343,9 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_annotation_text)
 		{},
 		{
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, cpl->id(), canonical(cpl->file().get()) },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), canonical(cpl->file().get()) }
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), canonical(cpl->file().get())
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash())
 		});
 }
 
@@ -2312,6 +2359,8 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_cpl_annotation_text)
 	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
 	auto const cpl = dcp->cpls()[0];
 
+	HashCalculator calc(cpl->file().get());
+
 	{
 		BOOST_REQUIRE (cpl->file());
 		Editor e(cpl->file().get());
@@ -2323,7 +2372,9 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_cpl_annotation_text)
 		{},
 		{
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, cpl->id(), canonical(cpl->file().get()) },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), canonical(cpl->file().get()) }
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), canonical(cpl->file().get())
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash())
 		});
 }
 
@@ -2623,6 +2674,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_hash)
 	BOOST_REQUIRE (cpl->reels()[0]->main_picture());
 	auto asset_id = cpl->reels()[0]->main_picture()->id();
 
+	HashCalculator calc(cpl->file().get());
+
 	{
 		BOOST_REQUIRE (cpl->file());
 		Editor e(cpl->file().get());
@@ -2633,7 +2686,9 @@ BOOST_AUTO_TEST_CASE (verify_missing_hash)
 		{dir},
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_HASH, asset_id }
 		});
 }
@@ -2765,6 +2820,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata1)
 	BOOST_REQUIRE_EQUAL (dcp->cpls().size(), 1U);
 	auto cpl = dcp->cpls()[0];
 
+	HashCalculator calc(cpl->file().get());
+
 	{
 		Editor e (cpl->file().get());
 		e.delete_lines ("<meta:ExtensionMetadataList>", "</meta:ExtensionMetadataList>");
@@ -2774,7 +2831,9 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata1)
 		{dir},
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_EXTENSION_METADATA, cpl->id(), cpl->file().get() }
 		});
 }
@@ -2788,6 +2847,8 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata2)
 
 	auto cpl = dcp->cpls()[0];
 
+	HashCalculator calc(cpl->file().get());
+
 	{
 		Editor e (cpl->file().get());
 		e.delete_lines ("<meta:ExtensionMetadata scope=\"http://isdcf.com/ns/cplmd/app\">", "</meta:ExtensionMetadata>");
@@ -2797,7 +2858,9 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata2)
 		{dir},
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_EXTENSION_METADATA, cpl->id(), cpl->file().get() }
 		});
 }
@@ -2811,6 +2874,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 
 	auto const cpl = dcp->cpls()[0];
 
+	HashCalculator calc(cpl->file().get());
+
 	{
 		Editor e (cpl->file().get());
 		e.replace ("<meta:Name>A", "<meta:NameX>A");
@@ -2823,7 +2888,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:NameX'"), cpl->file().get(), 70 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:NameX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 77 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 		});
 }
 
@@ -2836,6 +2903,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata1)
 
 	auto cpl = dcp->cpls()[0];
 
+	HashCalculator calc(cpl->file().get());
+
 	{
 		Editor e (cpl->file().get());
 		e.replace ("Application", "Fred");
@@ -2845,7 +2914,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata1)
 		{dir},
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("<Name> should be 'Application'"), cpl->file().get() },
 		});
 }
@@ -2859,6 +2930,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 
 	auto cpl = dcp->cpls()[0];
 
+	HashCalculator calc(cpl->file().get());
+
 	{
 		Editor e (cpl->file().get());
 		e.replace ("DCP Constraints Profile", "Fred");
@@ -2868,7 +2941,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 		{dir},
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("<Name> property should be 'DCP Constraints Profile'"), cpl->file().get() },
 		});
 }
@@ -2882,6 +2957,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 
 	auto const cpl = dcp->cpls()[0];
 
+	HashCalculator calc(cpl->file().get());
+
 	{
 		Editor e (cpl->file().get());
 		e.replace ("<meta:Value>", "<meta:ValueX>");
@@ -2894,7 +2971,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:ValueX'"), cpl->file().get(), 74 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:ValueX' is not allowed for content model '(Name,Value)'"), cpl->file().get(), 75 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 		});
 }
 
@@ -2907,6 +2986,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 
 	auto const cpl = dcp->cpls()[0];
 
+	HashCalculator calc(cpl->file().get());
+
 	{
 		Editor e (cpl->file().get());
 		e.replace ("SMPTE-RDD-52:2020-Bv2.1", "Fred");
@@ -2916,7 +2997,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 		{dir},
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("<Value> property should be 'SMPTE-RDD-52:2020-Bv2.1'"), cpl->file().get() },
 		});
 }
@@ -2930,6 +3013,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 
 	auto const cpl = dcp->cpls()[0];
 
+	HashCalculator calc(cpl->file().get());
+
 	{
 		Editor e (cpl->file().get());
 		e.replace ("<meta:Property>", "<meta:PropertyX>");
@@ -2942,7 +3027,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyX'"), cpl->file().get(), 72 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:PropertyX' is not allowed for content model '(Property+)'"), cpl->file().get(), 76 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 		});
 }
 
@@ -2954,6 +3041,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 	dcp->write_xml();
 
 	auto const cpl = dcp->cpls()[0];
+
+	HashCalculator calc(cpl->file().get());
 
 	{
 		Editor e (cpl->file().get());
@@ -2967,7 +3056,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 		{
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyListX'"), cpl->file().get(), 71 },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:PropertyListX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 77 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get() },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 		});
 }
 
@@ -2984,6 +3075,8 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_cpl_with_encrypted_content)
 	path const pkl = dir / ( "pkl_" + encryption_test_pkl_id() + ".xml" );
 	path const cpl = dir / ( "cpl_" + encryption_test_cpl_id() + ".xml");
 
+	HashCalculator calc(cpl);
+
 	{
 		Editor e (cpl);
 		e.delete_lines ("<dsig:Signature", "</dsig:Signature>");
@@ -2993,7 +3086,9 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_cpl_with_encrypted_content)
 		{dir},
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, encryption_test_cpl_id(), canonical(cpl) },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, encryption_test_cpl_id(), canonical(cpl)
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id(), canonical(pkl), },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE },
@@ -3317,6 +3412,8 @@ BOOST_AUTO_TEST_CASE (verify_unexpected_things_in_main_markers)
 	auto dcp = make_simple (dir, 1, 24);
 	dcp->write_xml();
 
+	HashCalculator calc(find_cpl(dir));
+
 	{
 		Editor e (find_cpl(dir));
 		e.insert(
@@ -3331,7 +3428,9 @@ BOOST_AUTO_TEST_CASE (verify_unexpected_things_in_main_markers)
 		{ dir },
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir))
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::UNEXPECTED_ENTRY_POINT },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::UNEXPECTED_DURATION },
 		});
@@ -3345,6 +3444,8 @@ BOOST_AUTO_TEST_CASE(verify_invalid_content_kind)
 	auto dcp = make_simple (dir, 1, 24);
 	dcp->write_xml();
 
+	HashCalculator calc(find_cpl(dir));
+
 	{
 		Editor e(find_cpl(dir));
 		e.replace("trailer", "trip");
@@ -3356,7 +3457,9 @@ BOOST_AUTO_TEST_CASE(verify_invalid_content_kind)
 		{ dir },
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir))
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_CONTENT_KIND, string("trip") }
 		});
 
@@ -3370,6 +3473,8 @@ BOOST_AUTO_TEST_CASE(verify_valid_content_kind)
 	auto dcp = make_simple (dir, 1, 24);
 	dcp->write_xml();
 
+	HashCalculator calc(find_cpl(dir));
+
 	{
 		Editor e(find_cpl(dir));
 		e.replace("<ContentKind>trailer</ContentKind>", "<ContentKind scope=\"http://bobs.contents/\">trip</ContentKind>");
@@ -3381,7 +3486,9 @@ BOOST_AUTO_TEST_CASE(verify_valid_content_kind)
 		{ dir },
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir))
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 		});
 
 }
@@ -3395,6 +3502,8 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_1)
 	dcp->write_xml();
 
 	auto constexpr area = "<meta:MainPictureActiveArea>";
+
+	HashCalculator calc(find_cpl(dir));
 
 	{
 		Editor e(find_cpl(dir));
@@ -3410,7 +3519,9 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_1)
 		{ dir },
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir))
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 1997 is not a multiple of 2", canonical(find_cpl(dir)) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 4080 is bigger than the asset height 1080", canonical(find_cpl(dir)) },
 		});
@@ -3426,6 +3537,8 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_2)
 
 	auto constexpr area = "<meta:MainPictureActiveArea>";
 
+	HashCalculator calc(find_cpl(dir));
+
 	{
 		Editor e(find_cpl(dir));
 		e.delete_lines_after(area, 2);
@@ -3440,7 +3553,9 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_2)
 		{ dir },
 		{},
 		{
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir)) },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl.id(), canonical(find_cpl(dir))
+				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is not a multiple of 2", canonical(find_cpl(dir)) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 9900 is bigger than the asset width 1998", canonical(find_cpl(dir)) },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is bigger than the asset height 1080", canonical(find_cpl(dir)) },

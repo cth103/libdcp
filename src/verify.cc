@@ -385,15 +385,24 @@ enum class VerifyAssetResult {
 
 
 static VerifyAssetResult
-verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelFileAsset> reel_file_asset, function<void (float)> progress)
+verify_asset(
+	shared_ptr<const DCP> dcp,
+	shared_ptr<const ReelFileAsset> reel_file_asset,
+	function<void (float)> progress,
+	string* reference_hash,
+	string* calculated_hash
+	)
 {
+	DCP_ASSERT(reference_hash);
+	DCP_ASSERT(calculated_hash);
+
 	/* When reading the DCP the hash will have been set to the one from the PKL/CPL.
 	 * We want to calculate the hash of the actual file contents here, so that we
 	 * can check it.  unset_hash() means that this calculation will happen on the
 	 * call to hash().
 	 */
 	reel_file_asset->asset_ref()->unset_hash();
-	auto const actual_hash = reel_file_asset->asset_ref()->hash([progress](int64_t done, int64_t total) {
+	*calculated_hash = reel_file_asset->asset_ref()->hash([progress](int64_t done, int64_t total) {
 		progress(float(done) / total);
 	});
 
@@ -403,22 +412,23 @@ verify_asset (shared_ptr<const DCP> dcp, shared_ptr<const ReelFileAsset> reel_fi
 
 	auto asset = reel_file_asset->asset_ref().asset();
 
-	optional<string> pkl_hash;
+	optional<string> maybe_pkl_hash;
 	for (auto i: pkls) {
-		pkl_hash = i->hash (reel_file_asset->asset_ref()->id());
-		if (pkl_hash) {
+		maybe_pkl_hash = i->hash (reel_file_asset->asset_ref()->id());
+		if (maybe_pkl_hash) {
 			break;
 		}
 	}
 
-	DCP_ASSERT (pkl_hash);
+	DCP_ASSERT(maybe_pkl_hash);
+	*reference_hash = *maybe_pkl_hash;
 
 	auto cpl_hash = reel_file_asset->hash();
-	if (cpl_hash && *cpl_hash != *pkl_hash) {
+	if (cpl_hash && *cpl_hash != *reference_hash) {
 		return VerifyAssetResult::CPL_PKL_DIFFER;
 	}
 
-	if (actual_hash != *pkl_hash) {
+	if (*calculated_hash != *reference_hash) {
 		return VerifyAssetResult::BAD;
 	}
 
@@ -517,12 +527,18 @@ verify_main_picture_asset (
 
 	if (options.check_asset_hashes && (!options.maximum_asset_size_for_hash_check || filesystem::file_size(file) < *options.maximum_asset_size_for_hash_check)) {
 		stage ("Checking picture asset hash", file);
-		auto const r = verify_asset (dcp, reel_asset, progress);
+		string reference_hash;
+		string calculated_hash;
+		auto const r = verify_asset(dcp, reel_asset, progress, &reference_hash, &calculated_hash);
 		switch (r) {
 			case VerifyAssetResult::BAD:
-				notes.push_back ({
-					VerificationNote::Type::ERROR, VerificationNote::Code::INCORRECT_PICTURE_HASH, file
-				});
+				notes.push_back(
+					dcp::VerificationNote(
+						VerificationNote::Type::ERROR,
+						VerificationNote::Code::INCORRECT_PICTURE_HASH,
+						file
+						).set_reference_hash(reference_hash).set_calculated_hash(calculated_hash)
+					);
 				break;
 			case VerifyAssetResult::CPL_PKL_DIFFER:
 				notes.push_back ({
@@ -613,10 +629,18 @@ verify_main_sound_asset (
 
 	if (options.check_asset_hashes && (!options.maximum_asset_size_for_hash_check || filesystem::file_size(file) < *options.maximum_asset_size_for_hash_check)) {
 		stage("Checking sound asset hash", file);
-		auto const r = verify_asset (dcp, reel_asset, progress);
+		string reference_hash;
+		string calculated_hash;
+		auto const r = verify_asset(dcp, reel_asset, progress, &reference_hash, &calculated_hash);
 		switch (r) {
 			case VerifyAssetResult::BAD:
-				notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::INCORRECT_SOUND_HASH, file});
+				notes.push_back(
+					dcp::VerificationNote(
+						VerificationNote::Type::ERROR,
+						VerificationNote::Code::INCORRECT_SOUND_HASH,
+						file
+						).set_reference_hash(reference_hash).set_calculated_hash(calculated_hash)
+					);
 				break;
 			case VerifyAssetResult::CPL_PKL_DIFFER:
 				notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_SOUND_HASHES, file});
@@ -1585,8 +1609,16 @@ verify_cpl(
 	for (auto i: dcp->pkls()) {
 		/* Check that the CPL's hash corresponds to the PKL */
 		optional<string> h = i->hash(cpl->id());
-		if (h && make_digest(ArrayData(*cpl->file())) != *h) {
-			notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->id(), cpl->file().get()});
+		auto calculated_cpl_hash = make_digest(ArrayData(*cpl->file()));
+		if (h && calculated_cpl_hash != *h) {
+			notes.push_back(
+				dcp::VerificationNote(
+					VerificationNote::Type::ERROR,
+					VerificationNote::Code::MISMATCHED_CPL_HASHES,
+					cpl->id(),
+					cpl->file().get()
+					).set_calculated_hash(calculated_cpl_hash).set_reference_hash(*h)
+				);
 		}
 
 		/* Check that any PKL with a single CPL has its AnnotationText the same as the CPL's ContentTitleText */
@@ -1918,15 +1950,15 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::FAILED_READ:
 		return *note.note();
 	case VerificationNote::Code::MISMATCHED_CPL_HASHES:
-		return String::compose("The hash of the CPL %1 in the PKL does not agree with the CPL file.", note.note().get());
+		return String::compose("The hash (%1) of the CPL (%2) in the PKL does not agree with the CPL file (%3).", note.reference_hash().get(), note.note().get(), note.calculated_hash().get());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE:
 		return String::compose("The picture in a reel has an invalid frame rate %1.", note.note().get());
 	case VerificationNote::Code::INCORRECT_PICTURE_HASH:
-		return String::compose("The hash of the picture asset %1 does not agree with the PKL file.", note.file()->filename());
+		return String::compose("The hash (%1) of the picture asset %2 does not agree with the PKL file (%3).", note.calculated_hash().get(), note.file()->filename(), note.reference_hash().get());
 	case VerificationNote::Code::MISMATCHED_PICTURE_HASHES:
 		return String::compose("The PKL and CPL hashes differ for the picture asset %1.", note.file()->filename());
 	case VerificationNote::Code::INCORRECT_SOUND_HASH:
-		return String::compose("The hash of the sound asset %1 does not agree with the PKL file.", note.file()->filename());
+		return String::compose("The hash (%1) of the sound asset %2 does not agree with the PKL file (%3).", note.calculated_hash().get(), note.file()->filename(), note.reference_hash().get());
 	case VerificationNote::Code::MISMATCHED_SOUND_HASHES:
 		return String::compose("The PKL and CPL hashes differ for the sound asset %1.", note.file()->filename());
 	case VerificationNote::Code::EMPTY_ASSET_PATH:
@@ -2161,7 +2193,9 @@ dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		a.size() == b.size() &&
 		a.id() == b.id() &&
 		a.other_id() == b.other_id() &&
-		a.frame_rate() == b.frame_rate();
+		a.frame_rate() == b.frame_rate() &&
+		a.reference_hash() == b.reference_hash() &&
+		a.calculated_hash() == b.calculated_hash();
 }
 
 

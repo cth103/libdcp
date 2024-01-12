@@ -101,6 +101,8 @@ public:
 		/** The hash of the CPL in the PKL does not agree with the CPL file
 		 *  note contains CPL ID
 		 *  file contains CPL filename
+		 *  calculated_hash contains current hash of the CPL
+		 *  reference_hash contains the hash written in the PKL
 		 */
 		MISMATCHED_CPL_HASHES,
 		/** The frame rate given in a reel for the main picture is not 24, 25, 30, 48, 50 or 60
@@ -109,6 +111,8 @@ public:
 		INVALID_PICTURE_FRAME_RATE,
 		/** The hash of a main picture asset does not agree with the PKL file
 		 *  file contains the picture asset filename
+		 *  calculated_hash contains the current hash of the picture MXF
+		 *  reference_hash contains the hash from the PKL
 		 */
 		INCORRECT_PICTURE_HASH,
 		/** The hash of a main picture is different in the CPL and PKL
@@ -117,6 +121,8 @@ public:
 		MISMATCHED_PICTURE_HASHES,
 		/** The hash of a main sound asset does not agree with the PKL file
 		 *  file contains the sound asset filename
+		 *  calculated_hash contains the current hash of the picture MXF
+		 *  reference_hash contains the hash from the PKL
 		 */
 		INCORRECT_SOUND_HASH,
 		/** The hash of a main sound is different in the CPL and PKL
@@ -525,7 +531,9 @@ private:
 		SIZE,
 		ID,
 		OTHER_ID,
-		FRAME_RATE
+		FRAME_RATE,
+		CALCULATED_HASH,
+		REFERENCE_HASH
 	};
 
 	template <class T>
@@ -603,6 +611,24 @@ public:
 
 	boost::optional<int> frame_rate() const {
 		return data<int>(Data::FRAME_RATE);
+	}
+
+	VerificationNote& set_calculated_hash(std::string hash) {
+		_data[Data::CALCULATED_HASH] = hash;
+		return *this;
+	}
+
+	boost::optional<std::string> calculated_hash() const {
+		return data<std::string>(Data::CALCULATED_HASH);
+	}
+
+	VerificationNote& set_reference_hash(std::string hash) {
+		_data[Data::REFERENCE_HASH] = hash;
+		return *this;
+	}
+
+	boost::optional<std::string> reference_hash() const {
+		return data<std::string>(Data::REFERENCE_HASH);
 	}
 
 private:
