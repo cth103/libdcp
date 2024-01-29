@@ -131,7 +131,8 @@ def configure(conf):
             image = conf.check_cfg(package='ImageMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
             graphics = conf.check_cfg(package='GraphicsMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
             if image is None and graphics is None:
-                Logs.error('Neither ImageMagick++ nor GraphicsMagick++ found: one or the other is required unless you ./waf configure --disable-examples --disable-dcpdumpimage')
+                Logs.error('Neither ImageMagick++ nor GraphicsMagick++ found: one or the other is required unless you ./waf configure --disable-examples --disable-dumpimage')
+                sys.exit(1)
 
     conf.check_cfg(package='sndfile', args='--cflags --libs', uselib_store='SNDFILE', mandatory=False)
 
