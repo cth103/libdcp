@@ -41,6 +41,7 @@
 #define LIBDCP_J2K_PICTURE_ASSET_H
 
 
+#include "behaviour.h"
 #include "mxf.h"
 #include "metadata.h"
 #include "picture_asset.h"
@@ -73,11 +74,6 @@ public:
 
 	/** Create a new J2KPictureAsset with a given edit rate and standard */
 	J2KPictureAsset (Fraction edit_rate, Standard standard);
-
-	enum class Behaviour {
-		OVERWRITE_EXISTING,
-		MAKE_NEW
-	};
 
 	virtual std::shared_ptr<J2KPictureAssetWriter> start_write (
 		boost::filesystem::path file,

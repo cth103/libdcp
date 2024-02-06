@@ -258,7 +258,7 @@ BOOST_AUTO_TEST_CASE (validity_period_test1)
 
 	auto asset = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 	asset->set_key (dcp::Key());
-	auto writer = asset->start_write("build/test/validity_period_test1.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
+	auto writer = asset->start_write("build/test/validity_period_test1.mxf", dcp::Behaviour::MAKE_NEW);
 	dcp::ArrayData frame ("test/data/flat_red.j2c");
 	writer->write (frame.data(), frame.size());
 	writer->finalize ();

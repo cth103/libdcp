@@ -1027,7 +1027,7 @@ dcp_from_frame (dcp::ArrayData const& frame, path dir)
 {
 	auto asset = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
 	create_directories (dir);
-	auto writer = asset->start_write(dir / "pic.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
+	auto writer = asset->start_write(dir / "pic.mxf", dcp::Behaviour::MAKE_NEW);
 	for (int i = 0; i < 24; ++i) {
 		writer->write (frame.data(), frame.size());
 	}
@@ -1832,7 +1832,7 @@ check_picture_size (int width, int height, int frame_rate, bool three_d)
 	} else {
 		mp = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction(frame_rate, 1), dcp::Standard::SMPTE);
 	}
-	auto picture_writer = mp->start_write(dcp_path / "video.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
+	auto picture_writer = mp->start_write(dcp_path / "video.mxf", dcp::Behaviour::MAKE_NEW);
 
 	auto image = black_image (dcp::Size(width, height));
 	auto j2c = dcp::compress_j2k (image, 100000000, frame_rate, three_d, width > 2048);
@@ -4673,7 +4673,7 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 	auto mp = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	mp->set_key (key);
 
-	auto writer = mp->start_write(dir / "video.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
+	auto writer = mp->start_write(dir / "video.mxf", dcp::Behaviour::MAKE_NEW);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data(), j2c.size());
@@ -5441,7 +5441,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 	boost::filesystem::create_directories(path);
 
 	auto mp = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction(24, 1), dcp::Standard::SMPTE);
-	auto picture_writer = mp->start_write(path / "video.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
+	auto picture_writer = mp->start_write(path / "video.mxf", dcp::Behaviour::MAKE_NEW);
 
 	dcp::Size const size(1998, 1080);
 	auto image = make_shared<dcp::OpenJPEGImage>(size);

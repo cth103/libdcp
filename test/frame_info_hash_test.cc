@@ -67,7 +67,7 @@ check (shared_ptr<dcp::J2KPictureAssetWriter> writer, boost::random::uniform_int
 BOOST_AUTO_TEST_CASE (frame_info_hash_test)
 {
 	auto mp = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
-	auto writer = mp->start_write("build/test/frame_info_hash_test.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
+	auto writer = mp->start_write("build/test/frame_info_hash_test.mxf", dcp::Behaviour::MAKE_NEW);
 
 	boost::random::mt19937 rng(1);
 	boost::random::uniform_int_distribution<> dist(0, 4095);

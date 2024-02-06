@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	mp->set_metadata (mxf_metadata);
 	mp->set_key (key);
 
-	auto writer = mp->start_write("build/test/DCP/encryption_test/video.mxf", dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
+	auto writer = mp->start_write("build/test/DCP/encryption_test/video.mxf", dcp::Behaviour::MAKE_NEW);
 	dcp::ArrayData j2c ("test/data/flat_red.j2c");
 	for (int i = 0; i < 24; ++i) {
 		writer->write (j2c.data (), j2c.size ());

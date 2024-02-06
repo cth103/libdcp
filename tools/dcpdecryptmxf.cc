@@ -235,7 +235,7 @@ main (int argc, char* argv[])
 			dcp::MonoJ2KPictureAsset in (input_file);
 			add_key (in, decrypted_kdm);
 			dcp::MonoJ2KPictureAsset out (in.edit_rate(), dcp::Standard::SMPTE);
-			auto writer = out.start_write(output_file.get(), dcp::J2KPictureAsset::Behaviour::MAKE_NEW);
+			auto writer = out.start_write(output_file.get(), dcp::Behaviour::MAKE_NEW);
 			copy (in, writer, ignore_hmac);
 			break;
 		}
