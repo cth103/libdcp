@@ -32,7 +32,7 @@
 */
 
 
-/** @file  rgb_xyz.h
+/** @file  src/rgb_xyz.h
  *  @brief Conversion between RGB and XYZ
  */
 

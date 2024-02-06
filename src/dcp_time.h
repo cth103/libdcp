@@ -37,8 +37,8 @@
  */
 
 
-#ifndef LIBDCP_TIME_H
-#define LIBDCP_TIME_H
+#ifndef LIBDCP_DCP_TIME_H
+#define LIBDCP_DCP_TIME_H
 
 
 #include "types.h"

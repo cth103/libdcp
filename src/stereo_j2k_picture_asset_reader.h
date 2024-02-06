@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/stereo_picture_asset_reader.h
+/** @file  src/stereo_j2k_picture_asset_reader.h
  *  @brief StereoJ2KPictureAssetReader typedef
  */
 
 
-#ifndef LIBDCP_STEREO_PICTURE_ASSET_READER_H
-#define LIBDCP_STEREO_PICTURE_ASSET_READER_H
+#ifndef LIBDCP_STEREO_J2K_PICTURE_ASSET_READER_H
+#define LIBDCP_STEREO_J2K_PICTURE_ASSET_READER_H
 
 
 #include "asset_reader.h"

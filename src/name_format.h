@@ -37,8 +37,8 @@
  */
 
 
-#ifndef LIBDCP_NAME_FORMAT
-#define LIBDCP_NAME_FORMAT
+#ifndef LIBDCP_NAME_FORMAT_H
+#define LIBDCP_NAME_FORMAT_H
 
 
 #include <string>

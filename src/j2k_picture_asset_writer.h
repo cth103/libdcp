@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/picture_asset_writer.h
+/** @file  src/j2k_picture_asset_writer.h
  *  @brief J2KPictureAssetWriter and FrameInfo classes.
  */
 
 
-#ifndef LIBDCP_PICTURE_ASSET_WRITER_H
-#define LIBDCP_PICTURE_ASSET_WRITER_H
+#ifndef LIBDCP_J2K_PICTURE_ASSET_WRITER_H
+#define LIBDCP_J2K_PICTURE_ASSET_WRITER_H
 
 
 #include "asset_writer.h"

@@ -32,7 +32,7 @@
 */
 
 
-/** @file  src/reel_markers_asset.cc
+/** @file  src/reel_markers_asset.h
  *  @brief ReelMarkersAsset class
  */
 

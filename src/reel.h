@@ -32,7 +32,7 @@
 */
 
 
-/** @file  src/reel.cc
+/** @file  src/reel.h
  *  @brief Reel class
  */
 

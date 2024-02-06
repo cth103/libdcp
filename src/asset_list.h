@@ -32,8 +32,8 @@
 */
 
 
-#ifndef DCP_ASSET_LIST_H
-#define DCP_ASSET_LIST_H
+#ifndef LIBDCP_ASSET_LIST_H
+#define LIBDCP_ASSET_LIST_H
 
 
 #include "types.h"

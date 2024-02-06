@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/stereo_picture_frame.h
+/** @file  src/stereo_j2k_picture_frame.h
  *  @brief StereoJ2KPictureFrame class
  */
 
 
-#ifndef LIBDCP_STEREO_PICTURE_FRAME_H
-#define LIBDCP_STEREO_PICTURE_FRAME_H
+#ifndef LIBDCP_STEREO_J2K_PICTURE_FRAME_H
+#define LIBDCP_STEREO_J2K_PICTURE_FRAME_H
 
 
 #include "asset_reader.h"

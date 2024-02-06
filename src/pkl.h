@@ -32,7 +32,7 @@
 */
 
 
-/** @file  src/pkl.cc
+/** @file  src/pkl.h
  *  @brief PKL class
  */
 

@@ -32,7 +32,7 @@
 */
 
 
-/** @file  src/locale_convert.cc
+/** @file  src/locale_convert.h
  *  @brief Methods to convert to/from string using the current locale
  */
 

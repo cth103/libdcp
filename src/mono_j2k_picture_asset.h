@@ -37,8 +37,8 @@
  */
 
 
-#ifndef LIBDCP_J2K_MONO_PICTURE_ASSET_H
-#define LIBDCP_J2K_MONO_PICTURE_ASSET_H
+#ifndef LIBDCP_MONO_J2K_PICTURE_ASSET_H
+#define LIBDCP_MONO_J2K_PICTURE_ASSET_H
 
 
 #include "j2k_picture_asset.h"

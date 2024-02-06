@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/stereo_picture_asset.h
+/** @file  src/stereo_j2k_picture_asset.h
  *  @brief StereoJ2KPictureAsset class
  */
 
 
-#ifndef LIBDCP_STEREO_PICTURE_ASSET_H
-#define LIBDCP_STEREO_PICTURE_ASSET_H
+#ifndef LIBDCP_STEREO_J2K_PICTURE_ASSET_H
+#define LIBDCP_STEREO_J2K_PICTURE_ASSET_H
 
 
 #include "j2k_picture_asset.h"

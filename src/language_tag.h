@@ -32,7 +32,7 @@
 */
 
 
-/** @file  src/language_tag.cc
+/** @file  src/language_tag.h
  *  @brief LanguageTag class
  */
 

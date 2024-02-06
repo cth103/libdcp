@@ -37,8 +37,8 @@
  */
 
 
-#ifndef DCP_INTEROP_SUBTITLE_ASSET_H
-#define DCP_INTEROP_SUBTITLE_ASSET_H
+#ifndef LIBDCP_INTEROP_SUBTITLE_ASSET_H
+#define LIBDCP_INTEROP_SUBTITLE_ASSET_H
 
 
 #include "subtitle_asset.h"

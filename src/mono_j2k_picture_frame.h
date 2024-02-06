@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/mono_picture_frame.h
+/** @file  src/mono_j2k_picture_frame.h
  *  @brief MonoJ2KPictureFrame class
  */
 
 
-#ifndef LIBDCP_MONO_PICTURE_FRAME_H
-#define LIBDCP_MONO_PICTURE_FRAME_H
+#ifndef LIBDCP_MONO_J2K_PICTURE_FRAME_H
+#define LIBDCP_MONO_J2K_PICTURE_FRAME_H
 
 
 #include "asset_reader.h"

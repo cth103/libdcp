@@ -32,8 +32,8 @@
 */
 
 
-/** @file  src/reel_interop_subtitle_asset.h
- *  @brief ReelInteropSubtitleAsset class
+/** @file  src/reel_smpte_subtitle_asset.h
+ *  @brief ReelSMPTESubtitleAsset class
  */
 
 

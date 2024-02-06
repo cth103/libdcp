@@ -37,8 +37,8 @@
  */
 
 
-#ifndef DCP_COLOUR_CONVERSION_H
-#define DCP_COLOUR_CONVERSION_H
+#ifndef LIBDCP_COLOUR_CONVERSION_H
+#define LIBDCP_COLOUR_CONVERSION_H
 
 
 #include "chromaticity.h"

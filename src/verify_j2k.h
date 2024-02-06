@@ -37,8 +37,8 @@
  */
 
 
-#ifndef LIBDCP_VERIFY_J2K
-#define LIBDCP_VERIFY_J2K
+#ifndef LIBDCP_VERIFY_J2K_H
+#define LIBDCP_VERIFY_J2K_H
 
 
 #include "verify.h"

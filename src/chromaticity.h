@@ -37,8 +37,8 @@
  */
 
 
-#ifndef DCP_CHROMATICITY_H
-#define DCP_CHROMATICITY_H
+#ifndef LIBDCP_CHROMATICITY_H
+#define LIBDCP_CHROMATICITY_H
 
 
 #include <cmath>
