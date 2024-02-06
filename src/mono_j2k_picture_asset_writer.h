@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/mono_picture_asset_writer.h
+/** @file  src/mono_j2k_picture_asset_writer.h
  *  @brief MonoJ2KPictureAssetWriter class
  */
 
 
-#ifndef LIBDCP_MONO_PICTURE_ASSET_WRITER_H
-#define LIBDCP_MONO_PICTURE_ASSET_WRITER_H
+#ifndef LIBDCP_MONO_J2K_PICTURE_ASSET_WRITER_H
+#define LIBDCP_MONO_J2K_PICTURE_ASSET_WRITER_H
 
 
 #include "j2k_picture_asset_writer.h"

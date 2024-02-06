@@ -32,7 +32,7 @@
 */
 
 
-/** @file  src/picture_asset.h
+/** @file  src/j2k_picture_asset.h
  *  @brief J2KPictureAsset class
  */
 

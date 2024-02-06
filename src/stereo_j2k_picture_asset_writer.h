@@ -32,7 +32,7 @@
 */
 
 
-/** @file  src/stereo_picture_asset_writer.h
+/** @file  src/stereo_j2k_picture_asset_writer.h
  *  @brief StereoJ2KPictureAssetWriter class
  */
 
