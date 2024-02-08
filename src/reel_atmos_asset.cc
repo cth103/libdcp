@@ -82,11 +82,11 @@ ReelAtmosAsset::cpl_node_namespace () const
 }
 
 
-xmlpp::Node *
-ReelAtmosAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+xmlpp::Element*
+ReelAtmosAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
 	auto asset = ReelFileAsset::write_to_cpl (node, standard);
-	asset->add_child("axd:DataType")->add_child_text("urn:smpte:ul:060e2b34.04010105.0e090604.00000000");
+	cxml::add_text_child(asset, "axd:DataType", "urn:smpte:ul:060e2b34.04010105.0e090604.00000000");
 	return asset;
 }
 

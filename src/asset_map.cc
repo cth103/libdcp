@@ -165,29 +165,29 @@ AssetMap::write_xml(boost::filesystem::path file) const
 		DCP_ASSERT (false);
 	}
 
-	root->add_child("Id")->add_child_text("urn:uuid:" + _id);
+	cxml::add_text_child(root, "Id", "urn:uuid:" + _id);
 	if (_annotation_text) {
-		root->add_child("AnnotationText")->add_child_text(*_annotation_text);
+		cxml::add_text_child(root, "AnnotationText", *_annotation_text);
 	}
 
 	switch (_standard) {
 	case Standard::INTEROP:
-		root->add_child("VolumeCount")->add_child_text("1");
-		root->add_child("IssueDate")->add_child_text(_issue_date);
-		root->add_child("Issuer")->add_child_text(_issuer);
-		root->add_child("Creator")->add_child_text(_creator);
+		cxml::add_text_child(root, "VolumeCount", "1");
+		cxml::add_text_child(root, "IssueDate", _issue_date);
+		cxml::add_text_child(root, "Issuer", _issuer);
+		cxml::add_text_child(root, "Creator", _creator);
 		break;
 	case Standard::SMPTE:
-		root->add_child("Creator")->add_child_text(_creator);
-		root->add_child("VolumeCount")->add_child_text("1");
-		root->add_child("IssueDate")->add_child_text(_issue_date);
-		root->add_child("Issuer")->add_child_text(_issuer);
+		cxml::add_text_child(root, "Creator", _creator);
+		cxml::add_text_child(root, "VolumeCount", "1");
+		cxml::add_text_child(root, "IssueDate", _issue_date);
+		cxml::add_text_child(root, "Issuer", _issuer);
 		break;
 	default:
 		DCP_ASSERT (false);
 	}
 
-	auto asset_list = root->add_child("AssetList");
+	auto asset_list = cxml::add_child(root, "AssetList");
 	for (auto const& asset: _assets) {
 		asset.write_xml(asset_list, file.parent_path());
 	}
@@ -200,20 +200,20 @@ AssetMap::write_xml(boost::filesystem::path file) const
 void
 AssetMap::Asset::write_xml(xmlpp::Element* asset_list, boost::filesystem::path dcp_root_directory) const
 {
-	auto node = asset_list->add_child("Asset");
-	node->add_child("Id")->add_child_text("urn:uuid:" + _id);
+	auto node = cxml::add_child(asset_list, "Asset");
+	cxml::add_text_child(node, "Id", "urn:uuid:" + _id);
 	if (_pkl) {
-		node->add_child("PackingList")->add_child_text("true");
+		cxml::add_text_child(node, "PackingList", "true");
 	}
-	auto chunk_list = node->add_child("ChunkList");
-	auto chunk = chunk_list->add_child("Chunk");
+	auto chunk_list = cxml::add_child(node, "ChunkList");
+	auto chunk = cxml::add_child(chunk_list, "Chunk");
 
 	auto relative_path = relative_to_root(filesystem::canonical(dcp_root_directory), filesystem::canonical(_path));
 	DCP_ASSERT(relative_path);
 
-	chunk->add_child("Path")->add_child_text(relative_path->generic_string());
-	chunk->add_child("VolumeIndex")->add_child_text("1");
-	chunk->add_child("Offset")->add_child_text("0");
-	chunk->add_child("Length")->add_child_text(raw_convert<string>(filesystem::file_size(_path)));
+	cxml::add_text_child(chunk, "Path", relative_path->generic_string());
+	cxml::add_text_child(chunk, "VolumeIndex", "1");
+	cxml::add_text_child(chunk, "Offset", "0");
+	cxml::add_text_child(chunk, "Length", raw_convert<string>(filesystem::file_size(_path)));
 }
 

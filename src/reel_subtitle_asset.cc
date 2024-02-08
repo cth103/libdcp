@@ -103,12 +103,12 @@ ReelSubtitleAsset::equals(shared_ptr<const ReelSubtitleAsset> other, EqualityOpt
 }
 
 
-xmlpp::Node *
-ReelSubtitleAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+xmlpp::Element *
+ReelSubtitleAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
 	auto asset = ReelFileAsset::write_to_cpl (node, standard);
 	if (_language) {
-		asset->add_child("Language")->add_child_text(*_language);
+		cxml::add_text_child(asset, "Language", *_language);
 	}
 	return asset;
 }

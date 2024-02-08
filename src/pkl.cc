@@ -105,26 +105,26 @@ PKL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain>
 		pkl = doc.create_root_node("PackingList", pkl_smpte_ns);
 	}
 
-	pkl->add_child("Id")->add_child_text ("urn:uuid:" + _id);
+	cxml::add_text_child(pkl, "Id", "urn:uuid:" + _id);
 	if (_annotation_text) {
-		pkl->add_child("AnnotationText")->add_child_text (*_annotation_text);
+		cxml::add_text_child(pkl, "AnnotationText", *_annotation_text);
 	}
-	pkl->add_child("IssueDate")->add_child_text (_issue_date);
-	pkl->add_child("Issuer")->add_child_text (_issuer);
-	pkl->add_child("Creator")->add_child_text (_creator);
+	cxml::add_text_child(pkl, "IssueDate", _issue_date);
+	cxml::add_text_child(pkl, "Issuer", _issuer);
+	cxml::add_text_child(pkl, "Creator", _creator);
 
-	auto asset_list = pkl->add_child("AssetList");
+	auto asset_list = cxml::add_child(pkl, "AssetList");
 	for (auto i: _assets) {
-		auto asset = asset_list->add_child("Asset");
-		asset->add_child("Id")->add_child_text ("urn:uuid:" + i->id());
+		auto asset = cxml::add_child(asset_list, "Asset");
+		cxml::add_text_child(asset, "Id", "urn:uuid:" + i->id());
 		if (i->annotation_text()) {
-			asset->add_child("AnnotationText")->add_child_text (*i->annotation_text());
+			cxml::add_text_child(asset, "AnnotationText", *i->annotation_text());
 		}
-		asset->add_child("Hash")->add_child_text (i->hash());
-		asset->add_child("Size")->add_child_text (raw_convert<string>(i->size()));
-		asset->add_child("Type")->add_child_text (i->type());
+		cxml::add_text_child(asset, "Hash", i->hash());
+		cxml::add_text_child(asset, "Size", raw_convert<string>(i->size()));
+		cxml::add_text_child(asset, "Type", i->type());
 		if (auto filename = i->original_filename()) {
-			asset->add_child("OriginalFileName")->add_child_text(*filename);
+			cxml::add_text_child(asset, "OriginalFileName", *filename);
 		}
 	}
 

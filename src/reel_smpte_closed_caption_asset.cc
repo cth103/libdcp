@@ -65,12 +65,12 @@ ReelSMPTEClosedCaptionAsset::ReelSMPTEClosedCaptionAsset (shared_ptr<const cxml:
 }
 
 
-xmlpp::Node *
-ReelSMPTEClosedCaptionAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+xmlpp::Element*
+ReelSMPTEClosedCaptionAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
 	auto asset = ReelClosedCaptionAsset::write_to_cpl (node, standard);
 	if (_language) {
-		asset->add_child("Language", "tt")->add_child_text(*_language);
+		cxml::add_child(asset, "Language", string("tt"))->add_child_text(*_language);
 	}
 	return asset;
 }

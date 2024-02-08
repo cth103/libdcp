@@ -94,15 +94,15 @@ ReelFileAsset::file_asset_equals(shared_ptr<const ReelFileAsset> other, Equality
 }
 
 
-xmlpp::Node *
-ReelFileAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+xmlpp::Element*
+ReelFileAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
-	auto asset = ReelAsset::write_to_cpl (node, standard);
+	auto asset = ReelAsset::write_to_cpl(node, standard);
         if (_key_id) {
-		asset->add_child("KeyId")->add_child_text("urn:uuid:" + *_key_id);
+		cxml::add_text_child(asset, "KeyId", "urn:uuid:" + *_key_id);
         }
 	if (_hash) {
-		asset->add_child("Hash")->add_child_text(*_hash);
+		cxml::add_text_child(asset, "Hash", *_hash);
 	}
 	return asset;
 }

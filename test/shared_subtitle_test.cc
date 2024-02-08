@@ -175,13 +175,13 @@ BOOST_AUTO_TEST_CASE (format_xml_test1)
 {
 	xmlpp::Document doc;
 	auto root = doc.create_root_node("Foo");
-	root->add_child("Empty");
-	root->add_child("Text")->add_child_text("Hello world");
-	root->add_child("Font")->add_child("Text")->add_child_text("Say what");
-	auto fred = root->add_child("Text")->add_child("Font");
+	cxml::add_child(root, "Empty");
+	cxml::add_text_child(root, "Text", "Hello world");
+	cxml::add_text_child(cxml::add_child(root, "Font"), "Text", "Say what");
+	auto fred = cxml::add_child(cxml::add_child(root, "Text"), "Font");
 	fred->set_attribute("bob", "job");
 	fred->add_child_text("Fred");
-	fred->add_child("Text")->add_child_text("Jim");
+	cxml::add_text_child(fred, "Text", "Jim");
 	fred->add_child_text("Sheila");
 	BOOST_REQUIRE_EQUAL (dcp::SubtitleAsset::format_xml(doc, make_pair(string{}, string{"fred"})),
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE (format_xml_entities_test)
 {
 	xmlpp::Document doc;
 	auto root = doc.create_root_node("Foo");
-	root->add_child("Bar")->add_child_text("Don't panic &amp; xml \"is\" 'great' & < > —");
+	cxml::add_text_child(root, "Bar", "Don't panic &amp; xml \"is\" 'great' & < > —");
 	BOOST_REQUIRE_EQUAL(dcp::SubtitleAsset::format_xml(doc, {}),
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 "<Foo>\n"

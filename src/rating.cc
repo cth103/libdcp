@@ -61,8 +61,8 @@ Rating::Rating (cxml::ConstNodePtr node)
 void
 Rating::as_xml (xmlpp::Element* parent) const
 {
-	parent->add_child("Agency")->add_child_text(agency);
-	parent->add_child("Label")->add_child_text(label);
+	cxml::add_text_child(parent, "Agency", agency);
+	cxml::add_text_child(parent, "Label", label);
 }
 
 

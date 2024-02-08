@@ -115,13 +115,13 @@ InteropSubtitleAsset::xml_as_string () const
 	auto root = doc.create_root_node ("DCSubtitle");
 	root->set_attribute ("Version", "1.0");
 
-	root->add_child("SubtitleID")->add_child_text (_id);
-	root->add_child("MovieTitle")->add_child_text (_movie_title);
-	root->add_child("ReelNumber")->add_child_text (raw_convert<string> (_reel_number));
-	root->add_child("Language")->add_child_text (_language);
+	cxml::add_text_child(root, "SubtitleID", _id);
+	cxml::add_text_child(root, "MovieTitle", _movie_title);
+	cxml::add_text_child(root, "ReelNumber", raw_convert<string> (_reel_number));
+	cxml::add_text_child(root, "Language", _language);
 
 	for (auto i: _load_font_nodes) {
-		auto load_font = root->add_child("LoadFont");
+		auto load_font = cxml::add_child(root, "LoadFont");
 		load_font->set_attribute ("Id", i->id);
 		load_font->set_attribute ("URI", i->uri);
 	}

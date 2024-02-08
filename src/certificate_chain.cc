@@ -606,47 +606,47 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
 	/* <Signer> */
 
 	parent->add_child_text("  ");
-	auto signer = parent->add_child("Signer");
+	auto signer = cxml::add_child(parent, "Signer");
 	signer->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
-	auto data = signer->add_child("X509Data", "dsig");
-	auto serial_element = data->add_child("X509IssuerSerial", "dsig");
-	serial_element->add_child("X509IssuerName", "dsig")->add_child_text (leaf().issuer());
-	serial_element->add_child("X509SerialNumber", "dsig")->add_child_text (leaf().serial());
-	data->add_child("X509SubjectName", "dsig")->add_child_text (leaf().subject());
+	auto data = cxml::add_child(signer, "X509Data", string("dsig"));
+	auto serial_element = cxml::add_child(data, "X509IssuerSerial", string("dsig"));
+	cxml::add_child(serial_element, "X509IssuerName", string("dsig"))->add_child_text(leaf().issuer());
+	cxml::add_child(serial_element, "X509SerialNumber", string("dsig"))->add_child_text(leaf().serial());
+	cxml::add_child(data, "X509SubjectName", string("dsig"))->add_child_text(leaf().subject());
 
 	indent (signer, 2);
 
 	/* <Signature> */
 
 	parent->add_child_text("\n  ");
-	auto signature = parent->add_child("Signature");
+	auto signature = cxml::add_child(parent, "Signature");
 	signature->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "dsig");
 	signature->set_namespace ("dsig");
 	parent->add_child_text("\n");
 
-	auto signed_info = signature->add_child ("SignedInfo", "dsig");
-	signed_info->add_child("CanonicalizationMethod", "dsig")->set_attribute ("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
+	auto signed_info = cxml::add_child(signature, "SignedInfo", string("dsig"));
+	cxml::add_child(signed_info, "CanonicalizationMethod", string("dsig"))->set_attribute("Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315");
 
 	if (standard == Standard::INTEROP) {
-		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+		cxml::add_child(signed_info, "SignatureMethod", string("dsig"))->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
 	} else {
-		signed_info->add_child("SignatureMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+		cxml::add_child(signed_info, "SignatureMethod", string("dsig"))->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
 	}
 
-	auto reference = signed_info->add_child("Reference", "dsig");
+	auto reference = cxml::add_child(signed_info, "Reference", string("dsig"));
 	reference->set_attribute ("URI", "");
 
-	auto transforms = reference->add_child("Transforms", "dsig");
-	transforms->add_child("Transform", "dsig")->set_attribute (
+	auto transforms = cxml::add_child(reference, "Transforms", string("dsig"));
+	cxml::add_child(transforms, "Transform", string("dsig"))->set_attribute(
 		"Algorithm", "http://www.w3.org/2000/09/xmldsig#enveloped-signature"
 		);
 
-	reference->add_child("DigestMethod", "dsig")->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
+	cxml::add_child(reference, "DigestMethod", string("dsig"))->set_attribute("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
 	/* This will be filled in by the signing later */
-	reference->add_child("DigestValue", "dsig");
+	cxml::add_child(reference, "DigestValue", string("dsig"));
 
-	signature->add_child("SignatureValue", "dsig");
-	signature->add_child("KeyInfo", "dsig");
+	cxml::add_child(signature, "SignatureValue", string("dsig"));
+	cxml::add_child(signature, "KeyInfo", string("dsig"));
 	add_signature_value (signature, "dsig", true);
 }
 
@@ -655,19 +655,20 @@ void
 CertificateChain::add_signature_value (xmlpp::Element* parent, string ns, bool add_indentation) const
 {
 	cxml::Node cp (parent);
-	auto key_info = cp.node_child("KeyInfo")->node();
+	auto key_info = dynamic_cast<xmlpp::Element*>(cp.node_child("KeyInfo")->node());
+	DCP_ASSERT(key_info);
 
 	/* Add the certificate chain to the KeyInfo child node of parent */
 	for (auto const& i: leaf_to_root()) {
-		auto data = key_info->add_child("X509Data", ns);
+		auto data = cxml::add_child(key_info, "X509Data", ns);
 
 		{
-			auto serial = data->add_child("X509IssuerSerial", ns);
-			serial->add_child("X509IssuerName", ns)->add_child_text (i.issuer ());
-			serial->add_child("X509SerialNumber", ns)->add_child_text (i.serial ());
+			auto serial = cxml::add_child(data, "X509IssuerSerial", ns);
+			cxml::add_child(serial, "X509IssuerName", ns)->add_child_text(i.issuer());
+			cxml::add_child(serial, "X509SerialNumber", ns)->add_child_text(i.serial());
 		}
 
-		data->add_child("X509Certificate", ns)->add_child_text (i.certificate());
+		cxml::add_child(data, "X509Certificate", ns)->add_child_text(i.certificate());
 	}
 
 	auto signature_context = xmlSecDSigCtxCreate (0);

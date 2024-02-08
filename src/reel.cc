@@ -141,9 +141,9 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node, dcp::Standard standard)
 xmlpp::Element *
 Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 {
-	auto reel = node->add_child ("Reel");
-	reel->add_child("Id")->add_child_text("urn:uuid:" + _id);
-	xmlpp::Element* asset_list = reel->add_child ("AssetList");
+	auto reel = cxml::add_child(node, "Reel");
+	cxml::add_text_child(reel, "Id", "urn:uuid:" + _id);
+	auto asset_list = cxml::add_child(reel, "AssetList");
 
 	if (_main_markers) {
 		_main_markers->write_to_cpl (asset_list, standard);

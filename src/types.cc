@@ -310,9 +310,9 @@ ContentVersion::ContentVersion (string label_text_)
 void
 ContentVersion::as_xml (xmlpp::Element* parent) const
 {
-	auto cv = parent->add_child("ContentVersion");
-	cv->add_child("Id")->add_child_text(id);
-	cv->add_child("LabelText")->add_child_text(label_text);
+	auto cv = cxml::add_child(parent, "ContentVersion");
+	cxml::add_text_child(cv, "Id", id);
+	cxml::add_text_child(cv, "LabelText", label_text);
 }
 
 
@@ -345,7 +345,7 @@ Luminance::set_value (float v)
 void
 Luminance::as_xml (xmlpp::Element* parent, string ns) const
 {
-	auto lum = parent->add_child("Luminance", ns);
+	auto lum = cxml::add_child(parent, "Luminance", ns);
 	lum->set_attribute("units", unit_to_string(_unit));
 	lum->add_child_text(raw_convert<string>(_value, 3));
 }

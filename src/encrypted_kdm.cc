@@ -85,8 +85,8 @@ public:
 
 	void as_xml (xmlpp::Element* node) const
 	{
-		node->add_child("X509IssuerName", "ds")->add_child_text (x509_issuer_name);
-		node->add_child("X509SerialNumber", "ds")->add_child_text (x509_serial_number);
+		cxml::add_child(node, "X509IssuerName", string("ds"))->add_child_text(x509_issuer_name);
+		cxml::add_child(node, "X509SerialNumber", string("ds"))->add_child_text(x509_serial_number);
 	}
 
 	string x509_issuer_name;
@@ -108,8 +108,8 @@ public:
 
 	void as_xml (xmlpp::Element* node) const
 	{
-		x509_issuer_serial.as_xml (node->add_child ("X509IssuerSerial", "ds"));
-		node->add_child("X509Certificate", "ds")->add_child_text (x509_certificate);
+		x509_issuer_serial.as_xml(cxml::add_child(node, "X509IssuerSerial", string("ds")));
+		cxml::add_child(node, "X509Certificate", string("ds"))->add_child_text(x509_certificate);
 	}
 
 	Signer x509_issuer_serial;
@@ -136,8 +136,8 @@ public:
 	void as_xml (xmlpp::Element* node) const
 	{
 		node->set_attribute ("URI", uri);
-		node->add_child("DigestMethod", "ds")->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#sha256");
-		node->add_child("DigestValue", "ds")->add_child_text (digest_value);
+		cxml::add_child(node, "DigestMethod", string("ds"))->set_attribute("Algorithm", "http://www.w3.org/2001/04/xmlenc#sha256");
+		cxml::add_child(node, "DigestValue", string("ds"))->add_child_text(digest_value);
 	}
 
 	string uri;
@@ -168,16 +168,16 @@ public:
 
 	void as_xml (xmlpp::Element* node) const
 	{
-		node->add_child ("CanonicalizationMethod", "ds")->set_attribute (
+		cxml::add_child(node, "CanonicalizationMethod", string("ds"))->set_attribute(
 			"Algorithm", "http://www.w3.org/TR/2001/REC-xml-c14n-20010315#WithComments"
 			);
 
-		node->add_child ("SignatureMethod", "ds")->set_attribute (
+		cxml::add_child(node, "SignatureMethod", string("ds"))->set_attribute(
 			"Algorithm", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
 			);
 
-		authenticated_public.as_xml (node->add_child ("Reference", "ds"));
-		authenticated_private.as_xml (node->add_child ("Reference", "ds"));
+		authenticated_public.as_xml(cxml::add_child(node, "Reference", string("ds")));
+		authenticated_private.as_xml(cxml::add_child(node, "Reference", string("ds")));
 	}
 
 private:
@@ -200,14 +200,14 @@ public:
 		}
 	}
 
-	void as_xml (xmlpp::Node* node) const
+	void as_xml(xmlpp::Element* element) const
 	{
-		signed_info.as_xml (node->add_child ("SignedInfo", "ds"));
-		node->add_child("SignatureValue", "ds")->add_child_text (signature_value);
+		signed_info.as_xml(cxml::add_child(element, "SignedInfo", string("ds")));
+		cxml::add_child(element, "SignatureValue", string("ds"))->add_child_text(signature_value);
 
-		auto key_info_node = node->add_child("KeyInfo", "ds");
+		auto key_info_node = cxml::add_child(element, "KeyInfo", string("ds"));
 		for (auto i: x509_data) {
-			i.as_xml (key_info_node->add_child("X509Data", "ds"));
+			i.as_xml(cxml::add_child(key_info_node, "X509Data", string("ds")));
 		}
 	}
 
@@ -234,17 +234,17 @@ public:
 		references["ID_AuthenticatedPrivate"] = node->set_attribute ("Id", "ID_AuthenticatedPrivate");
 
 		for (auto i: encrypted_key) {
-			auto encrypted_key = node->add_child ("EncryptedKey", "enc");
+			auto encrypted_key = cxml::add_child(node, "EncryptedKey", string("enc"));
 			/* XXX: hack for testing with Dolby */
 			encrypted_key->set_namespace_declaration ("http://www.w3.org/2001/04/xmlenc#", "enc");
-			auto encryption_method = encrypted_key->add_child("EncryptionMethod", "enc");
+			auto encryption_method = cxml::add_child(encrypted_key, "EncryptionMethod", string("enc"));
 			encryption_method->set_attribute ("Algorithm", "http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p");
-			auto digest_method = encryption_method->add_child ("DigestMethod", "ds");
+			auto digest_method = cxml::add_child(encryption_method, "DigestMethod", string("ds"));
 			/* XXX: hack for testing with Dolby */
 			digest_method->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "ds");
 			digest_method->set_attribute ("Algorithm", "http://www.w3.org/2000/09/xmldsig#sha1");
-			auto cipher_data = encrypted_key->add_child("CipherData", "enc");
-			cipher_data->add_child("CipherValue", "enc")->add_child_text (i);
+			auto cipher_data = cxml::add_child(encrypted_key, "CipherData", string("enc"));
+			cxml::add_child(cipher_data, "CipherValue", string("enc"))->add_child_text(i);
 		}
 	}
 
@@ -271,9 +271,9 @@ public:
 
 	void as_xml (xmlpp::Element* node) const
 	{
-		auto type = node->add_child("KeyType");
+		auto type = cxml::add_child(node, "KeyType");
 		type->add_child_text (key_type);
-		node->add_child("KeyId")->add_child_text ("urn:uuid:" + key_id);
+		cxml::add_text_child(node, "KeyId", "urn:uuid:" + key_id);
 		/* XXX: this feels like a bit of a hack */
 		if (key_type == "MDEK") {
 			type->set_attribute ("scope", "http://www.dolby.com/cp850/2012/KDM#kdm-key-type");
@@ -302,7 +302,7 @@ public:
 	void as_xml (xmlpp::Element* node) const
 	{
 		for (auto const& i: typed_key_id) {
-			i.as_xml (node->add_child("TypedKeyId"));
+			i.as_xml(cxml::add_child(node, ("TypedKeyId")));
 		}
 	}
 
@@ -326,13 +326,13 @@ public:
 
 	void as_xml (xmlpp::Element* node) const
 	{
-		node->add_child ("DeviceListIdentifier")->add_child_text ("urn:uuid:" + device_list_identifier);
+		cxml::add_text_child(node, "DeviceListIdentifier", "urn:uuid:" + device_list_identifier);
 		if (device_list_description) {
-			node->add_child ("DeviceListDescription")->add_child_text (device_list_description.get());
+			cxml::add_text_child(node, "DeviceListDescription", device_list_description.get());
 		}
-		auto device_list = node->add_child ("DeviceList");
+		auto device_list = cxml::add_child(node, "DeviceList");
 		for (auto i: certificate_thumbprints) {
-			device_list->add_child("CertificateThumbprint")->add_child_text (i);
+			cxml::add_text_child(device_list, "CertificateThumbprint", i);
 		}
 	}
 
@@ -357,8 +357,8 @@ public:
 
 	void as_xml (xmlpp::Element* node) const
 	{
-		node->add_child("X509IssuerName", "ds")->add_child_text (x509_issuer_name);
-		node->add_child("X509SerialNumber", "ds")->add_child_text (x509_serial_number);
+		cxml::add_child(node, "X509IssuerName", string("ds"))->add_child_text(x509_issuer_name);
+		cxml::add_child(node, "X509SerialNumber", string("ds"))->add_child_text(x509_serial_number);
 	}
 
 	string x509_issuer_name;
@@ -380,8 +380,8 @@ public:
 
 	void as_xml (xmlpp::Element* node) const
 	{
-		x509_issuer_serial.as_xml (node->add_child ("X509IssuerSerial"));
-		node->add_child("X509SubjectName")->add_child_text (x509_subject_name);
+		x509_issuer_serial.as_xml(cxml::add_child(node, "X509IssuerSerial"));
+		cxml::add_text_child(node, "X509SubjectName", x509_subject_name);
 	}
 
 	X509IssuerSerial x509_issuer_serial;
@@ -428,30 +428,30 @@ public:
 	{
 		node->set_attribute ("xmlns", "http://www.smpte-ra.org/schemas/430-1/2006/KDM");
 
-		recipient.as_xml (node->add_child ("Recipient"));
-		node->add_child("CompositionPlaylistId")->add_child_text ("urn:uuid:" + composition_playlist_id);
-		node->add_child("ContentTitleText")->add_child_text (content_title_text);
+		recipient.as_xml(cxml::add_child(node, "Recipient"));
+		cxml::add_text_child(node, "CompositionPlaylistId", "urn:uuid:" + composition_playlist_id);
+		cxml::add_text_child(node, "ContentTitleText", content_title_text);
 		if (content_authenticator) {
-			node->add_child("ContentAuthenticator")->add_child_text (content_authenticator.get ());
+			cxml::add_text_child(node, "ContentAuthenticator", content_authenticator.get());
 		}
-		node->add_child("ContentKeysNotValidBefore")->add_child_text (not_valid_before.as_string ());
-		node->add_child("ContentKeysNotValidAfter")->add_child_text (not_valid_after.as_string ());
+		cxml::add_text_child(node, "ContentKeysNotValidBefore", not_valid_before.as_string());
+		cxml::add_text_child(node, "ContentKeysNotValidAfter", not_valid_after.as_string());
 		if (authorized_device_info) {
-			authorized_device_info->as_xml (node->add_child ("AuthorizedDeviceInfo"));
+			authorized_device_info->as_xml(cxml::add_child(node, "AuthorizedDeviceInfo"));
 		}
-		key_id_list.as_xml (node->add_child ("KeyIdList"));
+		key_id_list.as_xml(cxml::add_child(node, "KeyIdList"));
 
 		if (disable_forensic_marking_picture || disable_forensic_marking_audio) {
-			auto forensic_mark_flag_list = node->add_child ("ForensicMarkFlagList");
+			auto forensic_mark_flag_list = cxml::add_child(node, "ForensicMarkFlagList");
 			if (disable_forensic_marking_picture) {
-				forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text(picture_disable);
+				cxml::add_text_child(forensic_mark_flag_list, "ForensicMarkFlag", picture_disable);
 			}
 			if (disable_forensic_marking_audio) {
 				auto mrkflg = audio_disable;
 				if (*disable_forensic_marking_audio > 0) {
 					mrkflg += String::compose ("-above-channel-%1", *disable_forensic_marking_audio);
 				}
-				forensic_mark_flag_list->add_child("ForensicMarkFlag")->add_child_text (mrkflg);
+				cxml::add_text_child(forensic_mark_flag_list, "ForensicMarkFlag", mrkflg);
 			}
 		}
 	}
@@ -490,7 +490,7 @@ public:
 
 	void as_xml (xmlpp::Element* node) const
 	{
-		kdm_required_extensions.as_xml (node->add_child ("KDMRequiredExtensions"));
+		kdm_required_extensions.as_xml(cxml::add_child(node, "KDMRequiredExtensions"));
 	}
 
 	KDMRequiredExtensions kdm_required_extensions;
@@ -521,17 +521,17 @@ public:
 	{
 		references["ID_AuthenticatedPublic"] = node->set_attribute ("Id", "ID_AuthenticatedPublic");
 
-		node->add_child("MessageId")->add_child_text ("urn:uuid:" + message_id);
-		node->add_child("MessageType")->add_child_text ("http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
+		cxml::add_text_child(node, "MessageId", "urn:uuid:" + message_id);
+		cxml::add_text_child(node, "MessageType", "http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
 		if (annotation_text) {
-			node->add_child("AnnotationText")->add_child_text (annotation_text.get ());
+			cxml::add_text_child(node, "AnnotationText", annotation_text.get());
 		}
-		node->add_child("IssueDate")->add_child_text (issue_date);
+		cxml::add_text_child(node, "IssueDate", issue_date);
 
-		signer.as_xml (node->add_child ("Signer"));
-		required_extensions.as_xml (node->add_child ("RequiredExtensions"));
+		signer.as_xml(cxml::add_child(node, "Signer"));
+		required_extensions.as_xml(cxml::add_child(node, "RequiredExtensions"));
 
-		node->add_child ("NonCriticalExtensions");
+		cxml::add_child(node, "NonCriticalExtensions");
 	}
 
 	string message_id;
@@ -563,14 +563,14 @@ public:
 
 	shared_ptr<xmlpp::Document> as_xml () const
 	{
-		shared_ptr<xmlpp::Document> document (new xmlpp::Document ());
-		xmlpp::Element* root = document->create_root_node ("DCinemaSecurityMessage", "http://www.smpte-ra.org/schemas/430-3/2006/ETM");
+		auto document = make_shared<xmlpp::Document>();
+		auto root = document->create_root_node("DCinemaSecurityMessage", "http://www.smpte-ra.org/schemas/430-3/2006/ETM");
 		root->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "ds");
 		root->set_namespace_declaration ("http://www.w3.org/2001/04/xmlenc#", "enc");
 		map<string, xmlpp::Attribute *> references;
-		authenticated_public.as_xml (root->add_child ("AuthenticatedPublic"), references);
-		authenticated_private.as_xml (root->add_child ("AuthenticatedPrivate"), references);
-		signature.as_xml (root->add_child ("Signature", "ds"));
+		authenticated_public.as_xml(cxml::add_child(root, "AuthenticatedPublic"), references);
+		authenticated_private.as_xml(cxml::add_child(root, "AuthenticatedPrivate"), references);
+		signature.as_xml(cxml::add_child(root, "Signature", string("ds")));
 
 		for (auto i: references) {
 			xmlAddID (0, document->cobj(), (const xmlChar *) i.first.c_str(), i.second->cobj());

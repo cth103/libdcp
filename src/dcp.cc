@@ -441,7 +441,7 @@ DCP::write_volindex (Standard standard) const
 		DCP_ASSERT (false);
 	}
 
-	root->add_child("Index")->add_child_text ("1");
+	cxml::add_text_child(root, "Index", "1");
 	doc.write_to_file_formatted(dcp::filesystem::fix_long_path(p).string(), "UTF-8");
 }
 

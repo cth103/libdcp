@@ -194,15 +194,15 @@ CPL::write_xml(boost::filesystem::path file, shared_ptr<const CertificateChain> 
 		root = doc.create_root_node ("CompositionPlaylist", cpl_smpte_ns);
 	}
 
-	root->add_child("Id")->add_child_text ("urn:uuid:" + _id);
+	cxml::add_text_child(root, "Id", "urn:uuid:" + _id);
 	if (_annotation_text) {
-		root->add_child("AnnotationText")->add_child_text (*_annotation_text);
+		cxml::add_text_child(root, "AnnotationText", *_annotation_text);
 	}
-	root->add_child("IssueDate")->add_child_text (_issue_date);
-	root->add_child("Issuer")->add_child_text (_issuer);
-	root->add_child("Creator")->add_child_text (_creator);
-	root->add_child("ContentTitleText")->add_child_text (_content_title_text);
-	auto content_kind = root->add_child("ContentKind");
+	cxml::add_text_child(root, "IssueDate", _issue_date);
+	cxml::add_text_child(root, "Issuer", _issuer);
+	cxml::add_text_child(root, "Creator", _creator);
+	cxml::add_text_child(root, "ContentTitleText", _content_title_text);
+	auto content_kind = cxml::add_child(root, "ContentKind");
 	content_kind->add_child_text(_content_kind.name());
 	if (_content_kind.scope()) {
 		content_kind->set_attribute("scope", *_content_kind.scope());
@@ -214,12 +214,12 @@ CPL::write_xml(boost::filesystem::path file, shared_ptr<const CertificateChain> 
 		_content_versions[0].as_xml (root);
 	}
 
-	auto rating_list = root->add_child("RatingList");
+	auto rating_list = cxml::add_child(root, "RatingList");
 	for (auto i: _ratings) {
-		i.as_xml (rating_list->add_child("Rating"));
+		i.as_xml(cxml::add_child(rating_list, "Rating"));
 	}
 
-	auto reel_list = root->add_child ("ReelList");
+	auto reel_list = cxml::add_child(root, "ReelList");
 
 	if (_reels.empty()) {
 		throw NoReelsError ();
@@ -373,27 +373,27 @@ CPL::write_mca_subdescriptors(xmlpp::Element* parent, shared_ptr<const SoundAsse
 		reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&soundfield)
 		);
 	if (KM_SUCCESS(r)) {
-		auto mca_subs = parent->add_child("mca:MCASubDescriptors");
+		auto mca_subs = cxml::add_child(parent, "mca:MCASubDescriptors");
 		mca_subs->set_namespace_declaration (mca_sub_descriptors_ns, "mca");
 		mca_subs->set_namespace_declaration (smpte_395_ns, "r0");
 		mca_subs->set_namespace_declaration (smpte_335_ns, "r1");
-		auto sf = mca_subs->add_child("SoundfieldGroupLabelSubDescriptor", "r0");
+		auto sf = cxml::add_child(mca_subs, "SoundfieldGroupLabelSubDescriptor", string("r0"));
 		char buffer[64];
 		soundfield->InstanceUID.EncodeString(buffer, sizeof(buffer));
-		sf->add_child("InstanceID", "r1")->add_child_text("urn:uuid:" + string(buffer));
+		cxml::add_child(sf, "InstanceID", string("r1"))->add_child_text("urn:uuid:" + string(buffer));
 		soundfield->MCALabelDictionaryID.EncodeString(buffer, sizeof(buffer));
-		sf->add_child("MCALabelDictionaryID", "r1")->add_child_text("urn:smpte:ul:" + string(buffer));
+		cxml::add_child(sf, "MCALabelDictionaryID", string("r1"))->add_child_text("urn:smpte:ul:" + string(buffer));
 		soundfield->MCALinkID.EncodeString(buffer, sizeof(buffer));
-		sf->add_child("MCALinkID", "r1")->add_child_text("urn:uuid:" + string(buffer));
+		cxml::add_child(sf, "MCALinkID", string("r1"))->add_child_text("urn:uuid:" + string(buffer));
 		soundfield->MCATagSymbol.EncodeString(buffer, sizeof(buffer));
-		sf->add_child("MCATagSymbol", "r1")->add_child_text(buffer);
+		cxml::add_child(sf, "MCATagSymbol", string("r1"))->add_child_text(buffer);
 		if (!soundfield->MCATagName.empty()) {
 			soundfield->MCATagName.get().EncodeString(buffer, sizeof(buffer));
-			sf->add_child("MCATagName", "r1")->add_child_text(buffer);
+			cxml::add_child(sf, "MCATagName", string("r1"))->add_child_text(buffer);
 		}
 		if (!soundfield->RFC5646SpokenLanguage.empty()) {
 			soundfield->RFC5646SpokenLanguage.get().EncodeString(buffer, sizeof(buffer));
-			sf->add_child("RFC5646SpokenLanguage", "r1")->add_child_text(buffer);
+			cxml::add_child(sf, "RFC5646SpokenLanguage", string("r1"))->add_child_text(buffer);
 		}
 
 		/* Find the MCA subdescriptors in the MXF so that we can also write them here */
@@ -405,29 +405,29 @@ CPL::write_mca_subdescriptors(xmlpp::Element* parent, shared_ptr<const SoundAsse
 
 		for (auto i: channels) {
 			auto channel = reinterpret_cast<ASDCP::MXF::AudioChannelLabelSubDescriptor*>(i);
-			auto ch = mca_subs->add_child("AudioChannelLabelSubDescriptor", "r0");
+			auto ch = cxml::add_child(mca_subs, "AudioChannelLabelSubDescriptor", string("r0"));
 			channel->InstanceUID.EncodeString(buffer, sizeof(buffer));
-			ch->add_child("InstanceID", "r1")->add_child_text("urn:uuid:" + string(buffer));
+			cxml::add_child(ch, "InstanceID", string("r1"))->add_child_text("urn:uuid:" + string(buffer));
 			channel->MCALabelDictionaryID.EncodeString(buffer, sizeof(buffer));
-			ch->add_child("MCALabelDictionaryID", "r1")->add_child_text("urn:smpte:ul:" + string(buffer));
+			cxml::add_child(ch, "MCALabelDictionaryID", string("r1"))->add_child_text("urn:smpte:ul:" + string(buffer));
 			channel->MCALinkID.EncodeString(buffer, sizeof(buffer));
-			ch->add_child("MCALinkID", "r1")->add_child_text("urn:uuid:" + string(buffer));
+			cxml::add_child(ch, "MCALinkID", string("r1"))->add_child_text("urn:uuid:" + string(buffer));
 			channel->MCATagSymbol.EncodeString(buffer, sizeof(buffer));
-			ch->add_child("MCATagSymbol", "r1")->add_child_text(buffer);
+			cxml::add_child(ch, "MCATagSymbol", string("r1"))->add_child_text(buffer);
 			if (!channel->MCATagName.empty()) {
 				channel->MCATagName.get().EncodeString(buffer, sizeof(buffer));
-				ch->add_child("MCATagName", "r1")->add_child_text(buffer);
+				cxml::add_child(ch, "MCATagName", string("r1"))->add_child_text(buffer);
 			}
 			if (!channel->MCAChannelID.empty()) {
-				ch->add_child("MCAChannelID", "r1")->add_child_text(raw_convert<string>(channel->MCAChannelID.get()));
+				cxml::add_child(ch, "MCAChannelID", string("r1"))->add_child_text(raw_convert<string>(channel->MCAChannelID.get()));
 			}
 			if (!channel->RFC5646SpokenLanguage.empty()) {
 				channel->RFC5646SpokenLanguage.get().EncodeString(buffer, sizeof(buffer));
-				ch->add_child("RFC5646SpokenLanguage", "r1")->add_child_text(buffer);
+				cxml::add_child(ch, "RFC5646SpokenLanguage", string("r1"))->add_child_text(buffer);
 			}
 			if (!channel->SoundfieldGroupLinkID.empty()) {
 				channel->SoundfieldGroupLinkID.get().EncodeString(buffer, sizeof(buffer));
-				ch->add_child("SoundfieldGroupLinkID", "r1")->add_child_text("urn:uuid:" + string(buffer));
+				cxml::add_child(ch, "SoundfieldGroupLinkID", string("r1"))->add_child_text("urn:uuid:" + string(buffer));
 			}
 		}
 	}
@@ -451,16 +451,16 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 		return;
 	}
 
-	auto meta = node->add_child("meta:CompositionMetadataAsset");
+	auto meta = cxml::add_child(node, "meta:CompositionMetadataAsset");
 	meta->set_namespace_declaration (cpl_metadata_ns, "meta");
 
-	meta->add_child("Id")->add_child_text("urn:uuid:" + _cpl_metadata_id);
+	cxml::add_text_child(meta, "Id", "urn:uuid:" + _cpl_metadata_id);
 
 	auto mp = _reels.front()->main_picture();
-	meta->add_child("EditRate")->add_child_text(mp->edit_rate().as_string());
-	meta->add_child("IntrinsicDuration")->add_child_text(raw_convert<string>(mp->intrinsic_duration()));
+	cxml::add_text_child(meta, "EditRate", mp->edit_rate().as_string());
+	cxml::add_text_child(meta, "IntrinsicDuration", raw_convert<string>(mp->intrinsic_duration()));
 
-	auto fctt = meta->add_child("FullContentTitleText", "meta");
+	auto fctt = cxml::add_child(meta, "FullContentTitleText", string("meta"));
 	if (_full_content_title_text && !_full_content_title_text->empty()) {
 		fctt->add_child_text (*_full_content_title_text);
 	}
@@ -469,11 +469,11 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 	}
 
 	if (_release_territory) {
-		meta->add_child("ReleaseTerritory", "meta")->add_child_text(*_release_territory);
+		cxml::add_child(meta, "ReleaseTerritory", string("meta"))->add_child_text(*_release_territory);
 	}
 
 	if (_version_number) {
-		xmlpp::Element* vn = meta->add_child("VersionNumber", "meta");
+		auto vn = cxml::add_child(meta, "VersionNumber", string("meta"));
 		vn->add_child_text(raw_convert<string>(*_version_number));
 		if (_status) {
 			vn->set_attribute("status", status_to_string(*_status));
@@ -481,19 +481,19 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 	}
 
 	if (_chain) {
-		meta->add_child("Chain", "meta")->add_child_text(*_chain);
+		cxml::add_child(meta, "Chain", string("meta"))->add_child_text(*_chain);
 	}
 
 	if (_distributor) {
-		meta->add_child("Distributor", "meta")->add_child_text(*_distributor);
+		cxml::add_child(meta, "Distributor", string("meta"))->add_child_text(*_distributor);
 	}
 
 	if (_facility) {
-		meta->add_child("Facility", "meta")->add_child_text(*_facility);
+		cxml::add_child(meta, "Facility", string("meta"))->add_child_text(*_facility);
 	}
 
 	if (_content_versions.size() > 1) {
-		xmlpp::Element* vc = meta->add_child("AlternateContentVersionList", "meta");
+		auto vc = cxml::add_child(meta, "AlternateContentVersionList", string("meta"));
 		for (size_t i = 1; i < _content_versions.size(); ++i) {
 			_content_versions[i].as_xml (vc);
 		}
@@ -504,17 +504,17 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 	}
 
 	if (_main_sound_configuration) {
-		meta->add_child("MainSoundConfiguration", "meta")->add_child_text(_main_sound_configuration->to_string());
+		cxml::add_child(meta, "MainSoundConfiguration", string("meta"))->add_child_text(_main_sound_configuration->to_string());
 	}
-	meta->add_child("MainSoundSampleRate", "meta")->add_child_text(raw_convert<string>(*_main_sound_sample_rate) + " 1");
+	cxml::add_child(meta, "MainSoundSampleRate", string("meta"))->add_child_text(raw_convert<string>(*_main_sound_sample_rate) + " 1");
 
-	auto stored = meta->add_child("MainPictureStoredArea", "meta");
-	stored->add_child("Width", "meta")->add_child_text(raw_convert<string>(_main_picture_stored_area->width));
-	stored->add_child("Height", "meta")->add_child_text(raw_convert<string>(_main_picture_stored_area->height));
+	auto stored = cxml::add_child(meta, "MainPictureStoredArea", string("meta"));
+	cxml::add_child(stored, "Width", string("meta"))->add_child_text(raw_convert<string>(_main_picture_stored_area->width));
+	cxml::add_child(stored, "Height", string("meta"))->add_child_text(raw_convert<string>(_main_picture_stored_area->height));
 
-	auto active = meta->add_child("MainPictureActiveArea", "meta");
-	active->add_child("Width", "meta")->add_child_text(raw_convert<string>(_main_picture_active_area->width));
-	active->add_child("Height", "meta")->add_child_text(raw_convert<string>(_main_picture_active_area->height));
+	auto active = cxml::add_child(meta, "MainPictureActiveArea", string("meta"));
+	cxml::add_child(active, "Width", string("meta"))->add_child_text(raw_convert<string>(_main_picture_active_area->width));
+	cxml::add_child(active, "Height", string("meta"))->add_child_text(raw_convert<string>(_main_picture_active_area->height));
 
 	optional<string> first_subtitle_language;
 	for (auto i: _reels) {
@@ -537,18 +537,18 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 			}
 			lang += i;
 		}
-		meta->add_child("MainSubtitleLanguageList", "meta")->add_child_text(lang);
+		cxml::add_child(meta, "MainSubtitleLanguageList", string("meta"))->add_child_text(lang);
 	}
 
-	auto metadata_list = meta->add_child("ExtensionMetadataList", "meta");
+	auto metadata_list = cxml::add_child(meta, "ExtensionMetadataList", string("meta"));
 
 	auto add_extension_metadata = [metadata_list](string scope, string name, string property_name, string property_value) {
-		auto extension = metadata_list->add_child("ExtensionMetadata", "meta");
+		auto extension = cxml::add_child(metadata_list, "ExtensionMetadata", string("meta"));
 		extension->set_attribute("scope", scope);
-		extension->add_child("Name", "meta")->add_child_text(name);
-		auto property = extension->add_child("PropertyList", "meta")->add_child("Property", "meta");
-		property->add_child("Name", "meta")->add_child_text(property_name);
-		property->add_child("Value", "meta")->add_child_text(property_value);
+		cxml::add_child(extension, "Name", string("meta"))->add_child_text(name);
+		auto property = cxml::add_child(cxml::add_child(extension, "PropertyList", string("meta")), "Property", string("meta"));
+		cxml::add_child(property, "Name", string("meta"))->add_child_text(property_name);
+		cxml::add_child(property, "Value", string("meta"))->add_child_text(property_value);
 	};
 
 	/* SMPTE Bv2.1 8.6.3 */

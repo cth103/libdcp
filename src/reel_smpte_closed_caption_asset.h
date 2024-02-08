@@ -63,7 +63,7 @@ public:
 		return asset_of_type<const SMPTESubtitleAsset>();
 	}
 
-	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
+	xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
 
 
 private:

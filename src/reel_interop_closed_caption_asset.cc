@@ -75,12 +75,12 @@ ReelInteropClosedCaptionAsset::cpl_node_namespace () const
 }
 
 
-xmlpp::Node *
-ReelInteropClosedCaptionAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+xmlpp::Element*
+ReelInteropClosedCaptionAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
 	auto asset = ReelClosedCaptionAsset::write_to_cpl (node, standard);
 	if (_language) {
-		asset->add_child("Language")->add_child_text(*_language);
+		cxml::add_text_child(asset, "Language", *_language);
 	}
 	return asset;
 }

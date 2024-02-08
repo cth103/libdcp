@@ -56,7 +56,7 @@ public:
 	ReelFileAsset (std::shared_ptr<Asset> asset, boost::optional<std::string> key_id, std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelFileAsset (std::shared_ptr<const cxml::Node> node);
 
-	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
+	virtual xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
 
 	/** @return a Ref to our actual asset */
 	Ref const & asset_ref () const {

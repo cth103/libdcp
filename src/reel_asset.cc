@@ -84,10 +84,10 @@ ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 }
 
 
-xmlpp::Node*
-ReelAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+xmlpp::Element*
+ReelAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
-	auto a = node->add_child (cpl_node_name (standard));
+	auto a = cxml::add_child(node, cpl_node_name(standard));
 	auto const attr = cpl_node_attribute (standard);
 	if (!attr.first.empty ()) {
 		a->set_attribute (attr.first, attr.second);
@@ -96,18 +96,18 @@ ReelAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 	if (!ns.first.empty()) {
 		a->set_namespace_declaration (ns.first, ns.second);
 	}
-	a->add_child("Id")->add_child_text ("urn:uuid:" + _id);
+	cxml::add_text_child(a, "Id", "urn:uuid:" + _id);
 	/* Empty <AnnotationText> tags cause refusal to play on some Sony SRX320 / LMT3000 systems (DoM bug #2124) */
 	if (_annotation_text && !_annotation_text->empty()) {
-		a->add_child("AnnotationText")->add_child_text(*_annotation_text);
+		cxml::add_text_child(a, "AnnotationText", *_annotation_text);
 	}
-	a->add_child("EditRate")->add_child_text (_edit_rate.as_string());
-	a->add_child("IntrinsicDuration")->add_child_text (raw_convert<string> (_intrinsic_duration));
+	cxml::add_text_child(a, "EditRate", _edit_rate.as_string());
+	cxml::add_text_child(a, "IntrinsicDuration", raw_convert<string>(_intrinsic_duration));
 	if (_entry_point) {
-		a->add_child("EntryPoint")->add_child_text(raw_convert<string>(*_entry_point));
+		cxml::add_text_child(a, "EntryPoint", raw_convert<string>(*_entry_point));
 	}
 	if (_duration) {
-		a->add_child("Duration")->add_child_text(raw_convert<string>(*_duration));
+		cxml::add_text_child(a, "Duration", raw_convert<string>(*_duration));
 	}
 	return a;
 }

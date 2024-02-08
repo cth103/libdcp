@@ -86,12 +86,12 @@ ReelPictureAsset::ReelPictureAsset (shared_ptr<const cxml::Node> node)
 }
 
 
-xmlpp::Node*
-ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+xmlpp::Element*
+ReelPictureAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
 	auto asset = ReelFileAsset::write_to_cpl (node, standard);
 
-	asset->add_child("FrameRate")->add_child_text(String::compose("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
+	cxml::add_text_child(asset, "FrameRate", String::compose("%1 %2", _frame_rate.numerator, _frame_rate.denominator));
 
 	if (standard == Standard::INTEROP) {
 
@@ -113,10 +113,12 @@ ReelPictureAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
 			}
 		}
 
-		asset->add_child("ScreenAspectRatio")->add_child_text(raw_convert<string>(closest.get(), 2, true));
+		cxml::add_text_child(asset, "ScreenAspectRatio", raw_convert<string>(closest.get(), 2, true));
 	} else {
-		asset->add_child("ScreenAspectRatio")->add_child_text(
-			String::compose ("%1 %2", _screen_aspect_ratio.numerator, _screen_aspect_ratio.denominator)
+		cxml::add_text_child(
+			asset,
+			"ScreenAspectRatio",
+			String::compose("%1 %2", _screen_aspect_ratio.numerator, _screen_aspect_ratio.denominator)
 			);
 	}
 

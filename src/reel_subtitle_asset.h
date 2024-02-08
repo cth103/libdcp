@@ -73,7 +73,7 @@ public:
 		return asset_of_type<SubtitleAsset>();
 	}
 
-	xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const override;
+	xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
 
 	bool equals(std::shared_ptr<const ReelSubtitleAsset>, EqualityOptions const&, NoteHandler) const;
 

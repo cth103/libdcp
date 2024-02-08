@@ -83,7 +83,7 @@ public:
 
 	explicit ReelAsset (std::shared_ptr<const cxml::Node>);
 
-	virtual xmlpp::Node* write_to_cpl (xmlpp::Node* node, Standard standard) const;
+	virtual xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const;
 
 	virtual bool encryptable () const {
 		return false;

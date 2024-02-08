@@ -104,16 +104,16 @@ ReelMarkersAsset::get (Marker m) const
 }
 
 
-xmlpp::Node*
-ReelMarkersAsset::write_to_cpl (xmlpp::Node* node, Standard standard) const
+xmlpp::Element*
+ReelMarkersAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
 	int const tcr = edit_rate().numerator / edit_rate().denominator;
 	auto asset = ReelAsset::write_to_cpl (node, standard);
-	auto ml = asset->add_child("MarkerList");
+	auto ml = cxml::add_child(asset, "MarkerList");
 	for (auto const& i: _markers) {
-		auto m = ml->add_child("Marker");
-		m->add_child("Label")->add_child_text(marker_to_string(i.first));
-		m->add_child("Offset")->add_child_text(raw_convert<string>(i.second.as_editable_units_ceil(tcr)));
+		auto m = cxml::add_child(ml, "Marker");
+		cxml::add_text_child(m, "Label", marker_to_string(i.first));
+		cxml::add_text_child(m, "Offset", raw_convert<string>(i.second.as_editable_units_ceil(tcr)));
 	}
 
 	return asset;

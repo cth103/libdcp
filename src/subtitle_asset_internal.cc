@@ -77,7 +77,7 @@ order::Font::Font (shared_ptr<SubtitleString> s, Standard standard)
 xmlpp::Element*
 order::Font::as_xml (xmlpp::Element* parent, Context&) const
 {
-	auto e = parent->add_child("Font");
+	auto e = cxml::add_child(parent, "Font");
 	for (const auto& i: _values) {
 		e->set_attribute (i.first, i.second);
 	}
@@ -137,7 +137,7 @@ xmlpp::Element*
 order::String::as_xml (xmlpp::Element* parent, Context& context) const
 {
 	if (fabs(_space_before) > SPACE_BEFORE_EPSILON) {
-		auto space = parent->add_child("Space");
+		auto space = cxml::add_child(parent, "Space");
 		auto size = raw_convert<string>(_space_before, 2);
 		if (context.standard == Standard::INTEROP) {
 			size += "em";
@@ -212,7 +212,7 @@ position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, floa
 xmlpp::Element*
 order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 {
-	auto e = parent->add_child ("Text");
+	auto e = cxml::add_child(parent, "Text");
 
 	position_align(e, context, _h_align, _h_position, _v_align, _v_position, _z_position);
 
@@ -224,9 +224,9 @@ order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 	}
 
 	for (auto const& ruby: _rubies) {
-		auto xml = e->add_child("Ruby");
-		xml->add_child("Rb")->add_child_text(ruby.base);
-		auto rt = xml->add_child("Rt");
+		auto xml = cxml::add_child(e, "Ruby");
+		cxml::add_child(xml, "Rb")->add_child_text(ruby.base);
+		auto rt = cxml::add_child(xml, "Rt");
 		rt->add_child_text(ruby.annotation);
 		rt->set_attribute("Size", dcp::raw_convert<string>(ruby.size, 6));
 		rt->set_attribute("Position", ruby.position == RubyPosition::BEFORE ? "before" : "after");
@@ -242,7 +242,7 @@ order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 xmlpp::Element*
 order::Subtitle::as_xml (xmlpp::Element* parent, Context& context) const
 {
-	auto e = parent->add_child ("Subtitle");
+	auto e = cxml::add_child(parent, "Subtitle");
 	e->set_attribute ("SpotNumber", raw_convert<string> (context.spot_number++));
 	e->set_attribute ("TimeIn", _in.rebase(context.time_code_rate).as_string(context.standard));
 	e->set_attribute ("TimeOut", _out.rebase(context.time_code_rate).as_string(context.standard));
@@ -274,7 +274,7 @@ order::Font::clear ()
 xmlpp::Element *
 order::Image::as_xml (xmlpp::Element* parent, Context& context) const
 {
-	auto e = parent->add_child ("Image");
+	auto e = cxml::add_child(parent, "Image");
 
 	position_align(e, context, _h_align, _h_position, _v_align, _v_position, _z_position);
 	if (context.standard == Standard::SMPTE) {

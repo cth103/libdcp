@@ -369,31 +369,31 @@ SMPTESubtitleAsset::xml_as_string () const
 	auto root = doc.create_root_node ("SubtitleReel");
 
 	DCP_ASSERT (_xml_id);
-	root->add_child("Id")->add_child_text("urn:uuid:" + *_xml_id);
-	root->add_child("ContentTitleText")->add_child_text(_content_title_text);
+	cxml::add_text_child(root, "Id", "urn:uuid:" + *_xml_id);
+	cxml::add_text_child(root, "ContentTitleText", _content_title_text);
 	if (_annotation_text) {
-		root->add_child("AnnotationText")->add_child_text(_annotation_text.get());
+		cxml::add_text_child(root, "AnnotationText", _annotation_text.get());
 	}
-	root->add_child("IssueDate")->add_child_text(_issue_date.as_string(false, false));
+	cxml::add_text_child(root, "IssueDate", _issue_date.as_string(false, false));
 	if (_reel_number) {
-		root->add_child("ReelNumber")->add_child_text(raw_convert<string>(_reel_number.get()));
+		cxml::add_text_child(root, "ReelNumber", raw_convert<string>(_reel_number.get()));
 	}
 	if (_language) {
-		root->add_child("Language")->add_child_text(_language.get());
+		cxml::add_text_child(root, "Language", _language.get());
 	}
-	root->add_child("EditRate")->add_child_text(_edit_rate.as_string());
-	root->add_child("TimeCodeRate")->add_child_text(raw_convert<string>(_time_code_rate));
+	cxml::add_text_child(root, "EditRate", _edit_rate.as_string());
+	cxml::add_text_child(root, "TimeCodeRate", raw_convert<string>(_time_code_rate));
 	if (_start_time) {
-		root->add_child("StartTime")->add_child_text(_start_time.get().as_string(Standard::SMPTE));
+		cxml::add_text_child(root, "StartTime", _start_time.get().as_string(Standard::SMPTE));
 	}
 
 	for (auto i: _load_font_nodes) {
-		auto load_font = root->add_child("LoadFont");
+		auto load_font = cxml::add_child(root, "LoadFont");
 		load_font->add_child_text ("urn:uuid:" + i->urn);
 		load_font->set_attribute ("ID", i->id);
 	}
 
-	subtitles_as_xml (root->add_child("SubtitleList"), _time_code_rate, Standard::SMPTE);
+	subtitles_as_xml(cxml::add_child(root, "SubtitleList"), _time_code_rate, Standard::SMPTE);
 
 	return format_xml(doc, std::make_pair(string{}, schema_namespace()));
 }
