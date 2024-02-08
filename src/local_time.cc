@@ -180,9 +180,6 @@ LocalTime::LocalTime (string s)
 			_offset.set_hour(-_offset.hour());
 			_offset.set_minute(-_offset.minute());
 		}
-	} else {
-		_offset.set_hour(0);
-		_offset.set_minute(0);
 	}
 }
 
