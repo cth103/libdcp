@@ -140,6 +140,19 @@ BOOST_AUTO_TEST_CASE (local_time_basic_test)
 	}
 
 	{
+		dcp::LocalTime t("2024-01-23T23:21:32Z");
+		BOOST_CHECK_EQUAL(t._year, 2024);
+		BOOST_CHECK_EQUAL(t._month, 1);
+		BOOST_CHECK_EQUAL(t._day, 23);
+		BOOST_CHECK_EQUAL(t._hour, 23);
+		BOOST_CHECK_EQUAL(t._minute, 21);
+		BOOST_CHECK_EQUAL(t._second, 32);
+		BOOST_CHECK_EQUAL(t._millisecond, 0);
+		BOOST_CHECK(t._offset == dcp::UTCOffset(0, 0));
+		BOOST_CHECK_EQUAL(t.as_string(false, false), "2024-01-23T23:21:32");
+	}
+
+	{
 		/* Construction from boost::posix_time::ptime */
 		dcp::LocalTime b (boost::posix_time::time_from_string ("2002-01-20 19:03:56"));
 		BOOST_CHECK_EQUAL (b._year, 2002);

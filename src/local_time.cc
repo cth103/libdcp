@@ -165,7 +165,7 @@ LocalTime::LocalTime (string s)
 	}
 
 	/* Timezone */
-	if (pos != s.length()) {
+	if (pos != s.length() && s[pos] != 'Z') {
 		if (s[pos] != '+' && s[pos] != '-') {
 			throw TimeFormatError(s);
 		}
