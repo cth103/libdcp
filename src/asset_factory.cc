@@ -62,7 +62,7 @@ dcp::asset_factory (boost::filesystem::path path, bool ignore_incorrect_picture_
 
 	ASDCP::EssenceType_t type;
 	auto const result = ASDCP::EssenceType(dcp::filesystem::fix_long_path(path).string().c_str(), type);
-	if (result != ASDCP::RESULT_OK) {
+	if (!ASDCP_SUCCESS(result)) {
 		throw ReadError(String::compose("Could not find essence type (%1)", result.Message()), path.string());
 	}
 	switch (type) {
