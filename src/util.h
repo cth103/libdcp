@@ -120,6 +120,7 @@ extern int base64_decode (std::string const & in, unsigned char* out, int out_le
 extern boost::optional<boost::filesystem::path> relative_to_root (boost::filesystem::path root, boost::filesystem::path file);
 
 extern std::string file_to_string (boost::filesystem::path, uintmax_t max_length = 1048576);
+extern void write_string_to_file(std::string const& string, boost::filesystem::path const& path);
 
 /** @param key RSA private key in PEM format (optionally with -----BEGIN... / -----END...)
  *  @return SHA1 fingerprint of key

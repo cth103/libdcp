@@ -272,6 +272,15 @@ dcp::file_to_string (boost::filesystem::path p, uintmax_t max_length)
 }
 
 
+void
+dcp::write_string_to_file(string const& string, boost::filesystem::path const& path)
+{
+	File file(path, "w");
+	if (!file) {
+		throw FileError("could not open file", path, errno);
+	}
+
+	file.write(string.c_str(), string.length(), 1);
 }
 
 
