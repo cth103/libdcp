@@ -265,14 +265,13 @@ dcp::file_to_string (boost::filesystem::path p, uintmax_t max_length)
 		throw FileError ("could not open file", p, errno);
 	}
 
-	char* c = new char[len];
+	std::vector<char> buffer(len);
 	/* This may read less than `len' if we are on Windows and we have CRLF in the file */
-	int const N = f.read(c, 1, len);
+	int const N = f.read(buffer.data(), 1, len);
+	return string(buffer.data(), N);
+}
 
-	string s (c, N);
-	delete[] c;
 
-	return s;
 }
 
 
