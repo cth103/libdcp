@@ -49,8 +49,11 @@
 #include <cmath>
 
 
-using namespace std;
-using namespace boost;
+using std::ostream;
+using std::string;
+using std::vector;
+using boost::is_any_of;
+using boost::optional;
 using namespace dcp;
 
 
