@@ -432,7 +432,6 @@ load_language_tag_list (boost::filesystem::path tags_directory, string name, std
 	}
 	char buffer[512];
 
-	int i = 0;
 	while (!f.eof()) {
 		char* r = f.gets(buffer, sizeof(buffer));
 		if (r == 0) {
@@ -447,7 +446,6 @@ load_language_tag_list (boost::filesystem::path tags_directory, string name, std
 		string b = buffer;
 		trim (b);
 		add (a, b);
-		++i;
 	}
 }
 
