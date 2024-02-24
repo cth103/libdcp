@@ -67,11 +67,20 @@ def options(opt):
     opt.add_option('--disable-dumpimage', action='store_true', default=False, help='disable building of dcpdumpimage')
     opt.add_option('--enable-openmp', action='store_true', default=False, help='enable use of OpenMP')
     opt.add_option('--openmp', default='gomp', help='specify OpenMP Library to use: omp, gomp (default), iomp')
+    opt.add_option('--c++17', action='store_true', default=False, help='build with C++17 and libxml++-4.0')
 
 def configure(conf):
     conf.load('compiler_cxx')
     conf.load('clang_compilation_database', tooldir=['waf-tools'])
-    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-D_FILE_OFFSET_BITS=64', '-D__STDC_FORMAT_MACROS', '-std=c++11'])
+
+    if vars(conf.options)['c++17']:
+        cpp_std = '17'
+        conf.env.XMLPP_API = '4.0'
+    else:
+        cpp_std = '11'
+        conf.env.XMLPP_API = '2.6'
+
+    conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-D_FILE_OFFSET_BITS=64', '-D__STDC_FORMAT_MACROS', '-std=c++' + cpp_std])
     gcc = conf.env['CC_VERSION']
     if int(gcc[0]) >= 4 and int(gcc[1]) > 1:
         conf.env.append_value('CXXFLAGS', ['-Wno-maybe-uninitialized'])
@@ -118,7 +127,7 @@ def configure(conf):
         conf.check(lib='dl', uselib_store='DL', msg='Checking for library dl')
 
     conf.check_cfg(package='openssl', args='--cflags --libs', uselib_store='OPENSSL', mandatory=True)
-    conf.check_cfg(package='libxml++-2.6', args='--cflags --libs', uselib_store='LIBXML++', mandatory=True)
+    conf.check_cfg(package='libxml++-' + conf.env.XMLPP_API, args='--cflags --libs', uselib_store='LIBXML++', mandatory=True)
     conf.check_cfg(package='xmlsec1', args='--cflags --libs', uselib_store='XMLSEC1', mandatory=True)
     # Remove erroneous escaping of quotes from xmlsec1 defines
     conf.env.DEFINES_XMLSEC1 = [f.replace('\\', '') for f in conf.env.DEFINES_XMLSEC1]
@@ -161,7 +170,7 @@ def configure(conf):
         conf.env.HAVE_ASDCPLIB_CTH = 1
         conf.env.STLIB_ASDCPLIB_CTH = ['asdcp-carl', 'kumu-carl']
         conf.env.HAVE_CXML = 1
-        conf.env.LIB_CXML = ['xml++-2.6', 'glibmm-2.4']
+        conf.env.LIB_CXML = ['xml++-' + conf.env.XMLPP_API, 'glibmm-2.4']
         conf.env.STLIB_CXML = ['cxml']
         conf.check_cfg(package='xerces-c', args='--cflags', uselib_store='XERCES', mandatory=True)
         conf.env.LIB_XERCES = ['xerces-c', 'icuuc', 'curl']
@@ -263,7 +272,8 @@ def build(bld):
         version=VERSION,
         includedir='%s/include/libdcp%s' % (bld.env.PREFIX, bld.env.API_VERSION),
         libs=libs,
-        install_path='${LIBDIR}/pkgconfig')
+        install_path='${LIBDIR}/pkgconfig',
+        xmlpp_api=bld.env.XMLPP_ABI)
 
     bld.recurse('src')
     bld.recurse('tools')

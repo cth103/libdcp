@@ -44,6 +44,7 @@
 #include "file.h"
 #include "util.h"
 #include <libcxml/cxml.h>
+#include <libxml++/attributenode.h>
 #include <libxml++/document.h>
 #include <libxml++/nodes/element.h>
 #include <libxml/parser.h>
@@ -229,9 +230,9 @@ public:
 		}
 	}
 
-	void as_xml (xmlpp::Element* node, map<string, xmlpp::Attribute *>& references) const
+	void as_xml (xmlpp::Element* node, map<string, xmlpp::AttributeNode*>& references) const
 	{
-		references["ID_AuthenticatedPrivate"] = node->set_attribute ("Id", "ID_AuthenticatedPrivate");
+		references["ID_AuthenticatedPrivate"] = dynamic_cast<xmlpp::AttributeNode*>(node->set_attribute("Id", "ID_AuthenticatedPrivate"));
 
 		for (auto i: encrypted_key) {
 			auto encrypted_key = cxml::add_child(node, "EncryptedKey", string("enc"));
@@ -517,9 +518,9 @@ public:
 
 	}
 
-	void as_xml (xmlpp::Element* node, map<string, xmlpp::Attribute *>& references) const
+	void as_xml (xmlpp::Element* node, map<string, xmlpp::AttributeNode*>& references) const
 	{
-		references["ID_AuthenticatedPublic"] = node->set_attribute ("Id", "ID_AuthenticatedPublic");
+		references["ID_AuthenticatedPublic"] = dynamic_cast<xmlpp::AttributeNode*>(node->set_attribute("Id", "ID_AuthenticatedPublic"));
 
 		cxml::add_text_child(node, "MessageId", "urn:uuid:" + message_id);
 		cxml::add_text_child(node, "MessageType", "http://www.smpte-ra.org/430-1/2006/KDM#kdm-key-type");
@@ -567,7 +568,7 @@ public:
 		auto root = document->create_root_node("DCinemaSecurityMessage", "http://www.smpte-ra.org/schemas/430-3/2006/ETM");
 		root->set_namespace_declaration ("http://www.w3.org/2000/09/xmldsig#", "ds");
 		root->set_namespace_declaration ("http://www.w3.org/2001/04/xmlenc#", "enc");
-		map<string, xmlpp::Attribute *> references;
+		map<string, xmlpp::AttributeNode*> references;
 		authenticated_public.as_xml(cxml::add_child(root, "AuthenticatedPublic"), references);
 		authenticated_private.as_xml(cxml::add_child(root, "AuthenticatedPrivate"), references);
 		signature.as_xml(cxml::add_child(root, "Signature", string("ds")));

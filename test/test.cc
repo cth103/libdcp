@@ -122,7 +122,7 @@ check_xml (xmlpp::Element* ref, xmlpp::Element* test, vector<string> ignore_tags
 	BOOST_CHECK_EQUAL (ref->get_name (), test->get_name ());
 	BOOST_CHECK_EQUAL (ref->get_namespace_prefix (), test->get_namespace_prefix ());
 
-	if (find(ignore_tags.begin(), ignore_tags.end(), ref->get_name()) != ignore_tags.end()) {
+	if (find(ignore_tags.begin(), ignore_tags.end(), std::string(ref->get_name())) != ignore_tags.end()) {
 		return;
 	}
 
