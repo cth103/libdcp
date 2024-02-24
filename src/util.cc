@@ -306,20 +306,6 @@ dcp::private_key_fingerprint (string key)
 }
 
 
-xmlpp::Node *
-dcp::find_child (xmlpp::Node const * node, string name)
-{
-	auto c = node->get_children ();
-	auto i = c.begin();
-	while (i != c.end() && (*i)->get_name() != name) {
-		++i;
-	}
-
-	DCP_ASSERT (i != c.end ());
-	return *i;
-}
-
-
 string
 dcp::remove_urn_uuid (string raw)
 {
