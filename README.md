@@ -26,7 +26,6 @@ Bugfixes were received from Philip Tschiemer.
 - pkg-config (for build system)
 - boost (1.45 or above): filesystem, signals2, datetime and unit testing libraries
 - openssl
-- libsigc++
 - libxml++
 - xmlsec
 - sndfile
