@@ -9,7 +9,7 @@
     <Asset>
       <Id>urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358ab</Id>
       <AnnotationText>6affb8ee-0020-4dff-a53c-17652f6358ab</AnnotationText>
-      <Hash>tfX1mVIKJCVr1m7Y32Nzxf0+Rpw=</Hash>
+      <Hash>2DSYFM8X5sGdsYgzhs3mBbTNNmw=</Hash>
       <Size>8559</Size>
       <Type>text/xml</Type>
       <OriginalFileName>cpl_6affb8ee-0020-4dff-a53c-17652f6358ab.xml</OriginalFileName>
@@ -17,8 +17,8 @@
     <Asset>
       <Id>urn:uuid:5407b210-4441-4e97-8b16-8bdc7c12da54</Id>
       <AnnotationText>5407b210-4441-4e97-8b16-8bdc7c12da54</AnnotationText>
-      <Hash>wUmt8G+cFFKMGt0ueS9+F1S4uhc=</Hash>
-      <Size>49240</Size>
+      <Hash>7a4KZ9j2kpSuBz+iBQD4f03ctm8=</Hash>
+      <Size>31648</Size>
       <Type>application/mxf</Type>
       <OriginalFileName>video.mxf</OriginalFileName>
     </Asset>

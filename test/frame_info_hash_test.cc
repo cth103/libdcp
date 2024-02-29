@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE (frame_info_hash_test)
 	boost::random::uniform_int_distribution<> dist(0, 4095);
 
 	/* Check a few random frames */
-	check(writer, dist, rng, "a9e772602a2fd3135d940cfd727ab8ff");
-	check(writer, dist, rng, "b075369922e42b23e1852a586ec43224");
-	check(writer, dist, rng, "402395e76152db05b03c8f24ddfd7732");
+	check(writer, dist, rng, "8f3dc7321d6dff3d5691011de31fc713");
+	check(writer, dist, rng, "a305b83a40367fda1b5cf0efa096fd18");
+	check(writer, dist, rng, "1abc71e011ced46d9928a4b2d22e20f6");
 }
