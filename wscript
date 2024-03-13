@@ -153,7 +153,7 @@ def configure(conf):
 
     if not patched_openjpeg:
         # We don't have our patched version so we need 2.5.0 to get the GUARD_BITS option
-        conf.check_cfg(package='libopenjp2', args='libopenjp2 >= 2.5.0', uselib_store='OPENJPEG', mandatory=True, msg='Checking for libopenjp2 >= 2.5.0')
+        conf.check_cfg(package='libopenjp2', args='libopenjp2 >= 2.5.0 --cflags --libs', uselib_store='OPENJPEG', mandatory=True, msg='Checking for libopenjp2 >= 2.5.0')
 
     if conf.options.static:
         conf.env.STLIB_OPENJPEG = ['openjp2']
