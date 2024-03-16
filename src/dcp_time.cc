@@ -147,7 +147,8 @@ Time::Time (string time, optional<int> tcr_)
 		}
 
 	} else {
-		/* SMPTE: HH:MM:SS:EE */
+		/* SMPTE: HH:MM:SS:EE[E].
+		 * It seems like there can be any number of E digits but let's just allow 2 or 3 */
 		split (b, time, is_any_of (":"));
 		if (b.size() != 4) {
 			boost::throw_exception (ReadError (String::compose ("unrecognised time specification %1; does not have 4 parts", time)));
@@ -159,7 +160,7 @@ Time::Time (string time, optional<int> tcr_)
 			boost::throw_exception (ReadError (String::compose ("unrecognised time specification %1; %2 has bad length", time, b[2])));
 		}
 		s = raw_convert<int> (b[2]);
-		if (b[3].empty() || b[3].length() > 2) {
+		if (b[3].empty() || b[3].length() > 3) {
 			boost::throw_exception (ReadError (String::compose ("unrecognised time specification %1; %2 has bad length", time, b[3])));
 		}
 		e = raw_convert<int> (b[3]);
