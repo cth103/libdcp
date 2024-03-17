@@ -51,6 +51,9 @@ def build(target, options):
     elif target.platform == 'windows':
         cmd += f' --target-windows-{target.bits}'
 
+    if 'c++17' in options and options['c++17']:
+        cmd += ' --c++17'
+
     if target.debug:
         cmd += ' --enable-debug'
 
