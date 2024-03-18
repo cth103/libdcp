@@ -1904,16 +1904,20 @@ dcp::verify (
 		}
 
 		for (auto cpl: dcp->cpls()) {
-			verify_cpl(
-				dcp,
-				cpl,
-				stage,
-				*xsd_dtd_directory,
-				progress,
-				options,
-				notes,
-				state
-				);
+			try {
+				verify_cpl(
+					dcp,
+					cpl,
+					stage,
+					*xsd_dtd_directory,
+					progress,
+					options,
+					notes,
+					state
+					);
+			} catch (ReadError& e) {
+				notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
+			}
 		}
 
 		for (auto pkl: dcp->pkls()) {
