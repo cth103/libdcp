@@ -57,7 +57,7 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-struct MonoJ2KPictureAssetWriter::ASDCPState : public ASDCPStateBase
+struct MonoJ2KPictureAssetWriter::ASDCPState : public ASDCPJ2KStateBase
 {
 	ASDCP::JP2K::MXFWriter mxf_writer;
 };

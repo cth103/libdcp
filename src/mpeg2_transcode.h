@@ -83,6 +83,25 @@ private:
 };
 
 
+class MPEG2Compressor : public MPEG2Codec
+{
+public:
+	MPEG2Compressor(dcp::Size size, int video_frame_rate, int64_t bit_rate);
+
+	MPEG2Compressor(MPEG2Compressor const&) = delete;
+	MPEG2Compressor& operator=(MPEG2Compressor const&) = delete;
+
+	/** Frame data with frame index within the asset */
+	typedef std::pair<std::shared_ptr<MonoMPEG2PictureFrame>, int64_t> IndexedFrame;
+
+	boost::optional<IndexedFrame> compress_frame(FFmpegImage const& image);
+	boost::optional<IndexedFrame> flush();
+
+private:
+	boost::optional<IndexedFrame> send_and_receive(AVFrame const* frame);
+};
+
+
 }
 
 

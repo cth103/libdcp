@@ -54,7 +54,7 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-struct StereoJ2KPictureAssetWriter::ASDCPState : public ASDCPStateBase
+struct StereoJ2KPictureAssetWriter::ASDCPState : public ASDCPJ2KStateBase
 {
 	ASDCP::JP2K::MXFSWriter mxf_writer;
 };

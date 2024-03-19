@@ -95,6 +95,7 @@ def build(bld):
                  markers_test.cc
                  mca_test.cc
                  mono_mpeg2_picture_read_test.cc
+                 mono_mpeg2_picture_write_test.cc
                  kdm_test.cc
                  key_test.cc
                  language_tag_test.cc

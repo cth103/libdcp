@@ -42,6 +42,14 @@ using namespace dcp;
 
 
 
+MonoMPEG2PictureFrame::MonoMPEG2PictureFrame(uint8_t const* data, int size)
+{
+	_buffer = make_shared<ASDCP::MPEG2::FrameBuffer>(size);
+	memcpy(_buffer->Data(), data, size);
+	_buffer->Size(size);
+}
+
+
 /** Make a picture frame from a 2D (monoscopic) asset.
  *  @param reader Reader for the asset's MXF file.
  *  @param n Frame within the asset, not taking EntryPoint into account.

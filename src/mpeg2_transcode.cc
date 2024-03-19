@@ -36,13 +36,16 @@
 #include "exceptions.h"
 #include "mono_mpeg2_picture_frame.h"
 #include "mpeg2_transcode.h"
+#include "scope_guard.h"
 extern "C" {
 #include <libavcodec/avcodec.h>
 }
 
 
+using std::make_shared;
 using std::shared_ptr;
 using std::vector;
+using boost::optional;
 using namespace dcp;
 
 
@@ -141,3 +144,73 @@ MPEG2Decompressor::decompress_packet(AVPacket* packet)
 	return images;
 }
 
+
+MPEG2Compressor::MPEG2Compressor(dcp::Size size, int video_frame_rate, int64_t bit_rate)
+{
+	_codec = avcodec_find_encoder_by_name("mpeg2video");
+	if (!_codec) {
+		throw MPEG2CodecError("could not find codec");
+	}
+
+	_context = avcodec_alloc_context3(_codec);
+	if (!_context) {
+		throw MPEG2CodecError("could not allocate codec context");
+	}
+
+	_context->width = size.width;
+	_context->height = size.height;
+	_context->time_base = AVRational{1, video_frame_rate};
+	_context->pix_fmt = AV_PIX_FMT_YUV420P;
+	_context->bit_rate = bit_rate;
+
+	int const r = avcodec_open2(_context, _codec, nullptr);
+	if (r < 0) {
+		avcodec_free_context(&_context);
+		throw MPEG2CodecError("could not open codec");
+	}
+}
+
+
+optional<MPEG2Compressor::IndexedFrame>
+MPEG2Compressor::send_and_receive(AVFrame const* frame)
+{
+	int r = avcodec_send_frame(_context, frame);
+	if (r < 0) {
+		throw MPEG2CompressionError(String::compose("avcodec_send_frame failed (%1", r));
+	}
+
+	auto packet = av_packet_alloc();
+	if (!packet) {
+		throw MPEG2CompressionError("could not allocate packet");
+	}
+
+	r = avcodec_receive_packet(_context, packet);
+	if (r < 0 && r != AVERROR(EAGAIN)) {
+		throw MPEG2CompressionError(String::compose("avcodec_receive_packet failed (%1)", r));
+	}
+
+	ScopeGuard sg = [&packet]() {
+		av_packet_free(&packet);
+	};
+
+	if (packet->size == 0) {
+		return {};
+	}
+
+	DCP_ASSERT(_context->time_base.num == 1);
+	return IndexedFrame{make_shared<MonoMPEG2PictureFrame>(packet->data, packet->size), std::round(static_cast<double>(packet->pts) / _context->time_base.den)};
+}
+
+
+optional<MPEG2Compressor::IndexedFrame>
+MPEG2Compressor::compress_frame(FFmpegImage const& image)
+{
+	return send_and_receive(image.frame());
+}
+
+
+optional<MPEG2Compressor::IndexedFrame>
+MPEG2Compressor::flush()
+{
+	return send_and_receive(nullptr);
+}

@@ -58,6 +58,7 @@ def build(bld):
              exceptions.cc
              file.cc
              filesystem.cc
+             ffmpeg_image.cc
              font_asset.cc
              fsk.cc
              gamma_transfer_function.cc
@@ -78,8 +79,10 @@ def build(bld):
              mono_j2k_picture_asset_writer.cc
              mono_j2k_picture_frame.cc
              mono_mpeg2_picture_asset.cc
+             mono_mpeg2_picture_asset_writer.cc
              mono_mpeg2_picture_frame.cc
              mpeg2_picture_asset.cc
+             mpeg2_picture_asset_writer.cc
              mpeg2_transcode.cc
              mxf.cc
              name_format.cc
@@ -185,6 +188,7 @@ def build(bld):
               local_time.h
               locale_convert.h
               metadata.h
+              mpeg2_picture_asset_writer.h
               modified_gamma_transfer_function.h
               mono_j2k_picture_asset.h
               mono_j2k_picture_asset_reader.h
@@ -192,6 +196,7 @@ def build(bld):
               mono_j2k_picture_frame.h
               mono_mpeg2_picture_asset.h
               mono_mpeg2_picture_asset_reader.h
+              mono_mpeg2_picture_asset_writer.h
               mono_mpeg2_picture_frame.h
               mpeg2_picture_asset.h
               mpeg2_transcode.h

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2023 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2024 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,68 +32,37 @@
 */
 
 
-#ifndef LIBDCP_FFMPEG_IMAGE_H
-#define LIBDCP_FFMPEG_IMAGE_H
+#ifndef LIBDCP_MPEG2_PICTURE_ASSET_WRITER_H
+#define LIBDCP_MPEG2_PICTURE_ASSET_WRITER_H
 
 
-#include "types.h"
-extern "C" {
-#include <libavutil/frame.h>
-}
-#include <algorithm>
-#include <vector>
+#include "asset_writer.h"
+#include "frame_info.h"
 
 
 namespace dcp {
 
 
-class FFmpegImage
+class Data;
+class MPEG2PictureAsset;
+
+
+class MPEG2PictureAssetWriter : public AssetWriter
 {
 public:
-	explicit FFmpegImage(int64_t pts);
+	virtual MPEG2FrameInfo write(uint8_t const* data, int size) = 0;
+	virtual void fake_write(MPEG2FrameInfo const& info) = 0;
 
-	explicit FFmpegImage(AVFrame* frame)
-		: _frame(frame)
-	{}
+	MPEG2FrameInfo write(Data const& data);
 
-	FFmpegImage(FFmpegImage const& other) = delete;
-	FFmpegImage& operator=(FFmpegImage const& other) = delete;
+protected:
+	template <class P, class Q>
+	friend void start(MPEG2PictureAssetWriter *, std::shared_ptr<P>, Q *, uint8_t const *, int);
 
-	FFmpegImage(FFmpegImage&& other) {
-		std::swap(_frame, other._frame);
-	}
+	MPEG2PictureAssetWriter(MPEG2PictureAsset* asset, boost::filesystem::path file, bool overwrite);
 
-	FFmpegImage& operator=(FFmpegImage&& other) {
-		std::swap(_frame, other._frame);
-		return *this;
-	}
-
-	~FFmpegImage()
-	{
-		av_frame_free(&_frame);
-	}
-
-	AVFrame const * frame() const {
-		return _frame;
-	}
-
-	uint8_t* y();
-	int y_stride() const;
-
-	uint8_t* u();
-	int u_stride() const;
-
-	uint8_t* v();
-	int v_stride() const;
-
-	Size size() const {
-		return { 1920, 1080 };
-	}
-
-	void set_pts(int64_t pts);
-
-private:
-	AVFrame* _frame = nullptr;
+	MPEG2PictureAsset* _picture_asset = nullptr;
+	bool _overwrite = false;
 };
 
 

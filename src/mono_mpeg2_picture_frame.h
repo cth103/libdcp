@@ -46,8 +46,12 @@ namespace dcp {
 class MonoMPEG2PictureFrame : public Data
 {
 public:
+	MonoMPEG2PictureFrame(uint8_t const * data, int size);
+
 	MonoMPEG2PictureFrame(MonoMPEG2PictureFrame const&) = delete;
 	MonoMPEG2PictureFrame& operator=(MonoMPEG2PictureFrame const&) = delete;
+
+	/* XXX: couldn't we just return the frame buffer */
 
 	/** @return Pointer to MPEG2 data */
 	uint8_t const * data() const override;
@@ -66,6 +70,7 @@ private:
 
 	MonoMPEG2PictureFrame(ASDCP::MPEG2::MXFReader* reader, int n, std::shared_ptr<DecryptionContext>, bool check_hmac);
 
+	/* XXX why is this a shared_ptr? */
 	std::shared_ptr<ASDCP::MPEG2::FrameBuffer> _buffer;
 };
 

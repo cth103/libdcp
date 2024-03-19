@@ -41,6 +41,8 @@
  */
 
 
+#include "behaviour.h"
+#include "mpeg2_picture_asset_writer.h"
 #include "picture_asset.h"
 #include <boost/filesystem/path.hpp>
 
@@ -58,11 +60,22 @@ namespace dcp {
 class MPEG2PictureAsset : public PictureAsset
 {
 public:
+	MPEG2PictureAsset(Fraction edit_rate)
+		: PictureAsset(edit_rate, Standard::INTEROP)
+	{}
+
 	explicit MPEG2PictureAsset(boost::filesystem::path file);
+
+	virtual std::shared_ptr<MPEG2PictureAssetWriter> start_write(
+		boost::filesystem::path file,
+		Behaviour behaviour
+		) = 0;
 
 	static std::string static_pkl_type(Standard standard);
 
 protected:
+	friend class MonoMPEG2PictureAssetWriter;
+
 	void read_video_descriptor(ASDCP::MPEG2::VideoDescriptor const& descriptor);
 
 private:

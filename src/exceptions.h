@@ -158,6 +158,15 @@ public:
 };
 
 
+class MPEG2CompressionError : public MiscError
+{
+public:
+	explicit MPEG2CompressionError(std::string message)
+		: MiscError(message)
+	{}
+};
+
+
 class BadContentKindError : public ReadError
 {
 public:

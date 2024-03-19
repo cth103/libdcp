@@ -65,6 +65,7 @@ namespace dcp
 
 class MXFMetadata;
 class J2KPictureAssetWriter;
+class MPEG2PictureAssetWriter;
 
 
 /** @class MXF
@@ -137,6 +138,8 @@ public:
 protected:
 	template <class P, class Q>
 	friend void start (J2KPictureAssetWriter* writer, std::shared_ptr<P> state, Q* mxf, uint8_t const * data, int size);
+	template <class P, class Q>
+	friend void start (MPEG2PictureAssetWriter* writer, std::shared_ptr<P> state, Q* mxf, uint8_t const * data, int size);
 
 	MXF ();
 

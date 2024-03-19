@@ -41,6 +41,7 @@
  */
 
 
+#include "behaviour.h"
 #include "mpeg2_picture_asset.h"
 #include "mono_mpeg2_picture_asset_reader.h"
 
@@ -48,11 +49,19 @@
 namespace dcp {
 
 
+class MonoMPEG2PictureAssetWriter;
+
+
 class MonoMPEG2PictureAsset : public MPEG2PictureAsset
 {
 public:
+	MonoMPEG2PictureAsset(Fraction edit_rate)
+		: MPEG2PictureAsset(edit_rate)
+	{}
+
 	explicit MonoMPEG2PictureAsset(boost::filesystem::path file);
 
+	std::shared_ptr<MPEG2PictureAssetWriter> start_write(boost::filesystem::path file, Behaviour behaviour) override;
 	std::shared_ptr<MonoMPEG2PictureAssetReader> start_read() const;
 };
 

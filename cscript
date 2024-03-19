@@ -38,7 +38,7 @@ def dependencies(target, options):
     deps = [
         ('libcxml', 'v0.17.9', options),
         ('openjpeg', 'ad8edaacd54a862940d0a77c41ecda5858b54d6e'),
-        ('asdcplib', '4b5d6e8d27dfd5fb282590538068662f4dbbf1c9')
+        ('asdcplib', 'v1.0.1')
     ]
 
     if target.platform == 'linux':

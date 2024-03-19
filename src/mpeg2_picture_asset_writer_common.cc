@@ -32,78 +32,62 @@
 */
 
 
-#ifndef LIBDCP_FRAME_INFO_H
-#define LIBDCP_FRAME_INFO_H
+/** @file  src/mpeg2_picture_asset_writer_common.cc
+ *  @brief Common parts of MPEG2PictureAssetWriter
+ */
 
 
-#include "warnings.h"
-LIBDCP_DISABLE_WARNINGS
-#include <asdcp/AS_DCP.h>
-LIBDCP_ENABLE_WARNINGS
-#include <stdint.h>
-#include <string>
+#include "filesystem.h"
+
+
+using std::shared_ptr;
 
 
 namespace dcp {
 
 
-/** @class FrameInfo
- *  @brief Information about a single frame (either a monoscopic frame or a left *or* right eye stereoscopic frame)
- */
-struct FrameInfo
+class MPEG2PictureAssetWriter;
+
+
+struct ASDCPMPEG2StateBase
 {
-	FrameInfo () = default;
-
-	FrameInfo(uint64_t o, uint64_t s, std::string h)
-		: offset(o)
-		, size(s)
-		, hash(h)
-	{}
-
-	uint64_t offset = 0;
-	uint64_t size = 0;
-	std::string hash;
-};
-
-
-struct J2KFrameInfo : public FrameInfo
-{
-	J2KFrameInfo() = default;
-
-	J2KFrameInfo(uint64_t offset_, uint64_t size_, std::string hash_)
-		: FrameInfo(offset_, size_, hash_)
-	{}
-};
-
-
-struct MPEG2FrameInfo : public FrameInfo
-{
-	MPEG2FrameInfo() = default;
-
-	MPEG2FrameInfo(
-		uint64_t offset_,
-		uint64_t size_,
-		std::string hash_,
-		ASDCP::MPEG2::FrameType_t type_,
-		bool gop_start_,
-		bool closed_gop_,
-		uint8_t temporal_offset_
-		)
-		: FrameInfo(offset_, size_, hash_)
-		, type(type_)
-		, gop_start(gop_start_)
-		, closed_gop(closed_gop_)
-		, temporal_offset(temporal_offset_)
-	{}
-
-	ASDCP::MPEG2::FrameType_t type;
-	bool gop_start;
-	bool closed_gop;
-	uint8_t temporal_offset;
+	ASDCP::MPEG2::Parser mpeg2_parser;
+	ASDCP::WriterInfo writer_info;
+	ASDCP::MPEG2::VideoDescriptor video_descriptor;
 };
 
 
 }
 
 
-#endif
+template <class P, class Q>
+void dcp::start(MPEG2PictureAssetWriter* writer, shared_ptr<P> state, Q* asset, uint8_t const * data, int size)
+{
+	asset->set_file (writer->_file);
+
+	if (ASDCP_FAILURE(state->mpeg2_parser.OpenRead(data, size))) {
+		boost::throw_exception(MiscError("could not parse MPEG2 frame"));
+	}
+
+	state->mpeg2_parser.FillVideoDescriptor(state->video_descriptor);
+	state->video_descriptor.EditRate = ASDCP::Rational(asset->edit_rate().numerator, asset->edit_rate().denominator);
+
+	asset->set_size(Size(state->video_descriptor.StoredWidth, state->video_descriptor.StoredHeight));
+	asset->set_screen_aspect_ratio(Fraction(state->video_descriptor.AspectRatio.Numerator, state->video_descriptor.AspectRatio.Denominator));
+
+	asset->fill_writer_info(&state->writer_info, asset->id());
+
+	auto r = state->mxf_writer.OpenWrite(
+		dcp::filesystem::fix_long_path(*asset->file()).string().c_str(),
+		state->writer_info,
+		state->video_descriptor,
+		16384,
+		writer->_overwrite
+		);
+
+	if (ASDCP_FAILURE(r)) {
+		boost::throw_exception(MXFFileError("could not open MXF file for writing", asset->file()->string(), r));
+	}
+
+	writer->_started = true;
+}

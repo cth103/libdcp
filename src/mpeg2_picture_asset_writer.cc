@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2023 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2024 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,73 +32,17 @@
 */
 
 
-#ifndef LIBDCP_FFMPEG_IMAGE_H
-#define LIBDCP_FFMPEG_IMAGE_H
+#include "mpeg2_picture_asset.h"
+#include "mpeg2_picture_asset_writer.h"
 
 
-#include "types.h"
-extern "C" {
-#include <libavutil/frame.h>
-}
-#include <algorithm>
-#include <vector>
+using namespace dcp;
 
 
-namespace dcp {
-
-
-class FFmpegImage
+MPEG2PictureAssetWriter::MPEG2PictureAssetWriter(MPEG2PictureAsset* asset, boost::filesystem::path file, bool overwrite)
+	: AssetWriter(asset, file)
+	, _picture_asset(asset)
+	, _overwrite(overwrite)
 {
-public:
-	explicit FFmpegImage(int64_t pts);
-
-	explicit FFmpegImage(AVFrame* frame)
-		: _frame(frame)
-	{}
-
-	FFmpegImage(FFmpegImage const& other) = delete;
-	FFmpegImage& operator=(FFmpegImage const& other) = delete;
-
-	FFmpegImage(FFmpegImage&& other) {
-		std::swap(_frame, other._frame);
-	}
-
-	FFmpegImage& operator=(FFmpegImage&& other) {
-		std::swap(_frame, other._frame);
-		return *this;
-	}
-
-	~FFmpegImage()
-	{
-		av_frame_free(&_frame);
-	}
-
-	AVFrame const * frame() const {
-		return _frame;
-	}
-
-	uint8_t* y();
-	int y_stride() const;
-
-	uint8_t* u();
-	int u_stride() const;
-
-	uint8_t* v();
-	int v_stride() const;
-
-	Size size() const {
-		return { 1920, 1080 };
-	}
-
-	void set_pts(int64_t pts);
-
-private:
-	AVFrame* _frame = nullptr;
-};
-
-
+	asset->set_file(file);
 }
-
-
-#endif
-

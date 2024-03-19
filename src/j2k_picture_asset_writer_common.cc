@@ -46,9 +46,9 @@ using std::shared_ptr;
 namespace dcp {
 
 
-struct ASDCPStateBase
+struct ASDCPJ2KStateBase
 {
-	ASDCPStateBase ()
+	ASDCPJ2KStateBase()
 		: frame_buffer (4 * Kumu::Megabyte)
 	{}
 

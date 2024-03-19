@@ -35,6 +35,7 @@
 #include "filesystem.h"
 #include "mono_mpeg2_picture_asset.h"
 #include "mono_mpeg2_picture_asset_reader.h"
+#include "mono_mpeg2_picture_asset_writer.h"
 #include <asdcp/AS_DCP.h>
 
 
@@ -74,4 +75,12 @@ MonoMPEG2PictureAsset::start_read () const
 	/* Can't use make_shared here as the MonoMPEG2PictureAssetReader constructor is private */
 	return shared_ptr<MonoMPEG2PictureAssetReader>(new MonoMPEG2PictureAssetReader(this, key(), standard()));
 
+}
+
+
+shared_ptr<MPEG2PictureAssetWriter>
+MonoMPEG2PictureAsset::start_write(boost::filesystem::path file, Behaviour behaviour)
+{
+	/* Can't use make_shared here as the MonoJ2KPictureAssetWriter constructor is private */
+	return shared_ptr<MonoMPEG2PictureAssetWriter>(new MonoMPEG2PictureAssetWriter(this, file, behaviour == Behaviour::OVERWRITE_EXISTING));
 }

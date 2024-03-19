@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2023 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2024 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,73 +32,91 @@
 */
 
 
-#ifndef LIBDCP_FFMPEG_IMAGE_H
-#define LIBDCP_FFMPEG_IMAGE_H
-
-
+#include "ffmpeg_image.h"
 #include "types.h"
 extern "C" {
-#include <libavutil/frame.h>
+#include <libavutil/pixfmt.h>
 }
-#include <algorithm>
-#include <vector>
 
 
-namespace dcp {
+using namespace dcp;
 
 
-class FFmpegImage
+FFmpegImage::FFmpegImage(int64_t pts)
 {
-public:
-	explicit FFmpegImage(int64_t pts);
+	auto const width = size().width;
+	auto const height = size().height;
 
-	explicit FFmpegImage(AVFrame* frame)
-		: _frame(frame)
-	{}
-
-	FFmpegImage(FFmpegImage const& other) = delete;
-	FFmpegImage& operator=(FFmpegImage const& other) = delete;
-
-	FFmpegImage(FFmpegImage&& other) {
-		std::swap(_frame, other._frame);
+	_frame = av_frame_alloc();
+	if (!_frame) {
+		throw std::bad_alloc();
 	}
 
-	FFmpegImage& operator=(FFmpegImage&& other) {
-		std::swap(_frame, other._frame);
-		return *this;
+	_frame->buf[0] = av_buffer_alloc(width * height);
+	_frame->buf[1] = av_buffer_alloc(width * height / 4);
+	_frame->buf[2] = av_buffer_alloc(width * height / 4);
+
+	_frame->linesize[0] = width;
+	_frame->linesize[1] = width / 2;
+	_frame->linesize[2] = width / 2;
+
+	for (auto i = 0; i < 3; ++i) {
+		_frame->data[i] = _frame->buf[i]->data;
 	}
 
-	~FFmpegImage()
-	{
-		av_frame_free(&_frame);
-	}
-
-	AVFrame const * frame() const {
-		return _frame;
-	}
-
-	uint8_t* y();
-	int y_stride() const;
-
-	uint8_t* u();
-	int u_stride() const;
-
-	uint8_t* v();
-	int v_stride() const;
-
-	Size size() const {
-		return { 1920, 1080 };
-	}
-
-	void set_pts(int64_t pts);
-
-private:
-	AVFrame* _frame = nullptr;
-};
-
-
+	_frame->width = width;
+	_frame->height = height;
+	_frame->format = AV_PIX_FMT_YUV420P;
+	_frame->pts = pts;
 }
 
 
-#endif
+void
+FFmpegImage::set_pts(int64_t pts)
+{
+	_frame->pts = pts;
+}
+
+
+uint8_t*
+FFmpegImage::y()
+{
+	return _frame->data[0];
+}
+
+
+int
+FFmpegImage::y_stride() const
+{
+	return _frame->linesize[0];
+}
+
+
+uint8_t*
+FFmpegImage::u()
+{
+	return _frame->data[1];
+}
+
+
+int
+FFmpegImage::u_stride() const
+{
+	return _frame->linesize[1];
+}
+
+
+uint8_t*
+FFmpegImage::v()
+{
+	return _frame->data[2];
+}
+
+
+int
+FFmpegImage::v_stride() const
+{
+	return _frame->linesize[2];
+}
+
 
