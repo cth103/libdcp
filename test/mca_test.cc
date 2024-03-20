@@ -168,7 +168,8 @@ check_mca_descriptors(int suffix, vector<dcp::Channel> extra_active_channels, ve
 
 	/* Check MXF */
 
-	auto reader = new ASDCP::PCM::MXFReader();
+	Kumu::FileReaderFactory factory;
+	auto reader = new ASDCP::PCM::MXFReader(factory);
 	reader->OpenRead(boost::filesystem::path(dir / "mxf.mxf").string());
 
 	list<ASDCP::MXF::InterchangeObject*> channels;

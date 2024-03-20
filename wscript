@@ -59,7 +59,7 @@ def options(opt):
     opt.add_option('--target-windows-64', action='store_true', default=False, help='set up to do a cross-compile to Windows 64-bit')
     opt.add_option('--target-windows-32', action='store_true', default=False, help='set up to do a cross-compile to Windows 32-bit')
     opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
-    opt.add_option('--static', action='store_true', default=False, help='build libdcp statically, and link statically to openjpeg, cxml, asdcplib-carl')
+    opt.add_option('--static', action='store_true', default=False, help='build libdcp statically, and link statically to openjpeg, cxml, asdcplib-dcpomatic')
     opt.add_option('--disable-tests', action='store_true', default=False, help='disable building of tests')
     opt.add_option('--disable-benchmarks', action='store_true', default=False, help='disable building of benchmarks')
     opt.add_option('--enable-gcov', action='store_true', default=False, help='use gcov in tests')
@@ -166,16 +166,16 @@ def configure(conf):
 
     if conf.options.static:
         conf.env.STLIB_OPENJPEG = ['openjp2']
-        conf.check_cfg(package='libasdcp-carl', args='libasdcp-carl >= 0.1.3 --cflags', uselib_store='ASDCPLIB_CTH', mandatory=True)
-        conf.env.HAVE_ASDCPLIB_CTH = 1
-        conf.env.STLIB_ASDCPLIB_CTH = ['asdcp-carl', 'kumu-carl']
+        conf.check_cfg(package='libasdcp-dcpomatic', args='libasdcp-dcpomatic >= 0.1.3 --cflags', uselib_store='ASDCPLIB_DCPOMATIC', mandatory=True)
+        conf.env.HAVE_ASDCPLIB_DCPOMATIC = 1
+        conf.env.STLIB_ASDCPLIB_DCPOMATIC = ['asdcp-dcpomatic', 'kumu-dcpomatic']
         conf.env.HAVE_CXML = 1
         conf.env.LIB_CXML = ['xml++-' + conf.env.XMLPP_API, 'glibmm-2.4']
         conf.env.STLIB_CXML = ['cxml']
         conf.check_cfg(package='xerces-c', args='--cflags', uselib_store='XERCES', mandatory=True)
         conf.env.LIB_XERCES = ['xerces-c', 'icuuc', 'curl']
     else:
-        conf.check_cfg(package='libasdcp-carl', args='libasdcp-carl >= 0.1.3 --cflags --libs', uselib_store='ASDCPLIB_CTH', mandatory=True)
+        conf.check_cfg(package='libasdcp-dcpomatic', args='libasdcp-dcpomatic >= 0.1.3 --cflags --libs', uselib_store='ASDCPLIB_DCPOMATIC', mandatory=True)
         conf.check_cfg(package='libcxml', args='libcxml >= 0.17.0 --cflags --libs', uselib_store='CXML', mandatory=True)
         conf.check_cfg(package='xerces-c', args='--cflags --libs', uselib_store='XERCES', mandatory=True)
 

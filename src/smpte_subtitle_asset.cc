@@ -95,7 +95,8 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 {
 	auto xml = make_shared<cxml::Document>("SubtitleReel");
 
-	auto reader = make_shared<ASDCP::TimedText::MXFReader>();
+	Kumu::FileReaderFactory factory;
+	auto reader = make_shared<ASDCP::TimedText::MXFReader>(factory);
 	auto r = Kumu::RESULT_OK;
 	{
 		ASDCPErrorSuspender sus;
@@ -320,7 +321,8 @@ SMPTESubtitleAsset::set_key (Key key)
 
 	/* Our data was encrypted; now we can decrypt it */
 
-	auto reader = make_shared<ASDCP::TimedText::MXFReader>();
+	Kumu::FileReaderFactory factory;
+	auto reader = make_shared<ASDCP::TimedText::MXFReader>(factory);
 	auto r = reader->OpenRead(dcp::filesystem::fix_long_path(*_file).string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (
@@ -354,7 +356,8 @@ SMPTESubtitleAsset::load_font_nodes () const
 bool
 SMPTESubtitleAsset::valid_mxf (boost::filesystem::path file)
 {
-	ASDCP::TimedText::MXFReader reader;
+	Kumu::FileReaderFactory factory;
+	ASDCP::TimedText::MXFReader reader(factory);
 	Kumu::DefaultLogSink().UnsetFilterFlag(Kumu::LOG_ALLOW_ALL);
 	auto r = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
 	Kumu::DefaultLogSink().SetFilterFlag(Kumu::LOG_ALLOW_ALL);

@@ -70,7 +70,8 @@ using namespace dcp;
 SoundAsset::SoundAsset (boost::filesystem::path file)
 	: Asset (file)
 {
-	ASDCP::PCM::MXFReader reader;
+	Kumu::FileReaderFactory factory;
+	ASDCP::PCM::MXFReader reader(factory);
 	auto r = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
 	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (MXFFileError("could not open MXF file for reading", file.string(), r));
@@ -138,14 +139,15 @@ SoundAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, No
 		return true;
 	}
 
-	ASDCP::PCM::MXFReader reader_A;
+	Kumu::FileReaderFactory factory;
+	ASDCP::PCM::MXFReader reader_A(factory);
 	DCP_ASSERT (file());
 	auto r = reader_A.OpenRead(dcp::filesystem::fix_long_path(*file()).string().c_str());
 	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (MXFFileError("could not open MXF file for reading", file()->string(), r));
 	}
 
-	ASDCP::PCM::MXFReader reader_B;
+	ASDCP::PCM::MXFReader reader_B(factory);
 	r = reader_B.OpenRead(dcp::filesystem::fix_long_path(*other->file()).string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError("could not open MXF file for reading", other->file()->string(), r));
@@ -278,7 +280,8 @@ SoundAsset::static_pkl_type (Standard standard)
 bool
 SoundAsset::valid_mxf (boost::filesystem::path file)
 {
-	ASDCP::PCM::MXFReader reader;
+	Kumu::FileReaderFactory factory;
+	ASDCP::PCM::MXFReader reader(factory);
 	Kumu::Result_t r = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
 	return !ASDCP_FAILURE (r);
 }

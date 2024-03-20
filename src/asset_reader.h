@@ -97,7 +97,8 @@ private:
 	explicit AssetReader (Asset const * asset, boost::optional<Key> key, Standard standard)
 		: _crypto_context (new DecryptionContext(key, standard))
 	{
-		_reader = new R ();
+		Kumu::FileReaderFactory factory;
+		_reader = new R(factory);
 		DCP_ASSERT (asset->file());
 		auto const r = _reader->OpenRead(dcp::filesystem::fix_long_path(*asset->file()).string().c_str());
 		if (ASDCP_FAILURE(r)) {

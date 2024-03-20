@@ -356,16 +356,16 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_picture_sound_hash)
 	HashCalculator video_calc(video_path);
 	auto mod = fopen(video_path.string().c_str(), "r+b");
 	BOOST_REQUIRE (mod);
-	fseek (mod, 4096, SEEK_SET);
+	BOOST_REQUIRE_EQUAL(fseek(mod, -16, SEEK_END), 0);
 	int x = 42;
-	fwrite (&x, sizeof(x), 1, mod);
+	BOOST_REQUIRE(fwrite(&x, sizeof(x), 1, mod) == 1);
 	fclose (mod);
 
 	auto audio_path = path(dir / "audio.mxf");
 	HashCalculator audio_calc(audio_path);
 	mod = fopen(audio_path.string().c_str(), "r+b");
 	BOOST_REQUIRE (mod);
-	BOOST_REQUIRE_EQUAL (fseek(mod, -64, SEEK_END), 0);
+	BOOST_REQUIRE_EQUAL(fseek(mod, 0, SEEK_END), 0);
 	BOOST_REQUIRE (fwrite (&x, sizeof(x), 1, mod) == 1);
 	fclose (mod);
 
@@ -406,9 +406,9 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 				).set_reference_hash("x" + calc.old_hash()).set_calculated_hash(calc.old_hash()),
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf") },
 			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_HASHES, canonical(dir / "audio.mxf") },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xKcJb7S2K5cNm8RG4kfQD5FTeS0A=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 28 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'x2DSYFM8X5sGdsYgzhs3mBbTNNmw=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 12 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'x7a4KZ9j2kpSuBz+iBQD4f03ctm8=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 20 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'x3M7YTgvFKXXMEGLkIbV4miC90FE=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 28 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xskI+5b/9LA/y6h0mcyxysJYanxI=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 12 },
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xvsVjRV9vhTBPUWfE/TT1o2vdQsI=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 20 },
 		});
 }
 
@@ -1503,7 +1503,7 @@ verify_timed_text_asset_too_large (string name)
 		{ dir },
 		{},
 		{
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, string("121695488"), canonical(dir / "subs.mxf") },
+			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, string("121698284"), canonical(dir / "subs.mxf") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, string("121634816"), canonical(dir / "subs.mxf") },
 			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf") },
 			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME },

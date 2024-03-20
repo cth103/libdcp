@@ -59,7 +59,8 @@ using namespace dcp;
 StereoPictureAsset::StereoPictureAsset (boost::filesystem::path file)
 	: PictureAsset (file)
 {
-	ASDCP::JP2K::MXFSReader reader;
+	Kumu::FileReaderFactory factory;
+	ASDCP::JP2K::MXFSReader reader(factory);
 	auto r = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
 	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (MXFFileError("could not open MXF file for reading", file.string(), r));
@@ -105,14 +106,15 @@ StereoPictureAsset::start_read () const
 bool
 StereoPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandler note) const
 {
-	ASDCP::JP2K::MXFSReader reader_A;
+	Kumu::FileReaderFactory factory;
+	ASDCP::JP2K::MXFSReader reader_A(factory);
 	DCP_ASSERT (file());
 	auto r = reader_A.OpenRead(dcp::filesystem::fix_long_path(*file()).string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError ("could not open MXF file for reading", file()->string(), r));
 	}
 
-	ASDCP::JP2K::MXFSReader reader_B;
+	ASDCP::JP2K::MXFSReader reader_B(factory);
 	DCP_ASSERT (other->file());
 	r = reader_B.OpenRead(dcp::filesystem::fix_long_path(*other->file()).string().c_str());
 	if (ASDCP_FAILURE (r)) {

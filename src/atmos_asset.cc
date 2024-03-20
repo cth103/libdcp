@@ -42,6 +42,7 @@
 #include "atmos_asset_writer.h"
 #include "exceptions.h"
 #include <asdcp/AS_DCP.h>
+#include <asdcp/KM_fileio.h>
 
 
 using std::string;
@@ -67,7 +68,8 @@ AtmosAsset::AtmosAsset (boost::filesystem::path file)
 	: Asset (file)
 	, MXF (Standard::SMPTE)
 {
-	ASDCP::ATMOS::MXFReader reader;
+	Kumu::FileReaderFactory factory;
+	ASDCP::ATMOS::MXFReader reader(factory);
 	auto r = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (MXFFileError("could not open MXF file for reading", file.string(), r));

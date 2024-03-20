@@ -9,7 +9,7 @@
     <Asset>
       <Id>urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358ab</Id>
       <AnnotationText>6affb8ee-0020-4dff-a53c-17652f6358ab</AnnotationText>
-      <Hash>z9r7fpZ4wf0GbiliDzpfKQvFkmo=</Hash>
+      <Hash>SgCEvehTaji0MCWOJTVioOcNndY=</Hash>
       <Size>1965</Size>
       <Type>text/xml;asdcpKind=CPL</Type>
       <OriginalFileName>cpl_6affb8ee-0020-4dff-a53c-17652f6358ab.xml</OriginalFileName>
@@ -17,7 +17,7 @@
     <Asset>
       <Id>urn:uuid:5407b210-4441-4e97-8b16-8bdc7c12da54</Id>
       <AnnotationText>5407b210-4441-4e97-8b16-8bdc7c12da54</AnnotationText>
-      <Hash>7a4KZ9j2kpSuBz+iBQD4f03ctm8=</Hash>
+      <Hash>vsVjRV9vhTBPUWfE/TT1o2vdQsI=</Hash>
       <Size>31648</Size>
       <Type>application/x-smpte-mxf;asdcpKind=Picture</Type>
       <OriginalFileName>video.mxf</OriginalFileName>
@@ -25,7 +25,7 @@
     <Asset>
       <Id>urn:uuid:97f0f352-5b77-48ee-a558-9df37717f4fa</Id>
       <AnnotationText>97f0f352-5b77-48ee-a558-9df37717f4fa</AnnotationText>
-      <Hash>KcJb7S2K5cNm8RG4kfQD5FTeS0A=</Hash>
+      <Hash>3M7YTgvFKXXMEGLkIbV4miC90FE=</Hash>
       <Size>881326</Size>
       <Type>application/x-smpte-mxf;asdcpKind=Sound</Type>
       <OriginalFileName>audio.mxf</OriginalFileName>

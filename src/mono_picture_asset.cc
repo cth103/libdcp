@@ -66,7 +66,8 @@ using namespace dcp;
 MonoPictureAsset::MonoPictureAsset (boost::filesystem::path file)
 	: PictureAsset (file)
 {
-	ASDCP::JP2K::MXFReader reader;
+	Kumu::FileReaderFactory factory;
+	ASDCP::JP2K::MXFReader reader(factory);
 	auto r = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
 	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (MXFFileError("could not open MXF file for reading", file.string(), r));
@@ -109,14 +110,15 @@ MonoPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions const& o
 		return false;
 	}
 
-	ASDCP::JP2K::MXFReader reader_A;
+	Kumu::FileReaderFactory factory;
+	ASDCP::JP2K::MXFReader reader_A(factory);
 	DCP_ASSERT (_file);
 	auto r = reader_A.OpenRead(dcp::filesystem::fix_long_path(*_file).string().c_str());
 	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (MXFFileError("could not open MXF file for reading", _file->string(), r));
 	}
 
-	ASDCP::JP2K::MXFReader reader_B;
+	ASDCP::JP2K::MXFReader reader_B(factory);
 	DCP_ASSERT (other->file ());
 	r = reader_B.OpenRead(dcp::filesystem::fix_long_path(*other->file()).string().c_str());
 	if (ASDCP_FAILURE (r)) {

@@ -38,7 +38,7 @@ def dependencies(target, options):
     return (
         ('libcxml', 'v0.17.8', options),
         ('openjpeg', 'ad8edaacd54a862940d0a77c41ecda5858b54d6e'),
-        ('asdcplib', '8a4a2f25cac0c58aac1d4267facab20e5ec3b57f')
+        ('asdcplib', '4b5d6e8d27dfd5fb282590538068662f4dbbf1c9')
     )
 
 def build(target, options):

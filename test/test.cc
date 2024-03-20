@@ -260,14 +260,14 @@ check_file (boost::filesystem::path ref, boost::filesystem::path check)
 
 RNGFixer::RNGFixer ()
 {
-	Kumu::cth_test = true;
+	Kumu::dcpomatic_test = true;
 	Kumu::FortunaRNG().Reset();
 }
 
 
 RNGFixer::~RNGFixer ()
 {
-	Kumu::cth_test = false;
+	Kumu::dcpomatic_test = false;
 }
 
 

@@ -23,7 +23,7 @@
           <EntryPoint>0</EntryPoint>
           <Duration>24</Duration>
           <KeyId>urn:uuid:ac8d301c-e5d9-4343-b6f3-ba2668adbe56</KeyId>
-          <Hash>AVtX8wz76uG2Uw0Qbc9+DKnHUfw=</Hash>
+          <Hash>Q0GMntXvEqVQsiv+YkfhMrXdw0w=</Hash>
           <FrameRate>24 1</FrameRate>
           <ScreenAspectRatio>1998 1080</ScreenAspectRatio>
         </MainPicture>
@@ -34,7 +34,7 @@
           <EntryPoint>0</EntryPoint>
           <Duration>24</Duration>
           <KeyId>urn:uuid:7ab6c77b-6648-44b9-8549-a5290ada6238</KeyId>
-          <Hash>3o02UpYqrl6w0NQbFvrB2tKxaIk=</Hash>
+          <Hash>v0SCdh2xnKNzGC7Sk5pS2q5Q/wQ=</Hash>
         </MainSound>
       </AssetList>
     </Reel>
@@ -57,15 +57,15 @@
           <dsig:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
-        <dsig:DigestValue>X3YkODMLyEJsAz5v3S/uT+xDD7c=</dsig:DigestValue>
+        <dsig:DigestValue>DBBENxFb5Qv377fb86n0KgUQ7go=</dsig:DigestValue>
       </dsig:Reference>
     </dsig:SignedInfo>
-    <dsig:SignatureValue>jH02vGxlTTi9T94KCIfMkafmdO0wluP9cvh+u5HyYoZo/D7O1Ki202t5uHRp0wcu
-OfBFuu1Hw3Ooy/VEa2l4l/UDfE7lI+D79e0VfA8HwFB+c21GF7Q2FRV5ddu9ODgz
-rk6kC5fZSLxc7cpK6jPNnT285O3nHfjk6MQ0fgGfNbvMefgeEWVKj8qcyFgN6H4e
-wr1omcjbdw/HVQaOW84//pBRSRdMJGe1u2iUE2RwxBLzP4BepzkMv9Asm6uDo1YG
-X1d60g2aCUdxAg9fjyTaOss1nRp1YdPlb3SHUhKXgTT/eAPkmmr7bs3jJtp2BN9U
-4Izz2GR/3Uyf0NP20mZgNQ==</dsig:SignatureValue>
+    <dsig:SignatureValue>rhF1QacGUhxm1jfcgyBjAo2BmD4QxBl7c6Bzt8rjXXhR+NVT4ITeyxi39+94WwBx
+Yp8iQhF46bE2QGZAr+HnZZJGVG3ajeaQ4uvPp2KRC8sHpBlZ2rGGtyjXAflYjepw
+c1cLvRoAKbxOMW+ESxjyYOKgT0Bke0GhbzZ8+w+hGZLHxK9oTokIG9YDnRNUKN5W
+n6avbxuaT8wtZgVwD4qfKzMeJlYW3yDFo/2apQA5K+oCj/gfrS1habYqBoNo9kO1
+fWkQ7LIeRrYuzNlr5K4e/LyIm7SHwb9EGcA7K8WbDrHKvaJmTs/T01QhU9f+huk2
+ZGJMMCGHhiwcbVtqVhgJSQ==</dsig:SignatureValue>
     <dsig:KeyInfo>
       <dsig:X509Data>
         <dsig:X509IssuerSerial>
