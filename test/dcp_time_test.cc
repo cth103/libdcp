@@ -131,6 +131,11 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	/* SMPTE */
 	a = dcp::Time ("01:23:45:12", 250);
 	BOOST_CHECK_EQUAL (a, dcp::Time (1, 23, 45, 12, 250));
+	/* The editable units field can be any length (depending on the timecode rate)
+	 * but in practice I think 3 is enough.
+	 */
+	a = dcp::Time("00:05:01:519", 250);
+	BOOST_CHECK_EQUAL(a, dcp::Time(0, 5, 1, 519, 250));
 
 	/* Check some disallowed constructions from string */
 	BOOST_CHECK_THROW (dcp::Time ("01:23:45:1234", optional<int>()), dcp::ReadError);
@@ -145,7 +150,6 @@ BOOST_AUTO_TEST_CASE (dcp_time)
 	BOOST_CHECK_THROW (dcp::Time ("01:23:.123", optional<int>()), dcp::ReadError);
 	BOOST_CHECK_THROW (dcp::Time ("01::45.123", optional<int>()), dcp::ReadError);
 	BOOST_CHECK_THROW (dcp::Time (":23:45.123", optional<int>()), dcp::ReadError);
-	BOOST_CHECK_THROW (dcp::Time ("01:23:45:123", 250), dcp::ReadError);
 	BOOST_CHECK_THROW (dcp::Time ("01:23:45:123:66", 250), dcp::ReadError);
 	BOOST_CHECK_THROW (dcp::Time ("01:23:45:", 250), dcp::ReadError);
 	BOOST_CHECK_THROW (dcp::Time ("01:23::123", 250), dcp::ReadError);
