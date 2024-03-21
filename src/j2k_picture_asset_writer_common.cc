@@ -32,7 +32,7 @@
 */
 
 
-/** @file  src/picture_asset_writer_common.cc
+/** @file  src/j2k_picture_asset_writer_common.cc
  *  @brief Common parts of J2KPictureAssetWriter
  */
 
