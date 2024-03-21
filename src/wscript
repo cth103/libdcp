@@ -164,6 +164,7 @@ def build(bld):
               filesystem.h
               font_asset.h
               frame.h
+              frame_info.h
               fsk.h
               gamma_transfer_function.h
               h_align.h

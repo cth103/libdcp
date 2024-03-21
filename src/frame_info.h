@@ -32,20 +32,10 @@
 */
 
 
-/** @file  src/j2k_picture_asset_writer.h
- *  @brief J2KPictureAssetWriter and FrameInfo classes.
- */
+#ifndef LIBDCP_FRAME_INFO_H
+#define LIBDCP_FRAME_INFO_H
 
 
-#ifndef LIBDCP_J2K_PICTURE_ASSET_WRITER_H
-#define LIBDCP_J2K_PICTURE_ASSET_WRITER_H
-
-
-#include "asset_writer.h"
-#include "frame_info.h"
-#include "metadata.h"
-#include <boost/utility.hpp>
-#include <memory>
 #include <stdint.h>
 #include <string>
 
@@ -53,29 +43,22 @@
 namespace dcp {
 
 
-class Data;
-class J2KPictureAsset;
-
-
-/** @class J2KPictureAssetWriter
- *  @brief Parent class for classes which write picture assets.
+/** @class FrameInfo
+ *  @brief Information about a single frame (either a monoscopic frame or a left *or* right eye stereoscopic frame)
  */
-class J2KPictureAssetWriter : public AssetWriter
+struct FrameInfo
 {
-public:
-	virtual FrameInfo write (uint8_t const *, int) = 0;
-	virtual void fake_write (int) = 0;
+	FrameInfo () = default;
 
-	FrameInfo write (Data const& data);
+	FrameInfo(uint64_t o, uint64_t s, std::string h)
+		: offset(o)
+		, size(s)
+		, hash(h)
+	{}
 
-protected:
-	template <class P, class Q>
-	friend void start (J2KPictureAssetWriter *, std::shared_ptr<P>, Q *, uint8_t const *, int);
-
-	J2KPictureAssetWriter (J2KPictureAsset *, boost::filesystem::path, bool);
-
-	J2KPictureAsset* _picture_asset = nullptr;
-	bool _overwrite = false;
+	uint64_t offset = 0;
+	uint64_t size = 0;
+	std::string hash;
 };
 
 
