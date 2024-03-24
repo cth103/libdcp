@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE (recovery)
 	auto mp = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	auto writer = mp->start_write("build/test/baz/video1.mxf", dcp::Behaviour::MAKE_NEW);
 
-	int written_size = 0;
+	uint64_t written_size = 0;
 	for (int i = 0; i < 24; ++i) {
 		auto info = writer->write (data.data(), data.size());
 		BOOST_CHECK_EQUAL (info.hash, "c3c9a3adec09baf2b0bcb65806fbeac8");
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE (recovery)
 	writer->write (data.data(), data.size());
 
 	for (int i = 1; i < 4; ++i) {
-		writer->fake_write (written_size);
+		writer->fake_write(dcp::J2KFrameInfo{0, written_size, "xxx"});
 	}
 
 	for (int i = 4; i < 24; ++i) {

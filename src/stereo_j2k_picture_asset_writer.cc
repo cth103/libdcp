@@ -128,12 +128,12 @@ StereoJ2KPictureAssetWriter::write (uint8_t const * data, int size)
 
 
 void
-StereoJ2KPictureAssetWriter::fake_write (int size)
+StereoJ2KPictureAssetWriter::fake_write(J2KFrameInfo const& info)
 {
 	DCP_ASSERT (_started);
 	DCP_ASSERT (!_finalized);
 
-	auto r = _state->mxf_writer.FakeWriteFrame (size, _next_eye == Eye::LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT);
+	auto r = _state->mxf_writer.FakeWriteFrame(info.size, _next_eye == Eye::LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT);
 	if (ASDCP_FAILURE(r)) {
 		boost::throw_exception (MXFFileError("error in writing video MXF", _file.string(), r));
 	}

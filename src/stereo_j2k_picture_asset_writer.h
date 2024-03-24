@@ -65,8 +65,8 @@ public:
 	 *  @param data JPEG2000 data.
 	 *  @param size Size of data.
 	 */
-	void fake_write (int size) override;
 	J2KFrameInfo write(uint8_t const * data, int size) override;
+	void fake_write(J2KFrameInfo const& info) override;
 	bool finalize () override;
 
 private:

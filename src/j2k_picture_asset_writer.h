@@ -63,8 +63,8 @@ class J2KPictureAsset;
 class J2KPictureAssetWriter : public AssetWriter
 {
 public:
-	virtual void fake_write (int) = 0;
 	virtual J2KFrameInfo write(uint8_t const *, int) = 0;
+	virtual void fake_write(J2KFrameInfo const& info) = 0;
 
 	J2KFrameInfo write(Data const& data);
 
