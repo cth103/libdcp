@@ -60,7 +60,7 @@ J2KPictureAssetWriter::J2KPictureAssetWriter (J2KPictureAsset* asset, boost::fil
 }
 
 
-FrameInfo
+J2KFrameInfo
 J2KPictureAssetWriter::write (Data const& data)
 {
 	return write (data.data(), data.size());

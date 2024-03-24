@@ -93,7 +93,7 @@ MonoJ2KPictureAssetWriter::start (uint8_t const * data, int size)
 }
 
 
-FrameInfo
+J2KFrameInfo
 MonoJ2KPictureAssetWriter::write (uint8_t const * data, int size)
 {
 	DCP_ASSERT (!_finalized);
@@ -117,7 +117,7 @@ MonoJ2KPictureAssetWriter::write (uint8_t const * data, int size)
 	}
 
 	++_frames_written;
-	return FrameInfo (before_offset, _state->mxf_writer.Tell() - before_offset, hash);
+	return J2KFrameInfo(before_offset, _state->mxf_writer.Tell() - before_offset, hash);
 }
 
 

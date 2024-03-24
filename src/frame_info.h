@@ -62,6 +62,16 @@ struct FrameInfo
 };
 
 
+struct J2KFrameInfo : public FrameInfo
+{
+	J2KFrameInfo() = default;
+
+	J2KFrameInfo(uint64_t offset_, uint64_t size_, std::string hash_)
+		: FrameInfo(offset_, size_, hash_)
+	{}
+};
+
+
 }
 
 

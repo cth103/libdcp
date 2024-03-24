@@ -63,10 +63,10 @@ class J2KPictureAsset;
 class J2KPictureAssetWriter : public AssetWriter
 {
 public:
-	virtual FrameInfo write (uint8_t const *, int) = 0;
 	virtual void fake_write (int) = 0;
+	virtual J2KFrameInfo write(uint8_t const *, int) = 0;
 
-	FrameInfo write (Data const& data);
+	J2KFrameInfo write(Data const& data);
 
 protected:
 	template <class P, class Q>

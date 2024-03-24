@@ -66,8 +66,8 @@ class MonoJ2KPictureAssetWriter : public J2KPictureAssetWriter
 public:
 	~MonoJ2KPictureAssetWriter();
 
-	FrameInfo write (uint8_t const *, int) override;
 	void fake_write (int size) override;
+	J2KFrameInfo write(uint8_t const *, int) override;
 	bool finalize () override;
 
 private:
