@@ -62,7 +62,7 @@ static void
 help (string n)
 {
 	cerr << "Re-write a MXF (decrypting it if required)\n"
-	     << "Syntax: " << n << " [OPTION] <MXF>]\n"
+	     << "Syntax: " << n << " [OPTION] <MXF>\n"
 	     << "  --version          show libdcp version\n"
 	     << "  -v, --verbose      be verbose\n"
 	     << "  -h, --help         show this help\n"
