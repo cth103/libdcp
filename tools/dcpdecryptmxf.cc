@@ -43,6 +43,8 @@
 #include "key.h"
 #include "mono_picture_asset.h"
 #include "mono_picture_asset_writer.h"
+#include "sound_asset.h"
+#include "sound_asset_writer.h"
 #include "util.h"
 #include "version.h"
 #include <asdcp/AS_DCP.h>
@@ -69,7 +71,7 @@ help (string n)
 	     << "  -o, --output       output filename\n"
 	     << "  -k, --kdm          KDM file\n"
 	     << "  -p, --private-key  private key file\n"
-	     << "  -t, --type         MXF type: picture or atmos\n"
+	     << "  -t, --type         MXF type: picture, sound or atmos\n"
 	     << "  -i, --ignore-hmac  don't raise an error if HMACs don't agree\n";
 }
 
@@ -99,6 +101,7 @@ main (int argc, char* argv[])
 
 	enum class Type {
 		PICTURE,
+		SOUND,
 		ATMOS,
 	};
 
@@ -146,6 +149,8 @@ main (int argc, char* argv[])
 		case 't':
 			if (strcmp(optarg, "picture") == 0) {
 				type = Type::PICTURE;
+			} else if (strcmp(optarg, "sound") == 0) {
+				type = Type::SOUND;
 			} else if (strcmp(optarg, "atmos") == 0) {
 				type = Type::ATMOS;
 			} else {
@@ -232,6 +237,32 @@ main (int argc, char* argv[])
 			dcp::MonoPictureAsset out (in.edit_rate(), dcp::Standard::SMPTE);
 			auto writer = out.start_write(output_file.get(), dcp::PictureAsset::Behaviour::MAKE_NEW);
 			copy (in, writer, ignore_hmac);
+			break;
+		}
+		case Type::SOUND:
+		{
+			dcp::SoundAsset in(input_file);
+			add_key(in, decrypted_kdm);
+			/* XXX: this is all a bit of a hack */
+			dcp::SoundAsset out(in.edit_rate(), in.sampling_rate(), in.channels(), dcp::LanguageTag(in.language().get_value_or("en-GB")), dcp::Standard::SMPTE);
+			auto writer = out.start_write(output_file.get(), {}, dcp::SoundAsset::AtmosSync::DISABLED, dcp::SoundAsset::MCASubDescriptors::DISABLED);
+			auto reader = in.start_read();
+			reader->set_check_hmac(!ignore_hmac);
+			for (int64_t i = 0; i < in.intrinsic_duration(); ++i) {
+				auto frame = reader->get_frame(i);
+				std::vector<int32_t*> pointers(frame->channels());
+				for (auto channel = 0; channel < frame->channels(); ++channel) {
+					pointers[channel] = new int32_t[frame->samples()];
+					for (auto sample = 0; sample < frame->samples(); ++sample) {
+						pointers[channel][sample] = frame->get(channel, sample);
+					}
+				}
+				writer->write(pointers.data(), frame->channels(), frame->samples());
+				for (auto channel = 0; channel < frame->channels(); ++channel) {
+					delete[] pointers[channel];
+				}
+			}
+			writer->finalize();
 			break;
 		}
 		}
