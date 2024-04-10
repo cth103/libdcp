@@ -1848,7 +1848,7 @@ verify_assetmap(Context& context, shared_ptr<const DCP> dcp)
 }
 
 
-dcp::VerifyResult
+dcp::VerificationResult
 dcp::verify (
 	vector<boost::filesystem::path> directories,
 	vector<dcp::DecryptedKDM> kdms,

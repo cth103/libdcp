@@ -675,14 +675,14 @@ struct VerificationOptions
 };
 
 
-struct VerifyResult
+struct VerificationResult
 {
 	std::vector<VerificationNote> notes;
 	std::vector<std::shared_ptr<dcp::DCP>> dcps;
 };
 
 
-VerifyResult verify(
+VerificationResult verify(
 	std::vector<boost::filesystem::path> directories,
 	std::vector<dcp::DecryptedKDM> kdms,
 	std::function<void (std::string, boost::optional<boost::filesystem::path>)> stage,
