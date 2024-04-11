@@ -117,6 +117,7 @@ def build(bld):
                  utf8_test.cc
                  v_align_test.cc
                  verify_test.cc
+                 verify_report_test.cc
                  """
     obj.target = 'tests'
     obj.install_path = ''

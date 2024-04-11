@@ -125,6 +125,7 @@ def build(bld):
              v_align.cc
              verify.cc
              verify_j2k.cc
+             verify_report.cc
              version.cc
              """
 
@@ -232,6 +233,7 @@ def build(bld):
               v_align.h
               verify.h
               verify_j2k.h
+              verify_report.h
               version.h
               warnings.h
               """

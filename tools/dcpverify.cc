@@ -37,6 +37,7 @@
 #include "filesystem.h"
 #include "raw_convert.h"
 #include "verify.h"
+#include "verify_report.h"
 #include "version.h"
 #include <boost/bind/bind.hpp>
 #include <boost/filesystem.hpp>
@@ -68,6 +69,7 @@ help (string n)
 	     << "  --ignore-bv21-smpte                          don't give the SMPTE Bv2.1 error about a DCP not being SMPTE\n"
 	     << "  --no-asset-hash-check                        don't check asset hashes\n"
 	     << "  --asset-hash-check-maximum-size <size-in-MB> only check hashes for assets smaller than this size (in MB)\n"
+	     << "  -o <filename>                                write HTML report to filename\n"
 	     << "  -q, --quiet                                  don't report progress\n";
 }
 
@@ -80,6 +82,7 @@ main (int argc, char* argv[])
 	bool ignore_missing_assets = false;
 	bool ignore_bv21_smpte = false;
 	bool quiet = false;
+	boost::optional<boost::filesystem::path> report_filename;
 
 	dcp::VerificationOptions verification_options;
 
@@ -96,7 +99,7 @@ main (int argc, char* argv[])
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "VhABCD:q", long_options, &option_index);
+		int c = getopt_long (argc, argv, "VhABCD:qo:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -125,6 +128,9 @@ main (int argc, char* argv[])
 			break;
 		case 'q':
 			quiet = true;
+			break;
+		case 'o':
+			report_filename = optarg;
 			break;
 		}
 	}
@@ -173,8 +179,8 @@ main (int argc, char* argv[])
 
 	vector<boost::filesystem::path> directories;
 	directories.push_back (argv[optind]);
-	auto notes = dcp::verify(directories, {}, stage, progress, verification_options).notes;
-	dcp::filter_notes (notes, ignore_missing_assets);
+	auto result = dcp::verify(directories, {}, stage, progress, verification_options);
+	dcp::filter_notes(result.notes, ignore_missing_assets);
 
 	if (!quiet) {
 		cout << "\n";
@@ -183,7 +189,7 @@ main (int argc, char* argv[])
 	bool failed = false;
 	bool bv21_failed = false;
 	bool warned = false;
-	for (auto i: notes) {
+	for (auto i: result.notes) {
 		if (ignore_bv21_smpte && i.code() == dcp::VerificationNote::Code::INVALID_STANDARD) {
 			continue;
 		}
@@ -215,6 +221,11 @@ main (int argc, char* argv[])
 		} else {
 			cout << "DCP verified OK.\n";
 		}
+	}
+
+	if (report_filename) {
+		dcp::HTMLFormatter formatter(*report_filename);
+		dcp::verify_report(result, formatter);
 	}
 
 	exit (failed ? EXIT_FAILURE : EXIT_SUCCESS);
