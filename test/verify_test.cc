@@ -307,29 +307,17 @@ check_verify_result(vector<path> dir, vector<dcp::DecryptedKDM> kdm, vector<dcp:
 
 
 /* Copy dcp_test1 to build/test/verify_test{suffix} then edit a file found by the functor 'file',
- * replacing from with to.  Verify the resulting DCP and check that the results match the given
- * list of codes.
+ * replacing from with to.
  */
 static
 void
-check_verify_result_after_replace (string suffix, boost::function<path (string)> file, string from, string to, vector<dcp::VerificationNote::Code> codes)
+replace(string suffix, boost::function<path (string)> file, string from, string to)
 {
 	auto dir = setup (1, suffix);
 
 	{
 		Editor e (file(suffix));
 		e.replace (from, to);
-	}
-
-	auto notes = dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes;
-
-	BOOST_REQUIRE_EQUAL (notes.size(), codes.size());
-	auto i = notes.begin();
-	auto j = codes.begin();
-	while (i != notes.end()) {
-		BOOST_CHECK_EQUAL (i->code(), *j);
-		++i;
-		++j;
 	}
 }
 
@@ -514,7 +502,7 @@ BOOST_AUTO_TEST_CASE (verify_failed_read_content_kind)
 
 static
 path
-cpl (string suffix)
+dcp_test1_cpl_path(string suffix)
 {
 	return dcp::String::compose("build/test/verify_test%1/%2", suffix, dcp_test1_cpl());
 }
@@ -522,7 +510,7 @@ cpl (string suffix)
 
 static
 path
-pkl (string suffix)
+dcp_test1_pkl_path(string suffix)
 {
 	return dcp::String::compose("build/test/verify_test%1/%2", suffix, dcp_test1_pkl());
 }
@@ -538,18 +526,34 @@ asset_map (string suffix)
 
 BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_rate)
 {
-	check_verify_result_after_replace (
-			"invalid_picture_frame_rate", &cpl,
-			"<FrameRate>24 1", "<FrameRate>99 1",
-			{ dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES,
-			  dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_RATE }
-			);
+	auto const suffix = "invalid_picture_frame_rate";
+
+	replace(suffix, &dcp_test1_cpl_path, "<FrameRate>24 1", "<FrameRate>99 1");
+
+	auto const dir = dcp::String::compose("build/test/verify_test%1", suffix);
+	auto const cpl_path = find_cpl(dir);
+	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
+
+	std::vector<dcp::VerificationNote> expected =
+		{
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl_path)
+				).set_cpl_id(cpl->id()).set_calculated_hash("7n7GQ2TbxQbmHYuAR8ml7XDOep8=").set_reference_hash("skI+5b/9LA/y6h0mcyxysJYanxI="),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_RATE, string{"99/1"}
+				).set_cpl_id(cpl->id())
+		};
+
+	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
 }
 
 BOOST_AUTO_TEST_CASE (verify_missing_asset)
 {
 	auto dir = setup (1, "missing_asset");
 	remove (dir / "video.mxf");
+
+	auto cpl = std::make_shared<dcp::CPL>(find_cpl(dir));
+
 	check_verify_result (
 		{ dir },
 		{},
@@ -561,71 +565,156 @@ BOOST_AUTO_TEST_CASE (verify_missing_asset)
 
 BOOST_AUTO_TEST_CASE (verify_empty_asset_path)
 {
-	check_verify_result_after_replace (
-			"empty_asset_path", &asset_map,
-			"<Path>video.mxf</Path>", "<Path></Path>",
-			{ dcp::VerificationNote::Code::EMPTY_ASSET_PATH }
-			);
+	auto const suffix = "empty_asset_path";
+
+	replace("empty_asset_path", &asset_map, "<Path>video.mxf</Path>", "<Path></Path>");
+
+	auto const dir = dcp::String::compose("build/test/verify_test%1", suffix);
+	auto const cpl_path = find_cpl(dir);
+	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
+
+	std::vector<dcp::VerificationNote> expected = {
+			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_ASSET_PATH }
+		};
+
+	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
 }
 
 
 BOOST_AUTO_TEST_CASE (verify_mismatched_standard)
 {
-	check_verify_result_after_replace (
-			"mismatched_standard", &cpl,
-			"http://www.smpte-ra.org/schemas/429-7/2006/CPL", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#",
-			{ dcp::VerificationNote::Code::MISMATCHED_STANDARD,
-			  dcp::VerificationNote::Code::INVALID_XML,
-			  dcp::VerificationNote::Code::INVALID_XML,
-			  dcp::VerificationNote::Code::INVALID_XML,
-			  dcp::VerificationNote::Code::INVALID_XML,
-			  dcp::VerificationNote::Code::INVALID_XML,
-			  dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES }
-			);
+	auto const suffix = "mismatched_standard";
+
+	replace(suffix, &dcp_test1_cpl_path, "http://www.smpte-ra.org/schemas/429-7/2006/CPL", "http://www.digicine.com/PROTO-ASDCP-CPL-20040511#");
+
+	auto const dir = dcp::String::compose("build/test/verify_test%1", suffix);
+	auto const cpl_path = find_cpl(dir);
+	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
+
+	std::vector<dcp::VerificationNote> expected = {
+			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_STANDARD },
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "invalid character encountered", canonical(cpl_path), 42
+				).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "no declaration found for element 'Id'", canonical(cpl_path), 53
+				).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "no declaration found for element 'EditRate'", canonical(cpl_path), 54
+				).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "no declaration found for element 'IntrinsicDuration'", canonical(cpl_path), 55
+				).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
+				"element 'Id' is not allowed for content model '(Id,AnnotationText?,EditRate,IntrinsicDuration,"
+				"EntryPoint?,Duration?,FullContentTitleText,ReleaseTerritory?,VersionNumber?,Chain?,Distributor?,"
+				"Facility?,AlternateContentVersionList?,Luminance?,MainSoundConfiguration,MainSoundSampleRate,"
+				"MainPictureStoredArea,MainPictureActiveArea,MainSubtitleLanguageList?,ExtensionMetadataList?,)'",
+				canonical(cpl_path), 149
+				).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl_path)
+				).set_cpl_id(cpl->id()).set_reference_hash("skI+5b/9LA/y6h0mcyxysJYanxI=").set_calculated_hash("FZ9E7L/pOuJ6aZfbiaANTv8BFOo=")
+		};
+
+	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
 }
 
 
 BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_id)
 {
+	auto const suffix = "invalid_xml_cpl_id";
+
 	/* There's no MISMATCHED_CPL_HASHES error here because it can't find the correct hash by ID (since the ID is wrong) */
-	check_verify_result_after_replace (
-			"invalid_xml_cpl_id", &cpl,
-			"<Id>urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358ab", "<Id>urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358a",
-			{ dcp::VerificationNote::Code::INVALID_XML }
-			);
+	replace("invalid_xml_cpl_id", &dcp_test1_cpl_path, "<Id>urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358ab", "<Id>urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358a");
+
+	auto const dir = dcp::String::compose("build/test/verify_test%1", suffix);
+	auto const cpl_path = find_cpl(dir);
+	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
+
+	std::vector<dcp::VerificationNote> expected = {
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
+				"value 'urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358a' does not match regular expression "
+				"facet 'urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'", canonical(cpl_path), 3
+				).set_cpl_id(cpl->id())
+		};
+
+	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
 }
 
 
 BOOST_AUTO_TEST_CASE (verify_invalid_xml_issue_date)
 {
-	check_verify_result_after_replace (
-			"invalid_xml_issue_date", &cpl,
-			"<IssueDate>", "<IssueDate>x",
-			{ dcp::VerificationNote::Code::INVALID_XML,
-			  dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES }
-			);
+	auto const suffix = "invalid_xml_issue_date";
+
+	replace("invalid_xml_issue_date", &dcp_test1_cpl_path, "<IssueDate>", "<IssueDate>x");
+
+	auto const dir = dcp::String::compose("build/test/verify_test%1", suffix);
+	auto const cpl_path = find_cpl(dir);
+	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
+
+	std::vector<dcp::VerificationNote> expected = {
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl_path)
+				).set_cpl_id(cpl->id()).set_reference_hash("skI+5b/9LA/y6h0mcyxysJYanxI=").set_calculated_hash("sz3BeIugJ567q3HMnA62JeRw4TE="),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
+				"invalid character encountered",
+				canonical(cpl_path), 5
+				).set_cpl_id(cpl->id()),
+		};
+
+	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
 }
 
 
 BOOST_AUTO_TEST_CASE (verify_invalid_xml_pkl_id)
 {
-	check_verify_result_after_replace (
-		"invalid_xml_pkl_id", &pkl,
-		"<Id>urn:uuid:" + dcp_test1_pkl_id().substr(0, 3),
-		"<Id>urn:uuid:x" + dcp_test1_pkl_id().substr(1, 2),
-		{ dcp::VerificationNote::Code::INVALID_XML }
-		);
+	auto const suffix = "invalid_xml_pkl_id";
+
+	replace("invalid_xml_pkl_id", &dcp_test1_pkl_path, "<Id>urn:uuid:" + dcp_test1_pkl_id().substr(0, 3), "<Id>urn:uuid:x" + dcp_test1_pkl_id().substr(1, 2));
+
+	auto const dir = dcp::String::compose("build/test/verify_test%1", suffix);
+	auto const pkl_path = find_pkl(dir);
+	auto const cpl_path = find_cpl(dir);
+	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
+
+	std::vector<dcp::VerificationNote> expected = {
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
+				"value 'urn:uuid:x199d58b-5ef8-4d49-b270-07e590ccb280' does not match regular "
+				"expression facet 'urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'",
+				canonical(pkl_path), 3
+				),
+	};
+
+	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
 }
 
 
 BOOST_AUTO_TEST_CASE (verify_invalid_xml_asset_map_id)
 {
-	check_verify_result_after_replace (
-		"invalid_xml_asset_map_id", &asset_map,
-		"<Id>urn:uuid:" + dcp_test1_asset_map_id.substr(0, 3),
-		"<Id>urn:uuid:x" + dcp_test1_asset_map_id.substr(1, 2),
-		{ dcp::VerificationNote::Code::INVALID_XML }
-		);
+	auto const suffix = "invalid_xml_asset_map_id";
+
+	replace("invalid_xml_asset_map_id", &asset_map, "<Id>urn:uuid:" + dcp_test1_asset_map_id.substr(0, 3), "<Id>urn:uuid:x" + dcp_test1_asset_map_id.substr(1, 2));
+
+	auto const dir = dcp::String::compose("build/test/verify_test%1", suffix);
+	auto const cpl_path = find_cpl(dir);
+	auto const asset_map_path = find_asset_map(dir);
+	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
+
+	std::vector<dcp::VerificationNote> expected = {
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
+				"value 'urn:uuid:x17b3de4-6dda-408d-b19b-6711354b0bc3' does not match regular "
+				"expression facet 'urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'",
+				canonical(asset_map_path), 3
+				),
+	};
+
+	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
 }
 
 

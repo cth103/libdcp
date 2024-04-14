@@ -567,7 +567,11 @@ Editor::Editor(boost::filesystem::path path)
 
 Editor::~Editor()
 {
-	auto f = fopen(_path.string().c_str(), "w");
+	/* Open this binary so that text files are re-written with Unix endings even on Windows,
+	 * so that if we subsequently get hashes of edited files the hashes are the same on
+	 * all platforms.
+	 */
+	auto f = fopen(_path.string().c_str(), "wb");
 	BOOST_REQUIRE (f);
 	fwrite (_content.c_str(), _content.length(), 1, f);
 	fclose (f);
