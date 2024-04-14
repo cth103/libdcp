@@ -353,6 +353,23 @@ private:
 };
 
 
+static
+dcp::VerificationNote
+ok(dcp::VerificationNote::Code code, shared_ptr<const dcp::CPL> cpl)
+{
+	return dcp::VerificationNote(dcp::VerificationNote::Type::OK, code).set_cpl_id(cpl->id());
+}
+
+
+void
+add(vector<dcp::VerificationNote>& notes, vector<dcp::VerificationNote> const& add)
+{
+	for (auto i: add) {
+		notes.push_back(i);
+	}
+}
+
+
 BOOST_AUTO_TEST_CASE (verify_no_error)
 {
 	stages.clear ();
