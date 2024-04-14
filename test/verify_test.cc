@@ -196,45 +196,76 @@ LIBDCP_ENABLE_WARNINGS
 
 
 static
+string
+to_string(dcp::VerificationNote const& note)
+{
+	string s = note_to_string(note) + dcp::String::compose(
+		"\n  [%1 %2 %3 %4 %5 %6 ",
+		static_cast<int>(note.type()),
+		static_cast<int>(note.code()),
+		note.note().get_value_or("<none>"),
+		note.file().get_value_or("<none>"),
+		note.line().get_value_or(0),
+		note.frame().get_value_or(0)
+		);
+
+	s += dcp::String::compose(
+		"%1 %2 %3 %4 %5]\n",
+		note.id().get_value_or("<none>"),
+		note.other_id().get_value_or("<none>"),
+		note.cpl_id().get_value_or("<none>"),
+		note.reference_hash().get_value_or("<none>"),
+		note.calculated_hash().get_value_or("<none>")
+		);
+
+	return s;
+}
+
+
+static
+void
+check_verify_result(vector<dcp::VerificationNote> notes, vector<dcp::VerificationNote> test_notes)
+{
+	std::sort(notes.begin(), notes.end());
+	std::sort(test_notes.begin(), test_notes.end());
+
+	string message = "\n";
+
+	vector<dcp::VerificationNote> not_expected;
+	for (auto note: notes) {
+		auto iter = std::find_if(test_notes.begin(), test_notes.end(), [note](dcp::VerificationNote const& n) { return note.type() == n.type() && note.code() == n.code(); });
+		if (iter != test_notes.end() && *iter != note) {
+			message += "Wrong details:\n --seen     " + to_string(note) + " --expected " + to_string(*iter) + "\n";
+		} else if (iter == test_notes.end()) {
+			not_expected.push_back(note);
+		}
+	}
+
+	vector<dcp::VerificationNote> not_seen;
+	for (auto note: test_notes) {
+		auto iter = std::find_if(notes.begin(), notes.end(), [note](dcp::VerificationNote const& n) { return note.type() == n.type() && note.code() == n.code(); });
+		if (iter == notes.end()) {
+			not_seen.push_back(note);
+		}
+	}
+
+	for (auto note: not_expected) {
+		message += "Not expected:\n" + to_string(note) + "\n";
+	}
+
+	for (auto note: not_seen) {
+		message += "Not seen:\n" + to_string(note) + "\n";
+	}
+
+	BOOST_REQUIRE_MESSAGE(notes == test_notes, message);
+}
+
+
+static
 void
 check_verify_result(vector<path> dir, vector<dcp::DecryptedKDM> kdm, vector<dcp::VerificationNote> test_notes)
 {
-	auto notes = dcp::verify({dir}, kdm, &stage, &progress, {}, xsd_test).notes;
-	std::sort (notes.begin(), notes.end());
-	std::sort (test_notes.begin(), test_notes.end());
-
-	string message = "\nVerification notes from test:\n";
-	for (auto i: notes) {
-		message += "  " + note_to_string(i) + "\n";
-		message += dcp::String::compose(
-			"  [%1 %2 %3 %4 %5 %6 %7 %8]\n",
-			static_cast<int>(i.type()),
-			static_cast<int>(i.code()),
-			i.note().get_value_or("<none>"),
-			i.file().get_value_or("<none>"),
-			i.line().get_value_or(0),
-			i.cpl_id().get_value_or("<none>"),
-			i.reference_hash().get_value_or("<none>"),
-			i.calculated_hash().get_value_or("<none>")
-			);
-	}
-	message += "Expected:\n";
-	for (auto i: test_notes) {
-		message += "  " + note_to_string(i) + "\n";
-		message += dcp::String::compose(
-			"  [%1 %2 %3 %4 %5 %6 %7 %8]\n",
-			static_cast<int>(i.type()),
-			static_cast<int>(i.code()),
-			i.note().get_value_or("<none>"),
-			i.file().get_value_or("<none>"),
-			i.line().get_value_or(0),
-			i.cpl_id().get_value_or("<none>"),
-			i.reference_hash().get_value_or("<none>"),
-			i.calculated_hash().get_value_or("<none>")
-			);
-	}
-
-	BOOST_REQUIRE_MESSAGE (notes == test_notes, message);
+	check_verify_result(dcp::verify({dir}, kdm, &stage, &progress, {}, xsd_test).notes, test_notes);
 }
 
 
