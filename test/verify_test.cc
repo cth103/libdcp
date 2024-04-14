@@ -148,6 +148,43 @@ prepare_directory (path path)
 }
 
 
+static
+path
+find_prefix(path dir, string prefix)
+{
+	auto iter = std::find_if(directory_iterator(dir), directory_iterator(), [prefix](path const& p) {
+		return boost::starts_with(p.filename().string(), prefix);
+	});
+
+	BOOST_REQUIRE(iter != directory_iterator());
+	return iter->path();
+}
+
+
+static
+path
+find_cpl(path dir)
+{
+	return find_prefix(dir, "cpl_");
+}
+
+
+static
+path
+find_pkl(path dir)
+{
+	return find_prefix(dir, "pkl_");
+}
+
+
+static
+path
+find_asset_map(path dir)
+{
+	return find_prefix(dir, "ASSETMAP");
+}
+
+
 /** Copy dcp_test{reference_number} to build/test/verify_test{verify_test_suffix}
  *  to make a new sacrificial test DCP.
  */
@@ -1160,38 +1197,6 @@ BOOST_AUTO_TEST_CASE (verify_valid_cpl_metadata)
 	dcp.add (cpl);
 	dcp.set_annotation_text("hello");
 	dcp.write_xml ();
-}
-
-
-path
-find_prefix(path dir, string prefix)
-{
-	auto iter = std::find_if(directory_iterator(dir), directory_iterator(), [prefix](path const& p) {
-		return boost::starts_with(p.filename().string(), prefix);
-	});
-
-	BOOST_REQUIRE(iter != directory_iterator());
-	return iter->path();
-}
-
-
-path find_cpl (path dir)
-{
-	return find_prefix(dir, "cpl_");
-}
-
-
-path
-find_pkl(path dir)
-{
-	return find_prefix(dir, "pkl_");
-}
-
-
-path
-find_asset_map(path dir)
-{
-	return find_prefix(dir, "ASSETMAP");
 }
 
 
