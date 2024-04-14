@@ -533,6 +533,7 @@ private:
 		ID,
 		OTHER_ID,
 		FRAME_RATE,
+		CPL_ID,
 		CALCULATED_HASH,
 		REFERENCE_HASH
 	};
@@ -630,6 +631,15 @@ public:
 
 	boost::optional<std::string> reference_hash() const {
 		return data<std::string>(Data::REFERENCE_HASH);
+	}
+
+	VerificationNote& set_cpl_id(std::string id) {
+		_data[Data::CPL_ID] = id;
+		return *this;
+	}
+
+	boost::optional<std::string> cpl_id() const {
+		return data<std::string>(Data::CPL_ID);
 	}
 
 private:

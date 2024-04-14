@@ -341,6 +341,9 @@ public:
 
 	void add_note(dcp::VerificationNote note)
 	{
+		if (cpl) {
+			note.set_cpl_id(cpl->id());
+		}
 		notes.push_back(std::move(note));
 	}
 
@@ -1381,7 +1384,7 @@ verify_extension_metadata(Context& context, shared_ptr<const CPL> cpl)
 	}
 
 	if (missing) {
-		context.bv21_error(VerificationNote::Code::MISSING_EXTENSION_METADATA, cpl->id(), cpl->file().get());
+		context.bv21_error(VerificationNote::Code::MISSING_EXTENSION_METADATA, cpl->file().get());
 	} else if (!malformed.empty()) {
 		context.bv21_error(VerificationNote::Code::INVALID_EXTENSION_METADATA, malformed, cpl->file().get());
 	}
@@ -1572,20 +1575,16 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 
 	for (auto version: cpl->content_versions()) {
 		if (version.label_text.empty()) {
-			context.add_note(
-				dcp::VerificationNote(
-					dcp::VerificationNote::Type::WARNING, VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get()
-					).set_id(cpl->id())
-				);
+			context.warning(VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get());
 			break;
 		}
 	}
 
 	if (context.dcp->standard() == Standard::SMPTE) {
 		if (!cpl->annotation_text()) {
-			context.bv21_error(VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get());
+			context.bv21_error(VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, cpl->file().get());
 		} else if (cpl->annotation_text().get() != cpl->content_title_text()) {
-			context.warning(VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, cpl->id(), cpl->file().get());
+			context.warning(VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, cpl->file().get());
 		}
 	}
 
@@ -1598,7 +1597,6 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 				dcp::VerificationNote(
 					VerificationNote::Type::ERROR,
 					VerificationNote::Code::MISMATCHED_CPL_HASHES,
-					cpl->id(),
 					cpl->file().get()
 					).set_calculated_hash(calculated_cpl_hash).set_reference_hash(*h)
 				);
@@ -1749,9 +1747,9 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		}
 
 		if (!cpl->read_composition_metadata()) {
-			context.bv21_error(VerificationNote::Code::MISSING_CPL_METADATA, cpl->id(), cpl->file().get());
+			context.bv21_error(VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get());
 		} else if (!cpl->version_number()) {
-			context.bv21_error(VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->id(), cpl->file().get());
+			context.bv21_error(VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->file().get());
 		}
 
 		verify_extension_metadata(context, cpl);
@@ -1761,7 +1759,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 			DCP_ASSERT(cpl->file());
 			doc.read_file(dcp::filesystem::fix_long_path(cpl->file().get()));
 			if (!doc.optional_node_child("Signature")) {
-				context.bv21_error(VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl->id(), cpl->file().get());
+				context.bv21_error(VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl->file().get());
 			}
 		}
 	}
@@ -1872,7 +1870,9 @@ dcp::verify (
 
 		for (auto cpl: dcp->cpls()) {
 			try {
+				context.cpl = cpl;
 				verify_cpl(context, cpl);
+				context.cpl.reset();
 			} catch (ReadError& e) {
 				notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
 			}
@@ -1912,7 +1912,7 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::FAILED_READ:
 		return *note.note();
 	case VerificationNote::Code::MISMATCHED_CPL_HASHES:
-		return String::compose("The hash (%1) of the CPL (%2) in the PKL does not agree with the CPL file (%3).", note.reference_hash().get(), note.note().get(), note.calculated_hash().get());
+		return String::compose("The hash (%1) of the CPL (%2) in the PKL does not agree with the CPL file (%3).", note.reference_hash().get(), note.cpl_id().get(), note.calculated_hash().get());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE:
 		return String::compose("The picture in a reel has an invalid frame rate %1.", note.note().get());
 	case VerificationNote::Code::INCORRECT_PICTURE_HASH:
@@ -2002,9 +2002,9 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::INVALID_SOUND_FRAME_RATE:
 		return String::compose("The sound asset %1 has a sampling rate of %2", note.file()->filename(), note.note().get());
 	case VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT:
-		return String::compose("The CPL %1 has no <AnnotationText> tag.", note.note().get());
+		return String::compose("The CPL %1 has no <AnnotationText> tag.", note.cpl_id().get());
 	case VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT:
-		return String::compose("The CPL %1 has an <AnnotationText> which differs from its <ContentTitleText>.", note.note().get());
+		return String::compose("The CPL %1 has an <AnnotationText> which differs from its <ContentTitleText>.", note.cpl_id().get());
 	case VerificationNote::Code::MISMATCHED_ASSET_DURATION:
 		return "All assets in a reel do not have the same duration.";
 	case VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS:
@@ -2034,15 +2034,15 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::INCORRECT_LFOC:
 		return String::compose("The LFOC marker is %1 instead of 1 less than the duration of the last reel.", note.note().get());
 	case VerificationNote::Code::MISSING_CPL_METADATA:
-		return String::compose("The CPL %1 has no <CompositionMetadataAsset> tag.", note.note().get());
+		return String::compose("The CPL %1 has no <CompositionMetadataAsset> tag.", note.cpl_id().get());
 	case VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER:
-		return String::compose("The CPL %1 has no <VersionNumber> in its <CompositionMetadataAsset>.", note.note().get());
+		return String::compose("The CPL %1 has no <VersionNumber> in its <CompositionMetadataAsset>.", note.cpl_id().get());
 	case VerificationNote::Code::MISSING_EXTENSION_METADATA:
-		return String::compose("The CPL %1 has no <ExtensionMetadata> in its <CompositionMetadataAsset>.", note.note().get());
+		return String::compose("The CPL %1 has no <ExtensionMetadata> in its <CompositionMetadataAsset>.", note.cpl_id().get());
 	case VerificationNote::Code::INVALID_EXTENSION_METADATA:
 		return String::compose("The CPL %1 has a malformed <ExtensionMetadata> (%2).", note.file()->filename(), note.note().get());
 	case VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT:
-		return String::compose("The CPL %1, which has encrypted content, is not signed.", note.note().get());
+		return String::compose("The CPL %1, which has encrypted content, is not signed.", note.cpl_id().get());
 	case VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT:
 		return String::compose("The PKL %1, which has encrypted content, is not signed.", note.note().get());
 	case VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL:
@@ -2135,7 +2135,7 @@ dcp::note_to_string (VerificationNote note)
 	case VerificationNote::Code::MISMATCHED_ASSET_MAP_ID:
 		return String::compose("The asset with ID %1 in the asset map actually has an id of %2", note.id().get(), note.other_id().get());
 	case VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT:
-		return String::compose("The <LabelText> in a <ContentVersion> in CPL %1 is empty", note.id().get());
+		return String::compose("The <LabelText> in a <ContentVersion> in CPL %1 is empty", note.cpl_id().get());
 	}
 
 	return "";
@@ -2156,6 +2156,7 @@ dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		a.id() == b.id() &&
 		a.other_id() == b.other_id() &&
 		a.frame_rate() == b.frame_rate() &&
+		a.cpl_id() == b.cpl_id() &&
 		a.reference_hash() == b.reference_hash() &&
 		a.calculated_hash() == b.calculated_hash();
 }
