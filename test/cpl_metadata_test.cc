@@ -450,3 +450,20 @@ BOOST_AUTO_TEST_CASE(check_that_missing_full_content_title_text_is_tolerated)
 {
 	dcp::CPL cpl("test/ref/cpl_metadata_test3.xml");
 }
+
+
+BOOST_AUTO_TEST_CASE(check_sign_language_video_language)
+{
+	dcp::CPL cpl("test/ref/cpl_metadata_test3.xml");
+	cpl.set_sign_language_video_language(dcp::LanguageTag("es-PT"));
+	cpl.write_xml("build/test/check_sign_language_video_language.xml", {});
+	check_xml(
+		dcp::file_to_string("test/ref/cpl_metadata_test4.xml"),
+		dcp::file_to_string("build/test/check_sign_language_video_language.xml"),
+		{"Id"}
+		);
+
+	dcp::CPL check("build/test/check_sign_language_video_language.xml");
+	BOOST_CHECK_EQUAL(check.sign_language_video_language().get_value_or(""), "es-PT");
+
+}
