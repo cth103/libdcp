@@ -326,6 +326,14 @@ public:
 		return _sign_language_video_language;
 	}
 
+	void set_dolby_edr_image_transfer_function(std::string function) {
+		_dolby_edr_image_transfer_function = function;
+	}
+
+	boost::optional<std::string> dolby_edr_image_transfer_function() const {
+		return _dolby_edr_image_transfer_function;
+	}
+
 	Standard standard () const {
 		return _standard;
 	}
@@ -383,6 +391,7 @@ private:
 	/* See note for _release_territory above */
 	std::vector<std::string> _additional_subtitle_languages;
 	boost::optional<std::string> _sign_language_video_language;
+	boost::optional<std::string> _dolby_edr_image_transfer_function;
 	bool _read_composition_metadata = false;
 
 	std::vector<std::shared_ptr<Reel>> _reels;

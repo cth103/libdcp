@@ -370,6 +370,7 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 	};
 
 	_sign_language_video_language = extension_metadata("http://isdcf.com/2017/10/SignLanguageVideo", "Sign Language Video", "Language Tag");
+	_dolby_edr_image_transfer_function = extension_metadata("http://www.dolby.com/schemas/2014/EDR-Metadata", "Dolby EDR", "image transfer function");
 }
 
 
@@ -566,6 +567,10 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 
 	if (_sign_language_video_language) {
 		add_extension_metadata ("http://isdcf.com/2017/10/SignLanguageVideo", "Sign Language Video", "Language Tag", *_sign_language_video_language);
+	}
+
+	if (_dolby_edr_image_transfer_function) {
+		add_extension_metadata("http://www.dolby.com/schemas/2014/EDR-Metadata", "Dolby EDR", "image transfer function", *_dolby_edr_image_transfer_function);
 	}
 
 	if (_reels.front()->main_sound()) {
