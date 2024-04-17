@@ -2178,6 +2178,10 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The asset with ID %1 in the asset map actually has an id of %2", note.id().get(), note.other_id().get());
 	case VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT:
 		return String::compose("The <LabelText> in a <ContentVersion> in CPL %1 is empty", note.id().get());
+	case VerificationNote::Code::INVALID_CPL_NAMESPACE:
+		return String::compose("The namespace %1 in CPL %2 is invalid", note.note().get(), note.file()->filename());
+	case VerificationNote::Code::MISSING_CPL_CONTENT_VERSION:
+		return String::compose("The CPL %1 has no <ContentVersion> tag", note.note().get());
 	}
 
 	return "";

@@ -104,7 +104,7 @@ CPL::CPL (string annotation_text, ContentKind content_kind, Standard standard)
 }
 
 
-CPL::CPL (boost::filesystem::path file)
+CPL::CPL (boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 	: Asset (file)
 	, _content_kind (ContentKind::FEATURE)
 {
@@ -116,7 +116,17 @@ CPL::CPL (boost::filesystem::path file)
 	} else if (f.namespace_uri() == cpl_smpte_ns) {
 		_standard = Standard::SMPTE;
 	} else {
-		boost::throw_exception (XMLError ("Unrecognised CPL namespace " + f.namespace_uri()));
+		if (notes) {
+			notes->push_back(
+				dcp::VerificationNote(
+					dcp::VerificationNote::Type::ERROR,
+					dcp::VerificationNote::Code::INVALID_CPL_NAMESPACE,
+					f.namespace_uri(),
+					file
+					)
+				);
+		}
+		_standard = Standard::INTEROP;
 	}
 
 	_id = remove_urn_uuid (f.string_child ("Id"));
@@ -139,7 +149,16 @@ CPL::CPL (boost::filesystem::path file)
 		content_version->done ();
 	} else if (_standard == Standard::SMPTE) {
 		/* ContentVersion is required in SMPTE */
-		throw XMLError ("Missing ContentVersion tag in CPL");
+		if (notes) {
+			notes->push_back(
+				dcp::VerificationNote(
+					dcp::VerificationNote::Type::ERROR,
+					dcp::VerificationNote::Code::MISSING_CPL_CONTENT_VERSION,
+					_id,
+					file
+					)
+				);
+		}
 	}
 	auto rating_list = f.node_child ("RatingList");
 	for (auto i: rating_list->node_children("Rating")) {

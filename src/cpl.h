@@ -47,6 +47,7 @@
 #include "key.h"
 #include "language_tag.h"
 #include "rating.h"
+#include "verify.h"
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
 #include <boost/optional.hpp>
@@ -82,8 +83,11 @@ class CPL : public Asset
 public:
 	CPL (std::string annotation_text, ContentKind content_kind, Standard standard);
 
-	/** Construct a CPL object from a XML file */
-	explicit CPL (boost::filesystem::path file);
+	/** Construct a CPL object from a XML file.
+	 *  If notes is not null, non-fatal errors will be added.
+	 *  Exceptions will be thrown on non-recoverable errors.
+	 */
+	explicit CPL(boost::filesystem::path file, std::vector<dcp::VerificationNote>* notes = nullptr);
 
 	bool equals (
 		std::shared_ptr<const Asset> other,
