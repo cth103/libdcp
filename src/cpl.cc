@@ -104,7 +104,7 @@ CPL::CPL (string annotation_text, ContentKind content_kind, Standard standard)
 }
 
 
-CPL::CPL (boost::filesystem::path file)
+CPL::CPL (boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 	: Asset (file)
 	, _content_kind (ContentKind::FEATURE)
 {
@@ -116,7 +116,17 @@ CPL::CPL (boost::filesystem::path file)
 	} else if (f.namespace_uri() == cpl_smpte_ns) {
 		_standard = Standard::SMPTE;
 	} else {
-		boost::throw_exception (XMLError ("Unrecognised CPL namespace " + f.namespace_uri()));
+		if (notes) {
+			notes->push_back(
+				dcp::VerificationNote(
+					dcp::VerificationNote::Type::ERROR,
+					dcp::VerificationNote::Code::INVALID_CPL_NAMESPACE,
+					f.namespace_uri(),
+					file
+					)
+				);
+		}
+		_standard = Standard::INTEROP;
 	}
 
 	_id = remove_urn_uuid (f.string_child ("Id"));
@@ -139,7 +149,16 @@ CPL::CPL (boost::filesystem::path file)
 		content_version->done ();
 	} else if (_standard == Standard::SMPTE) {
 		/* ContentVersion is required in SMPTE */
-		throw XMLError ("Missing ContentVersion tag in CPL");
+		if (notes) {
+			notes->push_back(
+				dcp::VerificationNote(
+					dcp::VerificationNote::Type::ERROR,
+					dcp::VerificationNote::Code::MISSING_CPL_CONTENT_VERSION,
+					_id,
+					file
+					)
+				);
+		}
 	}
 	auto rating_list = f.node_child ("RatingList");
 	for (auto i: rating_list->node_children("Rating")) {
@@ -345,21 +364,32 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 	}
 
 	auto eml = node->optional_node_child ("ExtensionMetadataList");
-	if (eml) {
+
+	auto extension_metadata = [eml](string scope, string name, string property) -> boost::optional<std::string> {
+		if (!eml) {
+			return {};
+		}
+
 		for (auto i: eml->node_children("ExtensionMetadata")) {
-			auto name = i->optional_string_child("Name");
-			if (name && *name == "Sign Language Video") {
+			auto xml_scope = i->optional_string_attribute("scope");
+			auto xml_name = i->optional_string_child("Name");
+			if (xml_scope && *xml_scope == scope && xml_name && *xml_name == name) {
 				auto property_list = i->node_child("PropertyList");
 				for (auto j: property_list->node_children("Property")) {
-					auto name = j->optional_string_child("Name");
-					auto value = j->optional_string_child("Value");
-					if (name && value && *name == "Language Tag") {
-						_sign_language_video_language = *value;
+					auto property_name = j->optional_string_child("Name");
+					auto property_value = j->optional_string_child("Value");
+					if (property_name && property_value && *property_name == property) {
+						return property_value;
 					}
 				}
 			}
 		}
-	}
+
+		return {};
+	};
+
+	_sign_language_video_language = extension_metadata("http://isdcf.com/2017/10/SignLanguageVideo", "Sign Language Video", "Language Tag");
+	_dolby_edr_image_transfer_function = extension_metadata("http://www.dolby.com/schemas/2014/EDR-Metadata", "Dolby EDR", "image transfer function");
 }
 
 
@@ -556,6 +586,10 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 
 	if (_sign_language_video_language) {
 		add_extension_metadata ("http://isdcf.com/2017/10/SignLanguageVideo", "Sign Language Video", "Language Tag", *_sign_language_video_language);
+	}
+
+	if (_dolby_edr_image_transfer_function) {
+		add_extension_metadata("http://www.dolby.com/schemas/2014/EDR-Metadata", "Dolby EDR", "image transfer function", *_dolby_edr_image_transfer_function);
 	}
 
 	if (_reels.front()->main_sound()) {

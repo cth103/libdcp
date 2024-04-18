@@ -2203,6 +2203,10 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 		return compose("The <LabelText> in a <ContentVersion> in CPL %1 is empty", note.cpl_id().get());
 	case VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT:
 		return compose("CPL has valid <ContentVersion> %1", note.note().get());
+	case VerificationNote::Code::INVALID_CPL_NAMESPACE:
+		return compose("The namespace %1 in CPL %2 is invalid", note.note().get(), note.cpl_id().get());
+	case VerificationNote::Code::MISSING_CPL_CONTENT_VERSION:
+		return compose("The CPL %1 has no <ContentVersion> tag", note.cpl_id().get());
 	}
 
 	return "";

@@ -492,6 +492,15 @@ public:
 		 */
 		EMPTY_CONTENT_VERSION_LABEL_TEXT,
 		VALID_CONTENT_VERSION_LABEL_TEXT,
+		/** The CPL namespace is not valid.
+		 *  note contains the invalid namespace
+		 *  file contains the CPL filename
+		 */
+		INVALID_CPL_NAMESPACE,
+		/** A SMPTE CPL does not contain a _<ContentVersion>_ tag
+		 *  file contains the CPL filename
+		 */
+		MISSING_CPL_CONTENT_VERSION
 	};
 
 	VerificationNote (Type type, Code code)

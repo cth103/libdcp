@@ -234,7 +234,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			delete p;
 
 			if (root == "CompositionPlaylist") {
-				auto cpl = make_shared<CPL>(path);
+				auto cpl = make_shared<CPL>(path, notes);
 				if (cpl->standard() != standard && notes) {
 					notes->push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_STANDARD});
 				}

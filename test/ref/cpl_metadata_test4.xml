@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompositionPlaylist xmlns="http://www.smpte-ra.org/schemas/429-7/2006/CPL">
+  <Id>urn:uuid:81fb54df-e1bf-4647-8788-ea7ba154375b</Id>
+  <AnnotationText></AnnotationText>
+  <IssueDate>2020-08-28T13:35:06+02:00</IssueDate>
+  <Issuer>libdcp1.6.4devel</Issuer>
+  <Creator>libdcp1.6.4devel</Creator>
+  <ContentTitleText></ContentTitleText>
+  <ContentKind>feature</ContentKind>
+  <ContentVersion>
+    <Id>id</Id>
+    <LabelText>version</LabelText>
+  </ContentVersion>
+  <RatingList/>
+  <ReelList>
+    <Reel>
+      <Id>urn:uuid:46c3eb45-15e5-47d6-8684-d8641e4dc516</Id>
+      <AssetList>
+        <MainPicture>
+          <Id>urn:uuid:e98d059d-645f-4343-a30f-edc61d58b8e0</Id>
+          <EditRate>24 1</EditRate>
+          <IntrinsicDuration>24</IntrinsicDuration>
+          <EntryPoint>0</EntryPoint>
+          <Duration>24</Duration>
+          <Hash>JtPL3uT3jyKMLysaqgdBWQb/n2E=</Hash>
+          <FrameRate>24 1</FrameRate>
+          <ScreenAspectRatio>1998 1080</ScreenAspectRatio>
+        </MainPicture>
+        <meta:CompositionMetadataAsset xmlns:meta="http://www.smpte-ra.org/schemas/429-16/2014/CPL-Metadata">
+          <Id>urn:uuid:d36f4bb3-c4fa-4a95-9915-6fec3110cd71</Id>
+          <EditRate>24 1</EditRate>
+          <IntrinsicDuration>24</IntrinsicDuration>
+          <meta:FullContentTitleText/>
+          <meta:MainSoundConfiguration>71/L,R,C,LFE,-,-,-,-,-,-,-,-,-,FSKSync,-,-</meta:MainSoundConfiguration>
+          <meta:MainSoundSampleRate>48000 1</meta:MainSoundSampleRate>
+          <meta:MainPictureStoredArea>
+            <meta:Width>1998</meta:Width>
+            <meta:Height>1080</meta:Height>
+          </meta:MainPictureStoredArea>
+          <meta:MainPictureActiveArea>
+            <meta:Width>1440</meta:Width>
+            <meta:Height>1080</meta:Height>
+          </meta:MainPictureActiveArea>
+          <meta:ExtensionMetadataList>
+            <meta:ExtensionMetadata scope="http://isdcf.com/ns/cplmd/app">
+              <meta:Name>Application</meta:Name>
+              <meta:PropertyList>
+                <meta:Property>
+                  <meta:Name>DCP Constraints Profile</meta:Name>
+                  <meta:Value>SMPTE-RDD-52:2020-Bv2.1</meta:Value>
+                </meta:Property>
+              </meta:PropertyList>
+            </meta:ExtensionMetadata>
+            <meta:ExtensionMetadata scope="http://isdcf.com/2017/10/SignLanguageVideo">
+              <meta:Name>Sign Language Video</meta:Name>
+              <meta:PropertyList>
+                <meta:Property>
+                  <meta:Name>Language Tag</meta:Name>
+                  <meta:Value>es-PT</meta:Value>
+                </meta:Property>
+              </meta:PropertyList>
+            </meta:ExtensionMetadata>
+          </meta:ExtensionMetadataList>
+        </meta:CompositionMetadataAsset>
+      </AssetList>
+    </Reel>
+  </ReelList>
+</CompositionPlaylist>
