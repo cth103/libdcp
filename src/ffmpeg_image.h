@@ -37,9 +37,12 @@
 
 
 #include "types.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
 extern "C" {
 #include <libavutil/frame.h>
 }
+LIBDCP_ENABLE_WARNINGS
 #include <algorithm>
 #include <vector>
 
