@@ -10,9 +10,35 @@ work=build/test
 dcpinfo=build/tools/dcpinfo
 dcpverify=build/tools/dcpverify
 
+type=""
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -e)
+        environment=$2
+        shift
+        shift
+        ;;
+        --debug)
+        type="debug"
+        shift
+        ;;
+        --valgrind)
+        type="valgrind"
+        shift
+        ;;
+        --callgrind)
+        type="callgrind"
+        shift
+        ;;
+        *)
+        break
+        ;;
+    esac
+done
+
 export LD_LIBRARY_PATH=build/src:/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH
 # SIP stops this being passed in from the caller's environment
-export DYLD_LIBRARY_PATH=/Users/ci/osx-environment/x86_64/10.10/lib:/Users/ci/workspace/lib
+export DYLD_LIBRARY_PATH=$environment/x86_64/10.10/lib:/Users/ci/workspace/lib
 export LIBDCP_RESOURCES=.
 
 # Make sure we have the required tools
@@ -23,14 +49,11 @@ done
 echo "--- Unit tests"
 
 # Run the unit tests in test/
-if [ "$1" == "--debug" ]; then
-    shift
+if [ "$type" == "debug" ]; then
     gdb --args $work/tests $private $*
-elif [ "$1" == "--valgrind" ]; then
-    shift
+elif [ "$type" == "valgrind" ]; then
     valgrind --tool="memcheck" $work/tests $private $*
-elif [ "$1" == "--callgrind" ]; then
-    shift
+elif [ "$type" == "callgrind" ]; then
     valgrind --tool="callgrind" $work/tests $private $*
 else
     $work/tests $* -- $private

@@ -81,6 +81,8 @@ def make_doxygen(target):
 def test(target, options, test):
     target.set('LC_ALL', 'C')
     cmd = 'run\\tests ' if target.platform == 'windows' else 'run/tests '
+    if target.environment_prefix:
+        cmd += '-e %s' % target.environment_prefix
     if test is not None:
         cmd += '-t %s' % test
     target.command(cmd)
