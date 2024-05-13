@@ -99,7 +99,8 @@ enum class Channel {
 	RS = 5,        ///< right surround
 	HI = 6,
 	VI = 7,
-	/* 8 and 9 are not used */
+	LC = 8,        ///< not used, but referred to in MainSoundConfiguration in some CPLs
+	RC = 9,        ///< not used, but referred to in MainSoundConfiguration in some CPLs
 	BSL = 10,
 	BSR = 11,
 	MOTION_DATA = 12,
