@@ -173,7 +173,7 @@ fi
 $dcpinfo -s $private/data/JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV >> $work/jah.log
 
 # Parse some problematic subs and check that we get it right
-run/test/subs_in_out $private/TunaBoat_Icelandic_Reel1_V1_8sec.xml > $work/tuna.xml
+build/test/subs_in_out $private/TunaBoat_Icelandic_Reel1_V1_8sec.xml > $work/tuna.xml
 diff -q $private/TunaBoat_Icelandic_Reel1_V1_8sec.parsed.xml $work/tuna.xml
 if [ "$?" != "0" ]; then
     echo "FAIL: output of parse check 1 invalid"
