@@ -547,11 +547,15 @@ dcp::mca_id_to_channel (string id)
 		return Channel::HI;
 	} else if (id == "vin" || id == "vi-n") {
 		return Channel::VI;
+	} else if (id == "lc") {
+		return Channel::LC;
+	} else if (id == "rc") {
+		return Channel::RC;
 	} else if (id == "lrs" || id == "lsr") {
 		return Channel::BSL;
 	} else if (id == "rrs" || id == "rsr") {
 		return Channel::BSR;
-	} else if (id == "dbox") {
+	} else if (id == "dbox" || id == "mtn") {
 		return Channel::MOTION_DATA;
 	} else if (id == "sync" || id == "fsksync") {
 		return Channel::SYNC_SIGNAL;

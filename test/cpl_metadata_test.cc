@@ -154,6 +154,30 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test5)
 }
 
 
+BOOST_AUTO_TEST_CASE(main_sound_configuration_test6)
+{
+	dcp::MainSoundConfiguration msc("WTF/L,R,C,LFE,LsLss,RsRss,HI,VIN,Lc,Rc,Lrs,Rrs,Mtn,FSKSync,SLVS,-");
+	BOOST_CHECK_EQUAL(msc.channels(), 16);
+	BOOST_CHECK_EQUAL(msc.field(), dcp::MCASoundField::OTHER);
+	BOOST_CHECK_EQUAL(msc.mapping(0).get(), dcp::Channel::LEFT);
+	BOOST_CHECK_EQUAL(msc.mapping(1).get(), dcp::Channel::RIGHT);
+	BOOST_CHECK_EQUAL(msc.mapping(2).get(), dcp::Channel::CENTRE);
+	BOOST_CHECK_EQUAL(msc.mapping(3).get(), dcp::Channel::LFE);
+	BOOST_CHECK_EQUAL(msc.mapping(4).get(), dcp::Channel::LS);
+	BOOST_CHECK_EQUAL(msc.mapping(5).get(), dcp::Channel::RS);
+	BOOST_CHECK_EQUAL(msc.mapping(6).get(), dcp::Channel::HI);
+	BOOST_CHECK_EQUAL(msc.mapping(7).get(), dcp::Channel::VI);
+	BOOST_CHECK_EQUAL(msc.mapping(8).get(), dcp::Channel::LC);
+	BOOST_CHECK_EQUAL(msc.mapping(9).get(), dcp::Channel::RC);
+	BOOST_CHECK_EQUAL(msc.mapping(10).get(), dcp::Channel::BSL);
+	BOOST_CHECK_EQUAL(msc.mapping(11).get(), dcp::Channel::BSR);
+	BOOST_CHECK_EQUAL(msc.mapping(12).get(), dcp::Channel::MOTION_DATA);
+	BOOST_CHECK_EQUAL(msc.mapping(13).get(), dcp::Channel::SYNC_SIGNAL);
+	BOOST_CHECK_EQUAL(msc.mapping(14).get(), dcp::Channel::SIGN_LANGUAGE);
+	BOOST_CHECK(!msc.mapping(15));
+}
+
+
 /* 482-12 says that implementations may use case-insensitive comparisons for the channel identifiers,
  * and there is one DCP in the private test suite (made by Disney) that uses LS for left surround.
  */

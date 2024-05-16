@@ -130,6 +130,12 @@ dcp::operator<<(ostream& s, Channel c)
 	case Channel::VI:
 		s << "vi(7)";
 		break;
+	case Channel::LC:
+		s << "lc(8)";
+		break;
+	case Channel::RC:
+		s << "rc(9)";
+		break;
 	case Channel::BSL:
 		s << "bsl(10)";
 		break;
