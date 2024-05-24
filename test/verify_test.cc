@@ -5773,3 +5773,49 @@ BOOST_AUTO_TEST_CASE(verify_encrypted_smpte_dcp)
 }
 
 
+BOOST_AUTO_TEST_CASE(verify_invalid_sound_bit_depth)
+{
+	auto const dir = private_test / "data" / "16_bit_audio";
+
+	auto cpl = make_shared<dcp::CPL>(find_prefix(dir, "CPL_"));
+
+	vector<dcp::VerificationNote> notes = {
+		ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+		ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"Advertisement"}, cpl),
+		ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+		ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"204794_Kitex_Scoobee_Day_Bags_30_Sec_Malayalam_220524_RADQR"}, cpl),
+		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "Video.mxf"), cpl),
+		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "Video.mxf"), cpl),
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_SOUND_BIT_DEPTH, "16", canonical(dir / "Audio.mxf")
+			).set_cpl_id(cpl->id()),
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_HASH, string("fd4796c2-9c84-454c-91f4-13ad127cea8a")
+			).set_cpl_id(cpl->id()),
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_HASH, string("9d5e8bc4-676b-4306-a86d-03f70c73b457")
+			).set_cpl_id(cpl->id()),
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, canonical(cpl->file().get())
+			).set_cpl_id(cpl->id()),
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC
+			).set_cpl_id(cpl->id()),
+		dcp::VerificationNote(
+			dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC
+			).set_cpl_id(cpl->id()),
+	};
+
+	for (auto i = 0; i < 792; ++i) {
+		notes.push_back(
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2")
+				).set_cpl_id(cpl->id())
+			);
+	}
+
+	check_verify_result({ dir }, {}, notes);
+}
+

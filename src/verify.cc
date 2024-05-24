@@ -714,6 +714,9 @@ verify_main_sound_asset(Context& context, shared_ptr<const ReelSoundAsset> reel_
 	if (asset->sampling_rate() != 48000) {
 		context.bv21_error(VerificationNote::Code::INVALID_SOUND_FRAME_RATE, raw_convert<string>(asset->sampling_rate()), file);
 	}
+	if (asset->bit_depth() != 24) {
+		context.error(VerificationNote::Code::INVALID_SOUND_BIT_DEPTH, raw_convert<string>(asset->bit_depth()), file);
+	}
 }
 
 
@@ -2054,6 +2057,8 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 		return process_string("There are more than 32 characters in at least one closed caption line.");
 	case VerificationNote::Code::INVALID_SOUND_FRAME_RATE:
 		return compose("The sound asset %1 has a sampling rate of %2", filename(), note.note().get());
+	case VerificationNote::Code::INVALID_SOUND_BIT_DEPTH:
+		return compose("The sound asset %1 has a bit depth of %2", filename(), note.note().get());
 	case VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT:
 		return compose("The CPL %1 has no <AnnotationText> tag.", note.cpl_id().get());
 	case VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT:

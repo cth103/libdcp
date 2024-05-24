@@ -115,6 +115,13 @@ public:
 		return _sampling_rate;
 	}
 
+	/** @return Bit depth of samples.  This should always be 24, but we return it
+	 *  so the verification code can check
+	 */
+	int bit_depth() const {
+		return _bit_depth;
+	}
+
 	Fraction edit_rate () const {
 		return _edit_rate;
 	}
@@ -148,6 +155,7 @@ private:
 	int _channels = 0;                     ///< number of channels in the MXF
 	boost::optional<int> _active_channels; ///< estimate of the number of active channels
 	int _sampling_rate = 0;                ///< sampling rate in Hz
+	int _bit_depth = 24;
 	boost::optional<std::string> _language;
 };
 

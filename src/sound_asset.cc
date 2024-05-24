@@ -83,6 +83,7 @@ SoundAsset::SoundAsset (boost::filesystem::path file)
 	}
 
 	_sampling_rate = desc.AudioSamplingRate.Denominator ? (desc.AudioSamplingRate.Numerator / desc.AudioSamplingRate.Denominator) : 0;
+	_bit_depth = desc.QuantizationBits;
 	_channels = desc.ChannelCount;
 	_edit_rate = Fraction (desc.EditRate.Numerator, desc.EditRate.Denominator);
 

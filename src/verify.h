@@ -255,6 +255,11 @@ public:
 		 *  file contains the asset filename
 		 */
 		INVALID_SOUND_FRAME_RATE,
+		/** The audio bit depth must be 24
+		 *  note contains the invalid bit depth
+		 *  file contains the asset filename
+		 */
+		INVALID_SOUND_BIT_DEPTH,
 		/** The CPL has no _<AnnotationText>_ tag [Bv2.1_8.1]
 		 *  note contains the CPL ID
 		 *  file contains the CPL filename
