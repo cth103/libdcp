@@ -37,6 +37,7 @@
  */
 
 
+#include "dcp_assert.h"
 #include "sound_frame.h"
 #include <asdcp/AS_DCP.h>
 #include <iostream>
@@ -52,15 +53,28 @@ SoundFrame::SoundFrame (ASDCP::PCM::MXFReader* reader, int n, std::shared_ptr<co
 	ASDCP::PCM::AudioDescriptor desc;
 	reader->FillAudioDescriptor (desc);
 	_channels = desc.ChannelCount;
+	_bits = desc.QuantizationBits;
 }
 
 
 int32_t
 SoundFrame::get (int channel, int frame) const
 {
-	uint8_t const * d = data() + (frame * _channels * 3) + (channel * 3);
-	/* This is slightly dubious I think */
-	return (d[0] << 8 | (d[1] << 16) | (d[2] << 24)) >> 8;
+	switch (_bits) {
+	case 24:
+	{
+		uint8_t const * d = data() + (frame * _channels * 3) + (channel * 3);
+		/* This is slightly dubious I think */
+		return (d[0] << 8 | (d[1] << 16) | (d[2] << 24)) >> 8;
+	}
+	case 16:
+	{
+		uint8_t const * d = data() + (frame * _channels * 2) + (channel * 2);
+		return d[0] | (d[1] << 8);
+	}
+	default:
+		DCP_ASSERT(false);
+	}
 }
 
 
@@ -74,5 +88,5 @@ SoundFrame::channels () const
 int
 SoundFrame::samples () const
 {
-	return size() / (_channels * 3);
+	return size() / (_channels * _bits / 8);
 }
