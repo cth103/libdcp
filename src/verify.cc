@@ -81,6 +81,7 @@
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <map>
+#include <numeric>
 #include <regex>
 #include <set>
 #include <vector>
@@ -1239,16 +1240,21 @@ dcp::verify_text_lines_and_characters(
 		return a->time < b->time;
 	});
 
-	map<int, int> current;
+	/* The number of characters currently displayed at different vertical positions, i.e. on
+	 * what we consider different lines.  Key is the vertical position (0 to 100) and the value
+	 * is a list of the active subtitles in that position.
+	 */
+	map<int, vector<shared_ptr<Event>>> current;
 	for (auto i: events) {
 		if (current.size() > 3) {
 			result->line_count_exceeded = true;
 		}
 		for (auto j: current) {
-			if (j.second > warning_length) {
+			int length = std::accumulate(j.second.begin(), j.second.end(), 0, [](int total, shared_ptr<const Event> event) { return total + event->characters; });
+			if (length > warning_length) {
 				result->warning_length_exceeded = true;
 			}
-			if (j.second > error_length) {
+			if (length > error_length) {
 				result->error_length_exceeded = true;
 			}
 		}
@@ -1256,17 +1262,20 @@ dcp::verify_text_lines_and_characters(
 		if (i->start) {
 			/* end of a subtitle */
 			DCP_ASSERT (current.find(i->start->position) != current.end());
-			if (current[i->start->position] == i->start->characters) {
+			auto current_position = current[i->start->position];
+			auto iter = std::find(current_position.begin(), current_position.end(), i->start);
+			if (iter != current_position.end()) {
+				current_position.erase(iter);
+			}
+			if (current_position.empty()) {
 				current.erase(i->start->position);
-			} else {
-				current[i->start->position] -= i->start->characters;
 			}
 		} else {
 			/* start of a subtitle */
 			if (current.find(i->position) == current.end()) {
-				current[i->position] = i->characters;
+				current[i->position] = vector<shared_ptr<Event>>{i};
 			} else {
-				current[i->position] += i->characters;
+				current[i->position].push_back(i);
 			}
 		}
 	}

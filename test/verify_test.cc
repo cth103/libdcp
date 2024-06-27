@@ -3986,3 +3986,37 @@ BOOST_AUTO_TEST_CASE(verify_encrypted_smpte_dcp)
 }
 
 
+BOOST_AUTO_TEST_CASE(overlapping_subtitles)
+{
+	auto asset = make_shared<dcp::InteropSubtitleAsset>();
+
+	asset->add(std::make_shared<dcp::SubtitleString>(
+			optional<string>{}, false, false, false,
+			dcp::Colour{}, 42, 0,
+			dcp::Time(0, 0, 0, 0, 24),
+			dcp::Time(0, 0, 8, 0, 24),
+			0, dcp::HAlign::CENTER,
+			0, dcp::VAlign::CENTER,
+			0,
+			dcp::Direction::LTR,
+			"",
+			dcp::Effect::NONE, dcp::Colour{}, dcp::Time{}, dcp::Time{}, 0, vector<dcp::Ruby>{}
+			));
+
+	asset->add(std::make_shared<dcp::SubtitleString>(
+			optional<string>{}, false, false, false,
+			dcp::Colour{}, 42, 0,
+			dcp::Time(0, 0, 2, 0, 24),
+			dcp::Time(0, 0, 4, 0, 24),
+			0, dcp::HAlign::CENTER,
+			0, dcp::VAlign::CENTER,
+			0,
+			dcp::Direction::LTR,
+			"Hello",
+			dcp::Effect::NONE, dcp::Colour{}, dcp::Time{}, dcp::Time{}, 0, vector<dcp::Ruby>{}
+			));
+
+	dcp::LinesCharactersResult result;
+	dcp::verify_text_lines_and_characters(asset, 64, 80, &result);
+}
+
