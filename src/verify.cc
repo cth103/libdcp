@@ -1235,7 +1235,7 @@ dcp::verify_text_lines_and_characters(
 		}
 	}
 
-	std::sort(events.begin(), events.end(), [](shared_ptr<Event> const& a, shared_ptr<Event>const& b) {
+	std::sort(events.begin(), events.end(), [](shared_ptr<Event> const& a, shared_ptr<Event> const& b) {
 		return a->time < b->time;
 	});
 
