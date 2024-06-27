@@ -1205,8 +1205,8 @@ dcp::verify_text_lines_and_characters(
 		{}
 
 		Time time;
-		int position; //< position from 0 at top of screen to 100 at bottom
-		int characters;
+		int position = 0;   ///< vertical position from 0 at top of screen to 100 at bottom
+		int characters = 0; ///< number of characters in the text of this event
 		shared_ptr<Event> start;
 	};
 
@@ -1225,6 +1225,7 @@ dcp::verify_text_lines_and_characters(
 		return 0L;
 	};
 
+	/* Make a list of "subtitle starts" and "subtitle ends" events */
 	for (auto j: asset->subtitles()) {
 		auto text = dynamic_pointer_cast<const SubtitleString>(j);
 		if (text) {
