@@ -1182,18 +1182,9 @@ verify_closed_caption_details (
 }
 
 
-struct LinesCharactersResult
-{
-	bool warning_length_exceeded = false;
-	bool error_length_exceeded = false;
-	bool line_count_exceeded = false;
-};
-
-
-static
 void
-verify_text_lines_and_characters (
-	shared_ptr<SubtitleAsset> asset,
+dcp::verify_text_lines_and_characters(
+	shared_ptr<const SubtitleAsset> asset,
 	int warning_length,
 	int error_length,
 	LinesCharactersResult* result
