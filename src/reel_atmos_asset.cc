@@ -69,7 +69,7 @@ ReelAtmosAsset::ReelAtmosAsset (std::shared_ptr<const cxml::Node> node)
 
 
 string
-ReelAtmosAsset::cpl_node_name (Standard) const
+ReelAtmosAsset::cpl_node_name() const
 {
 	return "axd:AuxData";
 }

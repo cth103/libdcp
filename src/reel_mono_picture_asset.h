@@ -82,7 +82,7 @@ public:
 	}
 
 private:
-	std::string cpl_node_name (Standard standard) const override;
+	std::string cpl_node_name() const override;
 };
 
 

@@ -62,7 +62,7 @@ public:
 	}
 
 protected:
-	std::string cpl_node_name (Standard) const override;
+	std::string cpl_node_name() const override;
 
 private:
 	std::map<Marker, Time> _markers;

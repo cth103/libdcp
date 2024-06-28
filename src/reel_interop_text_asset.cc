@@ -67,7 +67,7 @@ ReelInteropTextAsset::ReelInteropTextAsset(std::shared_ptr<const cxml::Node> nod
 
 
 string
-ReelInteropTextAsset::cpl_node_name(Standard) const
+ReelInteropTextAsset::cpl_node_name() const
 {
 	switch (_type) {
 	case TextType::SUBTITLE:

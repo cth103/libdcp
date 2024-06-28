@@ -73,7 +73,7 @@ ReelMarkersAsset::ReelMarkersAsset (cxml::ConstNodePtr node)
 
 
 string
-ReelMarkersAsset::cpl_node_name (Standard) const
+ReelMarkersAsset::cpl_node_name() const
 {
 	return "MainMarkers";
 }

@@ -87,7 +87,7 @@ ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
 xmlpp::Element*
 ReelAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
-	auto a = cxml::add_child(node, cpl_node_name(standard));
+	auto a = cxml::add_child(node, cpl_node_name());
 	auto const attr = cpl_node_attribute (standard);
 	if (!attr.first.empty ()) {
 		a->set_attribute (attr.first, attr.second);
@@ -138,7 +138,7 @@ optional_to_string (optional<T> o)
 bool
 ReelAsset::asset_equals(shared_ptr<const ReelAsset> other, EqualityOptions const& opt, NoteHandler note) const
 {
-	auto const node = cpl_node_name(Standard::SMPTE);
+	auto const node = cpl_node_name();
 
 	if (_annotation_text != other->_annotation_text) {
 		string const s = String::compose("Reel %1: annotation texts differ (%2 vs %3)", node, optional_to_string(_annotation_text), optional_to_string(other->_annotation_text));

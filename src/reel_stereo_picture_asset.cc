@@ -64,7 +64,7 @@ ReelStereoPictureAsset::ReelStereoPictureAsset (std::shared_ptr<const cxml::Node
 
 
 string
-ReelStereoPictureAsset::cpl_node_name (Standard) const
+ReelStereoPictureAsset::cpl_node_name() const
 {
 	return "msp-cpl:MainStereoscopicPicture";
 }

@@ -62,7 +62,7 @@ ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<const cxml::Node> no
 
 
 string
-ReelMonoPictureAsset::cpl_node_name (Standard) const
+ReelMonoPictureAsset::cpl_node_name() const
 {
 	return "MainPicture";
 }

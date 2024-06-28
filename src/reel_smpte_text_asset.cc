@@ -69,7 +69,7 @@ ReelSMPTETextAsset::ReelSMPTETextAsset(shared_ptr<const cxml::Node> node)
 
 
 string
-ReelSMPTETextAsset::cpl_node_name(Standard) const
+ReelSMPTETextAsset::cpl_node_name() const
 {
 	switch (_type) {
 	case TextType::SUBTITLE:

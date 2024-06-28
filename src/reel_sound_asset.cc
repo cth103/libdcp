@@ -68,7 +68,7 @@ ReelSoundAsset::ReelSoundAsset (shared_ptr<const cxml::Node> node)
 
 
 string
-ReelSoundAsset::cpl_node_name (Standard) const
+ReelSoundAsset::cpl_node_name() const
 {
 	return "MainSound";
 }
