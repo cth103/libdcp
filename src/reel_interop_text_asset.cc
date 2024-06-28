@@ -52,7 +52,7 @@ using boost::optional;
 using namespace dcp;
 
 
-ReelInteropTextAsset::ReelInteropTextAsset(TextType type, std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+ReelInteropTextAsset::ReelInteropTextAsset(TextType type, std::shared_ptr<TextAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelTextAsset(type, asset, edit_rate, intrinsic_duration, entry_point)
 {
 

@@ -44,7 +44,7 @@
 #include "language_tag.h"
 #include "reel_asset.h"
 #include "reel_file_asset.h"
-#include "subtitle_asset.h"
+#include "text_asset.h"
 #include "text_type.h"
 
 
@@ -55,7 +55,7 @@ struct verify_invalid_language2;
 namespace dcp {
 
 
-class SubtitleAsset;
+class TextAsset;
 
 
 /** @class ReelTextAsset
@@ -64,15 +64,15 @@ class SubtitleAsset;
 class ReelTextAsset : public ReelFileAsset
 {
 public:
-	ReelTextAsset(TextType type, std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	ReelTextAsset(TextType type, std::shared_ptr<TextAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelTextAsset(std::shared_ptr<const cxml::Node>);
 
-	std::shared_ptr<const SubtitleAsset> asset () const {
-		return asset_of_type<const SubtitleAsset>();
+	std::shared_ptr<const TextAsset> asset() const {
+		return asset_of_type<const TextAsset>();
 	}
 
-	std::shared_ptr<SubtitleAsset> asset () {
-		return asset_of_type<SubtitleAsset>();
+	std::shared_ptr<TextAsset> asset() {
+		return asset_of_type<TextAsset>();
 	}
 
 	bool equals(std::shared_ptr<const ReelTextAsset>, EqualityOptions const&, NoteHandler) const;

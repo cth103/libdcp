@@ -37,7 +37,7 @@
  */
 
 
-#include "interop_subtitle_asset.h"
+#include "interop_text_asset.h"
 #include "reel_text_asset.h"
 
 
@@ -50,15 +50,15 @@ namespace dcp {
 class ReelInteropTextAsset : public ReelTextAsset
 {
 public:
-	ReelInteropTextAsset(TextType type, std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	ReelInteropTextAsset(TextType type, std::shared_ptr<TextAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelInteropTextAsset (std::shared_ptr<const cxml::Node>);
 
-	std::shared_ptr<const InteropSubtitleAsset> interop_asset () const {
-		return asset_of_type<const InteropSubtitleAsset>();
+	std::shared_ptr<const InteropTextAsset> interop_asset() const {
+		return asset_of_type<const InteropTextAsset>();
 	}
 
-	std::shared_ptr<InteropSubtitleAsset> interop_asset () {
-		return asset_of_type<InteropSubtitleAsset>();
+	std::shared_ptr<InteropTextAsset> interop_asset() {
+		return asset_of_type<InteropTextAsset>();
 	}
 
 	xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;

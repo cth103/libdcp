@@ -32,16 +32,16 @@
 */
 
 
-/** @file  src/interop_subtitle_asset.h
- *  @brief InteropSubtitleAsset class
+/** @file  src/interop_text_asset.h
+ *  @brief InteropTextAsset class
  */
 
 
-#ifndef LIBDCP_INTEROP_SUBTITLE_ASSET_H
-#define LIBDCP_INTEROP_SUBTITLE_ASSET_H
+#ifndef LIBDCP_INTEROP_TEXT_ASSET_H
+#define LIBDCP_INTEROP_TEXT_ASSET_H
 
 
-#include "subtitle_asset.h"
+#include "text_asset.h"
 #include "subtitle_standard.h"
 #include <boost/filesystem.hpp>
 
@@ -52,16 +52,16 @@ namespace dcp {
 class InteropLoadFontNode;
 
 
-/** @class InteropSubtitleAsset
+/** @class InteropTextAsset
  *  @brief A set of subtitles to be read and/or written in the Inter-Op format
  *
  *  Inter-Op subtitles are sometimes known as CineCanvas.
  */
-class InteropSubtitleAsset : public SubtitleAsset
+class InteropTextAsset : public TextAsset
 {
 public:
-	InteropSubtitleAsset ();
-	explicit InteropSubtitleAsset (boost::filesystem::path file);
+	InteropTextAsset();
+	explicit InteropTextAsset(boost::filesystem::path file);
 
 	bool equals (
 		std::shared_ptr<const Asset>,

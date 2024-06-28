@@ -35,7 +35,7 @@
 #include "dcp.h"
 #include "cpl.h"
 #include "reel.h"
-#include "subtitle_asset.h"
+#include "text_asset.h"
 #include "reel_text_asset.h"
 #include "exceptions.h"
 

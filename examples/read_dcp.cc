@@ -32,7 +32,7 @@
 #include "mono_j2k_picture_asset_reader.h"
 #include "stereo_j2k_picture_asset.h"
 #include "sound_asset.h"
-#include "subtitle_asset.h"
+#include "text_asset.h"
 #include "openjpeg_image.h"
 #include "colour_conversion.h"
 #include "rgb_xyz.h"
@@ -77,8 +77,12 @@ main ()
 			std::cout << "3D picture\n";
 		} else if (std::dynamic_pointer_cast<dcp::SoundAsset>(i)) {
 			std::cout << "Sound\n";
-		} else if (std::dynamic_pointer_cast<dcp::SubtitleAsset>(i)) {
-			std::cout << "Subtitle\n";
+		} else if (text = std::dynamic_pointer_cast<dcp::TextAsset>(i)) {
+			if (text->type() == dcp::TextType::SUBTITLE) {
+				std::cout << "Subtitle\n";
+			} else {
+				std::cout << "Caption\n";
+			}
 		} else if (std::dynamic_pointer_cast<dcp::CPL>(i)) {
 			std::cout << "CPL\n";
 		}

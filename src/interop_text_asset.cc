@@ -32,8 +32,8 @@
 */
 
 
-/** @file  src/interop_subtitle_asset.cc
- *  @brief InteropSubtitleAsset class
+/** @file  src/interop_text_asset.cc
+ *  @brief InteropTextAsset class
  */
 
 
@@ -44,9 +44,9 @@
 #include "font_asset.h"
 #include "file.h"
 #include "interop_load_font_node.h"
-#include "interop_subtitle_asset.h"
+#include "interop_text_asset.h"
 #include "raw_convert.h"
-#include "subtitle_asset_internal.h"
+#include "text_asset_internal.h"
 #include "subtitle_image.h"
 #include "util.h"
 #include "warnings.h"
@@ -70,8 +70,8 @@ using boost::optional;
 using namespace dcp;
 
 
-InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
-	: SubtitleAsset (file)
+InteropTextAsset::InteropTextAsset(boost::filesystem::path file)
+	: TextAsset(file)
 {
 	_raw_xml = dcp::file_to_string (file);
 
@@ -102,14 +102,14 @@ InteropSubtitleAsset::InteropSubtitleAsset (boost::filesystem::path file)
 }
 
 
-InteropSubtitleAsset::InteropSubtitleAsset ()
+InteropTextAsset::InteropTextAsset()
 {
 
 }
 
 
 string
-InteropSubtitleAsset::xml_as_string () const
+InteropTextAsset::xml_as_string() const
 {
 	xmlpp::Document doc;
 	auto root = doc.create_root_node ("DCSubtitle");
@@ -133,7 +133,7 @@ InteropSubtitleAsset::xml_as_string () const
 
 
 void
-InteropSubtitleAsset::add_font (string load_id, dcp::ArrayData data)
+InteropTextAsset::add_font(string load_id, dcp::ArrayData data)
 {
 	_fonts.push_back (Font(load_id, make_uuid(), data));
 	auto const uri = String::compose("font_%1.ttf", _load_font_nodes.size());
@@ -142,13 +142,13 @@ InteropSubtitleAsset::add_font (string load_id, dcp::ArrayData data)
 
 
 bool
-InteropSubtitleAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions const& options, NoteHandler note) const
+InteropTextAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions const& options, NoteHandler note) const
 {
-	if (!SubtitleAsset::equals (other_asset, options, note)) {
+	if (!TextAsset::equals (other_asset, options, note)) {
 		return false;
 	}
 
-	auto other = dynamic_pointer_cast<const InteropSubtitleAsset> (other_asset);
+	auto other = dynamic_pointer_cast<const InteropTextAsset> (other_asset);
 	if (!other) {
 		return false;
 	}
@@ -183,7 +183,7 @@ InteropSubtitleAsset::equals(shared_ptr<const Asset> other_asset, EqualityOption
 
 
 vector<shared_ptr<LoadFontNode>>
-InteropSubtitleAsset::load_font_nodes () const
+InteropTextAsset::load_font_nodes() const
 {
 	vector<shared_ptr<LoadFontNode>> lf;
 	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter (lf));
@@ -192,7 +192,7 @@ InteropSubtitleAsset::load_font_nodes () const
 
 
 void
-InteropSubtitleAsset::write (boost::filesystem::path p) const
+InteropTextAsset::write(boost::filesystem::path p) const
 {
 	File f(p, "wb");
 	if (!f) {
@@ -230,7 +230,7 @@ InteropSubtitleAsset::write (boost::filesystem::path p) const
  *  a list of font ID, load ID and data.
  */
 void
-InteropSubtitleAsset::resolve_fonts (vector<shared_ptr<Asset>> assets)
+InteropTextAsset::resolve_fonts(vector<shared_ptr<Asset>> assets)
 {
 	for (auto asset: assets) {
 		auto font = dynamic_pointer_cast<FontAsset>(asset);
@@ -256,7 +256,7 @@ InteropSubtitleAsset::resolve_fonts (vector<shared_ptr<Asset>> assets)
 
 
 vector<shared_ptr<Asset>>
-InteropSubtitleAsset::font_assets()
+InteropTextAsset::font_assets()
 {
 	vector<shared_ptr<Asset>> assets;
 	for (auto const& i: _fonts) {
@@ -268,7 +268,7 @@ InteropSubtitleAsset::font_assets()
 
 
 vector<shared_ptr<const Asset>>
-InteropSubtitleAsset::font_assets() const
+InteropTextAsset::font_assets() const
 {
 	vector<shared_ptr<const Asset>> assets;
 	for (auto const& i: _fonts) {
@@ -280,7 +280,7 @@ InteropSubtitleAsset::font_assets() const
 
 
 void
-InteropSubtitleAsset::add_to_assetmap (AssetMap& asset_map, boost::filesystem::path root) const
+InteropTextAsset::add_to_assetmap(AssetMap& asset_map, boost::filesystem::path root) const
 {
 	Asset::add_to_assetmap(asset_map, root);
 
@@ -295,7 +295,7 @@ InteropSubtitleAsset::add_to_assetmap (AssetMap& asset_map, boost::filesystem::p
 
 
 void
-InteropSubtitleAsset::add_to_pkl (shared_ptr<PKL> pkl, boost::filesystem::path root) const
+InteropTextAsset::add_to_pkl(shared_ptr<PKL> pkl, boost::filesystem::path root) const
 {
 	Asset::add_to_pkl (pkl, root);
 
@@ -310,7 +310,7 @@ InteropSubtitleAsset::add_to_pkl (shared_ptr<PKL> pkl, boost::filesystem::path r
 
 
 void
-InteropSubtitleAsset::set_font_file (string load_id, boost::filesystem::path file)
+InteropTextAsset::set_font_file(string load_id, boost::filesystem::path file)
 {
 	for (auto& i: _fonts) {
 		if (i.load_id == load_id) {
@@ -327,7 +327,7 @@ InteropSubtitleAsset::set_font_file (string load_id, boost::filesystem::path fil
 
 
 vector<string>
-InteropSubtitleAsset::unresolved_fonts() const
+InteropTextAsset::unresolved_fonts() const
 {
 	vector<string> unresolved;
 	for (auto load_font_node: _load_font_nodes) {

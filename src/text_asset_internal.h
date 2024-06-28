@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/subtitle_asset_internal.h
- *  @brief Internal SubtitleAsset helpers
+/** @file  src/text_asset_internal.h
+ *  @brief Internal TextAsset helpers
  */
 
 
-#ifndef LIBDCP_SUBTITLE_ASSET_INTERNAL_H
-#define LIBDCP_SUBTITLE_ASSET_INTERNAL_H
+#ifndef LIBDCP_TEXT_ASSET_INTERNAL_H
+#define LIBDCP_TEXT_ASSET_INTERNAL_H
 
 
 #include "array_data.h"

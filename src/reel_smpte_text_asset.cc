@@ -38,7 +38,7 @@
 
 
 #include "reel_smpte_text_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 #include "warnings.h"
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
@@ -53,7 +53,7 @@ using boost::optional;
 using namespace dcp;
 
 
-ReelSMPTETextAsset::ReelSMPTETextAsset(TextType type, shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+ReelSMPTETextAsset::ReelSMPTETextAsset(TextType type, shared_ptr<SMPTETextAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelTextAsset(type, asset, edit_rate, intrinsic_duration, entry_point)
 {
 

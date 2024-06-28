@@ -33,7 +33,7 @@
 
 
 #include "smpte_load_font_node.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 #include "stream_operators.h"
 #include "subtitle_image.h"
 #include "test.h"
@@ -51,7 +51,7 @@ using boost::optional;
 
 BOOST_AUTO_TEST_CASE (smpte_subtitle_id_test)
 {
-	dcp::SMPTESubtitleAsset subs;
+	dcp::SMPTETextAsset subs;
 	subs.add(
 		std::make_shared<dcp::SubtitleString>(
 			optional<string>(),
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE (smpte_subtitle_id_test)
 		);
 	subs.write("build/test/smpte_subtitle_id_test.mxf");
 
-	dcp::SMPTESubtitleAsset check("build/test/smpte_subtitle_id_test.mxf");
+	dcp::SMPTETextAsset check("build/test/smpte_subtitle_id_test.mxf");
 	BOOST_CHECK(check.id() != check.xml_id());
 }
 
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE (smpte_subtitle_id_test)
 /** Check reading of a SMPTE subtitle file */
 BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test)
 {
-	dcp::SMPTESubtitleAsset sc (
+	dcp::SMPTETextAsset sc (
 		private_test /
 		"data" /
 		"JourneyToJah_TLR-1_F_EN-DE-FR_CH_51_2K_LOK_20140225_DGL_SMPTE_OV" /
@@ -128,7 +128,7 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test)
 /** And another one featuring <Font> within <Text> and some <Space> */
 BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test2)
 {
-	dcp::SMPTESubtitleAsset sc (private_test / "olsson.xml");
+	dcp::SMPTETextAsset sc (private_test / "olsson.xml");
 
 	auto subs = sc.subtitles();
 	BOOST_REQUIRE_EQUAL (subs.size(), 6U);
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test2)
 /* Write some subtitle content as SMPTE XML and check that it is right */
 BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 {
-	dcp::SMPTESubtitleAsset c;
+	dcp::SMPTETextAsset c;
 	c.set_reel_number (1);
 	c.set_language (dcp::LanguageTag("en"));
 	c.set_content_title_text ("Test");
@@ -296,7 +296,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 */
 BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 {
-	dcp::SMPTESubtitleAsset c;
+	dcp::SMPTETextAsset c;
 	c.set_reel_number (1);
 	c.set_language (dcp::LanguageTag("en"));
 	c.set_content_title_text ("Test");
@@ -493,7 +493,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 /* Write some subtitle content as SMPTE using bitmaps and check that it is right */
 BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 {
-	dcp::SMPTESubtitleAsset c;
+	dcp::SMPTETextAsset c;
 	c.set_reel_number (1);
 	c.set_language (dcp::LanguageTag("en"));
 	c.set_content_title_text ("Test");
@@ -522,7 +522,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 	boost::filesystem::create_directories (path);
 	c.write (path / "subs.mxf");
 
-	dcp::SMPTESubtitleAsset read_back (path / "subs.mxf");
+	dcp::SMPTETextAsset read_back (path / "subs.mxf");
 	auto subs = read_back.subtitles ();
 	BOOST_REQUIRE_EQUAL (subs.size(), 1U);
 	auto image = dynamic_pointer_cast<const dcp::SubtitleImage>(subs[0]);
@@ -546,7 +546,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
  */
 BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_top_alignment)
 {
-	dcp::SMPTESubtitleAsset c;
+	dcp::SMPTETextAsset c;
 	c.set_reel_number (1);
 	c.set_language (dcp::LanguageTag("en"));
 	c.set_content_title_text ("Test");
@@ -636,7 +636,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_top_alignment)
 /* See the test above */
 BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_bottom_alignment)
 {
-	dcp::SMPTESubtitleAsset c;
+	dcp::SMPTETextAsset c;
 	c.set_reel_number (1);
 	c.set_language (dcp::LanguageTag("en"));
 	c.set_content_title_text ("Test");
@@ -733,39 +733,39 @@ BOOST_AUTO_TEST_CASE(smpte_subtitle_standard_written_correctly)
 	boost::filesystem::remove_all(out);
 	boost::filesystem::create_directories(out);
 
-	dcp::SMPTESubtitleAsset test_2014;
+	dcp::SMPTETextAsset test_2014;
 	test_2014.set_issue_date(dcp::LocalTime("2020-01-01T14:00:00"));
 	test_2014.write(out / "2014.mxf");
-	BOOST_CHECK_EQUAL(dcp::SMPTESubtitleAsset(ref / "2014.mxf").raw_xml(), dcp::SMPTESubtitleAsset(out / "2014.mxf").raw_xml());
+	BOOST_CHECK_EQUAL(dcp::SMPTETextAsset(ref / "2014.mxf").raw_xml(), dcp::SMPTETextAsset(out / "2014.mxf").raw_xml());
 
-	dcp::SMPTESubtitleAsset test_2010(dcp::SubtitleStandard::SMPTE_2010);
+	dcp::SMPTETextAsset test_2010(dcp::SubtitleStandard::SMPTE_2010);
 	test_2010.set_issue_date(dcp::LocalTime("2020-01-01T14:00:00"));
 	test_2010.write(out / "2010.mxf");
-	BOOST_CHECK_EQUAL(dcp::SMPTESubtitleAsset(ref / "2010.mxf").raw_xml(), dcp::SMPTESubtitleAsset(out / "2010.mxf").raw_xml());
+	BOOST_CHECK_EQUAL(dcp::SMPTETextAsset(ref / "2010.mxf").raw_xml(), dcp::SMPTETextAsset(out / "2010.mxf").raw_xml());
 
-	dcp::SMPTESubtitleAsset test_2007(dcp::SubtitleStandard::SMPTE_2007);
+	dcp::SMPTETextAsset test_2007(dcp::SubtitleStandard::SMPTE_2007);
 	test_2007.set_issue_date(dcp::LocalTime("2020-01-01T14:00:00"));
 	test_2007.write(out / "2007.mxf");
-	BOOST_CHECK_EQUAL(dcp::SMPTESubtitleAsset(ref / "2007.mxf").raw_xml(), dcp::SMPTESubtitleAsset(out / "2007.mxf").raw_xml());
+	BOOST_CHECK_EQUAL(dcp::SMPTETextAsset(ref / "2007.mxf").raw_xml(), dcp::SMPTETextAsset(out / "2007.mxf").raw_xml());
 }
 
 
 BOOST_AUTO_TEST_CASE(smpte_subtitle_standard_read_correctly)
 {
-	dcp::SMPTESubtitleAsset test_2007("test/data/2007.mxf");
+	dcp::SMPTETextAsset test_2007("test/data/2007.mxf");
 	BOOST_CHECK(test_2007.subtitle_standard() == dcp::SubtitleStandard::SMPTE_2007);
 
-	dcp::SMPTESubtitleAsset test_2010("test/data/2010.mxf");
+	dcp::SMPTETextAsset test_2010("test/data/2010.mxf");
 	BOOST_CHECK(test_2010.subtitle_standard() == dcp::SubtitleStandard::SMPTE_2010);
 
-	dcp::SMPTESubtitleAsset test_2014("test/data/2014.mxf");
+	dcp::SMPTETextAsset test_2014("test/data/2014.mxf");
 	BOOST_CHECK(test_2014.subtitle_standard() == dcp::SubtitleStandard::SMPTE_2014);
 }
 
 
 BOOST_AUTO_TEST_CASE(smpte_subtitle_intrinsic_duration_read_correctly)
 {
-	dcp::SMPTESubtitleAsset ref("test/data/verify_incorrect_closed_caption_ordering3.xml");
+	dcp::SMPTETextAsset ref("test/data/verify_incorrect_closed_caption_ordering3.xml");
 
 	dcp::Key key;
 	ref.set_key(key);
@@ -777,7 +777,7 @@ BOOST_AUTO_TEST_CASE(smpte_subtitle_intrinsic_duration_read_correctly)
 	auto const path = boost::filesystem::path("build/test/smpte_subtitle_instrinsic_duration_read_correctly.mxf");
 	ref.write(path);
 
-	auto check = dcp::SMPTESubtitleAsset(path);
+	auto check = dcp::SMPTETextAsset(path);
 	check.set_key(key);
 	BOOST_CHECK_EQUAL(check.intrinsic_duration(), duration);
 }

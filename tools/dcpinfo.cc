@@ -40,16 +40,16 @@
 #include "encrypted_kdm.h"
 #include "exceptions.h"
 #include "filesystem.h"
-#include "interop_subtitle_asset.h"
+#include "interop_text_asset.h"
 #include "mono_j2k_picture_asset.h"
 #include "j2k_picture_asset.h"
 #include "reel.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_text_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 #include "sound_asset.h"
-#include "subtitle_asset.h"
+#include "text_asset.h"
 #include "subtitle_image.h"
 #include "subtitle_string.h"
 #include <getopt.h>
@@ -253,11 +253,11 @@ main_subtitle (vector<string> const& only, shared_ptr<Reel> reel, bool list_subt
 	if (ms->asset_ref().resolved()) {
 		auto subs = ms->asset()->subtitles ();
 		OUTPUT_SUBTITLE("\n      Subtitle:    %1 subtitles", subs.size());
-		shared_ptr<InteropSubtitleAsset> iop = dynamic_pointer_cast<InteropSubtitleAsset> (ms->asset());
+		auto iop = dynamic_pointer_cast<InteropTextAsset>(ms->asset());
 		if (iop) {
 			OUTPUT_SUBTITLE(" in %1\n", iop->language());
 		}
-		shared_ptr<SMPTESubtitleAsset> smpte = dynamic_pointer_cast<SMPTESubtitleAsset> (ms->asset());
+		auto smpte = dynamic_pointer_cast<SMPTETextAsset>(ms->asset());
 		if (smpte && smpte->language ()) {
 			OUTPUT_SUBTITLE(" in %1\n", smpte->language().get());
 		}

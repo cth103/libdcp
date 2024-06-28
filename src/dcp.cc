@@ -49,7 +49,7 @@
 #include "exceptions.h"
 #include "filesystem.h"
 #include "font_asset.h"
-#include "interop_subtitle_asset.h"
+#include "interop_text_asset.h"
 #include "metadata.h"
 #include "mono_j2k_picture_asset.h"
 #include "mono_mpeg2_picture_asset.h"
@@ -58,7 +58,7 @@
 #include "raw_convert.h"
 #include "reel_asset.h"
 #include "reel_text_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 #include "sound_asset.h"
 #include "stereo_j2k_picture_asset.h"
 #include "util.h"
@@ -222,7 +222,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 
 		if (
 			pkl_type == remove_parameters(CPL::static_pkl_type(standard)) ||
-			pkl_type == remove_parameters(InteropSubtitleAsset::static_pkl_type(standard))) {
+			pkl_type == remove_parameters(InteropTextAsset::static_pkl_type(standard))) {
 			auto p = new xmlpp::DomParser;
 			try {
 				p->parse_file(dcp::filesystem::fix_long_path(path).string());
@@ -244,14 +244,14 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 				if (standard == Standard::SMPTE && notes) {
 					notes->push_back (VerificationNote(VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_STANDARD));
 				}
-				other_assets.push_back (make_shared<InteropSubtitleAsset>(path));
+				other_assets.push_back (make_shared<InteropTextAsset>(path));
 			}
 		} else if (
 			*pkl_type == remove_parameters(J2KPictureAsset::static_pkl_type(standard)) ||
 			*pkl_type == remove_parameters(MPEG2PictureAsset::static_pkl_type(standard)) ||
 			*pkl_type == remove_parameters(SoundAsset::static_pkl_type(standard)) ||
 			*pkl_type == remove_parameters(AtmosAsset::static_pkl_type(standard)) ||
-			*pkl_type == remove_parameters(SMPTESubtitleAsset::static_pkl_type(standard))
+			*pkl_type == remove_parameters(SMPTETextAsset::static_pkl_type(standard))
 			) {
 
 			bool found_threed_marked_as_twod = false;
@@ -544,7 +544,7 @@ DCP::assets (bool ignore_unresolved) const
 				auto o = j->asset_ref().asset();
 				assets.push_back (o);
 				/* More Interop special-casing */
-				auto sub = dynamic_pointer_cast<InteropSubtitleAsset>(o);
+				auto sub = dynamic_pointer_cast<InteropTextAsset>(o);
 				if (sub) {
 					add_to_container(assets, sub->font_assets());
 				}

@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/subtitle_asset.h
- *  @brief SubtitleAsset class
+/** @file  src/text_asset.h
+ *  @brief TextAsset class
  */
 
 
-#ifndef LIBDCP_SUBTITLE_ASSET_H
-#define LIBDCP_SUBTITLE_ASSET_H
+#ifndef LIBDCP_TEXT_ASSET_H
+#define LIBDCP_TEXT_ASSET_H
 
 
 #include "array_data.h"
@@ -85,19 +85,19 @@ namespace order {
 }
 
 
-/** @class SubtitleAsset
- *  @brief A parent for classes representing a file containing subtitles
+/** @class TextAsset
+ *  @brief A parent for classes representing a file containing subtitles or captions
  *
  *  This class holds a list of Subtitle objects which it can extract
  *  from the appropriate part of either an Interop or SMPTE XML file.
- *  Its subclasses InteropSubtitleAsset and SMPTESubtitleAsset handle the
+ *  Its subclasses InteropTextAsset and SMPTETextAsset handle the
  *  differences between the two types.
  */
-class SubtitleAsset : public Asset
+class TextAsset : public Asset
 {
 public:
-	SubtitleAsset ();
-	explicit SubtitleAsset (boost::filesystem::path file);
+	TextAsset();
+	explicit TextAsset(boost::filesystem::path file);
 
 	bool equals (
 		std::shared_ptr<const Asset>,

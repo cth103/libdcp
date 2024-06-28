@@ -35,11 +35,11 @@
 #include "cpl.h"
 #include "dcp.h"
 #include "file.h"
-#include "interop_subtitle_asset.h"
+#include "interop_text_asset.h"
 #include "reel.h"
 #include "reel_interop_text_asset.h"
 #include "reel_smpte_text_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 #include "test.h"
 #include "util.h"
 #include <boost/test/unit_test.hpp>
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 	boost::filesystem::remove_all(directory);
 	dcp::DCP dcp (directory);
 
-	auto subs = make_shared<dcp::InteropSubtitleAsset>();
+	auto subs = make_shared<dcp::InteropTextAsset>();
 	subs->add_font ("theFontId", dcp::ArrayData("test/data/dummy.ttf"));
 	subs->write (directory / "frobozz.xml");
 	check_file ("test/data/dummy.ttf", "build/test/interop_dcp_font_test/font_0.ttf");
@@ -76,7 +76,7 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 
 	dcp::DCP dcp2 (directory);
 	dcp2.read ();
-	auto subs2 = dynamic_pointer_cast<dcp::SubtitleAsset> (
+	auto subs2 = dynamic_pointer_cast<dcp::TextAsset>(
 		dcp2.cpls()[0]->reels()[0]->main_subtitle()->asset_ref().asset()
 		);
 	BOOST_REQUIRE (subs2);
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
 	boost::filesystem::path directory = "build/test/smpte_dcp_font_test";
 	dcp::DCP dcp (directory);
 
-	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
+	auto subs = make_shared<dcp::SMPTETextAsset>();
 	subs->add_font ("theFontId", dcp::ArrayData("test/data/dummy.ttf"));
 	subs->write (directory / "frobozz.mxf");
 
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
 
 	dcp::DCP dcp2 (directory);
 	dcp2.read ();
-	auto subs2 = dynamic_pointer_cast<dcp::SubtitleAsset> (
+	auto subs2 = dynamic_pointer_cast<dcp::TextAsset>(
 		dcp2.cpls().front()->reels().front()->main_subtitle()->asset_ref().asset()
 		);
 	BOOST_REQUIRE (subs2);

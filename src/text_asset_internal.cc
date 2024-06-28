@@ -32,12 +32,12 @@
 */
 
 
-/** @file  src/subtitle_asset_internal.cc
- *  @brief Internal SubtitleAsset helpers
+/** @file  src/text_asset_internal.cc
+ *  @brief Internal TextAsset helpers
  */
 
 
-#include "subtitle_asset_internal.h"
+#include "text_asset_internal.h"
 #include "subtitle_string.h"
 #include "compose.hpp"
 #include <cmath>

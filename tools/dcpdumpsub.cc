@@ -36,7 +36,7 @@
 #include "decrypted_kdm_key.h"
 #include "encrypted_kdm.h"
 #include "file.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 #include "util.h"
 #include <getopt.h>
 #include <cstdlib>
@@ -107,7 +107,7 @@ main (int argc, char* argv[])
 		exit (EXIT_FAILURE);
 	}
 
-	dcp::SMPTESubtitleAsset sub (argv[optind]);
+	dcp::SMPTETextAsset sub(argv[optind]);
 
 	if (sub.key_id() && (!kdm_file || !private_key_file)) {
 		cerr << "Subtitle MXF is encrypted so you must provide a KDM and private key.\n";

@@ -42,7 +42,7 @@
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_smpte_text_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 #include "test.h"
 #include "types.h"
 #include "util.h"
@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE (vf_kdm_test)
 
 	/* Make VF */
 
-	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
+	auto subs = make_shared<dcp::SMPTETextAsset>();
 	subs->add(simple_subtitle());
 	subs->set_key(key);
 

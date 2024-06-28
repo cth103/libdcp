@@ -32,12 +32,12 @@
 */
 
 
-#ifndef LIBDCP_SMPTE_SUBTITLE_ASSET_H
-#define LIBDCP_SMPTE_SUBTITLE_ASSET_H
+#ifndef LIBDCP_SMPTE_TEXT_ASSET_H
+#define LIBDCP_SMPTE_TEXT_ASSET_H
 
 
-/** @file  src/smpte_subtitle_asset.h
- *  @brief SMPTESubtitleAsset class
+/** @file  src/smpte_text_asset.h
+ *  @brief SMPTETextAsset class
  */
 
 
@@ -45,7 +45,7 @@
 #include "language_tag.h"
 #include "local_time.h"
 #include "mxf.h"
-#include "subtitle_asset.h"
+#include "text_asset.h"
 #include "subtitle_standard.h"
 #include <boost/filesystem.hpp>
 
@@ -69,18 +69,18 @@ namespace dcp {
 class SMPTELoadFontNode;
 
 
-/** @class SMPTESubtitleAsset
+/** @class SMPTETextAsset
  *  @brief A set of subtitles to be read and/or written in the SMPTE format
  */
-class SMPTESubtitleAsset : public SubtitleAsset, public MXF
+class SMPTETextAsset : public TextAsset, public MXF
 {
 public:
-	explicit SMPTESubtitleAsset(SubtitleStandard standard = SubtitleStandard::SMPTE_2014);
+	explicit SMPTETextAsset(SubtitleStandard standard = SubtitleStandard::SMPTE_2014);
 
-	/** Construct a SMPTESubtitleAsset by reading an MXF or XML file
+	/** Construct a SMPTETextAsset by reading an MXF or XML file
 	 *  @param file Filename
 	 */
-	explicit SMPTESubtitleAsset (boost::filesystem::path file);
+	explicit SMPTETextAsset(boost::filesystem::path file);
 
 	bool equals (
 		std::shared_ptr<const Asset>,

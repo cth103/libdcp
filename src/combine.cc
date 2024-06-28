@@ -45,7 +45,7 @@
 #include "exceptions.h"
 #include "filesystem.h"
 #include "font_asset.h"
-#include "interop_subtitle_asset.h"
+#include "interop_text_asset.h"
 #include "raw_convert.h"
 #include <boost/filesystem.hpp>
 #include <set>
@@ -139,7 +139,7 @@ dcp::combine (
 				continue;
 			}
 
-			auto sub = dynamic_pointer_cast<dcp::InteropSubtitleAsset>(j);
+			auto sub = dynamic_pointer_cast<dcp::InteropTextAsset>(j);
 			if (sub) {
 				/* Interop fonts are really fiddly.  The font files are assets (in the ASSETMAP)
 				 * and also linked from the font XML by filename.  We have to fix both these things,

@@ -31,8 +31,8 @@
     files in the program, then also delete it here.
 */
 
-#include "interop_subtitle_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "interop_text_asset.h"
+#include "smpte_text_asset.h"
 #include <iostream>
 
 using namespace std;
@@ -46,12 +46,12 @@ main (int argc, char* argv[])
 	}
 
 	try {
-		dcp::InteropSubtitleAsset sc (argv[1]);
+		dcp::InteropTextAsset sc(argv[1]);
 		cout << sc.xml_as_string ();
 	} catch (exception& e) {
 		cerr << "Could not load as interop: " << e.what() << "\n";
 		try {
-			dcp::SMPTESubtitleAsset sc (argv[1]);
+			dcp::SMPTETextAsset sc(argv[1]);
 			cout << sc.xml_as_string();
 		} catch (exception& e) {
 			cerr << "Could not load as SMPTE (" << e.what() << ")\n";

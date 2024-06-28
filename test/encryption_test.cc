@@ -31,23 +31,24 @@
     files in the program, then also delete it here.
 */
 
-#include "metadata.h"
+
 #include "certificate.h"
-#include "dcp.h"
 #include "certificate_chain.h"
 #include "cpl.h"
+#include "dcp.h"
+#include "decrypted_kdm.h"
+#include "encrypted_kdm.h"
 #include "filesystem.h"
-#include "mono_j2k_picture_asset.h"
 #include "j2k_picture_asset_writer.h"
-#include "sound_asset_writer.h"
-#include "sound_asset.h"
+#include "metadata.h"
+#include "mono_j2k_picture_asset.h"
 #include "reel.h"
-#include "test.h"
-#include "subtitle_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
-#include "encrypted_kdm.h"
-#include "decrypted_kdm.h"
+#include "sound_asset.h"
+#include "sound_asset_writer.h"
+#include "test.h"
+#include "text_asset.h"
 #include <asdcp/KM_util.h>
 #include <sndfile.h>
 #include <boost/test/unit_test.hpp>

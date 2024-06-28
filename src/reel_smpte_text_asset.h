@@ -38,13 +38,13 @@
 
 
 #include "reel_text_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 
 
 namespace dcp {
 
 
-class SMPTESubtitleAsset;
+class SMPTETextAsset;
 
 
 /** @class ReelSMPTETextAsset
@@ -53,15 +53,15 @@ class SMPTESubtitleAsset;
 class ReelSMPTETextAsset : public ReelTextAsset
 {
 public:
-	ReelSMPTETextAsset(TextType type, std::shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	ReelSMPTETextAsset(TextType type, std::shared_ptr<SMPTETextAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelSMPTETextAsset(std::shared_ptr<const cxml::Node>);
 
-	std::shared_ptr<const SMPTESubtitleAsset> smpte_asset () const {
-		return asset_of_type<const SMPTESubtitleAsset>();
+	std::shared_ptr<const SMPTETextAsset> smpte_asset() const {
+		return asset_of_type<const SMPTETextAsset>();
 	}
 
-	std::shared_ptr<SMPTESubtitleAsset> smpte_asset () {
-		return asset_of_type<SMPTESubtitleAsset>();
+	std::shared_ptr<SMPTETextAsset> smpte_asset() {
+		return asset_of_type<SMPTETextAsset>();
 	}
 
 	xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;

@@ -40,7 +40,7 @@
 #include "decrypted_kdm.h"
 #include "decrypted_kdm_key.h"
 #include "equality_options.h"
-#include "interop_subtitle_asset.h"
+#include "interop_text_asset.h"
 #include "mono_j2k_picture_asset.h"
 #include "j2k_picture_asset.h"
 #include "reel.h"
@@ -52,10 +52,10 @@
 #include "reel_sound_asset.h"
 #include "reel_stereo_picture_asset.h"
 #include "reel_text_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 #include "sound_asset.h"
 #include "stereo_j2k_picture_asset.h"
-#include "subtitle_asset.h"
+#include "text_asset.h"
 #include "util.h"
 #include <libxml++/nodes/element.h>
 #include <stdint.h>
@@ -408,7 +408,7 @@ Reel::resolve_refs (vector<shared_ptr<Asset>> assets)
 
 		/* Interop subtitle handling is all special cases */
 		if (_main_subtitle->asset_ref().resolved()) {
-			auto iop = dynamic_pointer_cast<InteropSubtitleAsset> (_main_subtitle->asset_ref().asset());
+			auto iop = dynamic_pointer_cast<InteropTextAsset>(_main_subtitle->asset_ref().asset());
 			if (iop) {
 				iop->resolve_fonts (assets);
 			}
@@ -420,7 +420,7 @@ Reel::resolve_refs (vector<shared_ptr<Asset>> assets)
 
 		/* Interop subtitle handling is all special cases */
 		if (i->asset_ref().resolved()) {
-			auto iop = dynamic_pointer_cast<InteropSubtitleAsset> (i->asset_ref().asset());
+			auto iop = dynamic_pointer_cast<InteropTextAsset>(i->asset_ref().asset());
 			if (iop) {
 				iop->resolve_fonts (assets);
 			}

@@ -65,7 +65,7 @@ def build(bld):
              h_align.cc
              identity_transfer_function.cc
              interop_load_font_node.cc
-             interop_subtitle_asset.cc
+             interop_text_asset.cc
              j2k_picture_asset.cc
              j2k_picture_asset_writer.cc
              j2k_transcode.cc
@@ -110,7 +110,7 @@ def build(bld):
              s_gamut3_transfer_function.cc
              search.cc
              smpte_load_font_node.cc
-             smpte_subtitle_asset.cc
+             smpte_text_asset.cc
              sound_asset.cc
              sound_asset_writer.cc
              sound_frame.cc
@@ -118,8 +118,8 @@ def build(bld):
              stereo_j2k_picture_asset_writer.cc
              stereo_j2k_picture_frame.cc
              subtitle.cc
-             subtitle_asset.cc
-             subtitle_asset_internal.cc
+             text_asset.cc
+             text_asset_internal.cc
              subtitle_image.cc
              subtitle_standard.cc
              subtitle_string.cc
@@ -174,7 +174,7 @@ def build(bld):
               h_align.h
               identity_transfer_function.h
               interop_load_font_node.h
-              interop_subtitle_asset.h
+              interop_text_asset.h
               ffmpeg_image.h
               j2k_picture_asset.h
               j2k_picture_asset_writer.h
@@ -225,7 +225,7 @@ def build(bld):
               scope_guard.h
               search.h
               smpte_load_font_node.h
-              smpte_subtitle_asset.h
+              smpte_text_asset.h
               sound_asset.h
               sound_asset_reader.h
               sound_asset_writer.h
@@ -235,7 +235,7 @@ def build(bld):
               stereo_j2k_picture_asset_writer.h
               stereo_j2k_picture_frame.h
               subtitle.h
-              subtitle_asset.h
+              text_asset.h
               subtitle_image.h
               subtitle_standard.h
               subtitle_string.h

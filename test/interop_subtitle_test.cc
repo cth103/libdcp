@@ -32,7 +32,7 @@
 */
 
 
-#include "interop_subtitle_asset.h"
+#include "interop_text_asset.h"
 #include "interop_load_font_node.h"
 #include "reel_interop_text_asset.h"
 #include "subtitle_string.h"
@@ -51,7 +51,7 @@ using std::vector;
 /** Load some subtitle content from Interop XML and check that it is read correctly */
 BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 {
-	dcp::InteropSubtitleAsset subs ("test/data/subs1.xml");
+	dcp::InteropTextAsset subs("test/data/subs1.xml");
 
 	BOOST_CHECK_EQUAL (subs.id(), "cab5c268-222b-41d2-88ae-6d6999441b17");
 	BOOST_CHECK_EQUAL (subs.movie_title(), "Movie Title");
@@ -231,7 +231,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test1)
 /** And similarly for another one */
 BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 {
-	dcp::InteropSubtitleAsset subs ("test/data/subs2.xml");
+	dcp::InteropTextAsset subs("test/data/subs2.xml");
 
 	auto s = subs.subtitles_during (dcp::Time (0, 0, 42, 100, 250), dcp::Time (0, 0, 42, 101, 250), false);
 	BOOST_REQUIRE_EQUAL (s.size(), 2U);
@@ -714,7 +714,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test2)
 /** And one with bitmap subtitles */
 BOOST_AUTO_TEST_CASE (read_interop_subtitle_test3)
 {
-	dcp::InteropSubtitleAsset subs ("test/data/subs3.xml");
+	dcp::InteropTextAsset subs("test/data/subs3.xml");
 
 	BOOST_REQUIRE_EQUAL (subs.subtitles().size(), 1U);
 	auto si = dynamic_pointer_cast<const dcp::SubtitleImage>(subs.subtitles().front());
@@ -726,7 +726,7 @@ BOOST_AUTO_TEST_CASE (read_interop_subtitle_test3)
 /** Write some subtitle content as Interop XML and check that it is right */
 BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
 {
-	dcp::InteropSubtitleAsset c;
+	dcp::InteropTextAsset c;
 	c.set_reel_number ("1");
 	c.set_language ("EN");
 	c.set_movie_title ("Test");
@@ -841,7 +841,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test)
  */
 BOOST_AUTO_TEST_CASE (write_interop_subtitle_test2)
 {
-	dcp::InteropSubtitleAsset c;
+	dcp::InteropTextAsset c;
 	c.set_reel_number ("1");
 	c.set_language ("EN");
 	c.set_movie_title ("Test");
@@ -929,7 +929,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 {
 	RNGFixer fix;
 
-	auto c = std::make_shared<dcp::InteropSubtitleAsset>();
+	auto c = std::make_shared<dcp::InteropTextAsset>();
 	c->set_reel_number ("1");
 	c->set_language ("EN");
 	c->set_movie_title ("Test");

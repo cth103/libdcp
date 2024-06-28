@@ -36,7 +36,7 @@
 #include "compose.hpp"
 #include "cpl.h"
 #include "dcp.h"
-#include "interop_subtitle_asset.h"
+#include "interop_text_asset.h"
 #include "file.h"
 #include "j2k_transcode.h"
 #include "mono_j2k_picture_asset.h"
@@ -52,7 +52,7 @@
 #include "reel_mono_picture_asset.h"
 #include "reel_smpte_text_asset.h"
 #include "reel_sound_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 #include "sound_asset.h"
 #include "sound_asset_writer.h"
 #include "test.h"
@@ -436,7 +436,7 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 {
 	auto dcp = make_simple (path, 1, 24, dcp::Standard::INTEROP);
 
-	auto subs = make_shared<dcp::InteropSubtitleAsset>();
+	auto subs = make_shared<dcp::InteropTextAsset>();
 	subs->add (simple_subtitle());
 
 	boost::filesystem::create_directory (path / "subs");
@@ -457,7 +457,7 @@ make_simple_with_smpte_subs (boost::filesystem::path path)
 {
 	auto dcp = make_simple (path, 1, 192);
 
-	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
+	auto subs = make_shared<dcp::SMPTETextAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());
@@ -478,7 +478,7 @@ make_simple_with_interop_ccaps (boost::filesystem::path path)
 {
 	auto dcp = make_simple (path, 1, 24, dcp::Standard::INTEROP);
 
-	auto subs = make_shared<dcp::InteropSubtitleAsset>();
+	auto subs = make_shared<dcp::InteropTextAsset>();
 	subs->add (simple_subtitle());
 	subs->write (path / "ccap.xml");
 
@@ -494,7 +494,7 @@ make_simple_with_smpte_ccaps (boost::filesystem::path path)
 {
 	auto dcp = make_simple (path, 1, 192);
 
-	auto subs = make_shared<dcp::SMPTESubtitleAsset>();
+	auto subs = make_shared<dcp::SMPTETextAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
 	subs->add (simple_subtitle());

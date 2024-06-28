@@ -32,8 +32,8 @@
 */
 
 
-/** @file  src/smpte_subtitle_asset.cc
- *  @brief SMPTESubtitleAsset class
+/** @file  src/smpte_text_asset.cc
+ *  @brief SMPTETextAsset class
  */
 
 
@@ -45,7 +45,7 @@
 #include "filesystem.h"
 #include "raw_convert.h"
 #include "smpte_load_font_node.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 #include "subtitle_image.h"
 #include "util.h"
 #include "warnings.h"
@@ -79,7 +79,7 @@ static string const subtitle_smpte_ns_2010 = "http://www.smpte-ra.org/schemas/42
 static string const subtitle_smpte_ns_2014 = "http://www.smpte-ra.org/schemas/428-7/2014/DCST";
 
 
-SMPTESubtitleAsset::SMPTESubtitleAsset(SubtitleStandard standard)
+SMPTETextAsset::SMPTETextAsset(SubtitleStandard standard)
 	: MXF(Standard::SMPTE)
 	, _edit_rate (24, 1)
 	, _time_code_rate (24)
@@ -90,8 +90,8 @@ SMPTESubtitleAsset::SMPTESubtitleAsset(SubtitleStandard standard)
 }
 
 
-SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
-	: SubtitleAsset (file)
+SMPTETextAsset::SMPTETextAsset(boost::filesystem::path file)
+	: TextAsset (file)
 {
 	auto xml = make_shared<cxml::Document>("SubtitleReel");
 
@@ -169,7 +169,7 @@ SMPTESubtitleAsset::SMPTESubtitleAsset (boost::filesystem::path file)
 
 
 void
-SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
+SMPTETextAsset::parse_xml(shared_ptr<cxml::Document> xml)
 {
 	if (xml->namespace_uri() == subtitle_smpte_ns_2007) {
 		_subtitle_standard = SubtitleStandard::SMPTE_2007;
@@ -222,7 +222,7 @@ SMPTESubtitleAsset::parse_xml (shared_ptr<cxml::Document> xml)
 
 
 void
-SMPTESubtitleAsset::read_mxf_resources (shared_ptr<ASDCP::TimedText::MXFReader> reader, shared_ptr<DecryptionContext> dec)
+SMPTETextAsset::read_mxf_resources(shared_ptr<ASDCP::TimedText::MXFReader> reader, shared_ptr<DecryptionContext> dec)
 {
 	ASDCP::TimedText::TimedTextDescriptor descriptor;
 	reader->FillTimedTextDescriptor (descriptor);
@@ -284,7 +284,7 @@ SMPTESubtitleAsset::read_mxf_resources (shared_ptr<ASDCP::TimedText::MXFReader> 
 
 
 void
-SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader> reader)
+SMPTETextAsset::read_mxf_descriptor(shared_ptr<ASDCP::TimedText::MXFReader> reader)
 {
 	ASDCP::TimedText::TimedTextDescriptor descriptor;
 	reader->FillTimedTextDescriptor (descriptor);
@@ -301,7 +301,7 @@ SMPTESubtitleAsset::read_mxf_descriptor (shared_ptr<ASDCP::TimedText::MXFReader>
 
 
 void
-SMPTESubtitleAsset::set_key (Key key)
+SMPTETextAsset::set_key(Key key)
 {
 	/* See if we already have a key; if we do, and we have a file, we'll already
 	   have read that file.
@@ -345,7 +345,7 @@ SMPTESubtitleAsset::set_key (Key key)
 
 
 vector<shared_ptr<LoadFontNode>>
-SMPTESubtitleAsset::load_font_nodes () const
+SMPTETextAsset::load_font_nodes() const
 {
 	vector<shared_ptr<LoadFontNode>> lf;
 	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter(lf));
@@ -354,7 +354,7 @@ SMPTESubtitleAsset::load_font_nodes () const
 
 
 bool
-SMPTESubtitleAsset::valid_mxf (boost::filesystem::path file)
+SMPTETextAsset::valid_mxf(boost::filesystem::path file)
 {
 	Kumu::FileReaderFactory factory;
 	ASDCP::TimedText::MXFReader reader(factory);
@@ -366,7 +366,7 @@ SMPTESubtitleAsset::valid_mxf (boost::filesystem::path file)
 
 
 string
-SMPTESubtitleAsset::xml_as_string () const
+SMPTETextAsset::xml_as_string() const
 {
 	xmlpp::Document doc;
 	auto root = doc.create_root_node ("SubtitleReel");
@@ -403,7 +403,7 @@ SMPTESubtitleAsset::xml_as_string () const
 
 
 void
-SMPTESubtitleAsset::write (boost::filesystem::path p) const
+SMPTETextAsset::write(boost::filesystem::path p) const
 {
 	EncryptionContext enc (key(), Standard::SMPTE);
 
@@ -508,13 +508,13 @@ SMPTESubtitleAsset::write (boost::filesystem::path p) const
 }
 
 bool
-SMPTESubtitleAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions const& options, NoteHandler note) const
+SMPTETextAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions const& options, NoteHandler note) const
 {
-	if (!SubtitleAsset::equals (other_asset, options, note)) {
+	if (!TextAsset::equals (other_asset, options, note)) {
 		return false;
 	}
 
-	auto other = dynamic_pointer_cast<const SMPTESubtitleAsset>(other_asset);
+	auto other = dynamic_pointer_cast<const SMPTETextAsset>(other_asset);
 	if (!other) {
 		note (NoteType::ERROR, "Subtitles are in different standards");
 		return false;
@@ -587,7 +587,7 @@ SMPTESubtitleAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions 
 
 
 void
-SMPTESubtitleAsset::add_font (string load_id, dcp::ArrayData data)
+SMPTETextAsset::add_font(string load_id, dcp::ArrayData data)
 {
 	string const uuid = make_uuid ();
 	_fonts.push_back (Font(load_id, uuid, data));
@@ -596,15 +596,15 @@ SMPTESubtitleAsset::add_font (string load_id, dcp::ArrayData data)
 
 
 void
-SMPTESubtitleAsset::add (shared_ptr<Subtitle> s)
+SMPTETextAsset::add(shared_ptr<Subtitle> s)
 {
-	SubtitleAsset::add (s);
+	TextAsset::add(s);
 	_intrinsic_duration = latest_subtitle_out().as_editable_units_ceil(_edit_rate.numerator / _edit_rate.denominator);
 }
 
 
 string
-SMPTESubtitleAsset::schema_namespace() const
+SMPTETextAsset::schema_namespace() const
 {
 	switch (_subtitle_standard) {
 	case SubtitleStandard::SMPTE_2007:

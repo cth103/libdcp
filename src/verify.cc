@@ -42,7 +42,7 @@
 #include "dcp.h"
 #include "exceptions.h"
 #include "filesystem.h"
-#include "interop_subtitle_asset.h"
+#include "interop_text_asset.h"
 #include "mono_j2k_picture_asset.h"
 #include "mono_j2k_picture_frame.h"
 #include "raw_convert.h"
@@ -53,7 +53,7 @@
 #include "reel_sound_asset.h"
 #include "reel_smpte_text_asset.h"
 #include "reel_text_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 #include "stereo_j2k_picture_asset.h"
 #include "stereo_j2k_picture_frame.h"
 #include "verify.h"
@@ -756,7 +756,7 @@ verify_closed_caption_reel(Context& context, shared_ptr<const ReelTextAsset> ree
 void
 verify_smpte_timed_text_asset (
 	Context& context,
-	shared_ptr<const SMPTESubtitleAsset> asset,
+	shared_ptr<const SMPTETextAsset> asset,
 	optional<int64_t> reel_asset_duration
 	)
 {
@@ -801,7 +801,7 @@ verify_smpte_timed_text_asset (
 
 /** Verify Interop subtitle / CCAP stuff */
 void
-verify_interop_text_asset(Context& context, shared_ptr<const InteropSubtitleAsset> asset)
+verify_interop_text_asset(Context& context, shared_ptr<const InteropTextAsset> asset)
 {
 	if (asset->subtitles().empty()) {
 		context.error(VerificationNote::Code::MISSING_SUBTITLE, asset->id(), asset->file().get());
@@ -815,7 +815,7 @@ verify_interop_text_asset(Context& context, shared_ptr<const InteropSubtitleAsse
 
 /** Verify SMPTE subtitle-only stuff */
 void
-verify_smpte_subtitle_asset(Context& context, shared_ptr<const SMPTESubtitleAsset> asset)
+verify_smpte_subtitle_asset(Context& context, shared_ptr<const SMPTETextAsset> asset)
 {
 	if (asset->language()) {
 		if (!context.subtitle_language) {
@@ -854,10 +854,10 @@ verify_smpte_subtitle_asset(Context& context, shared_ptr<const SMPTESubtitleAsse
 
 /** Verify all subtitle stuff */
 static void
-verify_subtitle_asset(Context& context, shared_ptr<const SubtitleAsset> asset, optional<int64_t> reel_asset_duration)
+verify_subtitle_asset(Context& context, shared_ptr<const TextAsset> asset, optional<int64_t> reel_asset_duration)
 {
 	context.stage("Checking subtitle XML", asset->file());
-	/* Note: we must not use SubtitleAsset::xml_as_string() here as that will mean the data on disk
+	/* Note: we must not use TextAsset::xml_as_string() here as that will mean the data on disk
 	 * gets passed through libdcp which may clean up and therefore hide errors.
 	 */
 	if (asset->raw_xml()) {
@@ -866,7 +866,7 @@ verify_subtitle_asset(Context& context, shared_ptr<const SubtitleAsset> asset, o
 		context.warning(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
 	}
 
-	auto namespace_count = [](shared_ptr<const SubtitleAsset> asset, string root_node) {
+	auto namespace_count = [](shared_ptr<const TextAsset> asset, string root_node) {
 		cxml::Document doc(root_node);
 		doc.read_string(asset->raw_xml().get());
 		auto root = dynamic_cast<xmlpp::Element*>(doc.node())->cobj();
@@ -877,7 +877,7 @@ verify_subtitle_asset(Context& context, shared_ptr<const SubtitleAsset> asset, o
 		return count;
 	};
 
-	auto interop = dynamic_pointer_cast<const InteropSubtitleAsset>(asset);
+	auto interop = dynamic_pointer_cast<const InteropTextAsset>(asset);
 	if (interop) {
 		verify_interop_text_asset(context, interop);
 		if (namespace_count(asset, "DCSubtitle") > 1) {
@@ -885,7 +885,7 @@ verify_subtitle_asset(Context& context, shared_ptr<const SubtitleAsset> asset, o
 		}
 	}
 
-	auto smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
+	auto smpte = dynamic_pointer_cast<const SMPTETextAsset>(asset);
 	if (smpte) {
 		verify_smpte_timed_text_asset(context, smpte, reel_asset_duration);
 		verify_smpte_subtitle_asset(context, smpte);
@@ -901,12 +901,12 @@ verify_subtitle_asset(Context& context, shared_ptr<const SubtitleAsset> asset, o
 static void
 verify_closed_caption_asset (
 	Context& context,
-	shared_ptr<const SubtitleAsset> asset,
+	shared_ptr<const TextAsset> asset,
 	optional<int64_t> reel_asset_duration
 	)
 {
 	context.stage("Checking closed caption XML", asset->file());
-	/* Note: we must not use SubtitleAsset::xml_as_string() here as that will mean the data on disk
+	/* Note: we must not use TextAsset::xml_as_string() here as that will mean the data on disk
 	 * gets passed through libdcp which may clean up and therefore hide errors.
 	 */
 	auto raw_xml = asset->raw_xml();
@@ -919,12 +919,12 @@ verify_closed_caption_asset (
 		context.warning(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
 	}
 
-	auto interop = dynamic_pointer_cast<const InteropSubtitleAsset>(asset);
+	auto interop = dynamic_pointer_cast<const InteropTextAsset>(asset);
 	if (interop) {
 		verify_interop_text_asset(context, interop);
 	}
 
-	auto smpte = dynamic_pointer_cast<const SMPTESubtitleAsset>(asset);
+	auto smpte = dynamic_pointer_cast<const SMPTETextAsset>(asset);
 	if (smpte) {
 		verify_smpte_timed_text_asset(context, smpte, reel_asset_duration);
 	}
@@ -1202,7 +1202,7 @@ verify_closed_caption_details(Context& context, vector<shared_ptr<Reel>> reels)
 
 void
 dcp::verify_text_lines_and_characters(
-	shared_ptr<const SubtitleAsset> asset,
+	shared_ptr<const TextAsset> asset,
 	int warning_length,
 	int error_length,
 	LinesCharactersResult* result

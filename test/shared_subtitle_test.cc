@@ -37,11 +37,11 @@
  */
 
 
-#include "interop_subtitle_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "interop_text_asset.h"
+#include "smpte_text_asset.h"
 #include "subtitle_string.h"
 #include "subtitle_image.h"
-#include "subtitle_asset_internal.h"
+#include "text_asset_internal.h"
 #include "reel_interop_text_asset.h"
 #include "reel.h"
 #include "cpl.h"
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test1)
 	text1->font._values["font"] = "Inconsolata";
 	text1->font._values["size"] = "42";
 
-	dcp::SubtitleAsset::pull_fonts (root);
+	dcp::TextAsset::pull_fonts (root);
 
 	BOOST_REQUIRE_EQUAL (sub1->font._values.size(), 2U);
 	BOOST_CHECK_EQUAL (sub1->font._values["font"], "Inconsolata");
@@ -136,7 +136,7 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test2)
 	text2->font._values["font"] = "Inconsolata";
 	text2->font._values["size"] = "48";
 
-	dcp::SubtitleAsset::pull_fonts (root);
+	dcp::TextAsset::pull_fonts (root);
 
 	BOOST_REQUIRE_EQUAL (sub1->font._values.size(), 1U);
 	BOOST_CHECK_EQUAL (sub1->font._values["font"], "Inconsolata");
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test3)
 	auto string1 = make_shared<dcp::order::String>(text1, font, "Hello world", 0);
 	text1->children.push_back (string1);
 
-	dcp::SubtitleAsset::pull_fonts (root);
+	dcp::TextAsset::pull_fonts (root);
 
 	BOOST_REQUIRE_EQUAL (sub1->font._values.size(), 2U);
 	BOOST_CHECK_EQUAL (sub1->font._values["font"], "Inconsolata");
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE (format_xml_test1)
 	fred->add_child_text("Fred");
 	cxml::add_text_child(fred, "Text", "Jim");
 	fred->add_child_text("Sheila");
-	BOOST_REQUIRE_EQUAL (dcp::SubtitleAsset::format_xml(doc, make_pair(string{}, string{"fred"})),
+	BOOST_REQUIRE_EQUAL (dcp::TextAsset::format_xml(doc, make_pair(string{}, string{"fred"})),
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 "<Foo xmlns=\"fred\">\n"
 "  <Empty/>\n"
@@ -202,7 +202,7 @@ BOOST_AUTO_TEST_CASE (format_xml_test2)
 	auto path = private_test / "DKH_UT_EN20160601def.xml";
 	parser.parse_file(path.string().c_str());
 	auto document = parser.get_document();
-	check_xml (dcp::file_to_string(private_test / "DKH_UT_EN20160601def.reformatted.xml"), dcp::SubtitleAsset::format_xml(*document, {}), {});
+	check_xml (dcp::file_to_string(private_test / "DKH_UT_EN20160601def.reformatted.xml"), dcp::TextAsset::format_xml(*document, {}), {});
 }
 
 
@@ -211,7 +211,7 @@ BOOST_AUTO_TEST_CASE (format_xml_entities_test)
 	xmlpp::Document doc;
 	auto root = doc.create_root_node("Foo");
 	cxml::add_text_child(root, "Bar", "Don't panic &amp; xml \"is\" 'great' & < > —");
-	BOOST_REQUIRE_EQUAL(dcp::SubtitleAsset::format_xml(doc, {}),
+	BOOST_REQUIRE_EQUAL(dcp::TextAsset::format_xml(doc, {}),
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 "<Foo>\n"
 "  <Bar>Don't panic &amp;amp; xml \"is\" 'great' &amp; &lt; &gt; —</Bar>\n"
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE (format_xml_entities_test)
 
 BOOST_AUTO_TEST_CASE(ruby_round_trip_test)
 {
-	dcp::InteropSubtitleAsset asset("test/data/ruby1.xml");
+	dcp::InteropTextAsset asset("test/data/ruby1.xml");
 	check_xml(dcp::file_to_string("test/data/ruby1.xml"), asset.xml_as_string(), {}, false);
 }
 

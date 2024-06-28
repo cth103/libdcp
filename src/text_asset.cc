@@ -32,8 +32,8 @@
 */
 
 
-/** @file  src/subtitle_asset.cc
- *  @brief SubtitleAsset class
+/** @file  src/text_asset.cc
+ *  @brief TextAsset class
  */
 
 
@@ -42,10 +42,10 @@
 #include "load_font_node.h"
 #include "raw_convert.h"
 #include "reel_asset.h"
-#include "subtitle_asset.h"
-#include "subtitle_asset_internal.h"
 #include "subtitle_image.h"
 #include "subtitle_string.h"
+#include "text_asset.h"
+#include "text_asset_internal.h"
 #include "util.h"
 #include "xml.h"
 #include <asdcp/AS_DCP.h>
@@ -71,13 +71,13 @@ using boost::optional;
 using namespace dcp;
 
 
-SubtitleAsset::SubtitleAsset ()
+TextAsset::TextAsset()
 {
 
 }
 
 
-SubtitleAsset::SubtitleAsset (boost::filesystem::path file)
+TextAsset::TextAsset(boost::filesystem::path file)
 	: Asset (file)
 {
 
@@ -133,8 +133,8 @@ optional_number_attribute (xmlpp::Element const * node, string name)
 }
 
 
-SubtitleAsset::ParseState
-SubtitleAsset::font_node_state (xmlpp::Element const * node, Standard standard) const
+TextAsset::ParseState
+TextAsset::font_node_state(xmlpp::Element const * node, Standard standard) const
 {
 	ParseState ps;
 
@@ -169,7 +169,7 @@ SubtitleAsset::font_node_state (xmlpp::Element const * node, Standard standard) 
 }
 
 void
-SubtitleAsset::position_align (SubtitleAsset::ParseState& ps, xmlpp::Element const * node) const
+TextAsset::position_align(TextAsset::ParseState& ps, xmlpp::Element const * node) const
 {
 	auto hp = optional_number_attribute<float> (node, "HPosition");
 	if (!hp) {
@@ -210,8 +210,8 @@ SubtitleAsset::position_align (SubtitleAsset::ParseState& ps, xmlpp::Element con
 }
 
 
-SubtitleAsset::ParseState
-SubtitleAsset::text_node_state (xmlpp::Element const * node) const
+TextAsset::ParseState
+TextAsset::text_node_state(xmlpp::Element const * node) const
 {
 	ParseState ps;
 
@@ -228,8 +228,8 @@ SubtitleAsset::text_node_state (xmlpp::Element const * node) const
 }
 
 
-SubtitleAsset::ParseState
-SubtitleAsset::image_node_state (xmlpp::Element const * node) const
+TextAsset::ParseState
+TextAsset::image_node_state(xmlpp::Element const * node) const
 {
 	ParseState ps;
 
@@ -241,8 +241,8 @@ SubtitleAsset::image_node_state (xmlpp::Element const * node) const
 }
 
 
-SubtitleAsset::ParseState
-SubtitleAsset::subtitle_node_state (xmlpp::Element const * node, optional<int> tcr) const
+TextAsset::ParseState
+TextAsset::subtitle_node_state(xmlpp::Element const * node, optional<int> tcr) const
 {
 	ParseState ps;
 	ps.in = Time (string_attribute(node, "TimeIn"), tcr);
@@ -254,7 +254,7 @@ SubtitleAsset::subtitle_node_state (xmlpp::Element const * node, optional<int> t
 
 
 Time
-SubtitleAsset::fade_time (xmlpp::Element const * node, string name, optional<int> tcr) const
+TextAsset::fade_time(xmlpp::Element const * node, string name, optional<int> tcr) const
 {
 	auto const u = optional_string_attribute(node, name).get_value_or ("");
 	Time t;
@@ -276,7 +276,7 @@ SubtitleAsset::fade_time (xmlpp::Element const * node, string name, optional<int
 
 
 void
-SubtitleAsset::parse_subtitles (xmlpp::Element const * node, vector<ParseState>& state, optional<int> tcr, Standard standard)
+TextAsset::parse_subtitles(xmlpp::Element const * node, vector<ParseState>& state, optional<int> tcr, Standard standard)
 {
 	if (node->get_name() == "Font") {
 		state.push_back (font_node_state (node, standard));
@@ -393,7 +393,7 @@ SubtitleAsset::parse_subtitles (xmlpp::Element const * node, vector<ParseState>&
 
 
 void
-SubtitleAsset::maybe_add_subtitle(
+TextAsset::maybe_add_subtitle(
 	string text,
 	vector<ParseState> const & parse_state,
 	float space_before,
@@ -553,7 +553,7 @@ SubtitleAsset::maybe_add_subtitle(
 
 
 vector<shared_ptr<const Subtitle>>
-SubtitleAsset::subtitles () const
+TextAsset::subtitles() const
 {
 	vector<shared_ptr<const Subtitle>> s;
 	for (auto i: _subtitles) {
@@ -564,7 +564,7 @@ SubtitleAsset::subtitles () const
 
 
 vector<shared_ptr<const Subtitle>>
-SubtitleAsset::subtitles_during (Time from, Time to, bool starting) const
+TextAsset::subtitles_during(Time from, Time to, bool starting) const
 {
 	vector<shared_ptr<const Subtitle>> s;
 	for (auto i: _subtitles) {
@@ -578,14 +578,14 @@ SubtitleAsset::subtitles_during (Time from, Time to, bool starting) const
 
 
 void
-SubtitleAsset::add (shared_ptr<Subtitle> s)
+TextAsset::add(shared_ptr<Subtitle> s)
 {
 	_subtitles.push_back (s);
 }
 
 
 Time
-SubtitleAsset::latest_subtitle_out () const
+TextAsset::latest_subtitle_out() const
 {
 	Time t;
 	for (auto i: _subtitles) {
@@ -599,13 +599,13 @@ SubtitleAsset::latest_subtitle_out () const
 
 
 bool
-SubtitleAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions const& options, NoteHandler note) const
+TextAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions const& options, NoteHandler note) const
 {
 	if (!Asset::equals (other_asset, options, note)) {
 		return false;
 	}
 
-	auto other = dynamic_pointer_cast<const SubtitleAsset> (other_asset);
+	auto other = dynamic_pointer_cast<const TextAsset> (other_asset);
 	if (!other) {
 		return false;
 	}
@@ -660,7 +660,7 @@ struct SubtitleSorter
 
 
 void
-SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
+TextAsset::pull_fonts(shared_ptr<order::Part> part)
 {
 	if (part->children.empty ()) {
 		return;
@@ -724,7 +724,7 @@ SubtitleAsset::pull_fonts (shared_ptr<order::Part> part)
  *  class because the differences between the two are fairly subtle.
  */
 void
-SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, Standard standard) const
+TextAsset::subtitles_as_xml(xmlpp::Element* xml_root, int time_code_rate, Standard standard) const
 {
 	auto sorted = _subtitles;
 	std::stable_sort(sorted.begin(), sorted.end(), SubtitleSorter());
@@ -824,7 +824,7 @@ SubtitleAsset::subtitles_as_xml (xmlpp::Element* xml_root, int time_code_rate, S
 
 
 map<string, ArrayData>
-SubtitleAsset::font_data () const
+TextAsset::font_data() const
 {
 	map<string, ArrayData> out;
 	for (auto const& i: _fonts) {
@@ -835,7 +835,7 @@ SubtitleAsset::font_data () const
 
 
 map<string, boost::filesystem::path>
-SubtitleAsset::font_filenames () const
+TextAsset::font_filenames() const
 {
 	map<string, boost::filesystem::path> out;
 	for (auto const& i: _fonts) {
@@ -852,7 +852,7 @@ SubtitleAsset::font_filenames () const
  *  (see DCP-o-matic bug #1689).
  */
 void
-SubtitleAsset::fix_empty_font_ids ()
+TextAsset::fix_empty_font_ids()
 {
 	bool have_empty = false;
 	vector<string> ids;
@@ -965,7 +965,7 @@ format_xml_node (xmlpp::Node const* node, State& state)
  *  to get all namespaces with the libxml++ API.
  */
 string
-SubtitleAsset::format_xml(xmlpp::Document const& document, optional<pair<string, string>> xml_namespace)
+TextAsset::format_xml(xmlpp::Document const& document, optional<pair<string, string>> xml_namespace)
 {
 	auto root = document.get_root_node();
 
@@ -997,7 +997,7 @@ SubtitleAsset::format_xml(xmlpp::Document const& document, optional<pair<string,
 
 
 void
-SubtitleAsset::ensure_font(string load_id, dcp::ArrayData data)
+TextAsset::ensure_font(string load_id, dcp::ArrayData data)
 {
 	if (std::find_if(_fonts.begin(), _fonts.end(), [load_id](Font const& font) { return font.load_id == load_id; }) == _fonts.end()) {
 		add_font(load_id, data);

@@ -36,7 +36,7 @@
 #include "cpl.h"
 #include "dcp.h"
 #include "equality_options.h"
-#include "interop_subtitle_asset.h"
+#include "interop_text_asset.h"
 #include "reel_text_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
@@ -450,7 +450,7 @@ BOOST_AUTO_TEST_CASE(combine_multi_reel_subtitles)
 	dcp::ArrayData data1(4096);
 	memset(data1.data(), 0, data1.size());
 
-	auto subs1 = make_shared<dcp::InteropSubtitleAsset>();
+	auto subs1 = make_shared<dcp::InteropTextAsset>();
 	subs1->add(simple_subtitle());
 	boost::filesystem::create_directory(in / "subs1");
 	subs1->add_font("afont1", data1);
@@ -459,7 +459,7 @@ BOOST_AUTO_TEST_CASE(combine_multi_reel_subtitles)
 	dcp::ArrayData data2(4096);
 	memset(data2.data(), 1, data1.size());
 
-	auto subs2 = make_shared<dcp::InteropSubtitleAsset>();
+	auto subs2 = make_shared<dcp::InteropTextAsset>();
 	subs2->add(simple_subtitle());
 	boost::filesystem::create_directory(in / "subs2");
 	subs2->add_font("afont2", data2);

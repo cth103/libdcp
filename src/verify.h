@@ -59,7 +59,7 @@ namespace dcp {
 
 
 class DCP;
-class SubtitleAsset;
+class TextAsset;
 
 
 class VerificationNote
@@ -728,7 +728,7 @@ struct LinesCharactersResult
 
 
 extern void verify_text_lines_and_characters(
-	std::shared_ptr<const dcp::SubtitleAsset> asset,
+	std::shared_ptr<const dcp::TextAsset> asset,
 	int warning_length,
 	int error_length,
 	dcp::LinesCharactersResult* result

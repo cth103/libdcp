@@ -48,7 +48,7 @@
 #include "reel_sound_asset.h"
 #include "reel_smpte_text_asset.h"
 #include "rgb_xyz.h"
-#include "smpte_subtitle_asset.h"
+#include "smpte_text_asset.h"
 #include "sound_asset.h"
 #include "sound_asset_writer.h"
 #include "stream_operators.h"
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 	sound_writer->write(audio.data(), 2, 48000);
 	sound_writer->finalize ();
 
-	auto subs_asset = std::make_shared<dcp::SMPTESubtitleAsset>();
+	auto subs_asset = std::make_shared<dcp::SMPTETextAsset>();
 	subs_asset->set_key (key);
 	subs_asset->set_context_id (context_id);
 	subs_asset->add(std::make_shared<dcp::SubtitleString>(
@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 	BOOST_REQUIRE (reel_read->main_sound());
 	BOOST_CHECK (reel_read->main_sound()->asset()->key());
 	BOOST_REQUIRE (reel_read->main_subtitle());
-	auto smpte_sub = dynamic_pointer_cast<dcp::SMPTESubtitleAsset>(reel_read->main_subtitle()->asset());
+	auto smpte_sub = dynamic_pointer_cast<dcp::SMPTETextAsset>(reel_read->main_subtitle()->asset());
 	BOOST_REQUIRE (smpte_sub);
 	BOOST_CHECK (smpte_sub->key());
 }
