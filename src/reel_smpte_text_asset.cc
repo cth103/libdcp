@@ -45,14 +45,16 @@ LIBDCP_DISABLE_WARNINGS
 LIBDCP_ENABLE_WARNINGS
 
 
+using std::make_pair;
+using std::pair;
 using std::shared_ptr;
 using std::string;
 using boost::optional;
 using namespace dcp;
 
 
-ReelSMPTETextAsset::ReelSMPTETextAsset(shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelTextAsset(asset, edit_rate, intrinsic_duration, entry_point)
+ReelSMPTETextAsset::ReelSMPTETextAsset(TextType type, shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: ReelTextAsset(type, asset, edit_rate, intrinsic_duration, entry_point)
 {
 
 }
@@ -63,4 +65,48 @@ ReelSMPTETextAsset::ReelSMPTETextAsset(shared_ptr<const cxml::Node> node)
 {
 	node->done ();
 }
+
+
+
+string
+ReelSMPTETextAsset::cpl_node_name(Standard) const
+{
+	switch (_type) {
+	case TextType::SUBTITLE:
+		return "MainSubtitle";
+	case TextType::CAPTION:
+		return "tt:ClosedCaption";
+	}
+
+	DCP_ASSERT(false);
+	return "";
+}
+
+
+pair<string, string>
+ReelSMPTETextAsset::cpl_node_namespace() const
+{
+	switch (_type) {
+	case TextType::SUBTITLE:
+		return {};
+	case TextType::CAPTION:
+		return make_pair("http://www.smpte-ra.org/schemas/429-12/2008/TT", "tt");
+	}
+
+	DCP_ASSERT(false);
+	return {};
+}
+
+
+xmlpp::Element *
+ReelSMPTETextAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
+{
+	auto asset = ReelFileAsset::write_to_cpl (node, standard);
+	string const ns = _type == TextType::CAPTION ? "tt" : "";
+	if (_language) {
+		cxml::add_child(asset, "Language", ns)->add_child_text(*_language);
+	}
+	return asset;
+}
+
 

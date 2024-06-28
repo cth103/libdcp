@@ -46,12 +46,10 @@
 #include "j2k_picture_asset_writer.h"
 #include "reel.h"
 #include "reel_asset.h"
-#include "reel_interop_closed_caption_asset.h"
 #include "reel_interop_text_asset.h"
 #include "reel_markers_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_mono_picture_asset.h"
-#include "reel_smpte_closed_caption_asset.h"
 #include "reel_smpte_text_asset.h"
 #include "reel_sound_asset.h"
 #include "smpte_subtitle_asset.h"
@@ -447,7 +445,7 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 	subs->add_font ("afont", data);
 	subs->write (path / "subs" / "subs.xml");
 
-	auto reel_subs = make_shared<dcp::ReelInteropTextAsset>(subs, dcp::Fraction(24, 1), 240, 0);
+	auto reel_subs = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls().front()->reels().front()->add (reel_subs);
 
 	return dcp;
@@ -468,7 +466,7 @@ make_simple_with_smpte_subs (boost::filesystem::path path)
 
 	subs->write (path / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), 192, 0);
+	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), 192, 0);
 	dcp->cpls().front()->reels().front()->add (reel_subs);
 
 	return dcp;
@@ -484,7 +482,7 @@ make_simple_with_interop_ccaps (boost::filesystem::path path)
 	subs->add (simple_subtitle());
 	subs->write (path / "ccap.xml");
 
-	auto reel_caps = make_shared<dcp::ReelInteropClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 240, 0);
+	auto reel_caps = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::CAPTION, subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls()[0]->reels()[0]->add (reel_caps);
 
 	return dcp;
@@ -504,7 +502,7 @@ make_simple_with_smpte_ccaps (boost::filesystem::path path)
 	subs->add_font("font", fake_font);
 	subs->write (path / "ccap.mxf");
 
-	auto reel_caps = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(subs, dcp::Fraction(24, 1), 192, 0);
+	auto reel_caps = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CAPTION, subs, dcp::Fraction(24, 1), 192, 0);
 	dcp->cpls()[0]->reels()[0]->add(reel_caps);
 
 	return dcp;

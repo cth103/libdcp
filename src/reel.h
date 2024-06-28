@@ -113,7 +113,7 @@ public:
 		return _main_markers;
 	}
 
-	std::vector<std::shared_ptr<ReelClosedCaptionAsset>> closed_captions () const {
+	std::vector<std::shared_ptr<ReelTextAsset>> closed_captions () const {
 		return _closed_captions;
 	}
 
@@ -147,7 +147,7 @@ private:
 	std::shared_ptr<ReelSoundAsset> _main_sound;
 	std::shared_ptr<ReelTextAsset> _main_subtitle;
 	std::shared_ptr<ReelMarkersAsset> _main_markers;
-	std::vector<std::shared_ptr<ReelClosedCaptionAsset>> _closed_captions;
+	std::vector<std::shared_ptr<ReelTextAsset>> _closed_captions;
 	std::shared_ptr<ReelAtmosAsset> _atmos;
 
 	std::vector<dcp::DecryptedKDM> _kdms;

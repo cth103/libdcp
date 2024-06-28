@@ -37,6 +37,7 @@
  */
 
 
+#include "dcp_assert.h"
 #include "reel_interop_text_asset.h"
 #include "warnings.h"
 LIBDCP_DISABLE_WARNINGS
@@ -44,13 +45,15 @@ LIBDCP_DISABLE_WARNINGS
 LIBDCP_ENABLE_WARNINGS
 
 
+using std::make_pair;
+using std::pair;
 using std::string;
 using boost::optional;
 using namespace dcp;
 
 
-ReelInteropTextAsset::ReelInteropTextAsset(std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelTextAsset(asset, edit_rate, intrinsic_duration, entry_point)
+ReelInteropTextAsset::ReelInteropTextAsset(TextType type, std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: ReelTextAsset(type, asset, edit_rate, intrinsic_duration, entry_point)
 {
 
 }
@@ -61,4 +64,46 @@ ReelInteropTextAsset::ReelInteropTextAsset(std::shared_ptr<const cxml::Node> nod
 {
 	node->done ();
 }
+
+
+string
+ReelInteropTextAsset::cpl_node_name(Standard) const
+{
+	switch (_type) {
+	case TextType::SUBTITLE:
+		return "MainSubtitle";
+	case TextType::CAPTION:
+		return "cc-cpl:MainClosedCaption";
+	}
+
+	DCP_ASSERT(false);
+	return "";
+}
+
+
+pair<string, string>
+ReelInteropTextAsset::cpl_node_namespace() const
+{
+	switch (_type) {
+	case TextType::SUBTITLE:
+		return {};
+	case TextType::CAPTION:
+		return make_pair("http://www.digicine.com/PROTO-ASDCP-CC-CPL-20070926#", "cc-cpl");
+	}
+
+	DCP_ASSERT(false);
+	return {};
+}
+
+
+xmlpp::Element *
+ReelInteropTextAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
+{
+	auto asset = ReelFileAsset::write_to_cpl (node, standard);
+	if (_language) {
+		cxml::add_text_child(asset, "Language", *_language);
+	}
+	return asset;
+}
+
 

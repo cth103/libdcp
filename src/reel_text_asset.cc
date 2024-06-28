@@ -54,7 +54,7 @@ using boost::optional;
 using namespace dcp;
 
 
-ReelTextAsset::ReelTextAsset(std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+ReelTextAsset::ReelTextAsset(TextType type, std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelFileAsset (
 		asset,
 		dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : boost::none,
@@ -63,6 +63,7 @@ ReelTextAsset::ReelTextAsset(std::shared_ptr<SubtitleAsset> asset, Fraction edit
 		intrinsic_duration,
 		entry_point
 		)
+	, _type(type)
 {
 
 }
@@ -71,14 +72,15 @@ ReelTextAsset::ReelTextAsset(std::shared_ptr<SubtitleAsset> asset, Fraction edit
 ReelTextAsset::ReelTextAsset(std::shared_ptr<const cxml::Node> node)
 	: ReelFileAsset (node)
 {
+	if (node->name() == "MainSubtitle") {
+		_type = TextType::SUBTITLE;
+	} else if (node->name() == "MainClosedCaption" || node->name() == "ClosedCaption") {
+		_type = TextType::CAPTION;
+	} else {
+		DCP_ASSERT(false);
+	}
+
 	_language = node->optional_string_child("Language");
-}
-
-
-string
-ReelTextAsset::cpl_node_name(Standard) const
-{
-	return "MainSubtitle";
 }
 
 
@@ -101,16 +103,4 @@ ReelTextAsset::equals(shared_ptr<const ReelTextAsset> other, EqualityOptions con
 
 	return true;
 }
-
-
-xmlpp::Element *
-ReelTextAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
-{
-	auto asset = ReelFileAsset::write_to_cpl (node, standard);
-	if (_language) {
-		cxml::add_text_child(asset, "Language", *_language);
-	}
-	return asset;
-}
-
 

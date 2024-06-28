@@ -95,14 +95,11 @@ def build(bld):
              reel.cc
              reel_asset.cc
              reel_atmos_asset.cc
-             reel_closed_caption_asset.cc
              reel_file_asset.cc
-             reel_interop_closed_caption_asset.cc
              reel_interop_text_asset.cc
              reel_markers_asset.cc
              reel_mono_picture_asset.cc
              reel_picture_asset.cc
-             reel_smpte_closed_caption_asset.cc
              reel_smpte_text_asset.cc
              reel_sound_asset.cc
              reel_stereo_picture_asset.cc
@@ -212,14 +209,11 @@ def build(bld):
               reel.h
               reel_asset.h
               reel_atmos_asset.h
-              reel_closed_caption_asset.h
               reel_file_asset.h
-              reel_interop_closed_caption_asset.h
               reel_interop_text_asset.h
               reel_markers_asset.h
               reel_mono_picture_asset.h
               reel_picture_asset.h
-              reel_smpte_closed_caption_asset.h
               reel_smpte_text_asset.h
               reel_sound_asset.h
               reel_stereo_picture_asset.h
@@ -245,6 +239,7 @@ def build(bld):
               subtitle_image.h
               subtitle_standard.h
               subtitle_string.h
+              text_type.h
               transfer_function.h
               types.h
               utc_offset.h

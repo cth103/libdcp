@@ -48,7 +48,6 @@
 #include "raw_convert.h"
 #include "reel.h"
 #include "reel_atmos_asset.h"
-#include "reel_closed_caption_asset.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_text_asset.h"

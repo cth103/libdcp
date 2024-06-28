@@ -45,9 +45,11 @@
 #include "reel_asset.h"
 #include "reel_file_asset.h"
 #include "subtitle_asset.h"
+#include "text_type.h"
 
 
 struct verify_invalid_language1;
+struct verify_invalid_language2;
 
 
 namespace dcp {
@@ -62,7 +64,7 @@ class SubtitleAsset;
 class ReelTextAsset : public ReelFileAsset
 {
 public:
-	ReelTextAsset(std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	ReelTextAsset(TextType type, std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelTextAsset(std::shared_ptr<const cxml::Node>);
 
 	std::shared_ptr<const SubtitleAsset> asset () const {
@@ -73,8 +75,6 @@ public:
 		return asset_of_type<SubtitleAsset>();
 	}
 
-	xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
-
 	bool equals(std::shared_ptr<const ReelTextAsset>, EqualityOptions const&, NoteHandler) const;
 
 	void set_language (dcp::LanguageTag language);
@@ -83,17 +83,20 @@ public:
 		return _language;
 	}
 
+	TextType type() const {
+		return _type;
+	}
+
 protected:
+	friend struct ::verify_invalid_language1;
+	friend struct ::verify_invalid_language2;
+
 	/** As in other places, this is stored and returned as a string so that
 	 *  we can tolerate non-RFC-5646 strings, but must be set as a dcp::LanguageTag
 	 *  to try to ensure that we create compliant output.
 	 */
 	boost::optional<std::string> _language;
-
-private:
-	friend struct ::verify_invalid_language1;
-
-	std::string cpl_node_name (Standard standard) const override;
+	TextType _type;
 };
 
 

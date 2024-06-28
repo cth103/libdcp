@@ -47,7 +47,6 @@
 #include "mono_j2k_picture_frame.h"
 #include "raw_convert.h"
 #include "reel.h"
-#include "reel_closed_caption_asset.h"
 #include "reel_interop_text_asset.h"
 #include "reel_markers_asset.h"
 #include "reel_picture_asset.h"
@@ -738,7 +737,7 @@ verify_main_subtitle_reel(Context& context, shared_ptr<const ReelTextAsset> reel
 
 
 static void
-verify_closed_caption_reel(Context& context, shared_ptr<const ReelClosedCaptionAsset> reel_asset)
+verify_closed_caption_reel(Context& context, shared_ptr<const ReelTextAsset> reel_asset)
 {
 	/* XXX: is Language compulsory? */
 	if (reel_asset->language()) {

@@ -50,7 +50,7 @@ namespace dcp {
 class ReelInteropTextAsset : public ReelTextAsset
 {
 public:
-	ReelInteropTextAsset(std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	ReelInteropTextAsset(TextType type, std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelInteropTextAsset (std::shared_ptr<const cxml::Node>);
 
 	std::shared_ptr<const InteropSubtitleAsset> interop_asset () const {
@@ -60,6 +60,12 @@ public:
 	std::shared_ptr<InteropSubtitleAsset> interop_asset () {
 		return asset_of_type<InteropSubtitleAsset>();
 	}
+
+	xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
+
+protected:
+	std::string cpl_node_name (Standard standard) const override;
+	std::pair<std::string, std::string> cpl_node_namespace() const override;
 };
 
 

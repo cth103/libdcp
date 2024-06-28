@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2024 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,66 +32,14 @@
 */
 
 
-/** @file  src/reel_closed_caption_asset.h
- *  @brief ReelClosedCaptionAsset class
- */
-
-
-#ifndef LIBDCP_REEL_CLOSED_CAPTION_ASSET_H
-#define LIBDCP_REEL_CLOSED_CAPTION_ASSET_H
-
-
-#include "language_tag.h"
-#include "reel_asset.h"
-#include "reel_file_asset.h"
-#include "subtitle_asset.h"
-
-
-struct verify_invalid_language2;
-
-
 namespace dcp {
 
 
-/** @class ReelClosedCaptionAsset
- *  @brief Part of a Reel's description which refers to a closed caption XML/MXF file
- */
-class ReelClosedCaptionAsset : public ReelFileAsset
+enum class TextType
 {
-public:
-	ReelClosedCaptionAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
-	explicit ReelClosedCaptionAsset (std::shared_ptr<const cxml::Node>);
-
-	std::shared_ptr<const SubtitleAsset> asset () const {
-		return asset_of_type<const SubtitleAsset>();
-	}
-
-	std::shared_ptr<SubtitleAsset> asset () {
-		return asset_of_type<SubtitleAsset>();
-	}
-
-	bool equals(std::shared_ptr<const ReelClosedCaptionAsset>, EqualityOptions const&, NoteHandler) const;
-
-	void set_language (dcp::LanguageTag l) {
-		_language = l.to_string();
-	}
-
-	void unset_language () {
-		_language = boost::optional<std::string> ();
-	}
-
-	boost::optional<std::string> language () const {
-		return _language;
-	}
-
-protected:
-	friend struct ::verify_invalid_language2;
-
-	boost::optional<std::string> _language;
+	SUBTITLE,
+	CAPTION
 };
 
 
 }
-
-
-#endif

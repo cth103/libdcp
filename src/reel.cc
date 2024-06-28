@@ -45,12 +45,9 @@
 #include "j2k_picture_asset.h"
 #include "reel.h"
 #include "reel_atmos_asset.h"
-#include "reel_closed_caption_asset.h"
-#include "reel_interop_closed_caption_asset.h"
 #include "reel_interop_text_asset.h"
 #include "reel_markers_asset.h"
 #include "reel_mono_picture_asset.h"
-#include "reel_smpte_closed_caption_asset.h"
 #include "reel_smpte_text_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_stereo_picture_asset.h"
@@ -120,10 +117,10 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node, dcp::Standard standard)
 	for (auto i: closed_captions) {
 		switch (standard) {
 			case Standard::INTEROP:
-				_closed_captions.push_back (make_shared<ReelInteropClosedCaptionAsset>(i));
+				_closed_captions.push_back (make_shared<ReelInteropTextAsset>(i));
 				break;
 			case Standard::SMPTE:
-				_closed_captions.push_back (make_shared<ReelSMPTEClosedCaptionAsset>(i));
+				_closed_captions.push_back (make_shared<ReelSMPTETextAsset>(i));
 				break;
 		}
 	}
@@ -358,12 +355,14 @@ Reel::add (shared_ptr<ReelAsset> asset)
 		_main_picture = p;
 	} else if (auto so = dynamic_pointer_cast<ReelSoundAsset>(asset)) {
 		_main_sound = so;
-	} else if (auto su = dynamic_pointer_cast<ReelTextAsset>(asset)) {
-		_main_subtitle = su;
+	} else if (auto te = dynamic_pointer_cast<ReelTextAsset>(asset)) {
+		if (te->type() == TextType::SUBTITLE) {
+			_main_subtitle = te;
+		} else {
+			_closed_captions.push_back(te);
+		}
 	} else if (auto m = dynamic_pointer_cast<ReelMarkersAsset>(asset)) {
 		_main_markers = m;
-	} else if (auto c = dynamic_pointer_cast<ReelClosedCaptionAsset>(asset)) {
-		_closed_captions.push_back (c);
 	} else if (auto a = dynamic_pointer_cast<ReelAtmosAsset>(asset)) {
 		_atmos = a;
 	} else {

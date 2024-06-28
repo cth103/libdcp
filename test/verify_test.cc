@@ -43,13 +43,11 @@
 #include "openjpeg_image.h"
 #include "raw_convert.h"
 #include "reel.h"
-#include "reel_interop_closed_caption_asset.h"
 #include "reel_interop_text_asset.h"
 #include "reel_markers_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_stereo_picture_asset.h"
-#include "reel_smpte_closed_caption_asset.h"
 #include "reel_smpte_text_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "stereo_j2k_picture_asset.h"
@@ -1180,7 +1178,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_interop_subtitles)
 	prepare_directory (dir);
 	copy_file ("test/data/subs1.xml", dir / "subs.xml");
 	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
-	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto cpl = write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
 
 	check_verify_result (
@@ -1206,7 +1204,7 @@ BOOST_AUTO_TEST_CASE(verify_catch_missing_font_file_with_interop_ccap)
 	prepare_directory(dir);
 	copy_file("test/data/subs1.xml", dir / "ccap.xml");
 	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "ccap.xml");
-	auto reel_asset = make_shared<dcp::ReelInteropClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::CAPTION, asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto cpl = write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
 
 	check_verify_result (
@@ -1234,7 +1232,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_interop_subtitles)
 	prepare_directory (dir);
 	copy_file ("test/data/subs1.xml", dir / "subs.xml");
 	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
-	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto cpl = write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
 
 	{
@@ -1275,7 +1273,7 @@ BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_no_subtitles)
 	prepare_directory(dir);
 	copy_file("test/data/subs4.xml", dir / "subs.xml");
 	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
-	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto cpl = write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
 
 	check_verify_result (
@@ -1305,7 +1303,7 @@ BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_single_space_subtitle)
 	prepare_directory(dir);
 	copy_file("test/data/subs5.xml", dir / "subs.xml");
 	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
-	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto cpl = write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
 
 	check_verify_result (
@@ -1332,7 +1330,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_smpte_subtitles)
 	prepare_directory (dir);
 	copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(asset, dcp::Fraction(24, 1), 6046, 0);
+	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 6046, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result(
@@ -1367,7 +1365,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_smpte_subtitles)
 	/* This broken_smpte.mxf does not use urn:uuid: for its subtitle ID, which we tolerate (rightly or wrongly) */
 	copy_file ("test/data/broken_smpte.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(asset, dcp::Fraction(24, 1), 6046, 0);
+	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 6046, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result (
@@ -1412,7 +1410,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles)
 	prepare_directory (dir);
 	copy_file ("test/data/empty_text.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(asset, dcp::Fraction(24, 1), 192, 0);
+	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 192, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result (
@@ -1454,7 +1452,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_child_nodes)
 	prepare_directory (dir);
 	copy_file ("test/data/empty_but_with_children.xml", dir / "subs.xml");
 	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
-	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(asset, dcp::Fraction(24, 1), 192, 0);
+	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 192, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
 
 	check_verify_result (
@@ -1481,7 +1479,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_empty_child_nodes
 	prepare_directory (dir);
 	copy_file ("test/data/empty_with_empty_children.xml", dir / "subs.xml");
 	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
-	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(asset, dcp::Fraction(24, 1), 192, 0);
+	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 192, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
 
 	check_verify_result (
@@ -1551,7 +1549,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_cpl_metadata)
 
 	copy_file ("test/data/subs.mxf", dir / "subs.mxf");
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 16 * 24, 0);
 
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (reel_asset);
@@ -1688,7 +1686,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language1)
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
 	asset->_language = "wrong-andbad";
 	asset->write (dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(asset, dcp::Fraction(24, 1), 6046, 0);
+	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 6046, 0);
 	reel_asset->_language = "badlang";
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
@@ -1724,7 +1722,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language2)
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.mxf");
 	asset->_language = "wrong-andbad";
 	asset->write (dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 6046, 0);
+	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CAPTION, asset, dcp::Fraction(24, 1), 6046, 0);
 	reel_asset->_language = "badlang";
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
@@ -2115,7 +2113,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_xml_size_in_bytes)
 	add_font(asset);
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
-	auto reel_asset = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(asset, dcp::Fraction(24, 1), 49148, 0);
+	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CAPTION, asset, dcp::Fraction(24, 1), 49148, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result (
@@ -2172,7 +2170,7 @@ verify_timed_text_asset_too_large (string name)
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
 
-	auto reel_asset = make_shared<T>(asset, dcp::Fraction(24, 1), 240, 0);
+	auto reel_asset = make_shared<T>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 240, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
 	check_verify_result (
@@ -2210,7 +2208,7 @@ verify_timed_text_asset_too_large (string name)
 BOOST_AUTO_TEST_CASE (verify_subtitle_asset_too_large)
 {
 	verify_timed_text_asset_too_large<dcp::ReelSMPTETextAsset>("verify_subtitle_asset_too_large");
-	verify_timed_text_asset_too_large<dcp::ReelSMPTEClosedCaptionAsset>("verify_closed_caption_asset_too_large");
+	verify_timed_text_asset_too_large<dcp::ReelSMPTETextAsset>("verify_closed_caption_asset_too_large");
 }
 
 
@@ -2248,7 +2246,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write (dir / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), 106, 0);
+	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), 106, 0);
 	auto cpl = dcp->cpls()[0];
 	cpl->reels()[0]->add(reel_subs);
 	dcp->write_xml();
@@ -2294,7 +2292,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 		subs->add (simple_subtitle());
 		add_font(subs);
 		subs->write (path / "subs1.mxf");
-		auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), reel_length, 0);
+		auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[0]->add(reel_subs);
 	}
 
@@ -2304,7 +2302,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 		subs->add (simple_subtitle());
 		add_font(subs);
 		subs->write (path / "subs2.mxf");
-		auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), reel_length, 0);
+		auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[1]->add(reel_subs);
 	}
 
@@ -2356,7 +2354,7 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 		ccaps->add (simple_subtitle());
 		add_font(ccaps);
 		ccaps->write (path / "subs1.mxf");
-		auto reel_ccaps = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), reel_length, 0);
+		auto reel_ccaps = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CAPTION, ccaps, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[0]->add(reel_ccaps);
 	}
 
@@ -2366,7 +2364,7 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 		ccaps->add (simple_subtitle());
 		add_font(ccaps);
 		ccaps->write (path / "subs2.mxf");
-		auto reel_ccaps = make_shared<dcp::ReelSMPTEClosedCaptionAsset>(ccaps, dcp::Fraction(24, 1), reel_length, 0);
+		auto reel_ccaps = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CAPTION, ccaps, dcp::Fraction(24, 1), reel_length, 0);
 		cpl->reels()[1]->add(reel_ccaps);
 	}
 
@@ -2436,7 +2434,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write (dir / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), 106, 0);
+	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), 106, 0);
 	auto cpl = dcp->cpls()[0];
 	cpl->reels()[0]->add(reel_subs);
 	dcp->write_xml();
@@ -2504,7 +2502,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write (dir / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), 106, 0);
+	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), 106, 0);
 	auto cpl = dcp->cpls()[0];
 	cpl->reels().front()->add(reel_subs);
 	dcp->write_xml();
@@ -2558,7 +2556,7 @@ public:
 
 template <class T>
 shared_ptr<dcp::CPL>
-dcp_with_text(path dir, vector<TestText> subs, optional<dcp::Key> key = boost::none, optional<string> key_id = boost::none)
+dcp_with_text(dcp::TextType type, path dir, vector<TestText> subs, optional<dcp::Key> key = boost::none, optional<string> key_id = boost::none)
 {
 	prepare_directory (dir);
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>();
@@ -2574,14 +2572,14 @@ dcp_with_text(path dir, vector<TestText> subs, optional<dcp::Key> key = boost::n
 	add_font(asset);
 	asset->write (dir / "subs.mxf");
 
-	auto reel_asset = make_shared<T>(asset, dcp::Fraction(24, 1), asset->intrinsic_duration(), 0);
+	auto reel_asset = make_shared<T>(type, asset, dcp::Fraction(24, 1), asset->intrinsic_duration(), 0);
 	return write_dcp_with_single_asset (dir, reel_asset);
 }
 
 
 template <class T>
 shared_ptr<dcp::CPL>
-dcp_with_text_from_file (path dir, boost::filesystem::path subs_xml)
+dcp_with_text_from_file(dcp::TextType type, path dir, boost::filesystem::path subs_xml)
 {
 	prepare_directory (dir);
 	auto asset = make_shared<dcp::SMPTESubtitleAsset>(subs_xml);
@@ -2611,7 +2609,7 @@ dcp_with_text_from_file (path dir, boost::filesystem::path subs_xml)
 	BOOST_REQUIRE (!ASDCP_FAILURE(r));
 	writer.Finalize ();
 
-	auto reel_asset = make_shared<T>(asset, dcp::Fraction(24, 1), asset->intrinsic_duration(), 0);
+	auto reel_asset = make_shared<T>(type, asset, dcp::Fraction(24, 1), asset->intrinsic_duration(), 0);
 	return write_dcp_with_single_asset (dir, reel_asset);
 }
 
@@ -2620,7 +2618,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_first_text_time)
 {
 	auto const dir = path("build/test/verify_invalid_subtitle_first_text_time");
 	/* Just too early */
-	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (dir, {{ 4 * 24 - 1, 5 * 24 }});
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, dir, {{ 4 * 24 - 1, 5 * 24 }});
 	check_verify_result (
 		{ dir },
 		{},
@@ -2646,7 +2644,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time)
 {
 	auto const dir = path("build/test/verify_valid_subtitle_first_text_time");
 	/* Just late enough */
-	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (dir, {{ 4 * 24, 5 * 24 }});
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, dir, {{ 4 * 24, 5 * 24 }});
 	check_verify_result(
 		{dir},
 		{},
@@ -2676,7 +2674,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 	asset1->set_language (dcp::LanguageTag("de-DE"));
 	add_font(asset1);
 	asset1->write (dir / "subs1.mxf");
-	auto reel_asset1 = make_shared<dcp::ReelSMPTETextAsset>(asset1, dcp::Fraction(24, 1), 5 * 24, 0);
+	auto reel_asset1 = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, asset1, dcp::Fraction(24, 1), 5 * 24, 0);
 	auto reel1 = make_shared<dcp::Reel>();
 	reel1->add (reel_asset1);
 	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 5 * 24);
@@ -2690,7 +2688,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 	add_test_subtitle (asset2, 3, 4 * 24);
 	asset2->set_language (dcp::LanguageTag("de-DE"));
 	asset2->write (dir / "subs2.mxf");
-	auto reel_asset2 = make_shared<dcp::ReelSMPTETextAsset>(asset2, dcp::Fraction(24, 1), 4 * 24, 0);
+	auto reel_asset2 = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, asset2, dcp::Fraction(24, 1), 4 * 24, 0);
 	auto reel2 = make_shared<dcp::Reel>();
 	reel2->add (reel_asset2);
 	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 4 * 24);
@@ -2726,6 +2724,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_spacing)
 {
 	auto const dir = path("build/test/verify_invalid_subtitle_spacing");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::SUBTITLE,
 		dir,
 		{
 			{ 4 * 24,     5 * 24 },
@@ -2755,6 +2754,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_spacing)
 {
 	auto const dir = path("build/test/verify_valid_subtitle_spacing");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::SUBTITLE,
 		dir,
 		{
 			{ 4 * 24,      5 * 24 },
@@ -2781,7 +2781,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_spacing)
 BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_duration)
 {
 	auto const dir = path("build/test/verify_invalid_subtitle_duration");
-	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (dir, {{ 4 * 24, 4 * 24 + 1 }});
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, dir, {{ 4 * 24, 4 * 24 + 1 }});
 	check_verify_result (
 		{dir},
 		{},
@@ -2805,7 +2805,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_duration)
 BOOST_AUTO_TEST_CASE (verify_valid_subtitle_duration)
 {
 	auto const dir = path("build/test/verify_valid_subtitle_duration");
-	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (dir, {{ 4 * 24, 4 * 24 + 17 }});
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, dir, {{ 4 * 24, 4 * 24 + 17 }});
 
 	check_verify_result(
 		{dir},
@@ -2835,7 +2835,7 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_overlapping_reel_boundary)
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
 
-	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(asset, dcp::Fraction(24, 1), 3 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 3 * 24, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 	check_verify_result (
 		{dir},
@@ -2868,6 +2868,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_count1)
 {
 	auto const dir = path ("build/test/invalid_subtitle_line_count1");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::SUBTITLE,
 		dir,
 		{
 			{ 96, 200, 0.0, dcp::VAlign::CENTER, "We" },
@@ -2899,6 +2900,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_line_count1)
 {
 	auto const dir = path ("build/test/verify_valid_subtitle_line_count1");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::SUBTITLE,
 		dir,
 		{
 			{ 96, 200, 0.0, dcp::VAlign::CENTER, "We" },
@@ -2927,6 +2929,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_count2)
 {
 	auto const dir = path ("build/test/verify_invalid_subtitle_line_count2");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::SUBTITLE,
 		dir,
 		{
 			{ 96, 300, 0.0, dcp::VAlign::CENTER, "We" },
@@ -2958,6 +2961,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_line_count2)
 {
 	auto const dir = path ("build/test/verify_valid_subtitle_line_count2");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::SUBTITLE,
 		dir,
 		{
 			{ 96, 300, 0.0, dcp::VAlign::CENTER, "We" },
@@ -2987,6 +2991,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_length1)
 {
 	auto const dir = path ("build/test/verify_invalid_subtitle_line_length1");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::SUBTITLE,
 		dir,
 		{
 			{ 96, 300, 0.0, dcp::VAlign::CENTER, "012345678901234567890123456789012345678901234567890123" }
@@ -3015,6 +3020,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_length2)
 {
 	auto const dir = path ("build/test/verify_invalid_subtitle_line_length2");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::SUBTITLE,
 		dir,
 		{
 			{ 96, 300, 0.0, dcp::VAlign::CENTER, "012345678901234567890123456789012345678901234567890123456789012345678901234567890" }
@@ -3042,7 +3048,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_length2)
 BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count1)
 {
 	auto const dir = path ("build/test/verify_valid_closed_caption_line_count1");
-	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::CAPTION,
 		dir,
 		{
 			{ 96, 200, 0.0, dcp::VAlign::CENTER, "We" },
@@ -3073,7 +3080,8 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count1)
 BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count2)
 {
 	auto const dir = path ("build/test/verify_valid_closed_caption_line_count2");
-	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::SUBTITLE,
 		dir,
 		{
 			{ 96, 200, 0.0, dcp::VAlign::CENTER, "We" },
@@ -3101,7 +3109,8 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count2)
 BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_count3)
 {
 	auto const dir = path ("build/test/verify_invalid_closed_caption_line_count3");
-	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::CAPTION,
 		dir,
 		{
 			{ 96, 300, 0.0, dcp::VAlign::CENTER, "We" },
@@ -3132,7 +3141,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_count3)
 BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count4)
 {
 	auto const dir = path ("build/test/verify_valid_closed_caption_line_count4");
-	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::CAPTION,
 		dir,
 		{
 			{ 96, 300, 0.0, dcp::VAlign::CENTER, "We" },
@@ -3161,7 +3171,8 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count4)
 BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_length)
 {
 	auto const dir = path ("build/test/verify_valid_closed_caption_line_length");
-	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::CAPTION,
 		dir,
 		{
 			{ 96, 300, 0.0, dcp::VAlign::CENTER, "01234567890123456789012345678901" }
@@ -3187,7 +3198,8 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_length)
 BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_length)
 {
 	auto const dir = path ("build/test/verify_invalid_closed_caption_line_length");
-	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::CAPTION,
 		dir,
 		{
 			{ 96, 300, 0.0, dcp::VAlign::CENTER, "0123456789012345678901234567890123" }
@@ -3215,7 +3227,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_length)
 BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_valign1)
 {
 	auto const dir = path ("build/test/verify_mismatched_closed_caption_valign1");
-	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::CAPTION,
 		dir,
 		{
 			{ 96, 300, 0.0, dcp::VAlign::TOP, "This" },
@@ -3242,7 +3255,8 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_valign1)
 BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_valign2)
 {
 	auto const dir = path ("build/test/verify_mismatched_closed_caption_valign2");
-	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::CAPTION,
 		dir,
 		{
 			{ 96, 300, 0.0, dcp::VAlign::TOP, "This" },
@@ -3272,7 +3286,8 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_valign2)
 BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering1)
 {
 	auto const dir = path ("build/test/verify_invalid_incorrect_closed_caption_ordering1");
-	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::CAPTION,
 		dir,
 		{
 			{ 96, 300, 0.0, dcp::VAlign::TOP, "This" },
@@ -3300,7 +3315,8 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering1)
 BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering2)
 {
 	auto const dir = path ("build/test/verify_invalid_incorrect_closed_caption_ordering2");
-	auto cpl = dcp_with_text<dcp::ReelSMPTEClosedCaptionAsset> (
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::CAPTION,
 		dir,
 		{
 			{ 96, 300, 0.2, dcp::VAlign::BOTTOM, "This" },
@@ -3328,7 +3344,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering2)
 BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering3)
 {
 	auto const dir = path ("build/test/verify_incorrect_closed_caption_ordering3");
-	auto cpl = dcp_with_text_from_file<dcp::ReelSMPTEClosedCaptionAsset> (dir, "test/data/verify_incorrect_closed_caption_ordering3.xml");
+	auto cpl = dcp_with_text_from_file<dcp::ReelSMPTETextAsset>(dcp::TextType::CAPTION, dir, "test/data/verify_incorrect_closed_caption_ordering3.xml");
 	check_verify_result (
 		{dir},
 		{},
@@ -3352,7 +3368,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering3)
 BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering4)
 {
 	auto const dir = path ("build/test/verify_incorrect_closed_caption_ordering4");
-	auto cpl = dcp_with_text_from_file<dcp::ReelSMPTEClosedCaptionAsset> (dir, "test/data/verify_incorrect_closed_caption_ordering4.xml");
+	auto cpl = dcp_with_text_from_file<dcp::ReelSMPTETextAsset>(dcp::TextType::CAPTION, dir, "test/data/verify_incorrect_closed_caption_ordering4.xml");
 
 	check_verify_result(
 		{dir},
@@ -3562,7 +3578,7 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 	subs->add (simple_subtitle());
 	add_font(subs);
 	subs->write (dir / "subs.mxf");
-	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), reel_length, 0);
+	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), reel_length, 0);
 
 	auto reel1 = make_shared<dcp::Reel>(
 		make_shared<dcp::ReelMonoPictureAsset>(simple_picture(dir, "1", reel_length), 0),
@@ -3570,7 +3586,7 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 		);
 
 	if (add_to_reel1) {
-		reel1->add (make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
+		reel1->add (make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
 	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length);
@@ -3585,7 +3601,7 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 		);
 
 	if (add_to_reel2) {
-		reel2->add (make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
+		reel2->add (make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
 	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length);
@@ -3702,7 +3718,7 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 		);
 
 	for (int i = 0; i < caps_in_reel1; ++i) {
-		reel1->add (make_shared<dcp::ReelSMPTEClosedCaptionAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
+		reel1->add (make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CAPTION, subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
 	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length);
@@ -3717,7 +3733,7 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 		);
 
 	for (int i = 0; i < caps_in_reel2; ++i) {
-		reel2->add (make_shared<dcp::ReelSMPTEClosedCaptionAsset>(subs, dcp::Fraction(24, 1), reel_length, 0));
+		reel2->add (make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CAPTION, subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
 	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length);
@@ -3812,7 +3828,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_asset_counts)
 
 template <class T>
 void
-verify_text_entry_point_check (path dir, dcp::VerificationNote::Code code, boost::function<void (shared_ptr<T>)> adjust)
+verify_text_entry_point_check(dcp::TextType type, path dir, dcp::VerificationNote::Code code, boost::function<void (shared_ptr<T>)> adjust)
 {
 	prepare_directory (dir);
 	auto dcp = make_shared<dcp::DCP>(dir);
@@ -3826,7 +3842,7 @@ verify_text_entry_point_check (path dir, dcp::VerificationNote::Code code, boost
 	subs->add (simple_subtitle());
 	add_font(subs);
 	subs->write (dir / "subs.mxf");
-	auto reel_text = make_shared<T>(subs, dcp::Fraction(24, 1), reel_length, 0);
+	auto reel_text = make_shared<T>(type, subs, dcp::Fraction(24, 1), reel_length, 0);
 	adjust (reel_text);
 
 	auto reel = make_shared<dcp::Reel>(
@@ -3868,7 +3884,8 @@ verify_text_entry_point_check (path dir, dcp::VerificationNote::Code code, boost
 
 BOOST_AUTO_TEST_CASE (verify_text_entry_point)
 {
-	verify_text_entry_point_check<dcp::ReelSMPTETextAsset> (
+	verify_text_entry_point_check<dcp::ReelSMPTETextAsset>(
+		dcp::TextType::SUBTITLE,
 		"build/test/verify_subtitle_entry_point_must_be_present",
 		dcp::VerificationNote::Code::MISSING_SUBTITLE_ENTRY_POINT,
 		[](shared_ptr<dcp::ReelSMPTETextAsset> asset) {
@@ -3876,7 +3893,8 @@ BOOST_AUTO_TEST_CASE (verify_text_entry_point)
 			}
 		);
 
-	verify_text_entry_point_check<dcp::ReelSMPTETextAsset> (
+	verify_text_entry_point_check<dcp::ReelSMPTETextAsset>(
+		dcp::TextType::SUBTITLE,
 		"build/test/verify_subtitle_entry_point_must_be_zero",
 		dcp::VerificationNote::Code::INCORRECT_SUBTITLE_ENTRY_POINT,
 		[](shared_ptr<dcp::ReelSMPTETextAsset> asset) {
@@ -3884,18 +3902,20 @@ BOOST_AUTO_TEST_CASE (verify_text_entry_point)
 			}
 		);
 
-	verify_text_entry_point_check<dcp::ReelSMPTEClosedCaptionAsset> (
+	verify_text_entry_point_check<dcp::ReelSMPTETextAsset>(
+		dcp::TextType::CAPTION,
 		"build/test/verify_closed_caption_entry_point_must_be_present",
 		dcp::VerificationNote::Code::MISSING_CLOSED_CAPTION_ENTRY_POINT,
-		[](shared_ptr<dcp::ReelSMPTEClosedCaptionAsset> asset) {
+		[](shared_ptr<dcp::ReelSMPTETextAsset> asset) {
 			asset->unset_entry_point ();
 			}
 		);
 
-	verify_text_entry_point_check<dcp::ReelSMPTEClosedCaptionAsset> (
+	verify_text_entry_point_check<dcp::ReelSMPTETextAsset>(
+		dcp::TextType::CAPTION,
 		"build/test/verify_closed_caption_entry_point_must_be_zero",
 		dcp::VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT,
-		[](shared_ptr<dcp::ReelSMPTEClosedCaptionAsset> asset) {
+		[](shared_ptr<dcp::ReelSMPTETextAsset> asset) {
 			asset->set_entry_point (9);
 			}
 		);
@@ -4823,7 +4843,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_resource_id)
 	writer.Finalize();
 
 	auto subs_asset = make_shared<dcp::SMPTESubtitleAsset>(subs_mxf);
-	auto subs_reel = make_shared<dcp::ReelSMPTETextAsset>(subs_asset, dcp::Fraction(24, 1), 240, 0);
+	auto subs_reel = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs_asset, dcp::Fraction(24, 1), 240, 0);
 
 	auto cpl = write_dcp_with_single_asset (dir, subs_reel);
 
@@ -4903,7 +4923,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_timed_text_id)
 	writer.Finalize();
 
 	auto subs_asset = make_shared<dcp::SMPTESubtitleAsset>(subs_mxf);
-	auto subs_reel = make_shared<dcp::ReelSMPTETextAsset>(subs_asset, dcp::Fraction(24, 1), 240, 0);
+	auto subs_reel = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs_asset, dcp::Fraction(24, 1), 240, 0);
 
 	auto cpl = write_dcp_with_single_asset (dir, subs_reel);
 
@@ -5583,7 +5603,7 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font_for_font)
 		editor.delete_first_line_containing("LoadFont");
 	}
 	auto asset = make_shared<dcp::InteropSubtitleAsset>(dir / "subs.xml");
-	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(asset, dcp::Fraction(24, 1), 16 * 24, 0);
+	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::SUBTITLE, asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto cpl = write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
 
 	check_verify_result (
@@ -5636,7 +5656,7 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font)
 	auto subs = make_shared<dcp::SMPTESubtitleAsset>(dir / "subs.xml");
 	subs->write(dir / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), 202, 0);
+	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), 202, 0);
 	auto cpl = dcp->cpls()[0];
 	cpl->reels()[0]->add(reel_subs);
 	dcp->write_xml();
@@ -5742,7 +5762,7 @@ BOOST_AUTO_TEST_CASE(verify_encrypted_smpte_dcp)
 	auto const dir = path("build/test/verify_encrypted_smpte_dcp");
 	dcp::Key key;
 	auto key_id = dcp::make_uuid();
-	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dir, {{ 4 * 24, 5 * 24 }}, key, key_id);
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, dir, {{ 4 * 24, 5 * 24 }}, key, key_id);
 
 	dcp::DecryptedKDM kdm(dcp::LocalTime(), dcp::LocalTime(), "", "", "");
 	kdm.add_key(dcp::DecryptedKDMKey(string{"MDIK"}, key_id, key, cpl->id(), dcp::Standard::SMPTE));

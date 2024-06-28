@@ -53,7 +53,7 @@ class SMPTESubtitleAsset;
 class ReelSMPTETextAsset : public ReelTextAsset
 {
 public:
-	ReelSMPTETextAsset(std::shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	ReelSMPTETextAsset(TextType type, std::shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelSMPTETextAsset(std::shared_ptr<const cxml::Node>);
 
 	std::shared_ptr<const SMPTESubtitleAsset> smpte_asset () const {
@@ -63,6 +63,12 @@ public:
 	std::shared_ptr<SMPTESubtitleAsset> smpte_asset () {
 		return asset_of_type<SMPTESubtitleAsset>();
 	}
+
+	xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
+
+protected:
+	std::string cpl_node_name (Standard standard) const override;
+	std::pair<std::string, std::string> cpl_node_namespace() const override;
 
 private:
 	boost::optional<std::string> key_type () const override {

@@ -335,7 +335,7 @@ BOOST_AUTO_TEST_CASE (vf_kdm_test)
 	subs->add_font ("afont", data);
 	subs->write (vf_path / "subs.xml");
 
-	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), 192, 0);
+	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), 192, 0);
 
 	auto reel = make_shared<dcp::Reel>(ov_reel_picture, ov_reel_sound, reel_subs);
 
