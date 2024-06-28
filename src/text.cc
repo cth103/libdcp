@@ -32,15 +32,15 @@
 */
 
 
-/** @file  src/subtitle.cc
- *  @brief Subtitle class
+/** @file  src/text.cc
+ *  @brief Text class
  */
 
 
 #include "compose.hpp"
 #include "dcp_time.h"
 #include "equality_options.h"
-#include "subtitle.h"
+#include "text.h"
 
 
 using std::shared_ptr;
@@ -48,7 +48,7 @@ using namespace dcp;
 
 
 /** @param v_position Vertical position as a fraction of the screen height (between 0 and 1) from v_align */
-Subtitle::Subtitle (
+Text::Text(
 	Time in,
 	Time out,
 	float h_position,
@@ -74,56 +74,56 @@ Subtitle::Subtitle (
 
 
 bool
-Subtitle::equals(shared_ptr<const Subtitle> other, EqualityOptions const& options, NoteHandler note) const
+Text::equals(shared_ptr<const Text> other, EqualityOptions const& options, NoteHandler note) const
 {
 	bool same = true;
 
 	if (in() != other->in()) {
-		note(NoteType::ERROR, "subtitle in times differ");
+		note(NoteType::ERROR, "text in times differ");
 		same = false;
 	}
 
 	if (out() != other->out()) {
-		note(NoteType::ERROR, "subtitle out times differ");
+		note(NoteType::ERROR, "text out times differ");
 		same = false;
 	}
 
 	if (h_position() != other->h_position()) {
-		note(NoteType::ERROR, "subtitle horizontal positions differ");
+		note(NoteType::ERROR, "text horizontal positions differ");
 		same = false;
 	}
 
 	if (h_align() != other->h_align()) {
-		note(NoteType::ERROR, "subtitle horizontal alignments differ");
+		note(NoteType::ERROR, "text horizontal alignments differ");
 		same = false;
 	}
 
 	auto const vpos = std::abs(v_position() - other->v_position());
-	if (vpos > options.max_subtitle_vertical_position_error)  {
+	if (vpos > options.max_text_vertical_position_error)  {
 		note(
 			NoteType::ERROR,
-			String::compose("subtitle vertical positions differ by %1 (more than the allowed difference of %2)", vpos, options.max_subtitle_vertical_position_error)
+			String::compose("text vertical positions differ by %1 (more than the allowed difference of %2)", vpos, options.max_text_vertical_position_error)
 		    );
 		same = false;
 	}
 
 	if (v_align() != other->v_align()) {
-		note(NoteType::ERROR, "subtitle vertical alignments differ");
+		note(NoteType::ERROR, "text vertical alignments differ");
 		same = false;
 	}
 
 	if (z_position() != other->z_position()) {
-		note(NoteType::ERROR, "subtitle Z positions differ");
+		note(NoteType::ERROR, "text Z positions differ");
 		same = false;
 	}
 
 	if (fade_up_time() != other->fade_up_time()) {
-		note(NoteType::ERROR, "subtitle fade-up times differ");
+		note(NoteType::ERROR, "text fade-up times differ");
 		same = false;
 	}
 
 	if (fade_down_time() != other->fade_down_time()) {
-		note(NoteType::ERROR, "subtitle fade-down times differ");
+		note(NoteType::ERROR, "text fade-down times differ");
 		same = false;
 	}
 

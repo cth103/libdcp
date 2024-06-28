@@ -32,14 +32,14 @@
 */
 
 
-/** @file  src/subtitle_image.cc
- *  @brief SubtitleImage class
+/** @file  src/text_image.cc
+ *  @brief TextImage class
  */
 
 
 #include "equality_options.h"
 #include "filesystem.h"
-#include "subtitle_image.h"
+#include "text_image.h"
 #include "util.h"
 
 
@@ -50,7 +50,7 @@ using std::string;
 using namespace dcp;
 
 
-SubtitleImage::SubtitleImage (
+TextImage::TextImage(
 	ArrayData png_image,
 	Time in,
 	Time out,
@@ -62,7 +62,7 @@ SubtitleImage::SubtitleImage (
 	Time fade_up_time,
 	Time fade_down_time
 	)
-	: Subtitle(in, out, h_position, h_align, v_position, v_align, z_position, fade_up_time, fade_down_time)
+	: Text(in, out, h_position, h_align, v_position, v_align, z_position, fade_up_time, fade_down_time)
 	, _png_image (png_image)
 	, _id (make_uuid ())
 {
@@ -70,7 +70,7 @@ SubtitleImage::SubtitleImage (
 }
 
 
-SubtitleImage::SubtitleImage (
+TextImage::TextImage(
 	ArrayData png_image,
 	string id,
 	Time in,
@@ -83,7 +83,7 @@ SubtitleImage::SubtitleImage (
 	Time fade_up_time,
 	Time fade_down_time
 	)
-	: Subtitle(in, out, h_position, h_align, v_position, v_align, z_position, fade_up_time, fade_down_time)
+	: Text(in, out, h_position, h_align, v_position, v_align, z_position, fade_up_time, fade_down_time)
 	, _png_image (png_image)
 	, _id (id)
 {
@@ -92,7 +92,7 @@ SubtitleImage::SubtitleImage (
 
 
 void
-SubtitleImage::read_png_file (boost::filesystem::path file)
+TextImage::read_png_file(boost::filesystem::path file)
 {
 	_file = file;
 	_png_image = ArrayData (file);
@@ -100,7 +100,7 @@ SubtitleImage::read_png_file (boost::filesystem::path file)
 
 
 void
-SubtitleImage::write_png_file (boost::filesystem::path file) const
+TextImage::write_png_file(boost::filesystem::path file) const
 {
 	_file = file;
 	png_image().write (file);
@@ -108,7 +108,7 @@ SubtitleImage::write_png_file (boost::filesystem::path file) const
 
 
 bool
-dcp::operator== (SubtitleImage const & a, SubtitleImage const & b)
+dcp::operator==(TextImage const & a, TextImage const & b)
 {
 	return (
 		a.png_image() == b.png_image() &&
@@ -127,36 +127,36 @@ dcp::operator== (SubtitleImage const & a, SubtitleImage const & b)
 
 
 bool
-dcp::operator!= (SubtitleImage const & a, SubtitleImage const & b)
+dcp::operator!=(TextImage const & a, TextImage const & b)
 {
 	return !(a == b);
 }
 
 
 bool
-SubtitleImage::equals(shared_ptr<const Subtitle> other_sub, EqualityOptions const& options, NoteHandler note) const
+TextImage::equals(shared_ptr<const Text> other_sub, EqualityOptions const& options, NoteHandler note) const
 {
-	if (!Subtitle::equals(other_sub, options, note)) {
+	if (!Text::equals(other_sub, options, note)) {
 		return false;
 	}
 
-	auto other = dynamic_pointer_cast<const SubtitleImage>(other_sub);
+	auto other = dynamic_pointer_cast<const TextImage>(other_sub);
 	if (!other) {
-		note(NoteType::ERROR, "Subtitle types differ: string vs image");
+		note(NoteType::ERROR, "Text types differ: string vs image");
 		return false;
 	}
 
 	if (png_image() != other->png_image()) {
-		note (NoteType::ERROR, "subtitle image PNG data differs");
-		if (options.export_differing_subtitles) {
-			string const base = "dcpdiff_subtitle_";
+		note (NoteType::ERROR, "text image PNG data differs");
+		if (options.export_differing_texts) {
+			string const base = "dcpdiff_text_";
 			if (filesystem::exists(base + "A.png")) {
-				note (NoteType::ERROR, "could not export subtitle as " + base + "A.png already exists");
+				note (NoteType::ERROR, "could not export text as " + base + "A.png already exists");
 			} else {
 				png_image().write(base + "A.png");
 			}
 			if (filesystem::exists(base + "B.png")) {
-				note (NoteType::ERROR, "could not export subtitle as " + base + "B.png already exists");
+				note (NoteType::ERROR, "could not export text as " + base + "B.png already exists");
 			} else {
 				other->png_image().write(base + "B.png");
 			}
@@ -169,13 +169,13 @@ SubtitleImage::equals(shared_ptr<const Subtitle> other_sub, EqualityOptions cons
 
 
 ostream&
-dcp::operator<< (ostream& s, SubtitleImage const & sub)
+dcp::operator<<(ostream& s, TextImage const& text)
 {
-	s << "\n[IMAGE] from " << sub.in() << " to " << sub.out() << ";\n"
-	  << "fade up " << sub.fade_up_time() << ", fade down " << sub.fade_down_time() << ";\n"
-	  << "v pos " << sub.v_position() << ", valign " << ((int) sub.v_align())
-	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align())
-	  << ", zpos " << sub.z_position() << "\n";
+	s << "\n[IMAGE] from " << text.in() << " to " << text.out() << ";\n"
+	  << "fade up " << text.fade_up_time() << ", fade down " << text.fade_down_time() << ";\n"
+	  << "v pos " << text.v_position() << ", valign " << ((int) text.v_align())
+	  << ", hpos " << text.h_position() << ", halign " << ((int) text.h_align())
+	  << ", zpos " << text.z_position() << "\n";
 
 	return s;
 }

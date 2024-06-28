@@ -35,8 +35,8 @@
 #include "smpte_load_font_node.h"
 #include "smpte_text_asset.h"
 #include "stream_operators.h"
-#include "subtitle_image.h"
 #include "test.h"
+#include "text_image.h"
 #include "types.h"
 #include <boost/optional/optional_io.hpp>
 #include <boost/test/unit_test.hpp>
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE (smpte_subtitle_id_test)
 {
 	dcp::SMPTETextAsset subs;
 	subs.add(
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			optional<string>(),
 			false, false, false,
 			dcp::Colour(),
@@ -111,17 +111,17 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test)
 	BOOST_REQUIRE (smpte_lfn);
 	BOOST_CHECK_EQUAL (smpte_lfn->id, "theFontId");
 	BOOST_CHECK_EQUAL (smpte_lfn->urn, "9118bbce-4105-4a05-b37c-a5a6f75e1fea");
-	BOOST_REQUIRE_EQUAL (sc.subtitles().size(), 63U);
-	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().front()));
-	BOOST_CHECK_EQUAL (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().front())->text(), "Noch mal.");
-	BOOST_CHECK_EQUAL (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().front())->space_before(), 0.0f);
-	BOOST_CHECK_EQUAL (sc.subtitles().front()->in(), dcp::Time (0, 0, 25, 12, 25));
-	BOOST_CHECK_EQUAL (sc.subtitles().front()->out(), dcp::Time (0, 0, 26, 4, 25));
-	BOOST_REQUIRE (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().back()));
-	BOOST_CHECK_EQUAL (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().back())->text(), "Prochainement");
-	BOOST_CHECK_EQUAL (dynamic_pointer_cast<const dcp::SubtitleString>(sc.subtitles().back())->space_before(), 0.0f);
-	BOOST_CHECK_EQUAL (sc.subtitles().back()->in(), dcp::Time (0, 1, 57, 17, 25));
-	BOOST_CHECK_EQUAL (sc.subtitles().back()->out(), dcp::Time (0, 1, 58, 12, 25));
+	BOOST_REQUIRE_EQUAL(sc.texts().size(), 63U);
+	BOOST_REQUIRE(dynamic_pointer_cast<const dcp::TextString>(sc.texts().front()));
+	BOOST_CHECK_EQUAL(dynamic_pointer_cast<const dcp::TextString>(sc.texts().front())->text(), "Noch mal.");
+	BOOST_CHECK_EQUAL(dynamic_pointer_cast<const dcp::TextString>(sc.texts().front())->space_before(), 0.0f);
+	BOOST_CHECK_EQUAL(sc.texts().front()->in(), dcp::Time (0, 0, 25, 12, 25));
+	BOOST_CHECK_EQUAL(sc.texts().front()->out(), dcp::Time (0, 0, 26, 4, 25));
+	BOOST_REQUIRE(dynamic_pointer_cast<const dcp::TextString>(sc.texts().back()));
+	BOOST_CHECK_EQUAL(dynamic_pointer_cast<const dcp::TextString>(sc.texts().back())->text(), "Prochainement");
+	BOOST_CHECK_EQUAL(dynamic_pointer_cast<const dcp::TextString>(sc.texts().back())->space_before(), 0.0f);
+	BOOST_CHECK_EQUAL(sc.texts().back()->in(), dcp::Time (0, 1, 57, 17, 25));
+	BOOST_CHECK_EQUAL(sc.texts().back()->out(), dcp::Time (0, 1, 58, 12, 25));
 }
 
 
@@ -130,40 +130,40 @@ BOOST_AUTO_TEST_CASE (read_smpte_subtitle_test2)
 {
 	dcp::SMPTETextAsset sc (private_test / "olsson.xml");
 
-	auto subs = sc.subtitles();
+	auto subs = sc.texts();
 	BOOST_REQUIRE_EQUAL (subs.size(), 6U);
 	auto i = 0;
-	auto is = dynamic_pointer_cast<const dcp::SubtitleString>(subs[i]);
+	auto is = dynamic_pointer_cast<const dcp::TextString>(subs[i]);
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), "Testing is ");
 	BOOST_CHECK (!is->italic());
 	BOOST_CHECK_CLOSE (is->space_before(), 0, 0.1);
 	++i;
-	is = dynamic_pointer_cast<const dcp::SubtitleString>(subs[i]);
+	is = dynamic_pointer_cast<const dcp::TextString>(subs[i]);
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), "really");
 	BOOST_CHECK (is->italic());
 	BOOST_CHECK_CLOSE (is->space_before(), 0, 0.1);
 	++i;
-	is = dynamic_pointer_cast<const dcp::SubtitleString>(subs[i]);
+	is = dynamic_pointer_cast<const dcp::TextString>(subs[i]);
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), " fun!");
 	BOOST_CHECK (!is->italic());
 	BOOST_CHECK_CLOSE (is->space_before(), 5, 0.1);
 	++i;
-	is = dynamic_pointer_cast<const dcp::SubtitleString>(subs[i]);
+	is = dynamic_pointer_cast<const dcp::TextString>(subs[i]);
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), "This is the ");
 	BOOST_CHECK (!is->italic());
 	BOOST_CHECK_CLOSE (is->space_before(), 0, 0.1);
 	++i;
-	is = dynamic_pointer_cast<const dcp::SubtitleString>(subs[i]);
+	is = dynamic_pointer_cast<const dcp::TextString>(subs[i]);
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), "second");
 	BOOST_CHECK (is->italic());
 	BOOST_CHECK_CLOSE (is->space_before(), 0, 0.1);
 	++i;
-	is = dynamic_pointer_cast<const dcp::SubtitleString>(subs[i]);
+	is = dynamic_pointer_cast<const dcp::TextString>(subs[i]);
 	BOOST_REQUIRE (is);
 	BOOST_CHECK_EQUAL (is->text(), " line!");
 	BOOST_CHECK (!is->italic());
@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
 	c.add (
-		std::make_shared<dcp::SubtitleString> (
+		std::make_shared<dcp::TextString> (
 			string ("Frutiger"),
 			false,
 			false,
@@ -208,7 +208,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 		);
 
 	c.add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			boost::optional<string> (),
 			true,
 			true,
@@ -235,7 +235,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 		);
 
 	c.add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			boost::optional<string> (),
 			true,
 			true,
@@ -303,7 +303,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
 	c.add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			string ("Arial"),
 			false,
 			false,
@@ -330,7 +330,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 		);
 
 	c.add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			string ("Arial"),
 			true,
 			false,
@@ -357,7 +357,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 		);
 
 	c.add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			string ("Arial"),
 			false,
 			false,
@@ -384,7 +384,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 		);
 
 	c.add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			string ("Arial"),
 			false,
 			false,
@@ -411,7 +411,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 		);
 
 	c.add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			string ("Arial"),
 			true,
 			false,
@@ -438,7 +438,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 		);
 
 	c.add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			string ("Arial"),
 			false,
 			false,
@@ -502,7 +502,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 	boost::filesystem::path const sub_image = "test/data/sub.png";
 
 	c.add (
-		std::make_shared<dcp::SubtitleImage>(
+		std::make_shared<dcp::TextImage>(
 			dcp::ArrayData(sub_image),
 			dcp::Time (0, 4,  9, 22, 24),
 			dcp::Time (0, 4, 11, 22, 24),
@@ -523,9 +523,9 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 	c.write (path / "subs.mxf");
 
 	dcp::SMPTETextAsset read_back (path / "subs.mxf");
-	auto subs = read_back.subtitles ();
+	auto subs = read_back.texts();
 	BOOST_REQUIRE_EQUAL (subs.size(), 1U);
-	auto image = dynamic_pointer_cast<const dcp::SubtitleImage>(subs[0]);
+	auto image = dynamic_pointer_cast<const dcp::TextImage>(subs[0]);
 	BOOST_REQUIRE (image);
 
 	BOOST_CHECK (image->png_image() == dcp::ArrayData(sub_image));
@@ -553,7 +553,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_top_alignment)
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
 	c.add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			string ("Arial"),
 			false,
 			false,
@@ -580,7 +580,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_top_alignment)
 		);
 
 	c.add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			string ("Arial"),
 			false,
 			false,
@@ -643,7 +643,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_bottom_alignment)
 	c.set_issue_date (dcp::LocalTime ("2016-04-01T03:52:00+00:00"));
 
 	c.add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			string ("Arial"),
 			false,
 			false,
@@ -670,7 +670,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_bottom_alignment)
 		);
 
 	c.add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			string ("Arial"),
 			false,
 			false,

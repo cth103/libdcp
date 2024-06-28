@@ -77,10 +77,10 @@ public:
 	bool load_font_nodes_can_differ = false;
 	bool sound_assets_can_differ = false;
 	bool keep_going = false;
-	/** true to save the last pair of different image subtitles to the current working directory */
-	bool export_differing_subtitles = false;
-	/** The maximum allowable absolute difference between the vertical position of subtitles */
-	float max_subtitle_vertical_position_error = 0;
+	/** true to save the last pair of different image subtitles/captions to the current working directory */
+	bool export_differing_texts = false;
+	/** The maximum allowable absolute difference between the vertical position of texts */
+	float max_text_vertical_position_error = 0;
 };
 
 

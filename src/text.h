@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/subtitle.h
- *  @brief Subtitle class
+/** @file  src/text.h
+ *  @brief Text class
  */
 
 
-#ifndef LIBDCP_SUBTITLE_H
-#define LIBDCP_SUBTITLE_H
+#ifndef LIBDCP_TEXT_H
+#define LIBDCP_TEXT_H
 
 
 #include "dcp_time.h"
@@ -52,17 +52,17 @@ namespace dcp {
 class EqualityOptions;
 
 
-class Subtitle
+class Text
 {
 public:
-	virtual ~Subtitle () {}
+	virtual ~Text() {}
 
-	/** @return subtitle start time (relative to the start of the reel) */
+	/** @return text start time (relative to the start of the reel) */
 	Time in () const {
 		return _in;
 	}
 
-	/** @return subtitle finish time (relative to the start of the reel) */
+	/** @return text finish time (relative to the start of the reel) */
 	Time out () const {
 		return _out;
 	}
@@ -130,11 +130,11 @@ public:
 		_fade_down_time = t;
 	}
 
-	virtual bool equals(std::shared_ptr<const dcp::Subtitle> other, EqualityOptions const& options, NoteHandler note) const;
+	virtual bool equals(std::shared_ptr<const dcp::Text> other, EqualityOptions const& options, NoteHandler note) const;
 
 protected:
 
-	Subtitle (
+	Text(
 		Time in,
 		Time out,
 		float h_position,

@@ -32,18 +32,18 @@
 */
 
 
-/** @file  src/subtitle_string.h
- *  @brief SubtitleString class
+/** @file  src/text_string.h
+ *  @brief TextString class
  */
 
 
-#ifndef LIBDCP_SUBTITLE_STRING_H
-#define LIBDCP_SUBTITLE_STRING_H
+#ifndef LIBDCP_TEXT_STRING_H
+#define LIBDCP_TEXT_STRING_H
 
 
 #include "dcp_time.h"
 #include "ruby.h"
-#include "subtitle.h"
+#include "text.h"
 #include <boost/optional.hpp>
 #include <string>
 
@@ -51,10 +51,10 @@
 namespace dcp {
 
 
-/** @class SubtitleString
+/** @class TextString
  *  @brief A single line of subtitle text with all the associated attributes.
  */
-class SubtitleString : public Subtitle
+class TextString : public Text
 {
 public:
 	/** @param font Font ID, or empty to use the default
@@ -80,7 +80,7 @@ public:
 	 *  @param fade_down_time Time to fade the text out
 	 *  @param space_before Space to add before this string, in ems (could be negative to remove space).
 	 */
-	SubtitleString (
+	TextString(
 		boost::optional<std::string> font,
 		bool italic,
 		bool bold,
@@ -200,7 +200,7 @@ public:
 		_rubies = std::move(rubies);
 	}
 
-	bool equals(std::shared_ptr<const dcp::Subtitle> other_sub, EqualityOptions const& options, NoteHandler node) const override;
+	bool equals(std::shared_ptr<const dcp::Text> other_sub, EqualityOptions const& options, NoteHandler node) const override;
 
 private:
 	/** font ID */
@@ -226,9 +226,10 @@ private:
 	std::vector<Ruby> _rubies;
 };
 
-bool operator== (SubtitleString const & a, SubtitleString const & b);
-bool operator!= (SubtitleString const & a, SubtitleString const & b);
-std::ostream& operator<< (std::ostream& s, SubtitleString const & sub);
+
+bool operator==(TextString const & a, TextString const & b);
+bool operator!=(TextString const & a, TextString const & b);
+std::ostream& operator<<(std::ostream& s, TextString const & sub);
 
 
 }

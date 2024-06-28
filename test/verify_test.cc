@@ -2073,7 +2073,7 @@ void
 add_test_subtitle (shared_ptr<dcp::TextAsset> asset, int start_frame, int end_frame, float v_position = 0, dcp::VAlign v_align = dcp::VAlign::CENTER, string text = "Hello")
 {
 	asset->add (
-		std::make_shared<dcp::SubtitleString>(
+		std::make_shared<dcp::TextString>(
 			optional<string>(),
 			false,
 			false,
@@ -2289,7 +2289,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 	{
 		auto subs = make_shared<dcp::SMPTETextAsset>();
 		subs->set_language (dcp::LanguageTag("de-DE"));
-		subs->add (simple_subtitle());
+		subs->add(simple_text());
 		add_font(subs);
 		subs->write (path / "subs1.mxf");
 		auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), reel_length, 0);
@@ -2299,7 +2299,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 	{
 		auto subs = make_shared<dcp::SMPTETextAsset>();
 		subs->set_language (dcp::LanguageTag("en-US"));
-		subs->add (simple_subtitle());
+		subs->add(simple_text());
 		add_font(subs);
 		subs->write (path / "subs2.mxf");
 		auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), reel_length, 0);
@@ -2351,7 +2351,7 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 	{
 		auto ccaps = make_shared<dcp::SMPTETextAsset>();
 		ccaps->set_language (dcp::LanguageTag("de-DE"));
-		ccaps->add (simple_subtitle());
+		ccaps->add(simple_text());
 		add_font(ccaps);
 		ccaps->write (path / "subs1.mxf");
 		auto reel_ccaps = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CAPTION, ccaps, dcp::Fraction(24, 1), reel_length, 0);
@@ -2361,7 +2361,7 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 	{
 		auto ccaps = make_shared<dcp::SMPTETextAsset>();
 		ccaps->set_language (dcp::LanguageTag("en-US"));
-		ccaps->add (simple_subtitle());
+		ccaps->add(simple_text());
 		add_font(ccaps);
 		ccaps->write (path / "subs2.mxf");
 		auto reel_ccaps = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CAPTION, ccaps, dcp::Fraction(24, 1), reel_length, 0);
@@ -3575,7 +3575,7 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 	auto subs = make_shared<dcp::SMPTETextAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
-	subs->add (simple_subtitle());
+	subs->add(simple_text());
 	add_font(subs);
 	subs->write (dir / "subs.mxf");
 	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), reel_length, 0);
@@ -3708,7 +3708,7 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 	auto subs = make_shared<dcp::SMPTETextAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
-	subs->add (simple_subtitle());
+	subs->add(simple_text());
 	add_font(subs);
 	subs->write (dir / "subs.mxf");
 
@@ -3839,7 +3839,7 @@ verify_text_entry_point_check(dcp::TextType type, path dir, dcp::VerificationNot
 	auto subs = make_shared<dcp::SMPTETextAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
-	subs->add (simple_subtitle());
+	subs->add(simple_text());
 	add_font(subs);
 	subs->write (dir / "subs.mxf");
 	auto reel_text = make_shared<T>(type, subs, dcp::Fraction(24, 1), reel_length, 0);
@@ -5844,7 +5844,7 @@ BOOST_AUTO_TEST_CASE(overlapping_subtitles)
 {
 	auto asset = make_shared<dcp::InteropTextAsset>();
 
-	asset->add(std::make_shared<dcp::SubtitleString>(
+	asset->add(std::make_shared<dcp::TextString>(
 			optional<string>{}, false, false, false,
 			dcp::Colour{}, 42, 0,
 			dcp::Time(0, 0, 0, 0, 24),
@@ -5857,7 +5857,7 @@ BOOST_AUTO_TEST_CASE(overlapping_subtitles)
 			dcp::Effect::NONE, dcp::Colour{}, dcp::Time{}, dcp::Time{}, 0, vector<dcp::Ruby>{}
 			));
 
-	asset->add(std::make_shared<dcp::SubtitleString>(
+	asset->add(std::make_shared<dcp::TextString>(
 			optional<string>{}, false, false, false,
 			dcp::Colour{}, 42, 0,
 			dcp::Time(0, 0, 2, 0, 24),

@@ -39,8 +39,8 @@
 
 #include "interop_text_asset.h"
 #include "smpte_text_asset.h"
-#include "subtitle_string.h"
-#include "subtitle_image.h"
+#include "text_string.h"
+#include "text_image.h"
 #include "text_asset_internal.h"
 #include "reel_interop_text_asset.h"
 #include "reel.h"

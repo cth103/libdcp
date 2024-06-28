@@ -46,7 +46,7 @@
 #include "raw_convert.h"
 #include "smpte_load_font_node.h"
 #include "smpte_text_asset.h"
-#include "subtitle_image.h"
+#include "text_image.h"
 #include "util.h"
 #include "warnings.h"
 #include "xml.h"
@@ -140,8 +140,8 @@ SMPTETextAsset::SMPTETextAsset(boost::filesystem::path file)
 		/* Try to read PNG files from the same folder that the XML is in; the wisdom of this is
 		   debatable, at best...
 		*/
-		for (auto i: _subtitles) {
-			auto im = dynamic_pointer_cast<SubtitleImage>(i);
+		for (auto i: _texts) {
+			auto im = dynamic_pointer_cast<TextImage>(i);
 			if (im && im->png_image().size() == 0) {
 				/* Even more dubious; allow <id>.png or urn:uuid:<id>.png */
 				auto p = file.parent_path() / String::compose("%1.png", im->id());
@@ -159,10 +159,10 @@ SMPTETextAsset::SMPTETextAsset(boost::filesystem::path file)
 	}
 
 	/* Check that all required image data have been found */
-	for (auto i: _subtitles) {
-		auto im = dynamic_pointer_cast<SubtitleImage>(i);
+	for (auto i: _texts) {
+		auto im = dynamic_pointer_cast<TextImage>(i);
 		if (im && im->png_image().size() == 0) {
-			throw MissingSubtitleImageError (im->id());
+			throw MissingTextImageError (im->id());
 		}
 	}
 }
@@ -212,12 +212,12 @@ SMPTETextAsset::parse_xml(shared_ptr<cxml::Document> xml)
 	for (auto i: xml->node()->get_children()) {
 		auto const e = dynamic_cast<xmlpp::Element const *>(i);
 		if (e && e->get_name() == "SubtitleList") {
-			parse_subtitles (e, ps, _time_code_rate, Standard::SMPTE);
+			parse_texts(e, ps, _time_code_rate, Standard::SMPTE);
 		}
 	}
 
 	/* Guess intrinsic duration */
-	_intrinsic_duration = latest_subtitle_out().as_editable_units_ceil(_edit_rate.numerator / _edit_rate.denominator);
+	_intrinsic_duration = latest_text_out().as_editable_units_ceil(_edit_rate.numerator / _edit_rate.denominator);
 }
 
 
@@ -266,13 +266,13 @@ SMPTETextAsset::read_mxf_resources(shared_ptr<ASDCP::TimedText::MXFReader> reade
 		}
 		case ASDCP::TimedText::MT_PNG:
 		{
-			auto j = _subtitles.begin();
-			while (j != _subtitles.end() && ((!dynamic_pointer_cast<SubtitleImage>(*j)) || dynamic_pointer_cast<SubtitleImage>(*j)->id() != id)) {
+			auto j = _texts.begin();
+			while (j != _texts.end() && ((!dynamic_pointer_cast<TextImage>(*j)) || dynamic_pointer_cast<TextImage>(*j)->id() != id)) {
 				++j;
 			}
 
-			if (j != _subtitles.end()) {
-				dynamic_pointer_cast<SubtitleImage>(*j)->set_png_image(ArrayData(buffer.RoData(), buffer.Size()));
+			if (j != _texts.end()) {
+				dynamic_pointer_cast<TextImage>(*j)->set_png_image(ArrayData(buffer.RoData(), buffer.Size()));
 			}
 			break;
 		}
@@ -396,7 +396,7 @@ SMPTETextAsset::xml_as_string() const
 		load_font->set_attribute ("ID", i->id);
 	}
 
-	subtitles_as_xml(cxml::add_child(root, "SubtitleList"), _time_code_rate, Standard::SMPTE);
+	texts_as_xml(cxml::add_child(root, "SubtitleList"), _time_code_rate, Standard::SMPTE);
 
 	return format_xml(doc, std::make_pair(string{}, schema_namespace()));
 }
@@ -433,8 +433,8 @@ SMPTETextAsset::write(boost::filesystem::path p) const
 
 	/* Image subtitle references */
 
-	for (auto i: _subtitles) {
-		auto si = dynamic_pointer_cast<SubtitleImage>(i);
+	for (auto i: _texts) {
+		auto si = dynamic_pointer_cast<TextImage>(i);
 		if (si) {
 			ASDCP::TimedText::TimedTextResourceDescriptor res;
 			unsigned int c;
@@ -456,7 +456,7 @@ SMPTETextAsset::write(boost::filesystem::path p) const
 	/* This header size is a guess.  Empirically it seems that each subtitle reference is 90 bytes, and we need some extra.
 	   The default size is not enough for some feature-length PNG sub projects (see DCP-o-matic #1561).
 	*/
-	ASDCP::Result_t r = writer.OpenWrite(dcp::filesystem::fix_long_path(p).string().c_str(), writer_info, descriptor, _subtitles.size() * 90 + 16384);
+	ASDCP::Result_t r = writer.OpenWrite(dcp::filesystem::fix_long_path(p).string().c_str(), writer_info, descriptor, _texts.size() * 90 + 16384);
 	if (ASDCP_FAILURE (r)) {
 		boost::throw_exception (FileError ("could not open subtitle MXF for writing", p.string(), r));
 	}
@@ -489,9 +489,8 @@ SMPTETextAsset::write(boost::filesystem::path p) const
 
 	/* Image subtitle payload */
 
-	for (auto i: _subtitles) {
-		auto si = dynamic_pointer_cast<SubtitleImage>(i);
-		if (si) {
+	for (auto i: _texts) {
+		if (auto si = dynamic_pointer_cast<TextImage>(i)) {
 			ASDCP::TimedText::FrameBuffer buffer;
 			buffer.SetData (si->png_image().data(), si->png_image().size());
 			buffer.Size (si->png_image().size());
@@ -516,7 +515,7 @@ SMPTETextAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions cons
 
 	auto other = dynamic_pointer_cast<const SMPTETextAsset>(other_asset);
 	if (!other) {
-		note (NoteType::ERROR, "Subtitles are in different standards");
+		note (NoteType::ERROR, "Subtitles/captions are in different standards");
 		return false;
 	}
 
@@ -539,46 +538,46 @@ SMPTETextAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions cons
 	}
 
 	if (_content_title_text != other->_content_title_text) {
-		note (NoteType::ERROR, "Subtitle content title texts differ");
+		note (NoteType::ERROR, "Subtitle/caption content title texts differ");
 		return false;
 	}
 
 	if (_language != other->_language) {
-		note (NoteType::ERROR, String::compose("Subtitle languages differ (`%1' vs `%2')", _language.get_value_or("[none]"), other->_language.get_value_or("[none]")));
+		note (NoteType::ERROR, String::compose("Subtitle/caption languages differ (`%1' vs `%2')", _language.get_value_or("[none]"), other->_language.get_value_or("[none]")));
 		return false;
 	}
 
 	if (_annotation_text != other->_annotation_text) {
-		note (NoteType::ERROR, "Subtitle annotation texts differ");
+		note (NoteType::ERROR, "Subtitle/caption annotation texts differ");
 		return false;
 	}
 
 	if (_issue_date != other->_issue_date) {
 		if (options.issue_dates_can_differ) {
-			note (NoteType::NOTE, "Subtitle issue dates differ");
+			note (NoteType::NOTE, "Subtitle/caption issue dates differ");
 		} else {
-			note (NoteType::ERROR, "Subtitle issue dates differ");
+			note (NoteType::ERROR, "Subtitle/caption issue dates differ");
 			return false;
 		}
 	}
 
 	if (_reel_number != other->_reel_number) {
-		note (NoteType::ERROR, "Subtitle reel numbers differ");
+		note (NoteType::ERROR, "Subtitle/caption reel numbers differ");
 		return false;
 	}
 
 	if (_edit_rate != other->_edit_rate) {
-		note (NoteType::ERROR, "Subtitle edit rates differ");
+		note (NoteType::ERROR, "Subtitle/caption edit rates differ");
 		return false;
 	}
 
 	if (_time_code_rate != other->_time_code_rate) {
-		note (NoteType::ERROR, "Subtitle time code rates differ");
+		note (NoteType::ERROR, "Subtitle/caption time code rates differ");
 		return false;
 	}
 
 	if (_start_time != other->_start_time) {
-		note (NoteType::ERROR, "Subtitle start times differ");
+		note (NoteType::ERROR, "Subtitle/caption start times differ");
 		return false;
 	}
 
@@ -596,10 +595,10 @@ SMPTETextAsset::add_font(string load_id, dcp::ArrayData data)
 
 
 void
-SMPTETextAsset::add(shared_ptr<Subtitle> s)
+SMPTETextAsset::add(shared_ptr<Text> s)
 {
 	TextAsset::add(s);
-	_intrinsic_duration = latest_subtitle_out().as_editable_units_ceil(_edit_rate.numerator / _edit_rate.denominator);
+	_intrinsic_duration = latest_text_out().as_editable_units_ceil(_edit_rate.numerator / _edit_rate.denominator);
 }
 
 

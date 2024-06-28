@@ -198,7 +198,7 @@ main (int argc, char* argv[])
 			options.reel_annotation_texts_can_differ = true;
 			break;
 		case 'F':
-			options.export_differing_subtitles = true;
+			options.export_differing_texts = true;
 			break;
 		}
 	}

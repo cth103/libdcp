@@ -391,10 +391,10 @@ make_simple (boost::filesystem::path path, int reels, int frames, dcp::Standard 
 }
 
 
-shared_ptr<dcp::Subtitle>
-simple_subtitle ()
+shared_ptr<dcp::Text>
+simple_text()
 {
-	return std::make_shared<dcp::SubtitleString>(
+	return std::make_shared<dcp::TextString>(
 		optional<string>(),
 		false,
 		false,
@@ -437,7 +437,7 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 	auto dcp = make_simple (path, 1, 24, dcp::Standard::INTEROP);
 
 	auto subs = make_shared<dcp::InteropTextAsset>();
-	subs->add (simple_subtitle());
+	subs->add(simple_text());
 
 	boost::filesystem::create_directory (path / "subs");
 	dcp::ArrayData data(4096);
@@ -460,7 +460,7 @@ make_simple_with_smpte_subs (boost::filesystem::path path)
 	auto subs = make_shared<dcp::SMPTETextAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
-	subs->add (simple_subtitle());
+	subs->add(simple_text());
 	dcp::ArrayData fake_font(1024);
 	subs->add_font("font", fake_font);
 
@@ -479,7 +479,7 @@ make_simple_with_interop_ccaps (boost::filesystem::path path)
 	auto dcp = make_simple (path, 1, 24, dcp::Standard::INTEROP);
 
 	auto subs = make_shared<dcp::InteropTextAsset>();
-	subs->add (simple_subtitle());
+	subs->add(simple_text());
 	subs->write (path / "ccap.xml");
 
 	auto reel_caps = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::CAPTION, subs, dcp::Fraction(24, 1), 240, 0);
@@ -497,7 +497,7 @@ make_simple_with_smpte_ccaps (boost::filesystem::path path)
 	auto subs = make_shared<dcp::SMPTETextAsset>();
 	subs->set_language (dcp::LanguageTag("de-DE"));
 	subs->set_start_time (dcp::Time());
-	subs->add (simple_subtitle());
+	subs->add(simple_text());
 	dcp::ArrayData fake_font(1024);
 	subs->add_font("font", fake_font);
 	subs->write (path / "ccap.mxf");

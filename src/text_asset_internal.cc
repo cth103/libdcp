@@ -38,7 +38,7 @@
 
 
 #include "text_asset_internal.h"
-#include "subtitle_string.h"
+#include "text_string.h"
 #include "compose.hpp"
 #include <cmath>
 
@@ -49,7 +49,7 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-order::Font::Font (shared_ptr<SubtitleString> s, Standard standard)
+order::Font::Font(shared_ptr<TextString> s, Standard standard)
 {
 	if (s->font()) {
 		if (standard == Standard::SMPTE) {

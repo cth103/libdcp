@@ -70,7 +70,7 @@ class SMPTELoadFontNode;
 
 
 /** @class SMPTETextAsset
- *  @brief A set of subtitles to be read and/or written in the SMPTE format
+ *  @brief A set of subtitles/captions to be read and/or written in the SMPTE format
  */
 class SMPTETextAsset : public TextAsset, public MXF
 {
@@ -95,7 +95,7 @@ public:
 	/** Write this content to a MXF file */
 	void write (boost::filesystem::path path) const override;
 
-	void add (std::shared_ptr<Subtitle>) override;
+	void add(std::shared_ptr<Text>) override;
 	void add_font (std::string id, dcp::ArrayData data) override;
 	void set_key (Key key) override;
 
@@ -135,7 +135,7 @@ public:
 		return _intrinsic_duration;
 	}
 
-	/** @return title of the film that these subtitles are for,
+	/** @return title of the film that these subtitles/captions are for,
 	 *  to be presented to the user
 	 */
 	std::string content_title_text () const {
@@ -167,8 +167,8 @@ public:
 		return _edit_rate;
 	}
 
-	/** @return subdivision of 1 second that is used for subtitle times;
-	 *  e.g. a time_code_rate of 250 means that a subtitle time of 0:0:0:001
+	/** @return subdivision of 1 second that is used for text times;
+	 *  e.g. a time_code_rate of 250 means that a text time of 0:0:0:001
 	 *  represents 4ms.
 	 */
 	int time_code_rate () const override {

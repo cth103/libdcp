@@ -47,7 +47,7 @@
 #include "interop_text_asset.h"
 #include "raw_convert.h"
 #include "text_asset_internal.h"
-#include "subtitle_image.h"
+#include "text_image.h"
 #include "util.h"
 #include "warnings.h"
 #include "xml.h"
@@ -89,12 +89,12 @@ InteropTextAsset::InteropTextAsset(boost::filesystem::path file)
 	for (auto i: xml->node()->get_children()) {
 		auto e = dynamic_cast<xmlpp::Element const *>(i);
 		if (e && (e->get_name() == "Font" || e->get_name() == "Subtitle")) {
-			parse_subtitles (e, ps, optional<int>(), Standard::INTEROP);
+			parse_texts (e, ps, optional<int>(), Standard::INTEROP);
 		}
 	}
 
-	for (auto i: _subtitles) {
-		auto si = dynamic_pointer_cast<SubtitleImage>(i);
+	for (auto i: _texts) {
+		auto si = dynamic_pointer_cast<TextImage>(i);
 		if (si) {
 			si->read_png_file (file.parent_path() / String::compose("%1.png", si->id()));
 		}
@@ -126,7 +126,7 @@ InteropTextAsset::xml_as_string() const
 		load_font->set_attribute ("URI", i->uri);
 	}
 
-	subtitles_as_xml (root, 250, Standard::INTEROP);
+	texts_as_xml(root, 250, Standard::INTEROP);
 
 	return format_xml(doc, {});
 }
@@ -174,7 +174,7 @@ InteropTextAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions co
 	}
 
 	if (_movie_title != other->_movie_title) {
-		note (NoteType::ERROR, "Subtitle movie titles differ");
+		note (NoteType::ERROR, "Subtitle or caption movie titles differ");
 		return false;
 	}
 
@@ -206,9 +206,8 @@ InteropTextAsset::write(boost::filesystem::path p) const
 	_file = p;
 
 	/* Image subtitles */
-	for (auto i: _subtitles) {
-		auto im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
-		if (im) {
+	for (auto i: _texts) {
+		if (auto im = dynamic_pointer_cast<dcp::TextImage>(i)) {
 			im->write_png_file(p.parent_path() / String::compose("%1.png", im->id()));
 		}
 	}
@@ -284,8 +283,8 @@ InteropTextAsset::add_to_assetmap(AssetMap& asset_map, boost::filesystem::path r
 {
 	Asset::add_to_assetmap(asset_map, root);
 
-	for (auto i: _subtitles) {
-		auto im = dynamic_pointer_cast<dcp::SubtitleImage>(i);
+	for (auto i: _texts) {
+		auto im = dynamic_pointer_cast<dcp::TextImage>(i);
 		if (im) {
 			DCP_ASSERT(im->file());
 			add_file_to_assetmap(asset_map, root, im->file().get(), im->id());
@@ -299,8 +298,8 @@ InteropTextAsset::add_to_pkl(shared_ptr<PKL> pkl, boost::filesystem::path root) 
 {
 	Asset::add_to_pkl (pkl, root);
 
-	for (auto i: _subtitles) {
-		auto im = dynamic_pointer_cast<dcp::SubtitleImage> (i);
+	for (auto i: _texts) {
+		auto im = dynamic_pointer_cast<dcp::TextImage>(i);
 		if (im) {
 			auto png_image = im->png_image ();
 			pkl->add_asset(im->id(), optional<string>(), make_digest(png_image), png_image.size(), "image/png", root.filename().string());

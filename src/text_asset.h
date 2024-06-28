@@ -45,7 +45,7 @@
 #include "asset.h"
 #include "dcp_time.h"
 #include "subtitle_standard.h"
-#include "subtitle_string.h"
+#include "text_string.h"
 #include <libcxml/cxml.h>
 #include <boost/shared_array.hpp>
 #include <map>
@@ -70,13 +70,13 @@ struct pull_fonts_test3;
 namespace dcp {
 
 
-class SubtitleString;
-class SubtitleImage;
 class FontNode;
-class TextNode;
-class SubtitleNode;
 class LoadFontNode;
 class ReelAsset;
+class SubtitleNode;
+class TextImage;
+class TextNode;
+class TextString;
 
 
 namespace order {
@@ -88,7 +88,7 @@ namespace order {
 /** @class TextAsset
  *  @brief A parent for classes representing a file containing subtitles or captions
  *
- *  This class holds a list of Subtitle objects which it can extract
+ *  This class holds a list of Text objects which it can extract
  *  from the appropriate part of either an Interop or SMPTE XML file.
  *  Its subclasses InteropTextAsset and SMPTETextAsset handle the
  *  differences between the two types.
@@ -105,10 +105,10 @@ public:
 		NoteHandler note
 		) const override;
 
-	std::vector<std::shared_ptr<const Subtitle>> subtitles_during (Time from, Time to, bool starting) const;
-	std::vector<std::shared_ptr<const Subtitle>> subtitles () const;
+	std::vector<std::shared_ptr<const Text>> texts_during(Time from, Time to, bool starting) const;
+	std::vector<std::shared_ptr<const Text>> texts() const;
 
-	virtual void add (std::shared_ptr<Subtitle>);
+	virtual void add(std::shared_ptr<Text>);
 	virtual void add_font (std::string id, dcp::ArrayData data) = 0;
 	void ensure_font(std::string id, dcp::ArrayData data);
 	std::map<std::string, ArrayData> font_data () const;
@@ -117,7 +117,7 @@ public:
 	virtual void write (boost::filesystem::path) const = 0;
 	virtual std::string xml_as_string () const = 0;
 
-	Time latest_subtitle_out () const;
+	Time latest_text_out() const;
 
 	void fix_empty_font_ids ();
 
@@ -169,7 +169,7 @@ protected:
 		float space_before = 0;
 	};
 
-	void parse_subtitles (xmlpp::Element const * node, std::vector<ParseState>& state, boost::optional<int> tcr, Standard standard);
+	void parse_texts(xmlpp::Element const * node, std::vector<ParseState>& state, boost::optional<int> tcr, Standard standard);
 	ParseState font_node_state (xmlpp::Element const * node, Standard standard) const;
 	ParseState text_node_state (xmlpp::Element const * node) const;
 	ParseState image_node_state (xmlpp::Element const * node) const;
@@ -177,10 +177,10 @@ protected:
 	Time fade_time (xmlpp::Element const * node, std::string name, boost::optional<int> tcr) const;
 	void position_align (ParseState& ps, xmlpp::Element const * node) const;
 
-	void subtitles_as_xml (xmlpp::Element* root, int time_code_rate, Standard standard) const;
+	void texts_as_xml(xmlpp::Element* root, int time_code_rate, Standard standard) const;
 
-	/** All our subtitles, in no particular order */
-	std::vector<std::shared_ptr<Subtitle>> _subtitles;
+	/** All our texts, in no particular order */
+	std::vector<std::shared_ptr<Text>> _texts;
 
 	class Font
 	{
@@ -216,7 +216,7 @@ private:
 	friend struct ::pull_fonts_test2;
 	friend struct ::pull_fonts_test3;
 
-	void maybe_add_subtitle(
+	void maybe_add_text(
 		std::string text,
 		std::vector<ParseState> const & parse_state,
 		float space_before,

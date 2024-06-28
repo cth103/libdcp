@@ -63,7 +63,7 @@ namespace dcp {
 
 
 class Ruby;
-class SubtitleString;
+class TextString;
 
 
 namespace order {
@@ -82,7 +82,7 @@ class Font
 public:
 	Font () {}
 
-	Font (std::shared_ptr<SubtitleString> s, Standard standard);
+	Font (std::shared_ptr<TextString> s, Standard standard);
 
 	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const;
 

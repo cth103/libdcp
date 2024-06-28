@@ -451,7 +451,7 @@ BOOST_AUTO_TEST_CASE(combine_multi_reel_subtitles)
 	memset(data1.data(), 0, data1.size());
 
 	auto subs1 = make_shared<dcp::InteropTextAsset>();
-	subs1->add(simple_subtitle());
+	subs1->add(simple_text());
 	boost::filesystem::create_directory(in / "subs1");
 	subs1->add_font("afont1", data1);
 	subs1->write(in / "subs1" / "subs1.xml");
@@ -460,7 +460,7 @@ BOOST_AUTO_TEST_CASE(combine_multi_reel_subtitles)
 	memset(data2.data(), 1, data1.size());
 
 	auto subs2 = make_shared<dcp::InteropTextAsset>();
-	subs2->add(simple_subtitle());
+	subs2->add(simple_text());
 	boost::filesystem::create_directory(in / "subs2");
 	subs2->add_font("afont2", data2);
 	subs2->write(in / "subs2" / "subs2.xml");

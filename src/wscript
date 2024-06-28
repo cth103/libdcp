@@ -117,12 +117,12 @@ def build(bld):
              stereo_j2k_picture_asset.cc
              stereo_j2k_picture_asset_writer.cc
              stereo_j2k_picture_frame.cc
-             subtitle.cc
              text_asset.cc
              text_asset_internal.cc
-             subtitle_image.cc
+             text.cc
+             text_image.cc
              subtitle_standard.cc
-             subtitle_string.cc
+             text_string.cc
              transfer_function.cc
              types.cc
              utc_offset.cc
@@ -234,11 +234,11 @@ def build(bld):
               stereo_j2k_picture_asset_reader.h
               stereo_j2k_picture_asset_writer.h
               stereo_j2k_picture_frame.h
-              subtitle.h
+              text.h
               text_asset.h
-              subtitle_image.h
+              text_image.h
               subtitle_standard.h
-              subtitle_string.h
+              text_string.h
               text_type.h
               transfer_function.h
               types.h

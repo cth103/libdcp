@@ -21,8 +21,8 @@
 #include "cpl.h"
 #include "dcp.h"
 #include "reel.h"
-#include "subtitle.h"
 #include "reel_asset.h"
+#include "text.h"
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <boost/test/unit_test.hpp>
@@ -59,7 +59,7 @@ extern std::shared_ptr<dcp::SoundAsset> simple_sound (
 	boost::optional<dcp::Key> key = boost::optional<dcp::Key>(),
 	int channels = 6
 	);
-extern std::shared_ptr<dcp::Subtitle> simple_subtitle ();
+extern std::shared_ptr<dcp::Text> simple_text();
 extern std::shared_ptr<dcp::ReelMarkersAsset> simple_markers (int frames = 24);
 extern std::shared_ptr<dcp::DCP> make_simple (
 	boost::filesystem::path path,

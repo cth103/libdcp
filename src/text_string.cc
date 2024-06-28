@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/subtitle_string.cc
- *  @brief SubtitleString class
+/** @file  src/text_string.cc
+ *  @brief TextString class
  */
 
 
 #include "compose.hpp"
-#include "subtitle_string.h"
+#include "text_string.h"
 #include "xml.h"
 #include <cmath>
 
@@ -54,7 +54,7 @@ using boost::optional;
 using namespace dcp;
 
 
-SubtitleString::SubtitleString (
+TextString::TextString(
 	optional<string> font,
 	bool italic,
 	bool bold,
@@ -78,7 +78,7 @@ SubtitleString::SubtitleString (
 	float space_before,
 	vector<Ruby> rubies
 	)
-	: Subtitle(in, out, h_position, h_align, v_position, v_align, z_position, fade_up_time, fade_down_time)
+	: Text(in, out, h_position, h_align, v_position, v_align, z_position, fade_up_time, fade_down_time)
 	, _font (font)
 	, _italic (italic)
 	, _bold (bold)
@@ -98,7 +98,7 @@ SubtitleString::SubtitleString (
 
 
 float
-SubtitleString::size_in_pixels (int screen_height) const
+TextString::size_in_pixels(int screen_height) const
 {
 	/* Size in the subtitle file is given in points as if the screen
 	   height is 11 inches, so a 72pt font would be 1/11th of the screen
@@ -110,7 +110,7 @@ SubtitleString::size_in_pixels (int screen_height) const
 
 
 bool
-dcp::operator== (SubtitleString const & a, SubtitleString const & b)
+dcp::operator==(TextString const & a, TextString const & b)
 {
 	return (
 		a.font() == b.font() &&
@@ -140,14 +140,14 @@ dcp::operator== (SubtitleString const & a, SubtitleString const & b)
 
 
 bool
-dcp::operator!= (SubtitleString const & a, SubtitleString const & b)
+dcp::operator!=(TextString const & a, TextString const & b)
 {
 	return !(a == b);
 }
 
 
 ostream&
-dcp::operator<< (ostream& s, SubtitleString const & sub)
+dcp::operator<<(ostream& s, TextString const & sub)
 {
 	s << "\n`" << sub.text() << "' from " << sub.in() << " to " << sub.out() << ";\n"
 	  << "fade up " << sub.fade_up_time() << ", fade down " << sub.fade_down_time() << ";\n"
@@ -188,77 +188,77 @@ dcp::operator<< (ostream& s, SubtitleString const & sub)
 
 
 bool
-SubtitleString::equals(shared_ptr<const Subtitle> other_sub, EqualityOptions const& options, NoteHandler note) const
+TextString::equals(shared_ptr<const Text> other_sub, EqualityOptions const& options, NoteHandler note) const
 {
-	if (!Subtitle::equals(other_sub, options, note)) {
+	if (!Text::equals(other_sub, options, note)) {
 		return false;
 	}
 
-	auto other = dynamic_pointer_cast<const SubtitleString>(other_sub);
+	auto other = dynamic_pointer_cast<const TextString>(other_sub);
 	if (!other) {
-		note(NoteType::ERROR, "Subtitle types differ: string vs image");
+		note(NoteType::ERROR, "Text types differ: string vs image");
 		return false;
 	}
 
 	bool same = true;
 
 	if (_font != other->_font) {
-		note(NoteType::ERROR, String::compose("subtitle font differs: %1 vs %2", _font.get_value_or("[none]"), other->_font.get_value_or("[none]")));
+		note(NoteType::ERROR, String::compose("text font differs: %1 vs %2", _font.get_value_or("[none]"), other->_font.get_value_or("[none]")));
 		same = false;
 	}
 
 	if (_italic != other->_italic) {
-		note(NoteType::ERROR, String::compose("subtitle italic flag differs: %1 vs %2", _italic ? "true" : "false", other->_italic ? "true" : "false"));
+		note(NoteType::ERROR, String::compose("text italic flag differs: %1 vs %2", _italic ? "true" : "false", other->_italic ? "true" : "false"));
 		same = false;
 	}
 
 	if (_bold != other->_bold) {
-		note(NoteType::ERROR, String::compose("subtitle bold flag differs: %1 vs %2", _bold ? "true" : "false", other->_bold ? "true" : "false"));
+		note(NoteType::ERROR, String::compose("text bold flag differs: %1 vs %2", _bold ? "true" : "false", other->_bold ? "true" : "false"));
 		same = false;
 	}
 
 	if (_underline != other->_underline) {
-		note(NoteType::ERROR, String::compose("subtitle underline flag differs: %1 vs %2", _underline ? "true" : "false", other->_underline ? "true" : "false"));
+		note(NoteType::ERROR, String::compose("text underline flag differs: %1 vs %2", _underline ? "true" : "false", other->_underline ? "true" : "false"));
 		same = false;
 	}
 
 	if (_colour != other->_colour) {
-		note(NoteType::ERROR, String::compose("subtitle colour differs: %1 vs %2", _colour.to_rgb_string(), other->_colour.to_rgb_string()));
+		note(NoteType::ERROR, String::compose("text colour differs: %1 vs %2", _colour.to_rgb_string(), other->_colour.to_rgb_string()));
 		same = false;
 	}
 
 	if (_size != other->_size) {
-		note(NoteType::ERROR, String::compose("subtitle size differs: %1 vs %2", _size, other->_size));
+		note(NoteType::ERROR, String::compose("text size differs: %1 vs %2", _size, other->_size));
 		same = false;
 	}
 
 	if (_aspect_adjust != other->_aspect_adjust) {
-		note(NoteType::ERROR, String::compose("subtitle aspect_adjust differs: %1 vs %2", _aspect_adjust, other->_aspect_adjust));
+		note(NoteType::ERROR, String::compose("text aspect_adjust differs: %1 vs %2", _aspect_adjust, other->_aspect_adjust));
 		same = false;
 	}
 
 	if (_direction != other->_direction) {
-		note(NoteType::ERROR, String::compose("subtitle direction differs: %1 vs %2", direction_to_string(_direction), direction_to_string(other->_direction)));
+		note(NoteType::ERROR, String::compose("text direction differs: %1 vs %2", direction_to_string(_direction), direction_to_string(other->_direction)));
 		same = false;
 	}
 
 	if (_text != other->_text) {
-		note(NoteType::ERROR, String::compose("subtitle text differs: %1 vs %2", _text, other->_text));
+		note(NoteType::ERROR, String::compose("text text differs: %1 vs %2", _text, other->_text));
 		same = false;
 	}
 
 	if (_effect != other->_effect) {
-		note(NoteType::ERROR, String::compose("subtitle effect differs: %1 vs %2", effect_to_string(_effect), effect_to_string(other->_effect)));
+		note(NoteType::ERROR, String::compose("text effect differs: %1 vs %2", effect_to_string(_effect), effect_to_string(other->_effect)));
 		same = false;
 	}
 
 	if (_effect_colour != other->_effect_colour) {
-		note(NoteType::ERROR, String::compose("subtitle effect colour differs: %1 vs %2", _effect_colour.to_rgb_string(), other->_effect_colour.to_rgb_string()));
+		note(NoteType::ERROR, String::compose("text effect colour differs: %1 vs %2", _effect_colour.to_rgb_string(), other->_effect_colour.to_rgb_string()));
 		same = false;
 	}
 
 	if (_space_before != other->_space_before) {
-		note(NoteType::ERROR, String::compose("subtitle space before differs: %1 vs %2", _space_before, other->_space_before));
+		note(NoteType::ERROR, String::compose("text space before differs: %1 vs %2", _space_before, other->_space_before));
 		same = false;
 	}
 

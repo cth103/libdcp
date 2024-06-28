@@ -326,7 +326,7 @@ BOOST_AUTO_TEST_CASE (vf_kdm_test)
 	/* Make VF */
 
 	auto subs = make_shared<dcp::SMPTETextAsset>();
-	subs->add(simple_subtitle());
+	subs->add(simple_text());
 	subs->set_key(key);
 
 	boost::filesystem::remove_all (vf_path);

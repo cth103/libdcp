@@ -181,7 +181,7 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 	auto subs_asset = std::make_shared<dcp::SMPTETextAsset>();
 	subs_asset->set_key (key);
 	subs_asset->set_context_id (context_id);
-	subs_asset->add(std::make_shared<dcp::SubtitleString>(
+	subs_asset->add(std::make_shared<dcp::TextString>(
 		optional<string>(),
 		false, false, false,
 		dcp::Colour(255, 255, 255),

@@ -121,8 +121,8 @@ ReadError::ReadError (string message, string detail)
 }
 
 
-MissingSubtitleImageError::MissingSubtitleImageError (string id)
-	: runtime_error (String::compose("Could not load image for subtitle %1", id))
+MissingTextImageError::MissingTextImageError (string id)
+	: runtime_error (String::compose("Could not load image for subtitle/caption %1", id))
 {
 
 }

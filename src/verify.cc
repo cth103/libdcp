@@ -803,7 +803,7 @@ verify_smpte_timed_text_asset (
 void
 verify_interop_text_asset(Context& context, shared_ptr<const InteropTextAsset> asset)
 {
-	if (asset->subtitles().empty()) {
+	if (asset->texts().empty()) {
 		context.error(VerificationNote::Code::MISSING_SUBTITLE, asset->id(), asset->file().get());
 	}
 	auto const unresolved = asset->unresolved_fonts();
@@ -1230,7 +1230,7 @@ dcp::verify_text_lines_and_characters(
 
 	vector<shared_ptr<Event>> events;
 
-	auto position = [](shared_ptr<const SubtitleString> sub) {
+	auto position = [](shared_ptr<const TextString> sub) {
 		switch (sub->v_align()) {
 		case VAlign::TOP:
 			return lrintf(sub->v_position() * 100);
@@ -1244,8 +1244,8 @@ dcp::verify_text_lines_and_characters(
 	};
 
 	/* Make a list of "subtitle starts" and "subtitle ends" events */
-	for (auto j: asset->subtitles()) {
-		auto text = dynamic_pointer_cast<const SubtitleString>(j);
+	for (auto j: asset->texts()) {
+		auto text = dynamic_pointer_cast<const TextString>(j);
 		if (text) {
 			auto in = make_shared<Event>(text->in(), position(text), text->text().length());
 			events.push_back(in);

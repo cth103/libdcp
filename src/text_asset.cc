@@ -42,8 +42,8 @@
 #include "load_font_node.h"
 #include "raw_convert.h"
 #include "reel_asset.h"
-#include "subtitle_image.h"
-#include "subtitle_string.h"
+#include "text_image.h"
+#include "text_string.h"
 #include "text_asset.h"
 #include "text_asset_internal.h"
 #include "util.h"
@@ -276,7 +276,7 @@ TextAsset::fade_time(xmlpp::Element const * node, string name, optional<int> tcr
 
 
 void
-TextAsset::parse_subtitles(xmlpp::Element const * node, vector<ParseState>& state, optional<int> tcr, Standard standard)
+TextAsset::parse_texts(xmlpp::Element const * node, vector<ParseState>& state, optional<int> tcr, Standard standard)
 {
 	if (node->get_name() == "Font") {
 		state.push_back (font_node_state (node, standard));
@@ -366,7 +366,7 @@ TextAsset::parse_subtitles(xmlpp::Element const * node, vector<ParseState>& stat
 		/* Handle actual content e.g. text */
 		auto const v = dynamic_cast<xmlpp::ContentNode const *>(i);
 		if (v) {
-			maybe_add_subtitle (v->get_content(), state, space_before, standard, rubies);
+			maybe_add_text(v->get_content(), state, space_before, standard, rubies);
 			space_before = 0;
 		}
 
@@ -383,7 +383,7 @@ TextAsset::parse_subtitles(xmlpp::Element const * node, vector<ParseState>& stat
 				}
 				space_before += raw_convert<float>(size);
 			} else if (e->get_name() != "Ruby") {
-				parse_subtitles (e, state, tcr, standard);
+				parse_texts (e, state, tcr, standard);
 			}
 		}
 	}
@@ -393,7 +393,7 @@ TextAsset::parse_subtitles(xmlpp::Element const * node, vector<ParseState>& stat
 
 
 void
-TextAsset::maybe_add_subtitle(
+TextAsset::maybe_add_text(
 	string text,
 	vector<ParseState> const & parse_state,
 	float space_before,
@@ -482,8 +482,8 @@ TextAsset::maybe_add_subtitle(
 
 	switch (ps.type.get()) {
 	case ParseState::Type::TEXT:
-		_subtitles.push_back (
-			make_shared<SubtitleString>(
+		_texts.push_back (
+			make_shared<TextString>(
 				ps.font_id,
 				ps.italic.get_value_or (false),
 				ps.bold.get_value_or (false),
@@ -530,9 +530,9 @@ TextAsset::maybe_add_subtitle(
 			break;
 		}
 
-		/* Add a subtitle with no image data and we'll fill that in later */
-		_subtitles.push_back (
-			make_shared<SubtitleImage>(
+		/* Add a text with no image data and we'll fill that in later */
+		_texts.push_back(
+			make_shared<TextImage>(
 				ArrayData(),
 				text,
 				ps.in.get(),
@@ -552,22 +552,22 @@ TextAsset::maybe_add_subtitle(
 }
 
 
-vector<shared_ptr<const Subtitle>>
-TextAsset::subtitles() const
+vector<shared_ptr<const Text>>
+TextAsset::texts() const
 {
-	vector<shared_ptr<const Subtitle>> s;
-	for (auto i: _subtitles) {
+	vector<shared_ptr<const Text>> s;
+	for (auto i: _texts) {
 		s.push_back (i);
 	}
 	return s;
 }
 
 
-vector<shared_ptr<const Subtitle>>
-TextAsset::subtitles_during(Time from, Time to, bool starting) const
+vector<shared_ptr<const Text>>
+TextAsset::texts_during(Time from, Time to, bool starting) const
 {
-	vector<shared_ptr<const Subtitle>> s;
-	for (auto i: _subtitles) {
+	vector<shared_ptr<const Text>> s;
+	for (auto i: _texts) {
 		if ((starting && from <= i->in() && i->in() < to) || (!starting && i->out() >= from && i->in() <= to)) {
 			s.push_back (i);
 		}
@@ -578,17 +578,17 @@ TextAsset::subtitles_during(Time from, Time to, bool starting) const
 
 
 void
-TextAsset::add(shared_ptr<Subtitle> s)
+TextAsset::add(shared_ptr<Text> s)
 {
-	_subtitles.push_back (s);
+	_texts.push_back(s);
 }
 
 
 Time
-TextAsset::latest_subtitle_out() const
+TextAsset::latest_text_out() const
 {
 	Time t;
-	for (auto i: _subtitles) {
+	for (auto i: _texts) {
 		if (i->out() > t) {
 			t = i->out ();
 		}
@@ -610,22 +610,22 @@ TextAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions const& op
 		return false;
 	}
 
-	if (_subtitles.size() != other->_subtitles.size()) {
-		note (NoteType::ERROR, String::compose("different number of subtitles: %1 vs %2", _subtitles.size(), other->_subtitles.size()));
+	if (_texts.size() != other->_texts.size()) {
+		note (NoteType::ERROR, String::compose("different number of texts: %1 vs %2", _texts.size(), other->_texts.size()));
 		return false;
 	}
 
-	auto i = _subtitles.begin();
-	auto j = other->_subtitles.begin();
+	auto i = _texts.begin();
+	auto j = other->_texts.begin();
 
-	while (i != _subtitles.end()) {
-		auto string_i = dynamic_pointer_cast<SubtitleString> (*i);
-		auto string_j = dynamic_pointer_cast<SubtitleString> (*j);
-		auto image_i = dynamic_pointer_cast<SubtitleImage> (*i);
-		auto image_j = dynamic_pointer_cast<SubtitleImage> (*j);
+	while (i != _texts.end()) {
+		auto string_i = dynamic_pointer_cast<TextString>(*i);
+		auto string_j = dynamic_pointer_cast<TextString>(*j);
+		auto image_i = dynamic_pointer_cast<TextImage>(*i);
+		auto image_j = dynamic_pointer_cast<TextImage>(*j);
 
 		if ((string_i && !string_j) || (image_i && !image_j)) {
-			note (NoteType::ERROR, "subtitles differ: string vs. image");
+			note (NoteType::ERROR, "texts differ: string vs. image");
 			return false;
 		}
 
@@ -645,9 +645,9 @@ TextAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions const& op
 }
 
 
-struct SubtitleSorter
+struct TextSorter
 {
-	bool operator() (shared_ptr<Subtitle> a, shared_ptr<Subtitle> b) {
+	bool operator()(shared_ptr<Text> a, shared_ptr<Text> b) {
 		if (a->in() != b->in()) {
 			return a->in() < b->in();
 		}
@@ -724,12 +724,12 @@ TextAsset::pull_fonts(shared_ptr<order::Part> part)
  *  class because the differences between the two are fairly subtle.
  */
 void
-TextAsset::subtitles_as_xml(xmlpp::Element* xml_root, int time_code_rate, Standard standard) const
+TextAsset::texts_as_xml(xmlpp::Element* xml_root, int time_code_rate, Standard standard) const
 {
-	auto sorted = _subtitles;
-	std::stable_sort(sorted.begin(), sorted.end(), SubtitleSorter());
+	auto sorted = _texts;
+	std::stable_sort(sorted.begin(), sorted.end(), TextSorter());
 
-	/* Gather our subtitles into a hierarchy of Subtitle/Text/String objects, writing
+	/* Gather our texts into a hierarchy of Subtitle/Text/String objects, writing
 	   font information into the bottom level (String) objects.
 	*/
 
@@ -766,7 +766,7 @@ TextAsset::subtitles_as_xml(xmlpp::Element* xml_root, int time_code_rate, Standa
 			text.reset ();
 		}
 
-		auto is = dynamic_pointer_cast<SubtitleString>(i);
+		auto is = dynamic_pointer_cast<TextString>(i);
 		if (is) {
 			if (!text ||
 			    last_h_align != is->h_align() ||
@@ -799,8 +799,7 @@ TextAsset::subtitles_as_xml(xmlpp::Element* xml_root, int time_code_rate, Standa
 			text->children.push_back (make_shared<order::String>(text, order::Font (is, standard), is->text(), is->space_before()));
 		}
 
-		auto ii = dynamic_pointer_cast<SubtitleImage>(i);
-		if (ii) {
+		if (auto ii = dynamic_pointer_cast<TextImage>(i)) {
 			text.reset ();
 			subtitle->children.push_back (
 				make_shared<order::Image>(subtitle, ii->id(), ii->png_image(), ii->h_align(), ii->h_position(), ii->v_align(), ii->v_position(), ii->z_position())
@@ -876,8 +875,8 @@ TextAsset::fix_empty_font_ids()
 		}
 	}
 
-	for (auto i: _subtitles) {
-		auto j = dynamic_pointer_cast<SubtitleString> (i);
+	for (auto i: _texts) {
+		auto j = dynamic_pointer_cast<TextString>(i);
 		if (j && j->font() && j->font().get() == "") {
 			j->set_font (empty_id);
 		}
@@ -957,8 +956,8 @@ format_xml_node (xmlpp::Node const* node, State& state)
 
 
 /** Format XML much as write_to_string_formatted() would do, except without adding any white space
- *  to <Text> nodes.  This is an attempt to avoid changing what is actually displayed as subtitles
- *  while also formatting the XML in such a way as to avoid DoM bug 2205.
+ *  to <Text> nodes.  This is an attempt to avoid changing what is actually displayed while also
+ *  formatting the XML in such a way as to avoid DoM bug 2205.
  *
  *  xml_namespace is an optional namespace for the root node; it would be nicer to set this up with
  *  set_namespace_declaration in the caller and then to extract it here but I couldn't find a way

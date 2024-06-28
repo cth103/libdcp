@@ -50,8 +50,8 @@
 #include "smpte_text_asset.h"
 #include "sound_asset.h"
 #include "text_asset.h"
-#include "subtitle_image.h"
-#include "subtitle_string.h"
+#include "text_image.h"
+#include "text_string.h"
 #include <getopt.h>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string.hpp>
@@ -251,7 +251,7 @@ main_subtitle (vector<string> const& only, shared_ptr<Reel> reel, bool list_subt
 	OUTPUT_SUBTITLE("      Subtitle ID: %1", ms->id());
 
 	if (ms->asset_ref().resolved()) {
-		auto subs = ms->asset()->subtitles ();
+		auto subs = ms->asset()->texts();
 		OUTPUT_SUBTITLE("\n      Subtitle:    %1 subtitles", subs.size());
 		auto iop = dynamic_pointer_cast<InteropTextAsset>(ms->asset());
 		if (iop) {
@@ -263,13 +263,13 @@ main_subtitle (vector<string> const& only, shared_ptr<Reel> reel, bool list_subt
 		}
 		if (list_subtitles) {
 			for (auto k: subs) {
-				auto ks = dynamic_pointer_cast<const SubtitleString>(k);
+				auto ks = dynamic_pointer_cast<const TextString>(k);
 				if (ks) {
 					stringstream s;
 					s << *ks;
 					OUTPUT_SUBTITLE("%1\n", s.str());
 				}
-				auto is = dynamic_pointer_cast<const SubtitleImage>(k);
+				auto is = dynamic_pointer_cast<const TextImage>(k);
 				if (is) {
 					stringstream s;
 					s << *is;

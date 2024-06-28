@@ -259,10 +259,10 @@ public:
 };
 
 
-class MissingSubtitleImageError : public std::runtime_error
+class MissingTextImageError : public std::runtime_error
 {
 public:
-	MissingSubtitleImageError (std::string id);
+	MissingTextImageError (std::string id);
 };
 
 

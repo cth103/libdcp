@@ -260,19 +260,19 @@ extern bool operator!= (Colour const & a, Colour const & b);
 typedef boost::function<void (NoteType, std::string)> NoteHandler;
 
 
-/** Maximum absolute difference between dcp::SubtitleString::aspect_adjust values that
+/** Maximum absolute difference between dcp::TextString::aspect_adjust values that
  *  are considered equal
  */
 constexpr float ASPECT_ADJUST_EPSILON = 1e-3;
 
 
-/** Maximum absolute difference between dcp::SubtitleString alignment values that
+/** Maximum absolute difference between dcp::TextString alignment values that
  *  are considered equal.
  */
 constexpr float ALIGN_EPSILON = 1e-3;
 
 
-/** Maximum absolute difference between dcp::SubtitleString space_before values that
+/** Maximum absolute difference between dcp::TextString space_before values that
  *  are considered equal.
  */
 constexpr float SPACE_BEFORE_EPSILON = 1e-3;

@@ -32,17 +32,17 @@
 */
 
 
-/** @file  src/subtitle_image.h
- *  @brief SubtitleImage class
+/** @file  src/text_image.h
+ *  @brief TextImage class
  */
 
 
-#ifndef LIBDCP_SUBTITLE_IMAGE_H
-#define LIBDCP_SUBTITLE_IMAGE_H
+#ifndef LIBDCP_TEXT_IMAGE_H
+#define LIBDCP_TEXT_IMAGE_H
 
 
 #include "array_data.h"
-#include "subtitle.h"
+#include "text.h"
 #include "dcp_time.h"
 #include <boost/optional.hpp>
 #include <string>
@@ -51,13 +51,13 @@
 namespace dcp {
 
 
-/** @class SubtitleImage
- *  @brief A bitmap subtitle with all the associated attributes
+/** @class TextImage
+ *  @brief A bitmap subtitle or caption with all the associated attributes
  */
-class SubtitleImage : public Subtitle
+class TextImage : public Text
 {
 public:
-	SubtitleImage (
+	TextImage(
 		ArrayData png_image,
 		Time in,
 		Time out,
@@ -70,7 +70,7 @@ public:
 		Time fade_down_time
 		);
 
-	SubtitleImage (
+	TextImage(
 		ArrayData png_image,
 		std::string id,
 		Time in,
@@ -104,7 +104,7 @@ public:
 		return _file;
 	}
 
-	bool equals(std::shared_ptr<const dcp::Subtitle> other_sub, EqualityOptions const& options, NoteHandler note) const override;
+	bool equals(std::shared_ptr<const dcp::Text> other_text, EqualityOptions const& options, NoteHandler note) const override;
 
 private:
 	ArrayData _png_image;
@@ -113,9 +113,9 @@ private:
 };
 
 
-bool operator== (SubtitleImage const & a, SubtitleImage const & b);
-bool operator!= (SubtitleImage const & a, SubtitleImage const & b);
-std::ostream& operator<< (std::ostream& s, SubtitleImage const & sub);
+bool operator==(TextImage const & a, TextImage const& b);
+bool operator!=(TextImage const & a, TextImage const& b);
+std::ostream& operator<<(std::ostream& s, TextImage const& text);
 
 
 }
