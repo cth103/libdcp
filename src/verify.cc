@@ -48,12 +48,12 @@
 #include "raw_convert.h"
 #include "reel.h"
 #include "reel_closed_caption_asset.h"
-#include "reel_interop_subtitle_asset.h"
+#include "reel_interop_text_asset.h"
 #include "reel_markers_asset.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
-#include "reel_smpte_subtitle_asset.h"
-#include "reel_subtitle_asset.h"
+#include "reel_smpte_text_asset.h"
+#include "reel_text_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "stereo_j2k_picture_asset.h"
 #include "stereo_j2k_picture_frame.h"
@@ -722,7 +722,7 @@ verify_main_sound_asset(Context& context, shared_ptr<const ReelSoundAsset> reel_
 
 
 static void
-verify_main_subtitle_reel(Context& context, shared_ptr<const ReelSubtitleAsset> reel_asset)
+verify_main_subtitle_reel(Context& context, shared_ptr<const ReelTextAsset> reel_asset)
 {
 	/* XXX: is Language compulsory? */
 	if (reel_asset->language()) {

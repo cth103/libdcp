@@ -37,13 +37,13 @@
 #include "dcp.h"
 #include "equality_options.h"
 #include "interop_subtitle_asset.h"
-#include "reel_subtitle_asset.h"
+#include "reel_text_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
 #include "test.h"
 #include "types.h"
 #include "verify.h"
-#include "reel_interop_subtitle_asset.h"
+#include "reel_interop_text_asset.h"
 #include "reel_markers_asset.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/optional.hpp>
@@ -465,10 +465,10 @@ BOOST_AUTO_TEST_CASE(combine_multi_reel_subtitles)
 	subs2->add_font("afont2", data2);
 	subs2->write(in / "subs2" / "subs2.xml");
 
-	auto reel_subs1 = make_shared<dcp::ReelInteropSubtitleAsset>(subs1, dcp::Fraction(24, 1), 240, 0);
+	auto reel_subs1 = make_shared<dcp::ReelInteropTextAsset>(subs1, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls()[0]->reels()[0]->add(reel_subs1);
 
-	auto reel_subs2 = make_shared<dcp::ReelInteropSubtitleAsset>(subs2, dcp::Fraction(24, 1), 240, 0);
+	auto reel_subs2 = make_shared<dcp::ReelInteropTextAsset>(subs2, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls()[0]->reels()[1]->add(reel_subs2);
 
 	dcp->write_xml();

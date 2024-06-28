@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/reel_subtitle_asset.cc
- *  @brief ReelSubtitleAsset class
+/** @file  src/reel_text_asset.cc
+ *  @brief ReelTextAsset class
  */
 
 
 #include "language_tag.h"
-#include "reel_subtitle_asset.h"
+#include "reel_text_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "subtitle_asset.h"
 #include "warnings.h"
@@ -54,7 +54,7 @@ using boost::optional;
 using namespace dcp;
 
 
-ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+ReelTextAsset::ReelTextAsset(std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelFileAsset (
 		asset,
 		dynamic_pointer_cast<SMPTESubtitleAsset>(asset) ? dynamic_pointer_cast<SMPTESubtitleAsset>(asset)->key_id() : boost::none,
@@ -68,7 +68,7 @@ ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Frac
 }
 
 
-ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<const cxml::Node> node)
+ReelTextAsset::ReelTextAsset(std::shared_ptr<const cxml::Node> node)
 	: ReelFileAsset (node)
 {
 	_language = node->optional_string_child("Language");
@@ -76,21 +76,21 @@ ReelSubtitleAsset::ReelSubtitleAsset (std::shared_ptr<const cxml::Node> node)
 
 
 string
-ReelSubtitleAsset::cpl_node_name (Standard) const
+ReelTextAsset::cpl_node_name(Standard) const
 {
 	return "MainSubtitle";
 }
 
 
 void
-ReelSubtitleAsset::set_language (dcp::LanguageTag language)
+ReelTextAsset::set_language(dcp::LanguageTag language)
 {
 	_language = language.to_string();
 }
 
 
 bool
-ReelSubtitleAsset::equals(shared_ptr<const ReelSubtitleAsset> other, EqualityOptions const& opt, NoteHandler note) const
+ReelTextAsset::equals(shared_ptr<const ReelTextAsset> other, EqualityOptions const& opt, NoteHandler note) const
 {
 	if (!asset_equals (other, opt, note)) {
 		return false;
@@ -104,7 +104,7 @@ ReelSubtitleAsset::equals(shared_ptr<const ReelSubtitleAsset> other, EqualityOpt
 
 
 xmlpp::Element *
-ReelSubtitleAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
+ReelTextAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
 	auto asset = ReelFileAsset::write_to_cpl (node, standard);
 	if (_language) {

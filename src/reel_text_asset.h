@@ -32,13 +32,13 @@
 */
 
 
-/** @file  src/reel_subtitle_asset.h
- *  @brief ReelSubtitleAsset class.
+/** @file  src/reel_text_asset.h
+ *  @brief ReelTextAsset class.
  */
 
 
-#ifndef LIBDCP_REEL_SUBTITLE_ASSET_H
-#define LIBDCP_REEL_SUBTITLE_ASSET_H
+#ifndef LIBDCP_REEL_TEXT_ASSET_H
+#define LIBDCP_REEL_TEXT_ASSET_H
 
 
 #include "language_tag.h"
@@ -56,14 +56,14 @@ namespace dcp {
 class SubtitleAsset;
 
 
-/** @class ReelSubtitleAsset
- *  @brief Part of a Reel's description which refers to a subtitle XML/MXF file
+/** @class ReelTextAsset
+ *  @brief Part of a Reel's description which refers to a subtitle or caption XML/MXF file
  */
-class ReelSubtitleAsset : public ReelFileAsset
+class ReelTextAsset : public ReelFileAsset
 {
 public:
-	ReelSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
-	explicit ReelSubtitleAsset (std::shared_ptr<const cxml::Node>);
+	ReelTextAsset(std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	explicit ReelTextAsset(std::shared_ptr<const cxml::Node>);
 
 	std::shared_ptr<const SubtitleAsset> asset () const {
 		return asset_of_type<const SubtitleAsset>();
@@ -75,7 +75,7 @@ public:
 
 	xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
 
-	bool equals(std::shared_ptr<const ReelSubtitleAsset>, EqualityOptions const&, NoteHandler) const;
+	bool equals(std::shared_ptr<const ReelTextAsset>, EqualityOptions const&, NoteHandler) const;
 
 	void set_language (dcp::LanguageTag language);
 

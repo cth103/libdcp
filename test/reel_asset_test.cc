@@ -33,7 +33,7 @@
 
 
 #include "reel_mono_picture_asset.h"
-#include "reel_smpte_subtitle_asset.h"
+#include "reel_smpte_text_asset.h"
 #include <libcxml/cxml.h>
 #include <boost/test/unit_test.hpp>
 #include "stream_operators.h"
@@ -78,7 +78,7 @@ BOOST_AUTO_TEST_CASE (reel_picture_asset_test)
 }
 
 
-/** Test the XML constructor of ReelSMPTESubtitleAsset */
+/** Test the XML constructor of ReelSMPTETextAsset */
 BOOST_AUTO_TEST_CASE (reel_smpte_subtitle_asset_test)
 {
 	auto doc = make_shared<cxml::Document>("MainSubtitle");
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE (reel_smpte_subtitle_asset_test)
 		"</MainSubtitle>"
 		);
 
-	dcp::ReelSMPTESubtitleAsset ps (doc);
+	dcp::ReelSMPTETextAsset ps (doc);
 	BOOST_CHECK_EQUAL (ps.id(), "8bca1489-aab1-9259-a4fd-8150abc1de12");
 	BOOST_CHECK_EQUAL (ps.annotation_text().get_value_or(""), "Goodbye world!");
 	BOOST_CHECK_EQUAL (ps.edit_rate(), dcp::Fraction(25, 1));

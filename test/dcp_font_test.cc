@@ -37,8 +37,8 @@
 #include "file.h"
 #include "interop_subtitle_asset.h"
 #include "reel.h"
-#include "reel_interop_subtitle_asset.h"
-#include "reel_smpte_subtitle_asset.h"
+#include "reel_interop_text_asset.h"
+#include "reel_smpte_text_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "test.h"
 #include "util.h"
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 	check_file ("test/data/dummy.ttf", "build/test/interop_dcp_font_test/font_0.ttf");
 
 	auto reel = make_shared<dcp::Reel>();
-	reel->add (make_shared<dcp::ReelInteropSubtitleAsset>(subs, dcp::Fraction (24, 1), 24, 0));
+	reel->add (make_shared<dcp::ReelInteropTextAsset>(subs, dcp::Fraction (24, 1), 24, 0));
 
 	auto cpl = make_shared<dcp::CPL>("", dcp::ContentKind::TRAILER, dcp::Standard::INTEROP);
 	cpl->add (reel);
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
 	subs->write (directory / "frobozz.mxf");
 
 	auto reel = make_shared<dcp::Reel>();
-	reel->add (make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction (24, 1), 24, 0));
+	reel->add (make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction (24, 1), 24, 0));
 
 	auto cpl = make_shared<dcp::CPL>("", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
 	cpl->add (reel);

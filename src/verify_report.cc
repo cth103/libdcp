@@ -39,7 +39,7 @@
 #include "reel.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
-#include "reel_subtitle_asset.h"
+#include "reel_text_asset.h"
 #include "verify.h"
 #include "verify_report.h"
 

@@ -39,7 +39,7 @@
 #include "language_tag.h"
 #include "reel.h"
 #include "reel_mono_picture_asset.h"
-#include "reel_smpte_subtitle_asset.h"
+#include "reel_smpte_text_asset.h"
 #include "reel_sound_asset.h"
 #include "stream_operators.h"
 #include "test.h"
@@ -351,7 +351,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 
 	auto reel = make_shared<dcp::Reel>();
 	reel->add (black_picture_asset("build/test/cpl_metadata_write_test1"));
-	reel->add (make_shared<dcp::ReelSMPTESubtitleAsset>(doc));
+	reel->add (make_shared<dcp::ReelSMPTETextAsset>(doc));
 	cpl.add (reel);
 
 	auto lt = { dcp::LanguageTag("en-US"), dcp::LanguageTag("fr-ZA") };

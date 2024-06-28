@@ -21,7 +21,6 @@
 #include "cpl.h"
 #include "dcp.h"
 #include "reel.h"
-#include "reel_subtitle_asset.h"
 #include "subtitle.h"
 #include "reel_asset.h"
 #include <boost/filesystem.hpp>

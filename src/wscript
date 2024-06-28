@@ -98,15 +98,15 @@ def build(bld):
              reel_closed_caption_asset.cc
              reel_file_asset.cc
              reel_interop_closed_caption_asset.cc
-             reel_interop_subtitle_asset.cc
+             reel_interop_text_asset.cc
              reel_markers_asset.cc
              reel_mono_picture_asset.cc
              reel_picture_asset.cc
              reel_smpte_closed_caption_asset.cc
-             reel_smpte_subtitle_asset.cc
+             reel_smpte_text_asset.cc
              reel_sound_asset.cc
              reel_stereo_picture_asset.cc
-             reel_subtitle_asset.cc
+             reel_text_asset.cc
              ref.cc
              rgb_xyz.cc
              ruby.cc
@@ -215,15 +215,15 @@ def build(bld):
               reel_closed_caption_asset.h
               reel_file_asset.h
               reel_interop_closed_caption_asset.h
-              reel_interop_subtitle_asset.h
+              reel_interop_text_asset.h
               reel_markers_asset.h
               reel_mono_picture_asset.h
               reel_picture_asset.h
               reel_smpte_closed_caption_asset.h
-              reel_smpte_subtitle_asset.h
+              reel_smpte_text_asset.h
               reel_sound_asset.h
               reel_stereo_picture_asset.h
-              reel_subtitle_asset.h
+              reel_text_asset.h
               ref.h
               rgb_xyz.h
               ruby.h

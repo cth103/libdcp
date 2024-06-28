@@ -47,12 +47,12 @@
 #include "reel.h"
 #include "reel_asset.h"
 #include "reel_interop_closed_caption_asset.h"
-#include "reel_interop_subtitle_asset.h"
+#include "reel_interop_text_asset.h"
 #include "reel_markers_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_smpte_closed_caption_asset.h"
-#include "reel_smpte_subtitle_asset.h"
+#include "reel_smpte_text_asset.h"
 #include "reel_sound_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "sound_asset.h"
@@ -447,7 +447,7 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 	subs->add_font ("afont", data);
 	subs->write (path / "subs" / "subs.xml");
 
-	auto reel_subs = make_shared<dcp::ReelInteropSubtitleAsset>(subs, dcp::Fraction(24, 1), 240, 0);
+	auto reel_subs = make_shared<dcp::ReelInteropTextAsset>(subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls().front()->reels().front()->add (reel_subs);
 
 	return dcp;
@@ -468,7 +468,7 @@ make_simple_with_smpte_subs (boost::filesystem::path path)
 
 	subs->write (path / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 192, 0);
+	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), 192, 0);
 	dcp->cpls().front()->reels().front()->add (reel_subs);
 
 	return dcp;

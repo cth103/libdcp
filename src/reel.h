@@ -68,7 +68,7 @@ class DecryptedKDM;
 class ReelAsset;
 class ReelPictureAsset;
 class ReelSoundAsset;
-class ReelSubtitleAsset;
+class ReelTextAsset;
 class ReelMarkersAsset;
 class ReelClosedCaptionAsset;
 class ReelAtmosAsset;
@@ -84,7 +84,7 @@ public:
 	Reel (
 		std::shared_ptr<ReelPictureAsset> picture,
 		std::shared_ptr<ReelSoundAsset> sound = std::shared_ptr<ReelSoundAsset> (),
-		std::shared_ptr<ReelSubtitleAsset> subtitle = std::shared_ptr<ReelSubtitleAsset> (),
+		std::shared_ptr<ReelTextAsset> subtitle = std::shared_ptr<ReelTextAsset> (),
 		std::shared_ptr<ReelMarkersAsset> markers = std::shared_ptr<ReelMarkersAsset> (),
 		std::shared_ptr<ReelAtmosAsset> atmos = std::shared_ptr<ReelAtmosAsset> ()
 		)
@@ -105,7 +105,7 @@ public:
 		return _main_sound;
 	}
 
-	std::shared_ptr<ReelSubtitleAsset> main_subtitle () const {
+	std::shared_ptr<ReelTextAsset> main_subtitle () const {
 		return _main_subtitle;
 	}
 
@@ -145,7 +145,7 @@ private:
 
 	std::shared_ptr<ReelPictureAsset> _main_picture;
 	std::shared_ptr<ReelSoundAsset> _main_sound;
-	std::shared_ptr<ReelSubtitleAsset> _main_subtitle;
+	std::shared_ptr<ReelTextAsset> _main_subtitle;
 	std::shared_ptr<ReelMarkersAsset> _main_markers;
 	std::vector<std::shared_ptr<ReelClosedCaptionAsset>> _closed_captions;
 	std::shared_ptr<ReelAtmosAsset> _atmos;

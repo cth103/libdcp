@@ -34,7 +34,7 @@
 
 #include "interop_subtitle_asset.h"
 #include "interop_load_font_node.h"
-#include "reel_interop_subtitle_asset.h"
+#include "reel_interop_text_asset.h"
 #include "subtitle_string.h"
 #include "subtitle_image.h"
 #include "test.h"
@@ -955,7 +955,7 @@ BOOST_AUTO_TEST_CASE (write_interop_subtitle_test3)
 	c->write ("build/test/write_interop_subtitle_test3/subs.xml");
 
 	auto reel = std::make_shared<dcp::Reel>();
-	reel->add(std::make_shared<dcp::ReelInteropSubtitleAsset>(c, dcp::Fraction(24, 1), 6046, 0));
+	reel->add(std::make_shared<dcp::ReelInteropTextAsset>(c, dcp::Fraction(24, 1), 6046, 0));
 
 	string const issue_date = "2018-09-02T04:45:18+00:00";
 	string const issuer = "libdcp";

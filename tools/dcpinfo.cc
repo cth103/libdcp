@@ -46,7 +46,7 @@
 #include "reel.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
-#include "reel_subtitle_asset.h"
+#include "reel_text_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "sound_asset.h"
 #include "subtitle_asset.h"
@@ -243,7 +243,7 @@ static
 void
 main_subtitle (vector<string> const& only, shared_ptr<Reel> reel, bool list_subtitles)
 {
-	shared_ptr<dcp::ReelSubtitleAsset> ms = reel->main_subtitle ();
+	auto ms = reel->main_subtitle();
 	if (!ms) {
 		return;
 	}

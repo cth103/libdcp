@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	cpl->add (make_shared<dcp::Reel>(
 			make_shared<dcp::ReelMonoPictureAsset>(mp, 0),
 			make_shared<dcp::ReelSoundAsset>(ms, 0),
-			shared_ptr<dcp::ReelSubtitleAsset>()
+			shared_ptr<dcp::ReelTextAsset>()
 			));
 	cpl->set_content_version (
 		dcp::ContentVersion("urn:uri:81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00", "81fb54df-e1bf-4647-8788-ea7ba154375b_2012-07-17T04:45:18+00:00")

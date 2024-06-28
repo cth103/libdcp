@@ -51,7 +51,7 @@
 #include "reel_closed_caption_asset.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
-#include "reel_subtitle_asset.h"
+#include "reel_text_asset.h"
 #include "util.h"
 #include "version.h"
 #include "warnings.h"

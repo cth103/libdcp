@@ -32,45 +32,33 @@
 */
 
 
-/** @file  src/reel_smpte_subtitle_asset.h
- *  @brief ReelSMPTESubtitleAsset class
+/** @file  src/reel_interop_text_asset.cc
+ *  @brief ReelInteropTextAsset class
  */
 
 
-#include "reel_subtitle_asset.h"
-#include "smpte_subtitle_asset.h"
+#include "reel_interop_text_asset.h"
+#include "warnings.h"
+LIBDCP_DISABLE_WARNINGS
+#include <libxml++/libxml++.h>
+LIBDCP_ENABLE_WARNINGS
 
 
-namespace dcp {
+using std::string;
+using boost::optional;
+using namespace dcp;
 
 
-class SMPTESubtitleAsset;
-
-
-/** @class ReelSMPTESubtitleAsset
- *  @brief Part of a Reel's description which refers to an SMPTE subtitle MXF file
- */
-class ReelSMPTESubtitleAsset : public ReelSubtitleAsset
+ReelInteropTextAsset::ReelInteropTextAsset(std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: ReelTextAsset(asset, edit_rate, intrinsic_duration, entry_point)
 {
-public:
-	ReelSMPTESubtitleAsset (std::shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
-	explicit ReelSMPTESubtitleAsset (std::shared_ptr<const cxml::Node>);
-
-	std::shared_ptr<const SMPTESubtitleAsset> smpte_asset () const {
-		return asset_of_type<const SMPTESubtitleAsset>();
-	}
-
-	std::shared_ptr<SMPTESubtitleAsset> smpte_asset () {
-		return asset_of_type<SMPTESubtitleAsset>();
-	}
-
-private:
-	boost::optional<std::string> key_type () const override {
-		return std::string("MDSK");
-	}
-};
-
 
 }
 
+
+ReelInteropTextAsset::ReelInteropTextAsset(std::shared_ptr<const cxml::Node> node)
+	: ReelTextAsset(node)
+{
+	node->done ();
+}
 

@@ -47,14 +47,14 @@
 #include "reel_atmos_asset.h"
 #include "reel_closed_caption_asset.h"
 #include "reel_interop_closed_caption_asset.h"
-#include "reel_interop_subtitle_asset.h"
+#include "reel_interop_text_asset.h"
 #include "reel_markers_asset.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_smpte_closed_caption_asset.h"
-#include "reel_smpte_subtitle_asset.h"
+#include "reel_smpte_text_asset.h"
 #include "reel_sound_asset.h"
 #include "reel_stereo_picture_asset.h"
-#include "reel_subtitle_asset.h"
+#include "reel_text_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "sound_asset.h"
 #include "stereo_j2k_picture_asset.h"
@@ -98,10 +98,10 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node, dcp::Standard standard)
 	if (main_subtitle) {
 		switch (standard) {
 			case Standard::INTEROP:
-				_main_subtitle = make_shared<ReelInteropSubtitleAsset>(main_subtitle);
+				_main_subtitle = make_shared<ReelInteropTextAsset>(main_subtitle);
 				break;
 			case Standard::SMPTE:
-				_main_subtitle = make_shared<ReelSMPTESubtitleAsset>(main_subtitle);
+				_main_subtitle = make_shared<ReelSMPTETextAsset>(main_subtitle);
 				break;
 		}
 	}
@@ -208,8 +208,8 @@ Reel::equals(std::shared_ptr<const Reel> other, EqualityOptions const& opt, Note
 	bool same_type = false;
 
 	{
-		auto interop = dynamic_pointer_cast<ReelInteropSubtitleAsset>(_main_subtitle);
-		auto interop_other = dynamic_pointer_cast<ReelInteropSubtitleAsset>(other->_main_subtitle);
+		auto interop = dynamic_pointer_cast<ReelInteropTextAsset>(_main_subtitle);
+		auto interop_other = dynamic_pointer_cast<ReelInteropTextAsset>(other->_main_subtitle);
 		if (interop && interop_other) {
 			same_type = true;
 			if (!interop->equals(interop_other, opt, note)) {
@@ -219,8 +219,8 @@ Reel::equals(std::shared_ptr<const Reel> other, EqualityOptions const& opt, Note
 	}
 
 	{
-		auto smpte = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(_main_subtitle);
-		auto smpte_other = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(other->_main_subtitle);
+		auto smpte = dynamic_pointer_cast<ReelSMPTETextAsset>(_main_subtitle);
+		auto smpte_other = dynamic_pointer_cast<ReelSMPTETextAsset>(other->_main_subtitle);
 		if (smpte && smpte_other) {
 			same_type = true;
 			if (!smpte->equals(smpte_other, opt, note)) {
@@ -333,13 +333,13 @@ Reel::give_kdm_to_assets (DecryptedKDM const & kdm)
 			_main_sound->asset()->set_key (i.key());
 		}
 		if (_main_subtitle) {
-			auto smpte = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(_main_subtitle);
+			auto smpte = dynamic_pointer_cast<ReelSMPTETextAsset>(_main_subtitle);
 			if (smpte && i.id() == smpte->key_id() && smpte->asset_ref().resolved()) {
 				smpte->smpte_asset()->set_key(i.key());
 			}
 		}
 		for (auto j: _closed_captions) {
-			auto smpte = dynamic_pointer_cast<ReelSMPTESubtitleAsset>(j);
+			auto smpte = dynamic_pointer_cast<ReelSMPTETextAsset>(j);
 			if (smpte && i.id() == smpte->key_id() && smpte->asset_ref().resolved()) {
 				smpte->smpte_asset()->set_key(i.key());
 			}
@@ -358,7 +358,7 @@ Reel::add (shared_ptr<ReelAsset> asset)
 		_main_picture = p;
 	} else if (auto so = dynamic_pointer_cast<ReelSoundAsset>(asset)) {
 		_main_sound = so;
-	} else if (auto su = dynamic_pointer_cast<ReelSubtitleAsset>(asset)) {
+	} else if (auto su = dynamic_pointer_cast<ReelTextAsset>(asset)) {
 		_main_subtitle = su;
 	} else if (auto m = dynamic_pointer_cast<ReelMarkersAsset>(asset)) {
 		_main_markers = m;

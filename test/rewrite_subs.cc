@@ -36,7 +36,7 @@
 #include "cpl.h"
 #include "reel.h"
 #include "subtitle_asset.h"
-#include "reel_subtitle_asset.h"
+#include "reel_text_asset.h"
 #include "exceptions.h"
 
 using std::cout;

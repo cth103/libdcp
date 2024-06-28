@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	cpl->add(make_shared<dcp::Reel>(
 			make_shared<dcp::ReelMonoPictureAsset>(mp, 0),
 			make_shared<dcp::ReelSoundAsset>(ms, 0),
-			shared_ptr<dcp::ReelSubtitleAsset>(),
+			shared_ptr<dcp::ReelTextAsset>(),
 			shared_ptr<dcp::ReelMarkersAsset>(),
 			make_shared<dcp::ReelAtmosAsset>(am, 0)
 			));

@@ -46,7 +46,7 @@
 #include "reel_mono_picture_asset.h"
 #include "reel_picture_asset.h"
 #include "reel_sound_asset.h"
-#include "reel_smpte_subtitle_asset.h"
+#include "reel_smpte_text_asset.h"
 #include "rgb_xyz.h"
 #include "smpte_subtitle_asset.h"
 #include "sound_asset.h"
@@ -203,7 +203,7 @@ BOOST_AUTO_TEST_CASE (decryption_test2)
 	auto reel = std::make_shared<dcp::Reel>();
 	auto reel_picture_asset = std::make_shared<dcp::ReelMonoPictureAsset>(picture_asset, 0);
 	auto reel_sound_asset = std::make_shared<dcp::ReelSoundAsset>(sound_asset, 0);
-	auto reel_subs_asset = std::make_shared<dcp::ReelSMPTESubtitleAsset>(subs_asset, dcp::Fraction(24, 1), 120, 0);
+	auto reel_subs_asset = std::make_shared<dcp::ReelSMPTETextAsset>(subs_asset, dcp::Fraction(24, 1), 120, 0);
 	reel->add(reel_picture_asset);
 	reel->add(reel_sound_asset);
 	reel->add(reel_subs_asset);

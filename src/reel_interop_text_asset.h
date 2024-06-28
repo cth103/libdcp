@@ -32,27 +32,26 @@
 */
 
 
-/** @file  src/reel_interop_subtitle_asset.h
- *  @brief ReelInteropSubtitleAsset class
+/** @file  src/reel_interop_text_asset.h
+ *  @brief ReelInteropTextAsset class
  */
 
 
 #include "interop_subtitle_asset.h"
-#include "reel_file_asset.h"
-#include "reel_subtitle_asset.h"
+#include "reel_text_asset.h"
 
 
 namespace dcp {
 
 
-/** @class ReelInteropSubtitleAsset
- *  @brief Part of a Reel's description which refers to an Interop subtitle XML file
+/** @class ReelInteropTextAsset
+ *  @brief Part of a Reel's description which refers to an Interop subtitle or caption XML file
  */
-class ReelInteropSubtitleAsset : public ReelSubtitleAsset
+class ReelInteropTextAsset : public ReelTextAsset
 {
 public:
-	ReelInteropSubtitleAsset (std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
-	explicit ReelInteropSubtitleAsset (std::shared_ptr<const cxml::Node>);
+	ReelInteropTextAsset(std::shared_ptr<SubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
+	explicit ReelInteropTextAsset (std::shared_ptr<const cxml::Node>);
 
 	std::shared_ptr<const InteropSubtitleAsset> interop_asset () const {
 		return asset_of_type<const InteropSubtitleAsset>();

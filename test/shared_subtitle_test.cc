@@ -42,7 +42,7 @@
 #include "subtitle_string.h"
 #include "subtitle_image.h"
 #include "subtitle_asset_internal.h"
-#include "reel_interop_subtitle_asset.h"
+#include "reel_interop_text_asset.h"
 #include "reel.h"
 #include "cpl.h"
 #include "dcp.h"

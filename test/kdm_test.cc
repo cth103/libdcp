@@ -41,7 +41,7 @@
 #include "reel.h"
 #include "reel_mono_picture_asset.h"
 #include "reel_sound_asset.h"
-#include "reel_smpte_subtitle_asset.h"
+#include "reel_smpte_text_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "test.h"
 #include "types.h"
@@ -335,7 +335,7 @@ BOOST_AUTO_TEST_CASE (vf_kdm_test)
 	subs->add_font ("afont", data);
 	subs->write (vf_path / "subs.xml");
 
-	auto reel_subs = make_shared<dcp::ReelSMPTESubtitleAsset>(subs, dcp::Fraction(24, 1), 192, 0);
+	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(subs, dcp::Fraction(24, 1), 192, 0);
 
 	auto reel = make_shared<dcp::Reel>(ov_reel_picture, ov_reel_sound, reel_subs);
 

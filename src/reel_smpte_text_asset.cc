@@ -32,12 +32,12 @@
 */
 
 
-/** @file  src/reel_interop_subtitle_asset.cc
- *  @brief ReelInteropSubtitleAsset class
+/** @file  src/reel_interop_text_asset.cc
+ *  @brief ReelInteropTextAsset class
  */
 
 
-#include "reel_smpte_subtitle_asset.h"
+#include "reel_smpte_text_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "warnings.h"
 LIBDCP_DISABLE_WARNINGS
@@ -51,15 +51,15 @@ using boost::optional;
 using namespace dcp;
 
 
-ReelSMPTESubtitleAsset::ReelSMPTESubtitleAsset (shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
-	: ReelSubtitleAsset (asset, edit_rate, intrinsic_duration, entry_point)
+ReelSMPTETextAsset::ReelSMPTETextAsset(shared_ptr<SMPTESubtitleAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+	: ReelTextAsset(asset, edit_rate, intrinsic_duration, entry_point)
 {
 
 }
 
 
-ReelSMPTESubtitleAsset::ReelSMPTESubtitleAsset (shared_ptr<const cxml::Node> node)
-	: ReelSubtitleAsset (node)
+ReelSMPTETextAsset::ReelSMPTETextAsset(shared_ptr<const cxml::Node> node)
+	: ReelTextAsset(node)
 {
 	node->done ();
 }

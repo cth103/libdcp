@@ -57,7 +57,7 @@
 #include "pkl.h"
 #include "raw_convert.h"
 #include "reel_asset.h"
-#include "reel_subtitle_asset.h"
+#include "reel_text_asset.h"
 #include "smpte_subtitle_asset.h"
 #include "sound_asset.h"
 #include "stereo_j2k_picture_asset.h"
