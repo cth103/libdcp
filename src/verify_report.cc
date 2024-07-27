@@ -92,12 +92,19 @@ dcp::verify_report(dcp::VerificationResult const& result, Formatter& formatter)
 		for (auto note: result.notes) {
 			if (note.cpl_id() == cpl_id) {
 				auto const note_as_string = dcp::note_to_string(note, formatter.process_string(), formatter.process_filename());
-				if (note.type() == dcp::VerificationNote::Type::OK) {
+				switch (note.type()) {
+				case dcp::VerificationNote::Type::OK:
 					formatter.list_item(note_as_string, string("ok"));
-				} else if (note.type() == dcp::VerificationNote::Type::WARNING) {
+					break;
+				case dcp::VerificationNote::Type::WARNING:
 					formatter.list_item(note_as_string, string("warning"));
-				} else if (note.type() == dcp::VerificationNote::Type::ERROR) {
+					break;
+				case dcp::VerificationNote::Type::ERROR:
 					formatter.list_item(note_as_string, string("error"));
+					break;
+				case dcp::VerificationNote::Type::BV21_ERROR:
+					formatter.list_item(note_as_string, string("bv21-error"));
+					break;
 				}
 			}
 		}
