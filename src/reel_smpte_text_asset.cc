@@ -72,9 +72,9 @@ string
 ReelSMPTETextAsset::cpl_node_name() const
 {
 	switch (_type) {
-	case TextType::SUBTITLE:
+	case TextType::OPEN_SUBTITLE:
 		return "MainSubtitle";
-	case TextType::CAPTION:
+	case TextType::CLOSED_CAPTION:
 		return "tt:ClosedCaption";
 	}
 
@@ -87,9 +87,9 @@ pair<string, string>
 ReelSMPTETextAsset::cpl_node_namespace() const
 {
 	switch (_type) {
-	case TextType::SUBTITLE:
+	case TextType::OPEN_SUBTITLE:
 		return {};
-	case TextType::CAPTION:
+	case TextType::CLOSED_CAPTION:
 		return make_pair("http://www.smpte-ra.org/schemas/429-12/2008/TT", "tt");
 	}
 
@@ -102,7 +102,7 @@ xmlpp::Element *
 ReelSMPTETextAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
 	auto asset = ReelFileAsset::write_to_cpl (node, standard);
-	string const ns = _type == TextType::CAPTION ? "tt" : "";
+	string const ns = _type == TextType::CLOSED_CAPTION ? "tt" : "";
 	if (_language) {
 		cxml::add_child(asset, "Language", ns)->add_child_text(*_language);
 	}

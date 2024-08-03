@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE (interop_dcp_font_test)
 	check_file ("test/data/dummy.ttf", "build/test/interop_dcp_font_test/font_0.ttf");
 
 	auto reel = make_shared<dcp::Reel>();
-	reel->add(make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction (24, 1), 24, 0));
+	reel->add(make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::OPEN_SUBTITLE, subs, dcp::Fraction (24, 1), 24, 0));
 
 	auto cpl = make_shared<dcp::CPL>("", dcp::ContentKind::TRAILER, dcp::Standard::INTEROP);
 	cpl->add (reel);
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE (smpte_dcp_font_test)
 	subs->write (directory / "frobozz.mxf");
 
 	auto reel = make_shared<dcp::Reel>();
-	reel->add(make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction (24, 1), 24, 0));
+	reel->add(make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, subs, dcp::Fraction (24, 1), 24, 0));
 
 	auto cpl = make_shared<dcp::CPL>("", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
 	cpl->add (reel);

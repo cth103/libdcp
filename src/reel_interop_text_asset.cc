@@ -70,9 +70,9 @@ string
 ReelInteropTextAsset::cpl_node_name() const
 {
 	switch (_type) {
-	case TextType::SUBTITLE:
+	case TextType::OPEN_SUBTITLE:
 		return "MainSubtitle";
-	case TextType::CAPTION:
+	case TextType::CLOSED_CAPTION:
 		return "cc-cpl:MainClosedCaption";
 	}
 
@@ -85,9 +85,9 @@ pair<string, string>
 ReelInteropTextAsset::cpl_node_namespace() const
 {
 	switch (_type) {
-	case TextType::SUBTITLE:
+	case TextType::OPEN_SUBTITLE:
 		return {};
-	case TextType::CAPTION:
+	case TextType::CLOSED_CAPTION:
 		return make_pair("http://www.digicine.com/PROTO-ASDCP-CC-CPL-20070926#", "cc-cpl");
 	}
 

@@ -356,7 +356,7 @@ Reel::add (shared_ptr<ReelAsset> asset)
 	} else if (auto so = dynamic_pointer_cast<ReelSoundAsset>(asset)) {
 		_main_sound = so;
 	} else if (auto te = dynamic_pointer_cast<ReelTextAsset>(asset)) {
-		if (te->type() == TextType::SUBTITLE) {
+		if (te->type() == TextType::OPEN_SUBTITLE) {
 			_main_subtitle = te;
 		} else {
 			_closed_captions.push_back(te);

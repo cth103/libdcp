@@ -445,7 +445,7 @@ make_simple_with_interop_subs (boost::filesystem::path path)
 	subs->add_font ("afont", data);
 	subs->write (path / "subs" / "subs.xml");
 
-	auto reel_subs = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), 240, 0);
+	auto reel_subs = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::OPEN_SUBTITLE, subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls().front()->reels().front()->add (reel_subs);
 
 	return dcp;
@@ -466,7 +466,7 @@ make_simple_with_smpte_subs (boost::filesystem::path path)
 
 	subs->write (path / "subs.mxf");
 
-	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::SUBTITLE, subs, dcp::Fraction(24, 1), 192, 0);
+	auto reel_subs = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, subs, dcp::Fraction(24, 1), 192, 0);
 	dcp->cpls().front()->reels().front()->add (reel_subs);
 
 	return dcp;
@@ -482,7 +482,7 @@ make_simple_with_interop_ccaps (boost::filesystem::path path)
 	subs->add(simple_text());
 	subs->write (path / "ccap.xml");
 
-	auto reel_caps = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::CAPTION, subs, dcp::Fraction(24, 1), 240, 0);
+	auto reel_caps = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::CLOSED_CAPTION, subs, dcp::Fraction(24, 1), 240, 0);
 	dcp->cpls()[0]->reels()[0]->add (reel_caps);
 
 	return dcp;
@@ -502,7 +502,7 @@ make_simple_with_smpte_ccaps (boost::filesystem::path path)
 	subs->add_font("font", fake_font);
 	subs->write (path / "ccap.mxf");
 
-	auto reel_caps = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CAPTION, subs, dcp::Fraction(24, 1), 192, 0);
+	auto reel_caps = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CLOSED_CAPTION, subs, dcp::Fraction(24, 1), 192, 0);
 	dcp->cpls()[0]->reels()[0]->add(reel_caps);
 
 	return dcp;

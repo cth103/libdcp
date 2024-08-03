@@ -72,9 +72,9 @@ ReelTextAsset::ReelTextAsset(std::shared_ptr<const cxml::Node> node)
 	: ReelFileAsset (node)
 {
 	if (node->name() == "MainSubtitle") {
-		_type = TextType::SUBTITLE;
+		_type = TextType::OPEN_SUBTITLE;
 	} else if (node->name() == "MainClosedCaption" || node->name() == "ClosedCaption") {
-		_type = TextType::CAPTION;
+		_type = TextType::CLOSED_CAPTION;
 	} else {
 		DCP_ASSERT(false);
 	}
