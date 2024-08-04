@@ -76,23 +76,19 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node, dcp::Standard standard)
 {
 	auto asset_list = node->node_child ("AssetList");
 
-	auto main_picture = asset_list->optional_node_child ("MainPicture");
-	if (main_picture) {
+	if (auto main_picture = asset_list->optional_node_child("MainPicture")) {
 		_main_picture = make_shared<ReelMonoPictureAsset>(main_picture);
 	}
 
-	auto main_stereoscopic_picture = asset_list->optional_node_child ("MainStereoscopicPicture");
-	if (main_stereoscopic_picture) {
+	if (auto main_stereoscopic_picture = asset_list->optional_node_child("MainStereoscopicPicture")) {
 		_main_picture = make_shared<ReelStereoPictureAsset>(main_stereoscopic_picture);
 	}
 
-	auto main_sound = asset_list->optional_node_child ("MainSound");
-	if (main_sound) {
+	if (auto main_sound = asset_list->optional_node_child("MainSound")) {
 		_main_sound = make_shared<ReelSoundAsset>(main_sound);
 	}
 
-	auto main_subtitle = asset_list->optional_node_child ("MainSubtitle");
-	if (main_subtitle) {
+	if (auto main_subtitle = asset_list->optional_node_child("MainSubtitle")) {
 		switch (standard) {
 			case Standard::INTEROP:
 				_main_subtitle = make_shared<ReelInteropTextAsset>(main_subtitle);
@@ -103,8 +99,7 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node, dcp::Standard standard)
 		}
 	}
 
-	auto main_markers = asset_list->optional_node_child ("MainMarkers");
-	if (main_markers) {
+	if (auto main_markers = asset_list->optional_node_child("MainMarkers")) {
 		_main_markers = make_shared<ReelMarkersAsset>(main_markers);
 	}
 
@@ -125,8 +120,7 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node, dcp::Standard standard)
 		}
 	}
 
-	auto atmos = asset_list->optional_node_child ("AuxData");
-	if (atmos) {
+	if (auto atmos = asset_list->optional_node_child("AuxData")) {
 		_atmos = make_shared<ReelAtmosAsset>(atmos);
 	}
 
