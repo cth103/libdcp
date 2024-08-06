@@ -74,6 +74,10 @@ ReelSMPTETextAsset::cpl_node_name() const
 	switch (_type) {
 	case TextType::OPEN_SUBTITLE:
 		return "MainSubtitle";
+	case TextType::OPEN_CAPTION:
+		return "tt:MainCaption";
+	case TextType::CLOSED_SUBTITLE:
+		return "ClosedSubtitle";
 	case TextType::CLOSED_CAPTION:
 		return "tt:ClosedCaption";
 	}
@@ -88,7 +92,9 @@ ReelSMPTETextAsset::cpl_node_namespace() const
 {
 	switch (_type) {
 	case TextType::OPEN_SUBTITLE:
+	case TextType::CLOSED_SUBTITLE:
 		return {};
+	case TextType::OPEN_CAPTION:
 	case TextType::CLOSED_CAPTION:
 		return make_pair("http://www.smpte-ra.org/schemas/429-12/2008/TT", "tt");
 	}

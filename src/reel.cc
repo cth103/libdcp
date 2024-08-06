@@ -90,17 +90,40 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node, dcp::Standard standard)
 
 	if (auto main_subtitle = asset_list->optional_node_child("MainSubtitle")) {
 		switch (standard) {
-			case Standard::INTEROP:
-				_main_subtitle = make_shared<ReelInteropTextAsset>(main_subtitle);
-				break;
-			case Standard::SMPTE:
-				_main_subtitle = make_shared<ReelSMPTETextAsset>(main_subtitle);
-				break;
+		case Standard::INTEROP:
+			_main_subtitle = make_shared<ReelInteropTextAsset>(main_subtitle);
+			break;
+		case Standard::SMPTE:
+			_main_subtitle = make_shared<ReelSMPTETextAsset>(main_subtitle);
+			break;
+		}
+	}
+
+	if (auto main_caption = asset_list->optional_node_child("MainCaption")) {
+		switch (standard) {
+		case Standard::INTEROP:
+			DCP_ASSERT(false);
+			break;
+		case Standard::SMPTE:
+			_main_caption = make_shared<ReelSMPTETextAsset>(main_caption);
+			break;
 		}
 	}
 
 	if (auto main_markers = asset_list->optional_node_child("MainMarkers")) {
 		_main_markers = make_shared<ReelMarkersAsset>(main_markers);
+	}
+
+	auto closed_subtitles = asset_list->node_children("ClosedSubtitle");
+	for (auto i: closed_subtitles) {
+		switch (standard) {
+		case Standard::INTEROP:
+			DCP_ASSERT(false);
+			break;
+		case Standard::SMPTE:
+			_closed_subtitles.push_back(make_shared<ReelSMPTETextAsset>(i));
+			break;
+		}
 	}
 
 	/* XXX: it's not ideal that we silently tolerate Interop or SMPTE nodes here */
@@ -111,12 +134,12 @@ Reel::Reel (std::shared_ptr<const cxml::Node> node, dcp::Standard standard)
 	}
 	for (auto i: closed_captions) {
 		switch (standard) {
-			case Standard::INTEROP:
-				_closed_captions.push_back (make_shared<ReelInteropTextAsset>(i));
-				break;
-			case Standard::SMPTE:
-				_closed_captions.push_back (make_shared<ReelSMPTETextAsset>(i));
-				break;
+		case Standard::INTEROP:
+			_closed_captions.push_back(make_shared<ReelInteropTextAsset>(i));
+			break;
+		case Standard::SMPTE:
+			_closed_captions.push_back(make_shared<ReelSMPTETextAsset>(i));
+			break;
 		}
 	}
 
@@ -151,6 +174,14 @@ Reel::write_to_cpl (xmlpp::Element* node, Standard standard) const
 
 	if (_main_subtitle) {
 		_main_subtitle->write_to_cpl (asset_list, standard);
+	}
+
+	if (_main_caption) {
+		_main_caption->write_to_cpl(asset_list, standard);
+	}
+
+	for (auto i: _closed_subtitles) {
+		i->write_to_cpl(asset_list, standard);
 	}
 
 	for (auto i: _closed_captions) {
@@ -350,10 +381,19 @@ Reel::add (shared_ptr<ReelAsset> asset)
 	} else if (auto so = dynamic_pointer_cast<ReelSoundAsset>(asset)) {
 		_main_sound = so;
 	} else if (auto te = dynamic_pointer_cast<ReelTextAsset>(asset)) {
-		if (te->type() == TextType::OPEN_SUBTITLE) {
+		switch (te->type()) {
+		case TextType::OPEN_SUBTITLE:
 			_main_subtitle = te;
-		} else {
+			break;
+		case TextType::OPEN_CAPTION:
+			_main_caption = te;
+			break;
+		case TextType::CLOSED_SUBTITLE:
+			_closed_subtitles.push_back(te);
+			break;
+		case TextType::CLOSED_CAPTION:
 			_closed_captions.push_back(te);
+			break;
 		}
 	} else if (auto m = dynamic_pointer_cast<ReelMarkersAsset>(asset)) {
 		_main_markers = m;
@@ -378,6 +418,10 @@ Reel::assets () const
 	if (_main_subtitle) {
 		a.push_back (_main_subtitle);
 	}
+	if (_main_caption) {
+		a.push_back(_main_caption);
+	}
+	std::copy (_closed_subtitles.begin(), _closed_subtitles.end(), back_inserter(a));
 	std::copy (_closed_captions.begin(), _closed_captions.end(), back_inserter(a));
 	if (_atmos) {
 		a.push_back (_atmos);
@@ -397,28 +441,33 @@ Reel::resolve_refs (vector<shared_ptr<Asset>> assets)
 		_main_sound->asset_ref().resolve(assets);
 	}
 
-	if (_main_subtitle) {
-		_main_subtitle->asset_ref().resolve(assets);
-
+	auto resolve_interop_fonts = [&assets](shared_ptr<ReelTextAsset>(asset)) {
 		/* Interop subtitle handling is all special cases */
-		if (_main_subtitle->asset_ref().resolved()) {
-			auto iop = dynamic_pointer_cast<InteropTextAsset>(_main_subtitle->asset_ref().asset());
-			if (iop) {
-				iop->resolve_fonts (assets);
+		if (asset->asset_ref().resolved()) {
+			if (auto iop = dynamic_pointer_cast<InteropTextAsset>(asset->asset_ref().asset())) {
+				iop->resolve_fonts(assets);
 			}
 		}
+
+	};
+
+	if (_main_subtitle) {
+		_main_subtitle->asset_ref().resolve(assets);
+		resolve_interop_fonts(_main_subtitle);
+	}
+
+	if (_main_caption) {
+		_main_caption->asset_ref().resolve(assets);
+	}
+
+	for (auto i: _closed_subtitles) {
+		i->asset_ref().resolve(assets);
+		resolve_interop_fonts(i);
 	}
 
 	for (auto i: _closed_captions) {
 		i->asset_ref().resolve(assets);
-
-		/* Interop subtitle handling is all special cases */
-		if (i->asset_ref().resolved()) {
-			auto iop = dynamic_pointer_cast<InteropTextAsset>(i->asset_ref().asset());
-			if (iop) {
-				iop->resolve_fonts (assets);
-			}
-		}
+		resolve_interop_fonts(i);
 	}
 
 	if (_atmos) {
@@ -446,8 +495,14 @@ Reel::duration () const
 	if (_main_subtitle) {
 		d = min (d, _main_subtitle->actual_duration());
 	}
+	if (_main_caption) {
+		d = min(d, _main_caption->actual_duration());
+	}
 	if (_main_markers) {
 		d = min (d, _main_markers->actual_duration());
+	}
+	for (auto i: _closed_subtitles) {
+		d = min(d, i->actual_duration());
 	}
 	for (auto i: _closed_captions) {
 		d = min (d, i->actual_duration());

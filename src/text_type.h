@@ -38,6 +38,8 @@ namespace dcp {
 enum class TextType
 {
 	OPEN_SUBTITLE,
+	OPEN_CAPTION,
+	CLOSED_SUBTITLE,
 	CLOSED_CAPTION
 };
 
