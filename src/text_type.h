@@ -32,6 +32,10 @@
 */
 
 
+#ifndef LIBDCP_TEXT_TYPE_H
+#define LIBDCP_TEXT_TYPE_H
+
+
 namespace dcp {
 
 
@@ -45,3 +49,7 @@ enum class TextType
 
 
 }
+
+
+#endif
+
