@@ -3810,7 +3810,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 			expected.push_back(
 				dcp::VerificationNote(
 					dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE
-					).set_frame(frame).set_component(component).set_size(component_sizes[component])
+					).set_frame(frame).set_frame_rate(24).set_component(component).set_size(component_sizes[component])
 				);
 		}
 	}
