@@ -217,6 +217,7 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 				if (tile_part_length > max_tile_part_size) {
 					VerificationNote note{VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE};
 					note.set_frame(frame_index);
+					note.set_frame_rate(frame_rate);
 					note.set_component(tile_part_index);
 					note.set_size(tile_part_length);
 					notes.push_back(note);
