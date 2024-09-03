@@ -36,7 +36,7 @@ import shutil
 
 def dependencies(target, options):
     deps = [
-        ('libcxml', 'v0.17.9', options),
+        ('libcxml', 'v0.17.10', options),
         ('openjpeg', 'ad8edaacd54a862940d0a77c41ecda5858b54d6e'),
         ('asdcplib', 'v1.0.2')
     ]
@@ -59,6 +59,8 @@ def build(target, options):
         if target.distro != 'ubuntu' or not target.version in ('16.04', '22.04'):
             # We only build tests on Ubuntu 16.04 and 22.04
             cmd += ' --disable-tests'
+        if target.distro == 'centos' or (target.distro == 'ubuntu' and target.version == '16.04'):
+            cmd += ' --static-boost'
     elif target.platform == 'windows':
         cmd += f' --target-windows-{target.bits}'
 

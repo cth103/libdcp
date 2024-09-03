@@ -31,8 +31,9 @@
     files in the program, then also delete it here.
 */
 
-#define BOOST_TEST_DYN_LINK
+
 #define BOOST_TEST_MODULE libdcp_test
+
 #include "compose.hpp"
 #include "cpl.h"
 #include "dcp.h"

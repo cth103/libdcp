@@ -60,6 +60,7 @@ def options(opt):
     opt.add_option('--target-windows-32', action='store_true', default=False, help='set up to do a cross-compile to Windows 32-bit')
     opt.add_option('--enable-debug', action='store_true', default=False, help='build with debugging information and without optimisation')
     opt.add_option('--static', action='store_true', default=False, help='build libdcp statically, and link statically to openjpeg, cxml, asdcplib-dcpomatic')
+    opt.add_option('--static-boost', action='store_true', default=False, help='link statically to boost')
     opt.add_option('--disable-tests', action='store_true', default=False, help='disable building of tests')
     opt.add_option('--disable-benchmarks', action='store_true', default=False, help='disable building of benchmarks')
     opt.add_option('--enable-gcov', action='store_true', default=False, help='use gcov in tests')
@@ -110,6 +111,9 @@ def configure(conf):
         conf.env.append_value('LINKFLAGS', '-headerpad_max_install_names')
     elif int(gcc[0]) > 4:
         conf.env.append_value('CXXFLAGS', ['-Wsuggest-override'])
+
+    if not conf.options.static_boost:
+        conf.env.append_value('CXXFLAGS', '-DBOOST_TEST_DYN_LINK')
 
     # Disable libxml++ deprecation warnings for now
     conf.env.append_value('CXXFLAGS', ['-Wno-deprecated-declarations'])
