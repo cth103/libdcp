@@ -77,12 +77,8 @@ main ()
 			std::cout << "3D picture\n";
 		} else if (std::dynamic_pointer_cast<dcp::SoundAsset>(i)) {
 			std::cout << "Sound\n";
-		} else if (text = std::dynamic_pointer_cast<dcp::TextAsset>(i)) {
-			if (text->type() == dcp::TextType::SUBTITLE) {
-				std::cout << "Subtitle\n";
-			} else {
-				std::cout << "Caption\n";
-			}
+		} else if (std::dynamic_pointer_cast<dcp::TextAsset>(i)) {
+			std::cout << "Subtitle/caption\n";
 		} else if (std::dynamic_pointer_cast<dcp::CPL>(i)) {
 			std::cout << "CPL\n";
 		}
