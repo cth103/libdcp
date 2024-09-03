@@ -55,7 +55,8 @@
   _Pragma("GCC diagnostic ignored \"-Wsuggest-override\"") \
   _Pragma("GCC diagnostic ignored \"-Wunused-function\"") \
   _Pragma("GCC diagnostic ignored \"-Woverloaded-virtual\"") \
-  _Pragma("GCC diagnostic ignored \"-Wignored-qualifiers\"")
+  _Pragma("GCC diagnostic ignored \"-Wignored-qualifiers\"") \
+  _Pragma("GCC diagnostic ignored \"-Wtemplate-id-cdtor\"")
 #elif __GNUC__ >= 5
 #define LIBDCP_DISABLE_WARNINGS \
   _Pragma("GCC diagnostic push") \
