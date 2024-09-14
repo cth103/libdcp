@@ -35,7 +35,7 @@ import os
 import shutil
 
 def dependencies(target, options):
-    return (('libcxml', 'v0.17.6'), ('openjpeg', '925ca5192bb16d4f58a6fddc8b1623eced7f0203'), ('asdcplib', '8a4a2f25cac0c58aac1d4267facab20e5ec3b57f'))
+    return (('libcxml', 'v0.17.11'), ('openjpeg', '925ca5192bb16d4f58a6fddc8b1623eced7f0203'), ('asdcplib', '8a4a2f25cac0c58aac1d4267facab20e5ec3b57f'))
 
 def build(target, options):
     cmd = './waf configure --disable-examples --disable-dumpimage --disable-benchmarks --prefix=%s' % target.directory
