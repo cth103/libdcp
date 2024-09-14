@@ -42,7 +42,7 @@ def configure(conf):
     conf.check_cxx(fragment="""
                             #define BOOST_TEST_MODULE Config test\n
                             #include <boost/test/unit_test.hpp>\n
-                            int main() {}
+                            BOOST_AUTO_TEST_CASE(foo) {}
                             """,
                    msg='Checking for boost unit testing library',
                    lib='boost_unit_test_framework%s' % boost_lib_suffix,
