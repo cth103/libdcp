@@ -44,6 +44,8 @@ def build(target, options):
         if target.distro != 'ubuntu' or not target.version in ('16.04', '22.04'):
             # We only build tests on Ubuntu 16.04 and 22.04
             cmd += ' --disable-tests'
+        if target.distro == 'ubuntu' and target.version == '16.04':
+            cmd += ' --static-boost'
     elif target.platform == 'windows':
         cmd += f' --target-windows-{target.bits}'
 
