@@ -47,7 +47,6 @@ namespace filesystem
 boost::filesystem::path absolute(boost::filesystem::path const& path);
 boost::filesystem::path canonical(boost::filesystem::path const& path);
 boost::filesystem::path weakly_canonical(boost::filesystem::path const& path);
-boost::filesystem::path change_extension(boost::filesystem::path const& from, std::string const& new_extension);
 void copy(boost::filesystem::path const& from, boost::filesystem::path const& to);
 void copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to);
 void copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::system::error_code& ec);
