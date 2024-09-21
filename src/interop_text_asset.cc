@@ -73,7 +73,7 @@ using namespace dcp;
 InteropTextAsset::InteropTextAsset(boost::filesystem::path file)
 	: TextAsset(file)
 {
-	_raw_xml = dcp::file_to_string (file);
+	_raw_xml = dcp::file_to_string(file, 10 * 1024 * 1024);
 
 	auto xml = make_shared<cxml::Document>("DCSubtitle");
 	xml->read_file(dcp::filesystem::fix_long_path(file));
