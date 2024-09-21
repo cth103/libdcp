@@ -45,7 +45,6 @@
 #include "key.h"
 #include "metadata.h"
 #include "dcp_assert.h"
-#include <boost/signals2.hpp>
 
 
 namespace ASDCP {

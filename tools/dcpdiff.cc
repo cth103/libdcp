@@ -39,6 +39,7 @@
 #include "filesystem.h"
 #include "mxf.h"
 #include <getopt.h>
+#include <boost/bind.hpp>
 #include <boost/optional.hpp>
 #include <memory>
 #include <boost/filesystem.hpp>

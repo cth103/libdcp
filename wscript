@@ -228,13 +228,6 @@ def configure(conf):
                    define_name='LIBDCP_HAVE_WEAKLY_CANONICAL')
 
     conf.check_cxx(fragment="""
-    			    #include <boost/signals2.hpp>\n
-    			    int main() { boost::signals2::signal<void (int)> x; }\n
-			    """,
-                   msg='Checking for boost signals2 library',
-                   uselib_store='BOOST_SIGNALS2')
-
-    conf.check_cxx(fragment="""
     			    #include <boost/date_time.hpp>\n
     			    int main() { boost::gregorian::day_clock::local_day(); }\n
 			    """,
