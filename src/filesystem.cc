@@ -107,7 +107,11 @@ dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesyste
 
 
 void
+#ifdef LIBDCP_HAVE_COPY_OPTIONS
+dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::filesystem::copy_options option)
+#else
 dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::filesystem::copy_option option)
+#endif
 {
 	boost::filesystem::copy_file(dcp::filesystem::fix_long_path(from), dcp::filesystem::fix_long_path(to), option);
 }
@@ -247,7 +251,7 @@ dcp::filesystem::create_symlink(boost::filesystem::path const& from, boost::file
 std::string
 dcp::filesystem::extension(boost::filesystem::path const& path)
 {
-	return boost::filesystem::extension(dcp::filesystem::fix_long_path(path));
+	return dcp::filesystem::fix_long_path(path).extension().string();
 }
 
 
