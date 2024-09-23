@@ -301,7 +301,13 @@ dcp::filesystem::rename(boost::filesystem::path const& old_path, boost::filesyst
 boost::filesystem::path
 dcp::filesystem::change_extension(boost::filesystem::path const& path, std::string const& new_extension)
 {
+#ifdef LIBDCP_HAVE_REPLACE_EXTENSION
+	auto copy = path;
+	copy.replace_extension(new_extension);
+	return copy;
+#else
 	return boost::filesystem::change_extension(path, new_extension);
+#endif
 }
 
 
