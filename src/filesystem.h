@@ -51,11 +51,14 @@ boost::filesystem::path change_extension(boost::filesystem::path const& from, st
 void copy(boost::filesystem::path const& from, boost::filesystem::path const& to);
 void copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to);
 void copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::system::error_code& ec);
-#ifdef LIBDCP_HAVE_COPY_OPTIONS
-void copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::filesystem::copy_options ec);
-#else
-void copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::filesystem::copy_option ec);
-#endif
+
+enum class CopyOptions
+{
+	NONE,
+	OVERWRITE_EXISTING
+};
+
+void copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, CopyOptions options);
 bool create_directory(boost::filesystem::path const& path);
 bool create_directory(boost::filesystem::path const& path, boost::system::error_code& ec);
 bool create_directories(boost::filesystem::path const& path);

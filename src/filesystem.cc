@@ -107,13 +107,15 @@ dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesyste
 
 
 void
-#ifdef LIBDCP_HAVE_COPY_OPTIONS
-dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::filesystem::copy_options option)
-#else
-dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::filesystem::copy_option option)
-#endif
+dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, CopyOptions option)
 {
-	boost::filesystem::copy_file(dcp::filesystem::fix_long_path(from), dcp::filesystem::fix_long_path(to), option);
+#ifdef LIBDCP_HAVE_COPY_OPTIONS
+	auto const options = option == CopyOptions::OVERWRITE_EXISTING ? boost::filesystem::copy_options::overwrite_existing : boost::filesystem::copy_options::none;
+#else
+	auto const options = option == CopyOptions::OVERWRITE_EXISTING ? boost::filesystem::copy_option::overwrite_if_exists : boost::filesystem::copy_option::none;
+#endif
+
+	boost::filesystem::copy_file(dcp::filesystem::fix_long_path(from), dcp::filesystem::fix_long_path(to), options);
 }
 
 
