@@ -297,6 +297,14 @@ dcp::filesystem::rename(boost::filesystem::path const& old_path, boost::filesyst
 }
 
 
+/* We don't really need this but let's add it for completeness */
+boost::filesystem::path
+dcp::filesystem::change_extension(boost::filesystem::path const& path, std::string const& new_extension)
+{
+	return boost::filesystem::change_extension(path, new_extension);
+}
+
+
 #ifdef DCPOMATIC_WINDOWS
 
 dcp::filesystem::directory_iterator::directory_iterator(boost::filesystem::path const& path)
