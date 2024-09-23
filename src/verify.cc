@@ -2183,6 +2183,8 @@ dcp::note_to_string (VerificationNote note)
 		return String::compose("The namespace %1 in CPL %2 is invalid", note.note().get(), note.file()->filename());
 	case VerificationNote::Code::MISSING_CPL_CONTENT_VERSION:
 		return String::compose("The CPL %1 has no <ContentVersion> tag", note.note().get());
+	case VerificationNote::Code::INVALID_PKL_NAMESPACE:
+		return String::compose("The namespace %1 in PKL %2 is invalid", note.note().get(), note.file()->filename());
 	}
 
 	return "";

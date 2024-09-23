@@ -487,7 +487,12 @@ public:
 		 *  note contains the CPL ID
 		 *  file contains the CPL filename
 		 */
-		MISSING_CPL_CONTENT_VERSION
+		MISSING_CPL_CONTENT_VERSION,
+		/** The PKL namespace is not valid.
+		 *  note contains the invalid namespace
+		 *  file contains the PKL filename
+		 */
+		INVALID_PKL_NAMESPACE
 	};
 
 	VerificationNote (Type type, Code code)

@@ -52,6 +52,9 @@
 namespace dcp {
 
 
+class VerificationNote;
+
+
 class PKL : public Object, public AssetList
 {
 public:
@@ -59,7 +62,7 @@ public:
 		: AssetList(standard, annotation_text, issue_date, issuer, creator)
 	{}
 
-	explicit PKL (boost::filesystem::path file);
+	explicit PKL(boost::filesystem::path file, std::vector<dcp::VerificationNote>* notes = nullptr);
 
 	boost::optional<std::string> hash (std::string id) const;
 	boost::optional<std::string> type (std::string id) const;
