@@ -53,6 +53,7 @@
 #include "test.h"
 #include <asdcp/KM_util.h>
 #include <sndfile.h>
+#include <boost/bind.hpp>
 #include <boost/test/unit_test.hpp>
 
 

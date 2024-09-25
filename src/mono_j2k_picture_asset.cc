@@ -48,6 +48,7 @@
 #include "mono_j2k_picture_frame.h"
 #include <asdcp/AS_DCP.h>
 #include <asdcp/KM_fileio.h>
+#include <boost/bind/bind.hpp>
 
 
 using std::dynamic_pointer_cast;

@@ -49,7 +49,6 @@
 #include "util.h"
 #include "verify.h"
 #include "version.h"
-#include <boost/signals2.hpp>
 #include <memory>
 #include <string>
 #include <vector>

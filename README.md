@@ -24,7 +24,7 @@ Bugfixes were received from Philip Tschiemer.
 # Dependencies
 
 - pkg-config (for build system)
-- boost (1.45 or above): filesystem, signals2, datetime and unit testing libraries
+- boost (1.45 or above): filesystem, datetime and unit testing libraries
 - openssl
 - libxml++
 - xmlsec

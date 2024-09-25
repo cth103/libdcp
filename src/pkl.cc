@@ -44,6 +44,7 @@
 #include "raw_convert.h"
 #include "util.h"
 #include "warnings.h"
+#include "verify.h"
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
@@ -53,15 +54,18 @@ LIBDCP_ENABLE_WARNINGS
 using std::string;
 using std::shared_ptr;
 using std::make_shared;
+using std::vector;
 using boost::optional;
 using namespace dcp;
 
 
 static string const pkl_interop_ns = "http://www.digicine.com/PROTO-ASDCP-PKL-20040311#";
 static string const pkl_smpte_ns   = "http://www.smpte-ra.org/schemas/429-8/2007/PKL";
+/* I don't know why Resolve are using this namespace but apparently they are */
+static string const pkl_resolve_smpte_ns = "http://www.smpte-ra.org/schemas/2067-2/2016/PKL";
 
 
-PKL::PKL (boost::filesystem::path file)
+PKL::PKL(boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 	: _file (file)
 {
 	cxml::Document pkl ("PackingList");
@@ -71,6 +75,18 @@ PKL::PKL (boost::filesystem::path file)
 		_standard = Standard::INTEROP;
 	} else if (pkl.namespace_uri() == pkl_smpte_ns) {
 		_standard = Standard::SMPTE;
+	} else if (pkl.namespace_uri() == pkl_resolve_smpte_ns) {
+		_standard = Standard::SMPTE;
+		if (notes) {
+			notes->push_back(
+				dcp::VerificationNote(
+					dcp::VerificationNote::Type::ERROR,
+					dcp::VerificationNote::Code::INVALID_PKL_NAMESPACE,
+					pkl.namespace_uri(),
+					file
+					)
+				);
+		}
 	} else {
 		boost::throw_exception(XMLError("Unrecognised packing list namespace " + pkl.namespace_uri()));
 	}

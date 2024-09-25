@@ -237,11 +237,22 @@ def configure(conf):
                    define_name='LIBDCP_HAVE_WEAKLY_CANONICAL')
 
     conf.check_cxx(fragment="""
-    			    #include <boost/signals2.hpp>\n
-    			    int main() { boost::signals2::signal<void (int)> x; }\n
-			    """,
-                   msg='Checking for boost signals2 library',
-                   uselib_store='BOOST_SIGNALS2')
+                   #include <boost/filesystem.hpp>\n
+                   int main() { auto x = boost::filesystem::copy_options(); }\n
+                   """,
+                   mandatory=False,
+                   msg='Checking for boost::filesystem::copy_options',
+                   uselib='BOOST_FILESYSTEM',
+                   define_name='LIBDCP_HAVE_COPY_OPTIONS')
+
+    conf.check_cxx(fragment="""
+                   #include <boost/filesystem.hpp>\n
+                   int main() { boost::filesystem::path y = "foo"; y.replace_extension("bar"); }\n
+                   """,
+                   mandatory=False,
+                   msg='Checking for boost::filesystem::replace_extension',
+                   uselib='BOOST_FILESYSTEM',
+                   define_name='LIBDCP_HAVE_REPLACE_EXTENSION')
 
     conf.check_cxx(fragment="""
     			    #include <boost/date_time.hpp>\n

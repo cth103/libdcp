@@ -107,9 +107,15 @@ dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesyste
 
 
 void
-dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, boost::filesystem::copy_option option)
+dcp::filesystem::copy_file(boost::filesystem::path const& from, boost::filesystem::path const& to, CopyOptions option)
 {
-	boost::filesystem::copy_file(dcp::filesystem::fix_long_path(from), dcp::filesystem::fix_long_path(to), option);
+#ifdef LIBDCP_HAVE_COPY_OPTIONS
+	auto const options = option == CopyOptions::OVERWRITE_EXISTING ? boost::filesystem::copy_options::overwrite_existing : boost::filesystem::copy_options::none;
+#else
+	auto const options = option == CopyOptions::OVERWRITE_EXISTING ? boost::filesystem::copy_option::overwrite_if_exists : boost::filesystem::copy_option::none;
+#endif
+
+	boost::filesystem::copy_file(dcp::filesystem::fix_long_path(from), dcp::filesystem::fix_long_path(to), options);
 }
 
 
@@ -247,7 +253,7 @@ dcp::filesystem::create_symlink(boost::filesystem::path const& from, boost::file
 std::string
 dcp::filesystem::extension(boost::filesystem::path const& path)
 {
-	return boost::filesystem::extension(dcp::filesystem::fix_long_path(path));
+	return dcp::filesystem::fix_long_path(path).extension().string();
 }
 
 
@@ -297,7 +303,13 @@ dcp::filesystem::rename(boost::filesystem::path const& old_path, boost::filesyst
 boost::filesystem::path
 dcp::filesystem::change_extension(boost::filesystem::path const& path, std::string const& new_extension)
 {
+#ifdef LIBDCP_HAVE_REPLACE_EXTENSION
+	auto copy = path;
+	copy.replace_extension(new_extension);
+	return copy;
+#else
 	return boost::filesystem::change_extension(path, new_extension);
+#endif
 }
 
 

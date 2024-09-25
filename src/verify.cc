@@ -2212,6 +2212,8 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 		return compose("The namespace %1 in CPL %2 is invalid", note.note().get(), note.cpl_id().get());
 	case VerificationNote::Code::MISSING_CPL_CONTENT_VERSION:
 		return compose("The CPL %1 has no <ContentVersion> tag", note.cpl_id().get());
+	case VerificationNote::Code::INVALID_PKL_NAMESPACE:
+		return compose("The namespace %1 in PKL %2 is invalid", note.note().get(), note.file()->filename());
 	}
 
 	return "";

@@ -159,7 +159,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 	}
 
 	for (auto i: pkl_paths) {
-		_pkls.push_back(make_shared<PKL>(i));
+		_pkls.push_back(make_shared<PKL>(i, notes));
 	}
 
 	/* Now we have:
