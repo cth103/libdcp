@@ -35,7 +35,7 @@ import subprocess
 import os
 import sys
 import shlex
-import distutils.spawn
+import shutil
 from waflib import Logs, Context
 
 APPNAME = 'libdcp'
@@ -129,7 +129,7 @@ def configure(conf):
 
     # ImageMagick / GraphicsMagick
     if (not conf.options.disable_examples) and (not conf.options.disable_dumpimage):
-        if distutils.spawn.find_executable('Magick++-config'):
+        if shutil.which('Magick++-config'):
             conf.check_cfg(package='', path='Magick++-config', args='--cppflags --cxxflags --libs', uselib_store='MAGICK', mandatory=True, msg='Checking for ImageMagick/GraphicsMagick')
         else:
             image = conf.check_cfg(package='ImageMagick++', args='--cflags --libs', uselib_store='MAGICK', mandatory=False)
