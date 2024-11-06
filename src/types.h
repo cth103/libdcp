@@ -293,7 +293,9 @@ enum class Marker {
 	FFEC, ///< first frame of end credits
 	LFEC, ///< last frame of end credits
 	FFMC, ///< first frame of moving credits
-	LFMC  ///< last frame of moving credits
+	LFMC, ///< last frame of moving credits
+	FFOB, ///< first frame of ratings band
+	LFOB, ///< last frame of ratings band
 };
 
 

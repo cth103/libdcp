@@ -249,6 +249,10 @@ dcp::marker_to_string (dcp::Marker m)
 		return "FFMC";
 	case Marker::LFMC:
 		return "LFMC";
+	case Marker::FFOB:
+		return "FFOB";
+	case Marker::LFOB:
+		return "LFOB";
 	}
 
 	DCP_ASSERT (false);
@@ -278,6 +282,10 @@ dcp::marker_from_string (string s)
 		return Marker::FFMC;
 	} else if (s == "LFMC") {
 		return Marker::LFMC;
+	} else if (s == "FFOB") {
+		return Marker::FFOB;
+	} else if (s == "LFOB") {
+		return Marker::LFOB;
 	}
 
 	DCP_ASSERT (false);
