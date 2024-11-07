@@ -135,7 +135,9 @@ ReelMarkersAsset::equals(shared_ptr<const ReelMarkersAsset> other, EqualityOptio
 	    get(Marker::FFEC) != other->get(Marker::FFEC) ||
 	    get(Marker::LFEC) != other->get(Marker::LFEC) ||
 	    get(Marker::FFMC) != other->get(Marker::FFMC) ||
-	    get(Marker::LFMC) != other->get(Marker::LFMC)) {
+	    get(Marker::LFMC) != other->get(Marker::LFMC) ||
+	    get(Marker::FFOB) != other->get(Marker::FFOB) ||
+	    get(Marker::LFOB) != other->get(Marker::LFOB)) {
 		return false;
 	}
 

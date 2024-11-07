@@ -66,6 +66,8 @@ BOOST_AUTO_TEST_CASE(markers_test)
 		asset->set (dcp::Marker::LFEC, dcp::Time(3, 2, 8, 18, 24));
 		asset->set (dcp::Marker::FFMC, dcp::Time(4, 2, 8, 18, 24));
 		asset->set (dcp::Marker::LFMC, dcp::Time(4, 3, 8, 18, 24));
+		asset->set (dcp::Marker::FFOB, dcp::Time(5, 1, 2, 11, 24));
+		asset->set (dcp::Marker::LFOB, dcp::Time(9, 2, 3, 4, 24));
 
 		auto reel = make_shared<dcp::Reel>();
 		reel->add (asset);
@@ -103,6 +105,10 @@ BOOST_AUTO_TEST_CASE(markers_test)
 		BOOST_CHECK (markers->get (dcp::Marker::FFMC) == dcp::Time(4, 2, 8, 18, 24));
 		BOOST_REQUIRE (markers->get(dcp::Marker::LFMC));
 		BOOST_CHECK (markers->get (dcp::Marker::LFMC) == dcp::Time(4, 3, 8, 18, 24));
+		BOOST_REQUIRE (markers->get(dcp::Marker::FFOB));
+		BOOST_CHECK (markers->get (dcp::Marker::FFOB) == dcp::Time(5, 1, 2, 11, 24));
+		BOOST_REQUIRE (markers->get(dcp::Marker::LFOB));
+		BOOST_CHECK (markers->get (dcp::Marker::LFOB) == dcp::Time(9, 2, 3, 4, 24));
 
 		BOOST_CHECK (markers->equals(markers, dcp::EqualityOptions(), [](dcp::NoteType, string) {}));
 
