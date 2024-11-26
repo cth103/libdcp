@@ -414,20 +414,20 @@ public:
 		MISMATCHED_TIMED_TEXT_DURATION,
 		/** Something could not be verified because content is encrypted and no key is available */
 		MISSED_CHECK_OF_ENCRYPTED,
-		/** Some timed-text XML has an empty <_Text_> node */
+		/** Some timed-text XML has an empty _<Text>_ node */
 		EMPTY_TEXT,
-		/** Some closed captions do not have the same vertical alignment within a <_Subtitle_> node */
+		/** Some closed captions do not have the same vertical alignment within a _<Subtitle>_ node */
 		MISMATCHED_CLOSED_CAPTION_VALIGN,
 		/** Some closed captions are not listed in the XML in the order of their vertical position */
 		INCORRECT_CLOSED_CAPTION_ORDERING,
-		/** Some <MainMarkers> asset has an <EntryPoint> that should not be there */
+		/** Some <MainMarkers> asset has an _<EntryPoint>_ that should not be there */
 		UNEXPECTED_ENTRY_POINT,
-		/** Some <MainMarkers> asset has an <Duration> that should not be there */
+		/** Some <MainMarkers> asset has an _<Duration>_ that should not be there */
 		UNEXPECTED_DURATION,
-		/** A <ContentKind> has been specified with either no scope or the SMPTE 429-7 scope, but which is not one of those allowed */
+		/** A _<ContentKind>_ has been specified with either no scope or the SMPTE 429-7 scope, but which is not one of those allowed */
 		INVALID_CONTENT_KIND,
 		VALID_CONTENT_KIND,
-		/** Either the width or height of a <MainPictureActiveArea> in a CPL is either not an even number, or bigger than the corresponding asset dimension.
+		/** Either the width or height of a _<MainPictureActiveArea>_ in a CPL is either not an even number, or bigger than the corresponding asset dimension.
 		 *  note contains details of what is wrong
 		 *  file contains the CPL filename
 		 */
@@ -448,7 +448,7 @@ public:
 		 *  file contains the asset filename
 		 */
 		MISSING_SUBTITLE,
-		/** A SMPTE subtitle asset as an <IssueDate> which is not of the form yyyy-mm-ddThh:mm:ss
+		/** A SMPTE subtitle asset as an _<IssueDate>_ which is not of the form yyyy-mm-ddThh:mm:ss
 		 *  I can find no reference in a standard to this being required, but the Deluxe delivery
 		 *  specifications require it and their QC will fail DCPs that don't have it.
 		 *  note contains the incorrect <IssueDate>
@@ -458,13 +458,13 @@ public:
 		 *  file contains the filename of the first asset to differ
 		 */
 		MISMATCHED_SOUND_CHANNEL_COUNTS,
-		/** The CPL contains a MainSoundConfiguration tag which does not describe the number of
+		/** The CPL contains a _<MainSoundConfiguration>_ tag which does not describe the number of
 		 *  channels in the audio assets.
 		 *  note contains details of what is wrong
 		 *  file contains the CPL filename
 		 */
 		INVALID_MAIN_SOUND_CONFIGURATION,
-		/** An interop subtitle file has a <LoadFont> node which refers to a font file that is not found.
+		/** An interop subtitle file has a _<LoadFont>_ node which refers to a font file that is not found.
 		 *  note contains the <LoadFont> ID
 		 */
 		MISSING_FONT,
@@ -478,12 +478,12 @@ public:
 		 *  note contains the asset ID
 		 */
 		INCORRECT_SUBTITLE_NAMESPACE_COUNT,
-		/** A subtitle or closed caption file has a <Font> tag which refers to a font that is not
+		/** A subtitle or closed caption file has a _<Font>_ tag which refers to a font that is not
 		 *  first introduced with a <LoadFont>.
 		 *  id contains the ID of the <Font> tag.
 		 */
 		MISSING_LOAD_FONT_FOR_FONT,
-		/** A SMPTE subtitle asset has at least one <Text> element but no <LoadFont>
+		/** A SMPTE subtitle asset has at least one _<Text>_ element but no <LoadFont>
 		 *  id contains the ID of the subtitle asset.
 		 */
 		MISSING_LOAD_FONT,
@@ -492,7 +492,7 @@ public:
 		 *  other_id contains the ID from the file.
 		 */
 		MISMATCHED_ASSET_MAP_ID,
-		/** The <LabelText> inside a <ContentVersion> is empty
+		/** The <LabelText> inside a _<ContentVersion>_ is empty
 		 *  note contains the CPL ID
 		 *  file contains the CPL filename
 		 */
