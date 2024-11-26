@@ -103,6 +103,7 @@ public:
 		 *  note contains (probably technical) details
 		 */
 		FAILED_READ,
+		/** The hash of a CPL in the PKL agrees with the CPL file */
 		MATCHING_CPL_HASHES,
 		/** The hash of the CPL in the PKL does not agree with the CPL file
 		 *  note contains CPL ID
@@ -115,6 +116,7 @@ public:
 		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
 		 */
 		INVALID_PICTURE_FRAME_RATE,
+		/** The hash of a main picture asset agrees with the PKL file */
 		CORRECT_PICTURE_HASH,
 		/** The hash of a main picture asset does not agree with the PKL file
 		 *  file contains the picture asset filename
@@ -160,6 +162,7 @@ public:
 		 *  note contains asset ID
 		 */
 		INVALID_DURATION,
+		/** The JPEG2000 data in all picture frames of an asset is smaller than the maximum size */
 		VALID_PICTURE_FRAME_SIZES_IN_BYTES,
 		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 250Mbit/s
 		 *  file contains the picture asset filename
@@ -183,6 +186,7 @@ public:
 		 *  note contains the invalid language
 		 */
 		INVALID_LANGUAGE,
+		/** A CPL has a valid release territory */
 		VALID_RELEASE_TERRITORY,
 		/** A picture asset does not have one of the required Bv2.1 sizes (in pixels) [Bv2.1_7.1]
 		 *  note contains the incorrect size as "<width>x<height>"
@@ -271,6 +275,7 @@ public:
 		 *  file contains the CPL filename
 		 */
 		MISMATCHED_CPL_ANNOTATION_TEXT,
+		/** A CPL has an annotation text which matches the _<ContentTitleText>_ */
 		VALID_CPL_ANNOTATION_TEXT,
 		/** At least one asset in a reel does not have the same duration as the others */
 		MISMATCHED_ASSET_DURATION,
@@ -349,6 +354,7 @@ public:
 		 *  file contains the PKL filename
 		 */
 		MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL,
+		/** A PKL _<AnnotationText>_ matches a CPL _<ContentTitleText>_ */
 		MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL,
 		/** All content is encrypted */
 		ALL_ENCRYPTED,
@@ -426,12 +432,14 @@ public:
 		UNEXPECTED_DURATION,
 		/** A _<ContentKind>_ has been specified with either no scope or the SMPTE 429-7 scope, but which is not one of those allowed */
 		INVALID_CONTENT_KIND,
+		/** A valid _<ContentKind>_ was seen */
 		VALID_CONTENT_KIND,
 		/** Either the width or height of a _<MainPictureActiveArea>_ in a CPL is either not an even number, or bigger than the corresponding asset dimension.
 		 *  note contains details of what is wrong
 		 *  file contains the CPL filename
 		 */
 		INVALID_MAIN_PICTURE_ACTIVE_AREA,
+		/** A valid _<MainPictureActiveArea>_ was seen */
 		VALID_MAIN_PICTURE_ACTIVE_AREA,
 		/** A PKL has more than one asset with the same ID
 		 *  note contains the PKL ID
@@ -497,6 +505,7 @@ public:
 		 *  file contains the CPL filename
 		 */
 		EMPTY_CONTENT_VERSION_LABEL_TEXT,
+		/** A <LabelText> inside a _<ContentVersion>_ is valid */
 		VALID_CONTENT_VERSION_LABEL_TEXT,
 		/** The CPL namespace is not valid.
 		 *  note contains the invalid namespace
