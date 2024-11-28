@@ -1346,11 +1346,11 @@ verify_text_details(Context& context, vector<shared_ptr<Reel>> reels)
 
 
 void
-verify_extension_metadata(Context& context, shared_ptr<const CPL> cpl)
+verify_extension_metadata(Context& context)
 {
-	DCP_ASSERT (cpl->file());
+	DCP_ASSERT(context.cpl->file());
 	cxml::Document doc ("CompositionPlaylist");
-	doc.read_file(dcp::filesystem::fix_long_path(cpl->file().get()));
+	doc.read_file(dcp::filesystem::fix_long_path(context.cpl->file().get()));
 
 	auto missing = false;
 	string malformed;
@@ -1396,9 +1396,9 @@ verify_extension_metadata(Context& context, shared_ptr<const CPL> cpl)
 	}
 
 	if (missing) {
-		context.bv21_error(VerificationNote::Code::MISSING_EXTENSION_METADATA, cpl->file().get());
+		context.bv21_error(VerificationNote::Code::MISSING_EXTENSION_METADATA, context.cpl->file().get());
 	} else if (!malformed.empty()) {
-		context.bv21_error(VerificationNote::Code::INVALID_EXTENSION_METADATA, malformed, cpl->file().get());
+		context.bv21_error(VerificationNote::Code::INVALID_EXTENSION_METADATA, malformed, context.cpl->file().get());
 	}
 }
 
@@ -1793,7 +1793,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 			context.bv21_error(VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->file().get());
 		}
 
-		verify_extension_metadata(context, cpl);
+		verify_extension_metadata(context);
 
 		if (cpl->any_encrypted()) {
 			cxml::Document doc("CompositionPlaylist");
