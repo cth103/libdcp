@@ -294,80 +294,6 @@ parse (XercesDOMParser& parser, string xml)
 }
 
 
-class Context
-{
-public:
-	Context(
-		std::vector<VerificationNote>& notes_,
-		boost::filesystem::path xsd_dtd_directory_,
-		function<void (string, optional<boost::filesystem::path>)> stage_,
-		function<void (float)> progress_,
-		VerificationOptions options_
-	       )
-		: notes(notes_)
-		, xsd_dtd_directory(xsd_dtd_directory_)
-		, stage(stage_)
-		, progress(progress_)
-		, options(options_)
-	{
-
-	}
-
-	Context(Context const&) = delete;
-	Context& operator=(Context const&) = delete;
-
-	template<typename... Args>
-	void ok(dcp::VerificationNote::Code code, Args... args)
-	{
-		add_note({dcp::VerificationNote::Type::OK, code, std::forward<Args>(args)...});
-	}
-
-	template<typename... Args>
-	void warning(dcp::VerificationNote::Code code, Args... args)
-	{
-		add_note({dcp::VerificationNote::Type::WARNING, code, std::forward<Args>(args)...});
-	}
-
-	template<typename... Args>
-	void bv21_error(dcp::VerificationNote::Code code, Args... args)
-	{
-		add_note({dcp::VerificationNote::Type::BV21_ERROR, code, std::forward<Args>(args)...});
-	}
-
-	template<typename... Args>
-	void error(dcp::VerificationNote::Code code, Args... args)
-	{
-		add_note({dcp::VerificationNote::Type::ERROR, code, std::forward<Args>(args)...});
-	}
-
-	void add_note(dcp::VerificationNote note)
-	{
-		if (cpl) {
-			note.set_cpl_id(cpl->id());
-		}
-		notes.push_back(std::move(note));
-	}
-
-	void add_note_if_not_existing(dcp::VerificationNote note)
-	{
-		if (find(notes.begin(), notes.end(), note) == notes.end()) {
-			add_note(note);
-		}
-	}
-
-	std::vector<VerificationNote>& notes;
-	std::shared_ptr<const DCP> dcp;
-	std::shared_ptr<const CPL> cpl;
-	boost::filesystem::path xsd_dtd_directory;
-	function<void (string, optional<boost::filesystem::path>)> stage;
-	function<void (float)> progress;
-	VerificationOptions options;
-
-	boost::optional<string> subtitle_language;
-	boost::optional<int> audio_channels;
-};
-
-
 template <class T>
 void
 validate_xml(Context& context, T xml)
@@ -1347,7 +1273,7 @@ verify_text_details(Context& context, vector<shared_ptr<Reel>> reels)
 
 
 void
-verify_extension_metadata(Context& context)
+dcp::verify_extension_metadata(Context& context)
 {
 	DCP_ASSERT(context.cpl->file());
 	cxml::Document doc ("CompositionPlaylist");

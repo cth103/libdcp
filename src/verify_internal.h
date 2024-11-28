@@ -44,7 +44,12 @@
 #define LIBDCP_VERIFY_INTERNAL_H
 
 
+#include "cpl.h"
+#include "verify.h"
+#include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
 #include <memory>
+#include <vector>
 
 
 namespace dcp {
@@ -66,6 +71,80 @@ extern void verify_text_lines_and_characters(
 	dcp::LinesCharactersResult* result
 	);
 
+
+class Context
+{
+public:
+	Context(
+		std::vector<VerificationNote>& notes_,
+		boost::filesystem::path xsd_dtd_directory_,
+		std::function<void (std::string, boost::optional<boost::filesystem::path>)> stage_,
+		std::function<void (float)> progress_,
+		VerificationOptions options_
+	       )
+		: notes(notes_)
+		, xsd_dtd_directory(xsd_dtd_directory_)
+		, stage(stage_)
+		, progress(progress_)
+		, options(options_)
+	{}
+
+	Context(Context const&) = delete;
+	Context& operator=(Context const&) = delete;
+
+	template<typename... Args>
+	void ok(dcp::VerificationNote::Code code, Args... args)
+	{
+		add_note({dcp::VerificationNote::Type::OK, code, std::forward<Args>(args)...});
+	}
+
+	template<typename... Args>
+	void warning(dcp::VerificationNote::Code code, Args... args)
+	{
+		add_note({dcp::VerificationNote::Type::WARNING, code, std::forward<Args>(args)...});
+	}
+
+	template<typename... Args>
+	void bv21_error(dcp::VerificationNote::Code code, Args... args)
+	{
+		add_note({dcp::VerificationNote::Type::BV21_ERROR, code, std::forward<Args>(args)...});
+	}
+
+	template<typename... Args>
+	void error(dcp::VerificationNote::Code code, Args... args)
+	{
+		add_note({dcp::VerificationNote::Type::ERROR, code, std::forward<Args>(args)...});
+	}
+
+	void add_note(dcp::VerificationNote note)
+	{
+		if (cpl) {
+			note.set_cpl_id(cpl->id());
+		}
+		notes.push_back(std::move(note));
+	}
+
+	void add_note_if_not_existing(dcp::VerificationNote note)
+	{
+		if (find(notes.begin(), notes.end(), note) == notes.end()) {
+			add_note(note);
+		}
+	}
+
+	std::vector<VerificationNote>& notes;
+	std::shared_ptr<const DCP> dcp;
+	std::shared_ptr<const CPL> cpl;
+	boost::filesystem::path xsd_dtd_directory;
+	std::function<void (std::string, boost::optional<boost::filesystem::path>)> stage;
+	std::function<void (float)> progress;
+	VerificationOptions options;
+
+	boost::optional<std::string> subtitle_language;
+	boost::optional<int> audio_channels;
+};
+
+
+extern void verify_extension_metadata(dcp::Context& context);
 
 }
 
