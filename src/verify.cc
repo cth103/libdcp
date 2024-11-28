@@ -57,6 +57,7 @@
 #include "stereo_j2k_picture_asset.h"
 #include "stereo_j2k_picture_frame.h"
 #include "verify.h"
+#include "verify_internal.h"
 #include "verify_j2k.h"
 #include <libxml/parserInternals.h>
 #include <xercesc/dom/DOMAttr.hpp>

@@ -55,6 +55,7 @@
 #include "test.h"
 #include "util.h"
 #include "verify.h"
+#include "verify_internal.h"
 #include "verify_j2k.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/random.hpp>

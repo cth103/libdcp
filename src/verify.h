@@ -732,23 +732,6 @@ bool operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b);
 
 std::ostream& operator<<(std::ostream& s, dcp::VerificationNote const& note);
 
-
-struct LinesCharactersResult
-{
-	bool warning_length_exceeded = false;
-	bool error_length_exceeded = false;
-	bool line_count_exceeded = false;
-};
-
-
-extern void verify_text_lines_and_characters(
-	std::shared_ptr<const dcp::TextAsset> asset,
-	int warning_length,
-	int error_length,
-	dcp::LinesCharactersResult* result
-	);
-
 }
-
 
 #endif
