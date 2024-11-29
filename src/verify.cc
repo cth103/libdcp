@@ -1819,6 +1819,9 @@ dcp::verify (
 			context.error(VerificationNote::Code::FAILED_READ, string(e.what()));
 		} catch (cxml::Error& e) {
 			context.error(VerificationNote::Code::FAILED_READ, string(e.what()));
+		} catch (xmlpp::parse_error& e) {
+			carry_on = false;
+			context.error(VerificationNote::Code::FAILED_READ, string(e.what()));
 		}
 
 		if (!carry_on) {
