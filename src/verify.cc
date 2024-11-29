@@ -1300,17 +1300,14 @@ dcp::verify_extension_metadata(Context& context)
 								}
 							}
 							if (auto property_list = extension->optional_node_child("PropertyList")) {
-								if (auto property = property_list->optional_node_child("Property")) {
-									if (auto name = property->optional_node_child("Name")) {
-										if (name->content() != "DCP Constraints Profile") {
-											malformed = "<Name> property should be 'DCP Constraints Profile'";
-										}
-									}
-									if (auto value = property->optional_node_child("Value")) {
-										if (value->content() != "SMPTE-RDD-52:2020-Bv2.1") {
-											malformed = "<Value> property should be 'SMPTE-RDD-52:2020-Bv2.1'";
-										}
-									}
+								auto properties = property_list->node_children("Property");
+								auto is_bv21 = [](shared_ptr<const cxml::Node> property) {
+									auto name = property->optional_node_child("Name");
+									auto value = property->optional_node_child("Value");
+									return name && value && name->content() == "DCP Constraints Profile" && value->content() == "SMPTE-RDD-52:2020-Bv2.1";
+								};
+								if (!std::any_of(properties.begin(), properties.end(), is_bv21)) {
+									malformed = "No correctly-formed DCP Constraints Profile found";
 								}
 							}
 						}

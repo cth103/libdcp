@@ -4340,7 +4340,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("<Name> property should be 'DCP Constraints Profile'"), cpl->file().get()
+				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4387,7 +4387,10 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
-				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash())
+				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
+				).set_cpl_id(cpl->id())
 		});
 }
 
@@ -4428,7 +4431,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("<Value> property should be 'SMPTE-RDD-52:2020-Bv2.1'"), cpl->file().get()
+				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4475,6 +4478,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
+				).set_cpl_id(cpl->id())
 		});
 }
 
@@ -5873,5 +5879,17 @@ BOOST_AUTO_TEST_CASE(overlapping_subtitles)
 
 	dcp::LinesCharactersResult result;
 	dcp::verify_text_lines_and_characters(asset, 64, 80, &result);
+}
+
+
+BOOST_AUTO_TEST_CASE(multiple_metadata_property)
+{
+	vector<dcp::VerificationNote> notes;
+	auto stage = [](std::string, boost::optional<boost::filesystem::path>) {};
+	auto progress = [](float) {};
+
+	dcp::Context context(notes, {}, stage, progress, {});
+	context.cpl = make_shared<dcp::CPL>(private_test / "CPL_6935f81f-30d3-4283-898e-5bb1e9c2558c.xml");
+	verify_extension_metadata(context);
 }
 
