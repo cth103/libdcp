@@ -563,7 +563,7 @@ dcp::mca_id_to_channel (string id)
 		return Channel::BSL;
 	} else if (id == "rrs" || id == "rsr") {
 		return Channel::BSR;
-	} else if (id == "dbox" || id == "mtn") {
+	} else if (id == "dbox" || id == "dbox2" || id == "mtn") {
 		return Channel::MOTION_DATA;
 	} else if (id == "sync" || id == "fsksync") {
 		return Channel::SYNC_SIGNAL;

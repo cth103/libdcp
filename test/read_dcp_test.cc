@@ -36,6 +36,7 @@
 #include "dcp.h"
 #include "cpl.h"
 #include "stream_operators.h"
+#include "test.h"
 
 using std::list;
 using std::shared_ptr;
@@ -71,3 +72,12 @@ BOOST_AUTO_TEST_CASE (read_dcp_test2)
 	BOOST_REQUIRE (d.standard());
 	BOOST_CHECK_EQUAL (d.standard(), dcp::Standard::INTEROP);
 }
+
+
+/** Read a DCP that previously gave: Unrecognised channel ID 'dbox2' */
+BOOST_AUTO_TEST_CASE(read_dcp_test3)
+{
+	dcp::DCP d(private_test / "data/SMPTE_TST-1-Bv21_S_EN-EN-CCAP_US_51-HI-VI_2K_ISDCF_20170110_DTB_SMPTE_OV");
+	d.read();
+}
+
