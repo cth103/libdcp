@@ -71,7 +71,7 @@ main (int argc, char* argv[])
 	optional<boost::filesystem::path> private_key_file;
 
 	int option_index = 0;
-	while (1) {
+	while (true) {
 		static struct option long_options[] = {
 			{ "help", no_argument, 0, 'h'},
 			{ "no-fonts", no_argument, 0, 'n'},
