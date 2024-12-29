@@ -689,7 +689,8 @@ verify_smpte_timed_text_asset (
 {
 	if (asset->language()) {
 		verify_language_tag(context, *asset->language());
-	} else {
+	} else if (asset->raw_xml()) {
+		/* Raise this error only if we can access the raw XML (i.e. the asset was unencrypted or has been decrypted) */
 		context.bv21_error(VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, *asset->file());
 	}
 
@@ -710,10 +711,13 @@ verify_smpte_timed_text_asset (
 		context.bv21_error(VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, raw_convert<string>(total_size), asset->file().get());
 	}
 
-	if (!asset->start_time()) {
-		context.bv21_error(VerificationNote::Code::MISSING_SUBTITLE_START_TIME, asset->file().get());
-	} else if (asset->start_time() != Time()) {
-		context.bv21_error(VerificationNote::Code::INVALID_SUBTITLE_START_TIME, asset->file().get());
+	if (asset->raw_xml()) {
+		/* Raise these errors only if we can access the raw XML (i.e. the asset was unencrypted or has been decrypted) */
+		if (!asset->start_time()) {
+			context.bv21_error(VerificationNote::Code::MISSING_SUBTITLE_START_TIME, asset->file().get());
+		} else if (asset->start_time() != Time()) {
+			context.bv21_error(VerificationNote::Code::INVALID_SUBTITLE_START_TIME, asset->file().get());
+		}
 	}
 
 	if (reel_asset_duration && *reel_asset_duration != asset->intrinsic_duration()) {

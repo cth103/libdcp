@@ -5798,6 +5798,43 @@ BOOST_AUTO_TEST_CASE(verify_encrypted_smpte_dcp)
 }
 
 
+/** Check that we don't get any strange errors when verifying encrypted DCPs without a KDM (DoM #2916) */
+BOOST_AUTO_TEST_CASE(verify_encrypted_smpte_dcp_without_kdm)
+{
+	auto const dir = path("build/test/verify_encrypted_smpte_dcp_without_kdm");
+	dcp::Key key;
+	auto key_id = dcp::make_uuid();
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, dir, {{ 4 * 24, 5 * 24 }}, key, key_id);
+
+	path const pkl_file = find_file(dir, "pkl_");
+	path const cpl_file = find_file(dir, "cpl_");
+
+	check_verify_result(
+		{ dir },
+		{},
+		{
+			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			ok(dcp::VerificationNote::Code::ALL_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED
+			).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED
+			).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED
+			).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, canonical(cpl_file)
+				).set_cpl_id(cpl->id()),
+		});
+}
+
+
 BOOST_AUTO_TEST_CASE(verify_invalid_sound_bit_depth)
 {
 	auto const dir = private_test / "data" / "16_bit_audio";
