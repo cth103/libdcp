@@ -33,7 +33,8 @@
 
 
 #include "raw_convert.h"
-#include "locale_convert.h"
+#include <fmt/format.h>
+#include <fast_float/fast_float.h>
 #include <boost/algorithm/string.hpp>
 
 
@@ -41,91 +42,79 @@ using std::string;
 using std::wstring;
 
 
-/** @param v Numeric value as an ASCII string */
+template <>
+string
+dcp::raw_convert(unsigned char v, int, bool)
+{
+	return fmt::to_string(v);
+}
+
+
+template <>
+string
+dcp::raw_convert(unsigned short int v, int, bool)
+{
+	return fmt::to_string(v);
+}
+
+
+template <>
+string
+dcp::raw_convert(int v, int, bool)
+{
+	return fmt::to_string(v);
+}
+
+
+template <>
+string
+dcp::raw_convert(unsigned int v, int, bool)
+{
+	return fmt::to_string(v);
+}
+
+
+template <>
+string
+dcp::raw_convert(long v, int, bool)
+{
+	return fmt::to_string(v);
+}
+
+
+template <>
+string
+dcp::raw_convert(unsigned long v, int, bool)
+{
+	return fmt::to_string(v);
+}
+
+
+template <>
+string
+dcp::raw_convert(long long v, int, bool)
+{
+	return fmt::to_string(v);
+}
+
+
+template <>
+string
+dcp::raw_convert(unsigned long long v, int, bool)
+{
+	return fmt::to_string(v);
+}
+
+
 static
-string
-make_raw (string v)
+void
+make_format_string(char* buffer, int buffer_length, int precision, bool fixed)
 {
-	struct lconv* lc = localeconv ();
-	/* thousands_sep may be . so remove them before changing decimal points */
-	boost::algorithm::replace_all (v, lc->thousands_sep, "");
-	boost::algorithm::replace_all (v, lc->decimal_point, ".");
-	return v;
-}
-
-
-static
-string
-make_local (string v)
-{
-	struct lconv* lc = localeconv ();
-	boost::algorithm::replace_all (v, ".", lc->decimal_point);
-	/* We hope it's ok not to add in thousands separators here */
-	return v;
-}
-
-
-template <>
-string
-dcp::raw_convert (unsigned char v, int precision, bool fixed)
-{
-	return make_raw (locale_convert<string> (v, precision, fixed));
-}
-
-
-template <>
-string
-dcp::raw_convert (unsigned short int v, int precision, bool fixed)
-{
-	return make_raw (locale_convert<string> (v, precision, fixed));
-}
-
-
-template <>
-string
-dcp::raw_convert (int v, int precision, bool fixed)
-{
-	return make_raw (locale_convert<string> (v, precision, fixed));
-}
-
-
-template <>
-string
-dcp::raw_convert (unsigned int v, int precision, bool fixed)
-{
-	return make_raw (locale_convert<string> (v, precision, fixed));
-}
-
-
-template <>
-string
-dcp::raw_convert (long v, int precision, bool fixed)
-{
-	return make_raw (locale_convert<string> (v, precision, fixed));
-}
-
-
-template <>
-string
-dcp::raw_convert (unsigned long v, int precision, bool fixed)
-{
-	return make_raw (locale_convert<string> (v, precision, fixed));
-}
-
-
-template <>
-string
-dcp::raw_convert (long long v, int precision, bool fixed)
-{
-	return make_raw (locale_convert<string> (v, precision, fixed));
-}
-
-
-template <>
-string
-dcp::raw_convert (unsigned long long v, int precision, bool fixed)
-{
-	return make_raw (locale_convert<string> (v, precision, fixed));
+	if (fixed) {
+		snprintf(buffer, buffer_length, "{:.%df}", precision);
+	} else {
+		snprintf(buffer, buffer_length, "{:.%d}", precision);
+	}
 }
 
 
@@ -133,7 +122,13 @@ template <>
 string
 dcp::raw_convert (float v, int precision, bool fixed)
 {
-	return make_raw (locale_convert<string> (v, precision, fixed));
+	if (precision < 16) {
+		char format[16];
+		make_format_string(format, 16, precision, fixed);
+		return fmt::format(format, v);
+	}
+
+	return fmt::to_string(v);
 }
 
 
@@ -141,7 +136,13 @@ template <>
 string
 dcp::raw_convert (double v, int precision, bool fixed)
 {
-	return make_raw (locale_convert<string> (v, precision, fixed));
+	if (precision < 16) {
+		char format[16];
+		make_format_string(format, 16, precision, fixed);
+		return fmt::format(format, v);
+	}
+
+	return fmt::to_string(v);
 }
 
 
@@ -188,105 +189,119 @@ dcp::raw_convert (wchar_t const * v, int, bool)
 }
 
 
+template <typename T>
+T
+convert_with_fast_float(string v)
+{
+	T result;
+	auto const answer = fast_float::from_chars(v.data(), v.data() + v.size(), result);
+	if (answer.ec != std::errc()) {
+		return 0;
+	}
+
+	return result;
+}
+
+
 template <>
 unsigned char
-dcp::raw_convert(string v, int precision, bool fixed)
+dcp::raw_convert(string v, int, bool)
 {
-	return locale_convert<unsigned char> (make_local (v), precision, fixed);
+	return convert_with_fast_float<unsigned char>(v);
 }
 
 
 template <>
 unsigned short int
-dcp::raw_convert(string v, int precision, bool fixed)
+dcp::raw_convert(string v, int, bool)
 {
-	return locale_convert<unsigned short int> (make_local (v), precision, fixed);
+	return convert_with_fast_float<unsigned short int>(v);
 }
 
 
 template <>
 int
-dcp::raw_convert (string v, int precision, bool fixed)
+dcp::raw_convert(string v, int, bool)
 {
-	return locale_convert<int> (make_local (v), precision, fixed);
+	return convert_with_fast_float<int>(v);
 }
 
 
 template <>
 long
-dcp::raw_convert (string v, int precision, bool fixed)
+dcp::raw_convert(string v, int, bool)
 {
-	return locale_convert<long> (make_local (v), precision, fixed);
+	return convert_with_fast_float<long>(v);
 }
 
 
 template <>
 unsigned long
-dcp::raw_convert (string v, int precision, bool fixed)
+dcp::raw_convert(string v, int, bool)
 {
-	return locale_convert<unsigned long> (make_local (v), precision, fixed);
+	return convert_with_fast_float<unsigned long>(v);
 }
 
 
 template <>
 long long
-dcp::raw_convert (string v, int precision, bool fixed)
+dcp::raw_convert(string v, int, bool)
 {
-	return locale_convert<long long> (make_local (v), precision, fixed);
+	return convert_with_fast_float<long long>(v);
 }
 
 
 template <>
 unsigned long long
-dcp::raw_convert (string v, int precision, bool fixed)
+dcp::raw_convert(string v, int, bool)
 {
-	return locale_convert<unsigned long long> (make_local (v), precision, fixed);
+	return convert_with_fast_float<unsigned long long>(v);
 }
 
 
 template <>
 int
-dcp::raw_convert(char* v, int precision, bool fixed)
+dcp::raw_convert(char* v, int, bool)
 {
-	return locale_convert<int>(make_local (v), precision, fixed);
+	return convert_with_fast_float<int>(string(v));
 }
 
 
 template <>
 int
-dcp::raw_convert (char const * v, int precision, bool fixed)
+dcp::raw_convert(char const * v, int, bool)
 {
-	return locale_convert<int> (make_local (v), precision, fixed);
+	return convert_with_fast_float<int>(string(v));
 }
 
 
 template <>
 float
-dcp::raw_convert (string v, int precision, bool fixed)
+dcp::raw_convert(string v, int, bool)
 {
-	return locale_convert<float> (make_local (v), precision, fixed);
+	return convert_with_fast_float<float>(v);
 }
 
 
 template <>
 float
-dcp::raw_convert (char const * v, int precision, bool fixed)
+dcp::raw_convert(char const * v, int, bool)
 {
-	return locale_convert<float> (make_local (v), precision, fixed);
+	return convert_with_fast_float<float>(string(v));
 }
 
 
 template <>
 double
-dcp::raw_convert (string v, int precision, bool fixed)
+dcp::raw_convert(string v, int, bool)
 {
-	return locale_convert<double> (make_local (v), precision, fixed);
+	return convert_with_fast_float<double>(v);
 }
 
 
 template <>
 double
-dcp::raw_convert (char const * v, int precision, bool fixed)
+dcp::raw_convert(char const * v, int, bool)
 {
-	return locale_convert<double> (make_local (v), precision, fixed);
+	return convert_with_fast_float<double>(string(v));
 }

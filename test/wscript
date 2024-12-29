@@ -51,9 +51,11 @@ def configure(conf):
     conf.env.prepend_value('LINKFLAGS', '-Lsrc')
 
 def build(bld):
+    uselib = 'BOOST_TEST BOOST_FILESYSTEM BOOST_DATETIME OPENJPEG CXML XMLSEC1 SNDFILE OPENMP ASDCPLIB_DCPOMATIC LIBXML++ OPENSSL XERCES DL AVCODEC AVUTIL FMT FAST_FLOAT'
+
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'tests'
-    obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM BOOST_DATETIME OPENJPEG CXML XMLSEC1 SNDFILE OPENMP ASDCPLIB_DCPOMATIC LIBXML++ OPENSSL XERCES DL AVCODEC AVUTIL'
+    obj.uselib = uselib
     obj.cppflags = ['-fno-inline', '-fno-elide-constructors', '-g', '-O0']
     if bld.env['CXX_NAME'] == 'gcc':
         obj.cppflags.append('-fno-default-inline')
@@ -126,7 +128,7 @@ def build(bld):
 
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'subs_in_out'
-    obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM OPENJPEG CXML OPENMP ASDCPLIB_DCPOMATIC XMLSEC1 OPENSSL DL LIBXML++ AVCODEC AVUTIL'
+    obj.uselib = uselib
     obj.cppflags = ['-fno-inline', '-fno-elide-constructors', '-g', '-O0']
     if bld.env['CXX_NAME'] == 'gcc':
         obj.cppflags.append('-fno-default-inline')
@@ -143,7 +145,7 @@ def build(bld):
 
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'rewrite_subs'
-    obj.uselib = 'BOOST_TEST BOOST_FILESYSTEM OPENJPEG CXML OPENMP ASDCPLIB_DCPOMATIC XMLSEC1 OPENSSL DL LIBXML++ AVCODEC AVUTIL'
+    obj.uselib = uselib
     obj.cppflags = ['-fno-inline', '-fno-elide-constructors', '-g', '-O0']
     if bld.env['CXX_NAME'] == 'gcc':
         obj.cppflags.append('-fno-default-inline')

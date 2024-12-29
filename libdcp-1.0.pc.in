@@ -5,6 +5,6 @@ includedir=@includedir@
 Name: libdcp
 Description: DCP reading and writing library
 Version: @version@
-Requires: openssl libxml++-@xmlpp_api@ xmlsec1 libasdcp-dcpomatic xerces-c libavutil libavcodec
+Requires: openssl libxml++-@xmlpp_api@ xmlsec1 libasdcp-dcpomatic xerces-c libavutil libavcodec fmt
 Libs: @libs@
 Cflags: -I${includedir}

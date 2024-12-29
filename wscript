@@ -266,6 +266,9 @@ def configure(conf):
     conf.check_cfg(package='libavcodec', args='--cflags --libs', uselib_store='AVCODEC', mandatory=True)
     conf.check_cfg(package='libavutil', args='--cflags --libs', uselib_store='AVUTIL', mandatory=True)
 
+    conf.check_cfg(package='fmt', args='--cflags --libs', uselib_store='FMT', mandatory=True)
+    conf.check_cxx(header_name="fast_float/fast_float.h", uselib_store='FAST_FLOAT', mandatory=True)
+
     if not conf.env.DISABLE_TESTS:
         conf.recurse('test')
         if conf.options.enable_gcov:
