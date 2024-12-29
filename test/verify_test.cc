@@ -214,7 +214,11 @@ write_dcp_with_single_asset (path dir, shared_ptr<dcp::ReelAsset> reel_asset, dc
 	auto dcp = make_shared<dcp::DCP>(dir);
 	dcp->add (cpl);
 	dcp->set_annotation_text("hello");
-	dcp->write_xml ();
+
+	auto signer = make_shared<dcp::CertificateChain>(dcp::file_to_string("test/data/certificate_chain"));
+	signer->set_key(dcp::file_to_string("test/data/private.key"));
+
+	dcp->write_xml(signer);
 
 	return cpl;
 }
@@ -5789,13 +5793,7 @@ BOOST_AUTO_TEST_CASE(verify_encrypted_smpte_dcp)
 			ok(dcp::VerificationNote::Code::ALL_ENCRYPTED, cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, canonical(cpl_file)
-				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, canonical(cpl_file)
-				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, filename_to_id(pkl_file.filename()), canonical(pkl_file)
-				)
+				).set_cpl_id(cpl->id())
 		});
 }
 
