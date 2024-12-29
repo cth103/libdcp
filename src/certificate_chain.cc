@@ -676,6 +676,7 @@ CertificateChain::add_signature_value (xmlpp::Element* parent, string ns, bool a
 		throw MiscError ("could not create signature context");
 	}
 
+	DCP_ASSERT(_key);
 	signature_context->signKey = xmlSecCryptoAppKeyLoadMemory (
 		reinterpret_cast<const unsigned char *> (_key->c_str()), _key->size(), xmlSecKeyDataFormatPem, 0, 0, 0
 		);
