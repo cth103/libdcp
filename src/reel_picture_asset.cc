@@ -47,6 +47,7 @@
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
+#include <fmt/format.h>
 #include <iomanip>
 #include <cmath>
 
@@ -113,7 +114,7 @@ ReelPictureAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 			}
 		}
 
-		cxml::add_text_child(asset, "ScreenAspectRatio", raw_convert<string>(closest.get(), 2, true));
+		cxml::add_text_child(asset, "ScreenAspectRatio", fmt::format("{:.2f}", closest.get()));
 	} else {
 		cxml::add_text_child(
 			asset,

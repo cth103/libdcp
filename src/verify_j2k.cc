@@ -42,6 +42,7 @@
 #include "raw_convert.h"
 #include "verify.h"
 #include "verify_j2k.h"
+#include <fmt/format.h>
 #include <memory>
 #include <vector>
 
@@ -161,7 +162,7 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 		require_marker ("SIZ");
 		auto L_siz = get_16();
 		if (L_siz != 47) {
-			throw InvalidCodestream("unexpected SIZ size " + raw_convert<string>(L_siz));
+			throw InvalidCodestream("unexpected SIZ size " + fmt::to_string(L_siz));
 		}
 
 		get_16(); // CA: codestream capabilities
@@ -209,10 +210,10 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 				auto const tile_part_index = get_8();
 				auto tile_parts = get_8();
 				if (!fourk && tile_parts != 3) {
-					notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K, raw_convert<string>(tile_parts) });
+					notes.push_back({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K, fmt::to_string(tile_parts) });
 				}
 				if (fourk && tile_parts != 6) {
-					notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K, raw_convert<string>(tile_parts) });
+					notes.push_back({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K, fmt::to_string(tile_parts) });
 				}
 				if (tile_part_length > max_tile_part_size) {
 					VerificationNote note{VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE};
@@ -239,11 +240,11 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 				require_8(fourk ? 6 : 5, "invalid number of transform levels %1");
 				auto log_code_block_width = get_8();
 				if (log_code_block_width != 3) {
-					notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_WIDTH, raw_convert<string>(4 * (2 << log_code_block_width)) });
+					notes.push_back({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_WIDTH, fmt::to_string(4 * (2 << log_code_block_width)) });
 				}
 				auto log_code_block_height = get_8();
 				if (log_code_block_height != 3) {
-					notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_HEIGHT, raw_convert<string>(4 * (2 << log_code_block_height)) });
+					notes.push_back({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_HEIGHT, fmt::to_string(4 * (2 << log_code_block_height)) });
 				}
 				require_8(0, "invalid mode variations");
 				require_8(0, "invalid wavelet transform type %1"); // 9/7 irreversible
@@ -262,10 +263,10 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 				auto quantization_style = get_8();
 				int guard_bits = (quantization_style >> 5) & 7;
 				if (fourk && guard_bits != 2) {
-					notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_4K, raw_convert<string>(guard_bits) });
+					notes.push_back({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_4K, fmt::to_string(guard_bits) });
 				}
 				if (!fourk && guard_bits != 1) {
-					notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K, raw_convert<string>(guard_bits) });
+					notes.push_back({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K, fmt::to_string(guard_bits) });
 				}
 				ptr += L_qcd - 3;
 			} else if (*marker_name == "COC") {
@@ -344,10 +345,10 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 			throw InvalidCodestream("more than one QCD marker found");
 		}
 		if (num_POC_in_main != 0 && !fourk) {
-			notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K, raw_convert<string>(num_POC_in_main) });
+			notes.push_back({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K, fmt::to_string(num_POC_in_main) });
 		}
 		if (num_POC_in_main != 1 && fourk) {
-			notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K, raw_convert<string>(num_POC_in_main) });
+			notes.push_back({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K, fmt::to_string(num_POC_in_main) });
 		}
 		if (num_POC_after_main != 0) {
 			notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_POC_MARKER_LOCATION });

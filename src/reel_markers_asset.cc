@@ -44,6 +44,7 @@
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
+#include <fmt/format.h>
 
 
 using std::string;
@@ -113,7 +114,7 @@ ReelMarkersAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 	for (auto const& i: _markers) {
 		auto m = cxml::add_child(ml, "Marker");
 		cxml::add_text_child(m, "Label", marker_to_string(i.first));
-		cxml::add_text_child(m, "Offset", raw_convert<string>(i.second.as_editable_units_ceil(tcr)));
+		cxml::add_text_child(m, "Offset", fmt::to_string(i.second.as_editable_units_ceil(tcr)));
 	}
 
 	return asset;

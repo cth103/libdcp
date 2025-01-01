@@ -46,6 +46,7 @@
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
+#include <fmt/format.h>
 #include <boost/algorithm/string.hpp>
 #include <string>
 #include <vector>
@@ -355,7 +356,7 @@ Luminance::as_xml (xmlpp::Element* parent, string ns) const
 {
 	auto lum = cxml::add_child(parent, "Luminance", ns);
 	lum->set_attribute("units", unit_to_string(_unit));
-	lum->add_child_text(raw_convert<string>(_value, 3));
+	lum->add_child_text(fmt::format("{:.3}", _value));
 }
 
 

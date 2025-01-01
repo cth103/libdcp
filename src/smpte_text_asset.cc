@@ -56,6 +56,7 @@ LIBDCP_DISABLE_WARNINGS
 #include <asdcp/KM_log.h>
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
+#include <fmt/format.h>
 #include <boost/algorithm/string.hpp>
 
 
@@ -379,13 +380,13 @@ SMPTETextAsset::xml_as_string() const
 	}
 	cxml::add_text_child(root, "IssueDate", _issue_date.as_string(false, false));
 	if (_reel_number) {
-		cxml::add_text_child(root, "ReelNumber", raw_convert<string>(_reel_number.get()));
+		cxml::add_text_child(root, "ReelNumber", fmt::to_string(_reel_number.get()));
 	}
 	if (_language) {
 		cxml::add_text_child(root, "Language", _language.get());
 	}
 	cxml::add_text_child(root, "EditRate", _edit_rate.as_string());
-	cxml::add_text_child(root, "TimeCodeRate", raw_convert<string>(_time_code_rate));
+	cxml::add_text_child(root, "TimeCodeRate", fmt::to_string(_time_code_rate));
 	if (_start_time) {
 		cxml::add_text_child(root, "StartTime", _start_time.get().as_string(Standard::SMPTE));
 	}

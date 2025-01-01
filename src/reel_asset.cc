@@ -48,6 +48,7 @@
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
+#include <fmt/format.h>
 
 
 using std::make_pair;
@@ -102,12 +103,12 @@ ReelAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 		cxml::add_text_child(a, "AnnotationText", *_annotation_text);
 	}
 	cxml::add_text_child(a, "EditRate", _edit_rate.as_string());
-	cxml::add_text_child(a, "IntrinsicDuration", raw_convert<string>(_intrinsic_duration));
+	cxml::add_text_child(a, "IntrinsicDuration", fmt::to_string(_intrinsic_duration));
 	if (_entry_point) {
-		cxml::add_text_child(a, "EntryPoint", raw_convert<string>(*_entry_point));
+		cxml::add_text_child(a, "EntryPoint", fmt::to_string(*_entry_point));
 	}
 	if (_duration) {
-		cxml::add_text_child(a, "Duration", raw_convert<string>(*_duration));
+		cxml::add_text_child(a, "Duration", fmt::to_string(*_duration));
 	}
 	return a;
 }
@@ -131,7 +132,7 @@ template <class T>
 string
 optional_to_string (optional<T> o)
 {
-	return o ? raw_convert<string>(*o) : "[none]";
+	return o ? fmt::to_string(*o) : "[none]";
 }
 
 

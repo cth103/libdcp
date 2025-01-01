@@ -48,6 +48,7 @@
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
+#include <fmt/format.h>
 #include <iostream>
 
 
@@ -137,7 +138,7 @@ PKL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain>
 			cxml::add_text_child(asset, "AnnotationText", *i->annotation_text());
 		}
 		cxml::add_text_child(asset, "Hash", i->hash());
-		cxml::add_text_child(asset, "Size", raw_convert<string>(i->size()));
+		cxml::add_text_child(asset, "Size", fmt::to_string(i->size()));
 		cxml::add_text_child(asset, "Type", i->type());
 		if (auto filename = i->original_filename()) {
 			cxml::add_text_child(asset, "OriginalFileName", *filename);

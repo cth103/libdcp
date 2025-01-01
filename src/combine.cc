@@ -47,6 +47,7 @@
 #include "font_asset.h"
 #include "interop_text_asset.h"
 #include "raw_convert.h"
+#include <fmt/format.h>
 #include <boost/filesystem.hpp>
 #include <set>
 #include <string>
@@ -70,7 +71,7 @@ make_unique (boost::filesystem::path path)
 	}
 
 	for (int i = 0; i < 10000; ++i) {
-		boost::filesystem::path p = path.parent_path() / (path.stem().string() + dcp::raw_convert<string>(i) + path.extension().string());
+		boost::filesystem::path p = path.parent_path() / (path.stem().string() + fmt::to_string(i) + path.extension().string());
 		if (!dcp::filesystem::exists(p)) {
 			return p;
 		}

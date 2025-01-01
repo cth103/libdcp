@@ -41,6 +41,7 @@
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
+#include <fmt/format.h>
 #include <boost/algorithm/string.hpp>
 
 
@@ -214,6 +215,6 @@ AssetMap::Asset::write_xml(xmlpp::Element* asset_list, boost::filesystem::path d
 	cxml::add_text_child(chunk, "Path", relative_path->generic_string());
 	cxml::add_text_child(chunk, "VolumeIndex", "1");
 	cxml::add_text_child(chunk, "Offset", "0");
-	cxml::add_text_child(chunk, "Length", raw_convert<string>(filesystem::file_size(_path)));
+	cxml::add_text_child(chunk, "Length", fmt::to_string(filesystem::file_size(_path)));
 }
 

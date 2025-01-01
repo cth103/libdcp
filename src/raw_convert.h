@@ -65,66 +65,6 @@ raw_convert (Q, int precision = 16, bool fixed = false)
 }
 
 template <>
-std::string
-raw_convert (unsigned char v, int, bool);
-
-template <>
-std::string
-raw_convert (unsigned short int v, int, bool);
-
-template <>
-std::string
-raw_convert (int v, int, bool);
-
-template <>
-std::string
-raw_convert (unsigned int v, int, bool);
-
-template <>
-std::string
-raw_convert (long v, int, bool);
-
-template <>
-std::string
-raw_convert (unsigned long v, int, bool);
-
-template <>
-std::string
-raw_convert (long long v, int, bool);
-
-template <>
-std::string
-raw_convert (unsigned long long v, int, bool);
-
-template <>
-std::string
-raw_convert (float v, int, bool);
-
-template <>
-std::string
-raw_convert (double v, int, bool);
-
-template <>
-std::string
-raw_convert (char const * v, int, bool);
-
-template <>
-std::string
-raw_convert (char* v, int, bool);
-
-template <>
-std::string
-raw_convert (std::string v, int, bool);
-
-template <>
-std::string
-raw_convert (wchar_t const * v, int, bool);
-
-template <>
-std::string
-raw_convert (char v, int, bool);
-
-template <>
 unsigned char
 raw_convert (std::string v, int, bool);
 

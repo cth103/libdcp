@@ -40,22 +40,6 @@ using std::string;
 
 BOOST_AUTO_TEST_CASE (raw_convert_test)
 {
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (1), "1");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (12), "12");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (12.3), "12.3");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (12.34), "12.34");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (.34), "0.34");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (-.34), "-0.34");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (0.157123125), "0.157123125");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (0.157123125, 4), "0.1571");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (1e50), "1e+50");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (1e-50), "1e-50");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (1.5e12), "1500000000000");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (0.0086), "0.0086");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (0.00086), "0.00086");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (0.000086), "8.6e-05");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> (0.000086, 10, true), "0.0000860000");
-
 	BOOST_CHECK_EQUAL (dcp::raw_convert<int> ("42"), 42);
 	BOOST_CHECK_EQUAL (dcp::raw_convert<int> ("42.3"), 42);
 	BOOST_CHECK_EQUAL (dcp::raw_convert<int> ("42.7"), 42);
@@ -73,7 +57,4 @@ BOOST_AUTO_TEST_CASE (raw_convert_test)
 	BOOST_CHECK_CLOSE (dcp::raw_convert<float> ("4e8"), 4e8, 0.001);
 	BOOST_CHECK_CLOSE (dcp::raw_convert<float> ("9.1e9"), 9.1e9, 0.001);
 	BOOST_CHECK_CLOSE (dcp::raw_convert<float> ("0.005"), 0.005, 0.001);
-
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> ("foo"), "foo");
-	BOOST_CHECK_EQUAL (dcp::raw_convert<string> ("foo bar"), "foo bar");
 }

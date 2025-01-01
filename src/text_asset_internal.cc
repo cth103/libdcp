@@ -40,6 +40,7 @@
 #include "text_asset_internal.h"
 #include "text_string.h"
 #include "compose.hpp"
+#include <fmt/format.h>
 #include <cmath>
 
 
@@ -60,8 +61,8 @@ order::Font::Font(shared_ptr<TextString> s, Standard standard)
 	}
 	_values["Italic"] = s->italic() ? "yes" : "no";
 	_values["Color"] = s->colour().to_argb_string();
-	_values["Size"] = raw_convert<string> (s->size());
-	_values["AspectAdjust"] = raw_convert<string>(s->aspect_adjust(), 1, true);
+	_values["Size"] = fmt::to_string(s->size());
+	_values["AspectAdjust"] = fmt::format("{:.1f}", s->aspect_adjust());
 	_values["Effect"] = effect_to_string (s->effect());
 	_values["EffectColor"] = s->effect_colour().to_argb_string();
 	_values["Script"] = "normal";
@@ -138,7 +139,7 @@ order::String::as_xml (xmlpp::Element* parent, Context& context) const
 {
 	if (fabs(_space_before) > SPACE_BEFORE_EPSILON) {
 		auto space = cxml::add_child(parent, "Space");
-		auto size = raw_convert<string>(_space_before, 2);
+		auto size = fmt::format("{:.2}", _space_before);
 		if (context.standard == Standard::INTEROP) {
 			size += "em";
 		}
@@ -177,9 +178,9 @@ position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, floa
 
 	if (fabs(h_position) > ALIGN_EPSILON) {
 		if (context.standard == Standard::SMPTE) {
-			e->set_attribute ("Hposition", raw_convert<string> (h_position * 100, 6));
+			e->set_attribute("Hposition", fmt::format("{:.6}", h_position * 100));
 		} else {
-			e->set_attribute ("HPosition", raw_convert<string> (h_position * 100, 6));
+			e->set_attribute("HPosition", fmt::format("{:.6}", h_position * 100));
 		}
 	}
 
@@ -191,9 +192,9 @@ position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, floa
 
 	if (fabs(v_position) > ALIGN_EPSILON) {
 		if (context.standard == Standard::SMPTE) {
-			e->set_attribute ("Vposition", raw_convert<string> (v_position * 100, 6));
+			e->set_attribute("Vposition", fmt::format("{:.6}", v_position * 100));
 		} else {
-			e->set_attribute ("VPosition", raw_convert<string> (v_position * 100, 6));
+			e->set_attribute("VPosition", fmt::format("{:.6}", v_position * 100));
 		}
 	} else {
 		if (context.standard == Standard::SMPTE) {
@@ -204,7 +205,7 @@ position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, floa
 	}
 
 	if (fabs(z_position) > ALIGN_EPSILON && context.standard == Standard::SMPTE) {
-		e->set_attribute("Zposition", raw_convert<string>(z_position * 100, 6));
+		e->set_attribute("Zposition", fmt::format("{:.6}", z_position * 100));
 	}
 }
 
@@ -228,11 +229,11 @@ order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 		cxml::add_child(xml, "Rb")->add_child_text(ruby.base);
 		auto rt = cxml::add_child(xml, "Rt");
 		rt->add_child_text(ruby.annotation);
-		rt->set_attribute("Size", dcp::raw_convert<string>(ruby.size, 6));
+		rt->set_attribute("Size", fmt::format("{:.6}", ruby.size));
 		rt->set_attribute("Position", ruby.position == RubyPosition::BEFORE ? "before" : "after");
-		rt->set_attribute("Offset", dcp::raw_convert<string>(ruby.offset, 6));
-		rt->set_attribute("Spacing", dcp::raw_convert<string>(ruby.spacing, 6));
-		rt->set_attribute("AspectAdjust", dcp::raw_convert<string>(ruby.aspect_adjust, 6));
+		rt->set_attribute("Offset", fmt::format("{:.6}", ruby.offset));
+		rt->set_attribute("Spacing", fmt::format("{:.6}", ruby.spacing));
+		rt->set_attribute("AspectAdjust", fmt::format("{:.6}", ruby.aspect_adjust));
 	}
 
 	return e;
@@ -243,15 +244,15 @@ xmlpp::Element*
 order::Subtitle::as_xml (xmlpp::Element* parent, Context& context) const
 {
 	auto e = cxml::add_child(parent, "Subtitle");
-	e->set_attribute ("SpotNumber", raw_convert<string> (context.spot_number++));
+	e->set_attribute("SpotNumber", fmt::to_string(context.spot_number++));
 	e->set_attribute ("TimeIn", _in.rebase(context.time_code_rate).as_string(context.standard));
 	e->set_attribute ("TimeOut", _out.rebase(context.time_code_rate).as_string(context.standard));
 	if (context.standard == Standard::SMPTE) {
 		e->set_attribute ("FadeUpTime", _fade_up.rebase(context.time_code_rate).as_string(context.standard));
 		e->set_attribute ("FadeDownTime", _fade_down.rebase(context.time_code_rate).as_string(context.standard));
 	} else {
-		e->set_attribute ("FadeUpTime", raw_convert<string> (_fade_up.as_editable_units_ceil(context.time_code_rate)));
-		e->set_attribute ("FadeDownTime", raw_convert<string> (_fade_down.as_editable_units_ceil(context.time_code_rate)));
+		e->set_attribute("FadeUpTime", fmt::to_string(_fade_up.as_editable_units_ceil(context.time_code_rate)));
+		e->set_attribute("FadeDownTime", fmt::to_string(_fade_down.as_editable_units_ceil(context.time_code_rate)));
 	}
 	return e;
 }

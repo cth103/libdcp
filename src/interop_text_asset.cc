@@ -54,6 +54,7 @@
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
+#include <fmt/format.h>
 #include <boost/weak_ptr.hpp>
 #include <cmath>
 #include <cstdio>
@@ -117,7 +118,7 @@ InteropTextAsset::xml_as_string() const
 
 	cxml::add_text_child(root, "SubtitleID", _id);
 	cxml::add_text_child(root, "MovieTitle", _movie_title);
-	cxml::add_text_child(root, "ReelNumber", raw_convert<string> (_reel_number));
+	cxml::add_text_child(root, "ReelNumber", fmt::to_string(_reel_number));
 	cxml::add_text_child(root, "Language", _language);
 
 	for (auto i: _load_font_nodes) {

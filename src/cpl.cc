@@ -62,6 +62,7 @@ LIBDCP_ENABLE_WARNINGS
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS
+#include <fmt/format.h>
 #include <boost/algorithm/string.hpp>
 
 
@@ -448,7 +449,7 @@ CPL::write_mca_subdescriptors(xmlpp::Element* parent, shared_ptr<const SoundAsse
 				cxml::add_child(ch, "MCATagName", string("r1"))->add_child_text(buffer);
 			}
 			if (!channel->MCAChannelID.empty()) {
-				cxml::add_child(ch, "MCAChannelID", string("r1"))->add_child_text(raw_convert<string>(channel->MCAChannelID.get()));
+				cxml::add_child(ch, "MCAChannelID", string("r1"))->add_child_text(fmt::to_string(channel->MCAChannelID.get()));
 			}
 			if (!channel->RFC5646SpokenLanguage.empty()) {
 				channel->RFC5646SpokenLanguage.get().EncodeString(buffer, sizeof(buffer));
@@ -487,7 +488,7 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 
 	auto mp = _reels.front()->main_picture();
 	cxml::add_text_child(meta, "EditRate", mp->edit_rate().as_string());
-	cxml::add_text_child(meta, "IntrinsicDuration", raw_convert<string>(mp->intrinsic_duration()));
+	cxml::add_text_child(meta, "IntrinsicDuration", fmt::to_string(mp->intrinsic_duration()));
 
 	auto fctt = cxml::add_child(meta, "FullContentTitleText", string("meta"));
 	if (_full_content_title_text && !_full_content_title_text->empty()) {
@@ -503,7 +504,7 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 
 	if (_version_number) {
 		auto vn = cxml::add_child(meta, "VersionNumber", string("meta"));
-		vn->add_child_text(raw_convert<string>(*_version_number));
+		vn->add_child_text(fmt::to_string(*_version_number));
 		if (_status) {
 			vn->set_attribute("status", status_to_string(*_status));
 		}
@@ -535,15 +536,15 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 	if (_main_sound_configuration) {
 		cxml::add_child(meta, "MainSoundConfiguration", string("meta"))->add_child_text(_main_sound_configuration->to_string());
 	}
-	cxml::add_child(meta, "MainSoundSampleRate", string("meta"))->add_child_text(raw_convert<string>(*_main_sound_sample_rate) + " 1");
+	cxml::add_child(meta, "MainSoundSampleRate", string("meta"))->add_child_text(fmt::to_string(*_main_sound_sample_rate) + " 1");
 
 	auto stored = cxml::add_child(meta, "MainPictureStoredArea", string("meta"));
-	cxml::add_child(stored, "Width", string("meta"))->add_child_text(raw_convert<string>(_main_picture_stored_area->width));
-	cxml::add_child(stored, "Height", string("meta"))->add_child_text(raw_convert<string>(_main_picture_stored_area->height));
+	cxml::add_child(stored, "Width", string("meta"))->add_child_text(fmt::to_string(_main_picture_stored_area->width));
+	cxml::add_child(stored, "Height", string("meta"))->add_child_text(fmt::to_string(_main_picture_stored_area->height));
 
 	auto active = cxml::add_child(meta, "MainPictureActiveArea", string("meta"));
-	cxml::add_child(active, "Width", string("meta"))->add_child_text(raw_convert<string>(_main_picture_active_area->width));
-	cxml::add_child(active, "Height", string("meta"))->add_child_text(raw_convert<string>(_main_picture_active_area->height));
+	cxml::add_child(active, "Width", string("meta"))->add_child_text(fmt::to_string(_main_picture_active_area->width));
+	cxml::add_child(active, "Height", string("meta"))->add_child_text(fmt::to_string(_main_picture_active_area->height));
 
 	optional<string> first_subtitle_language;
 	for (auto i: _reels) {

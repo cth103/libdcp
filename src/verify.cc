@@ -78,6 +78,7 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/sax/HandlerBase.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
+#include <fmt/format.h>
 #include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <map>
@@ -639,10 +640,10 @@ verify_main_sound_asset(Context& context, shared_ptr<const ReelSoundAsset> reel_
 		verify_language_tag(context, *lang);
 	}
 	if (asset->sampling_rate() != 48000) {
-		context.bv21_error(VerificationNote::Code::INVALID_SOUND_FRAME_RATE, raw_convert<string>(asset->sampling_rate()), file);
+		context.bv21_error(VerificationNote::Code::INVALID_SOUND_FRAME_RATE, fmt::to_string(asset->sampling_rate()), file);
 	}
 	if (asset->bit_depth() != 24) {
-		context.error(VerificationNote::Code::INVALID_SOUND_BIT_DEPTH, raw_convert<string>(asset->bit_depth()), file);
+		context.error(VerificationNote::Code::INVALID_SOUND_BIT_DEPTH, fmt::to_string(asset->bit_depth()), file);
 	}
 }
 
@@ -696,7 +697,7 @@ verify_smpte_timed_text_asset (
 
 	auto const size = filesystem::file_size(asset->file().get());
 	if (size > 115 * 1024 * 1024) {
-		context.bv21_error(VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, raw_convert<string>(size), *asset->file());
+		context.bv21_error(VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, fmt::to_string(size), *asset->file());
 	}
 
 	/* XXX: I'm not sure what Bv2.1_7.2.1 means when it says "the font resource shall not be larger than 10MB"
@@ -708,7 +709,7 @@ verify_smpte_timed_text_asset (
 		total_size += i.second.size();
 	}
 	if (total_size > 10 * 1024 * 1024) {
-		context.bv21_error(VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, raw_convert<string>(total_size), asset->file().get());
+		context.bv21_error(VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, fmt::to_string(total_size), asset->file().get());
 	}
 
 	if (asset->raw_xml()) {
@@ -844,7 +845,7 @@ verify_closed_caption_asset (
 	if (raw_xml) {
 		validate_xml(context, *raw_xml);
 		if (raw_xml->size() > 256 * 1024) {
-			context.bv21_error(VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, raw_convert<string>(raw_xml->size()), *asset->file());
+			context.bv21_error(VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, fmt::to_string(raw_xml->size()), *asset->file());
 		}
 	} else {
 		context.warning(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
@@ -1670,7 +1671,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		if (ffoc == markers_seen.end()) {
 			context.warning(VerificationNote::Code::MISSING_FFOC);
 		} else if (ffoc->second.e != 1) {
-			context.warning(VerificationNote::Code::INCORRECT_FFOC, raw_convert<string>(ffoc->second.e));
+			context.warning(VerificationNote::Code::INCORRECT_FFOC, fmt::to_string(ffoc->second.e));
 		}
 
 		auto lfoc = markers_seen.find(Marker::LFOC);
@@ -1679,7 +1680,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		} else {
 			auto lfoc_time = lfoc->second.as_editable_units_ceil(lfoc->second.tcr);
 			if (lfoc_time != (cpl->reels().back()->duration() - 1)) {
-				context.warning(VerificationNote::Code::INCORRECT_LFOC, raw_convert<string>(lfoc_time));
+				context.warning(VerificationNote::Code::INCORRECT_LFOC, fmt::to_string(lfoc_time));
 			}
 		}
 

@@ -2194,7 +2194,7 @@ verify_timed_text_asset_too_large (string name)
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR,
 				dcp::VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES,
-				dcp::raw_convert<string>(121634816),
+				"121634816",
 				canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(
