@@ -73,6 +73,7 @@ def build(bld):
              language_tag.cc
              local_time.cc
              locale_convert.cc
+             main_sound_configuration.cc
              metadata.cc
              modified_gamma_transfer_function.cc
              mono_j2k_picture_asset.cc
@@ -184,6 +185,7 @@ def build(bld):
               load_font_node.h
               local_time.h
               locale_convert.h
+              main_sound_configuration.h
               metadata.h
               mpeg2_picture_asset_writer.h
               modified_gamma_transfer_function.h

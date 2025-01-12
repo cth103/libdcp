@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2021 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2012-2021 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,27 +32,59 @@
 */
 
 
-#include "content_kind.h"
-#include "main_sound_configuration.h"
-#include "rating.h"
+#ifndef LIBDCP_MAIN_SOUND_CONFIGURATION_H
+#define LIBDCP_MAIN_SOUND_CONFIGURATION_H
+
 #include "types.h"
-#include "verify.h"
+#include <string>
 
 
 namespace dcp {
 
-std::ostream& operator<< (std::ostream& s, Size const& a);
-std::ostream& operator<< (std::ostream& s, Channel c);
-std::ostream& operator<< (std::ostream& s, MCASoundField f);
-std::ostream& operator<< (std::ostream& s, ContentKind c);
-std::ostream& operator<< (std::ostream& s, Effect e);
-std::ostream& operator<< (std::ostream& s, Fraction const& f);
-std::ostream& operator<< (std::ostream& s, NoteType t);
-std::ostream& operator<< (std::ostream& s, Standard t);
-std::ostream& operator<< (std::ostream& s, Colour const& c);
-std::ostream& operator<< (std::ostream& s, Rating const& r);
-std::ostream& operator<< (std::ostream& s, Status t);
-std::ostream& operator<< (std::ostream& s, VerificationNote::Code c);
-std::ostream& operator<< (std::ostream& s, VerificationNote::Type t);
+
+enum class MCASoundField
+{
+	FIVE_POINT_ONE,
+	SEVEN_POINT_ONE,
+	OTHER
+};
+
+
+extern std::string channel_to_mca_id (Channel c, MCASoundField field);
+extern Channel mca_id_to_channel (std::string);
+extern std::string channel_to_mca_name (Channel c, MCASoundField field);
+extern ASDCP::UL channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dictionary const* dict);
+
+
+
+
+class MainSoundConfiguration
+{
+public:
+	explicit MainSoundConfiguration(std::string);
+	MainSoundConfiguration (MCASoundField field_, int channels);
+
+	MCASoundField field () const {
+		return _field;
+	}
+
+	int channels () const {
+		return _channels.size();
+	}
+
+	boost::optional<Channel> mapping (int index) const;
+	void set_mapping (int index, Channel channel);
+
+	std::string to_string () const;
+
+private:
+	MCASoundField _field;
+	std::vector<boost::optional<Channel>> _channels;
+};
+
+
 }
+
+
+#endif
 

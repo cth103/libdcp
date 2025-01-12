@@ -43,6 +43,7 @@
 #include "dcp_assert.h"
 #include "exceptions.h"
 #include "filesystem.h"
+#include "main_sound_configuration.h"
 #include "sound_asset.h"
 #include "sound_asset_writer.h"
 #include "warnings.h"

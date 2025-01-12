@@ -46,6 +46,7 @@
 #include "content_kind.h"
 #include "key.h"
 #include "language_tag.h"
+#include "main_sound_configuration.h"
 #include "rating.h"
 #include "verify.h"
 #include <boost/filesystem.hpp>

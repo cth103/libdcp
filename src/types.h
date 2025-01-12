@@ -114,20 +114,6 @@ enum class Channel {
 std::vector<dcp::Channel> used_audio_channels ();
 
 
-enum class MCASoundField
-{
-	FIVE_POINT_ONE,
-	SEVEN_POINT_ONE,
-	OTHER
-};
-
-
-extern std::string channel_to_mca_id (Channel c, MCASoundField field);
-extern Channel mca_id_to_channel (std::string);
-extern std::string channel_to_mca_name (Channel c, MCASoundField field);
-extern ASDCP::UL channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dictionary const* dict);
-
-
 enum class Effect
 {
 	NONE,
@@ -375,31 +361,6 @@ private:
 
 
 bool operator== (Luminance const& a, Luminance const& b);
-
-
-class MainSoundConfiguration
-{
-public:
-	explicit MainSoundConfiguration(std::string);
-	MainSoundConfiguration (MCASoundField field_, int channels);
-
-	MCASoundField field () const {
-		return _field;
-	}
-
-	int channels () const {
-		return _channels.size();
-	}
-
-	boost::optional<Channel> mapping (int index) const;
-	void set_mapping (int index, Channel channel);
-
-	std::string to_string () const;
-
-private:
-	MCASoundField _field;
-	std::vector<boost::optional<Channel>> _channels;
-};
 
 
 }
