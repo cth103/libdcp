@@ -95,6 +95,7 @@ extern std::string make_digest (ArrayData data);
 
 extern bool ids_equal (std::string a, std::string b);
 extern std::string remove_urn_uuid (std::string raw);
+extern boost::optional<std::string> remove_urn_uuid(boost::optional<std::string> raw);
 
 /** Set up various bits that the library needs.  Should be called once
  *  by client applications.

@@ -317,6 +317,17 @@ dcp::remove_urn_uuid (string raw)
 }
 
 
+optional<string>
+dcp::remove_urn_uuid(optional<string> raw)
+{
+	if (!raw) {
+		return {};
+	}
+
+	return remove_urn_uuid(*raw);
+}
+
+
 string
 dcp::openjpeg_version ()
 {

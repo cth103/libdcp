@@ -97,6 +97,7 @@ PKL::PKL(boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 	_issue_date = pkl.string_child ("IssueDate");
 	_issuer = pkl.string_child ("Issuer");
 	_creator = pkl.string_child ("Creator");
+	_group_id = remove_urn_uuid(pkl.optional_string_child("GroupId"));
 
 	for (auto i: pkl.node_child("AssetList")->node_children("Asset")) {
 		_assets.push_back(make_shared<Asset>(i));
@@ -129,6 +130,9 @@ PKL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain>
 	cxml::add_text_child(pkl, "IssueDate", _issue_date);
 	cxml::add_text_child(pkl, "Issuer", _issuer);
 	cxml::add_text_child(pkl, "Creator", _creator);
+	if (_group_id) {
+		cxml::add_text_child(pkl, "GroupId", "urn:uuid:" + *_group_id);
+	}
 
 	auto asset_list = cxml::add_child(pkl, "AssetList");
 	for (auto i: _assets) {

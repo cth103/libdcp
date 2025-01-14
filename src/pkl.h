@@ -58,8 +58,16 @@ class VerificationNote;
 class PKL : public Object, public AssetList
 {
 public:
-	PKL (Standard standard, boost::optional<std::string> annotation_text, std::string issue_date, std::string issuer, std::string creator)
+	PKL(
+		Standard standard,
+		boost::optional<std::string> annotation_text,
+		std::string issue_date,
+		std::string issuer,
+		std::string creator,
+		boost::optional<std::string> group_id = boost::none
+	   )
 		: AssetList(standard, annotation_text, issue_date, issuer, creator)
+		, _group_id(group_id)
 	{}
 
 	explicit PKL(boost::filesystem::path file, std::vector<dcp::VerificationNote>* notes = nullptr);
@@ -129,8 +137,13 @@ public:
 		return _assets;
 	}
 
+	boost::optional<std::string> group_id() const {
+		return _group_id;
+	}
+
 private:
 	std::vector<std::shared_ptr<Asset>> _assets;
+	boost::optional<std::string> _group_id;
 	/** The most recent disk file used to read or write this PKL */
 	mutable boost::optional<boost::filesystem::path> _file;
 };

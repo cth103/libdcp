@@ -157,7 +157,8 @@ public:
 	void write_xml(
 		std::shared_ptr<const CertificateChain> signer = std::shared_ptr<const CertificateChain>(),
 		bool include_mca_subdescriptors = true,
-		NameFormat name_format = NameFormat("%t")
+		NameFormat name_format = NameFormat("%t"),
+		boost::optional<std::string> group_id = boost::none
 	);
 
 	void resolve_refs (std::vector<std::shared_ptr<Asset>> assets);

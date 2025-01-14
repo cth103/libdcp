@@ -449,7 +449,12 @@ DCP::write_volindex (Standard standard) const
 
 
 void
-DCP::write_xml(shared_ptr<const CertificateChain> signer, bool include_mca_subdescriptors, NameFormat name_format)
+DCP::write_xml(
+	shared_ptr<const CertificateChain> signer,
+	bool include_mca_subdescriptors,
+	NameFormat name_format,
+	optional<string> group_id
+	)
 {
 	if (_cpls.empty()) {
 		throw MiscError ("Cannot write DCP with no CPLs.");
@@ -478,7 +483,8 @@ DCP::write_xml(shared_ptr<const CertificateChain> signer, bool include_mca_subde
 				_new_annotation_text.get_value_or(String::compose("Created by libdcp %1", dcp::version)),
 				_new_issue_date.get_value_or(LocalTime().as_string()),
 				_new_issuer.get_value_or(String::compose("libdcp %1", dcp::version)),
-				_new_creator.get_value_or(String::compose("libdcp %1", dcp::version))
+				_new_creator.get_value_or(String::compose("libdcp %1", dcp::version)),
+				group_id
 				)
 			);
 	}
