@@ -52,6 +52,7 @@
 #include "reel_sound_asset.h"
 #include "reel_text_asset.h"
 #include "util.h"
+#include "verify.h"
 #include "version.h"
 #include "warnings.h"
 #include "xml.h"
@@ -175,7 +176,7 @@ CPL::CPL (boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 		auto asset_list = reels.front()->node_child("AssetList");
 		auto metadata = asset_list->optional_node_child("CompositionMetadataAsset");
 		if (metadata) {
-			read_composition_metadata_asset (metadata);
+			read_composition_metadata_asset(metadata, notes);
 			_read_composition_metadata = true;
 		}
 	}
@@ -266,7 +267,7 @@ CPL::write_xml(boost::filesystem::path file, shared_ptr<const CertificateChain> 
 
 
 void
-CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
+CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::VerificationNote>* notes)
 {
 	_cpl_metadata_id = remove_urn_uuid(node->string_child("Id"));
 
@@ -310,13 +311,17 @@ CPL::read_composition_metadata_asset (cxml::ConstNodePtr node)
 	}
 
 	if (auto msc = node->optional_string_child("MainSoundConfiguration")) {
-		try {
-			_main_sound_configuration = MainSoundConfiguration(*msc);
-		} catch (MainSoundConfigurationError& e) {
+		_main_sound_configuration = MainSoundConfiguration(*msc);
+		if (!_main_sound_configuration->valid() && _standard == dcp::Standard::SMPTE && notes) {
 			/* With Interop DCPs this node may not make any sense, but that's OK */
-			if (_standard == dcp::Standard::SMPTE) {
-				throw e;
-			}
+			notes->push_back(
+				dcp::VerificationNote(
+					dcp::VerificationNote::Type::ERROR,
+					dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION,
+					fmt::format("{} could not be parsed", _main_sound_configuration->to_string()),
+					*_file
+					).set_cpl_id(_id)
+				);
 		}
 	}
 

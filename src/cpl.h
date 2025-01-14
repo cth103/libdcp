@@ -360,7 +360,7 @@ private:
 	friend struct ::verify_invalid_language3;
 
 	void maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_mca_subdescriptors) const;
-	void read_composition_metadata_asset (cxml::ConstNodePtr node);
+	void read_composition_metadata_asset(cxml::ConstNodePtr node, std::vector<dcp::VerificationNote>* notes);
 	void write_mca_subdescriptors(xmlpp::Element* parent, std::shared_ptr<const SoundAsset> asset) const;
 
 	std::string _issuer;

@@ -47,11 +47,13 @@ using namespace dcp;
 
 
 MainSoundConfiguration::MainSoundConfiguration (string s)
+	: _configuration(s)
 {
 	vector<string> parts;
 	boost::split (parts, s, boost::is_any_of("/"));
 	if (parts.empty()) {
-		throw MainSoundConfigurationError(s);
+		_valid = false;
+		return;
 	}
 
 	if (parts[0] == "51") {
@@ -73,14 +75,19 @@ MainSoundConfiguration::MainSoundConfiguration (string s)
 	boost::split (channels, parts[1], boost::is_any_of(","));
 
 	if (channels.size() > 16) {
-		throw MainSoundConfigurationError (s);
+		_valid = false;
+		return;
 	}
 
 	for (auto i: channels) {
 		if (i == "-") {
 			_channels.push_back(optional<Channel>());
 		} else {
-			_channels.push_back(mca_id_to_channel(i));
+			try {
+				_channels.push_back(mca_id_to_channel(i));
+			} catch (UnknownChannelIdError&) {
+				_valid = false;
+			}
 		}
 	}
 }
@@ -90,19 +97,23 @@ MainSoundConfiguration::MainSoundConfiguration (MCASoundField field, int channel
 	: _field (field)
 {
 	_channels.resize (channels);
+	update_string();
 }
 
 
-string
-MainSoundConfiguration::to_string () const
+void
+MainSoundConfiguration::update_string()
 {
-	string c;
+	if (!_valid) {
+		return;
+	}
+
 	switch (_field) {
 	case MCASoundField::FIVE_POINT_ONE:
-		c = "51/";
+		_configuration = "51/";
 		break;
 	case MCASoundField::SEVEN_POINT_ONE:
-		c = "71/";
+		_configuration = "71/";
 		break;
 	default:
 		DCP_ASSERT(false);
@@ -110,23 +121,23 @@ MainSoundConfiguration::to_string () const
 
 	for (auto i: _channels) {
 		if (!i) {
-			c += "-,";
+			_configuration += "-,";
 		} else {
-			c += channel_to_mca_id(*i, _field) + ",";
+			_configuration += channel_to_mca_id(*i, _field) + ",";
 		}
 	}
 
-	if (c.length() > 0) {
-		c = c.substr(0, c.length() - 1);
+	if (!_configuration.empty() > 0) {
+		_configuration = _configuration.substr(0, _configuration.length() - 1);
 	}
-
-	return c;
 }
 
 
 optional<Channel>
 MainSoundConfiguration::mapping (int index) const
 {
+	throw_if_invalid();
+
 	DCP_ASSERT (static_cast<size_t>(index) < _channels.size());
 	return _channels[index];
 }
@@ -135,8 +146,12 @@ MainSoundConfiguration::mapping (int index) const
 void
 MainSoundConfiguration::set_mapping (int index, Channel c)
 {
+	throw_if_invalid();
+
 	DCP_ASSERT (static_cast<size_t>(index) < _channels.size());
 	_channels[index] = c;
+
+	update_string();
 }
 
 

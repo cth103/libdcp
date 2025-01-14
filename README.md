@@ -88,6 +88,38 @@ Run doxygen in the top-level directory and then see build/doc/html/index.html.
 There are some examples in the examples/ directory.
 
 
+# Approach to non-compliant DCPs
+
+In a number of places we read metadata from DCPs that may not be in the correct format.  A vague design principle is that we should be
+able to read such values, write them back out again the same, and find out that they are invalid.  However, it should be difficult to
+create new DCPs with badly-formatted metadata.
+
+For example, a `CPL` has a `MainSoundConfiguration` that is essentially a specially-formatted string: a comma-separated list of values,
+where the values come from a limited range.  A correct value might be "L,R,C,LFE,Ls,Rs,-,-" and an incorrect one "fish" or
+"01,02,03,04,05,06"
+
+The "happy" path is:
+
+```
+MainSoundConfiguration foo("L,R,C,LFE,Ls,Rs,-,-");
+std::cout << "Config has " << foo.channels() << ", first is mapped to " << dcp::channel_to_mca_name(foo.mapping(0).get(), foo.field()) << "\n";
+std::cout << "Value for XML: " << foo.to_string() << "\n";
+```
+
+In this case `foo.valid()` will be true and the details of the configuration can be accessed.
+
+In the "invalid" case we have:
+
+```
+MainSoundConfiguration foo("01,02,03,04,05,06");
+std::cout << "Value for XML: " << foo.to_string() << "\n";
+```
+
+Now `foo.valid()` will be `false` and calls to (for example) `foo.channels()` will throw `MainSoundConfigurationError`.  `foo.to_string()` is
+OK, however, and will return the same invalid string "01,02,03,04,05,06" as was passed to the constructor.
+
+
+
 # Coding style
 
 * Use C++11 but nothing higher, as we need the library to be usable on some quite old compilers.

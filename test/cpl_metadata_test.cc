@@ -184,7 +184,6 @@ BOOST_AUTO_TEST_CASE(main_sound_configuration_test6)
 BOOST_AUTO_TEST_CASE(main_sound_configuration_test_case_insensitive)
 {
 	dcp::MainSoundConfiguration msc("51/L,-,C,LFE,LS,RS,HI,VIN");
-	BOOST_CHECK_EQUAL(msc.to_string(), "51/L,-,C,LFE,Ls,Rs,HI,VIN");
 	BOOST_CHECK_EQUAL(msc.channels(), 8);
 	BOOST_CHECK_EQUAL(msc.field(), dcp::MCASoundField::FIVE_POINT_ONE);
 	BOOST_CHECK_EQUAL(msc.mapping(0).get(), dcp::Channel::LEFT);

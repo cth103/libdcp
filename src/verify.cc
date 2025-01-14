@@ -1641,7 +1641,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 
 	if (context.dcp->standard() == Standard::SMPTE) {
 		if (auto msc = cpl->main_sound_configuration()) {
-			if (context.audio_channels && msc->channels() != *context.audio_channels) {
+			if (msc->valid() && context.audio_channels && msc->channels() != *context.audio_channels) {
 				context.error(
 					VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION,
 					String::compose("MainSoundConfiguration has %1 channels but sound assets have %2", msc->channels(), *context.audio_channels),

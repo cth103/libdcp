@@ -39,12 +39,12 @@
 #include "filesystem.h"
 #include "mxf.h"
 #include <getopt.h>
-#include <boost/bind.hpp>
-#include <boost/optional.hpp>
-#include <memory>
+#include <boost/bind/bind.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
 #include <iostream>
 #include <list>
+#include <memory>
 
 
 using std::list;

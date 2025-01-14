@@ -5456,7 +5456,10 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_sound_configuration)
 				).set_cpl_id(cpl->id()),
 			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION, std::string{"MainSoundConfiguration has 6 channels but sound assets have 2"}, canonical(find_cpl(path))
+				dcp::VerificationNote::Type::ERROR,
+				dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION,
+				std::string{"MainSoundConfiguration has 6 channels but sound assets have 2"},
+				canonical(find_cpl(path))
 				).set_cpl_id(cpl->id())
 		});
 }

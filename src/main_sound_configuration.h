@@ -35,6 +35,8 @@
 #ifndef LIBDCP_MAIN_SOUND_CONFIGURATION_H
 #define LIBDCP_MAIN_SOUND_CONFIGURATION_H
 
+
+#include "exceptions.h"
 #include "types.h"
 #include <string>
 
@@ -61,25 +63,48 @@ extern ASDCP::UL channel_to_mca_universal_label (Channel c, MCASoundField field,
 class MainSoundConfiguration
 {
 public:
+	/** Set up a MainSoundConfiguration from a string.  If the string is valid, valid() will
+	 *  subsequently return true and all accessors can be called.  Otherwise, all accessors
+	 *  except to_string() will throw a MainSoundConfigurationError and to_string() will
+	 *  return the original invalid string.
+	 */
 	explicit MainSoundConfiguration(std::string);
 	MainSoundConfiguration (MCASoundField field_, int channels);
 
 	MCASoundField field () const {
+		throw_if_invalid();
 		return _field;
 	}
 
 	int channels () const {
+		throw_if_invalid();
 		return _channels.size();
 	}
 
 	boost::optional<Channel> mapping (int index) const;
 	void set_mapping (int index, Channel channel);
 
-	std::string to_string () const;
+	std::string to_string() const {
+		return _configuration;
+	}
+
+	bool valid() const {
+		return _valid;
+	}
 
 private:
-	MCASoundField _field;
-	std::vector<boost::optional<Channel>> _channels;
+	void update_string();
+
+	void throw_if_invalid() const {
+		if (!_valid) {
+			throw MainSoundConfigurationError(_configuration);
+		}
+	}
+
+	std::string _configuration;
+	mutable bool _valid = true;
+	mutable MCASoundField _field;
+	mutable std::vector<boost::optional<Channel>> _channels;
 };
 
 
