@@ -130,7 +130,7 @@ PKL::write_xml (boost::filesystem::path file, shared_ptr<const CertificateChain>
 	cxml::add_text_child(pkl, "IssueDate", _issue_date);
 	cxml::add_text_child(pkl, "Issuer", _issuer);
 	cxml::add_text_child(pkl, "Creator", _creator);
-	if (_group_id) {
+	if (_group_id && _standard == Standard::SMPTE) {
 		cxml::add_text_child(pkl, "GroupId", "urn:uuid:" + *_group_id);
 	}
 
