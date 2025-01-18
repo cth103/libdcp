@@ -79,8 +79,12 @@ ContentKind::all()
 		ContentKind::POLICY,
 		ContentKind::PUBLIC_SERVICE_ANNOUNCEMENT,
 		ContentKind::ADVERTISEMENT,
+		ContentKind::CLIP,
+		ContentKind::PROMO,
+		ContentKind::STEREOCARD,
 		ContentKind::EPISODE,
-		ContentKind::PROMO
+		ContentKind::HIGHLIGHTS,
+		ContentKind::EVENT
 	};
 }
 
