@@ -89,27 +89,27 @@ static string const smpte_395_ns = "http://www.smpte-ra.org/reg/395/2014/13/1/aa
 static string const smpte_335_ns = "http://www.smpte-ra.org/reg/335/2012";
 
 
-CPL::CPL (string annotation_text, ContentKind content_kind, Standard standard)
+CPL::CPL(string annotation_text, ContentKind content_kind, Standard standard)
 	/* default _content_title_text to annotation_text */
 	: _issuer("libdcp", dcp::version)
 	, _creator("libdcp", dcp::version)
-	, _issue_date (LocalTime().as_string())
-	, _annotation_text (annotation_text)
-	, _content_title_text (annotation_text)
-	, _content_kind (content_kind)
-	, _standard (standard)
+	, _issue_date(LocalTime().as_string())
+	, _annotation_text(annotation_text)
+	, _content_title_text(annotation_text)
+	, _content_kind(content_kind)
+	, _standard(standard)
 {
 	ContentVersion cv;
 	cv.label_text = cv.id + LocalTime().as_string();
-	_content_versions.push_back (cv);
+	_content_versions.push_back(cv);
 }
 
 
-CPL::CPL (boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
-	: Asset (file)
-	, _content_kind (ContentKind::FEATURE)
+CPL::CPL(boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
+	: Asset(file)
+	, _content_kind(ContentKind::FEATURE)
 {
-	cxml::Document f ("CompositionPlaylist");
+	cxml::Document f("CompositionPlaylist");
 	f.read_file(dcp::filesystem::fix_long_path(file));
 
 	if (f.namespace_uri() == cpl_interop_ns) {
@@ -130,24 +130,24 @@ CPL::CPL (boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 		_standard = Standard::INTEROP;
 	}
 
-	_id = remove_urn_uuid (f.string_child ("Id"));
+	_id = remove_urn_uuid(f.string_child("Id"));
 	_annotation_text = f.optional_string_child("AnnotationText");
 	_issuer = f.optional_string_child("Issuer").get_value_or("");
 	_creator = f.optional_string_child("Creator").get_value_or("");
-	_issue_date = f.string_child ("IssueDate");
-	_content_title_text = f.string_child ("ContentTitleText");
+	_issue_date = f.string_child("IssueDate");
+	_content_title_text = f.string_child("ContentTitleText");
 	auto content_kind = f.node_child("ContentKind");
 	_content_kind = ContentKind(content_kind->content(), content_kind->optional_string_attribute("scope"));
-	shared_ptr<cxml::Node> content_version = f.optional_node_child ("ContentVersion");
+	shared_ptr<cxml::Node> content_version = f.optional_node_child("ContentVersion");
 	if (content_version) {
 		/* XXX: SMPTE should insist that Id is present */
-		_content_versions.push_back (
-			ContentVersion (
+		_content_versions.push_back(
+			ContentVersion(
 				content_version->optional_string_child("Id").get_value_or(""),
 				content_version->string_child("LabelText")
 				)
 			);
-		content_version->done ();
+		content_version->done();
 	} else if (_standard == Standard::SMPTE) {
 		/* ContentVersion is required in SMPTE */
 		if (notes) {
@@ -161,16 +161,16 @@ CPL::CPL (boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 				);
 		}
 	}
-	auto rating_list = f.node_child ("RatingList");
+	auto rating_list = f.node_child("RatingList");
 	for (auto i: rating_list->node_children("Rating")) {
-		_ratings.push_back (Rating(i));
+		_ratings.push_back(Rating(i));
 	}
 
 	for (auto i: f.node_child("ReelList")->node_children("Reel")) {
-		_reels.push_back (make_shared<Reel>(i, _standard));
+		_reels.push_back(make_shared<Reel>(i, _standard));
 	}
 
-	auto reel_list = f.node_child ("ReelList");
+	auto reel_list = f.node_child("ReelList");
 	auto reels = reel_list->node_children("Reel");
 	if (!reels.empty()) {
 		auto asset_list = reels.front()->node_child("AssetList");
@@ -181,23 +181,23 @@ CPL::CPL (boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 		}
 	}
 
-	f.ignore_child ("Issuer");
-	f.ignore_child ("Signer");
-	f.ignore_child ("Signature");
+	f.ignore_child("Issuer");
+	f.ignore_child("Signer");
+	f.ignore_child("Signature");
 
-	f.done ();
+	f.done();
 }
 
 
 void
-CPL::add (std::shared_ptr<Reel> reel)
+CPL::add(std::shared_ptr<Reel> reel)
 {
-	_reels.push_back (reel);
+	_reels.push_back(reel);
 }
 
 
 void
-CPL::set (std::vector<std::shared_ptr<Reel>> reels)
+CPL::set(std::vector<std::shared_ptr<Reel>> reels)
 {
 	_reels = reels;
 }
@@ -209,9 +209,9 @@ CPL::write_xml(boost::filesystem::path file, shared_ptr<const CertificateChain> 
 	xmlpp::Document doc;
 	xmlpp::Element* root;
 	if (_standard == Standard::INTEROP) {
-		root = doc.create_root_node ("CompositionPlaylist", cpl_interop_ns);
+		root = doc.create_root_node("CompositionPlaylist", cpl_interop_ns);
 	} else {
-		root = doc.create_root_node ("CompositionPlaylist", cpl_smpte_ns);
+		root = doc.create_root_node("CompositionPlaylist", cpl_smpte_ns);
 	}
 
 	cxml::add_text_child(root, "Id", "urn:uuid:" + _id);
@@ -229,9 +229,9 @@ CPL::write_xml(boost::filesystem::path file, shared_ptr<const CertificateChain> 
 	}
 	if (_content_versions.empty()) {
 		ContentVersion cv;
-		cv.as_xml (root);
+		cv.as_xml(root);
 	} else {
-		_content_versions[0].as_xml (root);
+		_content_versions[0].as_xml(root);
 	}
 
 	auto rating_list = cxml::add_child(root, "RatingList");
@@ -242,27 +242,27 @@ CPL::write_xml(boost::filesystem::path file, shared_ptr<const CertificateChain> 
 	auto reel_list = cxml::add_child(root, "ReelList");
 
 	if (_reels.empty()) {
-		throw NoReelsError ();
+		throw NoReelsError();
 	}
 
 	bool first = true;
 	for (auto i: _reels) {
-		auto asset_list = i->write_to_cpl (reel_list, _standard);
+		auto asset_list = i->write_to_cpl(reel_list, _standard);
 		if (first && _standard == Standard::SMPTE) {
 			maybe_write_composition_metadata_asset(asset_list, include_mca_subdescriptors);
 			first = false;
 		}
 	}
 
-	indent (root, 0);
+	indent(root, 0);
 
 	if (signer) {
-		signer->sign (root, _standard);
+		signer->sign(root, _standard);
 	}
 
 	doc.write_to_file_formatted(dcp::filesystem::fix_long_path(file).string(), "UTF-8");
 
-	set_file (file);
+	set_file(file);
 }
 
 
@@ -290,7 +290,7 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 		/* I decided to check for this number being non-negative on being set, and in the verifier, but not here */
 		auto vn_status = vn->optional_string_attribute("status");
 		if (vn_status) {
-			_status = string_to_status (*vn_status);
+			_status = string_to_status(*vn_status);
 		}
 	}
 
@@ -301,13 +301,13 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 	auto acv = node->optional_node_child("AlternateContentVersionList");
 	if (acv) {
 		for (auto i: acv->node_children("ContentVersion")) {
-			_content_versions.push_back (ContentVersion(i));
+			_content_versions.push_back(ContentVersion(i));
 		}
 	}
 
 	auto lum = node->optional_node_child("Luminance");
 	if (lum) {
-		_luminance = Luminance (lum);
+		_luminance = Luminance(lum);
 	}
 
 	if (auto msc = node->optional_string_child("MainSoundConfiguration")) {
@@ -328,19 +328,19 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 	auto sr = node->optional_string_child("MainSoundSampleRate");
 	if (sr) {
 		vector<string> sr_bits;
-		boost::split (sr_bits, *sr, boost::is_any_of(" "));
-		DCP_ASSERT (sr_bits.size() == 2);
+		boost::split(sr_bits, *sr, boost::is_any_of(" "));
+		DCP_ASSERT(sr_bits.size() == 2);
 		_main_sound_sample_rate = raw_convert<int>(sr_bits[0]);
 	}
 
 	if (_standard == dcp::Standard::SMPTE) {
-		_main_picture_stored_area = dcp::Size (
+		_main_picture_stored_area = dcp::Size(
 			node->node_child("MainPictureStoredArea")->number_child<int>("Width"),
 			node->node_child("MainPictureStoredArea")->number_child<int>("Height")
 			);
 	}
 
-	_main_picture_active_area = dcp::Size (
+	_main_picture_active_area = dcp::Size(
 		node->node_child("MainPictureActiveArea")->number_child<int>("Width"),
 		node->node_child("MainPictureActiveArea")->number_child<int>("Height")
 		);
@@ -348,8 +348,8 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 	auto sll = node->optional_string_child("MainSubtitleLanguageList");
 	if (sll) {
 		vector<string> sll_split;
-		boost::split (sll_split, *sll, boost::is_any_of(" "));
-		DCP_ASSERT (!sll_split.empty());
+		boost::split(sll_split, *sll, boost::is_any_of(" "));
+		DCP_ASSERT(!sll_split.empty());
 
 		/* If the first language on SubtitleLanguageList is the same as the language of the first subtitle we'll ignore it */
 		size_t first = 0;
@@ -364,11 +364,11 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 		}
 
 		for (auto i = first; i < sll_split.size(); ++i) {
-			_additional_subtitle_languages.push_back (sll_split[i]);
+			_additional_subtitle_languages.push_back(sll_split[i]);
 		}
 	}
 
-	auto eml = node->optional_node_child ("ExtensionMetadataList");
+	auto eml = node->optional_node_child("ExtensionMetadataList");
 
 	auto extension_metadata = [eml](string scope, string name, string property) -> boost::optional<std::string> {
 		if (!eml) {
@@ -401,7 +401,7 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 void
 CPL::write_mca_subdescriptors(xmlpp::Element* parent, shared_ptr<const SoundAsset> asset) const
 {
-	auto reader = asset->start_read ();
+	auto reader = asset->start_read();
 	ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield;
 	ASDCP::Result_t r = reader->reader()->OP1aHeader().GetMDObjectByType(
 		asdcp_smpte_dict->ul(ASDCP::MDD_SoundfieldGroupLabelSubDescriptor),
@@ -409,9 +409,9 @@ CPL::write_mca_subdescriptors(xmlpp::Element* parent, shared_ptr<const SoundAsse
 		);
 	if (KM_SUCCESS(r)) {
 		auto mca_subs = cxml::add_child(parent, "mca:MCASubDescriptors");
-		mca_subs->set_namespace_declaration (mca_sub_descriptors_ns, "mca");
-		mca_subs->set_namespace_declaration (smpte_395_ns, "r0");
-		mca_subs->set_namespace_declaration (smpte_335_ns, "r1");
+		mca_subs->set_namespace_declaration(mca_sub_descriptors_ns, "mca");
+		mca_subs->set_namespace_declaration(smpte_395_ns, "r0");
+		mca_subs->set_namespace_declaration(smpte_335_ns, "r1");
 		auto sf = cxml::add_child(mca_subs, "SoundfieldGroupLabelSubDescriptor", string("r0"));
 		char buffer[64];
 		soundfield->InstanceUID.EncodeString(buffer, sizeof(buffer));
@@ -487,7 +487,7 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 	}
 
 	auto meta = cxml::add_child(node, "meta:CompositionMetadataAsset");
-	meta->set_namespace_declaration (cpl_metadata_ns, "meta");
+	meta->set_namespace_declaration(cpl_metadata_ns, "meta");
 
 	cxml::add_text_child(meta, "Id", "urn:uuid:" + _cpl_metadata_id);
 
@@ -497,7 +497,7 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 
 	auto fctt = cxml::add_child(meta, "FullContentTitleText", string("meta"));
 	if (_full_content_title_text && !_full_content_title_text->empty()) {
-		fctt->add_child_text (*_full_content_title_text);
+		fctt->add_child_text(*_full_content_title_text);
 	}
 	if (_full_content_title_text_language) {
 		fctt->set_attribute("language", *_full_content_title_text_language);
@@ -530,12 +530,12 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 	if (_content_versions.size() > 1) {
 		auto vc = cxml::add_child(meta, "AlternateContentVersionList", string("meta"));
 		for (size_t i = 1; i < _content_versions.size(); ++i) {
-			_content_versions[i].as_xml (vc);
+			_content_versions[i].as_xml(vc);
 		}
 	}
 
 	if (_luminance) {
-		_luminance->as_xml (meta, "meta");
+		_luminance->as_xml(meta, "meta");
 	}
 
 	if (_main_sound_configuration) {
@@ -587,10 +587,10 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 	};
 
 	/* SMPTE Bv2.1 8.6.3 */
-	add_extension_metadata ("http://isdcf.com/ns/cplmd/app", "Application", "DCP Constraints Profile", "SMPTE-RDD-52:2020-Bv2.1");
+	add_extension_metadata("http://isdcf.com/ns/cplmd/app", "Application", "DCP Constraints Profile", "SMPTE-RDD-52:2020-Bv2.1");
 
 	if (_sign_language_video_language) {
-		add_extension_metadata ("http://isdcf.com/2017/10/SignLanguageVideo", "Sign Language Video", "Language Tag", *_sign_language_video_language);
+		add_extension_metadata("http://isdcf.com/2017/10/SignLanguageVideo", "Sign Language Video", "Language Tag", *_sign_language_video_language);
 	}
 
 	if (_dolby_edr_image_transfer_function) {
@@ -608,42 +608,42 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 
 template <class T>
 void
-add_file_assets (vector<shared_ptr<T>>& assets, vector<shared_ptr<Reel>> reels)
+add_file_assets(vector<shared_ptr<T>>& assets, vector<shared_ptr<Reel>> reels)
 {
 	for (auto i: reels) {
-		if (i->main_picture ()) {
-			assets.push_back (i->main_picture());
+		if (i->main_picture()) {
+			assets.push_back(i->main_picture());
 		}
-		if (i->main_sound ()) {
-			assets.push_back (i->main_sound());
+		if (i->main_sound()) {
+			assets.push_back(i->main_sound());
 		}
-		if (i->main_subtitle ()) {
-			assets.push_back (i->main_subtitle());
+		if (i->main_subtitle()) {
+			assets.push_back(i->main_subtitle());
 		}
 		for (auto j: i->closed_captions()) {
-			assets.push_back (j);
+			assets.push_back(j);
 		}
-		if (i->atmos ()) {
-			assets.push_back (i->atmos());
+		if (i->atmos()) {
+			assets.push_back(i->atmos());
 		}
 	}
 }
 
 
 vector<shared_ptr<ReelFileAsset>>
-CPL::reel_file_assets ()
+CPL::reel_file_assets()
 {
 	vector<shared_ptr<ReelFileAsset>> c;
-	add_file_assets (c, _reels);
+	add_file_assets(c, _reels);
 	return c;
 }
 
 
 vector<shared_ptr<const ReelFileAsset>>
-CPL::reel_file_assets () const
+CPL::reel_file_assets() const
 {
 	vector<shared_ptr<const ReelFileAsset>> c;
-	add_file_assets (c, _reels);
+	add_file_assets(c, _reels);
 	return c;
 }
 
@@ -658,25 +658,25 @@ CPL::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandl
 
 	if (_annotation_text != other_cpl->_annotation_text && !opt.cpl_annotation_texts_can_differ) {
 		string const s = "CPL: annotation texts differ: " + _annotation_text.get_value_or("") + " vs " + other_cpl->_annotation_text.get_value_or("") + "\n";
-		note (NoteType::ERROR, s);
+		note(NoteType::ERROR, s);
 		return false;
 	}
 
 	if (_content_kind != other_cpl->_content_kind) {
-		note (NoteType::ERROR, "CPL: content kinds differ");
+		note(NoteType::ERROR, "CPL: content kinds differ");
 		return false;
 	}
 
 	if (_reels.size() != other_cpl->_reels.size()) {
-		note (NoteType::ERROR, String::compose ("CPL: reel counts differ (%1 vs %2)", _reels.size(), other_cpl->_reels.size()));
+		note(NoteType::ERROR, String::compose("CPL: reel counts differ (%1 vs %2)", _reels.size(), other_cpl->_reels.size()));
 		return false;
 	}
 
 	auto a = _reels.begin();
 	auto b = other_cpl->_reels.begin();
 
-	while (a != _reels.end ()) {
-		if (!(*a)->equals (*b, opt, note)) {
+	while (a != _reels.end()) {
+		if (!(*a)->equals(*b, opt, note)) {
 			return false;
 		}
 		++a;
@@ -688,7 +688,7 @@ CPL::equals(shared_ptr<const Asset> other, EqualityOptions const& opt, NoteHandl
 
 
 bool
-CPL::any_encrypted () const
+CPL::any_encrypted() const
 {
 	for (auto i: _reels) {
 		if (i->any_encrypted()) {
@@ -701,7 +701,7 @@ CPL::any_encrypted () const
 
 
 bool
-CPL::all_encrypted () const
+CPL::all_encrypted() const
 {
 	for (auto i: _reels) {
 		if (!i->all_encrypted()) {
@@ -714,29 +714,29 @@ CPL::all_encrypted () const
 
 
 void
-CPL::add (DecryptedKDM const & kdm)
+CPL::add(DecryptedKDM const & kdm)
 {
 	for (auto i: _reels) {
-		i->add (kdm);
+		i->add(kdm);
 	}
 }
 
 void
-CPL::resolve_refs (vector<shared_ptr<Asset>> assets)
+CPL::resolve_refs(vector<shared_ptr<Asset>> assets)
 {
 	for (auto i: _reels) {
-		i->resolve_refs (assets);
+		i->resolve_refs(assets);
 	}
 }
 
 string
-CPL::pkl_type (Standard standard) const
+CPL::pkl_type(Standard standard) const
 {
-	return static_pkl_type (standard);
+	return static_pkl_type(standard);
 }
 
 string
-CPL::static_pkl_type (Standard standard)
+CPL::static_pkl_type(Standard standard)
 {
 	switch (standard) {
 	case Standard::INTEROP:
@@ -744,26 +744,26 @@ CPL::static_pkl_type (Standard standard)
 	case Standard::SMPTE:
 		return "text/xml";
 	default:
-		DCP_ASSERT (false);
+		DCP_ASSERT(false);
 	}
 }
 
 int64_t
-CPL::duration () const
+CPL::duration() const
 {
 	int64_t d = 0;
 	for (auto i: _reels) {
-		d += i->duration ();
+		d += i->duration();
 	}
 	return d;
 }
 
 
 void
-CPL::set_version_number (int v)
+CPL::set_version_number(int v)
 {
 	if (v < 0) {
-		throw BadSettingError ("CPL version number cannot be negative");
+		throw BadSettingError("CPL version number cannot be negative");
 	}
 
 	_version_number = v;
@@ -771,19 +771,19 @@ CPL::set_version_number (int v)
 
 
 void
-CPL::unset_version_number ()
+CPL::unset_version_number()
 {
 	_version_number = boost::none;
 }
 
 
 void
-CPL::set_content_versions (vector<ContentVersion> v)
+CPL::set_content_versions(vector<ContentVersion> v)
 {
 	std::set<string> ids;
 	for (auto i: v) {
 		if (!ids.insert(i.id).second) {
-			throw DuplicateIdError ("Duplicate ID in ContentVersion list");
+			throw DuplicateIdError("Duplicate ID in ContentVersion list");
 		}
 	}
 
@@ -792,7 +792,7 @@ CPL::set_content_versions (vector<ContentVersion> v)
 
 
 optional<ContentVersion>
-CPL::content_version () const
+CPL::content_version() const
 {
 	if (_content_versions.empty()) {
 		return optional<ContentVersion>();
@@ -803,11 +803,11 @@ CPL::content_version () const
 
 
 void
-CPL::set_additional_subtitle_languages (vector<dcp::LanguageTag> const& langs)
+CPL::set_additional_subtitle_languages(vector<dcp::LanguageTag> const& langs)
 {
-	_additional_subtitle_languages.clear ();
+	_additional_subtitle_languages.clear();
 	for (auto const& i: langs) {
-		_additional_subtitle_languages.push_back (i.to_string());
+		_additional_subtitle_languages.push_back(i.to_string());
 	}
 }
 

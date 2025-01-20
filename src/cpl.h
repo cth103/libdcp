@@ -82,7 +82,7 @@ class SoundAsset;
 class CPL : public Asset
 {
 public:
-	CPL (std::string annotation_text, ContentKind content_kind, Standard standard);
+	CPL(std::string annotation_text, ContentKind content_kind, Standard standard);
 
 	/** Construct a CPL object from a XML file.
 	 *  If notes is not null, non-fatal errors will be added.
@@ -90,7 +90,7 @@ public:
 	 */
 	explicit CPL(boost::filesystem::path file, std::vector<dcp::VerificationNote>* notes = nullptr);
 
-	bool equals (
+	bool equals(
 		std::shared_ptr<const Asset> other,
 		EqualityOptions const& options,
 		NoteHandler note
@@ -99,30 +99,30 @@ public:
 	/** Add a reel to this CPL
 	 *  @param reel Reel to add
 	 */
-	void add (std::shared_ptr<Reel> reel);
+	void add(std::shared_ptr<Reel> reel);
 
-	void set (std::vector<std::shared_ptr<Reel>> reels);
+	void set(std::vector<std::shared_ptr<Reel>> reels);
 
 	/** Add a KDM to this CPL.  If the KDM is for any of this CPLs assets it will be used
 	 *  to decrypt those assets.
 	 *  @param kdm KDM.
 	 */
-	void add (DecryptedKDM const &);
+	void add(DecryptedKDM const &);
 
 	/** @return the reels in this CPL */
-	std::vector<std::shared_ptr<Reel>> reels () const {
+	std::vector<std::shared_ptr<Reel>> reels() const {
 		return _reels;
 	}
 
 	/** @return the ReelFileAssets in this CPL in all reels */
-	std::vector<std::shared_ptr<const ReelFileAsset>> reel_file_assets () const;
-	std::vector<std::shared_ptr<ReelFileAsset>> reel_file_assets ();
+	std::vector<std::shared_ptr<const ReelFileAsset>> reel_file_assets() const;
+	std::vector<std::shared_ptr<ReelFileAsset>> reel_file_assets();
 
 	/** @return true if we have any encrypted content */
-	bool any_encrypted () const;
+	bool any_encrypted() const;
 
 	/** @return true if we have all our encryptable content is encrypted */
-	bool all_encrypted () const;
+	bool all_encrypted() const;
 
 	/** Write a CompositionPlaylist XML file
 	 *
@@ -131,163 +131,163 @@ public:
 	 *  @param include_mca_subdescriptors true to add a MCASubDescriptors tag to metadata,
 	 *  false to omit it.
 	 */
-	void write_xml (
+	void write_xml(
 		boost::filesystem::path file,
 		std::shared_ptr<const CertificateChain>,
 		bool include_mca_subdescriptors = true
 		) const;
 
-	void resolve_refs (std::vector<std::shared_ptr<Asset>>);
+	void resolve_refs(std::vector<std::shared_ptr<Asset>>);
 
-	int64_t duration () const;
+	int64_t duration() const;
 
-	std::string issuer () const {
+	std::string issuer() const {
 		return _issuer;
 	}
 
-	void set_issuer (std::string issuer) {
+	void set_issuer(std::string issuer) {
 		_issuer = issuer;
 	}
 
-	std::string creator () const {
+	std::string creator() const {
 		return _creator;
 	}
 
-	void set_creator (std::string creator) {
+	void set_creator(std::string creator) {
 		_creator = creator;
 	}
 
-	void set_issue_date (std::string issue_date) {
+	void set_issue_date(std::string issue_date) {
 		_issue_date = issue_date;
 	}
 
 	/** @return contents of the &lt;AnnotationText&gt; node, if present */
-	boost::optional<std::string> annotation_text () const {
+	boost::optional<std::string> annotation_text() const {
 		return _annotation_text;
 	}
 
-	void set_annotation_text (std::string at) {
+	void set_annotation_text(std::string at) {
 		_annotation_text = at;
 	}
 
 	/** @return contents of the &lt;ContentTitleText&gt; node */
-	std::string content_title_text () const {
+	std::string content_title_text() const {
 		return _content_title_text;
 	}
 
-	void set_content_title_text (std::string ct) {
+	void set_content_title_text(std::string ct) {
 		_content_title_text = ct;
 	}
 
-	void set_content_kind (dcp::ContentKind k) {
+	void set_content_kind(dcp::ContentKind k) {
 		_content_kind = k;
 	}
 
 	/** @return the type of the content, used by media servers
 	 *  to categorise things (e.g. feature, trailer, etc.)
 	 */
-	ContentKind content_kind () const {
+	ContentKind content_kind() const {
 		return _content_kind;
 	}
 
-	boost::optional<ContentVersion> content_version () const;
+	boost::optional<ContentVersion> content_version() const;
 
-	std::vector<ContentVersion> content_versions () const {
+	std::vector<ContentVersion> content_versions() const {
 		return _content_versions;
 	}
 
-	void set_content_version (ContentVersion v) {
-		_content_versions.clear ();
-		_content_versions.push_back (v);
+	void set_content_version(ContentVersion v) {
+		_content_versions.clear();
+		_content_versions.push_back(v);
 	}
 
-	void set_content_versions (std::vector<ContentVersion> v);
+	void set_content_versions(std::vector<ContentVersion> v);
 
-	std::vector<Rating> ratings () const {
+	std::vector<Rating> ratings() const {
 		return _ratings;
 	}
 
-	void set_ratings (std::vector<Rating> r) {
+	void set_ratings(std::vector<Rating> r) {
 		_ratings = r;
 	}
 
-	boost::optional<std::string> full_content_title_text () const {
+	boost::optional<std::string> full_content_title_text() const {
 		return _full_content_title_text;
 	}
 
-	void set_full_content_title_text (std::string t) {
+	void set_full_content_title_text(std::string t) {
 		_full_content_title_text = t;
 	}
 
-	boost::optional<std::string> full_content_title_text_language () const {
+	boost::optional<std::string> full_content_title_text_language() const {
 		return _full_content_title_text_language;
 	}
 
-	void set_full_content_title_text_language (dcp::LanguageTag l) {
+	void set_full_content_title_text_language(dcp::LanguageTag l) {
 		_full_content_title_text_language = l.to_string();
 	}
 
-	boost::optional<std::string> release_territory () const {
+	boost::optional<std::string> release_territory() const {
 		return _release_territory;
 	}
 
-	void set_release_territory (dcp::LanguageTag::RegionSubtag t) {
+	void set_release_territory(dcp::LanguageTag::RegionSubtag t) {
 		_release_territory = t.subtag();
 	}
 
-	boost::optional<std::string> release_territory_scope () const {
+	boost::optional<std::string> release_territory_scope() const {
 		return _release_territory_scope;
 	}
 
-	boost::optional<int> version_number () const {
+	boost::optional<int> version_number() const {
 		return _version_number;
 	}
 
-	void set_version_number (int v);
+	void set_version_number(int v);
 
-	void unset_version_number ();
+	void unset_version_number();
 
-	boost::optional<Status> status () const {
+	boost::optional<Status> status() const {
 		return _status;
 	}
 
-	void set_status (Status s) {
+	void set_status(Status s) {
 		_status = s;
 	}
 
-	boost::optional<std::string> chain () const {
+	boost::optional<std::string> chain() const {
 		return _chain;
 	}
 
-	void set_chain (std::string c) {
+	void set_chain(std::string c) {
 		_chain = c;
 	}
 
-	boost::optional<std::string> distributor () const {
+	boost::optional<std::string> distributor() const {
 		return _distributor;
 	}
 
-	void set_distributor (std::string d) {
+	void set_distributor(std::string d) {
 		_distributor = d;
 	}
 
-	boost::optional<std::string> facility () const {
+	boost::optional<std::string> facility() const {
 		return _facility;
 	}
 
-	void set_facility (std::string f) {
+	void set_facility(std::string f) {
 		_facility = f;
 	}
 
-	boost::optional<Luminance> luminance () const {
+	boost::optional<Luminance> luminance() const {
 		return _luminance;
 	}
 
-	void set_luminance (Luminance l) {
+	void set_luminance(Luminance l) {
 		_luminance = l;
 	}
 
-	boost::optional<dcp::MainSoundConfiguration> main_sound_configuration () const {
+	boost::optional<dcp::MainSoundConfiguration> main_sound_configuration() const {
 		return _main_sound_configuration;
 	}
 
@@ -295,39 +295,39 @@ public:
 		_main_sound_configuration = c;
 	}
 
-	boost::optional<int> main_sound_sample_rate () const {
+	boost::optional<int> main_sound_sample_rate() const {
 		return _main_sound_sample_rate;
 	}
 
-	void set_main_sound_sample_rate (int r) {
+	void set_main_sound_sample_rate(int r) {
 		_main_sound_sample_rate = r;
 	}
 
-	boost::optional<dcp::Size> main_picture_stored_area () const {
+	boost::optional<dcp::Size> main_picture_stored_area() const {
 		return _main_picture_stored_area;
 	}
 
-	void set_main_picture_stored_area (dcp::Size s) {
+	void set_main_picture_stored_area(dcp::Size s) {
 		_main_picture_stored_area = s;
 	}
 
-	boost::optional<dcp::Size> main_picture_active_area () const {
+	boost::optional<dcp::Size> main_picture_active_area() const {
 		return _main_picture_active_area;
 	}
 
 	void set_main_picture_active_area(dcp::Size area);
 
-	std::vector<std::string> additional_subtitle_languages () const {
+	std::vector<std::string> additional_subtitle_languages() const {
 		return _additional_subtitle_languages;
 	}
 
-	void set_additional_subtitle_languages (std::vector<dcp::LanguageTag> const& lang);
+	void set_additional_subtitle_languages(std::vector<dcp::LanguageTag> const& lang);
 
-	void set_sign_language_video_language (dcp::LanguageTag lang) {
+	void set_sign_language_video_language(dcp::LanguageTag lang) {
 		_sign_language_video_language = lang.to_string();
 	}
 
-	boost::optional<std::string> sign_language_video_language () const {
+	boost::optional<std::string> sign_language_video_language() const {
 		return _sign_language_video_language;
 	}
 
@@ -339,7 +339,7 @@ public:
 		return _dolby_edr_image_transfer_function;
 	}
 
-	Standard standard () const {
+	Standard standard() const {
 		return _standard;
 	}
 
@@ -350,11 +350,11 @@ public:
 		return _read_composition_metadata;
 	}
 
-	static std::string static_pkl_type (Standard standard);
+	static std::string static_pkl_type(Standard standard);
 
 protected:
 	/** @return type string for PKLs for this asset */
-	std::string pkl_type (Standard standard) const override;
+	std::string pkl_type(Standard standard) const override;
 
 private:
 	friend struct ::verify_invalid_language3;
