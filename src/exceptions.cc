@@ -37,12 +37,13 @@
  */
 
 
-#include "exceptions.h"
 #include "compose.hpp"
+#include "exceptions.h"
+#include <fmt/format.h>
 
 
-using std::string;
 using std::runtime_error;
+using std::string;
 using boost::optional;
 using namespace dcp;
 
@@ -212,3 +213,8 @@ BadURNUUIDError::BadURNUUIDError(string bad_id)
 
 }
 
+LoadVariableZError::LoadVariableZError(string variable_z)
+       : runtime_error(fmt::format("Badly-formed LoadVariableZ string {}", variable_z))
+{
+
+}

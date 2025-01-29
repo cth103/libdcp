@@ -91,6 +91,7 @@ def build(bld):
                  h_align_test.cc
                  interop_load_font_test.cc
                  interop_subtitle_test.cc
+                 load_variable_z_test.cc
                  local_time_test.cc
                  long_filenames_test.cc
                  make_digest_test.cc

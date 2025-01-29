@@ -358,6 +358,13 @@ public:
 };
 
 
+class LoadVariableZError : public std::runtime_error
+{
+public:
+       LoadVariableZError(std::string variable_z);
+};
+
+
 }
 
 

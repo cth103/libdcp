@@ -71,6 +71,7 @@ def build(bld):
              j2k_transcode.cc
              key.cc
              language_tag.cc
+             load_variable_z.cc
              local_time.cc
              locale_convert.cc
              main_sound_configuration.cc
@@ -183,6 +184,7 @@ def build(bld):
               key.h
               language_tag.h
               load_font_node.h
+              load_variable_z.h
               local_time.h
               locale_convert.h
               main_sound_configuration.h
