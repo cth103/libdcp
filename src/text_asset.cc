@@ -203,8 +203,7 @@ TextAsset::position_align(TextAsset::ParseState& ps, xmlpp::Element const * node
 		ps.v_align = string_to_valign (va.get ());
 	}
 
-	auto zp = optional_number_attribute<float>(node, "Zposition");
-	if (zp) {
+	if (auto zp = optional_number_attribute<float>(node, "Zposition")) {
 		ps.z_position = zp.get() / 100;
 	}
 }
