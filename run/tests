@@ -38,7 +38,7 @@ done
 
 export LD_LIBRARY_PATH=build/src:/usr/local/lib:/usr/local/lib64:$LD_LIBRARY_PATH
 # SIP stops this being passed in from the caller's environment
-export DYLD_LIBRARY_PATH=$environment/x86_64/10.10/lib:/Users/ci/workspace/lib
+export DYLD_LIBRARY_PATH=build/src:$environment/arm64/11.0/lib:$environment/x86_64/10.10/lib:/Users/ci/workspace/lib:/usr/local/lib
 export LIBDCP_RESOURCES=.
 
 # Make sure we have the required tools
