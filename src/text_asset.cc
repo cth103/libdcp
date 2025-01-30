@@ -387,6 +387,7 @@ TextAsset::parse_texts(xmlpp::Element const * node, vector<ParseState>& state, o
 		}
 	}
 
+	DCP_ASSERT(!state.empty());
 	state.pop_back ();
 }
 
