@@ -654,13 +654,15 @@ CertificateChain::sign (xmlpp::Element* parent, Standard standard) const
 void
 CertificateChain::add_signature_value (xmlpp::Element* parent, string ns, bool add_indentation) const
 {
-	cxml::Node cp (parent);
-	auto key_info = dynamic_cast<xmlpp::Element*>(cp.node_child("KeyInfo")->node());
-	DCP_ASSERT(key_info);
+	auto children = parent->get_children();
+	auto key_info = std::find_if(children.begin(), children.end(), [](xmlpp::Node* node) {
+		return node->get_name() == "KeyInfo";
+	});
+	DCP_ASSERT(key_info != children.end());
 
 	/* Add the certificate chain to the KeyInfo child node of parent */
 	for (auto const& i: leaf_to_root()) {
-		auto data = cxml::add_child(key_info, "X509Data", ns);
+		auto data = cxml::add_child(dynamic_cast<xmlpp::Element*>(*key_info), "X509Data", ns);
 
 		{
 			auto serial = cxml::add_child(data, "X509IssuerSerial", ns);

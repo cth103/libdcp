@@ -116,7 +116,7 @@ struct TestConfig
 
 
 void
-check_xml (xmlpp::Element* ref, xmlpp::Element* test, vector<string> ignore_tags, bool ignore_whitespace)
+check_xml(xmlpp::Element const* ref, xmlpp::Element const* test, vector<string> ignore_tags, bool ignore_whitespace)
 {
 	BOOST_CHECK_EQUAL (ref->get_name (), test->get_name ());
 	BOOST_CHECK_EQUAL (ref->get_namespace_prefix (), test->get_namespace_prefix ());
@@ -125,8 +125,8 @@ check_xml (xmlpp::Element* ref, xmlpp::Element* test, vector<string> ignore_tags
 		return;
 	}
 
-	auto whitespace_content = [](xmlpp::Node* node) {
-		auto content = dynamic_cast<xmlpp::ContentNode*>(node);
+	auto whitespace_content = [](xmlpp::Node const* node) {
+		auto content = dynamic_cast<xmlpp::ContentNode const*>(node);
 		return content && content->get_content().find_first_not_of(" \t\r\n") == string::npos;
 	};
 
@@ -137,12 +137,12 @@ check_xml (xmlpp::Element* ref, xmlpp::Element* test, vector<string> ignore_tags
 	auto l = test_children.begin ();
 	while (k != ref_children.end() && l != test_children.end()) {
 
-		if (dynamic_cast<xmlpp::CommentNode*>(*k)) {
+		if (dynamic_cast<xmlpp::CommentNode const*>(*k)) {
 			++k;
 			continue;
 		}
 
-		if (dynamic_cast<xmlpp::CommentNode*>(*l)) {
+		if (dynamic_cast<xmlpp::CommentNode const*>(*l)) {
 			++l;
 			continue;
 		}
@@ -159,15 +159,15 @@ check_xml (xmlpp::Element* ref, xmlpp::Element* test, vector<string> ignore_tags
 
 		/* XXX: should be doing xmlpp::EntityReference, xmlpp::XIncludeEnd, xmlpp::XIncludeStart */
 
-		auto ref_el = dynamic_cast<xmlpp::Element*> (*k);
-		auto test_el = dynamic_cast<xmlpp::Element*> (*l);
+		auto ref_el = dynamic_cast<xmlpp::Element const*>(*k);
+		auto test_el = dynamic_cast<xmlpp::Element const*>(*l);
 		BOOST_CHECK ((ref_el && test_el) || (!ref_el && !test_el));
 		if (ref_el && test_el) {
 			check_xml (ref_el, test_el, ignore_tags, ignore_whitespace);
 		}
 
-		auto ref_cn = dynamic_cast<xmlpp::ContentNode*> (*k);
-		auto test_cn = dynamic_cast<xmlpp::ContentNode*> (*l);
+		auto ref_cn = dynamic_cast<xmlpp::ContentNode const*>(*k);
+		auto test_cn = dynamic_cast<xmlpp::ContentNode const*>(*l);
 		BOOST_CHECK ((ref_cn && test_cn) || (!ref_cn && !test_cn));
 		if (ref_cn && test_cn) {
 			BOOST_CHECK_EQUAL (ref_cn->get_content(), test_cn->get_content());

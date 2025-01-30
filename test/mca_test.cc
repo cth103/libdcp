@@ -80,10 +80,10 @@ BOOST_AUTO_TEST_CASE (parse_mca_descriptors_from_mxf_test)
 
 		vector<string> ignore;
 		check_xml (
-			dynamic_cast<xmlpp::Element*>(
+			dynamic_cast<xmlpp::Element const*>(
 				ref.node_child("ReelList")->node_children("Reel").front()->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
 				),
-			dynamic_cast<xmlpp::Element*>(
+			dynamic_cast<xmlpp::Element const*>(
 				check.node_child("ReelList")->node_children("Reel").front()->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
 				),
 			ignore,
@@ -132,10 +132,10 @@ BOOST_AUTO_TEST_CASE (write_mca_descriptors_to_mxf_test)
 	cxml::Document check("CompositionPlaylist", "build/test/write_mca_descriptors_to_mxf_test/cpl.xml");
 
 	check_xml (
-		dynamic_cast<xmlpp::Element*>(
+		dynamic_cast<xmlpp::Element const*>(
 			ref.node_child("ReelList")->node_children("Reel")[0]->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
 			),
-		dynamic_cast<xmlpp::Element*>(
+		dynamic_cast<xmlpp::Element const*>(
 			check.node_child("ReelList")->node_children("Reel")[0]->node_child("AssetList")->node_child("CompositionMetadataAsset")->node_child("MCASubDescriptors")->node()
 			),
 		{ "InstanceID", "MCALinkID", "SoundfieldGroupLinkID" },

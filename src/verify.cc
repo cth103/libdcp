@@ -801,7 +801,7 @@ verify_subtitle_asset(Context& context, shared_ptr<const TextAsset> asset, optio
 	auto namespace_count = [](shared_ptr<const TextAsset> asset, string root_node) {
 		cxml::Document doc(root_node);
 		doc.read_string(asset->raw_xml().get());
-		auto root = dynamic_cast<xmlpp::Element*>(doc.node())->cobj();
+		auto root = dynamic_cast<xmlpp::Element const*>(doc.node())->cobj();
 		int count = 0;
 		for (auto ns = root->nsDef; ns != nullptr; ns = ns->next) {
 			++count;

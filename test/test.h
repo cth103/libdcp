@@ -40,7 +40,7 @@ namespace dcp {
 extern boost::filesystem::path private_test;
 extern boost::filesystem::path xsd_test;
 
-extern void check_xml (xmlpp::Element* ref, xmlpp::Element* test, std::vector<std::string> ignore_tags, bool ignore_whitespace = false);
+extern void check_xml(xmlpp::Element const* ref, xmlpp::Element const* test, std::vector<std::string> ignore_tags, bool ignore_whitespace = false);
 extern void check_xml (std::string ref, std::string test, std::vector<std::string> ignore, bool ignore_whitespace = false);
 extern void check_file (boost::filesystem::path ref, boost::filesystem::path check);
 extern std::shared_ptr<dcp::MonoJ2KPictureAsset> simple_picture (
