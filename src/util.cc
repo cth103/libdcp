@@ -287,6 +287,7 @@ dcp::write_string_to_file(string const& string, boost::filesystem::path const& p
 string
 dcp::private_key_fingerprint (string key)
 {
+	boost::replace_all(key, "\r", "");
 	boost::replace_all(key, "-----BEGIN RSA PRIVATE KEY-----\n", "");
 	boost::replace_all(key, "\n-----END RSA PRIVATE KEY-----\n", "");
 	boost::replace_all(key, "-----BEGIN PRIVATE KEY-----\n", "");
