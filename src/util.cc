@@ -287,22 +287,22 @@ dcp::write_string_to_file(string const& string, boost::filesystem::path const& p
 string
 dcp::private_key_fingerprint (string key)
 {
-	boost::replace_all (key, "-----BEGIN RSA PRIVATE KEY-----\n", "");
-	boost::replace_all (key, "\n-----END RSA PRIVATE KEY-----\n", "");
-	boost::replace_all (key, "-----BEGIN PRIVATE KEY-----\n", "");
-	boost::replace_all (key, "\n-----END PRIVATE KEY-----\n", "");
+	boost::replace_all(key, "-----BEGIN RSA PRIVATE KEY-----\n", "");
+	boost::replace_all(key, "\n-----END RSA PRIVATE KEY-----\n", "");
+	boost::replace_all(key, "-----BEGIN PRIVATE KEY-----\n", "");
+	boost::replace_all(key, "\n-----END PRIVATE KEY-----\n", "");
 
 	unsigned char buffer[4096];
-	int const N = base64_decode (key, buffer, sizeof (buffer));
+	int const N = base64_decode(key, buffer, sizeof (buffer));
 
 	SHA_CTX sha;
-	SHA1_Init (&sha);
-	SHA1_Update (&sha, buffer, N);
+	SHA1_Init(&sha);
+	SHA1_Update(&sha, buffer, N);
 	uint8_t digest[20];
-	SHA1_Final (digest, &sha);
+	SHA1_Final(digest, &sha);
 
 	char digest_base64[64];
-	return Kumu::base64encode (digest, 20, digest_base64, 64);
+	return Kumu::base64encode(digest, 20, digest_base64, 64);
 }
 
 
