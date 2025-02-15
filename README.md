@@ -30,7 +30,7 @@ Bugfixes were received from Philip Tschiemer.
 - xmlsec
 - sndfile
 - openjpeg (1.5.0 or above)
-- [libasdcp-cth](https://github.com/cth103/asdcplib-cth/tree/cth)
+- [asdcplib](https://github.com/cth103/asdcplib/tree/dcpomatic-2.13.0)
 - [libcxml](https://github.com/cth103/libcxml)
 - (optional) ImageMagick or GraphicsMagick (for examples)
 - (optional) OpenMP
