@@ -456,6 +456,11 @@ verify_picture_asset(
 	)
 {
 	auto asset = dynamic_pointer_cast<J2KPictureAsset>(reel_file_asset->asset_ref().asset());
+	if (!asset) {
+		/* No verification of MPEG2 picture assets at the moment */
+		return;
+	}
+
 	auto const duration = asset->intrinsic_duration ();
 
 	auto check_and_add = [&context](vector<VerificationNote> const& j2k_notes) {
