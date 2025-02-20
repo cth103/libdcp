@@ -108,6 +108,9 @@ verify_report(dcp::VerificationResult const& result, Formatter& formatter)
 	for (auto dcp: result.dcps) {
 		auto ul = formatter.unordered_list();
 		for (auto cpl: dcp->cpls()) {
+			if (cpl->annotation_text()) {
+				formatter.list_item(*cpl->annotation_text());
+			}
 			formatter.list_item(String::compose("CPL ID: %1", cpl->id()));
 			int reel_index = 1;
 			for (auto reel: cpl->reels()) {
