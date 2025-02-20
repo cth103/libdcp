@@ -29,14 +29,16 @@ BOOST_AUTO_TEST_CASE(verify_report_basically_ok)
 {
 	dcp::HTMLFormatter formatter("build/test/verify_report_basically_ok.html");
 	dcp::verify_report(
-		dcp::verify(
-			{ private_test / "TONEPLATES-SMPTE-PLAINTEXT_TST_F_XX-XX_ITL-TD_51-XX_2K_WOE_20111001_WOE_OV" },
-			{},
-			[](std::string, boost::optional<boost::filesystem::path>) {},
-			[](float) {},
-			{},
-			xsd_test
-			),
+		{
+			dcp::verify(
+				{ private_test / "TONEPLATES-SMPTE-PLAINTEXT_TST_F_XX-XX_ITL-TD_51-XX_2K_WOE_20111001_WOE_OV" },
+				{},
+				[](std::string, boost::optional<boost::filesystem::path>) {},
+				[](float) {},
+				{},
+				xsd_test
+				)
+		},
 		formatter
 		);
 }

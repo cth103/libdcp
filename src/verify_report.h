@@ -233,7 +233,7 @@ private:
 };
 
 
-extern void verify_report(dcp::VerificationResult const& result, Formatter& formatter);
+extern void verify_report(std::vector<dcp::VerificationResult> const& results, Formatter& formatter);
 
 
 }

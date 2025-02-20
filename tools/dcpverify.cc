@@ -225,7 +225,7 @@ main (int argc, char* argv[])
 
 	if (report_filename) {
 		dcp::HTMLFormatter formatter(*report_filename);
-		dcp::verify_report(result, formatter);
+		dcp::verify_report({ result }, formatter);
 	}
 
 	exit (failed ? EXIT_FAILURE : EXIT_SUCCESS);

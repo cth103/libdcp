@@ -64,14 +64,9 @@ void write_line(File& file, string format, Args... args)
 }
 
 
-void
-dcp::verify_report(dcp::VerificationResult const& result, Formatter& formatter)
+static void
+verify_report(dcp::VerificationResult const& result, Formatter& formatter)
 {
-	auto document = formatter.document();
-	auto body = formatter.body();
-
-	formatter.heading("DCP verification report");
-
 	if (result.dcps.size() > 1) {
 		formatter.subheading("DCPs");
 	} else {
@@ -146,6 +141,20 @@ dcp::verify_report(dcp::VerificationResult const& result, Formatter& formatter)
 	if (std::count_if(result.notes.begin(), result.notes.end(), [](VerificationNote const& note) { return !note.cpl_id(); }) > 0) {
 		formatter.subheading("Report");
 		write_notes(result, {});
+	}
+}
+
+
+void
+dcp::verify_report(vector<dcp::VerificationResult> const& results, Formatter& formatter)
+{
+	auto document = formatter.document();
+	auto body = formatter.body();
+
+	formatter.heading("DCP verification report");
+
+	for (auto result: results) {
+		::verify_report(result, formatter);
 	}
 }
 
