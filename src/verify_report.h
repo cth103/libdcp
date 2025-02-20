@@ -201,9 +201,9 @@ public:
 
 	void list_item(std::string const& text, boost::optional<std::string> type = {}) override {
 		if (type) {
-			_file.puts(dcp::String::compose("<li class=\"%1\">%2", *type, text).c_str());
+			_file.puts(dcp::String::compose("<li class=\"%1\">%2</li>", *type, text).c_str());
 		} else {
-			_file.puts(dcp::String::compose("<li>%1", text).c_str());
+			_file.puts(dcp::String::compose("<li>%1</li>", text).c_str());
 		}
 	}
 
