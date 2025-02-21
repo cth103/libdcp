@@ -416,7 +416,7 @@ BOOST_AUTO_TEST_CASE (verify_no_error)
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir / "video.mxf"));
 	++st;
-	BOOST_CHECK_EQUAL (st->first, "Checking picture frame sizes");
+	BOOST_CHECK_EQUAL (st->first, "Checking picture asset details");
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir / "video.mxf"));
 	++st;
@@ -931,7 +931,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_standard)
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir / "j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf"));
 	++st;
-	BOOST_CHECK_EQUAL (st->first, "Checking picture frame sizes");
+	BOOST_CHECK_EQUAL (st->first, "Checking picture asset details");
 	BOOST_REQUIRE (st->second);
 	BOOST_CHECK_EQUAL (st->second.get(), canonical(dir / "j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf"));
 	++st;

@@ -557,8 +557,10 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 		}
 	}
 
-	context.stage("Checking picture frame sizes", asset->file());
-	verify_picture_details(context, reel_asset, file, start_frame);
+	if (context.options.check_picture_details) {
+		context.stage("Checking picture asset details", asset->file());
+		verify_picture_details(context, reel_asset, file, start_frame);
+	}
 
 	/* Only flat/scope allowed by Bv2.1 */
 	if (

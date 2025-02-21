@@ -702,6 +702,8 @@ struct VerificationOptions
 	///< true to check asset hashes (except those which match maximum_asset_size_for_hash_check)
 	///< false to check no asset hashes.
 	bool check_asset_hashes = true;
+	///< true to do some time-consuming detailed picture checks (e.g. J2K bitstream)
+	bool check_picture_details = true;
 };
 
 

@@ -69,6 +69,7 @@ help (string n)
 	     << "  --ignore-bv21-smpte                          don't give the SMPTE Bv2.1 error about a DCP not being SMPTE\n"
 	     << "  --no-asset-hash-check                        don't check asset hashes\n"
 	     << "  --asset-hash-check-maximum-size <size-in-MB> only check hashes for assets smaller than this size (in MB)\n"
+	     << "  --no-picture-details-check                   don't check details of picture assets (J2K bitstream etc.)\n"
 	     << "  -o <filename>                                write HTML report to filename\n"
 	     << "  -q, --quiet                                  don't report progress\n";
 }
@@ -94,12 +95,13 @@ main (int argc, char* argv[])
 			{ "ignore-missing-assets", no_argument, 0, 'A' },
 			{ "ignore-bv21-smpte", no_argument, 0, 'B' },
 			{ "no-asset-hash-check", no_argument, 0, 'C' },
+			{ "no-picture-details-check", no_argument, 0, 'E' },
 			{ "asset-hash-check-maximum-size", required_argument, 0, 'D' },
 			{ "quiet", no_argument, 0, 'q' },
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "VhABCD:qo:", long_options, &option_index);
+		int c = getopt_long (argc, argv, "VhABCD:Eqo:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -125,6 +127,9 @@ main (int argc, char* argv[])
 			break;
 		case 'D':
 			verification_options.maximum_asset_size_for_hash_check = dcp::raw_convert<int>(optarg) * 1000000LL;
+			break;
+		case 'E':
+			verification_options.check_picture_details = false;
 			break;
 		case 'q':
 			quiet = true;
