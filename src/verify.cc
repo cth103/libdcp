@@ -448,7 +448,7 @@ verify_language_tag(Context& context, string tag)
 
 
 static void
-verify_picture_asset(
+verify_picture_details(
 	Context& context,
 	shared_ptr<const ReelFileAsset> reel_file_asset,
 	boost::filesystem::path file,
@@ -558,7 +558,7 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 	}
 
 	context.stage("Checking picture frame sizes", asset->file());
-	verify_picture_asset(context, reel_asset, file, start_frame);
+	verify_picture_details(context, reel_asset, file, start_frame);
 
 	/* Only flat/scope allowed by Bv2.1 */
 	if (
