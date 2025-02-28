@@ -93,3 +93,37 @@ dcp::find_and_resolve_cpls (vector<boost::filesystem::path> const& directories, 
 	return cpls;
 }
 
+
+
+static
+void
+find_potential_dcps(boost::filesystem::path path, vector<boost::filesystem::path>& dcp)
+{
+	bool found = false;
+	try {
+		found = dcp::filesystem::exists(path / "ASSETMAP") || dcp::filesystem::exists(path / "ASSETMAP.xml");
+	} catch (...) {}
+
+	if (found) {
+		dcp.push_back(path);
+	} else if (boost::filesystem::is_directory(path)) {
+		for (auto i: boost::filesystem::directory_iterator(path)) {
+			try {
+				find_potential_dcps(i.path(), dcp);
+			} catch (...) {}
+		}
+	}
+}
+
+
+/** Search a directory recursively and return directories within that could be DCPs (because they
+ *  contain ASSETMAP or ASSETMAP.xml)
+ */
+vector<boost::filesystem::path>
+dcp::find_potential_dcps(boost::filesystem::path directory)
+{
+	vector<boost::filesystem::path> dcp;
+	::find_potential_dcps(directory, dcp);
+	return dcp;
+}
+

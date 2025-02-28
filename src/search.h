@@ -32,9 +32,19 @@
 */
 
 
+#include <boost/filesystem.hpp>
+#include <memory>
+#include <vector>
+
+
 namespace dcp {
 
+
+class CPL;
+
+
 extern std::vector<std::shared_ptr<dcp::CPL>> find_and_resolve_cpls (std::vector<boost::filesystem::path> const& directories, bool tolerant);
+extern std::vector<boost::filesystem::path> find_potential_dcps(boost::filesystem::path directory);
 
 }
 
