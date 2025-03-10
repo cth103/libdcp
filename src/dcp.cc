@@ -248,7 +248,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			}
 		} else if (
 			*pkl_type == remove_parameters(J2KPictureAsset::static_pkl_type(standard)) ||
-			*pkl_type == remove_parameters(MPEG2PictureAsset::static_pkl_type(standard)) ||
+			(standard == Standard::INTEROP && *pkl_type == remove_parameters(MPEG2PictureAsset::static_pkl_type(standard))) ||
 			*pkl_type == remove_parameters(SoundAsset::static_pkl_type(standard)) ||
 			*pkl_type == remove_parameters(AtmosAsset::static_pkl_type(standard)) ||
 			*pkl_type == remove_parameters(SMPTETextAsset::static_pkl_type(standard))
