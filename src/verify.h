@@ -204,7 +204,6 @@ public:
 		 */
 		INVALID_PICTURE_FRAME_RATE_FOR_4K,
 		/** A picture asset is 4K but is 3D which is not allowed by Bv2.1 [Bv2.1_7.1]
-		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
 		 *  file contains the asset filename
 		 */
 		INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
