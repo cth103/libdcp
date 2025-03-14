@@ -34,9 +34,12 @@
 import os
 import shutil
 
+def build_with_cpp17(target):
+    return target.platform.startswith('osx') or (target.platform == 'linux' and target.distro == 'debian' and target.version == 'unstable')
+
 def dependencies(target, options):
     deps = [
-        ('libcxml', 'v0.17.13', { 'c++17': target.platform.startswith('osx') }),
+        ('libcxml', 'v0.17.13', { 'c++17': build_with_cpp17(target) }),
         ('openjpeg', 'ad8edaacd54a862940d0a77c41ecda5858b54d6e'),
         ('asdcplib', 'v1.0.5')
     ]
@@ -64,7 +67,7 @@ def build(target, options):
     elif target.platform == 'windows':
         cmd += f' --target-windows-{target.bits}'
 
-    if ('c++17' in options and options['c++17']) or target.platform.startswith('osx'):
+    if ('c++17' in options and options['c++17']) or build_with_cpp17(target):
         cmd += ' --c++17'
 
     if target.debug:

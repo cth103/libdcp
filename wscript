@@ -77,9 +77,11 @@ def configure(conf):
     if vars(conf.options)['c++17']:
         cpp_std = '17'
         conf.env.XMLPP_API = '4.0'
+        conf.env.GLIBMM_API = '2.68'
     else:
         cpp_std = '11'
         conf.env.XMLPP_API = '2.6'
+        conf.env.GLIBMM_API = '2.4'
 
     conf.env.append_value('CXXFLAGS', ['-Wall', '-Wextra', '-D_FILE_OFFSET_BITS=64', '-D__STDC_FORMAT_MACROS', '-std=c++' + cpp_std])
     gcc = conf.env['CC_VERSION']
@@ -174,7 +176,7 @@ def configure(conf):
         conf.env.HAVE_ASDCPLIB_DCPOMATIC = 1
         conf.env.STLIB_ASDCPLIB_DCPOMATIC = ['asdcp-dcpomatic', 'kumu-dcpomatic']
         conf.env.HAVE_CXML = 1
-        conf.env.LIB_CXML = ['xml++-' + conf.env.XMLPP_API, 'glibmm-2.4']
+        conf.env.LIB_CXML = ['xml++-' + conf.env.XMLPP_API, 'glibmm-' + conf.env.GLIBMM_API]
         conf.env.STLIB_CXML = ['cxml']
         conf.check_cfg(package='xerces-c', args='--cflags', uselib_store='XERCES', mandatory=True)
         conf.env.LIB_XERCES = ['xerces-c', 'icuuc', 'curl']
