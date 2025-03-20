@@ -44,6 +44,7 @@
 #include "array_data.h"
 #include "dcp_time.h"
 #include "h_align.h"
+#include "load_variable_z.h"
 #include "raw_convert.h"
 #include "v_align.h"
 #include "warnings.h"
@@ -146,18 +147,33 @@ private:
 class Text : public Part
 {
 public:
-	Text(std::shared_ptr<Part> parent, HAlign h_align, float h_position, VAlign v_align, float v_position, float z_position, Direction direction, std::vector<Ruby> rubies)
+	Text(
+			std::shared_ptr<Part> parent,
+			HAlign h_align,
+			float h_position,
+			VAlign v_align,
+			float v_position,
+			float z_position,
+			boost::optional<std::string> variable_z,
+			Direction direction,
+			std::vector<Ruby> rubies
+		)
 		: Part (parent)
 		, _h_align (h_align)
 		, _h_position (h_position)
 		, _v_align (v_align)
 		, _v_position (v_position)
 		, _z_position(z_position)
+		, _variable_z(variable_z)
 		, _direction (direction)
 		, _rubies(rubies)
 	{}
 
 	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const override;
+
+	boost::optional<std::string> variable_z() {
+		return _variable_z;
+	}
 
 private:
 	HAlign _h_align;
@@ -165,6 +181,7 @@ private:
 	VAlign _v_align;
 	float _v_position;
 	float _z_position;
+	boost::optional<std::string> _variable_z;
 	Direction _direction;
 	std::vector<Ruby> _rubies;
 };
@@ -181,6 +198,8 @@ public:
 		, _fade_down (fade_down)
 	{}
 
+	boost::optional<std::string> find_or_add_variable_z_positions(std::vector<dcp::Text::VariableZPosition> const& positions, int& load_variable_z_index);
+
 	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const override;
 
 private:
@@ -188,13 +207,24 @@ private:
 	Time _out;
 	Time _fade_up;
 	Time _fade_down;
+	std::vector<LoadVariableZ> _load_variable_z;
 };
 
 
 class Image : public Part
 {
 public:
-	Image (std::shared_ptr<Part> parent, std::string id, ArrayData png_data, HAlign h_align, float h_position, VAlign v_align, float v_position, float z_position)
+	Image(
+		std::shared_ptr<Part> parent,
+		std::string id,
+		ArrayData png_data,
+		HAlign h_align,
+		float h_position,
+		VAlign v_align,
+		float v_position,
+		float z_position,
+		boost::optional<std::string> variable_z
+	     )
 		: Part (parent)
 		, _png_data (png_data)
 		, _id (id)
@@ -203,6 +233,7 @@ public:
 		, _v_align (v_align)
 		, _v_position (v_position)
 		, _z_position(z_position)
+		, _variable_z(variable_z)
 	{}
 
 	xmlpp::Element* as_xml (xmlpp::Element* parent, Context& context) const override;
@@ -215,6 +246,7 @@ private:
 	VAlign _v_align;
 	float _v_position;
 	float _z_position;
+	boost::optional<std::string> _variable_z;
 };
 
 

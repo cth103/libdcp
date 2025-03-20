@@ -206,6 +206,10 @@ TextAsset::position_align(TextAsset::ParseState& ps, xmlpp::Element const * node
 	if (auto zp = optional_number_attribute<float>(node, "Zposition")) {
 		ps.z_position = zp.get() / 100;
 	}
+
+	if (auto variable_z = optional_string_attribute(node, "VariableZ")) {
+		ps.variable_z = *variable_z;
+	}
 }
 
 
@@ -248,6 +252,14 @@ TextAsset::subtitle_node_state(xmlpp::Element const * node, optional<int> tcr) c
 	ps.out = Time (string_attribute(node, "TimeOut"), tcr);
 	ps.fade_up_time = fade_time (node, "FadeUpTime", tcr);
 	ps.fade_down_time = fade_time (node, "FadeDownTime", tcr);
+
+	for (auto child: node->get_children()) {
+		auto element = dynamic_cast<xmlpp::Element const*>(child);
+		if (element && element->get_name() == "LoadVariableZ") {
+			ps.load_variable_z.push_back(LoadVariableZ(element));
+		}
+	}
+
 	return ps;
 }
 
@@ -287,6 +299,8 @@ TextAsset::parse_texts(xmlpp::Element const * node, vector<ParseState>& state, o
 		state.push_back (ParseState ());
 	} else if (node->get_name() == "Image") {
 		state.push_back (image_node_state (node));
+	} else if (node->get_name() == "LoadVariableZ") {
+		return;
 	} else {
 		throw XMLError ("unexpected node " + node->get_name());
 	}
@@ -453,6 +467,9 @@ TextAsset::maybe_add_text(
 		if (i.z_position) {
 			ps.z_position = i.z_position.get();
 		}
+		if (i.variable_z) {
+			ps.variable_z = i.variable_z.get();
+		}
 		if (i.direction) {
 			ps.direction = i.direction.get();
 		}
@@ -471,6 +488,13 @@ TextAsset::maybe_add_text(
 		if (i.type) {
 			ps.type = i.type.get();
 		}
+		for (auto j: i.load_variable_z) {
+			/* j is a LoadVariableZ from this "sub" ParseState. See if we should add it to the end result */
+			auto const k = std::find_if(ps.load_variable_z.begin(), ps.load_variable_z.end(), [j](LoadVariableZ const& z) { return j.id() == z.id(); });
+			if (k == ps.load_variable_z.end()) {
+				ps.load_variable_z.push_back(j);
+			}
+		}
 	}
 
 	if (!ps.in || !ps.out) {
@@ -482,6 +506,12 @@ TextAsset::maybe_add_text(
 
 	switch (ps.type.get()) {
 	case ParseState::Type::TEXT:
+	{
+		vector<Text::VariableZPosition> variable_z;
+		auto iter = std::find_if(ps.load_variable_z.begin(), ps.load_variable_z.end(), [&ps](LoadVariableZ const& z) { return z.id() == ps.variable_z; });
+		if (iter != ps.load_variable_z.end()) {
+			variable_z = iter->positions();
+		}
 		_texts.push_back (
 			make_shared<TextString>(
 				ps.font_id,
@@ -498,6 +528,7 @@ TextAsset::maybe_add_text(
 				ps.v_position.get_value_or(0),
 				ps.v_align.get_value_or(VAlign::CENTER),
 				ps.z_position.get_value_or(0),
+				variable_z,
 				ps.direction.get_value_or (Direction::LTR),
 				text,
 				ps.effect.get_value_or (Effect::NONE),
@@ -509,6 +540,7 @@ TextAsset::maybe_add_text(
 				)
 			);
 		break;
+	}
 	case ParseState::Type::IMAGE:
 	{
 		switch (standard) {
@@ -530,6 +562,12 @@ TextAsset::maybe_add_text(
 			break;
 		}
 
+		vector<Text::VariableZPosition> variable_z;
+		auto iter = std::find_if(ps.load_variable_z.begin(), ps.load_variable_z.end(), [&ps](LoadVariableZ const& z) { return ps.variable_z && z.id() == *ps.variable_z; });
+		if (iter != ps.load_variable_z.end()) {
+			variable_z = iter->positions();
+		}
+
 		/* Add a text with no image data and we'll fill that in later */
 		_texts.push_back(
 			make_shared<TextImage>(
@@ -542,6 +580,7 @@ TextAsset::maybe_add_text(
 				ps.v_position.get_value_or(0),
 				ps.v_align.get_value_or(VAlign::CENTER),
 				ps.z_position.get_value_or(0),
+				variable_z,
 				ps.fade_up_time.get_value_or(Time()),
 				ps.fade_down_time.get_value_or(Time())
 				)
@@ -747,6 +786,7 @@ TextAsset::texts_as_xml(xmlpp::Element* xml_root, int time_code_rate, Standard s
 	float last_v_position;
 	float last_z_position;
 	Direction last_direction;
+	int load_variable_z_index = 1;
 
 	for (auto i: sorted) {
 		if (!subtitle ||
@@ -783,6 +823,7 @@ TextAsset::texts_as_xml(xmlpp::Element* xml_root, int time_code_rate, Standard s
 					is->v_align(),
 					is->v_position(),
 					is->z_position(),
+					subtitle->find_or_add_variable_z_positions(is->variable_z_positions(), load_variable_z_index),
 					is->direction(),
 					is->rubies()
 					);
@@ -802,7 +843,16 @@ TextAsset::texts_as_xml(xmlpp::Element* xml_root, int time_code_rate, Standard s
 		if (auto ii = dynamic_pointer_cast<TextImage>(i)) {
 			text.reset ();
 			subtitle->children.push_back (
-				make_shared<order::Image>(subtitle, ii->id(), ii->png_image(), ii->h_align(), ii->h_position(), ii->v_align(), ii->v_position(), ii->z_position())
+				make_shared<order::Image>(
+					subtitle, ii->id(),
+					ii->png_image(),
+					ii->h_align(),
+					ii->h_position(),
+					ii->v_align(),
+					ii->v_position(),
+					ii->z_position(),
+					subtitle->find_or_add_variable_z_positions(ii->variable_z_positions(), load_variable_z_index)
+					)
 				);
 		}
 	}

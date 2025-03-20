@@ -69,6 +69,7 @@ TextString::TextString(
 	float v_position,
 	VAlign v_align,
 	float z_position,
+	vector<VariableZPosition> variable_z_positions,
 	Direction direction,
 	string text,
 	Effect effect,
@@ -78,7 +79,7 @@ TextString::TextString(
 	float space_before,
 	vector<Ruby> rubies
 	)
-	: Text(in, out, h_position, h_align, v_position, v_align, z_position, fade_up_time, fade_down_time)
+	: Text(in, out, h_position, h_align, v_position, v_align, z_position, variable_z_positions, fade_up_time, fade_down_time)
 	, _font (font)
 	, _italic (italic)
 	, _bold (bold)
@@ -127,6 +128,7 @@ dcp::operator==(TextString const & a, TextString const & b)
 		a.v_position() == b.v_position() &&
 		a.v_align() == b.v_align() &&
 		a.z_position() == b.z_position() &&
+		a.variable_z_positions() == b.variable_z_positions() &&
 		a.direction() == b.direction() &&
 		a.text() == b.text() &&
 		a.effect() == b.effect() &&
@@ -173,8 +175,8 @@ dcp::operator<<(ostream& s, TextString const & sub)
 	  << ", colour (" << sub.colour().r << ", " << sub.colour().g << ", " << sub.colour().b << ")"
 	  << ", vpos " << sub.v_position() << ", valign " << ((int) sub.v_align())
 	  << ", hpos " << sub.h_position() << ", halign " << ((int) sub.h_align())
-	  << ", zpos " << sub.z_position()
-	  << ", direction " << ((int) sub.direction())
+	  << ", zpos " << sub.z_position();
+	s << ", direction " << ((int) sub.direction())
 	  << ", effect " << ((int) sub.effect())
 	  << ", effect colour (" << sub.effect_colour().r << ", " << sub.effect_colour().g << ", " << sub.effect_colour().b << ")"
 	  << ", space before " << sub.space_before();

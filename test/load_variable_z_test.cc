@@ -33,6 +33,7 @@
 
 
 #include "load_variable_z.h"
+#include "smpte_text_asset.h"
 #include "warnings.h"
 #include "compose.hpp"
 LIBDCP_DISABLE_WARNINGS
@@ -89,3 +90,12 @@ BOOST_AUTO_TEST_CASE(variable_z_test)
 	made.set_positions({{-0.6, 2}, {4.2, 9}, {5, 1}});
 	BOOST_CHECK_EQUAL(xml(made), "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<LoadVariableZ ID=\"baz\">-0.6:2 4.2:9 5.0</LoadVariableZ>\n");
 }
+
+
+BOOST_AUTO_TEST_CASE(variable_z_pass_through)
+{
+	dcp::SMPTETextAsset asset("test/data/subtitles_with_vZani.xml");
+	BOOST_CHECK_EQUAL(asset.xml_as_string(), dcp::file_to_string("test/data/subtitles_with_vZani_parsed.xml"));
+}
+
+

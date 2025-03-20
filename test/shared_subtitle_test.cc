@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test1)
 	auto root = make_shared<dcp::order::Part>(shared_ptr<dcp::order::Part>());
 	auto sub1 = make_shared<dcp::order::Subtitle>(root, dcp::Time(), dcp::Time(), dcp::Time(), dcp::Time());
 	root->children.push_back (sub1);
-	auto text1 = make_shared<dcp::order::Text>(sub1, dcp::HAlign::CENTER, 0, dcp::VAlign::TOP, 0, 0, dcp::Direction::LTR, std::vector<dcp::Ruby>());
+	auto text1 = make_shared<dcp::order::Text>(sub1, dcp::HAlign::CENTER, 0, dcp::VAlign::TOP, 0, 0, optional<string>(), dcp::Direction::LTR, std::vector<dcp::Ruby>());
 	sub1->children.push_back (text1);
 	text1->font._values["font"] = "Inconsolata";
 	text1->font._values["size"] = "42";
@@ -127,11 +127,11 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test2)
 	auto root = make_shared<dcp::order::Part>(shared_ptr<dcp::order::Part> ());
 	auto sub1 = make_shared<dcp::order::Subtitle>(root, dcp::Time(), dcp::Time(), dcp::Time(), dcp::Time());
 	root->children.push_back (sub1);
-	auto text1 = make_shared<dcp::order::Text>(sub1, dcp::HAlign::CENTER, 0, dcp::VAlign::TOP, 0, 0, dcp::Direction::LTR, std::vector<dcp::Ruby>());
+	auto text1 = make_shared<dcp::order::Text>(sub1, dcp::HAlign::CENTER, 0, dcp::VAlign::TOP, 0, 0, optional<string>(), dcp::Direction::LTR, std::vector<dcp::Ruby>());
 	sub1->children.push_back (text1);
 	text1->font._values["font"] = "Inconsolata";
 	text1->font._values["size"] = "42";
-	auto text2 = make_shared<dcp::order::Text>(sub1, dcp::HAlign::CENTER, 0, dcp::VAlign::TOP, 0, 0, dcp::Direction::LTR, std::vector<dcp::Ruby>());
+	auto text2 = make_shared<dcp::order::Text>(sub1, dcp::HAlign::CENTER, 0, dcp::VAlign::TOP, 0, 0, optional<string>(), dcp::Direction::LTR, std::vector<dcp::Ruby>());
 	sub1->children.push_back (text2);
 	text2->font._values["font"] = "Inconsolata";
 	text2->font._values["size"] = "48";
@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE (pull_fonts_test3)
 	auto root = make_shared<dcp::order::Part>(shared_ptr<dcp::order::Part> ());
 	auto sub1 = make_shared<dcp::order::Subtitle>(root, dcp::Time(), dcp::Time(), dcp::Time(), dcp::Time());
 	root->children.push_back (sub1);
-	auto text1 = make_shared<dcp::order::Text>(sub1, dcp::HAlign::CENTER, 0, dcp::VAlign::TOP, 0, 0, dcp::Direction::LTR, std::vector<dcp::Ruby>());
+	auto text1 = make_shared<dcp::order::Text>(sub1, dcp::HAlign::CENTER, 0, dcp::VAlign::TOP, 0, 0, optional<string>(), dcp::Direction::LTR, std::vector<dcp::Ruby>());
 	sub1->children.push_back (text1);
 	dcp::order::Font font;
 	font._values["font"] = "Inconsolata";

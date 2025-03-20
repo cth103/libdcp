@@ -66,6 +66,7 @@ BOOST_AUTO_TEST_CASE (smpte_subtitle_id_test)
 			0.5,
 			dcp::VAlign::CENTER,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			"Hello",
 			dcp::Effect::NONE,
@@ -196,6 +197,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 			0.8,
 			dcp::VAlign::TOP,
 			0.3,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			"Hello world",
 			dcp::Effect::NONE,
@@ -223,6 +225,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 			0.4,
 			dcp::VAlign::BOTTOM,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::RTL,
 			"What's going ",
 			dcp::Effect::BORDER,
@@ -250,6 +253,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test)
 			0.4,
 			dcp::VAlign::BOTTOM,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::RTL,
 			"on",
 			dcp::Effect::BORDER,
@@ -318,6 +322,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			0.8,
 			dcp::VAlign::TOP,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			"Testing is ",
 			dcp::Effect::NONE,
@@ -345,6 +350,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			0.8,
 			dcp::VAlign::TOP,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			"really",
 			dcp::Effect::NONE,
@@ -372,6 +378,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			0.8,
 			dcp::VAlign::TOP,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			" fun",
 			dcp::Effect::NONE,
@@ -399,6 +406,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			0.9,
 			dcp::VAlign::TOP,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			"This is the ",
 			dcp::Effect::NONE,
@@ -426,6 +434,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			0.9,
 			dcp::VAlign::TOP,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			"second",
 			dcp::Effect::NONE,
@@ -453,6 +462,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test2)
 			0.9,
 			dcp::VAlign::TOP,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			" line",
 			dcp::Effect::NONE,
@@ -511,6 +521,7 @@ BOOST_AUTO_TEST_CASE (write_smpte_subtitle_test3)
 			0.8,
 			dcp::VAlign::TOP,
 			-88,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Time (0, 0, 0, 0, 24),
 			dcp::Time (0, 0, 0, 0, 24)
 			)
@@ -568,6 +579,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_top_alignment)
 			0.8,
 			dcp::VAlign::TOP,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			"Top line",
 			dcp::Effect::NONE,
@@ -595,6 +607,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_top_alignment)
 			0.9,
 			dcp::VAlign::TOP,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			"Bottom line",
 			dcp::Effect::NONE,
@@ -658,6 +671,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_bottom_alignment)
 			0.8,
 			dcp::VAlign::BOTTOM,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			"Top line",
 			dcp::Effect::NONE,
@@ -685,6 +699,7 @@ BOOST_AUTO_TEST_CASE (write_subtitles_in_vertical_order_with_bottom_alignment)
 			0.7,
 			dcp::VAlign::BOTTOM,
 			0,
+			vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			"Bottom line",
 			dcp::Effect::NONE,
@@ -780,5 +795,15 @@ BOOST_AUTO_TEST_CASE(smpte_subtitle_intrinsic_duration_read_correctly)
 	auto check = dcp::SMPTETextAsset(path);
 	check.set_key(key);
 	BOOST_CHECK_EQUAL(check.intrinsic_duration(), duration);
+}
+
+
+
+BOOST_AUTO_TEST_CASE(pass_through_smpte_subtitle_with_variable_z)
+{
+	auto source = "test/data/subtitles_with_vZani.xml";
+	dcp::SMPTETextAsset test("test/data/subtitles_with_vZani.xml");
+	/* _parsed is a version of the source with some changes made by libdcp that are OK */
+	check_xml(dcp::file_to_string("test/data/subtitles_with_vZani_parsed.xml"), test.xml_as_string(), { "IssueDate" }, true);
 }
 

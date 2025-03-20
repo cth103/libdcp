@@ -72,6 +72,7 @@ public:
 	 *  @param v_align Vertical alignment point
 	 *  @param z_position Z position as a proportion of the primary picture width between -1 and +1;
 	 *  +ve moves the image away from the viewer, -ve moves it toward the viewer, 0 is in the plane of the screen.
+	 *  @param variable_z_positions List of variable Z positions for this text (or empty).
 	 *  @param direction Direction of text
 	 *  @param text The text to display
 	 *  @param effect Effect to use
@@ -95,6 +96,7 @@ public:
 		float v_position,
 		VAlign v_align,
 		float z_position,
+		std::vector<VariableZPosition> variable_z_positions,
 		Direction direction,
 		std::string text,
 		Effect effect,

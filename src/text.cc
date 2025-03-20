@@ -44,6 +44,9 @@
 
 
 using std::shared_ptr;
+using std::string;
+using std::vector;
+using boost::optional;
 using namespace dcp;
 
 
@@ -56,6 +59,7 @@ Text::Text(
 	float v_position,
 	VAlign v_align,
 	float z_position,
+	vector<VariableZPosition> variable_z_positions,
 	Time fade_up_time,
 	Time fade_down_time
 	)
@@ -66,6 +70,7 @@ Text::Text(
 	, _v_position (v_position)
 	, _v_align (v_align)
 	, _z_position(z_position)
+	, _variable_z_positions(variable_z_positions)
 	, _fade_up_time (fade_up_time)
 	, _fade_down_time (fade_down_time)
 {
@@ -117,6 +122,11 @@ Text::equals(shared_ptr<const Text> other, EqualityOptions const& options, NoteH
 		same = false;
 	}
 
+	if (variable_z_positions() != other->variable_z_positions()) {
+		note(NoteType::ERROR, "text variable Z positions differ");
+		same = false;
+	}
+
 	if (fade_up_time() != other->fade_up_time()) {
 		note(NoteType::ERROR, "text fade-up times differ");
 		same = false;
@@ -129,3 +139,10 @@ Text::equals(shared_ptr<const Text> other, EqualityOptions const& options, NoteH
 
 	return same;
 }
+
+
+bool dcp::operator==(Text::VariableZPosition a, Text::VariableZPosition b)
+{
+	return a.position == b.position && a.duration == b.duration;
+}
+

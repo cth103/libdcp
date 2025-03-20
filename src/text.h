@@ -97,6 +97,10 @@ public:
 		int64_t duration;
 	};
 
+	std::vector<VariableZPosition> variable_z_positions() const {
+		return _variable_z_positions;
+	}
+
 	Time fade_up_time () const {
 		return _fade_up_time;
 	}
@@ -128,6 +132,10 @@ public:
 		_z_position = z;
 	}
 
+	void set_variable_z_positions(std::vector<VariableZPosition> z) {
+		_variable_z_positions = std::move(z);
+	}
+
 	void set_fade_up_time (Time t) {
 		_fade_up_time = t;
 	}
@@ -148,6 +156,7 @@ protected:
 		float v_position,
 		VAlign v_align,
 		float z_position,
+		std::vector<VariableZPosition> variable_z,
 		Time fade_up_time,
 		Time fade_down_time
 		);
@@ -165,9 +174,13 @@ protected:
 	float _v_position = 0;
 	VAlign _v_align = VAlign::CENTER;
 	float _z_position = 0;
+	std::vector<VariableZPosition> _variable_z_positions;
 	Time _fade_up_time;
 	Time _fade_down_time;
 };
+
+
+bool operator==(Text::VariableZPosition a, Text::VariableZPosition b);
 
 
 }

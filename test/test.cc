@@ -410,6 +410,7 @@ simple_text()
 		0.8,
 		dcp::VAlign::TOP,
 		0,
+		vector<dcp::Text::VariableZPosition>(),
 		dcp::Direction::LTR,
 		"Hello world",
 		dcp::Effect::NONE,

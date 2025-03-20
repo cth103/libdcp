@@ -44,9 +44,12 @@
 #include <cmath>
 
 
+using std::dynamic_pointer_cast;
 using std::string;
 using std::map;
 using std::shared_ptr;
+using std::vector;
+using boost::optional;
 using namespace dcp;
 
 
@@ -166,7 +169,16 @@ order::Part::write_xml (xmlpp::Element* parent, order::Context& context) const
 
 
 static void
-position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, float h_position, VAlign v_align, float v_position, float z_position)
+position_align(
+		xmlpp::Element* e,
+		order::Context& context,
+		HAlign h_align,
+		float h_position,
+		VAlign v_align,
+		float v_position,
+		float z_position,
+		optional<string> variable_z
+		)
 {
 	if (h_align != HAlign::CENTER) {
 		if (context.standard == Standard::SMPTE) {
@@ -207,6 +219,10 @@ position_align (xmlpp::Element* e, order::Context& context, HAlign h_align, floa
 	if (fabs(z_position) > ALIGN_EPSILON && context.standard == Standard::SMPTE) {
 		e->set_attribute("Zposition", fmt::format("{:.6}", z_position * 100));
 	}
+
+	if (variable_z) {
+		e->set_attribute("VariableZ", *variable_z);
+	}
 }
 
 
@@ -215,7 +231,7 @@ order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 {
 	auto e = cxml::add_child(parent, "Text");
 
-	position_align(e, context, _h_align, _h_position, _v_align, _v_position, _z_position);
+	position_align(e, context, _h_align, _h_position, _v_align, _v_position, _z_position, _variable_z);
 
 	/* Interop only supports "horizontal" or "vertical" for direction, so only write this
 	   for SMPTE.
@@ -240,6 +256,24 @@ order::Text::as_xml (xmlpp::Element* parent, Context& context) const
 }
 
 
+optional<string>
+order::Subtitle::find_or_add_variable_z_positions(vector<dcp::Text::VariableZPosition> const& positions, int& load_variable_z_index)
+{
+	if (positions.empty()) {
+		return {};
+	}
+
+	auto iter = std::find_if(_load_variable_z.begin(), _load_variable_z.end(), [positions](LoadVariableZ const& load) { return positions == load.positions(); });
+	if (iter == _load_variable_z.end()) {
+		auto const id = fmt::format("Zvector{}", load_variable_z_index++);
+		_load_variable_z.push_back(LoadVariableZ(id, positions));
+		return id;
+	}
+
+	return iter->id();
+}
+
+
 xmlpp::Element*
 order::Subtitle::as_xml (xmlpp::Element* parent, Context& context) const
 {
@@ -254,6 +288,11 @@ order::Subtitle::as_xml (xmlpp::Element* parent, Context& context) const
 		e->set_attribute("FadeUpTime", fmt::to_string(_fade_up.as_editable_units_ceil(context.time_code_rate)));
 		e->set_attribute("FadeDownTime", fmt::to_string(_fade_down.as_editable_units_ceil(context.time_code_rate)));
 	}
+
+	for (auto const& vz: _load_variable_z) {
+		vz.as_xml(cxml::add_child(e, "LoadVariableZ"));
+	}
+
 	return e;
 }
 
@@ -277,7 +316,7 @@ order::Image::as_xml (xmlpp::Element* parent, Context& context) const
 {
 	auto e = cxml::add_child(parent, "Image");
 
-	position_align(e, context, _h_align, _h_position, _v_align, _v_position, _z_position);
+	position_align(e, context, _h_align, _h_position, _v_align, _v_position, _z_position, _variable_z);
 	if (context.standard == Standard::SMPTE) {
 		e->add_child_text ("urn:uuid:" + _id);
 	} else {
@@ -286,3 +325,4 @@ order::Image::as_xml (xmlpp::Element* parent, Context& context) const
 
 	return e;
 }
+

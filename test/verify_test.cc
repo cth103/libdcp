@@ -2092,7 +2092,7 @@ add_test_subtitle (shared_ptr<dcp::TextAsset> asset, int start_frame, int end_fr
 			dcp::HAlign::CENTER,
 			v_position,
 			v_align,
-			0,
+			0, vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			text,
 			dcp::Effect::NONE,
@@ -5896,7 +5896,7 @@ BOOST_AUTO_TEST_CASE(overlapping_subtitles)
 			dcp::Time(0, 0, 8, 0, 24),
 			0, dcp::HAlign::CENTER,
 			0, dcp::VAlign::CENTER,
-			0,
+			0, vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			"",
 			dcp::Effect::NONE, dcp::Colour{}, dcp::Time{}, dcp::Time{}, 0, vector<dcp::Ruby>{}
@@ -5909,7 +5909,7 @@ BOOST_AUTO_TEST_CASE(overlapping_subtitles)
 			dcp::Time(0, 0, 4, 0, 24),
 			0, dcp::HAlign::CENTER,
 			0, dcp::VAlign::CENTER,
-			0,
+			0, vector<dcp::Text::VariableZPosition>(),
 			dcp::Direction::LTR,
 			"Hello",
 			dcp::Effect::NONE, dcp::Colour{}, dcp::Time{}, dcp::Time{}, 0, vector<dcp::Ruby>{}

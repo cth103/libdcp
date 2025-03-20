@@ -47,6 +47,8 @@ using std::dynamic_pointer_cast;
 using std::ostream;
 using std::shared_ptr;
 using std::string;
+using std::vector;
+using boost::optional;
 using namespace dcp;
 
 
@@ -59,10 +61,11 @@ TextImage::TextImage(
 	float v_position,
 	VAlign v_align,
 	float z_position,
+	vector<VariableZPosition> variable_z_positions,
 	Time fade_up_time,
 	Time fade_down_time
 	)
-	: Text(in, out, h_position, h_align, v_position, v_align, z_position, fade_up_time, fade_down_time)
+	: Text(in, out, h_position, h_align, v_position, v_align, z_position, variable_z_positions, fade_up_time, fade_down_time)
 	, _png_image (png_image)
 	, _id (make_uuid ())
 {
@@ -80,10 +83,11 @@ TextImage::TextImage(
 	float v_position,
 	VAlign v_align,
 	float z_position,
+	vector<VariableZPosition> variable_z_positions,
 	Time fade_up_time,
 	Time fade_down_time
 	)
-	: Text(in, out, h_position, h_align, v_position, v_align, z_position, fade_up_time, fade_down_time)
+	: Text(in, out, h_position, h_align, v_position, v_align, z_position, variable_z_positions, fade_up_time, fade_down_time)
 	, _png_image (png_image)
 	, _id (id)
 {

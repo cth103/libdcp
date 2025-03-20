@@ -44,6 +44,7 @@
 #include "array_data.h"
 #include "asset.h"
 #include "dcp_time.h"
+#include "load_variable_z.h"
 #include "subtitle_standard.h"
 #include "text_string.h"
 #include <libcxml/cxml.h>
@@ -156,6 +157,7 @@ protected:
 		boost::optional<float> v_position;
 		boost::optional<VAlign> v_align;
 		boost::optional<float> z_position;
+		boost::optional<std::string> variable_z;
 		boost::optional<Direction> direction;
 		boost::optional<Time> in;
 		boost::optional<Time> out;
@@ -167,6 +169,8 @@ protected:
 		};
 		boost::optional<Type> type;
 		float space_before = 0;
+
+		std::vector<LoadVariableZ> load_variable_z;
 	};
 
 	void parse_texts(xmlpp::Element const * node, std::vector<ParseState>& state, boost::optional<int> tcr, Standard standard);
@@ -181,6 +185,7 @@ protected:
 
 	/** All our texts, in no particular order */
 	std::vector<std::shared_ptr<Text>> _texts;
+	std::vector<LoadVariableZ> _load_variable_z;
 
 	class Font
 	{

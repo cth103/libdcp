@@ -66,6 +66,7 @@ public:
 		float v_position,
 		VAlign v_align,
 		float z_position,
+		std::vector<VariableZPosition> variable_z_positions,
 		Time fade_up_time,
 		Time fade_down_time
 		);
@@ -80,6 +81,7 @@ public:
 		float v_position,
 		VAlign v_align,
 		float z_position,
+		std::vector<VariableZPosition> variable_z_positions,
 		Time fade_up_time,
 		Time fade_down_time
 		);
