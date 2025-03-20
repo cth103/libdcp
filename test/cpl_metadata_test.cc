@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_bad_values_test)
 BOOST_AUTO_TEST_CASE (main_sound_configuration_test1)
 {
 	dcp::MainSoundConfiguration msc("51/L,R,C,LFE,-,-");
-	BOOST_CHECK_EQUAL (msc.to_string(), "51/L,R,C,LFE,-,-");
+	BOOST_CHECK_EQUAL (msc.as_string(), "51/L,R,C,LFE,-,-");
 	BOOST_CHECK_EQUAL (msc.channels(), 6);
 	BOOST_CHECK_EQUAL (msc.field(), dcp::MCASoundField::FIVE_POINT_ONE);
 	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::Channel::LEFT);
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test1)
 BOOST_AUTO_TEST_CASE (main_sound_configuration_test2)
 {
 	dcp::MainSoundConfiguration msc("71/L,R,C,LFE,-,-");
-	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,R,C,LFE,-,-");
+	BOOST_CHECK_EQUAL (msc.as_string(), "71/L,R,C,LFE,-,-");
 	BOOST_CHECK_EQUAL (msc.channels(), 6);
 	BOOST_CHECK_EQUAL (msc.field(), dcp::MCASoundField::SEVEN_POINT_ONE);
 	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::Channel::LEFT);
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test2)
 BOOST_AUTO_TEST_CASE (main_sound_configuration_test3)
 {
 	dcp::MainSoundConfiguration msc("71/L,-,C,LFE,Lss,Rss");
-	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,-,C,LFE,Lss,Rss");
+	BOOST_CHECK_EQUAL (msc.as_string(), "71/L,-,C,LFE,Lss,Rss");
 	BOOST_CHECK_EQUAL (msc.channels(), 6);
 	BOOST_CHECK_EQUAL (msc.field(), dcp::MCASoundField::SEVEN_POINT_ONE);
 	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::Channel::LEFT);
@@ -115,7 +115,7 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test3)
 BOOST_AUTO_TEST_CASE (main_sound_configuration_test4)
 {
 	dcp::MainSoundConfiguration msc("71/L,-,C,LFE,Lss,Rss,-,-,-,-,-,-,-,-,-");
-	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,-,C,LFE,Lss,Rss,-,-,-,-,-,-,-,-,-");
+	BOOST_CHECK_EQUAL (msc.as_string(), "71/L,-,C,LFE,Lss,Rss,-,-,-,-,-,-,-,-,-");
 	BOOST_CHECK_EQUAL (msc.channels(), 15);
 	BOOST_CHECK_EQUAL (msc.field(), dcp::MCASoundField::SEVEN_POINT_ONE);
 	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::Channel::LEFT);
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE (main_sound_configuration_test4)
 BOOST_AUTO_TEST_CASE (main_sound_configuration_test5)
 {
 	dcp::MainSoundConfiguration msc("71/L,-,C,LFE,Lss,Rss,HI,VIN,-,-,Lrs,Rrs,DBOX,FSKSync,SLVS");
-	BOOST_CHECK_EQUAL (msc.to_string(), "71/L,-,C,LFE,Lss,Rss,HI,VIN,-,-,Lrs,Rrs,DBOX,FSKSync,SLVS");
+	BOOST_CHECK_EQUAL (msc.as_string(), "71/L,-,C,LFE,Lss,Rss,HI,VIN,-,-,Lrs,Rrs,DBOX,FSKSync,SLVS");
 	BOOST_CHECK_EQUAL (msc.channels(), 15);
 	BOOST_CHECK_EQUAL (msc.field(), dcp::MCASoundField::SEVEN_POINT_ONE);
 	BOOST_CHECK_EQUAL (msc.mapping(0).get(), dcp::Channel::LEFT);

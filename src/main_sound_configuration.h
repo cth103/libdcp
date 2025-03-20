@@ -65,7 +65,7 @@ class MainSoundConfiguration
 public:
 	/** Set up a MainSoundConfiguration from a string.  If the string is valid, valid() will
 	 *  subsequently return true and all accessors can be called.  Otherwise, all accessors
-	 *  except to_string() will throw a MainSoundConfigurationError and to_string() will
+	 *  except as_string() will throw a MainSoundConfigurationError and as_string() will
 	 *  return the original invalid string.
 	 */
 	explicit MainSoundConfiguration(std::string);
@@ -84,7 +84,7 @@ public:
 	boost::optional<Channel> mapping (int index) const;
 	void set_mapping (int index, Channel channel);
 
-	std::string to_string() const {
+	std::string as_string() const {
 		return _configuration;
 	}
 

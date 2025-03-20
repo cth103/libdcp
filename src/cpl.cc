@@ -318,7 +318,7 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 				dcp::VerificationNote(
 					dcp::VerificationNote::Type::ERROR,
 					dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION,
-					fmt::format("{} could not be parsed", _main_sound_configuration->to_string()),
+					fmt::format("{} could not be parsed", _main_sound_configuration->as_string()),
 					*_file
 					).set_cpl_id(_id)
 				);
@@ -539,7 +539,7 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 	}
 
 	if (_main_sound_configuration) {
-		cxml::add_child(meta, "MainSoundConfiguration", string("meta"))->add_child_text(_main_sound_configuration->to_string());
+		cxml::add_child(meta, "MainSoundConfiguration", string("meta"))->add_child_text(_main_sound_configuration->as_string());
 	}
 	cxml::add_child(meta, "MainSoundSampleRate", string("meta"))->add_child_text(fmt::to_string(*_main_sound_sample_rate) + " 1");
 
