@@ -224,7 +224,7 @@ public:
 	}
 
 	void set_full_content_title_text_language(dcp::LanguageTag l) {
-		_full_content_title_text_language = l.to_string();
+		_full_content_title_text_language = l.as_string();
 	}
 
 	boost::optional<std::string> release_territory() const {
@@ -324,7 +324,7 @@ public:
 	void set_additional_subtitle_languages(std::vector<dcp::LanguageTag> const& lang);
 
 	void set_sign_language_video_language(dcp::LanguageTag lang) {
-		_sign_language_video_language = lang.to_string();
+		_sign_language_video_language = lang.as_string();
 	}
 
 	boost::optional<std::string> sign_language_video_language() const {

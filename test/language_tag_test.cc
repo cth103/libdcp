@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 	{
 		dcp::LanguageTag t;
 
-		BOOST_CHECK_THROW (t.to_string(), dcp::LanguageTagError);
+		BOOST_CHECK_THROW(t.as_string(), dcp::LanguageTagError);
 
 		BOOST_CHECK_THROW (t.set_language("sheila"), dcp::LanguageTagError);
 		BOOST_CHECK_THROW (t.set_script("frobozz"), dcp::LanguageTagError);
@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 	{
 		dcp::LanguageTag t;
 		BOOST_CHECK_NO_THROW (t.set_language("de"));
-		BOOST_CHECK_EQUAL (t.to_string(), "de");
+		BOOST_CHECK_EQUAL(t.as_string(), "de");
 		BOOST_CHECK_EQUAL (t.description(), "German");
 	}
 
@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 	{
 		dcp::LanguageTag t;
 		BOOST_CHECK_NO_THROW (t.set_language("dE"));
-		BOOST_CHECK_EQUAL (t.to_string(), "dE");
+		BOOST_CHECK_EQUAL(t.as_string(), "dE");
 	}
 
 	/* Language + script */
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		dcp::LanguageTag t;
 		BOOST_CHECK_NO_THROW (t.set_language("zh"));
 		BOOST_CHECK_NO_THROW (t.set_script("Hant"));
-		BOOST_CHECK_EQUAL (t.to_string(), "zh-Hant");
+		BOOST_CHECK_EQUAL(t.as_string(), "zh-Hant");
 		BOOST_CHECK_EQUAL (t.description(), "Chinese written using the Han (Traditional variant) script");
 	}
 
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		dcp::LanguageTag t;
 		BOOST_CHECK_NO_THROW (t.set_language("de"));
 		BOOST_CHECK_NO_THROW (t.set_region("DE"));
-		BOOST_CHECK_EQUAL (t.to_string(), "de-DE");
+		BOOST_CHECK_EQUAL(t.as_string(), "de-DE");
 		BOOST_CHECK_EQUAL (t.description(), "German for Germany");
 	}
 
@@ -112,7 +112,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		dcp::LanguageTag t;
 		BOOST_CHECK_NO_THROW (t.set_language("sl"));
 		BOOST_CHECK_NO_THROW (t.add_variant("rozaj"));
-		BOOST_CHECK_EQUAL (t.to_string(), "sl-rozaj");
+		BOOST_CHECK_EQUAL(t.as_string(), "sl-rozaj");
 		BOOST_CHECK_EQUAL (t.description(), "Resian/Resianic/Rezijan dialect of Slovenian");
 	}
 
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		BOOST_CHECK_NO_THROW (t.set_language("sl"));
 		BOOST_CHECK_NO_THROW (t.add_variant("biske"));
 		BOOST_CHECK_NO_THROW (t.add_variant("rozaj"));
-		BOOST_CHECK_EQUAL (t.to_string(), "sl-biske-rozaj");
+		BOOST_CHECK_EQUAL(t.as_string(), "sl-biske-rozaj");
 		BOOST_CHECK_EQUAL (t.description(), "The San Giorgio dialect of Resian/The Bila dialect of Resian dialect of Resian/Resianic/Rezijan dialect of Slovenian");
 	}
 
@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		dcp::LanguageTag t;
 		BOOST_CHECK_NO_THROW (t.set_language("sl"));
 		BOOST_CHECK_NO_THROW (t.add_extlang("afb"));
-		BOOST_CHECK_EQUAL (t.to_string(), "sl-afb");
+		BOOST_CHECK_EQUAL(t.as_string(), "sl-afb");
 		BOOST_CHECK_EQUAL (t.description(), "Slovenian, Gulf Arabic");
 	}
 
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		BOOST_CHECK_NO_THROW (t.set_language("sl"));
 		BOOST_CHECK_NO_THROW (t.add_extlang("afb"));
 		BOOST_CHECK_NO_THROW (t.add_extlang("ltg"));
-		BOOST_CHECK_EQUAL (t.to_string(), "sl-afb-ltg");
+		BOOST_CHECK_EQUAL(t.as_string(), "sl-afb-ltg");
 		BOOST_CHECK_EQUAL (t.description(), "Slovenian, Gulf Arabic, Latgalian");
 	}
 
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		BOOST_CHECK_NO_THROW (t.set_language("zh"));
 		BOOST_CHECK_NO_THROW (t.set_script("Hant"));
 		BOOST_CHECK_NO_THROW (t.set_region("DE"));
-		BOOST_CHECK_EQUAL (t.to_string(), "zh-Hant-DE");
+		BOOST_CHECK_EQUAL(t.as_string(), "zh-Hant-DE");
 		BOOST_CHECK_EQUAL (t.description(), "Chinese written using the Han (Traditional variant) script for Germany");
 	}
 
@@ -167,7 +167,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		BOOST_CHECK_NO_THROW (t.set_script("Latn"));
 		BOOST_CHECK_NO_THROW (t.set_region("IT"));
 		BOOST_CHECK_NO_THROW (t.add_variant("arevela"));
-		BOOST_CHECK_EQUAL (t.to_string(), "hy-Latn-IT-arevela");
+		BOOST_CHECK_EQUAL(t.as_string(), "hy-Latn-IT-arevela");
 		BOOST_CHECK_EQUAL (t.description(), "Eastern Armenian dialect of Armenian written using the Latin script for Italy");
 	}
 
@@ -180,7 +180,7 @@ BOOST_AUTO_TEST_CASE (language_tag_create_test)
 		BOOST_CHECK_NO_THROW (t.set_region("IT"));
 		BOOST_CHECK_NO_THROW (t.add_variant("arevela"));
 		BOOST_CHECK_NO_THROW (t.add_extlang("ltg"));
-		BOOST_CHECK_EQUAL (t.to_string(), "hy-Latn-IT-arevela-ltg");
+		BOOST_CHECK_EQUAL(t.as_string(), "hy-Latn-IT-arevela-ltg");
 		BOOST_CHECK_EQUAL (t.description(), "Eastern Armenian dialect of Armenian written using the Latin script for Italy, Latgalian");
 	}
 
@@ -195,12 +195,12 @@ BOOST_AUTO_TEST_CASE (language_tag_parse_test)
 	BOOST_CHECK_THROW (dcp::LanguageTag("de-Dogr-fish"), dcp::LanguageTagError);
 	BOOST_CHECK_THROW (dcp::LanguageTag("de-Dogr-DE-aranes-fish"), dcp::LanguageTagError);
 
-	BOOST_CHECK_EQUAL (dcp::LanguageTag("de").to_string(), "de");
-	BOOST_CHECK_EQUAL (dcp::LanguageTag("de-Dogr").to_string(), "de-Dogr");
-	BOOST_CHECK_EQUAL (dcp::LanguageTag("de-Dogr-DE").to_string(), "de-Dogr-DE");
-	BOOST_CHECK_EQUAL (dcp::LanguageTag("de-Dogr-DE-aranes").to_string(), "de-Dogr-DE-aranes");
-	BOOST_CHECK_EQUAL (dcp::LanguageTag("de-Dogr-DE-aranes-lemosin").to_string(), "de-Dogr-DE-aranes-lemosin");
-	BOOST_CHECK_EQUAL (dcp::LanguageTag("de-Dogr-DE-aranes-lemosin-abv").to_string(), "de-Dogr-DE-aranes-lemosin-abv");
-	BOOST_CHECK_EQUAL (dcp::LanguageTag("de-Dogr-DE-aranes-lemosin-abv-zsm").to_string(), "de-Dogr-DE-aranes-lemosin-abv-zsm");
+	BOOST_CHECK_EQUAL(dcp::LanguageTag("de").as_string(), "de");
+	BOOST_CHECK_EQUAL(dcp::LanguageTag("de-Dogr").as_string(), "de-Dogr");
+	BOOST_CHECK_EQUAL(dcp::LanguageTag("de-Dogr-DE").as_string(), "de-Dogr-DE");
+	BOOST_CHECK_EQUAL(dcp::LanguageTag("de-Dogr-DE-aranes").as_string(), "de-Dogr-DE-aranes");
+	BOOST_CHECK_EQUAL(dcp::LanguageTag("de-Dogr-DE-aranes-lemosin").as_string(), "de-Dogr-DE-aranes-lemosin");
+	BOOST_CHECK_EQUAL(dcp::LanguageTag("de-Dogr-DE-aranes-lemosin-abv").as_string(), "de-Dogr-DE-aranes-lemosin-abv");
+	BOOST_CHECK_EQUAL(dcp::LanguageTag("de-Dogr-DE-aranes-lemosin-abv-zsm").as_string(), "de-Dogr-DE-aranes-lemosin-abv-zsm");
 }
 

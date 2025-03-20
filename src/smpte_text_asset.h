@@ -104,7 +104,7 @@ public:
 	}
 
 	void set_language (dcp::LanguageTag l) {
-		_language = l.to_string();
+		_language = l.as_string();
 	}
 
 	void set_issue_date (LocalTime t) {

@@ -149,7 +149,7 @@ LanguageTag::LanguageTag (string tag)
 
 
 string
-LanguageTag::to_string () const
+LanguageTag::as_string() const
 {
 	if (!_language) {
 		throw LanguageTagError("No language set up");
@@ -336,28 +336,28 @@ LanguageTag::subtag_type_name (SubtagType type)
 bool
 dcp::operator== (dcp::LanguageTag const& a, dcp::LanguageTag const& b)
 {
-	return a.to_string() == b.to_string();
+	return a.as_string() == b.as_string();
 }
 
 
 bool
 dcp::operator!= (dcp::LanguageTag const& a, dcp::LanguageTag const& b)
 {
-	return a.to_string() != b.to_string();
+	return a.as_string() != b.as_string();
 }
 
 
 bool
 dcp::operator< (dcp::LanguageTag const& a, dcp::LanguageTag const& b)
 {
-	return a.to_string() < b.to_string();
+	return a.as_string() < b.as_string();
 }
 
 
 ostream&
 dcp::operator<< (ostream& os, dcp::LanguageTag const& tag)
 {
-	os << tag.to_string();
+	os << tag.as_string();
 	return os;
 }
 

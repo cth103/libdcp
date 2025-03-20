@@ -86,7 +86,7 @@ ReelTextAsset::ReelTextAsset(std::shared_ptr<const cxml::Node> node)
 void
 ReelTextAsset::set_language(dcp::LanguageTag language)
 {
-	_language = language.to_string();
+	_language = language.as_string();
 }
 
 

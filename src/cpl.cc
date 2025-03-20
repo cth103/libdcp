@@ -807,7 +807,7 @@ CPL::set_additional_subtitle_languages(vector<dcp::LanguageTag> const& langs)
 {
 	_additional_subtitle_languages.clear();
 	for (auto const& i: langs) {
-		_additional_subtitle_languages.push_back(i.to_string());
+		_additional_subtitle_languages.push_back(i.as_string());
 	}
 }
 

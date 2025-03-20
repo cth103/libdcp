@@ -127,7 +127,7 @@ SoundAsset::SoundAsset (Fraction edit_rate, int sampling_rate, int channels, Lan
 	, _edit_rate (edit_rate)
 	, _channels (channels)
 	, _sampling_rate (sampling_rate)
-	, _language (language.to_string())
+	, _language(language.as_string())
 {
 
 }

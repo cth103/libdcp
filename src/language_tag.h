@@ -53,8 +53,8 @@ namespace dcp {
 class LanguageTag
 {
 public:
-	std::string to_string () const;
-	std::string description () const;
+	std::string as_string() const;
+	std::string description() const;
 
 	struct SubtagData
 	{
