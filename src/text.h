@@ -91,6 +91,12 @@ public:
 		return _z_position;
 	}
 
+	struct VariableZPosition
+	{
+		float position;
+		int64_t duration;
+	};
+
 	Time fade_up_time () const {
 		return _fade_up_time;
 	}
