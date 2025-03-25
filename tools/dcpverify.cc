@@ -185,7 +185,7 @@ main (int argc, char* argv[])
 	vector<boost::filesystem::path> directories;
 	directories.push_back (argv[optind]);
 	auto result = dcp::verify(directories, {}, stage, progress, verification_options);
-	dcp::filter_notes(result.notes, ignore_missing_assets);
+	result.notes = dcp::filter_notes(result.notes, ignore_missing_assets, ignore_bv21_smpte);
 
 	if (!quiet) {
 		cout << "\n";
@@ -195,9 +195,6 @@ main (int argc, char* argv[])
 	bool bv21_failed = false;
 	bool warned = false;
 	for (auto i: result.notes) {
-		if (ignore_bv21_smpte && i.code() == dcp::VerificationNote::Code::INVALID_STANDARD) {
-			continue;
-		}
 		switch (i.type()) {
 		case dcp::VerificationNote::Type::OK:
 			break;

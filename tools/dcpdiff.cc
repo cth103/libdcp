@@ -102,8 +102,7 @@ load_dcp (boost::filesystem::path path, bool ignore_missing_assets, optional<str
 		dcp = new DCP (path);
 		vector<dcp::VerificationNote> notes;
 		dcp->read (&notes);
-		filter_notes (notes, ignore_missing_assets);
-		for (auto i: notes) {
+		for (auto i: dcp::filter_notes(notes, ignore_missing_assets, false)) {
 			cerr << dcp::note_to_string(i) << "\n";
 		}
 

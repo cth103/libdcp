@@ -40,20 +40,28 @@ using std::shared_ptr;
 using std::vector;
 
 
-void
-dcp::filter_notes (vector<dcp::VerificationNote>& notes, bool ignore_missing_assets)
+vector<dcp::VerificationNote>
+dcp::filter_notes(vector<dcp::VerificationNote> const& notes, bool ignore_missing_assets, bool ignore_bv21_smpte)
 {
-	if (!ignore_missing_assets) {
-		return;
-	}
-
 	vector<dcp::VerificationNote> filtered;
-	std::copy_if (notes.begin(), notes.end(), std::back_inserter(filtered), [](dcp::VerificationNote const& i) {
-		return i.code() != dcp::VerificationNote::Code::MISSING_ASSET &&
-			i.code() != dcp::VerificationNote::Code::EXTERNAL_ASSET &&
-			i.code() != dcp::VerificationNote::Code::MISSING_FONT;
+	std::copy_if(notes.begin(), notes.end(), std::back_inserter(filtered), [ignore_missing_assets, ignore_bv21_smpte](dcp::VerificationNote const& i) {
+		bool const missing = (
+			i.code() == dcp::VerificationNote::Code::MISSING_ASSET ||
+			i.code() == dcp::VerificationNote::Code::EXTERNAL_ASSET ||
+			i.code() == dcp::VerificationNote::Code::MISSING_FONT
+			);
+
+		if (ignore_missing_assets && missing) {
+			return false;
+		}
+
+		if (ignore_bv21_smpte && i.code() == dcp::VerificationNote::Code::INVALID_STANDARD) {
+			return false;
+		}
+
+		return true;
 	});
 
-	notes = filtered;
+	return filtered;
 }
 

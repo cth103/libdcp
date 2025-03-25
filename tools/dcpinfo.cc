@@ -386,8 +386,7 @@ main (int argc, char* argv[])
 
 		OUTPUT_DCP_PATH("DCP: %1\n", boost::filesystem::path(argv[optind]).string());
 
-		dcp::filter_notes (notes, ignore_missing_assets);
-		for (auto i: notes) {
+		for (auto i: dcp::filter_notes(notes, ignore_missing_assets, false)) {
 			cerr << "Error: " << note_to_string(i) << "\n";
 		}
 
