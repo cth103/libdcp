@@ -562,13 +562,19 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 		verify_picture_details(context, reel_asset, file, start_frame);
 	}
 
-	/* Only flat/scope allowed by Bv2.1 */
-	if (
-		asset->size() != Size(2048, 858) &&
-		asset->size() != Size(1998, 1080) &&
-		asset->size() != Size(4096, 1716) &&
-		asset->size() != Size(3996, 2160)) {
-		context.bv21_error(VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, String::compose("%1x%2", asset->size().width, asset->size().height), file);
+	if (dynamic_pointer_cast<const J2KPictureAsset>(asset)) {
+		/* Only flat/scope allowed by Bv2.1 */
+		if (
+			asset->size() != Size(2048, 858) &&
+			asset->size() != Size(1998, 1080) &&
+			asset->size() != Size(4096, 1716) &&
+			asset->size() != Size(3996, 2160)) {
+			context.bv21_error(VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, String::compose("%1x%2", asset->size().width, asset->size().height), file);
+		}
+	} else if (dynamic_pointer_cast<const MPEG2PictureAsset>(asset)) {
+		if (asset->size() != Size(1920, 1080)) {
+			context.error(VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, fmt::format("{}x{}", asset->size().width, asset->size().height), file);
+		}
 	}
 
 	/* Only 24, 25, 48fps allowed for 2K */
