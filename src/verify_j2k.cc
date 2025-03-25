@@ -42,6 +42,7 @@
 #include "raw_convert.h"
 #include "verify.h"
 #include "verify_j2k.h"
+#include <openjpeg.h>
 #include <fmt/format.h>
 #include <memory>
 #include <vector>
@@ -165,10 +166,16 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 			throw InvalidCodestream("unexpected SIZ size " + fmt::to_string(L_siz));
 		}
 
-		get_16(); // CA: codestream capabilities
+		// Codestream capabilities (CA, or Rsiz)
+		auto const rsiz = get_16();
 		auto const image_width = get_32();
 		auto const image_height = get_32();
 		auto const fourk = image_width > 2048;
+		if (!fourk && rsiz != OPJ_PROFILE_CINEMA_2K) {
+			notes.push_back({ VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_2K, fmt::to_string(rsiz) });
+		} else if (fourk && rsiz != OPJ_PROFILE_CINEMA_4K) {
+			notes.push_back({ VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_4K, fmt::to_string(rsiz) });
+		}
 		require_32 (0, "invalid top-left image x coordinate %1");
 		require_32 (0, "invalid top-left image y coordinate %1");
 		auto const tile_width = get_32();
