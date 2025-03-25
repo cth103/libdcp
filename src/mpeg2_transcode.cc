@@ -162,6 +162,8 @@ MPEG2Compressor::MPEG2Compressor(dcp::Size size, int video_frame_rate, int64_t b
 	_context->time_base = AVRational{1, video_frame_rate};
 	_context->pix_fmt = AV_PIX_FMT_YUV420P;
 	_context->bit_rate = bit_rate;
+	_context->rc_max_rate = bit_rate;
+	_context->rc_min_rate = bit_rate;
 
 	int const r = avcodec_open2(_context, _codec, nullptr);
 	if (r < 0) {
