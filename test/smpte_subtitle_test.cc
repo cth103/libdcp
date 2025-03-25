@@ -801,7 +801,6 @@ BOOST_AUTO_TEST_CASE(smpte_subtitle_intrinsic_duration_read_correctly)
 
 BOOST_AUTO_TEST_CASE(pass_through_smpte_subtitle_with_variable_z)
 {
-	auto source = "test/data/subtitles_with_vZani.xml";
 	dcp::SMPTETextAsset test("test/data/subtitles_with_vZani.xml");
 	/* _parsed is a version of the source with some changes made by libdcp that are OK */
 	check_xml(dcp::file_to_string("test/data/subtitles_with_vZani_parsed.xml"), test.xml_as_string(), { "IssueDate" }, true);
