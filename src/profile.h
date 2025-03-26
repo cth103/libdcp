@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2023 Carl Hetherington <cth@carlh.net>
+    Copyright (C) 2025 Carl Hetherington <cth@carlh.net>
 
     This file is part of libdcp.
 
@@ -32,29 +32,16 @@
 */
 
 
-#include "mono_mpeg2_picture_asset.h"
-#include "mpeg2_transcode.h"
-#include "test.h"
-#include <boost/test/unit_test.hpp>
-
-extern "C" {
-#include <libavcodec/avcodec.h>
-}
+namespace dcp {
 
 
-BOOST_AUTO_TEST_CASE(mpeg_mono_picture_read_test)
+enum class Profile
 {
-	dcp::MonoMPEG2PictureAsset asset(private_test / "data" / "mas" / "r2.mxf" );
+	SMPTE_A,
+	SMPTE_BV20,
+	SMPTE_BV21
+};
 
-	auto reader = asset.start_read();
 
-	dcp::MPEG2Decompressor decompressor;
-	for (auto i = 0; i < asset.intrinsic_duration(); ++i) {
-		auto images = decompressor.decompress_frame(reader->get_frame(i));
-		BOOST_CHECK_EQUAL(images.size(), i == 0 ? 0U : 1U);
-	}
-
-	auto images = decompressor.flush();
-	BOOST_CHECK_EQUAL(images.size(), 1U);
 }
 

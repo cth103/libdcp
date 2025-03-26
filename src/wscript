@@ -208,6 +208,7 @@ def build(bld):
               picture_asset.h
               piecewise_lut.h
               pkl.h
+              profile.h
               rating.h
               raw_convert.h
               reel.h

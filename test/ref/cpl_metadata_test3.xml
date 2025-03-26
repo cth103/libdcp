@@ -46,7 +46,7 @@
               <meta:PropertyList>
                 <meta:Property>
                   <meta:Name>DCP Constraints Profile</meta:Name>
-                  <meta:Value>SMPTE-RDD-52:2020-Bv2.1</meta:Value>
+                  <meta:Value>SMPTE-RDD-52:2020-Bv2.0</meta:Value>
                 </meta:Property>
               </meta:PropertyList>
             </meta:ExtensionMetadata>

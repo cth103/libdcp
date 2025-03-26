@@ -89,7 +89,7 @@ static string const smpte_395_ns = "http://www.smpte-ra.org/reg/395/2014/13/1/aa
 static string const smpte_335_ns = "http://www.smpte-ra.org/reg/335/2012";
 
 
-CPL::CPL(string annotation_text, ContentKind content_kind, Standard standard)
+CPL::CPL(string annotation_text, ContentKind content_kind, Standard standard, Profile profile)
 	/* default _content_title_text to annotation_text */
 	: _issuer("libdcp", dcp::version)
 	, _creator("libdcp", dcp::version)
@@ -98,6 +98,7 @@ CPL::CPL(string annotation_text, ContentKind content_kind, Standard standard)
 	, _content_title_text(annotation_text)
 	, _content_kind(content_kind)
 	, _standard(standard)
+	, _profile(profile)
 {
 	ContentVersion cv;
 	cv.label_text = cv.id + LocalTime().as_string();
@@ -178,6 +179,8 @@ CPL::CPL(boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 		if (metadata) {
 			read_composition_metadata_asset(metadata, notes);
 			_read_composition_metadata = true;
+		} else {
+			_profile = Profile::SMPTE_A;
 		}
 	}
 
@@ -204,7 +207,7 @@ CPL::set(std::vector<std::shared_ptr<Reel>> reels)
 
 
 void
-CPL::write_xml(boost::filesystem::path file, shared_ptr<const CertificateChain> signer, bool include_mca_subdescriptors) const
+CPL::write_xml(boost::filesystem::path file, shared_ptr<const CertificateChain> signer) const
 {
 	xmlpp::Document doc;
 	xmlpp::Element* root;
@@ -248,8 +251,8 @@ CPL::write_xml(boost::filesystem::path file, shared_ptr<const CertificateChain> 
 	bool first = true;
 	for (auto i: _reels) {
 		auto asset_list = i->write_to_cpl(reel_list, _standard);
-		if (first && _standard == Standard::SMPTE) {
-			maybe_write_composition_metadata_asset(asset_list, include_mca_subdescriptors);
+		if (first && _standard == Standard::SMPTE && _profile != Profile::SMPTE_A) {
+			maybe_write_composition_metadata_asset(asset_list);
 			first = false;
 		}
 	}
@@ -395,6 +398,12 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 
 	_sign_language_video_language = extension_metadata("http://isdcf.com/2017/10/SignLanguageVideo", "Sign Language Video", "Language Tag");
 	_dolby_edr_image_transfer_function = extension_metadata("http://www.dolby.com/schemas/2014/EDR-Metadata", "Dolby EDR", "image transfer function");
+
+	if (node->optional_node_child("MCASubDescriptors")) {
+		_profile = Profile::SMPTE_BV21;
+	} else {
+		_profile = Profile::SMPTE_BV20;
+	}
 }
 
 
@@ -474,7 +483,7 @@ CPL::write_mca_subdescriptors(xmlpp::Element* parent, shared_ptr<const SoundAsse
  *  is missing this method will do nothing.
  */
 void
-CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_mca_subdescriptors) const
+CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node) const
 {
 	if (
 		!_main_sound_configuration ||
@@ -586,8 +595,9 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 		cxml::add_child(property, "Value", string("meta"))->add_child_text(property_value);
 	};
 
+	string const profile_name = _profile == Profile::SMPTE_BV20 ? "2.0" : "2.1";
 	/* SMPTE Bv2.1 8.6.3 */
-	add_extension_metadata("http://isdcf.com/ns/cplmd/app", "Application", "DCP Constraints Profile", "SMPTE-RDD-52:2020-Bv2.1");
+	add_extension_metadata("http://isdcf.com/ns/cplmd/app", "Application", "DCP Constraints Profile", fmt::format("SMPTE-RDD-52:2020-Bv{}", profile_name));
 
 	if (_sign_language_video_language) {
 		add_extension_metadata("http://isdcf.com/2017/10/SignLanguageVideo", "Sign Language Video", "Language Tag", *_sign_language_video_language);
@@ -599,7 +609,7 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_m
 
 	if (_reels.front()->main_sound()) {
 		auto asset = _reels.front()->main_sound()->asset();
-		if (asset && include_mca_subdescriptors) {
+		if (asset && _profile == Profile::SMPTE_BV21) {
 			write_mca_subdescriptors(meta, asset);
 		}
 	}

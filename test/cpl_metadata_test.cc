@@ -299,7 +299,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test1)
 {
 	RNGFixer fix;
 
-	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
+	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE, dcp::Profile::SMPTE_BV20);
 	cpl.set_issue_date ("2020-08-28T13:35:06+02:00");
 
 	vector<dcp::ContentVersion> cv = {
@@ -385,7 +385,7 @@ BOOST_AUTO_TEST_CASE (cpl_metadata_write_test2)
 {
 	RNGFixer fix;
 
-	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
+	dcp::CPL cpl("", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE, dcp::Profile::SMPTE_BV20);
 	cpl.set_issue_date ("2020-08-28T13:35:06+02:00");
 	cpl.set_content_version (dcp::ContentVersion("id", "version"));
 	cpl.set_issuer ("libdcp1.6.4devel");

@@ -1319,12 +1319,14 @@ dcp::verify_extension_metadata(Context& context)
 							}
 							if (auto property_list = extension->optional_node_child("PropertyList")) {
 								auto properties = property_list->node_children("Property");
-								auto is_bv21 = [](shared_ptr<const cxml::Node> property) {
+								auto is_bv_20_or_21 = [](shared_ptr<const cxml::Node> property) {
 									auto name = property->optional_node_child("Name");
 									auto value = property->optional_node_child("Value");
-									return name && value && name->content() == "DCP Constraints Profile" && value->content() == "SMPTE-RDD-52:2020-Bv2.1";
+									string content = value ? value->content() : "";
+									return name && value && name->content() == "DCP Constraints Profile" &&
+										(content == "SMPTE-RDD-52:2020-Bv2.0" || content == "SMPTE-RDD-52:2020-Bv2.1");
 								};
-								if (!std::any_of(properties.begin(), properties.end(), is_bv21)) {
+								if (!std::any_of(properties.begin(), properties.end(), is_bv_20_or_21)) {
 									malformed = "No correctly-formed DCP Constraints Profile found";
 								}
 							}

@@ -47,6 +47,7 @@
 #include "key.h"
 #include "language_tag.h"
 #include "main_sound_configuration.h"
+#include "profile.h"
 #include "rating.h"
 #include "verify.h"
 #include <boost/filesystem.hpp>
@@ -82,7 +83,7 @@ class SoundAsset;
 class CPL : public Asset
 {
 public:
-	CPL(std::string annotation_text, ContentKind content_kind, Standard standard);
+	CPL(std::string annotation_text, ContentKind content_kind, Standard standard, Profile profile = Profile::SMPTE_BV21);
 
 	/** Construct a CPL object from a XML file.
 	 *  If notes is not null, non-fatal errors will be added.
@@ -128,14 +129,8 @@ public:
 	 *
 	 *  @param file Filename to write
 	 *  @param signer Signer to sign the CPL, or 0 to add no signature
-	 *  @param include_mca_subdescriptors true to add a MCASubDescriptors tag to metadata,
-	 *  false to omit it.
 	 */
-	void write_xml(
-		boost::filesystem::path file,
-		std::shared_ptr<const CertificateChain>,
-		bool include_mca_subdescriptors = true
-		) const;
+	void write_xml(boost::filesystem::path file, std::shared_ptr<const CertificateChain>) const;
 
 	void resolve_refs(std::vector<std::shared_ptr<Asset>>);
 
@@ -343,6 +338,10 @@ public:
 		return _standard;
 	}
 
+	Profile profile() const {
+		return _profile;
+	}
+
 	/** @return true iff this CPL was read from a file and it contained
 	 *  a CompositionMetadataAsset node.
 	 */
@@ -359,7 +358,7 @@ protected:
 private:
 	friend struct ::verify_invalid_language3;
 
-	void maybe_write_composition_metadata_asset(xmlpp::Element* node, bool include_mca_subdescriptors) const;
+	void maybe_write_composition_metadata_asset(xmlpp::Element* node) const;
 	void read_composition_metadata_asset(cxml::ConstNodePtr node, std::vector<dcp::VerificationNote>* notes);
 	void write_mca_subdescriptors(xmlpp::Element* parent, std::shared_ptr<const SoundAsset> asset) const;
 
@@ -403,6 +402,12 @@ private:
 
 	/** Standard of CPL that was read in */
 	Standard _standard;
+	/** SMPTE "profile" for this CPL (only applicable if _standard == Standard::SMPTE)
+	 *  One of the CPL constructors sets this, and one guesses it from the contents of the
+	 *  CPL.  The guess may be wrong (since it is only based on the presence of the
+	 *  CompositionMetadataAsset and the MCASubDescriptors within).
+	 */
+	Profile _profile = Profile::SMPTE_BV21;
 };
 
 

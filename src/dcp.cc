@@ -451,7 +451,6 @@ DCP::write_volindex (Standard standard) const
 void
 DCP::write_xml(
 	shared_ptr<const CertificateChain> signer,
-	bool include_mca_subdescriptors,
 	NameFormat name_format,
 	optional<string> group_id
 	)
@@ -473,7 +472,7 @@ DCP::write_xml(
 	for (auto i: cpls()) {
 		NameFormat::Map values;
 		values['t'] = "cpl";
-		i->write_xml(_directory / (name_format.get(values, "_" + i->id() + ".xml")), signer, include_mca_subdescriptors);
+		i->write_xml(_directory / (name_format.get(values, "_" + i->id() + ".xml")), signer);
 	}
 
 	if (_pkls.empty()) {

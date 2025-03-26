@@ -151,12 +151,10 @@ public:
 
 	/** Write all the XML files for this DCP.
 	 *  @param signer Signer to use
-	 *  @param include_mca_subdescriptors true to write MCA subdescriptors to CPLs.
 	 *  @param name_format Name format to use for the CPL and PKL filenames
 	 */
 	void write_xml(
 		std::shared_ptr<const CertificateChain> signer = std::shared_ptr<const CertificateChain>(),
-		bool include_mca_subdescriptors = true,
 		NameFormat name_format = NameFormat("%t"),
 		boost::optional<std::string> group_id = boost::none
 	);
