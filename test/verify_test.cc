@@ -2783,9 +2783,33 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_spacing)
 }
 
 
-BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_duration)
+BOOST_AUTO_TEST_CASE(verify_invalid_subtitle_duration)
 {
 	auto const dir = path("build/test/verify_invalid_subtitle_duration");
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, dir, {{ 4 * 24, 4 * 24 - 1 }});
+	check_verify_result (
+		{dir},
+		{},
+		{
+			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
+			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_SUBTITLE_DURATION
+				).set_cpl_id(cpl->id()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+				).set_cpl_id(cpl->id())
+		});
+}
+
+
+BOOST_AUTO_TEST_CASE(verify_invalid_subtitle_duration_bv21)
+{
+	auto const dir = path("build/test/verify_invalid_subtitle_duration_bv21");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, dir, {{ 4 * 24, 4 * 24 + 1 }});
 	check_verify_result (
 		{dir},
@@ -2798,7 +2822,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_duration)
 			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_DURATION
+				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_DURATION_BV21
 				).set_cpl_id(cpl->id()),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()

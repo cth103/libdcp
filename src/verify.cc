@@ -892,6 +892,7 @@ verify_text_details (
 	/* end of last subtitle (in editable units) */
 	optional<int64_t> last_out;
 	auto too_short = false;
+	auto too_short_bv21 = false;
 	auto too_close = false;
 	auto too_early = false;
 	auto reel_overlap = false;
@@ -902,7 +903,7 @@ verify_text_details (
 
 	std::function<void (cxml::ConstNodePtr, optional<int>, optional<Time>, int, bool, bool&, vector<string>&)> parse;
 
-	parse = [&parse, &last_out, &too_short, &too_close, &too_early, &empty_text, &reel_offset, &missing_load_font_id](
+	parse = [&parse, &last_out, &too_short, &too_short_bv21, &too_close, &too_early, &empty_text, &reel_offset, &missing_load_font_id](
 		cxml::ConstNodePtr node,
 		optional<int> tcr,
 		optional<Time> start_time,
@@ -924,8 +925,10 @@ verify_text_details (
 				too_early = true;
 			}
 			auto length = out - in;
-			if (length.as_editable_units_ceil(er) < 15) {
+			if (length.as_editable_units_ceil(er) <= 0) {
 				too_short = true;
+			} else if (length.as_editable_units_ceil(er) < 15) {
+				too_short_bv21 = true;
 			}
 			if (last_out) {
 				/* XXX: this feels dubious - is it really what Bv2.1 means? */
@@ -1024,7 +1027,11 @@ verify_text_details (
 	}
 
 	if (too_short) {
-		context.warning(VerificationNote::Code::INVALID_SUBTITLE_DURATION);
+		context.error(VerificationNote::Code::INVALID_SUBTITLE_DURATION);
+	}
+
+	if (too_short_bv21) {
+		context.warning(VerificationNote::Code::INVALID_SUBTITLE_DURATION_BV21);
 	}
 
 	if (too_close) {
@@ -1222,14 +1229,20 @@ dcp::verify_text_lines_and_characters(
 
 		if (i->start) {
 			/* end of a subtitle */
-			DCP_ASSERT (current.find(i->start->position) != current.end());
-			auto current_position = current[i->start->position];
-			auto iter = std::find(current_position.begin(), current_position.end(), i->start);
-			if (iter != current_position.end()) {
-				current_position.erase(iter);
-			}
-			if (current_position.empty()) {
-				current.erase(i->start->position);
+			auto iter = current.find(i->start->position);
+			/* It could be that there's no entry in current for this start position:
+			 * perhaps the end is before the start, or something else bad.
+			 */
+			if (iter != current.end()) {
+				DCP_ASSERT (current.find(i->start->position) != current.end());
+				auto current_position = current[i->start->position];
+				auto iter = std::find(current_position.begin(), current_position.end(), i->start);
+				if (iter != current_position.end()) {
+					current_position.erase(iter);
+				}
+				if (current_position.empty()) {
+					current.erase(i->start->position);
+				}
 			}
 		} else {
 			/* start of a subtitle */
@@ -1986,6 +1999,8 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME:
 		return process_string("The first subtitle or closed caption is less than 4 seconds from the start of the DCP.");
 	case VerificationNote::Code::INVALID_SUBTITLE_DURATION:
+		return process_string("At least one subtitle has a zero or negative duration.");
+	case VerificationNote::Code::INVALID_SUBTITLE_DURATION_BV21:
 		return process_string("At least one subtitle lasts less than 15 frames.");
 	case VerificationNote::Code::INVALID_SUBTITLE_SPACING:
 		return process_string("At least one pair of subtitles is separated by less than 2 frames.");

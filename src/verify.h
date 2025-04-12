@@ -238,8 +238,10 @@ public:
 		INVALID_SUBTITLE_START_TIME,
 		/** The first subtitle or closed caption happens before 4s into the first reel [Bv2.1_7.2.4] */
 		INVALID_SUBTITLE_FIRST_TEXT_TIME,
-		/** At least one subtitle is less than the minimum of 15 frames suggested by [Bv2.1_7.2.5] */
+		/** At least one subtitle has a zero or negative duration */
 		INVALID_SUBTITLE_DURATION,
+		/** At least one subtitle is less than the minimum of 15 frames suggested by [Bv2.1_7.2.5] */
+		INVALID_SUBTITLE_DURATION_BV21,
 		/** At least one pair of subtitles are separated by less than the the minimum of 2 frames suggested by [Bv2.1_7.2.5] */
 		INVALID_SUBTITLE_SPACING,
 		/** A subtitle lasts for longer than the reel which contains it */

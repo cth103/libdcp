@@ -92,7 +92,7 @@ check_no_errors (boost::filesystem::path path)
 	std::copy_if (notes.begin(), notes.end(), std::back_inserter(filtered_notes), [](dcp::VerificationNote const& i) {
 		return i.type() != dcp::VerificationNote::Type::OK &&
 			i.code() != dcp::VerificationNote::Code::INVALID_STANDARD &&
-			i.code() != dcp::VerificationNote::Code::INVALID_SUBTITLE_DURATION;
+			i.code() != dcp::VerificationNote::Code::INVALID_SUBTITLE_DURATION_BV21;
 	});
 	dump_notes (filtered_notes);
 	BOOST_CHECK (filtered_notes.empty());
