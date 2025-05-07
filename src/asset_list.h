@@ -63,20 +63,32 @@ public:
 		_annotation_text = annotation_text;
 	}
 
+	boost::optional<std::string> annotation_text() const {
+		return _annotation_text;
+	}
+
 	void set_issue_date(std::string issue_date) {
 		_issue_date = issue_date;
+	}
+
+	std::string issue_date() const {
+		return _issue_date;
 	}
 
 	void set_issuer(std::string issuer) {
 		_issuer = issuer;
 	}
 
+	std::string issuer() const {
+		return _issuer;
+	}
+
 	void set_creator(std::string creator) {
 		_creator = creator;
 	}
 
-	boost::optional<std::string> annotation_text() const {
-		return _annotation_text;
+	std::string creator() const {
+		return _creator;
 	}
 
 protected:
