@@ -533,7 +533,11 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 	auto asset = reel_asset->asset();
 	auto const file = *asset->file();
 
-	if (context.options.check_asset_hashes && (!context.options.maximum_asset_size_for_hash_check || filesystem::file_size(file) < *context.options.maximum_asset_size_for_hash_check)) {
+	if (
+		context.options.check_asset_hashes &&
+		(!context.options.maximum_asset_size_for_hash_check || filesystem::file_size(file) < *context.options.maximum_asset_size_for_hash_check) &&
+		context.should_verify_asset(reel_asset->id())
+	   ) {
 		context.stage("Checking picture asset hash", file);
 		string reference_hash;
 		string calculated_hash;
@@ -618,7 +622,11 @@ verify_main_sound_asset(Context& context, shared_ptr<const ReelSoundAsset> reel_
 	auto asset = reel_asset->asset();
 	auto const file = *asset->file();
 
-	if (context.options.check_asset_hashes && (!context.options.maximum_asset_size_for_hash_check || filesystem::file_size(file) < *context.options.maximum_asset_size_for_hash_check)) {
+	if (
+		context.options.check_asset_hashes &&
+		(!context.options.maximum_asset_size_for_hash_check || filesystem::file_size(file) < *context.options.maximum_asset_size_for_hash_check) &&
+		context.should_verify_asset(reel_asset->id())
+	   ) {
 		context.stage("Checking sound asset hash", file);
 		string reference_hash;
 		string calculated_hash;

@@ -5955,3 +5955,43 @@ BOOST_AUTO_TEST_CASE(multiple_metadata_property)
 	verify_extension_metadata(context);
 }
 
+
+BOOST_AUTO_TEST_CASE(only_verify_assets_once)
+{
+	auto const dir = boost::filesystem::path("build/test/only_verify_assets_once");
+	prepare_directory(dir);
+
+	/* Make a DCP which re-uses two assets */
+
+	auto picture = simple_picture(dir, "foo");
+	auto sound = simple_sound(dir, "foo", dcp::MXFMetadata(), "de-DE", 24, 96000, boost::none);
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
+	for (int i = 0; i < 2; ++i) {
+		auto reel = make_shared<dcp::Reel>();
+		auto reel_picture = make_shared<dcp::ReelMonoPictureAsset>(picture, 0);
+		reel->add(reel_picture);
+		auto reel_sound = make_shared<dcp::ReelSoundAsset>(sound, 0);
+		reel->add(reel_sound);
+		reel->add(simple_markers());
+		cpl->add(reel);
+	}
+
+	auto dcp = make_shared<dcp::DCP>(dir);
+	dcp->add(cpl);
+	dcp->set_annotation_text("hello");
+	dcp->write_xml();
+
+	vector<string> stages;
+	auto stage = [&stages](std::string stage, boost::optional<boost::filesystem::path>) { stages.push_back(stage); };
+	auto progress = [](float) {};
+
+	dcp::verify({dir}, {}, stage, progress, {}, xsd_test);
+
+	BOOST_CHECK_EQUAL(std::count(stages.begin(), stages.end(), "Checking picture asset hash"), 1);
+	BOOST_CHECK_EQUAL(std::count(stages.begin(), stages.end(), "Checking sound asset hash"), 1);
+
+	for (auto i: stages) {
+		std::cout << i << "\n";
+	}
+}
+

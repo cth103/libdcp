@@ -49,6 +49,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 #include <memory>
+#include <unordered_set>
 #include <vector>
 
 
@@ -131,6 +132,13 @@ public:
 		}
 	}
 
+	bool should_verify_asset(std::string const& id)
+	{
+		auto const should = verified_assets.find(id) == verified_assets.end();
+		verified_assets.insert(id);
+		return should;
+	}
+
 	std::vector<VerificationNote>& notes;
 	std::shared_ptr<const DCP> dcp;
 	std::shared_ptr<const CPL> cpl;
@@ -138,6 +146,8 @@ public:
 	std::function<void (std::string, boost::optional<boost::filesystem::path>)> stage;
 	std::function<void (float)> progress;
 	VerificationOptions options;
+	/** IDs of assets that have already been verified and need not be checked again */
+	std::unordered_set<std::string> verified_assets;
 
 	boost::optional<std::string> subtitle_language;
 	boost::optional<int> audio_channels;
