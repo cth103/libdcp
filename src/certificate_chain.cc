@@ -165,7 +165,6 @@ dcp::escape_digest(string digest)
 
 /** Extract a public key from a private key and create a SHA1 digest of it.
  *  @param private_key_file Private key filename
- *  @param openssl openssl binary name (or full path if openssl is not on the system path).
  *  @return SHA1 digest of corresponding public key, with escaped / characters.
  */
 string
