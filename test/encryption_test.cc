@@ -148,8 +148,8 @@ BOOST_AUTO_TEST_CASE (encryption_test)
 	dcp::DecryptedKDM kdm (
 		cpl,
 		key,
-		dcp::LocalTime ("2016-01-01T00:00:00+00:00"),
-		dcp::LocalTime ("2017-01-08T00:00:00+00:00"),
+		dcp::LocalTime ("2028-01-01T00:00:00+00:00"),
+		dcp::LocalTime ("2029-01-08T00:00:00+00:00"),
 		"libdcp",
 		"test",
 		"2012-07-17T04:45:18+00:00"

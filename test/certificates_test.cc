@@ -58,47 +58,47 @@ BOOST_AUTO_TEST_CASE (certificates1)
 
 	/* Leaf */
 	BOOST_CHECK_EQUAL (*i, c.leaf ());
-	BOOST_CHECK_EQUAL (i->thumbprint(), "EZg5wDcihccWqwdg59Y8D+IJpYM=");
+	BOOST_CHECK_EQUAL (i->thumbprint(), "ooMT95mSkhHzxx14ujbMSyQxFf8=");
 
 	BOOST_CHECK_EQUAL (
 		c.leaf().issuer(),
-		"dnQualifier=6eat8r33US71avuQEojmH\\+bjk84=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		"dnQualifier=rUEWSOEqt\\+7TvKTtNYzhRtrewRo=,CN=.dcpomatic.smpte-430-2.INTERMEDIATE,OU=dcpomatic.com,O=dcpomatic.com"
 		);
 
 	BOOST_CHECK_EQUAL (
 		c.leaf().subject(),
-		"dnQualifier=QFVlym7fuql6bPOnY38aaO1ZPW4=,CN=CS.smpte-430-2.LEAF.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		"dnQualifier=1u9TlD4x32jl1c\\+kSIKukb7ZZqA=,CN=CS.dcpomatic.smpte-430-2.LEAF,OU=dcpomatic.com,O=dcpomatic.com"
 		);
 
 	++i;
 
 	/* Intermediate */
-	BOOST_CHECK_EQUAL (i->thumbprint(), "GwM6ex2UVlWclH8f1uV7W1n0EEU=");
+	BOOST_CHECK_EQUAL (i->thumbprint(), "VoDClMHXh7G3B2lrH4ILh3tUpxA=");
 	BOOST_CHECK_EQUAL (
 		i->issuer(),
-		"dnQualifier=DCnRdHFbcv4ANVUq2\\+wMVALFSec=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		"dnQualifier=V54yfuoIWYLT5YM\\+LabHTaiSAtI=,CN=.dcpomatic.smpte-430-2.ROOT,OU=dcpomatic.com,O=dcpomatic.com"
 		);
 
 	BOOST_CHECK_EQUAL (
 		i->subject(),
-		"dnQualifier=6eat8r33US71avuQEojmH\\+bjk84=,CN=.smpte-430-2.INTERMEDIATE.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		"dnQualifier=rUEWSOEqt\\+7TvKTtNYzhRtrewRo=,CN=.dcpomatic.smpte-430-2.INTERMEDIATE,OU=dcpomatic.com,O=dcpomatic.com"
 		);
 
 	++i;
 
 	/* Root */
 	BOOST_CHECK_EQUAL (*i, c.root ());
-	BOOST_CHECK_EQUAL (i->thumbprint(), "zU8NVNwI2PYejmSYRntG7c6sdTw=");
+	BOOST_CHECK_EQUAL (i->thumbprint(), "ihrB25OpnYAC+/AXpM3ZVJYbRN0=");
 	BOOST_CHECK_EQUAL (
 		c.root().issuer(),
-		"dnQualifier=DCnRdHFbcv4ANVUq2\\+wMVALFSec=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		"dnQualifier=V54yfuoIWYLT5YM\\+LabHTaiSAtI=,CN=.dcpomatic.smpte-430-2.ROOT,OU=dcpomatic.com,O=dcpomatic.com"
 		);
 
 	BOOST_CHECK_EQUAL (c.root().serial(), "5");
 
 	BOOST_CHECK_EQUAL (
 		c.root().subject(),
-		"dnQualifier=DCnRdHFbcv4ANVUq2\\+wMVALFSec=,CN=.smpte-430-2.ROOT.NOT_FOR_PRODUCTION,OU=example.org,O=example.org"
+		"dnQualifier=V54yfuoIWYLT5YM\\+LabHTaiSAtI=,CN=.dcpomatic.smpte-430-2.ROOT,OU=dcpomatic.com,O=dcpomatic.com"
 		);
 
 	/* Check that reconstruction from a string works */
@@ -265,19 +265,19 @@ BOOST_AUTO_TEST_CASE (certificate_not_before_after)
 {
 	dcp::Certificate c (dcp::file_to_string("test/ref/crypt/ca.self-signed.pem"));
 	auto not_before = c.not_before();
-	BOOST_CHECK_EQUAL (not_before.second(), 8);
-	BOOST_CHECK_EQUAL (not_before.minute(), 20);
-	BOOST_CHECK_EQUAL (not_before.hour(), 13);
-	BOOST_CHECK_EQUAL (not_before.day(), 5);
-	BOOST_CHECK_EQUAL (not_before.month(), 6);
-	BOOST_CHECK_EQUAL (not_before.year(), 2015);
+	BOOST_CHECK_EQUAL(not_before.second(), 53);
+	BOOST_CHECK_EQUAL(not_before.minute(), 10);
+	BOOST_CHECK_EQUAL(not_before.hour(), 12);
+	BOOST_CHECK_EQUAL(not_before.day(), 10);
+	BOOST_CHECK_EQUAL(not_before.month(), 6);
+	BOOST_CHECK_EQUAL(not_before.year(), 2025);
 	auto not_after = c.not_after();
-	BOOST_CHECK_EQUAL (not_after.second(), 8);
-	BOOST_CHECK_EQUAL (not_after.minute(), 20);
-	BOOST_CHECK_EQUAL (not_after.hour(), 13);
-	BOOST_CHECK_EQUAL (not_after.day(), 2);
-	BOOST_CHECK_EQUAL (not_after.month(), 6);
-	BOOST_CHECK_EQUAL (not_after.year(), 2025);
+	BOOST_CHECK_EQUAL(not_after.second(), 53);
+	BOOST_CHECK_EQUAL(not_after.minute(), 10);
+	BOOST_CHECK_EQUAL(not_after.hour(), 12);
+	BOOST_CHECK_EQUAL(not_after.day(), 8);
+	BOOST_CHECK_EQUAL(not_after.month(), 6);
+	BOOST_CHECK_EQUAL(not_after.year(), 2035);
 }
 
 
