@@ -35,7 +35,11 @@ import os
 import shutil
 
 def build_with_cpp17(target):
-    return target.platform.startswith('osx') or (target.platform == 'linux' and target.distro == 'debian' and target.version == 'unstable')
+    return (
+        target.platform.startswith('osx') or
+        (target.platform == 'linux' and target.distro == 'debian' and target.version == 'unstable') or
+        (target.platform == 'linux' and target.distro == 'rocky' and target.version == '10')
+    )
 
 def dependencies(target, options):
     deps = [
