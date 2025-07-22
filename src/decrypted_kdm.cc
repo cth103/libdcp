@@ -185,7 +185,7 @@ DecryptedKDM::DecryptedKDM (EncryptedKDM const & kdm, string private_key)
 			/* Inter-op */
 			/* 0 is structure id (fixed sequence specified by standard) [16 bytes] */
 			p += 16;
-			/* 16 is is signer thumbprint [20 bytes] */
+			/* 16 is signer thumbprint [20 bytes] */
 			p += 20;
 			/* 36 is CPL id [16 bytes] */
 			string const cpl_id = get_uuid (&p);
