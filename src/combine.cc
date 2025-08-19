@@ -140,8 +140,7 @@ dcp::combine(
 				continue;
 			}
 
-			auto sub = dynamic_pointer_cast<dcp::InteropTextAsset>(j);
-			if (sub) {
+			if (auto sub = dynamic_pointer_cast<dcp::InteropTextAsset>(j)) {
 				/* Interop fonts are really fiddly.  The font files are assets (in the ASSETMAP)
 				 * and also linked from the font XML by filename.  We have to fix both these things,
 				 * and re-write the font XML file since the font URI might have changed if it's a duplicate
