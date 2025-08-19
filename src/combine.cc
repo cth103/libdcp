@@ -64,7 +64,7 @@ using boost::optional;
 
 
 boost::filesystem::path
-make_unique (boost::filesystem::path path)
+make_unique(boost::filesystem::path path)
 {
 	if (!dcp::filesystem::exists(path)) {
 		return path;
@@ -77,14 +77,14 @@ make_unique (boost::filesystem::path path)
 		}
 	}
 
-	DCP_ASSERT (false);
+	DCP_ASSERT(false);
 	return path;
 }
 
 
 static
 void
-create_hard_link_or_copy (boost::filesystem::path from, boost::filesystem::path to)
+create_hard_link_or_copy(boost::filesystem::path from, boost::filesystem::path to)
 {
 	try {
 		dcp::filesystem::create_hard_link(from, to);
@@ -99,7 +99,7 @@ create_hard_link_or_copy (boost::filesystem::path from, boost::filesystem::path 
 
 
 void
-dcp::combine (
+dcp::combine(
 	vector<boost::filesystem::path> inputs,
 	boost::filesystem::path output,
 	string issuer,
@@ -109,18 +109,18 @@ dcp::combine (
 	shared_ptr<const CertificateChain> signer
 	)
 {
-	DCP_ASSERT (!inputs.empty());
+	DCP_ASSERT(!inputs.empty());
 
-	DCP output_dcp (output);
+	DCP output_dcp(output);
 	optional<dcp::Standard> standard;
 
 	for (auto i: inputs) {
-		DCP dcp (i);
-		dcp.read ();
+		DCP dcp(i);
+		dcp.read();
 		if (!standard) {
 			standard = *dcp.standard();
 		} else if (standard != dcp.standard()) {
-			throw CombineError ("Cannot combine Interop and SMPTE DCPs.");
+			throw CombineError("Cannot combine Interop and SMPTE DCPs.");
 		}
 	}
 
@@ -128,11 +128,11 @@ dcp::combine (
 	vector<shared_ptr<dcp::Asset>> assets;
 
 	for (auto i: inputs) {
-		DCP dcp (i);
-		dcp.read ();
+		DCP dcp(i);
+		dcp.read();
 
 		for (auto j: dcp.cpls()) {
-			output_dcp.add (j);
+			output_dcp.add(j);
 		}
 
 		for (auto j: dcp.assets(true)) {
@@ -147,30 +147,30 @@ dcp::combine (
 				 * and re-write the font XML file since the font URI might have changed if it's a duplicate
 				 * with another DCP.
 				 */
-				auto fonts = sub->font_filenames ();
+				auto fonts = sub->font_filenames();
 				for (auto const& k: fonts) {
-					sub->set_font_file (k.first, make_unique(output / k.second.filename()));
+					sub->set_font_file(k.first, make_unique(output / k.second.filename()));
 				}
 				auto file = sub->file();
-				DCP_ASSERT (file);
+				DCP_ASSERT(file);
 				auto new_path = make_unique(output / file->filename());
-				sub->write (new_path);
+				sub->write(new_path);
 				add_to_container(assets, sub->font_assets());
 			}
 
-			assets.push_back (j);
+			assets.push_back(j);
 		}
 	}
 
-	output_dcp.resolve_refs (assets);
+	output_dcp.resolve_refs(assets);
 
 	for (auto i: output_dcp.assets()) {
 		if (!dynamic_pointer_cast<dcp::FontAsset>(i) && !dynamic_pointer_cast<dcp::CPL>(i)) {
 			auto file = i->file();
-			DCP_ASSERT (file);
+			DCP_ASSERT(file);
 			auto new_path = make_unique(output / file->filename());
-			create_hard_link_or_copy (*file, new_path);
-			i->set_file (new_path);
+			create_hard_link_or_copy(*file, new_path);
+			i->set_file(new_path);
 		}
 	}
 

@@ -48,7 +48,7 @@ namespace dcp {
 class CertificateChain;
 
 
-void combine (
+void combine(
 	std::vector<boost::filesystem::path> inputs,
 	boost::filesystem::path output,
 	std::string issuer = String::compose("libdcp %1", dcp::version),
