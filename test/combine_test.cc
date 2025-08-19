@@ -489,5 +489,56 @@ BOOST_AUTO_TEST_CASE(combine_multi_reel_subtitles)
 }
 
 
+BOOST_AUTO_TEST_CASE(combine_ov_with_vf)
+{
+	boost::filesystem::path const ov_path = "build/test/combine_ov_with_vf/ov";
+	auto ov = make_simple(ov_path, 1, 24, dcp::Standard::INTEROP);
+	ov->write_xml();
+
+	boost::filesystem::path const vf_path = "build/test/combine_ov_with_vf/vf";
+	boost::filesystem::remove_all(vf_path);
+
+	auto vf = make_shared<dcp::DCP>(vf_path);
+	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER, dcp::Standard::INTEROP);
+
+	auto subs = make_shared<dcp::InteropTextAsset>();
+	subs->add(simple_text());
+	subs->write(vf_path / "subs.xml");
+
+	auto reel = make_shared<dcp::Reel>(
+		ov->cpls()[0]->reels()[0]->main_picture(),
+		ov->cpls()[0]->reels()[0]->main_sound(),
+		std::make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::OPEN_SUBTITLE, subs, dcp::Fraction{ 24, 1 }, 256, 0)
+		);
+
+	cpl->add(reel);
+	vf->add(cpl);
+	vf->write_xml();
+
+	boost::filesystem::path const out_path = "build/test/combine_ov_with_vf/combine";
+	boost::filesystem::remove_all(out_path);
+
+	dcp::combine(
+		{ ov_path, vf_path },
+		out_path,
+		dcp::String::compose("libdcp %1", dcp::version),
+		dcp::String::compose("libdcp %1", dcp::version),
+		dcp::LocalTime().as_string(),
+		"A Test DCP"
+		);
+
+
+	int sub_files = 0;
+	for (auto i: boost::filesystem::recursive_directory_iterator(out_path)) {
+		if (boost::filesystem::extension(i.path()) == ".xml" && i.path().filename().string().substr(0, 3) == "sub") {
+			++sub_files;
+		}
+	}
+
+	BOOST_CHECK_EQUAL(sub_files, 1U);
+}
+
+
+
 /* XXX: same CPL names */
 /* XXX: Interop PNG subs */

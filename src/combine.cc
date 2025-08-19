@@ -126,6 +126,7 @@ dcp::combine(
 
 	vector<boost::filesystem::path> paths;
 	vector<shared_ptr<dcp::Asset>> assets;
+	set<string> already_written;
 
 	for (auto i: inputs) {
 		DCP dcp(i);
@@ -150,10 +151,11 @@ dcp::combine(
 				for (auto const& k: fonts) {
 					sub->set_font_file(k.first, make_unique(output / k.second.filename()));
 				}
-				auto file = sub->file();
+				auto const file = sub->file();
 				DCP_ASSERT(file);
-				auto new_path = make_unique(output / file->filename());
+				auto const new_path = make_unique(output / file->filename());
 				sub->write(new_path);
+				already_written.insert(sub->id());
 				add_to_container(assets, sub->font_assets());
 			}
 
@@ -165,11 +167,13 @@ dcp::combine(
 
 	for (auto i: output_dcp.assets()) {
 		if (!dynamic_pointer_cast<dcp::FontAsset>(i) && !dynamic_pointer_cast<dcp::CPL>(i)) {
-			auto file = i->file();
-			DCP_ASSERT(file);
-			auto new_path = make_unique(output / file->filename());
-			create_hard_link_or_copy(*file, new_path);
-			i->set_file(new_path);
+			if (already_written.find(i->id()) == already_written.end()) {
+				auto file = i->file();
+				DCP_ASSERT(file);
+				auto new_path = make_unique(output / file->filename());
+				create_hard_link_or_copy(*file, new_path);
+				i->set_file(new_path);
+			}
 		}
 	}
 
