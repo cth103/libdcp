@@ -92,51 +92,54 @@ try
 		exit (EXIT_FAILURE);
 	}
 
-	boost::filesystem::path kdm_file = argv[optind];
+	for (int kdm_index = optind; kdm_index < argc; ++kdm_index) {
 
-	dcp::EncryptedKDM enc_kdm (dcp::file_to_string (kdm_file));
+		boost::filesystem::path kdm_file = argv[optind];
 
-	if (enc_kdm.annotation_text()) {
-		cout << "Annotation:       " << enc_kdm.annotation_text().get() << "\n";
-	}
-	cout << "Content title:    " << enc_kdm.content_title_text() << "\n";
-	cout << "CPL id:           " << enc_kdm.cpl_id() << "\n";
-	cout << "Recipient:        " << enc_kdm.recipient_x509_subject_name() << "\n";
-	cout << "Not valid before: " << enc_kdm.not_valid_before().as_string() << "\n";
-	cout << "Not valid after:  " << enc_kdm.not_valid_after().as_string() << "\n";
+		dcp::EncryptedKDM enc_kdm (dcp::file_to_string (kdm_file));
 
-	cout << "Signer chain:\n";
-	dcp::CertificateChain signer = enc_kdm.signer_certificate_chain ();
-	for (auto const& i: signer.root_to_leaf()) {
-		cout << "\tCertificate:\n";
-		cout << "\t\tSubject: " << i.subject() << "\n";
-		cout << "\t\tSubject common name: " << i.subject_common_name() << "\n";
-		cout << "\t\tSubject organization name: " << i.subject_organization_name() << "\n";
-		cout << "\t\tSubject organizational unit name: " << i.subject_organizational_unit_name() << "\n";
-		cout << "\t\tNot before: " << i.not_before().as_string() << "\n";
-		cout << "\t\tNot after:  " << i.not_after().as_string() << "\n";
-		if (i.has_utf8_strings()) {
-			cout << "\t\tUSES INCORRECT (UTF8) STRING ENCODING\n";
+		if (enc_kdm.annotation_text()) {
+			cout << "Annotation:       " << enc_kdm.annotation_text().get() << "\n";
 		}
-	}
+		cout << "Content title:    " << enc_kdm.content_title_text() << "\n";
+		cout << "CPL id:           " << enc_kdm.cpl_id() << "\n";
+		cout << "Recipient:        " << enc_kdm.recipient_x509_subject_name() << "\n";
+		cout << "Not valid before: " << enc_kdm.not_valid_before().as_string() << "\n";
+		cout << "Not valid after:  " << enc_kdm.not_valid_after().as_string() << "\n";
 
-	if (private_key_file) {
-		try {
-			dcp::DecryptedKDM dec_kdm (enc_kdm, dcp::file_to_string (private_key_file.get()));
-			cout << "\nKeys:";
-			for (auto i: dec_kdm.keys()) {
-				cout << "\n";
-				cout << "\tID:       " << i.id() << "\n";
-				cout << "\tStandard: " << (i.standard() == dcp::Standard::SMPTE ? "SMPTE" : "Interop") << "\n";
-				cout << "\tCPL ID:   " << i.cpl_id() << "\n";
-				if (i.type()) {
-					cout << "\tType:     " << i.type().get() << "\n";
-				}
-				cout << "\tKey:      " << i.key().hex() << "\n";
+		cout << "Signer chain:\n";
+		dcp::CertificateChain signer = enc_kdm.signer_certificate_chain ();
+		for (auto const& i: signer.root_to_leaf()) {
+			cout << "\tCertificate:\n";
+			cout << "\t\tSubject: " << i.subject() << "\n";
+			cout << "\t\tSubject common name: " << i.subject_common_name() << "\n";
+			cout << "\t\tSubject organization name: " << i.subject_organization_name() << "\n";
+			cout << "\t\tSubject organizational unit name: " << i.subject_organizational_unit_name() << "\n";
+			cout << "\t\tNot before: " << i.not_before().as_string() << "\n";
+			cout << "\t\tNot after:  " << i.not_after().as_string() << "\n";
+			if (i.has_utf8_strings()) {
+				cout << "\t\tUSES INCORRECT (UTF8) STRING ENCODING\n";
 			}
-		} catch (dcp::KDMDecryptionError& e) {
-			cerr << e.what() << "\n";
-			exit (EXIT_FAILURE);
+		}
+
+		if (private_key_file) {
+			try {
+				dcp::DecryptedKDM dec_kdm (enc_kdm, dcp::file_to_string (private_key_file.get()));
+				cout << "\nKeys:";
+				for (auto i: dec_kdm.keys()) {
+					cout << "\n";
+					cout << "\tID:       " << i.id() << "\n";
+					cout << "\tStandard: " << (i.standard() == dcp::Standard::SMPTE ? "SMPTE" : "Interop") << "\n";
+					cout << "\tCPL ID:   " << i.cpl_id() << "\n";
+					if (i.type()) {
+						cout << "\tType:     " << i.type().get() << "\n";
+					}
+					cout << "\tKey:      " << i.key().hex() << "\n";
+				}
+			} catch (dcp::KDMDecryptionError& e) {
+				cerr << e.what() << "\n";
+				exit (EXIT_FAILURE);
+			}
 		}
 	}
 
