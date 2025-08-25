@@ -147,13 +147,14 @@ dcp::combine(
 				 * re-write the subtitle XML file since the font URI might have changed
 				 * if it's a duplicate with another DCP.
 				 */
+				boost::filesystem::create_directories(output / sub->id());
 				auto fonts = sub->font_filenames();
 				for (auto const& k: fonts) {
-					sub->set_font_file(k.first, make_unique(output / k.second.filename()));
+					sub->set_font_file(k.first, make_unique(output / sub->id() / k.second.filename()));
 				}
 				auto const file = sub->file();
 				DCP_ASSERT(file);
-				auto const new_path = make_unique(output / file->filename());
+				auto const new_path = make_unique(output / sub->id() / file->filename());
 				sub->write(new_path);
 				already_written.insert(sub->id());
 				add_to_container(assets, sub->font_assets());
