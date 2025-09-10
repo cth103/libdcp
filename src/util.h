@@ -42,6 +42,7 @@
 
 
 #include "array_data.h"
+#include "exceptions.h"
 #include "local_time.h"
 #include "warnings.h"
 LIBDCP_DISABLE_WARNINGS
@@ -172,6 +173,16 @@ add_to_container(To& container, From source)
 	std::copy(source.begin(), source.end(), std::back_inserter(container));
 }
 
+
+void maybe_throw_from_asdcplib(Kumu::Result_t result, boost::filesystem::path path);
+
+
+template <typename T>
+void throw_from_asdcplib(Kumu::Result_t result, boost::filesystem::path path, T const& general)
+{
+	maybe_throw_from_asdcplib(result, path);
+	boost::throw_exception(general);
+}
 
 }
 

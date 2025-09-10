@@ -218,3 +218,18 @@ LoadVariableZError::LoadVariableZError(string variable_z)
 {
 
 }
+
+
+DiskFullError::DiskFullError(boost::filesystem::path filename)
+	: runtime_error(fmt::format("Disk full when writing to {}", filename.string()))
+	, _filename(filename)
+{
+
+}
+
+
+TooManyOpenFilesError::TooManyOpenFilesError()
+	: runtime_error("Too many open files")
+{
+
+}

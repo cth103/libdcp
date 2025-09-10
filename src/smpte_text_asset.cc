@@ -466,7 +466,7 @@ SMPTETextAsset::write(boost::filesystem::path p) const
 
 	r = writer.WriteTimedTextResource (*_raw_xml, enc.context(), enc.hmac());
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("could not write XML to timed text resource", p.string(), r));
+		throw_from_asdcplib(r, p, MXFFileError("could not write XML to timed text resource", p.string(), r));
 	}
 
 	/* Font payload */
@@ -483,7 +483,7 @@ SMPTETextAsset::write(boost::filesystem::path p) const
 			buffer.Size (j->data.size());
 			r = writer.WriteAncillaryResource (buffer, enc.context(), enc.hmac());
 			if (ASDCP_FAILURE(r)) {
-				boost::throw_exception (MXFFileError ("could not write font to timed text resource", p.string(), r));
+				throw_from_asdcplib(r, p, MXFFileError("could not write font to timed text resource", p.string(), r));
 			}
 		}
 	}
@@ -497,7 +497,7 @@ SMPTETextAsset::write(boost::filesystem::path p) const
 			buffer.Size (si->png_image().size());
 			r = writer.WriteAncillaryResource (buffer, enc.context(), enc.hmac());
 			if (ASDCP_FAILURE(r)) {
-				boost::throw_exception (MXFFileError ("could not write PNG data to timed text resource", p.string(), r));
+				throw_from_asdcplib(r, p, MXFFileError("could not write PNG data to timed text resource", p.string(), r));
 			}
 		}
 	}

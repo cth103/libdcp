@@ -114,7 +114,7 @@ StereoJ2KPictureAssetWriter::write (uint8_t const * data, int size)
 		);
 
 	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (MXFFileError ("error in writing video MXF", _file.string(), r));
+		throw_from_asdcplib(r, _file, MXFFileError("error in writing video MXF", _file.string(), r));
 	}
 
 	_next_eye = _next_eye == Eye::LEFT ? Eye::RIGHT : Eye::LEFT;
@@ -135,7 +135,7 @@ StereoJ2KPictureAssetWriter::fake_write(J2KFrameInfo const& info)
 
 	auto r = _state->mxf_writer.FakeWriteFrame(info.size, _next_eye == Eye::LEFT ? ASDCP::JP2K::SP_LEFT : ASDCP::JP2K::SP_RIGHT);
 	if (ASDCP_FAILURE(r)) {
-		boost::throw_exception (MXFFileError("error in writing video MXF", _file.string(), r));
+		throw_from_asdcplib(r, _file, MXFFileError("error in writing video MXF", _file.string(), r));
 	}
 
 	_next_eye = _next_eye == Eye::LEFT ? Eye::RIGHT : Eye::LEFT;
@@ -151,7 +151,7 @@ StereoJ2KPictureAssetWriter::finalize ()
 	if (_started) {
 		auto r = _state->mxf_writer.Finalize();
 		if (ASDCP_FAILURE(r)) {
-			boost::throw_exception (MXFFileError("error in finalizing video MXF", _file.string(), r));
+			throw_from_asdcplib(r, _file, MXFFileError("error in finalizing video MXF", _file.string(), r));
 		}
 	}
 

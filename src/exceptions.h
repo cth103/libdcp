@@ -365,6 +365,27 @@ public:
 };
 
 
+class DiskFullError : public std::runtime_error
+{
+public:
+	DiskFullError(boost::filesystem::path filename);
+
+	boost::filesystem::path filename() const {
+		return _filename;
+	}
+
+private:
+	boost::filesystem::path _filename;
+};
+
+
+class TooManyOpenFilesError : public std::runtime_error
+{
+public:
+	TooManyOpenFilesError();
+};
+
+
 }
 
 

@@ -51,6 +51,7 @@ LIBDCP_DISABLE_WARNINGS
 #include <asdcp/AS_DCP.h>
 #include <asdcp/Metadata.h>
 LIBDCP_ENABLE_WARNINGS
+#include <fmt/format.h>
 #include <iostream>
 
 
@@ -150,7 +151,7 @@ SoundAssetWriter::start ()
 {
 	auto r = _state->mxf_writer.OpenWrite(dcp::filesystem::fix_long_path(_file).string().c_str(), _state->writer_info, _state->desc);
 	if (ASDCP_FAILURE(r)) {
-		boost::throw_exception (FileError("could not open audio MXF for writing", _file.string(), r));
+		throw_from_asdcplib(r, _file, FileError("could not open audio MXF for writing", _file.string(), r));
 	}
 
 	if (_asset->standard() == Standard::SMPTE && _include_mca_subdescriptors) {
@@ -262,7 +263,7 @@ SoundAssetWriter::write_current_frame ()
 {
 	auto const r = _state->mxf_writer.WriteFrame (_state->frame_buffer, _crypto_context->context(), _crypto_context->hmac());
 	if (ASDCP_FAILURE(r)) {
-		boost::throw_exception (MiscError(String::compose("could not write audio MXF frame (%1)", static_cast<int>(r))));
+		throw_from_asdcplib(r, _file, MiscError(fmt::format("could not write audio MXF frame ({})", static_cast<int>(r))));
 	}
 
 	++_frames_written;
@@ -283,7 +284,7 @@ SoundAssetWriter::finalize ()
 	if (_started) {
 		auto const r = _state->mxf_writer.Finalize();
 		if (ASDCP_FAILURE(r)) {
-			boost::throw_exception (MiscError(String::compose ("could not finalise audio MXF (%1)", static_cast<int>(r))));
+			throw_from_asdcplib(r, _file, MiscError(fmt::format("could not finalise audio MXF ({})", static_cast<int>(r))));
 		}
 	}
 

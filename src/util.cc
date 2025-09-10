@@ -455,3 +455,26 @@ boost::filesystem::path dcp::resources_directory ()
 }
 
 
+void
+dcp::maybe_throw_from_asdcplib(Kumu::Result_t result, boost::filesystem::path path)
+{
+	switch (result.OsError()) {
+
+#ifdef LIBDCP_WINDOWS
+	case ERROR_DISK_FULL:
+	case ERROR_HANDLE_DISK_FULL:
+#else
+	case EDQUOT:
+	case ENOSPC:
+#endif
+		boost::throw_exception(DiskFullError(path));
+
+#ifdef LIBDCP_WINDOWS
+	case ERROR_TOO_MANY_OPEN_FILES:
+#else
+	case EMFILE:
+#endif
+		boost::throw_exception(TooManyOpenFilesError());
+	}
+}
+

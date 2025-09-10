@@ -95,7 +95,7 @@ MonoMPEG2PictureAssetWriter::write(uint8_t const * data, int size)
 	string hash;
 	auto const r = _state->mxf_writer.WriteFrame(buffer, _crypto_context->context(), _crypto_context->hmac(), &hash);
 	if (ASDCP_FAILURE(r)) {
-		boost::throw_exception(MXFFileError("error in writing video MXF", _file.string(), r));
+		throw_from_asdcplib(r, _file, MXFFileError("error in writing video MXF", _file.string(), r));
 	}
 
 	++_frames_written;
@@ -121,7 +121,7 @@ MonoMPEG2PictureAssetWriter::fake_write(MPEG2FrameInfo const& info)
 
 	auto r = _state->mxf_writer.FakeWriteFrame(info.size, info.type, info.gop_start, info.closed_gop, info.temporal_offset);
 	if (ASDCP_FAILURE(r)) {
-		boost::throw_exception(MXFFileError("error in writing video MXF", _file.string(), r));
+		throw_from_asdcplib(r, _file, MXFFileError("error in writing video MXF", _file.string(), r));
 	}
 
 	++_frames_written;
@@ -134,7 +134,7 @@ MonoMPEG2PictureAssetWriter::finalize()
 	if (_started) {
 		auto r = _state->mxf_writer.Finalize();
 		if (ASDCP_FAILURE(r)) {
-			boost::throw_exception(MXFFileError("error in finalizing video MXF", _file.string(), r));
+			throw_from_asdcplib(r, _file, MXFFileError("error in finalizing video MXF", _file.string(), r));
 		}
 	}
 
