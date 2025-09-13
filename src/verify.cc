@@ -1881,6 +1881,8 @@ dcp::verify (
 				context.cpl = cpl;
 				verify_cpl(context, cpl);
 				context.cpl.reset();
+				context.audio_channels.reset();
+				context.subtitle_language.reset();
 			} catch (ReadError& e) {
 				notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
 			}

@@ -32,6 +32,7 @@
 */
 
 
+#include "combine.h"
 #include "compose.hpp"
 #include "cpl.h"
 #include "dcp.h"
@@ -6044,5 +6045,67 @@ BOOST_AUTO_TEST_CASE(only_verify_assets_once)
 	for (auto i: stages) {
 		std::cout << i << "\n";
 	}
+}
+
+
+
+BOOST_AUTO_TEST_CASE(verify_dcp_with_two_cpls)
+{
+	auto const prefix = string{"build/test/verify_dcp_with_two_cpls"};
+
+	vector<shared_ptr<dcp::CPL>> cpls;
+	for (auto i = 0; i < 2; ++i) {
+		auto dcp_dir = dcp::String::compose("%1_%2", prefix, i);
+		prepare_directory(dcp_dir);
+		auto picture = simple_picture(dcp_dir, "foo");
+		auto sound = simple_sound(dcp_dir, "foo", dcp::MXFMetadata{}, "de-DE", 24, 48000, boost::none, i == 0 ? 6 : 8);
+		auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
+		auto reel = make_shared<dcp::Reel>();
+		auto reel_picture = make_shared<dcp::ReelMonoPictureAsset>(picture, 0);
+		reel->add(reel_picture);
+		auto reel_sound = make_shared<dcp::ReelSoundAsset>(sound, 0);
+		reel->add(reel_sound);
+		reel->add(simple_markers());
+		cpl->add(reel);
+
+		auto dcp = make_shared<dcp::DCP>(dcp_dir);
+		dcp->add(cpl);
+		dcp->set_annotation_text("hello");
+		dcp->write_xml();
+
+		cpls.push_back(cpl);
+	}
+
+	auto const combined = boost::filesystem::path(prefix + "_combined");
+
+	prepare_directory(combined);
+	dcp::combine({ prefix + "_0", prefix+ "_1" }, combined);
+
+	check_verify_result_with_duplicates({combined}, {}, {
+			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpls[0]),
+			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpls[1]),
+			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpls[0]),
+			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpls[1]),
+			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpls[0]),
+			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpls[1]),
+			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpls[0]),
+			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpls[1]),
+			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpls[0]),
+			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpls[1]),
+			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpls[0]->content_version()->label_text, cpls[0]),
+			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpls[1]->content_version()->label_text, cpls[1]),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(combined / "videofoo.mxf"), cpls[0]),
+			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(combined / "videofoo0.mxf"), cpls[1]),
+			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(combined / "videofoo.mxf"), cpls[0]),
+			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(combined / "videofoo0.mxf"), cpls[1]),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::BV21_ERROR,
+				dcp::VerificationNote::Code::MISSING_CPL_METADATA,
+				canonical(combined / cpls[0]->file()->filename())).set_cpl_id(cpls[0]->id()),
+			dcp::VerificationNote(
+				dcp::VerificationNote::Type::BV21_ERROR,
+				dcp::VerificationNote::Code::MISSING_CPL_METADATA,
+				canonical(combined / cpls[1]->file()->filename())).set_cpl_id(cpls[1]->id())
+	});
 }
 
