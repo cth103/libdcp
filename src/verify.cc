@@ -2262,6 +2262,10 @@ dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		return a.other_id().get_value_or("") < b.other_id().get_value_or("");
 	}
 
+	if (a.cpl_id() != b.cpl_id()) {
+		return a.cpl_id().get_value_or("") < b.cpl_id().get_value_or("");
+	}
+
 	return a.frame_rate().get_value_or(0) != b.frame_rate().get_value_or(0);
 }
 
