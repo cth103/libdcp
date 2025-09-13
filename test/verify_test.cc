@@ -302,12 +302,63 @@ check_verify_result(vector<dcp::VerificationNote> notes, vector<dcp::Verificatio
 }
 
 
+/** Check some verification notes against a reference, without particularly trying to give clear explanations
+ *  when something is wrong.  This function compares the notes directly, without trying to hint when a note
+ *  has the right code but the wrong metadata.  It's useful for lists of notes coming from multi-CPL DCPs.
+ *  Normally check_verify_result() gives output which is easier to understand when something is wrong.
+ */
+static
+void
+check_verify_result_with_duplicates(vector<dcp::VerificationNote> notes, vector<dcp::VerificationNote> test_notes)
+{
+	std::sort(notes.begin(), notes.end());
+	std::sort(test_notes.begin(), test_notes.end());
+
+	string message = "\n";
+
+	vector<dcp::VerificationNote> not_expected;
+	for (auto note: notes) {
+		auto iter = std::find(test_notes.begin(), test_notes.end(), note);
+		if (iter == test_notes.end()) {
+			not_expected.push_back(note);
+		}
+	}
+
+	vector<dcp::VerificationNote> not_seen;
+	for (auto note: test_notes) {
+		auto iter = std::find(notes.begin(), notes.end(), note);
+		if (iter == notes.end()) {
+			not_seen.push_back(note);
+		}
+	}
+
+	for (auto note: not_expected) {
+		message += "Not expected:\n" + to_string(note) + "\n";
+	}
+
+	for (auto note: not_seen) {
+		message += "Not seen:\n" + to_string(note) + "\n";
+	}
+
+	BOOST_REQUIRE_MESSAGE(notes == test_notes, message);
+}
+
+
 static
 void
 check_verify_result(vector<path> dir, vector<dcp::DecryptedKDM> kdm, vector<dcp::VerificationNote> test_notes)
 {
 	check_verify_result(dcp::verify({dir}, kdm, &stage, &progress, {}, xsd_test).notes, test_notes);
 }
+
+
+static
+void
+check_verify_result_with_duplicates(vector<path> dir, vector<dcp::DecryptedKDM> kdm, vector<dcp::VerificationNote> test_notes)
+{
+	check_verify_result_with_duplicates(dcp::verify({dir}, kdm, &stage, &progress, {}, xsd_test).notes, test_notes);
+}
+
 
 
 /* Copy dcp_test1 to build/test/verify_test{suffix} then edit a file found by the functor 'file',
