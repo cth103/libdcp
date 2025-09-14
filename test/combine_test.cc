@@ -530,7 +530,7 @@ BOOST_AUTO_TEST_CASE(combine_ov_with_vf)
 
 	int sub_files = 0;
 	for (auto i: boost::filesystem::recursive_directory_iterator(out_path)) {
-		if (boost::filesystem::extension(i.path()) == ".xml" && i.path().filename().string().substr(0, 3) == "sub") {
+		if (dcp::filesystem::extension(i.path()) == ".xml" && i.path().filename().string().substr(0, 3) == "sub") {
 			++sub_files;
 			std::vector<boost::filesystem::path> parts;
 			for (auto j: i.path().lexically_relative(out_path)) {
