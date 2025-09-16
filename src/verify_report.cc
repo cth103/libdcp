@@ -42,6 +42,7 @@
 #include "reel_text_asset.h"
 #include "verify.h"
 #include "verify_report.h"
+#include <fmt/format.h>
 
 
 using std::shared_ptr;
@@ -74,7 +75,7 @@ verify_report(dcp::VerificationResult const& result, Formatter& formatter)
 	}
 
 	auto reel_asset_details = [&formatter](shared_ptr<dcp::ReelAsset> asset) {
-		formatter.list_item(String::compose("UUID: %1", asset->id()));
+		formatter.list_item(fmt::format("UUID: {}", formatter.fixed_width()(asset->id())));
 		formatter.list_item(String::compose("Intrinsic duration: %1", asset->intrinsic_duration()));
 		formatter.list_item(String::compose("Entry point: %1", asset->entry_point().get_value_or(0)));
 		formatter.list_item(String::compose("Duration: %1", asset->duration().get_value_or(0)));
@@ -111,7 +112,7 @@ verify_report(dcp::VerificationResult const& result, Formatter& formatter)
 			if (cpl->annotation_text()) {
 				formatter.list_item(*cpl->annotation_text());
 			}
-			formatter.list_item(String::compose("CPL ID: %1", cpl->id()));
+			formatter.list_item(fmt::format("CPL ID: {}", formatter.fixed_width()(cpl->id())));
 			int reel_index = 1;
 			for (auto reel: cpl->reels()) {
 				formatter.list_item(String::compose("Reel: %1", reel_index++));
