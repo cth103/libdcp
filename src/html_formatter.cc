@@ -116,7 +116,7 @@ HTMLFormatter::process_string()
 
 
 std::function<std::string (std::string)>
-HTMLFormatter::process_filename()
+HTMLFormatter::fixed_width()
 {
 	return [](std::string s) {
 		return String::compose("<code>%1</code>", s);

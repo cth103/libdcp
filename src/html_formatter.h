@@ -38,7 +38,7 @@ public:
 	void list_item(std::string const& text, boost::optional<std::string> type = {}) override;
 
 	std::function<std::string (std::string)> process_string() override;
-	std::function<std::string (std::string)> process_filename() override;
+	std::function<std::string (std::string)> fixed_width() override;
 
 private:
 	void tagged(std::string tag, std::string content);

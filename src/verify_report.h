@@ -89,7 +89,7 @@ public:
 	virtual void list_item(std::string const& text, boost::optional<std::string> type = {}) = 0;
 
 	virtual std::function<std::string (std::string)> process_string() = 0;
-	virtual std::function<std::string (std::string)> process_filename() = 0;
+	virtual std::function<std::string (std::string)> fixed_width() = 0;
 
 	dcp::File& file() {
 		return _file;

@@ -77,7 +77,7 @@ TextFormatter::process_string()
 
 
 std::function<std::string (std::string)>
-TextFormatter::process_filename()
+TextFormatter::fixed_width()
 {
 	return [](std::string s) {
 		return s;

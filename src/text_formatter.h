@@ -35,7 +35,7 @@ public:
 	Wrap unordered_list() override;
 	void list_item(std::string const& text, boost::optional<std::string> type = {}) override;
 	std::function<std::string (std::string)> process_string() override;
-	std::function<std::string (std::string)> process_filename() override;
+	std::function<std::string (std::string)> fixed_width() override;
 
 private:
 	void print(std::string const& text);

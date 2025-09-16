@@ -86,7 +86,7 @@ verify_report(dcp::VerificationResult const& result, Formatter& formatter)
 	auto write_notes = [&formatter](dcp::VerificationResult const& result, optional<string> cpl_id) {
 		for (auto note: result.notes) {
 			if (note.cpl_id() == cpl_id) {
-				auto const note_as_string = dcp::note_to_string(note, formatter.process_string(), formatter.process_filename());
+				auto const note_as_string = dcp::note_to_string(note, formatter.process_string(), formatter.fixed_width());
 				switch (note.type()) {
 				case dcp::VerificationNote::Type::OK:
 					formatter.list_item(note_as_string, string("ok"));
