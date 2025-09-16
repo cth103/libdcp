@@ -123,6 +123,7 @@ def build(bld):
              text_asset.cc
              text_asset_internal.cc
              text.cc
+             text_formatter.cc
              text_image.cc
              subtitle_standard.cc
              text_string.cc

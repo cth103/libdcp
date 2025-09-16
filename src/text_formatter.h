@@ -28,50 +28,17 @@ namespace dcp {
 class TextFormatter : public Formatter
 {
 public:
-	TextFormatter(boost::filesystem::path file)
-		: Formatter(file)
-	{}
+	TextFormatter(boost::filesystem::path file);
 
-	void heading(std::string const& text) override {
-		print(text);
-	}
-
-	void subheading(std::string const& text) override {
-		print("");
-		print(text);
-	}
-
-	Wrap unordered_list() override {
-		_indent++;
-		return Wrap(this, "", [this]() { _indent--; });
-	}
-
-	void list_item(std::string const& text, boost::optional<std::string> type = {}) override {
-		LIBDCP_UNUSED(type);
-		for (int i = 0; i < _indent * 2; ++i) {
-			_file.puts(" ");
-		}
-		_file.puts("* ");
-		print(text);
-	}
-
-	std::function<std::string (std::string)> process_string() override {
-		return [](std::string s) {
-			return s;
-		};
-	}
-
-	std::function<std::string (std::string)> process_filename() override {
-		return [](std::string s) {
-			return s;
-		};
-	}
+	void heading(std::string const& text) override;
+	void subheading(std::string const& text) override;
+	Wrap unordered_list() override;
+	void list_item(std::string const& text, boost::optional<std::string> type = {}) override;
+	std::function<std::string (std::string)> process_string() override;
+	std::function<std::string (std::string)> process_filename() override;
 
 private:
-	void print(std::string const& text) {
-		_file.puts(text.c_str());
-		_file.puts("\n");
-	}
+	void print(std::string const& text);
 
 	int _indent = 0;
 };
