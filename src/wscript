@@ -242,6 +242,7 @@ def build(bld):
               stereo_j2k_picture_asset_reader.h
               stereo_j2k_picture_asset_writer.h
               stereo_j2k_picture_frame.h
+              stream_formatter.h
               text.h
               text_asset.h
               text_image.h

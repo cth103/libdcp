@@ -19,22 +19,23 @@
 */
 
 
+#include "stream_formatter.h"
 #include "verify_report.h"
 
 
 namespace dcp {
 
 
-class HTMLFormatter : public Formatter
+class HTMLFormatter : public StreamFormatter
 {
 public:
 	HTMLFormatter(boost::filesystem::path file);
 
 	void heading(std::string const& text) override;
 	void subheading(std::string const& text) override;
-	Wrap document() override;
-	Wrap body() override;
-	Wrap unordered_list() override;
+	std::unique_ptr<Formatter::Wrap> document() override;
+	std::unique_ptr<Formatter::Wrap> body() override;
+	std::unique_ptr<Formatter::Wrap> unordered_list() override;
 	void list_item(std::string const& text, boost::optional<std::string> type = {}) override;
 
 	std::function<std::string (std::string)> process_string() override;
@@ -42,7 +43,7 @@ public:
 
 private:
 	void tagged(std::string tag, std::string content);
-	Wrap wrapped(std::string const& tag);
+	std::unique_ptr<Formatter::Wrap> wrapped(std::string const& tag);
 };
 
 }

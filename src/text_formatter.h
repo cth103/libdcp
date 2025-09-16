@@ -19,20 +19,21 @@
 */
 
 
+#include "stream_formatter.h"
 #include "verify_report.h"
 
 
 namespace dcp {
 
 
-class TextFormatter : public Formatter
+class TextFormatter : public StreamFormatter
 {
 public:
 	TextFormatter(boost::filesystem::path file);
 
 	void heading(std::string const& text) override;
 	void subheading(std::string const& text) override;
-	Wrap unordered_list() override;
+	std::unique_ptr<Formatter::Wrap> unordered_list() override;
 	void list_item(std::string const& text, boost::optional<std::string> type = {}) override;
 	std::function<std::string (std::string)> process_string() override;
 	std::function<std::string (std::string)> fixed_width() override;

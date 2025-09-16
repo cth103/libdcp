@@ -145,6 +145,8 @@ verify_report(dcp::VerificationResult const& result, Formatter& formatter)
 		formatter.subheading("Report");
 		write_notes(result, {});
 	}
+
+	formatter.finish();
 }
 
 

@@ -22,11 +22,12 @@
 #include "text_formatter.h"
 
 
+using std::unique_ptr;
 using namespace dcp;
 
 
 TextFormatter::TextFormatter(boost::filesystem::path file)
-	: Formatter(file)
+	: StreamFormatter(file)
 {
 
 }
@@ -47,11 +48,11 @@ TextFormatter::subheading(std::string const& text)
 }
 
 
-Formatter::Wrap
+unique_ptr<Formatter::Wrap>
 TextFormatter::unordered_list()
 {
 	_indent++;
-	return Wrap(this, "", [this]() { _indent--; });
+	return unique_ptr<Formatter::Wrap>(new Wrap(this, "", [this]() { _indent--; }));
 }
 
 

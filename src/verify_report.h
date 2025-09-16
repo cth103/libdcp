@@ -36,67 +36,25 @@ namespace dcp {
 class Formatter
 {
 public:
-	Formatter(boost::filesystem::path file)
-		: _file(file, "w")
-	{}
-
 	class Wrap
 	{
 	public:
-		Wrap() = default;
-
-		Wrap(Formatter* formatter, std::string const& close)
-			: _formatter(formatter)
-			, _close(close)
-		{}
-
-		Wrap(Formatter* formatter, std::string const& close, std::function<void ()> closer)
-			: _formatter(formatter)
-			, _close(close)
-			, _closer(closer)
-		{}
-
-		Wrap(Wrap&& other)
-		{
-			std::swap(_formatter, other._formatter);
-			std::swap(_close, other._close);
-			std::swap(_closer, other._closer);
-		}
-
-		~Wrap()
-		{
-			if (_formatter) {
-				_formatter->file().puts(_close.c_str());
-			}
-			if (_closer) {
-				_closer();
-			}
-		}
-
-	private:
-		Formatter* _formatter = nullptr;
-		std::string _close;
-		std::function<void ()> _closer = nullptr;
+		virtual ~Wrap() {}
 	};
 
-	virtual Wrap document() { return {}; }
+	virtual std::unique_ptr<Wrap> document() { return {}; }
 
 	virtual void heading(std::string const& text) = 0;
 	virtual void subheading(std::string const& text) = 0;
-	virtual Wrap body() { return {}; }
+	virtual std::unique_ptr<Wrap> body() { return {}; }
 
-	virtual Wrap unordered_list() = 0;
+	virtual std::unique_ptr<Wrap> unordered_list() = 0;
 	virtual void list_item(std::string const& text, boost::optional<std::string> type = {}) = 0;
 
 	virtual std::function<std::string (std::string)> process_string() = 0;
 	virtual std::function<std::string (std::string)> fixed_width() = 0;
 
-	dcp::File& file() {
-		return _file;
-	}
-
-protected:
-	dcp::File _file;
+	virtual void finish() {}
 };
 
 

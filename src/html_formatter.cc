@@ -23,12 +23,13 @@
 #include <boost/filesystem.hpp>
 
 
+using std::unique_ptr;
 using namespace dcp;
 
 
 
 HTMLFormatter::HTMLFormatter(boost::filesystem::path file)
-	: Formatter(file)
+	: StreamFormatter(file)
 {
 
 }
@@ -48,7 +49,7 @@ HTMLFormatter::subheading(std::string const& text)
 }
 
 
-Formatter::Wrap
+unique_ptr<Formatter::Wrap>
 HTMLFormatter::document()
 {
 	auto html = wrapped("html");
@@ -79,14 +80,14 @@ HTMLFormatter::document()
 }
 
 
-Formatter::Wrap
+unique_ptr<Formatter::Wrap>
 HTMLFormatter::body()
 {
 	return wrapped("body");
 }
 
 
-Formatter::Wrap
+unique_ptr<Formatter::Wrap>
 HTMLFormatter::unordered_list()
 {
 	return wrapped("ul");
@@ -131,10 +132,10 @@ HTMLFormatter::tagged(std::string tag, std::string content)
 }
 
 
-HTMLFormatter::Wrap
+unique_ptr<Formatter::Wrap>
 HTMLFormatter::wrapped(std::string const& tag)
 {
 	_file.puts(String::compose("<%1>", tag).c_str());
-	return Wrap(this, String::compose("</%1>", tag));
+	return unique_ptr<Formatter::Wrap>(new Wrap(this, String::compose("</%1>", tag)));
 }
 
