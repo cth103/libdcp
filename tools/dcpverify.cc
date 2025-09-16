@@ -36,6 +36,9 @@
 #include "compose.hpp"
 #include "filesystem.h"
 #include "html_formatter.h"
+#ifdef LIBDCP_HAVE_HARU
+#include "pdf_formatter.h"
+#endif
 #include "raw_convert.h"
 #include "text_formatter.h"
 #include "verify.h"
@@ -72,7 +75,12 @@ help (string n)
 	     << "  --no-asset-hash-check                        don't check asset hashes\n"
 	     << "  --asset-hash-check-maximum-size <size-in-MB> only check hashes for assets smaller than this size (in MB)\n"
 	     << "  --no-picture-details-check                   don't check details of picture assets (J2K bitstream etc.)\n"
-	     << "  -o <filename>                                write HTML report to filename\n"
+	     << "  -o <filename>                                write report to filename "
+#ifdef LIBDCP_HAVE_HARU
+	" (.txt, .htm, .html or .pdf)\n"
+#else
+	" (.txt, .htm or .html)\n"
+#endif
 	     << "  -q, --quiet                                  don't report progress\n";
 }
 
@@ -228,8 +236,18 @@ main (int argc, char* argv[])
 	}
 
 	if (report_filename) {
-		dcp::HTMLFormatter formatter(*report_filename);
-		dcp::verify_report({ result }, formatter);
+		if (report_filename->extension() == ".htm" || report_filename->extension() == ".html") {
+			dcp::HTMLFormatter formatter(*report_filename);
+			dcp::verify_report({ result }, formatter);
+#ifdef LIBDCP_HAVE_HARU
+		} else if (report_filename->extension() == ".pdf") {
+			dcp::PDFFormatter formatter(*report_filename);
+			dcp::verify_report({ result }, formatter);
+#endif
+		} else {
+			dcp::TextFormatter formatter(*report_filename);
+			dcp::verify_report({ result }, formatter);
+		}
 	}
 
 	exit (failed ? EXIT_FAILURE : EXIT_SUCCESS);

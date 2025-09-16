@@ -271,6 +271,20 @@ def configure(conf):
     conf.check_cfg(package='fmt', args='--cflags --libs', uselib_store='FMT', mandatory=True)
     conf.check_cxx(header_name="fast_float/fast_float.h", uselib_store='FAST_FLOAT', mandatory=True)
 
+    haru = conf.check_cc(fragment="""
+                         #include "hpdf.h"\n
+                         int main() { HPDF_Doc pdf; return 0; }\n
+                         """,
+                         msg='Checking for haru library',
+                         libpath='/usr/local/lib',
+                         lib=['hpdf'],
+                         uselib_store='HARU',
+                         define_name='LIBDCP_HAVE_HARU',
+                         mandatory=False)
+
+    if haru:
+        conf.env.append_value('LIBDCP_HAVE_HARU', '1')
+
     if not conf.env.DISABLE_TESTS:
         conf.recurse('test')
         if conf.options.enable_gcov:
@@ -288,6 +302,8 @@ def build(bld):
         boost_lib_suffix = ''
 
     libs="-L${libdir} -ldcp%s -lcxml -lboost_system%s" % (bld.env.API_VERSION, boost_lib_suffix)
+    if bld.env.HAVE_HARU:
+        libs += " -lhpdf"
     if bld.env.TARGET_LINUX:
         libs += " -ldl"
 

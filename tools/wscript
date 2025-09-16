@@ -33,6 +33,8 @@
 
 def build(bld):
     uselib = 'OPENJPEG CXML OPENMP ASDCPLIB_DCPOMATIC BOOST_FILESYSTEM LIBXML++ XMLSEC1 OPENSSL XERCES DL MAGICK AVCODEC AVUTIL FMT FAST_FLOAT'
+    if bld.env.LIBDCP_HAVE_HARU:
+        uselib += ' HARU'
 
     for f in ['diff', 'info', 'verify']:
         obj = bld(features='cxx cxxprogram')
