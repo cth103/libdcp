@@ -63,6 +63,7 @@ def build(bld):
              fsk.cc
              gamma_transfer_function.cc
              h_align.cc
+             html_formatter.cc
              identity_transfer_function.cc
              interop_load_font_node.cc
              interop_text_asset.cc

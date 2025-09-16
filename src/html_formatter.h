@@ -28,85 +28,21 @@ namespace dcp {
 class HTMLFormatter : public Formatter
 {
 public:
-	HTMLFormatter(boost::filesystem::path file)
-		: Formatter(file)
-	{}
+	HTMLFormatter(boost::filesystem::path file);
 
-	void heading(std::string const& text) override {
-		tagged("h1", text);
-	}
+	void heading(std::string const& text) override;
+	void subheading(std::string const& text) override;
+	Wrap document() override;
+	Wrap body() override;
+	Wrap unordered_list() override;
+	void list_item(std::string const& text, boost::optional<std::string> type = {}) override;
 
-	void subheading(std::string const& text) override {
-		tagged("h2", text);
-	}
-
-	Wrap document() override {
-		auto html = wrapped("html");
-		auto head = wrapped("head");
-		auto style = wrapped("style");
-		_file.puts("li {\n"
-			   "  margin: 2px;\n"
-			   "  padding: 2px 2px 2px 1em;\n"
-			   "}\n"
-			  );
-		_file.puts("li.ok {\n"
-			   "  background-color: #00ff00;\n"
-			   "}\n"
-			   "li.warning {\n"
-			   "  background-color: #ffa500;\n"
-			   "}\n"
-			   "li.error {\n"
-			   "  background-color: #ff0000;\n"
-			   "}\n"
-			   "li.bv21-error {\n"
-			   "  background-color: #ff6666;\n"
-			   "}\n"
-			   "ul {\n"
-			   "  list-style: none;\n"
-			   "}\n"
-			  );
-		return html;
-	}
-
-	Wrap body() override {
-		return wrapped("body");
-	}
-
-	Wrap unordered_list() override {
-		return wrapped("ul");
-	}
-
-	void list_item(std::string const& text, boost::optional<std::string> type = {}) override {
-		if (type) {
-			_file.puts(dcp::String::compose("<li class=\"%1\">%2</li>\n", *type, text).c_str());
-		} else {
-			_file.puts(dcp::String::compose("<li>%1</li>\n", text).c_str());
-		}
-	}
-
-	std::function<std::string (std::string)> process_string() override {
-		return [](std::string s) {
-			boost::replace_all(s, "<", "&lt;");
-			boost::replace_all(s, ">", "&gt;");
-			return s;
-		};
-	}
-
-	std::function<std::string (std::string)> process_filename() override {
-		return [](std::string s) {
-			return String::compose("<code>%1</code>", s);
-		};
-	}
+	std::function<std::string (std::string)> process_string() override;
+	std::function<std::string (std::string)> process_filename() override;
 
 private:
-	void tagged(std::string tag, std::string content) {
-		_file.puts(String::compose("<%1>%2</%3>\n", tag, content, tag).c_str());
-	};
-
-	Wrap wrapped(std::string const& tag) {
-		_file.puts(String::compose("<%1>", tag).c_str());
-		return Wrap(this, String::compose("</%1>", tag));
-	};
+	void tagged(std::string tag, std::string content);
+	Wrap wrapped(std::string const& tag);
 };
 
 }
