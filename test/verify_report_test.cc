@@ -19,6 +19,8 @@
 */
 
 
+#include "html_formatter.h"
+#include "text_formatter.h"
 #include "verify.h"
 #include "verify_report.h"
 #include <boost/test/unit_test.hpp>
