@@ -39,6 +39,9 @@ float constexpr vertical_margin = 1.0;
 
 static
 void
+#ifdef LIBDCP_WINDOWS
+__stdcall
+#endif
 error_handler(HPDF_STATUS error, HPDF_STATUS detail, void*)
 {
 	throw MiscError(fmt::format("Could not create PDF {} {}", error, detail));

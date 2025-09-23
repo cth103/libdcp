@@ -271,17 +271,21 @@ def configure(conf):
     conf.check_cfg(package='fmt', args='--cflags --libs', uselib_store='FMT', mandatory=True)
     conf.check_cxx(header_name="fast_float/fast_float.h", uselib_store='FAST_FLOAT', mandatory=True)
 
-    haru = conf.check_cc(fragment="""
-                         #include "hpdf.h"\n
-                         int main() { HPDF_Doc pdf; return 0; }\n
-                         """,
-                         msg='Checking for haru library',
-                         libpath='/usr/local/lib',
-                         lib=['hpdf'],
-                         uselib_store='HARU',
-                         define_name='LIBDCP_HAVE_HARU',
-                         mandatory=False)
-
+    # Windows has a .pc file, and we must use it to get an import cflag (HPDF_DLL) without which
+    # the 32-bit link fails
+    haru = conf.check_cfg(package='libharu', args='--cflags --libs', uselib_store='HARU', define_name='LIBDCP_HAVE_HARU', mandatory=False)
+    if not haru:
+        # Nobody else ships a .pc file
+        haru = conf.check_cc(fragment="""
+                             #include "hpdf.h"\n
+                             int main() { HPDF_Doc pdf; return 0; }\n
+                             """,
+                             msg='Checking for haru library',
+                             libpath='/usr/local/lib',
+                             lib=['hpdf'],
+                             uselib_store='HARU',
+                             define_name='LIBDCP_HAVE_HARU',
+                             mandatory=False)
     if haru:
         conf.env.append_value('LIBDCP_HAVE_HARU', '1')
 
