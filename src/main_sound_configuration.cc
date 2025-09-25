@@ -46,11 +46,11 @@ using namespace dcp;
 
 
 
-MainSoundConfiguration::MainSoundConfiguration (string s)
+MainSoundConfiguration::MainSoundConfiguration(string s)
 	: _configuration(s)
 {
 	vector<string> parts;
-	boost::split (parts, s, boost::is_any_of("/"));
+	boost::split(parts, s, boost::is_any_of("/"));
 	if (parts.empty()) {
 		_valid = false;
 		return;
@@ -72,7 +72,7 @@ MainSoundConfiguration::MainSoundConfiguration (string s)
 	}
 
 	vector<string> channels;
-	boost::split (channels, parts[1], boost::is_any_of(","));
+	boost::split(channels, parts[1], boost::is_any_of(","));
 
 	if (channels.size() > 16) {
 		_valid = false;
@@ -93,10 +93,10 @@ MainSoundConfiguration::MainSoundConfiguration (string s)
 }
 
 
-MainSoundConfiguration::MainSoundConfiguration (MCASoundField field, int channels)
-	: _field (field)
+MainSoundConfiguration::MainSoundConfiguration(MCASoundField field, int channels)
+	: _field(field)
 {
-	_channels.resize (channels);
+	_channels.resize(channels);
 	update_string();
 }
 
@@ -134,21 +134,21 @@ MainSoundConfiguration::update_string()
 
 
 optional<Channel>
-MainSoundConfiguration::mapping (int index) const
+MainSoundConfiguration::mapping(int index) const
 {
 	throw_if_invalid();
 
-	DCP_ASSERT (static_cast<size_t>(index) < _channels.size());
+	DCP_ASSERT(static_cast<size_t>(index) < _channels.size());
 	return _channels[index];
 }
 
 
 void
-MainSoundConfiguration::set_mapping (int index, Channel c)
+MainSoundConfiguration::set_mapping(int index, Channel c)
 {
 	throw_if_invalid();
 
-	DCP_ASSERT (static_cast<size_t>(index) < _channels.size());
+	DCP_ASSERT(static_cast<size_t>(index) < _channels.size());
 	_channels[index] = c;
 
 	update_string();
@@ -156,7 +156,7 @@ MainSoundConfiguration::set_mapping (int index, Channel c)
 
 
 Channel
-dcp::mca_id_to_channel (string id)
+dcp::mca_id_to_channel(string id)
 {
 	transform(id.begin(), id.end(), id.begin(), ::tolower);
 
@@ -192,12 +192,12 @@ dcp::mca_id_to_channel (string id)
 		return Channel::SIGN_LANGUAGE;
 	}
 
-	throw UnknownChannelIdError (id);
+	throw UnknownChannelIdError(id);
 }
 
 
 string
-dcp::channel_to_mca_id (Channel c, MCASoundField field)
+dcp::channel_to_mca_id(Channel c, MCASoundField field)
 {
 	switch (c) {
 	case Channel::LEFT:
@@ -230,12 +230,12 @@ dcp::channel_to_mca_id (Channel c, MCASoundField field)
 		break;
 	}
 
-	DCP_ASSERT (false);
+	DCP_ASSERT(false);
 }
 
 
 string
-dcp::channel_to_mca_name (Channel c, MCASoundField field)
+dcp::channel_to_mca_name(Channel c, MCASoundField field)
 {
 	switch (c) {
 	case Channel::LEFT:
@@ -268,12 +268,12 @@ dcp::channel_to_mca_name (Channel c, MCASoundField field)
 		break;
 	}
 
-	DCP_ASSERT (false);
+	DCP_ASSERT(false);
 }
 
 
 ASDCP::UL
-dcp::channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dictionary const* dict)
+dcp::channel_to_mca_universal_label(Channel c, MCASoundField field, ASDCP::Dictionary const* dict)
 {
 	static byte_t sync_signal[] = {
 		0x06, 0x0e, 0x2b, 0x34, 0x04, 0x01, 0x01, 0x0d, 0x03, 0x02, 0x01, 0x10, 0x00, 0x00, 0x00, 0x00
@@ -314,7 +314,7 @@ dcp::channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dict
 		break;
 	}
 
-	DCP_ASSERT (false);
+	DCP_ASSERT(false);
 }
 
 

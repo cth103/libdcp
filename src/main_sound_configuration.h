@@ -52,10 +52,10 @@ enum class MCASoundField
 };
 
 
-extern std::string channel_to_mca_id (Channel c, MCASoundField field);
-extern Channel mca_id_to_channel (std::string);
-extern std::string channel_to_mca_name (Channel c, MCASoundField field);
-extern ASDCP::UL channel_to_mca_universal_label (Channel c, MCASoundField field, ASDCP::Dictionary const* dict);
+extern std::string channel_to_mca_id(Channel c, MCASoundField field);
+extern Channel mca_id_to_channel(std::string);
+extern std::string channel_to_mca_name(Channel c, MCASoundField field);
+extern ASDCP::UL channel_to_mca_universal_label(Channel c, MCASoundField field, ASDCP::Dictionary const* dict);
 
 
 
@@ -69,20 +69,20 @@ public:
 	 *  return the original invalid string.
 	 */
 	explicit MainSoundConfiguration(std::string);
-	MainSoundConfiguration (MCASoundField field_, int channels);
+	MainSoundConfiguration(MCASoundField field_, int channels);
 
-	MCASoundField field () const {
+	MCASoundField field() const {
 		throw_if_invalid();
 		return _field;
 	}
 
-	int channels () const {
+	int channels() const {
 		throw_if_invalid();
 		return _channels.size();
 	}
 
-	boost::optional<Channel> mapping (int index) const;
-	void set_mapping (int index, Channel channel);
+	boost::optional<Channel> mapping(int index) const;
+	void set_mapping(int index, Channel channel);
 
 	std::string as_string() const {
 		return _configuration;
