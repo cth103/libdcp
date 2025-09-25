@@ -179,13 +179,6 @@ MainSoundConfigurationError::MainSoundConfigurationError (std::string s)
 }
 
 
-UnknownChannelIdError::UnknownChannelIdError (std::string id)
-	: runtime_error(String::compose("Unrecognised channel ID '%1'", id))
-{
-
-}
-
-
 NoReelsError::NoReelsError ()
 	: runtime_error("Cannot write a CPL which has no reels")
 {

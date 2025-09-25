@@ -83,9 +83,9 @@ MainSoundConfiguration::MainSoundConfiguration(string s)
 		if (i == "-") {
 			_channels.push_back(optional<Channel>());
 		} else {
-			try {
-				_channels.push_back(mca_id_to_channel(i));
-			} catch (UnknownChannelIdError&) {
+			if (auto channel = mca_id_to_channel(i)) {
+				_channels.push_back(*channel);
+			} else {
 				_valid = false;
 			}
 		}
@@ -155,7 +155,7 @@ MainSoundConfiguration::set_mapping(int index, Channel c)
 }
 
 
-Channel
+optional<Channel>
 dcp::mca_id_to_channel(string id)
 {
 	transform(id.begin(), id.end(), id.begin(), ::tolower);
@@ -192,7 +192,7 @@ dcp::mca_id_to_channel(string id)
 		return Channel::SIGN_LANGUAGE;
 	}
 
-	throw UnknownChannelIdError(id);
+	return {};
 }
 
 

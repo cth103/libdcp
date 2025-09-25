@@ -53,7 +53,12 @@ enum class MCASoundField
 
 
 extern std::string channel_to_mca_id(Channel c, MCASoundField field);
-extern Channel mca_id_to_channel(std::string);
+
+/** @param id MCA channel ID
+ *  @return Corresponding dcp::Channel, or empty if the id is not recognised.
+ */
+extern boost::optional<Channel> mca_id_to_channel(std::string id);
+
 extern std::string channel_to_mca_name(Channel c, MCASoundField field);
 extern ASDCP::UL channel_to_mca_universal_label(Channel c, MCASoundField field, ASDCP::Dictionary const* dict);
 
