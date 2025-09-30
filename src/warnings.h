@@ -41,7 +41,8 @@
   _Pragma("GCC diagnostic ignored \"-Waddress\"") \
   _Pragma("GCC diagnostic ignored \"-Wparentheses\"") \
   _Pragma("GCC diagnostic ignored \"-Woverloaded-virtual\"") \
-  _Pragma("GCC diagnostic ignored \"-Wtautological-overlap-compare\"")
+  _Pragma("GCC diagnostic ignored \"-Wtautological-overlap-compare\"") \
+  _Pragma("GCC diagnostic ignored \"-Wcast-function-type-mismatch\"")
 #else
 #if __GNUC__ >= 14
 #define LIBDCP_DISABLE_WARNINGS \
