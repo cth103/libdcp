@@ -315,14 +315,14 @@ simple_sound(boost::filesystem::path path, string suffix, dcp::MXFMetadata mxf_m
 
 	int const samples_per_frame = sample_rate / 24;
 
-	float* silence[channels];
+	vector<float*> silence(channels);
 	for (auto i = 0; i < channels; ++i) {
 		silence[i] = new float[samples_per_frame];
 		memset (silence[i], 0, samples_per_frame * sizeof(float));
 	}
 
 	for (auto i = 0; i < frames; ++i) {
-		sound_writer->write(silence, channels, samples_per_frame);
+		sound_writer->write(silence.data(), channels, samples_per_frame);
 	}
 
 	sound_writer->finalize ();

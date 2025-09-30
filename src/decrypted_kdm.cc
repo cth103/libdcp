@@ -378,16 +378,16 @@ DecryptedKDM::encrypt (
 
 		/* Encrypt using the projector's public key */
 		RSA* rsa = recipient.public_key ();
-		unsigned char encrypted[RSA_size(rsa)];
-		int const encrypted_len = RSA_public_encrypt (p - block, block, encrypted, rsa, RSA_PKCS1_OAEP_PADDING);
+		std::vector<unsigned char> encrypted(RSA_size(rsa));
+		int const encrypted_len = RSA_public_encrypt(p - block, block, encrypted.data(), rsa, RSA_PKCS1_OAEP_PADDING);
 		if (encrypted_len == -1) {
 			throw MiscError (String::compose ("Could not encrypt KDM (%1)", ERR_error_string (ERR_get_error(), 0)));
 		}
 
 		/* Lazy overallocation */
-		char out[encrypted_len * 2];
-		Kumu::base64encode (encrypted, encrypted_len, out, encrypted_len * 2);
-		int const N = strlen (out);
+		vector<char> out(encrypted_len * 2);
+		Kumu::base64encode(encrypted.data(), encrypted_len, out.data(), encrypted_len * 2);
+		int const N = strlen(out.data());
 		string lines;
 		for (int i = 0; i < N; ++i) {
 			if (i > 0 && (i % 64) == 0) {

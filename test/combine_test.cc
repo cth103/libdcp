@@ -540,7 +540,7 @@ BOOST_AUTO_TEST_CASE(combine_ov_with_vf)
 		}
 	}
 
-	BOOST_CHECK_EQUAL(sub_files, 1U);
+	BOOST_CHECK_EQUAL(sub_files, 1);
 }
 
 

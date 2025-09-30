@@ -46,7 +46,6 @@ BOOST_AUTO_TEST_CASE(mpeg_mono_picture_write_test)
 {
 	boost::filesystem::path dir = "build/test/mpeg2_mono_picture_write_test";
 
-	boost::system::error_code ec;
 	boost::filesystem::remove_all(dir);
 	boost::filesystem::create_directories(dir);
 

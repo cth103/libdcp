@@ -200,15 +200,15 @@ dcp::base64_decode (string const & in, unsigned char* out, int out_length)
 	BIO_set_flags (b64, BIO_FLAGS_BASE64_NO_NL);
 
 	/* Copy our input string, removing newlines */
-	char in_buffer[in.size() + 1];
-	char* p = in_buffer;
+	vector<char> in_buffer(in.size() + 1);
+	char* p = in_buffer.data();
 	for (size_t i = 0; i < in.size(); ++i) {
 		if (in[i] != '\n' && in[i] != '\r') {
 			*p++ = in[i];
 		}
 	}
 
-	auto bmem = BIO_new_mem_buf (in_buffer, p - in_buffer);
+	auto bmem = BIO_new_mem_buf(in_buffer.data(), p - in_buffer.data());
 	bmem = BIO_push (b64, bmem);
 	int const N = BIO_read (bmem, out, out_length);
 	BIO_free_all (bmem);

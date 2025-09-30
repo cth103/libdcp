@@ -216,7 +216,7 @@ test_rewriting_sound(string name, bool modify)
 	bool need_to_modify = modify;
 	for (int i = 0; i < A_sound->asset()->intrinsic_duration(); ++i) {
 		auto sf = reader->get_frame (i);
-		float* out[sf->channels()];
+		vector<float*> out(sf->channels());
 		for (int j = 0; j < sf->channels(); ++j) {
 			out[j] = new float[sf->samples()];
 		}
@@ -229,7 +229,7 @@ test_rewriting_sound(string name, bool modify)
 				}
 			}
 		}
-		writer->write(out, sf->channels(), sf->samples());
+		writer->write(out.data(), sf->channels(), sf->samples());
 		for (int j = 0; j < sf->channels(); ++j) {
 			delete[] out[j];
 		}

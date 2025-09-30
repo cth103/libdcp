@@ -108,9 +108,9 @@ Key::operator= (Key const & other)
 string
 Key::hex () const
 {
-	char buffer[_length * 2 + 1];
+	std::vector<char> buffer(_length * 2 + 1);
 
-	char* p = buffer;
+	char* p = buffer.data();
 	for (int i = 0; i < _length; ++i) {
 #ifdef LIBDCP_WINDOWS
 		__mingw_snprintf (p, 3, "%02hhx", _value[i]);
@@ -120,7 +120,7 @@ Key::hex () const
 		p += 2;
 	}
 
-	return buffer;
+	return string(buffer.data());
 }
 
 
