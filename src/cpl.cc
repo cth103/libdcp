@@ -630,6 +630,12 @@ add_file_assets(vector<shared_ptr<T>>& assets, vector<shared_ptr<Reel>> reels)
 		if (i->main_subtitle()) {
 			assets.push_back(i->main_subtitle());
 		}
+		if (i->main_caption()) {
+			assets.push_back(i->main_caption());
+		}
+		for (auto j: i->closed_subtitles()) {
+			assets.push_back(j);
+		}
 		for (auto j: i->closed_captions()) {
 			assets.push_back(j);
 		}
