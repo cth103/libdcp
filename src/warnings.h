@@ -32,7 +32,7 @@
 */
 
 
-#if defined(__clang__)
+#if __clang_major__ >= 17
 #define LIBDCP_DISABLE_WARNINGS \
   _Pragma("GCC diagnostic push") \
   _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"") \
@@ -43,8 +43,17 @@
   _Pragma("GCC diagnostic ignored \"-Woverloaded-virtual\"") \
   _Pragma("GCC diagnostic ignored \"-Wtautological-overlap-compare\"") \
   _Pragma("GCC diagnostic ignored \"-Wcast-function-type-mismatch\"")
-#else
-#if __GNUC__ >= 14
+#elif defined(__clang__)
+#define LIBDCP_DISABLE_WARNINGS \
+  _Pragma("GCC diagnostic push") \
+  _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"") \
+  _Pragma("GCC diagnostic ignored \"-Wmissing-field-initializers\"") \
+  _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"") \
+  _Pragma("GCC diagnostic ignored \"-Waddress\"") \
+  _Pragma("GCC diagnostic ignored \"-Wparentheses\"") \
+  _Pragma("GCC diagnostic ignored \"-Woverloaded-virtual\"") \
+  _Pragma("GCC diagnostic ignored \"-Wtautological-overlap-compare\"")
+#elif __GNUC__ >= 14
 #define LIBDCP_DISABLE_WARNINGS \
   _Pragma("GCC diagnostic push") \
   _Pragma("GCC diagnostic ignored \"-Wdeprecated-declarations\"") \
@@ -88,7 +97,6 @@
   _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"") \
   _Pragma("GCC diagnostic ignored \"-Waddress\"") \
   _Pragma("GCC diagnostic ignored \"-Wparentheses\"")
-#endif
 #endif
 
 #define LIBDCP_ENABLE_WARNINGS \
