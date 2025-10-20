@@ -51,7 +51,7 @@ dcp::find_and_resolve_cpls (vector<boost::filesystem::path> const& directories, 
 {
 	vector<shared_ptr<dcp::CPL>> cpls;
 
-	/** We accept and ignore some warnings / errors but everything else is bad */
+	/** We accept and ignore some warnings / errors but everything else is bad if tolerant == false */
 	vector<dcp::VerificationNote::Code> const ignore = {
 		dcp::VerificationNote::Code::EMPTY_ASSET_PATH,
 		dcp::VerificationNote::Code::EXTERNAL_ASSET,
