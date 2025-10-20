@@ -519,7 +519,6 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_picture_sound_hash)
 	BOOST_REQUIRE (fwrite (&x, sizeof(x), 1, mod) == 1);
 	fclose (mod);
 
-	dcp::ASDCPErrorSuspender sus;
 	check_verify_result (
 		{ dir },
 		{},

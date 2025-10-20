@@ -153,19 +153,6 @@ extern boost::filesystem::path directory_containing_executable ();
 extern boost::filesystem::path resources_directory ();
 
 
-class ASDCPErrorSuspender
-{
-public:
-	ASDCPErrorSuspender();
-	~ASDCPErrorSuspender();
-
-private:
-	Kumu::LogEntryList _log;
-	Kumu::ILogSink& _old;
-	Kumu::EntryListLogSink* _sink;
-};
-
-
 template <class From, class To>
 void
 add_to_container(To& container, From source)

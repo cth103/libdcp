@@ -98,11 +98,7 @@ SMPTETextAsset::SMPTETextAsset(boost::filesystem::path file)
 
 	Kumu::FileReaderFactory factory;
 	auto reader = make_shared<ASDCP::TimedText::MXFReader>(factory);
-	auto r = Kumu::RESULT_OK;
-	{
-		ASDCPErrorSuspender sus;
-		r = reader->OpenRead(dcp::filesystem::fix_long_path(*_file).string().c_str());
-	}
+	auto const r = reader->OpenRead(dcp::filesystem::fix_long_path(*_file).string().c_str());
 	if (!ASDCP_FAILURE(r)) {
 		/* MXF-wrapped */
 		ASDCP::WriterInfo info;

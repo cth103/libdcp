@@ -410,21 +410,6 @@ dcp::unique_string (vector<string> existing, string base)
 }
 
 
-ASDCPErrorSuspender::ASDCPErrorSuspender ()
-	: _old (Kumu::DefaultLogSink())
-{
-	_sink = new Kumu::EntryListLogSink(_log);
-	Kumu::SetDefaultLogSink (_sink);
-}
-
-
-ASDCPErrorSuspender::~ASDCPErrorSuspender ()
-{
-	Kumu::SetDefaultLogSink (&_old);
-	delete _sink;
-}
-
-
 boost::filesystem::path dcp::directory_containing_executable ()
 {
 #if BOOST_VERSION >= 106100

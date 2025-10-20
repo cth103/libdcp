@@ -87,10 +87,7 @@ BOOST_AUTO_TEST_CASE (sound_frame_test)
 
 BOOST_AUTO_TEST_CASE (sound_frame_test2)
 {
-	{
-		dcp::ASDCPErrorSuspender sus;
-		BOOST_CHECK_THROW (dcp::SoundAsset("frobozz"), dcp::FileError);
-	}
+	BOOST_CHECK_THROW(dcp::SoundAsset("frobozz"), dcp::FileError);
 
 	dcp::SoundAsset asset (
 		private_test /
