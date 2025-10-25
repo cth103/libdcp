@@ -43,7 +43,7 @@ def build_with_cpp17(target):
 
 def dependencies(target, options):
     deps = [
-        ('libcxml', 'v0.17.14', { 'c++17': build_with_cpp17(target) }),
+        ('libcxml', 'v0.17.15', { 'c++17': build_with_cpp17(target) }),
         ('openjpeg', 'ad8edaacd54a862940d0a77c41ecda5858b54d6e'),
         ('asdcplib', 'v1.0.8')
     ]
