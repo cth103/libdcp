@@ -363,6 +363,15 @@ private:
 bool operator== (Luminance const& a, Luminance const& b);
 
 
+enum class Filenames
+{
+	/* Use the original filenames for PKL and CPL, where available */
+	ORIGINAL,
+	/* Use new filenames for CPL and PKL, made using the given NameFormat */
+	NEW
+};
+
+
 }
 
 

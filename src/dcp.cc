@@ -451,6 +451,7 @@ DCP::write_volindex (Standard standard) const
 void
 DCP::write_xml(
 	shared_ptr<const CertificateChain> signer,
+	Filenames filenames,
 	NameFormat name_format,
 	optional<string> group_id
 	)
@@ -472,7 +473,8 @@ DCP::write_xml(
 	for (auto i: cpls()) {
 		NameFormat::Map values;
 		values['t'] = "cpl";
-		i->write_xml(_directory / (name_format.get(values, "_" + i->id() + ".xml")), signer);
+		boost::filesystem::path filename = (filenames == Filenames::ORIGINAL && i->file()) ? i->file()->filename() : name_format.get(values, "_" + i->id() + ".xml");
+		i->write_xml(_directory / filename, signer);
 	}
 
 	if (_pkls.empty()) {
@@ -498,8 +500,8 @@ DCP::write_xml(
 
 	NameFormat::Map values;
 	values['t'] = "pkl";
-	auto pkl_path = _directory / name_format.get(values, "_" + pkl->id() + ".xml");
-	pkl->write_xml (pkl_path, signer);
+	boost::filesystem::path const pkl_filename = (filenames == Filenames::ORIGINAL && pkl->file()) ? pkl->file()->filename() : name_format.get(values, "_" + pkl->id() + ".xml");
+	pkl->write_xml(_directory / pkl_filename, signer);
 
 	if (!_asset_map) {
 		_asset_map = AssetMap(
@@ -513,7 +515,7 @@ DCP::write_xml(
 
 	/* The assets may have changed since we read the asset map, so re-add them */
 	_asset_map->clear_assets();
-	_asset_map->add_asset(pkl->id(), pkl_path, true);
+	_asset_map->add_asset(pkl->id(), _directory / pkl_filename, true);
 	for (auto asset: assets()) {
 		asset->add_to_assetmap(*_asset_map, _directory);
 	}

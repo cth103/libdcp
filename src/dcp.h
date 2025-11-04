@@ -152,9 +152,13 @@ public:
 	/** Write all the XML files for this DCP.
 	 *  @param signer Signer to use
 	 *  @param name_format Name format to use for the CPL and PKL filenames
+	 *  @param filenames ORIGINAL to use original CPL and PKL filenames where available, NEW to
+	 *  always use name_format
+	 *  @param group_id Group UUID to write to PKL (or none to not write a GroupID tag)
 	 */
 	void write_xml(
 		std::shared_ptr<const CertificateChain> signer = std::shared_ptr<const CertificateChain>(),
+		Filenames filenames = Filenames::NEW,
 		NameFormat name_format = NameFormat("%t"),
 		boost::optional<std::string> group_id = boost::none
 	);
