@@ -76,7 +76,7 @@ public:
 	 *  @param ignore Any specification characters in this string will not
 	 *  be replaced, but left as-is.
 	 */
-	std::string get (Map, std::string suffix, std::string ignore = "") const;
+	std::string get(Map values, std::string suffix, std::string ignore = "") const;
 
 private:
 	std::string _specification;
