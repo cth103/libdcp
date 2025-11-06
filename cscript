@@ -43,9 +43,8 @@ def build_with_cpp17(target):
 
 def dependencies(target, options):
     deps = [
-        ('libcxml', 'v0.17.15', { 'c++17': build_with_cpp17(target) }),
-        ('openjpeg', 'ad8edaacd54a862940d0a77c41ecda5858b54d6e'),
-        ('asdcplib', 'v1.0.8')
+        ('libcxml', 'v0.17.16', { 'c++17': build_with_cpp17(target) }),
+        ('asdcplib', 'v1.0.9')
     ]
 
     if target.platform == 'linux':
@@ -54,31 +53,39 @@ def dependencies(target, options):
         ffmpeg_options = {}
 
     if target.platform != 'linux' or target.distro != 'arch':
-        # Use distro-provided FFmpeg on Arch, otherwise our own
+        # Use distro-provided FFmpeg and openjpeg on Arch, otherwise our own
         deps.append(('ffmpeg', '1b3378e5361c73076ce736dfa2c7b40bd6f24380', ffmpeg_options))
+        deps.append(('openjpeg', 'ad8edaacd54a862940d0a77c41ecda5858b54d6e'))
 
     return deps
 
-def build(target, options):
-    cmd = './waf configure --disable-examples --disable-dumpimage --disable-benchmarks --prefix=%s' % target.directory
-    if target.platform == 'linux':
-        cmd += ' --static'
-        if target.distro != 'ubuntu' or not target.version in ('16.04', '22.04'):
-            # We only build tests on Ubuntu 16.04 and 22.04
-            cmd += ' --disable-tests'
-        if target.distro == 'ubuntu' and target.version == '16.04':
-            cmd += ' --static-boost'
-    elif target.platform == 'windows':
-        cmd += f' --target-windows-{target.bits}'
+def build(target, options, for_package, version):
+    if for_package and target.platform == 'linux' and target.distro == 'arch':
+        target.command('git clone https://aur.archlinux.org/libdcp.git')
+        os.chdir('libdcp')
+        target.command('sed -i "s/tag=v\${pkgver}/branch=main/" PKGBUILD')
+        target.command('makepkg --skipinteg')
+        target.command('sudo pacman --noconfirm -U libdcp*.zst')
+    else:
+        cmd = './waf configure --disable-examples --disable-dumpimage --disable-benchmarks --prefix=%s' % target.directory
+        if target.platform == 'linux':
+            cmd += ' --static'
+            if target.distro != 'ubuntu' or not target.version in ('16.04', '22.04'):
+                # We only build tests on Ubuntu 16.04 and 22.04
+                cmd += ' --disable-tests'
+            if target.distro == 'ubuntu' and target.version == '16.04':
+                cmd += ' --static-boost'
+        elif target.platform == 'windows':
+            cmd += f' --target-windows-{target.bits}'
 
-    if ('c++17' in options and options['c++17']) or build_with_cpp17(target):
-        cmd += ' --c++17'
+        if ('c++17' in options and options['c++17']) or build_with_cpp17(target):
+            cmd += ' --c++17'
 
-    if target.debug:
-        cmd += ' --enable-debug'
+        if target.debug:
+            cmd += ' --enable-debug'
 
-    target.command(cmd)
-    target.command('./waf build install')
+        target.command(cmd)
+        target.command('./waf build install')
 
 def package(target, version):
     if target.platform == 'windows':
