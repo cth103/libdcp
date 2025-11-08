@@ -41,7 +41,7 @@ def build_with_cpp17(target):
         (target.platform == 'linux' and target.distro == 'rocky' and target.version == '10')
     )
 
-def dependencies(target, options):
+def dependencies(target, options, for_package):
     deps = [
         ('libcxml', 'v0.17.16', { 'c++17': build_with_cpp17(target) }),
         ('asdcplib', 'v1.0.9')
@@ -52,8 +52,8 @@ def dependencies(target, options):
     else:
         ffmpeg_options = {}
 
-    if target.platform != 'linux' or target.distro != 'arch':
-        # Use distro-provided FFmpeg and openjpeg on Arch, otherwise our own
+    if target.platform != 'linux' or target.distro != 'arch' or not for_package:
+        # Use distro-provided FFmpeg and openjpeg on Arch (except when packaging), otherwise our own
         deps.append(('ffmpeg', '1b3378e5361c73076ce736dfa2c7b40bd6f24380', ffmpeg_options))
         deps.append(('openjpeg', 'ad8edaacd54a862940d0a77c41ecda5858b54d6e'))
 
