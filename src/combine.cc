@@ -89,7 +89,7 @@ create_hard_link_or_copy(boost::filesystem::path from, boost::filesystem::path t
 	try {
 		dcp::filesystem::create_hard_link(from, to);
 	} catch (boost::filesystem::filesystem_error& e) {
-		if (e.code() == boost::system::errc::cross_device_link) {
+		if (e.code() == boost::system::errc::cross_device_link || e.code() == boost::system::errc::operation_not_supported) {
 			dcp::filesystem::copy_file(from, to);
 		} else {
 			throw;
