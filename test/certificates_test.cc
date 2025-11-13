@@ -302,3 +302,13 @@ BOOST_AUTO_TEST_CASE(certificate_dn_qualifiers)
 	}
 }
 
+
+BOOST_AUTO_TEST_CASE(chain_valid_checks_do_not_check_dates)
+{
+	dcp::CertificateChain chain;
+	chain.add(dcp::Certificate(dcp::file_to_string(private_test / "old-certificates" / "root")));
+	chain.add(dcp::Certificate(dcp::file_to_string(private_test / "old-certificates" / "intermediate")));
+	chain.add(dcp::Certificate(dcp::file_to_string(private_test / "old-certificates" / "leaf")));
+	BOOST_CHECK(chain.chain_valid());
+}
+

@@ -482,7 +482,16 @@ CertificateChain::chain_valid(List const & chain, string* error) const
 			throw MiscError ("could not create X509 store context");
 		}
 
-		X509_STORE_set_flags (store, 0);
+#ifdef LIBDCP_HAVE_NO_CHECK_TIME
+		X509_STORE_set_flags(store, X509_V_FLAG_NO_CHECK_TIME);
+#else
+		auto param = X509_VERIFY_PARAM_new();
+		X509_VERIFY_PARAM_set_time(param, i->not_before().as_time_t() + 60);
+		X509_STORE_set1_param(store, param);
+		X509_STORE_set_flags(store, X509_V_FLAG_USE_CHECK_TIME);
+		X509_VERIFY_PARAM_free(param);
+#endif
+
 		if (!X509_STORE_CTX_init (ctx, store, j->x509(), 0)) {
 			X509_STORE_CTX_free (ctx);
 			X509_STORE_free (store);

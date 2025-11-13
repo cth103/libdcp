@@ -133,6 +133,15 @@ def configure(conf):
         conf.check(lib='dl', uselib_store='DL', msg='Checking for library dl')
 
     conf.check_cfg(package='openssl', args='--cflags --libs', uselib_store='OPENSSL', mandatory=True)
+    conf.check_cxx(fragment="""
+                   #include <openssl/x509.h>
+                   int main() { X509_STORE* s; X509_STORE_set_flags(s, X509_V_FLAG_NO_CHECK_TIME); }
+                   """,
+                   msg='Checking for X509_V_FLAG_NO_CHECK_TIME',
+                   define_name='LIBDCP_HAVE_NO_CHECK_TIME',
+                   use='OPENSSL',
+                   mandatory=False)
+
     conf.check_cfg(package='libxml++-' + conf.env.XMLPP_API, args='--cflags --libs', uselib_store='LIBXML++', mandatory=True)
     conf.check_cfg(package='xmlsec1', args='--cflags --libs', uselib_store='XMLSEC1', mandatory=True)
     # Remove erroneous escaping of quotes from xmlsec1 defines
