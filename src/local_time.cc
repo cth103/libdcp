@@ -418,3 +418,13 @@ LocalTime::as_utc() const
 	return t;
 }
 
+
+time_t
+LocalTime::as_time_t() const
+{
+	DCP_ASSERT(_year >= 1970);
+
+	auto const since_epoch = boost::gregorian::date(_year, _month, _day) - boost::gregorian::date(1970, boost::gregorian::Jan, 1);
+	return ((((static_cast<time_t>(since_epoch.days()) * 24) + _hour) * 60) + _minute) * 60 + _second;
+}
+

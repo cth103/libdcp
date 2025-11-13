@@ -335,3 +335,9 @@ BOOST_AUTO_TEST_CASE(local_time_comparison_test)
 	BOOST_CHECK(dcp::LocalTime("2014-01-01T10:00:00+02:00") == dcp::LocalTime("2014-01-01T08:00:00"));
 	BOOST_CHECK(dcp::LocalTime("2014-01-01T10:00:00+02:00") == dcp::LocalTime("2014-01-01T11:00:00+03:00"));
 }
+
+
+BOOST_AUTO_TEST_CASE(local_time_to_time_t)
+{
+	BOOST_CHECK(dcp::LocalTime("2021-08-04T10:31:55").as_time_t() == 1628073115);
+}
