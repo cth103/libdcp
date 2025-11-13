@@ -489,9 +489,7 @@ CertificateChain::chain_valid(List const & chain, string* error) const
 			throw MiscError ("could not initialise X509 store context");
 		}
 
-		int const v = X509_verify_cert (ctx);
-
-		if (v != 1) {
+		if (X509_verify_cert(ctx) != 1) {
 			X509_STORE_free (store);
 			if (error) {
 				*error = X509_verify_cert_error_string(X509_STORE_CTX_get_error(ctx));
