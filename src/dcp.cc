@@ -228,7 +228,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 		}
 
 		/* Remove any optional parameters (after ;) */
-		pkl_type = pkl_type->substr(0, pkl_type->find(";"));
+		pkl_type = remove_parameters(*pkl_type);
 
 		if (
 			pkl_type == remove_parameters(CPL::static_pkl_type(standard)) ||
