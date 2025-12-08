@@ -136,21 +136,28 @@ DCP::operator=(DCP&& other)
 }
 
 
-void
-DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf_type)
+AssetMap
+DCP::read_assetmap() const
 {
-	/* Read the ASSETMAP and PKL */
+	boost::filesystem::path path;
 
-	boost::filesystem::path asset_map_path;
 	if (filesystem::exists(_directory / "ASSETMAP")) {
-		asset_map_path = _directory / "ASSETMAP";
+		path = _directory / "ASSETMAP";
 	} else if (filesystem::exists(_directory / "ASSETMAP.xml")) {
-		asset_map_path = _directory / "ASSETMAP.xml";
+		path = _directory / "ASSETMAP.xml";
 	} else {
 		boost::throw_exception(MissingAssetmapError(_directory));
 	}
 
-	_asset_map = AssetMap(asset_map_path);
+	return AssetMap(path);
+}
+
+
+void
+DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf_type)
+{
+	/* Read the ASSETMAP and PKL */
+	_asset_map = read_assetmap();
 	auto const pkl_paths = _asset_map->pkl_paths();
 	auto const standard = _asset_map->standard();
 

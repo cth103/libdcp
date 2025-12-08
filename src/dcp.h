@@ -202,6 +202,8 @@ public:
 private:
 
 	void write_volindex (Standard standard) const;
+	/** Throws MissingAssetmapError if asset map could not be found */
+	AssetMap read_assetmap() const;
 
 	/** The directory that we are writing to */
 	boost::filesystem::path _directory;
