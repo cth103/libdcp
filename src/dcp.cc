@@ -234,15 +234,15 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			pkl_type == remove_parameters(CPL::static_pkl_type(standard)) ||
 			pkl_type == remove_parameters(InteropTextAsset::static_pkl_type(standard))) {
 			auto p = new xmlpp::DomParser;
+			dcp::ScopeGuard sg = [p]() { delete p; };
+
 			try {
 				p->parse_file(dcp::filesystem::fix_long_path(path).string());
 			} catch (std::exception& e) {
-				delete p;
 				throw ReadError(String::compose("XML error in %1", path.string()), e.what());
 			}
 
 			auto const root = p->get_document()->get_root_node()->get_name();
-			delete p;
 
 			if (root == "CompositionPlaylist") {
 				auto cpl = make_shared<CPL>(path, notes);
