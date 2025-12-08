@@ -44,6 +44,7 @@
 #include "asset_map.h"
 #include "certificate.h"
 #include "compose.hpp"
+#include "cpl_summary.h"
 #include "metadata.h"
 #include "name_format.h"
 #include "util.h"
@@ -116,6 +117,12 @@ public:
 	 *  have an incorrect descriptor in their MXF.
 	 */
 	void read (std::vector<VerificationNote>* notes = nullptr, bool ignore_incorrect_picture_mxf_type = false);
+
+	/** Return summaries of the CPLs in this DCP.  This should only be used if the information
+	 *  in CPLSummary is all you need.  It's faster than read(), but if you need more than
+	 *  the CPLSummary you will need to just call read().
+	 */
+	std::vector<CPLSummary> cpl_summaries() const;
 
 	/** Compare this DCP with another, according to various options.
 	 *  @param other DCP to compare this one to.

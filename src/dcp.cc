@@ -58,6 +58,7 @@
 #include "raw_convert.h"
 #include "reel_asset.h"
 #include "reel_text_asset.h"
+#include "scope_guard.h"
 #include "smpte_text_asset.h"
 #include "sound_asset.h"
 #include "stereo_j2k_picture_asset.h"
@@ -636,5 +637,57 @@ DCP::set_annotation_text(string annotation_text)
 		_asset_map->set_annotation_text(annotation_text);
 	}
 	_new_annotation_text = annotation_text;
+}
+
+
+vector<CPLSummary>
+DCP::cpl_summaries() const
+{
+	auto asset_map = read_assetmap();
+	vector<PKL> pkls;
+	for (auto const& i: asset_map.pkl_paths()) {
+		pkls.push_back(PKL(i));
+	}
+
+	vector<CPLSummary> cpls;
+
+	for (auto const& id_and_path: asset_map.asset_ids_and_paths()) {
+		optional<string> pkl_type;
+		for (auto const& pkl: pkls) {
+			pkl_type = pkl.type(id_and_path.first);
+			if (pkl_type) {
+				break;
+			}
+		}
+
+		if (!pkl_type) {
+			continue;
+		}
+
+		if (
+			pkl_type == remove_parameters(CPL::static_pkl_type(Standard::INTEROP)) ||
+			pkl_type == remove_parameters(CPL::static_pkl_type(Standard::SMPTE))) {
+
+			auto parser = new xmlpp::DomParser;
+			dcp::ScopeGuard sg = [parser]() { delete parser; };
+
+			try {
+				parser->parse_file(dcp::filesystem::fix_long_path(id_and_path.second).string());
+			} catch (std::exception& e) {
+				throw ReadError(String::compose("XML error in %1", id_and_path.second.string()), e.what());
+			}
+
+			if (parser->get_document()->get_root_node()->get_name() == "CompositionPlaylist") {
+				auto cpl = CPL(id_and_path.second);
+				cpls.push_back(
+					CPLSummary(
+						_directory, cpl.id(), cpl.annotation_text(), *cpl.file(), cpl.any_encrypted(), filesystem::last_write_time(_directory)
+					)
+				);
+			}
+		}
+	}
+
+	return cpls;
 }
 

@@ -76,6 +76,7 @@ def build(bld):
                  cpl_test.cc
                  cpl_metadata_test.cc
                  cpl_sar_test.cc
+                 cpl_summary_test.cc
                  cpl_ratings_test.cc
                  dcp_font_test.cc
                  dcp_test.cc

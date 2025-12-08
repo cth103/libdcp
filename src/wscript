@@ -158,6 +158,7 @@ def build(bld):
               compose.hpp
               content_kind.h
               cpl.h
+              cpl_summary.h
               crypto_context.h
               data.h
               dcp.h
