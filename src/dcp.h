@@ -205,6 +205,8 @@ private:
 	/** Throws MissingAssetmapError if asset map could not be found */
 	AssetMap read_assetmap() const;
 
+	static std::string remove_parameters(std::string const& n);
+
 	/** The directory that we are writing to */
 	boost::filesystem::path _directory;
 	/** The CPLs that make up this DCP */

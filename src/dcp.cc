@@ -153,6 +153,13 @@ DCP::read_assetmap() const
 }
 
 
+string
+DCP::remove_parameters(string const& n)
+{
+	return n.substr(0, n.find(";"));
+}
+
+
 void
 DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_mxf_type)
 {
@@ -219,10 +226,6 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			 */
 			continue;
 		}
-
-		auto remove_parameters = [](string const& n) {
-			return n.substr(0, n.find(";"));
-		};
 
 		/* Remove any optional parameters (after ;) */
 		pkl_type = pkl_type->substr(0, pkl_type->find(";"));
