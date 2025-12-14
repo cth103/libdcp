@@ -163,7 +163,8 @@ public:
 	static ColourConversion const & srgb_to_xyz();
 	static ColourConversion const & rec601_to_xyz();
 	static ColourConversion const & rec709_to_xyz();
-	static ColourConversion const & p3_to_xyz();
+	/** P3 DCI (~6300K "theater" white point) */
+	static ColourConversion const & p3_dci_to_xyz();
 	static ColourConversion const & rec1886_to_xyz();
 	static ColourConversion const & rec2020_to_xyz();
 	static ColourConversion const & s_gamut3_to_xyz();

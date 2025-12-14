@@ -103,7 +103,7 @@ ColourConversion::rec709_to_xyz()
 }
 
 ColourConversion const &
-ColourConversion::p3_to_xyz()
+ColourConversion::p3_dci_to_xyz()
 {
 	static auto c = new ColourConversion(
 		make_shared<GammaTransferFunction>(2.6),
