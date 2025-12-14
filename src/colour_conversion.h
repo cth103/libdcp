@@ -167,6 +167,8 @@ public:
 	static ColourConversion const & p3_dci_to_xyz();
 	/** P3 with D65 white point */
 	static ColourConversion const & p3_d65_to_xyz();
+	/** P3 with D60 white point */
+	static ColourConversion const & p3_d60_to_xyz();
 	static ColourConversion const & rec1886_to_xyz();
 	static ColourConversion const & rec2020_to_xyz();
 	static ColourConversion const & s_gamut3_to_xyz();
