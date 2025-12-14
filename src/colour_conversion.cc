@@ -118,6 +118,24 @@ ColourConversion::p3_dci_to_xyz()
 	return *c;
 }
 
+
+ColourConversion const &
+ColourConversion::p3_d65_to_xyz()
+{
+	static auto c = new ColourConversion(
+		make_shared<GammaTransferFunction>(2.6),
+		YUVToRGB::REC709,
+		Chromaticity(0.68, 0.32),
+		Chromaticity(0.265, 0.69),
+		Chromaticity(0.15, 0.06),
+		Chromaticity(0.3127, 0.3290),
+		optional<Chromaticity>(),
+		make_shared<GammaTransferFunction>(2.6)
+		);
+	return *c;
+}
+
+
 ColourConversion const &
 ColourConversion::rec1886_to_xyz()
 {
