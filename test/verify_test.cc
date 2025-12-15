@@ -519,28 +519,31 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_picture_sound_hash)
 	BOOST_REQUIRE (fwrite (&x, sizeof(x), 1, mod) == 1);
 	fclose (mod);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
 			dcp::VerificationNote(
 				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(dcp_test1_cpl_id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_PICTURE_HASH, canonical(video_path)
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::ERROR, VC::INCORRECT_PICTURE_HASH, canonical(video_path)
 				).set_cpl_id(dcp_test1_cpl_id()).set_reference_hash(video_calc.old_hash()).set_calculated_hash(video_calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_SOUND_HASH, canonical(audio_path)
+			VN(
+				VN::Type::ERROR, VC::INCORRECT_SOUND_HASH, canonical(audio_path)
 				).set_cpl_id(dcp_test1_cpl_id()).set_reference_hash(audio_calc.old_hash()).set_calculated_hash(audio_calc.new_hash()),
 		});
 }
@@ -560,34 +563,37 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 		e.replace ("<Hash>", "<Hash>x");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(dir / dcp_test1_cpl())
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(dir / dcp_test1_cpl())
 				).set_cpl_id(dcp_test1_cpl_id()).set_reference_hash("x" + calc.old_hash()).set_calculated_hash(calc.old_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf")
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf")
 				).set_cpl_id(dcp_test1_cpl_id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_HASHES, canonical(dir / "audio.mxf")
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_SOUND_HASHES, canonical(dir / "audio.mxf")
 				).set_cpl_id(dcp_test1_cpl_id()),
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'x3M7YTgvFKXXMEGLkIbV4miC90FE=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 28 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xskI+5b/9LA/y6h0mcyxysJYanxI=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 12 },
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "value 'xvsVjRV9vhTBPUWfE/TT1o2vdQsI=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 20 },
+			{ VN::Type::ERROR, VC::INVALID_XML, "value 'x3M7YTgvFKXXMEGLkIbV4miC90FE=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 28 },
+			{ VN::Type::ERROR, VC::INVALID_XML, "value 'xskI+5b/9LA/y6h0mcyxysJYanxI=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 12 },
+			{ VN::Type::ERROR, VC::INVALID_XML, "value 'xvsVjRV9vhTBPUWfE/TT1o2vdQsI=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 20 },
 		});
 }
 
@@ -605,27 +611,30 @@ BOOST_AUTO_TEST_CASE (verify_failed_read_content_kind)
 
 	auto cpl = std::make_shared<dcp::CPL>(find_cpl(dir));
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(dir / dcp_test1_cpl())
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(dir / dcp_test1_cpl())
 				).set_cpl_id(dcp_test1_cpl_id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_CONTENT_KIND, string("xtrailer")
+			VN(
+				VN::Type::ERROR, VC::INVALID_CONTENT_KIND, string("xtrailer")
 				).set_cpl_id(dcp_test1_cpl_id())
 		});
 }
@@ -665,26 +674,29 @@ BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_rate)
 	auto const cpl_path = find_cpl(dir);
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
-	std::vector<dcp::VerificationNote> expected =
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	std::vector<VN> expected =
 		{
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl_path)
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(cpl_path)
 				).set_cpl_id(cpl->id()).set_calculated_hash("7n7GQ2TbxQbmHYuAR8ml7XDOep8=").set_reference_hash("skI+5b/9LA/y6h0mcyxysJYanxI="),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_RATE, string{"99/1"}
+			VN(
+				VN::Type::ERROR, VC::INVALID_PICTURE_FRAME_RATE, string{"99/1"}
 				).set_cpl_id(cpl->id())
 		};
 
@@ -699,23 +711,26 @@ BOOST_AUTO_TEST_CASE (verify_missing_asset)
 
 	auto cpl = std::make_shared<dcp::CPL>(find_cpl(dir));
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_ASSET, canonical(dir) / "video.mxf" }
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			{ VN::Type::ERROR, VC::MISSING_ASSET, canonical(dir) / "video.mxf" }
 		});
 }
 
@@ -730,20 +745,23 @@ BOOST_AUTO_TEST_CASE (verify_empty_asset_path)
 	auto const cpl_path = find_cpl(dir);
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
-	std::vector<dcp::VerificationNote> expected = {
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	std::vector<VN> expected = {
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_ASSET_PATH }
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			{ VN::Type::WARNING, VC::EMPTY_ASSET_PATH }
 		};
 
 	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
@@ -760,43 +778,46 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_standard)
 	auto const cpl_path = find_cpl(dir);
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
-	std::vector<dcp::VerificationNote> expected = {
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	std::vector<VN> expected = {
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_STANDARD },
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "invalid character encountered", canonical(cpl_path), 42
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			{ VN::Type::ERROR, VC::MISMATCHED_STANDARD },
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, "invalid character encountered", canonical(cpl_path), 42
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "no declaration found for element 'Id'", canonical(cpl_path), 53
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, "no declaration found for element 'Id'", canonical(cpl_path), 53
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "no declaration found for element 'EditRate'", canonical(cpl_path), 54
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, "no declaration found for element 'EditRate'", canonical(cpl_path), 54
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, "no declaration found for element 'IntrinsicDuration'", canonical(cpl_path), 55
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, "no declaration found for element 'IntrinsicDuration'", canonical(cpl_path), 55
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML,
 				"element 'Id' is not allowed for content model '(Id,AnnotationText?,EditRate,IntrinsicDuration,"
 				"EntryPoint?,Duration?,FullContentTitleText,ReleaseTerritory?,VersionNumber?,Chain?,Distributor?,"
 				"Facility?,AlternateContentVersionList?,Luminance?,MainSoundConfiguration,MainSoundSampleRate,"
 				"MainPictureStoredArea,MainPictureActiveArea,MainSubtitleLanguageList?,ExtensionMetadataList?,)'",
 				canonical(cpl_path), 149
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl_path)
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(cpl_path)
 				).set_cpl_id(cpl->id()).set_reference_hash("skI+5b/9LA/y6h0mcyxysJYanxI=").set_calculated_hash("FZ9E7L/pOuJ6aZfbiaANTv8BFOo=")
 		};
 
@@ -815,23 +836,26 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_id)
 	auto const cpl_path = find_cpl(dir);
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
-	std::vector<dcp::VerificationNote> expected = {
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	std::vector<VN> expected = {
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML,
 				"value 'urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358a' does not match regular expression "
 				"facet 'urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'", canonical(cpl_path), 3
 				).set_cpl_id(cpl->id())
@@ -851,25 +875,28 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_issue_date)
 	auto const cpl_path = find_cpl(dir);
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
-	std::vector<dcp::VerificationNote> expected = {
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	std::vector<VN> expected = {
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl_path)
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(cpl_path)
 				).set_cpl_id(cpl->id()).set_reference_hash("skI+5b/9LA/y6h0mcyxysJYanxI=").set_calculated_hash("sz3BeIugJ567q3HMnA62JeRw4TE="),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML,
 				"invalid character encountered",
 				canonical(cpl_path), 5
 				).set_cpl_id(cpl->id()),
@@ -890,23 +917,26 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_pkl_id)
 	auto const cpl_path = find_cpl(dir);
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
-	std::vector<dcp::VerificationNote> expected = {
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	std::vector<VN> expected = {
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML,
 				"value 'urn:uuid:x199d58b-5ef8-4d49-b270-07e590ccb280' does not match regular "
 				"expression facet 'urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'",
 				canonical(pkl_path), 3
@@ -928,23 +958,26 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_asset_map_id)
 	auto const asset_map_path = find_asset_map(dir);
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
-	std::vector<dcp::VerificationNote> expected = {
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	std::vector<VN> expected = {
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML,
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML,
 				"value 'urn:uuid:x17b3de4-6dda-408d-b19b-6711354b0bc3' does not match regular "
 				"expression facet 'urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'",
 				canonical(asset_map_path), 3
@@ -1004,21 +1037,24 @@ BOOST_AUTO_TEST_CASE (verify_invalid_standard)
 	++st;
 	BOOST_REQUIRE (st == stages.end());
 
-	vector<dcp::VerificationNote> expected = {
-		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-		{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"feature"}, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf"), cpl),
-		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf"), cpl)
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	vector<VN> expected = {
+		ok(VC::NONE_ENCRYPTED, cpl),
+		{ VN::Type::BV21_ERROR, VC::INVALID_STANDARD },
+		ok(VC::VALID_CONTENT_KIND, string{"feature"}, cpl),
+		ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+		ok(VC::MATCHING_CPL_HASHES, cpl),
+		ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf"), cpl),
+		ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "j2c_c6035f97-b07d-4e1c-944d-603fc2ddc242.mxf"), cpl)
 	};
 
 	for (int j = 0; j < 24; ++j) {
 		expected.push_back(
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2")
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2")
 				).set_cpl_id(cpl->id())
 		);
 	}
@@ -1036,37 +1072,40 @@ BOOST_AUTO_TEST_CASE (verify_invalid_duration)
 	BOOST_REQUIRE(dcp.cpls().size() == 1);
 	auto cpl = dcp.cpls()[0];
 
-	vector<dcp::VerificationNote> expected = {
-		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"feature"}, cpl),
-		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "j2c_d7576dcb-a361-4139-96b8-267f5f8d7f91.mxf"), cpl),
-		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "j2c_d7576dcb-a361-4139-96b8-267f5f8d7f91.mxf"), cpl),
-		{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_DURATION, string("d7576dcb-a361-4139-96b8-267f5f8d7f91")
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	vector<VN> expected = {
+		ok(VC::MATCHING_CPL_HASHES, cpl),
+		ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		ok(VC::NONE_ENCRYPTED, cpl),
+		ok(VC::VALID_CONTENT_KIND, string{"feature"}, cpl),
+		ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "j2c_d7576dcb-a361-4139-96b8-267f5f8d7f91.mxf"), cpl),
+		ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "j2c_d7576dcb-a361-4139-96b8-267f5f8d7f91.mxf"), cpl),
+		{ VN::Type::BV21_ERROR, VC::INVALID_STANDARD },
+		VN(
+			VN::Type::ERROR, VC::INVALID_DURATION, string("d7576dcb-a361-4139-96b8-267f5f8d7f91")
 			).set_cpl_id(cpl->id()),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_INTRINSIC_DURATION, string("d7576dcb-a361-4139-96b8-267f5f8d7f91")
+		VN(
+			VN::Type::ERROR, VC::INVALID_INTRINSIC_DURATION, string("d7576dcb-a361-4139-96b8-267f5f8d7f91")
 			).set_cpl_id(cpl->id()),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_DURATION, string("a2a87f5d-b749-4a7e-8d0c-9d48a4abf626")
+		VN(
+			VN::Type::ERROR, VC::INVALID_DURATION, string("a2a87f5d-b749-4a7e-8d0c-9d48a4abf626")
 			).set_cpl_id(cpl->id()),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_INTRINSIC_DURATION, string("a2a87f5d-b749-4a7e-8d0c-9d48a4abf626")
+		VN(
+			VN::Type::ERROR, VC::INVALID_INTRINSIC_DURATION, string("a2a87f5d-b749-4a7e-8d0c-9d48a4abf626")
 			).set_cpl_id(cpl->id()),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::WARNING,
-			dcp::VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT,
+		VN(
+			VN::Type::WARNING,
+			VC::EMPTY_CONTENT_VERSION_LABEL_TEXT,
 			cpl->file().get()
 			).set_cpl_id(cpl->id())
 	};
 
 	for (int i = 0; i < 23; ++i) {
 		expected.push_back(
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2")
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2")
 				).set_cpl_id(cpl->id())
 			);
 	}
@@ -1110,35 +1149,38 @@ BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_size_in_bytes)
 	prepare_directory (dir);
 	auto cpl = dcp_from_frame (oversized_frame, dir);
 
-	vector<dcp::VerificationNote> expected = {
-		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "pic.mxf"), cpl),
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	vector<VN> expected = {
+		ok(VC::MATCHING_CPL_HASHES, cpl),
+		ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		ok(VC::NONE_ENCRYPTED, cpl),
+		ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+		ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+		ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+		ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "pic.mxf"), cpl),
 	};
 
 	for (auto i = 0; i < 24; ++i) {
 		expected.push_back(
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte")
+			VN(
+				VN::Type::ERROR, VC::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte")
 				).set_frame(i).set_frame_rate(24).set_cpl_id(cpl->id())
 			);
 	}
 
 	for (auto i = 0; i < 24; ++i) {
 		expected.push_back(
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf")
+			VN(
+				VN::Type::ERROR, VC::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf")
 				).set_frame(i).set_frame_rate(24).set_cpl_id(cpl->id())
 			);
 	}
 
 	expected.push_back(
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+		VN(
+			VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 			).set_cpl_id(cpl->id())
 		);
 
@@ -1164,35 +1206,38 @@ BOOST_AUTO_TEST_CASE (verify_nearly_invalid_picture_frame_size_in_bytes)
 	prepare_directory (dir);
 	auto cpl = dcp_from_frame (oversized_frame, dir);
 
-	vector<dcp::VerificationNote> expected = {
-		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "pic.mxf"), cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	vector<VN> expected = {
+		ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "pic.mxf"), cpl),
+		ok(VC::MATCHING_CPL_HASHES, cpl),
+		ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		ok(VC::NONE_ENCRYPTED, cpl),
+		ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+		ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+		ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
 	};
 
 	for (auto i = 0; i < 24; ++i) {
 		expected.push_back(
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte")
+			VN(
+				VN::Type::ERROR, VC::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte")
 				).set_frame(i).set_frame_rate(24).set_cpl_id(cpl->id())
 			);
 	}
 
 	for (auto i = 0; i < 24; ++i) {
 		expected.push_back(
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf")
+			VN(
+				VN::Type::WARNING, VC::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf")
 				).set_frame(i).set_frame_rate(24).set_cpl_id(cpl->id())
 		);
 	}
 
 	expected.push_back(
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+		VN(
+			VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 			).set_cpl_id(cpl->id())
 		);
 
@@ -1211,19 +1256,22 @@ BOOST_AUTO_TEST_CASE (verify_valid_picture_frame_size_in_bytes)
 	prepare_directory (dir);
 	auto cpl = dcp_from_frame (frame, dir);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "pic.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "pic.mxf"), cpl),
-			dcp::VerificationNote(dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "pic.mxf"), cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "pic.mxf"), cpl),
+			VN(VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
 
@@ -1237,18 +1285,21 @@ BOOST_AUTO_TEST_CASE (verify_valid_interop_subtitles)
 	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::OPEN_SUBTITLE, asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto cpl = write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"theFontId"}
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			{ VN::Type::BV21_ERROR, VC::INVALID_STANDARD },
+			VN(
+				VN::Type::ERROR, VC::MISSING_FONT, string{"theFontId"}
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -1263,18 +1314,21 @@ BOOST_AUTO_TEST_CASE(verify_catch_missing_font_file_with_interop_ccap)
 	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::CLOSED_CAPTION, asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto cpl = write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"theFontId"}
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			{ VN::Type::BV21_ERROR, VC::INVALID_STANDARD },
+			VN(
+				VN::Type::ERROR, VC::MISSING_FONT, string{"theFontId"}
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -1296,28 +1350,31 @@ BOOST_AUTO_TEST_CASE (verify_invalid_interop_subtitles)
 		e.replace ("</ReelNumber>", "</ReelNumber><Foo></Foo>");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'Foo'"), path(), 5
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			{ VN::Type::BV21_ERROR, VC::INVALID_STANDARD },
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, string("no declaration found for element 'Foo'"), path(), 5
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR,
-				dcp::VerificationNote::Code::INVALID_XML,
+			VN(
+				VN::Type::ERROR,
+				VC::INVALID_XML,
 				string("element 'Foo' is not allowed for content model '(SubtitleID,MovieTitle,ReelNumber,Language,LoadFont*,Font*,Subtitle*)'"),
 				path(),
 				29
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"theFontId"}
+			VN(
+				VN::Type::ERROR, VC::MISSING_FONT, string{"theFontId"}
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -1332,24 +1389,26 @@ BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_no_subtitles)
 	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::OPEN_SUBTITLE, asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto cpl = write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE, asset->id(), boost::filesystem::canonical(asset->file().get())
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			{ VN::Type::BV21_ERROR, VC::INVALID_STANDARD },
+			VN(
+				VN::Type::ERROR, VC::MISSING_SUBTITLE, asset->id(), boost::filesystem::canonical(asset->file().get())
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"theFontId"}
+			VN(
+				VN::Type::ERROR, VC::MISSING_FONT, string{"theFontId"}
 				).set_cpl_id(cpl->id())
 		});
-
 }
 
 
@@ -1362,21 +1421,23 @@ BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_single_space_subtitle)
 	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::OPEN_SUBTITLE, asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto cpl = write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"Arial"}
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			{ VN::Type::BV21_ERROR, VC::INVALID_STANDARD },
+			VN(
+				VN::Type::ERROR, VC::MISSING_FONT, string{"Arial"}
 				).set_cpl_id(cpl->id())
 		});
-
 }
 
 
@@ -1389,24 +1450,27 @@ BOOST_AUTO_TEST_CASE (verify_valid_smpte_subtitles)
 	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, asset, dcp::Fraction(24, 1), 6046, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, string{"2021-04-14T13:19:14.000+02:00"}
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_ISSUE_DATE, string{"2021-04-14T13:19:14.000+02:00"}
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()
+			VN(
+				VN::Type::WARNING, VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()
 				).set_cpl_id(cpl->id()),
 		});
 }
@@ -1424,37 +1488,40 @@ BOOST_AUTO_TEST_CASE (verify_invalid_smpte_subtitles)
 	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, asset, dcp::Fraction(24, 1), 6046, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'Foo'"), path(), 2
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, string("no declaration found for element 'Foo'"), path(), 2
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR,
-				dcp::VerificationNote::Code::INVALID_XML,
+			VN(
+				VN::Type::ERROR,
+				VC::INVALID_XML,
 				string("element 'Foo' is not allowed for content model '(Id,ContentTitleText,AnnotationText?,IssueDate,ReelNumber?,Language?,EditRate,TimeCodeRate,StartTime?,DisplayType?,LoadFont*,SubtitleList)'"),
 				path(),
 				2
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, string{"2020-05-09T00:29:21.000+02:00"}
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_ISSUE_DATE, string{"2020-05-09T00:29:21.000+02:00"}
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()
+			VN(
+				VN::Type::WARNING, VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()
 				).set_cpl_id(cpl->id()),
 		});
 }
@@ -1469,33 +1536,36 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles)
 	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, asset, dcp::Fraction(24, 1), 192, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_TEXT
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			VN(
+				VN::Type::WARNING, VC::EMPTY_TEXT
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_FIRST_TEXT_TIME
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, canonical(dir / "subs.mxf")
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_SUBTITLE_LANGUAGE, canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, string{"2021-08-09T18:34:46.000+02:00"}
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_ISSUE_DATE, string{"2021-08-09T18:34:46.000+02:00"}
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()
+			VN(
+				VN::Type::WARNING, VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -1511,18 +1581,21 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_child_nodes)
 	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::OPEN_SUBTITLE, asset, dcp::Fraction(24, 1), 192, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"font0"}
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			{ VN::Type::BV21_ERROR, VC::INVALID_STANDARD },
+			VN(
+				VN::Type::ERROR, VC::MISSING_FONT, string{"font0"}
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -1538,24 +1611,27 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_empty_child_nodes
 	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::OPEN_SUBTITLE, asset, dcp::Fraction(24, 1), 192, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE, asset->id(), boost::filesystem::canonical(asset->file().get())
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::ERROR, VC::MISSING_SUBTITLE, asset->id(), boost::filesystem::canonical(asset->file().get())
 				).set_cpl_id(cpl->id()),
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_TEXT
+			{ VN::Type::BV21_ERROR, VC::INVALID_STANDARD },
+			VN(
+				VN::Type::WARNING, VC::EMPTY_TEXT
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_FONT, string{"font0"}
+			VN(
+				VN::Type::ERROR, VC::MISSING_FONT, string{"font0"}
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -1580,19 +1656,22 @@ BOOST_AUTO_TEST_CASE (verify_external_asset)
 	auto picture = ov.cpls()[0]->reels()[0]->main_picture();
 	auto cpl = write_dcp_with_single_asset (vf_dir, picture);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ vf_dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EXTERNAL_ASSET, picture->asset()->id() },
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			{ VN::Type::WARNING, VC::EXTERNAL_ASSET, picture->asset()->id() },
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -1660,32 +1739,35 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 		e.replace ("MainSound", "MainSoundX");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "pic.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "pic.mxf"), cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1440x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "pic.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:MainSoundXConfiguration'"), canonical(cpl->file().get()), 50
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "pic.mxf"), cpl),
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, string("no declaration found for element 'meta:MainSoundXConfiguration'"), canonical(cpl->file().get()), 50
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:MainSoundXSampleRate'"), canonical(cpl->file().get()), 51
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, string("no declaration found for element 'meta:MainSoundXSampleRate'"), canonical(cpl->file().get()), 51
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR,
-				dcp::VerificationNote::Code::INVALID_XML,
+			VN(
+				VN::Type::ERROR,
+				VC::INVALID_XML,
 				string("element 'meta:MainSoundXConfiguration' is not allowed for content model "
 				       "'(Id,AnnotationText?,EditRate,IntrinsicDuration,EntryPoint?,Duration?,"
 				       "FullContentTitleText,ReleaseTerritory?,VersionNumber?,Chain?,Distributor?,"
@@ -1694,8 +1776,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 				       "ExtensionMetadataList?,)'"),
 				canonical(cpl->file().get()),
 				71).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl->file().get())
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash())
 		});
 }
@@ -1746,24 +1828,27 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language1)
 	reel_asset->_language = "badlang";
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("badlang")
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_LANGUAGE, string("badlang")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("wrong-andbad")
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_LANGUAGE, string("wrong-andbad")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -1782,24 +1867,27 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language2)
 	reel_asset->_language = "badlang";
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("badlang")
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_LANGUAGE, string("badlang")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("wrong-andbad")
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_LANGUAGE, string("wrong-andbad")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -1837,35 +1925,38 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language3)
 	dcp->set_annotation_text("hello");
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "videofoo.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "videofoo.mxf"), cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1440x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "videofoo.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("this-is-wrong")
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "videofoo.mxf"), cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_LANGUAGE, string("this-is-wrong")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("andso-is-this")
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_LANGUAGE, string("andso-is-this")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("fred-jim")
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_LANGUAGE, string("fred-jim")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_LANGUAGE, string("frobozz")
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_LANGUAGE, string("frobozz")
 				).set_cpl_id(cpl->id()),
 		});
 }
@@ -1936,21 +2027,24 @@ check_picture_size_ok (int width, int height, int frame_rate, bool three_d)
 	boost::filesystem::path dir;
 	std::tie(notes, cpl, dir) = check_picture_size(width, height, frame_rate, three_d);
 
-	std::vector<dcp::VerificationNote> expected = {
-		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::OK,
-			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	std::vector<VN> expected = {
+		ok(VC::NONE_ENCRYPTED, cpl),
+		ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+		ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+		ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+		ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		ok(VC::MATCHING_CPL_HASHES, cpl),
+		VN(
+			VN::Type::OK,
+			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 			dcp::String::compose("%1x%2", width, height),
 			cpl->file().get()
 			).set_cpl_id(cpl->id()),
-		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl)
+		ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+		ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl)
 	};
 	check_verify_result(notes, expected);
 }
@@ -1965,23 +2059,26 @@ check_picture_size_bad_frame_size (int width, int height, int frame_rate, bool t
 	boost::filesystem::path dir;
 	std::tie(notes, cpl, dir) = check_picture_size(width, height, frame_rate, three_d);
 
-	std::vector<dcp::VerificationNote> expected = {
-		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::OK,
-			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	std::vector<VN> expected = {
+		ok(VC::NONE_ENCRYPTED, cpl),
+		ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+		ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+		ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+		ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		ok(VC::MATCHING_CPL_HASHES, cpl),
+		VN(
+			VN::Type::OK,
+			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 			dcp::String::compose("%1x%2", width, height),
 			cpl->file().get()
 			).set_cpl_id(cpl->id()),
-		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, dcp::String::compose("%1x%2", width, height), canonical(dir / "video.mxf")
+		ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+		ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+		VN(
+			VN::Type::BV21_ERROR, VC::INVALID_PICTURE_SIZE_IN_PIXELS, dcp::String::compose("%1x%2", width, height), canonical(dir / "video.mxf")
 			).set_cpl_id(cpl->id())
 	};
 	check_verify_result(notes, expected);
@@ -1997,26 +2094,29 @@ check_picture_size_bad_2k_frame_rate (int width, int height, int frame_rate, boo
 	boost::filesystem::path dir;
 	std::tie(notes, cpl, dir) = check_picture_size(width, height, frame_rate, three_d);
 
-	std::vector<dcp::VerificationNote> expected = {
-		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::OK,
-			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	std::vector<VN> expected = {
+		ok(VC::NONE_ENCRYPTED, cpl),
+		ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+		ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+		ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+		ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		ok(VC::MATCHING_CPL_HASHES, cpl),
+		VN(
+			VN::Type::OK,
+			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 			dcp::String::compose("%1x%2", width, height),
 			cpl->file().get()
 			).set_cpl_id(cpl->id()),
-		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_RATE, dcp::String::compose("%1/1", frame_rate * (three_d ? 2 : 1))
+		ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+		ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+		VN(
+			VN::Type::ERROR, VC::INVALID_PICTURE_FRAME_RATE, dcp::String::compose("%1/1", frame_rate * (three_d ? 2 : 1))
 			).set_cpl_id(cpl->id()),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_2K, dcp::String::compose("%1/1", frame_rate), canonical(dir / "video.mxf")
+		VN(
+			VN::Type::BV21_ERROR, VC::INVALID_PICTURE_FRAME_RATE_FOR_2K, dcp::String::compose("%1/1", frame_rate), canonical(dir / "video.mxf")
 			).set_cpl_id(cpl->id())
 	};
 
@@ -2033,23 +2133,26 @@ check_picture_size_bad_4k_frame_rate (int width, int height, int frame_rate, boo
 	boost::filesystem::path dir;
 	std::tie(notes, cpl, dir) = check_picture_size(width, height, frame_rate, three_d);
 
-	std::vector<dcp::VerificationNote> expected = {
-		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::OK,
-			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	std::vector<VN> expected = {
+		ok(VC::NONE_ENCRYPTED, cpl),
+		ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+		ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+		ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+		ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		ok(VC::MATCHING_CPL_HASHES, cpl),
+		VN(
+			VN::Type::OK,
+			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 			dcp::String::compose("%1x%2", width, height),
 			cpl->file().get()
 			).set_cpl_id(cpl->id()),
-		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_4K, dcp::String::compose("%1/1", frame_rate), canonical(dir / "video.mxf")
+		ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+		ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+		VN(
+			VN::Type::BV21_ERROR, VC::INVALID_PICTURE_FRAME_RATE_FOR_4K, dcp::String::compose("%1/1", frame_rate), canonical(dir / "video.mxf")
 			).set_cpl_id(cpl->id())
 	};
 
@@ -2104,22 +2207,25 @@ BOOST_AUTO_TEST_CASE (verify_picture_size)
 	boost::filesystem::path dir;
 	std::tie(notes, cpl, dir) = check_picture_size(3996, 2160, 24, true);
 
-	std::vector<dcp::VerificationNote> expected = {
-		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::OK,
-			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	std::vector<VN> expected = {
+		ok(VC::NONE_ENCRYPTED, cpl),
+		ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+		ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+		ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+		ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		ok(VC::MATCHING_CPL_HASHES, cpl),
+		VN(
+			VN::Type::OK,
+			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 			string{"3996x2160"},
 			cpl->file().get()
 			).set_cpl_id(cpl->id()),
-		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-		{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D },
+		ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+		ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+		{ VN::Type::BV21_ERROR, VC::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D },
 	};
 }
 
@@ -2172,30 +2278,33 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_xml_size_in_bytes)
 	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CLOSED_CAPTION, asset, dcp::Fraction(24, 1), 49148, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR,
-				dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES,
+			VN(
+				VN::Type::BV21_ERROR,
+				VC::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES,
 				string("419371"),
 				canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_FIRST_TEXT_TIME
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2229,33 +2338,36 @@ verify_timed_text_asset_too_large (string name)
 	auto reel_asset = make_shared<T>(dcp::TextType::OPEN_SUBTITLE, asset, dcp::Fraction(24, 1), 240, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
 			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, string("121698284"), canonical(dir / "subs.mxf")
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_TIMED_TEXT_SIZE_IN_BYTES, string("121698284"), canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR,
-				dcp::VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES,
+			VN(
+				VN::Type::BV21_ERROR,
+				VC::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES,
 				"121634816",
 				canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_FIRST_TEXT_TIME
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2307,29 +2419,32 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 	cpl->reels()[0]->add(reel_subs);
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, canonical(dir / "subs.mxf")
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_SUBTITLE_LANGUAGE, canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_FIRST_TEXT_TIME
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2364,34 +2479,37 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ path },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video0.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::CORRECT_PICTURE_HASH, canonical(path / "video0.mxf"), cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video0.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs1.mxf")
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video0.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_SUBTITLE_START_TIME, canonical(path / "subs1.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs2.mxf")
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_SUBTITLE_START_TIME, canonical(path / "subs2.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_SUBTITLE_LANGUAGES
+			VN(
+				VN::Type::BV21_ERROR, VC::MISMATCHED_SUBTITLE_LANGUAGES
 				).set_cpl_id(cpl->id()),
 		});
 }
@@ -2426,31 +2544,34 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ path },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video0.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video0.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs1.mxf")
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(path / "video0.mxf"), cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video0.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_SUBTITLE_START_TIME, canonical(path / "subs1.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(path / "subs2.mxf")
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_SUBTITLE_START_TIME, canonical(path / "subs2.mxf")
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2495,29 +2616,32 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 	cpl->reels()[0]->add(reel_subs);
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_FIRST_TEXT_TIME
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2563,29 +2687,32 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 	cpl->reels().front()->add(reel_subs);
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_FIRST_TEXT_TIME
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2672,6 +2799,9 @@ dcp_with_text_from_file(dcp::TextType type, path dir, boost::filesystem::path su
 
 BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_first_text_time)
 {
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	auto const dir = path("build/test/verify_invalid_subtitle_first_text_time");
 	/* Just too early */
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, dir, {{ 4 * 24 - 1, 5 * 24 }});
@@ -2679,17 +2809,17 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_first_text_time)
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_FIRST_TEXT_TIME
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 
@@ -2698,6 +2828,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_first_text_time)
 
 BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time)
 {
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	auto const dir = path("build/test/verify_valid_subtitle_first_text_time");
 	/* Just late enough */
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, dir, {{ 4 * 24, 5 * 24 }});
@@ -2705,14 +2838,14 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time)
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2759,18 +2892,21 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 	dcp->set_annotation_text("hello");
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2778,6 +2914,9 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 
 BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_spacing)
 {
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	auto const dir = path("build/test/verify_invalid_subtitle_spacing");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
 		dcp::TextType::OPEN_SUBTITLE,
@@ -2790,17 +2929,17 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_spacing)
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_SPACING
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_SPACING
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2817,18 +2956,21 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_spacing)
 			{ 5 * 24 + 16, 8 * 24 },
 		});
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2836,23 +2978,26 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_spacing)
 
 BOOST_AUTO_TEST_CASE(verify_invalid_subtitle_duration)
 {
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	auto const dir = path("build/test/verify_invalid_subtitle_duration");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, dir, {{ 4 * 24, 4 * 24 - 1 }});
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_SUBTITLE_DURATION
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::ERROR, VC::INVALID_SUBTITLE_DURATION
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2860,23 +3005,26 @@ BOOST_AUTO_TEST_CASE(verify_invalid_subtitle_duration)
 
 BOOST_AUTO_TEST_CASE(verify_invalid_subtitle_duration_bv21)
 {
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	auto const dir = path("build/test/verify_invalid_subtitle_duration_bv21");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, dir, {{ 4 * 24, 4 * 24 + 1 }});
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_DURATION_BV21
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_DURATION_BV21
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2887,18 +3035,21 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_duration)
 	auto const dir = path("build/test/verify_valid_subtitle_duration");
 	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, dir, {{ 4 * 24, 4 * 24 + 17 }});
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2915,32 +3066,34 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_overlapping_reel_boundary)
 	asset->set_language (dcp::LanguageTag("de-DE"));
 	asset->write (dir / "subs.mxf");
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	auto reel_asset = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, asset, dcp::Fraction(24, 1), 3 * 24, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset);
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION , "72 96", boost::filesystem::canonical(asset->file().get())
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISMATCHED_TIMED_TEXT_DURATION , "72 96", boost::filesystem::canonical(asset->file().get())
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_FIRST_TEXT_TIME
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::SUBTITLE_OVERLAPS_REEL_BOUNDARY
+			VN(
+				VN::Type::ERROR, VC::SUBTITLE_OVERLAPS_REEL_BOUNDARY
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
-
 }
 
 
@@ -2956,21 +3109,25 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_count1)
 			{ 96, 200, 0.2, dcp::VAlign::CENTER, "four" },
 			{ 96, 200, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
+
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_LINE_COUNT
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_LINE_COUNT
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -2988,18 +3145,21 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_line_count1)
 			{ 96, 200, 0.2, dcp::VAlign::CENTER, "four" },
 		});
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3017,21 +3177,25 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_count2)
 			{ 150, 180, 0.2, dcp::VAlign::CENTER, "four" },
 			{ 150, 180, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
+
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_LINE_COUNT
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_LINE_COUNT
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3050,18 +3214,21 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_line_count2)
 			{ 190, 250, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3076,21 +3243,25 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_length1)
 		{
 			{ 96, 300, 0.0, dcp::VAlign::CENTER, "012345678901234567890123456789012345678901234567890123" }
 		});
+
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::NEARLY_INVALID_SUBTITLE_LINE_LENGTH
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::WARNING, VC::NEARLY_INVALID_SUBTITLE_LINE_LENGTH
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3105,21 +3276,25 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_line_length2)
 		{
 			{ 96, 300, 0.0, dcp::VAlign::CENTER, "012345678901234567890123456789012345678901234567890123456789012345678901234567890" }
 		});
+
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_LINE_LENGTH
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_LINE_LENGTH
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3137,21 +3312,25 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count1)
 			{ 96, 200, 0.2, dcp::VAlign::CENTER, "four" },
 			{ 96, 200, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
+
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_COUNT
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_CLOSED_CAPTION_LINE_COUNT
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3169,18 +3348,21 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count2)
 			{ 96, 200, 0.2, dcp::VAlign::CENTER, "four" },
 		});
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3198,21 +3380,25 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_count3)
 			{ 150, 180, 0.2, dcp::VAlign::CENTER, "four" },
 			{ 150, 180, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
+
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_COUNT
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_CLOSED_CAPTION_LINE_COUNT
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3231,18 +3417,21 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_count4)
 			{ 190, 250, 0.3, dcp::VAlign::CENTER, "lines" }
 		});
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3258,18 +3447,21 @@ BOOST_AUTO_TEST_CASE (verify_valid_closed_caption_line_length)
 			{ 96, 300, 0.0, dcp::VAlign::CENTER, "01234567890123456789012345678901" }
 		});
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3284,21 +3476,25 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_length)
 		{
 			{ 96, 300, 0.0, dcp::VAlign::CENTER, "0123456789012345678901234567890123" }
 		});
+
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_CLOSED_CAPTION_LINE_LENGTH
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3315,18 +3511,22 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_valign1)
 			{ 96, 300, 0.1, dcp::VAlign::TOP, "is" },
 			{ 96, 300, 0.2, dcp::VAlign::TOP, "fine" },
 		});
+
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3343,21 +3543,25 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_valign2)
 			{ 96, 300, 0.1, dcp::VAlign::TOP, "is" },
 			{ 96, 300, 0.2, dcp::VAlign::CENTER, "not fine" },
 		});
+
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_VALIGN
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CLOSED_CAPTION_VALIGN
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3375,18 +3579,21 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering1)
 			{ 96, 300, 0.2, dcp::VAlign::TOP, "fine" },
 		});
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3404,18 +3611,21 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering2)
 			{ 96, 300, 0.0, dcp::VAlign::BOTTOM, "also fine" },
 		});
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3423,23 +3633,26 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering2)
 
 BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering3)
 {
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	auto const dir = path ("build/test/verify_incorrect_closed_caption_ordering3");
 	auto cpl = dcp_with_text_from_file<dcp::ReelSMPTETextAsset>(dcp::TextType::CLOSED_CAPTION, dir, "test/data/verify_incorrect_closed_caption_ordering3.xml");
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ORDERING
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::ERROR, VC::INCORRECT_CLOSED_CAPTION_ORDERING
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3450,18 +3663,21 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_closed_caption_ordering4)
 	auto const dir = path ("build/test/verify_incorrect_closed_caption_ordering4");
 	auto cpl = dcp_with_text_from_file<dcp::ReelSMPTETextAsset>(dcp::TextType::CLOSED_CAPTION, dir, "test/data/verify_incorrect_closed_caption_ordering4.xml");
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3488,23 +3704,26 @@ BOOST_AUTO_TEST_CASE (verify_invalid_sound_frame_rate)
 	dcp->set_annotation_text("hello");
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "videofoo.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "videofoo.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_SOUND_FRAME_RATE, string("96000"), canonical(dir / "audiofoo.mxf")
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "videofoo.mxf"), cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "videofoo.mxf"), cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_SOUND_FRAME_RATE, string("96000"), canonical(dir / "audiofoo.mxf")
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3528,27 +3747,30 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_annotation_text)
 		e.replace("<AnnotationText>A Test DCP</AnnotationText>", "");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, canonical(cpl->file().get())
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_ANNOTATION_TEXT, canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl->file().get())
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash())
 		});
 }
@@ -3571,27 +3793,30 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_cpl_annotation_text)
 		e.replace("<AnnotationText>A Test DCP</AnnotationText>", "<AnnotationText>A Test DCP 1</AnnotationText>");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, canonical(cpl->file().get())
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::WARNING, VC::MISMATCHED_CPL_ANNOTATION_TEXT, canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl->file().get())
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(cpl->file().get())
 				).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()).set_cpl_id(cpl->id())
 		});
 }
@@ -3619,23 +3844,26 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_asset_duration)
 	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_ASSET_DURATION
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISMATCHED_ASSET_DURATION
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, canonical(cpl->file().get())
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, canonical(cpl->file().get())
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3700,6 +3928,9 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 
 BOOST_AUTO_TEST_CASE (verify_missing_main_subtitle_from_some_reels)
 {
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	{
 		path dir ("build/test/missing_main_subtitle_from_some_reels");
 		auto cpl = verify_subtitles_must_be_in_all_reels_check (dir, true, false);
@@ -3707,21 +3938,21 @@ BOOST_AUTO_TEST_CASE (verify_missing_main_subtitle_from_some_reels)
 			{ dir },
 			{},
 			{
-				ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-				ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-				ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video1.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video2.mxf"), cpl),
-				dcp::VerificationNote(
-					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS
+				ok(VC::NONE_ENCRYPTED, cpl),
+				ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+				ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+				ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+				ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+				ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
+				ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
+				ok(VC::MATCHING_CPL_HASHES, cpl),
+				ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video1.mxf"), cpl),
+				ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video2.mxf"), cpl),
+				VN(
+					VN::Type::BV21_ERROR, VC::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS
 					).set_cpl_id(cpl->id()),
-				dcp::VerificationNote(
-					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+				VN(
+					VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 					).set_cpl_id(cpl->id())
 			});
 
@@ -3734,18 +3965,18 @@ BOOST_AUTO_TEST_CASE (verify_missing_main_subtitle_from_some_reels)
 			{dir},
 			{},
 			{
-				ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-				ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-				ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video1.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video2.mxf"), cpl),
-				dcp::VerificationNote(
-					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+				ok(VC::NONE_ENCRYPTED, cpl),
+				ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+				ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+				ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+				ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+				ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
+				ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
+				ok(VC::MATCHING_CPL_HASHES, cpl),
+				ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video1.mxf"), cpl),
+				ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video2.mxf"), cpl),
+				VN(
+					VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 					).set_cpl_id(cpl->id())
 			});
 	}
@@ -3757,18 +3988,18 @@ BOOST_AUTO_TEST_CASE (verify_missing_main_subtitle_from_some_reels)
 			{dir},
 			{},
 			{
-				ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-				ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-				ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video1.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video2.mxf"), cpl),
-				dcp::VerificationNote(
-					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+				ok(VC::NONE_ENCRYPTED, cpl),
+				ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+				ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+				ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+				ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+				ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
+				ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
+				ok(VC::MATCHING_CPL_HASHES, cpl),
+				ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video1.mxf"), cpl),
+				ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video2.mxf"), cpl),
+				VN(
+					VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 					).set_cpl_id(cpl->id())
 			});
 	}
@@ -3832,6 +4063,9 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 
 BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_asset_counts)
 {
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	{
 		path dir ("build/test/mismatched_closed_caption_asset_counts");
 		auto cpl = verify_closed_captions_must_be_in_all_reels_check (dir, 3, 4);
@@ -3839,21 +4073,21 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_asset_counts)
 			{dir},
 			{},
 			{
-				ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-				ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-				ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video1.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video2.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-				ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-				dcp::VerificationNote(
-					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS
+				ok(VC::NONE_ENCRYPTED, cpl),
+				ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
+				ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
+				ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+				ok(VC::MATCHING_CPL_HASHES, cpl),
+				ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video1.mxf"), cpl),
+				ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video2.mxf"), cpl),
+				ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+				ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+				ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+				VN(
+					VN::Type::BV21_ERROR, VC::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS
 					).set_cpl_id(cpl->id()),
-				dcp::VerificationNote(
-					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+				VN(
+					VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 					).set_cpl_id(cpl->id())
 			});
 	}
@@ -3865,18 +4099,18 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_asset_counts)
 			{dir},
 			{},
 			{
-				ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-				ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-				ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video1.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video2.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-				dcp::VerificationNote(
-					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+				ok(VC::NONE_ENCRYPTED, cpl),
+				ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
+				ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
+				ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+				ok(VC::MATCHING_CPL_HASHES, cpl),
+				ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+				ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+				ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video1.mxf"), cpl),
+				ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video2.mxf"), cpl),
+				ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+				VN(
+					VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 					).set_cpl_id(cpl->id())
 			});
 	}
@@ -3888,18 +4122,18 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_asset_counts)
 			{dir},
 			{},
 			{
-				ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-				ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-				ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-				ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video1.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video2.mxf"), cpl),
-				ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-				dcp::VerificationNote(
-					dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+				ok(VC::NONE_ENCRYPTED, cpl),
+				ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video1.mxf"), cpl),
+				ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video2.mxf"), cpl),
+				ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+				ok(VC::MATCHING_CPL_HASHES, cpl),
+				ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+				ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+				ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video1.mxf"), cpl),
+				ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video2.mxf"), cpl),
+				ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+				VN(
+					VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 					).set_cpl_id(cpl->id())
 			});
 	}
@@ -3940,23 +4174,26 @@ verify_text_entry_point_check(dcp::TextType type, path dir, dcp::VerificationNot
 	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, code, subs->id()
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::BV21_ERROR, code, subs->id()
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -3964,10 +4201,13 @@ verify_text_entry_point_check(dcp::TextType type, path dir, dcp::VerificationNot
 
 BOOST_AUTO_TEST_CASE (verify_text_entry_point)
 {
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	verify_text_entry_point_check<dcp::ReelSMPTETextAsset>(
 		dcp::TextType::OPEN_SUBTITLE,
 		"build/test/verify_subtitle_entry_point_must_be_present",
-		dcp::VerificationNote::Code::MISSING_SUBTITLE_ENTRY_POINT,
+		VC::MISSING_SUBTITLE_ENTRY_POINT,
 		[](shared_ptr<dcp::ReelSMPTETextAsset> asset) {
 			asset->unset_entry_point ();
 			}
@@ -3976,7 +4216,7 @@ BOOST_AUTO_TEST_CASE (verify_text_entry_point)
 	verify_text_entry_point_check<dcp::ReelSMPTETextAsset>(
 		dcp::TextType::OPEN_SUBTITLE,
 		"build/test/verify_subtitle_entry_point_must_be_zero",
-		dcp::VerificationNote::Code::INCORRECT_SUBTITLE_ENTRY_POINT,
+		VC::INCORRECT_SUBTITLE_ENTRY_POINT,
 		[](shared_ptr<dcp::ReelSMPTETextAsset> asset) {
 			asset->set_entry_point (4);
 			}
@@ -3985,7 +4225,7 @@ BOOST_AUTO_TEST_CASE (verify_text_entry_point)
 	verify_text_entry_point_check<dcp::ReelSMPTETextAsset>(
 		dcp::TextType::CLOSED_CAPTION,
 		"build/test/verify_closed_caption_entry_point_must_be_present",
-		dcp::VerificationNote::Code::MISSING_CLOSED_CAPTION_ENTRY_POINT,
+		VC::MISSING_CLOSED_CAPTION_ENTRY_POINT,
 		[](shared_ptr<dcp::ReelSMPTETextAsset> asset) {
 			asset->unset_entry_point ();
 			}
@@ -3994,7 +4234,7 @@ BOOST_AUTO_TEST_CASE (verify_text_entry_point)
 	verify_text_entry_point_check<dcp::ReelSMPTETextAsset>(
 		dcp::TextType::CLOSED_CAPTION,
 		"build/test/verify_closed_caption_entry_point_must_be_zero",
-		dcp::VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT,
+		VC::INCORRECT_CLOSED_CAPTION_ENTRY_POINT,
 		[](shared_ptr<dcp::ReelSMPTETextAsset> asset) {
 			asset->set_entry_point (9);
 			}
@@ -4024,28 +4264,31 @@ BOOST_AUTO_TEST_CASE (verify_missing_hash)
 		e.delete_first_line_containing("<Hash>");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_HASH, asset_id
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_HASH, asset_id
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4073,22 +4316,25 @@ verify_markers_test (
 		note.set_cpl_id(cpl->id());
 	}
 
-	test_notes.push_back(ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl));
-	test_notes.push_back(ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl));
-	test_notes.push_back(ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl));
-	test_notes.push_back(ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl));
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	test_notes.push_back(ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl));
+	test_notes.push_back(ok(VC::MATCHING_CPL_HASHES, cpl));
+	test_notes.push_back(ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl));
+	test_notes.push_back(ok(VC::NONE_ENCRYPTED, cpl));
 	test_notes.push_back(
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::OK,
-			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+		VN(
+			VN::Type::OK,
+			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 			string{"1998x1080"},
 			cpl->file().get()
 			).set_cpl_id(cpl->id())
 		);
-	test_notes.push_back(ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"feature"}, cpl));
-	test_notes.push_back(ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl));
-	test_notes.push_back(ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl));
-	test_notes.push_back(ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl));
+	test_notes.push_back(ok(VC::VALID_CONTENT_KIND, string{"feature"}, cpl));
+	test_notes.push_back(ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl));
+	test_notes.push_back(ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl));
+	test_notes.push_back(ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl));
 
 	check_verify_result({dir}, {}, test_notes);
 }
@@ -4096,6 +4342,9 @@ verify_markers_test (
 
 BOOST_AUTO_TEST_CASE (verify_markers)
 {
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	verify_markers_test (
 		"build/test/verify_markers_all_correct",
 		{
@@ -4115,7 +4364,7 @@ BOOST_AUTO_TEST_CASE (verify_markers)
 			{ dcp::Marker::LFOC, dcp::Time(23, 24, 24) }
 		},
 		{
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE }
+			{ VN::Type::BV21_ERROR, VC::MISSING_FFEC_IN_FEATURE }
 		});
 
 	verify_markers_test (
@@ -4126,7 +4375,7 @@ BOOST_AUTO_TEST_CASE (verify_markers)
 			{ dcp::Marker::LFOC, dcp::Time(23, 24, 24) }
 		},
 		{
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE }
+			{ VN::Type::BV21_ERROR, VC::MISSING_FFMC_IN_FEATURE }
 		});
 
 	verify_markers_test (
@@ -4137,7 +4386,7 @@ BOOST_AUTO_TEST_CASE (verify_markers)
 			{ dcp::Marker::LFOC, dcp::Time(23, 24, 24) }
 		},
 		{
-			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC}
+			{ VN::Type::WARNING, VC::MISSING_FFOC}
 		});
 
 	verify_markers_test (
@@ -4148,7 +4397,7 @@ BOOST_AUTO_TEST_CASE (verify_markers)
 			{ dcp::Marker::FFOC, dcp::Time(1, 24, 24) }
 		},
 		{
-			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC }
+			{ VN::Type::WARNING, VC::MISSING_LFOC }
 		});
 
 	verify_markers_test (
@@ -4160,7 +4409,7 @@ BOOST_AUTO_TEST_CASE (verify_markers)
 			{ dcp::Marker::LFOC, dcp::Time(23, 24, 24) }
 		},
 		{
-			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INCORRECT_FFOC, string("3") }
+			{ VN::Type::WARNING, VC::INCORRECT_FFOC, string("3") }
 		});
 
 	verify_markers_test (
@@ -4172,7 +4421,7 @@ BOOST_AUTO_TEST_CASE (verify_markers)
 			{ dcp::Marker::LFOC, dcp::Time(18, 24, 24) }
 		},
 		{
-			{ dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INCORRECT_LFOC, string("18") }
+			{ VN::Type::WARNING, VC::INCORRECT_LFOC, string("18") }
 		});
 }
 
@@ -4186,26 +4435,29 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_metadata_version_number)
 	cpl->unset_version_number();
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->file().get()
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4227,28 +4479,31 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata1)
 		e.delete_lines ("<meta:ExtensionMetadataList>", "</meta:ExtensionMetadataList>");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_EXTENSION_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_EXTENSION_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4269,28 +4524,31 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata2)
 		e.delete_lines ("<meta:ExtensionMetadata scope=\"http://isdcf.com/ns/cplmd/app\">", "</meta:ExtensionMetadata>");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_EXTENSION_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_EXTENSION_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4312,30 +4570,33 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 		e.replace ("n</meta:Name>", "n</meta:NameX>");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:NameX'"), cpl->file().get(), 70
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, string("no declaration found for element 'meta:NameX'"), cpl->file().get(), 70
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:NameX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 77).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, string("element 'meta:NameX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 77).set_cpl_id(cpl->id()),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 		});
 }
@@ -4356,28 +4617,31 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata1)
 		e.replace ("Application", "Fred");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("<Name> should be 'Application'"), cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_EXTENSION_METADATA, string("<Name> should be 'Application'"), cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4398,28 +4662,31 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 		e.replace ("DCP Constraints Profile", "Fred");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4441,34 +4708,37 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 		e.replace ("</meta:Value>", "</meta:ValueX>");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:ValueX'"), cpl->file().get(), 74
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, string("no declaration found for element 'meta:ValueX'"), cpl->file().get(), 74
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:ValueX' is not allowed for content model '(Name,Value)'"), cpl->file().get(), 75
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, string("element 'meta:ValueX' is not allowed for content model '(Name,Value)'"), cpl->file().get(), 75
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4489,28 +4759,31 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 		e.replace ("SMPTE-RDD-52:2020-Bv2.1", "Fred");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4532,33 +4805,36 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 		e.replace ("</meta:Property>", "</meta:PropertyX>");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyX'"), cpl->file().get(), 72
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, string("no declaration found for element 'meta:PropertyX'"), cpl->file().get(), 72
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:PropertyX' is not allowed for content model '(Property+)'"), cpl->file().get(), 76).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, string("element 'meta:PropertyX' is not allowed for content model '(Property+)'"), cpl->file().get(), 76).set_cpl_id(cpl->id()),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4580,31 +4856,34 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 		e.replace ("</meta:PropertyList>", "</meta:PropertyListX>");
 	}
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("no declaration found for element 'meta:PropertyListX'"), cpl->file().get(), 71
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, string("no declaration found for element 'meta:PropertyListX'"), cpl->file().get(), 71
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_XML, string("element 'meta:PropertyListX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 77
+			VN(
+				VN::Type::ERROR, VC::INVALID_XML, string("element 'meta:PropertyListX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 77
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, cpl->file().get()
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 		});
 }
@@ -4631,39 +4910,42 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_cpl_with_encrypted_content)
 
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::ALL_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"feature"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(cpl_path)
+			ok(VC::ALL_ENCRYPTED, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"feature"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(cpl_path)
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id(), canonical(pkl)
+			VN(
+				VN::Type::BV21_ERROR, VC::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id(), canonical(pkl)
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_FFEC_IN_FEATURE
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_FFMC_IN_FEATURE
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC
+			VN(
+				VN::Type::WARNING, VC::MISSING_FFOC
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC
+			VN(
+				VN::Type::WARNING, VC::MISSING_LFOC
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, canonical(cpl_path)
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, canonical(cpl_path)
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, canonical(cpl_path)
+			VN(
+				VN::Type::BV21_ERROR, VC::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, canonical(cpl_path)
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4686,37 +4968,40 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_encrypted_content)
 
 	auto cpl = std::make_shared<dcp::CPL>(cpl_path);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::ALL_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"feature"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id(), canonical(pkl)
+			ok(VC::ALL_ENCRYPTED, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"feature"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id(), canonical(pkl)
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_FFEC_IN_FEATURE
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_FFMC_IN_FEATURE
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC
+			VN(
+				VN::Type::WARNING, VC::MISSING_FFOC
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC
+			VN(
+				VN::Type::WARNING, VC::MISSING_LFOC
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, canonical(cpl_path)
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, canonical(cpl_path)
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, encryption_test_pkl_id(), canonical(pkl)
+			VN(
+				VN::Type::BV21_ERROR, VC::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, encryption_test_pkl_id(), canonical(pkl)
 				)
 		});
 }
@@ -4737,24 +5022,27 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_unencrypted_content)
 
 	auto cpl = make_shared<dcp::CPL>(find_cpl(dir));
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
 		});
 }
 
@@ -4818,25 +5106,28 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 	d.set_annotation_text("A Test DCP");
 	d.write_xml(signer);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1440x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::PARTIALLY_ENCRYPTED
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::PARTIALLY_ENCRYPTED
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -4933,27 +5224,30 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_resource_id)
 
 	auto cpl = write_dcp_with_single_asset (dir, subs_reel);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION , "240 0", boost::filesystem::canonical(subs_mxf)
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISMATCHED_TIMED_TEXT_DURATION , "240 0", boost::filesystem::canonical(subs_mxf)
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID
+			VN(
+				VN::Type::BV21_ERROR, VC::MISMATCHED_TIMED_TEXT_RESOURCE_ID
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_FIRST_TEXT_TIME
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -5013,30 +5307,33 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_timed_text_id)
 
 	auto cpl = write_dcp_with_single_asset (dir, subs_reel);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION , "240 0", boost::filesystem::canonical(subs_mxf)
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISMATCHED_TIMED_TEXT_DURATION , "240 0", boost::filesystem::canonical(subs_mxf)
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID
+			VN(
+				VN::Type::BV21_ERROR, VC::INCORRECT_TIMED_TEXT_ASSET_ID
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_FIRST_TEXT_TIME
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get()
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, string{"2018-10-02T12:25:14+02:00"}
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_ISSUE_DATE, string{"2018-10-02T12:25:14+02:00"}
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -5050,23 +5347,26 @@ BOOST_AUTO_TEST_CASE (verify_threed_marked_as_twod)
 	auto cpl = std::make_shared<dcp::CPL>(find_prefix(path, "CPL_"));
 	BOOST_REQUIRE(cpl);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ path },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "0d6f57e6-adac-4e1d-bfbe-d162bf13e2cd_j2c.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "0d6f57e6-adac-4e1d-bfbe-d162bf13e2cd_j2c.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING,
-				dcp::VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD, boost::filesystem::canonical(find_file(path, "j2c"))
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(path / "0d6f57e6-adac-4e1d-bfbe-d162bf13e2cd_j2c.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "0d6f57e6-adac-4e1d-bfbe-d162bf13e2cd_j2c.mxf"), cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			VN(
+				VN::Type::WARNING,
+				VC::THREED_ASSET_MARKED_AS_TWOD, boost::filesystem::canonical(find_file(path, "j2c"))
 				),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR,
-				dcp::VerificationNote::Code::INVALID_STANDARD
+			VN(
+				VN::Type::BV21_ERROR,
+				VC::INVALID_STANDARD
 				)
 		});
 
@@ -5092,31 +5392,34 @@ BOOST_AUTO_TEST_CASE (verify_unexpected_things_in_main_markers)
 
 	auto cpl = make_shared<dcp::CPL>(find_cpl(dir));
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::UNEXPECTED_ENTRY_POINT
+			VN(
+				VN::Type::ERROR, VC::UNEXPECTED_ENTRY_POINT
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::UNEXPECTED_DURATION
+			VN(
+				VN::Type::ERROR, VC::UNEXPECTED_DURATION
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -5138,27 +5441,30 @@ BOOST_AUTO_TEST_CASE(verify_invalid_content_kind)
 
 	auto cpl = std::make_shared<dcp::CPL>(find_cpl(dir));
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_CONTENT_KIND, string("trip")
+			VN(
+				VN::Type::ERROR, VC::INVALID_CONTENT_KIND, string("trip")
 				).set_cpl_id(cpl->id()),
 		});
 
@@ -5181,24 +5487,27 @@ BOOST_AUTO_TEST_CASE(verify_valid_content_kind)
 
 	auto cpl = std::make_shared<dcp::CPL>(find_cpl(dir));
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 		});
 }
@@ -5225,25 +5534,28 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_1)
 	dcp::PKL pkl(find_pkl(dir));
 	auto cpl = std::make_shared<dcp::CPL>(find_cpl(dir));
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 1997 is not a multiple of 2", canonical(find_cpl(dir))
+			VN(
+				VN::Type::ERROR, VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 1997 is not a multiple of 2", canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 4080 is bigger than the asset height 1080", canonical(find_cpl(dir))
+			VN(
+				VN::Type::ERROR, VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 4080 is bigger than the asset height 1080", canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()),
 		});
 }
@@ -5270,28 +5582,31 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_2)
 	dcp::PKL pkl(find_pkl(dir));
 	auto cpl = std::make_shared<dcp::CPL>(find_cpl(dir));
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is not a multiple of 2", canonical(find_cpl(dir))
+			VN(
+				VN::Type::ERROR, VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is not a multiple of 2", canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 9900 is bigger than the asset width 1998", canonical(find_cpl(dir))
+			VN(
+				VN::Type::ERROR, VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 9900 is bigger than the asset width 1998", canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is bigger than the asset height 1080", canonical(find_cpl(dir))
+			VN(
+				VN::Type::ERROR, VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is bigger than the asset height 1080", canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -5314,23 +5629,26 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_pkl_asset_ids)
 	dcp::PKL pkl(find_pkl(dir));
 	auto cpl = std::make_shared<dcp::CPL>(find_cpl(dir));
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			{ dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL, pkl.id(), canonical(find_pkl(dir)) },
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			{ VN::Type::ERROR, VC::DUPLICATE_ASSET_ID_IN_PKL, pkl.id(), canonical(find_pkl(dir)) },
 		});
 }
 
@@ -5353,27 +5671,30 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_assetmap_asset_ids)
 	dcp::AssetMap asset_map(find_asset_map(dir));
 	auto cpl = make_shared<dcp::CPL>(find_cpl(dir));
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map.id(), canonical(find_asset_map(dir))
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::NONE_ENCRYPTED, cpl),
+			VN(
+				VN::Type::ERROR, VC::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map.id(), canonical(find_asset_map(dir))
 				),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EXTERNAL_ASSET, string("5407b210-4441-4e97-8b16-8bdc7c12da54")
+			VN(
+				VN::Type::WARNING, VC::EXTERNAL_ASSET, string("5407b210-4441-4e97-8b16-8bdc7c12da54")
 				)
 		});
 }
@@ -5443,28 +5764,31 @@ BOOST_AUTO_TEST_CASE(verify_mismatched_sound_channel_counts)
 	dcp->set_annotation_text("hello");
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{ path },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video2.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video2.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS, canonical(find_file(path, "audio2"))
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(path / "video2.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video2.mxf"), cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::ERROR, VC::MISMATCHED_SOUND_CHANNEL_COUNTS, canonical(find_file(path, "audio2"))
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -5512,27 +5836,30 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_sound_configuration)
 	dcp->set_annotation_text("hello");
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{ path },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR,
-				dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION,
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::ERROR,
+				VC::INVALID_MAIN_SOUND_CONFIGURATION,
 				std::string{"MainSoundConfiguration has 6 channels but sound assets have 2"},
 				canonical(find_cpl(path))
 				).set_cpl_id(cpl->id())
@@ -5590,32 +5917,35 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 	dcp->set_annotation_text("A Test DCP");
 	dcp->write_xml();
 
-	vector<dcp::VerificationNote> expected = {
-		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::OK,
-			dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	vector<VN> expected = {
+		ok(VC::NONE_ENCRYPTED, cpl),
+		VN(
+			VN::Type::OK,
+			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 			string{"1998x1080"},
 			cpl->file().get()
 			).set_cpl_id(cpl->id()),
-		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(path / "video.mxf"), cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC
+		ok(VC::CORRECT_PICTURE_HASH, canonical(path / "video.mxf"), cpl),
+		ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+		ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+		ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+		ok(VC::MATCHING_CPL_HASHES, cpl),
+		VN(
+			VN::Type::WARNING, VC::MISSING_FFOC
 			).set_cpl_id(cpl->id()),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC
+		VN(
+			VN::Type::WARNING, VC::MISSING_LFOC
 			).set_cpl_id(cpl->id())
 	};
 
 	for (auto frame = 0; frame < 24; frame++) {
 		expected.push_back(
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(path / "video.mxf")
+			VN(
+				VN::Type::ERROR, VC::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(path / "video.mxf")
 			).set_frame(frame).set_frame_rate(24).set_cpl_id(cpl->id())
 		);
 	}
@@ -5629,8 +5959,8 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 	for (auto frame = 0; frame < 24; frame++) {
 		for (auto component = 0; component < 3; component++) {
 			expected.push_back(
-				dcp::VerificationNote(
-					dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE
+				VN(
+					VN::Type::ERROR, VC::INVALID_JPEG2000_TILE_PART_SIZE
 					).set_frame(frame).set_frame_rate(24).set_component(component).set_size(component_sizes[component]).set_cpl_id(cpl->id())
 				);
 		}
@@ -5648,35 +5978,38 @@ BOOST_AUTO_TEST_CASE(verify_too_many_subtitle_namespaces)
 	BOOST_REQUIRE(!dcp.cpls().empty());
 	auto cpl = dcp.cpls()[0];
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"feature"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"Dcp_FTR-1_F_XX-XX_MOS_2K_20230407_SMPTE_OV"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "j2c_42b34dcd-caa5-4c7b-aa0f-66a590947ba1.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "j2c_42b34dcd-caa5-4c7b-aa0f-66a590947ba1.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFEC_IN_FEATURE
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"feature"}, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"Dcp_FTR-1_F_XX-XX_MOS_2K_20230407_SMPTE_OV"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "j2c_42b34dcd-caa5-4c7b-aa0f-66a590947ba1.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "j2c_42b34dcd-caa5-4c7b-aa0f-66a590947ba1.mxf"), cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_FFEC_IN_FEATURE
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_FFMC_IN_FEATURE
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_FFMC_IN_FEATURE
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME
+			VN(
+				VN::Type::WARNING, VC::INVALID_SUBTITLE_FIRST_TEXT_TIME
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, canonical(find_file(dir, "sub_"))
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_SUBTITLE_LANGUAGE, canonical(find_file(dir, "sub_"))
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, canonical(find_file(dir, "cpl_"))
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, canonical(find_file(dir, "cpl_"))
 				).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, std::string{"315de731-1173-484c-9a35-bdacf5a9d99d"}
+			VN(
+				VN::Type::WARNING, VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT, std::string{"315de731-1173-484c-9a35-bdacf5a9d99d"}
 				).set_cpl_id(cpl->id()),
 		});
 }
@@ -5695,17 +6028,20 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font_for_font)
 	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::OPEN_SUBTITLE, asset, dcp::Fraction(24, 1), 16 * 24, 0);
 	auto cpl = write_dcp_with_single_asset(dir, reel_asset, dcp::Standard::INTEROP);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{dir},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			{ dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_STANDARD },
-			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT).set_id("theFontId").set_cpl_id(cpl->id())
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			{ VN::Type::BV21_ERROR, VC::INVALID_STANDARD },
+			VN(VN::Type::ERROR, VC::MISSING_LOAD_FONT_FOR_FONT).set_id("theFontId").set_cpl_id(cpl->id())
 		});
 
 }
@@ -5750,25 +6086,28 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font)
 	cpl->reels()[0]->add(reel_subs);
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result (
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISSING_LOAD_FONT).set_id(reel_subs->id()).set_cpl_id(cpl->id())
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(VN::Type::ERROR, VC::MISSING_LOAD_FONT).set_id(reel_subs->id()).set_cpl_id(cpl->id())
 		});
 }
 
@@ -5791,23 +6130,26 @@ BOOST_AUTO_TEST_CASE(verify_spots_wrong_asset)
 	boost::filesystem::remove(dir / "1" / "video.mxf");
 	boost::filesystem::copy_file(dir / "2" / "video.mxf", dir / "1" / "video.mxf");
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir / "1"},
 		{},
 		{
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::MISMATCHED_ASSET_MAP_ID).set_id(asset_1).set_other_id(asset_2)
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			VN(VN::Type::ERROR, VC::MISMATCHED_ASSET_MAP_ID).set_id(asset_1).set_other_id(asset_2)
 		});
 }
 
@@ -5823,24 +6165,27 @@ BOOST_AUTO_TEST_CASE(verify_cpl_content_version_label_text_empty)
 	cpl->set_content_version(dcp::ContentVersion(""));
 	dcp->write_xml();
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{dir},
 		{},
 		{
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::OK,
-				dcp::VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA,
+			VN(
+				VN::Type::OK,
+				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
 				string{"1998x1080"},
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
-			dcp::VerificationNote(dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get()).set_cpl_id(cpl->id())
+			ok(VC::NONE_ENCRYPTED, cpl),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl),
+			VN(VN::Type::WARNING, VC::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
 
@@ -5859,18 +6204,21 @@ BOOST_AUTO_TEST_CASE(verify_encrypted_smpte_dcp)
 	path const pkl_file = find_file(dir, "pkl_");
 	path const cpl_file = find_file(dir, "cpl_");
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{ dir },
 		{ kdm },
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			ok(dcp::VerificationNote::Code::ALL_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, canonical(cpl_file)
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			ok(VC::ALL_ENCRYPTED, cpl),
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, canonical(cpl_file)
 				).set_cpl_id(cpl->id())
 		});
 }
@@ -5887,27 +6235,30 @@ BOOST_AUTO_TEST_CASE(verify_encrypted_smpte_dcp_without_kdm)
 	path const pkl_file = find_file(dir, "pkl_");
 	path const cpl_file = find_file(dir, "cpl_");
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result(
 		{ dir },
 		{},
 		{
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-			ok(dcp::VerificationNote::Code::ALL_ENCRYPTED, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			ok(VC::MATCHING_CPL_HASHES, cpl),
+			ok(VC::ALL_ENCRYPTED, cpl),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
+			VN(
+				VN::Type::WARNING, VC::MISSED_CHECK_OF_ENCRYPTED
 			).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED
+			VN(
+				VN::Type::WARNING, VC::MISSED_CHECK_OF_ENCRYPTED
 			).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED
+			VN(
+				VN::Type::WARNING, VC::MISSED_CHECK_OF_ENCRYPTED
 			).set_cpl_id(cpl->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, canonical(cpl_file)
+			VN(
+				VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, canonical(cpl_file)
 				).set_cpl_id(cpl->id()),
 		});
 }
@@ -5919,39 +6270,42 @@ BOOST_AUTO_TEST_CASE(verify_invalid_sound_bit_depth)
 
 	auto cpl = make_shared<dcp::CPL>(find_prefix(dir, "CPL_"));
 
-	vector<dcp::VerificationNote> notes = {
-		ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
-		ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"Advertisement"}, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-		ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"204794_Kitex_Scoobee_Day_Bags_30_Sec_Malayalam_220524_RADQR"}, cpl),
-		ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpl),
-		ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(dir / "Video.mxf"), cpl),
-		ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "Video.mxf"), cpl),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::ERROR, dcp::VerificationNote::Code::INVALID_SOUND_BIT_DEPTH, "16", canonical(dir / "Audio.mxf")
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	vector<VN> notes = {
+		ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		ok(VC::MATCHING_CPL_HASHES, cpl),
+		ok(VC::VALID_CONTENT_KIND, string{"Advertisement"}, cpl),
+		ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
+		ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"204794_Kitex_Scoobee_Day_Bags_30_Sec_Malayalam_220524_RADQR"}, cpl),
+		ok(VC::NONE_ENCRYPTED, cpl),
+		ok(VC::CORRECT_PICTURE_HASH, canonical(dir / "Video.mxf"), cpl),
+		ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "Video.mxf"), cpl),
+		VN(
+			VN::Type::ERROR, VC::INVALID_SOUND_BIT_DEPTH, "16", canonical(dir / "Audio.mxf")
 			).set_cpl_id(cpl->id()),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_HASH, string("fd4796c2-9c84-454c-91f4-13ad127cea8a")
+		VN(
+			VN::Type::BV21_ERROR, VC::MISSING_HASH, string("fd4796c2-9c84-454c-91f4-13ad127cea8a")
 			).set_cpl_id(cpl->id()),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_HASH, string("9d5e8bc4-676b-4306-a86d-03f70c73b457")
+		VN(
+			VN::Type::BV21_ERROR, VC::MISSING_HASH, string("9d5e8bc4-676b-4306-a86d-03f70c73b457")
 			).set_cpl_id(cpl->id()),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::MISSING_CPL_METADATA, canonical(cpl->file().get())
+		VN(
+			VN::Type::BV21_ERROR, VC::MISSING_CPL_METADATA, canonical(cpl->file().get())
 			).set_cpl_id(cpl->id()),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_FFOC
+		VN(
+			VN::Type::WARNING, VC::MISSING_FFOC
 			).set_cpl_id(cpl->id()),
-		dcp::VerificationNote(
-			dcp::VerificationNote::Type::WARNING, dcp::VerificationNote::Code::MISSING_LFOC
+		VN(
+			VN::Type::WARNING, VC::MISSING_LFOC
 			).set_cpl_id(cpl->id()),
 	};
 
 	for (auto i = 0; i < 792; ++i) {
 		notes.push_back(
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR, dcp::VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2")
+			VN(
+				VN::Type::BV21_ERROR, VC::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2")
 				).set_cpl_id(cpl->id())
 			);
 	}
@@ -6080,30 +6434,33 @@ BOOST_AUTO_TEST_CASE(verify_dcp_with_two_cpls)
 	prepare_directory(combined);
 	dcp::combine({ prefix + "_0", prefix+ "_1" }, combined);
 
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
 	check_verify_result_with_duplicates({combined}, {}, {
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpls[0]),
-			ok(dcp::VerificationNote::Code::MATCHING_CPL_HASHES, cpls[1]),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpls[0]),
-			ok(dcp::VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpls[1]),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpls[0]),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_KIND, string{"trailer"}, cpls[1]),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpls[0]),
-			ok(dcp::VerificationNote::Code::NONE_ENCRYPTED, cpls[1]),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpls[0]),
-			ok(dcp::VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpls[1]),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpls[0]->content_version()->label_text, cpls[0]),
-			ok(dcp::VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, cpls[1]->content_version()->label_text, cpls[1]),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(combined / "videofoo.mxf"), cpls[0]),
-			ok(dcp::VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(combined / "videofoo0.mxf"), cpls[1]),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(combined / "videofoo.mxf"), cpls[0]),
-			ok(dcp::VerificationNote::Code::CORRECT_PICTURE_HASH, canonical(combined / "videofoo0.mxf"), cpls[1]),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR,
-				dcp::VerificationNote::Code::MISSING_CPL_METADATA,
+			ok(VC::MATCHING_CPL_HASHES, cpls[0]),
+			ok(VC::MATCHING_CPL_HASHES, cpls[1]),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpls[0]),
+			ok(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpls[1]),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpls[0]),
+			ok(VC::VALID_CONTENT_KIND, string{"trailer"}, cpls[1]),
+			ok(VC::NONE_ENCRYPTED, cpls[0]),
+			ok(VC::NONE_ENCRYPTED, cpls[1]),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpls[0]),
+			ok(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpls[1]),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpls[0]->content_version()->label_text, cpls[0]),
+			ok(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpls[1]->content_version()->label_text, cpls[1]),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(combined / "videofoo.mxf"), cpls[0]),
+			ok(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(combined / "videofoo0.mxf"), cpls[1]),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(combined / "videofoo.mxf"), cpls[0]),
+			ok(VC::CORRECT_PICTURE_HASH, canonical(combined / "videofoo0.mxf"), cpls[1]),
+			VN(
+				VN::Type::BV21_ERROR,
+				VC::MISSING_CPL_METADATA,
 				canonical(combined / cpls[0]->file()->filename())).set_cpl_id(cpls[0]->id()),
-			dcp::VerificationNote(
-				dcp::VerificationNote::Type::BV21_ERROR,
-				dcp::VerificationNote::Code::MISSING_CPL_METADATA,
+			VN(
+				VN::Type::BV21_ERROR,
+				VC::MISSING_CPL_METADATA,
 				canonical(combined / cpls[1]->file()->filename())).set_cpl_id(cpls[1]->id())
 	});
 }
