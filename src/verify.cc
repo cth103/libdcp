@@ -2117,7 +2117,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_2K:
 	case VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_4K:
 		return compose("The JPEG2000 codestream has an invalid Rsiz (capabilities) value of %1.", note.note().get());
-	case VerificationNote::Code::MISSING_JPEG200_TLM_MARKER:
+	case VerificationNote::Code::MISSING_JPEG2000_TLM_MARKER:
 		return process_string("No TLM marker was found in a JPEG2000 codestream.");
 	case VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID:
 		return process_string("The Resource ID in a timed text MXF did not match the ID of the contained XML.");

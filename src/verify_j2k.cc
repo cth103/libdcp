@@ -361,7 +361,7 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 			notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_JPEG2000_POC_MARKER_LOCATION });
 		}
 		if (!tlm) {
-			notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_JPEG200_TLM_MARKER });
+			notes.push_back ({ VerificationNote::Type::BV21_ERROR, VerificationNote::Code::MISSING_JPEG2000_TLM_MARKER });
 		}
 	}
 	catch (InvalidCodestream const& e)
