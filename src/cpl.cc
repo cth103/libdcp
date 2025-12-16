@@ -842,3 +842,11 @@ CPL::set_main_picture_active_area(dcp::Size area)
 	_main_picture_active_area = area;
 }
 
+
+bool
+CPL::can_be_read() const
+{
+	auto r = reels();
+	return std::all_of(r.begin(), r.end(), [](shared_ptr<const Reel> reel) { return reel->can_be_read(); });
+}
+

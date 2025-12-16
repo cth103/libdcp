@@ -125,6 +125,9 @@ public:
 	/** @return true if we have all our encryptable content is encrypted */
 	bool all_encrypted() const;
 
+	/** @return true if all assets are present and can be read */
+	bool can_be_read() const;
+
 	/** Write a CompositionPlaylist XML file
 	 *
 	 *  @param file Filename to write
