@@ -43,6 +43,7 @@
 
 #include "decrypted_kdm.h"
 #include "key.h"
+#include "picture_encoding.h"
 #include "ref.h"
 #include <boost/function.hpp>
 #include <memory>
@@ -139,6 +140,11 @@ public:
 
 	bool any_encrypted () const;
 	bool all_encrypted () const;
+
+	/** Checks to see whether all assets can be read (either because
+	 *  they are unencrypted, or the provided KDM can decrypt them).
+	 */
+	bool can_be_read() const;
 
 	bool equals(std::shared_ptr<const Reel> other, EqualityOptions const& opt, NoteHandler notes) const;
 

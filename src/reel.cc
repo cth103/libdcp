@@ -515,3 +515,12 @@ Reel::duration () const
 
 	return d;
 }
+
+
+bool
+Reel::can_be_read() const
+{
+	auto assets = file_assets();
+	return std::all_of(assets.begin(), assets.end(), [](shared_ptr<const ReelFileAsset> asset) { return asset->can_be_read(); });
+}
+
