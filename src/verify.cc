@@ -1406,22 +1406,21 @@ verify_reel(
 	map<Marker, Time>* markers_seen
 	)
 {
-	for (auto i: reel->assets()) {
+	for (auto i: reel->file_assets()) {
 		if (i->duration() && (i->duration().get() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
 			context.error(VerificationNote::Code::INVALID_DURATION, i->id());
 		}
 		if ((i->intrinsic_duration() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
 			context.error(VerificationNote::Code::INVALID_INTRINSIC_DURATION, i->id());
 		}
-		auto file_asset = dynamic_pointer_cast<ReelFileAsset>(i);
-		if (i->encryptable() && !file_asset->hash()) {
+		if (i->encryptable() && !i->hash()) {
 			context.bv21_error(VerificationNote::Code::MISSING_HASH, i->id());
 		}
 	}
 
 	if (context.dcp->standard() == Standard::SMPTE) {
 		boost::optional<int64_t> duration;
-		for (auto i: reel->assets()) {
+		for (auto i: reel->file_assets()) {
 			if (!duration) {
 				duration = i->actual_duration();
 			} else if (*duration != i->actual_duration()) {

@@ -133,7 +133,7 @@ public:
 
 	void add (std::shared_ptr<ReelAsset> asset);
 
-	std::vector<std::shared_ptr<ReelAsset>> assets () const;
+	std::vector<std::shared_ptr<ReelFileAsset>> file_assets() const;
 
 	xmlpp::Element* write_to_cpl (xmlpp::Element* node, Standard standard) const;
 

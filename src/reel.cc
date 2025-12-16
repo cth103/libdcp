@@ -405,10 +405,10 @@ Reel::add (shared_ptr<ReelAsset> asset)
 }
 
 
-vector<shared_ptr<ReelAsset>>
-Reel::assets () const
+vector<shared_ptr<ReelFileAsset>>
+Reel::file_assets() const
 {
-	vector<shared_ptr<ReelAsset>> a;
+	vector<shared_ptr<ReelFileAsset>> a;
 	if (_main_picture) {
 		a.push_back (_main_picture);
 	}
