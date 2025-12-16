@@ -529,45 +529,38 @@ public:
 		INVALID_PKL_NAMESPACE,
 	};
 
-	VerificationNote (Type type, Code code)
-		: _type (type)
-		, _code (code)
+	VerificationNote(Code code)
+		: _code(code)
 	{}
 
-	VerificationNote (Type type, Code code, std::string note)
-		: _type (type)
-		, _code (code)
+	VerificationNote(Code code, std::string note)
+		: _code(code)
 	{
 		_data[Data::NOTE] = note;
 	}
 
-	VerificationNote (Type type, Code code, boost::filesystem::path file)
-		: _type (type)
-		, _code (code)
+	VerificationNote(Code code, boost::filesystem::path file)
+		: _code(code)
 	{
 		_data[Data::FILE] = file;
 	}
 
-	VerificationNote (Type type, Code code, std::string note, boost::filesystem::path file)
-		: _type (type)
-		, _code (code)
+	VerificationNote(Code code, std::string note, boost::filesystem::path file)
+		: _code(code)
 	{
 		_data[Data::NOTE] = note;
 		_data[Data::FILE] = file;
 	}
 
-	VerificationNote (Type type, Code code, std::string note, boost::filesystem::path file, uint64_t line)
-		: _type (type)
-		, _code (code)
+	VerificationNote(Code code, std::string note, boost::filesystem::path file, uint64_t line)
+		: _code (code)
 	{
 		_data[Data::NOTE] = note;
 		_data[Data::FILE] = file;
 		_data[Data::LINE] = line;
 	}
 
-	Type type () const {
-		return _type;
-	}
+	Type type() const;
 
 	Code code () const {
 		return _code;
@@ -694,7 +687,6 @@ public:
 	}
 
 private:
-	Type _type;
 	Code _code;
 	std::map<Data, boost::any> _data;
 };

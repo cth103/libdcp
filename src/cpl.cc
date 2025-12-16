@@ -121,7 +121,6 @@ CPL::CPL(boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 		if (notes) {
 			notes->push_back(
 				dcp::VerificationNote(
-					dcp::VerificationNote::Type::ERROR,
 					dcp::VerificationNote::Code::INVALID_CPL_NAMESPACE,
 					f.namespace_uri(),
 					file
@@ -154,7 +153,6 @@ CPL::CPL(boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 		if (notes) {
 			notes->push_back(
 				dcp::VerificationNote(
-					dcp::VerificationNote::Type::ERROR,
 					dcp::VerificationNote::Code::MISSING_CPL_CONTENT_VERSION,
 					_id,
 					file
@@ -319,7 +317,6 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 			/* With Interop DCPs this node may not make any sense, but that's OK */
 			notes->push_back(
 				dcp::VerificationNote(
-					dcp::VerificationNote::Type::ERROR,
 					dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION,
 					fmt::format("{} could not be parsed", _main_sound_configuration->as_string()),
 					*_file

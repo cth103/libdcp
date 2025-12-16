@@ -81,7 +81,6 @@ PKL::PKL(boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 		if (notes) {
 			notes->push_back(
 				dcp::VerificationNote(
-					dcp::VerificationNote::Type::ERROR,
 					dcp::VerificationNote::Code::INVALID_PKL_NAMESPACE,
 					pkl.namespace_uri(),
 					file

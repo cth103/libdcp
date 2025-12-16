@@ -93,36 +93,18 @@ public:
 	Context(Context const&) = delete;
 	Context& operator=(Context const&) = delete;
 
-	template<typename... Args>
-	void ok(dcp::VerificationNote::Code code, Args... args)
-	{
-		add_note({dcp::VerificationNote::Type::OK, code, std::forward<Args>(args)...});
-	}
-
-	template<typename... Args>
-	void warning(dcp::VerificationNote::Code code, Args... args)
-	{
-		add_note({dcp::VerificationNote::Type::WARNING, code, std::forward<Args>(args)...});
-	}
-
-	template<typename... Args>
-	void bv21_error(dcp::VerificationNote::Code code, Args... args)
-	{
-		add_note({dcp::VerificationNote::Type::BV21_ERROR, code, std::forward<Args>(args)...});
-	}
-
-	template<typename... Args>
-	void error(dcp::VerificationNote::Code code, Args... args)
-	{
-		add_note({dcp::VerificationNote::Type::ERROR, code, std::forward<Args>(args)...});
-	}
-
 	void add_note(dcp::VerificationNote note)
 	{
 		if (cpl) {
 			note.set_cpl_id(cpl->id());
 		}
 		notes.push_back(std::move(note));
+	}
+
+	template<typename... Args>
+	void add_note(dcp::VerificationNote::Code code, Args... args)
+	{
+		add_note(dcp::VerificationNote{code, std::forward<Args>(args)...});
 	}
 
 	void add_note_if_not_existing(dcp::VerificationNote note)

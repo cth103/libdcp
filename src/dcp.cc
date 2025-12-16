@@ -200,14 +200,14 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			   claims to come from ClipsterDCI 5.10.0.5.
 			*/
 			if (notes) {
-				notes->push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::EMPTY_ASSET_PATH});
+				notes->push_back({VerificationNote::Code::EMPTY_ASSET_PATH});
 			}
 			continue;
 		}
 
 		if (!filesystem::exists(path)) {
 			if (notes) {
-				notes->push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_ASSET, path});
+				notes->push_back({VerificationNote::Code::MISSING_ASSET, path});
 			}
 			continue;
 		}
@@ -248,12 +248,12 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			if (root == "CompositionPlaylist") {
 				auto cpl = make_shared<CPL>(path, notes);
 				if (cpl->standard() != standard && notes) {
-					notes->push_back ({VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_STANDARD});
+					notes->push_back({VerificationNote::Code::MISMATCHED_STANDARD});
 				}
 				_cpls.push_back (cpl);
 			} else if (root == "DCSubtitle") {
 				if (standard == Standard::SMPTE && notes) {
-					notes->push_back (VerificationNote(VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_STANDARD));
+					notes->push_back({VerificationNote::Code::MISMATCHED_STANDARD});
 				}
 				other_assets.push_back (make_shared<InteropTextAsset>(path));
 			}
@@ -268,11 +268,11 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			bool found_threed_marked_as_twod = false;
 			auto asset = asset_factory(path, ignore_incorrect_picture_mxf_type, &found_threed_marked_as_twod);
 			if (asset->id() != id) {
-				notes->push_back(VerificationNote(VerificationNote::Type::ERROR, VerificationNote::Code::MISMATCHED_ASSET_MAP_ID).set_id(id).set_other_id(asset->id()));
+				notes->push_back(dcp::VerificationNote{VerificationNote::Code::MISMATCHED_ASSET_MAP_ID}.set_id(id).set_other_id(asset->id()));
 			}
 			other_assets.push_back(asset);
 			if (found_threed_marked_as_twod && notes) {
-				notes->push_back ({VerificationNote::Type::WARNING, VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD, path});
+				notes->push_back({VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD, path});
 			}
 		} else if (*pkl_type == remove_parameters(FontAsset::static_pkl_type(standard))) {
 			other_assets.push_back(make_shared<FontAsset>(id, path));
@@ -332,7 +332,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 		for (auto i: cpls()) {
 			for (auto j: i->reel_file_assets()) {
 				if (!j->asset_ref().resolved() && ids_and_paths.find(j->asset_ref().id()) == ids_and_paths.end()) {
-					notes->push_back (VerificationNote(VerificationNote::Type::WARNING, VerificationNote::Code::EXTERNAL_ASSET, j->asset_ref().id()));
+					notes->push_back(VerificationNote(VerificationNote::Code::EXTERNAL_ASSET, j->asset_ref().id()));
 				}
 			}
 		}

@@ -368,7 +368,7 @@ validate_xml(Context& context, T xml)
 	XMLPlatformUtils::Terminate ();
 
 	for (auto i: error_handler.errors()) {
-		context.error(
+		context.add_note(
 			VerificationNote::Code::INVALID_XML,
 			i.message(),
 			boost::trim_copy(i.public_id() + " " + i.system_id()),
@@ -442,7 +442,7 @@ verify_language_tag(Context& context, string tag)
 	try {
 		LanguageTag test (tag);
 	} catch (LanguageTagError &) {
-		context.bv21_error(VerificationNote::Code::INVALID_LANGUAGE, tag);
+		context.add_note(VerificationNote::Code::INVALID_LANGUAGE, tag);
 	}
 }
 
@@ -478,14 +478,14 @@ verify_picture_details(
 		if (size > max_frame) {
 			context.add_note(
 				VerificationNote(
-					VerificationNote::Type::ERROR, VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
+					VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
 					).set_frame(start_frame + index).set_frame_rate(frame_rate)
 			);
 			any_bad_frames_seen = true;
 		} else if (size > risky_frame) {
 			context.add_note(
 				VerificationNote(
-					VerificationNote::Type::WARNING, VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
+					VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
 					).set_frame(start_frame + index).set_frame_rate(frame_rate)
 			);
 			any_bad_frames_seen = true;
@@ -522,7 +522,7 @@ verify_picture_details(
 	}
 
 	if (!any_bad_frames_seen) {
-		context.ok(VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, file);
+		context.add_note(VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES, file);
 	}
 }
 
@@ -546,17 +546,16 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 			case VerifyAssetResult::BAD:
 				context.add_note(
 					dcp::VerificationNote(
-						VerificationNote::Type::ERROR,
 						VerificationNote::Code::INCORRECT_PICTURE_HASH,
 						file
 						).set_reference_hash(reference_hash).set_calculated_hash(calculated_hash)
 					);
 				break;
 			case VerifyAssetResult::CPL_PKL_DIFFER:
-				context.error(VerificationNote::Code::MISMATCHED_PICTURE_HASHES, file);
+				context.add_note(VerificationNote::Code::MISMATCHED_PICTURE_HASHES, file);
 				break;
 			default:
-				context.ok(VerificationNote::Code::CORRECT_PICTURE_HASH, file);
+				context.add_note(VerificationNote::Code::CORRECT_PICTURE_HASH, file);
 				break;
 		}
 	}
@@ -573,11 +572,11 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 			asset->size() != Size(1998, 1080) &&
 			asset->size() != Size(4096, 1716) &&
 			asset->size() != Size(3996, 2160)) {
-			context.bv21_error(VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, String::compose("%1x%2", asset->size().width, asset->size().height), file);
+			context.add_note(VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, String::compose("%1x%2", asset->size().width, asset->size().height), file);
 		}
 	} else if (dynamic_pointer_cast<const MPEG2PictureAsset>(asset)) {
 		if (asset->size() != Size(1920, 1080)) {
-			context.error(VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, fmt::format("{}x{}", asset->size().width, asset->size().height), file);
+			context.add_note(VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, fmt::format("{}x{}", asset->size().width, asset->size().height), file);
 		}
 	}
 
@@ -586,7 +585,7 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 		(asset->size() == Size(2048, 858) || asset->size() == Size(1998, 1080)) &&
 		(asset->edit_rate() != Fraction(24, 1) && asset->edit_rate() != Fraction(25, 1) && asset->edit_rate() != Fraction(48, 1))
 	   ) {
-		context.bv21_error(
+		context.add_note(
 			VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_2K,
 			String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
 			file
@@ -596,7 +595,7 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 	if (asset->size() == Size(4096, 1716) || asset->size() == Size(3996, 2160)) {
 		/* Only 24fps allowed for 4K */
 		if (asset->edit_rate() != Fraction(24, 1)) {
-			context.bv21_error(
+			context.add_note(
 				VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_4K,
 				String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
 				file
@@ -605,7 +604,7 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 
 		/* Only 2D allowed for 4K */
 		if (dynamic_pointer_cast<const StereoJ2KPictureAsset>(asset)) {
-			context.bv21_error(
+			context.add_note(
 				VerificationNote::Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
 				String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
 				file
@@ -635,14 +634,13 @@ verify_main_sound_asset(Context& context, shared_ptr<const ReelSoundAsset> reel_
 			case VerifyAssetResult::BAD:
 				context.add_note(
 					dcp::VerificationNote(
-						VerificationNote::Type::ERROR,
 						VerificationNote::Code::INCORRECT_SOUND_HASH,
 						file
 						).set_reference_hash(reference_hash).set_calculated_hash(calculated_hash)
 					);
 				break;
 			case VerifyAssetResult::CPL_PKL_DIFFER:
-				context.error(VerificationNote::Code::MISMATCHED_SOUND_HASHES, file);
+				context.add_note(VerificationNote::Code::MISMATCHED_SOUND_HASHES, file);
 				break;
 			default:
 				break;
@@ -652,7 +650,7 @@ verify_main_sound_asset(Context& context, shared_ptr<const ReelSoundAsset> reel_
 	if (!context.audio_channels) {
 		context.audio_channels = asset->channels();
 	} else if (*context.audio_channels != asset->channels()) {
-		context.error(VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS, file);
+		context.add_note(VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS, file);
 	}
 
 	context.stage("Checking sound asset metadata", file);
@@ -661,10 +659,10 @@ verify_main_sound_asset(Context& context, shared_ptr<const ReelSoundAsset> reel_
 		verify_language_tag(context, *lang);
 	}
 	if (asset->sampling_rate() != 48000) {
-		context.bv21_error(VerificationNote::Code::INVALID_SOUND_FRAME_RATE, fmt::to_string(asset->sampling_rate()), file);
+		context.add_note(VerificationNote::Code::INVALID_SOUND_FRAME_RATE, fmt::to_string(asset->sampling_rate()), file);
 	}
 	if (asset->bit_depth() != 24) {
-		context.error(VerificationNote::Code::INVALID_SOUND_BIT_DEPTH, fmt::to_string(asset->bit_depth()), file);
+		context.add_note(VerificationNote::Code::INVALID_SOUND_BIT_DEPTH, fmt::to_string(asset->bit_depth()), file);
 	}
 }
 
@@ -678,9 +676,9 @@ verify_main_subtitle_reel(Context& context, shared_ptr<const ReelTextAsset> reel
 	}
 
 	if (!reel_asset->entry_point()) {
-		context.bv21_error(VerificationNote::Code::MISSING_SUBTITLE_ENTRY_POINT, reel_asset->id());
+		context.add_note(VerificationNote::Code::MISSING_SUBTITLE_ENTRY_POINT, reel_asset->id());
 	} else if (reel_asset->entry_point().get()) {
-		context.bv21_error(VerificationNote::Code::INCORRECT_SUBTITLE_ENTRY_POINT, reel_asset->id());
+		context.add_note(VerificationNote::Code::INCORRECT_SUBTITLE_ENTRY_POINT, reel_asset->id());
 	}
 }
 
@@ -694,9 +692,9 @@ verify_closed_caption_reel(Context& context, shared_ptr<const ReelTextAsset> ree
 	}
 
 	if (!reel_asset->entry_point()) {
-		context.bv21_error(VerificationNote::Code::MISSING_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id());
+		context.add_note(VerificationNote::Code::MISSING_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id());
 	} else if (reel_asset->entry_point().get()) {
-		context.bv21_error(VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id());
+		context.add_note(VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id());
 	}
 }
 
@@ -713,12 +711,12 @@ verify_smpte_timed_text_asset (
 		verify_language_tag(context, *asset->language());
 	} else if (asset->raw_xml()) {
 		/* Raise this error only if we can access the raw XML (i.e. the asset was unencrypted or has been decrypted) */
-		context.bv21_error(VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, *asset->file());
+		context.add_note(VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE, *asset->file());
 	}
 
 	auto const size = filesystem::file_size(asset->file().get());
 	if (size > 115 * 1024 * 1024) {
-		context.bv21_error(VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, fmt::to_string(size), *asset->file());
+		context.add_note(VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, fmt::to_string(size), *asset->file());
 	}
 
 	/* XXX: I'm not sure what Bv2.1_7.2.1 means when it says "the font resource shall not be larger than 10MB"
@@ -730,20 +728,20 @@ verify_smpte_timed_text_asset (
 		total_size += i.second.size();
 	}
 	if (total_size > 10 * 1024 * 1024) {
-		context.bv21_error(VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, fmt::to_string(total_size), asset->file().get());
+		context.add_note(VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, fmt::to_string(total_size), asset->file().get());
 	}
 
 	if (asset->raw_xml()) {
 		/* Raise these errors only if we can access the raw XML (i.e. the asset was unencrypted or has been decrypted) */
 		if (!asset->start_time()) {
-			context.bv21_error(VerificationNote::Code::MISSING_SUBTITLE_START_TIME, asset->file().get());
+			context.add_note(VerificationNote::Code::MISSING_SUBTITLE_START_TIME, asset->file().get());
 		} else if (asset->start_time() != Time()) {
-			context.bv21_error(VerificationNote::Code::INVALID_SUBTITLE_START_TIME, asset->file().get());
+			context.add_note(VerificationNote::Code::INVALID_SUBTITLE_START_TIME, asset->file().get());
 		}
 	}
 
 	if (reel_asset_duration && *reel_asset_duration != asset->intrinsic_duration()) {
-		context.bv21_error(
+		context.add_note(
 			VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION,
 			String::compose("%1 %2", *reel_asset_duration, asset->intrinsic_duration()),
 			asset->file().get()
@@ -757,11 +755,11 @@ void
 verify_interop_text_asset(Context& context, shared_ptr<const InteropTextAsset> asset)
 {
 	if (asset->texts().empty()) {
-		context.error(VerificationNote::Code::MISSING_SUBTITLE, asset->id(), asset->file().get());
+		context.add_note(VerificationNote::Code::MISSING_SUBTITLE, asset->id(), asset->file().get());
 	}
 	auto const unresolved = asset->unresolved_fonts();
 	if (!unresolved.empty()) {
-		context.error(VerificationNote::Code::MISSING_FONT, unresolved.front());
+		context.add_note(VerificationNote::Code::MISSING_FONT, unresolved.front());
 	}
 }
 
@@ -774,7 +772,7 @@ verify_smpte_subtitle_asset(Context& context, shared_ptr<const SMPTETextAsset> a
 		if (!context.subtitle_language) {
 			context.subtitle_language = *asset->language();
 		} else if (context.subtitle_language != *asset->language()) {
-			context.bv21_error(VerificationNote::Code::MISMATCHED_SUBTITLE_LANGUAGES);
+			context.add_note(VerificationNote::Code::MISMATCHED_SUBTITLE_LANGUAGES);
 		}
 	}
 
@@ -782,14 +780,14 @@ verify_smpte_subtitle_asset(Context& context, shared_ptr<const SMPTETextAsset> a
 	auto xml_id = asset->xml_id();
 	if (xml_id) {
 		if (asset->resource_id().get() != xml_id) {
-			context.bv21_error(VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID);
+			context.add_note(VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID);
 		}
 
 		if (asset->id() == asset->resource_id().get() || asset->id() == xml_id) {
-			context.bv21_error(VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID);
+			context.add_note(VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID);
 		}
 	} else {
-		context.warning(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
+		context.add_note(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
 	}
 
 	if (asset->raw_xml()) {
@@ -799,7 +797,7 @@ verify_smpte_subtitle_asset(Context& context, shared_ptr<const SMPTETextAsset> a
 		auto issue_date = doc.string_child("IssueDate");
 		std::regex reg("^\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d$");
 		if (!std::regex_match(issue_date, reg)) {
-			context.warning(VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, issue_date);
+			context.add_note(VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, issue_date);
 		}
 	}
 }
@@ -816,7 +814,7 @@ verify_subtitle_asset(Context& context, shared_ptr<const TextAsset> asset, optio
 	if (asset->raw_xml()) {
 		validate_xml(context, asset->raw_xml().get());
 	} else {
-		context.warning(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
+		context.add_note(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
 	}
 
 	auto namespace_count = [](shared_ptr<const TextAsset> asset, string root_node) {
@@ -834,7 +832,7 @@ verify_subtitle_asset(Context& context, shared_ptr<const TextAsset> asset, optio
 	if (interop) {
 		verify_interop_text_asset(context, interop);
 		if (namespace_count(asset, "DCSubtitle") > 1) {
-			context.warning(VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id());
+			context.add_note(VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id());
 		}
 	}
 
@@ -844,7 +842,7 @@ verify_subtitle_asset(Context& context, shared_ptr<const TextAsset> asset, optio
 		verify_smpte_subtitle_asset(context, smpte);
 		/* This asset may be encrypted and in that case we'll have no raw_xml() */
 		if (asset->raw_xml() && namespace_count(asset, "SubtitleReel") > 1) {
-			context.warning(VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id());
+			context.add_note(VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id());
 		}
 	}
 }
@@ -866,10 +864,10 @@ verify_closed_caption_asset (
 	if (raw_xml) {
 		validate_xml(context, *raw_xml);
 		if (raw_xml->size() > 256 * 1024) {
-			context.bv21_error(VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, fmt::to_string(raw_xml->size()), *asset->file());
+			context.add_note(VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, fmt::to_string(raw_xml->size()), *asset->file());
 		}
 	} else {
-		context.warning(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
+		context.add_note(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
 	}
 
 	auto interop = dynamic_pointer_cast<const InteropTextAsset>(asset);
@@ -987,7 +985,7 @@ verify_text_details (
 
 		auto reel_xml = xml(reels[i]);
 		if (!reel_xml) {
-			context.warning(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
+			context.add_note(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
 			continue;
 		}
 
@@ -1022,7 +1020,7 @@ verify_text_details (
 		reel_offset = end;
 
 		if (context.dcp->standard() && *context.dcp->standard() == dcp::Standard::SMPTE && has_text && font_ids.empty()) {
-			context.add_note(dcp::VerificationNote(dcp::VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_LOAD_FONT).set_id(id(reels[i])));
+			context.add_note(dcp::VerificationNote(VerificationNote::Code::MISSING_LOAD_FONT).set_id(id(reels[i])));
 		}
 	}
 
@@ -1031,31 +1029,31 @@ verify_text_details (
 	}
 
 	if (too_early) {
-		context.warning(VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME);
+		context.add_note(VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME);
 	}
 
 	if (too_short) {
-		context.error(VerificationNote::Code::INVALID_SUBTITLE_DURATION);
+		context.add_note(VerificationNote::Code::INVALID_SUBTITLE_DURATION);
 	}
 
 	if (too_short_bv21) {
-		context.warning(VerificationNote::Code::INVALID_SUBTITLE_DURATION_BV21);
+		context.add_note(VerificationNote::Code::INVALID_SUBTITLE_DURATION_BV21);
 	}
 
 	if (too_close) {
-		context.warning(VerificationNote::Code::INVALID_SUBTITLE_SPACING);
+		context.add_note(VerificationNote::Code::INVALID_SUBTITLE_SPACING);
 	}
 
 	if (reel_overlap) {
-		context.error(VerificationNote::Code::SUBTITLE_OVERLAPS_REEL_BOUNDARY);
+		context.add_note(VerificationNote::Code::SUBTITLE_OVERLAPS_REEL_BOUNDARY);
 	}
 
 	if (empty_text) {
-		context.warning(VerificationNote::Code::EMPTY_TEXT);
+		context.add_note(VerificationNote::Code::EMPTY_TEXT);
 	}
 
 	if (missing_load_font_id) {
-		context.add_note(dcp::VerificationNote(VerificationNote::Type::ERROR, VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT).set_id(*missing_load_font_id));
+		context.add_note(dcp::VerificationNote(VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT).set_id(*missing_load_font_id));
 	}
 }
 
@@ -1128,7 +1126,7 @@ verify_closed_caption_details(Context& context, vector<shared_ptr<Reel>> reels)
 		for (auto ccap: reel->closed_captions()) {
 			auto reel_xml = ccap->asset()->raw_xml();
 			if (!reel_xml) {
-				context.warning(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
+				context.add_note(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
 				continue;
 			}
 
@@ -1151,11 +1149,11 @@ verify_closed_caption_details(Context& context, vector<shared_ptr<Reel>> reels)
 	}
 
 	if (mismatched_valign) {
-		context.error(VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_VALIGN);
+		context.add_note(VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_VALIGN);
 	}
 
 	if (incorrect_order) {
-		context.error(VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ORDERING);
+		context.add_note(VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ORDERING);
 	}
 }
 
@@ -1360,9 +1358,9 @@ dcp::verify_extension_metadata(Context& context)
 	}
 
 	if (missing) {
-		context.bv21_error(VerificationNote::Code::MISSING_EXTENSION_METADATA, context.cpl->file().get());
+		context.add_note(VerificationNote::Code::MISSING_EXTENSION_METADATA, context.cpl->file().get());
 	} else if (!malformed.empty()) {
-		context.bv21_error(VerificationNote::Code::INVALID_EXTENSION_METADATA, malformed, context.cpl->file().get());
+		context.add_note(VerificationNote::Code::INVALID_EXTENSION_METADATA, malformed, context.cpl->file().get());
 	}
 }
 
@@ -1408,13 +1406,13 @@ verify_reel(
 {
 	for (auto i: reel->file_assets()) {
 		if (i->duration() && (i->duration().get() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
-			context.error(VerificationNote::Code::INVALID_DURATION, i->id());
+			context.add_note(VerificationNote::Code::INVALID_DURATION, i->id());
 		}
 		if ((i->intrinsic_duration() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
-			context.error(VerificationNote::Code::INVALID_INTRINSIC_DURATION, i->id());
+			context.add_note(VerificationNote::Code::INVALID_INTRINSIC_DURATION, i->id());
 		}
 		if (i->encryptable() && !i->hash()) {
-			context.bv21_error(VerificationNote::Code::MISSING_HASH, i->id());
+			context.add_note(VerificationNote::Code::MISSING_HASH, i->id());
 		}
 	}
 
@@ -1424,7 +1422,7 @@ verify_reel(
 			if (!duration) {
 				duration = i->actual_duration();
 			} else if (*duration != i->actual_duration()) {
-				context.bv21_error(VerificationNote::Code::MISMATCHED_ASSET_DURATION);
+				context.add_note(VerificationNote::Code::MISMATCHED_ASSET_DURATION);
 				break;
 			}
 		}
@@ -1441,7 +1439,7 @@ verify_reel(
 		     frame_rate.numerator != 50 &&
 		     frame_rate.numerator != 60 &&
 		     frame_rate.numerator != 96)) {
-			context.error(VerificationNote::Code::INVALID_PICTURE_FRAME_RATE, String::compose("%1/%2", frame_rate.numerator, frame_rate.denominator));
+			context.add_note(VerificationNote::Code::INVALID_PICTURE_FRAME_RATE, String::compose("%1/%2", frame_rate.numerator, frame_rate.denominator));
 		}
 		/* Check asset */
 		if (reel->main_picture()->asset_ref().resolved()) {
@@ -1449,14 +1447,14 @@ verify_reel(
 			auto const asset_size = reel->main_picture()->asset()->size();
 			if (main_picture_active_area) {
 				if (main_picture_active_area->width > asset_size.width) {
-					context.error(
+					context.add_note(
 						VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
 						String::compose("width %1 is bigger than the asset width %2", main_picture_active_area->width, asset_size.width),
 						context.cpl->file().get()
 					);
 				}
 				if (main_picture_active_area->height > asset_size.height) {
-					context.error(
+					context.add_note(
 						VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
 						String::compose("height %1 is bigger than the asset height %2", main_picture_active_area->height, asset_size.height),
 						context.cpl->file().get()
@@ -1493,10 +1491,10 @@ verify_reel(
 			markers_seen->insert(i);
 		}
 		if (reel->main_markers()->entry_point()) {
-			context.error(VerificationNote::Code::UNEXPECTED_ENTRY_POINT);
+			context.add_note(VerificationNote::Code::UNEXPECTED_ENTRY_POINT);
 		}
 		if (reel->main_markers()->duration()) {
-			context.error(VerificationNote::Code::UNEXPECTED_DURATION);
+			context.add_note(VerificationNote::Code::UNEXPECTED_DURATION);
 		}
 	}
 
@@ -1514,11 +1512,11 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 	validate_xml(context, cpl->file().get());
 
 	if (cpl->any_encrypted() && !cpl->all_encrypted()) {
-		context.bv21_error(VerificationNote::Code::PARTIALLY_ENCRYPTED);
+		context.add_note(VerificationNote::Code::PARTIALLY_ENCRYPTED);
 	} else if (cpl->all_encrypted()) {
-		context.ok(VerificationNote::Code::ALL_ENCRYPTED);
+		context.add_note(VerificationNote::Code::ALL_ENCRYPTED);
 	} else if (!cpl->all_encrypted()) {
-		context.ok(VerificationNote::Code::NONE_ENCRYPTED);
+		context.add_note(VerificationNote::Code::NONE_ENCRYPTED);
 	}
 
 	for (auto const& i: cpl->additional_subtitle_languages()) {
@@ -1534,9 +1532,9 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		transform(name.begin(), name.end(), name.begin(), ::tolower);
 		auto iter = std::find_if(all.begin(), all.end(), [name](ContentKind const& k) { return !k.scope() && k.name() == name; });
 		if (iter == all.end()) {
-			context.error(VerificationNote::Code::INVALID_CONTENT_KIND, cpl->content_kind().name());
+			context.add_note(VerificationNote::Code::INVALID_CONTENT_KIND, cpl->content_kind().name());
 		} else {
-			context.ok(VerificationNote::Code::VALID_CONTENT_KIND, cpl->content_kind().name());
+			context.add_note(VerificationNote::Code::VALID_CONTENT_KIND, cpl->content_kind().name());
 		}
 	}
 
@@ -1549,32 +1547,32 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 				LanguageTag::RegionSubtag test(terr);
 			} catch (...) {
 				if (terr != "001") {
-					context.bv21_error(VerificationNote::Code::INVALID_LANGUAGE, terr);
+					context.add_note(VerificationNote::Code::INVALID_LANGUAGE, terr);
 					valid = false;
 				}
 			}
 			if (valid) {
-				context.ok(VerificationNote::Code::VALID_RELEASE_TERRITORY, terr);
+				context.add_note(VerificationNote::Code::VALID_RELEASE_TERRITORY, terr);
 			}
 		}
 	}
 
 	for (auto version: cpl->content_versions()) {
 		if (version.label_text.empty()) {
-			context.warning(VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get());
+			context.add_note(VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get());
 			break;
 		} else {
-			context.ok(VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, version.label_text);
+			context.add_note(VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, version.label_text);
 		}
 	}
 
 	if (context.dcp->standard() == Standard::SMPTE) {
 		if (!cpl->annotation_text()) {
-			context.bv21_error(VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, cpl->file().get());
+			context.add_note(VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT, cpl->file().get());
 		} else if (cpl->annotation_text().get() != cpl->content_title_text()) {
-			context.warning(VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, cpl->file().get());
+			context.add_note(VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT, cpl->file().get());
 		} else {
-			context.ok(VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, cpl->annotation_text().get());
+			context.add_note(VerificationNote::Code::VALID_CPL_ANNOTATION_TEXT, cpl->annotation_text().get());
 		}
 	}
 
@@ -1585,13 +1583,12 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		if (h && calculated_cpl_hash != *h) {
 			context.add_note(
 				dcp::VerificationNote(
-					VerificationNote::Type::ERROR,
 					VerificationNote::Code::MISMATCHED_CPL_HASHES,
 					cpl->file().get()
 					).set_calculated_hash(calculated_cpl_hash).set_reference_hash(*h)
 				);
 		} else {
-			context.ok(VerificationNote::Code::MATCHING_CPL_HASHES);
+			context.add_note(VerificationNote::Code::MATCHING_CPL_HASHES);
 		}
 
 		/* Check that any PKL with a single CPL has its AnnotationText the same as the CPL's ContentTitleText */
@@ -1612,9 +1609,9 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		}
 
 		if (required_annotation_text && i->annotation_text() != required_annotation_text) {
-			context.bv21_error(VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, i->id(), i->file().get());
+			context.add_note(VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, i->id(), i->file().get());
 		} else {
-			context.ok(VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL);
+			context.add_note(VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL);
 		}
 	}
 
@@ -1631,7 +1628,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 	auto const main_picture_active_area = cpl->main_picture_active_area();
 	bool active_area_ok = true;
 	if (main_picture_active_area && (main_picture_active_area->width % 2)) {
-		context.error(
+		context.add_note(
 			VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
 			String::compose("width %1 is not a multiple of 2", main_picture_active_area->width),
 			cpl->file().get()
@@ -1639,7 +1636,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		active_area_ok = false;
 	}
 	if (main_picture_active_area && (main_picture_active_area->height % 2)) {
-		context.error(
+		context.add_note(
 			VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
 			String::compose("height %1 is not a multiple of 2", main_picture_active_area->height),
 			cpl->file().get()
@@ -1648,7 +1645,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 	}
 
 	if (main_picture_active_area && active_area_ok) {
-		context.ok(
+		context.add_note(
 			VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA, String::compose("%1x%2", main_picture_active_area->width, main_picture_active_area->height),
 			cpl->file().get()
 			);
@@ -1676,7 +1673,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 	if (context.dcp->standard() == Standard::SMPTE) {
 		if (auto msc = cpl->main_sound_configuration()) {
 			if (msc->valid() && context.audio_channels && msc->channels() != *context.audio_channels) {
-				context.error(
+				context.add_note(
 					VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION,
 					String::compose("MainSoundConfiguration has %1 channels but sound assets have %2", msc->channels(), *context.audio_channels),
 					cpl->file().get()
@@ -1685,36 +1682,36 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		}
 
 		if (have_main_subtitle && have_no_main_subtitle) {
-			context.bv21_error(VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS);
+			context.add_note(VerificationNote::Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS);
 		}
 
 		if (fewest_closed_captions != most_closed_captions) {
-			context.bv21_error(VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS);
+			context.add_note(VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS);
 		}
 
 		if (cpl->content_kind() == ContentKind::FEATURE) {
 			if (markers_seen.find(Marker::FFEC) == markers_seen.end()) {
-				context.bv21_error(VerificationNote::Code::MISSING_FFEC_IN_FEATURE);
+				context.add_note(VerificationNote::Code::MISSING_FFEC_IN_FEATURE);
 			}
 			if (markers_seen.find(Marker::FFMC) == markers_seen.end()) {
-				context.bv21_error(VerificationNote::Code::MISSING_FFMC_IN_FEATURE);
+				context.add_note(VerificationNote::Code::MISSING_FFMC_IN_FEATURE);
 			}
 		}
 
 		auto ffoc = markers_seen.find(Marker::FFOC);
 		if (ffoc == markers_seen.end()) {
-			context.warning(VerificationNote::Code::MISSING_FFOC);
+			context.add_note(VerificationNote::Code::MISSING_FFOC);
 		} else if (ffoc->second.e != 1) {
-			context.warning(VerificationNote::Code::INCORRECT_FFOC, fmt::to_string(ffoc->second.e));
+			context.add_note(VerificationNote::Code::INCORRECT_FFOC, fmt::to_string(ffoc->second.e));
 		}
 
 		auto lfoc = markers_seen.find(Marker::LFOC);
 		if (lfoc == markers_seen.end()) {
-			context.warning(VerificationNote::Code::MISSING_LFOC);
+			context.add_note(VerificationNote::Code::MISSING_LFOC);
 		} else {
 			auto lfoc_time = lfoc->second.as_editable_units_ceil(lfoc->second.tcr);
 			if (lfoc_time != (cpl->reels().back()->duration() - 1)) {
-				context.warning(VerificationNote::Code::INCORRECT_LFOC, fmt::to_string(lfoc_time));
+				context.add_note(VerificationNote::Code::INCORRECT_LFOC, fmt::to_string(lfoc_time));
 			}
 		}
 
@@ -1726,12 +1723,12 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		}
 
 		if (result.line_count_exceeded) {
-			context.warning(VerificationNote::Code::INVALID_SUBTITLE_LINE_COUNT);
+			context.add_note(VerificationNote::Code::INVALID_SUBTITLE_LINE_COUNT);
 		}
 		if (result.error_length_exceeded) {
-			context.warning(VerificationNote::Code::INVALID_SUBTITLE_LINE_LENGTH);
+			context.add_note(VerificationNote::Code::INVALID_SUBTITLE_LINE_LENGTH);
 		} else if (result.warning_length_exceeded) {
-			context.warning(VerificationNote::Code::NEARLY_INVALID_SUBTITLE_LINE_LENGTH);
+			context.add_note(VerificationNote::Code::NEARLY_INVALID_SUBTITLE_LINE_LENGTH);
 		}
 
 		result = LinesCharactersResult();
@@ -1744,16 +1741,16 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		}
 
 		if (result.line_count_exceeded) {
-			context.bv21_error(VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_COUNT);
+			context.add_note(VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_COUNT);
 		}
 		if (result.error_length_exceeded) {
-			context.bv21_error(VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH);
+			context.add_note(VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH);
 		}
 
 		if (!cpl->read_composition_metadata()) {
-			context.bv21_error(VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get());
+			context.add_note(VerificationNote::Code::MISSING_CPL_METADATA, cpl->file().get());
 		} else if (!cpl->version_number()) {
-			context.bv21_error(VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->file().get());
+			context.add_note(VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER, cpl->file().get());
 		}
 
 		verify_extension_metadata(context);
@@ -1763,7 +1760,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 			DCP_ASSERT(cpl->file());
 			doc.read_file(dcp::filesystem::fix_long_path(cpl->file().get()));
 			if (!doc.optional_node_child("Signature")) {
-				context.bv21_error(VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl->file().get());
+				context.add_note(VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT, cpl->file().get());
 			}
 		}
 	}
@@ -1780,14 +1777,14 @@ verify_pkl(Context& context, shared_ptr<const PKL> pkl)
 		cxml::Document doc("PackingList");
 		doc.read_file(dcp::filesystem::fix_long_path(pkl->file().get()));
 		if (!doc.optional_node_child("Signature")) {
-			context.bv21_error(VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl->id(), pkl->file().get());
+			context.add_note(VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl->id(), pkl->file().get());
 		}
 	}
 
 	set<string> uuid_set;
 	for (auto asset: pkl->assets()) {
 		if (!uuid_set.insert(asset->id()).second) {
-			context.error(VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL, pkl->id(), pkl->file().get());
+			context.add_note(VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL, pkl->id(), pkl->file().get());
 			break;
 		}
 	}
@@ -1807,7 +1804,7 @@ verify_assetmap(Context& context, shared_ptr<const DCP> dcp)
 	set<string> uuid_set;
 	for (auto const& asset: asset_map->assets()) {
 		if (!uuid_set.insert(asset.id()).second) {
-			context.error(VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map->id(), asset_map->file().get());
+			context.add_note(VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map->id(), asset_map->file().get());
 			break;
 		}
 	}
@@ -1846,21 +1843,21 @@ dcp::verify (
 		try {
 			dcp->read (&notes, true);
 		} catch (MissingAssetmapError& e) {
-			context.error(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
 			carry_on = false;
 		} catch (ReadError& e) {
-			context.error(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
 		} catch (XMLError& e) {
-			context.error(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
 		} catch (MXFFileError& e) {
-			context.error(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
 		} catch (BadURNUUIDError& e) {
-			context.error(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
 		} catch (cxml::Error& e) {
-			context.error(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
 		} catch (xmlpp::parse_error& e) {
 			carry_on = false;
-			context.error(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
 		}
 
 		if (!carry_on) {
@@ -1868,7 +1865,7 @@ dcp::verify (
 		}
 
 		if (dcp->standard() != Standard::SMPTE) {
-			notes.push_back ({VerificationNote::Type::BV21_ERROR, VerificationNote::Code::INVALID_STANDARD});
+			notes.push_back({VerificationNote::Code::INVALID_STANDARD});
 		}
 
 		for (auto kdm: kdms) {
@@ -1883,7 +1880,7 @@ dcp::verify (
 				context.audio_channels.reset();
 				context.subtitle_language.reset();
 			} catch (ReadError& e) {
-				notes.push_back({VerificationNote::Type::ERROR, VerificationNote::Code::FAILED_READ, string(e.what())});
+				notes.push_back({VerificationNote::Code::FAILED_READ, string(e.what())});
 			}
 		}
 
@@ -1896,7 +1893,7 @@ dcp::verify (
 			stage("Checking ASSETMAP", dcp->asset_map_file().get());
 			verify_assetmap(context, dcp);
 		} else {
-			context.error(VerificationNote::Code::MISSING_ASSETMAP);
+			context.add_note(VerificationNote::Code::MISSING_ASSETMAP);
 		}
 	}
 
@@ -2190,6 +2187,140 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	}
 
 	return "";
+}
+
+
+dcp::VerificationNote::Type
+dcp::VerificationNote::type() const
+{
+	switch (_code) {
+	case Code::ALL_ENCRYPTED:
+	case Code::CORRECT_PICTURE_HASH:
+	case Code::MATCHING_CPL_HASHES:
+	case Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL:
+	case Code::NONE_ENCRYPTED:
+	case Code::VALID_CONTENT_KIND:
+	case Code::VALID_CONTENT_VERSION_LABEL_TEXT:
+	case Code::VALID_CPL_ANNOTATION_TEXT:
+	case Code::VALID_MAIN_PICTURE_ACTIVE_AREA:
+	case Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES:
+	case Code::VALID_RELEASE_TERRITORY:
+		return Type::OK;
+	case Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT:
+	case Code::INCORRECT_SUBTITLE_ENTRY_POINT:
+	case Code::INCORRECT_TIMED_TEXT_ASSET_ID:
+	case Code::INVALID_CLOSED_CAPTION_LINE_COUNT:
+	case Code::INVALID_CLOSED_CAPTION_LINE_LENGTH:
+	case Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES:
+	case Code::INVALID_EXTENSION_METADATA:
+	case Code::INVALID_PICTURE_SIZE_IN_PIXELS:
+	case Code::INVALID_LANGUAGE:
+	case Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D:
+	case Code::INVALID_PICTURE_FRAME_RATE_FOR_2K:
+	case Code::INVALID_PICTURE_FRAME_RATE_FOR_4K:
+	case Code::INVALID_SOUND_FRAME_RATE:
+	case Code::INVALID_STANDARD:
+	case Code::INVALID_SUBTITLE_START_TIME:
+	case Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES:
+	case Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES:
+	case Code::MISMATCHED_ASSET_DURATION:
+	case Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS:
+	case Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL:
+	case Code::MISMATCHED_SUBTITLE_LANGUAGES:
+	case Code::MISMATCHED_TIMED_TEXT_DURATION:
+	case Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID:
+	case Code::MISSING_CLOSED_CAPTION_ENTRY_POINT:
+	case Code::MISSING_CPL_ANNOTATION_TEXT:
+	case Code::MISSING_CPL_METADATA:
+	case Code::MISSING_CPL_METADATA_VERSION_NUMBER:
+	case Code::MISSING_EXTENSION_METADATA:
+	case Code::MISSING_FFEC_IN_FEATURE:
+	case Code::MISSING_FFMC_IN_FEATURE:
+	case Code::MISSING_HASH:
+	case Code::MISSING_MAIN_SUBTITLE_FROM_SOME_REELS:
+	case Code::MISSING_SUBTITLE_ENTRY_POINT:
+	case Code::MISSING_SUBTITLE_LANGUAGE:
+	case Code::MISSING_SUBTITLE_START_TIME:
+	case Code::PARTIALLY_ENCRYPTED:
+	case Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT:
+	case Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT:
+	case Code::INVALID_JPEG2000_TILE_SIZE:
+	case Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K:
+	case Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K:
+	case Code::INVALID_JPEG2000_CODE_BLOCK_WIDTH:
+	case Code::INVALID_JPEG2000_CODE_BLOCK_HEIGHT:
+	case Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K:
+	case Code::INVALID_JPEG2000_GUARD_BITS_FOR_4K:
+	case Code::INCORRECT_JPEG2000_POC_MARKER:
+	case Code::INVALID_JPEG2000_POC_MARKER_LOCATION:
+	case Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K:
+	case Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K:
+	case Code::MISSING_JPEG2000_TLM_MARKER:
+	case Code::INVALID_SUBTITLE_DURATION_BV21:
+		return Type::BV21_ERROR;
+	case Code::DUPLICATE_ASSET_ID_IN_ASSETMAP:
+	case Code::DUPLICATE_ASSET_ID_IN_PKL:
+	case Code::EMPTY_TEXT:
+	case Code::FAILED_READ:
+	case Code::INCORRECT_CLOSED_CAPTION_ORDERING:
+	case Code::INCORRECT_PICTURE_HASH:
+	case Code::INCORRECT_SOUND_HASH:
+	case Code::INVALID_CONTENT_KIND:
+	case Code::INVALID_CPL_NAMESPACE:
+	case Code::INVALID_DURATION:
+	case Code::INVALID_INTRINSIC_DURATION:
+	case Code::INVALID_MAIN_PICTURE_ACTIVE_AREA:
+	case Code::INVALID_MAIN_SOUND_CONFIGURATION:
+	case Code::INVALID_PICTURE_FRAME_RATE:
+	case Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
+	case Code::INVALID_SOUND_BIT_DEPTH:
+	case Code::INVALID_XML:
+	case Code::MISMATCHED_ASSET_MAP_ID:
+	case Code::MISMATCHED_CLOSED_CAPTION_VALIGN:
+	case Code::MISMATCHED_CPL_HASHES:
+	case Code::MISMATCHED_PICTURE_HASHES:
+	case Code::MISMATCHED_SOUND_CHANNEL_COUNTS:
+	case Code::MISMATCHED_SOUND_HASHES:
+	case Code::MISMATCHED_STANDARD:
+	case Code::MISSING_ASSET:
+	case Code::MISSING_ASSETMAP:
+	case Code::MISSING_CPL_CONTENT_VERSION:
+	case Code::MISSING_FONT:
+	case Code::MISSING_LOAD_FONT:
+	case Code::MISSING_LOAD_FONT_FOR_FONT:
+	case Code::MISSING_SUBTITLE:
+	case Code::SUBTITLE_OVERLAPS_REEL_BOUNDARY:
+	case Code::UNEXPECTED_DURATION:
+	case Code::UNEXPECTED_ENTRY_POINT:
+	case Code::INVALID_JPEG2000_RSIZ_FOR_2K:
+	case Code::INVALID_JPEG2000_RSIZ_FOR_4K:
+	case Code::INVALID_JPEG2000_TILE_PART_SIZE:
+	case Code::INVALID_JPEG2000_CODESTREAM:
+	case Code::INVALID_PKL_NAMESPACE:
+		return Type::ERROR;
+	case Code::EMPTY_ASSET_PATH:
+	case Code::EMPTY_CONTENT_VERSION_LABEL_TEXT:
+	case Code::EXTERNAL_ASSET:
+	case Code::INCORRECT_FFOC:
+	case Code::INCORRECT_LFOC:
+	case Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT:
+	case Code::INVALID_SUBTITLE_DURATION:
+	case Code::INVALID_SUBTITLE_FIRST_TEXT_TIME:
+	case Code::INVALID_SUBTITLE_ISSUE_DATE:
+	case Code::INVALID_SUBTITLE_LINE_COUNT:
+	case Code::INVALID_SUBTITLE_LINE_LENGTH:
+	case Code::INVALID_SUBTITLE_SPACING:
+	case Code::MISMATCHED_CPL_ANNOTATION_TEXT:
+	case Code::MISSED_CHECK_OF_ENCRYPTED:
+	case Code::MISSING_FFOC:
+	case Code::MISSING_LFOC:
+	case Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
+	case Code::NEARLY_INVALID_SUBTITLE_LINE_LENGTH:
+	case Code::THREED_ASSET_MARKED_AS_TWOD:
+		return Type::WARNING;
+	};
+
+	DCP_ASSERT(false);
 }
 
 
