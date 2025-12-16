@@ -60,6 +60,8 @@ public:
 	ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point);
 	explicit ReelAtmosAsset (std::shared_ptr<const cxml::Node>);
 
+	bool can_be_read() const override;
+
 	std::shared_ptr<const AtmosAsset> asset () const {
 		return asset_of_type<const AtmosAsset>();
 	}

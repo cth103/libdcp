@@ -615,3 +615,24 @@ SMPTETextAsset::schema_namespace() const
 
 	DCP_ASSERT(false);
 }
+
+
+
+bool
+SMPTETextAsset::can_be_read() const
+{
+	if (!MXF::can_be_read()) {
+		return false;
+	}
+
+	try {
+		texts();
+	} catch (dcp::ReadError&) {
+		return false;
+	} catch (dcp::MiscError&) {
+		return false;
+	}
+
+	return true;
+}
+

@@ -207,3 +207,25 @@ MonoJ2KPictureAsset::cpl_node_name () const
 {
 	return "MainPicture";
 }
+
+
+bool
+MonoJ2KPictureAsset::can_be_read() const
+{
+	if (!MXF::can_be_read()) {
+		return false;
+	}
+
+	try {
+		auto reader = start_read();
+		reader->set_check_hmac(false);
+		reader->get_frame(0)->xyz_image();
+	} catch (dcp::ReadError&) {
+		return false;
+	} catch (dcp::MiscError&) {
+		return false;
+	}
+
+	return true;
+}
+

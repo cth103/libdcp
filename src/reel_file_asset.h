@@ -57,6 +57,7 @@ public:
 	explicit ReelFileAsset (std::shared_ptr<const cxml::Node> node);
 
 	virtual xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
+	virtual bool can_be_read() const;
 
 	/** @return a Ref to our actual asset */
 	Ref const & asset_ref () const {

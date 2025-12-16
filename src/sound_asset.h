@@ -84,6 +84,8 @@ public:
 		DISABLED
 	};
 
+	bool can_be_read() const override;
+
 	/** @param extra_active_channels list of channels that are active in the asset, other than the basic 5.1
 	 *  which are assumed always to be active.
 	 */

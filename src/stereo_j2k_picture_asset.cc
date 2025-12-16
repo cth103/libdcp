@@ -181,3 +181,25 @@ StereoJ2KPictureAsset::equals(shared_ptr<const Asset> other, EqualityOptions con
 
 	return result;
 }
+
+
+bool
+StereoJ2KPictureAsset::can_be_read() const
+{
+	if (!MXF::can_be_read()) {
+		return false;
+	}
+
+	try {
+		auto reader = start_read();
+		reader->set_check_hmac(false);
+		reader->get_frame(0)->xyz_image(Eye::LEFT);
+	} catch (dcp::ReadError&) {
+		return false;
+	} catch (dcp::MiscError&) {
+		return false;
+	}
+
+	return true;
+}
+

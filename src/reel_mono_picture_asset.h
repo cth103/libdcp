@@ -61,6 +61,8 @@ public:
 	ReelMonoPictureAsset(std::shared_ptr<PictureAsset> asset, int64_t entry_point);
 	explicit ReelMonoPictureAsset (std::shared_ptr<const cxml::Node>);
 
+	bool can_be_read() const override;
+
 	/** @return the MonoJ2KPictureAsset that this object refers to, if applicable */
 	std::shared_ptr<const MonoJ2KPictureAsset> mono_j2k_asset() const {
 		return asset_of_type<const MonoJ2KPictureAsset>();

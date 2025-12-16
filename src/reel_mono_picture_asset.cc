@@ -42,8 +42,9 @@
 #include <libcxml/cxml.h>
 
 
-using std::string;
+using std::dynamic_pointer_cast;
 using std::shared_ptr;
+using std::string;
 using namespace dcp;
 
 
@@ -65,4 +66,15 @@ string
 ReelMonoPictureAsset::cpl_node_name() const
 {
 	return "MainPicture";
+}
+
+
+bool
+ReelMonoPictureAsset::can_be_read() const
+{
+	if (!ReelFileAsset::can_be_read()) {
+		return false;
+	}
+
+	return asset()->can_be_read();
 }

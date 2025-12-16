@@ -76,6 +76,8 @@ public:
 	MXF (Standard standard);
 	virtual ~MXF () {}
 
+	virtual bool can_be_read() const;
+
 	/** @return true if the data is encrypted */
 	bool encrypted () const {
 		return static_cast<bool>(_key_id);

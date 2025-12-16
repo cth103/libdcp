@@ -61,6 +61,8 @@ public:
 
 	explicit MonoMPEG2PictureAsset(boost::filesystem::path file);
 
+	bool can_be_read() const override;
+
 	std::shared_ptr<MPEG2PictureAssetWriter> start_write(boost::filesystem::path file, Behaviour behaviour) override;
 	std::shared_ptr<MonoMPEG2PictureAssetReader> start_read() const;
 };

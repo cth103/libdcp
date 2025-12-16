@@ -42,10 +42,11 @@
 #include <libcxml/cxml.h>
 
 
-using std::string;
-using std::pair;
+using std::dynamic_pointer_cast;
 using std::make_pair;
+using std::pair;
 using std::shared_ptr;
+using std::string;
 using namespace dcp;
 
 
@@ -82,3 +83,15 @@ ReelStereoPictureAsset::cpl_node_attribute (Standard standard) const
 
 	DCP_ASSERT (false);
 }
+
+
+bool
+ReelStereoPictureAsset::can_be_read() const
+{
+	if (!ReelFileAsset::can_be_read()) {
+		return false;
+	}
+
+	return asset()->can_be_read();
+}
+

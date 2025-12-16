@@ -60,6 +60,8 @@ public:
 	ReelStereoPictureAsset (std::shared_ptr<StereoJ2KPictureAsset> content, int64_t entry_point);
 	explicit ReelStereoPictureAsset (std::shared_ptr<const cxml::Node>);
 
+	bool can_be_read() const override;
+
 	/** @return the StereoJ2KPictureAsset that this object refers to */
 	std::shared_ptr<const StereoJ2KPictureAsset> stereo_asset () const {
 		return asset_of_type<const StereoJ2KPictureAsset>();

@@ -56,6 +56,8 @@ public:
 	ReelSMPTETextAsset(TextType type, std::shared_ptr<SMPTETextAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelSMPTETextAsset(std::shared_ptr<const cxml::Node>);
 
+	bool can_be_read() const override;
+
 	std::shared_ptr<const SMPTETextAsset> smpte_asset() const {
 		return asset_of_type<const SMPTETextAsset>();
 	}

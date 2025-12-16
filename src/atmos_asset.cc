@@ -122,3 +122,25 @@ AtmosAsset::start_write (boost::filesystem::path file)
 	/* Can't use make_shared here since the constructor is protected */
 	return shared_ptr<AtmosAssetWriter>(new AtmosAssetWriter(this, file));
 }
+
+
+bool
+AtmosAsset::can_be_read() const
+{
+	if (!MXF::can_be_read()) {
+		return false;
+	}
+
+	try {
+		auto reader = start_read();
+		reader->set_check_hmac(false);
+		reader->get_frame(0);
+	} catch (dcp::ReadError&) {
+		return false;
+	} catch (dcp::MiscError&) {
+		return false;
+	}
+
+	return true;
+}
+

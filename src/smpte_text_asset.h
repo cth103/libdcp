@@ -82,6 +82,8 @@ public:
 	 */
 	explicit SMPTETextAsset(boost::filesystem::path file);
 
+	bool can_be_read() const override;
+
 	bool equals (
 		std::shared_ptr<const Asset>,
 		EqualityOptions const&,

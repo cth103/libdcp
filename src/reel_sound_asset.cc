@@ -93,3 +93,15 @@ ReelSoundAsset::equals(shared_ptr<const ReelSoundAsset> other, EqualityOptions c
 
 	return true;
 }
+
+
+bool
+ReelSoundAsset::can_be_read() const
+{
+	if (!ReelFileAsset::can_be_read()) {
+		return false;
+	}
+
+	return asset()->can_be_read();
+}
+

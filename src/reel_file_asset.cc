@@ -107,3 +107,10 @@ ReelFileAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 	return asset;
 }
 
+
+bool
+ReelFileAsset::can_be_read() const
+{
+	return asset_ref().resolved();
+}
+

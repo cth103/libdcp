@@ -57,6 +57,8 @@ public:
 	explicit StereoJ2KPictureAsset (boost::filesystem::path file);
 	explicit StereoJ2KPictureAsset (Fraction edit_rate, Standard standard);
 
+	bool can_be_read() const override;
+
 	/** Start a progressive write to a StereoJ2KPictureAsset */
 	std::shared_ptr<J2KPictureAssetWriter> start_write(boost::filesystem::path file, Behaviour behaviour) override;
 	std::shared_ptr<StereoJ2KPictureAssetReader> start_read () const;

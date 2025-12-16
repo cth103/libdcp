@@ -104,3 +104,15 @@ ReelAtmosAsset::equals(shared_ptr<const ReelAtmosAsset> other, EqualityOptions c
 
 	return true;
 }
+
+
+bool
+ReelAtmosAsset::can_be_read() const
+{
+	if (!ReelFileAsset::can_be_read()) {
+		return false;
+	}
+
+	return asset()->can_be_read();
+}
+

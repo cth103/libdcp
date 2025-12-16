@@ -146,3 +146,10 @@ MXF::read_writer_info (ASDCP::WriterInfo const & info)
 	Kumu::bin2UUIDhex (info.AssetUUID, ASDCP::UUIDlen, buffer, sizeof (buffer));
 	return buffer;
 }
+
+
+bool
+MXF::can_be_read() const
+{
+	return !encrypted() || key();
+}

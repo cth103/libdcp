@@ -61,6 +61,8 @@ public:
 	AtmosAsset (Fraction edit_rate, int first_frame, int max_channel_count, int max_object_count, int atmos_version);
 	explicit AtmosAsset (boost::filesystem::path file);
 
+	bool can_be_read() const override;
+
 	std::shared_ptr<AtmosAssetWriter> start_write (boost::filesystem::path file);
 	std::shared_ptr<AtmosAssetReader> start_read () const;
 

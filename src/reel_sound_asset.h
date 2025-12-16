@@ -55,6 +55,8 @@ public:
 	ReelSoundAsset (std::shared_ptr<dcp::SoundAsset> content, int64_t entry_point);
 	explicit ReelSoundAsset (std::shared_ptr<const cxml::Node>);
 
+	bool can_be_read() const override;
+
 	/** @return the SoundAsset that this object refers to */
 	std::shared_ptr<const SoundAsset> asset () const {
 		return asset_of_type<const SoundAsset>();

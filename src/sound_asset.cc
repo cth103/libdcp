@@ -294,3 +294,24 @@ SoundAsset::active_channels() const
 	return _active_channels.get_value_or(_channels);
 }
 
+
+bool
+SoundAsset::can_be_read() const
+{
+	if (!MXF::can_be_read()) {
+		return false;
+	}
+
+	try {
+		auto reader = start_read();
+		reader->set_check_hmac(false);
+		reader->get_frame(0);
+	} catch (dcp::ReadError&) {
+		return false;
+	} catch (dcp::MiscError&) {
+		return false;
+	}
+
+	return true;
+}
+

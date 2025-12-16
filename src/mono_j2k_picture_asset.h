@@ -68,6 +68,8 @@ public:
 	 */
 	MonoJ2KPictureAsset(Fraction edit_rate, Standard standard);
 
+	bool can_be_read() const override;
+
 	/** Start a progressive write to a MonoJ2KPictureAsset.
 	 *  @path file File to write to.
 	 *  @path behaviour OVERWRITE_EXISTING to overwrite and potentially add to an existing file

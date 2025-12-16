@@ -116,3 +116,14 @@ ReelSMPTETextAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 }
 
 
+
+bool
+ReelSMPTETextAsset::can_be_read() const
+{
+	if (!ReelFileAsset::can_be_read()) {
+		return false;
+	}
+
+	return smpte_asset()->can_be_read();
+}
+

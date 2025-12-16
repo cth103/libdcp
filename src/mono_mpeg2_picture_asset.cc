@@ -36,6 +36,7 @@
 #include "mono_mpeg2_picture_asset.h"
 #include "mono_mpeg2_picture_asset_reader.h"
 #include "mono_mpeg2_picture_asset_writer.h"
+#include "mpeg2_transcode.h"
 #include <asdcp/AS_DCP.h>
 
 
@@ -84,3 +85,26 @@ MonoMPEG2PictureAsset::start_write(boost::filesystem::path file, Behaviour behav
 	/* Can't use make_shared here as the MonoJ2KPictureAssetWriter constructor is private */
 	return shared_ptr<MonoMPEG2PictureAssetWriter>(new MonoMPEG2PictureAssetWriter(this, file, behaviour == Behaviour::OVERWRITE_EXISTING));
 }
+
+
+bool
+MonoMPEG2PictureAsset::can_be_read() const
+{
+	if (!MXF::can_be_read()) {
+		return false;
+	}
+
+	try {
+		auto reader = start_read();
+		reader->set_check_hmac(false);
+		dcp::MPEG2Decompressor decompressor;
+		decompressor.decompress_frame(reader->get_frame(0));
+	} catch (dcp::ReadError&) {
+		return false;
+	} catch (dcp::MiscError&) {
+		return false;
+	}
+
+	return true;
+}
+
