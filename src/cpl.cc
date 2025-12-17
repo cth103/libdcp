@@ -850,3 +850,31 @@ CPL::can_be_read() const
 	return std::all_of(r.begin(), r.end(), [](shared_ptr<const Reel> reel) { return reel->can_be_read(); });
 }
 
+
+PictureEncoding
+CPL::picture_encoding() const
+{
+	PictureEncoding encoding = PictureEncoding::NO_VIDEO;
+
+	for (auto reel: reels()) {
+		auto const reel_encoding = reel->picture_encoding();
+		switch (reel_encoding) {
+		case PictureEncoding::NO_VIDEO:
+			break;
+		case PictureEncoding::JPEG2000:
+		case PictureEncoding::MPEG2:
+			if (encoding == PictureEncoding::NO_VIDEO) {
+				encoding = reel_encoding;
+			} else if (encoding != reel_encoding) {
+				encoding = PictureEncoding::MIXED;
+			}
+			break;
+		case PictureEncoding::MIXED:
+			encoding = PictureEncoding::MIXED;
+			break;
+		}
+	}
+
+	return encoding;
+}
+

@@ -47,6 +47,7 @@
 #include "key.h"
 #include "language_tag.h"
 #include "main_sound_configuration.h"
+#include "picture_encoding.h"
 #include "profile.h"
 #include "rating.h"
 #include "verify.h"
@@ -351,6 +352,9 @@ public:
 	bool read_composition_metadata() const {
 		return _read_composition_metadata;
 	}
+
+	/** @return picture encoding scheme used by assets in this CPL */
+	PictureEncoding picture_encoding() const;
 
 	static std::string static_pkl_type(Standard standard);
 

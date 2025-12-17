@@ -76,3 +76,29 @@ BOOST_AUTO_TEST_CASE(interop_cpl_with_metadata_test)
 	BOOST_CHECK_EQUAL(cpl.annotation_text().get_value_or(""), "EyeLeader2sec_XSN_F-133_XX-XX_MOS_4K_20230124_EYE_IOP_OV");
 }
 
+
+BOOST_AUTO_TEST_CASE(cpl_picture_encoding_test1)
+{
+	dcp::DCP dcp(private_test / "TONEPLATES-SMPTE-PLAINTEXT_TST_F_XX-XX_ITL-TD_51-XX_2K_WOE_20111001_WOE_OV");
+	dcp.read();
+	BOOST_REQUIRE_EQUAL(dcp.cpls().size(), 1U);
+	BOOST_CHECK(dcp.cpls()[0]->picture_encoding() == dcp::PictureEncoding::JPEG2000);
+}
+
+
+BOOST_AUTO_TEST_CASE(cpl_picture_encoding_test2)
+{
+	dcp::DCP dcp(private_test / "data" / "mas");
+	dcp.read();
+	BOOST_REQUIRE_EQUAL(dcp.cpls().size(), 1U);
+	BOOST_CHECK(dcp.cpls()[0]->picture_encoding() == dcp::PictureEncoding::MPEG2);
+}
+
+
+BOOST_AUTO_TEST_CASE(cpl_picture_encoding_test3)
+{
+	dcp::DCP dcp(private_test / "data" / "SMPTE_TST-1-Bv21_S_EN-EN-CCAP_US_51-HI-VI_2K_ISDCF_20170110_DTB_SMPTE_OV");
+	dcp.read();
+	BOOST_REQUIRE_EQUAL(dcp.cpls().size(), 1U);
+	BOOST_CHECK(dcp.cpls()[0]->picture_encoding() == dcp::PictureEncoding::JPEG2000);
+}
