@@ -691,3 +691,12 @@ DCP::cpl_summaries() const
 	return cpls;
 }
 
+
+bool
+DCP::can_be_read() const
+{
+	auto c = cpls();
+	return std::all_of(c.begin(), c.end(), [](shared_ptr<const CPL> cpl) { return cpl->can_be_read(); });
+}
+
+

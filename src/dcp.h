@@ -204,6 +204,8 @@ public:
 		return _asset_map;
 	}
 
+	bool can_be_read() const;
+
 	static std::vector<boost::filesystem::path> directories_from_files (std::vector<boost::filesystem::path> files);
 
 private:
