@@ -152,6 +152,8 @@ public:
 
 	void resolve_refs (std::vector<std::shared_ptr<Asset>>);
 
+	PictureEncoding picture_encoding() const;
+
 private:
 	friend struct ::dcp_add_kdm_test;
 

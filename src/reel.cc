@@ -524,3 +524,19 @@ Reel::can_be_read() const
 	return std::all_of(assets.begin(), assets.end(), [](shared_ptr<const ReelFileAsset> asset) { return asset->can_be_read(); });
 }
 
+
+PictureEncoding
+Reel::picture_encoding() const
+{
+	if (!_main_picture || !_main_picture->asset_ref().resolved()) {
+		return PictureEncoding::NO_VIDEO;
+	}
+
+	auto pic = _main_picture->asset_ref().asset();
+	if (dynamic_pointer_cast<MPEG2PictureAsset>(pic)) {
+		return PictureEncoding::MPEG2;
+	}
+
+	return PictureEncoding::JPEG2000;
+}
+
