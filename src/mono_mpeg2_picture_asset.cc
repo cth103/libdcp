@@ -90,6 +90,7 @@ MonoMPEG2PictureAsset::start_write(boost::filesystem::path file, Behaviour behav
 bool
 MonoMPEG2PictureAsset::can_be_read() const
 {
+#ifdef LIBDCP_MPEG2_TRANSCODE
 	if (!MXF::can_be_read()) {
 		return false;
 	}
@@ -106,5 +107,8 @@ MonoMPEG2PictureAsset::can_be_read() const
 	}
 
 	return true;
+#else
+	return false;
+#endif
 }
 

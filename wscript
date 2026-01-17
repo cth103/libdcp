@@ -69,6 +69,7 @@ def options(opt):
     opt.add_option('--enable-openmp', action='store_true', default=False, help='enable use of OpenMP')
     opt.add_option('--openmp', default='gomp', help='specify OpenMP Library to use: omp, gomp (default), iomp')
     opt.add_option('--c++17', action='store_true', default=False, help='build with C++17 and libxml++-4.0')
+    opt.add_option('--disable-mpeg2-transcode', action='store_true', default=False, help='build without support for MPEG2 transcoding (then ffmpeg is not required)')
 
 def configure(conf):
     conf.load('compiler_cxx')
@@ -98,6 +99,7 @@ def configure(conf):
     conf.env.DISABLE_BENCHMARKS = conf.options.disable_benchmarks
     conf.env.DISABLE_EXAMPLES = conf.options.disable_examples
     conf.env.DISABLE_DUMPIMAGE = conf.options.disable_dumpimage
+    conf.env.DISABLE_MPEG2_TRANSCODE = conf.options.disable_mpeg2_transcode
     conf.env.STATIC = conf.options.static
     conf.env.API_VERSION = API_VERSION
 
@@ -131,6 +133,9 @@ def configure(conf):
 
     if conf.env.TARGET_LINUX:
         conf.check(lib='dl', uselib_store='DL', msg='Checking for library dl')
+
+    if not conf.env.DISABLE_MPEG2_TRANSCODE:
+        conf.env.append_value('CXXFLAGS', '-DLIBDCP_MPEG2_TRANSCODE')
 
     conf.check_cfg(package='openssl', args='--cflags --libs', uselib_store='OPENSSL', mandatory=True)
     conf.check_cxx(fragment="""
@@ -280,8 +285,9 @@ def configure(conf):
                    lib=boost_libs('date_time'),
                    uselib_store='BOOST_DATETIME')
 
-    conf.check_cfg(package='libavcodec', args='--cflags --libs', uselib_store='AVCODEC', mandatory=True)
-    conf.check_cfg(package='libavutil', args='--cflags --libs', uselib_store='AVUTIL', mandatory=True)
+    if not conf.options.disable_mpeg2_transcode:
+        conf.check_cfg(package='libavcodec', args='--cflags --libs', uselib_store='AVCODEC', mandatory=True)
+        conf.check_cfg(package='libavutil', args='--cflags --libs', uselib_store='AVUTIL', mandatory=True)
 
     conf.check_cfg(package='fmt', args='--cflags --libs', uselib_store='FMT', mandatory=True)
     conf.check_cxx(header_name="fast_float/fast_float.h", uselib_store='FAST_FLOAT', mandatory=True)

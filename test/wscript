@@ -99,8 +99,6 @@ def build(bld):
                  make_digest_test.cc
                  markers_test.cc
                  mca_test.cc
-                 mono_mpeg2_picture_read_test.cc
-                 mono_mpeg2_picture_write_test.cc
                  kdm_test.cc
                  key_test.cc
                  language_tag_test.cc
@@ -129,6 +127,12 @@ def build(bld):
                  """
     obj.target = 'tests'
     obj.install_path = ''
+
+    if bld.env.LIBDCP_MPEG2_TRANSCODE:
+        obj.source += """
+                      mono_mpeg2_picture_read_test.cc
+                      mono_mpeg2_picture_write_test.cc
+                      """
 
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'subs_in_out'

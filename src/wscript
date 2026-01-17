@@ -58,7 +58,6 @@ def build(bld):
              exceptions.cc
              file.cc
              filesystem.cc
-             ffmpeg_image.cc
              font_asset.cc
              fsk.cc
              gamma_transfer_function.cc
@@ -86,7 +85,6 @@ def build(bld):
              mono_mpeg2_picture_frame.cc
              mpeg2_picture_asset.cc
              mpeg2_picture_asset_writer.cc
-             mpeg2_transcode.cc
              mxf.cc
              name_format.cc
              object.cc
@@ -181,7 +179,6 @@ def build(bld):
               identity_transfer_function.h
               interop_load_font_node.h
               interop_text_asset.h
-              ffmpeg_image.h
               j2k_picture_asset.h
               j2k_picture_asset_writer.h
               j2k_transcode.h
@@ -204,7 +201,6 @@ def build(bld):
               mono_mpeg2_picture_asset_writer.h
               mono_mpeg2_picture_frame.h
               mpeg2_picture_asset.h
-              mpeg2_transcode.h
               mxf.h
               name_format.h
               object.h
@@ -264,6 +260,15 @@ def build(bld):
               warnings.h
               """
 
+    if not bld.env.DISABLE_MPEG2_TRANSCODE:
+        source += """
+                  ffmpeg_image.cc
+                  mpeg2_transcode.cc
+                  """
+        headers += """
+                   ffmpeg_image.h
+                   mpeg2_transcode.h
+                   """
  
     uselib = 'BOOST_FILESYSTEM BOOST_SIGNALS2 BOOST_DATETIME OPENSSL SIGC++ LIBXML++ OPENJPEG CXML XMLSEC1 ASDCPLIB_DCPOMATIC XERCES AVCODEC AVUTIL FMT FAST_FLOAT HARU'
 
