@@ -53,6 +53,7 @@ namespace dcp {
 class ReelFileAsset : public ReelAsset
 {
 public:
+	ReelFileAsset(boost::optional<std::string> key_id, std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point, boost::optional<std::string> hash);
 	ReelFileAsset (std::shared_ptr<Asset> asset, boost::optional<std::string> key_id, std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point);
 	explicit ReelFileAsset (std::shared_ptr<const cxml::Node> node);
 
