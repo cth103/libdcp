@@ -505,7 +505,7 @@ DCP::write_xml(
 
 	/* The assets may have changed since we read the PKL, so re-add them */
 	pkl->clear_assets();
-	for (auto asset: assets()) {
+	for (auto asset: assets(true)) {
 		asset->add_to_pkl(pkl, _directory);
 	}
 
@@ -527,7 +527,7 @@ DCP::write_xml(
 	/* The assets may have changed since we read the asset map, so re-add them */
 	_asset_map->clear_assets();
 	_asset_map->add_asset(pkl->id(), _directory / pkl_filename, true);
-	for (auto asset: assets()) {
+	for (auto asset: assets(true)) {
 		asset->add_to_assetmap(*_asset_map, _directory);
 	}
 

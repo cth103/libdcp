@@ -545,3 +545,28 @@ BOOST_AUTO_TEST_CASE(hashes_preserved_when_loading_corrupted_dcp)
 	 */
 	BOOST_CHECK_EQUAL(reel->main_picture()->asset_ref()->hash(), new_hash);
 }
+
+
+BOOST_AUTO_TEST_CASE(can_write_vf_xml)
+{
+	auto dcp = dcp::DCP("build/test/can_write_vf_xml");
+	auto cpl = std::make_shared<dcp::CPL>("annotate", dcp::ContentKind::FEATURE, dcp::Standard::SMPTE);
+	auto picture = std::make_shared<dcp::ReelMonoPictureAsset>(
+		simple_picture("build/test/can_write_vf_xml", ""),
+		0
+	);
+	auto sound = std::make_shared<dcp::ReelSoundAsset>(
+		dcp::make_uuid(), dcp::Fraction(24, 1), 24, 0, boost::none, boost::none
+	);
+	auto reel = std::make_shared<dcp::Reel>(
+		picture,
+		sound,
+		std::shared_ptr<dcp::ReelTextAsset>(),
+		std::shared_ptr<dcp::ReelMarkersAsset>(),
+		std::shared_ptr<dcp::ReelAtmosAsset>()
+	);
+	cpl->add(reel);
+	dcp.add(cpl);
+	dcp.write_xml();
+}
+
