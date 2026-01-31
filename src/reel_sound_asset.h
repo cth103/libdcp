@@ -53,7 +53,7 @@ class ReelSoundAsset : public ReelFileAsset
 {
 public:
 	ReelSoundAsset(std::string id, dcp::Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point, boost::optional<std::string> hash, boost::optional<std::string> key_id);
-	ReelSoundAsset (std::shared_ptr<dcp::SoundAsset> content, int64_t entry_point);
+	ReelSoundAsset(std::shared_ptr<dcp::SoundAsset> content, int64_t entry_point);
 	explicit ReelSoundAsset (std::shared_ptr<const cxml::Node>);
 
 	bool can_be_read() const override;

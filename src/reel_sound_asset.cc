@@ -53,7 +53,7 @@ using namespace dcp;
 
 
 ReelSoundAsset::ReelSoundAsset(std::string id, dcp::Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point, boost::optional<std::string> hash, boost::optional<std::string> key_id)
-	: ReelFileAsset(key_id, id, edit_rate, intrinsic_duration, entry_point, hash)
+	: ReelFileAsset(id, edit_rate, intrinsic_duration, entry_point, hash, key_id)
 {
 
 }

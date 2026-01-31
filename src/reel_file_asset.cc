@@ -52,7 +52,7 @@ using boost::optional;
 using namespace dcp;
 
 
-ReelFileAsset::ReelFileAsset(boost::optional<std::string> key_id, std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point, optional<string> hash)
+ReelFileAsset::ReelFileAsset(std::string id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point, optional<string> hash, boost::optional<std::string> key_id)
 	: ReelAsset(id, edit_rate, intrinsic_duration, entry_point)
 	, _asset_ref(id)
 	, _hash(hash)
