@@ -87,6 +87,9 @@ static string const cpl_metadata_ns = "http://www.smpte-ra.org/schemas/429-16/20
 static string const mca_sub_descriptors_ns = "http://isdcf.com/ns/cplmd/mca";
 static string const smpte_395_ns = "http://www.smpte-ra.org/reg/395/2014/13/1/aaf";
 static string const smpte_335_ns = "http://www.smpte-ra.org/reg/335/2012";
+auto constexpr profile_scope = "http://isdcf.com/ns/cplmd/app";
+auto constexpr profile_name = "Application";
+auto constexpr profile_tag = "DCP Constraints Profile";
 
 
 CPL::CPL(string annotation_text, ContentKind content_kind, Standard standard, Profile profile)
@@ -103,6 +106,10 @@ CPL::CPL(string annotation_text, ContentKind content_kind, Standard standard, Pr
 	ContentVersion cv;
 	cv.label_text = cv.id + LocalTime().as_string();
 	_content_versions.push_back(cv);
+
+	/* SMPTE Bv2.1 8.6.3 */
+	string const profile_value = _profile == Profile::SMPTE_BV20 ? "2.0" : "2.1";
+	set_extension_metadata_value(profile_scope, profile_name, profile_tag, fmt::format("SMPTE-RDD-52:2020-Bv{}", profile_value));
 }
 
 
@@ -371,33 +378,12 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 		}
 	}
 
-	auto eml = node->optional_node_child("ExtensionMetadataList");
-
-	auto extension_metadata = [eml](string scope, string name, string property) -> boost::optional<std::string> {
-		if (!eml) {
-			return {};
+	_extension_metadata.clear();
+	if (auto eml = node->optional_node_child("ExtensionMetadataList")) {
+		for (auto const& metadata: eml->node_children("ExtensionMetadata")) {
+			_extension_metadata.push_back(ExtensionMetadata(metadata));
 		}
-
-		for (auto i: eml->node_children("ExtensionMetadata")) {
-			auto xml_scope = i->optional_string_attribute("scope");
-			auto xml_name = i->optional_string_child("Name");
-			if (xml_scope && *xml_scope == scope && xml_name && *xml_name == name) {
-				auto property_list = i->node_child("PropertyList");
-				for (auto j: property_list->node_children("Property")) {
-					auto property_name = j->optional_string_child("Name");
-					auto property_value = j->optional_string_child("Value");
-					if (property_name && property_value && *property_name == property) {
-						return property_value;
-					}
-				}
-			}
-		}
-
-		return {};
-	};
-
-	_sign_language_video_language = extension_metadata("http://isdcf.com/2017/10/SignLanguageVideo", "Sign Language Video", "Language Tag");
-	_dolby_edr_image_transfer_function = extension_metadata("http://www.dolby.com/schemas/2014/EDR-Metadata", "Dolby EDR", "image transfer function");
+	}
 
 	if (node->optional_node_child("MCASubDescriptors")) {
 		_profile = Profile::SMPTE_BV21;
@@ -601,27 +587,11 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node) const
 		cxml::add_child(meta, "MainSubtitleLanguageList", string("meta"))->add_child_text(lang);
 	}
 
-	auto metadata_list = cxml::add_child(meta, "ExtensionMetadataList", string("meta"));
-
-	auto add_extension_metadata = [metadata_list](string scope, string name, string property_name, string property_value) {
-		auto extension = cxml::add_child(metadata_list, "ExtensionMetadata", string("meta"));
-		extension->set_attribute("scope", scope);
-		cxml::add_child(extension, "Name", string("meta"))->add_child_text(name);
-		auto property = cxml::add_child(cxml::add_child(extension, "PropertyList", string("meta")), "Property", string("meta"));
-		cxml::add_child(property, "Name", string("meta"))->add_child_text(property_name);
-		cxml::add_child(property, "Value", string("meta"))->add_child_text(property_value);
-	};
-
-	string const profile_name = _profile == Profile::SMPTE_BV20 ? "2.0" : "2.1";
-	/* SMPTE Bv2.1 8.6.3 */
-	add_extension_metadata("http://isdcf.com/ns/cplmd/app", "Application", "DCP Constraints Profile", fmt::format("SMPTE-RDD-52:2020-Bv{}", profile_name));
-
-	if (_sign_language_video_language) {
-		add_extension_metadata("http://isdcf.com/2017/10/SignLanguageVideo", "Sign Language Video", "Language Tag", *_sign_language_video_language);
-	}
-
-	if (_dolby_edr_image_transfer_function) {
-		add_extension_metadata("http://www.dolby.com/schemas/2014/EDR-Metadata", "Dolby EDR", "image transfer function", *_dolby_edr_image_transfer_function);
+	if (!_extension_metadata.empty()) {
+		auto list = cxml::add_child(meta, "meta:ExtensionMetadataList");
+		for (auto metadata: _extension_metadata) {
+			metadata.as_xml(list);
+		}
 	}
 
 	if (_profile == Profile::SMPTE_BV21) {
@@ -910,3 +880,86 @@ CPL::picture_encoding() const
 	return encoding;
 }
 
+
+optional<string>
+CPL::extension_metadata_value(string const& scope, string const& name, string const& property_name) const
+{
+	for (auto const& metadata: _extension_metadata) {
+		if (metadata.scope == scope && metadata.name == name) {
+			for (auto const& property: metadata.properties) {
+				if (property.name == property_name) {
+					return property.value;
+				}
+			}
+		}
+	}
+
+	return {};
+}
+
+
+void
+CPL::set_extension_metadata_value(string const& scope, string const& name, string const& property_name, string const& value)
+{
+	for (auto& metadata: _extension_metadata) {
+		if (metadata.scope == scope && metadata.name == name) {
+			for (auto& property: metadata.properties) {
+				if (property.name == property_name) {
+					property.value = value;
+					return;
+				}
+			}
+		}
+	}
+
+	_extension_metadata.push_back(
+		ExtensionMetadata(scope, name, { ExtensionMetadata::Property(property_name, value) })
+	);
+}
+
+
+auto constexpr sign_language_scope = "http://isdcf.com/2017/10/SignLanguageVideo";
+auto constexpr sign_language_name = "Sign Language Video";
+auto constexpr sign_language_tag = "Language Tag";
+
+
+optional<string>
+CPL::sign_language_video_language() const
+{
+	return extension_metadata_value(sign_language_scope, sign_language_name, sign_language_tag);
+}
+
+
+void
+CPL::set_sign_language_video_language(dcp::LanguageTag language)
+{
+	set_extension_metadata_value(sign_language_scope, sign_language_name, sign_language_tag, language.as_string());
+}
+
+
+auto constexpr dolby_edr_image_transfer_function_scope = "http://www.dolby.com/schemas/2014/EDR-Metadata";
+auto constexpr dolby_edr_image_transfer_function_name = "Dolby EDR";
+auto constexpr dolby_edr_image_transfer_function_tag = "image transfer function";
+
+
+optional<string>
+CPL::dolby_edr_image_transfer_function() const
+{
+	return extension_metadata_value(
+		dolby_edr_image_transfer_function_scope,
+		dolby_edr_image_transfer_function_name,
+		dolby_edr_image_transfer_function_tag
+	);
+}
+
+
+void
+CPL::set_dolby_edr_image_transfer_function(string const& function)
+{
+	set_extension_metadata_value(
+		dolby_edr_image_transfer_function_scope,
+		dolby_edr_image_transfer_function_name,
+		dolby_edr_image_transfer_function_tag,
+		function
+	);
+}

@@ -44,6 +44,7 @@
 #include "asset.h"
 #include "certificate.h"
 #include "content_kind.h"
+#include "extension_metadata.h"
 #include "key.h"
 #include "language_tag.h"
 #include "main_sound_configuration.h"
@@ -323,21 +324,13 @@ public:
 
 	void set_additional_subtitle_languages(std::vector<dcp::LanguageTag> const& lang);
 
-	void set_sign_language_video_language(dcp::LanguageTag lang) {
-		_sign_language_video_language = lang.as_string();
-	}
+	void set_sign_language_video_language(dcp::LanguageTag lang);
 
-	boost::optional<std::string> sign_language_video_language() const {
-		return _sign_language_video_language;
-	}
+	boost::optional<std::string> sign_language_video_language() const;
 
-	void set_dolby_edr_image_transfer_function(std::string function) {
-		_dolby_edr_image_transfer_function = function;
-	}
+	void set_dolby_edr_image_transfer_function(std::string const& function);
 
-	boost::optional<std::string> dolby_edr_image_transfer_function() const {
-		return _dolby_edr_image_transfer_function;
-	}
+	boost::optional<std::string> dolby_edr_image_transfer_function() const;
 
 	Standard standard() const {
 		return _standard;
@@ -369,6 +362,13 @@ private:
 	void maybe_write_composition_metadata_asset(xmlpp::Element* node) const;
 	void read_composition_metadata_asset(cxml::ConstNodePtr node, std::vector<dcp::VerificationNote>* notes);
 	std::vector<MCASubDescriptor> create_mca_subdescriptors(std::shared_ptr<const SoundAsset> asset) const;
+	boost::optional<std::string> extension_metadata_value(std::string const& scope, std::string const& name, std::string const& property) const;
+	void set_extension_metadata_value(
+		std::string const& scope,
+		std::string const& name,
+		std::string const& property,
+		std::string const& value
+	);
 
 	std::string _issuer;
 	std::string _creator;
@@ -404,9 +404,8 @@ private:
 	boost::optional<dcp::Size> _main_picture_active_area;
 	/* See note for _release_territory above */
 	std::vector<std::string> _additional_subtitle_languages;
-	boost::optional<std::string> _sign_language_video_language;
-	boost::optional<std::string> _dolby_edr_image_transfer_function;
 	std::vector<MCASubDescriptor> _mca_sub_descriptors;
+	std::vector<ExtensionMetadata> _extension_metadata;
 	bool _read_composition_metadata = false;
 
 	std::vector<std::shared_ptr<Reel>> _reels;

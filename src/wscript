@@ -56,6 +56,7 @@ def build(bld):
              decrypted_kdm_key.cc
              encrypted_kdm.cc
              exceptions.cc
+             extension_metadata.cc
              file.cc
              filesystem.cc
              font_asset.cc
@@ -168,6 +169,7 @@ def build(bld):
               encrypted_kdm.h
               equality_options.h
               exceptions.h
+              extension_metadata.h
               file.h
               filesystem.h
               font_asset.h
