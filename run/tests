@@ -30,6 +30,11 @@ while [[ $# -gt 0 ]]; do
         type="callgrind"
         shift
         ;;
+        --private)
+        private=$2
+        shift
+        shift
+        ;;
         *)
         break
         ;;
