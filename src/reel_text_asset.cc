@@ -57,7 +57,6 @@ ReelTextAsset::ReelTextAsset(TextType type, std::shared_ptr<TextAsset> asset, Fr
 	: ReelFileAsset (
 		asset,
 		dynamic_pointer_cast<SMPTETextAsset>(asset) ? dynamic_pointer_cast<SMPTETextAsset>(asset)->key_id() : boost::none,
-		asset->id(),
 		edit_rate,
 		intrinsic_duration,
 		entry_point

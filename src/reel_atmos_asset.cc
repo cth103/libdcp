@@ -54,7 +54,7 @@ using namespace dcp;
 
 
 ReelAtmosAsset::ReelAtmosAsset (std::shared_ptr<AtmosAsset> asset, int64_t entry_point)
-	: ReelFileAsset (asset, asset->key_id(), asset->id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
+	: ReelFileAsset(asset, asset->key_id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
 {
 
 }
