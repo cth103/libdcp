@@ -56,10 +56,10 @@ using namespace dcp;
 ReelTextAsset::ReelTextAsset(TextType type, std::shared_ptr<TextAsset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
 	: ReelFileAsset (
 		asset,
-		dynamic_pointer_cast<SMPTETextAsset>(asset) ? dynamic_pointer_cast<SMPTETextAsset>(asset)->key_id() : boost::none,
 		edit_rate,
 		intrinsic_duration,
-		entry_point
+		entry_point,
+		dynamic_pointer_cast<SMPTETextAsset>(asset) ? dynamic_pointer_cast<SMPTETextAsset>(asset)->key_id() : boost::none
 		)
 	, _type(type)
 {

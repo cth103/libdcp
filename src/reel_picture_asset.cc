@@ -61,7 +61,7 @@ using namespace dcp;
 
 
 ReelPictureAsset::ReelPictureAsset(shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelFileAsset(asset, asset->key_id(), asset->edit_rate(), asset->intrinsic_duration(), entry_point)
+	: ReelFileAsset(asset, asset->edit_rate(), asset->intrinsic_duration(), entry_point, asset->key_id())
 	, _frame_rate (asset->frame_rate ())
 	, _screen_aspect_ratio (asset->screen_aspect_ratio ())
 {

@@ -62,7 +62,7 @@ ReelFileAsset::ReelFileAsset(std::string id, Fraction edit_rate, int64_t intrins
 }
 
 
-ReelFileAsset::ReelFileAsset(shared_ptr<Asset> asset, optional<string> key_id, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point)
+ReelFileAsset::ReelFileAsset(shared_ptr<Asset> asset, Fraction edit_rate, int64_t intrinsic_duration, int64_t entry_point, optional<string> key_id)
 	: ReelAsset(asset->id(), edit_rate, intrinsic_duration, entry_point)
 	, _asset_ref (asset)
 	, _hash (asset->hash())
