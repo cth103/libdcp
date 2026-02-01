@@ -47,6 +47,7 @@
 #include "key.h"
 #include "language_tag.h"
 #include "main_sound_configuration.h"
+#include "mca_sub_descriptor.h"
 #include "picture_encoding.h"
 #include "profile.h"
 #include "rating.h"
@@ -367,7 +368,7 @@ private:
 
 	void maybe_write_composition_metadata_asset(xmlpp::Element* node) const;
 	void read_composition_metadata_asset(cxml::ConstNodePtr node, std::vector<dcp::VerificationNote>* notes);
-	void write_mca_subdescriptors(xmlpp::Element* parent, std::shared_ptr<const SoundAsset> asset) const;
+	std::vector<MCASubDescriptor> create_mca_subdescriptors(std::shared_ptr<const SoundAsset> asset) const;
 
 	std::string _issuer;
 	std::string _creator;
@@ -381,6 +382,8 @@ private:
 	 *  or the one read in from the existing CPL.
 	 */
 	std::string _cpl_metadata_id = make_uuid();
+	boost::optional<Fraction> _cpl_metadata_edit_rate;
+	boost::optional<int64_t> _cpl_metadata_intrinsic_duration;
 	/** Human-readable name of the composition, without any metadata (i.e. no -FTR-EN-XX- etc.) */
 	boost::optional<std::string> _full_content_title_text;
 	boost::optional<std::string> _full_content_title_text_language;
@@ -403,6 +406,7 @@ private:
 	std::vector<std::string> _additional_subtitle_languages;
 	boost::optional<std::string> _sign_language_video_language;
 	boost::optional<std::string> _dolby_edr_image_transfer_function;
+	std::vector<MCASubDescriptor> _mca_sub_descriptors;
 	bool _read_composition_metadata = false;
 
 	std::vector<std::shared_ptr<Reel>> _reels;

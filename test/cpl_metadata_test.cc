@@ -507,3 +507,33 @@ BOOST_AUTO_TEST_CASE(check_dolby_edr_metadata)
 	BOOST_CHECK_EQUAL(check.dolby_edr_image_transfer_function().get_value_or(""), "PQ10K");
 }
 
+
+BOOST_AUTO_TEST_CASE(cpl_metadata_passthrough)
+{
+	boost::filesystem::path tmp = "build/test/ak";
+	dcp::filesystem::remove_all(tmp);
+
+	/* Plain dcp::filesystem::copy does not seem work on Ubuntu 16.04 */
+	dcp::filesystem::create_directory(tmp);
+	for (auto file: boost::filesystem::directory_iterator(private_test / "ak")) {
+		dcp::filesystem::copy_file(file, tmp / file.path().filename());
+	}
+
+	dcp::DCP dcp("build/test/ak");
+	dcp.read();
+
+	auto signer = make_shared<dcp::CertificateChain>();
+	signer->add(dcp::Certificate(dcp::file_to_string("test/ref/crypt/ca.self-signed.pem")));
+	signer->add(dcp::Certificate(dcp::file_to_string("test/ref/crypt/intermediate.signed.pem")));
+	signer->add(dcp::Certificate(dcp::file_to_string("test/ref/crypt/leaf.signed.pem")));
+	signer->set_key(dcp::file_to_string("test/ref/crypt/leaf.key"));
+
+	dcp.write_xml(signer);
+
+	check_xml(
+		dcp::file_to_string(private_test / "ak" / "cpl_48b6b1d3-37fd-4782-8ad1-f883e5020d47.xml"),
+		dcp::file_to_string(boost::filesystem::path("build/test/ak") / "cpl_48b6b1d3-37fd-4782-8ad1-f883e5020d47.xml"),
+		{"Signer", "Signature"}
+	);
+}
+

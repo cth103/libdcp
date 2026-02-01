@@ -272,6 +272,9 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 {
 	_cpl_metadata_id = remove_urn_uuid(node->string_child("Id"));
 
+	_cpl_metadata_edit_rate = dcp::Fraction(node->string_child("EditRate"));
+	_cpl_metadata_intrinsic_duration = node->number_child<int64_t>("IntrinsicDuration");
+
 	/* FullContentTitleText is compulsory but in DoM #2295 we saw a commercial tool which
 	 * apparently didn't include it, so as usual we have to be defensive.
 	 */
@@ -398,44 +401,51 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 
 	if (node->optional_node_child("MCASubDescriptors")) {
 		_profile = Profile::SMPTE_BV21;
+		for (auto descriptor: node->node_child("MCASubDescriptors")->node_children()) {
+			if (!descriptor->is_text()) {
+				_mca_sub_descriptors.push_back(MCASubDescriptor(descriptor));
+			}
+		}
 	} else {
 		_profile = Profile::SMPTE_BV20;
 	}
 }
 
 
-void
-CPL::write_mca_subdescriptors(xmlpp::Element* parent, shared_ptr<const SoundAsset> asset) const
+vector<MCASubDescriptor>
+CPL::create_mca_subdescriptors(shared_ptr<const SoundAsset> asset) const
 {
+	vector<MCASubDescriptor> descriptors;
+
 	auto reader = asset->start_read();
+
 	ASDCP::MXF::SoundfieldGroupLabelSubDescriptor* soundfield;
 	ASDCP::Result_t r = reader->reader()->OP1aHeader().GetMDObjectByType(
 		asdcp_smpte_dict->ul(ASDCP::MDD_SoundfieldGroupLabelSubDescriptor),
 		reinterpret_cast<ASDCP::MXF::InterchangeObject**>(&soundfield)
 		);
+
 	if (KM_SUCCESS(r)) {
-		auto mca_subs = cxml::add_child(parent, "mca:MCASubDescriptors");
-		mca_subs->set_namespace_declaration(mca_sub_descriptors_ns, "mca");
-		mca_subs->set_namespace_declaration(smpte_395_ns, "r0");
-		mca_subs->set_namespace_declaration(smpte_335_ns, "r1");
-		auto sf = cxml::add_child(mca_subs, "SoundfieldGroupLabelSubDescriptor", string("r0"));
+		MCASubDescriptor descriptor("SoundfieldGroupLabelSubDescriptor");
 		char buffer[64];
 		soundfield->InstanceUID.EncodeString(buffer, sizeof(buffer));
-		cxml::add_child(sf, "InstanceID", string("r1"))->add_child_text("urn:uuid:" + string(buffer));
+		descriptor.instance_id = buffer;
 		soundfield->MCALabelDictionaryID.EncodeString(buffer, sizeof(buffer));
-		cxml::add_child(sf, "MCALabelDictionaryID", string("r1"))->add_child_text("urn:smpte:ul:" + string(buffer));
+		descriptor.mca_label_dictionary_id = "urn:smpte:ul:" + string(buffer);
 		soundfield->MCALinkID.EncodeString(buffer, sizeof(buffer));
-		cxml::add_child(sf, "MCALinkID", string("r1"))->add_child_text("urn:uuid:" + string(buffer));
+		descriptor.mca_link_id = buffer;
 		soundfield->MCATagSymbol.EncodeString(buffer, sizeof(buffer));
-		cxml::add_child(sf, "MCATagSymbol", string("r1"))->add_child_text(buffer);
+		descriptor.mca_tag_symbol = buffer;
 		if (!soundfield->MCATagName.empty()) {
 			soundfield->MCATagName.get().EncodeString(buffer, sizeof(buffer));
-			cxml::add_child(sf, "MCATagName", string("r1"))->add_child_text(buffer);
+			descriptor.mca_tag_name = buffer;
 		}
 		if (!soundfield->RFC5646SpokenLanguage.empty()) {
 			soundfield->RFC5646SpokenLanguage.get().EncodeString(buffer, sizeof(buffer));
-			cxml::add_child(sf, "RFC5646SpokenLanguage", string("r1"))->add_child_text(buffer);
+			descriptor.rfc5646_spoken_language = buffer;
 		}
+
+		descriptors.push_back(descriptor);
 
 		/* Find the MCA subdescriptors in the MXF so that we can also write them here */
 		list<ASDCP::MXF::InterchangeObject*> channels;
@@ -445,33 +455,36 @@ CPL::write_mca_subdescriptors(xmlpp::Element* parent, shared_ptr<const SoundAsse
 			);
 
 		for (auto i: channels) {
+			MCASubDescriptor descriptor("AudioChannelLabelSubDescriptor");
 			auto channel = reinterpret_cast<ASDCP::MXF::AudioChannelLabelSubDescriptor*>(i);
-			auto ch = cxml::add_child(mca_subs, "AudioChannelLabelSubDescriptor", string("r0"));
 			channel->InstanceUID.EncodeString(buffer, sizeof(buffer));
-			cxml::add_child(ch, "InstanceID", string("r1"))->add_child_text("urn:uuid:" + string(buffer));
+			descriptor.instance_id = buffer;
 			channel->MCALabelDictionaryID.EncodeString(buffer, sizeof(buffer));
-			cxml::add_child(ch, "MCALabelDictionaryID", string("r1"))->add_child_text("urn:smpte:ul:" + string(buffer));
+			descriptor.mca_label_dictionary_id = "urn:smpte:ul:" + string(buffer);
 			channel->MCALinkID.EncodeString(buffer, sizeof(buffer));
-			cxml::add_child(ch, "MCALinkID", string("r1"))->add_child_text("urn:uuid:" + string(buffer));
+			descriptor.mca_link_id = string(buffer);
 			channel->MCATagSymbol.EncodeString(buffer, sizeof(buffer));
-			cxml::add_child(ch, "MCATagSymbol", string("r1"))->add_child_text(buffer);
+			descriptor.mca_tag_symbol = buffer;
 			if (!channel->MCATagName.empty()) {
 				channel->MCATagName.get().EncodeString(buffer, sizeof(buffer));
-				cxml::add_child(ch, "MCATagName", string("r1"))->add_child_text(buffer);
+				descriptor.mca_tag_name = buffer;
 			}
 			if (!channel->MCAChannelID.empty()) {
-				cxml::add_child(ch, "MCAChannelID", string("r1"))->add_child_text(fmt::to_string(channel->MCAChannelID.get()));
+				descriptor.mca_channel_id = fmt::to_string(channel->MCAChannelID.get());
 			}
 			if (!channel->RFC5646SpokenLanguage.empty()) {
 				channel->RFC5646SpokenLanguage.get().EncodeString(buffer, sizeof(buffer));
-				cxml::add_child(ch, "RFC5646SpokenLanguage", string("r1"))->add_child_text(buffer);
+				descriptor.rfc5646_spoken_language = buffer;
 			}
 			if (!channel->SoundfieldGroupLinkID.empty()) {
 				channel->SoundfieldGroupLinkID.get().EncodeString(buffer, sizeof(buffer));
-				cxml::add_child(ch, "SoundfieldGroupLinkID", string("r1"))->add_child_text("urn:uuid:" + string(buffer));
+				descriptor.soundfield_group_link_id = buffer;
 			}
+			descriptors.push_back(descriptor);
 		}
 	}
+
+	return descriptors;
 }
 
 
@@ -488,7 +501,8 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node) const
 		!_main_picture_stored_area ||
 		!_main_picture_active_area ||
 		_reels.empty() ||
-		!_reels.front()->main_picture()) {
+		(!_reels.front()->main_picture() && (!_cpl_metadata_edit_rate || !_cpl_metadata_intrinsic_duration))
+	   ) {
 		return;
 	}
 
@@ -497,9 +511,15 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node) const
 
 	cxml::add_text_child(meta, "Id", "urn:uuid:" + _cpl_metadata_id);
 
-	auto mp = _reels.front()->main_picture();
-	cxml::add_text_child(meta, "EditRate", mp->edit_rate().as_string());
-	cxml::add_text_child(meta, "IntrinsicDuration", fmt::to_string(mp->intrinsic_duration()));
+	if (_cpl_metadata_edit_rate && _cpl_metadata_intrinsic_duration) {
+		/* We read these in, so reproduce them */
+		cxml::add_text_child(meta, "EditRate", _cpl_metadata_edit_rate->as_string());
+		cxml::add_text_child(meta, "IntrinsicDuration", fmt::to_string(*_cpl_metadata_intrinsic_duration));
+	} else {
+		auto mp = _reels.front()->main_picture();
+		cxml::add_text_child(meta, "EditRate", mp->edit_rate().as_string());
+		cxml::add_text_child(meta, "IntrinsicDuration", fmt::to_string(mp->intrinsic_duration()));
+	}
 
 	auto fctt = cxml::add_child(meta, "FullContentTitleText", string("meta"));
 	if (_full_content_title_text && !_full_content_title_text->empty()) {
@@ -604,10 +624,25 @@ CPL::maybe_write_composition_metadata_asset(xmlpp::Element* node) const
 		add_extension_metadata("http://www.dolby.com/schemas/2014/EDR-Metadata", "Dolby EDR", "image transfer function", *_dolby_edr_image_transfer_function);
 	}
 
-	if (_reels.front()->main_sound()) {
-		auto asset = _reels.front()->main_sound()->asset();
-		if (asset && _profile == Profile::SMPTE_BV21) {
-			write_mca_subdescriptors(meta, asset);
+	if (_profile == Profile::SMPTE_BV21) {
+		vector<MCASubDescriptor> descriptors;
+		if (!_mca_sub_descriptors.empty()) {
+			/* We read these in, so reproduce them */
+			descriptors = _mca_sub_descriptors;
+		} else if (_reels.front()->main_sound()) {
+			if (auto asset = _reels.front()->main_sound()->asset()) {
+				descriptors = create_mca_subdescriptors(asset);
+			}
+		}
+
+		if (!descriptors.empty()) {
+			auto mca_subs = cxml::add_child(meta, "mca:MCASubDescriptors");
+			mca_subs->set_namespace_declaration(mca_sub_descriptors_ns, "mca");
+			mca_subs->set_namespace_declaration(smpte_395_ns, "r0");
+			mca_subs->set_namespace_declaration(smpte_335_ns, "r1");
+			for (auto const& descriptor: descriptors) {
+				descriptor.as_xml(mca_subs);
+			}
 		}
 	}
 }
