@@ -49,6 +49,7 @@
 #include "raw_convert.h"
 #include <fmt/format.h>
 #include <boost/filesystem.hpp>
+#include <boost/system/windows_error.hpp>
 #include <set>
 #include <string>
 #include <vector>
@@ -89,7 +90,13 @@ create_hard_link_or_copy(boost::filesystem::path from, boost::filesystem::path t
 	try {
 		dcp::filesystem::create_hard_link(from, to);
 	} catch (boost::filesystem::filesystem_error& e) {
-		if (e.code() == boost::system::errc::cross_device_link || e.code() == boost::system::errc::operation_not_supported) {
+		if (
+			e.code() == boost::system::errc::cross_device_link ||
+#ifdef LIBDCP_WINDOWS
+			e.code() == boost::system::windows_error::invalid_function ||
+#endif
+			e.code() == boost::system::errc::operation_not_supported
+		   ) {
 			dcp::filesystem::copy_file(from, to);
 		} else {
 			throw;
