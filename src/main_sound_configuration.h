@@ -86,6 +86,8 @@ public:
 		return _channels.size();
 	}
 
+	void set_channels(int number);
+
 	boost::optional<Channel> mapping(int index) const;
 	void set_mapping(int index, Channel channel);
 

@@ -318,3 +318,10 @@ dcp::channel_to_mca_universal_label(Channel c, MCASoundField field, ASDCP::Dicti
 }
 
 
+void
+MainSoundConfiguration::set_channels(int number)
+{
+	_channels.resize(number);
+	update_string();
+}
+
