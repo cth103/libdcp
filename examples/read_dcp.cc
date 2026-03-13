@@ -82,7 +82,7 @@ main ()
 		} else if (std::dynamic_pointer_cast<dcp::CPL>(i)) {
 			std::cout << "CPL\n";
 		}
-		std::cout << "\t" << i->file()->leaf().string() << "\n";
+		std::cout << "\t" << i->file()->filename().string() << "\n";
 	}
 
 	/* Take the first CPL */
