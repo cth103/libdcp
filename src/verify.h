@@ -98,6 +98,7 @@ public:
 	// as it looks for it when compiling the manual.  Also, in this enum:
 	//   [...]  will be taken as a reference to a section of Bv2.1
 	//   _foo_  means foo should be written as a piece of code
+	//   Only the first line of each comment will be taken as a description of the code.
 	enum class Code {
 		/** A general error when reading the DCP
 		 *  note contains (probably technical) details
@@ -408,9 +409,9 @@ public:
 		 *  note contains the number of tile parts
 		 */
 		INVALID_JPEG2000_TILE_PARTS_FOR_4K,
-		/** Invalid Rsiz (capabilities) value in 2K JPEG2000 stream */
+		/** Invalid _Rsiz_ (capabilities) value in 2K JPEG2000 stream */
 		INVALID_JPEG2000_RSIZ_FOR_2K,
-		/** Invalid Rsiz (capabilities) value in 4K JPEG2000 stream */
+		/** Invalid _Rsiz_ (capabilities) value in 4K JPEG2000 stream */
 		INVALID_JPEG2000_RSIZ_FOR_4K,
 		/** No TLM marker was found [Bv2.1_10.2.1] */
 		MISSING_JPEG2000_TLM_MARKER,
@@ -431,15 +432,15 @@ public:
 		MISMATCHED_CLOSED_CAPTION_VALIGN,
 		/** Some closed captions are not listed in the XML in the order of their vertical position */
 		INCORRECT_CLOSED_CAPTION_ORDERING,
-		/** Some <MainMarkers> asset has an _<EntryPoint>_ that should not be there */
+		/** Some _<MainMarkers>_ asset has an _<EntryPoint>_ that should not be there */
 		UNEXPECTED_ENTRY_POINT,
-		/** Some <MainMarkers> asset has an _<Duration>_ that should not be there */
+		/** Some _<MainMarkers>_ asset has an _<Duration>_ that should not be there */
 		UNEXPECTED_DURATION,
 		/** A _<ContentKind>_ has been specified with either no scope or the SMPTE 429-7 scope, but which is not one of those allowed */
 		INVALID_CONTENT_KIND,
 		/** A valid _<ContentKind>_ was seen */
 		VALID_CONTENT_KIND,
-		/** Either the width or height of a _<MainPictureActiveArea>_ in a CPL is either not an even number, or bigger than the corresponding asset dimension.
+		/** Either the width or height of a _<MainPictureActiveArea>_ in a CPL is either not an even number, or bigger than the corresponding asset dimension
 		 *  note contains details of what is wrong
 		 *  file contains the CPL filename
 		 */
@@ -467,22 +468,21 @@ public:
 		 *  note contains the incorrect <IssueDate>
 		 */
 		INVALID_SUBTITLE_ISSUE_DATE,
-		/** The sound assets in the CPL do not have the same audio channel count.
+		/** The sound assets in the CPL do not have the same audio channel count
 		 *  file contains the filename of the first asset to differ
 		 */
 		MISMATCHED_SOUND_CHANNEL_COUNTS,
-		/** The CPL contains a _<MainSoundConfiguration>_ tag which does not describe the number of
-		 *  channels in the audio assets, or which is in some way badly formatted.
+		/** The CPL contains a _<MainSoundConfiguration>_ tag which does not describe the number of channels in the audio assets, or which is in some way badly formatted
 		 *  note contains details of what is wrong
 		 *  file contains the CPL filename
 		 *  cpl_id contains the CPL ID
 		 */
 		INVALID_MAIN_SOUND_CONFIGURATION,
-		/** An interop subtitle file has a _<LoadFont>_ node which refers to a font file that is not found.
+		/** An interop subtitle file has a _<LoadFont>_ node which refers to a font file that is not found
 		 *  note contains the <LoadFont> ID
 		 */
 		MISSING_FONT,
-		/** A tile part in a JPEG2000 frame is too big.
+		/** A tile part in a JPEG2000 frame is too big
 		 *  frame contains the frame index (counted from 0)
 		 *  component contains the component index (0, 1 or 2)
 		 *  size contains the invalid size in bytes.
@@ -492,8 +492,7 @@ public:
 		 *  note contains the asset ID
 		 */
 		INCORRECT_SUBTITLE_NAMESPACE_COUNT,
-		/** A subtitle or closed caption file has a _<Font>_ tag which refers to a font that is not
-		 *  first introduced with a <LoadFont>.
+		/** A subtitle or closed caption file has a _<Font>_ tag which refers to a font that is not first introduced with a _<LoadFont>_
 		 *  id contains the ID of the <Font> tag.
 		 */
 		MISSING_LOAD_FONT_FOR_FONT,
@@ -501,7 +500,7 @@ public:
 		 *  id contains the ID of the subtitle asset.
 		 */
 		MISSING_LOAD_FONT,
-		/** An ID in an asset map does not match the ID obtained from reading the actual file.
+		/** An ID in an asset map does not match the ID obtained from reading the actual file
 		 *  id contains the ID from the asset map.
 		 *  other_id contains the ID from the file.
 		 */
@@ -513,7 +512,7 @@ public:
 		EMPTY_CONTENT_VERSION_LABEL_TEXT,
 		/** A <LabelText> inside a _<ContentVersion>_ is valid */
 		VALID_CONTENT_VERSION_LABEL_TEXT,
-		/** The CPL namespace is not valid.
+		/** The CPL namespace is not valid
 		 *  note contains the invalid namespace
 		 *  file contains the CPL filename
 		 */
@@ -522,7 +521,7 @@ public:
 		 *  file contains the CPL filename
 		 */
 		MISSING_CPL_CONTENT_VERSION,
-		/** The PKL namespace is not valid.
+		/** The PKL namespace is not valid
 		 *  note contains the invalid namespace
 		 *  file contains the PKL filename
 		 */
