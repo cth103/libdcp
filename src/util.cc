@@ -54,7 +54,9 @@
 #include <asdcp/AS_DCP.h>
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/dl.h>
+#ifdef XMLSEC_CRYPTO_DYNAMIC_LOADING
 #include <xmlsec/app.h>
+#endif
 #include <xmlsec/crypto.h>
 #include <libxml++/nodes/element.h>
 #include <libxml++/document.h>

@@ -69,7 +69,9 @@ LIBDCP_DISABLE_WARNINGS
 #include <asdcp/AS_DCP.h>
 LIBDCP_ENABLE_WARNINGS
 #include <xmlsec/xmldsig.h>
+#ifdef XMLSEC_CRYPTO_DYNAMIC_LOADING
 #include <xmlsec/app.h>
+#endif
 LIBDCP_DISABLE_WARNINGS
 #include <libxml++/libxml++.h>
 LIBDCP_ENABLE_WARNINGS

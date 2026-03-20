@@ -52,7 +52,9 @@ LIBDCP_DISABLE_WARNINGS
 LIBDCP_ENABLE_WARNINGS
 #include <xmlsec/xmldsig.h>
 #include <xmlsec/dl.h>
+#ifdef XMLSEC_CRYPTO_DYNAMIC_LOADING
 #include <xmlsec/app.h>
+#endif
 #include <xmlsec/crypto.h>
 #include <openssl/sha.h>
 #include <openssl/bio.h>
