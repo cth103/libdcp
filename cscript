@@ -77,8 +77,7 @@ def build(target, options, for_package, version):
             cmd += ' --disable-mpeg2-transcode'
         if target.platform == 'linux':
             cmd += ' --static'
-            if target.distro != 'ubuntu' or not target.version in ('16.04', '22.04'):
-                # We only build tests on Ubuntu 16.04 and 22.04
+            if target.distro == 'debian' or (target.distro == 'centos' and target.version != 'stream10') or (target.distro == 'rocky' and target.version != '10') or target.distro == 'mageia':
                 cmd += ' --disable-tests'
             if target.distro == 'ubuntu' and target.version == '16.04':
                 cmd += ' --static-boost'
