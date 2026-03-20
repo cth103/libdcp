@@ -148,7 +148,7 @@ def configure(conf):
                    mandatory=False)
 
     conf.check_cfg(package='libxml++-' + conf.env.XMLPP_API, args='--cflags --libs', uselib_store='LIBXML++', mandatory=True)
-    conf.check_cfg(package='xmlsec1', args='--cflags --libs', uselib_store='XMLSEC1', mandatory=True)
+    conf.check_cfg(package='xmlsec1-openssl', args='--cflags --libs', uselib_store='XMLSEC1', mandatory=True)
     # Remove erroneous escaping of quotes from xmlsec1 defines
     conf.env.DEFINES_XMLSEC1 = [f.replace('\\', '') for f in conf.env.DEFINES_XMLSEC1]
 
