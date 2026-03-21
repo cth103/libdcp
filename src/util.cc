@@ -184,6 +184,12 @@ dcp::init (optional<boost::filesystem::path> given_resources_directory)
 
 	OpenSSL_add_all_algorithms();
 
+#ifdef LIBDCP_WINDOWS
+	putenv("OPENSSL_ENABLE_SHA1_SIGNATURES=1");
+#else
+	setenv("OPENSSL_ENABLE_SHA1_SIGNATURES", "1", 1);
+#endif
+
 	asdcp_smpte_dict = &ASDCP::DefaultSMPTEDict();
 
 	auto res = given_resources_directory.get_value_or(resources_directory());
