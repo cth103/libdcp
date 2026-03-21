@@ -53,6 +53,7 @@
 #include "reel_sound_asset.h"
 #include "reel_smpte_text_asset.h"
 #include "reel_text_asset.h"
+#include "scope_guard.h"
 #include "smpte_text_asset.h"
 #include "stereo_j2k_picture_asset.h"
 #include "stereo_j2k_picture_frame.h"
@@ -479,14 +480,14 @@ verify_picture_details(
 			context.add_note(
 				VerificationNote(
 					VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
-					).set_frame(start_frame + index).set_frame_rate(frame_rate)
+					).set_frame(start_frame + index).set_frame_rate(frame_rate).set_reel_index(0)
 			);
 			any_bad_frames_seen = true;
 		} else if (size > risky_frame) {
 			context.add_note(
 				VerificationNote(
 					VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
-					).set_frame(start_frame + index).set_frame_rate(frame_rate)
+					).set_frame(start_frame + index).set_frame_rate(frame_rate).set_reel_index(0)
 			);
 			any_bad_frames_seen = true;
 		}
@@ -979,6 +980,9 @@ verify_text_details (
 	};
 
 	for (auto i = 0U; i < reels.size(); ++i) {
+		context.reel_index = i;
+		dcp::ScopeGuard sg = [&context]() { context.reel_index = boost::none; };
+
 		if (!check(reels[i])) {
 			continue;
 		}
@@ -1122,7 +1126,10 @@ verify_closed_caption_details(Context& context, vector<shared_ptr<Reel>> reels)
 		}
 	};
 
+	int reel_index = 0;
 	for (auto reel: reels) {
+		context.reel_index = reel_index;
+		dcp::ScopeGuard sg = [&context]() { context.reel_index = boost::none; };
 		for (auto ccap: reel->closed_captions()) {
 			auto reel_xml = ccap->asset()->raw_xml();
 			if (!reel_xml) {
@@ -1146,6 +1153,8 @@ verify_closed_caption_details(Context& context, vector<shared_ptr<Reel>> reels)
 			}
 			parse (doc);
 		}
+
+		++reel_index;
 	}
 
 	if (mismatched_valign) {
@@ -1652,7 +1661,10 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 	}
 
 	int64_t frame = 0;
+	int reel_index = 0;
 	for (auto reel: cpl->reels()) {
+		context.reel_index = reel_index;
+		dcp::ScopeGuard sg = [&context]() { context.reel_index = boost::none; };
 		context.stage("Checking reel", optional<boost::filesystem::path>());
 		verify_reel(
 			context,
@@ -1666,6 +1678,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 			&markers_seen
 			);
 		frame += reel->duration();
+		++reel_index;
 	}
 
 	verify_text_details(context, cpl->reels());
@@ -1716,10 +1729,14 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		}
 
 		LinesCharactersResult result;
+		int reel_index = 0;
 		for (auto reel: cpl->reels()) {
+			context.reel_index = reel_index;
+			dcp::ScopeGuard sg = [&context]() { context.reel_index = boost::none; };
 			if (reel->main_subtitle() && reel->main_subtitle()->asset_ref().resolved()) {
 				verify_text_lines_and_characters(reel->main_subtitle()->asset(), 52, 79, &result);
 			}
+			++reel_index;
 		}
 
 		if (result.line_count_exceeded) {
@@ -1732,12 +1749,16 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		}
 
 		result = LinesCharactersResult();
+		reel_index = 0;
 		for (auto reel: cpl->reels()) {
+			context.reel_index = reel_index;
+			dcp::ScopeGuard sg = [&context]() { context.reel_index = boost::none; };
 			for (auto i: reel->closed_captions()) {
 				if (i->asset()) {
 					verify_text_lines_and_characters(i->asset(), 32, 32, &result);
 				}
 			}
+			++reel_index;
 		}
 
 		if (result.line_count_exceeded) {
@@ -2340,7 +2361,8 @@ dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		a.frame_rate() == b.frame_rate() &&
 		a.cpl_id() == b.cpl_id() &&
 		a.reference_hash() == b.reference_hash() &&
-		a.calculated_hash() == b.calculated_hash();
+		a.calculated_hash() == b.calculated_hash() &&
+		a.reel_index() == b.reel_index();
 }
 
 
@@ -2396,6 +2418,10 @@ dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 
 	if (a.cpl_id() != b.cpl_id()) {
 		return a.cpl_id().get_value_or("") < b.cpl_id().get_value_or("");
+	}
+
+	if (a.reel_index() != b.reel_index()) {
+		return a.reel_index().get_value_or(-1) < b.reel_index().get_value_or(-1);
 	}
 
 	return a.frame_rate().get_value_or(0) != b.frame_rate().get_value_or(0);

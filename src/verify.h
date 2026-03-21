@@ -115,28 +115,35 @@ public:
 		MISMATCHED_CPL_HASHES,
 		/** The frame rate given in a reel for the main picture is not 24, 25, 30, 48, 50 or 60
 		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_PICTURE_FRAME_RATE,
-		/** The hash of a main picture asset agrees with the PKL file */
+		/** The hash of a main picture asset agrees with the PKL file.
+		 *  reel_index contains the reel index (starting from 0)
+		 */
 		CORRECT_PICTURE_HASH,
 		/** The hash of a main picture asset does not agree with the PKL file
 		 *  file contains the picture asset filename
 		 *  calculated_hash contains the current hash of the picture MXF
 		 *  reference_hash contains the hash from the PKL
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INCORRECT_PICTURE_HASH,
 		/** The hash of a main picture is different in the CPL and PKL
 		 *  file contains the picture asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISMATCHED_PICTURE_HASHES,
 		/** The hash of a main sound asset does not agree with the PKL file
 		 *  file contains the sound asset filename
 		 *  calculated_hash contains the current hash of the picture MXF
 		 *  reference_hash contains the hash from the PKL
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INCORRECT_SOUND_HASH,
 		/** The hash of a main sound is different in the CPL and PKL
 		 *  file contains the sound asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISMATCHED_SOUND_HASHES,
 		/** An assetmap's _<Path>_ entry is empty */
@@ -151,26 +158,33 @@ public:
 		 *  note contains the (probably technical) details
 		 *  file contains the invalid filename
 		 *  line contains the line number
+		 *  reel_index contains the reel index (starting from 0), if applicable
 		 */
 		INVALID_XML,
 		/** No _ASSETMAP_ or _ASSETMAP.xml_ was found */
 		MISSING_ASSETMAP,
 		/** An asset's _IntrinsicDuration_ is less than 1 second
 		 *  note contains asset ID
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_INTRINSIC_DURATION,
 		/** An asset's _Duration_ is less than 1 second
 		 *  note contains asset ID
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_DURATION,
-		/** The JPEG2000 data in all picture frames of an asset is smaller than the maximum size */
+		/** The JPEG2000 data in all picture frames of an asset is smaller than the maximum size.
+		 *  reel_index contains the reel index (starting from 0)
+		 */
 		VALID_PICTURE_FRAME_SIZES_IN_BYTES,
 		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 250Mbit/s
 		 *  file contains the picture asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_PICTURE_FRAME_SIZE_IN_BYTES,
 		/** The JPEG2000 data in at least one picture frame is larger than the equivalent of 230Mbit/s
 		 *  file contains the picture asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES,
 		/** An asset that the CPL requires is not in this DCP; the DCP may be a VF
@@ -185,6 +199,7 @@ public:
 		INVALID_STANDARD,
 		/** A language or territory does not conform to RFC 5646 [Bv2.1_6.2.1]
 		 *  note contains the invalid language
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_LANGUAGE,
 		/** A CPL has a valid release territory */
@@ -192,16 +207,19 @@ public:
 		/** A picture asset does not have one of the required Bv2.1 sizes (in pixels) [Bv2.1_7.1]
 		 *  note contains the incorrect size as "<width>x<height>"
 		 *  file contains the asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_PICTURE_SIZE_IN_PIXELS,
 		/** A picture asset is 2K but is not at 24, 25 or 48 fps as required by Bv2.1 [Bv2.1_7.1]
 		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
 		 *  file contains the asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_PICTURE_FRAME_RATE_FOR_2K,
 		/** A picture asset is 4K but is not at 24fps as required by Bv2.1 [Bv2.1_7.1]
 		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
 		 *  file contains the asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_PICTURE_FRAME_RATE_FOR_4K,
 		/** A picture asset is 4K but is 3D which is not allowed by Bv2.1 [Bv2.1_7.1]
@@ -211,6 +229,7 @@ public:
 		/** A closed caption's XML file is larger than 256KB [Bv2.1_7.2.1]
 		 *  note contains the invalid size in bytes
 		 *  file contains the asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES,
 		/** Any timed text asset's total files is larger than 115MB [Bv2.1_7.2.1]
@@ -225,16 +244,21 @@ public:
 		INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES,
 		/** Some SMPTE subtitle XML has no _<Language>_ tag [Bv2.1_7.2.2]
 		 *  file contains the asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISSING_SUBTITLE_LANGUAGE,
-		/** Not all subtitle assets specify the same _<Language>_ tag [Bv2.1_7.2.2] */
+		/** Not all subtitle assets specify the same _<Language>_ tag [Bv2.1_7.2.2]
+		 *  reel_index contains the reel index (starting from 0)
+		 */
 		MISMATCHED_SUBTITLE_LANGUAGES,
 		/** Some SMPTE subtitle XML has no _<StartTime>_ tag [Bv2.1_7.2.3]
 		 *  file contains the asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISSING_SUBTITLE_START_TIME,
 		/** Some SMPTE subtitle XML has a non-zero _<StartTime>_ tag [Bv2.1_7.2.3]
 		 *  file contains the asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_SUBTITLE_START_TIME,
 		/** The first subtitle or closed caption happens before 4s into the first reel [Bv2.1_7.2.4] */
@@ -260,11 +284,13 @@ public:
 		/** The audio sampling rate must be 48kHz [Bv2.1_7.3]
 		 *  note contains the invalid frame rate
 		 *  file contains the asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_SOUND_FRAME_RATE,
 		/** The audio bit depth must be 24
 		 *  note contains the invalid bit depth
 		 *  file contains the asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_SOUND_BIT_DEPTH,
 		/** The CPL has no _<AnnotationText>_ tag [Bv2.1_8.1]
@@ -279,7 +305,9 @@ public:
 		MISMATCHED_CPL_ANNOTATION_TEXT,
 		/** A CPL has an annotation text which matches the _<ContentTitleText>_ */
 		VALID_CPL_ANNOTATION_TEXT,
-		/** At least one asset in a reel does not have the same duration as the others */
+		/** At least one asset in a reel does not have the same duration as the others.
+		 *  reel_index contains the reel index (starting from 0)
+		 */
 		MISMATCHED_ASSET_DURATION,
 		/** If one reel has a _MainSubtitle_, all must have them */
 		MISSING_MAIN_SUBTITLE_FROM_SOME_REELS,
@@ -302,7 +330,8 @@ public:
 		 */
 		INCORRECT_CLOSED_CAPTION_ENTRY_POINT,
 		/** _<Hash>_ must be present for assets in CPLs
-		 * note contains the asset ID
+		 *  note contains the asset ID
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISSING_HASH,
 		/** If _ContentKind_ is Feature there must be a FFEC marker */
@@ -367,14 +396,17 @@ public:
 		/** General error during JPEG2000 codestream verification
 		 *  frame contains the frame index (counted from 0)
 		 *  note contains details
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_JPEG2000_CODESTREAM,
 		/** Invalid number of guard bits in a 2K JPEG2000 stream (should be 1) [Bv2.1_10.2.1]
 		 *  note contains the number of guard bits
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_JPEG2000_GUARD_BITS_FOR_2K,
 		/** Invalid number of guard bits in a 4K JPEG2000 stream (should be 2) [Bv2.1_10.2.1]
 		 *  note contains the number of guard bits
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_JPEG2000_GUARD_BITS_FOR_4K,
 		/** JPEG2000 tile size is not the same as the image size [Bv2.1_10.2.1] */
@@ -415,16 +447,23 @@ public:
 		INVALID_JPEG2000_RSIZ_FOR_4K,
 		/** No TLM marker was found [Bv2.1_10.2.1] */
 		MISSING_JPEG2000_TLM_MARKER,
-		/** The MXF _ResourceID_ of a timed text resource was not the same as that of the contained XML essence [Bv2.1_10.4.3] */
+		/** The MXF _ResourceID_ of a timed text resource was not the same as that of the contained XML essence [Bv2.1_10.4.3]
+		 *  reel_index contains the reel index (starting from 0)
+		 */
 		MISMATCHED_TIMED_TEXT_RESOURCE_ID,
-		/** The AssetID of a timed text MXF is the same as its _ResourceID_ or that of the contained XML essence [Bv2.1_10.4.2] */
+		/** The AssetID of a timed text MXF is the same as its _ResourceID_ or that of the contained XML essence [Bv2.1_10.4.2]
+		 *  reel_index contains the reel index (starting from 0)
+		 */
 		INCORRECT_TIMED_TEXT_ASSET_ID,
 		/** The ContainerDuration of a timed text MXF is not the same as the _Duration_ in its reel [Bv2.1_10.4.3]
 		 *  note contains the reel duration, followed by a space, followed by the MXF duration
 		 *  file contains the asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISMATCHED_TIMED_TEXT_DURATION,
-		/** Something could not be verified because content is encrypted and no key is available */
+		/** Something could not be verified because content is encrypted and no key is available
+		 *  reel_index contains the reel index (starting from 0)
+		 */
 		MISSED_CHECK_OF_ENCRYPTED,
 		/** Some timed-text XML has an empty _<Text>_ node */
 		EMPTY_TEXT,
@@ -432,9 +471,13 @@ public:
 		MISMATCHED_CLOSED_CAPTION_VALIGN,
 		/** Some closed captions are not listed in the XML in the order of their vertical position */
 		INCORRECT_CLOSED_CAPTION_ORDERING,
-		/** Some _<MainMarkers>_ asset has an _<EntryPoint>_ that should not be there */
+		/** Some _<MainMarkers>_ asset has an _<EntryPoint>_ that should not be there
+		 *  reel_index contains the reel index (starting from 0)
+		 */
 		UNEXPECTED_ENTRY_POINT,
-		/** Some _<MainMarkers>_ asset has an _<Duration>_ that should not be there */
+		/** Some _<MainMarkers>_ asset has an _<Duration>_ that should not be there
+		 *  reel_index contains the reel index (starting from 0)
+		 */
 		UNEXPECTED_DURATION,
 		/** A _<ContentKind>_ has been specified with either no scope or the SMPTE 429-7 scope, but which is not one of those allowed */
 		INVALID_CONTENT_KIND,
@@ -443,6 +486,7 @@ public:
 		/** Either the width or height of a _<MainPictureActiveArea>_ in a CPL is either not an even number, or bigger than the corresponding asset dimension
 		 *  note contains details of what is wrong
 		 *  file contains the CPL filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_MAIN_PICTURE_ACTIVE_AREA,
 		/** A valid _<MainPictureActiveArea>_ was seen */
@@ -460,16 +504,19 @@ public:
 		/** An Interop subtitle asset has no subtitles
 		 *  note contains the asset ID
 		 *  file contains the asset filename
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISSING_SUBTITLE,
 		/** A SMPTE subtitle asset as an _<IssueDate>_ which is not of the form yyyy-mm-ddThh:mm:ss
 		 *  I can find no reference in a standard to this being required, but the Deluxe delivery
 		 *  specifications require it and their QC will fail DCPs that don't have it.
 		 *  note contains the incorrect <IssueDate>
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_SUBTITLE_ISSUE_DATE,
 		/** The sound assets in the CPL do not have the same audio channel count
 		 *  file contains the filename of the first asset to differ
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISMATCHED_SOUND_CHANNEL_COUNTS,
 		/** The CPL contains a _<MainSoundConfiguration>_ tag which does not describe the number of channels in the audio assets, or which is in some way badly formatted
@@ -480,16 +527,19 @@ public:
 		INVALID_MAIN_SOUND_CONFIGURATION,
 		/** An interop subtitle file has a _<LoadFont>_ node which refers to a font file that is not found
 		 *  note contains the <LoadFont> ID
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISSING_FONT,
 		/** A tile part in a JPEG2000 frame is too big
 		 *  frame contains the frame index (counted from 0)
 		 *  component contains the component index (0, 1 or 2)
 		 *  size contains the invalid size in bytes.
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_JPEG2000_TILE_PART_SIZE,
 		/** A subtitle XML root node has more than one namespace (xmlns) declaration.
 		 *  note contains the asset ID
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INCORRECT_SUBTITLE_NAMESPACE_COUNT,
 		/** A subtitle or closed caption file has a _<Font>_ tag which refers to a font that is not first introduced with a _<LoadFont>_
@@ -498,6 +548,7 @@ public:
 		MISSING_LOAD_FONT_FOR_FONT,
 		/** A SMPTE subtitle asset has at least one _<Text>_ element but no <LoadFont>
 		 *  id contains the ID of the subtitle asset.
+		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISSING_LOAD_FONT,
 		/** An ID in an asset map does not match the ID obtained from reading the actual file
@@ -578,7 +629,8 @@ private:
 		FRAME_RATE,
 		CPL_ID,
 		CALCULATED_HASH,
-		REFERENCE_HASH
+		REFERENCE_HASH,
+		REEL_INDEX ///< reel index, counting from 0
 	};
 
 	template <class T>
@@ -683,6 +735,15 @@ public:
 
 	boost::optional<std::string> cpl_id() const {
 		return data<std::string>(Data::CPL_ID);
+	}
+
+	VerificationNote& set_reel_index(int index) {
+		_data[Data::REEL_INDEX] = index;
+		return *this;
+	}
+
+	boost::optional<int> reel_index() const {
+		return data<int>(Data::REEL_INDEX);
 	}
 
 private:

@@ -98,6 +98,9 @@ public:
 		if (cpl) {
 			note.set_cpl_id(cpl->id());
 		}
+		if (reel_index) {
+			note.set_reel_index(*reel_index);
+		}
 		notes.push_back(std::move(note));
 	}
 
@@ -124,6 +127,7 @@ public:
 	std::vector<VerificationNote>& notes;
 	std::shared_ptr<const DCP> dcp;
 	std::shared_ptr<const CPL> cpl;
+	boost::optional<int> reel_index;
 	boost::filesystem::path xsd_dtd_directory;
 	std::function<void (std::string, boost::optional<boost::filesystem::path>)> stage;
 	std::function<void (float)> progress;
