@@ -2374,6 +2374,29 @@ dcp::operator!=(dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 }
 
 
+template <class T>
+bool
+less_than_optional(boost::optional<T> a, boost::optional<T> b)
+{
+	if (!static_cast<bool>(a) && !static_cast<bool>(b)) {
+		// same
+		return false;
+	}
+
+	if (!static_cast<bool>(a) && static_cast<bool>(b)) {
+		// none is smaller than any actual value
+		return true;
+	}
+
+	if (static_cast<bool>(a) && !static_cast<bool>(b)) {
+		// none is smaller than any actual value
+		return false;
+	}
+
+	return *a < *b;
+}
+
+
 bool
 dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 {
@@ -2386,47 +2409,47 @@ dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 	}
 
 	if (a.note() != b.note()) {
-		return a.note().get_value_or("") < b.note().get_value_or("");
+		return less_than_optional(a.note(), b.note());
 	}
 
 	if (a.file() != b.file()) {
-		return a.file().get_value_or("") < b.file().get_value_or("");
+		return less_than_optional(a.file(), b.file());
 	}
 
 	if (a.line() != b.line()) {
-		return a.line().get_value_or(0) < b.line().get_value_or(0);
+		return less_than_optional(a.line(), b.line());
 	}
 
 	if (a.frame() != b.frame()) {
-		return a.frame().get_value_or(0) < b.frame().get_value_or(0);
+		return less_than_optional(a.frame(), b.frame());
 	}
 
 	if (a.component() != b.component()) {
-		return a.component().get_value_or(0) < b.component().get_value_or(0);
+		return less_than_optional(a.component(), b.component());
 	}
 
 	if (a.size() != b.size()) {
-		return a.size().get_value_or(0) < b.size().get_value_or(0);
+		return less_than_optional(a.size(), b.size());
 	}
 
 	if (a.load_font_id() != b.load_font_id()) {
-		return a.load_font_id().get_value_or("") < b.load_font_id().get_value_or("");
+		return less_than_optional(a.load_font_id(), b.load_font_id());
 	}
 
 	if (a.asset_id() != b.asset_id()) {
-		return a.asset_id().get_value_or("") < b.asset_id().get_value_or("");
+		return less_than_optional(a.asset_id(), b.asset_id());
 	}
 
 	if (a.other_asset_id() != b.other_asset_id()) {
-		return a.other_asset_id().get_value_or("") < b.other_asset_id().get_value_or("");
+		return less_than_optional(a.other_asset_id(), b.other_asset_id());
 	}
 
 	if (a.cpl_id() != b.cpl_id()) {
-		return a.cpl_id().get_value_or("") < b.cpl_id().get_value_or("");
+		return less_than_optional(a.cpl_id(), b.cpl_id());
 	}
 
 	if (a.reel_index() != b.reel_index()) {
-		return a.reel_index().get_value_or(-1) < b.reel_index().get_value_or(-1);
+		return less_than_optional(a.reel_index(), b.reel_index());
 	}
 
 	return a.frame_rate().get_value_or(0) != b.frame_rate().get_value_or(0);
