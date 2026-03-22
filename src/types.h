@@ -176,6 +176,7 @@ public:
 
 extern bool operator== (Fraction const & a, Fraction const & b);
 extern bool operator!= (Fraction const & a, Fraction const & b);
+extern bool operator< (Fraction const& a, Fraction const& b);
 
 
 enum class NoteType {

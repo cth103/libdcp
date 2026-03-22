@@ -110,6 +110,15 @@ dcp::operator!= (Fraction const & a, Fraction const & b)
 }
 
 
+bool
+dcp::operator< (Fraction const& a, Fraction const& b)
+{
+	DCP_ASSERT(a.denominator > 0);
+	DCP_ASSERT(b.denominator > 0);
+	return a.numerator * b.denominator < b.numerator * a.denominator;
+}
+
+
 Colour::Colour (int r_, int g_, int b_)
 	: r (r_)
 	, g (g_)
