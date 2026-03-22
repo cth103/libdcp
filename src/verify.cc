@@ -2452,7 +2452,7 @@ dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		return less_than_optional(a.reel_index(), b.reel_index());
 	}
 
-	return a.frame_rate().get_value_or(0) != b.frame_rate().get_value_or(0);
+	return less_than_optional(a.frame_rate(), b.frame_rate());
 }
 
 
