@@ -1114,13 +1114,19 @@ BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_size_in_bytes)
 
 	for (auto i = 0; i < 24; ++i) {
 		expected.push_back(
-			VN(VC::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte")).set_frame(i).set_frame_rate(24).set_cpl_id(cpl->id()).set_reel_index(0)
+			VN(
+				VC::INVALID_JPEG2000_CODESTREAM,
+				string("missing marker start byte")
+			).set_frame(i).set_frame_rate(dcp::Fraction(24, 1)).set_cpl_id(cpl->id()).set_reel_index(0)
 		);
 	}
 
 	for (auto i = 0; i < 24; ++i) {
 		expected.push_back(
-			VN(VC::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf")).set_frame(i).set_frame_rate(24).set_cpl_id(cpl->id()).set_reel_index(0)
+			VN(
+				VC::INVALID_PICTURE_FRAME_SIZE_IN_BYTES,
+				canonical(dir / "pic.mxf")
+			).set_frame(i).set_frame_rate(dcp::Fraction(24, 1)).set_cpl_id(cpl->id()).set_reel_index(0)
 		);
 	}
 
@@ -1164,13 +1170,19 @@ BOOST_AUTO_TEST_CASE (verify_nearly_invalid_picture_frame_size_in_bytes)
 
 	for (auto i = 0; i < 24; ++i) {
 		expected.push_back(
-			VN(VC::INVALID_JPEG2000_CODESTREAM, string("missing marker start byte")).set_frame(i).set_frame_rate(24).set_cpl_id(cpl->id()).set_reel_index(0)
+			VN(
+				VC::INVALID_JPEG2000_CODESTREAM,
+				string("missing marker start byte")
+			).set_frame(i).set_frame_rate(dcp::Fraction(24, 1)).set_cpl_id(cpl->id()).set_reel_index(0)
 			);
 	}
 
 	for (auto i = 0; i < 24; ++i) {
 		expected.push_back(
-			VN(VC::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(dir / "pic.mxf")).set_frame(i).set_frame_rate(24).set_cpl_id(cpl->id()).set_reel_index(0)
+			VN(
+				VC::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES,
+				canonical(dir / "pic.mxf")
+			).set_frame(i).set_frame_rate(dcp::Fraction(24, 1)).set_cpl_id(cpl->id()).set_reel_index(0)
 		);
 	}
 
@@ -5522,7 +5534,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 	for (auto frame = 0; frame < 24; frame++) {
 		expected.push_back(
 			VN(VC::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, canonical(path / "video.mxf")
-			).set_frame(frame).set_frame_rate(24).set_cpl_id(cpl->id()).set_reel_index(0)
+			).set_frame(frame).set_frame_rate(dcp::Fraction(24, 1)).set_cpl_id(cpl->id()).set_reel_index(0)
 		);
 	}
 
@@ -5535,9 +5547,9 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 	for (auto frame = 0; frame < 24; frame++) {
 		for (auto component = 0; component < 3; component++) {
 			expected.push_back(
-				VN(
-					VC::INVALID_JPEG2000_TILE_PART_SIZE
-					).set_frame(frame).set_frame_rate(24).set_component(component).set_size(component_sizes[component]).set_cpl_id(cpl->id()).set_reel_index(0)
+				VN(VC::INVALID_JPEG2000_TILE_PART_SIZE)
+				.set_frame(frame).set_frame_rate(dcp::Fraction(24, 1)).set_component(component)
+				.set_size(component_sizes[component]).set_cpl_id(cpl->id()).set_reel_index(0)
 				);
 		}
 	}

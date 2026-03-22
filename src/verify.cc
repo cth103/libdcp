@@ -480,14 +480,14 @@ verify_picture_details(
 			context.add_note(
 				VerificationNote(
 					VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
-					).set_frame(start_frame + index).set_frame_rate(frame_rate).set_reel_index(0)
+					).set_frame(start_frame + index).set_frame_rate(dcp::Fraction(frame_rate, 1)).set_reel_index(0)
 			);
 			any_bad_frames_seen = true;
 		} else if (size > risky_frame) {
 			context.add_note(
 				VerificationNote(
 					VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES, file
-					).set_frame(start_frame + index).set_frame_rate(frame_rate).set_reel_index(0)
+					).set_frame(start_frame + index).set_frame_rate(dcp::Fraction(frame_rate, 1)).set_reel_index(0)
 			);
 			any_bad_frames_seen = true;
 		}
@@ -1981,14 +1981,14 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 		return compose(
 			"Frame %1 (timecode %2) in asset %3 has an instantaneous bit rate that is larger than the limit of 250Mbit/s.",
 			note.frame().get(),
-			dcp::Time(note.frame().get(), note.frame_rate().get(), note.frame_rate().get()).as_string(dcp::Standard::SMPTE),
+			dcp::Time(note.frame().get(), note.frame_rate()->as_float(), note.frame_rate()->numerator).as_string(dcp::Standard::SMPTE),
 			filename()
 			);
 	case VerificationNote::Code::NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
 		return compose(
 			"Frame %1 (timecode %2) in asset %3 has an instantaneous bit rate that is close to the limit of 250Mbit/s.",
 			note.frame().get(),
-			dcp::Time(note.frame().get(), note.frame_rate().get(), note.frame_rate().get()).as_string(dcp::Standard::SMPTE),
+			dcp::Time(note.frame().get(), note.frame_rate()->as_float(), note.frame_rate()->numerator).as_string(dcp::Standard::SMPTE),
 			filename()
 			);
 	case VerificationNote::Code::EXTERNAL_ASSET:
@@ -2107,7 +2107,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 		return compose(
 			"Frame %1 (timecode %2) has an invalid JPEG2000 codestream (%3).",
 			note.frame().get(),
-			dcp::Time(note.frame().get(), note.frame_rate().get(), note.frame_rate().get()).as_string(dcp::Standard::SMPTE),
+			dcp::Time(note.frame().get(), note.frame_rate()->as_float(), note.frame_rate()->numerator).as_string(dcp::Standard::SMPTE),
 			note.note().get()
 			);
 	case VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K:

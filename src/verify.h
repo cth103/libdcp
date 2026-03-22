@@ -42,6 +42,7 @@
 
 
 #include "decrypted_kdm.h"
+#include "types.h"
 #include <boost/any.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/function.hpp>
@@ -711,13 +712,13 @@ public:
 		return data<std::string>(Data::OTHER_ASSET_ID);
 	}
 
-	VerificationNote& set_frame_rate(int frame_rate) {
+	VerificationNote& set_frame_rate(dcp::Fraction frame_rate) {
 		_data[Data::FRAME_RATE] = frame_rate;
 		return *this;
 	}
 
-	boost::optional<int> frame_rate() const {
-		return data<int>(Data::FRAME_RATE);
+	boost::optional<dcp::Fraction> frame_rate() const {
+		return data<dcp::Fraction>(Data::FRAME_RATE);
 	}
 
 	VerificationNote& set_calculated_hash(std::string hash) {
