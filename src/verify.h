@@ -115,7 +115,7 @@ public:
 		 */
 		MISMATCHED_CPL_HASHES,
 		/** The frame rate given in a reel for the main picture is not 24, 25, 30, 48, 50 or 60
-		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
+		 *  frame_rate contains the invalid frame rate
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_PICTURE_FRAME_RATE,
@@ -212,13 +212,13 @@ public:
 		 */
 		INVALID_PICTURE_SIZE_IN_PIXELS,
 		/** A picture asset is 2K but is not at 24, 25 or 48 fps as required by Bv2.1 [Bv2.1_7.1]
-		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
+		 *  frame_rate contains the invalid frame rate
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_PICTURE_FRAME_RATE_FOR_2K,
 		/** A picture asset is 4K but is not at 24fps as required by Bv2.1 [Bv2.1_7.1]
-		 *  note contains the invalid frame rate as "<numerator>/<denominator>"
+		 *  frame_rate contains the invalid frame rate
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
@@ -283,7 +283,7 @@ public:
 		/** There are more than 32 characters in at least one closed caption line [Bv2.1_7.2.6] */
 		INVALID_CLOSED_CAPTION_LINE_LENGTH,
 		/** The audio sampling rate must be 48kHz [Bv2.1_7.3]
-		 *  note contains the invalid frame rate
+		 *  frame_rate contains the invalid frame rate
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */

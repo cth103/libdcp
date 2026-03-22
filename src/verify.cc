@@ -587,9 +587,7 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 		(asset->edit_rate() != Fraction(24, 1) && asset->edit_rate() != Fraction(25, 1) && asset->edit_rate() != Fraction(48, 1))
 	   ) {
 		context.add_note(
-			VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_2K,
-			String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
-			file
+			dcp::VerificationNote(dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_2K, file).set_frame_rate(asset->edit_rate())
 		);
 	}
 
@@ -597,9 +595,7 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 		/* Only 24fps allowed for 4K */
 		if (asset->edit_rate() != Fraction(24, 1)) {
 			context.add_note(
-				VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_4K,
-				String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
-				file
+				dcp::VerificationNote(dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_4K, file).set_frame_rate(asset->edit_rate())
 			);
 		}
 
@@ -655,7 +651,7 @@ verify_main_sound_asset(Context& context, shared_ptr<const ReelSoundAsset> reel_
 		verify_language_tag(context, *lang);
 	}
 	if (asset->sampling_rate() != 48000) {
-		context.add_note(VerificationNote::Code::INVALID_SOUND_FRAME_RATE, fmt::to_string(asset->sampling_rate()), file);
+		context.add_note(VerificationNote(VerificationNote::Code::INVALID_SOUND_FRAME_RATE, file).set_frame_rate(dcp::Fraction(asset->sampling_rate(), 1)));
 	}
 	if (asset->bit_depth() != 24) {
 		context.add_note(VerificationNote::Code::INVALID_SOUND_BIT_DEPTH, fmt::to_string(asset->bit_depth()), file);
@@ -1443,7 +1439,7 @@ verify_reel(
 		     frame_rate.numerator != 50 &&
 		     frame_rate.numerator != 60 &&
 		     frame_rate.numerator != 96)) {
-			context.add_note(VerificationNote::Code::INVALID_PICTURE_FRAME_RATE, String::compose("%1/%2", frame_rate.numerator, frame_rate.denominator));
+			context.add_note(dcp::VerificationNote(dcp::VerificationNote::Code::INVALID_PICTURE_FRAME_RATE).set_frame_rate(frame_rate));
 		}
 		/* Check asset */
 		if (reel->main_picture()->asset_ref().resolved()) {
@@ -1945,7 +1941,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::MISMATCHED_CPL_HASHES:
 		return compose("The hash (%1) of the CPL (%2) in the PKL does not agree with the CPL file (%3).", note.reference_hash().get(), note.cpl_id().get(), note.calculated_hash().get());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE:
-		return compose("The picture in a reel has an invalid frame rate %1.", note.note().get());
+		return compose("The picture in a reel has an invalid frame rate %1/%2.", note.frame_rate()->numerator, note.frame_rate()->denominator);
 	case VerificationNote::Code::INCORRECT_PICTURE_HASH:
 		return compose("The hash (%1) of the picture asset %2 does not agree with the PKL file (%3).", note.calculated_hash().get(), filename(), note.reference_hash().get());
 	case VerificationNote::Code::CORRECT_PICTURE_HASH:
@@ -1999,9 +1995,9 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS:
 		return compose("The size %1 of picture asset %2 is not allowed.", note.note().get(), filename());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_2K:
-		return compose("The frame rate %1 of picture asset %2 is not allowed for 2K DCPs.", note.note().get(), filename());
+		return compose("The frame rate %1/%2 of picture asset %3 is not allowed for 2K DCPs.", note.frame_rate()->numerator, note.frame_rate()->denominator, filename());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_4K:
-		return compose("The frame rate %1 of picture asset %2 is not allowed for 4K DCPs.", note.note().get(), filename());
+		return compose("The frame rate %1/%2 of picture asset %3 is not allowed for 4K DCPs.", note.frame_rate()->numerator, note.frame_rate()->denominator, filename());
 	case VerificationNote::Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D:
 		return process_string("3D 4K DCPs are not allowed.");
 	case VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES:
@@ -2039,7 +2035,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH:
 		return process_string("There are more than 32 characters in at least one closed caption line.");
 	case VerificationNote::Code::INVALID_SOUND_FRAME_RATE:
-		return compose("The sound asset %1 has a sampling rate of %2", filename(), note.note().get());
+		return compose("The sound asset %1 has a sampling rate of %2", filename(), note.frame_rate()->numerator);
 	case VerificationNote::Code::INVALID_SOUND_BIT_DEPTH:
 		return compose("The sound asset %1 has a bit depth of %2", filename(), note.note().get());
 	case VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT:

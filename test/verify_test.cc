@@ -686,7 +686,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_rate)
 			VN(
 				VC::MISMATCHED_CPL_HASHES, canonical(cpl_path)
 				).set_cpl_id(cpl->id()).set_calculated_hash("7n7GQ2TbxQbmHYuAR8ml7XDOep8=").set_reference_hash("skI+5b/9LA/y6h0mcyxysJYanxI="),
-			VN(VC::INVALID_PICTURE_FRAME_RATE, string{"99/1"}).set_cpl_id(cpl->id()).set_reel_index(0),
+			VN(VC::INVALID_PICTURE_FRAME_RATE).set_cpl_id(cpl->id()).set_reel_index(0).set_frame_rate({99, 1}),
 		};
 
 	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
@@ -1977,8 +1977,8 @@ check_picture_size_bad_2k_frame_rate (int width, int height, int frame_rate, boo
 			).set_cpl_id(cpl->id()),
 		note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0),
 		note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0),
-		VN(VC::INVALID_PICTURE_FRAME_RATE, dcp::String::compose("%1/1", frame_rate * (three_d ? 2 : 1))).set_cpl_id(cpl->id()).set_reel_index(0),
-		VN(VC::INVALID_PICTURE_FRAME_RATE_FOR_2K, dcp::String::compose("%1/1", frame_rate), canonical(dir / "video.mxf")).set_cpl_id(cpl->id()).set_reel_index(0),
+		VN(VC::INVALID_PICTURE_FRAME_RATE).set_cpl_id(cpl->id()).set_reel_index(0).set_frame_rate({frame_rate * (three_d ? 2 : 1), 1}),
+		VN(VC::INVALID_PICTURE_FRAME_RATE_FOR_2K, canonical(dir / "video.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_frame_rate({frame_rate, 1})
 	};
 
 	check_verify_result(notes, expected);
@@ -2011,7 +2011,7 @@ check_picture_size_bad_4k_frame_rate (int width, int height, int frame_rate, boo
 			).set_cpl_id(cpl->id()),
 		note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0),
 		note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0),
-		VN(VC::INVALID_PICTURE_FRAME_RATE_FOR_4K, dcp::String::compose("%1/1", frame_rate), canonical(dir / "video.mxf")).set_cpl_id(cpl->id()).set_reel_index(0),
+		VN(VC::INVALID_PICTURE_FRAME_RATE_FOR_4K, canonical(dir / "video.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_frame_rate({frame_rate, 1})
 	};
 
 	check_verify_result(notes, expected);
@@ -3445,7 +3445,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_sound_frame_rate)
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "videofoo.mxf"), cpl).set_reel_index(0),
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "videofoo.mxf"), cpl).set_reel_index(0),
-			VN(VC::INVALID_SOUND_FRAME_RATE, string("96000"), canonical(dir / "audiofoo.mxf")).set_cpl_id(cpl->id()).set_reel_index(0),
+			VN(VC::INVALID_SOUND_FRAME_RATE, canonical(dir / "audiofoo.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_frame_rate({96000, 1}),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
