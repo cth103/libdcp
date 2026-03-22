@@ -624,8 +624,9 @@ private:
 		FRAME,
 		COMPONENT,
 		SIZE,
-		ID,
-		OTHER_ID,
+		LOAD_FONT_ID,
+		ASSET_ID,
+		OTHER_ASSET_ID,
 		FRAME_RATE,
 		CPL_ID,
 		CALCULATED_HASH,
@@ -683,22 +684,31 @@ public:
 		return data<int>(Data::SIZE);
 	}
 
-	VerificationNote& set_id(std::string id) {
-		_data[Data::ID] = id;
+	VerificationNote& set_load_font_id(std::string id) {
+		_data[Data::LOAD_FONT_ID] = id;
 		return *this;
 	}
 
-	boost::optional<std::string> id() const {
-		return data<std::string>(Data::ID);
+	boost::optional<std::string> load_font_id() const {
+		return data<std::string>(Data::LOAD_FONT_ID);
 	}
 
-	VerificationNote& set_other_id(std::string other_id) {
-		_data[Data::OTHER_ID] = other_id;
+	VerificationNote& set_asset_id(std::string id) {
+		_data[Data::ASSET_ID] = id;
 		return *this;
 	}
 
-	boost::optional<std::string> other_id() const {
-		return data<std::string>(Data::OTHER_ID);
+	boost::optional<std::string> asset_id() const {
+		return data<std::string>(Data::ASSET_ID);
+	}
+
+	VerificationNote& set_other_asset_id(std::string other_id) {
+		_data[Data::OTHER_ASSET_ID] = other_id;
+		return *this;
+	}
+
+	boost::optional<std::string> other_asset_id() const {
+		return data<std::string>(Data::OTHER_ASSET_ID);
 	}
 
 	VerificationNote& set_frame_rate(int frame_rate) {

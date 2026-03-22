@@ -254,8 +254,8 @@ to_string(dcp::VerificationNote const& note)
 
 	s += dcp::String::compose(
 		"%1 %2 %3 %4 %5]\n",
-		note.id().get_value_or("<none>"),
-		note.other_id().get_value_or("<none>"),
+		note.asset_id().get_value_or("<none>"),
+		note.other_asset_id().get_value_or("<none>"),
 		note.cpl_id().get_value_or("<none>"),
 		note.reference_hash().get_value_or("<none>"),
 		note.calculated_hash().get_value_or("<none>")
@@ -5605,7 +5605,7 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font_for_font)
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			{ VC::INVALID_STANDARD },
-			VN(VC::MISSING_LOAD_FONT_FOR_FONT).set_id("theFontId").set_cpl_id(cpl->id())
+			VN(VC::MISSING_LOAD_FONT_FOR_FONT).set_load_font_id("theFontId").set_cpl_id(cpl->id())
 		});
 
 }
@@ -5670,7 +5670,7 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0),
-			VN(VC::MISSING_LOAD_FONT).set_id(reel_subs->id()).set_cpl_id(cpl->id()).set_reel_index(0)
+			VN(VC::MISSING_LOAD_FONT).set_asset_id(reel_subs->id()).set_cpl_id(cpl->id()).set_reel_index(0)
 		});
 }
 
@@ -5711,7 +5711,7 @@ BOOST_AUTO_TEST_CASE(verify_spots_wrong_asset)
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			VN(VC::MISMATCHED_ASSET_MAP_ID).set_id(asset_1).set_other_id(asset_2)
+			VN(VC::MISMATCHED_ASSET_MAP_ID).set_asset_id(asset_1).set_other_asset_id(asset_2)
 		});
 }
 

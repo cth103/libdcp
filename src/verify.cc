@@ -1024,7 +1024,7 @@ verify_text_details (
 		reel_offset = end;
 
 		if (context.dcp->standard() && *context.dcp->standard() == dcp::Standard::SMPTE && has_text && font_ids.empty()) {
-			context.add_note(dcp::VerificationNote(VerificationNote::Code::MISSING_LOAD_FONT).set_id(id(reels[i])));
+			context.add_note(dcp::VerificationNote(VerificationNote::Code::MISSING_LOAD_FONT).set_asset_id(id(reels[i])));
 		}
 	}
 
@@ -1057,7 +1057,7 @@ verify_text_details (
 	}
 
 	if (missing_load_font_id) {
-		context.add_note(dcp::VerificationNote(VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT).set_id(*missing_load_font_id));
+		context.add_note(dcp::VerificationNote(VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT).set_load_font_id(*missing_load_font_id));
 	}
 }
 
@@ -2190,11 +2190,11 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT:
 		return compose("The XML in the subtitle asset %1 has more than one namespace declaration.", note.note().get());
 	case VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT:
-		return compose("A subtitle or closed caption refers to a font with ID %1 that does not have a corresponding <LoadFont> node", note.id().get());
+		return compose("A subtitle or closed caption refers to a font with ID %1 that does not have a corresponding <LoadFont> node", note.load_font_id().get());
 	case VerificationNote::Code::MISSING_LOAD_FONT:
-		return compose("The SMPTE subtitle asset %1 has <Text> nodes but no <LoadFont> node", note.id().get());
+		return compose("The SMPTE subtitle asset %1 has <Text> nodes but no <LoadFont> node", note.asset_id().get());
 	case VerificationNote::Code::MISMATCHED_ASSET_MAP_ID:
-		return compose("The asset with ID %1 in the asset map actually has an id of %2", note.id().get(), note.other_id().get());
+		return compose("The asset with ID %1 in the asset map actually has an id of %2", note.asset_id().get(), note.other_asset_id().get());
 	case VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT:
 		return compose("The <LabelText> in a <ContentVersion> in CPL %1 is empty", note.cpl_id().get());
 	case VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT:
@@ -2356,8 +2356,9 @@ dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		a.frame() == b.frame() &&
 		a.component() == b.component() &&
 		a.size() == b.size() &&
-		a.id() == b.id() &&
-		a.other_id() == b.other_id() &&
+		a.load_font_id() == b.load_font_id() &&
+		a.asset_id() == b.asset_id() &&
+		a.other_asset_id() == b.other_asset_id() &&
 		a.frame_rate() == b.frame_rate() &&
 		a.cpl_id() == b.cpl_id() &&
 		a.reference_hash() == b.reference_hash() &&
@@ -2408,12 +2409,16 @@ dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		return a.size().get_value_or(0) < b.size().get_value_or(0);
 	}
 
-	if (a.id() != b.id()) {
-		return a.id().get_value_or("") < b.id().get_value_or("");
+	if (a.load_font_id() != b.load_font_id()) {
+		return a.load_font_id().get_value_or("") < b.load_font_id().get_value_or("");
 	}
 
-	if (a.other_id() != b.other_id()) {
-		return a.other_id().get_value_or("") < b.other_id().get_value_or("");
+	if (a.asset_id() != b.asset_id()) {
+		return a.asset_id().get_value_or("") < b.asset_id().get_value_or("");
+	}
+
+	if (a.other_asset_id() != b.other_asset_id()) {
+		return a.other_asset_id().get_value_or("") < b.other_asset_id().get_value_or("");
 	}
 
 	if (a.cpl_id() != b.cpl_id()) {
