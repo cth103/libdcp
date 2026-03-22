@@ -605,12 +605,7 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 
 		/* Only 2D allowed for 4K */
 		if (dynamic_pointer_cast<const StereoJ2KPictureAsset>(asset)) {
-			context.add_note(
-				VerificationNote::Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
-				String::compose("%1/%2", asset->edit_rate().numerator, asset->edit_rate().denominator),
-				file
-			);
-
+			context.add_note(VerificationNote::Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D, file);
 		}
 	}
 }
