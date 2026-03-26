@@ -101,6 +101,9 @@ public:
 		if (reel_index) {
 			note.set_reel_index(*reel_index);
 		}
+		if (asset_id) {
+			note.set_asset_id(*asset_id);
+		}
 		notes.push_back(std::move(note));
 	}
 
@@ -128,6 +131,7 @@ public:
 	std::shared_ptr<const DCP> dcp;
 	std::shared_ptr<const CPL> cpl;
 	boost::optional<int> reel_index;
+	boost::optional<std::string> asset_id;
 	boost::filesystem::path xsd_dtd_directory;
 	std::function<void (std::string, boost::optional<boost::filesystem::path>)> stage;
 	std::function<void (float)> progress;

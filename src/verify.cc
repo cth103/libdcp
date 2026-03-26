@@ -852,8 +852,7 @@ verify_closed_caption_asset (
 	/* Note: we must not use TextAsset::xml_as_string() here as that will mean the data on disk
 	 * gets passed through libdcp which may clean up and therefore hide errors.
 	 */
-	auto raw_xml = asset->raw_xml();
-	if (raw_xml) {
+	if (auto raw_xml = asset->raw_xml()) {
 		validate_xml(context, *raw_xml);
 		if (raw_xml->size() > 256 * 1024) {
 			context.add_note(VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, fmt::to_string(raw_xml->size()), *asset->file());
@@ -862,13 +861,11 @@ verify_closed_caption_asset (
 		context.add_note(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
 	}
 
-	auto interop = dynamic_pointer_cast<const InteropTextAsset>(asset);
-	if (interop) {
+	if (auto interop = dynamic_pointer_cast<const InteropTextAsset>(asset)) {
 		verify_interop_text_asset(context, interop);
 	}
 
-	auto smpte = dynamic_pointer_cast<const SMPTETextAsset>(asset);
-	if (smpte) {
+	if (auto smpte = dynamic_pointer_cast<const SMPTETextAsset>(asset)) {
 		verify_smpte_timed_text_asset(context, smpte, reel_asset_duration);
 	}
 }
@@ -1271,6 +1268,8 @@ verify_text_details(Context& context, vector<shared_ptr<Reel>> reels)
 	}
 
 	if (reels[0]->main_subtitle() && reels[0]->main_subtitle()->asset_ref().resolved()) {
+		context.asset_id = reels[0]->main_subtitle()->asset()->id();
+		dcp::ScopeGuard sg = [&context]() { context.asset_id = boost::none; };
 		verify_text_details(context, reels, reels[0]->main_subtitle()->edit_rate().numerator,
 			[](shared_ptr<Reel> reel) {
 				return static_cast<bool>(reel->main_subtitle());
@@ -1288,6 +1287,8 @@ verify_text_details(Context& context, vector<shared_ptr<Reel>> reels)
 	}
 
 	for (auto i = 0U; i < reels[0]->closed_captions().size(); ++i) {
+		context.asset_id = reels[0]->closed_captions()[i]->asset()->id();
+		dcp::ScopeGuard sg = [&context]() { context.asset_id = boost::none; };
 		verify_text_details(context, reels, reels[0]->closed_captions()[i]->edit_rate().numerator,
 			[i](shared_ptr<Reel> reel) {
 				return i < reel->closed_captions().size();
@@ -1443,6 +1444,8 @@ verify_reel(
 		}
 		/* Check asset */
 		if (reel->main_picture()->asset_ref().resolved()) {
+			context.asset_id = reel->main_picture()->asset()->id();
+			dcp::ScopeGuard sg = [&context]() { context.asset_id = boost::none; };
 			verify_main_picture_asset(context, reel->main_picture(), start_frame);
 			auto const asset_size = reel->main_picture()->asset()->size();
 			if (main_picture_active_area) {
@@ -1466,12 +1469,16 @@ verify_reel(
 	}
 
 	if (reel->main_sound() && reel->main_sound()->asset_ref().resolved()) {
+		context.asset_id = reel->main_sound()->asset()->id();
+		dcp::ScopeGuard sg = [&context]() { context.asset_id = boost::none; };
 		verify_main_sound_asset(context, reel->main_sound());
 	}
 
 	if (reel->main_subtitle()) {
 		verify_main_subtitle_reel(context, reel->main_subtitle());
 		if (reel->main_subtitle()->asset_ref().resolved()) {
+			context.asset_id = reel->main_subtitle()->asset()->id();
+			dcp::ScopeGuard sg = [&context]() { context.asset_id = boost::none; };
 			verify_subtitle_asset(context, reel->main_subtitle()->asset(), reel->main_subtitle()->duration());
 		}
 		*have_main_subtitle = true;
@@ -1482,6 +1489,8 @@ verify_reel(
 	for (auto i: reel->closed_captions()) {
 		verify_closed_caption_reel(context, i);
 		if (i->asset_ref().resolved()) {
+			context.asset_id = i->asset()->id();
+			dcp::ScopeGuard sg = [&context]() { context.asset_id = boost::none; };
 			verify_closed_caption_asset(context, i->asset(), i->duration());
 		}
 	}
@@ -1725,6 +1734,8 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 			context.reel_index = reel_index;
 			dcp::ScopeGuard sg = [&context]() { context.reel_index = boost::none; };
 			if (reel->main_subtitle() && reel->main_subtitle()->asset_ref().resolved()) {
+				context.asset_id = reel->main_subtitle()->asset()->id();
+				dcp::ScopeGuard sg = [&context]() { context.asset_id = boost::none; };
 				verify_text_lines_and_characters(reel->main_subtitle()->asset(), 52, 79, &result);
 			}
 			++reel_index;
