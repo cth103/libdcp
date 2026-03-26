@@ -1481,8 +1481,8 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles)
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			VN(VC::EMPTY_TEXT).set_cpl_id(cpl->id()).set_asset_id(asset->id()),
-			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_asset_id(asset->id()),
+			VN(VC::EMPTY_TEXT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_SUBTITLE_LANGUAGE, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),
 			VN(VC::INVALID_SUBTITLE_ISSUE_DATE, string{"2021-08-09T18:34:46.000+02:00"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
@@ -1544,7 +1544,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_empty_child_nodes
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::MISSING_SUBTITLE, asset->id(), boost::filesystem::canonical(asset->file().get())).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
 			{ VC::INVALID_STANDARD },
-			VN(VC::EMPTY_TEXT).set_cpl_id(cpl->id()).set_asset_id(subs_id),
+			VN(VC::EMPTY_TEXT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
 			VN(VC::MISSING_FONT, string{"font0"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
 		});
 }
@@ -2153,7 +2153,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_xml_size_in_bytes)
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
 			VN(VC::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, string("419371"), canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
-			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_asset_id(asset->id()),
+			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
@@ -2209,7 +2209,7 @@ verify_timed_text_asset_too_large (string name)
 				canonical(dir / "subs.mxf")
 				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
-			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_asset_id(asset->id()),
+			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
@@ -2284,7 +2284,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			VN(VC::MISSING_SUBTITLE_LANGUAGE, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
-			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_asset_id(subs_id),
+			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id)
 		});
 }
 
@@ -2481,7 +2481,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			VN(VC::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs->id()),
-			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_asset_id(subs->id()),
+			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs->id()),
 		});
 }
 
@@ -2548,7 +2548,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 				).set_cpl_id(cpl->id()),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			VN(VC::INVALID_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs->id()),
-			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_asset_id(subs->id()),
+			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs->id()),
 		});
 }
 
@@ -2653,7 +2653,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_first_text_time)
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_asset_id(subs_id),
+			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 
@@ -2768,7 +2768,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_spacing)
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			VN(VC::INVALID_SUBTITLE_SPACING).set_cpl_id(cpl->id()).set_asset_id(subs_id),
+			VN(VC::INVALID_SUBTITLE_SPACING).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
@@ -2823,7 +2823,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_subtitle_duration)
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			VN(VC::INVALID_SUBTITLE_DURATION).set_cpl_id(cpl->id()).set_asset_id(subs_id),
+			VN(VC::INVALID_SUBTITLE_DURATION).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
@@ -2849,7 +2849,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_subtitle_duration_bv21)
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			VN(VC::INVALID_SUBTITLE_DURATION_BV21).set_cpl_id(cpl->id()).set_asset_id(subs_id),
+			VN(VC::INVALID_SUBTITLE_DURATION_BV21).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
@@ -2905,8 +2905,8 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_overlapping_reel_boundary)
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::MISMATCHED_TIMED_TEXT_DURATION , "72 96", boost::filesystem::canonical(asset->file().get())).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
-			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_asset_id(asset->id()),
-			VN(VC::SUBTITLE_OVERLAPS_REEL_BOUNDARY).set_cpl_id(cpl->id()).set_asset_id(asset->id()),
+			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::SUBTITLE_OVERLAPS_REEL_BOUNDARY).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
@@ -4960,7 +4960,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_resource_id)
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			VN(VC::MISMATCHED_TIMED_TEXT_DURATION , "240 0", boost::filesystem::canonical(subs_mxf)).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
 			VN(VC::MISMATCHED_TIMED_TEXT_RESOURCE_ID).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
-			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_asset_id(subs_asset->id()),
+			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
@@ -5035,7 +5035,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_timed_text_id)
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			VN(VC::MISMATCHED_TIMED_TEXT_DURATION , "240 0", boost::filesystem::canonical(subs_mxf)).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
 			VN(VC::INCORRECT_TIMED_TEXT_ASSET_ID).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
-			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_asset_id(subs_asset->id()),
+			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),
 			VN(VC::INVALID_SUBTITLE_ISSUE_DATE, string{"2018-10-02T12:25:14+02:00"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
 		});
@@ -5691,7 +5691,7 @@ BOOST_AUTO_TEST_CASE(verify_too_many_subtitle_namespaces)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::MISSING_FFEC_IN_FEATURE).set_cpl_id(cpl->id()),
 			VN(VC::MISSING_FFMC_IN_FEATURE).set_cpl_id(cpl->id()),
-			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_asset_id("315de731-1173-484c-9a35-bdacf5a9d99d"),
+			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("315de731-1173-484c-9a35-bdacf5a9d99d"),
 			VN(VC::MISSING_SUBTITLE_LANGUAGE, canonical(find_file(dir, "sub_"))).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("315de731-1173-484c-9a35-bdacf5a9d99d"),
 			VN(VC::MISSING_CPL_METADATA, canonical(find_file(dir, "cpl_"))).set_cpl_id(cpl->id()),
 			VN(
@@ -5728,7 +5728,7 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font_for_font)
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			{ VC::INVALID_STANDARD },
-			VN(VC::MISSING_LOAD_FONT_FOR_FONT).set_load_font_id("theFontId").set_cpl_id(cpl->id()).set_asset_id(asset->id())
+			VN(VC::MISSING_LOAD_FONT_FOR_FONT).set_load_font_id("theFontId").set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id())
 		});
 
 }

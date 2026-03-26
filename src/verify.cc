@@ -878,6 +878,7 @@ verify_text_details (
 	Context& context,
 	vector<shared_ptr<Reel>> reels,
 	int edit_rate,
+	std::function<std::string (shared_ptr<Reel>)> asset_id,
 	std::function<bool (shared_ptr<Reel>)> check,
 	std::function<optional<string> (shared_ptr<Reel>)> xml,
 	std::function<int64_t (shared_ptr<Reel>)> duration,
@@ -886,19 +887,22 @@ verify_text_details (
 {
 	/* end of last subtitle (in editable units) */
 	optional<int64_t> last_out;
-	auto too_short = false;
-	auto too_short_bv21 = false;
-	auto too_close = false;
-	auto too_early = false;
-	auto reel_overlap = false;
-	auto empty_text = false;
 	/* current reel start time (in editable units) */
 	int64_t reel_offset = 0;
-	optional<string> missing_load_font_id;
 
-	std::function<void (cxml::ConstNodePtr, optional<int>, optional<Time>, int, bool, bool&, vector<string>&)> parse;
+	struct Errors {
+		bool too_short = false;
+		bool too_short_bv21 = false;
+		bool too_close = false;
+		bool too_early = false;
+		bool empty_text = false;
+		optional<string> missing_load_font_id;
+	};
 
-	parse = [&parse, &last_out, &too_short, &too_short_bv21, &too_close, &too_early, &empty_text, &reel_offset, &missing_load_font_id](
+	std::function<void (Errors&, cxml::ConstNodePtr, optional<int>, optional<Time>, int, bool, bool&, vector<string>&)> parse;
+
+	parse = [&parse, &last_out, &reel_offset](
+		Errors& errors,
 		cxml::ConstNodePtr node,
 		optional<int> tcr,
 		optional<Time> start_time,
@@ -917,19 +921,19 @@ verify_text_details (
 				out -= *start_time;
 			}
 			if (first_reel && tcr && in < Time(0, 0, 4, 0, *tcr)) {
-				too_early = true;
+				errors.too_early = true;
 			}
 			auto length = out - in;
 			if (length.as_editable_units_ceil(er) <= 0) {
-				too_short = true;
+				errors.too_short = true;
 			} else if (length.as_editable_units_ceil(er) < 15) {
-				too_short_bv21 = true;
+				errors.too_short_bv21 = true;
 			}
 			if (last_out) {
 				/* XXX: this feels dubious - is it really what Bv2.1 means? */
 				auto distance = reel_offset + in.as_editable_units_ceil(er) - *last_out;
 				if (distance >= 0 && distance < 2) {
-					too_close = true;
+					errors.too_close = true;
 				}
 			}
 			last_out = reel_offset + out.as_editable_units_floor(er);
@@ -946,7 +950,7 @@ verify_text_details (
 				return false;
 			};
 			if (!node_has_content(node)) {
-				empty_text = true;
+				errors.empty_text = true;
 			}
 			has_text = true;
 		} else if (node->name() == "LoadFont") {
@@ -958,18 +962,23 @@ verify_text_details (
 		} else if (node->name() == "Font") {
 			if (auto const font_id = node->optional_string_attribute("Id")) {
 				if (std::find_if(font_ids.begin(), font_ids.end(), [font_id](string const& id) { return id == font_id; }) == font_ids.end()) {
-					missing_load_font_id = font_id;
+					errors.missing_load_font_id = font_id;
 				}
 			}
 		}
 		for (auto i: node->node_children()) {
-			parse(i, tcr, start_time, er, first_reel, has_text, font_ids);
+			parse(errors, i, tcr, start_time, er, first_reel, has_text, font_ids);
 		}
 	};
 
 	for (auto i = 0U; i < reels.size(); ++i) {
+
+		bool reel_overlap = false;
+		Errors errors;
+
 		context.reel_index = i;
-		dcp::ScopeGuard sg = [&context]() { context.reel_index = boost::none; };
+		context.asset_id = asset_id(reels[i]);
+		dcp::ScopeGuard sg = [&context]() { context.reel_index = boost::none; context.asset_id = boost::none; };
 
 		if (!check(reels[i])) {
 			continue;
@@ -1004,7 +1013,7 @@ verify_text_details (
 		}
 		bool has_text = false;
 		vector<string> font_ids;
-		parse(doc, tcr, start_time, edit_rate, i == 0, has_text, font_ids);
+		parse(errors, doc, tcr, start_time, edit_rate, i == 0, has_text, font_ids);
 		auto end = reel_offset + duration(reels[i]);
 		if (last_out && *last_out > end) {
 			reel_overlap = true;
@@ -1014,38 +1023,38 @@ verify_text_details (
 		if (context.dcp->standard() && *context.dcp->standard() == dcp::Standard::SMPTE && has_text && font_ids.empty()) {
 			context.add_note(dcp::VerificationNote(VerificationNote::Code::MISSING_LOAD_FONT).set_asset_id(id(reels[i])));
 		}
-	}
 
-	if (last_out && *last_out > reel_offset) {
-		reel_overlap = true;
-	}
+		if (last_out && *last_out > reel_offset) {
+			reel_overlap = true;
+		}
 
-	if (too_early) {
-		context.add_note(VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME);
-	}
+		if (reel_overlap) {
+			context.add_note(VerificationNote::Code::SUBTITLE_OVERLAPS_REEL_BOUNDARY);
+		}
 
-	if (too_short) {
-		context.add_note(VerificationNote::Code::INVALID_SUBTITLE_DURATION);
-	}
+		if (errors.too_early) {
+			context.add_note(VerificationNote::Code::INVALID_SUBTITLE_FIRST_TEXT_TIME);
+		}
 
-	if (too_short_bv21) {
-		context.add_note(VerificationNote::Code::INVALID_SUBTITLE_DURATION_BV21);
-	}
+		if (errors.too_short) {
+			context.add_note(VerificationNote::Code::INVALID_SUBTITLE_DURATION);
+		}
 
-	if (too_close) {
-		context.add_note(VerificationNote::Code::INVALID_SUBTITLE_SPACING);
-	}
+		if (errors.too_short_bv21) {
+			context.add_note(VerificationNote::Code::INVALID_SUBTITLE_DURATION_BV21);
+		}
 
-	if (reel_overlap) {
-		context.add_note(VerificationNote::Code::SUBTITLE_OVERLAPS_REEL_BOUNDARY);
-	}
+		if (errors.too_close) {
+			context.add_note(VerificationNote::Code::INVALID_SUBTITLE_SPACING);
+		}
 
-	if (empty_text) {
-		context.add_note(VerificationNote::Code::EMPTY_TEXT);
-	}
+		if (errors.empty_text) {
+			context.add_note(VerificationNote::Code::EMPTY_TEXT);
+		}
 
-	if (missing_load_font_id) {
-		context.add_note(dcp::VerificationNote(VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT).set_load_font_id(*missing_load_font_id));
+		if (errors.missing_load_font_id) {
+			context.add_note(dcp::VerificationNote(VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT).set_load_font_id(*errors.missing_load_font_id));
+		}
 	}
 }
 
@@ -1268,9 +1277,10 @@ verify_text_details(Context& context, vector<shared_ptr<Reel>> reels)
 	}
 
 	if (reels[0]->main_subtitle() && reels[0]->main_subtitle()->asset_ref().resolved()) {
-		context.asset_id = reels[0]->main_subtitle()->asset()->id();
-		dcp::ScopeGuard sg = [&context]() { context.asset_id = boost::none; };
 		verify_text_details(context, reels, reels[0]->main_subtitle()->edit_rate().numerator,
+			[](shared_ptr<Reel> reel) {
+				return reel->main_subtitle() ? reel->main_subtitle()->id() : string{};
+			},
 			[](shared_ptr<Reel> reel) {
 				return static_cast<bool>(reel->main_subtitle());
 			},
@@ -1287,9 +1297,10 @@ verify_text_details(Context& context, vector<shared_ptr<Reel>> reels)
 	}
 
 	for (auto i = 0U; i < reels[0]->closed_captions().size(); ++i) {
-		context.asset_id = reels[0]->closed_captions()[i]->asset()->id();
-		dcp::ScopeGuard sg = [&context]() { context.asset_id = boost::none; };
 		verify_text_details(context, reels, reels[0]->closed_captions()[i]->edit_rate().numerator,
+			[i](shared_ptr<Reel> reel) {
+				return reel->closed_captions()[i]->id();
+			},
 			[i](shared_ptr<Reel> reel) {
 				return i < reel->closed_captions().size();
 			},
