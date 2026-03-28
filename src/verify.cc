@@ -1422,7 +1422,7 @@ verify_reel(
 			context.add_note(VerificationNote::Code::INVALID_DURATION, i->id());
 		}
 		if ((i->intrinsic_duration() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
-			context.add_note(VerificationNote::Code::INVALID_INTRINSIC_DURATION, i->id());
+			context.add_note(VerificationNote(VerificationNote::Code::INVALID_INTRINSIC_DURATION).set_asset_id(i->id()));
 		}
 		if (i->encryptable() && !i->hash()) {
 			context.add_note(VerificationNote::Code::MISSING_HASH, i->id());
@@ -1986,7 +1986,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::MISSING_ASSETMAP:
 		return process_string("No valid ASSETMAP or ASSETMAP.xml was found.");
 	case VerificationNote::Code::INVALID_INTRINSIC_DURATION:
-		return compose("The intrinsic duration of the asset %1 is less than 1 second.", note.note().get());
+		return compose("The intrinsic duration of the asset %1 is less than 1 second.", *note.asset_id());
 	case VerificationNote::Code::INVALID_DURATION:
 		return compose("The duration of the asset %1 is less than 1 second.", note.note().get());
 	case VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES:

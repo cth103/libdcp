@@ -1055,9 +1055,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_duration)
 		note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "j2c_d7576dcb-a361-4139-96b8-267f5f8d7f91.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 		{ VC::INVALID_STANDARD },
 		VN(VC::INVALID_DURATION, string("d7576dcb-a361-4139-96b8-267f5f8d7f91")).set_cpl_id(cpl->id()).set_reel_index(0),
-		VN(VC::INVALID_INTRINSIC_DURATION, string("d7576dcb-a361-4139-96b8-267f5f8d7f91")).set_cpl_id(cpl->id()).set_reel_index(0),
+		VN(VC::INVALID_INTRINSIC_DURATION).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("d7576dcb-a361-4139-96b8-267f5f8d7f91"),
 		VN(VC::INVALID_DURATION, string("a2a87f5d-b749-4a7e-8d0c-9d48a4abf626")).set_cpl_id(cpl->id()).set_reel_index(0),
-		VN(VC::INVALID_INTRINSIC_DURATION, string("a2a87f5d-b749-4a7e-8d0c-9d48a4abf626")).set_cpl_id(cpl->id()).set_reel_index(0),
+		VN(VC::INVALID_INTRINSIC_DURATION).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("a2a87f5d-b749-4a7e-8d0c-9d48a4abf626"),
 		VN(VC::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get()).set_cpl_id(cpl->id())
 	};
 
