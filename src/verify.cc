@@ -370,10 +370,11 @@ validate_xml(Context& context, T xml)
 
 	for (auto i: error_handler.errors()) {
 		context.add_note(
-			VerificationNote::Code::INVALID_XML,
-			i.message(),
-			boost::trim_copy(i.public_id() + " " + i.system_id()),
-			i.line()
+			VerificationNote(
+				VerificationNote::Code::INVALID_XML,
+				boost::filesystem::path(boost::trim_copy(i.public_id() + " " + i.system_id())),
+				i.line()
+			).set_error(i.message())
 		);
 	}
 }
@@ -1981,7 +1982,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::MISMATCHED_STANDARD:
 		return process_string("The DCP contains both SMPTE and Interop parts.");
 	case VerificationNote::Code::INVALID_XML:
-		return compose("An XML file is badly formed: %1 (%2:%3)", note.note().get(), filename(), note.line().get());
+		return compose("An XML file is badly formed: %1 (%2:%3)", *note.error(), filename(), note.line().get());
 	case VerificationNote::Code::MISSING_ASSETMAP:
 		return process_string("No valid ASSETMAP or ASSETMAP.xml was found.");
 	case VerificationNote::Code::INVALID_INTRINSIC_DURATION:

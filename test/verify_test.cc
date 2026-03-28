@@ -588,9 +588,9 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 				).set_cpl_id(dcp_test1_cpl_id()).set_reference_hash("x" + calc.old_hash()).set_calculated_hash(calc.old_hash()),
 			VN(VC::MISMATCHED_PICTURE_HASHES, canonical(dir / "video.mxf")).set_cpl_id(dcp_test1_cpl_id()).set_reel_index(0).set_asset_id("5407b210-4441-4e97-8b16-8bdc7c12da54"),
 			VN(VC::MISMATCHED_SOUND_HASHES, canonical(dir / "audio.mxf")).set_cpl_id(dcp_test1_cpl_id()).set_reel_index(0).set_asset_id("97f0f352-5b77-48ee-a558-9df37717f4fa"),
-			{ VC::INVALID_XML, "value 'x3M7YTgvFKXXMEGLkIbV4miC90FE=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 28 },
-			{ VC::INVALID_XML, "value 'xskI+5b/9LA/y6h0mcyxysJYanxI=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 12 },
-			{ VC::INVALID_XML, "value 'xvsVjRV9vhTBPUWfE/TT1o2vdQsI=' is invalid Base64-encoded binary", canonical(dir / dcp_test1_pkl()), 20 },
+			VN(VC::INVALID_XML, canonical(dir / dcp_test1_pkl()), 28).set_error("value 'x3M7YTgvFKXXMEGLkIbV4miC90FE=' is invalid Base64-encoded binary"),
+			VN(VC::INVALID_XML, canonical(dir / dcp_test1_pkl()), 12).set_error("value 'xskI+5b/9LA/y6h0mcyxysJYanxI=' is invalid Base64-encoded binary"),
+			VN(VC::INVALID_XML, canonical(dir / dcp_test1_pkl()), 20).set_error("value 'xvsVjRV9vhTBPUWfE/TT1o2vdQsI=' is invalid Base64-encoded binary"),
 		});
 }
 
@@ -784,18 +784,16 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_standard)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
 			{ VC::MISMATCHED_STANDARD },
-			VN(VC::INVALID_XML, "invalid character encountered", canonical(cpl_path), 42).set_cpl_id(cpl->id()),
-			VN(VC::INVALID_XML, "no declaration found for element 'Id'", canonical(cpl_path), 53).set_cpl_id(cpl->id()),
-			VN(VC::INVALID_XML, "no declaration found for element 'EditRate'", canonical(cpl_path), 54).set_cpl_id(cpl->id()),
-			VN(VC::INVALID_XML, "no declaration found for element 'IntrinsicDuration'", canonical(cpl_path), 55).set_cpl_id(cpl->id()),
-			VN(
-				VC::INVALID_XML,
+			VN(VC::INVALID_XML, canonical(cpl_path), 42).set_cpl_id(cpl->id()).set_error("invalid character encountered"),
+			VN(VC::INVALID_XML, canonical(cpl_path), 53).set_cpl_id(cpl->id()).set_error("no declaration found for element 'Id'"),
+			VN(VC::INVALID_XML, canonical(cpl_path), 54).set_cpl_id(cpl->id()).set_error("no declaration found for element 'EditRate'"),
+			VN(VC::INVALID_XML, canonical(cpl_path), 55).set_cpl_id(cpl->id()).set_error("no declaration found for element 'IntrinsicDuration'"),
+			VN(VC::INVALID_XML, canonical(cpl_path), 149).set_cpl_id(cpl->id()).set_error(
 				"element 'Id' is not allowed for content model '(Id,AnnotationText?,EditRate,IntrinsicDuration,"
 				"EntryPoint?,Duration?,FullContentTitleText,ReleaseTerritory?,VersionNumber?,Chain?,Distributor?,"
 				"Facility?,AlternateContentVersionList?,Luminance?,MainSoundConfiguration,MainSoundSampleRate,"
-				"MainPictureStoredArea,MainPictureActiveArea,MainSubtitleLanguageList?,ExtensionMetadataList?,)'",
-				canonical(cpl_path), 149
-				).set_cpl_id(cpl->id()),
+				"MainPictureStoredArea,MainPictureActiveArea,MainSubtitleLanguageList?,ExtensionMetadataList?,)'"
+			),
 			VN(
 				VC::MISMATCHED_CPL_HASHES, canonical(cpl_path)
 				).set_cpl_id(cpl->id()).set_reference_hash("skI+5b/9LA/y6h0mcyxysJYanxI=").set_calculated_hash("FZ9E7L/pOuJ6aZfbiaANTv8BFOo=")
@@ -833,11 +831,10 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_id)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
-			VN(
-				VC::INVALID_XML,
+			VN(VC::INVALID_XML, canonical(cpl_path), 3).set_cpl_id(cpl->id()).set_error(
 				"value 'urn:uuid:6affb8ee-0020-4dff-a53c-17652f6358a' does not match regular expression "
-				"facet 'urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'", canonical(cpl_path), 3
-				).set_cpl_id(cpl->id())
+				"facet 'urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'"
+			),
 		};
 
 	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
@@ -876,7 +873,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_issue_date)
 			VN(
 				VC::MISMATCHED_CPL_HASHES, canonical(cpl_path)
 				).set_cpl_id(cpl->id()).set_reference_hash("skI+5b/9LA/y6h0mcyxysJYanxI=").set_calculated_hash("sz3BeIugJ567q3HMnA62JeRw4TE="),
-			VN(VC::INVALID_XML, "invalid character encountered", canonical(cpl_path), 5).set_cpl_id(cpl->id()),
+			VN(VC::INVALID_XML, canonical(cpl_path), 5).set_cpl_id(cpl->id()).set_error("invalid character encountered"),
 		};
 
 	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
@@ -914,12 +911,10 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_pkl_id)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
-			VN(
-				VC::INVALID_XML,
+			VN(VC::INVALID_XML, canonical(pkl_path), 3).set_error(
 				"value 'urn:uuid:x199d58b-5ef8-4d49-b270-07e590ccb280' does not match regular "
-				"expression facet 'urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'",
-				canonical(pkl_path), 3
-				),
+				"expression facet 'urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'"
+			),
 	};
 
 	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
@@ -957,12 +952,10 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_asset_map_id)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"A Test DCP"}, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
-			VN(
-				VC::INVALID_XML,
+			VN(VC::INVALID_XML, canonical(asset_map_path), 3).set_error(
 				"value 'urn:uuid:x17b3de4-6dda-408d-b19b-6711354b0bc3' does not match regular "
-				"expression facet 'urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'",
-				canonical(asset_map_path), 3
-				),
+				"expression facet 'urn:uuid:[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'"
+			),
 	};
 
 	check_verify_result(dcp::verify({dir}, {}, &stage, &progress, {}, xsd_test).notes, expected);
@@ -1321,13 +1314,10 @@ BOOST_AUTO_TEST_CASE (verify_invalid_interop_subtitles)
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			{ VC::INVALID_STANDARD },
-			VN(VC::INVALID_XML, string("no declaration found for element 'Foo'"), path(), 5).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
-			VN(
-				VC::INVALID_XML,
-				string("element 'Foo' is not allowed for content model '(SubtitleID,MovieTitle,ReelNumber,Language,LoadFont*,Font*,Subtitle*)'"),
-				path(),
-				29
-				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::INVALID_XML, path(), 5).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_error("no declaration found for element 'Foo'"),
+			VN(VC::INVALID_XML, path(), 29).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_error(
+				"element 'Foo' is not allowed for content model '(SubtitleID,MovieTitle,ReelNumber,Language,LoadFont*,Font*,Subtitle*)'"
+			),
 			VN(VC::MISSING_FONT, string{"theFontId"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 		});
 }
@@ -1444,13 +1434,11 @@ BOOST_AUTO_TEST_CASE (verify_invalid_smpte_subtitles)
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			VN(VC::INVALID_XML, string("no declaration found for element 'Foo'"), path(), 2).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
-			VN(
-				VC::INVALID_XML,
-				string("element 'Foo' is not allowed for content model '(Id,ContentTitleText,AnnotationText?,IssueDate,ReelNumber?,Language?,EditRate,TimeCodeRate,StartTime?,DisplayType?,LoadFont*,SubtitleList)'"),
-				path(),
-				2
-				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::INVALID_XML, path(), 2).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_error("no declaration found for element 'Foo'"),
+			VN(VC::INVALID_XML, path(), 2).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_error(
+				"element 'Foo' is not allowed for content model "
+				"'(Id,ContentTitleText,AnnotationText?,IssueDate,ReelNumber?,Language?,EditRate,TimeCodeRate,StartTime?,DisplayType?,LoadFont*,SubtitleList)'"
+			),
 			VN(VC::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),
 			VN(VC::INVALID_SUBTITLE_ISSUE_DATE, string{"2020-05-09T00:29:21.000+02:00"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
@@ -1670,22 +1658,16 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "pic.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::INVALID_XML, string("no declaration found for element 'meta:MainSoundXConfiguration'"), canonical(cpl->file().get()), 50
-				).set_cpl_id(cpl->id()),
-			VN(
-				VC::INVALID_XML, string("no declaration found for element 'meta:MainSoundXSampleRate'"), canonical(cpl->file().get()), 51
-				).set_cpl_id(cpl->id()),
-			VN(
-				VC::INVALID_XML,
-				string("element 'meta:MainSoundXConfiguration' is not allowed for content model "
-				       "'(Id,AnnotationText?,EditRate,IntrinsicDuration,EntryPoint?,Duration?,"
-				       "FullContentTitleText,ReleaseTerritory?,VersionNumber?,Chain?,Distributor?,"
-				       "Facility?,AlternateContentVersionList?,Luminance?,MainSoundConfiguration,"
-				       "MainSoundSampleRate,MainPictureStoredArea,MainPictureActiveArea,MainSubtitleLanguageList?,"
-				       "ExtensionMetadataList?,)'"),
-				canonical(cpl->file().get()),
-				71).set_cpl_id(cpl->id()),
+			VN(VC::INVALID_XML, canonical(cpl->file().get()), 50).set_cpl_id(cpl->id()).set_error("no declaration found for element 'meta:MainSoundXConfiguration'"),
+			VN(VC::INVALID_XML, canonical(cpl->file().get()), 51).set_cpl_id(cpl->id()).set_error("no declaration found for element 'meta:MainSoundXSampleRate'"),
+			VN(VC::INVALID_XML, canonical(cpl->file().get()), 71).set_cpl_id(cpl->id()).set_error(
+				"element 'meta:MainSoundXConfiguration' is not allowed for content model "
+				"'(Id,AnnotationText?,EditRate,IntrinsicDuration,EntryPoint?,Duration?,"
+				"FullContentTitleText,ReleaseTerritory?,VersionNumber?,Chain?,Distributor?,"
+				"Facility?,AlternateContentVersionList?,Luminance?,MainSoundConfiguration,"
+				"MainSoundSampleRate,MainPictureStoredArea,MainPictureActiveArea,MainSubtitleLanguageList?,"
+				"ExtensionMetadataList?,)'"
+			),
 			VN(
 				VC::MISMATCHED_CPL_HASHES, canonical(cpl->file().get())
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash())
@@ -4336,11 +4318,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			VN(
-				VC::INVALID_XML, string("no declaration found for element 'meta:NameX'"), cpl->file().get(), 70
-				).set_cpl_id(cpl->id()),
-			VN(
-				VC::INVALID_XML, string("element 'meta:NameX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 77).set_cpl_id(cpl->id()),
+			VN(VC::INVALID_XML, cpl->file().get(), 70).set_cpl_id(cpl->id()).set_error("no declaration found for element 'meta:NameX'"),
+			VN(VC::INVALID_XML, cpl->file().get(), 77).set_cpl_id(cpl->id()).set_error("element 'meta:NameX' is not allowed for content model '(Name,PropertyList?,)'"),
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -4475,12 +4454,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			VN(
-				VC::INVALID_XML, string("no declaration found for element 'meta:ValueX'"), cpl->file().get(), 74
-				).set_cpl_id(cpl->id()),
-			VN(
-				VC::INVALID_XML, string("element 'meta:ValueX' is not allowed for content model '(Name,Value)'"), cpl->file().get(), 75
-				).set_cpl_id(cpl->id()),
+			VN(VC::INVALID_XML, cpl->file().get(), 74).set_cpl_id(cpl->id()).set_error("no declaration found for element 'meta:ValueX'"),
+			VN(VC::INVALID_XML, cpl->file().get(), 75).set_cpl_id(cpl->id()).set_error("element 'meta:ValueX' is not allowed for content model '(Name,Value)'"),
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -4570,9 +4545,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, string{"1998x1080"}, cpl->file().get()).set_cpl_id(cpl->id()),
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			VN(VC::INVALID_XML, string("no declaration found for element 'meta:PropertyX'"), cpl->file().get(), 72).set_cpl_id(cpl->id()),
-			VN(
-				VC::INVALID_XML, string("element 'meta:PropertyX' is not allowed for content model '(Property+)'"), cpl->file().get(), 76).set_cpl_id(cpl->id()),
+			VN(VC::INVALID_XML, cpl->file().get(), 72).set_cpl_id(cpl->id()).set_error("no declaration found for element 'meta:PropertyX'"),
+			VN(VC::INVALID_XML, cpl->file().get(), 76).set_cpl_id(cpl->id()).set_error("element 'meta:PropertyX' is not allowed for content model '(Property+)'"),
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -4620,12 +4594,10 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 				cpl->file().get()
 				).set_cpl_id(cpl->id()),
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			VN(
-				VC::INVALID_XML, string("no declaration found for element 'meta:PropertyListX'"), cpl->file().get(), 71
-				).set_cpl_id(cpl->id()),
-			VN(
-				VC::INVALID_XML, string("element 'meta:PropertyListX' is not allowed for content model '(Name,PropertyList?,)'"), cpl->file().get(), 77
-				).set_cpl_id(cpl->id()),
+			VN(VC::INVALID_XML, cpl->file().get(), 71).set_cpl_id(cpl->id()).set_error("no declaration found for element 'meta:PropertyListX'"),
+			VN(VC::INVALID_XML, cpl->file().get(), 77).set_cpl_id(cpl->id()).set_error(
+				"element 'meta:PropertyListX' is not allowed for content model '(Name,PropertyList?,)'"
+			),
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),

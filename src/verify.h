@@ -157,7 +157,7 @@ public:
 		/** The DCP contains both SMPTE and Interop-standard components */
 		MISMATCHED_STANDARD,
 		/** Some XML fails to validate against its XSD/DTD
-		 *  note contains the (probably technical) details
+		 *  error contains the (probably technical) details
 		 *  file contains the invalid filename
 		 *  line contains the line number
 		 *  reel_index contains the reel index (starting from 0), if applicable
@@ -602,6 +602,13 @@ public:
 	{
 		_data[Data::NOTE] = note;
 		_data[Data::FILE] = file;
+	}
+
+	VerificationNote(Code code, boost::filesystem::path file, uint64_t line)
+		: _code (code)
+	{
+		_data[Data::FILE] = file;
+		_data[Data::LINE] = line;
 	}
 
 	VerificationNote(Code code, std::string note, boost::filesystem::path file, uint64_t line)
