@@ -227,7 +227,7 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 					note.set_frame(frame_index);
 					note.set_frame_rate(dcp::Fraction(frame_rate, 1));
 					note.set_component(tile_part_index);
-					note.set_size(tile_part_length);
+					note.set_size_in_bytes(tile_part_length);
 					notes.push_back(note);
 				}
 				main_header_finished = true;

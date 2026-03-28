@@ -2198,7 +2198,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE:
 		return compose(
 			"Frame %1 has an image component that is too large (component %2 is %3 bytes in size).",
-			note.frame().get(), note.component().get(), note.size().get()
+			note.frame().get(), note.component().get(), note.size_in_bytes().get()
 			);
 	case VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT:
 		return compose("The XML in the subtitle asset %1 has more than one namespace declaration.", note.note().get());
@@ -2368,7 +2368,7 @@ dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		a.line() == b.line() &&
 		a.frame() == b.frame() &&
 		a.component() == b.component() &&
-		a.size() == b.size() &&
+		a.size_in_bytes() == b.size_in_bytes() &&
 		a.load_font_id() == b.load_font_id() &&
 		a.asset_id() == b.asset_id() &&
 		a.other_asset_id() == b.other_asset_id() &&
@@ -2441,8 +2441,8 @@ dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		return less_than_optional(a.component(), b.component());
 	}
 
-	if (a.size() != b.size()) {
-		return less_than_optional(a.size(), b.size());
+	if (a.size_in_bytes() != b.size_in_bytes()) {
+		return less_than_optional(a.size_in_bytes(), b.size_in_bytes());
 	}
 
 	if (a.load_font_id() != b.load_font_id()) {

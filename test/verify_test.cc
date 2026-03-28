@@ -5653,7 +5653,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 			expected.push_back(
 				VN(VC::INVALID_JPEG2000_TILE_PART_SIZE)
 				.set_frame(frame).set_frame_rate(dcp::Fraction(24, 1)).set_component(component)
-				.set_size(component_sizes[component]).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(mp->id())
+				.set_size_in_bytes(component_sizes[component]).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(mp->id())
 				);
 		}
 	}

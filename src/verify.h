@@ -632,7 +632,7 @@ private:
 		OTHER_ASSET_ID,
 		REEL_INDEX, ///< reel index, counting from 0
 		REFERENCE_HASH,
-		SIZE,
+		SIZE_IN_BYTES
 	};
 
 	template <class T>
@@ -676,13 +676,13 @@ public:
 		return data<int>(Data::COMPONENT);
 	}
 
-	VerificationNote& set_size(int size) {
-		_data[Data::SIZE] = size;
+	VerificationNote& set_size_in_bytes(uint64_t size) {
+		_data[Data::SIZE_IN_BYTES] = size;
 		return *this;
 	}
 
-	boost::optional<int> size() const {
-		return data<int>(Data::SIZE);
+	boost::optional<uint64_t> size_in_bytes() const {
+		return data<uint64_t>(Data::SIZE_IN_BYTES);
 	}
 
 	VerificationNote& set_load_font_id(std::string id) {
