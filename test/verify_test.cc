@@ -1721,7 +1721,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_missing_tag)
 	check_verify_result (
 		{ dir },
 		{},
-		{{ dcp::VerificationNote::Code::FAILED_READ, string("missing XML tag Width in MainPictureStoredArea") }}
+		{ dcp::VerificationNote(dcp::VerificationNote::Code::FAILED_READ).set_error("missing XML tag Width in MainPictureStoredArea") }
 		);
 }
 

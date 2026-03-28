@@ -103,7 +103,7 @@ public:
 	//   Only the first line of each comment will be taken as a description of the code.
 	enum class Code {
 		/** A general error when reading the DCP
-		 *  note contains (probably technical) details
+		 *  error contains (probably technical) details
 		 */
 		FAILED_READ,
 		/** The hash of a CPL in the PKL agrees with the CPL file */

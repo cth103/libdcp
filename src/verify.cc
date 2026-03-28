@@ -1877,21 +1877,21 @@ dcp::verify (
 		try {
 			dcp->read (&notes, true);
 		} catch (MissingAssetmapError& e) {
-			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote(VerificationNote::Code::FAILED_READ).set_error(e.what()));
 			carry_on = false;
 		} catch (ReadError& e) {
-			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote(VerificationNote::Code::FAILED_READ).set_error(e.what()));
 		} catch (XMLError& e) {
-			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote(VerificationNote::Code::FAILED_READ).set_error(e.what()));
 		} catch (MXFFileError& e) {
-			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote(VerificationNote::Code::FAILED_READ).set_error(e.what()));
 		} catch (BadURNUUIDError& e) {
-			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote(VerificationNote::Code::FAILED_READ).set_error(e.what()));
 		} catch (cxml::Error& e) {
-			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote(VerificationNote::Code::FAILED_READ).set_error(e.what()));
 		} catch (xmlpp::parse_error& e) {
 			carry_on = false;
-			context.add_note(VerificationNote::Code::FAILED_READ, string(e.what()));
+			context.add_note(VerificationNote(VerificationNote::Code::FAILED_READ).set_error(e.what()));
 		}
 
 		if (!carry_on) {
@@ -1914,7 +1914,7 @@ dcp::verify (
 				context.audio_channels.reset();
 				context.subtitle_language.reset();
 			} catch (ReadError& e) {
-				notes.push_back({VerificationNote::Code::FAILED_READ, string(e.what())});
+				notes.push_back(VerificationNote(VerificationNote::Code::FAILED_READ).set_error(e.what()));
 			}
 		}
 
@@ -1957,7 +1957,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 
 	switch (note.code()) {
 	case VerificationNote::Code::FAILED_READ:
-		return process_string(*note.note());
+		return process_string(*note.error());
 	case VerificationNote::Code::MATCHING_CPL_HASHES:
 		return process_string("The hash of the CPL in the PKL matches the CPL file.");
 	case VerificationNote::Code::MISMATCHED_CPL_HASHES:
