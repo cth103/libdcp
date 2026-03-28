@@ -126,6 +126,8 @@ public:
 	/** @return the total number of seconds that this time consists of */
 	double as_seconds () const;
 
+	int64_t as_editable_units() const;
+
 	/** @param tcr_ Timecode rate with which the return value should be counted
 	 *  @return the total number of editable units that this time consists of at the specified timecode rate, rounded down
 	 *  to the nearest editable unit. For example, as_editable_units_floor(24) returns the total time in frames at 24fps.

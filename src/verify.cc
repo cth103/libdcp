@@ -1725,8 +1725,8 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		auto ffoc = markers_seen.find(Marker::FFOC);
 		if (ffoc == markers_seen.end()) {
 			context.add_note(VerificationNote::Code::MISSING_FFOC);
-		} else if (ffoc->second.e != 1) {
-			context.add_note(VerificationNote::Code::INCORRECT_FFOC, fmt::to_string(ffoc->second.e));
+		} else if (ffoc->second.as_editable_units() != 1) {
+			context.add_note(VerificationNote::Code::INCORRECT_FFOC, fmt::to_string(ffoc->second.as_editable_units()));
 		}
 
 		auto lfoc = markers_seen.find(Marker::LFOC);
