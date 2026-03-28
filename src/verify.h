@@ -619,20 +619,20 @@ public:
 
 private:
 	enum class Data {
-		NOTE,  ///< further information about the error
-		FILE,  ///< path of file containing the error
-		LINE,  ///< error line number within the FILE
-		FRAME,
-		COMPONENT,
-		SIZE,
-		LOAD_FONT_ID,
 		ASSET_ID,
-		OTHER_ASSET_ID,
-		FRAME_RATE,
-		CPL_ID,
 		CALCULATED_HASH,
+		COMPONENT,
+		CPL_ID,
+		FILE,  ///< path of file containing the error
+		FRAME,
+		FRAME_RATE,
+		LINE,  ///< error line number within the FILE
+		LOAD_FONT_ID,
+		NOTE,  ///< further information about the error
+		OTHER_ASSET_ID,
+		REEL_INDEX, ///< reel index, counting from 0
 		REFERENCE_HASH,
-		REEL_INDEX ///< reel index, counting from 0
+		SIZE,
 	};
 
 	template <class T>
