@@ -41,6 +41,7 @@
 #define LIBDCP_VERIFY_H
 
 
+#include "dcp_time.h"
 #include "decrypted_kdm.h"
 #include "types.h"
 #include <boost/any.hpp>
@@ -619,20 +620,42 @@ public:
 
 private:
 	enum class Data {
+		ANNOTATION_TEXT,
 		ASSET_ID,
+		BIT_DEPTH,
 		CALCULATED_HASH,
+		CAPABILITIES,
+		CODE_BLOCK_HEIGHT,
+		CODE_BLOCK_WIDTH,
 		COMPONENT,
+		CONTENT_KIND,
+		CONTENT_VERSION,
 		CPL_ID,
+		DURATION,
+		ERROR,
 		FILE,  ///< path of file containing the error
 		FRAME,
 		FRAME_RATE,
+		GUARD_BITS,
+		ISSUE_DATE,
+		LANGUAGE,
 		LINE,  ///< error line number within the FILE
 		LOAD_FONT_ID,
+		MAIN_PICTURE_ACTIVE_AREA,
 		NOTE,  ///< further information about the error
 		OTHER_ASSET_ID,
+		OTHER_DURATION,
+		PKL_ID,
+		POC_MARKER,
+		POC_MARKERS,
 		REEL_INDEX, ///< reel index, counting from 0
 		REFERENCE_HASH,
-		SIZE_IN_BYTES
+		SIZE_IN_BYTES,
+		SIZE_IN_PIXELS,
+		TERRITORY,
+		TILE_PARTS,
+		TIME,
+		XML_NAMESPACE,
 	};
 
 	template <class T>
@@ -748,6 +771,15 @@ public:
 		return data<std::string>(Data::CPL_ID);
 	}
 
+	VerificationNote& set_pkl_id(std::string id) {
+		_data[Data::PKL_ID] = id;
+		return *this;
+	}
+
+	boost::optional<std::string> pkl_id() const {
+		return data<std::string>(Data::PKL_ID);
+	}
+
 	VerificationNote& set_reel_index(int index) {
 		_data[Data::REEL_INDEX] = index;
 		return *this;
@@ -755,6 +787,195 @@ public:
 
 	boost::optional<int> reel_index() const {
 		return data<int>(Data::REEL_INDEX);
+	}
+
+	VerificationNote& set_error(std::string error) {
+		_data[Data::ERROR] = std::move(error);
+		return *this;
+	}
+
+	boost::optional<std::string> error() const {
+		return data<std::string>(Data::ERROR);
+	}
+
+	VerificationNote& set_language(std::string language) {
+		_data[Data::LANGUAGE] = std::move(language);
+		return *this;
+	}
+
+	boost::optional<std::string> language() const {
+		return data<std::string>(Data::LANGUAGE);
+	}
+
+	VerificationNote& set_territory(std::string territory) {
+		_data[Data::TERRITORY] = std::move(territory);
+		return *this;
+	}
+
+	boost::optional<std::string> territory() const {
+		return data<std::string>(Data::TERRITORY);
+	}
+
+	VerificationNote& set_size_in_pixels(dcp::Size size_in_pixels) {
+		_data[Data::SIZE_IN_PIXELS] = size_in_pixels;
+		return *this;
+	}
+
+	boost::optional<dcp::Size> size_in_pixels() const {
+		return data<dcp::Size>(Data::SIZE_IN_PIXELS);
+	}
+
+	VerificationNote& set_bit_depth(int bit_depth) {
+		_data[Data::BIT_DEPTH] = std::move(bit_depth);
+		return *this;
+	}
+
+	boost::optional<int> bit_depth() const {
+		return data<int>(Data::BIT_DEPTH);
+	}
+
+	VerificationNote& set_annotation_text(std::string annotation_text) {
+		_data[Data::ANNOTATION_TEXT] = std::move(annotation_text);
+		return *this;
+	}
+
+	boost::optional<std::string> annotation_text() const {
+		return data<std::string>(Data::ANNOTATION_TEXT);
+	}
+
+	VerificationNote& set_time(dcp::Time time) {
+		_data[Data::TIME] = std::move(time);
+		return *this;
+	}
+
+	boost::optional<dcp::Time> time() const {
+		return data<dcp::Time>(Data::TIME);
+	}
+
+	VerificationNote& set_guard_bits(int guard_bits) {
+		_data[Data::GUARD_BITS] = guard_bits;
+		return *this;
+	}
+
+	boost::optional<int> guard_bits() const {
+		return data<int>(Data::GUARD_BITS);
+	}
+
+	VerificationNote& set_code_block_width(int code_block_width) {
+		_data[Data::CODE_BLOCK_WIDTH] = code_block_width;
+		return *this;
+	}
+
+	boost::optional<int> code_block_width() const {
+		return data<int>(Data::CODE_BLOCK_WIDTH);
+	}
+
+	VerificationNote& set_code_block_height(int code_block_height) {
+		_data[Data::CODE_BLOCK_HEIGHT] = code_block_height;
+		return *this;
+	}
+
+	boost::optional<int> code_block_height() const {
+		return data<int>(Data::CODE_BLOCK_HEIGHT);
+	}
+
+	VerificationNote& set_poc_marker(int poc_marker) {
+		_data[Data::POC_MARKER] = poc_marker;
+		return *this;
+	}
+
+	boost::optional<int> poc_marker() const {
+		return data<int>(Data::POC_MARKER);
+	}
+
+	VerificationNote& set_poc_markers(int poc_markers) {
+		_data[Data::POC_MARKERS] = poc_markers;
+		return *this;
+	}
+
+	boost::optional<int> poc_markers() const {
+		return data<int>(Data::POC_MARKERS);
+	}
+
+	VerificationNote& set_tile_parts(int tile_parts) {
+		_data[Data::TILE_PARTS] = tile_parts;
+		return *this;
+	}
+
+	boost::optional<int> tile_parts() const {
+		return data<int>(Data::TILE_PARTS);
+	}
+
+	VerificationNote& set_capabilities(int capabilities) {
+		_data[Data::CAPABILITIES] = capabilities;
+		return *this;
+	}
+
+	boost::optional<int> capabilities() const {
+		return data<int>(Data::CAPABILITIES);
+	}
+
+	VerificationNote& set_duration(int64_t duration) {
+		_data[Data::DURATION] = std::move(duration);
+		return *this;
+	}
+
+	boost::optional<int64_t> duration() const {
+		return data<int64_t>(Data::DURATION);
+	}
+
+	VerificationNote& set_other_duration(int64_t other_duration) {
+		_data[Data::OTHER_DURATION] = std::move(other_duration);
+		return *this;
+	}
+
+	boost::optional<int64_t> other_duration() const {
+		return data<int64_t>(Data::OTHER_DURATION);
+	}
+
+	VerificationNote& set_content_kind(std::string content_kind) {
+		_data[Data::CONTENT_KIND] = std::move(content_kind);
+		return *this;
+	}
+
+	boost::optional<std::string> content_kind() const {
+		return data<std::string>(Data::CONTENT_KIND);
+	}
+
+	VerificationNote& set_main_picture_active_area(dcp::Size main_picture_active_area) {
+		_data[Data::MAIN_PICTURE_ACTIVE_AREA] = std::move(main_picture_active_area);
+		return *this;
+	}
+
+	boost::optional<dcp::Size> main_picture_active_area() const {
+		return data<dcp::Size>(Data::MAIN_PICTURE_ACTIVE_AREA);
+	}
+
+	VerificationNote& set_issue_date(std::string issue_date) {
+		_data[Data::ISSUE_DATE] = std::move(issue_date);
+		return *this;
+	}
+
+	boost::optional<std::string> issue_date() const {
+		return data<std::string>(Data::ISSUE_DATE);
+	}
+
+	VerificationNote& set_content_version(std::string content_version) {
+		_data[Data::CONTENT_VERSION] = std::move(content_version);
+		return *this;
+	}
+
+	boost::optional<std::string> content_version() const {
+		return data<std::string>(Data::CONTENT_VERSION);
+	}
+
+	VerificationNote& set_xml_namespace(std::string xml_namespace) {
+		_data[Data::XML_NAMESPACE] = std::move(xml_namespace);
+		return *this;
+	}
+
+	boost::optional<std::string> xml_namespace() const {
+		return data<std::string>(Data::XML_NAMESPACE);
 	}
 
 private:

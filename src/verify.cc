@@ -2374,9 +2374,31 @@ dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		a.other_asset_id() == b.other_asset_id() &&
 		a.frame_rate() == b.frame_rate() &&
 		a.cpl_id() == b.cpl_id() &&
+		a.pkl_id() == b.pkl_id() &&
 		a.reference_hash() == b.reference_hash() &&
 		a.calculated_hash() == b.calculated_hash() &&
-		a.reel_index() == b.reel_index();
+		a.reel_index() == b.reel_index() &&
+		a.annotation_text() == b.annotation_text() &&
+		a.bit_depth() == b.bit_depth() &&
+		a.capabilities() == b.capabilities() &&
+		a.code_block_height() == b.code_block_height() &&
+		a.code_block_width() == b.code_block_width() &&
+		a.content_kind() == b.content_kind() &&
+		a.content_version() == b.content_version() &&
+		a.duration() == b.duration() &&
+		a.error() == b.error() &&
+		a.guard_bits() == b.guard_bits() &&
+		a.issue_date() == b.issue_date() &&
+		a.language() == b.language() &&
+		a.main_picture_active_area() == b.main_picture_active_area() &&
+		a.other_duration() == b.other_duration() &&
+		a.poc_marker() == b.poc_marker() &&
+		a.poc_markers() == b.poc_markers() &&
+		a.size_in_pixels() == b.size_in_pixels() &&
+		a.territory() == b.territory() &&
+		a.tile_parts() == b.tile_parts() &&
+		a.time() == b.time() &&
+		a.xml_namespace() == b.xml_namespace();
 }
 
 
@@ -2407,6 +2429,33 @@ less_than_optional(boost::optional<T> a, boost::optional<T> b)
 	}
 
 	return *a < *b;
+}
+
+
+template <class T>
+bool
+less_than_optional_size(boost::optional<T> a, boost::optional<T> b)
+{
+	if (!static_cast<bool>(a) && !static_cast<bool>(b)) {
+		// same
+		return false;
+	}
+
+	if (!static_cast<bool>(a) && static_cast<bool>(b)) {
+		// none is smaller than any actual value
+		return true;
+	}
+
+	if (static_cast<bool>(a) && !static_cast<bool>(b)) {
+		// none is smaller than any actual value
+		return false;
+	}
+
+	if (a->width != b->width) {
+		return a->width < b->width;
+	}
+
+	return a->height < b->height;
 }
 
 
@@ -2457,15 +2506,111 @@ dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		return less_than_optional(a.other_asset_id(), b.other_asset_id());
 	}
 
+	if (a.frame_rate() != b.frame_rate()) {
+		return less_than_optional(a.frame_rate(), b.frame_rate());
+	}
+
 	if (a.cpl_id() != b.cpl_id()) {
 		return less_than_optional(a.cpl_id(), b.cpl_id());
+	}
+
+	if (a.pkl_id() != b.pkl_id()) {
+		return less_than_optional(a.pkl_id(), b.pkl_id());
+	}
+
+	if (a.reference_hash() != b.reference_hash()) {
+		return less_than_optional(a.reference_hash(), b.reference_hash());
+	}
+
+	if (a.calculated_hash() != b.calculated_hash()) {
+		return less_than_optional(a.calculated_hash(), b.calculated_hash());
 	}
 
 	if (a.reel_index() != b.reel_index()) {
 		return less_than_optional(a.reel_index(), b.reel_index());
 	}
 
-	return less_than_optional(a.frame_rate(), b.frame_rate());
+	if (a.annotation_text() != b.annotation_text()) {
+		return less_than_optional(a.annotation_text(), b.annotation_text());
+	}
+
+	if (a.bit_depth() != b.bit_depth()) {
+		return less_than_optional(a.bit_depth(), b.bit_depth());
+	}
+
+	if (a.capabilities() != b.capabilities()) {
+		return less_than_optional(a.capabilities(), b.capabilities());
+	}
+
+	if (a.code_block_height() != b.code_block_height()) {
+		return less_than_optional(a.code_block_height(), b.code_block_height());
+	}
+
+	if (a.code_block_width() != b.code_block_width()) {
+		return less_than_optional(a.code_block_width(), b.code_block_width());
+	}
+
+	if (a.content_kind() != b.content_kind()) {
+		return less_than_optional(a.content_kind(), b.content_kind());
+	}
+
+	if (a.content_version() != b.content_version()) {
+		return less_than_optional(a.content_version(), b.content_version());
+	}
+
+	if (a.duration() != b.duration()) {
+		return less_than_optional(a.duration(), b.duration());
+	}
+
+	if (a.error() != b.error()) {
+		return less_than_optional(a.error(), b.error());
+	}
+
+	if (a.guard_bits() != b.guard_bits()) {
+		return less_than_optional(a.guard_bits(), b.guard_bits());
+	}
+
+	if (a.issue_date() != b.issue_date()) {
+		return less_than_optional(a.issue_date(), b.issue_date());
+	}
+
+	if (a.language() != b.language()) {
+		return less_than_optional(a.language(), b.language());
+	}
+
+	if (a.main_picture_active_area() != b.main_picture_active_area()) {
+		return less_than_optional_size(a.main_picture_active_area(), b.main_picture_active_area());
+	}
+
+	if (a.other_duration() != b.other_duration()) {
+		return less_than_optional(a.other_duration(), b.other_duration());
+	}
+
+	if (a.poc_marker() != b.poc_marker()) {
+		return less_than_optional(a.poc_marker(), b.poc_marker());
+	}
+
+	if (a.poc_markers() != b.poc_markers()) {
+		return less_than_optional(a.poc_markers(), b.poc_markers());
+	}
+
+	if (a.size_in_pixels() != b.size_in_pixels()) {
+		return less_than_optional_size(a.size_in_pixels(), b.size_in_pixels());
+	}
+
+	if (a.territory() != b.territory()) {
+		return less_than_optional(a.territory(), b.territory());
+	}
+
+	if (a.tile_parts() != b.tile_parts()) {
+		return less_than_optional(a.tile_parts(), b.tile_parts());
+	}
+
+	if (a.time() != b.time()) {
+		return less_than_optional(a.time(), b.time());
+	}
+
+	return less_than_optional(a.xml_namespace(), b.xml_namespace());
 }
 
 
