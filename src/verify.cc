@@ -655,7 +655,7 @@ verify_main_sound_asset(Context& context, shared_ptr<const ReelSoundAsset> reel_
 		context.add_note(VerificationNote(VerificationNote::Code::INVALID_SOUND_FRAME_RATE, file).set_frame_rate(dcp::Fraction(asset->sampling_rate(), 1)));
 	}
 	if (asset->bit_depth() != 24) {
-		context.add_note(VerificationNote::Code::INVALID_SOUND_BIT_DEPTH, fmt::to_string(asset->bit_depth()), file);
+		context.add_note(VerificationNote(VerificationNote::Code::INVALID_SOUND_BIT_DEPTH, file).set_bit_depth(asset->bit_depth()));
 	}
 }
 
@@ -2060,7 +2060,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_SOUND_FRAME_RATE:
 		return compose("The sound asset %1 has a sampling rate of %2", filename(), note.frame_rate()->numerator);
 	case VerificationNote::Code::INVALID_SOUND_BIT_DEPTH:
-		return compose("The sound asset %1 has a bit depth of %2", filename(), note.note().get());
+		return compose("The sound asset %1 has a bit depth of %2", filename(), *note.bit_depth());
 	case VerificationNote::Code::MISSING_CPL_ANNOTATION_TEXT:
 		return compose("The CPL %1 has no <AnnotationText> tag.", note.cpl_id().get());
 	case VerificationNote::Code::MISMATCHED_CPL_ANNOTATION_TEXT:

@@ -292,7 +292,7 @@ public:
 		 */
 		INVALID_SOUND_FRAME_RATE,
 		/** The audio bit depth must be 24
-		 *  note contains the invalid bit depth
+		 *  bit_depth contains the invalid bit depth
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
