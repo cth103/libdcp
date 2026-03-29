@@ -1736,7 +1736,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		} else {
 			auto lfoc_time = lfoc->second.as_editable_units_ceil(lfoc->second.tcr);
 			if (lfoc_time != (cpl->reels().back()->duration() - 1)) {
-				context.add_note(VerificationNote::Code::INCORRECT_LFOC, fmt::to_string(lfoc_time));
+				context.add_note(VerificationNote(VerificationNote::Code::INCORRECT_LFOC).set_time(lfoc->second));
 			}
 		}
 
@@ -2094,7 +2094,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INCORRECT_FFOC:
 		return compose("The FFOC marker is %1 instead of 1", note.time()->as_string(dcp::Standard::SMPTE));
 	case VerificationNote::Code::INCORRECT_LFOC:
-		return compose("The LFOC marker is %1 instead of 1 less than the duration of the last reel.", note.note().get());
+		return compose("The LFOC marker is %1 instead of 1 less than the duration of the last reel.", note.time()->as_string(dcp::Standard::SMPTE));
 	case VerificationNote::Code::MISSING_CPL_METADATA:
 		return compose("The CPL %1 has no <CompositionMetadataAsset> tag.", note.cpl_id().get());
 	case VerificationNote::Code::MISSING_CPL_METADATA_VERSION_NUMBER:

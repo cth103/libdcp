@@ -353,7 +353,7 @@ public:
 		 */
 		INCORRECT_FFOC,
 		/** The LFOC marker should be the last frame in the reel
-		 *  note contains the incorrect value
+		 *  time contains the incorrect time
 		 */
 		INCORRECT_LFOC,
 		/** There must be a _<CompositionMetadataAsset>_
