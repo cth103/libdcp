@@ -382,7 +382,7 @@ public:
 		 */
 		UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT,
 		/** A PKL containing encrypted content is not signed [Bv2.1_8.7]
-		 *  note contains the PKL ID
+		 *  pkl_id contains the PKL ID
 		 *  file contains the PKL filename
 		 */
 		UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT,

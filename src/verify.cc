@@ -1812,7 +1812,7 @@ verify_pkl(Context& context, shared_ptr<const PKL> pkl)
 		cxml::Document doc("PackingList");
 		doc.read_file(dcp::filesystem::fix_long_path(pkl->file().get()));
 		if (!doc.optional_node_child("Signature")) {
-			context.add_note(VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl->id(), pkl->file().get());
+			context.add_note(VerificationNote(VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, pkl->file().get()).set_pkl_id(pkl->id()));
 		}
 	}
 
@@ -2106,7 +2106,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT:
 		return compose("The CPL %1, which has encrypted content, is not signed.", note.cpl_id().get());
 	case VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT:
-		return compose("The PKL %1, which has encrypted content, is not signed.", note.note().get());
+		return compose("The PKL %1, which has encrypted content, is not signed.", *note.pkl_id());
 	case VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL:
 		return compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>.", note.note().get());
 	case VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL:

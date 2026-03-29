@@ -4691,7 +4691,7 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_encrypted_content)
 			VN(VC::MISSING_FFOC).set_cpl_id(cpl->id()),
 			VN(VC::MISSING_LFOC).set_cpl_id(cpl->id()),
 			VN(VC::MISSING_CPL_METADATA, canonical(cpl_path)).set_cpl_id(cpl->id()),
-			VN(VC::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, encryption_test_pkl_id(), canonical(pkl))
+			VN(VC::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT, canonical(pkl)).set_pkl_id(encryption_test_pkl_id()),
 		});
 }
 
