@@ -721,7 +721,7 @@ verify_smpte_timed_text_asset (
 		total_size += i.second.size();
 	}
 	if (total_size > 10 * 1024 * 1024) {
-		context.add_note(VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, fmt::to_string(total_size), asset->file().get());
+		context.add_note(VerificationNote(VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES, asset->file().get()).set_size_in_bytes(total_size));
 	}
 
 	if (asset->raw_xml()) {
@@ -2028,7 +2028,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES:
 		return compose("The size %1 of the timed text asset %2 is larger than the 115MB maximum.", *note.size_in_bytes(), filename());
 	case VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES:
-		return compose("The size %1 of the fonts in timed text asset %2 is larger than the 10MB maximum.", note.note().get(), filename());
+		return compose("The size %1 of the fonts in timed text asset %2 is larger than the 10MB maximum.", *note.size_in_bytes(), filename());
 	case VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE:
 		return compose("The XML for the SMPTE subtitle asset %1 has no <Language> tag.", filename());
 	case VerificationNote::Code::MISMATCHED_SUBTITLE_LANGUAGES:

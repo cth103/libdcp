@@ -242,7 +242,7 @@ public:
 		 */
 		INVALID_TIMED_TEXT_SIZE_IN_BYTES,
 		/** The total size of all a timed text asset's fonts is larger than 10MB [Bv2.1_7.2.1]
-		 *  note contains the invalid size in bytes
+		 *  size_in_bytes contains the invalid size in bytes
 		 *  file contains the asset filename
 		 */
 		INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES,

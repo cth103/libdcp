@@ -2191,9 +2191,8 @@ verify_timed_text_asset_too_large (string name)
 				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_size_in_bytes(121698284),
 			VN(
 				VC::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES,
-				"121634816",
 				canonical(dir / "subs.mxf")
-				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_size_in_bytes(121634816),
 			VN(VC::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
