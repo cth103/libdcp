@@ -171,7 +171,7 @@ public:
 		 */
 		INVALID_INTRINSIC_DURATION,
 		/** An asset's _Duration_ is less than 1 second
-		 *  note contains asset ID
+		 *  asset_id contains asset ID
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_DURATION,

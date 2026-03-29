@@ -1419,7 +1419,7 @@ verify_reel(
 {
 	for (auto i: reel->file_assets()) {
 		if (i->duration() && (i->duration().get() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
-			context.add_note(VerificationNote::Code::INVALID_DURATION, i->id());
+			context.add_note(VerificationNote(VerificationNote::Code::INVALID_DURATION).set_asset_id(i->id()));
 		}
 		if ((i->intrinsic_duration() * i->edit_rate().denominator / i->edit_rate().numerator) < 1) {
 			context.add_note(VerificationNote(VerificationNote::Code::INVALID_INTRINSIC_DURATION).set_asset_id(i->id()));
@@ -1988,7 +1988,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_INTRINSIC_DURATION:
 		return compose("The intrinsic duration of the asset %1 is less than 1 second.", *note.asset_id());
 	case VerificationNote::Code::INVALID_DURATION:
-		return compose("The duration of the asset %1 is less than 1 second.", note.note().get());
+		return compose("The duration of the asset %1 is less than 1 second.", *note.asset_id());
 	case VerificationNote::Code::VALID_PICTURE_FRAME_SIZES_IN_BYTES:
 		return compose("Each frame of the picture asset %1 has a bit rate safely under the limit of 250Mbit/s.", filename());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_SIZE_IN_BYTES:
