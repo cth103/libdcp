@@ -1573,7 +1573,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 				}
 			}
 			if (valid) {
-				context.add_note(VerificationNote::Code::VALID_RELEASE_TERRITORY, terr);
+				context.add_note(VerificationNote(VerificationNote::Code::VALID_RELEASE_TERRITORY).set_territory(terr));
 			}
 		}
 	}
@@ -2014,7 +2014,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_LANGUAGE:
 		return compose("The DCP specifies a language '%1' which does not conform to the RFC 5646 standard.", note.note().get());
 	case VerificationNote::Code::VALID_RELEASE_TERRITORY:
-		return compose("Valid release territory %1.", note.note().get());
+		return compose("Valid release territory %1.", *note.territory());
 	case VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS:
 		return compose("The size %1 of picture asset %2 is not allowed.", note.note().get(), filename());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_2K:

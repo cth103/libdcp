@@ -204,7 +204,9 @@ public:
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_LANGUAGE,
-		/** A CPL has a valid release territory */
+		/** A CPL has a valid release territory
+		 *  territory contains the territory
+		 */
 		VALID_RELEASE_TERRITORY,
 		/** A picture asset does not have one of the required Bv2.1 sizes (in pixels) [Bv2.1_7.1]
 		 *  note contains the incorrect size as "<width>x<height>"
