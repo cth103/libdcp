@@ -3932,7 +3932,7 @@ verify_text_entry_point_check(dcp::TextType type, path dir, dcp::VerificationNot
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			VN(code, subs->id()).set_cpl_id(cpl->id()).set_reel_index(0),
+			VN(code).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }

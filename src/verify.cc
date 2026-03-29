@@ -669,9 +669,9 @@ verify_main_subtitle_reel(Context& context, shared_ptr<const ReelTextAsset> reel
 	}
 
 	if (!reel_asset->entry_point()) {
-		context.add_note(VerificationNote::Code::MISSING_SUBTITLE_ENTRY_POINT, reel_asset->id());
+		context.add_note(VerificationNote(VerificationNote::Code::MISSING_SUBTITLE_ENTRY_POINT).set_asset_id(reel_asset->id()));
 	} else if (reel_asset->entry_point().get()) {
-		context.add_note(VerificationNote::Code::INCORRECT_SUBTITLE_ENTRY_POINT, reel_asset->id());
+		context.add_note(VerificationNote(VerificationNote::Code::INCORRECT_SUBTITLE_ENTRY_POINT).set_asset_id(reel_asset->id()));
 	}
 }
 
@@ -685,9 +685,9 @@ verify_closed_caption_reel(Context& context, shared_ptr<const ReelTextAsset> ree
 	}
 
 	if (!reel_asset->entry_point()) {
-		context.add_note(VerificationNote::Code::MISSING_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id());
+		context.add_note(VerificationNote(VerificationNote::Code::MISSING_CLOSED_CAPTION_ENTRY_POINT).set_asset_id(reel_asset->id()));
 	} else if (reel_asset->entry_point().get()) {
-		context.add_note(VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT, reel_asset->id());
+		context.add_note(VerificationNote(VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT).set_asset_id(reel_asset->id()));
 	}
 }
 
@@ -2074,13 +2074,13 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS:
 		return process_string("At least one reel has closed captions, but reels have different numbers of closed caption assets.");
 	case VerificationNote::Code::MISSING_SUBTITLE_ENTRY_POINT:
-		return compose("The subtitle asset %1 has no <EntryPoint> tag.", note.note().get());
+		return compose("The subtitle asset %1 has no <EntryPoint> tag.", *note.asset_id());
 	case VerificationNote::Code::INCORRECT_SUBTITLE_ENTRY_POINT:
-		return compose("The subtitle asset %1 has an <EntryPoint> other than 0.", note.note().get());
+		return compose("The subtitle asset %1 has an <EntryPoint> other than 0.", *note.asset_id());
 	case VerificationNote::Code::MISSING_CLOSED_CAPTION_ENTRY_POINT:
-		return compose("The closed caption asset %1 has no <EntryPoint> tag.", note.note().get());
+		return compose("The closed caption asset %1 has no <EntryPoint> tag.", *note.asset_id());
 	case VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT:
-		return compose("The closed caption asset %1 has an <EntryPoint> other than 0.", note.note().get());
+		return compose("The closed caption asset %1 has an <EntryPoint> other than 0.", *note.asset_id());
 	case VerificationNote::Code::MISSING_HASH:
 		return compose("The asset %1 has no <Hash> tag in the CPL.", note.note().get());
 	case VerificationNote::Code::MISSING_FFEC_IN_FEATURE:

@@ -320,19 +320,19 @@ public:
 		/** If one reel has at least one _ClosedCaption_, all reels must have the same number of _ClosedCaptions_ */
 		MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS,
 		/** MainSubtitle in reels must have _<EntryPoint>_ [Bv2.1_8.3.2]
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 */
 		MISSING_SUBTITLE_ENTRY_POINT,
 		/** MainSubtitle _<EntryPoint>_ must be zero [Bv2.1_8.3.2]
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 */
 		INCORRECT_SUBTITLE_ENTRY_POINT,
 		/** Closed caption in reels must have _<EntryPoint>_ [Bv2.1_8.3.2]
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 */
 		MISSING_CLOSED_CAPTION_ENTRY_POINT,
 		/** Closed caption _MainSubtitle_ _<EntryPoint>_ must be zero [Bv2.1_8.3.2]
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 */
 		INCORRECT_CLOSED_CAPTION_ENTRY_POINT,
 		/** _<Hash>_ must be present for assets in CPLs
