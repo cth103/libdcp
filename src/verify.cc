@@ -1373,7 +1373,7 @@ dcp::verify_extension_metadata(Context& context)
 	if (missing) {
 		context.add_note(VerificationNote::Code::MISSING_EXTENSION_METADATA, context.cpl->file().get());
 	} else if (!malformed.empty()) {
-		context.add_note(VerificationNote::Code::INVALID_EXTENSION_METADATA, malformed, context.cpl->file().get());
+		context.add_note(VerificationNote(VerificationNote::Code::INVALID_EXTENSION_METADATA, context.cpl->file().get()).set_error(malformed));
 	}
 }
 
@@ -2102,7 +2102,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::MISSING_EXTENSION_METADATA:
 		return compose("The CPL %1 has no <ExtensionMetadata> in its <CompositionMetadataAsset>.", note.cpl_id().get());
 	case VerificationNote::Code::INVALID_EXTENSION_METADATA:
-		return compose("The CPL %1 has a malformed <ExtensionMetadata> (%2).", filename(), note.note().get());
+		return compose("The CPL %1 has a malformed <ExtensionMetadata> (%2).", filename(), *note.error());
 	case VerificationNote::Code::UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT:
 		return compose("The CPL %1, which has encrypted content, is not signed.", note.cpl_id().get());
 	case VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT:

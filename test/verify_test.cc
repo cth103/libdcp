@@ -4369,7 +4369,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata1)
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			VN(VC::INVALID_EXTENSION_METADATA, string("<Name> should be 'Application'"), cpl->file().get()).set_cpl_id(cpl->id())
+			VN(VC::INVALID_EXTENSION_METADATA, cpl->file().get()).set_cpl_id(cpl->id()).set_error("<Name> should be 'Application'"),
 		});
 }
 
@@ -4413,9 +4413,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			VN(
-				VC::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
-				).set_cpl_id(cpl->id())
+			VN(VC::INVALID_EXTENSION_METADATA, cpl->file().get()).set_cpl_id(cpl->id()).set_error("No correctly-formed DCP Constraints Profile found"),
 		});
 }
 
@@ -4462,9 +4460,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			VN(
-				VC::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
-				).set_cpl_id(cpl->id())
+			VN(VC::INVALID_EXTENSION_METADATA, cpl->file().get()).set_cpl_id(cpl->id()).set_error("No correctly-formed DCP Constraints Profile found"),
 		});
 }
 
@@ -4508,9 +4504,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			VN(
-				VC::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
-				).set_cpl_id(cpl->id())
+			VN(VC::INVALID_EXTENSION_METADATA, cpl->file().get()).set_cpl_id(cpl->id()).set_error("No correctly-formed DCP Constraints Profile found"),
 		});
 }
 
@@ -4553,9 +4547,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			VN(
-				VC::INVALID_EXTENSION_METADATA, string("No correctly-formed DCP Constraints Profile found"), cpl->file().get()
-				).set_cpl_id(cpl->id())
+			VN(VC::INVALID_EXTENSION_METADATA, cpl->file().get()).set_cpl_id(cpl->id()).set_error("No correctly-formed DCP Constraints Profile found"),
 		});
 }
 

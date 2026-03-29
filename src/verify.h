@@ -372,7 +372,7 @@ public:
 		 */
 		MISSING_EXTENSION_METADATA,
 		/** _<ExtensionMetadata>_ does not have the correct form [Bv2.1_8.6.3]
-		 *  note contains details of what's wrong
+		 *  error contains details of what's wrong
 		 *  file contains the CPL filename
 		 */
 		INVALID_EXTENSION_METADATA,
