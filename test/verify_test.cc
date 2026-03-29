@@ -4640,7 +4640,7 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_cpl_with_encrypted_content)
 			VN(
 				VC::MISMATCHED_CPL_HASHES, canonical(cpl_path)
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			VN(VC::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id(), canonical(pkl)).set_cpl_id(cpl->id()),
+			VN(VC::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, canonical(pkl)).set_cpl_id(cpl->id()).set_pkl_id(encryption_test_pkl_id()),
 			VN(VC::MISSING_FFEC_IN_FEATURE).set_cpl_id(cpl->id()),
 			VN(VC::MISSING_FFMC_IN_FEATURE).set_cpl_id(cpl->id()),
 			VN(VC::MISSING_FFOC).set_cpl_id(cpl->id()),
@@ -4685,7 +4685,7 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_encrypted_content)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::MATCHING_CPL_HASHES, cpl),
-			VN(VC::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, encryption_test_pkl_id(), canonical(pkl)).set_cpl_id(cpl->id()),
+			VN(VC::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, canonical(pkl)).set_cpl_id(cpl->id()).set_pkl_id(encryption_test_pkl_id()),
 			VN(VC::MISSING_FFEC_IN_FEATURE).set_cpl_id(cpl->id()),
 			VN(VC::MISSING_FFMC_IN_FEATURE).set_cpl_id(cpl->id()),
 			VN(VC::MISSING_FFOC).set_cpl_id(cpl->id()),

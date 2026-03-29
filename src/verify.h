@@ -387,7 +387,7 @@ public:
 		 */
 		UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT,
 		/** If a PKL has one CPL its _<ContentTitleText>_ must be the same as the PKL's _<AnnotationText>_
-		 *  note contains the PKL ID
+		 *  pkl_id contains the PKL ID
 		 *  file contains the PKL filename
 		 */
 		MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL,

@@ -1630,7 +1630,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		}
 
 		if (required_annotation_text && i->annotation_text() != required_annotation_text) {
-			context.add_note(VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, i->id(), i->file().get());
+			context.add_note(VerificationNote(VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL, i->file().get()).set_pkl_id(i->id()));
 		} else {
 			context.add_note(VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL);
 		}
@@ -2108,7 +2108,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT:
 		return compose("The PKL %1, which has encrypted content, is not signed.", *note.pkl_id());
 	case VerificationNote::Code::MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL:
-		return compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>.", note.note().get());
+		return compose("The PKL %1 has only one CPL but its <AnnotationText> does not match the CPL's <ContentTitleText>.", *note.pkl_id());
 	case VerificationNote::Code::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL:
 		return process_string("The PKL and CPL annotation texts match.");
 	case VerificationNote::Code::ALL_ENCRYPTED:
