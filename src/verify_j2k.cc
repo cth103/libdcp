@@ -270,10 +270,10 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 				auto quantization_style = get_8();
 				int guard_bits = (quantization_style >> 5) & 7;
 				if (fourk && guard_bits != 2) {
-					notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_4K, fmt::to_string(guard_bits) });
+					notes.push_back(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_4K).set_guard_bits(guard_bits));
 				}
 				if (!fourk && guard_bits != 1) {
-					notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K, fmt::to_string(guard_bits) });
+					notes.push_back(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K).set_guard_bits(guard_bits));
 				}
 				ptr += L_qcd - 3;
 			} else if (*marker_name == "COC") {

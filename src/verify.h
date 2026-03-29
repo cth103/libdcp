@@ -406,12 +406,12 @@ public:
 		 */
 		INVALID_JPEG2000_CODESTREAM,
 		/** Invalid number of guard bits in a 2K JPEG2000 stream (should be 1) [Bv2.1_10.2.1]
-		 *  note contains the number of guard bits
+		 *  guard_bits contains the number of guard bits
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_JPEG2000_GUARD_BITS_FOR_2K,
 		/** Invalid number of guard bits in a 4K JPEG2000 stream (should be 2) [Bv2.1_10.2.1]
-		 *  note contains the number of guard bits
+		 *  guard_bits contains the number of guard bits
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_JPEG2000_GUARD_BITS_FOR_4K,

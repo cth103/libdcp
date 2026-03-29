@@ -1026,7 +1026,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_standard)
 	};
 
 	for (int j = 0; j < 24; ++j) {
-		expected.push_back(VN(VC::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("c6035f97-b07d-4e1c-944d-603fc2ddc242"));
+		expected.push_back(
+			VN(VC::INVALID_JPEG2000_GUARD_BITS_FOR_2K).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("c6035f97-b07d-4e1c-944d-603fc2ddc242").set_guard_bits(2)
+		);
 	}
 
 	check_verify_result(notes, expected);
@@ -1062,7 +1064,9 @@ BOOST_AUTO_TEST_CASE (verify_invalid_duration)
 	};
 
 	for (int i = 0; i < 23; ++i) {
-		expected.push_back(VN(VC::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("d7576dcb-a361-4139-96b8-267f5f8d7f91"));
+		expected.push_back(
+			VN(VC::INVALID_JPEG2000_GUARD_BITS_FOR_2K).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("d7576dcb-a361-4139-96b8-267f5f8d7f91").set_guard_bits(2)
+		);
 	}
 
 	check_verify_result({ dir }, {}, expected);
@@ -5932,7 +5936,9 @@ BOOST_AUTO_TEST_CASE(verify_invalid_sound_bit_depth)
 	};
 
 	for (auto i = 0; i < 792; ++i) {
-		notes.push_back(VN(VC::INVALID_JPEG2000_GUARD_BITS_FOR_2K, string("2")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("fd4796c2-9c84-454c-91f4-13ad127cea8a"));
+		notes.push_back(
+			VN(VC::INVALID_JPEG2000_GUARD_BITS_FOR_2K).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("fd4796c2-9c84-454c-91f4-13ad127cea8a").set_guard_bits(2)
+		);
 	}
 
 	check_verify_result({ dir }, {}, notes);

@@ -2125,9 +2125,9 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 			*note.error()
 			);
 	case VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K:
-		return compose("The JPEG2000 codestream uses %1 guard bits in a 2K image instead of 1.", note.note().get());
+		return compose("The JPEG2000 codestream uses %1 guard bits in a 2K image instead of 1.", *note.guard_bits());
 	case VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_4K:
-		return compose("The JPEG2000 codestream uses %1 guard bits in a 4K image instead of 2.", note.note().get());
+		return compose("The JPEG2000 codestream uses %1 guard bits in a 4K image instead of 2.", *note.guard_bits());
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_SIZE:
 		return process_string("The JPEG2000 tile size is not the same as the image size.");
 	case VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_WIDTH:
