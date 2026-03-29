@@ -2006,7 +2006,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 			filename()
 			);
 	case VerificationNote::Code::EXTERNAL_ASSET:
-		return compose("The asset %1 that this DCP refers to is not included in the DCP.  It may be a VF.", note.note().get());
+		return compose("The asset %asset_id that this DCP refers to is not included in the DCP.  It may be a VF.", *note.asset_id());
 	case VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD:
 		return compose("The asset %1 is 3D but its MXF is marked as 2D.", filename());
 	case VerificationNote::Code::INVALID_STANDARD:

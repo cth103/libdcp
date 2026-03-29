@@ -190,7 +190,7 @@ public:
 		 */
 		NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES,
 		/** An asset that the CPL requires is not in this DCP; the DCP may be a VF
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 */
 		EXTERNAL_ASSET,
 		/** A stereoscopic asset has an MXF which is marked as being monoscopic

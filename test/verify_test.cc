@@ -1570,7 +1570,7 @@ BOOST_AUTO_TEST_CASE (verify_external_asset)
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			{ VC::EXTERNAL_ASSET, picture->asset()->id() },
+			VN(VC::EXTERNAL_ASSET).set_asset_id(picture->asset()->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
@@ -5360,9 +5360,7 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_assetmap_asset_ids)
 			VN(
 				VC::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map.id(), canonical(find_asset_map(dir))
 				),
-			VN(
-				VC::EXTERNAL_ASSET, string("5407b210-4441-4e97-8b16-8bdc7c12da54")
-				)
+			VN(VC::EXTERNAL_ASSET).set_asset_id("5407b210-4441-4e97-8b16-8bdc7c12da54"),
 		});
 }
 
