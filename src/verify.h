@@ -349,7 +349,7 @@ public:
 		/** There should be a LFOC marker */
 		MISSING_LFOC,
 		/** The FFOC marker should be 1
-		 *  note contains the incorrect value.
+		 *  time contains the incorrect time
 		 */
 		INCORRECT_FFOC,
 		/** The LFOC marker should be the last frame in the reel

@@ -1727,7 +1727,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		if (ffoc == markers_seen.end()) {
 			context.add_note(VerificationNote::Code::MISSING_FFOC);
 		} else if (ffoc->second.as_editable_units() != 1) {
-			context.add_note(VerificationNote::Code::INCORRECT_FFOC, fmt::to_string(ffoc->second.as_editable_units()));
+			context.add_note(VerificationNote(VerificationNote::Code::INCORRECT_FFOC).set_time(ffoc->second));
 		}
 
 		auto lfoc = markers_seen.find(Marker::LFOC);
@@ -2092,7 +2092,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::MISSING_LFOC:
 		return process_string("There should be a LFOC (last frame of content) marker.");
 	case VerificationNote::Code::INCORRECT_FFOC:
-		return compose("The FFOC marker is %1 instead of 1", note.note().get());
+		return compose("The FFOC marker is %1 instead of 1", note.time()->as_string(dcp::Standard::SMPTE));
 	case VerificationNote::Code::INCORRECT_LFOC:
 		return compose("The LFOC marker is %1 instead of 1 less than the duration of the last reel.", note.note().get());
 	case VerificationNote::Code::MISSING_CPL_METADATA:

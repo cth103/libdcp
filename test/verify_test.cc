@@ -4146,7 +4146,7 @@ BOOST_AUTO_TEST_CASE (verify_markers)
 			{ dcp::Marker::LFOC, dcp::Time(23, 24, 24) }
 		},
 		{
-			{ VC::INCORRECT_FFOC, string("3") }
+			{ VN(VC::INCORRECT_FFOC).set_time(dcp::Time(3, 24, 24)) }
 		});
 
 	verify_markers_test (
