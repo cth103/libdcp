@@ -574,11 +574,11 @@ verify_main_picture_asset(Context& context, shared_ptr<const ReelPictureAsset> r
 			asset->size() != Size(1998, 1080) &&
 			asset->size() != Size(4096, 1716) &&
 			asset->size() != Size(3996, 2160)) {
-			context.add_note(VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, String::compose("%1x%2", asset->size().width, asset->size().height), file);
+			context.add_note(VerificationNote(VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, file).set_size_in_pixels(asset->size()));
 		}
 	} else if (dynamic_pointer_cast<const MPEG2PictureAsset>(asset)) {
 		if (asset->size() != Size(1920, 1080)) {
-			context.add_note(VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, fmt::format("{}x{}", asset->size().width, asset->size().height), file);
+			context.add_note(VerificationNote(VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS, file).set_size_in_pixels(asset->size()));
 		}
 	}
 
@@ -2016,7 +2016,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::VALID_RELEASE_TERRITORY:
 		return compose("Valid release territory %1.", *note.territory());
 	case VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS:
-		return compose("The size %1 of picture asset %2 is not allowed.", note.note().get(), filename());
+		return compose("The size %1x%2 of picture asset %3 is not allowed.", note.size_in_pixels()->width, note.size_in_pixels()->height, filename());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_2K:
 		return compose("The frame rate %1/%2 of picture asset %3 is not allowed for 2K DCPs.", note.frame_rate()->numerator, note.frame_rate()->denominator, filename());
 	case VerificationNote::Code::INVALID_PICTURE_FRAME_RATE_FOR_4K:

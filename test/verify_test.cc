@@ -1948,7 +1948,9 @@ check_picture_size_bad_frame_size (int width, int height, int frame_rate, bool t
 			).set_cpl_id(cpl->id()),
 		note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 		note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-		VN(VC::INVALID_PICTURE_SIZE_IN_PIXELS, dcp::String::compose("%1x%2", width, height), canonical(dir / "video.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(picture_id),
+		VN(
+			VC::INVALID_PICTURE_SIZE_IN_PIXELS, canonical(dir / "video.mxf")
+			).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(picture_id).set_size_in_pixels({width, height}),
 	};
 	check_verify_result(notes, expected);
 }

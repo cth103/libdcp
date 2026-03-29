@@ -209,7 +209,7 @@ public:
 		 */
 		VALID_RELEASE_TERRITORY,
 		/** A picture asset does not have one of the required Bv2.1 sizes (in pixels) [Bv2.1_7.1]
-		 *  note contains the incorrect size as "<width>x<height>"
+		 *  size_in_pixels contains the incorrect size
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
