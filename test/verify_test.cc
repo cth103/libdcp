@@ -4026,7 +4026,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_hash)
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
-			VN(VC::MISSING_HASH, asset_id).set_cpl_id(cpl->id()).set_reel_index(0)
+			VN(VC::MISSING_HASH).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset_id),
 		});
 }
 
@@ -5936,8 +5936,8 @@ BOOST_AUTO_TEST_CASE(verify_invalid_sound_bit_depth)
 		VN(
 			VC::INVALID_SOUND_BIT_DEPTH, canonical(dir / "Audio.mxf")
 			).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("9d5e8bc4-676b-4306-a86d-03f70c73b457").set_bit_depth(16),
-		VN(VC::MISSING_HASH, string("fd4796c2-9c84-454c-91f4-13ad127cea8a")).set_cpl_id(cpl->id()).set_reel_index(0),
-		VN(VC::MISSING_HASH, string("9d5e8bc4-676b-4306-a86d-03f70c73b457")).set_cpl_id(cpl->id()).set_reel_index(0),
+		VN(VC::MISSING_HASH).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("fd4796c2-9c84-454c-91f4-13ad127cea8a"),
+		VN(VC::MISSING_HASH).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("9d5e8bc4-676b-4306-a86d-03f70c73b457"),
 		VN(VC::MISSING_CPL_METADATA, canonical(cpl->file().get())).set_cpl_id(cpl->id()),
 		VN(VC::MISSING_FFOC).set_cpl_id(cpl->id()),
 		VN(VC::MISSING_LFOC).set_cpl_id(cpl->id()),

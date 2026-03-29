@@ -336,7 +336,7 @@ public:
 		 */
 		INCORRECT_CLOSED_CAPTION_ENTRY_POINT,
 		/** _<Hash>_ must be present for assets in CPLs
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISSING_HASH,

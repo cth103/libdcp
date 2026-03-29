@@ -1425,7 +1425,7 @@ verify_reel(
 			context.add_note(VerificationNote(VerificationNote::Code::INVALID_INTRINSIC_DURATION).set_asset_id(i->id()));
 		}
 		if (i->encryptable() && !i->hash()) {
-			context.add_note(VerificationNote::Code::MISSING_HASH, i->id());
+			context.add_note(VerificationNote(VerificationNote::Code::MISSING_HASH).set_asset_id(i->id()));
 		}
 	}
 
@@ -2082,7 +2082,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INCORRECT_CLOSED_CAPTION_ENTRY_POINT:
 		return compose("The closed caption asset %1 has an <EntryPoint> other than 0.", *note.asset_id());
 	case VerificationNote::Code::MISSING_HASH:
-		return compose("The asset %1 has no <Hash> tag in the CPL.", note.note().get());
+		return compose("The asset %1 has no <Hash> tag in the CPL.", *note.asset_id());
 	case VerificationNote::Code::MISSING_FFEC_IN_FEATURE:
 		return process_string("The DCP is marked as a Feature but there is no FFEC (first frame of end credits) marker.");
 	case VerificationNote::Code::MISSING_FFMC_IN_FEATURE:
