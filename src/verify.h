@@ -200,7 +200,7 @@ public:
 		/** DCP is Interop, not SMPTE [Bv2.1_6.1] */
 		INVALID_STANDARD,
 		/** A language or territory does not conform to RFC 5646 [Bv2.1_6.2.1]
-		 *  note contains the invalid language
+		 *  language contains the invalid language
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_LANGUAGE,

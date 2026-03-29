@@ -444,7 +444,7 @@ verify_language_tag(Context& context, string tag)
 	try {
 		LanguageTag test (tag);
 	} catch (LanguageTagError &) {
-		context.add_note(VerificationNote::Code::INVALID_LANGUAGE, tag);
+		context.add_note(VerificationNote(VerificationNote::Code::INVALID_LANGUAGE).set_language(tag));
 	}
 }
 
@@ -1568,7 +1568,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 				LanguageTag::RegionSubtag test(terr);
 			} catch (...) {
 				if (terr != "001") {
-					context.add_note(VerificationNote::Code::INVALID_LANGUAGE, terr);
+					context.add_note(VerificationNote(VerificationNote::Code::INVALID_LANGUAGE).set_language(terr));
 					valid = false;
 				}
 			}
@@ -2012,7 +2012,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_STANDARD:
 		return "This DCP does not use the SMPTE standard.";
 	case VerificationNote::Code::INVALID_LANGUAGE:
-		return compose("The DCP specifies a language '%1' which does not conform to the RFC 5646 standard.", note.note().get());
+		return compose("The DCP specifies a language '%1' which does not conform to the RFC 5646 standard.", *note.language());
 	case VerificationNote::Code::VALID_RELEASE_TERRITORY:
 		return compose("Valid release territory %1.", *note.territory());
 	case VerificationNote::Code::INVALID_PICTURE_SIZE_IN_PIXELS:

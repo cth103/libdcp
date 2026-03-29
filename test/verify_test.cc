@@ -1733,8 +1733,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language1)
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			VN(VC::INVALID_LANGUAGE, string("badlang")).set_cpl_id(cpl->id()).set_reel_index(0),
-			VN(VC::INVALID_LANGUAGE, string("wrong-andbad")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::INVALID_LANGUAGE).set_cpl_id(cpl->id()).set_reel_index(0).set_language("badlang"),
+			VN(VC::INVALID_LANGUAGE).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_language("wrong-andbad"),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
@@ -1766,8 +1766,8 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language2)
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
-			VN(VC::INVALID_LANGUAGE, string("badlang")).set_cpl_id(cpl->id()).set_reel_index(0),
-			VN(VC::INVALID_LANGUAGE, string("wrong-andbad")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::INVALID_LANGUAGE).set_cpl_id(cpl->id()).set_reel_index(0).set_language("badlang"),
+			VN(VC::INVALID_LANGUAGE).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_language("wrong-andbad"),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
 		});
 }
@@ -1825,10 +1825,10 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language3)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "videofoo.mxf"), cpl).set_reel_index(0).set_asset_id(picture->id()),
-			VN(VC::INVALID_LANGUAGE, string("this-is-wrong")).set_cpl_id(cpl->id()),
-			VN(VC::INVALID_LANGUAGE, string("andso-is-this")).set_cpl_id(cpl->id()),
-			VN(VC::INVALID_LANGUAGE, string("fred-jim")).set_cpl_id(cpl->id()),
-			VN(VC::INVALID_LANGUAGE, string("frobozz")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(sound->id()),
+			VN(VC::INVALID_LANGUAGE).set_cpl_id(cpl->id()).set_language("this-is-wrong"),
+			VN(VC::INVALID_LANGUAGE).set_cpl_id(cpl->id()).set_language("andso-is-this"),
+			VN(VC::INVALID_LANGUAGE).set_cpl_id(cpl->id()).set_language("fred-jim"),
+			VN(VC::INVALID_LANGUAGE).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(sound->id()).set_language("frobozz"),
 		});
 }
 
