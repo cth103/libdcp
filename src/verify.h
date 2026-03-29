@@ -307,7 +307,9 @@ public:
 		 *  file contains the CPL filename
 		 */
 		MISMATCHED_CPL_ANNOTATION_TEXT,
-		/** A CPL has an annotation text which matches the _<ContentTitleText>_ */
+		/** A CPL has an annotation text which matches the _<ContentTitleText>_
+		 *  annotation_text contains the annotation text.
+		 */
 		VALID_CPL_ANNOTATION_TEXT,
 		/** At least one asset in a reel does not have the same duration as the others.
 		 *  reel_index contains the reel index (starting from 0)
