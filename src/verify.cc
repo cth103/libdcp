@@ -709,7 +709,7 @@ verify_smpte_timed_text_asset (
 
 	auto const size = filesystem::file_size(asset->file().get());
 	if (size > 115 * 1024 * 1024) {
-		context.add_note(VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, fmt::to_string(size), *asset->file());
+		context.add_note(VerificationNote(VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES, *asset->file()).set_size_in_bytes(size));
 	}
 
 	/* XXX: I'm not sure what Bv2.1_7.2.1 means when it says "the font resource shall not be larger than 10MB"
@@ -2026,7 +2026,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES:
 		return compose("The size %1 of the closed caption asset %2 is larger than the 256KB maximum.", *note.size_in_bytes(), filename());
 	case VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES:
-		return compose("The size %1 of the timed text asset %2 is larger than the 115MB maximum.", note.note().get(), filename());
+		return compose("The size %1 of the timed text asset %2 is larger than the 115MB maximum.", *note.size_in_bytes(), filename());
 	case VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES:
 		return compose("The size %1 of the fonts in timed text asset %2 is larger than the 10MB maximum.", note.note().get(), filename());
 	case VerificationNote::Code::MISSING_SUBTITLE_LANGUAGE:

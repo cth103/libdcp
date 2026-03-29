@@ -2187,8 +2187,8 @@ verify_timed_text_asset_too_large (string name)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CPL_ANNOTATION_TEXT, string{"hello"}, cpl),
 			VN(
-				VC::INVALID_TIMED_TEXT_SIZE_IN_BYTES, string("121698284"), canonical(dir / "subs.mxf")
-				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+				VC::INVALID_TIMED_TEXT_SIZE_IN_BYTES, canonical(dir / "subs.mxf")
+				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_size_in_bytes(121698284),
 			VN(
 				VC::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES,
 				"121634816",

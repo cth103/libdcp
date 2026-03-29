@@ -237,7 +237,7 @@ public:
 		 */
 		INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES,
 		/** Any timed text asset's total files is larger than 115MB [Bv2.1_7.2.1]
-		 *  note contains the invalid size in bytes
+		 *  size_in_bytes contains the invalid size in bytes
 		 *  file contains the asset filename
 		 */
 		INVALID_TIMED_TEXT_SIZE_IN_BYTES,
