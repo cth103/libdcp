@@ -2122,7 +2122,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 			"Frame %1 (timecode %2) has an invalid JPEG2000 codestream (%3).",
 			note.frame().get(),
 			dcp::Time(note.frame().get(), note.frame_rate()->as_float(), note.frame_rate()->numerator).as_string(dcp::Standard::SMPTE),
-			note.note().get()
+			*note.error()
 			);
 	case VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K:
 		return compose("The JPEG2000 codestream uses %1 guard bits in a 2K image instead of 1.", note.note().get());

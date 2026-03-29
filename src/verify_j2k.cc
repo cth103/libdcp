@@ -366,7 +366,7 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 	}
 	catch (InvalidCodestream const& e)
 	{
-		VerificationNote note({VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string(e.what())});
+		VerificationNote note(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_CODESTREAM).set_error(e.what()));
 		note.set_frame(start_index + frame_index);
 		note.set_frame_rate(dcp::Fraction(frame_rate, 1));
 		notes.push_back(note);

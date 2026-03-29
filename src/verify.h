@@ -401,7 +401,7 @@ public:
 		PARTIALLY_ENCRYPTED,
 		/** General error during JPEG2000 codestream verification
 		 *  frame contains the frame index (counted from 0)
-		 *  note contains details
+		 *  error contains details
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_JPEG2000_CODESTREAM,
