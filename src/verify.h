@@ -418,11 +418,11 @@ public:
 		/** JPEG2000 tile size is not the same as the image size [Bv2.1_10.2.1] */
 		INVALID_JPEG2000_TILE_SIZE,
 		/** JPEG2000 code block width is not 32 [Bv2.1_10.2.1]
-		 *  note contains the code block width
+		 *  code_block_width contains the code block width
 		 */
 		INVALID_JPEG2000_CODE_BLOCK_WIDTH,
 		/** JPEG2000 code block height is not 32 [Bv2.1_10.2.1]
-		 *  note contains the code block height
+		 *  code_block_height contains the code block height
 		 */
 		INVALID_JPEG2000_CODE_BLOCK_HEIGHT,
 		/** There must be no POC markers in a 2K codestream [Bv2.1_10.2.1]

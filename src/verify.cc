@@ -2131,9 +2131,9 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_SIZE:
 		return process_string("The JPEG2000 tile size is not the same as the image size.");
 	case VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_WIDTH:
-		return compose("The JPEG2000 codestream uses a code block width of %1 instead of 32.", note.note().get());
+		return compose("The JPEG2000 codestream uses a code block width of %1 instead of 32.", *note.code_block_width());
 	case VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_HEIGHT:
-		return compose("The JPEG2000 codestream uses a code block height of %1 instead of 32.", note.note().get());
+		return compose("The JPEG2000 codestream uses a code block height of %1 instead of 32.", *note.code_block_height());
 	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K:
 		return compose("%1 POC markers found in 2K JPEG2000 codestream instead of 0.", note.note().get());
 	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K:

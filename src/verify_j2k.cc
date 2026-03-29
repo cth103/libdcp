@@ -247,11 +247,15 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 				require_8(fourk ? 6 : 5, "invalid number of transform levels %1");
 				auto log_code_block_width = get_8();
 				if (log_code_block_width != 3) {
-					notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_WIDTH, fmt::to_string(4 * (2 << log_code_block_width)) });
+					notes.push_back(
+						VerificationNote(VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_WIDTH).set_code_block_width(4 * (2 << log_code_block_width))
+					);
 				}
 				auto log_code_block_height = get_8();
 				if (log_code_block_height != 3) {
-					notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_HEIGHT, fmt::to_string(4 * (2 << log_code_block_height)) });
+					notes.push_back(
+						VerificationNote(VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_HEIGHT).set_code_block_height(4 * (2 << log_code_block_height))
+					);
 				}
 				require_8(0, "invalid mode variations");
 				require_8(0, "invalid wavelet transform type %1"); // 9/7 irreversible
