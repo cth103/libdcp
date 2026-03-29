@@ -856,7 +856,7 @@ verify_closed_caption_asset (
 	if (auto raw_xml = asset->raw_xml()) {
 		validate_xml(context, *raw_xml);
 		if (raw_xml->size() > 256 * 1024) {
-			context.add_note(VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, fmt::to_string(raw_xml->size()), *asset->file());
+			context.add_note(VerificationNote(VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES, *asset->file()).set_size_in_bytes(raw_xml->size()));
 		}
 	} else {
 		context.add_note(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
@@ -2024,7 +2024,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D:
 		return process_string("3D 4K DCPs are not allowed.");
 	case VerificationNote::Code::INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES:
-		return compose("The size %1 of the closed caption asset %2 is larger than the 256KB maximum.", note.note().get(), filename());
+		return compose("The size %1 of the closed caption asset %2 is larger than the 256KB maximum.", *note.size_in_bytes(), filename());
 	case VerificationNote::Code::INVALID_TIMED_TEXT_SIZE_IN_BYTES:
 		return compose("The size %1 of the timed text asset %2 is larger than the 115MB maximum.", note.note().get(), filename());
 	case VerificationNote::Code::INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES:

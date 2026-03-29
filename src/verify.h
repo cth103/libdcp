@@ -231,7 +231,7 @@ public:
 		 */
 		INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
 		/** A closed caption's XML file is larger than 256KB [Bv2.1_7.2.1]
-		 *  note contains the invalid size in bytes
+		 *  size_in_bytes contains the invalid size in bytes
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
