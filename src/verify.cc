@@ -2143,12 +2143,12 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_JPEG2000_POC_MARKER_LOCATION:
 		return process_string("POC marker found outside main header.");
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K:
-		return compose("The JPEG2000 codestream has %1 tile parts in a 2K image instead of 3.", note.note().get());
+		return compose("The JPEG2000 codestream has %1 tile parts in a 2K image instead of 3.", *note.tile_parts());
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K:
-		return compose("The JPEG2000 codestream has %1 tile parts in a 4K image instead of 6.", note.note().get());
+		return compose("The JPEG2000 codestream has %1 tile parts in a 4K image instead of 6.", *note.tile_parts());
 	case VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_2K:
 	case VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_4K:
-		return compose("The JPEG2000 codestream has an invalid Rsiz (capabilities) value of %1.", note.note().get());
+		return compose("The JPEG2000 codestream has an invalid Rsiz (capabilities) value of %1.", *note.capabilities());
 	case VerificationNote::Code::MISSING_JPEG2000_TLM_MARKER:
 		return process_string("No TLM marker was found in a JPEG2000 codestream.");
 	case VerificationNote::Code::MISMATCHED_TIMED_TEXT_RESOURCE_ID:

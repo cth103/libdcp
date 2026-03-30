@@ -172,9 +172,9 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 		auto const image_height = get_32();
 		auto const fourk = image_width > 2048;
 		if (!fourk && rsiz != OPJ_PROFILE_CINEMA_2K) {
-			notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_2K, fmt::to_string(rsiz) });
+			notes.push_back(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_2K).set_capabilities(rsiz));
 		} else if (fourk && rsiz != OPJ_PROFILE_CINEMA_4K) {
-			notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_4K, fmt::to_string(rsiz) });
+			notes.push_back(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_4K).set_capabilities(rsiz));
 		}
 		require_32 (0, "invalid top-left image x coordinate %1");
 		require_32 (0, "invalid top-left image y coordinate %1");

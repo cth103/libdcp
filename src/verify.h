@@ -448,9 +448,13 @@ public:
 		 *  note contains the number of tile parts
 		 */
 		INVALID_JPEG2000_TILE_PARTS_FOR_4K,
-		/** Invalid _Rsiz_ (capabilities) value in 2K JPEG2000 stream */
+		/** Invalid _Rsiz_ (capabilities) value in 2K JPEG2000 stream.
+		 *  The invalid value is in capabilities.
+		 */
 		INVALID_JPEG2000_RSIZ_FOR_2K,
-		/** Invalid _Rsiz_ (capabilities) value in 4K JPEG2000 stream */
+		/** Invalid _Rsiz_ (capabilities) value in 4K JPEG2000 stream
+		 *  The invalid value is in capabilities.
+		 */
 		INVALID_JPEG2000_RSIZ_FOR_4K,
 		/** No TLM marker was found [Bv2.1_10.2.1] */
 		MISSING_JPEG2000_TLM_MARKER,
