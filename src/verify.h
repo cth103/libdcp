@@ -491,9 +491,13 @@ public:
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		UNEXPECTED_DURATION,
-		/** A _<ContentKind>_ has been specified with either no scope or the SMPTE 429-7 scope, but which is not one of those allowed */
+		/** A _<ContentKind>_ has an invalid value
+		 *  content_kind contains the invalid content kind
+		 */
 		INVALID_CONTENT_KIND,
-		/** A valid _<ContentKind>_ was seen */
+		/** A valid _<ContentKind>_ was seen
+		 *  content_kind contains the valid content kind
+		 */
 		VALID_CONTENT_KIND,
 		/** Either the width or height of a _<MainPictureActiveArea>_ in a CPL is either not an even number, or bigger than the corresponding asset dimension
 		 *  note contains details of what is wrong

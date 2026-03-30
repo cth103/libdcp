@@ -1553,9 +1553,9 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		transform(name.begin(), name.end(), name.begin(), ::tolower);
 		auto iter = std::find_if(all.begin(), all.end(), [name](ContentKind const& k) { return !k.scope() && k.name() == name; });
 		if (iter == all.end()) {
-			context.add_note(VerificationNote::Code::INVALID_CONTENT_KIND, cpl->content_kind().name());
+			context.add_note(VerificationNote(VerificationNote::Code::INVALID_CONTENT_KIND).set_content_kind(cpl->content_kind().name()));
 		} else {
-			context.add_note(VerificationNote::Code::VALID_CONTENT_KIND, cpl->content_kind().name());
+			context.add_note(VerificationNote(VerificationNote::Code::VALID_CONTENT_KIND).set_content_kind(cpl->content_kind().name()));
 		}
 	}
 
@@ -2170,9 +2170,9 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::UNEXPECTED_DURATION:
 		return process_string("There is an <Duration> node inside a <MainMarkers>.");
 	case VerificationNote::Code::INVALID_CONTENT_KIND:
-		return compose("<ContentKind> has an invalid value %1.", note.note().get());
+		return compose("<ContentKind> has an invalid value %1.", *note.content_kind());
 	case VerificationNote::Code::VALID_CONTENT_KIND:
-		return compose("Valid <ContentKind> %1.", note.note().get());
+		return compose("Valid <ContentKind> %1.", *note.content_kind());
 	case VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA:
 		return compose("<MainPictureActiveaArea> has an invalid value: %1", note.note().get());
 	case VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA:
