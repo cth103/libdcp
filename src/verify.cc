@@ -735,9 +735,9 @@ verify_smpte_timed_text_asset (
 
 	if (reel_asset_duration && *reel_asset_duration != asset->intrinsic_duration()) {
 		context.add_note(
-			VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION,
-			String::compose("%1 %2", *reel_asset_duration, asset->intrinsic_duration()),
-			asset->file().get()
+			VerificationNote(
+				VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION, *asset->file()
+				).set_duration(asset->intrinsic_duration()).set_other_duration(*reel_asset_duration)
 			);
 	}
 }
@@ -2156,12 +2156,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INCORRECT_TIMED_TEXT_ASSET_ID:
 		return process_string("The Asset ID in a timed text MXF is the same as the Resource ID or that of the contained XML.");
 	case VerificationNote::Code::MISMATCHED_TIMED_TEXT_DURATION:
-	{
-		vector<string> parts;
-		boost::split (parts, note.note().get(), boost::is_any_of(" "));
-		DCP_ASSERT (parts.size() == 2);
-		return compose("The reel duration of some timed text (%1) is not the same as the ContainerDuration of its MXF (%2).", parts[0], parts[1]);
-	}
+		return compose("The reel duration of some timed text (%1) is not the same as the ContainerDuration of its MXF (%2).", *note.other_duration(), *note.duration());
 	case VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED:
 		return process_string("Some aspect of this DCP could not be checked because it is encrypted.");
 	case VerificationNote::Code::EMPTY_TEXT:

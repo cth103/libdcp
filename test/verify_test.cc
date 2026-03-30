@@ -2889,7 +2889,9 @@ BOOST_AUTO_TEST_CASE (verify_subtitle_overlapping_reel_boundary)
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			VN(VC::MISMATCHED_TIMED_TEXT_DURATION , "72 96", boost::filesystem::canonical(asset->file().get())).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(
+				VC::MISMATCHED_TIMED_TEXT_DURATION, boost::filesystem::canonical(asset->file().get())
+				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_duration(96).set_other_duration(72),
 			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::SUBTITLE_OVERLAPS_REEL_BOUNDARY).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
@@ -4925,7 +4927,9 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_resource_id)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			VN(VC::MISMATCHED_TIMED_TEXT_DURATION , "240 0", boost::filesystem::canonical(subs_mxf)).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
+			VN(
+				VC::MISMATCHED_TIMED_TEXT_DURATION, boost::filesystem::canonical(subs_mxf)
+				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()).set_duration(0).set_other_duration(240),
 			VN(VC::MISMATCHED_TIMED_TEXT_RESOURCE_ID).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
 			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
@@ -5000,7 +5004,9 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_timed_text_id)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::VALID_CONTENT_KIND, string{"trailer"}, cpl),
-			VN(VC::MISMATCHED_TIMED_TEXT_DURATION , "240 0", boost::filesystem::canonical(subs_mxf)).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
+			VN(
+				VC::MISMATCHED_TIMED_TEXT_DURATION, boost::filesystem::canonical(subs_mxf)
+				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()).set_duration(0).set_other_duration(240),
 			VN(VC::INCORRECT_TIMED_TEXT_ASSET_ID).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
 			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),

@@ -467,7 +467,8 @@ public:
 		 */
 		INCORRECT_TIMED_TEXT_ASSET_ID,
 		/** The ContainerDuration of a timed text MXF is not the same as the _Duration_ in its reel [Bv2.1_10.4.3]
-		 *  note contains the reel duration, followed by a space, followed by the MXF duration
+		 *  duration contains the MXF duration
+		 *  other_duration contains the reel duration
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
