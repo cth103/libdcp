@@ -2139,7 +2139,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K:
 		return compose("%1 POC markers found in 4K JPEG2000 codestream instead of 1.", *note.poc_markers());
 	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER:
-		return compose("Incorrect POC marker content found (%1).", note.note().get());
+		return compose("Incorrect POC marker content found (%1).", *note.error());
 	case VerificationNote::Code::INVALID_JPEG2000_POC_MARKER_LOCATION:
 		return process_string("POC marker found outside main header.");
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K:

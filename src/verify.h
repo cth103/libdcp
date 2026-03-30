@@ -434,7 +434,8 @@ public:
 		 */
 		INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K,
 		/** A POC marker has incorrect content [Bv2.1_10.2.1]
-		 *  note contains details
+		 *  poc_marker contains the invalid marker
+		 *  error contains detalis
 		 */
 		INCORRECT_JPEG2000_POC_MARKER,
 		/** A POC marker was found outside the main head [Bv2.1_10.2.1] */

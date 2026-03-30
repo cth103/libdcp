@@ -317,13 +317,13 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 
 				auto require_8_poc = [&](uint16_t value, string note) {
 					if (get_8() != value) {
-						notes.push_back ({ VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER, String::compose(note, value) });
+						notes.push_back(VerificationNote(VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER).set_poc_marker(value).set_error(note));
 					}
 				};
 
 				auto require_16_poc = [&](uint16_t value, string note) {
 					if (get_16() != value) {
-						notes.push_back ({ VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER, String::compose(note, value) });
+						notes.push_back (VerificationNote(VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER).set_poc_marker(value).set_error(note));
 					}
 				};
 
