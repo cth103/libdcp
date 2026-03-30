@@ -426,11 +426,11 @@ public:
 		 */
 		INVALID_JPEG2000_CODE_BLOCK_HEIGHT,
 		/** There must be no POC markers in a 2K codestream [Bv2.1_10.2.1]
-		 *  note contains the number of POC markers found
+		 *  poc_markers contains the number of POC markers found
 		 */
 		INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K,
 		/** There must be exactly one POC marker in a 4K codestream [Bv2.1_10.2.1]
-		 *  note contains the number of POC markers found
+		 *  poc_markers contains the number of POC markers found
 		 */
 		INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K,
 		/** A POC marker has incorrect content [Bv2.1_10.2.1]

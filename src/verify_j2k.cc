@@ -356,10 +356,10 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 			throw InvalidCodestream("more than one QCD marker found");
 		}
 		if (num_POC_in_main != 0 && !fourk) {
-			notes.push_back({ VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K, fmt::to_string(num_POC_in_main) });
+			notes.push_back(VerificationNote(VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K).set_poc_markers(num_POC_in_main));
 		}
 		if (num_POC_in_main != 1 && fourk) {
-			notes.push_back({ VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K, fmt::to_string(num_POC_in_main) });
+			notes.push_back(VerificationNote(VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K).set_poc_markers(num_POC_in_main));
 		}
 		if (num_POC_after_main != 0) {
 			notes.push_back ({ VerificationNote::Code::INVALID_JPEG2000_POC_MARKER_LOCATION });

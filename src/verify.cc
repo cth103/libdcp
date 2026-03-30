@@ -2135,9 +2135,9 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_HEIGHT:
 		return compose("The JPEG2000 codestream uses a code block height of %1 instead of 32.", *note.code_block_height());
 	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K:
-		return compose("%1 POC markers found in 2K JPEG2000 codestream instead of 0.", note.note().get());
+		return compose("%1 POC markers found in 2K JPEG2000 codestream instead of 0.", *note.poc_markers());
 	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K:
-		return compose("%1 POC markers found in 4K JPEG2000 codestream instead of 1.", note.note().get());
+		return compose("%1 POC markers found in 4K JPEG2000 codestream instead of 1.", *note.poc_markers());
 	case VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER:
 		return compose("Incorrect POC marker content found (%1).", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_POC_MARKER_LOCATION:
