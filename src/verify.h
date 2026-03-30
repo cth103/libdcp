@@ -510,7 +510,7 @@ public:
 		 */
 		VALID_MAIN_PICTURE_ACTIVE_AREA,
 		/** A PKL has more than one asset with the same ID
-		 *  note contains the PKL ID
+		 *  pkl_id contains the PKL ID
 		 *  file contains the PKL filename
 		 */
 		DUPLICATE_ASSET_ID_IN_PKL,

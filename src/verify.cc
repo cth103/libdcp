@@ -1820,7 +1820,7 @@ verify_pkl(Context& context, shared_ptr<const PKL> pkl)
 	set<string> uuid_set;
 	for (auto asset: pkl->assets()) {
 		if (!uuid_set.insert(asset->id()).second) {
-			context.add_note(VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL, pkl->id(), pkl->file().get());
+			context.add_note(VerificationNote(VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL, pkl->file().get()).set_pkl_id(pkl->id()));
 			break;
 		}
 	}
@@ -2179,7 +2179,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA:
 		return compose("<MainPictureActiveaArea> %1x%2 is valid", note.size_in_pixels()->width, note.size_in_pixels()->height);
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL:
-		return compose("The PKL %1 has more than one asset with the same ID.", note.note().get());
+		return compose("The PKL %1 has more than one asset with the same ID.", *note.pkl_id());
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP:
 		return compose("The ASSETMAP %1 has more than one asset with the same ID.", note.note().get());
 	case VerificationNote::Code::MISSING_SUBTITLE:

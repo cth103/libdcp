@@ -5150,7 +5150,7 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_pkl_asset_ids)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			{ VC::DUPLICATE_ASSET_ID_IN_PKL, pkl.id(), canonical(find_pkl(dir)) },
+			VN(VC::DUPLICATE_ASSET_ID_IN_PKL, canonical(find_pkl(dir))).set_pkl_id(pkl.id()),
 		});
 }
 
