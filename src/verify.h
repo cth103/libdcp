@@ -505,7 +505,9 @@ public:
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_MAIN_PICTURE_ACTIVE_AREA,
-		/** A valid _<MainPictureActiveArea>_ was seen */
+		/** A valid _<MainPictureActiveArea>_ was seen
+		 *  size_in_pixels contains the valid active area
+		 */
 		VALID_MAIN_PICTURE_ACTIVE_AREA,
 		/** A PKL has more than one asset with the same ID
 		 *  note contains the PKL ID

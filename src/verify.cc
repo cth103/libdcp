@@ -1670,10 +1670,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 	}
 
 	if (main_picture_active_area && active_area_ok) {
-		context.add_note(
-			VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA, String::compose("%1x%2", main_picture_active_area->width, main_picture_active_area->height),
-			cpl->file().get()
-			);
+		context.add_note(VerificationNote(VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_size_in_pixels(*main_picture_active_area));
 	}
 
 	int64_t frame = 0;
@@ -2180,7 +2177,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA:
 		return compose("<MainPictureActiveaArea> has an invalid value: %1", *note.error());
 	case VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA:
-		return compose("<MainPictureActiveaArea> %1 is valid", note.note().get());
+		return compose("<MainPictureActiveaArea> %1x%2 is valid", note.size_in_pixels()->width, note.size_in_pixels()->height);
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL:
 		return compose("The PKL %1 has more than one asset with the same ID.", note.note().get());
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP:

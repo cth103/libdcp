@@ -530,11 +530,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_picture_sound_hash)
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			dcp::VerificationNote(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(dcp_test1_cpl_id()),
+			dcp::VerificationNote(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(dcp_test1_cpl_id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
@@ -574,11 +570,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_picture_sound_hashes)
 		{
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
@@ -618,11 +610,7 @@ BOOST_AUTO_TEST_CASE (verify_failed_read_content_kind)
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id("5407b210-4441-4e97-8b16-8bdc7c12da54"),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id("5407b210-4441-4e97-8b16-8bdc7c12da54"),
@@ -675,11 +663,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_picture_frame_rate)
 		{
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id("5407b210-4441-4e97-8b16-8bdc7c12da54"),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -712,11 +696,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_asset)
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
@@ -741,11 +721,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_asset_path)
 	std::vector<VN> expected = {
 			note(VC::NONE_ENCRYPTED, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -774,11 +750,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_standard)
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id("5407b210-4441-4e97-8b16-8bdc7c12da54"),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id("5407b210-4441-4e97-8b16-8bdc7c12da54"),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -821,11 +793,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_id)
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id("5407b210-4441-4e97-8b16-8bdc7c12da54"),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id("5407b210-4441-4e97-8b16-8bdc7c12da54"),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -861,11 +829,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_issue_date)
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -901,11 +865,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_pkl_id)
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -942,11 +902,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_asset_map_id)
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -1649,11 +1605,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_cpl_metadata_bad_tag)
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "pic.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1440x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1440, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("hello"),
@@ -1816,11 +1768,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_language3)
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1440x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1440, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("hello"),
@@ -1909,11 +1857,7 @@ check_picture_size_ok (int width, int height, int frame_rate, bool three_d)
 		VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 		note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 		note(VC::MATCHING_CPL_HASHES, cpl),
-		VN(
-			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-			dcp::String::compose("%1x%2", width, height),
-			cpl->file().get()
-			).set_cpl_id(cpl->id()),
+		VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({width, height}),
 		note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 		note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id)
 	};
@@ -1941,11 +1885,7 @@ check_picture_size_bad_frame_size (int width, int height, int frame_rate, bool t
 		VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 		note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 		note(VC::MATCHING_CPL_HASHES, cpl),
-		VN(
-			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-			dcp::String::compose("%1x%2", width, height),
-			cpl->file().get()
-			).set_cpl_id(cpl->id()),
+		VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({width, height}),
 		note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 		note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 		VN(
@@ -1976,11 +1916,7 @@ check_picture_size_bad_2k_frame_rate (int width, int height, int frame_rate, boo
 		VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 		note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 		note(VC::MATCHING_CPL_HASHES, cpl),
-		VN(
-			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-			dcp::String::compose("%1x%2", width, height),
-			cpl->file().get()
-			).set_cpl_id(cpl->id()),
+		VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({width, height}),
 		note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 		note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 		VN(VC::INVALID_PICTURE_FRAME_RATE).set_cpl_id(cpl->id()).set_reel_index(0).set_frame_rate({frame_rate * (three_d ? 2 : 1), 1}),
@@ -2011,11 +1947,7 @@ check_picture_size_bad_4k_frame_rate (int width, int height, int frame_rate, boo
 		VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 		note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 		note(VC::MATCHING_CPL_HASHES, cpl),
-		VN(
-			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-			dcp::String::compose("%1x%2", width, height),
-			cpl->file().get()
-			).set_cpl_id(cpl->id()),
+		VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({width, height}),
 		note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 		note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 		VN(VC::INVALID_PICTURE_FRAME_RATE_FOR_4K, canonical(dir / "video.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_frame_rate({frame_rate, 1}).set_asset_id(picture_id),
@@ -2258,11 +2190,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_language)
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
@@ -2323,11 +2251,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_subtitle_languages)
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
@@ -2387,11 +2311,7 @@ BOOST_AUTO_TEST_CASE (verify_multiple_closed_caption_languages_allowed)
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
@@ -2456,11 +2376,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_subtitle_start_time)
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
@@ -2526,11 +2442,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_subtitle_start_time)
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			VN(VC::INVALID_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs->id()),
 			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs->id()),
@@ -3501,11 +3413,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_annotation_text)
 		{
 			note(VC::NONE_ENCRYPTED, cpl),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
@@ -3548,11 +3456,7 @@ BOOST_AUTO_TEST_CASE (verify_mismatched_cpl_annotation_text)
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::MISMATCHED_CPL_ANNOTATION_TEXT, canonical(cpl->file().get())).set_cpl_id(cpl->id()),
 			VN(
@@ -4014,11 +3918,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_hash)
 		{},
 		{
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -4063,13 +3963,7 @@ verify_markers_test (
 	test_notes.push_back(note(VC::MATCHING_CPL_HASHES, cpl));
 	test_notes.push_back(note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl));
 	test_notes.push_back(note(VC::NONE_ENCRYPTED, cpl));
-	test_notes.push_back(
-		VN(
-			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-			string{"1998x1080"},
-			cpl->file().get()
-			).set_cpl_id(cpl->id())
-		);
+	test_notes.push_back(VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}));
 	test_notes.push_back(note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("feature"));
 	test_notes.push_back(note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl));
 	test_notes.push_back(VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"));
@@ -4186,11 +4080,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_cpl_metadata_version_number)
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
@@ -4230,11 +4120,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata1)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
@@ -4273,11 +4159,7 @@ BOOST_AUTO_TEST_CASE (verify_missing_extension_metadata2)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
@@ -4317,11 +4199,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata3)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(VC::INVALID_XML, cpl->file().get(), 70).set_cpl_id(cpl->id()).set_error("no declaration found for element 'meta:NameX'"),
 			VN(VC::INVALID_XML, cpl->file().get(), 77).set_cpl_id(cpl->id()).set_error("element 'meta:NameX' is not allowed for content model '(Name,PropertyList?,)'"),
@@ -4362,11 +4240,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata1)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
@@ -4406,11 +4280,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_extension_metadata2)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
@@ -4451,11 +4321,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata6)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(VC::INVALID_XML, cpl->file().get(), 74).set_cpl_id(cpl->id()).set_error("no declaration found for element 'meta:ValueX'"),
 			VN(VC::INVALID_XML, cpl->file().get(), 75).set_cpl_id(cpl->id()).set_error("element 'meta:ValueX' is not allowed for content model '(Name,Value)'"),
@@ -4497,11 +4363,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata7)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(
 				VC::MISMATCHED_CPL_HASHES, cpl->file().get()
@@ -4542,7 +4404,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata8)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, string{"1998x1080"}, cpl->file().get()).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(VC::INVALID_XML, cpl->file().get(), 72).set_cpl_id(cpl->id()).set_error("no declaration found for element 'meta:PropertyX'"),
 			VN(VC::INVALID_XML, cpl->file().get(), 76).set_cpl_id(cpl->id()).set_error("element 'meta:PropertyX' is not allowed for content model '(Property+)'"),
@@ -4585,11 +4447,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_xml_cpl_extension_metadata9)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(VC::INVALID_XML, cpl->file().get(), 71).set_cpl_id(cpl->id()).set_error("no declaration found for element 'meta:PropertyListX'"),
 			VN(VC::INVALID_XML, cpl->file().get(), 77).set_cpl_id(cpl->id()).set_error(
@@ -4727,11 +4585,7 @@ BOOST_AUTO_TEST_CASE (verify_unsigned_pkl_with_unencrypted_content)
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
@@ -4806,11 +4660,7 @@ BOOST_AUTO_TEST_CASE (verify_partially_encrypted)
 		{dir},
 		{},
 		{
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1440x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1440, 1080}),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -5077,11 +4927,7 @@ BOOST_AUTO_TEST_CASE (verify_unexpected_things_in_main_markers)
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -5119,11 +4965,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_content_kind)
 		{},
 		{
 			note(VC::NONE_ENCRYPTED, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -5168,11 +5010,7 @@ BOOST_AUTO_TEST_CASE(verify_valid_content_kind)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::CORRECT_PICTURE_HASH, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(dir / "video.mxf"), cpl).set_reel_index(0).set_asset_id(picture_id),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			VN(
 				VC::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
@@ -5307,11 +5145,7 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_pkl_asset_ids)
 		{
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -5348,11 +5182,7 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_assetmap_asset_ids)
 		{
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				canonical(cpl->file().get())
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, canonical(cpl->file().get())).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -5445,11 +5275,7 @@ BOOST_AUTO_TEST_CASE(verify_mismatched_sound_channel_counts)
 			note(VC::NONE_ENCRYPTED, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("hello"),
 			note(VC::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl).set_reel_index(0).set_asset_id(picture_ids[0]),
@@ -5520,11 +5346,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_sound_configuration)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("hello"),
 			note(VC::CORRECT_PICTURE_HASH, canonical(path / "video1.mxf"), cpl).set_reel_index(0).set_asset_id(mp->id()),
 			note(VC::VALID_PICTURE_FRAME_SIZES_IN_BYTES, canonical(path / "video1.mxf"), cpl).set_reel_index(0).set_asset_id(mp->id()),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(
 				VC::INVALID_MAIN_SOUND_CONFIGURATION,
@@ -5590,11 +5412,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_tile_part_size)
 
 	vector<VN> expected = {
 		note(VC::NONE_ENCRYPTED, cpl),
-		VN(
-			VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-			string{"1998x1080"},
-			cpl->file().get()
-			).set_cpl_id(cpl->id()),
+		VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 		note(VC::CORRECT_PICTURE_HASH, canonical(path / "video.mxf"), cpl).set_reel_index(0).set_asset_id(mp->id()),
 		note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 		note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
@@ -5755,11 +5573,7 @@ BOOST_AUTO_TEST_CASE(verify_missing_load_font)
 			note(VC::NONE_ENCRYPTED, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -5798,11 +5612,7 @@ BOOST_AUTO_TEST_CASE(verify_spots_wrong_asset)
 			note(VC::NONE_ENCRYPTED, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("A Test DCP"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
@@ -5830,11 +5640,7 @@ BOOST_AUTO_TEST_CASE(verify_cpl_content_version_label_text_empty)
 		{dir},
 		{},
 		{
-			VN(
-				VC::VALID_MAIN_PICTURE_ACTIVE_AREA,
-				string{"1998x1080"},
-				cpl->file().get()
-				).set_cpl_id(cpl->id()),
+			VN(VC::VALID_MAIN_PICTURE_ACTIVE_AREA, cpl->file().get()).set_cpl_id(cpl->id()).set_size_in_pixels({1998, 1080}),
 			note(VC::NONE_ENCRYPTED, cpl),
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
