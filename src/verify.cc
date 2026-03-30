@@ -1463,17 +1463,19 @@ verify_reel(
 			if (main_picture_active_area) {
 				if (main_picture_active_area->width > asset_size.width) {
 					context.add_note(
-						VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
-						String::compose("width %1 is bigger than the asset width %2", main_picture_active_area->width, asset_size.width),
-						context.cpl->file().get()
-					);
+						VerificationNote(
+							VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
+							context.cpl->file().get()
+							).set_error(fmt::format("width {} is bigger than the asset width {}", main_picture_active_area->width, asset_size.width))
+						);
 				}
 				if (main_picture_active_area->height > asset_size.height) {
 					context.add_note(
-						VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
-						String::compose("height %1 is bigger than the asset height %2", main_picture_active_area->height, asset_size.height),
-						context.cpl->file().get()
-					);
+						VerificationNote(
+							VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
+							context.cpl->file().get()
+							).set_error(fmt::format("height {} is bigger than the asset height {}", main_picture_active_area->height, asset_size.height))
+						);
 				}
 			}
 		}
@@ -1650,18 +1652,20 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 	bool active_area_ok = true;
 	if (main_picture_active_area && (main_picture_active_area->width % 2)) {
 		context.add_note(
-			VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
-			String::compose("width %1 is not a multiple of 2", main_picture_active_area->width),
-			cpl->file().get()
-		     );
+			VerificationNote(
+				VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
+				cpl->file().get()
+				).set_error(fmt::format("width {} is not a multiple of 2", main_picture_active_area->width))
+			);
 		active_area_ok = false;
 	}
 	if (main_picture_active_area && (main_picture_active_area->height % 2)) {
 		context.add_note(
-			VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
-			String::compose("height %1 is not a multiple of 2", main_picture_active_area->height),
-			cpl->file().get()
-		     );
+			VerificationNote(
+				VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA,
+				cpl->file().get()
+				).set_error(fmt::format("height {} is not a multiple of 2", main_picture_active_area->height))
+			);
 		active_area_ok = false;
 	}
 
@@ -2174,7 +2178,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::VALID_CONTENT_KIND:
 		return compose("Valid <ContentKind> %1.", *note.content_kind());
 	case VerificationNote::Code::INVALID_MAIN_PICTURE_ACTIVE_AREA:
-		return compose("<MainPictureActiveaArea> has an invalid value: %1", note.note().get());
+		return compose("<MainPictureActiveaArea> has an invalid value: %1", *note.error());
 	case VerificationNote::Code::VALID_MAIN_PICTURE_ACTIVE_AREA:
 		return compose("<MainPictureActiveaArea> %1 is valid", note.note().get());
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL:

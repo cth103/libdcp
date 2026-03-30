@@ -5220,11 +5220,11 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_1)
 				VC::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			VN(
-				VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 1997 is not a multiple of 2", canonical(find_cpl(dir))
-				).set_cpl_id(cpl->id()),
+				VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, canonical(find_cpl(dir))
+				).set_cpl_id(cpl->id()).set_error("width 1997 is not a multiple of 2"),
 			VN(
-				VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 4080 is bigger than the asset height 1080", canonical(find_cpl(dir))
-				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(picture_id),
+				VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, canonical(find_cpl(dir))
+				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(picture_id).set_error("height 4080 is bigger than the asset height 1080"),
 		});
 }
 
@@ -5269,14 +5269,14 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_picture_active_area_2)
 				VC::MISMATCHED_CPL_HASHES, canonical(find_cpl(dir))
 				).set_cpl_id(cpl->id()).set_reference_hash(calc.old_hash()).set_calculated_hash(calc.new_hash()),
 			VN(
-				VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is not a multiple of 2", canonical(find_cpl(dir))
-				).set_cpl_id(cpl->id()),
+				VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, canonical(find_cpl(dir))
+				).set_cpl_id(cpl->id()).set_error("height 5125 is not a multiple of 2"),
 			VN(
-				VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, "width 9900 is bigger than the asset width 1998", canonical(find_cpl(dir))
-				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(picture_id),
+				VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, canonical(find_cpl(dir))
+				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(picture_id).set_error("width 9900 is bigger than the asset width 1998"),
 			VN(
-				VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, "height 5125 is bigger than the asset height 1080", canonical(find_cpl(dir))
-				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(picture_id),
+				VC::INVALID_MAIN_PICTURE_ACTIVE_AREA, canonical(find_cpl(dir))
+				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(picture_id).set_error("height 5125 is bigger than the asset height 1080"),
 		});
 }
 

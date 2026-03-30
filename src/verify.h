@@ -500,7 +500,7 @@ public:
 		 */
 		VALID_CONTENT_KIND,
 		/** Either the width or height of a _<MainPictureActiveArea>_ in a CPL is either not an even number, or bigger than the corresponding asset dimension
-		 *  note contains details of what is wrong
+		 *  error contains details of what is wrong
 		 *  file contains the CPL filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
