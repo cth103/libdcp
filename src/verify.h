@@ -109,7 +109,7 @@ public:
 		/** The hash of a CPL in the PKL agrees with the CPL file */
 		MATCHING_CPL_HASHES,
 		/** The hash of the CPL in the PKL does not agree with the CPL file
-		 *  note contains CPL ID
+		 *  cpl_id contains CPL ID
 		 *  file contains CPL filename
 		 *  calculated_hash contains current hash of the CPL
 		 *  reference_hash contains the hash written in the PKL
@@ -298,12 +298,12 @@ public:
 		 */
 		INVALID_SOUND_BIT_DEPTH,
 		/** The CPL has no _<AnnotationText>_ tag [Bv2.1_8.1]
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISSING_CPL_ANNOTATION_TEXT,
 		/** The _<AnnotationText>_ is not the same as the _<ContentTitleText>_ [Bv2.1_8.1]
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISMATCHED_CPL_ANNOTATION_TEXT,
@@ -357,17 +357,17 @@ public:
 		 */
 		INCORRECT_LFOC,
 		/** There must be a _<CompositionMetadataAsset>_
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISSING_CPL_METADATA,
 		/** CPL metadata should contain _<VersionNumber>_ of 1, at least
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISSING_CPL_METADATA_VERSION_NUMBER,
 		/** There must be an _<ExtensionMetadata>_ in _<CompositionMetadataAsset>_ [Bv2.1_8.6.3]
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISSING_EXTENSION_METADATA,
@@ -377,7 +377,7 @@ public:
 		 */
 		INVALID_EXTENSION_METADATA,
 		/** A CPL containing encrypted content is not signed [Bv2.1_8.7]
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT,
@@ -575,7 +575,7 @@ public:
 		 */
 		MISMATCHED_ASSET_MAP_ID,
 		/** The <LabelText> inside a _<ContentVersion>_ is empty
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		EMPTY_CONTENT_VERSION_LABEL_TEXT,
