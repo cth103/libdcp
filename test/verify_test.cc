@@ -1360,7 +1360,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_smpte_subtitles)
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("hello"),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),
 			VN(VC::INVALID_SUBTITLE_ISSUE_DATE).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_issue_date("2021-04-14T13:19:14.000+02:00"),
-			VN(VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 		});
 }
 
@@ -1398,7 +1398,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_smpte_subtitles)
 			VN(VC::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),
 			VN(VC::INVALID_SUBTITLE_ISSUE_DATE).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_issue_date("2020-05-09T00:29:21.000+02:00"),
-			VN(VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 		});
 }
 
@@ -1430,7 +1430,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles)
 			VN(VC::MISSING_SUBTITLE_LANGUAGE, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),
 			VN(VC::INVALID_SUBTITLE_ISSUE_DATE).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_issue_date("2021-08-09T18:34:46.000+02:00"),
-			VN(VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 		});
 }
 
@@ -5481,10 +5481,7 @@ BOOST_AUTO_TEST_CASE(verify_too_many_subtitle_namespaces)
 			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("315de731-1173-484c-9a35-bdacf5a9d99d"),
 			VN(VC::MISSING_SUBTITLE_LANGUAGE, canonical(find_file(dir, "sub_"))).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("315de731-1173-484c-9a35-bdacf5a9d99d"),
 			VN(VC::MISSING_CPL_METADATA, canonical(find_file(dir, "cpl_"))).set_cpl_id(cpl->id()),
-			VN(
-				VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT,
-				std::string{"315de731-1173-484c-9a35-bdacf5a9d99d"}
-				).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("315de731-1173-484c-9a35-bdacf5a9d99d")
+			VN(VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id("315de731-1173-484c-9a35-bdacf5a9d99d")
 		});
 }
 

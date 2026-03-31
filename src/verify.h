@@ -556,7 +556,7 @@ public:
 		 */
 		INVALID_JPEG2000_TILE_PART_SIZE,
 		/** A subtitle XML root node has more than one namespace (xmlns) declaration.
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INCORRECT_SUBTITLE_NAMESPACE_COUNT,

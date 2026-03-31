@@ -825,7 +825,7 @@ verify_subtitle_asset(Context& context, shared_ptr<const TextAsset> asset, optio
 	if (interop) {
 		verify_interop_text_asset(context, interop);
 		if (namespace_count(asset, "DCSubtitle") > 1) {
-			context.add_note(VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id());
+			context.add_note(VerificationNote(VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT).set_asset_id(asset->id()));
 		}
 	}
 
@@ -835,7 +835,7 @@ verify_subtitle_asset(Context& context, shared_ptr<const TextAsset> asset, optio
 		verify_smpte_subtitle_asset(context, smpte);
 		/* This asset may be encrypted and in that case we'll have no raw_xml() */
 		if (asset->raw_xml() && namespace_count(asset, "SubtitleReel") > 1) {
-			context.add_note(VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id());
+			context.add_note(VerificationNote(VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT).set_asset_id(asset->id()));
 		}
 	}
 }
@@ -2199,7 +2199,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 			note.frame().get(), note.component().get(), note.size_in_bytes().get()
 			);
 	case VerificationNote::Code::INCORRECT_SUBTITLE_NAMESPACE_COUNT:
-		return compose("The XML in the subtitle asset %1 has more than one namespace declaration.", note.note().get());
+		return compose("The XML in the subtitle asset %1 has more than one namespace declaration.", *note.asset_id());
 	case VerificationNote::Code::MISSING_LOAD_FONT_FOR_FONT:
 		return compose("A subtitle or closed caption refers to a font with ID %1 that does not have a corresponding <LoadFont> node", note.load_font_id().get());
 	case VerificationNote::Code::MISSING_LOAD_FONT:
