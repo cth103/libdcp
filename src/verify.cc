@@ -748,7 +748,7 @@ void
 verify_interop_text_asset(Context& context, shared_ptr<const InteropTextAsset> asset)
 {
 	if (asset->texts().empty()) {
-		context.add_note(VerificationNote::Code::MISSING_SUBTITLE, asset->id(), asset->file().get());
+		context.add_note(VerificationNote(VerificationNote::Code::MISSING_SUBTITLE, asset->file().get()).set_asset_id(asset->id()));
 	}
 	auto const unresolved = asset->unresolved_fonts();
 	if (!unresolved.empty()) {
@@ -2183,7 +2183,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP:
 		return compose("The ASSETMAP %1 has more than one asset with the same ID.", *note.asset_map_id());
 	case VerificationNote::Code::MISSING_SUBTITLE:
-		return compose("The subtitle asset %1 has no subtitles.", note.note().get());
+		return compose("The subtitle asset %1 has no subtitles.", *note.asset_id());
 	case VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE:
 		return compose("<IssueDate> has an invalid value: %1", note.note().get());
 	case VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS:

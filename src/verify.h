@@ -520,7 +520,7 @@ public:
 		 */
 		DUPLICATE_ASSET_ID_IN_ASSETMAP,
 		/** An Interop subtitle asset has no subtitles
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */

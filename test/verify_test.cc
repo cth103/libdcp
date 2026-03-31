@@ -1301,7 +1301,7 @@ BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_no_subtitles)
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			{ VC::INVALID_STANDARD },
-			VN(VC::MISSING_SUBTITLE, asset->id(), boost::filesystem::canonical(asset->file().get())).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::MISSING_SUBTITLE, boost::filesystem::canonical(asset->file().get())).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_FONT, string{"theFontId"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 		});
 }
@@ -1473,7 +1473,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_empty_child_nodes
 	auto reel_asset = make_shared<dcp::ReelInteropTextAsset>(dcp::TextType::OPEN_SUBTITLE, asset, dcp::Fraction(24, 1), 192, 0);
 	auto cpl = write_dcp_with_single_asset (dir, reel_asset, dcp::Standard::INTEROP);
 
-	auto const subs_id = cpl->reels()[0]->main_subtitle()->asset()->id();
+	auto const subs_id = asset->id();
 	using VN = dcp::VerificationNote;
 	using VC = VN::Code;
 
@@ -1486,7 +1486,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_empty_child_nodes
 			note(VC::NONE_ENCRYPTED, cpl),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
-			VN(VC::MISSING_SUBTITLE, asset->id(), boost::filesystem::canonical(asset->file().get())).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
+			VN(VC::MISSING_SUBTITLE, boost::filesystem::canonical(asset->file().get())).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
 			{ VC::INVALID_STANDARD },
 			VN(VC::EMPTY_TEXT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
 			VN(VC::MISSING_FONT, string{"font0"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
