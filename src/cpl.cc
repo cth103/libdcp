@@ -155,12 +155,8 @@ CPL::CPL(boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 		/* ContentVersion is required in SMPTE */
 		if (notes) {
 			notes->push_back(
-				dcp::VerificationNote(
-					dcp::VerificationNote::Code::MISSING_CPL_CONTENT_VERSION,
-					_id,
-					file
-					)
-				);
+				dcp::VerificationNote(dcp::VerificationNote::Code::MISSING_CPL_CONTENT_VERSION, file).set_cpl_id(_id)
+			);
 		}
 	}
 	auto rating_list = f.node_child("RatingList");

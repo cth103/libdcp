@@ -603,36 +603,15 @@ public:
 		: _code(code)
 	{}
 
-	VerificationNote(Code code, std::string note)
-		: _code(code)
-	{
-		_data[Data::NOTE] = note;
-	}
-
 	VerificationNote(Code code, boost::filesystem::path file)
 		: _code(code)
 	{
 		_data[Data::FILE] = file;
 	}
 
-	VerificationNote(Code code, std::string note, boost::filesystem::path file)
-		: _code(code)
-	{
-		_data[Data::NOTE] = note;
-		_data[Data::FILE] = file;
-	}
-
 	VerificationNote(Code code, boost::filesystem::path file, uint64_t line)
 		: _code (code)
 	{
-		_data[Data::FILE] = file;
-		_data[Data::LINE] = line;
-	}
-
-	VerificationNote(Code code, std::string note, boost::filesystem::path file, uint64_t line)
-		: _code (code)
-	{
-		_data[Data::NOTE] = note;
 		_data[Data::FILE] = file;
 		_data[Data::LINE] = line;
 	}
@@ -668,7 +647,6 @@ private:
 		LINE,  ///< error line number within the FILE
 		LOAD_FONT_ID,
 		MAIN_PICTURE_ACTIVE_AREA,
-		NOTE,  ///< further information about the error
 		OTHER_ASSET_ID,
 		OTHER_DURATION,
 		PKL_ID,
@@ -695,10 +673,6 @@ private:
 	}
 
 public:
-	boost::optional<std::string> note () const {
-		return data<std::string>(Data::NOTE);
-	}
-
 	boost::optional<boost::filesystem::path> file () const {
 		return data<boost::filesystem::path>(Data::FILE);
 	}

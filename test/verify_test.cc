@@ -242,10 +242,9 @@ string
 to_string(dcp::VerificationNote const& note)
 {
 	string s = note_to_string(note) + dcp::String::compose(
-		"\n  [%1 %2 %3 %4 %5 %6 %7 ",
+		"\n  [%1 %2 %3 %4 %5 %6 ",
 		static_cast<int>(note.type()),
 		static_cast<int>(note.code()),
-		note.note().get_value_or("<none>"),
 		note.file().get_value_or("<none>"),
 		note.line().get_value_or(0),
 		note.frame().get_value_or(0),
@@ -415,14 +414,6 @@ dcp::VerificationNote
 note(dcp::VerificationNote::Code code, shared_ptr<const dcp::CPL> cpl)
 {
        return dcp::VerificationNote(code).set_cpl_id(cpl->id());
-}
-
-
-static
-dcp::VerificationNote
-note(dcp::VerificationNote::Code code, string note, shared_ptr<const dcp::CPL> cpl)
-{
-       return dcp::VerificationNote(code, note).set_cpl_id(cpl->id());
 }
 
 

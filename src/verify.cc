@@ -2361,7 +2361,6 @@ dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 {
 	return a.type() == b.type() &&
 		a.code() == b.code() &&
-		a.note() == b.note() &&
 		a.file() == b.file() &&
 		a.line() == b.line() &&
 		a.frame() == b.frame() &&
@@ -2467,10 +2466,6 @@ dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 
 	if (a.code() != b.code()) {
 		return a.code() < b.code();
-	}
-
-	if (a.note() != b.note()) {
-		return less_than_optional(a.note(), b.note());
 	}
 
 	if (a.file() != b.file()) {
@@ -2621,9 +2616,6 @@ std::ostream&
 dcp::operator<< (std::ostream& s, dcp::VerificationNote const& note)
 {
 	s << note_to_string (note);
-	if (note.note()) {
-		s << " [" << note.note().get() << "]";
-	}
 	if (note.file()) {
 		s << " [" << note.file().get() << "]";
 	}
