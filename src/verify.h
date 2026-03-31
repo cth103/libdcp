@@ -538,7 +538,7 @@ public:
 		 */
 		MISMATCHED_SOUND_CHANNEL_COUNTS,
 		/** The CPL contains a _<MainSoundConfiguration>_ tag which does not describe the number of channels in the audio assets, or which is in some way badly formatted
-		 *  note contains details of what is wrong
+		 *  error contains details of what is wrong
 		 *  file contains the CPL filename
 		 *  cpl_id contains the CPL ID
 		 */

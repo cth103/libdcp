@@ -5350,9 +5350,8 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_sound_configuration)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(
 				VC::INVALID_MAIN_SOUND_CONFIGURATION,
-				std::string{"MainSoundConfiguration has 6 channels but sound assets have 2"},
 				canonical(find_cpl(path))
-				).set_cpl_id(cpl->id())
+				).set_cpl_id(cpl->id()).set_error("MainSoundConfiguration has 6 channels but sound assets have 2"),
 		});
 }
 

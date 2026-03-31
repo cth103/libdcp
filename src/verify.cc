@@ -1700,9 +1700,10 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 		if (auto msc = cpl->main_sound_configuration()) {
 			if (msc->valid() && context.audio_channels && msc->channels() != *context.audio_channels) {
 				context.add_note(
-					VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION,
-					String::compose("MainSoundConfiguration has %1 channels but sound assets have %2", msc->channels(), *context.audio_channels),
-					cpl->file().get()
+					VerificationNote(
+						VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION,
+						cpl->file().get()
+					).set_error(fmt::format("MainSoundConfiguration has {} channels but sound assets have {}", msc->channels(), *context.audio_channels))
 				);
 			}
 		}
@@ -2189,7 +2190,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS:
 		return compose("The sound assets do not all have the same channel count; the first to differ is %1", filename());
 	case VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION:
-		return compose("<MainSoundConfiguration> has an invalid value: %1", note.note().get());
+		return compose("<MainSoundConfiguration> has an invalid value: %1", *note.error());
 	case VerificationNote::Code::MISSING_FONT:
 		return compose("The font file for font ID \"%1\" was not found, or was not referred to in the ASSETMAP.", note.note().get());
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE:

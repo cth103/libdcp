@@ -328,9 +328,8 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 			notes->push_back(
 				dcp::VerificationNote(
 					dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION,
-					fmt::format("{} could not be parsed", _main_sound_configuration->as_string()),
 					*_file
-					).set_cpl_id(_id)
+					).set_cpl_id(_id).set_error(fmt::format("{} could not be parsed", _main_sound_configuration->as_string()))
 				);
 		}
 	}
