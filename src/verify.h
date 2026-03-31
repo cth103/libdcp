@@ -528,7 +528,7 @@ public:
 		/** A SMPTE subtitle asset as an _<IssueDate>_ which is not of the form yyyy-mm-ddThh:mm:ss
 		 *  I can find no reference in a standard to this being required, but the Deluxe delivery
 		 *  specifications require it and their QC will fail DCPs that don't have it.
-		 *  note contains the incorrect <IssueDate>
+		 *  issue_date contains the incorrect <IssueDate>
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_SUBTITLE_ISSUE_DATE,

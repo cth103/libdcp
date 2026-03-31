@@ -790,7 +790,7 @@ verify_smpte_subtitle_asset(Context& context, shared_ptr<const SMPTETextAsset> a
 		auto issue_date = doc.string_child("IssueDate");
 		std::regex reg("^\\d\\d\\d\\d-\\d\\d-\\d\\dT\\d\\d:\\d\\d:\\d\\d$");
 		if (!std::regex_match(issue_date, reg)) {
-			context.add_note(VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE, issue_date);
+			context.add_note(VerificationNote(VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE).set_issue_date(issue_date));
 		}
 	}
 }
@@ -2185,7 +2185,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::MISSING_SUBTITLE:
 		return compose("The subtitle asset %1 has no subtitles.", *note.asset_id());
 	case VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE:
-		return compose("<IssueDate> has an invalid value: %1", note.note().get());
+		return compose("<IssueDate> has an invalid value: %1", *note.issue_date());
 	case VerificationNote::Code::MISMATCHED_SOUND_CHANNEL_COUNTS:
 		return compose("The sound assets do not all have the same channel count; the first to differ is %1", filename());
 	case VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION:

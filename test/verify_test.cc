@@ -1359,7 +1359,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_smpte_subtitles)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("hello"),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),
-			VN(VC::INVALID_SUBTITLE_ISSUE_DATE, string{"2021-04-14T13:19:14.000+02:00"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::INVALID_SUBTITLE_ISSUE_DATE).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_issue_date("2021-04-14T13:19:14.000+02:00"),
 			VN(VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 		});
 }
@@ -1397,7 +1397,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_smpte_subtitles)
 			),
 			VN(VC::MISSING_SUBTITLE_START_TIME, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),
-			VN(VC::INVALID_SUBTITLE_ISSUE_DATE, string{"2020-05-09T00:29:21.000+02:00"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::INVALID_SUBTITLE_ISSUE_DATE).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_issue_date("2020-05-09T00:29:21.000+02:00"),
 			VN(VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 		});
 }
@@ -1429,7 +1429,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles)
 			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_SUBTITLE_LANGUAGE, canonical(dir / "subs.mxf")).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),
-			VN(VC::INVALID_SUBTITLE_ISSUE_DATE, string{"2021-08-09T18:34:46.000+02:00"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::INVALID_SUBTITLE_ISSUE_DATE).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_issue_date("2021-08-09T18:34:46.000+02:00"),
 			VN(VC::INCORRECT_SUBTITLE_NAMESPACE_COUNT, asset->id()).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
 		});
 }
@@ -4860,7 +4860,7 @@ BOOST_AUTO_TEST_CASE (verify_incorrect_timed_text_id)
 			VN(VC::INCORRECT_TIMED_TEXT_ASSET_ID).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
 			VN(VC::INVALID_SUBTITLE_FIRST_TEXT_TIME).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
 			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),
-			VN(VC::INVALID_SUBTITLE_ISSUE_DATE, string{"2018-10-02T12:25:14+02:00"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()),
+			VN(VC::INVALID_SUBTITLE_ISSUE_DATE).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_asset->id()).set_issue_date("2018-10-02T12:25:14+02:00"),
 		});
 }
 
