@@ -127,11 +127,7 @@ CPL::CPL(boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 	} else {
 		if (notes) {
 			notes->push_back(
-				dcp::VerificationNote(
-					dcp::VerificationNote::Code::INVALID_CPL_NAMESPACE,
-					f.namespace_uri(),
-					file
-					)
+				dcp::VerificationNote(dcp::VerificationNote::Code::INVALID_CPL_NAMESPACE, file).set_xml_namespace(f.namespace_uri())
 				);
 		}
 		_standard = Standard::INTEROP;

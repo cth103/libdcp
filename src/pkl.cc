@@ -80,11 +80,7 @@ PKL::PKL(boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 		_standard = Standard::SMPTE;
 		if (notes) {
 			notes->push_back(
-				dcp::VerificationNote(
-					dcp::VerificationNote::Code::INVALID_PKL_NAMESPACE,
-					pkl.namespace_uri(),
-					file
-					)
+				dcp::VerificationNote(dcp::VerificationNote::Code::INVALID_PKL_NAMESPACE, file).set_xml_namespace(pkl.namespace_uri())
 				);
 		}
 	} else {

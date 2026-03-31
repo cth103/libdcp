@@ -584,7 +584,7 @@ public:
 		 */
 		VALID_CONTENT_VERSION_LABEL_TEXT,
 		/** The CPL namespace is not valid
-		 *  note contains the invalid namespace
+		 *  xml_namespace contains the invalid namespace
 		 *  file contains the CPL filename
 		 */
 		INVALID_CPL_NAMESPACE,
@@ -593,7 +593,7 @@ public:
 		 */
 		MISSING_CPL_CONTENT_VERSION,
 		/** The PKL namespace is not valid
-		 *  note contains the invalid namespace
+		 *  xml_namespace contains the invalid namespace
 		 *  file contains the PKL filename
 		 */
 		INVALID_PKL_NAMESPACE,
