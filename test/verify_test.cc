@@ -5188,8 +5188,8 @@ BOOST_AUTO_TEST_CASE(verify_duplicate_assetmap_asset_ids)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			note(VC::NONE_ENCRYPTED, cpl),
 			VN(
-				VC::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map.id(), canonical(find_asset_map(dir))
-				),
+				VC::DUPLICATE_ASSET_ID_IN_ASSETMAP, canonical(find_asset_map(dir))
+				).set_asset_map_id(asset_map.id()),
 			VN(VC::EXTERNAL_ASSET).set_asset_id("5407b210-4441-4e97-8b16-8bdc7c12da54"),
 		});
 }

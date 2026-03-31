@@ -515,7 +515,7 @@ public:
 		 */
 		DUPLICATE_ASSET_ID_IN_PKL,
 		/** An ASSETMAP has more than one asset with the same ID
-		 *  note contains the ASSETMAP ID
+		 *  asset_map_id contains the ASSETMAP ID
 		 *  file contains the ASSETMAP filename
 		 */
 		DUPLICATE_ASSET_ID_IN_ASSETMAP,
@@ -645,6 +645,7 @@ private:
 	enum class Data {
 		ANNOTATION_TEXT,
 		ASSET_ID,
+		ASSET_MAP_ID,
 		BIT_DEPTH,
 		CALCULATED_HASH,
 		CAPABILITIES,
@@ -801,6 +802,15 @@ public:
 
 	boost::optional<std::string> pkl_id() const {
 		return data<std::string>(Data::PKL_ID);
+	}
+
+	VerificationNote& set_asset_map_id(std::string id) {
+		_data[Data::ASSET_MAP_ID] = id;
+		return *this;
+	}
+
+	boost::optional<std::string> asset_map_id() const {
+		return data<std::string>(Data::ASSET_MAP_ID);
 	}
 
 	VerificationNote& set_reel_index(int index) {

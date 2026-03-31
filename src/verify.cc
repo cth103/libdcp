@@ -1840,7 +1840,7 @@ verify_assetmap(Context& context, shared_ptr<const DCP> dcp)
 	set<string> uuid_set;
 	for (auto const& asset: asset_map->assets()) {
 		if (!uuid_set.insert(asset.id()).second) {
-			context.add_note(VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map->id(), asset_map->file().get());
+			context.add_note(VerificationNote(VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP, asset_map->file().get()).set_asset_map_id(asset_map->id()));
 			break;
 		}
 	}
@@ -2181,7 +2181,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_PKL:
 		return compose("The PKL %1 has more than one asset with the same ID.", *note.pkl_id());
 	case VerificationNote::Code::DUPLICATE_ASSET_ID_IN_ASSETMAP:
-		return compose("The ASSETMAP %1 has more than one asset with the same ID.", note.note().get());
+		return compose("The ASSETMAP %1 has more than one asset with the same ID.", *note.asset_map_id());
 	case VerificationNote::Code::MISSING_SUBTITLE:
 		return compose("The subtitle asset %1 has no subtitles.", note.note().get());
 	case VerificationNote::Code::INVALID_SUBTITLE_ISSUE_DATE:
@@ -2372,6 +2372,7 @@ dcp::operator== (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 		a.frame_rate() == b.frame_rate() &&
 		a.cpl_id() == b.cpl_id() &&
 		a.pkl_id() == b.pkl_id() &&
+		a.asset_map_id() == b.asset_map_id() &&
 		a.reference_hash() == b.reference_hash() &&
 		a.calculated_hash() == b.calculated_hash() &&
 		a.reel_index() == b.reel_index() &&
@@ -2513,6 +2514,10 @@ dcp::operator< (dcp::VerificationNote const& a, dcp::VerificationNote const& b)
 
 	if (a.pkl_id() != b.pkl_id()) {
 		return less_than_optional(a.pkl_id(), b.pkl_id());
+	}
+
+	if (a.asset_map_id() != b.asset_map_id()) {
+		return less_than_optional(a.asset_map_id(), b.asset_map_id());
 	}
 
 	if (a.reference_hash() != b.reference_hash()) {
