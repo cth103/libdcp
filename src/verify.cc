@@ -1585,7 +1585,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 			context.add_note(VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT, cpl->file().get());
 			break;
 		} else {
-			context.add_note(VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT, version.label_text);
+			context.add_note(VerificationNote(VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT).set_content_version(version.label_text));
 		}
 	}
 
@@ -2209,7 +2209,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::EMPTY_CONTENT_VERSION_LABEL_TEXT:
 		return compose("The <LabelText> in a <ContentVersion> in CPL %1 is empty", note.cpl_id().get());
 	case VerificationNote::Code::VALID_CONTENT_VERSION_LABEL_TEXT:
-		return compose("CPL has valid <ContentVersion> %1", note.note().get());
+		return compose("CPL has valid <ContentVersion> %1", *note.content_version());
 	case VerificationNote::Code::INVALID_CPL_NAMESPACE:
 		return compose("The namespace %1 in CPL %2 is invalid", note.note().get(), note.cpl_id().get());
 	case VerificationNote::Code::MISSING_CPL_CONTENT_VERSION:

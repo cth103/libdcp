@@ -579,7 +579,9 @@ public:
 		 *  file contains the CPL filename
 		 */
 		EMPTY_CONTENT_VERSION_LABEL_TEXT,
-		/** A <LabelText> inside a _<ContentVersion>_ is valid */
+		/** A <LabelText> inside a _<ContentVersion>_ is valid.
+		 *  content_version contains the label text.
+		 */
 		VALID_CONTENT_VERSION_LABEL_TEXT,
 		/** The CPL namespace is not valid
 		 *  note contains the invalid namespace
