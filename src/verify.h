@@ -544,7 +544,7 @@ public:
 		 */
 		INVALID_MAIN_SOUND_CONFIGURATION,
 		/** An interop subtitle file has a _<LoadFont>_ node which refers to a font file that is not found
-		 *  note contains the <LoadFont> ID
+		 *  load_font_id contains the <LoadFont> ID
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISSING_FONT,

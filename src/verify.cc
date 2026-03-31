@@ -752,7 +752,7 @@ verify_interop_text_asset(Context& context, shared_ptr<const InteropTextAsset> a
 	}
 	auto const unresolved = asset->unresolved_fonts();
 	if (!unresolved.empty()) {
-		context.add_note(VerificationNote::Code::MISSING_FONT, unresolved.front());
+		context.add_note(VerificationNote(VerificationNote::Code::MISSING_FONT).set_load_font_id(unresolved.front()));
 	}
 }
 
@@ -2192,7 +2192,7 @@ dcp::note_to_string(VerificationNote note, function<string (string)> process_str
 	case VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION:
 		return compose("<MainSoundConfiguration> has an invalid value: %1", *note.error());
 	case VerificationNote::Code::MISSING_FONT:
-		return compose("The font file for font ID \"%1\" was not found, or was not referred to in the ASSETMAP.", note.note().get());
+		return compose("The font file for font ID \"%1\" was not found, or was not referred to in the ASSETMAP.", *note.load_font_id());
 	case VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE:
 		return compose(
 			"Frame %1 has an image component that is too large (component %2 is %3 bytes in size).",

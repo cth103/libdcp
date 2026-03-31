@@ -1209,7 +1209,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_interop_subtitles)
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			{ VC::INVALID_STANDARD },
-			VN(VC::MISSING_FONT, string{"theFontId"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::MISSING_FONT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_load_font_id("theFontId"),
 		});
 }
 
@@ -1236,7 +1236,7 @@ BOOST_AUTO_TEST_CASE(verify_catch_missing_font_file_with_interop_ccap)
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			{ VC::INVALID_STANDARD },
-			VN(VC::MISSING_FONT, string{"theFontId"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::MISSING_FONT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_load_font_id("theFontId"),
 		});
 }
 
@@ -1274,7 +1274,7 @@ BOOST_AUTO_TEST_CASE (verify_invalid_interop_subtitles)
 			VN(VC::INVALID_XML, path(), 29).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_error(
 				"element 'Foo' is not allowed for content model '(SubtitleID,MovieTitle,ReelNumber,Language,LoadFont*,Font*,Subtitle*)'"
 			),
-			VN(VC::MISSING_FONT, string{"theFontId"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::MISSING_FONT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_load_font_id("theFontId"),
 		});
 }
 
@@ -1302,7 +1302,7 @@ BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_no_subtitles)
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			{ VC::INVALID_STANDARD },
 			VN(VC::MISSING_SUBTITLE, boost::filesystem::canonical(asset->file().get())).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
-			VN(VC::MISSING_FONT, string{"theFontId"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::MISSING_FONT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_load_font_id("theFontId"),
 		});
 }
 
@@ -1331,7 +1331,7 @@ BOOST_AUTO_TEST_CASE(verify_interop_subtitle_asset_with_single_space_subtitle)
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			{ VC::INVALID_STANDARD },
-			VN(VC::MISSING_FONT, string{"Arial"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
+			VN(VC::MISSING_FONT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_load_font_id("Arial"),
 		});
 }
 
@@ -1458,7 +1458,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_child_nodes)
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
 			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl->content_version()->label_text, cpl),
 			{ VC::INVALID_STANDARD },
-			VN(VC::MISSING_FONT, string{"font0"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()),
+			VN(VC::MISSING_FONT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_load_font_id("font0"),
 		});
 }
 
@@ -1489,7 +1489,7 @@ BOOST_AUTO_TEST_CASE (verify_empty_text_node_in_subtitles_with_empty_child_nodes
 			VN(VC::MISSING_SUBTITLE, boost::filesystem::canonical(asset->file().get())).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
 			{ VC::INVALID_STANDARD },
 			VN(VC::EMPTY_TEXT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
-			VN(VC::MISSING_FONT, string{"font0"}).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(subs_id),
+			VN(VC::MISSING_FONT).set_cpl_id(cpl->id()).set_reel_index(0).set_asset_id(asset->id()).set_load_font_id("font0"),
 		});
 }
 
