@@ -217,10 +217,10 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 				auto const tile_part_index = get_8();
 				auto tile_parts = get_8();
 				if (!fourk && tile_parts != 3) {
-					notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K, fmt::to_string(tile_parts) });
+					notes.push_back(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K).set_tile_parts(tile_parts));
 				}
 				if (fourk && tile_parts != 6) {
-					notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K, fmt::to_string(tile_parts) });
+					notes.push_back(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K).set_tile_parts(tile_parts));
 				}
 				if (tile_part_length > max_tile_part_size) {
 					VerificationNote note{VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE};

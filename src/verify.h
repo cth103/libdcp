@@ -441,11 +441,11 @@ public:
 		/** A POC marker was found outside the main head [Bv2.1_10.2.1] */
 		INVALID_JPEG2000_POC_MARKER_LOCATION,
 		/** Invalid number of tile parts for 2K JPEG2000 stream (should be 3) [Bv2.1_10.2.1]
-		 *  note contains the number of tile parts
+		 *  tile_parts contains the number of tile parts
 		 */
 		INVALID_JPEG2000_TILE_PARTS_FOR_2K,
 		/** Invalid number of tile parts for 4K JPEG2000 stream (should be 6) [Bv2.1_10.2.1]
-		 *  note contains the number of tile parts
+		 *  tile_parts contains the number of tile parts
 		 */
 		INVALID_JPEG2000_TILE_PARTS_FOR_4K,
 		/** Invalid _Rsiz_ (capabilities) value in 2K JPEG2000 stream.
