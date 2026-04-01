@@ -334,7 +334,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 		for (auto i: cpls()) {
 			for (auto j: i->reel_file_assets()) {
 				if (!j->asset_ref().resolved() && ids_and_paths.find(j->asset_ref().id()) == ids_and_paths.end()) {
-					notes->push_back(VerificationNote(VerificationNote::Code::EXTERNAL_ASSET, j->asset_ref().id()));
+					notes->push_back(VerificationNote(VerificationNote::Code::EXTERNAL_ASSET).set_asset_id(j->asset_ref().id()));
 				}
 			}
 		}

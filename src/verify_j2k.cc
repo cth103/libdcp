@@ -172,9 +172,9 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 		auto const image_height = get_32();
 		auto const fourk = image_width > 2048;
 		if (!fourk && rsiz != OPJ_PROFILE_CINEMA_2K) {
-			notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_2K, fmt::to_string(rsiz) });
+			notes.push_back(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_2K).set_capabilities(rsiz));
 		} else if (fourk && rsiz != OPJ_PROFILE_CINEMA_4K) {
-			notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_4K, fmt::to_string(rsiz) });
+			notes.push_back(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_RSIZ_FOR_4K).set_capabilities(rsiz));
 		}
 		require_32 (0, "invalid top-left image x coordinate %1");
 		require_32 (0, "invalid top-left image y coordinate %1");
@@ -217,10 +217,10 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 				auto const tile_part_index = get_8();
 				auto tile_parts = get_8();
 				if (!fourk && tile_parts != 3) {
-					notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K, fmt::to_string(tile_parts) });
+					notes.push_back(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_2K).set_tile_parts(tile_parts));
 				}
 				if (fourk && tile_parts != 6) {
-					notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K, fmt::to_string(tile_parts) });
+					notes.push_back(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_TILE_PARTS_FOR_4K).set_tile_parts(tile_parts));
 				}
 				if (tile_part_length > max_tile_part_size) {
 					VerificationNote note{VerificationNote::Code::INVALID_JPEG2000_TILE_PART_SIZE};
@@ -247,11 +247,15 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 				require_8(fourk ? 6 : 5, "invalid number of transform levels %1");
 				auto log_code_block_width = get_8();
 				if (log_code_block_width != 3) {
-					notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_WIDTH, fmt::to_string(4 * (2 << log_code_block_width)) });
+					notes.push_back(
+						VerificationNote(VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_WIDTH).set_code_block_width(4 * (2 << log_code_block_width))
+					);
 				}
 				auto log_code_block_height = get_8();
 				if (log_code_block_height != 3) {
-					notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_HEIGHT, fmt::to_string(4 * (2 << log_code_block_height)) });
+					notes.push_back(
+						VerificationNote(VerificationNote::Code::INVALID_JPEG2000_CODE_BLOCK_HEIGHT).set_code_block_height(4 * (2 << log_code_block_height))
+					);
 				}
 				require_8(0, "invalid mode variations");
 				require_8(0, "invalid wavelet transform type %1"); // 9/7 irreversible
@@ -270,10 +274,10 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 				auto quantization_style = get_8();
 				int guard_bits = (quantization_style >> 5) & 7;
 				if (fourk && guard_bits != 2) {
-					notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_4K, fmt::to_string(guard_bits) });
+					notes.push_back(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_4K).set_guard_bits(guard_bits));
 				}
 				if (!fourk && guard_bits != 1) {
-					notes.push_back({ VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K, fmt::to_string(guard_bits) });
+					notes.push_back(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_GUARD_BITS_FOR_2K).set_guard_bits(guard_bits));
 				}
 				ptr += L_qcd - 3;
 			} else if (*marker_name == "COC") {
@@ -313,13 +317,13 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 
 				auto require_8_poc = [&](uint16_t value, string note) {
 					if (get_8() != value) {
-						notes.push_back ({ VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER, String::compose(note, value) });
+						notes.push_back(VerificationNote(VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER).set_poc_marker(value).set_error(note));
 					}
 				};
 
 				auto require_16_poc = [&](uint16_t value, string note) {
 					if (get_16() != value) {
-						notes.push_back ({ VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER, String::compose(note, value) });
+						notes.push_back (VerificationNote(VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER).set_poc_marker(value).set_error(note));
 					}
 				};
 
@@ -352,10 +356,10 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 			throw InvalidCodestream("more than one QCD marker found");
 		}
 		if (num_POC_in_main != 0 && !fourk) {
-			notes.push_back({ VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K, fmt::to_string(num_POC_in_main) });
+			notes.push_back(VerificationNote(VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K).set_poc_markers(num_POC_in_main));
 		}
 		if (num_POC_in_main != 1 && fourk) {
-			notes.push_back({ VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K, fmt::to_string(num_POC_in_main) });
+			notes.push_back(VerificationNote(VerificationNote::Code::INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K).set_poc_markers(num_POC_in_main));
 		}
 		if (num_POC_after_main != 0) {
 			notes.push_back ({ VerificationNote::Code::INVALID_JPEG2000_POC_MARKER_LOCATION });
@@ -366,7 +370,7 @@ dcp::verify_j2k(shared_ptr<const Data> j2k, int start_index, int frame_index, in
 	}
 	catch (InvalidCodestream const& e)
 	{
-		VerificationNote note({VerificationNote::Code::INVALID_JPEG2000_CODESTREAM, string(e.what())});
+		VerificationNote note(VerificationNote(VerificationNote::Code::INVALID_JPEG2000_CODESTREAM).set_error(e.what()));
 		note.set_frame(start_index + frame_index);
 		note.set_frame_rate(dcp::Fraction(frame_rate, 1));
 		notes.push_back(note);

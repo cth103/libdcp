@@ -127,11 +127,7 @@ CPL::CPL(boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 	} else {
 		if (notes) {
 			notes->push_back(
-				dcp::VerificationNote(
-					dcp::VerificationNote::Code::INVALID_CPL_NAMESPACE,
-					f.namespace_uri(),
-					file
-					)
+				dcp::VerificationNote(dcp::VerificationNote::Code::INVALID_CPL_NAMESPACE, file).set_xml_namespace(f.namespace_uri())
 				);
 		}
 		_standard = Standard::INTEROP;
@@ -159,12 +155,8 @@ CPL::CPL(boost::filesystem::path file, vector<dcp::VerificationNote>* notes)
 		/* ContentVersion is required in SMPTE */
 		if (notes) {
 			notes->push_back(
-				dcp::VerificationNote(
-					dcp::VerificationNote::Code::MISSING_CPL_CONTENT_VERSION,
-					_id,
-					file
-					)
-				);
+				dcp::VerificationNote(dcp::VerificationNote::Code::MISSING_CPL_CONTENT_VERSION, file).set_cpl_id(_id)
+			);
 		}
 	}
 	auto rating_list = f.node_child("RatingList");
@@ -328,9 +320,8 @@ CPL::read_composition_metadata_asset(cxml::ConstNodePtr node, vector<dcp::Verifi
 			notes->push_back(
 				dcp::VerificationNote(
 					dcp::VerificationNote::Code::INVALID_MAIN_SOUND_CONFIGURATION,
-					fmt::format("{} could not be parsed", _main_sound_configuration->as_string()),
 					*_file
-					).set_cpl_id(_id)
+					).set_cpl_id(_id).set_error(fmt::format("{} could not be parsed", _main_sound_configuration->as_string()))
 				);
 		}
 	}

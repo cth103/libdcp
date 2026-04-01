@@ -41,6 +41,7 @@
 #define LIBDCP_VERIFY_H
 
 
+#include "dcp_time.h"
 #include "decrypted_kdm.h"
 #include "types.h"
 #include <boost/any.hpp>
@@ -102,13 +103,13 @@ public:
 	//   Only the first line of each comment will be taken as a description of the code.
 	enum class Code {
 		/** A general error when reading the DCP
-		 *  note contains (probably technical) details
+		 *  error contains (probably technical) details
 		 */
 		FAILED_READ,
 		/** The hash of a CPL in the PKL agrees with the CPL file */
 		MATCHING_CPL_HASHES,
 		/** The hash of the CPL in the PKL does not agree with the CPL file
-		 *  note contains CPL ID
+		 *  cpl_id contains CPL ID
 		 *  file contains CPL filename
 		 *  calculated_hash contains current hash of the CPL
 		 *  reference_hash contains the hash written in the PKL
@@ -156,7 +157,7 @@ public:
 		/** The DCP contains both SMPTE and Interop-standard components */
 		MISMATCHED_STANDARD,
 		/** Some XML fails to validate against its XSD/DTD
-		 *  note contains the (probably technical) details
+		 *  error contains the (probably technical) details
 		 *  file contains the invalid filename
 		 *  line contains the line number
 		 *  reel_index contains the reel index (starting from 0), if applicable
@@ -165,12 +166,12 @@ public:
 		/** No _ASSETMAP_ or _ASSETMAP.xml_ was found */
 		MISSING_ASSETMAP,
 		/** An asset's _IntrinsicDuration_ is less than 1 second
-		 *  note contains asset ID
+		 *  asset_id contains asset ID
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_INTRINSIC_DURATION,
 		/** An asset's _Duration_ is less than 1 second
-		 *  note contains asset ID
+		 *  asset_id contains asset ID
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_DURATION,
@@ -189,7 +190,7 @@ public:
 		 */
 		NEARLY_INVALID_PICTURE_FRAME_SIZE_IN_BYTES,
 		/** An asset that the CPL requires is not in this DCP; the DCP may be a VF
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 */
 		EXTERNAL_ASSET,
 		/** A stereoscopic asset has an MXF which is marked as being monoscopic
@@ -199,14 +200,16 @@ public:
 		/** DCP is Interop, not SMPTE [Bv2.1_6.1] */
 		INVALID_STANDARD,
 		/** A language or territory does not conform to RFC 5646 [Bv2.1_6.2.1]
-		 *  note contains the invalid language
+		 *  language contains the invalid language
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_LANGUAGE,
-		/** A CPL has a valid release territory */
+		/** A CPL has a valid release territory
+		 *  territory contains the territory
+		 */
 		VALID_RELEASE_TERRITORY,
 		/** A picture asset does not have one of the required Bv2.1 sizes (in pixels) [Bv2.1_7.1]
-		 *  note contains the incorrect size as "<width>x<height>"
+		 *  size_in_pixels contains the incorrect size
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
@@ -228,18 +231,18 @@ public:
 		 */
 		INVALID_PICTURE_ASSET_RESOLUTION_FOR_3D,
 		/** A closed caption's XML file is larger than 256KB [Bv2.1_7.2.1]
-		 *  note contains the invalid size in bytes
+		 *  size_in_bytes contains the invalid size in bytes
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_CLOSED_CAPTION_XML_SIZE_IN_BYTES,
 		/** Any timed text asset's total files is larger than 115MB [Bv2.1_7.2.1]
-		 *  note contains the invalid size in bytes
+		 *  size_in_bytes contains the invalid size in bytes
 		 *  file contains the asset filename
 		 */
 		INVALID_TIMED_TEXT_SIZE_IN_BYTES,
 		/** The total size of all a timed text asset's fonts is larger than 10MB [Bv2.1_7.2.1]
-		 *  note contains the invalid size in bytes
+		 *  size_in_bytes contains the invalid size in bytes
 		 *  file contains the asset filename
 		 */
 		INVALID_TIMED_TEXT_FONT_SIZE_IN_BYTES,
@@ -289,22 +292,24 @@ public:
 		 */
 		INVALID_SOUND_FRAME_RATE,
 		/** The audio bit depth must be 24
-		 *  note contains the invalid bit depth
+		 *  bit_depth contains the invalid bit depth
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_SOUND_BIT_DEPTH,
 		/** The CPL has no _<AnnotationText>_ tag [Bv2.1_8.1]
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISSING_CPL_ANNOTATION_TEXT,
 		/** The _<AnnotationText>_ is not the same as the _<ContentTitleText>_ [Bv2.1_8.1]
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISMATCHED_CPL_ANNOTATION_TEXT,
-		/** A CPL has an annotation text which matches the _<ContentTitleText>_ */
+		/** A CPL has an annotation text which matches the _<ContentTitleText>_
+		 *  annotation_text contains the annotation text.
+		 */
 		VALID_CPL_ANNOTATION_TEXT,
 		/** At least one asset in a reel does not have the same duration as the others.
 		 *  reel_index contains the reel index (starting from 0)
@@ -315,23 +320,23 @@ public:
 		/** If one reel has at least one _ClosedCaption_, all reels must have the same number of _ClosedCaptions_ */
 		MISMATCHED_CLOSED_CAPTION_ASSET_COUNTS,
 		/** MainSubtitle in reels must have _<EntryPoint>_ [Bv2.1_8.3.2]
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 */
 		MISSING_SUBTITLE_ENTRY_POINT,
 		/** MainSubtitle _<EntryPoint>_ must be zero [Bv2.1_8.3.2]
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 */
 		INCORRECT_SUBTITLE_ENTRY_POINT,
 		/** Closed caption in reels must have _<EntryPoint>_ [Bv2.1_8.3.2]
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 */
 		MISSING_CLOSED_CAPTION_ENTRY_POINT,
 		/** Closed caption _MainSubtitle_ _<EntryPoint>_ must be zero [Bv2.1_8.3.2]
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 */
 		INCORRECT_CLOSED_CAPTION_ENTRY_POINT,
 		/** _<Hash>_ must be present for assets in CPLs
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISSING_HASH,
@@ -344,45 +349,45 @@ public:
 		/** There should be a LFOC marker */
 		MISSING_LFOC,
 		/** The FFOC marker should be 1
-		 *  note contains the incorrect value.
+		 *  time contains the incorrect time
 		 */
 		INCORRECT_FFOC,
 		/** The LFOC marker should be the last frame in the reel
-		 *  note contains the incorrect value
+		 *  time contains the incorrect time
 		 */
 		INCORRECT_LFOC,
 		/** There must be a _<CompositionMetadataAsset>_
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISSING_CPL_METADATA,
 		/** CPL metadata should contain _<VersionNumber>_ of 1, at least
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISSING_CPL_METADATA_VERSION_NUMBER,
 		/** There must be an _<ExtensionMetadata>_ in _<CompositionMetadataAsset>_ [Bv2.1_8.6.3]
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		MISSING_EXTENSION_METADATA,
 		/** _<ExtensionMetadata>_ does not have the correct form [Bv2.1_8.6.3]
-		 *  note contains details of what's wrong
+		 *  error contains details of what's wrong
 		 *  file contains the CPL filename
 		 */
 		INVALID_EXTENSION_METADATA,
 		/** A CPL containing encrypted content is not signed [Bv2.1_8.7]
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		UNSIGNED_CPL_WITH_ENCRYPTED_CONTENT,
 		/** A PKL containing encrypted content is not signed [Bv2.1_8.7]
-		 *  note contains the PKL ID
+		 *  pkl_id contains the PKL ID
 		 *  file contains the PKL filename
 		 */
 		UNSIGNED_PKL_WITH_ENCRYPTED_CONTENT,
 		/** If a PKL has one CPL its _<ContentTitleText>_ must be the same as the PKL's _<AnnotationText>_
-		 *  note contains the PKL ID
+		 *  pkl_id contains the PKL ID
 		 *  file contains the PKL filename
 		 */
 		MISMATCHED_PKL_ANNOTATION_TEXT_WITH_CPL,
@@ -396,55 +401,60 @@ public:
 		PARTIALLY_ENCRYPTED,
 		/** General error during JPEG2000 codestream verification
 		 *  frame contains the frame index (counted from 0)
-		 *  note contains details
+		 *  error contains details
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_JPEG2000_CODESTREAM,
 		/** Invalid number of guard bits in a 2K JPEG2000 stream (should be 1) [Bv2.1_10.2.1]
-		 *  note contains the number of guard bits
+		 *  guard_bits contains the number of guard bits
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_JPEG2000_GUARD_BITS_FOR_2K,
 		/** Invalid number of guard bits in a 4K JPEG2000 stream (should be 2) [Bv2.1_10.2.1]
-		 *  note contains the number of guard bits
+		 *  guard_bits contains the number of guard bits
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_JPEG2000_GUARD_BITS_FOR_4K,
 		/** JPEG2000 tile size is not the same as the image size [Bv2.1_10.2.1] */
 		INVALID_JPEG2000_TILE_SIZE,
 		/** JPEG2000 code block width is not 32 [Bv2.1_10.2.1]
-		 *  note contains the code block width
+		 *  code_block_width contains the code block width
 		 */
 		INVALID_JPEG2000_CODE_BLOCK_WIDTH,
 		/** JPEG2000 code block height is not 32 [Bv2.1_10.2.1]
-		 *  note contains the code block height
+		 *  code_block_height contains the code block height
 		 */
 		INVALID_JPEG2000_CODE_BLOCK_HEIGHT,
 		/** There must be no POC markers in a 2K codestream [Bv2.1_10.2.1]
-		 *  note contains the number of POC markers found
+		 *  poc_markers contains the number of POC markers found
 		 */
 		INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_2K,
 		/** There must be exactly one POC marker in a 4K codestream [Bv2.1_10.2.1]
-		 *  note contains the number of POC markers found
+		 *  poc_markers contains the number of POC markers found
 		 */
 		INCORRECT_JPEG2000_POC_MARKER_COUNT_FOR_4K,
 		/** A POC marker has incorrect content [Bv2.1_10.2.1]
-		 *  note contains details
+		 *  poc_marker contains the invalid marker
+		 *  error contains detalis
 		 */
 		INCORRECT_JPEG2000_POC_MARKER,
 		/** A POC marker was found outside the main head [Bv2.1_10.2.1] */
 		INVALID_JPEG2000_POC_MARKER_LOCATION,
 		/** Invalid number of tile parts for 2K JPEG2000 stream (should be 3) [Bv2.1_10.2.1]
-		 *  note contains the number of tile parts
+		 *  tile_parts contains the number of tile parts
 		 */
 		INVALID_JPEG2000_TILE_PARTS_FOR_2K,
 		/** Invalid number of tile parts for 4K JPEG2000 stream (should be 6) [Bv2.1_10.2.1]
-		 *  note contains the number of tile parts
+		 *  tile_parts contains the number of tile parts
 		 */
 		INVALID_JPEG2000_TILE_PARTS_FOR_4K,
-		/** Invalid _Rsiz_ (capabilities) value in 2K JPEG2000 stream */
+		/** Invalid _Rsiz_ (capabilities) value in 2K JPEG2000 stream.
+		 *  The invalid value is in capabilities.
+		 */
 		INVALID_JPEG2000_RSIZ_FOR_2K,
-		/** Invalid _Rsiz_ (capabilities) value in 4K JPEG2000 stream */
+		/** Invalid _Rsiz_ (capabilities) value in 4K JPEG2000 stream
+		 *  The invalid value is in capabilities.
+		 */
 		INVALID_JPEG2000_RSIZ_FOR_4K,
 		/** No TLM marker was found [Bv2.1_10.2.1] */
 		MISSING_JPEG2000_TLM_MARKER,
@@ -457,7 +467,8 @@ public:
 		 */
 		INCORRECT_TIMED_TEXT_ASSET_ID,
 		/** The ContainerDuration of a timed text MXF is not the same as the _Duration_ in its reel [Bv2.1_10.4.3]
-		 *  note contains the reel duration, followed by a space, followed by the MXF duration
+		 *  duration contains the MXF duration
+		 *  other_duration contains the reel duration
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
@@ -480,30 +491,36 @@ public:
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		UNEXPECTED_DURATION,
-		/** A _<ContentKind>_ has been specified with either no scope or the SMPTE 429-7 scope, but which is not one of those allowed */
+		/** A _<ContentKind>_ has an invalid value
+		 *  content_kind contains the invalid content kind
+		 */
 		INVALID_CONTENT_KIND,
-		/** A valid _<ContentKind>_ was seen */
+		/** A valid _<ContentKind>_ was seen
+		 *  content_kind contains the valid content kind
+		 */
 		VALID_CONTENT_KIND,
 		/** Either the width or height of a _<MainPictureActiveArea>_ in a CPL is either not an even number, or bigger than the corresponding asset dimension
-		 *  note contains details of what is wrong
+		 *  error contains details of what is wrong
 		 *  file contains the CPL filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_MAIN_PICTURE_ACTIVE_AREA,
-		/** A valid _<MainPictureActiveArea>_ was seen */
+		/** A valid _<MainPictureActiveArea>_ was seen
+		 *  size_in_pixels contains the valid active area
+		 */
 		VALID_MAIN_PICTURE_ACTIVE_AREA,
 		/** A PKL has more than one asset with the same ID
-		 *  note contains the PKL ID
+		 *  pkl_id contains the PKL ID
 		 *  file contains the PKL filename
 		 */
 		DUPLICATE_ASSET_ID_IN_PKL,
 		/** An ASSETMAP has more than one asset with the same ID
-		 *  note contains the ASSETMAP ID
+		 *  asset_map_id contains the ASSETMAP ID
 		 *  file contains the ASSETMAP filename
 		 */
 		DUPLICATE_ASSET_ID_IN_ASSETMAP,
 		/** An Interop subtitle asset has no subtitles
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 *  file contains the asset filename
 		 *  reel_index contains the reel index (starting from 0)
 		 */
@@ -511,7 +528,7 @@ public:
 		/** A SMPTE subtitle asset as an _<IssueDate>_ which is not of the form yyyy-mm-ddThh:mm:ss
 		 *  I can find no reference in a standard to this being required, but the Deluxe delivery
 		 *  specifications require it and their QC will fail DCPs that don't have it.
-		 *  note contains the incorrect <IssueDate>
+		 *  issue_date contains the incorrect <IssueDate>
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INVALID_SUBTITLE_ISSUE_DATE,
@@ -521,13 +538,13 @@ public:
 		 */
 		MISMATCHED_SOUND_CHANNEL_COUNTS,
 		/** The CPL contains a _<MainSoundConfiguration>_ tag which does not describe the number of channels in the audio assets, or which is in some way badly formatted
-		 *  note contains details of what is wrong
+		 *  error contains details of what is wrong
 		 *  file contains the CPL filename
 		 *  cpl_id contains the CPL ID
 		 */
 		INVALID_MAIN_SOUND_CONFIGURATION,
 		/** An interop subtitle file has a _<LoadFont>_ node which refers to a font file that is not found
-		 *  note contains the <LoadFont> ID
+		 *  load_font_id contains the <LoadFont> ID
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		MISSING_FONT,
@@ -539,7 +556,7 @@ public:
 		 */
 		INVALID_JPEG2000_TILE_PART_SIZE,
 		/** A subtitle XML root node has more than one namespace (xmlns) declaration.
-		 *  note contains the asset ID
+		 *  asset_id contains the asset ID
 		 *  reel_index contains the reel index (starting from 0)
 		 */
 		INCORRECT_SUBTITLE_NAMESPACE_COUNT,
@@ -558,14 +575,16 @@ public:
 		 */
 		MISMATCHED_ASSET_MAP_ID,
 		/** The <LabelText> inside a _<ContentVersion>_ is empty
-		 *  note contains the CPL ID
+		 *  cpl_id contains the CPL ID
 		 *  file contains the CPL filename
 		 */
 		EMPTY_CONTENT_VERSION_LABEL_TEXT,
-		/** A <LabelText> inside a _<ContentVersion>_ is valid */
+		/** A <LabelText> inside a _<ContentVersion>_ is valid.
+		 *  content_version contains the label text.
+		 */
 		VALID_CONTENT_VERSION_LABEL_TEXT,
 		/** The CPL namespace is not valid
-		 *  note contains the invalid namespace
+		 *  xml_namespace contains the invalid namespace
 		 *  file contains the CPL filename
 		 */
 		INVALID_CPL_NAMESPACE,
@@ -574,7 +593,7 @@ public:
 		 */
 		MISSING_CPL_CONTENT_VERSION,
 		/** The PKL namespace is not valid
-		 *  note contains the invalid namespace
+		 *  xml_namespace contains the invalid namespace
 		 *  file contains the PKL filename
 		 */
 		INVALID_PKL_NAMESPACE,
@@ -584,29 +603,15 @@ public:
 		: _code(code)
 	{}
 
-	VerificationNote(Code code, std::string note)
-		: _code(code)
-	{
-		_data[Data::NOTE] = note;
-	}
-
 	VerificationNote(Code code, boost::filesystem::path file)
 		: _code(code)
 	{
 		_data[Data::FILE] = file;
 	}
 
-	VerificationNote(Code code, std::string note, boost::filesystem::path file)
-		: _code(code)
-	{
-		_data[Data::NOTE] = note;
-		_data[Data::FILE] = file;
-	}
-
-	VerificationNote(Code code, std::string note, boost::filesystem::path file, uint64_t line)
+	VerificationNote(Code code, boost::filesystem::path file, uint64_t line)
 		: _code (code)
 	{
-		_data[Data::NOTE] = note;
 		_data[Data::FILE] = file;
 		_data[Data::LINE] = line;
 	}
@@ -619,20 +624,42 @@ public:
 
 private:
 	enum class Data {
+		ANNOTATION_TEXT,
 		ASSET_ID,
+		ASSET_MAP_ID,
+		BIT_DEPTH,
 		CALCULATED_HASH,
+		CAPABILITIES,
+		CODE_BLOCK_HEIGHT,
+		CODE_BLOCK_WIDTH,
 		COMPONENT,
+		CONTENT_KIND,
+		CONTENT_VERSION,
 		CPL_ID,
+		DURATION,
+		ERROR,
 		FILE,  ///< path of file containing the error
 		FRAME,
 		FRAME_RATE,
+		GUARD_BITS,
+		ISSUE_DATE,
+		LANGUAGE,
 		LINE,  ///< error line number within the FILE
 		LOAD_FONT_ID,
-		NOTE,  ///< further information about the error
+		MAIN_PICTURE_ACTIVE_AREA,
 		OTHER_ASSET_ID,
+		OTHER_DURATION,
+		PKL_ID,
+		POC_MARKER,
+		POC_MARKERS,
 		REEL_INDEX, ///< reel index, counting from 0
 		REFERENCE_HASH,
-		SIZE_IN_BYTES
+		SIZE_IN_BYTES,
+		SIZE_IN_PIXELS,
+		TERRITORY,
+		TILE_PARTS,
+		TIME,
+		XML_NAMESPACE,
 	};
 
 	template <class T>
@@ -646,10 +673,6 @@ private:
 	}
 
 public:
-	boost::optional<std::string> note () const {
-		return data<std::string>(Data::NOTE);
-	}
-
 	boost::optional<boost::filesystem::path> file () const {
 		return data<boost::filesystem::path>(Data::FILE);
 	}
@@ -748,6 +771,24 @@ public:
 		return data<std::string>(Data::CPL_ID);
 	}
 
+	VerificationNote& set_pkl_id(std::string id) {
+		_data[Data::PKL_ID] = id;
+		return *this;
+	}
+
+	boost::optional<std::string> pkl_id() const {
+		return data<std::string>(Data::PKL_ID);
+	}
+
+	VerificationNote& set_asset_map_id(std::string id) {
+		_data[Data::ASSET_MAP_ID] = id;
+		return *this;
+	}
+
+	boost::optional<std::string> asset_map_id() const {
+		return data<std::string>(Data::ASSET_MAP_ID);
+	}
+
 	VerificationNote& set_reel_index(int index) {
 		_data[Data::REEL_INDEX] = index;
 		return *this;
@@ -755,6 +796,195 @@ public:
 
 	boost::optional<int> reel_index() const {
 		return data<int>(Data::REEL_INDEX);
+	}
+
+	VerificationNote& set_error(std::string error) {
+		_data[Data::ERROR] = std::move(error);
+		return *this;
+	}
+
+	boost::optional<std::string> error() const {
+		return data<std::string>(Data::ERROR);
+	}
+
+	VerificationNote& set_language(std::string language) {
+		_data[Data::LANGUAGE] = std::move(language);
+		return *this;
+	}
+
+	boost::optional<std::string> language() const {
+		return data<std::string>(Data::LANGUAGE);
+	}
+
+	VerificationNote& set_territory(std::string territory) {
+		_data[Data::TERRITORY] = std::move(territory);
+		return *this;
+	}
+
+	boost::optional<std::string> territory() const {
+		return data<std::string>(Data::TERRITORY);
+	}
+
+	VerificationNote& set_size_in_pixels(dcp::Size size_in_pixels) {
+		_data[Data::SIZE_IN_PIXELS] = size_in_pixels;
+		return *this;
+	}
+
+	boost::optional<dcp::Size> size_in_pixels() const {
+		return data<dcp::Size>(Data::SIZE_IN_PIXELS);
+	}
+
+	VerificationNote& set_bit_depth(int bit_depth) {
+		_data[Data::BIT_DEPTH] = std::move(bit_depth);
+		return *this;
+	}
+
+	boost::optional<int> bit_depth() const {
+		return data<int>(Data::BIT_DEPTH);
+	}
+
+	VerificationNote& set_annotation_text(std::string annotation_text) {
+		_data[Data::ANNOTATION_TEXT] = std::move(annotation_text);
+		return *this;
+	}
+
+	boost::optional<std::string> annotation_text() const {
+		return data<std::string>(Data::ANNOTATION_TEXT);
+	}
+
+	VerificationNote& set_time(dcp::Time time) {
+		_data[Data::TIME] = std::move(time);
+		return *this;
+	}
+
+	boost::optional<dcp::Time> time() const {
+		return data<dcp::Time>(Data::TIME);
+	}
+
+	VerificationNote& set_guard_bits(int guard_bits) {
+		_data[Data::GUARD_BITS] = guard_bits;
+		return *this;
+	}
+
+	boost::optional<int> guard_bits() const {
+		return data<int>(Data::GUARD_BITS);
+	}
+
+	VerificationNote& set_code_block_width(int code_block_width) {
+		_data[Data::CODE_BLOCK_WIDTH] = code_block_width;
+		return *this;
+	}
+
+	boost::optional<int> code_block_width() const {
+		return data<int>(Data::CODE_BLOCK_WIDTH);
+	}
+
+	VerificationNote& set_code_block_height(int code_block_height) {
+		_data[Data::CODE_BLOCK_HEIGHT] = code_block_height;
+		return *this;
+	}
+
+	boost::optional<int> code_block_height() const {
+		return data<int>(Data::CODE_BLOCK_HEIGHT);
+	}
+
+	VerificationNote& set_poc_marker(int poc_marker) {
+		_data[Data::POC_MARKER] = poc_marker;
+		return *this;
+	}
+
+	boost::optional<int> poc_marker() const {
+		return data<int>(Data::POC_MARKER);
+	}
+
+	VerificationNote& set_poc_markers(int poc_markers) {
+		_data[Data::POC_MARKERS] = poc_markers;
+		return *this;
+	}
+
+	boost::optional<int> poc_markers() const {
+		return data<int>(Data::POC_MARKERS);
+	}
+
+	VerificationNote& set_tile_parts(int tile_parts) {
+		_data[Data::TILE_PARTS] = tile_parts;
+		return *this;
+	}
+
+	boost::optional<int> tile_parts() const {
+		return data<int>(Data::TILE_PARTS);
+	}
+
+	VerificationNote& set_capabilities(int capabilities) {
+		_data[Data::CAPABILITIES] = capabilities;
+		return *this;
+	}
+
+	boost::optional<int> capabilities() const {
+		return data<int>(Data::CAPABILITIES);
+	}
+
+	VerificationNote& set_duration(int64_t duration) {
+		_data[Data::DURATION] = std::move(duration);
+		return *this;
+	}
+
+	boost::optional<int64_t> duration() const {
+		return data<int64_t>(Data::DURATION);
+	}
+
+	VerificationNote& set_other_duration(int64_t other_duration) {
+		_data[Data::OTHER_DURATION] = std::move(other_duration);
+		return *this;
+	}
+
+	boost::optional<int64_t> other_duration() const {
+		return data<int64_t>(Data::OTHER_DURATION);
+	}
+
+	VerificationNote& set_content_kind(std::string content_kind) {
+		_data[Data::CONTENT_KIND] = std::move(content_kind);
+		return *this;
+	}
+
+	boost::optional<std::string> content_kind() const {
+		return data<std::string>(Data::CONTENT_KIND);
+	}
+
+	VerificationNote& set_main_picture_active_area(dcp::Size main_picture_active_area) {
+		_data[Data::MAIN_PICTURE_ACTIVE_AREA] = std::move(main_picture_active_area);
+		return *this;
+	}
+
+	boost::optional<dcp::Size> main_picture_active_area() const {
+		return data<dcp::Size>(Data::MAIN_PICTURE_ACTIVE_AREA);
+	}
+
+	VerificationNote& set_issue_date(std::string issue_date) {
+		_data[Data::ISSUE_DATE] = std::move(issue_date);
+		return *this;
+	}
+
+	boost::optional<std::string> issue_date() const {
+		return data<std::string>(Data::ISSUE_DATE);
+	}
+
+	VerificationNote& set_content_version(std::string content_version) {
+		_data[Data::CONTENT_VERSION] = std::move(content_version);
+		return *this;
+	}
+
+	boost::optional<std::string> content_version() const {
+		return data<std::string>(Data::CONTENT_VERSION);
+	}
+
+	VerificationNote& set_xml_namespace(std::string xml_namespace) {
+		_data[Data::XML_NAMESPACE] = std::move(xml_namespace);
+		return *this;
+	}
+
+	boost::optional<std::string> xml_namespace() const {
+		return data<std::string>(Data::XML_NAMESPACE);
 	}
 
 private:
