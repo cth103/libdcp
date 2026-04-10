@@ -274,7 +274,7 @@ DCP::read (vector<dcp::VerificationNote>* notes, bool ignore_incorrect_picture_m
 			}
 			other_assets.push_back(asset);
 			if (found_threed_marked_as_twod && notes) {
-				notes->push_back({VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD, path});
+				notes->push_back(dcp::VerificationNote(VerificationNote::Code::THREED_ASSET_MARKED_AS_TWOD, path).set_asset_id(id));
 			}
 		} else if (*pkl_type == remove_parameters(FontAsset::static_pkl_type(standard))) {
 			other_assets.push_back(make_shared<FontAsset>(id, path));

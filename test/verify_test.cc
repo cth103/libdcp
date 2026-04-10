@@ -4881,7 +4881,7 @@ BOOST_AUTO_TEST_CASE (verify_threed_marked_as_twod)
 			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
 			note(VC::MATCHING_CPL_HASHES, cpl),
 			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
-			VN(VC::THREED_ASSET_MARKED_AS_TWOD, boost::filesystem::canonical(find_file(path, "j2c"))),
+			VN(VC::THREED_ASSET_MARKED_AS_TWOD, boost::filesystem::canonical(find_file(path, "j2c"))).set_asset_id("0d6f57e6-adac-4e1d-bfbe-d162bf13e2cd"),
 			VN(VC::INVALID_STANDARD)
 		});
 
