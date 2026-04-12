@@ -606,14 +606,14 @@ public:
 	VerificationNote(Code code, boost::filesystem::path file)
 		: _code(code)
 	{
-		_data[Data::FILE] = file;
+		_location[Location::FILE] = file;
 	}
 
 	VerificationNote(Code code, boost::filesystem::path file, uint64_t line)
 		: _code (code)
 	{
-		_data[Data::FILE] = file;
-		_data[Data::LINE] = line;
+		_location[Location::FILE] = file;
+		_location[Location::LINE] = line;
 	}
 
 	Type type() const;
@@ -625,34 +625,25 @@ public:
 private:
 	enum class Data {
 		ANNOTATION_TEXT,
-		ASSET_ID,
-		ASSET_MAP_ID,
 		BIT_DEPTH,
 		CALCULATED_HASH,
 		CAPABILITIES,
 		CODE_BLOCK_HEIGHT,
 		CODE_BLOCK_WIDTH,
-		COMPONENT,
 		CONTENT_KIND,
 		CONTENT_VERSION,
-		CPL_ID,
 		DURATION,
 		ERROR,
-		FILE,  ///< path of file containing the error
-		FRAME,
 		FRAME_RATE,
 		GUARD_BITS,
 		ISSUE_DATE,
 		LANGUAGE,
-		LINE,  ///< error line number within the FILE
 		LOAD_FONT_ID,
 		MAIN_PICTURE_ACTIVE_AREA,
 		OTHER_ASSET_ID,
 		OTHER_DURATION,
-		PKL_ID,
 		POC_MARKER,
 		POC_MARKERS,
-		REEL_INDEX, ///< reel index, counting from 0
 		REFERENCE_HASH,
 		SIZE_IN_BYTES,
 		SIZE_IN_PIXELS,
@@ -660,6 +651,18 @@ private:
 		TILE_PARTS,
 		TIME,
 		XML_NAMESPACE,
+	};
+
+	enum class Location {
+		ASSET_ID,
+		ASSET_MAP_ID,
+		COMPONENT,
+		CPL_ID,
+		FILE,  ///< path of file containing the error
+		FRAME,
+		LINE,  ///< error line number within the FILE
+		PKL_ID,
+		REEL_INDEX, ///< reel index, counting from 0
 	};
 
 	template <class T>
@@ -672,31 +675,41 @@ private:
 		return boost::any_cast<T>(iter->second);
 	}
 
+	template <class T>
+	boost::optional<T> location(Location key) const
+	{
+		auto iter = _location.find(key);
+		if (iter == _location.end()) {
+			return {};
+		}
+		return boost::any_cast<T>(iter->second);
+	}
+
 public:
 	boost::optional<boost::filesystem::path> file () const {
-		return data<boost::filesystem::path>(Data::FILE);
+		return location<boost::filesystem::path>(Location::FILE);
 	}
 
 	boost::optional<uint64_t> line () const {
-		return data<uint64_t>(Data::LINE);
+		return location<uint64_t>(Location::LINE);
 	}
 
 	VerificationNote& set_frame(int frame) {
-		_data[Data::FRAME] = frame;
+		_location[Location::FRAME] = frame;
 		return *this;
 	}
 
 	boost::optional<int> frame() const {
-		return data<int>(Data::FRAME);
+		return location<int>(Location::FRAME);
 	}
 
 	VerificationNote& set_component(int component) {
-		_data[Data::COMPONENT] = component;
+		_location[Location::COMPONENT] = component;
 		return *this;
 	}
 
 	boost::optional<int> component() const {
-		return data<int>(Data::COMPONENT);
+		return location<int>(Location::COMPONENT);
 	}
 
 	VerificationNote& set_size_in_bytes(uint64_t size) {
@@ -718,12 +731,12 @@ public:
 	}
 
 	VerificationNote& set_asset_id(std::string id) {
-		_data[Data::ASSET_ID] = id;
+		_location[Location::ASSET_ID] = id;
 		return *this;
 	}
 
 	boost::optional<std::string> asset_id() const {
-		return data<std::string>(Data::ASSET_ID);
+		return location<std::string>(Location::ASSET_ID);
 	}
 
 	VerificationNote& set_other_asset_id(std::string other_id) {
@@ -763,39 +776,39 @@ public:
 	}
 
 	VerificationNote& set_cpl_id(std::string id) {
-		_data[Data::CPL_ID] = id;
+		_location[Location::CPL_ID] = id;
 		return *this;
 	}
 
 	boost::optional<std::string> cpl_id() const {
-		return data<std::string>(Data::CPL_ID);
+		return location<std::string>(Location::CPL_ID);
 	}
 
 	VerificationNote& set_pkl_id(std::string id) {
-		_data[Data::PKL_ID] = id;
+		_location[Location::PKL_ID] = id;
 		return *this;
 	}
 
 	boost::optional<std::string> pkl_id() const {
-		return data<std::string>(Data::PKL_ID);
+		return location<std::string>(Location::PKL_ID);
 	}
 
 	VerificationNote& set_asset_map_id(std::string id) {
-		_data[Data::ASSET_MAP_ID] = id;
+		_location[Location::ASSET_MAP_ID] = id;
 		return *this;
 	}
 
 	boost::optional<std::string> asset_map_id() const {
-		return data<std::string>(Data::ASSET_MAP_ID);
+		return location<std::string>(Location::ASSET_MAP_ID);
 	}
 
 	VerificationNote& set_reel_index(int index) {
-		_data[Data::REEL_INDEX] = index;
+		_location[Location::REEL_INDEX] = index;
 		return *this;
 	}
 
 	boost::optional<int> reel_index() const {
-		return data<int>(Data::REEL_INDEX);
+		return location<int>(Location::REEL_INDEX);
 	}
 
 	VerificationNote& set_error(std::string error) {
@@ -990,6 +1003,7 @@ public:
 private:
 	Code _code;
 	std::map<Data, boost::any> _data;
+	std::map<Location, boost::any> _location;
 };
 
 
