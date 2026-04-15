@@ -471,3 +471,24 @@ dcp::maybe_throw_from_asdcplib(Kumu::Result_t result, boost::filesystem::path pa
 	}
 }
 
+
+size_t
+dcp::utf8_strlen(string s)
+{
+	size_t const len = s.length();
+	int N = 0;
+	for (size_t i = 0; i < len; ++i) {
+		unsigned char c = s[i];
+		if ((c & 0xe0) == 0xc0) {
+			++i;
+		} else if ((c & 0xf0) == 0xe0) {
+			i += 2;
+		} else if ((c & 0xf8) == 0xf0) {
+			i += 3;
+		}
+		++N;
+	}
+	return N;
+}
+
+

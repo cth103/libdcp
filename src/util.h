@@ -171,6 +171,8 @@ void throw_from_asdcplib(Kumu::Result_t result, boost::filesystem::path path, T 
 	boost::throw_exception(general);
 }
 
+extern size_t utf8_strlen(std::string s);
+
 }
 
 

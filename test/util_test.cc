@@ -276,3 +276,12 @@ BOOST_AUTO_TEST_CASE (unique_string_test)
 		existing.push_back (s);
 	}
 }
+
+
+BOOST_AUTO_TEST_CASE(utf8_strlen_test)
+{
+	BOOST_CHECK_EQUAL(dcp::utf8_strlen("hello world"), 11U);
+	BOOST_CHECK_EQUAL(dcp::utf8_strlen("hëllo world"), 11U);
+	BOOST_CHECK_EQUAL(dcp::utf8_strlen("hëłlo wørld"), 11U);
+}
+
