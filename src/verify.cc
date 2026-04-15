@@ -1211,7 +1211,7 @@ dcp::verify_text_lines_and_characters(
 	/* Make a list of "subtitle starts" and "subtitle ends" events */
 	for (auto j: asset->texts()) {
 		if (auto text = dynamic_pointer_cast<const TextString>(j)) {
-			auto in = make_shared<Event>(text->in(), position(text), text->text().length());
+			auto in = make_shared<Event>(text->in(), position(text), utf8_strlen(text->text()));
 			events.push_back(in);
 			events.push_back(make_shared<Event>(text->out(), in));
 		}

@@ -3167,6 +3167,34 @@ BOOST_AUTO_TEST_CASE (verify_invalid_closed_caption_line_length)
 }
 
 
+BOOST_AUTO_TEST_CASE(verify_invalid_closed_caption_line_length_with_utf8)
+{
+	auto const dir = path("build/test/verify_invalid_closed_caption_line_length_with_utf8");
+	auto cpl = dcp_with_text<dcp::ReelSMPTETextAsset> (
+		dcp::TextType::CLOSED_CAPTION,
+		dir,
+		{
+			{ 96, 300, 0.0, dcp::VAlign::CENTER, "0123456789012345678901234567890…" }
+		});
+
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	check_verify_result (
+		{dir},
+		{},
+		{
+			note(VC::NONE_ENCRYPTED, cpl),
+			note(VC::MATCHING_CPL_HASHES, cpl),
+			VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text("hello"),
+			note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+			note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
+			note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl).set_content_version(cpl->content_version()->label_text),
+			VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id())
+		});
+}
+
+
 BOOST_AUTO_TEST_CASE (verify_mismatched_closed_caption_valign1)
 {
 	auto const dir = path ("build/test/verify_mismatched_closed_caption_valign1");
