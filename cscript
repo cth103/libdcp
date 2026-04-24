@@ -47,7 +47,7 @@ def build_with_cpp17(target):
 
 def dependencies(target, options, for_package):
     deps = [
-        ('libcxml', 'v0.17.16', { 'c++17': build_with_cpp17(target) }),
+        ('libcxml', 'v0.17.17', { 'c++17': build_with_cpp17(target) }),
         ('asdcplib', 'v1.0.9')
     ]
 
@@ -79,7 +79,7 @@ def build(target, options, for_package, version):
             cmd += ' --static'
             if target.distro == 'debian' or (target.distro == 'centos' and target.version != 'stream10') or (target.distro == 'rocky' and target.version != '10') or target.distro == 'mageia':
                 cmd += ' --disable-tests'
-            if target.distro == 'ubuntu' and target.version == '16.04':
+            if (target.distro, target.version) in [('rocky', '8'), ('ubuntu', '18.04'), ('ubuntu', '16.04')]:
                 cmd += ' --static-boost'
         elif target.platform == 'windows':
             cmd += f' --target-windows-{target.bits}'
