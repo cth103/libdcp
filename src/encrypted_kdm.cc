@@ -646,6 +646,10 @@ EncryptedKDM::EncryptedKDM (
 	kre.recipient.x509_subject_name = recipient.subject ();
 	kre.composition_playlist_id = cpl_id;
 	if (formulation == Formulation::DCI_ANY || formulation == Formulation::DCI_SPECIFIC) {
+		/* XXX: this should be the thumbprint of one of the CPL signer certificates,
+		 * which might not necessarily be the case if we're using a CPL from somebody
+		 * else.
+		 */
 		kre.content_authenticator = signer->leaf().thumbprint ();
 	}
 	kre.content_title_text = content_title_text;
