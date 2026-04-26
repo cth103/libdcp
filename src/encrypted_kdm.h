@@ -103,6 +103,7 @@ public:
 	LocalTime not_valid_after () const;
 	std::string recipient_x509_subject_name () const;
 	CertificateChain signer_certificate_chain () const;
+	std::vector<std::string> trusted_devices() const;
 
 private:
 

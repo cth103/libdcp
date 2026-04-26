@@ -839,3 +839,10 @@ dcp::operator== (EncryptedKDM const & a, EncryptedKDM const & b)
 	/* Not exactly efficient... */
 	return a.as_xml() == b.as_xml();
 }
+
+
+vector<string>
+EncryptedKDM::trusted_devices() const
+{
+	return _data->authenticated_public.required_extensions.kdm_required_extensions.authorized_device_info->certificate_thumbprints;
+}
