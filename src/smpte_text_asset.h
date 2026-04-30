@@ -216,7 +216,6 @@ private:
 	friend struct ::write_subtitles_in_vertical_order_with_top_alignment;
 	friend struct ::write_subtitles_in_vertical_order_with_bottom_alignment;
 
-	void read_fonts (std::shared_ptr<ASDCP::TimedText::MXFReader>);
 	void parse_xml (std::shared_ptr<cxml::Document> xml);
 	void read_mxf_descriptor (std::shared_ptr<ASDCP::TimedText::MXFReader> reader);
 	void read_mxf_resources (std::shared_ptr<ASDCP::TimedText::MXFReader> reader, std::shared_ptr<DecryptionContext> dec);
