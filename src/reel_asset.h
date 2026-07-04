@@ -41,9 +41,10 @@
 #define LIBDCP_REEL_ASSET_H
 
 
+#include "equality_options.h"
 #include "object.h"
+#include "types.h"
 #include "util.h"
-#include "ref.h"
 #include <memory>
 
 
