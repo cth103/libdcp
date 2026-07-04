@@ -38,7 +38,6 @@
 
 
 #include "dcp_assert.h"
-#include "raw_convert.h"
 #include "reel_markers_asset.h"
 #include "warnings.h"
 LIBDCP_DISABLE_WARNINGS
@@ -48,8 +47,6 @@ LIBDCP_ENABLE_WARNINGS
 
 
 using std::string;
-using std::map;
-using std::max;
 using boost::optional;
 using std::shared_ptr;
 using namespace dcp;
