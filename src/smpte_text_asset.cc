@@ -585,6 +585,8 @@ SMPTETextAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions cons
 void
 SMPTETextAsset::add_font(string load_id, dcp::ArrayData data)
 {
+	check_resource_limit();
+
 	string const uuid = make_uuid ();
 	_fonts.push_back (Font(load_id, uuid, data));
 	_load_font_nodes.push_back (make_shared<SMPTELoadFontNode>(load_id, uuid));
@@ -594,8 +596,19 @@ SMPTETextAsset::add_font(string load_id, dcp::ArrayData data)
 void
 SMPTETextAsset::add(shared_ptr<Text> s)
 {
+	check_resource_limit();
+
 	TextAsset::add(s);
 	_intrinsic_duration = latest_text_out().as_editable_units_ceil(_edit_rate.numerator / _edit_rate.denominator);
+}
+
+
+void
+SMPTETextAsset::check_resource_limit() const
+{
+	if ((_fonts.size() + _image_texts) >= 4095) {
+		throw SMPTETextAssetFullError();
+	}
 }
 
 

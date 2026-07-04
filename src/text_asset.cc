@@ -585,6 +585,8 @@ TextAsset::maybe_add_text(
 				ps.fade_down_time.get_value_or(Time())
 				)
 			);
+
+		_image_texts++;
 		break;
 	}
 	}
@@ -620,6 +622,9 @@ void
 TextAsset::add(shared_ptr<Text> s)
 {
 	_texts.push_back(s);
+	if (dynamic_pointer_cast<TextImage>(s)) {
+		_image_texts++;
+	}
 }
 
 

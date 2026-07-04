@@ -226,3 +226,10 @@ TooManyOpenFilesError::TooManyOpenFilesError()
 {
 
 }
+
+
+SMPTETextAssetFullError::SMPTETextAssetFullError()
+	: runtime_error("SMPTE text asset can contain no more resources (PNG subtitles or fonts)")
+{
+
+}

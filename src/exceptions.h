@@ -379,6 +379,22 @@ public:
 };
 
 
+/** @class SMPTETextAssetFullError
+ *  @brief Thrown on an attempt to add a font or image (PNG) subtitle
+ *  to a SMPTE asset if that is not possible because the asset is already
+ *  "full".
+ *
+ *  ASDCP::TimedText::MXFWriter::h__Writer::SetSourceStream() returns
+ *  RESULT_FORMAT if there are too many sub-descriptors; a comment there
+ *  explains it more.
+ */
+class SMPTETextAssetFullError : public std::runtime_error
+{
+public:
+	SMPTETextAssetFullError();
+};
+
+
 }
 
 

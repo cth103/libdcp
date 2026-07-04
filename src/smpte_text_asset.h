@@ -220,6 +220,7 @@ private:
 	void read_mxf_descriptor (std::shared_ptr<ASDCP::TimedText::MXFReader> reader);
 	void read_mxf_resources (std::shared_ptr<ASDCP::TimedText::MXFReader> reader, std::shared_ptr<DecryptionContext> dec);
 	std::string schema_namespace() const;
+	void check_resource_limit() const;
 
 	/** The total length of this content in video frames.  The amount of
 	 *  content presented may be less than this.

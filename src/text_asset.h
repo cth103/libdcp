@@ -186,6 +186,7 @@ protected:
 	/** All our texts, in no particular order */
 	std::vector<std::shared_ptr<Text>> _texts;
 	std::vector<LoadVariableZ> _load_variable_z;
+	int _image_texts = 0;
 
 	class Font
 	{

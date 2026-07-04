@@ -806,3 +806,34 @@ BOOST_AUTO_TEST_CASE(pass_through_smpte_subtitle_with_variable_z)
 	check_xml(dcp::file_to_string("test/data/subtitles_with_vZani_parsed.xml"), test.xml_as_string(), { "IssueDate" }, true);
 }
 
+
+
+BOOST_AUTO_TEST_CASE(throws_on_too_many_png_subs)
+{
+	dcp::SMPTETextAsset test;
+	auto image = dcp::ArrayData("test/data/sub.png");
+	auto add = [&test, &image]() {
+		test.add(
+			std::make_shared<dcp::TextImage>(
+				image,
+				dcp::Time(),
+				dcp::Time(24, 24, 24),
+				0,
+				dcp::HAlign::CENTER,
+				0,
+				dcp::VAlign::TOP,
+				0,
+				std::vector<dcp::Text::VariableZPosition>(),
+				dcp::Time(),
+				dcp::Time()
+			)
+		);
+	};
+
+	for (int i = 0; i < 4095; ++i) {
+		add();
+	}
+
+	BOOST_CHECK_THROW(add(), dcp::SMPTETextAssetFullError);
+}
+
