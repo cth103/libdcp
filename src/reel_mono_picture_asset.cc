@@ -48,16 +48,16 @@ using namespace dcp;
 
 
 ReelMonoPictureAsset::ReelMonoPictureAsset(std::shared_ptr<PictureAsset> asset, int64_t entry_point)
-	: ReelPictureAsset (asset, entry_point)
+	: ReelPictureAsset(asset, entry_point)
 {
 
 }
 
 
-ReelMonoPictureAsset::ReelMonoPictureAsset (std::shared_ptr<const cxml::Node> node)
-	: ReelPictureAsset (node)
+ReelMonoPictureAsset::ReelMonoPictureAsset(std::shared_ptr<const cxml::Node> node)
+	: ReelPictureAsset(node)
 {
-	node->done ();
+	node->done();
 }
 
 
