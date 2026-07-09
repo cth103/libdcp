@@ -112,3 +112,10 @@ ReelSoundAsset::can_be_read() const
 	return asset()->can_be_read();
 }
 
+
+shared_ptr<ReelSoundAsset>
+ReelSoundAsset::clone() const
+{
+	return std::make_shared<ReelSoundAsset>(*this);
+}
+

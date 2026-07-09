@@ -90,6 +90,8 @@ public:
 
 	virtual xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
 
+	virtual std::shared_ptr<ReelPictureAsset> clone() const = 0;
+
 	bool equals(std::shared_ptr<const ReelPictureAsset>, EqualityOptions const&, NoteHandler) const;
 
 	/** @return picture frame rate */

@@ -77,3 +77,11 @@ ReelMonoPictureAsset::can_be_read() const
 
 	return asset()->can_be_read();
 }
+
+
+shared_ptr<ReelPictureAsset>
+ReelMonoPictureAsset::clone() const
+{
+	return std::make_shared<ReelMonoPictureAsset>(*this);
+}
+

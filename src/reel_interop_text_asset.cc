@@ -47,6 +47,7 @@ LIBDCP_ENABLE_WARNINGS
 
 using std::make_pair;
 using std::pair;
+using std::shared_ptr;
 using std::string;
 using boost::optional;
 using namespace dcp;
@@ -113,3 +114,8 @@ ReelInteropTextAsset::write_to_cpl(xmlpp::Element* node, Standard standard) cons
 }
 
 
+shared_ptr<ReelTextAsset>
+ReelInteropTextAsset::clone() const
+{
+	return std::make_shared<ReelInteropTextAsset>(*this);
+}

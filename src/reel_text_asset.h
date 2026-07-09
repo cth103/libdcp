@@ -75,6 +75,8 @@ public:
 		return asset_of_type<TextAsset>();
 	}
 
+	virtual std::shared_ptr<ReelTextAsset> clone() const = 0;
+
 	bool equals(std::shared_ptr<const ReelTextAsset>, EqualityOptions const&, NoteHandler) const;
 
 	void set_language (dcp::LanguageTag language);

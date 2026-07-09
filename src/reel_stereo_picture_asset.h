@@ -72,6 +72,8 @@ public:
 		return asset_of_type<StereoJ2KPictureAsset>();
 	}
 
+	std::shared_ptr<ReelPictureAsset> clone() const override;
+
 private:
 	std::string cpl_node_name() const override;
 	std::pair<std::string, std::string> cpl_node_attribute (Standard standard) const override;

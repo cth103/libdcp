@@ -83,6 +83,8 @@ public:
 		return asset_of_type<MonoMPEG2PictureAsset>();
 	}
 
+	std::shared_ptr<ReelPictureAsset> clone() const override;
+
 private:
 	std::string cpl_node_name() const override;
 };

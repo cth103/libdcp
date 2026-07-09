@@ -127,3 +127,10 @@ ReelSMPTETextAsset::can_be_read() const
 	return smpte_asset()->can_be_read();
 }
 
+
+shared_ptr<ReelTextAsset>
+ReelSMPTETextAsset::clone() const
+{
+	return std::make_shared<ReelSMPTETextAsset>(*this);
+}
+
