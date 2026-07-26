@@ -48,7 +48,7 @@ def build_with_cpp17(target):
 def dependencies(target, options, for_package):
     deps = [
         ('libcxml', 'v0.17.17', { 'c++17': build_with_cpp17(target) }),
-        ('asdcplib', 'v1.0.9')
+        ('asdcplib', 'v1.0.10')
     ]
 
     if target.platform == 'linux':

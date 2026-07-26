@@ -149,7 +149,7 @@ File::operator bool() const
 
 
 void
-File::checked_write(void const * ptr, size_t size)
+File::checked_write(void const* ptr, size_t size)
 {
 	size_t N = write(ptr, 1, size);
 	if (N != size) {
@@ -165,13 +165,19 @@ File::checked_write(void const * ptr, size_t size)
 void
 File::checked_read(void* ptr, size_t size)
 {
-	size_t N = read(ptr, 1, size);
-	if (N != size) {
-		if (ferror(_file)) {
-			throw FileError("fread error %1", _path, errno);
-		} else {
-			throw FileError("Unexpected short read", _path, 0);
+	size_t done = 0;
+	while (done < size) {
+		ssize_t N = read(static_cast<uint8_t*>(ptr) + done, 1, size - done);
+		if (N == -1) {
+			if (errno == EINTR) {
+				continue;
+			}
+			throw FileError("read error %1", _path, errno);
 		}
+		if (N == 0) {
+			throw FileError("Unexpected end of file", _path, 0);
+		}
+		done += N;
 	}
 }
 
