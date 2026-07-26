@@ -107,7 +107,7 @@ find_potential_dcps(boost::filesystem::path path, vector<boost::filesystem::path
 	if (found) {
 		dcp.push_back(path);
 	} else if (boost::filesystem::is_directory(path)) {
-		for (auto i: boost::filesystem::directory_iterator(path)) {
+		for (auto i: dcp::filesystem::directory_iterator(path)) {
 			try {
 				find_potential_dcps(i.path(), dcp);
 			} catch (...) {}
