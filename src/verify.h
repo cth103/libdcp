@@ -622,6 +622,21 @@ public:
 		return _code;
 	}
 
+	enum class Location {
+		ASSET_ID,
+		ASSET_MAP_ID,
+		COMPONENT,
+		CPL_ID,
+		FILE,  ///< path of file containing the error
+		FRAME,
+		LINE,  ///< error line number within the FILE
+		PKL_ID,
+		REEL_INDEX, ///< reel index, counting from 0j
+	};
+
+	std::vector<Location> locations() const;
+	std::string location_as_string(Location key) const;
+
 private:
 	enum class Data {
 		ANNOTATION_TEXT,
@@ -651,18 +666,6 @@ private:
 		TILE_PARTS,
 		TIME,
 		XML_NAMESPACE,
-	};
-
-	enum class Location {
-		ASSET_ID,
-		ASSET_MAP_ID,
-		COMPONENT,
-		CPL_ID,
-		FILE,  ///< path of file containing the error
-		FRAME,
-		LINE,  ///< error line number within the FILE
-		PKL_ID,
-		REEL_INDEX, ///< reel index, counting from 0
 	};
 
 	template <class T>

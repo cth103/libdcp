@@ -33,7 +33,7 @@
 
 
 #include "common.h"
-#include "compose.hpp"
+#include "dcp_assert.h"
 #include "filesystem.h"
 #include "html_formatter.h"
 #ifdef LIBDCP_HAVE_HARU
@@ -82,6 +82,36 @@ help (string n)
 	" (.txt, .htm or .html)\n"
 #endif
 	     << "  -q, --quiet                                  don't report progress\n";
+}
+
+
+static
+std::string
+location_name(dcp::VerificationNote::Location location)
+{
+       switch (location) {
+       case dcp::VerificationNote::Location::ASSET_ID:
+               return "Asset ID";
+       case dcp::VerificationNote::Location::ASSET_MAP_ID:
+               return "AssetMap ID";
+       case dcp::VerificationNote::Location::COMPONENT:
+               return "Component";
+       case dcp::VerificationNote::Location::CPL_ID:
+               return "CPL ID";
+       case dcp::VerificationNote::Location::FILE:
+               return "Filename";
+       case dcp::VerificationNote::Location::FRAME:
+               return "Frame";
+       case dcp::VerificationNote::Location::LINE:
+               return "Line number";
+       case dcp::VerificationNote::Location::PKL_ID:
+               return "PKL ID";
+       case dcp::VerificationNote::Location::REEL_INDEX:
+               return "Reel number";
+       }
+
+       DCP_ASSERT(false);
+       return "";
 }
 
 
@@ -220,6 +250,19 @@ main (int argc, char* argv[])
 			cout << "Warning: " << note_to_string(i) << "\n";
 			warned = true;
 			break;
+		}
+
+		if (i.type() != dcp::VerificationNote::Type::OK) {
+			int count = i.locations().size();
+			for (auto location: i.locations()) {
+				--count;
+				if (count) {
+					cout << "  ┣━ ";
+				} else {
+					cout << "  ┗━ ";
+				}
+				cout << location_name(location) << " " << i.location_as_string(location) << "\n";
+			}
 		}
 	}
 

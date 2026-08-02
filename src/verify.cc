@@ -2625,3 +2625,49 @@ dcp::operator<< (std::ostream& s, dcp::VerificationNote const& note)
 	return s;
 }
 
+
+
+vector<dcp::VerificationNote::Location>
+dcp::VerificationNote::locations() const
+{
+       vector<dcp::VerificationNote::Location> locations;
+       for (auto location: _location) {
+               locations.push_back(location.first);
+       }
+
+       return locations;
+}
+
+
+string
+dcp::VerificationNote::location_as_string(Location location) const
+{
+       if (_location.find(location) == _location.end()) {
+               return "";
+       }
+
+       switch (location) {
+       case Location::ASSET_ID:
+               return *asset_id();
+       case Location::ASSET_MAP_ID:
+               return *asset_map_id();
+       case Location::COMPONENT:
+               return fmt::to_string(*component());
+       case Location::CPL_ID:
+               return *cpl_id();
+       case Location::FILE:
+               return file()->string();
+       case Location::FRAME:
+               return fmt::to_string(*frame());
+       case Location::LINE:
+               return fmt::to_string(*line());
+       case Location::PKL_ID:
+               return *pkl_id();
+       case Location::REEL_INDEX:
+               return fmt::to_string(*reel_index());
+       }
+
+       DCP_ASSERT(false);
+       return "";
+}
+
