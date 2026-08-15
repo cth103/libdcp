@@ -113,3 +113,21 @@ BOOST_AUTO_TEST_CASE(cpl_summary_test3)
 }
 
 
+BOOST_AUTO_TEST_CASE(cpl_summary_interop_test)
+{
+	auto const dir = boost::filesystem::path("test/ref/DCP/dcp_test7");
+	dcp::DCP dcp(dir);
+	auto cpls = dcp.cpl_summaries();
+	BOOST_REQUIRE_EQUAL(cpls.size(), 1U);
+
+	BOOST_CHECK_EQUAL(cpls[0].dcp_directory, dcp::filesystem::canonical(dir));
+	BOOST_CHECK_EQUAL(cpls[0].cpl_id, "6affb8ee-0020-4dff-a53c-17652f6358ab");
+	BOOST_REQUIRE_EQUAL(cpls[0].cpl_annotation_text.get_value_or(""), "A Test DCP");
+	BOOST_CHECK_EQUAL(
+		cpls[0].cpl_file,
+		dcp::filesystem::canonical(dir / "cpl_6affb8ee-0020-4dff-a53c-17652f6358ab.xml")
+	);
+	BOOST_CHECK(!cpls[0].encrypted);
+	BOOST_CHECK(cpls[0].last_write_time > 0);
+}
+

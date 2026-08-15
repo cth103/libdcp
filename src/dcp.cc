@@ -666,10 +666,7 @@ DCP::cpl_summaries() const
 			continue;
 		}
 
-		if (
-			pkl_type == remove_parameters(CPL::static_pkl_type(Standard::INTEROP)) ||
-			pkl_type == remove_parameters(CPL::static_pkl_type(Standard::SMPTE))) {
-
+		if (remove_parameters(*pkl_type) == "text/xml") {
 			auto parser = new xmlpp::DomParser;
 			dcp::ScopeGuard sg = [parser]() { delete parser; };
 
