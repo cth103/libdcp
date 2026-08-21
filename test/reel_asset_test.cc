@@ -49,7 +49,7 @@ BOOST_AUTO_TEST_CASE (reel_picture_asset_test)
 {
 	auto doc = make_shared<cxml::Document>("MainPicture");
 
-	doc->read_string (
+	doc->read_string(
 		"<MainPicture>"
 		"<Id>urn:uuid:06ac1ca7-9c46-4107-8864-a6448e24b04b</Id>"
 		"<AnnotationText>Hello world!</AnnotationText>"
@@ -63,16 +63,16 @@ BOOST_AUTO_TEST_CASE (reel_picture_asset_test)
 		"</MainPicture>"
 		);
 
-	dcp::ReelMonoPictureAsset pa (doc);
-	BOOST_CHECK_EQUAL (pa.id(), "06ac1ca7-9c46-4107-8864-a6448e24b04b");
-	BOOST_CHECK_EQUAL (pa.annotation_text().get_value_or(""), "Hello world!");
-	BOOST_CHECK_EQUAL (pa.edit_rate(), dcp::Fraction(24, 1));
-	BOOST_CHECK_EQUAL (pa.intrinsic_duration(), 187048);
-	BOOST_CHECK_EQUAL (pa.entry_point().get(), 42L);
-	BOOST_CHECK_EQUAL (pa.duration().get(), 9444L);
-	BOOST_CHECK_EQUAL (pa.hash().get(), string("6EQX4NjG8vxIWhLUtHhrGSyLgOY="));
-	BOOST_CHECK_EQUAL (pa.frame_rate(), dcp::Fraction(24, 1));
-	BOOST_CHECK_EQUAL (pa.screen_aspect_ratio(), dcp::Fraction(2048, 858));
+	dcp::ReelMonoPictureAsset pa(doc);
+	BOOST_CHECK_EQUAL(pa.id(), "06ac1ca7-9c46-4107-8864-a6448e24b04b");
+	BOOST_CHECK_EQUAL(pa.annotation_text().get_value_or(""), "Hello world!");
+	BOOST_CHECK_EQUAL(pa.edit_rate(), dcp::Fraction(24, 1));
+	BOOST_CHECK_EQUAL(pa.intrinsic_duration(), 187048);
+	BOOST_CHECK_EQUAL(pa.entry_point().get(), 42L);
+	BOOST_CHECK_EQUAL(pa.duration().get(), 9444L);
+	BOOST_CHECK_EQUAL(pa.hash().get(), string("6EQX4NjG8vxIWhLUtHhrGSyLgOY="));
+	BOOST_CHECK_EQUAL(pa.frame_rate(), dcp::Fraction(24, 1));
+	BOOST_CHECK_EQUAL(pa.screen_aspect_ratio(), dcp::Fraction(2048, 858));
 }
 
 
@@ -95,14 +95,14 @@ BOOST_AUTO_TEST_CASE (reel_smpte_subtitle_asset_test)
 		"</MainSubtitle>"
 		);
 
-	dcp::ReelSMPTETextAsset ps (doc);
-	BOOST_CHECK_EQUAL (ps.id(), "8bca1489-aab1-9259-a4fd-8150abc1de12");
-	BOOST_CHECK_EQUAL (ps.annotation_text().get_value_or(""), "Goodbye world!");
-	BOOST_CHECK_EQUAL (ps.edit_rate(), dcp::Fraction(25, 1));
-	BOOST_CHECK_EQUAL (ps.intrinsic_duration(), 1870);
-	BOOST_CHECK_EQUAL (ps.entry_point().get(), 0L);
-	BOOST_CHECK_EQUAL (ps.duration().get(), 525L);
-	BOOST_CHECK_EQUAL (ps.hash().get(), string("3EABjX9BB1CAWhLUtHhrGSyLgOY="));
-	BOOST_REQUIRE (ps.language());
-	BOOST_CHECK_EQUAL (ps.language().get(), "de-DE");
+	dcp::ReelSMPTETextAsset ps(doc);
+	BOOST_CHECK_EQUAL(ps.id(), "8bca1489-aab1-9259-a4fd-8150abc1de12");
+	BOOST_CHECK_EQUAL(ps.annotation_text().get_value_or(""), "Goodbye world!");
+	BOOST_CHECK_EQUAL(ps.edit_rate(), dcp::Fraction(25, 1));
+	BOOST_CHECK_EQUAL(ps.intrinsic_duration(), 1870);
+	BOOST_CHECK_EQUAL(ps.entry_point().get(), 0L);
+	BOOST_CHECK_EQUAL(ps.duration().get(), 525L);
+	BOOST_CHECK_EQUAL(ps.hash().get(), string("3EABjX9BB1CAWhLUtHhrGSyLgOY="));
+	BOOST_REQUIRE(ps.language());
+	BOOST_CHECK_EQUAL(ps.language().get(), "de-DE");
 }
