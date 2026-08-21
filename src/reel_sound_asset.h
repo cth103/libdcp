@@ -56,6 +56,7 @@ public:
 	ReelSoundAsset(std::shared_ptr<dcp::SoundAsset> content, int64_t entry_point);
 	explicit ReelSoundAsset (std::shared_ptr<const cxml::Node>);
 
+	virtual xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
 	bool can_be_read() const override;
 
 	/** @return the SoundAsset that this object refers to */
@@ -72,9 +73,16 @@ public:
 
 	bool equals(std::shared_ptr<const ReelSoundAsset>, EqualityOptions const&, NoteHandler) const;
 
+	void set_language(dcp::LanguageTag const& language);
+
+	boost::optional<std::string> language() const {
+		return _language;
+	}
+
 private:
 	boost::optional<std::string> key_type () const override;
 	std::string cpl_node_name() const override;
+	boost::optional<std::string> _language;
 };
 
 

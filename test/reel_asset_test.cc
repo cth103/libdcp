@@ -34,6 +34,7 @@
 
 #include "reel_mono_picture_asset.h"
 #include "reel_smpte_text_asset.h"
+#include "reel_sound_asset.h"
 #include <libcxml/cxml.h>
 #include <boost/test/unit_test.hpp>
 #include "stream_operators.h"
@@ -105,4 +106,96 @@ BOOST_AUTO_TEST_CASE (reel_smpte_subtitle_asset_test)
 	BOOST_CHECK_EQUAL(ps.hash().get(), string("3EABjX9BB1CAWhLUtHhrGSyLgOY="));
 	BOOST_REQUIRE(ps.language());
 	BOOST_CHECK_EQUAL(ps.language().get(), "de-DE");
+}
+
+
+BOOST_AUTO_TEST_CASE(reel_sound_asset_preserves_language)
+{
+	auto doc = make_shared<cxml::Document>("MainSound");
+
+	doc->read_string (
+		"<MainSound>"
+		"<Id>urn:uuid:06ac1ca7-9c46-4107-8864-a6448e24b04b</Id>"
+		"<AnnotationText>Hello world!</AnnotationText>"
+		"<EditRate>24 1</EditRate>"
+		"<IntrinsicDuration>187048</IntrinsicDuration>"
+		"<EntryPoint>42</EntryPoint>"
+		"<Duration>9444</Duration>"
+		"<Hash>6EQX4NjG8vxIWhLUtHhrGSyLgOY=</Hash>"
+		"<Language>frobozz</Language>"
+		"</MainSound>"
+		);
+
+	dcp::ReelSoundAsset rs(doc);
+	BOOST_CHECK_EQUAL(rs.id(), "06ac1ca7-9c46-4107-8864-a6448e24b04b");
+	BOOST_CHECK_EQUAL(rs.annotation_text().get_value_or(""), "Hello world!");
+	BOOST_CHECK_EQUAL(rs.edit_rate(), dcp::Fraction(24, 1));
+	BOOST_CHECK_EQUAL(rs.intrinsic_duration(), 187048);
+	BOOST_CHECK_EQUAL(rs.entry_point().get(), 42L);
+	BOOST_CHECK_EQUAL(rs.duration().get(), 9444L);
+	BOOST_CHECK_EQUAL(rs.hash().get(), string("6EQX4NjG8vxIWhLUtHhrGSyLgOY="));
+	BOOST_CHECK_EQUAL(rs.language().get_value_or(""), "frobozz");
+}
+
+
+BOOST_AUTO_TEST_CASE(reel_sound_asset_accepts_no_language)
+{
+	auto doc = make_shared<cxml::Document>("MainSound");
+
+	doc->read_string (
+		"<MainSound>"
+		"<Id>urn:uuid:06ac1ca7-9c46-4107-8864-a6448e24b04b</Id>"
+		"<AnnotationText>Hello world!</AnnotationText>"
+		"<EditRate>24 1</EditRate>"
+		"<IntrinsicDuration>187048</IntrinsicDuration>"
+		"<EntryPoint>42</EntryPoint>"
+		"<Duration>9444</Duration>"
+		"<Hash>6EQX4NjG8vxIWhLUtHhrGSyLgOY=</Hash>"
+		"</MainSound>"
+		);
+
+	dcp::ReelSoundAsset rs(doc);
+	BOOST_CHECK(!rs.language());
+}
+
+
+BOOST_AUTO_TEST_CASE(reel_sound_asset_writes_provided_language)
+{
+	auto doc = make_shared<cxml::Document>("MainSound");
+
+	doc->read_string (
+		"<MainSound>"
+		"<Id>urn:uuid:06ac1ca7-9c46-4107-8864-a6448e24b04b</Id>"
+		"<AnnotationText>Hello world!</AnnotationText>"
+		"<EditRate>24 1</EditRate>"
+		"<IntrinsicDuration>187048</IntrinsicDuration>"
+		"<EntryPoint>42</EntryPoint>"
+		"<Duration>9444</Duration>"
+		"<Hash>6EQX4NjG8vxIWhLUtHhrGSyLgOY=</Hash>"
+		"<Language>frobozz</Language>"
+		"</MainSound>"
+		);
+
+	dcp::ReelSoundAsset rs(doc);
+	rs.set_language(dcp::LanguageTag("de-DE"));
+
+	xmlpp::Document check_doc;
+	rs.write_to_cpl(check_doc.create_root_node("CPL"), dcp::Standard::SMPTE);
+
+	auto const correct =
+		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+		"<CPL>"
+		  "<MainSound>"
+		    "<Id>urn:uuid:06ac1ca7-9c46-4107-8864-a6448e24b04b</Id>"
+		    "<AnnotationText>Hello world!</AnnotationText>"
+		    "<EditRate>24 1</EditRate>"
+		    "<IntrinsicDuration>187048</IntrinsicDuration>"
+		    "<EntryPoint>42</EntryPoint>"
+		    "<Duration>9444</Duration>"
+		    "<Hash>6EQX4NjG8vxIWhLUtHhrGSyLgOY=</Hash>"
+		    "<Language>de-DE</Language>"
+		  "</MainSound>"
+		"</CPL>\n";
+
+	BOOST_CHECK_EQUAL(std::string(check_doc.write_to_string("UTF-8")), string(correct));
 }

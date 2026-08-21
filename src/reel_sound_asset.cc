@@ -68,11 +68,21 @@ ReelSoundAsset::ReelSoundAsset(shared_ptr<SoundAsset> asset, int64_t entry_point
 
 ReelSoundAsset::ReelSoundAsset (shared_ptr<const cxml::Node> node)
 	: ReelFileAsset (node)
+	, _language(node->optional_string_child("Language"))
 {
-	node->ignore_child ("Language");
 	node->done ();
 }
 
+
+xmlpp::Element*
+ReelSoundAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
+{
+	auto asset = ReelFileAsset::write_to_cpl(node, standard);
+	if (_language) {
+		cxml::add_text_child(asset, "Language", *_language);
+	}
+	return asset;
+}
 
 string
 ReelSoundAsset::cpl_node_name() const
@@ -117,5 +127,12 @@ shared_ptr<ReelSoundAsset>
 ReelSoundAsset::clone() const
 {
 	return std::make_shared<ReelSoundAsset>(*this);
+}
+
+
+void
+ReelSoundAsset::set_language(dcp::LanguageTag const& language)
+{
+	_language = language.as_string();
 }
 
