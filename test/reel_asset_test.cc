@@ -42,8 +42,6 @@
 
 using std::make_shared;
 using std::string;
-using std::shared_ptr;
-using boost::optional;
 
 
 /** Test the XML constructor of ReelPictureAsset */
