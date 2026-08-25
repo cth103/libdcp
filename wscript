@@ -158,6 +158,15 @@ def configure(conf):
                    use='OPENSSL',
                    mandatory=False)
 
+    conf.check_cxx(fragment="""
+                   #include <openssl/x509.h>
+                   int main() { ASN1_TIME_to_tm(nullptr, nullptr); }
+                   """,
+                   msg='Checking for ASN1_TIME_to_tm',
+                   define_name='LIBDCP_HAVE_ASN1_TIME_TO_TM',
+                   use='OPENSSL',
+                   mandatory=False)
+
     conf.check_cfg(package='libxml++-' + conf.env.XMLPP_API, args='--cflags --libs', uselib_store='LIBXML++', mandatory=True)
     conf.check_cfg(package='xmlsec1-openssl', args='--cflags --libs', uselib_store='XMLSEC1', mandatory=True)
     # Remove erroneous escaping of quotes from xmlsec1 defines

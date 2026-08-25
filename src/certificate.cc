@@ -380,7 +380,12 @@ static
 LocalTime
 convert_time (ASN1_TIME const * time)
 {
-	LocalTime t;
+#ifdef LIBDCP_HAVE_ASN1_TIME_TO_TM
+	struct tm tm_time;
+	if (ASN1_TIME_to_tm(time, &tm_time)) {
+		return LocalTime(tm_time);
+	}
+#else
 	char const * s = (char const *) time->data;
 
 	if (time->type == V_ASN1_UTCTIME) {
@@ -388,6 +393,7 @@ convert_time (ASN1_TIME const * time)
 	} else if (time->type == V_ASN1_GENERALIZEDTIME) {
 		return LocalTime::from_asn1_generalized_time (s);
 	}
+#endif
 
 	DCP_ASSERT (false);
 	return {};
