@@ -503,7 +503,7 @@ static bool string_is_utf8(X509_NAME const* n, int nid)
 {
 	int p = -1;
 	p = X509_NAME_get_index_by_NID (n, nid, p);
-	return p != -1 && X509_NAME_ENTRY_get_data(X509_NAME_get_entry(n, p))->type == V_ASN1_UTF8STRING;
+	return p != -1 && ASN1_STRING_type(X509_NAME_ENTRY_get_data(X509_NAME_get_entry(n, p))) == V_ASN1_UTF8STRING;
 }
 
 
