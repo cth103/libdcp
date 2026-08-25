@@ -127,9 +127,15 @@ public:
 
 private:
 
-	static std::string name_for_xml (X509_NAME *);
-	static std::string asn_to_utf8 (ASN1_STRING *);
-	static std::string get_name_part (X509_NAME *, int);
+#ifdef LIBDCP_OPENSSL_IS_NOT_CONST_CORRECT
+	static std::string name_for_xml(X509_NAME *);
+	static std::string asn_to_utf8(ASN1_STRING *);
+	static std::string get_name_part(X509_NAME *, int);
+#else
+	static std::string name_for_xml(X509_NAME const *);
+	static std::string asn_to_utf8(ASN1_STRING const *);
+	static std::string get_name_part(X509_NAME const *, int);
+#endif
 
 	X509* _certificate = nullptr;
 	mutable RSA* _public_key = nullptr;

@@ -147,6 +147,17 @@ def configure(conf):
                    use='OPENSSL',
                    mandatory=False)
 
+    # Use this as a proxy for working out whether a few things in the OpenSSL API
+    # have been const-fixed.
+    conf.check_cxx(fragment="""
+                   #include <openssl/x509.h>
+                   int main() { ASN1_STRING* foo = X509_NAME_ENTRY_get_data(nullptr); }
+                   """,
+                   msg='Checking if X509_NAME_ENTRY_get_data() returns a non-constant pointer',
+                   define_name='LIBDCP_OPENSSL_IS_NOT_CONST_CORRECT',
+                   use='OPENSSL',
+                   mandatory=False)
+
     conf.check_cfg(package='libxml++-' + conf.env.XMLPP_API, args='--cflags --libs', uselib_store='LIBXML++', mandatory=True)
     conf.check_cfg(package='xmlsec1-openssl', args='--cflags --libs', uselib_store='XMLSEC1', mandatory=True)
     # Remove erroneous escaping of quotes from xmlsec1 defines
@@ -251,15 +262,6 @@ def configure(conf):
 
     conf.check_cxx(fragment="""
                    #include <boost/filesystem.hpp>\n
-                   int main() { boost::filesystem::weakly_canonical("a/b/c"); }\n
-                   """,
-                   mandatory=False,
-                   msg='Checking for boost::filesystem::weakly_canonical',
-                   uselib='BOOST_FILESYSTEM',
-                   define_name='LIBDCP_HAVE_WEAKLY_CANONICAL')
-
-    conf.check_cxx(fragment="""
-                   #include <boost/filesystem.hpp>\n
                    int main() { auto x = boost::filesystem::copy_options(); }\n
                    """,
                    mandatory=False,
@@ -334,8 +336,11 @@ def build(bld):
     if bld.env.TARGET_LINUX:
         libs += " -ldl"
 
+    cflags = "-DLIBDCP_OPENSSL_IS_NOT_CONST_CORRECT" if bld.env.LIBDCP_OPENSSL_IS_NOT_CONST_CORRECT else ""
+
     bld(source='libdcp%s.pc.in' % bld.env.API_VERSION,
         version=VERSION,
+        cflags=cflags,
         includedir='%s/include/libdcp%s' % (bld.env.PREFIX, bld.env.API_VERSION),
         libs=libs,
         install_path='${LIBDIR}/pkgconfig',

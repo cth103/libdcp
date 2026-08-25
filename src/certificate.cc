@@ -273,7 +273,11 @@ Certificate::issuer_organizational_unit_name() const
 
 
 string
-Certificate::asn_to_utf8 (ASN1_STRING* s)
+#ifdef LIBDCP_OPENSSL_IS_NOT_CONST_CORRECT
+Certificate::asn_to_utf8(ASN1_STRING* s)
+#else
+Certificate::asn_to_utf8(ASN1_STRING const* s)
+#endif
 {
 	unsigned char* buf = 0;
 	ASN1_STRING_to_UTF8 (&buf, s);
@@ -284,7 +288,11 @@ Certificate::asn_to_utf8 (ASN1_STRING* s)
 
 
 string
-Certificate::get_name_part (X509_NAME* n, int nid)
+#ifdef LIBDCP_OPENSSL_IS_NOT_CONST_CORRECT
+Certificate::get_name_part(X509_NAME* n, int nid)
+#else
+Certificate::get_name_part(X509_NAME const* n, int nid)
+#endif
 {
 	int p = -1;
 	p = X509_NAME_get_index_by_NID (n, nid, p);
@@ -296,7 +304,11 @@ Certificate::get_name_part (X509_NAME* n, int nid)
 
 
 string
-Certificate::name_for_xml (X509_NAME* name)
+#ifdef LIBDCP_OPENSSL_IS_NOT_CONST_CORRECT
+Certificate::name_for_xml(X509_NAME* name)
+#else
+Certificate::name_for_xml(X509_NAME const* name)
+#endif
 {
 	assert (name);
 
@@ -477,7 +489,11 @@ Certificate::public_key () const
 }
 
 
-static bool string_is_utf8 (X509_NAME* n, int nid)
+#ifdef LIBDCP_OPENSSL_IS_NOT_CONST_CORRECT
+static bool string_is_utf8(X509_NAME* n, int nid)
+#else
+static bool string_is_utf8(X509_NAME const* n, int nid)
+#endif
 {
 	int p = -1;
 	p = X509_NAME_get_index_by_NID (n, nid, p);
