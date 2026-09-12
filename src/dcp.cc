@@ -50,18 +50,14 @@
 #include "filesystem.h"
 #include "font_asset.h"
 #include "interop_text_asset.h"
-#include "metadata.h"
-#include "mono_j2k_picture_asset.h"
 #include "mono_mpeg2_picture_asset.h"
 #include "j2k_picture_asset.h"
 #include "pkl.h"
-#include "raw_convert.h"
 #include "reel_asset.h"
 #include "reel_text_asset.h"
 #include "scope_guard.h"
 #include "smpte_text_asset.h"
 #include "sound_asset.h"
-#include "stereo_j2k_picture_asset.h"
 #include "util.h"
 #include "verify.h"
 #include "warnings.h"
@@ -79,18 +75,11 @@ LIBDCP_ENABLE_WARNINGS
 #include <numeric>
 
 
-using std::cerr;
-using std::cout;
 using std::dynamic_pointer_cast;
-using std::exception;
-using std::list;
-using std::make_pair;
 using std::make_shared;
-using std::map;
 using std::shared_ptr;
 using std::string;
 using std::vector;
-using boost::algorithm::starts_with;
 using boost::optional;
 using namespace dcp;
 
