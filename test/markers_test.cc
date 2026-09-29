@@ -36,6 +36,7 @@
 #include "equality_options.h"
 #include "reel.h"
 #include "reel_markers_asset.h"
+#include <fmt/format.h>
 #include <boost/bind/bind.hpp>
 #include <boost/test/unit_test.hpp>
 #include <memory>
@@ -116,3 +117,44 @@ BOOST_AUTO_TEST_CASE(markers_test)
 		BOOST_CHECK (!markers->equals(markers2, dcp::EqualityOptions(), [](dcp::NoteType, string) {}));
 	}
 }
+
+
+BOOST_AUTO_TEST_CASE(markers_order_test)
+{
+	dcp::ReelMarkersAsset asset({24, 1}, 1000);
+
+	asset.set(dcp::Marker::FFOC, dcp::Time(0, 24, 24));
+	asset.set(dcp::Marker::LFOC, dcp::Time(999, 24, 24));
+	asset.set(dcp::Marker::FFEC, dcp::Time(800, 24, 24));
+	asset.set(dcp::Marker::LFEC, dcp::Time(805, 24, 24));
+	asset.set(dcp::Marker::FFOB, dcp::Time(2, 24, 24));
+	asset.set(dcp::Marker::LFOB, dcp::Time(8, 24, 24));
+
+	xmlpp::Document doc;
+	auto root = doc.create_root_node("Test");
+	asset.write_to_cpl(root, dcp::Standard::SMPTE);
+
+	BOOST_CHECK_EQUAL(
+		std::string(doc.write_to_string("UTF-8")),
+		fmt::format(
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			"<Test>"
+			"<MainMarkers>"
+			"<Id>urn:uuid:{}</Id>"
+			"<EditRate>24 1</EditRate>"
+			"<IntrinsicDuration>1000</IntrinsicDuration>"
+			"<MarkerList>"
+			"<Marker><Label>FFOC</Label><Offset>0</Offset></Marker>"
+			"<Marker><Label>FFOB</Label><Offset>2</Offset></Marker>"
+			"<Marker><Label>LFOB</Label><Offset>8</Offset></Marker>"
+			"<Marker><Label>FFEC</Label><Offset>800</Offset></Marker>"
+			"<Marker><Label>LFEC</Label><Offset>805</Offset></Marker>"
+			"<Marker><Label>LFOC</Label><Offset>999</Offset></Marker>"
+			"</MarkerList>"
+			"</MainMarkers>"
+			"</Test>\n",
+			asset.id()
+		)
+	);
+}
+

@@ -108,7 +108,17 @@ ReelMarkersAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 	int const tcr = edit_rate().numerator / edit_rate().denominator;
 	auto asset = ReelAsset::write_to_cpl (node, standard);
 	auto ml = cxml::add_child(asset, "MarkerList");
+
+	std::list<std::pair<Marker, Time>> sorted;
 	for (auto const& i: _markers) {
+		sorted.push_back({i.first, i.second});
+	}
+
+	sorted.sort([](std::pair<Marker, Time> const& a, std::pair<Marker, Time> const& b) {
+		return a.second < b.second;
+	});
+
+	for (auto const& i: sorted) {
 		auto m = cxml::add_child(ml, "Marker");
 		cxml::add_text_child(m, "Label", marker_to_string(i.first));
 		cxml::add_text_child(m, "Offset", fmt::to_string(i.second.as_editable_units_ceil(tcr)));
