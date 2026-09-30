@@ -56,14 +56,12 @@ def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'tests'
     obj.uselib = uselib
-    obj.cppflags = ['-fno-inline', '-fno-elide-constructors', '-g', '-O0']
-    if bld.env['CXX_NAME'] == 'gcc':
-        obj.cppflags.append('-fno-default-inline')
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.lib = ['gcov']
         obj.cppflags.append('-ftest-coverage')
         obj.cppflags.append('-fprofile-arcs')
+        obj.cppflags = ['-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
     else:
         obj.use = 'libdcp%s' % bld.env.API_VERSION
     obj.source = """
@@ -137,14 +135,12 @@ def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'subs_in_out'
     obj.uselib = uselib
-    obj.cppflags = ['-fno-inline', '-fno-elide-constructors', '-g', '-O0']
-    if bld.env['CXX_NAME'] == 'gcc':
-        obj.cppflags.append('-fno-default-inline')
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.lib = ['gcov']
         obj.cppflags.append('-ftest-coverage')
         obj.cppflags.append('-fprofile-arcs')
+        obj.cppflags = ['-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
     else:
         obj.use = 'libdcp%s' % bld.env.API_VERSION
     obj.source = 'subs_in_out.cc'
@@ -154,14 +150,12 @@ def build(bld):
     obj = bld(features='cxx cxxprogram')
     obj.name   = 'rewrite_subs'
     obj.uselib = uselib
-    obj.cppflags = ['-fno-inline', '-fno-elide-constructors', '-g', '-O0']
-    if bld.env['CXX_NAME'] == 'gcc':
-        obj.cppflags.append('-fno-default-inline')
     if bld.is_defined('HAVE_GCOV'):
         obj.use = 'libdcp%s_gcov' % bld.env.API_VERSION
         obj.lib = ['gcov']
         obj.cppflags.append('-ftest-coverage')
         obj.cppflags.append('-fprofile-arcs')
+        obj.cppflags = ['-fno-inline', '-fno-default-inline', '-fno-elide-constructors', '-g', '-O0']
     else:
         obj.use = 'libdcp%s' % bld.env.API_VERSION
     obj.source = 'rewrite_subs.cc'
