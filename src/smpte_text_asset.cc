@@ -79,17 +79,17 @@ static string const subtitle_smpte_ns_2014 = "http://www.smpte-ra.org/schemas/42
 
 SMPTETextAsset::SMPTETextAsset(SubtitleStandard standard)
 	: MXF(Standard::SMPTE)
-	, _edit_rate (24, 1)
-	, _time_code_rate (24)
+	, _edit_rate(24, 1)
+	, _time_code_rate(24)
 	, _subtitle_standard(standard)
-	, _xml_id (make_uuid())
+	, _xml_id(make_uuid())
 {
 
 }
 
 
 SMPTETextAsset::SMPTETextAsset(boost::filesystem::path file)
-	: TextAsset (file)
+	: TextAsset(file)
 {
 	auto xml = make_shared<cxml::Document>("SubtitleReel");
 
@@ -99,31 +99,31 @@ SMPTETextAsset::SMPTETextAsset(boost::filesystem::path file)
 	if (!ASDCP_FAILURE(r)) {
 		/* MXF-wrapped */
 		ASDCP::WriterInfo info;
-		reader->FillWriterInfo (info);
-		_id = read_writer_info (info);
+		reader->FillWriterInfo(info);
+		_id = read_writer_info(info);
 		if (!_key_id) {
 			/* Not encrypted; read it in now */
 			string xml_string;
-			reader->ReadTimedTextResource (xml_string);
+			reader->ReadTimedTextResource(xml_string);
 			_raw_xml = xml_string;
-			xml->read_string (xml_string);
-			parse_xml (xml);
-			read_mxf_descriptor (reader);
+			xml->read_string(xml_string);
+			parse_xml(xml);
+			read_mxf_descriptor(reader);
 			read_mxf_resources(reader, std::make_shared<DecryptionContext>(optional<Key>(), Standard::SMPTE));
 		} else {
-			read_mxf_descriptor (reader);
+			read_mxf_descriptor(reader);
 		}
 	} else {
 		/* Plain XML */
 		try {
-			_raw_xml = dcp::file_to_string (file);
+			_raw_xml = dcp::file_to_string(file);
 			xml = make_shared<cxml::Document>("SubtitleReel");
 			xml->read_file(dcp::filesystem::fix_long_path(file));
-			parse_xml (xml);
+			parse_xml(xml);
 		} catch (cxml::Error& e) {
-			boost::throw_exception (
-				ReadError (
-					String::compose (
+			boost::throw_exception(
+				ReadError(
+					String::compose(
 						"Failed to read subtitle file %1; MXF failed with %2, XML failed with %3",
 						file, static_cast<int>(r), e.what()
 						)
@@ -140,11 +140,11 @@ SMPTETextAsset::SMPTETextAsset(boost::filesystem::path file)
 				/* Even more dubious; allow <id>.png or urn:uuid:<id>.png */
 				auto p = file.parent_path() / String::compose("%1.png", im->id());
 				if (filesystem::is_regular_file(p)) {
-					im->read_png_file (p);
-				} else if (starts_with (im->id(), "urn:uuid:")) {
+					im->read_png_file(p);
+				} else if (starts_with(im->id(), "urn:uuid:")) {
 					p = file.parent_path() / String::compose("%1.png", remove_urn_uuid(im->id()));
 					if (filesystem::is_regular_file(p)) {
-						im->read_png_file (p);
+						im->read_png_file(p);
 					}
 				}
 			}
@@ -156,7 +156,7 @@ SMPTETextAsset::SMPTETextAsset(boost::filesystem::path file)
 	for (auto i: _texts) {
 		auto im = dynamic_pointer_cast<TextImage>(i);
 		if (im && im->png_image().size() == 0) {
-			throw MissingTextImageError (im->id());
+			throw MissingTextImageError(im->id());
 		}
 	}
 }
@@ -175,29 +175,29 @@ SMPTETextAsset::parse_xml(shared_ptr<cxml::Document> xml)
 		throw XMLError("Unrecognised subtitle namespace " + xml->namespace_uri());
 	}
 	_xml_id = remove_urn_uuid(xml->string_child("Id"));
-	_load_font_nodes = type_children<dcp::SMPTELoadFontNode> (xml, "LoadFont");
+	_load_font_nodes = type_children<dcp::SMPTELoadFontNode>(xml, "LoadFont");
 
-	_content_title_text = xml->string_child ("ContentTitleText");
-	_annotation_text = xml->optional_string_child ("AnnotationText");
-	_issue_date = LocalTime (xml->string_child ("IssueDate"));
-	_reel_number = xml->optional_number_child<int> ("ReelNumber");
-	_language = xml->optional_string_child ("Language");
+	_content_title_text = xml->string_child("ContentTitleText");
+	_annotation_text = xml->optional_string_child("AnnotationText");
+	_issue_date = LocalTime(xml->string_child("IssueDate"));
+	_reel_number = xml->optional_number_child<int>("ReelNumber");
+	_language = xml->optional_string_child("Language");
 
 	/* This is supposed to be two numbers, but a single number has been seen in the wild */
-	auto const er = xml->string_child ("EditRate");
+	auto const er = xml->string_child("EditRate");
 	vector<string> er_parts;
-	split (er_parts, er, is_any_of (" "));
+	split(er_parts, er, is_any_of(" "));
 	if (er_parts.size() == 1) {
-		_edit_rate = Fraction (raw_convert<int> (er_parts[0]), 1);
+		_edit_rate = Fraction(raw_convert<int>(er_parts[0]), 1);
 	} else if (er_parts.size() == 2) {
-		_edit_rate = Fraction (raw_convert<int> (er_parts[0]), raw_convert<int> (er_parts[1]));
+		_edit_rate = Fraction(raw_convert<int>(er_parts[0]), raw_convert<int>(er_parts[1]));
 	} else {
-		throw XMLError ("malformed EditRate " + er);
+		throw XMLError("malformed EditRate " + er);
 	}
 
-	_time_code_rate = xml->number_child<int> ("TimeCodeRate");
-	if (xml->optional_string_child ("StartTime")) {
-		_start_time = Time (xml->string_child("StartTime"), _time_code_rate);
+	_time_code_rate = xml->number_child<int>("TimeCodeRate");
+	if (xml->optional_string_child("StartTime")) {
+		_start_time = Time(xml->string_child("StartTime"), _time_code_rate);
 	}
 
 	/* Now we need to drop down to xmlpp */
@@ -219,7 +219,7 @@ void
 SMPTETextAsset::read_mxf_resources(shared_ptr<ASDCP::TimedText::MXFReader> reader, shared_ptr<DecryptionContext> dec)
 {
 	ASDCP::TimedText::TimedTextDescriptor descriptor;
-	reader->FillTimedTextDescriptor (descriptor);
+	reader->FillTimedTextDescriptor(descriptor);
 
 	/* Load fonts and images */
 
@@ -243,7 +243,7 @@ SMPTETextAsset::read_mxf_resources(shared_ptr<ASDCP::TimedText::MXFReader> reade
 		}
 
 		char id[64];
-		Kumu::bin2UUIDhex (i->ResourceID, ASDCP::UUIDlen, id, sizeof(id));
+		Kumu::bin2UUIDhex(i->ResourceID, ASDCP::UUIDlen, id, sizeof(id));
 
 		switch (i->Type) {
 		case ASDCP::TimedText::MT_OPENTYPE:
@@ -253,7 +253,7 @@ SMPTETextAsset::read_mxf_resources(shared_ptr<ASDCP::TimedText::MXFReader> reade
 				++j;
 			}
 
-			if (j != _load_font_nodes.end ()) {
+			if (j != _load_font_nodes.end()) {
 				_fonts.push_back(Font((*j)->id, (*j)->urn, ArrayData(buffer.RoData(), buffer.Size())));
 			}
 			break;
@@ -281,7 +281,7 @@ void
 SMPTETextAsset::read_mxf_descriptor(shared_ptr<ASDCP::TimedText::MXFReader> reader)
 {
 	ASDCP::TimedText::TimedTextDescriptor descriptor;
-	reader->FillTimedTextDescriptor (descriptor);
+	reader->FillTimedTextDescriptor(descriptor);
 
 	_intrinsic_duration = descriptor.ContainerDuration;
 	/* The thing which is called AssetID in the descriptor is also known as the
@@ -289,7 +289,7 @@ SMPTETextAsset::read_mxf_descriptor(shared_ptr<ASDCP::TimedText::MXFReader> read
 	 * purposes.
 	 */
 	char id[64];
-	Kumu::bin2UUIDhex (descriptor.AssetID, ASDCP::UUIDlen, id, sizeof(id));
+	Kumu::bin2UUIDhex(descriptor.AssetID, ASDCP::UUIDlen, id, sizeof(id));
 	_resource_id = id;
 }
 
@@ -303,7 +303,7 @@ SMPTETextAsset::set_key(Key key)
 	auto const had_key = static_cast<bool>(_key);
 	auto const had_key_id = static_cast<bool>(_key_id);
 
-	MXF::set_key (key);
+	MXF::set_key(key);
 
 	if (!had_key_id || !_file || had_key) {
 		/* Either we don't have any data to read, it wasn't
@@ -318,23 +318,23 @@ SMPTETextAsset::set_key(Key key)
 	Kumu::FileReaderFactory factory;
 	auto reader = make_shared<ASDCP::TimedText::MXFReader>(factory);
 	auto r = reader->OpenRead(dcp::filesystem::fix_long_path(*_file).string().c_str());
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (
-			ReadError (
-				String::compose ("Could not read encrypted subtitle MXF (%1)", static_cast<int> (r))
+	if (ASDCP_FAILURE(r)) {
+		boost::throw_exception(
+			ReadError(
+				String::compose("Could not read encrypted subtitle MXF (%1)", static_cast<int>(r))
 				)
 			);
 	}
 
 	auto dec = make_shared<DecryptionContext>(key, Standard::SMPTE);
 	string xml_string;
-	reader->ReadTimedTextResource (xml_string, dec->context(), dec->hmac());
+	reader->ReadTimedTextResource(xml_string, dec->context(), dec->hmac());
 	_raw_xml = xml_string;
 	auto xml = make_shared<cxml::Document>("SubtitleReel");
-	xml->read_string (xml_string);
-	parse_xml (xml);
+	xml->read_string(xml_string);
+	parse_xml(xml);
 	read_mxf_descriptor(reader);
-	read_mxf_resources (reader, dec);
+	read_mxf_resources(reader, dec);
 }
 
 
@@ -342,7 +342,7 @@ vector<shared_ptr<LoadFontNode>>
 SMPTETextAsset::load_font_nodes() const
 {
 	vector<shared_ptr<LoadFontNode>> lf;
-	copy (_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter(lf));
+	copy(_load_font_nodes.begin(), _load_font_nodes.end(), back_inserter(lf));
 	return lf;
 }
 
@@ -355,7 +355,7 @@ SMPTETextAsset::valid_mxf(boost::filesystem::path file)
 	Kumu::DefaultLogSink().UnsetFilterFlag(Kumu::LOG_ALLOW_ALL);
 	auto r = reader.OpenRead(dcp::filesystem::fix_long_path(file).string().c_str());
 	Kumu::DefaultLogSink().SetFilterFlag(Kumu::LOG_ALLOW_ALL);
-	return !ASDCP_FAILURE (r);
+	return !ASDCP_FAILURE(r);
 }
 
 
@@ -363,9 +363,9 @@ string
 SMPTETextAsset::xml_as_string() const
 {
 	xmlpp::Document doc;
-	auto root = doc.create_root_node ("SubtitleReel");
+	auto root = doc.create_root_node("SubtitleReel");
 
-	DCP_ASSERT (_xml_id);
+	DCP_ASSERT(_xml_id);
 	cxml::add_text_child(root, "Id", "urn:uuid:" + *_xml_id);
 	cxml::add_text_child(root, "ContentTitleText", _content_title_text);
 	if (_annotation_text) {
@@ -386,8 +386,8 @@ SMPTETextAsset::xml_as_string() const
 
 	for (auto i: _load_font_nodes) {
 		auto load_font = cxml::add_child(root, "LoadFont");
-		load_font->add_child_text ("urn:uuid:" + i->urn);
-		load_font->set_attribute ("ID", i->id);
+		load_font->add_child_text("urn:uuid:" + i->urn);
+		load_font->set_attribute("ID", i->id);
 	}
 
 	texts_as_xml(cxml::add_child(root, "SubtitleList"), _time_code_rate, Standard::SMPTE);
@@ -399,13 +399,13 @@ SMPTETextAsset::xml_as_string() const
 void
 SMPTETextAsset::write(boost::filesystem::path p) const
 {
-	EncryptionContext enc (key(), Standard::SMPTE);
+	EncryptionContext enc(key(), Standard::SMPTE);
 
 	ASDCP::WriterInfo writer_info;
-	fill_writer_info (&writer_info, _id);
+	fill_writer_info(&writer_info, _id);
 
 	ASDCP::TimedText::TimedTextDescriptor descriptor;
-	descriptor.EditRate = ASDCP::Rational (_edit_rate.numerator, _edit_rate.denominator);
+	descriptor.EditRate = ASDCP::Rational(_edit_rate.numerator, _edit_rate.denominator);
 	descriptor.EncodingName = "UTF-8";
 
 	/* Font references */
@@ -415,13 +415,13 @@ SMPTETextAsset::write(boost::filesystem::path p) const
 		while (j != _fonts.end() && j->load_id != i->id) {
 			++j;
 		}
-		if (j != _fonts.end ()) {
+		if (j != _fonts.end()) {
 			ASDCP::TimedText::TimedTextResourceDescriptor res;
 			unsigned int c;
-			Kumu::hex2bin (i->urn.c_str(), res.ResourceID, Kumu::UUID_Length, &c);
-			DCP_ASSERT (c == Kumu::UUID_Length);
+			Kumu::hex2bin(i->urn.c_str(), res.ResourceID, Kumu::UUID_Length, &c);
+			DCP_ASSERT(c == Kumu::UUID_Length);
 			res.Type = ASDCP::TimedText::MT_OPENTYPE;
-			descriptor.ResourceList.push_back (res);
+			descriptor.ResourceList.push_back(res);
 		}
 	}
 
@@ -432,18 +432,18 @@ SMPTETextAsset::write(boost::filesystem::path p) const
 		if (si) {
 			ASDCP::TimedText::TimedTextResourceDescriptor res;
 			unsigned int c;
-			Kumu::hex2bin (si->id().c_str(), res.ResourceID, Kumu::UUID_Length, &c);
-			DCP_ASSERT (c == Kumu::UUID_Length);
+			Kumu::hex2bin(si->id().c_str(), res.ResourceID, Kumu::UUID_Length, &c);
+			DCP_ASSERT(c == Kumu::UUID_Length);
 			res.Type = ASDCP::TimedText::MT_PNG;
-			descriptor.ResourceList.push_back (res);
+			descriptor.ResourceList.push_back(res);
 		}
 	}
 
 	descriptor.NamespaceName = schema_namespace();
 	unsigned int c;
-	DCP_ASSERT (_xml_id);
-	Kumu::hex2bin (_xml_id->c_str(), descriptor.AssetID, ASDCP::UUIDlen, &c);
-	DCP_ASSERT (c == Kumu::UUID_Length);
+	DCP_ASSERT(_xml_id);
+	Kumu::hex2bin(_xml_id->c_str(), descriptor.AssetID, ASDCP::UUIDlen, &c);
+	DCP_ASSERT(c == Kumu::UUID_Length);
 	descriptor.ContainerDuration = _intrinsic_duration;
 
 	ASDCP::TimedText::MXFWriter writer;
@@ -451,14 +451,14 @@ SMPTETextAsset::write(boost::filesystem::path p) const
 	   The default size is not enough for some feature-length PNG sub projects (see DCP-o-matic #1561).
 	*/
 	ASDCP::Result_t r = writer.OpenWrite(dcp::filesystem::fix_long_path(p).string().c_str(), writer_info, descriptor, _texts.size() * 90 + 16384);
-	if (ASDCP_FAILURE (r)) {
-		boost::throw_exception (FileError ("could not open subtitle MXF for writing", p.string(), r));
+	if (ASDCP_FAILURE(r)) {
+		boost::throw_exception(FileError("could not open subtitle MXF for writing", p.string(), r));
 	}
 
-	_raw_xml = xml_as_string ();
+	_raw_xml = xml_as_string();
 
-	r = writer.WriteTimedTextResource (*_raw_xml, enc.context(), enc.hmac());
-	if (ASDCP_FAILURE (r)) {
+	r = writer.WriteTimedTextResource(*_raw_xml, enc.context(), enc.hmac());
+	if (ASDCP_FAILURE(r)) {
 		throw_from_asdcplib(r, p, MXFFileError("could not write XML to timed text resource", p.string(), r));
 	}
 
@@ -469,12 +469,12 @@ SMPTETextAsset::write(boost::filesystem::path p) const
 		while (j != _fonts.end() && j->load_id != i->id) {
 			++j;
 		}
-		if (j != _fonts.end ()) {
+		if (j != _fonts.end()) {
 			ASDCP::TimedText::FrameBuffer buffer;
 			ArrayData data_copy(j->data);
-			buffer.SetData (data_copy.data(), data_copy.size());
-			buffer.Size (j->data.size());
-			r = writer.WriteAncillaryResource (buffer, enc.context(), enc.hmac());
+			buffer.SetData(data_copy.data(), data_copy.size());
+			buffer.Size(j->data.size());
+			r = writer.WriteAncillaryResource(buffer, enc.context(), enc.hmac());
 			if (ASDCP_FAILURE(r)) {
 				throw_from_asdcplib(r, p, MXFFileError("could not write font to timed text resource", p.string(), r));
 			}
@@ -486,16 +486,16 @@ SMPTETextAsset::write(boost::filesystem::path p) const
 	for (auto i: _texts) {
 		if (auto si = dynamic_pointer_cast<TextImage>(i)) {
 			ASDCP::TimedText::FrameBuffer buffer;
-			buffer.SetData (si->png_image().data(), si->png_image().size());
-			buffer.Size (si->png_image().size());
-			r = writer.WriteAncillaryResource (buffer, enc.context(), enc.hmac());
+			buffer.SetData(si->png_image().data(), si->png_image().size());
+			buffer.Size(si->png_image().size());
+			r = writer.WriteAncillaryResource(buffer, enc.context(), enc.hmac());
 			if (ASDCP_FAILURE(r)) {
 				throw_from_asdcplib(r, p, MXFFileError("could not write PNG data to timed text resource", p.string(), r));
 			}
 		}
 	}
 
-	writer.Finalize ();
+	writer.Finalize();
 
 	_file = p;
 }
@@ -503,27 +503,27 @@ SMPTETextAsset::write(boost::filesystem::path p) const
 bool
 SMPTETextAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions const& options, NoteHandler note) const
 {
-	if (!TextAsset::equals (other_asset, options, note)) {
+	if (!TextAsset::equals(other_asset, options, note)) {
 		return false;
 	}
 
 	auto other = dynamic_pointer_cast<const SMPTETextAsset>(other_asset);
 	if (!other) {
-		note (NoteType::ERROR, "Subtitles/captions are in different standards");
+		note(NoteType::ERROR, "Subtitles/captions are in different standards");
 		return false;
 	}
 
 	auto i = _load_font_nodes.begin();
 	auto j = other->_load_font_nodes.begin();
 
-	while (i != _load_font_nodes.end ()) {
-		if (j == other->_load_font_nodes.end ()) {
-			note (NoteType::ERROR, "<LoadFont> nodes differ");
+	while (i != _load_font_nodes.end()) {
+		if (j == other->_load_font_nodes.end()) {
+			note(NoteType::ERROR, "<LoadFont> nodes differ");
 			return false;
 		}
 
 		if ((*i)->id != (*j)->id) {
-			note (NoteType::ERROR, "<LoadFont> nodes differ");
+			note(NoteType::ERROR, "<LoadFont> nodes differ");
 			return false;
 		}
 
@@ -532,46 +532,46 @@ SMPTETextAsset::equals(shared_ptr<const Asset> other_asset, EqualityOptions cons
 	}
 
 	if (_content_title_text != other->_content_title_text) {
-		note (NoteType::ERROR, "Subtitle/caption content title texts differ");
+		note(NoteType::ERROR, "Subtitle/caption content title texts differ");
 		return false;
 	}
 
 	if (_language != other->_language) {
-		note (NoteType::ERROR, String::compose("Subtitle/caption languages differ (`%1' vs `%2')", _language.get_value_or("[none]"), other->_language.get_value_or("[none]")));
+		note(NoteType::ERROR, String::compose("Subtitle/caption languages differ (`%1' vs `%2')", _language.get_value_or("[none]"), other->_language.get_value_or("[none]")));
 		return false;
 	}
 
 	if (_annotation_text != other->_annotation_text) {
-		note (NoteType::ERROR, "Subtitle/caption annotation texts differ");
+		note(NoteType::ERROR, "Subtitle/caption annotation texts differ");
 		return false;
 	}
 
 	if (_issue_date != other->_issue_date) {
 		if (options.issue_dates_can_differ) {
-			note (NoteType::NOTE, "Subtitle/caption issue dates differ");
+			note(NoteType::NOTE, "Subtitle/caption issue dates differ");
 		} else {
-			note (NoteType::ERROR, "Subtitle/caption issue dates differ");
+			note(NoteType::ERROR, "Subtitle/caption issue dates differ");
 			return false;
 		}
 	}
 
 	if (_reel_number != other->_reel_number) {
-		note (NoteType::ERROR, "Subtitle/caption reel numbers differ");
+		note(NoteType::ERROR, "Subtitle/caption reel numbers differ");
 		return false;
 	}
 
 	if (_edit_rate != other->_edit_rate) {
-		note (NoteType::ERROR, "Subtitle/caption edit rates differ");
+		note(NoteType::ERROR, "Subtitle/caption edit rates differ");
 		return false;
 	}
 
 	if (_time_code_rate != other->_time_code_rate) {
-		note (NoteType::ERROR, "Subtitle/caption time code rates differ");
+		note(NoteType::ERROR, "Subtitle/caption time code rates differ");
 		return false;
 	}
 
 	if (_start_time != other->_start_time) {
-		note (NoteType::ERROR, "Subtitle/caption start times differ");
+		note(NoteType::ERROR, "Subtitle/caption start times differ");
 		return false;
 	}
 
@@ -584,9 +584,9 @@ SMPTETextAsset::add_font(string load_id, dcp::ArrayData data)
 {
 	check_resource_limit();
 
-	string const uuid = make_uuid ();
-	_fonts.push_back (Font(load_id, uuid, data));
-	_load_font_nodes.push_back (make_shared<SMPTELoadFontNode>(load_id, uuid));
+	string const uuid = make_uuid();
+	_fonts.push_back(Font(load_id, uuid, data));
+	_load_font_nodes.push_back(make_shared<SMPTELoadFontNode>(load_id, uuid));
 }
 
 

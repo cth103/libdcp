@@ -84,88 +84,88 @@ public:
 
 	bool can_be_read() const override;
 
-	bool equals (
+	bool equals(
 		std::shared_ptr<const Asset>,
 		EqualityOptions const&,
 		NoteHandler note
 		) const override;
 
-	std::vector<std::shared_ptr<LoadFontNode>> load_font_nodes () const override;
+	std::vector<std::shared_ptr<LoadFontNode>> load_font_nodes() const override;
 
-	std::string xml_as_string () const override;
+	std::string xml_as_string() const override;
 
 	/** Write this content to a MXF file */
-	void write (boost::filesystem::path path) const override;
+	void write(boost::filesystem::path path) const override;
 
 	void add(std::shared_ptr<Text>) override;
-	void add_font (std::string id, dcp::ArrayData data) override;
-	void set_key (Key key) override;
+	void add_font(std::string id, dcp::ArrayData data) override;
+	void set_key(Key key) override;
 
-	void set_content_title_text (std::string t) {
+	void set_content_title_text(std::string t) {
 		_content_title_text = t;
 	}
 
-	void set_language (dcp::LanguageTag l) {
+	void set_language(dcp::LanguageTag l) {
 		_language = l.as_string();
 	}
 
-	void set_issue_date (LocalTime t) {
+	void set_issue_date(LocalTime t) {
 		_issue_date = t;
 	}
 
-	void set_reel_number (int r) {
+	void set_reel_number(int r) {
 		_reel_number = r;
 	}
 
-	void set_edit_rate (Fraction e) {
+	void set_edit_rate(Fraction e) {
 		_edit_rate = e;
 	}
 
-	void set_time_code_rate (int t) {
+	void set_time_code_rate(int t) {
 		_time_code_rate = t;
 	}
 
-	void set_start_time (Time t) {
+	void set_start_time(Time t) {
 		_start_time = t;
 	}
 
-	void set_intrinsic_duration (int64_t d) {
+	void set_intrinsic_duration(int64_t d) {
 		_intrinsic_duration = d;
 	}
 
-	int64_t intrinsic_duration () const {
+	int64_t intrinsic_duration() const {
 		return _intrinsic_duration;
 	}
 
 	/** @return title of the film that these subtitles/captions are for,
 	 *  to be presented to the user
 	 */
-	std::string content_title_text () const {
+	std::string content_title_text() const {
 		return _content_title_text;
 	}
 
 	/** @return Language, if one was set.  This should be a xs:language, but
 	 *  it might not be if a non-compliant DCP was read in.
 	 */
-	boost::optional<std::string> language () const {
+	boost::optional<std::string> language() const {
 		return _language;
 	}
 
 	/** @return annotation text, to be presented to the user */
-	boost::optional<std::string> annotation_text () const {
+	boost::optional<std::string> annotation_text() const {
 		return _annotation_text;
 	}
 
 	/** @return file issue time and date */
-	LocalTime issue_date () const {
+	LocalTime issue_date() const {
 		return _issue_date;
 	}
 
-	boost::optional<int> reel_number () const {
+	boost::optional<int> reel_number() const {
 		return _reel_number;
 	}
 
-	Fraction edit_rate () const {
+	Fraction edit_rate() const {
 		return _edit_rate;
 	}
 
@@ -173,23 +173,23 @@ public:
 	 *  e.g. a time_code_rate of 250 means that a text time of 0:0:0:001
 	 *  represents 4ms.
 	 */
-	int time_code_rate () const override {
+	int time_code_rate() const override {
 		return _time_code_rate;
 	}
 
-	boost::optional<Time> start_time () const {
+	boost::optional<Time> start_time() const {
 		return _start_time;
 	}
 
 	/** @return ID from XML's <Id> tag, or the <Id> that will be used when writing the XML,
 	 *  or boost::none if this content is encrypted and no key is available.
 	 */
-	boost::optional<std::string> xml_id () const {
+	boost::optional<std::string> xml_id() const {
 		return _xml_id;
 	}
 
 	/** @return ResourceID read from any MXF that was read */
-	boost::optional<std::string> resource_id () const {
+	boost::optional<std::string> resource_id() const {
 		return _resource_id;
 	}
 
@@ -197,15 +197,15 @@ public:
 		return _subtitle_standard;
 	}
 
-	static bool valid_mxf (boost::filesystem::path);
-	static std::string static_pkl_type (Standard) {
+	static bool valid_mxf(boost::filesystem::path);
+	static std::string static_pkl_type(Standard) {
 		return "application/mxf";
 	}
 
 protected:
 
-	std::string pkl_type (Standard s) const override {
-		return static_pkl_type (s);
+	std::string pkl_type(Standard s) const override {
+		return static_pkl_type(s);
 	}
 
 private:
@@ -216,9 +216,9 @@ private:
 	friend struct ::write_subtitles_in_vertical_order_with_top_alignment;
 	friend struct ::write_subtitles_in_vertical_order_with_bottom_alignment;
 
-	void parse_xml (std::shared_ptr<cxml::Document> xml);
-	void read_mxf_descriptor (std::shared_ptr<ASDCP::TimedText::MXFReader> reader);
-	void read_mxf_resources (std::shared_ptr<ASDCP::TimedText::MXFReader> reader, std::shared_ptr<DecryptionContext> dec);
+	void parse_xml(std::shared_ptr<cxml::Document> xml);
+	void read_mxf_descriptor(std::shared_ptr<ASDCP::TimedText::MXFReader> reader);
+	void read_mxf_resources(std::shared_ptr<ASDCP::TimedText::MXFReader> reader, std::shared_ptr<DecryptionContext> dec);
 	std::string schema_namespace() const;
 	void check_resource_limit() const;
 
