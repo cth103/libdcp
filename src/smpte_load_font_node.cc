@@ -57,9 +57,15 @@ SMPTELoadFontNode::SMPTELoadFontNode(string id, string urn_)
 
 SMPTELoadFontNode::SMPTELoadFontNode(shared_ptr<const cxml::Node> node)
 	: LoadFontNode(node->string_attribute("ID"))
-	, urn(remove_urn_uuid(node->content()))
 {
-
+	try {
+		urn = remove_urn_uuid(node->content());
+	} catch (BadURNUUIDError&) {
+		urn = node->content();
+		if (urn.substr(0, 4) == "urn:") {
+			urn = urn.substr(4);
+		}
+	}
 }
 
 

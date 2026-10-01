@@ -837,3 +837,9 @@ BOOST_AUTO_TEST_CASE(throws_on_too_many_png_subs)
 	BOOST_CHECK_THROW(add(), dcp::SMPTETextAssetFullError);
 }
 
+
+BOOST_AUTO_TEST_CASE(tolerate_badly_formed_load_font_node)
+{
+	dcp::SMPTETextAsset test(private_test / "urn_without_uuid.mxf");
+}
+
