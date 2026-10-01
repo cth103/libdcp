@@ -56,16 +56,16 @@ namespace dcp {
 class SMPTELoadFontNode : public LoadFontNode
 {
 public:
-	SMPTELoadFontNode () {}
-	SMPTELoadFontNode (std::string id, std::string urn);
-	explicit SMPTELoadFontNode (std::shared_ptr<const cxml::Node> node);
+	SMPTELoadFontNode() {}
+	SMPTELoadFontNode(std::string id, std::string urn);
+	explicit SMPTELoadFontNode(std::shared_ptr<const cxml::Node> node);
 
 	std::string urn;
 };
 
 
-bool operator== (SMPTELoadFontNode const & a, SMPTELoadFontNode const & b);
-bool operator!= (SMPTELoadFontNode const & a, SMPTELoadFontNode const & b);
+bool operator==(SMPTELoadFontNode const & a, SMPTELoadFontNode const & b);
+bool operator!=(SMPTELoadFontNode const & a, SMPTELoadFontNode const & b);
 
 
 }

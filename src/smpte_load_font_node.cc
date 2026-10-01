@@ -47,31 +47,31 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-SMPTELoadFontNode::SMPTELoadFontNode (string id, string urn_)
-	: LoadFontNode (id)
-	, urn (urn_)
+SMPTELoadFontNode::SMPTELoadFontNode(string id, string urn_)
+	: LoadFontNode(id)
+	, urn(urn_)
 {
 
 }
 
 
-SMPTELoadFontNode::SMPTELoadFontNode (shared_ptr<const cxml::Node> node)
-	: LoadFontNode (node->string_attribute ("ID"))
-	, urn (remove_urn_uuid (node->content()))
+SMPTELoadFontNode::SMPTELoadFontNode(shared_ptr<const cxml::Node> node)
+	: LoadFontNode(node->string_attribute("ID"))
+	, urn(remove_urn_uuid(node->content()))
 {
 
 }
 
 
 bool
-dcp::operator== (SMPTELoadFontNode const & a, SMPTELoadFontNode const & b)
+dcp::operator==(SMPTELoadFontNode const & a, SMPTELoadFontNode const & b)
 {
 	return a.id == b.id && a.urn == b.urn;
 }
 
 
 bool
-dcp::operator!= (SMPTELoadFontNode const & a, SMPTELoadFontNode const & b)
+dcp::operator!=(SMPTELoadFontNode const & a, SMPTELoadFontNode const & b)
 {
 	return !(a == b);
 }
