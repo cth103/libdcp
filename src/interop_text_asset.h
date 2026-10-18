@@ -70,7 +70,11 @@ public:
 		) const override;
 
 	void add_to_assetmap (AssetMap& asset_map, boost::filesystem::path root) const override;
-	void add_to_pkl (std::shared_ptr<PKL> pkl, boost::filesystem::path root) const override;
+	void add_to_pkl(
+		std::shared_ptr<PKL> pkl,
+		boost::filesystem::path root,
+		boost::optional<std::string> annotation_text
+	) const override;
 
 	std::vector<std::shared_ptr<LoadFontNode>> load_font_nodes () const override;
 

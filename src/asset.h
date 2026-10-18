@@ -94,7 +94,11 @@ public:
 
 	virtual void add_to_assetmap (AssetMap& asset_map, boost::filesystem::path root) const;
 
-	virtual void add_to_pkl (std::shared_ptr<PKL> pkl, boost::filesystem::path root) const;
+	virtual void add_to_pkl(
+		std::shared_ptr<PKL> pkl,
+		boost::filesystem::path root,
+		boost::optional<std::string> annotation_text
+	) const;
 
 	/** @return the most recent disk file used to read or write this asset, if there is one */
 	boost::optional<boost::filesystem::path> file () const {

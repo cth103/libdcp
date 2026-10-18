@@ -570,3 +570,48 @@ BOOST_AUTO_TEST_CASE(can_write_vf_xml)
 	dcp.write_xml();
 }
 
+
+BOOST_AUTO_TEST_CASE(can_edit_pkl_annotation_text)
+{
+	auto original_dcp = dcp::DCP("test/data/DCP");
+	original_dcp.read();
+
+	auto copy_path = boost::filesystem::path("build/test/can_edit_pkl_annotation_text");
+	dcp::filesystem::remove_all(copy_path);
+	dcp::filesystem::create_directories(copy_path);
+	for (auto file: dcp::filesystem::directory_iterator("test/data/DCP")) {
+		dcp::filesystem::copy_file(file, copy_path / file.path().filename());
+	}
+
+	auto copy_dcp = dcp::DCP(copy_path);
+	copy_dcp.read();
+
+	/* Change the first PKL asset's annotation text and write the XML */
+	auto pkl = copy_dcp.pkls().at(0);
+	pkl->assets().at(0)->set_annotation_text(string{"frobozz"});
+	copy_dcp.write_xml();
+
+	/* Reload what we just wrote */
+	auto check_dcp = dcp::DCP(copy_path);
+	check_dcp.read();
+
+	/* Check that the one asset's annotation text got updated */
+	auto original_assets = original_dcp.pkls().at(0)->assets();
+	auto new_assets = check_dcp.pkls().at(0)->assets();
+
+	auto i = original_assets.begin();
+	auto j = new_assets.begin();
+
+	BOOST_CHECK((*j)->annotation_text().get_value_or("") == "frobozz");
+	i++;
+	j++;
+
+	while (i != original_assets.end()) {
+		BOOST_CHECK(j != new_assets.end());
+		BOOST_CHECK((*i)->annotation_text() == (*j)->annotation_text());
+		++i;
+		++j;
+	}
+}
+
+

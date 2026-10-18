@@ -83,7 +83,7 @@ Asset::Asset(string id, boost::filesystem::path file)
 
 
 void
-Asset::add_to_pkl(shared_ptr<PKL> pkl, boost::filesystem::path root) const
+Asset::add_to_pkl(shared_ptr<PKL> pkl, boost::filesystem::path root, optional<string> annotation_text) const
 {
 	DCP_ASSERT (_file);
 
@@ -99,7 +99,7 @@ Asset::add_to_pkl(shared_ptr<PKL> pkl, boost::filesystem::path root) const
 		return;
 	}
 
-	pkl->add_asset(_id, _id, hash(), file_size(_file.get()), pkl_type(pkl->standard()), _file->filename().string());
+	pkl->add_asset(_id, annotation_text, hash(), file_size(_file.get()), pkl_type(pkl->standard()), _file->filename().string());
 }
 
 

@@ -77,6 +77,7 @@ LIBDCP_ENABLE_WARNINGS
 
 using std::dynamic_pointer_cast;
 using std::make_shared;
+using std::map;
 using std::shared_ptr;
 using std::string;
 using std::vector;
@@ -494,10 +495,18 @@ DCP::write_xml(
 
 	auto pkl = _pkls.front();
 
-	/* The assets may have changed since we read the PKL, so re-add them */
+	/* The assets may have changed since we read the PKL, so re-add them.
+	 * While doing this, be careful to preserve things we allow to be
+	 * set on PKL::Asset (i.e. just the annotation_text).
+	 */
+	map<string, optional<string>> annotation_texts;
+	for (auto asset: pkl->assets()) {
+		annotation_texts[asset->id()] = asset->annotation_text();
+	}
 	pkl->clear_assets();
 	for (auto asset: assets(true)) {
-		asset->add_to_pkl(pkl, _directory);
+		auto const iter = annotation_texts.find(asset->id());
+		asset->add_to_pkl(pkl, _directory, iter == annotation_texts.end() ? asset->id() : iter->second);
 	}
 
 	NameFormat::Map values;

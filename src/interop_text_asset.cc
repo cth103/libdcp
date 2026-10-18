@@ -295,14 +295,14 @@ InteropTextAsset::add_to_assetmap(AssetMap& asset_map, boost::filesystem::path r
 
 
 void
-InteropTextAsset::add_to_pkl(shared_ptr<PKL> pkl, boost::filesystem::path root) const
+InteropTextAsset::add_to_pkl(shared_ptr<PKL> pkl, boost::filesystem::path root, optional<string> annotation_text) const
 {
-	Asset::add_to_pkl (pkl, root);
+	Asset::add_to_pkl(pkl, root, annotation_text);
 
 	for (auto i: _texts) {
 		if (auto im = dynamic_pointer_cast<dcp::TextImage>(i)) {
 			auto png_image = im->png_image ();
-			pkl->add_asset(im->id(), optional<string>(), make_digest(png_image), png_image.size(), "image/png", root.filename().string());
+			pkl->add_asset(im->id(), annotation_text, make_digest(png_image), png_image.size(), "image/png", root.filename().string());
 		}
 	}
 }
