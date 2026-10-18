@@ -109,6 +109,10 @@ public:
 			return _annotation_text;
 		}
 
+		void set_annotation_text(boost::optional<std::string> annotation_text) {
+			_annotation_text = std::move(annotation_text);
+		}
+
 		std::string hash () const {
 			return _hash;
 		}
