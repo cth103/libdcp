@@ -300,8 +300,7 @@ InteropTextAsset::add_to_pkl(shared_ptr<PKL> pkl, boost::filesystem::path root) 
 	Asset::add_to_pkl (pkl, root);
 
 	for (auto i: _texts) {
-		auto im = dynamic_pointer_cast<dcp::TextImage>(i);
-		if (im) {
+		if (auto im = dynamic_pointer_cast<dcp::TextImage>(i)) {
 			auto png_image = im->png_image ();
 			pkl->add_asset(im->id(), optional<string>(), make_digest(png_image), png_image.size(), "image/png", root.filename().string());
 		}
