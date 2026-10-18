@@ -87,13 +87,13 @@ public:
 	 *
 	 *  @param directory Directory containing the DCP's files.
 	 */
-	explicit DCP (boost::filesystem::path directory);
+	explicit DCP(boost::filesystem::path directory);
 
-	DCP (DCP const&) = delete;
-	DCP& operator= (DCP const&) = delete;
+	DCP(DCP const&) = delete;
+	DCP& operator=(DCP const&) = delete;
 
-	DCP (DCP &&);
-	DCP& operator= (DCP &&);
+	DCP(DCP &&);
+	DCP& operator=(DCP &&);
 
 	/** Read a DCP.  This method does not do any deep checking of the DCP's validity, but
 	 *  if it comes across any bad things it will do one of two things.
@@ -113,7 +113,7 @@ public:
 	 *  as stereoscopic if the monoscopic load fails; fixes problems some 3D DCPs that (I think)
 	 *  have an incorrect descriptor in their MXF.
 	 */
-	void read (std::vector<VerificationNote>* notes = nullptr, bool ignore_incorrect_picture_mxf_type = false);
+	void read(std::vector<VerificationNote>* notes = nullptr, bool ignore_incorrect_picture_mxf_type = false);
 
 	/** Return summaries of the CPLs in this DCP.  This should only be used if the information
 	 *  in CPLSummary is all you need.  It's faster than read(), but if you need more than
@@ -129,24 +129,24 @@ public:
 	 */
 	bool equals(DCP const & other, EqualityOptions const& options, NoteHandler note) const;
 
-	void add (std::shared_ptr<CPL> cpl);
+	void add(std::shared_ptr<CPL> cpl);
 
-	std::vector<std::shared_ptr<CPL>> cpls () const;
+	std::vector<std::shared_ptr<CPL>> cpls() const;
 
 	/** @param ignore_unresolved true to silently ignore unresolved assets, otherwise
 	 *  an exception is thrown if they are found.
 	 *  @return All assets (including CPLs).
 	 */
-	std::vector<std::shared_ptr<Asset>> assets (bool ignore_unresolved = false) const;
+	std::vector<std::shared_ptr<Asset>> assets(bool ignore_unresolved = false) const;
 
-	bool any_encrypted () const;
-	bool all_encrypted () const;
+	bool any_encrypted() const;
+	bool all_encrypted() const;
 
 	/** Add a KDM to decrypt this DCP.  This method must be called after DCP::read()
 	 *  or the KDM you specify will be ignored.
 	 *  @param kdm KDM to use.
 	 */
-	void add (DecryptedKDM const &);
+	void add(DecryptedKDM const &);
 
 	void set_issuer(std::string issuer);
 	void set_creator(std::string creator);
@@ -167,10 +167,10 @@ public:
 		boost::optional<std::string> group_id = boost::none
 	);
 
-	void resolve_refs (std::vector<std::shared_ptr<Asset>> assets);
+	void resolve_refs(std::vector<std::shared_ptr<Asset>> assets);
 
 	/** @return Standard of a DCP that was read in */
-	boost::optional<Standard> standard () const {
+	boost::optional<Standard> standard() const {
 		if (!_asset_map) {
 			return {};
 		}
@@ -178,14 +178,14 @@ public:
 		return _asset_map->standard();
 	}
 
-	boost::filesystem::path directory () const {
+	boost::filesystem::path directory() const {
 		return _directory;
 	}
 
 	/** @return PKLs if this DCP was read from an existing one, or if write_xml() has been called on it.
 	 *  If neither is true, this method returns an empty vector.
 	 */
-	std::vector<std::shared_ptr<PKL>> pkls () const {
+	std::vector<std::shared_ptr<PKL>> pkls() const {
 		return _pkls;
 	}
 
@@ -203,11 +203,11 @@ public:
 
 	bool can_be_read() const;
 
-	static std::vector<boost::filesystem::path> directories_from_files (std::vector<boost::filesystem::path> files);
+	static std::vector<boost::filesystem::path> directories_from_files(std::vector<boost::filesystem::path> files);
 
 private:
 
-	void write_volindex (Standard standard) const;
+	void write_volindex(Standard standard) const;
 	/** Throws MissingAssetmapError if asset map could not be found */
 	AssetMap read_assetmap() const;
 
