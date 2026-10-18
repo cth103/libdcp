@@ -553,8 +553,7 @@ DCP::assets (bool ignore_unresolved) const
 				auto o = j->asset_ref().asset();
 				assets.push_back (o);
 				/* More Interop special-casing */
-				auto sub = dynamic_pointer_cast<InteropTextAsset>(o);
-				if (sub) {
+				if (auto sub = dynamic_pointer_cast<InteropTextAsset>(o)) {
 					add_to_container(assets, sub->font_assets());
 				}
 			}
