@@ -42,10 +42,7 @@
 
 
 #include "asset_map.h"
-#include "certificate.h"
-#include "compose.hpp"
 #include "cpl_summary.h"
-#include "metadata.h"
 #include "name_format.h"
 #include "util.h"
 #include "verify.h"
