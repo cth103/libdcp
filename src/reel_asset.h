@@ -80,56 +80,56 @@ public:
 	 *  @param intrinsic_duration Intrinsic duration of this asset
 	 *  @param entry_point Entry point to use in that asset
 	 */
-	ReelAsset (std::string id, Fraction edit_rate, int64_t intrinsic_duration, boost::optional<int64_t> entry_point);
+	ReelAsset(std::string id, Fraction edit_rate, int64_t intrinsic_duration, boost::optional<int64_t> entry_point);
 
-	explicit ReelAsset (std::shared_ptr<const cxml::Node>);
+	explicit ReelAsset(std::shared_ptr<const cxml::Node>);
 
 	virtual xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const;
 
-	virtual bool encryptable () const {
+	virtual bool encryptable() const {
 		return false;
 	}
 
-	Fraction edit_rate () const {
+	Fraction edit_rate() const {
 		return _edit_rate;
 	}
 
-	int64_t intrinsic_duration () const {
+	int64_t intrinsic_duration() const {
 		return _intrinsic_duration;
 	}
 
-	void set_entry_point (int64_t e) {
+	void set_entry_point(int64_t e) {
 		_entry_point = e;
 	}
 
-	void unset_entry_point () {
+	void unset_entry_point() {
 		_entry_point = boost::none;
 	}
 
-	boost::optional<int64_t> entry_point () const {
+	boost::optional<int64_t> entry_point() const {
 		return _entry_point;
 	}
 
-	void set_duration (int64_t d) {
+	void set_duration(int64_t d) {
 		_duration = d;
 	}
 
-	boost::optional<int64_t> duration () const {
+	boost::optional<int64_t> duration() const {
 		return _duration;
 	}
 
 	/** @return <Duration>, or <IntrinsicDuration> - <EntryPoint> if <Duration> is not present */
-	int64_t actual_duration () const;
+	int64_t actual_duration() const;
 
-	boost::optional<std::string> annotation_text () const {
+	boost::optional<std::string> annotation_text() const {
 		return _annotation_text;
 	}
 
-	void set_annotation_text (std::string at) {
+	void set_annotation_text(std::string at) {
 		_annotation_text = at;
 	}
 
-	void unset_annotation_text () {
+	void unset_annotation_text() {
 		_annotation_text = boost::none;
 	}
 
@@ -143,10 +143,10 @@ protected:
 	virtual std::string cpl_node_name() const = 0;
 
 	/** @return Any attribute that should be used on the asset's node in the CPL */
-	virtual std::pair<std::string, std::string> cpl_node_attribute (Standard) const;
+	virtual std::pair<std::string, std::string> cpl_node_attribute(Standard) const;
 
 	/** @return Any namespace that should be used on the asset's node in the CPL */
-	virtual std::pair<std::string, std::string> cpl_node_namespace () const;
+	virtual std::pair<std::string, std::string> cpl_node_namespace() const;
 
 	int64_t _intrinsic_duration = 0;       ///< The &lt;IntrinsicDuration&gt; from the reel's entry for this asset
 	boost::optional<int64_t> _duration;    ///< The &lt;Duration&gt; from the reel's entry for this asset, if present

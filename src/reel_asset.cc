@@ -59,27 +59,27 @@ using boost::optional;
 using namespace dcp;
 
 
-ReelAsset::ReelAsset (string id, Fraction edit_rate, int64_t intrinsic_duration, optional<int64_t> entry_point)
-	: Object (id)
-	, _intrinsic_duration (intrinsic_duration)
-	, _edit_rate (edit_rate)
-	, _entry_point (entry_point)
+ReelAsset::ReelAsset(string id, Fraction edit_rate, int64_t intrinsic_duration, optional<int64_t> entry_point)
+	: Object(id)
+	, _intrinsic_duration(intrinsic_duration)
+	, _edit_rate(edit_rate)
+	, _entry_point(entry_point)
 {
 	if (_entry_point) {
 		_duration = intrinsic_duration - *_entry_point;
 	}
 
-	DCP_ASSERT (!_entry_point || *_entry_point <= _intrinsic_duration);
+	DCP_ASSERT(!_entry_point || *_entry_point <= _intrinsic_duration);
 }
 
 
-ReelAsset::ReelAsset (shared_ptr<const cxml::Node> node)
-	: Object (remove_urn_uuid (node->string_child ("Id")))
-	, _intrinsic_duration (node->number_child<int64_t> ("IntrinsicDuration"))
-	, _duration (node->optional_number_child<int64_t>("Duration"))
-	, _annotation_text (node->optional_string_child("AnnotationText"))
-	, _edit_rate (Fraction (node->string_child ("EditRate")))
-	, _entry_point (node->optional_number_child<int64_t>("EntryPoint"))
+ReelAsset::ReelAsset(shared_ptr<const cxml::Node> node)
+	: Object(remove_urn_uuid(node->string_child("Id")))
+	, _intrinsic_duration(node->number_child<int64_t>("IntrinsicDuration"))
+	, _duration(node->optional_number_child<int64_t>("Duration"))
+	, _annotation_text(node->optional_string_child("AnnotationText"))
+	, _edit_rate(Fraction(node->string_child("EditRate")))
+	, _entry_point(node->optional_number_child<int64_t>("EntryPoint"))
 {
 
 }
@@ -89,13 +89,13 @@ xmlpp::Element*
 ReelAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
 	auto a = cxml::add_child(node, cpl_node_name());
-	auto const attr = cpl_node_attribute (standard);
-	if (!attr.first.empty ()) {
-		a->set_attribute (attr.first, attr.second);
+	auto const attr = cpl_node_attribute(standard);
+	if (!attr.first.empty()) {
+		a->set_attribute(attr.first, attr.second);
 	}
-	auto const ns = cpl_node_namespace ();
+	auto const ns = cpl_node_namespace();
 	if (!ns.first.empty()) {
-		a->set_namespace_declaration (ns.first, ns.second);
+		a->set_namespace_declaration(ns.first, ns.second);
 	}
 	cxml::add_text_child(a, "Id", "urn:uuid:" + _id);
 	/* Empty <AnnotationText> tags cause refusal to play on some Sony SRX320 / LMT3000 systems (DoM bug #2124) */
@@ -115,22 +115,22 @@ ReelAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 
 
 pair<string, string>
-ReelAsset::cpl_node_attribute (Standard) const
+ReelAsset::cpl_node_attribute(Standard) const
 {
-	return make_pair ("", "");
+	return make_pair("", "");
 }
 
 
 pair<string, string>
-ReelAsset::cpl_node_namespace () const
+ReelAsset::cpl_node_namespace() const
 {
-	return make_pair ("", "");
+	return make_pair("", "");
 }
 
 
 template <class T>
 string
-optional_to_string (optional<T> o)
+optional_to_string(optional<T> o)
 {
 	return o ? fmt::to_string(*o) : "[none]";
 }
@@ -144,15 +144,15 @@ ReelAsset::asset_equals(shared_ptr<const ReelAsset> other, EqualityOptions const
 	if (_annotation_text != other->_annotation_text) {
 		string const s = String::compose("Reel %1: annotation texts differ (%2 vs %3)", node, optional_to_string(_annotation_text), optional_to_string(other->_annotation_text));
 		if (!opt.reel_annotation_texts_can_differ) {
-			note (NoteType::ERROR, s);
+			note(NoteType::ERROR, s);
 			return false;
 		} else {
-			note (NoteType::NOTE, s);
+			note(NoteType::NOTE, s);
 		}
 	}
 
 	if (_edit_rate != other->_edit_rate) {
-		note (
+		note(
 			NoteType::ERROR,
 			String::compose("Reel %1: edit rates differ (%2 vs %3)", node, _edit_rate.as_string(), other->_edit_rate.as_string())
 		     );
@@ -160,7 +160,7 @@ ReelAsset::asset_equals(shared_ptr<const ReelAsset> other, EqualityOptions const
 	}
 
 	if (_intrinsic_duration != other->_intrinsic_duration) {
-		note (
+		note(
 			NoteType::ERROR,
 			String::compose("Reel %1: intrinsic durations differ (%2 vs %3)", node, _intrinsic_duration, other->_intrinsic_duration)
 		     );
@@ -168,7 +168,7 @@ ReelAsset::asset_equals(shared_ptr<const ReelAsset> other, EqualityOptions const
 	}
 
 	if (_entry_point != other->_entry_point) {
-		note (
+		note(
 			NoteType::ERROR,
 			String::compose("Reel %1: entry points differ (%2 vs %3)", node, optional_to_string(_entry_point), optional_to_string(other->_entry_point))
 		     );
@@ -176,7 +176,7 @@ ReelAsset::asset_equals(shared_ptr<const ReelAsset> other, EqualityOptions const
 	}
 
 	if (_duration != other->_duration) {
-		note (
+		note(
 			NoteType::ERROR,
 			String::compose("Reel %1: durations differ (%2 vs %3)", node, optional_to_string(_duration), optional_to_string(other->_duration))
 		     );
@@ -188,7 +188,7 @@ ReelAsset::asset_equals(shared_ptr<const ReelAsset> other, EqualityOptions const
 
 
 int64_t
-ReelAsset::actual_duration () const
+ReelAsset::actual_duration() const
 {
 	if (_duration) {
 		return *_duration;
