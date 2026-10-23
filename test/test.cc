@@ -350,7 +350,7 @@ make_simple (boost::filesystem::path path, int reels, int frames, dcp::Standard 
 	boost::filesystem::create_directories (path);
 	auto d = make_shared<dcp::DCP>(path);
 	auto cpl = make_shared<dcp::CPL>("A Test DCP", dcp::ContentKind::TRAILER, standard);
-	cpl->set_annotation_text ("A Test DCP");
+	cpl->set_annotation_text(string{"A Test DCP"});
 	cpl->set_issuer ("OpenDCP 0.0.25");
 	cpl->set_creator ("OpenDCP 0.0.25");
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");

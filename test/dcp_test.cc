@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE (dcp_test2)
 	cpl->set_issuer ("OpenDCP 0.0.25");
 	cpl->set_creator ("OpenDCP 0.0.25");
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
-	cpl->set_annotation_text ("A Test DCP");
+	cpl->set_annotation_text(string{"A Test DCP"});
 
 	auto mp = make_shared<dcp::StereoJ2KPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	mp->set_metadata (mxf_meta);
@@ -289,7 +289,7 @@ BOOST_AUTO_TEST_CASE (dcp_test5)
 	cpl->set_issuer ("OpenDCP 0.0.25");
 	cpl->set_creator ("OpenDCP 0.0.25");
 	cpl->set_issue_date ("2012-07-17T04:45:18+00:00");
-	cpl->set_annotation_text ("A Test DCP");
+	cpl->set_annotation_text(string{"A Test DCP"});
 
 	auto mp = make_shared<dcp::MonoJ2KPictureAsset>(dcp::Fraction (24, 1), dcp::Standard::SMPTE);
 	mp->set_metadata (mxf_meta);
