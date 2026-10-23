@@ -125,8 +125,8 @@ public:
 		return _annotation_text;
 	}
 
-	void set_annotation_text(std::string at) {
-		_annotation_text = at;
+	void set_annotation_text(boost::optional<std::string> at) {
+		_annotation_text = std::move(at);
 	}
 
 	void unset_annotation_text() {
