@@ -77,6 +77,14 @@ ReelMarkersAsset::cpl_node_name() const
 }
 
 
+int
+ReelMarkersAsset::editable_units(Time t) const
+{
+	int const tcr = edit_rate().numerator / edit_rate().denominator;
+	return t.as_editable_units_ceil(tcr);
+}
+
+
 void
 ReelMarkersAsset::set(Marker m, Time t)
 {
@@ -105,7 +113,6 @@ ReelMarkersAsset::get(Marker m) const
 xmlpp::Element*
 ReelMarkersAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
-	int const tcr = edit_rate().numerator / edit_rate().denominator;
 	auto asset = ReelAsset::write_to_cpl(node, standard);
 	auto ml = cxml::add_child(asset, "MarkerList");
 
@@ -121,7 +128,7 @@ ReelMarkersAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 	for (auto const& i: sorted) {
 		auto m = cxml::add_child(ml, "Marker");
 		cxml::add_text_child(m, "Label", marker_to_string(i.first));
-		cxml::add_text_child(m, "Offset", fmt::to_string(i.second.as_editable_units_ceil(tcr)));
+		cxml::add_text_child(m, "Offset", fmt::to_string(editable_units(i.second)));
 	}
 
 	return asset;

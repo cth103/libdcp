@@ -65,6 +65,7 @@ protected:
 	std::string cpl_node_name() const override;
 
 private:
+	int editable_units(Time t) const;
 	std::map<Marker, Time> _markers;
 };
 
