@@ -2586,7 +2586,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 	auto reel_asset1 = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, asset1, dcp::Fraction(24, 1), 5 * 24, 0);
 	auto reel1 = make_shared<dcp::Reel>();
 	reel1->add (reel_asset1);
-	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 5 * 24);
+	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1));
 	markers1->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
 	reel1->add (markers1);
 
@@ -2600,7 +2600,7 @@ BOOST_AUTO_TEST_CASE (verify_valid_subtitle_first_text_time_on_second_reel)
 	auto reel_asset2 = make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, asset2, dcp::Fraction(24, 1), 4 * 24, 0);
 	auto reel2 = make_shared<dcp::Reel>();
 	reel2->add (reel_asset2);
-	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 4 * 24);
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1));
 	markers2->set (dcp::Marker::LFOC, dcp::Time(4 * 24 - 1, 24, 24));
 	reel2->add (markers2);
 
@@ -3556,7 +3556,7 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 		reel1->add (make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
-	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length);
+	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1));
 	markers1->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
 	reel1->add (markers1);
 
@@ -3571,7 +3571,7 @@ verify_subtitles_must_be_in_all_reels_check (path dir, bool add_to_reel1, bool a
 		reel2->add (make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::OPEN_SUBTITLE, subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
-	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length);
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1));
 	markers2->set (dcp::Marker::LFOC, dcp::Time(reel_length - 1, 24, 24));
 	reel2->add (markers2);
 
@@ -3695,7 +3695,7 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 		reel1->add (make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CLOSED_CAPTION, subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
-	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length);
+	auto markers1 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1));
 	markers1->set (dcp::Marker::FFOC, dcp::Time(1, 24, 24));
 	reel1->add (markers1);
 
@@ -3710,7 +3710,7 @@ verify_closed_captions_must_be_in_all_reels_check (path dir, int caps_in_reel1, 
 		reel2->add (make_shared<dcp::ReelSMPTETextAsset>(dcp::TextType::CLOSED_CAPTION, subs, dcp::Fraction(24, 1), reel_length, 0));
 	}
 
-	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), reel_length);
+	auto markers2 = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1));
 	markers2->set (dcp::Marker::LFOC, dcp::Time(reel_length - 1, 24, 24));
 	reel2->add (markers2);
 
@@ -3963,7 +3963,7 @@ verify_markers_test (
 	auto dcp = make_simple (dir);
 	auto cpl = dcp->cpls()[0];
 	cpl->set_content_kind(dcp::ContentKind::FEATURE);
-	auto markers_asset = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), 24);
+	auto markers_asset = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1));
 	for (auto const& i: markers) {
 		markers_asset->set (i.first, i.second);
 	}
@@ -5253,7 +5253,7 @@ BOOST_AUTO_TEST_CASE(verify_mismatched_sound_channel_counts)
 			std::make_shared<dcp::ReelSoundAsset>(ms, 0)
 			);
 
-		auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), frames);
+		auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1));
 		markers->set(dcp::Marker::FFOC, dcp::Time(0, 0, 0, 1, 24));
 		reel->add(markers);
 
@@ -5273,7 +5273,7 @@ BOOST_AUTO_TEST_CASE(verify_mismatched_sound_channel_counts)
 			std::make_shared<dcp::ReelSoundAsset>(ms, 0)
 			);
 
-		auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), frames);
+		auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1));
 		markers->set(dcp::Marker::LFOC, dcp::Time(0, 0, 0, frames - 1, 24));
 		reel->add(markers);
 
@@ -5340,7 +5340,7 @@ BOOST_AUTO_TEST_CASE(verify_invalid_main_sound_configuration)
 		std::make_shared<dcp::ReelSoundAsset>(ms, 0)
 		);
 
-	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1), frames);
+	auto markers = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1));
 	markers->set(dcp::Marker::FFOC, dcp::Time(0, 0, 0, 1, 24));
 	markers->set(dcp::Marker::LFOC, dcp::Time(0, 0, 9, 23, 24));
 	reel->add(markers);

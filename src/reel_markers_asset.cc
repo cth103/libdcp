@@ -52,8 +52,8 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-ReelMarkersAsset::ReelMarkersAsset(Fraction edit_rate, int64_t intrinsic_duration)
-	: ReelAsset(make_uuid(), edit_rate, intrinsic_duration, {})
+ReelMarkersAsset::ReelMarkersAsset(Fraction edit_rate)
+	: ReelAsset(make_uuid(), edit_rate, 0, {})
 {
 
 }
@@ -65,7 +65,7 @@ ReelMarkersAsset::ReelMarkersAsset(cxml::ConstNodePtr node)
 	auto list = node->node_child("MarkerList");
 	DCP_ASSERT(list);
 	for (auto i: list->node_children("Marker")) {
-		set(marker_from_string(i->string_child("Label")), dcp::Time(i->number_child<int64_t>("Offset"), edit_rate().as_float(), edit_rate().numerator));
+		_markers[marker_from_string(i->string_child("Label"))] = dcp::Time(i->number_child<int64_t>("Offset"), edit_rate().as_float(), edit_rate().numerator);
 	}
 }
 
@@ -86,9 +86,23 @@ ReelMarkersAsset::editable_units(Time t) const
 
 
 void
+ReelMarkersAsset::update_intrinsic_duration()
+{
+	Time latest;
+	for (auto i: _markers) {
+		if (i.second > latest) {
+			latest = i.second;
+		}
+	}
+	_intrinsic_duration = editable_units(latest) + 1;
+}
+
+
+void
 ReelMarkersAsset::set(Marker m, Time t)
 {
 	_markers[m] = t;
+	update_intrinsic_duration();
 }
 
 
@@ -96,6 +110,7 @@ void
 ReelMarkersAsset::unset(Marker m)
 {
 	_markers.erase(m);
+	update_intrinsic_duration();
 }
 
 

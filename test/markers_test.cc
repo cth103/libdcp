@@ -157,3 +157,19 @@ BOOST_AUTO_TEST_CASE(markers_order_test)
 	);
 }
 
+
+BOOST_AUTO_TEST_CASE(markers_intrinsic_duration_test)
+{
+	auto asset = make_shared<dcp::ReelMarkersAsset>(dcp::Fraction(24, 1));
+
+	asset->set(dcp::Marker::LFOB, dcp::Time(9, 2, 3, 4, 24));
+	asset->set(dcp::Marker::FFOC, dcp::Time(1, 1, 9, 16, 24));
+
+	BOOST_CHECK_EQUAL(asset->intrinsic_duration(), 780557);
+
+	asset->unset(dcp::Marker::LFOB);
+
+	BOOST_CHECK_EQUAL(asset->intrinsic_duration(), 88073);
+}
+
+
