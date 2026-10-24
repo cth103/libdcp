@@ -48,16 +48,16 @@ namespace dcp {
 class ReelMarkersAsset : public ReelAsset
 {
 public:
-	ReelMarkersAsset (Fraction edit_rate, int64_t intrinsic_duration);
-	explicit ReelMarkersAsset (std::shared_ptr<const cxml::Node>);
+	ReelMarkersAsset(Fraction edit_rate, int64_t intrinsic_duration);
+	explicit ReelMarkersAsset(std::shared_ptr<const cxml::Node>);
 
 	xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
 	bool equals(std::shared_ptr<const ReelMarkersAsset>, EqualityOptions const&, NoteHandler) const;
 
-	void set (Marker, Time);
-	void unset (Marker);
-	boost::optional<Time> get (Marker m) const;
-	std::map<Marker, Time> get () const {
+	void set(Marker, Time);
+	void unset(Marker);
+	boost::optional<Time> get(Marker m) const;
+	std::map<Marker, Time> get() const {
 		return _markers;
 	}
 

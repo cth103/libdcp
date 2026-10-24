@@ -52,20 +52,20 @@ using std::shared_ptr;
 using namespace dcp;
 
 
-ReelMarkersAsset::ReelMarkersAsset (Fraction edit_rate, int64_t intrinsic_duration)
-	: ReelAsset (make_uuid(), edit_rate, intrinsic_duration, {})
+ReelMarkersAsset::ReelMarkersAsset(Fraction edit_rate, int64_t intrinsic_duration)
+	: ReelAsset(make_uuid(), edit_rate, intrinsic_duration, {})
 {
 
 }
 
 
-ReelMarkersAsset::ReelMarkersAsset (cxml::ConstNodePtr node)
-	: ReelAsset (node)
+ReelMarkersAsset::ReelMarkersAsset(cxml::ConstNodePtr node)
+	: ReelAsset(node)
 {
-	auto list = node->node_child ("MarkerList");
-	DCP_ASSERT (list);
+	auto list = node->node_child("MarkerList");
+	DCP_ASSERT(list);
 	for (auto i: list->node_children("Marker")) {
-		set (marker_from_string(i->string_child("Label")), dcp::Time(i->number_child<int64_t>("Offset"), edit_rate().as_float(), edit_rate().numerator));
+		set(marker_from_string(i->string_child("Label")), dcp::Time(i->number_child<int64_t>("Offset"), edit_rate().as_float(), edit_rate().numerator));
 	}
 }
 
@@ -78,24 +78,24 @@ ReelMarkersAsset::cpl_node_name() const
 
 
 void
-ReelMarkersAsset::set (Marker m, Time t)
+ReelMarkersAsset::set(Marker m, Time t)
 {
 	_markers[m] = t;
 }
 
 
 void
-ReelMarkersAsset::unset (Marker m)
+ReelMarkersAsset::unset(Marker m)
 {
-	_markers.erase (m);
+	_markers.erase(m);
 }
 
 
 optional<Time>
-ReelMarkersAsset::get (Marker m) const
+ReelMarkersAsset::get(Marker m) const
 {
-	auto i = _markers.find (m);
-	if (i == _markers.end ()) {
+	auto i = _markers.find(m);
+	if (i == _markers.end()) {
 		return {};
 	}
 	return i->second;
@@ -106,7 +106,7 @@ xmlpp::Element*
 ReelMarkersAsset::write_to_cpl(xmlpp::Element* node, Standard standard) const
 {
 	int const tcr = edit_rate().numerator / edit_rate().denominator;
-	auto asset = ReelAsset::write_to_cpl (node, standard);
+	auto asset = ReelAsset::write_to_cpl(node, standard);
 	auto ml = cxml::add_child(asset, "MarkerList");
 
 	std::list<std::pair<Marker, Time>> sorted;
