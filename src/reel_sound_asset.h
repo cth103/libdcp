@@ -69,7 +69,7 @@ public:
 		return asset_of_type<SoundAsset>();
 	}
 
-	virtual std::shared_ptr<ReelSoundAsset> clone() const;
+	std::shared_ptr<ReelSoundAsset> clone() const;
 
 	bool equals(std::shared_ptr<const ReelSoundAsset>, EqualityOptions const&, NoteHandler) const;
 
