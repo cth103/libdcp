@@ -48,7 +48,6 @@ LIBDCP_ENABLE_WARNINGS
 
 using std::string;
 using std::pair;
-using std::make_pair;
 using std::shared_ptr;
 using namespace dcp;
 
