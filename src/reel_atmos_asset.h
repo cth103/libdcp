@@ -70,6 +70,8 @@ public:
 		return asset_of_type<AtmosAsset>();
 	}
 
+	std::shared_ptr<ReelAtmosAsset> clone() const;
+
 	xmlpp::Element* write_to_cpl(xmlpp::Element* node, Standard standard) const override;
 	bool equals(std::shared_ptr<const ReelAtmosAsset>, EqualityOptions const&, NoteHandler) const;
 

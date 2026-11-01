@@ -115,3 +115,9 @@ ReelAtmosAsset::can_be_read() const
 	return asset()->can_be_read();
 }
 
+
+shared_ptr<ReelAtmosAsset>
+ReelAtmosAsset::clone() const
+{
+	return std::make_shared<ReelAtmosAsset>(*this);
+}
