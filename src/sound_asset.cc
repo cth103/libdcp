@@ -60,6 +60,7 @@ LIBDCP_ENABLE_WARNINGS
 
 using std::dynamic_pointer_cast;
 using std::list;
+using std::set;
 using std::shared_ptr;
 using std::string;
 using std::vector;
@@ -115,7 +116,12 @@ SoundAsset::SoundAsset(boost::filesystem::path file)
 		);
 
 	if (KM_SUCCESS(rr)) {
-		_active_channels = channel_labels.size();
+		for (auto label: channel_labels) {
+			auto audio = dynamic_cast<ASDCP::MXF::AudioChannelLabelSubDescriptor*>(label);
+			if (audio && !audio->MCAChannelID.empty()) {
+				_labelled_channels.insert(static_cast<int>(audio->MCAChannelID.get()) - 1);
+			}
+		}
 	}
 
 	_id = read_writer_info(info);
@@ -288,10 +294,10 @@ SoundAsset::valid_mxf(boost::filesystem::path file)
 }
 
 
-int
-SoundAsset::active_channels() const
+set<int>
+SoundAsset::labelled_channels() const
 {
-	return _active_channels.get_value_or(_channels);
+	return _labelled_channels;
 }
 
 

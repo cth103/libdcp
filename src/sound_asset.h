@@ -109,8 +109,8 @@ public:
 		return _channels;
 	}
 
-	/** @return An estimate of the number of channels that are actually in use */
-	int active_channels() const;
+	/** @return Channel indices (0-indexed) that have an MCA audio channel label */
+	std::set<int> labelled_channels() const;
 
 	/** @return sampling rate in Hz */
 	int sampling_rate() const {
@@ -155,7 +155,7 @@ private:
 	 */
 	int64_t _intrinsic_duration = 0;
 	int _channels = 0;                     ///< number of channels in the MXF
-	boost::optional<int> _active_channels; ///< estimate of the number of active channels
+	std::set<int> _labelled_channels;      ///< channel indices (0-based) that have a MCA audio channel label
 	int _sampling_rate = 0;                ///< sampling rate in Hz
 	int _bit_depth = 24;
 	boost::optional<std::string> _language;
