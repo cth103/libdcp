@@ -53,7 +53,7 @@ namespace dcp {
 }
 
 
-extern std::shared_ptr<dcp::SoundAsset> simple_sound (
+extern std::shared_ptr<dcp::SoundAsset> simple_sound(
 	boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language, int frames, int sample_rate, boost::optional<dcp::Key>, int channels
 	);
 
@@ -71,8 +71,8 @@ class SoundAssetWriter;
 class SoundAsset : public Asset, public MXF
 {
 public:
-	explicit SoundAsset (boost::filesystem::path file);
-	SoundAsset (Fraction edit_rate, int sampling_rate, int channels, LanguageTag language, Standard standard);
+	explicit SoundAsset(boost::filesystem::path file);
+	SoundAsset(Fraction edit_rate, int sampling_rate, int channels, LanguageTag language, Standard standard);
 
 	enum class AtmosSync {
 		ENABLED,
@@ -96,16 +96,16 @@ public:
 		MCASubDescriptors mca_subdescriptors
 		);
 
-	std::shared_ptr<SoundAssetReader> start_read () const;
+	std::shared_ptr<SoundAssetReader> start_read() const;
 
-	bool equals (
+	bool equals(
 		std::shared_ptr<const Asset> other,
 		EqualityOptions const& opt,
 		NoteHandler note
 		) const override;
 
 	/** @return number of channels in the MXF */
-	int channels () const {
+	int channels() const {
 		return _channels;
 	}
 
@@ -113,7 +113,7 @@ public:
 	int active_channels() const;
 
 	/** @return sampling rate in Hz */
-	int sampling_rate () const {
+	int sampling_rate() const {
 		return _sampling_rate;
 	}
 
@@ -124,29 +124,29 @@ public:
 		return _bit_depth;
 	}
 
-	Fraction edit_rate () const {
+	Fraction edit_rate() const {
 		return _edit_rate;
 	}
 
-	int64_t intrinsic_duration () const {
+	int64_t intrinsic_duration() const {
 		return _intrinsic_duration;
 	}
 
-	boost::optional<std::string> language () const {
+	boost::optional<std::string> language() const {
 		return _language;
 	}
 
-	static bool valid_mxf (boost::filesystem::path);
-	static std::string static_pkl_type (Standard standard);
+	static bool valid_mxf(boost::filesystem::path);
+	static std::string static_pkl_type(Standard standard);
 
 private:
 	friend class SoundAssetWriter;
-	friend std::shared_ptr<dcp::SoundAsset> (::simple_sound) (
+	friend std::shared_ptr<dcp::SoundAsset>(::simple_sound)(
 		boost::filesystem::path path, std::string suffix, dcp::MXFMetadata mxf_meta, std::string language, int frames, int sample_rate, boost::optional<dcp::Key>, int channels
 		);
 
-	std::string pkl_type (Standard standard) const override {
-		return static_pkl_type (standard);
+	std::string pkl_type(Standard standard) const override {
+		return static_pkl_type(standard);
 	}
 
 	Fraction _edit_rate;
