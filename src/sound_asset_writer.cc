@@ -84,7 +84,8 @@ SoundAssetWriter::SoundAssetWriter(SoundAsset* asset, boost::filesystem::path fi
 	DCP_ASSERT (!_sync || _asset->standard() == Standard::SMPTE);
 
 	/* None of these are allowed in extra_active_channels; some are implicit, and (it seems) should never have a descriptor
-	 * written for them.
+	 * written for them.  The sign language video channel is allowed: SMPTE RDD 52 (section 10.3.2 and table 4) and
+	 * ISDCF Doc 13 give it an audio channel label (SLVS).
 	 */
 	vector<Channel> disallowed_extra = {
 		Channel::LEFT,
@@ -95,7 +96,6 @@ SoundAssetWriter::SoundAssetWriter(SoundAsset* asset, boost::filesystem::path fi
 		Channel::RS,
 		Channel::MOTION_DATA,
 		Channel::SYNC_SIGNAL,
-		Channel::SIGN_LANGUAGE,
 		Channel::CHANNEL_COUNT
 	};
 	for (auto disallowed: disallowed_extra) {
@@ -226,7 +226,8 @@ LIBDCP_ENABLE_WARNINGS
 			GenRandomValue (channel->MCALinkID);
 			channel->SoundfieldGroupLinkID = soundfield->MCALinkID;
 			channel->MCAChannelID = static_cast<int>(dcp_channel) + 1;
-			channel->MCATagSymbol = "ch" + channel_to_mca_id(dcp_channel, field);
+			/* The ST 428-12 channel symbols start with "ch"; the sign language video one (RDD 52 table 4) does not */
+			channel->MCATagSymbol = dcp_channel == Channel::SIGN_LANGUAGE ? channel_to_mca_id(dcp_channel, field) : "ch" + channel_to_mca_id(dcp_channel, field);
 			channel->MCATagName = channel_to_mca_name(dcp_channel, field);
 			if (auto lang = _asset->language()) {
 				channel->RFC5646SpokenLanguage = *lang;
