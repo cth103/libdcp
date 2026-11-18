@@ -5950,12 +5950,16 @@ write_dcp_with_text_reels(path dir, dcp::TextType type, vector<shared_ptr<dcp::S
 /** @return a text asset written to `dir`/`filename`, with one subtitle with the given text */
 static
 shared_ptr<dcp::SMPTETextAsset>
-write_text_asset(path dir, string filename, string text)
+write_text_asset(path dir, string filename, string text, optional<dcp::Key> key = boost::none, optional<string> key_id = boost::none)
 {
 	auto asset = make_shared<dcp::SMPTETextAsset>();
 	asset->set_start_time(dcp::Time());
 	add_test_subtitle(asset, 96, 300, 0.0, dcp::VAlign::CENTER, text);
 	asset->set_language(dcp::LanguageTag("de-DE"));
+	if (key && key_id) {
+		asset->set_key(*key);
+		asset->set_key_id(*key_id);
+	}
 	add_font(asset);
 	asset->write(dir / filename);
 	return asset;
@@ -6109,11 +6113,11 @@ BOOST_AUTO_TEST_CASE(verify_vf_with_some_closed_captions_in_another_dcp2)
 /** Verify the VF in `vf_dir`, telling the verifier that it may refer to the DCPs in `other_dcps`, and return the notes */
 static
 vector<dcp::VerificationNote>
-verify_vf_with_other_dcps(path vf_dir, vector<path> other_dcps)
+verify_vf_with_other_dcps(path vf_dir, vector<path> other_dcps, vector<dcp::DecryptedKDM> kdms = {})
 {
 	dcp::VerificationOptions options;
 	options.other_dcps = other_dcps;
-	return dcp::verify({vf_dir}, {}, &stage, &progress, options, xsd_test).notes;
+	return dcp::verify({vf_dir}, kdms, &stage, &progress, options, xsd_test).notes;
 }
 
 
@@ -6208,6 +6212,42 @@ BOOST_AUTO_TEST_CASE(verify_vf_with_picture_resolved_from_other_dcp)
 	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::EXTERNAL_ASSET), 0);
 	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::CORRECT_PICTURE_HASH), 1);
 	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::INCORRECT_PICTURE_HASH), 0);
+}
+
+
+/** An encrypted VF with one closed caption in the OV and one of its own: the KDM for the OV and the KDM for the VF
+ *  are both needed, each for the DCP whose CPL it is for.  The closed caption in the OV is only found to have a line
+ *  that is too long if the OV's KDM was used.
+ */
+BOOST_AUTO_TEST_CASE(verify_encrypted_vf_with_closed_caption_resolved_from_other_dcp)
+{
+	auto const ov_dir = path("build/test/verify_encrypted_vf_with_closed_caption_resolved_from_other_dcp_ov");
+	auto const vf_dir = path("build/test/verify_encrypted_vf_with_closed_caption_resolved_from_other_dcp_vf");
+
+	dcp::Key ov_key;
+	auto const ov_key_id = dcp::make_uuid();
+	dcp::Key vf_key;
+	auto const vf_key_id = dcp::make_uuid();
+
+	prepare_directory(ov_dir);
+	/* 34 characters is too long for a closed caption line */
+	auto external = write_text_asset(ov_dir, "subs.mxf", "0123456789012345678901234567890123", ov_key, ov_key_id);
+	auto ov_cpl = write_dcp_with_text_reels(ov_dir, dcp::TextType::CLOSED_CAPTION, { external });
+
+	prepare_directory(vf_dir);
+	auto local = write_text_asset(vf_dir, "local.mxf", "Hello", vf_key, vf_key_id);
+	auto vf_cpl = write_dcp_with_text_reels(vf_dir, dcp::TextType::CLOSED_CAPTION, { external, local });
+
+	dcp::DecryptedKDM ov_kdm(dcp::LocalTime(), dcp::LocalTime(), "", "", "");
+	ov_kdm.add_key(dcp::DecryptedKDMKey(string{"MDIK"}, ov_key_id, ov_key, ov_cpl->id(), dcp::Standard::SMPTE));
+	dcp::DecryptedKDM vf_kdm(dcp::LocalTime(), dcp::LocalTime(), "", "", "");
+	vf_kdm.add_key(dcp::DecryptedKDMKey(string{"MDIK"}, vf_key_id, vf_key, vf_cpl->id(), dcp::Standard::SMPTE));
+
+	vector<dcp::VerificationNote> notes;
+	BOOST_REQUIRE_NO_THROW(notes = verify_vf_with_other_dcps(vf_dir, { ov_dir }, { ov_kdm, vf_kdm }));
+
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::EXTERNAL_ASSET), 0);
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH), 1);
 }
 
 

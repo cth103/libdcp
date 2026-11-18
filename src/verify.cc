@@ -1905,6 +1905,13 @@ dcp::verify (
 			notes.push_back(VerificationNote(VerificationNote::Code::FAILED_READ).set_error(e.what()));
 			continue;
 		}
+		/* The KDMs we are given may be for the other DCP as well as for the ones we are verifying
+		 * (for example the KDM for the OV and that for the VF); each is used by the DCP whose CPL it is for.
+		 * The assets are shared, so the keys will also be used when the references are resolved.
+		 */
+		for (auto kdm: kdms) {
+			other->add(kdm);
+		}
 		for (auto asset: other->assets(true)) {
 			other_assets.push_back(asset);
 		}
