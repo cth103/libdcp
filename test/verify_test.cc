@@ -5918,3 +5918,190 @@ BOOST_AUTO_TEST_CASE(verify_dcp_with_two_cpls)
 	});
 }
 
+
+/** Write a DCP (which may be a VF) containing one reel for each of the given text assets.  The asset in each reel is only
+ *  written into the DCP if it was made in `dir`; assets which are somewhere else (in another DCP) are only referred to
+ *  by the CPL, as in a VF.
+ */
+static
+shared_ptr<dcp::CPL>
+write_dcp_with_text_reels(path dir, dcp::TextType type, vector<shared_ptr<dcp::SMPTETextAsset>> assets)
+{
+	auto cpl = make_shared<dcp::CPL>("hello", dcp::ContentKind::TRAILER, dcp::Standard::SMPTE);
+	for (auto asset: assets) {
+		auto reel = make_shared<dcp::Reel>();
+		reel->add(make_shared<dcp::ReelSMPTETextAsset>(type, asset, dcp::Fraction(24, 1), asset->intrinsic_duration(), 0));
+		reel->add(simple_markers());
+		cpl->add(reel);
+	}
+
+	auto dcp = make_shared<dcp::DCP>(dir);
+	dcp->add(cpl);
+	dcp->set_annotation_text("hello");
+
+	auto signer = make_shared<dcp::CertificateChain>(dcp::file_to_string("test/data/certificate_chain"));
+	signer->set_key(dcp::file_to_string("test/data/private.key"));
+	dcp->write_xml(signer);
+
+	return cpl;
+}
+
+
+/** @return a text asset written to `dir`/`filename`, with one subtitle with the given text */
+static
+shared_ptr<dcp::SMPTETextAsset>
+write_text_asset(path dir, string filename, string text)
+{
+	auto asset = make_shared<dcp::SMPTETextAsset>();
+	asset->set_start_time(dcp::Time());
+	add_test_subtitle(asset, 96, 300, 0.0, dcp::VAlign::CENTER, text);
+	asset->set_language(dcp::LanguageTag("de-DE"));
+	add_font(asset);
+	asset->write(dir / filename);
+	return asset;
+}
+
+
+/** Make an OV in `ov_dir` which has one reel with a text asset of the given type, and then a VF in `vf_dir`
+ *  whose CPL refers to that asset without including it.
+ */
+static
+shared_ptr<dcp::CPL>
+make_vf_referring_to_text(path ov_dir, path vf_dir, dcp::TextType type, string text)
+{
+	prepare_directory(ov_dir);
+	auto ov_asset = write_text_asset(ov_dir, "subs.mxf", text);
+	write_dcp_with_text_reels(ov_dir, type, { ov_asset });
+
+	prepare_directory(vf_dir);
+	return write_dcp_with_text_reels(vf_dir, type, { ov_asset });
+}
+
+
+/** Verifying a VF whose closed captions are in another DCP should not throw: we can't check the closed
+ *  captions but it is not an error that they are missing (the CPL could be completed by the OV).
+ */
+BOOST_AUTO_TEST_CASE(verify_vf_with_closed_caption_in_another_dcp)
+{
+	auto const ov_dir = path("build/test/verify_vf_with_closed_caption_in_another_dcp_ov");
+	auto const vf_dir = path("build/test/verify_vf_with_closed_caption_in_another_dcp_vf");
+	auto cpl = make_vf_referring_to_text(ov_dir, vf_dir, dcp::TextType::CLOSED_CAPTION, "Hello");
+
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	vector<dcp::VerificationNote> notes;
+	BOOST_REQUIRE_NO_THROW(notes = dcp::verify({vf_dir}, {}, &stage, &progress, {}, xsd_test).notes);
+
+	check_verify_result(notes, {
+		note(VC::NONE_ENCRYPTED, cpl),
+		note(VC::MATCHING_CPL_HASHES, cpl),
+		VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text(string{"hello"}),
+		note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
+		note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl).set_content_version(cpl->content_version()->label_text),
+		VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),
+		VN(VC::EXTERNAL_ASSET).set_asset_id(cpl->reels()[0]->closed_captions()[0]->id())
+	});
+}
+
+
+/** The same for open subtitles, which have always been handled correctly: this is the behaviour
+ *  that closed captions should match.
+ */
+BOOST_AUTO_TEST_CASE(verify_vf_with_open_subtitle_in_another_dcp)
+{
+	auto const ov_dir = path("build/test/verify_vf_with_open_subtitle_in_another_dcp_ov");
+	auto const vf_dir = path("build/test/verify_vf_with_open_subtitle_in_another_dcp_vf");
+	auto cpl = make_vf_referring_to_text(ov_dir, vf_dir, dcp::TextType::OPEN_SUBTITLE, "Hello");
+
+	using VN = dcp::VerificationNote;
+	using VC = VN::Code;
+
+	vector<dcp::VerificationNote> notes;
+	BOOST_REQUIRE_NO_THROW(notes = dcp::verify({vf_dir}, {}, &stage, &progress, {}, xsd_test).notes);
+
+	check_verify_result(notes, {
+		note(VC::NONE_ENCRYPTED, cpl),
+		note(VC::MATCHING_CPL_HASHES, cpl),
+		VN(VC::VALID_CPL_ANNOTATION_TEXT).set_cpl_id(cpl->id()).set_annotation_text(string{"hello"}),
+		note(VC::MATCHING_PKL_ANNOTATION_TEXT_WITH_CPL, cpl),
+		note(VC::VALID_CONTENT_KIND, cpl).set_content_kind("trailer"),
+		note(VC::VALID_CONTENT_VERSION_LABEL_TEXT, cpl).set_content_version(cpl->content_version()->label_text),
+		VN(VC::MISSING_CPL_METADATA, cpl->file().get()).set_cpl_id(cpl->id()),
+		VN(VC::EXTERNAL_ASSET).set_asset_id(cpl->reels()[0]->main_subtitle()->id())
+	});
+}
+
+
+/** An OV and a VF verified together: the problems in the closed captions are reported (once, for the OV)
+ *  and verifying the VF does not throw.
+ */
+BOOST_AUTO_TEST_CASE(verify_vf_and_ov_with_closed_caption_problem)
+{
+	auto const ov_dir = path("build/test/verify_vf_and_ov_with_closed_caption_problem_ov");
+	auto const vf_dir = path("build/test/verify_vf_and_ov_with_closed_caption_problem_vf");
+	/* 34 characters is too long for a closed caption line */
+	make_vf_referring_to_text(ov_dir, vf_dir, dcp::TextType::CLOSED_CAPTION, "0123456789012345678901234567890123");
+
+	vector<dcp::VerificationNote> notes;
+	BOOST_REQUIRE_NO_THROW(notes = dcp::verify({ov_dir, vf_dir}, {}, &stage, &progress, {}, xsd_test).notes);
+
+	auto count = [&notes](dcp::VerificationNote::Code code) {
+		return std::count_if(notes.begin(), notes.end(), [code](dcp::VerificationNote const& n) { return n.code() == code; });
+	};
+
+	BOOST_CHECK_EQUAL(count(dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH), 1);
+	BOOST_CHECK_EQUAL(count(dcp::VerificationNote::Code::EXTERNAL_ASSET), 1);
+}
+
+
+/** A VF with two reels, the closed captions of one being in another DCP and those of the other being in the VF.
+ *  The ones that are present should still be checked.
+ */
+static
+void
+check_vf_with_some_closed_captions_in_another_dcp(string name, bool external_first)
+{
+	auto const ov_dir = path("build/test/" + name + "_ov");
+	auto const vf_dir = path("build/test/" + name + "_vf");
+
+	prepare_directory(ov_dir);
+	auto external = write_text_asset(ov_dir, "subs.mxf", "Hello");
+	write_dcp_with_text_reels(ov_dir, dcp::TextType::CLOSED_CAPTION, { external });
+
+	prepare_directory(vf_dir);
+	/* 34 characters is too long for a closed caption line */
+	auto local = write_text_asset(vf_dir, "local.mxf", "0123456789012345678901234567890123");
+	auto cpl = write_dcp_with_text_reels(
+		vf_dir, dcp::TextType::CLOSED_CAPTION, external_first ? vector<shared_ptr<dcp::SMPTETextAsset>>{ external, local } : vector<shared_ptr<dcp::SMPTETextAsset>>{ local, external }
+		);
+
+	vector<dcp::VerificationNote> notes;
+	BOOST_REQUIRE_NO_THROW(notes = dcp::verify({vf_dir}, {}, &stage, &progress, {}, xsd_test).notes);
+
+	auto count = [&notes](dcp::VerificationNote::Code code) {
+		return std::count_if(notes.begin(), notes.end(), [code](dcp::VerificationNote const& n) { return n.code() == code; });
+	};
+
+	/* The closed caption which is in the VF has been checked ... */
+	BOOST_CHECK_EQUAL(count(dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH), 1);
+	/* ... and the one which is not has been reported as external (only that one) */
+	BOOST_CHECK_EQUAL(count(dcp::VerificationNote::Code::EXTERNAL_ASSET), 1);
+	auto missing = std::find_if(notes.begin(), notes.end(), [](dcp::VerificationNote const& n) { return n.code() == dcp::VerificationNote::Code::EXTERNAL_ASSET; });
+	BOOST_REQUIRE(missing != notes.end());
+	BOOST_CHECK_EQUAL(missing->asset_id().get_value_or(""), cpl->reels()[external_first ? 0 : 1]->closed_captions()[0]->id());
+}
+
+
+BOOST_AUTO_TEST_CASE(verify_vf_with_some_closed_captions_in_another_dcp1)
+{
+	check_vf_with_some_closed_captions_in_another_dcp("verify_vf_with_some_closed_captions_in_another_dcp1", true);
+}
+
+
+BOOST_AUTO_TEST_CASE(verify_vf_with_some_closed_captions_in_another_dcp2)
+{
+	check_vf_with_some_closed_captions_in_another_dcp("verify_vf_with_some_closed_captions_in_another_dcp2", false);
+}
+
