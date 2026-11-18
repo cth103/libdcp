@@ -1019,6 +1019,9 @@ struct VerificationOptions
 	bool check_asset_hashes = true;
 	///< true to do some time-consuming detailed picture checks (e.g. J2K bitstream)
 	bool check_picture_details = true;
+	///< DCPs which the DCPs being verified may refer to (typically the OV of a VF).  They are read so that
+	///< references to their assets can be resolved, but they are not verified themselves.
+	std::vector<boost::filesystem::path> other_dcps;
 };
 
 

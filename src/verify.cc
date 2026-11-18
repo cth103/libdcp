@@ -423,10 +423,18 @@ verify_asset(
 		}
 	}
 
-	DCP_ASSERT(maybe_pkl_hash);
+	auto cpl_hash = reel_file_asset->hash();
+
+	if (!maybe_pkl_hash) {
+		/* This asset is not in this DCP, so it is not in this DCP's PKL either: it must have been found in another
+		 * DCP (see VerificationOptions::other_dcps).  The best we can do is to compare with the hash in the CPL.
+		 */
+		*reference_hash = cpl_hash.get_value_or(*calculated_hash);
+		return *calculated_hash == *reference_hash ? VerifyAssetResult::GOOD : VerifyAssetResult::BAD;
+	}
+
 	*reference_hash = *maybe_pkl_hash;
 
-	auto cpl_hash = reel_file_asset->hash();
 	if (cpl_hash && *cpl_hash != *reference_hash) {
 		return VerifyAssetResult::CPL_PKL_DIFFER;
 	}
@@ -1884,6 +1892,24 @@ dcp::verify (
 		dcps.push_back (make_shared<DCP>(i));
 	}
 
+	/* Read the DCPs that the ones we are verifying may refer to, so that the references can be resolved.
+	 * We do not verify these.
+	 */
+	vector<shared_ptr<Asset>> other_assets;
+	for (auto i: options.other_dcps) {
+		auto other = make_shared<DCP>(i);
+		try {
+			vector<VerificationNote> ignored;
+			other->read(&ignored, true);
+		} catch (std::exception& e) {
+			notes.push_back(VerificationNote(VerificationNote::Code::FAILED_READ).set_error(e.what()));
+			continue;
+		}
+		for (auto asset: other->assets(true)) {
+			other_assets.push_back(asset);
+		}
+	}
+
 	for (auto dcp: dcps) {
 		stage ("Checking DCP", dcp->directory());
 
@@ -1912,6 +1938,30 @@ dcp::verify (
 
 		if (!carry_on) {
 			continue;
+		}
+
+		if (!other_assets.empty()) {
+			dcp->resolve_refs(other_assets);
+			/* read() will have said that the assets we have just found are external */
+			auto const is_resolved = [dcp](string id) {
+				for (auto cpl: dcp->cpls()) {
+					for (auto asset: cpl->reel_file_assets()) {
+						if (asset->asset_ref().id() == id && asset->asset_ref().resolved()) {
+							return true;
+						}
+					}
+				}
+				return false;
+			};
+			notes.erase(
+				std::remove_if(
+					notes.begin(),
+					notes.end(),
+					[is_resolved](VerificationNote const& note) {
+						return note.code() == VerificationNote::Code::EXTERNAL_ASSET && is_resolved(*note.asset_id());
+					}),
+				notes.end()
+				);
 		}
 
 		if (dcp->standard() != Standard::SMPTE) {

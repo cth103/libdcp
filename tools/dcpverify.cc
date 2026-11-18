@@ -70,6 +70,8 @@ help (string n)
 	cerr << "Syntax: " << n << " [OPTION] <DCP>\n"
 	     << "  -V, --version                                show libdcp version\n"
 	     << "  -h, --help                                   show this help\n"
+	     << "  --other-dcp <DCP>                            a DCP which <DCP> refers to (e.g. the OV of a VF); it is not verified\n"
+	     << "                                               itself.  Can be given more than once.\n"
 	     << "  --ignore-missing-assets                      don't give errors about missing assets\n"
 	     << "  --ignore-bv21-smpte                          don't give the SMPTE Bv2.1 error about a DCP not being SMPTE\n"
 	     << "  --no-asset-hash-check                        don't check asset hashes\n"
@@ -138,10 +140,11 @@ main (int argc, char* argv[])
 			{ "no-picture-details-check", no_argument, 0, 'E' },
 			{ "asset-hash-check-maximum-size", required_argument, 0, 'D' },
 			{ "quiet", no_argument, 0, 'q' },
+			{ "other-dcp", required_argument, 0, 'F' },
 			{ 0, 0, 0, 0 }
 		};
 
-		int c = getopt_long (argc, argv, "VhABCD:Eqo:", long_options, &option_index);
+		int c = getopt_long (argc, argv, "VhABCD:EF:qo:", long_options, &option_index);
 
 		if (c == -1) {
 			break;
@@ -170,6 +173,13 @@ main (int argc, char* argv[])
 			break;
 		case 'E':
 			verification_options.check_picture_details = false;
+			break;
+		case 'F':
+			if (!dcp::filesystem::exists(optarg)) {
+				cerr << argv[0] << ": DCP " << optarg << " not found.\n";
+				exit (EXIT_FAILURE);
+			}
+			verification_options.other_dcps.push_back(optarg);
 			break;
 		case 'q':
 			quiet = true;

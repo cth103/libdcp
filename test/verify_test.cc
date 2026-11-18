@@ -6105,3 +6105,142 @@ BOOST_AUTO_TEST_CASE(verify_vf_with_some_closed_captions_in_another_dcp2)
 	check_vf_with_some_closed_captions_in_another_dcp("verify_vf_with_some_closed_captions_in_another_dcp2", false);
 }
 
+
+/** Verify the VF in `vf_dir`, telling the verifier that it may refer to the DCPs in `other_dcps`, and return the notes */
+static
+vector<dcp::VerificationNote>
+verify_vf_with_other_dcps(path vf_dir, vector<path> other_dcps)
+{
+	dcp::VerificationOptions options;
+	options.other_dcps = other_dcps;
+	return dcp::verify({vf_dir}, {}, &stage, &progress, options, xsd_test).notes;
+}
+
+
+static
+long
+count_notes(vector<dcp::VerificationNote> const& notes, dcp::VerificationNote::Code code)
+{
+	return std::count_if(notes.begin(), notes.end(), [code](dcp::VerificationNote const& n) { return n.code() == code; });
+}
+
+
+/** If the OV is given to the verifier as another DCP the closed captions of the VF are resolved, so they are
+ *  no longer reported as external and are checked (here, the line which is too long).
+ */
+BOOST_AUTO_TEST_CASE(verify_vf_with_closed_caption_resolved_from_other_dcp)
+{
+	auto const ov_dir = path("build/test/verify_vf_with_closed_caption_resolved_from_other_dcp_ov");
+	auto const vf_dir = path("build/test/verify_vf_with_closed_caption_resolved_from_other_dcp_vf");
+	/* 34 characters is too long for a closed caption line */
+	make_vf_referring_to_text(ov_dir, vf_dir, dcp::TextType::CLOSED_CAPTION, "0123456789012345678901234567890123");
+
+	vector<dcp::VerificationNote> notes;
+	BOOST_REQUIRE_NO_THROW(notes = verify_vf_with_other_dcps(vf_dir, { ov_dir }));
+
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::EXTERNAL_ASSET), 0);
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH), 1);
+}
+
+
+/** The same with a closed caption which is fine: nothing at all is reported about it */
+BOOST_AUTO_TEST_CASE(verify_vf_with_good_closed_caption_resolved_from_other_dcp)
+{
+	auto const ov_dir = path("build/test/verify_vf_with_good_closed_caption_resolved_from_other_dcp_ov");
+	auto const vf_dir = path("build/test/verify_vf_with_good_closed_caption_resolved_from_other_dcp_vf");
+	make_vf_referring_to_text(ov_dir, vf_dir, dcp::TextType::CLOSED_CAPTION, "Hello");
+
+	vector<dcp::VerificationNote> notes;
+	BOOST_REQUIRE_NO_THROW(notes = verify_vf_with_other_dcps(vf_dir, { ov_dir }));
+
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::EXTERNAL_ASSET), 0);
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::INVALID_CLOSED_CAPTION_LINE_LENGTH), 0);
+}
+
+
+BOOST_AUTO_TEST_CASE(verify_vf_with_open_subtitle_resolved_from_other_dcp)
+{
+	auto const ov_dir = path("build/test/verify_vf_with_open_subtitle_resolved_from_other_dcp_ov");
+	auto const vf_dir = path("build/test/verify_vf_with_open_subtitle_resolved_from_other_dcp_vf");
+	make_vf_referring_to_text(ov_dir, vf_dir, dcp::TextType::OPEN_SUBTITLE, "Hello");
+
+	vector<dcp::VerificationNote> notes;
+	BOOST_REQUIRE_NO_THROW(notes = verify_vf_with_other_dcps(vf_dir, { ov_dir }));
+
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::EXTERNAL_ASSET), 0);
+}
+
+
+/** A DCP that does not hold the asset does not resolve it: it is still reported as external, without an exception */
+BOOST_AUTO_TEST_CASE(verify_vf_with_unrelated_other_dcp)
+{
+	auto const ov_dir = path("build/test/verify_vf_with_unrelated_other_dcp_ov");
+	auto const vf_dir = path("build/test/verify_vf_with_unrelated_other_dcp_vf");
+	auto const unrelated_ov_dir = path("build/test/verify_vf_with_unrelated_other_dcp_unrelated_ov");
+	auto const unrelated_vf_dir = path("build/test/verify_vf_with_unrelated_other_dcp_unrelated_vf");
+	make_vf_referring_to_text(ov_dir, vf_dir, dcp::TextType::CLOSED_CAPTION, "Hello");
+	make_vf_referring_to_text(unrelated_ov_dir, unrelated_vf_dir, dcp::TextType::CLOSED_CAPTION, "Goodbye");
+
+	vector<dcp::VerificationNote> notes;
+	BOOST_REQUIRE_NO_THROW(notes = verify_vf_with_other_dcps(vf_dir, { unrelated_ov_dir }));
+
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::EXTERNAL_ASSET), 1);
+}
+
+
+/** A picture asset of a VF which is found in the other DCP is checked: its hash is not in the VF's PKL, so it
+ *  is compared with the one in the VF's CPL.
+ */
+BOOST_AUTO_TEST_CASE(verify_vf_with_picture_resolved_from_other_dcp)
+{
+	auto const ov_dir = path("build/test/verify_vf_with_picture_resolved_from_other_dcp_ov");
+	auto const vf_dir = path("build/test/verify_vf_with_picture_resolved_from_other_dcp_vf");
+	prepare_directory(ov_dir);
+	prepare_directory(vf_dir);
+
+	auto picture = simple_picture(ov_dir, "", 24);
+	write_dcp_with_single_asset(ov_dir, make_shared<dcp::ReelMonoPictureAsset>(picture, 0));
+	write_dcp_with_single_asset(vf_dir, make_shared<dcp::ReelMonoPictureAsset>(picture, 0));
+
+	vector<dcp::VerificationNote> notes;
+	BOOST_REQUIRE_NO_THROW(notes = verify_vf_with_other_dcps(vf_dir, { ov_dir }));
+
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::EXTERNAL_ASSET), 0);
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::CORRECT_PICTURE_HASH), 1);
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::INCORRECT_PICTURE_HASH), 0);
+}
+
+
+/** An other DCP which itself refers to assets in a third DCP (it is a VF too) does not make verification throw */
+BOOST_AUTO_TEST_CASE(verify_vf_with_other_dcp_which_is_a_vf)
+{
+	auto const ov_dir = path("build/test/verify_vf_with_other_dcp_which_is_a_vf_ov");
+	auto const vf_dir = path("build/test/verify_vf_with_other_dcp_which_is_a_vf_vf");
+	auto const other_vf_dir = path("build/test/verify_vf_with_other_dcp_which_is_a_vf_other_vf");
+	auto const other_ov_dir = path("build/test/verify_vf_with_other_dcp_which_is_a_vf_other_ov");
+	make_vf_referring_to_text(ov_dir, vf_dir, dcp::TextType::CLOSED_CAPTION, "Hello");
+	make_vf_referring_to_text(other_ov_dir, other_vf_dir, dcp::TextType::CLOSED_CAPTION, "Goodbye");
+
+	vector<dcp::VerificationNote> notes;
+	BOOST_REQUIRE_NO_THROW(notes = verify_vf_with_other_dcps(vf_dir, { other_vf_dir, ov_dir }));
+
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::EXTERNAL_ASSET), 0);
+}
+
+
+/** An other DCP which cannot be read is reported, and the VF is still verified */
+BOOST_AUTO_TEST_CASE(verify_vf_with_unreadable_other_dcp)
+{
+	auto const ov_dir = path("build/test/verify_vf_with_unreadable_other_dcp_ov");
+	auto const vf_dir = path("build/test/verify_vf_with_unreadable_other_dcp_vf");
+	auto const empty_dir = path("build/test/verify_vf_with_unreadable_other_dcp_empty");
+	make_vf_referring_to_text(ov_dir, vf_dir, dcp::TextType::CLOSED_CAPTION, "Hello");
+	prepare_directory(empty_dir);
+
+	vector<dcp::VerificationNote> notes;
+	BOOST_REQUIRE_NO_THROW(notes = verify_vf_with_other_dcps(vf_dir, { empty_dir }));
+
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::FAILED_READ), 1);
+	BOOST_CHECK_EQUAL(count_notes(notes, dcp::VerificationNote::Code::EXTERNAL_ASSET), 1);
+}
+
