@@ -81,6 +81,7 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <fmt/format.h>
 #include <boost/algorithm/string.hpp>
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <numeric>
@@ -422,10 +423,18 @@ verify_asset(
 		}
 	}
 
-	DCP_ASSERT(maybe_pkl_hash);
+	auto cpl_hash = reel_file_asset->hash();
+
+	if (!maybe_pkl_hash) {
+		/* This asset is not in this DCP, so it is not in this DCP's PKL either: it must have been found in another
+		 * DCP (see VerificationOptions::other_dcps).  The best we can do is to compare with the hash in the CPL.
+		 */
+		*reference_hash = cpl_hash.get_value_or(*calculated_hash);
+		return *calculated_hash == *reference_hash ? VerifyAssetResult::GOOD : VerifyAssetResult::BAD;
+	}
+
 	*reference_hash = *maybe_pkl_hash;
 
-	auto cpl_hash = reel_file_asset->hash();
 	if (cpl_hash && *cpl_hash != *reference_hash) {
 		return VerifyAssetResult::CPL_PKL_DIFFER;
 	}
@@ -1129,6 +1138,10 @@ verify_closed_caption_details(Context& context, vector<shared_ptr<Reel>> reels)
 		context.reel_index = reel_index;
 		dcp::ScopeGuard sg = [&context]() { context.reel_index = boost::none; };
 		for (auto ccap: reel->closed_captions()) {
+			if (!ccap->asset_ref().resolved()) {
+				/* The asset is not in this DCP (so this is a VF) */
+				continue;
+			}
 			auto reel_xml = ccap->asset()->raw_xml();
 			if (!reel_xml) {
 				context.add_note(VerificationNote::Code::MISSED_CHECK_OF_ENCRYPTED);
@@ -1298,6 +1311,14 @@ verify_text_details(Context& context, vector<shared_ptr<Reel>> reels)
 	}
 
 	for (auto i = 0U; i < reels[0]->closed_captions().size(); ++i) {
+		auto const all_resolved = std::all_of(reels.begin(), reels.end(), [i](shared_ptr<Reel> reel) {
+			return i >= reel->closed_captions().size() || reel->closed_captions()[i]->asset_ref().resolved();
+		});
+		if (!all_resolved) {
+			/* At least one of the assets is not in this DCP (so this is a VF) */
+			continue;
+		}
+
 		verify_text_details(context, reels, reels[0]->closed_captions()[i]->edit_rate().numerator,
 			[i](shared_ptr<Reel> reel) {
 				return reel->closed_captions()[i]->id();
@@ -1770,7 +1791,7 @@ verify_cpl(Context& context, shared_ptr<const CPL> cpl)
 			context.reel_index = reel_index;
 			dcp::ScopeGuard sg = [&context]() { context.reel_index = boost::none; };
 			for (auto i: reel->closed_captions()) {
-				if (i->asset()) {
+				if (i->asset_ref().resolved()) {
 					verify_text_lines_and_characters(i->asset(), 32, 32, &result);
 				}
 			}
@@ -1871,6 +1892,31 @@ dcp::verify (
 		dcps.push_back (make_shared<DCP>(i));
 	}
 
+	/* Read the DCPs that the ones we are verifying may refer to, so that the references can be resolved.
+	 * We do not verify these.
+	 */
+	vector<shared_ptr<Asset>> other_assets;
+	for (auto i: options.other_dcps) {
+		auto other = make_shared<DCP>(i);
+		try {
+			vector<VerificationNote> ignored;
+			other->read(&ignored, true);
+		} catch (std::exception& e) {
+			notes.push_back(VerificationNote(VerificationNote::Code::FAILED_READ).set_error(e.what()));
+			continue;
+		}
+		/* The KDMs we are given may be for the other DCP as well as for the ones we are verifying
+		 * (for example the KDM for the OV and that for the VF); each is used by the DCP whose CPL it is for.
+		 * The assets are shared, so the keys will also be used when the references are resolved.
+		 */
+		for (auto kdm: kdms) {
+			other->add(kdm);
+		}
+		for (auto asset: other->assets(true)) {
+			other_assets.push_back(asset);
+		}
+	}
+
 	for (auto dcp: dcps) {
 		stage ("Checking DCP", dcp->directory());
 
@@ -1899,6 +1945,30 @@ dcp::verify (
 
 		if (!carry_on) {
 			continue;
+		}
+
+		if (!other_assets.empty()) {
+			dcp->resolve_refs(other_assets);
+			/* read() will have said that the assets we have just found are external */
+			auto const is_resolved = [dcp](string id) {
+				for (auto cpl: dcp->cpls()) {
+					for (auto asset: cpl->reel_file_assets()) {
+						if (asset->asset_ref().id() == id && asset->asset_ref().resolved()) {
+							return true;
+						}
+					}
+				}
+				return false;
+			};
+			notes.erase(
+				std::remove_if(
+					notes.begin(),
+					notes.end(),
+					[is_resolved](VerificationNote const& note) {
+						return note.code() == VerificationNote::Code::EXTERNAL_ASSET && is_resolved(*note.asset_id());
+					}),
+				notes.end()
+				);
 		}
 
 		if (dcp->standard() != Standard::SMPTE) {
